@@ -23,7 +23,6 @@ package it.eng.spagobi.engines.worksheet.services;
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
-import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.commons.bo.UserProfile;

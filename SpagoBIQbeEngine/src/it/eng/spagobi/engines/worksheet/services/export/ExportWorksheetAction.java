@@ -64,6 +64,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	public static final String CONTENT = "CONTENT";
 	public static final String CONTENT_PARS = "PARS";
 	public static final String FILTERS = "FILTERS";
+	public static final String SHEET = "sheetName";
 	
 	// misc
 	public static final String RESPONSE_TYPE_INLINE = "RESPONSE_TYPE_INLINE";
@@ -92,10 +93,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		String mimeType = null;
 		JSONObject worksheetJSON = null;
 		File exportFile = null;
-    	
-		
 
-		
     	try {
 			setSpagoBIRequestContainer( request );
 			setSpagoBIResponseContainer( response );
@@ -269,6 +267,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	private IDataStore getTableDataStore(JSONObject sheetJ) throws Exception {
 		JSONObject sheetContentPars = null;
 		JSONArray jsonVisibleSelectFields = null;
+		String sheetName = sheetJ.getString(SHEET);
 		JSONObject sheetContent = sheetJ.optJSONObject(CONTENT);
 		sheetContentPars = sheetContent.optJSONObject(CONTENT_PARS);
 		// get the visible columns
@@ -276,7 +275,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			jsonVisibleSelectFields = sheetContentPars
 					.optJSONArray(QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS);
 		}
-		IDataStore dataStore = executeQuery(jsonVisibleSelectFields);
+		IDataStore dataStore = executeQuery(jsonVisibleSelectFields, sheetName);
 		return dataStore;
 	}
 	

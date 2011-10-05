@@ -91,7 +91,6 @@ public class DataSourceTablePDFExporter {
 		logger.debug("IN: building the headers of the table");
 		IMetaData dataStoreMetaData = dataStore.getMetaData();	
     	int colunum = dataStoreMetaData.getFieldCount();
-	    int visibleColumns=0;
 	    List<String> columnsName = new ArrayList<String>();
     	
 	    //reads the names of the visible table columns
@@ -100,32 +99,28 @@ public class DataSourceTablePDFExporter {
     	    IFieldMetaData fieldMetaData = dataStoreMetaData.getFieldMeta(j);
 //    	    String format = (String) fieldMetaData.getProperty("format");
     	    String alias = (String) fieldMetaData.getAlias();
-    	    Boolean visible = (Boolean) fieldMetaData.getProperty("visible");
 
-    	    if (visible != null && visible.booleanValue()) { 
-            	if(alias!=null && !alias.equals("")){
-            		columnsName.add(alias);
-            	}else{
-            		columnsName.add(fieldName);
-            	}	 
-            	visibleColumns++;
-            }
-    	}
+           	if(alias!=null && !alias.equals("")){
+           		columnsName.add(alias);
+           	}else{
+           		columnsName.add(fieldName);
+           	}	 
+        }
     	
-    	PdfPTable table = new PdfPTable(visibleColumns);
+    	PdfPTable table = new PdfPTable(colunum);
     	
     	//For each column builds a cell
 		PdfPCell d = table.getDefaultCell();
 
     	
 
-		if(visibleColumns<4){
-			table.setWidthPercentage(visibleColumns*25);
+		if(colunum<4){
+			table.setWidthPercentage(colunum*25);
 		}else{
 			table.setWidthPercentage(100);
 		}
 		
-    	for(int j = 0; j < visibleColumns; j++){
+    	for(int j = 0; j < colunum; j++){
     		PdfPCell cell = new PdfPCell(new Phrase(columnsName.get(j)));
     		//cell.setHeader(true);
     		cell.setBorderColor(cellsBorderColor);
@@ -162,23 +157,20 @@ public class DataSourceTablePDFExporter {
 			for(int fieldIndex =0; fieldIndex<length; fieldIndex++){
 				IField f = (IField)fields.get(fieldIndex);
 				IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);
-		    	Boolean visible = (Boolean) fieldMetaData.getProperty("visible");
-		    	
-		    	if(visible){
-		    		if (f == null || f.getValue()== null) {
-		    			cell = new PdfPCell(new Phrase(""));
-		    		}else{
-						Class c = d.getFieldType(fieldIndex);
-						cell = new PdfPCell(new Phrase(formatPDFCell(c, f)));
-						if(oddRows){
-							cell.setBackgroundColor(oddrowsBackgroundColor);
-						}else{
-							cell.setBackgroundColor(evenrowsBackgroundColor);
-						}
-		    		}
-		    		cell.setBorderColor(cellsBorderColor);
-		    		table.addCell(cell);
+
+				if (f == null || f.getValue()== null) {
+		    		cell = new PdfPCell(new Phrase(""));
+		    	}else{
+					Class c = d.getFieldType(fieldIndex);
+					cell = new PdfPCell(new Phrase(formatPDFCell(c, f)));
+					if(oddRows){
+						cell.setBackgroundColor(oddrowsBackgroundColor);
+					}else{
+						cell.setBackgroundColor(evenrowsBackgroundColor);
+					}
 		    	}
+		    	cell.setBorderColor(cellsBorderColor);
+		    	table.addCell(cell);
 				
 			}
 			oddRows = !oddRows;

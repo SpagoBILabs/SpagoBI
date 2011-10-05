@@ -107,7 +107,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 				FOOTER: footer,
 				CONTENT: exportedContent,
 				FILTERS: filters
-				}
+				};
+			completedExportedContent.sheetName=this.sheetConfig.name;
 		return completedExportedContent;
 	},
 	

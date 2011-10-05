@@ -121,16 +121,12 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		return gridDataFeed;
 	}
 	
-//	protected JSONObject loadSmartFilterFormValues() throws JSONException{
-//		FormState formState = getEngineInstance().getFormState();
-//		if (formState == null) {
-//			return null;
-//		} else {
-//			return formState.getFormStateValues();
-//		}
-//	}
-	
 	protected IDataStore executeQuery(JSONArray jsonVisibleSelectFields) throws Exception {
+		String sheetName = this.getAttributeAsString(SHEET);
+		return executeQuery(jsonVisibleSelectFields, sheetName);
+	}
+	
+	protected IDataStore executeQuery(JSONArray jsonVisibleSelectFields, String sheetName) throws Exception {
 		
 		IDataStore dataStore = null;
 		JSONObject jsonFormState = null;
@@ -180,12 +176,6 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 			selectableFieldsBehaviour.setSelectedFields(fields);
 		}
 		
-//		List<WhereField> whereFields = new ArrayList<WhereField>();
-//		String sheetName = this.getAttributeAsString( SHEET );
-//		whereFields.addAll(LoadWorksheetCrosstabAction.transformIntoWhereClauses(onTableAttributes));
-////		whereFields.addAll(LoadWorksheetCrosstabAction.getMandatoryFilters(this.getEngineInstance(), sheetName));
-//		whereFields.addAll(LoadWorksheetCrosstabAction.getOptionalFilters(optionalUserFilters));
-		
 		// persist dataset into temporary table	
 		IDataSetTableDescriptor descriptor = this.persistDataSet(tableName);
 		// build SQL query against temporary table
@@ -195,7 +185,7 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 			List<WhereField> temp = transformIntoWhereClauses(globalFilters);
 			whereFields.addAll(temp);
 		}
-		String sheetName = this.getAttributeAsString(SHEET);
+
 		Map<String, List<String>> sheetFilters = getSheetFiltersOnDomainValues(sheetName);
 		List<WhereField> temp = transformIntoWhereClauses(sheetFilters);
 		whereFields.addAll(temp);
