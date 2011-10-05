@@ -10,6 +10,8 @@ import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
+import it.eng.qbe.statement.hibernate.HQLStatement;
+import it.eng.qbe.statement.hibernate.HQLStatement.IConditionalOperator;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
@@ -28,6 +30,7 @@ import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -350,17 +353,35 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	private void manageFilterOnDomainValues(StringBuffer buffer,
 			String fieldName, IDataSetTableDescriptor tableDescriptor, IDataStoreFilter filter) {
 		if (filter != null) {
-			if (!fieldName.equals(filter.getFieldName())) {
-				throw new SpagoBIRuntimeException("Field name [" + fieldName + "] does not match filter column [" + filter.getFieldName() + "]");
+			String filterColumnName = tableDescriptor.getColumnName(fieldName);
+			if (filterColumnName == null) {
+				throw new SpagoBIRuntimeException("Field name [" + fieldName + "] not found");
 			}
-//			String columnName = tableDescriptor.getColumnName(fieldName);
-//			String value = filter.getValue();
-//			Class clazz = null;
-//			
-//			buffer.append(" WHERE " + columnName + " ");
+			String columnName = tableDescriptor.getColumnName(fieldName);
+			Class clazz = tableDescriptor.getColumnType(fieldName);
+			String value = getFilterValue(filter.getValue(), clazz);
+			IConditionalOperator conditionalOperator = (IConditionalOperator) HQLStatement.conditionalOperators.get(filter.getOperator());
+			String temp = conditionalOperator.apply(columnName, new String[] { value });
+			buffer.append(" WHERE " + temp);
 		}
 	}
 
+	private String getFilterValue(String value, Class clazz) {
+		String toReturn = null;
+		if ( String.class.isAssignableFrom(clazz) ) {
+			value = StringUtils.escapeQuotes(value);
+			toReturn = StringUtils.bound(value, "'");
+		} else if ( Number.class.isAssignableFrom(clazz) ) {
+			toReturn = value;
+		} else if ( Boolean.class.isAssignableFrom(clazz) ) {
+			toReturn = value;
+		} else {
+			// TODO manage other types, such as date and timestamp
+			throw new SpagoBIRuntimeException("Unsupported operation: cannot filter on a fild type " + clazz.getName());
+		}
+		return toReturn;
+	}
+	
 	private String getUserId() {
 		Map userProfileAttrs = getUserProfileAttributes();
 		String userId = null;
