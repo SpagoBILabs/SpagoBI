@@ -143,7 +143,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
  		var visibleColumns;
  		
  		//Calculate the sum of sums
- 		if(rowsumO.length>1){
+ 		if(rowsumO!=null && rowsumO!=undefined && rowsumO.length>1){
  			for(var x=0; x<rowsumO.length; x++){
  				var freshSum=0;
  	 			for(var y=0; y<rowsumO[x].length; y++){
@@ -151,7 +151,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
  	 			}
  	 			superSumArray.push(Sbi.qbe.commons.Format.number(freshSum,'float'));
  			}
- 		}else if(columnsumO.length>1){
+ 		}else if(rowsumO!=null && rowsumO!=undefined && columnsumO.length>1){
  			for(var x=0; x<columnsumO.length; x++){
  				var freshSum=0;
  	 			for(var y=0; y<columnsumO[x].length; y++){
@@ -192,7 +192,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
 			}
 		}
  		
-    	if(columnsumO!=null){
+    	if(columnsumO!=null && columnsumO!=undefined){
     		columnsum = Sbi.crosstab.core.CrossTabShowHideUtility.cloneArray(columnsumO);
     		this.addPrefix(columnsum,'[sum]');
     		for(var j=0; j<columnsum.length; j++){
@@ -200,12 +200,12 @@ Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
  			}
     	}
     	
-    	if(rowsumO!=null){
+    	if(rowsumO!=null && rowsumO!=undefined){
     		rowsum = Sbi.crosstab.core.CrossTabShowHideUtility.cloneArray(rowsumO);
     	}
  		
     	//ADD the sum of sum
- 		if(rowsumO!=null && columnsumO!=null){
+ 		if(rowsumO!=null && rowsumO!=undefined && columnsumO!=null && columnsumO!=undefined){
     		if(!misuresOnRow){
     			for(var u=0; u<superSumArray.length; u++){
     				rowsum[u].push(superSumArray[u]);
