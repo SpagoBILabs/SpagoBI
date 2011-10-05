@@ -51,7 +51,7 @@ Sbi.console.GridPanel = function(config) {
 
 		var defaultSettings = {
 			layout: 'fit'
-			, loadMask: false
+			, loadMask: true
 		    , viewConfig: {
 	          	forceFit:false,
 	           	autoFill: true,
