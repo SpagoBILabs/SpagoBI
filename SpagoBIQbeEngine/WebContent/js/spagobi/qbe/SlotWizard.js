@@ -107,6 +107,8 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			, expertMode: c.expertMode
 			, scopeComboBoxData: c.scopeComboBoxData   		
 			, validationService: c.validationService
+			, title: 'Calulated field definition'
+			//, layout: 'fit'
 		});
 		
 		this.secondSlotDefinitionPanel = new Ext.Panel({
@@ -116,11 +118,11 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 	    });
 		
 		this.mainPanel = new Ext.Panel({  
-			    title: 'Card Layout (Wizard)',  
 			    layout: 'card',  
 			    activeItem: 0,  
-			    bodyStyle: 'padding:15px',
 			    scope: this,
+				width: 580,
+				height: 270,
 			    defaults: {border:false},  
 			    bbar: [
 			           {
@@ -144,9 +146,13 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			               
 			           }
 			    ], 
-			    items: [this.firstCalculatedFiledPanel,this.secondSlotDefinitionPanel]  
-		});    
+			    items: [this.firstCalculatedFiledPanel, this.secondSlotDefinitionPanel]  
+		});  
+		
+		
+		this.firstCalculatedFiledPanel.doLayout();
 		this.mainPanel.doLayout();
+		//this.mainPanel.layout.setActiveItem(0);
     }
 	, save: function(){
 		alert('save');
