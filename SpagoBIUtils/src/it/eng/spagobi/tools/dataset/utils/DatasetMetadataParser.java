@@ -29,6 +29,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.Iterator;
 import java.util.List;
@@ -51,41 +52,58 @@ public class DatasetMetadataParser {
 
 	private static transient Logger logger = Logger.getLogger(DatasetMetadataParser.class);
 
-	
-	// XML elements
-public static final String COLUMNLIST = "COLUMNLIST"; 
-public static final String COLUMN = "COLUMN"; 
-public static final String PROPERTY = "PROPERTY"; 
 
+	// XML tags
+	public static final String COLUMNLIST = "COLUMNLIST"; 
+	public static final String COLUMN = "COLUMN"; 
+	public static final String PROPERTY = "PROPERTY"; 
+
+	// XML attributes for tag COLUMM
+	public static final String NAME = "name"; 
+	public static final String FIELD_TYPE = "fieldType"; 
+	public static final String TYPE = "type"; 
+	public static final String ALIAS = "alias"; 
+
+	// XML VALUES FOR PROPERTIES TAG
+
+	public static final String VALUE = "value"; 
+	public static final String NAME_P = "name"; 
 
 
 	public String metadataToXML(IDataStore dataStore) {
-		logger.debug("IN");
-
 		if(dataStore==null || dataStore.getMetaData()==null){
 			logger.error("Data Store is null, cannot recover metadata because Data Store or Data Store metadata is null");
 			return null;
 		} 
+		return metadataToXML(dataStore.getMetaData());
+
+	}
+
+	public String metadataToXML(IMetaData dataStoreMetaData) {
+		logger.debug("IN");
+
+
 		SourceBean sb = null;
 		try{
 
 			sb = new SourceBean(DatasetMetadataParser.COLUMNLIST);
 
-			IMetaData dataStoreMetaData=dataStore.getMetaData();
 
 			for (int i = 0; i < dataStoreMetaData.getFieldCount(); i++) {
 				IFieldMetaData fieldMetaData=dataStoreMetaData.getFieldMeta(i);
 				String name = fieldMetaData.getName();
+				Assert.assertNotNull(name, "Name of the field cannot be null");
 				String alias = fieldMetaData.getAlias();
 				String type = fieldMetaData.getType().getName();
+				Assert.assertNotNull(type, "Type of the field "+name+" cannot be null");
 				FieldType fieldType = fieldMetaData.getFieldType();
 				Map properties = fieldMetaData.getProperties();
 
 				SourceBean sbMeta = new SourceBean(DatasetMetadataParser.COLUMN);
-				SourceBeanAttribute attN = new SourceBeanAttribute("name", name);
-				SourceBeanAttribute attT = new SourceBeanAttribute("type", type);
-				SourceBeanAttribute attA = alias != null? new SourceBeanAttribute("alias", alias) : null;
-				SourceBeanAttribute attF = fieldType != null? new SourceBeanAttribute("fieldType", fieldType.toString()) : null;
+				SourceBeanAttribute attN = new SourceBeanAttribute(NAME, name);
+				SourceBeanAttribute attT = new SourceBeanAttribute(TYPE, type);
+				SourceBeanAttribute attA = alias != null? new SourceBeanAttribute(ALIAS, alias) : null;
+				SourceBeanAttribute attF = fieldType != null? new SourceBeanAttribute(FIELD_TYPE, fieldType.toString()) : null;
 				sbMeta.setAttribute(attN);
 				sbMeta.setAttribute(attT);
 				if(attA != null) sbMeta.setAttribute(attA);
@@ -109,16 +127,18 @@ public static final String PROPERTY = "PROPERTY";
 		return xml1;
 	}
 
-	
+
 	public void insertPropertiesInSourceBean(SourceBean sbMeta, Map properties ) throws SourceBeanException{
 		logger.debug("IN");
 		for (Iterator iterator = properties.keySet().iterator(); iterator.hasNext();) {
 			String  name = (String) iterator.next();
+			Assert.assertNotNull(name, "Property name cannot be null");
 			Object value = properties.get(name);
+			Assert.assertNotNull(value, "Value of property "+name +" cannot be null");
 			if(value != null){
 				SourceBean sbP = new SourceBean(DatasetMetadataParser.PROPERTY);
-				SourceBeanAttribute attN = new SourceBeanAttribute("name", name);
-				SourceBeanAttribute attV = new SourceBeanAttribute("value", value.toString());
+				SourceBeanAttribute attN = new SourceBeanAttribute(NAME, name);
+				SourceBeanAttribute attV = new SourceBeanAttribute(VALUE, value.toString());
 				sbP.setAttribute(attN);
 				sbP.setAttribute(attV);
 				sbMeta.setAttribute(sbP);
@@ -126,21 +146,21 @@ public static final String PROPERTY = "PROPERTY";
 		}
 		logger.debug("OUT");
 	}
-	
-	
-	
-	
-	
-	
 
 
-	public IMetaData xmlToMetadata(String xmlMetadata) throws ClassNotFoundException {
+
+
+
+
+
+
+	public IMetaData xmlToMetadata(String xmlMetadata) throws Exception {
 		logger.debug("IN");
 		MetaData dsMeta=new MetaData();
 
 		if(xmlMetadata==null){
 			logger.error("String rapresentation of metadata is null");
-			return null;
+			throw new Exception("Xml Metadata String cannot be null ");
 		}
 		SourceBean sb=null; 
 		try {
@@ -158,10 +178,10 @@ public static final String PROPERTY = "PROPERTY";
 
 		for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
 			SourceBean sbRow = (SourceBean)iterator.next();
-			String name=sbRow.getAttribute("name")!= null ? sbRow.getAttribute("name").toString() : null;
-			String type=sbRow.getAttribute("type")!= null ? sbRow.getAttribute("type").toString() : null;
-			String alias=sbRow.getAttribute("alias")!= null ? sbRow.getAttribute("alias").toString() : null;
-			String fieldType=sbRow.getAttribute("fieldType")!= null ? sbRow.getAttribute("fieldType").toString() : null;
+			String name=sbRow.getAttribute(NAME)!= null ? sbRow.getAttribute(NAME).toString() : null;
+			String type=sbRow.getAttribute(TYPE)!= null ? sbRow.getAttribute(TYPE).toString() : null;
+			String alias=sbRow.getAttribute(ALIAS)!= null ? sbRow.getAttribute(ALIAS).toString() : null;
+			String fieldType=sbRow.getAttribute(FIELD_TYPE)!= null ? sbRow.getAttribute(FIELD_TYPE).toString() : null;
 
 			if(name!=null){
 				FieldMetadata fieldMeta=new FieldMetadata();
@@ -189,7 +209,7 @@ public static final String PROPERTY = "PROPERTY";
 					}
 					catch (Exception e) {
 						logger.error("Error in reading properties");
-						return null;
+						throw new Exception("Error in inserting properties: "+e.getMessage());
 					}
 				}
 
@@ -210,13 +230,15 @@ public static final String PROPERTY = "PROPERTY";
 
 		for (Iterator iterator = propertiesBean.iterator(); iterator.hasNext();) {
 			SourceBean sb = (SourceBean) iterator.next();
-			String name=sb.getAttribute("name")!= null ? sb.getAttribute("name").toString() : null;
-			String value=sb.getAttribute("value")!= null ? sb.getAttribute("value").toString() : null;
+			String name=sb.getAttribute(NAME_P)!= null ? sb.getAttribute(NAME_P).toString() : null;
+			Assert.assertNotNull(name, "Property name cannot be null");
+			String value=sb.getAttribute(VALUE)!= null ? sb.getAttribute(VALUE).toString() : null;
+			Assert.assertNotNull(value, "value of property's "+name+" cannot be null");
 			properties.put(name, value);
 		}
 
 		logger.debug("OUT");
 	}
-	
+
 
 }
