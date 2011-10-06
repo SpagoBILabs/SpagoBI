@@ -383,32 +383,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		var text = entityNode.text || entityNode.attributes.text;
 		
 		if(type === 'entity') {
-			var fields = new Array();
-			
-			var parametersLoader = new Ext.tree.TreeLoader({
-		        baseParams: {},
-		        dataUrl: this.services['getParameters']
-		    });
-			
-			var attributesLoader = new Ext.tree.TreeLoader({
-		        baseParams: {},
-		        dataUrl: this.services['getAttributes']
-		    });
-			
-			var crossFn = Ext.util.Format.htmlEncode("String label = 'bestByRegion';") + '<br>' + 
-				Ext.util.Format.htmlEncode("String text= fields['salesRegion'];") + '<br>' + 
-				Ext.util.Format.htmlEncode("String params= 'region=5';") + '<br>' + 
-				Ext.util.Format.htmlEncode("String subobject;") + '<p>' + 
-				Ext.util.Format.htmlEncode("String result = '';") + '<p>' + 
-				Ext.util.Format.htmlEncode("result +='<a href=\"#\" onclick=\"javascript:sendMessage({';") + '<br>' + 
-				Ext.util.Format.htmlEncode("result +='\\'label\\':\\'' + label + '\\'';") + '<br>' + 
-				Ext.util.Format.htmlEncode("result +=', parameters:\\'' + params + '\\'';") + '<br>' + 
-				Ext.util.Format.htmlEncode("result +=', windowName: this.name';") + '<br>' + 
-				Ext.util.Format.htmlEncode("if(subobject != null) result +=', subobject:\\'' + subobject +'\\'';") + '<br>' + 
-				Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' + 
-				Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' + 
-				Ext.util.Format.htmlEncode("return result;");
-			
+
 			var dateFunctions = [
  			    {
  		            text: 'GG_between_dates'
