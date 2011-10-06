@@ -79,25 +79,48 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 		return this.firstCalculatedFiledPanel;
 	}
 	, initMainPanel: function(c) {
-		
-		var navHandler = function(direction){
-			if(this.mainPanel !== null){
-				var curr = this.mainPanel.layout.activeItem;
-				if(direction == 1){
-					this.mainPanel.layout.setActiveItem(1);
-					//this.mainPanel.toolbars.items[2].disabled = false;
-				}else{
-					//back
-					this.mainPanel.layout.setActiveItem(0);
-					//this.mainPanel.toolbars.items[0].disabled = true;
-				}
-			}
-		};
-		
 		var save = function(){
 			this.save();
 		};
 		
+		
+		var navHandler = function(page){
+			if(this.mainPanel !== null){
+				var curr = this.mainPanel.layout.activeItem;
+				if(page == 1){
+					this.mainPanel.layout.setActiveItem(1);
+					btnNext.disabled = true;
+					btnPrev.disabled = false;
+					btnFinish.disabled = false;
+				}else{
+					//back
+					this.mainPanel.layout.setActiveItem(0);
+					btnPrev.disabled = true;
+					btnNext.disabled = false;
+					btnFinish.disabled = true;
+				}
+			}
+		};
+		var btnPrev = new Ext.Button({
+            id: 'move-prev',
+            text: 'Back',
+            handler: navHandler.createDelegate(this, [-1]),
+		});
+		
+		var btnNext = new Ext.Button({
+            id: 'move-next',
+            text: 'Next',
+            handler: navHandler.createDelegate(this, [1])
+		});
+		
+		var btnFinish = new Ext.Button({
+            id: 'finish',
+            text: 'Finish',
+            disabled: false,
+            scope: this,
+            handler : save.createDelegate(this)
+		});
+
 		this.firstCalculatedFiledPanel = new Sbi.qbe.CalculatedFieldEditorPanel({
 			expItemGroups: c.expItemGroups
 			, fields: c.fields
@@ -108,14 +131,17 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			, scopeComboBoxData: c.scopeComboBoxData   		
 			, validationService: c.validationService
 			, title: 'Calulated field definition'
-			//, layout: 'fit'
+
 		});
 		
-		this.secondSlotDefinitionPanel = new Ext.Panel({
-			id: 'card-1',  
-	        layout: 'fit',
-	        html: '<p>Step 2 of 2: complete!!!</p><p>Almost there.  Please click the "Next" button to continue...</p>'  
+		this.secondSlotDefinitionPanel = new Sbi.qbe.SlotEditorPanel({
+			id: 'card-1'  ,
+			width: 580,
+			height: 270,
+			title: 'Slot definition'
+
 	    });
+
 		
 		this.mainPanel = new Ext.Panel({  
 			    layout: 'card',  
@@ -125,34 +151,18 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 				height: 270,
 			    defaults: {border:false},  
 			    bbar: [
-			           {
-			               id: 'move-prev',
-			               text: 'Back',
-			               handler: navHandler.createDelegate(this, [-1]),
-			               disabled: true
-			           },
+			           btnPrev,
 			           '->', // greedy spacer so that the buttons are aligned to each side
-			           {
-			               id: 'move-next',
-			               text: 'Next',
-			               handler: navHandler.createDelegate(this, [1])
-			           },
-			           {
-			               id: 'finish',
-			               text: 'Finish',
-			               disabled: false,
-			               scope: this,
-			               handler : save.createDelegate(this) 
-			               
-			           }
+			           btnNext,
+			           btnFinish
 			    ], 
 			    items: [this.firstCalculatedFiledPanel, this.secondSlotDefinitionPanel]  
 		});  
 		
-		
 		this.firstCalculatedFiledPanel.doLayout();
+		this.secondSlotDefinitionPanel.doLayout();
 		this.mainPanel.doLayout();
-		//this.mainPanel.layout.setActiveItem(0);
+
     }
 	, save: function(){
 		alert('save');
