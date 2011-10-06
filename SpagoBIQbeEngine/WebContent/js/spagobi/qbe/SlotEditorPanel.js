@@ -57,10 +57,22 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	, initToolbar: function(c){
 	
 		this.panelToolbar = new Ext.Toolbar({
+			scope: this,
 			items: [{
                 xtype:'button',
                 text: 'Add',
-                iconCls: 'add'
+                iconCls: 'add',
+                handler : function(){
+	                // access the Record constructor through the grid's store
+	                var Slot = this.gridPanel.getStore().recordType;
+	                var p = new Slot({
+	                    name: 'New Slot 1',
+	                    values: 'New values'
+	                });
+	                this.gridPanel.stopEditing();
+	                this.gridPanel.store.insert(0, p);
+	                this.gridPanel.startEditing(0, 0);
+	            }
             },{
                 xtype:'button',
                 text: 'Delete',
