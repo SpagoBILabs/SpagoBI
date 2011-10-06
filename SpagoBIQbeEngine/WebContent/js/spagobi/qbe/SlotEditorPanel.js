@@ -53,6 +53,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
    
     gridPanel: null 
     , panelToolbar: null
+    , valuesItemTemplate: null
     
 	, initToolbar: function(c){
 	
@@ -61,18 +62,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			items: [{
                 xtype:'button',
                 text: 'Add',
-                iconCls: 'add',
-                handler : function(){
-	                // access the Record constructor through the grid's store
-	                var Slot = this.gridPanel.getStore().recordType;
-	                var p = new Slot({
-	                    name: 'New Slot 1',
-	                    values: 'New values'
-	                });
-	                this.gridPanel.stopEditing();
-	                this.gridPanel.store.insert(0, p);
-	                this.gridPanel.startEditing(0, 0);
-	            }
+                iconCls: 'add'
             },{
                 xtype:'button',
                 text: 'Delete',
@@ -80,20 +70,36 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
             }]
 		});
 	}
+
 	, initGrid: function(c) {
 		
-		var emptyData = [{name: '', values: []}];
+		//var emptyData = [['eta 1','da 0 a 10']];
 	    // create the data store
 	    var store = new Ext.data.ArrayStore({
-	        fields: [
-	           {name: 'name'},
-	           {name: 'values'}
-	        ]
+	        fields: ['name', 'values'],
+	        data  : [['eta 1','da 0 a 10']]
 	    });
 
 	    // manually load local data
-	    store.loadData(emptyData);
+	    //store.loadData(emptyData);
 	    
+        var template = new Ext.XTemplate(
+        		'<div style="border: 1px solid silver;border-radius:5px; padding: 2px;">' + 
+                '<span width="70px" style="vertical-align: top;">{values}</span>' + 
+                '<span align="right"><img onClick="test();" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +
+                '</span>'+
+                '</div>'
+             );  
+             
+        template.compile();
+             
+        var valuesColumn = new Ext.grid.TemplateColumn(	{
+            header   : 'Values', 
+            dataIndex: 'values',
+            xtype: 'templatecolumn',
+            tpl : template
+        });
+
 		this.gridPanel = new Ext.grid.EditorGridPanel({
 			store: store,
 			columns: [
@@ -103,11 +109,8 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
                    sortable : true, 
                    dataIndex: 'name'
                },
-               {
-                   header   : 'Values', 
-                   sortable : true, 
-                   dataIndex: 'values'
-               }],
+               	   valuesColumn
+               ],
 	        tbar: this.toolbar,
 	        clicksToEdit:1,
 	        frame: true,
@@ -118,11 +121,24 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	        layout: 'fit',
 	        viewConfig: {
 	            forceFit: true
-	        },		
+	        },	
 
 	        enableDragDrop:false	
 	    });
-
+		var btnAdd = this.panelToolbar.items.items[0];
+		btnAdd.on('click', function(){
+            // access the Record constructor through the grid's store
+            var Slot = this.gridPanel.getStore().recordType;
+            var p = new Slot({
+                name: 'New Slot 1',
+                values: 'New values'
+            });
+            this.gridPanel.stopEditing();
+            this.gridPanel.store.insert(0, p);
+            this.gridPanel.startEditing(0, 0);
+        }, this);
 	}
-
 });
+test= function(itemGroupName, expression) {
+	alert('funziona!!');
+}
