@@ -49,8 +49,7 @@ Sbi.qbe.SlotWizard = function(config) {
 	}
 	Sbi.qbe.SlotWizard.superclass.constructor.call(this, c);  
 	this.add(this.mainPanel);
-	
-	this.addEvents('apply');  
+  
 };
 
 Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
