@@ -189,6 +189,8 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 
     }
 	, save: function(){
-		alert('save');
+
+		this.close();
 	}
+
 });
