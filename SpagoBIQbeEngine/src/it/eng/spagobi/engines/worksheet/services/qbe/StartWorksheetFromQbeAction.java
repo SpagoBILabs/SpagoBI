@@ -20,6 +20,8 @@
  **/
 package it.eng.spagobi.engines.worksheet.services.qbe;
 
+import java.util.Map;
+
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.spago.base.SourceBean;
@@ -31,6 +33,11 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import org.apache.log4j.Logger;
 
+/**
+ * @authors Alberto Ghedin (alberto.ghedin@eng.it)
+ *          Davide Zerbetto (davide.zerbetto@eng.it)
+ *
+ */
 public class StartWorksheetFromQbeAction extends WorksheetEngineStartAction {
 
 	private static final long serialVersionUID = 7152366345295485818L;
@@ -67,4 +74,14 @@ public class StartWorksheetFromQbeAction extends WorksheetEngineStartAction {
     protected boolean goToWorksheetPreentation() {
 		return false;
 	}
+
+    // We must override the getEnv method, since the WorksheetEngine must inherit the same environment 
+    // (that contains analytical drivers) of Qbe engine instance
+	@Override
+	public Map getEnv() {
+		QbeEngineInstance qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+		return qbeEngineInstance.getEnv();
+	}
+    
+    
 }

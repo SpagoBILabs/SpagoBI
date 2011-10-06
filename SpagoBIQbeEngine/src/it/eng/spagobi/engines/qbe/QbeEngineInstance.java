@@ -35,11 +35,9 @@ import it.eng.spagobi.engines.qbe.datasource.QbeDataSourceManager;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;
-import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
-import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -47,7 +45,6 @@ import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -361,19 +358,13 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 			}
 			
 			Map userAttributes = new HashMap();
-			UserProfile profile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-			Iterator it = profile.getUserAttributeNames().iterator();
-			while(it.hasNext()) {
-				String attributeName = (String)it.next();
-				Object attributeValue = profile.getUserAttribute(attributeName);
-				userAttributes.put(attributeName, attributeValue);
-			}
 			UserProfile userProfile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			userAttributes.putAll(userProfile.getUserAttributes());
 			userAttributes.put(SsoServiceInterface.USER_ID, userProfile.getUserId().toString());
 			
 			dataSet.addBinding("attributes", userAttributes);
 			dataSet.addBinding("parameters", this.getEnv());
-			dataSet.setUserProfileAttributes(profile.getUserAttributes());
+			dataSet.setUserProfileAttributes(userAttributes);
 			
 			dataSet.setParamsMap( this.getEnv() );
 			
@@ -384,21 +375,5 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		logger.debug("Dataset correctly taken from the query ");
 		return dataSet;
 	}
-	
-	/**
-	 * Updates the dataset of the worksheet instanc, if a 
-	 * worksheet instance exists in the session
-	 * @param dataSet
-	 */
-	public void updateWorksheetDataSet(IDataSet dataSet,WorksheetEngineInstance worksheetEngineInstance){
-		logger.debug("Updating the dataset definition in the worksheet");
-		
-		if(worksheetEngineInstance!=null){
-			logger.debug("A worksheet instance has been defined, so we update it");
-			worksheetEngineInstance.setDataSet(dataSet);
-		}
-		logger.debug("Finish to update the dataset definition in the worksheet");
-	}
 
-	
 }
