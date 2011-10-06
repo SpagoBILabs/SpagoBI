@@ -207,13 +207,12 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	qbeConfig.externalServicesConfig = <%= qbeEngineInstance.getTemplate().getExternalServiceConfigurationsAsJSONArray() %>;
 
 	      	qbeConfig.worksheet = {};
+	      	qbeConfig.worksheet.engineInitialized = <%= worksheetEngineInstance != null %>;
 	      	<%
 	      	JSONObject workSheetDefinitionJSON = workSheetDefinition != null ? 
 	      			(JSONObject) SerializationManager.serialize(workSheetDefinition, "application/json") : 
 	      				new JSONObject();
 	      	%>
-	      	
-	
 	      	qbeConfig.worksheet.worksheetTemplate = <%= workSheetDefinitionJSON %>;
 	    	
 	        // javascript-side user profile object

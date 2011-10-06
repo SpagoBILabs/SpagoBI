@@ -386,7 +386,9 @@ public class TemporaryTableManager {
 	
 	public static String getTableName(String userId) {
 		logger.debug("IN");
-
+		
+		Assert.assertNotNull(userId, "User identifier is null!!");
+		
 		String tableNamePrefix = getTableNamePrefix();
 		String tableNameSuffix = getTableNameSuffix();
 		String cleanUserId = StringUtils.convertNonAscii(userId);

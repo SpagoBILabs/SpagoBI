@@ -30,6 +30,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spago.base.*"%>
 <%@page import="it.eng.spagobi.engines.qbe.QbeEngineConfig"%>
 <%@page import="it.eng.spagobi.engines.qbe.QbeEngineInstance"%>
+<%@page import="it.eng.spagobi.engines.worksheet.WorksheetEngineInstance"%>
+<%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
@@ -45,6 +47,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%-- ---------------------------------------------------------------------- --%>
 <%
 	QbeEngineInstance qbeEngineInstance;
+	WorksheetEngineInstance worksheetEngineInstance;
+	WorkSheetDefinition workSheetDefinition;
 	UserProfile profile;
 	Locale locale;
 	String isFromCross;
@@ -60,6 +64,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	SourceBean serviceResponse = responseContainer.getServiceResponse();
 	SourceBean serviceRequest = requestContainer.getServiceRequest();
 	qbeEngineInstance = (QbeEngineInstance) serviceResponse.getAttribute("ENGINE_INSTANCE");
+	worksheetEngineInstance = (WorksheetEngineInstance) serviceResponse.getAttribute(WorksheetEngineInstance.class.getName());
+  	workSheetDefinition = worksheetEngineInstance != null ? 
+  			((WorkSheetDefinition) worksheetEngineInstance.getAnalysisState()) 
+  			: null;
 	profile = (UserProfile)qbeEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	locale = (Locale) qbeEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	modality = (String) serviceRequest.getAttribute("MODALITY");
@@ -132,18 +140,13 @@ end DOCTYPE declaration --%>
 	    
 	    var formEngineConfig = {};
 	    formEngineConfig.worksheet = {};
+	    formEngineConfig.worksheet.engineInitialized = <%= worksheetEngineInstance != null %>;
       	<%
-      	WorkSheetDefinition workSheetDefinition = qbeEngineInstance.getWorkSheetDefinition();
       	JSONObject workSheetDefinitionJSON = workSheetDefinition != null ? 
       			(JSONObject) SerializationManager.serialize(workSheetDefinition, "application/json") : 
       				new JSONObject();
       	%>
-      	
-
-      	
       	formEngineConfig.worksheet.worksheetTemplate = <%= workSheetDefinitionJSON %>;
-	    
-	    
 	    
       	Sbi.formviewer.formEnginePanel = null;
 	    

@@ -1337,7 +1337,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    , stopWorksheetEditing: function() {
 	   this.documentMode = 'VIEW';
 	   this.synchronizeToolbar(this.executionInstance, this.miframe, this.southPanel, this.northPanel, this.parametersPanel, this.shortcutsPanel);
-	   var newUrl = this.changeDocumentExecutionUrlParameter('ACTION_NAME', 'WORKSHEET_WITH_DATASET_ENGINE_START_ACTION');
+	   var newUrl = this.changeDocumentExecutionUrlParameter('ACTION_NAME', 'WORKSHEET_ENGINE_START_ACTION');
 	   this.miframe.getFrame().setSrc(newUrl);
    }
    

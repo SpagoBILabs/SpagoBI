@@ -109,17 +109,21 @@ Sbi.qbe.QbePanel = function(config) {
 			id : 'WorksheetDesignerPanel'
 		}));
 
-		this.worksheetDesignerPanel.on('activate', function(){
-			if(!this.notFirstTimeDesignPanelOpened){
-				this.notFirstTimeDesignPanelOpened = true;
-				Ext.Ajax.request({
-					url: this.services['executeWorksheetStartAction'],
-					params: {},
-					scope: this,
-					failure: Sbi.exception.ExceptionHandler.handleFailure
-				});
-			}
-		}, this);
+		var worksheetEngineInitialized = worksheetDesignerConfig.engineInitialized;
+		if (worksheetEngineInitialized === undefined || worksheetEngineInitialized == false) {
+			// if the worksheet engine is not initialized, we need to initialize it on first activation of worksheet designer tab
+			this.worksheetDesignerPanel.on('activate', function(){
+				if(!this.notFirstTimeDesignPanelOpened){
+					this.notFirstTimeDesignPanelOpened = true;
+					Ext.Ajax.request({
+						url: this.services['executeWorksheetStartAction'],
+						params: {},
+						scope: this,
+						failure: Sbi.exception.ExceptionHandler.handleFailure
+					});
+				}
+			}, this);
+		}
 		
 		items.push(this.worksheetDesignerPanel);
 	}

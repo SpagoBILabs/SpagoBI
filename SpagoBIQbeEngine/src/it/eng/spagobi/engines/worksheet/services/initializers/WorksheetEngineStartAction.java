@@ -44,6 +44,7 @@ import org.apache.log4j.Logger;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
+ *          Davide Zerbetto (davide.zerbetto@eng.it)
  *
  */
 public class WorksheetEngineStartAction extends AbstractEngineStartAction {	
@@ -200,8 +201,8 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		
 		// update parameters into the dataset
 		logger.debug("Setting parameters into dataset...");
-		logger.debug( this.getEnv() );
-		dataset.setParamsMap( this.getEnv() );
+		logger.debug( worksheetEngineInstance.getEnv() );
+		dataset.setParamsMap( worksheetEngineInstance.getEnv() );
 		
 		// update profile attributes into dataset
 		Map<String, Object> userAttributes = new HashMap<String, Object>();

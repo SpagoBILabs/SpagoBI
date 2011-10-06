@@ -33,6 +33,7 @@ import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.services.formviewer.FormViewerQueryTransformer;
 import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
@@ -60,6 +61,7 @@ public class UpdateDataSetWithSmartFilterValues extends AbstractWorksheetEngineA
 		//Add the smart filter values
 		try {
 			QbeEngineInstance qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+			Assert.assertNotNull(qbeEngineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			JSONObject jsonEncodedFormState = getAttributeAsJSONObject(FORM_STATE);
 			
 			FormState formState = qbeEngineInstance.getFormState();
@@ -84,19 +86,19 @@ public class UpdateDataSetWithSmartFilterValues extends AbstractWorksheetEngineA
     private void updateDataSetWithSmartFilterQuery() throws Exception{
 		JSONObject jsonFormState = null;
 		logger.debug("Updating the data set in the worksheet engine with the smart filter form values..");
-		QbeEngineInstance qbeEngineInstance = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
-		if(qbeEngineInstance!=null){
-			Query query = qbeEngineInstance.getQueryCatalogue().getFirstQuery();
-			jsonFormState = loadSmartFilterFormValues(qbeEngineInstance);
-			//build the query filtered for the smart filter
-			if (jsonFormState != null) {
-				logger.debug("Form state retrieved as a string: " + jsonFormState);
-				//Update the qbe query
-				query = updateQbeWithSmartFilterQuery(query, qbeEngineInstance, jsonFormState);
-				//Update the data set in the Worksheet Instance 
-				IDataSet smartFilterUpdatedDS = qbeEngineInstance.getActiveQueryAsDataSet();
-				qbeEngineInstance.updateWorksheetDataSet(smartFilterUpdatedDS, getEngineInstance());
-			}
+		QbeEngineInstance qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+		Query query = qbeEngineInstance.getQueryCatalogue().getFirstQuery();
+		jsonFormState = loadSmartFilterFormValues(qbeEngineInstance);
+		//build the query filtered for the smart filter
+		if (jsonFormState != null) {
+			logger.debug("Form state retrieved as a string: " + jsonFormState);
+			// transform the query
+			query = updateQbeWithSmartFilterQuery(query, qbeEngineInstance, jsonFormState);
+			// update active query on Qbe engine instance
+			qbeEngineInstance.setActiveQuery(query);
+			// update the data set in the Worksheet engine instance 
+			IDataSet smartFilterUpdatedDS = qbeEngineInstance.getActiveQueryAsDataSet();
+			getEngineInstance().setDataSet(smartFilterUpdatedDS);
 		}
 		logger.debug("The data set has been updated");
 	}
@@ -108,7 +110,7 @@ public class UpdateDataSetWithSmartFilterValues extends AbstractWorksheetEngineA
 	 */
 	private JSONObject loadSmartFilterFormValues(QbeEngineInstance qbeEngine) throws JSONException {
 		FormState formState = qbeEngine.getFormState();
-		if(formState!=null){
+		if ( formState != null ) {
 			return formState.getFormStateValues(); 
 		}
 		return null;
@@ -122,8 +124,8 @@ public class UpdateDataSetWithSmartFilterValues extends AbstractWorksheetEngineA
 	 * @throws SerializationException
 	 */
 	private Query updateQbeWithSmartFilterQuery(Query query, QbeEngineInstance qbeInstance, JSONObject jsonEncodedFormState) throws SerializationException{
-		Query toReturn =null;
-		if (jsonEncodedFormState != null) {
+		Query toReturn = null;
+		if ( jsonEncodedFormState != null ) {
 			logger.debug("Making a deep copy of the original query...");
 			String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, qbeInstance.getDataSource(), getLocale())).toString();
 			Query copy = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, qbeInstance.getDataSource());
@@ -140,10 +142,9 @@ public class UpdateDataSetWithSmartFilterValues extends AbstractWorksheetEngineA
 			query = formViewerQueryTransformer.execTransformation(copy);
 			logger.debug("Applying Form Viewer query transformation...");
 			toReturn = copy;
-		}else{
+		} else {
 			toReturn = query;	
 		}
-		qbeInstance.setActiveQuery(toReturn);
 		return toReturn;
 	}
 

@@ -89,6 +89,7 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			
 			String fieldName = getAttributeAsString( ENTITY_ID );
 			Assert.assertNotNull(fieldName, "Parameter [" + ENTITY_ID + "] cannot be null in oder to execute " + this.getActionName() + " service");
+			logger.debug("Parameter [" + ENTITY_ID + "] is equals to [" + fieldName + "]");
 			String alias = getAttributeAsString( ALIAS );
 			logger.debug("Parameter [" + ALIAS + "] is equals to [" + alias + "]");
 			Integer start = getAttributeAsInteger( START );	
@@ -153,11 +154,23 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			JSONObject metadataJSON = gridDataFeed.getJSONObject("metaData");
 			JSONArray fieldsMetaDataJSON = metadataJSON.getJSONArray("fields");
 			JSONObject firstColumn = fieldsMetaDataJSON.getJSONObject(1); // remember that JSONDataWriter puts a recNo column as first column
-			// those information are useful to understand the column that contain the actual value
-			String name = firstColumn.getString("name");
-			metadataJSON.put("valueField", name); 
-			metadataJSON.put("displayField", name);
-			metadataJSON.put("descriptionField", name);
+			String valueColumnName = firstColumn.getString("name");
+			String descriptionColumnName = null;
+			IMetaData metadata = dataStore.getMetaData();
+			int fieldsCount = metadata.getFieldCount();
+			JSONObject secondColumn = null;
+			if (fieldsCount > 1) {
+				// there are 2 or more columns: the first column contains the values, while the second column contains the descriptions
+				secondColumn = fieldsMetaDataJSON.getJSONObject(2);
+				descriptionColumnName = secondColumn.getString("name");
+			} else {
+				descriptionColumnName = valueColumnName;
+			}
+			
+			// those information are useful to understand the column that contains the actual value and the column that contains the descriptions
+			metadataJSON.put("valueField", valueColumnName); 
+			metadataJSON.put("displayField", valueColumnName);
+			metadataJSON.put("descriptionField", descriptionColumnName);
 			
 			try {
 				writeBackToClient( new JSONSuccess(gridDataFeed) );

@@ -169,16 +169,21 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 	 */
 	, updateWorksheetEngine : function(){
 		this.tabs.setActiveTab(0);
-		if(!this.notFirstTimeDesignPanelOpened){
-			this.notFirstTimeDesignPanelOpened = true;
-			Ext.Ajax.request({
-				url: this.services['executeWorksheetStartAction'],
-				params: {},
-				scope: this,
-				success: this.updateWorksheetDataSet,
-				failure: Sbi.exception.ExceptionHandler.handleFailure
-			});
-		}else{
+		var worksheetEngineInitialized = this.engineInitialized;
+		if (worksheetEngineInitialized === undefined || worksheetEngineInitialized == false) {
+			if (!this.notFirstTimeDesignPanelOpened) {
+				this.notFirstTimeDesignPanelOpened = true;
+				Ext.Ajax.request({
+					url: this.services['executeWorksheetStartAction'],
+					params: {},
+					scope: this,
+					success: this.updateWorksheetDataSet,
+					failure: Sbi.exception.ExceptionHandler.handleFailure
+				});
+			} else {
+				this.updateWorksheetDataSet();
+			}
+		} else {
 			this.updateWorksheetDataSet();
 		}
 	}
