@@ -35,7 +35,8 @@ Sbi.qbe.SlotWizard = function(config) {
 		title: 'Slot wizard ...'
 		, width: 600
 		, height: 300
-		, hasBuddy: false		
+		, hasBuddy: false	
+		
 	});
 
 	Ext.apply(this, c);
@@ -61,6 +62,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
     , firstCalculatedFiledPanel : null
     , secondSlotDefinitionPanel: null
     , buttonsConfig: null
+    , startFromFirstPage : true
 
     
     , setExpItems: function(itemGroupName, items) {
@@ -79,6 +81,9 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 		return this.firstCalculatedFiledPanel;
 	}
 	, initMainPanel: function(c) {
+		if(c.startFromFirstPage !== undefined){
+			this.startFromFirstPage = c.startFromFirstPage;
+		}
 		var save = function(){
 			this.save();
 		};
@@ -92,12 +97,19 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 					btnNext.disabled = true;
 					btnPrev.disabled = false;
 					btnFinish.disabled = false;
+					btnNext.disable();
+					btnPrev.enable();
+					btnFinish.enable();
 				}else{
 					//back
 					this.mainPanel.layout.setActiveItem(0);
 					btnPrev.disabled = true;
 					btnNext.disabled = false;
 					btnFinish.disabled = true;
+					
+					btnPrev.disable();
+					btnNext.enable();
+					btnFinish.disable();
 				}
 			}
 		};
@@ -141,8 +153,20 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			title: 'Slot definition'
 
 	    });
-
+		var wizardPages = [];
 		
+		if(this.startFromFirstPage){
+			wizardPages = [this.firstCalculatedFiledPanel, this.secondSlotDefinitionPanel] ; 
+			btnPrev.disable();
+			btnNext.enable();
+			btnFinish.disable();
+
+		}else{
+			wizardPages = [this.secondSlotDefinitionPanel] ; 
+			btnPrev.disable();
+			btnNext.disable();
+			btnFinish.enable();
+		}
 		this.mainPanel = new Ext.Panel({  
 			    layout: 'card',  
 			    activeItem: 0,  
@@ -156,7 +180,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			           btnNext,
 			           btnFinish
 			    ], 
-			    items: [this.firstCalculatedFiledPanel, this.secondSlotDefinitionPanel]  
+			    items: wizardPages
 		});  
 		
 		this.firstCalculatedFiledPanel.doLayout();

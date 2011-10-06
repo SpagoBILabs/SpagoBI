@@ -442,6 +442,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			//creates a window
 			this.slotWizard = new Sbi.qbe.SlotWizard( { 
 				title: 'Slot definition Wizard',
+				startFromFirstPage: true,
 		    	expItemGroups: [
 	    		    {name:'fields', text: 'Fields'}, 
 	    		    {name:'dateFunctions', text: 'Date Functions'}
@@ -472,7 +473,16 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			this.slotWizard.show();
 
 		
-		} else {
+		} else if(type === 'field'){
+			//creates a window
+			this.slotWizard = new Sbi.qbe.SlotWizard( { 
+				title: 'Slot definition Wizard',
+				startFromFirstPage: false
+			});
+			
+			this.slotWizard.mainPanel.doLayout();
+			this.slotWizard.show();
+		}else {
 			Ext.Msg.show({
 				   title:'Invalid operation',
 				   msg: 'Impossible to add slot to a node of type [' + type + ']',
