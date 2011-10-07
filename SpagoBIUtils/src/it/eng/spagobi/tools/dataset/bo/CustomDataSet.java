@@ -4,13 +4,16 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /** user defines a javaClass Name (extending IDAtaSet) and a set of properties, written as JSON Object, that are translated in a map
@@ -23,7 +26,7 @@ public class CustomDataSet extends ConfigurableDataSet {
 
 	String customData;
 	String javaClassName;
-	
+
 	Map customDataMap = null;
 
 	IDataSet classToLaunch;
@@ -57,6 +60,49 @@ public class CustomDataSet extends ConfigurableDataSet {
 		return sbd;
 	}
 
+	private IDataSet instantiate(){
+		logger.debug("IN");
+		Class classRet = null;
+		try {
+			classRet = Class.forName(javaClassName);
+		} catch (ClassNotFoundException e) {
+			logger.error("Could not find class "+javaClassName);
+		}
+		Object obj = null;
+		try {
+			obj = classRet.newInstance();
+		} catch (InstantiationException e) {
+			logger.error("Could not locad class "+javaClassName);
+		} catch (IllegalAccessException e) {
+			logger.error("Could not locad class "+javaClassName);		}
+
+		if(!(obj instanceof AbstractDataSet)){
+			logger.error("class "+javaClassName+ "does not extends AbstractDataset as should do");
+			return null;
+		}
+
+
+		logger.debug("OUT");
+		return (IDataSet) obj;
+
+	}
+
+
+	@Override
+	public IDataStore test() {
+		if(classToLaunch == null)
+			classToLaunch = instantiate();
+
+		return classToLaunch.test();
+	}
+
+	@Override
+	public IDataStore test(int offset, int fetchSize, int maxResults) {
+		if(classToLaunch == null)
+			classToLaunch = instantiate();
+		return classToLaunch.test(offset, fetchSize, maxResults);
+	}
+
 
 	public void setCustomData(String customData) {
 		this.customData = customData;
@@ -77,6 +123,8 @@ public class CustomDataSet extends ConfigurableDataSet {
 
 	public void loadData() {
 		logger.debug("IN");
+		if(classToLaunch == null)
+			classToLaunch = instantiate();
 		classToLaunch.loadData();
 		logger.debug("OUT");
 	}
@@ -85,6 +133,8 @@ public class CustomDataSet extends ConfigurableDataSet {
 
 	public void loadData(int offset, int fetchSize, int maxResults) {
 		logger.debug("IN");
+		if(classToLaunch == null)
+			classToLaunch = instantiate();
 		classToLaunch.loadData(offset, fetchSize, maxResults);
 		logger.debug("OUT");
 
@@ -93,31 +143,31 @@ public class CustomDataSet extends ConfigurableDataSet {
 	public IDataStore getDataStore() {
 		return classToLaunch.getDataStore();
 	}
-	
-	
-	
+
+
+
 	private Map convertStringToMap(String _customData){
 		logger.debug("IN");
 		Map toInsert = new HashMap<String, Object>();
 		try{
 			if(_customData != null && !_customData.equals("")){
 				JSONObject jsonObject = new JSONObject(_customData);
-				
+
 				String[] names = JSONObject.getNames(jsonObject);
-				
+
 				for (int i = 0; i < names.length; i++) {
 					String nm = names[i];
 					String value = jsonObject.getString(nm);
 					toInsert.put(nm, value);
 				}
-				
-//				JSONArray jsonArray = new JSONArray(_customData);
-//				for(int i = 0;i<jsonArray.length();i++){
-//					JSONObject obj = (JSONObject)jsonArray.getJSONObject(0);
-//					String name = obj.getString("name");
-//					String value = obj.getString("value");
-//					toInsert.put(name, value);
-//				}
+
+				//				JSONArray jsonArray = new JSONArray(_customData);
+				//				for(int i = 0;i<jsonArray.length();i++){
+				//					JSONObject obj = (JSONObject)jsonArray.getJSONObject(0);
+				//					String name = obj.getString("name");
+				//					String value = obj.getString("value");
+				//					toInsert.put(name, value);
+				//				}
 			}
 		}
 		catch (Exception e) {
@@ -127,28 +177,28 @@ public class CustomDataSet extends ConfigurableDataSet {
 		return toInsert;
 
 	}
-	
-//	private Map convertStringToMap(String _customData){
-//		logger.debug("IN");
-//		Map toInsert = new HashMap<String, Object>();
-//		try{
-//			if(_customData != null && !_customData.equals("")){
-//				JSONArray jsonArray = new JSONArray(_customData);
-//				for(int i = 0;i<jsonArray.length();i++){
-//					JSONObject obj = (JSONObject)jsonArray.getJSONObject(0);
-//					String name = obj.getString("name");
-//					String value = obj.getString("value");
-//					toInsert.put(name, value);
-//				}
-//			}
-//		}
-//		catch (Exception e) {
-//			logger.error("cannot parse to Map the Json string "+customData);
-//		}
-//		logger.debug("IN");
-//		return toInsert;
-//
-//	}
+
+	//	private Map convertStringToMap(String _customData){
+	//		logger.debug("IN");
+	//		Map toInsert = new HashMap<String, Object>();
+	//		try{
+	//			if(_customData != null && !_customData.equals("")){
+	//				JSONArray jsonArray = new JSONArray(_customData);
+	//				for(int i = 0;i<jsonArray.length();i++){
+	//					JSONObject obj = (JSONObject)jsonArray.getJSONObject(0);
+	//					String name = obj.getString("name");
+	//					String value = obj.getString("value");
+	//					toInsert.put(name, value);
+	//				}
+	//			}
+	//		}
+	//		catch (Exception e) {
+	//			logger.error("cannot parse to Map the Json string "+customData);
+	//		}
+	//		logger.debug("IN");
+	//		return toInsert;
+	//
+	//	}
 
 	/**
 	 *  Methos used to instantiate user class and set theere properties.
@@ -181,6 +231,79 @@ public class CustomDataSet extends ConfigurableDataSet {
 		this.classToLaunch = classToLaunch;
 	}
 
+
+	
+	
+	
+//	IDataSet iDataSet = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(dataSet.getLabel());
+//
+//	IDataStore dsStore = iDataSet.test();
+//	if(dsStore != null){
+//		IMetaData meta = dsStore.getMetaData();
+//
+//		DatasetMetadataParser metadataParser = new DatasetMetadataParser();
+//		String xml = metadataParser.metadataToXML(dsStore);
+//
+//		iDataSet.setDsMetadata(xml);
+//		dataSet.setDsId(iDataSet.getId());
+//		GuiDataSetDetail guiDataSetDetail = dataSet.getActiveDetail();
+//		guiDataSetDetail.setDsMetadata(xml);			
+	
+	
+	
+	@Override
+	public IMetaData getMetadata() {
+		IMetaData metadata = null;
+		try {
+			// search if dsMetadaa exist, otherwise calculate them
+			if(dsMetadata != null && !dsMetadata.equals("")){
+				DatasetMetadataParser dsp = new DatasetMetadataParser();
+				metadata = dsp.xmlToMetadata(dsMetadata);
+				
+			}
+			else{
+				
+				IDataStore dsStore = test();
+				if(dsStore != null){
+					metadata = dsStore.getMetaData();
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error loading the metadata",e);
+			throw new SpagoBIEngineRuntimeException("Error loading the metadata",e);
+		}
+		return metadata;
+	}
+
+	
+	
+	
+	@Override
+	public IDataStore decode(IDataStore datastore) {
+		// TODO Auto-generated method stub
+		return super.decode(datastore);
+	}
+
+//	@Override
+//	public Map<String, List<String>> getDomainDescriptions(
+//			Map<String, List<String>> codes) {
+//		if(classToLaunch == null)
+//			classToLaunch = instantiate();
+//		
+//		return classToLaunch.getDomainDescriptions(codes);
+//	}
+//
+//	@Override
+//	public IDataStore getDomainValues(String fieldName, Integer start,
+//			Integer limit, IDataStoreFilter filter) {
+//		if(classToLaunch == null)
+//			classToLaunch = instantiate();		
+//		return classToLaunch.getDomainValues(fieldName, start, limit, filter);
+//	}
+
+	
+	
+	
 
 }
 
