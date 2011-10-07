@@ -23,6 +23,7 @@ package it.eng.spagobi.engines.worksheet.serializer.json;
 import it.eng.qbe.serializer.ISerializer;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.serializer.SerializationManager;
+import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Field;
 import it.eng.spagobi.engines.worksheet.bo.Serie;
@@ -36,8 +37,12 @@ import it.eng.spagobi.engines.worksheet.widgets.TableDefinition;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -115,7 +120,12 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		logger.debug("IN");
 		logger.debug("Serializing the sheet " + sheet.getName());
 		JSONObject jsonSheet = new JSONObject();
+		
+		setImageWidth(sheet.getFooter());
+		setImageWidth( sheet.getHeader());
+		
 		try {
+				
 			jsonSheet.put(WorkSheetSerializationCostants.NAME, sheet.getName());
 			jsonSheet.put(WorkSheetSerializationCostants.LAYOUT, sheet.getLayout());
 			jsonSheet.put(WorkSheetSerializationCostants.HEADER, sheet.getHeader());
@@ -123,6 +133,9 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			jsonSheet.put(WorkSheetSerializationCostants.CONTENT, serializeContent(sheet.getContent()));
 			jsonSheet.put(WorkSheetSerializationCostants.FILTERS_ON_DOMAIN_VALUES, serializeFilters(sheet.getFiltersOnDomainValues()));
 			jsonSheet.put(WorkSheetSerializationCostants.FOOTER, sheet.getFooter());
+
+
+			
 		} catch (Exception e) {
 			logger.error("Error serializing the sheet "+sheet.getName(),e);
 			throw new SerializationException("Error serializing the sheet "+sheet.getName(),e);
@@ -182,6 +195,36 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		toReturn.put(WorkSheetSerializationCostants.SERIES, seriesJSON);
 		
 		return toReturn;
+	}
+	
+    /**
+     * Set the with of the image in the template
+     * @param title The JSONObject rapresentation of the header/footer
+     * @throws Exception
+     */
+	private static void setImageWidth(JSONObject title) {
+		logger.debug("IN");
+		
+		if(title!=null){
+			String s = title.optString("img");
+			if(s!=null && !s.equals("") && !s.equals("null")){
+				try {
+					logger.debug("Image file = "+s);
+					File toReturn = null;
+					File imagesDir = QbeEngineConfig.getInstance().getWorksheetImagesDir();
+					toReturn = new File(imagesDir, s);
+
+					BufferedImage img = ImageIO.read(toReturn);
+				    int width= img.getWidth();
+					
+					title.put("width", width);	
+				} catch (Exception e) {
+					logger.error("Error loading the image "+s+":  "+e);
+				}
+
+			}
+		}
+		logger.debug("OUT");
 	}
 
 }
