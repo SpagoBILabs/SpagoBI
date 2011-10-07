@@ -36,7 +36,7 @@ public class AttributeJSONSerializer implements ISerializer {
 
     public static transient Logger logger = Logger.getLogger(AttributeJSONSerializer.class);
 
-	@Override
+	//@Override
 	public Object serialize(Object o) throws SerializationException {
 		JSONObject toReturn = null;
 		Attribute attribute;

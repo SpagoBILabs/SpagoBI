@@ -62,7 +62,7 @@ public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.worksheet.template.IWorksheetTemplateParser#parse(java.lang.Object)
 	 */
-	@Override
+	//@Override
 	public WorksheetTemplate parse(Object template,  Map env) {
 		Assert.assertNotNull(template, "Input parameter [template] cannot be null");
 		Assert.assertTrue(template instanceof SourceBean, "Input parameter [template] cannot be of type [" + template.getClass().getName() + "]");

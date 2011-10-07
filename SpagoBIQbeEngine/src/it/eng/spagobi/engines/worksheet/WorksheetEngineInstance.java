@@ -70,7 +70,7 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.utilities.engines.IEngineInstance#getAnalysisState()
 	 */
-	@Override
+	//@Override
 	public IEngineAnalysisState getAnalysisState() {
 		return this.getTemplate().getWorkSheetDefinition();
 	}
@@ -78,7 +78,7 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.utilities.engines.IEngineInstance#setAnalysisState(it.eng.spagobi.utilities.engines.IEngineAnalysisState)
 	 */
-	@Override
+	//@Override
 	public void setAnalysisState(IEngineAnalysisState analysisState) {
 		this.getTemplate().setWorkSheetDefinition((WorkSheetDefinition)analysisState);
 	}

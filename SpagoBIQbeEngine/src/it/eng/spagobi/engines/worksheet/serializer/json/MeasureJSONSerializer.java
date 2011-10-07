@@ -36,7 +36,7 @@ public class MeasureJSONSerializer implements ISerializer {
 
     public static transient Logger logger = Logger.getLogger(MeasureJSONSerializer.class);
 
-	@Override
+	//@Override
 	public Object serialize(Object o) throws SerializationException {
 		JSONObject toReturn = null;
 		Measure measure;
