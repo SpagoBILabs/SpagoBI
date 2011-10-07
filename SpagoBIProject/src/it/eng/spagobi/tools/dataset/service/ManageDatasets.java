@@ -803,7 +803,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore();
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
-			dsMetadata = dsp.metadataToXML(dataStore);
+			dsMetadata = dsp.metadataToXML(dataStore.getMetaData());
 		}
 		catch (Exception e) {
 			logger.error("Error while executing dataset for test purpose",e);
