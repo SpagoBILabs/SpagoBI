@@ -64,14 +64,7 @@ public class Query {
 		subqueries  = new HashMap();
 	}
 	
-	/*
-	public Query(Query query) {
-		
-	}
-	*/
-	
-	
-	
+
 	public String getId() {
 		return id;
 	}
@@ -98,10 +91,19 @@ public class Query {
 
 	
 	public boolean isEmpty() {
-		List fields;
+		int selectedFieldsCount;
+		List fields, calculatedFields, inlineCalculatedFields;
+		
 		fields = getDataMartSelectFields(true);
 		Assert.assertNotNull(fields, "getDataMartSelectFields method cannot return a null value");
-		return (fields.size() == 0);
+		calculatedFields = getCalculatedSelectFields(true);
+		Assert.assertNotNull(fields, "getCalculatedSelectFields method cannot return a null value");
+		inlineCalculatedFields = getInLineCalculatedSelectFields(true);
+		Assert.assertNotNull(fields, "getInLineCalculatedSelectFields method cannot return a null value");
+		
+		selectedFieldsCount = fields.size() + calculatedFields.size() + inlineCalculatedFields.size();
+		
+		return (selectedFieldsCount == 0);
 	}
 	
 	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible,

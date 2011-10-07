@@ -30,12 +30,14 @@ import java.util.Map;
  * 
  * @author Andrea Gioia
  */
-public abstract class  AbstractStatement implements IStatement{
+public abstract class  AbstractStatement implements IStatement {
 
+	
 	public static final String OPERAND_TYPE_STATIC = "Static Value";
 	public static final String OPERAND_TYPE_SUBQUERY = "Subquery";
 	public static final String OPERAND_TYPE_FIELD = "Field Content";
 	public static final String OPERAND_TYPE_PARENT_FIELD = "Parent Field Content";
+	
 	
 	
 	IDataSource dataSource;
