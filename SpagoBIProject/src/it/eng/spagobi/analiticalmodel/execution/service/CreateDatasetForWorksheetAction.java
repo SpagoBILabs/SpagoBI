@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.analiticalmodel.execution.service;
 
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -30,9 +31,16 @@ import it.eng.spagobi.tools.dataset.bo.CustomDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.utils.CreationUtilities;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -45,6 +53,23 @@ import org.safehaus.uuid.UUIDGenerator;
 public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 
 	public static final String SERVICE_NAME = "CREATE_DATASET_FOR WORKSHEET_ACTION";
+
+
+
+	/**  FIELDS EXPECTEDIN REQUEST
+	 * 	
+	 * label       
+		name      
+		description   
+		jClassName        
+		customData      
+		parametersDefinition 
+		parametersValues  
+		metadata  
+	 */
+	public static final String  PARAMETERS_DEFINITION = "parametersDefinition";
+	public static final String  PARAMETERS_VALUES = "parametersValues";	
+
 
 	// request parameters for dataset	
 
@@ -97,44 +122,14 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 
 			profile = getUserProfile();
 
-			//			modality = getAttributeAsString( MODALITY );
 
-			//	logger.debug("Modality is "+modality);
-
-			// get data
-			//			if(modality == null) {
-			//				logger.error("Action "+SERVICE_NAME+ " requires a MODALITY parameter in input that must be of value DATASET if intending to pass a dataset, BIOBJECT if a document");
-			//				throw new SpagoBIServiceException(SERVICE_NAME, "requires a MODALITY parameter in input that must be of value DATASET if intending to pass a dataset, BIOBJECT if a document");
-			//			}
-
-			//			boolean isDatasetModality = false;
-
-			//			if(modality.equals(MODALITY_DATASET)) {
 			ds = collectDatasetInformations();
-			//				isDatasetModality = true;
-			//			}
-			//			else if(modality.equals(MODALITY_BIOBJECT)) {
-			//				biObj = collectBiObjectInformations();
-			//				isDatasetModality = false;
-			//			}
-			//			else{
-			//				logger.error("Action "+SERVICE_NAME+ " requires a MODALITY parameter in input that must be of value DATASET if intending to pass a dataset, BIOBJECT if a document");
-			//				throw new SpagoBIServiceException(SERVICE_NAME, "requires a MODALITY parameter in input that must be of value DATASET if intending to pass a dataset, BIOBJECT if a document");				
-			//			}
-
-
-//			logger.debug(modality+" creation");
 
 			CreationUtilities creatUtils = new CreationUtilities();
 			Integer returnId = null;
 
 			try{			
-//				if(isDatasetModality){
-					returnId = creatUtils.creatDataSet(ds);
-//				}
-//				else{
-//					returnId = creatUtils.creatBiObject(biObj);
-//				}
+				returnId = creatUtils.creatDataSet(ds);
 			}
 			catch (Exception e) {
 				logger.error("Error during creation method.", e);
@@ -145,22 +140,36 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 			// check and id has been returned.
 			if(returnId == null){
 				throw new SpagoBIServiceException(SERVICE_NAME, 
-						" dataset creation method did not return any result: check log");	
+				" dataset creation method did not return any result: check log");	
 			}
 
 			UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
 			UUID uuidObj = uuidGen.generateTimeBasedUUID();
 			String executionContextId = uuidObj.toString();
 
+
+			String valsJson = getAttributeAsString( PARAMETERS_VALUES );
+			// put in response parameters ANNO and ENTE
+			Map valsMap = null;
+			if(valsJson != null)
+				valsMap = getParameterValues(valsJson);
+
+
 			// ExecutionInstance has been created it's time to prepare the response with the instance unique id and flush it to the client
 
 			try {
-//				if(isDatasetModality){
-					getServiceResponse().setAttribute("dataset_id", returnId);					
-//				}
-//				else{
-//					getServiceResponse().setAttribute("document_id", returnId);
-//				}
+				getServiceResponse().setAttribute("dataset_id", returnId);					
+				getServiceResponse().setAttribute("dataset_label", ds.getLabel());	
+
+				if(valsMap != null){
+					for (Iterator iterator = valsMap.keySet().iterator(); iterator.hasNext();) {
+						String n = (String) iterator.next();
+						Object v = valsMap.get(n);
+						getServiceResponse().setAttribute("PAR_"+n, v);
+					}
+
+				}
+
 			} catch (SourceBeanException e1) {
 				logger.error("Error ins etting response",e1);
 			}
@@ -169,6 +178,26 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private Map getParameterValues(String valsJson){
+		Map parsValuesMap = new HashMap<String, String>();
+		try{
+			JSONObject json = new JSONObject(valsJson);
+			for (Iterator iterator = json.keys(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				String v = json.getString(key);
+				parsValuesMap.put(key, v);
+			}
+
+		}
+		catch (Exception e) {
+			logger.error("error in parsing "+valsJson,e);
+			parsValuesMap = null;
+		}
+		Assert.assertNotNull(parsValuesMap, "error in parsing "+valsJson);
+
+		return parsValuesMap;
 	}
 
 
@@ -185,7 +214,9 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		String dsPars;
 		String dsCustomData;
 		String dsJClassName;
-
+		String dsMetadata;
+		String parametersDefinitionJson = null;
+		String parametersDefinitionXML = null;
 
 		dsLabel = getAttributeAsString( DataSetConstants.LABEL );
 		dsName = getAttributeAsString( DataSetConstants.NAME );
@@ -193,6 +224,13 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		dsPars = getAttributeAsString( DataSetConstants.PARS );
 		dsCustomData = getAttributeAsString( DataSetConstants.CUSTOM_DATA );
 		dsJClassName = getAttributeAsString( DataSetConstants.JCLASS_NAME );
+
+		dsMetadata = getAttributeAsString( DataSetConstants.DS_METADATA );
+
+		if(getAttributeAsString( PARAMETERS_DEFINITION ) != null){
+			parametersDefinitionJson = getAttributeAsString( PARAMETERS_DEFINITION );
+			parametersDefinitionXML = parametersJsonToXML(parametersDefinitionJson);
+		}
 
 		if(dsLabel== null){
 			logger.error("Action "+SERVICE_NAME+ " ");
@@ -202,8 +240,9 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		dsDetail = new CustomDataSetDetail();
 		dsDetail.setCustomData(dsCustomData);
 		dsDetail.setJavaClassName(dsJClassName);
-		dsDetail.setParameters(dsPars);
+		dsDetail.setParameters(parametersDefinitionXML);
 		dsDetail.setDsType(DataSetConstants.DS_CUSTOM);
+		dsDetail.setDsMetadata(dsMetadata);
 
 		ds = new GuiGenericDataSet();
 		ds.setLabel(dsLabel);
@@ -216,6 +255,56 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 
 		return ds;
 	}
+
+
+	private String parametersJsonToXML(String parsJson) {
+		String xml = null;
+		SourceBean sb = null;
+
+
+		try{
+			JSONObject json = new JSONObject(parsJson);
+			sb = new SourceBean("PARAMETERSLIST");	
+			SourceBean sb1 = new SourceBean("ROWS");
+			for (Iterator iterator = json.keys(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				String t = json.getString(key);
+				SourceBean b = new SourceBean("ROW");
+				b.setAttribute("NAME", key);
+				b.setAttribute("TYPE", t);
+				sb1.setAttribute(b);
+			}
+
+			sb.setAttribute(sb1);
+			xml = sb.toXML(false);
+		}
+		catch (Exception e) {
+			logger.error("error in parsing "+parsJson,e);
+		}
+		Assert.assertNotNull(xml, "There was an error in parsing "+parsJson);
+
+		return xml;
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	/**
 	 * 
