@@ -301,6 +301,8 @@ public class QueryJSONSerializer implements IQuerySerializer {
 				alias = alias.substring("DISTINCT ".length());
 			}
 
+			if(datamartFields.get(alias) == null) continue;
+			
 			if( (!(datamartFields.get(alias)).equals( QuerySerializationConstants.FIELD_NATURE_MEASURE) && !(datamartFields.get(alias)).equals( QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE))){
 				return QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE;
 			}
