@@ -66,8 +66,7 @@ import org.hibernate.Session;
  * The Class HQLStatement.
  */
 public class HQLStatement extends AbstractStatement {
-	
-	
+
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(HQLStatement.class);
 	

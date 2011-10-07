@@ -293,16 +293,14 @@ public class QueryJSONSerializer implements IQuerySerializer {
 	 */
 	public static String getInLinecalculatedFieldNature(String expr, Map<String, String> datamartFields){
 		
-		StringTokenizer stk = new StringTokenizer(expr, "+-|*/()");
+		StringTokenizer stk = new StringTokenizer(expr, "+-|*/(),");
 		while(stk.hasMoreTokens()){
 			String alias = stk.nextToken().trim();
 			// alias can contain "DISTINCT" HQL/SQL key: we have to remove it
 			if (alias.toUpperCase().startsWith("DISTINCT ")) {
 				alias = alias.substring("DISTINCT ".length());
 			}
-
 			if(datamartFields.get(alias) == null) continue;
-			
 			if( (!(datamartFields.get(alias)).equals( QuerySerializationConstants.FIELD_NATURE_MEASURE) && !(datamartFields.get(alias)).equals( QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE))){
 				return QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE;
 			}
