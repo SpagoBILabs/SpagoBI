@@ -111,7 +111,6 @@ Ext.extend(Sbi.qbe.CalculatedFieldWizard, Ext.Window, {
 		    	} else if(emptyType){
 		    	  	this.mainPanel.inputFields.type.focus();
 		    	} else {
-		    		alert('fire ' + this.mainPanel.target);
 			    	this.fireEvent('apply', this, this.mainPanel.getFormState(), this.mainPanel.target);
 		           	this.hide();
 		    	}
