@@ -70,14 +70,7 @@ public class DatasetMetadataParser {
 	public static final String NAME_P = "name"; 
 
 
-	public String metadataToXML(IDataStore dataStore) {
-		if(dataStore==null || dataStore.getMetaData()==null){
-			logger.error("Data Store is null, cannot recover metadata because Data Store or Data Store metadata is null");
-			return null;
-		} 
-		return metadataToXML(dataStore.getMetaData());
 
-	}
 
 	public String metadataToXML(IMetaData dataStoreMetaData) {
 		logger.debug("IN");
@@ -183,17 +176,18 @@ public class DatasetMetadataParser {
 			String alias=sbRow.getAttribute(ALIAS)!= null ? sbRow.getAttribute(ALIAS).toString() : null;
 			String fieldType=sbRow.getAttribute(FIELD_TYPE)!= null ? sbRow.getAttribute(FIELD_TYPE).toString() : null;
 
-			if(name!=null){
+			Assert.assertNotNull(name, "Name in XML column cannot be null");
+
 				FieldMetadata fieldMeta=new FieldMetadata();
 				fieldMeta.setName(name);
-				if(type!=null){
+				Assert.assertNotNull(type, "type in XML column "+name+" cannot be null");
 					// remove class!
 					// operation for back compatibility, if there is class remove it otherwise not needed)
 					if(type.startsWith("class")){
 						type=type.substring(6);						
 					}
 					fieldMeta.setType(Class.forName(type.trim()));
-				}
+				
 				fieldMeta.setAlias(alias);
 				if(fieldType != null && fieldType.equalsIgnoreCase(FieldType.ATTRIBUTE.toString())) 
 					fieldMeta.setFieldType(FieldType.ATTRIBUTE);
@@ -215,7 +209,7 @@ public class DatasetMetadataParser {
 
 
 				dsMeta.addFiedMeta(fieldMeta);
-			}
+			
 		}
 		logger.debug("OUT");
 		return dsMeta;
