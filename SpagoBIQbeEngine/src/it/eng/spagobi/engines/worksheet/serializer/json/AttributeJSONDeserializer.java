@@ -37,7 +37,7 @@ public class AttributeJSONDeserializer implements IDeserializer {
 
     public static transient Logger logger = Logger.getLogger(AttributeJSONDeserializer.class);
 
-	@Override
+	//@Override
 	public Attribute deserialize(Object o) throws SerializationException {
 		Attribute toReturn = null;
 		JSONObject attributeJSON = null;
