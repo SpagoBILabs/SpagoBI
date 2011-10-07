@@ -49,7 +49,7 @@ import org.dom4j.io.XMLWriter;
 
 
 /**
- * @author Andrea Gioia
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	
@@ -82,7 +82,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		String entity;
 		String name;
 		String type;
-		Boolean inLineCF;
+		Boolean inlineCalculatedField;
 		String expression;
 		ModelCalculatedField calculatedField;
 		List calculatedFieldNodes;
@@ -116,9 +116,25 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 					entity = calculatedFieldNode.valueOf("@" + FIELD_TAG_ENTIY_ATTR);
 					name = calculatedFieldNode.valueOf("@" + FIELD_TAG_NAME_ATTR);
 					type = calculatedFieldNode.valueOf("@" + FIELD_TAG_TYPE_ATTR);
-					inLineCF = new Boolean(calculatedFieldNode.valueOf("@" + FIELD_TAG_IN_LINE_ATTR));					expression = calculatedFieldNode.getStringValue();
-					calculatedField = new ModelCalculatedField(name, type, expression, inLineCF.booleanValue());
-			
+					inlineCalculatedField = new Boolean(calculatedFieldNode.valueOf("@" + FIELD_TAG_IN_LINE_ATTR));					
+					expression = calculatedFieldNode.getStringValue();
+					calculatedField = new ModelCalculatedField(name, type, expression, inlineCalculatedField.booleanValue());
+					
+					// parse slots
+					List<Node> slotBlocks = calculatedFieldNode.selectNodes("SLOTS");
+					if(slotBlocks != null && slotBlocks.size() > 0) {
+						Node slotBlock = slotBlocks.get(0); // consider only the first block
+						String defaultSoltValue = slotBlock.valueOf("@defaultSoltValue");	
+						List<Node> slotNodes = slotBlocks.get(0).selectNodes("SLOT");
+						List<String> slots = new ArrayList();
+						for(int i = 0; i < slotNodes.size(); i++) {
+							Node slotNode = slotNodes.get(i);
+							String slotValue = slotNode.valueOf("@value");	
+							slots.add(slotValue);
+						}
+					}
+					
+					
 					if(!calculatedFiledsMap.containsKey(entity)) {
 						calculatedFiledsMap.put(entity, new ArrayList());
 					}

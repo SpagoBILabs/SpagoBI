@@ -208,10 +208,6 @@ public class HQLDataSet extends AbstractQbeDataSet {
 
 	}
 
-	public Map<String, List<String>> getDomainDescriptions(
-			Map<String, List<String>> codes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 }
