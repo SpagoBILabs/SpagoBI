@@ -34,6 +34,10 @@ public class WorksheetTemplate {
 	WorkSheetDefinition workSheetDefinition;
 	QbeEngineInstance qbEngineInstance;
 	
+	public WorksheetTemplate() {
+		workSheetDefinition = WorkSheetDefinition.EMPTY_WORKSHEET;
+	}
+	
 	public IDataSet getDataSet() {
 		return dataSet;
 	}

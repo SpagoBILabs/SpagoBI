@@ -92,7 +92,7 @@ end DOCTYPE declaration --%>
 	</head>
 	
 	<body>
-	
+   
     	<script type="text/javascript"> 
 
     	Sbi.config = {}; 
@@ -123,7 +123,7 @@ end DOCTYPE declaration --%>
 
 			var worksheet = <%= ((WorkSheetDefinition)(worksheetEngineInstance.getAnalysisState())).getConf().toString() %>;
         	workSheetPanel = new Sbi.worksheet.designer.WorksheetDefinitionPanel(worksheet, {
-        		header: false'
+        		header: false
         	});
            	var viewport = new Ext.Viewport({layout: 'fit', items: [workSheetPanel]}); 
            	

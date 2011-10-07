@@ -93,5 +93,12 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 
+		<ACTION name="WORKSHEET_WITH_DATASET_START_EDIT_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.WorksheetWithDatasetStartEditAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+
 </ACTIONS>
 
