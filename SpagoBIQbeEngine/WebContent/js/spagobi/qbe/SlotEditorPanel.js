@@ -75,24 +75,30 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 
 	, initGrid: function(c) {
 		
-		//var emptyData = [['eta 1','da 0 a 10']];
+		//var emptyData = [['eta 1',' 0 a 10']];
 	    // create the data store
 	    var store = new Ext.data.ArrayStore({
 	        fields: ['name', 'values'],
-	        data  : [['eta 1',['da 0 a 10']]]
+	        data  : [['eta 1',['[ 0 , 10 ]']]]
 	    });
-
+//[{name:'slot name 1', values:[{from: {operand:'>', value:'0'}, to:{operand:'<', value:'10'}, descr: 'da 0 a 10'}]]
 	    // manually load local data
 	    //store.loadData(emptyData);
 	    
         var template = new Ext.XTemplate(
+        		'<tpl if="values !== null">'+
         		'<tpl for="values">'+
-        		'<span width="150px" style="border: 1px solid silver;border-radius:5px; padding: 2px;">' + 
-                '<span style="vertical-align: top;">{values}</span>' + 
-                '<span align="right"><img onClick="test();" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +
+        		'<div width="150px" style="border: 1px solid silver;border-radius:5px; padding: 2px; float: left;" id="tpl-range-{[xindex]}">' + 
+                '<span style="vertical-align: top;">{[values]}</span>' + 
+                //'<span align="right"><img onClick="this.eraseRange(\"{[xindex]}\",\"{.}\");" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +
+                '<span align="right"><img onClick="test({[xindex]})" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +                
                 '</span>'+
-                '</span>'+
-                '</tpl>'
+                '</div>'+
+                '</tpl></tpl>',
+                { eraseRange : function (i) {
+                	alert('"'+i+'"');
+                }
+                }
              );  
              
         template.compile();
@@ -111,11 +117,9 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		       , clickHandler:function(e, t){
 		          var index = this.scope.gridPanel.getView().findRowIndex(t);
 		          var record = this.scope.gridPanel.store.getAt(index);
-		          //this.gridPanel.store.remove(record);
-		          //openpopup
 		          this.scope.openiInsertRangeWindow(record);
 		       }
-		       //, width: 20
+		       , width: 20
 		       , header: 'Range'
 		       , renderer : function(v, p, record){
 		           return '<center><img class="x-mybutton-'+this.id+'" width="29px" height="16px" src="' + this.imgSrc + '"/></center>';
@@ -130,10 +134,9 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			       , clickHandler:function(e, t){
 			          var index = this.scope.gridPanel.getView().findRowIndex(t);
 			          var record = this.scope.gridPanel.store.getAt(index);
-			          //this.gridPanel.store.remove(record);
-			          //openpopup
+			          this.scope.openiInsertPunctualWindow(record);
 			       }
-			       //, width: 20
+			       , width: 20
 			       , header: 'Punctual'
 				   , renderer : function(v, p, record){
 			           return '<center><img class="x-mybutton-'+this.id+'" width="21px" height="13px" src="' + this.imgSrc + '"/></center>';
@@ -170,12 +173,8 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	        enableDragDrop:false	
 	    });
 		var btnAdd = this.panelToolbar.items.items[0];
-		var Slot = this.gridPanel.getStore().recordType;
-        var p = new Slot({
-            name: 'New Slot 1',
-            values: []
-        });
-		btnAdd.on('click', this.createSlotRowToDisplay(p), this);
+
+		btnAdd.on('click', this.createSlotRowToDisplay, this);
 	}
 	, openiInsertRangeWindow: function(rec){
 		this.rangeWindow = new Sbi.qbe.RangeDefinitionWindow({slotPanel: this, record: rec});
@@ -183,25 +182,49 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		this.rangeWindow.mainPanel.doLayout();
 		this.rangeWindow.show();
 	}
+	, openiInsertPunctualWindow: function(rec){
+		this.punctualWindow = new Sbi.qbe.PunctualDefinitionWindow({slotPanel: this, record: rec});
+		
+		this.punctualWindow.mainPanel.doLayout();
+		this.punctualWindow.show();
+	}
 	, createSlotRowToDisplay: function(p){
         // access the Record constructor through the grid's store
-		
+		var Slot = this.gridPanel.getStore().recordType;
+        var p = new Slot({
+            name: 'New Slot',
+            values: null
+        });
         this.gridPanel.stopEditing();
         this.gridPanel.store.insert(0, p);
         this.gridPanel.startEditing(0, 0);
 	}
 	, addRange: function(rowIndex, rec){
-		var opFrom = rowIndex.from.operand;
+		var opFrom = rowIndex.from.operand ;
+		var dsOpFrom = ']';
+		if(opFrom == 2){
+			dsOpFrom = '[';
+		}
 		var valFrom = rowIndex.from.value;
 		var opTo = rowIndex.to.operand;
+		var dsOpTo = '[';
+		if(opTo == 4){
+			dsOpTo = ']';
+		}
 		var valTo = rowIndex.to.value;
-		var newVal = opFrom+' '+valFrom+ ' '+opTo+' '+valTo;
-
+		var newVal = dsOpFrom+' '+valFrom+ ','+valTo+' '+dsOpTo;
+		if(rec.data.values == null){
+			rec.data.values = new Array();
+		}
 		rec.data.values.push(newVal);
 		rec.commit();
     }
 	
 });
-test= function(itemGroupName, expression) {
-	alert('funziona!!');
+var toerase = null;
+test= function(idx) {
+	//alert(idx);
+	toerase = idx;
+	var elementToErase = Ext.get('tpl-range-'+idx);
+	elementToErase.remove();
 }

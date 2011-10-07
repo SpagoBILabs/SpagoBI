@@ -82,7 +82,7 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 	      });
 	      var valuesTo = new Ext.data.SimpleStore({
 	          fields: ['id', 'value'],
-	          data : [['1',Ext.util.Format.htmlEncode('<')],['2','&lt;=']]
+	          data : [['3',Ext.util.Format.htmlEncode('<')],['4','&lt;=']]
 	      });
 	      
 		this.rangeFrom = new Ext.form.ComboBox({
@@ -161,10 +161,15 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		
 		this.rangeToSave.from ={};
 		this.rangeToSave.to ={};
+		this.rangeToSave.desc ={};
+		
 		this.rangeToSave.from.operand = this.rangeFrom.value;
-		this.rangeToSave.from.value = this.rangeFromValue.value;
+		this.rangeToSave.from.value = this.rangeFromValue.getValue();
 		this.rangeToSave.to.operand = this.rangeTo.value;
-		this.rangeToSave.to.value = this.rangeToValue.value;
+		this.rangeToSave.to.value = this.rangeToValue.getValue();
+
+		var descr = this.rangeToSave.from.operand+' '+this.rangeToSave.from.value+ ' '+this.rangeToSave.to.operand+' '+this.rangeToSave.to.value;
+		this.rangeToSave.desc =descr;
 		
 		this.slotPanel.rangeToSave = this.rangeToSave;
 		this.slotPanel.addRange(this.rangeToSave, rec);
