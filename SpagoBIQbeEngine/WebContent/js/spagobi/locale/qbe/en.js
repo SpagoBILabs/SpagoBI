@@ -273,6 +273,15 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.max'] = 'maximum';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.min'] = 'minimum';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.count'] = 'count';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'] = 'count distinct';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpSum'] = 'Attribute to use in function SUM';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMin'] = 'Attribute to use in function MIN';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMax'] = 'Attribute to use in function MAX';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCount'] = 'Attribute to use in function Count';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCountDist'] = 'Attribute to use in function Count Distinct';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpAVG'] = 'Attribute to use in function AVG';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate'] = 'Date to use in the function';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1'] = 'Date 1 to use in the function';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2'] = 'Date 2 to use in the function';
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.none'] = 'No aggregation function applied';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.sum'] = 'Return the sum of all values in group';

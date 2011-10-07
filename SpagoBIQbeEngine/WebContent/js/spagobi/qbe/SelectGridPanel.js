@@ -47,7 +47,7 @@
 Ext.ns("Sbi.qbe");
 
 Sbi.qbe.SelectGridPanel = function(config) {
-	
+
 	var defaultSettings = {
 		border: true
 		//, enableToolbar: true
@@ -662,32 +662,44 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 			    text: '+'
 			    , qtip: 'binary sum function'
 			    , type: 'function'
-			    , value: Ext.util.Format.htmlEncode('op1 + op2')
-			    , alias: Ext.util.Format.htmlEncode('op1 + op2')
+			    , value: Ext.util.Format.htmlEncode('+')
+			    , alias: Ext.util.Format.htmlEncode('+')
 		    }, {
 			    text: '-' 
 			    , qtip: 'binary difference function'
 			    , type: 'function'
-			    , value: Ext.util.Format.htmlEncode('op1 - op2')
-			    , alias: Ext.util.Format.htmlEncode('op1 - op2')
+			    , value: Ext.util.Format.htmlEncode('-')
+			    , alias: Ext.util.Format.htmlEncode('-')
 		    }, {
 			    text: '*'
 			    , qtip: 'binary multiplication function'
 			    , type: 'function'
-			    , value: Ext.util.Format.htmlEncode('op1 * op2')
-			    , alias: Ext.util.Format.htmlEncode('op1 * op2')
+			    , value: Ext.util.Format.htmlEncode('*')
+			    , alias: Ext.util.Format.htmlEncode('*')
 		    }, {
 			    text: '/'
 				, qtip: 'binary division function'
 				, type: 'function'
-				, value: Ext.util.Format.htmlEncode('op1 / op2')
-				, alias: Ext.util.Format.htmlEncode('op1 / op2')
+				, value: Ext.util.Format.htmlEncode('/')
+				, alias: Ext.util.Format.htmlEncode('/')
 			}, {
 			    text: '||'
 				, qtip: 'pipe'
 				, type: 'function'
-				, value: Ext.util.Format.htmlEncode('op1 || op2')
-				, alias: Ext.util.Format.htmlEncode('op1 || op2')
+				, value: Ext.util.Format.htmlEncode('||')
+				, alias: Ext.util.Format.htmlEncode('||')
+			}, {
+			    text: '('
+				, qtip: 'open parenthesis'
+				, type: 'function'
+				, value: Ext.util.Format.htmlEncode('(')
+				, alias: Ext.util.Format.htmlEncode('(')
+			}, {
+			    text: ')'
+  				, qtip: 'closed parenthesis'
+  				, type: 'function'
+  				, value: Ext.util.Format.htmlEncode(')')
+  				, alias: Ext.util.Format.htmlEncode(')')
 			}
 		];
 		
@@ -727,36 +739,42 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
  			    , type: 'function'
 			    , value: Ext.util.Format.htmlEncode('SUM(op1)')
 			    , alias: Ext.util.Format.htmlEncode('SUM(op1)')
+			    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpSum')}]
  		    }, {
  			    text: 'MIN'  
  			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.min')
  			    , type: 'function'
  			    , value: Ext.util.Format.htmlEncode('MIN(op1)')
  			    , alias: Ext.util.Format.htmlEncode('MIN(op1)')
+ 			    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMin')}]
  		    }, {
  			    text: 'MAX' 
  			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.max')
  			    , type: 'function'
  			    , value: Ext.util.Format.htmlEncode('MAX(op1)')
  			    , alias: Ext.util.Format.htmlEncode('MAX(op1)')
+ 			    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMax')}]
  		    }, {
  			    text: 'COUNT'
  			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')
  			    , type: 'function'
  	 			, value: Ext.util.Format.htmlEncode('COUNT(op1)')
  	 			, alias: Ext.util.Format.htmlEncode('COUNT(op1)')
+ 	 			, operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCount')}]
  		    }, {
  			    text: 'COUNT_DISTINCT'
  			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')
  			    , type: 'function'
  	 			, value: Ext.util.Format.htmlEncode('COUNT(DISTINCT op1)')
  	 			, alias: Ext.util.Format.htmlEncode('COUNT(DISTINCT op1)')
+ 	 			, operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCountDist')}]
  		    }, {
 			    text: 'AVG'
 				, qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.avg')
 				, type: 'function'
 				, value: Ext.util.Format.htmlEncode('AVG(op1)')
 				, alias: Ext.util.Format.htmlEncode('AVG(op1)')
+				, operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpAVG')}]
 				}
  		];
 		

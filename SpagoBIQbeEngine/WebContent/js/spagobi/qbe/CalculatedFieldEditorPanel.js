@@ -82,6 +82,8 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	, groupRootNodes: null
 	, scopeComboBoxData: null	
 	
+	, opWin: null
+	
 
     // --------------------------------------------------------------------------------------------
     // public methods
@@ -422,14 +424,27 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	}
 	
 	, expItemsTreeClick: function(node, e) {
-		if(node.attributes.value) {
-			var text;
-			if(node.attributes.alias !== undefined && !this.expertMode ){
-				text= node.attributes.alias + ' ';
-			}else{
-				text= node.attributes.value + ' ';	
+		//checks if the wizard should ask some operands selection by the user
+		if (node.attributes.operands && this.expItemsTreeRootNode && this.expItemsTreeRootNode.childNodes){			
+			this.opWin = new Sbi.qbe.OperandsWindow({
+				operands: node.attributes.operands
+			,   fields: this.expItemsTreeRootNode.childNodes[0]	
+			,   text: node.attributes.value
+			});
+			this.opWin.on('click', function(win, text) {
+				this.expressionEditor.insertAtCursor(text) ;
+			}, this);
+			this.opWin.show();			
+		}else{			
+			if(node.attributes.value) {
+				var text;
+				if(node.attributes.alias !== undefined && !this.expertMode ){
+					text= node.attributes.alias + ' ';
+				}else{
+					text= node.attributes.value + ' ';	
+				}
+		    	this.expressionEditor.insertAtCursor(text) ;
 			}
-	    	this.expressionEditor.insertAtCursor(text) ;
 		}
 	}
 	

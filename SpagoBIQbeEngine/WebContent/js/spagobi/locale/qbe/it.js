@@ -270,6 +270,15 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.max'] = 'Restituisce il mass
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.min'] = 'Restituisce il minimo dei valori nel gruppo';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.count'] = 'Restituisce il conteggio dei valori nel gruppo';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct'] = 'Restituisce il conteggio dei valori distinti nel gruppo';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpSum'] = 'Attributo da usare nella funz. Somma';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMin'] = 'Attributo da usare nella funz. Minimo';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMax'] = 'Attributo da usare nella funz. Massimo';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCount'] = 'Attributo da usare nella funz. Count';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCountDist'] = 'Attributo da usare nella funz. Count Distinct';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpAVG'] = 'Attributo da usare nella funz. Media';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate'] = 'Data da usare nella funzione';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1'] = 'Data 1 da usare nella funzione';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2'] = 'Data 2 da usare nella funzione';
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'] = 'Seleziona una funzione...';
 

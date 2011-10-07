@@ -385,44 +385,54 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		if(type === 'entity') {
 
 			var dateFunctions = [
- 			    {
- 		            text: 'GG_between_dates'
- 		            , qtip: LN('da implementare')
- 		            , type: 'function'
- 		            , value: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
- 		            , alias: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
- 		         }, {
- 			         text: 'MM_between_dates'
- 			         , qtip: LN('da implementare')
- 				     , type: 'function'
- 				     , value: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
- 				     , alias: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
- 				 },{
- 					 text: 'AA_between_dates'
- 				      , qtip: LN('da implementare')
- 				      , type: 'function'
- 				      , value: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
- 				      , alias: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
- 				 }, {
- 				     text: 'gg_between_dates'
- 				     , qtip: LN('da implementare')
- 					 , type: 'function'
- 					 , value: Ext.util.Format.htmlEncode('gg_between_dates(date1)')
- 					 , alias: Ext.util.Format.htmlEncode('gg_between_dates(date1)')
- 				 }, {
- 				     text: 'mm_between_dates'
- 					 , qtip: LN('da implementare')
- 					 , type: 'function'
- 					 , value: Ext.util.Format.htmlEncode('mm_between_dates(date1)')
- 					 , alias: Ext.util.Format.htmlEncode('mm_between_dates(date1)')
- 				  }, {
- 					 text: 'yy_between_dates'
- 					 , qtip: LN('da implementare')
- 					 , type: 'function'
- 					 , value: Ext.util.Format.htmlEncode('yy_between_dates(date1)')
- 					 , alias: Ext.util.Format.htmlEncode('yy_between_dates(date1)')
- 				   }
- 		    ];
+     		    {
+     	            text: 'GG_between_dates'
+     	            , qtip: LN('da implementare')
+     	            , type: 'function'
+     	            , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+     	            , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+     	            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
+     	            		   , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
+     		    
+     	         }, {
+     		         text: 'MM_between_dates'
+     		         , qtip: LN('da implementare')
+     			     , type: 'function'
+     			     , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+     			     , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+     			     , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
+     	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
+     			 },{
+     				 text: 'AA_between_dates'
+     			      , qtip: LN('da implementare')
+     			      , type: 'function'
+     			      , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+     			      , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+     			      , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
+     	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
+     			 }, {
+     			     text: 'gg_between_dates'
+     			     , qtip: LN('da implementare')
+     				 , type: 'function'
+     				 , value: Ext.util.Format.htmlEncode('gg_between_dates(op1)')
+     				 , alias: Ext.util.Format.htmlEncode('gg_between_dates(op1)')
+     				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
+     			 }, {
+     			     text: 'mm_between_dates'
+     				 , qtip: LN('da implementare')
+     				 , type: 'function'
+     				 , value: Ext.util.Format.htmlEncode('mm_between_dates(op1)')
+     				 , alias: Ext.util.Format.htmlEncode('mm_between_dates(op1)')
+     				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
+     			  }, {
+     				 text: 'yy_between_dates'
+     				 , qtip: LN('da implementare')
+     				 , type: 'function'
+     				 , value: Ext.util.Format.htmlEncode('yy_between_dates(op1)')
+     				 , alias: Ext.util.Format.htmlEncode('yy_between_dates(op1)')
+     				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
+     			   }
+     	    ];
 			var fields = new Array();
 			for(var i = 0; i < entityNode.attributes.children.length; i++) {
 				var child = entityNode.attributes.children[i];
@@ -602,118 +612,146 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		];
 		
 		var aggregationFunctions = [		                            
-     		    {
-     			    text: 'SUM'
-     			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')
-     			    , type: 'function'
-    			    , value: Ext.util.Format.htmlEncode('SUM(op1)')
-    			    , alias: Ext.util.Format.htmlEncode('SUM(op1)')
-     		    }, {
-     			    text: 'MIN'  
-     			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.min')
-     			    , type: 'function'
-     			    , value: Ext.util.Format.htmlEncode('MIN(op1)')
-     			    , alias: Ext.util.Format.htmlEncode('MIN(op1)')
-     		    }, {
-     			    text: 'MAX' 
-     			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.max')
-     			    , type: 'function'
-     			    , value: Ext.util.Format.htmlEncode('MAX(op1)')
-     			    , alias: Ext.util.Format.htmlEncode('MAX(op1)')
-     		    }, {
-     			    text: 'COUNT'
-     			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')
-     			    , type: 'function'
-     	 			, value: Ext.util.Format.htmlEncode('COUNT(op1)')
-     	 			, alias: Ext.util.Format.htmlEncode('COUNT(op1)')
-     		    }, {
-     			    text: 'COUNT_DISTINCT'
-     			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')
-     			    , type: 'function'
-     	 			, value: Ext.util.Format.htmlEncode('COUNT(DISTINCT op1)')
-     	 			, alias: Ext.util.Format.htmlEncode('COUNT(DISTINCT op1)')
-     		    }, {
-    			    text: 'AVG'
-    				, qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.avg')
-    				, type: 'function'
-    				, value: Ext.util.Format.htmlEncode('AVG(op1)')
-    				, alias: Ext.util.Format.htmlEncode('AVG(op1)')
-    				}
-     		];
+ 		    {
+ 			    text: 'SUM'
+ 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')
+ 			    , type: 'function'
+			    , value: Ext.util.Format.htmlEncode('SUM(op1)')
+			    , alias: Ext.util.Format.htmlEncode('SUM(op1)')    			    
+			    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpSum')}]
+ 		    }, {
+ 			    text: 'MIN'  
+ 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.min')
+ 			    , type: 'function'
+ 			    , value: Ext.util.Format.htmlEncode('MIN(op1)')
+ 			    , alias: Ext.util.Format.htmlEncode('MIN(op1)')
+ 			    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMin')}]
+ 		    }, {
+ 			    text: 'MAX' 
+ 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.max')
+ 			    , type: 'function'
+ 			    , value: Ext.util.Format.htmlEncode('MAX(op1)')
+ 			    , alias: Ext.util.Format.htmlEncode('MAX(op1)')
+ 			    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMax')}]
+ 		    }, {
+ 			    text: 'COUNT'
+ 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')
+ 			    , type: 'function'
+ 	 			, value: Ext.util.Format.htmlEncode('COUNT(op1)')
+ 	 			, alias: Ext.util.Format.htmlEncode('COUNT(op1)')
+ 	 		    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCount')}]
+ 		    }, {
+ 			    text: 'COUNT_DISTINCT'
+ 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')
+ 			    , type: 'function'
+ 	 			, value: Ext.util.Format.htmlEncode('COUNT(DISTINCT op1)')
+ 	 			, alias: Ext.util.Format.htmlEncode('COUNT(DISTINCT op1)')
+ 	 			, operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCountDist')}]
+ 		    }, {
+			    text: 'AVG'
+				, qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.avg')
+				, type: 'function'
+				, value: Ext.util.Format.htmlEncode('AVG(op1)')
+				, alias: Ext.util.Format.htmlEncode('AVG(op1)')
+				, operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpAVG')}]
+			}
+ 		];
 		
-			var dateFunctions = [
-			    {
-		            text: 'GG_between_dates'
-		            , qtip: LN('da implementare')
-		            , type: 'function'
-		            , value: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
-		            , alias: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
-		         }, {
-			         text: 'MM_between_dates'
-			         , qtip: LN('da implementare')
-				     , type: 'function'
-				     , value: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
-				     , alias: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
-				 },{
-					 text: 'AA_between_dates'
-				      , qtip: LN('da implementare')
-				      , type: 'function'
-				      , value: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
-				      , alias: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
-				 }, {
-				     text: 'gg_between_dates'
-				     , qtip: LN('da implementare')
-					 , type: 'function'
-					 , value: Ext.util.Format.htmlEncode('gg_between_dates(date1)')
-					 , alias: Ext.util.Format.htmlEncode('gg_between_dates(date1)')
-				 }, {
-				     text: 'mm_between_dates'
-					 , qtip: LN('da implementare')
-					 , type: 'function'
-					 , value: Ext.util.Format.htmlEncode('mm_between_dates(date1)')
-					 , alias: Ext.util.Format.htmlEncode('mm_between_dates(date1)')
-				  }, {
-					 text: 'yy_between_dates'
-					 , qtip: LN('da implementare')
-					 , type: 'function'
-					 , value: Ext.util.Format.htmlEncode('yy_between_dates(date1)')
-					 , alias: Ext.util.Format.htmlEncode('yy_between_dates(date1)')
-				   }
-		    ]
+		var dateFunctions = [
+		    {
+	            text: 'GG_between_dates'
+	            , qtip: LN('da implementare')
+	            , type: 'function'
+	            , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+	            , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+	            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
+	            		   , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
+		    
+	         }, {
+		         text: 'MM_between_dates'
+		         , qtip: LN('da implementare')
+			     , type: 'function'
+			     , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+			     , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+			     , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
+	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
+			 },{
+				 text: 'AA_between_dates'
+			      , qtip: LN('da implementare')
+			      , type: 'function'
+			      , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+			      , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+			      , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
+	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
+			 }, {
+			     text: 'gg_between_dates'
+			     , qtip: LN('da implementare')
+				 , type: 'function'
+				 , value: Ext.util.Format.htmlEncode('gg_between_dates(op1)')
+				 , alias: Ext.util.Format.htmlEncode('gg_between_dates(op1)')
+				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
+			 }, {
+			     text: 'mm_between_dates'
+				 , qtip: LN('da implementare')
+				 , type: 'function'
+				 , value: Ext.util.Format.htmlEncode('mm_between_dates(op1)')
+				 , alias: Ext.util.Format.htmlEncode('mm_between_dates(op1)')
+				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
+			  }, {
+				 text: 'yy_between_dates'
+				 , qtip: LN('da implementare')
+				 , type: 'function'
+				 , value: Ext.util.Format.htmlEncode('yy_between_dates(op1)')
+				 , alias: Ext.util.Format.htmlEncode('yy_between_dates(op1)')
+				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
+			   }
+	    ];
 		
-		    var functionsForInline = [
-      		    {
-      			    text: '+'
-      			    , qtip: 'binary sum function'
-      			    , type: 'function'
-      			    , value: Ext.util.Format.htmlEncode('op1 + op2')
-      			    , alias: Ext.util.Format.htmlEncode('op1 + op2')
-      		    }, {
-      			    text: '-' 
-      			    , qtip: 'binary difference function'
-      			    , type: 'function'
-      			    , value: Ext.util.Format.htmlEncode('op1 - op2')
-      			    , alias: Ext.util.Format.htmlEncode('op1 - op2')
-      		    }, {
-      			    text: '*'
-      			    , qtip: 'binary multiplication function'
-      			    , type: 'function'
-      			    , value: Ext.util.Format.htmlEncode('op1 * op2')
-      			    , alias: Ext.util.Format.htmlEncode('op1 * op2')
-      		    }, {
-      			    text: '/'
-      				, qtip: 'binary division function'
+		var functionsForInline = [
+  		    {
+  			    text: '+'
+  			    , qtip: 'binary sum function'
+  			    , type: 'function'
+  			    , value: Ext.util.Format.htmlEncode('+')
+  			    , alias: Ext.util.Format.htmlEncode('+')
+  		    }, {
+  			    text: '-' 
+  			    , qtip: 'binary difference function'
+  			    , type: 'function'
+  			    , value: Ext.util.Format.htmlEncode('-')
+  			    , alias: Ext.util.Format.htmlEncode('-')
+  		    }, {
+  			    text: '*'
+  			    , qtip: 'binary multiplication function'
+  			    , type: 'function'
+  			    , value: Ext.util.Format.htmlEncode('*')
+  			    , alias: Ext.util.Format.htmlEncode('*')
+  		    }, {
+  			    text: '/'
+  				, qtip: 'binary division function'
+  				, type: 'function'
+  				, value: Ext.util.Format.htmlEncode('/')
+  				, alias: Ext.util.Format.htmlEncode('/')
+  			}, {
+  			    text: '||'
+  				, qtip: 'pipe'
+  				, type: 'function'
+  				, value: Ext.util.Format.htmlEncode('||')
+  				, alias: Ext.util.Format.htmlEncode('||')
+  			}, {
+  			    text: '('
+      				, qtip: 'open parenthesis'
       				, type: 'function'
-      				, value: Ext.util.Format.htmlEncode('op1 / op2')
-      				, alias: Ext.util.Format.htmlEncode('op1 / op2')
-      			}, {
-      			    text: '||'
-      				, qtip: 'pipe'
+      				, value: Ext.util.Format.htmlEncode('(')
+      				, alias: Ext.util.Format.htmlEncode('(')
+      		}, {
+  			    text: ')'
+      				, qtip: 'closed parenthesis'
       				, type: 'function'
-      				, value: Ext.util.Format.htmlEncode('op1 || op2')
-      				, alias: Ext.util.Format.htmlEncode('op1 || op2')
-      			}
-      		];		
+      				, value: Ext.util.Format.htmlEncode(')')
+      				, alias: Ext.util.Format.htmlEncode(')')
+          	}
+  		];		
 		
 		
 		//this.treeLoader.on('load', this.oonLoad, this);
