@@ -20,7 +20,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 
 
 
@@ -34,9 +34,14 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
+import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 
 import java.util.Iterator;
@@ -88,8 +93,39 @@ public class CreationUtilities {
 			throw new RuntimeException(e.getMessage());
 		}
 
+		// want to save metadata needed for execution
+//		try{
+//			fillMetadata(dataSet);
+//		}
+//		catch (Exception e) {
+//			logger.error("Error in retrieving metadata");
+//		}
 		logger.debug("OUT");
 		return toReturn;
+	}
+
+	private void fillMetadata(GuiGenericDataSet dataSet) throws EMFUserError{
+		logger.debug("IN");
+		IDataSet iDataSet = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(dataSet.getLabel());
+
+		IDataStore dsStore = iDataSet.test();
+		if(dsStore != null){
+			IMetaData meta = dsStore.getMetaData();
+
+			DatasetMetadataParser metadataParser = new DatasetMetadataParser();
+			String xml = metadataParser.metadataToXML(dsStore.getMetaData());
+
+			iDataSet.setDsMetadata(xml);
+			dataSet.setDsId(iDataSet.getId());
+			GuiDataSetDetail guiDataSetDetail = dataSet.getActiveDetail();
+			guiDataSetDetail.setDsMetadata(xml);			
+
+			DAOFactory.getDataSetDAO().modifyDataSet(dataSet);
+		}
+		else{
+			logger.error("Error in retrieving data store: daaset execution coul not complete");
+		}
+		logger.debug("OUT");
 	}
 
 	private boolean validateDataSet(GuiGenericDataSet dataSet) throws ValidationException, EMFUserError{
