@@ -26,7 +26,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -34,7 +33,6 @@ import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.sql.SqlUtils;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.sql.Connection;
@@ -337,7 +335,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				tableDescriptor = TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
 			}
 			String filterColumnName = tableDescriptor.getColumnName(fieldName);
-			StringBuffer buffer = new StringBuffer("Select DISTINCT(" + filterColumnName + ") FROM " + tableName);
+			StringBuffer buffer = new StringBuffer("Select DISTINCT " + filterColumnName + ", CONCAT(" + filterColumnName + ", ' Description' ) as description FROM " + tableName);
 			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
 			String sqlStatement = buffer.toString();
 			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, dataSource, start, limit);
@@ -472,6 +470,26 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	@Override
 	public Map getParamsMap() {
 		return this.getStatement().getParameters();
+	}
+	
+	public IDataStore decode(
+			IDataStore datastore) {
+		return datastore;
+	}
+	
+	public IDataStore test(int offset, int fetchSize, int maxResults) {
+		this.loadData(offset, fetchSize, maxResults);
+		return getDataStore();
+	}
+	
+	public IDataStore test() {
+		loadData();
+		return getDataStore();
+	}
+	
+	public void setMetadata(IMetaData metadata) {
+		// TODO Auto-generated method stub
+
 	}
 	
 }

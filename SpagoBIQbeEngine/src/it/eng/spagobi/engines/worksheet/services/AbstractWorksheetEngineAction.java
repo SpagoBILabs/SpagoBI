@@ -33,6 +33,8 @@ import it.eng.spagobi.engines.worksheet.bo.Field;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
+import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -193,7 +195,33 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		return TemporaryTableManager.getTableName(userProfile.getUserId().toString());
 	}
 	
-	public IDataSetTableDescriptor persistDataSet(IDataSet dataset, String tableName) {
+	public IDataSetTableDescriptor persistDataSet() {
+		
+		WorksheetEngineInstance engineInstance = getEngineInstance();
+		
+		// get temporary table name
+		String tableName = this.getTemporaryTableName();
+		logger.debug("Temporary table name is [" + tableName + "]");
+		
+		// set all filters into dataset, because dataset's getSignature() and persist() methods may depend on them
+		IDataSet dataset = engineInstance.getDataSet();
+		Assert.assertNotNull(dataset, "The engine instance is missing the dataset!!");
+		Map<String, List<String>> filters = getFiltersOnDomainValues();
+		if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
+			logger.debug("Dataset has FilteringBehaviour.");
+			FilteringBehaviour filteringBehaviour = (FilteringBehaviour) dataset.getBehaviour(FilteringBehaviour.ID);
+			logger.debug("Setting filters on domain values : " + filters);
+			filteringBehaviour.setFilters(filters);
+		}
+		
+		if (dataset.hasBehaviour(SelectableFieldsBehaviour.ID)) {
+			logger.debug("Dataset has SelectableFieldsBehaviour.");
+			List<String> fields = getAllFields();
+			SelectableFieldsBehaviour selectableFieldsBehaviour = (SelectableFieldsBehaviour) dataset.getBehaviour(SelectableFieldsBehaviour.ID);
+			logger.debug("Setting list of fields : " + fields);
+			selectableFieldsBehaviour.setSelectedFields(fields);
+		}
+		
 		String signature = dataset.getSignature();
 		logger.debug("Dataset signature : " + signature);
 		if (signature.equals(TemporaryTableManager.getLastDataSetSignature(tableName))) {

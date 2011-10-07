@@ -31,7 +31,6 @@ import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
-import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -157,31 +156,10 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 			}
 		}
 		
-		// get temporary table name
-		String tableName = this.getTemporaryTableName();
-		logger.debug("Temporary table name is [" + tableName + "]");
-		
-		// set all filters into dataset, because dataset's getSignature() and persist() methods may depend on them
-		IDataSet dataset = engineInstance.getDataSet();
-		Assert.assertNotNull(dataset, "The engine instance is missing the dataset!!");
-		Map<String, List<String>> filters = getFiltersOnDomainValues();
-		if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
-			logger.debug("Dataset has FilteringBehaviour.");
-			FilteringBehaviour filteringBehaviour = (FilteringBehaviour) dataset.getBehaviour(FilteringBehaviour.ID);
-			logger.debug("Setting filters on domain values : " + filters);
-			filteringBehaviour.setFilters(filters);
-		}
-		
-		if (dataset.hasBehaviour(SelectableFieldsBehaviour.ID)) {
-			logger.debug("Dataset has SelectableFieldsBehaviour.");
-			List<String> fields = getAllFields();
-			SelectableFieldsBehaviour selectableFieldsBehaviour = (SelectableFieldsBehaviour) dataset.getBehaviour(SelectableFieldsBehaviour.ID);
-			logger.debug("Setting list of fields : " + fields);
-			selectableFieldsBehaviour.setSelectedFields(fields);
-		}
-		
 		// persist dataset into temporary table	
-		IDataSetTableDescriptor descriptor = this.persistDataSet(dataset, tableName);
+		IDataSetTableDescriptor descriptor = this.persistDataSet();
+		
+		IDataSet dataset = engineInstance.getDataSet();
 		// build SQL query against temporary table
 		List<WhereField> whereFields = new ArrayList<WhereField>();
 		if (!dataset.hasBehaviour(FilteringBehaviour.ID)) {
@@ -199,7 +177,14 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		
 		String worksheetQuery = this.buildSqlStatement(fieldNames, descriptor, whereFields);
 		// execute SQL query against temporary table
+		logger.debug("Executing query on temporary table : " + worksheetQuery);
 		dataStore = this.executeWorksheetQuery(worksheetQuery, start, limit);
+		logger.debug("Query on temporary table executed successfully; datastore obtained:");
+		logger.debug(dataStore);
+		logger.debug("Decoding dataset ...");
+		dataStore = dataset.decode(dataStore);
+		logger.debug("Dataset decoded:");
+		logger.debug(dataStore);
 		
 		// at this moment, the store has "col_0_..." (or something like that) as column aliases: we must put the right aliases 
 		IMetaData dataStoreMetadata = dataStore.getMetaData();

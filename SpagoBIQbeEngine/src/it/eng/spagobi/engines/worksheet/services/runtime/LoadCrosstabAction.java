@@ -32,7 +32,6 @@ import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
-import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -89,32 +88,11 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			
 			WorksheetEngineInstance engineInstance = getEngineInstance();
 			Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
-			
-			// get temporary table name
-			String tableName = this.getTemporaryTableName();
-			logger.debug("Temporary table name is [" + tableName + "]");
-			
-			// set all filters into dataset, because dataset's getSignature() and persist() methods may depend on them
-			IDataSet dataset = engineInstance.getDataSet();
-			Assert.assertNotNull(dataset, "The engine instance is missing the dataset!!");
-			Map<String, List<String>> filters = getFiltersOnDomainValues();
-			if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
-				logger.debug("Dataset has FilteringBehaviour.");
-				FilteringBehaviour filteringBehaviour = (FilteringBehaviour) dataset.getBehaviour(FilteringBehaviour.ID);
-				logger.debug("Setting filters on domain values : " + filters);
-				filteringBehaviour.setFilters(filters);
-			}
-			
-			if (dataset.hasBehaviour(SelectableFieldsBehaviour.ID)) {
-				logger.debug("Dataset has SelectableFieldsBehaviour.");
-				List<String> fields = getAllFields();
-				SelectableFieldsBehaviour selectableFieldsBehaviour = (SelectableFieldsBehaviour) dataset.getBehaviour(SelectableFieldsBehaviour.ID);
-				logger.debug("Setting list of fields : " + fields);
-				selectableFieldsBehaviour.setSelectedFields(fields);
-			}
-			
+
 			// persist dataset into temporary table	
-			IDataSetTableDescriptor descriptor = this.persistDataSet(dataset, tableName);
+			IDataSetTableDescriptor descriptor = this.persistDataSet();
+			
+			IDataSet dataset = engineInstance.getDataSet();
 			// build SQL query against temporary table
 			List<WhereField> whereFields = new ArrayList<WhereField>();
 			if (!dataset.hasBehaviour(FilteringBehaviour.ID)) {
@@ -132,7 +110,16 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			
 			String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields);
 			// execute SQL query against temporary table
+			logger.debug("Executing query on temporary table : " + worksheetQuery);
 			dataStore = this.executeWorksheetQuery(worksheetQuery, null, null);
+			logger.debug("Query on temporary table executed successfully; datastore obtained:");
+			logger.debug(dataStore);
+			logger.debug("Decoding dataset ...");
+			dataStore = dataset.decode(dataStore);
+			logger.debug("Dataset decoded:");
+			logger.debug(dataStore);
+			
+			
 			// serialize crosstab
 			CrossTab crossTab = new CrossTab(dataStore, crosstabDefinition);
 			JSONObject crossTabDefinition = crossTab.getJSONCrossTab();

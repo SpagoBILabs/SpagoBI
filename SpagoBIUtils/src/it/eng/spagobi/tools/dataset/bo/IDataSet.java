@@ -21,10 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.dataset.bo;
 
-import java.sql.Connection;
-import java.util.List;
-import java.util.Map;
-
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -32,6 +28,9 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+
+import java.sql.Connection;
+import java.util.Map;
 
 public interface IDataSet {
 	
@@ -159,6 +158,6 @@ public interface IDataSet {
 	public IDataStore getDomainValues(String fieldName, 
             Integer start, Integer limit, IDataStoreFilter filter);
 	
-	public Map<String, List<String>> getDomainDescriptions(Map<String, List<String>> codes); 
+	public IDataStore decode(IDataStore datastore); 
 	
 }
