@@ -29,11 +29,7 @@ import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCSharedConnectionDataProxy;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -211,30 +207,5 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		}
 
 	}
-
-	public void setMetadata(IMetaData metadata) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public IDataStore test() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public Map<String, List<String>> getDomainDescriptions(
-			Map<String, List<String>> codes) {
-		return codes;
-	}
-
-	public IDataStore test(int offset, int fetchSize, int maxResults) {
-		loadData(offset, fetchSize, maxResults);
-		return getDataStore();
-	}
-
-
-
-
 
 }

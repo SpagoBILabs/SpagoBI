@@ -3,9 +3,6 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
@@ -14,7 +11,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -214,9 +210,9 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 		return null;
 	}
 
-	public Map<String, List<String>> getDomainDescriptions(
-			Map<String, List<String>> codes) {
-		return codes;
+	public IDataStore decode(
+			IDataStore datastore) {
+		return datastore;
 	}
 
 }
