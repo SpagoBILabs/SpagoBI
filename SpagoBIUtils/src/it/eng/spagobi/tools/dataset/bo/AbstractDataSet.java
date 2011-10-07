@@ -134,6 +134,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setParameters(getParameters());
 		sbd.setDescription(getDescription());
 		sbd.setCategoryId(getCategoryId());
+		sbd.setDsMetadata(getDsMetadata());
 		
 		sbd.setTransformerId(getTransformerId());
 		sbd.setPivotColumnName(getPivotColumnName());
