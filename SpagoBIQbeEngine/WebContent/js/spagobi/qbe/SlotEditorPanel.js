@@ -91,8 +91,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
         		'<tpl if="valueset !== null">'+
         		'<tpl for="valueset">'+
         		'<tpl if="type == \'range\'">'+
-	        		'<div width="150px" style="border: 1px solid red;border-radius:5px; padding: 2px; float: left; margin-right: 1px;" id="tpl-slot-val-{[xindex]}">' + 
-	        		'<span style="vertical-align: top;">'+
+	        		'<div class="icon-close" id="tpl-slot-val-{[xindex]}">' + 
 	        		'<tpl if="includeFrom == true">'+
 	        			'[' + 
 	        		'</tpl>'+
@@ -106,23 +105,16 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	        		'<tpl if="includeTo == false">'+
 	        			'[' + 
 	        		'</tpl>'+
-	        		'</span>' + 
-	                '<span align="right"><img onClick="test({[xindex]})" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +                
-	                '</span>'+
 	                '</div>'+
                 '</tpl>'+
                 '<tpl if="type == \'punctual\'">'+
-	        		'<div width="150px" style="border: 1px solid green;border-radius:5px; padding: 2px; float: left; margin-right: 1px;" id="tpl-slot-val-{[xindex]}">' + 
-	                '<span style="vertical-align: top;">{values}</span>' + 
-	                '<span align="right"><img onClick="test({[xindex]})" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +                
-	                '</span>'+
-	                '</div>'+
+	        		'<div class="icon-close green" id="tpl-slot-val-{[xindex]}">' + 
+	                '{values}' + 
+      	            '</div>'+
                 '</tpl>'+
                 '<tpl if="type == \'default\'">'+
-	        		'<div width="150px" style="border: 1px solid blue;border-radius:5px; padding: 2px; float: left; margin-right: 1px;" id="tpl-slot-val-{[xindex]}">' + 
-	                '<span style="vertical-align: top;">{value}</span>' + 
-	                '<span align="right"><img onClick="test({[xindex]})" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +                
-	                '</span>'+
+	        		'<div class="icon-close blue" id="tpl-slot-val-{[xindex]}">' + 
+	                '{value}' + 
 	                '</div>'+
 	            '</tpl>'+
                 '</tpl></tpl>'
@@ -130,12 +122,13 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
              
         template.compile();
              
-        var valuesColumn = new Ext.grid.TemplateColumn(	{
+        var valuesColumn = new Ext.grid.TemplateColumn({
             header   : 'Values', 
             dataIndex: 'valueset',
             xtype: 'templatecolumn',
             tpl : template
         });
+
 	    // button-columns
 	    var rangeButtonColumn = new Ext.grid.ButtonColumn(
 		    Ext.apply({
@@ -173,6 +166,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		    );
 	    
 		this.gridPanel = new Ext.grid.EditorGridPanel({
+			id: 'slot-panel',
 			store: store,
 			columns: [
                {
@@ -198,11 +192,30 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	            forceFit: true
 	        },
 	        plugins :[rangeButtonColumn,  punctualButtonColumn],
-	        enableDragDrop:false	
+	        enableDragDrop:false,
+	        listeners:{
+	        	 cellclick: function(grid, rowIndex, columnIndex, e) {
+	        			// Get the Record for the row
+	        	        var record = grid.getStore().getAt(rowIndex);
+	        	        // Get field name for the column
+	        	        var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
+	        	    	var slotItem = e.getTarget();
+	        	    	var id = slotItem.id;
+	        	    	var startIndex = id.indexOf('tpl-slot-val-');
+	        	    	var itemIdx = id.substring(startIndex + ('tpl-slot-val-'.length));
+	        	    	var valuesSets = record.data.valueset;
+	        	    	var idx = parseInt(itemIdx) ;
+	        	    	var toremove = record.data.valueset[idx-1];
+	        	    	record.data.valueset.remove(toremove);
+	        	    	record.commit();
+	        	 }
+	        }
+
 	    });
 		var btnAdd = this.panelToolbar.items.items[0];
-
+		
 		btnAdd.on('click', this.createSlotRowToDisplay, this);
+
 	}
 	, openiInsertRangeWindow: function(rec){
 		this.rangeWindow = new Sbi.qbe.RangeDefinitionWindow({slotPanel: this, record: rec});
@@ -253,13 +266,43 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		rec.data.valueset.push(item);
 		rec.commit();
     }
-	, 
+	, removeItem: function( column, grid, rowIndex, e){
+		alert("ciao");
+    	var button = e.getTarget('div[class=button]', 10, true);
+    	var action = null;
+/*    	if(button) {
+    		var buttonImg = button.down('img');
+    		var startIndex = (' '+buttonImg.dom.className+' ').indexOf(' action-');
+    		if(startIndex != -1) {
+    			action = buttonImg.dom.className.substring(startIndex).trim().split(' ')[0];
+    			action = action.split('-')[1];
+    		}    		
+    	}
+    	
+    	var r = this.folderView.getRecord(i);
+    	if(r.engine) {
+    		if(action !== null) {
+    			this.performActionOnDocument(r, action);
+    		} else {
+    			this.fireEvent('ondocumentclick', this, r, e);
+    		}
+    	} else{
+    		if(action !== null) {
+    			this.performActionOnFolder(r, action);
+    		} else {
+    			this.fireEvent('onfolderclick', this, r, e);
+    		}
+    	} */    
+	} 
 });
 var toerase = null;
+var slotgrid = null;
+
 test= function(idx) {
 	//alert(idx);
 	toerase = idx;
 	var elementToErase = Ext.get('tpl-slot-val-'+idx);
 	elementToErase.remove();
-	this.fireEvent('onSlotRemove', elementToErase);
+	var store = slotgrid.store;
+
 }

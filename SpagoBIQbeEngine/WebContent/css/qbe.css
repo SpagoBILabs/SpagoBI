@@ -425,3 +425,25 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 .icon-save {
 	background-image: url('../img/save16.png') !important;
 }
+/*******************************************************************************************************
+ * Slot
+ ********************************************************************************************************/
+.icon-close {
+	border: 1px solid red;
+	border-radius:5px; 
+	padding: 2px; 
+	float: left;
+	margin-right: 1px;
+	background-image: url('../img/actions/close_icon-15.png') !important;
+	background-repeat: no-repeat;
+	background-position: right;
+	padding-right: 20px;
+	text-align: right;	
+}
+.green {
+	border: 1px solid green;
+
+}
+.blue {
+	border: 1px solid blue;
+}
