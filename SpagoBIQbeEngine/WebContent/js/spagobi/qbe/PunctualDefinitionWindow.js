@@ -34,7 +34,7 @@ Sbi.qbe.PunctualDefinitionWindow = function(config) {
 	var c = Ext.apply({}, config || {}, {
 		title: 'Punctual Values Definition'
 		, width: 400
-		, height: 150
+		, height: 200
 		, hasBuddy: false	
 		
 	});
@@ -60,9 +60,8 @@ Ext.extend(Sbi.qbe.PunctualDefinitionWindow, Ext.Window, {
     , slotPanel : null
    
     , mainPanel: null
-    , rangeFrom: null
-    , rangeTo: null
-    , rangeToSave: {}
+    , valuesToSave: []
+
     
 	, initMainPanel: function(c) {
 		
@@ -82,7 +81,7 @@ Ext.extend(Sbi.qbe.PunctualDefinitionWindow, Ext.Window, {
 	      });
 
 	      var sm = new Ext.grid.CheckboxSelectionModel();
-			this.mainPanel = new Ext.grid.GridPanel({
+		  this.mainPanel = new Ext.grid.GridPanel({
 				store: valuesSt,
 				columns: [
 	               {
@@ -96,12 +95,15 @@ Ext.extend(Sbi.qbe.PunctualDefinitionWindow, Ext.Window, {
 	            selMode: sm,
 		        border:true,  
 				width: 380,
-				height: 130,
+				height: 170,
 		        style:'padding:0px',
 		        scrollable: true,
 		        iconCls:'icon-grid',
 		        collapsible:false,
 		        layout: 'fit',
+			    bbar: [
+			           btnFinish
+			    ], 
 		        viewConfig: {
 		            forceFit: true
 		        }
@@ -111,7 +113,12 @@ Ext.extend(Sbi.qbe.PunctualDefinitionWindow, Ext.Window, {
 
     }
 	, save: function(rec){
-		
+		var recs = this.mainPanel.selModel.getSelections();
+		for(i=0; i<recs.length; i++){
+			var sel = recs[i];
+			this.valuesToSave.push(sel.data.value);
+		}
+		this.slotPanel.addPunctualVals(this.valuesToSave, rec);
 		this.close();
 	}
 

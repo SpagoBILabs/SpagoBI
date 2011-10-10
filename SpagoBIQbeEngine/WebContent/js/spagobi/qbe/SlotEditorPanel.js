@@ -88,7 +88,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
         var template = new Ext.XTemplate(
         		'<tpl if="values !== null">'+
         		'<tpl for="values">'+
-        		'<div width="150px" style="border: 1px solid silver;border-radius:5px; padding: 2px; float: left;" id="tpl-range-{[xindex]}">' + 
+        		'<div width="150px" style="border: 1px solid silver;border-radius:5px; padding: 2px; float: left;" id="tpl-slot-val-{[xindex]}">' + 
                 '<span style="vertical-align: top;">{[values]}</span>' + 
                 //'<span align="right"><img onClick="this.eraseRange(\"{[xindex]}\",\"{.}\");" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +
                 '<span align="right"><img onClick="test({[xindex]})" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +                
@@ -219,12 +219,19 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		rec.data.values.push(newVal);
 		rec.commit();
     }
-	
+	, addPunctualVals: function(vals, rec){
+		var strVals = Ext.encode(vals);
+		if(rec.data.values == null){
+			rec.data.values = new Array();
+		}
+		rec.data.values.push(strVals);
+		rec.commit();
+    }
 });
 var toerase = null;
 test= function(idx) {
 	//alert(idx);
 	toerase = idx;
-	var elementToErase = Ext.get('tpl-range-'+idx);
+	var elementToErase = Ext.get('tpl-slot-val-'+idx);
 	elementToErase.remove();
 }
