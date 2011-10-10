@@ -179,6 +179,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
                    id       :'name',
                    header   : 'Name', 
                    sortable : true, 
+                   editor: new Ext.form.TextField(),
                    dataIndex: 'name'
                },
                	   valuesColumn
@@ -238,13 +239,17 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			includeTo = true;
 		}
 		var item ={type: 'range', from: rowIndex.from.value, includeFrom: includeFrom, to: rowIndex.to.value, includeTo: includeTo};
-		
+		if(rec.data.valueset == null){
+			rec.data.valueset = new Array();
+		}
 		rec.data.valueset.push(item);
 		rec.commit();
     }
 	, addPunctualVals: function(vals, rec){
 		var item ={type: 'punctual', values: vals};
-
+		if(rec.data.valueset == null){
+			rec.data.valueset = new Array();
+		}
 		rec.data.valueset.push(item);
 		rec.commit();
     }
