@@ -171,7 +171,6 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		var descr = this.rangeToSave.from.operand+' '+this.rangeToSave.from.value+ ' '+this.rangeToSave.to.operand+' '+this.rangeToSave.to.value;
 		this.rangeToSave.desc =descr;
 		
-		this.slotPanel.rangeToSave = this.rangeToSave;
 		this.slotPanel.addRange(this.rangeToSave, rec);
 		
 		this.close();
