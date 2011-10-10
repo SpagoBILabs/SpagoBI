@@ -167,11 +167,15 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		this.rangeToSave.from.value = this.rangeFromValue.getValue();
 		this.rangeToSave.to.operand = this.rangeTo.value;
 		this.rangeToSave.to.value = this.rangeToValue.getValue();
+		if(this.rangeToSave.from.operand == null || this.rangeToSave.from.operand === undefined
+				||this.rangeToSave.from.value == null || this.rangeToSave.from.value === undefined
+				||this.rangeToSave.to.operand == null || this.rangeToSave.to.operand === undefined
+				||this.rangeToSave.to.value == null || this.rangeToSave.to.value === undefined){
+			alert("Range not correctly set");
+		}else{
+			this.slotPanel.addRange(this.rangeToSave, rec);
+		}
 
-		var descr = this.rangeToSave.from.operand+' '+this.rangeToSave.from.value+ ' '+this.rangeToSave.to.operand+' '+this.rangeToSave.to.value;
-		this.rangeToSave.desc =descr;
-		
-		this.slotPanel.addRange(this.rangeToSave, rec);
 		
 		this.close();
 	}

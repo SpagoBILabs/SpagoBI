@@ -114,11 +114,14 @@ Ext.extend(Sbi.qbe.PunctualDefinitionWindow, Ext.Window, {
     }
 	, save: function(rec){
 		var recs = this.mainPanel.selModel.getSelections();
-		for(i=0; i<recs.length; i++){
-			var sel = recs[i];
-			this.valuesToSave.push(sel.data.value);
+		if(recs !== null && recs !== undefined && recs.length !== 0){			
+			for(i=0; i<recs.length; i++){
+				var sel = recs[i];
+				this.valuesToSave.push(sel.data.value);
+			}
+			this.slotPanel.addPunctualVals(this.valuesToSave, rec);
 		}
-		this.slotPanel.addPunctualVals(this.valuesToSave, rec);
+		
 		this.close();
 	}
 
