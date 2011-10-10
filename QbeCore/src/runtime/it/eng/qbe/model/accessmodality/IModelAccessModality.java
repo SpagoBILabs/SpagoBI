@@ -23,6 +23,7 @@ package it.eng.qbe.model.accessmodality;
 
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.query.Filter;
 
 import java.io.IOException;
 import java.util.List;
@@ -54,7 +55,7 @@ public interface IModelAccessModality {
 	 * 
 	 * @return the entity filter conditions
 	 */
-	List getEntityFilterConditions(String entityName);
+	List<Filter> getEntityFilterConditions(String entityName);
 	
 	/**
 	 * Gets the entity filter conditions.

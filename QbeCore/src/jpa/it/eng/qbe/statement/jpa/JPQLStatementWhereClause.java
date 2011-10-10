@@ -57,195 +57,57 @@ public class JPQLStatementWhereClause extends JPQLStatementFilteringClause {
 	protected String buildWhereClause(Query query, Map entityAliasesMaps) {
 		
 		StringBuffer buffer;
-		Map entityAliases;
-		IModelStructure dataMartModelStructure;
-		IModelAccessModality dataMartModelAccessModality;
-		
+
 		buffer = new StringBuffer();
 		
-		entityAliases = (Map)entityAliasesMaps.get(query.getId());
-		
-		if( query.getWhereClauseStructure() != null) {
-			buffer.append(" " + WHERE + " ");
-			buffer.append( buildUserProvidedWhereClause(query.getWhereClauseStructure(), query, entityAliasesMaps) );
-		}
-		
-
-		dataMartModelStructure = parentStatement.getDataSource().getModelStructure();
-		dataMartModelAccessModality = parentStatement.getDataSource().getModelAccessModality();
-		
-		Iterator it = entityAliases.keySet().iterator();
-		while(it.hasNext()){
-			String entityUniqueName = (String)it.next();
-			IModelEntity entity = dataMartModelStructure.getEntity( entityUniqueName );
-			
-			// check for condition filter on this entity
-			List filters = dataMartModelAccessModality.getEntityFilterConditions(entity.getType());
-			if(filters!=null){
-				for(int i = 0; i < filters.size(); i++) {
-					Filter filter = (Filter)filters.get(i);
-					Set fields = filter.getFields();
-					Properties props = new Properties();
-					Iterator fieldIterator = fields.iterator();
-					while(fieldIterator.hasNext()) {
-						String fieldName = (String)fieldIterator.next();
-						String entityAlias = (String)entityAliases.get(entityUniqueName);
-						props.put(fieldName, entityAlias + "." + fieldName);
-					}
-					String filterCondition = null;
-					try {
-						filterCondition = StringUtils.replaceParameters(filter.getFilterCondition(), "F", props);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					
-					if(filterCondition != null) {
-						if(buffer.toString().length() > 0) {
-							buffer.append(" and ");
-						} else {
-							buffer.append("where ");
-						}
-						buffer.append(filterCondition + " ");
-					}
-				}
-				
-				
-				
-				if(dataMartModelAccessModality.getRecursiveFiltering() == null 
-						|| dataMartModelAccessModality.getRecursiveFiltering().booleanValue() == true) {
-					//	check for condition filter on sub entities
-					List subEntities = entity.getAllSubEntities();
-					for(int i = 0; i < subEntities.size(); i++) {
-						IModelEntity subEntity = (IModelEntity)subEntities.get(i);
-						filters = dataMartModelAccessModality.getEntityFilterConditions(subEntity.getType());
-						for(int j = 0; j < filters.size(); j++) {
-							Filter filter = (Filter)filters.get(j);
-							Set fields = filter.getFields();
-							Properties props = new Properties();
-							Iterator fieldIterator = fields.iterator();
-							while(fieldIterator.hasNext()) {
-								String fieldName = (String)fieldIterator.next();
-								IModelField filed = null;
-								Iterator subEntityFields = subEntity.getAllFields().iterator();
-								while(subEntityFields.hasNext()) {
-									filed = (IModelField)subEntityFields.next();
-									if(((String)filed.getQueryName().getFirst()).endsWith("." + fieldName)) break;
-								}
-								String entityAlias = (String)entityAliases.get(entityUniqueName);
-								props.put(fieldName, entityAlias + "." + filed.getQueryName());
-							}
-							String filterCondition = null;
-							try {
-								filterCondition = StringUtils.replaceParameters(filter.getFilterCondition(), "F", props);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-							
-							if(filterCondition != null) {
-								if(buffer.toString().length() > 0) {
-									buffer.append(" and ");
-								} else {
-									buffer.append("where ");
-								}
-								buffer.append(filterCondition + " ");
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		// add joins required by views
-		try {
-		Map<String, Set<String>> viewToInnerEntitiesMap = new HashMap<String, Set<String>>();
-		List<ISelectField> selectFields =  query.getSelectFields(true);
-		for(ISelectField selectField : selectFields) {
-			if(selectField.isDataMartField()){
-				DataMartSelectField dataMartSelectField = (DataMartSelectField)selectField;
-				IModelField modelField = parentStatement.getDataSource().getModelStructure().getField(dataMartSelectField.getUniqueName());
-				List<ModelViewEntity> viewEntities = modelField.getParentViews();
-				if(viewEntities!=null){
-					for(ModelViewEntity viewEntity : viewEntities) {
-						if( !viewToInnerEntitiesMap.containsKey( viewEntity.getUniqueName() ) ) {
-							viewToInnerEntitiesMap.put(viewEntity.getUniqueName(), new HashSet<String>());
-						}
-						Set innerEntities = (Set)viewToInnerEntitiesMap.get( viewEntity.getUniqueName());
-						innerEntities.add(modelField.getParent().getUniqueName());
-					}
-				}				
-			}
-		}
-		
-		// per il momento metto le join anche se non ce n'è bisogno
-		for(String viewName : viewToInnerEntitiesMap.keySet()) {
-			ModelViewEntity view = (ModelViewEntity)parentStatement.getDataSource().getModelStructure().getEntity( viewName );
-			List<Join> joins = view.getJoins();
-			for(Join join : joins) {
-				IConditionalOperator conditionalOperator = null;
-				conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( CriteriaConstants.EQUALS_TO );
-				
-				String sourceEntityAlias = (String)entityAliases.get(join.getSourceEntity().getUniqueName());
-				if(sourceEntityAlias == null) {
-					sourceEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
-					entityAliases.put(join.getSourceEntity().getUniqueName(), sourceEntityAlias);
-				}
-				String destinationEntityAlias = (String)entityAliases.get(join.getDestinationEntity().getUniqueName());
-				if(destinationEntityAlias == null) {
-					destinationEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
-					entityAliases.put(join.getDestinationEntity().getUniqueName(), destinationEntityAlias);
-				}
-				
-				for(int i = 0; i < join.getSourceFileds().size(); i++) {
-					IModelField sourceField = join.getSourceFileds().get(i);
-					IModelField destinationField = join.getDestinationFileds().get(i);
-					String sourceFieldName = (String)sourceField.getQueryName().getFirst();
-					String destinationFieldName = (String)destinationField.getQueryName().getFirst();
-					
-					String leftHandValue = sourceEntityAlias + "." + sourceFieldName;
-					String rightHandValues = destinationEntityAlias + "." + destinationFieldName;
-					
-					String filterCondition = conditionalOperator.apply(leftHandValue, new String[]{rightHandValues});
-					
-					if(filterCondition != null) {
-						if(buffer.toString().length() > 0) {
-							buffer.append(" AND ");
-						} else {
-							buffer.append("WHERE ");
-						}
-						buffer.append(filterCondition + " ");
-					}
-				}
-			}
-		}
-		} catch(Throwable t) {
-			t.printStackTrace();
-		}
+		addUserProvidedConditions(buffer, query, entityAliasesMaps);
+		addProfilingConditions(buffer, query, entityAliasesMaps);
+		addJoinConditions(buffer, query, entityAliasesMaps);	
+	
 		return buffer.toString().trim();
 	}
 	
-	private String buildUserProvidedWhereClause(ExpressionNode filterExp, Query query, Map entityAliasesMaps) {
+	private StringBuffer addCondition(StringBuffer buffer, String condition) {
+		if(condition != null) {
+			if(buffer.toString().trim().length() > 0) {
+				buffer.append(" AND ");
+			} else {
+				buffer.append(" " + WHERE + " ");
+			}
+			buffer.append(condition + " ");
+		}
+		
+		return buffer;
+	}
+	
+	private StringBuffer addUserProvidedConditions(StringBuffer buffer, Query query, Map entityAliasesMaps) {
+		ExpressionNode filterExp = query.getWhereClauseStructure(); 
+		return (filterExp  == null)?  buffer: addUserProvidedConditions(buffer, filterExp, query, entityAliasesMaps);
+	}
+	
+	private StringBuffer addUserProvidedConditions(StringBuffer buffer, ExpressionNode filterExp, Query query, Map entityAliasesMaps) {
 		String str = "";
 		
 		String type = filterExp.getType();
 		if("NODE_OP".equalsIgnoreCase( type )) {
 			for(int i = 0; i < filterExp.getChildNodes().size(); i++) {
 				ExpressionNode child = (ExpressionNode)filterExp.getChildNodes().get(i);
-				String childStr = buildUserProvidedWhereClause(child, query, entityAliasesMaps);
+				StringBuffer childStr = addUserProvidedConditions(new StringBuffer(), child, query, entityAliasesMaps);
 				if("NODE_OP".equalsIgnoreCase( child.getType() )) {
-					childStr = "(" + childStr + ")";
+					childStr = new StringBuffer("(" + childStr.toString() + ")");
 				}
-				str += (i==0?"": " " + filterExp.getValue());
-				str += " " + childStr;
+				str += (i==0? "": " " + filterExp.getValue());
+				str += " " + childStr.toString();
 			}
 		} else {
 			WhereField whereField = query.getWhereFieldByName( filterExp.getValue() );
-			str += buildUserProvidedWhereField(whereField, query, entityAliasesMaps);
+			addUserProvidedCondition(buffer, whereField, query, entityAliasesMaps);
 		}
 		
-		return str;
+		return buffer;
 	}
 	
-	private String buildUserProvidedWhereField(WhereField whereField, Query query, Map entityAliasesMaps) {
+	private StringBuffer addUserProvidedCondition(StringBuffer buffer, WhereField whereField, Query query, Map entityAliasesMaps) {
 		
 		String whereClauseElement = "";
 		String[] rightOperandElements;
@@ -260,23 +122,21 @@ public class JPQLStatementWhereClause extends JPQLStatementFilteringClause {
 			
 			if(whereField.getLeftOperand().values[0].contains("expression")){
 				whereClauseElement = buildInLineCalculatedFieldClause(whereField.getOperator(), whereField.getLeftOperand(), whereField.isPromptable(), whereField.getRightOperand(), query, entityAliasesMaps, conditionalOperator);
-			}else{
+			} else {
 				
 				leftOperandElements = buildOperand(whereField.getLeftOperand(), query, entityAliasesMaps);
 				
-				if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getRightOperand().type) 
-						&& whereField.isPromptable()) {
+				if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getRightOperand().type) && whereField.isPromptable()) {
 					// get last value first (the last value edited by the user)
 					rightOperandElements = whereField.getRightOperand().lastValues;
 				} else {
-					
 					rightOperandElements = buildOperand(whereField.getRightOperand(), query, entityAliasesMaps);
 				}
 				
+				
 				if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getLeftOperand().type) )  {
 					leftOperandElements = getTypeBoundedStaticOperand(whereField.getRightOperand(), whereField.getOperator(), leftOperandElements);
-				}
-				
+				}				
 				if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getRightOperand().type) )  {
 					rightOperandElements = getTypeBoundedStaticOperand(whereField.getLeftOperand(), whereField.getOperator(), rightOperandElements);
 				}
@@ -289,8 +149,181 @@ public class JPQLStatementWhereClause extends JPQLStatementFilteringClause {
 			logger.debug("OUT");
 		}
 		
+		addCondition(buffer, whereClauseElement);
 		
-		return  whereClauseElement;
+		return  buffer;
+	}
+	
+	private StringBuffer addProfilingConditions(StringBuffer buffer, Query query, Map entityAliasesMaps) {
+		Map<String, String> entityAliases;
+		
+		entityAliases = (Map<String, String>)entityAliasesMaps.get(query.getId());
+				
+		for(String entityUniqueName : entityAliases.keySet()){
+			addProfilingConditionsOnEntity(buffer, entityUniqueName, query, entityAliasesMaps);
+			addProfilingConditionsOnSubEntity(buffer, entityUniqueName, query, entityAliasesMaps);			
+		}
+		
+		return buffer;
+	}
+	
+	private StringBuffer addProfilingConditionsOnEntity(StringBuffer buffer, String entityUniqueName, Query query, Map entityAliasesMaps) {
+		
+		IModelStructure dataMartModelStructure;
+		IModelAccessModality dataMartModelAccessModality;
+		Map<String, String> entityAliases;
+		
+		entityAliases = (Map<String, String>)entityAliasesMaps.get(query.getId());
+		dataMartModelStructure = parentStatement.getDataSource().getModelStructure();
+		dataMartModelAccessModality = parentStatement.getDataSource().getModelAccessModality();
+		
+		IModelEntity entity = dataMartModelStructure.getEntity( entityUniqueName );
+		List<Filter> filters = dataMartModelAccessModality.getEntityFilterConditions(entity.getType());
+		
+		if(filters != null)return buffer;
+		
+		for(Filter filter: filters) {
+			Set fields = filter.getFields();
+			Properties props = new Properties();
+			Iterator fieldIterator = fields.iterator();
+			while(fieldIterator.hasNext()) {
+				String fieldName = (String)fieldIterator.next();
+				String entityAlias = (String)entityAliases.get(entityUniqueName);
+				props.put(fieldName, entityAlias + "." + fieldName);
+			}
+			String filterCondition = null;
+			try {
+				filterCondition = StringUtils.replaceParameters(filter.getFilterCondition(), "F", props);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			addCondition(buffer, filterCondition);
+		}
+		
+		return buffer;
+	}
+	
+	private StringBuffer addProfilingConditionsOnSubEntity(StringBuffer buffer, String entityUniqueName, Query query, Map entityAliasesMaps) {
+		
+		IModelStructure dataMartModelStructure;
+		IModelAccessModality dataMartModelAccessModality;
+		Map<String, String> entityAliases;
+		
+		entityAliases = (Map<String, String>)entityAliasesMaps.get(query.getId());
+		
+		dataMartModelStructure = parentStatement.getDataSource().getModelStructure();
+		dataMartModelAccessModality = parentStatement.getDataSource().getModelAccessModality();
+		
+		IModelEntity entity = dataMartModelStructure.getEntity( entityUniqueName );
+		List filters = dataMartModelAccessModality.getEntityFilterConditions(entity.getType());
+		
+		if(dataMartModelAccessModality.getRecursiveFiltering() == null 
+				|| dataMartModelAccessModality.getRecursiveFiltering().booleanValue() == true) {
+			//	check for condition filter on sub entities
+			List subEntities = entity.getAllSubEntities();
+			for(int i = 0; i < subEntities.size(); i++) {
+				IModelEntity subEntity = (IModelEntity)subEntities.get(i);
+				filters = dataMartModelAccessModality.getEntityFilterConditions(subEntity.getType());
+				for(int j = 0; j < filters.size(); j++) {
+					Filter filter = (Filter)filters.get(j);
+					Set fields = filter.getFields();
+					Properties props = new Properties();
+					Iterator fieldIterator = fields.iterator();
+					while(fieldIterator.hasNext()) {
+						String fieldName = (String)fieldIterator.next();
+						IModelField filed = null;
+						Iterator subEntityFields = subEntity.getAllFields().iterator();
+						while(subEntityFields.hasNext()) {
+							filed = (IModelField)subEntityFields.next();
+							if(((String)filed.getQueryName().getFirst()).endsWith("." + fieldName)) break;
+						}
+						String entityAlias = (String)entityAliases.get(entityUniqueName);
+						props.put(fieldName, entityAlias + "." + filed.getQueryName());
+					}
+					
+					String filterCondition = null;
+					try {
+						filterCondition = StringUtils.replaceParameters(filter.getFilterCondition(), "F", props);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
+					addCondition(buffer, filterCondition);
+				}
+			}
+		}
+	
+	
+		return buffer;
+	}
+	
+	private StringBuffer addJoinConditions(StringBuffer buffer, Query query, Map entityAliasesMaps) {
+	
+		Map<String, String> entityAliases;
+		
+		entityAliases = (Map<String, String>)entityAliasesMaps.get(query.getId());
+		
+		try {
+			Map<String, Set<String>> viewToInnerEntitiesMap = new HashMap<String, Set<String>>();
+			List<ISelectField> selectFields =  query.getSelectFields(true);
+			for(ISelectField selectField : selectFields) {
+				if(selectField.isDataMartField()){
+					DataMartSelectField dataMartSelectField = (DataMartSelectField)selectField;
+					IModelField modelField = parentStatement.getDataSource().getModelStructure().getField(dataMartSelectField.getUniqueName());
+					List<ModelViewEntity> viewEntities = modelField.getParentViews();
+					if(viewEntities!=null){
+						for(ModelViewEntity viewEntity : viewEntities) {
+							if( !viewToInnerEntitiesMap.containsKey( viewEntity.getUniqueName() ) ) {
+								viewToInnerEntitiesMap.put(viewEntity.getUniqueName(), new HashSet<String>());
+							}
+							Set innerEntities = (Set)viewToInnerEntitiesMap.get( viewEntity.getUniqueName());
+							innerEntities.add(modelField.getParent().getUniqueName());
+						}
+					}				
+				}
+			}
+			
+			// per il momento metto le join anche se non ce n'è bisogno
+			for(String viewName : viewToInnerEntitiesMap.keySet()) {
+				ModelViewEntity view = (ModelViewEntity)parentStatement.getDataSource().getModelStructure().getEntity( viewName );
+				List<Join> joins = view.getJoins();
+				for(Join join : joins) {
+					IConditionalOperator conditionalOperator = null;
+					conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( CriteriaConstants.EQUALS_TO );
+					
+					String sourceEntityAlias = (String)entityAliases.get(join.getSourceEntity().getUniqueName());
+					if(sourceEntityAlias == null) {
+						sourceEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
+						entityAliases.put(join.getSourceEntity().getUniqueName(), sourceEntityAlias);
+					}
+					String destinationEntityAlias = (String)entityAliases.get(join.getDestinationEntity().getUniqueName());
+					if(destinationEntityAlias == null) {
+						destinationEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
+						entityAliases.put(join.getDestinationEntity().getUniqueName(), destinationEntityAlias);
+					}
+					
+					for(int i = 0; i < join.getSourceFileds().size(); i++) {
+						IModelField sourceField = join.getSourceFileds().get(i);
+						IModelField destinationField = join.getDestinationFileds().get(i);
+						String sourceFieldName = (String)sourceField.getQueryName().getFirst();
+						String destinationFieldName = (String)destinationField.getQueryName().getFirst();
+						
+						String leftHandValue = sourceEntityAlias + "." + sourceFieldName;
+						String rightHandValues = destinationEntityAlias + "." + destinationFieldName;
+						
+						String filterCondition = conditionalOperator.apply(leftHandValue, new String[]{rightHandValues});
+						
+						addCondition(buffer, filterCondition);  
+					}
+				}
+			}
+		} catch(Throwable t) {
+			t.printStackTrace();
+		}
+			
+		return buffer;
+		
 	}
 	
 	

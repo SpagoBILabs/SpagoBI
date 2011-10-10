@@ -54,9 +54,6 @@ public abstract class JPQLStatementFilteringClause  extends JPQLStatementClause 
 		logger.debug("Left operand (of a inline calculated field) for the filter clause of the query: "+leftOperand.values[0]);
 		logger.debug("Expression of a inline calculated field for the filter clause of the query: "+expr);
 
-		
-		//String expr = leftOperand.value.substring(15,leftOperand.value.indexOf("\",\"alias"));//.replace("\'", "");
-
 		expr = parseInLinecalculatedField(expr, query, entityAliasesMaps);
 				
 		logger.debug("IN");
