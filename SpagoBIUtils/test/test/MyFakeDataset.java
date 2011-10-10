@@ -2,6 +2,7 @@ package test;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.tools.dataset.bo.AbstractCustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class MyFakeDataset extends AbstractDataSet {
+public class MyFakeDataset extends AbstractCustomDataSet {
 
 	public void addBinding(String bindingName, Object bindingValue) {
 		// TODO Auto-generated method stub
@@ -84,151 +85,13 @@ public class MyFakeDataset extends AbstractDataSet {
 		return dsS;
 	}
 
-	public IMetaData getMetadata() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object getQuery() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getSignature() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Map getUserProfileAttributes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public IDataSetTableDescriptor persist(String tableName,
-			Connection connection) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setAbortOnOverflow(boolean abortOnOverflow) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void setMetadata(IMetaData metadata) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void setQuery(Object query) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void setUserProfileAttributes(Map attributes) {
-		// TODO Auto-generated method stub
-
-	}
 
 	public IDataStore test() {
 
 
 		return createStore();
 	}
-	public String toXml() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	public SourceBean toSourceBean() throws SourceBeanException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void sortRecords(Comparator recordComparator) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void sortRecords(int fieldIndex, Comparator filedComparator) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void sortRecords(int fieldIndex) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void prependRecord(IRecord record) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public Iterator iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public void insertRecord(int recordIndex, IRecord record) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public long getRecordsCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public IRecord getRecordByID(Object value) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public IRecord getRecordAt(int i) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public IMetaData getMetaData() {
-		// TODO Auto-generated method stub
-		return createStore().getMetaData();
-	}
-
-	public List getFieldValues(int fieldIndex) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Set getFieldDistinctValues(int fieldIndex) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List findRecords(IRecordMatcher matcher) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List findRecords(List fieldIndexes, List fieldValues) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List findRecords(int fieldIndex, Object fieldValue) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void appendRecord(IRecord r) {
-		// TODO Auto-generated method stub
-
-	}
 
 
 
@@ -310,10 +173,24 @@ public class MyFakeDataset extends AbstractDataSet {
 
 	}
 
+	@Override
+	public String getSignature() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IDataSetTableDescriptor persist(String tableName,
+			Connection connection) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public IDataStore decode(IDataStore datastore) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 
 
