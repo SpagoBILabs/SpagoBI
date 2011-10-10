@@ -1,4 +1,5 @@
- <!--
+
+<!--
 SpagoBI - The Business Intelligence Free Platform
 
 Copyright (C) 2005-2008 Engineering Ingegneria Informatica S.p.A.
@@ -19,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 -->
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
+<%@ include file="/WEB-INF/jsp/commons/importSbiJS.jspf"%>
 
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
@@ -32,13 +34,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@page import="it.eng.spagobi.engines.config.bo.Engine"%>
 
-<%@page import="java.net.URLEncoder"%><script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/miframe/miframe-min.js")%>'></script>
+<%@page import="java.net.URLEncoder"%><script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/miframe/miframe-min.js")%>'></script>
 
 <!-- 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/worksheet/WorksheetToolbar.js")%>"></script>
  -->
 
-<script>
+<script type="text/javascript">
 
 
 
@@ -80,8 +83,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	}
 	
 	
-
-	
 	
 	StringBuffer urlToCall= new StringBuffer(engineWs.getUrl());
 	EngineURL engineurl = new EngineURL(urlToCall.toString(), null);
@@ -113,49 +114,79 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			urlToCall.append("&"+name+"="+valueEnc);			
 		}
 	}
- String encodedUrl =	urlToCall.toString(); //URLEncoder.encode(urlToCall.toString(), "UTF-8");
+	
+	String encodedUrl =	urlToCall.toString(); //URLEncoder.encode(urlToCall.toString(), "UTF-8");
  
 %>
+
+
+var url = {
+    	host: '<%= request.getServerName()%>'
+    	, port: '<%= request.getServerPort()%>'
+    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
+    	   				  request.getContextPath().substring(1):
+    	   				  request.getContextPath()%>'
+    	    
+};
+
+var params = {
+    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+};
+
+Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+	baseUrl: url
+    , baseParams: params
+});
 
 Ext.onReady(function(){
 
 	var saveButton = new Ext.Toolbar.Button({
 				iconCls: 'icon-saveas' 
 				    , scope: this
-	    	    , handler : function() {window.location.href = '<%= backUrl %>';}	
+	    	    , handler : function() {
+	    	    	var thePanel = this.templateEditIFrame.getFrame().getWindow().workSheetPanel;
+	    	    	var template = thePanel.validate();	
+	    	    	if(template == null){
+	    	    		return;
+	    	    	}
+	    	    	var templateJSON = Ext.util.JSON.decode(template);
+	    			var wkDefinition = templateJSON.OBJECT_WK_DEFINITION;
+	    			var documentWindowsParams = {
+	    					//'OBJECT_ID': this.executionInstance.OBJECT_ID,
+	    					'OBJECT_TYPE': 'WORKSHEET',
+	    					'OBJECT_WK_DEFINITION': wkDefinition
+	    					//,'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
+	    				};
+	    			//if(this.executionInstance.document.typeCode == 'DATAMART'){
+	    			//	documentWindowsParams = templateJSON.OBJECT_QUERY;
+	    			//}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
+	    			//	documentWindowsParams=templateJSON.OBJECT_FORM_VALUES;
+	    			//	documentWindowsParams = Ext.apply(this.executionInstance, params);
+	    			//}
+
+	    			
+	    			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow(documentWindowsParams);
+	    			this.win_saveDoc.show();
+	    	    
+	    	    }	
 	});
 
     var backButton = new Ext.Toolbar.Button({
     	iconCls: 'icon-back'
 		, scope: this
-		, handler : function() {window.location.href = '<%= backUrl %>';}
+		, handler : function() {this.fireEvent('backToAdmin');}
     });
 
-var items;
-if (Sbi.user.ismodeweb) {
+	var items;
+	if (Sbi.user.ismodeweb) {
 		items = ['->', saveButton, backButton];
-	} else {
-		//items = ['->', backButton];
-	}
+	} 
 
-var toolbar = new Ext.Toolbar({
-	  items: items
-});
+	var toolbar = new Ext.Toolbar({
+		  items: items
+	});
 
-
-//var toolbar = new Sbi.execution.worksheet.WorksheetToolbar();
-
-
-//var templateEditIFrame = new Ext.ux.ManagedIframePanel({
-//	title: 'ciao'
-//	, defaultSrc: 'http://www.google.it'
-//	, autoLoad: true
-//    , loadMask: true
-//    , disableMessaging: true
- //   , tbar: toolbar
-//});
-
-	var templateEditIFrame = new Ext.ux.ManagedIframePanel({
+	this.templateEditIFrame = new Ext.ux.ManagedIframePanel({
 		title: '<%= StringEscapeUtils.escapeJavaScript(title) %>'
 		, defaultSrc: '<%= StringEscapeUtils.escapeJavaScript(GeneralUtilities.getUrl(encodedUrl, engineurl.getParameters())) %>'
 		, autoLoad: true
@@ -180,7 +211,7 @@ var toolbar = new Ext.Toolbar({
 	}
 		
 });
- 
+
  </script>
-    <!-- ERROR TAG --> 
-	<spagobi:error/>
+<!-- ERROR TAG -->
+<spagobi:error />
