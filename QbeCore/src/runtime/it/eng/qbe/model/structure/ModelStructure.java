@@ -36,6 +36,7 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	protected long nextId;	
 	
 	protected Map<String, Map<String,IModelEntity>> rootEntities;	// modelName->(entityUniqueName->entity)
+	
 	protected Map<String, IModelEntity> entities; //entityUniqueName->entity
 	protected Map<String, IModelField> fields; // uniqueName -> field	
 	protected Map<String, List<ModelCalculatedField>> calculatedFields; // entity uniqueName -> fields' list
@@ -279,6 +280,8 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 			calculatedFiledsOnTargetEntity.remove(toRemove.get(i));
 		}
 		calculatedFiledsOnTargetEntity.add(calculatedFiled);
+		
+		String n = calculatedFiled.getUniqueName();
 	}
 	
 	/*
