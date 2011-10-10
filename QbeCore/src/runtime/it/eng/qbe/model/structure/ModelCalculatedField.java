@@ -47,7 +47,7 @@ public class ModelCalculatedField extends ModelField {
 		setName(name);
 		setType(type);
 		setExpression(expression);
-		inLine = inLine;
+		this.inLine = inLine;
 		slots = new ArrayList<Slot>();
 	}
 	
