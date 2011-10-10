@@ -186,6 +186,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	
 	applyFilters: function(filtersValue){
 		this.fireEvent('contentloading');
+		this.contentConfig.hiddenContent=false;
 		switch (this.contentConfig.designer) {
 	        case 'Pivot Table':
 	        	this.content.load(this.contentConfig.crosstabDefinition, filtersValue);
@@ -201,14 +202,14 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	        	this.content.loadChartData({'rows':[this.contentConfig.category],'measures':this.contentConfig.series},filtersValue);
 	        	break;
 	        case 'Line Chart':
-	        	this.content.loadChartData({'rows':[this.contentConfig.category],'measures':this.contentConfig.series},filtersValue);
+	    		this.content.loadChartData({'rows':[this.contentConfig.category],'measures':this.contentConfig.series},filtersValue);
 	        	break;
 	        case 'Pie Chart':
 	        	this.content.loadChartData({'rows':[this.contentConfig.category],'measures':this.contentConfig.series},filtersValue);
 	        	break;
 		}
 
-		this.contentConfig.hiddenContent=false;
+		
 		this.show();
 	}
 
