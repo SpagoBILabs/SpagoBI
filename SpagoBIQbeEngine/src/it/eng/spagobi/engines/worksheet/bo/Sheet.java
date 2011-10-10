@@ -37,7 +37,7 @@ public class Sheet {
 	private String name;
 	private String layout;
 	private JSONObject header;
-	private List<Attribute> filters;
+	private List<Filter> filters;
 	private FiltersPosition filtersPosition;
 	private SheetContent content;
 	private List<Attribute> filtersOnDomainValues;
@@ -53,7 +53,7 @@ public class Sheet {
 	 * @param footer
 	 */
 	public Sheet(String name, String layout, JSONObject header,
-			List<Attribute> filters, SheetContent content, List<Attribute> filtersOnDomainValues, JSONObject footer) {
+			List<Filter> filters, SheetContent content, List<Attribute> filtersOnDomainValues, JSONObject footer) {
 		super();
 		this.name = name;
 		this.header = header;
@@ -65,7 +65,7 @@ public class Sheet {
 		this.filtersPosition = FiltersPosition.TOP;
 	}
 	public Sheet(String name, String layout, JSONObject header,
-			List<Attribute> filters, FiltersPosition filtersPosition, SheetContent content, 
+			List<Filter> filters, FiltersPosition filtersPosition, SheetContent content, 
 			List<Attribute> filtersOnDomainValues, JSONObject footer) {
 		this(name, layout, header, filters, content, filtersOnDomainValues, footer);
 		this.filtersPosition = filtersPosition;
@@ -76,10 +76,10 @@ public class Sheet {
 	public void setHeader(JSONObject header) {
 		this.header = header;
 	}
-	public List<Attribute> getFilters() {
+	public List<Filter> getFilters() {
 		return filters;
 	}
-	public void setFilters(List<Attribute> filters) {
+	public void setFilters(List<Filter> filters) {
 		this.filters = filters;
 	}
 	public SheetContent getContent() {
@@ -124,7 +124,7 @@ public class Sheet {
 	}
 	public List<Field> getAllFields() {
 		List<Field> toReturn = new ArrayList<Field>();
-		List<Attribute> filters = this.getFilters();
+		List<Filter> filters = this.getFilters();
 		toReturn.addAll(filters);
 		SheetContent content = this.getContent();
 		List<Field> fields = content.getAllFields();

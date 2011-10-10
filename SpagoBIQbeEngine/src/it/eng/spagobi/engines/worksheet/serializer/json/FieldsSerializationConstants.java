@@ -37,5 +37,9 @@ public class FieldsSerializationConstants {
 	public static final String SHOWCOMMA = "showcomma";
 	public static final String PRECISION = "precision";
 	public static final String SUFFIX = "suffix";
+	public static final String MANDATORY = "mandatory";
+	public static final String SELECTION = "selection";
+	public static final String SELECTION_MULTIVALUE = "multivalue";
+	public static final String SELECTION_SINGLEVALUE = "singlevalue";
 	
 }

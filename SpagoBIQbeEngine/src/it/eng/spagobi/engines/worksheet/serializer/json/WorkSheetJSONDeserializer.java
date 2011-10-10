@@ -25,6 +25,7 @@ import it.eng.qbe.serializer.IDeserializer;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.worksheet.bo.Filter;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.engines.worksheet.bo.Serie;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
@@ -134,7 +135,7 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 		JSONObject footer = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FOOTER);
 		
 		JSONObject filtersJSON = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FILTERS);
-		List<Attribute> filters = deserializeSheetFilters(filtersJSON);
+		List<Filter> filters = deserializeSheetFilters(filtersJSON);
 		FiltersPosition position = FiltersPosition.TOP;
 		if (filtersJSON != null) {
 			position = FiltersPosition.valueOf(filtersJSON.getString(WorkSheetSerializationCostants.POSITION).toUpperCase());
@@ -215,13 +216,14 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 		return toReturn;
 	}
 
-	private List<Attribute> deserializeSheetFilters(JSONObject filtersJSON) throws Exception {
-		List<Attribute> toReturn = new ArrayList<Attribute>();
+	private List<Filter> deserializeSheetFilters(JSONObject filtersJSON) throws Exception {
+		List<Filter> toReturn = new ArrayList<Filter>();
+		FilterJSONDeserializer deserialier = new FilterJSONDeserializer();
 		if (filtersJSON != null) {
 			JSONArray filters = filtersJSON.optJSONArray(QuerySerializationConstants.FILTERS);
 			if (filters != null && filters.length() > 0) {
 				for (int i = 0; i < filters.length(); i++) {
-					Attribute attribute = deserializeAttribute(filters.getJSONObject(i));
+					Filter attribute = deserialier.deserialize(filters.getJSONObject(i));
 					toReturn.add(attribute);
 				}
 			}

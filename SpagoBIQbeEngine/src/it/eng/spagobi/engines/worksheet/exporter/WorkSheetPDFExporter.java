@@ -49,12 +49,14 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.html.simpleparser.HTMLWorker;
 import com.lowagie.text.html.simpleparser.StyleSheet;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfWriter;
+
 
 /**
  * 
@@ -84,6 +86,7 @@ public class WorkSheetPDFExporter {
 	public static final String CHART = "CHART";
 	public static final String CROSSTAB = "CROSSTAB";
 	public static final String TABLE = "TABLE";
+	public static final String EMPTY = "EMPTY";
 	
 	public static final String POSITION = "position";
 	public static final String TITLE = "title";
@@ -139,6 +142,10 @@ public class WorkSheetPDFExporter {
 				addTable(content);
 			} else if (WorkSheetPDFExporter.CROSSTAB.equalsIgnoreCase(sheetType)) {
 				addCrosstab(content);
+			} //if the content is hidden
+				else if (WorkSheetPDFExporter.EMPTY.equalsIgnoreCase(sheetType)) {
+				Phrase emptyString = new Phrase("     ");
+				pdfDocument.add(emptyString);
 			} else {
 				logger.error("Sheet type " + sheetType + " not recognized");
 			}

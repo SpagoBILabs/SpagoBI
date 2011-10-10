@@ -26,6 +26,7 @@ import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Field;
+import it.eng.spagobi.engines.worksheet.bo.Filter;
 import it.eng.spagobi.engines.worksheet.bo.Serie;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.Sheet.FiltersPosition;
@@ -78,7 +79,7 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			JSONArray sheets = serializeSheets(workSheetDefinition.getSheets());
 			toReturn.put(WorkSheetSerializationCostants.SHEETS, sheets);
 			
-			JSONArray globalFilters = serializeFilters(workSheetDefinition.getGlobalFilters());
+			JSONArray globalFilters = serializeGlobalFilters(workSheetDefinition.getGlobalFilters());
 			toReturn.put(WorkSheetSerializationCostants.GLOBAL_FILTERS, globalFilters);
 			
 		} catch (Throwable t) {
@@ -90,15 +91,8 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		return toReturn;
 	}
 	
-	private JSONObject serializeSheetFilters(List<Attribute> globalFilters, FiltersPosition filtersPosition) throws SerializationException, JSONException {
-		JSONArray globalFiltersJSON = serializeFilters(globalFilters);
-		JSONObject toReturn = new JSONObject();
-		toReturn.put(WorkSheetSerializationCostants.FILTERS, globalFiltersJSON);
-		toReturn.put(WorkSheetSerializationCostants.POSITION, filtersPosition.name().toLowerCase());
-		return toReturn;
-	}
 	
-	private JSONArray serializeFilters(List<Attribute> globalFilters) throws SerializationException, JSONException {
+	private JSONArray serializeGlobalFilters(List<Attribute> globalFilters) throws SerializationException, JSONException {
 		JSONArray globalFiltersJSON = new JSONArray();
 		Iterator<Attribute> it = globalFilters.iterator();
 		while (it.hasNext()) {
@@ -107,6 +101,32 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		}
 		return globalFiltersJSON;
 	}
+	
+	
+	private JSONObject serializeSheetFilters(List<Filter> filters, FiltersPosition filtersPosition) throws SerializationException, JSONException {
+		JSONArray globalFiltersJSON = serializeSheetFilters(filters);
+		JSONObject toReturn = new JSONObject();
+		toReturn.put(WorkSheetSerializationCostants.FILTERS, globalFiltersJSON);
+		toReturn.put(WorkSheetSerializationCostants.POSITION, filtersPosition.name().toLowerCase());
+		return toReturn;
+	}
+	
+	private JSONArray serializeSheetFilters(List<Filter> filters) throws SerializationException, JSONException {
+		JSONArray filtersJSON = new JSONArray();
+		Attribute a;
+		JSONObject js;
+		Iterator<Filter> it = filters.iterator();
+		FilterJSONSerializer serializer = new FilterJSONSerializer();
+		
+		while (it.hasNext()) {
+			a = it.next();
+			js = (JSONObject) serializer.serialize(a);
+			filtersJSON.put(js);
+		}
+		
+		return filtersJSON;
+	}
+	
 
 	private JSONArray serializeSheets(List<Sheet> sheets) throws SerializationException {
 		JSONArray jsonSheets = new JSONArray();
@@ -131,7 +151,7 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			jsonSheet.put(WorkSheetSerializationCostants.HEADER, sheet.getHeader());
 			jsonSheet.put(WorkSheetSerializationCostants.FILTERS, serializeSheetFilters(sheet.getFilters(), sheet.getFiltersPosition()));
 			jsonSheet.put(WorkSheetSerializationCostants.CONTENT, serializeContent(sheet.getContent()));
-			jsonSheet.put(WorkSheetSerializationCostants.FILTERS_ON_DOMAIN_VALUES, serializeFilters(sheet.getFiltersOnDomainValues()));
+			jsonSheet.put(WorkSheetSerializationCostants.FILTERS_ON_DOMAIN_VALUES, serializeGlobalFilters(sheet.getFiltersOnDomainValues()));
 			jsonSheet.put(WorkSheetSerializationCostants.FOOTER, sheet.getFooter());
 
 
