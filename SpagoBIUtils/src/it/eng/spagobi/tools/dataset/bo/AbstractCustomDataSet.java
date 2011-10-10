@@ -29,9 +29,9 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.functionalities.temporarytable.DatasetTempTable;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 public abstract class AbstractCustomDataSet extends AbstractDataSet implements IDataSet {
 
 	private IMetaData metadata;	
+	private Map userAttributes;
 
 	private static transient Logger logger = Logger.getLogger(AbstractCustomDataSet.class);
 
@@ -47,9 +48,10 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 		super();
 		addBehaviour( new FilteringBehaviour(this) );
 		addBehaviour( new SelectableFieldsBehaviour(this) );
+		userAttributes = new HashMap();
 	}
 
-	public IMetaData getMetadata(){
+	public IMetaData getMetadata() {
 		return this.metadata;
 	}
 
@@ -78,41 +80,33 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 	public abstract Map<String, List<String>> getDomainDescriptions(Map<String, List<String>> codes); 
 	public abstract IDataSetTableDescriptor persist(String tableName, Connection connection);
 
-
-
 	public Map getUserProfileAttributes() {
-		logger.error("This method is not implemented. It should not be invoked");
-		return null;
+		return userAttributes;
 	}
 
 	public void setUserProfileAttributes(Map attributes) {
-		logger.error("This method is not implemented. It should not be invoked");
+		this.userAttributes = attributes;
 
 	}
 
 	public IDataStore getDataStore() {
-		logger.error("This method is not implemented. It should not be invoked");
-		throw new SpagoBIRuntimeException("This method is not implemented. It should not be invoked");
+		throw new RuntimeException("This method is not implemented. It should not be invoked");
 	}
 
 	public Object getQuery() {
-		logger.error("This method is not implemented. It should not be invoked");
-		return null;
+		throw new RuntimeException("This method is not implemented. It should not be invoked");
 	}
 
 	public void setQuery(Object query) {
-		logger.error("This method is not implemented. It should not be invoked");
-
+		throw new RuntimeException("This method is not implemented. It should not be invoked");
 	}
 
 	public void setAbortOnOverflow(boolean abortOnOverflow) {
-		logger.error("This method is not implemented. It should not be invoked");
-
+		throw new RuntimeException("This method is not implemented. It should not be invoked");
 	}
 
 	public void addBinding(String bindingName, Object bindingValue) {
-		logger.error("This method is not implemented. It should not be invoked");
-
+		throw new RuntimeException("This method is not implemented. It should not be invoked");
 	}
 
 
