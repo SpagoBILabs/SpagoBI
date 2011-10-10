@@ -21,11 +21,23 @@ import org.apache.log4j.Logger;
  *
  */
 public class JPQLStatementClause {
+	
 	JPQLStatement parentStatement;
 	
 	public static transient Logger logger = Logger.getLogger(JPQLStatementSelectClause.class);
 	
-	public String parseInLinecalculatedField(String expr, Query query, Map entityAliasesMaps){
+	public String parseInLinecalculatedField(String expression, Query query, Map entityAliasesMaps){
+		String newExpression;
+		
+		newExpression = expression;
+		newExpression = replaceFields(newExpression, query, entityAliasesMaps);
+		newExpression = replaceInLineFunctions(newExpression, query, entityAliasesMaps);
+		newExpression = replaceSlotDefinitions(newExpression, query, entityAliasesMaps);
+		
+		return newExpression;
+	}
+	
+	private String replaceFields(String expression, Query query, Map entityAliasesMaps) {
 		List allSelectFields;
 		IModelEntity rootEntity;
 		IModelField datamartField;
@@ -35,7 +47,7 @@ public class JPQLStatementClause {
 		List<String> aliasEntityMapping = new  ArrayList<String>();
 		List<String> aliases = new  ArrayList<String>();
 		
-		StringTokenizer stk = new StringTokenizer(expr, "+-|*/(),");
+		StringTokenizer stk = new StringTokenizer(expression, "+-|*/(),");
 		while(stk.hasMoreTokens()){
 			String alias = stk.nextToken().trim();
 			String uniqueName;
@@ -62,10 +74,10 @@ public class JPQLStatementClause {
 			}
 		}
 		
-		String freshExpr = expr;
+		String freshExpr = expression;
 		int ind =0;
 		int pos =0;
-		stk = new StringTokenizer(expr.replace("\'", ""), "+-|*/(),");
+		stk = new StringTokenizer(expression.replace("\'", ""), "+-|*/(),");
 		while(stk.hasMoreTokens()){
 			String alias = stk.nextToken().trim();
 			pos = freshExpr.indexOf(alias, pos);
@@ -80,4 +92,21 @@ public class JPQLStatementClause {
 		}
 		return freshExpr;
 	}
+	
+	private String replaceInLineFunctions(String expression, Query query, Map entityAliasesMaps) {
+		String newExpression;
+		
+		newExpression = expression;
+		
+		return newExpression;
+	}
+	
+	private String replaceSlotDefinitions(String expression, Query query, Map entityAliasesMaps) {
+		String newExpression;
+		
+		newExpression = expression;
+		
+		return newExpression;
+	}
+	
 }
