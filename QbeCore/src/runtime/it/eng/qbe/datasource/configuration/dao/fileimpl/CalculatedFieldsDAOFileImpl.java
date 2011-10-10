@@ -70,6 +70,9 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	}
 	
 	
+	// =============================================================================
+	// LOAD
+	// =============================================================================
 	
 	public Map<String, List<ModelCalculatedField>> loadCalculatedFields() {
 		
@@ -107,6 +110,8 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 				document = guardedRead(calculatedFieldsFile);
 				Assert.assertNotNull(document, "Document cannot be null");
 					
+				
+				
 				calculatedFieldNodes = document.selectNodes("//" + ROOT_TAG + "/" + FIELD_TAG + "");
 				logger.debug("Found [" + calculatedFieldNodes.size() + "] calculated field/s");
 				
@@ -117,22 +122,12 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 					name = calculatedFieldNode.valueOf("@" + FIELD_TAG_NAME_ATTR);
 					type = calculatedFieldNode.valueOf("@" + FIELD_TAG_TYPE_ATTR);
 					inlineCalculatedField = new Boolean(calculatedFieldNode.valueOf("@" + FIELD_TAG_IN_LINE_ATTR));					
-					expression = calculatedFieldNode.getStringValue();
+					expression = loadExpression(calculatedFieldNode);
 					calculatedField = new ModelCalculatedField(name, type, expression, inlineCalculatedField.booleanValue());
 					
 					// parse slots
-					List<Node> slotBlocks = calculatedFieldNode.selectNodes("SLOTS");
-					if(slotBlocks != null && slotBlocks.size() > 0) {
-						Node slotBlock = slotBlocks.get(0); // consider only the first block
-						String defaultSoltValue = slotBlock.valueOf("@defaultSoltValue");	
-						List<Node> slotNodes = slotBlocks.get(0).selectNodes("SLOT");
-						List<String> slots = new ArrayList();
-						for(int i = 0; i < slotNodes.size(); i++) {
-							Node slotNode = slotNodes.get(i);
-							String slotValue = slotNode.valueOf("@value");	
-							slots.add(slotValue);
-						}
-					}
+					List<ModelCalculatedField.Slot> slots = loadSlots(calculatedFieldNode);
+					calculatedField.addSlots(slots);			
 					
 					
 					if(!calculatedFiledsMap.containsKey(entity)) {
@@ -163,8 +158,109 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		return calculatedFiledsMap;
 	}
 	
+	private String loadExpression(Node calculatedFieldNode) {
+		String expression;
 		
+		expression = null;
+		
+		Node expressionNode = calculatedFieldNode.selectSingleNode("EXPRESSION");
+		if(expressionNode != null) {
+			expression = expressionNode.getStringValue();
+		} else { // for back compatibility
+			expression = calculatedFieldNode.getStringValue();
+		}
+		
+		return expression;
+	}	
+	
+	private List<ModelCalculatedField.Slot> loadSlots(Node calculatedFieldNode) {
+		
+		List<ModelCalculatedField.Slot> slots = new ArrayList<ModelCalculatedField.Slot>();
+		
+		Node slotBlock = calculatedFieldNode.selectSingleNode("SLOTS");
+		if(slotBlock != null) {
+			String defaultSoltValue = slotBlock.valueOf("@defaultSoltValue");	
+			List<Node> slotNodes = slotBlock.selectNodes("SLOT");
+			
+			for(Node slotNode : slotNodes) {
+				ModelCalculatedField.Slot slot = loadSlot(slotNode);
+				slots.add(slot);
+			}
+		}
+		
+		return slots;
+	}
+	
+	private ModelCalculatedField.Slot loadSlot(Node slotNode) {
+		ModelCalculatedField.Slot slot;
+		
+		String slotValue = slotNode.valueOf("@value");	
+		slot = new ModelCalculatedField.Slot("slotValue");
+		
+		List<Node> mappedValues = slotNode.selectNodes("VALUESET");
+		for(Node mappedValuesNode:  mappedValues) {
+			ModelCalculatedField.Slot.MappedValuesDescriptor descriptor = loadDescriptor(mappedValuesNode);
+			slot.addMappedValuesDescriptors(descriptor);
+		}
+		
+		return slot;
+	}
+	
+	private ModelCalculatedField.Slot.MappedValuesDescriptor loadDescriptor(Node mappedValuesNode) {
+		ModelCalculatedField.Slot.MappedValuesDescriptor descriptor = null;
+		
+		String descriptorType = mappedValuesNode.valueOf("@type");	
+		if(descriptorType.equalsIgnoreCase("range")) {
+			descriptor = loadRangeDescriptor(mappedValuesNode);			
+		} else if(descriptorType.equalsIgnoreCase("punctual")) {
+			descriptor = loadPunctualDescriptor(mappedValuesNode);
+		}
+		
+		return descriptor;
+	}
+	
+	
+	private ModelCalculatedField.Slot.MappedValuesPunctualDescriptor loadPunctualDescriptor(Node mappedValuesNode) { 
+		ModelCalculatedField.Slot.MappedValuesPunctualDescriptor punctualDescriptor;
+		
+		punctualDescriptor = new ModelCalculatedField.Slot.MappedValuesPunctualDescriptor();
+		List<Node> punctualValueNodes = mappedValuesNode.selectNodes("VALUE");
+		for(Node punctualValueNode : punctualValueNodes) {
+			String punctualValue = punctualValueNode.valueOf("@value");
+			punctualDescriptor.addValue( punctualValue );
+		}
+		
+		return punctualDescriptor;
+	}
+	
+	private ModelCalculatedField.Slot.MappedValuesRangeDescriptor loadRangeDescriptor(Node mappedValuesNode) { 
+		ModelCalculatedField.Slot.MappedValuesRangeDescriptor rangeDescriptor = null;
+		
+		Node fomrNode = mappedValuesNode.selectSingleNode("FROM");
+		String fromValue = fomrNode.valueOf("@value");
+		Node toNode = mappedValuesNode.selectSingleNode("TO");
+		String toValue = toNode.valueOf("@value");
+		rangeDescriptor = new ModelCalculatedField.Slot.MappedValuesRangeDescriptor(fromValue, toValue);
+		String includeValue = null;
+		includeValue = fomrNode.valueOf("@include");
+		if(includeValue != null && (includeValue.equalsIgnoreCase("TRUE") || includeValue.equalsIgnoreCase("FALSE"))) {
+			rangeDescriptor.setIncludeMinValue(Boolean.parseBoolean(includeValue));
+		}
+		includeValue = toNode.valueOf("@include");
+		if(includeValue != null && (includeValue.equalsIgnoreCase("TRUE") || includeValue.equalsIgnoreCase("FALSE"))) {
+			rangeDescriptor.setIncludeMaxValue(Boolean.parseBoolean(includeValue));
+		}
+		
+		return rangeDescriptor;
+	}
+	
+	
+	
 
+	// =============================================================================
+	// SAVE
+	// =============================================================================
+	
 	public void saveCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields) {
 		
 		File calculatedFieldsFile;
