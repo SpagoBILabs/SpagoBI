@@ -199,8 +199,8 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 			editable: true			
 		    , forceSelection: false
 		    , store: store
-		    , mode: (openFilter.values != '[]') ? 'local' : 'remote' // in case the filters contains some values, they are loaded locally
-		    , displayField: 'column_1'
+		    , mode: 'remote'
+		    , displayField: 'column_2'
 		    , valueField: 'column_1'
 		    , emptyText: ''
 		    , typeAhead: false
@@ -219,18 +219,18 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 
 	, createStore: function(openFilter) {
 		var store = null;
-		if (openFilter.values != '[]') {
-			// case of fixed values
-			var data = [];
-			var temp = Ext.decode(openFilter.values);
-			for (var i = 0; i < temp.length; i++) {
-				data[i] = [temp[i]];
-			}
-			store = new Ext.data.ArrayStore({
-			    fields : ['column_1']
-				, data : data
-			});
-		} else {
+//		if (openFilter.values != '[]') {
+//			// case of fixed values
+//			var data = [];
+//			var temp = Ext.decode(openFilter.values);
+//			for (var i = 0; i < temp.length; i++) {
+//				data[i] = [temp[i]];
+//			}
+//			store = new Ext.data.ArrayStore({
+//			    fields : ['column_1']
+//				, data : data
+//			});
+//		} else {
 			// we must load the values from server
 			store = new Ext.data.JsonStore({
 				url: this.services['getFilterValuesService']
@@ -243,7 +243,7 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 			store.on('loadexception', function(store, options, response, e) {
 				Sbi.exception.ExceptionHandler.handleFailure(response, options);
 			});
-		}
+//		}
 		
 		return store;
 		
