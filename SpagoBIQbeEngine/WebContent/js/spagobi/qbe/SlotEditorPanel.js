@@ -47,6 +47,7 @@ Sbi.qbe.SlotEditorPanel = function(config) {
 	
 	// constructor
 	Sbi.qbe.SlotEditorPanel.superclass.constructor.call(this, c);
+
 };
 
 Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
@@ -74,38 +75,64 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	}
 
 	, initGrid: function(c) {
-		
-		//var emptyData = [['eta 1',' 0 a 10']];
+
 	    // create the data store
-	    var store = new Ext.data.ArrayStore({
-	        fields: ['name', 'values'],
-	        data  : [['eta 1',['[ 0 , 10 ]']]]
+		//data: [{ name: "slot 1", valueset: [{type: "range", from: 0, includeFrom: true, to: 100, includeTo: false}, { type: "punctual", values: [100, 101, 201]}, { type: "default", value: 0}]}]
+
+	    var store = new Ext.data.JsonStore({
+	        //url: 'get-images.php',
+	        data: {slots:[{ name: "slot 1", valueset: [{type: "range", from: 0, includeFrom: true, to: 100, includeTo: false}, { type: "punctual", values: [100, 101, 201]}, { type: "default", value: 0}]}]},
+	        root: 'slots',
+	        fields: ['name', 'valueset']
 	    });
-//[{name:'slot name 1', values:[{from: {operand:'>', value:'0'}, to:{operand:'<', value:'10'}, descr: 'da 0 a 10'}]]
 	    // manually load local data
-	    //store.loadData(emptyData);
 	    
         var template = new Ext.XTemplate(
-        		'<tpl if="values !== null">'+
-        		'<tpl for="values">'+
-        		'<div width="150px" style="border: 1px solid silver;border-radius:5px; padding: 2px; float: left;" id="tpl-slot-val-{[xindex]}">' + 
-                '<span style="vertical-align: top;">{[values]}</span>' + 
-                //'<span align="right"><img onClick="this.eraseRange(\"{[xindex]}\",\"{.}\");" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +
-                '<span align="right"><img onClick="test({[xindex]})" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +                
-                '</span>'+
-                '</div>'+
-                '</tpl></tpl>',
-                { eraseRange : function (i) {
-                	alert('"'+i+'"');
-                }
-                }
+        		'<tpl if="valueset !== null">'+
+        		'<tpl for="valueset">'+
+        		'<tpl if="type == \'range\'">'+
+	        		'<div width="150px" style="border: 1px solid red;border-radius:5px; padding: 2px; float: left; margin-right: 1px;" id="tpl-slot-val-{[xindex]}">' + 
+	        		'<span style="vertical-align: top;">'+
+	        		'<tpl if="includeFrom == true">'+
+	        			'[' + 
+	        		'</tpl>'+
+	        		'<tpl if="includeFrom == false">'+
+	        			']' + 
+	        		'</tpl>'+
+	        		'{from},{to}' + 
+	        		'<tpl if="includeTo == true">'+
+	        			']' + 
+	        		'</tpl>'+
+	        		'<tpl if="includeTo == false">'+
+	        			'[' + 
+	        		'</tpl>'+
+	        		'</span>' + 
+	                '<span align="right"><img onClick="test({[xindex]})" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +                
+	                '</span>'+
+	                '</div>'+
+                '</tpl>'+
+                '<tpl if="type == \'punctual\'">'+
+	        		'<div width="150px" style="border: 1px solid green;border-radius:5px; padding: 2px; float: left; margin-right: 1px;" id="tpl-slot-val-{[xindex]}">' + 
+	                '<span style="vertical-align: top;">{values}</span>' + 
+	                '<span align="right"><img onClick="test({[xindex]})" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +                
+	                '</span>'+
+	                '</div>'+
+                '</tpl>'+
+                '<tpl if="type == \'default\'">'+
+	        		'<div width="150px" style="border: 1px solid blue;border-radius:5px; padding: 2px; float: left; margin-right: 1px;" id="tpl-slot-val-{[xindex]}">' + 
+	                '<span style="vertical-align: top;">{value}</span>' + 
+	                '<span align="right"><img onClick="test({[xindex]})" style="vertical-align: top;" src="../img/actions/close_icon-15.png"/>' +                
+	                '</span>'+
+	                '</div>'+
+	            '</tpl>'+
+                '</tpl></tpl>'
              );  
              
         template.compile();
              
         var valuesColumn = new Ext.grid.TemplateColumn(	{
             header   : 'Values', 
-            dataIndex: 'values',
+            dataIndex: 'valueset',
             xtype: 'templatecolumn',
             tpl : template
         });
@@ -193,7 +220,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		var Slot = this.gridPanel.getStore().recordType;
         var p = new Slot({
             name: 'New Slot',
-            values: null
+            valueset: null
         });
         this.gridPanel.stopEditing();
         this.gridPanel.store.insert(0, p);
@@ -201,32 +228,27 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	}
 	, addRange: function(rowIndex, rec){
 		var opFrom = rowIndex.from.operand ;
-		var dsOpFrom = ']';
+		var includeFrom = false;
 		if(opFrom == 2){
-			dsOpFrom = '[';
+			includeFrom = true;
 		}
-		var valFrom = rowIndex.from.value;
 		var opTo = rowIndex.to.operand;
-		var dsOpTo = '[';
+		var includeTo = false;
 		if(opTo == 4){
-			dsOpTo = ']';
+			includeTo = true;
 		}
-		var valTo = rowIndex.to.value;
-		var newVal = dsOpFrom+' '+valFrom+ ','+valTo+' '+dsOpTo;
-		if(rec.data.values == null){
-			rec.data.values = new Array();
-		}
-		rec.data.values.push(newVal);
+		var item ={type: 'range', from: rowIndex.from.value, includeFrom: includeFrom, to: rowIndex.to.value, includeTo: includeTo};
+		
+		rec.data.valueset.push(item);
 		rec.commit();
     }
 	, addPunctualVals: function(vals, rec){
-		var strVals = Ext.encode(vals);
-		if(rec.data.values == null){
-			rec.data.values = new Array();
-		}
-		rec.data.values.push(strVals);
+		var item ={type: 'punctual', values: vals};
+
+		rec.data.valueset.push(item);
 		rec.commit();
     }
+	, 
 });
 var toerase = null;
 test= function(idx) {
@@ -234,4 +256,5 @@ test= function(idx) {
 	toerase = idx;
 	var elementToErase = Ext.get('tpl-slot-val-'+idx);
 	elementToErase.remove();
+	this.fireEvent('onSlotRemove', elementToErase);
 }
