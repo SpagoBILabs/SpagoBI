@@ -127,7 +127,7 @@ public class GetFilterValuesAction extends AbstractWorksheetEngineAction {
 			for (long i = 0; i < count; i++) {
 				IRecord record = clone.getRecordAt((int) i);
 				Object value = dataStore.getRecordAt((int) i).getFieldAt(0);
-				record.appendField(new Field(value.toString() + " description"));
+				record.appendField(new Field(value.toString()));
 			}
 			
 			JSONDataWriter dataSetWriter = new JSONDataWriter();
