@@ -201,13 +201,30 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	        	        var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
 	        	    	var slotItem = e.getTarget();
 	        	    	var id = slotItem.id;
-	        	    	var startIndex = id.indexOf('tpl-slot-val-');
-	        	    	var itemIdx = id.substring(startIndex + ('tpl-slot-val-'.length));
-	        	    	var valuesSets = record.data.valueset;
-	        	    	var idx = parseInt(itemIdx) ;
-	        	    	var toremove = record.data.valueset[idx-1];
-	        	    	record.data.valueset.remove(toremove);
-	        	    	record.commit();
+	        	    	if(id !== undefined && id != null && id !== ''){
+		        	    	var startIndex = id.indexOf('tpl-slot-val-');
+		        	    	var itemIdx = id.substring(startIndex + ('tpl-slot-val-'.length));
+		        	    	var valuesSets = record.data.valueset;
+		        	    	try{
+
+		        	    		Ext.MessageBox.show({
+		        	    			title : 'Slot item deletion',
+		        	    			msg : 'Confirm item delete?',
+		        	    		   	buttons: Ext.Msg.YESNO,
+		        	    		   	fn: function(btn) {
+		        	    				if(btn === 'yes') {
+		    			        	    	var idx = parseInt(itemIdx) ;
+						        	    	var toremove = record.data.valueset[idx-1];
+						        	    	record.data.valueset.remove(toremove);
+						        	    	record.commit();
+		        	    				}
+		        	    			},
+		        	    			scope: this
+		        	    		});
+		        	    	}catch(err){
+		        	    		
+		        	    	}
+	        	    	}
 	        	 }
 	        }
 
