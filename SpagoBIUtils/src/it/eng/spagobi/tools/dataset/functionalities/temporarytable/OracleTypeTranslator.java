@@ -105,7 +105,7 @@ public class OracleTypeTranslator implements INativeDBTypeable{
 				queryType+="("+precision+","+scale+")";
 			}
 		}
-		logger.debug("The translated DB2 type is "+queryType);	
+		logger.debug("The translated Oracle type is "+queryType);	
 		queryType+=" ";
 		return queryType;
 	}

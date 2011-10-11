@@ -86,7 +86,7 @@ public class SqlServerTypeTranslator implements INativeDBTypeable{
 		}else if(typeJavaName.equalsIgnoreCase(Float.class.getName()) && (precision != null)){//mantissa
 			queryType+="("+precision+")";
 		}
-		logger.debug("The translated DB2 type is "+queryType);
+		logger.debug("The translated sql server type is "+queryType);
 		queryType+=" ";
 		return queryType;
 	}

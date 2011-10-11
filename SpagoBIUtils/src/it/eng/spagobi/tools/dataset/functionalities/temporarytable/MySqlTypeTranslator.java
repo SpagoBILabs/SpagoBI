@@ -91,7 +91,7 @@ public class MySqlTypeTranslator implements INativeDBTypeable{
 				}
 			}
 		}
-		logger.debug("The translated DB2 type is "+queryType);
+		logger.debug("The translated my sql type is "+queryType);
 		queryType+=" ";
 		return queryType;
 	}
