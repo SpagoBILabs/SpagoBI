@@ -80,9 +80,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ManageDatasets extends AbstractSpagoBIAction {
-	
+
 	// logger component
 	public static Logger logger = Logger.getLogger(ManageDatasets.class);
+
+	public static final String STRING_TYPE = "string";
+	public static final String NUMBER_TYPE = "number";
+	public static final String RAW_TYPE = "raw";
+	public static final String GENERIC_TYPE = "generic";
 
 	@Override
 	public void doService() {
@@ -99,7 +104,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		Locale locale = getLocale();
 		String serviceType = this.getAttributeAsString(DataSetConstants.MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
-		
+
 		if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASETS_FOR_KPI_LIST)) {			
 			returnDatasetForKpiList(dsDao, locale);
 		} else if(serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASETS_LIST)) {			
@@ -121,7 +126,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 		logger.debug("OUT");
 	}
-	
+
 	private void returnDatasetForKpiList(IDataSetDAO dsDao, Locale locale){
 		try {	
 			Integer totalItemsNum = dsDao.countDatasets();
@@ -136,7 +141,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.general.retrieveItemsError", e);
 		}
 	}
-	
+
 	private void returnDatasetList(IDataSetDAO dsDao, Locale locale){
 		try {		
 			Integer totalItemsNum = dsDao.countDatasets();
@@ -151,7 +156,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.general.retrieveItemsError", e);
 		}
 	}
-	
+
 	private void datatsetInsert(IDataSetDAO dsDao, Locale locale){
 		GuiGenericDataSet ds = getGuiGenericDatasetToInsert();		
 		if(ds!=null){
@@ -192,7 +197,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.fillFieldsError");
 		}
 	}
-	
+
 	private void datatsetTest(IDataSetDAO dsDao, Locale locale){
 		try {
 			JSONObject dataSetJSON = datasetTest();
@@ -210,7 +215,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError", e);
 		}
 	}
-	
+
 	private void datatsetDelete(IDataSetDAO dsDao, Locale locale){
 		Integer dsID = getAttributeAsInteger(DataSetConstants.ID);
 		try {
@@ -222,7 +227,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteDsError", e);
 		}
 	}
-	
+
 	private void datatsetVersionDelete(IDataSetDAO dsDao, Locale locale){
 		Integer dsVersionID = getAttributeAsInteger(DataSetConstants.VERSION_ID);
 		try {
@@ -238,7 +243,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteVersion", e);
 		}
 	}
-	
+
 	private void datatsetAllVersionsDelete(IDataSetDAO dsDao, Locale locale){
 		Integer dsID = getAttributeAsInteger(DataSetConstants.DS_ID);
 		try {
@@ -250,7 +255,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteVersion", e);
 		}
 	}
-	
+
 	private void datatsetVersionRestore(IDataSetDAO dsDao, Locale locale){
 		Integer dsID = getAttributeAsInteger(DataSetConstants.DS_ID);
 		Integer dsVersionNum = getAttributeAsInteger(DataSetConstants.VERSION_NUM);
@@ -271,7 +276,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.restoreVersionError", e);
 		}
 	}
-	
+
 	private void setUsefulItemsInSession(IDataSetDAO dsDao, Locale locale){
 		try {
 			List dsTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.DATA_SET_TYPE);
@@ -291,19 +296,19 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			String filePath= SpagoBIUtilities.readJndiResource(pathh);
 			filePath += "/dataset/files";
 			File dir = new File(filePath);
-   			String[] fileNames = dir.list();
-   			getSessionContainer().setAttribute("fileNames", fileNames);	
+			String[] fileNames = dir.list();
+			getSessionContainer().setAttribute("fileNames", fileNames);	
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage(), e);
 			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.dsTypesRetrieve", e);
 		}
 	}
-	
-	
+
+
 	private List<SbiDataSetConfig> getListOfGenericDatasetsForKpi(IDataSetDAO dsDao) throws JSONException, EMFUserError{
 		Integer start = getAttributeAsInteger( DataSetConstants.START );
 		Integer limit = getAttributeAsInteger( DataSetConstants.LIMIT );
-		
+
 		if(start==null){
 			start = DataSetConstants.START_DEFAULT;
 		}
@@ -313,11 +318,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		List<SbiDataSetConfig> items = dsDao.loadPagedSbiDatasetConfigList(start,limit);
 		return items;
 	}
-	
+
 	private List<GuiGenericDataSet> getListOfGenericDatasets(IDataSetDAO dsDao) throws JSONException, EMFUserError{
 		Integer start = getAttributeAsInteger( DataSetConstants.START );
 		Integer limit = getAttributeAsInteger( DataSetConstants.LIMIT );
-		
+
 		if(start==null){
 			start = DataSetConstants.START_DEFAULT;
 		}
@@ -335,11 +340,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 		return items;
 	}
-	
+
 	private GuiGenericDataSet getGuiGenericDatasetToInsert() {
-		
+
 		GuiGenericDataSet ds = null;
-		
+
 		String label = getAttributeAsString(DataSetConstants.LABEL);
 		String name = getAttributeAsString(DataSetConstants.NAME);
 		String description = getAttributeAsString(DataSetConstants.DESCRIPTION);		
@@ -357,14 +362,14 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				}
 			}
 		}			
-		
-	    if (name != null && label != null && dsType!=null && !dsType.equals("")) {
-			
-	    	ds = new GuiGenericDataSet();		
+
+		if (name != null && label != null && dsType!=null && !dsType.equals("")) {
+
+			ds = new GuiGenericDataSet();		
 			if(ds!=null){
 				ds.setLabel(label);
 				ds.setName(name);
-				
+
 				if(description != null && !description.equals("")){
 					ds.setDescription(description);
 				}
@@ -377,27 +382,27 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}    
 		return ds;
 	}
-	
+
 	private GuiDataSetDetail constructDataSetDetail(String dsType){
 		GuiDataSetDetail dsActiveDetail = instantiateCorrectDsDetail(dsType);
-		
+
 		if(dsActiveDetail!=null){
 			dsActiveDetail.setDsType(dsType);
-			
+
 			String catTypeCd = getAttributeAsString(DataSetConstants.CATEGORY_TYPE_VN);			
 			JSONArray parsJSON = getAttributeAsJSONArray(DataSetConstants.PARS);
 			String meta = getAttributeAsString(DataSetConstants.METADATA);					
 			String trasfTypeCd = getAttributeAsString(DataSetConstants.TRASFORMER_TYPE_CD);
-			
+
 			List<Domain> domainsCat = (List<Domain>)getSessionContainer().getAttribute("catTypesList");			
 			HashMap<String, Integer> domainIds = new HashMap<String, Integer> ();
-		    if(domainsCat != null){
-			    for(int i=0; i< domainsCat.size(); i++){
-			    	domainIds.put(domainsCat.get(i).getValueName(), domainsCat.get(i).getValueId());
-			    }
-		    }
-		    Integer catTypeID = domainIds.get(catTypeCd);
-		    if(catTypeID!=null){
+			if(domainsCat != null){
+				for(int i=0; i< domainsCat.size(); i++){
+					domainIds.put(domainsCat.get(i).getValueName(), domainsCat.get(i).getValueId());
+				}
+			}
+			Integer catTypeID = domainIds.get(catTypeCd);
+			if(catTypeID!=null){
 				dsActiveDetail.setCategoryValueName(catTypeCd);
 				dsActiveDetail.setCategoryId(catTypeID);
 			}
@@ -405,7 +410,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			if(meta != null && !meta.equals("")){
 				dsActiveDetail.setDsMetadata(meta);
 			}
-			
+
 			if(parsJSON != null){
 				String pars;
 				try {
@@ -423,11 +428,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			if(trasfTypeCd!=null && !trasfTypeCd.equals("")){
 				dsActiveDetail = setTransformer(dsActiveDetail, trasfTypeCd);
 			}
-			
+
 			IDataSet ds = null;		
 			try {
 				if ( dsType!=null && !dsType.equals("")) {
-					
+
 					ds = instantiateCorrectIDataSetType(dsType);		
 					if(ds!=null){									
 						if(trasfTypeCd!=null && !trasfTypeCd.equals("")){
@@ -451,10 +456,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}	
 		return dsActiveDetail;
 	}
-	
+
 	private GuiDataSetDetail instantiateCorrectDsDetail(String dsType){
 		GuiDataSetDetail dsActiveDetail = null;
-		
+
 		if(dsType.equalsIgnoreCase(DataSetConstants.DS_FILE)){
 			dsActiveDetail = new FileDataSetDetail();
 			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
@@ -521,25 +526,25 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 		return dsActiveDetail;
 	}
-	
+
 
 	private GuiDataSetDetail setTransformer(GuiDataSetDetail dsActiveDetail, String trasfTypeCd){
 		List<Domain> domainsTrasf = (List<Domain>)getSessionContainer().getAttribute("trasfTypesList");
-	    HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer> ();
-	    if(domainsTrasf != null){
-		    for(int i=0; i< domainsTrasf.size(); i++){
-		    	domainTrasfIds.put(domainsTrasf.get(i).getValueCd(), domainsTrasf.get(i).getValueId());
-		    }
-	    }
-	    Integer transformerId = domainTrasfIds.get(trasfTypeCd);
-	    dsActiveDetail.setTransformerId(transformerId);
-	    dsActiveDetail.setTransformerCd(trasfTypeCd);
-		
-	    String pivotColName = getAttributeAsString(DataSetConstants.PIVOT_COL_NAME);
+		HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer> ();
+		if(domainsTrasf != null){
+			for(int i=0; i< domainsTrasf.size(); i++){
+				domainTrasfIds.put(domainsTrasf.get(i).getValueCd(), domainsTrasf.get(i).getValueId());
+			}
+		}
+		Integer transformerId = domainTrasfIds.get(trasfTypeCd);
+		dsActiveDetail.setTransformerId(transformerId);
+		dsActiveDetail.setTransformerCd(trasfTypeCd);
+
+		String pivotColName = getAttributeAsString(DataSetConstants.PIVOT_COL_NAME);
 		String pivotColValue = getAttributeAsString(DataSetConstants.PIVOT_COL_VALUE);
 		String pivotRowName = getAttributeAsString(DataSetConstants.PIVOT_ROW_NAME);
 		Boolean pivotIsNumRows = getAttributeAsBoolean(DataSetConstants.PIVOT_IS_NUM_ROWS);
-		
+
 		if(pivotColName != null && !pivotColName.equals("")){
 			dsActiveDetail.setPivotColumnName(pivotColName);
 		}
@@ -554,15 +559,15 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 		return dsActiveDetail;
 	}
-	
+
 	private JSONObject datasetTest() throws Exception{
-		
+
 		JSONObject dataSetJSON = null;		
 		String id = getAttributeAsString(DataSetConstants.ID);		
 		String dsTypeCd = getAttributeAsString(DataSetConstants.DS_TYPE_CD);				
 		JSONArray parsJSON = getAttributeAsJSONArray(DataSetConstants.PARS);
 		String trasfTypeCd = getAttributeAsString(DataSetConstants.TRASFORMER_TYPE_CD);
-		
+
 		List<Domain> domainsDs = (List<Domain>)getSessionContainer().getAttribute("dsTypesList");	
 		//if the method is called out of DatasetManagement
 		if (domainsDs == null) {
@@ -600,7 +605,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 		return dataSetJSON;
 	}
-	
+
 	private IDataSet instantiateCorrectIDataSetType(String dsType) throws Exception{
 
 		IDataSet ds = null;
@@ -650,7 +655,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			String jclassName = getAttributeAsString(DataSetConstants.JCLASS_NAME);
 			((JavaClassDataSet)ds).setClassName(jclassName);
 		}
-		
+
 		if(dsType.equalsIgnoreCase(DataSetConstants.DS_CUSTOM)){		
 			ds=new CustomDataSet();
 			String customData = getAttributeAsString(DataSetConstants.CUSTOM_DATA);
@@ -659,48 +664,48 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			((CustomDataSet)ds).setJavaClassName(javaClassName);
 			((CustomDataSet)ds).init();
 		}
-		
+
 		if(dsType.equalsIgnoreCase(DataSetConstants.DS_QBE)){
-			
+
 			ds = new QbeDataSet();
 			QbeDataSet qbeDataSet = (QbeDataSet) ds;
 			String qbeDatamarts = getAttributeAsString(DataSetConstants.QBE_DATAMARTS);
 			String dataSourceLabel = getAttributeAsString(DataSetConstants.QBE_DATA_SOURCE);
 			String jsonQuery = getAttributeAsString(DataSetConstants.QBE_JSON_QUERY);
-			
+
 			qbeDataSet.setJsonQuery(jsonQuery);
 			qbeDataSet.setDatamarts(qbeDatamarts);
 			IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
 			qbeDataSet.setDataSource(dataSource);		
-			
+
 		}
 		return ds;
 	}
-	
+
 	private IDataSet setTransformer(IDataSet ds,String trasfTypeCd){
 		List<Domain> domainsTrasf = (List<Domain>)getSessionContainer().getAttribute("trasfTypesList");
-	    HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer> ();
-	    if(domainsTrasf != null){
-		    for(int i=0; i< domainsTrasf.size(); i++){
-		    	domainTrasfIds.put(domainsTrasf.get(i).getValueCd(), domainsTrasf.get(i).getValueId());
-		    }
-	    }
-	    Integer transformerId = domainTrasfIds.get(trasfTypeCd);
-		
-	    String pivotColName = getAttributeAsString(DataSetConstants.PIVOT_COL_NAME);
-	    if(pivotColName!=null){
-	    	pivotColName = pivotColName.trim();
-	    }
+		HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer> ();
+		if(domainsTrasf != null){
+			for(int i=0; i< domainsTrasf.size(); i++){
+				domainTrasfIds.put(domainsTrasf.get(i).getValueCd(), domainsTrasf.get(i).getValueId());
+			}
+		}
+		Integer transformerId = domainTrasfIds.get(trasfTypeCd);
+
+		String pivotColName = getAttributeAsString(DataSetConstants.PIVOT_COL_NAME);
+		if(pivotColName!=null){
+			pivotColName = pivotColName.trim();
+		}
 		String pivotColValue = getAttributeAsString(DataSetConstants.PIVOT_COL_VALUE);
 		if(pivotColValue!=null){
 			pivotColValue = pivotColValue.trim();
-	    }
+		}
 		String pivotRowName = getAttributeAsString(DataSetConstants.PIVOT_ROW_NAME);
 		if(pivotRowName!=null){
 			pivotRowName = pivotRowName.trim();
-	    }
+		}
 		Boolean pivotIsNumRows = getAttributeAsBoolean(DataSetConstants.PIVOT_IS_NUM_ROWS);
-		
+
 		if(pivotColName != null && !pivotColName.equals("")){
 			ds.setPivotColumnName(pivotColName);
 		}
@@ -713,7 +718,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		if(pivotIsNumRows != null){
 			ds.setNumRows(pivotIsNumRows);
 		}
-		
+
 		ds.setTransformerId(transformerId);	
 
 		if(ds.getPivotColumnName() != null 
@@ -726,7 +731,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	}
 
 	private JSONObject createJSONResponse(JSONArray rows, Integer totalResNumber)
-			throws JSONException {
+	throws JSONException {
 		JSONObject results;
 
 		results = new JSONObject();
@@ -735,40 +740,124 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		results.put("rows", rows);
 		return results;
 	}
-	
+
+
 	private HashMap deserializeParValuesListJSONArray(JSONArray parsListJSON) throws JSONException{
 		HashMap h = new HashMap();
 		for(int i=0; i< parsListJSON.length(); i++){
 			JSONObject obj = (JSONObject)parsListJSON.get(i);
 			String name = obj.getString("name");
+			String type = null;
+			if(obj.has("type")){
+				type = obj.getString("type"); 
+			}
+
 			boolean hasVal  = obj.has("value");
 			String tempVal = "";
 			if(hasVal){
 				tempVal = obj.getString("value");
 			}
-			String value = "";
+
+			boolean multivalue = false;
 			if(tempVal!=null && tempVal.contains(",")){
-				String[] tempArrayValues = tempVal.split(",");
-				for(int j=0; j< tempArrayValues.length; j++){
-					if(j==0){
-						value = "'"+tempArrayValues[j]+"'";
-					}else{
-						value = value+",'"+tempArrayValues[j]+"'";	
-					}
-				}
-			}else{
-			    value = "'"+tempVal+"'";	
+				multivalue = true;
 			}
+
+			String value = "";
+			if(multivalue){
+				value = getMultiValue(tempVal, type);
+			}
+			else{
+				value = getSingleValue(tempVal, type);
+			}
+
+			System.out.println("name: "+name+" / value: "+value);
 			h.put(name,value);
 		}	
 		return h;
 	}
-	
+
+
+	private String getSingleValue(String value, String type){
+		String toReturn = "";
+		value = value.trim();
+		if(type.equalsIgnoreCase(STRING_TYPE)){
+			if(!(value.startsWith("'") && value.endsWith("'"))){
+				toReturn="'"+value+"'";
+			}
+		}
+		else if(type.equalsIgnoreCase(NUMBER_TYPE)){
+
+			if((value.startsWith("'") && value.endsWith("'"))){
+				toReturn = value.substring(1, value.length()-1);
+			}
+			else{
+				toReturn = value;
+			}
+		}
+		else if(type.equalsIgnoreCase(GENERIC_TYPE)){
+			toReturn = value;
+		}
+		else if(type.equalsIgnoreCase(RAW_TYPE)){
+			if((value.startsWith("'") && value.endsWith("'"))){
+				toReturn = value.substring(1, value.length()-1);
+			}
+		}
+
+		return toReturn;
+	}
+
+
+	private String getMultiValue(String value, String type){
+		String toReturn = "";
+
+		String[] tempArrayValues = value.split(",");
+		for(int j=0; j< tempArrayValues.length; j++){
+			String tempValue = tempArrayValues[j];
+			if(j==0){
+				toReturn = getSingleValue(tempValue, type);
+			}else{
+				toReturn = toReturn+","+getSingleValue(tempValue, type);	
+			}
+		}
+
+		return toReturn;
+	}
+
+	//	OLD
+	//	private HashMap deserializeParValuesListJSONArray(JSONArray parsListJSON) throws JSONException{
+	//		HashMap h = new HashMap();
+	//		for(int i=0; i< parsListJSON.length(); i++){
+	//			JSONObject obj = (JSONObject)parsListJSON.get(i);
+	//			String name = obj.getString("name");
+	//			boolean hasVal  = obj.has("value");
+	//			String tempVal = "";
+	//			if(hasVal){
+	//				tempVal = obj.getString("value");
+	//			}
+	//			String value = "";
+	//			if(tempVal!=null && tempVal.contains(",")){
+	//				String[] tempArrayValues = tempVal.split(",");
+	//				for(int j=0; j< tempArrayValues.length; j++){
+	//					if(j==0){
+	//						value = "'"+tempArrayValues[j]+"'";
+	//					}else{
+	//						value = value+",'"+tempArrayValues[j]+"'";	
+	//					}
+	//				}
+	//			}else{
+	//			    value = "'"+tempVal+"'";	
+	//			}
+	//			h.put(name,value);
+	//		}	
+	//		return h;
+	//	}
+
 	private String deserializeParsListJSONArray(JSONArray parsListJSON) throws JSONException, SourceBeanException{
 		String toReturn = "";
 		SourceBean sb = new SourceBean("PARAMETERSLIST");	
 		SourceBean sb1 = new SourceBean("ROWS");
-		
+
 		for(int i=0; i< parsListJSON.length(); i++){
 			JSONObject obj = (JSONObject)parsListJSON.get(i);
 			String name = obj.getString("name");	
@@ -782,7 +871,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		toReturn = sb.toXML(false);
 		return toReturn;
 	}
-	
+
 	public JSONArray serializeJSONArrayParsList(String parsList) throws JSONException, SourceBeanException{
 		JSONArray toReturn = new JSONArray();
 		DataSetParametersList params  = DataSetParametersList.fromXML(parsList);
@@ -793,10 +882,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	public String getDatasetTestMetadata(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile) throws Exception {
 		logger.debug("IN");
 		String dsMetadata = null;
-		
+
 		Integer start = new Integer(0);
 		Integer limit = new Integer(10);
-		
+
 		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
 		dataSet.setParamsMap(parametersFilled);		
 		try {
@@ -813,7 +902,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 		return dsMetadata;
 	}
-	
+
 	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile) throws Exception {
 		logger.debug("IN");
 		JSONObject dataSetJSON = null;
@@ -850,7 +939,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 		return dataSetJSON;
 	}
-	
+
 	public JSONObject getJSONDatasetResult(Integer dsId, IEngUserProfile profile) {
 		logger.debug("IN");
 		JSONObject dataSetJSON = null;		
@@ -875,7 +964,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 		return dataSetJSON;
 	}
-	
+
 	private String filterList(JSONObject filtersJSON) throws JSONException {
 		logger.debug("IN");				
 		String hsql= " from SbiDataSetHistory h where h.active = true ";
@@ -892,6 +981,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 		return hsql;
 	}
-	
-	
+
+
 }
