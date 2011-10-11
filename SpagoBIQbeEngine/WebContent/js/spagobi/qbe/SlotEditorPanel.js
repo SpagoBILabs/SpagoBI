@@ -77,16 +77,18 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	, initGrid: function(c) {
 
 	    // create the data store
-		//data: [{ name: "slot 1", valueset: [{type: "range", from: 0, includeFrom: true, to: 100, includeTo: false}, { type: "punctual", values: [100, 101, 201]}, { type: "default", value: 0}]}]
-
+	    
+	   // {name: 'Default Slot Value', valueset: [{type: "default", value: 0}]},
 	    var store = new Ext.data.JsonStore({
 	        //url: 'get-images.php',
-	        data: {slots:[{ name: "slot 1", valueset: [{type: "range", from: 0, includeFrom: true, to: 100, includeTo: false}, { type: "punctual", values: [100, 101, 201]}, { type: "default", value: 0}]}]},
+	        data: {slots:[{ name: "slot 1", valueset: [{type: "range", from: 0, includeFrom: true, to: 100, includeTo: false}, { type: "punctual", values: [100, 101, 201]}]}]},
 	        root: 'slots',
 	        fields: ['name', 'valueset']
 	    });
 	    // manually load local data
-	    
+	   	store.insert(0,new store.recordType({name: 'Default Slot Value', valueset: [{type: "default", value: ''}]}));
+	  	store.commitChanges();
+	  
         var template = new Ext.XTemplate(
         		'<tpl if="valueset !== null">'+
         		'<tpl for="valueset">'+
@@ -112,9 +114,16 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	                '{values}' + 
       	            '</div>'+
                 '</tpl>'+
-                '<tpl if="type == \'default\'">'+
-	        		'<div class="icon-close blue" id="tpl-slot-val-{[xindex]}">' + 
-	                '{value}' + 
+               '<tpl if="type == \'default\'">'+
+	        		'<div id="tpl-default-val">' + 
+	        		'<input type="checkbox" id="check-tpl-default" value="" '+
+	        		'<tpl if="value != \'\'">'+
+	        		' checked="true" ' +
+	        		'</tpl>'+	        		
+	        		'/> '+
+	        		'<tpl if="value != \'\'">'+
+	        		'&nbsp; VALUE: {value}' +
+	        		'</tpl>'+
 	                '</div>'+
 	            '</tpl>'+
                 '</tpl></tpl>'
@@ -136,8 +145,12 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		       , imgSrc: '../img/actions/range.gif'
 		       , clickHandler:function(e, t){
 		          var index = this.scope.gridPanel.getView().findRowIndex(t);
-		          var record = this.scope.gridPanel.store.getAt(index);
-		          this.scope.openiInsertRangeWindow(record);
+		          if(index !== 0){
+			          var record = this.scope.gridPanel.store.getAt(index);
+			          this.scope.openiInsertRangeWindow(record);
+			       }else{
+		        	  alert('Operation denied for default slot');
+		          }
 		       }
 		       , width: 20
 		       , header: 'Range'
@@ -153,8 +166,12 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			       , imgSrc: '../img/actions/dots.gif'
 			       , clickHandler:function(e, t){
 			          var index = this.scope.gridPanel.getView().findRowIndex(t);
-			          var record = this.scope.gridPanel.store.getAt(index);
-			          this.scope.openiInsertPunctualWindow(record);
+			          if(index !== 0){
+				          var record = this.scope.gridPanel.store.getAt(index);
+				          this.scope.openiInsertPunctualWindow(record);
+			          }else{
+			        	  alert('Operation denied for default slot');
+			          }
 			       }
 			       , width: 20
 			       , header: 'Punctual'
@@ -164,7 +181,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			       , scope: this
 			    })
 		    );
-	    
+
 		this.gridPanel = new Ext.grid.EditorGridPanel({
 			id: 'slot-panel',
 			store: store,
@@ -193,7 +210,9 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	        },
 	        plugins :[rangeButtonColumn,  punctualButtonColumn],
 	        enableDragDrop:false,
+	        scope: this,
 	        listeners:{
+	        	 scope: this,
 	        	 cellclick: function(grid, rowIndex, columnIndex, e) {
 	        			// Get the Record for the row
 	        	        var record = grid.getStore().getAt(rowIndex);
@@ -203,35 +222,45 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	        	    	var id = slotItem.id;
 	        	    	if(id !== undefined && id != null && id !== ''){
 		        	    	var startIndex = id.indexOf('tpl-slot-val-');
-		        	    	var itemIdx = id.substring(startIndex + ('tpl-slot-val-'.length));
-		        	    	var valuesSets = record.data.valueset;
-		        	    	try{
-
-		        	    		Ext.MessageBox.show({
-		        	    			title : 'Slot item deletion',
-		        	    			msg : 'Confirm item delete?',
-		        	    		   	buttons: Ext.Msg.YESNO,
-		        	    		   	fn: function(btn) {
-		        	    				if(btn === 'yes') {
-		    			        	    	var idx = parseInt(itemIdx) ;
-						        	    	var toremove = record.data.valueset[idx-1];
-						        	    	record.data.valueset.remove(toremove);
-						        	    	record.commit();
-		        	    				}
-		        	    			},
-		        	    			scope: this
-		        	    		});
-		        	    	}catch(err){
-		        	    		
+		        	    	if(startIndex !== -1){
+			        	    	var itemIdx = id.substring(startIndex + ('tpl-slot-val-'.length));
+			        	    	var valuesSets = record.data.valueset;
+			        	    	try{
+	
+			        	    		Ext.MessageBox.show({
+			        	    			title : 'Slot item deletion',
+			        	    			msg : 'Confirm item delete?',
+			        	    		   	buttons: Ext.Msg.YESNO,
+			        	    		   	fn: function(btn) {
+			        	    				if(btn === 'yes') {
+			    			        	    	var idx = parseInt(itemIdx) ;
+							        	    	var toremove = record.data.valueset[idx-1];
+							        	    	record.data.valueset.remove(toremove);
+							        	    	record.commit();
+			        	    				}
+			        	    			},
+			        	    			scope: this
+			        	    		});
+			        	    	}catch(err){
+			        	    		
+			        	    	}
+		        	    	}else{
+		        	    		var check = id.indexOf('check-tpl-default');
+		        	    		var def = slotItem.checked;
+		        	    		if(def){
+		        	    			this.defaultValueWindow(record);
+		        	    		}
 		        	    	}
 	        	    	}
 	        	 }
 	        }
 
 	    });
+
 		var btnAdd = this.panelToolbar.items.items[0];
-		
+		var btnDelete = this.panelToolbar.items.items[1];
 		btnAdd.on('click', this.createSlotRowToDisplay, this);
+		btnDelete.on('click', this.removeSlot, this);
 
 	}
 	, openiInsertRangeWindow: function(rec){
@@ -254,8 +283,20 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
             valueset: null
         });
         this.gridPanel.stopEditing();
-        this.gridPanel.store.insert(0, p);
-        this.gridPanel.startEditing(0, 0);
+        this.gridPanel.store.insert(1, p);
+        this.gridPanel.startEditing(1, 0);
+	}
+	, removeSlot: function(){
+        // access the Record constructor through the grid's store
+		var slot = this.gridPanel.selModel.selection.record;
+        if(slot !== null && slot !== undefined){
+
+            this.gridPanel.store.remove(slot);
+            this.gridPanel.store.commitChanges();
+
+
+        }
+
 	}
 	, addRange: function(rowIndex, rec){
 		var opFrom = rowIndex.from.operand ;
@@ -283,43 +324,53 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		rec.data.valueset.push(item);
 		rec.commit();
     }
-	, removeItem: function( column, grid, rowIndex, e){
-		alert("ciao");
-    	var button = e.getTarget('div[class=button]', 10, true);
-    	var action = null;
-/*    	if(button) {
-    		var buttonImg = button.down('img');
-    		var startIndex = (' '+buttonImg.dom.className+' ').indexOf(' action-');
-    		if(startIndex != -1) {
-    			action = buttonImg.dom.className.substring(startIndex).trim().split(' ')[0];
-    			action = action.split('-')[1];
-    		}    		
-    	}
-    	
-    	var r = this.folderView.getRecord(i);
-    	if(r.engine) {
-    		if(action !== null) {
-    			this.performActionOnDocument(r, action);
-    		} else {
-    			this.fireEvent('ondocumentclick', this, r, e);
-    		}
-    	} else{
-    		if(action !== null) {
-    			this.performActionOnFolder(r, action);
-    		} else {
-    			this.fireEvent('onfolderclick', this, r, e);
-    		}
-    	} */    
-	} 
+	, defaultValueWindow: function(record){
+		
+		if(record.data.valueset == null){
+			record.data.valueset = new Array();
+		}
+		var defVal = new Ext.form.TextField();
+		var item = record.data.valueset[0];
+		
+		defVal.on('change', function(field,newValue,oldValue){
+			item.value = newValue;
+		}, this);
+		
+		var btnFinish = new Ext.Button({
+	        text: 'Save',
+	        disabled: false,
+	        scope: this,
+	        handler : function(){
+				record.data.valueset[0]=item;
+				record.commit();
+				win.close();
+			}
+
+		});
+		
+        var defPanel = new Ext.form.FormPanel({
+            layout: 'hbox',
+            width: 120,
+            height: 70,
+		    bbar: ['->',
+		        btnFinish
+		    ],
+            items: [defVal]
+        });
+        
+        var win = new Ext.Window({
+            layout: 'fit',
+            title: 'Type default value',
+            width: 150,
+            height: 90,
+            closable: false,
+            resizable: false,
+            draggable: false,
+            plain: true,
+            items: [defPanel]
+        });
+        win.show();
+	}
+
 });
-var toerase = null;
-var slotgrid = null;
 
-test= function(idx) {
-	//alert(idx);
-	toerase = idx;
-	var elementToErase = Ext.get('tpl-slot-val-'+idx);
-	elementToErase.remove();
-	var store = slotgrid.store;
-
-}
