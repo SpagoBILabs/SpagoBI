@@ -31,13 +31,13 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
  */
 public class NativeTypeTranslatorFactory {
 	
-	public static final String DRIVER_ORACLE = "OracleDriver";
+	public static final String DRIVER_ORACLE = "Oracle";
 	public static final String DRIVER_SQLSERVER = "mssqlserver4";
-	public static final String DRIVER_SQLSERVERMICROSOFT = "SQLServerDriver";
+	public static final String DRIVER_SQLSERVERMICROSOFT = "SQLServer";
 	public static final String DRIVER_SQLSERVERSPRINTA = "TdsDriver";
 	public static final String DRIVER_SQLSERVERJTURBO = "jturbo";
-	public static final String DRIVER_DB2 = "DB2Driver";
-	public static final String DRIVER_MYSQL = "mysql";
+	public static final String DRIVER_DB2 = "DB2";
+	public static final String DRIVER_MYSQL = "MySQL";
 	public static final String TEMPORARY_TABLE_NATIVE_TYPES_CLASS = "TEMPORARY_TABLE_NATIVE_TYPES_CLASS";
 	
 	public static INativeDBTypeable getInstance(String driverName){
