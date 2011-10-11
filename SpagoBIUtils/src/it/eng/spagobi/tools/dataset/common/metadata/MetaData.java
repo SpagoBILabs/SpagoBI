@@ -133,7 +133,7 @@ public class MetaData implements IMetaData {
 	public void addFiedMeta(IFieldMetaData fieldMetaData) {
 		Integer fieldIndex = new Integer(fieldsMeta.size());
 		fieldsMeta.add(fieldMetaData);
-		String fieldKey = fieldMetaData.getAlias() != null ? fieldMetaData.getAlias() : fieldMetaData.getName();
+		String fieldKey = fieldMetaData.getName();
 		name2IndexMap.put(fieldKey.toUpperCase(), fieldIndex);
 	}
 
@@ -156,10 +156,7 @@ public class MetaData implements IMetaData {
 
 	public void changeFieldAlias(int fieldIndex, String newAlias) {
 		IFieldMetaData m = this.getFieldMeta(fieldIndex);
-		String previousAlias = m.getAlias() != null ? m.getAlias() :  m.getName();
 		m.setAlias(newAlias);
-		name2IndexMap.remove(previousAlias);
-		name2IndexMap.put(newAlias.toUpperCase(), fieldIndex);
 	}
 
 }
