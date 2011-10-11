@@ -55,6 +55,23 @@ public interface IParameterDAO extends ISpagoBIDao{
 	
 	public Parameter loadForDetailByParameterID(Integer parameterID) throws EMFUserError;
 	
+	
+	/**
+	 * Loads all detail information for a parameter identified by its
+	 * <code>label</code>. All these information, are stored into a
+	 * <code>Parameter</code> object, which is
+	 * returned.
+	 * 
+	 * @param label The label for the parameter to load
+	 * 
+	 * @return A <code>Parameter</code> object containing all loaded information
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	
+	public Parameter loadForDetailByParameterLabel(String Label) throws EMFUserError;
+
+	
 	/**
 	 * Load for execution by parameter i dand role name.
 	 * 

@@ -29,6 +29,8 @@ package it.eng.spagobi.behaviouralmodel.analyticaldriver.dao;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
@@ -103,6 +105,38 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements
 		return toReturn;
 	}
 
+	
+	public Parameter loadForDetailByParameterLabel(String label) throws EMFUserError {
+		logger.debug("IN");
+		Parameter parameter = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Criterion labelCriterrion = Expression.eq("label",
+					label);
+			Criteria criteria = aSession.createCriteria(SbiParameters.class);
+			criteria.add(labelCriterrion);
+			SbiParameters hibPar = (SbiParameters) criteria.uniqueResult();
+			if (hibPar == null) return null;
+			parameter = toParameter(hibPar);
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return parameter;
+	}
+
+	
 	
 	
 	
