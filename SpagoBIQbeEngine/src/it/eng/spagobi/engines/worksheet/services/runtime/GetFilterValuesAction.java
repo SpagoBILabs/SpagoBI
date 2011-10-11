@@ -30,6 +30,7 @@ import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -163,7 +164,8 @@ public class GetFilterValuesAction extends AbstractWorksheetEngineAction {
 		long count = dataStore.getRecordsCount();
 		for (long i = 0; i < count; i++) {
 			IRecord record = dataStore.getRecordAt((int) i);
-			Object value = record.getFieldAt(0);
+			IField field = record.getFieldAt(0);
+			Object value = field.getValue();
 			IRecord newRecord = new Record();
 			newRecord.appendField(new Field(value));
 			toReturn.appendRecord(newRecord);
