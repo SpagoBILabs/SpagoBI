@@ -737,7 +737,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
  	    			
  	    			
  	    		}
-    		}else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD) {	
+    		} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD) {	
  	 	    		var field = {
  	 	    			id: node.attributes.attributes.formState,
  	 	    			type: Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED,
