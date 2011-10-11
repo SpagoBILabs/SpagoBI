@@ -49,7 +49,23 @@ Ext.ns("Sbi.execution");
 Sbi.execution.SaveDocumentWindow = function(config) {
 
 	this.services = new Array();
-	var saveDocParams = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: 'DOC_SAVE'};
+	
+	var saveDocParams;
+	
+	// case coming from createWorksheetObject.jsp
+	if(config.MESSAGE_DET != undefined && config.MESSAGE_DET != null ){
+		if(config.dataset_label != undefined && config.dataset_label != null ){
+			saveDocParams = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: config.MESSAGE_DET, dataset_label: config.dataset_label};
+		}
+		else{
+			saveDocParams = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: config.MESSAGE_DET};		
+		}
+	}
+	else{
+		saveDocParams = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: 'DOC_SAVE'};		
+	}
+	
+
 	this.services['saveDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'SAVE_DOCUMENT_ACTION'
 		, baseParams: saveDocParams

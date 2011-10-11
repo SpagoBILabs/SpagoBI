@@ -18,9 +18,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.spagobi.analiticalmodel.execution.service;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
@@ -28,6 +30,8 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -36,6 +40,10 @@ import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
+import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
+import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
+import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -52,10 +60,11 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 
 	// logger component
 	private static Logger logger = Logger.getLogger(SaveDocumentAction.class);
-	
+
 	private final String MESSAGE_DET = "MESSAGE_DET";
 	// type of service
 	private final String DOC_SAVE = "DOC_SAVE";
+	private final String DOC_SAVE_FROM_DATASET = "DOC_SAVE_FROM_DATASET";
 	private final String DOC_UPDATE = "DOC_UPDATE";
 
 	// RES detail
@@ -73,8 +82,26 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private final String OBJECT_QUERY = "query";
 	private final String FORMVALUES = "formValues";
 
+	public static final String OBJ_DATASET_ID ="dataSetId";
+	public static final String OBJ_DATASET_LABEL ="dataset_label";
+
+
 	private IBIObjectDAO objDao = null;
-	
+
+
+
+	// default type
+	public static final String WORKSHEET_VALUE_CODE ="WORKSHEET";
+	public static final String BIOBJ_TYPE_DOMAIN_CD ="BIOBJ_TYPE";
+
+	// default for parameters
+	public static final Integer REQUIRED = 0;
+	public static final Integer MODIFIABLE = 1;
+	public static final Integer MULTIVALUE = 0;
+	public static final Integer VISIBLE = 1;
+
+	String serviceType = null;
+
 	@Override
 	public void doService() {
 		logger.debug("IN");
@@ -86,10 +113,10 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
 		}
 
-		String serviceType = this.getAttributeAsString(MESSAGE_DET);
+		serviceType = this.getAttributeAsString(MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
 		try {
-			if (serviceType != null && serviceType.equalsIgnoreCase(DOC_SAVE)) {
+			if (serviceType != null && (serviceType.equalsIgnoreCase(DOC_SAVE) || serviceType.equalsIgnoreCase(DOC_SAVE_FROM_DATASET))) {
 				saveDocument();
 			} else if (serviceType != null && serviceType.equalsIgnoreCase(DOC_UPDATE)) {
 				updateWorksheetTemplate();
@@ -112,15 +139,22 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		String engineId = getAttributeAsString(ENGINE);
 		String dataSourceId = getAttributeAsString(DATASOURCE);
 		String type = getAttributeAsString(TYPE);
+		String typeId;
 		String template = getAttributeAsString(TEMPLATE);	
 		JSONArray functsArrayJSon = getAttributeAsJSONArray(FUNCTS);
 		String wk_definition = getAttributeAsString(OBJECT_WK_DEFINITION);
 		JSONObject smartFilterValues = getAttributeAsJSONObject(FORMVALUES);
 		String query = getAttributeAsString(OBJECT_QUERY);
 
+		if(type == null || type.equals("")){
+			Domain typeDom = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(BIOBJ_TYPE_DOMAIN_CD, WORKSHEET_VALUE_CODE);
+			typeId = typeDom.getValueId().toString();
+			type = WORKSHEET_VALUE_CODE;
+		}
+
 		if (name != null && name != "" && label != null && label != "" && 
-			 type!=null && functsArrayJSon!=null && functsArrayJSon.length()!= 0) {
-			
+				type!=null && functsArrayJSon!=null && functsArrayJSon.length()!= 0) {
+
 			BIObject o = new BIObject();
 			BIObject objAlreadyExisting = objDao.loadBIObjectByLabel(label);
 			if(objAlreadyExisting!=null){
@@ -131,7 +165,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			o.setLabel(label);
 			o.setDescription(description);
 			o.setVisible(new Integer(1));
-			
+
 			if(engineId!=null){
 				Engine engine = DAOFactory.getEngineDAO().loadEngineByID(new Integer(engineId));
 				o.setEngine(engine);
@@ -141,12 +175,12 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 					o.setEngine(engines.get(0));
 				}
 			}
-			
+
 			Domain objType = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.BIOBJ_TYPE, type);
 			Integer biObjectTypeID = objType.getValueId();
 			o.setBiObjectTypeID(biObjectTypeID);
 			o.setBiObjectTypeCode(objType.getValueCd());
-					
+
 			UserProfile userProfile = (UserProfile) this.getUserProfile();
 			String creationUser =  userProfile.getUserId().toString();
 			o.setCreationUser(creationUser);
@@ -171,13 +205,17 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				functionalities.add(funcId);
 			}		
 			o.setFunctionalities(functionalities);
-			
+
 			Domain objState = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.DOC_STATE, SpagoBIConstants.DOC_STATE_REL);			
 			Integer stateID = objState.getValueId();
 			o.setStateID(stateID);
 			o.setStateCode(objState.getValueCd());		
-			
-			BIObject orig_obj = objDao.loadBIObjectById(new Integer(orig_biobj_id));
+
+			BIObject orig_obj = null;
+			if(orig_biobj_id != null && !orig_biobj_id.equals("")){
+				orig_obj = objDao.loadBIObjectById(new Integer(orig_biobj_id));
+			}
+
 			ObjTemplate objTemp = new ObjTemplate();
 			byte[] content = null;
 			if(template != null && template != ""){
@@ -190,50 +228,93 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				WorksheetDriver q = new WorksheetDriver();
 				String temp = q.composeWorksheetTemplate(wk_definition, query, null, templCont);
 				content = temp.getBytes();
-			}else{
+			}
+			else if(serviceType.equals(DOC_SAVE_FROM_DATASET) && wk_definition!=null){
+				content = wk_definition.getBytes();
+			}
+			else{
 				logger.error("Document template not available");
 				throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.document.saveError");
 			}
-			
+
 			objTemp.setContent(content);
 			objTemp.setCreationUser(creationUser);
 			objTemp.setDimension(Long.toString(content.length/1000)+" KByte");
 			objTemp.setName("template.sbiworksheet");
-			
+
+
 			try {
-				if(id != null && !id.equals("") && !id.equals("0")){							
-					o.setId(Integer.valueOf(id));
-					objDao.modifyBIObject(o, objTemp);
-					logger.debug("Document with id "+id+" updated");
-					JSONObject attributesResponseSuccessJSON = new JSONObject();
-					attributesResponseSuccessJSON.put("success", true);
-					attributesResponseSuccessJSON.put("responseText", "Operation succeded");
-					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-				}else{
-					Integer biObjectID = objDao.insertBIObject(o, objTemp);
-					if(orig_biobj_id!=null && orig_biobj_id!=""){					
-						List obj_pars = orig_obj.getBiObjectParameters();
-						if(obj_pars!=null && !obj_pars.isEmpty()){
-							Iterator it = obj_pars.iterator();
-							while(it.hasNext()){
-								BIObjectParameter par = (BIObjectParameter)it.next();
-								par.setBiObjectID(biObjectID);
-								par.setId(null);
-								DAOFactory.getBIObjectParameterDAO().insertBIObjectParameter(par);
+
+
+				if(serviceType.equals(DOC_SAVE)){
+
+					if(id != null && !id.equals("") && !id.equals("0")){							
+						o.setId(Integer.valueOf(id));
+						objDao.modifyBIObject(o, objTemp);
+						logger.debug("Document with id "+id+" updated");
+						JSONObject attributesResponseSuccessJSON = new JSONObject();
+						attributesResponseSuccessJSON.put("success", true);
+						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
+						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+					}else{
+						Integer biObjectID = objDao.insertBIObject(o, objTemp);
+						if(orig_biobj_id!=null && orig_biobj_id!=""){					
+							List obj_pars = orig_obj.getBiObjectParameters();
+							if(obj_pars!=null && !obj_pars.isEmpty()){
+								Iterator it = obj_pars.iterator();
+								while(it.hasNext()){
+									BIObjectParameter par = (BIObjectParameter)it.next();
+									par.setBiObjectID(biObjectID);
+									par.setId(null);
+									DAOFactory.getBIObjectParameterDAO().insertBIObjectParameter(par);
+								}
 							}
 						}
+						logger.debug("New document inserted with id "+biObjectID);
+						JSONObject attributesResponseSuccessJSON = new JSONObject();
+						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
+						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+
+
+
 					}
-					logger.debug("New document inserted");
+				}
+				// CASE saveing from dataset: get parameters from dataset
+				else if(serviceType.equals(DOC_SAVE_FROM_DATASET)){
+					logger.debug("case "+DOC_SAVE_FROM_DATASET+" search parameters in dataset");
+					String dataSetLabel = getAttributeAsString( OBJ_DATASET_LABEL );
+					GuiGenericDataSet guiGenDs = DAOFactory.getDataSetDAO().loadDataSetByLabel(dataSetLabel);
+					o.setDataSetId(guiGenDs.getDsId());
+					Assert.assertNotNull(guiGenDs, "Dataset with label "+dataSetLabel+" was not found");
+					GuiDataSetDetail dsDetail = guiGenDs.getActiveDetail();			
+
+					// insert parameters
+					String parametersXML = dsDetail.getParameters();
+					collectParametersInformation(o, parametersXML);
+					objDao.insertBIObject(o, objTemp, false);
+					Integer biObjectID = o.getId();
+					List biObjectParameters = o.getBiObjectParameters();
+					if(biObjectParameters != null){
+						for (Iterator iterator = biObjectParameters.iterator(); iterator.hasNext();) {
+							BIObjectParameter parameter = (BIObjectParameter) iterator.next();
+							parameter.setBiObjectID(biObjectID);
+							creatBiObjectParameter(parameter);
+						}
+					}
+					
+					logger.debug("New document inserted with id "+biObjectID);
 					JSONObject attributesResponseSuccessJSON = new JSONObject();
 					attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+
 				}
+
 
 			} catch (Throwable e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.document.saveError", e);
 			}
-			
+
 		} else {
 			logger.error("Document name or label are missing");
 			throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.document.missingFieldsError");
@@ -293,7 +374,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 		return objTemp;
 	}
-	
+
 	private byte[] getSmartFilterTemplateContent() throws Exception {
 		logger.debug("OUT");
 		String wkDefinition = getAttributeAsString(OBJECT_WK_DEFINITION);
@@ -313,5 +394,117 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 		return content;
 	}
+
+
+
+
+	/** SAVE from DATASET case
+	 * 
+	 * 	Get parameters from dataset parameters definitiona nd add them to documetn: parameter label must be equals
+	 * to parametersUrlnAME and the parameter must be already present in system.
+	 * 
+	 * @param biObj
+	 * @param parsXml
+	 */
+
+
+	private void collectParametersInformation(BIObject biObj , String parsXml){
+		logger.debug("IN");	
+
+		// get parameters from Dataset XML
+
+		List<DataSetParameterItem> listDs;
+		try {
+			listDs = loadFromXML(parsXml);
+		} catch (SourceBeanException e) {
+			logger.error("error in reading dataset parameters from String "+parsXml);
+			throw new SpagoBIServiceException(SERVICE_NAME, "error in reading dataset parameters from String "+parsXml, e);
+		}
+
+		// get parameters from SpagoBI
+		List<Parameter> listPar = new ArrayList<Parameter>();
+		for (Iterator iterator = listDs.iterator(); iterator.hasNext();) {
+			DataSetParameterItem dataSetParameterItem = (DataSetParameterItem) iterator.next();
+
+			// check the parameters exist otherwise throw error; they must have same label as dataste parameter name
+			Parameter parameter= null;
+			try {
+				parameter = DAOFactory.getParameterDAO().loadForDetailByParameterLabel(dataSetParameterItem.getName());
+			} catch (EMFUserError e) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Parameter with label "+dataSetParameterItem.getName()+" was not found!", e);
+			}
+			Assert.assertNotNull(parameter, "Parameter with label "+dataSetParameterItem.getName()+" was not found!");
+			listPar.add(parameter);
+		}
+
+		// insert parameters as BiObjectParameters
+		for (Iterator iterator = listPar.iterator(); iterator.hasNext();) {
+			Parameter parameter = (Parameter) iterator.next();
+			BIObjectParameter biObjectParameter = new BIObjectParameter();
+			biObjectParameter.setParID(parameter.getId());
+			biObjectParameter.setParameter(parameter);
+			biObjectParameter.setParameterUrlName(parameter.getLabel());
+			biObjectParameter.setLabel(parameter.getLabel());
+			biObjectParameter.setRequired(REQUIRED);
+			biObjectParameter.setMultivalue(MULTIVALUE);
+			biObjectParameter.setModifiable(MODIFIABLE);
+			biObjectParameter.setVisible(VISIBLE);
+
+			if(biObj.getBiObjectParameters() == null)
+				biObj.setBiObjectParameters(new ArrayList<BIObjectParameter>());
+			biObj.getBiObjectParameters().add(biObjectParameter);
+			logger.debug("inserted parameter with label "+parameter.getLabel());
+		}
+
+		logger.debug("OUT");	
+	}
+
+	/** SAVE from DATASET case
+	 * 
+	 * @param parsXml
+	 * @return
+	 * @throws SourceBeanException
+	 */
+	public List<DataSetParameterItem> loadFromXML (String parsXml) throws SourceBeanException {
+		logger.debug("IN");
+		parsXml = parsXml.trim();
+		// load data from xml
+		SourceBean source = SourceBean.fromXMLString(parsXml);
+		List listRows = source.getAttributeAsList("ROWS.ROW");
+		Iterator iterRows = listRows.iterator();
+		List<DataSetParameterItem> parsList = new ArrayList<DataSetParameterItem>();
+		while(iterRows.hasNext()){
+			DataSetParameterItem par = new DataSetParameterItem();
+			SourceBean element = (SourceBean)iterRows.next();
+			String name = (String)element.getAttribute("NAME");
+			par.setName(name);
+			String type = (String)element.getAttribute("TYPE");
+			par.setType(type);
+			parsList.add(par);
+		}
+		logger.debug("OUT");
+		return parsList;
+	}
+	
+	/** SAVE from DATASET case
+	 * 
+	 * @param biObjectParameter
+	 * @return
+	 * @throws NotAllowedOperationException
+	 * @throws EMFUserError
+	 */
+	
+	private  Integer creatBiObjectParameter(BIObjectParameter biObjectParameter) throws NotAllowedOperationException, EMFUserError{
+		logger.debug("IN");
+		Integer toReturn = null;
+
+		IBIObjectParameterDAO biObjParameterDAO = DAOFactory.getBIObjectParameterDAO();
+		biObjParameterDAO.insertBIObjectParameter(biObjectParameter);
+		logger.debug("Inserted parameter with parameter url "+biObjectParameter.getParameterUrlName());
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+
 
 }
