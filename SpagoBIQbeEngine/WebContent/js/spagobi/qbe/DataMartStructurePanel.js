@@ -60,6 +60,7 @@ Sbi.qbe.DataMartStructurePanel = function(config) {
 		, baseParams: {}
 		, enableTreeContextMenu: false
   	};
+	
 	if (Sbi.settings && Sbi.settings.qbe && Sbi.settings.qbe.dataMartStructurePanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.qbe.dataMartStructurePanel);
 	}
@@ -129,8 +130,6 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	, inLineCalculatedFieldWizard : null
 	, slotWizard : null
 	, menu: null
-	, CALCULATED_FIELD: 'calculatedField'
-	, IN_LINE_CALCULATED_FIELD: 'inLineCalculatedField'
 	
 	// --------------------------------------------------------------------------------
 	// public methods
@@ -154,7 +153,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	, removeCalculatedField:  function(fieldNode) {
 		var nodeType;
 		nodeType = fieldNode.attributes.type || fieldNode.attributes.attributes.type;
-		if(nodeType === 'calculatedField' || nodeType === 'inLineCalculatedField') {
+		if(nodeType === Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD 
+		|| nodeType === Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 			
 			var entityId = fieldNode.parentNode.id;
 			var formState;
@@ -201,7 +201,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	, editField: function(fieldNode) {
 		var nodeType;
 		nodeType = fieldNode.attributes.type || fieldNode.attributes.attributes.type;
-		if(nodeType == 'calculatedField') {
+		if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD) {
 			
 			if(this.calculatedFieldWizard === null) {
 				this.initCalculatedFieldWizards();
@@ -230,7 +230,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			
 			this.calculatedFieldWizard.setTargetNode(fieldNode);
 			this.calculatedFieldWizard.show();
-		} else 	if(nodeType == 'inLineCalculatedField') {
+		} else 	if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 			
 			if(this.inLineCalculatedFieldWizard === null) {
 				this.initCalculatedFieldWizards();
@@ -282,7 +282,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		var type = entityNode.attributes.type || entityNode.attributes.attributes.type;
 		var text = entityNode.text || entityNode.attributes.text;
 		
-		if(type === 'entity') {
+		if(type === Sbi.settings.qbe.constants.NODE_TYPE_ENTITY) {
 			
 			if(this.calculatedFieldWizard === null) {
 				this.initCalculatedFieldWizards();
@@ -292,7 +292,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			for(var i = 0; i < entityNode.attributes.children.length; i++) {
 				var child = entityNode.attributes.children[i];
 				var childType = child.attributes.type || child.attributes.attributes.type;
-				if(childType === 'field') {
+				if(childType === Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) {
 					var field = {
 						uniqueName: child.id,
 						alias: child.text,
@@ -331,7 +331,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		var type = entityNode.attributes.type || entityNode.attributes.attributes.type;
 		var text = entityNode.text || entityNode.attributes.text;
 		
-		if(type === 'entity') {
+		if(type === Sbi.settings.qbe.constants.NODE_TYPE_ENTITY) {
 			
 			if(this.inLineCalculatedFieldWizard === null) {
 				this.initCalculatedFieldWizards();
@@ -341,7 +341,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			for(var i = 0; i < entityNode.attributes.children.length; i++) {
 				var child = entityNode.attributes.children[i];
 				var childType = child.attributes.type || child.attributes.attributes.type;
-				if(childType === 'field') {
+				if(childType === Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) {
 					var field = {
 						uniqueName: child.id,
 						alias: child.text,
@@ -382,7 +382,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		var type = entityNode.attributes.type || entityNode.attributes.attributes.type;
 		var text = entityNode.text || entityNode.attributes.text;
 		
-		if(type === 'entity') {
+		if(type === Sbi.settings.qbe.constants.NODE_TYPE_ENTITY) {
 
 			var dateFunctions = [
      		    {
@@ -483,7 +483,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			this.slotWizard.show();
 
 		
-		} else if(type === 'field'){
+		} else if(type === Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD){
 			//creates a window
 			this.slotWizard = new Sbi.qbe.SlotWizard( { 
 				title: 'Slot definition Wizard',
@@ -829,11 +829,11 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     		var nodeType;
     		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
     		
-    		var entityId = (nodeType == this.IN_LINE_CALCULATED_FIELD)? targetNode.parentNode.id: targetNode.id;
+    		var entityId = (nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD)? targetNode.parentNode.id: targetNode.id;
     		var f = {
     			alias: formState.alias
     			, id: formState
-    			, filedType: this.IN_LINE_CALCULATED_FIELD
+    			, filedType: Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD
     			, type: formState.type
     			, calculationDescriptor: formState
     		};
@@ -854,21 +854,21 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
         	}); 
     		
     		
-    		if(nodeType == this.IN_LINE_CALCULATED_FIELD) {
+    		if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD) {
     			targetNode.text = formState.alias;
     			targetNode.attributes.attributes.formState = formState;
-    		} else if (nodeType == 'entity') {
+    		} else if (nodeType == Sbi.settings.qbe.constants.NODE_TYPE_ENTITY) {
     			var node = new Ext.tree.TreeNode({
         			text: formState.alias,
         			leaf: true,
-        			type: this.IN_LINE_CALCULATED_FIELD, 
+        			type: Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD, 
         			longDescription: formState.expression,
         			formState: formState, 
         			iconCls: 'calculation',
         			attributes:{
             			text: formState.alias,
             			leaf: true,
-            			type: this.IN_LINE_CALCULATED_FIELD, 
+            			type: Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD, 
             			longDescription: formState.expression,
             			formState: formState, 
             			iconCls: 'calculation'}
@@ -897,12 +897,12 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     		var nodeType;
     		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
     		
-    		var entityId = (nodeType == this.CALCULATED_FIELD)? targetNode.parentNode.id: targetNode.id;
+    		var entityId = (nodeType == Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD)? targetNode.parentNode.id: targetNode.id;
     		var f = {
     			alias: formState.alias
     			, id: formState
     			, type: formState.type
-    			, filedType: this.CALCULATED_FIELD
+    			, filedType: Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD
     			, calculationDescriptor: formState
     		};
     		var params = {
@@ -921,21 +921,21 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
         	}); 
     		
     		
-    		if(nodeType == this.CALCULATED_FIELD) {
+    		if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD) {
     			targetNode.text = formState.alias;
     			targetNode.attributes.attributes.formState = formState;
-    		} else if (nodeType == 'entity') {
+    		} else if (nodeType == Sbi.settings.qbe.constants.NODE_TYPE_ENTITY) {
     			var node = new Ext.tree.TreeNode({
         			text: formState.alias,
         			leaf: true,
-        			type: this.CALCULATED_FIELD, 
+        			type: Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD, 
         			longDescription: formState.expression,
         			formState: formState, 
         			iconCls: 'calculation',
         			attributes:{
 	        			text: formState.alias,
 	        			leaf: true,
-	        			type: this.CALCULATED_FIELD, 
+	        			type: Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD, 
 	        			longDescription: formState.expression,
 	        			formState: formState, 
 	        			iconCls: 'calculation'}
@@ -1040,15 +1040,6 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
         this.ctxNode = node;
         this.ctxNode.ui.addClass('x-node-ctx');
         this.menu.showAt(e.getXY());
-        
-        /*
-        if(node.isLeaf()){
-            this.ctxNode = node;
-            this.ctxNode.ui.addClass('x-node-ctx');
-            this.menu.items.get('load').setDisabled(node.isSelected());
-            this.menu.showAt(e.getXY());
-        }
-        */
     }
 	
 	, oonLoad: function(treeLoader, node, response) {
