@@ -174,12 +174,12 @@ public class ExportAction extends AbstractConsoleEngineAction {
 					String key = (String)it.next();
 					JSONObject header = resultHeaders.getJSONObject(key);
 					String fieldHeader = header.optString("header", "");
-					String fieldHeaderType =  header.optString("headerType", "");		
-					// in case of dynamic headers gets the value from the dataset
-					if (fieldHeaderType.equalsIgnoreCase("dataset")){
-						int posHeader = dataStore.getMetaData().getFieldIndex(fieldHeader);
-						fieldHeader =((List)dataStore.getFieldValues(posHeader)).get(0).toString();
-					}
+//					String fieldHeaderType =  header.optString("headerType", "");		
+//					// in case of dynamic headers gets the value from the dataset
+//					if (fieldHeaderType.equalsIgnoreCase("dataset")){
+//						int posHeader = dataStore.getMetaData().getFieldIndex(fieldHeader);
+//						fieldHeader =((List)dataStore.getFieldValues(posHeader)).get(0).toString();
+//					}
 					
 					Field headerF = new Field(fieldHeader, "java.lang.String", 100);
 					extractedFields.add(headerF);
