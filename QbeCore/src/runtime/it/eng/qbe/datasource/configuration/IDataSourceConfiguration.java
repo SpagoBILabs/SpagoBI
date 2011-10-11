@@ -88,4 +88,10 @@ public interface IDataSourceConfiguration {
 	List<IModelViewEntityDescriptor> loadViews();
 	Map<String, List<ModelCalculatedField>> loadCalculatedFields();
 	void saveCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields);
+	
+	/**
+	 * Loads the inline functions
+	 * @return the function code
+	 */
+	List loadInLineFunctions(String dialect);
 }

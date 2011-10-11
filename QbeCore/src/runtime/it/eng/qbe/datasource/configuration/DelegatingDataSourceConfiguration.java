@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.datasource.configuration.dao.ICalculatedFieldsDAO;
+import it.eng.qbe.datasource.configuration.dao.IInLineFunctionsDAO;
 import it.eng.qbe.datasource.configuration.dao.IModelI18NPropertiesDAO;
 import it.eng.qbe.datasource.configuration.dao.IModelPropertiesDAO;
 import it.eng.qbe.datasource.configuration.dao.IViewsDAO;
@@ -44,6 +45,7 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 	ICalculatedFieldsDAO calculatedFieldsDAO;
 	IModelI18NPropertiesDAO modelLabelsDAOFileImpl;
 	IViewsDAO viewsDAO;
+	IInLineFunctionsDAO functionsDAO;
 	
 	public DelegatingDataSourceConfiguration(String modelName) {
 		super(modelName);
@@ -112,5 +114,9 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 
 	public void setViewsDAO(IViewsDAO viewsDAO) {
 		this.viewsDAO = viewsDAO;
+	}
+	
+	public List IInLineFunctionsDAO(String dialect) {
+		return functionsDAO.loadInLineFunctions(dialect);
 	}
 }
