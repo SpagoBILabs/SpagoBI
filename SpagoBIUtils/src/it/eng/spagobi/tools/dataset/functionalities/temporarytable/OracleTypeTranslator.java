@@ -33,13 +33,13 @@ public class OracleTypeTranslator implements INativeDBTypeable{
 
 	private static Logger logger = Logger.getLogger("OracleTypeTranslator");
 	
-	static final Integer MAX_VARCHAR2_SIZE = 4000;
+	static final Integer MAX_VARCHAR2_SIZE = 2000;
 	
 	private static Map<String, String> oracleTypeMapping;
 	static{
 		oracleTypeMapping = new HashMap<String, String>();
 		oracleTypeMapping.put("java.lang.Integer", "NUMBER");
-		oracleTypeMapping.put("java.lang.String", "VARCHAR2");
+		oracleTypeMapping.put("java.lang.String", "CHAR");
 		oracleTypeMapping.put("java.lang.String4001", "CLOB");
 		oracleTypeMapping.put("java.lang.Boolean", "VARCHAR2(1)");
 		oracleTypeMapping.put("java.lang.Float", "NUMBER");
