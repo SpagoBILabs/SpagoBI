@@ -154,7 +154,11 @@ Ext.onReady(function(){
 	    			var documentWindowsParams = {
 	    					//'OBJECT_ID': this.executionInstance.OBJECT_ID,
 	    					'OBJECT_TYPE': 'WORKSHEET',
-	    					'OBJECT_WK_DEFINITION': wkDefinition
+	    					//'template': wkDefinition,
+	    					'OBJECT_WK_DEFINITION': wkDefinition,
+	    					'MESSAGE_DET': 'DOC_SAVE_FROM_DATASET',
+	    					'dataset_label': '<%=dataSetLabel%>',
+	    					'typeid': 'WORKSHEET' 
 	    					//,'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
 	    				};
 	    			//if(this.executionInstance.document.typeCode == 'DATAMART'){
