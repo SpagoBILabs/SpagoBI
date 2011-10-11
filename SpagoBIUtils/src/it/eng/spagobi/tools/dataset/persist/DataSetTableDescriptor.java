@@ -29,19 +29,26 @@ public class DataSetTableDescriptor implements IDataSetTableDescriptor {
 	private String tableName = null;
 	private Map<String, String> field2ColumnMap = null;
 	private Map<String, Class> field2ClassMap = null;
+	private Map<String, String> column2fieldMap = null;
 	
 	public DataSetTableDescriptor() {
 		this.field2ColumnMap = new HashMap<String, String>();
 		this.field2ClassMap = new HashMap<String, Class>();
+		this.column2fieldMap = new HashMap<String, String>();
 	}
 	
 	public void addField(String fieldName, String columnName, Class type) {
 		this.field2ColumnMap.put(fieldName, columnName);
 		this.field2ClassMap.put(fieldName, type);
+		this.column2fieldMap.put(columnName, fieldName);
 	}
 
 	public String getColumnName(String fieldName) {
 		return this.field2ColumnMap.get(fieldName);
+	}
+	
+	public String getFieldName(String columnName) {
+		return this.column2fieldMap.get(columnName);
 	}
 	
 	public Class getColumnType(String fieldName) {

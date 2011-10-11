@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -109,13 +110,18 @@ public class GetFilterValuesAction extends AbstractWorksheetEngineAction {
 			// execute SQL query against temporary table
 			logger.debug("Executing query on temporary table : " + worksheetQuery);
 			dataStore = this.executeWorksheetQuery(worksheetQuery, null, null);
-			logger.debug("Query on temporary table executed successfully; datastore obtained:");
-			logger.debug(dataStore);
+			LogMF.debug(logger, "Query on temporary table executed successfully; datastore obtained: {0}", dataStore);
+			Assert.assertNotNull(dataStore, "Datastore obatined is null!!");
+			/* since the datastore, at this point, is a JDBC datastore, 
+			* it does not contain information about measures/attributes, fields' name...
+			* therefore we adjust its metadata
+			*/
+			this.adjustMetadata((DataStore) dataStore, dataset, descriptor);
+			LogMF.debug(logger, "Adjusted metadata: {0}", dataStore.getMetaData());
 			DataStore clone = this.clone(dataStore);
 			logger.debug("Decoding dataset ...");
 			dataStore = dataset.decode(dataStore);
-			logger.debug("Dataset decoded:");
-			logger.debug(dataStore);
+			LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
 			
 			IMetaData metadata = dataStore.getMetaData();
 			IFieldMetaData fieldMetadata = metadata.getFieldMeta(0);

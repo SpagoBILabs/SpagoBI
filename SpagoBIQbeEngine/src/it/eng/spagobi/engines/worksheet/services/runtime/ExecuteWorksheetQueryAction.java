@@ -31,6 +31,7 @@ import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -45,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -179,12 +181,17 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		// execute SQL query against temporary table
 		logger.debug("Executing query on temporary table : " + worksheetQuery);
 		dataStore = this.executeWorksheetQuery(worksheetQuery, start, limit);
-		logger.debug("Query on temporary table executed successfully; datastore obtained:");
-		logger.debug(dataStore);
+		LogMF.debug(logger, "Query on temporary table executed successfully; datastore obtained: {0}", dataStore);
+		Assert.assertNotNull(dataStore, "Datastore obatined is null!!");
+		/* since the datastore, at this point, is a JDBC datastore, 
+		* it does not contain information about measures/attributes, fields' name...
+		* therefore we adjust its metadata
+		*/
+		this.adjustMetadata((DataStore) dataStore, dataset, descriptor);
+		LogMF.debug(logger, "Adjusted metadata: {0}", dataStore.getMetaData());
 		logger.debug("Decoding dataset ...");
 		dataStore = dataset.decode(dataStore);
-		logger.debug("Dataset decoded:");
-		logger.debug(dataStore);
+		LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
 		
 		// at this moment, the store has "col_0_..." (or something like that) as column aliases: we must put the right aliases 
 		IMetaData dataStoreMetadata = dataStore.getMetaData();

@@ -25,14 +25,11 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
  */
 public class DataStore implements IDataStore {
 	
+	private static transient Logger logger = Logger.getLogger(DataStore.class);
+	
 	IMetaData metaData;
 	
 	List records = null;
-	
-	
-	private static transient Logger logger = Logger.getLogger(DataStore.class);
-	
-
 
     public DataStore() {
 		super();
@@ -291,6 +288,23 @@ public class DataStore implements IDataStore {
 		
 		return xml;
     }
-
+	
+    @Override
+	public String toString() {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("DataStore: [\n");
+    	buffer.append("MetaData:\n");
+    	buffer.append(metaData);
+    	buffer.append("\n");
+    	buffer.append("Records:\n");
+    	Iterator it = this.iterator();
+    	while (it.hasNext()) {
+    		IRecord record =(IRecord) it.next();
+    		buffer.append(record);
+    		buffer.append("\n");
+    	}
+    	buffer.append("]");
+    	return buffer.toString();
+	}
 
 }

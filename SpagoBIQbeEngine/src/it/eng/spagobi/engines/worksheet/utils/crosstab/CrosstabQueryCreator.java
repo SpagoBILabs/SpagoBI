@@ -33,8 +33,10 @@ import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition.Row;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.util.Iterator;
 import java.util.List;
@@ -60,11 +62,11 @@ public class CrosstabQueryCreator {
 	public static String getCrosstabQuery(
 			CrosstabDefinition crosstabDefinition,
 			IDataSetTableDescriptor descriptor,
-			List<WhereField> whereFields) {
+			List<WhereField> whereFields, IDataSource dataSource) {
 		logger.debug("IN");
 		StringBuffer buffer = new StringBuffer();
 		
-		putSelectClause(buffer, crosstabDefinition, descriptor);
+		putSelectClause(buffer, crosstabDefinition, descriptor, dataSource);
 		
 		putFromClause(buffer, descriptor);
 		
@@ -163,11 +165,13 @@ public class CrosstabQueryCreator {
 	}
 
 	private static void putSelectClause(StringBuffer toReturn,
-			CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor) {
+			CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor, IDataSource dataSource) {
 		logger.debug("IN");
 		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
 		List<Measure> measures = crosstabDefinition.getMeasures(); 
+		
+		String aliasDelimiter = TemporaryTableManager.getAliasDelimiter(dataSource);
 		
 		toReturn.append("SELECT ");
 		
@@ -197,6 +201,7 @@ public class CrosstabQueryCreator {
 			if (columnName == null) {
 				// when defining a crosstab inside the SmartFilter document, an additional COUNT field with id QBE_SMARTFILTER_COUNT
 				// is automatically added inside query fields, therefore the entity id is not found on base query selected fields
+				columnName = "Count";
 				if (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) {
 					toReturn.append(AggregationFunctions.COUNT_FUNCTION.apply("*"));
 				} else {
@@ -210,6 +215,7 @@ public class CrosstabQueryCreator {
 					toReturn.append(columnName);
 				}
 			}
+			toReturn.append(" AS " + aliasDelimiter + columnName + aliasDelimiter);
 			if (measuresIt.hasNext()) {
 				toReturn.append(", ");
 			}

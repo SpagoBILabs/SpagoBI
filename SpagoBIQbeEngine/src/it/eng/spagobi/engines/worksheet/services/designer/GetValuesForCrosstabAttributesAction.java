@@ -133,7 +133,7 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			dataStore = dataset.getDomainValues(fieldName, start, limit, filter);
 			if (alias != null) {
 				IMetaData metadata = dataStore.getMetaData();
-				metadata.changeFieldAlias(metadata.getFieldIndex(fieldName), alias);
+				metadata.changeFieldAlias(0, alias);
 			}
 			Map<String, Object> props = new HashMap<String, Object>();
 			props.put(JSONDataWriter.PROPERTY_PUT_IDS, Boolean.FALSE);

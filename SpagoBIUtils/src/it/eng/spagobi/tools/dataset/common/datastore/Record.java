@@ -40,25 +40,18 @@ public class Record implements IRecord,Serializable {
 	public void insertField(int fieldIndex, IField field) {    	
 		fields.add(fieldIndex, field);	
     }
-
-
-   
-
-
+	
 	public List getFields() {
 		return this.fields;
 	}
-
 
 	public void setFields(List fields) {
 		this.fields = fields;
 	}
 
-
 	public IDataStore getDataStore() {
 		return dataStore;
 	}
-
 
 	public void setDataStore(IDataStore dataStore) {
 		this.dataStore = dataStore;

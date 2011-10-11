@@ -32,8 +32,10 @@ import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
@@ -44,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -108,17 +111,21 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			temp = getOptionalFilters(getAttributeAsJSONObject(OPTIONAL_FILTERS));
 			whereFields.addAll(temp);
 			
-			String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields);
+			String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, engineInstance.getDataSource());
 			// execute SQL query against temporary table
 			logger.debug("Executing query on temporary table : " + worksheetQuery);
 			dataStore = this.executeWorksheetQuery(worksheetQuery, null, null);
-			logger.debug("Query on temporary table executed successfully; datastore obtained:");
-			logger.debug(dataStore);
+			LogMF.debug(logger, "Query on temporary table executed successfully; datastore obtained: {0}", dataStore);
+			Assert.assertNotNull(dataStore, "Datastore obatined is null!!");
+			/* since the datastore, at this point, is a JDBC datastore, 
+			* it does not contain information about measures/attributes, fields' name...
+			* therefore we adjust its metadata
+			*/
+			this.adjustMetadata((DataStore) dataStore, dataset, descriptor);
+			LogMF.debug(logger, "Adjusted metadata: {0}", dataStore.getMetaData());
 			logger.debug("Decoding dataset ...");
 			dataStore = dataset.decode(dataStore);
-			logger.debug("Dataset decoded:");
-			logger.debug(dataStore);
-			
+			LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
 			
 			// serialize crosstab
 			CrossTab crossTab = new CrossTab(dataStore, crosstabDefinition);
@@ -141,16 +148,18 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 		}	
 	}
 
+
 	/**
 	 * Build the sql statement to query the temporary table 
 	 * @param crosstabDefinition definition of the crosstab
 	 * @param descriptor the temporary table descriptor
+	 * @param dataSource the datasource
 	 * @param tableName the temporary table name
 	 * @return the sql statement to query the temporary table 
 	 */
 	protected String buildSqlStatement(CrosstabDefinition crosstabDefinition,
-			IDataSetTableDescriptor descriptor, List<WhereField> filters) {
-		return CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, descriptor, filters);
+			IDataSetTableDescriptor descriptor, List<WhereField> filters, IDataSource dataSource) {
+		return CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, descriptor, filters, dataSource);
 	}
 	
 }
