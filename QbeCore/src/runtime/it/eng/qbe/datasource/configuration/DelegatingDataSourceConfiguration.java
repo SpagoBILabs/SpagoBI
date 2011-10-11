@@ -47,6 +47,8 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 	IViewsDAO viewsDAO;
 	IInLineFunctionsDAO functionsDAO;
 	
+	
+
 	public DelegatingDataSourceConfiguration(String modelName) {
 		super(modelName);
 	}
@@ -79,6 +81,10 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 
 	public List<IModelViewEntityDescriptor> loadViews() {
 		return viewsDAO.loadModelViews();
+	}
+	
+	public List loadInLineFunctions(String dialect) {
+		return functionsDAO.loadInLineFunctions(dialect);
 	}
 	
 	// Accessor methods	
@@ -116,7 +122,11 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 		this.viewsDAO = viewsDAO;
 	}
 	
-	public List IInLineFunctionsDAO(String dialect) {
-		return functionsDAO.loadInLineFunctions(dialect);
+	public IInLineFunctionsDAO getFunctionsDAO() {
+		return functionsDAO;
+	}
+
+	public void setFunctionsDAO(IInLineFunctionsDAO functionsDAO) {
+		this.functionsDAO = functionsDAO;
 	}
 }
