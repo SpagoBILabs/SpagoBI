@@ -4,7 +4,7 @@ import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.CalculatedSelectField;
-import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
@@ -86,9 +86,9 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			
 			dataStoreFieldMeta = new FieldMetadata();
 			dataStoreFieldMeta.setAlias( queryFiled.getAlias() );
-			if(queryFiled.isDataMartField()) {
-				DataMartSelectField dataMartSelectField = (DataMartSelectField) queryFiled;
-				dataStoreFieldMeta.setName( ((DataMartSelectField)queryFiled).getUniqueName() );
+			if(queryFiled.isSimpleField()) {
+				SimpleSelectField dataMartSelectField = (SimpleSelectField) queryFiled;
+				dataStoreFieldMeta.setName( ((SimpleSelectField)queryFiled).getUniqueName() );
 				dataStoreFieldMeta.setProperty("calculated", new Boolean(false));
 				dataStoreFieldMeta.setProperty("uniqueName", dataMartSelectField.getUniqueName());
 				dataStoreFieldMeta.setType(Object.class);

@@ -280,8 +280,6 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 			calculatedFiledsOnTargetEntity.remove(toRemove.get(i));
 		}
 		calculatedFiledsOnTargetEntity.add(calculatedFiled);
-		
-		String n = calculatedFiled.getUniqueName();
 	}
 	
 	/*

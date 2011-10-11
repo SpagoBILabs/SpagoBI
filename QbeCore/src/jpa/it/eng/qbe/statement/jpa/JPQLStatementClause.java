@@ -3,10 +3,9 @@
  */
 package it.eng.qbe.statement.jpa;
 
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
-import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.spagobi.utilities.objects.Couple;
 
@@ -48,20 +47,14 @@ public class JPQLStatementClause {
 		List<String> aliasEntityMapping = new  ArrayList<String>();
 		List<String> aliases = new  ArrayList<String>();
 		
-		//test anto		
-		ConnectionDescriptor connection = (ConnectionDescriptor)this.parentStatement.getDataSource().getConfiguration().loadDataSourceProperties().get("connection");		
-		String dbDialect = connection.getDialect(); 
-		Object pippo = this.parentStatement.getDataSource().getConfiguration().loadInLineFunctions(dbDialect);
-		// fine test anto
-		
 		StringTokenizer stk = new StringTokenizer(expression, "+-|*/(),");
 		while(stk.hasMoreTokens()){
 			String alias = stk.nextToken().trim();
 			String uniqueName;
 			allSelectFields = query.getSelectFields(false);
 			for(int i=0; i<allSelectFields.size(); i++){
-				if(allSelectFields.get(i).getClass().equals(DataMartSelectField.class) && ((DataMartSelectField)allSelectFields.get(i)).getAlias().equals(alias)){
-					uniqueName=((DataMartSelectField)allSelectFields.get(i)).getUniqueName();
+				if(allSelectFields.get(i).getClass().equals(SimpleSelectField.class) && ((SimpleSelectField)allSelectFields.get(i)).getAlias().equals(alias)){
+					uniqueName=((SimpleSelectField)allSelectFields.get(i)).getUniqueName();
 					datamartField = parentStatement.getDataSource().getModelStructure().getField(uniqueName);	
 					Couple queryNameAndRoot = datamartField.getQueryName();
 					queryName = (String) queryNameAndRoot.getFirst();
@@ -73,7 +66,7 @@ public class JPQLStatementClause {
 						rootEntity = datamartField.getParent().getRoot(); 	
 					}
 					rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
-					queryName = ((DataMartSelectField)allSelectFields.get(i)).getFunction().apply(rootEntityAlias+"."+queryName);
+					queryName = ((SimpleSelectField)allSelectFields.get(i)).getFunction().apply(rootEntityAlias+"."+queryName);
 					aliasEntityMapping.add(queryName);
 					aliases.add(alias);
 					break;

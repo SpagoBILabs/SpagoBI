@@ -42,9 +42,9 @@ public class Query {
 	
 	boolean distinctClauseEnabled;
 	
-	List selectFields;	
-	List whereClause;
-	List havingClause;
+	List<ISelectField> selectFields;	
+	List<WhereField> whereClause;
+	List<HavingField> havingClause;
 	
 	ExpressionNode whereClauseStructure;
 	boolean nestedExpression;
@@ -94,7 +94,7 @@ public class Query {
 		int selectedFieldsCount;
 		List fields, calculatedFields, inlineCalculatedFields;
 		
-		fields = getDataMartSelectFields(true);
+		fields = getSimpleSelectFields(true);
 		Assert.assertNotNull(fields, "getDataMartSelectFields method cannot return a null value");
 		calculatedFields = getCalculatedSelectFields(true);
 		Assert.assertNotNull(fields, "getCalculatedSelectFields method cannot return a null value");
@@ -108,7 +108,7 @@ public class Query {
 	
 	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible,
 			boolean groupByField, String orderType, String pattern) {
-		selectFields.add( new DataMartSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern) );
+		selectFields.add( new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern) );
 	}
 	
 	public void addCalculatedFiled(String fieldAlias, String expression, String type, boolean included, boolean visible) {
@@ -151,16 +151,20 @@ public class Query {
 	}
 	
 
-	
-	public List getSelectFields(boolean onlyIncluded) {
-		List fields;
+	/**
+	 * @param onlyIncluded true to return all the select fields. 
+	 * false to include only the select fields actually included in the select clause of the generated statemet (i.e
+	 * it is possible for a select field to be used only in 'order by' or in 'group by' clause of the statement)
+	 * 
+	 * @return a List o selected field
+	 */
+	public List<ISelectField> getSelectFields(boolean onlyIncluded) {
+		List<ISelectField> fields;
 		if(onlyIncluded == false) {
-			fields = new ArrayList(selectFields);
+			fields = new ArrayList<ISelectField>(selectFields);
 		} else {
-			fields = new ArrayList();
-			Iterator it = selectFields.iterator();
-			while(it.hasNext()) {
-				ISelectField field = (ISelectField)it.next();
+			fields = new ArrayList<ISelectField>();
+			for(ISelectField field : selectFields) {
 				if(field.isIncluded()) {
 					fields.add(field);
 				}
@@ -172,14 +176,14 @@ public class Query {
 	public List getSelectFieldsByName(String uniqueName) {
 		List fields;
 		Iterator it;
-		DataMartSelectField field;
+		SimpleSelectField field;
 		
 		fields = new ArrayList();
 		it = getSelectFields(false).iterator();
 		while(it.hasNext()) {
 			ISelectField f = (ISelectField)it.next();
-			if(f.isDataMartField()) {
-				field = (DataMartSelectField)f;
+			if(f.isSimpleField()) {
+				field = (SimpleSelectField)f;
 				if(field.getUniqueName().equalsIgnoreCase(uniqueName)) {
 					fields.add(field);
 				}
@@ -217,8 +221,8 @@ public class Query {
 				
 		for(int i = 0; i < selectFields.size(); i++) {
 			ISelectField f = (ISelectField)selectFields.get(i);
-			if(f.isDataMartField()) {
-				DataMartSelectField field = (DataMartSelectField)f;
+			if(f.isSimpleField()) {
+				SimpleSelectField field = (SimpleSelectField)f;
 				if(field.getUniqueName().equalsIgnoreCase(uniqueName)) {
 					index = i;
 					break;
@@ -230,7 +234,7 @@ public class Query {
 	}
 	
 
-	public List getDataMartSelectFields(boolean onlyIncluded) {
+	public List getSimpleSelectFields(boolean onlyIncluded) {
 		List dataMartSelectFields;
 		Iterator it;
 		ISelectField field;
@@ -239,7 +243,7 @@ public class Query {
 		it = selectFields.iterator();
 		while(it.hasNext()) {
 			field = (ISelectField)it.next();
-			if(field.isDataMartField()) {
+			if(field.isSimpleField()) {
 				if( onlyIncluded == false || (onlyIncluded == true && field.isIncluded()) ) {
 					dataMartSelectFields.add(field);
 				}				
@@ -303,11 +307,11 @@ public class Query {
 		this.distinctClauseEnabled = distinctClauseEnabled;
 	}
 	
-	public List getOrderByFields() {
-		List orderByFields = new ArrayList();
-		Iterator it = this.getDataMartSelectFields(false).iterator();
+	public List<ISelectField> getOrderByFields() {
+		List<ISelectField> orderByFields = new ArrayList();
+		Iterator it = this.getSimpleSelectFields(false).iterator();
 		while( it.hasNext() ) {
-			DataMartSelectField selectField = (DataMartSelectField)it.next();
+			SimpleSelectField selectField = (SimpleSelectField)it.next();
 			if(selectField.isOrderByField()) {
 				orderByFields.add(selectField);
 			}
@@ -316,11 +320,11 @@ public class Query {
 	}
 	
 	
-	public List getGroupByFields() {
-		List groupByFields = new ArrayList();
-		Iterator it = this.getDataMartSelectFields(false).iterator();
+	public List<ISelectField> getGroupByFields() {
+		List<ISelectField> groupByFields = new ArrayList();
+		Iterator it = this.getSimpleSelectFields(false).iterator();
 		while( it.hasNext() ) {
-			DataMartSelectField selectField = (DataMartSelectField)it.next();
+			SimpleSelectField selectField = (SimpleSelectField)it.next();
 			if(selectField.isGroupByField()) {
 				groupByFields.add(selectField);
 			}

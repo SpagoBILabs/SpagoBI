@@ -6,7 +6,7 @@ package it.eng.qbe.statement.jpa;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.AbstractSelectField;
-import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -34,7 +34,7 @@ public class JPQLStatementOrderByClause  extends JPQLStatementClause {
 	protected String buildOrderByClause(Query query, Map entityAliasesMaps) {
 		StringBuffer buffer;
 		Iterator it;
-		DataMartSelectField selectField;
+		SimpleSelectField selectField;
 		
 		it = getOrderByFields(query).iterator();		
 		if(!it.hasNext()) {
@@ -47,7 +47,7 @@ public class JPQLStatementOrderByClause  extends JPQLStatementClause {
 		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
 					
 		while( it.hasNext() ) {
-			selectField = (DataMartSelectField)it.next();
+			selectField = (SimpleSelectField)it.next();
 			
 			Assert.assertTrue(selectField.isOrderByField(), "Field [" + selectField.getUniqueName() +"] is not an orderBy filed");
 			
@@ -81,9 +81,9 @@ public class JPQLStatementOrderByClause  extends JPQLStatementClause {
 	
 	private List getOrderByFields(Query query) {
 		List orderByFields = new ArrayList();
-		Iterator it = query.getDataMartSelectFields(false).iterator();
+		Iterator it = query.getSimpleSelectFields(false).iterator();
 		while( it.hasNext() ) {
-			DataMartSelectField selectField = (DataMartSelectField)it.next();
+			SimpleSelectField selectField = (SimpleSelectField)it.next();
 			if(selectField.isOrderByField()) {
 				orderByFields.add(selectField);
 			}

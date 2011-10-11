@@ -277,8 +277,8 @@ public class FilteredModelEntity implements IModelEntity{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.model.structure.IModelNode#getPathParent()
 	 */
-	public IModelEntity getPathParent() {
-		return wrappedModelEntity.getPathParent();
+	public IModelEntity getLogicalParent() {
+		return wrappedModelEntity.getLogicalParent();
 	}
 
 	/* (non-Javadoc)

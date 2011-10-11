@@ -29,7 +29,7 @@ import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.CriteriaConstants;
-import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Filter;
 import it.eng.qbe.query.HavingField;
@@ -257,7 +257,7 @@ public class HQLStatement extends AbstractStatement {
 		List allSelectFields;
 		List<InLineCalculatedSelectField> selectInLineCalculatedFields = new ArrayList<InLineCalculatedSelectField>();
 		AbstractSelectField selectAbstractField;
-		DataMartSelectField selectField;
+		SimpleSelectField selectField;
 		InLineCalculatedSelectField selectInLineField;
 		IModelEntity rootEntity;
 		IModelField datamartField;
@@ -289,9 +289,9 @@ public class HQLStatement extends AbstractStatement {
 				String[] idsForQuery = new String[selectFields.size()-query.getCalculatedSelectFields(true).size()]; 
 				int index=0;
 				do{				
-					if(selectAbstractField.isDataMartField()){
+					if(selectAbstractField.isSimpleField()){
 					
-						selectField = (DataMartSelectField)selectAbstractField;
+						selectField = (SimpleSelectField)selectAbstractField;
 						
 						logger.debug("select field unique name [" + selectField.getUniqueName() + "]");
 						
@@ -580,7 +580,8 @@ public class HQLStatement extends AbstractStatement {
 				operandElement = buildStaticOperand(operand);
 			} else if (OPERAND_TYPE_SUBQUERY.equalsIgnoreCase(operand.type)) {
 				operandElement = new String[] {buildQueryOperand(operand)};
-			} else if (OPERAND_TYPE_FIELD.equalsIgnoreCase(operand.type)) {
+			} else if (OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(operand.type)
+					|| OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(operand.type)) {
 				operandElement = new String[] {buildFieldOperand(operand, query, entityAliasesMaps)};
 			} else if (OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(operand.type)) {
 				operandElement = new String[] {buildParentFieldOperand(operand, query, entityAliasesMaps)};
@@ -600,17 +601,14 @@ public class HQLStatement extends AbstractStatement {
 		
 			String operandValueToBound = operandValuesToBound[i];
 			String boundedValue = operandValueToBound;
-			
-			
-			// calculated field
-			// TODO check!!!! why not a OPERAND_TYPE_CALCUALTED_FIELD????
-			if (leadOperand.values[0].contains("expression")) {
+	
+			if (OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(leadOperand.type)) {
 				int startType = leadOperand.values[0].indexOf("type\":")+7;
 				int endType = leadOperand.values[0].indexOf( "\"", startType);
 				String type = leadOperand.values[0].substring(startType, endType);
 				boundedValue = getValueBounded(operandValueToBound, type);
-			}else if (OPERAND_TYPE_FIELD.equalsIgnoreCase(leadOperand.type) 
-							|| OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(leadOperand.type)) {
+			}else if (OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(leadOperand.type) 
+					|| OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(leadOperand.type)) {
 				
 				IModelField datamartField = getDataSource().getModelStructure().getField(leadOperand.values[0]);
 				boundedValue = getValueBounded(operandValueToBound, datamartField.getType());
@@ -838,13 +836,13 @@ public class HQLStatement extends AbstractStatement {
 			String uniqueName;
 			allSelectFields = query.getSelectFields(false);
 			for(int i=0; i<allSelectFields.size(); i++){
-				if(allSelectFields.get(i).getClass().equals(DataMartSelectField.class) && ((DataMartSelectField)allSelectFields.get(i)).getAlias().equals(alias)){
-					uniqueName=((DataMartSelectField)allSelectFields.get(i)).getUniqueName();
+				if(allSelectFields.get(i).getClass().equals(SimpleSelectField.class) && ((SimpleSelectField)allSelectFields.get(i)).getAlias().equals(alias)){
+					uniqueName=((SimpleSelectField)allSelectFields.get(i)).getUniqueName();
 					datamartField = getDataSource().getModelStructure().getField(uniqueName);	
 					queryName =  (String)datamartField.getQueryName().getFirst();
 					rootEntity = datamartField.getParent().getRoot(); 
 					rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
-					queryName = ((DataMartSelectField)allSelectFields.get(i)).getFunction().apply(rootEntityAlias+"."+queryName);
+					queryName = ((SimpleSelectField)allSelectFields.get(i)).getFunction().apply(rootEntityAlias+"."+queryName);
 					aliasEntityMapping.add(queryName);
 					aliases.add(alias);
 					break;
@@ -1089,7 +1087,7 @@ public class HQLStatement extends AbstractStatement {
 				fieldName = parseInLinecalculatedField(icf.getExpression(), query, entityAliasesMaps);
 			}else{
 			
-				DataMartSelectField groupByField = (DataMartSelectField)abstractSelectedField;
+				SimpleSelectField groupByField = (SimpleSelectField)abstractSelectedField;
 				IModelField datamartField = getDataSource().getModelStructure().getField(groupByField.getUniqueName());
 				IModelEntity entity = datamartField.getParent().getRoot(); 
 				String queryName = (String)datamartField.getQueryName().getFirst();
@@ -1110,9 +1108,9 @@ public class HQLStatement extends AbstractStatement {
 	
 	private List getOrderByFields(Query query) {
 		List orderByFields = new ArrayList();
-		Iterator it = query.getDataMartSelectFields(false).iterator();
+		Iterator it = query.getSimpleSelectFields(false).iterator();
 		while( it.hasNext() ) {
-			DataMartSelectField selectField = (DataMartSelectField)it.next();
+			SimpleSelectField selectField = (SimpleSelectField)it.next();
 			if(selectField.isOrderByField()) {
 				orderByFields.add(selectField);
 			}
@@ -1123,7 +1121,7 @@ public class HQLStatement extends AbstractStatement {
 	private String buildOrderByClause(Query query, Map entityAliasesMaps) {
 		StringBuffer buffer;
 		Iterator it;
-		DataMartSelectField selectField;
+		SimpleSelectField selectField;
 		
 		it = getOrderByFields(query).iterator();		
 		if(!it.hasNext()) {
@@ -1136,7 +1134,7 @@ public class HQLStatement extends AbstractStatement {
 		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
 					
 		while( it.hasNext() ) {
-			selectField = (DataMartSelectField)it.next();
+			selectField = (SimpleSelectField)it.next();
 			
 			Assert.assertTrue(selectField.isOrderByField(), "Field [" + selectField.getUniqueName() +"] is not an orderBy filed");
 			

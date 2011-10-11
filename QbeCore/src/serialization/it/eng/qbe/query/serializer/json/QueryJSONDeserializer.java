@@ -158,7 +158,7 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 					included = fieldJSON.getBoolean(QuerySerializationConstants.FIELD_INCLUDE);
 					visible = fieldJSON.getBoolean(QuerySerializationConstants.FIELD_VISIBLE);
 					
-					if("datamartField".equalsIgnoreCase(fieldType)) {
+					if(ISelectField.SIMPLE_FIELD.equalsIgnoreCase(fieldType)) {
 						fieldUniqueName = fieldJSON.getString(QuerySerializationConstants.FIELD_ID);
 						Assert.assertNotNull(fieldUniqueName, "Field name connot be null");
 					
@@ -176,7 +176,7 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 							pattern = null;
 						}
 						query.addSelectFiled(field.getUniqueName(), funct, alias, included, visible, group.equalsIgnoreCase("true"), order, pattern);		
-					} else if ("calculatedField".equalsIgnoreCase(fieldType)) {
+					} else if (ISelectField.CALCULATED_FIELD.equalsIgnoreCase(fieldType)) {
 						
 						fieldClaculationDescriptor = fieldJSON.getJSONObject(QuerySerializationConstants.FIELD_ID);
 						type = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_TYPE);
