@@ -146,8 +146,6 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
     
     , saveQueryWindow: null
     , saveViewWindow: null
-	, CALCULATED_FIELD: 'calculatedField'
-	, IN_LINE_CALCULATED_FIELD: 'inLineCalculatedField'
    
     // --------------------------------------------------------------------------------
 	// public methods
@@ -549,26 +547,29 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	        
 	        items: [this.selectGridPanel, this.filterGridPanel, this.havingGridPanel]
 	    });
-	    /*
-	     * work-around for filters grids (where clause and having clause) resizing, since they are not automatically resized
-	     * TODO: fix this problem with an Ext override (fixed upgrading to Ext3)
-	    this.selectGridPanel.grid.on('resize', function (component, adjWidth, adjHeight, rawWidth, rawHeight) {
-	    	if (this.filterGridPanel.grid.rendered) {
-	    		var previousSize = this.filterGridPanel.grid.getSize();
-		    	this.filterGridPanel.grid.setSize(adjWidth, previousSize.height);
-	    	}
-	    	if (this.havingGridPanel.grid.rendered) {
-	    		var previousSize = this.havingGridPanel.grid.getSize();
-		    	this.havingGridPanel.grid.setSize(adjWidth, previousSize.height);
-	    	}
-	    }, this);
-	    */
-	    
+	  
 	    this.selectGridPanel.on('filter', function(panel, record) {
+	    	var operandType;
+	    	if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_SIMPLE) {
+	    		operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
+	    	} else if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED) {
+	    		operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_CALCULATED_FIELD
+	    	} else if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED) {
+	    		operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+	    	} else{
+	    		Ext.Msg.show({
+				   title:'Invalid operation',
+				   msg: 'Impossibe to add field [' + record.data.alias + '] of type [' + record.data.type + '] to where clause',
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.ERROR
+				});
+	    		return;
+	    	}
+	    	
 	    	filter = {
 	    		leftOperandValue: record.data.id
 				, leftOperandDescription: record.data.entity + ' : ' + record.data.field 
-				, leftOperandType: 'Field Content'
+				, leftOperandType: operandType
 				, leftOperandLongDescription: record.data.longDescription
 
 			};
@@ -576,10 +577,27 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	    }, this);
 	    
 	    this.selectGridPanel.on('having', function(panel, record) {
+	    	var operandType;
+	    	if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_SIMPLE) {
+	    		operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
+	    	} else if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED) {
+	    		operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_CALCULATED_FIELD
+	    	} else if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED) {
+	    		operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+	    	} else{
+	    		Ext.Msg.show({
+				   title:'Invalid operation',
+				   msg: 'Impossibe to add field [' + record.data.alias + '] of type [' + record.data.type + '] to having clause',
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.ERROR
+				});
+	    		return;
+	    	}
+	    	
 	    	filter = {
 	    		leftOperandValue: record.data.id
 				, leftOperandDescription: record.data.entity + ' : ' + record.data.field 
-				, leftOperandType: 'Field Content'
+				, leftOperandType: operandType
 				, leftOperandAggregator: record.data.funct
 				, leftOperandLongDescription: record.data.longDescription
 			};
@@ -671,30 +689,34 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			recordBaseConfig = recordBaseConfig || {};
 			nodeType = node.attributes.type || node.attributes.attributes.type;
 			
-    		if(nodeType == 'field') {
+    		if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) {
 			    
     			field = {
 			    	id: node.id,
-			    	type: this.selectGridPanel.DATAMART_FIELD,
+			    	type: Sbi.settings.qbe.constants.FIELD_TYPE_SIMPLE,
 			    	entity: node.attributes.attributes.entity, 
 			    	field: node.attributes.attributes.field,
 			    	alias: node.attributes.attributes.field,
 			    	longDescription: node.attributes.attributes.longDescription
-			    };				    	
+			    };		
+    			
+    			alert(field.toSource());
 			    
     			Ext.apply(field, recordBaseConfig);
     			
     			this.selectGridPanel.addField(field);
 			    		    
-    		} else if(nodeType == this.CALCULATED_FIELD) {	
+    		} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD) {	
  	    		var field = {
  	    			id: node.attributes.formState,
- 	    			type: this.selectGridPanel.CALCULATED_FIELD,
+ 	    			type: Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED,
  	    			entity: node.parentNode.text, 
 			    	field: node.text,
  			        alias: node.text,
  			        longDescription: null
  			    };
+ 	    		
+ 	    		alert(field.toSource());
  	    		
  	    		Ext.apply(field, recordBaseConfig);
  	    		
@@ -709,22 +731,23 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
  	    			
  	    			if(n) {
  	    				this.onAddNodeToSelect(n, {visible:false});
- 	    				//this.currentDataMartStructurePanel.fireEvent('click', this.currentDataMartStructurePanel, n);
  	    			} else {
  	    				alert('node  [' + seeds + '] not contained in entity [' + node.parentNode.text + ']');
  	    			}
  	    			
  	    			
  	    		}
-    		}else if(nodeType == this.IN_LINE_CALCULATED_FIELD) {	
+    		}else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD) {	
  	 	    		var field = {
  	 	    			id: node.attributes.attributes.formState,
- 	 	    			type: this.selectGridPanel.IN_LINE_CALCULATED_FIELD,
+ 	 	    			type: Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED,
  	 	    			entity: node.parentNode.text, 
  				    	field: node.text,
  	 			        alias: node.text,
  	 			        longDescription: null
  	 			    };
+ 	 	    		
+ 	 	    		alert(field.toSource());
  	 	    		
  	 	    		Ext.apply(field, recordBaseConfig);
  	 	    		
@@ -747,10 +770,10 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
  	 	    			
  	 	    		}
 
-    		} else if(nodeType == 'entity'){
+    		} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_ENTITY){
     			for(var i = 0; i < node.attributes.children.length; i++) {
-    				if((node.attributes.children[i].attributes.type != 'field' && node.attributes.children[i].attributes.type != this.CALCULATED_FIELD) || 
-    					(node.attributes.children[i].attributes.type != 'field' && node.attributes.children[i].attributes.type != this.IN_LINE_CALCULATED_FIELD)) continue;
+    				if((node.attributes.children[i].attributes.type != 'field' && node.attributes.children[i].attributes.type != Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD) || 
+    					(node.attributes.children[i].attributes.type != 'field' && node.attributes.children[i].attributes.type != Sbi.settings.qbe.constants.IN_LINE_CALCULATED_FIELD)) continue;
     				field = {
           				id: node.attributes.children[i].id , 
             			entity: node.attributes.children[i].attributes.entity , 
