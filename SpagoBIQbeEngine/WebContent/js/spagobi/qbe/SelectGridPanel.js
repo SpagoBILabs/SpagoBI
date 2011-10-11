@@ -60,9 +60,6 @@ Sbi.qbe.SelectGridPanel = function(config) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.qbe.selectGridPanel);
 	}
 	
-	//alert(Sbi.settings.qbe.selectGridPanel.enableTbAddCalculatedBtn);
-	//alert(Sbi.settings.qbe.selectGridPanel.enableTbAddCalculatedBtn);
-	
 	var c = Ext.apply(defaultSettings, config || {});	
 	Ext.apply(this, c);
 	
@@ -87,19 +84,7 @@ Sbi.qbe.SelectGridPanel = function(config) {
 	this.initToolbar(c);
 	this.initGrid(c);
 	this.initGridListeners(c);
-	
-//	Ext.apply(c, {
-//
-//	collapsible: true,
-//	split: true,
-////	layout: 'fit',
-//
-//		 autoHeight:true,
-//		 autoWidth: true
-//		, items: [this.grid]          
-//	});	
-//	
-//	
+
 	
 	Ext.apply(c, {
 		layout: 'fit'
@@ -159,10 +144,6 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		] 
 	})
 	
-	, DATAMART_FIELD: 'datamartField'
-	, CALCULATED_FIELD: 'calculatedField'
-	, IN_LINE_CALCULATED_FIELD: 'inLineCalculatedField'
-
 	// public methods
 	
 	, loadSavedData: function(query) {
@@ -182,7 +163,7 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		field = Ext.apply(field, {
 			id: '', 
 			alias: '', 
-			type: this.DATAMART_FIELD,
+			type: Sbi.settings.qbe.constants.FIELD_TYPE_SIMPLE,
 			
 			entity: '', 
 			field: '',
@@ -824,13 +805,12 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
      	});
  		
      	this.calculatedFieldWizard.on('apply', function(win, formState, targetRecord){
-     		var field = {id: formState, alias: formState.alias, type: this.CALCULATED_FIELD, longDescription: formState.expression};
+     		var field = {id: formState, alias: formState.alias, type: Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED, longDescription: formState.expression};
      		if(targetRecord) {
      			Ext.apply(targetRecord.data, field);	
      			this.store.fireEvent('datachanged', this.store) ;
      		} else {
-     			//formState.type=this.CALCULATED_FIELD;
-     			this.addField({id: formState, alias: formState.alias, type: this.CALCULATED_FIELD, longDescription: formState.expression});
+     			this.addField({id: formState, alias: formState.alias, type: Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED, longDescription: formState.expression});
      		}
      	}, this);
      	
@@ -854,14 +834,13 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
      	}, this);
 		
     	this.inLineCalculatedFieldWizard.on('apply', function(win, formState, targetRecord){
-    		var field = {id: formState, alias: formState.alias, type: this.IN_LINE_CALCULATED_FIELD, longDescription: formState.expression};
+    		var field = {id: formState, alias: formState.alias, type: Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED, longDescription: formState.expression};
     		
     		if(targetRecord) {
     			Ext.apply(targetRecord.data, field);
     			this.store.fireEvent('datachanged', this.store);
     		} else {
-    			//formState.type=this.IN_LINE_CALCULATED_FIELD;
-    			this.addField({id: formState, alias: formState.alias, type: this.IN_LINE_CALCULATED_FIELD, longDescription: formState.expression});
+    			this.addField({id: formState, alias: formState.alias, type: Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED, longDescription: formState.expression});
     		}
     	}, this);
 	}
@@ -1014,10 +993,10 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 	, initGridListeners: function() {
 		this.grid.addEvents('actionrequest');
 		this.grid.on("actionrequest", function(grid, action, record){
-			if(action === 'filter' && record.data.type != this.CALCULATED_FIELD) {
+			if(action === 'filter' && record.data.type != Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED) {
 				this.fireEvent('filter', this, record);
 			}
-			if(action === 'having' && record.data.type != this.CALCULATED_FIELD) {	
+			if(action === 'having' && record.data.type != Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED) {	
 				this.fireEvent('having', this, record);
 			}
 		}, this);
@@ -1025,10 +1004,10 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		this.grid.on("rowdblclick", function(grid,  rowIndex, e){
 	    	var row;
 	       	var record = grid.getStore().getAt( rowIndex );
-	       	if(record.data.type === this.IN_LINE_CALCULATED_FIELD) {
+	       	if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED) {
 	       		this.addInLineCalculatedField(record);
 	       	}
-	       	if(record.data.type === this.CALCULATED_FIELD) {
+	       	if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED) {
 	       		this.addCalculatedField(record);
 	       	}
 	     }, this);
