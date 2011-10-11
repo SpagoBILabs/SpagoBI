@@ -102,27 +102,90 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			
 			//looks for js function		
 			if (singleChartConfig.plotOptions){
-				if(singleChartConfig.plotOptions.pie && singleChartConfig.plotOptions.pie.dataLabels){
-					var formatter = this.getFormatterCode(singleChartConfig.plotOptions.pie.dataLabels.formatter);
-					if (formatter !== undefined && formatter !== null){
-						singleChartConfig.plotOptions.pie.dataLabels.formatter = formatter;
+				if(singleChartConfig.plotOptions.pie && singleChartConfig.plotOptions.pie.dataLabels &&
+								singleChartConfig.plotOptions.pie.dataLabels.formatter){
+						var formatterCode = "";
+						switch (singleChartConfig.plotOptions.pie.dataLabels.formatter) {
+					        case 'name_percentage':
+					        	formatterCode = this.formatWithNamePercentage();        	
+					        	break;
+					        case 'name_value':
+					        	formatterCode = this.formatWithNameValue();
+					        	break;
+					        case 'percentage':
+					        	formatterCode = this.formatWithPercentage();
+					        	break;
+					        case 'x_y': 
+					        	//TODO : internazionalizzare messaggi
+					        	formatterCode = this.formatWithXY();
+					        	break;	
+					        case 'name':
+					        	formatterCode =  this.formatWithName();
+					        	break;
+					        default: 
+					        	//formatterCode = function (){return  singleChartConfig.plotOptions.pie.dataLabels.formatter;};
+					        	formatterCode =this.formatWithName();
+					        	break	       
+							}
+					        singleChartConfig.plotOptions.pie.dataLabels.formatter = formatterCode;
 					}
 				}
-				if(singleChartConfig.series){
-					var formatter = this.getFormatterCode(singleChartConfig.series.formatter);
-					if (formatter != null){
-						singleChartConfig.series.formatter = formatter;
+					
+			if(singleChartConfig.series && singleChartConfig.series.formatter){
+				var formatterCode = "";
+				switch (singleChartConfig.series.formatter) {
+			        case 'name_percentage':
+			        	formatterCode = this.formatWithNamePercentage();        	
+			        	break;
+			        case 'name_value':
+			        	formatterCode = this.formatWithNameValue();
+			        	break;
+			        case 'percentage':
+			        	formatterCode = this.formatWithPercentage();
+			        	break;
+			        case 'x_y': 
+			        	//TODO : internazionalizzare messaggi
+			        	formatterCode = this.formatWithXY();
+			        	break;	
+			        case 'name':
+			        	formatterCode =  this.formatWithName();
+			        	break;
+			        default: 
+			        	//formatterCode = function (){return  singleChartConfig.series.formatter;};
+			        	formatterCode = this.formatWithName();
+			        	break	       
 					}
-				}
+			        singleChartConfig.series.formatter = formatterCode;
+			}				
+			
+			//defines tooltip			
+			if(singleChartConfig.tooltip && singleChartConfig.tooltip.formatter){
+				var formatterCode = "";
+				switch (singleChartConfig.tooltip.formatter) {
+			        case 'name_percentage':
+			        	formatterCode = this.formatWithNamePercentage();        	
+			        	break;
+			        case 'name_value':
+			        	formatterCode = this.formatWithNameValue();
+			        	break;
+			        case 'percentage':
+			        	formatterCode = this.formatWithPercentage();
+			        	break;
+			        case 'x_y': 
+			        	//TODO : internazionalizzare messaggi
+			        	formatterCode = this.formatWithXY();
+			        	break;	
+			        case 'name':
+			        	formatterCode =  this.formatWithName();
+			        	break;
+			        default: 
+			        	//formatterCode = function (){return singleChartConfig.tooltip.formatter;};
+			        	formatterCode = this.formatWithName();
+			        	break	       
+					}
+					singleChartConfig.tooltip.formatter = formatterCode;
 			}
-			//defines tooltip
-			if(singleChartConfig.tooltip){
-				var formatter = this.getFormatterCode(singleChartConfig.tooltip.formatter);
-				if (formatter != null){
-					singleChartConfig.tooltip.formatter = formatter;
-				}
-			}
-	
+			
 			//defines series data
 			this.defineSeriesData(singleChartConfig);
 			
@@ -176,38 +239,6 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	        	alert('Unknown chart type!');
 	        return null;
 		}
-	}
-
-	, getFormatterCode: function (formatter){
-		if (formatter === undefined || formatter === null) return null;
-		
-		var result;
-		var formatterCode = "";
-		//alert("formatter: " + formatter);
-		switch (formatter) {
-	        case 'name_percentage':
-	        	formatterCode = "function (){return \'\<b\>\'+ this.series.name +\'\</b\>\<br/\>\'+ this.point.name +\': \'+ this.y +\' %\';}";	        	
-	        	break;
-	        case 'name':
-	        	formatterCode = "function (){return \'\<b\>\'+ this.series.name +\'\</b\>\<br/\>\'+ this.point.name ;}";
-	        	break;
-	        case 'percentage':
-	        	formatterCode = "function (){return \'\<b\>\'+ this.series.name +\'\</b\>\<br/\>\'+ this.y +\' %';}";
-	        	break;
-	        case 'x_y':
-	        	//TODO : internazionalizzare messaggi
-	        	formatterCode = "function (){return \'The value for \<b\>\'+ this.x +\'\</b\> is \<b\>\'+ this.y +\'\</b\>\';}";
-	        	break;
-	        default: 
-	        	formatterCode = "function (){return " + formatter.replace(/"/gi, "\'") + ";}";
-	        	break	       
-		}
-		
-		//formatterCode = 'function (){return '+formatterCode+';}';
-		result = eval(formatterCode);
-		//result = eval("{ return this.y;}");
-		//alert("result: " + result);
-		return result;
 	}
 	
 	, defineSeriesData: function(config){
@@ -280,5 +311,22 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 				}				
 			}
 		}
+	}
+	
+	//formatter definition 
+	, formatWithName: function (){
+		return  function (){return this.series.name;}
+	}
+	, formatWithNamePercentage: function (){
+		return function (){return  '<b>'+this.series.name +'</b><br/>'+this.point.name +':'+  this.y+'%';};
+	}
+	, formatWithPercentage: function (){
+		return  function (){return '<b>'+ this.series.name +'</b><br/>'+ this.y+'%';};
+	}
+	, formatWithXY: function (){
+		return  function (){return 'The value for <b> '+this.x+' </b> is <b> '+this.y+' </b>';};
+	}
+	, formatWithNameValue: function (){
+		return function (){return '<b>'+ this.series.name+ '</b><br/>'+ this.point.name ;};
 	}
 });
