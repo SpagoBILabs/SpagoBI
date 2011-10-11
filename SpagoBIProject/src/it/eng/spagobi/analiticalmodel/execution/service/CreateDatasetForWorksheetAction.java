@@ -151,7 +151,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 			String valsJson = getAttributeAsString( PARAMETERS_VALUES );
 			// put in response parameters ANNO and ENTE
 			Map valsMap = null;
-			if(valsJson != null)
+			if(valsJson != null && !valsJson.equals(""))
 				valsMap = getParameterValues(valsJson);
 
 
@@ -227,7 +227,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 
 		dsMetadata = getAttributeAsString( DataSetConstants.DS_METADATA );
 
-		if(getAttributeAsString( PARAMETERS_DEFINITION ) != null){
+		if(getAttributeAsString( PARAMETERS_DEFINITION ) != null && !getAttributeAsString( PARAMETERS_DEFINITION ).equals("")){
 			parametersDefinitionJson = getAttributeAsString( PARAMETERS_DEFINITION );
 			parametersDefinitionXML = parametersJsonToXML(parametersDefinitionJson);
 		}
@@ -242,7 +242,9 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		dsDetail.setJavaClassName(dsJClassName);
 		dsDetail.setParameters(parametersDefinitionXML);
 		dsDetail.setDsType(DataSetConstants.DS_CUSTOM);
-		dsDetail.setDsMetadata(dsMetadata);
+		
+		if(dsMetadata != null && !dsMetadata.equals(""))
+			dsDetail.setDsMetadata(dsMetadata);
 
 		ds = new GuiGenericDataSet();
 		ds.setLabel(dsLabel);
