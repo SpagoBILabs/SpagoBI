@@ -56,7 +56,7 @@ public abstract class AbstractModelNode extends AbstractModelObject implements I
 	 * entity is a ModelView: getPathParent() returns the view. 
 	 * getParent() returns the entity of the view that contains the node
 	 */
-	public IModelEntity getPathParent(){
+	public IModelEntity getLogicalParent(){
 		if(parent==null){
 			return null;
 		}

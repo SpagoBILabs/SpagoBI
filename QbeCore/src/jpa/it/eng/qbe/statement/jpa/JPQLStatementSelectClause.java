@@ -6,7 +6,7 @@ package it.eng.qbe.statement.jpa;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.AbstractSelectField;
-import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.spagobi.utilities.objects.Couple;
@@ -44,7 +44,7 @@ public class JPQLStatementSelectClause extends JPQLStatementClause {
 		List allSelectFields;
 		List<InLineCalculatedSelectField> selectInLineCalculatedFields = new ArrayList<InLineCalculatedSelectField>();
 		AbstractSelectField selectAbstractField;
-		DataMartSelectField selectField;
+		SimpleSelectField selectField;
 		InLineCalculatedSelectField selectInLineField;
 
 		logger.debug("IN");
@@ -71,8 +71,8 @@ public class JPQLStatementSelectClause extends JPQLStatementClause {
 			while(it.hasNext()){
 				selectAbstractField = (AbstractSelectField)it.next();
 										
-				if(selectAbstractField.isDataMartField()){
-					addDatamartField((DataMartSelectField)selectAbstractField, entityAliasesMaps); 
+				if(selectAbstractField.isSimpleField()){
+					addSimpleSelectField((SimpleSelectField)selectAbstractField, entityAliasesMaps); 
 				}else if(selectAbstractField.isInLineCalculatedField()){
 					selectInLineCalculatedFields.add((InLineCalculatedSelectField)selectAbstractField);
 					index++;
@@ -115,7 +115,7 @@ public class JPQLStatementSelectClause extends JPQLStatementClause {
 		return buffer.toString().trim();
 	}
 	
-	private void addDatamartField(DataMartSelectField selectField, Map entityAliasesMaps) {
+	private void addSimpleSelectField(SimpleSelectField selectField, Map entityAliasesMaps) {
 		
 		IModelField datamartField;
 		String queryName;

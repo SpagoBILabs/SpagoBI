@@ -6,7 +6,7 @@ package it.eng.qbe.statement.jpa;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.AbstractSelectField;
-import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -52,7 +52,7 @@ public class JPQLStatementGroupByClause  extends JPQLStatementClause {
 				fieldName = parseInLinecalculatedField(icf.getExpression(), query, entityAliasesMaps);
 			}else{
 			
-				DataMartSelectField groupByField = (DataMartSelectField)abstractSelectedField;
+				SimpleSelectField groupByField = (SimpleSelectField)abstractSelectedField;
 				IModelField datamartField = parentStatement.getDataSource().getModelStructure().getField(groupByField.getUniqueName());
 				
 						

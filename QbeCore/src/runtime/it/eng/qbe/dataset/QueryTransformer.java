@@ -57,7 +57,7 @@ public class QueryTransformer {
 			fliterValues = filters.get(filterKey);
 			filterLeftOperandValues = new String[1];
 			filterRightOperandValues = fliterValues.toArray(new String[0]);
-			filterLeftOperand = new Operand(filterLeftOperandValues, filterKey,  AbstractStatement.OPERAND_TYPE_FIELD, null, null);
+			filterLeftOperand = new Operand(filterLeftOperandValues, filterKey,  AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
 			filterRightOperand = new Operand(filterRightOperandValues, filterKey+"_values",  AbstractStatement.OPERAND_TYPE_STATIC, null, null);
 			operator = "EQUALS TO";
 			if(filterRightOperandValues.length>1){

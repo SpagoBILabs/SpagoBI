@@ -26,7 +26,8 @@ import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.ModelViewEntity;
 import it.eng.qbe.model.structure.ModelViewEntity.ViewRelationship;
 import it.eng.qbe.query.AbstractSelectField;
-import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.ISelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
@@ -53,127 +54,142 @@ public class JPQLBusinessViewUtility {
 	/**
 	 * Build the string with the join conditions between the views
 	 * and the entity in relation with the view
+	 * 
 	 * @param entityAliasesMaps 
 	 * @param query the query
-	 * @param queryWhereClause the where clause of the query (used for add the strin WHERE or AND at
+	 * @param queryWhereClause the where clause of the query (used for add the string WHERE or AND at
 	 * the beginning of the clause)
+	 * 
 	 * @return
 	 */
 	public String buildViewsRelations(Map entityAliasesMaps, Query query, String queryWhereClause) {
-		IModelField datamartField;
-		Set<ViewRalationClause> viewRelations = new HashSet<ViewRalationClause>();
+		Set<ViewRalationClause> viewRelations;
 		StringBuffer whereClause = new StringBuffer("");
-		Set<IModelEntity> concernedEntities = new HashSet<IModelEntity>();
+		Set<IModelEntity> refferredEntities;
 		String clauseToReturn;
-		DataMartSelectField freshDataMartSelectField = null;
 		
-		//get all the fields
+		//get all referred entities
+		refferredEntities = new HashSet<IModelEntity>();
+		extractReferredEntitiesFromSelectClause(refferredEntities, query);
+		extractReferredEntitiesFromWhereClause(refferredEntities, query);
+		extractReferredEntitiesFromHavingClause(refferredEntities, query);
+		extractReferredEntitiesFromOrderByClause(refferredEntities, query);
+		extractReferredEntitiesFromGroupByClause(refferredEntities, query);
 		
-		//Get the select fields
-		List<AbstractSelectField> selectFields = query.getSelectFields(false);
-		if(selectFields!=null){
-			for(int i=0; i<selectFields.size(); i++){
-				if(selectFields.get(i) instanceof DataMartSelectField){
-					freshDataMartSelectField = (DataMartSelectField)selectFields.get(i);
-					datamartField = statement.getDataSource().getModelStructure().getField(freshDataMartSelectField.getUniqueName());
-					concernedEntities.add(datamartField.getPathParent());
-				}
-			}
-		}
-
-		
-		//Get the where fields
-		List<WhereField> whereFields = query.getWhereFields();
-		if(whereFields!=null){
-			for(int i=0; i<whereFields.size(); i++){
-				WhereField whereField = whereFields.get(i);
-				Operand leftOperand = whereField.getLeftOperand();
-				if(statement.OPERAND_TYPE_FIELD.equalsIgnoreCase(leftOperand.type)){
-					datamartField = statement.getDataSource().getModelStructure().getField( leftOperand.values[0] );
-					concernedEntities.add(datamartField.getPathParent());
-				}
-				Operand rightOperand = whereField.getLeftOperand();
-				if(statement.OPERAND_TYPE_FIELD.equalsIgnoreCase(rightOperand.type)){
-					datamartField = statement.getDataSource().getModelStructure().getField( rightOperand.values[0] );
-					concernedEntities.add(datamartField.getPathParent());
-				}
-			}
-		}
-
-		
-		//Get the having fields
-		List<HavingField> havingFields = query.getHavingFields();
-		if(havingFields!=null){
-			for(int i=0; i<havingFields.size(); i++){
-				HavingField havingField = havingFields.get(i);
-				Operand leftOperand = havingField.getLeftOperand();
-				if(statement.OPERAND_TYPE_FIELD.equalsIgnoreCase(leftOperand.type)){
-					datamartField = statement.getDataSource().getModelStructure().getField( leftOperand.values[0] );
-					concernedEntities.add(datamartField.getPathParent());
-				}
-				Operand rightOperand = havingField.getLeftOperand();
-				if(statement.OPERAND_TYPE_FIELD.equalsIgnoreCase(rightOperand.type)){
-					datamartField = statement.getDataSource().getModelStructure().getField( rightOperand.values[0] );
-					concernedEntities.add(datamartField.getPathParent());
-				}
-			}
-		}
-
-		
-		//Get the order by fields
-		List<AbstractSelectField> orderFields = query.getOrderByFields();
-		if(orderFields!=null){
-			for(int i=0; i<orderFields.size(); i++){
-				if(orderFields.get(i) instanceof DataMartSelectField){
-					freshDataMartSelectField = (DataMartSelectField)orderFields.get(i);
-					datamartField = statement.getDataSource().getModelStructure().getField(freshDataMartSelectField.getUniqueName());
-					concernedEntities.add(datamartField.getPathParent());
-				}
-
-			}
-		}
-
-		
-		//Get the group by fields
-		List<AbstractSelectField> groupFields = query.getGroupByFields();
-		if(groupFields!=null){
-			for(int i=0; i<groupFields.size(); i++){
-				if(groupFields.get(i) instanceof DataMartSelectField){
-					freshDataMartSelectField = (DataMartSelectField)groupFields.get(i);
-					datamartField = statement.getDataSource().getModelStructure().getField(freshDataMartSelectField.getUniqueName());
-					concernedEntities.add(datamartField.getPathParent());
-				}
-
-			}
-		}
-
-		
-		Iterator<IModelEntity> concernedEntitiesIter = concernedEntities.iterator();
-		while (concernedEntitiesIter.hasNext()) {
-			buildViewsRelationsBackVistitPath((IModelEntity) concernedEntitiesIter.next(), null, viewRelations, entityAliasesMaps, query);			
+		viewRelations = new HashSet<ViewRalationClause>();
+		for (IModelEntity referredEntity : refferredEntities) {
+			buildViewsRelationsBackVistitPath(referredEntity, null, viewRelations, entityAliasesMaps, query);			
 		}
 				
-		Iterator<ViewRalationClause> iter = viewRelations.iterator();
-		while (iter.hasNext()) {
-			ViewRalationClause viewRalationClause = (ViewRalationClause) iter.next();
-			whereClause.append(viewRalationClause.toString());
-			if(iter.hasNext()){
-				whereClause.append(" and ");
-			}
+		String logicalConnector = " ";
+		for (ViewRalationClause viewRalationClause : viewRelations) {
+			whereClause.append(logicalConnector + viewRalationClause.toString());
+			logicalConnector = " AND ";
 		}
 		
-		clauseToReturn =whereClause.toString();
-		if(clauseToReturn!=null && clauseToReturn.length()>1){
-			if(queryWhereClause!=null && queryWhereClause.length()<4){
-				clauseToReturn = " WHERE "+clauseToReturn;
-			}else{
-				clauseToReturn = " and "+clauseToReturn;
+		clauseToReturn = whereClause.toString();
+		if(clauseToReturn !=null && clauseToReturn.trim().length() > 1 ){
+			if(queryWhereClause != null && queryWhereClause.trim().length()<4){
+				clauseToReturn = " WHERE " + clauseToReturn;
+			} else {
+				clauseToReturn = " AND " + clauseToReturn;
 			}
 		}
 			
 		
 		return clauseToReturn;
 	}
+	
+	private void extractReferredEntitiesFromSelectClause(Set<IModelEntity> refferredEntities, Query query) {
+		extractReferredEntitiesFromSelectFields(refferredEntities, query.getSelectFields(false));
+	}
+	
+	private void extractReferredEntitiesFromOrderByClause(Set<IModelEntity> refferredEntities, Query query) {
+		extractReferredEntitiesFromSelectFields(refferredEntities, query.getOrderByFields());
+	}
+	
+	private void extractReferredEntitiesFromGroupByClause(Set<IModelEntity> refferredEntities, Query query) {
+		extractReferredEntitiesFromSelectFields(refferredEntities, query.getGroupByFields());
+	}
+	
+	/**
+	 * Note qbe query uses ISelectField to manage select fields, order by fields and group by fields
+	 
+	 * @param selectFields the list of ISelectFields from where the referred entities will be extracted
+	 */
+	private void extractReferredEntitiesFromSelectFields(Set<IModelEntity> refferredEntities, List<ISelectField> selectFields) {
+		SimpleSelectField simpleSelectField;
+		IModelField modelField;
+		
+		if(selectFields == null) return;
+		
+		for(ISelectField selectField : selectFields){
+			if(selectField instanceof SimpleSelectField){
+				simpleSelectField = (SimpleSelectField)selectField;
+				modelField = statement.getDataSource().getModelStructure().getField(simpleSelectField.getUniqueName());
+				refferredEntities.add(modelField.getLogicalParent());
+			}
+		}
+	}
+	
+	
+	private void extractReferredEntitiesFromWhereClause(Set<IModelEntity> refferredEntities, Query query) {
+		IModelField modelField;
+		
+		List<WhereField> whereFields = query.getWhereFields();
+		if(whereFields!=null){
+			for(int i=0; i<whereFields.size(); i++){
+				WhereField whereField = whereFields.get(i);
+				Operand leftOperand = whereField.getLeftOperand();
+				if(statement.OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(leftOperand.type)){
+					modelField = statement.getDataSource().getModelStructure().getField( leftOperand.values[0] );
+					refferredEntities.add(modelField.getLogicalParent());
+				} else if (statement.OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(leftOperand.type)) {
+					// TODO extract referred entity also from in line calculated field
+				}
+				
+				Operand rightOperand = whereField.getRightOperand();
+				if(statement.OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(rightOperand.type)){
+					modelField = statement.getDataSource().getModelStructure().getField( rightOperand.values[0] );
+					refferredEntities.add(modelField.getLogicalParent());
+				} else if (statement.OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(rightOperand.type)) {
+					// TODO extract referred entity also from in line calculated field
+				}
+			}
+		}
+	}
+	
+	private void extractReferredEntitiesFromHavingClause(Set<IModelEntity> refferredEntities, Query query) {
+		IModelField datamartField;
+		
+		List<HavingField> havingFields = query.getHavingFields();
+		if(havingFields!=null){
+			for(int i=0; i<havingFields.size(); i++){
+				HavingField havingField = havingFields.get(i);
+				
+				Operand leftOperand = havingField.getLeftOperand();
+				if(statement.OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(leftOperand.type)){
+					datamartField = statement.getDataSource().getModelStructure().getField( leftOperand.values[0] );
+					refferredEntities.add(datamartField.getLogicalParent());
+				} else if (statement.OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(leftOperand.type)) {
+					// TODO extract referred entity also from in line calculated field
+				}
+				
+				Operand rightOperand = havingField.getRightOperand();
+				if(statement.OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(rightOperand.type)){
+					datamartField = statement.getDataSource().getModelStructure().getField( rightOperand.values[0] );
+					refferredEntities.add(datamartField.getLogicalParent());
+				} else if (statement.OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(rightOperand.type)) {
+					// TODO extract referred entity also from in line calculated field
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	
 	
 	/**
 	 * Visit backward the branch from the field to the root..
@@ -190,9 +206,9 @@ public class JPQLBusinessViewUtility {
 		if(entity==null){
 			return;
 		} else if(entity instanceof ModelViewEntity){
-			addRelationForTheView(entity.getPathParent(), (ModelViewEntity)entity, child,viewRelations, entityAliases, query);
+			addRelationForTheView(entity.getLogicalParent(), (ModelViewEntity)entity, child,viewRelations, entityAliases, query);
 		}
-		buildViewsRelationsBackVistitPath(entity.getPathParent(), entity, viewRelations, entityAliases, query);
+		buildViewsRelationsBackVistitPath(entity.getLogicalParent(), entity, viewRelations, entityAliases, query);
 		
 	}
 	
@@ -264,13 +280,6 @@ public class JPQLBusinessViewUtility {
 		}else{
 			rootEntity = datamartField.getParent().getRoot(); 	
 		}
-		
-		
-//		if(datamartField.getPathParent() instanceof ModelViewEntity){
-//			rootEntity = (datamartField.getParent()).getRoot(); 
-//		}else{
-//			rootEntity = datamartField.getParent().getRoot(); 
-//		}
 	
 		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
 		String rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());

@@ -26,7 +26,7 @@ import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.CalculatedSelectField;
-import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.ISelectField;
@@ -35,6 +35,7 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.IQuerySerializer;
 import it.eng.qbe.serializer.SerializationException;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -176,10 +177,10 @@ public class QueryJSONSerializer implements IQuerySerializer {
 					// field nature can me "measure" or "attribute"
 					String nature = null;
 
-					if (field.isDataMartField()) {
-						DataMartSelectField dataMartSelectField = (DataMartSelectField)field;
+					if (field.isSimpleField()) {
+						SimpleSelectField dataMartSelectField = (SimpleSelectField)field;
 						
-						fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, field.DATAMART_FIELD);
+						fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, field.SIMPLE_FIELD);
 
 						fieldUniqueName = dataMartSelectField.getUniqueName();
 						datamartField = dataSource.getModelStructure().getField( fieldUniqueName );
@@ -318,12 +319,12 @@ public class QueryJSONSerializer implements IQuerySerializer {
 		Map<String, String> feldsNatureMap = new HashMap<String, String>();
 		String nature;
 		IModelField datamartField;
-		DataMartSelectField dataMartSelectField;
+		SimpleSelectField dataMartSelectField;
 		List<ISelectField> fields = query.getSelectFields(false);
 		
 		for(int i=0; i<fields.size(); i++){
-			if ((fields.get(i)).isDataMartField()) {
-				dataMartSelectField = (DataMartSelectField)fields.get(i);
+			if ((fields.get(i)).isSimpleField()) {
+				dataMartSelectField = (SimpleSelectField)fields.get(i);
 				datamartField = dataSource.getModelStructure().getField( dataMartSelectField.getUniqueName() );
 				String iconCls = datamartField.getPropertyAsString("type");	
 				nature = dataMartSelectField.getNature();
@@ -416,15 +417,17 @@ public class QueryJSONSerializer implements IQuerySerializer {
 				filterJSON.put(QuerySerializationConstants.FILTER_DESCRIPTION, filter.getDescription());
 				filterJSON.put(QuerySerializationConstants.FILTER_PROMPTABLE, filter.isPromptable());
 
+				// left operand
 				operand = filter.getLeftOperand();
 				filterJSON.put(QuerySerializationConstants.FILTER_LO_VALUE, operand.values[0]);
-				if(operand.type.equalsIgnoreCase("Field Content")) {
-					if(operand.values[0].contains("\"expression\":\"")){
+				if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_CALCULATED_FIELD)
+						|| operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_INLINE_CALCULATED_FIELD)) {
+					
 						filterJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, operand.description );
 						String description = operand.values[0].substring(operand.values[0].indexOf("\"expression\":\"")+14);
 						description.substring(0, description.indexOf("\""));
 						filterJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, description);						
-					}else{
+				} else if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD)) {
 						datamartField = dataSource.getModelStructure().getField( operand.values[0] );
 
 						String labelF, labelE;
@@ -445,13 +448,12 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 						String loLongDescription = getFieldLongDescription(datamartField, datamartLabels);
 						filterJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
-					}
-				} else if(operand.type.equalsIgnoreCase("Subquery")) {
+				} else if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_SUBQUERY)) {
 					String loLongDescription = "Subquery " + operand.description;
 					filterJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
 
 					filterJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
-				} else if(operand.type.equalsIgnoreCase("Parent Field Content")) {
+				} else if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_PARENT_FIELD)) {
 					String[] chunks = operand.values[0].split(" ");
 					String parentQueryId = chunks[0];
 					String fieldName = chunks[1];
@@ -472,10 +474,12 @@ public class QueryJSONSerializer implements IQuerySerializer {
 				filterJSON.put(QuerySerializationConstants.FILTER_LO_LAST_VALUE, operand.lastValues[0]);
 
 				filterJSON.put(QuerySerializationConstants.FILTER_OPERATOR, filter.getOperator());
-
+				
+				// right perand
 				operand = filter.getRightOperand();
 				filterJSON.put(QuerySerializationConstants.FILTER_RO_VALUE, JSONUtils.asJSONArray(operand.values));
-				if(operand.type.equalsIgnoreCase("Field Content")) {
+				// TODO must be possible to use calculated field also as right hand operand
+				if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD)) {
 					datamartField = dataSource.getModelStructure().getField( operand.values[0] );
 
 					String labelF, labelE;
@@ -501,7 +505,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 					filterJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, roLongDescription);
 
 					filterJSON.put(QuerySerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
-				} else if(operand.type.equalsIgnoreCase("Parent Field Content")) {
+				} else if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_PARENT_FIELD)) {
 					String[] chunks = operand.values[0].split(" ");
 					String parentQueryId = chunks[0];
 					String fieldName = chunks[1];
@@ -561,16 +565,17 @@ public class QueryJSONSerializer implements IQuerySerializer {
 				havingJSON.put(QuerySerializationConstants.FILTER_DESCRIPTION, filter.getDescription());
 				havingJSON.put(QuerySerializationConstants.FILTER_PROMPTABLE, filter.isPromptable());
 
+				// left operand
 				operand = filter.getLeftOperand();
 				havingJSON.put(QuerySerializationConstants.FILTER_LO_VALUE, operand.values[0]);
-				if(operand.type.equalsIgnoreCase("Field Content")) {
+				if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_CALCULATED_FIELD)
+						|| operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_INLINE_CALCULATED_FIELD)) {
 
-					if(operand.values[0].contains("\"expression\":\"")){
-						havingJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, operand.description );
-						String description = operand.values[0].substring(operand.values[0].indexOf("\"expression\":\"")+14);
-						description.substring(0, description.indexOf("\""));
-						havingJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, description);						
-					}else{
+					havingJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, operand.description );
+					String description = operand.values[0].substring(operand.values[0].indexOf("\"expression\":\"")+14);
+					description.substring(0, description.indexOf("\""));
+					havingJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, description);						
+				} else if (operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD)) {
 
 						datamartField = dataSource.getModelStructure().getField( operand.values[0] );
 
@@ -593,14 +598,12 @@ public class QueryJSONSerializer implements IQuerySerializer {
 						String loLongDescription = getFieldLongDescription(datamartField, datamartLabels);
 						havingJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
 
-					}	
-
-				} else if(operand.type.equalsIgnoreCase("Subquery")) {
+				} else if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_SUBQUERY)) {
 					String loLongDescription = "Subquery " + operand.description;
 					havingJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
 
 					havingJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
-				} else if(operand.type.equalsIgnoreCase("Parent Field Content")) {
+				} else if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_PARENT_FIELD)) {
 					String[] chunks = operand.values[0].split(" ");
 					String parentQueryId = chunks[0];
 					String fieldName = chunks[1];
@@ -625,7 +628,8 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 				operand = filter.getRightOperand();
 				havingJSON.put(QuerySerializationConstants.FILTER_RO_VALUE, JSONUtils.asJSONArray(operand.values));
-				if(operand.type.equalsIgnoreCase("Field Content")) {
+				// TODO must be possible to use calculated field also as right hand operand
+				if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD)) {
 					datamartField = dataSource.getModelStructure().getField( operand.values[0] );
 
 					String labelF, labelE;
@@ -646,12 +650,12 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 					String roLongDescription = getFieldLongDescription(datamartField, datamartLabels);
 					havingJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, roLongDescription);
-				} else if(operand.type.equalsIgnoreCase("Subquery")) {
+				} else if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_SUBQUERY)) {
 					String roLongDescription = "Subquery " + operand.description;
 					havingJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, roLongDescription);
 
 					havingJSON.put(QuerySerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
-				} else if(operand.type.equalsIgnoreCase("Parent Field Content")) {
+				} else if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_PARENT_FIELD)) {
 					String[] chunks = operand.values[0].split(" ");
 					String parentQueryId = chunks[0];
 					String fieldName = chunks[1];

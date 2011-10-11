@@ -11,7 +11,7 @@ import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelViewEntity;
 import it.eng.qbe.model.structure.ModelViewEntity.Join;
 import it.eng.qbe.query.CriteriaConstants;
-import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Filter;
 import it.eng.qbe.query.ISelectField;
@@ -268,8 +268,8 @@ public class JPQLStatementWhereClause extends JPQLStatementFilteringClause {
 			Map<String, Set<String>> viewToInnerEntitiesMap = new HashMap<String, Set<String>>();
 			List<ISelectField> selectFields =  query.getSelectFields(true);
 			for(ISelectField selectField : selectFields) {
-				if(selectField.isDataMartField()){
-					DataMartSelectField dataMartSelectField = (DataMartSelectField)selectField;
+				if(selectField.isSimpleField()){
+					SimpleSelectField dataMartSelectField = (SimpleSelectField)selectField;
 					IModelField modelField = parentStatement.getDataSource().getModelStructure().getField(dataMartSelectField.getUniqueName());
 					List<ModelViewEntity> viewEntities = modelField.getParentViews();
 					if(viewEntities!=null){

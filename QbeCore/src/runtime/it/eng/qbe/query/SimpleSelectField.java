@@ -30,7 +30,7 @@ import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class DataMartSelectField extends AbstractSelectField {
+public class SimpleSelectField extends AbstractSelectField {
 	
 	private String uniqueName;
 	private IAggregationFunction function;
@@ -40,10 +40,10 @@ public class DataMartSelectField extends AbstractSelectField {
 	
 
 
-	public DataMartSelectField(String uniqueName, String function, String alias, boolean include, boolean visible,
+	public SimpleSelectField(String uniqueName, String function, String alias, boolean include, boolean visible,
 		boolean groupByField, String orderType, String pattern ) {
 		
-		super(alias, ISelectField.DATAMART_FIELD, include, visible);
+		super(alias, ISelectField.SIMPLE_FIELD, include, visible);
 				
 		setUniqueName(uniqueName);
 		setFunction( AggregationFunctions.get(function) );		
@@ -52,7 +52,7 @@ public class DataMartSelectField extends AbstractSelectField {
 		setPattern(pattern);
 	}
 	
-	public DataMartSelectField(DataMartSelectField field) {
+	public SimpleSelectField(SimpleSelectField field) {
 			
 			this(field.getUniqueName(), 
 				field.getFunction().getName(), 
@@ -109,7 +109,7 @@ public class DataMartSelectField extends AbstractSelectField {
 	}
 	
 	public ISelectField copy() {
-		return new DataMartSelectField( this );
+		return new SimpleSelectField( this );
 	}
 	
 	public String getPattern() {

@@ -85,11 +85,13 @@ public abstract class JPQLStatementFilteringClause  extends JPQLStatementClause 
 				operandElement = buildStaticOperand(operand);
 			} else if (parentStatement.OPERAND_TYPE_SUBQUERY.equalsIgnoreCase(operand.type)) {
 				operandElement = new String[] {buildQueryOperand(operand)};
-			} else if (parentStatement.OPERAND_TYPE_FIELD.equalsIgnoreCase(operand.type)) {
+			} else if (parentStatement.OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(operand.type)
+					|| parentStatement.OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(operand.type)) {
 				operandElement = new String[] {buildFieldOperand(operand, query, entityAliasesMaps)};
 			} else if (parentStatement.OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(operand.type)) {
 				operandElement = new String[] {buildParentFieldOperand(operand, query, entityAliasesMaps)};
 			} else {
+				// NOTE: OPERAND_TYPE_CALCULATED_FIELD cannot be used in where condition
 				Assert.assertUnreachable("Invalid operand type [" + operand.type+ "]");
 			}
 		} finally {
@@ -149,7 +151,6 @@ public abstract class JPQLStatementFilteringClause  extends JPQLStatementClause 
 			
 			targetQueryEntityAliasesMap = (Map)entityAliasesMaps.get(query.getId());
 			Assert.assertNotNull(targetQueryEntityAliasesMap, "Entity aliases map for query [" + query.getId() + "] cannot be null in order to execute method [buildUserProvidedWhereField]");
-			
 			
 			datamartField = parentStatement.getDataSource().getModelStructure().getField( operand.values[0] );
 			Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + operand.values[0] + "]");
@@ -266,16 +267,14 @@ public abstract class JPQLStatementFilteringClause  extends JPQLStatementClause 
 			String operandValueToBound = operandValuesToBound[i];
 			String boundedValue = operandValueToBound;
 			
-			
-			// calculated field
-			// TODO check!!!! why not a OPERAND_TYPE_CALCUALTED_FIELD????
-			if (leadOperand.values[0].contains("expression")) {
+		
+			if (parentStatement.OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(leadOperand.type) ) {
 				int startType = leadOperand.values[0].indexOf("type\":")+7;
 				int endType = leadOperand.values[0].indexOf( "\"", startType);
 				String type = leadOperand.values[0].substring(startType, endType);
 				boundedValue = getValueBounded(operandValueToBound, type);
-			}else if (parentStatement.OPERAND_TYPE_FIELD.equalsIgnoreCase(leadOperand.type) 
-							|| parentStatement.OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(leadOperand.type)) {
+			} else if (parentStatement.OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(leadOperand.type) 
+					|| parentStatement.OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(leadOperand.type)) {
 				
 				IModelField datamartField = parentStatement.getDataSource().getModelStructure().getField(leadOperand.values[0]);
 				boundedValue = getValueBounded(operandValueToBound, datamartField.getType());

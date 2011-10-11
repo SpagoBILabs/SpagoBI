@@ -54,8 +54,8 @@ public abstract class AbstractSelectField implements ISelectField {
 		this.type = type;
 	}
 	
-	public boolean isDataMartField() {
-		return this.DATAMART_FIELD.equalsIgnoreCase(type);
+	public boolean isSimpleField() {
+		return this.SIMPLE_FIELD.equalsIgnoreCase(type);
 	}
 	
 	public boolean isInLineCalculatedField() {
