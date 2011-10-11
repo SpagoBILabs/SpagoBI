@@ -307,7 +307,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			List<String> values = filters.get(aFilterName);
 			if (values != null && values.size() > 0) {
 				String operator = values.size() > 1 ? CriteriaConstants.IN : CriteriaConstants.EQUALS_TO;
-				Operand leftOperand = new Operand(new String[] {aFilterName}, null, AbstractStatement.OPERAND_TYPE_FIELD, null, null);
+				Operand leftOperand = new Operand(new String[] {aFilterName}, null, AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
 				String[] valuesArray = values.toArray(new String[0]);
 				Operand rightOperand = new Operand(valuesArray, null, AbstractStatement.OPERAND_TYPE_STATIC, null, null);
 				WhereField whereField = new WhereField(UUIDGenerator.getInstance().generateRandomBasedUUID().toString(), 
@@ -342,7 +342,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 				values[0] = fieldName;
 
 				Operand leftOperand = new Operand(values, fieldName,
-						AbstractStatement.OPERAND_TYPE_FIELD, values, values);
+						AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, values, values);
 
 				values = new String[valuesArray.length()];
 				for (int j = 0; j < valuesArray.length(); j++) {

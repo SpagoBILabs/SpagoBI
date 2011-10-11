@@ -21,7 +21,7 @@
 package it.eng.spagobi.engines.qbe.services.formviewer;
 
 import it.eng.qbe.datasource.ConnectionDescriptor;
-import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
@@ -179,10 +179,10 @@ public class ExecuteMasterQueryAction extends AbstractQbeEngineAction {
 			transformer.addAggregateColumn("*"/*f[1]!=null? f[1]:f[0]*/, "COUNT", "Records");
 			
 			// aggregate measures
-			List dataMartSelectFields = query.getDataMartSelectFields(true);
+			List dataMartSelectFields = query.getSimpleSelectFields(true);
 			Iterator it = dataMartSelectFields.iterator();
 			while (it.hasNext()) {
-				DataMartSelectField field = (DataMartSelectField) it.next();
+				SimpleSelectField field = (SimpleSelectField) it.next();
 				int fieldIndex = query.getSelectFieldIndex(field.getUniqueName());				
 				String[] f = (String[])selectFields.get(fieldIndex);
 				IAggregationFunction aggregationFunction = field.getFunction();

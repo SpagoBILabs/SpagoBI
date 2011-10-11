@@ -150,7 +150,7 @@ public class CrosstabQueryCreator {
 	private static WhereField buildWhereField(Attribute attribute,
 			JSONArray valuesJSON) {
 		String operator = valuesJSON.length() > 1 ? CriteriaConstants.IN : CriteriaConstants.EQUALS_TO;
-		Operand leftOperand = new Operand(new String[] {attribute.getEntityId()}, attribute.getAlias(), AbstractStatement.OPERAND_TYPE_FIELD, null, null);
+		Operand leftOperand = new Operand(new String[] {attribute.getEntityId()}, attribute.getAlias(), AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
 		String[] values = new String[valuesJSON.length()];
 		for (int i = 0; i < valuesJSON.length(); i++) {
 			try {
