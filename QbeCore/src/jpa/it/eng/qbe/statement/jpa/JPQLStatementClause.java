@@ -3,6 +3,7 @@
  */
 package it.eng.qbe.statement.jpa;
 
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.DataMartSelectField;
@@ -46,6 +47,12 @@ public class JPQLStatementClause {
 		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
 		List<String> aliasEntityMapping = new  ArrayList<String>();
 		List<String> aliases = new  ArrayList<String>();
+		
+		//test anto		
+		ConnectionDescriptor connection = (ConnectionDescriptor)this.parentStatement.getDataSource().getConfiguration().loadDataSourceProperties().get("connection");		
+		String dbDialect = connection.getDialect(); 
+		Object pippo = this.parentStatement.getDataSource().getConfiguration().loadInLineFunctions(dbDialect);
+		// fine test anto
 		
 		StringTokenizer stk = new StringTokenizer(expression, "+-|*/(),");
 		while(stk.hasMoreTokens()){

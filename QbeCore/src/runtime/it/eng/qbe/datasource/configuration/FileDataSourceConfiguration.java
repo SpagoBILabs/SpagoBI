@@ -23,6 +23,7 @@ package it.eng.qbe.datasource.configuration;
 
 
 import it.eng.qbe.datasource.configuration.dao.fileimpl.CalculatedFieldsDAOFileImpl;
+import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl;
 import it.eng.qbe.datasource.configuration.dao.fileimpl.ModelI18NPropertiesDAOFileImpl;
 import it.eng.qbe.datasource.configuration.dao.fileimpl.ModelPropertiesDAOFileImpl;
 import it.eng.qbe.datasource.configuration.dao.fileimpl.ViewsDAOFileImpl;
@@ -44,6 +45,7 @@ public class FileDataSourceConfiguration extends DelegatingDataSourceConfigurati
 		this.modelLabelsDAOFileImpl = new ModelI18NPropertiesDAOFileImpl(file);
 		this.calculatedFieldsDAO = new CalculatedFieldsDAOFileImpl(file);	
 		this.viewsDAO = new ViewsDAOFileImpl(file);	
+		this.functionsDAO = new InLineFunctionsDAOFileImpl();
 	}
 	
 	public File getFile() {

@@ -80,5 +80,10 @@ public class AbstractDataSourceConfiguration implements IDataSourceConfiguration
 			Map<String, List<ModelCalculatedField>> calculatedFields) {
 		// do nothing
 	}
+	
+	public List loadInLineFunctions(String dialect){
+		return new ArrayList();
+		
+	}
 
 }

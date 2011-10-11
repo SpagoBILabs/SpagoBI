@@ -185,7 +185,12 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 		return views;
 	}
 
-
+	public List loadInLineFunctions(String dialect) {
+		List functions = new ArrayList();
+		functions =	subConfigurations.get(0).loadInLineFunctions(dialect);
+		
+		return functions;
+	}
 
 
 

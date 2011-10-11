@@ -48,6 +48,8 @@ public class InMemoryDataSourceConfiguration extends AbstractDataSourceConfigura
 	List<IModelViewEntityDescriptor> views;
 	Map<String, List<ModelCalculatedField>> calculatedFields;
 	
+	List inLineFunctions;
+	
 	public InMemoryDataSourceConfiguration(String modelName) {
 		super(modelName);
 	}
@@ -93,6 +95,11 @@ public class InMemoryDataSourceConfiguration extends AbstractDataSourceConfigura
 			Map<String, List<ModelCalculatedField>> calculatedFields) {
 		// do nothing	
 		super.saveCalculatedFields(calculatedFields);
+	}
+	
+	public List loadInLineFunctions(String dialect) {
+		// do nothing	
+		return super.loadInLineFunctions(dialect);
 	}
 
 }

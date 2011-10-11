@@ -96,4 +96,13 @@ public class QuerySerializationConstants {
 	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
 	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
 	
+	//Date functions
+	public static final String FUNC_GG_BETWEEN_DATES = "GG-between-dates";
+	public static final String FUNC_MM_BETWEEN_DATES = "MM-between-dates";
+	public static final String FUNC_YY_BETWEEN_DATES = "YY-between-dates";
+	public static final String FUNC_GG_UP_TODAY = "gg_up_today";
+	public static final String FUNC_MM_UP_TODAY = "mm_up_today";
+	public static final String FUNC_YY_UP_TODAY = "yy_up_today";
+	
+	
 }
