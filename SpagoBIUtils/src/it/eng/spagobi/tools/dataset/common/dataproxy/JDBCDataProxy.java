@@ -104,12 +104,18 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
 			}
 			
-			try {
-				stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			try {				
+				//ATTENTION: For the most db sets the stmt as a scrollable stmt, only for the compatibility with Ingres sets
+				//a stmt forward only 			
+				if (dataSource.getHibDialectClass().contains("Ingres")){
+					stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);	
+				}else{
+					stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);					
+				}
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
 			}
-			
+		
 			
 	        try {
 	        	//get max size 
