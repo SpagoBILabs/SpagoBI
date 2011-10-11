@@ -37,6 +37,14 @@ Sbi.qbe.SlotEditorPanel = function(config) {
 
 	Ext.apply(this, c);
 	
+	var params = c.datamart !== undefined ? {'datamartName': c.datamart} : {};
+	this.services = this.services || new Array();	
+	
+	this.services['addCalculatedField'] = this.services['addCalculatedField'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'ADD_CALCULATED_FIELD_ACTION'
+		, baseParams: params
+		});
+	
 	this.initToolbar(c);
 	this.initGrid(c);
 	
@@ -57,6 +65,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
     , valuesItemTemplate: null
     , rangeWindow : null
     , rangeToSave : null
+    , store: null
     
 	, initToolbar: function(c){
 	
@@ -79,15 +88,15 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	    // create the data store
 	    
 	   // {name: 'Default Slot Value', valueset: [{type: "default", value: 0}]},
-	    var store = new Ext.data.JsonStore({
+	    this.store = new Ext.data.JsonStore({
 	        //url: 'get-images.php',
 	        data: {slots:[{ name: "slot 1", valueset: [{type: "range", from: 0, includeFrom: true, to: 100, includeTo: false}, { type: "punctual", values: [100, 101, 201]}]}]},
 	        root: 'slots',
 	        fields: ['name', 'valueset']
 	    });
 	    // manually load local data
-	   	store.insert(0,new store.recordType({name: 'Default Slot Value', valueset: [{type: "default", value: ''}]}));
-	  	store.commitChanges();
+	   	this.store.insert(0,new this.store.recordType({name: 'Default Slot Value', valueset: [{type: "default", value: ''}]}));
+	  	this.store.commitChanges();
 	  
         var template = new Ext.XTemplate(
         		'<tpl if="valueset !== null">'+
@@ -184,7 +193,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 
 		this.gridPanel = new Ext.grid.EditorGridPanel({
 			id: 'slot-panel',
-			store: store,
+			store: this.store,
 			columns: [
                {
                    id       :'name',
@@ -290,10 +299,13 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
         // access the Record constructor through the grid's store
 		var slot = this.gridPanel.selModel.selection.record;
         if(slot !== null && slot !== undefined){
-
-            this.gridPanel.store.remove(slot);
-            this.gridPanel.store.commitChanges();
-
+        	var idx = this.gridPanel.store.indexOf(slot);
+        	if(idx == 0){
+        		alert('Default slot cannot be deleted.');
+        	}else{
+	            this.gridPanel.store.remove(slot);
+	            this.gridPanel.store.commitChanges();
+        	}
 
         }
 

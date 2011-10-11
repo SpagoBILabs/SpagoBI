@@ -51,6 +51,7 @@ Sbi.qbe.SlotWizard = function(config) {
 	Sbi.qbe.SlotWizard.superclass.constructor.call(this, c);  
 	this.add(this.mainPanel);
   
+	this.addEvents('apply'); 
 };
 
 Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
@@ -130,7 +131,19 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
             text: 'Finish',
             disabled: false,
             scope: this,
-            handler : save.createDelegate(this)
+            handler: function(){
+		   	    var emptyAlias = (this.firstCalculatedFiledPanel.inputFields.alias.getValue()==null) || (this.firstCalculatedFiledPanel.inputFields.alias.getValue()=="");
+		   	    var emptyType = (this.firstCalculatedFiledPanel.inputFields.type.getValue()==null) || (this.firstCalculatedFiledPanel.inputFields.type.getValue()=="");
+	
+		   	    if(emptyAlias){
+		    	   	this.firstCalculatedFiledPanel.inputFields.alias.focus();
+		    	} else if(emptyType){
+		    	  	this.firstCalculatedFiledPanel.inputFields.type.focus();
+		    	} else {
+			    	this.fireEvent('apply', this, this.firstCalculatedFiledPanel.getFormState(), this.firstCalculatedFiledPanel.target);
+		           	this.close();
+		    	}
+		    }
 		});
 
 		this.firstCalculatedFiledPanel = new Sbi.qbe.CalculatedFieldEditorPanel({
@@ -188,9 +201,10 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 		this.mainPanel.doLayout();
 
     }
-	, save: function(){
-
-		this.close();
+	, save: function( formState, targetNode){
+		//"{"alias":"sss","id":{"alias":"sss","type":"STRING","expression":"Store id "},"filedType":"inLineCalculatedField","type":"STRING","calculationDescriptor":{"alias":"sss","type":"STRING","expression":"Store id "}}"
+		this.fireEvent('apply', this, this.firstCalculatedFiledPanel.getFormState(), this.firstCalculatedFiledPanel.target);
+		//this.close();
 	}
 
 });
