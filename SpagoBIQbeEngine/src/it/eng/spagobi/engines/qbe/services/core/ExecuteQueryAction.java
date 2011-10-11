@@ -210,7 +210,9 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			String jpaQueryStr = statement.getQueryString();
 			logger.debug("Executable query (HQL/JPQL): [" +  jpaQueryStr+ "]");
 			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
-			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL/JPQL: " + jpaQueryStr);	
+			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL/JPQL: " + jpaQueryStr);
+			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + statement.getSqlQueryString());
+			
 			
 			dataSet.loadData(start, limit, (maxSize == null? -1: maxSize.intValue()));
 			dataStore = dataSet.getDataStore();

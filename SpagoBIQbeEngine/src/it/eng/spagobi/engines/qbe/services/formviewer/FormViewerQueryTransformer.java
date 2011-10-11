@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.qbe.services.formviewer;
 
 import it.eng.qbe.query.CriteriaConstants;
-import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
@@ -247,11 +247,11 @@ public class FormViewerQueryTransformer extends AbstractQbeQueryTransformer {
 				String id = filter.getString(QbeJSONTemplateParser.ID);
 				String field = formViewerState.getDynamicFilterField(id);
 				if (field != null && !field.trim().equals("")) {
-					List fields = query.getDataMartSelectFields(false);
-					DataMartSelectField selectField = null;
+					List fields = query.getSimpleSelectFields(false);
+					SimpleSelectField selectField = null;
 					Iterator it = fields.iterator();
 					while (it.hasNext()) {
-						selectField = (DataMartSelectField) it.next();
+						selectField = (SimpleSelectField) it.next();
 						if (selectField.getUniqueName().equals(field)) {
 							break;
 						}
@@ -289,7 +289,7 @@ public class FormViewerQueryTransformer extends AbstractQbeQueryTransformer {
 		updateWhereClauseStructure(query, id, "AND");
 	}
 	
-	private void addHavingFilter(Query query, DataMartSelectField field, JSONObject filter) throws Exception {
+	private void addHavingFilter(Query query, SimpleSelectField field, JSONObject filter) throws Exception {
 		String id = filter.getString(QbeJSONTemplateParser.ID);
 		HavingField.Operand leftOperand = new HavingField.Operand(new String[] {field.getUniqueName()}, null, "Field Content", null, null, field.getFunction());
 		String operator = filter.getString(QbeJSONTemplateParser.OPERATOR);

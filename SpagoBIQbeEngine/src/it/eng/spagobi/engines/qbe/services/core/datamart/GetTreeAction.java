@@ -118,18 +118,6 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 						nodes.put(object);
 					}
 				}
-				/*
-				List<IDataSourceConfiguration> configurations = getEngineInstance().getDataSource().getConfiguration();
-				Iterator<IDataSourceConfiguration> it = configurations.iterator();
-				while (it.hasNext()) {
-					IDataSourceConfiguration configuration = it.next();
-					JSONArray temp = qbeBuilder.getQbeTree(getDataSource(), getLocale(), configuration.getModelName());
-					for (int i = 0; i < temp.length(); i++) {
-						Object object = temp.get(i);
-						nodes.put(object);
-					}
-				}
-				*/
 			}
 			
 			try {

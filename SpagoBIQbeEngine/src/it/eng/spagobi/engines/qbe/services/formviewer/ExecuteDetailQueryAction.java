@@ -170,7 +170,7 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 			FilterQueryTransformer transformer = new FilterQueryTransformer();
 			List selectFields = SqlUtils.getSelectFields(sqlQuery);
 			
-			List queryFields = query.getDataMartSelectFields(true);
+			List queryFields = query.getSimpleSelectFields(true);
 			for(int i = 0; i < queryFields.size(); i++) {
 				ISelectField queryField = (ISelectField)queryFields.get(i);
 				String[] f = (String[])selectFields.get(i);	

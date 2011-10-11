@@ -22,7 +22,7 @@ package it.eng.spagobi.engines.qbe.services.core;
 
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.datasource.transaction.ITransaction;
-import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
@@ -161,7 +161,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			}
 			logger.debug("Fields extracted succesfully");
 			
-			Assert.assertTrue(getEngineInstance().getActiveQuery().getDataMartSelectFields(true).size()+getEngineInstance().getActiveQuery().getInLineCalculatedSelectFields(true).size() == extractedFields.size(), 
+			Assert.assertTrue(getEngineInstance().getActiveQuery().getSimpleSelectFields(true).size()+getEngineInstance().getActiveQuery().getInLineCalculatedSelectFields(true).size() == extractedFields.size(), 
 					"The number of fields extracted from query resultset cannot be different from the number of fields specified into the query select clause");
 			
 			decorateExtractedFields( extractedFields );
@@ -320,8 +320,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			ISelectField selectedField = (ISelectField)selectedFieldsIterator.next();
 			exctractedField.setAlias( selectedField.getAlias() );
 			exctractedField.setVisible( selectedField.isVisible() );
-			if(selectedField.isDataMartField())
-				exctractedField.setPattern( ((DataMartSelectField)selectedField).getPattern() );
+			if(selectedField.isSimpleField())
+				exctractedField.setPattern( ((SimpleSelectField)selectedField).getPattern() );
 		}
 	}
 	

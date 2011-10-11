@@ -20,7 +20,7 @@
  **/
 package it.eng.spagobi.engines.qbe.services.formviewer;
 
-import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.spago.base.SourceBean;
@@ -118,8 +118,8 @@ public class GetSelectedColumnsAction extends AbstractQbeEngineAction {
 		
 		for(int i = 0; i < selectedFields.size(); i++) {
 			ISelectField f = (ISelectField)selectedFields.get(i);
-			if(f.isDataMartField()) {
-				DataMartSelectField dataMartSelectField = (DataMartSelectField)f;
+			if(f.isSimpleField()) {
+				SimpleSelectField dataMartSelectField = (SimpleSelectField)f;
 				JSONObject selectFieldJSON = new JSONObject();
 				try {
 					selectFieldJSON.put("name", dataMartSelectField.getUniqueName());

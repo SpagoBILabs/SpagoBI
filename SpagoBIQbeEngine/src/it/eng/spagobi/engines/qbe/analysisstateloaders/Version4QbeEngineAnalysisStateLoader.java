@@ -106,7 +106,7 @@ public class Version4QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnaly
 				logger.debug( "Converting field [" + (j+1) + "] ...");
 				fieldJSON = fieldsJSON.getJSONObject(j);
 				
-				fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, ISelectField.DATAMART_FIELD);
+				fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, ISelectField.SIMPLE_FIELD);
 				
 				logger.debug( "Field [" + (j+1) + "] converted succesfully to [" + fieldJSON.toString() + "]");
 			}
