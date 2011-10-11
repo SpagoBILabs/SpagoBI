@@ -27,6 +27,8 @@ public interface IDataSetTableDescriptor {
 	
 	Class getColumnType(String fieldName);
 	
+	String getFieldName(String columnName);
+	
 	String getTableName();
 
 }

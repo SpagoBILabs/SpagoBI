@@ -26,7 +26,6 @@ import java.util.Map;
 
 public class FieldMetadata implements IFieldMetaData {
 
-
 	String name;
 	String alias;
 	Class type;
@@ -43,7 +42,7 @@ public class FieldMetadata implements IFieldMetaData {
 		super();
 		setName(name);
 		setType(type);
-		this.properties= new HashMap();
+		this.properties = new HashMap();
 		fieldType = FieldType.ATTRIBUTE;
 	}
 
@@ -78,13 +77,13 @@ public class FieldMetadata implements IFieldMetaData {
 	public void setProperty(String propertyName, Object propertyValue) {
 		properties.put(propertyName, propertyValue);
 	}
-	
-	public String toString() {
-		return name + " (" + type.getName()+ ")";
-	}
 
 	public Map getProperties() {
 		return properties;
+	}
+	
+	public void setProperties(Map properties) {
+		this.properties = properties;
 	}
 	
 	public FieldType getFieldType() {
@@ -93,6 +92,13 @@ public class FieldMetadata implements IFieldMetaData {
 
 	public void setFieldType(FieldType fieldType) {
 		this.fieldType = fieldType;
+	}
+	
+	@Override
+	public String toString() {
+		return "FieldMetadata [name=" + name + ", alias=" + alias + ", type="
+				+ type + ", properties=" + properties + ", fieldType="
+				+ fieldType + "]";
 	}
 	
 }

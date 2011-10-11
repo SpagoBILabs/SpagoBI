@@ -35,7 +35,12 @@ import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -45,8 +50,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,8 +57,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -377,6 +378,36 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 
 		WorksheetEngineInstance worksheetEngineInstance = getEngineInstance();
 		worksheetEngineInstance.setAnalysisState(workSheetDefinition);
+	}
+	
+	
+	protected void adjustMetadata(DataStore dataStore,
+			IDataSet dataset,
+			IDataSetTableDescriptor descriptor) {
+		
+		IMetaData dataStoreMetadata = dataStore.getMetaData();
+		IMetaData dataSetMetadata = dataset.getMetadata();
+		MetaData newdataStoreMetadata = new MetaData();
+		int fieldCount = dataStoreMetadata.getFieldCount();
+		for (int i = 0; i < fieldCount; i++) {
+			IFieldMetaData dataStoreFieldMetadata = dataStoreMetadata.getFieldMeta(i);
+			String columnName = dataStoreFieldMetadata.getName();
+			logger.debug("Column name : " + columnName);
+			String fieldName = descriptor.getFieldName(columnName);
+			logger.debug("Field name : " + fieldName);
+			int index = dataSetMetadata.getFieldIndex(fieldName);
+			logger.debug("Field index : " + index);
+			IFieldMetaData dataSetFieldMetadata = dataSetMetadata.getFieldMeta(index);
+			logger.debug("Field metadata : " + dataSetFieldMetadata);
+			FieldMetadata newFieldMetadata = new FieldMetadata();
+			newFieldMetadata.setAlias(dataSetFieldMetadata.getAlias());
+			newFieldMetadata.setFieldType(dataSetFieldMetadata.getFieldType());
+			newFieldMetadata.setName(dataSetFieldMetadata.getName());
+			newFieldMetadata.setProperties(dataSetFieldMetadata.getProperties());
+			newFieldMetadata.setType(dataStoreFieldMetadata.getType());
+			newdataStoreMetadata.addFiedMeta(newFieldMetadata);
+		}
+		dataStore.setMetaData(newdataStoreMetadata);
 	}
 	
 

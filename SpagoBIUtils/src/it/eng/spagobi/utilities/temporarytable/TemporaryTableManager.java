@@ -24,7 +24,6 @@ package it.eng.spagobi.utilities.temporarytable;
 
 
 import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.dbaccess.Utils;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
@@ -222,7 +221,8 @@ public class TemporaryTableManager {
 		int index = 0;
 		do {
 			String fieldName = fields.get(index);
-			String columnName = delimiter+resultSet.getString("COLUMN_NAME")+delimiter;
+//			String columnName = delimiter+resultSet.getString("COLUMN_NAME")+delimiter;
+			String columnName = resultSet.getString("COLUMN_NAME");
 			Class type = JDBCTypeMapper.getJavaType(resultSet.getShort("DATA_TYPE"));
 			tableDescriptor.addField(fieldName, columnName, type);
 			index++;
