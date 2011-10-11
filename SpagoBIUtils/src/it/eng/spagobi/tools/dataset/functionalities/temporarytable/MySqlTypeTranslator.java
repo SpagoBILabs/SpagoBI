@@ -79,6 +79,8 @@ public class MySqlTypeTranslator implements INativeDBTypeable{
 		if(typeJavaName.equalsIgnoreCase(String.class.getName())){
 			if( size != null && size!= 0){
 				queryType +="("+size+")";
+			}else{
+				queryType +="("+4000+")";
 			}
 		}else if(typeJavaName.equalsIgnoreCase(BigDecimal.class.getName())){
 			if((precision != null)){
