@@ -23,17 +23,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.dataset.functionalities.temporarytable;
 
 
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
-import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -60,7 +57,7 @@ public class DatasetTempTable {
 		String hqlQuery = null;
 
 		try {
-			CreateTableCommand createTableCommand = new CreateTableCommand(tableName);
+			CreateTableCommand createTableCommand = new CreateTableCommand(tableName, conn.getMetaData().getDriverName());
 
 			// run through all columns in order to build the SQL columndefinition
 			for (Iterator iterator = meta.getFieldsMeta().iterator(); iterator.hasNext();) {
