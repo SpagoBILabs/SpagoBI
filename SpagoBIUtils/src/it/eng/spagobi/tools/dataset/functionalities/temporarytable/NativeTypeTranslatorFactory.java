@@ -50,9 +50,9 @@ public class NativeTypeTranslatorFactory {
 //		}
 //		return toReturn;
 		if(driverName.contains(DRIVER_DB2)){
-			return new OracleTypeTranslator();
-		}else if(driverName.contains(DRIVER_ORACLE)){
 			return new DB2TypeTranslator();
+		}else if(driverName.contains(DRIVER_ORACLE)){
+			return new OracleTypeTranslator();
 		}else if(driverName.contains(DRIVER_SQLSERVER) || driverName.contains(DRIVER_SQLSERVERMICROSOFT) || driverName.contains(DRIVER_SQLSERVERSPRINTA) || driverName.contains(DRIVER_SQLSERVERJTURBO)){
 			return new SqlServerTypeTranslator();
 		}else if(driverName.contains(DRIVER_MYSQL) ){
