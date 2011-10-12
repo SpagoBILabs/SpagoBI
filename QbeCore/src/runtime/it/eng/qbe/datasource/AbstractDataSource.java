@@ -111,14 +111,13 @@ public abstract class AbstractDataSource implements IDataSource {
 	public it.eng.spagobi.tools.datasource.bo.IDataSource getToolsDataSource(){
 		it.eng.spagobi.tools.datasource.bo.IDataSource ds = new DataSource();
 		ds.setDriver(getConnection().getDriverClass());
-		ds.setHibDialectClass("");
+		ds.setHibDialectClass(getConnection().getDialect());
 		ds.setHibDialectName("");
 		ds.setJndi(getConnection().getJndiName());
 		ds.setLabel(getName());
 		ds.setPwd(getConnection().getPassword());
 		ds.setUrlConnection(getConnection().getUrl());
 		ds.setUser(getConnection().getUsername());
-		ds.setHibDialectName(getConnection().getDialect());
 		return ds;
 	}
 	
