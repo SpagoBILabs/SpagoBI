@@ -716,7 +716,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
  			        longDescription: null
  			    };
  	    		
- 	    		alert(field.toSource());
+ 	    		//alert(field.toSource());
  	    		
  	    		Ext.apply(field, recordBaseConfig);
  	    		
@@ -747,7 +747,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
  	 			        longDescription: null
  	 			    };
  	 	    		
- 	 	    		alert(field.toSource());
+ 	 	    		//alert(field.toSource());
  	 	    		
  	 	    		Ext.apply(field, recordBaseConfig);
  	 	    		

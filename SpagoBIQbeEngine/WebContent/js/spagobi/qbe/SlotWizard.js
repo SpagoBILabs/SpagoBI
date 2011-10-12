@@ -40,7 +40,9 @@ Sbi.qbe.SlotWizard = function(config) {
 	});
 
 	Ext.apply(this, c);
-	
+	if(c.fieldForSlot !== undefined){
+		this.fieldForSlot = c.fieldForSlot;
+	}
 	this.initMainPanel(c);	
 	
 	if(c.hasBuddy === 'true') {
@@ -64,6 +66,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
     , secondSlotDefinitionPanel: null
     , buttonsConfig: null
     , startFromFirstPage : true
+    , fieldForSlot: null
 
     
     , setExpItems: function(itemGroupName, items) {
@@ -85,6 +88,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 		if(c.startFromFirstPage !== undefined){
 			this.startFromFirstPage = c.startFromFirstPage;
 		}
+
 		var save = function(){
 			this.save();
 		};
@@ -132,19 +136,18 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
             disabled: false,
             scope: this,
             handler: function(){
-		   	    var emptyAlias = (this.firstCalculatedFiledPanel.inputFields.alias.getValue()==null) || (this.firstCalculatedFiledPanel.inputFields.alias.getValue()=="");
-		   	    var emptyType = (this.firstCalculatedFiledPanel.inputFields.type.getValue()==null) || (this.firstCalculatedFiledPanel.inputFields.type.getValue()=="");
-				var formState = this.firstCalculatedFiledPanel.getFormState();
+			    var formState = null;
+				var target = this.firstCalculatedFiledPanel.target;
+				if(this.startFromFirstPage == undefined || this.startFromFirstPage == null || this.startFromFirstPage == false){
+					formState = {alias: 'Slot - ' +this.fieldForSlot.text, type: 'STRING', expression: this.fieldForSlot.text };
+					target = this.fieldForSlot.parentNode;
+				}else{
+					formState = this.firstCalculatedFiledPanel.getFormState();
+				}
 				this.addSlotToFormState(formState);
-				
-		   	    if(emptyAlias){
-		    	   	this.firstCalculatedFiledPanel.inputFields.alias.focus();
-		    	} else if(emptyType){
-		    	  	this.firstCalculatedFiledPanel.inputFields.type.focus();
-		    	} else {
-			    	this.fireEvent('apply', this, formState, this.firstCalculatedFiledPanel.target);
-		           	this.close();
-		    	}
+		    	this.fireEvent('apply', this, formState, target);
+		        //this.close();
+
 		    }
 		});
 
@@ -204,6 +207,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 
     }
 	, addSlotToFormState: function(formState){
+
 		var slotStore = this.secondSlotDefinitionPanel.store;
 		var slots = [];
 		for (var i = 0; i < slotStore.data.length; i++) { 
