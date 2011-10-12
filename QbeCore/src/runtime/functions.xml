@@ -2,8 +2,7 @@
 
 <INLINE_FUNCTIONS>
 	<FUNCTION group="Date Functions" name="GG_between_dates" desc="The difference in days" nParams="2">
-		<MySQLInnoDBDialect code=" DATEDIFF(concat(year($2),'-',month($2),'-',day($2)),concat(year($1),'-',month($1),'-',day($1))) " />	
-		<!-- <MySQLInnoDBDialect code=" DATEDIFF('dd', $2, $1) " /> -->			
+		<MySQLInnoDBDialect code=" DATEDIFF(concat(year($2),'-',month($2),'-',day($2)),concat(year($1),'-',month($1),'-',day($1))) " />				
 		<OracleDialect code=" nvl(round(to_date($2,'dd/mm/yyyy') - to_date($1,'dd/mm/yyyy'),0),-1) " />
 		<!-- <HSQLDialect code=" ... " />
 		<PostgreSQLDialect code=" ... " />
@@ -11,8 +10,7 @@
 		<SQLServerDialect code=" ... " /> -->
 	</FUNCTION>
 	<FUNCTION group="Date Functions" name="MM_between_dates" desc="The difference in months" nParams="2">
-		<MySQLInnoDBDialect code=" PERIOD_DIFF(concat(year($2),month($2)),concat(year($1),month($1))) " />			
-		<!-- <MySQLInnoDBDialect code=" DATEDIFF('mm', $2, $1) " /> -->
+		<MySQLInnoDBDialect code="  (year($2)- year($1))*12 + (month($2)-month($1)) " />			
 		<OracleDialect code="  months_between(to_date($2,'yyyy-mm-dd'), to_date('$1','yyyy-mm-dd')) " />
 		<!-- <HSQLDialect code=" ... " />
 		<PostgreSQLDialect code=" ... " />
@@ -36,8 +34,7 @@
 		<SQLServerDialect code=" ... " /> -->
 	</FUNCTION>
 	<FUNCTION group="Date Functions" name="MM_up_today" desc="The difference in days" nParams="1">
-		<!-- <MySQLInnoDBDialect code=" PERIOD_DIFF(concat(year(sysdate()),month(sysdate())),concat(year($1),month($1))) " />--> 
-		<MySQLInnoDBDialect code=" DATE_FORMAT(FROM_DAYS(TO_DAYS(sysdate())-TO_DAYS($1)), '%m') " /> 
+		<MySQLInnoDBDialect code=" (year(sysdate())- year($1))*12 + (month(sysdate())-month($1))  " />  
 		<OracleDialect code=" round(months_between(sysdate, to_date($1,'yyyy-mm-dd')),0) " />
 		<!-- <HSQLDialect code=" ... " />
 		<PostgreSQLDialect code=" ... " />
@@ -53,3 +50,4 @@
 		<SQLServerDialect code=" ... " /> -->
 	</FUNCTION>
 </INLINE_FUNCTIONS>
+ 
