@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.configuration;
 
+import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
@@ -81,8 +82,8 @@ public class AbstractDataSourceConfiguration implements IDataSourceConfiguration
 		// do nothing
 	}
 	
-	public List loadInLineFunctions(String dialect){
-		return new ArrayList();
+	public HashMap<String, InLineFunction> loadInLineFunctions(String dialect){
+		return new HashMap<String, InLineFunction>();
 		
 	}
 

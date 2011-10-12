@@ -26,11 +26,13 @@ import it.eng.qbe.datasource.configuration.dao.IInLineFunctionsDAO;
 import it.eng.qbe.datasource.configuration.dao.IModelI18NPropertiesDAO;
 import it.eng.qbe.datasource.configuration.dao.IModelPropertiesDAO;
 import it.eng.qbe.datasource.configuration.dao.IViewsDAO;
+import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -83,7 +85,7 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 		return viewsDAO.loadModelViews();
 	}
 	
-	public List loadInLineFunctions(String dialect) {
+	public HashMap<String, InLineFunction> loadInLineFunctions(String dialect) {
 		return functionsDAO.loadInLineFunctions(dialect);
 	}
 	

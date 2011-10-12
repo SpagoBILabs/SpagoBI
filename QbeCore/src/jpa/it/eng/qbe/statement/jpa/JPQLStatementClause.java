@@ -3,13 +3,16 @@
  */
 package it.eng.qbe.statement.jpa;
 
+import it.eng.qbe.datasource.ConnectionDescriptor;
+import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
-import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.spagobi.utilities.objects.Couple;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -95,8 +98,27 @@ public class JPQLStatementClause {
 	
 	private String replaceInLineFunctions(String expression, Query query, Map entityAliasesMaps) {
 		String newExpression;
+ 
+		ConnectionDescriptor connection = (ConnectionDescriptor)this.parentStatement.getDataSource().getConfiguration().loadDataSourceProperties().get("connection");		
+		String dbDialect = connection.getDialect(); 
+		HashMap<String, InLineFunction>  mapFuncs = this.parentStatement.getDataSource().getConfiguration().loadInLineFunctions(dbDialect);
+
+		String nameFunc = expression.substring(0, expression.indexOf("("));
 		
-		newExpression = expression;
+		if (mapFuncs.get(nameFunc) == null) return expression;
+		
+		String codeFunc = ((InLineFunction)mapFuncs.get(nameFunc)).getCode();
+		newExpression = codeFunc;
+		//substitutes paramters in the new function code
+		StringTokenizer stk = new StringTokenizer(expression, "+-|*/(),");
+		int idx = 0;
+		while(stk.hasMoreTokens()){
+			String alias = stk.nextToken().trim();
+			if (!alias.equalsIgnoreCase(nameFunc)) {
+				newExpression = newExpression.replaceAll("\\$"+(idx+1), alias);
+				idx++;
+			}
+		}
 		
 		return newExpression;
 	}
