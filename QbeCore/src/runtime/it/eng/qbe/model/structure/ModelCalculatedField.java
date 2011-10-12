@@ -67,7 +67,7 @@ public class ModelCalculatedField extends ModelField {
 	}
 	
 	public void addSlots(List<Slot> slots) {
-		slots.addAll(slots);
+		this.slots.addAll(slots);
 	}
 	
 	public List<Slot> getSlots() {
@@ -101,7 +101,7 @@ public class ModelCalculatedField extends ModelField {
 	}
 	
 	public static class Slot {
-		String value;
+		String name;
 		List<MappedValuesDescriptor> mappedValues;
 		
 		public interface MappedValuesDescriptor {}
@@ -118,6 +118,7 @@ public class ModelCalculatedField extends ModelField {
 				this.maxValue = maxValue;
 				includeMaxValue = false;
 			}
+			
 			
 			public String getMinValue() { return minValue; }
 			public void setMinValue(String minValue) { this.minValue = minValue; } 
@@ -137,11 +138,11 @@ public class ModelCalculatedField extends ModelField {
 			}
 			
 			public void addValue(String v) { punctualValues.add(v); }
-			public Set<String> getValues(String v) { return punctualValues; }
+			public Set<String> getValues() { return punctualValues; }
 		}
 		
 		public Slot(String value) {
-			this.value = value;
+			this.name = value;
 			mappedValues = new ArrayList<MappedValuesDescriptor>();
 		}
 		
@@ -151,6 +152,14 @@ public class ModelCalculatedField extends ModelField {
 		
 		public List<MappedValuesDescriptor> getMappedValuesDescriptors() {
 			return mappedValues;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
 		}
 		
 		
