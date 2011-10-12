@@ -38,7 +38,7 @@ public class SqlServerTypeTranslator implements INativeDBTypeable{
 	static{
 		sqlServerTypeMapping = new HashMap<String, String>();
 		sqlServerTypeMapping.put("java.lang.Integer", "int");//no param
-		sqlServerTypeMapping.put("java.lang.String", "varchar");//  oppure char [ ( n | max ) ]  Dati di tipo carattere a lunghezza variabile non Unicode. n può essere un valore compreso tra 1 e 8.000. max indica che le dimensioni massime dello spazio di archiviazione sono 2^31-1 byte.
+		sqlServerTypeMapping.put("java.lang.String", "char");//  oppure varchar  [ ( n | max ) ]  Dati di tipo carattere a lunghezza variabile non Unicode. n può essere un valore compreso tra 1 e 8.000. max indica che le dimensioni massime dello spazio di archiviazione sono 2^31-1 byte.
 		//sqlServerTypeMapping("java.lang.String4001", "CLOB");
 		sqlServerTypeMapping.put("java.lang.Boolean", "bit");//1,0 o null
 		sqlServerTypeMapping.put("java.lang.Float", "float");//n può non essere specificato Dove n è il numero di bit utilizzato per archiviare la mantissa del numero float nella notazione scientifica
