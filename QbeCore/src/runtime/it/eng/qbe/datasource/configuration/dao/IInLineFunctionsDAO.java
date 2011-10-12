@@ -20,12 +20,14 @@
  **/
 package it.eng.qbe.datasource.configuration.dao;
 
-import java.util.List;
+import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
+
+import java.util.HashMap;
 
 /**
- * The Interface IViewsDAO.
+ * The Interface IInLineFunctionsDAO.
  * 
- * @author Andrea Gioia
+ * @author Antonella Giachino (antonella.giachino@eng.it)
  */
 public interface IInLineFunctionsDAO {
 	
@@ -34,7 +36,7 @@ public interface IInLineFunctionsDAO {
 	 * 
 	 * @return the model views
 	 */
-	List loadInLineFunctions(String dialect);
+	public HashMap<String, InLineFunction> loadInLineFunctions(String dialect);
 	
 
 }

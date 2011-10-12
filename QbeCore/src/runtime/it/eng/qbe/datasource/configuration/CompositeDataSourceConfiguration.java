@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.configuration;
 
+import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
@@ -185,8 +186,8 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 		return views;
 	}
 
-	public List loadInLineFunctions(String dialect) {
-		List functions = new ArrayList();
+	public HashMap<String, InLineFunction> loadInLineFunctions(String dialect) {
+		HashMap<String, InLineFunction> functions = new HashMap<String, InLineFunction>();
 		functions =	subConfigurations.get(0).loadInLineFunctions(dialect);
 		
 		return functions;
