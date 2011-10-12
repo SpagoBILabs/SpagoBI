@@ -178,7 +178,7 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 			filter = {
 				rightOperandValue: (rows[0].data.type == 'NUM') ? 'P{' + rows[0].data.id + '}' : '\'P{' + rows[0].data.id + '}\''
 				, rightOperandDescription: '[' + rows[0].data.label + ']'
-				, rightOperandType: 'Static Value'
+				, rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE
 				, rightOperandLongDescription: LN('sbi.qbe.documentparametersgridpanel.parameterreference') + ' [' + rows[0].data.label + ']'
 			};
 			this.targetPanel.modifyFilter(filter, rowIndex);
@@ -186,7 +186,7 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 			filter = {
 				leftOperandValue: (rows[0].data.type == 'NUM') ? 'P{' + rows[0].data.id + '}' : '\'P{' + rows[0].data.id + '}\''
 				, leftOperandDescription: '[' + rows[0].data.label + ']'
-				, leftOperandType: 'Static Value'
+				, leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE
 				, leftOperandLongDescription: LN('sbi.qbe.documentparametersgridpanel.parameterreference') + ' [' + rows[0].data.label + ']'
 			};
 			this.targetPanel.modifyFilter(filter, rowIndex);
@@ -229,7 +229,7 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 			filter = {
 				rightOperandValue: (rows[0].data.type == 'NUM') ? 'P{' + rows[0].data.name + '}' : '\'P{' + rows[0].data.name + '}\''
 				, rightOperandDescription: '[' + rows[0].data.name + ']'
-				, rightOperandType: 'Static Value'
+				, rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE
 				, rightOperandLongDescription: LN('sbi.qbe.parametersgridpanel.parameterreference') + ' [' + rows[0].data.name + ']'
 				, promptable: true
 			};
@@ -262,12 +262,13 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 			dropColDataIndex = this.targetGrid.getColumnModel().getDataIndex( colIndex );
 		}
 	
-		if(nodeType == 'field') {			
+		if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) {		
+			
 			if(dropColDataIndex === 'rightOperandDescription') {			
 				filter = {
 					rightOperandValue: node.id
 					, rightOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
-					, rightOperandType: 'Field Content'
+					, rightOperandType: Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD
 					, rightOperandLongDescription: node.attributes.attributes.longDescription
 				};
 				this.targetPanel.modifyFilter(filter, rowIndex);
@@ -275,7 +276,7 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 				filter = {
 					leftOperandValue: node.id
 					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
-					, leftOperandType: 'Field Content'
+					, leftOperandType: Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD
 					, leftOperandLongDescription: node.attributes.attributes.longDescription
 				};
 				this.targetPanel.modifyFilter(filter, rowIndex);
@@ -283,29 +284,38 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 				filter = {
 					leftOperandValue: node.id
 					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
-					, leftOperandType: 'Field Content'
+					, leftOperandType: Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD
 					, leftOperandLongDescription: node.attributes.attributes.longDescription
 				};
 	  			this.targetPanel.insertFilter(filter, rowIndex);
 			}
-		} else if(nodeType == 'entity'){
+		} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_ENTITY){
 			
 			for(var i = 0; i < node.attributes.children.length; i++) {
-				if(node.attributes.children[i].attributes.type != 'field') continue;
+				var filterType;
+				var nodeType = node.attributes.children[i].attributes.type;
+				if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) {
+					filterType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD;
+				} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD) {
+					filterType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD;
+				} else {
+					continue;
+				}
+				
 				filter = {
 					leftOperandValue: node.attributes.children[i].id
 					, leftOperandDescription: node.attributes.children[i].attributes.entity + ' : ' + node.attributes.children[i].attributes.field 
-					, leftOperandType: 'Field Content'
+					, leftOperandType: filterType
 					, leftOperandLongDescription: node.attributes.children[i].attributes.longDescription
 				};
 				
 				this.targetPanel.insertFilter(filter, rowIndex);
 			}
-		} else if(nodeType == 'inLineCalculatedField'){
+		} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD){
 				filter = {
 					leftOperandValue: node.attributes.attributes.formState
 					, leftOperandDescription: node.attributes.entity + ' : ' + node.attributes.attributes.formState.alias 
-					, leftOperandType: 'Field Content'
+					, leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
 					, leftOperandLongDescription: node.attributes.attributes.formState.alias 
 				};
 				

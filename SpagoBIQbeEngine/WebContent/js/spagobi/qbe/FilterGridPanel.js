@@ -169,7 +169,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 			, leftOperandValue: ''
 			, leftOperandDescription: ''
 			, leftOperandLongDescription: ''
-			, leftOperandType: 'Static Value'
+			, leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE
 			, leftOperandDefaultValue: null
 			, leftOperandLastValue: null
 			
@@ -178,7 +178,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 			, rightOperandValue: ''
 			, rightOperandDescription: ''
 			, rightOperandLongDescription: ''
-			, rightOperandType: 'Static Value'
+			, rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE
 			, rightOperandDefaultValue: null
 			, rightOperandLastValue: null
 			
@@ -300,14 +300,13 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 		for(i = 0; i <  this.grid.store.getCount(); i++) {
 			record =  this.grid.store.getAt(i);
 			filter = Ext.apply({}, record.data);
-			//filter.operand = (filter.otype === 'Static Value')? filter.odesc: filter.operand;
 			filter.promptable = filter.promptable || false;
 			var rightOperandValue = [''];
 			var rightOperandLastValue = [''];
 			var rightOperandDefaultValue = [''];
 			
 			// splitting values into an array
-			if (filter.rightOperandType == 'Static Value' && (filter.operator == 'BETWEEN' || filter.operator == 'NOT BETWEEN' || 
+			if (filter.rightOperandType == Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE && (filter.operator == 'BETWEEN' || filter.operator == 'NOT BETWEEN' || 
 					filter.operator == 'IN' || filter.operator == 'NOT IN')) {
 				rightOperandValue = filter.rightOperandValue.split(Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator);
 				if (filter.rightOperandLastValue && filter.rightOperandLastValue !== null) {
@@ -650,87 +649,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 	              selectOnFocus: true //True to select any existing text in the field immediately on focus
 	        });
 
-		    /*
-		    var parentFieldEditor = new Ext.form.TriggerField({
-	             allowBlank: true
-	             , triggerClass: 'trigger-up'
-
-		    });
-		    parentFieldEditor.onTriggerClick = this.onOpenValueEditor.createDelegate(this);
-		    parentFieldEditor.on('change', function(f, newValue, oldValue){
-		    	if(this.activeEditingContext) {
-		    		if(this.activeEditingContext.dataIndex === 'leftOperandDescription') {
-		    			this.modifyFilter({leftOperandValue: newValue, leftOperandType: 'Static Value', leftOperandLongDescription: null}, this.activeEditingContext.row);
-		    		} else if(this.activeEditingContext.dataIndex === 'rightOperandDescription') {
-		    			this.modifyFilter({rightOperandValue: newValue, rightOperandType: 'Static Value', rightOperandLongDescription: null}, this.activeEditingContext.row);
-		    		}
-		    	}		    	
-		    }, this);
-		    
-		    
-		    var textEditor = new Ext.form.TextField({
-	             allowBlank: true
-		    });
-		    
-		    textEditor.ownerGrid = this;
-		    textEditor.fireKey = this.fireKeyHandler;
-		    
-		    textEditor.on('change', function(f, newValue, oldValue){
-		    	
-		    	if(this.activeEditingContext) {
-		    		if(this.activeEditingContext.dataIndex === 'leftOperandDescription') {
-		    			this.modifyFilter({leftOperandValue: newValue, leftOperandType: 'Static Value', leftOperandLongDescription: null}, this.activeEditingContext.row);
-		    		} else if(this.activeEditingContext.dataIndex === 'rightOperandDescription') {
-		    			this.modifyFilter({rightOperandValue: newValue, rightOperandType: 'Static Value', rightOperandLongDescription: null}, this.activeEditingContext.row);
-		    		} else {
-		    			//alert('ONCHANGE: ' + this.activeEditingContext.dataIndex);
-		    		}
-		    	}		    	
-		    }, this);
-		    
-		    var lookupFieldEditor = new Ext.form.TriggerField({
-	             allowBlank: true
-	             , triggerClass: 'x-form-search-trigger'
-
-		    });
-		    
-			lookupFieldEditor.ownerGrid = this;
-			lookupFieldEditor.fireKey = this.fireKeyHandler;
-		    
-		    lookupFieldEditor.onTriggerClick = this.openValuesForQbeFilterLookup.createDelegate(this);
-		    lookupFieldEditor.on('change', function(f, newValue, oldValue){
-		    	if(this.activeEditingContext) {
-		    		if(this.activeEditingContext.dataIndex === 'rightOperandDescription') {
-		    			this.modifyFilter({rightOperandValue: newValue, rightOperandType: 'Static Value', rightOperandLongDescription: null}, this.activeEditingContext.row);
-		    		}
-		    	}		    	
-		    }, this);
-		    
-		    var multiButtonEditor = new Sbi.widgets.TriggerFieldMultiButton({
-	         		allowBlank: true
-		    });
-		    
-		    multiButtonEditor.ownerGrid = this;
-		    multiButtonEditor.fireKey = this.fireKeyHandler;
-		    
-		    multiButtonEditor.onTrigger1Click = this.openValuesForQbeFilterLookup.createDelegate(this);
-		    multiButtonEditor.onTrigger2Click = this.onOpenValueEditor.createDelegate(this);  	
-		    
-		    multiButtonEditor.on('change', function(f, newValue, oldValue){
-		    	if(this.activeEditingContext) {
-		    		if(this.activeEditingContext.dataIndex === 'rightOperandDescription') {
-		    			this.modifyFilter({rightOperandValue: newValue, rightOperandType: 'Static Value', rightOperandLongDescription: null}, this.activeEditingContext.row);
-		    		}
-		    	}		    	
-		    }, this);
-		    
-		    this.valueColumnEditors = {
-		    		parentFieldEditor: new Ext.grid.GridEditor(parentFieldEditor)		    		
-		    		, textEditor: new Ext.grid.GridEditor(textEditor)
-		    		, lookupFieldEditor: new Ext.grid.GridEditor(lookupFieldEditor)	
-		    		, multiButtonEditor: new Ext.grid.GridEditor(multiButtonEditor)
-		    };
-		    */
+		   
 			
 		    this.cm = new Ext.grid.ColumnModel([
 		        new Ext.grid.RowNumberer(),
@@ -1015,7 +934,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 				if(this.activeEditingContext.dirty === true){
 					this.modifyFilter({
 						leftOperandValue: filter.leftOperandDescription, 
-						leftOperandType: 'Static Value', 
+						leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE, 
 						leftOperandLongDescription: null
 					}, this.activeEditingContext.row);
 				}				
@@ -1023,7 +942,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 				if(this.activeEditingContext.dirty === true){
 					this.modifyFilter({
 						rightOperandValue: filter.rightOperandDescription, 
-						rightOperandType: 'Static Value', 
+						rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE, 
 						rightOperandLongDescription: null
 					}, this.activeEditingContext.row);
 				}				
@@ -1074,7 +993,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 	    			this.modifyFilter({
 		    				rightOperandValue: newValue, 
 		    				rightOperandDescription: newValue,
-		    				rightOperandType: 'Static Value', 
+		    				rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE, 
 		    				rightOperandLongDescription: null
 	    				}, 
 	    				this.activeEditingContext.row);
@@ -1095,9 +1014,9 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 	    parentFieldEditor.on('change', function(f, newValue, oldValue){
 	    	if(this.activeEditingContext) {
 	    		if(this.activeEditingContext.dataIndex === 'leftOperandDescription') {
-	    			this.modifyFilter({leftOperandValue: newValue, leftOperandDescription: newValue, leftOperandType: 'Static Value', leftOperandLongDescription: null}, this.activeEditingContext.row);
+	    			this.modifyFilter({leftOperandValue: newValue, leftOperandDescription: newValue, leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE, leftOperandLongDescription: null}, this.activeEditingContext.row);
 	    		} else if(this.activeEditingContext.dataIndex === 'rightOperandDescription') {
-	    			this.modifyFilter({rightOperandValue: newValue, rightOperandDescription: newValue, rightOperandType: 'Static Value', rightOperandLongDescription: null}, this.activeEditingContext.row);
+	    			this.modifyFilter({rightOperandValue: newValue, rightOperandDescription: newValue, rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE, rightOperandLongDescription: null}, this.activeEditingContext.row);
 	    		}
 	    	}		    	
 	    }, this);
@@ -1118,7 +1037,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 	    lookupFieldEditor.on('change', function(f, newValue, oldValue){
 	    	if(this.activeEditingContext) {
 	    		if(this.activeEditingContext.dataIndex === 'rightOperandDescription') {
-	    			this.modifyFilter({rightOperandValue: newValue, rightOperandDescription: newValue, rightOperandType: 'Static Value', rightOperandLongDescription: null}, this.activeEditingContext.row);
+	    			this.modifyFilter({rightOperandValue: newValue, rightOperandDescription: newValue, rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE, rightOperandLongDescription: null}, this.activeEditingContext.row);
 	    		}
 	    	}		    	
 	    }, this);
@@ -1137,9 +1056,9 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 	    textEditor.on('change', function(f, newValue, oldValue){
 	    	if(this.activeEditingContext) {
 	    		if(this.activeEditingContext.dataIndex === 'leftOperandDescription') {
-	    			this.modifyFilter({leftOperandValue: newValue, leftOperandDescription: newValue, leftOperandType: 'Static Value', leftOperandLongDescription: null}, this.activeEditingContext.row);
+	    			this.modifyFilter({leftOperandValue: newValue, leftOperandDescription: newValue, leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE, leftOperandLongDescription: null}, this.activeEditingContext.row);
 	    		} else if(this.activeEditingContext.dataIndex === 'rightOperandDescription') {
-	    			this.modifyFilter({rightOperandValue: newValue, rightOperandDescription: newValue, rightOperandType: 'Static Value', rightOperandLongDescription: null}, this.activeEditingContext.row);
+	    			this.modifyFilter({rightOperandValue: newValue, rightOperandDescription: newValue, rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE, rightOperandLongDescription: null}, this.activeEditingContext.row);
 	    		} else {
 	    			//alert('ONCHANGE: ' + this.activeEditingContext.dataIndex);
 	    		}
@@ -1234,7 +1153,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 				var filter;
 				if(this.activeEditingContext.dataIndex === 'rightOperandDescription') {
 					filter = {
-						rightOperandType: 'Static Value'
+						rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE
 						, rightOperandDescription: xselection.Values.join(Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator)
 						, rightOperandValue: xselection.Values.join(Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator)
 						, rightOperandLongDescription: xselection.Values.join(Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator)
