@@ -92,6 +92,7 @@ public class CustomDataSet extends ConfigurableDataSet {
 		toreturn.setDsMetadata(getDsMetadata());
 		toreturn.setMetadata(getMetadata());
 		toreturn.setParamsMap(getParamsMap());
+		toreturn.setProperties(getProperties());
 		
 		
 
