@@ -89,6 +89,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //    EngineURL engineurl = (EngineURL) moduleResponse.getAttribute(ObjectsTreeConstants.CALL_URL);
 //	StringBuffer urlToCall= new StringBuffer(engineurl.getMainURL());
 	//urlToCall+=param1;
+	
 	urlToCall.append(param2);
 	urlToCall.append(param3);
 	urlToCall.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
@@ -96,10 +97,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	urlToCall.append("&NEW_SESSION=TRUE");
 	//urlToCall.append("&ACTION_NAME=QBE_ENGINE_START_ACTION");
 	urlToCall.append("&ACTION_NAME=WORKSHEET_WITH_DATASET_START_EDIT_ACTION");
-	urlToCall.append("&SBI_EXECUTION_ROLE=/spagobi/admin");
-	urlToCall.append("&user_id=biadmin");
+	urlToCall.append("&user_id="+userId);
 	urlToCall.append("&dataset_label="+dataSetLabel);
-	//urlToCall.append("&document=103");
 	
 	// get parameters, those passed can be recognize by prefix PAR_
 	List atts= aResponseContainer.getServiceResponse().getContainedAttributes();
@@ -152,21 +151,14 @@ Ext.onReady(function(){
 	    	    	var templateJSON = Ext.util.JSON.decode(template);
 	    			var wkDefinition = templateJSON.OBJECT_WK_DEFINITION;
 	    			var documentWindowsParams = {
-	    					//'OBJECT_ID': this.executionInstance.OBJECT_ID,
 	    					'OBJECT_TYPE': 'WORKSHEET',
 	    					//'template': wkDefinition,
 	    					'OBJECT_WK_DEFINITION': wkDefinition,
 	    					'MESSAGE_DET': 'DOC_SAVE_FROM_DATASET',
 	    					'dataset_label': '<%=dataSetLabel%>',
 	    					'typeid': 'WORKSHEET' 
-	    					//,'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
 	    				};
-	    			//if(this.executionInstance.document.typeCode == 'DATAMART'){
-	    			//	documentWindowsParams = templateJSON.OBJECT_QUERY;
-	    			//}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
-	    			//	documentWindowsParams=templateJSON.OBJECT_FORM_VALUES;
-	    			//	documentWindowsParams = Ext.apply(this.executionInstance, params);
-	    			//}
+
 
 	    			
 	    			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow(documentWindowsParams);
