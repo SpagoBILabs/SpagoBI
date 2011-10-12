@@ -111,7 +111,10 @@ Ext.extend(Sbi.qbe.CalculatedFieldWizard, Ext.Window, {
 		    	} else if(emptyType){
 		    	  	this.mainPanel.inputFields.type.focus();
 		    	} else {
-			    	this.fireEvent('apply', this, this.mainPanel.getFormState(), this.mainPanel.target);
+		    		var fieldType = this.mainPanel.expertMode? 
+		    				Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD: 
+		    					Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD;
+			    	this.fireEvent('apply', this, this.mainPanel.getFormState(), this.mainPanel.target, fieldType);
 		           	this.hide();
 		    	}
 		    }
