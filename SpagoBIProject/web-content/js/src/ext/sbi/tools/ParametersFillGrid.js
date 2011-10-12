@@ -126,7 +126,7 @@ Ext.extend(Sbi.tools.ParametersFillGrid, Ext.grid.PropertyGrid, {
 					}
 				}
 		
-				var tempRecord = new Ext.data.Record({"name": singlePar.name,"value": valueToInsert});		
+				var tempRecord = new Ext.data.Record({"name": singlePar.name,"type": typeData, "value": valueToInsert});		
 				this.store.add(tempRecord);
 			}
 		}
