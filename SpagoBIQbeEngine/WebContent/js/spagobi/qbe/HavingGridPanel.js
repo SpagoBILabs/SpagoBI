@@ -179,7 +179,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 			, leftOperandValue: ''
 			, leftOperandDescription: ''
 			, leftOperandLongDescription: null
-			, leftOperandType: 'Static Value'
+			, leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE
 			, leftOperandDefaultValue: null
 			, leftOperandLastValue: null
 			
@@ -189,7 +189,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 			, rightOperandValue: ''
 			, rightOperandDescription: ''
 			, rightOperandLongDescription: null
-			, rightOperandType: 'Static Value'
+			, rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE
 			, rightOperandDefaultValue: null
 			, rightOperandLastValue: null
 			
@@ -275,10 +275,9 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 		for(i = 0; i <  this.grid.store.getCount(); i++) {
 			record =  this.grid.store.getAt(i);
 			filter = Ext.apply({}, record.data);
-			//filter.operand = (filter.otype === 'Static Value')? filter.odesc: filter.operand;
 			filter.promptable = filter.promptable || false;
 			// splitting values into an array
-			if (filter.rightOperandType == 'Static Value' && (filter.operator == 'BETWEEN' || filter.operator == 'NOT BETWEEN' || 
+			if (filter.rightOperandType == Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE && (filter.operator == 'BETWEEN' || filter.operator == 'NOT BETWEEN' || 
 					filter.operator == 'IN' || filter.operator == 'NOT IN')) {
 				filter.rightOperandValue = filter.rightOperandValue.split(Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator);
 				if (filter.rightOperandLastValue && filter.rightOperandLastValue != null) {
@@ -326,35 +325,6 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 		this.idCount = max;
 	}
 	
-	/*
-	, setFiltersExpression: function(expression) {
-		if(expression !== undefined) {
-			var expStr = this.loadSavedExpression(expression);
-			it.eng.spagobi.engines.qbe.filterwizard.setExpression( expStr, true ); 
-			this.setWizardExpression(true);
-		}
-	}
-	  	
-  	, loadSavedExpression : function(expression) {
-  		var str = "";
-  		
-  		if(expression.type == 'NODE_OP') {
-  			for(var i = 0; i < expression.childNodes.length; i++) {
-  				var child = expression.childNodes[i];
-  				var childStr = this.loadSavedExpression(child); 
-  				if(child.type == "NODE_OP") {
-  					childStr = "(" + childStr + ")";
-  				}
-  				str += (i==0?"": " " + expression.value);
-				str += " " + childStr;
-  			}
-  		} else {
-  			str += expression.value;
-  		}
-  		
-  		return str;
-  	}
-  	*/
   	
   	, setPromptableFiltersLastValues: function(formState) {
     	for (var filterName in formState) {
@@ -385,74 +355,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
     		}
     	}
     }
-    
-  	/*
-	, syncWizardExpressionWithGrid: function() {
-		var exp = '';
-		var store = this.grid.store;
-		for(i = 0; i <  store.getCount(); i++) {
-			var currRecord =  store.getAt(i);
-			var prevRecord =  store.getAt(i-1);
-			if(i > 0) {
-				exp += ' ' + prevRecord.data.booleanConnector + ' $F{' +  currRecord.data.filterId + '}';
-			} else {
-				exp += '$F{' + currRecord.data.filterId + '}';
-			}
-		}
-		it.eng.spagobi.engines.qbe.filterwizard.setExpression(exp, true);
-		
-	}
-	
-	, getFiltersExpression : function() {	
-		if(!this.isWizardExpression()) {
-			this.syncWizardExpressionWithGrid();
-		}
-		return it.eng.spagobi.engines.qbe.filterwizard.getExpressionAsObject();
-	}
-	
-	, getFiltersExpressionAsJSON : function() {	
-		if(!this.isWizardExpression()) {
-			this.syncWizardExpressionWithGrid();
-		}
-		var json = it.eng.spagobi.engines.qbe.filterwizard.getExpressionAsJSON();
-		
-		return json;
-	}
-	
-	, showWizard: function() {	
-		if(!this.isWizardExpression()) {
-			this.syncWizardExpressionWithGrid();
-		}					
-		var operands = [];			
-		for(i = 0; i <  this.grid.store.getCount(); i++) {
-			var tmpRec =  this.grid.store.getAt(i);
-			operands[i] = {
-				text: tmpRec.data.filterId,
-				ttip: tmpRec.data.filterId + ': ' + tmpRec.data.filterDescription,
-				type: 'operand',
-				value: '$F{' +  tmpRec.data.filterId + '}'
-			};
-		}
-		
-		it.eng.spagobi.engines.qbe.filterwizard.setOperands(operands);
-		it.eng.spagobi.engines.qbe.filterwizard.show();	 
-		this.setWizardExpression(true);
-	}
-	
-	, setWizardExpression: function(b) {
-		if(b) {
-			this.wizardExpression = true;
-			//alert('I will use the xpression defined into wizard');
-		} else {
-			this.wizardExpression = false;
-			//alert('I will use inline expression');
-		}
-	}
-	
-	, isWizardExpression: function() {
-		return this.wizardExpression;
-	}
-	*/
+
 	
     // -- private methods ----------------------------------------------------------------------------------------
 
@@ -487,23 +390,6 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 		   {name: 'deleteButton', type: 'bool'}
 		]);
 		   
-		/*
-		this.Record = Ext.data.Record.create([
-		   {name: 'fname', type: 'string'},
-		   {name: 'id', type: 'string'},
-		   {name: 'entity', type: 'string'},
-		   {name: 'field', type: 'string'},
-		   {name: 'operator', type: 'string'},
-		   {name: 'operand', type: 'auto'},
-		   {name: 'isfree', type: 'bool'},
-		   {name: 'otype', type: 'string'},
-		   {name: 'odesc', type: 'string'},
-		   {name: 'boperator', type: 'string'},
-		   {name: 'del', type: 'bool'},
-		   {name: 'defaultvalue', type: 'string'},
-		   {name: 'lastvalue', type: 'string'}
-		]);
-		*/
 		
 		this.store = new Ext.data.SimpleStore({
 			reader: new Ext.data.ArrayReader({}, this.Record)
@@ -861,12 +747,6 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 	    }, this);
 	    
 	    this.grid.on('beforeedit', this.onBeforeEdit, this);
-	    
-	    /*
-	    this.grid.store.on('remove', function(e){
-	    	this.setWizardExpression(false);
-	    }, this);
-	    */
 	}
 	
 	, onBeforeEdit: function(e) {
@@ -885,7 +765,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 				if(this.activeEditingContext.dirty === true){
 					this.modifyFilter({
 						leftOperandValue: filter.leftOperandDescription, 
-						leftOperandType: 'Static Value', 
+						leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE, 
 						leftOperandLongDescription: null
 					}, this.activeEditingContext.row);
 				}				
@@ -893,7 +773,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 				if(this.activeEditingContext.dirty === true){
 					this.modifyFilter({
 						rightOperandValue: filter.rightOperandDescription, 
-						rightOperandType: 'Static Value', 
+						rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE, 
 						rightOperandLongDescription: null
 					}, this.activeEditingContext.row);
 				}				
@@ -924,9 +804,9 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 	    textEditor.on('change', function(f, newValue, oldValue){
 	    	if(this.activeEditingContext) {
 	    		if(this.activeEditingContext.dataIndex === 'leftOperandDescription') {
-	    			this.modifyFilter({leftOperandValue: newValue, leftOperandDescription: newValue, leftOperandType: 'Static Value'}, this.activeEditingContext.row);
+	    			this.modifyFilter({leftOperandValue: newValue, leftOperandDescription: newValue, leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE}, this.activeEditingContext.row);
 	    		} else if(this.activeEditingContext.dataIndex === 'rightOperandDescription') {
-	    			this.modifyFilter({rightOperandValue: newValue, rightOperandDescription: newValue, rightOperandType: 'Static Value'}, this.activeEditingContext.row);
+	    			this.modifyFilter({rightOperandValue: newValue, rightOperandDescription: newValue, rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE}, this.activeEditingContext.row);
 	    		}
 	    	}		    	
 	    }, this);
@@ -934,41 +814,6 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 	    return textEditor;
 	}
 	
-	/*
-	, onOpenValueEditor: function(e) {
-		if(this.operandChooserWindow === undefined) {
-			this.operandChooserWindow = new Sbi.qbe.OperandChooserWindow();
-			this.operandChooserWindow.on('applyselection', function(win, node) {
-				//var r = this.activeEditingContext.record;
-				var filter;
-				if(this.activeEditingContext.dataIndex === 'leftOperandDescription') {
-					filter = {
-						leftOperandType: 'Parent Field Content'
-						, leftOperandDescription: this.parentQuery.id  + ' : ' +  node.attributes.entity + ' : ' + node.attributes.field
-						, leftOperandValue: this.parentQuery.id + ' ' + node.id
-					}
-					this.modifyFilter(filter, this.activeEditingContext.row);
-				} else if(this.activeEditingContext.dataIndex === 'rightOperandDescription') {
-					filter = {
-						rightOperandType: 'Parent Field Content'
-						, rightOperandDescription: this.parentQuery.id  + ' : ' +  node.attributes.entity + ' : ' + node.attributes.field
-						, rightOperandValue: this.parentQuery.id + ' ' + node.id
-					}
-					this.modifyFilter(filter, this.activeEditingContext.row);
-				}
-				//this.store.fireEvent('datachanged', this.store) ;
-				//this.activeEditingContext = null;
-			}, this);
-			
-			this.operandChooserWindow.on('applyselection', function(win, node) {
-				this.activeEditingContext = null;
-			}, this);
-		}
-		this.grid.stopEditing();
-		this.operandChooserWindow.setParentQuery(this.parentQuery);
-		this.operandChooserWindow.show();
-	}
-	*/
 	
 	, getLeftOperandTooltip: function (value, metadata, record) {
 	 	var tooltipString = record.data.leftOperandLongDescription;

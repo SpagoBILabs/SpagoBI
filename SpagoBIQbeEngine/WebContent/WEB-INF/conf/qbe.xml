@@ -32,7 +32,7 @@
 	
 	<QBE_TEMPORARY_TABLE prefix="TMPSBIQBE_" suffix="" /> <!-- TEMPORARY_TABLE mechanism is always enabled -->
 
-	<QBE-DATE-FORMAT it="dd/MM/yyyy" es="dd/MM/yyyy" fr="dd/MM/yyyy" en="MM/dd/yyyy" database="yyyy-MM-dd" extJsFormat="d/m/Y" />
+	<QBE-DATE-FORMAT it="yyyy-MM-dd" es="yyyy-MM-dd" fr="yyyy-MM-dd" en="yyyy-MM-dd" database="yyyy-MM-dd" extJsFormat="d/m/Y" />
 	
 		
 	<TEMPLATE-BUILDER>
