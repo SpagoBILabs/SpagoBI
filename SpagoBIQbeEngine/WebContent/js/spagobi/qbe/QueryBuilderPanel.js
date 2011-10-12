@@ -700,7 +700,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			    	longDescription: node.attributes.attributes.longDescription
 			    };		
     			
-    			alert(field.toSource());
+    			//alert(field.toSource());
 			    
     			Ext.apply(field, recordBaseConfig);
     			
