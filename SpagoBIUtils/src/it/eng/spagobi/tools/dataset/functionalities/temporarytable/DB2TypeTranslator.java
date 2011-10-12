@@ -20,6 +20,8 @@
  **/
 package it.eng.spagobi.tools.dataset.functionalities.temporarytable;
 
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,12 +35,12 @@ import org.apache.log4j.Logger;
 public class DB2TypeTranslator implements INativeDBTypeable{
 
 	private static Logger logger = Logger.getLogger("DB2TypeTranslator");
-	
+	private static final int MAX_CHAR_SIZE = 254;
 	private static Map<String, String> db2TypeMapping;
 	static{
 		db2TypeMapping = new HashMap<String, String>();
 		db2TypeMapping.put("java.lang.Integer", "INTEGER");//no param
-		db2TypeMapping.put("java.lang.String", "VARCHAR");// (n)n<32672  CHAR(n) n<=254
+		db2TypeMapping.put("java.lang.String", "CHAR");// (n)n<32672  CHAR(n) n<=254
 		//db2TypeMapping.put("java.lang.String4001", "CLOB");
 		db2TypeMapping.put("java.lang.Boolean", "SMALLINT");//no param
 		db2TypeMapping.put("java.lang.Float", "REAL");//no param
@@ -76,10 +78,12 @@ public class DB2TypeTranslator implements INativeDBTypeable{
 		queryType +=" "+typeSQL+""; 
 
 		if(typeJavaName.equalsIgnoreCase(String.class.getName())){
+			if(size>MAX_CHAR_SIZE){
+				logger.error("For DB2 the max size of a char column must be < "+MAX_CHAR_SIZE+". The size you've specified is "+size);
+				throw new SpagoBIRuntimeException("For DB2 the max size of a char column must be < 254. The size you've specified is "+size);
+			}
 			if( size != null && size!= 0){
 				queryType +="("+size+")";
-			}else{
-				queryType +="("+4000+")";
 			}
 		}else if(typeJavaName.equalsIgnoreCase(BigDecimal.class.getName()) && (precision != null && scale != null)){
 			queryType+="("+precision+","+scale+")";
