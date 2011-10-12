@@ -134,13 +134,15 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
             handler: function(){
 		   	    var emptyAlias = (this.firstCalculatedFiledPanel.inputFields.alias.getValue()==null) || (this.firstCalculatedFiledPanel.inputFields.alias.getValue()=="");
 		   	    var emptyType = (this.firstCalculatedFiledPanel.inputFields.type.getValue()==null) || (this.firstCalculatedFiledPanel.inputFields.type.getValue()=="");
-	
+				var formState = this.firstCalculatedFiledPanel.getFormState();
+				this.addSlotToFormState(formState);
+				
 		   	    if(emptyAlias){
 		    	   	this.firstCalculatedFiledPanel.inputFields.alias.focus();
 		    	} else if(emptyType){
 		    	  	this.firstCalculatedFiledPanel.inputFields.type.focus();
 		    	} else {
-			    	this.fireEvent('apply', this, this.firstCalculatedFiledPanel.getFormState(), this.firstCalculatedFiledPanel.target);
+			    	this.fireEvent('apply', this, formState, this.firstCalculatedFiledPanel.target);
 		           	this.close();
 		    	}
 		    }
@@ -201,10 +203,15 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 		this.mainPanel.doLayout();
 
     }
-	, save: function( formState, targetNode){
-		//"{"alias":"sss","id":{"alias":"sss","type":"STRING","expression":"Store id "},"filedType":"inLineCalculatedField","type":"STRING","calculationDescriptor":{"alias":"sss","type":"STRING","expression":"Store id "}}"
-		this.fireEvent('apply', this, this.firstCalculatedFiledPanel.getFormState(), this.firstCalculatedFiledPanel.target);
-		//this.close();
+	, addSlotToFormState: function(formState){
+		var slotStore = this.secondSlotDefinitionPanel.store;
+		var slots = [];
+		for (var i = 0; i < slotStore.data.length; i++) { 
+			var record = slotStore.getAt(i); 
+			slots[i] = record.data; 
+		}
+		formState.slots = slots;
 	}
+
 
 });
