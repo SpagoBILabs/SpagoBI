@@ -389,8 +389,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
      	            text: 'GG_between_dates'
      	            , qtip: LN('da implementare')
      	            , type: 'function'
-     	            , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
-     	            , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+     	            , value: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
+     	            , alias: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
      	            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
      	            		   , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
      		    
@@ -398,8 +398,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
      		         text: 'MM_between_dates'
      		         , qtip: LN('da implementare')
      			     , type: 'function'
-     			     , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
-     			     , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+     			     , value: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
+     			     , alias: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
      			     , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
      	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
      			 },{
@@ -411,25 +411,25 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
      			      , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
      	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
      			 }, {
-     			     text: 'gg_between_dates'
+     			     text: 'GG_up_today'
      			     , qtip: LN('da implementare')
      				 , type: 'function'
-     				 , value: Ext.util.Format.htmlEncode('gg_between_dates(op1)')
-     				 , alias: Ext.util.Format.htmlEncode('gg_between_dates(op1)')
+     				 , value: Ext.util.Format.htmlEncode('GG_up_today(op1)')
+     				 , alias: Ext.util.Format.htmlEncode('GG_up_today(op1)')
      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
      			 }, {
-     			     text: 'mm_between_dates'
+     			     text: 'MM_up_today'
      				 , qtip: LN('da implementare')
      				 , type: 'function'
-     				 , value: Ext.util.Format.htmlEncode('mm_between_dates(op1)')
-     				 , alias: Ext.util.Format.htmlEncode('mm_between_dates(op1)')
+     				 , value: Ext.util.Format.htmlEncode('MM_up_today(op1)')
+     				 , alias: Ext.util.Format.htmlEncode('MM_up_today(op1)')
      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
      			  }, {
-     				 text: 'yy_between_dates'
+     				 text: 'AA_up_today'
      				 , qtip: LN('da implementare')
      				 , type: 'function'
-     				 , value: Ext.util.Format.htmlEncode('yy_between_dates(op1)')
-     				 , alias: Ext.util.Format.htmlEncode('yy_between_dates(op1)')
+     				 , value: Ext.util.Format.htmlEncode('AA_up_today(op1)')
+     				 , alias: Ext.util.Format.htmlEncode('AA_up_today(op1)')
      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
      			   }
      	    ];
@@ -727,8 +727,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	            text: 'GG_between_dates'
 	            , qtip: LN('da implementare')
 	            , type: 'function'
-	            , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
-	            , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+	            , value: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
+	            , alias: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
 	            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
 	            		   , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
 		    
@@ -736,8 +736,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		         text: 'MM_between_dates'
 		         , qtip: LN('da implementare')
 			     , type: 'function'
-			     , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
-			     , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+			     , value: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
+			     , alias: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
 			     , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
 	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
 			 },{
@@ -749,25 +749,25 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			      , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
 	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
 			 }, {
-			     text: 'gg_between_dates'
+			     text: 'GG_up_today'
 			     , qtip: LN('da implementare')
 				 , type: 'function'
-				 , value: Ext.util.Format.htmlEncode('gg_between_dates(op1)')
-				 , alias: Ext.util.Format.htmlEncode('gg_between_dates(op1)')
+				 , value: Ext.util.Format.htmlEncode('GG_up_today(op1)')
+				 , alias: Ext.util.Format.htmlEncode('GG_up_today(op1)')
 				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
 			 }, {
-			     text: 'mm_between_dates'
+			     text: 'MM_up_today'
 				 , qtip: LN('da implementare')
 				 , type: 'function'
-				 , value: Ext.util.Format.htmlEncode('mm_between_dates(op1)')
-				 , alias: Ext.util.Format.htmlEncode('mm_between_dates(op1)')
+				 , value: Ext.util.Format.htmlEncode('MM_up_today(op1)')
+				 , alias: Ext.util.Format.htmlEncode('MM_up_today(op1)')
 				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
 			  }, {
-				 text: 'yy_between_dates'
+				 text: 'AA_up_today'
 				 , qtip: LN('da implementare')
 				 , type: 'function'
-				 , value: Ext.util.Format.htmlEncode('yy_between_dates(op1)')
-				 , alias: Ext.util.Format.htmlEncode('yy_between_dates(op1)')
+				 , value: Ext.util.Format.htmlEncode('AA_up_today(op1)')
+				 , alias: Ext.util.Format.htmlEncode('AA_up_today(op1)')
 				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
 			   }
 	    ];
