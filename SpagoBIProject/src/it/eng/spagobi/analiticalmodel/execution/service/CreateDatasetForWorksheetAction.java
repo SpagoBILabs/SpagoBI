@@ -71,7 +71,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	public static final String  PARAMETERS_VALUES = "parametersValues";	
 
 
-	// request parameters for dataset	
+	// request parameters for dataset	 (Taken from DatsetConstants)
 
 	//	public static String MODALITY = "MODALITY";
 	//	public static String MODALITY_DATASET = "DATASET";
@@ -143,13 +143,8 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 				" dataset creation method did not return any result: check log");	
 			}
 
-			UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
-			UUID uuidObj = uuidGen.generateTimeBasedUUID();
-			String executionContextId = uuidObj.toString();
-
-
 			String valsJson = getAttributeAsString( PARAMETERS_VALUES );
-			// put in response parameters ANNO and ENTE
+			// put in response parameters 
 			Map valsMap = null;
 			if(valsJson != null && !valsJson.equals(""))
 				valsMap = getParameterValues(valsJson);
@@ -165,6 +160,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 					for (Iterator iterator = valsMap.keySet().iterator(); iterator.hasNext();) {
 						String n = (String) iterator.next();
 						Object v = valsMap.get(n);
+						// passing parameters with prefix PAR_
 						getServiceResponse().setAttribute("PAR_"+n, v);
 					}
 
@@ -201,7 +197,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	}
 
 
-	/**
+	/** get dataset information from request
 	 * 
 	 * @return  GuiGenericDataSet
 	 */
@@ -292,157 +288,6 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	/**
-	 * 
-	 * @param biObject
-	 * @param parameters
-	 */
-	//	private void collectParametersInformation(BIObject biObject, String parameters){
-	//		logger.debug("IN");
-	//
-	//		// parameters let's assume is a json St5rring
-	//
-	//		try {
-	//			JSONArray jsonArray = new JSONArray(parameters);
-	//
-	//			for (int i = 0; i < jsonArray.length(); i++) {
-	//				JSONObject jsonObject = (JSONObject)jsonArray.get(i);
-	//				// recover informations
-	//				String label = jsonObject.getString(OBJPAR_LABEL);
-	//				String parId = jsonObject.getString(OBJPAR_PAR_ID);
-	//				String parameterUrlName = jsonObject.getString(OBJPAR_PARAMETER_URL_NAME);
-	//
-	//				if(biObject.getBiObjectParameters()== null ){
-	//					biObject.setBiObjectParameters(new ArrayList<BIObjectParameter>());
-	//				}
-	//
-	//				BIObjectParameter biObjectParameter = new BIObjectParameter();
-	//				biObjectParameter.setParID(Integer.valueOf(parId));
-	//				biObjectParameter.setParameterUrlName(parameterUrlName);
-	//				biObjectParameter.setLabel(label);
-	//				biObject.getBiObjectParameters().add(biObjectParameter);
-	//			}
-	//		} catch (JSONException e) {
-	//			logger.error("parameters JSON string not well formed: "+parameters);
-	//			throw new SpagoBIServiceException(SERVICE_NAME, "parameters JSON string not well formed: "+parameters);
-	//		}
-	//
-	//		logger.debug("OUT");
-	//	}
-
-
-	//	private BIObject collectBiObjectInformations(){
-	//		logger.debug("IN");
-	//		// Dataset Fields
-	//		String objLabel;
-	//		String objName;
-	//		String objDescr;
-	//		String objPars;
-	//		Integer objFunctionality;
-	//
-	//		Integer engineId;
-	//		Integer dataSetId;
-	//		Integer dataSourceId;
-	//		Integer stateId;
-	//
-	//		String parameters;
-	//
-	//		try{
-	//
-	//			objLabel = getAttributeAsString( OBJ_LABEL );
-	//			objName = getAttributeAsString( OBJ_NAME );
-	//			objDescr = getAttributeAsString( OBJ_DESCR );
-	//			objPars = getAttributeAsString( OBJ_PARS );
-	//			objFunctionality = getAttributeAsInteger( OBJ_FUNCTIONALITY );
-	//			engineId = getAttributeAsInteger( OBJ_ENGINE_ID );
-	//			dataSourceId = getAttributeAsInteger( OBJ_DATASOURCE_ID );
-	//			dataSetId = getAttributeAsInteger( OBJ_DATASET_ID );
-	//			stateId = getAttributeAsInteger(OBJ_STATE_ID);
-	//
-	//
-	//			if(objLabel== null){
-	//				logger.error("Action "+SERVICE_NAME+ " ");
-	//				throw new SpagoBIServiceException(SERVICE_NAME, "Could not find label for object in request: label is mandatory.");
-	//			}
-	//			biObj = new BIObject();
-	//
-	//			biObj.setLabel(objLabel);
-	//			biObj.setName(objName);
-	//			biObj.setDescription(objDescr);
-	//			biObj.setDataSetId(dataSetId);
-	//			biObj.setDataSourceId(dataSourceId);
-	//			biObj.setStateID(stateId);
-	//			// get Worksheet Engine
-	//
-	//			//List<Engine> engines = DAOFactory.getEngineDAO().loadEngineByObjType(BIOBJ_TYPE_DOMAIN_CD, WORKSHEET_VALUE_CODE);
-	//			List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(WORKSHEET_VALUE_CODE);
-	//
-	//			if(engines != null){
-	//				if(engines.size()>1){
-	//					logger.warn("More than one engine found for type "+WORKSHEET_VALUE_CODE+": should be at most one, first found will be assigned ");
-	//				}
-	//				// should be at most one
-	//				boolean stop = false;
-	//				for (Iterator iterator = engines.iterator(); iterator.hasNext() && !stop;) {
-	//					Engine engine = (Engine) iterator.next();
-	//					biObj.setEngine(engine);			
-	//					logger.warn("ASeeigne3d engine with label "+engine.getLabel());
-	//					stop = true;
-	//				}
-	//			}
-	//			else{
-	//				throw new SpagoBIServiceException(SERVICE_NAME, "Wotksheet engine not found");
-	//			}
-	//
-	//			//set type
-	//			Domain typeDom = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(BIOBJ_TYPE_DOMAIN_CD, WORKSHEET_VALUE_CODE);
-	//			biObj.setBiObjectTypeID(typeDom.getValueId());
-	//			biObj.setBiObjectTypeCode(typeDom.getValueCd());
-	//			biObj.setVisible(Integer.valueOf(1));
-	//			biObj.setCreationUser(getUserProfile().getUserUniqueIdentifier().toString());
-	//
-	//
-	//			// get functionalities, assume it is simply the id
-	//			List toInsert = null;
-	//			if(objFunctionality != null){
-	//				toInsert = new ArrayList<Integer>();
-	//				toInsert.add(objFunctionality);
-	//			}
-	//			biObj.setFunctionalities(toInsert);
-	//
-	//			// parameters,a ssume it is a json
-	//			logger.debug("recover parameters informations with JSON string "+objPars);
-	//			if(objPars != null && !objPars.equals("")){
-	//				collectParametersInformation(biObj, objPars);
-	//			}
-	//		}
-	//		catch (EMFUserError e) {
-	//			logger.error("Error in collecting object informations ",e);
-	//			throw new SpagoBIServiceException(SERVICE_NAME, "Error in collecting object informations");
-	//		}
-	//
-	//
-	//
-	//		logger.debug("OUT");
-	//
-	//		return biObj;
-	//	}
 
 
 
