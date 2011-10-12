@@ -20,6 +20,8 @@
  **/
 package it.eng.spagobi.tools.dataset.functionalities.temporarytable;
 
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +35,7 @@ import org.apache.log4j.Logger;
 public class SqlServerTypeTranslator implements INativeDBTypeable{
 	
 	private static Logger logger = Logger.getLogger("SqlServerTypeTranslator");
+	private static final Integer MAX_CHAR_SIZE = 8000;
 	
 	private static Map<String, String> sqlServerTypeMapping;
 	static{
@@ -76,10 +79,12 @@ public class SqlServerTypeTranslator implements INativeDBTypeable{
 		queryType +=" "+typeSQL+""; 
 
 		if(typeJavaName.equalsIgnoreCase(String.class.getName())){
+			if(size>MAX_CHAR_SIZE){
+				logger.error("For Sqlserver the max size of a char column must be < "+MAX_CHAR_SIZE+". The size you've specified is "+size);
+				throw new SpagoBIRuntimeException("For Sqlserver the max size of a char column must be < "+MAX_CHAR_SIZE+". The size you've specified is "+size);
+			}
 			if( size != null && size!= 0){
 				queryType +="("+size+")";
-			}else{
-				queryType +="("+4000+")";
 			}
 		}else if(typeJavaName.equalsIgnoreCase(BigDecimal.class.getName()) && (precision != null && scale != null)){
 			queryType+="("+precision+","+scale+")";

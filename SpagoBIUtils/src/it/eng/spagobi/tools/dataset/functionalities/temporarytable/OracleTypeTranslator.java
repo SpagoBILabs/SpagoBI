@@ -20,6 +20,8 @@
  **/
 package it.eng.spagobi.tools.dataset.functionalities.temporarytable;
 
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +35,7 @@ public class OracleTypeTranslator implements INativeDBTypeable{
 
 	private static Logger logger = Logger.getLogger("OracleTypeTranslator");
 	
-	static final Integer MAX_VARCHAR2_SIZE = 2000;
+	static final Integer MAX_CHAR_SIZE = 2000;
 	
 	private static Map<String, String> oracleTypeMapping;
 	static{
@@ -72,29 +74,17 @@ public class OracleTypeTranslator implements INativeDBTypeable{
 			scale = Integer.valueOf(properties.get(SCALE).toString());
 
 
-		// particular case of VARCHAR and CLOB
-
-		if(typeJavaName.equalsIgnoreCase(String.class.getName())){
-			// varchar with no size is varchar(4000)
-			if((size == null || size == 0) ){
-				typeSQL = oracleTypeMapping.get(typeJavaName);
-				size = MAX_VARCHAR2_SIZE;
-			}
-			// varchar with size > 4001 is CLOB
-			else if(size > MAX_VARCHAR2_SIZE){
-				typeSQL = oracleTypeMapping.get(typeJavaName+"4001");
-			}
-			else {
-				typeSQL = oracleTypeMapping.get(typeJavaName);				
-			}
-		}
-		else typeSQL = oracleTypeMapping.get(typeJavaName);
+		typeSQL = oracleTypeMapping.get(typeJavaName);
 
 
 		// write Type
 		queryType +=" "+typeSQL+""; 
 
 		if(typeJavaName.equalsIgnoreCase(String.class.getName())){
+			if(size>MAX_CHAR_SIZE){
+				logger.error("For Oracle the max size of a char column must be < "+MAX_CHAR_SIZE+". The size you've specified is "+size);
+				throw new SpagoBIRuntimeException("For Oracle the max size of a char column must be < "+MAX_CHAR_SIZE+". The size you've specified is "+size);
+			}
 			if( size != null && size!= 0){
 				queryType +="("+size+")";
 			}
