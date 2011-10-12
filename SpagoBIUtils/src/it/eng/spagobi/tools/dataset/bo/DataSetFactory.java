@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.spagobi.tools.dataset.bo;
 
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -37,16 +37,16 @@ import org.xml.sax.InputSource;
  *
  */
 public class DataSetFactory {
-	
+
 	private static transient Logger logger = Logger.getLogger(DataSetFactory.class);
-	
+
 	public static IDataSet getDataSet( SpagoBiDataSet dataSetConfig ) {
 		IDataSet dataSet = null;
-				
+
 		if (dataSetConfig == null) {
 			throw new IllegalArgumentException("dataset-config parameter cannot be null");
 		}
-		
+
 		InputStream source = DataSetFactory.class.getResourceAsStream("/datasetTypes.properties");
 		Properties p = new Properties();
 		try {
@@ -71,23 +71,34 @@ public class DataSetFactory {
 			throw new SpagoBIRuntimeException("Error while instantiating dataset type [" + dsType 
 					+ "], class [" + className + "]", e);
 		}
-		
-		
-//		if ( ScriptDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
-//			dataSet = new ScriptDataSet( dataSetConfig );	
-//		} else if (  JDBCDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
-//			dataSet = new JDBCDataSet( dataSetConfig );
-//		} else if ( JavaClassDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
-//			dataSet = new JavaClassDataSet( dataSetConfig );
-//		} else if ( WebServiceDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
-//			dataSet = new WebServiceDataSet( dataSetConfig );
-//		} else if ( FileDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
-//			dataSet = new FileDataSet( dataSetConfig );
-//		} else {
-//			logger.error("Invalid dataset type [" + dataSetConfig.getType() + "]");
-//			throw new IllegalArgumentException("dataset type in dataset-config cannot be equal to [" + dataSetConfig.getType() + "]");
-//		}
-		
+
+		// if custom data set type try instanziate the refeerred class
+		IDataSet customDataset = dataSet;
+		if(CustomDataSet.DS_TYPE.equals(( dataSetConfig.getType() ) )
+				&& customDataset instanceof CustomDataSet){
+			try {
+				dataSet = ((CustomDataSet)customDataset).instantiate();			
+			} catch (Exception e) {
+				logger.error("Cannot instantiate class "+((CustomDataSet)customDataset).getJavaClassName()+ ": go on with CustomDatasetClass");
+			}			
+		}
+
+
+		//		if ( ScriptDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
+		//			dataSet = new ScriptDataSet( dataSetConfig );	
+		//		} else if (  JDBCDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
+		//			dataSet = new JDBCDataSet( dataSetConfig );
+		//		} else if ( JavaClassDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
+		//			dataSet = new JavaClassDataSet( dataSetConfig );
+		//		} else if ( WebServiceDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
+		//			dataSet = new WebServiceDataSet( dataSetConfig );
+		//		} else if ( FileDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
+		//			dataSet = new FileDataSet( dataSetConfig );
+		//		} else {
+		//			logger.error("Invalid dataset type [" + dataSetConfig.getType() + "]");
+		//			throw new IllegalArgumentException("dataset type in dataset-config cannot be equal to [" + dataSetConfig.getType() + "]");
+		//		}
+
 		return dataSet;
 	}
 }
