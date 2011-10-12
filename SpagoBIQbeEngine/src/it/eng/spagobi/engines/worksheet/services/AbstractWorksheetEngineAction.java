@@ -403,7 +403,6 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			newFieldMetadata.setAlias(dataSetFieldMetadata.getAlias());
 			newFieldMetadata.setFieldType(dataSetFieldMetadata.getFieldType());
 			newFieldMetadata.setName(dataSetFieldMetadata.getName());
-			newFieldMetadata.setProperties(dataSetFieldMetadata.getProperties());
 			newFieldMetadata.setType(dataStoreFieldMetadata.getType());
 			newdataStoreMetadata.addFiedMeta(newFieldMetadata);
 		}

@@ -129,9 +129,9 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 
 	,
 	setWorksheetState : function (successFn, failureFn, scope) {
-		var state = this.worksheetDesignerPanel.sheetsContainerPanel.getSheetsState();
+		var worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
 		var params = {
-			'worksheetdefinition':  Ext.encode(state)
+			'worksheetdefinition':  Ext.encode(worksheetDefinition)
 		};
 		
 //		params.formstate = Ext.util.JSON.encode(this.getFormState());

@@ -19,6 +19,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
@@ -335,7 +336,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				tableDescriptor = TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
 			}
 			String filterColumnName = tableDescriptor.getColumnName(fieldName);
-			StringBuffer buffer = new StringBuffer("Select DISTINCT(" + filterColumnName + ") FROM " + tableName);
+			StringBuffer buffer = new StringBuffer("Select DISTINCT " + filterColumnName + " FROM " + tableName);
 			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
 			String sqlStatement = buffer.toString();
 			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, dataSource, start, limit);
@@ -434,6 +435,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			dataSource = new DataSource();
 			ConnectionDescriptor connectionDescriptor = ((AbstractDataSource)statement.getDataSource()).getConnection();
 			dataSource.setHibDialectName(connectionDescriptor.getDialect());
+			dataSource.setHibDialectClass(connectionDescriptor.getDialect());
 			dataSource.setDriver(connectionDescriptor.getDriverClass());
 			dataSource.setJndi(connectionDescriptor.getJndiName());
 			dataSource.setLabel(connectionDescriptor.getName());

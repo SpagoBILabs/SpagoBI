@@ -442,9 +442,9 @@ setQueriesCatalogue: function (queriesCatalogue) {
 
 ,
 setWorksheetState : function (successFn, failureFn, scope) {
-	var state = this.worksheetDesignerPanel.getWorksheetDefinition();
+	var worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
 	var params = {
-			'worksheetdefinition':  Ext.encode(state)
+			'worksheetdefinition':  Ext.encode(worksheetDefinition)
 	};
 	Ext.Ajax.request({
 		url: this.services['setWorkSheetState'],
