@@ -27,10 +27,13 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.FilteredModelStructure;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
 import it.eng.qbe.model.structure.filter.QbeTreeFilter;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.io.CharArrayWriter;
 import java.io.File;
@@ -51,17 +54,21 @@ import org.json.JSONObject;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class ExtJsQbeTreeBuilder  {	
-	
+
 	private QbeTreeFilter qbeTreeFilter;
-	
-	
+
 	private IDataSource dataSource;	
 	
 	private Locale locale;
 	
 	private IModelProperties datamartLabels;
 	
-
+	
+	public static final String NODE_TYPE_ENTITY = "entity";
+	public static final String NODE_TYPE_SIMPLE_FIELD = "field";
+	public static final String NODE_TYPE_CALCULATED_FIELD = "calculatedField";
+	public static final String NODE_TYPE_INLINE_CALCULATED_FIELD = "inLineCalculatedField";
+			
 	/**
 	 * Instantiates a new ext js qbe tree builder.
 	 * 
@@ -75,7 +82,6 @@ public class ExtJsQbeTreeBuilder  {
 	public JSONArray getQbeTree(IDataSource dataSource, Locale locale, String datamartName)  {			
 		setLocale(locale);
 		setDatamartModel(dataSource);
-		//setDatamartLabels( QbeCacheManager.getInstance().getLabels( getDataSource() , getLocale() ) );
 		setDatamartLabels( dataSource.getModelI18NProperties( getLocale() ) );
 		if( getDatamartLabels() == null) {
 			setDatamartLabels( new SimpleModelProperties() );
@@ -202,7 +208,7 @@ public class ExtJsQbeTreeBuilder  {
 			
 			JSONObject nodeAttributes = new JSONObject();
 			nodeAttributes.put("iconCls", iconCls);
-			nodeAttributes.put("type", "entity");
+			nodeAttributes.put("type", this.NODE_TYPE_ENTITY);
 			nodeAttributes.put("londDescription", londDescription);
 			entityNode.put("attributes", nodeAttributes);
 			entityNode.put("children", childrenNodes);
@@ -301,13 +307,12 @@ public class ExtJsQbeTreeBuilder  {
 			
 			JSONObject nodeAttributes = new JSONObject();
 			nodeAttributes.put("iconCls", iconCls);
-			nodeAttributes.put("type", "field");
+			nodeAttributes.put("type", NODE_TYPE_SIMPLE_FIELD);
 			nodeAttributes.put("entity", entityLabel);
 			nodeAttributes.put("field", fieldLabel);
 			nodeAttributes.put("longDescription", longDescription);
 			fieldNode.put("attributes", nodeAttributes);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -316,7 +321,7 @@ public class ExtJsQbeTreeBuilder  {
 	
 	public  JSONObject getCalculatedFieldNode(IModelEntity parentEntity, ModelCalculatedField field) {
 
-		String iconCls = "calculation";;//datamartProperties.getFieldIconClass( field );		
+		String iconCls = "calculation";		
 		String fieldLabel = geFieldLabel( field );
 		String fieldTooltip = geFieldTooltip( field );
 		String entityLabel = geEntityLabel( parentEntity );
@@ -335,9 +340,9 @@ public class ExtJsQbeTreeBuilder  {
 			JSONObject nodeAttributes = new JSONObject();
 			nodeAttributes.put("iconCls", "calculation");
 			if(field.isInLine()){
-				nodeAttributes.put("type", "inLineCalculatedField");
+				nodeAttributes.put("type", NODE_TYPE_INLINE_CALCULATED_FIELD);
 			}else{
-				nodeAttributes.put("type", "calculatedField");
+				nodeAttributes.put("type", NODE_TYPE_CALCULATED_FIELD);
 			}
 			
 			nodeAttributes.put("entity", entityLabel);
@@ -347,11 +352,22 @@ public class ExtJsQbeTreeBuilder  {
 			formState.put("alias", field.getName());
 			formState.put("type", field.getType());
 			formState.put("expression", field.getExpression());
-			nodeAttributes.put("formState", formState);
 			
+			List<Slot> slots = field.getSlots();
+			JSONArray slotsJSON = new JSONArray();
+			for(Slot slot : slots) {
+				try {
+					JSONObject slotJSON = (JSONObject)SerializationManager.serialize(slot, "application/json");
+					slotsJSON.put(slotJSON);
+				} catch (Throwable e) {
+					throw new SpagoBIEngineRuntimeException("Impossible to serialize slots definition", e);
+				}
+			}
+			formState.put("slots", slotsJSON);
+			
+			nodeAttributes.put("formState", formState);
 			fieldNode.put("attributes", nodeAttributes);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

@@ -22,6 +22,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.qbe;
 
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.engines.qbe.crosstable.serializer.CrosstabDeserializerFactory;
+import it.eng.spagobi.engines.qbe.crosstable.serializer.CrosstabSerializerFactory;
+import it.eng.spagobi.engines.qbe.serializer.SlotDeserializerFactory;
+import it.eng.spagobi.engines.qbe.serializer.SlotSerializerFactory;
+import it.eng.spagobi.engines.worksheet.serializer.AttributeDeserializerFactory;
+import it.eng.spagobi.engines.worksheet.serializer.AttributeSerializerFactory;
+import it.eng.spagobi.engines.worksheet.serializer.MeasureDeserializerFactory;
+import it.eng.spagobi.engines.worksheet.serializer.MeasureSerializerFactory;
+import it.eng.spagobi.engines.worksheet.serializer.WorkSheetDeserializerFactory;
+import it.eng.spagobi.engines.worksheet.serializer.WorkSheetSerializerFactory;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
 import java.util.Locale;
@@ -49,6 +59,10 @@ public class QbeEngine {
 
 	public static QbeEngineInstance createInstance(Object template, Map env) throws QbeEngineException {
 		QbeEngineInstance qbeEngineInstance = null;
+		
+		initDeserializers();
+		initSerializers();
+		
 		logger.debug("IN");
 		initEngine();
 		
@@ -64,7 +78,15 @@ public class QbeEngine {
 		logger.debug("OUT");
 		return qbeEngineInstance;
 	}
+	
+	private static void initDeserializers() {
+    	SlotDeserializerFactory.getInstance();
+	}
 
+
+	private static void initSerializers() {
+    	SlotSerializerFactory.getInstance();
+	}
 
 	
 }

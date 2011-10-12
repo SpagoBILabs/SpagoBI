@@ -2,6 +2,8 @@ Ext.ns("Sbi.settings");
 
 Sbi.settings.qbe = {
 		
+		
+		// TODO move this to a dedicated file
 		constants : {
 			// select clause field types (twins java constants are defined in class ISelectField)
 			FIELD_TYPE_SIMPLE: 'simple.field'
@@ -16,13 +18,16 @@ Sbi.settings.qbe = {
 			, OPERAND_TYPE_CALCULATED_FIELD: 'calculated.field'
 			, OPERAND_TYPE_INLINE_CALCULATED_FIELD: 'inline.calculated.field'
 				
-			// tree field types
+			// tree field types (twins java constants are defined in class ExtJsQbeTreeBuilder)
 			, NODE_TYPE_ENTITY: 'entity'
 			, NODE_TYPE_SIMPLE_FIELD: 'field'
 			, NODE_TYPE_CALCULATED_FIELD: 'calculatedField'
 			, NODE_TYPE_INLINE_CALCULATED_FIELD: 'inLineCalculatedField'
 			
 		}
+
+
+
 		
 		, queryBuilderPanel: {
 			enableTreeToolbar: true,
