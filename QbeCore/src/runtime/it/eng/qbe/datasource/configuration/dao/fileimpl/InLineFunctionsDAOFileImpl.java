@@ -84,9 +84,7 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 		String code;
 		List functionsNodes;
 		Iterator it;
-		Iterator itDialect;
 		Node functionNode;
-		List dialectNodes;
 		Node dialectNode;
 
 		logger.debug("IN");
@@ -120,16 +118,16 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 				//get the code function only for the dialect managed
 				if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)){					
 					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_MYSQL_DIALECT + "");
-				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)){					
-					dialectNodes = functionNode.selectNodes("//" + ROOT_TAG + "/" + FIELD_TAG + "/" + FIELD_TAG_HQL_DIALECT + "");
-				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)){					
-					dialectNodes = functionNode.selectNodes("//" + ROOT_TAG + "/" + FIELD_TAG + "/" + FIELD_TAG_ORACLE_DIALECT + "");
-				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)){					
-					dialectNodes = functionNode.selectNodes("//" + ROOT_TAG + "/" + FIELD_TAG + "/" + FIELD_TAG_INGRES_DIALECT + "");
-				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)){					
-					dialectNodes = functionNode.selectNodes("//" + ROOT_TAG + "/" + FIELD_TAG + "/" + FIELD_TAG_POSTGRES_DIALECT + "");
+				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)){		
+					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_HQL_DIALECT + "");
+				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)){		
+					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_ORACLE_DIALECT + "");
+				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)){	
+					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_INGRES_DIALECT + "");
+				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)){		
+					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_POSTGRES_DIALECT + "");
 				}else{
-					dialectNodes = functionNode.selectNodes("//" + ROOT_TAG + "/" + FIELD_TAG + "/" + FIELD_TAG_SQLSERVER_DIALECT + "");
+					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_SQLSERVER_DIALECT + "");
 				}
 				code = "";
 				if (dialectNode != null){

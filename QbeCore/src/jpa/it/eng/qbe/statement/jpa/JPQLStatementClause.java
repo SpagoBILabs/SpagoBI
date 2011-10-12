@@ -103,6 +103,7 @@ public class JPQLStatementClause {
 		String dbDialect = connection.getDialect(); 
 		HashMap<String, InLineFunction>  mapFuncs = this.parentStatement.getDataSource().getConfiguration().loadInLineFunctions(dbDialect);
 
+		if (expression.startsWith("(")) expression = (expression.substring(expression.indexOf("(")+1,expression.lastIndexOf(")"))).trim();
 		String nameFunc = expression.substring(0, expression.indexOf("("));
 		
 		if (mapFuncs.get(nameFunc) == null) return expression;
