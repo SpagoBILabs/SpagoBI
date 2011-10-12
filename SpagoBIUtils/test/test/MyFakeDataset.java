@@ -1,32 +1,23 @@
 package test;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.tools.dataset.bo.AbstractCustomDataSet;
-import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecordMatcher;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class MyFakeDataset extends AbstractCustomDataSet {
 
@@ -107,6 +98,8 @@ public class MyFakeDataset extends AbstractCustomDataSet {
 
 
 
+
+
 	static public IDataStore createStore(){
 		IDataStore dataStore = new DataStore();
 
@@ -150,9 +143,9 @@ public class MyFakeDataset extends AbstractCustomDataSet {
 		return dataStore;
 	}
 
-	public static void main(String[] args) {
-		createStore();	
-	}
+//	public static void main(String[] args) {
+//		createStore();	
+//	}
 
 
 	static void print(IDataStore dstore){

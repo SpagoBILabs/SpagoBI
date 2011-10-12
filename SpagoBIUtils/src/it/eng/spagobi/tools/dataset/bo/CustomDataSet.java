@@ -6,9 +6,12 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,27 +63,37 @@ public class CustomDataSet extends ConfigurableDataSet {
 		return sbd;
 	}
 
-	private IDataSet instantiate(){
+	public IDataSet instantiate(){
 		logger.debug("IN");
 		Class classRet = null;
 		try {
 			classRet = Class.forName(javaClassName);
 		} catch (ClassNotFoundException e) {
 			logger.error("Could not find class "+javaClassName);
+			throw new SpagoBIRuntimeException("Could not find class "+javaClassName, e);	
 		}
 		Object obj = null;
 		try {
 			obj = classRet.newInstance();
 		} catch (InstantiationException e) {
-			logger.error("Could not locad class "+javaClassName);
+			logger.error("Could not locate class "+javaClassName);
+			throw new SpagoBIRuntimeException("Could not locad class "+javaClassName, e);	
 		} catch (IllegalAccessException e) {
-			logger.error("Could not locad class "+javaClassName);		}
+			logger.error("Could not locad class "+javaClassName);		
+			throw new SpagoBIRuntimeException("Could not locate class "+javaClassName, e);	
+		}
 
 		if(!(obj instanceof AbstractDataSet)){
 			logger.error("class "+javaClassName+ "does not extends AbstractDataset as should do");
-			return null;
+			throw new SpagoBIRuntimeException("class "+javaClassName+ "does not extends AbstractDataset as should do");
 		}
 
+		IDataSet toreturn = (IDataSet) obj;
+		toreturn.setDsMetadata(getDsMetadata());
+		toreturn.setMetadata(getMetadata());
+		toreturn.setParamsMap(getParamsMap());
+		
+		
 
 		logger.debug("OUT");
 		return (IDataSet) obj;
@@ -141,6 +154,9 @@ public class CustomDataSet extends ConfigurableDataSet {
 	}
 
 	public IDataStore getDataStore() {
+
+		if(classToLaunch == null)
+			classToLaunch = instantiate();
 		return classToLaunch.getDataStore();
 	}
 
@@ -178,27 +194,7 @@ public class CustomDataSet extends ConfigurableDataSet {
 
 	}
 
-	//	private Map convertStringToMap(String _customData){
-	//		logger.debug("IN");
-	//		Map toInsert = new HashMap<String, Object>();
-	//		try{
-	//			if(_customData != null && !_customData.equals("")){
-	//				JSONArray jsonArray = new JSONArray(_customData);
-	//				for(int i = 0;i<jsonArray.length();i++){
-	//					JSONObject obj = (JSONObject)jsonArray.getJSONObject(0);
-	//					String name = obj.getString("name");
-	//					String value = obj.getString("value");
-	//					toInsert.put(name, value);
-	//				}
-	//			}
-	//		}
-	//		catch (Exception e) {
-	//			logger.error("cannot parse to Map the Json string "+customData);
-	//		}
-	//		logger.debug("IN");
-	//		return toInsert;
-	//
-	//	}
+
 
 	/**
 	 *  Methos used to instantiate user class and set theere properties.
@@ -209,7 +205,7 @@ public class CustomDataSet extends ConfigurableDataSet {
 			classToLaunch = (IDataSet) Class.forName( javaClassName ).newInstance();
 			classToLaunch.setProperties(customDataMap);
 			classToLaunch.setParamsMap(getParamsMap());
-
+			classToLaunch.setDsMetadata(getDsMetadata());
 		}
 		catch (ClassCastException e) {
 			logger.error("Class cast ecepstion, check this class implements IDAtaset "+javaClassName, e);
@@ -276,13 +272,7 @@ public class CustomDataSet extends ConfigurableDataSet {
 	}
 
 	
-	
-	
-	@Override
-	public IDataStore decode(IDataStore datastore) {
-		// TODO Auto-generated method stub
-		return super.decode(datastore);
-	}
+
 
 //	@Override
 //	public Map<String, List<String>> getDomainDescriptions(
@@ -292,14 +282,33 @@ public class CustomDataSet extends ConfigurableDataSet {
 //		
 //		return classToLaunch.getDomainDescriptions(codes);
 //	}
-//
-//	@Override
-//	public IDataStore getDomainValues(String fieldName, Integer start,
-//			Integer limit, IDataStoreFilter filter) {
-//		if(classToLaunch == null)
-//			classToLaunch = instantiate();		
-//		return classToLaunch.getDomainValues(fieldName, start, limit, filter);
-//	}
+//	
+	
+	
+
+	@Override
+	public IDataStore getDomainValues(String fieldName, Integer start,
+			Integer limit, IDataStoreFilter filter) {
+		if(classToLaunch == null)
+			classToLaunch = instantiate();		
+		return classToLaunch.getDomainValues(fieldName, start, limit, filter);
+	}
+
+	@Override
+	public IDataStore decode(IDataStore datastore) {
+		if(classToLaunch == null)
+			classToLaunch = instantiate();		
+		return classToLaunch.decode(datastore);
+	}
+
+	@Override
+	public IDataSetTableDescriptor persist(String tableName,
+			Connection connection) {
+		if(classToLaunch == null)
+			classToLaunch = instantiate();		
+		return classToLaunch.persist(tableName,
+				connection) ;
+	}
 
 	
 	
