@@ -363,6 +363,14 @@ public class ExtJsQbeTreeBuilder  {
 					throw new SpagoBIEngineRuntimeException("Impossible to serialize slots definition", e);
 				}
 			}
+
+			if(field.getDefaultSlotValue() != null) {
+				JSONObject defaultSlot = new JSONObject();
+				defaultSlot.put("type", "default");
+				defaultSlot.put("name", field.getDefaultSlotValue());
+				slotsJSON.put(defaultSlot);
+			}
+			
 			formState.put("slots", slotsJSON);
 			
 			nodeAttributes.put("formState", formState);

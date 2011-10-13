@@ -29,6 +29,7 @@ import it.eng.spagobi.engines.worksheet.serializer.json.FieldsSerializationConst
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,6 +38,8 @@ import org.json.JSONObject;
  *
  */
 public class SlotJSONDeserializer implements IDeserializer {
+	
+
 
     public static transient Logger logger = Logger.getLogger(SlotJSONDeserializer.class);
 
@@ -78,8 +81,54 @@ public class SlotJSONDeserializer implements IDeserializer {
 	}
 	
 
-	private Slot deserializeSlot(JSONObject obj) throws JSONException {
-		return null;
+	private Slot deserializeSlot(JSONObject slotJSON) throws SerializationException {
+		Slot slot;
+		
+		logger.debug("IN");
+
+		slot = null;
+		
+		try {
+			
+			Assert.assertNotNull(slotJSON, "Input parameter [slotJSON] cannot be null");
+			
+			String slotName = slotJSON.getString(QbeSerializationConstants.SLOT_NAME);
+			slot = new Slot(slotName);
+			
+			String slotType = slotJSON.optString("type");
+			if(slotType != null && slotType.equalsIgnoreCase("default")) return slot;
+			
+			JSONArray valueset = slotJSON.getJSONArray(QbeSerializationConstants.SLOT_VALUESET);
+			for(int i = 0; i < valueset.length(); i++) {
+				JSONObject mappedValueDescriptorJSON = valueset.getJSONObject(i);
+				String descriptorType = mappedValueDescriptorJSON.getString(QbeSerializationConstants.SLOT_VALUESET_TYPE);
+				if(descriptorType.equalsIgnoreCase(QbeSerializationConstants.SLOT_VALUESET_TYPE_PUNCTUAL)) {
+					JSONArray valuesJSON = mappedValueDescriptorJSON.getJSONArray(QbeSerializationConstants.SLOT_VALUESET_VALUES);
+					Slot.MappedValuesPunctualDescriptor punctualDescriptor = new Slot.MappedValuesPunctualDescriptor();
+					for(int j = 0; j < valuesJSON.length(); j++) {
+						punctualDescriptor.addValue(valuesJSON.getString(j));
+					}
+					slot.addMappedValuesDescriptors(punctualDescriptor);
+				} else if(descriptorType.equalsIgnoreCase(QbeSerializationConstants.SLOT_VALUESET_TYPE_RANGE)) {
+					String fromValue = mappedValueDescriptorJSON.getString(QbeSerializationConstants.SLOT_VALUESET_FROM);
+					String toValue = mappedValueDescriptorJSON.getString(QbeSerializationConstants.SLOT_VALUESET_TO);
+					Slot.MappedValuesRangeDescriptor rangeDescriptor = new Slot.MappedValuesRangeDescriptor(fromValue, toValue);
+					boolean includeFromValue = mappedValueDescriptorJSON.optBoolean(QbeSerializationConstants.SLOT_VALUESET_INCLUDE_FROM);
+					rangeDescriptor.setIncludeMinValue(includeFromValue);
+					boolean includeToValue = mappedValueDescriptorJSON.optBoolean(QbeSerializationConstants.SLOT_VALUESET_INCLUDE_TO);
+					rangeDescriptor.setIncludeMaxValue(includeToValue);
+					slot.addMappedValuesDescriptors(rangeDescriptor);
+				} else {
+					throw new SerializationException("Impossible to deserialize a mapped values descriptor of type [" + descriptorType + "]");
+				}
+			} 
+		} catch(Throwable t) {
+			throw new SerializationException("An error occurred while deserializing slot: " + slotJSON, t);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return slot;
 	}
     
 		
