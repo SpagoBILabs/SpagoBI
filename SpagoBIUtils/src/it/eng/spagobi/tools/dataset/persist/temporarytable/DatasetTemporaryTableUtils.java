@@ -30,6 +30,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -40,20 +42,25 @@ public class DatasetTemporaryTableUtils {
 
 	/**
 	 * Creates a table with columns got from metadata.
-	 * PAY ATTENTION TO THE FACT THAT THE INPUT CONNECTION ISN'T CLOSED!!!!!
+	 * PAY ATTENTION TO THE FACT THAT THE INPUT CONNECTION CANNOT BE CLOSED!!!!!
 	 * @param conn
 	 * @param meta
 	 * @param tableName
+	 * @param list 
 	 * @return
 	 * @throws Exception
 	 */
-	public static DataSetTableDescriptor createTemporaryTable(Connection conn, IMetaData meta, String tableName) {
+	public static DataSetTableDescriptor createTemporaryTable(Connection conn, IMetaData meta, String tableName, List<String> selectedFields) {
 		logger.debug("IN");
 
 		DataSetTableDescriptor dstd = null;
 		Statement st = null;
 		String sqlQuery = null;
 
+		if ( selectedFields == null ) {
+			selectedFields = new ArrayList<String>();
+		}
+		
 		try {
 			CreateTableCommand createTableCommand = new CreateTableCommand(tableName, conn.getMetaData().getDriverName());
 
@@ -61,7 +68,10 @@ public class DatasetTemporaryTableUtils {
 			int count = meta.getFieldCount();
 			for (int i = 0 ; i < count ; i++) {
 				IFieldMetaData fieldMeta = meta.getFieldMeta(i);
-				createTableCommand.addColumn(fieldMeta);
+				String fieldName = fieldMeta.getName();
+				if (selectedFields.isEmpty() || selectedFields.contains(fieldName)) {
+					createTableCommand.addColumn(fieldMeta);
+				}
 			}
 
 			// after built columns create SQL Query

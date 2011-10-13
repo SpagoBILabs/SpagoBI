@@ -69,12 +69,12 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 	}
 
 	public IDataSetTableDescriptor createTemporaryTable(String tableName
-			, MetaData metadata
 			, Connection connection){
 		logger.debug("IN");
 		IDataSetTableDescriptor descriptor = null;
+		SelectableFieldsBehaviour behaviour = (SelectableFieldsBehaviour) this.getBehaviour(SelectableFieldsBehaviour.ID);
 		try {
-			descriptor = DatasetTemporaryTableUtils.createTemporaryTable(connection, metadata, tableName);
+			descriptor = DatasetTemporaryTableUtils.createTemporaryTable(connection, this.getMetadata(), tableName, behaviour.getSelectedFields());
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Error creating temporary table", t);
 		}
