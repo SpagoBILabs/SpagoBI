@@ -146,7 +146,7 @@ public class WorkSheetXLSExporter {
 	public int setHeader(HSSFSheet sheet, JSONObject header,
 			CreationHelper createHelper, HSSFWorkbook wb, HSSFPatriarch patriarch, int sheetRow) throws JSONException, IOException {
 		String title = header.getString(TITLE);
-		String imgName = header.getString(IMG);
+		String imgName = header.optString(IMG);
 		String imagePosition = header.getString(POSITION);
 		CellStyle cellStyle = buildHeaderTitleCellStyle(sheet);
 		
@@ -193,7 +193,7 @@ public class WorkSheetXLSExporter {
 	public int setFooter(HSSFSheet sheet, JSONObject footer,
 			CreationHelper createHelper, HSSFWorkbook wb, HSSFPatriarch patriarch, int sheetRow) throws JSONException, IOException {
 		String title = footer.getString(TITLE);
-		String imgName = footer.getString(IMG);
+		String imgName = footer.optString(IMG);
 		String imagePosition = footer.getString(POSITION);
 		CellStyle cellStyle = buildHeaderTitleCellStyle(sheet);
 		
