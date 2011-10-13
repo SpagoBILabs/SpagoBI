@@ -182,35 +182,44 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		WorkSheetXLSExporter exporter = new WorkSheetXLSExporter();
 		HSSFWorkbook wb = new HSSFWorkbook();
 		CreationHelper createHelper = wb.getCreationHelper();
-
+		//The numeber of row of the sheet
+		int sheetRow;
+		
 		int sheetsNumber = worksheetJSON.getInt(SHEETS_NUM);
 		JSONArray exportedSheets = worksheetJSON.getJSONArray(EXPORTED_SHEETS);
 		for (int i = 0; i < sheetsNumber; i++) {
+			sheetRow=0;
+			
 			JSONObject sheetJ = exportedSheets.getJSONObject(i);
 			String sheetName = "Sheet " + i;
 			HSSFSheet sheet = wb.createSheet(sheetName);
+
 			HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 			
-			for(int j = 0; j < 50; j++){
-				sheet.createRow(j);
-			}
+			sheet.createRow(sheetRow);
+			sheetRow++;
 			
 			if(sheetJ.has(WorkSheetXLSExporter.HEADER)){
 				JSONObject header = sheetJ.getJSONObject(WorkSheetXLSExporter.HEADER);
 				if(header!=null){
-					exporter.setHeader(sheet, header, createHelper, wb, patriarch);
+					sheetRow = exporter.setHeader(sheet, header, createHelper, wb, patriarch, sheetRow);
 				}
 			}	
 			
-			int endRowNum = 37;
+			sheet.createRow(sheetRow);
+			sheetRow++;
+			
 			if(sheetJ.has(WorkSheetXLSExporter.CONTENT)){
-				endRowNum = fillSheetContent(wb, sheet, sheetJ, createHelper, exporter, patriarch);
+				sheetRow = fillSheetContent(wb, sheet, sheetJ, createHelper, exporter, patriarch, sheetRow);
 			}			
+			
+			sheet.createRow(sheetRow);
+			sheetRow++;
 			
 			if(sheetJ.has(WorkSheetXLSExporter.FOOTER)){
 				JSONObject footer = sheetJ.getJSONObject(WorkSheetXLSExporter.FOOTER);
 				if(footer!=null){
-					exporter.setFooter(sheet, footer, createHelper, wb, endRowNum, patriarch);
+					exporter.setFooter(sheet, footer, createHelper, wb, patriarch, sheetRow);
 				}
 			}		
 		}
@@ -221,11 +230,10 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	}
 	
 	public int fillSheetContent(HSSFWorkbook wb, HSSFSheet sheet, JSONObject sheetJ, 
-			CreationHelper createHelper, WorkSheetXLSExporter exporter, HSSFPatriarch patriarch) throws Exception {
+			CreationHelper createHelper, WorkSheetXLSExporter exporter, HSSFPatriarch patriarch, int sheetRow) throws Exception {
 		
 		JSONObject content = sheetJ.getJSONObject(WorkSheetXLSExporter.CONTENT);
 		String sheetType = content.getString(WorkSheetXLSExporter.SHEET_TYPE);
-		int endRowNum = 0;
 		
 
 		if (sheetType != null && !sheetType.equals("")) {
@@ -233,28 +241,35 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CHART)) {
 				File jpgImage = WorkSheetXLSExporter.createJPGImage(content);
 				int col = 1;
-				int row = 4;
-				int colend = 13;
-				int rowend = 37;
-				exporter.setImageIntoWorkSheet(wb, patriarch, jpgImage, col, row, colend, rowend,HSSFWorkbook.PICTURE_TYPE_JPEG);
-				endRowNum = rowend;
-				
+				int colend = 20;
+				int charHeight = 30;
+				for(int i=0; i<charHeight; i++){
+					sheet.createRow(sheetRow+i);
+				}
+				exporter.setImageIntoWorkSheet(wb, patriarch, jpgImage, col, colend, sheetRow, charHeight,HSSFWorkbook.PICTURE_TYPE_JPEG);
+				sheetRow= sheetRow+30;
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CROSSTAB)) {
 				
 				String crosstab = content.getString(WorkSheetXLSExporter.CROSSTAB);
 				JSONObject crosstabJSON = new JSONObject(crosstab);	
 				CrosstabXLSExporter expCr = new CrosstabXLSExporter();
-				endRowNum = expCr.fillAlreadyCreatedSheet(sheet, crosstabJSON, createHelper);
-				
+				int rows = expCr.initSheet(sheet, crosstabJSON);
+				expCr.fillAlreadyCreatedSheet(sheet, crosstabJSON, createHelper, sheetRow);
+				sheetRow = sheetRow+rows;
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
 
 				IDataStore dataStore = getTableDataStore(sheetJ);
 				long recCount = dataStore.getRecordsCount();
-				endRowNum = (new Long(recCount)).intValue() + 5;
-				exporter.designTableInWorksheet(sheet, wb, createHelper, dataStore);			
+				recCount = (new Long(recCount)).intValue() + 5;
+				int startRow = sheetRow;
+				for(int i=0; i<recCount; i++){
+					sheet.createRow(sheetRow);
+					sheetRow++;
+				}
+				exporter.designTableInWorksheet(sheet, wb, createHelper, dataStore,startRow);			
 			}
 		}
-		return endRowNum;
+		return sheetRow;
 	}
 	
 
