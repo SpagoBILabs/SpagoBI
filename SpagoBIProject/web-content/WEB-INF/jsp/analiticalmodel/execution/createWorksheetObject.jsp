@@ -1,5 +1,4 @@
-
-<!--
+<%--
 SpagoBI - The Business Intelligence Free Platform
 
 Copyright (C) 2005-2008 Engineering Ingegneria Informatica S.p.A.
@@ -17,11 +16,10 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
--->
+--%>
 
-<%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
-<%@ include file="/WEB-INF/jsp/commons/importSbiJS.jspf"%>
-
+<%@page import="it.eng.spagobi.tools.datasource.bo.DataSource"%>
+<%@page import="it.eng.spagobi.services.common.SsoServiceInterface"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="org.safehaus.uuid.UUIDGenerator"%>
@@ -33,72 +31,45 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spago.navigation.LightNavigationManager"%>
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@page import="it.eng.spagobi.engines.config.bo.Engine"%>
+<%@page import="java.net.URLEncoder"%>
 
-<%@page import="java.net.URLEncoder"%><script type="text/javascript"
+<%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
+<%@ include file="/WEB-INF/jsp/commons/importSbiJS.jspf"%>
+
+<script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/miframe/miframe-min.js")%>'></script>
-
-<!-- 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/worksheet/WorksheetToolbar.js")%>"></script>
- -->
-
-<script type="text/javascript">
-
-
 
 <%
 	UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
-	UUID uuid = uuidGen.generateTimeBasedUUID();
-	String requestIdentity = "request" + uuid.toString();
-//    SourceBean moduleResponse = (SourceBean) aServiceResponse.getAttribute("DocumentTemplateBuildModule");
-//    BIObject obj = (BIObject) moduleResponse.getAttribute("biobject");
-
-	Object dataset_labelO = aResponseContainer.getServiceResponse().getAttribute("dataset_label");
-	String dataSetLabel = null; 
-	if(dataset_labelO != null){
-			dataSetLabel = dataset_labelO.toString();
-	}
-	
-	String title ="";
-   	Map backUrlPars = new HashMap();
-   	backUrlPars.put(SpagoBIConstants.PAGE, "DetailBIObjectPage");
-   	backUrlPars.put(SpagoBIConstants.MESSAGEDET, ObjectsTreeConstants.DETAIL_SELECT);
-   	//backUrlPars.put(ObjectsTreeConstants.OBJECT_ID, obj.getId().toString());
-   	backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO, "1");
-    String backUrl = urlBuilder.getUrl(request, backUrlPars);
-
-
-	String context=GeneralUtilities.getSpagoBiContext();
-	String param2="?"+SpagoBIConstants.SBI_CONTEXT+"="+context;
-	String host=GeneralUtilities.getSpagoBiHost();
-	String param3="&"+SpagoBIConstants.SBI_HOST+"="+host;
-	
-    SourceBean moduleResponse = (SourceBean) aServiceResponse.getAttribute("DocumentTemplateBuildModule");
-	Engine engineWs = null;
+	UUID uuidObj = uuidGen.generateTimeBasedUUID();
+	String executionId = uuidObj.toString();
+	executionId = executionId.replaceAll("-", "");
+	String dataSetLabel = (String) aResponseContainer.getServiceResponse().getAttribute("dataset_label");
 	
 	// only one engine for WORKSHEET type 
+	Engine engineWs = null;
     List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType("WORKSHEET");
-	for (Iterator iterator = engines.iterator(); iterator.hasNext();) {
-		Engine object = (Engine) iterator.next();
-		engineWs = object;
+	if (engines == null || engines.size() == 0) {
+		throw new RuntimeException("No engines for WORKSHEET documents found");
+	} else {
+		engineWs = (Engine) engines.get(0);
 	}
 	
-	
-	
-	StringBuffer urlToCall= new StringBuffer(engineWs.getUrl());
-	EngineURL engineurl = new EngineURL(urlToCall.toString(), null);
-//    EngineURL engineurl = (EngineURL) moduleResponse.getAttribute(ObjectsTreeConstants.CALL_URL);
-//	StringBuffer urlToCall= new StringBuffer(engineurl.getMainURL());
-	//urlToCall+=param1;
-	
-	urlToCall.append(param2);
-	urlToCall.append(param3);
-	urlToCall.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
-	urlToCall.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
-	urlToCall.append("&NEW_SESSION=TRUE");
-	//urlToCall.append("&ACTION_NAME=QBE_ENGINE_START_ACTION");
-	urlToCall.append("&ACTION_NAME=WORKSHEET_WITH_DATASET_START_EDIT_ACTION");
-	urlToCall.append("&user_id="+userId);
-	urlToCall.append("&dataset_label="+dataSetLabel);
+	HashMap<String, String> parameters = new HashMap<String, String>();
+	parameters.put(SpagoBIConstants.SBI_CONTEXT, GeneralUtilities.getSpagoBiContext());
+	parameters.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
+	parameters.put(SpagoBIConstants.SBI_LANGUAGE, locale.getLanguage());
+	parameters.put(SpagoBIConstants.SBI_COUNTRY, locale.getCountry());
+	parameters.put("NEW_SESSION", "TRUE");
+	parameters.put("ACTION_NAME", "WORKSHEET_WITH_DATASET_START_EDIT_ACTION");
+	parameters.put(SsoServiceInterface.USER_ID, userId);
+	parameters.put("dataset_label" , dataSetLabel);
+	Integer datasourceId = engineWs.getDataSourceId();
+	if (datasourceId == null) {
+		throw new RuntimeException("Worksheet engine [" + engineWs.getLabel() + "] has no datasource.");
+	}
+	DataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(datasourceId);
+	parameters.put("datasource_label" , dataSource.getLabel());
 	
 	// get parameters, those passed can be recognize by prefix PAR_
 	List atts= aResponseContainer.getServiceResponse().getContainedAttributes();
@@ -108,16 +79,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		if(key.startsWith("PAR_")){
 			Object value = sba.getValue();
 			String name = key.substring(4);
-			
 			String valueEnc = URLEncoder.encode(value.toString(), "UTF-8");
-			urlToCall.append("&"+name+"="+valueEnc);			
+			parameters.put(name, valueEnc);			
 		}
 	}
-	
-	String encodedUrl =	urlToCall.toString(); //URLEncoder.encode(urlToCall.toString(), "UTF-8");
- 
+
+	String title ="";
 %>
 
+<script type="text/javascript">
 
 var url = {
     	host: '<%= request.getServerName()%>'
@@ -128,9 +98,7 @@ var url = {
     	    
 };
 
-var params = {
-    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
-};
+var params = {};
 
 Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
 	baseUrl: url
@@ -141,11 +109,11 @@ Ext.onReady(function(){
 
 	var saveButton = new Ext.Toolbar.Button({
 				iconCls: 'icon-saveas' 
-				    , scope: this
+				, scope: this
 	    	    , handler : function() {
 	    	    	var thePanel = this.templateEditIFrame.getFrame().getWindow().workSheetPanel;
 	    	    	var template = thePanel.validate();	
-	    	    	if(template == null){
+	    	    	if (template == null){
 	    	    		return;
 	    	    	}
 	    	    	var templateJSON = Ext.util.JSON.decode(template);
@@ -158,9 +126,6 @@ Ext.onReady(function(){
 	    					'dataset_label': '<%=dataSetLabel%>',
 	    					'typeid': 'WORKSHEET' 
 	    				};
-
-
-	    			
 	    			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow(documentWindowsParams);
 	    			this.win_saveDoc.show();
 	    	    
@@ -175,7 +140,8 @@ Ext.onReady(function(){
 
 	var items;
 	if (Sbi.user.ismodeweb) {
-		items = ['->', saveButton, backButton];
+		//items = ['->', saveButton, backButton];
+		items = ['->', saveButton];
 	} 
 
 	var toolbar = new Ext.Toolbar({
@@ -184,12 +150,11 @@ Ext.onReady(function(){
 
 	this.templateEditIFrame = new Ext.ux.ManagedIframePanel({
 		title: '<%= StringEscapeUtils.escapeJavaScript(title) %>'
-		, defaultSrc: '<%= StringEscapeUtils.escapeJavaScript(GeneralUtilities.getUrl(encodedUrl, engineurl.getParameters())) %>'
+		, defaultSrc: '<%= StringEscapeUtils.escapeJavaScript(GeneralUtilities.getUrl(engineWs.getUrl(), parameters)) %>'
 		, autoLoad: true
         , loadMask: true
-       , disableMessaging: true
+        , disableMessaging: true
         , tbar: toolbar
-        , renderTo: Sbi.user.ismodeweb ? undefined : 'edit_template_<%=requestIdentity%>'  
 	});
 
 	
@@ -208,6 +173,6 @@ Ext.onReady(function(){
 		
 });
 
- </script>
-<!-- ERROR TAG -->
-<spagobi:error />
+</script>
+ 
+<%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>

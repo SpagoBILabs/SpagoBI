@@ -279,7 +279,7 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 				errors.mandatory.push(aCombo.fieldLabel);
 			}
 			if(comboValuesLength>aCombo.maxSelection){
-				errors.toomuch.push(aCombo.fieldLabel + '  (max'+aCombo.maxSelection+')');
+				errors.toomuch.push(aCombo.fieldLabel + '  (' + LN('sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.maxselection') + ' ' + aCombo.maxSelection+')');
 			}
 		}
 		return errors;

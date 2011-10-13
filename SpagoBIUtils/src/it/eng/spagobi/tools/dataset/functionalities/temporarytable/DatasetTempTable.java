@@ -19,18 +19,17 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
  **/
-
 package it.eng.spagobi.tools.dataset.functionalities.temporarytable;
 
 
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
@@ -40,7 +39,8 @@ public class DatasetTempTable {
 	private static transient Logger logger = Logger.getLogger(DatasetTempTable.class);
 
 	/**
-	 *  Creates a table with columns got from metadata
+	 * Creates a table with columns got from metadata.
+	 * PAY ATTENTION TO THE FACT THAT THE INPUT CONNECTION ISN'T CLOSED!!!!!
 	 * @param conn
 	 * @param meta
 	 * @param tableName
@@ -48,48 +48,45 @@ public class DatasetTempTable {
 	 * @throws Exception
 	 */
 
-	public static DataSetTableDescriptor createTemporaryTable(Connection conn, MetaData meta, String tableName){
+	public static DataSetTableDescriptor createTemporaryTable(Connection conn, IMetaData meta, String tableName) {
 		logger.debug("IN");
 
 		DataSetTableDescriptor dstd = null;
-		boolean result= false;
 		Statement st = null;
-		String hqlQuery = null;
+		String sqlQuery = null;
 
 		try {
 			CreateTableCommand createTableCommand = new CreateTableCommand(tableName, conn.getMetaData().getDriverName());
 
 			// run through all columns in order to build the SQL columndefinition
-			for (Iterator iterator = meta.getFieldsMeta().iterator(); iterator.hasNext();) {
-				IFieldMetaData fieldMeta = (IFieldMetaData) iterator.next();
+			int count = meta.getFieldCount();
+			for (int i = 0 ; i < count ; i++) {
+				IFieldMetaData fieldMeta = meta.getFieldMeta(i);
 				createTableCommand.addColumn(fieldMeta);
 			}
 
 			// after built columns create SQL Query
-			hqlQuery = createTableCommand.createSQLQuery();
+			sqlQuery = createTableCommand.createSQLQuery();
 
-			// excute 
+			// execute 
 			st = conn.createStatement();
-			result =  st.execute(hqlQuery);
+			st.execute(sqlQuery);
 
 			dstd = createTableCommand.getDsTableDescriptor();
 
 		} catch (SQLException e) {
-			logger.error("Error in excuting statement "+hqlQuery, e);
-			System.out.println("Errore "+e);
-			return null;
+			logger.error("Error in excuting statement " + sqlQuery, e);
+			throw new SpagoBIRuntimeException("Error creating temporary table", e);
 		}
-		finally{
-			try{
-				if( conn != null) conn.close();
-				if( st != null)	st.close();
-			}
-			catch (SQLException e) {
-				logger.warn("could not free resources ",e);
+		finally {
+			try {
+				if ( st != null ) {
+					st.close();
+				}
+			} catch (SQLException e) {
+				logger.error("could not free resources ", e);
 			}
 		}
-
-		System.out.println("Query "+hqlQuery);
 		logger.debug("OUT");
 		return dstd;
 	}

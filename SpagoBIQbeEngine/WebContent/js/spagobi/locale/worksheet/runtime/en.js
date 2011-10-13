@@ -22,3 +22,4 @@ Sbi.locale.ln['sbi.worksheet.runtime.worksheetpreviewpage.title'] = 'Worksheet P
 Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.title'] = 'Filter Errors';
 Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.mandatory'] = 'Those filters should have at least one value:';
 Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.toomuch'] = 'Those filters have too much values:';
+Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.maxselection'] = 'maximum allowed';

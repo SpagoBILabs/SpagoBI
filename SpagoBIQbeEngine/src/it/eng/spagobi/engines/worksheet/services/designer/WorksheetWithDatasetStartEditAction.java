@@ -21,15 +21,10 @@
 package it.eng.spagobi.engines.worksheet.services.designer;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.commons.presentation.DynamicPublisher;
-import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.services.initializers.WorksheetEngineStartAction;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-
-import java.util.HashMap;
-import java.util.Map;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 import org.apache.log4j.Logger;
 
@@ -40,83 +35,85 @@ public class WorksheetWithDatasetStartEditAction extends WorksheetEngineStartAct
 
 	private static final long serialVersionUID = 6272194014941617286L;
 
-	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
-
+	// INPUT PARAMETERS
+	public static final String DATASET_LABEL = "dataset_label";
+	public static final String DATASOURCE_LABEL = "datasource_label";
+	
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(WorksheetStartEditAction.class);
+	private static transient Logger logger = Logger.getLogger(WorksheetWithDatasetStartEditAction.class);
 
-	String dsLabel = null;
 
-	public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
-		logger.debug("IN");
-		dsLabel = serviceRequest.getAttribute("dataset_label") != null ?
-				serviceRequest.getAttribute("dataset_label").toString() : null;
+//	public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
+//		logger.debug("IN");
+//		super.service(serviceRequest, serviceResponse);
+//
+//		// publisher for the qbe edit
+//		String publisherName = "WORKSHEET_START_EDIT_ACTION_DATASET_PUBLISHER";
+//
+//		try {
+//			serviceResponse.setAttribute(DynamicPublisher.PUBLISHER_NAME,
+//					publisherName);
+//		} catch (SourceBeanException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//
+//		logger.debug("OUT");
+//	}
 
-				super.service(serviceRequest, serviceResponse);
+//	public Map getEnv() {
+//		Map env = new HashMap();
+//
+//		copyRequestParametersIntoEnv(env, getSpagoBIRequestContainer());
+//		//env.put(EngineConstants.ENV_DATASOURCE, getDataSource());
+//		// document id can be null (when using QbE for dataset definition)
+//		//		   if (getDocumentId() != null) {
+//		//			   env.put(EngineConstants.ENV_DOCUMENT_ID, getDocumentId());
+//		//		   }
+//		env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
+//		// env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
+//		env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy() );
+//		env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy()); 
+//		env.put(EngineConstants.ENV_LOCALE, getLocale()); 
+//
+//		return env;
+//	}
 
-				//publisher for the qbe edit
-				String publisherName = "WORKSHEET_START_EDIT_ACTION_DATASET_PUBLISHER";
-
-				try {
-					serviceResponse.setAttribute(DynamicPublisher.PUBLISHER_NAME, publisherName);
-				} catch (SourceBeanException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				logger.debug("OUT");
+	@Override
+    protected boolean goToWorksheetPreentation() {
+		return true;
 	}
-
-
-	/**
-	 *  Override bcause datasource and docuemtn are not prsesetn
-	 */
-
-
-	public Map getEnv() {
-		Map env = new HashMap();
-
-		copyRequestParametersIntoEnv(env, getSpagoBIRequestContainer());
-		//env.put(EngineConstants.ENV_DATASOURCE, getDataSource());
-		// document id can be null (when using QbE for dataset definition)
-		//		   if (getDocumentId() != null) {
-		//			   env.put(EngineConstants.ENV_DOCUMENT_ID, getDocumentId());
-		//		   }
-		env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
-		// env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
-		env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy() );
-		env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy()); 
-		env.put(EngineConstants.ENV_LOCALE, getLocale()); 
-
-		return env;
-	}
-
+	
 	@Override
 	public IDataSet getDataSet() {
-		//dsLabel="modello";
-		IDataSet dataSet = getDataSetServiceProxy().getDataSetByLabel(dsLabel);  	
-
+		// dataset information is coming with the request
+		String datasetLabel = this.getAttributeAsString( DATASET_LABEL );
+		logger.debug("Parameter [" + DATASET_LABEL + "]  is equal to [" + datasetLabel + "]");
+		Assert.assertNotNull(datasetLabel, "Dataset not specified");
+		IDataSet dataSet = getDataSetServiceProxy().getDataSetByLabel(datasetLabel);  	
 		return dataSet;
-
-
 	}
 
 	@Override
-	public void initDataSource(WorksheetEngineInstance worksheetEngineInstance) {
-		// TODO Auto-generated method stub
-		return;
+	public IDataSource getDataSource() {
+		// datasource information is coming with the request
+		String datasourceLabel = this.getAttributeAsString( DATASOURCE_LABEL );
+		logger.debug("Parameter [" + DATASOURCE_LABEL + "]  is equal to [" + datasourceLabel + "]");
+		Assert.assertNotNull(datasourceLabel, "Dataset not specified");
+		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);
+		return dataSource;
 	}
-
 
 	@Override
 	public SourceBean getTemplateAsSourceBean() {
-		// TODO Auto-generated method stub
+		// we must start with an empty template
 		return null;
 	}
 
 	@Override
 	public String getDocumentId() {
-		// TODO Auto-generated method stub
+		// there is no document at the time
 		return null;
 	}
 

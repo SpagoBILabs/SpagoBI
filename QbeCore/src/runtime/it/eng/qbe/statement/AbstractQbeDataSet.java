@@ -4,10 +4,10 @@ import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.CalculatedSelectField;
-import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statement.hibernate.HQLStatement;
@@ -19,7 +19,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
@@ -313,7 +312,6 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			String sql = getSQLQuery();
 			List<String> fields = getDataSetSelectedFields(statement.getQuery());
 			return TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
-//			return getDataSetTableDescriptor(sql, statement.getQuery(), tableName);
 		} catch (Exception e) {
 			logger.error("Error loading Persisting the temporary table with name"+tableName, e);
 			throw new SpagoBIEngineRuntimeException("Error loading Persisting the temporary table with name"+tableName, e);
@@ -336,6 +334,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				tableDescriptor = TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
 			}
 			String filterColumnName = tableDescriptor.getColumnName(fieldName);
+//			StringBuffer buffer = new StringBuffer("Select DISTINCT " + filterColumnName + ", CONCAT(" + filterColumnName + ", ' Description' ) as description FROM " + tableName);
 			StringBuffer buffer = new StringBuffer("Select DISTINCT " + filterColumnName + " FROM " + tableName);
 			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
 			String sqlStatement = buffer.toString();
@@ -474,8 +473,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		return this.getStatement().getParameters();
 	}
 	
-	public IDataStore decode(
-			IDataStore datastore) {
+	public IDataStore decode(IDataStore datastore) {
 		return datastore;
 	}
 	

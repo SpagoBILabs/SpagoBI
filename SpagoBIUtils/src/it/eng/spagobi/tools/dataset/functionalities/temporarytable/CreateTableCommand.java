@@ -50,7 +50,7 @@ public class CreateTableCommand {
 
 	public void addColumn(IFieldMetaData fieldMeta) {
 		logger.debug("IN");
-		if(columns == null) columns = new ArrayList<ColumnMeta>();
+		if (columns == null) columns = new ArrayList<ColumnMeta>();
 
 		Class fieldClass = fieldMeta.getType();
 		String name = fieldMeta.getName();
