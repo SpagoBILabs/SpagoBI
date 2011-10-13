@@ -57,17 +57,17 @@ public class Exporter {
 	    for(int j = 0; j < 50; j++){
 			sheet.createRow(j);
 		}
-	    fillSheet(sheet, wb, createHelper);
+	    fillSheet(sheet, wb, createHelper, 0);
 
 	    return wb;
 	}
 	
-	public void fillSheet(Sheet sheet,Workbook wb, CreationHelper createHelper) {		
+	public void fillSheet(Sheet sheet,Workbook wb, CreationHelper createHelper, int startRow) {		
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
 		 if(dataStore!=null  && !dataStore.isEmpty()){
-			    CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper, 4, 4);
-			    fillSheetData(sheet, wb, createHelper, cellTypes, 5, 4);    	
+			    CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper, startRow, 4);
+			    fillSheetData(sheet, wb, createHelper, cellTypes, startRow+1, 4);    	
 		    }
 	}
 	

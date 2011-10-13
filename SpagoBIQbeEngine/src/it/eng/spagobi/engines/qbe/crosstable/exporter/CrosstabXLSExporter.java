@@ -80,18 +80,18 @@ public class CrosstabXLSExporter {
 		CrosstabExporterUtility.calculateDescendants(json);
     	// init the sheet
     	initSheet(sheet, json);
-    	commonFillSheet(sheet, json, createHelper);
+    	commonFillSheet(sheet, json, createHelper,0);
 	}
 	
-	public int fillAlreadyCreatedSheet(Sheet sheet,JSONObject json, CreationHelper createHelper) throws JSONException{		
+	public int fillAlreadyCreatedSheet(Sheet sheet,JSONObject json, CreationHelper createHelper, int startRow) throws JSONException{		
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
 		CrosstabExporterUtility.calculateDescendants(json);
-    	int totalRowNum = commonFillSheet(sheet, json, createHelper);
+    	int totalRowNum = commonFillSheet(sheet, json, createHelper,startRow);
     	return totalRowNum;
 	}
 	
-	public int commonFillSheet(Sheet sheet,JSONObject json, CreationHelper createHelper) throws JSONException{	
+	public int commonFillSheet(Sheet sheet,JSONObject json, CreationHelper createHelper, int startRow) throws JSONException{	
 		JSONObject columnsRoot = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_COLUMNS_HEADERS);
     	JSONArray columnsRootChilds = columnsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
     	int columnsDepth = CrosstabExporterUtility.getDepth(columnsRoot);
@@ -100,13 +100,19 @@ public class CrosstabXLSExporter {
 		JSONArray rowsRootChilds = rowsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
 		JSONArray data = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_DATA);
 		
+		int rowsNumber = data.length();
+		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
+		for (int i = 0; i < totalRowsNumber + 10; i++) {
+			sheet.createRow(i);
+		}
+	
 		// build headers for column first ...
-		buildColumnsHeader(sheet, columnsRootChilds, 4, rowsDepth + 4, createHelper);
+		buildColumnsHeader(sheet, columnsRootChilds, startRow, rowsDepth + 4, createHelper);
 		// ... then build headers for rows ....
-	    buildRowsHeaders(sheet, rowsRootChilds, columnsDepth + 4, 4, createHelper);
+	    buildRowsHeaders(sheet, rowsRootChilds, columnsDepth + startRow, 4, createHelper);
 	    // then put the matrix data
-	    int totalRowNum = buildDataMatrix(sheet, data, columnsDepth + 4, rowsDepth + 4, createHelper);
-	    return totalRowNum;
+	    buildDataMatrix(sheet, data, columnsDepth + startRow, rowsDepth + 4, createHelper);
+	    return startRow+totalRowsNumber;
 	}
 	
 
@@ -117,15 +123,16 @@ public class CrosstabXLSExporter {
 	 * @param json The crosstab data (it must have been enriched with the calculateDescendants method)
 	 * @throws JSONException
 	 */
-	private void initSheet(Sheet sheet, JSONObject json) throws JSONException {
+	public int initSheet(Sheet sheet, JSONObject json) throws JSONException {
 		JSONObject columnsHeaders = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_COLUMNS_HEADERS);
 		int columnsDepth = CrosstabExporterUtility.getDepth(columnsHeaders);
-		JSONObject rowsHeaders = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_ROWS_HEADERS);
-		int rowsNumber = rowsHeaders.getInt(CrosstabExporterUtility.CROSSTAB_JSON_DESCENDANTS_NUMBER);
+		JSONArray rowsHeaders = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_DATA);
+		int rowsNumber = rowsHeaders.length();
 		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
 		for (int i = 0; i < totalRowsNumber + 4; i++) {
 			sheet.createRow(i);
 		}
+		return totalRowsNumber+4;
 	}
 
 	private int buildDataMatrix(Sheet sheet, JSONArray data, int rowOffset, int columnOffset, CreationHelper createHelper) throws JSONException {

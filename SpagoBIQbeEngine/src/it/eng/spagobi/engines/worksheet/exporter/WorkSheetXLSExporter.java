@@ -137,21 +137,22 @@ public class WorkSheetXLSExporter {
 	}
 	
 	public void designTableInWorksheet(Sheet sheet,Workbook wb, CreationHelper createHelper, 
-			  IDataStore dataStore) throws SerializationException, JSONException{
+			  IDataStore dataStore, int startRow) throws SerializationException, JSONException{
 		
 		Exporter exp = new Exporter(dataStore);
-		exp.fillSheet(sheet, wb, createHelper);
+		exp.fillSheet(sheet, wb, createHelper, startRow);
 	}
 
-	public void setHeader(HSSFSheet sheet, JSONObject header,
-			CreationHelper createHelper, HSSFWorkbook wb, HSSFPatriarch patriarch) throws JSONException, IOException {
+	public int setHeader(HSSFSheet sheet, JSONObject header,
+			CreationHelper createHelper, HSSFWorkbook wb, HSSFPatriarch patriarch, int sheetRow) throws JSONException, IOException {
 		String title = header.getString(TITLE);
 		String imgName = header.getString(IMG);
 		String imagePosition = header.getString(POSITION);
 		CellStyle cellStyle = buildHeaderTitleCellStyle(sheet);
 		
 		if(title!=null && !title.equals("")){			
-			Row row = sheet.getRow(1);
+			Row row = sheet.createRow(sheetRow);
+			sheetRow++;
 			Cell cell = row.createCell(6);
 			cell.setCellValue(createHelper.createRichTextString(title));
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
@@ -163,8 +164,6 @@ public class WorkSheetXLSExporter {
 			String imgNameUpperCase = imgName.toUpperCase();
 			int impgType = getImageType(imgNameUpperCase);
 			
-			int r = 1;
-			int rowend = 4;
 			int c = 7;
 			int colend = 9;
 
@@ -178,21 +177,29 @@ public class WorkSheetXLSExporter {
 				}
 			}
 			if(impgType!=0){
-				setImageIntoWorkSheet(wb, patriarch, img, c, r, colend, rowend,impgType);
+				for(int i=0; i<4; i++){
+					sheet.createRow(sheetRow+i);
+				}
+				setImageIntoWorkSheet(wb, patriarch, img, c, colend, sheetRow, 4,impgType);
+
+				sheetRow = sheetRow+4;
 			}
 		}
 		
+		return sheetRow;
+		
 	}
 
-	public void setFooter(HSSFSheet sheet, JSONObject footer,
-			CreationHelper createHelper, HSSFWorkbook wb, int rowStart, HSSFPatriarch patriarch) throws JSONException, IOException {
+	public int setFooter(HSSFSheet sheet, JSONObject footer,
+			CreationHelper createHelper, HSSFWorkbook wb, HSSFPatriarch patriarch, int sheetRow) throws JSONException, IOException {
 		String title = footer.getString(TITLE);
 		String imgName = footer.getString(IMG);
 		String imagePosition = footer.getString(POSITION);
 		CellStyle cellStyle = buildHeaderTitleCellStyle(sheet);
 		
 		if(title!=null && !title.equals("")){		
-			Row row = sheet.getRow(rowStart + 4);
+			Row row = sheet.createRow(sheetRow);
+			sheetRow++;
 			Cell cell = row.createCell(6);
 			cell.setCellValue(createHelper.createRichTextString(title));
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
@@ -204,8 +211,7 @@ public class WorkSheetXLSExporter {
 			String imgNameUpperCase = imgName.toUpperCase();
 			int impgType = getImageType(imgNameUpperCase);
 			
-			int r = rowStart + 4;
-			int rowend = rowStart + 8;
+
 			int c = 7;
 			int colend = 9;
 			
@@ -219,9 +225,12 @@ public class WorkSheetXLSExporter {
 				}
 			}
 			if(impgType!=0){
-				setImageIntoWorkSheet(wb, patriarch, img, c, r, colend, rowend,impgType);
+				setImageIntoWorkSheet(wb, patriarch, img, c, colend, sheetRow, 4,impgType);
+				sheetRow = sheetRow+4;
 			}
 		}
+		
+		return sheetRow;
 	}
 	
 	public int getImageType(String imgNameUpperCase){
@@ -265,7 +274,7 @@ public class WorkSheetXLSExporter {
 	}
 
 	public void setImageIntoWorkSheet(HSSFWorkbook wb, HSSFPatriarch drawing ,
-			File f, int col, int row, int colend, int rowend,int imgType) throws IOException {
+			File f, int col, int colend, int sheetRow, int height,int imgType) throws IOException {
 		FileInputStream fis = new FileInputStream(f);
 
 		ByteArrayOutputStream imgBytes = new ByteArrayOutputStream();
@@ -282,7 +291,7 @@ public class WorkSheetXLSExporter {
 		imgBytes.close();
 		fis.close();
 		
-		HSSFClientAnchor anchor = new HSSFClientAnchor(dx1, dy1, dx2, dy2, (short) col,	row, (short) colend, rowend);
+		HSSFClientAnchor anchor = new HSSFClientAnchor(dx1, dy1, dx2, dy2, (short) col,	sheetRow, (short) colend, sheetRow+height);
 		Picture pict = drawing.createPicture(anchor, index);
 		
 		//HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
