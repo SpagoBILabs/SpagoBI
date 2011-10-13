@@ -19,7 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
  **/
-package it.eng.spagobi.tools.dataset.functionalities.temporarytable;
+package it.eng.spagobi.tools.dataset.persist.temporarytable;
 
 
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
@@ -34,9 +34,9 @@ import java.sql.Statement;
 import org.apache.log4j.Logger;
 
 
-public class DatasetTempTable {
+public class DatasetTemporaryTableUtils {
 
-	private static transient Logger logger = Logger.getLogger(DatasetTempTable.class);
+	private static transient Logger logger = Logger.getLogger(DatasetTemporaryTableUtils.class);
 
 	/**
 	 * Creates a table with columns got from metadata.
@@ -47,7 +47,6 @@ public class DatasetTempTable {
 	 * @return
 	 * @throws Exception
 	 */
-
 	public static DataSetTableDescriptor createTemporaryTable(Connection conn, IMetaData meta, String tableName) {
 		logger.debug("IN");
 

@@ -31,8 +31,8 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.functionalities.temporarytable.DatasetTempTable;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.persist.temporarytable.DatasetTemporaryTableUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
@@ -74,7 +74,7 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 		logger.debug("IN");
 		IDataSetTableDescriptor descriptor = null;
 		try {
-			descriptor = DatasetTempTable.createTemporaryTable(connection, metadata, tableName);
+			descriptor = DatasetTemporaryTableUtils.createTemporaryTable(connection, metadata, tableName);
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Error creating temporary table", t);
 		}
