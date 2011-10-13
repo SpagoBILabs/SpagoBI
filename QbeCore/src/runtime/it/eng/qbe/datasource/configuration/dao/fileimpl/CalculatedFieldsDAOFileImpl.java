@@ -127,7 +127,11 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 					
 					// parse slots
 					List<ModelCalculatedField.Slot> slots = loadSlots(calculatedFieldNode);
-					calculatedField.addSlots(slots);			
+					calculatedField.addSlots(slots);
+					if(slots.size() > 0) {
+						String defaultSlotValue = loadDefaultSlotValue(calculatedFieldNode);
+						calculatedField.setDefaultSlotValue(defaultSlotValue);
+					}
 					
 					
 					if(!calculatedFiledsMap.containsKey(entity)) {
@@ -179,7 +183,6 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		
 		Node slotBlock = calculatedFieldNode.selectSingleNode("SLOTS");
 		if(slotBlock != null) {
-			String defaultSoltValue = slotBlock.valueOf("@defaultSoltValue");	
 			List<Node> slotNodes = slotBlock.selectNodes("SLOT");
 			
 			for(Node slotNode : slotNodes) {
@@ -190,24 +193,37 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		
 		return slots;
 	}
+		
+	private String loadDefaultSlotValue(Node calculatedFieldNode) {
+			
+		String defaultSoltValue = null;
+			
+		Node slotBlock = calculatedFieldNode.selectSingleNode("SLOTS");
+		if(slotBlock != null) {
+			defaultSoltValue = slotBlock.valueOf("@defaultSoltValue");	
+		}
+			
+		return defaultSoltValue;
+	}
+	
 	
 	private ModelCalculatedField.Slot loadSlot(Node slotNode) {
 		ModelCalculatedField.Slot slot;
 		
 		String slotValue = slotNode.valueOf("@value");	
-		slot = new ModelCalculatedField.Slot("slotValue");
+		slot = new ModelCalculatedField.Slot(slotValue);
 		
 		List<Node> mappedValues = slotNode.selectNodes("VALUESET");
 		for(Node mappedValuesNode:  mappedValues) {
-			ModelCalculatedField.Slot.MappedValuesDescriptor descriptor = loadDescriptor(mappedValuesNode);
+			ModelCalculatedField.Slot.IMappedValuesDescriptor descriptor = loadDescriptor(mappedValuesNode);
 			slot.addMappedValuesDescriptors(descriptor);
 		}
 		
 		return slot;
 	}
 	
-	private ModelCalculatedField.Slot.MappedValuesDescriptor loadDescriptor(Node mappedValuesNode) {
-		ModelCalculatedField.Slot.MappedValuesDescriptor descriptor = null;
+	private ModelCalculatedField.Slot.IMappedValuesDescriptor loadDescriptor(Node mappedValuesNode) {
+		ModelCalculatedField.Slot.IMappedValuesDescriptor descriptor = null;
 		
 		String descriptorType = mappedValuesNode.valueOf("@type");	
 		if(descriptorType.equalsIgnoreCase("range")) {

@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.query;
 
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -115,8 +116,8 @@ public class Query {
 		selectFields.add( new CalculatedSelectField(fieldAlias, expression, type, included, visible) );
 	}
 	
-	public void addInLineCalculatedFiled(String fieldAlias, String expression, String type, boolean included, boolean visible, boolean groupByField, String orderType, String funct) {
-		selectFields.add( new InLineCalculatedSelectField(fieldAlias, expression, type, included, visible, groupByField, orderType, funct) );
+	public void addInLineCalculatedFiled(String fieldAlias, String expression, String slots, String type, boolean included, boolean visible, boolean groupByField, String orderType, String funct) {
+		selectFields.add( new InLineCalculatedSelectField(fieldAlias, expression, slots, type, included, visible, groupByField, orderType, funct) );
 	}
 
 	
@@ -156,7 +157,8 @@ public class Query {
 	 * false to include only the select fields actually included in the select clause of the generated statemet (i.e
 	 * it is possible for a select field to be used only in 'order by' or in 'group by' clause of the statement)
 	 * 
-	 * @return a List o selected field
+	 * @return a List of all selected fields (ISelectField). All the field types are included (i.e. simple fields, calculated fields
+	 * and inline calculated fields). Never returns null. If there are no selected fields in the query it returns an empty list.
 	 */
 	public List<ISelectField> getSelectFields(boolean onlyIncluded) {
 		List<ISelectField> fields;

@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.query;
 
+import java.util.List;
+
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 
@@ -30,6 +33,7 @@ import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 public class InLineCalculatedSelectField extends AbstractSelectField {
 	
 	private String expression;
+	private String slots;
 	private String type;
 //	private Object initialValue;
 	private boolean groupByField;
@@ -38,9 +42,10 @@ public class InLineCalculatedSelectField extends AbstractSelectField {
 //	private int resetType;
 //	private int incrementType;
 	
-	public InLineCalculatedSelectField(String alias, String expression, String type, boolean included, boolean visible, boolean groupByField, String orderType, String function ) {
+	public InLineCalculatedSelectField(String alias, String expression, String slots, String type, boolean included, boolean visible, boolean groupByField, String orderType, String function ) {
 		super(alias, ISelectField.CALCULATED_FIELD, included, visible);
 		this.expression = expression;
+		this.slots = slots;
 		this.type = type;
 		this.groupByField = groupByField;
 		setOrderType(orderType);
@@ -55,6 +60,14 @@ public class InLineCalculatedSelectField extends AbstractSelectField {
 		this.expression = expression;
 	}
 	
+	public String getSlots() {
+		return slots;
+	}
+
+	public void setSlots(String slots) {
+		this.slots = slots;
+	}
+
 	public String getType() {
 		return type;
 	}

@@ -5,18 +5,26 @@ package it.eng.qbe.statement.jpa;
 
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesPunctualDescriptor;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesRangeDescriptor;
 import it.eng.qbe.query.AbstractSelectField;
+import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.serializer.SerializationManager;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.objects.Couple;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -24,7 +32,7 @@ import org.apache.log4j.Logger;
  */
 public class JPQLStatementSelectClause extends JPQLStatementClause {
 	
-	String[] idsForQuery;
+	String[] statementFields;
 	int index;
 	Map entityAliases;;
 	
@@ -40,56 +48,57 @@ public class JPQLStatementSelectClause extends JPQLStatementClause {
 	
 	protected String buildSelectClause(Query query, Map entityAliasesMaps) {
 		StringBuffer buffer;
-		List selectFields;
-		List allSelectFields;
+		List<ISelectField> selectFields;
 		List<InLineCalculatedSelectField> selectInLineCalculatedFields = new ArrayList<InLineCalculatedSelectField>();
-		AbstractSelectField selectAbstractField;
-		SimpleSelectField selectField;
-		InLineCalculatedSelectField selectInLineField;
-
+	
 		logger.debug("IN");
 		
 		buffer = new StringBuffer();
+		
 		try {
+			
+			Assert.assertNotNull(query, "Input parameter [query] cannot be null");
+			Assert.assertNotNull(query, "Input parameter [entityAliasesMaps] cannot be null");
+			
+			logger.debug("Building select clause for query [" + query.getId() + "]");
+			
+			entityAliases = (Map)entityAliasesMaps.get(query.getId());	
+			Assert.assertNotNull(entityAliases, "The entity map for the query [" + query.getId() + "] canot be null");
+			
 			selectFields = query.getSelectFields(true);
-			
-			if(selectFields == null ||selectFields.size() == 0) {
-				return "";
-			}
-			
-			entityAliases = (Map)entityAliasesMaps.get(query.getId());
-						
+				
 			buffer.append(SELECT);		
 			if (query.isDistinctClauseEnabled()) {
 				buffer.append(" " + DISTINCT);
 			}
 			
-			idsForQuery = new String[selectFields.size()-query.getCalculatedSelectFields(true).size()]; 
-			index=0;
+			int calculatedFieldNumber = query.getCalculatedSelectFields(true).size();
+			logger.debug("In select clause of query [" + query.getId() + "] there are [" + calculatedFieldNumber + "] calculated fields out of [" + selectFields.size() + "]");
 			
-			Iterator it = selectFields.iterator();
-			while(it.hasNext()){
-				selectAbstractField = (AbstractSelectField)it.next();
-										
+			statementFields = new String[selectFields.size() - calculatedFieldNumber]; 
+			index = 0;
+			
+			for(ISelectField selectAbstractField : selectFields){										
 				if(selectAbstractField.isSimpleField()){
 					addSimpleSelectField((SimpleSelectField)selectAbstractField, entityAliasesMaps); 
-				}else if(selectAbstractField.isInLineCalculatedField()){
+				} else if(selectAbstractField.isInLineCalculatedField()){
+					// calculated field will be added in the second step when all the simple fields will be already in place
 					selectInLineCalculatedFields.add((InLineCalculatedSelectField)selectAbstractField);
+					// we keep the space to add this field later in the second process step
 					index++;
 				}
 			}
 				
-
-			for(int k=0; k< selectInLineCalculatedFields.size(); k++){
-					selectInLineField = selectInLineCalculatedFields.get(k);
+			for(InLineCalculatedSelectField selectInLineField :  selectInLineCalculatedFields){
 					
-					String expr = selectInLineField.getExpression();//.replace("\'", "");			
+					String expr = selectInLineField.getExpression();
 					expr = parseInLinecalculatedField(expr, query, entityAliasesMaps);
+					expr = addSlots(expr, selectInLineField);
 					expr = selectInLineField.getFunction().apply(expr);
 					
-					for(int y= 0; y<idsForQuery.length; y++){
-						if(idsForQuery[y]==null){
-							idsForQuery[y]=" " +expr;
+					for(int y = 0; y < statementFields.length; y++){
+						if(statementFields[y] == null){
+							statementFields[y]= " " + expr;
 							index = y;
 							break;
 						}
@@ -99,29 +108,112 @@ public class JPQLStatementSelectClause extends JPQLStatementClause {
 			}
 				
 				
-			for(int y= 0; y<idsForQuery.length-1; y++){
-					buffer.append(idsForQuery[y]+",");
+			for(int y= 0; y < statementFields.length-1; y++){
+				buffer.append(statementFields[y]+",");
 			}
-			buffer.append(idsForQuery[idsForQuery.length-1]);
-				
 			
+			buffer.append(statementFields[statementFields.length-1]);
 		
-		}
-		
-		finally {
+		} finally {
 			logger.debug("OUT");
 		}
 		
 		return buffer.toString().trim();
 	}
 	
+	private String addSlots(String expr, InLineCalculatedSelectField selectInLineField) {
+		String newExpr;
+		
+		newExpr = null;
+		
+		try {
+			String s = selectInLineField.getSlots();
+			if(s ==  null || s.trim().length() == 0) return expr;
+			JSONArray slotsJSON = new JSONArray(s);
+			List<Slot> slots = new ArrayList<Slot>();
+			for(int i = 0; i < slotsJSON.length(); i++) {
+				Slot slot = (Slot)SerializationManager.deserialize(slotsJSON.get(i), "application/json", Slot.class);
+				slots.add(slot);
+			}
+			
+			
+			
+			if(slots.isEmpty()) return expr;
+			
+			Slot defaultSlot = null;
+			
+			newExpr = "CASE";
+			for(Slot slot : slots) {
+				List<Slot.IMappedValuesDescriptor> descriptors =  slot.getMappedValuesDescriptors();
+				if(descriptors == null || descriptors.isEmpty()) {
+					defaultSlot = slot;
+					continue;
+				}
+				for(Slot.IMappedValuesDescriptor descriptor : descriptors) {
+					if(descriptor instanceof MappedValuesPunctualDescriptor) {
+					
+						MappedValuesPunctualDescriptor punctualDescriptor = (MappedValuesPunctualDescriptor)descriptor;
+						newExpr += " WHEN (" + expr + ") IN (";
+						String valueSeparator = "";
+						Set<String> values = punctualDescriptor.getValues();
+						for(String value : values) {
+							newExpr += valueSeparator + "'" + value + "'";
+							valueSeparator = ", ";
+						}
+						newExpr += ") THEN '" + slot.getName() + "'";
+						
+					} else if(descriptor instanceof MappedValuesRangeDescriptor) {
+						MappedValuesRangeDescriptor punctualDescriptor = (MappedValuesRangeDescriptor)descriptor;
+						newExpr += " WHEN";
+						String minCondition = null;
+						String maxCondition = null;
+						if(punctualDescriptor.getMinValue() != null) {
+							minCondition = " (" + expr + ")";
+							minCondition += (punctualDescriptor.isIncludeMinValue())? " >= " : ">";
+							minCondition += punctualDescriptor.getMinValue();
+						}
+						if(punctualDescriptor.getMaxValue() != null) {
+							maxCondition = " (" + expr + ")";
+							maxCondition += (punctualDescriptor.isIncludeMaxValue())? " <= " : "<";
+							maxCondition += punctualDescriptor.getMaxValue();
+						}
+						String completeCondition = "";
+						if(minCondition != null) {
+							completeCondition += "(" + minCondition + ")";
+						}
+						if(maxCondition != null) {
+							completeCondition += (minCondition != null)? " AND " : "";
+							completeCondition += "(" + maxCondition + ")";
+						}
+						newExpr += " " + completeCondition;
+						newExpr += " THEN '" + slot.getName() + "'";
+					} else {
+						// ignore slot
+					}
+				
+				}
+			}
+			if(defaultSlot != null) {
+				newExpr += " ELSE '" + defaultSlot.getName() + "'";
+			} else {
+				newExpr += " ELSE (" + expr + ")";
+			}
+			newExpr += " END ";
+		} catch (Throwable t) {
+			logger.error("Impossible to add slots", t);
+			return expr;
+		}
+		
+		return newExpr;
+	}
+
 	private void addSimpleSelectField(SimpleSelectField selectField, Map entityAliasesMaps) {
 		
 		IModelField datamartField;
 		String queryName;
 		IModelEntity rootEntity;
 		String rootEntityAlias;
-		String selectClauseElement; // rootEntityAlias.queryName
+		String selectClauseElement; 
 	
 		
 		logger.debug("select field unique name [" + selectField.getUniqueName() + "]");
@@ -149,8 +241,6 @@ public class JPQLStatementSelectClause extends JPQLStatementClause {
 		}
 		logger.debug("select field root entity alias [" + rootEntityAlias + "]");
 		
-		
-		//selectClauseElement = rootEntityAlias + "." + queryName.substring(0,1).toLowerCase()+queryName.substring(1);
 		selectClauseElement = rootEntityAlias + "." + queryName;
 		logger.debug("select clause element before aggregation [" + selectClauseElement + "]");
 		
@@ -158,8 +248,9 @@ public class JPQLStatementSelectClause extends JPQLStatementClause {
 		logger.debug("select clause element after aggregation [" + selectClauseElement + "]");
 		
 		
-		idsForQuery[index] = " " + selectClauseElement;
+		statementFields[index] = " " + selectClauseElement;
 		index++;
+		
 		logger.debug("select clause element succesfully added to select clause");
 	}
 	
