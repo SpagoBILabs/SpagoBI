@@ -135,7 +135,6 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 				logger.debug("The nature of the attribute is recognized as " + attributeNature);
 				fieldMetaDataJSON.put("nature", attributeNature);
 				fieldMetaDataJSON.put("funct", AggregationFunctions.NONE);
-				fieldMetaDataJSON.put("iconCls", "attribute");
 				fieldMetaDataJSON.put("iconCls", attributeNature);
 				break;
 			case MEASURE:
