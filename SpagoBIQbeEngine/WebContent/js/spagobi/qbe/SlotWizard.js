@@ -43,6 +43,8 @@ Sbi.qbe.SlotWizard = function(config) {
 	if(c.fieldForSlot !== undefined){
 		this.fieldForSlot = c.fieldForSlot;
 	}
+
+	
 	this.initMainPanel(c);	
 	
 	if(c.hasBuddy === 'true') {
@@ -67,6 +69,8 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
     , buttonsConfig: null
     , startFromFirstPage : true
     , fieldForSlot: null
+    , modality: 'add'
+    , fieldId : null
 
     
     , setExpItems: function(itemGroupName, items) {
@@ -88,7 +92,24 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 		if(c.startFromFirstPage !== undefined){
 			this.startFromFirstPage = c.startFromFirstPage;
 		}
-
+		var editStore = new Ext.data.JsonStore({
+	        root: 'slots',
+	        data: {slots:[]},
+	        fields: ['name', 'valueset']
+	    });
+		this.modality = c.modality;//add (not passed) or edit
+		if(this.modality !== undefined && this.modality !== null && this.modality =='edit'){
+			this.startFromFirstPage = false;//this function is to edit the slot only
+			var field = this.fieldForSlot;
+			try{
+				var storedata = {slots: field.attributes.attributes.formState.slots}
+				editStore.loadData(storedata);
+				editStore.commitChanges();
+			}catch(err){
+				alert("Cannot load Range definition");
+				return;
+			}
+		}
 		var save = function(){
 			this.save();
 		};
@@ -105,6 +126,9 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 					btnNext.disable();
 					btnPrev.enable();
 					btnFinish.enable();
+					///gets field id
+					var fs = this.firstCalculatedFiledPanel.getFormState();
+					this.fieldId = fs.expression;
 				}else{
 					//back
 					this.mainPanel.layout.setActiveItem(0);
@@ -121,7 +145,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 		var btnPrev = new Ext.Button({
             id: 'move-prev',
             text: 'Back',
-            handler: navHandler.createDelegate(this, [-1]),
+            handler: navHandler.createDelegate(this, [-1])
 		});
 		
 		var btnNext = new Ext.Button({
@@ -138,15 +162,23 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
             handler: function(){
 			    var formState = null;
 				var target = this.firstCalculatedFiledPanel.target;
-				if(this.startFromFirstPage == undefined || this.startFromFirstPage == null || this.startFromFirstPage == false){
-					formState = {alias: 'Slot - ' +this.fieldForSlot.text, type: 'STRING', expression: this.fieldForSlot.text };
-					target = this.fieldForSlot.parentNode;
+				//add band mode
+				if(this.modality === undefined || this.modality == null || this.modality !='edit'){
+
+					if(this.startFromFirstPage == undefined || this.startFromFirstPage == null || this.startFromFirstPage == false){
+						formState = {alias: 'Slot - ' +this.fieldForSlot.text, type: 'STRING', expression: this.fieldForSlot.text };
+						target = this.fieldForSlot.parentNode;
+					}else{
+						formState = this.firstCalculatedFiledPanel.getFormState();
+					}
+					this.addSlotToFormState(formState);
 				}else{
-					formState = this.firstCalculatedFiledPanel.getFormState();
+					//edit band
+					formState = this.fieldForSlot.attributes.attributes.formState;
+					target = this.fieldForSlot;
 				}
-				this.addSlotToFormState(formState);
 		    	this.fireEvent('apply', this, formState, target);
-		        //this.close();
+		        this.close();
 
 		    }
 		});
@@ -160,15 +192,23 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			, expertMode: c.expertMode
 			, scopeComboBoxData: c.scopeComboBoxData   		
 			, validationService: c.validationService
-			, title: 'Calulated field definition'
 
 		});
-		
+		var firstPage = null;
+		if(this.startFromFirstPage){
+			firstPage = this.firstCalculatedFiledPanel;
+		}
+		var fieldID = null;
+		if(this.fieldForSlot !== null){
+			fieldID= this.fieldForSlot.attributes.id
+		}
 		this.secondSlotDefinitionPanel = new Sbi.qbe.SlotEditorPanel({
 			id: 'card-1'  ,
 			width: 580,
 			height: 270,
-			title: 'Slot definition'
+			fieldId: fieldID,
+			firstPage: firstPage,
+			editStore: editStore
 
 	    });
 		var wizardPages = [];
@@ -210,11 +250,14 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 
 		var slotStore = this.secondSlotDefinitionPanel.store;
 		var slots = [];
-		for (var i = 0; i < slotStore.data.length; i++) { 
-			var record = slotStore.getAt(i); 
-			slots[i] = record.data; 
+		if(slotStore !== null){
+			for (var i = 0; i < slotStore.data.length; i++) { 
+				var record = slotStore.getAt(i); 
+				slots[i] = record.data; 
+			}
 		}
 		formState.slots = slots;
+		
 	}
 
 
