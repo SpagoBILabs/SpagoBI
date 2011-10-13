@@ -46,10 +46,10 @@ import org.json.JSONObject;
 public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {	
 
 	private static final long serialVersionUID = -5874137232683097175L;
-	
+
 	/** Logger component. */
 	private static transient Logger logger = Logger.getLogger(GetWorksheetFieldsAction.class);
-	
+
 	// PROPERTIES TO LOOK FOR INTO THE FIELDS
 	public static final String PROPERTY_VISIBLE = "visible";
 	public static final String PROPERTY_IS_SEGMENT_ATTRIBUTE = "isSegmentAttribute";
@@ -59,7 +59,7 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 	public void service(SourceBean request, SourceBean response)  {
 
 		JSONObject resultsJSON;
-		
+
 		logger.debug("IN");
 
 		try {		
@@ -71,7 +71,7 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 			Assert.assertNotNull(dataset, "The engine instance is missing the dataset!!");
 			IMetaData metadata = dataset.getMetadata();
 			Assert.assertNotNull(metadata, "No metadata retrieved by the dataset");
-			
+
 			JSONArray fieldsJSON = writeFields(metadata);
 			logger.debug("Metadata read:");
 			logger.debug(fieldsJSON);
@@ -90,21 +90,21 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 			logger.debug("OUT");
 		}	
 	}
-	
+
 	public JSONArray writeFields(IMetaData metadata) throws Exception {
-		
+
 		// field's meta
 		JSONArray fieldsMetaDataJSON = new JSONArray();
-		
+
 		int fieldCount = metadata.getFieldCount();
 		logger.debug("Number of fields = " + fieldCount);
 		Assert.assertTrue(fieldCount > 0, "Dataset has no fields!!!");
-		
+
 		for (int i = 0; i < fieldCount; i++) {
 			IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
 			Assert.assertNotNull(fieldMetaData, "Field metadata for position " + i + " not found.");
 			logger.debug("Evaluating field with name [" + fieldMetaData.getName() + "], alias [" + fieldMetaData.getAlias() + "] ...");
-			
+
 			Object propertyRawValue = fieldMetaData.getProperty(PROPERTY_VISIBLE);
 			logger.debug("Read property " + PROPERTY_VISIBLE + ": its value is [" + propertyRawValue + "]");
 			if (propertyRawValue != null
@@ -115,49 +115,50 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 			} else {
 				logger.debug("The field is visible");
 			}
-			
+
 			String fieldName = getFieldName(fieldMetaData);
 			String fieldHeader = getFieldAlias(fieldMetaData);
-			
+
 			JSONObject fieldMetaDataJSON = new JSONObject();
 			fieldMetaDataJSON.put("id", fieldName);						
 			fieldMetaDataJSON.put("alias", fieldHeader);
-			
+
 			FieldType type = fieldMetaData.getFieldType();
 			logger.debug("The field type is " + type.name());
 			switch (type) {
-				case ATTRIBUTE:
-					Object isSegmentAttributeObj = fieldMetaData.getProperty(PROPERTY_IS_SEGMENT_ATTRIBUTE);
-					logger.debug("Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
-					String attributeNature = (isSegmentAttributeObj != null
-							&& (isSegmentAttributeObj instanceof Boolean)
-							&& ((Boolean) isSegmentAttributeObj).booleanValue()) ? "segment_attribute" : "attribute";
-					logger.debug("The nature of the attribute is recognized as " + attributeNature);
-					fieldMetaDataJSON.put("nature", attributeNature);
-					fieldMetaDataJSON.put("funct", AggregationFunctions.NONE);
-					fieldMetaDataJSON.put("iconCls", "attribute");
-					break;
-				case MEASURE:
-					Object isMandatoryMeasureObj = fieldMetaData.getProperty(PROPERTY_IS_MANDATORY_MEASURE);
-					logger.debug("Read property " + PROPERTY_IS_MANDATORY_MEASURE + ": its value is [" + isMandatoryMeasureObj + "]");
-					String measureNature = (isMandatoryMeasureObj != null
-							&& (isMandatoryMeasureObj instanceof Boolean)
-							&& ((Boolean) isMandatoryMeasureObj).booleanValue()) ? "mandatory_measure" : "measure";
-					logger.debug("The nature of the measure is recognized as " + measureNature);
-					fieldMetaDataJSON.put("nature", measureNature);
-					String aggregationFunction = (String) fieldMetaData.getProperty(PROPERTY_AGGREGATION_FUNCTION);
-					logger.debug("Read property " + PROPERTY_AGGREGATION_FUNCTION + ": its value is [" + aggregationFunction + "]");
-					fieldMetaDataJSON.put("funct", AggregationFunctions.get(aggregationFunction).getName());
-					fieldMetaDataJSON.put("iconCls", "measure");
-					break;
+			case ATTRIBUTE:
+				Object isSegmentAttributeObj = fieldMetaData.getProperty(PROPERTY_IS_SEGMENT_ATTRIBUTE);
+				logger.debug("Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
+				String attributeNature = (isSegmentAttributeObj != null
+						&& (isSegmentAttributeObj instanceof Boolean)
+						&& ((Boolean) isSegmentAttributeObj).booleanValue()) ? "segment_attribute" : "attribute";
+				logger.debug("The nature of the attribute is recognized as " + attributeNature);
+				fieldMetaDataJSON.put("nature", attributeNature);
+				fieldMetaDataJSON.put("funct", AggregationFunctions.NONE);
+				fieldMetaDataJSON.put("iconCls", "attribute");
+				fieldMetaDataJSON.put("iconCls", attributeNature);
+				break;
+			case MEASURE:
+				Object isMandatoryMeasureObj = fieldMetaData.getProperty(PROPERTY_IS_MANDATORY_MEASURE);
+				logger.debug("Read property " + PROPERTY_IS_MANDATORY_MEASURE + ": its value is [" + isMandatoryMeasureObj + "]");
+				String measureNature = (isMandatoryMeasureObj != null
+						&& (isMandatoryMeasureObj instanceof Boolean)
+						&& ((Boolean) isMandatoryMeasureObj).booleanValue()) ? "mandatory_measure" : "measure";
+				logger.debug("The nature of the measure is recognized as " + measureNature);
+				fieldMetaDataJSON.put("nature", measureNature);
+				String aggregationFunction = (String) fieldMetaData.getProperty(PROPERTY_AGGREGATION_FUNCTION);
+				logger.debug("Read property " + PROPERTY_AGGREGATION_FUNCTION + ": its value is [" + aggregationFunction + "]");
+				fieldMetaDataJSON.put("funct", AggregationFunctions.get(aggregationFunction).getName());
+				fieldMetaDataJSON.put("iconCls", measureNature);
+				break;
 			}
 			fieldsMetaDataJSON.put(fieldMetaDataJSON);
 		}
-		
+
 		return fieldsMetaDataJSON;
-	
+
 	}
-	
+
 	protected String getFieldAlias(IFieldMetaData fieldMetaData) {
 		String fieldAlias = fieldMetaData.getAlias() != null ? fieldMetaData.getAlias() : fieldMetaData.getName();
 		return fieldAlias;
@@ -167,5 +168,5 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 		String fieldName = fieldMetaData.getName();
 		return fieldName;
 	}
-	
+
 }
