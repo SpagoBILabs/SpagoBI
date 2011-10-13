@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
-import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesDescriptor;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot.IMappedValuesDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesPunctualDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesRangeDescriptor;
 import it.eng.qbe.serializer.ISerializer;
@@ -44,17 +44,6 @@ import org.json.JSONObject;
  *
  */
 public class SlotJSONSerializer implements ISerializer {
-	public static transient String NAME = "name";
-	public static transient String VALUESET = "valueset";
-	
-	public static transient String TYPE = "type";
-	public static transient String VALUES = "values";
-	
-	public static transient String FROM = "type";
-	public static transient String INCLUDE_FROM = "includeFrom";
-	public static transient String TO = "to";
-	public static transient String INCLUDE_TO = "includeTo";
-
 		
     public static transient Logger logger = Logger.getLogger(SlotJSONSerializer.class);
 
@@ -71,10 +60,9 @@ public class SlotJSONSerializer implements ISerializer {
 			
 			slot = (Slot) o;
 			
-			toReturn.put(NAME, slot.getName());
-			toReturn.put(VALUESET, serializeMappedValuesDescriptors(slot.getMappedValuesDescriptors()));
+			toReturn.put(QbeSerializationConstants.SLOT_NAME, slot.getName());
+			toReturn.put(QbeSerializationConstants.SLOT_VALUESET, serializeMappedValuesDescriptors(slot.getMappedValuesDescriptors()));
 			
-
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
@@ -84,18 +72,18 @@ public class SlotJSONSerializer implements ISerializer {
 		return toReturn;
 	}
     
-	private JSONArray serializeMappedValuesDescriptors(List<MappedValuesDescriptor> descriptors) throws SerializationException {
+	private JSONArray serializeMappedValuesDescriptors(List<IMappedValuesDescriptor> descriptors) throws SerializationException {
 		JSONArray descriptorsJSON;
 		
 		descriptorsJSON = new JSONArray();
-		for(MappedValuesDescriptor descriptor : descriptors) {
+		for(IMappedValuesDescriptor descriptor : descriptors) {
 			descriptorsJSON.put( serializeMappedValuesDescriptor(descriptor) );
 		}
 		
 		return descriptorsJSON;
 	}
 
-	private JSONObject serializeMappedValuesDescriptor(MappedValuesDescriptor descriptor) throws SerializationException {
+	private JSONObject serializeMappedValuesDescriptor(IMappedValuesDescriptor descriptor) throws SerializationException {
 		JSONObject descriptorJSON;
 		
 		descriptorJSON = new JSONObject();
@@ -103,15 +91,15 @@ public class SlotJSONSerializer implements ISerializer {
 		try {
 			if(descriptor instanceof MappedValuesPunctualDescriptor) {
 				MappedValuesPunctualDescriptor punctualDescriptor = (MappedValuesPunctualDescriptor)descriptor;
-				descriptorJSON.put(TYPE, "punctual");
-				descriptorJSON.put(VALUES, new JSONArray(punctualDescriptor.getValues()));
+				descriptorJSON.put(QbeSerializationConstants.SLOT_VALUESET_TYPE, QbeSerializationConstants.SLOT_VALUESET_TYPE_PUNCTUAL);
+				descriptorJSON.put(QbeSerializationConstants.SLOT_VALUESET_VALUES, new JSONArray(punctualDescriptor.getValues()));
 			} else if(descriptor instanceof MappedValuesRangeDescriptor) {
 				MappedValuesRangeDescriptor rangeDescriptor = (MappedValuesRangeDescriptor)descriptor;
-				descriptorJSON.put(TYPE, "range");
-				descriptorJSON.put(FROM, rangeDescriptor.getMinValue());
-				descriptorJSON.put(INCLUDE_FROM, rangeDescriptor.isIncludeMinValue() );
-				descriptorJSON.put(TO, rangeDescriptor.getMaxValue());
-				descriptorJSON.put(INCLUDE_TO, rangeDescriptor.isIncludeMaxValue());
+				descriptorJSON.put(QbeSerializationConstants.SLOT_VALUESET_TYPE, QbeSerializationConstants.SLOT_VALUESET_TYPE_RANGE);
+				descriptorJSON.put(QbeSerializationConstants.SLOT_VALUESET_FROM, rangeDescriptor.getMinValue());
+				descriptorJSON.put(QbeSerializationConstants.SLOT_VALUESET_INCLUDE_FROM, rangeDescriptor.isIncludeMinValue() );
+				descriptorJSON.put(QbeSerializationConstants.SLOT_VALUESET_TO, rangeDescriptor.getMaxValue());
+				descriptorJSON.put(QbeSerializationConstants.SLOT_VALUESET_INCLUDE_TO, rangeDescriptor.isIncludeMaxValue());
 			} else {
 				throw new SerializationException("Impossible to serialize a descriptor of class: " + descriptor.getClass().getName());
 			}
