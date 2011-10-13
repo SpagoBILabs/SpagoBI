@@ -12,8 +12,8 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.functionalities.temporarytable.DatasetTempTable;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.persist.temporarytable.DatasetTemporaryTableUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
@@ -202,7 +202,7 @@ public class MyFakeDataset extends AbstractCustomDataSet {
 	@Override
 	public IDataSetTableDescriptor persist(String tableName,
 			Connection connection) {
-		IDataSetTableDescriptor toReturn = DatasetTempTable.createTemporaryTable(connection, this.getMetadata(), tableName);
+		IDataSetTableDescriptor toReturn = DatasetTemporaryTableUtils.createTemporaryTable(connection, this.getMetadata(), tableName);
 		this.populateTable(connection, this.getMetadata(), tableName);
 		return toReturn;
 	}
