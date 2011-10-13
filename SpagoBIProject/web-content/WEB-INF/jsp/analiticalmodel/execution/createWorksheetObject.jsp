@@ -62,7 +62,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	parameters.put(SpagoBIConstants.SBI_COUNTRY, locale.getCountry());
 	parameters.put("NEW_SESSION", "TRUE");
 	parameters.put("ACTION_NAME", "WORKSHEET_WITH_DATASET_START_EDIT_ACTION");
-	parameters.put(SsoServiceInterface.USER_ID, userId);
+	if (!GeneralUtilities.isSSOEnabled()) {
+		parameters.put(SsoServiceInterface.USER_ID, userId);
+	}
 	parameters.put("dataset_label" , dataSetLabel);
 	Integer datasourceId = engineWs.getDataSourceId();
 	if (datasourceId == null) {
