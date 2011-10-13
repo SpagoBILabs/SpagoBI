@@ -156,7 +156,7 @@ public class TemporaryTableManager {
 			logger.debug("Table [" + tableName + "] must be created");
 			createTableInternal(sqlStatement, tableName, dataSource);
 			logger.debug("Table [" + tableName + "] created successfully");
-			tables.put(tableName, sqlStatement);
+			setLastDataSetSignature(tableName, sqlStatement);
 		}
 
 		// may be the table has been dropped in the meanwhile (while the
@@ -170,7 +170,6 @@ public class TemporaryTableManager {
 		}
 		
 		IDataSetTableDescriptor tableDescriptor = getTableDescriptor(fields, tableName, dataSource);
-
 		setLastDataSetTableDescriptor(tableName, tableDescriptor);
 
 		logger.debug("OUT");
@@ -382,7 +381,13 @@ public class TemporaryTableManager {
 	}
 
 	public static String getLastDataSetSignature(String tableName) {
+		logger.debug("Returning " + tables.get(tableName));
 		return tables.get(tableName);
+	}
+	
+	public static void setLastDataSetSignature(String tableName, String signature) {
+		logger.debug("Table name : [" + tableName + "], signature : [" + signature + "]");
+		tables.put(tableName, signature);
 	}
 	
 	public static String getTableName(String userId) {

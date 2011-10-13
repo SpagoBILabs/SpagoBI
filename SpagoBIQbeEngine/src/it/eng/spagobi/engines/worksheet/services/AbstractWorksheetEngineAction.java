@@ -286,6 +286,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		}
 		
 		logger.debug("Dataset persisted successfully. Table descriptor : " + td);
+		TemporaryTableManager.setLastDataSetSignature(tableName, signature);
 		TemporaryTableManager.setLastDataSetTableDescriptor(tableName, td);
 		return td;
 	}
