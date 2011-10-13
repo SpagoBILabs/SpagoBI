@@ -33,7 +33,9 @@ public class ModelCalculatedField extends ModelField {
 	String expression;
 	boolean inLine;
 	List<Slot> slots;
-	
+	String defaultSlotValue;
+
+
 	public ModelCalculatedField(String name, String type, String expression) {
 		setName(name);
 		setType(type);
@@ -74,6 +76,14 @@ public class ModelCalculatedField extends ModelField {
 		return slots;
 	}
 	
+	public String getDefaultSlotValue() {
+		return defaultSlotValue;
+	}
+
+	public void setDefaultSlotValue(String defaultSlotValue) {
+		this.defaultSlotValue = defaultSlotValue;
+	}
+	
 	public String getExpression() {
 		return expression;
 	}
@@ -102,11 +112,11 @@ public class ModelCalculatedField extends ModelField {
 	
 	public static class Slot {
 		String name;
-		List<MappedValuesDescriptor> mappedValues;
+		List<IMappedValuesDescriptor> mappedValues;
 		
-		public interface MappedValuesDescriptor {}
+		public interface IMappedValuesDescriptor {}
 		
-		public static class MappedValuesRangeDescriptor implements MappedValuesDescriptor {
+		public static class MappedValuesRangeDescriptor implements IMappedValuesDescriptor {
 			public String minValue;
 			public boolean includeMinValue;
 			public String maxValue;
@@ -130,7 +140,7 @@ public class ModelCalculatedField extends ModelField {
 			public void setIncludeMaxValue(boolean includeMaxValue) { this.includeMaxValue = includeMaxValue; }
 		}
 		
-		public static class MappedValuesPunctualDescriptor implements MappedValuesDescriptor {
+		public static class MappedValuesPunctualDescriptor implements IMappedValuesDescriptor {
 			public Set<String> punctualValues;
 			
 			public MappedValuesPunctualDescriptor() {
@@ -143,14 +153,14 @@ public class ModelCalculatedField extends ModelField {
 		
 		public Slot(String value) {
 			this.name = value;
-			mappedValues = new ArrayList<MappedValuesDescriptor>();
+			mappedValues = new ArrayList<IMappedValuesDescriptor>();
 		}
 		
-		public void addMappedValuesDescriptors(MappedValuesDescriptor descriptor) {
+		public void addMappedValuesDescriptors(IMappedValuesDescriptor descriptor) {
 			mappedValues.add(descriptor);
 		}
 		
-		public List<MappedValuesDescriptor> getMappedValuesDescriptors() {
+		public List<IMappedValuesDescriptor> getMappedValuesDescriptors() {
 			return mappedValues;
 		}
 

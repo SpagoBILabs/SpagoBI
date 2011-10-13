@@ -44,6 +44,7 @@ public class QuerySerializationConstants {
 	public static final String FIELD_INCLUDE = "include";
 	public static final String FIELD_INITIAL_VALUE = "initialValue";
 	public static final String FIELD_EXPRESSION = "expression";
+	public static final String FIELD_SLOTS = "slots";
 	public static final String FIELD_NATURE = "nature";
 	public static final String FIELD_NATURE_MEASURE = "measure";
 	public static final String FIELD_NATURE_ATTRIBUTE = "attribute";
@@ -103,6 +104,7 @@ public class QuerySerializationConstants {
 	public static final String FUNC_GG_UP_TODAY = "gg_up_today";
 	public static final String FUNC_MM_UP_TODAY = "mm_up_today";
 	public static final String FUNC_YY_UP_TODAY = "yy_up_today";
+	
 	
 	
 }
