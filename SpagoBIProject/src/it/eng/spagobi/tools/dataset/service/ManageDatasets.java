@@ -922,12 +922,13 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
 		dataSet.setParamsMap(parametersFilled);		
 		try {
+			IDataStore dataStore = null;
 			if(dataSet.getTransformerId()!=null){
-				dataSet.test();
+				dataStore = dataSet.test();
 			}else{
-				dataSet.test(start, limit, GeneralUtilities.getDatasetMaxResults());
+				dataStore = dataSet.test(start, limit, GeneralUtilities.getDatasetMaxResults());
 			}		
-			IDataStore dataStore = dataSet.getDataStore();
+			//IDataStore dataStore = dataSet.getDataStore();
 			JSONDataWriter dataSetWriter = new JSONDataWriter();
 			dataSetJSON = (JSONObject) dataSetWriter.write(dataStore);
 		}
