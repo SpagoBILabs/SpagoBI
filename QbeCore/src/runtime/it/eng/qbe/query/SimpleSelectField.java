@@ -34,8 +34,7 @@ public class SimpleSelectField extends AbstractSelectField {
 	
 	private String uniqueName;
 	private IAggregationFunction function;
-	private boolean groupByField;
-	private String orderType;
+	
 	private String pattern;
 	
 
@@ -80,32 +79,6 @@ public class SimpleSelectField extends AbstractSelectField {
 
 	public void setUniqueName(String uniqueName) {
 		this.uniqueName = uniqueName;
-	}
-
-	public boolean isGroupByField() {
-		return groupByField;
-	}
-
-
-	public void setGroupByField(boolean groupByField) {
-		this.groupByField = groupByField;
-	}
-
-	public boolean isOrderByField() {
-		return "ASC".equalsIgnoreCase( getOrderType() )
-			|| "DESC".equalsIgnoreCase( getOrderType() );
-	}
-
-	public boolean isAscendingOrder() {
-		return "ASC".equalsIgnoreCase( getOrderType() );
-	}
-	
-	public String getOrderType() {
-		return orderType;
-	}
-
-	public void setOrderType(String orderType) {
-		this.orderType = orderType;
 	}
 	
 	public ISelectField copy() {

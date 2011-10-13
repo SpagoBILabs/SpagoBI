@@ -17,6 +17,7 @@ import it.eng.qbe.query.Filter;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.jpa.JPQLStatementConditionalOperators.IConditionalOperator;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -120,7 +121,10 @@ public class JPQLStatementWhereClause extends JPQLStatementFilteringClause {
 			conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( whereField.getOperator() );
 			Assert.assertNotNull(conditionalOperator, "Unsopported operator " + whereField.getOperator() + " used in query definition");
 			
-			if(whereField.getLeftOperand().values[0].contains("expression")){
+			
+			
+			//if(whereField.getLeftOperand().values[0].contains("expression")){
+			if(whereField.getLeftOperand().type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_INLINE_CALCULATED_FIELD)) {
 				whereClauseElement = buildInLineCalculatedFieldClause(whereField.getOperator(), whereField.getLeftOperand(), whereField.isPromptable(), whereField.getRightOperand(), query, entityAliasesMaps, conditionalOperator);
 			} else {
 				

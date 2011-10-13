@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -35,41 +36,37 @@ public abstract class JPQLStatementFilteringClause  extends JPQLStatementClause 
 
 	public static transient Logger logger = Logger.getLogger(JPQLStatementFilteringClause.class);
 	
-	/**
-	 * Builds the sql statement (for the having or the where clause) for the calculate fields.  
-	 * @param operator the operator of the clause 
-	 * @param leftOperand the left operand
-	 * @param isPromptable
-	 * @param rightOperand right operand
-	 * @param query the sql query
-	 * @param entityAliasesMaps the map of the entity involved in the query
-	 * @return
-	 */
+
 	protected String buildInLineCalculatedFieldClause(String operator, Operand leftOperand, boolean isPromptable, Operand rightOperand, Query query, Map entityAliasesMaps, IConditionalOperator conditionalOperator){
 		String[] rightOperandElements;
-				
-		String expr = leftOperand.values[0].substring(leftOperand.values[0].indexOf("\"expression\":\"")+14);//.replace("\'", "");
-		expr = expr.substring(0, expr.indexOf("\""));
+			
 		
-		logger.debug("Left operand (of a inline calculated field) for the filter clause of the query: "+leftOperand.values[0]);
-		logger.debug("Expression of a inline calculated field for the filter clause of the query: "+expr);
-
-		expr = parseInLinecalculatedField(expr, query, entityAliasesMaps);
-				
 		logger.debug("IN");
+		try {
+			// Se sono qui è perchè il leftoPerand è un campo calcolato inline quindi posso parserizzare senza problemi
+			JSONObject leftOperandJSON = new JSONObject(leftOperand.values[0]);
+			
+			String expression = leftOperandJSON.getString("expression");
+			String slots = leftOperandJSON.getString("slots");
+			
+			expression = parseInLinecalculatedField(expression, slots, query, entityAliasesMaps);
 					
-		if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) && isPromptable) {
-			// get last value first (the last value edited by the user)
-			rightOperandElements = rightOperand.lastValues;
-		} else {
-			rightOperandElements = buildOperand(rightOperand, query, entityAliasesMaps);
-		}
+			if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) && isPromptable) {
+				// get last value first (the last value edited by the user)
+				rightOperandElements = rightOperand.lastValues;
+			} else {
+				rightOperandElements = buildOperand(rightOperand, query, entityAliasesMaps);
+			}
+			
+			if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) )  {
+				rightOperandElements = getTypeBoundedStaticOperand(leftOperand, operator, rightOperandElements);
+			}
+			
+			return conditionalOperator.apply("("+expression+")", rightOperandElements);
 		
-		if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) )  {
-			rightOperandElements = getTypeBoundedStaticOperand(leftOperand, operator, rightOperandElements);
+		} catch(Throwable t) {
+			throw new RuntimeException("Impossible to build inline calculated field clause", t);
 		}
-		
-		return conditionalOperator.apply("("+expr+")", rightOperandElements);
 	}
 	
 	String[] buildOperand(Operand operand, Query query, Map entityAliasesMaps) {

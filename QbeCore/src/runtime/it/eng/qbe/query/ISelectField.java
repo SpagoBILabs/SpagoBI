@@ -41,6 +41,13 @@ public interface ISelectField {
 	boolean isInLineCalculatedField();
 	boolean isCalculatedField();
 	
+	boolean isGroupByField() ;
+	void setGroupByField(boolean groupByField) ;
+	boolean isOrderByField() ;
+	boolean isAscendingOrder() ;
+	String getOrderType() ;
+	void setOrderType(String orderType) ;
+	
 	boolean isVisible() ;
 	void setVisible(boolean visible);
 
