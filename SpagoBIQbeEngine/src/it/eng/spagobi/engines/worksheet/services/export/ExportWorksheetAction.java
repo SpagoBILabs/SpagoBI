@@ -242,7 +242,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				File jpgImage = WorkSheetXLSExporter.createJPGImage(content);
 				int col = 1;
 				int colend = 20;
-				int charHeight = 30;
+				int charHeight = 20;
 				for(int i=0; i<charHeight; i++){
 					sheet.createRow(sheetRow+i);
 				}
