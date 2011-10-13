@@ -81,7 +81,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		if(key.startsWith("PAR_")){
 			Object value = sba.getValue();
 			String name = key.substring(4);
-			String valueEnc = URLEncoder.encode(value.toString(), "UTF-8");
+			//String valueEnc = URLEncoder.encode(value.toString(), "UTF-8");
+			String valueEnc = value.toString();
+				
 			parameters.put(name, valueEnc);			
 		}
 	}
