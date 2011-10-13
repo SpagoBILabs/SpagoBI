@@ -1,6 +1,9 @@
 package test;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
@@ -37,28 +40,38 @@ public class InsertCommand {
 		this.tableName = tableName;
 	}
 
-	public String createSQLQuery(){
+	public String createSQLQuery(List<String> selectedFields){
+		
+		if ( selectedFields == null ) {
+			selectedFields = new ArrayList<String>();
+		}
+		
 		StringBuffer buffer = new StringBuffer("INSERT INTO " + this.tableName + " VALUES (");
 		
 		int count = this.metadata.getFieldCount();
 		for (int i = 0 ; i < count ; i++) {
 			IFieldMetaData fieldMetadata = this.metadata.getFieldMeta(i);
-			Class c = fieldMetadata.getType();
-			IField field = this.record.getFieldAt(i);
-			String value = field.getValue().toString();
+			String fieldName = fieldMetadata.getName();
+			if ( selectedFields.isEmpty() || selectedFields.contains(fieldName) ) {
 			
-			if ( String.class.isAssignableFrom(c) ) {
-				value = StringUtils.escapeQuotes(value);
-				buffer.append("'" + value + "'");
-			} else {
-				buffer.append(value);
-			}
-			
-			if (i < count -1) {
+				Class c = fieldMetadata.getType();
+				IField field = this.record.getFieldAt(i);
+				String value = field.getValue().toString();
+				
+				if ( String.class.isAssignableFrom(c) ) {
+					value = StringUtils.escapeQuotes(value);
+					buffer.append("'" + value + "'");
+				} else {
+					buffer.append(value);
+				}
+				
 				buffer.append(",");
+			
 			}
 
 		}
+		
+		buffer.delete(buffer.length() - 1, buffer.length()); // remove last ","
 		
 		buffer.append(")");
 		String query = buffer.toString();
@@ -67,4 +80,12 @@ public class InsertCommand {
 		return query;
 	}
 
+//	public static void main (String[] args) {
+//		StringBuffer buffer = new StringBuffer("ciao davide");
+//		buffer.append(",");
+//		buffer.delete(buffer.length() - 1, buffer.length());
+//		String query = buffer.toString();
+//		System.out.println("[" + query + "]");
+//	}
+	
 }
