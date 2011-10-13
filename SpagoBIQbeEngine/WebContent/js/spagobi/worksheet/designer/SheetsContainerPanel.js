@@ -244,6 +244,7 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 			for(; i<sheets.length; i++){
 				var aSheetPanel = this.addTab();
 				aSheetPanel.setSheetState(sheets[i]);
+				this.updateTabLastName(sheets[i].name);
 			}
 		}else{
 			this.on('render',function(){
@@ -252,9 +253,16 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 				for(; i<sheets.length; i++){
 					var aSheetPanel = this.addTab();
 					aSheetPanel.setSheetState(sheets[i]);
+					this.updateTabLastName(sheets[i].name);
 				}
 			},this);
-		}
+		}		
+	}
+	
+	, updateTabLastName: function(sheetName){
+		//6= length("Sheet ")
+		var actualSheetNumber = parseInt(sheetName.substring(6));
+		this.index = actualSheetNumber;
 	}
 	
 	, setSheetsStateDefered: function(){
