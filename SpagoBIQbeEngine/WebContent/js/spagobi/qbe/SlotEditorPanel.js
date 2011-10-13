@@ -45,6 +45,10 @@ Sbi.qbe.SlotEditorPanel = function(config) {
 		, baseParams: params
 		});
 	
+	this.fieldId = c.fieldId;//an be null if click on entity node
+	this.firstPage = c.firstPage;
+	
+	this.initStore(c);
 	this.initToolbar(c);
 	this.initGrid(c);
 	
@@ -66,6 +70,9 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
     , rangeWindow : null
     , rangeToSave : null
     , store: null
+    , hasDefault: false
+    , fieldId: null
+    , firstPage : null
     
 	, initToolbar: function(c){
 	
@@ -73,7 +80,11 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			scope: this,
 			items: [{
                 xtype:'button',
-                text: 'Add',
+                text: 'Add Band',
+                iconCls: 'add'
+            },{
+                xtype:'button',
+                text: 'Add Default',
                 iconCls: 'add'
             },{
                 xtype:'button',
@@ -82,40 +93,67 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
             }]
 		});
 	}
+	, initStore: function(c){
+	    // create the data store
+	    if(c.editStore !== null && c.editStore !== undefined ){
+	    	this.store = c.editStore;
 
+	    }else{
+		    this.store = new Ext.data.JsonStore({
+		        //url: 'get-images.php',
+		        data: {slots:[{ name: "slot 1", valueset: [{type: "range", from: 0, includeFrom: true, to: 100, includeTo: false}, { type: "punctual", values: [100, 101, 201]}]}]},
+		        root: 'slots',
+		        fields: ['name', 'valueset']
+		    });
+	    }
+	    // looks for default range configuration
+	    var defaultRec = null;
+	    if(this.store.data != null && this.store.data !== undefined){
+			for (var i = 0; i < this.store.data.length; i++) { 
+				var record = this.store.getAt(i); 
+				var slot = record.data; 
+				if(slot.valueset !== null && slot.valueset !== undefined){
+					for (var j = 0; j < slot.valueset.length; j++) {
+						var val = slot.valueset[j];
+						if(val.type == 'default'){
+							defaultRec = slot;
+							this.store.remove(slot);
+							this.store.commitChanges();
+							break;
+						}
+					}
+				}
+			}
+	    }
+	    if(defaultRec != null){
+
+	    	this.store.insert(0, defaultRec);
+	    	this.hasDefault = true;
+	    }
+
+	  	this.store.commitChanges();
+	}
 	, initGrid: function(c) {
 
-	    // create the data store
-	    
-	   // {name: 'Default Slot Value', valueset: [{type: "default", value: 0}]},
-	    this.store = new Ext.data.JsonStore({
-	        //url: 'get-images.php',
-	        data: {slots:[{ name: "slot 1", valueset: [{type: "range", from: 0, includeFrom: true, to: 100, includeTo: false}, { type: "punctual", values: [100, 101, 201]}]}]},
-	        root: 'slots',
-	        fields: ['name', 'valueset']
-	    });
-	    // manually load local data
-	   	this.store.insert(0,new this.store.recordType({name: 'Default Slot Value', valueset: [{type: "default", value: ''}]}));
-	  	this.store.commitChanges();
-	  
         var template = new Ext.XTemplate(
         		'<tpl if="valueset !== null">'+
         		'<tpl for="valueset">'+
         		'<tpl if="type == \'range\'">'+
 	        		'<div class="icon-close" id="tpl-slot-val-{[xindex]}">' + 
 	        		'<tpl if="includeFrom == true">'+
-	        			'[' + 
+	        			'&gt;' + 
 	        		'</tpl>'+
 	        		'<tpl if="includeFrom == false">'+
-	        			']' + 
+	        			'&gt;=' + 
 	        		'</tpl>'+
-	        		'{from},{to}' + 
+	        		'{from} '+ 
 	        		'<tpl if="includeTo == true">'+
-	        			']' + 
+	        			' &lt;=' + 
 	        		'</tpl>'+
 	        		'<tpl if="includeTo == false">'+
-	        			'[' + 
+	        			' &lt;' + 
 	        		'</tpl>'+
+	        		'{to}'+
 	                '</div>'+
                 '</tpl>'+
                 '<tpl if="type == \'punctual\'">'+
@@ -123,7 +161,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	                '{values}' + 
       	            '</div>'+
                 '</tpl>'+
-               '<tpl if="type == \'default\'">'+
+/*               '<tpl if="type == \'default\'">'+
 	        		'<div id="tpl-default-val">' + 
 	        		'<input type="checkbox" id="check-tpl-default" value="" '+
 	        		'<tpl if="value != \'\'">'+
@@ -134,7 +172,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	        		'&nbsp; VALUE: {value}' +
 	        		'</tpl>'+
 	                '</div>'+
-	            '</tpl>'+
+	            '</tpl>'+*/
                 '</tpl></tpl>'
              );  
              
@@ -147,6 +185,11 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
             tpl : template
         });
 
+/*        if(this.fieldId == null){
+        	var fs = this.firstPage.getFormState();
+        	var node = st.target;
+        	this.fieldId = node.attributes.id;
+        }*/
 	    // button-columns
 	    var rangeButtonColumn = new Ext.grid.ButtonColumn(
 		    Ext.apply({
@@ -158,11 +201,16 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			          var record = this.scope.gridPanel.store.getAt(index);
 			          this.scope.openiInsertRangeWindow(record);
 			       }else{
-		        	  alert('Operation denied for default slot');
+		        	  if(this.scope.hasDefault == true){
+		        		  alert('Operation denied for default band');
+		        	  }else{
+				          var record = this.scope.gridPanel.store.getAt(index);
+				          this.scope.openiInsertRangeWindow(record);
+		        	  }
 		          }
 		       }
 		       , width: 20
-		       , header: 'Range'
+		       , header: 'Limits'
 		       , renderer : function(v, p, record){
 		           return '<center><img class="x-mybutton-'+this.id+'" width="29px" height="16px" src="' + this.imgSrc + '"/></center>';
 		       }
@@ -175,15 +223,21 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			       , imgSrc: '../img/actions/dots.gif'
 			       , clickHandler:function(e, t){
 			          var index = this.scope.gridPanel.getView().findRowIndex(t);
-			          if(index !== 0){
+			          if(index !== 0 ){
 				          var record = this.scope.gridPanel.store.getAt(index);
 				          this.scope.openiInsertPunctualWindow(record);
 			          }else{
-			        	  alert('Operation denied for default slot');
+			        	  if(this.scope.hasDefault == true){
+			        		  alert('Operation denied for default band');
+			        	  }else{
+					          var record = this.scope.gridPanel.store.getAt(index);
+					          this.scope.openiInsertPunctualWindow(record); 
+			        	  }
+			        	  
 			          }
 			       }
 			       , width: 20
-			       , header: 'Punctual'
+			       , header: 'Values List'
 				   , renderer : function(v, p, record){
 			           return '<center><img class="x-mybutton-'+this.id+'" width="21px" height="13px" src="' + this.imgSrc + '"/></center>';
 			       }
@@ -215,7 +269,18 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	        collapsible:false,
 	        layout: 'fit',
 	        viewConfig: {
-	            forceFit: true
+	            forceFit: true,
+	            getRowClass: function(record, index) {
+					var slot = record.data; 
+					if(slot.valueset !== null && slot.valueset !== undefined){
+						for (var j = 0; j < slot.valueset.length; j++) {
+							var val = slot.valueset[j];
+							if(val.type == 'default'){
+								return 'dafault-row';
+							}
+						}
+					}
+	            }
 	        },
 	        plugins :[rangeButtonColumn,  punctualButtonColumn],
 	        enableDragDrop:false,
@@ -267,19 +332,21 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	    });
 
 		var btnAdd = this.panelToolbar.items.items[0];
-		var btnDelete = this.panelToolbar.items.items[1];
+		var btnDefault = this.panelToolbar.items.items[1];
+		var btnDelete = this.panelToolbar.items.items[2];
 		btnAdd.on('click', this.createSlotRowToDisplay, this);
 		btnDelete.on('click', this.removeSlot, this);
+		btnDefault.on('click', this.createDefault, this);
 
 	}
 	, openiInsertRangeWindow: function(rec){
-		this.rangeWindow = new Sbi.qbe.RangeDefinitionWindow({slotPanel: this, record: rec});
+		this.rangeWindow = new Sbi.qbe.RangeDefinitionWindow({slotPanel: this, record: rec, id: this.fieldId});
 		
 		this.rangeWindow.mainPanel.doLayout();
 		this.rangeWindow.show();
 	}
 	, openiInsertPunctualWindow: function(rec){
-		this.punctualWindow = new Sbi.qbe.PunctualDefinitionWindow({slotPanel: this, record: rec});
+		this.punctualWindow = new Sbi.qbe.PunctualDefinitionWindow({slotPanel: this, record: rec, id: this.fieldId});
 		
 		this.punctualWindow.mainPanel.doLayout();
 		this.punctualWindow.show();
@@ -288,12 +355,31 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
         // access the Record constructor through the grid's store
 		var Slot = this.gridPanel.getStore().recordType;
         var p = new Slot({
-            name: 'New Slot',
+            name: 'New Band',
             valueset: null
         });
         this.gridPanel.stopEditing();
-        this.gridPanel.store.insert(1, p);
-        this.gridPanel.startEditing(1, 0);
+        this.gridPanel.store.add(p);
+        var idx = this.gridPanel.store.indexOf(p);
+        this.gridPanel.startEditing(idx, 0);
+	}
+	, createDefault: function(){
+        // access the Record constructor through the grid's store
+        if(this.hasDefault == false){
+			var Slot = this.gridPanel.getStore().recordType;
+	        var p = new Slot({
+	            name: 'Other',
+	            valueset: [{type: "default", value: ''}]
+	        });
+	        this.gridPanel.stopEditing();
+	        this.store.insert(0, p);
+	        this.gridPanel.startEditing(0, 0);
+	        this.hasDefault = true;
+	        this.gridPanel.getView().refresh();
+        }else{
+        	alert("Default already defined");
+        }
+
 	}
 	, removeSlot: function(){
         // access the Record constructor through the grid's store
@@ -301,12 +387,10 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
         if(slot !== null && slot !== undefined){
         	var idx = this.gridPanel.store.indexOf(slot);
         	if(idx == 0){
-        		alert('Default slot cannot be deleted.');
-        	}else{
-	            this.gridPanel.store.remove(slot);
-	            this.gridPanel.store.commitChanges();
+        		this.hasDefault = false;
         	}
-
+            this.gridPanel.store.remove(slot);
+            this.gridPanel.store.commitChanges();
         }
 
 	}
