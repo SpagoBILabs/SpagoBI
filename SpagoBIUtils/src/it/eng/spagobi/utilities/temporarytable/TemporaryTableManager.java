@@ -62,6 +62,7 @@ public class TemporaryTableManager {
 	public static final String DIALECT_HSQL = "HSQL";
 	public static final String DIALECT_ORACLE9i10g = "Oracle9Dialect";
 	public static final String DIALECT_SQLSERVER = "SQLServer";
+	public static final String DIALECT_DB2 = "DB2";
 	public static final String DIALECT_INGRES = "Ingres";
     
     /**
@@ -446,7 +447,9 @@ public class TemporaryTableManager {
 			} else if (dialect.contains(DIALECT_POSTGRES)) {
 				return "\"";
 			} else if (dialect.contains(DIALECT_SQLSERVER)) {
-				return ""; // TODO check it!!!!
+				return "\""; // TODO not tested yet!!!!
+			} else if (dialect.contains(DIALECT_DB2)) {
+				return "\""; // TODO not tested yet!!!!
 			} 
 		}
 		return "";
