@@ -124,8 +124,9 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	}
 	
 	, attributeDblClickHandler : function (thePanel, attribute, theSheet) {
+		var worksheetDefinition = this.getWorksheetDefinition();
 		var params = {
-			worksheetDefinition : this.getWorksheetDefinition()
+			worksheetDefinition : Ext.encode(worksheetDefinition)
 		};
 		if (theSheet) {
 			// double-click event on a sheet

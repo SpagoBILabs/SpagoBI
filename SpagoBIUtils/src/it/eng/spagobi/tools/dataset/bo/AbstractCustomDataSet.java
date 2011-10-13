@@ -25,16 +25,25 @@ import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.functionalities.temporarytable.DatasetTempTable;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 public abstract class AbstractCustomDataSet extends AbstractDataSet implements IDataSet {
@@ -63,7 +72,12 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 			, MetaData metadata
 			, Connection connection){
 		logger.debug("IN");
-		IDataSetTableDescriptor descriptor = DatasetTempTable.createTemporaryTable(connection, metadata, tableName);
+		IDataSetTableDescriptor descriptor = null;
+		try {
+			descriptor = DatasetTempTable.createTemporaryTable(connection, metadata, tableName);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Error creating temporary table", t);
+		}
 		logger.debug("Temporary table created successfully");
 		logger.debug("OUT");
 		return descriptor;
@@ -109,5 +123,73 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 		throw new RuntimeException("This method is not implemented. It should not be invoked");
 	}
 
+	public IDataStore decode(IDataStore datastore) {
+		Map<String, List<String>> codes = this.getCodes(datastore);
+		LogMF.debug(logger, "Codes : {0}", codes);
+		Map<String, List<String>> descriptions = this.getDomainDescriptions(codes);
+		LogMF.debug(logger, "Descriptions : {0}", descriptions);
+		this.substituteCodeWithDescriptions(datastore, codes, descriptions);
+		LogMF.debug(logger, "Datastore decoded : {0}", datastore);
+		return datastore;
+	}
 
+	private void substituteCodeWithDescriptions(IDataStore datastore,
+			Map<String, List<String>> codes,
+			Map<String, List<String>> descriptions) {
+		IMetaData metadata = datastore.getMetaData();
+		int count = metadata.getFieldCount();
+		for (int i = 0 ; i < count ; i++) {
+			IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
+			if (fieldMetadata.getFieldType().ordinal() == FieldType.MEASURE.ordinal()) {
+				continue;
+			}
+			String key = fieldMetadata.getName();
+			if (descriptions.containsKey(key)) {
+				// se esiste la descrizione, allora la sostituisco ai codici
+				substituteCodeWithDescriptionsOnColumn(i, datastore, codes.get(key), descriptions.get(key));
+			}
+		}
+	}
+
+	private void substituteCodeWithDescriptionsOnColumn(int columnIndex,
+			IDataStore datastore, List<String> codes, List<String> descriptions) {
+		Iterator it = datastore.iterator();
+		while (it.hasNext()) {
+			IRecord record = (IRecord) it.next();
+			IField field = record.getFieldAt(columnIndex);
+			Object value = field.getValue();
+			String code = value == null ? "null" : value.toString();
+			// recupero la posizione del codice dalla lista dei codici
+			int index = codes.indexOf(code);
+			// recupero la relativa descrizione prendendolo dalla stessa posizione nella lista delle descrizioni
+			String newValue = descriptions.get(index);
+			field.setValue(newValue);
+		}
+	}
+
+	private Map<String, List<String>> getCodes(IDataStore datastore) {
+		IMetaData metadata = datastore.getMetaData();
+		int count = metadata.getFieldCount();
+		
+		Map<String, List<String>> codes = new HashMap<String, List<String>>();
+		
+		for (int i = 0 ; i < count ; i++) {
+			IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
+			if (fieldMetadata.getFieldType().ordinal() == FieldType.MEASURE.ordinal()) {
+				continue;
+			}
+			String key = fieldMetadata.getName();
+			Set value = datastore.getFieldDistinctValues(i);
+			List<String> strings = new ArrayList<String>();
+			Iterator it = value.iterator();
+			while (it.hasNext()) {
+				Object aValue = it.next();
+				strings.add(aValue == null ? "null" : aValue.toString());
+			}
+			codes.put(key, strings);
+		}
+		
+		return codes;
+	}
+	
 }

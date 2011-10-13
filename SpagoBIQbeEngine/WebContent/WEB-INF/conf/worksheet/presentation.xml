@@ -12,7 +12,7 @@
 			 
 	<MAPPING business_type="ACTION" 
 			 business_name="WORKSHEET_WITH_DATASET_START_EDIT_ACTION" 
-			 publisher_name="WORKSHEET_START_EDIT_ACTION_PUBLISHER"/>
+			 publisher_name="WORKSHEET_WITH_DATASET_START_EDIT_PUBLISHER"/>
 			 
 </PRESENTATION>
 

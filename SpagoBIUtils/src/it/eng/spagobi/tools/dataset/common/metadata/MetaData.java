@@ -150,6 +150,10 @@ public class MetaData implements IMetaData {
 		return properties;
 	}
 	
+	public void setProperties(Map<String, Object> properties) {
+		this.properties = properties;
+	}
+	
 	public List getFieldsMeta() {
 		return fieldsMeta;
 	}

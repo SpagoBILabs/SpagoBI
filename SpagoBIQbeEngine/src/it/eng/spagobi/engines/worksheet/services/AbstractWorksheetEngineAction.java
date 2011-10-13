@@ -48,9 +48,11 @@ import it.eng.spagobi.utilities.engines.AbstractEngineAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -230,7 +232,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			logger.debug("Signature matches: no need to create a TemporaryTable");
 			return TemporaryTableManager.getLastDataSetTableDescriptor(tableName);
 		}
-		Connection connection = getConnection();
+		
 		//drop the temporary table if one exists
 		try {
 			logger.debug("Signature does not match: dropping TemporaryTable " + tableName + " if it exists...");
@@ -239,8 +241,50 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			logger.error("Impossible to drop the temporary table with name " + tableName, e);
 			throw new SpagoBIEngineRuntimeException("Impossible to drop the temporary table with name " + tableName, e);
 		}
-		logger.debug("Persisting dataset ...");
-		IDataSetTableDescriptor td = dataset.persist(tableName, connection);
+		
+		Connection connection = null;
+		IDataSetTableDescriptor td = null;
+		
+		try {
+			connection = getConnection();
+			logger.debug("Cheking autocommit ...");
+			try {
+				if (!connection.getAutoCommit()) {
+					logger.debug("Autocommit is false, setting to true ...");
+					connection.setAutoCommit(true);
+					logger.debug("Autocommit setted to true successfully");
+				}
+			} catch (SQLException e) {
+				logger.error("Cannot set autocommit to true", e);
+			}
+			logger.debug("Persisting dataset ...");
+			td = dataset.persist(tableName, connection);
+			
+			try {
+				if (!connection.getAutoCommit() && !connection.isClosed()) {
+					logger.debug("Committing changes ...");
+					connection.commit();
+					logger.debug("Changes committed successfully");
+				}
+			} catch (SQLException e) {
+				logger.error("Error while committing changes", e);
+				throw new SpagoBIRuntimeException("Error while committing changes", e);
+			}
+		} catch (Throwable t) {
+			logger.error("Error while persisting dataset", t);
+			throw new SpagoBIRuntimeException("Error while persisting dataset", t);
+		} finally {
+			if ( connection != null ) {
+				try {
+					if (!connection.isClosed()) {
+						connection.close();
+					}
+				} catch (SQLException e) {
+					logger.error("Error while closing connection", e);
+				}
+			}
+		}
+		
 		logger.debug("Dataset persisted successfully. Table descriptor : " + td);
 		TemporaryTableManager.setLastDataSetTableDescriptor(tableName, td);
 		return td;
@@ -406,6 +450,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			newFieldMetadata.setType(dataStoreFieldMetadata.getType());
 			newdataStoreMetadata.addFiedMeta(newFieldMetadata);
 		}
+		newdataStoreMetadata.setProperties(dataStoreMetadata.getProperties());
 		dataStore.setMetaData(newdataStoreMetadata);
 	}
 	
