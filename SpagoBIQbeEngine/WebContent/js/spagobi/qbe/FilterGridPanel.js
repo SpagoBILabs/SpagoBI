@@ -957,6 +957,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 		this.activeEditingContext.dirty = false;
 		//alert("b "+row);
 		filter = this.getFilterAt(row);
+		//alert(filter.leftOperandValue.expression);
 		if(dataIndex === 'leftOperandDescription' || dataIndex === 'rightOperandDescription') {
 			var editor;
 			if(this.parentQuery !== null) {
@@ -965,7 +966,11 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 				}else{
 					editor = this.createParentFieldEditor();
 				}
-			} else if(dataIndex === 'rightOperandDescription' && (filter.leftOperandType == 'Field Content') && (filter.leftOperandValue!=null && filter.leftOperandValue.expression==null)) {
+			} else if(dataIndex === 'rightOperandDescription' 
+				&& (filter.leftOperandType == Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD 
+						|| filter.leftOperandType ==  Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD) 
+				&& filter.leftOperandValue != null 
+				/*&& filter.leftOperandValue.expression==null */) {
 				editor = this.createLookupFieldEditor();
 			}  else {
 				editor = this.createTextEditor();

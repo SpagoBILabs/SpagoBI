@@ -802,27 +802,41 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			recordBaseConfig = recordBaseConfig || {};
 			nodeType = node.attributes.type || node.attributes.attributes.type;
 			
-    		if(nodeType == 'field') {
+    		if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD 
+    		|| nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD ) {
+    			
+    			var operandType;
+    			if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
+    			else operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+    			
 				filter = {
 					leftOperandValue: node.id
 					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
-					, leftOperandType: 'Field Content'
+					, leftOperandType: operandType
 					, leftOperandLongDescription: node.attributes.attributes.longDescription
 				};
 		  		this.filterGridPanel.addFilter(filter);
 			
-			} else if(nodeType == 'entity'){
+			} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_ENTITY) {
 				
 				for(var i = 0; i < node.attributes.children.length; i++) {
-					if(node.attributes.children[i].attributes.type != 'field') continue;
-					filter = {
-						leftOperandValue: node.attributes.children[i].id
-						, leftOperandDescription: node.attributes.children[i].attributes.entity + ' : ' + node.attributes.children[i].attributes.field 
-						, leftOperandType: 'Field Content'
-						, leftOperandLongDescription: node.attributes.children[i].attributes.longDescription
-					};
-					
-					this.filterGridPanel.addFilter(filter);
+					nodeType = node.attributes.children[i].attributes.type;
+					if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD 
+				      || nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD ) {
+				    	
+						var operandType;
+				    	if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
+				    	else operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+				    							
+						filter = {
+							leftOperandValue: node.attributes.children[i].id
+							, leftOperandDescription: node.attributes.children[i].attributes.entity + ' : ' + node.attributes.children[i].attributes.field 
+							, leftOperandType: operandType
+							, leftOperandLongDescription: node.attributes.children[i].attributes.longDescription
+						};
+						
+						this.filterGridPanel.addFilter(filter);
+					}
 				}
 				
 			} else {
@@ -844,27 +858,41 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			recordBaseConfig = recordBaseConfig || {};
 			nodeType = node.attributes.type || node.attributes.attributes.type;
 			
-    		if(nodeType == 'field') {
+			if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD 
+		      || nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD ) {
+		    			
+				var operandType;
+		    	if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
+		    	else operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+		    			
 				filter = {
 					leftOperandValue: node.id
 					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
-					, leftOperandType: 'Field Content'
+					, leftOperandType: operandType
 					, leftOperandLongDescription: node.attributes.attributes.longDescription
 				};
 		  		this.havingGridPanel.addFilter(filter);
 			
-			} else if(nodeType == 'entity'){
+			} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_ENTITY){
 				
 				for(var i = 0; i < node.attributes.children.length; i++) {
-					if(node.attributes.children[i].attributes.type != 'field') continue;
-					filter = {
-						leftOperandValue: node.attributes.children[i].id
-						, leftOperandDescription: node.attributes.children[i].attributes.entity + ' : ' + node.attributes.children[i].attributes.field 
-						, leftOperandType: 'Field Content'
-						, leftOperandLongDescription: node.attributes.children[i].attributes.longDescription
-					};
-					
-					this.havingGridPanel.addFilter(filter);
+					nodeType = node.attributes.children[i].attributes.type;
+					if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD 
+					  || nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD ) {
+						   			
+						var operandType;
+						if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
+						else operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+						    					
+						filter = {
+							leftOperandValue: node.attributes.children[i].id
+							, leftOperandDescription: node.attributes.children[i].attributes.entity + ' : ' + node.attributes.children[i].attributes.field 
+							, leftOperandType: operandType
+							, leftOperandLongDescription: node.attributes.children[i].attributes.longDescription
+						};
+						
+						this.havingGridPanel.addFilter(filter);
+					}
 				}
 				
 			} else {

@@ -361,19 +361,33 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 				return;
 			}
 		
+			var operandType;
+			if(rows[0].data.type == Sbi.settings.qbe.constants.FIELD_TYPE_SIMPLE) {
+				operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD;
+			} else if(rows[0].data.type == Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED) {
+				operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD;
+			} else {
+				Ext.Msg.show({
+					   title:'Drop target not allowed',
+					   msg: 'Select fields of type [' + rows[0].data.type + '] cannot be dropped into filter grid',
+					   buttons: Ext.Msg.OK,
+					   icon: Ext.MessageBox.WARNING
+				});
+			}
+			
 			if(dropColDataIndex === 'leftOperandDescription') {
 				filter = {
-						leftOperandValue: rows[0].data.id
-						, leftOperandDescription: rows[0].data.entity + ' : ' + rows[0].data.field 
-						, leftOperandType: 'Field Content'
-						, leftOperandLongDescription: rows[0].data.longDescription
+					leftOperandValue: rows[0].data.id
+					, leftOperandDescription: rows[0].data.entity + ' : ' + rows[0].data.field 
+					, leftOperandType: operandType
+					, leftOperandLongDescription: rows[0].data.longDescription
 				};
 			} else {
 				filter = {
-						rightOperandValue: rows[0].data.id
-						, rightOperandDescription: rows[0].data.entity + ' : ' + rows[0].data.field 
-						, rightOperandType: 'Field Content'
-						, rightOperandLongDescription: rows[0].data.longDescription
+					rightOperandValue: rows[0].data.id
+					, rightOperandDescription: rows[0].data.entity + ' : ' + rows[0].data.field 
+					, rightOperandType: operandType
+					, rightOperandLongDescription: rows[0].data.longDescription
 				};
 			}
 			
@@ -392,12 +406,25 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 			}
 	   
 			for (i = 0; i < rows.length; i++) {
+				var operandType;
+				if(rows[i].data.type == Sbi.settings.qbe.constants.FIELD_TYPE_SIMPLE) {
+					operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD;
+				} else if(rows[i].data.type == Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED) {
+					operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD;
+				} else {
+					Ext.Msg.show({
+						   title:'Drop target not allowed',
+						   msg: 'Select fields of type [' + rows[i].data.type + '] cannot be dropped into filter grid',
+						   buttons: Ext.Msg.OK,
+						   icon: Ext.MessageBox.WARNING
+					});
+				}
 	  			if(!this.copy) {
 	  				filter = {
-							leftOperandValue: rows[i].data.id
-							, leftOperandDescription: rows[i].data.entity + ' : ' + rows[i].data.field 
-							, leftOperandType: 'Field Content'
-							, leftOperandLongDescription: rows[i].data.longDescription
+	  					leftOperandValue: rows[i].data.id
+						, leftOperandDescription: rows[i].data.entity + ' : ' + rows[i].data.field 
+						, leftOperandType: operandType
+						, leftOperandLongDescription: rows[i].data.longDescription
 					};
 	  				this.targetPanel.insertFilter( filter, rowIndex );
 	  			}
