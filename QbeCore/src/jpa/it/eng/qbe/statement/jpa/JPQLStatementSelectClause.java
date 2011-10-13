@@ -91,14 +91,16 @@ public class JPQLStatementSelectClause extends JPQLStatementClause {
 				
 			for(InLineCalculatedSelectField selectInLineField :  selectInLineCalculatedFields){
 					
-					String expr = selectInLineField.getExpression();
-					expr = parseInLinecalculatedField(expr, query, entityAliasesMaps);
-					expr = addSlots(expr, selectInLineField);
-					expr = selectInLineField.getFunction().apply(expr);
+					String expression = selectInLineField.getExpression();
+					String slots = selectInLineField.getSlots();
+					
+					expression = parseInLinecalculatedField(expression, slots, query, entityAliasesMaps);
+					//expr = addSlots(expr, selectInLineField);
+					expression = selectInLineField.getFunction().apply(expression);
 					
 					for(int y = 0; y < statementFields.length; y++){
 						if(statementFields[y] == null){
-							statementFields[y]= " " + expr;
+							statementFields[y]= " " + expression;
 							index = y;
 							break;
 						}

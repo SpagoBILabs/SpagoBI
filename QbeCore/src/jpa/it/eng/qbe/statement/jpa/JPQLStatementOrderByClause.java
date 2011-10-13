@@ -6,6 +6,7 @@ package it.eng.qbe.statement.jpa;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.AbstractSelectField;
+import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
@@ -33,62 +34,66 @@ public class JPQLStatementOrderByClause  extends JPQLStatementClause {
 	
 	protected String buildOrderByClause(Query query, Map entityAliasesMaps) {
 		StringBuffer buffer;
-		Iterator it;
-		SimpleSelectField selectField;
 		
-		it = getOrderByFields(query).iterator();		
-		if(!it.hasNext()) {
-			return "";
-		}
 		
-		buffer = new StringBuffer();	
-		buffer.append("ORDER BY");
+		buffer = new StringBuffer();
+		
+		List<ISelectField> orderByFields = query.getOrderByFields();
+		if(orderByFields.size() == 0) return buffer.toString();
+		
+		buffer.append(JPQLStatementConstants.STMT_KEYWORD_ORDER_BY);
 		
 		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
-					
-		while( it.hasNext() ) {
-			selectField = (SimpleSelectField)it.next();
+		
+		String fieldSeparator = "";
+		
+		for( ISelectField orderByField : orderByFields ) {
+			Assert.assertTrue(orderByField.isOrderByField(), "Field [" + orderByField.getAlias() +"] is not an orderBy filed");
 			
-			Assert.assertTrue(selectField.isOrderByField(), "Field [" + selectField.getUniqueName() +"] is not an orderBy filed");
+			buffer.append(fieldSeparator);
 			
-			IModelField datamartField = parentStatement.getDataSource().getModelStructure().getField(selectField.getUniqueName());
-			Couple queryNameAndRoot = datamartField.getQueryName();
-			IModelEntity root;
-			String queryName = (String) queryNameAndRoot.getFirst();
-			logger.debug("select field query name [" + queryName + "]");
+			if(orderByField.isSimpleField()) {				
+				SimpleSelectField simpleField = (SimpleSelectField)orderByField;
+				
+				IModelField modelField = parentStatement.getDataSource().getModelStructure().getField(simpleField.getUniqueName());
+				Couple queryNameAndRoot = modelField.getQueryName();
+				
+				String queryName = (String) queryNameAndRoot.getFirst();
+				logger.debug("select field query name [" + queryName + "]");
+				
+				IModelEntity root;
+				if(queryNameAndRoot.getSecond()!=null){
+					root = (IModelEntity)queryNameAndRoot.getSecond(); 	
+				} else {
+					root = modelField.getParent().getRoot(); 	
+				}
+				
+				if(!entityAliases.containsKey(root.getUniqueName())) {
+					entityAliases.put(root.getUniqueName(), parentStatement.getNextAlias(entityAliasesMaps));
+				}
+				
+				String entityAlias = (String)entityAliases.get( root.getUniqueName() );
+				String fieldName = entityAlias + "." + queryName;
+				
+				buffer.append(" " + simpleField.getFunction().apply(fieldName));
 			
-			if(queryNameAndRoot.getSecond()!=null){
-				root = (IModelEntity)queryNameAndRoot.getSecond(); 	
-			}else{
-				root = datamartField.getParent().getRoot(); 	
+			} else if(orderByField.isInLineCalculatedField()) {
+				InLineCalculatedSelectField inlineCalculatedField = (InLineCalculatedSelectField)orderByField;
+				String fieldName = parseInLinecalculatedField(inlineCalculatedField.getExpression(), inlineCalculatedField.getSlots(), query, entityAliasesMaps);
+				
+				buffer.append(" " + inlineCalculatedField.getFunction().apply(fieldName));
+			} else {
+				// TODO throw an exception here
 			}
 			
-			if(!entityAliases.containsKey(root.getUniqueName())) {
-				entityAliases.put(root.getUniqueName(), parentStatement.getNextAlias(entityAliasesMaps));
-			}
-			String entityAlias = (String)entityAliases.get( root.getUniqueName() );
-			String fieldName = entityAlias + "." + queryName;
-			buffer.append(" " + selectField.getFunction().apply(fieldName));
-			buffer.append(" " + (selectField.isAscendingOrder()?"ASC": "DESC") );
-						
-			if( it.hasNext() ) {
-				buffer.append(",");
-			}
+			buffer.append(" " + (orderByField.isAscendingOrder()? JPQLStatementConstants.STMT_KEYWORD_ASCENDING: JPQLStatementConstants.STMT_KEYWORD_DESCENDING) );
+			
+			fieldSeparator = ", ";			
 		}
 		
 		return buffer.toString().trim();
 	}
 	
-	private List getOrderByFields(Query query) {
-		List orderByFields = new ArrayList();
-		Iterator it = query.getSimpleSelectFields(false).iterator();
-		while( it.hasNext() ) {
-			SimpleSelectField selectField = (SimpleSelectField)it.next();
-			if(selectField.isOrderByField()) {
-				orderByFields.add(selectField);
-			}
-		}
-		return orderByFields;
-	}
+	
 	
 }

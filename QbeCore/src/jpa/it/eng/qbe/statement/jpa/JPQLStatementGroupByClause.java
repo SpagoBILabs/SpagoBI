@@ -6,6 +6,7 @@ package it.eng.qbe.statement.jpa;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.AbstractSelectField;
+import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
@@ -32,28 +33,32 @@ public class JPQLStatementGroupByClause  extends JPQLStatementClause {
 	}
 	
 	protected String buildGroupByClause(Query query, Map entityAliasesMaps) {
-		StringBuffer buffer = new StringBuffer();
-		List groupByFields = query.getGroupByFields();
-		String fieldName; 
-		if(groupByFields == null ||groupByFields.size() == 0) {
-			return "";
-		}
+		StringBuffer buffer;	
+		String fieldName;
 		
-		buffer.append("GROUP BY");
+		buffer = new StringBuffer();
+		
+		List<ISelectField> groupByFields = query.getGroupByFields();
+		if(groupByFields.size() == 0) return buffer.toString();
+		
+		buffer.append(JPQLStatementConstants.STMT_KEYWORD_GROUP_BY);
 		
 		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
 		
-		Iterator<AbstractSelectField> it = groupByFields.iterator();
-		while( it.hasNext() ) {
-			AbstractSelectField abstractSelectedField = it.next();
+		String fieldSeparator = "";
+		
+		for( ISelectField groupByField : groupByFields ) {
+			Assert.assertTrue(groupByField.isGroupByField(), "Field [" + groupByField.getAlias() +"] is not an groupBy filed");
 			
-			if(abstractSelectedField.isInLineCalculatedField()){
-				InLineCalculatedSelectField icf = (InLineCalculatedSelectField)abstractSelectedField;
-				fieldName = parseInLinecalculatedField(icf.getExpression(), query, entityAliasesMaps);
-			}else{
+			buffer.append(fieldSeparator);
 			
-				SimpleSelectField groupByField = (SimpleSelectField)abstractSelectedField;
-				IModelField datamartField = parentStatement.getDataSource().getModelStructure().getField(groupByField.getUniqueName());
+			fieldName = null;			
+			if(groupByField.isInLineCalculatedField()){
+				InLineCalculatedSelectField inlineCalculatedField = (InLineCalculatedSelectField)groupByField;
+				fieldName = parseInLinecalculatedField(inlineCalculatedField.getExpression(), inlineCalculatedField.getSlots(), query, entityAliasesMaps);
+			} else if(groupByField.isSimpleField()){			
+				SimpleSelectField simpleField = (SimpleSelectField)groupByField;
+				IModelField datamartField = parentStatement.getDataSource().getModelStructure().getField(simpleField.getUniqueName());
 				
 						
 				Couple queryNameAndRoot = datamartField.getQueryName();
@@ -72,12 +77,15 @@ public class JPQLStatementGroupByClause  extends JPQLStatementClause {
 					entityAliases.put(root.getUniqueName(), parentStatement.getNextAlias(entityAliasesMaps));
 				}
 				String entityAlias = (String)entityAliases.get( root.getUniqueName() );
-				fieldName = entityAlias + "." +queryName;
+				fieldName = entityAlias + "." + queryName;
+			} else {
+				// TODO throw an exception here
 			}
+			
 			buffer.append(" " + fieldName);
-			if( it.hasNext() ) {
-				buffer.append(",");
-			}
+			
+			fieldSeparator = ", ";
+			
 		}
 		
 		return buffer.toString().trim();

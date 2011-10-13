@@ -44,15 +44,6 @@ public class CalculatedSelectField extends AbstractSelectField {
 		this.expression = expression;
 	}
 
-/*	
-	public Object getInitialValue() {
-		return initialValue;
-	}
-
-	public void setInitialValue(Object initialValue) {
-		this.initialValue = initialValue;
-	}
-*/	
 	public String getType() {
 		return type;
 	}

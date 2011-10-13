@@ -7,17 +7,23 @@ import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesPunctualDescriptor;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesRangeDescriptor;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.utilities.objects.Couple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -29,13 +35,13 @@ public class JPQLStatementClause {
 	
 	public static transient Logger logger = Logger.getLogger(JPQLStatementSelectClause.class);
 	
-	public String parseInLinecalculatedField(String expression, Query query, Map entityAliasesMaps){
+	public String parseInLinecalculatedField(String expression, String slots, Query query, Map entityAliasesMaps){
 		String newExpression;
 		
 		newExpression = expression;
 		newExpression = replaceFields(newExpression, query, entityAliasesMaps);
 		newExpression = replaceInLineFunctions(newExpression, query, entityAliasesMaps);
-		newExpression = replaceSlotDefinitions(newExpression, query, entityAliasesMaps);
+		newExpression = replaceSlotDefinitions(newExpression, slots, query, entityAliasesMaps);
 		
 		return newExpression;
 	}
@@ -124,12 +130,89 @@ public class JPQLStatementClause {
 		return newExpression;
 	}
 	
-	private String replaceSlotDefinitions(String expression, Query query, Map entityAliasesMaps) {
-		String newExpression;
+	private String replaceSlotDefinitions(String expr, String s, Query query, Map entityAliasesMaps) {
+		String newExpr;
 		
-		newExpression = expression;
+		newExpr = null;
 		
-		return newExpression;
+		try {
+			if(s ==  null || s.trim().length() == 0) return expr;
+			JSONArray slotsJSON = new JSONArray(s);
+			List<Slot> slots = new ArrayList<Slot>();
+			for(int i = 0; i < slotsJSON.length(); i++) {
+				Slot slot = (Slot)SerializationManager.deserialize(slotsJSON.get(i), "application/json", Slot.class);
+				slots.add(slot);
+			}
+			
+			
+			
+			if(slots.isEmpty()) return expr;
+			
+			Slot defaultSlot = null;
+			
+			newExpr = "CASE";
+			for(Slot slot : slots) {
+				List<Slot.IMappedValuesDescriptor> descriptors =  slot.getMappedValuesDescriptors();
+				if(descriptors == null || descriptors.isEmpty()) {
+					defaultSlot = slot;
+					continue;
+				}
+				for(Slot.IMappedValuesDescriptor descriptor : descriptors) {
+					if(descriptor instanceof MappedValuesPunctualDescriptor) {
+					
+						MappedValuesPunctualDescriptor punctualDescriptor = (MappedValuesPunctualDescriptor)descriptor;
+						newExpr += " WHEN (" + expr + ") IN (";
+						String valueSeparator = "";
+						Set<String> values = punctualDescriptor.getValues();
+						for(String value : values) {
+							newExpr += valueSeparator + "'" + value + "'";
+							valueSeparator = ", ";
+						}
+						newExpr += ") THEN '" + slot.getName() + "'";
+						
+					} else if(descriptor instanceof MappedValuesRangeDescriptor) {
+						MappedValuesRangeDescriptor punctualDescriptor = (MappedValuesRangeDescriptor)descriptor;
+						newExpr += " WHEN";
+						String minCondition = null;
+						String maxCondition = null;
+						if(punctualDescriptor.getMinValue() != null) {
+							minCondition = " (" + expr + ")";
+							minCondition += (punctualDescriptor.isIncludeMinValue())? " >= " : ">";
+							minCondition += punctualDescriptor.getMinValue();
+						}
+						if(punctualDescriptor.getMaxValue() != null) {
+							maxCondition = " (" + expr + ")";
+							maxCondition += (punctualDescriptor.isIncludeMaxValue())? " <= " : "<";
+							maxCondition += punctualDescriptor.getMaxValue();
+						}
+						String completeCondition = "";
+						if(minCondition != null) {
+							completeCondition += "(" + minCondition + ")";
+						}
+						if(maxCondition != null) {
+							completeCondition += (minCondition != null)? " AND " : "";
+							completeCondition += "(" + maxCondition + ")";
+						}
+						newExpr += " " + completeCondition;
+						newExpr += " THEN '" + slot.getName() + "'";
+					} else {
+						// ignore slot
+					}
+				
+				}
+			}
+			if(defaultSlot != null) {
+				newExpr += " ELSE '" + defaultSlot.getName() + "'";
+			} else {
+				newExpr += " ELSE (" + expr + ")";
+			}
+			newExpr += " END ";
+		} catch (Throwable t) {
+			logger.error("Impossible to add slots", t);
+			return expr;
+		}
+		
+		return newExpr;
 	}
 	
 }

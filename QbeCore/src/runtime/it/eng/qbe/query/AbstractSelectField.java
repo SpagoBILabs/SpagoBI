@@ -29,6 +29,10 @@ public abstract class AbstractSelectField implements ISelectField {
 	private String type;
 	private boolean visible;
 	private boolean included;
+	
+	private boolean groupByField;
+	private String orderType;
+	
 	protected String nature;
 	
 	public AbstractSelectField(String alias, String type, boolean included, boolean visible) {
@@ -36,6 +40,8 @@ public abstract class AbstractSelectField implements ISelectField {
 		setType(type);
 		setIncluded( included );
 		setVisible( visible );
+		groupByField = false;
+		orderType = null;
 	}
 	
 	public String getAlias() {
@@ -66,6 +72,33 @@ public abstract class AbstractSelectField implements ISelectField {
 		return this.CALCULATED_FIELD.equalsIgnoreCase(type);
 	}
 	
+	
+	
+	public boolean isGroupByField() {
+		return groupByField;
+	}
+
+	public void setGroupByField(boolean groupByField) {
+		this.groupByField = groupByField;
+	}
+
+	public boolean isOrderByField() {
+		return "ASC".equalsIgnoreCase( getOrderType() )
+			|| "DESC".equalsIgnoreCase( getOrderType() );
+	}
+
+	public boolean isAscendingOrder() {
+		return "ASC".equalsIgnoreCase( getOrderType() );
+	}
+	
+	public String getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(String orderType) {
+		this.orderType = orderType;
+	}
+
 	public boolean isVisible() {
 		return visible;
 	}

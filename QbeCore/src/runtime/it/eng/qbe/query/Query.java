@@ -236,23 +236,27 @@ public class Query {
 	}
 	
 
-	public List getSimpleSelectFields(boolean onlyIncluded) {
-		List dataMartSelectFields;
-		Iterator it;
-		ISelectField field;
-		
-		dataMartSelectFields = new ArrayList();
-		it = selectFields.iterator();
-		while(it.hasNext()) {
-			field = (ISelectField)it.next();
-			if(field.isSimpleField()) {
-				if( onlyIncluded == false || (onlyIncluded == true && field.isIncluded()) ) {
-					dataMartSelectFields.add(field);
+	/**
+	 * Returns a list of of simple select fields (no inlineCalculatedSelectField & calculatedSelectField)
+	 * 
+	 * @param onlyIncluded if true the returned list will include only the simple select fields actually included in the select statement. All the simple
+	 * select fields will be returned otherwise.
+	 * 
+	 * @return a list of SimpleSelectField. It never returns null. If there are not fields in select clause it will return an empty list.
+	 */
+	public List<SimpleSelectField> getSimpleSelectFields(boolean onlyIncluded) {
+		List<SimpleSelectField> simpleSelectFields;
+				
+		simpleSelectFields = new ArrayList<SimpleSelectField>();
+		for(ISelectField selectField :  selectFields) {			
+			if(selectField.isSimpleField()) {
+				if( onlyIncluded == false || (onlyIncluded == true && selectField.isIncluded()) ) {
+					simpleSelectFields.add((SimpleSelectField)selectField);
 				}				
 			}
 		}
 		
-		return dataMartSelectFields;
+		return simpleSelectFields;
 	}
 	
 	public List getCalculatedSelectFields(boolean onlyIncluded) {
@@ -274,18 +278,26 @@ public class Query {
 		return calculatedSelectFields;
 	}
 	
+	/**
+	 * Returns the list of inline calculated fields included in select clause (no simpleSelectField & calculatedSelectField)
+	 * 
+	 * @param onlyIncluded if true the returned list will include only the inline calculated fields actually included in the select statement. All the
+	 * inline calculated fields will be returned otherwise.
+	 * 
+	 * @return a list of InLineCalculatedSelectField. It never returns null. If there are not inline calculated fields in select 
+	 * clause it will return an empty list.
+	 */
 	public List getInLineCalculatedSelectFields(boolean onlyIncluded) {
-		List inLineCalculatedSelectFields;
-		Iterator it;
-		ISelectField field;
+		List<InLineCalculatedSelectField> inLineCalculatedSelectFields;
+		List<ISelectField>  selectFields;
 		
-		inLineCalculatedSelectFields = new ArrayList();
-		it = getSelectFields(false).iterator();
-		while(it.hasNext()) {
-			field = (ISelectField)it.next();
+		selectFields = getSelectFields(false);
+		inLineCalculatedSelectFields = new ArrayList<InLineCalculatedSelectField>();
+		
+		for(ISelectField field : selectFields) {
 			if(field.isInLineCalculatedField()) {
 				if( onlyIncluded == false || (onlyIncluded == true && field.isIncluded()) ) {
-					inLineCalculatedSelectFields.add(field);
+					inLineCalculatedSelectFields.add( (InLineCalculatedSelectField)field);
 				}
 			}
 		}
@@ -309,15 +321,30 @@ public class Query {
 		this.distinctClauseEnabled = distinctClauseEnabled;
 	}
 	
+	/**
+	 * Get all the fields in order by clause (i.e. SimpleSelectField + InLineCalculatedSelectedField). Note: CalculatedField cannot
+	 * be used in order by clause. If some CalculateField has been erroneously added to order by clause it will be ignored
+	 * by this method.
+	 * 
+	 * @return The list of ISelectField  included in order by clause (except CalculatedSelectField). It never returns null. If there are not
+	 * fields in order by clause it will return an empty list.
+	 */
 	public List<ISelectField> getOrderByFields() {
-		List<ISelectField> orderByFields = new ArrayList();
-		Iterator it = this.getSimpleSelectFields(false).iterator();
-		while( it.hasNext() ) {
-			SimpleSelectField selectField = (SimpleSelectField)it.next();
+		List<ISelectField> orderByFields = new ArrayList<ISelectField>();
+		List<ISelectField> selectFields = new ArrayList<ISelectField>();
+		
+		List<SimpleSelectField> simpleSelectField = getSimpleSelectFields(false);
+		selectFields.addAll(simpleSelectField);
+		
+		List<SimpleSelectField> inlineCalculatedSelectField = this.getInLineCalculatedSelectFields(false);
+		selectFields.addAll(inlineCalculatedSelectField);
+		
+		for( ISelectField selectField : selectFields ) {
 			if(selectField.isOrderByField()) {
 				orderByFields.add(selectField);
 			}
 		}
+		
 		return orderByFields;
 	}
 	
