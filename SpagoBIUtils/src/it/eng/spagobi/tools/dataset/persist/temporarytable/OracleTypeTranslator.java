@@ -18,11 +18,10 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.tools.dataset.functionalities.temporarytable;
+package it.eng.spagobi.tools.dataset.persist.temporarytable;
 
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,25 +31,29 @@ import org.apache.log4j.Logger;
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-public class DB2TypeTranslator implements INativeDBTypeable{
+public class OracleTypeTranslator implements INativeDBTypeable{
 
-	private static Logger logger = Logger.getLogger("DB2TypeTranslator");
-	private static final int MAX_CHAR_SIZE = 254;
-	private static Map<String, String> db2TypeMapping;
+	private static Logger logger = Logger.getLogger("OracleTypeTranslator");
+	
+	static final Integer MAX_CHAR_SIZE = 2000;
+	
+	private static Map<String, String> oracleTypeMapping;
 	static{
-		db2TypeMapping = new HashMap<String, String>();
-		db2TypeMapping.put("java.lang.Integer", "INTEGER");//no param
-		db2TypeMapping.put("java.lang.String", "CHAR");// (n)n<32672  CHAR(n) n<=254
-		//db2TypeMapping.put("java.lang.String4001", "CLOB");
-		db2TypeMapping.put("java.lang.Boolean", "SMALLINT");//no param
-		db2TypeMapping.put("java.lang.Float", "REAL");//no param
-		db2TypeMapping.put("java.lang.Double", "DOUBLE");//no param
-		db2TypeMapping.put("java.util.Date", "DATE");//no param
-		db2TypeMapping.put("java.sql.Date", "DATE");//no param
-		db2TypeMapping.put("java.sql.Timestamp", "TIMESTAMP");//no param
-		db2TypeMapping.put("java.math.BigDecimal", "DECIMAL");//DECIMAL(p,s)
+		oracleTypeMapping = new HashMap<String, String>();
+		oracleTypeMapping.put("java.lang.Integer", "NUMBER");
+		oracleTypeMapping.put("java.lang.String", "CHAR");
+		oracleTypeMapping.put("java.lang.String4001", "CLOB");
+		oracleTypeMapping.put("java.lang.Boolean", "VARCHAR2(1)");
+		oracleTypeMapping.put("java.lang.Float", "NUMBER");
+		oracleTypeMapping.put("java.lang.Double", "NUMBER");
+		oracleTypeMapping.put("java.util.Date", "DATE");
+		oracleTypeMapping.put("java.sql.Date", "DATE");
+		oracleTypeMapping.put("java.sql.Timestamp", "TIMESTAMP");
+		oracleTypeMapping.put("oracle.sql.TIMESTAMP", "TIMESTAMP");
+		oracleTypeMapping.put("java.math.BigDecimal", "NUMBER");
 	}
 	
+
 	@SuppressWarnings("rawtypes")
 	public String getNativeTypeString(String typeJavaName, Map properties) {
 		logger.debug("Translating java type "+typeJavaName+" with properties "+properties);
@@ -71,7 +74,7 @@ public class DB2TypeTranslator implements INativeDBTypeable{
 			scale = Integer.valueOf(properties.get(SCALE).toString());
 
 
-		typeSQL = db2TypeMapping.get(typeJavaName);
+		typeSQL = oracleTypeMapping.get(typeJavaName);
 
 
 		// write Type
@@ -79,19 +82,21 @@ public class DB2TypeTranslator implements INativeDBTypeable{
 
 		if(typeJavaName.equalsIgnoreCase(String.class.getName())){
 			if(size>MAX_CHAR_SIZE){
-				logger.error("For DB2 the max size of a char column must be < "+MAX_CHAR_SIZE+". The size you've specified is "+size);
-				throw new SpagoBIRuntimeException("For DB2 the max size of a char column must be < 254. The size you've specified is "+size);
+				logger.error("For Oracle the max size of a char column must be < "+MAX_CHAR_SIZE+". The size you've specified is "+size);
+				throw new SpagoBIRuntimeException("For Oracle the max size of a char column must be < "+MAX_CHAR_SIZE+". The size you've specified is "+size);
 			}
 			if( size != null && size!= 0){
 				queryType +="("+size+")";
 			}
-		}else if(typeJavaName.equalsIgnoreCase(BigDecimal.class.getName()) && (precision != null && scale != null)){
-			queryType+="("+precision+","+scale+")";
+		}else if(typeJavaName.equalsIgnoreCase(Integer.class.getName())     ||
+				typeJavaName.equalsIgnoreCase(Double.class.getName()) ||
+				typeJavaName.equalsIgnoreCase(Float.class.getName())){
+			if(precision != null && scale != null){
+				queryType+="("+precision+","+scale+")";
+			}
 		}
-
+		logger.debug("The translated Oracle type is "+queryType);	
 		queryType+=" ";
-		
-		logger.debug("The translated DB2 type is "+queryType);
 		return queryType;
 	}
 
