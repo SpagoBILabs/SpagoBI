@@ -41,6 +41,14 @@ Sbi.qbe.PunctualDefinitionWindow = function(config) {
 
 	Ext.apply(this, c);
 	
+	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
+	this.services = new Array();
+	
+	this.services['getValuesForQbeFilterLookupService'] = Sbi.config.serviceRegistry.getServiceUrl({
+		  serviceName: 'GET_VALUES_FOR_QBE_FILTER_LOOKUP_ACTION'
+		, baseParams: params
+	});
+	
 	this.initMainPanel(c);	
 	
 	if(c.hasBuddy === 'true') {
@@ -55,12 +63,13 @@ Sbi.qbe.PunctualDefinitionWindow = function(config) {
 
 Ext.extend(Sbi.qbe.PunctualDefinitionWindow, Ext.Window, {
 	
-	hasBuddy: null
+	  hasBuddy: null
     , buddy: null
     , slotPanel : null
    
     , mainPanel: null
     , valuesToSave: []
+	, services: null
 
     
 	, initMainPanel: function(c) {
@@ -74,15 +83,19 @@ Ext.extend(Sbi.qbe.PunctualDefinitionWindow, Ext.Window, {
 	        scope: this,
 	        handler : this.save.createDelegate(this, [record])
 		});
-		
+		/*
 	      var valuesSt = new Ext.data.SimpleStore({
 	          fields: ['value'],
 	          data : [['valore1'],['valore2'], ['valore3'], ['valore4']]
 	      });
-
+	      */	     
+		// for test uses MATRICOLA of table ACCESSO (enel db)
+	      var storeP = this.createStore(c.record, 'it.eng.spagobi.meta.Accesso:matricola');
+	      storeP.load();
+	      
 	      var sm = new Ext.grid.CheckboxSelectionModel();
 		  this.mainPanel = new Ext.grid.GridPanel({
-				store: valuesSt,
+				store: storeP,
 				columns: [
 	               {
 	                   id       :'value',
@@ -123,6 +136,30 @@ Ext.extend(Sbi.qbe.PunctualDefinitionWindow, Ext.Window, {
 		}
 		
 		this.close();
+	}
+	
+	, createStore: function(record, entityId) {
+		//var record = this.activeEditingContext.grid.store.getAt(this.activeEditingContext.row);
+		//var entityId = record.get('leftOperandValue');
+		//var entityId = record.get('entityId');
+		var createStoreUrl = this.services['getValuesForQbeFilterLookupService']
+		        		   + '&ENTITY_ID=' + entityId;
+		var store = new Ext.data.JsonStore({
+			url: createStoreUrl
+		});
+		
+		store.on('loadexception', function(store, options, response, e) {
+			var msg = '';
+			var content = Ext.util.JSON.decode( response.responseText );
+  			if(content !== undefined) {
+  				msg += content.serviceName + ' : ' + content.message;
+  			} else {
+  				msg += 'Server response is empty';
+  			}
+	
+			Sbi.exception.ExceptionHandler.showErrorMessage(msg, response.statusText);
+		});
+		return store;	
 	}
 
 });

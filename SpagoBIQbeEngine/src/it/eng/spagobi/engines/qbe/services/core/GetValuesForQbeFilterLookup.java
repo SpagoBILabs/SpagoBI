@@ -132,7 +132,7 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 				}
 				dataSet.addBinding("attributes", userAttributes);
 				dataSet.addBinding("parameters", this.getEnv());
-				dataSet.loadData(start, limit, (maxSize == null? -1: maxSize.intValue()));
+				dataSet.loadData(start, limit, (maxSize == null)? -1: maxSize.intValue());
 				
 				dataStore = dataSet.getDataStore();
 				Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
