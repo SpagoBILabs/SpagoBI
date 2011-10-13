@@ -99,7 +99,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 						'rows': [],
 						'columns': dataConfig.rows,
 						'measures': dataConfig.measures,
-						'config': {'measureson':'rows'},
+						'config': {'measureson':'rows'}
 					})
 					, 'sheetName' : this.sheetName
 			};
