@@ -571,6 +571,112 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     		win.close();
     	}, this);
 	}
+	, editSlot: function(entityNode) {
+		if(entityNode==null || entityNode==undefined){
+			entityNode = this.pressedNode;
+		}
+		this.pressedNode=entityNode
+		
+		var selectNode;
+		
+		if(!entityNode) return;
+		var type = entityNode.attributes.type || entityNode.attributes.attributes.type;
+		var text = entityNode.text || entityNode.attributes.text;
+		
+		if(type === Sbi.settings.qbe.constants.NODE_TYPE_ENTITY) {			
+			Ext.Msg.show({
+			   title:'Invalid operation',
+			   msg: 'This node is not a Slot',
+			   buttons: Ext.Msg.OK,
+			   icon: Ext.MessageBox.ERROR
+			});		
+		} else if(type === Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD){
+			//creates a window
+			this.slotWizard = new Sbi.qbe.SlotWizard( { 
+				title: 'Slot definition Wizard',
+				fieldForSlot: entityNode,
+				modality: 'edit',
+				startFromFirstPage: false
+			});
+			this.slotWizard.on('apply', function(win, formState, targetNode){
+	    		
+	    		var nodeType;
+	    		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
+	    		
+	    		var entityId = (nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD)? targetNode.parentNode.id: targetNode.id;
+	    		var f = {
+	    			alias: formState.alias
+	    			, id: formState
+	    			, filedType: Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD
+	    			, type: formState.type
+	    			, calculationDescriptor: formState
+	    		};
+	    		
+	    		var params = {
+	    			entityId: entityId,
+	    			field: Ext.util.JSON.encode(f)
+	    		}
+	    		
+	    		Ext.Ajax.request({
+					url:  this.services['addCalculatedField'],
+					success: function(response, options) {
+	       				//alert('saved');
+	       			},
+	       			scope: this,
+					failure: Sbi.exception.ExceptionHandler.handleFailure,	
+					params: params
+	        	}); 
+	    		
+	    		
+	    		if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD) {
+	    			targetNode.text = formState.alias;
+	    			targetNode.attributes.attributes.formState = formState;
+	    		} else if (nodeType == Sbi.settings.qbe.constants.NODE_TYPE_ENTITY) {
+	    			var node = new Ext.tree.TreeNode({
+	        			text: formState.alias,
+	        			leaf: true,
+	        			type: Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD, 
+	        			longDescription: formState.expression,
+	        			formState: formState, 
+	        			iconCls: 'calculation',
+	        			attributes:{
+	            			text: formState.alias,
+	            			leaf: true,
+	            			type: Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD, 
+	            			longDescription: formState.expression,
+	            			formState: formState, 
+	            			iconCls: 'calculation'}
+	            		
+	        		});
+
+	    			
+	    			if (!targetNode.isExpanded()) {
+	        			targetNode.expand(false, true, function() {targetNode.appendChild( node );});
+	        		} else {
+	        			targetNode.appendChild( node );
+	        		}
+	    		} else {
+	    			Ext.Msg.show({
+						   title:'Invalid operation',
+						   msg: 'Node of type [' + nodeType + '] cannot be modified',
+						   buttons: Ext.Msg.OK,
+						   icon: Ext.MessageBox.ERROR
+					});
+	    		}
+	    		win.close();
+	    	}, this);
+			this.slotWizard.mainPanel.doLayout();
+			this.slotWizard.show();
+		}else {
+			Ext.Msg.show({
+				   title:'Invalid operation',
+				   msg: 'This node is not a Slot',
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.ERROR
+			});		
+		}	
+
+	}
 	// --------------------------------------------------------------------------------
 	// private methods
 	// --------------------------------------------------------------------------------
@@ -630,6 +736,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		}, this);
 		if(this.enableTreeContextMenu) {
 			this.tree.on('contextmenu', this.onContextMenu, this);
+			
 		}
 	}
 
@@ -1069,9 +1176,16 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
             		this.addSlot(this.ctxNode);	
 	             },
                  scope: this
+             },{
+            	 text:'Edit Slot',
+                 iconCls:'slot',
+                 handler:function(){
+            		this.editSlot(this.ctxNode);	
+	             },
+                 scope: this
              }]
          });
-		 
+
 		 for(var i = 0; i < this.actions.length; i++) {
 			
 			 var item = new Ext.menu.Item({
