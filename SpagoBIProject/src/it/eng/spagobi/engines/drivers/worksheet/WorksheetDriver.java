@@ -373,6 +373,16 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		return template;
     }
     
+    public String createNewWorksheetTemplate(String worksheetDefinition) throws SourceBeanException {
+    	SourceBean templateSB = new SourceBean(TAG_WORKSHEET);
+    	templateSB.setAttribute(ATTRIBUTE_VERSION, CURRENT_VERSION);
+		SourceBean worksheetDefinitionSB = new SourceBean(TAG_WORKSHEET_DEFINITION);
+		worksheetDefinitionSB.setCharacters(worksheetDefinition);
+		templateSB.setAttribute(worksheetDefinitionSB);
+		String template = templateSB.toXML(false);	
+		return template;
+    }
+    
 	private Map applyService(Map parameters, BIObject biObject) {
 		logger.debug("IN");
 		

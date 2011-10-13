@@ -83,12 +83,19 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			
 			totalTimeMonitor = MonitorFactory.start("WorksheetEngine.loadCrosstabAction.totalTime");
 			
+			// start reading input parameters
 			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( CROSSTAB_DEFINITION );			
-			Assert.assertNotNull(crosstabDefinitionJSON, "Parameter [" + CROSSTAB_DEFINITION + "] cannot be null in oder to execute " + this.getActionName() + " service");
 			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
-			crosstabDefinition = (CrosstabDefinition) SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
-			crosstabDefinition.setCellLimit( new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) );
+			Assert.assertNotNull(crosstabDefinitionJSON, "Parameter [" + CROSSTAB_DEFINITION + "] cannot be null in oder to execute " + this.getActionName() + " service");
 			
+			String sheetName = this.getAttributeAsString(SHEET);
+			logger.debug("Parameter [" + SHEET + "] is equals to [" + sheetName + "]");
+			
+			JSONObject optionalFilters = getAttributeAsJSONObject(OPTIONAL_FILTERS);
+			logger.debug("Parameter [" + OPTIONAL_FILTERS + "] is equals to [" + optionalFilters + "]");
+			// end reading input parameters
+			
+			// retrieve engine instance
 			WorksheetEngineInstance engineInstance = getEngineInstance();
 			Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 
@@ -99,17 +106,31 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			// build SQL query against temporary table
 			List<WhereField> whereFields = new ArrayList<WhereField>();
 			if (!dataset.hasBehaviour(FilteringBehaviour.ID)) {
+				/* 
+				 * If the dataset had the FilteringBehaviour, data was already filtered on domain values by the FilteringBehaviour itself.
+				 * If the dataset hadn't the FilteringBehaviour, we must pust filters on domain values on query to temporary table 
+				 */
 				Map<String, List<String>> globalFilters = getGlobalFiltersOnDomainValues();
+				LogMF.debug(logger, "Global filters on domain values detected: {0}", globalFilters);
 				List<WhereField> temp = transformIntoWhereClauses(globalFilters);
 				whereFields.addAll(temp);
 			}
-			String sheetName = this.getAttributeAsString(SHEET);
+			
+			/* 
+			 * We must consider sheet filters anyway because temporary table contains data for all sheets,
+			 * but different sheets could have different filters defined on them
+			 */
 			Map<String, List<String>> sheetFilters = getSheetFiltersOnDomainValues(sheetName);
+			LogMF.debug(logger, "Sheet filters on domain values detected: {0}", sheetFilters);
 			List<WhereField> temp = transformIntoWhereClauses(sheetFilters);
 			whereFields.addAll(temp);
-			
-			temp = getOptionalFilters(getAttributeAsJSONObject(OPTIONAL_FILTERS));
+
+			temp = getOptionalFilters(optionalFilters);
 			whereFields.addAll(temp);
+
+			// deserialize crosstab definition
+			crosstabDefinition = (CrosstabDefinition) SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
+			crosstabDefinition.setCellLimit( new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) );
 			
 			String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, engineInstance.getDataSource());
 			// execute SQL query against temporary table
@@ -118,7 +139,7 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			LogMF.debug(logger, "Query on temporary table executed successfully; datastore obtained: {0}", dataStore);
 			Assert.assertNotNull(dataStore, "Datastore obatined is null!!");
 			/* since the datastore, at this point, is a JDBC datastore, 
-			* it does not contain information about measures/attributes, fields' name...
+			* it does not contain information about measures/attributes, fields' name and alias...
 			* therefore we adjust its metadata
 			*/
 			this.adjustMetadata((DataStore) dataStore, dataset, descriptor);

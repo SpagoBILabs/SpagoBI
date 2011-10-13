@@ -230,7 +230,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				content = temp.getBytes();
 			}
 			else if(serviceType.equals(DOC_SAVE_FROM_DATASET) && wk_definition!=null){
-				content = wk_definition.getBytes();
+				WorksheetDriver q = new WorksheetDriver();
+				String temp = q.createNewWorksheetTemplate(wk_definition);
+				content = temp.getBytes();
 			}
 			else{
 				logger.error("Document template not available");
