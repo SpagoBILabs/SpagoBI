@@ -370,3 +370,29 @@ Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.fail.title'] = 'Validat
 Sbi.locale.ln['sbi.qbe.calculatedFields.expert.nofilterwindow.title'] = 'Warning: with this type of calculated fields you can\'t use filters';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.ok'] = 'OK';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.cancel'] = 'Cancel';
+
+//===================================================================
+//BANDS WIZARD
+//===================================================================
+Sbi.locale.ln['sbi.qbe.menu.bands.add'] = 'Add Range';
+Sbi.locale.ln['sbi.qbe.menu.bands.edit'] = 'Edit Range';
+Sbi.locale.ln['sbi.qbe.bands.title'] = 'Bands wizard ...';
+Sbi.locale.ln['sbi.qbe.bands.noteditable'] = 'Cannot load range definition';
+Sbi.locale.ln['sbi.qbe.bands.back.btn'] = 'Back';
+Sbi.locale.ln['sbi.qbe.bands.next.btn'] = 'Next';
+Sbi.locale.ln['sbi.qbe.bands.finish.btn'] = 'Finish';
+Sbi.locale.ln['sbi.qbe.bands.save.btn'] = 'Save';
+Sbi.locale.ln['sbi.qbe.bands.addband.btn'] = 'Add Band';
+Sbi.locale.ln['sbi.qbe.bands.adddefault.btn'] = 'Add Default';
+Sbi.locale.ln['sbi.qbe.bands.delete.btn'] = 'Delete';
+Sbi.locale.ln['sbi.qbe.bands.col.name'] = 'Name';
+Sbi.locale.ln['sbi.qbe.bands.col.values'] = 'Values';
+Sbi.locale.ln['sbi.qbe.bands.col.limits'] = 'Limits';
+Sbi.locale.ln['sbi.qbe.bands.col.vallist'] = 'Values List';
+Sbi.locale.ln['sbi.qbe.bands.alert.default'] = 'Operation denied for default band';
+Sbi.locale.ln['sbi.qbe.bands.delete.alert.title'] = 'Band item deletion';
+Sbi.locale.ln['sbi.qbe.bands.delete.alert.msg'] = 'Confirm item delete?';
+Sbi.locale.ln['sbi.qbe.bands.new.name'] = 'New Band';
+Sbi.locale.ln['sbi.qbe.bands.default.name'] = 'Other';
+Sbi.locale.ln['sbi.qbe.bands.default.alert'] = 'Deafult already defined';
+Sbi.locale.ln['sbi.qbe.bands.prefix'] = 'Band-';

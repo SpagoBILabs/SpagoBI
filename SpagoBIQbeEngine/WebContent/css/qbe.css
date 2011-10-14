@@ -429,7 +429,7 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
  * Slot
  ********************************************************************************************************/
 .icon-close {
-	border: 1px solid red;
+	border: 1px solid blue;
 	border-radius:5px; 
 	padding: 2px; 
 	float: left;
@@ -446,4 +446,7 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 }
 .blue {
 	border: 1px solid blue;
+}
+.default-row{
+	background-color: #FFF7B2;
 }

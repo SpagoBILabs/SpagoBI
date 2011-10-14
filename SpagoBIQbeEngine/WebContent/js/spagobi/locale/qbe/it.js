@@ -363,3 +363,29 @@ Sbi.locale.ln['sbi.qbe.calculatedFields.expert.nofilterwindow.title'] = 'Attenzi
 Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.text.expert'] = 'Utente Esperto';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.ok'] = 'OK';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.cancel'] = 'Annulla';
+
+//===================================================================
+//BANDS WIZARD
+//===================================================================
+Sbi.locale.ln['sbi.qbe.menu.bands.add'] = 'Inserimento Fascia';
+Sbi.locale.ln['sbi.qbe.menu.bands.edit'] = 'Modifica Fascia';
+Sbi.locale.ln['sbi.qbe.bands.title'] = 'Wizard gestione Fasce...';
+Sbi.locale.ln['sbi.qbe.bands.noteditable'] = 'Non e\' possibile caricare la Fascia';
+Sbi.locale.ln['sbi.qbe.bands.back.btn'] = 'Indietro';
+Sbi.locale.ln['sbi.qbe.bands.next.btn'] = 'Avanti';
+Sbi.locale.ln['sbi.qbe.bands.finish.btn'] = 'Fine';
+Sbi.locale.ln['sbi.qbe.bands.save.btn'] = 'Salva';
+Sbi.locale.ln['sbi.qbe.bands.addband.btn'] = 'Aggiungi Intervallo';
+Sbi.locale.ln['sbi.qbe.bands.adddefault.btn'] = 'Aggiungi Default';
+Sbi.locale.ln['sbi.qbe.bands.delete.btn'] = 'Elimina';
+Sbi.locale.ln['sbi.qbe.bands.col.name'] = 'Nome';
+Sbi.locale.ln['sbi.qbe.bands.col.values'] = 'Valori';
+Sbi.locale.ln['sbi.qbe.bands.col.limits'] = 'Estremi';
+Sbi.locale.ln['sbi.qbe.bands.col.vallist'] = 'Lista di valori';
+Sbi.locale.ln['sbi.qbe.bands.alert.default'] = 'Impossibile eseguire operazione per dafault';
+Sbi.locale.ln['sbi.qbe.bands.delete.alert.title'] = 'Cancellazione fascia';
+Sbi.locale.ln['sbi.qbe.bands.delete.alert.msg'] = 'Confermi la cancellazione?';
+Sbi.locale.ln['sbi.qbe.bands.new.name'] = 'Nuova fascia';
+Sbi.locale.ln['sbi.qbe.bands.default.name'] = 'Altro';
+Sbi.locale.ln['sbi.qbe.bands.default.alert'] = 'Deafult gi\'a definito';
+Sbi.locale.ln['sbi.qbe.bands.prefix'] = 'Fascia-';

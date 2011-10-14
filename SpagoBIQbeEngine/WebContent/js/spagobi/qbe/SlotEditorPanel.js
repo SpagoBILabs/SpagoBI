@@ -89,15 +89,15 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			scope: this,
 			items: [{
                 xtype:'button',
-                text: 'Add Band',
+                text: LN('sbi.qbe.bands.addband.btn'),
                 iconCls: 'add'
             },{
                 xtype:'button',
-                text: 'Add Default',
+                text: LN('sbi.qbe.bands.adddefault.btn'),
                 iconCls: 'add'
             },{
                 xtype:'button',
-                text: 'Delete',
+                text: LN('sbi.qbe.bands.delete.btn'),
                 iconCls: 'remove'
             }]
 		});
@@ -176,7 +176,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
         template.compile();
              
         var valuesColumn = new Ext.grid.TemplateColumn({
-            header   : 'Values', 
+            header   : LN('sbi.qbe.bands.col.values'), 
             dataIndex: 'valueset',
             xtype: 'templatecolumn',
             tpl : template
@@ -195,7 +195,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			          this.scope.openiInsertRangeWindow(record);
 			       }else{
 		        	  if(this.scope.hasDefault == true){
-		        		  alert('Operation denied for default band');
+		        		  alert(LN('sbi.qbe.bands.alert.default'));
 		        	  }else{
 				          var record = this.scope.gridPanel.store.getAt(index);
 				          this.scope.openiInsertRangeWindow(record);
@@ -203,7 +203,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		          }
 		       }
 		       , width: 20
-		       , header: 'Limits'
+		       , header: LN('sbi.qbe.bands.col.limits')
 		       , renderer : function(v, p, record){
 		           return '<center><img class="x-mybutton-'+this.id+'" width="29px" height="16px" src="' + this.imgSrc + '"/></center>';
 		       }
@@ -221,7 +221,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 				          this.scope.openiInsertPunctualWindow(record);
 			          }else{
 			        	  if(this.scope.hasDefault == true){
-			        		  alert('Operation denied for default band');
+			        		  alert(LN('sbi.qbe.bands.alert.default'));
 			        	  }else{
 					          var record = this.scope.gridPanel.store.getAt(index);
 					          this.scope.openiInsertPunctualWindow(record); 
@@ -230,7 +230,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			          }
 			       }
 			       , width: 20
-			       , header: 'Values List'
+			       , header:  LN('sbi.qbe.bands.col.vallist')
 				   , renderer : function(v, p, record){
 			           return '<center><img class="x-mybutton-'+this.id+'" width="21px" height="13px" src="' + this.imgSrc + '"/></center>';
 			       }
@@ -244,7 +244,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			columns: [
                {
                    id       :'name',
-                   header   : 'Name', 
+                   header   :  LN('sbi.qbe.bands.col.name'), 
                    sortable : true, 
                    editor: new Ext.form.TextField(),
                    dataIndex: 'name'
@@ -295,8 +295,8 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			        	    	try{
 	
 			        	    		Ext.MessageBox.show({
-			        	    			title : 'Slot item deletion',
-			        	    			msg : 'Confirm item delete?',
+			        	    			title : LN('sbi.qbe.bands.delete.alert.title'),
+			        	    			msg : LN('sbi.qbe.bands.delete.alert.msg'),
 			        	    		   	buttons: Ext.Msg.YESNO,
 			        	    		   	fn: function(btn) {
 			        	    				if(btn === 'yes') {
@@ -360,7 +360,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
         // access the Record constructor through the grid's store
 		var Slot = this.gridPanel.getStore().recordType;
         var p = new Slot({
-            name: 'New Band',
+            name: LN('sbi.qbe.bands.new.name'),
             valueset: null
         });
         this.gridPanel.stopEditing();
@@ -374,7 +374,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
         if(this.hasDefault == false){
 			var Slot = this.gridPanel.getStore().recordType;
 	        var p = new Slot({
-	            name: 'Other',
+	            name: LN('sbi.qbe.bands.default.name'),
 	            valueset: [{type: "default", value: ''}]
 	        });
 	        this.gridPanel.stopEditing();
@@ -383,7 +383,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	        this.hasDefault = true;
 	        this.gridPanel.getView().refresh();
         }else{
-        	alert("Default already defined");
+        	alert(LN('sbi.qbe.bands.default.alert'));
         }
 
 	}
@@ -439,7 +439,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		}, this);
 		
 		var btnFinish = new Ext.Button({
-	        text: 'Save',
+	        text: LN('sbi.qbe.bands.save.btn'),
 	        disabled: false,
 	        scope: this,
 	        handler : function(){
@@ -459,7 +459,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		    ],
             items: [defVal]
         });
-        
+/*        
         var win = new Ext.Window({
             layout: 'fit',
             title: 'Type default value',
@@ -471,7 +471,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
             plain: true,
             items: [defPanel]
         });
-        win.show();
+        win.show();*/
 	}
 	
 	, createLookupStore: function() {
