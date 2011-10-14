@@ -303,7 +303,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 							creatBiObjectParameter(parameter);
 						}
 					}
-					
+
 					logger.debug("New document inserted with id "+biObjectID);
 					JSONObject attributesResponseSuccessJSON = new JSONObject();
 					attributesResponseSuccessJSON.put("responseText", "Operation succeded");
@@ -312,7 +312,11 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				}
 
 
-			} catch (Throwable e) {
+			} 
+			catch (SpagoBIServiceException e) {
+				throw e;			
+				}
+			catch (Throwable e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.document.saveError", e);
 			}
@@ -492,7 +496,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 		return parsList;
 	}
-	
+
 	/** SAVE from DATASET case
 	 * 
 	 * @param biObjectParameter
@@ -500,7 +504,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	 * @throws NotAllowedOperationException
 	 * @throws EMFUserError
 	 */
-	
+
 	private  Integer creatBiObjectParameter(BIObjectParameter biObjectParameter) throws NotAllowedOperationException, EMFUserError{
 		logger.debug("IN");
 		Integer toReturn = null;
