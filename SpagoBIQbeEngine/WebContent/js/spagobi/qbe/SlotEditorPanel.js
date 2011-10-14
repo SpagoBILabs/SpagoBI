@@ -126,21 +126,17 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 						var val = slot.valueset[j];
 						if(val.type == 'default'){
 							defaultRec = slot;
-							this.store.remove(slot);
-							this.store.commitChanges();
+/*							this.store.remove(slot);
+							this.store.insert(0, slot);
+							this.store.commitChanges();*/
+							this.hasDefault = true;
 							break;
 						}
 					}
 				}
 			}
 	    }
-	    if(defaultRec != null){
 
-	    	this.store.insert(0, defaultRec);
-	    	this.hasDefault = true;
-	    }
-
-	  	this.store.commitChanges();
 	}
 	, initGrid: function(c) {
 
