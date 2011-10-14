@@ -95,9 +95,6 @@ public class SlotJSONDeserializer implements IDeserializer {
 			String slotName = slotJSON.getString(QbeSerializationConstants.SLOT_NAME);
 			slot = new Slot(slotName);
 			
-			String slotType = slotJSON.optString("type");
-			if(slotType != null && slotType.equalsIgnoreCase("default")) return slot;
-			
 			JSONArray valueset = slotJSON.getJSONArray(QbeSerializationConstants.SLOT_VALUESET);
 			for(int i = 0; i < valueset.length(); i++) {
 				JSONObject mappedValueDescriptorJSON = valueset.getJSONObject(i);
@@ -118,6 +115,8 @@ public class SlotJSONDeserializer implements IDeserializer {
 					boolean includeToValue = mappedValueDescriptorJSON.optBoolean(QbeSerializationConstants.SLOT_VALUESET_INCLUDE_TO);
 					rangeDescriptor.setIncludeMaxValue(includeToValue);
 					slot.addMappedValuesDescriptors(rangeDescriptor);
+				} else if(descriptorType.equalsIgnoreCase(QbeSerializationConstants.SLOT_VALUESET_TYPE_DEFAULT)) {
+					// ok do nothing. we already have all the info we need for defining the default slot 
 				} else {
 					throw new SerializationException("Impossible to deserialize a mapped values descriptor of type [" + descriptorType + "]");
 				}

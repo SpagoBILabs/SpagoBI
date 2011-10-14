@@ -13,6 +13,7 @@ public class QbeSerializationConstants {
 	public static transient String SLOT_VALUESET_TYPE = "type";
 	public static transient String SLOT_VALUESET_TYPE_PUNCTUAL  = "punctual";
 	public static transient String SLOT_VALUESET_TYPE_RANGE  = "range";
+	public static transient String SLOT_VALUESET_TYPE_DEFAULT  = "default";
 	public static transient String SLOT_VALUESET_VALUES = "values";	
 	public static transient String SLOT_VALUESET_FROM = "from";
 	public static transient String SLOT_VALUESET_INCLUDE_FROM = "includeFrom";
