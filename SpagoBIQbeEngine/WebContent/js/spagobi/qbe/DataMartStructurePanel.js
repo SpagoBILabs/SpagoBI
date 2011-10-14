@@ -976,25 +976,25 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			}
     	});
      	
-     	this.calculatedFieldWizard.on('expert', function(){
-     		alert('expert');
+     	this.calculatedFieldWizard.mainPanel.on('expert', function(){
+
      		if(this.calculatedFieldWizard!=null){
-     			var alias = this.calculatedFieldWizard.inputFields.alias.getValue();
+     			var alias = this.calculatedFieldWizard.mainPanel.inputFields.alias.getValue();
      		}
      		this.initCalculatedFieldWizards();
      		this.addInLineCalculatedField(this.pressedNode);
-     		this.inLineCalculatedFieldWizard.setCFAlias(alias);
+     		this.inLineCalculatedFieldWizard.mainPanel.setCFAlias(alias);
      		this.inLineCalculatedFieldWizard.show();
      	}, this);
  
-     	this.inLineCalculatedFieldWizard.on('notexpert', function(){
-     		alert('notexpert');
+     	this.inLineCalculatedFieldWizard.mainPanel.on('notexpert', function(){
+
      		if(this.inLineCalculatedFieldWizard!=null){
-     			var alias = this.inLineCalculatedFieldWizard.inputFields.alias.getValue();
+     			var alias = this.inLineCalculatedFieldWizard.mainPanel.inputFields.alias.getValue();
      		}
      		this.initCalculatedFieldWizards();
      		this.addCalculatedField(this.pressedNode);
-   			this.calculatedFieldWizard.setCFAlias(alias);
+   			this.calculatedFieldWizard.mainPanel.setCFAlias(alias);
    			this.calculatedFieldWizard.show();
      	}, this);
 	
@@ -1006,8 +1006,6 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		
 		var nodeType;
 		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
-		
-		alert(fieldType + ' onAddCalculatedField: ' + formState.toSource());
 		
 		var entityId = (nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD)? targetNode.parentNode.id: targetNode.id;
 		var f = {
@@ -1077,8 +1075,6 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		
 		var nodeType;
 		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
-		
-		alert(fieldType + ' onAddCalculatedField: ' + formState.toSource());
 		
 		var entityId = (nodeType == Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD)? targetNode.parentNode.id: targetNode.id;
 		var f = {

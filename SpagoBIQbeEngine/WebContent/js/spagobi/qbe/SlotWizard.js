@@ -196,6 +196,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			, expertMode: c.expertMode
 			, scopeComboBoxData: c.scopeComboBoxData   		
 			, validationService: c.validationService
+			, expertDisable: true
 
 		});
 		var firstPage = null;

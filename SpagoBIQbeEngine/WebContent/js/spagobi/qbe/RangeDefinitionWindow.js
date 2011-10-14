@@ -32,7 +32,7 @@ Ext.ns("Sbi.qbe");
 Sbi.qbe.RangeDefinitionWindow = function(config) {	
 	
 	var c = Ext.apply({}, config || {}, {
-		title: 'Range Definition'
+		title: 'Limits Definition'
 		, width: 400
 		, height: 150
 		, hasBuddy: false	

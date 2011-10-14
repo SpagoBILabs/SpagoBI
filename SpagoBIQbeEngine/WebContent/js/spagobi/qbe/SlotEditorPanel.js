@@ -109,7 +109,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 
 	    }else{
 		    this.store = new Ext.data.JsonStore({
-		        //url: 'get-images.php',
+
 		        data: {slots:[{ name: "slot 1", valueset: [{type: "range", from: 0, includeFrom: true, to: 100, includeTo: false}, { type: "punctual", values: [100, 101, 201]}]}]},
 		        root: 'slots',
 		        fields: ['name', 'valueset']
@@ -126,9 +126,6 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 						var val = slot.valueset[j];
 						if(val.type == 'default'){
 							defaultRec = slot;
-/*							this.store.remove(slot);
-							this.store.insert(0, slot);
-							this.store.commitChanges();*/
 							this.hasDefault = true;
 							break;
 						}
@@ -233,7 +230,8 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			       , scope: this
 			    })
 		    );
-
+	    var nameEditor = new Ext.form.TextField();
+	    
 		this.gridPanel = new Ext.grid.EditorGridPanel({
 			id: 'slot-panel',
 			store: this.store,
@@ -242,7 +240,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
                    id       :'name',
                    header   :  LN('sbi.qbe.bands.col.name'), 
                    sortable : true, 
-                   editor: new Ext.form.TextField(),
+                   editor: nameEditor,
                    dataIndex: 'name'
                },
                	   valuesColumn
@@ -307,13 +305,13 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			        	    	}catch(err){
 			        	    		
 			        	    	}
-		        	    	}else{
+		        	    	}/*else{
 		        	    		var check = id.indexOf('check-tpl-default');
 		        	    		var def = slotItem.checked;
 		        	    		if(def){
 		        	    			this.defaultValueWindow(record);
 		        	    		}
-		        	    	}
+		        	    	}*/
 	        	    	}
 	        	 }
 	        }
@@ -327,6 +325,13 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		btnDelete.on('click', this.removeSlot, this);
 		btnDefault.on('click', this.createDefault, this);
 
+/*		nameEditor.on('change', function(f, newv, oldv){
+			var slot = this.gridPanel.selModel.selection.record;
+			slot.set('name', newv);
+			slot.commit();
+			this.gridPanel.stopEditing();
+
+		}, this);*/
 	}
 	, openiInsertRangeWindow: function(rec){
 		this.expression = this.slotWizard.expression;
