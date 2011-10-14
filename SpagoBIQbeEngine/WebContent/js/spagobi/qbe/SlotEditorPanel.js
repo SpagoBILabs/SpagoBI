@@ -45,6 +45,11 @@ Sbi.qbe.SlotEditorPanel = function(config) {
 		, baseParams: params
 		});
 	
+	this.services['getValuesForQbeFilterLookupService'] = Sbi.config.serviceRegistry.getServiceUrl({
+		  serviceName: 'GET_VALUES_FOR_QBE_FILTER_LOOKUP_ACTION'
+		, baseParams: params
+	});
+	
 	this.fieldId = c.fieldId;//an be null if click on entity node
 	this.firstPage = c.firstPage;
 	
@@ -67,6 +72,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
     gridPanel: null 
     , panelToolbar: null
     , valuesItemTemplate: null
+    , punctualWindow : null
     , rangeWindow : null
     , rangeToSave : null
     , store: null
@@ -346,9 +352,16 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		this.rangeWindow.show();
 	}
 	, openiInsertPunctualWindow: function(rec){
-		this.punctualWindow = new Sbi.qbe.PunctualDefinitionWindow({slotPanel: this, record: rec, id: this.fieldId, expression: this.expression});
-		
-		this.punctualWindow.mainPanel.doLayout();
+		var lookupStore = this.createLookupStore();		
+		lookupStore.load();
+		var baseConfig = {
+	       store: lookupStore
+	     , singleSelect: false
+	     //, valuesSeparator: Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator
+		};
+		this.punctualWindow = new Sbi.widgets.FilterLookupField(baseConfig);
+		//this.punctualWindow = new Sbi.qbe.PunctualDefinitionWindow({slotPanel: this, record: rec, id: this.fieldId, expression: this.expression});		
+		//this.punctualWindow.mainPanel.doLayout();
 		this.punctualWindow.show();
 	}
 	, createSlotRowToDisplay: function(p){
@@ -468,6 +481,31 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
         });
         win.show();
 	}
-
+	
+	, createLookupStore: function() {
+		alert("this.fieldId: " + this.fieldId);
+		alert("this.expression: " + this.expression);
+		var createStoreUrl = this.services['getValuesForQbeFilterLookupService'];
+		
+		if (this.fieldId !== null) createStoreUrl += '&ENTITY_ID=' + this.fieldId;
+		if (this.expression !== null) createStoreUrl += '&EXPRESSION=' + this.expression;		
+		        		  
+		var store = new Ext.data.JsonStore({
+			url: createStoreUrl
+		});
+		
+		store.on('loadexception', function(store, options, response, e) {
+			var msg = '';
+			var content = Ext.util.JSON.decode( response.responseText );
+  			if(content !== undefined) {
+  				msg += content.serviceName + ' : ' + content.message;
+  			} else {
+  				msg += 'Server response is empty';
+  			}
+	
+			Sbi.exception.ExceptionHandler.showErrorMessage(msg, response.statusText);
+		});
+		return store;	
+	}
 });
 

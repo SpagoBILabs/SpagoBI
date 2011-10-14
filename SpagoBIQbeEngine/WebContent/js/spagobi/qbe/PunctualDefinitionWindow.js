@@ -83,12 +83,7 @@ Ext.extend(Sbi.qbe.PunctualDefinitionWindow, Ext.Window, {
 	        scope: this,
 	        handler : this.save.createDelegate(this, [record])
 		});
-		/*
-	      var valuesSt = new Ext.data.SimpleStore({
-	          fields: ['value'],
-	          data : [['valore1'],['valore2'], ['valore3'], ['valore4']]
-	      });
-	      */	     
+     
 		// for test uses MATRICOLA of table ACCESSO (enel db)
 	      var storeP = this.createStore(c.record, 'it.eng.spagobi.meta.Accesso:matricola');
 	      storeP.load();
@@ -98,10 +93,10 @@ Ext.extend(Sbi.qbe.PunctualDefinitionWindow, Ext.Window, {
 				store: storeP,
 				columns: [
 	               {
-	                   id       :'value',
-	                   header   : 'Value', 
+	                   id       :'values',
+	                   header   : 'Values', 
 	                   sortable : true, 
-	                   dataIndex: 'value'
+	                   dataIndex: 'column_1'
 	               }, 
 	               sm
 	            ],

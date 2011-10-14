@@ -41,6 +41,14 @@ Sbi.qbe.RangeDefinitionWindow = function(config) {
 
 	Ext.apply(this, c);
 	
+	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
+	this.services = new Array();
+	
+	this.services['getValuesForQbeFilterLookupService'] = Sbi.config.serviceRegistry.getServiceUrl({
+		  serviceName: 'GET_VALUES_FOR_QBE_FILTER_LOOKUP_ACTION'
+		, baseParams: params
+	});
+	
 	this.initMainPanel(c);	
 	
 	if(c.hasBuddy === 'true') {
@@ -95,9 +103,18 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		    valueField: 'id',
 		    displayField: 'value'
 		});
+		/*
 		this.rangeFromValue = new Ext.form.TextField({
 			width: 70
-		});
+		});*/
+		
+		this.rangeFromValue = new Ext.form.TriggerField({
+			  width: 100
+            , allowBlank: true
+            , triggerClass: 'x-form-search-trigger'
+	    });
+		//this.rangeFromValue.onTriggerClick = this.openLookup.createDelegate(this);
+		this.rangeFromValue.onTriggerClick = this.openLookup.createDelegate(this);
 		
 		this.rangeTo = new Ext.form.ComboBox({
 		    allowBlank: false,
@@ -109,9 +126,17 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		    valueField: 'id',
 		    displayField: 'value'
 		});
+		/*
 		this.rangeToValue = new Ext.form.TextField({
 			width: 70
 		});
+		*/
+		this.rangeToValue = new Ext.form.TriggerField({
+			  width: 100
+			, allowBlank: true
+            , triggerClass: 'x-form-search-trigger'
+		});
+		this.rangeToValue.onTriggerClick = this.openLookup.createDelegate(this);
 		
 		this.mainPanel = new Ext.form.FormPanel({  
 			    layout: 'column',  
@@ -179,5 +204,36 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		
 		this.close();
 	}
-
+	, openLookup: function(e) {
+		var store = this.createLookupStore();
+		var baseConfig = {
+	       store: store
+	     , singleSelect: true
+	     , valuesSeparator: Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator
+		};
+		
+		this.lookupField = new Sbi.widgets.FilterLookupField(baseConfig);	
+	}
+	
+	, createLookupStore: function(record, entityId) {
+		entityId = 'it.eng.spagobi.meta.Accesso:matricola';//da dinamicizzare
+		var createStoreUrl = this.services['getValuesForQbeFilterLookupService']
+		        		   + '&ENTITY_ID=' + entityId;
+		var store = new Ext.data.JsonStore({
+			url: createStoreUrl
+		});
+		
+		store.on('loadexception', function(store, options, response, e) {
+			var msg = '';
+			var content = Ext.util.JSON.decode( response.responseText );
+  			if(content !== undefined) {
+  				msg += content.serviceName + ' : ' + content.message;
+  			} else {
+  				msg += 'Server response is empty';
+  			}
+	
+			Sbi.exception.ExceptionHandler.showErrorMessage(msg, response.statusText);
+		});
+		return store;	
+	}
 });
