@@ -84,8 +84,7 @@ Ext.extend(Sbi.qbe.PunctualDefinitionWindow, Ext.Window, {
 	        handler : this.save.createDelegate(this, [record])
 		});
      
-		// for test uses MATRICOLA of table ACCESSO (enel db)
-	      var storeP = this.createStore(c.record, 'it.eng.spagobi.meta.Accesso:matricola');
+	      var storeP = this.createStore();
 	      storeP.load();
 	      
 	      var sm = new Ext.grid.CheckboxSelectionModel();
@@ -134,9 +133,6 @@ Ext.extend(Sbi.qbe.PunctualDefinitionWindow, Ext.Window, {
 	}
 	
 	, createStore: function(record, entityId) {
-		//var record = this.activeEditingContext.grid.store.getAt(this.activeEditingContext.row);
-		//var entityId = record.get('leftOperandValue');
-		//var entityId = record.get('entityId');
 		var createStoreUrl = this.services['getValuesForQbeFilterLookupService']
 		        		   + '&ENTITY_ID=' + entityId;
 		var store = new Ext.data.JsonStore({

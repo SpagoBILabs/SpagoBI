@@ -71,10 +71,15 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
     , rangeFrom: null
     , rangeTo: null
     , rangeToSave: {}
-    
+	, fieldId: null
+    , expression: null
+	
 	, initMainPanel: function(c) {
 		
 		this.slotPanel = c.slotPanel;
+		this.fieldId = c.id;
+		this.expression = c.expression;
+		
 		var record = c.record;
 		
 		var btnFinish = new Ext.Button({
@@ -103,17 +108,12 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		    valueField: 'id',
 		    displayField: 'value'
 		});
-		/*
-		this.rangeFromValue = new Ext.form.TextField({
-			width: 70
-		});*/
 		
 		this.rangeFromValue = new Ext.form.TriggerField({
 			  width: 100
             , allowBlank: true
             , triggerClass: 'x-form-search-trigger'
 	    });
-		//this.rangeFromValue.onTriggerClick = this.openLookup.createDelegate(this);
 		this.rangeFromValue.onTriggerClick = this.openLookup.createDelegate(this);
 		
 		this.rangeTo = new Ext.form.ComboBox({
@@ -126,11 +126,7 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		    valueField: 'id',
 		    displayField: 'value'
 		});
-		/*
-		this.rangeToValue = new Ext.form.TextField({
-			width: 70
-		});
-		*/
+
 		this.rangeToValue = new Ext.form.TriggerField({
 			  width: 100
 			, allowBlank: true
@@ -201,24 +197,28 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 			this.slotPanel.addRange(this.rangeToSave, rec);
 		}
 
-		
 		this.close();
 	}
-	, openLookup: function(e) {
-		var store = this.createLookupStore();
+	
+	, openLookup: function() {		
+		var lookupStore = this.createLookupStore();
+		lookupStore.load();
 		var baseConfig = {
-	       store: store
+	       store: lookupStore
 	     , singleSelect: true
-	     , valuesSeparator: Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator
+	    // , valuesSeparator: Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator
 		};
 		
-		this.lookupField = new Sbi.widgets.FilterLookupField(baseConfig);	
+		this.lookupField = new Sbi.widgets.FilterLookupPopupWindow(baseConfig);	
+		this.lookupField.show();
 	}
 	
-	, createLookupStore: function(record, entityId) {
-		entityId = 'it.eng.spagobi.meta.Accesso:matricola';//da dinamicizzare
-		var createStoreUrl = this.services['getValuesForQbeFilterLookupService']
-		        		   + '&ENTITY_ID=' + entityId;
+	, createLookupStore: function() {
+		
+		var createStoreUrl = this.services['getValuesForQbeFilterLookupService'];
+		if (this.fieldId !== null) createStoreUrl +=  '&ENTITY_ID=' + this.fieldId;
+		if (this.expression !== null) createStoreUrl +=  '&EXPRESSION=' + this.expression;
+		
 		var store = new Ext.data.JsonStore({
 			url: createStoreUrl
 		});

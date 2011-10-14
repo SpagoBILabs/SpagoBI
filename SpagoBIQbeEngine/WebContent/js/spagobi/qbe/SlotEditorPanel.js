@@ -337,19 +337,18 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	}
 	, openiInsertPunctualWindow: function(rec){
 		this.expression = this.slotWizard.expression;
-		this.punctualWindow = new Sbi.qbe.PunctualDefinitionWindow({slotPanel: this, record: rec, id: this.fieldId, expression: this.expression});
-		
-		this.punctualWindow.mainPanel.doLayout();
 		var lookupStore = this.createLookupStore();		
 		lookupStore.load();
 		var baseConfig = {
 	       store: lookupStore
 	     , singleSelect: false
-	     //, valuesSeparator: Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator
+	     , valuesSeparator: Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator
 		};
-		this.punctualWindow = new Sbi.widgets.FilterLookupField(baseConfig);
-		//this.punctualWindow = new Sbi.qbe.PunctualDefinitionWindow({slotPanel: this, record: rec, id: this.fieldId, expression: this.expression});		
-		//this.punctualWindow.mainPanel.doLayout();
+		this.punctualWindow = new Sbi.widgets.FilterLookupPopupWindow(baseConfig);
+		this.punctualWindow.on('selectionmade', function(xselection) {
+			this.addPunctualVals(xselection.xselection.Values, rec);	
+			this.punctualWindow.close();
+		}, this);
 		this.punctualWindow.show();
 	}
 	, createSlotRowToDisplay: function(p){
@@ -471,8 +470,6 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	}
 	
 	, createLookupStore: function() {
-		alert("this.fieldId: " + this.fieldId);
-		alert("this.expression: " + this.expression);
 		var createStoreUrl = this.services['getValuesForQbeFilterLookupService'];
 		
 		if (this.fieldId !== null) createStoreUrl += '&ENTITY_ID=' + this.fieldId;
