@@ -47,6 +47,7 @@ import it.eng.spagobi.tools.datasource.bo.DataSource;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 
@@ -75,8 +76,12 @@ public class CreationUtilities {
 			validateDataSet(dataSet);
 
 			// validate
+			logger.debug("Getting the data set dao..");
 			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
+			logger.debug("DatasetDAo loaded");
+			logger.debug("Inserting the data set wit the dao...");
 			toReturn = dataSetDao.insertDataSet(dataSet);
+			logger.debug("Data Set inserted");
 			if (toReturn != null) {
 				logger.info("DataSet "+dataSet.getLabel()+" saved with id = " + toReturn);
 			} else {
@@ -107,11 +112,12 @@ public class CreationUtilities {
 	private void fillMetadata(GuiGenericDataSet dataSet) throws EMFUserError{
 		logger.debug("IN");
 		IDataSet iDataSet = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(dataSet.getLabel());
-
+		logger.debug("Testing the dataset...");
 		IDataStore dsStore = iDataSet.test();
+		logger.debug("Dataset tested");
 		if(dsStore != null){
 			IMetaData meta = dsStore.getMetaData();
-
+			LogMF.debug(logger, "The metadata are: {}", meta.toString());
 			DatasetMetadataParser metadataParser = new DatasetMetadataParser();
 			String xml = metadataParser.metadataToXML(dsStore.getMetaData());
 
@@ -119,8 +125,9 @@ public class CreationUtilities {
 			dataSet.setDsId(iDataSet.getId());
 			GuiDataSetDetail guiDataSetDetail = dataSet.getActiveDetail();
 			guiDataSetDetail.setDsMetadata(xml);			
-
+			logger.debug("Modifing the data set...");
 			DAOFactory.getDataSetDAO().modifyDataSet(dataSet);
+			logger.debug("Data set modified");
 		}
 		else{
 			logger.error("Error in retrieving data store: daaset execution coul not complete");

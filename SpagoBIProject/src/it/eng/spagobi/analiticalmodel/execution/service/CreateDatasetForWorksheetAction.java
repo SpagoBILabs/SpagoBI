@@ -36,13 +36,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 
 
@@ -122,7 +120,6 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 
 			profile = getUserProfile();
 
-
 			ds = collectDatasetInformations();
 
 			CreationUtilities creatUtils = new CreationUtilities();
@@ -142,12 +139,19 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 				throw new SpagoBIServiceException(SERVICE_NAME, 
 				" dataset creation method did not return any result: check log");	
 			}
-
+			
+			logger.debug("Getting PARAMETERS_VALUES from the request");
 			String valsJson = getAttributeAsString( PARAMETERS_VALUES );
+			
 			// put in response parameters 
 			Map valsMap = null;
-			if(valsJson != null && !valsJson.equals(""))
+			if(valsJson != null && !valsJson.equals("")){
 				valsMap = getParameterValues(valsJson);
+				LogMF.debug(logger,"The PARAMETERS_VALUES are: {0}", valsJson);
+			}else{
+				logger.debug("No PARAMETERS_VALUES is empty ");
+			}
+				
 
 
 			// ExecutionInstance has been created it's time to prepare the response with the instance unique id and flush it to the client
@@ -177,6 +181,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	}
 
 	private Map getParameterValues(String valsJson){
+		logger.debug("Getting the parameters value");
 		Map parsValuesMap = new HashMap<String, String>();
 		try{
 			JSONObject json = new JSONObject(valsJson);
@@ -192,7 +197,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 			parsValuesMap = null;
 		}
 		Assert.assertNotNull(parsValuesMap, "error in parsing "+valsJson);
-
+		LogMF.debug(logger, "Parameters map loaded.. {0}", parsValuesMap);
 		return parsValuesMap;
 	}
 
@@ -214,18 +219,38 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		String parametersDefinitionJson = null;
 		String parametersDefinitionXML = null;
 
+		logger.debug("Collecting information necessary for build thd dataset:");
+		logger.debug("Getting LABEL from request");
 		dsLabel = getAttributeAsString( DataSetConstants.LABEL );
+		logger.debug("LABEL= "+dsLabel);
+		logger.debug("Getting NAME from request");
 		dsName = getAttributeAsString( DataSetConstants.NAME );
+		logger.debug("NAME= "+dsLabel);
+		logger.debug("Getting DESCRIPTION from request");
 		dsDescr = getAttributeAsString( DataSetConstants.DESCRIPTION );
+		logger.debug("DESCRIPTION= "+dsLabel);
+		logger.debug("Getting PARS from request");
 		dsPars = getAttributeAsString( DataSetConstants.PARS );
+		logger.debug("PARS= "+dsLabel);
+		logger.debug("Getting CUSTOM_DATA from request");
 		dsCustomData = getAttributeAsString( DataSetConstants.CUSTOM_DATA );
+		logger.debug("CUSTOM_DATA= "+dsLabel);
+		logger.debug("Getting JCLASS_NAME from request");
 		dsJClassName = getAttributeAsString( DataSetConstants.JCLASS_NAME );
-
+		logger.debug("JCLASS_NAME= "+dsLabel);
+		logger.debug("Getting DS_METADATA from request");
 		dsMetadata = getAttributeAsString( DataSetConstants.DS_METADATA );
-
+		logger.debug("DS_METADATA= "+dsLabel);
+			
+		
 		if(getAttributeAsString( PARAMETERS_DEFINITION ) != null && !getAttributeAsString( PARAMETERS_DEFINITION ).equals("")){
+			logger.debug("Getting PARAMETERS_DEFINITION from request");
 			parametersDefinitionJson = getAttributeAsString( PARAMETERS_DEFINITION );
+			logger.debug("parametersDefinitionJson = "+parametersDefinitionJson);
 			parametersDefinitionXML = parametersJsonToXML(parametersDefinitionJson);
+			logger.debug("parametersJsonToXML = "+parametersDefinitionXML);
+		}else{
+			logger.debug("No PARAMETERS_DEFINITION in the request");
 		}
 
 		if(dsLabel== null){
@@ -241,14 +266,15 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		
 		if(dsMetadata != null && !dsMetadata.equals(""))
 			dsDetail.setDsMetadata(dsMetadata);
-
+		
+		logger.debug("Start building the GuiGenericDataSet...");
 		ds = new GuiGenericDataSet();
 		ds.setLabel(dsLabel);
 		ds.setName(dsName);
 		ds.setDescription(dsDescr);
 
 		ds.setActiveDetail(dsDetail);
-
+		logger.debug("GuiGenericDataSet builded...");
 		logger.debug("OUT");
 
 		return ds;
@@ -284,15 +310,4 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		return xml;
 
 	}
-
-
-
-
-
-
-
-
-
-
-
 }
