@@ -108,7 +108,7 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 				filtersJSON = getAttributeAsJSONObject( FILTERS );
 			}
 			if(entityId == null){
-				expression = getAttributeAsString( EXPRESSION );
+				expression = getAttributeAsString( EXPRESSION ).trim();
 				query = buildQuery(expression, TYPE_INLINE_CC_FIELD, filtersJSON);
 
 			}else{
@@ -132,7 +132,7 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 			logger.debug("Parameter [" + START + "] is equals to [" + start + "]");
 			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
 			
-			Assert.assertNotNull(entityId, "Parameter [" + ENTITY_ID + "] cannot be null" );
+		//	Assert.assertNotNull(entityId, "Parameter [" + ENTITY_ID + "] cannot be null" );
 		
 			try {
 				logger.debug("Executing query ...");
