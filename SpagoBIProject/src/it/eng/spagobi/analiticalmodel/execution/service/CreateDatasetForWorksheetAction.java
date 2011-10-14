@@ -52,7 +52,7 @@ import org.safehaus.uuid.UUIDGenerator;
  */
 public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 
-	public static final String SERVICE_NAME = "CREATE_DATASET_FOR WORKSHEET_ACTION";
+	public static final String SERVICE_NAME = "CREATE_DATASET_FOR_WORKSHEET_ACTION";
 
 
 
