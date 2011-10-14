@@ -278,7 +278,12 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 				}
 		           
 	         	var rowData = this.store.getById(row.id);
+	         	/*
+	         	 * We suspend events since the remove method will raise the attributeRemoved event
+	         	 */
+	         	this.store.suspendEvents();
             	this.store.remove(this.store.getById(row.id));
+            	this.store.resumeEvents();
                 if (rowIndex != undefined) {
                 	this.store.insert(rowIndex, rowData);
                 } else {
@@ -291,8 +296,14 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 		} else {
 			// DD on another AttributesContainerPanel --> moving the fields from rows to columns or from columns to rows
 			var rows = ddSource.dragData.selections;
-			ddSource.grid.store.remove(rows);
+			/*
+			 * operation must be performed in this order: 
+			 * 1. add new rows
+			 * 2. remove rows from source
+			 * because the attributeRemoved is fired when removing the attribute from the source, and we may loose filters on domain values
+			 */
 			this.store.add(rows);
+			ddSource.grid.store.remove(rows);
 		}
 	}
 	

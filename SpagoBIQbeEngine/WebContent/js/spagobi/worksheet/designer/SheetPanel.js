@@ -150,11 +150,13 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 			return;
 		}
 		if (thePanel instanceof Sbi.worksheet.designer.SheetFilterContentPanel) {
-			if ( !this.filtersPanel.containsAttribute(attribute.id) ) {
+			var onContent = this.contentPanel.containsAttribute(attribute.id);
+			if ( !onContent ) {
 				delete this.filtersOnDomainValues[attribute.id];
 			}
 		} else {
-			if ( !this.contentPanel.containsAttribute(attribute.id) ) {
+			var onFilters = this.filtersPanel.containsAttribute(attribute.id);
+			if ( !onFilters ) {
 				delete this.filtersOnDomainValues[attribute.id];
 			}
 		}
