@@ -97,7 +97,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-
+			
+			// check dataset is not used by any document: a DB constraint should be added in future
+			Query hibQuery = aSession.createQuery("from SbiObjects h where h.dataSet = ?" );	
+			hibQuery.setInteger(0, dsID);
+			List objectsRelated = hibQuery.list();
+			if(objectsRelated != null && objectsRelated.size()>0){
+				String message="Dataset with id "+dsID+" is in use by "+objectsRelated.size()+" documents: cannot erase it";
+				logger.error(message);
+				throw new EMFUserError(EMFErrorSeverity.WARNING, 10014);
+			}
+			
+			
 			SbiDataSetConfig hibDataSet = (SbiDataSetConfig) aSession.load(SbiDataSetConfig.class,dsID);
 			aSession.delete(hibDataSet);
 
@@ -120,6 +131,30 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			aSession.close();
 		}
 	}
+	
+	
+	
+	
+//	if(dsID!=null){
+//		Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.sbiDsConfig = ?" );
+//		hibQuery.setBoolean(0, false);
+//		hibQuery.setInteger(1, dsID);	
+//		List toBeDeleted = hibQuery.list();
+//		if(toBeDeleted!=null && !toBeDeleted.isEmpty()){
+//			Iterator it = toBeDeleted.iterator();
+//			while(it.hasNext()){
+//				SbiDataSetHistory hibDataSet = (SbiDataSetHistory) it.next();
+//				if(hibDataSet!=null && !hibDataSet.isActive()){
+//					aSession.delete(hibDataSet);			
+//				}
+//			}
+//			tx.commit();
+//		}	
+	
+	
+	
+	
+	
 
 	/**
 	 * Delete the inactive dataset version.
