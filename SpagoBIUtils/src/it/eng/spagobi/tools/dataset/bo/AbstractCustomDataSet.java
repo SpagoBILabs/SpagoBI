@@ -70,7 +70,7 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 
 	public IDataSetTableDescriptor createTemporaryTable(String tableName
 			, Connection connection){
-		logger.debug("IN");
+		logger.debug("IN: creating the tempoary table with name "+tableName);
 		IDataSetTableDescriptor descriptor = null;
 		SelectableFieldsBehaviour behaviour = (SelectableFieldsBehaviour) this.getBehaviour(SelectableFieldsBehaviour.ID);
 		try {

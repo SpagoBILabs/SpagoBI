@@ -71,6 +71,7 @@ public class CreateTableCommand {
 
 	public void addColumn(IFieldMetaData fieldMeta) {
 		logger.debug("IN");
+		logger.debug("Adding the column with name = "+fieldMeta.getName()+" with alias = "+fieldMeta.getAlias()+" type="+fieldMeta.getType());
 		if (columns == null) columns = new ArrayList<ColumnMeta>();
 
 		Class fieldClass = fieldMeta.getType();
@@ -98,6 +99,8 @@ public class CreateTableCommand {
 
 
 	public String createSQLQuery(){
+		logger.debug("Creating the SQL query for the table "+tableName);
+		
 		String query ="CREATE TABLE ";
 		query+=tableName+ " (";
 
@@ -129,8 +132,7 @@ public class CreateTableCommand {
 		//query+=");";
 		query+=")";
 
-		logger.debug("Query is "+query);
-		System.out.println(query);
+		logger.info("Query is "+query);
 		logger.debug("OUT");
 		return query;
 	}
