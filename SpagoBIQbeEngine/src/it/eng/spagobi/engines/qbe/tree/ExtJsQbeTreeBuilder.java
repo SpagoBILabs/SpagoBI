@@ -356,15 +356,7 @@ public class ExtJsQbeTreeBuilder  {
 			
 			List<Slot> slots = field.getSlots();
 			JSONArray slotsJSON = new JSONArray();
-			for(Slot slot : slots) {
-				try {
-					JSONObject slotJSON = (JSONObject)SerializationManager.serialize(slot, "application/json");
-					slotsJSON.put(slotJSON);
-				} catch (Throwable e) {
-					throw new SpagoBIEngineRuntimeException("Impossible to serialize slots definition", e);
-				}
-			}
-
+			
 			if(field.getDefaultSlotValue() != null) {
 				JSONObject defaultSlot = new JSONObject();
 				defaultSlot.put(QbeSerializationConstants.SLOT_NAME, field.getDefaultSlotValue());
@@ -376,6 +368,17 @@ public class ExtJsQbeTreeBuilder  {
 				defaultSlot.put(QbeSerializationConstants.SLOT_VALUESET, valuesets);
 				slotsJSON.put(defaultSlot);
 			}
+			
+			for(Slot slot : slots) {
+				try {
+					JSONObject slotJSON = (JSONObject)SerializationManager.serialize(slot, "application/json");
+					slotsJSON.put(slotJSON);
+				} catch (Throwable e) {
+					throw new SpagoBIEngineRuntimeException("Impossible to serialize slots definition", e);
+				}
+			}
+
+
 			
 			formState.put("slots", slotsJSON);
 			
