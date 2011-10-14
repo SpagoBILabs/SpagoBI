@@ -43,12 +43,12 @@ public class DatasetTemporaryTableUtils {
 
 	/**
 	 * Creates a table with columns got from metadata.
-	 * PAY ATTENTION TO THE FACT THAT THE INPUT CONNECTION CANNOT BE CLOSED!!!!!
-	 * @param conn
-	 * @param meta
-	 * @param tableName
-	 * @return
-	 * @throws Exception
+	 * PAY ATTENTION TO THE FACT THAT THE INPUT CONNECTION WON'T BE CLOSED!!!!!
+	 * @param conn The JDBC connection to be used
+	 * @param meta The metadata of the dataset to be persisted on the database
+	 * @param tableName The name of the table to be created
+	 * @param list The list of the fields of the dataset to be included on table
+	 * @return A DataSetTableDescriptor that contains the association between table's columns and dataset's fields.
 	 */
 	public static DataSetTableDescriptor createTemporaryTable(Connection conn, IMetaData meta, String tableName, List<String> selectedFields) {
 		logger.debug("IN");
