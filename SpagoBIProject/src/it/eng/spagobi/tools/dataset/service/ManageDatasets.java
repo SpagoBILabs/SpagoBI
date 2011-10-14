@@ -780,7 +780,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				value = getSingleValue(tempVal, type);
 			}
 
-			System.out.println("name: "+name+" / value: "+value);
+			logger.debug("name: " + name + " / value: " + value);
 			h.put(name,value);
 		}	
 		return h;
