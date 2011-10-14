@@ -174,9 +174,11 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 		SheetContent toReturn;
 		ChartDefinition chart = new ChartDefinition();
 		
-		JSONObject categoryJSON = content.getJSONObject(WorkSheetSerializationCostants.CATEGORY);
-		Attribute category = (Attribute) SerializationManager.deserialize(categoryJSON, "application/json", Attribute.class);
-		chart.setCategory(category);
+		JSONObject categoryJSON = content.optJSONObject(WorkSheetSerializationCostants.CATEGORY);
+		if (categoryJSON != null) {
+			Attribute category = (Attribute) SerializationManager.deserialize(categoryJSON, "application/json", Attribute.class);
+			chart.setCategory(category);
+		}
 		
 		List<Serie> series = new ArrayList<Serie>();
 		JSONArray seriesJSON = content.getJSONArray(WorkSheetSerializationCostants.SERIES);

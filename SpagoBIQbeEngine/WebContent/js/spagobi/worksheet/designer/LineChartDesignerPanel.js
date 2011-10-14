@@ -57,7 +57,7 @@ Sbi.worksheet.designer.LineChartDesignerPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
-	this.addEvents("attributeDblClick");
+	this.addEvents("attributeDblClick", "attributeRemoved");
 	
 	this.init();
 	
@@ -129,11 +129,18 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
             , initialData: null
             , ddGroup: this.ddGroup
 		});
-		// propagate event
+		// propagate events
 		this.categoryContainerPanel.on(
 			'attributeDblClick' , 
 			function (thePanel, attribute) { 
 				this.fireEvent("attributeDblClick", this, attribute); 
+			}, 
+			this
+		);
+		this.categoryContainerPanel.on(
+			'attributeRemoved' , 
+			function (thePanel, attribute) { 
+				this.fireEvent("attributeRemoved", this, attribute); 
 			}, 
 			this
 		);
@@ -282,7 +289,15 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 		}
 		return; 
 
-}
+	}
+	
+	, containsAttribute: function (attributeId) {
+		if (this.categoryContainerPanel.category == null) {
+			return false;
+		} else {
+			return this.categoryContainerPanel.category.id == attributeId;
+		}
+	}
 	
 
 });

@@ -94,11 +94,18 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 			, initialData: this.crosstabTemplate.columns
 			, ddGroup: this.ddGroup
 		});
-		// propagate event
+		// propagate events
 		this.columnsContainerPanel.on(
 			'attributeDblClick' , 
 			function (thePanel, attribute) { 
 				this.fireEvent("attributeDblClick", this, attribute); 
+			}, 
+			this
+		);
+		this.columnsContainerPanel.on(
+			'attributeRemoved' , 
+			function (thePanel, attribute) { 
+				this.fireEvent("attributeRemoved", this, attribute); 
 			}, 
 			this
 		);
@@ -109,11 +116,18 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 			, initialData: this.crosstabTemplate.rows
 			, ddGroup: this.ddGroup
 		});
-		// propagate event
+		// propagate events
 		this.rowsContainerPanel.on(
 			'attributeDblClick' , 
 			function (thePanel, attribute) { 
 				this.fireEvent("attributeDblClick", this, attribute); 
+			}, 
+			this
+		);
+		this.rowsContainerPanel.on(
+			'attributeRemoved' , 
+			function (thePanel, attribute) { 
+				this.fireEvent("attributeRemoved", this, attribute); 
 			}, 
 			this
 		);
@@ -248,19 +262,9 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 	}
 
 	, checkIfAttributeIsAlreadyPresent: function(aPanel, attribute) {
-		var id = attribute.id;	
-		var storeRows = this.rowsContainerPanel.store;
-		var storeColumns = this.columnsContainerPanel.store;
-		if (storeRows.find('id', id) !== -1) {
-			Ext.Msg.show({
-				   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
-				   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
-				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.WARNING
-			});
-			return false;
-		}
-		else if (storeColumns.find('id', id) !== -1){
+		var attributeId = attribute.id;
+		var alreadyPresent = this.containsAttribute(attributeId);
+		if (alreadyPresent) {
 			Ext.Msg.show({
 				   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
 				   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
@@ -270,6 +274,18 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 			return false;
 		}
 		return true;
+	}
+	
+	, containsAttribute: function (attributeId) {
+		var storeRows = this.rowsContainerPanel.store;
+		var storeColumns = this.columnsContainerPanel.store;
+		if (storeRows.find('id', attributeId) !== -1) {
+			return true;
+		}
+		if (storeColumns.find('id', attributeId) !== -1) {
+			return true;
+		}
+		return false;
 	}
 	
 });

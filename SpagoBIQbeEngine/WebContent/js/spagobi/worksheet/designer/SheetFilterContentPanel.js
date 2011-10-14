@@ -57,11 +57,11 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 	
 	Ext.apply(this, c);
 	
-	this.addEvents("addDesigner", "attributeDblClick");
+	this.addEvents("addDesigner", "attributeDblClick", "attributeRemoved", "designerRemoved");
 
 	this.contentPanel = new Sbi.worksheet.designer.SheetContentPanel({style:'padding: 5px 15px 0px 15px;'});
 	this.contentPanel.on('addDesigner', function(sheet, state){this.fireEvent('addDesigner',sheet, state);}, this);
-	// propagate event
+	// propagate events
 	this.contentPanel.on(
 		'attributeDblClick' , 
 		function (thePanel, attribute) { 
@@ -69,6 +69,21 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 		}, 
 		this
 	);
+	this.contentPanel.on(
+		'attributeRemoved' , 
+		function (thePanel, attribute) { 
+			this.fireEvent("attributeRemoved", this, attribute); 
+		}, 
+		this
+	);
+	this.contentPanel.on(
+		'designerRemoved' , 
+		function (thePanel, attribute) { 
+			this.fireEvent("designerRemoved", this, attribute); 
+		}, 
+		this
+	);
+	
 	
 	this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel({
 		style:'padding:5px 10px 0px 15px; float: left; overflow: auto'
@@ -84,11 +99,18 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
         	scope: this
         }]
 	});
-	// propagate event
+	// propagate events
 	this.filtersPanel.on(
 		'attributeDblClick' , 
 		function (thePanel, attribute) { 
 			this.fireEvent("attributeDblClick", this, attribute); 
+		}, 
+		this
+	);
+	this.filtersPanel.on(
+		'attributeRemoved' , 
+		function (thePanel, attribute) { 
+			this.fireEvent("attributeRemoved", this, attribute); 
 		}, 
 		this
 	);
@@ -152,6 +174,15 @@ Ext.extend(Sbi.worksheet.designer.SheetFilterContentPanel, Ext.Panel, {
 	
 	validate: function(){
 		return this.contentPanel.validate();
+	},
+	
+	containsAttribute: function (attributeId) {
+		var toReturn = this.contentPanel.containsAttribute(attributeId);
+		if (!toReturn) {
+			return this.filtersPanel.containsAttribute(attributeId);
+		} else {
+			return true;
+		}
 	}
 
 	

@@ -57,14 +57,21 @@ Sbi.worksheet.designer.TableDesignerPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
-	this.addEvents("attributeDblClick");
+	this.addEvents("attributeDblClick", "attributeRemoved");
 	
 	this.tableDesigner = new Sbi.worksheet.designer.QueryFieldsCardPanel({ddGroup: this.ddGroup});
-	// propagate event
+	// propagate events
 	this.tableDesigner.on(
 		'attributeDblClick' , 
 		function (thePanel, attribute) { 
 			this.fireEvent("attributeDblClick", this, attribute); 
+		}, 
+		this
+	);
+	this.tableDesigner.on(
+		'attributeRemoved' , 
+		function (thePanel, attribute) { 
+			this.fireEvent("attributeRemoved", this, attribute); 
 		}, 
 		this
 	);
@@ -102,6 +109,10 @@ Ext.extend(Sbi.worksheet.designer.TableDesignerPanel, Ext.Panel, {
 		var vals = this.tableDesigner.tableDesigner.getContainedValues();
 		if (vals && vals.length> 0) {return;} // OK
 		else {return LN("sbi.designertable.tableValidation.noElement");} // ERROR MESSAGE
+	}
+	
+	, containsAttribute: function (attributeId) {
+		return this.tableDesigner.containsAttribute(attributeId);
 	}
 	
 });
