@@ -110,6 +110,9 @@ public class JPQLStatementClause {
 		HashMap<String, InLineFunction>  mapFuncs = this.parentStatement.getDataSource().getConfiguration().loadInLineFunctions(dbDialect);
 
 		if (expression.startsWith("(")) expression = (expression.substring(expression.indexOf("(")+1,expression.lastIndexOf(")"))).trim();
+		//if is not a real function (ex. only a field) returns the expression in input
+		if (expression.indexOf("(") < 0) return expression;
+
 		String nameFunc = expression.substring(0, expression.indexOf("("));
 		
 		if (mapFuncs.get(nameFunc) == null) return expression;
