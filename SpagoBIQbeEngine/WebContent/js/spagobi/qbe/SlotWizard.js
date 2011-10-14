@@ -33,8 +33,9 @@ Sbi.qbe.SlotWizard = function(config) {
 	
 	var c = Ext.apply({}, config || {}, {
 		title: 'Slot wizard ...'
-		, width: 600
-		, height: 300
+		, width: 800
+		, height: 450
+		, resizable: true
 		, hasBuddy: false	
 		
 	});
@@ -56,6 +57,7 @@ Sbi.qbe.SlotWizard = function(config) {
 	this.add(this.mainPanel);
   
 	this.addEvents('apply'); 
+	//this.addEvents('setExpression'); 
 };
 
 Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
@@ -71,6 +73,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
     , fieldForSlot: null
     , modality: 'add'
     , fieldId : null
+    , expression : null
 
     
     , setExpItems: function(itemGroupName, items) {
@@ -128,7 +131,8 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 					btnFinish.enable();
 					///gets field id
 					var fs = this.firstCalculatedFiledPanel.getFormState();
-					this.fieldId = fs.expression;
+					this.expression = fs.expression;
+					//this.fireEvent('setExpression', expression);
 				}else{
 					//back
 					this.mainPanel.layout.setActiveItem(0);
@@ -204,10 +208,11 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 		}
 		this.secondSlotDefinitionPanel = new Sbi.qbe.SlotEditorPanel({
 			id: 'card-1'  ,
-			width: 580,
-			height: 270,
+			width: 780,
+			height: 420,
 			fieldId: fieldID,
 			firstPage: firstPage,
+			slotWizard: this,
 			editStore: editStore
 
 	    });
@@ -229,8 +234,9 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			    layout: 'card',  
 			    activeItem: 0,  
 			    scope: this,
-				width: 580,
-				height: 270,
+				width: 780,
+				height: 420,
+				resizable: true,
 			    defaults: {border:false},  
 			    bbar: [
 			           btnPrev,
