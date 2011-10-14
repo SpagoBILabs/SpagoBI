@@ -368,10 +368,12 @@ public class ExtJsQbeTreeBuilder  {
 			if(field.getDefaultSlotValue() != null) {
 				JSONObject defaultSlot = new JSONObject();
 				defaultSlot.put(QbeSerializationConstants.SLOT_NAME, field.getDefaultSlotValue());
-				JSONObject valueset = new JSONObject("{type: 'default', value: ''}");
+				JSONArray valuesets = new JSONArray();
+				JSONObject valueset = new JSONObject();
 				valueset.put(QbeSerializationConstants.SLOT_VALUESET_TYPE, QbeSerializationConstants.SLOT_VALUESET_TYPE_DEFAULT);
 				valueset.put(QbeSerializationConstants.SLOT_VALUESET_VALUES, "");
-				defaultSlot.put(QbeSerializationConstants.SLOT_VALUESET, valueset);
+				valuesets.put( valueset );
+				defaultSlot.put(QbeSerializationConstants.SLOT_VALUESET, valuesets);
 				slotsJSON.put(defaultSlot);
 			}
 			

@@ -22,7 +22,10 @@ package it.eng.spagobi.engines.qbe.services.core;
 
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot.IMappedValuesDescriptor;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -30,8 +33,11 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
@@ -96,17 +102,11 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 		String alias;
 		String fieldType;
 		
-		String fieldUniqueName;		
-		String group;
-		String order;
-		String funct;
-		
 		JSONObject fieldClaculationDescriptor;
 		String type;
 		String expression;
-		
-		boolean visible;
-		boolean included;
+		String slots;
+
 		
 		
 		try {
@@ -116,14 +116,29 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 			fieldClaculationDescriptor = fieldJSON.getJSONObject("calculationDescriptor");
 			type = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_TYPE);
 			expression = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION);
-			
-			
-			String ft = fieldJSON.getString("filedType");
-			
-			if(ft.equals("calculatedField")){
+			slots = fieldClaculationDescriptor.optString(QuerySerializationConstants.FIELD_SLOTS);
+						
+			fieldType = fieldJSON.getString("filedType");
+			if(fieldType.equals("calculatedField")){
 				field = new ModelCalculatedField(alias, type, expression);
-			}else{
+			} else {
 				field = new ModelCalculatedField(alias, type, expression, true);
+			}
+			
+			if(slots != null) {
+				JSONArray slotsJSON = new JSONArray(slots);
+				List<Slot> slotList = new ArrayList<Slot>();
+				for(int i = 0; i < slotsJSON.length(); i++) {
+					Slot slot = (Slot)SerializationManager.deserialize(slotsJSON.get(i), "application/json", Slot.class);
+					if( slot.getMappedValuesDescriptors().isEmpty() ){
+						// it's the default slot
+						field.setDefaultSlotValue(slot.getName());
+					} else {
+						slotList.add(slot);
+					}
+				}
+				
+				field.addSlots(slotList);
 			}
 			
 			
