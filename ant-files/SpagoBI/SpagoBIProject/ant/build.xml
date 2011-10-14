@@ -395,6 +395,7 @@
               <file name="./src/ext/sbi/tools/ManageDatasets.js"/>
               <file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js"/>
               <file name="./src/ext/sbi/tools/dataset/PreviewWindow.js"/>
+			  <file name="./src/ext/sbi/tools/dataset/CustomDataGrid.js"/>
               <file name="./src/ext/sbi/domain/ManageDomains.js"/>
               <file name="./src/ext/sbi/config/ManageConfig.js"/>
 		      <file name="./src/ext/sbi/engines/chart/data/PagingStore.js"/>
