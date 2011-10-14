@@ -814,22 +814,22 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
      		}
      	}, this);
      	
-     	this.calculatedFieldWizard.on('expert', function(){
+     	this.calculatedFieldWizard.mainPanel.on('expert', function(){
      		if(this.calculatedFieldWizard!=null){
      			var alias = this.calculatedFieldWizard.inputFields.alias.getValue();
      		}
      		this.initCalculatedFieldWizards();
      		this.addInLineCalculatedField(null);
-     		this.inLineCalculatedFieldWizard.setCFAlias(alias);
+     		this.inLineCalculatedFieldWizard.mainPanel.setCFAlias(alias);
      	}, this);
  
-     	this.inLineCalculatedFieldWizard.on('notexpert', function(){
+     	this.inLineCalculatedFieldWizard.mainPanel.on('notexpert', function(){
      		if(this.inLineCalculatedFieldWizard!=null){
      			var alias = this.inLineCalculatedFieldWizard.inputFields.alias.getValue();
      		}
      		this.initCalculatedFieldWizards();
      		this.addCalculatedField(null);
-   			this.calculatedFieldWizard.setCFAlias(alias);
+   			this.calculatedFieldWizard.mainPanel.setCFAlias(alias);
 
      	}, this);
 		

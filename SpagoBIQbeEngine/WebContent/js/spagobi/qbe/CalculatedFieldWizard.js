@@ -87,6 +87,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldWizard, Ext.Window, {
 	}
     
 	, initMainPanel: function(c) {
+		
 		this.mainPanel = new Sbi.qbe.CalculatedFieldEditorPanel({
 			expItemGroups: c.expItemGroups
 			, fields: c.fields

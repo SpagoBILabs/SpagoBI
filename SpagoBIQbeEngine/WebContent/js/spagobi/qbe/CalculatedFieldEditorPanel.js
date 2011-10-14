@@ -41,6 +41,8 @@ Sbi.qbe.CalculatedFieldEditorPanel = function(config) {
 
 	Ext.apply(this, c);
 	
+	this.expertDisable = c.expertDisable;
+	
 	this.initNorthRegionPanel(c.northRegionConfig || {});
 	this.initWestRegionPanel(c.westRegionConfig || {});
 	this.initCenterRegionPanel(c.centerRegionConfig || {});
@@ -56,6 +58,8 @@ Sbi.qbe.CalculatedFieldEditorPanel = function(config) {
 Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	hasBuddy: null
     , buddy: null
+    
+    , expertDisable: false
    
     , westRegionPanel: null 
     , centerRegionPanel: null
@@ -336,6 +340,9 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
     		bodyStyle: "background-color: transparent; border-color: transparent; padding-left: 10px;",
     		items: [this.expertCheckBox]
     	});
+    	if(this.expertDisable){
+    		expertCheckPanel.hide();
+    	}
 
     	this.detailsFormPanel = new Ext.Panel(
 	    	 Ext.apply({
