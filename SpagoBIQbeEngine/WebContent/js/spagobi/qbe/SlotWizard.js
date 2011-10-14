@@ -32,7 +32,7 @@ Ext.ns("Sbi.qbe");
 Sbi.qbe.SlotWizard = function(config) {	
 	
 	var c = Ext.apply({}, config || {}, {
-		title: 'Slot wizard ...'
+		title: LN('sbi.qbe.bands.title')
 		, width: 800
 		, height: 450
 		, resizable: true
@@ -57,7 +57,7 @@ Sbi.qbe.SlotWizard = function(config) {
 	this.add(this.mainPanel);
   
 	this.addEvents('apply'); 
-	//this.addEvents('setExpression'); 
+
 };
 
 Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
@@ -109,7 +109,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 				editStore.loadData(storedata);
 				editStore.commitChanges();
 			}catch(err){
-				alert("Cannot load Range definition");
+				alert(LN('sbi.qbe.bands.noteditable'));
 				return;
 			}
 		}
@@ -132,7 +132,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 					///gets field id
 					var fs = this.firstCalculatedFiledPanel.getFormState();
 					this.expression = fs.expression;
-					//this.fireEvent('setExpression', expression);
+
 				}else{
 					//back
 					this.mainPanel.layout.setActiveItem(0);
@@ -148,19 +148,19 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 		};
 		var btnPrev = new Ext.Button({
             id: 'move-prev',
-            text: 'Back',
+            text: LN('sbi.qbe.bands.back.btn'),
             handler: navHandler.createDelegate(this, [-1])
 		});
 		
 		var btnNext = new Ext.Button({
             id: 'move-next',
-            text: 'Next',
+            text: LN('sbi.qbe.bands.next.btn'),
             handler: navHandler.createDelegate(this, [1])
 		});
 		
 		var btnFinish = new Ext.Button({
             id: 'finish',
-            text: 'Finish',
+            text: LN('sbi.qbe.bands.finish.btn'),
             disabled: false,
             scope: this,
             handler: function(){
@@ -170,7 +170,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 				if(this.modality === undefined || this.modality == null || this.modality !='edit'){
 
 					if(this.startFromFirstPage == undefined || this.startFromFirstPage == null || this.startFromFirstPage == false){
-						formState = {alias: 'Slot - ' +this.fieldForSlot.text, type: 'STRING', expression: this.fieldForSlot.text };
+						formState = {alias: LN('sbi.qbe.bands.prefix') +this.fieldForSlot.text, type: 'STRING', expression: this.fieldForSlot.text };
 						target = this.fieldForSlot.parentNode;
 					}else{
 						formState = this.firstCalculatedFiledPanel.getFormState();
@@ -207,9 +207,8 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			fieldID= this.fieldForSlot.attributes.id
 		}
 		this.secondSlotDefinitionPanel = new Sbi.qbe.SlotEditorPanel({
-			id: 'card-1'  ,
-			width: 780,
 			height: 420,
+			autoWidth: true,
 			fieldId: fieldID,
 			firstPage: firstPage,
 			slotWizard: this,
@@ -234,8 +233,8 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			    layout: 'card',  
 			    activeItem: 0,  
 			    scope: this,
-				width: 780,
 				height: 420,
+				autoWidth: true,
 				resizable: true,
 			    defaults: {border:false},  
 			    bbar: [

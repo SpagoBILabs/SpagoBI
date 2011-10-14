@@ -451,7 +451,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			}
 			//creates a window
 			this.slotWizard = new Sbi.qbe.SlotWizard( { 
-				title: 'Slot definition Wizard',
+				title: LN('sbi.qbe.bands.title'),
 				startFromFirstPage: true,
 		    	expItemGroups: [
 	    		    {name:'fields', text: 'Fields'}, 
@@ -1170,14 +1170,14 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	             },
                  scope: this
              },{
-            	 text:'Insert Slot',
+            	 text: LN('sbi.qbe.menu.bands.add'),
                  iconCls:'slot',
                  handler:function(){
             		this.addSlot(this.ctxNode);	
 	             },
                  scope: this
              },{
-            	 text:'Edit Slot',
+            	 text: LN('sbi.qbe.menu.bands.edit'),
                  iconCls:'slot',
                  handler:function(){
             		this.editSlot(this.ctxNode);	
