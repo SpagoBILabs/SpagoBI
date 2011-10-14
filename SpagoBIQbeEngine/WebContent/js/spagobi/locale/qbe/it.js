@@ -277,8 +277,32 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCount'] = 'Attributo 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCountDist'] = 'Attributo da usare nella funz. Count Distinct';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpAVG'] = 'Attributo da usare nella funz. Media';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate'] = 'Data da usare nella funzione';
-Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1'] = 'Data 1 da usare nella funzione';
-Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2'] = 'Data 2 da usare nella funzione';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1'] = 'Data inizio da usare nella funzione';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2'] = 'Data fine da usare nella funzione';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.link.tip'] = 'crea link ad una pagina web esterna';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.image.tip'] = 'include una immagine esterna';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.cross.tip'] = 'crea un link di cross navigation';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.sum.tip'] = 'Funzione binaria di somma';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.difference.tip'] = 'Funzione binaria di differenza';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.multiplication.tip'] = 'Funzione binaria di moltiplicazione';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.division.tip'] = 'Funzione binaria di divisione';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.pipe.tip'] = 'Pipe';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.openpar.tip'] = 'Parentesi aperta';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.closepar.tip'] = 'Parentesi chiusa';
+
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.none'] = 'Non ci sono funzioni di aggregazione da applicare';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.sum'] = 'Ritorna la somma di tutti i valori del raggruppamento';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.avg'] = 'Ritorna la media di tutti i valori del raggruppamento';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.max'] = 'Ritorna il valore massimo tra tutti i valori del raggruppamento';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.min'] = 'Ritorna il valore minimo tra tutti i valori del raggruppamento';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.count'] = 'Ritorna il conteggio i valori del raggruppamento';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct'] = 'Ritorna il conteggio di tutti i valori distinti del raggruppamento';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.ggbetweendates'] = 'Ritorna la differenza in giorni tra due campi data';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.mmbetweendates'] = 'Ritorna la differenza in mesi tra due campi data';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.aabetweendates'] = 'Ritorna la differenza in anni tra due campi data';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.gguptoday'] = 'Ritorna la differenza in giorni tra la data odierna ed un campo data';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.mmuptoday'] = 'Ritorna la differenza in mesi tra la data odierna ed un campo data';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.aauptoday'] = 'Ritorna la differenza in anni tra la data odierna ed un campo data';
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'] = 'Seleziona una funzione...';
 
@@ -302,7 +326,7 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.text.group'] = 'Raggruppa per ent
 Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.tt.group'] = 'Raggruppa per entita\' padre';
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.text.add'] = 'Aggiungi campo calcolato';
-Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.tt.add'] = 'Add an ad-hoc calculated field (i.e. valid only for this query)';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.tt.add'] = 'Aggiungi campo calcolato ad-hoc (valido solo per questa query)';
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.text.delete'] = 'Elimina tutti';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.tt.delete'] = 'Elimina campi selezionati';
@@ -356,6 +380,7 @@ Sbi.locale.ln['sbi.qbe.datastore.refreshgrid'] = 'Ripristina formato tabella'
 //===================================================================
 //CALCULATED FIELD WIZARD
 //===================================================================
+	Sbi.locale.ln['sbi.qbe.calculatedFields.title'] = 'Wizard Campi Calcolati...';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.title'] = 'Validazione';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.text'] = 'Espressione valida';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.fail.title'] = 'Errore di validazione';
@@ -363,6 +388,20 @@ Sbi.locale.ln['sbi.qbe.calculatedFields.expert.nofilterwindow.title'] = 'Attenzi
 Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.text.expert'] = 'Utente Esperto';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.ok'] = 'OK';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.cancel'] = 'Annulla';
+Sbi.locale.ln['sbi.qbe.calculatedFields.fields'] = 'Campi';
+Sbi.locale.ln['sbi.qbe.calculatedFields.attributes'] = 'Attributi';
+Sbi.locale.ln['sbi.qbe.calculatedFields.parameters'] = 'Parametri';
+Sbi.locale.ln['sbi.qbe.calculatedFields.functions'] = 'Funzioni';
+Sbi.locale.ln['sbi.qbe.calculatedFields.aggrfunctions'] = 'Funzioni di Aggregazione';
+Sbi.locale.ln['sbi.qbe.calculatedFields.datefunctions'] = 'Funzioni sulle date';
+Sbi.locale.ln['sbi.qbe.calculatedFields.string.type'] = 'Se l\'espressione ritorna una stringa';
+Sbi.locale.ln['sbi.qbe.calculatedFields.html.type'] = 'Se l\'espressione ritorna un codice HTML';
+Sbi.locale.ln['sbi.qbe.calculatedFields.num.type'] = 'Se l\'espressione ritorna un numero';
+Sbi.locale.ln['sbi.qbe.calculatedFields.add'] = 'Aggiungi campo calcolato';
+Sbi.locale.ln['sbi.qbe.calculatedFields.remove'] = 'Rimuovi campo calcolato';
+Sbi.locale.ln['sbi.qbe.calculatedFields.edit'] = 'Edita campo';
+Sbi.locale.ln['sbi.qbe.calculatedFields.add.error'] = 'Impossibile aggiungere un campo calcolato ad un nodo di tipo [{0}]';
+
 
 //===================================================================
 //BANDS WIZARD
@@ -389,3 +428,12 @@ Sbi.locale.ln['sbi.qbe.bands.new.name'] = 'Nuova fascia';
 Sbi.locale.ln['sbi.qbe.bands.default.name'] = 'Altro';
 Sbi.locale.ln['sbi.qbe.bands.default.alert'] = 'Deafult gi\'a definito';
 Sbi.locale.ln['sbi.qbe.bands.prefix'] = 'Fascia-';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.definition'] = 'Definizione invalida';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.definition.msg'] = 'Impossibile aggiungere alla fascia un nodo di tipo [{0}]';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation'] = 'Operazione invalida';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.msg'] = 'Il nodo di tipo [{0}] non puo\' essere modificato';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.delete.msg'] = 'Il nodo di tipo [{0}] non puo\' essere cancellato';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.edit.msg'] = 'Il nodo di tipo [{0}] non puo\' essere editato';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.node'] = 'Il nodo non e\' una fascia';
+Sbi.locale.ln['sbi.qbe.bands.range.title'] = 'Definizione limiti';
+Sbi.locale.ln['sbi.qbe.bands.range.invalid'] = 'Range invalido!';

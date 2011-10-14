@@ -190,8 +190,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
         	}); 
 		} else {
 			Ext.Msg.show({
-				   title:'Invalid operation',
-				   msg: 'Node of type [' + nodeType + '] cannot be deleted',
+				   title:LN('sbi.qbe.bands.wizard.invalid.operation'),
+				   msg: LN('sbi.qbe.bands.wizard.invalid.operation.delete.msg'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.ERROR
 			});
@@ -263,8 +263,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			
 		} else{
 			Ext.Msg.show({
-				   title:'Invalid operation',
-				   msg: 'Node of type [' + nodeType + '] cannot be edited',
+				   title:LN('sbi.qbe.bands.wizard.invalid.operation'),
+				   msg: LN('sbi.qbe.bands.wizard.invalid.operation.edit.msg'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.ERROR
 			});
@@ -311,8 +311,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		
 		} else {
 			Ext.Msg.show({
-				   title:'Invalid operation',
-				   msg: 'Impossible to add calculated field to a node of type [' + type + ']',
+				   title:LN('sbi.qbe.bands.wizard.invalid.operation'),
+				   msg: LN('sbi.qbe.calculatedFields.add.error'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.ERROR
 			});		
@@ -362,8 +362,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		
 		} else {
 			Ext.Msg.show({
-				   title:'Invalid operation',
-				   msg: 'Impossible to add calculated field to a node of type [' + type + ']',
+				   title:LN('sbi.qbe.bands.wizard.invalid.operation'),
+				   msg: LN('sbi.qbe.calculatedFields.add.error'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.ERROR
 			});		
@@ -387,7 +387,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			var dateFunctions = [
      		    {
      	            text: 'GG_between_dates'
-     	            , qtip: LN('da implementare')
+     	            , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.ggbetweendates')
      	            , type: 'function'
      	            , value: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
      	            , alias: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
@@ -396,7 +396,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
      		    
      	         }, {
      		         text: 'MM_between_dates'
-     		         , qtip: LN('da implementare')
+     		         , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.mmbetweendates')
      			     , type: 'function'
      			     , value: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
      			     , alias: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
@@ -404,7 +404,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
      	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
      			 },{
      				 text: 'AA_between_dates'
-     			      , qtip: LN('da implementare')
+     			      , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.aabetweendates')
      			      , type: 'function'
      			      , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
      			      , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
@@ -412,27 +412,74 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
      	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
      			 }, {
      			     text: 'GG_up_today'
-     			     , qtip: LN('da implementare')
+     			     , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.gguptoday')
      				 , type: 'function'
      				 , value: Ext.util.Format.htmlEncode('GG_up_today(op1)')
      				 , alias: Ext.util.Format.htmlEncode('GG_up_today(op1)')
      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
      			 }, {
      			     text: 'MM_up_today'
-     				 , qtip: LN('da implementare')
+     				 , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.mmuptoday')
      				 , type: 'function'
      				 , value: Ext.util.Format.htmlEncode('MM_up_today(op1)')
      				 , alias: Ext.util.Format.htmlEncode('MM_up_today(op1)')
      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
      			  }, {
      				 text: 'AA_up_today'
-     				 , qtip: LN('da implementare')
+     				 , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.aauptoday')
      				 , type: 'function'
      				 , value: Ext.util.Format.htmlEncode('AA_up_today(op1)')
      				 , alias: Ext.util.Format.htmlEncode('AA_up_today(op1)')
      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
      			   }
      	    ];
+			
+			var functionsForInline = [
+			    {
+				    text: '+'
+				    , qtip: LN('sbi.qbe.selectgridpanel.func.sum.tip')
+				    , type: 'function'
+				    , value: Ext.util.Format.htmlEncode('+')
+				    , alias: Ext.util.Format.htmlEncode('+')
+			    }, {
+				    text: '-' 
+				    , qtip: LN('sbi.qbe.selectgridpanel.func.difference.tip')
+				    , type: 'function'
+				    , value: Ext.util.Format.htmlEncode('-')
+				    , alias: Ext.util.Format.htmlEncode('-')
+			    }, {
+				    text: '*'
+				    ,qtip: LN('sbi.qbe.selectgridpanel.func.multiplication.tip')
+				    , type: 'function'
+				    , value: Ext.util.Format.htmlEncode('*')
+				    , alias: Ext.util.Format.htmlEncode('*')
+			    }, {
+				    text: '/'
+					,qtip: LN('sbi.qbe.selectgridpanel.func.division.tip')
+					, type: 'function'
+					, value: Ext.util.Format.htmlEncode('/')
+					, alias: Ext.util.Format.htmlEncode('/')
+				}, {
+				    text: '||'
+					,qtip: LN('sbi.qbe.selectgridpanel.func.pipe.tip')
+					, type: 'function'
+					, value: Ext.util.Format.htmlEncode('||')
+					, alias: Ext.util.Format.htmlEncode('||')
+				}, {
+				    text: '('
+	    				,qtip: LN('sbi.qbe.selectgridpanel.func.openpar.tip')
+	    				, type: 'function'
+	    				, value: Ext.util.Format.htmlEncode('(')
+	    				, alias: Ext.util.Format.htmlEncode('(')
+	    		}, {
+				    text: ')'
+	    				,qtip: LN('sbi.qbe.selectgridpanel.func.closepar.tip')
+	    				, type: 'function'
+	    				, value: Ext.util.Format.htmlEncode(')')
+	    				, alias: Ext.util.Format.htmlEncode(')')
+	        	}
+			];		
+			
 			var fields = new Array();
 			for(var i = 0; i < entityNode.attributes.children.length; i++) {
 				var child = entityNode.attributes.children[i];
@@ -454,10 +501,12 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				title: LN('sbi.qbe.bands.title'),
 				startFromFirstPage: true,
 		    	expItemGroups: [
-	    		    {name:'fields', text: 'Fields'}, 
-	    		    {name:'dateFunctions', text: 'Date Functions'}
+	    		    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
+	    		    {name:'functions', text: LN('sbi.qbe.calculatedFields.functions')},  		    
+	    		    {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
 	    		],
 	    		fields: new Array(),
+	    		functions: functionsForInline,
 	    		dateFunctions: dateFunctions,
 	    		expertMode: false,
 	        	scopeComboBoxData :[
@@ -486,7 +535,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		} else if(type === Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD){
 			//creates a window
 			this.slotWizard = new Sbi.qbe.SlotWizard( { 
-				title: 'Slot definition Wizard',
+				title: LN('sbi.qbe.bands.title'),
 				fieldForSlot: entityNode,
 				startFromFirstPage: false
 			});
@@ -495,8 +544,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			this.slotWizard.show();
 		}else {
 			Ext.Msg.show({
-				   title:'Invalid operation',
-				   msg: 'Impossible to add slot to a node of type [' + type + ']',
+				   title: LN('sbi.qbe.bands.wizard.invalid.definition'),
+				   msg: LN('sbi.qbe.bands.wizard.invalid.definition.msg'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.ERROR
 			});		
@@ -562,8 +611,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
         		}
     		} else {
     			Ext.Msg.show({
-					   title:'Invalid operation',
-					   msg: 'Node of type [' + nodeType + '] cannot be modified',
+					   title: LN('sbi.qbe.bands.wizard.invalid.operation'),
+					   msg: LN('sbi.qbe.bands.wizard.invalid.operation.msg'),
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.ERROR
 				});
@@ -585,15 +634,15 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		
 		if(type === Sbi.settings.qbe.constants.NODE_TYPE_ENTITY) {			
 			Ext.Msg.show({
-			   title:'Invalid operation',
-			   msg: 'This node is not a Slot',
+			   title: LN('sbi.qbe.bands.wizard.invalid.operation'),
+			   msg:  LN('sbi.qbe.bands.wizard.invalid.node'),
 			   buttons: Ext.Msg.OK,
 			   icon: Ext.MessageBox.ERROR
 			});		
 		} else if(type === Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD){
 			//creates a window
 			this.slotWizard = new Sbi.qbe.SlotWizard( { 
-				title: 'Slot definition Wizard',
+				title: LN('sbi.qbe.bands.wizard.definition'),
 				fieldForSlot: entityNode,
 				modality: 'edit',
 				startFromFirstPage: false
@@ -657,8 +706,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	        		}
 	    		} else {
 	    			Ext.Msg.show({
-						   title:'Invalid operation',
-						   msg: 'Node of type [' + nodeType + '] cannot be modified',
+						   title:LN('sbi.qbe.bands.wizard.invalid.operation'),
+						   msg: LN('sbi.qbe.bands.wizard.invalid.operation.msg'),
 						   buttons: Ext.Msg.OK,
 						   icon: Ext.MessageBox.ERROR
 					});
@@ -669,8 +718,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			this.slotWizard.show();
 		}else {
 			Ext.Msg.show({
-				   title:'Invalid operation',
-				   msg: 'This node is not a Slot',
+				   title:LN('sbi.qbe.bands.wizard.invalid.operation'),
+				   msg: LN('sbi.qbe.bands.wizard.invalid.node'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.ERROR
 			});		
@@ -771,17 +820,17 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		var functions = [
 		    {
 			    text: 'link'
-			    , qtip: 'create a link to external web page'
+			    , qtip: LN('sbi.qbe.selectgridpanel.func.link.tip')
 			    , type: 'function'
 			    , value: Ext.util.Format.htmlEncode('\'<a href="${URL}">\' + ${LABEL} + \'</a>\'')
 		    }, {
 			    text: 'image' , 
-			    qtip: 'include an external image'
+			    qtip: LN('sbi.qbe.selectgridpanel.func.image.tip')
 			    , type: 'function'
 			    , value: Ext.util.Format.htmlEncode('\'<img src="${URL}"></img>\'')
 		    }, {
 			    text: 'cross-navigation'
-			    , qtip: 'create a cross navigation link'
+			    , qtip: LN('sbi.qbe.selectgridpanel.func.cross.tip')
 			    , type: 'function'
 			    , value: crossFn
 		    }
@@ -836,7 +885,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		var dateFunctions = [
 		    {
 	            text: 'GG_between_dates'
-	            , qtip: LN('da implementare')
+	            , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.ggbetweendates')
 	            , type: 'function'
 	            , value: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
 	            , alias: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
@@ -845,7 +894,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		    
 	         }, {
 		         text: 'MM_between_dates'
-		         , qtip: LN('da implementare')
+		         , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.mmbetweendates')
 			     , type: 'function'
 			     , value: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
 			     , alias: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
@@ -853,7 +902,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
 			 },{
 				 text: 'AA_between_dates'
-			      , qtip: LN('da implementare')
+			      , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.aabetweendates')
 			      , type: 'function'
 			      , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
 			      , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
@@ -861,21 +910,21 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
 			 }, {
 			     text: 'GG_up_today'
-			     , qtip: LN('da implementare')
+			     , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.gguptoday')
 				 , type: 'function'
 				 , value: Ext.util.Format.htmlEncode('GG_up_today(op1)')
 				 , alias: Ext.util.Format.htmlEncode('GG_up_today(op1)')
 				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
 			 }, {
 			     text: 'MM_up_today'
-				 , qtip: LN('da implementare')
+				 , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.mmuptoday')
 				 , type: 'function'
 				 , value: Ext.util.Format.htmlEncode('MM_up_today(op1)')
 				 , alias: Ext.util.Format.htmlEncode('MM_up_today(op1)')
 				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
 			  }, {
 				 text: 'AA_up_today'
-				 , qtip: LN('da implementare')
+				 , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.aauptoday')
 				 , type: 'function'
 				 , value: Ext.util.Format.htmlEncode('AA_up_today(op1)')
 				 , alias: Ext.util.Format.htmlEncode('AA_up_today(op1)')
@@ -886,64 +935,66 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		var functionsForInline = [
   		    {
   			    text: '+'
-  			    , qtip: 'binary sum function'
+  			    , qtip: LN('sbi.qbe.selectgridpanel.func.sum.tip')
   			    , type: 'function'
   			    , value: Ext.util.Format.htmlEncode('+')
   			    , alias: Ext.util.Format.htmlEncode('+')
   		    }, {
   			    text: '-' 
-  			    , qtip: 'binary difference function'
+  			    , qtip: LN('sbi.qbe.selectgridpanel.func.difference.tip')
   			    , type: 'function'
   			    , value: Ext.util.Format.htmlEncode('-')
   			    , alias: Ext.util.Format.htmlEncode('-')
   		    }, {
   			    text: '*'
-  			    , qtip: 'binary multiplication function'
+  			    ,qtip: LN('sbi.qbe.selectgridpanel.func.multiplication.tip')
   			    , type: 'function'
   			    , value: Ext.util.Format.htmlEncode('*')
   			    , alias: Ext.util.Format.htmlEncode('*')
   		    }, {
   			    text: '/'
-  				, qtip: 'binary division function'
+  				,qtip: LN('sbi.qbe.selectgridpanel.func.division.tip')
   				, type: 'function'
   				, value: Ext.util.Format.htmlEncode('/')
   				, alias: Ext.util.Format.htmlEncode('/')
   			}, {
   			    text: '||'
-  				, qtip: 'pipe'
+  				,qtip: LN('sbi.qbe.selectgridpanel.func.pipe.tip')
   				, type: 'function'
   				, value: Ext.util.Format.htmlEncode('||')
   				, alias: Ext.util.Format.htmlEncode('||')
   			}, {
   			    text: '('
-      				, qtip: 'open parenthesis'
+      				,qtip: LN('sbi.qbe.selectgridpanel.func.openpar.tip')
       				, type: 'function'
       				, value: Ext.util.Format.htmlEncode('(')
       				, alias: Ext.util.Format.htmlEncode('(')
       		}, {
   			    text: ')'
-      				, qtip: 'closed parenthesis'
+      				,qtip: LN('sbi.qbe.selectgridpanel.func.closepar.tip')
       				, type: 'function'
       				, value: Ext.util.Format.htmlEncode(')')
       				, alias: Ext.util.Format.htmlEncode(')')
           	}
-  		];		
+  		];				
 		
 		this.calculatedFieldWizard = new Sbi.qbe.CalculatedFieldWizard({
-    		title: 'Calculated Field Wizard',
+    		title: LN('sbi.qbe.calculatedFields.title'),
      		expItemGroups: [
-       		    {name:'fields', text: 'Fields'}, 
-       		    {name:'parameters', text: 'Parameters', loader: parametersLoader}, 
-       		    {name:'attributes', text: 'Attributes', loader: attributesLoader},
-       		    {name:'functions', text: 'Functions'}
+       		    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
+       		    {name:'parameters', text: LN('sbi.qbe.calculatedFields.parameters'), loader: parametersLoader}, 
+       		    {name:'attributes', text: LN('sbi.qbe.calculatedFields.attributes'), loader: attributesLoader},
+       		    {name:'functions', text: LN('sbi.qbe.calculatedFields.functions')},
+       		    {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
        		],
        		fields: fields,
        		functions: functions,
+       		dateFunctions: dateFunctions,
        		expertMode: true,
           	scopeComboBoxData :[
-           	    ['STRING','String', 'If the expression script returns a plain text string'],
-           	    ['HTML', 'Html', 'If the expression script returns a valid html fragment'],
-           	    ['NUMBER', 'Number', 'If the expression script returns a number']
+           	    ['STRING','String', LN('sbi.qbe.calculatedFields.string.type')],
+           	    ['HTML', 'Html', LN('sbi.qbe.calculatedFields.html.type')],
+           	    ['NUMBER', 'Number', LN('sbi.qbe.calculatedFields.num.type')]
            	],
     		validationService: {
 				serviceName: 'VALIDATE_EXPRESSION_ACTION'
@@ -955,10 +1006,10 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		this.inLineCalculatedFieldWizard = new Sbi.qbe.CalculatedFieldWizard({
     		title: 'Calculated Field Wizard',
     		expItemGroups: [
-    		    {name:'fields', text: 'Fields'}, 
-    		    {name:'functions', text: 'Functions'},
-    		    {name:'aggregationFunctions', text: 'Aggregation Functions'},
-    		    {name:'dateFunctions', text: 'Date Functions'}
+    		    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
+    		    {name:'functions', text: LN('sbi.qbe.calculatedFields.functions')},
+    		    {name:'aggregationFunctions', text: LN('sbi.qbe.calculatedFields.aggrfunctions')},
+    		    {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
     		],
     		fields: fields,
     		functions: functionsForInline,
@@ -966,8 +1017,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     		dateFunctions: dateFunctions,
     		expertMode: false,
         	scopeComboBoxData :[
-        	    ['STRING','String', 'If the expression script returns a plain text string'],
-        	    ['NUMBER', 'Number', 'If the expression script returns a number']
+        	    ['STRING','String',  LN('sbi.qbe.calculatedFields.string.type')],
+        	    ['NUMBER', 'Number', LN('sbi.qbe.calculatedFields.num.type')]
         	],
         	validationService: {
 				serviceName: 'VALIDATE_EXPRESSION_ACTION'
@@ -1063,8 +1114,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     		}
 		} else {
 			Ext.Msg.show({
-				   title:'Invalid operation',
-				   msg: 'Node of type [' + nodeType + '] cannot be modified',
+				   title: LN('sbi.qbe.bands.wizard.invalid.operation'),
+				   msg: LN('sbi.qbe.bands.wizard.invalid.operation.msg'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.ERROR
 			});
@@ -1129,8 +1180,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     		}
 		} else {
 			Ext.Msg.show({
-				   title:'Invalid operation',
-				   msg: 'Node of type [' + nodeType + '] cannot be modified',
+				   title:LN('sbi.qbe.bands.wizard.invalid.operation'),
+				   msg: LN('sbi.qbe.bands.wizard.invalid.operation.msg'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.ERROR
 			});
@@ -1143,14 +1194,14 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
              items: [
              // ACID operations on nodes
              '-',{
-            	 text:'Add Calculated Field',
+            	 text:LN('sbi.qbe.calculatedFields.add'),
                  iconCls:'add',
                  handler:function(){
             	   	this.addInLineCalculatedField(this.ctxNode);	         	 	
 	             },
                  scope: this
              },{
-            	 text:'Remove Calculated Field',
+            	 text:LN('sbi.qbe.calculatedFields.remove'),
                  iconCls:'remove',
                  handler:  function() {
 	            	 this.ctxNode.ui.removeClass('x-node-ctx');
@@ -1159,7 +1210,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
                  },
                  scope: this
              },{
-            	 text:'Edit Field',
+            	 text:LN('sbi.qbe.calculatedFields.edit'),
                  iconCls:'edit',
                  handler:function(){
 	         	 	this.editField(this.ctxNode);

@@ -280,8 +280,19 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCount'] = 'Attribute 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCountDist'] = 'Attribute to use in function Count Distinct';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpAVG'] = 'Attribute to use in function AVG';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate'] = 'Date to use in the function';
-Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1'] = 'Date 1 to use in the function';
-Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2'] = 'Date 2 to use in the function';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1'] = 'Start date to use in the function';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2'] = 'End date to use in the function';
+
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.link.tip'] = 'create a link to external web page';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.image.tip'] = 'include an external image';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.cross.tip'] = 'create a cross navigation link';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.sum.tip'] = 'binary sum function';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.difference.tip'] = 'binary difference function';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.multiplication.tip'] = 'binary multiplication function';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.division.tip'] = 'binary division function';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.pipe.tip'] = 'pipe';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.openpar.tip'] = 'open parenthesis';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.func.closepar.tip'] = 'closed parenthesis';
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.none'] = 'No aggregation function applied';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.sum'] = 'Return the sum of all values in group';
@@ -291,6 +302,13 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.min'] = 'Return the min of a
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.count'] = 'Return the count of all values in group';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct'] = 'Return the count of distinct values in group';
 
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.ggbetweendates'] = 'Return the difference in days between two dates fields';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.mmbetweendates'] = 'Return the difference in months between two dates fields';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.aabetweendates'] = 'Return the difference in years between two dates fields';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.gguptoday'] = 'Return the difference in days between now and a date field';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.mmuptoday'] = 'Return the difference in months between now and a date field';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.aauptoday'] = 'Return the difference in years between now and a date field';
+	
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'] = 'Select a function...';
 
 
@@ -364,12 +382,26 @@ Sbi.locale.ln['sbi.qbe.datastore.refreshgrid'] = 'Restore grid style'
 //===================================================================
 //CALCULATED FIELD WIZARD
 //===================================================================
+Sbi.locale.ln['sbi.qbe.calculatedFields.title'] = 'Calculated Field Wizard...';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.title'] = 'Validation';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.text'] = 'Validation OK';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.fail.title'] = 'Validation Fail';
 Sbi.locale.ln['sbi.qbe.calculatedFields.expert.nofilterwindow.title'] = 'Warning: with this type of calculated fields you can\'t use filters';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.ok'] = 'OK';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.cancel'] = 'Cancel';
+Sbi.locale.ln['sbi.qbe.calculatedFields.fields'] = 'Fields';
+Sbi.locale.ln['sbi.qbe.calculatedFields.attributes'] = 'Attributes';
+Sbi.locale.ln['sbi.qbe.calculatedFields.parameters'] = 'Parameters';
+Sbi.locale.ln['sbi.qbe.calculatedFields.functions'] = 'Functions';
+Sbi.locale.ln['sbi.qbe.calculatedFields.aggrfunctions'] = 'Aggregation Functions';
+Sbi.locale.ln['sbi.qbe.calculatedFields.datefunctions'] = 'Date Functions';
+Sbi.locale.ln['sbi.qbe.calculatedFields.string.type'] = 'If the expression script returns a plain text string';
+Sbi.locale.ln['sbi.qbe.calculatedFields.html.type'] = 'If the expression script returns a valid html fragment';
+Sbi.locale.ln['sbi.qbe.calculatedFields.num.type'] = 'If the expression script returns a number';
+Sbi.locale.ln['sbi.qbe.calculatedFields.add'] = 'Add Calculated Field';
+Sbi.locale.ln['sbi.qbe.calculatedFields.remove'] = 'Remove Calculated Field';
+Sbi.locale.ln['sbi.qbe.calculatedFields.edit'] = 'Edit Field';
+Sbi.locale.ln['sbi.qbe.calculatedFields.add.error'] = 'Impossible to add calculated field to a node of type [{0}]';
 
 //===================================================================
 //BANDS WIZARD
@@ -396,3 +428,12 @@ Sbi.locale.ln['sbi.qbe.bands.new.name'] = 'New Band';
 Sbi.locale.ln['sbi.qbe.bands.default.name'] = 'Other';
 Sbi.locale.ln['sbi.qbe.bands.default.alert'] = 'Deafult already defined';
 Sbi.locale.ln['sbi.qbe.bands.prefix'] = 'Band-';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.definition'] = 'Invalid definition';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.definition.msg'] = 'Impossible to add slot to a node of type [{0}]';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation'] = 'Invalid operation';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.msg'] = 'Node of type [{0}] doesn\'t been modified';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.delete.msg'] = 'Node of type [{0}] doesn\'t been deleted';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.edit.msg'] = 'Node of type [{0}] doesn\'t been edited';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.node'] = 'The node isn\'t a band';
+Sbi.locale.ln['sbi.qbe.bands.range.title'] = 'Limit definition';
+Sbi.locale.ln['sbi.qbe.bands.range.invalid'] = 'Range not correctly set';

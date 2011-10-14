@@ -32,7 +32,7 @@ Ext.ns("Sbi.qbe");
 Sbi.qbe.RangeDefinitionWindow = function(config) {	
 	
 	var c = Ext.apply({}, config || {}, {
-		title: 'Limits Definition'
+		title: LN('sbi.qbe.bands.range.title')
 		, width: 400
 		, height: 150
 		, hasBuddy: false	
@@ -86,7 +86,7 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		var record = c.record;
 		
 		var btnFinish = new Ext.Button({
-	        text: 'Save',
+	        text: LN('sbi.qbe.bands.save.btn'),
 	        disabled: false,
 	        scope: this,
 	        handler : this.save.createDelegate(this, [record])
@@ -217,7 +217,7 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 				||this.rangeToSave.from.value == null || this.rangeToSave.from.value === undefined || this.rangeToSave.from.value == ''
 				||this.rangeToSave.to.operand == null || this.rangeToSave.to.operand === undefined
 				||this.rangeToSave.to.value == null || this.rangeToSave.to.value === undefined || this.rangeToSave.to.value == ''){
-			alert("Range not correctly set");
+			alert(LN('sbi.qbe.bands.range.invalid'));
 		}else{
 			this.slotPanel.addRange(this.rangeToSave, rec);
 		}
