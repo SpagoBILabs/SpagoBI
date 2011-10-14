@@ -116,7 +116,7 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
 			
 			Assert.assertNotNull(entityId, "Parameter [" + ENTITY_ID + "] cannot be null" );
-		
+		 
 			try {
 				logger.debug("Executing query ...");
 				dataSet = QbeDatasetFactory.createDataSet(statement);
@@ -132,7 +132,7 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 				}
 				dataSet.addBinding("attributes", userAttributes);
 				dataSet.addBinding("parameters", this.getEnv());
-				dataSet.loadData(start, limit, (maxSize == null)? -1: maxSize.intValue());
+				dataSet.loadData((start == null)? -1: start.intValue(), (limit == null)? -1: limit.intValue(), (maxSize == null)? -1: maxSize.intValue());
 				
 				dataStore = dataSet.getDataStore();
 				Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
