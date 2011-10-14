@@ -30,7 +30,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.temporarytable.DatasetTemporaryTableUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -58,6 +57,42 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 		addBehaviour( new FilteringBehaviour(this) );
 		addBehaviour( new SelectableFieldsBehaviour(this) );
 		userAttributes = new HashMap();
+	}
+	
+	@Override
+	public void setParamsMap(Map paramsMap) {
+		if (paramsMap == null) {
+			super.setParamsMap(paramsMap);
+			return;
+		}
+		Map toSet = new HashMap();
+		Set keys = paramsMap.keySet();
+		Iterator it = keys.iterator();
+		while (it.hasNext()) {
+			String key = (String) it.next();
+			Object value = paramsMap.get(key);
+			if (value != null && value instanceof String) {
+				String valueStr = (String) value;
+				String[] values = valueStr.split(",");
+				StringBuffer buffer = new StringBuffer();
+				for (int i = 0; i < values.length; i++) {
+					String aValue = values[i];
+					if (aValue.startsWith("'") && aValue.endsWith("'")) {
+						buffer.append(aValue.substring(1, aValue.length() - 1));
+					} else {
+						buffer.append(aValue);
+					}
+					if (i < values.length - 1) {
+						buffer.append(",");
+					}
+				}
+				valueStr = buffer.toString();
+				toSet.put(key, valueStr);
+			} else {
+				toSet.put(key, value);
+			}
+		}
+		super.setParamsMap(toSet);
 	}
 
 	public IMetaData getMetadata() {
