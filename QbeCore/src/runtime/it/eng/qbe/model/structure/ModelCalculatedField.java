@@ -151,6 +151,7 @@ public class ModelCalculatedField extends ModelField {
 			public Set<String> getValues() { return punctualValues; }
 		}
 		
+		
 		public Slot(String value) {
 			this.name = value;
 			mappedValues = new ArrayList<IMappedValuesDescriptor>();
