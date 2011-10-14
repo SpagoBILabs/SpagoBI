@@ -120,7 +120,8 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_MYSQL_DIALECT + "");
 				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)){		
 					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_HQL_DIALECT + "");
-				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)){		
+				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE) ||
+						  dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)){		
 					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_ORACLE_DIALECT + "");
 				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)){	
 					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_INGRES_DIALECT + "");
