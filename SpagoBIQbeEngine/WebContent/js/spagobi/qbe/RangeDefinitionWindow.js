@@ -73,6 +73,9 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
     , rangeToSave: {}
 	, fieldId: null
     , expression: null
+    , lookupStore: null
+    , lookupFieldFrom: null
+    , lookupFieldTo: null
 	
 	, initMainPanel: function(c) {
 		
@@ -125,7 +128,7 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
             , allowBlank: true
             , triggerClass: 'x-form-search-trigger'
 	    });
-		this.rangeFromValue.onTriggerClick = this.openLookup.createDelegate(this);
+		this.rangeFromValue.onTriggerClick = this.openLookupFrom.createDelegate(this);
 		
 		this.rangeTo = new Ext.form.ComboBox({
 		    allowBlank: false,
@@ -154,7 +157,7 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 			, allowBlank: true
             , triggerClass: 'x-form-search-trigger'
 		});
-		this.rangeToValue.onTriggerClick = this.openLookup.createDelegate(this);
+		this.rangeToValue.onTriggerClick = this.openLookupTo.createDelegate(this);
 		
 		this.mainPanel = new Ext.form.FormPanel({  
 			    layout: 'column',  
@@ -222,26 +225,48 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		this.close();
 	}
 	
-	, openLookup: function() {		
-		var lookupStore = this.createLookupStore();
-		lookupStore.load();
+	, openLookupFrom: function() {	
+		this.lookupStore = this.createLookupStore();
+		this.lookupStore.load()
+		
 		var baseConfig = {
-	       store: lookupStore
+	       store: this.lookupStore
 	     , singleSelect: true
-	    // , valuesSeparator: Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator
+	     , valuesSeparator: Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator
 		};
 		
-		this.lookupField = new Sbi.widgets.FilterLookupPopupWindow(baseConfig);	
-		this.lookupField.show();
+		this.lookupFieldFrom = new Sbi.widgets.FilterLookupPopupWindow(baseConfig);	
+		this.lookupFieldFrom.on('selectionmade', function(xselection) {
+			this.rangeFromValue.setValue(xselection.xselection.Values);			
+			this.lookupFieldFrom.close();
+		}, this);
+		this.lookupFieldFrom.show();
+	}
+	
+	, openLookupTo: function() {	
+		this.lookupStore = this.createLookupStore();
+		this.lookupStore.load()
+		var baseConfig = {
+	       store: this.lookupStore
+	     , singleSelect: true
+	     , valuesSeparator: Sbi.settings.qbe.filterGridPanel.lookupValuesSeparator
+		};
+		
+		this.lookupFieldTo = new Sbi.widgets.FilterLookupPopupWindow(baseConfig);	
+		this.lookupFieldTo.on('selectionmade', function(xselection) {
+			this.rangeToValue.setValue(xselection.xselection.Values);			
+			this.lookupFieldTo.close();
+		}, this);
+		this.lookupFieldTo.show();
 	}
 	
 	, createLookupStore: function() {
-		
+		var store = null;
 		var createStoreUrl = this.services['getValuesForQbeFilterLookupService'];
 		if (this.fieldId !== null) createStoreUrl +=  '&ENTITY_ID=' + this.fieldId;
 		if (this.expression !== null) createStoreUrl +=  '&EXPRESSION=' + this.expression;
 		
-		var store = new Ext.data.JsonStore({
+		store = new Ext.data.JsonStore({
 			url: createStoreUrl
 		});
 		
@@ -256,6 +281,8 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 	
 			Sbi.exception.ExceptionHandler.showErrorMessage(msg, response.statusText);
 		});
-		return store;	
+		
+		return store;
 	}
+	
 });
