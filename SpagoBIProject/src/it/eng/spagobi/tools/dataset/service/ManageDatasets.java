@@ -657,13 +657,22 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 
 		if(dsType.equalsIgnoreCase(DataSetConstants.DS_CUSTOM)){		
-			ds=new CustomDataSet();
+			CustomDataSet customDs=new CustomDataSet();
 			String customData = getAttributeAsString(DataSetConstants.CUSTOM_DATA);
-			((CustomDataSet)ds).setCustomData(customData);
+			customDs.setCustomData(customData);
 			String javaClassName = getAttributeAsString(DataSetConstants.JCLASS_NAME);
-			((CustomDataSet)ds).setJavaClassName(javaClassName);
-			((CustomDataSet)ds).init();
+			customDs.setJavaClassName(javaClassName);
+//			customDs.init();
+			
+			// if custom type call the referred class extending CustomAbstractDataSet
+			try {
+				ds = customDs.instantiate();			
+			} catch (Exception e) {
+				logger.error("Cannot instantiate class "+customDs.getJavaClassName()+ ": go on with CustomDatasetClass");
+				throw new SpagoBIServiceException("Manage Dataset","Cannot instantiate class "+javaClassName+": check it extends AbstractCustomDataSet");	
+			}			
 		}
+
 
 		if(dsType.equalsIgnoreCase(DataSetConstants.DS_QBE)){
 
