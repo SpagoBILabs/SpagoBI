@@ -106,7 +106,18 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		    mode: 'local',
 		    store: valuesFrom,
 		    valueField: 'id',
-		    displayField: 'value'
+		    displayField: 'value',
+		    listeners:{
+				beforeselect : function(combo, record, index ) {
+					if(record !== null && record !== undefined){
+						var display ='';
+						if(record.data.value.indexOf("&gt;") != -1){
+							diplay = record.data.value.replace("&gt;",'>');
+						}
+						record.data.value=diplay;
+					}
+				}
+			}
 		});
 		
 		this.rangeFromValue = new Ext.form.TriggerField({
@@ -124,7 +135,18 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		    mode: 'local',
 		    store: valuesTo,
 		    valueField: 'id',
-		    displayField: 'value'
+		    displayField: 'value',
+		    listeners:{
+				beforeselect : function(combo, record, index ) {
+					if(record !== null && record !== undefined){
+						var display ='';
+						if(record.data.value.indexOf("&lt;") != -1){
+							diplay = record.data.value.replace("&lt;",'<');
+						}
+						record.data.value=diplay;
+					}
+				}
+			}
 		});
 
 		this.rangeToValue = new Ext.form.TriggerField({
