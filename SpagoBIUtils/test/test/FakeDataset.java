@@ -13,6 +13,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -128,7 +129,23 @@ public class FakeDataset extends AbstractCustomDataSet {
 
 
 	public IDataStore test(int offset, int fetchSize, int maxResults) {
-		return datastore;
+	
+		logFilters();
+		
+		DataStore toReturn = new DataStore();
+		
+		IRecord rec = null;
+		Integer resultNumber = (Integer) this.getMetadata().getProperty("resultNumber");
+		int count = 0;
+		for ( int i = offset; i < offset + fetchSize && i < resultNumber; i++ ) {
+			rec = datastore.getRecordAt(i);
+			toReturn.appendRecord(rec);
+			count++;
+		}
+		
+		toReturn.setMetaData(this.getMetadata());
+		
+		return toReturn;
 	}
 	
 	static public IDataStore createStore(){
@@ -201,6 +218,8 @@ public class FakeDataset extends AbstractCustomDataSet {
 		IRecord rec = null;
 
 		int totale = sessi.length * statimatrimoniali.length * occupazioni.length * titoli.length * sportelli.length * anni.length * enti.length;
+		
+		meta.setProperty("resultNumber", totale);
 		
 		for (int i = 0; i < totale; i++) {
 			rec = new Record();

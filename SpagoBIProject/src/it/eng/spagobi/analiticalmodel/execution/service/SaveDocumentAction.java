@@ -444,8 +444,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		}
 
 		// insert parameters as BiObjectParameters
-		for (Iterator iterator = listPar.iterator(); iterator.hasNext();) {
-			Parameter parameter = (Parameter) iterator.next();
+		for (int i = 0 ; i < listPar.size(); i++) {	
+			Parameter parameter = (Parameter) listPar.get(i);
 			BIObjectParameter biObjectParameter = new BIObjectParameter();
 			biObjectParameter.setParID(parameter.getId());
 			biObjectParameter.setParameter(parameter);
@@ -455,6 +455,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			biObjectParameter.setMultivalue(MULTIVALUE);
 			biObjectParameter.setModifiable(MODIFIABLE);
 			biObjectParameter.setVisible(VISIBLE);
+			biObjectParameter.setPriority(i + 1);
 
 			if(biObj.getBiObjectParameters() == null)
 				biObj.setBiObjectParameters(new ArrayList<BIObjectParameter>());
