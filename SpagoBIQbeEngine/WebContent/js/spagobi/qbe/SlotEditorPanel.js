@@ -52,6 +52,7 @@ Sbi.qbe.SlotEditorPanel = function(config) {
 	
 	this.fieldId = c.fieldId;//an be null if click on entity node
 	this.firstPage = c.firstPage;
+	this.slotWizard = c.slotWizard;
 	
 	this.initStore(c);
 	this.initToolbar(c);
@@ -80,6 +81,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
     , fieldId: null
     , firstPage : null
     , expression: null
+    , slotWizard: null
     
 	, initToolbar: function(c){
 	
@@ -168,18 +170,6 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	                '{values}' + 
       	            '</div>'+
                 '</tpl>'+
-/*               '<tpl if="type == \'default\'">'+
-	        		'<div id="tpl-default-val">' + 
-	        		'<input type="checkbox" id="check-tpl-default" value="" '+
-	        		'<tpl if="value != \'\'">'+
-	        		' checked="true" ' +
-	        		'</tpl>'+	        		
-	        		'/> '+
-	        		'<tpl if="value != \'\'">'+
-	        		'&nbsp; VALUE: {value}' +
-	        		'</tpl>'+
-	                '</div>'+
-	            '</tpl>'+*/
                 '</tpl></tpl>'
              );  
              
@@ -192,10 +182,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
             tpl : template
         });
 
-        if(this.fieldId == null){
-        	var fs = this.firstPage.getFormState();
-        	this.expression = fs.expression;
-        }
+
 	    // button-columns
 	    var rangeButtonColumn = new Ext.grid.ButtonColumn(
 		    Ext.apply({
@@ -346,12 +333,17 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 
 	}
 	, openiInsertRangeWindow: function(rec){
+		this.expression = this.slotWizard.expression;
 		this.rangeWindow = new Sbi.qbe.RangeDefinitionWindow({slotPanel: this, record: rec, id: this.fieldId, expression: this.expression});
 		
 		this.rangeWindow.mainPanel.doLayout();
 		this.rangeWindow.show();
 	}
 	, openiInsertPunctualWindow: function(rec){
+		this.expression = this.slotWizard.expression;
+		this.punctualWindow = new Sbi.qbe.PunctualDefinitionWindow({slotPanel: this, record: rec, id: this.fieldId, expression: this.expression});
+		
+		this.punctualWindow.mainPanel.doLayout();
 		var lookupStore = this.createLookupStore();		
 		lookupStore.load();
 		var baseConfig = {
