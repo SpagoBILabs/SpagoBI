@@ -78,6 +78,7 @@ public class FakeDataset extends AbstractCustomDataSet {
 	public IDataStore getDomainValues(String fieldName, Integer start,
 			Integer limit, IDataStoreFilter filter) {
 		
+		logParams();
 		logFilters();
 		
 		String[] values = mappa.get(fieldName);
@@ -121,6 +122,10 @@ public class FakeDataset extends AbstractCustomDataSet {
 		List<String> fields = behaviour.getSelectedFields();
 		System.out.println("Selected fields: " + fields);
 	}
+	
+	private void logParams() {
+		System.out.println("Params: " + this.getParamsMap());
+	}
 
 
 	public IDataStore test() {
@@ -130,7 +135,7 @@ public class FakeDataset extends AbstractCustomDataSet {
 
 	public IDataStore test(int offset, int fetchSize, int maxResults) {
 	
-		logFilters();
+		logParams();
 		
 		DataStore toReturn = new DataStore();
 		
@@ -271,6 +276,7 @@ public class FakeDataset extends AbstractCustomDataSet {
 	public String getSignature() {
 		logger.debug("IN");
 		
+		logParams();
 		logFilters();
 		logSelectedFields();
 		
@@ -347,6 +353,7 @@ public class FakeDataset extends AbstractCustomDataSet {
 	@Override
 	public IDataSetTableDescriptor persist(String tableName,
 			Connection connection) {
+		logParams();
 		logFilters();
 		logSelectedFields();
 		IDataSetTableDescriptor toReturn = this.createTemporaryTable(tableName, connection);
