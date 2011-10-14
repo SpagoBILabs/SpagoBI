@@ -58,17 +58,26 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 	
 	// request parameters
 	public static String ENTITY_ID = "ENTITY_ID";
+	public static String EXPRESSION = "EXPRESSION";
 	public static String FILTERS = "FILTERS";	
 	public static String MODE = "MODE";
 	public static String MODE_SIMPLE = "simple";
 	public static String MODE_COMPLETE = "complete";
 	public static String START = "start";
 	public static String LIMIT = "limit";
+	
+	//class parameters
+	public static String TYPE_SIMPLE_FIELD = "TYPE_SIMPLE_FIELD";
+	public static String TYPE_INLINE_CC_FIELD = "TYPE_INLINE_CC_FIELD";
+
+	
 	// logger component
 	private static Logger logger = Logger.getLogger(GetValuesForQbeFilterLookup.class);
 	
 	public void service(SourceBean request, SourceBean response) {		
 		String entityId = null;
+		String expression = null;
+		
 		Integer limit = null;
 		Integer start = null;
 		Integer maxSize = null;
@@ -98,7 +107,15 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 			if(this.requestContainsAttribute( FILTERS ) ) {
 				filtersJSON = getAttributeAsJSONObject( FILTERS );
 			}
-			query = buildQuery(entityId, filtersJSON);
+			if(entityId == null){
+				expression = getAttributeAsString( EXPRESSION );
+				query = buildQuery(expression, TYPE_INLINE_CC_FIELD, filtersJSON);
+
+			}else{
+				query = buildQuery(entityId, TYPE_SIMPLE_FIELD, filtersJSON);
+			}
+
+			
 			statement = getDataSource().createStatement( query );
 			
 			statement.setParameters( getEnv() );
@@ -116,7 +133,7 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
 			
 			Assert.assertNotNull(entityId, "Parameter [" + ENTITY_ID + "] cannot be null" );
-		 
+		
 			try {
 				logger.debug("Executing query ...");
 				dataSet = QbeDatasetFactory.createDataSet(statement);
@@ -194,10 +211,14 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 		}		
 	}
 	
-	private Query buildQuery(String fieldUniqueName, JSONObject filtersJSON) throws JSONException {
+	private Query buildQuery(String fieldUniqueName, String type, JSONObject filtersJSON) throws JSONException {
 		logger.debug("IN: fieldUniqueName = " + fieldUniqueName);
 		Query query = new Query();
-		query.addSelectFiled(fieldUniqueName, "NONE", "Valori", true, true, false, "asc", null);
+		if(type.equals(TYPE_INLINE_CC_FIELD)){
+			query.addInLineCalculatedFiled("Valori", fieldUniqueName, null, "String", true, true, false, "asc", "NONE");
+		}else{
+			query.addSelectFiled(fieldUniqueName, "NONE", "Valori", true, true, false, "asc", null);
+		}
 		query.setDistinctClauseEnabled(true);
 		if (filtersJSON != null) {
 			
