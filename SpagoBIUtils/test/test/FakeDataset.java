@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -53,6 +54,8 @@ public class FakeDataset extends AbstractCustomDataSet {
 	
 	private static Map<String, String[]> mappa = new HashMap<String, String[]>();
 	
+	private static Random randomGenerator = new Random();
+	
 	static {
 		for (int i = 0 ; i < 30; i++) {
 			sportelli[i] = new Integer(i).toString();
@@ -74,6 +77,7 @@ public class FakeDataset extends AbstractCustomDataSet {
 	public IDataStore getDomainValues(String fieldName, Integer start,
 			Integer limit, IDataStoreFilter filter) {
 		
+		logFilters();
 		
 		String[] values = mappa.get(fieldName);
 		List<String> temp = new ArrayList<String>();
@@ -102,6 +106,19 @@ public class FakeDataset extends AbstractCustomDataSet {
 		
 		
 		return dataStore;
+	}
+
+
+	private void logFilters() {
+		FilteringBehaviour behaviour = (FilteringBehaviour) this.getBehaviour(FilteringBehaviour.ID);
+		Map<String, List<String>> filters = behaviour.getFilters();
+		System.out.println("Filters: " + filters);
+	}
+	
+	private void logSelectedFields() {
+		SelectableFieldsBehaviour behaviour = (SelectableFieldsBehaviour) this.getBehaviour(SelectableFieldsBehaviour.ID);
+		List<String> fields = behaviour.getSelectedFields();
+		System.out.println("Selected fields: " + fields);
 	}
 
 
@@ -188,16 +205,19 @@ public class FakeDataset extends AbstractCustomDataSet {
 		for (int i = 0; i < totale; i++) {
 			rec = new Record();
 
-			f = new Field(); f.setValue( sessi[ i % sessi.length ] ); rec.appendField(f);
+			f = new Field(); f.setValue( sessi[ (i < totale / 2) ? 0 : 1 ] ); rec.appendField(f);
 			f = new Field(); f.setValue( statimatrimoniali[ i % statimatrimoniali.length ] ); rec.appendField(f);
-			f = new Field(); f.setValue( occupazioni[ i % occupazioni.length ] ); rec.appendField(f);
-			f = new Field(); f.setValue( titoli[ i % titoli.length ] ); rec.appendField(f);
+			f = new Field(); f.setValue( occupazioni[ randomGenerator.nextInt(occupazioni.length) ] ); rec.appendField(f);
+			f = new Field(); f.setValue( titoli[ randomGenerator.nextInt(titoli.length) ] ); rec.appendField(f);
 			f = new Field(); f.setValue( regioni[ ( (i % sportelli.length) % lecittacodici.length ) % regioni.length ] ); rec.appendField(f);
 			f = new Field(); f.setValue( lecittacodici[ (i % sportelli.length) % lecittacodici.length ] ); rec.appendField(f);
 			f = new Field(); f.setValue( sportelli[ i % sportelli.length ] ); rec.appendField(f);
 //			f = new Field(); f.setValue( mesi[ i % mesi.length ] ); rec.appendField(f);
-			f = new Field(); f.setValue( anni[ i % anni.length ] ); rec.appendField(f);
-			f = new Field(); f.setValue( enti[ i % enti.length ] ); rec.appendField(f);
+			
+			int lunghezzaGruppo = totale / anni.length; 
+			int annoIndex = new Double(Math.floor( i / lunghezzaGruppo)).intValue();
+			f = new Field(); f.setValue( anni[ annoIndex ] ); rec.appendField(f);
+			f = new Field(); f.setValue( enti[ randomGenerator.nextInt(enti.length) ] ); rec.appendField(f);
 			f = new Field(); f.setValue( 1 ); rec.appendField(f); // spesa
 			f = new Field(); f.setValue( 1 ); rec.appendField(f); // guadagno
 
@@ -231,6 +251,9 @@ public class FakeDataset extends AbstractCustomDataSet {
 	@Override
 	public String getSignature() {
 		logger.debug("IN");
+		
+		logFilters();
+		logSelectedFields();
 		
 		StringBuffer buffer = new StringBuffer();
 		
@@ -305,6 +328,8 @@ public class FakeDataset extends AbstractCustomDataSet {
 	@Override
 	public IDataSetTableDescriptor persist(String tableName,
 			Connection connection) {
+		logFilters();
+		logSelectedFields();
 		IDataSetTableDescriptor toReturn = this.createTemporaryTable(tableName, connection);
 		this.populateTable(connection, tableName);
 		return toReturn;
