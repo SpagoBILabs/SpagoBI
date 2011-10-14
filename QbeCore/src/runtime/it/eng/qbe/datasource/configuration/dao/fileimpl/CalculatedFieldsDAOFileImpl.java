@@ -23,6 +23,10 @@ package it.eng.qbe.datasource.configuration.dao.fileimpl;
 import it.eng.qbe.datasource.configuration.dao.DAOException;
 import it.eng.qbe.datasource.configuration.dao.ICalculatedFieldsDAO;
 import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot.IMappedValuesDescriptor;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesPunctualDescriptor;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesRangeDescriptor;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.io.File;
@@ -36,6 +40,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -56,12 +61,26 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	protected File modelJarFile;
 
 	public static final String CFIELDS_FILE_NAME = "cfields.xml";
+	
 	public final static String ROOT_TAG = "CFIELDS";
+	
 	public final static String FIELD_TAG = "CFIELD";
 	public final static String FIELD_TAG_ENTIY_ATTR = "entity";
 	public final static String FIELD_TAG_NAME_ATTR = "name";
 	public final static String FIELD_TAG_TYPE_ATTR = "type";
 	public final static String FIELD_TAG_IN_LINE_ATTR = "isInLine";
+	
+	public final static String EXPRESSION_TAG = "EXPRESSION";
+	public final static String SLOTS_TAG = "SLOTS";
+	public final static String SLOT_TAG = "SLOT";
+	
+	public final static String VALUESET_TAG = "VALUESET";
+	public final static String FROM_TAG = "FROM";
+	public final static String TO_TAG = "TO";
+	public final static String VALUE_TAG = "VALUE";
+	
+	
+	
 	
 	public static transient Logger logger = Logger.getLogger(CalculatedFieldsDAOFileImpl.class);
 	
@@ -167,7 +186,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		
 		expression = null;
 		
-		Node expressionNode = calculatedFieldNode.selectSingleNode("EXPRESSION");
+		Node expressionNode = calculatedFieldNode.selectSingleNode(EXPRESSION_TAG);
 		if(expressionNode != null) {
 			expression = expressionNode.getStringValue();
 		} else { // for back compatibility
@@ -181,9 +200,9 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		
 		List<ModelCalculatedField.Slot> slots = new ArrayList<ModelCalculatedField.Slot>();
 		
-		Node slotBlock = calculatedFieldNode.selectSingleNode("SLOTS");
+		Node slotBlock = calculatedFieldNode.selectSingleNode(SLOTS_TAG);
 		if(slotBlock != null) {
-			List<Node> slotNodes = slotBlock.selectNodes("SLOT");
+			List<Node> slotNodes = slotBlock.selectNodes(SLOT_TAG);
 			
 			for(Node slotNode : slotNodes) {
 				ModelCalculatedField.Slot slot = loadSlot(slotNode);
@@ -196,14 +215,14 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		
 	private String loadDefaultSlotValue(Node calculatedFieldNode) {
 			
-		String defaultSoltValue = null;
+		String defaultSlotValue = null;
 			
-		Node slotBlock = calculatedFieldNode.selectSingleNode("SLOTS");
+		Node slotBlock = calculatedFieldNode.selectSingleNode(SLOTS_TAG);
 		if(slotBlock != null) {
-			defaultSoltValue = slotBlock.valueOf("@defaultSoltValue");	
+			defaultSlotValue = slotBlock.valueOf("@defaultSlotValue");	
 		}
 			
-		return defaultSoltValue;
+		return defaultSlotValue;
 	}
 	
 	
@@ -213,7 +232,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		String slotValue = slotNode.valueOf("@value");	
 		slot = new ModelCalculatedField.Slot(slotValue);
 		
-		List<Node> mappedValues = slotNode.selectNodes("VALUESET");
+		List<Node> mappedValues = slotNode.selectNodes(VALUESET_TAG);
 		for(Node mappedValuesNode:  mappedValues) {
 			ModelCalculatedField.Slot.IMappedValuesDescriptor descriptor = loadDescriptor(mappedValuesNode);
 			slot.addMappedValuesDescriptors(descriptor);
@@ -240,7 +259,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		ModelCalculatedField.Slot.MappedValuesPunctualDescriptor punctualDescriptor;
 		
 		punctualDescriptor = new ModelCalculatedField.Slot.MappedValuesPunctualDescriptor();
-		List<Node> punctualValueNodes = mappedValuesNode.selectNodes("VALUE");
+		List<Node> punctualValueNodes = mappedValuesNode.selectNodes(VALUE_TAG);
 		for(Node punctualValueNode : punctualValueNodes) {
 			String punctualValue = punctualValueNode.valueOf("@value");
 			punctualDescriptor.addValue( punctualValue );
@@ -252,9 +271,9 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	private ModelCalculatedField.Slot.MappedValuesRangeDescriptor loadRangeDescriptor(Node mappedValuesNode) { 
 		ModelCalculatedField.Slot.MappedValuesRangeDescriptor rangeDescriptor = null;
 		
-		Node fomrNode = mappedValuesNode.selectSingleNode("FROM");
+		Node fomrNode = mappedValuesNode.selectSingleNode(FROM_TAG);
 		String fromValue = fomrNode.valueOf("@value");
-		Node toNode = mappedValuesNode.selectSingleNode("TO");
+		Node toNode = mappedValuesNode.selectSingleNode(TO_TAG);
 		String toValue = toNode.valueOf("@value");
 		rangeDescriptor = new ModelCalculatedField.Slot.MappedValuesRangeDescriptor(fromValue, toValue);
 		String includeValue = null;
@@ -285,7 +304,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		List fields;
 		Document document;
 		Element root;
-		ModelCalculatedField field;
+		ModelCalculatedField modelCalculatedField;
 		
 		logger.debug("IN");
 		
@@ -318,14 +337,30 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 				logger.debug("Serializing [" + calculatedFields.size() + "] calculated fields for entity [" + entityName + "]");
 				fields = (List)calculatedFields.get(entityName);
 				for(int i = 0; i < fields.size(); i++) {
-					field = (ModelCalculatedField)fields.get(i);
-					logger.debug("Serializing calculated field [" + field.getName() + "] for entity [" + entityName + "]");
-					root.addElement( FIELD_TAG )
+					modelCalculatedField = (ModelCalculatedField)fields.get(i);
+					logger.debug("Serializing calculated field [" + modelCalculatedField.getName() + "] for entity [" + entityName + "]");
+					Element fieldElement = root.addElement( FIELD_TAG )
 		            	.addAttribute( FIELD_TAG_ENTIY_ATTR, entityName )
-		            	.addAttribute( FIELD_TAG_NAME_ATTR, field.getName() )
-		            	.addAttribute( FIELD_TAG_TYPE_ATTR, field.getType() )
-		            	.addAttribute( FIELD_TAG_IN_LINE_ATTR, ""+field.isInLine() )
-		            	.addCDATA( field.getExpression() );
+		            	.addAttribute( FIELD_TAG_NAME_ATTR, modelCalculatedField.getName() )
+		            	.addAttribute( FIELD_TAG_TYPE_ATTR, modelCalculatedField.getType() )
+		            	.addAttribute( FIELD_TAG_IN_LINE_ATTR, "" + modelCalculatedField.isInLine() );
+		            	
+					
+					fieldElement.addElement( EXPRESSION_TAG ).addCDATA( modelCalculatedField.getExpression() );
+					
+					List<Slot> slots = modelCalculatedField.getSlots();
+					if(slots != null && slots.size() > 0) {
+						Element slotsElement = fieldElement.addElement( SLOTS_TAG );
+						if(modelCalculatedField.getDefaultSlotValue() != null) {
+							slotsElement.addAttribute("defaultSlotValue", modelCalculatedField.getDefaultSlotValue());
+						}
+						
+						for(Slot slot : slots) {
+							Element slotElement = slotsElement.addElement(SLOT_TAG);
+							slotElement.addAttribute("value", slot.getName());
+							saveValueSets(slot, slotElement);							
+						}
+					}
 				}
 			}
 			
@@ -338,6 +373,39 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 			logger.debug("OUT");
 		}
 	}
+	
+	public void saveValueSets(Slot slot, Element slotElement) {
+		List<IMappedValuesDescriptor> descriptors = slot.getMappedValuesDescriptors();
+		for(IMappedValuesDescriptor descriptor : descriptors) {
+			Element valuesetElement = slotElement.addElement(VALUESET_TAG);
+			
+			if(descriptor instanceof MappedValuesPunctualDescriptor) {
+				MappedValuesPunctualDescriptor punctualDescriptor = (MappedValuesPunctualDescriptor)descriptor;
+				valuesetElement.addAttribute("type", "punctual");
+				Set<String> values = punctualDescriptor.getValues();
+				for(String value : values) {
+					valuesetElement.addElement(VALUE_TAG).addAttribute("value", value);
+				}
+			} else if(descriptor instanceof MappedValuesRangeDescriptor) {
+				MappedValuesRangeDescriptor rangeDescriptor = (MappedValuesRangeDescriptor)descriptor;
+				valuesetElement.addAttribute("type", "range");
+				valuesetElement.addElement(FROM_TAG)
+					.addAttribute("value", rangeDescriptor.getMinValue())
+					.addAttribute("include", "" + rangeDescriptor.isIncludeMinValue());
+				valuesetElement.addElement(TO_TAG)
+					.addAttribute("value", rangeDescriptor.getMaxValue())
+					.addAttribute("include", "" + rangeDescriptor.isIncludeMaxValue());
+			} else {
+				throw new DAOException("An unpredicetd error occurred while saving valueset of slot [" + slot.getName() + "]");
+			}
+			
+		}
+	}
+	
+	
+	
+	
+	
 	
 	private File getCalculatedFieldsFile() {
 		File calculatedFieldsFile = null;
