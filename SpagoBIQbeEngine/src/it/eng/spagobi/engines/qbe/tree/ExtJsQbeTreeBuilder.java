@@ -33,6 +33,7 @@ import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.qbe.serializer.json.QbeSerializationConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.io.CharArrayWriter;
@@ -366,8 +367,11 @@ public class ExtJsQbeTreeBuilder  {
 
 			if(field.getDefaultSlotValue() != null) {
 				JSONObject defaultSlot = new JSONObject();
-				defaultSlot.put("type", "default");
-				defaultSlot.put("name", field.getDefaultSlotValue());
+				defaultSlot.put(QbeSerializationConstants.SLOT_NAME, field.getDefaultSlotValue());
+				JSONObject valueset = new JSONObject("{type: 'default', value: ''}");
+				valueset.put(QbeSerializationConstants.SLOT_VALUESET_TYPE, QbeSerializationConstants.SLOT_VALUESET_TYPE_DEFAULT);
+				valueset.put(QbeSerializationConstants.SLOT_VALUESET_VALUES, "");
+				defaultSlot.put(QbeSerializationConstants.SLOT_VALUESET, valueset);
 				slotsJSON.put(defaultSlot);
 			}
 			
