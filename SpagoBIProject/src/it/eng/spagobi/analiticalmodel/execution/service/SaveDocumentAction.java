@@ -446,7 +446,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			biObjectParameter.setParID(parameter.getId());
 			biObjectParameter.setParameter(parameter);
 			biObjectParameter.setParameterUrlName(parameter.getLabel());
-			biObjectParameter.setLabel(parameter.getLabel());
+			biObjectParameter.setLabel(parameter.getName());
 			biObjectParameter.setRequired(REQUIRED);
 			biObjectParameter.setMultivalue(MULTIVALUE);
 			biObjectParameter.setModifiable(MODIFIABLE);
