@@ -51,7 +51,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/qbe/FreeConditionsWindow.js'/></script>
 <script type="text/javascript" src='../js/spagobi/qbe/OperandsWindow.js'/></script>
 <script type="text/javascript" src='../js/spagobi/qbe/CalculatedFieldEditorPanel.js'/></script>
-<script type="text/javascript" src='../js/spagobi/qbe/PunctualDefinitionWindow.js'/></script>
 <script type="text/javascript" src='../js/spagobi/qbe/RangeDefinitionWindow.js'/></script>
 <script type="text/javascript" src='../js/spagobi/qbe/SlotEditorPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/qbe/CalculatedFieldWizard.js'/></script>
