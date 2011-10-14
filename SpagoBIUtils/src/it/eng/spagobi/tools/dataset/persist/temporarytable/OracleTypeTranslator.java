@@ -65,14 +65,14 @@ public class OracleTypeTranslator implements INativeDBTypeable{
 		Integer size = null;
 		Integer precision = null;
 		Integer scale = null;
-
-		if(properties.get(SIZE) != null) 
-			size = Integer.valueOf(properties.get(SIZE).toString());
-		if(properties.get(PRECISION) != null) 
-			precision = Integer.valueOf(properties.get(PRECISION).toString());
-		if(properties.get(SCALE) != null) 
-			scale = Integer.valueOf(properties.get(SCALE).toString());
-
+		if(properties!=null){
+			if(properties.get(SIZE) != null) 
+				size = Integer.valueOf(properties.get(SIZE).toString());
+			if(properties.get(PRECISION) != null) 
+				precision = Integer.valueOf(properties.get(PRECISION).toString());
+			if(properties.get(SCALE) != null) 
+				scale = Integer.valueOf(properties.get(SCALE).toString());	
+		}
 
 		typeSQL = oracleTypeMapping.get(typeJavaName);
 

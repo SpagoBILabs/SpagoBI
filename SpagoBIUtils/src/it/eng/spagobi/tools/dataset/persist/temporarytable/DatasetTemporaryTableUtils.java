@@ -33,6 +33,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 
@@ -46,7 +47,6 @@ public class DatasetTemporaryTableUtils {
 	 * @param conn
 	 * @param meta
 	 * @param tableName
-	 * @param list 
 	 * @return
 	 * @throws Exception
 	 */
@@ -66,6 +66,7 @@ public class DatasetTemporaryTableUtils {
 
 			// run through all columns in order to build the SQL columndefinition
 			int count = meta.getFieldCount();
+			logger.debug("The table tableName has "+count+" columns ");
 			for (int i = 0 ; i < count ; i++) {
 				IFieldMetaData fieldMeta = meta.getFieldMeta(i);
 				String fieldName = fieldMeta.getName();
@@ -78,10 +79,12 @@ public class DatasetTemporaryTableUtils {
 			sqlQuery = createTableCommand.createSQLQuery();
 
 			// execute 
+			logger.debug("Executing the query "+sqlQuery+"...");
 			st = conn.createStatement();
 			st.execute(sqlQuery);
-
+			logger.debug("Query executed");
 			dstd = createTableCommand.getDsTableDescriptor();
+			LogMF.debug(logger, "The query descriptor is {0}", dstd);
 
 		} catch (SQLException e) {
 			logger.error("Error in excuting statement " + sqlQuery, e);
