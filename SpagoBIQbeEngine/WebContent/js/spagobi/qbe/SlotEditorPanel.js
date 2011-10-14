@@ -73,6 +73,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
     , hasDefault: false
     , fieldId: null
     , firstPage : null
+    , expression: null
     
 	, initToolbar: function(c){
 	
@@ -185,11 +186,10 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
             tpl : template
         });
 
-/*        if(this.fieldId == null){
+        if(this.fieldId == null){
         	var fs = this.firstPage.getFormState();
-        	var node = st.target;
-        	this.fieldId = node.attributes.id;
-        }*/
+        	this.expression = fs.expression;
+        }
 	    // button-columns
 	    var rangeButtonColumn = new Ext.grid.ButtonColumn(
 		    Ext.apply({
@@ -340,13 +340,13 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 
 	}
 	, openiInsertRangeWindow: function(rec){
-		this.rangeWindow = new Sbi.qbe.RangeDefinitionWindow({slotPanel: this, record: rec, id: this.fieldId});
+		this.rangeWindow = new Sbi.qbe.RangeDefinitionWindow({slotPanel: this, record: rec, id: this.fieldId, expression: this.expression});
 		
 		this.rangeWindow.mainPanel.doLayout();
 		this.rangeWindow.show();
 	}
 	, openiInsertPunctualWindow: function(rec){
-		this.punctualWindow = new Sbi.qbe.PunctualDefinitionWindow({slotPanel: this, record: rec, id: this.fieldId});
+		this.punctualWindow = new Sbi.qbe.PunctualDefinitionWindow({slotPanel: this, record: rec, id: this.fieldId, expression: this.expression});
 		
 		this.punctualWindow.mainPanel.doLayout();
 		this.punctualWindow.show();
@@ -365,6 +365,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	}
 	, createDefault: function(){
         // access the Record constructor through the grid's store
+        //{type: 'default", name: 'ecco il default''}
         if(this.hasDefault == false){
 			var Slot = this.gridPanel.getStore().recordType;
 	        var p = new Slot({
