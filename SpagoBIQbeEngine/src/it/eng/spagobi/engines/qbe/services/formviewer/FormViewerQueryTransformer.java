@@ -29,6 +29,7 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QueryJSONDeserializer;
 import it.eng.qbe.query.transformers.AbstractQbeQueryTransformer;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.engines.qbe.bo.FormViewerState;
 import it.eng.spagobi.engines.qbe.template.QbeJSONTemplateParser;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
@@ -142,12 +143,12 @@ public class FormViewerQueryTransformer extends AbstractQbeQueryTransformer {
 		// adding filters for the selected option
 		for (int i = 0; i < filters.length(); i++) {
 			JSONObject filter = filters.getJSONObject(i);
-			WhereField.Operand leftOperand = new WhereField.Operand(new String[] {filter.getString("leftOperandValue")}, null, "Field Content", null, null);
+			WhereField.Operand leftOperand = new WhereField.Operand(new String[] {filter.getString("leftOperandValue")}, null, AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
 			WhereField.Operand rightOperand = null;
 			if (filter.optString("rightOperandValue") != null) {
 				logger.debug(filter.toString(3));
 				String type = filter.optString("rightOperandType");
-				String defType = "Static Value";
+				String defType = AbstractStatement.OPERAND_TYPE_STATIC;
 				if(type == null || type.equalsIgnoreCase("")) {
 					type = defType;
 				}
@@ -228,8 +229,8 @@ public class FormViewerQueryTransformer extends AbstractQbeQueryTransformer {
 					if (operator.equals(CriteriaConstants.EQUALS_TO)) {
 						operator = CriteriaConstants.IN;
 					}
-					WhereField.Operand leftOperand = new WhereField.Operand(new String[] {filter.getString("field")}, null, "Field Content", null, null);
-					WhereField.Operand rightOperand = new WhereField.Operand(values.toArray(new String[]{}), null, "Static Value", null, null);
+					WhereField.Operand leftOperand = new WhereField.Operand(new String[] {filter.getString("field")}, null, AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
+					WhereField.Operand rightOperand = new WhereField.Operand(values.toArray(new String[]{}), null, AbstractStatement.OPERAND_TYPE_STATIC, null, null);
 					query.addWhereField(id, null, false, leftOperand, operator, rightOperand, "AND");
 					updateWhereClauseStructure(query, filter.getString(QbeJSONTemplateParser.ID), "AND");
 				}
@@ -275,15 +276,15 @@ public class FormViewerQueryTransformer extends AbstractQbeQueryTransformer {
 	
 	private void addWhereFilter(Query query, String field, JSONObject filter) throws Exception {
 		String id = filter.getString(QbeJSONTemplateParser.ID);
-		WhereField.Operand leftOperand = new WhereField.Operand(new String[] {field}, null, "Field Content", null, null);
+		WhereField.Operand leftOperand = new WhereField.Operand(new String[] {field}, null, AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
 		String operator = filter.getString(QbeJSONTemplateParser.OPERATOR);
 		WhereField.Operand rightOperand = null;
 		if (operator.equalsIgnoreCase("BETWEEN")) {
 			List<String> fromToValues = formViewerState.getDynamicFilterFromToValues(id);
-			rightOperand = new WhereField.Operand(new String[] {fromToValues.get(0), fromToValues.get(1)}, null, "Static Value", null, null);
+			rightOperand = new WhereField.Operand(new String[] {fromToValues.get(0), fromToValues.get(1)}, null, AbstractStatement.OPERAND_TYPE_STATIC, null, null);
 		} else {
 			String value = formViewerState.getDynamicFilterValue(id);
-			rightOperand = new WhereField.Operand(new String[] {value}, null, "Static Value", null, null);
+			rightOperand = new WhereField.Operand(new String[] {value}, null, AbstractStatement.OPERAND_TYPE_STATIC, null, null);
 		}
 		query.addWhereField(id, null, false, leftOperand, filter.getString("operator"), rightOperand, "AND");
 		updateWhereClauseStructure(query, id, "AND");
@@ -291,15 +292,15 @@ public class FormViewerQueryTransformer extends AbstractQbeQueryTransformer {
 	
 	private void addHavingFilter(Query query, SimpleSelectField field, JSONObject filter) throws Exception {
 		String id = filter.getString(QbeJSONTemplateParser.ID);
-		HavingField.Operand leftOperand = new HavingField.Operand(new String[] {field.getUniqueName()}, null, "Field Content", null, null, field.getFunction());
+		HavingField.Operand leftOperand = new HavingField.Operand(new String[] {field.getUniqueName()}, null, AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null, field.getFunction());
 		String operator = filter.getString(QbeJSONTemplateParser.OPERATOR);
 		HavingField.Operand rightOperand = null;
 		if (operator.equalsIgnoreCase("BETWEEN")) {
 			List<String> fromToValues = formViewerState.getDynamicFilterFromToValues(id);
-			rightOperand = new HavingField.Operand(new String[] {fromToValues.get(0), fromToValues.get(1)}, null, "Static Value", null, null, AggregationFunctions.NONE_FUNCTION);
+			rightOperand = new HavingField.Operand(new String[] {fromToValues.get(0), fromToValues.get(1)}, null, AbstractStatement.OPERAND_TYPE_STATIC, null, null, AggregationFunctions.NONE_FUNCTION);
 		} else {
 			String value = formViewerState.getDynamicFilterValue(id);
-			rightOperand = new HavingField.Operand(new String[] {value}, null, "Static Value", null, null, AggregationFunctions.NONE_FUNCTION);
+			rightOperand = new HavingField.Operand(new String[] {value}, null, AbstractStatement.OPERAND_TYPE_STATIC, null, null, AggregationFunctions.NONE_FUNCTION);
 		}
 		query.addHavingField(id, null, false, leftOperand, filter.getString("operator"), rightOperand, "AND");
 	}
