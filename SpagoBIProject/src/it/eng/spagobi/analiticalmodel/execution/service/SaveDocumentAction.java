@@ -433,9 +433,13 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			try {
 				parameter = DAOFactory.getParameterDAO().loadForDetailByParameterLabel(dataSetParameterItem.getName());
 			} catch (EMFUserError e) {
+				logger.error("Parameter with label "+dataSetParameterItem.getName()+" was not found!");
 				throw new SpagoBIServiceException(SERVICE_NAME, "Parameter with label "+dataSetParameterItem.getName()+" was not found!", e);
 			}
-			Assert.assertNotNull(parameter, "Parameter with label "+dataSetParameterItem.getName()+" was not found!");
+			if(parameter == null){
+				logger.error("Parameter with label "+dataSetParameterItem.getName()+" was not found!");
+				throw new SpagoBIServiceException(SERVICE_NAME, "Parameter with label "+dataSetParameterItem.getName()+" was not found!");
+			}
 			listPar.add(parameter);
 		}
 
