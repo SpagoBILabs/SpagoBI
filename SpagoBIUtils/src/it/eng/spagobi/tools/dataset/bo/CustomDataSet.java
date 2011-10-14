@@ -282,10 +282,10 @@ public class CustomDataSet extends ConfigurableDataSet {
 			}
 			else{
 				
-				IDataStore dsStore = test();
-				if(dsStore != null){
-					metadata = dsStore.getMetaData();
-				}
+//				IDataStore dsStore = test();
+//				if(dsStore != null){
+//					metadata = dsStore.getMetaData();
+//				}
 			}
 		} catch (Exception e) {
 			logger.error("Error loading the metadata",e);
