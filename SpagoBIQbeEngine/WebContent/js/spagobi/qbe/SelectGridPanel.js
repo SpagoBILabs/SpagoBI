@@ -641,43 +641,43 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		var functionsForInline = [
 		    {
 			    text: '+'
-			    , qtip: 'binary sum function'
+			    , qtip: LN('sbi.qbe.selectgridpanel.func.sum.tip')
 			    , type: 'function'
 			    , value: Ext.util.Format.htmlEncode('+')
 			    , alias: Ext.util.Format.htmlEncode('+')
 		    }, {
 			    text: '-' 
-			    , qtip: 'binary difference function'
+			    , qtip: LN('sbi.qbe.selectgridpanel.func.difference.tip')
 			    , type: 'function'
 			    , value: Ext.util.Format.htmlEncode('-')
 			    , alias: Ext.util.Format.htmlEncode('-')
 		    }, {
 			    text: '*'
-			    , qtip: 'binary multiplication function'
+			    , qtip: LN('sbi.qbe.selectgridpanel.func.multiplication.tip')
 			    , type: 'function'
 			    , value: Ext.util.Format.htmlEncode('*')
 			    , alias: Ext.util.Format.htmlEncode('*')
 		    }, {
 			    text: '/'
-				, qtip: 'binary division function'
+				, qtip: LN('sbi.qbe.selectgridpanel.func.division.tip')
 				, type: 'function'
 				, value: Ext.util.Format.htmlEncode('/')
 				, alias: Ext.util.Format.htmlEncode('/')
 			}, {
 			    text: '||'
-				, qtip: 'pipe'
+				, qtip: LN('sbi.qbe.selectgridpanel.func.pipe.tip')
 				, type: 'function'
 				, value: Ext.util.Format.htmlEncode('||')
 				, alias: Ext.util.Format.htmlEncode('||')
 			}, {
 			    text: '('
-				, qtip: 'open parenthesis'
+				, qtip: LN('sbi.qbe.selectgridpanel.func.openpar.tip')
 				, type: 'function'
 				, value: Ext.util.Format.htmlEncode('(')
 				, alias: Ext.util.Format.htmlEncode('(')
 			}, {
 			    text: ')'
-  				, qtip: 'closed parenthesis'
+  				, qtip: LN('sbi.qbe.selectgridpanel.func.closepar.tip')
   				, type: 'function'
   				, value: Ext.util.Format.htmlEncode(')')
   				, alias: Ext.util.Format.htmlEncode(')')
@@ -759,20 +759,72 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 				}
  		];
 		
+		var dateFunctions = [
+      		    {
+      	            text: 'GG_between_dates'
+      	            , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.ggbetweendates')
+      	            , type: 'function'
+      	            , value: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
+      	            , alias: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
+      	            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
+      	            		   , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
+      		    
+      	         }, {
+      		         text: 'MM_between_dates'
+      		         , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.mmbetweendates')
+      			     , type: 'function'
+      			     , value: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
+      			     , alias: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
+      			     , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
+      	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
+      			 },{
+      				 text: 'AA_between_dates'
+      			      , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.aabetweendates')
+      			      , type: 'function'
+      			      , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+      			      , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+      			      , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
+      	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
+      			 }, {
+      			     text: 'GG_up_today'
+      			     , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.gguptoday')
+      				 , type: 'function'
+      				 , value: Ext.util.Format.htmlEncode('GG_up_today(op1)')
+      				 , alias: Ext.util.Format.htmlEncode('GG_up_today(op1)')
+      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
+      			 }, {
+      			     text: 'MM_up_today'
+      				 , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.mmuptoday')
+      				 , type: 'function'
+      				 , value: Ext.util.Format.htmlEncode('MM_up_today(op1)')
+      				 , alias: Ext.util.Format.htmlEncode('MM_up_today(op1)')
+      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
+      			  }, {
+      				 text: 'AA_up_today'
+      				 , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.aauptoday')
+      				 , type: 'function'
+      				 , value: Ext.util.Format.htmlEncode('AA_up_today(op1)')
+      				 , alias: Ext.util.Format.htmlEncode('AA_up_today(op1)')
+      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
+      			   }
+      	    ];
+		
 		this.inLineCalculatedFieldWizard = new Sbi.qbe.CalculatedFieldWizard({
-    		title: 'Calculated Field Wizard',
+    		title: LN('sbi.qbe.calculatedFields.title'),
     		expItemGroups: [
-    		    {name:'fields', text: 'Fields'}, 
-    		    {name:'functions', text: 'Functions'},
-    		    {name:'aggregationFunctions', text: 'Aggregation Functions'}
+    		    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
+    		    {name:'functions', text:  LN('sbi.qbe.calculatedFields.functions')},
+    		    {name:'aggregationFunctions', text:  LN('sbi.qbe.calculatedFields.aggrfunctions')},
+    		    {name:'dateFunctions', text:  LN('sbi.qbe.calculatedFields.datefunctions')}
     		],
     		fields: fields,
     		functions: functionsForInline,
     		aggregationFunctions: aggregationFunctions,
+    		dateFunctions: dateFunctions,
     		expertMode: false,
         	scopeComboBoxData :[
-        	     ['STRING','String', 'If the expression script returns a plain text string'],
-    	         ['NUMBER', 'Number', 'If the expression script returns a number']
+        	     ['STRING','String', LN('sbi.qbe.calculatedFields.string.type')],
+    	         ['NUMBER', 'Number', LN('sbi.qbe.calculatedFields.num.type')]
     	    ],
     		validationService: {
 				serviceName: 'VALIDATE_EXPRESSION_ACTION'
@@ -782,20 +834,22 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
     	});
 		
  		this.calculatedFieldWizard = new Sbi.qbe.CalculatedFieldWizard({
-     		title: 'Calculated Field Wizard',
+     		title:  LN('sbi.qbe.calculatedFields.title'),
      		expItemGroups: [
-     		    {name:'fields', text: 'Fields'}, 
-     		    {name:'parameters', text: 'Parameters', loader: parametersLoader}, 
-     		    {name:'attributes', text: 'Attributes', loader: attributesLoader},
-     		    {name:'functions', text: 'Functions'}
+     		    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
+     		    {name:'parameters', text: LN('sbi.qbe.calculatedFields.parameters'), loader: parametersLoader}, 
+     		    {name:'attributes', text: LN('sbi.qbe.calculatedFields.attributes'), loader: attributesLoader},
+     		    {name:'functions', text: LN('sbi.qbe.calculatedFields.functions')},
+     		    {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
      		],
      		fields: fields,
      		functions: functions,
+     		dateFunctions: dateFunctions,
      		expertMode: true,
         	scopeComboBoxData :[
-        	    ['STRING','String', 'If the expression script returns a plain text string'],
-        	    ['HTML', 'Html', 'If the expression script returns a valid html fragment'],
-        	    ['NUMBER', 'Number', 'If the expression script returns a number']
+        	    ['STRING','String', LN('sbi.qbe.calculatedFields.string.type')],
+        	    ['HTML', 'Html', LN('sbi.qbe.calculatedFields.html.type')],
+        	    ['NUMBER', 'Number', LN('sbi.qbe.calculatedFields.num.type')]
         	],
      		validationService: {
  				serviceName: 'VALIDATE_EXPRESSION_ACTION'
@@ -824,7 +878,8 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
      	}, this);
  
      	this.inLineCalculatedFieldWizard.mainPanel.on('notexpert', function(){
-     		if(this.inLineCalculatedFieldWizard!=null){
+     		if(this.inLineCalculatedFieldWizard != null &&  this.inLineCalculatedFieldWizard != undefined &&
+     		   this.inLineCalculatedFieldWizard.inputFields !== null && this.inLineCalculatedFieldWizard.inputFields !== undefined){
      			var alias = this.inLineCalculatedFieldWizard.inputFields.alias.getValue();
      		}
      		this.initCalculatedFieldWizards();

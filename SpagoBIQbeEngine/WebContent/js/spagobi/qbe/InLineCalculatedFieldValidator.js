@@ -20,6 +20,7 @@
 			    "COUNT"
 			    "MIN"
 			    "MAX"
+			    "GG_between_dates"
 			    "\|\|"
 			    '[0-9]+'                        				INT   [* %match = parseInt( %match ); *]
 			    '[0-9]+\.[0-9]*|[0-9]*\.[0-9]+' 				FLOAT [* %match = parseFloat( %match ); *]
@@ -565,7 +566,8 @@ SQLExpressionParser.module = function(){
 	    "numericexpression" /* Non-terminal symbol */,
 	    "stringexpression" /* Non-terminal symbol */,
 	    "p" /* Non-terminal symbol */,
-	    "$" /* Terminal symbol */
+	    "$" /* Terminal symbol */,
+	    "GG_between_dates"
 	);
 
 
