@@ -60,7 +60,7 @@ Sbi.worksheet.designer.QueryFieldsContainerPanel = function(config) {
 	
 	Ext.apply(this, c); // this operation should overwrite this.initialData content, that is initial grid's content
 	
-	this.addEvents('storeChanged', 'attributeDblClick');
+	this.addEvents('storeChanged', 'attributeDblClick', 'attributeRemoved');
 	
 	this.init(c);
 	
@@ -141,6 +141,18 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 				this.addField(this.initialData[i]);
 			}
 		}
+		this.store.on('remove', function (theStore, theRecord, index ) {
+			this.fireEvent('attributeRemoved', this, theRecord.data);
+		}, this);
+		/*
+		 * unfortunately, when removing all record with removeAll method, the event remove is not raised
+		 */
+		this.store.on('clear', function (theStore, theRecords ) {
+			for (var i = 0 ; i < theRecords.length; i++) {
+				var aRecord = theRecords[i];
+				this.fireEvent('attributeRemoved', this, aRecord.data);
+			}
+		}, this);
 	}
 	
 	, initColumnModel: function(c) {
@@ -241,8 +253,15 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 	}
 	
 	, removeAllValues: function() {
-		this.store.removeAll(false);
+		this.store.removeAll(false); // CANNOT BE SILENT!!! it must throw the clear event for attributeRemoved event
 		this.fireEvent('storeChanged',0);
 	}
 
+	, containsAttribute: function (attributeId) {
+		if (this.store.find('id', attributeId) !== -1) {
+			return true;
+		}
+		return false;
+	}
+	
 });

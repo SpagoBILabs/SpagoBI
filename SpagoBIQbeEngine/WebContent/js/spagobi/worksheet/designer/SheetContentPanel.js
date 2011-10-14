@@ -58,7 +58,7 @@ Sbi.worksheet.designer.SheetContentPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
-	this.addEvents('addDesigner', 'attributeDblClick');
+	this.addEvents('addDesigner', 'attributeDblClick', 'attributeRemoved', 'designerRemoved');
 	
 	this.initEmptyMsgPanel();
 	
@@ -215,6 +215,7 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		this.designer = null;
 		this.initEmptyMsgPanel();
 		this.add(this.emptyMsgPanel);
+		this.fireEvent('designerRemoved');
 		this.doLayout();
 	}
 	
@@ -276,11 +277,18 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 			}, this);
 		}
 		
-		// propagate event
+		// propagate events
 		this.designer.on(
 			'attributeDblClick' , 
 			function (thePanel, attribute) { 
 				this.fireEvent("attributeDblClick", this, attribute); 
+			}, 
+			this
+		);
+		this.designer.on(
+			'attributeRemoved' , 
+			function (thePanel, attribute) { 
+				this.fireEvent("attributeRemoved", this, attribute); 
 			}, 
 			this
 		);
@@ -293,6 +301,8 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 			return this.designer.validate();
 	}
 	
-	
+	, containsAttribute: function (attributeId) {
+		return this.designer.containsAttribute(attributeId);
+	}
 
 });

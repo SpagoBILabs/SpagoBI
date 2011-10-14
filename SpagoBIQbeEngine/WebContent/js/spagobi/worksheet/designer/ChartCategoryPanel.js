@@ -59,7 +59,7 @@ Sbi.worksheet.designer.ChartCategoryPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
-	this.addEvents("attributeDblClick");
+	this.addEvents("attributeDblClick", "attributeRemoved");
 	
 	this.init();
 	
@@ -145,11 +145,15 @@ Ext.extend(Sbi.worksheet.designer.ChartCategoryPanel, Ext.Panel, {
 	}
 	
 	, setCategory: function (category) {
+		var previousCategory = this.category;
 		this.category = Ext.apply({}, category); // making a clone of the input object
 		this.content.destroy();
 		var panel = this.createCategoryPanel();
 		this.add(panel);
 		this.content = panel;
+		if (previousCategory != null) {
+			this.fireEvent('attributeRemoved', this, previousCategory);
+		}
 		this.doLayout();
 	}
 	
@@ -158,11 +162,15 @@ Ext.extend(Sbi.worksheet.designer.ChartCategoryPanel, Ext.Panel, {
 	}
 	
 	, removeCategory: function() {
+		var previousCategory = this.category;
 		this.category = null;
 		this.content.destroy();
 		this.initEmptyMsgPanel();
 		this.add(this.emptyMsgPanel);
 		this.content = this.emptyMsgPanel;
+		if (previousCategory != null) {
+			this.fireEvent('attributeRemoved', this, previousCategory);
+		}
 		this.doLayout();
 	}
 	

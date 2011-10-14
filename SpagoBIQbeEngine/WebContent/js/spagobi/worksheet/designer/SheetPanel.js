@@ -116,6 +116,8 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 			}, 
 			this
 		);
+		this.filtersPanel.on('attributeRemoved' , this.attributeRemovedHandler, this);
+		
 		this.contentPanel = new Sbi.worksheet.designer.SheetFilterContentPanel({},this.filtersPanel.store);
 		// propagate event
 		this.contentPanel.on(
@@ -125,6 +127,8 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 			}, 
 			this
 		);
+		this.contentPanel.on('attributeRemoved' , this.attributeRemovedHandler, this);
+		this.contentPanel.on('designerRemoved' , this.designerRemovedHandler, this);
 		
 		this.contentPanel.on('topFilters', function() {
 			this.filtersPanel.show();
@@ -135,6 +139,37 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		},this)
 		
 		this.footerPanel  = new Sbi.worksheet.designer.SheetTitlePanel({});
+	}
+
+	/* 
+	 * check if there is a filter on domain values on that attribute:
+	 * it is exists and it is still used, does nothing, elsewhere remove the filter on domain values 
+	 */
+	, attributeRemovedHandler : function (thePanel, attribute) {
+		if (this.filtersOnDomainValues == null || this.filtersOnDomainValues[attribute.id] == undefined) {
+			return;
+		}
+		if (thePanel instanceof Sbi.worksheet.designer.SheetFilterContentPanel) {
+			if ( !this.filtersPanel.containsAttribute(attribute.id) ) {
+				delete this.filtersOnDomainValues[attribute.id];
+			}
+		} else {
+			if ( !this.contentPanel.containsAttribute(attribute.id) ) {
+				delete this.filtersOnDomainValues[attribute.id];
+			}
+		}
+	}
+	
+	/* 
+	 * a designer (ex: a pivot table) was removed. We have to check if some filters on domain values are still useful 
+	 * (i.e. the relevant attribute is still in use in the filters panel)
+	 */
+	, designerRemovedHandler : function () {
+		for (var attributeId in this.filtersOnDomainValues) {
+			if ( !this.filtersPanel.containsAttribute(attributeId) ) {
+				delete this.filtersOnDomainValues[attributeId];
+			}
+		}
 	}
 
 	, updateLayout: function (sheetLayout) {

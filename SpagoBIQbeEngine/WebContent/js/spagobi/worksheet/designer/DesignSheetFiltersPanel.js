@@ -59,7 +59,7 @@ Sbi.worksheet.designer.DesignSheetFiltersPanel = function(config) {
 		
 	Ext.apply(this, c);
 	
-	this.addEvents('attributeDblClick');
+	this.addEvents('attributeDblClick', 'attributeRemoved');
 	
 	this.init();
 	
@@ -120,6 +120,9 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 				this.empty=false;
 			}
 		}
+		this.store.on('remove', function (theStore, theRecord, index ) {
+			this.fireEvent('attributeRemoved', this, theRecord.data);
+		}, this);
 	}
 	
 	, initDropTarget: function() {
@@ -395,6 +398,11 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 			this.store.commitChanges();
 			this.selectedRecord = null;
 		}	
+	}
+	
+	, containsAttribute: function (attributeId) {
+		var toReturn = this.store.find('id', attributeId) !== -1;
+		return toReturn;
 	}
 	
 });

@@ -60,7 +60,7 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
 	
 	Ext.apply(this, c); // this operation should overwrite this.initialData content, that is initial grid's content
 	
-	this.addEvents("beforeAddAttribute", "attributeDblClick");
+	this.addEvents("beforeAddAttribute", "attributeDblClick", "attributeRemoved");
 	
 	this.init(c);
 	
@@ -112,6 +112,7 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
 Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 	
 	initialData: undefined
+	, store: null
 	, targetRow: null
 	, calculateTotalsCheckbox: null
 	, calculateSubtotalsCheckbox: null
@@ -139,6 +140,18 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 				this.addAttribute(this.initialData[i]);
 			}
 		}
+		this.store.on('remove', function (theStore, theRecord, index ) {
+			this.fireEvent('attributeRemoved', this, theRecord.data);
+		}, this);
+		/*
+		 * unfortunately, when removing all record with removeAll method, the event remove is not raised
+		 */
+		this.store.on('clear', function (theStore, theRecords ) {
+			for (var i = 0 ; i < theRecords.length; i++) {
+				var aRecord = theRecords[i];
+				this.fireEvent('attributeRemoved', this, aRecord.data);
+			}
+		}, this);
 	}
 	
 	, initColumnModel: function(c) {
@@ -307,7 +320,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 	}
 	
 	, removeAllAttributes: function() {
-		this.store.removeAll(false);
+		this.store.removeAll(false); // CANNOT BE SILENT!!! it must throw the clear event for attributeRemoved event 
 	}
 	
 	, rowDblClickHandler: function(grid, rowIndex, event) {

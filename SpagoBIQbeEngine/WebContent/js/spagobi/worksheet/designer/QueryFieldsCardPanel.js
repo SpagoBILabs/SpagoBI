@@ -58,18 +58,25 @@ Sbi.worksheet.designer.QueryFieldsCardPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
-	this.addEvents("attributeDblClick");
+	this.addEvents("attributeDblClick", "attributeRemoved");
 	
 	this.initEmptyMsgPanel();
 	
 	this.tableDesigner = new Sbi.worksheet.designer.QueryFieldsContainerPanel( {
 		ddGroup: this.ddGroup
 	});
-	// propagate event
+	// propagate events
 	this.tableDesigner.on(
 		'attributeDblClick' , 
 		function (thePanel, attribute) { 
 			this.fireEvent("attributeDblClick", this, attribute); 
+		}, 
+		this
+	);
+	this.tableDesigner.on(
+		'attributeRemoved' , 
+		function (thePanel, attribute) { 
+			this.fireEvent("attributeRemoved", this, attribute); 
 		}, 
 		this
 	);
@@ -134,6 +141,10 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsCardPanel, Ext.Panel, {
     	
     	//if the table has no data we show the empty message 
     	this.tableDesigner.on('storeChanged', this.setActiveItem, this);
+	}
+	
+	, containsAttribute: function (attributeId) {
+		return this.tableDesigner.containsAttribute(attributeId);
 	}
 	
 });
