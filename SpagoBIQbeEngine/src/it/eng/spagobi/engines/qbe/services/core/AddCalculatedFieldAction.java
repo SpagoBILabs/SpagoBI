@@ -125,7 +125,7 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 				field = new ModelCalculatedField(alias, type, expression, true);
 			}
 			
-			if(slots != null) {
+			if(slots != null && slots.trim().length() > 0) {
 				JSONArray slotsJSON = new JSONArray(slots);
 				List<Slot> slotList = new ArrayList<Slot>();
 				for(int i = 0; i < slotsJSON.length(); i++) {

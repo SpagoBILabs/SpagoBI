@@ -30,6 +30,7 @@ import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -107,10 +108,13 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 			if(this.requestContainsAttribute( FILTERS ) ) {
 				filtersJSON = getAttributeAsJSONObject( FILTERS );
 			}
-			if(entityId == null){
+			
+			if(this.requestContainsAttribute( EXPRESSION ) ) {
 				expression = getAttributeAsString( EXPRESSION ).trim();
+			}
+			
+			if(expression != null){
 				query = buildQuery(expression, TYPE_INLINE_CC_FIELD, filtersJSON);
-
 			}else{
 				query = buildQuery(entityId, TYPE_SIMPLE_FIELD, filtersJSON);
 			}
@@ -215,7 +219,7 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 		logger.debug("IN: fieldUniqueName = " + fieldUniqueName);
 		Query query = new Query();
 		if(type.equals(TYPE_INLINE_CC_FIELD)){
-			query.addInLineCalculatedFiled("Valori", fieldUniqueName, null, "String", true, true, false, "asc", "NONE");
+			query.addInLineCalculatedFiled("Valori", fieldUniqueName, null, DataSetVariable.STRING, true, true, false, "asc", "NONE");
 		}else{
 			query.addSelectFiled(fieldUniqueName, "NONE", "Valori", true, true, false, "asc", null);
 		}
