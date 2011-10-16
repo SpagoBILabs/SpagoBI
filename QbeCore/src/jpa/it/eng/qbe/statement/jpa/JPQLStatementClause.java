@@ -13,6 +13,7 @@ import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesRangeDes
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.serializer.SerializationManager;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.objects.Couple;
 
 import java.util.ArrayList;
@@ -33,74 +34,189 @@ public class JPQLStatementClause {
 	
 	JPQLStatement parentStatement;
 	
+	public static final String EXPRESSION_TOKEN_DELIMITERS = "+-|*/(),";
+	
 	public static transient Logger logger = Logger.getLogger(JPQLStatementSelectClause.class);
+	
 	
 	public String parseInLinecalculatedField(String expression, String slots, Query query, Map entityAliasesMaps){
 		String newExpression;
 		
+		logger.debug("IN");
+		
 		newExpression = expression;
-		newExpression = replaceFields(newExpression, query, entityAliasesMaps);
-		newExpression = replaceInLineFunctions(newExpression, query, entityAliasesMaps);
-		newExpression = replaceSlotDefinitions(newExpression, slots, query, entityAliasesMaps);
+		
+		try {
+			Assert.assertNotNull(parentStatement, "Class member [parentStatement] cannot be null in orser to properly parse inline calculated field expression [" + expression + "]");
+			Assert.assertNotNull(expression, "Input parameter [espression] cannot be null");
+			Assert.assertNotNull(query, "Input parameter [query] cannot be null");
+			Assert.assertNotNull(entityAliasesMaps, "Input parameter [entityAliasesMaps] cannot be null");
+			
+			logger.debug("Parsing expression [" + expression + "] ...");
+			newExpression = replaceFields(newExpression, false, query, entityAliasesMaps);
+			newExpression = replaceInLineFunctions(newExpression, query, entityAliasesMaps);
+			newExpression = replaceSlotDefinitions(newExpression, slots, query, entityAliasesMaps);
+			logger.debug("Expression [" + expression + "] paresed succesfully into [" + newExpression + "]");
+		} catch(Throwable t) {
+			throw new RuntimeException("An unpredicted error occurred while parsing expression [" + expression + "]");
+		} finally {
+			logger.debug("OUT");
+		}
 		
 		return newExpression;
 	}
 	
-	private String replaceFields(String expression, Query query, Map entityAliasesMaps) {
-		List allSelectFields;
+
+	private String replaceFields(String expression, boolean isTransientExpression, Query query, Map entityAliasesMaps) {
+		String newExpression;
 		IModelEntity rootEntity;
-		IModelField datamartField;
+		IModelField modelField;
 		String queryName;
 		String rootEntityAlias;
-		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
-		List<String> aliasEntityMapping = new  ArrayList<String>();
-		List<String> aliases = new  ArrayList<String>();
+		Map entityAliases;
 		
-		StringTokenizer stk = new StringTokenizer(expression, "+-|*/(),");
-		while(stk.hasMoreTokens()){
-			String alias = stk.nextToken().trim();
-			String uniqueName;
-			allSelectFields = query.getSelectFields(false);
-			for(int i=0; i<allSelectFields.size(); i++){
-				if(allSelectFields.get(i).getClass().equals(SimpleSelectField.class) && ((SimpleSelectField)allSelectFields.get(i)).getAlias().equals(alias)){
-					uniqueName=((SimpleSelectField)allSelectFields.get(i)).getUniqueName();
-					datamartField = parentStatement.getDataSource().getModelStructure().getField(uniqueName);	
-					Couple queryNameAndRoot = datamartField.getQueryName();
+		List<String> fieldQueryNames;
+		List<String> fieldExpressionNames;
+		
+		logger.debug("IN");
+		
+		newExpression = expression;
+		
+		entityAliases = (Map)entityAliasesMaps.get(query.getId());
+		fieldQueryNames = new  ArrayList<String>();
+		fieldExpressionNames = new  ArrayList<String>();
+		
+		try  {		
+			StringTokenizer tokenizer = new StringTokenizer(expression, EXPRESSION_TOKEN_DELIMITERS);
+			while(tokenizer.hasMoreTokens()) {
+				String token = tokenizer.nextToken().trim();
+				
+				logger.debug("Processing expression token [" + token + "] ...");
+					
+				modelField = null;
+				if(isTransientExpression) {
+					SimpleSelectField fieldMatchingAlias = null;
+					List<SimpleSelectField> fieldsMatchingAlias = query.getSelectSimpleFieldsByAlias(token);
+					if(!fieldsMatchingAlias.isEmpty()) {
+						fieldMatchingAlias = fieldsMatchingAlias.get(0);
+						modelField = parentStatement.getDataSource().getModelStructure().getField(fieldMatchingAlias.getUniqueName());
+					}
+				} else {
+					modelField = parentStatement.getDataSource().getModelStructure().getField(token);
+				}
+				
+				
+				if(modelField != null) {
+					logger.debug("Expression token [" + token + "] references the model field whose unique name is [" + modelField.getUniqueName()+ "]");
+					
+					Couple queryNameAndRoot = modelField.getQueryName();
 					queryName = (String) queryNameAndRoot.getFirst();
 					logger.debug("select field query name [" + queryName + "]");
 					
 					if(queryNameAndRoot.getSecond()!=null){
 						rootEntity = (IModelEntity)queryNameAndRoot.getSecond(); 	
 					}else{
-						rootEntity = datamartField.getParent().getRoot(); 	
+						rootEntity = modelField.getParent().getRoot(); 	
 					}
 					rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
-					queryName = ((SimpleSelectField)allSelectFields.get(i)).getFunction().apply(rootEntityAlias+"."+queryName);
-					aliasEntityMapping.add(queryName);
-					aliases.add(alias);
-					break;
+					//queryName = fieldMatchingAlias.getFunction().apply(rootEntityAlias + "." + queryName);
+					if(rootEntityAlias == null) {
+						rootEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
+						entityAliases.put(rootEntity.getUniqueName(), rootEntityAlias);
+					}
+					
+					
+					queryName = rootEntityAlias + "." + queryName;
+					logger.debug("Expression token [" + token + "] query name is equal to [" + queryName + "]");
+					
+						
+					fieldQueryNames.add(queryName);
+					fieldExpressionNames.add(token);
+				} else {
+					logger.debug("Expression token [" + token + "] does not references any model field");
+				}
+				
+				logger.debug("Expression token [" + token + "] succesfully processed");
+			}
+	
+			int fieldIndex =0;
+			int expressionCursorIndex = 0;
+			tokenizer = new StringTokenizer(expression.replace("\'", ""), "+-|*/(),");
+			while(tokenizer.hasMoreTokens()){
+				String token = tokenizer.nextToken().trim();
+				expressionCursorIndex = newExpression.indexOf(token, expressionCursorIndex);
+				if(fieldIndex < fieldExpressionNames.size() && fieldExpressionNames.get(fieldIndex).equals(token)){
+					newExpression = newExpression.substring(0, expressionCursorIndex)+ fieldQueryNames.get(fieldIndex)+newExpression.substring(expressionCursorIndex+token.length());
+					expressionCursorIndex = expressionCursorIndex + fieldQueryNames.get(fieldIndex).length();
+					fieldIndex++;
+				}else {
+					expressionCursorIndex = expressionCursorIndex + token.length();
 				}
 			}
+		} catch(Throwable t) {
+			throw new RuntimeException("An unpredicted error occurred while parsing expression [" + expression + "]");
+		} finally {
+			logger.debug("OUT");
 		}
-		
-		String freshExpr = expression;
-		int ind =0;
-		int pos =0;
-		stk = new StringTokenizer(expression.replace("\'", ""), "+-|*/(),");
-		while(stk.hasMoreTokens()){
-			String alias = stk.nextToken().trim();
-			pos = freshExpr.indexOf(alias, pos);
-			if(ind<aliases.size() && aliases.get(ind).equals(alias)){
-				freshExpr = freshExpr.substring(0, pos)+ aliasEntityMapping.get(ind)+freshExpr.substring(pos+alias.length());
-				pos = pos+ aliasEntityMapping.get(ind).length();
-				ind++;
-			}else{
-				//freshExpr = freshExpr.substring(0, pos)+ alias+freshExpr.substring(pos+alias.length());
-				pos = pos+ alias.length();
-			}
-		}
-		return freshExpr;
+		return newExpression;
 	}
+	
+//	private String replaceFields(String expression, Query query, Map entityAliasesMaps) {
+//		IModelEntity rootEntity;
+//		IModelField modelField;
+//		String queryName;
+//		String rootEntityAlias;
+//		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
+//		
+//		List<String> aliasEntityMapping = new  ArrayList<String>();
+//		List<String> aliases = new  ArrayList<String>();
+//		
+//		StringTokenizer stk = new StringTokenizer(expression, "+-|*/(),");
+//		while(stk.hasMoreTokens()) {
+//			String alias = stk.nextToken().trim();
+//			List<SimpleSelectField> fieldsMatchingAlias = query.getSelectSimpleFieldsByAlias(alias);
+//			if(!fieldsMatchingAlias.isEmpty()) {
+//				SimpleSelectField fieldMatchingAlias = fieldsMatchingAlias.get(0);
+//				
+//				String uniqueName = fieldMatchingAlias.getUniqueName();
+//				modelField = parentStatement.getDataSource().getModelStructure().getField(uniqueName);	
+//				Couple queryNameAndRoot = modelField.getQueryName();
+//				queryName = (String) queryNameAndRoot.getFirst();
+//				logger.debug("select field query name [" + queryName + "]");
+//				
+//				if(queryNameAndRoot.getSecond()!=null){
+//					rootEntity = (IModelEntity)queryNameAndRoot.getSecond(); 	
+//				}else{
+//					rootEntity = modelField.getParent().getRoot(); 	
+//				}
+//				rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
+//				queryName = fieldMatchingAlias.getFunction().apply(rootEntityAlias+"."+queryName);
+//				
+//				aliasEntityMapping.add(queryName);
+//				aliases.add(alias);
+//			}
+//		}
+//
+//		String freshExpr = expression;
+//		int ind =0;
+//		int pos =0;
+//		stk = new StringTokenizer(expression.replace("\'", ""), "+-|*/(),");
+//		while(stk.hasMoreTokens()){
+//			String alias = stk.nextToken().trim();
+//			pos = freshExpr.indexOf(alias, pos);
+//			if(ind<aliases.size() && aliases.get(ind).equals(alias)){
+//				freshExpr = freshExpr.substring(0, pos)+ aliasEntityMapping.get(ind)+freshExpr.substring(pos+alias.length());
+//				pos = pos+ aliasEntityMapping.get(ind).length();
+//				ind++;
+//			}else{
+//				//freshExpr = freshExpr.substring(0, pos)+ alias+freshExpr.substring(pos+alias.length());
+//				pos = pos+ alias.length();
+//			}
+//		}
+//		return freshExpr;
+//	}
+	
+	
 	
 	private String replaceInLineFunctions(String expression, Query query, Map entityAliasesMaps) {
 		String newExpression;

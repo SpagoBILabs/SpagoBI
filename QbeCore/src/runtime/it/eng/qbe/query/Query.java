@@ -175,25 +175,32 @@ public class Query {
 		return fields;
 	}
 	
-	public List getSelectFieldsByName(String uniqueName) {
-		List fields;
-		Iterator it;
-		SimpleSelectField field;
+	public List getSelectSimpleFieldsByUniqueName(String uniqueName) {
+	List<SimpleSelectField> matchingSimpleSelectFields;
 		
-		fields = new ArrayList();
-		it = getSelectFields(false).iterator();
-		while(it.hasNext()) {
-			ISelectField f = (ISelectField)it.next();
-			if(f.isSimpleField()) {
-				field = (SimpleSelectField)f;
-				if(field.getUniqueName().equalsIgnoreCase(uniqueName)) {
-					fields.add(field);
-				}
+		matchingSimpleSelectFields = new ArrayList<SimpleSelectField>();
+		List<SimpleSelectField> simpleSelectFields = getSimpleSelectFields(false);
+		for(SimpleSelectField simpleSelectField : simpleSelectFields) {
+			if(simpleSelectField.getUniqueName().equalsIgnoreCase(uniqueName)) {
+				matchingSimpleSelectFields.add(simpleSelectField);
 			}
-				
 		}
 		
-		return fields;
+		return matchingSimpleSelectFields;
+	}
+	
+	public List<SimpleSelectField> getSelectSimpleFieldsByAlias(String alias) {
+		List<SimpleSelectField> matchingSimpleSelectFields;
+		
+		matchingSimpleSelectFields = new ArrayList<SimpleSelectField>();
+		List<SimpleSelectField> simpleSelectFields = getSimpleSelectFields(false);
+		for(SimpleSelectField simpleSelectField : simpleSelectFields) {
+			if(simpleSelectField.getAlias().equalsIgnoreCase(alias)) {
+				matchingSimpleSelectFields.add(simpleSelectField);
+			}
+		}
+		
+		return matchingSimpleSelectFields;
 	}
 	
 	public void removeSelectField(int fieldIndex) {
