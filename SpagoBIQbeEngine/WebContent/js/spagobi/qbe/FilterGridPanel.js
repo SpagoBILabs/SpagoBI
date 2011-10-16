@@ -1112,12 +1112,28 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 	, createStore: function(entityId) {
 		var record = this.activeEditingContext.grid.store.getAt(this.activeEditingContext.row);
 		var entityId = record.get('leftOperandValue');
-		var createStoreUrl = this.services['getValuesForQbeFilterLookupService']
-		        + '&ENTITY_ID=' + entityId;
+		
+		var storeUrl = this.services['getValuesForQbeFilterLookupService'];
+		var params = {};
+		var operandType = record.get('leftOperandType');
+		if(operandType === Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD) {
+			//params.EXPRESSION = entityId.expression;
+			var urlEncodedExpression = Ext.urlEncode({EXPRESSION: entityId.expression});
+			storeUrl += '&' + urlEncodedExpression;	
+		} else {
+			//params.ENTITY_ID = entityId;
+			storeUrl += '&ENTITY_ID=' + this.fieldId;
+		}
+		
+		
 		var store;	
 		store = new Ext.data.JsonStore({
-			url: createStoreUrl
+			url: storeUrl
+			, baseParams : params
 		});
+		
+		
+		
 		store.on('loadexception', function(store, options, response, e) {
 			var msg = '';
 			var content = Ext.util.JSON.decode( response.responseText );

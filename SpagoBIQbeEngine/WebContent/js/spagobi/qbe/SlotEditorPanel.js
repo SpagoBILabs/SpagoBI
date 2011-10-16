@@ -478,8 +478,10 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		var createStoreUrl = this.services['getValuesForQbeFilterLookupService'];
 		
 		if (this.fieldId !== null) createStoreUrl += '&ENTITY_ID=' + this.fieldId;
-		if (this.expression !== null) createStoreUrl += '&EXPRESSION=' + this.expression;		
-		        		  
+		if (this.expression !== null) {
+			createStoreUrl += '&' + Ext.urlEncode({EXPRESSION: this.expression});
+			alert(createStoreUrl);
+		}
 		var store = new Ext.data.JsonStore({
 			url: createStoreUrl
 		});

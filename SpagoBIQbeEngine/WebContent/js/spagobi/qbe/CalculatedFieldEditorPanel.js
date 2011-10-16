@@ -100,28 +100,109 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 		if(this.expressionEditor) {
 	  		expression = this.expressionEditor.getValue();
 	  		expression = Ext.util.Format.stripTags( expression );
-	  		//expression = Ext.util.Format.htmlEncode(expression);
 	  		expression = expression.replace(/&nbsp;/g," ");
 	  		expression = expression.replace(/\u200B/g,"");
 	  		expression = expression.replace(/&gt;/g,">");
 	  		expression = expression.replace(/&lt;/g,"<");
+	  		
+	  		if(!this.expertMode){
+	  			expression = this.replaceFieldAliasesWithFieldUniqueNames(expression);
+	  		}
 	  	}
+		
+		alert('getExpression: [' + expression + ']');
+		
 		return expression;
 	}
+
+	
 
 
 	, setExpression: function(expression) {
 		if(this.expressionEditor) {
-			//expresion = Ext.util.Format.htmlEncode(expresion);
+			if(!this.expertMode){
+	  			expression = this.replaceFieldUniqueNamesWithFieldAliases(expression);
+	  		}
+			
 			expression = expression.replace(/ /g,"&nbsp;");
 	  		expression = expression.replace(/</g,"&lt;");
 	  		expression = expression.replace(/>/g,"&gt;");
+	  		
+	  		alert('setExpression: [' + expression + ']');
+	  		
 	  		this.baseExpression = expression;
 	  		if(this.expressionEditor.initialized) {
 	  			this.expressionEditor.reset();
   				this.expressionEditor.insertAtCursor( expression );
 	  		} 
 		}
+	}
+	
+	, replaceFieldAliasesWithFieldUniqueNames: function(expression) {
+		var newExpression;
+		
+		newExpression = expression;
+		var fieldNodes = this.groupRootNodes['fields'];
+		var childNodes = fieldNodes.childNodes;
+		var aliasToUniqueNameMap = new Object();
+		var aliasOrderedByLengthList = new Array();
+		for(var i = 0; i < childNodes.length; i++) {
+			var childNode = childNodes[i];
+			var alias = childNode.attributes['alias'];
+			var uniqueName = childNode.attributes['uniqueName'];
+			aliasToUniqueNameMap[alias] = uniqueName;
+			aliasOrderedByLengthList.push(alias);
+		}
+		
+		// we need to replace first longest aliases in order to avoid replacing confilcts error that occur when one alias is the prefix of another one 
+		// ex. 'Profit' & 'Profit per Unit'
+		aliasOrderedByLengthList.sort(function(a,b){
+			return b.length - a.length;
+		});
+		
+		for(var i = 0; i < aliasOrderedByLengthList.length; i++) {
+			var alias = aliasOrderedByLengthList[i];
+			var uniqueName = aliasToUniqueNameMap[alias];
+			//alert('replacing all occurences of [' + alias + '](' + alias.length + ') with [' + uniqueName+ '] in expression [' + newExpression + ']');
+			newExpression = newExpression.replace(new RegExp(alias, 'g'), uniqueName);
+			//alert('Results: ' + newExpression);
+		}		
+		
+		return newExpression;
+	}
+	
+	, replaceFieldUniqueNamesWithFieldAliases: function(expression) {
+		var newExpression;
+		
+		newExpression = expression;
+		var fieldNodes = this.groupRootNodes['fields'];
+		var childNodes = fieldNodes.childNodes;
+		var uniqueNameToAliasMap = new Object();
+		var uniqueNameOrderedByLengthList = new Array();
+		
+		for(var i = 0; i < childNodes.length; i++) {
+			var childNode = childNodes[i];
+			var alias = childNode.attributes['alias'];
+			var uniqueName = childNode.attributes['uniqueName'];
+			uniqueNameToAliasMap[uniqueName] = alias;
+			uniqueNameOrderedByLengthList.push(uniqueName);
+		}
+		
+		// we need to replace first longest aliases in order to avoid replacing confilcts error that occur when one alias is the prefix of another one 
+		// ex. 'Profit' & 'Profit per Unit'
+		uniqueNameOrderedByLengthList.sort(function(a,b){
+			return b.length - a.length;
+		});
+		
+		for(var i = 0; i < uniqueNameOrderedByLengthList.length; i++) {
+			var uniqueName = uniqueNameOrderedByLengthList[i];
+			var alias = uniqueNameToAliasMap[uniqueName];
+			//alert('replacing all occurences of [' + uniqueName + '](' + uniqueName.length + ') with [' + alias+ '] in expression [' + newExpression + ']');
+			newExpression = newExpression.replace(new RegExp(uniqueName, 'g'), alias);
+			//alert('Results: ' + newExpression);
+		}		
+		
+		return newExpression;
 	}
 	
 	, getFormState : function() {      
