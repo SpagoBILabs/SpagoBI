@@ -142,25 +142,29 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
         		'<tpl for="valueset">'+
         		'<tpl if="type == \'range\'">'+
 	        		'<div class="icon-close" id="tpl-slot-val-{[xindex]}">' + 
-	        		'<tpl if="includeFrom == true">'+
-	        			'&gt;' + 
-	        		'</tpl>'+
-	        		'<tpl if="includeFrom == false">'+
-	        			'&gt;=' + 
-	        		'</tpl>'+
-	        		'{from} '+ 
-	        		'<tpl if="includeTo == true">'+
-	        			' &lt;=' + 
-	        		'</tpl>'+
-	        		'<tpl if="includeTo == false">'+
-	        			' &lt;' + 
-	        		'</tpl>'+
-	        		'{to}'+
+		        		'<div class="box-to-edit" id="tpl-edit-range-{[xindex]}">' + 
+			        		'<tpl if="includeFrom == true">'+
+			        			'&gt;' + 
+			        		'</tpl>'+
+			        		'<tpl if="includeFrom == false">'+
+			        			'&gt;=' + 
+			        		'</tpl>'+
+			        		'{from} '+ 
+			        		'<tpl if="includeTo == true">'+
+			        			' &lt;=' + 
+			        		'</tpl>'+
+			        		'<tpl if="includeTo == false">'+
+			        			' &lt;' + 
+			        		'</tpl>'+
+			        		'{to}'+
+		        		'</div>'+
 	                '</div>'+
                 '</tpl>'+
                 '<tpl if="type == \'punctual\'">'+
 	        		'<div class="icon-close green" id="tpl-slot-val-{[xindex]}">' + 
-	                '{values}' + 
+		        		'<div class="box-to-edit" id="tpl-edit-punct-{[xindex]}">' + 
+		                '{values}' + 
+		                '</div>'+
       	            '</div>'+
                 '</tpl>'+
                 '</tpl></tpl>'
@@ -231,7 +235,27 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			    })
 		    );
 	    var nameEditor = new Ext.form.TextField();
-	    
+	    var gridViewStyled = new Ext.grid.GridView({
+            forceFit: true,
+            enableRowBody:true,
+            showPreview:true,
+            getRowClass: function(record, index, rowParams,ds) {
+				var slot = record.data; 
+				var att = rowParams.tstyle;
+				if(slot.valueset !== null && slot.valueset !== undefined){
+					for (var j = 0; j < slot.valueset.length; j++) {
+						var val = slot.valueset[j];
+						if(val.type === 'default' ){
+							rowParams.tstyle= att+" background-color: #B0CEEE; ";
+						}else if(val.type === 'range' || val.type === 'punctual'){
+							rowParams.tstyle= att+" background-color: white; ";
+						}else{
+							rowParams.tstyle= att+" background-color: white; ";
+						}
+					}
+				}
+            }
+	    });
 		this.gridPanel = new Ext.grid.EditorGridPanel({
 			id: 'slot-panel',
 			store: this.store,
@@ -255,25 +279,13 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	        iconCls:'icon-grid',
 	        collapsible:false,
 	        layout: 'fit',
-	        viewConfig: {
-	            forceFit: true,
-	            getRowClass: function(record, index) {
-					var slot = record.data; 
-					if(slot.valueset !== null && slot.valueset !== undefined){
-						for (var j = 0; j < slot.valueset.length; j++) {
-							var val = slot.valueset[j];
-							if(val.type == 'default'){
-								return 'dafault-row';
-							}
-						}
-					}
-	            }
-	        },
+	        view: gridViewStyled,
 	        plugins :[rangeButtonColumn,  punctualButtonColumn],
 	        enableDragDrop:false,
 	        scope: this,
 	        listeners:{
 	        	 scope: this,
+	        	 //afterrender: this.setRowStyle,
 	        	 cellclick: function(grid, rowIndex, columnIndex, e) {
 	        			// Get the Record for the row
 	        	        var record = grid.getStore().getAt(rowIndex);
@@ -282,9 +294,11 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	        	    	var slotItem = e.getTarget();
 	        	    	var id = slotItem.id;
 	        	    	if(id !== undefined && id != null && id !== ''){
-		        	    	var startIndex = id.indexOf('tpl-slot-val-');
-		        	    	if(startIndex !== -1){
-			        	    	var itemIdx = id.substring(startIndex + ('tpl-slot-val-'.length));
+		        	    	var istodelete = id.indexOf('tpl-slot-val-');
+		        	    	var istoedit = id.indexOf('tpl-edit-range-');
+		        	    	var istoeditP = id.indexOf('tpl-edit-punct-');
+		        	    	if(istodelete !== -1){
+			        	    	var itemIdx = id.substring(istodelete + ('tpl-slot-val-'.length));
 			        	    	var valuesSets = record.data.valueset;
 			        	    	try{
 	
@@ -305,13 +319,22 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			        	    	}catch(err){
 			        	    		
 			        	    	}
-		        	    	}/*else{
-		        	    		var check = id.indexOf('check-tpl-default');
-		        	    		var def = slotItem.checked;
-		        	    		if(def){
-		        	    			this.defaultValueWindow(record);
-		        	    		}
-		        	    	}*/
+		        	    	}else if(istoedit !== -1){
+		        	    		var itemIdx = id.substring(istoedit + ('tpl-edit-range-'.length));
+			        	    	var valuesSets = record.data.valueset;
+			        	    	var idx = parseInt(itemIdx) ;
+			        	    	var valpos = idx-1;
+			        	    	var toedit = record.data.valueset[valpos];
+			        	    	this.openiInsertRangeWindow(record, toedit, valpos);
+		        	    	}else if(istoeditP !== -1){
+		        	    		var itemIdx = id.substring(istoeditP + ('tpl-edit-punct-'.length));
+			        	    	var valuesSets = record.data.valueset;
+			        	    	var idx = parseInt(itemIdx) ;
+			        	    	var valpos = idx-1;
+			        	    	var toedit = record.data.valueset[valpos];
+			        	    	var values = toedit.values;
+		        	    		this.openiInsertPunctualWindow(record, toedit.values);
+		        	    	}
 	        	    	}
 	        	 }
 	        }
@@ -325,22 +348,22 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		btnDelete.on('click', this.removeSlot, this);
 		btnDefault.on('click', this.createDefault, this);
 
-/*		nameEditor.on('change', function(f, newv, oldv){
-			var slot = this.gridPanel.selModel.selection.record;
-			slot.set('name', newv);
-			slot.commit();
-			this.gridPanel.stopEditing();
 
-		}, this);*/
 	}
-	, openiInsertRangeWindow: function(rec){
+	, openiInsertRangeWindow: function(rec, toedit, idx){
+
 		this.expression = this.slotWizard.expression;
-		this.rangeWindow = new Sbi.qbe.RangeDefinitionWindow({slotPanel: this, record: rec, id: this.fieldId, expression: this.expression});
+		this.rangeWindow = new Sbi.qbe.RangeDefinitionWindow({slotPanel: this, 
+																record: rec, 
+																id: this.fieldId, 
+																expression: this.expression, 
+																toedit: toedit, 
+																idx: idx});
 		
 		this.rangeWindow.mainPanel.doLayout();
 		this.rangeWindow.show();
 	}
-	, openiInsertPunctualWindow: function(rec){
+	, openiInsertPunctualWindow: function(rec, vals){
 		this.expression = this.slotWizard.expression;
 		var lookupStore = this.createLookupStore();		
 		lookupStore.load();
@@ -354,6 +377,9 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			this.addPunctualVals(xselection.xselection.Values, rec);	
 			this.punctualWindow.close();
 		}, this);
+		if(vals !== undefined && vals !== null && vals.length !== 0){
+			this.punctualWindow.setSelection(vals);
+		}
 		this.punctualWindow.show();
 	}
 	, createSlotRowToDisplay: function(p){
@@ -370,7 +396,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	}
 	, createDefault: function(){
         // access the Record constructor through the grid's store
-        //{type: 'default", name: 'ecco il default''}
+
         if(this.hasDefault == false){
 			var Slot = this.gridPanel.getStore().recordType;
 	        var p = new Slot({
@@ -382,11 +408,13 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	        this.gridPanel.startEditing(0, 0);
 	        this.hasDefault = true;
 	        this.gridPanel.getView().refresh();
+	        
         }else{
         	alert(LN('sbi.qbe.bands.default.alert'));
         }
 
 	}
+
 	, removeSlot: function(){
         // access the Record constructor through the grid's store
 		var slot = this.gridPanel.selModel.selection.record;
@@ -400,7 +428,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
         }
 
 	}
-	, addRange: function(rowIndex, rec){
+	, addRange: function(rowIndex, rec, idx){
 		var opFrom = rowIndex.from.operand ;
 		var includeFrom = false;
 		if(opFrom == 2){
@@ -412,10 +440,17 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			includeTo = true;
 		}
 		var item ={type: 'range', from: rowIndex.from.value, includeFrom: includeFrom, to: rowIndex.to.value, includeTo: includeTo};
+
 		if(rec.data.valueset == null){
 			rec.data.valueset = new Array();
 		}
-		rec.data.valueset.push(item);
+		if(idx !== undefined){
+			// edit mode
+			rec.data.valueset[idx] = item;
+		}else{
+			rec.data.valueset.push(item);
+		}
+
 		rec.commit();
     }
 	, addPunctualVals: function(vals, rec){
@@ -426,53 +461,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		rec.data.valueset.push(item);
 		rec.commit();
     }
-	, defaultValueWindow: function(record){
-		
-		if(record.data.valueset == null){
-			record.data.valueset = new Array();
-		}
-		var defVal = new Ext.form.TextField();
-		var item = record.data.valueset[0];
-		
-		defVal.on('change', function(field,newValue,oldValue){
-			item.value = newValue;
-		}, this);
-		
-		var btnFinish = new Ext.Button({
-	        text: LN('sbi.qbe.bands.save.btn'),
-	        disabled: false,
-	        scope: this,
-	        handler : function(){
-				record.data.valueset[0]=item;
-				record.commit();
-				win.close();
-			}
 
-		});
-		
-        var defPanel = new Ext.form.FormPanel({
-            layout: 'hbox',
-            width: 120,
-            height: 70,
-		    bbar: ['->',
-		        btnFinish
-		    ],
-            items: [defVal]
-        });
-/*        
-        var win = new Ext.Window({
-            layout: 'fit',
-            title: 'Type default value',
-            width: 150,
-            height: 90,
-            closable: false,
-            resizable: false,
-            draggable: false,
-            plain: true,
-            items: [defPanel]
-        });
-        win.show();*/
-	}
 	
 	, createLookupStore: function() {
 		var createStoreUrl = this.services['getValuesForQbeFilterLookupService'];
