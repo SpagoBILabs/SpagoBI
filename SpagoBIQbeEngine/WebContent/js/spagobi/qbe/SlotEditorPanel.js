@@ -333,7 +333,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 			        	    	var valpos = idx-1;
 			        	    	var toedit = record.data.valueset[valpos];
 			        	    	var values = toedit.values;
-		        	    		this.openiInsertPunctualWindow(record, toedit.values);
+		        	    		this.openiInsertPunctualWindow(record, toedit.values, valpos);
 		        	    	}
 	        	    	}
 	        	 }
@@ -453,12 +453,17 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 
 		rec.commit();
     }
-	, addPunctualVals: function(vals, rec){
+	, addPunctualVals: function(vals, rec, idx){
 		var item ={type: 'punctual', values: vals};
 		if(rec.data.valueset == null){
 			rec.data.valueset = new Array();
 		}
-		rec.data.valueset.push(item);
+		if(idx !== undefined){
+			// edit mode
+			rec.data.valueset[idx] = item;
+		}else{
+			rec.data.valueset.push(item);
+		}
 		rec.commit();
     }
 
