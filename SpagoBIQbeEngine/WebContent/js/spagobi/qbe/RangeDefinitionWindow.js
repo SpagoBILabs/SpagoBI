@@ -50,6 +50,7 @@ Sbi.qbe.RangeDefinitionWindow = function(config) {
 	});
 	
 	this.initMainPanel(c);	
+	this.initfields(c.toedit);
 	
 	if(c.hasBuddy === 'true') {
 		this.buddy = new Sbi.commons.ComponentBuddy({
@@ -76,38 +77,57 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
     , lookupStore: null
     , lookupFieldFrom: null
     , lookupFieldTo: null
+    , record: null
 	
+    , initfields: function(toedit){
+		if(toedit !== undefined && toedit !== null){
+			if(toedit.includeTo){
+				this.rangeFrom.value = '<=';
+			}else{
+				this.rangeFrom.value = '<';
+			}
+			this.rangeToValue.value = toedit.to;
+			this.rangeFromValue.value = toedit.from;
+			if(toedit.includeFrom){
+				this.rangeFrom.value = '>=';
+			}else{
+				this.rangeFrom.value = '>';
+			}
+		}
+		
+	}
 	, initMainPanel: function(c) {
 		
 		this.slotPanel = c.slotPanel;
 		this.fieldId = c.id;
 		this.expression = c.expression;
 		
-		var record = c.record;
+		this.record = c.record;
 		
 		var btnFinish = new Ext.Button({
 	        text: LN('sbi.qbe.bands.save.btn'),
 	        disabled: false,
 	        scope: this,
-	        handler : this.save.createDelegate(this, [record])
+	        handler : this.save.createDelegate(this, [this.record, c.idx])
 		});
 		
 	      var valuesFrom = new Ext.data.SimpleStore({
 	          fields: ['id', 'value'],
-	          data : [['1','&gt;'],['2','&gt;=']]
+	          data : [['1','&gt;'],['2','&gt;='], []]
 	      });
 	      var valuesTo = new Ext.data.SimpleStore({
 	          fields: ['id', 'value'],
-	          data : [['3',Ext.util.Format.htmlEncode('<')],['4','&lt;=']]
+	          data : [['3','&lt;'],['4','&lt;='], []]
 	      });
 	      
 		this.rangeFrom = new Ext.form.ComboBox({
-		    allowBlank: false,
+		    allowBlank: true,
 		    width: 50,
 		    triggerAction: 'all',
 		    lazyRender:true,
 		    mode: 'local',
 		    store: valuesFrom,
+		    value: '>=',
 		    valueField: 'id',
 		    displayField: 'value',
 		    listeners:{
@@ -131,7 +151,7 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		this.rangeFromValue.onTriggerClick = this.openLookupFrom.createDelegate(this);
 		
 		this.rangeTo = new Ext.form.ComboBox({
-		    allowBlank: false,
+		    allowBlank: true,
 		    width: 50,
 		    triggerAction: 'all',
 		    lazyRender:true,
@@ -139,6 +159,7 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		    store: valuesTo,
 		    valueField: 'id',
 		    displayField: 'value',
+		    value: '<',
 		    listeners:{
 				beforeselect : function(combo, record, index ) {
 					if(record !== null && record !== undefined){
@@ -203,7 +224,7 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		this.mainPanel.doLayout();
 
     }
-	, save: function(rec){
+	, save: function(rec, idx){
 		
 		this.rangeToSave.from ={};
 		this.rangeToSave.to ={};
@@ -213,16 +234,16 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		this.rangeToSave.from.value = this.rangeFromValue.getValue();
 		this.rangeToSave.to.operand = this.rangeTo.value;
 		this.rangeToSave.to.value = this.rangeToValue.getValue();
-		if(this.rangeToSave.from.operand == null || this.rangeToSave.from.operand === undefined
-				||this.rangeToSave.from.value == null || this.rangeToSave.from.value === undefined || this.rangeToSave.from.value == ''
-				||this.rangeToSave.to.operand == null || this.rangeToSave.to.operand === undefined
-				||this.rangeToSave.to.value == null || this.rangeToSave.to.value === undefined || this.rangeToSave.to.value == ''){
+		if((this.rangeToSave.from.operand == null || this.rangeToSave.from.operand === undefined
+			||this.rangeToSave.from.value == null || this.rangeToSave.from.value === undefined || this.rangeToSave.from.value == '')
+			||(this.rangeToSave.to.operand == null || this.rangeToSave.to.operand === undefined
+			||this.rangeToSave.to.value == null || this.rangeToSave.to.value === undefined || this.rangeToSave.to.value == '')){
 			alert(LN('sbi.qbe.bands.range.invalid'));
 		}else{
-			this.slotPanel.addRange(this.rangeToSave, rec);
+			this.slotPanel.addRange(this.rangeToSave, rec, idx);
+			this.close();
 		}
 
-		this.close();
 	}
 	
 	, openLookupFrom: function() {	
