@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -266,9 +267,15 @@ public abstract class JPQLStatementFilteringClause  extends JPQLStatementClause 
 			
 		
 			if (parentStatement.OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(leadOperand.type) ) {
-				int startType = leadOperand.values[0].indexOf("type\":")+7;
-				int endType = leadOperand.values[0].indexOf( "\"", startType);
-				String type = leadOperand.values[0].substring(startType, endType);
+				String leadOpernadValue = leadOperand.values[0];
+				JSONObject leadOperandJSON = null;
+				try {
+					leadOperandJSON = new JSONObject(leadOpernadValue);
+				} catch (Throwable t) {
+					throw new RuntimeException("Impossible to parse operand value [" + leadOpernadValue + "]", t);
+				}
+				
+				String type = leadOperandJSON.optString("type");
 				boundedValue = getValueBounded(operandValueToBound, type);
 			} else if (parentStatement.OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(leadOperand.type) 
 					|| parentStatement.OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(leadOperand.type)) {
