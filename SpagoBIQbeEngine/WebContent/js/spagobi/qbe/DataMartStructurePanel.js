@@ -201,6 +201,17 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	, editField: function(fieldNode) {
 		var nodeType;
 		nodeType = fieldNode.attributes.type || fieldNode.attributes.attributes.type;
+		//edit slot forbidden
+		if(fieldNode.attributes.attributes.formState.slots !== undefined || fieldNode.attributes.attributes.formState.slots !== null){
+			Ext.Msg.show({
+				   title:'Invalid operation',
+				   msg: 'Range cannot be edited. Use Edit Range menu function.',
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.ERROR
+			});
+			return;
+		}
+		
 		if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD) {
 			
 			if(this.calculatedFieldWizard === null) {
@@ -224,7 +235,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 					fields.push(field);
 				}
 			}
-			this.calculatedFieldWizard.validationService.params = {fields: Ext.util.JSON.encode(fields)};
+			this.calculatedFieldWizard.mainPanel.validationService.params = {fields: Ext.util.JSON.encode(fields)};
 		
 			this.calculatedFieldWizard.setExpItems('fields', fields);
 			
@@ -255,7 +266,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 					fields.push(field);
 				}
 			}
-			this.inLineCalculatedFieldWizard.validationService.params = {fields: Ext.util.JSON.encode(fields)};
+			this.inLineCalculatedFieldWizard.mainPanel.validationService.params = {fields: Ext.util.JSON.encode(fields)};
 			this.inLineCalculatedFieldWizard.setExpItems('fields', fields);
 			this.inLineCalculatedFieldWizard.setTargetNode(fieldNode);
 			this.inLineCalculatedFieldWizard.show();
@@ -304,7 +315,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 					fields.push(field);
 				}
 			}
-			this.calculatedFieldWizard.validationService.params = {fields: Ext.util.JSON.encode(fields)};
+			this.calculatedFieldWizard.mainPanel.validationService.params = {fields: Ext.util.JSON.encode(fields)};
 			this.calculatedFieldWizard.setExpItems('fields', fields);
 			this.calculatedFieldWizard.setTargetNode(entityNode);
 			this.calculatedFieldWizard.show();
@@ -355,7 +366,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			}
 			
 			this.inLineCalculatedFieldWizard.show();
-			this.inLineCalculatedFieldWizard.validationService.params = {fields: Ext.util.JSON.encode(fields)};
+			this.inLineCalculatedFieldWizard.mainPanel.validationService.params = {fields: Ext.util.JSON.encode(fields)};
 			this.inLineCalculatedFieldWizard.setExpItems('fields', fields);
 			this.inLineCalculatedFieldWizard.setTargetNode(entityNode);
 			this.inLineCalculatedFieldWizard.show();
@@ -523,7 +534,9 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			
 
 			var slotCalculatedFieldsPanel = this.slotWizard.getCalculatedFiledPanel();
-			slotCalculatedFieldsPanel.validationService.params = {fields: Ext.util.JSON.encode(fields)};
+			if(slotCalculatedFieldsPanel.mainPanel !== undefined && slotCalculatedFieldsPanel.mainPanel != null){
+				slotCalculatedFieldsPanel.mainPanel.validationService.params = {fields: Ext.util.JSON.encode(fields)};
+			}
 			slotCalculatedFieldsPanel.setExpItems('fields', fields);
 			slotCalculatedFieldsPanel.setTargetNode(entityNode);
 		
@@ -574,7 +587,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     		Ext.Ajax.request({
 				url:  this.services['addCalculatedField'],
 				success: function(response, options) {
-       				//alert('saved');
+       				//('saved');
        			},
        			scope: this,
 				failure: Sbi.exception.ExceptionHandler.handleFailure,	
@@ -640,13 +653,97 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			   icon: Ext.MessageBox.ERROR
 			});		
 		} else if(type === Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD){
-			//creates a window
-			this.slotWizard = new Sbi.qbe.SlotWizard( { 
-				title: LN('sbi.qbe.bands.wizard.definition'),
+			var dateFunctions = [
+      		    {
+      	            text: 'GG_between_dates'
+      	            , qtip: LN('da implementare')
+      	            , type: 'function'
+      	            , value: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
+      	            , alias: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
+      	            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
+      	            		   , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
+      		    
+      	         }, {
+      		         text: 'MM_between_dates'
+      		         , qtip: LN('da implementare')
+      			     , type: 'function'
+      			     , value: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
+      			     , alias: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
+      			     , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
+      	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
+      			 },{
+      				 text: 'AA_between_dates'
+      			      , qtip: LN('da implementare')
+      			      , type: 'function'
+      			      , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+      			      , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
+      			      , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
+      	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
+      			 }, {
+      			     text: 'GG_up_today'
+      			     , qtip: LN('da implementare')
+      				 , type: 'function'
+      				 , value: Ext.util.Format.htmlEncode('GG_up_today(op1)')
+      				 , alias: Ext.util.Format.htmlEncode('GG_up_today(op1)')
+      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
+      			 }, {
+      			     text: 'MM_up_today'
+      				 , qtip: LN('da implementare')
+      				 , type: 'function'
+      				 , value: Ext.util.Format.htmlEncode('MM_up_today(op1)')
+      				 , alias: Ext.util.Format.htmlEncode('MM_up_today(op1)')
+      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
+      			  }, {
+      				 text: 'AA_up_today'
+      				 , qtip: LN('da implementare')
+      				 , type: 'function'
+      				 , value: Ext.util.Format.htmlEncode('AA_up_today(op1)')
+      				 , alias: Ext.util.Format.htmlEncode('AA_up_today(op1)')
+      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
+      			   }
+      	    ];
+ 			var fields = new Array();
+ 			var fieldNode = entityNode.parentNode;
+ 			for(var i = 0; i < fieldNode.childNodes.length; i++) {
+ 				var child = fieldNode.childNodes[i];
+ 				var childType = child.attributes.type || child.attributes.attributes.type;
+ 				if(childType === 'field') {
+ 					var field = {
+ 						uniqueName: child.id,
+ 						alias: child.text,
+ 						text: child.attributes.attributes.field, 
+ 						qtip: child.attributes.attributes.entity + ' : ' + child.attributes.attributes.field, 
+ 						type: 'field', 
+ 						value: 'dmFields[\'' + child.attributes.attributes.field + '\']'
+ 					};	
+ 					fields.push(field);
+ 				}
+ 			}
+ 			//creates a window
+ 			this.slotWizard = new Sbi.qbe.SlotWizard( { 
+ 				title: LN('sbi.qbe.bands.wizard.definition'),
 				fieldForSlot: entityNode,
 				modality: 'edit',
-				startFromFirstPage: false
-			});
+				startFromFirstPage: false,
+ 		    	expItemGroups: [
+ 	    		    {name:'fields', text: 'Fields'}, 
+ 	    		    {name:'dateFunctions', text: 'Date Functions'}
+ 	    		],
+ 	    		fields: new Array(),
+ 	    		dateFunctions: dateFunctions,
+ 	    		expertMode: false,
+ 	        	scopeComboBoxData :[
+ 	        	    ['STRING','String', 'If the expression script returns a plain text string'],
+ 	        	    ['NUMBER', 'Number', 'If the expression script returns a number']
+ 	        	],
+ 	        	validationService: {
+ 					serviceName: 'VALIDATE_EXPRESSION_ACTION'
+ 					, baseParams: {contextType: 'datamart'}
+ 					, params: null
+ 				}
+ 			});
+    	
+
 			this.slotWizard.on('apply', function(win, formState, targetNode){
 	    		
 	    		var nodeType;
@@ -714,8 +811,17 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	    		}
 	    		win.close();
 	    	}, this);
+			
+ 			if(this.slotWizard.mainPanel.validationService !== undefined){
+ 				this.slotWizard.mainPanel.validationService.params = {fields: Ext.util.JSON.encode(fields)}; 		
+ 			}
+			this.slotWizard.setExpItems('fields', fields);
+						
+			this.slotWizard.setTargetNode(entityNode);
 			this.slotWizard.mainPanel.doLayout();
-			this.slotWizard.show();
+			//this.slotWizard.mainPanel.firstCalculatedFiledPanel.inputFields['type'].syncSize();
+			this.slotWizard.show(); 	
+
 		}else {
 			Ext.Msg.show({
 				   title:LN('sbi.qbe.bands.wizard.invalid.operation'),
@@ -1201,15 +1307,6 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	             },
                  scope: this
              },{
-            	 text:LN('sbi.qbe.calculatedFields.remove'),
-                 iconCls:'remove',
-                 handler:  function() {
-	            	 this.ctxNode.ui.removeClass('x-node-ctx');
-	            	 this.removeCalculatedField(this.ctxNode);
-	            	 this.ctxNode = null;
-                 },
-                 scope: this
-             },{
             	 text:LN('sbi.qbe.calculatedFields.edit'),
                  iconCls:'edit',
                  handler:function(){
@@ -1229,6 +1326,15 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
                  handler:function(){
             		this.editSlot(this.ctxNode);	
 	             },
+                 scope: this
+             },{
+            	 text:LN('sbi.qbe.calculatedFields.remove'),
+                 iconCls:'remove',
+                 handler:  function() {
+	            	 this.ctxNode.ui.removeClass('x-node-ctx');
+	            	 this.removeCalculatedField(this.ctxNode);
+	            	 this.ctxNode = null;
+                 },
                  scope: this
              }]
          });
