@@ -363,7 +363,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		this.rangeWindow.mainPanel.doLayout();
 		this.rangeWindow.show();
 	}
-	, openiInsertPunctualWindow: function(rec, vals){
+	, openiInsertPunctualWindow: function(rec, vals, idx){
 		this.expression = this.slotWizard.expression;
 		var lookupStore = this.createLookupStore();		
 		lookupStore.load();
@@ -374,7 +374,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		};
 		this.punctualWindow = new Sbi.widgets.FilterLookupPopupWindow(baseConfig);
 		this.punctualWindow.on('selectionmade', function(xselection) {
-			this.addPunctualVals(xselection.xselection.Values, rec);	
+			this.addPunctualVals(xselection.xselection.Values, rec, idx);	
 			this.punctualWindow.close();
 		}, this);
 		if(vals !== undefined && vals !== null && vals.length !== 0){
