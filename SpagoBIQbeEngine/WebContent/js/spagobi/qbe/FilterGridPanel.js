@@ -1109,31 +1109,34 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 		this.operandChooserWindow.show();
 	}
 	
-	, createStore: function(entityId) {
+	, createStore: function() {
 		var record = this.activeEditingContext.grid.store.getAt(this.activeEditingContext.row);
-		var entityId = record.get('leftOperandValue');
+		
+		var operandType = record.get('leftOperandType');
+		var operandValue = record.get('leftOperandValue');
 		
 		var storeUrl = this.services['getValuesForQbeFilterLookupService'];
 		var params = {};
-		var operandType = record.get('leftOperandType');
+		
 		if(operandType === Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD) {
-			//params.EXPRESSION = entityId.expression;
-			var urlEncodedExpression = Ext.urlEncode({EXPRESSION: entityId.expression});
-			storeUrl += '&' + urlEncodedExpression;	
+			params.fieldDescriptor = Ext.util.JSON.encode(operandValue);
 		} else {
-			//params.ENTITY_ID = entityId;
-			storeUrl += '&ENTITY_ID=' + this.fieldId;
+			storeUrl += '&ENTITY_ID=' + operandValue;
 		}
 		
 		
 		var store;	
 		store = new Ext.data.JsonStore({
 			url: storeUrl
-			, baseParams : params
+			// does not work. SI do not why. As workaroud I inject my params befor store load (see below)
+			//, baseParams : params
 		});
+	
 		
-		
-		
+		store.on('beforeload', function(store, options) {
+			options =  Ext.apply(options.params, params);
+		});
+		 
 		store.on('loadexception', function(store, options, response, e) {
 			var msg = '';
 			var content = Ext.util.JSON.decode( response.responseText );
@@ -1145,17 +1148,14 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 	
 			Sbi.exception.ExceptionHandler.showErrorMessage(msg, response.statusText);
 		});
+		
 		return store;	
 	}
 	
 	, openValuesForQbeFilterLookup: function(e) {
 			this.grid.stopEditing();
 			var store = this.createStore();
-			//store.on('beforeload', function(store, o) {
-				//var p = Sbi.commons.JSON.encode(this.getFormState());
-				//o.params.PARAMETERS = p;
-				//return true;
-			//}, this);
+			
 			var baseConfig = {
 		       store: store
 		     , singleSelect: false

@@ -110,7 +110,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	  		}
 	  	}
 		
-		alert('getExpression: [' + expression + ']');
+		//alert('getExpression: [' + expression + ']');
 		
 		return expression;
 	}
@@ -128,7 +128,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	  		expression = expression.replace(/</g,"&lt;");
 	  		expression = expression.replace(/>/g,"&gt;");
 	  		
-	  		alert('setExpression: [' + expression + ']');
+	  		//alert('setExpression: [' + expression + ']');
 	  		
 	  		this.baseExpression = expression;
 	  		if(this.expressionEditor.initialized) {
