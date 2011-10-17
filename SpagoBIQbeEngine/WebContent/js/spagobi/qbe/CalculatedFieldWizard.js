@@ -104,6 +104,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldWizard, Ext.Window, {
 		var okButtonConfig = {
 			text: LN('sbi.qbe.calculatedFields.buttons.text.ok'),
 		    handler: function(){
+
 		   	    var emptyAlias = (this.mainPanel.inputFields.alias.getValue()==null) || (this.mainPanel.inputFields.alias.getValue()=="");
 		   	    var emptyType = (this.mainPanel.inputFields.type.getValue()==null) || (this.mainPanel.inputFields.type.getValue()=="");
 
