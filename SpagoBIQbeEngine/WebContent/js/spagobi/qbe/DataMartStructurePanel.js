@@ -721,7 +721,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
  			}
  			//creates a window
  			this.slotWizard = new Sbi.qbe.SlotWizard( { 
- 				title: LN('sbi.qbe.bands.wizard.definition'),
+ 				title: LN('sbi.qbe.bands.title'),
 				fieldForSlot: entityNode,
 				modality: 'edit',
 				startFromFirstPage: false,
