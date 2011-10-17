@@ -281,7 +281,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			for(p in this.parametersPanel.fields) {
 				var aField = this.parametersPanel.fields[p];
 				//alert(p + '  : ' + aField.toSource());
-				if(aField.xtype == 'combo' && !aField.isHacked){
+				if(aField.xtype == 'combo' && !aField.isHacked && aField.el){
 					var box = aField.getSize();
 					aField.setWidth(box.width-1); // wont apply same width :)
 					aField.setWidth(box.width);
