@@ -141,10 +141,10 @@ public class Exporter {
         cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);  
         cellStyle.setFillForegroundColor(IndexedColors.WHITE.getIndex());
         cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+/*        cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
         cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
         cellStyle.setBorderRight(CellStyle.BORDER_THIN);
-        cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+        cellStyle.setBorderTop(CellStyle.BORDER_THIN);*/
 
         Font font = sheet.getWorkbook().createFont();
         font.setFontHeightInPoints((short)12);
@@ -160,10 +160,10 @@ public class Exporter {
         cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
         cellStyle.setFillForegroundColor(IndexedColors.WHITE.getIndex());
         cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);    
-        cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+/*        cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
         cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
         cellStyle.setBorderRight(CellStyle.BORDER_THIN);
-        cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+        cellStyle.setBorderTop(CellStyle.BORDER_THIN);*/
         cellStyle.setWrapText(false);
         Font font = sheet.getWorkbook().createFont();
         font.setFontHeightInPoints((short)10);
