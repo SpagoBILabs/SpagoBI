@@ -9,6 +9,7 @@ import it.eng.qbe.statement.jpa.JPQLStatementConditionalOperators.IConditionalOp
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -18,6 +19,8 @@ import org.apache.log4j.Logger;
  *
  */
 public class JPQLStatementHavingClause extends JPQLStatementFilteringClause {
+	
+	public static final String HAVING = "HAVING";
 	
 	public static transient Logger logger = Logger.getLogger(JPQLStatementHavingClause.class);
 	
@@ -30,25 +33,34 @@ public class JPQLStatementHavingClause extends JPQLStatementFilteringClause {
 		StringBuffer buffer = new StringBuffer();
 		
 		if( query.getHavingFields().size() > 0) {
-			buffer.append("HAVING ");
-			Iterator it = query.getHavingFields().iterator();
-			while (it.hasNext()) {
-				HavingField field = (HavingField) it.next();
-								
-				if(field.getLeftOperand().values[0].contains("expression")){
+			buffer.append(" " + HAVING + " ");
+			
+			List<HavingField> havingFields = query.getHavingFields();
+			String booleanConnetor = "";
+			for (HavingField havingField : havingFields) {
+				
+				buffer.append(" " + booleanConnetor + " ");
+				
+				String leftOperandType = havingField.getLeftOperand().type;
+				if(havingField.getLeftOperand().values[0].contains("expression")){
+					String havingClauseElement;
+					
 					IConditionalOperator conditionalOperator = null;
-					conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( field.getOperator() );
-					Assert.assertNotNull(conditionalOperator, "Unsopported operator " + field.getOperator() + " used in query definition");
+					conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( havingField.getOperator() );
+					Assert.assertNotNull(conditionalOperator, "Unsopported operator " + havingField.getOperator() + " used in query definition");
 
-					String havingClauseElement =  buildInLineCalculatedFieldClause(field.getOperator(), field.getLeftOperand(), field.isPromptable(), field.getRightOperand(), query, entityAliasesMaps, conditionalOperator);
+					havingClauseElement =  buildInLineCalculatedFieldClause(havingField.getOperator(), havingField.getLeftOperand(), havingField.isPromptable(), havingField.getRightOperand(), query, entityAliasesMaps, conditionalOperator);
+					
+					
+					
 					buffer.append(havingClauseElement);
 				}else{
-						buffer.append( buildHavingClauseElement(field, query, entityAliasesMaps) );
+						buffer.append( buildHavingClauseElement(havingField, query, entityAliasesMaps) );
 				}
 				
-				if (it.hasNext()) {
-					buffer.append(" " + field.getBooleanConnector() + " ");
-				}
+				
+				booleanConnetor =  havingField.getBooleanConnector();
+				
 			}
 		}
 		

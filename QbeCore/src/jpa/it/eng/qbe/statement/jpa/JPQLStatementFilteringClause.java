@@ -48,7 +48,11 @@ public abstract class JPQLStatementFilteringClause  extends JPQLStatementClause 
 			JSONObject leftOperandJSON = new JSONObject(leftOperand.values[0]);
 			
 			String expression = leftOperandJSON.getString("expression");
-			String slots = leftOperandJSON.getString("slots");
+			String slots = null;
+			String s = leftOperandJSON.optString("slots");
+			if(s != null && s.trim().length() > 0) {
+				slots = leftOperandJSON.getString("slots");
+			}
 			
 			expression = parseInLinecalculatedField(expression, slots, query, entityAliasesMaps);
 					
@@ -63,7 +67,16 @@ public abstract class JPQLStatementFilteringClause  extends JPQLStatementClause 
 				rightOperandElements = getTypeBoundedStaticOperand(leftOperand, operator, rightOperandElements);
 			}
 			
-			return conditionalOperator.apply("("+expression+")", rightOperandElements);
+			String operandElement = null;
+			if (leftOperand instanceof HavingField.Operand) {
+				HavingField.Operand havingFieldOperand = (HavingField.Operand) leftOperand;
+				IAggregationFunction function = havingFieldOperand.function;
+				operandElement = function.apply( "("+expression+")" );
+			} else {
+				operandElement = "("+expression+")";
+			}
+			
+			return conditionalOperator.apply(operandElement , rightOperandElements);
 		
 		} catch(Throwable t) {
 			throw new RuntimeException("Impossible to build inline calculated field clause", t);

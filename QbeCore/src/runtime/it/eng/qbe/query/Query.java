@@ -312,11 +312,11 @@ public class Query {
 		return inLineCalculatedSelectFields;
 	}
 	
-	public List getWhereFields() {
+	public List<WhereField> getWhereFields() {
 		return whereClause;
 	}
 	
-	public List getHavingFields() {
+	public List<HavingField> getHavingFields() {
 		return havingClause;
 	}
 
