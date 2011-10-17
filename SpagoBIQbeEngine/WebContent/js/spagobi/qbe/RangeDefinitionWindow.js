@@ -283,12 +283,19 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 	
 	, createLookupStore: function() {
 		var store = null;
+		var params = {};
 		var createStoreUrl = this.services['getValuesForQbeFilterLookupService'];
 		if (this.fieldId !== null) createStoreUrl +=  '&ENTITY_ID=' + this.fieldId;
-		if (this.expression !== null) createStoreUrl +=  '&EXPRESSION=' + this.expression;
+		if (this.expression !== null) {
+			params.fieldDescriptor = Ext.util.JSON.encode({expression: this.expression});
+		}
 		
 		store = new Ext.data.JsonStore({
 			url: createStoreUrl
+		});
+		
+		store.on('beforeload', function(store, options) {
+			options =  Ext.apply(options.params, params);
 		});
 		
 		store.on('loadexception', function(store, options, response, e) {

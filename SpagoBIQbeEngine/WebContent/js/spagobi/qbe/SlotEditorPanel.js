@@ -471,13 +471,19 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	, createLookupStore: function() {
 		var createStoreUrl = this.services['getValuesForQbeFilterLookupService'];
 		
+		var params = {};
+		
 		if (this.fieldId !== null) createStoreUrl += '&ENTITY_ID=' + this.fieldId;
 		if (this.expression !== null) {
-			createStoreUrl += '&' + Ext.urlEncode({EXPRESSION: this.expression});
-			alert(createStoreUrl);
+			params.fieldDescriptor = Ext.util.JSON.encode({expression: this.expression});
 		}
+		
 		var store = new Ext.data.JsonStore({
 			url: createStoreUrl
+		});
+		
+		store.on('beforeload', function(store, options) {
+			options =  Ext.apply(options.params, params);
 		});
 		
 		store.on('loadexception', function(store, options, response, e) {

@@ -21,6 +21,7 @@
 package it.eng.spagobi.engines.qbe.services.core;
 
 import it.eng.qbe.query.ExpressionNode;
+import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.LookupStoreJSONSerializer;
@@ -59,34 +60,31 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 	
 	// request parameters
 	public static String ENTITY_ID = "ENTITY_ID";
-	public static String EXPRESSION = "EXPRESSION";
+	public static String INLINE_CALCULATED_FIELD_DESCRIPTOR = "fieldDescriptor";
 	public static String FILTERS = "FILTERS";	
+	
 	public static String MODE = "MODE";
 	public static String MODE_SIMPLE = "simple";
 	public static String MODE_COMPLETE = "complete";
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	
-	//class parameters
-	public static String TYPE_SIMPLE_FIELD = "TYPE_SIMPLE_FIELD";
-	public static String TYPE_INLINE_CC_FIELD = "TYPE_INLINE_CC_FIELD";
-
-	
 	// logger component
 	private static Logger logger = Logger.getLogger(GetValuesForQbeFilterLookup.class);
 	
 	public void service(SourceBean request, SourceBean response) {		
 		String entityId = null;
-		String expression = null;
+		
 		
 		Integer limit = null;
 		Integer start = null;
 		Integer maxSize = null;
-		boolean isMaxResultsLimitBlocking = false;
 		IDataStore dataStore = null;
 		IDataSet dataSet = null;
 		JSONDataWriter serializer;
 		JSONObject filtersJSON = null;
+		JSONObject inlineCalculatedDescriptorJSON;
+		JSONObject simpleCalculatedDescriptorJSON;
 		Query query = null;
 		IStatement statement = null;
 		
@@ -104,19 +102,38 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 		
 			totalTimeMonitor = MonitorFactory.start("QbeEngine.GetValuesForQbeFilterLookup.totalTime");
 			
-			entityId = getAttributeAsString( ENTITY_ID );
+			simpleCalculatedDescriptorJSON = null;
+			if(this.requestContainsAttribute( ENTITY_ID ) ) {
+				entityId = getAttributeAsString( ENTITY_ID );
+				simpleCalculatedDescriptorJSON = new JSONObject();
+				simpleCalculatedDescriptorJSON.put("entity", entityId);
+			}
+			
+			inlineCalculatedDescriptorJSON = null;
+			if(this.requestContainsAttribute( INLINE_CALCULATED_FIELD_DESCRIPTOR ) ) {
+				try {
+					inlineCalculatedDescriptorJSON = getAttributeAsJSONObject( INLINE_CALCULATED_FIELD_DESCRIPTOR );
+				} catch(Throwable t) {
+					throw new RuntimeException("Value [" + getAttributeAsString( INLINE_CALCULATED_FIELD_DESCRIPTOR ) + "] of request parameter [" + INLINE_CALCULATED_FIELD_DESCRIPTOR + "] is not a well formed JSON string", t);
+				}
+			}
+			
+			Assert.assertTrue(simpleCalculatedDescriptorJSON != null || inlineCalculatedDescriptorJSON != null, "One between request parameters [" + ENTITY_ID + "] and [" + INLINE_CALCULATED_FIELD_DESCRIPTOR + "] must be not null");
+			
 			if(this.requestContainsAttribute( FILTERS ) ) {
-				filtersJSON = getAttributeAsJSONObject( FILTERS );
+				try {
+					filtersJSON = getAttributeAsJSONObject( FILTERS );
+				} catch(Throwable t) {
+					throw new RuntimeException("Value [" + getAttributeAsString( FILTERS ) + "] of request parameter [" + FILTERS + "] is not a well formed JSON string", t);
+				}
 			}
 			
-			if(this.requestContainsAttribute( EXPRESSION ) ) {
-				expression = getAttributeAsString( EXPRESSION ).trim();
-			}
-			
-			if(expression != null){
-				query = buildQuery(expression, TYPE_INLINE_CC_FIELD, filtersJSON);
-			}else{
-				query = buildQuery(entityId, TYPE_SIMPLE_FIELD, filtersJSON);
+			if(inlineCalculatedDescriptorJSON != null){
+				query = buildQuery(inlineCalculatedDescriptorJSON, ISelectField.IN_LINE_CALCULATED_FIELD, filtersJSON);
+			} else {
+				// note: if the field is not of type IN_LINE_CALCULATED_FIELD it muts be og type SIMPLE_FIELD because it
+				// is impossible to get domain values of a CALCULATED_FIELD
+				query = buildQuery(simpleCalculatedDescriptorJSON, ISelectField.SIMPLE_FIELD, filtersJSON);
 			}
 
 			
@@ -215,13 +232,21 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 		}		
 	}
 	
-	private Query buildQuery(String fieldUniqueName, String type, JSONObject filtersJSON) throws JSONException {
-		logger.debug("IN: fieldUniqueName = " + fieldUniqueName);
+	private Query buildQuery(JSONObject fieldDescriptor, String type, JSONObject filtersJSON) throws JSONException {
+		
 		Query query = new Query();
-		if(type.equals(TYPE_INLINE_CC_FIELD)){
-			query.addInLineCalculatedFiled("Valori", fieldUniqueName, null, DataSetVariable.STRING, true, true, false, "asc", "NONE");
+		String value = null;
+		
+		if(type.equals(ISelectField.IN_LINE_CALCULATED_FIELD)){
+			String s = fieldDescriptor.optString("slots");
+			String slots = null;
+			if(s != null && s.trim().length() > 0) slots = s;
+			
+			query.addInLineCalculatedFiled("Valori", fieldDescriptor.getString("expression"), slots, DataSetVariable.STRING, true, true, false, "asc", "NONE");
+			value = fieldDescriptor.getString("expression");
 		}else{
-			query.addSelectFiled(fieldUniqueName, "NONE", "Valori", true, true, false, "asc", null);
+			query.addSelectFiled(fieldDescriptor.getString("entity"), "NONE", "Valori", true, true, false, "asc", null);
+			value = fieldDescriptor.getString("entity");
 		}
 		query.setDistinctClauseEnabled(true);
 		if (filtersJSON != null) {
@@ -231,7 +256,8 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
 			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
 			String typeValueFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_VALUE_FILTER);
-			WhereField.Operand leftOperand = new WhereField.Operand(new String[] {fieldUniqueName}, "", AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
+			
+			WhereField.Operand leftOperand = new WhereField.Operand(new String[] {value}, "", AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
 			valuefilter = typeValueFilter.equalsIgnoreCase("NUMBER") ? valuefilter : "" + valuefilter + "";
 			WhereField.Operand rightOperand = new WhereField.Operand(new String[] {valuefilter}, 
 					"", AbstractStatement.OPERAND_TYPE_STATIC, null, null);
