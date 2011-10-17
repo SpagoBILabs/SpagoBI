@@ -437,7 +437,7 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 	background-image: url('../img/actions/close_icon-15.png') !important;
 	background-repeat: no-repeat;
 	background-position: right;
-	padding-right: 20px;
+	padding-right: 16px;
 	text-align: right;	
 }
 .green {
@@ -446,7 +446,14 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 }
 .blue {
 	border: 1px solid blue;
+	background-color: #6C69AB; 
 }
 .default-row{
-	background-color: #FFF7B2;
+	background-color: #6C69AB;	
+	border:1px solid red;
+}
+.box-to-edit{
+	width: 100%;
+	text-align:right;
+	//border: 1px solid black;
 }
