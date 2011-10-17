@@ -179,6 +179,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 				}else{
 					//edit band
 					formState = this.fieldForSlot.attributes.attributes.formState;
+					this.addSlotToFormState(formState);
 					target = this.fieldForSlot;
 				}
 		    	this.fireEvent('apply', this, formState, target);
@@ -202,10 +203,15 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 		var firstPage = null;
 		if(this.startFromFirstPage){
 			firstPage = this.firstCalculatedFiledPanel;
+			
 		}
 		var fieldID = null;
 		if(this.fieldForSlot !== null){
-			fieldID= this.fieldForSlot.attributes.id
+			fieldID= this.fieldForSlot.attributes.id;
+			if(fieldID !== undefined && fieldID !== null && fieldID.indexOf('xnode-') !== -1){
+				fieldID = null;
+				this.expression = this.fieldForSlot.attributes.attributes.formState.expression;
+			}
 		}
 		this.secondSlotDefinitionPanel = new Sbi.qbe.SlotEditorPanel({
 			height: 420,
@@ -223,12 +229,16 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			btnPrev.disable();
 			btnNext.enable();
 			btnFinish.disable();
+			
 
 		}else{
 			wizardPages = [this.secondSlotDefinitionPanel] ; 
 			btnPrev.disable();
 			btnNext.disable();
 			btnFinish.enable();
+			if(this.modality =='edit'){
+				wizardPages = [this.firstCalculatedFiledPanel, this.secondSlotDefinitionPanel] ; 
+			}
 		}
 		this.mainPanel = new Ext.Panel({  
 			    layout: 'card',  
@@ -249,12 +259,16 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 		
 		this.firstCalculatedFiledPanel.doLayout();
 		this.secondSlotDefinitionPanel.doLayout();
+		if(this.modality =='edit'){
+			this.mainPanel.activeItem = 1;
+			btnPrev.enable();
+		}
 		this.mainPanel.doLayout();
 
     }
 	, addSlotToFormState: function(formState){
-
-		var slotStore = this.secondSlotDefinitionPanel.store;
+		
+		var slotStore = this.secondSlotDefinitionPanel.gridPanel.store;
 		var slots = [];
 		if(slotStore !== null){
 			for (var i = 0; i < slotStore.data.length; i++) { 
