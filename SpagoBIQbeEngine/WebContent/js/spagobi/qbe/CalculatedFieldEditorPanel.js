@@ -409,6 +409,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
     		emptyText:'Select type...',
     		typeAhead: true,
     		triggerAction: 'all',
+    		width:150,
     		selectOnFocus:true
     	});
     	
