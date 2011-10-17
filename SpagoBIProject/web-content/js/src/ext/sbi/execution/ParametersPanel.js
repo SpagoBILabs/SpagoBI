@@ -260,16 +260,31 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var nonTransientField = 0;
 		for(var i = 0; i < parameters.length; i++) {
 			var field = this.createField( executionInstance, parameters[i] );
+			 
+			
+			// check if parameter has dependencies
+			var hasDependencies = false;
+			if(parameters[i].dependencies && parameters[i].dependencies.length>0){			
+				hasDependencies = true;
+			}
+				
+			// if parameter has only one value but has dependencies draw it
+			if(parameters[i].valuesCount !== undefined && parameters[i].valuesCount == 1 && hasDependencies == true) {
+				field.isTransient = false;
+				field.columnNo = (nonTransientField++)%this.columns.length;
+				this.columns[field.columnNo].add( field );
 
-			if(parameters[i].valuesCount !== undefined && parameters[i].valuesCount == 1) {
+			}
+			else if(parameters[i].valuesCount !== undefined && parameters[i].valuesCount == 1) {
 				field.isTransient = true;
 				field.setValue(parameters[i].value);
+				
 			} else if (preferenceState !== undefined && preferenceState[parameters[i].id] !== undefined) {
-				field.isTransient = true;
+				//field.isTransient = true;
 				//if(this.isFromCross) alert(parameters[i].id + ' set equals to ' + preferenceState[parameters[i].id]);
 				field.setValue(preferenceState[parameters[i].id]);
 			} else if (parameters[i].visible === false) {
-				field.isTransient = true;
+				//field.isTransient = true;
 				if (preferenceState !== undefined && preferenceState[parameters[i].id] !== undefined) {
 					field.setValue(preferenceState[parameters[i].id]);
 				}
