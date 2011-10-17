@@ -23,10 +23,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	var objName = obj;
 	var nameSuffix = objName.split("_");
 	var objList = document.getElementById(tab_name);
-	
+	if(objList!=undefined && objList!=null ){
 	 for(var j=0;j<objList.rows.length;j++){
-		 //firefox and chrome
-	  if (navigator.userAgent.indexOf("Firefox")!=-1 || navigator.userAgent.indexOf("Mozilla")!=-1){
+			 //firefox and chrome
+	 if (navigator.userAgent.indexOf("Firefox")!=-1 || navigator.userAgent.indexOf("Mozilla")!=-1){
 	   var nome = objList.rows[j].id;
 	  } else {
 	   var nome = objList.rows[j].getAttribute('id');
@@ -51,20 +51,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	     objList.rows[j].style.display='none';
 	    }
 	  }
+	}
 	}	 	
 	
 	function hideAllTr(tab_name){
 	   var objList = document.getElementById(tab_name);
-
-	   for(var j=0;j<objList.rows.length;j++){
-		  if (navigator.userAgent.indexOf("Firefox")!=-1){
-		   		var nome = objList.rows[j].id;
-		  } else {
-		    	var nome = objList.rows[j].getAttribute('id');
-		  }
-		  if(nome.indexOf("child")>0){
-		    	objList.rows[j].style.display='none';
-		  }
+	   if(objList!=undefined && objList!=null ){
+		   for(var j=0;j<objList.rows.length;j++){
+			  if (navigator.userAgent.indexOf("Firefox")!=-1){
+			   		var nome = objList.rows[j].id;
+			  } else {
+			    	var nome = objList.rows[j].getAttribute('id');
+			  }
+			  if(nome.indexOf("child")>0){
+			    	objList.rows[j].style.display='none';
+			  }
+		   }
 	   }
 	}
 
