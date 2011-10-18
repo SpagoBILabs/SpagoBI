@@ -102,7 +102,10 @@ public class JPQLStatementClause {
 						modelField = parentStatement.getDataSource().getModelStructure().getField(fieldMatchingAlias.getUniqueName());
 					}
 				} else {
-					modelField = parentStatement.getDataSource().getModelStructure().getField(token);
+					String decodedToken = token;
+					decodedToken = decodedToken.replaceAll("\\[", "(");
+					decodedToken = decodedToken.replaceAll("\\]", ")");
+					modelField = parentStatement.getDataSource().getModelStructure().getField(decodedToken);
 				}
 				
 				
