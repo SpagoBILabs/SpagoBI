@@ -119,6 +119,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 
 
 	, setExpression: function(expression) {
+		
 		if(this.expressionEditor) {
 			if(this.expertMode === undefined || this.expertMode === null || this.expertMode === false){
 	  			expression = this.replaceFieldUniqueNamesWithFieldAliases(expression);
@@ -127,8 +128,6 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 			expression = expression.replace(/ /g,"&nbsp;");
 	  		expression = expression.replace(/</g,"&lt;");
 	  		expression = expression.replace(/>/g,"&gt;");
-	  		
-	  		//alert('setExpression: [' + expression + ']');
 	  		
 	  		this.baseExpression = expression;
 	  		if(this.expressionEditor.initialized) {

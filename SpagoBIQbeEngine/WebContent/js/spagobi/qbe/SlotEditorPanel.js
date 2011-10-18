@@ -352,7 +352,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	}
 	, openiInsertRangeWindow: function(rec, toedit, idx){
 
-		this.expression = this.slotWizard.expression;
+		this.expression = this.slotWizard.getExpression();
 		this.rangeWindow = new Sbi.qbe.RangeDefinitionWindow({slotPanel: this, 
 																record: rec, 
 																id: this.fieldId, 
@@ -364,7 +364,7 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 		this.rangeWindow.show();
 	}
 	, openiInsertPunctualWindow: function(rec, vals, idx){
-		this.expression = this.slotWizard.expression;
+		this.expression = this.slotWizard.getExpression();
 		var lookupStore = this.createLookupStore();		
 		lookupStore.load();
 		var baseConfig = {
