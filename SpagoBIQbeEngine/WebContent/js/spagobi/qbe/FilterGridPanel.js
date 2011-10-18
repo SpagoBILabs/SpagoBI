@@ -126,6 +126,8 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 
 	, filterOptStore: new Ext.data.SimpleStore({
 	    fields: ['funzione', 'nome', 'descrizione'],
+	    data: Sbi.constants.qbe.WHERE_CLAUSE_COMPARISON_FUNCTIONS
+	    /*
 	    data : [
 	            ['NONE', LN('sbi.qbe.filtergridpanel.foperators.name.none'), LN()],
 	            ['EQUALS TO', LN('sbi.qbe.filtergridpanel.foperators.name.eq'),  LN('sbi.qbe.filtergridpanel.foperators.desc.eq')],
@@ -149,6 +151,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 	            ['NOT NULL', LN('sbi.qbe.filtergridpanel.foperators.name.notnull'),  LN('sbi.qbe.filtergridpanel.foperators.desc.notnull')],
 	            ['IS NULL', LN('sbi.qbe.filtergridpanel.foperators.name.isnull'),  LN('sbi.qbe.filtergridpanel.foperators.desc.isnull')]
 	    ]
+	    */
 	})
 
 	// public methods

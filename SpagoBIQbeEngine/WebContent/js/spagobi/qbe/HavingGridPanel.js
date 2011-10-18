@@ -101,7 +101,9 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 	// static members
 	, leftOperandAggregationFunctionsStore:  new Ext.data.SimpleStore({
 		 fields: ['funzione', 'nome', 'descrizione'],
-	     data : [
+		 data: Sbi.constants.qbe.HAVING_CLAUSE_AGGREGATION_FUNCTION
+	     /*
+		 data : [
 	        ['NONE', LN('sbi.qbe.selectgridpanel.aggfunc.name.none'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.none')],
 	        ['SUM', LN('sbi.qbe.selectgridpanel.aggfunc.name.sum'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')],
 	        ['AVG', LN('sbi.qbe.selectgridpanel.aggfunc.name.avg'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.avg')],
@@ -110,10 +112,13 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 	        ['COUNT', LN('sbi.qbe.selectgridpanel.aggfunc.name.count'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')],
 	        ['COUNT_DISTINCT', LN('sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')]
 	     ] 
+	     */
 	})
 
 	, rightOperandAggregationFunctionsStore:  new Ext.data.SimpleStore({
 		fields: ['funzione', 'nome', 'descrizione'],
+		data: Sbi.constants.qbe.HAVING_CLAUSE_AGGREGATION_FUNCTION
+	     /*
 	    data : [
 	       ['NONE', LN('sbi.qbe.selectgridpanel.aggfunc.name.none'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.none')],
 	       ['SUM', LN('sbi.qbe.selectgridpanel.aggfunc.name.sum'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')],
@@ -123,6 +128,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 	       ['COUNT', LN('sbi.qbe.selectgridpanel.aggfunc.name.count'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')],
 	       ['COUNT_DISTINCT', LN('sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')]
 	    ] 
+	    */
 	})
 		
 	, booleanOptStore: new Ext.data.SimpleStore({
@@ -135,6 +141,8 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 
 	, filterOptStore: new Ext.data.SimpleStore({
 	    fields: ['funzione', 'nome', 'descrizione'],
+	    data: Sbi.constants.qbe.HAVING_CLAUSE_COMPARISON_FUNCTIONS
+	    /*
 	    data : [
 	            ['NONE', LN('sbi.qbe.filtergridpanel.foperators.name.none'), LN()],
 	            ['EQUALS TO', LN('sbi.qbe.filtergridpanel.foperators.name.eq'),  LN('sbi.qbe.filtergridpanel.foperators.desc.eq')],
@@ -158,6 +166,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 	            ['NOT NULL', LN('sbi.qbe.filtergridpanel.foperators.name.notnull'),  LN('sbi.qbe.filtergridpanel.foperators.desc.notnull')],
 	            ['IS NULL', LN('sbi.qbe.filtergridpanel.foperators.name.isnull'),  LN('sbi.qbe.filtergridpanel.foperators.desc.isnull')]
 	    ]
+	    */
 	})
 
 	// public methods

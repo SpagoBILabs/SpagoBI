@@ -120,7 +120,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 
 	, setExpression: function(expression) {
 		if(this.expressionEditor) {
-			if(!this.expertMode){
+			if(this.expertMode === undefined || this.expertMode === null || this.expertMode === false){
 	  			expression = this.replaceFieldUniqueNamesWithFieldAliases(expression);
 	  		}
 			
@@ -140,7 +140,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	
 	, replaceFieldAliasesWithFieldUniqueNames: function(expression) {
 		var newExpression;
-		
+				
 		newExpression = expression;
 		var fieldNodes = this.groupRootNodes['fields'];
 		var childNodes = fieldNodes.childNodes;
@@ -160,13 +160,27 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 			return b.length - a.length;
 		});
 		
+		var uniqueNamesUsedInExpression = [];
 		for(var i = 0; i < aliasOrderedByLengthList.length; i++) {
 			var alias = aliasOrderedByLengthList[i];
 			var uniqueName = aliasToUniqueNameMap[alias];
-			//alert('replacing all occurences of [' + alias + '](' + alias.length + ') with [' + uniqueName+ '] in expression [' + newExpression + ']');
-			newExpression = newExpression.replace(new RegExp(alias, 'g'), uniqueName);
-			//alert('Results: ' + newExpression);
+			
+			if(newExpression.indexOf(alias) >= 0) {
+				uniqueNamesUsedInExpression.push(uniqueName);
+				//alert('replacing all occurrences of [' + alias + '](' + alias.length + ') with [' + uniqueName+ '] in expression [' + newExpression + ']');
+				newExpression = newExpression.replace(new RegExp(alias, 'g'), '#' + (uniqueNamesUsedInExpression.length - 1));
+				//alert('replacing [' + alias + '] with [' + '#' + (uniqueNamesUsedInExpression.length - 1) +']: ' + newExpression);
+				//alert('Results: ' + newExpression);
+			}
 		}		
+		
+		for(var i = 0; i < uniqueNamesUsedInExpression.length; i++) {
+			var uniqueNameEncoded = uniqueNamesUsedInExpression[i];
+			uniqueNameEncoded = uniqueNameEncoded.replace(new RegExp('\\(' , 'g'), '[');
+			uniqueNameEncoded = uniqueNameEncoded.replace(new RegExp('\\)' , 'g'), ']');
+			newExpression = newExpression.replace(new RegExp('#' + i , 'g'), uniqueNameEncoded);
+			//alert('replacing [' + '#' + i + '] with [' + uniqueNameEncoded +']: ' + newExpression);
+		}
 		
 		return newExpression;
 	}
@@ -194,13 +208,38 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 			return b.length - a.length;
 		});
 		
+		var aliasesUsedInExpression = [];
 		for(var i = 0; i < uniqueNameOrderedByLengthList.length; i++) {
 			var uniqueName = uniqueNameOrderedByLengthList[i];
 			var alias = uniqueNameToAliasMap[uniqueName];
-			//alert('replacing all occurences of [' + uniqueName + '](' + uniqueName.length + ') with [' + alias+ '] in expression [' + newExpression + ']');
-			newExpression = newExpression.replace(new RegExp(uniqueName, 'g'), alias);
-			//alert('Results: ' + newExpression);
-		}		
+			
+			var uniqueNameRegEx = uniqueName;
+			uniqueNameRegEx = uniqueNameRegEx.replace(new RegExp('\\(' , 'g'), '\\[');
+			uniqueNameRegEx = uniqueNameRegEx.replace(new RegExp('\\)' , 'g'), '\\]');
+			
+			var uniqueNameEncoded = uniqueName;
+			uniqueNameEncoded = uniqueNameEncoded.replace(new RegExp('\\(' , 'g'), '[');
+			uniqueNameEncoded = uniqueNameEncoded.replace(new RegExp('\\)' , 'g'), ']');
+			
+			
+			//alert('unique name [' + uniqueName +'] has been decoded [' + uniqueNameEncoded + ']');
+			
+			if(newExpression.indexOf(uniqueNameEncoded) >= 0) {
+				aliasesUsedInExpression.push(alias);
+				//alert('replacing all occurrences of [' + alias + '](' + alias.length + ') with [' + uniqueName+ '] in expression [' + newExpression + ']');
+				newExpression = newExpression.replace(new RegExp(uniqueNameRegEx, 'g'), '#' + (aliasesUsedInExpression.length - 1));
+				//alert('REPLACING [' + uniqueNameRegEx + '] with [' + '#' + (aliasesUsedInExpression.length - 1) +']: ' + newExpression);
+				//alert('Results: ' + newExpression);
+			} else {
+				//alert('No match for [' + uniqueNameEncoded + '] in expression [' + newExpression + ']');
+			}
+		}	
+		
+		for(var i = 0; i < aliasesUsedInExpression.length; i++) {
+			var alias = aliasesUsedInExpression[i];
+			newExpression = newExpression.replace(new RegExp('#' + i , 'g'), alias);
+			//alert('replacing [' + '#' + i + '] with [' + alias +']: ' + newExpression);
+		}
 		
 		return newExpression;
 	}
