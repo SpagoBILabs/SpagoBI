@@ -90,7 +90,6 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	
 
 	, setCategoryAliasX: function(dataConfig) {
-		//alert("setCategoryAliasX.dataConfig: " +dataConfig.toSource());
 		if(dataConfig.xAxis != undefined){
 			if(dataConfig.xAxis.length != undefined){
 				for(var i=0; i< dataConfig.xAxis.length; i++){
@@ -133,16 +132,20 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		//checks series configuration; since SpagoBI 3.2 all series can be filtered through an input parameter defined 
 		//into the 'paramFilterSeries' attribute.
 		var finalSeries = [];
+		var toFilter = false;
 		if (dataConfig.series){
 			var strValue = dataConfig.series;
+	
 			var filterSeries = [];
-			if (dataConfig.chart.paramFilterSeries){
+			if (dataConfig.chart.paramFilterSeries !== undefined && dataConfig.chart.paramFilterSeries !== null){
+				toFilter = true;
 				filterSeries = this.getSeriesByParam(dataConfig.chart.paramFilterSeries, dataConfig.dsPars);
 			}
+			
 			if (Ext.isArray(strValue)){
 				var str = "";
 				for(var i = 0; i < strValue.length; i++) {
-					if (dataConfig.chart.paramFilterSeries == undefined || this.isFilteredSerie(strValue[i].alias, filterSeries )){
+					if (toFilter && this.isFilteredSerie(strValue[i].alias, filterSeries )){
 						finalSeries.push(strValue[i]);
 						str += strValue[i].alias;
 						if (i < (strValue.length-1)) str += ",";
@@ -151,7 +154,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 				if (str) {
 					this.serieAlias = str.split(",");
 				}
-				dataConfig.series = finalSeries;
+				if (toFilter) dataConfig.series = finalSeries; //updates the series
 			}			
 		} 
 		
