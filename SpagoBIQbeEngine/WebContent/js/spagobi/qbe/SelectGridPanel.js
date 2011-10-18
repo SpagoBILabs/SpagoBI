@@ -124,6 +124,8 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 	// static members
 	, aggregationFunctionsStore:  new Ext.data.SimpleStore({
 		 fields: ['funzione', 'nome', 'descrizione'],
+		 data: Sbi.constants.qbe.SELECT_CLAUSE_AGGREGATION_FUNCTION
+	     /*
 	     data : [
 	        ['NONE', LN('sbi.qbe.selectgridpanel.aggfunc.name.none'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.none')],
 	        ['SUM', LN('sbi.qbe.selectgridpanel.aggfunc.name.sum'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')],
@@ -133,6 +135,7 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 	        ['COUNT', LN('sbi.qbe.selectgridpanel.aggfunc.name.count'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')],
 	        ['COUNT_DISTINCT', LN('sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')]
 	     ] 
+	     */
 	 })
 
 	, orderingTypesStore: new Ext.data.SimpleStore({
@@ -637,7 +640,7 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 			Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' + 
 			Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' + 
 			Ext.util.Format.htmlEncode("return result;");
-		
+		 /*
 		var functionsForInline = [
 		    {
 			    text: '+'
@@ -683,7 +686,7 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
   				, alias: Ext.util.Format.htmlEncode(')')
 			}
 		];
-		
+		*/
 		var functions = [
  		    {
  			    text: 'link'
@@ -707,13 +710,12 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
  		];
 		     		
 		     		
-		     		//this.treeLoader.on('load', this.oonLoad, this);
-		     		//this.treeLoader.on('loadexception', this.oonLoadException, this);
+		//this.treeLoader.on('load', this.oonLoad, this);
+		//this.treeLoader.on('loadexception', this.oonLoadException, this);
 		     		
 
-		
+		/*
 		var aggregationFunctions = [
-                     
  		    {
  			    text: 'SUM'
  			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')
@@ -808,7 +810,7 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
       				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
       			   }
       	    ];
-		
+		*/
 		this.inLineCalculatedFieldWizard = new Sbi.qbe.CalculatedFieldWizard({
     		title: LN('sbi.qbe.calculatedFields.title'),
     		expItemGroups: [
@@ -818,9 +820,9 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
     		    {name:'dateFunctions', text:  LN('sbi.qbe.calculatedFields.datefunctions')}
     		],
     		fields: fields,
-    		functions: functionsForInline,
-    		aggregationFunctions: aggregationFunctions,
-    		dateFunctions: dateFunctions,
+    		functions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_ARITHMETIC_FUNCTIONS, // functionsForInline,
+    		aggregationFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_AGGREGATIN_FUNCTIONS, // aggregationFunctions,
+    		dateFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_DATE_FUNCTIONS, // dateFunctions,
     		expertMode: false,
         	scopeComboBoxData :[
         	     ['STRING','String', LN('sbi.qbe.calculatedFields.string.type')],
