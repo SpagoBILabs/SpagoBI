@@ -282,7 +282,6 @@
           <file name='./spagobi/crosstab/AttributesContainerPanel.js'/>
           <file name='./spagobi/crosstab/MeasuresContainerPanel.js'/>
           <file name='./spagobi/crosstab/CrosstabDefinitionPanel.js'/>
-          <file name='./spagobi/crosstab/CrosstabDesignerPanel.js'/>
           <file name='./spagobi/crosstab/CrosstabPreviewPanel.js'/>
           
           <file name='./spagobi/dataset/ParametersGridPanel.js'/>
@@ -293,7 +292,6 @@
           <file name='./spagobi/worksheet/designer/DesignToolsPanel.js'/>
           <file name='./spagobi/worksheet/designer/DesignToolsPallettePanel.js'/>
           <file name='./spagobi/worksheet/designer/DesignToolsLayoutPanel.js'/>
-          <file name='./spagobi/worksheet/designer/DesignToolsFieldsPanel.js'/>
           <file name='./spagobi/worksheet/designer/SheetPanel.js'/>
           <file name='./spagobi/worksheet/designer/DesignSheetFiltersPanel.js'/>
           <file name='./spagobi/worksheet/designer/DesignSheetFiltersEditWizard.js'/>
