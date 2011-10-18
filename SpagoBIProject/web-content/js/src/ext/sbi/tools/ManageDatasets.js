@@ -794,15 +794,7 @@ Ext.extend(
 //						name : 'customData'
 //					});
 
-					
-					function Config () {
-					    this.pars = 'ciao';
-					}
-
-					var c = new Config();
-					
-					
-					this.customDataGrid = new Sbi.tools.dataset.CustomDataGrid(c);
+					this.customDataGrid = new Sbi.tools.dataset.CustomDataGrid();
 					
 
 					this.dsTypeDetail = new Ext.form.FieldSet(
