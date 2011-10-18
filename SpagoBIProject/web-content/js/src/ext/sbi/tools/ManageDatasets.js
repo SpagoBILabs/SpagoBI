@@ -135,7 +135,8 @@ Ext.extend(
 				detailFieldDateIn: null,
 				detailFieldVersNum: null,
 				detailFieldVersId: null,
-				qbeDataSetBuilder: null
+				qbeDataSetBuilder: null,
+				customDataGrid: null
 
 				, modifyToolbar : function(tabpanel, panel){
 					var itemId = panel.getItemId();
