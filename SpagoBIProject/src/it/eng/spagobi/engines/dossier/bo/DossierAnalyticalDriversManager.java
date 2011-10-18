@@ -139,7 +139,7 @@ public class DossierAnalyticalDriversManager {
 		try {
 			error = DetailBIObjectModule.checkForDependancies(aParameter.getId());
 			if (error == null) {
-				DAOFactory.getBIObjectParameterDAO().eraseBIObjectParameter(aParameter);
+				DAOFactory.getBIObjectParameterDAO().eraseBIObjectParameter(aParameter, true);
 			}
 		} catch (EMFUserError e) {
 			throw new SpagoBIRuntimeException("Cannot remove document parameter " + aParameter.getLabel(), e);
