@@ -57,6 +57,8 @@ Sbi.qbe.SlotWizard = function(config) {
 	this.add(this.mainPanel);
   
 	this.addEvents('apply'); 
+	
+	
 
 };
 
@@ -75,7 +77,14 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
     , fieldId : null
     , expression : null
 
-    
+    , getExpression: function() {
+    	var expression;
+    	var fs = this.firstCalculatedFiledPanel.getFormState();
+    	expression = fs.expression || this.firstCalculatedFiledPanel.target.attributes.attributes.formState.expression;
+    	//alert(this.firstCalculatedFiledPanel.target.attributes.attributes.formState.expression + ' vediamo se così va: ' + expression );
+		return expression;
+    }
+
     , setExpItems: function(itemGroupName, items) {
     	this.firstCalculatedFiledPanel.setExpItems(itemGroupName, items);
     }
@@ -220,7 +229,6 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			firstPage: firstPage,
 			slotWizard: this,
 			editStore: editStore
-
 	    });
 		var wizardPages = [];
 		
