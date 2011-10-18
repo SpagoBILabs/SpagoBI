@@ -46,6 +46,7 @@ Sbi.engines.chart.GenericChartPanel  = function(config) {
 	};
 
 	var c = Ext.apply(defaultSettings, config || {});
+	
 	c.storeId = c.dsLabel;
 	
 	Ext.apply(this, c);
@@ -67,7 +68,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	 * (uses the test method of the manageDataset class) 
 	 */
 	, loadChartData: function(dataConfig){
-		//this.showMask();
+	//	this.showMask();
 		this.setCategoryAliasX(dataConfig);
 		this.setCategoryAliasY(dataConfig);
 		this.setSerieAlias(dataConfig);
@@ -84,7 +85,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		var datasets = [];
 		datasets.push(requestParameters);	
 		this.initStore(datasets, dataConfig.dsId);
-			
+	//	this.hideMask();
 	}
 	
 
@@ -109,7 +110,6 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	}
 		
 	, setCategoryAliasY: function(dataConfig) {
-		//alert("setCategoryAliasY.dataConfig: " +dataConfig.toSource());
 		if(dataConfig.yAxis != undefined){
 			if(dataConfig.yAxis.length != undefined){
 				for(var i=0; i< dataConfig.yAxis.length; i++){//it's an array
@@ -130,21 +130,30 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	}
 	
 	, setSerieAlias: function(dataConfig){
-		//alert("setSerieAlias.dataConfig: " +dataConfig.toSource());
-		//checks series configuration
+		//checks series configuration; since SpagoBI 3.2 all series can be filtered through an input parameter defined 
+		//into the 'paramFilterSeries' attribute.
+		var finalSeries = [];
 		if (dataConfig.series){
 			var strValue = dataConfig.series;
+			var filterSeries = [];
+			if (dataConfig.chart.paramFilterSeries){
+				filterSeries = this.getSeriesByParam(dataConfig.chart.paramFilterSeries, dataConfig.dsPars);
+			}
 			if (Ext.isArray(strValue)){
 				var str = "";
 				for(var i = 0; i < strValue.length; i++) {
-					str += strValue[i].alias;
-					if (i < (strValue.length-1)) str += ",";
+					if (dataConfig.chart.paramFilterSeries == undefined || this.isFilteredSerie(strValue[i].alias, filterSeries )){
+						finalSeries.push(strValue[i]);
+						str += strValue[i].alias;
+						if (i < (strValue.length-1)) str += ",";
+					}
 				}
 				if (str) {
 					this.serieAlias = str.split(",");
 				}
-			}
-		}
+				dataConfig.series = finalSeries;
+			}			
+		} 
 		
 		//checks plotOptions.series configuration			
 		if(this.serieAlias.length == 0 && dataConfig.plotOptions && dataConfig.series !== undefined){
@@ -260,8 +269,9 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	 * Opens the loading mask 
 	 */
     , showMask : function(){
+    	//alert("showMAs: " + this.loadMask);
     	if (this.loadMask == null) {
-    		this.loadMask = new Ext.LoadMask(this.getId(), {msg: "Loading.."});
+    		this.loadMask = new Ext.LoadMask(this.id, {msg: "Loading.."});
     	}
     	this.loadMask.show();
     }
@@ -270,6 +280,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	 * Closes the loading mask
 	 */
 	, hideMask: function() {
+		alert("hideMAsk");
     	if (this.loadMask != null) {
     		this.loadMask.hide();
     	}
@@ -574,16 +585,43 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		}
 		//adaptes the colors array to the real number of the serie (necessary for force the same color for each serie in double pie)
 	    var lenColors = 0;
-	    for (var i = 0, l = config.series[0].data.length; i < l ; i++) {				
-			if (i == colors.length){
-				lenColors = 0;
+	    if(config.series[0] !== undefined){
+		    for (var i = 0, l = config.series[0].data.length; i < l ; i++) {				
+				if (i == colors.length){
+					lenColors = 0;
+				}
+				retColors.push(colors[lenColors]);
+				lenColors ++;
 			}
-			retColors.push(colors[lenColors]);
-			lenColors ++;
-		}
+	    }
 	    
 		return retColors;
 	}
+    
+    , getSeriesByParam: function(filterParam, params){
+    	var toReturn = [];
+    	for(var i=0, l=params.length; i<l; i++){
+    		var tmpPar = params[i];
+    		if (tmpPar.name == filterParam){
+    			toReturn = tmpPar.value.split(",");
+    			break;
+    		}
+    	}
+    	return toReturn;
+    }
+    
+    , isFilteredSerie: function(serie, filterSeries){
+    	var toReturn = false;
+    	
+    	for(var i=0, l=filterSeries.length; i<l; i++){
+    		if (serie.indexOf(filterSeries[i]) >= 0) {
+    			toReturn = true;
+    			break;
+    		}
+    	}
+    	return toReturn;
+    }
+    
 });
 
 
