@@ -820,14 +820,28 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 
 				// delete parameters associated
+				// before deleting parameters associated is needed to delete all dependencies,
+				// otherwise in case there could be error if is firstly deleted a parameter from wich some else is dependant
+				// (thought priority parameter is not costraining dependencies definition)
+				
 				Set objPars = hibBIObject.getSbiObjPars();
-				Iterator itObjPar = objPars.iterator();
+				
+				Iterator itObjParDep = objPars.iterator();
 				BIObjectParameterDAOHibImpl objParDAO = new BIObjectParameterDAOHibImpl();
+				while (itObjParDep.hasNext()) {
+					SbiObjPar aSbiObjPar = (SbiObjPar) itObjParDep.next();
+					BIObjectParameter aBIObjectParameter = new BIObjectParameter();
+					aBIObjectParameter.setId(aSbiObjPar.getObjParId());			
+					objParDAO.eraseBIObjectParameterDependencies(aBIObjectParameter, aSession);
+				}
+					
+				Iterator itObjPar = objPars.iterator();
 				while (itObjPar.hasNext()) {
 					SbiObjPar aSbiObjPar = (SbiObjPar) itObjPar.next();
 					BIObjectParameter aBIObjectParameter = new BIObjectParameter();
 					aBIObjectParameter.setId(aSbiObjPar.getObjParId());
-					objParDAO.eraseBIObjectParameter(aBIObjectParameter, aSession);
+					
+					objParDAO.eraseBIObjectParameter(aBIObjectParameter, aSession, false);
 				}
 
 				// delete dossier temp parts eventually associated

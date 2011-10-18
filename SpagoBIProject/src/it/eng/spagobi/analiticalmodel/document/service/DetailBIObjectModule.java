@@ -945,7 +945,7 @@ public class DetailBIObjectModule extends AbstractModule {
 						// deletes the BIObjectParameter
 						IBIObjectParameterDAO objParDAO = DAOFactory.getBIObjectParameterDAO();
 						BIObjectParameter objPar = objParDAO.loadForDetailByObjParId(new Integer(objParId));
-						objParDAO.eraseBIObjectParameter(objPar);
+						objParDAO.eraseBIObjectParameter(objPar, true);
 						selectedObjParIdStr = "";
 						prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
 						return;

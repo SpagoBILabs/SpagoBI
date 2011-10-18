@@ -34,6 +34,8 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting a
  * ObjParview.
@@ -87,6 +89,17 @@ public interface IObjParviewDAO extends ISpagoBIDao{
 	 * @throws EMFUserError If an Exception occurred
 	 */
 	public void eraseObjParview(ObjParview aObjParview) throws EMFUserError;
+	
+	/**
+	 * 	 Implements the query to erase a ObjParview preserving the session. All information needed is stored
+	 * into the input <code>ObjParview</code> object.
+	 * 
+	 * @param aObjParview
+	 * @param aSession
+	 * @throws EMFUserError
+	 */
+	
+	public void eraseObjParview(ObjParview aObjParview, Session aSession) throws EMFUserError; 
 	
 	/**
 	 * Returns the list of all ObjParview objects associated to a <code>BIObjectParameter</code>,

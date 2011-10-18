@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 /*
  * Created on 21-giu-2005
  *
@@ -33,9 +33,11 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -46,6 +48,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 
 /**
  * Defines the Hibernate implementations for all DAO methods,
@@ -55,7 +58,7 @@ import org.hibernate.Transaction;
  */
 public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements IBIObjectParameterDAO{
 	static private Logger logger = Logger.getLogger(BIObjectParameterDAOHibImpl.class);
-	
+
 	/**
 	 * Load by id.
 	 * 
@@ -87,7 +90,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 		}
 		return hibObjPar;
 	}
-	
+
 	/**
 	 * Load for detail by obj par id.
 	 * 
@@ -100,16 +103,16 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#loadForDetailByObjParId(java.lang.Integer)
 	 */
 	public BIObjectParameter loadForDetailByObjParId(Integer objParId) throws EMFUserError {
-		
+
 		BIObjectParameter toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			SbiObjPar hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class,  objParId);
-			
+
 			toReturn = toBIObjectParameter(hibObjPar);
 			tx.commit();
 		} catch(HibernateException he) {
@@ -123,7 +126,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 		}
 		return toReturn;
 	}
-	
+
 
 	/**
 	 * Modify bi object parameter.
@@ -135,23 +138,23 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#modifyBIObjectParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter)
 	 */
 	public void modifyBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError {
-		
+
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-		
+
 			SbiObjPar hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class,  aBIObjectParameter.getId());
 
 			if (hibObjPar == null) {
 				logger.error("the BIObjectParameter with id="+aBIObjectParameter.getId()+" does not exist.");
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 1033);
 			}
-			
+
 			SbiObjects aSbiObject = (SbiObjects) aSession.load(SbiObjects.class, aBIObjectParameter.getBiObjectID());
 			SbiParameters aSbiParameter = (SbiParameters)aSession.load(SbiParameters.class, aBIObjectParameter.getParameter().getId());
-			
+
 			hibObjPar.setSbiObject(aSbiObject);
 			hibObjPar.setSbiParameter(aSbiParameter);
 			hibObjPar.setLabel(aBIObjectParameter.getLabel());
@@ -202,16 +205,16 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#insertBIObjectParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter)
 	 */
 	public void insertBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError {
-		
+
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-		
+
 			SbiObjects aSbiObject = (SbiObjects) aSession.load(SbiObjects.class, aBIObjectParameter.getBiObjectID());
 			SbiParameters aSbiParameter = (SbiParameters) aSession.load(SbiParameters.class, aBIObjectParameter.getParameter().getId());
-			
+
 			SbiObjPar hibObjectParameterNew = new SbiObjPar();
 			hibObjectParameterNew.setSbiObject(aSbiObject);
 			hibObjectParameterNew.setSbiParameter(aSbiParameter);
@@ -222,16 +225,16 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			hibObjectParameterNew.setViewFl(new Short(aBIObjectParameter.getVisible().shortValue()));
 			hibObjectParameterNew.setMultFl(new Short(aBIObjectParameter.getMultivalue().shortValue()));
 			hibObjectParameterNew.setParurlNm(aBIObjectParameter.getParameterUrlName());
-			
+
 			String hqlUpdateShiftRight = "update SbiObjPar s set s.priority = (s.priority + 1) where s.priority >= " 
 				+ aBIObjectParameter.getPriority() + " and s.sbiObject.biobjId = " + aSbiObject.getBiobjId();
 			Query query = aSession.createQuery(hqlUpdateShiftRight);
 			query.executeUpdate();
-			
+
 			hibObjectParameterNew.setPriority(aBIObjectParameter.getPriority());
 			updateSbiCommonInfo4Insert(hibObjectParameterNew);
 			aSession.save(hibObjectParameterNew);
-			
+
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -242,13 +245,13 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			
+
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
 			}
-		
+
 		}
-		
+
 	}
 
 	/**
@@ -260,18 +263,22 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#eraseBIObjectParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter)
 	 */
-	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError {
-		
+	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter, boolean alsoDependencies) throws EMFUserError {
+
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
-			eraseBIObjectParameter(aBIObjectParameter, aSession);
-			
+
+			eraseBIObjectParameter(aBIObjectParameter, aSession,alsoDependencies );
+
 			tx.commit();
-		} catch (HibernateException he) {
+		} 
+		catch (ConstraintViolationException e) {
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 1086);		
+			}
+		catch (HibernateException he) {
 			logException(he);
 			if (tx != null)
 				tx.rollback();
@@ -282,15 +289,18 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			}
 		}
 	}
-	
-	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter, Session aSession) throws EMFUserError {
+
+
+	public void eraseBIObjectParameterDependencies(BIObjectParameter aBIObjectParameter, Session aSession ) throws EMFUserError  {
+		logger.debug("IN");
+		logger.debug("Delete dependencies for object parameter with id "+aBIObjectParameter.getId());
 		SbiObjPar hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class,  aBIObjectParameter.getId());
-		
+
 		if (hibObjPar == null) {		
 			logger.error("the BIObjectParameter with id="+aBIObjectParameter.getId()+" does not exist.");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1034);
 		}
-		
+
 		// deletes all ObjParuse object (dependencies) of the biObjectParameter
 		ObjParuseDAOHibImpl objParuseDAO = new ObjParuseDAOHibImpl();
 		List objParuses = objParuseDAO.loadObjParuses(hibObjPar.getObjParId());
@@ -299,11 +309,56 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			ObjParuse aObjParuse = (ObjParuse) itObjParuses.next();
 			objParuseDAO.eraseObjParuse(aObjParuse, aSession);
 		}
-		
+
+		// delete also all ObjParView (visibility dependencies) of the biObjectParameter
+		IObjParviewDAO objParviewDAO = DAOFactory.getObjParviewDAO();
+		List objParview =objParviewDAO.loadObjParviews(hibObjPar.getObjParId());
+		Iterator itObjParviews = objParview.iterator();
+		while (itObjParviews.hasNext()) {
+			ObjParview aObjParview = (ObjParview) itObjParviews.next();
+			objParviewDAO.eraseObjParview(aObjParview, aSession);
+		}	
+		logger.debug("OUT");
+
+	}
+
+
+
+
+
+	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter, Session aSession, boolean alsoDependencies) throws EMFUserError {
+		SbiObjPar hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class,  aBIObjectParameter.getId());
+
+		if (hibObjPar == null) {		
+			logger.error("the BIObjectParameter with id="+aBIObjectParameter.getId()+" does not exist.");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 1034);
+		}
+
+		if(alsoDependencies){
+			// deletes all ObjParuse object (dependencies) of the biObjectParameter
+			ObjParuseDAOHibImpl objParuseDAO = new ObjParuseDAOHibImpl();
+			List objParuses = objParuseDAO.loadObjParuses(hibObjPar.getObjParId());
+			Iterator itObjParuses = objParuses.iterator();
+			while (itObjParuses.hasNext()) {
+				ObjParuse aObjParuse = (ObjParuse) itObjParuses.next();
+				objParuseDAO.eraseObjParuse(aObjParuse, aSession);
+			}
+
+			// delete also all ObjParView (visibility dependencies) of the biObjectParameter
+			IObjParviewDAO objParviewDAO = DAOFactory.getObjParviewDAO();
+			List objParview =objParviewDAO.loadObjParviews(hibObjPar.getObjParId());
+			Iterator itObjParviews = objParview.iterator();
+			while (itObjParviews.hasNext()) {
+				ObjParview aObjParview = (ObjParview) itObjParviews.next();
+				objParviewDAO.eraseObjParview(aObjParview, aSession);
+			}
+		}
+
+
 		aSession.delete(hibObjPar);
-		
+
 		Integer biobjId = hibObjPar.getSbiObject().getBiobjId();
-		
+
 		String hqlUpdateShiftRight = "update SbiObjPar s set s.priority = (s.priority - 1) where s.priority >= " 
 			+ hibObjPar.getPriority() + " and s.sbiObject.biobjId = " + biobjId;
 		Query query = aSession.createQuery(hqlUpdateShiftRight);
@@ -322,27 +377,27 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#getDocumentLabelsListUsingParameter(java.lang.Integer)
 	 */
 	public List getDocumentLabelsListUsingParameter(Integer parId) throws EMFUserError {
-		
+
 		List toReturn = new ArrayList();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			String hql = 
-					"select " +
-					"	distinct(obj.label) " +
-					"from " +
-					"	SbiObjects obj, SbiObjPar objPar " +
-					"where " +
-					"	obj.biobjId = objPar.sbiObject.biobjId and " +
-					"	objPar.sbiParameter.parId = " + parId;
+				"select " +
+				"	distinct(obj.label) " +
+				"from " +
+				"	SbiObjects obj, SbiObjPar objPar " +
+				"where " +
+				"	obj.biobjId = objPar.sbiObject.biobjId and " +
+				"	objPar.sbiParameter.parId = " + parId;
 			Query query = aSession.createQuery(hql);
 			List result = query.list();
-			
+
 			toReturn = result;
-			
+
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -356,7 +411,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 		}
 		return toReturn;
 	}
-	
+
 	/**
 	 * Load bi object parameters by id.
 	 * 
@@ -369,7 +424,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#loadBIObjectParametersById(java.lang.Integer)
 	 */
 	public List loadBIObjectParametersById(Integer biObjectID) throws EMFUserError {
-		
+
 		Session aSession = null;
 		Transaction tx = null;
 		List resultList = new ArrayList();
@@ -416,8 +471,8 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			}
 		}
 		return resultList;
-	 }
-	
+	}
+
 	/**
 	 * Recalculates the priority of all the BiParameters of the document, identified by its biObjectID,
 	 * in the Hibernate session passed at input.
@@ -426,17 +481,17 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @param aSession The Hibernate session
 	 */
 	public void recalculateBiParametersPriority(Integer biObjectID, Session aSession) {
-			String hql = "from SbiObjPar s where s.sbiObject.biobjId = " + biObjectID + " order by s.priority asc";
-			Query hqlQuery = aSession.createQuery(hql);
-			List hibObjectPars = hqlQuery.list();
-			Iterator it = hibObjectPars.iterator();
-			int count = 1;
-			while (it.hasNext()) {
-				SbiObjPar aSbiObjPar = (SbiObjPar) it.next();
-				aSbiObjPar.setPriority(new Integer(count));
-				count++;
-				aSession.save(aSbiObjPar);
-			}
+		String hql = "from SbiObjPar s where s.sbiObject.biobjId = " + biObjectID + " order by s.priority asc";
+		Query hqlQuery = aSession.createQuery(hql);
+		List hibObjectPars = hqlQuery.list();
+		Iterator it = hibObjectPars.iterator();
+		int count = 1;
+		while (it.hasNext()) {
+			SbiObjPar aSbiObjPar = (SbiObjPar) it.next();
+			aSbiObjPar.setPriority(new Integer(count));
+			count++;
+			aSession.save(aSbiObjPar);
+		}
 	}
 
 
@@ -468,8 +523,8 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	}
 
 
-	
-	
-	
-	
+
+
+
+
 }

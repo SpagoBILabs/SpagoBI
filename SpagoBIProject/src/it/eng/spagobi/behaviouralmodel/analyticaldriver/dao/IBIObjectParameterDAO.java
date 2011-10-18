@@ -34,6 +34,8 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting a
  * BI Object Parameter.
@@ -106,7 +108,7 @@ public interface IBIObjectParameterDAO extends ISpagoBIDao{
 	 * 
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError;
+	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter, boolean alsoDependencies) throws EMFUserError;
 
 	/**
 	 * Returns the labels list of document using the parameter identified by the id at input.
@@ -130,5 +132,13 @@ public interface IBIObjectParameterDAO extends ISpagoBIDao{
 	 * @throws EMFUserError If any exception occurred
 	 */
 	public List loadBIObjectParametersById(Integer biObjectID) throws EMFUserError ;
+	
+	/** erase alld ependencies of a given object parameterr
+	 *  
+	 * @param aBIObjectParameter
+	 * @param aSession
+	 */
+	
+	public void eraseBIObjectParameterDependencies(BIObjectParameter aBIObjectParameter, Session aSession) throws EMFUserError;
 
 }
