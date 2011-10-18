@@ -118,7 +118,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	"?ACTION_NAME=GET_PNG2&NEW_SESSION=TRUE&userid="+userId+"&path="+path_param+"&LIGHT_NAVIGATOR_DISABLED=TRUE";
 	 %><br>
  		<div align="center">
-			<img id="image" src="<%=urlPng%>" BORDER="1" alt="Error in displaying the chart" USEMAP="#chart"/>
+			<img id="image" src="<%=urlPng%>" BORDER="1" USEMAP="#chart"/>
 		</div>
 		<br>	
 	  <% 

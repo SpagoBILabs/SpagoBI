@@ -116,7 +116,7 @@ public StringBuffer addItemForTree(String lineTagId,ExecutionInstance execInstan
 	
 	//START GETTING INTERNATIONALIZED MESSAGES
 	String periodValid = msgBuilder.getMessage("sbi.kpi.validPeriod", httpReq);
-	if (kpiVal !=null){
+	if (kpiVal !=null ){
 		periodValid = periodValid.replaceAll("%0", kpiVal.getBeginDate().toString());
 		periodValid = periodValid.replaceAll("%1", kpiVal.getEndDate().toString());		    
 	}
@@ -262,7 +262,7 @@ private StringBuffer addKpiValueColumn(StringBuffer _htmlStream,Float kpiValue,S
 	}else if(kpiValue!= null){
 		_htmlStream.append("<td  width='"+VAL_COL_W+"%' title='"+periodValid+"' class='"+td_al_left_css_class+"' ><div  class='"+div_css_class+"'>"+kpiValue.toString()+"</div></td>\n");
 	}else{
-		_htmlStream.append("<td  width='"+VAL_COL_W+"%' title='"+periodValid+"' class='"+td_al_left_css_class+"' ><div class='"+div_css_class+"'></div></td>\n");
+		_htmlStream.append("<td  width='"+VAL_COL_W+"%' class='"+td_al_left_css_class+"' ><div class='"+div_css_class+"'></div></td>\n");
 	}		
 	return _htmlStream;
 }
@@ -284,23 +284,29 @@ private StringBuffer addBulletChartAndOrThresholdImageColumn(StringBuffer _htmlS
 		if (displayBulletChart && displayThresholdImage ){	
 			
 			String urlChartPng = constructChartUrl(line,requestIdentity,showAxis,line.getValue());
-			_htmlStream.append("<td width='"+CHART_COL_W+"%' class='"+td_al_left_css_class+"' ><div class='kpi_bulletchart'><img style=\"align:left;\" id=\"image\" src=\""+urlChartPng+"\" BORDER=\"1\" alt=\"Error in displaying the chart\" USEMAP=\"#chart\"/></div></td>\n");
-		
+			//_htmlStream.append("<td width='"+CHART_COL_W+"%' class='"+td_al_left_css_class+"' ><div class='kpi_bulletchart'><img style=\"align:left;\" id=\"image\" src=\""+urlChartPng+"\" BORDER=\"1\" alt=\"Error in displaying the chart\" USEMAP=\"#chart\"/></div></td>\n");
+			_htmlStream.append("<td width='"+CHART_COL_W+"%' class='"+td_al_left_css_class+"' ><div class='kpi_bulletchart'><img style=\"align:left;\" id=\"image\" src=\""+urlChartPng+"\" BORDER=\"1\" USEMAP=\"#chart\"/></div></td>\n");
+			
 			ThresholdValue tOfVal = line.getThresholdOfValue();
 			if (tOfVal!=null && tOfVal.getPosition()!=null && tOfVal.getThresholdCode()!=null){	
 				String urlImagePng = constructImgUrl(tOfVal);
-				_htmlStream.append("<td width='"+IMG_COL_W+"%' class='"+td_al_left_css_class+"' ><div class='kpi_image'><img style=\"align:left;\" id=\"image\" src=\""+urlImagePng+"\" alt=\"Error in displaying the chart\" USEMAP=\"#chart\" BORDER=\"1\" /></div></td>\n");				
+				//_htmlStream.append("<td width='"+IMG_COL_W+"%' class='"+td_al_left_css_class+"' ><div class='kpi_image'><img style=\"align:left;\" id=\"image\" src=\""+urlImagePng+"\" alt=\"Error in displaying the chart\" USEMAP=\"#chart\" BORDER=\"1\" /></div></td>\n");
+				_htmlStream.append("<td width='"+IMG_COL_W+"%' class='"+td_al_left_css_class+"' ><div class='kpi_image'><img style=\"align:left;\" id=\"image\" src=\""+urlImagePng+"\" USEMAP=\"#chart\" BORDER=\"1\" /></div></td>\n");
 			}				
 		}else if(displayBulletChart && !displayThresholdImage){
 			
 			String urlChartPng = constructChartUrl(line,requestIdentity,showAxis, line.getValue());
-			_htmlStream.append("<td width='"+CHART_OR_IMAGE_COL_W+"%' class='"+td_al_left_css_class+"'  ><div class='kpi_bulletchart'><img style=\"align:left;\" id=\"image\" src=\""+urlChartPng+"\" BORDER=\"1\" alt=\"Error in displaying the chart\" USEMAP=\"#chart\"/></div></td>\n");				
+			//_htmlStream.append("<td width='"+CHART_OR_IMAGE_COL_W+"%' class='"+td_al_left_css_class+"'  ><div class='kpi_bulletchart'><img style=\"align:left;\" id=\"image\" src=\""+urlChartPng+"\" BORDER=\"1\" alt=\"Error in displaying the chart\" USEMAP=\"#chart\"/></div></td>\n");				
+			_htmlStream.append("<td width='"+CHART_OR_IMAGE_COL_W+"%' class='"+td_al_left_css_class+"'  ><div class='kpi_bulletchart'><img style=\"align:left;\" id=\"image\" src=\""+urlChartPng+"\" BORDER=\"1\" USEMAP=\"#chart\"/></div></td>\n");				
+			
 		}else if(!displayBulletChart && displayThresholdImage){
 			
 			ThresholdValue tOfVal = line.getThresholdOfValue();
 			if (tOfVal!=null && tOfVal.getPosition()!=null && tOfVal.getThresholdCode()!=null){
 				String urlImagePng = constructImgUrl(tOfVal);
-				_htmlStream.append("<td width='"+CHART_OR_IMAGE_COL_W+"%' class='"+td_al_left_css_class+"'  ><div class='kpi_image'><img style=\"align:left;\" id=\"image\" src=\""+urlImagePng+"\" alt=\"Error in displaying the chart\" USEMAP=\"#chart\" BORDER=\"1\" /></div></td>\n");				
+				//_htmlStream.append("<td width='"+CHART_OR_IMAGE_COL_W+"%' class='"+td_al_left_css_class+"'  ><div class='kpi_image'><img style=\"align:left;\" id=\"image\" src=\""+urlImagePng+"\" alt=\"Error in displaying the chart\" USEMAP=\"#chart\" BORDER=\"1\" /></div></td>\n");				
+				_htmlStream.append("<td width='"+CHART_OR_IMAGE_COL_W+"%' class='"+td_al_left_css_class+"'  ><div class='kpi_image'><img style=\"align:left;\" id=\"image\" src=\""+urlImagePng+"\" USEMAP=\"#chart\" BORDER=\"1\" /></div></td>\n");				
+				
 			}
 		}
 	}else{
