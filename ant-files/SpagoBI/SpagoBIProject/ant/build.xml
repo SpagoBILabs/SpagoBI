@@ -343,67 +343,77 @@
               <file name="./src/ext/sbi/commons/Session.js"/>	
               <file name="./lib/ext-3.1.1/ux/grid/Ext.grid.ButtonColumn.js"/> 
               <file name="./lib/ext-3.1.1/ux/grid/Ext.ux.ColorField.js"/> 
-              <file name="./lib/ext-3.1.1/ux/grid/Ext.ux.grid.RowEditor.js"/>              
-              <file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js"/>
-              <file name="./src/ext/sbi/widgets/FilteringToolbar.js"/>
-              <file name="./src/ext/sbi/widgets/PagingToolbar.js"/>
-              <file name="./src/ext/sbi/widgets/ListGridPanel.js"/>
-              <file name="./src/ext/sbi/widgets/ListDetailForm.js"/>
-              <file name="./src/ext/sbi/widgets/LookupField.js"/>
-              <file name="./src/ext/sbi/widgets/TreeDetailForm.js"/>
-              <file name="./src/ext/sbi/widgets/TreeModelPanel.js"/>
-              <file name="./src/ext/sbi/widgets/SimpleTreePanel.js"/>
-              <file name="./src/ext/sbi/widgets/TreeSerializers.js"/>
-              <file name="./src/ext/sbi/widgets/FilteringToolbarLight.js"/>
-              <file name="./src/ext/sbi/widgets/ConfigurableTree.js"/>
-              <file name="./src/ext/sbi/widgets/ModelInstanceTree.js"/>
-              <file name="./src/ext/sbi/widgets/DataStorePanel.js"/>
-              <file name="./src/ext/sbi/udp/ManageUdp.js"/>
-              <file name="./src/ext/sbi/udp/ManageUdpValues.js"/>
-              <file name="./src/ext/sbi/profiling/ManageAttributes.js"/>
-              <file name="./src/ext/sbi/profiling/ManageRoles.js"/>
-              <file name="./src/ext/sbi/profiling/ManageUsers.js"/>
-              <file name="./src/ext/sbi/alarm/ManageContacts.js"/>
-              <file name="./src/ext/sbi/alarm/ManageAlarms.js"/>
-              <file name="./src/ext/sbi/kpi/ManageThresholdValues.js"/>
-              <file name="./src/ext/sbi/kpi/ManageResources.js"/>
-              <file name="./src/ext/sbi/kpi/ManageThresholds.js"/>
-              <file name="./src/ext/sbi/kpi/ManageKpis.js"/>
-              <file name="./src/ext/sbi/kpi/ManageModels.js"/>
-              <file name="./src/ext/sbi/kpi/ManageModelsGrid.js"/>
-              <file name="./src/ext/sbi/kpi/ManageModelsViewPort.js"/>
-              <file name="./src/ext/sbi/kpi/ManagePeriodicities.js"/>
-              <file name="./src/ext/sbi/kpi/ManageOUGrants.js"/>
-              <file name="./src/ext/sbi/kpi/ManageOUGrantsViewPort.js"/>
-              <file name="./src/ext/sbi/kpi/ManageModelInstances.js"/>
-              <file name="./src/ext/sbi/kpi/ManageModelInstancesGrid.js"/>
-              <file name="./src/ext/sbi/kpi/ManageOUGrantsGrid.js"/>
-              <file name="./src/ext/sbi/kpi/ManageModelInstancesViewPort.js"/>
-              <file name="./src/ext/sbi/kpi/ManageModelsTree.js"/>
-              <file name="./src/ext/sbi/kpi/ManageAddModelPanel.js"/>
-              <file name="./src/ext/sbi/kpi/ManageKpisGrid.js"/>
-              <file name="./src/ext/sbi/kpi/ManageKpiWindow.js"/>
-              <file name="./src/ext/sbi/kpi/ManageGoals.js"/>
-              <file name="./src/ext/sbi/kpi/ManageGoalsOUTree.js"/>
-              <file name="./src/ext/sbi/kpi/ManageGoalsDetailsPanel.js"/>
-              <file name="./src/ext/sbi/kpi/ManageGoalsViewPort.js"/>
-              <file name="./src/ext/sbi/kpi/ManageGoalsGrid.js"/>
-              <file name="./src/ext/sbi/widgets/ColumnNodeUI.js"/>
-              <file name="./src/ext/sbi/tools/ManageDatasetVersions.js"/>
-              <file name="./src/ext/sbi/tools/ManageDatasetParameters.js"/>
-              <file name="./src/ext/sbi/tools/ParametersFillGrid.js"/>
-              <file name="./src/ext/sbi/tools/ManageDatasets.js"/>
-              <file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js"/>
-              <file name="./src/ext/sbi/tools/dataset/PreviewWindow.js"/>
-			  <file name="./src/ext/sbi/tools/dataset/CustomDataGrid.js"/>
-              <file name="./src/ext/sbi/domain/ManageDomains.js"/>
-              <file name="./src/ext/sbi/config/ManageConfig.js"/>
-		      <file name="./src/ext/sbi/engines/chart/data/PagingStore.js"/>
-		      <file name="./src/ext/sbi/engines/chart/data/StoreManager.js"/>
-		      <file name="./src/ext/sbi/engines/chart/data/Store.js"/>
-		      <file name="./src/ext/sbi/engines/chart/GenericChartPanel.js"/>
-		      <file name="./src/ext/sbi/engines/chart/HighchartsPanel.js"/>
-		      <file name="./src/ext/sbi/engines/chart/MasterDetailChartPanel.js"/>
+              <file name="./lib/ext-3.1.1/ux/grid/Ext.ux.grid.RowEditor.js"/>    
+			  
+				<file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js"/>
+				<file name="./src/ext/sbi/widgets/FilteringToolbar.js"/>
+				<file name="./src/ext/sbi/widgets/PagingToolbar.js"/>
+				<file name="./src/ext/sbi/widgets/ListGridPanel.js"/>
+				<file name="./src/ext/sbi/widgets/ListDetailForm.js"/>
+				<file name="./src/ext/sbi/widgets/LookupField.js"/>
+				<file name="./src/ext/sbi/widgets/TreeDetailForm.js"/>
+				<file name="./src/ext/sbi/widgets/TreeModelPanel.js"/>
+				<file name="./src/ext/sbi/widgets/SimpleTreePanel.js"/>
+				<file name="./src/ext/sbi/widgets/TreeSerializers.js"/>
+				<file name="./src/ext/sbi/widgets/FilteringToolbarLight.js"/>
+				<file name="./src/ext/sbi/widgets/ConfigurableTree.js"/>
+				<file name="./src/ext/sbi/widgets/ModelInstanceTree.js"/>
+				<file name="./src/ext/sbi/widgets/DataStorePanel.js"/>
+
+				<file name="./src/ext/sbi/udp/ManageUdp.js"/>
+				<file name="./src/ext/sbi/udp/ManageUdpValues.js"/>
+
+				<file name="./src/ext/sbi/profiling/ManageAttributes.js"/>
+				<file name="./src/ext/sbi/profiling/ManageRoles.js"/>
+				<file name="./src/ext/sbi/profiling/ManageUsers.js"/>
+				<file name="./src/ext/sbi/alarm/ManageContacts.js"/>
+				<file name="./src/ext/sbi/alarm/ManageAlarms.js"/>
+
+				<file name="./src/ext/sbi/kpi/ManageThresholdValues.js"/>
+				<file name="./src/ext/sbi/kpi/ManageResources.js"/>
+				<file name="./src/ext/sbi/kpi/ManageThresholds.js"/>
+				<file name="./src/ext/sbi/kpi/ManageKpis.js"/>
+				<file name="./src/ext/sbi/kpi/ManageModels.js"/>
+				<file name="./src/ext/sbi/kpi/ManageModelsGrid.js"/>
+				<file name="./src/ext/sbi/kpi/ManageModelsViewPort.js"/>
+				<file name="./src/ext/sbi/kpi/ManagePeriodicities.js"/>
+
+				<file name="./src/ext/sbi/kpi/ManageOUGrants.js"/>
+				<file name="./src/ext/sbi/kpi/ManageOUGrantsViewPort.js"/>
+				<file name="./src/ext/sbi/kpi/ManageModelInstances.js"/>
+				<file name="./src/ext/sbi/kpi/ManageModelInstancesGrid.js"/>
+				<file name="./src/ext/sbi/kpi/ManageOUGrantsGrid.js"/>
+				<file name="./src/ext/sbi/kpi/ManageModelInstancesViewPort.js"/>
+				<file name="./src/ext/sbi/kpi/ManageModelsTree.js"/>
+				<file name="./src/ext/sbi/kpi/ManageAddModelPanel.js"/>
+				<file name="./src/ext/sbi/kpi/ManageKpisGrid.js"/>
+				<file name="./src/ext/sbi/kpi/ManageKpiWindow.js"/>
+
+				<file name="./src/ext/sbi/kpi/ManageGoals.js"/>
+				<file name="./src/ext/sbi/kpi/ManageGoalsOUTree.js"/>
+				<file name="./src/ext/sbi/kpi/ManageGoalsDetailsPanel.js"/>
+				<file name="./src/ext/sbi/kpi/ManageGoalsViewPort.js"/>
+				<file name="./src/ext/sbi/kpi/ManageGoalsGrid.js"/>
+				<file name="./src/ext/sbi/widgets/ColumnNodeUI.js"/>
+
+				<file name="./src/ext/sbi/tools/ManageDatasetVersions.js"/>
+				<file name="./src/ext/sbi/tools/ManageDatasetParameters.js"/>
+				<file name="./src/ext/sbi/tools/ParametersFillGrid.js"/>
+				<file name="./src/ext/sbi/tools/ManageDatasets.js"/>
+				<file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js"/>
+				<file name="./src/ext/sbi/tools/dataset/PreviewWindow.js"/>
+				<file name="./src/ext/sbi/tools/dataset/CustomDataGrid.js"/>
+
+				<file name="./src/ext/sbi/domain/ManageDomains.js"/>
+				<file name="./src/ext/sbi/config/ManageConfig.js"/>
+
+				<file name="./src/ext/sbi/engines/chart/data/PagingStore.js"/>
+				<file name="./src/ext/sbi/engines/chart/data/StoreManager.js"/>
+				<file name="./src/ext/sbi/engines/chart/data/Store.js"/>
+
+				<file name="./src/ext/sbi/engines/chart/GenericChartPanel.js"/>
+				<file name="./src/ext/sbi/engines/chart/HighchartsPanel.js"/>
+				<file name="./src/ext/sbi/engines/chart/MasterDetailChartPanel.js"/>
 
 				    </filelist>
 
