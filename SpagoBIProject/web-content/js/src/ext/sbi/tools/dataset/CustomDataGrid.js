@@ -125,7 +125,7 @@ Sbi.tools.dataset.CustomDataGrid = function(config) {
 	        maxHeight : 230,
 	        autoHeight : true,
 	        collapsible : true,
-	    	//fieldLabel : 'cuiaooo'
+	    	//fieldLabel : ''
 	        title : LN('sbi.ds.customData')
 	        //forceLayout: true
 	    };
