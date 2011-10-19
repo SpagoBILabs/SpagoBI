@@ -261,7 +261,6 @@ private StringBuffer addMetadataIconColumn(StringBuffer _htmlStream,int recursio
 private StringBuffer addKpiValueColumn(StringBuffer _htmlStream,Float kpiValue,String scaleCode,KpiValue kpiVal,String periodValid){
 	if (kpiValue!= null && kpiVal !=null && scaleCode!=null){
 		String scaleToAppend = "";
-		System.out.println(scaleCode);
 		if(scaleCode.trim().equalsIgnoreCase("Ratio scale")){
 			scaleToAppend = " (%)";
 		}else if(scaleCode.trim().equalsIgnoreCase("Day scale")){
