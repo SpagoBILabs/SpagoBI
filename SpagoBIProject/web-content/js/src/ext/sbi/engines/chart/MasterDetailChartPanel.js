@@ -68,6 +68,12 @@ Ext.extend(Sbi.engines.chart.MasterDetailChartPanel, Sbi.engines.chart.GenericCh
 	, chartConfig : null 
 
 	, init : function () {
+		//show the loading mask
+		if(this.rendered){
+			this.showMask();
+		} else{
+			this.on('afterlayout',this.showMask,this);
+		}
 		//gets dataset values (at the moment one dataset for all charts in a document)
 		var dataConfig = this.chartConfig;
 		if (this.chartConfig.charts){			
@@ -128,6 +134,7 @@ Ext.extend(Sbi.engines.chart.MasterDetailChartPanel, Sbi.engines.chart.GenericCh
 		//saves the chart for eventually multiple export
 		this.chartsArr.push(detailChart);
 		this.chartsArr.push(this.chart);		
+		this.hideMask();
 	}
 
 	, createMasterEvents: function(config, detailSerieData, detailChart ) {

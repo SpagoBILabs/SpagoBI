@@ -54,7 +54,7 @@ Sbi.engines.chart.HighchartsPanel = function(config) {
 	
 	// constructor
 	Sbi.engines.chart.HighchartsPanel.superclass.constructor.call(this, c);
-
+	
 	this.init();
 };
 
@@ -63,8 +63,7 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	 chart : null
    , detailChart: null
    , chartsArr : []
-   , chartConfig : null // mandatory object to be passed as a property of the constructor input object.						
-
+   , chartConfig : null // mandatory object to be passed as a property of the constructor input object.	
 
 	, init : function () {
 		//gets dataset values (at the moment one dataset for all charts in a document)
@@ -75,6 +74,12 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 		}
 		this.loadChartData(dataConfig);
 		
+		//show the loading mask
+		if(this.rendered){
+			this.showMask();
+		} else{
+			this.on('afterlayout',this.showMask,this);
+		}
 	}
 
 	, createChart: function () {
@@ -199,6 +204,7 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			//saves the chart for eventually multiple export
 			this.chartsArr.push(this.chart);
 		}, this);
+		this.hideMask();
 	}
 
 	
@@ -329,4 +335,5 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	, formatWithNameValue: function (){
 		return function (){return '<b>'+ this.series.name+ '</b><br/>'+ this.point.name ;};
 	}
+	
 });

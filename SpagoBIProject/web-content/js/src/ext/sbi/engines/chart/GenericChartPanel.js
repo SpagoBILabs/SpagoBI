@@ -47,12 +47,15 @@ Sbi.engines.chart.GenericChartPanel  = function(config) {
 
 	var c = Ext.apply(defaultSettings, config || {});
 	
+	c = Ext.apply(c, {id: 'GenericChartPanel'});
+	
 	c.storeId = c.dsLabel;
 	
 	Ext.apply(this, c);
 
 	//constructor
-	Sbi.engines.chart.GenericChartPanel.superclass.constructor.call(this, c);	 	
+	Sbi.engines.chart.GenericChartPanel.superclass.constructor.call(this, c);	 
+	
 };
 
 Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
@@ -68,7 +71,6 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	 * (uses the test method of the manageDataset class) 
 	 */
 	, loadChartData: function(dataConfig){
-	//	this.showMask();
 		this.setCategoryAliasX(dataConfig);
 		this.setCategoryAliasY(dataConfig);
 		this.setSerieAlias(dataConfig);
@@ -85,7 +87,6 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		var datasets = [];
 		datasets.push(requestParameters);	
 		this.initStore(datasets, dataConfig.dsId);
-	//	this.hideMask();
 	}
 	
 
@@ -266,27 +267,6 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 			}
 			return  series;
 		}
-	}
-	
-	/**
-	 * Opens the loading mask 
-	 */
-    , showMask : function(){
-    	//alert("showMAs: " + this.loadMask);
-    	if (this.loadMask == null) {
-    		this.loadMask = new Ext.LoadMask(this.id, {msg: "Loading.."});
-    	}
-    	this.loadMask.show();
-    }
-	
-	/**
-	 * Closes the loading mask
-	 */
-	, hideMask: function() {
-		alert("hideMAsk");
-    	if (this.loadMask != null) {
-    		this.loadMask.hide();
-    	}
 	}
 	
     , format: function(value, type, format) {
@@ -624,7 +604,27 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     	}
     	return toReturn;
     }
-    
+
+    /**
+	 * Opens the loading mask 
+	 */
+    , showMask : function(){
+    	this.un('afterlayout',this.showMask,this);
+    	if (this.loadMask == null) {    		
+    		this.loadMask = new Ext.LoadMask('GenericChartPanel', {msg: "Loading.."});
+    	}
+    	this.loadMask.show();
+    }
+	
+	/**
+	 * Closes the loading mask
+	*/
+	, hideMask: function() {
+    	if (this.loadMask != null) {
+    		this.loadMask.hide();
+    	}
+	} 
+	 
 });
 
 
