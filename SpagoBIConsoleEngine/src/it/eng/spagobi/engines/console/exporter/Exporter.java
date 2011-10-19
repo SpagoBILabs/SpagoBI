@@ -1,21 +1,21 @@
 package it.eng.spagobi.engines.console.exporter;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.console.ConsoleEngineConfig;
+import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
-import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -35,6 +35,15 @@ public class Exporter {
 	IDataStore dataStore = null;
 	Vector extractedFields = null;
 	List<IFieldMetaData> extractedFieldsMetaData = null;
+	private long numberOfRows;
+
+	public long getNumberOfRows() {
+		return numberOfRows;
+	}
+
+	public void setNumberOfRows(long numberOfRows) {
+		this.numberOfRows = numberOfRows;
+	}
 
 	public List<IFieldMetaData> getExtractedFieldsMetaData() {
 		return extractedFieldsMetaData;
@@ -175,8 +184,8 @@ public class Exporter {
 	public void fillSheetData(Sheet sheet,Workbook wb, CreationHelper createHelper,CellStyle[] cellTypes, int beginRowData, int beginColumnData) {	
 		
 		CellStyle dCellStyle = buildDataCellStyle(sheet);
-	
-		Iterator it = dataStore.iterator();
+
+
     	int rownum = beginRowData;
     	short formatIndexInt = HSSFDataFormat.getBuiltinFormat("#,##0");
 	    CellStyle cellStyleInt = wb.createCellStyle(); // cellStyleInt is the default cell style for integers
@@ -193,9 +202,9 @@ public class Exporter {
 		cellStyleDate.setDataFormat(HSSFDataFormat.getBuiltinFormat("yy-m-d h:mm"));
 
 		
-		while(it.hasNext()){
+		for(int i= 0; i<numberOfRows ; i++){
 			Row rowVal = sheet.getRow(rownum);
-			IRecord record =(IRecord)it.next();
+			IRecord record =(IRecord)dataStore.getRecordAt(i);
 			List fields = record.getFields();
 			int length = extractedFieldsMetaData.size();
 			for(int fieldIndex =0; fieldIndex< length; fieldIndex++){
