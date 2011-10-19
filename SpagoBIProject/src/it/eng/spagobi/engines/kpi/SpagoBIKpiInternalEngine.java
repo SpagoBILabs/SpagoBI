@@ -993,6 +993,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		if(alreadyExistent){//use diplay behaviour since value already exists
 			logger.debug("Display behaviour");
 			value = DAOFactory.getKpiDAO().getDisplayKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r, grantNodeToUse);
+			Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiI.getKpi());			
+			value = getFromKpiInstAndSetKpiValueAttributes(kpiI, value, kpi);
 			logger.debug("Old KpiValue retrieved it could be still valid or not");
 		}else{	
 			if(behaviour.equalsIgnoreCase("timeIntervalDefault")){
@@ -1045,6 +1047,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				}else if(behaviour.equalsIgnoreCase("display")){//diplay behaviour
 					logger.debug("Display behaviour");
 					value = DAOFactory.getKpiDAO().getDisplayKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r, grantNodeToUse);
+					Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiI.getKpi());			
+					value = getFromKpiInstAndSetKpiValueAttributes(kpiI, value, kpi);
 					logger.debug("Old KpiValue retrieved it could be still valid or not");
 				} 
 			}
