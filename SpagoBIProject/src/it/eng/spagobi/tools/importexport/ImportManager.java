@@ -43,6 +43,8 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuseId;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParview;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParviewId;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseCk;
@@ -1221,7 +1223,9 @@ public class ImportManager implements IImportManager, Serializable {
 				importBIObjPar(exportedObj.getBiobjId());
 				// puts dependencies into object
 				importObjParUse(exportedObj.getBiobjId());
-
+				// puts visual into object
+				importObjParView(exportedObj.getBiobjId());
+				
 				commit();
 
 				//updates lucene index
@@ -2125,6 +2129,92 @@ public class ImportManager implements IImportManager, Serializable {
 		logger.debug("OUT");
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Imports biparameter visual dependencies for current exported biobject
+	 * 
+	 * @param exportedBIObjectId The id of the current exported biobject
+	 * @throws EMFUserError
+	 */
+	private void importObjParView(Integer exportedBIObjectId) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			List exportedParDepends = importer.getFilteredExportedSbiObjects(sessionExpDB, "SbiObjParview", "id.sbiObjPar.sbiObject.biobjId", exportedBIObjectId);
+			Iterator iterParDep = exportedParDepends.iterator();
+			while (iterParDep.hasNext()) {
+				SbiObjParview pardep = (SbiObjParview) iterParDep.next();
+				// get ids of objpar and paruse associated
+				Integer objparId = pardep.getId().getSbiObjPar().getObjParId();
+				Integer objparfathId = pardep.getId().getSbiObjParFather().getObjParId();
+				String operation = pardep.getId().getOperation();
+				String compareValue = pardep.getId().getCompareValue();
+				// get association of objpar and paruses
+				Map objparIdAss = metaAss.getObjparIDAssociation();
+
+				// try to get from association the id associate to the exported
+				// metadata
+				Integer newObjparId = (Integer) objparIdAss.get(objparId);
+				Integer newObjParFathId = (Integer) objparIdAss.get(objparfathId);
+				// build a new id for the SbiObjParview
+				SbiObjParviewId objparviewid = pardep.getId();
+				objparviewid.setOperation(operation);
+				objparviewid.setCompareValue(compareValue);
+
+				if (newObjparId != null) {
+					SbiObjPar sbiobjpar = objparviewid.getSbiObjPar();
+					SbiObjPar newObjPar = ImportUtilities.makeNewSbiObjpar(sbiobjpar, newObjparId);
+					objparviewid.setSbiObjPar(newObjPar);
+					objparId = newObjparId;
+				}
+				if (newObjParFathId != null) {
+					SbiObjPar sbiobjparfath = objparviewid.getSbiObjParFather();
+					SbiObjPar newObjParFath = ImportUtilities.makeNewSbiObjpar(sbiobjparfath, newObjParFathId);
+					objparviewid.setSbiObjParFather(newObjParFath);
+					objparfathId = newObjParFathId;
+				}
+
+				pardep.setId(objparviewid);
+
+				Map unique = new HashMap();
+				unique.put("objparid", objparId);
+				unique.put("objparfathid", objparfathId);
+				unique.put("operation", operation);
+				unique.put("compareValue", compareValue);
+				
+				Object existObj = importer.checkExistence(unique, sessionCurrDB, new SbiObjParview());
+				if (existObj == null) {
+					sessionCurrDB.save(pardep);
+					metaLog.log("Inserted new visual dependecies (parview) between biparameter "
+							+ pardep.getId().getSbiObjPar().getLabel() + " of the biobject "
+							+ pardep.getId().getSbiObjPar().getSbiObject().getLabel() + " with operation "
+							+ pardep.getId().getOperation()+ " and compareValue "+pardep.getId().getCompareValue());
+				}
+			}
+		} catch (HibernateException he) {
+			logger.error("Error while inserting object ", he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+		} catch (Exception e) {
+			logger.error("Error while inserting object ", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Gets the list of exported data sources.
 	 * 
