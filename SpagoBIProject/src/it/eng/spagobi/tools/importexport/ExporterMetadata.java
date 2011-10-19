@@ -44,11 +44,15 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRoleId;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuseId;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParview;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParviewId;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseCk;
@@ -1131,7 +1135,59 @@ public class ExporterMetadata {
 
 
 
+	/**
+	 * Insert Visibility Dependencies between parameters.
+	 * 
+	 * @param biparams the biparams
+	 * @param session the session
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void insertBiParamViewDepend(List biparams, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			Iterator iterBIParams = biparams.iterator();
+			while(iterBIParams.hasNext()) {
+				BIObjectParameter biparam = (BIObjectParameter)iterBIParams.next();			    
+				IObjParviewDAO objparviewDao = DAOFactory.getObjParviewDAO();
+				List objparlist = objparviewDao.loadObjParviews(biparam.getId());
+				Iterator iterObjParview = objparlist.iterator();
+				while(iterObjParview.hasNext()) {
+					ObjParview objParview = (ObjParview)iterObjParview.next();
+					Transaction tx = session.beginTransaction();
+					// TODO controllare perché serve questo controllo: le dipendenze non dovrebbero essere riutilizzabili, per 
+					// cui vengono inseriti una sola volta
+					Query hibQuery = session.createQuery(" from SbiObjParview where id.sbiObjPar.objParId = " + objParview.getObjParId() + 
+							" and id.sbiObjParFather.objParId = " + objParview.getObjParFatherId() + 
+							" and id.compareValue = '" + objParview.getCompareValue() +"'"+ 
+							" and id.operation = '" + objParview.getOperation() + "'" );
+					List hibList = hibQuery.list();
+					if(!hibList.isEmpty()) {
+						continue;
+					}
+					// built key
+					SbiObjParviewId hibObjParviewId = new SbiObjParviewId();
+					SbiObjPar hibObjPar = (SbiObjPar)session.load(SbiObjPar.class, objParview.getObjParId());
+					SbiObjPar objparfather = (SbiObjPar)session.load(SbiObjPar.class, objParview.getObjParFatherId());
+					hibObjParviewId.setSbiObjPar(hibObjPar);
+					hibObjParviewId.setOperation(objParview.getOperation());
+					hibObjParviewId.setCompareValue(objParview.getCompareValue());
+					hibObjParviewId.setSbiObjParFather(objparfather);
+					SbiObjParview hibObjParview = new SbiObjParview(hibObjParviewId);
+					hibObjParview.setViewLabel(objParview.getViewLabel());
+					hibObjParview.setProg(objParview.getProg());
+					session.save(hibObjParview);
+					tx.commit();	
+				}
+			}
 
+		} catch (Exception e) {
+			logger.error("Error while inserting parameter view dependencied into export database " , e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		}finally{
+			logger.debug("OUT");
+		}
+	}
 
 
 

@@ -30,6 +30,7 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreports;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParview;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseCk;
@@ -365,7 +366,8 @@ public class ImporterMetadata {
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiParuse hibParuse = (SbiParuse) hqlQuery.uniqueResult();
 			return hibParuse;
-		} else if (hibObj instanceof SbiFuncRole) {
+		} 
+		else if (hibObj instanceof SbiFuncRole) {
 			Map uniqueMap = (Map) unique;
 			Integer stateid = (Integer) uniqueMap.get("stateid");
 			Integer roleid = (Integer) uniqueMap.get("roleid");
@@ -442,7 +444,21 @@ public class ImporterMetadata {
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiObjParuse hibObjParUse = (SbiObjParuse) hqlQuery.uniqueResult();
 			return hibObjParUse;
-		} else if (hibObj instanceof SbiDataSetConfig) {
+		} else if (hibObj instanceof SbiObjParview) {
+			Map uniqueMap = (Map) unique;
+			Integer objparid = (Integer) uniqueMap.get("objparid");
+			Integer objparfathid = (Integer) uniqueMap.get("objparfathid");
+			String operation = (String) uniqueMap.get("operation");
+			String compareValue = (String) uniqueMap.get("compareValue");
+			hql = "from SbiObjParview objparview where objparview.id.sbiObjPar.objParId = " + objparid
+			+ " and objparview.id.sbiObjParFather.objParId = " + objparfathid
+			+ " and objparview.id.compareValue = '" + compareValue + "'"
+			+ " and objparview.id.operation = '" + operation + "'";
+			hqlQuery = sessionCurrDB.createQuery(hql);
+			SbiObjParview hibObjParview = (SbiObjParview) hqlQuery.uniqueResult();
+			return hibObjParview;
+		} 
+		else if (hibObj instanceof SbiDataSetConfig) {
 			String label = (String) unique;
 			hql = "from SbiDataSetConfig ds where ds.label = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);

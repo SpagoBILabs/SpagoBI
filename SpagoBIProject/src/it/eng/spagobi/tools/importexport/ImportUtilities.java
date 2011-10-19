@@ -37,6 +37,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRoleId;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParview;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseCk;
@@ -734,6 +735,7 @@ public class ImportUtilities {
 				SbiObjPar objPar = (SbiObjPar) objParsIt.next();
 				// for each biobjectparameter deletes all its dependencies, if any
 				Query query = sessionCurrDB.createQuery(" from SbiObjParuse where id.sbiObjPar.objParId = " + objPar.getObjParId());
+				logger.debug("delete dependencies");
 				List dependencies = query.list();
 				if (dependencies != null && !dependencies.isEmpty()) {
 					Iterator it = dependencies.iterator();
@@ -742,7 +744,21 @@ public class ImportUtilities {
 						sessionCurrDB.delete(aSbiObjParuse);
 					}
 				}
+				
+				// for each biobjectparameter deletes all its visual dependencies, if any
+				Query visQuery = sessionCurrDB.createQuery(" from SbiObjParview where id.sbiObjPar.objParId = " + objPar.getObjParId());
+				logger.debug("delete visual dependencies");
+				List visdependencies = visQuery.list();
+				if (visdependencies != null && !visdependencies.isEmpty()) {
+					Iterator it = visdependencies.iterator();
+					while (it.hasNext()) {
+						SbiObjParview aSbiObjParview = (SbiObjParview) it.next();
+						sessionCurrDB.delete(aSbiObjParview);
+					}
+				}				
+				logger.debug("delete objPar");
 				sessionCurrDB.delete(objPar);
+				
 			}
 		} finally {
 			logger.debug("OUT");
