@@ -129,11 +129,14 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 	        cm: cm,
 	        sm: sm,
 	        width: 370,
-	        height: 110,
+	        height: 120,
 	        //autoExpandColumn: 'label', // column with this id will be expanded
 	        frame: true,
 	        clicksToEdit: 2,
-	        tbar: tb
+	        tbar: tb,
+	        //autoHeight: false,
+	        boxMaxHeight: 300,
+	        boxMinHeight: 100
 	    };
 
     var c = Ext.apply( {}, config, grid);
@@ -170,14 +173,33 @@ Ext.extend(Sbi.tools.ManageDatasetParameters, Ext.grid.EditorGridPanel, {
               type: 'String'     
 			 });   
         this.store.insert(0,emptyRecToAdd);
+        //this.refreshHeightOnAdd();
     }
-    
     ,onDelete: function() {   	
         var rec = this.getSelectionModel().getSelected();
         this.store.remove(rec);
         this.store.commitChanges();
+        //this.refreshHeightOnDelete();
      }
-    
+    , refreshHeightOnAdd: function(){
+    	var currHeight = this.getHeight();
+        var numero = this.store.getCount();
+    	var newHeight = currHeight;
+    	if(currHeight<=150){
+    		newHeight+=20;
+    	}
+    	this.setHeight(newHeight);
+    }
+    , refreshHeightOnDelete: function(){
+    	var currHeight = this.getHeight();
+    	var newHeight = currHeight;
+        var numero = this.store.getCount();
+
+        if(currHeight>120 && numero <4){
+    		newHeight-=22;
+    	}
+    	this.setHeight(newHeight);
+    }
     ,getParsArray: function(){
 	    var arrayPars = new Array();
 			var storePars = this.getStore();
