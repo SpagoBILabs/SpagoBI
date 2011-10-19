@@ -661,7 +661,7 @@ Ext.extend(
 						maxLength : 30000,
 						xtype : 'textarea',
 						width : 350,
-						height : 195,
+						height : 140,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.query'),
 						validationEvent : true,
@@ -982,7 +982,9 @@ Ext.extend(
 								autoScroll : false
 								 , bodyStyle: Ext.isIE ? 'padding:0 0 3px 3px;' : 'padding:3px 3px;',
 								border : true,
-								height: 110,
+								height: 'auto',
+						        boxMaxHeight: 300,
+						        boxMinHeight: 100,
 								items : [ this.manageParsGrid ],
 								scope : this
 							});
