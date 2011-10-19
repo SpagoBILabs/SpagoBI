@@ -24,6 +24,7 @@ package it.eng.spagobi.engines.console.exporter;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.console.ConsoleEngineConfig;
 import it.eng.spagobi.engines.console.services.AbstractConsoleEngineAction;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
@@ -131,7 +132,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 				jsonArray = getAttributeAsJSONArray(META);
 				logger.debug("Parameter [" + META + "] is equal to [" + jsonArray.toString(4) + "]");
 			}catch(Throwable t){
-				logger.error("Not a json array: "+test);
+				logger.debug("Not a json array: "+test);
 				jsonArray = new JSONArray();
 				JSONObject obj = getAttributeAsJSONObject(META);
 				jsonArray.put(obj);
@@ -203,8 +204,23 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			
 			
 			if( "application/vnd.ms-excel".equalsIgnoreCase( mimeType ) ) {
-				
+
 				Exporter exp = new Exporter(dataStore);
+				
+				long numberOfRows = dataStore.getRecordsCount();
+				ConsoleEngineConfig conf = ConsoleEngineConfig.getInstance();
+				String configLimit = (String)conf.getProperty("EXPORT_ROWS_LIMIT");
+				if(configLimit == null){
+					configLimit = "65000";
+				}
+				if(numberOfRows >= Long.parseLong(configLimit)){
+					numberOfRows = Long.parseLong(configLimit);
+					logger.info("Result set exceded maximum rows number "+configLimit);
+					
+				}
+				
+				exp.setNumberOfRows(numberOfRows);
+				
 				exp.setExtractedFields(extractedFields);
 				exp.setExtractedFieldsMetaData(extractedFieldsMetaData);
 				
