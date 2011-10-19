@@ -361,14 +361,14 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	    
 	    //Store of the measure types combobox
 	    this.measuresStore = new Ext.data.SimpleStore({
-	        fields: ['metricScaleCd'],
+	    	fields: ['measureTypeCd'],
 	        data: config.measureTypesCd,
 	        autoLoad: false
 	    });
 	    
 	    //Store of the metric scale combobox
-	    this.metricScalesStore = new Ext.data.SimpleStore({
-	        fields: ['measureTypeCd'],
+	    this.metricScalesStore = new Ext.data.SimpleStore({	        
+	        fields: ['metricScaleCd'],
 	        data: config.metricScaleTypesCd,
 	        autoLoad: false
 	    });
@@ -446,9 +446,9 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             xtype: 'combo'
         }; 
  	   
- 	     var detailFieldMeasureType =  {
+ 	    	var detailFieldMetricScaleType =  {
  	      	    name: 'metricScaleCd',
- 	            store: this.measuresStore,
+ 	            store: this.metricScalesStore,
  	            width : 120,
  	            fieldLabel: LN('sbi.kpis.metricScale'),
  	            displayField: 'metricScaleCd',   // what the user sees in the popup
@@ -464,9 +464,9 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	            xtype: 'combo'
  	        };
  	   
- 	      var detailFieldMetricScaleType =  {
+ 	   		var detailFieldMeasureType =  {
  	      	    name: 'measureTypeCd',
- 	            store: this.metricScalesStore,
+ 	            store: this.measuresStore,
  	            width : 120,
  	            fieldLabel: LN('sbi.kpis.measType'),
  	            displayField: 'measureTypeCd',   // what the user sees in the popup

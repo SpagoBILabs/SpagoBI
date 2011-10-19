@@ -112,6 +112,7 @@ public StringBuffer addItemForTree(String lineTagId,ExecutionInstance execInstan
 	String tab_name = "KPI_TABLE";
 	boolean hasChildren = false;
 	String scaleCode = "";
+	String scalename = "";
 	//END VARIABLES INITIALIZATION
 	
 	//START GETTING INTERNATIONALIZED MESSAGES
@@ -140,6 +141,7 @@ public StringBuffer addItemForTree(String lineTagId,ExecutionInstance execInstan
 	if (kpiVal!=null){
 		value = kpiVal.getValue();
 		scaleCode = kpiVal.getScaleCode();
+		scalename = kpiVal.getScaleName();
 		if(value!=null){
 			Double val = new Double(value);
 			kpiValue = new Float( val.floatValue());
@@ -258,7 +260,15 @@ private StringBuffer addMetadataIconColumn(StringBuffer _htmlStream,int recursio
 //Method to add the Kpi Value column
 private StringBuffer addKpiValueColumn(StringBuffer _htmlStream,Float kpiValue,String scaleCode,KpiValue kpiVal,String periodValid){
 	if (kpiValue!= null && kpiVal !=null && scaleCode!=null){
-		_htmlStream.append("<td  width='"+VAL_COL_W+"%' title='"+periodValid+"' class='"+td_al_left_css_class+"' ><div  class='"+div_css_class+"'>"+kpiValue.toString()+"("+kpiVal.getScaleCode()+")</div></td>\n");
+		String scaleToAppend = "";
+		System.out.println(scaleCode);
+		if(scaleCode.trim().equalsIgnoreCase("Ratio scale")){
+			scaleToAppend = " (%)";
+		}else if(scaleCode.trim().equalsIgnoreCase("Day scale")){
+
+			scaleToAppend = " (gg)";
+		}// else to be implemented for other types...
+		_htmlStream.append("<td  width='"+VAL_COL_W+"%' title='"+periodValid+"' class='"+td_al_left_css_class+"' ><div  class='"+div_css_class+"'>"+kpiValue.toString()+scaleToAppend+"</div></td>\n");
 	}else if(kpiValue!= null){
 		_htmlStream.append("<td  width='"+VAL_COL_W+"%' title='"+periodValid+"' class='"+td_al_left_css_class+"' ><div  class='"+div_css_class+"'>"+kpiValue.toString()+"</div></td>\n");
 	}else{

@@ -36,10 +36,12 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.DomainDAOHibImpl;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.InternalEngineIFace;
@@ -85,8 +87,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
@@ -683,8 +683,9 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 					kpiI = tempKIn;
 				}
 			}
-
-			kVal = getFromKpiInstAndSetKpiValueAttributes(kpiI,kVal);
+			Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiI.getKpi());
+			
+			kVal = getFromKpiInstAndSetKpiValueAttributes(kpiI,kVal, kpi);
 
 			// If it has to be calculated for a Resource. The resource will be set as parameter
 			HashMap temp = (HashMap) this.parametersObject.clone();
@@ -694,7 +695,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			// and the DataSet won't expect a parameter of type resource
 			//if(dataSet.hasBehaviour( QuerableBehaviour.class.getName()) ) {
 			if(dataSet!=null){
-				Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiI.getKpi());
+				
 				//if parameter exists and OU is abilitaded for Model Instance, than calculate as dataset parameter
 				String parKpiOuLabel = (String)this.parametersObject.get("ParKpiOU");
 				logger.info("Got ParKpiOU: " + parKpiOuLabel);
@@ -1080,8 +1081,9 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				kpiInst = tempKIn;
 			}
 		}
-
-		kVal = getFromKpiInstAndSetKpiValueAttributes(kpiInst,kVal);
+		Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiInst.getKpi());
+		
+		kVal = getFromKpiInstAndSetKpiValueAttributes(kpiInst,kVal, kpi);
 
 		// If it has to be calculated for a Resource. The resource will be set
 		// as parameter
@@ -1104,7 +1106,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		// and the DataSet won't expect a parameter of type resource
 		//if(dataSet.hasBehaviour( QuerableBehaviour.class.getName()) ) {
 		if(dataSet!=null){
-			Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiInst.getKpi());
+			
 			
 			if(behaviour.equalsIgnoreCase("timeIntervalDefault") || behaviour.equalsIgnoreCase("timeIntervalForceRecalculation")){
 				if(dateIntervalFrom!=null && dateIntervalTo!=null){
@@ -1154,12 +1156,14 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		return kVal;
 	}
 
-	private KpiValue getFromKpiInstAndSetKpiValueAttributes(KpiInstance kpiInst,KpiValue kVal) throws EMFUserError{
+	private KpiValue getFromKpiInstAndSetKpiValueAttributes(KpiInstance kpiInst,KpiValue kVal, Kpi kpi) throws EMFUserError{
 		logger.debug("IN");
 		Double weight = null;
 		Double target = null;
 		String scaleCode = null;
 		String scaleName = null;
+		String measureTypeCd = null;
+		String measureTypeName = null;
 		List thresholdValues = null;
 		String chartType = null;
 		if (kpiInst!=null){
@@ -1170,9 +1174,16 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			weight = kpiInst.getWeight();
 			logger.debug("SbiKpiValue weight: "+(weight!=null ? weight.toString() : "weight null"));
 			target = kpiInst.getTarget();
-			scaleCode = kpiInst.getScaleCode();
+			
+			//scale type is defined on kpi not on kpiInstance
+			scaleCode = kpi.getMetricScaleCd();
 			logger.debug("SbiKpiValue scaleCode: "+(scaleCode!=null ? scaleCode : "scaleCode null"));
-			scaleName =kpiInst.getScaleName();
+			Integer scaleId = kpi.getMetricScaleId();
+			DomainDAOHibImpl daoDomain = (DomainDAOHibImpl)DAOFactory.getDomainDAO();
+			Domain scale = daoDomain.loadDomainById(scaleId);
+			scaleName = scale.getValueName();
+			
+			measureTypeCd = kpi.getMeasureTypeCd();
 			logger.debug("SbiKpiValue scaleName: "+(scaleName!=null ? scaleName : "scaleName null"));
 		}
 		kVal.setWeight(weight);
