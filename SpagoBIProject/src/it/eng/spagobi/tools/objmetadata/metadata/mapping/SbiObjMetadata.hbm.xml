@@ -7,7 +7,7 @@
         <id name="objMetaId" type="integer">
             <column name="OBJ_META_ID" />
 			   <generator class="org.hibernate.id.enhanced.TableGenerator">
-					<param name="optimizer">hilo</param>
+					<param name="optimizer">none</param>
 					<param name="segment_value">SBI_OBJ_METADATA</param>	
 					<param name="initial_value">1</param>	
 			   </generator>            
