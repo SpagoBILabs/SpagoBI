@@ -6,7 +6,7 @@
         <id name="dsHId" type="int">
             <column name="DS_H_ID" />     
    <generator class="org.hibernate.id.enhanced.TableGenerator">
-		<param name="optimizer">hilo</param>
+		<param name="optimizer">none</param>
 		<param name="segment_value">SBI_DATA_SET_HISTORY</param>	
 		<param name="initial_value">1</param>	
    </generator>
