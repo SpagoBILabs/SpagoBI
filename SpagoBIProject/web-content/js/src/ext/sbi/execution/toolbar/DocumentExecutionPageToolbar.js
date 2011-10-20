@@ -306,7 +306,20 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		}
 		Ext.DomHelper.useDom = false; //reset configuration for dom management
 	}		
-	
+	, exportGeoExecution: function (exportType) {	
+	    var mf = this.miframe;
+		var frame = mf.getFrame();
+	    var docurl = frame.getDocumentURI();
+	    var baseUrl = docurl.substring(0,docurl.indexOf('?')+1);   
+	    if (baseUrl=="") baseUrl = docurl;
+	 
+	    //var docurlPar = "ACTION_NAME=DRAW_MAP_ACTION&SBI_EXECUTION_ID="+this.executionInstance.SBI_EXECUTION_ID+"&user_id=-1&outputFormat=jpeg&inline=false";
+	    var docurlPar = "ACTION_NAME=DRAW_MAP_ACTION&SBI_EXECUTION_ID="+this.executionInstance.SBI_EXECUTION_ID+"&outputFormat="+exportType+"&inline=false";
+	    var endUrl = baseUrl + docurlPar;
+	   // alert ("endUrl: " + endUrl);
+	    
+		window.open(endUrl,'name','resizable=1,height=750,width=1000');
+	}
 	, exportReportExecution: function (exportType) {
 	    var endUrl = this.changeDocumentExecutionUrlParameter('outputType', exportType);
 		window.open(endUrl, 'name', 'resizable=1,height=750,width=1000');
