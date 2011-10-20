@@ -382,7 +382,8 @@ Sbi.locale.ln['sbi.qbe.datastore.refreshgrid'] = 'Restore grid style'
 //===================================================================
 //CALCULATED FIELD WIZARD
 //===================================================================
-Sbi.locale.ln['sbi.qbe.calculatedFields.title'] = 'Calculated Field Wizard...';
+Sbi.locale.ln['sbi.qbe.calculatedFields.title'] = 'Calculated Field Wizard (Expert mode)';
+Sbi.locale.ln['sbi.qbe.inlineCalculatedFields.title'] = 'Calculated Field Wizard (Simple mode)';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.title'] = 'Validation';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.text'] = 'Validation OK';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.fail.title'] = 'Validation Fail';
