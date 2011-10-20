@@ -6,7 +6,7 @@
         <id name="objTempId" type="integer">
             <column name="obj_temp_id" />
    			<generator class="org.hibernate.id.enhanced.TableGenerator">
-					<param name="optimizer">hilo</param>
+					<param name="optimizer">none</param>
 					<param name="segment_value">SBI_OBJECT_TEMPLATES</param>
 					<param name="initial_value">1</param>						
    			</generator>
