@@ -44,7 +44,7 @@ public abstract class JPQLStatementFilteringClause  extends JPQLStatementClause 
 		
 		logger.debug("IN");
 		try {
-			// Se sono qui è perchè il leftoPerand è un campo calcolato inline quindi posso parserizzare senza problemi
+			// Se sono qui è perchè il leftOperand è un campo calcolato inline quindi posso parserizzare senza problemi
 			JSONObject leftOperandJSON = new JSONObject(leftOperand.values[0]);
 			
 			String expression = leftOperandJSON.getString("expression");
