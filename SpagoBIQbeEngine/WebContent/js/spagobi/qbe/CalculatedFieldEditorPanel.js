@@ -421,11 +421,15 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 		    listeners: {
 		    	 check: function(checkbox , checked) {
 			    	 if (!checked) {
-			    		  this.fireEvent('expert');
-			    		  this.hide();
+			    		 this.expertCheckBox.suspendEvents( false );
+			    		 this.expertCheckBox.setValue(true);
+			    		 this.expertCheckBox.resumeEvents();
+			    		 this.fireEvent('expert');
 			    	  }else{
+			    		  this.expertCheckBox.suspendEvents( false );
+			    		  this.expertCheckBox.setValue(false);
+			    		  this.expertCheckBox.resumeEvents();
 			    		  this.fireEvent('notexpert');
-			    		  this.hide();
 			    	  }
     		
 			     },scope: this

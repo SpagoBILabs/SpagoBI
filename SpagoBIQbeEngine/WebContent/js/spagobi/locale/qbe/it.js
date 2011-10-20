@@ -380,7 +380,8 @@ Sbi.locale.ln['sbi.qbe.datastore.refreshgrid'] = 'Ripristina formato tabella'
 //===================================================================
 //CALCULATED FIELD WIZARD
 //===================================================================
-	Sbi.locale.ln['sbi.qbe.calculatedFields.title'] = 'Wizard Campi Calcolati...';
+Sbi.locale.ln['sbi.qbe.calculatedFields.title'] = 'Wizard Campi Calcolati (Expert mode)';
+Sbi.locale.ln['sbi.qbe.inlineCalculatedFields.title'] = 'Wizard Campi Calcolati (Simple mode)';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.title'] = 'Validazione';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.text'] = 'Espressione valida';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.fail.title'] = 'Errore di validazione';
