@@ -215,7 +215,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {
 			
 			if(this.calculatedFieldWizard === null) {
-				this.initCalculatedFieldWizards();
+				this.initWizards();
 			}
 			
 			var parentEtityNode = fieldNode.parentNode;
@@ -244,7 +244,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		} else 	if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 			
 			if(this.inLineCalculatedFieldWizard === null) {
-				this.initCalculatedFieldWizards();
+				this.initWizards();
 			}			
 			
 			var parentEtityNode = fieldNode.parentNode;
@@ -296,7 +296,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		if(type === Sbi.constants.qbe.NODE_TYPE_ENTITY) {
 			
 			if(this.calculatedFieldWizard === null) {
-				this.initCalculatedFieldWizards();
+				this.initWizards();
 			}
 			
 			var fields = new Array();
@@ -345,7 +345,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		if(type === Sbi.constants.qbe.NODE_TYPE_ENTITY) {
 			
 			if(this.inLineCalculatedFieldWizard === null) {
-				this.initCalculatedFieldWizards();
+				this.initWizards();
 			}
 			
 			var fields = new Array();
@@ -394,7 +394,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		var text = entityNode.text || entityNode.attributes.text;
 		
 		if(type === Sbi.constants.qbe.NODE_TYPE_ENTITY) {
-
+			/*
 			var dateFunctions = [
      		    {
      	            text: 'GG_between_dates'
@@ -444,7 +444,9 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
      			   }
      	    ];
+			*/
 			
+			/*
 			var functionsForInline = [
 			    {
 				    text: '+'
@@ -489,7 +491,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	    				, value: Ext.util.Format.htmlEncode(')')
 	    				, alias: Ext.util.Format.htmlEncode(')')
 	        	}
-			];		
+			];	
+			*/	
 			
 			var fields = new Array();
 			for(var i = 0; i < entityNode.attributes.children.length; i++) {
@@ -517,8 +520,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	    		    {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
 	    		],
 	    		fields: new Array(),
-	    		functions: functionsForInline,
-	    		dateFunctions: dateFunctions,
+	    		functions: Sbi.constants.qbe.SLOTS_EDITOR_ARITHMETIC_FUNCTIONS,
+	    		dateFunctions: Sbi.constants.qbe.SLOTS_EDITOR_DATE_FUNCTIONS,
 	    		expertMode: false,
 	        	scopeComboBoxData :[
 	        	    ['STRING','String', 'If the expression script returns a plain text string'],
@@ -653,6 +656,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			   icon: Ext.MessageBox.ERROR
 			});		
 		} else if(type === Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD){
+			/*
 			var dateFunctions = [
       		    {
       	            text: 'GG_between_dates'
@@ -702,6 +706,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
       				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
       			   }
       	    ];
+      	    */
  			var fields = new Array();
  			var fieldNode = entityNode.parentNode;
  			for(var i = 0; i < fieldNode.childNodes.length; i++) {
@@ -730,7 +735,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
  	    		    {name:'dateFunctions', text: 'Date Functions'}
  	    		],
  	    		fields: new Array(),
- 	    		dateFunctions: dateFunctions,
+ 	    		//functions: Sbi.constants.qbe.SLOTS_EDITOR_ARITHMETIC_FUNCTIONS,
+	    		dateFunctions: Sbi.constants.qbe.SLOTS_EDITOR_DATE_FUNCTIONS,
  	    		expertMode: false,
  	        	scopeComboBoxData :[
  	        	    ['STRING','String', 'If the expression script returns a plain text string'],
@@ -895,7 +901,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		}
 	}
 
-	, initCalculatedFieldWizards: function() {
+	, initWizards: function() {
 		
 		var fields = new Array();
 		
@@ -942,147 +948,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		    }
 		];
 		
-		var aggregationFunctions = [		                            
- 		    {
- 			    text: 'SUM'
- 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')
- 			    , type: 'function'
-			    , value: Ext.util.Format.htmlEncode('SUM(op1)')
-			    , alias: Ext.util.Format.htmlEncode('SUM(op1)')    			    
-			    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpSum')}]
- 		    }, {
- 			    text: 'MIN'  
- 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.min')
- 			    , type: 'function'
- 			    , value: Ext.util.Format.htmlEncode('MIN(op1)')
- 			    , alias: Ext.util.Format.htmlEncode('MIN(op1)')
- 			    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMin')}]
- 		    }, {
- 			    text: 'MAX' 
- 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.max')
- 			    , type: 'function'
- 			    , value: Ext.util.Format.htmlEncode('MAX(op1)')
- 			    , alias: Ext.util.Format.htmlEncode('MAX(op1)')
- 			    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMax')}]
- 		    }, {
- 			    text: 'COUNT'
- 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')
- 			    , type: 'function'
- 	 			, value: Ext.util.Format.htmlEncode('COUNT(op1)')
- 	 			, alias: Ext.util.Format.htmlEncode('COUNT(op1)')
- 	 		    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCount')}]
- 		    }, {
- 			    text: 'COUNT_DISTINCT'
- 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')
- 			    , type: 'function'
- 	 			, value: Ext.util.Format.htmlEncode('COUNT(DISTINCT op1)')
- 	 			, alias: Ext.util.Format.htmlEncode('COUNT(DISTINCT op1)')
- 	 			, operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCountDist')}]
- 		    }, {
-			    text: 'AVG'
-				, qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.avg')
-				, type: 'function'
-				, value: Ext.util.Format.htmlEncode('AVG(op1)')
-				, alias: Ext.util.Format.htmlEncode('AVG(op1)')
-				, operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpAVG')}]
-			}
- 		];
 		
-		var dateFunctions = [
-		    {
-	            text: 'GG_between_dates'
-	            , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.ggbetweendates')
-	            , type: 'function'
-	            , value: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
-	            , alias: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
-	            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
-	            		   , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
-		    
-	         }, {
-		         text: 'MM_between_dates'
-		         , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.mmbetweendates')
-			     , type: 'function'
-			     , value: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
-			     , alias: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
-			     , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
-	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
-			 },{
-				 text: 'AA_between_dates'
-			      , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.aabetweendates')
-			      , type: 'function'
-			      , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
-			      , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
-			      , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
-	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
-			 }, {
-			     text: 'GG_up_today'
-			     , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.gguptoday')
-				 , type: 'function'
-				 , value: Ext.util.Format.htmlEncode('GG_up_today(op1)')
-				 , alias: Ext.util.Format.htmlEncode('GG_up_today(op1)')
-				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
-			 }, {
-			     text: 'MM_up_today'
-				 , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.mmuptoday')
-				 , type: 'function'
-				 , value: Ext.util.Format.htmlEncode('MM_up_today(op1)')
-				 , alias: Ext.util.Format.htmlEncode('MM_up_today(op1)')
-				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
-			  }, {
-				 text: 'AA_up_today'
-				 , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.aauptoday')
-				 , type: 'function'
-				 , value: Ext.util.Format.htmlEncode('AA_up_today(op1)')
-				 , alias: Ext.util.Format.htmlEncode('AA_up_today(op1)')
-				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
-			   }
-	    ];
-		
-		var functionsForInline = [
-  		    {
-  			    text: '+'
-  			    , qtip: LN('sbi.qbe.selectgridpanel.func.sum.tip')
-  			    , type: 'function'
-  			    , value: Ext.util.Format.htmlEncode('+')
-  			    , alias: Ext.util.Format.htmlEncode('+')
-  		    }, {
-  			    text: '-' 
-  			    , qtip: LN('sbi.qbe.selectgridpanel.func.difference.tip')
-  			    , type: 'function'
-  			    , value: Ext.util.Format.htmlEncode('-')
-  			    , alias: Ext.util.Format.htmlEncode('-')
-  		    }, {
-  			    text: '*'
-  			    ,qtip: LN('sbi.qbe.selectgridpanel.func.multiplication.tip')
-  			    , type: 'function'
-  			    , value: Ext.util.Format.htmlEncode('*')
-  			    , alias: Ext.util.Format.htmlEncode('*')
-  		    }, {
-  			    text: '/'
-  				,qtip: LN('sbi.qbe.selectgridpanel.func.division.tip')
-  				, type: 'function'
-  				, value: Ext.util.Format.htmlEncode('/')
-  				, alias: Ext.util.Format.htmlEncode('/')
-  			}, {
-  			    text: '||'
-  				,qtip: LN('sbi.qbe.selectgridpanel.func.pipe.tip')
-  				, type: 'function'
-  				, value: Ext.util.Format.htmlEncode('||')
-  				, alias: Ext.util.Format.htmlEncode('||')
-  			}, {
-  			    text: '('
-      				,qtip: LN('sbi.qbe.selectgridpanel.func.openpar.tip')
-      				, type: 'function'
-      				, value: Ext.util.Format.htmlEncode('(')
-      				, alias: Ext.util.Format.htmlEncode('(')
-      		}, {
-  			    text: ')'
-      				,qtip: LN('sbi.qbe.selectgridpanel.func.closepar.tip')
-      				, type: 'function'
-      				, value: Ext.util.Format.htmlEncode(')')
-      				, alias: Ext.util.Format.htmlEncode(')')
-          	}
-  		];				
 		
 		this.calculatedFieldWizard = new Sbi.qbe.CalculatedFieldWizard({
     		title: LN('sbi.qbe.calculatedFields.title'),
@@ -1095,7 +961,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
        		],
        		fields: fields,
        		functions: functions,
-       		dateFunctions: dateFunctions,
+       		dateFunctions: Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS,
        		expertMode: true,
           	scopeComboBoxData :[
            	    ['STRING','String', LN('sbi.qbe.calculatedFields.string.type')],
@@ -1118,9 +984,9 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     		    {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
     		],
     		fields: fields,
-    		functions: functionsForInline,
-    		aggregationFunctions: aggregationFunctions,
-    		dateFunctions: dateFunctions,
+    		functions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS,
+    		aggregationFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_AGGREGATION_FUNCTIONS,
+    		dateFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS,
     		expertMode: false,
         	scopeComboBoxData :[
         	    ['STRING','String',  LN('sbi.qbe.calculatedFields.string.type')],
@@ -1138,7 +1004,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
      		if(this.calculatedFieldWizard!=null){
      			var alias = this.calculatedFieldWizard.mainPanel.inputFields.alias.getValue();
      		}
-     		this.initCalculatedFieldWizards();
+     		this.initWizards();
      		this.addInLineCalculatedField(this.pressedNode);
      		this.inLineCalculatedFieldWizard.mainPanel.setCFAlias(alias);
      		this.inLineCalculatedFieldWizard.show();
@@ -1149,7 +1015,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
      		if(this.inLineCalculatedFieldWizard!=null){
      			var alias = this.inLineCalculatedFieldWizard.mainPanel.inputFields.alias.getValue();
      		}
-     		this.initCalculatedFieldWizards();
+     		this.initWizards();
      		this.addCalculatedField(this.pressedNode);
    			this.calculatedFieldWizard.mainPanel.setCFAlias(alias);
    			this.calculatedFieldWizard.show();

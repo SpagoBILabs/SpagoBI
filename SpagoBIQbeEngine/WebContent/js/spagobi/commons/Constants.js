@@ -3,15 +3,15 @@ Ext.ns("Sbi.constants");
 Sbi.constants.qbe = {
 		
 	// select clause field types (twins java constants are defined in class ISelectField)
-	FIELD_TYPE_SIMPLE: 'simple.field'
+	FIELD_TYPE_SIMPLE: 'Field Content'
 	, FIELD_TYPE_CALCULATED: 'calculated.field'
 	, FIELD_TYPE_INLINE_CALCULATED: 'inline.calculated.field'
 			
 	// where clause operand types (twins java constants are defined in class AbstractStatement)
-	, OPERAND_TYPE_STATIC_VALUE: 'static.value'
-	, OPERAND_TYPE_SUBQUERY: 'subquery'
-	, OPERAND_TYPE_PARENT_FIELD: 'parent.query.field'
-	, OPERAND_TYPE_SIMPLE_FIELD: 'simple.field'
+	, OPERAND_TYPE_STATIC_VALUE: 'Static Content'
+	, OPERAND_TYPE_SUBQUERY: 'Subquery'
+	, OPERAND_TYPE_PARENT_FIELD: 'Parent Field Content'
+	, OPERAND_TYPE_SIMPLE_FIELD: 'Field Content'
 	, OPERAND_TYPE_CALCULATED_FIELD: 'calculated.field'
 	, OPERAND_TYPE_INLINE_CALCULATED_FIELD: 'inline.calculated.field'
 				
@@ -85,7 +85,7 @@ Sbi.constants.qbe = {
         ['COUNT_DISTINCT', LN('sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')]
     ] 
 
-	, INLINE_CALCULATED_FIELD_ARITHMETIC_FUNCTIONS : [
+	, ARITHMETIC_FUNCTIONS : [
         {
         	text: '+'
             , qtip: LN('sbi.qbe.selectgridpanel.func.sum.tip')
@@ -131,7 +131,7 @@ Sbi.constants.qbe = {
          }
     ]
 
-	, INLINE_CALCULATED_FIELD_AGGREGATIN_FUNCTIONS : [
+	, AGGREGATION_FUNCTIONS : [
        {
     	   text: 'SUM'
            , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')
@@ -176,9 +176,8 @@ Sbi.constants.qbe = {
            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpAVG')}]
        }
     ]
-                		
-    //, dateFunctions = [
-	, INLINE_CALCULATED_FIELD_DATE_FUNCTIONS : [
+
+	, DATE_FUNCTIONS : [
        {
            text: 'GG_between_dates'
            , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.ggbetweendates')
@@ -226,7 +225,67 @@ Sbi.constants.qbe = {
            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
         }
     ]
+
+	, SCRIPT_FUNCTIONS : [
+	     {
+	        text: 'link'
+	        , qtip: 'create a link to external web page'
+	        , type: 'function'
+	        , value: Ext.util.Format.htmlEncode('\'<a href="${URL}">\' + ${LABEL} + \'</a>\'')
+	        , alias: Ext.util.Format.htmlEncode('\'<a href="${URL}">\' + ${LABEL} + \'</a>\'')
+	     }, {
+	    	 text: 'image'
+	    	 , qtip: 'include an external image'
+	    	 , type: 'function'
+	         , value: Ext.util.Format.htmlEncode('\'<img src="${URL}"></img>\'')
+	         , alias: Ext.util.Format.htmlEncode('\'<img src="${URL}"></img>\'')
+	     }, {
+	    	 text: 'cross-navigation'
+	    	 , qtip: 'create a cross navigation link'
+	         , type: 'function'
+	         , value: Ext.util.Format.htmlEncode("String label = 'bestByRegion';") + '<br>' + 
+	         	Ext.util.Format.htmlEncode("String text= fields['salesRegion'];") + '<br>' + 
+	         Ext.util.Format.htmlEncode("String params= 'region=5';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("String subobject;") + '<p>' + 
+	         Ext.util.Format.htmlEncode("String result = '';") + '<p>' + 
+	         Ext.util.Format.htmlEncode("result +='<a href=\"#\" onclick=\"javascript:sendMessage({';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("result +='\\'label\\':\\'' + label + '\\'';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("result +=', parameters:\\'' + params + '\\'';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("result +=', windowName: this.name';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("if(subobject != null) result +=', subobject:\\'' + subobject +'\\'';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' + 
+	         Ext.util.Format.htmlEncode("return result;")
+	         , alias: Ext.util.Format.htmlEncode("String label = 'bestByRegion';") + '<br>' + 
+	         	Ext.util.Format.htmlEncode("String text= fields['salesRegion'];") + '<br>' + 
+	         Ext.util.Format.htmlEncode("String params= 'region=5';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("String subobject;") + '<p>' + 
+	         Ext.util.Format.htmlEncode("String result = '';") + '<p>' + 
+	         Ext.util.Format.htmlEncode("result +='<a href=\"#\" onclick=\"javascript:sendMessage({';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("result +='\\'label\\':\\'' + label + '\\'';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("result +=', parameters:\\'' + params + '\\'';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("result +=', windowName: this.name';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("if(subobject != null) result +=', subobject:\\'' + subobject +'\\'';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' + 
+	         Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' + 
+	         Ext.util.Format.htmlEncode("return result;")
+	     }
+	 ]
 };
+
+// arithmetic functions
+Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS = Sbi.constants.qbe.ARITHMETIC_FUNCTIONS;
+Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS = Sbi.constants.qbe.ARITHMETIC_FUNCTIONS;
+Sbi.constants.qbe.SLOTS_EDITOR_ARITHMETIC_FUNCTIONS = Sbi.constants.qbe.ARITHMETIC_FUNCTIONS;
+//date functions
+Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS = Sbi.constants.qbe.DATE_FUNCTIONS; // ???
+Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS = Sbi.constants.qbe.DATE_FUNCTIONS;
+Sbi.constants.qbe.SLOTS_EDITOR_DATE_FUNCTIONS = Sbi.constants.qbe.DATE_FUNCTIONS;
+// aggregation functions
+Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_AGGREGATION_FUNCTIONS = Sbi.constants.qbe.AGGREGATION_FUNCTIONS;
+Sbi.constants.qbe.SLOTS_EDITOR_AGGREGATION_FUNCTIONS = Sbi.constants.qbe.AGGREGATION_FUNCTIONS;
+// script functions
+Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_SCRIPT_FUNCTIONS = Sbi.constants.qbe.SCRIPT_FUNCTIONS;
 
 Sbi.constants.worksheet = {
 		

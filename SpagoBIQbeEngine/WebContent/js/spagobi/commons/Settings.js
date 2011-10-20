@@ -25,7 +25,11 @@ Sbi.settings.qbe = {
 			, NODE_TYPE_CALCULATED_FIELD: 'calculatedField'
 			, NODE_TYPE_INLINE_CALCULATED_FIELD: 'inLineCalculatedField'
 			
-		},*/
+		}
+
+		*/
+
+		
 		queryBuilderPanel: {
 			enableTreeToolbar: true,
 			enableTreeTbPinBtn: true,
