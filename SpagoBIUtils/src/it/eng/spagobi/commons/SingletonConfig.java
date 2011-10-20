@@ -44,7 +44,7 @@ public class SingletonConfig {
 			if (instance == null)
 					instance = new SingletonConfig();
 		}catch(Exception e) {
-			logger.error("Impossible to load configuration",e);
+			logger.debug("Impossible to load configuration",e);
 		}
 		return instance;
 	}
@@ -54,7 +54,8 @@ public class SingletonConfig {
 		try {
 			cache = (ISingletonConfigCache)Class.forName("it.eng.spagobi.commons.SingletonConfigCache").newInstance();
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error creating SingletonConfigCache", e);
+      logger.warn("Impossible to create it.eng.spagobi.commons.SingletonConfigCache",e);
+			//throw new SpagoBIRuntimeException("Error creating SingletonConfigCache", e);
 		}
 	}
 
@@ -78,7 +79,7 @@ public class SingletonConfig {
 		try{
 			instance= null;
 		}catch(Exception e){
-			logger.error("Impossible to create a new istance", e);
+			logger.debug("Impossible to create a new istance", e);
 		}
 	}
 }
