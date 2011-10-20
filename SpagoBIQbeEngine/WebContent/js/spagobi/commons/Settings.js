@@ -4,6 +4,7 @@ Sbi.settings.qbe = {
 		
 		
 		// TODO move this to a dedicated file
+		/*
 		constants : {
 			// select clause field types (twins java constants are defined in class ISelectField)
 			FIELD_TYPE_SIMPLE: 'simple.field'
@@ -26,7 +27,7 @@ Sbi.settings.qbe = {
 			
 		}
 
-
+		*/
 
 		
 		, queryBuilderPanel: {

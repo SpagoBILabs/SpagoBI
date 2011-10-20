@@ -120,7 +120,7 @@ Ext.extend(Sbi.qbe.SelectGridDropTarget, Ext.dd.DropTarget, {
 		node = ddSource.dragData.node; 				
 		nodeType = node.attributes.type || node.attributes.attributes.type;
 
-        if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) {
+        if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
         	field = {
         		id: node.id , 
             	entity: node.attributes.attributes.entity , 
@@ -131,7 +131,7 @@ Ext.extend(Sbi.qbe.SelectGridDropTarget, Ext.dd.DropTarget, {
         
         	this.targetPanel.addField(field, rowIndex);
         	
-        } else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD){
+        } else if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD){
         	
         	field = {
             	id: node.id , 
@@ -160,11 +160,11 @@ Ext.extend(Sbi.qbe.SelectGridDropTarget, Ext.dd.DropTarget, {
  	    			
  	    		}
              */
-        } else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD){
+        } else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD){
 
         	field = {
         			id: node.attributes.attributes.formState,
-        			type: Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED,
+        			type: Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED,
         			entity: node.parentNode.text, 
         			field: node.text,
         			alias: node.text,
@@ -173,17 +173,17 @@ Ext.extend(Sbi.qbe.SelectGridDropTarget, Ext.dd.DropTarget, {
 
             this.targetPanel.addField(field, rowIndex);
             
-        } else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_ENTITY){
+        } else if(nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY){
 			
 			for(var i = 0; i < node.attributes.children.length; i++) {
 				var fieldType;
 				var nodeType = node.attributes.children[i].attributes.type;
-				if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) {
-					fieldType = Sbi.settings.qbe.constants.FIELD_TYPE_SIMPLE;
-				} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD) {
-					fieldType = Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED;
-				} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD) {
-					fieldType = Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED;
+				if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
+					fieldType = Sbi.constants.qbe.FIELD_TYPE_SIMPLE;
+				} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {
+					fieldType = Sbi.constants.qbe.FIELD_TYPE_CALCULATED;
+				} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
+					fieldType = Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED;
 				} else {
 					continue;
 				}

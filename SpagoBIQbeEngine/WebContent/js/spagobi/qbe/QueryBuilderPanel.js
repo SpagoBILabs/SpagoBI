@@ -550,12 +550,12 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	  
 	    this.selectGridPanel.on('filter', function(panel, record) {
 	    	var operandType;
-	    	if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_SIMPLE) {
-	    		operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
-	    	} else if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED) {
-	    		operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_CALCULATED_FIELD
-	    	} else if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED) {
-	    		operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+	    	if(record.data.type === Sbi.constants.qbe.FIELD_TYPE_SIMPLE) {
+	    		operandType = Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
+	    	} else if(record.data.type === Sbi.constants.qbe.FIELD_TYPE_CALCULATED) {
+	    		operandType = Sbi.constants.qbe.OPERAND_TYPE_CALCULATED_FIELD
+	    	} else if(record.data.type === Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED) {
+	    		operandType = Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
 	    	} else{
 	    		Ext.Msg.show({
 				   title:'Invalid operation',
@@ -578,12 +578,12 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	    
 	    this.selectGridPanel.on('having', function(panel, record) {
 	    	var operandType;
-	    	if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_SIMPLE) {
-	    		operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
-	    	} else if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED) {
-	    		operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_CALCULATED_FIELD
-	    	} else if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED) {
-	    		operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+	    	if(record.data.type === Sbi.constants.qbe.FIELD_TYPE_SIMPLE) {
+	    		operandType = Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
+	    	} else if(record.data.type === Sbi.constants.qbe.FIELD_TYPE_CALCULATED) {
+	    		operandType = Sbi.constants.qbe.OPERAND_TYPE_CALCULATED_FIELD
+	    	} else if(record.data.type === Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED) {
+	    		operandType = Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
 	    	} else{
 	    		Ext.Msg.show({
 				   title:'Invalid operation',
@@ -689,11 +689,11 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			recordBaseConfig = recordBaseConfig || {};
 			nodeType = node.attributes.type || node.attributes.attributes.type;
 			
-    		if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) {
+    		if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
 			    
     			field = {
 			    	id: node.id,
-			    	type: Sbi.settings.qbe.constants.FIELD_TYPE_SIMPLE,
+			    	type: Sbi.constants.qbe.FIELD_TYPE_SIMPLE,
 			    	entity: node.attributes.attributes.entity, 
 			    	field: node.attributes.attributes.field,
 			    	alias: node.attributes.attributes.field,
@@ -706,10 +706,10 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
     			
     			this.selectGridPanel.addField(field);
 			    		    
-    		} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD) {	
+    		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {	
  	    		var field = {
  	    			id: node.attributes.formState,
- 	    			type: Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED,
+ 	    			type: Sbi.constants.qbe.FIELD_TYPE_CALCULATED,
  	    			entity: node.parentNode.text, 
 			    	field: node.text,
  			        alias: node.text,
@@ -737,10 +737,10 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
  	    			
  	    			
  	    		}
-    		} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD) {	
+    		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {	
  	 	    		var field = {
  	 	    			id: node.attributes.attributes.formState,
- 	 	    			type: Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED,
+ 	 	    			type: Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED,
  	 	    			entity: node.parentNode.text, 
  				    	field: node.text,
  	 			        alias: node.text,
@@ -770,10 +770,10 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
  	 	    			
  	 	    		}
 
-    		} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_ENTITY){
+    		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY){
     			for(var i = 0; i < node.attributes.children.length; i++) {
-    				if((node.attributes.children[i].attributes.type != 'field' && node.attributes.children[i].attributes.type != Sbi.settings.qbe.constants.NODE_TYPE_CALCULATED_FIELD) || 
-    					(node.attributes.children[i].attributes.type != 'field' && node.attributes.children[i].attributes.type != Sbi.settings.qbe.constants.IN_LINE_CALCULATED_FIELD)) continue;
+    				if((node.attributes.children[i].attributes.type != 'field' && node.attributes.children[i].attributes.type != Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) || 
+    					(node.attributes.children[i].attributes.type != 'field' && node.attributes.children[i].attributes.type != Sbi.constants.qbe.IN_LINE_CALCULATED_FIELD)) continue;
     				field = {
           				id: node.attributes.children[i].id , 
             			entity: node.attributes.children[i].attributes.entity , 
@@ -802,12 +802,12 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			recordBaseConfig = recordBaseConfig || {};
 			nodeType = node.attributes.type || node.attributes.attributes.type;
 			
-    		if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD 
-    		|| nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD ) {
+    		if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD 
+    		|| nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD ) {
     			
     			var operandType;
-    			if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
-    			else operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+    			if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) operandType = Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
+    			else operandType = Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
     			
 				filter = {
 					leftOperandValue: node.id
@@ -817,16 +817,16 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 				};
 		  		this.filterGridPanel.addFilter(filter);
 			
-			} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_ENTITY) {
+			} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY) {
 				
 				for(var i = 0; i < node.attributes.children.length; i++) {
 					nodeType = node.attributes.children[i].attributes.type;
-					if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD 
-				      || nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD ) {
+					if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD 
+				      || nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD ) {
 				    	
 						var operandType;
-				    	if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
-				    	else operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+				    	if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) operandType = Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
+				    	else operandType = Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
 				    							
 						filter = {
 							leftOperandValue: node.attributes.children[i].id
@@ -858,12 +858,12 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			recordBaseConfig = recordBaseConfig || {};
 			nodeType = node.attributes.type || node.attributes.attributes.type;
 			
-			if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD 
-		      || nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD ) {
+			if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD 
+		      || nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD ) {
 		    			
 				var operandType;
-		    	if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
-		    	else operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+		    	if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) operandType = Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
+		    	else operandType = Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
 		    			
 				filter = {
 					leftOperandValue: node.id
@@ -873,16 +873,16 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 				};
 		  		this.havingGridPanel.addFilter(filter);
 			
-			} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_ENTITY){
+			} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY){
 				
 				for(var i = 0; i < node.attributes.children.length; i++) {
 					nodeType = node.attributes.children[i].attributes.type;
-					if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD 
-					  || nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD ) {
+					if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD 
+					  || nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD ) {
 						   			
 						var operandType;
-						if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
-						else operandType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+						if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) operandType = Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
+						else operandType = Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
 						    					
 						filter = {
 							leftOperandValue: node.attributes.children[i].id
