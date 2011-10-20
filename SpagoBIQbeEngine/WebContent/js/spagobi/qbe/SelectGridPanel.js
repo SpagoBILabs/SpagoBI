@@ -125,17 +125,6 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 	, aggregationFunctionsStore:  new Ext.data.SimpleStore({
 		 fields: ['funzione', 'nome', 'descrizione'],
 		 data: Sbi.constants.qbe.SELECT_CLAUSE_AGGREGATION_FUNCTION
-	     /*
-	     data : [
-	        ['NONE', LN('sbi.qbe.selectgridpanel.aggfunc.name.none'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.none')],
-	        ['SUM', LN('sbi.qbe.selectgridpanel.aggfunc.name.sum'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')],
-	        ['AVG', LN('sbi.qbe.selectgridpanel.aggfunc.name.avg'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.avg')],
-	        ['MAX', LN('sbi.qbe.selectgridpanel.aggfunc.name.max'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.max')],
-	        ['MIN', LN('sbi.qbe.selectgridpanel.aggfunc.name.min'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.min')],
-	        ['COUNT', LN('sbi.qbe.selectgridpanel.aggfunc.name.count'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')],
-	        ['COUNT_DISTINCT', LN('sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')]
-	     ] 
-	     */
 	 })
 
 	, orderingTypesStore: new Ext.data.SimpleStore({
@@ -627,6 +616,7 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 	        dataUrl: this.services['getAttributes']
 	    });
 		
+		/*
 		var crossFn = Ext.util.Format.htmlEncode("String label = 'bestByRegion';") + '<br>' + 
 			Ext.util.Format.htmlEncode("String text= fields['salesRegion'];") + '<br>' + 
 			Ext.util.Format.htmlEncode("String params= 'region=5';") + '<br>' + 
@@ -640,53 +630,7 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 			Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' + 
 			Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' + 
 			Ext.util.Format.htmlEncode("return result;");
-		 /*
-		var functionsForInline = [
-		    {
-			    text: '+'
-			    , qtip: LN('sbi.qbe.selectgridpanel.func.sum.tip')
-			    , type: 'function'
-			    , value: Ext.util.Format.htmlEncode('+')
-			    , alias: Ext.util.Format.htmlEncode('+')
-		    }, {
-			    text: '-' 
-			    , qtip: LN('sbi.qbe.selectgridpanel.func.difference.tip')
-			    , type: 'function'
-			    , value: Ext.util.Format.htmlEncode('-')
-			    , alias: Ext.util.Format.htmlEncode('-')
-		    }, {
-			    text: '*'
-			    , qtip: LN('sbi.qbe.selectgridpanel.func.multiplication.tip')
-			    , type: 'function'
-			    , value: Ext.util.Format.htmlEncode('*')
-			    , alias: Ext.util.Format.htmlEncode('*')
-		    }, {
-			    text: '/'
-				, qtip: LN('sbi.qbe.selectgridpanel.func.division.tip')
-				, type: 'function'
-				, value: Ext.util.Format.htmlEncode('/')
-				, alias: Ext.util.Format.htmlEncode('/')
-			}, {
-			    text: '||'
-				, qtip: LN('sbi.qbe.selectgridpanel.func.pipe.tip')
-				, type: 'function'
-				, value: Ext.util.Format.htmlEncode('||')
-				, alias: Ext.util.Format.htmlEncode('||')
-			}, {
-			    text: '('
-				, qtip: LN('sbi.qbe.selectgridpanel.func.openpar.tip')
-				, type: 'function'
-				, value: Ext.util.Format.htmlEncode('(')
-				, alias: Ext.util.Format.htmlEncode('(')
-			}, {
-			    text: ')'
-  				, qtip: LN('sbi.qbe.selectgridpanel.func.closepar.tip')
-  				, type: 'function'
-  				, value: Ext.util.Format.htmlEncode(')')
-  				, alias: Ext.util.Format.htmlEncode(')')
-			}
-		];
-		*/
+		
 		var functions = [
  		    {
  			    text: 'link'
@@ -709,108 +653,8 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
  		    }
  		];
 		     		
-		     		
-		//this.treeLoader.on('load', this.oonLoad, this);
-		//this.treeLoader.on('loadexception', this.oonLoadException, this);
-		     		
-
-		/*
-		var aggregationFunctions = [
- 		    {
- 			    text: 'SUM'
- 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')
- 			    , type: 'function'
-			    , value: Ext.util.Format.htmlEncode('SUM(op1)')
-			    , alias: Ext.util.Format.htmlEncode('SUM(op1)')
-			    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpSum')}]
- 		    }, {
- 			    text: 'MIN'  
- 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.min')
- 			    , type: 'function'
- 			    , value: Ext.util.Format.htmlEncode('MIN(op1)')
- 			    , alias: Ext.util.Format.htmlEncode('MIN(op1)')
- 			    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMin')}]
- 		    }, {
- 			    text: 'MAX' 
- 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.max')
- 			    , type: 'function'
- 			    , value: Ext.util.Format.htmlEncode('MAX(op1)')
- 			    , alias: Ext.util.Format.htmlEncode('MAX(op1)')
- 			    , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMax')}]
- 		    }, {
- 			    text: 'COUNT'
- 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')
- 			    , type: 'function'
- 	 			, value: Ext.util.Format.htmlEncode('COUNT(op1)')
- 	 			, alias: Ext.util.Format.htmlEncode('COUNT(op1)')
- 	 			, operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCount')}]
- 		    }, {
- 			    text: 'COUNT_DISTINCT'
- 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')
- 			    , type: 'function'
- 	 			, value: Ext.util.Format.htmlEncode('COUNT(DISTINCT op1)')
- 	 			, alias: Ext.util.Format.htmlEncode('COUNT(DISTINCT op1)')
- 	 			, operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpCountDist')}]
- 		    }, {
-			    text: 'AVG'
-				, qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.avg')
-				, type: 'function'
-				, value: Ext.util.Format.htmlEncode('AVG(op1)')
-				, alias: Ext.util.Format.htmlEncode('AVG(op1)')
-				, operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpAVG')}]
-				}
- 		];
+		*/	
 		
-		var dateFunctions = [
-      		    {
-      	            text: 'GG_between_dates'
-      	            , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.ggbetweendates')
-      	            , type: 'function'
-      	            , value: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
-      	            , alias: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
-      	            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
-      	            		   , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
-      		    
-      	         }, {
-      		         text: 'MM_between_dates'
-      		         , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.mmbetweendates')
-      			     , type: 'function'
-      			     , value: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
-      			     , alias: Ext.util.Format.htmlEncode('MM_between_dates(op1,op2)')
-      			     , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
-      	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
-      			 },{
-      				 text: 'AA_between_dates'
-      			      , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.aabetweendates')
-      			      , type: 'function'
-      			      , value: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
-      			      , alias: Ext.util.Format.htmlEncode('AA_between_dates(op1,op2)')
-      			      , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1')}
-      	            		    , {label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2')}]
-      			 }, {
-      			     text: 'GG_up_today'
-      			     , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.gguptoday')
-      				 , type: 'function'
-      				 , value: Ext.util.Format.htmlEncode('GG_up_today(op1)')
-      				 , alias: Ext.util.Format.htmlEncode('GG_up_today(op1)')
-      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
-      			 }, {
-      			     text: 'MM_up_today'
-      				 , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.mmuptoday')
-      				 , type: 'function'
-      				 , value: Ext.util.Format.htmlEncode('MM_up_today(op1)')
-      				 , alias: Ext.util.Format.htmlEncode('MM_up_today(op1)')
-      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
-      			  }, {
-      				 text: 'AA_up_today'
-      				 , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.aauptoday')
-      				 , type: 'function'
-      				 , value: Ext.util.Format.htmlEncode('AA_up_today(op1)')
-      				 , alias: Ext.util.Format.htmlEncode('AA_up_today(op1)')
-      				 , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
-      			   }
-      	    ];
-		*/
 		this.inLineCalculatedFieldWizard = new Sbi.qbe.CalculatedFieldWizard({
     		title: LN('sbi.qbe.calculatedFields.title'),
     		expItemGroups: [
@@ -820,9 +664,9 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
     		    {name:'dateFunctions', text:  LN('sbi.qbe.calculatedFields.datefunctions')}
     		],
     		fields: fields,
-    		functions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_ARITHMETIC_FUNCTIONS, // functionsForInline,
-    		aggregationFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_AGGREGATIN_FUNCTIONS, // aggregationFunctions,
-    		dateFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_DATE_FUNCTIONS, // dateFunctions,
+    		functions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS, // functionsForInline,
+    		aggregationFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS, // aggregationFunctions,
+    		dateFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS, // dateFunctions,
     		expertMode: false,
         	scopeComboBoxData :[
         	     ['STRING','String', LN('sbi.qbe.calculatedFields.string.type')],
@@ -845,8 +689,8 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
      		    {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
      		],
      		fields: fields,
-     		functions: functions,
-     		dateFunctions: dateFunctions,
+     		functions: Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_SCRIPT_FUNCTIONS,
+     		dateFunctions: Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS,
      		expertMode: true,
         	scopeComboBoxData :[
         	    ['STRING','String', LN('sbi.qbe.calculatedFields.string.type')],
