@@ -425,7 +425,7 @@ public class ViewpointDAOHimpl extends AbstractHibernateDAO implements IViewpoin
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, objId.intValue());
-			hqlQuery.setString(1, ((UserProfile)userProfile).getUserId().toString());
+			hqlQuery.setString(1, (String)((UserProfile)userProfile).getUserId());
 			
 			List hibList = hqlQuery.list();
 			
