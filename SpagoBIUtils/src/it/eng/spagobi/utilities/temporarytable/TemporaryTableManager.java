@@ -313,7 +313,8 @@ public class TemporaryTableManager {
 
 	public static void dropTableIfExists(String tableName, IDataSource dataSource) throws Exception {
 		logger.debug("IN: dropping table " + tableName + " if exists");
-		String dialect = dataSource.getHibDialectName();
+		String dialect = dataSource.getHibDialectClass();
+		logger.debug("Dialect : " + dialect );
 		if (dialect.contains("Oracle")) { // ORACLE does not support DROP TABLE IF EXISTS command
 			try {
 				executeStatement("DROP TABLE " + tableName, dataSource);

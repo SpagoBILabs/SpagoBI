@@ -295,7 +295,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
             , layout: {
                 type:'column'
             }
-			, style:'padding:0px 5px 5px 5px; float: left; width: auto;'
+			, style:'padding:0px 5px 5px 5px; float: left;' + (Ext.isIE) ? '' : 'width: auto;'
        		, items: [
        		     thePanel
        		     , deleteButtonPlaceHolder

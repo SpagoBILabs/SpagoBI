@@ -27,6 +27,7 @@ import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
+import it.eng.spagobi.engines.worksheet.exceptions.WrongConfigurationForFiltersOnDomainValuesException;
 import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
@@ -125,7 +126,12 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 					Sheet aSheet = workSheetDefinition.getSheet(sheetName);
 					sheetFilters = aSheet.getFiltersOnDomainValues();
 				}
-				Map<String, List<String>> filters = WorkSheetDefinition.mergeDomainValuesFilters(globalFilters, sheetFilters);
+				Map<String, List<String>> filters = null;
+				try {
+					filters = WorkSheetDefinition.mergeDomainValuesFilters(globalFilters, sheetFilters);
+				} catch (WrongConfigurationForFiltersOnDomainValuesException e) {
+					throw new SpagoBIEngineServiceException(this.getActionName(), e.getMessage(), e);
+				}
 				logger.debug("Setting filters on domain values : " + filters);
 				filteringBehaviour.setFilters(filters);
 			}
@@ -146,8 +152,7 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			 * TODO change JSONDataWriter to use the field name as column name and change any class (java and javascript) 
 			 * based on "column_" + index convention
 			 */
-//			JSONDataWriter writer = new JSONDataWriter(props);
-			JSONDataWriter writer = new DomainValuesJSONDataWriter();  
+			JSONDataWriter writer = new DomainValuesJSONDataWriter(props);  
 			gridDataFeed = (JSONObject) writer.write(dataStore);
 			
 			// the first column contains the actual domain values, we must put this information into the response
@@ -178,7 +183,6 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 				String message = "Impossible to write back the responce to the client";
 				throw new SpagoBIEngineServiceException(getActionName(), message, e);
 			}
-			
 		} catch(Throwable t) {
 			errorHitsMonitor = MonitorFactory.start("WorksheetEngine.errorHits");
 			errorHitsMonitor.stop();
@@ -206,7 +210,11 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 	}
 	
 	private class DomainValuesJSONDataWriter extends JSONDataWriter {
-
+		
+		public DomainValuesJSONDataWriter(Map<String, Object> properties) {
+			super(properties);
+		}
+		
 		@Override
 		protected String getFieldName(IFieldMetaData fieldMetaData, int i) {
 			return fieldMetaData.getName();

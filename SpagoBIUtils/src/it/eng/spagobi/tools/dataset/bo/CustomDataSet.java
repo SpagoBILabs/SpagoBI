@@ -35,9 +35,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -114,9 +114,8 @@ public class CustomDataSet extends ConfigurableDataSet {
 		toreturn.setDsMetadata(getDsMetadata());
 		toreturn.setMetadata(getMetadata());
 		toreturn.setParamsMap(getParamsMap());
-		toreturn.setProperties(getProperties());
-		
-		
+		LogMF.debug(logger, "Setting properties into dataset : {0}", this.customDataMap);
+		toreturn.setProperties(this.customDataMap);
 
 		logger.debug("OUT");
 		return (IDataSet) obj;
@@ -185,34 +184,27 @@ public class CustomDataSet extends ConfigurableDataSet {
 
 
 
-	private Map convertStringToMap(String _customData){
-		logger.debug("IN");
+	private Map convertStringToMap(String _customData) {
+		LogMF.debug(logger, "IN : {0}", _customData);
 		Map toInsert = new HashMap<String, Object>();
-		try{
-			if(_customData != null && !_customData.equals("")){
+		try {
+			if (_customData != null && !_customData.equals("")) {
 				JSONObject jsonObject = new JSONObject(_customData);
 
 				String[] names = JSONObject.getNames(jsonObject);
 
 				for (int i = 0; i < names.length; i++) {
 					String nm = names[i];
-					String value = jsonObject.getString(nm);
+					Object value = jsonObject.get(nm);
+					logger.debug("Property read: key is [" + nm
+							+ "], value is [" + value + "]");
 					toInsert.put(nm, value);
 				}
-
-				//				JSONArray jsonArray = new JSONArray(_customData);
-				//				for(int i = 0;i<jsonArray.length();i++){
-				//					JSONObject obj = (JSONObject)jsonArray.getJSONObject(0);
-				//					String name = obj.getString("name");
-				//					String value = obj.getString("value");
-				//					toInsert.put(name, value);
-				//				}
 			}
+		} catch (Exception e) {
+			logger.error("cannot parse to Map the Json string " + customData, e);
 		}
-		catch (Exception e) {
-			logger.error("cannot parse to Map the Json string "+customData);
-		}
-		logger.debug("IN");
+		LogMF.debug(logger, "OUT : {0}", toInsert);
 		return toInsert;
 
 	}

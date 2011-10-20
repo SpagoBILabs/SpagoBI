@@ -33,6 +33,7 @@ public class NativeTypeTranslatorFactory {
 	
 	public static final String DRIVER_ORACLE = "Oracle";
 	public static final String DRIVER_SQLSERVER = "mssqlserver4";
+	public static final String DRIVER_SQLSERVERMICROSOFT_WITH_SPACE = "SQL Server";
 	public static final String DRIVER_SQLSERVERMICROSOFT = "SQLServer";
 	public static final String DRIVER_SQLSERVERSPRINTA = "TdsDriver";
 	public static final String DRIVER_SQLSERVERJTURBO = "jturbo";
@@ -53,7 +54,7 @@ public class NativeTypeTranslatorFactory {
 			return new DB2TypeTranslator();
 		}else if(driverName.contains(DRIVER_ORACLE)){
 			return new OracleTypeTranslator();
-		}else if(driverName.contains(DRIVER_SQLSERVER) || driverName.contains(DRIVER_SQLSERVERMICROSOFT) || driverName.contains(DRIVER_SQLSERVERSPRINTA) || driverName.contains(DRIVER_SQLSERVERJTURBO)){
+		}else if(driverName.contains(DRIVER_SQLSERVER) || driverName.contains(DRIVER_SQLSERVERMICROSOFT) || driverName.contains(DRIVER_SQLSERVERMICROSOFT_WITH_SPACE) || driverName.contains(DRIVER_SQLSERVERSPRINTA) || driverName.contains(DRIVER_SQLSERVERJTURBO)){
 			return new SqlServerTypeTranslator();
 		}else if(driverName.contains(DRIVER_MYSQL) ){
 			return new MySqlTypeTranslator();

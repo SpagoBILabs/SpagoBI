@@ -23,6 +23,7 @@ package it.eng.spagobi.engines.worksheet.bo;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.worksheet.IWorksheetStateLoader;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.worksheet.WorksheetStateLoaderFactory;
+import it.eng.spagobi.engines.worksheet.exceptions.WrongConfigurationForFiltersOnDomainValuesException;
 import it.eng.spagobi.utilities.engines.EngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -183,7 +184,7 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 		return rowData.getBytes();
 	}
 
-	public Map<String, List<String>> getFiltersOnDomainValues() {
+	public Map<String, List<String>> getFiltersOnDomainValues() throws WrongConfigurationForFiltersOnDomainValuesException {
 		List<Attribute> globalFilters = this.getGlobalFilters(); // the global filters
 		List<Attribute> sheetFilters = this.getFiltersOnDomainValuesOnSheets(); // the union of the filters defined in all the sheets
 		Map<String, List<String>> toReturn = mergeDomainValuesFilters(globalFilters, sheetFilters);
@@ -222,7 +223,7 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 	
 
 	public static Map<String, List<String>> mergeDomainValuesFilters(
-			List<Attribute> globalFilters, List<Attribute> sheetFilters) {
+			List<Attribute> globalFilters, List<Attribute> sheetFilters) throws WrongConfigurationForFiltersOnDomainValuesException {
 		Iterator<Attribute> globalFiltersIt = globalFilters.iterator();
 		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
 		while (globalFiltersIt.hasNext()) {
@@ -237,8 +238,8 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 					// the sheets filters are less or equal to the global filters (this should always happen)
 					toReturn.put(aGlobalFilter.getEntityId(), sheetsFilterValues);
 				} else {
-					logger.error("The global filter on field " + aGlobalFilter.getAlias() + " is overridden by sheets");
-					throw new SpagoBIEngineRuntimeException("The global filter on field " + aGlobalFilter.getAlias() + " is overridden by sheets");
+					logger.error("The global filter on field " + aGlobalFilter.getAlias() + " is overridden by the sheet.");
+					throw new WrongConfigurationForFiltersOnDomainValuesException("The global filter on field " + aGlobalFilter.getAlias() + " is overridden by the sheet. Please expand the global filter's values.");
 				}
 			} else {
 				toReturn.put(aGlobalFilter.getEntityId(), aGlobalFilter.getValuesAsList());
