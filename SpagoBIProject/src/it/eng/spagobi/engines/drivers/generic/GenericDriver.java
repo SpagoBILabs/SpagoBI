@@ -202,8 +202,12 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 				try {
 					biobjPar = (BIObjectParameter)it.next();									
 					String value = parValuesEncoder.encode(biobjPar);
-					pars.put(biobjPar.getParameterUrlName(), value);
-					logger.debug("Add parameter:"+biobjPar.getParameterUrlName()+"/"+value);
+          if (biobjPar!=null && biobjPar.getParameterUrlName()!=null && value!=null) {
+					 pars.put(biobjPar.getParameterUrlName(), value);
+					 logger.debug("Add parameter:"+biobjPar.getParameterUrlName()+"/"+value);
+          }  else {
+             logger.warn("NO parameter are added... something is null");
+          }
 				} catch (Exception e) {
 					logger.error("Error while processing a BIParameter",e);
 				}
