@@ -78,11 +78,16 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
     , expression : null
 
     , getExpression: function() {
-    	var expression;
-    	var fs = this.firstCalculatedFiledPanel.getFormState();
-    	expression = fs.expression || this.firstCalculatedFiledPanel.target.attributes.attributes.formState.expression;
-    	//alert(this.firstCalculatedFiledPanel.target.attributes.attributes.formState.expression + ' vediamo se così va: ' + expression );
-		return expression;
+    	var expression = null;
+    	if(this.startFromFirstPage == true || this.modality == 'edit') {
+    		var fs = this.firstCalculatedFiledPanel.getFormState();
+        	expression = fs.expression;
+    	}
+    		
+    	if(this.firstCalculatedFiledPanel.target) {
+    		expression = expression || this.firstCalculatedFiledPanel.target.attributes.attributes.formState.expression;
+    	}
+    	return expression;
     }
 
     , setExpItems: function(itemGroupName, items) {
