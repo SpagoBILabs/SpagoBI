@@ -1003,5 +1003,9 @@ VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOM
 	'Custom','SbiCustomDataSet','DATA_SET_TYPE','Data Set Type','SbiCustomDataSet', 'biadmin');
 	
 	
-	-- 6/10/2011 Giulio
-ALTER TABLE sbi_data_set_history MODIFY COLUMN DS_METADATA TEXT
+-- 6/10/2011 Giulio
+ALTER TABLE sbi_data_set_history MODIFY COLUMN DS_METADATA TEXT;
+
+
+-- 20/10/2011 Davide : il motore worksheet può lavorare con i dataset
+UPDATE SBI_ENGINES SET USE_DATASET = TRUE WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver';
