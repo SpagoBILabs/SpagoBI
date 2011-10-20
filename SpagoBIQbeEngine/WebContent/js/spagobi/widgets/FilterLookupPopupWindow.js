@@ -70,7 +70,6 @@ Sbi.widgets.FilterLookupPopupWindow = function(config) {
 
 	this.addEvents('selectionmade', 'onok');	
 	
-	
 	this.init();
 
 	this.items = this.grid;
@@ -106,6 +105,8 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
     , xvalue: null
     // oggetto (value: description, *)
     , xselection: null
+    // contains values for records to be enabled (i.e. that can be selected)
+    , enabledRecords: null
     
     , singleSelect: true
    
@@ -169,7 +170,21 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
 			
 		}
 		
-		this.sm = new Ext.grid.CheckboxSelectionModel( {singleSelect: this.singleSelect } );
+		this.sm = new Ext.grid.CheckboxSelectionModel({
+			singleSelect: this.singleSelect
+			, listeners: {
+				beforerowselect : {
+					fn : function (sm, rowIndex, keepExisting, record) {
+						var recordValue = record.data[this.valueField];
+						// if record is not enabled, is cannot be selected (this.enabledRecords = null means every record is enabled)
+						if ( this.enabledRecords != null && this.enabledRecords.indexOf(recordValue) == -1 ) {
+							return false;
+						}
+					}
+					, scope : this
+				}
+			}
+		});
 		this.sm.on('rowselect', this.onSelect, this);
 		this.sm.on('rowdeselect', this.onDeselect, this);
 		
@@ -182,11 +197,11 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
    	     	, collapsible:false
    	     	, loadMask: true
    	     	, viewConfig: {
-   	        	forceFit:true
-   	        	, enableRowBody:true
-   	        	, showPreview:true
+   	        	forceFit : true
+   	        	, enableRowBody : true
+   	        	, showPreview : true
+		        , getRowClass : this.getRowClassFunction.createDelegate(this, [], true)
    	     	}
-			
 			, tbar: filteringToolbar
 			, bbar: pagingBar
 		});
@@ -203,13 +218,22 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
     		
     	
     	// initializing the values' array, if not already initialized
-    	if(this.startValues){
+    	if (this.startValues) {
     		this.xselection['Values'] = this.startValues;
     	}
     	else if (this.xselection['Values'] === undefined) {
     		this.xselection['Values'] = new Array();
     	}
 
+	}
+
+	, getRowClassFunction : function (record, index, rowParams, store) {
+    	var recordValue = record.data[this.valueField];
+    	// if record is not enabled, is cannot be selected (this.enabledRecords = null means every record is enabled)
+    	if ( this.enabledRecords != null && this.enabledRecords.indexOf(recordValue) == -1 ) {
+          	return "disabled-record";
+    	}
+    	return "";
 	}
     
     , updateMeta: function(meta) {

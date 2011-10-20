@@ -58,6 +58,7 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 	// The following instruction creates mainly:
 	//this.attribute = c.attribute : the json object representing the attribute: it must be in the constructor input object
 	//this.params = c.params : the json object with the parameters for store loading: it must be in the constructor input object
+	//this.startValues = c.startValues : the initial values to be selected
 	Ext.apply(this, c);
 	
 	var service_params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
@@ -88,15 +89,16 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 	
 	c.params = p;
 	
-	// add selection values
-	if (this.attribute.values) {
-		c.startValues = this.attribute.values; 	
-	}
+//	// add selection values
+//	if (this.attribute.values) {
+//		c.startValues = this.attribute.values; 	
+//	}
 	
 	// constructor
 	Sbi.worksheet.designer.AttributeValuesChooserWindow.superclass.constructor.call(this, c);
-	// set first selection
-	this.setSelection(Ext.decode(this.attribute.values)); // TODO è necessario?
+
+//	// set first selection
+//	this.setSelection(Ext.decode(this.attribute.values));
  	
 	this.show(this);
 

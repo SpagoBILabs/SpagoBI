@@ -128,25 +128,36 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 		var params = {
 			worksheetDefinition : Ext.encode(worksheetDefinition)
 		};
+		var startValues = null;
+		var enabledRecords = null; // records selectable, if null means every record
 		if (theSheet) {
 			// double-click event on a sheet
 			params.sheetName = theSheet.getName();
 			attribute = theSheet.getFilterOnDomainValues(attribute);
+			startValues = Ext.decode(attribute.values);
+			var globalFilter = this.getGlobalFilterForAttribute(attribute);
 			if (attribute.values == '[]') {
 				// if there are no filters on sheet, consider the global filters
-				var globalFilter = this.getGlobalFilterForAttribute(attribute);
 				if (globalFilter !== null) {
-					attribute.values = globalFilter.values;
+					startValues = Ext.decode(globalFilter.values);
 				}
 			}
+			enabledRecords = globalFilter != null ? Ext.decode(globalFilter.values) : null; // records selectable are those in global filter
+		} else {
+			// double click on top-left fields panel (global filters)
+			startValues = Ext.decode(attribute.values);
+			enabledRecords = null;
 		}
 		var c = {
      		attribute : attribute
+     		, startValues : startValues
+     		, enabledRecords : enabledRecords
      		, params : params
 	    };
      	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow(c);
      	chooserWindow.on('selectionmade', function(theWindow, sSelection) {
-     		attribute.values = Ext.encode(theWindow.getSelection());
+     		var selection = Ext.encode(theWindow.getSelection());
+     		attribute.values = selection;
      	}, this);
 	}
 	

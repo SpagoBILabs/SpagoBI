@@ -32,6 +32,7 @@ import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Field;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
+import it.eng.spagobi.engines.worksheet.exceptions.WrongConfigurationForFiltersOnDomainValuesException;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
@@ -293,7 +294,26 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 
 	public Connection getConnection() {
 		try {
-			return this.getDataSource().getConnection();
+			IDataSource datasource = this.getDataSource();
+			Boolean multiSchema = datasource.getMultiSchema();
+			logger.debug("Datasource is multischema: " + multiSchema);
+			String schema;
+			if (multiSchema == null || !multiSchema.booleanValue()) {
+				schema = null;
+			} else {
+				String attributeName = datasource.getSchemaAttribute();
+				logger.debug("Datasource multischema attribute name: " + attributeName);
+				UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
+				logger.debug("Looking for attribute " + attributeName + " for user " + userProfile + " ...");
+				Object attributeValue = userProfile.getUserAttribute(attributeName);
+				logger.debug("Atribute " + attributeName + " for user " + userProfile.getUserId() + " is " + attributeValue);
+				if (attributeValue == null) {
+					throw new RuntimeException("No attribute with name " + attributeName + " found for user " + userProfile.getUserId());
+				} else {
+					schema = attributeValue.toString();
+				}
+			}
+			return this.getDataSource().getConnection(schema);
 		} catch (Exception e) {
 			throw new SpagoBIEngineRuntimeException("Cannot get connection to datasource", e);
 		}
@@ -302,7 +322,12 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 	public Map<String, List<String>> getFiltersOnDomainValues() {
 		WorksheetEngineInstance engineInstance = this.getEngineInstance();
 		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
-		Map<String, List<String>> toReturn = workSheetDefinition.getFiltersOnDomainValues();
+		Map<String, List<String>> toReturn = null;
+		try {
+			toReturn = workSheetDefinition.getFiltersOnDomainValues();
+		} catch (WrongConfigurationForFiltersOnDomainValuesException e) {
+			throw new SpagoBIEngineServiceException(this.getActionName(), e.getMessage(), e);
+		}
 		return toReturn;
 	}
 	

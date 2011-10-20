@@ -457,3 +457,10 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 	text-align:right;
 	//border: 1px solid black;
 }
+
+/*******************************************************************************************************
+ * disabled-record for Sbi.widgets.FilterLookupPopupWindow
+ ********************************************************************************************************/
+.disabled-record {
+	background-color: #EAEAEA;
+}
