@@ -6,7 +6,7 @@
         <id name="subObjId" type="integer">
             <column name="subobj_id" />
    			<generator class="org.hibernate.id.enhanced.TableGenerator">
-					<param name="optimizer">hilo</param>
+					<param name="optimizer">none</param>
 		            <param name="segment_value">SBI_SUBOBJECTS</param>	
 		            <param name="initial_value">1</param>					
    			</generator>
