@@ -128,7 +128,7 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 				rightOperandValue: node.id
 				, rightOperandDescription: node.props.query.name
 				, rightOperandLongDescription: 'Subquery ' + node.props.query.name
-				, rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_SUBQUERY
+				, rightOperandType: Sbi.constants.qbe.OPERAND_TYPE_SUBQUERY
 			};
 			this.targetPanel.modifyFilter(filter, rowIndex);
 		} else if(dropColDataIndex === 'leftOperandDescription') {
@@ -136,7 +136,7 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 				leftOperandValue: node.id
 				, leftOperandDescription: node.props.query.name
 				, leftOperandLongDescription: 'Subquery ' + node.props.query.name
-				, leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_SUBQUERY
+				, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SUBQUERY
 			};
 			this.targetPanel.modifyFilter(filter, rowIndex);
 		} else {
@@ -178,7 +178,7 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 			filter = {
 				rightOperandValue: (rows[0].data.type == 'NUM') ? 'P{' + rows[0].data.id + '}' : '\'P{' + rows[0].data.id + '}\''
 				, rightOperandDescription: '[' + rows[0].data.label + ']'
-				, rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE
+				, rightOperandType: Sbi.constants.qbe.OPERAND_TYPE_STATIC_VALUE
 				, rightOperandAggregator: 'NONE'
 				, rightOperandLongDescription: LN('sbi.qbe.documentparametersgridpanel.parameterreference') + ' [' + rows[0].data.label + ']'
 			};
@@ -188,7 +188,7 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 			filter = {
 				leftOperandValue: (rows[0].data.type == 'NUM') ? 'P{' + rows[0].data.id + '}' : '\'P{' + rows[0].data.id + '}\''
 				, leftOperandDescription: '[' + rows[0].data.label + ']'
-				, leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE
+				, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_STATIC_VALUE
 				, leftOperandAggregator: 'NONE'
 				, leftOperandLongDescription: LN('sbi.qbe.documentparametersgridpanel.parameterreference') + ' [' + rows[0].data.label + ']'
 			};
@@ -232,7 +232,7 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 			filter = {
 				rightOperandValue: (rows[0].data.type == 'NUM') ? 'P{' + rows[0].data.name + '}' : '\'P{' + rows[0].data.name + '}\''
 				, rightOperandDescription: '[' + rows[0].data.name + ']'
-				, rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_STATIC_VALUE
+				, rightOperandType: Sbi.constants.qbe.OPERAND_TYPE_STATIC_VALUE
 				, rightOperandAggregator: 'NONE'
 				, rightOperandLongDescription: LN('sbi.qbe.parametersgridpanel.parameterreference') + ' [' + rows[0].data.name + ']'
 				, promptable: true
@@ -267,12 +267,12 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 			dropColDataIndex = this.targetGrid.getColumnModel().getDataIndex( colIndex );
 		}
 	
-		if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) {			
+		if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {			
 			if(dropColDataIndex === 'rightOperandDescription') {			
 				filter = {
 					rightOperandValue: node.id
 					, rightOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
-					, rightOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
+					, rightOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 					, rightOperandLongDescription: node.attributes.attributes.longDescription
 				};
 				this.targetPanel.modifyFilter(filter, rowIndex);
@@ -280,7 +280,7 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 				filter = {
 					leftOperandValue: node.id
 					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
-					, leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
+					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 					, leftOperandLongDescription: node.attributes.attributes.longDescription
 				};
 				this.targetPanel.modifyFilter(filter, rowIndex);
@@ -288,20 +288,20 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 				filter = {
 					leftOperandValue: node.id
 					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
-					, leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD
+					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 					, leftOperandLongDescription: node.attributes.attributes.longDescription
 				};
 	  			this.targetPanel.insertFilter(filter, rowIndex);
 			}
-		} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_ENTITY){
+		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY){
 			
 			for(var i = 0; i < node.attributes.children.length; i++) {
 				var filterType;
 				var nodeType = node.attributes.children[i].attributes.type;
-				if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_SIMPLE_FIELD) {
-					filterType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD;
-				} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD) {
-					filterType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD;
+				if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
+					filterType = Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD;
+				} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
+					filterType = Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD;
 				} else {
 					continue;
 				}
@@ -315,11 +315,11 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 				
 				this.targetPanel.insertFilter(filter, rowIndex);
 			}
-		} else if(nodeType == Sbi.settings.qbe.constants.NODE_TYPE_INLINE_CALCULATED_FIELD){
+		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD){
 			filter = {
 					leftOperandValue: node.attributes.attributes.formState
 					, leftOperandDescription: node.attributes.entity + ' : ' + node.attributes.attributes.formState.alias 
-					, leftOperandType: Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
 					, leftOperandLongDescription: node.attributes.attributes.formState.alias 
 			};
 				
@@ -368,10 +368,10 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 			}
 		
 			var filterType;
-			if(rows[0].data.type == Sbi.settings.qbe.constants.FIELD_TYPE_SIMPLE) {
-				filterType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD;
-			} else if(rows[0].data.type == Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED) {
-				filterType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD;
+			if(rows[0].data.type == Sbi.constants.qbe.FIELD_TYPE_SIMPLE) {
+				filterType = Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD;
+			} else if(rows[0].data.type == Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED) {
+				filterType = Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD;
 			} else {
 				Ext.Msg.show({
 					   title:'Drop target not allowed',
@@ -418,10 +418,10 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 	  			if(!this.copy) {
 	  				
 	  				var filterType;
-	  				if(rows[i].data.type == Sbi.settings.qbe.constants.FIELD_TYPE_SIMPLE) {
-	  					filterType = Sbi.settings.qbe.constants.OPERAND_TYPE_SIMPLE_FIELD;
-	  				} else if(rows[i].data.type == Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED) {
-	  					filterType = Sbi.settings.qbe.constants.OPERAND_TYPE_INLINE_CALCULATED_FIELD;
+	  				if(rows[i].data.type == Sbi.constants.qbe.FIELD_TYPE_SIMPLE) {
+	  					filterType = Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD;
+	  				} else if(rows[i].data.type == Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED) {
+	  					filterType = Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD;
 	  				} else {
 	  					Ext.Msg.show({
 	  						   title:'Drop target not allowed',

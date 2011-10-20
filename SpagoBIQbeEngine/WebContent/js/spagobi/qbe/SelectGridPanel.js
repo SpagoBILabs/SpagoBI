@@ -166,7 +166,7 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		field = Ext.apply(field, {
 			id: '', 
 			alias: '', 
-			type: Sbi.settings.qbe.constants.FIELD_TYPE_SIMPLE,
+			type: Sbi.constants.qbe.FIELD_TYPE_SIMPLE,
 			
 			entity: '', 
 			field: '',
@@ -861,12 +861,12 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
      	});
  		
      	this.calculatedFieldWizard.on('apply', function(win, formState, targetRecord){
-     		var field = {id: formState, alias: formState.alias, type: Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED, longDescription: formState.expression};
+     		var field = {id: formState, alias: formState.alias, type: Sbi.constants.qbe.FIELD_TYPE_CALCULATED, longDescription: formState.expression};
      		if(targetRecord) {
      			Ext.apply(targetRecord.data, field);	
      			this.store.fireEvent('datachanged', this.store) ;
      		} else {
-     			this.addField({id: formState, alias: formState.alias, type: Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED, longDescription: formState.expression});
+     			this.addField({id: formState, alias: formState.alias, type: Sbi.constants.qbe.FIELD_TYPE_CALCULATED, longDescription: formState.expression});
      		}
      	}, this);
      	
@@ -891,13 +891,13 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
      	}, this);
 		
     	this.inLineCalculatedFieldWizard.on('apply', function(win, formState, targetRecord){
-    		var field = {id: formState, alias: formState.alias, type: Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED, longDescription: formState.expression};
+    		var field = {id: formState, alias: formState.alias, type: Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED, longDescription: formState.expression};
     		
     		if(targetRecord) {
     			Ext.apply(targetRecord.data, field);
     			this.store.fireEvent('datachanged', this.store);
     		} else {
-    			this.addField({id: formState, alias: formState.alias, type: Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED, longDescription: formState.expression});
+    			this.addField({id: formState, alias: formState.alias, type: Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED, longDescription: formState.expression});
     		}
     	}, this);
 	}
@@ -1050,10 +1050,10 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 	, initGridListeners: function() {
 		this.grid.addEvents('actionrequest');
 		this.grid.on("actionrequest", function(grid, action, record){
-			if(action === 'filter' && record.data.type != Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED) {
+			if(action === 'filter' && record.data.type != Sbi.constants.qbe.FIELD_TYPE_CALCULATED) {
 				this.fireEvent('filter', this, record);
 			}
-			if(action === 'having' && record.data.type != Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED) {	
+			if(action === 'having' && record.data.type != Sbi.constants.qbe.FIELD_TYPE_CALCULATED) {	
 				this.fireEvent('having', this, record);
 			}
 		}, this);
@@ -1061,10 +1061,10 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		this.grid.on("rowdblclick", function(grid,  rowIndex, e){
 	    	var row;
 	       	var record = grid.getStore().getAt( rowIndex );
-	       	if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_INLINE_CALCULATED) {
+	       	if(record.data.type === Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED) {
 	       		this.addInLineCalculatedField(record);
 	       	}
-	       	if(record.data.type === Sbi.settings.qbe.constants.FIELD_TYPE_CALCULATED) {
+	       	if(record.data.type === Sbi.constants.qbe.FIELD_TYPE_CALCULATED) {
 	       		this.addCalculatedField(record);
 	       	}
 	     }, this);
