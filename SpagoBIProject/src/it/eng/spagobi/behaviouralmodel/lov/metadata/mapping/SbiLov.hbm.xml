@@ -10,7 +10,7 @@
         <id name="lovId" type="integer">
             <column name="lov_id" />
    <generator class="org.hibernate.id.enhanced.TableGenerator">
-		<param name="optimizer">hilo</param>
+		<param name="optimizer">none</param>
 		<param name="segment_value">SBI_LOV</param>
 		<param name="initial_value">1</param>		
    </generator>
