@@ -7,7 +7,7 @@
         <id name="featureId" type="int">
             <column name="FEATURE_ID" />     
    <generator class="org.hibernate.id.enhanced.TableGenerator">
-		<param name="optimizer">hilo</param>
+		<param name="optimizer">none</param>
 		<param name="segment_value">SBI_GEO_FEATURES</param>
 		<param name="initial_value">1</param>		
    </generator> 
