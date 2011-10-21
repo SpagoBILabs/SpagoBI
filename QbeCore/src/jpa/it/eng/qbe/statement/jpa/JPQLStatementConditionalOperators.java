@@ -93,8 +93,13 @@ public class JPQLStatementConditionalOperators {
 			public String apply(String leftHandValue, String[] rightHandValues) {	
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				String rightHandValue = rightHandValues[0].trim();
-				rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
-				rightHandValue = rightHandValue + "%";
+				if (rightHandValue.startsWith("'")) {
+					rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
+					rightHandValue = rightHandValue + "%";
+				}else{
+					// field reference
+					rightHandValue = "' || " + rightHandValue + " || '%";
+				}
 				return leftHandValue + " like '" + rightHandValue + "'";
 			}
 		});
@@ -103,8 +108,13 @@ public class JPQLStatementConditionalOperators {
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				String rightHandValue = rightHandValues[0].trim();
-				rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
-				rightHandValue = rightHandValue + "%";
+				if (rightHandValue.startsWith("'")) {
+					rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
+					rightHandValue = rightHandValue + "%";
+				}else{
+					// field reference
+					rightHandValue = "' || " +rightHandValue + " || '%";
+				}
 				return leftHandValue + " not like '" + rightHandValue + "'";
 			}
 		});
@@ -113,8 +123,13 @@ public class JPQLStatementConditionalOperators {
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				String rightHandValue = rightHandValues[0].trim();
-				rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
-				rightHandValue = "%" + rightHandValue;
+				if (rightHandValue.startsWith("'")) {
+					rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
+					rightHandValue = "%" + rightHandValue;
+				}else{
+					// field reference
+					rightHandValue = "%' || " + rightHandValue + " || '";
+				}
 				return leftHandValue + " like '" + rightHandValue + "'";
 			}
 		});
@@ -123,18 +138,28 @@ public class JPQLStatementConditionalOperators {
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				String rightHandValue = rightHandValues[0].trim();
-				rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
-				rightHandValue = "%" + rightHandValue;
+				if (rightHandValue.startsWith("'")) {
+					rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
+					rightHandValue = "%" + rightHandValue;
+				}else{
+					// field reference
+					rightHandValue = "%' || " + rightHandValue + " || '";
+				}
 				return leftHandValue + " not like '" + rightHandValue + "'";
 			}
-		});		
+		});		 
 		conditionalOperators.put(CriteriaConstants.CONTAINS, new IConditionalOperator() {
 			public String getName() {return CriteriaConstants.CONTAINS;}
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
-				String rightHandValue = rightHandValues[0].trim();
-				rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
-				rightHandValue = "%" + rightHandValue + "%";
+				String rightHandValue = rightHandValues[0].trim(); 
+				if (rightHandValue.startsWith("'")) {
+					rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
+					rightHandValue = "%" + rightHandValue + "%";
+				}else{
+					// field reference
+					rightHandValue = "%' || " + rightHandValue + " || '%";
+				}
 				return leftHandValue + " like '" + rightHandValue + "'";
 			}
 		});
