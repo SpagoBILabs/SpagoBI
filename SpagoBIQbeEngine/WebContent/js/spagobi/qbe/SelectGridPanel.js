@@ -229,29 +229,6 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		return fields;
 	}
 	
-	, getRowsAsJSONParams: function() {
-		Sbi.qbe.commons.deprectadeFunction('SelectGridPanel', 'getRowsAsJSONParams');
-		var jsonStr = '[';
-		for(i = 0; i < this.store.getCount(); i++) {
-			var tmpRec = this.store.getAt(i);
-			if(i != 0) jsonStr += ',';
-			jsonStr += '{';
-			jsonStr += 	'"id" : "' + tmpRec.data['id'] + '",';	
-			jsonStr += 	'"entity" : "' + tmpRec.data['entity'] + '",';	
-			jsonStr += 	'"field"  : "' + tmpRec.data['field']  + '",';	
-			jsonStr += 	'"alias"  : "' + tmpRec.data['alias']  + '",';	
-			jsonStr += 	'"group"  : "' + tmpRec.data['group']  + '",';
-			jsonStr += 	'"order"  : "' + tmpRec.data['order']  + '",';
-			jsonStr += 	'"funct"  : "' + tmpRec.data['funct']  + '",';
-			jsonStr += 	'"include" : ' + tmpRec.data['include'] + '';	
-			jsonStr += 	'"visible" : ' + tmpRec.data['visible'] + '';	
-			jsonStr += '}';	
-		}
-		jsonStr += ']';
-		
-		return jsonStr;
-	}
-	
 	, hideNonVisibleRows: function(button, pressed) {
 		
 		this.grid.store.filterBy(function(record, id) {

@@ -894,7 +894,12 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		Ext.Ajax.request({
 			url:  this.services['addCalculatedField'],
 			success: function(response, options) {
-   				//alert('saved');
+//				Ext.Msg.show({
+//					   title: 'Add',
+//					   msg: 'Calculated field succesfully added to tree',
+//					   buttons: Ext.Msg.OK,
+//					   icon: Ext.MessageBox.INFO
+//				});
    			},
    			scope: this,
 			failure: Sbi.exception.ExceptionHandler.handleFailure,	
@@ -962,7 +967,12 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		Ext.Ajax.request({
 			url:  this.services['addCalculatedField'],
 			success: function(response, options) {
-   				//alert('saved');
+//				Ext.Msg.show({
+//					   title: 'Add',
+//					   msg: 'Calculated field succesfully added to tree',
+//					   buttons: Ext.Msg.OK,
+//					   icon: Ext.MessageBox.INFO
+//				});
    			},
    			scope: this,
 			failure: Sbi.exception.ExceptionHandler.handleFailure,	
