@@ -176,27 +176,45 @@ Ext.extend(Sbi.qbe.SelectGridDropTarget, Ext.dd.DropTarget, {
         } else if(nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY){
 			
 			for(var i = 0; i < node.attributes.children.length; i++) {
-				var fieldType;
+				var childNode = node.attributes.children[i];
 				var nodeType = node.attributes.children[i].attributes.type;
+				
 				if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
-					fieldType = Sbi.constants.qbe.FIELD_TYPE_SIMPLE;
+					field = {
+		      			id: childNode.id , 
+		        		entity:childNode.attributes.entity , 
+		        		field: childNode.attributes.field,
+		        		type: Sbi.constants.qbe.FIELD_TYPE_SIMPLE,
+		               	alias: childNode.attributes.field,
+		               	longDescription: childNode.attributes.longDescription
+		      		};				
+					this.targetPanel.addField(field, rowIndex);
 				} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {
-					fieldType = Sbi.constants.qbe.FIELD_TYPE_CALCULATED;
+					field = {
+			           	id: childNode.id , 
+			            entity: childNode.attributes.entity , 
+			            field: childNode.attributes.field,
+			            alias: childNode.attributes.field  
+			        };
+			            
+			        this.targetPanel.addField(field, rowIndex);
 				} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
-					fieldType = Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED;
+					field = {
+		        		id: childNode.attributes.formState,
+		        		type: Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED,
+		        		entity: node.text, 
+		        		field: childNode.text,
+		        		alias: childNode.text,
+		        		longDescription: null
+				    };
+
+		            this.targetPanel.addField(field, rowIndex);
 				} else {
 					continue;
 				}
 				
-				field = {
-      				id: node.attributes.children[i].id , 
-        			entity: node.attributes.children[i].attributes.entity , 
-        			field: node.attributes.children[i].attributes.field,
-        			type: fieldType,
-                	alias: node.attributes.children[i].attributes.field,
-                	longDescription: node.attributes.children[i].attributes.longDescription
-      			};				
-				this.targetPanel.addField(field, rowIndex);
+				
+				
 			}
 			
         } else {

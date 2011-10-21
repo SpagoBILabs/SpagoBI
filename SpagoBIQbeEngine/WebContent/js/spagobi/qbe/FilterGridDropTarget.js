@@ -128,7 +128,7 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 				rightOperandValue: node.id
 				, rightOperandDescription: node.props.query.name
 				, rightOperandLongDescription: 'Subquery ' + node.props.query.name
-				, rightOperandType: 'Subquery'
+				, rightOperandType: Sbi.constants.qbe.OPERAND_TYPE_SUBQUERY
 			};
 			this.targetPanel.modifyFilter(filter, rowIndex);
 		} else if(dropColDataIndex === 'leftOperandDescription') {
@@ -136,7 +136,7 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 				leftOperandValue: node.id
 				, leftOperandDescription: node.props.query.name
 				, leftOperandLongDescription: 'Subquery ' + node.props.query.name
-				, leftOperandType: 'Subquery'
+				, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SUBQUERY
 			};
 			this.targetPanel.modifyFilter(filter, rowIndex);
 		} else {
@@ -268,7 +268,7 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 				filter = {
 					rightOperandValue: node.id
 					, rightOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
-					, rightOperandType: Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD
+					, rightOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 					, rightOperandLongDescription: node.attributes.attributes.longDescription
 				};
 				this.targetPanel.modifyFilter(filter, rowIndex);
@@ -276,7 +276,7 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 				filter = {
 					leftOperandValue: node.id
 					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
-					, leftOperandType: Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD
+					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 					, leftOperandLongDescription: node.attributes.attributes.longDescription
 				};
 				this.targetPanel.modifyFilter(filter, rowIndex);
@@ -284,7 +284,7 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 				filter = {
 					leftOperandValue: node.id
 					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
-					, leftOperandType: Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD
+					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 					, leftOperandLongDescription: node.attributes.attributes.longDescription
 				};
 	  			this.targetPanel.insertFilter(filter, rowIndex);

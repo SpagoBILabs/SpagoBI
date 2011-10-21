@@ -270,6 +270,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 		var filter;
 		
 		record =  this.grid.store.getAt(i);
+		if(!record) alert("No record at " + i);
 		filter = Ext.apply({}, record.data);
 		filter.promptable = filter.promptable || false;
 		
