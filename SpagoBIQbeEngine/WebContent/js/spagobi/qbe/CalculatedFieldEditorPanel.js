@@ -402,7 +402,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
     		allowBlank: false, 
     		inputType:'text',
     		maxLength:50,
-    		width:250,
+    		width:150,
     		fieldLabel:'Alias' 
     	});
     	var aliasPanel = new  Ext.form.FormPanel({
@@ -413,6 +413,14 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
     	var scopeComboBoxStore = new Ext.data.SimpleStore({
     		fields: ['value', 'field', 'description'],
     		data : this.scopeComboBoxData 
+    	});  
+    	
+    	var natureComboBoxStore = new Ext.data.SimpleStore({
+    		fields: ['value', 'field', 'description'],
+    		data : [
+    		    ['ATTRIBUTE', 'Attribute', 'Attribite is ...']
+    		    , ['MEASURE', 'Measure', 'Measure is ...']
+    		] 
     	});  
     	
     	this.expertCheckBox = new Ext.form.Checkbox({
@@ -467,6 +475,29 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
     	if(this.expertDisable){
     		expertCheckPanel.hide();
     	}
+    	
+    	this.inputFields['nature'] = new Ext.form.ComboBox({
+    		tpl: '<tpl for="."><div ext:qtip="{field}: {description}" class="x-combo-list-item">{field}</div></tpl>',	
+    		editable  : false,
+    		fieldLabel : 'Nature',
+    		forceSelection : true,
+    		allowBlank :false,
+    		mode : 'local',
+    		name : 'scope',
+    		store : natureComboBoxStore,
+    		displayField:'field',
+    		valueField:'value',
+    		emptyText:'Select nature...',
+    		typeAhead: true,
+    		triggerAction: 'all',
+    		width:150,
+    		selectOnFocus:true
+    	});
+    	
+    	var naturePanel = new  Ext.form.FormPanel({
+    		bodyStyle: "background-color: transparent; border-color: transparent; padding-left: 10px;",
+    		items: [this.inputFields['nature']]
+    	});
 
     	this.detailsFormPanel = new Ext.Panel(
 	    	 Ext.apply({
@@ -477,7 +508,8 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	    		 items: [
 	    		     aliasPanel,
 	    		     expertCheckPanel ,
-	    		     typePanel
+	    		     typePanel,
+	    		     naturePanel
 	    		 ]
 	    	 }, c || {})
 

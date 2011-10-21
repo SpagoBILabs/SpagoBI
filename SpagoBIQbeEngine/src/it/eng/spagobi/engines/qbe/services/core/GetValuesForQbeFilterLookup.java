@@ -238,11 +238,18 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 		String value = null;
 		
 		if(type.equals(ISelectField.IN_LINE_CALCULATED_FIELD)){
-			String s = fieldDescriptor.optString("slots");
-			String slots = null;
-			if(s != null && s.trim().length() > 0) slots = s;
 			
-			query.addInLineCalculatedFiled("Valori", fieldDescriptor.getString("expression"), slots, DataSetVariable.STRING, true, true, false, "asc", "NONE");
+			String slots = null;
+			if(fieldDescriptor.has("slots")) {
+				slots = fieldDescriptor.getString("slots");
+			}
+			
+			String nature = null;
+			if(fieldDescriptor.has("nature")) {
+				nature = fieldDescriptor.getString("nature");
+			}
+			
+			query.addInLineCalculatedFiled("Valori", fieldDescriptor.getString("expression"), slots, DataSetVariable.STRING, nature, true, true, false, "asc", "NONE");
 			value = fieldDescriptor.getString("expression");
 		}else{
 			query.addSelectFiled(fieldDescriptor.getString("entity"), "NONE", "Valori", true, true, false, "asc", null);
