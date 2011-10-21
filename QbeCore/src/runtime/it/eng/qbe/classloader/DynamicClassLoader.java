@@ -119,7 +119,12 @@ public class DynamicClassLoader extends URLClassLoader {
 				return super.findSystemClass(className);
 			}
 
-			classToLoad = defineClass(className, buffer, 0, buffer.length);
+			try {
+				classToLoad = defineClass(className, buffer, 0, buffer.length);
+			} catch (ClassFormatError e) {
+				logger.error("Error defining class " + className , e);
+				throw e;
+			}
 			if (classToLoad == null) { 
 				throw new ClassFormatError();
 			}
@@ -242,7 +247,8 @@ public class DynamicClassLoader extends URLClassLoader {
 			//load the persistence.xml from the jar file
 			try{
 				String s = jarFile.getAbsolutePath().replace(File.separatorChar, '/');		
-				final URL jarUrl = new URL("jar","",-1,"file:/"+s+"!/META-INF/persistence.xml");
+//				final URL jarUrl = new URL("jar","",-1,"file:/"+s+"!/META-INF/persistence.xml");  // this works only on Windows!!
+				final URL jarUrl = new URL("jar:file:"+s+"!/META-INF/persistence.xml");
 				//build the enumeration with only the URL with the location of the persistence.xml
 				return new Enumeration<URL>() {
 					private int position = 0;
