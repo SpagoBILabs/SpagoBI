@@ -201,6 +201,7 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 		    , store: store
 		    , mode: 'remote'
 		    , displayField: 'column_2'
+		    , displayFieldTpl: '<tpl for="."><div ext:qtip="{column_2}">{column_2}</div></tpl>' // tooltip for items selected
 		    , valueField: 'column_1'
 		    , emptyText: ''
 		    , typeAhead: false
@@ -211,6 +212,7 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 		    , width: 200
 		    , maxHeight: 250
 		    , displayDateFormat: Sbi.locale.formats.date.dateFormat
+		    , tpl: '<tpl for="."><div ext:qtip="{column_2}" class="x-combo-list-item">{column_2}&nbsp;</div></tpl>' // tooltip for available selections
 		}));
 		
 		return field;
