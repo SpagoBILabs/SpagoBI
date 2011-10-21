@@ -276,7 +276,7 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 					, rightOperandLongDescription: node.attributes.attributes.longDescription
 				};
 				this.targetPanel.modifyFilter(filter, rowIndex);
-			}else if(dropColDataIndex === 'leftOperandDescription') {			
+			} else if(dropColDataIndex === 'leftOperandDescription') {			
 				filter = {
 					leftOperandValue: node.id
 					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
@@ -293,41 +293,66 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 				};
 	  			this.targetPanel.insertFilter(filter, rowIndex);
 			}
+		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD){
+			
+			if(dropColDataIndex === 'rightOperandDescription') {			
+				filter = {
+					rightOperandValue: node.attributes.attributes.formState
+					, rightOperandDescription: node.attributes.entity + ' : ' + node.attributes.attributes.formState.alias 
+					, rightOperandType: Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+					, rightOperandLongDescription: node.attributes.attributes.formState.alias
+				};
+				this.targetPanel.modifyFilter(filter, rowIndex);
+			} else if(dropColDataIndex === 'leftOperandDescription') {			
+				filter = {
+					leftOperandValue: node.attributes.attributes.formState
+				    , leftOperandDescription: node.attributes.entity + ' : ' + node.attributes.attributes.formState.alias 
+					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+					, leftOperandLongDescription: node.attributes.attributes.formState.alias 
+				};
+				this.targetPanel.modifyFilter(filter, rowIndex);
+			} else {
+				filter = {
+					leftOperandValue: node.attributes.attributes.formState
+				    , leftOperandDescription: node.attributes.entity + ' : ' + node.attributes.attributes.formState.alias 
+					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+					, leftOperandLongDescription: node.attributes.attributes.formState.alias 
+				};
+						
+				this.targetPanel.insertFilter(filter, rowIndex);
+			}
+		
+				
 		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY){
 			
 			for(var i = 0; i < node.attributes.children.length; i++) {
-				var filterType;
-				var nodeType = node.attributes.children[i].attributes.type;
-				if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
-					filterType = Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD;
-				} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
-					filterType = Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD;
-				} else {
-					continue;
+				
+				var childNode = node.attributes.children[i];
+				var childNodeType = childNode.attributes.type;
+				
+				if(childNodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
+					  					
+					filter = {
+						leftOperandValue: childNode.id
+						, leftOperandDescription: childNode.attributes.entity + ' : ' + childNode.attributes.field 
+						, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
+						, leftOperandLongDescription: childNode.attributes.longDescription
+					};
+					
+					this.targetPanel.addFilter(filter);
+				} else if(childNodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
+				
+					filter = {
+						leftOperandValue: childNode.attributes.formState
+						, leftOperandDescription: childNode.entity + ' : ' + childNode.attributes.formState.alias 
+						, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
+						, leftOperandLongDescription: childNode.attributes.formState.alias 
+					};
+								
+					this.targetPanel.addFilter(filter);
 				}
-				
-				filter = {
-					leftOperandValue: node.attributes.children[i].id
-					, leftOperandDescription: node.attributes.children[i].attributes.entity + ' : ' + node.attributes.children[i].attributes.field 
-					, leftOperandType: filterType
-					, leftOperandLongDescription: node.attributes.children[i].attributes.longDescription
-				};
-				
-				this.targetPanel.insertFilter(filter, rowIndex);
 			}
-		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD){
-			filter = {
-					leftOperandValue: node.attributes.attributes.formState
-					, leftOperandDescription: node.attributes.entity + ' : ' + node.attributes.attributes.formState.alias 
-					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
-					, leftOperandLongDescription: node.attributes.attributes.formState.alias 
-			};
-				
-			this.targetPanel.insertFilter(filter, rowIndex);
-			
-
-            
-        } else {
+		} else {
 			Ext.Msg.show({
 				   title:'Drop target not allowed',
 				   msg: 'Node of type [' + nodeType + '] cannot be dropped here',
