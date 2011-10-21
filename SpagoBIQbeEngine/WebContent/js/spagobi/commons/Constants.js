@@ -3,7 +3,7 @@ Ext.ns("Sbi.constants");
 Sbi.constants.qbe = {
 		
 	// select clause field types (twins java constants are defined in class ISelectField)
-	FIELD_TYPE_SIMPLE: 'Field Content'
+	FIELD_TYPE_SIMPLE: 'datamartField'
 	, FIELD_TYPE_CALCULATED: 'calculated.field'
 	, FIELD_TYPE_INLINE_CALCULATED: 'inline.calculated.field'
 			
