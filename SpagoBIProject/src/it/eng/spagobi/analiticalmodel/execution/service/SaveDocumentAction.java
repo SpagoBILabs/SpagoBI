@@ -166,15 +166,21 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			o.setDescription(description);
 			o.setVisible(new Integer(1));
 
-			if(engineId!=null){
-				Engine engine = DAOFactory.getEngineDAO().loadEngineByID(new Integer(engineId));
-				o.setEngine(engine);
-			}else{
+			Engine engine = null;
+			if ( engineId != null ) {
+				engine = DAOFactory.getEngineDAO().loadEngineByID(new Integer(engineId));
+				if ( engine == null ) {
+					throw new SpagoBIServiceException(SERVICE_NAME,	"No engine found");
+				}
+			} else {
 				List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(type);
-				if(engines!=null && !engines.isEmpty()){
-					o.setEngine(engines.get(0));
+				if ( engines != null && !engines.isEmpty() ){
+					engine = engines.get(0);
+				} else {
+					throw new SpagoBIServiceException(SERVICE_NAME,	"No suitable engine found for " + type + " document type");
 				}
 			}
+			o.setEngine(engine);
 
 			Domain objType = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.BIOBJ_TYPE, type);
 			Integer biObjectTypeID = objType.getValueId();
