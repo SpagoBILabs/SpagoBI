@@ -116,8 +116,8 @@ public class Query {
 		selectFields.add( new CalculatedSelectField(fieldAlias, expression, type, included, visible) );
 	}
 	
-	public void addInLineCalculatedFiled(String fieldAlias, String expression, String slots, String type, boolean included, boolean visible, boolean groupByField, String orderType, String funct) {
-		selectFields.add( new InLineCalculatedSelectField(fieldAlias, expression, slots, type, included, visible, groupByField, orderType, funct) );
+	public void addInLineCalculatedFiled(String fieldAlias, String expression, String slots, String type, String nature, boolean included, boolean visible, boolean groupByField, String orderType, String funct) {
+		selectFields.add( new InLineCalculatedSelectField(fieldAlias, expression, slots, type, nature, included, visible, groupByField, orderType, funct) );
 	}
 
 	
