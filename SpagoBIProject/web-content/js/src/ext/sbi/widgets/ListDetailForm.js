@@ -386,7 +386,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
  	    });
  	    
  	   var pagingBar = new Ext.PagingToolbar({
-	        pageSize: 14,
+	        pageSize: 15, 
 	        store: this.mainElementsStore,
 	        displayInfo: true,
 	        displayMsg: '', 
