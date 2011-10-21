@@ -208,6 +208,8 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			, functions: c.functions
 			, aggregationFunctions: c.aggregationFunctions
 			, dateFunctions: c.dateFunctions
+			, arithmeticFunctions : c.arithmeticFunctions
+			, groovyFunctions : c.groovyFunctions
 			, expertMode: c.expertMode
 			, scopeComboBoxData: c.scopeComboBoxData   		
 			, validationService: c.validationService

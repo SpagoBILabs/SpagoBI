@@ -200,9 +200,18 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	
 	, editField: function(fieldNode) {
 		var nodeType;
+//		var hasSlots = true;
+		
 		nodeType = fieldNode.attributes.type || fieldNode.attributes.attributes.type;
+		
+//		var slots = fieldNode.attributes.attributes.formState.slots;
+//		hasSlots = slots !== undefined && slots !== null;
+		
 		//edit slot forbidden
-		if(fieldNode.attributes.attributes.formState.slots !== undefined || fieldNode.attributes.attributes.formState.slots !== null){
+		if(fieldNode.attributes.attributes.formState.slots !== undefined 
+			&& fieldNode.attributes.attributes.formState.slots !== null
+			&& fieldNode.attributes.attributes.formState.slots.length > 0){
+		
 			Ext.Msg.show({
 				   title:'Invalid operation',
 				   msg: 'Range cannot be edited. Use Edit Range menu function.',
@@ -214,7 +223,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		
 		if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {
 			
-			if(this.calculatedFieldWizard === null) {
+			if(this.calculatedFieldWizard === null || this.inLineCalculatedFieldWizard === null) {
 				this.initWizards();
 			}
 			
@@ -243,7 +252,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			this.calculatedFieldWizard.show();
 		} else 	if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 			
-			if(this.inLineCalculatedFieldWizard === null) {
+			if(this.calculatedFieldWizard === null || this.inLineCalculatedFieldWizard === null) {
 				this.initWizards();
 			}			
 			
@@ -319,11 +328,11 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				startFromFirstPage: true,
 		    	expItemGroups: [
 	    		    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
-	    		    {name:'functions', text: LN('sbi.qbe.calculatedFields.functions')},  		    
+	    		    {name:'arithmeticFunctions', text: LN('sbi.qbe.calculatedFields.functions.arithmentic')},  		    
 	    		    {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
 	    		],
 	    		fields: new Array(),
-	    		functions: Sbi.constants.qbe.SLOTS_EDITOR_ARITHMETIC_FUNCTIONS,
+	    		arithmeticFunctions: Sbi.constants.qbe.SLOTS_EDITOR_ARITHMETIC_FUNCTIONS,
 	    		dateFunctions: Sbi.constants.qbe.SLOTS_EDITOR_DATE_FUNCTIONS,
 	    		expertMode: false,
 	        	scopeComboBoxData :[
@@ -483,14 +492,16 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				fieldForSlot: entityNode,
 				modality: 'edit',
 				startFromFirstPage: false,
- 		    	expItemGroups: [
- 	    		    {name:'fields', text: 'Fields'}, 
- 	    		    {name:'dateFunctions', text: 'Date Functions'}
- 	    		],
- 	    		fields: new Array(),
- 	    		//functions: Sbi.constants.qbe.SLOTS_EDITOR_ARITHMETIC_FUNCTIONS,
-	    		dateFunctions: Sbi.constants.qbe.SLOTS_EDITOR_DATE_FUNCTIONS,
- 	    		expertMode: false,
+				expItemGroups: [
+				    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
+				    {name:'arithmeticFunctions', text: LN('sbi.qbe.calculatedFields.functions.arithmentic')},  		    
+				    {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
+				],
+				fields: new Array(),
+				arithmeticFunctions: Sbi.constants.qbe.SLOTS_EDITOR_ARITHMETIC_FUNCTIONS,
+				dateFunctions: Sbi.constants.qbe.SLOTS_EDITOR_DATE_FUNCTIONS,
+				expertMode: false,
+				 		  
  	        	scopeComboBoxData :[
  	        	    ['STRING','String', 'If the expression script returns a plain text string'],
  	        	    ['NUMBER', 'Number', 'If the expression script returns a number']
@@ -665,14 +676,14 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		this.inLineCalculatedFieldWizard = new Sbi.qbe.CalculatedFieldWizard({
 			title: LN('sbi.qbe.inlineCalculatedFields.title'),
     		expItemGroups: [
-    		    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
-    		    {name:'functions', text: LN('sbi.qbe.calculatedFields.functions')},
-    		    {name:'aggregationFunctions', text: LN('sbi.qbe.calculatedFields.aggrfunctions')},
-    		    {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
+    		    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}
+    		    , {name:'arithmeticFunctions', text: LN('sbi.qbe.calculatedFields.functions.arithmentic')}
+    		    //, {name:'aggregationFunctions', text: LN('sbi.qbe.calculatedFields.aggrfunctions')},
+    		    , {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
     		],
     		fields: fields,
-    		functions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS,
-    		aggregationFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_AGGREGATION_FUNCTIONS,
+    		arithmeticFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS,
+    		//aggregationFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_AGGREGATION_FUNCTIONS,
     		dateFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS,
     		expertMode: false,
         	scopeComboBoxData :[
@@ -719,15 +730,17 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		this.calculatedFieldWizard = new Sbi.qbe.CalculatedFieldWizard({
     		title: LN('sbi.qbe.calculatedFields.title'),
      		expItemGroups: [
-       		    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
-       		    {name:'parameters', text: LN('sbi.qbe.calculatedFields.parameters'), loader: parametersLoader}, 
-       		    {name:'attributes', text: LN('sbi.qbe.calculatedFields.attributes'), loader: attributesLoader},
-       		    {name:'functions', text: LN('sbi.qbe.calculatedFields.functions')},
-       		    {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
+       		    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}
+       		    , {name:'parameters', text: LN('sbi.qbe.calculatedFields.parameters'), loader: parametersLoader}
+       		    , {name:'attributes', text: LN('sbi.qbe.calculatedFields.attributes'), loader: attributesLoader}
+       		    , {name:'arithmeticFunctions', text: LN('sbi.qbe.calculatedFields.functions.arithmentic')}
+       		    , {name:'groovyFunctions', text: LN('sbi.qbe.calculatedFields.functions.script')}
+       		    //, {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
        		],
        		fields: fields,
-       		functions: Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_SCRIPT_FUNCTIONS,
-       		dateFunctions: Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS,
+       		arithmeticFunctions: Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS,
+       		groovyFunctions: Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_SCRIPT_FUNCTIONS,
+       		// dateFunctions: Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS,
        		expertMode: true,
           	scopeComboBoxData :[
            	    ['STRING','String', LN('sbi.qbe.calculatedFields.string.type')],

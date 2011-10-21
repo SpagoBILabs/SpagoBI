@@ -602,12 +602,12 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
      		    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
      		    {name:'parameters', text: LN('sbi.qbe.calculatedFields.parameters'), loader: parametersLoader}, 
      		    {name:'attributes', text: LN('sbi.qbe.calculatedFields.attributes'), loader: attributesLoader},
-     		    {name:'functions', text: LN('sbi.qbe.calculatedFields.functions')},
-     		    {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
+     		    {name:'arithmeticFunctions', text: LN('sbi.qbe.calculatedFields.functions.arithmetic')},
+     		    {name:'groovyFunctions', text: LN('sbi.qbe.calculatedFields.functions.script')}
      		],
      		fields: fields,
-     		functions: Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_SCRIPT_FUNCTIONS,
-     		dateFunctions: Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS,
+     		arithmeticFunctions: Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS,
+     		groovyFunctions: Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_SCRIPT_FUNCTIONS,
      		expertMode: true,
         	scopeComboBoxData :[
         	    ['STRING','String', LN('sbi.qbe.calculatedFields.string.type')],
@@ -642,13 +642,13 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
     		title: LN('sbi.qbe.inlineCalculatedFields.title'),
     		expItemGroups: [
     		    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
-    		    {name:'functions', text:  LN('sbi.qbe.calculatedFields.functions')},
+    		    {name:'arithmeticFunctions', text:  LN('sbi.qbe.calculatedFields.functions.arithmentic')},
     		    {name:'aggregationFunctions', text:  LN('sbi.qbe.calculatedFields.aggrfunctions')},
     		    {name:'dateFunctions', text:  LN('sbi.qbe.calculatedFields.datefunctions')}
     		],
     		fields: fields,
-    		functions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS, // functionsForInline,
-    		aggregationFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS, // aggregationFunctions,
+    		arithmeticFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS, // functionsForInline,
+    		aggregationFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_AGGREGATION_FUNCTIONS, // aggregationFunctions,
     		dateFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS, // dateFunctions,
     		expertMode: false,
         	scopeComboBoxData :[
