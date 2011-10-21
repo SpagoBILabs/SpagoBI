@@ -148,10 +148,14 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				DataSetVariable variable = new DataSetVariable(claculatedQueryField.getAlias(), claculatedQueryField.getType(), claculatedQueryField.getExpression());
 				dataStoreFieldMeta.setProperty("variable", variable);	
 				dataStoreFieldMeta.setType( variable.getTypeClass() );	
-				String nature = QueryJSONSerializer.getInLinecalculatedFieldNature(claculatedQueryField.getExpression(), aliasSelectedFields);
+				
+				String nature = queryFiled.getNature();
+				if(nature == null) {
+					nature = QueryJSONSerializer.getInLinecalculatedFieldNature(claculatedQueryField.getExpression(), aliasSelectedFields);
+				}
 				dataStoreFieldMeta.setProperty("nature", nature);
-				if( nature.equals(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE)||
-						nature.equals(QuerySerializationConstants.FIELD_NATURE_MEASURE)){
+				if( nature.equalsIgnoreCase(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE)||
+						nature.equalsIgnoreCase(QuerySerializationConstants.FIELD_NATURE_MEASURE)){
 					dataStoreFieldMeta.setFieldType(FieldType.MEASURE);
 				}else{
 					dataStoreFieldMeta.setFieldType(FieldType.ATTRIBUTE);
@@ -263,7 +267,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				ex.printStackTrace();
 			}	
 
-			//logger.debug("Field [" + fieldMeta.getName()+ "] is equals to [" + calculatedValue + "]");
+			logger.debug("Field [" + fieldMeta.getName()+ "] is equals to [" + calculatedValue + "]");
 			variable.setValue(calculatedValue);
 
 			record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMeta.getName())).setValue(variable.getValue());

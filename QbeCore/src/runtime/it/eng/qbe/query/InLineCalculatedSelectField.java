@@ -35,6 +35,7 @@ public class InLineCalculatedSelectField extends AbstractSelectField {
 	private String expression;
 	private String slots;
 	private String type;
+	private String nature;
 //	private Object initialValue;
 	private boolean groupByField;
 	private IAggregationFunction function;
@@ -42,11 +43,12 @@ public class InLineCalculatedSelectField extends AbstractSelectField {
 //	private int resetType;
 //	private int incrementType;
 	
-	public InLineCalculatedSelectField(String alias, String expression, String slots, String type, boolean included, boolean visible, boolean groupByField, String orderType, String function ) {
+	public InLineCalculatedSelectField(String alias, String expression, String slots, String type, String nature, boolean included, boolean visible, boolean groupByField, String orderType, String function ) {
 		super(alias, ISelectField.CALCULATED_FIELD, included, visible);
 		this.expression = expression;
 		this.slots = slots;
 		this.type = type;
+		this.nature = nature;
 		this.groupByField = groupByField;
 		setOrderType(orderType);
 		setFunction( AggregationFunctions.get(function) );
@@ -76,6 +78,14 @@ public class InLineCalculatedSelectField extends AbstractSelectField {
 		this.type = type;
 	}
 	
+	public String getNature() {
+		return nature;
+	}
+
+	public void setNature(String nature) {
+		this.nature = nature;
+	}
+
 	public ISelectField copy() {
 		return null;
 	}

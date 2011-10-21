@@ -264,7 +264,10 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 						fieldJSON.put(QuerySerializationConstants.FIELD_ICON_CLS, "calculation");
 
-						nature = getInLinecalculatedFieldNature(calculatedSelectField.getExpression(), aliasSelectedFields);
+						nature = calculatedSelectField.getNature();
+						if(nature == null) {
+							nature = getInLinecalculatedFieldNature(calculatedSelectField.getExpression(), aliasSelectedFields);
+						}
 
 					}
 
