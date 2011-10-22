@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * The Interface IStatement.
  * 
- * @author Andrea Gioia
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public interface IStatement {
 	

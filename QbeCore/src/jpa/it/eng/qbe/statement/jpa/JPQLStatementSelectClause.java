@@ -30,7 +30,7 @@ import org.json.JSONArray;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class JPQLStatementSelectClause extends JPQLStatementClause {
+public class JPQLStatementSelectClause extends AbstractJPQLStatementClause {
 	
 	String[] statementFields;
 	int index;
@@ -42,11 +42,16 @@ public class JPQLStatementSelectClause extends JPQLStatementClause {
 	 
 	public static transient Logger logger = Logger.getLogger(JPQLStatementSelectClause.class);
 	
+	public static String build(JPQLStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps){
+		JPQLStatementSelectClause clause = new JPQLStatementSelectClause(parentStatement);
+		return clause.buildClause(query, entityAliasesMaps);
+	}
+	
 	protected JPQLStatementSelectClause(JPQLStatement statement) {
 		parentStatement = statement;
 	}
 	
-	protected String buildSelectClause(Query query, Map entityAliasesMaps) {
+	public String buildClause(Query query, Map<String, Map<String, String>> entityAliasesMaps) {
 		StringBuffer buffer;
 		List<ISelectField> selectFields;
 		List<InLineCalculatedSelectField> selectInLineCalculatedFields = new ArrayList<InLineCalculatedSelectField>();

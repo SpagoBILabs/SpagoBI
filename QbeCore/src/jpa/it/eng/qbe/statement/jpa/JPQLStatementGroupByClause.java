@@ -24,15 +24,20 @@ import org.apache.log4j.Logger;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class JPQLStatementGroupByClause  extends JPQLStatementClause {
+public class JPQLStatementGroupByClause  extends AbstractJPQLStatementClause {
 	
 	public static transient Logger logger = Logger.getLogger(JPQLStatementGroupByClause.class);
+	
+	public static String build(JPQLStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps){
+		JPQLStatementGroupByClause clause = new JPQLStatementGroupByClause(parentStatement);
+		return clause.buildClause(query, entityAliasesMaps);
+	}
 	
 	protected JPQLStatementGroupByClause(JPQLStatement statement) {
 		parentStatement = statement;
 	}
 	
-	protected String buildGroupByClause(Query query, Map entityAliasesMaps) {
+	public String buildClause(Query query, Map<String, Map<String, String>> entityAliasesMaps) {
 		StringBuffer buffer;	
 		String fieldName;
 		

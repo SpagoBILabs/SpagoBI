@@ -31,17 +31,22 @@ import org.apache.log4j.Logger;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class JPQLStatementFromClause extends JPQLStatementClause {
+public class JPQLStatementFromClause extends AbstractJPQLStatementClause {
 	
 	public static final String FROM = "FROM";
 	
 	public static transient Logger logger = Logger.getLogger(JPQLStatementFromClause.class);
 	
+	public static String build(JPQLStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps){
+		JPQLStatementFromClause clause = new JPQLStatementFromClause(parentStatement);
+		return clause.buildClause(query, entityAliasesMaps);
+	}
+	
 	protected JPQLStatementFromClause(JPQLStatement statement) {
 		parentStatement = statement;
 	}
 	
-	protected String buildFromClause(Query query, Map entityAliasesMaps) {
+	public String buildClause(Query query, Map entityAliasesMaps) {
 		StringBuffer buffer;
 		
 		
