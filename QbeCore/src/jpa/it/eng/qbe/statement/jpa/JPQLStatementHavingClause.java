@@ -18,17 +18,22 @@ import org.apache.log4j.Logger;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class JPQLStatementHavingClause extends JPQLStatementFilteringClause {
+public class JPQLStatementHavingClause extends AbstractJPQLStatementFilteringClause {
 	
 	public static final String HAVING = "HAVING";
 	
 	public static transient Logger logger = Logger.getLogger(JPQLStatementHavingClause.class);
 	
+	public static String build(JPQLStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps){
+		JPQLStatementHavingClause clause = new JPQLStatementHavingClause(parentStatement);
+		return clause.buildClause(query, entityAliasesMaps);
+	}
+	
 	protected JPQLStatementHavingClause(JPQLStatement statement) {
 		parentStatement = statement;
 	}
 	
-	protected String buildHavingClause(Query query, Map entityAliasesMaps) {
+	public String buildClause(Query query, Map<String, Map<String, String>> entityAliasesMaps) {
 		
 		StringBuffer buffer = new StringBuffer();
 		

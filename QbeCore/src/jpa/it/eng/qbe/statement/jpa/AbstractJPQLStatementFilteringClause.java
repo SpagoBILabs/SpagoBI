@@ -32,10 +32,10 @@ import org.json.JSONObject;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public abstract class JPQLStatementFilteringClause  extends JPQLStatementClause {
+public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQLStatementClause {
 	
 
-	public static transient Logger logger = Logger.getLogger(JPQLStatementFilteringClause.class);
+	public static transient Logger logger = Logger.getLogger(AbstractJPQLStatementFilteringClause.class);
 	
 
 	protected String buildInLineCalculatedFieldClause(String operator, Operand leftOperand, boolean isPromptable, Operand rightOperand, Query query, Map entityAliasesMaps, IConditionalOperator conditionalOperator){

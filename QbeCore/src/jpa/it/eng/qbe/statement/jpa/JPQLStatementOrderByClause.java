@@ -24,15 +24,20 @@ import org.apache.log4j.Logger;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class JPQLStatementOrderByClause  extends JPQLStatementClause {
+public class JPQLStatementOrderByClause  extends AbstractJPQLStatementClause {
 	
 	public static transient Logger logger = Logger.getLogger(JPQLStatementOrderByClause.class);
+	
+	public static String build(JPQLStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps){
+		JPQLStatementOrderByClause clause = new JPQLStatementOrderByClause(parentStatement);
+		return clause.buildClause(query, entityAliasesMaps);
+	}
 	
 	protected JPQLStatementOrderByClause(JPQLStatement statement) {
 		parentStatement = statement;
 	}
 	
-	protected String buildOrderByClause(Query query, Map entityAliasesMaps) {
+	public String buildClause(Query query, Map<String, Map<String, String>> entityAliasesMaps) {
 		StringBuffer buffer;
 		
 		

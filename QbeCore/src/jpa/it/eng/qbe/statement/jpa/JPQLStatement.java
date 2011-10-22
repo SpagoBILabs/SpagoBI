@@ -87,7 +87,6 @@ public class JPQLStatement extends AbstractStatement {
 		super(dataSource);
 	}
 	
-	
 	public JPQLStatement(IDataSource dataSource, Query query) {
 		super(dataSource, query);
 	}
@@ -97,7 +96,7 @@ public class JPQLStatement extends AbstractStatement {
 		
 		// one map of entity aliases for each queries (master query + subqueries)
 		// each map is indexed by the query id
-		Map entityAliasesMaps = new HashMap();
+		Map<String, Map<String, String>> entityAliasesMaps = new HashMap<String, Map<String, String>>();
 		
 		queryStr = compose(getQuery(), entityAliasesMaps);	
 
@@ -115,10 +114,11 @@ public class JPQLStatement extends AbstractStatement {
 	}
 	
 	/*
-	 * internally used to generate the parametric statement string. Shared by the prepare method and the buildWhereClause method in order
-	 * to recursively generate subquery statement string to be embedded in the parent query.
+	 * internally used to generate the parametric statement string. Shared by the prepare method 
+	 * and the buildWhereClause method in order to recursively generate subquery statement 
+	 * string to be embedded in the parent query.
 	 */
-	private String compose(Query query, Map entityAliasesMaps) {
+	private String compose(Query query, Map<String, Map<String, String>> entityAliasesMaps) {
 		String queryStr = null;
 		String selectClause = null;
 		String whereClause = null;
@@ -132,22 +132,29 @@ public class JPQLStatement extends AbstractStatement {
 		Assert.assertTrue(!query.isEmpty(), "Input query cannot be empty (i.e. with no selected fields)");
 				
 		// let's start with the query at hand
-		entityAliasesMaps.put(query.getId(), new HashMap());
+		entityAliasesMaps.put(query.getId(), new HashMap<String, String>());
 		
 		JPQLBusinessViewUtility viewsUtility = new JPQLBusinessViewUtility(this);
 		
-		selectClause = buildSelectClause(query, entityAliasesMaps);
-		whereClause = buildWhereClause(query, entityAliasesMaps);
-		groupByClause = buildGroupByClause(query, entityAliasesMaps);
-		orderByClause = buildOrderByClause(query, entityAliasesMaps);
-		havingClause = buildHavingClause(query, entityAliasesMaps);
+		selectClause = JPQLStatementSelectClause.build(this, query, entityAliasesMaps);
+		whereClause = JPQLStatementWhereClause.build(this, query, entityAliasesMaps);
+		groupByClause = JPQLStatementGroupByClause.build(this, query, entityAliasesMaps);
+		orderByClause = JPQLStatementOrderByClause.build(this, query, entityAliasesMaps);
+		havingClause = JPQLStatementHavingClause.build(this, query, entityAliasesMaps);
+		
 		viewRelation = viewsUtility.buildViewsRelations(entityAliasesMaps, query, whereClause);
-		fromClause = buildFromClause(query, entityAliasesMaps);
+		fromClause = JPQLStatementFromClause.build(this, query, entityAliasesMaps);
 		
 		JPQLStatementWhereClause clause = new JPQLStatementWhereClause(this);
 		whereClause = clause.fixWhereClause(whereClause, query, entityAliasesMaps);
 		
-		queryStr = selectClause + " " + fromClause + " " + whereClause + " "+viewRelation+" " +  groupByClause + " " + havingClause + " " + orderByClause;
+		queryStr = selectClause    + " " 
+				   + fromClause    + " " 
+				   + whereClause   + " "
+				   + viewRelation  + " " 
+				   + groupByClause + " " 
+				   + havingClause  + " " 
+				   + orderByClause;
 		
 		Set subqueryIds;
 		try {
@@ -181,44 +188,9 @@ public class JPQLStatement extends AbstractStatement {
 		return "t_" + aliasesCount;
 	}
 	
-	private String buildSelectClause(Query query, Map entityAliasesMaps) {
-		JPQLStatementSelectClause clause = new JPQLStatementSelectClause(this);
-		return clause.buildSelectClause(query, entityAliasesMaps);
-	}
-	
-	
-	
-	private String buildFromClause(Query query, Map entityAliasesMaps) {
-		JPQLStatementFromClause clause = new JPQLStatementFromClause(this);
-		return clause.buildFromClause(query, entityAliasesMaps);
-	}
-
-	private String buildHavingClause(Query query, Map entityAliasesMaps) {
-		JPQLStatementHavingClause clause = new JPQLStatementHavingClause(this);		
-		return clause.buildHavingClause(query, entityAliasesMaps);
-	}
-	
-	private String buildWhereClause(Query query, Map entityAliasesMaps) {
-		JPQLStatementWhereClause clause = new JPQLStatementWhereClause(this);		
-		return clause.buildWhereClause(query, entityAliasesMaps);
-	}
-	
-	private String buildOrderByClause(Query query, Map entityAliasesMaps) {
-		JPQLStatementOrderByClause clause = new JPQLStatementOrderByClause(this);		
-		return clause.buildOrderByClause(query, entityAliasesMaps);
-	}
-	
-	private String buildGroupByClause(Query query, Map entityAliasesMaps) {
-		JPQLStatementGroupByClause clause = new JPQLStatementGroupByClause(this);		
-		return clause.buildGroupByClause(query, entityAliasesMaps);
-	}
-	
-	
-	
-	
 	public Set getSelectedEntities() {
 		Set selectedEntities;
-		Map entityAliasesMaps;
+		Map<String, Map<String, String>> entityAliasesMaps;
 		Iterator entityUniqueNamesIterator;
 		String entityUniqueName;
 		IModelEntity entity;
@@ -231,22 +203,21 @@ public class JPQLStatement extends AbstractStatement {
 		
 		// one map of entity aliases for each queries (master query + subqueries)
 		// each map is indexed by the query id
-		entityAliasesMaps = new HashMap();
+		entityAliasesMaps = new HashMap<String, Map<String, String>>();
 		
 		// let's start with the query at hand
-		entityAliasesMaps.put( getQuery().getId(), new HashMap());
+		entityAliasesMaps.put( getQuery().getId(), new HashMap<String, String>());
 		
-		buildSelectClause( getQuery(), entityAliasesMaps);
-		buildWhereClause( getQuery(), entityAliasesMaps);
-		buildGroupByClause( getQuery(), entityAliasesMaps);
-		buildOrderByClause( getQuery(), entityAliasesMaps);
-		buildFromClause( getQuery(), entityAliasesMaps);
+		JPQLStatementSelectClause.build(this, getQuery(), entityAliasesMaps);
+		JPQLStatementWhereClause.build(this, getQuery(), entityAliasesMaps);
+		JPQLStatementGroupByClause.build(this, getQuery(), entityAliasesMaps);
+		JPQLStatementOrderByClause.build(this, getQuery(), entityAliasesMaps);
+		JPQLStatementFromClause.build(this, getQuery(), entityAliasesMaps);
 		
 		Map entityAliases = (Map)entityAliasesMaps.get( getQuery().getId());
 		entityUniqueNamesIterator = entityAliases.keySet().iterator();
 		while(entityUniqueNamesIterator.hasNext()) {
 			entityUniqueName = (String)entityUniqueNamesIterator.next();
-			//entity = getDataMartModel().getDataMartModelStructure().getRootEntity( entityUniqueName );
 			entity = getDataSource().getModelStructure().getEntity( entityUniqueName );
 			selectedEntities.add(entity);
 		}

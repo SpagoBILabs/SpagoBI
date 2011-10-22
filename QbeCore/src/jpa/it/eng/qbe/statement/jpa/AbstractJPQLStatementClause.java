@@ -13,6 +13,7 @@ import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesRangeDes
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.serializer.SerializationManager;
+import it.eng.qbe.statement.IStatementClause;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.objects.Couple;
 
@@ -30,14 +31,13 @@ import org.json.JSONArray;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class JPQLStatementClause {
+public abstract class AbstractJPQLStatementClause implements IStatementClause {
 	
 	JPQLStatement parentStatement;
 	
 	public static final String EXPRESSION_TOKEN_DELIMITERS = "+-|*/(),";
 	
 	public static transient Logger logger = Logger.getLogger(JPQLStatementSelectClause.class);
-	
 	
 	public String parseInLinecalculatedField(String expression, String slots, Query query, Map entityAliasesMaps){
 		String newExpression;

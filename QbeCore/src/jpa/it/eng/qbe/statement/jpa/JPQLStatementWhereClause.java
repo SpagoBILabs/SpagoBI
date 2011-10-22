@@ -18,6 +18,7 @@ import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.statement.StatementCompositionException;
 import it.eng.qbe.statement.jpa.JPQLStatementConditionalOperators.IConditionalOperator;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -42,28 +43,54 @@ import javax.persistence.metamodel.Type;
 import org.apache.log4j.Logger;
 
 /**
+ * This class builds the where clause part of the statement
+ * 
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class JPQLStatementWhereClause extends JPQLStatementFilteringClause {
+public class JPQLStatementWhereClause extends AbstractJPQLStatementFilteringClause {
 	
 	public static final String WHERE = "WHERE";
 	
 	public static transient Logger logger = Logger.getLogger(JPQLStatementWhereClause.class);
 	
+	public static String build(JPQLStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps){
+		JPQLStatementWhereClause clause = new JPQLStatementWhereClause(parentStatement);
+		return clause.buildClause(query, entityAliasesMaps);
+	}
+	
 	protected JPQLStatementWhereClause(JPQLStatement statement) {
 		parentStatement = statement;
 	}
-	
-	protected String buildWhereClause(Query query, Map entityAliasesMaps) {
+		
+	/**
+	 * Builds the where clause part of the statement. If something goes wrong during the build process a
+	 * StatementCompositionException will be thrown
+	 *
+	 * @param query The target query
+	 * @param entityAliasesMaps Contains an alias to entity map for each query build so far.
+	 * 
+	 * @return a string representing in JPQL format the where clause part of the statement. 
+	 * 			It never returns null. If the target query have no filtering conditions it 
+	 * 			returns an empty String
+	 */
+	public String buildClause(Query query, Map<String, Map<String, String>> entityAliasesMaps) {
 		
 		StringBuffer buffer;
 
 		buffer = new StringBuffer();
 		
-		addUserProvidedConditions(buffer, query, entityAliasesMaps);
-		addProfilingConditions(buffer, query, entityAliasesMaps);
-		addJoinConditions(buffer, query, entityAliasesMaps);	
+		logger.debug("IN");
+		
+		try {
+			addUserProvidedConditions(buffer, query, entityAliasesMaps);
+			addProfilingConditions(buffer, query, entityAliasesMaps);
+			addJoinConditions(buffer, query, entityAliasesMaps);
+		} catch(Throwable t) {
+			throw new StatementCompositionException("Impossible to build where clause", t);
+		} finally {
+			logger.debug("OUT");
+		}
 	
 		return buffer.toString().trim();
 	}
@@ -81,49 +108,63 @@ public class JPQLStatementWhereClause extends JPQLStatementFilteringClause {
 		return buffer;
 	}
 	
+	/**
+	 * Add where conditions explicitly defined by user
+	 * 
+	 * @param buffer Contains the part of where clause build so far
+	 * @param query The target query
+	 * @param entityAliasesMaps Contains an alias to entity map for each query build so far.
+	 * 
+	 * @return Appends to the where clause build so far all the conditions explicitly defined by user and returns it
+	 */
 	private StringBuffer addUserProvidedConditions(StringBuffer buffer, Query query, Map entityAliasesMaps) {
 		ExpressionNode filterExp = query.getWhereClauseStructure(); 
-		return (filterExp  == null)?  buffer: addUserProvidedConditions(buffer, filterExp, query, entityAliasesMaps);
-	}
-	
-	private StringBuffer addUserProvidedConditions(StringBuffer buffer, ExpressionNode filterExp, Query query, Map entityAliasesMaps) {
-		String str = "";
-		
-		String type = filterExp.getType();
-		if("NODE_OP".equalsIgnoreCase( type )) {
-			for(int i = 0; i < filterExp.getChildNodes().size(); i++) {
-				ExpressionNode child = (ExpressionNode)filterExp.getChildNodes().get(i);
-				StringBuffer childStr = addUserProvidedConditions(new StringBuffer(), child, query, entityAliasesMaps);
-				if("NODE_OP".equalsIgnoreCase( child.getType() )) {
-					childStr = new StringBuffer("(" + childStr.toString() + ")");
-				}
-				str += (i==0? "": " " + filterExp.getValue());
-				str += " " + childStr.toString();
-			}
-		} else {
-			WhereField whereField = query.getWhereFieldByName( filterExp.getValue() );
-			addUserProvidedCondition(buffer, whereField, query, entityAliasesMaps);
+		if (filterExp  != null){
+			String userProvidedConditions = buildUserProvidedConditions(filterExp, query, entityAliasesMaps);
+			addCondition(buffer, userProvidedConditions);
 		}
 		
 		return buffer;
 	}
 	
-	private StringBuffer addUserProvidedCondition(StringBuffer buffer, WhereField whereField, Query query, Map entityAliasesMaps) {
+	private String buildUserProvidedConditions( ExpressionNode filterExp, Query query, Map entityAliasesMaps) {		
+		StringBuffer buffer = new StringBuffer();
 		
+		String type = filterExp.getType();
+		if("NODE_OP".equalsIgnoreCase( type )) {
+			for(int i = 0; i < filterExp.getChildNodes().size(); i++) {
+				ExpressionNode child = (ExpressionNode)filterExp.getChildNodes().get(i);
+				String childStr = buildUserProvidedConditions(child, query, entityAliasesMaps);
+				if("NODE_OP".equalsIgnoreCase( child.getType() )) {
+					childStr = "(" + childStr.toString() + ")";
+				}
+				buffer.append( (i==0? "": " " + filterExp.getValue()) );
+				buffer.append(" " + childStr.toString() );
+			}
+		} else {
+			WhereField whereField = query.getWhereFieldByName( filterExp.getValue() );
+			buffer.append(buildUserProvidedCondition(whereField, query, entityAliasesMaps));
+		}
+		
+		return buffer.toString().trim();
+	}
+	
+	private String buildUserProvidedCondition(WhereField whereField, Query query, Map entityAliasesMaps) {
+		
+		StringBuffer buffer;
 		String whereClauseElement = "";
 		String[] rightOperandElements;
 		String[] leftOperandElements;
 				
 		logger.debug("IN");
 		
+		buffer = new StringBuffer();
 		try {
 			IConditionalOperator conditionalOperator = null;
 			conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( whereField.getOperator() );
 			Assert.assertNotNull(conditionalOperator, "Unsopported operator " + whereField.getOperator() + " used in query definition");
 			
-			
-			
-			//if(whereField.getLeftOperand().values[0].contains("expression")){
+		
 			if(whereField.getLeftOperand().type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_INLINE_CALCULATED_FIELD)) {
 				whereClauseElement = buildInLineCalculatedFieldClause(whereField.getOperator(), whereField.getLeftOperand(), whereField.isPromptable(), whereField.getRightOperand(), query, entityAliasesMaps, conditionalOperator);
 			} else {
@@ -153,9 +194,11 @@ public class JPQLStatementWhereClause extends JPQLStatementFilteringClause {
 			logger.debug("OUT");
 		}
 		
-		addCondition(buffer, whereClauseElement);
+		buffer.append(whereClauseElement);
 		
-		return  buffer;
+		//addCondition(buffer, whereClauseElement);
+		
+		return  buffer.toString().trim();
 	}
 	
 	private StringBuffer addProfilingConditions(StringBuffer buffer, Query query, Map entityAliasesMaps) {
