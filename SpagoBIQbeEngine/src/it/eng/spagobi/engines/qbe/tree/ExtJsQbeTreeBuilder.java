@@ -352,6 +352,7 @@ public class ExtJsQbeTreeBuilder  {
 			JSONObject formState = new JSONObject();
 			formState.put("alias", field.getName());
 			formState.put("type", field.getType());
+			formState.put("nature", field.getNature());
 			formState.put("expression", field.getExpression());
 			
 			List<Slot> slots = field.getSlots();
