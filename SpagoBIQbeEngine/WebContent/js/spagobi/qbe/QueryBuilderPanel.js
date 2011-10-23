@@ -440,7 +440,12 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 					url:  this.services['saveTree'],
 					callback: function(success, response, options) {
 	       				if(success) {
-	       					alert('saved');
+	       					Ext.Msg.show({
+	       						title: 'Add',
+	       						msg: 'Calculated fields succesfully saved',
+	       						buttons: Ext.Msg.OK,
+	       						icon: Ext.MessageBox.INFO
+	       					});
 	       				}
 	       			},
 	       			scope: this,
@@ -566,8 +571,6 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	    		return;
 	    	}
 	    	
-	    	alert(record.data.toSource());
-	    	
 	    	filter = {
 	    		leftOperandValue: record.data.id
 				, leftOperandDescription: record.data.entity + ' : ' + record.data.field 
@@ -575,8 +578,6 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 				, leftOperandLongDescription: record.data.longDescription
 
 			};
-	    	
-	    	alert(filter.toSource());
 	    	
 	    	this.filterGridPanel.addFilter(filter);
 	    }, this);
@@ -705,8 +706,6 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			    	longDescription: node.attributes.attributes.longDescription
 			    };		
     			
-    			//alert(field.toSource());
-			    
     			Ext.apply(field, recordBaseConfig);
     			
     			this.selectGridPanel.addField(field);
@@ -720,8 +719,6 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
  			        alias: node.text,
  			        longDescription: null
  			    };
- 	    		
- 	    		//alert(field.toSource());
  	    		
  	    		Ext.apply(field, recordBaseConfig);
  	    		
@@ -751,8 +748,6 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
  	 			        alias: node.text,
  	 			        longDescription: null
  	 			    };
- 	 	    		
- 	 	    		//alert(field.toSource());
  	 	    		
  	 	    		Ext.apply(field, recordBaseConfig);
  	 	    		
