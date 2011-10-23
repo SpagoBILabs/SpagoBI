@@ -126,6 +126,7 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 		
 		JSONObject fieldClaculationDescriptor;
 		String type;
+		String nature;
 		String expression;
 		String slots;
 
@@ -137,6 +138,7 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 						
 			fieldClaculationDescriptor = fieldJSON.getJSONObject("calculationDescriptor");
 			type = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_TYPE);
+			nature = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_NATURE);
 			expression = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION);
 			slots = fieldClaculationDescriptor.optString(QuerySerializationConstants.FIELD_SLOTS);
 						
@@ -146,6 +148,7 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 			} else {
 				field = new ModelCalculatedField(alias, type, expression, true);
 			}
+			field.setNature(nature);
 			
 			if(slots != null && slots.trim().length() > 0) {
 				JSONArray slotsJSON = new JSONArray(slots);
