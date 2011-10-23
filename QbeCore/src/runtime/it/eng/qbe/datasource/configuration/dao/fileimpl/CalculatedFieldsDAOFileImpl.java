@@ -68,6 +68,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	public final static String FIELD_TAG_ENTIY_ATTR = "entity";
 	public final static String FIELD_TAG_NAME_ATTR = "name";
 	public final static String FIELD_TAG_TYPE_ATTR = "type";
+	public final static String FIELD_TAG_NATURE_ATTR = "nature";
 	public final static String FIELD_TAG_IN_LINE_ATTR = "isInLine";
 	
 	public final static String EXPRESSION_TAG = "EXPRESSION";
@@ -104,6 +105,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		String entity;
 		String name;
 		String type;
+		String nature;
 		Boolean inlineCalculatedField;
 		String expression;
 		ModelCalculatedField calculatedField;
@@ -140,9 +142,11 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 					entity = calculatedFieldNode.valueOf("@" + FIELD_TAG_ENTIY_ATTR);
 					name = calculatedFieldNode.valueOf("@" + FIELD_TAG_NAME_ATTR);
 					type = calculatedFieldNode.valueOf("@" + FIELD_TAG_TYPE_ATTR);
+					nature = calculatedFieldNode.valueOf("@" + FIELD_TAG_NATURE_ATTR);
 					inlineCalculatedField = new Boolean(calculatedFieldNode.valueOf("@" + FIELD_TAG_IN_LINE_ATTR));					
 					expression = loadExpression(calculatedFieldNode);
 					calculatedField = new ModelCalculatedField(name, type, expression, inlineCalculatedField.booleanValue());
+					calculatedField.setNature(nature);
 					
 					// parse slots
 					List<ModelCalculatedField.Slot> slots = loadSlots(calculatedFieldNode);
@@ -343,8 +347,9 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		            	.addAttribute( FIELD_TAG_ENTIY_ATTR, entityName )
 		            	.addAttribute( FIELD_TAG_NAME_ATTR, modelCalculatedField.getName() )
 		            	.addAttribute( FIELD_TAG_TYPE_ATTR, modelCalculatedField.getType() )
+		            	.addAttribute( FIELD_TAG_NATURE_ATTR, modelCalculatedField.getNature() )
 		            	.addAttribute( FIELD_TAG_IN_LINE_ATTR, "" + modelCalculatedField.isInLine() );
-		            	
+		            
 					
 					fieldElement.addElement( EXPRESSION_TAG ).addCDATA( modelCalculatedField.getExpression() );
 					
