@@ -32,6 +32,7 @@ public class ModelCalculatedField extends ModelField {
 	
 	String expression;
 	boolean inLine;
+	String nature;
 	List<Slot> slots;
 	String defaultSlotValue;
 
@@ -60,6 +61,14 @@ public class ModelCalculatedField extends ModelField {
 		slots = new ArrayList<Slot>();
 	}
 	
+	public String getNature() {
+		return nature;
+	}
+
+	public void setNature(String nature) {
+		this.nature = nature;
+	}
+
 	public boolean hasSlots() {
 		return slots.size() > 0;
 	}
