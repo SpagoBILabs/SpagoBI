@@ -751,17 +751,19 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		
 		var nodeType;
 		var entityId;
-		var applyMode;
+		var fieldId;
+		var editingMode;
 		
 		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
-		
+			
 		// is it the editing of en existing field or the creation of a new one?
 		if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 			entityId = targetNode.parentNode.id;
-			applyMode = 'edit';
+			editingMode = 'modify';
+			fieldId = targetNode.attributes.attributes.formState.alias; 
 		} else if(Sbi.constants.qbe.NODE_TYPE_ENTITY) {
 			entityId = targetNode.id;
-			applyMode = 'create';
+			editingMode = 'create';
 		} else {
 			Ext.Msg.show({
 			   title:'Internal error',
@@ -781,7 +783,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		
 		var params = {
 			entityId: entityId,
-			applyMode: applyMode,
+			fieldId: fieldId,
+			editingMode: editingMode,
 			field: Ext.util.JSON.encode(f)
 		}
 		
@@ -801,11 +804,11 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     	}); 
 		
 		
-		if(applyMode === 'edit') {
+		if(editingMode === 'modify') {
 			targetNode.setText(formState.alias);
 			targetNode.attributes.attributes.formState = formState;
 			
-		} else if (applyMode === 'create') {
+		} else if (editingMode === 'create') {
 			
 			var node = new Ext.tree.TreeNode({
     			text: formState.alias,
@@ -836,7 +839,29 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	, onApplyCalculatedField : function(win, formState, targetNode, fieldType){
 		
 		var nodeType;
+		var entityId;
+		var fieldId;
+		var editingMode;
+		
 		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
+			
+		// is it the editing of en existing field or the creation of a new one?
+		if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
+			entityId = targetNode.parentNode.id;
+			editingMode = 'modify';
+			fieldId = targetNode.attributes.attributes.formState.alias;
+		} else if(Sbi.constants.qbe.NODE_TYPE_ENTITY) {
+			entityId = targetNode.id;
+			editingMode = 'create';
+		} else {
+			Ext.Msg.show({
+			   title:'Internal error',
+			   msg: 'Input parameter [targetNode] of function [onApplyInlineCalculatedField] cannot be of type [' + nodeType + ']',
+			   buttons: Ext.Msg.OK,
+			   icon: Ext.MessageBox.ERROR
+			});		
+		}
+		
 		
 		var entityId = (nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD)? targetNode.parentNode.id: targetNode.id;
 		var f = {
@@ -847,7 +872,9 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			, calculationDescriptor: formState
 		};
 		var params = {
+			editingMode : editingMode,
 			entityId: entityId,
+			fieldId: fieldId,
 			field: Ext.util.JSON.encode(f)
 		}
 		
@@ -919,6 +946,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		};
 		
 		var params = {
+			editingMode : 'create',
 			entityId: entityId,
 			field: Ext.util.JSON.encode(f)
 		}
@@ -992,7 +1020,9 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		};
 		
 		var params = {
+			editingMode: 'modify',
 			entityId: entityId,
+			fieldId: targetNode.attributes.attributes.formState.alias,
 			field: Ext.util.JSON.encode(f)
 		}
 		
@@ -1012,7 +1042,6 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     	}); 
 		
 		if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
-			alert('edited calculated: ' + formState.alias);
 			targetNode.setText(formState.alias);
 			targetNode.attributes.attributes.formState = formState;
 		}  else {

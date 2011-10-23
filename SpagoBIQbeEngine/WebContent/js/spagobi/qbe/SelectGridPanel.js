@@ -858,9 +858,10 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 	    	var row;
 	       	var record = grid.getStore().getAt( rowIndex );
 	       	if(record.data.type === Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED) {
-	       		this.showInLineCalculatedFieldWizard(record);
-	       	}
-	       	if(record.data.type === Sbi.constants.qbe.FIELD_TYPE_CALCULATED) {
+	       		if(!record.data.id.slots || record.data.id.slots.length == 0) {
+	       			this.showInLineCalculatedFieldWizard(record);
+	       		}
+	       	} else if(record.data.type === Sbi.constants.qbe.FIELD_TYPE_CALCULATED) {
 	       		this.showCalculatedFieldWizard(record);
 	       	}
 	     }, this);

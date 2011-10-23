@@ -51,6 +51,8 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 	
 	
 	// INPUT PARAMETERS
+	public static final String EDITING_MODE = "editingMode";
+	public static final String FIELD_NAME = "fieldId";
 	public static final String PARENT_ENTITY_UNIQUE_NAME = "entityId";
 	public static final String FIELD = "field";
 	
@@ -61,6 +63,8 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 	
 	public void service(SourceBean request, SourceBean response)  {				
 			
+		String editingMode;
+		String fieldName;
 		String parentEntityUniqueName;
 		JSONObject fieldJSON;
 				
@@ -68,20 +72,38 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 		
 		try {
 		
-			super.service(request, response);		
+			super.service(request, response);
+			
+			editingMode = this.getAttributeAsString( EDITING_MODE );
+			logger.debug("Parameter [" + EDITING_MODE + "] is equals to [" + editingMode + "]");
+			Assert.assertNotNull(editingMode, "Parametr [" + EDITING_MODE + "] cannot be null");
+			fieldName = null;
+			if(editingMode.equalsIgnoreCase("modify")) {
+				fieldName = this.getAttributeAsString( FIELD_NAME );
+				logger.debug("Parameter [" + FIELD_NAME + "] is equals to [" + fieldName + "]");
+				Assert.assertNotNull(fieldName, "Parametr [" + FIELD_NAME + "] cannot be null if parameter [" + EDITING_MODE + "] is equal to [" + editingMode + "]");
+			} 
 			
 			parentEntityUniqueName = this.getAttributeAsString( PARENT_ENTITY_UNIQUE_NAME );
 			logger.debug("Parameter [" + PARENT_ENTITY_UNIQUE_NAME + "] is equals to [" + parentEntityUniqueName + "]");
-			
+		
 			fieldJSON = this.getAttributeAsJSONObject( FIELD );
 			logger.debug("Parameter [" + FIELD + "] is equals to [" + fieldJSON + "]");
 			
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			
-			ModelCalculatedField calculatedField = deserialize(fieldJSON);
 			
+			ModelCalculatedField calculatedField = deserialize(fieldJSON);
+		
 			IModelEntity parentEntity = getDataSource().getModelStructure().getEntity(parentEntityUniqueName);
-			parentEntity.addCalculatedField(calculatedField);
+			if(editingMode.equalsIgnoreCase("modify")) {
+				ModelCalculatedField calculatedFieldToModify = new ModelCalculatedField(fieldName, null, null);
+				calculatedFieldToModify.setParent(parentEntity);
+				parentEntity.deleteCalculatedField(calculatedFieldToModify.getUniqueName());
+				parentEntity.addCalculatedField(calculatedField);
+			} else {
+				parentEntity.addCalculatedField(calculatedField);
+			}
 			
 			try {
 				writeBackToClient( new JSONAcknowledge() );
