@@ -198,15 +198,12 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		}
 	}
 	
-	, editField: function(fieldNode) {
+	, editCalculatedField: function(fieldNode) {
 		var nodeType;
-//		var hasSlots = true;
-		
+
 		nodeType = fieldNode.attributes.type || fieldNode.attributes.attributes.type;
 		
-//		var slots = fieldNode.attributes.attributes.formState.slots;
-//		hasSlots = slots !== undefined && slots !== null;
-		
+
 		//edit slot forbidden
 		if(fieldNode.attributes.attributes.formState.slots !== undefined 
 			&& fieldNode.attributes.attributes.formState.slots !== null
@@ -291,7 +288,6 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		}
 	}
 	
-	
 	, addSlot: function(entityNode) {
 		if(entityNode==null || entityNode==undefined){
 			entityNode = this.pressedNode;
@@ -346,8 +342,6 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				}
 			});
 	    	
-			
-
 			var slotCalculatedFieldsPanel = this.slotWizard.getCalculatedFiledPanel();
 			if(slotCalculatedFieldsPanel.mainPanel !== undefined && slotCalculatedFieldsPanel.mainPanel != null){
 				slotCalculatedFieldsPanel.mainPanel.validationService.params = {fields: Ext.util.JSON.encode(fields)};
@@ -370,7 +364,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			
 			this.slotWizard.mainPanel.doLayout();
 			this.slotWizard.show();
-		}else {
+		} else {
 			Ext.Msg.show({
 				   title: LN('sbi.qbe.bands.wizard.invalid.definition'),
 				   msg: LN('sbi.qbe.bands.wizard.invalid.definition.msg'),
@@ -378,76 +372,10 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				   icon: Ext.MessageBox.ERROR
 			});		
 		}	
-		this.slotWizard.on('apply', function(win, formState, targetNode){
-    		
-    		var nodeType;
-    		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
-    		
-    		
-    		
-    		var entityId = (nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD)? targetNode.parentNode.id: targetNode.id;
-    		var f = {
-    			alias: formState.alias
-    			, id: formState
-    			, filedType: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD
-    			, type: formState.type
-    			, calculationDescriptor: formState
-    		};
-    		
-    		var params = {
-    			entityId: entityId,
-    			field: Ext.util.JSON.encode(f)
-    		}
-    		
-    		Ext.Ajax.request({
-				url:  this.services['addCalculatedField'],
-				success: function(response, options) {
-       				//('saved');
-       			},
-       			scope: this,
-				failure: Sbi.exception.ExceptionHandler.handleFailure,	
-				params: params
-        	}); 
-    		
-    		
-    		if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
-    			targetNode.text = formState.alias;
-    			targetNode.attributes.attributes.formState = formState;
-    		} else if (nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY) {
-    			var node = new Ext.tree.TreeNode({
-        			text: formState.alias,
-        			leaf: true,
-        			type: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD, 
-        			longDescription: formState.expression,
-        			formState: formState, 
-        			iconCls: 'calculation',
-        			attributes:{
-            			text: formState.alias,
-            			leaf: true,
-            			type: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD, 
-            			longDescription: formState.expression,
-            			formState: formState, 
-            			iconCls: 'calculation'}
-            		
-        		});
-
-    			
-    			if (!targetNode.isExpanded()) {
-        			targetNode.expand(false, true, function() {targetNode.appendChild( node );});
-        		} else {
-        			targetNode.appendChild( node );
-        		}
-    		} else {
-    			Ext.Msg.show({
-					   title: LN('sbi.qbe.bands.wizard.invalid.operation'),
-					   msg: LN('sbi.qbe.bands.wizard.invalid.operation.msg'),
-					   buttons: Ext.Msg.OK,
-					   icon: Ext.MessageBox.ERROR
-				});
-    		}
-    		win.close();
-    	}, this);
+		
+		this.slotWizard.on('apply', this.onApplySlotNew, this);
 	}
+
 	, editSlot: function(entityNode) {
 		if(entityNode==null || entityNode==undefined){
 			entityNode = this.pressedNode;
@@ -486,6 +414,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
  					fields.push(field);
  				}
  			}
+ 			
  			//creates a window
  			this.slotWizard = new Sbi.qbe.SlotWizard( { 
  				title: LN('sbi.qbe.bands.title'),
@@ -514,73 +443,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
  			});
     	
 
-			this.slotWizard.on('apply', function(win, formState, targetNode){
-	    		
-	    		var nodeType;
-	    		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
-	    		
-	    		var entityId = (nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD)? targetNode.parentNode.id: targetNode.id;
-	    		var f = {
-	    			alias: formState.alias
-	    			, id: formState
-	    			, filedType: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD
-	    			, type: formState.type
-	    			, calculationDescriptor: formState
-	    		};
-	    		
-	    		var params = {
-	    			entityId: entityId,
-	    			field: Ext.util.JSON.encode(f)
-	    		}
-	    		
-	    		Ext.Ajax.request({
-					url:  this.services['addCalculatedField'],
-					success: function(response, options) {
-	       				//alert('saved');
-	       			},
-	       			scope: this,
-					failure: Sbi.exception.ExceptionHandler.handleFailure,	
-					params: params
-	        	}); 
-	    		
-	    		
-	    		if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
-	    			targetNode.text = formState.alias;
-	    			targetNode.attributes.attributes.formState = formState;
-	    		} else if (nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY) {
-	    			var node = new Ext.tree.TreeNode({
-	        			text: formState.alias,
-	        			leaf: true,
-	        			type: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD, 
-	        			longDescription: formState.expression,
-	        			formState: formState, 
-	        			iconCls: 'calculation',
-	        			attributes:{
-	            			text: formState.alias,
-	            			leaf: true,
-	            			type: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD, 
-	            			longDescription: formState.expression,
-	            			formState: formState, 
-	            			iconCls: 'calculation'}
-	            		
-	        		});
-
-	    			
-	    			if (!targetNode.isExpanded()) {
-	        			targetNode.expand(false, true, function() {targetNode.appendChild( node );});
-	        		} else {
-	        			targetNode.appendChild( node );
-	        		}
-	    		} else {
-	    			Ext.Msg.show({
-						   title:LN('sbi.qbe.bands.wizard.invalid.operation'),
-						   msg: LN('sbi.qbe.bands.wizard.invalid.operation.msg'),
-						   buttons: Ext.Msg.OK,
-						   icon: Ext.MessageBox.ERROR
-					});
-	    		}
-	    		win.close();
-	    	}, this);
+			this.slotWizard.on('apply', this.onApplySlotEdit, this);
 			
  			if(this.slotWizard.mainPanel.validationService !== undefined){
  				this.slotWizard.mainPanel.validationService.params = {fields: Ext.util.JSON.encode(fields)}; 		
@@ -589,7 +452,6 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 						
 			this.slotWizard.setTargetNode(entityNode);
 			this.slotWizard.mainPanel.doLayout();
-			//this.slotWizard.mainPanel.firstCalculatedFiledPanel.inputFields['type'].syncSize();
 			this.slotWizard.show(); 	
 
 		}else {
@@ -699,7 +561,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
      	
      	this.inLineCalculatedFieldWizard.mainPanel.on('notexpert', this.onPassToExpertMode, this);
 	
-    	this.inLineCalculatedFieldWizard.on('apply', this.onAddInlineCalculatedField, this);
+    	this.inLineCalculatedFieldWizard.on('apply', this.onApplyInlineCalculatedField, this);
     	
 	}
 	
@@ -754,7 +616,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			}
     	});
 		
-		this.calculatedFieldWizard.on('apply', this.onAddCalculatedField, this);
+		this.calculatedFieldWizard.on('apply', this.onApplyCalculatedField, this);
 		
 		this.calculatedFieldWizard.mainPanel.on('expert', this.onPassToSimpleMode, this);
 	}
@@ -885,12 +747,30 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	
 	
 	
-	, onAddInlineCalculatedField : function(win, formState, targetNode, fieldType){
+	, onApplyInlineCalculatedField : function(win, formState, targetNode, fieldType){
 		
 		var nodeType;
+		var entityId;
+		var applyMode;
+		
 		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
 		
-		var entityId = (nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD)? targetNode.parentNode.id: targetNode.id;
+		// is it the editing of en existing field or the creation of a new one?
+		if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
+			entityId = targetNode.parentNode.id;
+			applyMode = 'edit';
+		} else if(Sbi.constants.qbe.NODE_TYPE_ENTITY) {
+			entityId = targetNode.id;
+			applyMode = 'create';
+		} else {
+			Ext.Msg.show({
+			   title:'Internal error',
+			   msg: 'Input parameter [targetNode] of function [onApplyInlineCalculatedField] cannot be of type [' + nodeType + ']',
+			   buttons: Ext.Msg.OK,
+			   icon: Ext.MessageBox.ERROR
+			});		
+		}
+		
 		var f = {
 			alias: formState.alias
 			, id: formState
@@ -901,6 +781,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		
 		var params = {
 			entityId: entityId,
+			applyMode: applyMode,
 			field: Ext.util.JSON.encode(f)
 		}
 		
@@ -920,11 +801,11 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     	}); 
 		
 		
-		if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
-			targetNode.text = formState.alias;
+		if(applyMode === 'edit') {
+			targetNode.setText(formState.alias);
 			targetNode.attributes.attributes.formState = formState;
 			
-		} else if (nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY) {
+		} else if (applyMode === 'create') {
 			
 			var node = new Ext.tree.TreeNode({
     			text: formState.alias,
@@ -949,17 +830,10 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     		} else {
     			targetNode.appendChild( node );
     		}
-		} else {
-			Ext.Msg.show({
-				   title: LN('sbi.qbe.bands.wizard.invalid.operation'),
-				   msg: LN('sbi.qbe.bands.wizard.invalid.operation.msg'),
-				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.ERROR
-			});
-		}
+		} 
 	}
-	
-	, onAddCalculatedField : function(win, formState, targetNode, fieldType){
+
+	, onApplyCalculatedField : function(win, formState, targetNode, fieldType){
 		
 		var nodeType;
 		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
@@ -995,7 +869,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 
     	
 		if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {
-			targetNode.text = formState.alias;
+			targetNode.setText(formState.alias);
 			targetNode.attributes.attributes.formState = formState;
 		} else if (nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY) {
 			var node = new Ext.tree.TreeNode({
@@ -1030,6 +904,128 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		}
 	}
 	
+	, onApplySlotNew : function(win, formState, targetNode){
+		
+		var nodeType;
+		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
+		
+		var entityId = (nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD)? targetNode.parentNode.id: targetNode.id;
+		var f = {
+			alias: formState.alias
+			, id: formState
+			, filedType: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD
+			, type: formState.type
+			, calculationDescriptor: formState
+		};
+		
+		var params = {
+			entityId: entityId,
+			field: Ext.util.JSON.encode(f)
+		}
+		
+		Ext.Ajax.request({
+			url:  this.services['addCalculatedField'],
+			success: function(response, options) {
+//				Ext.Msg.show({
+//				   title: 'Add',
+//				   msg: 'Calculated field succesfully added to tree',
+//				   buttons: Ext.Msg.OK,
+//				   icon: Ext.MessageBox.INFO
+//			});
+   			},
+   			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure,	
+			params: params
+    	}); 
+		
+		
+		if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
+			targetNode.text = formState.alias;
+			targetNode.attributes.attributes.formState = formState;
+		} else if (nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY) {
+			var node = new Ext.tree.TreeNode({
+    			text: formState.alias,
+    			leaf: true,
+    			type: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD, 
+    			longDescription: formState.expression,
+    			formState: formState, 
+    			iconCls: 'calculation',
+    			attributes:{
+        			text: formState.alias,
+        			leaf: true,
+        			type: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD, 
+        			longDescription: formState.expression,
+        			formState: formState, 
+        			iconCls: 'calculation'}
+        		
+    		});
+
+			
+			if (!targetNode.isExpanded()) {
+    			targetNode.expand(false, true, function() {targetNode.appendChild( node );});
+    		} else {
+    			targetNode.appendChild( node );
+    		}
+		} else {
+			Ext.Msg.show({
+				   title: LN('sbi.qbe.bands.wizard.invalid.operation'),
+				   msg: LN('sbi.qbe.bands.wizard.invalid.operation.msg'),
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.ERROR
+			});
+		}
+		win.close();
+	}
+	
+	, onApplySlotEdit : function(win, formState, targetNode){
+		
+		var nodeType;
+		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
+		
+		var entityId = (nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD)? targetNode.parentNode.id: targetNode.id;
+		var f = {
+			alias: formState.alias
+			, id: formState
+			, filedType: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD
+			, type: formState.type
+			, calculationDescriptor: formState
+		};
+		
+		var params = {
+			entityId: entityId,
+			field: Ext.util.JSON.encode(f)
+		}
+		
+		Ext.Ajax.request({
+			url:  this.services['addCalculatedField'],
+			success: function(response, options) {
+//				Ext.Msg.show({
+//				   title: 'Add',
+//				   msg: 'Calculated field succesfully added to tree',
+//				   buttons: Ext.Msg.OK,
+//				   icon: Ext.MessageBox.INFO
+//			});
+   			},
+   			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure,	
+			params: params
+    	}); 
+		
+		if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
+			alert('edited calculated: ' + formState.alias);
+			targetNode.setText(formState.alias);
+			targetNode.attributes.attributes.formState = formState;
+		}  else {
+			Ext.Msg.show({
+				   title:LN('sbi.qbe.bands.wizard.invalid.operation'),
+				   msg: LN('sbi.qbe.bands.wizard.invalid.operation.msg'),
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.ERROR
+			});
+		}
+		win.close();
+	}
+	
 	, initMenu: function() {
 		 this.menu = new Ext.menu.Menu({
              id:'feeds-ctx',
@@ -1046,7 +1042,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
             	 text:LN('sbi.qbe.calculatedFields.edit'),
                  iconCls:'edit',
                  handler:function(){
-	         	 	this.editField(this.ctxNode);
+	         	 	this.editCalculatedField(this.ctxNode);
 	             },
                  scope: this
              },{

@@ -283,16 +283,19 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 			if(nodeType === Sbi.constants.qbe.NODE_TYPE_ENTITY) {
 				this.inputFields.alias.reset();
 				this.inputFields.type.reset();
+				this.inputFields.nature.reset();
 				this.expressionEditor.reset();
 			} else if(nodeType === Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
 				Sbi.qbe.commons.unimplementedFunction('handle [field] target');
 			} else if(nodeType === Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {
 				this.inputFields.alias.setValue( node.attributes.attributes.formState.alias );
 				this.inputFields.type.setValue( node.attributes.attributes.formState.type );
+				this.inputFields.nature.setValue( node.attributes.attributes.formState.nature );
 				this.setExpression.defer(100,this, [node.attributes.attributes.formState.expression] );
 			} else if(nodeType === Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 				this.inputFields.alias.setValue( node.attributes.attributes.formState.alias );
 				this.inputFields.type.setValue( node.attributes.attributes.formState.type );
+				this.inputFields.nature.setValue( node.attributes.attributes.formState.nature );
 				this.setExpression.defer(100,this,[node.attributes.attributes.formState.expression] );
 			} else {
 				alert('Impossible to edit node of type [' + nodeType +']');
