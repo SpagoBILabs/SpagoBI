@@ -95,6 +95,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		else
 			{return true;}
 	}
+	
+	function setUser(userV, pswV){
+		var password = document.getElementById('password');
+		var user = document.getElementById('userID');
+		password.value = pswV;
+		user.value = userV;
+	//	document.forms[0].submit();
+	}
 	</script>
 	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "img/favicon.ico")%>" />
     <title>SpagoBI</title>
@@ -159,17 +167,19 @@ else {
         	%>
         	
 	        <div id="content" style="width:100%;overflow:hidden;">
-		        	<div style="float:left;background-image:url('/SpagoBI/themes/sbi_default/img/wapp/login.png');width:530px;height:200px;margin-top:110px;margin-left:50px; " >
+		        	<div style="float:left;background-image:url('/SpagoBI/themes/sbi_default/img/wapp/login_demo.png');background-repeat:no-repeat !important;width:570px;height:310px;margin-top:80px;margin-left:50px; " >
 		        	<!--
 		        	DO NOT DELETE THIS COMMENT
 		        	If you change the tag table with this one  you can have the border of the box with the shadow via css
 		        	the problem is that it doesn't work with ie	
+		     		
 		     		<table style="background: none repeat scroll 0 0 #fff; border-radius: 10px 10px 10px 10px;  box-shadow: 0 0 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
 		        	 -->
 		        	
 		        		<table border=0>
 		        			<tr>
-		        				<td width = "100px">
+		        				<td width = "120px">
+		        					&nbsp;
 		        				</td>
 		        				<td width = "350px">
 		        				    <br/> <br/><br/>
@@ -180,7 +190,7 @@ else {
 		        							</td>
 		        							<td width="25px">&nbsp;</td>
 		        							<td>
-		        								<input name="userID" type="text" size="25" />
+		        								<input id="userID" name="userID" type="text" size="25" />
 		        							</td>	
 		        						</tr>
 		        						<tr class='header-row-portlet-section'>
@@ -189,7 +199,7 @@ else {
 		        							</td>
 		        							<td width="25px">&nbsp;</td>
 		        							<td>
-		        								<input name="password" type="password" size="25" />
+		        								<input id="password" name="password" type="password" size="25" />
 		        							</td>	
 		        						</tr>
 		        						<% if (isInternalSecurity) {%>
@@ -214,6 +224,17 @@ else {
 		        					       alt="<%=msgBuilder.getMessage("login")%>"/>
 		        				</td>
 		        			</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td class='header-title-column-portlet-section-nogrey'>
+									<div class="header-row-portlet-section" style = "line-height: 130%; margin-top: 10px; font-size:9pt;">														
+										SpagoBI Demo users' credentials:<br/>
+										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('biuser','biuser')"><b>biuser/biuser</b></a>(business user)<br/>
+										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('bidemo','bidemo')"><b>bidemo/bidemo</b></a> (showcase user)<br/>
+										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('biadmin','biadmin')"><b>biadmin/biadmin</b></a> (administrator)
+									</div>
+								</td>
+							</tr>
 		        			<tr>
 		        				<td>&nbsp;</td>
 		        				<td style='color:red;font-size:11pt;'><br/><%=authFailed%></td>
