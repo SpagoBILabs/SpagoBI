@@ -343,11 +343,7 @@ public class ModelViewEntity extends ModelEntity {
 	
 	
 	public List<ModelCalculatedField> getCalculatedFields() {
-		List<ModelCalculatedField> fields = new ArrayList<ModelCalculatedField>();
-		for(IModelEntity entity : entities) {
-			fields.addAll( entity.getCalculatedFields() );
-		}
-		return fields;
+		return getCalculatedFields();
 	}
 
 	
