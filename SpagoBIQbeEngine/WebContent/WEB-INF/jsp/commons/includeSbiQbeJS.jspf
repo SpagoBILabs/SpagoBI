@@ -149,6 +149,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <script type="text/javascript" src='../js/spagobi/worksheet/exception/ValidationError.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/AttributeValuesChooserWindow.js'></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetTabMenu.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetsContainerPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignToolsPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignToolsPallettePanel.js'></script>

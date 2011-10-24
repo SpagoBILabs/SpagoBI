@@ -176,3 +176,16 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.title']='Flat table designer';
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields']='Visible fields';
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields.emptymsg']='Drag & drop here the attributes and measures that you want to visualize in the table';
+
+
+//===================================================================
+//Sbi.worksheet.designer.SheetTabMenu
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.menu.close']='Close';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.menu.rename']='Rename';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.rename.sheetname']='Sheet name';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.apply']='Apply';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.cancel']='Cancel';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error']='Error';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error.sheetnamealreadyinuse']='A sheet with the same name already exists';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error.nosheetname']='Sheet name not specified';

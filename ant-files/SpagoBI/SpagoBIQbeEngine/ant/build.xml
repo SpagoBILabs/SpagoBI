@@ -297,6 +297,7 @@
 
 			  <file name='./spagobi/worksheet/exception/ValidationError.js'/>
 			  <file name='./spagobi/worksheet/designer/AttributeValuesChooserWindow.js'/>
+		      <file name='./spagobi/worksheet/designer/SheetTabMenu.js'/>
 			  <file name='./spagobi/worksheet/designer/SheetsContainerPanel.js'/>
 			  <file name='./spagobi/worksheet/designer/DesignToolsPanel.js'/>
 			  <file name='./spagobi/worksheet/designer/DesignToolsPallettePanel.js'/>
