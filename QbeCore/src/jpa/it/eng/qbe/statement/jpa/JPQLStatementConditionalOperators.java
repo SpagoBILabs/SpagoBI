@@ -163,6 +163,21 @@ public class JPQLStatementConditionalOperators {
 				return leftHandValue + " like '" + rightHandValue + "'";
 			}
 		});
+		conditionalOperators.put(CriteriaConstants.NOT_CONTAINS, new IConditionalOperator() {
+			public String getName() {return CriteriaConstants.NOT_CONTAINS;}
+			public String apply(String leftHandValue, String[] rightHandValues) {
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
+				String rightHandValue = rightHandValues[0].trim(); 
+				if (rightHandValue.startsWith("'")) {
+					rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
+					rightHandValue = "%" + rightHandValue + "%";
+				}else{
+					// field reference
+					rightHandValue = "%' || " + rightHandValue + " || '%";
+				}
+				return leftHandValue + " not like '" + rightHandValue + "'";
+			}
+		});
 		conditionalOperators.put(CriteriaConstants.IS_NULL, new IConditionalOperator() {
 			public String getName() {return CriteriaConstants.IS_NULL;}
 			public String apply(String leftHandValue, String[] rightHandValue) {
