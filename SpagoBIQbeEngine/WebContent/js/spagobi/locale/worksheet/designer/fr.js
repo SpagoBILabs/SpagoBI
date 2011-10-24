@@ -178,3 +178,16 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['
 //Sbi.worksheet.designer.TableDesignerPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.title']='Concepteur table aplatie';
+
+
+//===================================================================
+//Sbi.worksheet.designer.SheetTabMenu
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.menu.close']='Fermer';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.menu.rename']='Renommer';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.rename.sheetname']='Nom du feuille';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.apply']='Appliquer';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.cancel']='Supprimer';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error']='Erreur';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error.sheetnamealreadyinuse']='Un feuille ayant le meme nom d\u00E9j\u00E0 existe';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error.nosheetname']='Le nom du feuille n\'as pas \u00E9t\u00E9 sp\u00E8cifi\u00E9';

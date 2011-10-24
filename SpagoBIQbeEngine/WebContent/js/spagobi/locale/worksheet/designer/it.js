@@ -176,3 +176,16 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.title']='Definizione tabella piatta';
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields']='Campi visibili';
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields.empty']='Trascina qui gli attributi e le misure che vuoi visualizzare nella tabella';
+
+
+//===================================================================
+//Sbi.worksheet.designer.SheetTabMenu
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.menu.close']='Chiudi';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.menu.rename']='Rinomina';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.rename.sheetname']='Nome del foglio';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.apply']='Applica';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.cancel']='Cancella';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error']='Errore';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error.sheetnamealreadyinuse']='Il nome è già utilizzato da un altro foglio';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error.nosheetname']='Nome del foglio non specificato';

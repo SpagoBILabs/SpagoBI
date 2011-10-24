@@ -75,7 +75,8 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
         enableTabScroll:true,
         defaults: {autoScroll:true},
         items: [this.addPanel],
-        frame: true
+        frame: true,
+        plugins: new Sbi.worksheet.designer.SheetTabMenu()
 	};
 	
 	this.initPanel();
@@ -261,8 +262,11 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	
 	, updateTabLastName: function(sheetName){
 		//6= length("Sheet ")
-		var actualSheetNumber = parseInt(sheetName.substring(6));
-		this.index = actualSheetNumber;
+		var prefix = sheetName.substring(0, 6);
+		if (prefix == "Sheet ") {
+			var actualSheetNumber = parseInt(sheetName.substring(6));
+			this.index = actualSheetNumber;
+		}
 	}
 	
 	, setSheetsStateDefered: function(){
