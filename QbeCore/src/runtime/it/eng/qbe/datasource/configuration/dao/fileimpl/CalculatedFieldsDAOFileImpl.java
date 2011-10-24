@@ -60,7 +60,8 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	
 	protected File modelJarFile;
 
-	public static final String CFIELDS_FILE_NAME = "cfields.xml";
+	public static final String CFIELDS_FROM_META_FILE_NAME = "cfields_meta.xml";
+	public static final String CFIELDS_FROM_USER_FILE_NAME = "cfields_user.xml";
 	
 	public final static String ROOT_TAG = "CFIELDS";
 	
@@ -95,10 +96,22 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	// =============================================================================
 	
 	public Map<String, List<ModelCalculatedField>> loadCalculatedFields() {
-		
+		File calculatedFieldsFile;
 		Map<String, List<ModelCalculatedField>> calculatedFiledsMap;
 		
-		File calculatedFieldsFile;
+		calculatedFiledsMap = new HashMap<String, List<ModelCalculatedField>>();
+		
+		calculatedFieldsFile = getMetaCalculatedFieldsFile();
+		loadCalculatedFieldsFromFile(calculatedFieldsFile, calculatedFiledsMap);
+		
+		calculatedFieldsFile = getUserCalculatedFieldsFile();
+		loadCalculatedFieldsFromFile(calculatedFieldsFile, calculatedFiledsMap);
+		
+		return calculatedFiledsMap;
+	}
+	
+	private void loadCalculatedFieldsFromFile(File calculatedFieldsFile, Map<String, List<ModelCalculatedField>> calculatedFiledsMap) {
+		
 		FileInputStream in;
 		SAXReader reader;
 		Document document;
@@ -112,19 +125,15 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		List calculatedFieldNodes;
 		Iterator it;
 		Node calculatedFieldNode;
-		List calculatedFileds;
+		List<ModelCalculatedField> calculatedFileds;
 		
 		logger.debug("IN");
 		
-		calculatedFieldsFile = null;
 		in = null;	
 		
 		try {
-			
-			calculatedFiledsMap = new HashMap<String, List<ModelCalculatedField>>();
-			
-			calculatedFieldsFile = getCalculatedFieldsFile();
-			logger.debug("Calculated fields will be loaded from file [" + calculatedFieldsFile + "]");
+		
+			logger.debug("Load calculated fields from file [" + calculatedFieldsFile + "]");
 			
 			if(calculatedFieldsFile != null && calculatedFieldsFile.exists()) {
 							
@@ -160,7 +169,19 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 					if(!calculatedFiledsMap.containsKey(entity)) {
 						calculatedFiledsMap.put(entity, new ArrayList());
 					}
-					calculatedFileds = (List)calculatedFiledsMap.get(entity);					
+					calculatedFileds = calculatedFiledsMap.get(entity);
+					ModelCalculatedField calculatedFieldToRemove = null;
+					for(ModelCalculatedField cf : calculatedFileds) {
+						if(cf.getName().equals(calculatedField.getName())) {
+							calculatedFieldToRemove = cf;
+							break;
+						}
+					}
+					
+					if(calculatedFieldToRemove != null) {
+						boolean removed = calculatedFileds.remove(calculatedFieldToRemove);
+						logger.debug("Calculated field [" + calculatedFieldToRemove.getName() + "] already defined. The old version will be replaced with this one");
+					}
 					calculatedFileds.add(calculatedField);
 					
 					logger.debug("Calculated filed [" + calculatedField.getName() + "] loaded succesfully");
@@ -181,8 +202,6 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 			}
 			logger.debug("OUT");
 		}
-		
-		return calculatedFiledsMap;
 	}
 	
 	private String loadExpression(Node calculatedFieldNode) {
@@ -317,7 +336,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		try {
 			Assert.assertNotNull(calculatedFields, "Input parameter [calculatedFields] cannot be null");
 			
-			calculatedFieldsFile = getCalculatedFieldsFile();
+			calculatedFieldsFile = getUserCalculatedFieldsFile();
 			Assert.assertNotNull(calculatedFieldsFile, "Destination file cannot be null");
 			logger.debug("Calculated fields will be saved on file [" + calculatedFieldsFile + "]");
 			
@@ -412,11 +431,15 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	
 	
 	
-	private File getCalculatedFieldsFile() {
+	private File getUserCalculatedFieldsFile() {
 		File calculatedFieldsFile = null;
-		
-		calculatedFieldsFile = new File(modelJarFile.getParentFile(), CFIELDS_FILE_NAME);
-		
+		calculatedFieldsFile = new File(modelJarFile.getParentFile(), CFIELDS_FROM_USER_FILE_NAME);
+		return calculatedFieldsFile;
+	}
+	
+	private File getMetaCalculatedFieldsFile() {
+		File calculatedFieldsFile = null;
+		calculatedFieldsFile = new File(modelJarFile.getParentFile(), CFIELDS_FROM_META_FILE_NAME);
 		return calculatedFieldsFile;
 	}
 	
