@@ -29,10 +29,21 @@ ALTER TABLE SBI_OBJ_PARVIEW ADD CONSTRAINT FK_SBI_OBJ_PARVIEW_2 FOREIGN KEY ( OB
 
 ALTER TABLE sbi_data_set_history ADD CUSTOM_DATA CLOB;
 
+update HIBERNATE_SEQUENCES set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+Commit;
 INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN)
 	VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),
 	'Custom','SbiCustomDataSet','DATA_SET_TYPE','Data Set Type','SbiCustomDataSet', 'biadmin', CURRENT_TIMESTAMP);
-	
+update HIBERNATE_SEQUENCES set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+Commit;
+Insert Into Sbi_Domains (Value_Id, Value_Cd,Value_Nm,Domain_Cd,Domain_Nm,Value_Ds, User_In, Time_In)
+	VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),	'DATE_DEFAULT','sbidomains.nm.date.default','PAR_TYPE','Parameter type','sbidomains.ds.date.default', 'biadmin', SYSDATE);
+commit;
+update HIBERNATE_SEQUENCES set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+Commit;
+Insert Into Sbi_Domains (Value_Id, Value_Cd,Value_Nm,Domain_Cd,Domain_Nm,Value_Ds, User_In, Time_In)
+	Values ((Select Next_Val From Hibernate_Sequences Where Sequence_Name = 'SBI_DOMAINS'),	'Day scale','Day scale','METRIC_SCALE_TYPE','Metric Scale Type','', 'biadmin', SYSDATE);
+commit;			
 	
 --ALTER TABLE SBI_DATA_SET_HISTORY MODIFY ( DS_METADATA CLOB );
 ALTER TABLE SBI_DATA_SET_HISTORY ADD DS_METADATA_TMP CLOB;
