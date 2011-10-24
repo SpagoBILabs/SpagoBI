@@ -99,6 +99,7 @@
 <DOMAIN valueCd="Intervals scale" valueNm="Intervals scale" domainCd="METRIC_SCALE_TYPE" domainNm="Metric Scale Type" valueDs=""/>
 <DOMAIN valueCd="Ratio scale" valueNm="Ratio scale" domainCd="METRIC_SCALE_TYPE" domainNm="Metric Scale Type" valueDs=""/>
 <DOMAIN valueCd="Absolute scale" valueNm="Absolute scale" domainCd="METRIC_SCALE_TYPE" domainNm="Metric Scale Type" valueDs=""/>
+<DOMAIN valueCd="Day scale" valueNm="Day scale" domainCd="METRIC_SCALE_TYPE" domainNm="Metric Scale Type" valueDs=""/>
 <DOMAIN valueCd="COUNT" valueNm="Count" domainCd="MEASURE_TYPE" domainNm="Measure Type" valueDs=""/>
 <DOMAIN valueCd="TIME" valueNm="Time" domainCd="MEASURE_TYPE" domainNm="Measure Type" valueDs=""/>
 <DOMAIN valueCd="SIZE" valueNm="Size" domainCd="MEASURE_TYPE" domainNm="Measure Type" valueDs=""/>
