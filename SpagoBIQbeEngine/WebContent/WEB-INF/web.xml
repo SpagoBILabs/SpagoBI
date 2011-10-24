@@ -128,7 +128,7 @@ END-CAS -->
 		 
 		<init-param>
 			<param-name>AF_CONFIG_FILE</param-name>
-			<param-value>\WEB-INF\conf\master.xml</param-value>
+			<param-value>/WEB-INF/conf/master.xml</param-value>
 		</init-param>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
