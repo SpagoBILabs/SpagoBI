@@ -127,6 +127,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 					ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure, null);
 					addedViewsEntities.add(viewEntity);
 					propertiesInitializer.addProperties(viewEntity);
+					addCalculatedFields(viewEntity);
 					modelStructure.addRootEntity(modelName, viewEntity);
 				}
 			}
@@ -149,6 +150,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 						
 						//Add node for first level entities (using UniqueName)
 						ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure, entity);
+						addCalculatedFields(viewEntity);
 						propertiesInitializer.addProperties(viewEntity);
 						entity.addSubEntity(viewEntity);
 						
@@ -158,6 +160,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 							logger.debug("Current Entity type: "+modelEntity.getType());
 							if (modelEntity.getType().equals(entity.getType())){
 								ModelViewEntity viewEntitySub = new ModelViewEntity(viewDescriptor, modelName, modelStructure, modelEntity);
+								addCalculatedFields(viewEntitySub);
 								propertiesInitializer.addProperties(viewEntitySub);
 								logger.debug(" ** Found matching for: "+modelEntity.getType()+" with "+entity.getType());
 								modelEntity.addSubEntity(viewEntitySub);
