@@ -92,25 +92,28 @@ Sbi.crosstab.core.HeaderEntry = function(config) {
 		
 	this.name = config.name;
 	
+	var sharedConf = {
+		hideMode: 'offsets',
+		bodyCssClass: 'x-grid3-header crosstab-table-headers' ,
+		bodyStyle: 'font-size:'+ this.fontSize,
+	};
+	
 	if(this.horizontal){	
 		c = {
 				width: this.thisDimension*this.columnWidth,
 				height: h,
-				hideMode: 'offsets',
-				html: this.getBackground(h+'px',(this.fontSize+(h/2))+'px'),
-				bodyCssClass: 'x-grid3-header crosstab-table-headers' ,
-				bodyStyle: 'font-size:'+ this.fontSize
+				html: this.getBackground(h+'px',(this.fontSize+(h/2))+'px')
+
 		};
 	}else{
 		c = {
 				width: w,
 				height: this.thisDimension*this.rowHeight,
-				hideMode: 'offsets',
-				html: this.getBackground('105%',((this.thisDimension*h+this.fontSize)/2)+'px'),
-				bodyCssClass: 'x-grid3-header crosstab-table-headers',
-				bodyStyle: 'font-size:'+ this.fontSize
+				html: this.getBackground('105%',((this.thisDimension*h+this.fontSize)/2)+'px')
 			};	
 	}
+	
+	c = Ext.apply(c,sharedConf);
 	
 	this.addEvents();
 	
@@ -122,6 +125,13 @@ Sbi.crosstab.core.HeaderEntry = function(config) {
 			this.height = this.thisDimension*this.rowHeight;
 			this.setHeight(this.thisDimension*this.rowHeight);
 		}
+		
+		//tooltip with the name
+		new Ext.ToolTip({
+			target: this.id,
+			html: this.name
+		});
+		
 	}, this);
 
 	
