@@ -309,6 +309,8 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <wsdl:message name="uploadDatamartTemplateRequest">
 
       <wsdl:part name="in0" type="tns2:SDKTemplate"/>
+      
+      <wsdl:part name="in1" type="tns2:SDKTemplate"/>
 
    </wsdl:message>
 
@@ -506,7 +508,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
-      <wsdl:operation name="uploadDatamartTemplate" parameterOrder="in0">
+      <wsdl:operation name="	" parameterOrder="in0 in1">
 
          <wsdl:input message="impl:uploadDatamartTemplateRequest" name="uploadDatamartTemplateRequest"/>
 
