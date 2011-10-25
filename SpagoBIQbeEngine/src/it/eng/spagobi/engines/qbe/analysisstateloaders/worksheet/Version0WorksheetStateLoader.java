@@ -96,8 +96,8 @@ public class Version0WorksheetStateLoader extends AbstractWorksheetStateLoader {
 			convertAttribute(category);
 		}
 		if (designer.equals("Table")) {
-			JSONObject fields = content.getJSONObject("visibleselectfields");
-			convert(fields);
+			JSONArray fields = content.getJSONArray("visibleselectfields");
+			convertAttributes(fields);
 		}
 	}
 	
