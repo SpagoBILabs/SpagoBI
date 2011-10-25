@@ -191,7 +191,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			sheetRow=0;
 			
 			JSONObject sheetJ = exportedSheets.getJSONObject(i);
-			String sheetName = "Sheet " + i;
+			String sheetName = sheetJ.getString(SHEET);
 			HSSFSheet sheet = wb.createSheet(sheetName);
 
 			HSSFPatriarch patriarch = sheet.createDrawingPatriarch();

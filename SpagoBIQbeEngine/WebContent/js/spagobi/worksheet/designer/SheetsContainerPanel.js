@@ -219,7 +219,7 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		var sheets = [];
 		if(this.items.items.length>1){
 			var i=0;
-			for(; i<this.items.items.length-1; i++){//-1 because of the add panel teb
+			for(; i<this.items.items.length-1; i++){//-1 because of the add panel tab
 				sheets.push(this.items.items[i].getSheetState());
 			}
 		}
@@ -265,7 +265,9 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		var prefix = sheetName.substring(0, 6);
 		if (prefix == "Sheet ") {
 			var actualSheetNumber = parseInt(sheetName.substring(6));
-			this.index = actualSheetNumber;
+			if ( !isNaN(actualSheetNumber) ) {
+				this.index = actualSheetNumber;
+			}
 		}
 	}
 	
@@ -282,9 +284,24 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		var toReturn = new Array();
 		if ( this.items.items.length > 1 ) {
 			var errCounter = 0;
-			var i=0;
-			for(; i<this.items.items.length-1; i++){//-1 because of the add panel teb
+			var i = 0;
+			for(; i<this.items.items.length-1; i++){//-1 because of the add panel tab
 				var aSheet = this.items.items[i];
+				
+				// check if another sheet with the same name exists
+				var j = 0;
+				for(; j < this.items.items.length-1; j++) {
+					var otherSheet = this.items.items[j];
+					if (i != j && otherSheet.title == aSheet.title) {
+						var valError = new Sbi.worksheet.exception.ValidationError(
+								aSheet.getName(),
+								'Another sheet with the same name exists'
+						);
+						toReturn[errCounter] = valError;
+						errCounter++;
+					}
+				}
+				
 				if (aSheet.rendered) { /* workaround (work-around): the sheet is validated only if it is rendered, 
 					because a non-rendered sheet hasn't the state set. TODO improve this behaviour */
 					var errMessage = aSheet.validate();
@@ -297,7 +314,6 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 						errCounter++;
 					}
 				}
-				
 			}
 		}
 		return toReturn;
