@@ -548,7 +548,8 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
 		 env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
 		 env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy() );
-		 env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy()); 
+		 env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy());
+		 env.put(EngineConstants.ENV_DATASOURCE_PROXY, getDataSourceServiceProxy()); 
 		 env.put(EngineConstants.ENV_LOCALE, getLocale()); 
 
 		 return env;
