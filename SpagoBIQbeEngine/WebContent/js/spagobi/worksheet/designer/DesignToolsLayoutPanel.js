@@ -101,7 +101,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsLayoutPanel, Ext.FormPanel, {
 			target: 'x-form-el-layout-content',
 			html: LN('sbi.worksheet.designer.designtoolslayoutpanel.tooltip.content')
 		},sharedConf));
-		this.on('afterLayout',this.addToolTips,this);
+		
 	},
 
 	//returns a string with the selected layout (for the available values look the..
