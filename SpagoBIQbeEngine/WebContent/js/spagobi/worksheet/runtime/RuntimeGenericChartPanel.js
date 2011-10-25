@@ -62,7 +62,7 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanel  = function(config) {
 	
 	Ext.apply(this, c);
 
-	this.style='width: 80%';
+	this.style='width: 80%; margin-left: auto; margin-right: auto;';
 	
 	this.services = this.services || new Array();
 	var params = {};
