@@ -459,12 +459,21 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
     		store : scopeComboBoxStore,
     		displayField:'field',
     		valueField:'value',
+    		//value: 'STRING',
     		emptyText:'Select type...',
     		typeAhead: true,
     		triggerAction: 'all',
     		width:150,
     		selectOnFocus:true
     	});
+    	
+    	this.inputFields['type'].on('render', function(){
+    		var v = this.inputFields['type'].getValue();
+    		if(!v || v === '') {
+    			this.inputFields['type'].setValue('STRING');
+    		}
+    		
+    	}, this);
     	
     	var typePanel = new  Ext.form.FormPanel({
     		bodyStyle: "background-color: transparent; border-color: transparent",
@@ -490,12 +499,21 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
     		store : natureComboBoxStore,
     		displayField:'field',
     		valueField:'value',
+    		//value: 'ATTRIBUTE',
     		emptyText:'Select nature...',
     		typeAhead: true,
     		triggerAction: 'all',
     		width:150,
     		selectOnFocus:true
     	});
+    	
+    	this.inputFields['nature'].on('render', function(){
+    		var v = this.inputFields['nature'].getValue();
+    		if(!v || v === '') {
+    			this.inputFields['nature'].setValue('ATTRIBUTE');
+    		}
+    		
+    	}, this);
     	
     	var naturePanel = new  Ext.form.FormPanel({
     		bodyStyle: "background-color: transparent; border-color: transparent; padding-left: 10px;",
