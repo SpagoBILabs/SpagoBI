@@ -150,6 +150,8 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 				}else{
 					//back
 					this.mainPanel.layout.setActiveItem(0);
+					//this.firstCalculatedFiledPanel.detailsFormPanel.syncSize()();
+					this.mainP
 					btnPrev.disabled = true;
 					btnNext.disabled = false;
 					btnFinish.disabled = true;
