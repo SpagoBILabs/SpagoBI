@@ -304,5 +304,4 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 	, containsAttribute: function (attributeId) {
 		return this.designer.containsAttribute(attributeId);
 	}
-
 });
