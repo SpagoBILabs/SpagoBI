@@ -83,4 +83,8 @@ Ext.extend(Sbi.worksheet.runtime.WorkSheetsRuntimePanel, Ext.Panel, {
 //		var encodedExportedContent = Ext.util.JSON.encode(exportedContent);
 //		return encodedExportedContent;
 	}
+	
+	,getAdditionalData: function(){
+		return this.sheetsContainerPanel.getAdditionalData();
+	}
 });

@@ -213,6 +213,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 		this.show();
 	}
 
-	
+	, getAdditionalData: function(){
+		var data ={};
+		if(this.contentConfig.designer=='Pivot Table') {
+			data.crosstabDefinition = {'calculatedFields': this.content.getCalculatedFields()};
+		}
+		return data;
+	}
 
 });
