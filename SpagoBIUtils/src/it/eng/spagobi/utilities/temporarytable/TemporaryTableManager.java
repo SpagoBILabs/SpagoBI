@@ -185,13 +185,31 @@ public class TemporaryTableManager {
 		try {
 			connection = dataSource.getConnection();
 			DatabaseMetaData dbMeta = connection.getMetaData();
+			String driverName = connection.getMetaData().getDriverName();
 			resultSet = dbMeta.getColumns(null, null, tableName, null);
 			if (resultSet.first()) {
 				tableDescriptor = new DataSetTableDescriptor();
 				tableDescriptor.setTableName(tableName);
 				readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource));
 			} else {
-				throw new SpagoBIRuntimeException("Cannot find metadata for table [" + tableName + "]");
+				if (driverName.contains("HSQL")) {
+					/*
+					 * HSQL has this problem: when creating a table with name, for example, "TMPSBIQBE_biadmin", 
+					 * it creates a table with actual name "TMPSBIQBE_BIADMIN" (all upper case) but the getColumns method 
+					 * is case sensitive, therefore we try also with putting the table name upper case
+					 */
+					String tableNameUpperCase = tableName.toUpperCase();
+					resultSet = dbMeta.getColumns(null, null, tableNameUpperCase, null);
+					if (resultSet.first()) {
+						tableDescriptor = new DataSetTableDescriptor();
+						tableDescriptor.setTableName(tableNameUpperCase);
+						readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource));
+					} else {
+						throw new SpagoBIRuntimeException("Cannot find metadata for table [" + tableName + "]");
+					}
+				} else {
+					throw new SpagoBIRuntimeException("Cannot find metadata for table [" + tableName + "]");
+				}
 			}
 		} finally {
 			if (resultSet != null) {
