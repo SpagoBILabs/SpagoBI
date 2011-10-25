@@ -353,23 +353,24 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
     	} else {
 
     		SourceBean qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE);
-	    	templateSB.setAttribute(qbeSB);
+    		if (qbeSB != null) {
+    			templateSB.setAttribute(qbeSB);
+    			if(workSheetQuery!=null && !workSheetQuery.equals("") ){
+    				SourceBean query_sb = new SourceBean(QUERY);
+    				query_sb.setCharacters(workSheetQuery);
+    				qbeSB.updAttribute(query_sb);
+    			}
+    			
+    			if(smartFilterValues!=null && !smartFilterValues.equals("")){
+    				SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
+    				smartFilterValuesSB.setCharacters(smartFilterValues);
+    				qbeSB.updAttribute(smartFilterValuesSB);
+    			}
+    		}
+	    	
 			SourceBean wk_def_sb = new SourceBean(TAG_WORKSHEET_DEFINITION);
 			wk_def_sb.setCharacters(workSheetDef);
 			templateSB.setAttribute(wk_def_sb);
-			
-			if(workSheetQuery!=null && !workSheetQuery.equals("") ){
-				SourceBean query_sb = new SourceBean(QUERY);
-				query_sb.setCharacters(workSheetQuery);
-				qbeSB.updAttribute(query_sb);
-			}
-			
-			if(smartFilterValues!=null && !smartFilterValues.equals("")){
-				SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
-				smartFilterValuesSB.setCharacters(smartFilterValues);
-				qbeSB.updAttribute(smartFilterValuesSB);
-			}
-    		
     	}
 
 		String template = templateSB.toXML(false);	
