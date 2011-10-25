@@ -38,8 +38,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
 import java.util.jar.JarEntry;
@@ -246,9 +248,12 @@ public class DynamicClassLoader extends URLClassLoader {
 		if(descriptorPath.equals("META-INF/persistence.xml")){
 			//load the persistence.xml from the jar file
 			try{
-				String s = jarFile.getAbsolutePath().replace(File.separatorChar, '/');		
-//				final URL jarUrl = new URL("jar","",-1,"file:/"+s+"!/META-INF/persistence.xml");  // this works only on Windows!!
-				final URL jarUrl = new URL("jar:file:"+s+"!/META-INF/persistence.xml");
+				//String s = jarFile.getAbsolutePath().replace(File.separatorChar, '/');		
+				String s = jarFile.toURI().toString();
+				final URL jarUrl = new URI("jar:" + s + "!/META-INF/persistence.xml").toURL();
+				//final URL jarUrl = new URI("jar:file:"+s+"!/META-INF/persistence.xml").toURL();
+				//final URL jarUrl = new URL("jar","",-1,"file:/"+s+"!/META-INF/persistence.xml");  // this works only on Windows!!
+				
 				//build the enumeration with only the URL with the location of the persistence.xml
 				return new Enumeration<URL>() {
 					private int position = 0;
