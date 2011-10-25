@@ -168,7 +168,6 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 
 		if(this.worksheetPreviewPanel.rendered === true){
 			var additionalData = this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.getAdditionalData();
-			alert(additionalData.toSource());
 			if(additionalData!=undefined && additionalData!=null){
 				var sheets = sheetTemplate.sheets;
 				for(var i=0; i<sheets.length; i++){
