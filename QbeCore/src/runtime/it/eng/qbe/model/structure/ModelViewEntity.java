@@ -342,9 +342,9 @@ public class ModelViewEntity extends ModelEntity {
 	}	
 	
 	
-	public List<ModelCalculatedField> getCalculatedFields() {
-		return getCalculatedFields();
-	}
+//	public List<ModelCalculatedField> getCalculatedFields() {
+//		return calculatedFields;
+//	}
 
 	
 	public List<IModelField> getKeyFields() {
@@ -432,7 +432,7 @@ public class ModelViewEntity extends ModelEntity {
 	public IModelEntity clone(IModelEntity newParent, String parentView){
 		try {
 			ModelViewEntity newModelEntity = new ModelViewEntity(viewDescriptor,  name, structure,  newParent);
-
+			newModelEntity.calculatedFields = this.calculatedFields;
 			if(newParent==null || newParent.getRoot()==null){
 				newModelEntity.setRoot(newParent);
 			}else{
