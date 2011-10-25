@@ -72,7 +72,7 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 		
 	c = {
 		border: false,
-		style:'padding:5px 15px 5px',
+		style:'padding:5px 15px 5px; text-align:center;',
 		items: this.content,
 		autoHeight: true
 	};
