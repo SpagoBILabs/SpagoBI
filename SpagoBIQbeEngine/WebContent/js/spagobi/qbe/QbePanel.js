@@ -443,6 +443,7 @@ setQueriesCatalogue: function (queriesCatalogue) {
 ,
 setWorksheetState : function (successFn, failureFn, scope) {
 	var worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
+	this.addSheetAdditionalData(worksheetDefinition,this.worksheetDesignerPanel.worksheetTemplate);
 	var params = {
 			'worksheetdefinition':  Ext.encode(worksheetDefinition)
 	};
