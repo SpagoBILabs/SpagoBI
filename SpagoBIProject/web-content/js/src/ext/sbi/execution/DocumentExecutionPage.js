@@ -137,8 +137,10 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 		items.push(this.northPanel);
 	}
 	
+	var id = Ext.id();
+	
 	var c = Ext.apply({}, config, {
-		id: 'documentexecutionpage'
+		id: 'documentexecutionpage'+id
 		, layout: 'border'
 		, tbar: this.toolbar
 		, items: items
@@ -161,6 +163,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
     , shortcutsPanel: null
     , southPanel: null
     , northPanel: null
+    , loadMask: null
    
 	// ----------------------------------------------------------------------------------------
 	// public methods
@@ -244,9 +247,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		});*/
 		var c = {TOOLBAR_CONFIG: this.toolbarConfig};
 		this.toolbar = new Sbi.execution.toolbar.DocumentExecutionPageToolbar(c);
-		this.toolbar.on('render', function() {
-			
-		}, this);
+		this.toolbar.on('render', function() {}, this);
+		this.toolbar.on('showmask', this.showMask, this);
 	}
 	
 	, initNorthPanel: function( config ) {
@@ -319,8 +321,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			
 				'message:contentexported': {
 	        		fn: function(srcFrame, message) {
-	        	    	if (this.toolbar.loadMask != null) {
-	        	    		this.toolbar.loadMask.hide();
+	        	    	if (this.loadMask != null) {
+	        	    		this.hideMask();
 	        	    	}  
 	        		}
 	        		, scope: this
@@ -456,6 +458,25 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	
 	, extendSession: function() {
 		Sbi.commons.Session.extend();
+	}
+	
+	/**
+	 * Opens the loading mask 
+	 */
+    , showMask : function(message){
+    	if (this.loadMask == null) {
+    		this.loadMask = new Ext.LoadMask(this.getId(), {msg: message});
+    	}
+    	this.loadMask.show();
+    }
+	
+	/**
+	 * Closes the loading mask
+	 */
+	, hideMask: function() {
+    	if (this.loadMask != null) {
+    		this.loadMask.hide();
+    	}
 	}
 	
 });

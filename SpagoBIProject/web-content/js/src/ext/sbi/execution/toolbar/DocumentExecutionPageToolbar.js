@@ -102,7 +102,7 @@ Sbi.execution.toolbar.DocumentExecutionPageToolbar = function(config) {
 	
 	Sbi.execution.toolbar.DocumentExecutionPageToolbar.superclass.constructor.call(this, config);
 	
-	this.addEvents('beforetoolbarinit', 'moveprevrequest', 'beforerefresh','collapse3', 'backToAdmin','refreshexecution');
+	this.addEvents('beforetoolbarinit', 'moveprevrequest', 'beforerefresh','collapse3', 'backToAdmin','refreshexecution','showmask');
 };
 
 Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
@@ -439,36 +439,18 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	}
 	*/
 	
-	/**
-	 * Opens the loading mask 
-	 */
-    , showMask : function(){
-    	if (this.loadMask == null) {
-    		this.loadMask = new Ext.LoadMask('documentexecutionpage', {msg: "Exporting.."});
-    	}
-    	this.loadMask.show();
-    }
-	
-	/**
-	 * Closes the loading mask
-	 */
-	, hideMask: function() {
-    	if (this.loadMask != null) {
-    		this.loadMask.hide();
-    	}
-	}
-	
 	, exportWorksheetsExecution: function (mimeType) {
 		try {
 			var frame = this.miframe.getFrame();
 			var worksheetWindow = frame.getWindow();
-			this.showMask();
+			this.fireEvent('showmask','Exporting..');
 			worksheetWindow.workSheetPanel.exportContent(mimeType);
 		} catch (err) {
 			alert('Sorry, cannot perform operation.');
 			throw err;
 		}
 	}
+	
 	
 	/*
 	, exportWorksheetsExecution: function (exportType) {
