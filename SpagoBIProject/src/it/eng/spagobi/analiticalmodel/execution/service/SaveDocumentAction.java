@@ -193,6 +193,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			String creationUser =  userProfile.getUserId().toString();
 			o.setCreationUser(creationUser);
 			
+			// datasource
 			if ( sourceBiobj != null && sourceBiobj.getBiObjectTypeCode().equals(SpagoBIConstants.DATAMART_TYPE_CODE) 
 					&& o.getBiObjectTypeCode().equals(SpagoBIConstants.WORKSHEET_TYPE_CODE)) {
 				// case when creating a worksheet document starting from a QbE document
@@ -207,6 +208,16 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				}
 			}
 			o.setDataSourceId(dataSourceId);
+			
+			// dataset
+			if ( sourceBiobj != null && sourceBiobj.getBiObjectTypeCode().equals(SpagoBIConstants.WORKSHEET_TYPE_CODE) 
+					&& o.getBiObjectTypeCode().equals(SpagoBIConstants.WORKSHEET_TYPE_CODE)) {
+				// case when creating a worksheet document starting from another worksheet document
+				// getting source document's dataset
+				Integer dataSetId = sourceBiobj.getDataSetId();
+				o.setDataSetId(dataSetId);
+			}
+			
 			
 			List<Integer> functionalities = new ArrayList<Integer>();
 			for(int i=0; i< functsArrayJSon.length(); i++){
