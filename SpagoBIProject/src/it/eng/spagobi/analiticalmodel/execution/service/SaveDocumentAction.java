@@ -91,7 +91,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 
 
 	// default type
-	public static final String WORKSHEET_VALUE_CODE ="WORKSHEET";
 	public static final String BIOBJ_TYPE_DOMAIN_CD ="BIOBJ_TYPE";
 
 	// default for parameters
@@ -132,24 +131,27 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 
 	private void saveDocument() throws Exception {
 		String id = getAttributeAsString(ID);
-		String orig_biobj_id = getAttributeAsString(OBJ_ID);
+		Integer sourceBiobjId = getAttributeAsInteger(OBJ_ID);
 		String label = getAttributeAsString(LABEL);
 		String name = getAttributeAsString(NAME);
 		String description = getAttributeAsString(DESCRIPTION);
 		String engineId = getAttributeAsString(ENGINE);
-		String dataSourceId = getAttributeAsString(DATASOURCE);
+		String dataSourceIdStr = getAttributeAsString(DATASOURCE);
+		Integer dataSourceId = ( dataSourceIdStr != null && !dataSourceIdStr.trim().equals("")) ? new Integer(dataSourceIdStr) : null;
 		String type = getAttributeAsString(TYPE);
-		String typeId;
 		String template = getAttributeAsString(TEMPLATE);	
 		JSONArray functsArrayJSon = getAttributeAsJSONArray(FUNCTS);
 		String wk_definition = getAttributeAsString(OBJECT_WK_DEFINITION);
 		JSONObject smartFilterValues = getAttributeAsJSONObject(FORMVALUES);
 		String query = getAttributeAsString(OBJECT_QUERY);
 
-		if(type == null || type.equals("")){
-			Domain typeDom = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(BIOBJ_TYPE_DOMAIN_CD, WORKSHEET_VALUE_CODE);
-			typeId = typeDom.getValueId().toString();
-			type = WORKSHEET_VALUE_CODE;
+		BIObject sourceBiobj = null;
+		if (sourceBiobjId != null ) {
+			sourceBiobj = objDao.loadBIObjectById(new Integer(sourceBiobjId));
+		}
+		
+		if ( type == null || type.equals("") ) {
+			type = SpagoBIConstants.WORKSHEET_TYPE_CODE;
 		}
 
 		if (name != null && name != "" && label != null && label != "" && 
@@ -190,9 +192,22 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			UserProfile userProfile = (UserProfile) this.getUserProfile();
 			String creationUser =  userProfile.getUserId().toString();
 			o.setCreationUser(creationUser);
-			if(dataSourceId!=null && dataSourceId!=""){
-				o.setDataSourceId(new Integer(dataSourceId));
-			}	
+			
+			if ( sourceBiobj != null && sourceBiobj.getBiObjectTypeCode().equals(SpagoBIConstants.DATAMART_TYPE_CODE) 
+					&& o.getBiObjectTypeCode().equals(SpagoBIConstants.WORKSHEET_TYPE_CODE)) {
+				// case when creating a worksheet document starting from a QbE document
+				// getting source document's datasource
+				dataSourceId = sourceBiobj.getDataSourceId();
+				if ( dataSourceId == null ) {
+					// getting the data source from the engine associated to the source document
+					dataSourceId = sourceBiobj.getEngine().getDataSourceId();
+					if ( dataSourceId == null ) {
+						throw new SpagoBIServiceException(SERVICE_NAME,	"No datasource found");
+					}
+				}
+			}
+			o.setDataSourceId(dataSourceId);
+			
 			List<Integer> functionalities = new ArrayList<Integer>();
 			for(int i=0; i< functsArrayJSon.length(); i++){
 				String funcIdStr = functsArrayJSon.getString(i);
@@ -217,19 +232,14 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			o.setStateID(stateID);
 			o.setStateCode(objState.getValueCd());		
 
-			BIObject orig_obj = null;
-			if(orig_biobj_id != null && !orig_biobj_id.equals("")){
-				orig_obj = objDao.loadBIObjectById(new Integer(orig_biobj_id));
-			}
-
 			ObjTemplate objTemp = new ObjTemplate();
 			byte[] content = null;
 			if(template != null && template != ""){
 				content = template.getBytes();
 			}else if(smartFilterValues!=null){ 
 				content = getSmartFilterTemplateContent();
-			}else if(wk_definition!=null && query!=null && orig_obj!=null){
-				ObjTemplate qbETemplate = orig_obj.getActiveTemplate();
+			}else if(wk_definition!=null && query!=null && sourceBiobj!=null){
+				ObjTemplate qbETemplate = sourceBiobj.getActiveTemplate();
 				String templCont = new String(qbETemplate.getContent());
 				WorksheetDriver q = new WorksheetDriver();
 				String temp = q.composeWorksheetTemplate(wk_definition, query, null, templCont);
@@ -266,8 +276,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 					}else{
 						Integer biObjectID = objDao.insertBIObject(o, objTemp);
-						if(orig_biobj_id!=null && orig_biobj_id!=""){					
-							List obj_pars = orig_obj.getBiObjectParameters();
+						if ( sourceBiobjId != null ){					
+							List obj_pars = sourceBiobj.getBiObjectParameters();
 							if(obj_pars!=null && !obj_pars.isEmpty()){
 								Iterator it = obj_pars.iterator();
 								while(it.hasNext()){

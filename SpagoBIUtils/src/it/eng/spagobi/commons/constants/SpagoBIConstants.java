@@ -151,6 +151,7 @@ public class SpagoBIConstants {
 	public static final String BIOBJECT_TYPE_CODE = "BIOBJECT_TYPE_CODE";
 	public static final String REPORT_TYPE_CODE = "REPORT";
 	public static final String DATAMART_TYPE_CODE = "DATAMART";
+	public static final String WORKSHEET_TYPE_CODE = "WORKSHEET";
 	public static final String OLAP_TYPE_CODE = "OLAP";
 	public static final String DATA_MINING_TYPE_CODE = "DATA_MINING";
 	public static final String DASH_TYPE_CODE = "DASH";
