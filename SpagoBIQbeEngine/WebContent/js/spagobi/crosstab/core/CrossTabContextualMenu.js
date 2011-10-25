@@ -198,7 +198,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
     		toReturn.push({
 		       	text: LN('sbi.crosstab.menu.removecalculatedfield'),
 		       	iconCls: 'remove',
-		       	handler: function() {this.crossTab.removeEntries(node);},
+		       	handler: function() {this.crossTab.removeCalculatedField(node);},
 		       	scope: this
     		});
     		toReturn.push({

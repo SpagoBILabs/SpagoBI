@@ -1590,8 +1590,17 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	this.calculatedFields.push(calculatedField);
     }
     
+    , removeCalculatedField: function(node){
+    	for(var x =0; x<this.calculatedFields.length; x++){
+    		if(this.calculatedFields[x].name == node.name){
+    			this.calculatedFields.splice(x,1);
+    			break;
+    		}
+    	}
+    	this.removeEntries(node);
+    }
+    
     , modifyCalculatedField: function(level, horizontal, op, CFName){
-    	//alert(this.calculatedFields.toSource());
     	if(this.calculatedFields!=null){
     		for(var i=0; i<this.calculatedFields.length; i++){
     			if(this.calculatedFields[i].name == CFName){
@@ -1599,7 +1608,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     			}
     		}
     	}
-    	//alert(this.calculatedFields.toSource());
     }
 
     , getCalculatedFields: function() {
