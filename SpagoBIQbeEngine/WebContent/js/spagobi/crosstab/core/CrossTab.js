@@ -78,12 +78,13 @@
 Ext.ns("Sbi.crosstab.core");
 
 Sbi.crosstab.core.CrossTab = function(config) {
-    
+
 	var defaultSettings = {
 				percentageFontSize: 9,
 				columnWidth: 80,
 				rowHeight: 25,
-				fontSize: 10};
+				fontSize: 10,
+				calculatedFields: new Array()};
 	if(Sbi.settings && Sbi.settings.qbe && Sbi.settings.qbe.crossTab) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.qbe.crossTab);
 	}
@@ -104,7 +105,7 @@ Sbi.crosstab.core.CrossTab = function(config) {
 	}
 	
 	
-	this.calculatedFields = new Array();
+	
 	this.manageDegenerateCrosstab(this.rowHeadersDefinition, this.columnHeadersDefinition);
 	this.entries = new Sbi.crosstab.core.CrossTabData(this.entries);
     this.rowHeader = new Array();

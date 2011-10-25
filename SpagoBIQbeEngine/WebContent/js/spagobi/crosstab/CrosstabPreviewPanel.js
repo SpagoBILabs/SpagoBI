@@ -74,10 +74,10 @@ Sbi.crosstab.CrosstabPreviewPanel = function(config) {
     	});
 	
 	this.calculatedFields = new Array();
-	if (config.crosstabTemplate !== undefined && config.crosstabTemplate.calculatedFields !== undefined) {
-		this.calculatedFields = config.crosstabTemplate.calculatedFields;
+	if (config.crosstabDefinition !== undefined && config.crosstabDefinition.calculatedFields !== undefined) {
+		this.calculatedFields = config.crosstabDefinition.calculatedFields;
 	}
-	
+
 	// constructor
     Sbi.crosstab.CrosstabPreviewPanel.superclass.constructor.call(this, c);
     this.addEvents('contentloaded');
@@ -135,9 +135,9 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	, refreshCrossTab: function(crosstab){
 
 		if(this.crosstab!=null){
-			this.calculatedFields = this.crosstab.getCalculatedFields();
+			this.calculatedFields = Ext.apply(this.calculatedFields, this.crosstab.getCalculatedFields());
 		}
-		
+	
 		this.removeAll(true);
 		
 		var rows = this.fromNodeToArray(crosstab.rows);

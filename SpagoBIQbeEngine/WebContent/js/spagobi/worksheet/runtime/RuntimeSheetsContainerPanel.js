@@ -199,4 +199,15 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 		return resultExport;
 	}
 	
+	,getAdditionalData: function(){
+		var data = new Array();
+		if (this.sheetItems != undefined && this.sheetItems != null) {
+			var i = 0;
+			for (; i < this.sheetItems.length; i++) {
+				data. push(this.sheetItems[i].getAdditionalData());
+			}
+		}
+		return data;
+	}
+	
 });

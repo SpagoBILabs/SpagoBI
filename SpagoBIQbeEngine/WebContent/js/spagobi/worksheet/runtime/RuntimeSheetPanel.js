@@ -340,5 +340,13 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
     	this.contentLoaded = true;
     	this.fireEvent('contentloaded');
 	}
+	
+	, getAdditionalData: function(){
+		var c ={};
+		if(this.content!= undefined && this.content!=null){
+			 c.data = this.content.getAdditionalData();
+		}
+		return c;
+	}
 
 });
