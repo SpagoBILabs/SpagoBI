@@ -492,10 +492,11 @@ refreshWorksheetPreview : function () {
 
 , addAdditionalData : function(sheetTemplate){
 	if(this.worksheetPreviewPanel.rendered === true){
+		
 		var additionalData = this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.getAdditionalData();
 		var sheets = sheetTemplate.sheets;
 		for(var i=0; i<sheets.length; i++){
-			if(additionalData[i].data!=undefined && additionalData[i].data!=null){
+			if(additionalData[i].data!=undefined && additionalData[i].data!=null && additionalData[i].data.length>0){
 				if(sheets[i].content.crosstabDefinition.calculatedFields==undefined || sheets[i].content.crosstabDefinition.calculatedFields==null){
 					sheets[i].content.crosstabDefinition.calculatedFields =additionalData[i].data.crosstabDefinition.calculatedFields;
 				}else{
@@ -505,6 +506,5 @@ refreshWorksheetPreview : function () {
 		}
 	}
 }
-
 
 });
