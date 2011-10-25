@@ -517,6 +517,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
     	
     	var naturePanel = new  Ext.form.FormPanel({
     		bodyStyle: "background-color: transparent; border-color: transparent; padding-left: 10px;",
+    		width: 280,
     		items: [this.inputFields['nature']]
     	});
 
