@@ -186,7 +186,12 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 				if(this.modality === undefined || this.modality == null || this.modality !='edit'){
 
 					if(this.startFromFirstPage == undefined || this.startFromFirstPage == null || this.startFromFirstPage == false){
-						formState = {alias: LN('sbi.qbe.bands.prefix') + this.fieldForSlot.text, type: 'STRING', nature:'ATTRIBUTE', expression: this.fieldForSlot.text };
+						formState = {
+								alias: LN('sbi.qbe.bands.prefix') + this.fieldForSlot.text
+								, type: 'STRING'
+								, nature:'ATTRIBUTE'
+								, expression: this.fieldForSlot.attributes.id 
+						};
 						target = this.fieldForSlot.parentNode;
 					}else{
 						formState = this.firstCalculatedFiledPanel.getFormState();
