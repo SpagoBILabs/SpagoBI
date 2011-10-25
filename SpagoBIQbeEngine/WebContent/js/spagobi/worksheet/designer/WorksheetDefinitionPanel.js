@@ -163,23 +163,43 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 	refreshWorksheetPreview : function () {
 		this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
 	}
+
 	, addAdditionalData : function(sheetTemplate){
+
 		if(this.worksheetPreviewPanel.rendered === true){
-			
 			var additionalData = this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.getAdditionalData();
+			alert(additionalData.toSource());
 			if(additionalData!=undefined && additionalData!=null){
 				var sheets = sheetTemplate.sheets;
 				for(var i=0; i<sheets.length; i++){
-					if(additionalData[i].data!=undefined && additionalData[i].data!=null && !Ext.isEmpty(additionalData[i].data)){
-						if(sheets[i].content.crosstabDefinition.calculatedFields==undefined || sheets[i].content.crosstabDefinition.calculatedFields==null){
+					if(additionalData[i].data!=undefined && additionalData[i].data!=null && !Ext.isEmpty(additionalData[i].data) && sheets[i].content.crosstabDefinition!=undefined && sheets[i].content.crosstabDefinition!=null){
+						//if(sheets[i].content.crosstabDefinition.calculatedFields==undefined || sheets[i].content.crosstabDefinition.calculatedFields==null){
 							sheets[i].content.crosstabDefinition.calculatedFields =additionalData[i].data.crosstabDefinition.calculatedFields;
-						}else{
-							sheets[i].content.crosstabDefinition.calculatedFields = Ext.apply(sheets[i].content.crosstabDefinition.calculatedFields, additionalData[i].data.crosstabDefinition.calculatedFields);
-						}
+						//}else{
+						//	sheets[i].content.crosstabDefinition.calculatedFields = Ext.apply(sheets[i].content.crosstabDefinition.calculatedFields, additionalData[i].data.crosstabDefinition.calculatedFields);
+						//}
 					}
 				}	
 			}
+		}else{
+			this.addSheetAdditionalData(sheetTemplate,this.worksheetDesignerPanel.worksheetTemplate);
 		}
+	}
+
+
+	, addSheetAdditionalData: function(designerTemplate, documentTemplate){
+		var designerTemplateSheets = designerTemplate.sheets;
+		var documentTemplateSheets = documentTemplate.sheets;
+		for(var i=0; i<designerTemplateSheets.length; i++){
+			for(var y=0; y<documentTemplateSheets.length; y++){
+				if(designerTemplateSheets[i].name == documentTemplateSheets[y].name){
+					if(designerTemplateSheets[i].content.crosstabDefinition!=undefined && designerTemplateSheets[i].content.crosstabDefinition!=null && documentTemplateSheets[y].content.crosstabDefinition!=undefined && documentTemplateSheets[y].content.crosstabDefinition!=null){
+						designerTemplateSheets[i].content.crosstabDefinition.calculatedFields =documentTemplateSheets[y].content.crosstabDefinition.calculatedFields; 
+					}
+					break;
+				}
+			}	
+		}	
 	}
 
 
