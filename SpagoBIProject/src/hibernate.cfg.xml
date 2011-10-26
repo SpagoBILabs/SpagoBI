@@ -2,15 +2,16 @@
 <!DOCTYPE hibernate-configuration PUBLIC
 "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
 <hibernate-configuration>
-    <session-factory name="HibernateSessionFactoryMySQL">
+     <session-factory name="HibernateSessionFactoryMySQL"> 
 
     	<property name="hibernate.connection.datasource">java:/comp/env/jdbc/spagobi</property>
 
+       
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-        
         <!-- 
-        
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="hibernate.dialect">org.hibernate.dialect.Oracle9Dialect</property>
@@ -156,4 +157,5 @@
 -->   
 		        
     </session-factory>
+    
 </hibernate-configuration>
