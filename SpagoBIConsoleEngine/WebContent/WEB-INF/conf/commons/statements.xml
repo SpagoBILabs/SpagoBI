@@ -15,18 +15,18 @@
   			   query="UPDATE TEST_CONSOLE SET FLG5 = ? WHERE ID = ? "/>	  			 
   			   
    <STATEMENT name="UPDATE_ALL_ERRORS_STATE_TEST" 
-  			   query="UPDATE TEST_CONSOLE  SET FLG3 = ?, COLUMN3 = ?, COLUMN_DATA = now() 
+  			   query="UPDATE TEST_CONSOLE  SET FLG3 = ?, COLUMN3 = ? 
   			   		  WHERE  FLG2 = 1  
-  			   		  AND COLUMN1 like ? and COLUMN2 like ? and DATE_FORMAT(column_data,'%Y-%m-%d') like ?"/>	
+  			   		  AND COLUMN1 like ? and COLUMN2 like ? "/>	
   			   
    <STATEMENT name="UPDATE_ALL_ALARMS_STATE_TEST" 
-  			   query="UPDATE TEST_CONSOLE  SET FLG5 = ?, COLUMN3 = ?, COLUMN_DATA = now() 
+  			   query="UPDATE TEST_CONSOLE  SET FLG5 = ?, COLUMN3 = ? 
   			   		  WHERE  FLG4 = 1  
-  			   		  AND COLUMN1 like ? and COLUMN2 like ? and DATE_FORMAT(column_data,'%Y-%m-%d') like ?"/>	
+  			   		  AND COLUMN1 like ? and COLUMN2 like ? "/>	
   			   
    <STATEMENT name="UPDATE_ALL_VIEWING_STATE_TEST" 
-  			   query="UPDATE TEST_CONSOLE  SET FLG6 = ?, COLUMN3 = ?, COLUMN_DATA = now()
-  			    	  WHERE COLUMN1 like ? and COLUMN2 like ? and DATE_FORMAT(column_data,'%Y-%m-%d') like ?"/>	
+  			   query="UPDATE TEST_CONSOLE  SET FLG6 = ?, COLUMN3 = ?
+  			    	  WHERE COLUMN1 like ? and COLUMN2 like ? "/>	
   <!-- end statements for test console -->
 
 			 
