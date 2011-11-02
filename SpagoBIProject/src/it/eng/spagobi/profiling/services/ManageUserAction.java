@@ -166,8 +166,8 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 
 				} catch (EMFUserError e) {
 					logger.error("Exception occurred while saving new user", e);
-					writeErrorsBackToClient();
-					throw new SpagoBIServiceException(SERVICE_NAME,	"Exception occurred while saving new user",	e);
+					//swriteErrorsBackToClient();
+					throw new SpagoBIServiceException(SERVICE_NAME,	""+e.getMessage(),	null);
 				} catch (IOException e) {
 					logger.error("Exception occurred while writing response to client", e);
 					throw new SpagoBIServiceException(SERVICE_NAME,
