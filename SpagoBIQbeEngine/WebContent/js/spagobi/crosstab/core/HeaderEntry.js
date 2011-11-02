@@ -95,7 +95,7 @@ Sbi.crosstab.core.HeaderEntry = function(config) {
 	var sharedConf = {
 		hideMode: 'offsets',
 		bodyCssClass: 'x-grid3-header crosstab-table-headers' ,
-		bodyStyle: 'font-size:'+ this.fontSize,
+		bodyStyle: 'font-size:'+ this.fontSize
 	};
 	
 	if(this.horizontal){	
