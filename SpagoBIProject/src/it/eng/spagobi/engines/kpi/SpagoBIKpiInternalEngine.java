@@ -1172,7 +1172,9 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		String chartType = null;
 		if (kpiInst!=null){
 			Integer thresholdId = kpiInst.getThresholdId();
-			if (thresholdId!=null) thresholdValues = DAOFactory.getThresholdValueDAO().loadThresholdValuesByThresholdId(thresholdId);
+			if (thresholdId!=null) {
+				thresholdValues = DAOFactory.getThresholdValueDAO().loadThresholdValuesByThresholdId(thresholdId);
+			}
 			chartType = "BulletGraph";
 			logger.debug("Requested date d: "+dateOfKPI.toString()+" in between beginDate and EndDate");
 			weight = kpiInst.getWeight();
@@ -1184,11 +1186,13 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			logger.debug("SbiKpiValue scaleCode: "+(scaleCode!=null ? scaleCode : "scaleCode null"));
 			Integer scaleId = kpi.getMetricScaleId();
 			DomainDAOHibImpl daoDomain = (DomainDAOHibImpl)DAOFactory.getDomainDAO();
-			Domain scale = daoDomain.loadDomainById(scaleId);
-			scaleName = scale.getValueName();
-			
-			measureTypeCd = kpi.getMeasureTypeCd();
-			logger.debug("SbiKpiValue scaleName: "+(scaleName!=null ? scaleName : "scaleName null"));
+			if(scaleId != null){
+				Domain scale = daoDomain.loadDomainById(scaleId);
+				scaleName = scale.getValueName();			
+				
+				measureTypeCd = kpi.getMeasureTypeCd();
+				logger.debug("SbiKpiValue scaleName: "+(scaleName!=null ? scaleName : "scaleName null"));
+			}
 		}
 		kVal.setWeight(weight);
 		logger.debug("Setted the KpiValue weight:"+weight);	
