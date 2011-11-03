@@ -161,6 +161,8 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			IDataSource ds = getConsoleEngineInstance().getDataSource();				
 			DataSourceUtilities dsu = new DataSourceUtilities(ds);
 			Vector extractedFields = dsu.readFields(dataSet.getQuery().toString());
+			//order fields like template
+			
 			List extractedFieldsMetaData = new ArrayList<IFieldMetaData>();
 			if(jsonArray != null && jsonArray.length() > 0) {
 				int fieldNo = dataStore.getMetaData().getFieldCount();
@@ -169,34 +171,35 @@ public class ExportAction extends AbstractConsoleEngineAction {
 				}
 				
 				List actionColumns = new ArrayList();
-				JSONObject resultHeaders = jsonArray.getJSONObject(0);
-				Iterator it = resultHeaders.keys();
-				while(it.hasNext()) {
-					String key = (String)it.next();
-					JSONObject header = resultHeaders.getJSONObject(key);
-					String fieldHeader = header.optString("header", "");
-					String fieldHeaderType =  header.optString("headerType", "");		
+				for(int k = 0; k < jsonArray.length(); k++){
+					JSONObject resultHeaders = jsonArray.getJSONObject(k);
+					Iterator it = resultHeaders.keys();
+					while(it.hasNext()) {
+						String key = (String)it.next();
+						JSONObject header = resultHeaders.getJSONObject(key);
+						String fieldHeader = header.optString("header", "");
+					/*String fieldHeaderType =  header.optString("headerType", "");		
 //					// in case of dynamic headers gets the value from the dataset
 					if (fieldHeaderType.equalsIgnoreCase("dataset")){
 						int posHeader = dataStore.getMetaData().getFieldIndex(fieldHeader);
 						fieldHeader =((List)dataStore.getFieldValues(posHeader)).get(0).toString();
-					}
-					
-					Field headerF = new Field(fieldHeader, "java.lang.String", 100);
-					extractedFields.add(headerF);
-					for(int i = 0; i < fieldNo; i++) {
-						IFieldMetaData fFound = dataStore.getMetaData().getFieldMeta(i);
-						if(fFound.getName().equals(key)){
-							fFound.setProperty("visible", Boolean.TRUE);
-							fFound.setAlias(fieldHeader);
-							fFound.setProperty("index", i);
-							extractedFieldsMetaData.add(fFound);
+					}*/
+						Field headerF = new Field(fieldHeader, "java.lang.String", 100);
+						extractedFields.add(headerF);
+						for(int i = 0; i < fieldNo; i++) {
+							IFieldMetaData fFound = dataStore.getMetaData().getFieldMeta(i);
+							if(fFound.getName().equals(key)){
+								fFound.setProperty("visible", Boolean.TRUE);
+								fFound.setAlias(fieldHeader);
+								fFound.setProperty("index", k);							
+								extractedFieldsMetaData.add(fFound);
+								break;
+							}
+							
 						}
-						
+	
 					}
-
 				}
-				
 				dataStore.getMetaData().setProperty("actionColumns", actionColumns);
 			}
 			params = new HashMap();
