@@ -67,6 +67,8 @@ public class ModelViewEntity extends ModelEntity {
 			if(parentEntity.getParent() == null) {
 				return parentEntity.getType() + ":" + fieldName;
 			}
+			
+			
 			String parentViewName = parentEntity.getPropertyAsString("parentView");
 			if(parentViewName!= null) {
 				return parentViewName+":"+parentEntity.getType() + ":" + getName();
@@ -287,13 +289,13 @@ public class ModelViewEntity extends ModelEntity {
 		Set<String> innerEntityUniqueNames = view.getInnerEntityUniqueNames();
 		for(String innerEntityUniqueName : innerEntityUniqueNames) {
 			IModelEntity e = structure.getRootEntity(modelName, innerEntityUniqueName);
-			List<IModelEntity> innerEntitySubEntities = e.getSubEntities();
+//			List<IModelEntity> innerEntitySubEntities = e.getSubEntities();
 			IModelEntity clonedEntity = e.clone(null, getUniqueName());
 			entities.add(clonedEntity);
-			for(IModelEntity innerEntitySubEntity : innerEntitySubEntities) {
-				IModelEntity subEntity = (innerEntitySubEntity.clone(clonedEntity, null));
-				subEntities.put(subEntity.getUniqueName(), subEntity);
-			}
+//			for(IModelEntity innerEntitySubEntity : innerEntitySubEntities) {
+//				IModelEntity subEntity = (innerEntitySubEntity.clone(clonedEntity, null));
+//				subEntities.put(subEntity.getUniqueName(), subEntity);
+//			}
 		}
 				
 		joins = new ArrayList<Join>();
