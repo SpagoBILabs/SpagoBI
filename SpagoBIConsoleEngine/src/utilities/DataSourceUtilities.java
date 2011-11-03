@@ -142,10 +142,10 @@ public class DataSourceUtilities {
 								paramValue = null;
 							}
 						}
+						logger.debug("Parameter " + paramName + "  is equals to [" + paramValue + "]");
 						inputParameter.add(dataConnection.createDataField(paramName,getParamType(paramType), paramValue));							
 					}	
-				}
-				
+				}				
 				dataResult = sqlCommand.execute(inputParameter);
 			}else{
 				dataResult = sqlCommand.execute();
