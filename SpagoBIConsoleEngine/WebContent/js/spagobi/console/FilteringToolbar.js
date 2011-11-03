@@ -170,6 +170,14 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 	
 		var gridConsole = this.ownerCt;
 		var columnConfigs = gridConsole.columnConfig;
+		
+		//gets colModel to retrieve order
+		var colModArray = gridConsole.colModel.fields;
+		
+		//gets store reader metadata to retrieve dataIndex
+		var storeMetaArray = gridConsole.store.reader.meta.fields;
+		
+		var meta = this.orderMetaColumns(colModArray, storeMetaArray);
 
 		var output = 'application/vnd.ms-excel';
 		if(format == 'PDF'){
@@ -179,7 +187,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 			mimeType: output
 			, responseType: 'attachment'
 			, datasetLabel: gridConsole.store.dsLabel
-			, meta: Ext.util.JSON.encode(columnConfigs)
+			, meta: Ext.util.JSON.encode(meta)
 		};
 		
 		Sbi.Sync.request({
@@ -187,6 +195,29 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 			, params: params
 		});
 		
+	}
+	, orderMetaColumns : function(colModArray, storeMetaArray){
+		var result = new Array();
+		if(colModArray != null && colModArray !== undefined){
+			for(i=0; i<colModArray.length; i++){
+				var colItem = colModArray[i];
+				if(colItem !== undefined && colItem.dataIndex !== ''){
+					var header = colItem.header;
+					for(j=0; j<storeMetaArray.length; j++){
+						var storeItem = storeMetaArray[j];
+						if(storeItem !== undefined && (colItem.dataIndex == storeItem.dataIndex)){
+							var colName= storeItem.header;
+							var metaObj = {};	
+							metaObj[colName] = {header: header};	
+							
+							result.push(metaObj);
+							break;
+						}
+					}
+				}
+			}
+		}
+		return result;
 	}
 	 //defines fields depending from operator type
 	 , createFilterField: function(operator, header, dataIndex){
