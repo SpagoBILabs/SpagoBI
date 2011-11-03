@@ -70,7 +70,7 @@ public class CrosstabQueryCreator {
 		
 		putFromClause(buffer, descriptor);
 		
-		putWhereClause(buffer, whereFields, descriptor, dataSource.getDriver());
+		putWhereClause(buffer, whereFields, descriptor);
 		
 		putGroupByClause(buffer, crosstabDefinition, descriptor);
 		
@@ -286,7 +286,7 @@ public class CrosstabQueryCreator {
 //	}
 	
 	
-	private static void putWhereClause(StringBuffer toReturn, List<WhereField> whereFields, IDataSetTableDescriptor descriptor, String dialect) {
+	private static void putWhereClause(StringBuffer toReturn, List<WhereField> whereFields, IDataSetTableDescriptor descriptor) {
 		String boundedValue, leftValue, columnName;
 		String[] rightValues;
 		
@@ -301,13 +301,6 @@ public class CrosstabQueryCreator {
 				if (rightValues.length == 1) {
 					boundedValue = getValueBounded(rightValues[0],
 							descriptor.getColumnType(leftValue));
-					if(dialect.contains("SQLServerDialect")){
-						if(boundedValue.equals("true")){
-							boundedValue = "1";
-						}else if(boundedValue.equals("false")){
-							boundedValue = "0";
-						}
-					}
 					toReturn.append(columnName + " = " + boundedValue);
 				} else {
 					toReturn.append(columnName + " IN (");
