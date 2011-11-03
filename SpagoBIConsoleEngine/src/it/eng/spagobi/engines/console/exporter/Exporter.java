@@ -87,8 +87,8 @@ public class Exporter {
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
 		 if(dataStore!=null  && !dataStore.isEmpty()){
-			    CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper, 4, 4);
-			    fillSheetData(sheet, wb, createHelper, cellTypes, 5, 4);
+			    CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper, 0, 0);
+			    fillSheetData(sheet, wb, createHelper, cellTypes, 1, 0);
 			    int first = sheet.getRow(0).getFirstCellNum();
 			    int last = sheet.getRow(0).getLastCellNum();
 			    adjustToColumnContent(sheet,first, last );
@@ -199,7 +199,8 @@ public class Exporter {
 	    
 		CellStyle cellStyleDate = wb.createCellStyle(); // cellStyleDate is the default cell style for dates
 		cellStyleDate.cloneStyleFrom(dCellStyle);
-		cellStyleDate.setDataFormat(HSSFDataFormat.getBuiltinFormat("yy-m-d h:mm"));
+		//cellStyleDate.setDataFormat(HSSFDataFormat.getBuiltinFormat("yy-m-d h:mm"));
+		cellStyleDate.setDataFormat(HSSFDataFormat.getBuiltinFormat("yy-m-d"));
 
 		
 		for(int i= 0; i<numberOfRows ; i++){
