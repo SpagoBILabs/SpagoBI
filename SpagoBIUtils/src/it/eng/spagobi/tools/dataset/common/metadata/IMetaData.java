@@ -32,6 +32,9 @@ import java.util.Map;
  */
 public interface IMetaData {
 	
+	public static final String FLOATFORMAT = "floatFormat";
+	public static final String DECIMALPRECISION = "decimalPrecision";
+	
 	/**
 	 * @return Returns the index of identfier field if any. -1 otherwaise. 
 	 */
