@@ -828,15 +828,17 @@ public class HQLStatement extends AbstractStatement {
 		
 		StringTokenizer stk = new StringTokenizer(expr, "+-|*/()");
 		while(stk.hasMoreTokens()){
-			String alias = stk.nextToken().trim();
+			String cfExpressionField = stk.nextToken().trim();
 			// alias can contain "DISTINCT" HQL/SQL key: we have to remove it
-			if (alias.toUpperCase().startsWith("DISTINCT ")) {
-				alias = alias.substring("DISTINCT ".length());
+			if (cfExpressionField.toUpperCase().startsWith("DISTINCT ")) {
+				cfExpressionField = cfExpressionField.substring("DISTINCT ".length());
 			}
+			
+			
 			String uniqueName;
 			allSelectFields = query.getSelectFields(false);
 			for(int i=0; i<allSelectFields.size(); i++){
-				if(allSelectFields.get(i).getClass().equals(SimpleSelectField.class) && ((SimpleSelectField)allSelectFields.get(i)).getAlias().equals(alias)){
+				if(allSelectFields.get(i).getClass().equals(SimpleSelectField.class) && ((SimpleSelectField)allSelectFields.get(i)).getUniqueName().equals(cfExpressionField)){
 					uniqueName=((SimpleSelectField)allSelectFields.get(i)).getUniqueName();
 					datamartField = getDataSource().getModelStructure().getField(uniqueName);	
 					queryName =  (String)datamartField.getQueryName().getFirst();
@@ -844,7 +846,7 @@ public class HQLStatement extends AbstractStatement {
 					rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
 					queryName = ((SimpleSelectField)allSelectFields.get(i)).getFunction().apply(rootEntityAlias+"."+queryName);
 					aliasEntityMapping.add(queryName);
-					aliases.add(alias);
+					aliases.add(cfExpressionField);
 					break;
 				}
 			}
