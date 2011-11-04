@@ -151,15 +151,22 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 	    });
 		
 		this.store.on('metachange', function( store, meta ) {
-			
-		  
+
 		   for(var i = 0; i < meta.fields.length; i++) {
 			   if(meta.fields[i].type) {
 				   var t = meta.fields[i].type;
 				   //if(t === 'float' || t ==='int') t = 'number';
 				   if (meta.fields[i].format) { // format is applied only to numbers
 					   var format = Sbi.qbe.commons.Format.getFormatFromJavaPattern(meta.fields[i].format);
-					   var f = Ext.apply( Sbi.locale.formats[t], format);
+					   var formatDataSet = meta.fields[i].format;
+					   if((typeof formatDataSet == "string") || (typeof formatDataSet == "String")){
+						   try{
+							   formatDataSet =  Ext.decode(meta.fields[i].format);
+						   }catch(e){
+							   formatDataSet = meta.fields[i].format;
+						   }
+					   }
+					   var f = Ext.apply( Sbi.locale.formats[t], formatDataSet);
 					   meta.fields[i].renderer = Sbi.qbe.commons.Format.numberRenderer(f);
 				   } else {
 					   meta.fields[i].renderer = Sbi.locale.formatters[t];
