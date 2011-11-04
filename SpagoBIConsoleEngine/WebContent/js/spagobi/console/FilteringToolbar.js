@@ -177,7 +177,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 		//gets store reader metadata to retrieve dataIndex
 		var storeMetaArray = gridConsole.store.reader.meta.fields;
 		
-		var meta = this.orderMetaColumns(colModArray, storeMetaArray);
+		var meta = this.orderMetaColumns(colModArray, storeMetaArray , columnConfigs);
 
 		var output = 'application/vnd.ms-excel';
 		if(format == 'PDF'){
@@ -196,7 +196,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 		});
 		
 	}
-	, orderMetaColumns : function(colModArray, storeMetaArray){
+	, orderMetaColumns : function(colModArray, storeMetaArray, columnConfig){
 		var result = new Array();
 		if(colModArray != null && colModArray !== undefined){
 			for(i=0; i<colModArray.length; i++){
@@ -207,9 +207,9 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 						var storeItem = storeMetaArray[j];
 						if(storeItem !== undefined && (colItem.dataIndex == storeItem.dataIndex)){
 							var colName= storeItem.header;
-							var metaObj = {};	
-							metaObj[colName] = {header: header};	
-							
+							var metaObj = {};
+							metaObj[colName] = columnConfig[colName];
+
 							result.push(metaObj);
 							break;
 						}
