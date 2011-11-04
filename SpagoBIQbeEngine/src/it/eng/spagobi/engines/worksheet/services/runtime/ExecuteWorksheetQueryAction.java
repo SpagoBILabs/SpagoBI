@@ -34,6 +34,8 @@ import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -41,6 +43,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +77,7 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
     public static transient Logger logger = Logger.getLogger(LoadCrosstabAction.class);
 	
 	public void service(SourceBean request, SourceBean response)  {				
-		
+		String decimalPrecision = null;
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
 		
@@ -95,6 +98,24 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 			Assert.assertTrue(jsonVisibleSelectFields != null && jsonVisibleSelectFields.length() > 0, "jsonVisibleSelectFields input not valid");
 			
 			dataStore = executeQuery(jsonVisibleSelectFields);
+			
+			Map<String,String> floatFormat = (Map<String,String> ) getEngineInstance().getDataSet().getMetadata().getProperty(IMetaData.FLOATFORMAT);
+			if(floatFormat!=null){
+				decimalPrecision = floatFormat.get(IMetaData.DECIMALPRECISION);
+			}
+			
+			for(int i=0; i<dataStore.getMetaData().getFieldCount(); i++){
+				IFieldMetaData fmd = dataStore.getMetaData().getFieldMeta(i);
+							
+				Class clazz = fmd.getType();
+				if( Float.class.isAssignableFrom(clazz) || 
+					Double.class.isAssignableFrom(clazz)  || 
+					BigDecimal.class.isAssignableFrom(clazz)){
+					if(decimalPrecision!=null){
+						fmd.setProperty("format", "{"+IMetaData.DECIMALPRECISION+": "+decimalPrecision+"}");
+					}
+				}
+			}
 			
 			gridDataFeed = serializeDataStore(dataStore);
 			

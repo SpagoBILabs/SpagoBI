@@ -192,14 +192,16 @@ public class CustomDataSet extends ConfigurableDataSet {
 				JSONObject jsonObject = new JSONObject(_customData);
 
 				String[] names = JSONObject.getNames(jsonObject);
-
-				for (int i = 0; i < names.length; i++) {
-					String nm = names[i];
-					Object value = jsonObject.get(nm);
-					logger.debug("Property read: key is [" + nm
-							+ "], value is [" + value + "]");
-					toInsert.put(nm, value);
+				if(names!=null){
+					for (int i = 0; i < names.length; i++) {
+						String nm = names[i];
+						Object value = jsonObject.get(nm);
+						logger.debug("Property read: key is [" + nm
+								+ "], value is [" + value + "]");
+						toInsert.put(nm, value);
+					}
 				}
+
 			}
 		} catch (Exception e) {
 			logger.error("cannot parse to Map the Json string " + customData, e);
