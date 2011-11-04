@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,16 +75,19 @@ public class CrossTab {
 	private String[][] dataMatrix;
 	private JSONObject config;
 	private List<MeasureInfo> measures;
+	private String decimalPrecision;
+	
 	
 	/**
 	 * Builds the crossTab (headers structure and data)
 	 * @param dataStore: the source of the data
 	 * @param crosstabDefinition: the definition of the crossTab
 	 */
-	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition) throws JSONException{
+	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, Map<String, String> cellProperties) throws JSONException{
 		IRecord record;
 		String rowPath;
 		String columnPath;
+		decimalPrecision = null;
 		this.config = crosstabDefinition.getConfig();
 		int cellLimit = crosstabDefinition.getCellLimit();
 		boolean columnsOverflow = false; //true if the number of cell shown in the crosstab is less than the total number of cells
@@ -145,7 +149,12 @@ public class CrossTab {
 				}
 				rowPath = rowPath + valueStr.toString();
 			}
-
+			
+			//Object floatFormat = cellProperties.get("floatFormat");
+			if(cellProperties!=null){
+				decimalPrecision = cellProperties.get("decimalPrecision");
+			}
+				
 			for(int i=record.getFields().size()-measuresCount; i<record.getFields().size(); i++){
 				columnCordinates.add(columnPath);
 				rowCordinates.add(rowPath);
@@ -377,7 +386,6 @@ public class CrossTab {
 		if (obj == null) {
 			return "NULL";
 		}
-		
 		String fieldValue = null;
 		
 		Class clazz = obj.getClass();
@@ -524,7 +532,11 @@ public class CrossTab {
 			   || Byte.class.isAssignableFrom(clazz)) {
 				return new MeasureInfo(fieldName, "int", null);
 			} else {
-				return new MeasureInfo(fieldName, "float", null);
+				if(decimalPrecision!=null){
+					return new MeasureInfo(fieldName, "custom_number", "{decimalPrecision:"+decimalPrecision+"}");
+				}else{
+					return new MeasureInfo(fieldName, "float", null);
+				}
 			}
 			
 		} else if( Timestamp.class.isAssignableFrom(clazz) ) {

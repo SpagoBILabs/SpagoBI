@@ -5,6 +5,7 @@ Sbi.locale.formatters = {
 	//number: Sbi.locale.dummyFormatter,
 	'int': Sbi.locale.dummyFormatter,
 	'float': Sbi.locale.dummyFormatter,
+	'custom_number': Sbi.locale.dummyFormatter,
 	'string': Sbi.locale.dummyFormatter,		
 	'date': Sbi.locale.dummyFormatter,
 	'timestamp': Sbi.locale.dummyFormatter,
@@ -16,7 +17,8 @@ Sbi.locale.formatters = {
 if(Sbi.qbe.commons.Format){
 	if(Sbi.locale.formats) {
 		Sbi.locale.formatters['int']  = Sbi.qbe.commons.Format.numberRenderer(Sbi.locale.formats['int']);		
-		Sbi.locale.formatters['float']  = Sbi.qbe.commons.Format.numberRenderer(Sbi.locale.formats['float']);		
+		Sbi.locale.formatters['float']  = Sbi.qbe.commons.Format.numberRenderer(Sbi.locale.formats['float']);
+		Sbi.locale.formatters['custom_number'] = Sbi.qbe.commons.Format.customNumberRenderer(Sbi.locale.formats['float']);
 		Sbi.locale.formatters['string']  = Sbi.qbe.commons.Format.stringRenderer(Sbi.locale.formats['string']);		
 		Sbi.locale.formatters['date']   = Sbi.qbe.commons.Format.dateRenderer(Sbi.locale.formats['date']);
 		Sbi.locale.formatters['timestamp']   = Sbi.qbe.commons.Format.dateRenderer(Sbi.locale.formats['timestamp']);
@@ -25,6 +27,7 @@ if(Sbi.qbe.commons.Format){
 	} else {
 		Sbi.locale.formatters['int']  = Sbi.qbe.commons.Format.numberRenderer( );	
 		Sbi.locale.formatters['float']  = Sbi.qbe.commons.Format.numberRenderer( );	
+		Sbi.locale.formatters['custom_number'] = Sbi.qbe.commons.Format.numberRenderer( );	
 		Sbi.locale.formatters['string']  = Sbi.qbe.commons.Format.stringRenderer( );		
 		Sbi.locale.formatters['date']    = Sbi.qbe.commons.Format.dateRenderer( );
 		Sbi.locale.formatters['timestamp']    = Sbi.qbe.commons.Format.dateRenderer( );	
