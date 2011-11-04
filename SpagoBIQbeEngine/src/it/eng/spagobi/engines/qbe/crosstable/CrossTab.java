@@ -150,9 +150,8 @@ public class CrossTab {
 				rowPath = rowPath + valueStr.toString();
 			}
 			
-			//Object floatFormat = cellProperties.get("floatFormat");
 			if(cellProperties!=null){
-				decimalPrecision = cellProperties.get("decimalPrecision");
+				decimalPrecision = cellProperties.get(IMetaData.DECIMALPRECISION);
 			}
 				
 			for(int i=record.getFields().size()-measuresCount; i<record.getFields().size(); i++){
