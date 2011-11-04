@@ -34,6 +34,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -149,7 +150,12 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
 			
 			// serialize crosstab
-			CrossTab crossTab = new CrossTab(dataStore, crosstabDefinition);
+			
+			Map<String,String> floatFormat = (Map<String,String> ) engineInstance.getDataSet().getMetadata().getProperty(IMetaData.FLOATFORMAT);
+			//Map<String,String> floatFormat = new HashMap<String, String>();
+			//floatFormat.put(IMetaData.DECIMALPRECISION, "1");
+			CrossTab crossTab = new CrossTab(dataStore, crosstabDefinition, floatFormat);
+			
 			JSONObject crossTabDefinition = crossTab.getJSONCrossTab();
 			
 			try {

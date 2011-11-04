@@ -1378,6 +1378,8 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				valueObj = parseInt(value);
 			} else if (type == 'float') {
 				valueObj = parseFloat(value);
+			} else if (type == 'custom_number') {
+				valueObj = parseFloat(value);
 			} else if (type == 'date') {
 				valueObj = Date.parseDate(value, format);
 			} else if (type == 'timestamp') {
@@ -1389,9 +1391,13 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			if(percent!=undefined && percent!=null && percent!='' && (type == 'float' || type == 'int')){
 				str = '<div style=\'text-align: right;\'>' + Sbi.qbe.commons.Format.number(valueObj, type) +'<span style="font-size:'+percentFontSize+'px;"> (' + Sbi.qbe.commons.Format.number(percent, 'int') +'%)</span></div>';
 			}else{
-				str = Sbi.locale.formatters[type].call(this, valueObj); // formats the value
+				if(type=='custom_number' && format!=null && format!=undefined){
+					str = Sbi.locale.formatters[type].call(this,Ext.decode(format), valueObj); // formats the value
+				}else{
+					str = Sbi.locale.formatters[type].call(this, valueObj); // formats the value
+				}
 			}
-			
+		
 			return str;
 		} catch (err) {
 			return value;
