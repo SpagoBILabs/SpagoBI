@@ -32,7 +32,6 @@ import java.util.Map;
  */
 public interface IMetaData {
 	
-	public static final String FLOATFORMAT = "floatFormat";
 	public static final String DECIMALPRECISION = "decimalPrecision";
 	
 	/**
