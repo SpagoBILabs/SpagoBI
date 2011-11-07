@@ -77,7 +77,6 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
     public static transient Logger logger = Logger.getLogger(LoadCrosstabAction.class);
 	
 	public void service(SourceBean request, SourceBean response)  {				
-		String decimalPrecision = null;
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
 		
@@ -98,7 +97,7 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 			Assert.assertTrue(jsonVisibleSelectFields != null && jsonVisibleSelectFields.length() > 0, "jsonVisibleSelectFields input not valid");
 			
 			dataStore = executeQuery(jsonVisibleSelectFields);
-						
+			
 			gridDataFeed = serializeDataStore(dataStore);
 			
 			try {
