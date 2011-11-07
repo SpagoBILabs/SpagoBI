@@ -144,7 +144,13 @@ Sbi.qbe.commons.Format = function(){
             	return '<div style=\'text-align: right;\'>' + Sbi.qbe.commons.Format.number(v, format) + '</div>';
             };
         }
-        
+        , floatRenderer : function(format){
+        	
+            return function(v){
+            	var fl = parseFloat(v);
+            	return '<div style=\'text-align: right;\'>' + Sbi.qbe.commons.Format.number(fl, format) + '</div>';
+            };
+        }
         , customNumberRenderer : function(format){
             return function(conf, v){
             	
