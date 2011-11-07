@@ -131,7 +131,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 
 	private void saveDocument() throws Exception {
 		String id = getAttributeAsString(ID);
-		Integer sourceBiobjId = getAttributeAsInteger(OBJ_ID);
+		String sourceBiobjIdStr = getAttributeAsString(OBJ_ID);
 		String label = getAttributeAsString(LABEL);
 		String name = getAttributeAsString(NAME);
 		String description = getAttributeAsString(DESCRIPTION);
@@ -146,8 +146,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		String query = getAttributeAsString(OBJECT_QUERY);
 
 		BIObject sourceBiobj = null;
-		if (sourceBiobjId != null ) {
-			sourceBiobj = objDao.loadBIObjectById(new Integer(sourceBiobjId));
+		if (sourceBiobjIdStr != null && !sourceBiobjIdStr.trim().equals("")) {
+			sourceBiobj = objDao.loadBIObjectById(new Integer(sourceBiobjIdStr));
 		}
 		
 		if ( type == null || type.equals("") ) {
@@ -287,9 +287,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 					}else{
 						Integer biObjectID = objDao.insertBIObject(o, objTemp);
-						if ( sourceBiobjId != null ){					
+						if ( sourceBiobj != null ) {
 							List obj_pars = sourceBiobj.getBiObjectParameters();
-							if(obj_pars!=null && !obj_pars.isEmpty()){
+							if (obj_pars != null && !obj_pars.isEmpty() ) {
 								Iterator it = obj_pars.iterator();
 								while(it.hasNext()){
 									BIObjectParameter par = (BIObjectParameter)it.next();
