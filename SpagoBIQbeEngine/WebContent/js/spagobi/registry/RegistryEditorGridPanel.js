@@ -164,11 +164,11 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			   
 			   if(meta.fields[i].type) {
 				   var t = meta.fields[i].type;
-				   //if(t === 'float' || t ==='int') t = 'number';
-				   if (meta.fields[i].format) { // format is applied only to numbers
+				   if (t ==='float') { // format is applied only to numbers
 					   var format = Sbi.qbe.commons.Format.getFormatFromJavaPattern(meta.fields[i].format);
 					   var f = Ext.apply( Sbi.locale.formats[t], format);
-					   meta.fields[i].renderer = Sbi.qbe.commons.Format.numberRenderer(f);
+					   meta.fields[i].renderer = Sbi.qbe.commons.Format.floatRenderer(f);
+
 				   } else {
 					   meta.fields[i].renderer = Sbi.locale.formatters[t];
 				   }			   
@@ -217,11 +217,9 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			    	}else{
 			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats['date']);
 			    	}
-			    }else if(Ext.isNumber(val)){
-			    	/*if(t === 'int'){
-			    		e.record.data[e.field] = Sbi.qbe.commons.Format.number(val, Sbi.locale.formats.int);
-			    	}else */
-			    		if(t === 'float'){
+			    }
+			    else if(Ext.isNumber(val)){
+			    	if(t === 'float'){
 			    		e.record.data[e.field] = Sbi.qbe.commons.Format.number(val, Sbi.locale.formats['float']);
 			    	}
 			    }
@@ -243,10 +241,15 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   var dt = new Date(Date.parse(e.value));
 				   e.record.data[e.field] = dt;
 			   }
+			   if (t === 'float') {
+				   var f = parseFloat(e.value);
+				   e.record.data[e.field] = f;
 
+			   }
 			 }, this);
+
 		}, this);
-		
+
 	}
 
 	,
