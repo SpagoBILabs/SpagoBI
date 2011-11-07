@@ -242,7 +242,9 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   e.record.data[e.field] = dt;
 			   }
 			   if (t === 'float') {
-				   var f = parseFloat(e.value);
+				   //replace , wirth .
+				   var dottedVal = e.value.replace(',', '.');
+				   var f = parseFloat(dottedVal);
 				   e.record.data[e.field] = f;
 
 			   }
