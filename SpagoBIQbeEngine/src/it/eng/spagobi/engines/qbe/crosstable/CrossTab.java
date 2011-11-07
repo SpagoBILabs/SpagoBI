@@ -75,7 +75,6 @@ public class CrossTab {
 	private String[][] dataMatrix;
 	private JSONObject config;
 	private List<MeasureInfo> measures;
-	private String decimalPrecision;
 	
 	
 	/**
@@ -83,11 +82,10 @@ public class CrossTab {
 	 * @param dataStore: the source of the data
 	 * @param crosstabDefinition: the definition of the crossTab
 	 */
-	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, Map<String, String> cellProperties) throws JSONException{
+	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition) throws JSONException{
 		IRecord record;
 		String rowPath;
 		String columnPath;
-		decimalPrecision = null;
 		this.config = crosstabDefinition.getConfig();
 		int cellLimit = crosstabDefinition.getCellLimit();
 		boolean columnsOverflow = false; //true if the number of cell shown in the crosstab is less than the total number of cells
@@ -150,9 +148,6 @@ public class CrossTab {
 				rowPath = rowPath + valueStr.toString();
 			}
 			
-			if(cellProperties!=null){
-				decimalPrecision = cellProperties.get(IMetaData.DECIMALPRECISION);
-			}
 				
 			for(int i=record.getFields().size()-measuresCount; i<record.getFields().size(); i++){
 				columnCordinates.add(columnPath);
@@ -531,6 +526,7 @@ public class CrossTab {
 			   || Byte.class.isAssignableFrom(clazz)) {
 				return new MeasureInfo(fieldName, "int", null);
 			} else {
+				String decimalPrecision = (String)fieldMeta.getProperty(IMetaData.DECIMALPRECISION);
 				if(decimalPrecision!=null){
 					return new MeasureInfo(fieldName, "custom_number", "{decimalPrecision:"+decimalPrecision+"}");
 				}else{

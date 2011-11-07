@@ -98,25 +98,7 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 			Assert.assertTrue(jsonVisibleSelectFields != null && jsonVisibleSelectFields.length() > 0, "jsonVisibleSelectFields input not valid");
 			
 			dataStore = executeQuery(jsonVisibleSelectFields);
-			
-			Map<String,String> floatFormat = (Map<String,String> ) getEngineInstance().getDataSet().getMetadata().getProperty(IMetaData.FLOATFORMAT);
-			if(floatFormat!=null){
-				decimalPrecision = floatFormat.get(IMetaData.DECIMALPRECISION);
-			}
-			
-			for(int i=0; i<dataStore.getMetaData().getFieldCount(); i++){
-				IFieldMetaData fmd = dataStore.getMetaData().getFieldMeta(i);
-							
-				Class clazz = fmd.getType();
-				if( Float.class.isAssignableFrom(clazz) || 
-					Double.class.isAssignableFrom(clazz)  || 
-					BigDecimal.class.isAssignableFrom(clazz)){
-					if(decimalPrecision!=null){
-						fmd.setProperty("format", "{"+IMetaData.DECIMALPRECISION+": "+decimalPrecision+"}");
-					}
-				}
-			}
-			
+						
 			gridDataFeed = serializeDataStore(dataStore);
 			
 			try {
