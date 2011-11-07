@@ -149,6 +149,12 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 				logger.debug("Read property " + PROPERTY_AGGREGATION_FUNCTION + ": its value is [" + aggregationFunction + "]");
 				fieldMetaDataJSON.put("funct", AggregationFunctions.get(aggregationFunction).getName());
 				fieldMetaDataJSON.put("iconCls", measureNature);
+				String decimalPrecision= (String) fieldMetaData.getProperty(IMetaData.DECIMALPRECISION);
+				if(decimalPrecision!=null){
+					fieldMetaDataJSON.put("precision", decimalPrecision);
+				}else{
+					fieldMetaDataJSON.put("precision", "2");
+				}
 				break;
 			}
 			fieldsMetaDataJSON.put(fieldMetaDataJSON);
