@@ -147,6 +147,9 @@ Sbi.qbe.commons.Format = function(){
         , floatRenderer : function(format){
         	
             return function(v){
+            	if( typeof v === 'string'){
+            		v = v.replace(',', '.');
+            	}
             	var fl = parseFloat(v);
             	return '<div style=\'text-align: right;\'>' + Sbi.qbe.commons.Format.number(fl, format) + '</div>';
             };
