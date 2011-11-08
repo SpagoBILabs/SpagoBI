@@ -207,15 +207,17 @@ public class FakeDataset extends AbstractCustomDataSet {
 		ente.setProperty("isSegmentAttribute", Boolean.TRUE);
 		meta.addFiedMeta(ente);
 		
-		FieldMetadata spesa = new FieldMetadata("spesa", Integer.class);
+		FieldMetadata spesa = new FieldMetadata("spesa", Float.class);
 		spesa.setAlias("Spesa sostenuta");
 		spesa.setProperty("isMandatoryMeasure", Boolean.TRUE);
+		spesa.setProperty("decimalPrecision", "4");
 		spesa.setFieldType(FieldType.MEASURE);
 		meta.addFiedMeta(spesa);
 		
 		FieldMetadata guadagno = new FieldMetadata("guadagno", Integer.class);
 		guadagno.setAlias("Guadagno");
 		guadagno.setProperty("aggregationFunction", "SUM");
+		guadagno.setProperty("decimalPrecision", "2");
 		guadagno.setFieldType(FieldType.MEASURE);
 		meta.addFiedMeta(guadagno);
 		
@@ -242,7 +244,7 @@ public class FakeDataset extends AbstractCustomDataSet {
 			int annoIndex = new Double(Math.floor( i / lunghezzaGruppo)).intValue();
 			f = new Field(); f.setValue( anni[ annoIndex ] ); rec.appendField(f);
 			f = new Field(); f.setValue( enti[ randomGenerator.nextInt(enti.length) ] ); rec.appendField(f);
-			f = new Field(); f.setValue( 1 ); rec.appendField(f); // spesa
+			f = new Field(); f.setValue( Math.random() ); rec.appendField(f); // spesa
 			f = new Field(); f.setValue( 1 ); rec.appendField(f); // guadagno
 
 			dataStore.appendRecord(rec);
