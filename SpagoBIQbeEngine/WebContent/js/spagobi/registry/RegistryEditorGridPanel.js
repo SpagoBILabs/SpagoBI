@@ -169,6 +169,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					   var f = Ext.apply( Sbi.locale.formats[t], format);
 					   meta.fields[i].renderer = Sbi.qbe.commons.Format.floatRenderer(f);
 
+				   }else if(t ==='int'){
+					   meta.fields[i].renderer = Sbi.locale.formatters['string'];
 				   } else {
 					   meta.fields[i].renderer = Sbi.locale.formatters[t];
 				   }			   
