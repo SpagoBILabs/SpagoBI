@@ -187,7 +187,8 @@ public class TemporaryTableManager {
 			DatabaseMetaData dbMeta = connection.getMetaData();
 			String driverName = connection.getMetaData().getDriverName();
 			resultSet = dbMeta.getColumns(null, null, tableName, null);
-			if (resultSet.first()) {
+			//if (resultSet.first()) {
+			if (resultSet.next()) {
 				tableDescriptor = new DataSetTableDescriptor();
 				tableDescriptor.setTableName(tableName);
 				readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource));
@@ -200,7 +201,8 @@ public class TemporaryTableManager {
 					 */
 					String tableNameUpperCase = tableName.toUpperCase();
 					resultSet = dbMeta.getColumns(null, null, tableNameUpperCase, null);
-					if (resultSet.first()) {
+					//if (resultSet.first()) {
+					if (resultSet.next()) {
 						tableDescriptor = new DataSetTableDescriptor();
 						tableDescriptor.setTableName(tableNameUpperCase);
 						readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource));
