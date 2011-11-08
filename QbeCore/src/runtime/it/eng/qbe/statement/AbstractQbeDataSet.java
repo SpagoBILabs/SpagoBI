@@ -337,8 +337,8 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			List<String> fields = getDataSetSelectedFields(statement.getQuery());
 			return TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
 		} catch (Exception e) {
-			logger.error("Error loading Persisting the temporary table with name"+tableName, e);
-			throw new SpagoBIEngineRuntimeException("Error loading Persisting the temporary table with name"+tableName, e);
+			logger.error("Error creating the temporary table with name " + tableName, e);
+			throw new SpagoBIEngineRuntimeException("Error creating the temporary table with name " + tableName, e);
 		}	
 	}
 
