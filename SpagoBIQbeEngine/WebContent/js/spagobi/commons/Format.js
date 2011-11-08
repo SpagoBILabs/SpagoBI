@@ -154,13 +154,6 @@ Sbi.qbe.commons.Format = function(){
             	return '<div style=\'text-align: right;\'>' + Sbi.qbe.commons.Format.number(fl, format) + '</div>';
             };
         }
-        , customNumberRenderer : function(format){
-            return function(conf, v){
-            	
-            	return '<div style=\'text-align: right;\'>' + Sbi.qbe.commons.Format.number(v, Ext.apply(format||{}, conf)) + '</div>';
-            };
-        }
-        
         , string : function(v, format) {
         	format = Ext.apply({}, format || {}, {
 	    		trim: true,
