@@ -174,7 +174,7 @@ public class Exporter {
 
 					    cell.setCellValue(val.doubleValue());			    
 					    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-					    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleDoub);
+					    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cs);
 					}else if( String.class.isAssignableFrom(c)){
 						logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "STRING" + "]");	    
 					    String val = (String)f.getValue();
