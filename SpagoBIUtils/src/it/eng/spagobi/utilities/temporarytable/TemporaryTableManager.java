@@ -193,9 +193,9 @@ public class TemporaryTableManager {
 				tableDescriptor.setTableName(tableName);
 				readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource));
 			} else {
-				if (driverName.contains("HSQL")) {
+				if (driverName.contains("HSQL") || driverName.contains("Oracle")) {
 					/*
-					 * HSQL has this problem: when creating a table with name, for example, "TMPSBIQBE_biadmin", 
+					 * HSQL and Oracle have this problem: when creating a table with name, for example, "TMPSBIQBE_biadmin", 
 					 * it creates a table with actual name "TMPSBIQBE_BIADMIN" (all upper case) but the getColumns method 
 					 * is case sensitive, therefore we try also with putting the table name upper case
 					 */
