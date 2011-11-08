@@ -96,6 +96,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	
 		, exportContent: function(){
 			var crosstabData = this.serializeCrossTab(); 
+			crosstabData.config = this.config
 			var crosstabDataEncoded = Ext.util.JSON.encode(crosstabData);
 			var exportedCrosstab = {CROSSTAB: crosstabDataEncoded, SHEET_TYPE: 'CROSSTAB'};
 			return exportedCrosstab;
@@ -144,6 +145,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		var columns = this.fromNodeToArray(crosstab.columns);
 		var data = crosstab.data;
 		var config = crosstab.config;
+		this.config = config;
 		var measuresMetadata = crosstab.measures_metadata;
 		
 		var c = {

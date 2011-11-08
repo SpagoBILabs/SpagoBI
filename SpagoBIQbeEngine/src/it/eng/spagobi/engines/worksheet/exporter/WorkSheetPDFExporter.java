@@ -21,8 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.engines.worksheet.exporter;
 
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabPDFExporter;
+import it.eng.spagobi.engines.qbe.crosstable.serializer.json.CrosstabSerializationConstants;
+import it.eng.spagobi.engines.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
@@ -36,12 +40,14 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.JPEGTranscoder;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.lowagie.text.Document;
@@ -534,9 +540,7 @@ public class WorkSheetPDFExporter {
 				logger.error("Error while adding header or footer", e);
 			}
 			
-		}
-
-		
+		}		
 	}
 	
 	

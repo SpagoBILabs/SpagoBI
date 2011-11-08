@@ -157,12 +157,12 @@ public class DataSourceTablePDFExporter {
 			for(int fieldIndex =0; fieldIndex<length; fieldIndex++){
 				IField f = (IField)fields.get(fieldIndex);
 				IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);
-
+				String decimalPrecision = (String)fieldMetaData.getProperty(IMetaData.DECIMALPRECISION);
 				if (f == null || f.getValue()== null) {
 		    		cell = new PdfPCell(new Phrase(""));
 		    	}else{
 					Class c = d.getFieldType(fieldIndex);
-					cell = new PdfPCell(new Phrase(formatPDFCell(c, f)));
+					cell = new PdfPCell(new Phrase(formatPDFCell(c, f, decimalPrecision)));
 					if(oddRows){
 						cell.setBackgroundColor(oddrowsBackgroundColor);
 					}else{
@@ -184,14 +184,24 @@ public class DataSourceTablePDFExporter {
 	 * @param f
 	 * @return
 	 */
-	private String formatPDFCell(Class c, IField f){
+	private String formatPDFCell(Class c, IField f, String numberFormat){
+		DecimalFormat aNumberFormat = new DecimalFormat("##,##0.00");
+		if(numberFormat!=null){
+			try {
+				aNumberFormat.setMaximumFractionDigits(new Integer(numberFormat)) ;
+				aNumberFormat.setMinimumFractionDigits(new Integer(numberFormat)) ;
+			} catch (Exception e) {
+				// its ok empty... if an error occours use the default
+				logger.debug("The decimal precison is not valid:  "+numberFormat);
+			}
+		}
 		String cellValue ="";
 		if( Integer.class.isAssignableFrom(c) || Short.class.isAssignableFrom(c)) {
 			Number val = (Number)f.getValue();
-			cellValue = numberFormat.format(val);
+			cellValue = aNumberFormat.format(val);
 		}else if( Number.class.isAssignableFrom(c) ) {
 		    Number val = (Number)f.getValue();
-		    cellValue = numberFormat.format(val);
+		    cellValue = aNumberFormat.format(val);
 		}else if( String.class.isAssignableFrom(c)){
 			cellValue = (String)f.getValue();
 		}else if( Boolean.class.isAssignableFrom(c) ) {

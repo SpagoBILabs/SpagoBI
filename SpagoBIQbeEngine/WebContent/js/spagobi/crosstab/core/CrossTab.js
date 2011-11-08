@@ -456,6 +456,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     		 this.columnHeader = columnHeaderBK;
     		 this.rowHeader=rowHeaderBK;
     	 }
+    	 serializedCrossTab.measures = this.measuresMetadata;
     	 return serializedCrossTab;
      }
      
@@ -1378,8 +1379,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				valueObj = parseInt(value);
 			} else if (type == 'float') {
 				valueObj = parseFloat(value);
-			} else if (type == 'custom_number') {
-				valueObj = parseFloat(value);
 			} else if (type == 'date') {
 				valueObj = Date.parseDate(value, format);
 			} else if (type == 'timestamp') {
@@ -1391,8 +1390,8 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			if(percent!=undefined && percent!=null && percent!='' && (type == 'float' || type == 'int')){
 				str = '<div style=\'text-align: right;\'>' + Sbi.qbe.commons.Format.number(valueObj, type) +'<span style="font-size:'+percentFontSize+'px;"> (' + Sbi.qbe.commons.Format.number(percent, 'int') +'%)</span></div>';
 			}else{
-				if(type=='custom_number' && format!=null && format!=undefined){
-					str = Sbi.locale.formatters[type].call(this,Ext.decode(format), valueObj); // formats the value
+				if(type=='float' && format!=null && format!=undefined){
+					str = (Sbi.qbe.commons.Format.numberRenderer( Ext.apply(Sbi.locale.formats[type], Ext.decode(format)||{}) )).call(this, valueObj);
 				}else{
 					str = Sbi.locale.formatters[type].call(this, valueObj); // formats the value
 				}
