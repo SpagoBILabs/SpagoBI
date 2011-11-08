@@ -8,8 +8,10 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -19,6 +21,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -31,6 +34,7 @@ public class Exporter {
     
 	IDataStore dataStore = null;
 	Vector extractedFields = null;
+	 Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
 
 	public Exporter(IDataStore dataStore) {
 		super();
@@ -114,7 +118,7 @@ public class Exporter {
 	public void fillSheetData(Sheet sheet,Workbook wb, CreationHelper createHelper,CellStyle[] cellTypes, int beginRowData, int beginColumnData) {	
 		CrosstabXLSExporter xlsExp = new CrosstabXLSExporter();
 		CellStyle dCellStyle = xlsExp.buildDataCellStyle(sheet);
-	
+		DataFormat df = createHelper.createDataFormat();
 		Iterator it = dataStore.iterator();
     	int rownum = beginRowData;
     	short formatIndexInt = HSSFDataFormat.getBuiltinFormat("#,##0");
@@ -141,7 +145,6 @@ public class Exporter {
 			for(int fieldIndex =0; fieldIndex<length; fieldIndex++){
 				IField f = (IField)fields.get(fieldIndex);
 				if (f != null && f.getValue()!= null) {
-		    	    IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);
 
 					Class c = d.getFieldType(fieldIndex);
 					logger.debug("Column [" + (fieldIndex) + "] class is equal to [" + c.getName() + "]");
@@ -157,9 +160,19 @@ public class Exporter {
 					    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
 					    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleInt);
 					}else if( Number.class.isAssignableFrom(c) ) {
+			    	    IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);	    
+						String decimalPrecision = (String)fieldMetaData.getProperty(IMetaData.DECIMALPRECISION);
+						CellStyle cs ;
+					    if(decimalPrecision!=null){
+					    	cs = getNumberFormat(new Integer(decimalPrecision), wb, createHelper, dCellStyle);
+					    }else{
+					    	cs = getNumberFormat(2, wb, createHelper, dCellStyle);
+					    }
+
 						logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "NUMBER" + "]");
 					    Number val = (Number)f.getValue();
-					    cell.setCellValue(val.doubleValue());
+
+					    cell.setCellValue(val.doubleValue());			    
 					    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
 					    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleDoub);
 					}else if( String.class.isAssignableFrom(c)){
@@ -192,5 +205,25 @@ public class Exporter {
 	public void setExtractedFields(Vector extractedFields) {
 		this.extractedFields = extractedFields;
 	}
+	
+	
+	private CellStyle getNumberFormat(int j, Workbook wb, CreationHelper createHelper, CellStyle dCellStyle){
+
+		if(decimalFormats.get(j)!=null)
+			return decimalFormats.get(j);
+		String decimals="";
+		for(int i=0; i<j; i++){
+			decimals+="0";
+		}
+		
+	    CellStyle cellStyleDoub = wb.createCellStyle(); // cellStyleDoub is the default cell style for doubles
+	    cellStyleDoub.cloneStyleFrom(dCellStyle);
+	    DataFormat df = createHelper.createDataFormat();
+	    cellStyleDoub.setDataFormat(df.getFormat("#,##0."+decimals));
+		
+		decimalFormats.put(j, cellStyleDoub);
+		return cellStyleDoub;
+	}
+
 	
 }

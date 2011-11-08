@@ -39,7 +39,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -105,6 +107,7 @@ public class WorkSheetXLSExporter {
 	public static final String RIGHT = "right";
 	public static final String LEFT = "left";
 
+	Map<Integer, String> decimalFormats = new HashMap<Integer, String>();
 	
 	public JSONObject getOptionalUserFilters(JSONObject paramsJSON) throws JSONException{
 		JSONObject optionalUserFiltersJSON = null;
@@ -351,4 +354,16 @@ public class WorkSheetXLSExporter {
 		}
 	}
 
+	private String getNumberFormat(String decimal){
+		int j = new Integer(decimal);
+		if(decimalFormats.get(j)!=null)
+			return decimalFormats.get(j);
+		String decimals="";
+		for(int i=0; i<j; i++){
+			decimals+="0";
+		}
+		decimalFormats.put(j, decimals);
+		return decimals;
+	}
+	
 }

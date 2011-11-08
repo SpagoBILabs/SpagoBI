@@ -20,13 +20,15 @@
  **/
 package it.eng.spagobi.engines.qbe.crosstable.exporter;
 
+import it.eng.qbe.serializer.SerializationException;
+import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
+import it.eng.spagobi.engines.worksheet.services.export.MeasureFormatter;
+
 import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
-import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -58,6 +60,7 @@ public class CrosstabPDFExporter {
 	//private static final Color tableBorderColor = new Color(153,187,232);
 	private static final Color cellsBorderColor = new Color(170,170,170);
 	private Font cellFont = new Font(Font.HELVETICA, 8);
+	private MeasureFormatter measureMetadata;
 	
 	public static transient Logger logger = Logger.getLogger(CrosstabPDFExporter.class);
 	
@@ -73,7 +76,7 @@ public class CrosstabPDFExporter {
 	 * @throws BadElementException
 	 * @throws DocumentException
 	 */
-	public void export(JSONObject json, Document pdfDocument, DecimalFormat numberFormat) throws JSONException, BadElementException, DocumentException {
+	public void export(JSONObject json, Document pdfDocument, DecimalFormat numberFormat) throws SerializationException, JSONException, BadElementException, DocumentException {
 		logger.debug("IN: exporting the crosstab");
 		//prepare the crosstab for the export
 		CrosstabExporterUtility.calculateDescendants(json);
@@ -82,7 +85,7 @@ public class CrosstabPDFExporter {
 		JSONObject rowsRoot = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_ROWS_HEADERS);
 		JSONArray rowsRootChilds = rowsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
 		JSONArray data = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_DATA);
-
+		measureMetadata = new MeasureFormatter(json, numberFormat, "##,##0.00");
 		this.numberFormat = numberFormat;
 		
 		//build the matrix for the content
@@ -137,10 +140,10 @@ public class CrosstabPDFExporter {
 				//Check if a cell is a sum
 				if(text.length()>5 && text.substring(0, 5).equals("[sum]")){
 					text= text.substring(5);
-					cell = new PdfPCell(new Phrase (getFormattedString(text), cellFont));
+					cell = new PdfPCell(new Phrase (getFormattedString(text,i,j), cellFont));
 					cell.setBackgroundColor(sumBackgroundColor);
 				} else{
-					cell = new PdfPCell(new Phrase (getFormattedString(text), cellFont));
+					cell = new PdfPCell(new Phrase (getFormattedString(text,i,j), cellFont));
 				}
 				
 				cell.setBorderColor(cellsBorderColor);
@@ -248,14 +251,19 @@ public class CrosstabPDFExporter {
 		return levelNodes;
 	}
 	
-	private String getFormattedString(String string) {
+	private String getFormattedString(String string, int i, int j) {
 		try{
 			Float f = new Float(string);
+			if(measureMetadata!=null){
+				return measureMetadata.getFormat(f, i, j);
+			}			
 			return numberFormat.format(f);
 		}catch (Exception e) {
 			return string;
 		}
 	}
+
+	
 
 
 }

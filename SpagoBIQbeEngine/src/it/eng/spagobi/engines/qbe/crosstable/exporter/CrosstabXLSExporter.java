@@ -22,7 +22,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.qbe.crosstable.exporter;
 
 
+import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
+import it.eng.spagobi.engines.worksheet.services.export.MeasureFormatter;
+
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -30,6 +36,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
@@ -64,8 +71,9 @@ public class CrosstabXLSExporter {
 	 * @param json The crosstab data serialization
 	 * @return the Workbook object (the XLS file)
 	 * @throws JSONException
+	 * @throws SerializationException 
 	 */
-	public Workbook export(JSONObject json) throws JSONException {
+	public Workbook export(JSONObject json) throws JSONException, SerializationException {
 		
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet("new sheet");
@@ -74,7 +82,7 @@ public class CrosstabXLSExporter {
 		return wb;
 	}
 	
-	public void fillSheet(Sheet sheet,JSONObject json, CreationHelper createHelper) throws JSONException{		
+	public void fillSheet(Sheet sheet,JSONObject json, CreationHelper createHelper) throws JSONException, SerializationException{		
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
 		CrosstabExporterUtility.calculateDescendants(json);
@@ -83,7 +91,7 @@ public class CrosstabXLSExporter {
     	commonFillSheet(sheet, json, createHelper,0);
 	}
 	
-	public int fillAlreadyCreatedSheet(Sheet sheet,JSONObject json, CreationHelper createHelper, int startRow) throws JSONException{		
+	public int fillAlreadyCreatedSheet(Sheet sheet,JSONObject json, CreationHelper createHelper, int startRow) throws JSONException, SerializationException{		
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
 		CrosstabExporterUtility.calculateDescendants(json);
@@ -91,7 +99,7 @@ public class CrosstabXLSExporter {
     	return totalRowNum;
 	}
 	
-	public int commonFillSheet(Sheet sheet,JSONObject json, CreationHelper createHelper, int startRow) throws JSONException{	
+	public int commonFillSheet(Sheet sheet,JSONObject json, CreationHelper createHelper, int startRow) throws SerializationException, JSONException{	
 		JSONObject columnsRoot = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_COLUMNS_HEADERS);
     	JSONArray columnsRootChilds = columnsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
     	int columnsDepth = CrosstabExporterUtility.getDepth(columnsRoot);
@@ -99,7 +107,7 @@ public class CrosstabXLSExporter {
 		int rowsDepth = CrosstabExporterUtility.getDepth(rowsRoot);
 		JSONArray rowsRootChilds = rowsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
 		JSONArray data = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_DATA);
-		
+		MeasureFormatter measureFormatter = new MeasureFormatter(json, new DecimalFormat("#0.00"),"#0.00");
 		int rowsNumber = data.length();
 		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
 		for (int i = 0; i < totalRowsNumber + 10; i++) {
@@ -111,7 +119,7 @@ public class CrosstabXLSExporter {
 		// ... then build headers for rows ....
 	    buildRowsHeaders(sheet, rowsRootChilds, columnsDepth + startRow, 4, createHelper);
 	    // then put the matrix data
-	    buildDataMatrix(sheet, data, columnsDepth + startRow, rowsDepth + 4, createHelper);
+	    buildDataMatrix(sheet, data, columnsDepth + startRow, rowsDepth + 4, createHelper, measureFormatter);
 	    return startRow+totalRowsNumber;
 	}
 	
@@ -135,11 +143,12 @@ public class CrosstabXLSExporter {
 		return totalRowsNumber+4;
 	}
 
-	private int buildDataMatrix(Sheet sheet, JSONArray data, int rowOffset, int columnOffset, CreationHelper createHelper) throws JSONException {
-		CellStyle cellStyle = buildDataCellStyle(sheet);
+	private int buildDataMatrix(Sheet sheet, JSONArray data, int rowOffset, int columnOffset, CreationHelper createHelper, MeasureFormatter measureFormatter) throws JSONException {
+		//CellStyle cellStyle = buildDataCellStyle(sheet);
+		
 		CellStyle sumCellStyle = buildDataCellStyle(sheet);
 		sumCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-		
+		Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
 		int endRowNum = 0;
 		for (int i = 0; i < data.length(); i++) {
 			JSONArray array = (JSONArray) data.get(i);
@@ -153,7 +162,7 @@ public class CrosstabXLSExporter {
 				}
 				endRowNum = rowNum;
 				Cell cell = row.createCell(columnNum);
-				cell.setCellStyle(cellStyle);
+				//cell.setCellStyle(cellStyle);
 				
 				//Check if a cell is a sum
 				if(text.length()>5 && text.substring(0, 5).equals("[sum]")){
@@ -161,12 +170,13 @@ public class CrosstabXLSExporter {
 					cell.setCellStyle(sumCellStyle);
 				} 
 				
-				
-				
 				try {
+
 					double value = Double.parseDouble(text);
-					cell.setCellValue(value);
+					int decimals = measureFormatter.getFormatXLS(new Float(text), i, j);
+					cell.setCellValue(new Double(value));
 					cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+					cell.setCellStyle(getNumberFormat(decimals, decimalFormats, sheet, createHelper));
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
 					cell.setCellValue(createHelper.createRichTextString(text));
@@ -334,7 +344,22 @@ public class CrosstabXLSExporter {
 	}
 
 	
-	
+	private CellStyle getNumberFormat(int j, Map<Integer, CellStyle> decimalFormats, Sheet sheet, CreationHelper createHelper){
+
+		if(decimalFormats.get(j)!=null)
+			return decimalFormats.get(j);
+		String decimals="";
+		for(int i=0; i<j; i++){
+			decimals+="0";
+		}
+		
+		CellStyle cellStyle = buildDataCellStyle(sheet);
+		DataFormat df = createHelper.createDataFormat();
+		cellStyle.setDataFormat(df.getFormat("#,##0."+decimals));
+		
+		decimalFormats.put(j, cellStyle);
+		return cellStyle;
+	}
 
 
 }

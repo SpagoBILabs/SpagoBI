@@ -528,7 +528,7 @@ public class CrossTab {
 			} else {
 				String decimalPrecision = (String)fieldMeta.getProperty(IMetaData.DECIMALPRECISION);
 				if(decimalPrecision!=null){
-					return new MeasureInfo(fieldName, "custom_number", "{decimalPrecision:"+decimalPrecision+"}");
+					return new MeasureInfo(fieldName, "float", "{decimalPrecision:"+decimalPrecision+"}");
 				}else{
 					return new MeasureInfo(fieldName, "float", null);
 				}
