@@ -21,6 +21,7 @@
 
 package it.eng.spagobi.engines.qbe.crosstable;
 
+import groovy.util.Eval;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -28,12 +29,14 @@ import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +79,7 @@ public class CrossTab {
 	private JSONObject config;
 	private List<MeasureInfo> measures;
 	
+	public CrossTab(){};
 	
 	/**
 	 * Builds the crossTab (headers structure and data)
@@ -399,9 +403,11 @@ public class CrossTab {
 	}
 
 
-	private class Node{
+	private class Node implements Cloneable{
 		private String value;
 		private List<Node> childs;
+		private int leafPosition =-1;
+		private List<Integer> leafPositionsForCF;//Uset for the CF
 		
 		public Node(String value){
 			this.value = value;
@@ -504,7 +510,467 @@ public class CrossTab {
 		private CrossTab getOuterType() {
 			return CrossTab.this;
 		}
+
+		public int getLeafPosition() {
+			return leafPosition;
+		}
+		
+		public void setLeafPositions(){
+			setLeafPositions(0);
+		}
+		
+		private int setLeafPositions(int pos){
+			if(childs.size()==0){
+				leafPosition = pos;
+				pos++;
+			}else{
+				for(int i=0; i<childs.size(); i++){
+					pos = childs.get(i).setLeafPositions(pos);
+				}
+			}
+			return pos;
+		}
+		
+		public Node clone(){
+			Node n = new Node(value);
+			if(childs.size()>0){
+				for (int j = 0; j < childs.size(); j++) {
+					n.addChild(childs.get(j).clone());
+				}
+			}
+			return n;
+		}
+
+		public List<Integer> getLeafPositionsForCF() {
+			return leafPositionsForCF;
+		}
+
+		public void setLeafPositionsForCF(List<Integer> leafPositionsForCF) {
+			this.leafPositionsForCF = leafPositionsForCF;
+		}
+
+		public List<Node> getLevel(int level){
+			List<Node> nodes = new ArrayList<CrossTab.Node>();
+			if(level==0){
+				nodes.add(this);
+			}else{
+				if(childs.size()==0){
+					return null;
+				}
+				for(int i=0; i<childs.size(); i++){
+					nodes.addAll(childs.get(i).getLevel(level-1));
+				}
+			}
+			return nodes;
+		}
+		
+		public List<Node> getLeafs(){
+			List<Node> list = new ArrayList<CrossTab.Node>();
+			if(childs.size()==0){
+				list.add(this);
+			}else{
+				for(int i=0; i<childs.size(); i++){
+					list.addAll(childs.get(i).getLeafs());
+				}
+			}
+			return list;
+		}
+
+		public Node buildRoot(){
+			Node root = new Node("Root");
+			
+			Node A = new Node("A");
+			Node Aa = new Node("a");
+			Node Ab = new Node("b");
+			Node Aa2 = new Node("1");
+			Node Aa3 = new Node("3");
+			Node Ab1 = new Node("1");
+			Node Ab2 = new Node("2");
+			
+			Aa.addChild(Aa3);
+			Aa.addChild(Aa2);
+			Ab.addChild(Ab2);
+			Ab.addChild(Ab1);
+			A.addChild(Aa);
+			A.addChild(Ab);
+			
+			Node B = new Node("B");
+			Node Ba = new Node("a");
+			Node Bb = new Node("b");
+			Node Bc = new Node("c");
+			Node Ba1 = new Node("1");
+			Node Ba3 = new Node("3");
+			Node Bb1 = new Node("1");
+			Node Bb2 = new Node("2");
+			Node Bc2 = new Node("2");
+			Node Bc3 = new Node("3");
+			
+			Bc.addChild(Bc3);
+			Bc.addChild(Bc2);
+			Ba.addChild(Ba3);
+			Ba.addChild(Ba1);
+			Bb.addChild(Bb2);
+			Bb.addChild(Bb1);
+			B.addChild(Ba);
+			B.addChild(Bb);
+			
+			Node C = new Node("B");
+			Node Ca = new Node("a");
+			Node Cb = new Node("b");
+			Node Cc = new Node("c");
+			Node Ca1 = new Node("1");
+//			Node Ca3 = new Node("3");
+			Node Cb1 = new Node("1");
+			Node Cb2 = new Node("2");
+//			Node Cc2 = new Node("2");
+			Node Cc3 = new Node("3");
+			
+			Cc.addChild(Cc3);
+			Ca.addChild(Ca1);
+			Cb.addChild(Cb2);
+			Cb.addChild(Cb1);
+			C.addChild(Ca);
+			C.addChild(Cb);
+			
+			root.addChild(A);
+			root.addChild(B);
+			root.addChild(C);
+			
+			return root;
+		}
+		
+		
+		public Node buildRoot2(){
+			Node root = new Node("X");
+			
+			Node A = new Node("A");
+			Node Aa = new Node("a");
+			Node Ab = new Node("b");
+//			Node Aa1 = new Node("1");
+//			Node Aa2 = new Node("2");
+//			Node Ab1 = new Node("1");
+//			Node Ab2 = new Node("2");
+			
+//			Aa.addChild(Aa3);
+//			Aa.addChild(Aa2);
+//			Ab.addChild(Ab2);
+//			Ab.addChild(Ab1);
+			A.addChild(Aa);
+			A.addChild(Ab);
+			
+			Node B = new Node("B");
+			Node Ba = new Node("a");
+			Node Bb = new Node("b");
+//			Node Bc = new Node("c");
+//			Node Ba1 = new Node("1");
+//			Node Ba3 = new Node("3");
+//			Node Bb1 = new Node("1");
+//			Node Bb2 = new Node("2");
+//			Node Bc2 = new Node("2");
+//			Node Bc3 = new Node("3");
+			
+//			Bc.addChild(Bc3);
+//			Bc.addChild(Bc2);
+//			Ba.addChild(Ba3);
+//			Ba.addChild(Ba1);
+//			Bb.addChild(Bb2);
+//			Bb.addChild(Bb1);
+			B.addChild(Ba);
+			B.addChild(Bb);
+			
+//			Node C = new Node("B");
+//			Node Ca = new Node("a");
+//			Node Cb = new Node("b");
+//			Node Cc = new Node("c");
+//			Node Ca1 = new Node("1");
+////			Node Ca3 = new Node("3");
+//			Node Cb1 = new Node("1");
+//			Node Cb2 = new Node("2");
+////			Node Cc2 = new Node("2");
+//			Node Cc3 = new Node("3");
+			
+//			Cc.addChild(Cc3);
+//			Ca.addChild(Ca1);
+//			Cb.addChild(Cb2);
+//			Cb.addChild(Cb1);
+//			C.addChild(Ca);
+//			C.addChild(Cb);
+			
+			root.addChild(A);
+			root.addChild(B);
+//			root.addChild(C);
+			
+			return root;
+		}
+		
 	}
+	
+	
+//	private Node mergeNodes(Node nodeA, Node nodeB, String NodeValue){
+//		Node newNode = new Node(NodeValue);
+//		int index;
+//		List<Node> childsA = nodeA.getChilds();
+//		List<Node> childsB = nodeB.getChilds();
+//		List<Node> newchilds = new ArrayList<CrossTab.Node>();
+//		if(childsA!=null && childsB!=null){
+//			for(int i=0; i<childsA.size(); i++){
+//				index = childsB.indexOf(childsA.get(i));
+//				if(index>=0){
+//					newchilds.add(mergeNodes(childsA.get(i), childsB.get(index), childsA.get(i).value));
+//				}
+//			}
+//		}
+//		newNode.setChilds(newchilds);
+//		return newNode;
+//	}
+//	
+	
+	
+	public static void main(String args[]){
+		CrossTab cs = new CrossTab();
+		Node n = cs.new Node("");
+		Node root = n.buildRoot2();
+		//Node m = cs.mergeNodes(root.getChilds(), "root");
+		
+		String[] aa= new String[4];
+		aa[0]="1";
+		aa[1]="20";
+		aa[2]="300";
+		aa[3]="4000";
+		String[][] aaa= new String[2][4];
+		aaa[0] = aa;
+		aaa[1] = aa;
+		cs.dataMatrix = aaa;
+//		System.out.println(root.getChilds().get(0).toString());
+//		System.out.println(root.getChilds().get(1).toString());
+//		System.out.println(m.toString());
+		
+		cs.calculateCF("field[A]+field[B]", root, false, 1);
+		
+//		System.out.println(Eval.me("1+2"));
+	}
+	
+
+	
+	private Node mergeNodes(List<Node> nodes, String NodeValue){
+		Assert.assertNotNull(nodes, "We need at least a node to merge");
+		Assert.assertTrue(nodes.size()>0, "We need at least a node to merge");
+		int index;
+		List<Node> commonChildNode;
+		Node newNode = new Node(NodeValue);
+		List<Node> newchilds = new ArrayList<CrossTab.Node>();
+		if(nodes.size()>1){
+			//get the first node. If a child of the first node
+			//is not a child of the other nodes is not in common... 
+			Node firstNode = nodes.get(0);
+			List<Node> firstNodeChilds = firstNode.getChilds();
+			if(firstNodeChilds!=null && firstNodeChilds.size()>0){
+				for(int i=0; i<firstNodeChilds.size(); i++){
+					commonChildNode = new ArrayList<CrossTab.Node>();
+					commonChildNode.add(firstNodeChilds.get(i));
+					//look for the child in all other nodes
+					for(int j=1; j<nodes.size(); j++){
+						index = nodes.get(j).getChilds().indexOf(firstNodeChilds.get(i));
+						if(index>=0){
+							commonChildNode.add(nodes.get(j).getChilds().get(index));
+						}else{
+							commonChildNode = null;
+							break;
+						}
+					}
+					if(commonChildNode!=null){
+						newchilds.add(mergeNodes(commonChildNode, firstNodeChilds.get(i).value));
+					}
+				}
+			}else{
+				//we are the leafs.. so we want the id of the node
+				List<Integer> leafPositions= new ArrayList<Integer>();
+				for(int j=0; j<nodes.size(); j++){
+					leafPositions.add(nodes.get(j).getLeafPosition());
+				}
+				newNode.setLeafPositionsForCF(leafPositions);
+			}
+		}else{
+			newNode = nodes.get(0).clone(); 
+		}
+		newNode.setChilds(newchilds);
+		return newNode;
+	}
+	
+	
+	
+	private void calculateCF(String operation, Node rootNode, boolean horizontal, int level){
+		List<String[]> calculatedFieldResult = new ArrayList<String[]>();
+		List<String> operationParsed;
+		List<String> operationExpsNames;
+		List<List<String>> parseOperationR = parseOperation(operation);
+		operationParsed = parseOperationR.get(0);
+		operationExpsNames = parseOperationR.get(1);
+		
+		//set the id on the leafs
+		rootNode.setLeafPositions();
+		
+		List<Node> levelNodes = rootNode.getLevel(level);
+		
+		Object[] expressionMap = buildExpressionMap(levelNodes, operationExpsNames);
+		Map<String, Integer> expressionToIndexMap = (Map<String, Integer>) expressionMap[1];
+		List<Node> nodeInvolvedInTheOperation = (List<Node>) expressionMap[0];
+		
+		Node mergedNode = mergeNodes(levelNodes, "CF");
+		
+		List<Node> mergedNodeLeafs = mergedNode.getLeafs();
+		for(int i=0; i<mergedNodeLeafs.size(); i++){
+			List<String[]> arraysInvolvedInTheOperation = getArraysInvolvedInTheOperation(horizontal, operationExpsNames, expressionToIndexMap, mergedNodeLeafs.get(i).getLeafPositionsForCF());
+			calculatedFieldResult.add(executeOperationOnArrays(arraysInvolvedInTheOperation, operationParsed));
+		}
+		int c = 7;
+	}
+	
+	
+	
+	
+	private static List<List<String>> parseOperation(String operation){
+		String freshOp = " "+operation;
+		List<String> operationParsed = new ArrayList<String>();
+		List<String> operationExpsNames = new ArrayList<String>();
+		int index =0;
+    	//parse the operation
+    	while(freshOp.indexOf("field[")>=0){
+    		index =  freshOp.indexOf("field[")+6;
+    		operationParsed.add(freshOp.substring(0,index-6));
+    		freshOp = freshOp.substring(index);
+    		index = freshOp.indexOf("]");
+    		operationExpsNames.add(freshOp.substring(0, index));
+    		freshOp = freshOp.substring(index+1);
+    	}
+    	operationParsed.add(freshOp);
+    	List<List<String>> toReturn=  new ArrayList<List<String>>();
+    	toReturn.add(operationParsed);
+    	toReturn.add(operationExpsNames);
+    	return toReturn;
+	}
+	
+	/**
+	 * prende la lista di nodi di un livello e i campi che compaiono nella quey...
+	 * Costruisce la lista dei nodi coinvolti nell'operazione e la mappa degli indici operationExpsNames-->indice del nodo corrispondente nella lista prcedente
+	 * @param nodes
+	 * @param operationExpsNames
+	 * @return
+	 */
+	private Object[] buildExpressionMap(List<Node> nodes, List<String> operationExpsNames){
+		Map<String, Integer> expressionToIndexMap = new HashMap<String, Integer>();
+		List<Node> nodeInvolvedInTheOperation = new ArrayList<Node>();
+		int foundNode=0;
+		for (Iterator<String> iterator = operationExpsNames.iterator(); iterator.hasNext();) {
+			String operationElement = iterator.next();
+			if(!expressionToIndexMap.containsKey(operationElement)){
+				expressionToIndexMap.put(operationElement, foundNode);
+				for(int y=0; y<nodes.size();y++){
+					if(nodes.get(y).value.equals(operationElement)){
+						nodeInvolvedInTheOperation.add(nodes.get(y));
+						foundNode++;
+						break;
+					}
+				}
+			}
+		}
+		Object[] toReturn= new Object[2]; 
+		toReturn[0]=nodeInvolvedInTheOperation;
+		toReturn[1]=expressionToIndexMap;
+//		String s;
+//		
+//		for(int i=0; i<operationExpsNames.size(); i++){
+//			s = operationExpsNames.get(i);
+//			if(!expressionToIndexMap.containsKey(s)){
+//				for(int j=0; j<leafNodes.size(); j++){
+//					if(leafNodes.get(j).value.equals(s)){
+//						expressionToIndexMap.put(s, leafNodes.get(j).getLeafPosition());
+//						break;
+//					}
+//				}
+//			}
+//		}
+		return toReturn;
+	}
+	
+	/**
+	 * 
+	 * @param horizontal
+	 * @param operationExpsNames the names of the operation : A+ D+C-(A*C) = A,D,C,A,C
+	 * @param expressionToIndexMap if the operation is the same of before and the Nodes of the level are A,B,C,D the map is (A->0, B->1...)
+	 * @param indexInTheArray è una lista la cui proima posizione è l'indice della colonna/riga nella tabella corrispondente al dato A,....
+	 * @return
+	 */
+	private List<String[]> getArraysInvolvedInTheOperation(boolean horizontal, List<String> operationExpsNames,  Map<String, Integer> expressionToIndexMap, List<Integer> indexInTheArray){
+		List<String[]> toReturn = new ArrayList<String[]>();
+		for (int y=0; y<operationExpsNames.size(); y++) {
+			String alias = operationExpsNames.get(y);
+			int index = expressionToIndexMap.get(alias);
+			if(horizontal){
+				toReturn.add(getCrosstabDataRow(indexInTheArray.get(index)));
+			}else{
+				toReturn.add(getCrosstabDataColumn(indexInTheArray.get(index)));
+			}
+		}
+		return toReturn;
+	}
+	
+	/**
+	 * Dati i parametri costruisce la lista risultante dell'esecuzione dell'operazione 
+	 * sulle liste passate. es: [4,6]
+	 * @param data lista di colonne/righe della crosstab su cui eseguire l'operazione es [1,2], [3,4]
+	 * @param operation l'opearzione parsata es: +
+	 * @return
+	 */
+	private String[] executeOperationOnArrays(List<String[]> data, List<String> operation){
+		List<String> operationElements;
+		int datalength = data.get(0).length;
+		String[] operationResult = new String[datalength];
+		for(int i =0; i<datalength; i++){
+			operationElements = new ArrayList<String>();
+			for(int j =0; j<data.size(); j++){
+				operationElements.add(data.get(j)[i]);
+			}	
+			operationResult[i] = executeOperationOnNumbers(operationElements, operation);
+		}
+		return operationResult;
+	}
+	
+	/**
+	 * Vene creata ed eseguita un operazione. dati i parametri descitti sotto viene composta l'operazione
+	 * 1+2-(2*4)
+	 * @param data una lista di valori che rappresentano gli elementi dell'operazione.. es: 1,2,3,4
+	 * @param op lista di stringhe che rappresentano l'operazione per sempio: +,-(,*,)
+	 * @return
+	 */
+	private String executeOperationOnNumbers(List<String> data, List<String> op){
+    	String operation ="";
+    	int i=0;
+    	for(i=0; i<op.size()-1; i++){
+    		operation = operation+op.get(i);
+    		operation = operation+data.get(i);
+    		if(data.get(i)=="NA" || data.get(i)=="null"  || data.get(i)==null){
+    			return "NA";
+    		}
+    	}
+    	operation = operation + op.get(i);
+    	String evalued = (Eval.me(operation)).toString();
+    	return evalued;
+	}
+	 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	private MeasureInfo getMeasureInfo(IFieldMetaData fieldMeta, Measure measure) {
@@ -579,7 +1045,18 @@ public class CrossTab {
 		public String getFormat() {
 			return format;
 		}
-
+	}
+	
+	private String[] getCrosstabDataColumn(int i){
+		String[] column = new String[dataMatrix.length];
+		for (int j = 0; j < dataMatrix.length; j++) {
+			column[j] = dataMatrix[j][i];
+		}
+		return column;
+	}
+	
+	private String[] getCrosstabDataRow(int i){
+		return dataMatrix[i];
 	}
 	
 }
