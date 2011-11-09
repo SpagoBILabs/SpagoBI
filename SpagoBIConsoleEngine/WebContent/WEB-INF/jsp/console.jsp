@@ -176,11 +176,14 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 				String parameterName = (String)it.next();
 				String parameterValue = (String)analyticalDrivers.get(parameterName);
 				if (parameterValue != null && !parameterValue.equals("")){
+					if (parameterValue.startsWith("'")){
 		   %>
-		   executionContext ['<%=parameterName%>'] = '<%=parameterValue%>';
-		   <%		
-			  }
-        }
+		   				executionContext ['<%=parameterName%>'] = <%=parameterValue%>;
+		   <%		}else{ %>
+						executionContext ['<%=parameterName%>'] = '<%=parameterValue%>';
+		   <%		}
+			    }
+        	  } //while
 	       %>
 	       template.executionContext = executionContext;
 
