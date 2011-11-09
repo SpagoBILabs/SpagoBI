@@ -507,8 +507,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}
 		var fatherFieldValueSet = {};
 		for(var i = 0; i < fatherFieldValues.length; i++) {
-			var v = fatherFieldValues[i].trim();
-			fatherFieldValueSet[ v ] = v;
+			if(fatherFieldValues[i]){
+				//var v = fatherFieldValues[i].trim();
+				var v = Ext.util.Format.trim(fatherFieldValues[i]);
+				fatherFieldValueSet[ v ] = v;
+			}
 		}
 		
 		var disableField = conditions.length > 0;
@@ -540,12 +543,16 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var conditionIsTrue = false;
 		var values = condition.value.split(',');
 		for(var i = 0; i < values.length; i++) {
-			var v = values[i].trim();
+		  if(values[i]){
+			//var v = values[i].trim();
+			var v = Ext.util.Format.trim(values[i]);
 			if(fatherFieldValueSet[v]) {
 				conditionIsTrue = true;
 				break;
 			}
+		   }
 		}
+		
 		//alert(conditionIsTrue + " ->> " + condition.toSource());
 		return (condition.operation == 'contains')? conditionIsTrue: !conditionIsTrue;
 	}
