@@ -146,90 +146,25 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 	    return results;
 	}
 	
-
     , execAction: function(){
     	var flgCheck = null;
     	var checkCol = null;
     	
-    	checkCol = this.actionConf.checkColumn;
-    	
-    	if (this.actionConf.type === 'monitor' || this.actionConf.type === 'monitor_inactive'){     		
-    		this.store.filterPlugin.removeFilter(this.store.getFieldNameByAlias(this.actionConf.checkColumn));
-    		var newFilter = new Array();
-    		newFilter.push((this.actionConf.type === 'monitor') ? this.ACTIVE_VALUE : this.INACTIVE_VALUE);    	
-    		this.store.filterPlugin.addFilter(this.store.getFieldNameByAlias(this.actionConf.checkColumn), newFilter);    		
-    		this.store.filterPlugin.applyFilters();	   
-    		return;
-    	}else if (this.actionConf.type === 'refresh'){    	
-    		if(this.store.pagingParams && this.store.pagingParams.paginator) {
-    			if(this.store.lastParams) {
-    				delete this.store.lastParams;
-    			}
-    			var paginator = this.store.pagingParams.paginator;
-    			paginator.doLoad(paginator.cursor); 
-    		} else {
-    			this.store.loadStore();    
-    		}
-    				
-    		return;
-    	} else if (this.actionConf.type === 'errors' || this.actionConf.type === 'errors_inactive'){  
-    		if (this.isActive !== undefined && this.isActive == true){
-    			flgCheck = this.ACTIVE_VALUE;
-    		}else if (this.isActive !== undefined && this.isActive == false){
-    			flgCheck = this.INACTIVE_VALUE;
-    		}else{
-    			flgCheck = (this.iconCls === 'errors')? this.ACTIVE_VALUE: this.INACTIVE_VALUE; 
-    		}    		   		    	
-    	} else if (this.actionConf.type === 'alarms' || this.actionConf.type === 'alarms_inactive'){   
-    		if (this.isActive !== undefined && this.isActive == true){
-    			flgCheck = this.ACTIVE_VALUE;
-    		}else if (this.isActive !== undefined && this.isActive == false){
-    			flgCheck = this.INACTIVE_VALUE;
-    		}else{
-    			flgCheck = (this.iconCls === 'alarms')? this.ACTIVE_VALUE: this.INACTIVE_VALUE;    		
-    		}    		
-    	} else if (this.actionConf.type === 'views' || this.actionConf.type === 'views_inactive'){     
-    		if (this.isActive !== undefined && this.isActive == true){
-    			flgCheck = this.ACTIVE_VALUE;
-    		}else if (this.isActive !== undefined && this.isActive == false){
-    			flgCheck = this.INACTIVE_VALUE;
-    		}else{
-    			flgCheck = (this.iconCls === 'views')? this.ACTIVE_VALUE: this.INACTIVE_VALUE;
-    		}
+    	//views a confirm message if it's configurated
+    	if (this.actionConf.msgConfirm !== undefined && this.actionConf.msgConfirm !== ''){
+    		Ext.MessageBox.confirm(
+    				"Confirm",
+    	            this.actionConf.msgConfirm,            
+    	            function(btn, text) {
+    					 if (btn == 'yes') {
+    						 this.execRealAction();
+    					 }
+    				},    	            
+	            this
+			);  
+    	}else{
+    		this.execRealAction();
     	}
-    	
-    	//if in configuration is set that the action is usable only once, it doesn't change the check if it's yet checked
-        if(flgCheck != null  && flgCheck === this.INACTIVE_VALUE &&
-        		this.actionConf.singleExecution !== undefined && this.actionConf.singleExecution == true) return;            	
-    	
-    	this.executionContext[checkCol] = flgCheck;
-		var params = this.resolveParameters(this.actionConf.config, this.executionContext);
-		params = Ext.apply(params, {
-				message: this.actionConf.type, 
-				userId: Sbi.user.userId 
-			}); 
-				
-		Ext.Ajax.request({
-		url: this.services[this.actionConf.type]	       
-       	, params: params 			       
-    	, success: function(response, options) {
-    		if(response !== undefined && response.responseText !== undefined) {
-					var content = Ext.util.JSON.decode( response.responseText );
-					if (content !== undefined) {				      			  
-					//	alert(content.toSource());
-					}				      		
-			} else {
-				Sbi.Msg.showError('Server response is empty', 'Service Error');
-			}
-    	}
-    	, failure: Sbi.exception.ExceptionHandler.onServiceRequestFailure
-    	, scope: this     
-	    });  
-
-		
-		this.setCheckValue(this.actionConf.checkColumn, flgCheck);        
-		//fire events to toggle all icons of the same type
-		this.fireEvent('toggleIcons', this, flgCheck);
 	}
  
 
@@ -330,6 +265,87 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     		this.isActive = true;
     	}
     }
-    
+
+    , execRealAction: function(){
+    	checkCol = this.actionConf.checkColumn;
+    	
+    	if (this.actionConf.type === 'monitor' || this.actionConf.type === 'monitor_inactive'){     		
+    		this.store.filterPlugin.removeFilter(this.store.getFieldNameByAlias(this.actionConf.checkColumn));
+    		var newFilter = new Array();
+    		newFilter.push((this.actionConf.type === 'monitor') ? this.ACTIVE_VALUE : this.INACTIVE_VALUE);    	
+    		this.store.filterPlugin.addFilter(this.store.getFieldNameByAlias(this.actionConf.checkColumn), newFilter);    		
+    		this.store.filterPlugin.applyFilters();	   
+    		return;
+    	}else if (this.actionConf.type === 'refresh'){    	
+    		if(this.store.pagingParams && this.store.pagingParams.paginator) {
+    			if(this.store.lastParams) {
+    				delete this.store.lastParams;
+    			}
+    			var paginator = this.store.pagingParams.paginator;
+    			paginator.doLoad(paginator.cursor); 
+    		} else {
+    			this.store.loadStore();    
+    		}
+    				
+    		return;
+    	} else if (this.actionConf.type === 'errors' || this.actionConf.type === 'errors_inactive'){  
+    		if (this.isActive !== undefined && this.isActive == true){
+    			flgCheck = this.ACTIVE_VALUE;
+    		}else if (this.isActive !== undefined && this.isActive == false){
+    			flgCheck = this.INACTIVE_VALUE;
+    		}else{
+    			flgCheck = (this.iconCls === 'errors')? this.ACTIVE_VALUE: this.INACTIVE_VALUE; 
+    		}    		   		    	
+    	} else if (this.actionConf.type === 'alarms' || this.actionConf.type === 'alarms_inactive'){   
+    		if (this.isActive !== undefined && this.isActive == true){
+    			flgCheck = this.ACTIVE_VALUE;
+    		}else if (this.isActive !== undefined && this.isActive == false){
+    			flgCheck = this.INACTIVE_VALUE;
+    		}else{
+    			flgCheck = (this.iconCls === 'alarms')? this.ACTIVE_VALUE: this.INACTIVE_VALUE;    		
+    		}    		
+    	} else if (this.actionConf.type === 'views' || this.actionConf.type === 'views_inactive'){     
+    		if (this.isActive !== undefined && this.isActive == true){
+    			flgCheck = this.ACTIVE_VALUE;
+    		}else if (this.isActive !== undefined && this.isActive == false){
+    			flgCheck = this.INACTIVE_VALUE;
+    		}else{
+    			flgCheck = (this.iconCls === 'views')? this.ACTIVE_VALUE: this.INACTIVE_VALUE;
+    		}
+    	}
+    	
+    	//if in configuration is set that the action is usable only once, it doesn't change the check if it's yet checked
+        if(flgCheck != null  && flgCheck === this.INACTIVE_VALUE &&
+        		this.actionConf.singleExecution !== undefined && this.actionConf.singleExecution == true) return;            	
+    	
+    	this.executionContext[checkCol] = flgCheck;
+		var params = this.resolveParameters(this.actionConf.config, this.executionContext);
+		params = Ext.apply(params, {
+				message: this.actionConf.type, 
+				userId: Sbi.user.userId 
+			}); 
+				
+		Ext.Ajax.request({
+		url: this.services[this.actionConf.type]	       
+       	, params: params 			       
+    	, success: function(response, options) {
+    		if(response !== undefined && response.responseText !== undefined) {
+					var content = Ext.util.JSON.decode( response.responseText );
+					if (content !== undefined) {				      			  
+					//	alert(content.toSource());
+					}				      		
+			} else {
+				Sbi.Msg.showError('Server response is empty', 'Service Error');
+			}
+    	}
+    	, failure: Sbi.exception.ExceptionHandler.onServiceRequestFailure
+    	, scope: this     
+	    });  
+
+		
+		this.setCheckValue(this.actionConf.checkColumn, flgCheck);        
+		//fire events to toggle all icons of the same type
+		this.fireEvent('toggleIcons', this, flgCheck);
+    }
 });
     
