@@ -69,6 +69,7 @@ public class CrossTab {
 	public static final String MEASURE_NAME = "name";
 	public static final String MEASURE_TYPE = "type";
 	public static final String MEASURE_FORMAT = "format";
+	public static final String TOTAL = "Total";
 
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy" );
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
@@ -104,6 +105,11 @@ public class CrossTab {
 			}
 			calculateCF(cf.getString("operation"), rootNode,horizontal, cf.getInt("level"), cf.getString("name"));
 		}
+		columnsRoot.addChild(getHeaderTotalSubTree(false, columnsRoot.getSubTreeDepth()-1));
+		addCrosstabDataColumns(dataMatrix[0].length, getTotalsOnRows(true));
+		
+		rowsRoot.addChild(getHeaderTotalSubTree(true, rowsRoot.getSubTreeDepth()-1));
+		addCrosstabDataRow(dataMatrix.length, getTotalsOnColumns(true));
 	}
 	
 	/**
@@ -924,17 +930,80 @@ public class CrossTab {
     	String evalued = (Eval.me(operation)).toString();
     	return evalued;
 	}
-	 
+
+	
+	/**
+	 * SOMME**********************************************************************
+	 */
 	
 	
 	
+	private List<String[]> getTotalsOnRows(boolean measuresOnRow){
+		List<String[]> sum = new ArrayList<String[]>();
+		double[] st = new double[dataMatrix.length];
+		int measures = 1;
+		if(!measuresOnRow){
+			measures= this.measures.size();
+		}
+		int iteration = dataMatrix[0].length/measures;
+		for(int measureId=0; measureId<measures; measureId++){
+			for(int i=0; i<dataMatrix.length; i++){
+				for(int j=0; j<iteration; j++){
+					st[i] = st[i] + new Double(dataMatrix[i][j+measureId]);
+				}
+			}
+			sum.add(toStringArray(st));
+		}
+		
+		return sum;
+	}
 	
+	private String[] toStringArray(double[] doubleArray){
+		String[] strings = new String[doubleArray.length];
+		for(int i=0; i<doubleArray.length; i++){
+			strings[i] = ""+(doubleArray[i]);
+		}
+		return strings;
+	}
 	
+	private List<String[]> getTotalsOnColumns(boolean measuresOnRow){
+		List<String[]> sum = new ArrayList<String[]>();
+		double[] st = new double[dataMatrix[0].length];
+		int measures = 1;
+		if(measuresOnRow){
+			measures= this.measures.size();
+		}
+		int iteration = dataMatrix[0].length/measures;
+		for(int measureId=0; measureId<measures; measureId++){
+			for(int i=0; i<iteration; i++){
+				for(int j=0; j<dataMatrix[0].length; j++){
+					st[j] = st[j] + new Double(dataMatrix[i+measureId][j]);
+				}
+			}
+			sum.add(toStringArray(st));
+		}
+		return sum;
+	}
 	
-	
-	
-	
-	
+	/**
+	 * 
+	 * @param withMeasures
+	 * @param deepth = tree depth-1
+	 * @return
+	 */
+	private Node getHeaderTotalSubTree(boolean withMeasures, int deepth){
+		Node node= new Node(TOTAL);
+		if(withMeasures && deepth==2){
+			for(int i=0; i<measures.size(); i++){
+				node.addChild(new Node(measures.get(i).getName()));
+			}
+		}else{
+			if(deepth>1){
+				node.addChild(getHeaderTotalSubTree(withMeasures, deepth-1));
+			}
+		}
+		return node;
+	}
 	
 	
 	
@@ -1078,5 +1147,7 @@ public class CrossTab {
 		
 		dataMatrix = newData;
 	}
+	
+	
 	
 }
