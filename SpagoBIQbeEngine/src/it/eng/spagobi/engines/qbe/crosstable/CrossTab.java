@@ -606,6 +606,14 @@ public class CrossTab {
 				}
 			}
 		}
+		
+		
+		public int getRightMostLeafPositionCF(){
+			if(childs.size()==0){
+				return leafPosition;
+			}
+			return childs.get(childs.size()-1).getRightMostLeafPositionCF();
+		}
 
 		public Node buildRoot(){
 			Node root = new Node("Root");
@@ -678,15 +686,15 @@ public class CrossTab {
 			Node A = new Node("A");
 			Node Aa = new Node("a");
 			Node Ab = new Node("b");
-//			Node Aa1 = new Node("1");
-//			Node Aa2 = new Node("2");
+			Node Aa1 = new Node("1");
+			Node Aa2 = new Node("1");
 //			Node Ab1 = new Node("1");
 //			Node Ab2 = new Node("2");
 			
 //			Aa.addChild(Aa3);
 //			Aa.addChild(Aa2);
-//			Ab.addChild(Ab2);
-//			Ab.addChild(Ab1);
+			Ab.addChild(Aa1);
+			Aa.addChild(Aa2);
 			A.addChild(Aa);
 			A.addChild(Ab);
 			
@@ -707,9 +715,9 @@ public class CrossTab {
 //			Ba.addChild(Ba1);
 //			Bb.addChild(Bb2);
 //			Bb.addChild(Bb1);
-			B.addChild(Ba);
-			B.addChild(Bb);
-			
+//			B.addChild(Ba);
+//			B.addChild(Bb);
+//			
 //			Node C = new Node("B");
 //			Node Ca = new Node("a");
 //			Node Cb = new Node("b");
@@ -732,50 +740,72 @@ public class CrossTab {
 			root.addChild(B);
 //			root.addChild(C);
 			
-			return root;
+			return A;
+		}
+		
+		public void buildSubTree(int height, int branch){
+			if(height<2){
+				for(int i=0; i<branch; i++){
+					addChild(new Node(""+i));
+				}
+			}else{
+				for(int i=0; i<branch; i++){
+					Node n = new Node(value+"_"+i);
+					addChild(n);
+					n.buildSubTree(height-1, branch);
+				}
+			}
 		}
 		
 	}
 	
 	
+	private static String[][] buildMatrix(int rows, int columns){
+		String[][] m = new String[rows][columns];
+		for(int i=0; i<rows; i++){
+			for(int j=0; j<columns; j++){
+				m[i][j]=""+i;
+			}
+		}
+		return m;
+	}
+	
 	public static void main(String args[]){
 		CrossTab cs = new CrossTab();
-		Node n = cs.new Node("");
-		Node root = n.buildRoot();
-		Node m = cs.mergeNodes(root.getChilds(), "root");
+		Node root = cs.new Node("Root");
+		root.buildSubTree(1, 2);
+		
 
-		String[] aa= new String[14];
-		aa[0]="1";
-		aa[1]="2";
-		aa[2]="3";
-		aa[3]="4";
+//		String[] aa= new String[16];
+//		aa[0]="1";
+//		aa[1]="2";
+//		aa[2]="3";
+//		aa[3]="4";
+//		
+//		aa[4]="50";
+//		aa[5]="60";
+//		aa[6]="70";
+//		aa[7]="80";
+//		
+//		aa[8]="90";
+//		aa[9]="100";
+//		aa[10]="1100";
+//		aa[11]="1200";
+//		
+//		aa[12]="1300";
+//		aa[13]="1400";
+//		aa[14]="1500";
+//		aa[15]="1600";
+//		
+//		
+//		String[][] aaa= new String[2][4];
+//		aaa[0] = aa;
+//		aaa[1] = aa;
+		cs.dataMatrix = buildMatrix(2, 16);
+
 		
-		aa[4]="50";
-		aa[5]="60";
-		aa[6]="70";
-		aa[7]="80";
-		aa[8]="90";
-		aa[9]="100";
+		cs.calculateCF("field[0]+field[1]+(7*field[1])", root, true, 1);
 		
-		aa[10]="1100";
-		aa[11]="1200";
-		aa[12]="1300";
-		
-		
-		
-		String[][] aaa= new String[2][4];
-		aaa[0] = aa;
-		aaa[1] = aa;
-		cs.dataMatrix = aaa;
-		System.out.println(root.toString());
-		System.out.println(m.toString());
-		m.updateFathers();
-		
-		cs.cleanTreeAfterMerge(m,  0);
-		System.out.println(m.toString());
-		
-		List<String[]> cd = cs.calculateCF("field[A]+field[B]", root, false, 1);
-		cs.addCrosstabDataLine(2, cd, false);
 		System.out.println("");
 	}
 	
@@ -857,7 +887,18 @@ public class CrossTab {
 	
 	
 	
-	private List<String[]> calculateCF(String operation, Node rootNode, boolean horizontal, int level){
+	private void calculateCF(String operation, Node rootNode, boolean horizontal, int level){
+		
+		List<Node> fathersOfTheNodesOfTheLevel = rootNode.getLevel(level-1);
+		
+		for(int i=0; i<fathersOfTheNodesOfTheLevel.size(); i++){
+			rootNode.setLeafPositions();
+			calculateCFSub(operation, fathersOfTheNodesOfTheLevel.get(i), horizontal, level);
+		}
+	}
+	
+	
+	private void calculateCFSub(String operation, Node node, boolean horizontal, int level){
 		List<String[]> calculatedFieldResult = new ArrayList<String[]>();
 		List<String> operationParsed;
 		List<String> operationExpsNames;
@@ -865,25 +906,28 @@ public class CrossTab {
 		operationParsed = parseOperationR.get(0);
 		operationExpsNames = parseOperationR.get(1);
 		
-		//set the id on the leafs
-		rootNode.setLeafPositions();
-		
-		List<Node> levelNodes = rootNode.getLevel(level);
+		List<Node> levelNodes = node.childs;
 		
 		Object[] expressionMap = buildExpressionMap(levelNodes, operationExpsNames);
 		Map<String, Integer> expressionToIndexMap = (Map<String, Integer>) expressionMap[1];
 		List<Node> nodeInvolvedInTheOperation = (List<Node>) expressionMap[0];
 		
 		Node mergedNode = mergeNodes(nodeInvolvedInTheOperation, "CF");
-		
+		cleanTreeAfterMerge(mergedNode, level);
 		List<Node> mergedNodeLeafs = mergedNode.getLeafs();
 		for(int i=0; i<mergedNodeLeafs.size(); i++){
 			List<String[]> arraysInvolvedInTheOperation = getArraysInvolvedInTheOperation(horizontal, operationExpsNames, expressionToIndexMap, mergedNodeLeafs.get(i).getLeafPositionsForCF());
 			calculatedFieldResult.add(executeOperationOnArrays(arraysInvolvedInTheOperation, operationParsed));
 		}
-		return calculatedFieldResult;
+		
+		
+		//add the header
+		int positionToAdd = node.getRightMostLeafPositionCF()+1;
+		node.addChild(mergedNode);
+		addCrosstabDataLine(positionToAdd, calculatedFieldResult, horizontal);
+		
+		//return calculatedFieldResult;
 	}
-	
 	
 	
 	
