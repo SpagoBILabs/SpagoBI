@@ -408,6 +408,7 @@ public class CrossTab {
 		private List<Node> childs;
 		private int leafPosition =-1;
 		private List<Integer> leafPositionsForCF;//Uset for the CF
+		private Node fatherNode; //!= from null only if we need the value
 		
 		public Node(String value){
 			this.value = value;
@@ -575,6 +576,36 @@ public class CrossTab {
 			}
 			return list;
 		}
+		
+		public void updateFathers(){
+			for(int i=0; i<childs.size(); i++ ){
+				childs.get(i).fatherNode = this;
+				childs.get(i).updateFathers();
+			}
+		}
+		
+		public int getSubTreeDepth(){
+			if(childs.size()==0){
+				return 1;
+			}else{
+				return 1 + childs.get(0).getSubTreeDepth();
+			}
+		}
+		
+		public void removeNodeFromTree(){
+			if(fatherNode!=null){
+				List<Node> fatherChilds = fatherNode.getChilds();
+				for(int i=0;i<fatherChilds.size(); i++){
+					if(fatherChilds.get(i)==this){
+						fatherChilds.remove(i);
+						break;
+					}
+				}
+				if(fatherChilds.size()==0){
+					fatherNode.removeNodeFromTree();
+				}
+			}
+		}
 
 		public Node buildRoot(){
 			Node root = new Node("Root");
@@ -613,16 +644,17 @@ public class CrossTab {
 			Bb.addChild(Bb1);
 			B.addChild(Ba);
 			B.addChild(Bb);
+			B.addChild(Bc);
 			
-			Node C = new Node("B");
+			Node C = new Node("C");
 			Node Ca = new Node("a");
 			Node Cb = new Node("b");
 			Node Cc = new Node("c");
-			Node Ca1 = new Node("1");
-//			Node Ca3 = new Node("3");
+			Node Ca1 = new Node("111");
+//			Node Ca3 = new Node("31");
 			Node Cb1 = new Node("1");
 			Node Cb2 = new Node("2");
-//			Node Cc2 = new Node("2");
+//			Node Cc2 = new Node("21");
 			Node Cc3 = new Node("3");
 			
 			Cc.addChild(Cc3);
@@ -706,48 +738,45 @@ public class CrossTab {
 	}
 	
 	
-//	private Node mergeNodes(Node nodeA, Node nodeB, String NodeValue){
-//		Node newNode = new Node(NodeValue);
-//		int index;
-//		List<Node> childsA = nodeA.getChilds();
-//		List<Node> childsB = nodeB.getChilds();
-//		List<Node> newchilds = new ArrayList<CrossTab.Node>();
-//		if(childsA!=null && childsB!=null){
-//			for(int i=0; i<childsA.size(); i++){
-//				index = childsB.indexOf(childsA.get(i));
-//				if(index>=0){
-//					newchilds.add(mergeNodes(childsA.get(i), childsB.get(index), childsA.get(i).value));
-//				}
-//			}
-//		}
-//		newNode.setChilds(newchilds);
-//		return newNode;
-//	}
-//	
-	
-	
 	public static void main(String args[]){
 		CrossTab cs = new CrossTab();
 		Node n = cs.new Node("");
-		Node root = n.buildRoot2();
-		//Node m = cs.mergeNodes(root.getChilds(), "root");
-		
-		String[] aa= new String[4];
+		Node root = n.buildRoot();
+		Node m = cs.mergeNodes(root.getChilds(), "root");
+
+		String[] aa= new String[14];
 		aa[0]="1";
-		aa[1]="20";
-		aa[2]="300";
-		aa[3]="4000";
+		aa[1]="2";
+		aa[2]="3";
+		aa[3]="4";
+		
+		aa[4]="50";
+		aa[5]="60";
+		aa[6]="70";
+		aa[7]="80";
+		aa[8]="90";
+		aa[9]="100";
+		
+		aa[10]="1100";
+		aa[11]="1200";
+		aa[12]="1300";
+		
+		
+		
 		String[][] aaa= new String[2][4];
 		aaa[0] = aa;
 		aaa[1] = aa;
 		cs.dataMatrix = aaa;
-//		System.out.println(root.getChilds().get(0).toString());
-//		System.out.println(root.getChilds().get(1).toString());
-//		System.out.println(m.toString());
+		System.out.println(root.toString());
+		System.out.println(m.toString());
+		m.updateFathers();
 		
-		cs.calculateCF("field[A]+field[B]", root, false, 1);
+		cs.cleanTreeAfterMerge(m,  0);
+		System.out.println(m.toString());
 		
-//		System.out.println(Eval.me("1+2"));
+		List<String[]> cd = cs.calculateCF("field[A]+field[B]", root, false, 1);
+		cs.addCrosstabDataLine(2, cd, false);
+		System.out.println("");
 	}
 	
 
@@ -797,9 +826,38 @@ public class CrossTab {
 		return newNode;
 	}
 	
+	/**
+	 * Remove the leafs not in the last level of the tree
+	 * @param node
+	 * @param level
+	 */
+	private void cleanTreeAfterMerge(Node node, int level){
+		int treeDepth = node.getSubTreeDepth();
+		List<Node> listOfNodesToRemove = cleanTreeAfterMergeRecorsive(node, treeDepth, level);
+		for (Iterator iterator = listOfNodesToRemove.iterator(); iterator.hasNext();) {
+			Node node2 = (Node) iterator.next();
+			node2.removeNodeFromTree();
+			
+		}
+	}
+	
+	private List<Node> cleanTreeAfterMergeRecorsive(Node node, int treeDepth, int level){
+		List<Node> listOfNodesToRemove = new ArrayList<CrossTab.Node>();
+		if(node.childs.size()==0){
+			if(level<treeDepth-1){
+				listOfNodesToRemove.add(node);
+			}
+		}else{
+			for(int i=0; i<node.childs.size(); i++){
+				listOfNodesToRemove.addAll(cleanTreeAfterMergeRecorsive(node.childs.get(i), treeDepth, level+1));
+			}
+		}
+		return listOfNodesToRemove;
+	}
 	
 	
-	private void calculateCF(String operation, Node rootNode, boolean horizontal, int level){
+	
+	private List<String[]> calculateCF(String operation, Node rootNode, boolean horizontal, int level){
 		List<String[]> calculatedFieldResult = new ArrayList<String[]>();
 		List<String> operationParsed;
 		List<String> operationExpsNames;
@@ -816,14 +874,14 @@ public class CrossTab {
 		Map<String, Integer> expressionToIndexMap = (Map<String, Integer>) expressionMap[1];
 		List<Node> nodeInvolvedInTheOperation = (List<Node>) expressionMap[0];
 		
-		Node mergedNode = mergeNodes(levelNodes, "CF");
+		Node mergedNode = mergeNodes(nodeInvolvedInTheOperation, "CF");
 		
 		List<Node> mergedNodeLeafs = mergedNode.getLeafs();
 		for(int i=0; i<mergedNodeLeafs.size(); i++){
 			List<String[]> arraysInvolvedInTheOperation = getArraysInvolvedInTheOperation(horizontal, operationExpsNames, expressionToIndexMap, mergedNodeLeafs.get(i).getLeafPositionsForCF());
 			calculatedFieldResult.add(executeOperationOnArrays(arraysInvolvedInTheOperation, operationParsed));
 		}
-		int c = 7;
+		return calculatedFieldResult;
 	}
 	
 	
@@ -877,19 +935,7 @@ public class CrossTab {
 		Object[] toReturn= new Object[2]; 
 		toReturn[0]=nodeInvolvedInTheOperation;
 		toReturn[1]=expressionToIndexMap;
-//		String s;
-//		
-//		for(int i=0; i<operationExpsNames.size(); i++){
-//			s = operationExpsNames.get(i);
-//			if(!expressionToIndexMap.containsKey(s)){
-//				for(int j=0; j<leafNodes.size(); j++){
-//					if(leafNodes.get(j).value.equals(s)){
-//						expressionToIndexMap.put(s, leafNodes.get(j).getLeafPosition());
-//						break;
-//					}
-//				}
-//			}
-//		}
+
 		return toReturn;
 	}
 	
@@ -1057,6 +1103,58 @@ public class CrossTab {
 	
 	private String[] getCrosstabDataRow(int i){
 		return dataMatrix[i];
+	}
+	
+	public void addCrosstabDataLine(int startposition, List<String[]> line, boolean horizontal){
+		if(horizontal){
+			addCrosstabDataRow(startposition, line);
+		}else{
+			addCrosstabDataColumns(startposition, line);
+		}
+	}
+	
+	public void addCrosstabDataColumns(int startposition, List<String[]> colums){
+		Assert.assertNotNull(dataMatrix, "The data matrix must not be null");
+		Assert.assertTrue(startposition<=dataMatrix[0].length, "The position you want to add the columns is bigger than the table size ts="+dataMatrix[0].length+" position= "+startposition);
+		String[][] newData = new String[dataMatrix.length][dataMatrix[0].length+colums.size()];
+		int columnsToAddSize = colums.size();
+		for (int i = 0; i < dataMatrix.length; i++) {
+			for(int x=0; x<startposition; x++){
+				newData[i][x] =dataMatrix[i][x]; 
+			}
+			
+			for(int x=0; x<columnsToAddSize; x++){
+				newData[i][startposition+x] =colums.get(x)[i]; 
+			}
+			
+			for(int x=0; x<dataMatrix[0].length-startposition; x++){
+				newData[i][startposition+columnsToAddSize+x] =dataMatrix[i][startposition+x]; 
+			}
+			
+		}
+		dataMatrix = newData;
+	}
+	
+	public void addCrosstabDataRow(int startposition, List<String[]> rows){
+		Assert.assertNotNull(dataMatrix, "The data matrix must not be null");
+		Assert.assertTrue(startposition<=dataMatrix.length, "The position you want to add the rows is bigger than the table size ts="+dataMatrix[0].length+" position= "+startposition);
+		
+		String[][] newData = new String[dataMatrix.length+rows.size()][];
+		int rowsToAddSize = rows.size();
+		
+		for(int x=0; x<startposition; x++){
+			newData[x] =dataMatrix[x]; 
+		}
+			
+		for(int x=0; x<rowsToAddSize; x++){
+			newData[startposition+x] =rows.get(x); 
+		}
+		
+		for(int x=0; x<dataMatrix.length-startposition; x++){
+			newData[startposition+rowsToAddSize+x] =dataMatrix[startposition+x]; 
+		}
+		
+		dataMatrix = newData;
 	}
 	
 }
