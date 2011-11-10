@@ -57,7 +57,7 @@ public interface DocumentsService {
 
     SDKExecutedDocumentContent executeDocument(SDKDocument document, SDKDocumentParameter[] parameters, String roleName, String outputType) throws NonExecutableDocumentException, NotAllowedOperationException, InvalidParameterValue, MissingParameterValue;
     
-    void uploadDatamartTemplate(SDKTemplate template, SDKTemplate calculatedFields);
+    void uploadDatamartTemplate(SDKTemplate template, SDKTemplate calculatedFields, String dataSourceLabel);
     
     void uploadDatamartModel(SDKTemplate template);
 
