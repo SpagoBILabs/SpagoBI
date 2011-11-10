@@ -81,6 +81,31 @@ public class CrossTab {
 	
 	public CrossTab(){};
 	
+	
+	
+	/**
+	 * Builds the crossTab (headers structure and data)
+	 * @param dataStore: the source of the data
+	 * @param crosstabDefinition: the definition of the crossTab
+	 * @param calculateFields: array of JSONObjects the CF
+	 */
+	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray calculateFields) throws JSONException{
+		this(dataStore, crosstabDefinition);
+		
+		for(int i=0; i<calculateFields.length(); i++){
+			
+			JSONObject cf = calculateFields.getJSONObject(i);
+			boolean horizontal =  cf.getBoolean("horizontal");
+			Node rootNode;
+			if(horizontal){
+				rootNode = columnsRoot;
+			}else{
+				rootNode = rowsRoot;
+			}
+			calculateCF(cf.getString("operation"), rootNode,horizontal, cf.getInt("level"), cf.getString("name"));
+		}
+	}
+	
 	/**
 	 * Builds the crossTab (headers structure and data)
 	 * @param dataStore: the source of the data
@@ -615,134 +640,11 @@ public class CrossTab {
 			return childs.get(childs.size()-1).getRightMostLeafPositionCF();
 		}
 
-		public Node buildRoot(){
-			Node root = new Node("Root");
-			
-			Node A = new Node("A");
-			Node Aa = new Node("a");
-			Node Ab = new Node("b");
-			Node Aa2 = new Node("1");
-			Node Aa3 = new Node("3");
-			Node Ab1 = new Node("1");
-			Node Ab2 = new Node("2");
-			
-			Aa.addChild(Aa3);
-			Aa.addChild(Aa2);
-			Ab.addChild(Ab2);
-			Ab.addChild(Ab1);
-			A.addChild(Aa);
-			A.addChild(Ab);
-			
-			Node B = new Node("B");
-			Node Ba = new Node("a");
-			Node Bb = new Node("b");
-			Node Bc = new Node("c");
-			Node Ba1 = new Node("1");
-			Node Ba3 = new Node("3");
-			Node Bb1 = new Node("1");
-			Node Bb2 = new Node("2");
-			Node Bc2 = new Node("2");
-			Node Bc3 = new Node("3");
-			
-			Bc.addChild(Bc3);
-			Bc.addChild(Bc2);
-			Ba.addChild(Ba3);
-			Ba.addChild(Ba1);
-			Bb.addChild(Bb2);
-			Bb.addChild(Bb1);
-			B.addChild(Ba);
-			B.addChild(Bb);
-			B.addChild(Bc);
-			
-			Node C = new Node("C");
-			Node Ca = new Node("a");
-			Node Cb = new Node("b");
-			Node Cc = new Node("c");
-			Node Ca1 = new Node("111");
-//			Node Ca3 = new Node("31");
-			Node Cb1 = new Node("1");
-			Node Cb2 = new Node("2");
-//			Node Cc2 = new Node("21");
-			Node Cc3 = new Node("3");
-			
-			Cc.addChild(Cc3);
-			Ca.addChild(Ca1);
-			Cb.addChild(Cb2);
-			Cb.addChild(Cb1);
-			C.addChild(Ca);
-			C.addChild(Cb);
-			
-			root.addChild(A);
-			root.addChild(B);
-			root.addChild(C);
-			
-			return root;
-		}
-		
-		
-		public Node buildRoot2(){
-			Node root = new Node("X");
-			
-			Node A = new Node("A");
-			Node Aa = new Node("a");
-			Node Ab = new Node("b");
-			Node Aa1 = new Node("1");
-			Node Aa2 = new Node("1");
-//			Node Ab1 = new Node("1");
-//			Node Ab2 = new Node("2");
-			
-//			Aa.addChild(Aa3);
-//			Aa.addChild(Aa2);
-			Ab.addChild(Aa1);
-			Aa.addChild(Aa2);
-			A.addChild(Aa);
-			A.addChild(Ab);
-			
-			Node B = new Node("B");
-			Node Ba = new Node("a");
-			Node Bb = new Node("b");
-//			Node Bc = new Node("c");
-//			Node Ba1 = new Node("1");
-//			Node Ba3 = new Node("3");
-//			Node Bb1 = new Node("1");
-//			Node Bb2 = new Node("2");
-//			Node Bc2 = new Node("2");
-//			Node Bc3 = new Node("3");
-			
-//			Bc.addChild(Bc3);
-//			Bc.addChild(Bc2);
-//			Ba.addChild(Ba3);
-//			Ba.addChild(Ba1);
-//			Bb.addChild(Bb2);
-//			Bb.addChild(Bb1);
-//			B.addChild(Ba);
-//			B.addChild(Bb);
-//			
-//			Node C = new Node("B");
-//			Node Ca = new Node("a");
-//			Node Cb = new Node("b");
-//			Node Cc = new Node("c");
-//			Node Ca1 = new Node("1");
-////			Node Ca3 = new Node("3");
-//			Node Cb1 = new Node("1");
-//			Node Cb2 = new Node("2");
-////			Node Cc2 = new Node("2");
-//			Node Cc3 = new Node("3");
-			
-//			Cc.addChild(Cc3);
-//			Ca.addChild(Ca1);
-//			Cb.addChild(Cb2);
-//			Cb.addChild(Cb1);
-//			C.addChild(Ca);
-//			C.addChild(Cb);
-			
-			root.addChild(A);
-			root.addChild(B);
-//			root.addChild(C);
-			
-			return A;
-		}
-		
+		/**
+		 * For test
+		 * @param height
+		 * @param branch
+		 */
 		public void buildSubTree(int height, int branch){
 			if(height<2){
 				for(int i=0; i<branch; i++){
@@ -774,42 +676,10 @@ public class CrossTab {
 		CrossTab cs = new CrossTab();
 		Node root = cs.new Node("Root");
 		root.buildSubTree(1, 2);
-		
-
-//		String[] aa= new String[16];
-//		aa[0]="1";
-//		aa[1]="2";
-//		aa[2]="3";
-//		aa[3]="4";
-//		
-//		aa[4]="50";
-//		aa[5]="60";
-//		aa[6]="70";
-//		aa[7]="80";
-//		
-//		aa[8]="90";
-//		aa[9]="100";
-//		aa[10]="1100";
-//		aa[11]="1200";
-//		
-//		aa[12]="1300";
-//		aa[13]="1400";
-//		aa[14]="1500";
-//		aa[15]="1600";
-//		
-//		
-//		String[][] aaa= new String[2][4];
-//		aaa[0] = aa;
-//		aaa[1] = aa;
 		cs.dataMatrix = buildMatrix(2, 16);
-
-		
-		cs.calculateCF("field[0]+field[1]+(7*field[1])", root, true, 1);
-		
+		cs.calculateCF("field[0]+field[1]+(7*field[1])", root, true, 1, "A+B");
 		System.out.println("");
 	}
-	
-
 	
 	private Node mergeNodes(List<Node> nodes, String NodeValue){
 		Assert.assertNotNull(nodes, "We need at least a node to merge");
@@ -818,7 +688,7 @@ public class CrossTab {
 		List<Node> commonChildNode;
 		Node newNode = new Node(NodeValue);
 		List<Node> newchilds = new ArrayList<CrossTab.Node>();
-		if(nodes.size()>1){
+		if(nodes.size()>0){
 			//get the first node. If a child of the first node
 			//is not a child of the other nodes is not in common... 
 			Node firstNode = nodes.get(0);
@@ -849,9 +719,16 @@ public class CrossTab {
 				}
 				newNode.setLeafPositionsForCF(leafPositions);
 			}
-		}else{
-			newNode = nodes.get(0).clone(); 
 		}
+//		else{
+//			newNode = nodes.get(0).clone(); 
+//			List<Node> firstNodeChilds = newNode.getChilds();
+//			if(firstNodeChilds!=null && firstNodeChilds.size()>0){
+//				List<Integer> leafPositions= new ArrayList<Integer>();
+//				leafPositions.add(nodes.get(0).getLeafPosition());
+//				newNode.setLeafPositionsForCF(leafPositions);
+//			}
+//		}
 		newNode.setChilds(newchilds);
 		return newNode;
 	}
@@ -887,18 +764,18 @@ public class CrossTab {
 	
 	
 	
-	private void calculateCF(String operation, Node rootNode, boolean horizontal, int level){
+	private void calculateCF(String operation, Node rootNode, boolean horizontal, int level, String cfName){
 		
 		List<Node> fathersOfTheNodesOfTheLevel = rootNode.getLevel(level-1);
 		
 		for(int i=0; i<fathersOfTheNodesOfTheLevel.size(); i++){
 			rootNode.setLeafPositions();
-			calculateCFSub(operation, fathersOfTheNodesOfTheLevel.get(i), horizontal, level);
+			calculateCFSub(operation, fathersOfTheNodesOfTheLevel.get(i), horizontal, level, cfName);
 		}
 	}
 	
 	
-	private void calculateCFSub(String operation, Node node, boolean horizontal, int level){
+	private void calculateCFSub(String operation, Node node, boolean horizontal, int level, String cfName){
 		List<String[]> calculatedFieldResult = new ArrayList<String[]>();
 		List<String> operationParsed;
 		List<String> operationExpsNames;
@@ -912,7 +789,7 @@ public class CrossTab {
 		Map<String, Integer> expressionToIndexMap = (Map<String, Integer>) expressionMap[1];
 		List<Node> nodeInvolvedInTheOperation = (List<Node>) expressionMap[0];
 		
-		Node mergedNode = mergeNodes(nodeInvolvedInTheOperation, "CF");
+		Node mergedNode = mergeNodes(nodeInvolvedInTheOperation, cfName);
 		cleanTreeAfterMerge(mergedNode, level);
 		List<Node> mergedNodeLeafs = mergedNode.getLeafs();
 		for(int i=0; i<mergedNodeLeafs.size(); i++){
@@ -997,9 +874,9 @@ public class CrossTab {
 			String alias = operationExpsNames.get(y);
 			int index = expressionToIndexMap.get(alias);
 			if(horizontal){
-				toReturn.add(getCrosstabDataRow(indexInTheArray.get(index)));
-			}else{
 				toReturn.add(getCrosstabDataColumn(indexInTheArray.get(index)));
+			}else{
+				toReturn.add(getCrosstabDataRow(indexInTheArray.get(index)));
 			}
 		}
 		return toReturn;
@@ -1151,9 +1028,10 @@ public class CrossTab {
 	
 	public void addCrosstabDataLine(int startposition, List<String[]> line, boolean horizontal){
 		if(horizontal){
-			addCrosstabDataRow(startposition, line);
-		}else{
 			addCrosstabDataColumns(startposition, line);
+		}else{
+			
+			addCrosstabDataRow(startposition, line);
 		}
 	}
 	
