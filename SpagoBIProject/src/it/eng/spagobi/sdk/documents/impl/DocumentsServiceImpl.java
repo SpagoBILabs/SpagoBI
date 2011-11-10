@@ -72,6 +72,7 @@ import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
 import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter.MemoryOnlyDataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.file.FileUtils;
@@ -101,7 +102,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	public static final String DATAMART_FILE_NAME = "datamart.jar";
 	public static final String CFIELDS_FILE_NAME = "cfields_meta.xml";
-	
+
 	static private Logger logger = Logger.getLogger(DocumentsServiceImpl.class);
 
 	public HashMap getAdmissibleValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException {
@@ -739,7 +740,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	}
 
 
-	public void uploadDatamartTemplate(SDKTemplate sdkTemplate, SDKTemplate calculatedFields) {
+	public void uploadDatamartTemplate(SDKTemplate sdkTemplate, SDKTemplate calculatedFields, String dataSourceLabel) {
 		logger.debug("IN: template file name = [" + sdkTemplate.getFileName() + "] and optional calculatedFields file ["+calculatedFields+"]");
 
 
@@ -776,387 +777,395 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 		try{
 
-		/***********************************************************************************************************/
-		/* STEP 2: template creation in SpagoBI Metadata (under the personal folder) to use the previous datamart. */
-		/***********************************************************************************************************/
-		BIObject obj = null;
-		String datamartName = sdkTemplate.getFolderName();
+			/***********************************************************************************************************/
+			/* STEP 2: template creation in SpagoBI Metadata (under the personal folder) to use the previous datamart. */
+			/***********************************************************************************************************/
+			BIObject obj = null;
+			String datamartName = sdkTemplate.getFolderName();
 
-		//checks if the template already exists. In this case doesn't create the new one!
-		obj  =	DAOFactory.getBIObjectDAO().loadBIObjectByLabel(datamartName);
-		if (obj != null){
-			logger.info("The datamart with name "  + datamartName + " is already been inserted in SpagoBI. Template not loaded! " );
-			return;
-		}
-
-		IEngUserProfile profile = getUserProfile();
-
-		obj = new BIObject();
-		String userId = ((UserProfile) profile).getUserId().toString();
-		logger.debug("Current user id is [" + userId + "]");
-
-		obj.setCreationUser(((UserProfile) profile).getUserId().toString());
-		obj.setCreationDate(new Date());
-		obj.setVisible(new Integer(1));
-		obj.setLabel(datamartName);
-		obj.setName(datamartName);
-		obj.setDescription("");
-		obj.setEncrypt(0);
-		obj.setStateCode("DEV");
-		Domain state = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "DEV");
-		obj.setStateID(state.getValueId());
-		//sets the qbe engine
-		Domain objectType = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("BIOBJ_TYPE", "DATAMART");
-		obj.setBiObjectTypeID(objectType.getValueId());
-		obj.setBiObjectTypeCode(objectType.getValueCd());
-		List<Engine> lstQbeEngines =  DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType("DATAMART");
-		if (lstQbeEngines == null || lstQbeEngines.size() == 0){
-			logger.error("Error while retrieving Engine list.");
-			return;
-		}
-		Engine qbeEngine =  lstQbeEngines.get(0);
-		obj.setEngine(qbeEngine);
-
-		//sets the default functionality (personal folder).  
-		List functionalities = new ArrayList();
-		LowFunctionality funct = null;
-		funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath("/" + userId , false);
-		if (funct != null){
-			functionalities.add(funct.getId());
-			obj.setFunctionalities(functionalities);
-		} else {
-			//the personal folder doesn't exist yet. It creates it, and uses it.
-			UserUtilities.createUserFunctionalityRoot(profile);
-			logger.error("Error while retrieving Functionality identifier.");
-			funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath("/" + userId , false);
-			functionalities.add(funct.getId());
-			obj.setFunctionalities(functionalities);
-		}
-		//sets the template's content
-		ObjTemplate objTemplate = new ObjTemplate();
-		objTemplate.setActive(new Boolean(true));
-		objTemplate.setCreationUser(userId);
-		objTemplate.setCreationDate(new Date());
-		objTemplate.setName(sdkTemplate.getFolderName() + ".xml");
-		String template = getTemplate(datamartName);
-		objTemplate.setContent(template.getBytes());
-
-		//inserts the document
-		logger.debug("Saving document ...");
-		IBIObjectDAO biObjDAO = DAOFactory.getBIObjectDAO();
-		biObjDAO.setUserProfile(profile);
-		biObjDAO.insertBIObject(obj, objTemplate);
-		Integer newIdObj = obj.getId();
-		if (newIdObj != null) {
-			logger.info("Document saved with id = " + newIdObj);
-		} else {
-			logger.error("Document not saved!!");
-		}
-	} catch(Exception e) {
-		logger.error("Error while uploading template", e);
-		throw new SpagoBIRuntimeException("Error while uploading template");
-	} 
-	logger.debug("OUT");
-} 
-
-public void uploadDatamartModel(SDKTemplate sdkTemplate) {
-	logger.debug("IN: template file name = [" + sdkTemplate.getFileName() + "]");
-
-	try {	
-		uploadFisicalFile(sdkTemplate, "");
-
-	} catch(Exception e) {
-		logger.error("Error while uploading model template", e);
-	}
-	logger.debug("OUT");
-} 
-
-public SDKTemplate downloadDatamartFile(String folderName, String fileName) {
-	logger.debug("IN");
-	SDKTemplate toReturn = null;
-	try {
-		FileInputStream isDatamartFile = downloadSingleFile(folderName, fileName);
-		//defines a content to return
-		byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(isDatamartFile);
-
-		toReturn = new SDKTemplate();
-		toReturn.setFileName(fileName);
-		SDKObjectsConverter objConverter = new SDKObjectsConverter();
-		MemoryOnlyDataSource mods = objConverter.new MemoryOnlyDataSource(templateContent, null);
-		DataHandler dhSource = new DataHandler(mods);
-		toReturn.setContent(dhSource);
-
-	} catch(Exception e) {
-		return null;
-	}
-	logger.debug("OUT");
-	return toReturn;
-}
-
-
-//download a zip file with datamart.jar and modelfile
-public SDKTemplate downloadDatamartModelFiles(String folderName, String fileDatamartName , String fileModelName) {
-	logger.debug("IN");
-
-	File file = null;
-	FileOutputStream fileZip = null;
-	ZipOutputStream zip = null;
-	File inFileZip =null;
-
-	try {
-		// These are the files to include in the ZIP file
-		String[] filenames = new String[]{fileDatamartName, fileModelName};
-		String fileZipName  = folderName + ".zip";
-		//String path = getResourcePath()  + System.getProperty("file.separator") + fileZipName;
-		String path = System.getProperty("java.io.tmpdir") +  System.getProperty("file.separator") + fileZipName;;
-
-		// Create the ZIP file
-		file = new File(path);
-		fileZip = new FileOutputStream(file);
-		zip = new ZipOutputStream(fileZip);
-
-		for (int i=0; i<filenames.length; i++) {
-			if (filenames[i] != null && !filenames[i].equals("")){ 
-				// Add ZIP entry to output stream.
-				zip.putNextEntry(new ZipEntry(filenames[i]));
-
-				FileInputStream in = downloadSingleFile(folderName, filenames[i]);
-				zip.write(SpagoBIUtilities.getByteArrayFromInputStream(in));
-				// Complete the entry
-				zip.closeEntry();
-				in.close();
-
+			//checks if the template already exists. In this case doesn't create the new one!
+			obj  =	DAOFactory.getBIObjectDAO().loadBIObjectByLabel(datamartName);
+			if (obj != null){
+				logger.info("The datamart with name "  + datamartName + " is already been inserted in SpagoBI. Template not loaded! " );
+				return;
 			}
+
+			IEngUserProfile profile = getUserProfile();
+
+			obj = new BIObject();
+			String userId = ((UserProfile) profile).getUserId().toString();
+			logger.debug("Current user id is [" + userId + "]");
+
+			obj.setCreationUser(((UserProfile) profile).getUserId().toString());
+			obj.setCreationDate(new Date());
+			obj.setVisible(new Integer(1));
+			obj.setLabel(datamartName);
+			obj.setName(datamartName);
+			obj.setDescription("");
+			obj.setEncrypt(0);
+			obj.setStateCode("DEV");
+			Domain state = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "DEV");
+			obj.setStateID(state.getValueId());
+			//sets the qbe engine
+			Domain objectType = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("BIOBJ_TYPE", "DATAMART");
+			obj.setBiObjectTypeID(objectType.getValueId());
+			obj.setBiObjectTypeCode(objectType.getValueCd());
+			List<Engine> lstQbeEngines =  DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType("DATAMART");
+			if (lstQbeEngines == null || lstQbeEngines.size() == 0){
+				logger.error("Error while retrieving Engine list.");
+				return;
+			}
+			Engine qbeEngine =  lstQbeEngines.get(0);
+			obj.setEngine(qbeEngine);
+
+			// get the dataSource if label is not null
+			IDataSource dataSource = null;
+			if(dataSourceLabel != null){
+				logger.debug("retrieve data source with label "+dataSourceLabel);
+				dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+				obj.setDataSourceId(dataSource.getDsId());
+			}
+
+			//sets the default functionality (personal folder).  
+			List functionalities = new ArrayList();
+			LowFunctionality funct = null;
+			funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath("/" + userId , false);
+			if (funct != null){
+				functionalities.add(funct.getId());
+				obj.setFunctionalities(functionalities);
+			} else {
+				//the personal folder doesn't exist yet. It creates it, and uses it.
+				UserUtilities.createUserFunctionalityRoot(profile);
+				logger.error("Error while retrieving Functionality identifier.");
+				funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath("/" + userId , false);
+				functionalities.add(funct.getId());
+				obj.setFunctionalities(functionalities);
+			}
+			//sets the template's content
+			ObjTemplate objTemplate = new ObjTemplate();
+			objTemplate.setActive(new Boolean(true));
+			objTemplate.setCreationUser(userId);
+			objTemplate.setCreationDate(new Date());
+			objTemplate.setName(sdkTemplate.getFolderName() + ".xml");
+			String template = getTemplate(datamartName);
+			objTemplate.setContent(template.getBytes());
+
+			//inserts the document
+			logger.debug("Saving document ...");
+			IBIObjectDAO biObjDAO = DAOFactory.getBIObjectDAO();
+			biObjDAO.setUserProfile(profile);
+			biObjDAO.insertBIObject(obj, objTemplate);
+			Integer newIdObj = obj.getId();
+			if (newIdObj != null) {
+				logger.info("Document saved with id = " + newIdObj);
+			} else {
+				logger.error("Document not saved!!");
+			}
+		} catch(Exception e) {
+			logger.error("Error while uploading template", e);
+			throw new SpagoBIRuntimeException("Error while uploading template");
+		} 
+		logger.debug("OUT");
+	} 
+
+	public void uploadDatamartModel(SDKTemplate sdkTemplate) {
+		logger.debug("IN: template file name = [" + sdkTemplate.getFileName() + "]");
+
+		try {	
+			uploadFisicalFile(sdkTemplate, "");
+
+		} catch(Exception e) {
+			logger.error("Error while uploading model template", e);
 		}
-		//writes the fisical file just created
-		zip.close();
-		fileZip.close();
-		//reopen the zip file as input stream to save as SDKTemplate object because is not possible to convert
-		//automatically an outputStream in inputStream
-		inFileZip = new File(path);
+		logger.debug("OUT");
+	} 
 
-		//creates the returned object
-		SDKTemplate toReturn = new SDKTemplate();
-		toReturn.setFileName(fileZipName);
-		SDKObjectsConverter objConverter = new SDKObjectsConverter();
-		MemoryOnlyDataSource mods = objConverter.new MemoryOnlyDataSource(new FileInputStream(inFileZip), null);
-		DataHandler dhSource = new DataHandler(mods);
-		toReturn.setContent(dhSource);
+	public SDKTemplate downloadDatamartFile(String folderName, String fileName) {
+		logger.debug("IN");
+		SDKTemplate toReturn = null;
+		try {
+			FileInputStream isDatamartFile = downloadSingleFile(folderName, fileName);
+			//defines a content to return
+			byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(isDatamartFile);
 
+			toReturn = new SDKTemplate();
+			toReturn.setFileName(fileName);
+			SDKObjectsConverter objConverter = new SDKObjectsConverter();
+			MemoryOnlyDataSource mods = objConverter.new MemoryOnlyDataSource(templateContent, null);
+			DataHandler dhSource = new DataHandler(mods);
+			toReturn.setContent(dhSource);
+
+		} catch(Exception e) {
+			return null;
+		}
 		logger.debug("OUT");
 		return toReturn;
+	}
 
-	} catch(Exception e) {
-		return null;
-	} finally {
-		if (zip != null) {
-			try {		
-				zip.close();
-			} catch (IOException e) {
-				logger.error("Error closing output stream", e);
-			}
-		}
-		if (fileZip != null) {
-			try {		
-				fileZip.close();
-			} catch (IOException e) {
-				logger.error("Error closing file output", e);
-			}
-		}
-		if (inFileZip != null) {
-			try {		
-				if (!inFileZip.delete()) {
-					inFileZip.deleteOnExit();
-				}
-			} catch (Exception e) {
-				logger.error("Error deleting temporary input zip file", e);
-			}
-		}
-		if (file != null) {
-			try {		
-				if (!file.delete()) {
-					file.deleteOnExit();
-				}
-			} catch (Exception e) {
-				logger.error("Error deleting temporary output zip file", e);
-			}
-		}
-	}	
-}
 
-public HashMap<String, String> getAllDatamartModels(){
-	logger.debug("IN");
+	//download a zip file with datamart.jar and modelfile
+	public SDKTemplate downloadDatamartModelFiles(String folderName, String fileDatamartName , String fileModelName) {
+		logger.debug("IN");
 
-	HashMap<String, String> toReturn = new HashMap<String, String>();
-	try {
-		String pathDatatamartsDir = getResourcePath();
-		File datamartsDir = new File(pathDatatamartsDir);
-		File[] dirs = datamartsDir.listFiles(new FileFilter() {
-			public boolean accept(File pathname) {
-				if (pathname.isDirectory()) {
-					return true;
+		File file = null;
+		FileOutputStream fileZip = null;
+		ZipOutputStream zip = null;
+		File inFileZip =null;
+
+		try {
+			// These are the files to include in the ZIP file
+			String[] filenames = new String[]{fileDatamartName, fileModelName};
+			String fileZipName  = folderName + ".zip";
+			//String path = getResourcePath()  + System.getProperty("file.separator") + fileZipName;
+			String path = System.getProperty("java.io.tmpdir") +  System.getProperty("file.separator") + fileZipName;;
+
+			// Create the ZIP file
+			file = new File(path);
+			fileZip = new FileOutputStream(file);
+			zip = new ZipOutputStream(fileZip);
+
+			for (int i=0; i<filenames.length; i++) {
+				if (filenames[i] != null && !filenames[i].equals("")){ 
+					// Add ZIP entry to output stream.
+					zip.putNextEntry(new ZipEntry(filenames[i]));
+
+					FileInputStream in = downloadSingleFile(folderName, filenames[i]);
+					zip.write(SpagoBIUtilities.getByteArrayFromInputStream(in));
+					// Complete the entry
+					zip.closeEntry();
+					in.close();
+
 				}
-				return false;
 			}
-		});
-		if (dirs == null || dirs.length == 0) {
-			throw new SpagoBIRuntimeException("No datamarts found!! Check configuration for datamarts repository");
-		}
-		for (int i = 0; i < dirs.length; i++) {
-			File dir = dirs[i];
-			File[] models = dir.listFiles(new FileFilter() {
-				public boolean accept(File file) {
-					if (file.getName().endsWith(".sbimodel")){
+			//writes the fisical file just created
+			zip.close();
+			fileZip.close();
+			//reopen the zip file as input stream to save as SDKTemplate object because is not possible to convert
+			//automatically an outputStream in inputStream
+			inFileZip = new File(path);
+
+			//creates the returned object
+			SDKTemplate toReturn = new SDKTemplate();
+			toReturn.setFileName(fileZipName);
+			SDKObjectsConverter objConverter = new SDKObjectsConverter();
+			MemoryOnlyDataSource mods = objConverter.new MemoryOnlyDataSource(new FileInputStream(inFileZip), null);
+			DataHandler dhSource = new DataHandler(mods);
+			toReturn.setContent(dhSource);
+
+			logger.debug("OUT");
+			return toReturn;
+
+		} catch(Exception e) {
+			return null;
+		} finally {
+			if (zip != null) {
+				try {		
+					zip.close();
+				} catch (IOException e) {
+					logger.error("Error closing output stream", e);
+				}
+			}
+			if (fileZip != null) {
+				try {		
+					fileZip.close();
+				} catch (IOException e) {
+					logger.error("Error closing file output", e);
+				}
+			}
+			if (inFileZip != null) {
+				try {		
+					if (!inFileZip.delete()) {
+						inFileZip.deleteOnExit();
+					}
+				} catch (Exception e) {
+					logger.error("Error deleting temporary input zip file", e);
+				}
+			}
+			if (file != null) {
+				try {		
+					if (!file.delete()) {
+						file.deleteOnExit();
+					}
+				} catch (Exception e) {
+					logger.error("Error deleting temporary output zip file", e);
+				}
+			}
+		}	
+	}
+
+	public HashMap<String, String> getAllDatamartModels(){
+		logger.debug("IN");
+
+		HashMap<String, String> toReturn = new HashMap<String, String>();
+		try {
+			String pathDatatamartsDir = getResourcePath();
+			File datamartsDir = new File(pathDatatamartsDir);
+			File[] dirs = datamartsDir.listFiles(new FileFilter() {
+				public boolean accept(File pathname) {
+					if (pathname.isDirectory()) {
 						return true;
 					}
 					return false;
 				}
 			});
-			for (int j = 0; j < models.length; j++) {
-				toReturn.put(dir.getName(), models[j].getName());
+			if (dirs == null || dirs.length == 0) {
+				throw new SpagoBIRuntimeException("No datamarts found!! Check configuration for datamarts repository");
 			}
+			for (int i = 0; i < dirs.length; i++) {
+				File dir = dirs[i];
+				File[] models = dir.listFiles(new FileFilter() {
+					public boolean accept(File file) {
+						if (file.getName().endsWith(".sbimodel")){
+							return true;
+						}
+						return false;
+					}
+				});
+				for (int j = 0; j < models.length; j++) {
+					toReturn.put(dir.getName(), models[j].getName());
+				}
+			}
+		} catch(Exception e) {
+			logger.error(e);
 		}
-	} catch(Exception e) {
-		logger.error(e);
+
+		logger.debug("OUT");
+		return toReturn;
 	}
 
-	logger.debug("OUT");
-	return toReturn;
-}
+	private void uploadFisicalFile (SDKTemplate sdkTemplate, String defaultName) throws Exception{
+		InputStream is = null;
+		FileOutputStream osFile = null;
+		DataHandler dh = null;
 
-private void uploadFisicalFile (SDKTemplate sdkTemplate, String defaultName) throws Exception{
-	InputStream is = null;
-	FileOutputStream osFile = null;
-	DataHandler dh = null;
+		try {	
+			String fileName = sdkTemplate.getFolderName();
 
-	try {	
-		String fileName = sdkTemplate.getFolderName();
+			// if user cannot develop the specified document, he cannot upload templates on it
+			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
+			if (sdkTemplate == null) {
+				logger.warn("SDKTemplate in input is null!");
+				return;
+			}
 
-		// if user cannot develop the specified document, he cannot upload templates on it
-		super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
-		if (sdkTemplate == null) {
-			logger.warn("SDKTemplate in input is null!");
-			return;
-		}
-
-		//creates the folder correct (the name is given by the name of the file).
-		String path = getResourcePath()  + System.getProperty("file.separator") + fileName;
-		logger.debug("File path: " + path);
-		File datamartFolder = new File (path);
-		if (!datamartFolder.exists()){
-			datamartFolder.mkdir();
-		}
-		path += System.getProperty("file.separator") + (sdkTemplate.getFileName() == null || sdkTemplate.getFileName().equals("")?defaultName:sdkTemplate.getFileName());
-		File datamartFile = new File(path);
-		logger.debug("File: " + path);
-		if (!datamartFile.exists()){
-			datamartFile.createNewFile();
-		}
-		osFile = new FileOutputStream(path);
-		dh = sdkTemplate.getContent();
-		is = dh.getInputStream();
-		logger.debug("Upload file template....");
-		byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
-		/* ----------- test code ---------
+			//creates the folder correct (the name is given by the name of the file).
+			String path = getResourcePath()  + System.getProperty("file.separator") + fileName;
+			logger.debug("File path: " + path);
+			File datamartFolder = new File (path);
+			if (!datamartFolder.exists()){
+				datamartFolder.mkdir();
+			}
+			path += System.getProperty("file.separator") + (sdkTemplate.getFileName() == null || sdkTemplate.getFileName().equals("")?defaultName:sdkTemplate.getFileName());
+			File datamartFile = new File(path);
+			logger.debug("File: " + path);
+			if (!datamartFile.exists()){
+				datamartFile.createNewFile();
+			}
+			osFile = new FileOutputStream(path);
+			dh = sdkTemplate.getContent();
+			is = dh.getInputStream();
+			logger.debug("Upload file template....");
+			byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
+			/* ----------- test code ---------
 			String ss = new String(templateContent);
 			System.out.println(ss);
  				----------- test code --------- */
 
-		osFile.write(templateContent);
-		logger.debug("Template uploaded without errors.");
+			osFile.write(templateContent);
+			logger.debug("Template uploaded without errors.");
 
-	} catch(Exception e) {
-		logger.error("Error while uploading template", e);
-		throw e;
-	} finally {
-		if (is != null) {
-			try {				
-				is.close();
-			} catch (IOException e) {
-				logger.error("Error closing file input stream", e);
+		} catch(Exception e) {
+			logger.error("Error while uploading template", e);
+			throw e;
+		} finally {
+			if (is != null) {
+				try {				
+					is.close();
+				} catch (IOException e) {
+					logger.error("Error closing file input stream", e);
+				}
+			}
+			if (osFile != null) {
+				try {				
+					osFile.close();
+				} catch (IOException e) {
+					logger.error("Error closing output stream", e);
+				}
 			}
 		}
-		if (osFile != null) {
-			try {				
-				osFile.close();
-			} catch (IOException e) {
-				logger.error("Error closing output stream", e);
+	}
+
+	private FileInputStream downloadSingleFile(String folderName, String fileName) throws Exception{
+		FileInputStream toReturn = null;
+
+		try {
+			// if user cannot develop the specified document, he cannot upload templates on it
+			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
+
+			// retrieves template
+			String path = getResourcePath()  + System.getProperty("file.separator") + folderName;
+			logger.debug("Path: " + path);
+			File folder = new File (path);
+			if(!folder.exists()) {
+				throw new RuntimeException("Folder [" + folder.getPath() + "] does not exist");
 			}
+			if(!folder.isDirectory()) {
+				throw new RuntimeException("Folder [" + folder + "] is a file not a folder");
+			}
+			path += System.getProperty("file.separator") + fileName;
+			File datamartFile = new File(path);
+			logger.debug("File: " + path);
+			if(!datamartFile.exists()) {
+				throw new RuntimeException("File [" + datamartFile.getPath() + "] does not exist");
+			}
+			//check file content
+			toReturn = new FileInputStream(path);
+			if (toReturn == null) {
+				logger.warn("The template for document [" + folderName + "] is NULL");
+				return null;
+			}
+
+
+			logger.debug("Template for document [" + folderName + "] retrieved.");
+		} catch(Exception e) {
+			logger.error(e);
+			throw e;
 		}
-	}
-}
-
-private FileInputStream downloadSingleFile(String folderName, String fileName) throws Exception{
-	FileInputStream toReturn = null;
-
-	try {
-		// if user cannot develop the specified document, he cannot upload templates on it
-		super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
-
-		// retrieves template
-		String path = getResourcePath()  + System.getProperty("file.separator") + folderName;
-		logger.debug("Path: " + path);
-		File folder = new File (path);
-		if(!folder.exists()) {
-			throw new RuntimeException("Folder [" + folder.getPath() + "] does not exist");
-		}
-		if(!folder.isDirectory()) {
-			throw new RuntimeException("Folder [" + folder + "] is a file not a folder");
-		}
-		path += System.getProperty("file.separator") + fileName;
-		File datamartFile = new File(path);
-		logger.debug("File: " + path);
-		if(!datamartFile.exists()) {
-			throw new RuntimeException("File [" + datamartFile.getPath() + "] does not exist");
-		}
-		//check file content
-		toReturn = new FileInputStream(path);
-		if (toReturn == null) {
-			logger.warn("The template for document [" + folderName + "] is NULL");
-			return null;
-		}
-
-
-		logger.debug("Template for document [" + folderName + "] retrieved.");
-	} catch(Exception e) {
-		logger.error(e);
-		throw e;
-	}
-	return toReturn;
-}
-
-private String getResourcePath() {
-
-	String path = null;
-	SourceBean pathSB;
-	SingletonConfig configSingleton = SingletonConfig.getInstance();
-	String jndiPath = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-	Assert.assertNotNull(jndiPath, "Impossible to find block [<SPAGOBI.RESOURCE_PATH_JNDI_NAME>] into configuration");
-	//path = SpagoBIUtilities.readJndiResource(jndiPath) + System.getProperty("file.separator") + "qbe" + System.getProperty("file.separator") + "datamarts" ;
-	path = SpagoBIUtilities.readJndiResource(jndiPath) + System.getProperty("file.separator") + "qbe";
-	//checks if the 'qbe' folder exists. If not, it creates it.
-	File datamartFolder = new File(path);
-	if (!datamartFolder.exists()){
-		datamartFolder.mkdir();
-	}
-	//checks if the 'datamarts' folder exists. If not, it creates it.
-	path += System.getProperty("file.separator") + "datamarts";
-	datamartFolder = new File(path);
-	if (!datamartFolder.exists()){
-		datamartFolder.mkdir();
+		return toReturn;
 	}
 
-	//returns the complete path
-	return path;
-}
+	private String getResourcePath() {
 
-private String getTemplate(String datamartName) throws IOException {
-	String template = "";
-	template += "<QBE>\n";
-	template += "\t<DATAMART name=\"" + datamartName + "\"/>\n";
-	template += "</QBE>";
+		String path = null;
+		SourceBean pathSB;
+		SingletonConfig configSingleton = SingletonConfig.getInstance();
+		String jndiPath = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+		Assert.assertNotNull(jndiPath, "Impossible to find block [<SPAGOBI.RESOURCE_PATH_JNDI_NAME>] into configuration");
+		//path = SpagoBIUtilities.readJndiResource(jndiPath) + System.getProperty("file.separator") + "qbe" + System.getProperty("file.separator") + "datamarts" ;
+		path = SpagoBIUtilities.readJndiResource(jndiPath) + System.getProperty("file.separator") + "qbe";
+		//checks if the 'qbe' folder exists. If not, it creates it.
+		File datamartFolder = new File(path);
+		if (!datamartFolder.exists()){
+			datamartFolder.mkdir();
+		}
+		//checks if the 'datamarts' folder exists. If not, it creates it.
+		path += System.getProperty("file.separator") + "datamarts";
+		datamartFolder = new File(path);
+		if (!datamartFolder.exists()){
+			datamartFolder.mkdir();
+		}
 
-	return template;
-}
+		//returns the complete path
+		return path;
+	}
+
+	private String getTemplate(String datamartName) throws IOException {
+		String template = "";
+		template += "<QBE>\n";
+		template += "\t<DATAMART name=\"" + datamartName + "\"/>\n";
+		template += "</QBE>";
+
+		return template;
+	}
 
 }

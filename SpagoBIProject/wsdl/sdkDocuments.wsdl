@@ -312,6 +312,8 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
       
       <wsdl:part name="in1" type="tns2:SDKTemplate"/>
 
+	  <wsdl:part name="in2" type="soapenc:string"/>
+
    </wsdl:message>
 
    <wsdl:message name="getDocumentsAsListRequest">
@@ -508,7 +510,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
-      <wsdl:operation name="	" parameterOrder="in0 in1">
+      <wsdl:operation name="	" parameterOrder="in0 in1 in2">
 
          <wsdl:input message="impl:uploadDatamartTemplateRequest" name="uploadDatamartTemplateRequest"/>
 
