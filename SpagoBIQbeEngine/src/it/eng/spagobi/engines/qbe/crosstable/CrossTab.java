@@ -79,9 +79,11 @@ public class CrossTab {
 	private String[][] dataMatrix;
 	private JSONObject config;
 	private List<MeasureInfo> measures;
+		
+	public enum CellType {DATA, CF, SUBTOTAL, TOTAL }
 	
-	public CrossTab(){};
-	
+	private List<CellType> celltypeOfColumns;
+	private List<CellType> celltypeOfRows;
 	
 	
 	/**
@@ -92,24 +94,21 @@ public class CrossTab {
 	 */
 	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray calculateFields) throws JSONException{
 		this(dataStore, crosstabDefinition);
-		
-		for(int i=0; i<calculateFields.length(); i++){
-			
-			JSONObject cf = calculateFields.getJSONObject(i);
-			boolean horizontal =  cf.getBoolean("horizontal");
-			Node rootNode;
-			if(horizontal){
-				rootNode = columnsRoot;
-			}else{
-				rootNode = rowsRoot;
+		if(calculateFields!=null){
+			for(int i=0; i<calculateFields.length(); i++){
+				
+				JSONObject cf = calculateFields.getJSONObject(i);
+				boolean horizontal =  cf.getBoolean("horizontal");
+				Node rootNode;
+				if(horizontal){
+					rootNode = columnsRoot;
+				}else{
+					rootNode = rowsRoot;
+				}
+				calculateCF(cf.getString("operation"), rootNode,horizontal, cf.getInt("level"), cf.getString("name"));
 			}
-			calculateCF(cf.getString("operation"), rootNode,horizontal, cf.getInt("level"), cf.getString("name"));
 		}
-		columnsRoot.addChild(getHeaderTotalSubTree(false, columnsRoot.getSubTreeDepth()-1));
-		addCrosstabDataColumns(dataMatrix[0].length, getTotalsOnRows(true));
-		
-		rowsRoot.addChild(getHeaderTotalSubTree(true, rowsRoot.getSubTreeDepth()-1));
-		addCrosstabDataRow(dataMatrix.length, getTotalsOnColumns(true));
+		addTotals();
 	}
 	
 	/**
@@ -212,6 +211,19 @@ public class CrossTab {
 			Measure relevantMeasure = crosstabDefinition.getMeasures().get( i - (meta.getFieldCount() - measuresCount));
 			measures.add(getMeasureInfo(fieldMeta, relevantMeasure));
 		}
+		
+		
+		celltypeOfColumns = new ArrayList<CrossTab.CellType>();
+		celltypeOfRows = new ArrayList<CrossTab.CellType>();
+		
+		for(int i=0; i< dataMatrix.length; i++){
+			celltypeOfRows.add(CellType.DATA);
+		}
+		
+		for(int i=0; i< dataMatrix[0].length; i++){
+			celltypeOfColumns.add(CellType.DATA);
+		}
+		
 	}
 	
 
@@ -374,11 +386,11 @@ public class CrossTab {
 	private List<String> visit(Node n, String prefix){
 		List<String> toReturn = new ArrayList<String>();
 		if(n.getChilds().size()==0){
-			toReturn.add(prefix+(String)(n.getElement()));
+			toReturn.add(prefix+(String)(n.getValue()));
 			return toReturn;
 		}else{
 			for(int i=0; i<n.getChilds().size(); i++){
-				toReturn.addAll(visit(n.getChilds().get(i), prefix+(String)(n.getElement())));
+				toReturn.addAll(visit(n.getChilds().get(i), prefix+(String)(n.getValue())));
 			}
 			return toReturn;
 		}
@@ -432,582 +444,8 @@ public class CrossTab {
 		return fieldValue;
 
 	}
+	
 
-
-	private class Node implements Cloneable{
-		private String value;
-		private List<Node> childs;
-		private int leafPosition =-1;
-		private List<Integer> leafPositionsForCF;//Uset for the CF
-		private Node fatherNode; //!= from null only if we need the value
-		
-		public Node(String value){
-			this.value = value;
-			childs = new ArrayList<Node>();
-		}
-
-		public String getElement() {
-			return value;
-		}
-
-		public List<Node> getChilds() {
-			return childs;
-		}
-		
-		public void setChilds(List<Node> childs) {
-			this.childs = childs;
-		}
-		
-		public void addChild(Node child){
-			childs.add(child);
-		}
-		
-		public boolean isChild(Node child){
-			return childs.contains(child);
-		}
-		
-		public int getLeafsNumber(){
-			if(childs.size()==0){
-				return 1;
-			}else{
-				int leafsNumber=0;
-				for(int i=0; i<childs.size(); i++){
-					leafsNumber = leafsNumber + childs.get(i).getLeafsNumber();
-				}
-				return leafsNumber;
-			}
-		}
-		
-		public JSONObject toJSONObject() throws JSONException{
-			JSONObject thisNode = new JSONObject();
-			
-			thisNode.put(CROSSTAB_NODE_JSON_KEY, value);
-			
-			if(childs.size()>0){
-				JSONArray nodeChilds = new JSONArray();
-				for(int i=0; i<childs.size(); i++){
-					nodeChilds.put(childs.get(i).toJSONObject());
-				}
-				thisNode.put(CROSSTAB_NODE_JSON_CHILDS, nodeChilds);
-			}
-					
-			return thisNode;
-		}
-		
-		@Override
-		public String toString(){
-			String string;
-			
-			if(childs.size()==0){
-				return "["+value.toString()+"]";
-			}else{
-				string = "["+value.toString()+",[";
-				for(int i=0; i<childs.size()-1; i++){
-					string = string+childs.get(i).toString()+",";
-				}
-				string=string+childs.get(childs.size()-1).toString()+"]]";
-			}
-			return string;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result
-					+ ((value == null) ? 0 : value.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			Node other = (Node) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
-			if (value == null) {
-				if (other.value != null)
-					return false;
-			} else if (!value.equals(other.value))
-				return false;
-			return true;
-		}
-
-		private CrossTab getOuterType() {
-			return CrossTab.this;
-		}
-
-		public int getLeafPosition() {
-			return leafPosition;
-		}
-		
-		public void setLeafPositions(){
-			setLeafPositions(0);
-		}
-		
-		private int setLeafPositions(int pos){
-			if(childs.size()==0){
-				leafPosition = pos;
-				pos++;
-			}else{
-				for(int i=0; i<childs.size(); i++){
-					pos = childs.get(i).setLeafPositions(pos);
-				}
-			}
-			return pos;
-		}
-		
-		public Node clone(){
-			Node n = new Node(value);
-			if(childs.size()>0){
-				for (int j = 0; j < childs.size(); j++) {
-					n.addChild(childs.get(j).clone());
-				}
-			}
-			return n;
-		}
-
-		public List<Integer> getLeafPositionsForCF() {
-			return leafPositionsForCF;
-		}
-
-		public void setLeafPositionsForCF(List<Integer> leafPositionsForCF) {
-			this.leafPositionsForCF = leafPositionsForCF;
-		}
-
-		public List<Node> getLevel(int level){
-			List<Node> nodes = new ArrayList<CrossTab.Node>();
-			if(level==0){
-				nodes.add(this);
-			}else{
-				if(childs.size()==0){
-					return null;
-				}
-				for(int i=0; i<childs.size(); i++){
-					nodes.addAll(childs.get(i).getLevel(level-1));
-				}
-			}
-			return nodes;
-		}
-		
-		public List<Node> getLeafs(){
-			List<Node> list = new ArrayList<CrossTab.Node>();
-			if(childs.size()==0){
-				list.add(this);
-			}else{
-				for(int i=0; i<childs.size(); i++){
-					list.addAll(childs.get(i).getLeafs());
-				}
-			}
-			return list;
-		}
-		
-		public void updateFathers(){
-			for(int i=0; i<childs.size(); i++ ){
-				childs.get(i).fatherNode = this;
-				childs.get(i).updateFathers();
-			}
-		}
-		
-		public int getSubTreeDepth(){
-			if(childs.size()==0){
-				return 1;
-			}else{
-				return 1 + childs.get(0).getSubTreeDepth();
-			}
-		}
-		
-		public void removeNodeFromTree(){
-			if(fatherNode!=null){
-				List<Node> fatherChilds = fatherNode.getChilds();
-				for(int i=0;i<fatherChilds.size(); i++){
-					if(fatherChilds.get(i)==this){
-						fatherChilds.remove(i);
-						break;
-					}
-				}
-				if(fatherChilds.size()==0){
-					fatherNode.removeNodeFromTree();
-				}
-			}
-		}
-		
-		
-		public int getRightMostLeafPositionCF(){
-			if(childs.size()==0){
-				return leafPosition;
-			}
-			return childs.get(childs.size()-1).getRightMostLeafPositionCF();
-		}
-
-		/**
-		 * For test
-		 * @param height
-		 * @param branch
-		 */
-		public void buildSubTree(int height, int branch){
-			if(height<2){
-				for(int i=0; i<branch; i++){
-					addChild(new Node(""+i));
-				}
-			}else{
-				for(int i=0; i<branch; i++){
-					Node n = new Node(value+"_"+i);
-					addChild(n);
-					n.buildSubTree(height-1, branch);
-				}
-			}
-		}
-		
-	}
-	
-	
-	private static String[][] buildMatrix(int rows, int columns){
-		String[][] m = new String[rows][columns];
-		for(int i=0; i<rows; i++){
-			for(int j=0; j<columns; j++){
-				m[i][j]=""+i;
-			}
-		}
-		return m;
-	}
-	
-	public static void main(String args[]){
-		CrossTab cs = new CrossTab();
-		Node root = cs.new Node("Root");
-		root.buildSubTree(1, 2);
-		cs.dataMatrix = buildMatrix(2, 16);
-		cs.calculateCF("field[0]+field[1]+(7*field[1])", root, true, 1, "A+B");
-		System.out.println("");
-	}
-	
-	private Node mergeNodes(List<Node> nodes, String NodeValue){
-		Assert.assertNotNull(nodes, "We need at least a node to merge");
-		Assert.assertTrue(nodes.size()>0, "We need at least a node to merge");
-		int index;
-		List<Node> commonChildNode;
-		Node newNode = new Node(NodeValue);
-		List<Node> newchilds = new ArrayList<CrossTab.Node>();
-		if(nodes.size()>0){
-			//get the first node. If a child of the first node
-			//is not a child of the other nodes is not in common... 
-			Node firstNode = nodes.get(0);
-			List<Node> firstNodeChilds = firstNode.getChilds();
-			if(firstNodeChilds!=null && firstNodeChilds.size()>0){
-				for(int i=0; i<firstNodeChilds.size(); i++){
-					commonChildNode = new ArrayList<CrossTab.Node>();
-					commonChildNode.add(firstNodeChilds.get(i));
-					//look for the child in all other nodes
-					for(int j=1; j<nodes.size(); j++){
-						index = nodes.get(j).getChilds().indexOf(firstNodeChilds.get(i));
-						if(index>=0){
-							commonChildNode.add(nodes.get(j).getChilds().get(index));
-						}else{
-							commonChildNode = null;
-							break;
-						}
-					}
-					if(commonChildNode!=null){
-						newchilds.add(mergeNodes(commonChildNode, firstNodeChilds.get(i).value));
-					}
-				}
-			}else{
-				//we are the leafs.. so we want the id of the node
-				List<Integer> leafPositions= new ArrayList<Integer>();
-				for(int j=0; j<nodes.size(); j++){
-					leafPositions.add(nodes.get(j).getLeafPosition());
-				}
-				newNode.setLeafPositionsForCF(leafPositions);
-			}
-		}
-//		else{
-//			newNode = nodes.get(0).clone(); 
-//			List<Node> firstNodeChilds = newNode.getChilds();
-//			if(firstNodeChilds!=null && firstNodeChilds.size()>0){
-//				List<Integer> leafPositions= new ArrayList<Integer>();
-//				leafPositions.add(nodes.get(0).getLeafPosition());
-//				newNode.setLeafPositionsForCF(leafPositions);
-//			}
-//		}
-		newNode.setChilds(newchilds);
-		return newNode;
-	}
-	
-	/**
-	 * Remove the leafs not in the last level of the tree
-	 * @param node
-	 * @param level
-	 */
-	private void cleanTreeAfterMerge(Node node, int level){
-		int treeDepth = node.getSubTreeDepth();
-		List<Node> listOfNodesToRemove = cleanTreeAfterMergeRecorsive(node, treeDepth, level);
-		for (Iterator iterator = listOfNodesToRemove.iterator(); iterator.hasNext();) {
-			Node node2 = (Node) iterator.next();
-			node2.removeNodeFromTree();
-			
-		}
-	}
-	
-	private List<Node> cleanTreeAfterMergeRecorsive(Node node, int treeDepth, int level){
-		List<Node> listOfNodesToRemove = new ArrayList<CrossTab.Node>();
-		if(node.childs.size()==0){
-			if(level<treeDepth-1){
-				listOfNodesToRemove.add(node);
-			}
-		}else{
-			for(int i=0; i<node.childs.size(); i++){
-				listOfNodesToRemove.addAll(cleanTreeAfterMergeRecorsive(node.childs.get(i), treeDepth, level+1));
-			}
-		}
-		return listOfNodesToRemove;
-	}
-	
-	
-	
-	private void calculateCF(String operation, Node rootNode, boolean horizontal, int level, String cfName){
-		
-		List<Node> fathersOfTheNodesOfTheLevel = rootNode.getLevel(level-1);
-		
-		for(int i=0; i<fathersOfTheNodesOfTheLevel.size(); i++){
-			rootNode.setLeafPositions();
-			calculateCFSub(operation, fathersOfTheNodesOfTheLevel.get(i), horizontal, level, cfName);
-		}
-	}
-	
-	
-	private void calculateCFSub(String operation, Node node, boolean horizontal, int level, String cfName){
-		List<String[]> calculatedFieldResult = new ArrayList<String[]>();
-		List<String> operationParsed;
-		List<String> operationExpsNames;
-		List<List<String>> parseOperationR = parseOperation(operation);
-		operationParsed = parseOperationR.get(0);
-		operationExpsNames = parseOperationR.get(1);
-		
-		List<Node> levelNodes = node.childs;
-		
-		Object[] expressionMap = buildExpressionMap(levelNodes, operationExpsNames);
-		Map<String, Integer> expressionToIndexMap = (Map<String, Integer>) expressionMap[1];
-		List<Node> nodeInvolvedInTheOperation = (List<Node>) expressionMap[0];
-		
-		Node mergedNode = mergeNodes(nodeInvolvedInTheOperation, cfName);
-		cleanTreeAfterMerge(mergedNode, level);
-		List<Node> mergedNodeLeafs = mergedNode.getLeafs();
-		for(int i=0; i<mergedNodeLeafs.size(); i++){
-			List<String[]> arraysInvolvedInTheOperation = getArraysInvolvedInTheOperation(horizontal, operationExpsNames, expressionToIndexMap, mergedNodeLeafs.get(i).getLeafPositionsForCF());
-			calculatedFieldResult.add(executeOperationOnArrays(arraysInvolvedInTheOperation, operationParsed));
-		}
-		
-		
-		//add the header
-		int positionToAdd = node.getRightMostLeafPositionCF()+1;
-		node.addChild(mergedNode);
-		addCrosstabDataLine(positionToAdd, calculatedFieldResult, horizontal);
-		
-		//return calculatedFieldResult;
-	}
-	
-	
-	
-	private static List<List<String>> parseOperation(String operation){
-		String freshOp = " "+operation;
-		List<String> operationParsed = new ArrayList<String>();
-		List<String> operationExpsNames = new ArrayList<String>();
-		int index =0;
-    	//parse the operation
-    	while(freshOp.indexOf("field[")>=0){
-    		index =  freshOp.indexOf("field[")+6;
-    		operationParsed.add(freshOp.substring(0,index-6));
-    		freshOp = freshOp.substring(index);
-    		index = freshOp.indexOf("]");
-    		operationExpsNames.add(freshOp.substring(0, index));
-    		freshOp = freshOp.substring(index+1);
-    	}
-    	operationParsed.add(freshOp);
-    	List<List<String>> toReturn=  new ArrayList<List<String>>();
-    	toReturn.add(operationParsed);
-    	toReturn.add(operationExpsNames);
-    	return toReturn;
-	}
-	
-	/**
-	 * prende la lista di nodi di un livello e i campi che compaiono nella quey...
-	 * Costruisce la lista dei nodi coinvolti nell'operazione e la mappa degli indici operationExpsNames-->indice del nodo corrispondente nella lista prcedente
-	 * @param nodes
-	 * @param operationExpsNames
-	 * @return
-	 */
-	private Object[] buildExpressionMap(List<Node> nodes, List<String> operationExpsNames){
-		Map<String, Integer> expressionToIndexMap = new HashMap<String, Integer>();
-		List<Node> nodeInvolvedInTheOperation = new ArrayList<Node>();
-		int foundNode=0;
-		for (Iterator<String> iterator = operationExpsNames.iterator(); iterator.hasNext();) {
-			String operationElement = iterator.next();
-			if(!expressionToIndexMap.containsKey(operationElement)){
-				expressionToIndexMap.put(operationElement, foundNode);
-				for(int y=0; y<nodes.size();y++){
-					if(nodes.get(y).value.equals(operationElement)){
-						nodeInvolvedInTheOperation.add(nodes.get(y));
-						foundNode++;
-						break;
-					}
-				}
-			}
-		}
-		Object[] toReturn= new Object[2]; 
-		toReturn[0]=nodeInvolvedInTheOperation;
-		toReturn[1]=expressionToIndexMap;
-
-		return toReturn;
-	}
-	
-	/**
-	 * 
-	 * @param horizontal
-	 * @param operationExpsNames the names of the operation : A+ D+C-(A*C) = A,D,C,A,C
-	 * @param expressionToIndexMap if the operation is the same of before and the Nodes of the level are A,B,C,D the map is (A->0, B->1...)
-	 * @param indexInTheArray è una lista la cui proima posizione è l'indice della colonna/riga nella tabella corrispondente al dato A,....
-	 * @return
-	 */
-	private List<String[]> getArraysInvolvedInTheOperation(boolean horizontal, List<String> operationExpsNames,  Map<String, Integer> expressionToIndexMap, List<Integer> indexInTheArray){
-		List<String[]> toReturn = new ArrayList<String[]>();
-		for (int y=0; y<operationExpsNames.size(); y++) {
-			String alias = operationExpsNames.get(y);
-			int index = expressionToIndexMap.get(alias);
-			if(horizontal){
-				toReturn.add(getCrosstabDataColumn(indexInTheArray.get(index)));
-			}else{
-				toReturn.add(getCrosstabDataRow(indexInTheArray.get(index)));
-			}
-		}
-		return toReturn;
-	}
-	
-	/**
-	 * Dati i parametri costruisce la lista risultante dell'esecuzione dell'operazione 
-	 * sulle liste passate. es: [4,6]
-	 * @param data lista di colonne/righe della crosstab su cui eseguire l'operazione es [1,2], [3,4]
-	 * @param operation l'opearzione parsata es: +
-	 * @return
-	 */
-	private String[] executeOperationOnArrays(List<String[]> data, List<String> operation){
-		List<String> operationElements;
-		int datalength = data.get(0).length;
-		String[] operationResult = new String[datalength];
-		for(int i =0; i<datalength; i++){
-			operationElements = new ArrayList<String>();
-			for(int j =0; j<data.size(); j++){
-				operationElements.add(data.get(j)[i]);
-			}	
-			operationResult[i] = executeOperationOnNumbers(operationElements, operation);
-		}
-		return operationResult;
-	}
-	
-	/**
-	 * Vene creata ed eseguita un operazione. dati i parametri descitti sotto viene composta l'operazione
-	 * 1+2-(2*4)
-	 * @param data una lista di valori che rappresentano gli elementi dell'operazione.. es: 1,2,3,4
-	 * @param op lista di stringhe che rappresentano l'operazione per sempio: +,-(,*,)
-	 * @return
-	 */
-	private String executeOperationOnNumbers(List<String> data, List<String> op){
-    	String operation ="";
-    	int i=0;
-    	for(i=0; i<op.size()-1; i++){
-    		operation = operation+op.get(i);
-    		operation = operation+data.get(i);
-    		if(data.get(i)=="NA" || data.get(i)=="null"  || data.get(i)==null){
-    			return "NA";
-    		}
-    	}
-    	operation = operation + op.get(i);
-    	String evalued = (Eval.me(operation)).toString();
-    	return evalued;
-	}
-
-	
-	/**
-	 * SOMME**********************************************************************
-	 */
-	
-	
-	
-	private List<String[]> getTotalsOnRows(boolean measuresOnRow){
-		List<String[]> sum = new ArrayList<String[]>();
-		double[] st = new double[dataMatrix.length];
-		int measures = 1;
-		if(!measuresOnRow){
-			measures= this.measures.size();
-		}
-		int iteration = dataMatrix[0].length/measures;
-		for(int measureId=0; measureId<measures; measureId++){
-			for(int i=0; i<dataMatrix.length; i++){
-				for(int j=0; j<iteration; j++){
-					st[i] = st[i] + new Double(dataMatrix[i][j+measureId]);
-				}
-			}
-			sum.add(toStringArray(st));
-		}
-		
-		return sum;
-	}
-	
-	private String[] toStringArray(double[] doubleArray){
-		String[] strings = new String[doubleArray.length];
-		for(int i=0; i<doubleArray.length; i++){
-			strings[i] = ""+(doubleArray[i]);
-		}
-		return strings;
-	}
-	
-	private List<String[]> getTotalsOnColumns(boolean measuresOnRow){
-		List<String[]> sum = new ArrayList<String[]>();
-		double[] st = new double[dataMatrix[0].length];
-		int measures = 1;
-		if(measuresOnRow){
-			measures= this.measures.size();
-		}
-		int iteration = dataMatrix[0].length/measures;
-		for(int measureId=0; measureId<measures; measureId++){
-			for(int i=0; i<iteration; i++){
-				for(int j=0; j<dataMatrix[0].length; j++){
-					st[j] = st[j] + new Double(dataMatrix[i+measureId][j]);
-				}
-			}
-			sum.add(toStringArray(st));
-		}
-		return sum;
-	}
-	
-	/**
-	 * 
-	 * @param withMeasures
-	 * @param deepth = tree depth-1
-	 * @return
-	 */
-	private Node getHeaderTotalSubTree(boolean withMeasures, int deepth){
-		Node node= new Node(TOTAL);
-		if(withMeasures && deepth==2){
-			for(int i=0; i<measures.size(); i++){
-				node.addChild(new Node(measures.get(i).getName()));
-			}
-		}else{
-			if(deepth>1){
-				node.addChild(getHeaderTotalSubTree(withMeasures, deepth-1));
-			}
-		}
-		return node;
-	}
-	
-	
-	
-	
 	
 	private MeasureInfo getMeasureInfo(IFieldMetaData fieldMeta, Measure measure) {
 		Class clazz = fieldMeta.getType();
@@ -1095,16 +533,16 @@ public class CrossTab {
 		return dataMatrix[i];
 	}
 	
-	public void addCrosstabDataLine(int startposition, List<String[]> line, boolean horizontal){
+	public void addCrosstabDataLine(int startposition, List<String[]> line, boolean horizontal, CellType type){
 		if(horizontal){
-			addCrosstabDataColumns(startposition, line);
+			addCrosstabDataColumns(startposition, line, type);
 		}else{
 			
-			addCrosstabDataRow(startposition, line);
+			addCrosstabDataRow(startposition, line, type);
 		}
 	}
 	
-	public void addCrosstabDataColumns(int startposition, List<String[]> colums){
+	public void addCrosstabDataColumns(int startposition, List<String[]> colums, CellType type){
 		Assert.assertNotNull(dataMatrix, "The data matrix must not be null");
 		Assert.assertTrue(startposition<=dataMatrix[0].length, "The position you want to add the columns is bigger than the table size ts="+dataMatrix[0].length+" position= "+startposition);
 		String[][] newData = new String[dataMatrix.length][dataMatrix[0].length+colums.size()];
@@ -1123,10 +561,15 @@ public class CrossTab {
 			}
 			
 		}
+		//update the list of columns type
+		for(int i=0; i< colums.size(); i++){
+			celltypeOfColumns.add(i+startposition, type);
+		}
+		
 		dataMatrix = newData;
 	}
 	
-	public void addCrosstabDataRow(int startposition, List<String[]> rows){
+	public void addCrosstabDataRow(int startposition, List<String[]> rows, CellType type){
 		Assert.assertNotNull(dataMatrix, "The data matrix must not be null");
 		Assert.assertTrue(startposition<=dataMatrix.length, "The position you want to add the rows is bigger than the table size ts="+dataMatrix[0].length+" position= "+startposition);
 		
@@ -1144,10 +587,401 @@ public class CrossTab {
 		for(int x=0; x<dataMatrix.length-startposition; x++){
 			newData[startposition+rowsToAddSize+x] =dataMatrix[startposition+x]; 
 		}
+		//update the list of rows type
+		for(int i=0; i< rows.size(); i++){
+			celltypeOfRows.add(i+startposition, type);
+		}
 		
 		dataMatrix = newData;
 	}
+
+	public CellType getCellType(int row, int column){
+		CellType cellCellType;
+		CellType rowCellType = celltypeOfRows.get(row);
+		CellType columnCellType = celltypeOfColumns.get(column);
+		cellCellType = rowCellType;
+		if(columnCellType.compareTo(rowCellType)>0){
+			cellCellType =  columnCellType;
+		}
+		return cellCellType;
+	}
+
+
+/*
+ * CALCULATED FIELDS***********************************************
+ */
 	
+	/**
+	 * TEST
+	 * @param rows
+	 * @param columns
+	 * @return
+	 */
+	private static String[][] buildMatrix(int rows, int columns){
+		String[][] m = new String[rows][columns];
+		for(int i=0; i<rows; i++){
+			for(int j=0; j<columns; j++){
+				m[i][j]=""+i;
+			}
+		}
+		return m;
+	}
+	
+//	public static void main(String args[]){
+//		CrossTab cs = new CrossTab();
+//		Node root = new Node("Root");
+//		root.buildSubTree(1, 2);
+//		cs.dataMatrix = buildMatrix(2, 16);
+//		cs.calculateCF("field[0]+field[1]+(7*field[1])", root, true, 1, "A+B");
+//		System.out.println("");
+//	}
+//	
+	private Node mergeNodes(List<Node> nodes, String NodeValue){
+		Assert.assertNotNull(nodes, "We need at least a node to merge");
+		Assert.assertTrue(nodes.size()>0, "We need at least a node to merge");
+		int index;
+		List<Node> commonChildNode;
+		Node newNode = new Node(NodeValue);
+		List<Node> newchilds = new ArrayList<Node>();
+		if(nodes.size()>0){
+			//get the first node. If a child of the first node
+			//is not a child of the other nodes is not in common... 
+			Node firstNode = nodes.get(0);
+			List<Node> firstNodeChilds = firstNode.getChilds();
+			if(firstNodeChilds!=null && firstNodeChilds.size()>0){
+				for(int i=0; i<firstNodeChilds.size(); i++){
+					commonChildNode = new ArrayList<Node>();
+					commonChildNode.add(firstNodeChilds.get(i));
+					//look for the child in all other nodes
+					for(int j=1; j<nodes.size(); j++){
+						index = nodes.get(j).getChilds().indexOf(firstNodeChilds.get(i));
+						if(index>=0){
+							commonChildNode.add(nodes.get(j).getChilds().get(index));
+						}else{
+							commonChildNode = null;
+							break;
+						}
+					}
+					if(commonChildNode!=null){
+						newchilds.add(mergeNodes(commonChildNode, firstNodeChilds.get(i).getValue()));
+					}
+				}
+			}else{
+				//we are the leafs.. so we want the id of the node
+				List<Integer> leafPositions= new ArrayList<Integer>();
+				for(int j=0; j<nodes.size(); j++){
+					leafPositions.add(nodes.get(j).getLeafPosition());
+				}
+				newNode.setLeafPositionsForCF(leafPositions);
+			}
+		}
+		newNode.setChilds(newchilds);
+		return newNode;
+	}
+	
+	/**
+	 * Remove the leafs not in the last level of the tree
+	 * @param node
+	 * @param level
+	 */
+	private void cleanTreeAfterMerge(Node node, int level){
+		int treeDepth = node.getSubTreeDepth();
+		List<Node> listOfNodesToRemove = cleanTreeAfterMergeRecorsive(node, treeDepth, level);
+		for (Iterator iterator = listOfNodesToRemove.iterator(); iterator.hasNext();) {
+			Node node2 = (Node) iterator.next();
+			node2.removeNodeFromTree();
+			
+		}
+	}
+	
+	private List<Node> cleanTreeAfterMergeRecorsive(Node node, int treeDepth, int level){
+		List<Node> listOfNodesToRemove = new ArrayList<Node>();
+		if(node.getChilds().size()==0){
+			if(level<treeDepth-1){
+				listOfNodesToRemove.add(node);
+			}
+		}else{
+			for(int i=0; i<node.getChilds().size(); i++){
+				listOfNodesToRemove.addAll(cleanTreeAfterMergeRecorsive(node.getChilds().get(i), treeDepth, level+1));
+			}
+		}
+		return listOfNodesToRemove;
+	}
+	
+	
+	
+	private void calculateCF(String operation, Node rootNode, boolean horizontal, int level, String cfName){
+		
+		List<Node> fathersOfTheNodesOfTheLevel = rootNode.getLevel(level-1);
+		
+		for(int i=0; i<fathersOfTheNodesOfTheLevel.size(); i++){
+			rootNode.setLeafPositions();
+			calculateCFSub(operation, fathersOfTheNodesOfTheLevel.get(i), horizontal, level, cfName);
+		}
+	}
+	
+	
+	private void calculateCFSub(String operation, Node node, boolean horizontal, int level, String cfName){
+		List<String[]> calculatedFieldResult = new ArrayList<String[]>();
+		List<String> operationParsed;
+		List<String> operationExpsNames;
+		List<List<String>> parseOperationR = parseOperation(operation);
+		operationParsed = parseOperationR.get(0);
+		operationExpsNames = parseOperationR.get(1);
+		
+		List<Node> levelNodes = node.getChilds();
+		
+		Object[] expressionMap = buildExpressionMap(levelNodes, operationExpsNames);
+		Map<String, Integer> expressionToIndexMap = (Map<String, Integer>) expressionMap[1];
+		List<Node> nodeInvolvedInTheOperation = (List<Node>) expressionMap[0];
+		if(nodeInvolvedInTheOperation.size()>0){
+			Node mergedNode = mergeNodes(nodeInvolvedInTheOperation, cfName);
+			cleanTreeAfterMerge(mergedNode, level);
+			List<Node> mergedNodeLeafs = mergedNode.getLeafs();
+			for(int i=0; i<mergedNodeLeafs.size(); i++){
+				List<String[]> arraysInvolvedInTheOperation = getArraysInvolvedInTheOperation(horizontal, operationExpsNames, expressionToIndexMap, mergedNodeLeafs.get(i).getLeafPositionsForCF());
+				calculatedFieldResult.add(executeOperationOnArrays(arraysInvolvedInTheOperation, operationParsed));
+			}
+			
+			
+			//add the header
+			int positionToAdd = node.getRightMostLeafPositionCF()+1;
+			node.addChild(mergedNode);
+			addCrosstabDataLine(positionToAdd, calculatedFieldResult, horizontal, CellType.CF);
+		}
+
+		
+		//return calculatedFieldResult;
+	}
+	
+	
+	
+	private static List<List<String>> parseOperation(String operation){
+		String freshOp = " "+operation;
+		List<String> operationParsed = new ArrayList<String>();
+		List<String> operationExpsNames = new ArrayList<String>();
+		int index =0;
+    	//parse the operation
+    	while(freshOp.indexOf("field[")>=0){
+    		index =  freshOp.indexOf("field[")+6;
+    		operationParsed.add(freshOp.substring(0,index-6));
+    		freshOp = freshOp.substring(index);
+    		index = freshOp.indexOf("]");
+    		operationExpsNames.add(freshOp.substring(0, index));
+    		freshOp = freshOp.substring(index+1);
+    	}
+    	operationParsed.add(freshOp);
+    	List<List<String>> toReturn=  new ArrayList<List<String>>();
+    	toReturn.add(operationParsed);
+    	toReturn.add(operationExpsNames);
+    	return toReturn;
+	}
+	
+	/**
+	 * prende la lista di nodi di un livello e i campi che compaiono nella quey...
+	 * Costruisce la lista dei nodi coinvolti nell'operazione e la mappa degli indici operationExpsNames-->indice del nodo corrispondente nella lista prcedente
+	 * @param nodes
+	 * @param operationExpsNames
+	 * @return
+	 */
+	private Object[] buildExpressionMap(List<Node> nodes, List<String> operationExpsNames){
+		Map<String, Integer> expressionToIndexMap = new HashMap<String, Integer>();
+		List<Node> nodeInvolvedInTheOperation = new ArrayList<Node>();
+		int foundNode=0;
+		for (Iterator<String> iterator = operationExpsNames.iterator(); iterator.hasNext();) {
+			String operationElement = iterator.next();
+			if(!expressionToIndexMap.containsKey(operationElement)){
+				expressionToIndexMap.put(operationElement, foundNode);
+				for(int y=0; y<nodes.size();y++){
+					if(nodes.get(y).getValue().equals(operationElement)){
+						nodeInvolvedInTheOperation.add(nodes.get(y));
+						foundNode++;
+						break;
+					}
+				}
+			}
+		}
+		Object[] toReturn= new Object[2]; 
+		toReturn[0]=nodeInvolvedInTheOperation;
+		toReturn[1]=expressionToIndexMap;
+
+		return toReturn;
+	}
+	
+	/**
+	 * 
+	 * @param horizontal
+	 * @param operationExpsNames the names of the operation : A+ D+C-(A*C) = A,D,C,A,C
+	 * @param expressionToIndexMap if the operation is the same of before and the Nodes of the level are A,B,C,D the map is (A->0, B->1...)
+	 * @param indexInTheArray è una lista la cui proima posizione è l'indice della colonna/riga nella tabella corrispondente al dato A,....
+	 * @return
+	 */
+	private List<String[]> getArraysInvolvedInTheOperation(boolean horizontal, List<String> operationExpsNames,  Map<String, Integer> expressionToIndexMap, List<Integer> indexInTheArray){
+		List<String[]> toReturn = new ArrayList<String[]>();
+		for (int y=0; y<operationExpsNames.size(); y++) {
+			String alias = operationExpsNames.get(y);
+			int index = expressionToIndexMap.get(alias);
+			if(horizontal){
+				toReturn.add(getCrosstabDataColumn(indexInTheArray.get(index)));
+			}else{
+				toReturn.add(getCrosstabDataRow(indexInTheArray.get(index)));
+			}
+		}
+		return toReturn;
+	}
+	
+	/**
+	 * Dati i parametri costruisce la lista risultante dell'esecuzione dell'operazione 
+	 * sulle liste passate. es: [4,6]
+	 * @param data lista di colonne/righe della crosstab su cui eseguire l'operazione es [1,2], [3,4]
+	 * @param operation l'opearzione parsata es: +
+	 * @return
+	 */
+	private String[] executeOperationOnArrays(List<String[]> data, List<String> operation){
+		List<String> operationElements;
+		int datalength = data.get(0).length;
+		String[] operationResult = new String[datalength];
+		for(int i =0; i<datalength; i++){
+			operationElements = new ArrayList<String>();
+			for(int j =0; j<data.size(); j++){
+				operationElements.add(data.get(j)[i]);
+			}	
+			operationResult[i] = executeOperationOnNumbers(operationElements, operation);
+		}
+		return operationResult;
+	}
+	
+	/**
+	 * Vene creata ed eseguita un operazione. dati i parametri descitti sotto viene composta l'operazione
+	 * 1+2-(2*4)
+	 * @param data una lista di valori che rappresentano gli elementi dell'operazione.. es: 1,2,3,4
+	 * @param op lista di stringhe che rappresentano l'operazione per sempio: +,-(,*,)
+	 * @return
+	 */
+	private String executeOperationOnNumbers(List<String> data, List<String> op){
+    	String operation ="";
+    	int i=0;
+    	for(i=0; i<op.size()-1; i++){
+    		operation = operation+op.get(i);
+    		operation = operation+data.get(i);
+    		if(data.get(i)=="NA" || data.get(i)=="null"  || data.get(i)==null){
+    			return "NA";
+    		}
+    	}
+    	operation = operation + op.get(i);
+    	String evalued = (Eval.me(operation)).toString();
+    	return evalued;
+	}
+
+	
+	/**
+	 * SOMME**********************************************************************
+	 */
+	
+	
+	/**
+	 * sommo i valori delle righe.. quindi pannello a dx
+	 */
+	private List<String[]> getTotalsOnRows(boolean measuresOnRow){
+		List<String[]> sum = new ArrayList<String[]>();
+		double[] st = new double[dataMatrix.length];
+		int measures = 1;
+		if(!measuresOnRow){
+			measures= this.measures.size();
+		}
+		int iteration = dataMatrix[0].length/measures;
+		for(int measureId=0; measureId<measures; measureId++){
+			for(int i=0; i<dataMatrix.length; i++){
+				for(int j=0; j<iteration; j++){
+					st[i] = st[i] + new Double(dataMatrix[i][j+measureId]);
+				}
+			}
+			sum.add(toStringArray(st));
+		}
+		
+		return sum;
+	}
+	
+	private String[] toStringArray(double[] doubleArray){
+		String[] strings = new String[doubleArray.length];
+		for(int i=0; i<doubleArray.length; i++){
+			strings[i] = ""+(doubleArray[i]);
+		}
+		return strings;
+	}
+	
+	private List<String[]> getTotalsOnColumns(boolean measuresOnRow){
+		List<String[]> sum = new ArrayList<String[]>();
+		double[] st = new double[dataMatrix[0].length];
+		int measures = 1;
+		if(measuresOnRow){
+			measures= this.measures.size();
+		}
+		int iteration = dataMatrix.length/measures;
+		for(int measureId=0; measureId<measures; measureId++){
+			for(int i=0; i<iteration; i++){
+				for(int j=0; j<dataMatrix[0].length; j++){
+					st[j] = st[j] + new Double(dataMatrix[i+measureId][j]);
+				}
+			}
+			sum.add(toStringArray(st));
+		}
+		return sum;
+	}
+	
+	/**
+	 * 
+	 * @param withMeasures
+	 * @param deepth = tree depth-1
+	 * @return
+	 */
+	private Node getHeaderTotalSubTree(boolean withMeasures, int deepth){
+		Node node= new Node(TOTAL);
+		if(withMeasures && deepth==2){
+			for(int i=0; i<measures.size(); i++){
+				node.addChild(new Node(measures.get(i).getName()));
+			}
+		}else{
+			if(deepth>1){
+				node.addChild(getHeaderTotalSubTree(withMeasures, deepth-1));
+			}
+		}
+		return node;
+	}
+	
+	
+	private void addTotals() throws JSONException{
+		boolean measuresOnRow = config.getString("measureson").equals("rows");
+		String rowsTotals = config.optString("calculatetotalsoncolumns");
+		String columnsTotals = config.optString("calculatetotalsonrows");
+
+		if(rowsTotals!=null && rowsTotals.equals("on")){
+			rowsRoot.addChild(getHeaderTotalSubTree(measuresOnRow, rowsRoot.getSubTreeDepth()-1));
+			addCrosstabDataRow(dataMatrix.length, getTotalsOnColumns(measuresOnRow), CellType.TOTAL);
+		}
+		
+		if(columnsTotals!=null && columnsTotals.equals("on")){
+			columnsRoot.addChild(getHeaderTotalSubTree(!measuresOnRow, columnsRoot.getSubTreeDepth()-1));
+			addCrosstabDataColumns(dataMatrix[0].length, getTotalsOnRows(measuresOnRow), CellType.TOTAL);
+		}
+		
+		
+		//"calculatesubtotalsoncolumns":"on","calculatetotalsoncolumns":"on","calculatesubtotalsonrows":"on","calculatetotalsonrows":"on"
+
+	}
+	
+	public Node getColumnsRoot() {
+		return columnsRoot;
+	}
+
+	public Node getRowsRoot() {
+		return rowsRoot;
+	}
+
+	public String[][] getDataMatrix() {
+		return dataMatrix;
+	}
+
 	
 	
 }

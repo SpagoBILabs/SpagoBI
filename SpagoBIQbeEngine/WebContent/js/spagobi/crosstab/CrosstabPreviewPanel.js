@@ -98,7 +98,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 			var crosstabData = this.serializeCrossTab(); 
 			crosstabData.config = this.config
 			var crosstabDataEncoded = Ext.util.JSON.encode(crosstabData);
-			var exportedCrosstab = {CROSSTAB: crosstabDataEncoded, SHEET_TYPE: 'CROSSTAB'};
+			var exportedCrosstab = {CROSSTAB: crosstabDataEncoded, SHEET_TYPE: 'CROSSTAB', CROSSTABDEFINITION: this.crosstabDefinition , CF: this.getCalculatedFields()};
 			return exportedCrosstab;
 		}
 
