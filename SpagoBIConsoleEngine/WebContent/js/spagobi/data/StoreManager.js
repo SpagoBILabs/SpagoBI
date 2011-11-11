@@ -111,15 +111,12 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 		for(var i = 0, l = this.stores.length, s; i < l; i++) {
 			var s = this.stores.get(i);
 			s.stopped = value;
-			//alert('set stopped value ' + value + ' to store: ' + s.toSource());
-			//alert('set stopped value ' + value);
 		}
 		 
 	}
 	
 	//refresh All stores of the store manager managed
 	, forceRefresh: function(){
-	//	alert('*** forceRefresh called! ');
 		for(var i = 0, l = this.stores.length; i < l; i++) {
 			var s = this.getStore(i);
 			//s.stopped = false; 
