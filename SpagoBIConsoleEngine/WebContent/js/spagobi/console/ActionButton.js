@@ -84,6 +84,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 	, USER_ID: 'userId'
 	, ERRORS: 'errors'
 	, ALARMS: 'alarms'
+	, VIEWS: 'views'
 	, MONITOR: 'monitor'
 	, MONITOR_INACTIVE: 'monitor_inactive'
 		
@@ -188,14 +189,16 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     		return;
     	}
     	
-    	//checks if the button is visible (when the action is errors or alarms)
-    	if (this.actionConf.type === this.ERROR || this.actionConf.type === this.ALARMS){
+    	//checks if the button is active (when the action is errors or alarms)
+    	if (this.actionConf.type === this.ERROR || this.actionConf.type === this.ALARMS ||
+    		this.actionConf.type === this.VIEWS && this.actionConf.flagColumn !== undefined	){
     		var flagCol = this.store.getFieldNameByAlias(this.actionConf.flagColumn);    
         	if (flagCol === undefined ){
         		return;
         	}else{
         		var flagValue = this.store.findExact(flagCol, this.ACTIVE_VALUE);
         		if (flagValue === -1) {
+        			this.hide();
         			return;
         		}
         	}    		
@@ -267,6 +270,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     }
 
     , execRealAction: function(){
+    	
     	checkCol = this.actionConf.checkColumn;
     	
     	if (this.actionConf.type === 'monitor' || this.actionConf.type === 'monitor_inactive'){     		
@@ -341,11 +345,16 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     	, failure: Sbi.exception.ExceptionHandler.onServiceRequestFailure
     	, scope: this     
 	    });  
-
 		
-		this.setCheckValue(this.actionConf.checkColumn, flgCheck);        
-		//fire events to toggle all icons of the same type
-		this.fireEvent('toggleIcons', this, flgCheck);
+		//if by configuration is required a refresh of the dataset, it executes the store's load method,
+		//otherwise it changes the icons by the toggle (default)
+		if (this.refreshDataAfterAction !== undefined && this.refreshDataAfterAction === true ){
+			this.store.loadStore();
+		} else {
+			//fire events to toggle all icons of the same type
+			this.setCheckValue(this.actionConf.checkColumn, flgCheck);    
+			this.fireEvent('toggleIcons', this, flgCheck);
+		}
     }
 });
     
