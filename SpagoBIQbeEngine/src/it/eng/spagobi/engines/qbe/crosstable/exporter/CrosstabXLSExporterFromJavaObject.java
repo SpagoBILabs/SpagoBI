@@ -35,7 +35,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -44,9 +43,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,7 +54,7 @@ import org.json.JSONObject;
  * 		rows: {...} contains tree node structure of the rows' headers
  * 		data: [[...], [...], ...] 2-dimensional matrix containing crosstab data
  * 
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Alberto Ghedin (alberto.ghedin@eng.it), Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class CrosstabXLSExporterFromJavaObject {
 	
@@ -66,19 +63,19 @@ public class CrosstabXLSExporterFromJavaObject {
 
 
 	
-	public int fillAlreadyCreatedSheet(Sheet sheet,CrossTab cs, CreationHelper createHelper, int startRow) throws JSONException, SerializationException{		
+	public int fillAlreadyCreatedSheet(Sheet sheet,CrossTab cs, JSONObject crosstabJSON, CreationHelper createHelper, int startRow) throws JSONException, SerializationException{		
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
-    	int totalRowNum = commonFillSheet(sheet, cs, createHelper,startRow);
+    	int totalRowNum = commonFillSheet(sheet, cs, crosstabJSON, createHelper,startRow);
     	return totalRowNum;
 	}
 	
-	public int commonFillSheet(Sheet sheet,CrossTab cs, CreationHelper createHelper, int startRow) throws SerializationException, JSONException{	
+	public int commonFillSheet(Sheet sheet,CrossTab cs, JSONObject crosstabJSON, CreationHelper createHelper, int startRow) throws SerializationException, JSONException{	
     	int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
 		int rowsDepth = cs.getRowsRoot().getSubTreeDepth();
 
 		
-		MeasureFormatter measureFormatter = new MeasureFormatter(new JSONObject(), new DecimalFormat("#0.00"),"#0.00");
+		MeasureFormatter measureFormatter = new MeasureFormatter(crosstabJSON, new DecimalFormat("#0.00"),"#0.00");
 		int rowsNumber = cs.getDataMatrix().length;
 		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
 		for (int i = 0; i < totalRowsNumber + 10 +13; i++) {
@@ -133,18 +130,14 @@ public class CrosstabXLSExporterFromJavaObject {
 				Cell cell = row.createCell(columnNum);
 				//cell.setCellStyle(cellStyle);
 				
-//				//Check if a cell is a sum
-//				if(cs.getCellType(i,j).equals(CellType.TOTAL)){
-//					cell.setCellStyle(sumCellStyle);
-//				} 
 				
 				try {
 
 					double value = Double.parseDouble(text);
-					//int decimals = measureFormatter.getFormatXLS(new Float(text), i, j);
+					int decimals = measureFormatter.getFormatXLS(i, j);
 					cell.setCellValue(new Double(value));
 					cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-					cell.setCellStyle(getNumberFormat(3, decimalFormats, sheet, createHelper,cs.getCellType(i,j) ));
+					cell.setCellStyle(getNumberFormat(decimals, decimalFormats, sheet, createHelper,cs.getCellType(i,j) ));
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
 					cell.setCellValue(createHelper.createRichTextString(text));
@@ -317,9 +310,11 @@ public class CrosstabXLSExporterFromJavaObject {
 		int mapPosition =  j;
 		
 		if(celltype.equals(CellType.TOTAL)){
-			mapPosition = j+1000000;
+			mapPosition = j+90000;
+		}else if(celltype.equals(CellType.SUBTOTAL)){
+			mapPosition = j+80000;
 		}else if(celltype.equals(CellType.CF)){
-			mapPosition = j+10000;
+			mapPosition = j+60000;
 		}
 		
 		if(decimalFormats.get(mapPosition)!=null)
@@ -337,6 +332,9 @@ public class CrosstabXLSExporterFromJavaObject {
 			cellStyle.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
 		}
 		if(celltype.equals(CellType.CF)){
+			cellStyle.setFillForegroundColor(IndexedColors.DARK_YELLOW.getIndex());
+		}
+		if(celltype.equals(CellType.SUBTOTAL)){
 			cellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
 		}
 		

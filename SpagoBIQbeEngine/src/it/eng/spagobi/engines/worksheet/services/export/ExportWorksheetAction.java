@@ -267,8 +267,10 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				sheetRow= sheetRow+30;
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CROSSTAB)) {
 				JSONArray calculateFieldsJSON=null;
-				String crosstab = content.getString("CROSSTABDEFINITION");
+				String crosstabDefinition = content.getString("CROSSTABDEFINITION");
+				String crosstab = content.getString(WorkSheetXLSExporter.CROSSTAB);
 				String sheetName = sheetJ.getString(SHEET);
+				JSONObject crosstabDefinitionJSON = new JSONObject(crosstabDefinition);
 				JSONObject crosstabJSON = new JSONObject(crosstab);	
 				
 				String calculateFields = content.optString("CF");
@@ -277,10 +279,10 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				}
 				
 				
-				CrossTab cs = getCrosstab(crosstabJSON, sheetName, calculateFieldsJSON);
+				CrossTab cs = getCrosstab(crosstabDefinitionJSON, sheetName, calculateFieldsJSON);
 				CrosstabXLSExporterFromJavaObject expCr = new CrosstabXLSExporterFromJavaObject();
 				int rows = expCr.initSheet(sheet, cs);
-				expCr.fillAlreadyCreatedSheet(sheet, cs, createHelper, sheetRow);
+				expCr.fillAlreadyCreatedSheet(sheet, cs, crosstabJSON, createHelper, sheetRow);
 				sheetRow = sheetRow+rows;
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
 
@@ -373,7 +375,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 
 		// deserialize crosstab definition
 		CrosstabDefinition crosstabDefinition = (CrosstabDefinition) SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
-		crosstabDefinition.setCellLimit( new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) );
+		crosstabDefinition.setCellLimit(0);//FOR THE EXPORT WE REMOVE THE CELL LIMIT
 		
 		String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, engineInstance.getDataSource());
 		// execute SQL query against temporary table

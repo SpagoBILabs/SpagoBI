@@ -84,7 +84,7 @@ public class MeasureFormatter {
 			return formatted;
 		}
 		
-		public int getFormatXLS(Float f, int positionI, int positionJ) {
+		public int getFormatXLS(int positionI, int positionJ) {
 			int pos;
 			String formatted="";
 			if(measureOnRow){
@@ -96,9 +96,8 @@ public class MeasureFormatter {
 				String decimalPrecision =  (new JSONObject(measureMetadata[pos][1])).optString(IMetaData.DECIMALPRECISION);
 				return new Integer(decimalPrecision);
 			} catch (Exception e) {
-				formatted = numberFormat.format(f);
+				return 2;
 			}
-			return 2;
 		}
 
 }

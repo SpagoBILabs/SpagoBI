@@ -59,6 +59,8 @@ public class CrosstabJSONSerializer implements ISerializer {
 			
 			// config (measures on rows/columns, totals/subototals on rows/columns)
 			JSONObject config = crosstabDefinition.getConfig();
+			config.put("maxcellnumber", crosstabDefinition.getCellLimit());
+
 			toReturn.put(CrosstabSerializationConstants.CONFIG, config);
 			
 			// calculated fields definition
