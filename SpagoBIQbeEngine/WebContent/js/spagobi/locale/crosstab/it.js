@@ -43,6 +43,7 @@ Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.percenton'] = 'Percentuali ris
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.column'] = 'colonna';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.row'] = 'riga';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.nopercent'] = 'nessuno';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.maxcellnumber'] = 'Numero massimo di celle';
 
 
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.title'] = 'Scegli la funzione di aggregazione per la misura';

@@ -41,6 +41,7 @@ Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.percenton'] = 'Percentage calc
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.row'] = 'row';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.column'] = 'column';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.nopercent'] = 'no';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.maxcellnumber'] = 'Max cells number';
 
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.title'] = 'Choisissez la fonction d\'agr\u00E9gation pour la mesure';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.apply'] = 'Appliquer';

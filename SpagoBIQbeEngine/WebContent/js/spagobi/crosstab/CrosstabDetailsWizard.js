@@ -125,6 +125,12 @@ Ext.extend(Sbi.crosstab.CrosstabDetailsWizard, Ext.Window, {
 		                , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.nopercent'), name: 'percenton', inputValue: 'no', checked: true}
 		            ]
 	            }
+	            , 
+	            {
+		            xtype: 'field'
+		            , name: 'maxcellnumber' 
+		            , fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.maxcellnumber')
+	            }
 			]
 			, buttons: [{
     			text: LN('sbi.crosstab.crosstabdetailswizard.buttons.apply')
