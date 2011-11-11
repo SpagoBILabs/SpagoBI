@@ -20,13 +20,26 @@
  **/
 package it.eng.spagobi.engines.worksheet.services.export;
 
+import it.eng.qbe.query.WhereField;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
-import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
+import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
+import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporterFromJavaObject;
+import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.exporter.WorkSheetPDFExporter;
 import it.eng.spagobi.engines.worksheet.exporter.WorkSheetXLSExporter;
 import it.eng.spagobi.engines.worksheet.services.runtime.ExecuteWorksheetQueryAction;
+import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
+import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
@@ -37,8 +50,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -249,12 +266,21 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				exporter.setImageIntoWorkSheet(wb, patriarch, jpgImage, col, colend, sheetRow, charHeight,HSSFWorkbook.PICTURE_TYPE_JPEG);
 				sheetRow= sheetRow+30;
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CROSSTAB)) {
-				
-				String crosstab = content.getString(WorkSheetXLSExporter.CROSSTAB);
+				JSONArray calculateFieldsJSON=null;
+				String crosstab = content.getString("CROSSTABDEFINITION");
+				String sheetName = sheetJ.getString(SHEET);
 				JSONObject crosstabJSON = new JSONObject(crosstab);	
-				CrosstabXLSExporter expCr = new CrosstabXLSExporter();
-				int rows = expCr.initSheet(sheet, crosstabJSON);
-				expCr.fillAlreadyCreatedSheet(sheet, crosstabJSON, createHelper, sheetRow);
+				
+				String calculateFields = content.optString("CF");
+				if(calculateFields!=null){
+					calculateFieldsJSON = new JSONArray(calculateFields);
+				}
+				
+				
+				CrossTab cs = getCrosstab(crosstabJSON, sheetName, calculateFieldsJSON);
+				CrosstabXLSExporterFromJavaObject expCr = new CrosstabXLSExporterFromJavaObject();
+				int rows = expCr.initSheet(sheet, cs);
+				expCr.fillAlreadyCreatedSheet(sheet, cs, createHelper, sheetRow);
 				sheetRow = sheetRow+rows;
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
 
@@ -310,6 +336,77 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	}
 	
 
+	public CrossTab getCrosstab(JSONObject crosstabDefinitionJSON,	String sheetName, JSONArray calculateFieldsJSON) throws Exception{
+		JSONObject optionalFilters = getAttributeAsJSONObject(OPTIONAL_FILTERS);
+		// retrieve engine instance
+		WorksheetEngineInstance engineInstance = getEngineInstance();
+		Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
+
+		// persist dataset into temporary table	
+		IDataSetTableDescriptor descriptor = this.persistDataSet();
+		
+		IDataSet dataset = engineInstance.getDataSet();
+		// build SQL query against temporary table
+		List<WhereField> whereFields = new ArrayList<WhereField>();
+		if (!dataset.hasBehaviour(FilteringBehaviour.ID)) {
+			/* 
+			 * If the dataset had the FilteringBehaviour, data was already filtered on domain values by the FilteringBehaviour itself.
+			 * If the dataset hadn't the FilteringBehaviour, we must pust filters on domain values on query to temporary table 
+			 */
+			Map<String, List<String>> globalFilters = getGlobalFiltersOnDomainValues();
+			LogMF.debug(logger, "Global filters on domain values detected: {0}", globalFilters);
+			List<WhereField> temp = transformIntoWhereClauses(globalFilters);
+			whereFields.addAll(temp);
+		}
+		
+		/* 
+		 * We must consider sheet filters anyway because temporary table contains data for all sheets,
+		 * but different sheets could have different filters defined on them
+		 */
+		Map<String, List<String>> sheetFilters = getSheetFiltersOnDomainValues(sheetName);
+		LogMF.debug(logger, "Sheet filters on domain values detected: {0}", sheetFilters);
+		List<WhereField> temp = transformIntoWhereClauses(sheetFilters);
+		whereFields.addAll(temp);
+
+		temp = getOptionalFilters(optionalFilters);
+		whereFields.addAll(temp);
+
+		// deserialize crosstab definition
+		CrosstabDefinition crosstabDefinition = (CrosstabDefinition) SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
+		crosstabDefinition.setCellLimit( new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) );
+		
+		String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, engineInstance.getDataSource());
+		// execute SQL query against temporary table
+		logger.debug("Executing query on temporary table : " + worksheetQuery);
+		IDataStore dataStore = this.executeWorksheetQuery(worksheetQuery, null, null);
+		LogMF.debug(logger, "Query on temporary table executed successfully; datastore obtained: {0}", dataStore);
+		Assert.assertNotNull(dataStore, "Datastore obatined is null!!");
+		/* since the datastore, at this point, is a JDBC datastore, 
+		* it does not contain information about measures/attributes, fields' name and alias...
+		* therefore we adjust its metadata
+		*/
+		this.adjustMetadata((DataStore) dataStore, dataset, descriptor);
+		LogMF.debug(logger, "Adjusted metadata: {0}", dataStore.getMetaData());
+		logger.debug("Decoding dataset ...");
+		dataStore = dataset.decode(dataStore);
+		LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
+		
+		CrossTab crossTab = new CrossTab(dataStore, crosstabDefinition,calculateFieldsJSON);
+		
+		return crossTab;
+	}
 	
+	/**
+	 * Build the sql statement to query the temporary table 
+	 * @param crosstabDefinition definition of the crosstab
+	 * @param descriptor the temporary table descriptor
+	 * @param dataSource the datasource
+	 * @param tableName the temporary table name
+	 * @return the sql statement to query the temporary table 
+	 */
+	protected String buildSqlStatement(CrosstabDefinition crosstabDefinition,
+			IDataSetTableDescriptor descriptor, List<WhereField> filters, IDataSource dataSource) {
+		return CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, descriptor, filters, dataSource);
+	}
 	
 }
