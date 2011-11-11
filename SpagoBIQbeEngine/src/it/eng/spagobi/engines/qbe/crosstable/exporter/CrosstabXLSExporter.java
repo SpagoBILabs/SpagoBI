@@ -173,7 +173,7 @@ public class CrosstabXLSExporter {
 				try {
 
 					double value = Double.parseDouble(text);
-					int decimals = measureFormatter.getFormatXLS(new Float(text), i, j);
+					int decimals = measureFormatter.getFormatXLS( i, j);
 					cell.setCellValue(new Double(value));
 					cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
 					cell.setCellStyle(getNumberFormat(decimals, decimalFormats, sheet, createHelper));

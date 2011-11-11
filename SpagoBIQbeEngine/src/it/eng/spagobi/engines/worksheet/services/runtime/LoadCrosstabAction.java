@@ -130,8 +130,7 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 
 			// deserialize crosstab definition
 			crosstabDefinition = (CrosstabDefinition) SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
-			crosstabDefinition.setCellLimit( new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) );
-			
+						
 			String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, engineInstance.getDataSource());
 			// execute SQL query against temporary table
 			logger.debug("Executing query on temporary table : " + worksheetQuery);

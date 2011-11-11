@@ -78,6 +78,10 @@ public class CrosstabJSONDeserializer implements IDeserializer {
 				// config (measures on rows/columns, totals/subototals on rows/columns) remains a JSONObject 
 				JSONObject config = crosstabDefinitionJSON.optJSONObject(CrosstabSerializationConstants.CONFIG);
 				crosstabDefinition.setConfig(config);
+				Integer maxCells= config.optInt("maxcellnumber");
+				if (maxCells!=null){
+					crosstabDefinition.setCellLimit(maxCells);
+				}
 				
 				JSONArray calculatedFields = crosstabDefinitionJSON.optJSONArray(CrosstabSerializationConstants.CALCULATED_FIELDS);
 				crosstabDefinition.setCalculatedFields(calculatedFields);

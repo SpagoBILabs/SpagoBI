@@ -20,6 +20,7 @@
  **/
 package it.eng.spagobi.engines.worksheet.widgets;
 
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.engines.qbe.crosstable.serializer.json.CrosstabSerializationConstants;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Field;
@@ -59,7 +60,9 @@ public class CrosstabDefinition extends SheetContent {
 	private JSONObject config = null;
 	private JSONArray calculatedFields = null;
 	
-	public CrosstabDefinition() {}
+	public CrosstabDefinition() {
+		cellLimit = new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) ;
+	}
 	
 	public int getCellLimit() {
 		return cellLimit;
