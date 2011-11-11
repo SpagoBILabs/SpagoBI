@@ -697,7 +697,13 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			    		metaIsChanged = true;
 			    		fieldsMap[fields[i].header] = (fields[i].id+1);
 			    		headerToHide.push(fields[i].header);
-			    		fields[i].header = tmpHeader;
+			    		if (tmpHeader === "") {
+			    			tmpHeader = "header__" + i;
+			    			fieldsMap[tmpHeader] = (fields[i].id);
+			    			headerToHide.push(tmpHeader);
+			    		}else{
+				    		fields[i].header = tmpHeader;				    		
+			    		}
 			    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 			    	}
 				}else
@@ -736,7 +742,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 							idxFieldColumn = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].column));
 							idxFieldThreshold = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].threshold));
 							fieldsMap[pointChartConfig.threshold] = idxFieldThreshold;						
-							headerToHide.push(this.inlineCharts[p].threshold); //hides the column with the thresholds
+							if (headerToHide.indexOf(this.inlineCharts[p].threshold)<0) headerToHide.push(this.inlineCharts[p].threshold); //hides the column with the thresholds
 							nameFieldThreshold = this.store.getFieldNameByAlias(this.inlineCharts[p].threshold);
 							pointChartConfig.nameFieldThreshold = nameFieldThreshold;
 							//check the tooltip 
@@ -746,7 +752,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 								nameTooltipField =  pointChartConfig.tooltip.substr(startFieldTooltip,lenFieldTooltip);
 								var idxFieldTooltip = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(nameTooltipField));
 								fieldsMap[nameTooltipField] = idxFieldTooltip;					
-								headerToHide.push(nameTooltipField); //hides the column with the tooltip
+								if (headerToHide.indexOf(nameTooltipField)<0) headerToHide.push(nameTooltipField); //hides the column with the tooltip
 								pointChartConfig.nameTooltipField = nameTooltipField;
 								pointChartConfig.nameTooltipValue = this.store.getFieldNameByAlias(nameTooltipField);
 							}
@@ -892,6 +898,16 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 				}
 				
   	  		}	
+		}
+		//hides flag icons column for massive actions 
+		if (this.filterBar.actions) {
+			for(var i = 0, l = this.filterBar.actions.length; i < l; i++){
+				var massiveAction =  this.filterBar.actions[i];
+				if (massiveAction.flagColumn !== undefined){
+					var tmpName = this.store.getFieldNameByAlias(massiveAction.flagColumn);						
+					if (tmpName !== undefined)  tmpMeta.fields[fieldsMap[tmpName]].hidden = true;
+				}
+			}
 		}
 
 		//adds numeration column    
