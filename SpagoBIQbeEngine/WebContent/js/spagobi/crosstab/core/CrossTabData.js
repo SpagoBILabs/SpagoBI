@@ -151,7 +151,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
  	 			}
  	 			superSumArray.push(Sbi.qbe.commons.Format.number(freshSum,'float'));
  			}
- 		}else if(rowsumO!=null && rowsumO!=undefined && columnsumO.length>1){
+ 		}else if(columnsumO!=null && columnsumO!=undefined && columnsumO.length>1){
  			for(var x=0; x<columnsumO.length; x++){
  				var freshSum=0;
  	 			for(var y=0; y<columnsumO[x].length; y++){
