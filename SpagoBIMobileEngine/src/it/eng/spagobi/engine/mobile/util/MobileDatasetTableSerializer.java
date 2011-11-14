@@ -22,15 +22,12 @@ package it.eng.spagobi.engine.mobile.util;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jdt.internal.compiler.ast.JavadocSingleNameReference;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
