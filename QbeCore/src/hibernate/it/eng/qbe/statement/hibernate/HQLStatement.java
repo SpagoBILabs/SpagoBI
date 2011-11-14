@@ -42,6 +42,7 @@ import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
@@ -641,7 +642,7 @@ public class HQLStatement extends AbstractStatement {
 			ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
 			String dbDialect = connection.getDialect();
 			
-			String userDateFormatPattern = (String)getParameters().get("userDateFormatPattern");
+			String userDateFormatPattern = (String)getParameters().get(EngineConstants.ENV_USER_DATE_FORMAT);
 			DateFormat userDataFormat = new SimpleDateFormat(userDateFormatPattern);		
 			try{
 				operandValueToBoundDate = userDataFormat.parse(operandValueToBound);
