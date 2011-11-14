@@ -132,7 +132,7 @@ author: Monica Franceschini
 	<body>
 
 		
-		<script>
+		<script><!--
 
 
 	      Ext.setup({
@@ -215,7 +215,7 @@ author: Monica Franceschini
 	    	    }
 	    	});
 
-</script>
+		--></script>
 		
 		
 		 

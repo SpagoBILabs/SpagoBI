@@ -13,20 +13,7 @@ Ext.ux.TouchGridPanel = Ext.extend(Ext.Panel, {
 	conditions    : null,
 	columnToStyle : new Array(),
 	
-/*	toReplaceStyle : new Array(),
-	
-	getToReplaceStyleIds: function(){
-	
-		return this.toReplaceStyle;
-	},
-	replaceStyle: function(){
-		alert(this.toReplaceStyle);
-		for(i=0; i<this.toReplaceStyle.length; i++){
-			var obj = this.toReplaceStyle[i];
-			var tdToReplaceStyle = Ext.get(obj.id);
-			tdToReplaceStyle.applyStyles(obj.style);
-		}
-	},*/
+
 	initComponent : function() {
 		var me = this;
 		
@@ -140,12 +127,7 @@ Ext.ux.TouchGridPanel = Ext.extend(Ext.Panel, {
 			}
 
 			if(me.columnToStyle.indexOf(col.mapping) != -1){
-				var idx= i;
-				//colTpl += '<tpl if="this.hasStyle(values.styleTD, '+i+')">';
-				colTpl += '<td id="'+generatedCellId+'{rowIndex}" width="' + width + '%" class="x-grid-cell x-grid-col-' + col.mapping + ' ' + cls + ' {isDirty:this.isCellDirty(parent)}" style="' + style + ' {[values.styleTD['+idx+']]}" mapping="' + col.mapping + '" rowIndex="{rowIndex}">{' + col.mapping + '}</td>';
-				/*colTpl += '</tpl><tpl if="!this.hasStyle(values.styleTD, '+i+')"><tpl if="this.hasStyle(values.styleTD, '+i+')">';		
-				colTpl += '<td id="'+generatedCellId+'{rowIndex}" width="' + width + '%" class="x-grid-cell x-grid-col-' + col.mapping + ' ' + cls + ' {isDirty:this.isCellDirty(parent)}" style="' + style + '" mapping="' + col.mapping + '" rowIndex="{rowIndex}">{' + col.mapping + '}</td>';
-				colTpl += '</tpl>';*/
+				colTpl += '<td id="'+generatedCellId+'{rowIndex}" width="' + width + '%" class="x-grid-cell x-grid-col-' + col.mapping + ' ' + cls + ' {isDirty:this.isCellDirty(parent)}" style="' + style + ' {[values.styleTD['+i+']]}" mapping="' + col.mapping + '" rowIndex="{rowIndex}">{' + col.mapping + '}</td>';
 			}else{
 				colTpl += '<td id="'+generatedCellId+'{rowIndex}" width="' + width + '%" class="x-grid-cell x-grid-col-' + col.mapping + ' ' + cls + ' {isDirty:this.isCellDirty(parent)}" style="' + style + '" mapping="' + col.mapping + '" rowIndex="{rowIndex}">{' + col.mapping + '}</td>';
 			}	
@@ -153,11 +135,11 @@ Ext.ux.TouchGridPanel = Ext.extend(Ext.Panel, {
 		}
 		colTpl += '</tr>';
 
-		var datas = new Ext.DataView({
+		return new Ext.DataView({
 			store        : me.store,
 			itemSelector : "tr.x-grid-row",
 			simpleSelect : me.multiSelect,
-			scroll       : me.scroll,
+			//scroll       : me.scroll,
 			scope        : this,
 			tpl          : new Ext.XTemplate(
 				'<table style="width: 100%;">',
@@ -237,7 +219,6 @@ Ext.ux.TouchGridPanel = Ext.extend(Ext.Panel, {
 			]
 		});
 
-		return datas;
 	},
 	
 	getFirst: function(a){
