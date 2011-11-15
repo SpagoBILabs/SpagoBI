@@ -183,6 +183,9 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			        case 'name':
 			        	formatterCode =  this.formatWithName();
 			        	break;
+			        case 'substring':
+			        	formatterCode =  this.formatSubstringLabel();
+			        	break;
 			        default: 
 			        	//formatterCode = function (){return singleChartConfig.tooltip.formatter;};
 			        	formatterCode = this.formatWithName();
@@ -334,6 +337,9 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	}
 	, formatWithNameValue: function (){
 		return function (){return '<b>'+ this.series.name+ '</b><br/>'+ this.point.name ;};
+	}
+	, formatSubstringLabel: function (){
+		return function (){return this.series.name.substring(0,10).concat("...") ;};
 	}
 	
 });
