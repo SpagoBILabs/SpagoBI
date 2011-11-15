@@ -161,8 +161,6 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			IDataSource ds = getConsoleEngineInstance().getDataSource();				
 			DataSourceUtilities dsu = new DataSourceUtilities(ds);
 			Vector extractedFields = dsu.readFields(dataSet.getQuery().toString());
-			//order fields like template
-			
 			List extractedFieldsMetaData = new ArrayList<IFieldMetaData>();
 			if(jsonArray != null && jsonArray.length() > 0) {
 				int fieldNo = dataStore.getMetaData().getFieldCount();
@@ -182,8 +180,11 @@ public class ExportAction extends AbstractConsoleEngineAction {
 	//					// in case of dynamic headers gets the value from the dataset
 						if (fieldHeaderType.equalsIgnoreCase("dataset")){
 							int posHeader = dataStore.getMetaData().getFieldIndex(fieldHeader);
-							fieldHeader =((List)dataStore.getFieldValues(posHeader)).get(0).toString();
-
+							int fieldValsize = ((List)dataStore.getFieldValues(posHeader)).size();
+							if(fieldValsize != 0){
+								fieldHeader =((List)dataStore.getFieldValues(posHeader)).get(0).toString();
+							}
+							
 						}
 						Field headerF = new Field(fieldHeader, "java.lang.String", 100);
 						extractedFields.add(headerF);
@@ -200,7 +201,10 @@ public class ExportAction extends AbstractConsoleEngineAction {
 						}
 	
 					}
+
+
 				}
+				
 				dataStore.getMetaData().setProperty("actionColumns", actionColumns);
 			}
 			params = new HashMap();
@@ -259,3 +263,4 @@ public class ExportAction extends AbstractConsoleEngineAction {
 		}
 	}
 }
+
