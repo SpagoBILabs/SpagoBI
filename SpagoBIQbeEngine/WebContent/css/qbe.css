@@ -425,6 +425,9 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 .icon-save {
 	background-image: url('../img/save16.png') !important;
 }
+.icon-refresh {
+	background-image: url('../img/refresh16.png') !important;
+}
 /*******************************************************************************************************
  * Slot
  ********************************************************************************************************/

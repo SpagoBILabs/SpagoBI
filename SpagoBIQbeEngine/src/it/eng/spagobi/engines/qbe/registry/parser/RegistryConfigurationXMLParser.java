@@ -58,6 +58,8 @@ public class RegistryConfigurationXMLParser {
 	public static String ATTRIBUTE_VISIBLE = "visible";
 	public static String ATTRIBUTE_SUBENTITY = "subEntity";
 	public static String ATTRIBUTE_FOREIGNKEY = "foreignKey";
+	public static String ATTRIBUTE_MANDATORY_COLUMN = "mandatoryColumn";
+	public static String ATTRIBUTE_MANDATORY_VALUE = "mandatoryValue";
 
 	public static String PRESENTATION_TYPE_MANUAL = "MANUAL";
 	public static String PRESENTATION_TYPE_COMBO = "COMBO";
@@ -158,7 +160,14 @@ public class RegistryConfigurationXMLParser {
 				column.setEditable(isEditable);
 				column.setVisible(isVisible);
 				column.setEditorType(editorType);
-				
+				String mandatoryColumn = (String) aColumn.getAttribute(ATTRIBUTE_MANDATORY_COLUMN);
+				if(mandatoryColumn != null){
+					column.setMandatoryColumn(mandatoryColumn)	;
+				}
+				String mandatoryValue = (String) aColumn.getAttribute(ATTRIBUTE_MANDATORY_VALUE);
+				if(mandatoryValue != null){
+					column.setMandatoryValue(mandatoryValue);
+				}
 				if (subEntity != null) { // if a column is a subEntity reference, the editor is a combo-box
 					if (editorType != null && !editorType.trim().equals(EDITOR_TYPE_COMBO)) {
 						logger.warn("For sub-entity references, only " + EDITOR_TYPE_COMBO + " is admissible as editor type");
