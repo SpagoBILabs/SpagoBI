@@ -135,6 +135,26 @@ public class RegistryConfiguration {
 		private boolean isEditable = true;
 		
 		private boolean isVisible = true;
+		//mandatory depending on another column value
+		private String mandatoryColumn = null;
+		
+		public String getMandatoryColumn() {
+			return mandatoryColumn;
+		}
+
+		public void setMandatoryColumn(String mandatoryColumn) {
+			this.mandatoryColumn = mandatoryColumn;
+		}
+
+		public String getMandatoryValue() {
+			return mandatoryValue;
+		}
+
+		public void setMandatoryValue(String mandatoryValue) {
+			this.mandatoryValue = mandatoryValue;
+		}
+
+		private String mandatoryValue = null;
 		
 		public String getField() {
 			return field;
