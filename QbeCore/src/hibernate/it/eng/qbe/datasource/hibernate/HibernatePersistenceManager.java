@@ -23,10 +23,10 @@ package it.eng.qbe.datasource.hibernate;
 import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -85,7 +85,13 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 			ClassMetadata classMetadata = sf.getClassMetadata(entityName);
 			String keyName = classMetadata.getIdentifierPropertyName();
 			Object key = aRecord.get(keyName);
-			Object obj = aSession.load(entityName, (Serializable) key);
+			Property propertyId = classMapping.getProperty(keyName);
+
+			//casts the id to the appropriate java type
+			Object keyConverted = this.convertValue(key, propertyId);
+			
+			
+			Object obj = aSession.load(entityName, (Serializable) keyConverted);
 			Iterator it = aRecord.keys();
 			while (it.hasNext()) {
 				String aKey = (String) it.next();
@@ -111,12 +117,15 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 					Property property = classMapping.getProperty(aKey);
 					Setter setter = property.getSetter(obj.getClass());
 					Object valueObj = aRecord.get(aKey);
-					Object valueConverted = this.convertValue(valueObj, property);
-					setter.getMethod().invoke(obj, valueConverted);
+					if(valueObj != null && !valueObj.equals("")){
+						Object valueConverted = this.convertValue(valueObj, property);
+						setter.getMethod().invoke(obj, valueConverted);
+					}
+
 				}
 
 			}
-			aSession.save(obj);
+			aSession.saveOrUpdate(obj);
 			tx.commit();
 		} catch (Exception e) {
 
@@ -146,6 +155,8 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 				toReturn = Integer.parseInt(value);
 			} else if (BigInteger.class.isAssignableFrom(clazz)) {
 				toReturn = new BigInteger(value);
+			} else if (BigDecimal.class.isAssignableFrom(clazz)) {
+				toReturn = new BigDecimal(value);
 			} else if (Long.class.isAssignableFrom(clazz)) {
 				toReturn = new Long(value);
 			} else if (Short.class.isAssignableFrom(clazz)) {
