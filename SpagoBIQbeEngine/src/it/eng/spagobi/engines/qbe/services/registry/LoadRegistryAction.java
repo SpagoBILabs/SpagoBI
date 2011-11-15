@@ -25,6 +25,7 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
@@ -39,6 +40,8 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -49,11 +52,20 @@ import org.json.JSONObject;
 public class LoadRegistryAction extends ExecuteQueryAction {
 	
 	private static final long serialVersionUID = -642121076148276452L;
+	private String ID_COLUMN = "ID_COLUMN";
+	
+	private JSONArray mandatories = new JSONArray();
 
 	@Override
 	public Query getQuery() {
 		Query query = buildQuery();
 		return query;
+	}
+	
+	@Override
+	protected IStatement getStatement(Query query){
+		IStatement statement =  getDataSource().createStatement( query );
+		return statement;
 	}
 	
 	@Override
@@ -71,9 +83,34 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	public JSONObject serializeDataStore(IDataStore dataStore) {
 		RegistryJSONDataWriter dataSetWriter = new RegistryJSONDataWriter();
 		JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
+		setMandatoryMetadata(gridDataFeed);
 		return gridDataFeed;
 	}
-	
+	private void setMandatoryMetadata(JSONObject gridDataFeed){
+		try {
+			((JSONObject)gridDataFeed.get("metaData")).put("mandatory", mandatories);
+
+		} catch (JSONException e) {
+			logger.error("Error setting mandatory informations "+e.getMessage() );
+		}
+	}
+	private void getMandatoryMetadata(Column column){
+		try {
+			//mandatory management
+			String mandatoryColumn = column.getMandatoryColumn();
+			String mandatoryValue = column.getMandatoryValue();
+			JSONObject mandatory = new JSONObject();
+
+			if(mandatoryColumn != null && mandatoryValue != null){
+				mandatory.put("mandatoryColumn", mandatoryColumn);
+				mandatory.put("mandatoryValue", mandatoryValue);
+				mandatory.put("column", column.getField());			
+				mandatories.put(mandatory);
+			}
+		} catch (JSONException e) {
+			logger.error("Error getting mandatory informations from template "+e.getMessage() );
+		}
+	}
 	private Query buildQuery() {
 		logger.debug("IN");
 		Query query = null;
@@ -89,6 +126,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			Iterator<Column> it = columns.iterator();
 			while (it.hasNext()) {
 				Column column = it.next();
+				getMandatoryMetadata(column);
 				IModelField field = getColumnModelField(column, entity);
 				if (field == null) {
 					logger.error("Field " + column.getField() + " not found!!");

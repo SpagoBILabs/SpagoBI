@@ -117,6 +117,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	, columnName2columnHeader : null
 	, columnHeader2columnName : null
 	, keyUpTimeoutId : null
+	, mandatory: null
+	, visibleColumns: []
     
 	// ---------------------------------------------------------------------------------------------------
     // public methods
@@ -156,12 +158,13 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			
 			this.columnName2columnHeader = {};
 			this.columnHeader2columnName = {};
-			
+			var columnVisible = [];
 			for(var i = 0; i < meta.fields.length; i++) {
-			   
-			   this.columnName2columnHeader[meta.fields[i].name] = meta.fields[i].header;
-			   this.columnHeader2columnName[meta.fields[i].header] = meta.fields[i].name;
-			   
+				
+				this.columnName2columnHeader[meta.fields[i].name] = meta.fields[i].header;
+				this.columnHeader2columnName[meta.fields[i].header] = meta.fields[i].name;
+				
+
 			   if(meta.fields[i].type) {
 				   var t = meta.fields[i].type;
 				   if (t ==='float') { // format is applied only to numbers
@@ -190,15 +193,28 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					   meta.fields[i].sortable = true;
 				   }
 			   }
-			   
+
+
+				
 			   var editor = this.getEditor(meta.fields[i].header, meta.fields[i].type);
 			   if (editor != null) {
+
 				   meta.fields[i].editor = editor;
 			   }
 			   
+			   var config = this.getColumnEditorConfig(meta.fields[i].header);
+			   if(config.visible == false){
+					continue;
+			   }else{		
+				   this.visibleColumns.push(meta.fields[i]);
+			   }
 		   }
-		   meta.fields[0] = new Ext.grid.RowNumberer();
-		   this.getColumnModel().setConfig(meta.fields);
+		   //meta.fields[0] = new Ext.grid.RowNumberer();
+		   this.visibleColumns[0] = new Ext.grid.RowNumberer();
+		   this.getColumnModel().setConfig(this.visibleColumns);
+		   
+		   this.mandatory = meta.mandatory;
+
 		   this.on('beforeedit', function(e){			   
 			   
 			   /*
@@ -211,8 +227,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			    cancel - Set this to true to cancel the edit or return false from your handler.
 				*/
 			    var val = e.value;
-			    var t = meta.fields[e.column].type;
-			    var st = meta.fields[e.column].subtype;
+			    var t = this.visibleColumns[e.column].type;
+			    var st = this.visibleColumns[e.column].subtype;
 			    if(Ext.isDate(val) ){
 			    	if(st != null && st !== undefined && st === 'timestamp'){
 			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats['timestamp']);
@@ -237,8 +253,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				    row - The grid row index
 				    column - The grid column index*/
 				
-			   var t = meta.fields[e.column].type;
-			   var st = meta.fields[e.column].subtype;
+			   var t = this.visibleColumns[e.column].type;
+			   var st = this.visibleColumns[e.column].subtype;
 			   if (t === 'date') {
 				   var dt = new Date(Date.parse(e.value));
 				   e.record.data[e.field] = dt;
@@ -265,6 +281,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	getEditor : function (field, type) {
 		var toReturn = null;
 		var editorConfig = this.getColumnEditorConfig(field);
+
 		if (editorConfig.editable == true) {
 			if (editorConfig.editor == "COMBO") {
 				
@@ -279,9 +296,10 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		}
 		return toReturn;
 	}
-	
+
 	,
 	getColumnEditorConfig : function (field) {
+
 		var columnsConf = this.getColumnsConfiguration();
 		var toReturn = {  // default values
 				editable : true
@@ -310,6 +328,17 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			handler : this.save,
 			scope : this
 		});
+		items.push({
+			iconCls : 'icon-refresh',
+			handler : this.refresh,
+			scope : this
+		});
+		items.push({xtype: 'tbspacer', width: 30});
+		items.push({
+			iconCls : 'icon-clear',
+			handler : this.clearFilterForm,
+			scope : this
+		});
 		this.filters = [];
 		var filtersConf = this.getFiltersConfiguration();
 		if (filtersConf.length > 0) {
@@ -321,12 +350,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				this.filters.push(filterField); // save filters into local variable this.filters
 			}
 		}
-		items.push({xtype: 'tbspacer', width: 30});
-		items.push({
-			iconCls : 'icon-clear',
-			handler : this.clearFilterForm,
-			scope : this
-		});
+
 		return items;
 	}
 	
@@ -510,16 +534,43 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		}
 		this.store.clearFilter(false);
 	}
-	
+	, hasMandatoryColumnRespected: function(aRecordData){
+		var ok = '';
+		for(i =0; i<this.mandatory.length; i++){
+			var columnToCheck = this.mandatory[i].column;
+			var col = aRecordData[columnToCheck];
+			if(col === undefined || col == null || col === ''){
+				var columnRef = this.mandatory[i].mandatoryColumn;
+				var valueRef = this.mandatory[i].mandatoryValue;
+				var value = aRecordData[columnRef];
+				if(value !== undefined && value !== null && value === valueRef){
+					return columnToCheck;					
+				}
+			}
+		}
+		return ok;
+	}
 	,
 	saveSingleRecord : function (index, modifiedRecords) {
 		var recordsData = [];
 
 		if(index<modifiedRecords.length){
+
 			var aRecordData = Ext.apply({}, modifiedRecords[index].data);
 			delete aRecordData.recNo; // record number is not something to be persisted
 			recordsData.push(aRecordData);
-			
+			var colMandatory= this.hasMandatoryColumnRespected(aRecordData);
+			if(colMandatory !== ''){
+				Ext.MessageBox.show({
+					title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
+					msg : colMandatory +" "+LN('sbi.registry.registryeditorgridpanel.mandatory'),
+					buttons : Ext.MessageBox.OK,
+					width : 300,
+					icon : Ext.MessageBox.INFO
+				});
+
+				return;
+			}
 			Ext.Ajax.request({
 				url: this.services['update'],
 				method: 'post',
@@ -529,6 +580,13 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					for(var j=0; j<index;j++){
 						modifiedRecords[0].commit();
 					}
+					Ext.MessageBox.show({
+						title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
+						msg : LN('sbi.registry.registryeditorgridpanel.saveconfirm.message.ko'),
+						buttons : Ext.MessageBox.OK,
+						width : 300,
+						icon : Ext.MessageBox.INFO
+					});
 				},
 				scope: this
 			});
@@ -542,7 +600,11 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		var modifiedRecords = this.store.getModifiedRecords();
 		this.saveSingleRecord(0,modifiedRecords);
 	}
-	
+	,
+	refresh: function () {
+		this.view.refresh();
+
+	}
 	,
 	updateSuccessHandler : function () {
 		Ext.MessageBox.show({

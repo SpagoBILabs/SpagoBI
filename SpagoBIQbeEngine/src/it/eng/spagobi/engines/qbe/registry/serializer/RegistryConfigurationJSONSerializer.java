@@ -54,6 +54,8 @@ public class RegistryConfigurationJSONSerializer {
 	public static String EDITOR_TYPE = "editor";
 	public static String SUBENTITY = "subEntity";
 	public static String FOREIGNKEY = "foreignKey";
+	public static String MANDATORY_COLUMN = "mandatoryColumn";
+	public static String MANDATORY_VALUE = "mandatoryValue";
 
 	public JSONObject serialize(RegistryConfiguration conf) {
 		logger.debug("IN");
@@ -113,6 +115,15 @@ public class RegistryConfigurationJSONSerializer {
 			}
 			columnJSON.put(EDITABLE, isEditable);
 			columnJSON.put(VISIBLE, isVisible);
+			columnJSON.put(EDITOR_TYPE, editorType);
+			String mandatoryCol = column.getMandatoryColumn();
+			if(mandatoryCol != null){
+				columnJSON.put(MANDATORY_COLUMN, mandatoryCol);
+			}
+			String mandatoryVal = column.getMandatoryValue();
+			if(mandatoryVal != null){
+				columnJSON.put(MANDATORY_VALUE, mandatoryVal);
+			}
 			columnJSON.put(EDITOR_TYPE, editorType);
 			columnsJSON.put(columnJSON);
 		}
