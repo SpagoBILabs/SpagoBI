@@ -339,7 +339,7 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 		return function (){return '<b>'+ this.series.name+ '</b><br/>'+ this.point.name ;};
 	}
 	, formatSubstringLabel: function (){
-		return function (){return this.series.name.substring(0,10).concat("...") ;};
+		return function (){return Ext.util.Format.ellipsis( this.series.name, 10) ;};
 	}
 	
 });
