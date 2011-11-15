@@ -736,7 +736,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 					for (var i=0; i < numRec; i++){
 						var tmpRec = this.store.getAt(i);
 						var tmpValue = tmpRec.get(this.store.getFieldNameByAlias(this.inlineCharts[p].column));						
-						if (this.inlineCharts[p].type == 'point' && this.inlineCharts[p].thresholdType == 'dataset' && this.inlineCharts[p].threshold !== undefined){
+						if ((this.inlineCharts[p].type == 'point' || this.inlineCharts[p].type == 'semaphore') &&
+							 this.inlineCharts[p].thresholdType == 'dataset' && this.inlineCharts[p].threshold !== undefined){
 							pointChartConfig = Ext.apply({}, this.inlineCharts[p] || {});
 							metaIsChanged = true;
 							idxFieldColumn = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].column));
@@ -746,39 +747,28 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 							nameFieldThreshold = this.store.getFieldNameByAlias(this.inlineCharts[p].threshold);
 							pointChartConfig.nameFieldThreshold = nameFieldThreshold;
 							//check the tooltip 
-							if (pointChartConfig.tooltip && pointChartConfig.tooltip.indexOf("$F{") !== -1 ){
-								var startFieldTooltip = pointChartConfig.tooltip.indexOf("$F{")+3;
-								var lenFieldTooltip = pointChartConfig.tooltip.indexOf("}")-startFieldTooltip;
-								nameTooltipField =  pointChartConfig.tooltip.substr(startFieldTooltip,lenFieldTooltip);
-								var idxFieldTooltip = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(nameTooltipField));
-								fieldsMap[nameTooltipField] = idxFieldTooltip;					
-								if (headerToHide.indexOf(nameTooltipField)<0) headerToHide.push(nameTooltipField); //hides the column with the tooltip
-								pointChartConfig.nameTooltipField = nameTooltipField;
-								pointChartConfig.nameTooltipValue = this.store.getFieldNameByAlias(nameTooltipField);
+							if ((pointChartConfig.tooltip && pointChartConfig.tooltip.indexOf("$F{") !== -1) ||
+								(pointChartConfig.tooltipLower && pointChartConfig.tooltipLower.indexOf("$F{") !== -1) ||
+							    (pointChartConfig.tooltipHigher && pointChartConfig.tooltipHigher.indexOf("$F{") !== -1)){
+								pointChartConfig = this.getTooltipFromField(pointChartConfig, fieldsMap, headerToHide );
 							}
-		
+
 							var renderer = this.createInlineChartRenderer(pointChartConfig);
 							if( renderer !== null ) {
 								fields[idxFieldColumn].renderer = renderer;
 					    		tmpMeta.fields[idxFieldColumn] = Ext.apply({}, fields[idxFieldColumn]);
 							}
-						}else if (this.inlineCharts[p].type == 'point' && this.inlineCharts[p].thresholdType == 'env' && this.inlineCharts[p].threshold !== undefined ){
+						}else if ((this.inlineCharts[p].type == 'point' || this.inlineCharts[p].type == 'semaphore') && 
+								   this.inlineCharts[p].thresholdType == 'env' && this.inlineCharts[p].threshold !== undefined ){
 							idxFieldColumn = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].column));
 							pointChartConfig = Ext.apply({}, this.inlineCharts[p] || {});
 							metaIsChanged = true;
 							pointChartConfig.threshold = this.executionContext[this.inlineCharts[p].threshold];
 							//check the tooltip 
-							if (pointChartConfig.tooltip && pointChartConfig.tooltip.indexOf("$P{") !== -1 ){
-								var startFieldTooltip = pointChartConfig.tooltip.indexOf("$P{")+3;
-								var lenFieldTooltip = pointChartConfig.tooltip.indexOf("}")-startFieldTooltip;
-								nameTooltipField =  pointChartConfig.tooltip.substr(startFieldTooltip,lenFieldTooltip);																
-								if (nameTooltipField){
-			  						var tmpTooltipValue = this.executionContext[nameTooltipField];
-			  						if (tmpTooltipValue){
-			  							var newTooltip = pointChartConfig.tooltip.replace("$P{" + nameTooltipField + "}", tmpTooltipValue);
-			  							pointChartConfig.tooltip = newTooltip;
-			  						}
-								}
+							if ((pointChartConfig.tooltip && pointChartConfig.tooltip.indexOf("$P{") !== -1) ||
+								(pointChartConfig.tooltipLower && pointChartConfig.tooltipLower.indexOf("$P{") !== -1) ||
+								(pointChartConfig.tooltipHigher && pointChartConfig.tooltipHigher.indexOf("$P{") !== -1)){
+								pointChartConfig = this.getTooltipFromEnv(pointChartConfig);
 							}							
 	  						var renderer = this.createInlineChartRenderer(pointChartConfig);
 							if( renderer !== null ) {
@@ -923,6 +913,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			renderer  =  Sbi.console.commons.Format.inlineBarRenderer(config);
 		} else if(config.type === 'point') {			
 			renderer  =  Sbi.console.commons.Format.inlinePointRenderer(config);
+		} else if(config.type === 'semaphore') {			
+			renderer  =  Sbi.console.commons.Format.inlineSemaphoreRenderer(config);
 		} else{
 			Sbi.Msg.showWarning('InlineChart type [' + chartConf.type + '] is not supported');
 		}
@@ -1067,5 +1059,89 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		}
 		return toReturn;
 	}
-
+	
+	, getTooltipFromField: function(chartConfig, fieldsMap, headerToHide){
+		var startFieldTooltip;
+		var lenFieldTooltip;
+		var nameTooltipField;
+		var idxFieldTooltip;
+	
+		if (chartConfig.tooltip !== undefined){
+			startFieldTooltip = chartConfig.tooltip.indexOf("$F{")+3;
+			lenFieldTooltip = chartConfig.tooltip.indexOf("}")-startFieldTooltip;
+			nameTooltipField =  chartConfig.tooltip.substr(startFieldTooltip,lenFieldTooltip);
+			idxFieldTooltip = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(nameTooltipField));
+			fieldsMap[nameTooltipField] = idxFieldTooltip;					
+			if (headerToHide.indexOf(nameTooltipField)<0) headerToHide.push(nameTooltipField); //hides the column with the tooltip
+			chartConfig.nameTooltipField = nameTooltipField;
+			chartConfig.nameTooltipValue = this.store.getFieldNameByAlias(nameTooltipField);
+		}
+		if (chartConfig.tooltipLower !== undefined){
+			startFieldTooltip = chartConfig.tooltipLower.indexOf("$F{")+3;
+			lenFieldTooltip = chartConfig.tooltipLower.indexOf("}")-startFieldTooltip;
+			nameTooltipField =  chartConfig.tooltipLower.substr(startFieldTooltip,lenFieldTooltip);
+			idxFieldTooltip = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(nameTooltipField));
+			fieldsMap[nameTooltipField] = idxFieldTooltip;					
+			if (headerToHide.indexOf(nameTooltipField)<0) headerToHide.push(nameTooltipField); //hides the column with the tooltip
+			chartConfig.nameTooltipLowerField = nameTooltipField;
+			chartConfig.nameTooltipLowerValue = this.store.getFieldNameByAlias(nameTooltipField);
+		}
+		if (chartConfig.tooltipHigher !== undefined){
+			startFieldTooltip = chartConfig.tooltipHigher.indexOf("$F{")+3;
+			lenFieldTooltip = chartConfig.tooltipHigher.indexOf("}")-startFieldTooltip;
+			nameTooltipField =  chartConfig.tooltipHigher.substr(startFieldTooltip,lenFieldTooltip);
+			idxFieldTooltip = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(nameTooltipField));
+			fieldsMap[nameTooltipField] = idxFieldTooltip;					
+			if (headerToHide.indexOf(nameTooltipField)<0) headerToHide.push(nameTooltipField); //hides the column with the tooltip
+			chartConfig.nameTooltipHigherField = nameTooltipField;
+			chartConfig.nameTooltipHigherValue = this.store.getFieldNameByAlias(nameTooltipField);
+		}
+		return chartConfig;
+	}
+	
+	, getTooltipFromEnv: function(chartConfig){
+		var startFieldTooltip;
+		var lenFieldTooltip;
+		var nameTooltipField;
+	
+		if (chartConfig.tooltip !== undefined){
+			startFieldTooltip = chartConfig.tooltip.indexOf("$P{")+3;
+			lenFieldTooltip = chartConfig.tooltip.indexOf("}")-startFieldTooltip;
+			nameTooltipField =  chartConfig.tooltip.substr(startFieldTooltip,lenFieldTooltip);																
+			if (nameTooltipField){
+					var tmpTooltipValue = this.executionContext[nameTooltipField];
+					if (tmpTooltipValue){
+						var newTooltip = chartConfig.tooltip.replace("$P{" + nameTooltipField + "}", tmpTooltipValue);
+						chartConfig.tooltip = newTooltip;
+					}
+			}
+		}
+		
+		if (chartConfig.tooltipLower !== undefined){
+			startFieldTooltip = chartConfig.tooltipLower.indexOf("$P{")+3;
+			lenFieldTooltip = chartConfig.tooltipLower.indexOf("}")-startFieldTooltip;
+			nameTooltipField =  chartConfig.tooltipLower.substr(startFieldTooltip,lenFieldTooltip);																
+			if (nameTooltipField){
+					var tmpTooltipValue = this.executionContext[nameTooltipField];
+					if (tmpTooltipValue){
+						var newTooltip = chartConfig.tooltipLower.replace("$P{" + nameTooltipField + "}", tmpTooltipValue);
+						chartConfig.tooltipLower = newTooltip;
+					}
+			}
+		}
+		
+		if (chartConfig.tooltipHigher !== undefined){
+			startFieldTooltip = chartConfig.tooltipHigher.indexOf("$P{")+3;
+			lenFieldTooltip = chartConfig.tooltipHigher.indexOf("}")-startFieldTooltip;
+			nameTooltipField =  chartConfig.tooltipHigher.substr(startFieldTooltip,lenFieldTooltip);																
+			if (nameTooltipField){
+					var tmpTooltipValue = this.executionContext[nameTooltipField];
+					if (tmpTooltipValue){
+						var newTooltip = chartConfig.tooltipHigher.replace("$P{" + nameTooltipField + "}", tmpTooltipValue);
+						chartConfig.tooltipHigher = newTooltip;
+					}
+			}
+		}
+		return chartConfig;
+	}
 });

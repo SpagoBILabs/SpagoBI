@@ -236,18 +236,7 @@ Sbi.console.commons.Format = function(){
                 return '<div title="'+ tip + '" style="width:' +  v  + '%;height:10px;border:1px solid #000;background:' + format.color + ';"/>'
             };
         }
-       /*
-        , inlinePointRenderer : function(format){        	
-            return function(v){          
-               if (v > format.threshold) { 
-                  var width = (format.width === undefined) ? "100%" : format.width+"px";                  
-                  return '<div align=center title="'+ format.tooltip + '" style="width:'+ width +'"><img  src="../img/ico_point_'+ format.color +'.gif"></img></div>';  
-                } else {  
-                  return '';  
-                }
-            };
-        }
-        */
+
         , inlinePointRenderer : function(format){  
         	/* v: value
         	 * p: position (?)
@@ -263,16 +252,55 @@ Sbi.console.commons.Format = function(){
 						var tmpTooltipValue = rec.get(format.nameTooltipValue);
 						if (tmpTooltipValue){
 							var newTooltip = format.tooltip.replace("$F{" + format.nameTooltipField + "}", tmpTooltipValue);
-							localTooltip =  newTooltip;
+							localTooltip =  newTooltip;							
 						}
 					}
                }
                                
                if (v > localThreshold) { 
                   var width = (format.width === undefined) ? "100%" : format.width+"px";                  
-                  return '<div align=center title="'+ localTooltip + '" style="width:'+ width +'"><img  src="../img/ico_point_'+ format.color +'.gif"></img></div>';  
+                  return '<div align=center title="'+ localTooltip + '" style="width:'+ width +'"><img  src="../img/ico_point_'+ format.color +'.gif"></img></div>';             
                 } else {  
-                  return '';  
+                  return '';
+
+                }
+            };
+        }
+        
+        , inlineSemaphoreRenderer : function(format){  
+        	/* v: value
+        	 * p: position (?)
+        	 * rec: actual record data
+        	 * */
+            return function(v, p, rec){     
+               var localThreshold = format.threshold;
+               var localTooltipLower = format.tooltipLower ||  format.tooltip;
+               var localTooltipHigher = format.tooltipHigher ||  format.tooltip;
+               //gets threshold from each rows of the dataset and gets relative tooltip
+               if (format.thresholdType == 'dataset' && format.threshold !== undefined ){            	 
+            	 localThreshold = rec.get(format.nameFieldThreshold);            	      
+            	 if (format.nameTooltipLowerValue && format.nameTooltipLowerField){	
+						var tmpTooltipLowerValue = rec.get(format.nameTooltipLowerValue);
+						if (tmpTooltipLowerValue){
+							var newTooltipLower = format.tooltipLower.replace("$F{" + format.nameTooltipLowerField + "}", tmpTooltipLowerValue);
+							localTooltipLower =  newTooltipLower;
+						}
+            	 }
+            	 if (format.nameTooltipHigherValue && format.nameTooltipHigherField){	
+						var tmpTooltipHigherValue = rec.get(format.nameTooltipHigherValue);
+						if (tmpTooltipHigherValue){
+							var newTooltipHigher = format.tooltipHigher.replace("$F{" + format.nameTooltipHigherField + "}", tmpTooltipHigherValue);
+							localTooltipHigher =  newTooltipHigher;
+						}
+					}
+               }
+                               
+               if (v > localThreshold) { 
+                  var width = (format.width === undefined) ? "100%" : format.width+"px";                    
+                  return '<div align=center title="'+ localTooltipHigher + '" style="width:'+ width +'"><img  src="../img/ico_point_red.gif"></img></div>';
+                } else {  
+                    var width = (format.width === undefined) ? "100%" : format.width+"px";                  
+                    return '<div align=center title="'+ localTooltipLower + '" style="width:'+ width +'"><img  src="../img/ico_point_green.gif"></img></div>';  
                 }
             };
         }
