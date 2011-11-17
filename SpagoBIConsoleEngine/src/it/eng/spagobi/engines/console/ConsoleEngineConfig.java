@@ -140,6 +140,17 @@ public class ConsoleEngineConfig {
 		}		
 	}
 	
+	public String getEngineResourcePath() {
+		String path = null;
+		if(getEngineConfig().getResourcePath() != null) {
+			path = getEngineConfig().getResourcePath() + System.getProperty("file.separator") + "console";
+		} else {
+			path = ConfigSingleton.getRootPath() + System.getProperty("file.separator") + "resources" + System.getProperty("file.separator") + "console";
+		}
+		
+		return path;
+	}
+	
 	// utils 
 	
 	public String getProperty(String propertName) {
