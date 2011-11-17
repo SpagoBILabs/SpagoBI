@@ -69,6 +69,7 @@ Sbi.console.GridPanel = function(config) {
 		var c = Ext.apply(defaultSettings, config || {});
 		
 		c.storeId = c.dataset;
+		c.storeLabelsId = c.datasetLabels;
 		delete c.dataset;	
 		var tableConfig = c.table || {};
 		var filterConfig =  c.filterBar || {};
@@ -129,6 +130,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	services: null
 	// grid
 	, store: null
+	, storeLabels: null
 	, columnModel: null
 	, selectionModel: null
 	
@@ -602,6 +604,12 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
     }
     
 	, initStore: function() {
+		//load optional dataset with lables for i18N management:		
+		if (this.storeLabelsId !== undefined){
+			this.storeLabels = this.storeManager.getStore(this.storeLabelsId);
+			this.storeLabels.loadStore(); 						
+		}
+
 		this.store = this.storeManager.getStore(this.storeId);
 		if (this.store === undefined) {
 			Sbi.Msg.showError('Dataset with identifier [' + this.storeId + '] is not correctly configurated');			
@@ -685,11 +693,12 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		var fieldsMap = {};
 		tmpMeta.fields = new Array(fields.length);
 		
-		//-------------------------------------------------------------------------------//
-		// 	//subsitutes the grid header values with the dataset header fields													 //
-		//-------------------------------------------------------------------------------//
+		
 		for(var i = 0, len = fields.length; i < len; i++) {
-			if(fields[i].headerType !== undefined && fields[i].headerType === 'dataset'){		    	
+			if(fields[i].headerType !== undefined && fields[i].headerType.toUpperCase() === 'DATASET'){
+				//-------------------------------------------------------------------------------//
+				// 	subsitutes the grid header values with the dataset header fields			 //
+				//-------------------------------------------------------------------------------//
 				var tmpRec = this.store.getAt(0);
 				if (tmpRec !== undefined) {
 			    	var tmpHeader =  tmpRec.get(this.store.getFieldNameByAlias(fields[i].header));
@@ -706,7 +715,52 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			    		}
 			    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 			    	}
-				}else
+				}else 
+					tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+		    }else if (fields[i].headerType !== undefined && fields[i].headerType.toUpperCase() === 'I18N'){
+		    	//-------------------------------------------------------------------------------//
+				// subsitutes the grid header values with the label presents into file 			 //
+		    	// (ex: \webapps\SpagoBIConsoleEngine\user_messages\it.js)						 //
+				//-------------------------------------------------------------------------------//
+		    	var tmpHeader = LN(fields[i].header);
+		    	if (tmpHeader !== undefined){
+		    		metaIsChanged = true;
+		    		fields[i].header = tmpHeader;		    		
+		    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+		    	}else{
+					tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+		    	}
+		    	
+		    }else if (fields[i].headerType !== undefined && fields[i].headerType.toUpperCase() === 'DATASETI18N'){
+		    	//-------------------------------------------------------------------------------//
+				// 	subsitutes the grid header values with the specific dataset labels.
+		    	// This dataset should returns 3 fields: code, label, locale (it_IT, en_US, fr_FR, es_ES)
+		    	// Ex: cod_UnitSales, Unit Sales, en_US 													 
+				//-------------------------------------------------------------------------------//
+		    	var idxLocale = this.storeLabels.getFieldMetaByAlias("locale").dataIndex;								
+		    	var idxCode = this.storeLabels.getFieldMetaByAlias("code").dataIndex;
+		    	var idxLabel = this.storeLabels.getFieldMetaByAlias("label").dataIndex;
+		    	//apply filter on labelsStore:
+		    	var idxRec = this.storeLabels.findBy(function(record){				    		 
+		    	   if (idxLocale !== undefined && idxCode !== undefined){
+		    		  if(record.data[idxLocale] === Sbi.user.locale && 
+		    		     record.data[idxCode] === fields[i].header) {		
+  						   return true;  						   
+  					   }	
+		    	   } 		  		  
+		  		   return false;				   
+		  	   }, this);		    	 
+		    	var tmpRec = this.storeLabels.getAt(idxRec);		    	
+				if (tmpRec !== undefined) {
+					var tmpHeader =  tmpRec.get(idxLabel);
+			    	if (tmpHeader !== undefined){	
+			    		metaIsChanged = true;
+			    		fields[i].header = tmpHeader;		    		
+			    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+			    	}else{
+						tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+			    	}	
+				}else 
 					tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 		    }else{
 	    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);

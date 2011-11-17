@@ -89,6 +89,9 @@ author: Antonella Giachino (antonella.giachino@eng.it)
     }   
     // gets analytical driver
     Map analyticalDrivers  = consoleEngineInstance.getAnalyticalDrivers();
+
+//    String localeResourcePath = consoleEngineConfig.getEngineResourcePath() + System.getProperty("file.separator") + "user_messages_"+locale.getLanguage()+".js";
+
 %>
 
 
@@ -100,7 +103,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	<head>
 		<%@include file="commons/includeExtJS.jspf" %>
 		<%@include file="commons/includeSbiConsoleJS.jspf"%>
-		
+		 
 		<!-- Active TEST  -->
 		<!--  %@include file="tests/template.jspf"% -->
 		<!-- Active TEST  -->
@@ -140,7 +143,8 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 			};
 		
 			var params = {
-				SBI_EXECUTION_ID: <%= executionId %>
+				SBI_EXECUTION_ID: <%=executionId %>
+				, LOCALE: '<%=locale%>'
 				, LIGHT_NAVIGATOR_DISABLED: 'TRUE'
 			};
 		
@@ -169,6 +173,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 			// javascript-side user profile object
 	        Ext.ns("Sbi.user");
 	        Sbi.user.userId = "<%= profile.getUserId() %>";
+	        Sbi.user.locale = "<%= locale%>";
 
 	       var executionContext = {};
 	       <% Iterator it = analyticalDrivers.keySet().iterator();
