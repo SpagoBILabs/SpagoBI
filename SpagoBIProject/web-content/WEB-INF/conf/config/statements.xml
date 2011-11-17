@@ -125,17 +125,19 @@
 					FROM SBI_DIST_LIST s, SBI_DIST_LIST_USER sbu, 
 					SBI_DIST_LIST_OBJECTS o, SBI_OBJ_FUNC sof, SBI_FUNC_ROLE fr, SBI_EXT_ROLES e
 					WHERE s.DL_ID = o.DL_ID   AND sbu.LIST_ID=s.DL_ID AND o.DOC_ID = sof.BIOBJ_ID AND sof.FUNCT_ID = fr.FUNCT_ID
-					AND fr.STATE_CD = 'REL' AND fr.ROLE_ID= e.EXT_ROLE_ID  AND e.NAME IN (?,?,?,?,?,?) AND sbu.USER_ID = ?
+					AND fr.STATE_CD = 'EXECUTION' AND fr.ROLE_ID= e.EXT_ROLE_ID  AND e.NAME IN (?,?,?,?,?,?) AND sbu.USER_ID = ?
 					GROUP BY s.NAME, s.DESCR,  s.DL_ID
 					union
 					SELECT s.NAME, s.DESCR,  s.DL_ID as ID, 0 as PRES
 					FROM SBI_DIST_LIST s, SBI_DIST_LIST_OBJECTS o,SBI_OBJ_FUNC sof,SBI_FUNC_ROLE fr, SBI_EXT_ROLES e
 					WHERE s.DL_ID = o.DL_ID    AND o.DOC_ID = sof.BIOBJ_ID       AND sof.FUNCT_ID = fr.FUNCT_ID
-					AND fr.STATE_CD = 'REL'       AND fr.ROLE_ID= e.EXT_ROLE_ID      AND e.NAME IN (?,?,?,?,?,?) 
+					AND fr.STATE_CD = 'EXECUTION'       AND fr.ROLE_ID= e.EXT_ROLE_ID      AND e.NAME IN (?,?,?,?,?,?) 
 					AND NOT EXISTS (SELECT sl.DL_ID
     				FROM SBI_DIST_LIST sl, SBI_DIST_LIST_USER sbul, SBI_DIST_LIST_OBJECTS ol,SBI_OBJ_FUNC ofl,SBI_FUNC_ROLE frl, SBI_EXT_ROLES el
-    				WHERE sl.DL_ID = ol.DL_ID   AND sbul.LIST_ID=sl.DL_ID    AND ol.DOC_ID = ofl.BIOBJ_ID       AND ofl.FUNCT_ID = frl.FUNCT_ID
-   					AND frl.STATE_CD = 'REL'       AND frl.ROLE_ID= el.EXT_ROLE_ID      AND el.NAME IN (?,?,?,?,?,?) AND sbul.USER_ID = ? AND  s.DL_ID = sl.DL_ID)
+    				WHERE sl.DL_ID = ol.DL_ID   AND sbul.LIST_ID=sl.DL_ID    AND ol.DOC_ID = ofl.BIOBJ_ID       
+    				AND ofl.FUNCT_ID = frl.FUNCT_ID
+   					AND frl.STATE_CD = 'EXECUTION'       AND frl.ROLE_ID= el.EXT_ROLE_ID      
+   					AND el.NAME IN (?,?,?,?,?,?) AND sbul.USER_ID = ? AND  s.DL_ID = sl.DL_ID)
 					GROUP BY s.NAME, s.DESCR,  s.DL_ID"/>	
 					
 	<STATEMENT name="SELECT_ALL_OBJMETADATA" 
