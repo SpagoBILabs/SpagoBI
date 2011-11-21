@@ -189,7 +189,8 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 				newRecord = record;
 								
 				for (int i = 0; i < pivotedFieldNames.size(); i++) {					
-					newRecord.appendField(new Field(null));
+					//newRecord.appendField(new Field(null));
+					newRecord.appendField(new Field(0));
 				}
 				
 				
