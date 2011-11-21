@@ -1,0 +1,505 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- IMPORT TAG LIBRARY -->
+
+
+
+
+<!-- GET SPAGO OBJECTS -->
+
+
+<!-- based on ecexution mode include initial html -->
+
+
+
+
+<html lang="en">
+<head>
+<link rel="shortcut icon"
+	href="/SpagoBI/themes/sbi_default/img/favicon.ico" />
+</head>
+<body>
+
+
+
+
+<script type="text/javascript"
+	src="/SpagoBI/js/lib/ext-3.1.1/adapter/ext/ext-base.js"></script>
+
+<script type="text/javascript"
+	src="/SpagoBI/js/lib/ext-3.1.1/ext-all-debug.js"></script>
+
+
+
+
+<script type="text/javascript"
+	src="/SpagoBI/js/lib/overrides-ext-3.1.1/overrides.js"></script>
+
+
+<script type="text/javascript"
+	src="/SpagoBI/js/lib/ext-3.1.1/ux/miframe/miframe-debug.js"></script>
+<script type="text/javascript"
+	src="/SpagoBI/js/lib/ext-3.1.1/ux/miframe/mifmsg.js"></script>
+<!-- jQuery (HighCharts dependency) -->
+<script type="text/javascript"
+	src="/SpagoBI/js/lib/jquery-1.5.1/jquery-1.5.1.js"></script>
+
+<!-- HighCharts -->
+<script type="text/javascript"
+	src="/SpagoBI/js/lib/highcharts-2.1.6/highcharts.js"></script>
+<script type="text/javascript"
+	src="/SpagoBI/js/lib/highcharts-2.1.6/modules/exporting.js"></script>
+
+<script type="text/javascript">
+Ext.BLANK_IMAGE_URL = '/SpagoBI/js/lib/ext-3.1.1/resources/images/default/s.gif';
+
+
+Ext.Ajax.defaultHeaders = {
+'Powered-By': 'Ext'
+};
+Ext.Ajax.timeout = 300000;
+
+// general SpagoBI configuration
+Ext.ns("Sbi.config");
+Sbi.config = function () {
+return {
+// login url, used when session is expired
+loginUrl: '/SpagoBI',
+currTheme: 'sbi_default',
+curr_country: 'US',
+curr_language: 'en',
+contextName: '/SpagoBI',
+adapterPath: '/SpagoBI/servlet/AdapterHTTP',
+supportedLocales: [{"language":"it","country":"IT"},{"language":"en","country":"US"},{"language":"fr","country":"FR"},{"language":"es","country":"ES"}],
+sessionParametersManagerEnabled: false,
+isSSOEnabled: false
+};
+}();
+
+// javascript-side user profile object
+Ext.ns("Sbi.user");
+Sbi.user.userUniqueIdentifier = 'biadmin';
+Sbi.user.userId = 'biadmin';
+Sbi.user.userName = 'SpagoBI Administrator';
+Sbi.user.ismodeweb = true;
+Sbi.user.defaultRole = ''
+
+Sbi.user.roles = new Array();
+
+
+
+
+Sbi.user.roles[0] = '/spagobi/admin';
+
+Sbi.user.roles[1] = 'GESTORE_KPI_PROCESSI';
+
+Sbi.user.roles[2] = 'ANALISTA KPI PROCESSI';
+
+Sbi.user.roles[3] = 'VISUALIZZAZIONE PROCESSI';
+
+Sbi.user.roles[4] = 'GESTORE_PROCESSI';
+
+
+
+
+// Sbi.user.functionalities is a javascript array containing all user functionalities' names
+Sbi.user.functionalities = ['SaveSubobjectFunctionality','SeeSubobjectsFunctionality','SeeSnapshotsFunctionality','SeeViewpointsFunctionality','SeeNotesFunctionality','SendMailFunctionality','SaveIntoFolderFunctionality','SaveRememberMeFunctionality','SeeMetadataFunctionality','SaveMetadataFunctionality','BuildQbeQueriesFunctionality','EnginesManagement','FunctionalitiesManagement','LovsManagement','ConstraintManagement','ParameterManagement','DocumentAdministration','DocumentDevManagement','DocumentTestManagement','DocumentAdminManagement','ImportExportManagement','SchedulerManagement','EventsManagement','WorkspaceManagement','WorklistManagement','MapCatalogueManagement','MapFeaturesManagement','DocumentManagement','SyncronizeRolesManagement','ProfileAttributeManagement','DataSourceManagement','DocumentUserManagement','DocumentDeleteManagement','DocumentStateManagement','DocumentDetailManagement','ViewMyFolderAdmin','DistributionListUser','DistributionListManagement','DocumentMetadataManagement','LovsView','ConstraintView','ParameterView','DatasetManagement','DocumentMoveDownState','DocumentMoveUpState','ModifyRefresh','MenuManagement','HotLinkManagement','KpiManagement','ObjMetadataManagement','ProfileManagement','UserDefinedPropertyManagement','DomainManagement','ConfigManagement','UserSaveDocumentFunctionality'];
+</script>
+
+
+
+
+<!-- import css -->
+
+
+<LINK rel='StyleSheet'
+	href='/SpagoBI/themes/sbi_default/css/spagobi_wa.css' type='text/css' />
+
+
+<LINK rel='StyleSheet'
+	href='/SpagoBI/themes/sbi_default/css/spagobi_shared.css'
+	type='text/css' />
+
+<LINK rel='StyleSheet' href='/SpagoBI/themes/sbi_default/css/jsr168.css'
+	type='text/css' />
+
+<LINK rel='StyleSheet'
+	href='/SpagoBI/themes/sbi_default/css/external.css' type='text/css' />
+
+
+<LINK rel='StyleSheet' href='/SpagoBI/themes/sbi_default/css/menu.css'
+	type='text/css' />
+
+<LINK rel='StyleSheet'
+	href='/SpagoBI/js/lib/ext-3.1.1/resources/css/ext-all.css'
+	type='text/css' />
+
+<LINK rel='StyleSheet'
+	href='/SpagoBI/js/src/ext/sbi/overrides/overrides.css' type='text/css' />
+<LINK rel='StyleSheet'
+	href='/SpagoBI/js/lib/overrides-ext-3.1.1/css/overrides.css'
+	type='text/css' />
+
+
+
+
+<LINK rel='StyleSheet'
+	href='/SpagoBI/js/lib/ext-3.1.1/resources/css/xtheme-gray.css'
+	type='text/css' />
+
+<link rel='stylesheet' type='text/css'
+	href='/SpagoBI/js/lib/ext-3.1.1/ux/css/RowEditor.css' />
+
+<link rel='stylesheet' type='text/css'
+	href='/SpagoBI/js/lib/ext-3.1.1/ux/css/Ext.ux.ColorField.css' />
+
+
+
+<!--
+IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
+create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
+-->
+
+<!-- Persist library -->
+<script type="text/javascript"
+	src='/SpagoBI/js/lib/persist-0.1.0/persist-all-min.js'></script>
+
+<link rel='stylesheet' type='text/css'
+	href='/SpagoBI/themes/sbi_default/css/analiticalmodel/execution/main.css' />
+<link rel='stylesheet' type='text/css'
+	href='/SpagoBI/themes/sbi_default/css/commons/loadmask.css' />
+<LINK rel='StyleSheet' type='text/css'
+	href='/SpagoBI/themes/sbi_default/css/domain/domain.css' />
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/locale/commons/en.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/locale/en.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/commons/Settings.js'></script>
+
+<!-- START-DEBUG -->
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/commons/Format.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/locale/LocaleUtils.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/exception/ExceptionHandler.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/service/ServiceRegistry.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/commons/Session.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/lib/ext-3.1.1/ux/grid/Ext.grid.ButtonColumn.js'></script>
+<script type="text/javascript"
+	src="/SpagoBI/js/lib/ext-3.1.1/ux/grid/Ext.ux.ColorField.js"></script>
+<script type="text/javascript"
+	src="/SpagoBI/js/lib/ext-3.1.1/ux/grid/Ext.ux.grid.RowEditor.js"></script>
+
+
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/KpiTreeOuTreePanel.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/FilteringToolbar.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/PagingToolbar.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/ListGridPanel.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/ListDetailForm.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/LookupField.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/TreeDetailForm.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/TreeModelPanel.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/SimpleTreePanel.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/TreeSerializers.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/FilteringToolbarLight.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/ConfigurableTree.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/ModelInstanceTree.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/DataStorePanel.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/udp/ManageUdp.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/udp/ManageUdpValues.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/profiling/ManageAttributes.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/profiling/ManageRoles.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/profiling/ManageUsers.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/alarm/ManageContacts.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/alarm/ManageAlarms.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageThresholdValues.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageResources.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageThresholds.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageKpis.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageModels.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageModelsGrid.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageModelsViewPort.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManagePeriodicities.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageOUGrants.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageOUGrantsViewPort.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageModelInstances.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageModelInstancesGrid.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageOUGrantsGrid.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageModelInstancesViewPort.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageModelsTree.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageAddModelPanel.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageKpisGrid.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageKpiWindow.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageGoals.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageGoalsOUTree.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageGoalsDetailsPanel.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageGoalsViewPort.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/kpi/ManageGoalsGrid.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/widgets/ColumnNodeUI.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/tools/ManageDatasetVersions.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/tools/ManageDatasetParameters.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/tools/ParametersFillGrid.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/tools/ManageDatasets.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/tools/dataset/QbeDatasetBuilder.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/tools/dataset/PreviewWindow.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/tools/dataset/CustomDataGrid.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/domain/ManageDomains.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/config/ManageConfig.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/engines/chart/data/PagingStore.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/engines/chart/data/StoreManager.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/engines/chart/data/Store.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/engines/chart/GenericChartPanel.js'></script>
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/engines/chart/HighchartsPanel.js'></script>
+
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/engines/chart/MasterDetailChartPanel.js'></script>
+
+
+
+        <script type="text/javascript" src="/SpagoBI/js/lib/ext-3.1.1/ux/treegrid/TreeGridSorter.js"></script>
+        <script type="text/javascript" src="/SpagoBI/js/lib/ext-3.1.1/ux/treegrid/TreeGridColumnResizer.js"></script>
+        <script type="text/javascript" src="/SpagoBI/js/lib/ext-3.1.1/ux/treegrid/TreeGridNodeUI.js"></script>
+        <script type="text/javascript" src="/SpagoBI/js/lib/ext-3.1.1/ux/treegrid/TreeGridLoader.js"></script>
+
+        <script type="text/javascript" src="/SpagoBI/js/lib/ext-3.1.1/ux/treegrid/TreeGridColumns.js"></script>
+        <script type="text/javascript" src="/SpagoBI/js/lib/ext-3.1.1/ux/treegrid/TreeGrid.js"></script>
+
+<!-- END-DEBUG -->
+
+<!-- START-PRODUCTION
+<script type="text/javascript" src='/SpagoBI/js/src/ext/sbi-all-ext311-3.2.0.js'></script>
+
+END-PRODUCTION -->
+
+
+<script>
+document.onselectstart = function() { return true; }
+</script>
+
+
+<LINK rel='StyleSheet'
+	href='/SpagoBI/themes/sbi_default/css/kpi/kpi.css' type='text/css' />
+<script type="text/javascript"
+	src='/SpagoBI/js/src/ext/sbi/service/ServiceRegistry.js'></script>
+
+<script type="text/javascript">
+
+var url = {
+host: 'localhost'
+, port: '8080'
+, contextPath: 'SpagoBI'
+
+};
+
+Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+baseUrl: url
+});
+
+var config = {};
+
+
+
+Ext.onReady(function(){
+
+    var item1 = new Ext.Panel({
+        title: 'Accordion Item 1',
+        html: '&lt;empty panel&gt;',
+        cls:'empty'
+    });
+
+    var item2 = new Ext.Panel({
+        title: 'Accordion Item 2',
+        html: '&lt;empty panel&gt;',
+        cls:'empty'
+    });
+
+    var item3 = new Ext.Panel({
+        title: 'Accordion Item 3',
+        html: '&lt;empty panel&gt;',
+        cls:'empty'
+    });
+
+    var item4 = new Ext.Panel({
+        title: 'Accordion Item 4',
+        html: '&lt;empty panel&gt;',
+        cls:'empty'
+    });
+
+    var item5 = new Ext.Panel({
+        title: 'Accordion Item 5',
+        html: '&lt;empty panel&gt;',
+        cls:'empty'
+    });
+
+    var accordion = new Ext.Panel({
+        region:'east',
+        fill: true,
+        split:true,
+        width: 200,
+        minSize: 175,
+        maxSize: 400,
+        collapsible: true,
+        layout:'accordion',
+        items: [item1, item2, item3, item4, item5]
+    });
+    
+    var tree = new Ext.ux.tree.TreeGrid({
+        title: 'Core Team Projects',
+        region:'center',
+        enableDD: true,
+        columns:[{
+            header: 'Task',
+            dataIndex: 'task',
+            width: 230
+        },{
+            header: 'Duration',
+            width: 100,
+            dataIndex: 'duration',
+            align: 'center',
+            sortType: 'asFloat',
+            tpl: new Ext.XTemplate('{duration:this.formatHours}', {
+                formatHours: function(v) {
+                    if(v < 1) {
+                        return Math.round(v * 60) + ' mins';
+                    } else if (Math.floor(v) !== v) {
+                        var min = v - Math.floor(v);
+                        return Math.floor(v) + 'h ' + Math.round(min * 60) + 'm';
+                    } else {
+                        return v + ' hour' + (v === 1 ? '' : 's');
+                    }
+                }
+            })
+        },{
+            header: 'Assigned To',
+            width: 150,
+            dataIndex: 'user'
+        }],
+
+        dataUrl: 'treegrid-data.json'
+    });
+
+    var viewport = new Ext.Viewport({
+        layout:'border',
+        items:[tree, accordion]
+    });
+
+});
+
+
+</script>
+
+
+
+
+
+
+
+<!-- based on ecexution mode include initial html -->
+
+</body>
+</html>
+
