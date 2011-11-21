@@ -35,10 +35,10 @@ public class Node implements Cloneable{
 		public static final String CROSSTAB_NODE_JSON_CHILDS = "node_childs";
 		public static final String CROSSTAB_NODE_JSON_KEY = "node_key";
 	
-		private String value;
-		private List<Node> childs;
-		private int leafPosition =-1;
-		private List<Integer> leafPositionsForCF;//Uset for the CF
+		private String value;//the value of the node
+		private List<Node> childs;//list of childs
+		private int leafPosition =-1;//position of the leafs in the tree.. If this is the right most leaf the value is 0 and so on
+		private List<Integer> leafPositionsForCF;//Uset for the CF (The node is the result of a merging of nodes.. This list contains the position of the lines of the data matrix with header equals to the value of this node)
 		private Node fatherNode; //!= from null only if we need the value
 		
 		public Node(String value){
@@ -66,6 +66,10 @@ public class Node implements Cloneable{
 			return childs.contains(child);
 		}
 		
+		/**
+		 * Get the number of leafs in the tree
+		 * @return
+		 */
 		public int getLeafsNumber(){
 			if(childs.size()==0){
 				return 1;
@@ -78,6 +82,11 @@ public class Node implements Cloneable{
 			}
 		}
 		
+		/**
+		 * Serialize the node and the subtree
+		 * @return
+		 * @throws JSONException
+		 */
 		public JSONObject toJSONObject() throws JSONException{
 			JSONObject thisNode = new JSONObject();
 			
@@ -92,6 +101,131 @@ public class Node implements Cloneable{
 			}
 					
 			return thisNode;
+		}
+		
+		public int getLeafPosition() {
+			return leafPosition;
+		}
+		
+		/**
+		 * Initialize the variable leafPosition
+		 */
+		public void setLeafPositions(){
+			setLeafPositions(0);
+		}
+		
+		private int setLeafPositions(int pos){
+			if(childs.size()==0){
+				leafPosition = pos;
+				pos++;
+			}else{
+				for(int i=0; i<childs.size(); i++){
+					pos = childs.get(i).setLeafPositions(pos);
+				}
+			}
+			return pos;
+		}
+		
+		public List<Integer> getLeafPositionsForCF() {
+			return leafPositionsForCF;
+		}
+
+		public void setLeafPositionsForCF(List<Integer> leafPositionsForCF) {
+			this.leafPositionsForCF = leafPositionsForCF;
+		}
+
+		/**
+		 * return the list of nodes of the passed level
+		 * @param level
+		 * @return
+		 */
+		public List<Node> getLevel(int level){
+			List<Node> nodes = new ArrayList<Node>();
+			if(level==0){
+				nodes.add(this);
+			}else{
+				if(childs.size()==0){
+					return null;
+				}
+				for(int i=0; i<childs.size(); i++){
+					nodes.addAll(childs.get(i).getLevel(level-1));
+				}
+			}
+			return nodes;
+		}
+		
+		/**
+		 * Return the list of leafs of the subtree with this node as radix
+		 * @return
+		 */
+		public List<Node> getLeafs(){
+			List<Node> list = new ArrayList<Node>();
+			if(childs.size()==0){
+				list.add(this);
+			}else{
+				for(int i=0; i<childs.size(); i++){
+					list.addAll(childs.get(i).getLeafs());
+				}
+			}
+			return list;
+		}
+		
+		/**
+		 * Update the fathers of this tree
+		 */
+		public void updateFathers(){
+			for(int i=0; i<childs.size(); i++ ){
+				childs.get(i).fatherNode = this;
+				childs.get(i).updateFathers();
+			}
+		}
+		
+		public int getSubTreeDepth(){
+			if(childs.size()==0){
+				return 1;
+			}else{
+				return 1 + childs.get(0).getSubTreeDepth();
+			}
+		}
+		
+		/**
+		 * Remove this node from the tree..
+		 * IThe fathers must be valued for all the tree
+		 */
+		public void removeNodeFromTree(){
+			if(fatherNode!=null){
+				List<Node> fatherChilds = fatherNode.getChilds();
+				for(int i=0;i<fatherChilds.size(); i++){
+					if(fatherChilds.get(i)==this){
+						fatherChilds.remove(i);
+						break;
+					}
+				}
+				if(fatherChilds.size()==0){
+					fatherNode.removeNodeFromTree();
+				}
+			}
+		}
+		
+		
+		public int getRightMostLeafPositionCF(){
+			if(childs.size()==0){
+				return leafPosition;
+			}
+			return childs.get(childs.size()-1).getRightMostLeafPositionCF();
+		}
+		
+		/**
+		 * Clone only the value and the children
+		 */
+		public Node clone(){
+			Node n = new Node(value);
+			if(childs.size()>0){
+				for (int j = 0; j < childs.size(); j++) {
+					n.addChild(childs.get(j).clone());
+				}
+			}
+			return n;
 		}
 		
 		@Override
@@ -110,6 +244,9 @@ public class Node implements Cloneable{
 			return string;
 		}
 
+		/**
+		 * Tho node with the same value are equals
+		 */
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -135,111 +272,7 @@ public class Node implements Cloneable{
 				return false;
 			return true;
 		}
-
-
-		public int getLeafPosition() {
-			return leafPosition;
-		}
 		
-		public void setLeafPositions(){
-			setLeafPositions(0);
-		}
-		
-		private int setLeafPositions(int pos){
-			if(childs.size()==0){
-				leafPosition = pos;
-				pos++;
-			}else{
-				for(int i=0; i<childs.size(); i++){
-					pos = childs.get(i).setLeafPositions(pos);
-				}
-			}
-			return pos;
-		}
-		
-		public Node clone(){
-			Node n = new Node(value);
-			if(childs.size()>0){
-				for (int j = 0; j < childs.size(); j++) {
-					n.addChild(childs.get(j).clone());
-				}
-			}
-			return n;
-		}
-
-		public List<Integer> getLeafPositionsForCF() {
-			return leafPositionsForCF;
-		}
-
-		public void setLeafPositionsForCF(List<Integer> leafPositionsForCF) {
-			this.leafPositionsForCF = leafPositionsForCF;
-		}
-
-		public List<Node> getLevel(int level){
-			List<Node> nodes = new ArrayList<Node>();
-			if(level==0){
-				nodes.add(this);
-			}else{
-				if(childs.size()==0){
-					return null;
-				}
-				for(int i=0; i<childs.size(); i++){
-					nodes.addAll(childs.get(i).getLevel(level-1));
-				}
-			}
-			return nodes;
-		}
-		
-		public List<Node> getLeafs(){
-			List<Node> list = new ArrayList<Node>();
-			if(childs.size()==0){
-				list.add(this);
-			}else{
-				for(int i=0; i<childs.size(); i++){
-					list.addAll(childs.get(i).getLeafs());
-				}
-			}
-			return list;
-		}
-		
-		public void updateFathers(){
-			for(int i=0; i<childs.size(); i++ ){
-				childs.get(i).fatherNode = this;
-				childs.get(i).updateFathers();
-			}
-		}
-		
-		public int getSubTreeDepth(){
-			if(childs.size()==0){
-				return 1;
-			}else{
-				return 1 + childs.get(0).getSubTreeDepth();
-			}
-		}
-		
-		public void removeNodeFromTree(){
-			if(fatherNode!=null){
-				List<Node> fatherChilds = fatherNode.getChilds();
-				for(int i=0;i<fatherChilds.size(); i++){
-					if(fatherChilds.get(i)==this){
-						fatherChilds.remove(i);
-						break;
-					}
-				}
-				if(fatherChilds.size()==0){
-					fatherNode.removeNodeFromTree();
-				}
-			}
-		}
-		
-		
-		public int getRightMostLeafPositionCF(){
-			if(childs.size()==0){
-				return leafPosition;
-			}
-			return childs.get(childs.size()-1).getRightMostLeafPositionCF();
-		}
-
 		/**
 		 * For test
 		 * @param height
@@ -258,6 +291,4 @@ public class Node implements Cloneable{
 				}
 			}
 		}
-		
-	
 }

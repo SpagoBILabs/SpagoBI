@@ -77,7 +77,7 @@ public class CrossTab {
 
 	private Node columnsRoot;
 	private Node rowsRoot;
-	private String[][] dataMatrix;
+	String[][] dataMatrix;
 	private JSONObject config;
 	private List<MeasureInfo> measures;
 	//private boolean measuresOnRow;
@@ -87,6 +87,7 @@ public class CrossTab {
 	private List<CellType> celltypeOfColumns;
 	private List<CellType> celltypeOfRows;
 	
+	public CrossTab(){}
 	
 	/**
 	 * Builds the crossTab (headers structure and data)
@@ -520,121 +521,25 @@ public class CrossTab {
 		}
 	}
 	
-	private String[] getCrosstabDataColumn(int i){
-		String[] column = new String[dataMatrix.length];
-		for (int j = 0; j < dataMatrix.length; j++) {
-			column[j] = dataMatrix[j][i];
-		}
-		return column;
-	}
-	
-	private String[] getCrosstabDataRow(int i){
-		return dataMatrix[i];
-	}
-	
-	public void addCrosstabDataLine(int startposition, List<String[]> line, boolean horizontal, CellType type){
-		if(horizontal){
-			addCrosstabDataColumns(startposition, line, type);
-		}else{
-			
-			addCrosstabDataRow(startposition, line, type);
-		}
-	}
-	
-	public void addCrosstabDataColumns(int startposition, List<String[]> colums, CellType type){
-		Assert.assertNotNull(dataMatrix, "The data matrix must not be null");
-		Assert.assertTrue(startposition<=dataMatrix[0].length, "The position you want to add the columns is bigger than the table size ts="+dataMatrix[0].length+" position= "+startposition);
-		String[][] newData = new String[dataMatrix.length][dataMatrix[0].length+colums.size()];
-		int columnsToAddSize = colums.size();
-		for (int i = 0; i < dataMatrix.length; i++) {
-			for(int x=0; x<startposition; x++){
-				newData[i][x] =dataMatrix[i][x]; 
-			}
-			
-			for(int x=0; x<columnsToAddSize; x++){
-				newData[i][startposition+x] =colums.get(x)[i]; 
-			}
-			
-			for(int x=0; x<dataMatrix[0].length-startposition; x++){
-				newData[i][startposition+columnsToAddSize+x] =dataMatrix[i][startposition+x]; 
-			}
-			
-		}
-		//update the list of columns type
-		for(int i=0; i< colums.size(); i++){
-			celltypeOfColumns.add(i+startposition, type);
-		}
-		
-		dataMatrix = newData;
-	}
-	
-	public void addCrosstabDataRow(int startposition, List<String[]> rows, CellType type){
-		Assert.assertNotNull(dataMatrix, "The data matrix must not be null");
-		Assert.assertTrue(startposition<=dataMatrix.length, "The position you want to add the rows is bigger than the table size ts="+dataMatrix[0].length+" position= "+startposition);
-		
-		String[][] newData = new String[dataMatrix.length+rows.size()][];
-		int rowsToAddSize = rows.size();
-		
-		for(int x=0; x<startposition; x++){
-			newData[x] =dataMatrix[x]; 
-		}
-			
-		for(int x=0; x<rowsToAddSize; x++){
-			newData[startposition+x] =rows.get(x); 
-		}
-		
-		for(int x=0; x<dataMatrix.length-startposition; x++){
-			newData[startposition+rowsToAddSize+x] =dataMatrix[startposition+x]; 
-		}
-		//update the list of rows type
-		for(int i=0; i< rows.size(); i++){
-			celltypeOfRows.add(i+startposition, type);
-		}
-		
-		dataMatrix = newData;
-	}
-
-	public CellType getCellType(int row, int column){
-		CellType cellCellType;
-		CellType rowCellType = celltypeOfRows.get(row);
-		CellType columnCellType = celltypeOfColumns.get(column);
-		cellCellType = rowCellType;
-		if(columnCellType.compareTo(rowCellType)>0){
-			cellCellType =  columnCellType;
-		}
-		return cellCellType;
-	}
 
 
-/*
- * CALCULATED FIELDS***********************************************
- */
-	
+	/*************************************************
+	 *               CALCULATED FIELDS
+	 ************************************************/
+
 	/**
-	 * TEST
-	 * @param rows
-	 * @param columns
+	 * Get a list of nodes and merge them..
+	 * It builds a tree with all the node in common with the subtree in with
+	 * radix in input..
+	 * For example nodes=[A,[1,2,3], A,[1,6]] the result is [A,[1]]
+	 * In the leafs (in this case 1) it add the position of that
+	 * header in the matrix..
+	 * In this case, suppose the id of the first occurence of A.1 is at row 3 and the second in row 7
+	 * the leafs with id A.1 has this list [3,7]
+	 * @param nodes
+	 * @param NodeValue
 	 * @return
 	 */
-	private static String[][] buildMatrix(int rows, int columns){
-		String[][] m = new String[rows][columns];
-		for(int i=0; i<rows; i++){
-			for(int j=0; j<columns; j++){
-				m[i][j]=""+i;
-			}
-		}
-		return m;
-	}
-	
-//	public static void main(String args[]){
-//		CrossTab cs = new CrossTab();
-//		Node root = new Node("Root");
-//		root.buildSubTree(1, 2);
-//		cs.dataMatrix = buildMatrix(2, 16);
-//		cs.calculateCF("field[0]+field[1]+(7*field[1])", root, true, 1, "A+B");
-//		System.out.println("");
-//	}
-//	
 	private Node mergeNodes(List<Node> nodes, String NodeValue){
 		Assert.assertNotNull(nodes, "We need at least a node to merge");
 		Assert.assertTrue(nodes.size()>0, "We need at least a node to merge");
@@ -693,6 +598,13 @@ public class CrossTab {
 		}
 	}
 	
+	/**
+	 * Remove the dead nodes (the inner nodes with no leafs)
+	 * @param node
+	 * @param treeDepth
+	 * @param level
+	 * @return
+	 */
 	private List<Node> cleanTreeAfterMergeRecorsive(Node node, int treeDepth, int level){
 		List<Node> listOfNodesToRemove = new ArrayList<Node>();
 		if(node.getChilds().size()==0){
@@ -708,7 +620,14 @@ public class CrossTab {
 	}
 	
 	
-	
+	/**
+	 * Calculate the calculated fields and add the result in the structure
+	 * @param operation 
+	 * @param horizontal
+	 * @param level
+	 * @param cfName
+	 * @param celltype
+	 */
 	private void calculateCF(String operation,  boolean horizontal, int level, String cfName, CellType celltype){
 		Node rootNode;
 		if(horizontal){
@@ -725,7 +644,16 @@ public class CrossTab {
 		}
 	}
 	
-	private void calculateCF(String operation,  Node node, boolean horizontal, int level, String cfName, CellType celltype){
+	/**
+	 * Calculate the calculated fields and add the result in the structure
+	 * @param operation
+	 * @param node the result of the calculated fields will add as child of this node
+	 * @param horizontal
+	 * @param level
+	 * @param cfName
+	 * @param celltype
+	 */
+	private void calculateCF(String operation, Node node, boolean horizontal, int level, String cfName, CellType celltype){
 		Node rootNode;
 		if(horizontal){
 			rootNode = columnsRoot;
@@ -772,16 +700,13 @@ public class CrossTab {
 				List<String[]> arraysInvolvedInTheOperation = getArraysInvolvedInTheOperation(horizontal, operationExpsNames, expressionToIndexMap, mergedNodeLeafs.get(i).getLeafPositionsForCF());
 				calculatedFieldResult.add(executeOperationOnArrays(arraysInvolvedInTheOperation, operationParsed));
 			}
-			
-			
+
 			//add the header
 			int positionToAdd = node.getRightMostLeafPositionCF()+1;
 			node.addChild(mergedNode);
 			addCrosstabDataLine(positionToAdd, calculatedFieldResult, horizontal, celltype);
 		}
 
-		
-		//return calculatedFieldResult;
 	}
 	
 	
@@ -808,7 +733,7 @@ public class CrossTab {
 	}
 	
 	/**
-	 * prende la lista di nodi di un livello e i campi che compaiono nella quey...
+	 * prende la lista di nodi di un livello e i campi che compaiono nella query...
 	 * Costruisce la lista dei nodi coinvolti nell'operazione e la mappa degli indici operationExpsNames-->indice del nodo corrispondente nella lista prcedente
 	 * @param nodes
 	 * @param operationExpsNames
@@ -904,9 +829,9 @@ public class CrossTab {
 	}
 
 	
-	/**
-	 * TOTALS**********************************************************************
-	 */
+	/************************************************************
+	  							TOTALS
+	 ***********************************************************  */
 	
 	
 	/**
@@ -1000,9 +925,9 @@ public class CrossTab {
 	}
 
 	
-	/**
-	 * SUBTOTALS***************************************************************************
-	 */
+	/************************************************************************
+	 *								 SUBTOTALS
+	********************************************************************** */
 	public void addSubtotals(){
 		String rowsTotals = config.optString("calculatesubtotalsonrows");
 		String columnsTotals = config.optString("calculatesubtotalsoncolumns");
@@ -1049,8 +974,129 @@ public class CrossTab {
 			}
 		}
 	}
+
+
 	
+	/********************************************************
+	                 UTILITY METHODS
+	************************************************************/
 	
+	/**
+	 * Returns a column of the data matrix
+	 * @param i the id of the column to get
+	 * @return the i-th column of the data matrix
+	 */
+	private String[] getCrosstabDataColumn(int i){
+		String[] column = new String[dataMatrix.length];
+		for (int j = 0; j < dataMatrix.length; j++) {
+			column[j] = dataMatrix[j][i];
+		}
+		return column;
+	}
+	
+	/**
+	 * Returns a row of the data matrix
+	 * @param i the id of the row to get
+	 * @return the i-th row of the data matrix
+	 */
+	private String[] getCrosstabDataRow(int i){
+		return dataMatrix[i];
+	}
+	
+	/**
+	 * Inserts lines in the crosstab data matrix
+	 * @param startposition the position where insert the rows/columns into the matrix
+	 * @param line the lines to insert
+	 * @param horizontal true to insert columns/false to insert rows
+	 * @param type the type of the data
+	 */
+	public void addCrosstabDataLine(int startposition, List<String[]> line, boolean horizontal, CellType type){
+		if(horizontal){
+			addCrosstabDataColumns(startposition, line, type);
+		}else{
+			addCrosstabDataRow(startposition, line, type);
+		}
+	}
+	
+	/**
+	 * Inserts columns in the crosstab data matrix
+	 * @param startposition the position where insert the columns into the matrix
+	 * @param colums the lines to insert
+	 * @param type the type of the data
+	 */
+	public void addCrosstabDataColumns(int startposition, List<String[]> colums, CellType type){
+		Assert.assertNotNull(dataMatrix, "The data matrix must not be null");
+		Assert.assertTrue(startposition<=dataMatrix[0].length, "The position you want to add the columns is bigger than the table size ts="+dataMatrix[0].length+" position= "+startposition);
+		String[][] newData = new String[dataMatrix.length][dataMatrix[0].length+colums.size()];
+		int columnsToAddSize = colums.size();
+		for (int i = 0; i < dataMatrix.length; i++) {
+			for(int x=0; x<startposition; x++){
+				newData[i][x] =dataMatrix[i][x]; 
+			}
+			
+			for(int x=0; x<columnsToAddSize; x++){
+				newData[i][startposition+x] =colums.get(x)[i]; 
+			}
+			
+			for(int x=0; x<dataMatrix[0].length-startposition; x++){
+				newData[i][startposition+columnsToAddSize+x] =dataMatrix[i][startposition+x]; 
+			}
+		}
+		//update the list of columns type
+		for(int i=0; i< colums.size(); i++){
+			celltypeOfColumns.add(i+startposition, type);
+		}
+		dataMatrix = newData;
+	}
+	
+	/**
+	 * Inserts rows in the crosstab data matrix
+	 * @param startposition the position where insert the rows into the matrix
+	 * @param colums the lines to insert
+	 * @param type the type of the data
+	 */
+	public void addCrosstabDataRow(int startposition, List<String[]> rows, CellType type){
+		Assert.assertNotNull(dataMatrix, "The data matrix must not be null");
+		Assert.assertTrue(startposition<=dataMatrix.length, "The position you want to add the rows is bigger than the table size ts="+dataMatrix[0].length+" position= "+startposition);
+		
+		String[][] newData = new String[dataMatrix.length+rows.size()][];
+		int rowsToAddSize = rows.size();
+		
+		for(int x=0; x<startposition; x++){
+			newData[x] =dataMatrix[x]; 
+		}
+			
+		for(int x=0; x<rowsToAddSize; x++){
+			newData[startposition+x] =rows.get(x); 
+		}
+		
+		for(int x=0; x<dataMatrix.length-startposition; x++){
+			newData[startposition+rowsToAddSize+x] =dataMatrix[startposition+x]; 
+		}
+		//update the list of rows type
+		for(int i=0; i< rows.size(); i++){
+			celltypeOfRows.add(i+startposition, type);
+		}
+		
+		dataMatrix = newData;
+	}
+
+	/**
+	 * Get the CellType of the cell
+	 * @param row the row
+	 * @param column the column
+	 * @return the celltype of the cell
+	 */
+	public CellType getCellType(int row, int column){
+		CellType cellCellType;
+		CellType rowCellType = celltypeOfRows.get(row);
+		CellType columnCellType = celltypeOfColumns.get(column);
+		cellCellType = rowCellType;
+		if(columnCellType.compareTo(rowCellType)>0){
+			cellCellType =  columnCellType;
+		}
+		return cellCellType;
+	}
 	
 	public Node getColumnsRoot() {
 		return columnsRoot;
@@ -1063,7 +1109,6 @@ public class CrossTab {
 	public String[][] getDataMatrix() {
 		return dataMatrix;
 	}
-
 	
 	
 }
