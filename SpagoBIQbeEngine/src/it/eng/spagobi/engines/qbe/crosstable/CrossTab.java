@@ -706,11 +706,13 @@ public class CrossTab {
 			node.addChild(mergedNode);
 			addCrosstabDataLine(positionToAdd, calculatedFieldResult, horizontal, celltype);
 		}
-
 	}
 	
-	
-	
+	/**
+	 * Parse the operation
+	 * @param operation
+	 * @return
+	 */
 	private static List<List<String>> parseOperation(String operation){
 		String freshOp = " "+operation;
 		List<String> operationParsed = new ArrayList<String>();
@@ -733,10 +735,14 @@ public class CrossTab {
 	}
 	
 	/**
-	 * prende la lista di nodi di un livello e i campi che compaiono nella query...
-	 * Costruisce la lista dei nodi coinvolti nell'operazione e la mappa degli indici operationExpsNames-->indice del nodo corrispondente nella lista prcedente
-	 * @param nodes
-	 * @param operationExpsNames
+	 * Build the list of the nodes involved in the operation and the map of the indexes
+	 * es: 
+	 * 	nodes: [A,[1,2]], [B[1,3]] , [C[1,3]]
+	 *  operationExpsNames: [A, C]
+	 *  nodeInvolvedInTheOperation: [A,[1,2]], [B[1,3]]
+	 *  expressionToIndexMap: 0,2
+	 * @param nodes the list of the nodes of the level involved in the cf
+	 * @param operationExpsNames the alias of the fields in the query
 	 * @return
 	 */
 	private Object[] buildExpressionMap(List<Node> nodes, List<String> operationExpsNames){
@@ -768,7 +774,7 @@ public class CrossTab {
 	 * @param horizontal
 	 * @param operationExpsNames the names of the operation : A+ D+C-(A*C) = A,D,C,A,C
 	 * @param expressionToIndexMap if the operation is the same of before and the Nodes of the level are A,B,C,D the map is (A->0, B->1...)
-	 * @param indexInTheArray è una lista la cui proima posizione è l'indice della colonna/riga nella tabella corrispondente al dato A,....
+	 * @param indexInTheArray
 	 * @return
 	 */
 	private List<String[]> getArraysInvolvedInTheOperation(boolean horizontal, List<String> operationExpsNames,  Map<String, Integer> expressionToIndexMap, List<Integer> indexInTheArray){
@@ -786,10 +792,9 @@ public class CrossTab {
 	}
 	
 	/**
-	 * Dati i parametri costruisce la lista risultante dell'esecuzione dell'operazione 
-	 * sulle liste passate. es: [4,6]
-	 * @param data lista di colonne/righe della crosstab su cui eseguire l'operazione es [1,2], [3,4]
-	 * @param operation l'opearzione parsata es: +
+	 * Build and execute the operation.. For example x+y = [4,6]
+	 * @param data list of rows/columns members of the operation l'operazione es [1,2], [3,4]
+	 * @param operation the operation es: [+]
 	 * @return
 	 */
 	private String[] executeOperationOnArrays(List<String[]> data, List<String> operation){
@@ -807,10 +812,10 @@ public class CrossTab {
 	}
 	
 	/**
-	 * Vene creata ed eseguita un operazione. dati i parametri descitti sotto viene composta l'operazione
+	 * Execute the operation
 	 * 1+2-(2*4)
-	 * @param data una lista di valori che rappresentano gli elementi dell'operazione.. es: 1,2,3,4
-	 * @param op lista di stringhe che rappresentano l'operazione per sempio: +,-(,*,)
+	 * @param data the members of the operation.. es: 1,2,3,4
+	 * @param op the list of operator: +,-(,*,)
 	 * @return
 	 */
 	private String executeOperationOnNumbers(List<String> data, List<String> op){
@@ -835,7 +840,8 @@ public class CrossTab {
 	
 	
 	/**
-	 * sommo i valori delle righe.. quindi pannello a dx
+	 * Sum the values of the rows (the right pannel)
+	 * @param measuresOnRow
 	 */
 	private List<String[]> getTotalsOnRows(boolean measuresOnRow){
 		List<String[]> sum = new ArrayList<String[]>();
@@ -854,7 +860,6 @@ public class CrossTab {
 			}
 			sum.add(toStringArray(st));
 		}
-		
 		return sum;
 	}
 	
@@ -866,6 +871,11 @@ public class CrossTab {
 		return strings;
 	}
 	
+	/**
+	 * Sum the values of the columns (the bottom pannel)
+	 * @param measuresOnRow
+	 * @return
+	 */
 	private List<String[]> getTotalsOnColumns(boolean measuresOnRow){
 		List<String[]> sum = new ArrayList<String[]>();
 		double[] st;
@@ -947,7 +957,13 @@ public class CrossTab {
 		}
 	}
 
-	
+	/**
+	 * Prepare and execute a CF for the subtotals
+	 * @param n
+	 * @param horizontal
+	 * @param level
+	 * @param measuresOnRow
+	 */
 	public void addSubtotalsToTheNode(Node n, boolean horizontal, int level, boolean measuresOnRow){
 		List<Node> childs = n.getChilds();
 		if(measuresOnRow){
