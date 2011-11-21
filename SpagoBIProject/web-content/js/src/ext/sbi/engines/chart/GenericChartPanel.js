@@ -244,11 +244,14 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 						var recArray = [];
 						for(i = 0; i<this.serieAlias.length; i++){			
 					    	var serieColumn = this.store.getFieldNameByAlias(this.serieAlias[i]);
-					    	var posValue = recArray.indexOf(recArray[serieColumn]);
+					    	var tmpValue = rec[serieColumn];
+					    	if (tmpValue == undefined) tmpValue = 0;
+					    	var posValue = recArray.indexOf(recArray[serieColumn]);					    	
 							if (posValue == -1){
-								recArray.push(rec[serieColumn]);								
+								//recArray.push(rec[serieColumn]);		
+								recArray.push(tmpValue);		
 							}
-						}
+						}						
 						series.push(recArray);
 					}
 		    	}
@@ -257,7 +260,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 				var records = this.store.getRange();
 		    	for (var i = 0; i < records.length; i++) {
 		    		var rec = records[i].data;
-					if(rec) {
+					if(rec) {						
 						var posValue = series.indexOf(rec[serieColumn]);
 						if (posValue == -1){
 							series.push(rec[serieColumn]);
