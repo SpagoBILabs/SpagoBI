@@ -144,10 +144,10 @@ Ext.extend(Sbi.qbe.SlotEditorPanel, Ext.Panel, {
 	        		'<div class="icon-close" id="tpl-slot-val-{[xindex]}">' + 
 		        		'<div class="box-to-edit" id="tpl-edit-range-{[xindex]}">' + 
 			        		'<tpl if="includeFrom == true">'+
-			        			'&gt;' + 
+			        			'&gt;=' + 
 			        		'</tpl>'+
 			        		'<tpl if="includeFrom == false">'+
-			        			'&gt;=' + 
+			        			'&gt;' + 
 			        		'</tpl>'+
 			        		'{from} '+ 
 			        		'<tpl if="includeTo == true">'+

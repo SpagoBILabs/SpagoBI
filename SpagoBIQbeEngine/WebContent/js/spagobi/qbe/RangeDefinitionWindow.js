@@ -113,11 +113,11 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		
 	      var valuesFrom = new Ext.data.SimpleStore({
 	          fields: ['id', 'value'],
-	          data : [['1','&gt;'],['2','&gt;='], []]
+	          data : [['1','>'],['2','>='], []]
 	      });
 	      var valuesTo = new Ext.data.SimpleStore({
 	          fields: ['id', 'value'],
-	          data : [['3','&lt;'],['4','&lt;='], []]
+	          data : [['3','<'],['4','<='], []]
 	      });
 	      
 		this.rangeFrom = new Ext.form.ComboBox({
@@ -127,20 +127,9 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		    lazyRender:true,
 		    mode: 'local',
 		    store: valuesFrom,
-		    value: '>=',
+		    value: '2',
 		    valueField: 'id',
-		    displayField: 'value',
-		    listeners:{
-				beforeselect : function(combo, record, index ) {
-					if(record !== null && record !== undefined){
-						var display ='';
-						if(record.data.value.indexOf("&gt;") != -1){
-							diplay = record.data.value.replace("&gt;",'>');
-						}
-						record.data.value=diplay;
-					}
-				}
-			}
+		    displayField: 'value'
 		});
 		
 		this.rangeFromValue = new Ext.form.TriggerField({
@@ -159,18 +148,7 @@ Ext.extend(Sbi.qbe.RangeDefinitionWindow, Ext.Window, {
 		    store: valuesTo,
 		    valueField: 'id',
 		    displayField: 'value',
-		    value: '<',
-		    listeners:{
-				beforeselect : function(combo, record, index ) {
-					if(record !== null && record !== undefined){
-						var display ='';
-						if(record.data.value.indexOf("&lt;") != -1){
-							diplay = record.data.value.replace("&lt;",'<');
-						}
-						record.data.value=diplay;
-					}
-				}
-			}
+		    value: '3'
 		});
 
 		this.rangeToValue = new Ext.form.TriggerField({
