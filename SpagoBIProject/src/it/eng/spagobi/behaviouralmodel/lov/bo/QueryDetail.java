@@ -89,6 +89,7 @@ public class QueryDetail  implements ILovDetail  {
 	public static final String DIALECT_ORACLE9i10g = "org.hibernate.dialect.Oracle9Dialect";
 	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
 	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
+	public static final String DIALECT_TERADATA = "org.hibernate.dialect.TeradataDialect";
 
 	/**
 	 * constructor.
@@ -436,8 +437,11 @@ public class QueryDetail  implements ILovDetail  {
 				ALIAS_DELIMITER = "\"";
 			} else if (databaseDialect.equalsIgnoreCase(DIALECT_SQLSERVER)) {
 				ALIAS_DELIMITER = ""; // TODO check it!!!!
+			} else if (databaseDialect.equalsIgnoreCase(DIALECT_TERADATA)) {
+				ALIAS_DELIMITER = "\"";
 			} else {
-				throw new SpagoBIRuntimeException("Cannot determine alias delimiter since the database dialect is not set!!");
+				logger.error("Cannot determine alias delimiter since the database dialect is not set or not recognized!! Using empty string as alias delimiter");
+				ALIAS_DELIMITER = "";
 			}
 		}
 	}
@@ -503,6 +507,12 @@ public class QueryDetail  implements ILovDetail  {
 					toReturn = date;
 				}else{
 					toReturn = "'"+date+"'";
+				}
+			}else if( dialect.equalsIgnoreCase(DIALECT_TERADATA)){
+				if (date.startsWith("'") && date.endsWith("'")) {
+					toReturn = " CAST(" + date + " AS DATE FORMAT 'dd/mm/yyyy') ";
+				} else {
+					toReturn = " CAST('" + date + "' AS DATE FORMAT 'dd/mm/yyyy') ";
 				}
 			}
 		}
