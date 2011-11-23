@@ -25,7 +25,9 @@
 	
 	<!-- QBE-SQL-RESULT-LIMIT value="none" isBlocking="false"/ -->
 	<!-- QBE-SQL-RESULT-LIMIT value="10000" isBlocking="true"/ -->
-	<QBE-SQL-RESULT-LIMIT value="10000" isBlocking="false"/> 
+	<QBE-SQL-RESULT-LIMIT value="10000" isBlocking="false"/>
+	
+	<QBE-TIMEOUT-FOR-QUERY-EXECUTION value="900000" />
 	
 	<!-- limit of the cross tab cells number -->
 	<QBE-CROSSTAB-CELLS-LIMIT value="2000" isBlocking="true"/> 

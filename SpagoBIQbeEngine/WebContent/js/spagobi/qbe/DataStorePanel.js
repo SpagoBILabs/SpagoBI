@@ -148,10 +148,9 @@ Ext.extend(Sbi.widgets.DataStorePanel, Ext.Panel, {
 	
 	
 	, initStore: function() {
-		
 		this.proxy = new Ext.data.HttpProxy({
 	           url: this.services['loadDataStore']
-	           , timeout : 300000
+	           , timeout : Sbi.config.queryExecutionTimeout || 300000
 	   		   , failure: this.onDataStoreLoadException
 	    });
 		

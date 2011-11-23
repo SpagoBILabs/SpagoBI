@@ -257,4 +257,24 @@ public class QbeEngineConfig {
 	public SourceBean getConfigSourceBean() {
 		return getEngineConfig().getConfig();
 	}
+	
+	public int getQueryExecutionTimeout() {
+		int timeout = 300000;
+		String timeoutStr = (String) ConfigSingleton.getInstance()
+				.getAttribute("QBE.QBE-TIMEOUT-FOR-QUERY-EXECUTION.value");
+		if (timeoutStr != null) {
+			try {
+				timeout = Integer.parseInt(timeoutStr);
+			} catch (Throwable t) {
+				logger.error(
+						"Wrong value for 'value' attribute in tag QBE-TIMEOUT-FOR-QUERY-EXECUTION in qbe.xml: it must be an integer and instead it is "
+								+ timeoutStr + ". Using default that is 300000",
+						t);
+			}
+		} else {
+			logger.warn("No value for 'value' attribute in tag QBE-TIMEOUT-FOR-QUERY-EXECUTION in qbe.xml. Using default that is 300000");
+		}
+		logger.debug("Returning " + timeout);
+		return timeout;
+	}
 }
