@@ -344,7 +344,7 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 			DateFormat stagingDataFormat = new SimpleDateFormat("dd/MM/yyyy");	
 			toReturn = stagingDataFormat.format(operandValueToBoundDate);
 		} catch (ParseException e) {
-			logger.error("Error parsing the date "+date);
+			logger.error("Error parsing the date " + date, e);
 			throw new SpagoBIRuntimeException("Error parsing the date "+date+". Check the format, it should be "+userDfString);
 		}
 		
@@ -404,6 +404,29 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 					toReturn = toReturn;
 				}else{
 					toReturn = "'"+toReturn+"'";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
+				/*
+				 * Unfortunately we cannot use neither
+				 * CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') 
+				 * nor
+				 * CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy')) As Date)
+				 * because Hibernate does not recognize (and validate) those SQL functions.
+				 * Therefore we must use a predefined date format (yyyy-MM-dd).
+				 */
+				try {
+					DateFormat dateFormat;
+					if ( StringUtils.isBounded(toReturn, "'") ) {
+						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
+					} else {
+						dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+					}
+					Date myDate = dateFormat.parse(toReturn);
+					dateFormat = new SimpleDateFormat("yyyy-MM-dd");		
+					toReturn = "'" + dateFormat.format(myDate) + "'";
+				} catch (Exception e) {
+					logger.error("Error parsing the date " + toReturn, e);
+					throw new SpagoBIRuntimeException("Error parsing the date " + toReturn + ".");
 				}
 			}
 		}
