@@ -69,6 +69,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	boolean isMaxResultLimitBlocking;
 	boolean isQueryValidationEnabled;
 	boolean isQueryValidationBlocking;
+	int timeout;
 	String spagobiServerHost;
 	String spagobiContext;
 	String spagobiSpagoController;
@@ -95,6 +96,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
     isMaxResultLimitBlocking = qbeEngineConfig.isMaxResultLimitBlocking();
     isQueryValidationEnabled = qbeEngineConfig.isQueryValidationEnabled();
     isQueryValidationBlocking = qbeEngineConfig.isQueryValidationBlocking();
+    timeout = qbeEngineConfig.getQueryExecutionTimeout();
     
     spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
     spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
@@ -143,7 +145,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			Sbi.config.queryValidation = {};
 			Sbi.config.queryValidation.isEnabled = <%= isQueryValidationEnabled %>;
 			Sbi.config.queryValidation.isBlocking = <%= isQueryValidationBlocking %>;
-	  	
+			Sbi.config.queryExecutionTimeout = <%= timeout %>;
+			
 			var url = {
 		    	host: '<%= request.getServerName()%>'
 		    	, port: '<%= request.getServerPort()%>'
