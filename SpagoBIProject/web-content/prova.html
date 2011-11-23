@@ -405,8 +405,12 @@ var config = {};
 
 Ext.onReady(function(){
 
+	var item = new Sbi.kpi.KpiGUILayout();
 
-    var viewport = new Sbi.kpi.KpiGUILayout({});
+    var viewport = new Ext.Viewport({
+        layout:'fit',
+        items:[item]
+    });
 
 });
 
