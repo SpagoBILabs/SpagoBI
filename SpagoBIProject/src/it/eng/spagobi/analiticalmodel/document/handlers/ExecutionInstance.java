@@ -714,7 +714,11 @@ public class ExecutionInstance implements Serializable{
 			logger.debug("Modality in use for biparameter [" + biparamLabel + "] is manual input");
 			return new ArrayList();
 		}
-		
+		//patch for default date value
+		if (biparam.getParameter().getType().equalsIgnoreCase("DATE")) {
+			logger.debug("Parameter [" + biparamLabel + "] has lov defined just for default value: any other chose allowed");
+			return new ArrayList();
+		}
 		// get the lov provider detail
 		String lovProv = lov.getLovProvider();
 		ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
