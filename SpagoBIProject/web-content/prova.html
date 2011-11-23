@@ -405,87 +405,8 @@ var config = {};
 
 Ext.onReady(function(){
 
-    var item1 = new Ext.Panel({
-        title: 'Accordion Item 1',
-        html: '&lt;empty panel&gt;',
-        cls:'empty'
-    });
 
-    var item2 = new Ext.Panel({
-        title: 'Accordion Item 2',
-        html: '&lt;empty panel&gt;',
-        cls:'empty'
-    });
-
-    var item3 = new Ext.Panel({
-        title: 'Accordion Item 3',
-        html: '&lt;empty panel&gt;',
-        cls:'empty'
-    });
-
-    var item4 = new Ext.Panel({
-        title: 'Accordion Item 4',
-        html: '&lt;empty panel&gt;',
-        cls:'empty'
-    });
-
-    var item5 = new Ext.Panel({
-        title: 'Accordion Item 5',
-        html: '&lt;empty panel&gt;',
-        cls:'empty'
-    });
-
-    var accordion = new Ext.Panel({
-        region:'east',
-        fill: true,
-        split:true,
-        width: 200,
-        minSize: 175,
-        maxSize: 400,
-        collapsible: true,
-        layout:'accordion',
-        items: [item1, item2, item3, item4, item5]
-    });
-    
-    var tree = new Ext.ux.tree.TreeGrid({
-        title: 'Core Team Projects',
-        region:'center',
-        enableDD: true,
-        columns:[{
-            header: 'Task',
-            dataIndex: 'task',
-            width: 230
-        },{
-            header: 'Duration',
-            width: 100,
-            dataIndex: 'duration',
-            align: 'center',
-            sortType: 'asFloat',
-            tpl: new Ext.XTemplate('{duration:this.formatHours}', {
-                formatHours: function(v) {
-                    if(v < 1) {
-                        return Math.round(v * 60) + ' mins';
-                    } else if (Math.floor(v) !== v) {
-                        var min = v - Math.floor(v);
-                        return Math.floor(v) + 'h ' + Math.round(min * 60) + 'm';
-                    } else {
-                        return v + ' hour' + (v === 1 ? '' : 's');
-                    }
-                }
-            })
-        },{
-            header: 'Assigned To',
-            width: 150,
-            dataIndex: 'user'
-        }],
-
-        dataUrl: 'treegrid-data.json'
-    });
-
-    var viewport = new Ext.Viewport({
-        layout:'border',
-        items:[tree, accordion]
-    });
+    var viewport = new Sbi.kpi.KpiGUILayout({});
 
 });
 

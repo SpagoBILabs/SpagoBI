@@ -23,7 +23,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Session.js")%>'></script>	
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-3.1.1/ux/grid/Ext.grid.ButtonColumn.js")%>'></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/grid/Ext.ux.ColorField.js")%>"></script> 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/grid/Ext.ux.grid.RowEditor.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/grid/Ext.ux.grid.RowEditor.js")%>"></script>
+ 
 
 
 
@@ -97,6 +98,9 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/engines/chart/HighchartsPanel.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/engines/chart/MasterDetailChartPanel.js")%>'></script>
 
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/kpi/KpiGUILayout.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/kpi/KpiGridPanel.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/kpi/KpiAccordionPanel.js")%>'></script>
 
 <!-- END-DEBUG -->
 
