@@ -81,16 +81,19 @@ public class AbstractDriver {
     	    for (Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();) {
     		try {
     		    biobjPar = (BIObjectParameter) it.next();
+    		    logger.debug("Manage parameter: "+biobjPar.getParameterUrlName());
     		    /*
     		     * value = (String) biobjPar.getParameterValues().get(0);
     		     * pars.put(biobjPar.getParameterUrlName(), value);
-    		     */
+    		     */    		    
     		    description = parValuesEncoder.encodeDescription(biobjPar);
-    		    pars.put(biobjPar.getParameterUrlName()+DESCRIPTION_SUFFIX, description);
-    		    logger.debug("Add description:"+biobjPar.getParameterUrlName()+DESCRIPTION_SUFFIX+"/"+description);
+    		    if (description != null){
+	    		    pars.put(biobjPar.getParameterUrlName()+DESCRIPTION_SUFFIX, description);
+	    		    logger.debug("Add description:"+biobjPar.getParameterUrlName()+DESCRIPTION_SUFFIX+"/"+description);
+    		    }
     		} catch (Exception e) {
     		    logger.debug("OUT");
-    		    logger.warn("Error while processing a BIParameter.. getting the description", e);
+    		    logger.warn("Error while processing the BIParameter " +biobjPar.getParameterUrlName()+ ".. getting the description", e);
     		}
     	    }
     	}

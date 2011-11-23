@@ -32,6 +32,8 @@ import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
 import it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -315,17 +317,29 @@ public class DocumentCompositionUtils {
 						if(values == null || values.size() == 0 || ((String)values.get(0)).equals("")){ 							
 							values.add(lstParams.getProperty(("default_value_param_"+document.getNumOrder()+"_"+cont)));
 						}
-						
+						logger.debug("Values to pass : " + values);
 						//define a BIObjectParameter to use it for encode (multivalue management).
 						if (obj.getEngine().getClassName() == null || obj.getEngine().getClassName().equalsIgnoreCase("")){
 							//EXTERNAL ENGINES
 							BIObjectParameter par = getBIObjectParameter(obj, key);
 							par.setParameterValues(values);
+							Parameter tmpPar = par.getParameter() ;				
+							logger.debug("Manage parameter : " + tmpPar.getLabel() + "...");
+							if (tmpPar != null && values.size()>1 && tmpPar.getModalityValue() != null &&
+									((!(tmpPar.getModalityValue()).isMultivalue()) ||
+										tmpPar.getModalityValue().getITypeCd().equalsIgnoreCase(SpagoBIConstants.INPUT_TYPE_MAN_IN_CODE))){ 
+								logger.debug("Force the multivalue modality for parameter " + tmpPar.getLabel());
+								//force the multivalue management if the parameter has defined as MANUAL INPUT and the values is multiple.							
+								tmpPar.getModalityValue().setMultivalue(true);
+								tmpPar.getModalityValue().setITypeCd(SpagoBIConstants.INPUT_TYPE_QUERY_CODE);
+								par.setParameter(tmpPar);
+							}
 							String parsValue = encoderUtility.encode(par);
 							//conversion in UTF-8 of the par
 							Map parsMap = new HashMap();
 							parsMap.put(key, parsValue);
 							String tmpUrl = GeneralUtilities.getUrl("",  parsMap);
+							logger.debug("tmpUrl for " + obj.getLabel() + ": " + tmpUrl);
 							paramUrl += "&" + tmpUrl.substring(tmpUrl.indexOf("?")+1);
 							
 							//paramUrl += "&" + key + "=" + tmpUrl;
