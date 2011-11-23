@@ -57,6 +57,8 @@ Sbi.kpi.KpiGUILayout =  function(config) {
 
 		Ext.apply(this, c);
 		
+		this.intPanels();
+		
 		c = {
 			items:[this.kpiGridPanel, this.kpiAccordinPanel]
 		};
