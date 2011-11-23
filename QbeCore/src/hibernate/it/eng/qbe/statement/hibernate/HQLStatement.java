@@ -719,6 +719,29 @@ public class HQLStatement extends AbstractStatement {
 				}else{
 					toReturn = "'"+dateStr+"'";
 				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
+				/*
+				 * Unfortunately we cannot use neither
+				 * CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') 
+				 * nor
+				 * CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy')) As Date)
+				 * because Hibernate does not recognize (and validate) those SQL functions.
+				 * Therefore we must use a predefined date format (yyyy-MM-dd).
+				 */
+				try {
+					DateFormat dateFormat;
+					if ( StringUtils.isBounded(dateStr, "'") ) {
+						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
+					} else {
+						dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+					}
+					Date myDate = dateFormat.parse(dateStr);
+					dateFormat = new SimpleDateFormat("yyyy-MM-dd");		
+					toReturn = "'" + dateFormat.format(myDate) + "'";
+				} catch (Exception e) {
+					logger.error("Error parsing the date " + dateStr, e);
+					throw new SpagoBIRuntimeException("Error parsing the date " + dateStr + ".");
+				}
 			}
 		}
 		

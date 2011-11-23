@@ -90,6 +90,7 @@ public class QuerySerializationConstants {
 	public static final String SUBQUERIES = "subqueries";
 	
 	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";
+	public static final String DIALECT_TERADATA = "org.hibernate.dialect.TeradataDialect";
 	public static final String DIALECT_POSTGRES = "org.hibernate.dialect.PostgreSQLDialect";
 	public static final String DIALECT_ORACLE = "org.hibernate.dialect.OracleDialect";
 	public static final String DIALECT_HSQL = "org.hibernate.dialect.HSQLDialect";
