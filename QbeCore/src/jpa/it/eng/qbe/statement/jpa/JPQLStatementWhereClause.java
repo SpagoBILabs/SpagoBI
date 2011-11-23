@@ -227,7 +227,7 @@ public class JPQLStatementWhereClause extends AbstractJPQLStatementFilteringClau
 		IModelEntity entity = dataMartModelStructure.getEntity( entityUniqueName );
 		List<Filter> filters = dataMartModelAccessModality.getEntityFilterConditions(entity.getType());
 		
-		if(filters != null)return buffer;
+		if(filters == null || filters.isEmpty())return buffer;
 		
 		for(Filter filter: filters) {
 			Set fields = filter.getFields();
