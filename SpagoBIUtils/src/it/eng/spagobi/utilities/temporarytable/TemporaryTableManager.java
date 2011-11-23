@@ -323,6 +323,9 @@ public class TemporaryTableManager {
 			
 //			int index = baseQuery.toUpperCase().indexOf(" FROM "); 
 //			sql = baseQuery.substring(0, index) + " INTO " + tableName + " "  + baseQuery.substring(index + 1);
+		} else if (dialect.contains("Teradata")) {
+			// command CREATE TABLE table_name AS ( SELECT .... ) WITH DATA
+			sql = "CREATE TABLE " + tableName + " AS ( " + baseQuery + " ) WITH DATA";
 		} else {
 			// command CREATE TABLE table_name AS SELECT ....
 			sql = "CREATE TABLE " + tableName + " AS " + baseQuery;
@@ -347,10 +350,19 @@ public class TemporaryTableManager {
 			}
 		} else if (dialect.contains("SQLServer")) { // SQLServer has a different command 
 			// see http://www.webdevblog.info/database/drop-table-if-exists-in-oracle-nd-sql-server/
-			// TODO test it!!!
 			executeStatement("IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " +
 					" WHERE TABLE_NAME = '" + tableName + "') " +
 					" DROP TABLE " + tableName, dataSource);
+		} else if (dialect.contains("Teradata")) { // Teradata does not support DROP TABLE IF EXISTS command
+				try {
+					executeStatement("DROP TABLE " + tableName, dataSource);
+				} catch (SQLException e) {
+					if (e.getErrorCode() == 3807) { // Object does not exist.
+						logger.debug("Table " + tableName + "does not exists.");
+					} else {
+						throw e;
+					}
+				}
 		} else {
 			executeStatement("DROP TABLE IF EXISTS " + tableName, dataSource);
 		}
