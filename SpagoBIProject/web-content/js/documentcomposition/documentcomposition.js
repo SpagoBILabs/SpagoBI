@@ -159,7 +159,8 @@ function execCrossNavigation(windowName, label, parameters) {
 												//replace all old values of parameter:											
 												if (tmpOldLabel == tmpNewLabel){
 													reload = true; 
-													tmpNewValue = tmpNewValue.substring(tmpNewValue.indexOf("=")+1);
+													//tmpNewValue = tmpNewValue.substring(tmpNewValue.indexOf("=")+1);
+													tmpNewValue = getNewValues(tmpNewLabel, paramsNewValues);
 													tmpOldValue = paramsOldValues[k] ;
 													tmpOldValue = tmpOldValue.substring(tmpOldValue.indexOf("=")+1);
 													//if ( tmpNewValue != ""){													
@@ -184,8 +185,8 @@ function execCrossNavigation(windowName, label, parameters) {
 	
 										if ((tmpNewValue.substring(0, tmpNewValue.indexOf("=")) == sbiParMaster) ){
 											reload = true; //reload only if document target has the parameter inline
-											tmpNewValue = tmpNewValue.substring(tmpNewValue.indexOf("=")+1);
-											
+											//tmpNewValue = tmpNewValue.substring(tmpNewValue.indexOf("=")+1);
+											tmpNewValue = getNewValues(tmpNewLabel, paramsNewValues);
 											if (paramsOldValues != null && paramsOldValues.length > 0) {
 												for (k = 0; k < paramsOldValues.length; k++) {
 													tmpOldLabel = paramsOldValues[k].substring(0, paramsOldValues[k].indexOf("="));
@@ -295,6 +296,23 @@ function  exportExecution(item) {
     }
 	
 } 
+
+function getNewValues(newLabel, paramsNewValues){
+	var newValues = "";
+   	for (var i=0, l=paramsNewValues.length; i<l; i++) {
+   		var tmpValues = paramsNewValues[i];
+   		if (tmpValues.substring(0,tmpValues.indexOf("=")) == newLabel &&
+   			tmpValues.substring(tmpValues.indexOf("=")+1) !== ""){
+   			var singleValue = tmpValues.substring(tmpValues.indexOf("=")+1);
+   			newValues += (newValues=="")?"":",";
+			//if the value is a string puts the ' , otherwise not
+			//newValues +=  (isNaN(parseFloat(singleValue)))? "'"+singleValue+"'" : parseFloat(singleValue);
+   			newValues +=  singleValue;
+   		}
+   	}
+   	return newValues;
+}
+
 //create panels for each document
 Ext.onReady(function() {  
 	if (numDocs > 0){   
