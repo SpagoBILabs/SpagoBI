@@ -186,12 +186,13 @@ public class TemporaryTableManager {
 			connection = dataSource.getConnection();
 			DatabaseMetaData dbMeta = connection.getMetaData();
 			String driverName = connection.getMetaData().getDriverName();
+					
 			resultSet = dbMeta.getColumns(null, null, tableName, null);
 			//if (resultSet.first()) {
 			if (resultSet.next()) {
 				tableDescriptor = new DataSetTableDescriptor();
 				tableDescriptor.setTableName(tableName);
-				readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource));
+				readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource), dbMeta);
 			} else {
 				if (driverName.contains("HSQL") || driverName.contains("Oracle")) {
 					/*
@@ -205,7 +206,7 @@ public class TemporaryTableManager {
 					if (resultSet.next()) {
 						tableDescriptor = new DataSetTableDescriptor();
 						tableDescriptor.setTableName(tableNameUpperCase);
-						readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource));
+						readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource), dbMeta);
 					} else {
 						throw new SpagoBIRuntimeException("Cannot find metadata for table [" + tableName + "]");
 					}
@@ -237,16 +238,27 @@ public class TemporaryTableManager {
 	}
 
 	private static void readColumns(ResultSet resultSet, List<String> fields,
-			DataSetTableDescriptor tableDescriptor, String delimiter) throws SQLException {
+			DataSetTableDescriptor tableDescriptor, String delimiter, DatabaseMetaData dbMetadata) throws SQLException {
 		int index = 0;
 		do {
+			// For oracle we have to check if the table live in the right schema
+			// If we set the schema name in the method dbMeta.getColumns in this way
+			// dbMeta.getColumns(connection.getCatalog(), dbMeta.getUserName(), tableName, null);
+			// the result contains all the tables for which the user have the select grand
+			// also if they belong to other schema 
+			String tableSchema = resultSet.getString("TABLE_SCHEM");
+			if(dbMetadata.getDriverName().contains("Oracle")){
+				if(!tableSchema.equalsIgnoreCase(dbMetadata.getUserName())){
+					continue;
+				}
+			}
 			String fieldName = fields.get(index);
 //			String columnName = delimiter+resultSet.getString("COLUMN_NAME")+delimiter;
 			String columnName = resultSet.getString("COLUMN_NAME");
 			Class type = JDBCTypeMapper.getJavaType(resultSet.getShort("DATA_TYPE"));
 			tableDescriptor.addField(fieldName, columnName, type);
 			index++;
-		} while (resultSet.next());
+		} while (resultSet.next());// && (index<fields.size()));
 	}
 
 	private static boolean checkTableExistence(String tableName,
