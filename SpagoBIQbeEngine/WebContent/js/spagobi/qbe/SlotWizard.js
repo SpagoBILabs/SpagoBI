@@ -201,8 +201,12 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 					//edit band
 					//formState = this.fieldForSlot.attributes.attributes.formState;
 					formState = this.firstCalculatedFiledPanel.getFormState();
-					if(formState.expression === '' && this.expression !== null && this.expression !== undefined){
-						formState.expression = this.expression;
+					if(formState.expression == undefined || formState.expression == null || formState.expression == ''){
+						if(this.expression==undefined || this.expression==null|| this.expression==''){
+							formState.expression = this.fieldForSlot.attributes.attributes.formState.expression;
+						}else{
+							formState.expression = this.expression;
+						}
 					}
 					this.addSlotToFormState(formState);
 					target = this.fieldForSlot;
