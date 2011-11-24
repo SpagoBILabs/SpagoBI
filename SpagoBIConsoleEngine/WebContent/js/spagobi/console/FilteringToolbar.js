@@ -178,8 +178,9 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 		//gets store reader metadata to retrieve dataIndex
 		var storeMetaArray = gridConsole.store.reader.meta.fields;
 		
+		var dsHeadersLabel = (gridConsole.storeLabels !== undefined)? gridConsole.storeLabels.dsLabel : "";
+		
 		var meta = this.orderMetaColumns(colModArray, storeMetaArray , columnConfigs);
-
 		var output = 'application/vnd.ms-excel';
 		if(format == 'PDF'){
 			output = 'application/pdf';
@@ -188,6 +189,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 			mimeType: output
 			, responseType: 'attachment'
 			, datasetLabel: gridConsole.store.dsLabel
+			, datasetHeadersLabel: dsHeadersLabel
 			, meta: Ext.util.JSON.encode(meta)
 		};
 		

@@ -95,6 +95,10 @@ Ext.extend(Sbi.console.DetailPage, Ext.Panel, {
     , getStore: function() {
 		return this.gridPanel.store;
 	}
+
+	, getStoreLabels: function() {
+		return this.gridPanel.storeLabels;
+	}
     
     //  -- private methods ---------------------------------------------------------
     , initNavigationToolbar: function(navigationBarConf) {

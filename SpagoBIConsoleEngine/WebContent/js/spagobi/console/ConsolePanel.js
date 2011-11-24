@@ -76,7 +76,7 @@ Sbi.console.ConsolePanel = function(config) {
 	this.services = this.services || new Array();	
 	this.services['export'] = this.services['export'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'EXPORT_ACTION'
-		, baseParams: new Object()
+	  , baseParams: new Object()
 	});
 	
 	
@@ -107,6 +107,7 @@ Sbi.console.ConsolePanel = function(config) {
 	}
 	
 	// just for test export function
+	/*
 	items.push({
 		title: 'Export panel'
 		, hidden: true
@@ -121,10 +122,11 @@ Sbi.console.ConsolePanel = function(config) {
 			}]
 		, html: 'Click on the button up here to export console document'
 	});
-	
+	*/
 	c = Ext.apply(c, {  	
 		items: items
 	});
+	
 	
 	// constructor
 	Sbi.console.ConsolePanel.superclass.constructor.call(this, c);
@@ -182,26 +184,26 @@ Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
 	, initDetailPanel: function(conf) {
 		this.detailPanel = new Sbi.console.DetailPanel(conf);
 	}
-	
+	/*
 	, exportConsole: function(format) {
-		
 		var detailPage = this.detailPanel.getActivePage();
 		var columnConfigs = detailPage.gridPanel.getColumnConfigs();
-		
+		var dsHeadersLabel = (detailPage.getStoreLabels() !== undefined)?detailPage.getStoreLabels().getDsLabel() : "";
 		var params = {
 			mimeType: 'application/pdf'
+			, datasetHeadersLabel: 'testConsoleLabels'
 			, responseType: 'attachment'
-			, datasetLabel: detailPage.getStore().getDsLabel()
+			//, datasetLabel: detailPage.getStore().getDsLabel()
+			//, datasetHeadersLabel: dsHeadersLabel		
 			, meta: Ext.util.JSON.encode(columnConfigs)
 		};
-		
 		Sbi.Sync.request({
 			url: this.services['export']
-			, params: params
+		  , params: params
 		});
-		
+	
 	}
-
+*/
 	
 	//stop all datastore of the hidden console 
 	, onHide: function(){

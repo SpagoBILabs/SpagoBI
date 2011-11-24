@@ -26,9 +26,12 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.console.ConsoleEngineConfig;
 import it.eng.spagobi.engines.console.services.AbstractConsoleEngineAction;
+import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -62,6 +65,8 @@ public class ExportAction extends AbstractConsoleEngineAction {
 	public static final String MIME_TYPE = "mimeType";
 	public static final String RESPONSE_TYPE = "responseType";
 	public static final String DATASET_LABEL = "datasetLabel";
+	public static final String DATASET_HEADERS_LABEL = "datasetHeadersLabel";
+	public static final String LOCALE = "LOCALE";
 	public static final String META = "meta";
 	
 	// misc
@@ -83,12 +88,16 @@ public class ExportAction extends AbstractConsoleEngineAction {
 		
 		File reportFile;
 		String dataSetLabel;
+		String dataSetHeadersLabel;
 		String mimeType;
 		String responseType;
+		String locale;
 		JSONArray jsonArray;
 		
 		IDataSet dataSet;
+		IDataSet dataSetHeaders;
 		IDataStore dataStore;
+		IDataStore dataStoreHeaders;
 		IDataSource dataSource;
 		JSONObject dataSetJSON;
 		
@@ -102,13 +111,18 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			super.service(request,response);
 			
 			Assert.assertNotNull(getConsoleEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
-			Assert.assertNotNull(getConsoleEngineInstance().getDataSetServiceProxy(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of DatasetServiceProxy class");
-			
+			Assert.assertNotNull(getConsoleEngineInstance().getDataSetServiceProxy(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of DatasetServiceProxy class");			
 
 			dataSetLabel = getAttributeAsString( DATASET_LABEL );
 			logger.debug("Parameter [" + DATASET_LABEL + "] is equals to [" + dataSetLabel + "]");			
 			Assert.assertTrue(!StringUtilities.isEmpty( dataSetLabel ), "Parameter [" + DATASET_LABEL + "] cannot be null or empty");
 				
+			dataSetHeadersLabel = getAttributeAsString( DATASET_HEADERS_LABEL );
+			logger.debug("Parameter [" + DATASET_HEADERS_LABEL + "] is equals to [" + dataSetHeadersLabel + "]");
+			
+			locale = getAttributeAsString( LOCALE );
+			logger.debug("Parameter [" + LOCALE + "] is equals to [" + locale + "]");
+			
 			mimeType = getAttributeAsString( MIME_TYPE );
 			logger.debug("Parameter [" + MIME_TYPE + "] is equal to [" + mimeType + "]");
 			if(mimeType == null) {
@@ -125,6 +139,8 @@ public class ExportAction extends AbstractConsoleEngineAction {
 				logger.debug("Parameter [" + RESPONSE_TYPE + "] has been set equal to [" + responseType + "]");
 			}
 				
+			ConsoleEngineConfig conf = ConsoleEngineConfig.getInstance();
+			
 			String test = getAttributeAsString(META);
 			logger.debug("Parameter [" + META + "] is equal to [" + test + "]");
 			Object m = getAttribute(META);
@@ -145,8 +161,24 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			}
 			Assert.assertNotNull(dataSet, "Impossible to find a dataset whose label is [" + dataSetLabel + "]");
 				
+			//read the dataset with headers
+			dataSetHeaders = null;
+			dataStoreHeaders = null;
+			if (dataSetHeadersLabel != null){				
+				try {
+					dataSetHeaders = getConsoleEngineInstance().getDataSetServiceProxy().getDataSetByLabel( dataSetHeadersLabel );
+				} catch(Throwable t) {
+					throw new SpagoBIServiceException("Impossible to find a dataset whose label is [" + dataSetHeadersLabel + "]", t);
+				}
+				Assert.assertNotNull(dataSet, "Impossible to find a dataset whose label is [" + dataSetHeadersLabel + "]");
+				Map params = getConsoleEngineInstance().getAnalyticalDrivers();
+				dataSetHeaders.setParamsMap(params);
+				dataSetHeaders.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
+				dataSetHeaders.loadData();
+				dataStoreHeaders = dataSetHeaders.getDataStore();
+				Assert.assertNotNull(dataStoreHeaders, "The dataStore returned by loadData method of the class [" + dataSetHeaders.getClass().getName()+ "] cannot be null");
+			}
 			
-			Assert.assertNotNull(dataSet, "Impossible to find a dataset whose label is [" + dataSetLabel + "]");
 			Map params = getConsoleEngineInstance().getAnalyticalDrivers();
 			dataSet.setParamsMap(params);
 			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
@@ -177,15 +209,62 @@ public class ExportAction extends AbstractConsoleEngineAction {
 						JSONObject header = resultHeaders.getJSONObject(key);
 						String fieldHeader = header.optString("header", "");
 						String fieldHeaderType =  header.optString("headerType", "");		
-	//					// in case of dynamic headers gets the value from the dataset
+	//					// in case of dynamic headers gets the value from the dataset (of data)
 						if (fieldHeaderType.equalsIgnoreCase("dataset")){
 							int posHeader = dataStore.getMetaData().getFieldIndex(fieldHeader);
 							int fieldValsize = ((List)dataStore.getFieldValues(posHeader)).size();
 							if(fieldValsize != 0){
 								fieldHeader =((List)dataStore.getFieldValues(posHeader)).get(0).toString();
+							}							
+						}else if (fieldHeaderType.equalsIgnoreCase("datasetI18N") && dataStoreHeaders != null){
+							//gets the header value from the specific dataset (only with labels: code - label - locale) 
+							int headersFieldNo = dataStoreHeaders.getMetaData().getFieldCount();
+							//adds index informations to the metadata properties
+							for(int i = 0; i < headersFieldNo; i++) {
+								dataStoreHeaders.getMetaData().getFieldMeta(i).setProperty("index", i+1);
 							}
+							// gets the specific label using the code and the locale
+							int posCode = (dataStoreHeaders.getMetaData().getFieldIndex("code") != -1) ?
+									dataStoreHeaders.getMetaData().getFieldIndex("code") : 
+									dataStoreHeaders.getMetaData().getFieldIndex("CODE");
 							
+							int posLabel = (dataStoreHeaders.getMetaData().getFieldIndex("label") != -1) ?
+									dataStoreHeaders.getMetaData().getFieldIndex("label") : 
+									dataStoreHeaders.getMetaData().getFieldIndex("LABEL");
+									
+							int posLocale = (dataStoreHeaders.getMetaData().getFieldIndex("locale") != -1) ?
+									dataStoreHeaders.getMetaData().getFieldIndex("locale") : 
+									dataStoreHeaders.getMetaData().getFieldIndex("LOCALE");
+									
+							List filterCodes = new ArrayList<String>();
+							List filterValues = new ArrayList<String>();
+							filterCodes.add(posCode);
+							filterValues.add(fieldHeader);
+							filterCodes.add(posLocale);
+							filterValues.add(locale);
+
+							List headersFieldValues = (List)dataStoreHeaders.findRecords(filterCodes, filterValues);
+							if (headersFieldValues != null && headersFieldValues.size() > 0){
+								Record headerRec = (Record)headersFieldValues.get(0);
+								IField headerField = null;
+								if (headerRec != null){
+									headerField = (IField) headerRec.getFieldAt(posLabel);
+								}
+								String label = (headerField != null) ? headerField.toString() : "";
+									
+								if(label != null && !("").equalsIgnoreCase(label)){
+									fieldHeader = label;
+								}
+							}
+						}else if (fieldHeaderType.equalsIgnoreCase("I18N")){						
+							//gets the header value from the locale files 
+							/*
+							EnginConf tmp = conf.getEngineConfig();
+							System.out.println(tmp);
+							*/
+							logger.debug("Export headers by locale file doesn't supported yet!");
 						}
+						
 						Field headerF = new Field(fieldHeader, "java.lang.String", 100);
 						extractedFields.add(headerF);
 						for(int i = 0; i < fieldNo; i++) {
@@ -216,7 +295,6 @@ public class ExportAction extends AbstractConsoleEngineAction {
 				Exporter exp = new Exporter(dataStore);
 				
 				long numberOfRows = dataStore.getRecordsCount();
-				ConsoleEngineConfig conf = ConsoleEngineConfig.getInstance();
 				String configLimit = (String)conf.getProperty("EXPORT_ROWS_LIMIT");
 				if(configLimit == null){
 					configLimit = "65000";
