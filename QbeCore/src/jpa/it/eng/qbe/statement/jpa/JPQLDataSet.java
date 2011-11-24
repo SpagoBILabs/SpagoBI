@@ -184,7 +184,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 		logger.debug("Count query prepared and parameters setted..");
 		logger.debug("Executing query..");
-		resultNumber = ((BigInteger)countQuery.getResultList().get(0)).intValue();
+		resultNumber = ((Number)countQuery.getResultList().get(0)).intValue();
 		logger.debug("Query " + "SELECT COUNT(*) FROM (" + sqlQueryString + ")" + " executed");
 		logger.debug("Result number is " + resultNumber);
 		resultNumber = resultNumber < 0? 0: resultNumber;
