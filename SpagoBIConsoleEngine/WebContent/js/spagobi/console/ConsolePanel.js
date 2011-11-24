@@ -184,7 +184,7 @@ Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
 	, initDetailPanel: function(conf) {
 		this.detailPanel = new Sbi.console.DetailPanel(conf);
 	}
-	/*
+	
 	, exportConsole: function(format) {
 		var detailPage = this.detailPanel.getActivePage();
 		var columnConfigs = detailPage.gridPanel.getColumnConfigs();
@@ -193,8 +193,7 @@ Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
 			mimeType: 'application/pdf'
 			, datasetHeadersLabel: 'testConsoleLabels'
 			, responseType: 'attachment'
-			//, datasetLabel: detailPage.getStore().getDsLabel()
-			//, datasetHeadersLabel: dsHeadersLabel		
+			, datasetHeadersLabel: dsHeadersLabel		
 			, meta: Ext.util.JSON.encode(columnConfigs)
 		};
 		Sbi.Sync.request({
@@ -203,7 +202,7 @@ Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
 		});
 	
 	}
-*/
+
 	
 	//stop all datastore of the hidden console 
 	, onHide: function(){
