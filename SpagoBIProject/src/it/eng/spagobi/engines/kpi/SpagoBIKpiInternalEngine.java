@@ -25,7 +25,6 @@ import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -43,7 +42,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.DomainDAOHibImpl;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.InternalEngineIFace;
 import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
@@ -75,7 +73,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.exceptions.DatasetException;
 import it.eng.spagobi.tools.udp.bo.UdpValue;
 
-import java.awt.Color;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -86,7 +83,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -98,15 +94,33 @@ import org.apache.log4j.Logger;
 
 public class SpagoBIKpiInternalEngine extends AbstractDriver implements InternalEngineIFace {
 
-	private static transient Logger logger = Logger.getLogger(SpagoBIKpiInternalEngine.class);
+
+
+
+	static transient Logger logger = Logger.getLogger(SpagoBIKpiInternalEngine.class);
 
 	public static final String messageBundle = "MessageFiles.messages";
 
-	private static final String RESOURCE="RES_NAME";
+	protected static final String RESOURCE="RES_NAME";
 
-	protected String publisher_Name= "KPI_DEFAULT_PUB";//Kpi default publisher
-	protected String metadata_publisher_Name= "KPI_METADATA_DEFAULT_PUB";//Kpi default publisher
-	protected String trend_publisher_Name= "TREND_DEFAULT_PUB";//Kpi default publisher
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public String getSubName() {
+		return subName;
+	}
+
+
+	public void setSubName(String subName) {
+		this.subName = subName;
+	}
 
 	protected String name = "";// Document's title
 	protected String subName = "";// Document's subtitle
@@ -114,108 +128,49 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	protected StyleLabel styleSubTitle;// Document's subtitle style
 	protected String userIdField=null;
 
-	protected Locale locale=null;
-
-	private IEngUserProfile profile=null;
-	//internationalized DateFormat
-	protected String internationalizedFormat = null;
-	//Server dateFormat
-	protected String formatServer = null;
-
-	protected HashMap parametersObject;
-
-	protected boolean closed_tree  = false;// true if the kpi tree has to start closed
-
-	protected String model_title = "MODEL";// 
-	// displayed
-	protected String threshold_image_title = null;// 
-	// displayed
-	protected String bullet_chart_title = null;//
-
-	protected String value_title = null;
-	// will be displayed
-	protected String kpi_title = null;// 
-	// will be displayed
-	protected String weight_title = null;// 
-	
-	protected boolean use_ou = false;
-
-	protected boolean display_semaphore = true;// true if the semaphore will be
-	// displayed
-	protected boolean display_bullet_chart = false;// true if the bullet chart
-	// displayed
-	protected boolean display_threshold_image = false;// true if the bullet chart
-	// will be displayed
-	protected boolean display_weight = false;// true if the weight will be
-	// displayed
-	protected boolean display_alarm = false;// true if the alarm state will be
-	// displayed
-	protected boolean register_values = true;//true if the new values calculated will have to be inserted into the db
-
-	protected boolean recalculate_anyway = false;//true if the scheduler calls the engine and wants the kpi to be calculated even if another value already exists
-
-	protected boolean register_par_setted = false;//true if register_values is setted by SpagoBIparameter and so is more important than the template value
-
-	protected boolean show_axis = false;//true if the range axis on the bullet chart has to be shown
-
-	protected boolean weighted_values = false;//true if values visualized have to be weighted
-
-	protected HashMap confMap;// HashMap with all the config parameters
-
 	protected List resources;// List of resources linked to the
 	// ModelInstanceNode
-
-	protected Date dateOfKPI = new Date();//date when the kpiValues are requested
-
-	protected Date endKpiValueDate = null;//End validity date for the kpiValues 
 
 	protected Integer periodInstID = null;
 
 	protected Integer modelInstanceRootId = null;
 
-	protected String lang = null;
-	protected String country = null;
-
-	protected String behaviour = "default";// 4 possible values:
-	//default:all old kpiValues are recalculated; all kpivalues without periodicity will not be recalculated
-	//display:shows all the last calculated values, even if they are not valid anymore
-	//force_recalculation: all the values are recalculated
-	//recalculate:old kpiValues are recalculated and also the one without a periodicity
-
-	protected boolean dataset_multires = false;
-
-	protected Date timeRangeFrom = null;//Begin date of range
-
-	protected Date timeRangeTo = null;//End date of range
-
-	protected Date dateIntervalFrom = null;//Begin date of range
-
-	protected Date dateIntervalTo = null;//End date of range
-
+	protected KpiTemplateConfiguration templateConfiguration = new KpiTemplateConfiguration(
+			"KPI_DEFAULT_PUB", "KPI_METADATA_DEFAULT_PUB", "TREND_DEFAULT_PUB", false, "MODEL", null, null, null, null, null, false, true,
+			false, false, false, false, true, false, false, false, false,
+			false);
+	
+	protected KpiEnginData data;	
+	
+	protected KpiParametrization parameters = new KpiParametrization(
+			new Date(), null, "default", null, null, null, null);
+	
+	protected KpiValueComputation computation; 
 	// used to set the return of the execution
 	protected List<KpiResourceBlock> kpiResultsList;
 	
-	//modality of calculation: scheduler or docuement execution
-	private boolean executionModalityScheduler = false;
-	
+
 	//collection of OU available and valid
 	private ArrayList<OrganizationalUnitGrantNode> ouList = new ArrayList<OrganizationalUnitGrantNode>();
 	private String ouWarning = null;
 
+	public HashMap confMap;
+
+
 	//Method only called by a specific configuration of the scheduler created through the class KPIEngineJob.java
-	public void execute(RequestContainer requestContainer, SourceBean response) throws EMFUserError, SourceBeanException {
+	public void executeByKpiEngineJob(RequestContainer requestContainer, SourceBean response) throws EMFUserError, SourceBeanException {
 		logger.debug("IN");
 		//setting locale, formats, profile
-		setGeneralVariables(requestContainer);
-		this.parametersObject = new HashMap();
+		this.data = KpiEngineUtil.setGeneralVariables(requestContainer);
+		this.parameters.setParametersObject(new HashMap());
 
 		String recalculate = (String)requestContainer.getAttribute("recalculate_anyway");
 		if(recalculate.equals("true")){
-			this.recalculate_anyway = true;
+			this.templateConfiguration.setRecalculate_anyway(true);
 		}	
 		// Date for which we want to see the KpiValues
-		this.dateOfKPI = (Date)requestContainer.getAttribute("start_date");
-		this.endKpiValueDate = (Date)requestContainer.getAttribute("end_date");
+		this.parameters.setDateOfKPI((Date)requestContainer.getAttribute("start_date"));
+		this.parameters.setEndKpiValueDate((Date)requestContainer.getAttribute("end_date"));
 
 		String cascade = (String)requestContainer.getAttribute("cascade");	
 
@@ -230,18 +185,18 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 		List kpiRBlocks = new ArrayList();// List of KpiValues Trees for each Resource: it will be sent to the jsp
 
-		if(!parametersObject.containsKey("ParKpiDate")){
-			String dateForDataset = getDateForDataset(dateOfKPI);	
-			parametersObject.put("ParKpiDate", dateForDataset);
+		if(!parameters.getParametersObject().containsKey("ParKpiDate")){
+			String dateForDataset = KpiEngineUtil.getDateForDataset(parameters.getDateOfKPI());	
+			parameters.getParametersObject().put("ParKpiDate", dateForDataset);
 		}
 
 		// gets the ModelInstanceNode
-		ModelInstanceNode mI = DAOFactory.getModelInstanceDAO().loadModelInstanceByLabel(modelNodeInstance, this.dateOfKPI);
+		ModelInstanceNode mI = DAOFactory.getModelInstanceDAO().loadModelInstanceByLabel(modelNodeInstance, this.parameters.getDateOfKPI());
 		logger.debug("ModelInstanceNode, ID=" + mI.getModelInstanceNodeId());
 		modelInstanceRootId = mI.getModelInstanceNodeId();
 		logger.debug("Loaded the modelInstanceNode with LABEL " + modelNodeInstance);
 
-		if(dataset_multires){//if datasets return a value for each resource
+		if(templateConfiguration.isDataset_multires()){//if datasets return a value for each resource
 			this.resources = mI.getResources(); //Set all the Resources for the Model Instance
 			logger.info("Dataset multiresource");
 			try {
@@ -259,8 +214,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			this.resources = mI.getResources();
 		}
 		logger.debug("Setted the List of Resources related to the specified Model Instance");
-
-		KpiLineVisibilityOptions options = setVisibilityOptions();
+		computation = new KpiValueComputation(this); 
+		KpiLineVisibilityOptions options = KpiEngineUtil.setVisibilityOptions(this.templateConfiguration);
 
 		if (cascade!=null && cascade.equals("true")){//in case all the kpi children have to be calculated too
 
@@ -269,7 +224,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 					logger.debug("There are no resources assigned to the Model Instance");
 
 					KpiResourceBlock block = new KpiResourceBlock();
-					block.setD(this.dateOfKPI);
+					block.setD(this.parameters.getDateOfKPI());
 					KpiLine line = getBlock(mI.getModelInstanceNodeId(), null);				
 					block.setRoot(line);
 					block.setOptions(options);
@@ -283,7 +238,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 						KpiResourceBlock block = new KpiResourceBlock();
 						block.setR(r);
 
-				block.setD(dateOfKPI);
+				block.setD(parameters.getDateOfKPI());
 						block.setOptions(options);
 						KpiLine line = getBlock(mI.getModelInstanceNodeId(), r);
 						block.setRoot(line);
@@ -302,7 +257,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				if (this.resources == null || this.resources.isEmpty()) {
 					logger.debug("There are no resources assigned to the Model Instance");
 					logger.debug("Retrieved the Dataset to be calculated: " + dataSet.getId());
-					value = getNewKpiValue(dataSet, kpiI, null,mI.getModelInstanceNodeId(), null);
+					value = computation.getNewKpiValue(dataSet, kpiI, null,mI.getModelInstanceNodeId(), null);
 					logger.debug("New value calculated");
 				} else {
 					Iterator resourcesIt = this.resources.iterator();
@@ -310,13 +265,13 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 						Resource r = (Resource) resourcesIt.next();
 						logger.debug("Resource: " + r.getName());
 						logger.debug("Retrieved the Dataset to be calculated: " + dataSet.getId());
-						value = getNewKpiValue(dataSet, kpiI, r,mI.getModelInstanceNodeId(), null);					
+						value = computation.getNewKpiValue(dataSet, kpiI, r,mI.getModelInstanceNodeId(), null);					
 					}
 				}
 				logger.debug("New value calculated");
 				// Insert new Value into the DB
 				IKpiDAO dao=DAOFactory.getKpiDAO();
-				dao.setUserProfile(profile);
+				dao.setUserProfile(data.getProfile());
 				dao.insertKpiValue(value);
 				logger.debug("New value inserted in the DB");		
 				// Checks if the value is alarming (out of a certain range)
@@ -366,7 +321,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		ResponseContainer responseContainer = ResponseContainer.getResponseContainer();
 		EMFErrorHandler errorHandler = responseContainer.getErrorHandler();
 		//setting locale, formats, profile, parameters, startDate, endDate
-		setGeneralVariables(requestContainer);
+		this.data = KpiEngineUtil.setGeneralVariables(requestContainer);
 
 		if (obj == null) {
 			logger.error("The input object is null.");
@@ -378,8 +333,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		}
 		String userId = null;
 
-		if(profile!=null){
-			userId=(String) ((UserProfile) profile).getUserId();
+		if(data.getProfile()!=null){
+			userId=(String) ((UserProfile) data.getProfile()).getUserId();
 		}
 		else{
 			userId=userIdField;
@@ -390,19 +345,19 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		ModelInstanceNode mI = null;
 		try {
 			// **************get the template*****************		
-			SourceBean content = getTemplate(documentId);
+			SourceBean content = KpiEngineUtil.getTemplate(documentId);
 			logger.debug("Got the template.");
 
 			// Date for which we want to see the KpiValues
-			this.dateOfKPI = new Date();
-			this.parametersObject = readParameters(obj.getBiObjectParameters());
-			addBIParameterDescriptions(obj, this.parametersObject);
+			this.parameters.setDateOfKPI(new Date());
+			this.parameters.setParametersObject(KpiEngineUtil.readParameters(obj.getBiObjectParameters(), this));
+			addBIParameterDescriptions(obj, this.parameters.getParametersObject());
 			
-			if(!parametersObject.containsKey("ParKpiDate")){
-				String dateForDataset = getDateForDataset(dateOfKPI);	
-				parametersObject.put("ParKpiDate", dateForDataset);
+			if(!parameters.getParametersObject().containsKey("ParKpiDate")){
+				String dateForDataset = KpiEngineUtil.getDateForDataset(parameters.getDateOfKPI());	
+				parameters.getParametersObject().put("ParKpiDate", dateForDataset);
 			}
-			logger.debug("Got the date for which the KpiValues have to be calculated. Date:" + this.dateOfKPI);
+			logger.debug("Got the date for which the KpiValues have to be calculated. Date:" + this.parameters.getDateOfKPI());
 
 			// **************take informations on the modelInstance and its KpiValues*****************
 			String modelNodeInstance = (String) content.getAttribute("model_node_instance");
@@ -420,13 +375,13 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			}else{
 				periodInstID = new Integer(periodInstanceID);
 			}
-			getSetConf(content);
+			templateConfiguration.getSetConf(this, content);
 			logger.debug("Setted the configuration of the template");
 
 			List kpiRBlocks = new ArrayList();// List of KpiValues Trees for each Resource: it will be sent to the jsp
 
 			// gets the ModelInstanceNode
-			mI = DAOFactory.getModelInstanceDAO().loadModelInstanceByLabel(modelNodeInstance, this.dateOfKPI);
+			mI = DAOFactory.getModelInstanceDAO().loadModelInstanceByLabel(modelNodeInstance, this.parameters.getDateOfKPI());
 			if (mI==null) {
 				logger.error("MODEL INSTANCE IS NULL, CHECK model_node_instance IN DOCUMENT TEMPLATE.!!!!!!!!!!!!!!");
 			}else {
@@ -435,7 +390,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				logger.debug("Loaded the modelInstanceNode with LABEL " + modelNodeInstance);
 			}
 
-			if(dataset_multires){//if datasets return a value for each resource
+			if(templateConfiguration.isDataset_multires()){//if datasets return a value for each resource
 				this.resources = mI.getResources(); //Set all the Resources for the Model Instance
 				logger.info("Dataset multiresource");
 
@@ -449,18 +404,18 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				this.resources = mI.getResources();
 			}
 			logger.debug("Setted the List of Resources related to the specified Model Instance");
-
-			KpiLineVisibilityOptions options = setVisibilityOptions();
+			computation = new KpiValueComputation(this); 
+			KpiLineVisibilityOptions options = KpiEngineUtil.setVisibilityOptions(this.templateConfiguration);
 
 			//sets up register values
-			ModelInstanceNode modI = DAOFactory.getModelInstanceDAO().loadModelInstanceById(mI.getModelInstanceNodeId(), dateOfKPI);
+			ModelInstanceNode modI = DAOFactory.getModelInstanceDAO().loadModelInstanceById(mI.getModelInstanceNodeId(), parameters.getDateOfKPI());
 
 			logger.debug("Setted the List of Kpis that does not need to be persisted in db");
 			if (this.resources == null || this.resources.isEmpty()) {
 				logger.debug("There are no resources assigned to the Model Instance");
 				KpiResourceBlock block = new KpiResourceBlock();
-				block.setD(this.dateOfKPI);
-				block.setParMap(this.parametersObject);
+				block.setD(this.parameters.getDateOfKPI());
+				block.setParMap(this.parameters.getParametersObject());
 				KpiLine line = getBlock(mI.getModelInstanceNodeId(), null);
 				block.setRoot(line);
 				block.setTitle(name);
@@ -476,8 +431,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 					logger.info("Resource: " + r.getName());
 					KpiResourceBlock block = new KpiResourceBlock();
 					block.setR(r);
-					block.setD(dateOfKPI);
-					block.setParMap(this.parametersObject);
+					block.setD(parameters.getDateOfKPI());
+					block.setParMap(this.parameters.getParametersObject());
 					KpiLine line = getBlock(mI.getModelInstanceNodeId(), r);
 					block.setRoot(line);
 					block.setOptions(options);
@@ -490,9 +445,9 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				logger.debug("Successfull kpis creation");
 
 				response.setAttribute(ObjectsTreeConstants.SESSION_OBJ_ATTR, obj);
-				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, publisher_Name);
-				response.setAttribute("metadata_publisher_Name", metadata_publisher_Name);
-				response.setAttribute("trend_publisher_Name", trend_publisher_Name);
+				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, templateConfiguration.getPublisher_Name());
+				response.setAttribute("metadata_publisher_Name", templateConfiguration.getMetadata_publisher_Name());
+				response.setAttribute("trend_publisher_Name", templateConfiguration.getTrend_publisher_Name());
 
 				if (name != null) {
 					response.setAttribute("title", name);
@@ -537,64 +492,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	}
 
 
-	private SourceBean getTemplate(String documentId) throws EMFUserError{
-		logger.debug("IN");
-		SourceBean content = null;
-		byte[] contentBytes = null;
-		try {
-			ObjTemplate template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(Integer.valueOf(documentId));
-			if (template == null) {
-				logger.warn("Active Template null.");
-				throw new Exception("Active Template null.");
-			}
-			contentBytes = template.getContent();
-			if (contentBytes == null) {
-				logger.warn("Content of the Active template null.");
-				throw new Exception("Content of the Active template null");
-			}
-			// get bytes of template and transform them into a SourceBean
-			String contentStr = new String(contentBytes);
-			content = SourceBean.fromXMLString(contentStr);
-			logger.debug("Got the content of the template");
-		} catch (Exception e) {
-			logger.error("Error while converting the Template bytes into a SourceBean object");
-			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2003);
-			userError.setBundle("messages");
-			throw userError;
-		}
-		logger.debug("OUT");
-		return content;
-	}
-
-	private void setGeneralVariables(RequestContainer requestContainer){
-		logger.debug("IN");
-		String isScheduledExec = (String)requestContainer.getAttribute("scheduledExecution");
-		if(isScheduledExec != null && Boolean.valueOf(isScheduledExec)){
-			this.executionModalityScheduler = true;
-		}
-		SessionContainer session = requestContainer.getSessionContainer();
-		profile = (IEngUserProfile) session.getPermanentContainer().getAttribute(
-				IEngUserProfile.ENG_USER_PROFILE);
-
-		locale=GeneralUtilities.getDefaultLocale();
-		lang=(String)session.getPermanentContainer().getAttribute(SpagoBIConstants.AF_LANGUAGE);
-		country=(String)session.getPermanentContainer().getAttribute(SpagoBIConstants.AF_COUNTRY);
-		if(lang!=null && country!=null){
-			locale=new Locale(lang,country,"");
-		}
-
-		String internationalizedFormatSB = null; 
-		if(lang!=null && country!=null){
-			internationalizedFormatSB = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-"+lang.toUpperCase()+"_"+country.toUpperCase()+".format"));				
-		}else{
-			internationalizedFormatSB = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
-		}
-		internationalizedFormat = internationalizedFormatSB;	
-		String formatServerSB = (SingletonConfig.getInstance().getConfigValue(("SPAGOBI.DATE-FORMAT-SERVER.format")));
-		formatServer = formatServerSB;
-
-		logger.debug("OUT");
-	}
+	
 
 
 	/**
@@ -621,31 +519,11 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	}
 
 
-	private KpiLineVisibilityOptions setVisibilityOptions(){
-		logger.debug("IN");
-		KpiLineVisibilityOptions options = new KpiLineVisibilityOptions();
-		options.setClosed_tree(closed_tree);
-		options.setDisplay_alarm(display_alarm);
-		options.setDisplay_bullet_chart(display_bullet_chart);
-		options.setDisplay_semaphore(display_semaphore);
-		options.setDisplay_threshold_image(display_threshold_image);
-		options.setDisplay_weight(display_weight);
-		options.setShow_axis(show_axis);
-		options.setWeighted_values(weighted_values);
 
-		options.setBullet_chart_title(bullet_chart_title);
-		options.setKpi_title(kpi_title);
-		options.setModel_title(model_title);
-		options.setThreshold_image_title(threshold_image_title);
-		options.setWeight_title(weight_title);
-		options.setValue_title(value_title);
-		logger.debug("OUT");
-		return options;
-	}
 
 	public void calculateAndInsertKpiValueWithResources(Integer miId,List resources)throws EMFUserError, EMFInternalError, SourceBeanException {
 		logger.debug("IN");
-		ModelInstanceNode modI =  DAOFactory.getModelInstanceDAO().loadModelInstanceById(miId, dateOfKPI);
+		ModelInstanceNode modI =  DAOFactory.getModelInstanceDAO().loadModelInstanceById(miId, parameters.getDateOfKPI());
 		if (modI != null) {
 			logger.info("Loaded Model Instance Node with id: " + modI.getModelInstanceNodeId());
 		}
@@ -669,14 +547,14 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			Integer kpiInstanceID = kpiI.getKpiInstanceId();
 			Date kpiInstBegDt = kpiI.getD();
 
-			kVal = setTimeAttributes(kVal, kpiI);		
+			kVal = computation.setTimeAttributes(kVal, kpiI);		
 			kVal.setKpiInstanceId(kpiInstanceID);
 			logger.debug("Setted the KpiValue Instance ID:"+kpiInstanceID);	
 
-			if ( (dateOfKPI.after(kpiInstBegDt)||dateOfKPI.equals(kpiInstBegDt))) {
+			if ( (parameters.getDateOfKPI().after(kpiInstBegDt)||parameters.getDateOfKPI().equals(kpiInstBegDt))) {
 				//kpiInstance doesn't change
 			}else{
-				KpiInstance tempKIn = DAOFactory.getKpiInstanceDAO().loadKpiInstanceByIdFromHistory(kpiInstanceID,dateOfKPI);
+				KpiInstance tempKIn = DAOFactory.getKpiInstanceDAO().loadKpiInstanceByIdFromHistory(kpiInstanceID,parameters.getDateOfKPI());
 				if(tempKIn==null){//kpiInstance doesn't change
 				}else{
 					// in case older thresholds have to be retrieved
@@ -685,10 +563,10 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			}
 			Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiI.getKpi());
 			
-			kVal = getFromKpiInstAndSetKpiValueAttributes(kpiI,kVal, kpi);
+			kVal = computation.getFromKpiInstAndSetKpiValueAttributes(kpiI,kVal, kpi);
 
 			// If it has to be calculated for a Resource. The resource will be set as parameter
-			HashMap temp = (HashMap) this.parametersObject.clone();
+			HashMap temp = (HashMap) this.parameters.getParametersObject().clone();
 			temp.put("ParModelInstance", miId);	
 			temp.put("ParKpiInstance", kpiInstanceID.toString());
 			// If not, the dataset will be calculated without the parameter Resource
@@ -697,55 +575,55 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			if(dataSet!=null){
 				
 				//if parameter exists and OU is abilitaded for Model Instance, than calculate as dataset parameter
-				String parKpiOuLabel = (String)this.parametersObject.get("ParKpiOU");
+				String parKpiOuLabel = (String)this.parameters.getParametersObject().get("ParKpiOU");
 				logger.info("Got ParKpiOU: " + parKpiOuLabel);
 				
-				String paramLabelHierarchy = (String)this.parametersObject.get("ParKpiHierarchy");
+				String paramLabelHierarchy = (String)this.parameters.getParametersObject().get("ParKpiHierarchy");
 				logger.info("Got ParKpiHierarchy: " + paramLabelHierarchy);
 				setOUAbilitated(miId, parKpiOuLabel, paramLabelHierarchy);
 				
 				if(ouList != null && !ouList.isEmpty()){
-					if(use_ou){
+					if(templateConfiguration.isUse_ou()){
 						for(int i = 0; i<ouList.size(); i++){
 							OrganizationalUnitGrantNode grantNode = ouList.get(i);
 							String ouLabel = grantNode.getOuNode().getOu().getLabel();
 							String hierLabel = grantNode.getOuNode().getHierarchy().getLabel();
 							if(parKpiOuLabel == null){
-								this.parametersObject.put("ParKpiOU", ouLabel);
-								this.parametersObject.put("ParKpiHierarchy", hierLabel);
+								this.parameters.getParametersObject().put("ParKpiOU", ouLabel);
+								this.parameters.getParametersObject().put("ParKpiHierarchy", hierLabel);
 							}
 
 							kVal.setGrantNodeOU(grantNode);
-							kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), modI.getModelInstanceNodeId());
-							kVal = getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), true, modI.getModelInstanceNodeId());
+							kVal = computation.recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,parameters.getDateOfKPI(),kVal.getEndDate(), modI.getModelInstanceNodeId());
+							kVal = computation.getKpiValueFromDataset(dataSet,temp,kVal,parameters.getDateOfKPI(),kVal.getEndDate(), true, modI.getModelInstanceNodeId());
 							if(ouWarning != null && kVal.getValue() == null){
 								kVal.setValueDescr(ouWarning);		
 							}
 							if(parKpiOuLabel == null){
-								this.parametersObject.remove("ParKpiOU");
-								this.parametersObject.remove("ParKpiHierarchy");
+								this.parameters.getParametersObject().remove("ParKpiOU");
+								this.parameters.getParametersObject().remove("ParKpiHierarchy");
 							}
 						}
 					}else{
-						kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), modI.getModelInstanceNodeId());
-						kVal = getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), true, modI.getModelInstanceNodeId());
+						kVal = computation.recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,parameters.getDateOfKPI(),kVal.getEndDate(), modI.getModelInstanceNodeId());
+						kVal = computation.getKpiValueFromDataset(dataSet,temp,kVal,parameters.getDateOfKPI(),kVal.getEndDate(), true, modI.getModelInstanceNodeId());
 					}
 				}else{				
-					if(use_ou){		
+					if(templateConfiguration.isUse_ou()){		
 						kVal = new KpiValue();
 						kVal.setValueDescr(ouWarning);	
 						kVal.setKpiInstanceId(kpiI.getKpiInstanceId());
-			            if(dateIntervalFrom!=null && dateIntervalTo!=null){
-			            	kVal.setBeginDate(dateIntervalFrom);
-			            	kVal.setEndDate(dateIntervalTo);
+			            if(parameters.getDateIntervalFrom()!=null && parameters.getDateIntervalTo()!=null){
+			            	kVal.setBeginDate(parameters.getDateIntervalFrom());
+			            	kVal.setEndDate(parameters.getDateIntervalTo());
 		                } else{
-		                	kVal.setBeginDate(dateOfKPI);
-		                	kVal.setEndDate(dateOfKPI);						
+		                	kVal.setBeginDate(parameters.getDateOfKPI());
+		                	kVal.setEndDate(parameters.getDateOfKPI());						
 		                }
 						kVal.setValue(null);
 					}else{
-						kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), modI.getModelInstanceNodeId());
-						kVal = getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), true, modI.getModelInstanceNodeId());
+						kVal = computation.recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,parameters.getDateOfKPI(),kVal.getEndDate(), modI.getModelInstanceNodeId());
+						kVal = computation.getKpiValueFromDataset(dataSet,temp,kVal,parameters.getDateOfKPI(),kVal.getEndDate(), true, modI.getModelInstanceNodeId());
 						
 					}	
 
@@ -773,22 +651,22 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 	private KpiLine retrieveKpiLine(KpiLine line,KpiValue value, KpiInstance kpiI, Integer miId, Resource r, boolean alreadyExistent) throws EMFUserError, EMFInternalError, SourceBeanException{
 		//if parameter exists and OU is abilitaded for Model Instance, than calculate as dataset parameter
-		String parKpiOuLabel = (String)this.parametersObject.get("ParKpiOU");
+		String parKpiOuLabel = (String)this.parameters.getParametersObject().get("ParKpiOU");
 		logger.info("Got ParKpiOU: " + parKpiOuLabel);
-		String paramLabelHierarchy = (String)this.parametersObject.get("ParKpiHierarchy");
+		String paramLabelHierarchy = (String)this.parameters.getParametersObject().get("ParKpiHierarchy");
 		logger.info("Got ParKpiHierarchy: " + paramLabelHierarchy);
 		setOUAbilitated(miId, parKpiOuLabel, paramLabelHierarchy);
 		
 
 		if(ouList != null && !ouList.isEmpty()){
-			if(use_ou){
+			if(templateConfiguration.isUse_ou()){
 				for(int i = 0; i<ouList.size(); i++){
 					OrganizationalUnitGrantNode grantNode = (OrganizationalUnitGrantNode)ouList.get(i);
 					String ouLabel =grantNode.getOuNode().getOu().getLabel();
 					String hierLabel =grantNode.getOuNode().getHierarchy().getLabel();
 					if(parKpiOuLabel == null){
-						this.parametersObject.put("ParKpiOU", ouLabel);
-						this.parametersObject.put("ParKpiHierarchy", hierLabel);
+						this.parameters.getParametersObject().put("ParKpiOU", ouLabel);
+						this.parameters.getParametersObject().put("ParKpiHierarchy", hierLabel);
 					}
 					value = getValueDependingOnBehaviour(kpiI, miId, r, alreadyExistent , grantNode);
 					line.setValue(value);
@@ -796,7 +674,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 						value.setValueDescr(ouWarning);		
 					}
 					if(parKpiOuLabel == null){
-						this.parametersObject.remove("ParKpiOU");
+						this.parameters.getParametersObject().remove("ParKpiOU");
 					}
 				}
 			}else{
@@ -804,16 +682,16 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				line.setValue(value);
 			}
 		}else{				
-			if(use_ou){		
+			if(templateConfiguration.isUse_ou()){		
 				value = new KpiValue();
 				value.setValueDescr(ouWarning);	
 				value.setKpiInstanceId(kpiI.getKpiInstanceId());
-	            if(dateIntervalFrom!=null && dateIntervalTo!=null){
-	            	value.setBeginDate(dateIntervalFrom);
-	            	value.setEndDate(dateIntervalTo);
+	            if(parameters.getDateIntervalFrom()!=null && parameters.getDateIntervalTo()!=null){
+	            	value.setBeginDate(parameters.getDateIntervalFrom());
+	            	value.setEndDate(parameters.getDateIntervalTo());
                 } else{
-					value.setBeginDate(dateOfKPI);
-					value.setEndDate(dateOfKPI);						
+					value.setBeginDate(parameters.getDateOfKPI());
+					value.setEndDate(parameters.getDateOfKPI());						
                 }
 	            value.setValue(null);
 			}else{
@@ -828,7 +706,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	public KpiLine getBlock(Integer miId, Resource r) throws EMFUserError, EMFInternalError, SourceBeanException {
 		logger.debug("IN");
 		KpiLine line = new KpiLine();
-		ModelInstanceNode modI = DAOFactory.getModelInstanceDAO().loadModelInstanceById(miId, dateOfKPI);
+		ModelInstanceNode modI = DAOFactory.getModelInstanceDAO().loadModelInstanceById(miId, parameters.getDateOfKPI());
 		if (modI != null) {
 			logger.info("Loaded Model Instance Node with id: " + modI.getModelInstanceNodeId());
 		}
@@ -855,7 +733,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		boolean alreadyExistent = false;
 
 		if (kpiI == null && modI.getModelInstaceReferenceLabel() != null){
-			ModelInstanceNode modelInstanceRefered = DAOFactory.getModelInstanceDAO().loadModelInstanceByLabel(modI.getModelInstaceReferenceLabel(), dateOfKPI);
+			ModelInstanceNode modelInstanceRefered = DAOFactory.getModelInstanceDAO().loadModelInstanceByLabel(modI.getModelInstaceReferenceLabel(), parameters.getDateOfKPI());
 			alreadyExistent = true;
 			if (modelInstanceRefered != null && modelInstanceRefered.getKpiInstanceAssociated() != null){
 				kpiI = modelInstanceRefered.getKpiInstanceAssociated();
@@ -878,7 +756,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 					UdpValue udpVal = udps.get(i);
 					String udpParameterNameForDataset = udpVal.getName();
 					String udpParameterValueForDataset = udpVal.getValue();
-					this.parametersObject.put(udpParameterNameForDataset, udpParameterValueForDataset);
+					this.parameters.getParametersObject().put(udpParameterNameForDataset, udpParameterValueForDataset);
 				}
 				logger.debug("if udp is present passes a upd name = parameter name to dataset, by ading it to HashMap pars");
 			}
@@ -902,7 +780,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				line.setDocuments(documents);
 
 			}
-			if (display_alarm && value!=null && value.getValue()!= null) {
+			if (templateConfiguration.isDisplay_alarm() && value!=null && value.getValue()!= null) {
 				Boolean alarm = DAOFactory.getKpiInstanceDAO().isKpiInstUnderAlramControl(kpiInstID);
 				logger.debug("KPI is under alarm control: " + alarm.toString());
 				line.setAlarm(alarm);
@@ -934,7 +812,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		ouWarning = null;
 		//looks up for OU grants
 		logger.debug("this is hierarchy:"+paramLabelHierarchy);
-		List<OrganizationalUnitGrantNode> grants = DAOFactory.getOrganizationalUnitDAO().getGrantsValidByDate(miId, dateOfKPI);
+		List<OrganizationalUnitGrantNode> grants = DAOFactory.getOrganizationalUnitDAO().getGrantsValidByDate(miId, parameters.getDateOfKPI());
 		if(grants != null){
 			for(int i = 0; i<grants.size(); i++){				
 				OrganizationalUnitGrantNode grantNode = grants.get(i);
@@ -942,7 +820,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				OrganizationalUnitHierarchy hier = grant.getHierarchy();
 				if(paramLabelOU == null){
 					//scheduling mode 
-					if(executionModalityScheduler){
+					if(data.isExecutionModalityScheduler()){
 						//than all OU valid by date are filling
 						if(hier.getLabel().equalsIgnoreCase(paramLabelHierarchy)){
 							ouList.add(grantNode);
@@ -987,42 +865,42 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		KpiValue value = new KpiValue();
 		boolean no_period_to_period = false;
 		OrganizationalUnitGrantNode grantNodeToUse = null;
-		if(grantNode != null && use_ou){
+		if(grantNode != null && templateConfiguration.isUse_ou()){
 			grantNodeToUse = grantNode;
 		}
 		if(alreadyExistent){//use diplay behaviour since value already exists
 			logger.debug("Display behaviour");
-			value = DAOFactory.getKpiDAO().getDisplayKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r, grantNodeToUse);
+			value = DAOFactory.getKpiDAO().getDisplayKpiValue(kpiI.getKpiInstanceId(), parameters.getDateOfKPI(), r, grantNodeToUse);
 			Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiI.getKpi());			
-			value = getFromKpiInstAndSetKpiValueAttributes(kpiI, value, kpi);
+			value = computation.getFromKpiInstAndSetKpiValueAttributes(kpiI, value, kpi);
 			logger.debug("Old KpiValue retrieved it could be still valid or not");
 		}else{	
-			if(behaviour.equalsIgnoreCase("timeIntervalDefault")){
-				if(dateIntervalFrom!=null && dateIntervalTo!=null){
-					value = DAOFactory.getKpiDAO().getKpiValueFromInterval(kpiI.getKpiInstanceId(), dateIntervalFrom, dateIntervalTo, r, grantNodeToUse);
+			if(parameters.getBehaviour().equalsIgnoreCase("timeIntervalDefault")){
+				if(parameters.getDateIntervalFrom()!=null && parameters.getDateIntervalTo()!=null){
+					value = DAOFactory.getKpiDAO().getKpiValueFromInterval(kpiI.getKpiInstanceId(), parameters.getDateIntervalFrom(), parameters.getDateIntervalTo(), r, grantNodeToUse);
 					if (value==null){
 						IDataSet dataSet = DAOFactory.getKpiDAO().getDsFromKpiId(kpiI.getKpi());	
 						logger.info("Retrieved the Dataset to be calculated: " + (dataSet!=null ? dataSet.getId():"null"));
-						value = getNewKpiValue(dataSet, kpiI, r, miId, grantNodeToUse);		
+						value = computation.getNewKpiValue(dataSet, kpiI, r, miId, grantNodeToUse);		
 					}
 				}else{
 					value = null;
 				}
-			}else if(behaviour.equalsIgnoreCase("timeIntervalForceRecalculation")){
-				if(dateIntervalFrom!=null && dateIntervalTo!=null){
-					DAOFactory.getKpiDAO().deleteKpiValueFromInterval(kpiI.getKpiInstanceId(), dateIntervalFrom, dateIntervalTo, r, grantNodeToUse);
+			}else if(parameters.getBehaviour().equalsIgnoreCase("timeIntervalForceRecalculation")){
+				if(parameters.getDateIntervalFrom()!=null && parameters.getDateIntervalTo()!=null){
+					DAOFactory.getKpiDAO().deleteKpiValueFromInterval(kpiI.getKpiInstanceId(), parameters.getDateIntervalFrom(), parameters.getDateIntervalTo(), r, grantNodeToUse);
 					IDataSet dataSet = DAOFactory.getKpiDAO().getDsFromKpiId(kpiI.getKpi());	
 					logger.info("Retrieved the Dataset to be calculated: " + (dataSet!=null ? dataSet.getId():"null"));
-					value = getNewKpiValue(dataSet, kpiI, r, miId, grantNodeToUse);		
+					value = computation.getNewKpiValue(dataSet, kpiI, r, miId, grantNodeToUse);		
 				}else{
 					value = null;
 				}
 			}else{
-				if(behaviour.equalsIgnoreCase("default") || //If the behaviour is default
-						(behaviour.equalsIgnoreCase("recalculate") && kpiI.getPeriodicityId()!=null)){//or the behaviour is recalculate and the kpiinstance has a setted periodicity
+				if(parameters.getBehaviour().equalsIgnoreCase("default") || //If the behaviour is default
+						(parameters.getBehaviour().equalsIgnoreCase("recalculate") && kpiI.getPeriodicityId()!=null)){//or the behaviour is recalculate and the kpiinstance has a setted periodicity
 					// the old value still valid is retrieved
 					logger.debug("Trying to retrieve the old value still valid");
-					value = DAOFactory.getKpiDAO().getKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r, grantNodeToUse);
+					value = DAOFactory.getKpiDAO().getKpiValue(kpiI.getKpiInstanceId(), parameters.getDateOfKPI(), r, grantNodeToUse);
 					logger.debug("Old KpiValue retrieved");		
 				}
 				if(value!=null && value.getEndDate()!=null && kpiI.getPeriodicityId()!=null){
@@ -1036,19 +914,19 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				}
 				if (value==null || //If the retrieved value is null
 						no_period_to_period || //or the periodicity was before null and now is setted
-						behaviour.equalsIgnoreCase("force_recalculation") || //or the  behaviour is force_recalculation
-						(behaviour.equalsIgnoreCase("recalculate") && kpiI.getPeriodicityId()==null) ) {// or the behaviour is recalculate and the kpiinstance hasn't a setted periodicity
+						parameters.getBehaviour().equalsIgnoreCase("force_recalculation") || //or the  behaviour is force_recalculation
+						(parameters.getBehaviour().equalsIgnoreCase("recalculate") && kpiI.getPeriodicityId()==null) ) {// or the behaviour is recalculate and the kpiinstance hasn't a setted periodicity
 					//a new value is calculated
 					logger.debug("Old value not valid anymore or recalculation forced");
 					IDataSet dataSet = DAOFactory.getKpiDAO().getDsFromKpiId(kpiI.getKpi());	
 					logger.info("Retrieved the Dataset to be calculated: " + (dataSet!=null ? dataSet.getId():"null"));
-					value = getNewKpiValue(dataSet, kpiI, r, miId, grantNodeToUse);		
+					value = computation.getNewKpiValue(dataSet, kpiI, r, miId, grantNodeToUse);		
 
-				}else if(behaviour.equalsIgnoreCase("display")){//diplay behaviour
+				}else if(parameters.getBehaviour().equalsIgnoreCase("display")){//diplay behaviour
 					logger.debug("Display behaviour");
-					value = DAOFactory.getKpiDAO().getDisplayKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r, grantNodeToUse);
+					value = DAOFactory.getKpiDAO().getDisplayKpiValue(kpiI.getKpiInstanceId(), parameters.getDateOfKPI(), r, grantNodeToUse);
 					Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiI.getKpi());			
-					value = getFromKpiInstAndSetKpiValueAttributes(kpiI, value, kpi);
+					value = computation.getFromKpiInstAndSetKpiValueAttributes(kpiI, value, kpi);
 					logger.debug("Old KpiValue retrieved it could be still valid or not");
 				} 
 			}
@@ -1057,309 +935,9 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		return value;
 	}
 
+	
 
-	public KpiValue getNewKpiValue(IDataSet dataSet, KpiInstance kpiInst, Resource r, Integer modelInstanceId, OrganizationalUnitGrantNode grantNode) throws EMFUserError, EMFInternalError, SourceBeanException {
-
-		logger.debug("IN");
-		Integer kpiInstanceID = kpiInst.getKpiInstanceId();
-		Date kpiInstBegDt = kpiInst.getD();
-
-		KpiValue kVal = new KpiValue();
-		kVal = setTimeAttributes(kVal, kpiInst);		
-		kVal.setKpiInstanceId(kpiInstanceID);
-		logger.debug("Setted the KpiValue Instance ID:"+kpiInstanceID);	
-		logger.debug("kpiInstBegDt begin date: "+(kpiInstBegDt!=null ? kpiInstBegDt.toString(): "Begin date null"));
-		
-		if(grantNode != null){
-			kVal.setGrantNodeOU(grantNode);
-			logger.debug("Setted the OU label :"+grantNode.getOuNode().getOu().getLabel());	
-			logger.debug("Setted the hierarchy label :"+grantNode.getOuNode().getHierarchy().getLabel());	
-		}
-		if ( (dateOfKPI.after(kpiInstBegDt)||dateOfKPI.equals(kpiInstBegDt))) {
-			//kpiInstance doesn't change
-		}else{
-			KpiInstance tempKIn = DAOFactory.getKpiInstanceDAO().loadKpiInstanceByIdFromHistory(kpiInstanceID,dateOfKPI);
-			if(tempKIn==null){//kpiInstance doesn't change
-			}else{
-				// in case older thresholds have to be retrieved
-				kpiInst = tempKIn;
-			}
-		}
-		Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiInst.getKpi());
-		
-		kVal = getFromKpiInstAndSetKpiValueAttributes(kpiInst,kVal, kpi);
-
-		// If it has to be calculated for a Resource. The resource will be set
-		// as parameter
-		HashMap temp = (HashMap) this.parametersObject.clone();
-		if (r != null) {
-			String colName = r.getColumn_name();
-			String value = r.getName();
-			String code = r.getCode();
-			kVal.setR(r);
-			logger.info("Setted the Resource:"+r.getName());
-			temp.put("ParKpiResource", value);
-			temp.put("ParKpiResourceCode", code);
-		}
-		// cast Integer Ids to String
-		temp.put("ParModelInstance", modelInstanceId.toString());
-		temp.put("ParKpiInstance", kpiInstanceID.toString());
-
-		
-		// If not, the dataset will be calculated without the parameter Resource
-		// and the DataSet won't expect a parameter of type resource
-		//if(dataSet.hasBehaviour( QuerableBehaviour.class.getName()) ) {
-		if(dataSet!=null){
-			
-			
-			if(behaviour.equalsIgnoreCase("timeIntervalDefault") || behaviour.equalsIgnoreCase("timeIntervalForceRecalculation")){
-				if(dateIntervalFrom!=null && dateIntervalTo!=null){
-					kVal.setBeginDate(dateIntervalFrom);
-					kVal.setEndDate(dateIntervalTo);
-				}
-			}
-			kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), modelInstanceId);
-			kVal = getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), true, modelInstanceId);
-		}
-		logger.debug("OUT");
-		return kVal;
-	}
-
-
-	private KpiValue setTimeAttributes(KpiValue kVal, KpiInstance kpiInst) throws EMFUserError{
-		logger.debug("IN");
-		Date begD = dateOfKPI;
-		Date endDate = null;
-		logger.debug("behaviour: -"+behaviour+"-");
-		kVal.setBeginDate(begD);
-		logger.debug("Setted the KpiValue begin Date:"+begD);
-		if(endKpiValueDate!=null){
-			endDate = endKpiValueDate;
-			kVal.setEndDate(endKpiValueDate);
-		}else if(kpiInst.getPeriodicityId()!=null){
-			Integer seconds = null;
-			if(periodInstID!=null){
-				kpiInst.setPeriodicityId(periodInstID);
-				logger.debug("Setted new Periodicity ID:"+periodInstID.toString());
-			}
-			seconds = DAOFactory.getPeriodicityDAO().getPeriodicitySeconds(kpiInst.getPeriodicityId());
-			// Transforms seconds into milliseconds
-			long milliSeconds = seconds.longValue() * 1000;
-			long begDtTime = begD.getTime();
-			long endTime = begDtTime + milliSeconds;
-			endDate = new Date(endTime);
-			kVal.setEndDate(endDate);
-		}else{
-			GregorianCalendar c = new GregorianCalendar();
-			c.set(9999, 11, 31);			
-			endDate = c.getTime();
-			kVal.setEndDate(endDate);
-		}
-		logger.debug("Setted the KpiValue end Date:"+endDate);
-		logger.debug("OUT");
-		return kVal;
-	}
-
-	private KpiValue getFromKpiInstAndSetKpiValueAttributes(KpiInstance kpiInst,KpiValue kVal, Kpi kpi) throws EMFUserError{
-		logger.debug("IN");
-		Double weight = null;
-		Double target = null;
-		String scaleCode = null;
-		String scaleName = null;
-		String measureTypeCd = null;
-		String measureTypeName = null;
-		List thresholdValues = null;
-		String chartType = null;
-		if (kpiInst!=null){
-			Integer thresholdId = kpiInst.getThresholdId();
-			if (thresholdId!=null) {
-				thresholdValues = DAOFactory.getThresholdValueDAO().loadThresholdValuesByThresholdId(thresholdId);
-			}
-			chartType = "BulletGraph";
-			logger.debug("Requested date d: "+dateOfKPI.toString()+" in between beginDate and EndDate");
-			weight = kpiInst.getWeight();
-			logger.debug("SbiKpiValue weight: "+(weight!=null ? weight.toString() : "weight null"));
-			target = kpiInst.getTarget();
-			
-			//scale type is defined on kpi not on kpiInstance
-			scaleCode = kpi.getMetricScaleCd();
-			logger.debug("SbiKpiValue scaleCode: "+(scaleCode!=null ? scaleCode : "scaleCode null"));
-			Integer scaleId = kpi.getMetricScaleId();
-			DomainDAOHibImpl daoDomain = (DomainDAOHibImpl)DAOFactory.getDomainDAO();
-			if(scaleId != null){
-				Domain scale = daoDomain.loadDomainById(scaleId);
-				scaleName = scale.getValueName();			
-				
-				measureTypeCd = kpi.getMeasureTypeCd();
-				logger.debug("SbiKpiValue scaleName: "+(scaleName!=null ? scaleName : "scaleName null"));
-			}
-		}
-		kVal.setWeight(weight);
-		logger.debug("Setted the KpiValue weight:"+weight);	
-		kVal.setThresholdValues(thresholdValues);
-		logger.debug("Setted the KpiValue thresholds");	
-		kVal.setScaleCode(scaleCode);
-		logger.debug("Kpi value scale Code setted");
-		kVal.setScaleName(scaleName);
-		logger.debug("Kpi value scale Name setted");
-		kVal.setTarget(target);
-		logger.debug("Kpi value target setted");
-		if (chartType != null) kVal.setChartType(chartType);
-		logger.debug("OUT");
-		return kVal;
-	}
-
-	public KpiValue recursiveGetKpiValueFromKpiRel(Kpi kpiParent, 
-													IDataSet dataSet, 
-													HashMap pars, 
-													KpiValue kVal, 
-													Date begD, 
-													Date endDate, 
-													Integer modInstNodeId
-													) throws EMFUserError, EMFInternalError, SourceBeanException{
-		logger.debug("IN");
-		List <KpiRel> relations = DAOFactory.getKpiDAO().loadKpiRelListByParentId(kpiParent.getKpiId());
-		logger.info("extracts relations for kpi parent : "+kpiParent.getKpiName());
-		KpiDAOImpl kpiDao = (KpiDAOImpl)DAOFactory.getKpiDAO();
-		OrganizationalUnitGrantNode ouGrant = kVal.getGrantNodeOU();
-		String ouLabel = "";
-		if(ouGrant != null){
-			ouLabel = ouGrant.getOuNode().getOu().getLabel();
-		}
-		logger.debug("kpi inst id= "+kVal.getKpiInstanceId()+" parent kpi is "+ kpiParent.getKpiName()+" and OU :"+ ouLabel);
-		for(int i= 0; i< relations.size(); i++){
-			KpiRel rel = relations.get(i);
-			Kpi child = rel.getKpiChild();
-			IDataSet chDataSet = kpiDao.getDsFromKpiId(child.getKpiId());
-			HashMap chPars  = new HashMap();
-			chPars.putAll(pars);
-			//then the one in rel table
-			String parameter = rel.getParameter();
-			KpiValue kpiVal = recursiveGetKpiValueFromKpiRel(child, chDataSet, chPars, kVal, begD, endDate, modInstNodeId);
-			pars.put(parameter, kpiVal.getValue());
-
-		}
-		//checks if it is to recalculate
-		//calculate with dataset
-		KpiValue value = getKpiValueFromDataset(dataSet, pars, kVal, begD, endDate, false, modInstNodeId);
-		logger.debug("gets value from dataset : "+value.getValue());
-		logger.debug("OUT");
-		return value;
-	}
-
-	public KpiValue getKpiValueFromDataset(IDataSet dataSet, HashMap pars, KpiValue kVal, 
-			Date begD, Date endDate, boolean doSave, Integer modInstNodeId) throws EMFInternalError, SourceBeanException, EMFUserError, DatasetException{
-		logger.debug("IN"); 
-		KpiValue kpiValTemp = null;
-
-		dataSet.setParamsMap(pars);
-		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
-
-		
-		logger.info("Load Data Set. Label="+dataSet.getLabel());
-
-		// Handle in table SbiKpiError dataset Error
-		try {
-			dataSet.loadData();
-		} catch (RuntimeException e) {
-			// Exception must be handled and recorded in table SbiKpiError, if it is a datasetexception
-
-			if(e instanceof DatasetException){
-				logger.error("write exception in tabe kpiError ", e);
-				IKpiErrorDAO dao= DAOFactory.getKpiErrorDAO();
-				dao.setUserProfile(profile);
-				dao.insertKpiError(
-						(DatasetException)e, 
-						modInstNodeId, 
-						kVal.getR() != null ? kVal.getR().getName() : null );
-			}
-			else{
-				logger.error("Exception not handled by table KpiError ", e);
-			}
-			throw e;
-		}
-
-		IDataStore dataStore = dataSet.getDataStore();
-		logger.debug("Got the datastore");
-
-		if (dataStore != null && !dataStore.isEmpty()) {
-			// Transform result into KPIValue (I suppose that the result has a unique value)
-			IMetaData d = dataStore.getMetaData();		
-			int indexRes = d.getFieldIndex(RESOURCE);
-
-			if(indexRes!=-1){
-				Iterator it = dataStore.iterator();
-				while(it.hasNext()){
-
-					kpiValTemp = kVal.clone();
-					IRecord record =(IRecord)it.next();
-					List fields = record.getFields();
-					kpiValTemp = setKpiValuesFromDataset(kpiValTemp,fields,d, begD, endDate, dataSet.getLabel(),modInstNodeId, kVal);
-
-					if (kpiValTemp.getR()!=null && kVal.getR()!=null && kpiValTemp.getR().getId()!=null && 
-							kVal.getR().getId()!=null && kpiValTemp.getR().getId().equals(kVal.getR().getId())){
-						kVal = kpiValTemp.clone() ;
-					}
-					logger.debug("New value calculated");
-					if(register_values && kpiValTemp.getR().getName()!=null){
-
-						if(doSave){
-							// Insert new Value into the DB
-							IKpiDAO dao= DAOFactory.getKpiDAO();
-							dao.setUserProfile(profile);
-							Integer kpiValueId = dao.insertKpiValue(kpiValTemp);
-							kVal.setKpiValueId(kpiValueId);
-							logger.info("New value inserted in the DB. Resource="+kpiValTemp.getR().getName()+" KpiInstanceId="+kpiValTemp.getKpiInstanceId());
-						}
-						// Checks if the value is alarming (out of a certain range)
-						// If the value is alarming a new line will be inserted in the
-						// sbi_alarm_event table and scheduled to be sent
-						DAOFactory.getAlarmDAO().isAlarmingValue(kpiValTemp);
-						logger.debug("Alarms sent if the value is over the thresholds");
-					}
-
-
-				} 					
-			}else{
-
-				IRecord record = dataStore.getRecordAt(0);
-				List fields = record.getFields();
-				kVal = setKpiValuesFromDataset(kVal,fields,d, begD, endDate, dataSet.getLabel(), modInstNodeId, kVal);
-				logger.debug("New value calculated");
-				if(register_values){
-					if(doSave){
-						// Insert new Value into the DB
-						Integer kpiValueId =DAOFactory.getKpiDAO().insertKpiValue(kVal);
-						kVal.setKpiValueId(kpiValueId);
-						logger.debug("New value inserted in the DB");
-					}
-				}			
-				// Checks if the value is alarming (out of a certain range)
-				// If the value is alarming a new line will be inserted in the
-				// sbi_alarm_event table and scheduled to be sent
-				DAOFactory.getAlarmDAO().isAlarmingValue(kVal);
-				logger.debug("Alarms sent if the value is over the thresholds");
-			}
-		} else {
-			logger.warn("The Data Set doesn't return any value!!!!!");
-			if(register_values){
-				if(doSave){
-					// Insert new Value into the DB
-					Integer kpiValueId =DAOFactory.getKpiDAO().insertKpiValue(kVal);
-					kVal.setKpiValueId(kpiValueId);
-					logger.debug("New value inserted in the DB");
-				}
-			}		
-			DAOFactory.getAlarmDAO().isAlarmingValue(kVal);
-			logger.debug("Alarms sent if the value is over the thresholds");
-		}
-
-		logger.debug("OUT");
-
-		return kVal;
-	}
-
-	private KpiValue setKpiValuesFromDataset(KpiValue kpiValueToReturn, List fields,IMetaData d, 
+	protected KpiValue setKpiValuesFromDataset(KpiValue kpiValueToReturn, List fields,IMetaData d, 
 			Date begD, Date endDate, String datasetLabel,
 			Integer modInstId, KpiValue kpiVal) throws EMFUserError, SourceBeanException{
 		int length = fields.size();
@@ -1436,7 +1014,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			MissingKpiValueException missingKpiValueException = new MissingKpiValueException("cjheck dataset "+datasetLabel+ " because no value field for kpi was found");			
 			
 			IKpiErrorDAO dao= DAOFactory.getKpiErrorDAO();
-			dao.setUserProfile(profile);
+			dao.setUserProfile(data.getProfile());
 			dao.insertKpiError(
 					missingKpiValueException, 
 					modInstId, 
@@ -1447,465 +1025,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	}
 
 
-	private HashMap readParameters(List parametersList) throws EMFUserError {
-		logger.debug("IN");
-		if (parametersList == null) {
-			logger.warn("parametersList si NULL!!!");
-			return new HashMap();
-		}
-		HashMap parametersMap = new HashMap();
-		logger.debug("Check for BIparameters and relative values");
-
-		for (Iterator iterator = parametersList.iterator(); iterator.hasNext();) {
-			SimpleDateFormat f = new SimpleDateFormat();
-			f.applyPattern(formatServer);
-			BIObjectParameter par = (BIObjectParameter) iterator.next();
-			String url = par.getParameterUrlName();
-			List values = par.getParameterValues();
-			if (values != null) {
-				if (values.size() == 1) {
-					if (url.equals("ParKpiResources")) {
-						this.resources = new ArrayList();
-						String value = (String) values.get(0);
-						Integer res = new Integer(value);
-						Resource toAdd = DAOFactory.getResourceDAO().loadResourceById(res);
-						this.resources.add(toAdd);
-					}else if (url.equals("ParKpiResourcesCode")) {
-						this.resources = new ArrayList();
-						for (int k = 0; k < values.size(); k++) {
-							String value = (String) values.get(k);
-							Resource toAdd = DAOFactory.getResourceDAO().loadResourceByCode(value);
-							this.resources.add(toAdd);
-						}
-					}else if(url.equals("register_values")){
-						String value = (String) values.get(0);
-						if (value.equalsIgnoreCase("true")){
-							this.register_values = true;
-							this.register_par_setted = true;
-						}else if (value.equalsIgnoreCase("false")){
-							this.register_values = false;
-							this.register_par_setted = true;
-						}
-					}else if (url.equals("behaviour")){
-						String value = (String) values.get(0);
-						behaviour = value;
-						logger.debug("Behaviour is: "+ behaviour);
-					}else if(url.equals("dataset_multires")){
-						String value = (String) values.get(0);
-						if (value.equalsIgnoreCase("true")){
-							this.dataset_multires = true;
-						}else if (value.equalsIgnoreCase("false")){
-							this.dataset_multires = false;
-						}
-					}else{
-						String value = (String) values.get(0);	
-						if (url.equals("ParKpiDate")) {
-							value = setCalculationDateOfKpi(value);		
-						}else if (url.equals("TimeRangeFrom")) {
-							try {
-								timeRangeFrom = f.parse(value);
-							} catch (ParseException e) {
-								logger.error("ParseException.value=" + value, e);
-							}
-							logger.debug("Setted TIME RANGE FROM");
-						}else if (url.equals("TimeRangeTo")) {
-							try {
-								timeRangeTo = f.parse(value);
-							} catch (ParseException e) {
-								logger.error("ParseException.value=" + value, e);
-							}
-							logger.debug("Setted TIME RANGE TO");
-						}else if(url.equals("dateIntervalFrom")){
-							try {
-								dateIntervalFrom = f.parse(value);
-								value = getDateForDataset(dateIntervalFrom);
-							} catch (ParseException e) {
-								logger.error("ParseException.value=" + value, e);
-							}
-							logger.debug("Setted TIME RANGE TO");
-						}else if(url.equals("dateIntervalTo")){
-							try {
-								dateIntervalTo = f.parse(value);
-								value = getDateForDataset(dateIntervalTo);
-							} catch (ParseException e) {
-								logger.error("ParseException.value=" + value, e);
-							}
-							logger.debug("Setted TIME RANGE TO");
-						}
-						parametersMap.put(url, value);
-					}   
-					//instead if parameter has more than one value
-				}else if (values != null && values.size() >= 1) {
-					if (url.equals("ParKpiResources")) {
-						this.resources = new ArrayList();
-						for (int k = 0; k < values.size(); k++) {
-							String value = (String) values.get(k);
-							Integer res = new Integer(value);
-							Resource toAdd = DAOFactory.getResourceDAO().loadResourceById(res);
-							this.resources.add(toAdd);
-						}
-					}else if (url.equals("ParKpiResourcesCode")) {
-						this.resources = new ArrayList();
-						for (int k = 0; k < values.size(); k++) {
-							String value = (String) values.get(k);
-							Resource toAdd = DAOFactory.getResourceDAO().loadResourceByCode(value);
-							this.resources.add(toAdd);
-						}
-					}else {
-						String value = "'" + (String) values.get(0) + "'";
-						for (int k = 1; k < values.size(); k++) {
-							value = value + ",'" + (String) values.get(k) + "'";
-						}					
-						parametersMap.put(url, value);
-					}
-				}
-			}
-		}
-		logger.debug("OUT. Date:" + this.dateOfKPI);
-		return parametersMap;
-	}
-
-	private String getDateForDataset(Date d){
-		String toReturn = "";
-		String formatSB = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
-		String format = formatSB;
-		SimpleDateFormat f = new SimpleDateFormat();
-		f.applyPattern(format);
-		toReturn = f.format(d);
-		return toReturn;
-	}
-
-	private String setCalculationDateOfKpi(String value){
-		logger.debug("IN");
-		String formatSB = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
-		String format = formatSB;
-		SimpleDateFormat f = new SimpleDateFormat();
-		f.applyPattern(format);
-		String temp = f.format(this.dateOfKPI);
-		try {
-			this.dateOfKPI = f.parse(value);
-			Long milliseconds = this.dateOfKPI.getTime();
-			//If the date required is today then the time considered will be the actual date
-			if(temp.equals(value)){
-				Calendar calendar = new GregorianCalendar();
-				int hrs = calendar.get(Calendar.HOUR); 
-				int mins = calendar.get(Calendar.MINUTE); 
-				int secs = calendar.get(Calendar.SECOND); 
-				int AM = calendar.get(Calendar.AM_PM);//if AM then int=0, if PM then int=1
-				if(AM==0){
-					int millisec =  (secs*1000) + (mins *60*1000) + (hrs*60*60*1000);
-					Long milliSecToAdd = new Long (millisec);
-					milliseconds = new Long(milliseconds.longValue()+milliSecToAdd.longValue());
-					this.dateOfKPI = new Date(milliseconds);
-				}else{
-					int millisec =  (secs*1000) + (mins *60*1000) + ((hrs+12)*60*60*1000);
-					Long milliSecToAdd = new Long (millisec);
-					milliseconds = new Long(milliseconds.longValue()+milliSecToAdd.longValue());
-					this.dateOfKPI = new Date(milliseconds);
-				}    
-
-				String h = "";
-				String min = "";
-				String sec = "";
-				if(hrs<10){
-					if(AM==0){
-						h="0"+hrs;
-					}else{
-						hrs = hrs+12;
-						h=""+hrs;
-					}
-				}else{
-					if(AM==0){
-						h =""+ hrs;
-					}else{
-						hrs = hrs+12;
-						h=""+hrs;
-					}
-				}
-				if(mins<10){
-					min="0"+mins;
-				}else{
-					min =""+ mins;
-				}
-				if(secs<10){
-					sec="0"+secs;
-				}else{
-					sec =""+ secs;
-				}
-				value ="'"+ value +" "+h+":"+min+":"+sec+"'";
-			}else{
-				value ="'"+ value +" 00:00:00'";
-			}
-		} catch (ParseException e) {
-			logger.error("ParseException.value=" + value, e);
-		}
-		logger.debug("OUT");
-		return value;
-	}
-
-	/**
-	 * Function that sets the basic values getting them from the xml template
-	 * @param content The template SourceBean containing parameters configuration
-	 */
-	public void getSetConf(SourceBean content) {
-		logger.debug("IN");
-		this.confMap = new HashMap();
-
-		//Getting TITLE and replacing eventual parameters
-		if (content.getAttribute("name") != null) {
-			String titleChart = (String) content.getAttribute("name");
-			titleChart = replaceParsInString(titleChart);
-			setName(titleChart);
-		} 
-
-		//Setting title style
-		SourceBean styleTitleSB = (SourceBean) content.getAttribute("STYLE_TITLE");
-		if (styleTitleSB != null) {
-			String fontS = (String) content.getAttribute("STYLE_TITLE.font");
-			String sizeS = (String) content.getAttribute("STYLE_TITLE.size");
-			String colorS = (String) content.getAttribute("STYLE_TITLE.color");
-			try {
-				Color color = Color.decode(colorS);
-				int size = Integer.valueOf(sizeS).intValue();
-				styleTitle = new StyleLabel(fontS, size, color);
-			} catch (Exception e) {
-				logger.error("Wrong style Title settings, use default",e);
-			}
-
-		} else {
-			styleTitle = new StyleLabel("Arial", 16, new Color(255, 0, 0));
-		}
-		this.confMap.put("styleTitle", styleTitle);
-
-		//Getting SUBTITLE and setting its style
-		SourceBean styleSubTitleSB = (SourceBean) content.getAttribute("STYLE_SUBTITLE");
-		if (styleSubTitleSB != null) {
-
-			String subTitle = (String) content.getAttribute("STYLE_SUBTITLE.name");
-			subTitle = replaceParsInString(subTitle);
-			setSubName(subTitle);		
-			String fontS = (String) content.getAttribute("STYLE_SUBTITLE.font");
-			String sizeS = (String) content.getAttribute("STYLE_SUBTITLE.size");
-			String colorS = (String) content.getAttribute("STYLE_SUBTITLE.color");
-			try {
-				Color color = Color.decode(colorS);
-				int size = Integer.valueOf(sizeS).intValue();
-				styleSubTitle = new StyleLabel(fontS, size, color);
-			} catch (Exception e) {
-				logger.error("Wrong style SubTitle settings, use default");
-			}
-		} else {
-			styleSubTitle = new StyleLabel("Arial", 12, new Color(0, 0, 0));
-		}
-		this.confMap.put("styleSubTitle", styleSubTitle);
-
-		// get all the other template parameters
-		try {
-			Map dataParameters = new HashMap();
-			SourceBean dataSB = (SourceBean) content.getAttribute("CONF");
-			List dataAttrsList = dataSB.getContainedSourceBeanAttributes();
-			Iterator dataAttrsIter = dataAttrsList.iterator();
-			while (dataAttrsIter.hasNext()) {
-				SourceBeanAttribute paramSBA = (SourceBeanAttribute) dataAttrsIter.next();
-				SourceBean param = (SourceBean) paramSBA.getValue();
-				String nameParam = (String) param.getAttribute("name");
-				String valueParam = (String) param.getAttribute("value");
-				dataParameters.put(nameParam, valueParam);
-			}
-
-			closed_tree = true;
-			if (dataParameters.get("closed_tree") != null
-					&& !(((String) dataParameters.get("closed_tree")).equalsIgnoreCase(""))) {
-				String leg = (String) dataParameters.get("closed_tree");
-				if (leg.equalsIgnoreCase("false"))
-					closed_tree = false;
-			}
-			this.confMap.put("closed_tree", closed_tree);
-
-			display_semaphore = true;
-			if (dataParameters.get("display_semaphore") != null
-					&& !(((String) dataParameters.get("display_semaphore")).equalsIgnoreCase(""))) {
-				String leg = (String) dataParameters.get("display_semaphore");
-				if (leg.equalsIgnoreCase("false"))
-					display_semaphore = false;
-			}
-			this.confMap.put("display_semaphore", display_semaphore);
-
-			display_bullet_chart = true;
-			if (dataParameters.get("display_bullet_chart") != null
-					&& !(((String) dataParameters.get("display_bullet_chart")).equalsIgnoreCase(""))) {
-				String fil = (String) dataParameters.get("display_bullet_chart");
-				if (fil.equalsIgnoreCase("false"))
-					display_bullet_chart = false;
-			}
-			this.confMap.put("display_bullet_chart", display_bullet_chart);
-
-			display_threshold_image = false;
-			if (dataParameters.get("display_threshold_image") != null
-					&& !(((String) dataParameters.get("display_threshold_image")).equalsIgnoreCase(""))) {
-				String fil = (String) dataParameters.get("display_threshold_image");
-				if (fil.equalsIgnoreCase("true"))
-					display_threshold_image = true;
-			}
-			this.confMap.put("display_threshold_image", display_threshold_image);
-
-			display_weight = true;
-			if (dataParameters.get("display_weight") != null
-					&& !(((String) dataParameters.get("display_weight")).equalsIgnoreCase(""))) {
-				String fil = (String) dataParameters.get("display_weight");
-				if (fil.equalsIgnoreCase("false"))
-					display_weight = false;
-			}
-			this.confMap.put("display_weight", display_weight);
-
-			display_alarm = true;
-			if (dataParameters.get("display_alarm") != null
-					&& !(((String) dataParameters.get("display_alarm")).equalsIgnoreCase(""))) {
-				String fil = (String) dataParameters.get("display_alarm");
-				if (fil.equalsIgnoreCase("false"))
-					display_alarm = false;
-			}
-			this.confMap.put("display_alarm", display_alarm);
-			
-			use_ou = false;
-			if (dataParameters.get("use_ou") != null
-					&& !(((String) dataParameters.get("use_ou")).equalsIgnoreCase(""))) {
-				String fil = (String) dataParameters.get("use_ou");
-				if (fil.equalsIgnoreCase("true"))
-					use_ou = true;
-			}
-			this.confMap.put("use_ou", use_ou);
-
-			if(!register_par_setted){//the spagobi register_values if setted has priority
-				register_values = true;
-				if (dataParameters.get("register_values") != null
-						&& !(((String) dataParameters.get("register_values")).equalsIgnoreCase(""))) {
-					String fil = (String) dataParameters.get("register_values");
-					if (fil.equalsIgnoreCase("false"))
-						register_values = false;
-				}
-				this.confMap.put("register_values", register_values);
-			}
-
-			show_axis = false;
-			if (dataParameters.get("show_axis") != null
-					&& !(((String) dataParameters.get("show_axis")).equalsIgnoreCase(""))) {
-				String fil = (String) dataParameters.get("show_axis");
-				if (fil.equalsIgnoreCase("true"))
-					show_axis = true;
-			}
-			this.confMap.put("show_axis", show_axis);
-
-			weighted_values = false;
-			if (dataParameters.get("weighted_values") != null
-					&& !(((String) dataParameters.get("weighted_values")).equalsIgnoreCase(""))) {
-				String fil = (String) dataParameters.get("weighted_values");
-				if (fil.equalsIgnoreCase("true"))
-					weighted_values = true;
-			}
-			this.confMap.put("weighted_values", weighted_values);
-
-			if (dataParameters.get("model_title") != null
-					&& !(((String) dataParameters.get("model_title")).equalsIgnoreCase(""))) {
-				String fil = (String) dataParameters.get("model_title");
-				if (fil!=null) model_title = fil;
-			}else{
-				MessageBuilder msgBuild=new MessageBuilder();
-				model_title = msgBuild.getMessage("sbi.kpi.modelLineTitle", locale);					
-			}
-			this.confMap.put("model_title", model_title);
-
-			if (dataParameters.get("kpi_title") != null) {
-				String fil = (String) dataParameters.get("kpi_title");
-				if (fil!=null) kpi_title = fil;
-			}
-			this.confMap.put("kpi_title", kpi_title);
-
-			if (dataParameters.get("weight_title") != null) {
-				String fil = (String) dataParameters.get("weight_title");
-				if (fil!=null) weight_title = fil;
-			}
-			this.confMap.put("weight_title", weight_title);
-
-			if (dataParameters.get("bullet_chart_title") != null) {
-				String fil = (String) dataParameters.get("bullet_chart_title");
-				if (fil!=null) bullet_chart_title = fil;
-			}
-			this.confMap.put("bullet_chart_title", bullet_chart_title);
-
-			if (dataParameters.get("threshold_image_title") != null) {
-				String fil = (String) dataParameters.get("threshold_image_title");
-				if (fil!=null) threshold_image_title = fil;
-			}
-			this.confMap.put("threshold_image_title", threshold_image_title);
-
-			if (dataParameters.get("value_title") != null) {
-				String fil = (String) dataParameters.get("value_title");
-				if (fil!=null) value_title = fil;
-			}
-			this.confMap.put("value_title", value_title);
-
-			if (dataParameters.get(SpagoBIConstants.PUBLISHER_NAME) != null && dataParameters.get(SpagoBIConstants.PUBLISHER_NAME) != "") {
-				String fil = (String) dataParameters.get(SpagoBIConstants.PUBLISHER_NAME);
-				if (fil!=null) publisher_Name = fil;
-			}
-
-			if (dataParameters.get("metadata_publisher_Name") != null && dataParameters.get("metadata_publisher_Name") != "") {
-				String fil = (String) dataParameters.get("metadata_publisher_Name");
-				if (fil!=null) metadata_publisher_Name = fil;
-			}
-
-			if (dataParameters.get("trend_publisher_Name") != null && dataParameters.get("trend_publisher_Name") != "") {
-				String fil = (String) dataParameters.get("trend_publisher_Name");
-				if (fil!=null) trend_publisher_Name = fil;
-			}
-		} catch (Exception e) {
-			logger.error("error in reading template parameters");
-		}
-	}
-
-	private String replaceParsInString(String title){
-		logger.debug("IN");
-		SimpleDateFormat f = new SimpleDateFormat();
-		f.applyPattern(internationalizedFormat);
-		SimpleDateFormat fServ = new SimpleDateFormat();
-		fServ.applyPattern(formatServer);
-		if (title != null) {
-			String tmpTitle = title;
-			while (!tmpTitle.equals("")) {
-				if (tmpTitle.indexOf("$P{") >= 0) {
-					String parName = tmpTitle
-					.substring(tmpTitle.indexOf("$P{") + 3, tmpTitle.indexOf("}"));
-					String parValue = (parametersObject.get(parName) == null) ? "" : (String) parametersObject
-							.get(parName);
-					parValue = parValue.replaceAll("\'", "");
-					if (parValue.equals("%"))
-						parValue = "";
-					int pos = tmpTitle.indexOf("$P{" + parName + "}") + (parName.length() + 4);
-					if(parName.equalsIgnoreCase("ParKpiDate")){
-						try {
-							if(parValue!=null && !parValue.equalsIgnoreCase("")){
-								Date d = fServ.parse(parValue);
-								parValue = f.format(d);
-							}
-						} catch (ParseException e) {
-							logger.error(e);
-							e.printStackTrace();
-						}
-					}
-					title = title.replace("$P{" + parName + "}", parValue);
-					tmpTitle = tmpTitle.substring(pos);
-				} else
-					tmpTitle = "";
-			}
-		} else{
-			title = "";
-		}
-		logger.debug("OUT");
-		return title;
-	}
-
-	/**
+		/**
 	 * The <code>SpagoBIDashboardInternalEngine</code> cannot manage
 	 * subobjects so this method must not be invoked. 
 	 * @param requestContainer
@@ -1922,13 +1042,6 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		throw new EMFUserError(EMFErrorSeverity.ERROR, "101", messageBundle);
 	}
 
-	public void setName(String _name) {
-		name = _name;
-	}
-
-	public void setSubName(String _name) {
-		subName = _name;
-	}
 
 	/**
 	 * Function not implemented. Thid method should not be called
