@@ -107,7 +107,7 @@ public class KpiEngineJob implements Job {
 	    		SpagoBIKpiInternalEngine engine = new SpagoBIKpiInternalEngine();	    		
 
 				try {
-					engine.execute(reqContainer, resp);
+					engine.executeByKpiEngineJob(reqContainer, resp);
 				} catch (EMFUserError e) {
 					logger.error("Error during engine execution", e);
 					errorHandler.addError(e);
