@@ -340,18 +340,20 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		        		var params = "";
 		        		for(var i = 0; i< drill.param.length; i++){
 		        			if(drill.param[i].type == 'ABSOLUTE'){
-		        				params+= drill.param[i].name +"="+drill.param[i].value;
-		        			
-		    	    			if(i != drill.param.length -1 ){
+		        				if(params !== ""){
 		    	    				params+="&";
 		    	    			}
+		        				params+= drill.param[i].name +"="+drill.param[i].value;
 		        			}
 		        		}
 		        		var relParams = dataConfig.dsPars;
 		        		for(var i = 0; i< drill.param.length; i++){
 		        			if(drill.param[i].type == 'RELATIVE'){
-		        				for(var y =0; y<relParams.length; y++){
+		        				for(var y =0; y<relParams.length; y++){		        					
 		        					if(relParams[y].name == drill.param[i].name){
+		        						if(params !== ""){
+				    	    				params+="&";
+				    	    			}
 				        				params+= drill.param[i].name +"="+relParams[y].value+"";
 			    	    				params+="&";
 		        					}
@@ -361,35 +363,34 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     					//alert(this.name+" "+ev.point.x +" " +ev.point.y);
     		    		for(var i = 0; i< drill.param.length; i++){
     		    			if(drill.param[i].type == 'CATEGORY'){
+    		    				if(params !== ""){
+		    	    				params+="&";
+		    	    			}
     		    				if(ev.point.category !== undefined){
     		    					params+= drill.param[i].name +"="+ev.point.category;
     		    				}else{
     		    					params+= drill.param[i].name +"="+ev.point.name;
-    		    				}
-    		    				
-    		    			
-    			    			if(i != drill.param.length -1 ){
-    			    				params+="&";
-    			    			}
+    		    				}    		    				
     		    			}
     		    			
     		    		}
     		    		for(var i = 0; i< drill.param.length; i++){
     		    			if(drill.param[i].type == 'SERIE'){
+    		    				if(params !== ""){
+		    	    				params+="&";
+		    	    			}
     		    				params+= drill.param[i].name +"="+ev.point.y;
-    		    			
-    			    			if(i != drill.param.length -1 ){
-    			    				params+="&";
-    			    			}
     		    			}
     		    			
     		    		}
+    		    		/*
     		    		if(params.length != 0){
 	    		    		var atpos = params.lastIndexOf("&", params.length-1);
 	    		    		if(params.lastIndexOf("&", params.length-1) != -1){
 	    		    			params = params.substring(0, atpos);
 	    		    		}
     		    		}
+    		    		*/
     					parent.execCrossNavigation("iframe_"+dataConfig.docLabel, doc, params);
     				}
     		};
