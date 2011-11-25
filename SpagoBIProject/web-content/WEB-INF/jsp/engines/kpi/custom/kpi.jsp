@@ -16,6 +16,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+Authors - Monica Franceschini
 --%>
 <%@page import="it.eng.spagobi.engines.kpi.KpiEngineUtil"%>
 <%@page import="org.json.JSONObject, 
@@ -56,39 +58,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	
 	JSONArray kpiRowsArray = new JSONArray();
 	
-	JSONArray kpiColumns = new JSONArray();
-	
-	JSONObject col = new JSONObject();
-	col.put("header", "Model Instance");
-	col.put("dataIndex", "name");
-	col.put("width", "200");
-	kpiColumns.put(col);
-	
-	JSONObject col1 = new JSONObject();
-	col1.put("header", "Actual");
-	col1.put("dataIndex", "actual");
-	col1.put("width", "100");
-	kpiColumns.put(col1);	
-	
-	JSONObject col2 = new JSONObject();
-	col2.put("header", "Target");
-	col2.put("dataIndex", "target");
-	col2.put("width", "70");
-	kpiColumns.put(col2);
-	
-	
-	JSONObject col3 = new JSONObject();
-	col3.put("header", "Status");
-	col3.put("dataIndex", "status");
-	col3.put("width", "70");
-	kpiColumns.put(col3);
-	
-	
-	JSONObject col4 = new JSONObject();
-	col4.put("header", "Trend");
-	col4.put("dataIndex", "trend");
-	col4.put("width", "70");
-	kpiColumns.put(col4);
 	
 	if(!kpiRBlocks.isEmpty()){
 		Iterator blocksIt = kpiRBlocks.iterator();
@@ -116,10 +85,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 		var config = {
 			subtitle: '<%= subTitle%>',
-			columns : <%=kpiColumns%>,
 			json: <%=kpiRowsArray%>
 		};
-
 
 
 		Ext.onReady(function(){
