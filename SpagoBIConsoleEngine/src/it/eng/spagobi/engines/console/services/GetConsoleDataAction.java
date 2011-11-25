@@ -62,6 +62,7 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 	public static String DATASET_LABEL = "ds_label";
 	public static String USER_ID = "userId";
 	public static String CALLBACK = "callback";
+	public static String LOCALE = "LOCALE";
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static String ROWS_LIMIT = "ds_rowsLimit";
@@ -76,6 +77,7 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 		String dataSetLabel;
 		String user;
 		String callback;
+		String locale;
 		Integer start;
 		Integer limit;
 		Integer limitSS; 	//for pagination server side
@@ -99,6 +101,9 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 			callback = getAttributeAsString( CALLBACK );
 			logger.debug("Parameter [" + CALLBACK + "] is equals to [" + callback + "]");
 			
+			locale = getAttributeAsString( LOCALE );
+			logger.debug("Parameter [" + LOCALE + "] is equals to [" + locale + "]");
+			
 			memoryPagination =  getAttributeAsBoolean( MEMORY_PAGINATION );
 			logger.debug("Parameter [" + MEMORY_PAGINATION + "] is equals to [" + memoryPagination + "]");
 			
@@ -113,6 +118,7 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 			
 			limit = (getAttributeAsInteger( LIMIT ) == null) ? -1 :  getAttributeAsInteger( LIMIT );
 			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
+			
 
 			dataSet = null;
 			try {
@@ -122,6 +128,7 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 			}
 			Assert.assertNotNull(dataSet, "Impossible to find a dataset whose label is [" + dataSetLabel + "]");
 			Map params = consoleEngineInstance.getAnalyticalDrivers();
+			params.put(LOCALE, locale);
 			dataSet.setParamsMap(params);
 			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
 			//gets the max number of rows for the table
