@@ -124,8 +124,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 		Ext.onReady(function(){
 
-			//var item = new Sbi.kpi.KpiGUILayout(config);
-			var item = new Sbi.kpi.KpiGridPanel(config);
+			var item = new Sbi.kpi.KpiGUILayout(config);
+			//var item = new Sbi.kpi.KpiGridPanel(config);
 
 		    var viewport = new Ext.Viewport({
 		        layout:'fit',
