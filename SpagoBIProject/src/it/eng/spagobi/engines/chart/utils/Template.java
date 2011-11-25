@@ -404,6 +404,7 @@ public class Template {
 							if(((String)objPar.get("name")).equals(parName)){
 								String val = ((String)objPar.get("value")).replaceAll("'", "");
 								sb.append(val);
+								sb.append(" ");
 							}
 						} catch (JSONException e1) {
 							logger.error("Error while replacing parameters in value: " + e1.getMessage());
