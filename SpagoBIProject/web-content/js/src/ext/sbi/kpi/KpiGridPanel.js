@@ -44,40 +44,22 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.KpiGridPanel =  function(config) {
-		
-		var defaultSettings = {
-		        title: 'Core Team Projects',
-		        region:'center',
-		        enableDD: true,
-		        columns:[{
-		            header: 'Task',
-		            dataIndex: 'task',
-		            width: 230
-		        },{
-		            header: 'Duration',
-		            width: 100,
-		            dataIndex: 'duration',
-		            align: 'center',
-		            sortType: 'asFloat',
-		            tpl: new Ext.XTemplate('{duration:this.formatHours}', {
-		                formatHours: function(v) {
-		                    if(v < 1) {
-		                        return Math.round(v * 60) + ' mins';
-		                    } else if (Math.floor(v) !== v) {
-		                        var min = v - Math.floor(v);
-		                        return Math.floor(v) + 'h ' + Math.round(min * 60) + 'm';
-		                    } else {
-		                        return v + ' hour' + (v === 1 ? '' : 's');
-		                    }
-		                }
-		            })
-		        },{
-		            header: 'Assigned To',
-		            width: 150,
-		            dataIndex: 'user'
-		        }],
+	
+		var columns = config.columns;
+		var json = config.json;
 
-		        dataUrl: 'treegrid-data.json'
+		var defaultSettings = {
+	        title: config.title,
+	        region:'center',
+	        enableDD: true,
+	        columns: columns
+			,loader: new Ext.tree.TreeLoader() // Note: no dataurl, register a TreeLoader to make use of createNode()
+			,root: new Ext.tree.AsyncTreeNode({
+				text: 'KPI root',
+				id:'name',
+				children: json
+			}),
+			rootVisible:false
 				
 		};
 

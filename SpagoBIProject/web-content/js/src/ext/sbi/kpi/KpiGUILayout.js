@@ -57,7 +57,7 @@ Sbi.kpi.KpiGUILayout =  function(config) {
 
 		Ext.apply(this, c);
 		
-		this.intPanels();
+		this.intPanels(c);
 		
 		c = {
 			items:[this.kpiGridPanel, this.kpiAccordinPanel]
@@ -68,11 +68,11 @@ Sbi.kpi.KpiGUILayout =  function(config) {
 
 Ext.extend(Sbi.kpi.KpiGUILayout , Ext.Panel, {
 	kpiGridPanel: null,
-	kpiAccordinPanel: null,
+	kpiAccordionPanel: null,
 	
 	intPanels : function(config){
-		this.kpiGridPanel = new Sbi.kpi.kpiGridPanel();
-		this.kpiAccordinPanel = new Sbi.kpi.kpiAccordinPanel();
+		this.kpiGridPanel = new Sbi.kpi.KpiGridPanel(config);
+		this.kpiAccordionPanel = new Sbi.kpi.KpiAccordionPanel();
 	}
 	
 });
