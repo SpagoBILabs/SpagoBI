@@ -50,7 +50,7 @@ Sbi.kpi.KpiGridPanel =  function(config) {
 
 		var defaultSettings = {
 	        title: config.title,
-	        region:'center',
+	        region: 'center',
 	        enableDD: true,
 	        columns: columns
 			,loader: new Ext.tree.TreeLoader() // Note: no dataurl, register a TreeLoader to make use of createNode()

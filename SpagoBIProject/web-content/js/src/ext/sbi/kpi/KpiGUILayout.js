@@ -53,14 +53,14 @@ Sbi.kpi.KpiGUILayout =  function(config) {
 			defaultSettings = Ext.apply(defaultSettings, Sbi.settings.kpi.kpiGUILayout);
 		}
 
-		var c = Ext.apply(defaultSettings, config || {});
+		var c = Ext.apply(defaultSettings);
 
 		Ext.apply(this, c);
 		
-		this.intPanels(c);
+		this.intPanels(config);
 		
 		c = {
-			items:[this.kpiGridPanel, this.kpiAccordinPanel]
+			items:[this.kpiGridPanel, this.kpiAccordionPanel]
 		};
    
 		Sbi.kpi.KpiGUILayout.superclass.constructor.call(this, c);
