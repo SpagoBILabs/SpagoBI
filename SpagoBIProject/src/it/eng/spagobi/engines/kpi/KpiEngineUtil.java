@@ -36,12 +36,15 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.kpi.bo.KpiLine;
 import it.eng.spagobi.engines.kpi.bo.KpiLineVisibilityOptions;
+import it.eng.spagobi.engines.kpi.utils.KpiInterval;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiRel;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
 import it.eng.spagobi.kpi.model.bo.Resource;
+import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
+import java.awt.Color;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -392,17 +395,17 @@ public class KpiEngineUtil {
 			if (kpiLine.getValue() != null) {
 				jsonToReturn.put("actual", kpiLine.getValue().getValue());
 				jsonToReturn.put("target", kpiLine.getValue().getTarget());
-				jsonToReturn.put("iconCls","has-kpi");
+				//jsonToReturn.put("iconCls","has-kpi");
+				jsonToReturn.put("iconCls","");
 			}else{
 				jsonToReturn.put("actual", "");
 				jsonToReturn.put("target", "");
 				jsonToReturn.put("iconCls", "folder");
+				jsonToReturn.put("cls", "node-folder");
 			}
-			if (kpiLine.getThresholdOfValue() != null) {
-				jsonToReturn.put("status", kpiLine.getThresholdOfValue().getColourString());
-			}else{
-				jsonToReturn.put("status", "");
-			}
+			String color = detectColor(kpiLine.getValue());
+			jsonToReturn.put("status", color);
+
 			jsonToReturn.put("trend", "");
 			
 			jsonToReturn.put("expanded", true);
@@ -426,5 +429,44 @@ public class KpiEngineUtil {
 
 		return jsonToReturn;
 
+	}
+	
+	private static String detectColor(KpiValue value){
+		String ret = "";
+		if(value == null){
+			return ret;
+		}
+		if(value.getThresholdOfValue() != null && value.getThresholdOfValue().getColourString() != null){
+			return value.getThresholdOfValue().getColourString();
+		}else{
+			//calculate it
+			String val = value.getValue();
+			getStatus(value.getThresholdValues(), Double.parseDouble(val));
+			
+		}
+
+		return ret;
+		
+	}
+	public static String getStatus(List thresholdValues, double val) {
+		logger.debug("IN");
+		String status = "";
+		if(thresholdValues!=null && !thresholdValues.isEmpty()){
+			Iterator it = thresholdValues.iterator();
+
+			while(it.hasNext()){
+				ThresholdValue t = (ThresholdValue)it.next();
+				String type = t.getThresholdType();
+				Double min = t.getMinValue();
+				Double max = t.getMaxValue();
+				if(val <= max && val >= min){
+					status = t.getColourString();
+				}		
+				logger.debug("New interval added to the Vector");
+			}
+		}
+		logger.debug("OUT");
+		return status;
+		
 	}
 }
