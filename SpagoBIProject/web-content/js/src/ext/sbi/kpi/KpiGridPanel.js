@@ -45,19 +45,18 @@ Ext.ns("Sbi.kpi");
 
 Sbi.kpi.KpiGridPanel =  function(config) {
 	
-		var columns = config.columns;
 		var json = config.json;
 
 		var defaultSettings = {
 	        title: config.title,
 	        region: 'center',
-	        enableDD: true,
-	        columns: columns
+	        enableDD: true
 			,loader: new Ext.tree.TreeLoader() // Note: no dataurl, register a TreeLoader to make use of createNode()
 			,root: new Ext.tree.AsyncTreeNode({
 				text: 'KPI root',
 				id:'name',
 				children: json
+				
 			}),
 			rootVisible:false
 				
@@ -71,7 +70,46 @@ Sbi.kpi.KpiGridPanel =  function(config) {
 
 		Ext.apply(this, c);
 		
+		this.initGrid();
+		
 		Sbi.kpi.KpiGridPanel.superclass.constructor.call(this, c);
 };
 
-Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {});
+Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
+	columns: null
+	
+	, initGrid: function(){
+		var kpiColumns = new Array();
+		
+		var col = {header:'Model Instance',
+		dataIndex:'name',
+		width:200};
+		kpiColumns.push(col);
+		
+		var col1 = {header:'Actual',
+		dataIndex: 'actual',
+		width: 100};
+		kpiColumns.push(col1);	
+		
+		var col2 = {header:'Target',
+		dataIndex:'target',
+		width: 70};
+		kpiColumns.push(col2);
+		
+		var col3 = {header:'Status',
+		dataIndex:'status',
+		//xtype:'templatecolumn', 
+		width:70};
+		kpiColumns.push(col3);
+		
+		var col4 = {header:'Trend',
+		dataIndex:'trend',
+		width:70};
+		kpiColumns.push(col4);
+		
+		this.columns = kpiColumns;
+
+
+	}
+	
+});
