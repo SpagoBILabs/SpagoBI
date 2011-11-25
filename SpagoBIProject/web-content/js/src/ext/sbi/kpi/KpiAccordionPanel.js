@@ -47,8 +47,8 @@ Sbi.kpi.KpiAccordionPanel =  function(config) {
 		
 		var defaultSettings = {};
 
-		if (Sbi.settings && Sbi.settings.kpi && Sbi.settings.kpi.kpiAccordinPanel) {
-			defaultSettings = Ext.apply(defaultSettings, Sbi.settings.kpi.kpiAccordinPanel);
+		if (Sbi.settings && Sbi.settings.kpi && Sbi.settings.kpi.kpiAccordionPanel) {
+			defaultSettings = Ext.apply(defaultSettings, Sbi.settings.kpi.kpiAccordionPanel);
 		}
 
 		var c = Ext.apply(defaultSettings, config || {});
