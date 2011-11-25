@@ -109,91 +109,26 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			if (singleChartConfig.plotOptions){
 				if(singleChartConfig.plotOptions.pie && singleChartConfig.plotOptions.pie.dataLabels &&
 								singleChartConfig.plotOptions.pie.dataLabels.formatter){
-						var formatterCode = "";
-						switch (singleChartConfig.plotOptions.pie.dataLabels.formatter) {
-					        case 'name_percentage':
-					        	formatterCode = this.formatWithNamePercentage();        	
-					        	break;
-					        case 'name_value':
-					        	formatterCode = this.formatWithNameValue();
-					        	break;
-					        case 'percentage':
-					        	formatterCode = this.formatWithPercentage();
-					        	break;
-					        case 'x_y': 
-					        	//TODO : internazionalizzare messaggi
-					        	formatterCode = this.formatWithXY();
-					        	break;	
-					        case 'name':
-					        	formatterCode =  this.formatWithName();
-					        	break;
-					        default: 
-					        	//formatterCode = function (){return  singleChartConfig.plotOptions.pie.dataLabels.formatter;};
-					        	formatterCode =this.formatWithName();
-					        	break	       
-							}
-					        singleChartConfig.plotOptions.pie.dataLabels.formatter = formatterCode;
+						var formatterCode = this.getFormatter(singleChartConfig.plotOptions.pie.dataLabels.formatter);							
+					    singleChartConfig.plotOptions.pie.dataLabels.formatter = formatterCode;
 					}
 				}
 					
 			if(singleChartConfig.series && singleChartConfig.series.formatter){
-				var formatterCode = "";
-				switch (singleChartConfig.series.formatter) {
-			        case 'name_percentage':
-			        	formatterCode = this.formatWithNamePercentage();        	
-			        	break;
-			        case 'name_value':
-			        	formatterCode = this.formatWithNameValue();
-			        	break;
-			        case 'percentage':
-			        	formatterCode = this.formatWithPercentage();
-			        	break;
-			        case 'x_y': 
-			        	//TODO : internazionalizzare messaggi
-			        	formatterCode = this.formatWithXY();
-			        	break;	
-			        case 'name':
-			        	formatterCode =  this.formatWithName();
-			        	break;
-			        default: 
-			        	//formatterCode = function (){return  singleChartConfig.series.formatter;};
-			        	formatterCode = this.formatWithName();
-			        	break	       
-					}
-			        singleChartConfig.series.formatter = formatterCode;
+				var formatterCode = this.getFormatter(singleChartConfig.series.formatter);	
+			    singleChartConfig.series.formatter = formatterCode;
 			}				
 			
 			//defines tooltip			
 			if(singleChartConfig.tooltip && singleChartConfig.tooltip.formatter){
-				var formatterCode = "";
-				switch (singleChartConfig.tooltip.formatter) {
-			        case 'name_percentage':
-			        	formatterCode = this.formatWithNamePercentage();        	
-			        	break;
-			        case 'name_value':
-			        	formatterCode = this.formatWithNameValue();
-			        	break;
-			        case 'percentage':
-			        	formatterCode = this.formatWithPercentage();
-			        	break;
-			        case 'x_y': 
-			        	//TODO : internazionalizzare messaggi
-			        	formatterCode = this.formatWithXY();
-			        	break;	
-			        case 'name':
-			        	formatterCode =  this.formatWithName();
-			        	break;
-			        case 'substring':
-			        	formatterCode =  this.formatSubstringLabel();
-			        	break;
-			        default: 
-			        	//formatterCode = function (){return singleChartConfig.tooltip.formatter;};
-			        	formatterCode = this.formatWithName();
-			        	break	       
-					}
-					singleChartConfig.tooltip.formatter = formatterCode;
+				var formatterCode = this.getFormatter(singleChartConfig.tooltip.formatter);				
+				singleChartConfig.tooltip.formatter = formatterCode;
 			}
 			
+			if(singleChartConfig.xAxis && singleChartConfig.xAxis.labels && singleChartConfig.xAxis.labels.formatter){
+				var formatterCode = this.getFormatter(singleChartConfig.xAxis.labels.formatter);
+				 singleChartConfig.xAxis.labels.formatter = formatterCode;
+			}			
 			//defines series data
 			this.defineSeriesData(singleChartConfig);
 			
@@ -337,9 +272,37 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	}
 	, formatWithNameValue: function (){
 		return function (){return '<b>'+ this.series.name+ '</b><br/>'+ this.point.name ;};
-	}
+	}	
 	, formatSubstringLabel: function (){
-		return function (){return Ext.util.Format.ellipsis( this.series.name, 10) ;};
+		return function (){return '<b>'+ this.value.substring(0,10)+ '</b>';};
+	}
+	, getFormatter: function(obj){
+		var formatterCode = "";
+		switch (obj) {
+        case 'name_percentage':
+        	formatterCode = this.formatWithNamePercentage();        	
+        	break;
+        case 'name_value':
+        	formatterCode = this.formatWithNameValue();
+        	break;
+        case 'percentage':
+        	formatterCode = this.formatWithPercentage();
+        	break;
+        case 'x_y': 
+        	//TODO : internazionalizzare messaggi
+        	formatterCode = this.formatWithXY();
+        	break;	
+        case 'name':
+        	formatterCode =  this.formatWithName();
+        	break;
+        case 'substringLabel':
+        	formatterCode = this.formatSubstringLabel();
+        	break;
+        default: 
+        	formatterCode = this.formatWithName();
+        	break	       
+		}
+		return formatterCode;
 	}
 	
 });
