@@ -64,6 +64,7 @@ public class TemporaryTableManager {
 	public static final String DIALECT_SQLSERVER = "SQLServer";
 	public static final String DIALECT_DB2 = "DB2";
 	public static final String DIALECT_INGRES = "Ingres";
+	public static final String DIALECT_TERADATA = "Teradata";
     
     /**
      * Contains the definition of the existing temporary tables.
@@ -186,8 +187,15 @@ public class TemporaryTableManager {
 			connection = dataSource.getConnection();
 			DatabaseMetaData dbMeta = connection.getMetaData();
 			String driverName = connection.getMetaData().getDriverName();
-					
-			resultSet = dbMeta.getColumns(null, null, tableName, null);
+			String schema = null;
+			String actualTableName = null;
+			if (tableName.indexOf(".") != -1) {
+				schema = tableName.substring(0, tableName.indexOf("."));
+				actualTableName = tableName.substring( tableName.indexOf(".") + 1 );
+			} else {
+				actualTableName = tableName;
+			}
+			resultSet = dbMeta.getColumns(null, schema, actualTableName, null);
 			//if (resultSet.first()) {
 			if (resultSet.next()) {
 				tableDescriptor = new DataSetTableDescriptor();
@@ -441,6 +449,14 @@ public class TemporaryTableManager {
 		Assert.assertNotNull(userId, "User identifier is null!!");
 		
 		String tableNamePrefix = getTableNamePrefix();
+		String schema = null;
+		int dotIndex = tableNamePrefix.indexOf(".");
+		if ( dotIndex != -1 ) {
+			schema = tableNamePrefix.substring(0, dotIndex);
+			logger.debug("Recognized schema in table prefix : [" + schema + "]");
+			tableNamePrefix = tableNamePrefix.substring( dotIndex + 1 );
+			logger.debug("Actual table prefix : [" + schema + "]");
+		}
 		String tableNameSuffix = getTableNameSuffix();
 		String cleanUserId = StringUtils.convertNonAscii(userId);
 		// removing non letters
@@ -465,6 +481,10 @@ public class TemporaryTableManager {
 		if (tableName.length() > 30) {
 			tableName = tableName.substring(0, 30);
 		}
+		if (schema != null && !schema.trim().equals("")) {
+			tableName = schema + "." + tableName.substring(0, 30);
+		}
+		
 		logger.debug("OUT: tableName = " + tableName);
 		return tableName;
 	}
@@ -500,6 +520,8 @@ public class TemporaryTableManager {
 				return "\""; // TODO not tested yet!!!!
 			} else if (dialect.contains(DIALECT_DB2)) {
 				return "\""; // TODO not tested yet!!!!
+			} else if (dialect.contains(DIALECT_TERADATA)) {
+				return "\"";
 			} 
 		}
 		return "";
