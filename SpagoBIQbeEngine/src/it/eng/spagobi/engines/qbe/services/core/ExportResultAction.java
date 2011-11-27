@@ -49,8 +49,12 @@ import it.eng.spagobi.utilities.mime.MimeUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -250,28 +254,50 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 					}
 			
 				}else{
-					try {
-						reportFile = File.createTempFile("report", ".rpt");
-					} catch (IOException ioe) {
-						throw new SpagoBIEngineException("Impossible to create a temporary file to store the template generated on the fly", ioe);
+					
+					
+					if ("text/csv".equalsIgnoreCase( mimeType )) {
+						File csvFile = null;
+						try {
+							csvFile = File.createTempFile("csv", ".csv");
+							exportCsv(csvFile, transaction.getSQLConnection(), sqlQuery);
+							try {
+								writeBackToClient(csvFile, null, writeBackResponseInline, "report." + fileExtension, mimeType);
+							} catch (IOException ioe) {
+								throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
+							}
+						} finally {
+							if (csvFile != null) {
+								csvFile.delete();
+							}
+						}
+						
+					} else {
+					
+					
+						try {
+							reportFile = File.createTempFile("report", ".rpt");
+						} catch (IOException ioe) {
+							throw new SpagoBIEngineException("Impossible to create a temporary file to store the template generated on the fly", ioe);
+						}
+						
+						setJasperClasspath();
+						connection = transaction.getSQLConnection();
+						
+						runner = new ReportRunner( );
+						Locale locale = this.getLocale();
+						try {
+							runner.run( templateContent, reportFile, mimeType, connection, locale);
+						}  catch (Exception e) {
+							throw new SpagoBIEngineException("Impossible compile or to export the report", e);
+						}
+						
+						try {				
+							writeBackToClient(reportFile, null, writeBackResponseInline, "report." + fileExtension, mimeType);
+						} catch (IOException ioe) {
+							throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
+						}	
 					}
-					
-					setJasperClasspath();
-					connection = transaction.getSQLConnection();
-					
-					runner = new ReportRunner( );
-					Locale locale = this.getLocale();
-					try {
-						runner.run( templateContent, reportFile, mimeType, connection, locale);
-					}  catch (Exception e) {
-						throw new SpagoBIEngineException("Impossible compile or to export the report", e);
-					}
-					
-					try {				
-						writeBackToClient(reportFile, null, writeBackResponseInline, "report." + fileExtension, mimeType);
-					} catch (IOException ioe) {
-						throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
-					}	
 				}
 			} else {
 				try {				
@@ -308,6 +334,37 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 
 	
 
+
+
+
+	private void exportCsv(File csvFile, Connection connection, String sqlStatement) {
+		try {
+			FileWriter writer = new FileWriter(csvFile);
+			Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ResultSet resultSet = stmt.executeQuery( sqlStatement );
+			int columnCount = resultSet.getMetaData().getColumnCount();
+			while (resultSet.next()) {
+				writeRecordInfoCsvFile(writer, resultSet, columnCount);
+			}
+			writer.flush();
+			writer.close();
+		} catch (Exception e) {
+			logger.error("Error exporting in CSV", e);
+		}
+	}
+
+
+	private void writeRecordInfoCsvFile(FileWriter writer, ResultSet resultSet,
+			int columnCount) throws SQLException, IOException {
+		for (int i = 1; i <= columnCount; i++) {
+			Object temp = resultSet.getObject(i);
+			if (temp != null) {
+				writer.append(temp.toString());
+			}
+			writer.append("\t");
+		}
+		writer.append("\n");
+	}
 
 
 
