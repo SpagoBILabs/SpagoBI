@@ -88,3 +88,5 @@ Sbi.locale.ln['sbi.console.promptables.btnClose'] = 'Close';
 Sbi.locale.ln['sbi.console.promptables.lookup.Annulla'] = 'Cancel';
 Sbi.locale.ln['sbi.console.promptables.lookup.Confirm'] = 'Confirm';
 Sbi.locale.ln['sbi.console.promptables.lookup.Select'] = 'Select';
+//internationalization
+Sbi.locale.ln['sbi.console.localization.columnsKO'] = 'Error during the internationalizzation. Check the dataset!';

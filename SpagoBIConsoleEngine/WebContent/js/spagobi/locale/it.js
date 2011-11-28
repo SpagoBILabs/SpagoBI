@@ -88,3 +88,5 @@ Sbi.locale.ln['sbi.console.promptables.lookup.Annulla'] = 'Annulla';
 Sbi.locale.ln['sbi.console.promptables.lookup.Confirm'] = 'Conferma';
 Sbi.locale.ln['sbi.console.promptables.lookup.Select'] = 'Seleziona';
 
+Sbi.locale.ln['sbi.console.localization.columnsKO'] = 'Errore durante la internazionalizzazione. Controllare il dataset!';
+

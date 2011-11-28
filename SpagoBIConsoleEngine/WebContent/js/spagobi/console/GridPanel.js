@@ -737,31 +737,46 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		    	// This dataset should returns 3 fields: code, label, locale (it_IT, en_US, fr_FR, es_ES)
 		    	// Ex: cod_UnitSales, Unit Sales, en_US 													 
 				//-------------------------------------------------------------------------------//
-		    	var idxLocale = this.storeLabels.getFieldMetaByAlias("locale").dataIndex;								
-		    	var idxCode = this.storeLabels.getFieldMetaByAlias("code").dataIndex;
-		    	var idxLabel = this.storeLabels.getFieldMetaByAlias("label").dataIndex;
-		    	//apply filter on labelsStore:
-		    	var idxRec = this.storeLabels.findBy(function(record){				    		 
-		    	   if (idxLocale !== undefined && idxCode !== undefined){
-		    		  if(record.data[idxLocale] === Sbi.user.locale && 
-		    		     record.data[idxCode] === fields[i].header) {		
-  						   return true;  						   
-  					   }	
-		    	   } 		  		  
-		  		   return false;				   
-		  	   }, this);		    	 
-		    	var tmpRec = this.storeLabels.getAt(idxRec);		    	
-				if (tmpRec !== undefined) {
-					var tmpHeader =  tmpRec.get(idxLabel);
-			    	if (tmpHeader !== undefined){	
-			    		metaIsChanged = true;
-			    		fields[i].header = tmpHeader;		    		
-			    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
-			    	}else{
+		    	//var idxLocale = this.storeLabels.getFieldMetaByAlias("locale").dataIndex;		
+		    	var idxLocale = (this.storeLabels.getFieldMetaByAlias("locale") !== undefined)?this.storeLabels.getFieldMetaByAlias("locale") :
+		    		this.storeLabels.getFieldMetaByAlias("LOCALE");
+		    	if (idxLocale !== undefined) idxLocale = idxLocale.dataIndex;
+		    	//var idxCode = this.storeLabels.getFieldMetaByAlias("code").dataIndex;
+		    	var idxCode = (this.storeLabels.getFieldMetaByAlias("code") !== undefined)?this.storeLabels.getFieldMetaByAlias("code") :
+		    		this.storeLabels.getFieldMetaByAlias("CODE");
+		    	if (idxCode !== undefined) idxCode = idxCode.dataIndex;		    	
+		    	//var idxLabel = this.storeLabels.getFieldMetaByAlias("label").dataIndex;
+		    	var idxLabel = (this.storeLabels.getFieldMetaByAlias("label") !== undefined)?this.storeLabels.getFieldMetaByAlias("label") :
+		    		this.storeLabels.getFieldMetaByAlias("LABEL");
+		    	if (idxLabel !== undefined) idxLabel = idxLabel.dataIndex;
+		    	
+		    	if (idxLocale == undefined || idxCode == undefined || idxLabel == undefined){
+		    		Sbi.Msg.showError(LN('sbi.console.localization.columnsKO'), 'Service Error');
+		    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+		    	}else{
+			    	//apply filter on labelsStore:
+			    	var idxRec = this.storeLabels.findBy(function(record){				    		 
+			    	   if (idxLocale !== undefined && idxCode !== undefined){
+			    		  if(record.data[idxLocale] === Sbi.user.locale && 
+			    		     record.data[idxCode] === fields[i].header) {		
+	  						   return true;  						   
+	  					   }	
+			    	   } 		  		  
+			  		   return false;				   
+			  	   }, this);		    	 
+			    	var tmpRec = this.storeLabels.getAt(idxRec);		    	
+					if (tmpRec !== undefined) {
+						var tmpHeader =  tmpRec.get(idxLabel);
+				    	if (tmpHeader !== undefined){	
+				    		metaIsChanged = true;
+				    		fields[i].header = tmpHeader;		    		
+				    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+				    	}else{
+							tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+				    	}	
+					}else 
 						tmpMeta.fields[i] = Ext.apply({}, fields[i]);
-			    	}	
-				}else 
-					tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+			    }
 		    }else{
 	    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 	    	}
