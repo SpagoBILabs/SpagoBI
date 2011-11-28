@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 public class ClassLoaderManager{
 	
 	public static ClassLoader qbeClassLoader;
+	private static long jarFileTimeStamp;
 	
 	private static transient Logger logger = Logger.getLogger(ClassLoaderManager.class);
 	
@@ -54,12 +55,14 @@ public class ClassLoaderManager{
 		try {
 			
 			logger.debug("jar file to be loaded: " + jarFile.getAbsoluteFile());
-			
+			jarFile.lastModified();
 			if(qbeClassLoader!=null){
 				if (qbeClassLoader instanceof DynamicClassLoader) {
 					DynamicClassLoader dcl = (DynamicClassLoader) qbeClassLoader;
 					//check if the cached loader has the same jar of the one we need now
-					if ((dcl.getJarFile().equals(jarFile))) {
+					if (	(dcl.getJarFile().equals(jarFile)) 
+							&& jarFileTimeStamp==jarFile.lastModified()//check if the file has been updated..
+						) {
 						logger.debug("Found a cached loader of type: "+ qbeClassLoader.getClass().getName());
 						logger.debug("Set as current loader the one previusly cached");
 						Thread.currentThread().setContextClassLoader(qbeClassLoader);
@@ -145,6 +148,7 @@ public class ClassLoaderManager{
     		    DynamicClassLoader current = new DynamicClassLoader(file, previous);
 			    Thread.currentThread().setContextClassLoader(current);
 			    cl = current;
+			    jarFileTimeStamp = file.lastModified();
 			}
 			
 		} catch (Exception e) {
