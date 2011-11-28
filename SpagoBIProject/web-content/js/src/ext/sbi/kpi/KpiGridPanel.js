@@ -72,15 +72,35 @@ Sbi.kpi.KpiGridPanel =  function(config) {
 		
 		this.initGrid();
 		
+		
 		Sbi.kpi.KpiGridPanel.superclass.constructor.call(this, c);
+		this.initGridListeners();
 };
 
 Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
-	columns: null
+	columns: null,
+	ids : new Array()
 	
 	, initGrid: function(){
 		var kpiColumns = new Array();
-		
+		//onLoad="{[this.draw(values.name)]}"  
+		//
+		var ids = this.ids;
+	    var tpl = new Ext.XTemplate(
+			      '<tpl for=".">'
+	    		  ,'<tpl if="values.status">'
+			      ,'<canvas id="{values.name}" width="15px" height="15px" onLoad="{[this.draw(values.name, values.status)]}" style="align: center;"/>'	     
+			      ,'</tpl>'
+			      ,'</tpl>'
+			      ,{
+			          ids: this.ids,
+			          draw: function(val, color) {
+			    	  	  //console.log(val);
+			    	  	  var status = {val : val, color: color};
+			              ids.push(status);
+			          }
+			      }
+			);
 		var col = {header:'Model Instance',
 		dataIndex:'name',
 		width:200};
@@ -98,18 +118,46 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 		
 		var col3 = {header:'Status',
 		dataIndex:'status',
-		//xtype:'templatecolumn', 
+		tpl: tpl,
 		width:70};
 		kpiColumns.push(col3);
 		
 		var col4 = {header:'Trend',
 		dataIndex:'trend',
 		width:70};
-		kpiColumns.push(col4);
+		kpiColumns.push(col4);	
 		
 		this.columns = kpiColumns;
 
 
 	}
-	
+	, initGridListeners: function() {
+		this.on("afterrender", function(grid){
+	    	for(i=0; i< this.ids.length; i++){
+	    		var status = this.ids[i];
+	    		var canvas = document.getElementById(status.val);
+	    		drawCanvasCircle(canvas, status.color);
+	    	}
+	    	this.show();
+	     }, this);
+	}
+
 });
+
+function drawCanvasCircle(canvas, color){
+	    
+	    var context = canvas.getContext("2d");
+	 
+	    var centerX = 7;
+	    var centerY = 7;
+	    var radius = 7;
+	 
+	    context.beginPath();
+	    context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+	 
+	    context.fillStyle = color;
+	    context.fill();
+	    context.lineWidth = 1;
+	    context.strokeStyle = "black";
+	    context.stroke();
+}
