@@ -1384,18 +1384,25 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			} else if (type == 'timestamp') {
 				valueObj = Date.parseDate(value, format);
 			}
+
 			
-			//if the tipe is a number and the percenton variable is not null in the configuration
-			//we add the percent in the cell
-			if(percent!=undefined && percent!=null && percent!='' && (type == 'float' || type == 'int')){
-				str = '<div style=\'text-align: right;\'>' + Sbi.qbe.commons.Format.number(valueObj, type) +'<span style="font-size:'+percentFontSize+'px;"> (' + Sbi.qbe.commons.Format.number(percent, 'int') +'%)</span></div>';
-			}else{
+			if(type=='float' || type=='int'){
 				if(type=='float' && format!=null && format!=undefined){
-					str = (Sbi.qbe.commons.Format.numberRenderer( Ext.apply(Sbi.locale.formats[type], Ext.decode(format)||{}) )).call(this, valueObj);
+					//str = (Sbi.qbe.commons.Format.numberRenderer( Ext.apply(Sbi.locale.formats[type], Ext.decode(format)||{}) )).call(this, valueObj);
+					str = Sbi.qbe.commons.Format.number(valueObj,Ext.apply(Sbi.locale.formats[type], Ext.decode(format)||{}));
 				}else{
-					str = Sbi.locale.formatters[type].call(this, valueObj); // formats the value
+					str = Sbi.qbe.commons.Format.number(valueObj,Sbi.locale.formats[type]);
+				}
+				
+				//if the tipe is a number and the percenton variable is not null in the configuration
+				//we add the percent in the cell
+				if(percent!=undefined && percent!=null && percent!='' && (type == 'float' || type == 'int')){
+					str = '<div style=\'text-align: right;\'>' + str +'<span style="font-size:'+percentFontSize+'px;"> (' + Sbi.qbe.commons.Format.number(percent, 'int') +'%)</span></div>';
+				}else{
+					str = '<div style=\'text-align: right;\'>' + str +'</div>';
 				}
 			}
+
 		
 			return str;
 		} catch (err) {
