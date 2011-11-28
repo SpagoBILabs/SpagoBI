@@ -136,7 +136,17 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	    	for(i=0; i< this.ids.length; i++){
 	    		var status = this.ids[i];
 	    		var canvas = document.getElementById(status.val);
-	    		drawCanvasCircle(canvas, status.color);
+	    		try{
+		    		if(canvas.getContext("2d")){
+		    		//if(canvas.context !== undefined){
+		    			drawCanvasCircle(canvas, status.color);
+		    		}
+	    		}catch(error){
+	    			var canvasEl = new Ext.Element(canvas);
+	    			canvasEl.setHeight(0);
+	    			Ext.DomHelper.insertHtml('beforeBegin', canvas, '<div width="10px" height="10px" style="display:inline; border: 1px solid black; background-color:'+status.color+'">&nbsp;&nbsp;&nbsp;</div>' )
+	    		
+	    		}
 	    	}
 	    	this.show();
 	     }, this);
@@ -145,7 +155,7 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 });
 
 function drawCanvasCircle(canvas, color){
-	    
+	
 	    var context = canvas.getContext("2d");
 	 
 	    var centerX = 7;
