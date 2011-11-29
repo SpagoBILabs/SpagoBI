@@ -71,7 +71,7 @@ Sbi.kpi.KpiGridPanel =  function(config) {
 		Ext.apply(this, c);
 		
 		this.initGrid();
-		
+		this.addEvents('updateAccordion');
 		
 		Sbi.kpi.KpiGridPanel.superclass.constructor.call(this, c);
 		this.initGridListeners();
@@ -166,17 +166,15 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	     }, this);
 		
 		this.addListener('click', this.selectNode, this);
-		this.addListener('select', this.selectNode, this);
+		
 	}
 	,selectNode : function(field) {
-		
-		var node = this.getSelectionModel().getSelectedNode();
-		
-		if(node !== null){
-			if(node.attributes === undefined ){
 
-				alert(node.attributes);
-
+		if(field !== null){
+			if(field.attributes != undefined ){
+//				var parent = this.ownerCt;
+//				var accordion = parent.items[1];
+				this.fireEvent('updateAccordion',field);				
 			}
 		}
 	}

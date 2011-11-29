@@ -54,14 +54,35 @@ Sbi.kpi.KpiAccordionPanel =  function(config) {
 		var c = Ext.apply(defaultSettings, config || {});
 
 		Ext.apply(this, c);
-		
+	
+	    c = {
+	        region:'east',
+	        fill: true,
+	        split:true,
+	        width: 300,
+	        minSize: 275,
+	        maxSize: 400,
+	        collapsible: true,
+	        layout:'accordion',
+	        items: []
+	    };
+	    this.initDetail();
+		this.initAccordion(c);
+   
+		Sbi.kpi.KpiAccordionPanel.superclass.constructor.call(this, c);
+};
+
+Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
+	detail: null
+	
+	, initAccordion: function(c){
 
 	    var item1 = new Ext.Panel({
 	        title: 'Dettaglio',
-	        items: new Sbi.kpi.KpiGUIDetail(),
+	        items: [this.detail],
 	        cls:'empty'
 	    });
-
+	    
 	    var item2 = new Ext.Panel({
 	        title: 'Accordion Item 2',
 	        html: '&lt;empty panel&gt;',
@@ -85,21 +106,14 @@ Sbi.kpi.KpiAccordionPanel =  function(config) {
 	        html: '&lt;empty panel&gt;',
 	        cls:'empty'
 	    });
-
-	    c = {
-	        region:'east',
-	        fill: true,
-	        split:true,
-	        width: 200,
-	        minSize: 175,
-	        maxSize: 400,
-	        collapsible: true,
-	        layout:'accordion',
-	        items: [item1, item2, item3, item4, item5]
-	    };
-		
-   
-		Sbi.kpi.KpiAccordionPanel.superclass.constructor.call(this, c);
-};
-
-Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {});
+	    c.items = [item1, item2, item3, item4, item5];
+	}
+	, initDetail: function(){
+		this.detail = new Sbi.kpi.KpiGUIDetail();
+	}
+	
+	, updateAccordion: function(field){
+		this.detail.update(field);
+		this.render();
+	}
+});
