@@ -138,4 +138,6 @@ public interface IKpiDAO extends ISpagoBIDao{
 	 */
 	public List loadKpiListFiltered(String hsql,Integer offset, Integer fetchSize) throws EMFUserError;
 	
+	public Integer getKpiTrend(Integer resId, Integer kpiInstId, Date endDate) throws Exception;
+	
 }

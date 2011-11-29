@@ -57,8 +57,8 @@ Sbi.kpi.KpiAccordionPanel =  function(config) {
 		
 
 	    var item1 = new Ext.Panel({
-	        title: 'Accordion Item 1',
-	        html: '&lt;empty panel&gt;',
+	        title: 'Dettaglio',
+	        items: new Sbi.kpi.KpiGUIDetail(),
 	        cls:'empty'
 	    });
 

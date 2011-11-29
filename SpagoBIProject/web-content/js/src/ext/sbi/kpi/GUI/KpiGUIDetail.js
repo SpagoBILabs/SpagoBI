@@ -39,43 +39,41 @@
  * 
  * [list]
  * 
- * Authors - Alberto Ghedin
+ * Authors - Monica Franceschini
  */
 Ext.ns("Sbi.kpi");
 
-Sbi.kpi.KpiGUILayout =  function(config) {
-
+Sbi.kpi.KpiGUIDetail =  function(config) {
 		
-		var defaultSettings = {
-			layout:'border'
-		};
+		var defaultSettings = {};
 
-		if (Sbi.settings && Sbi.settings.kpi && Sbi.settings.kpi.kpiGUILayout) {
-			defaultSettings = Ext.apply(defaultSettings, Sbi.settings.kpi.kpiGUILayout);
+		if (Sbi.settings && Sbi.settings.kpi && Sbi.settings.kpi.kpiGUIDetail) {
+			defaultSettings = Ext.apply(defaultSettings, Sbi.settings.kpi.kpiGUIDetail);
 		}
 
-		var c = Ext.apply(defaultSettings);
+		var c = Ext.apply(defaultSettings, config || {});
 
 		Ext.apply(this, c);
 		
-		this.intPanels(config);
-		
-		c = {
-			items:[this.kpiGridPanel, this.kpiAccordionPanel]
-		};
+		this.initDetail(c);
    
-		Sbi.kpi.KpiGUILayout.superclass.constructor.call(this, c);
+		Sbi.kpi.KpiGUIDetail.superclass.constructor.call(this, c);
 };
 
-Ext.extend(Sbi.kpi.KpiGUILayout , Ext.Panel, {
-	kpiGridPanel: null,
-	kpiAccordionPanel: null,
+Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
+	items: null,
 	
-	intPanels : function(config){
-		var gridconf= config.grid;
-		var accordionconf = config.accordion;
-		this.kpiGridPanel = new Sbi.kpi.KpiGridPanel(gridconf);
-		this.kpiAccordionPanel = new Sbi.kpi.KpiAccordionPanel(accordionconf);
+	initDetail: function(){
+	
+		this.defaultType= 'textfield';
+		
+        this.items =[{
+                fieldLabel: 'Field 1'
+            }, {
+                fieldLabel: 'Field 2'
+            }, {
+                fieldLabel: 'Field 3'
+            }
+        ];
 	}
-	
 });

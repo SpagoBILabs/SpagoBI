@@ -473,7 +473,86 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return toReturn;
 	}
 
+	public Integer getKpiTrend(Integer resId, Integer kpiInstId, Date endDate) throws Exception{
 
+		logger.debug("IN");
+		Integer toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			String hql = "select max(s.idKpiInstanceValue), s.beginDt";
+			hql += " from SbiKpiValue s where s.sbiKpiInstance.idKpiInstance = ? ";
+			hql += " and s.beginDt <= ? ";
+			if (resId != null) {
+				hql += " and s.sbiResources.resourceId = ? ";
+			} else {
+				logger.debug("Null resource setted");
+			}	
+			hql += "group by s.beginDt order by s.beginDt desc";         
+
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setInteger(0, kpiInstId);
+			hqlQuery.setDate(1, endDate);
+			if (resId != null) {
+				hqlQuery.setInteger(3, resId);
+				logger.debug("Resource setted");
+			} else {
+				logger.debug("Null resource setted");
+			}				
+			hqlQuery.setMaxResults(2);
+
+			List l = hqlQuery.list();
+			
+			SbiKpiValue lastValue = null;
+			SbiKpiValue previousValue = null;
+			if (!l.isEmpty()) {
+				logger.debug("The result list is not empty");
+				for (int k = l.size() - 1; k >= 0; k--) {
+					Object[] tempL =  (Object[])l.get(k);
+					Integer kpiValueId = (Integer) tempL[0];
+					SbiKpiValue temp = (SbiKpiValue) aSession.load(SbiKpiValue.class, kpiValueId);
+					if(lastValue == null){
+						lastValue = temp;
+					}else{
+						previousValue = temp;
+					}					
+				}
+				if(previousValue == null){
+					return null;
+				}else{
+					logger.debug(lastValue.getValue() +"  "+previousValue.getValue());
+					if(Double.parseDouble(lastValue.getValue()) > Double.parseDouble(previousValue.getValue()) ){
+						toReturn = 1;
+					}else if(Double.parseDouble(lastValue.getValue()) < Double.parseDouble(previousValue.getValue()) ){
+						toReturn = -1;
+					}else {
+						toReturn = 0;
+					}
+				}
+			} else {
+				logger.debug("The result list is empty");
+			}
+
+
+		} catch (HibernateException he) {
+
+			if (tx != null)
+				tx.rollback();
+			logger.error(he);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+
+		return toReturn;
+	}
 	public List getKpiValue(SbiKpiInstance kpi, Date d) throws EMFUserError {
 
 		logger.debug("IN");
