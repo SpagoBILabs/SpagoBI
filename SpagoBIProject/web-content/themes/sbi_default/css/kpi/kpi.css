@@ -112,3 +112,25 @@
     border-left:1px solid #eee;
     border-right:1px solid #d0d0d0;
 }
+
+/*
+ new KPI GUI
+*/
+.node-folder {
+	 background-color: #F1F3CB;
+}
+.trend-up {
+	 background-image:url(../../img/kpi/trend-up.png) !important;
+	 background-repeat:no-repeat;
+	 background-position: center middle;
+}
+.trend-down{
+	 background-image:url(../../img/kpi/trend-down.png) !important;
+	 	 background-repeat:no-repeat;
+	 background-position: center middle;
+}
+.trend-equal {
+	 background-image:url(../../img/kpi/trend-equal.png) !important;
+	 	 background-repeat:no-repeat;
+	 background-position: center middle;
+}

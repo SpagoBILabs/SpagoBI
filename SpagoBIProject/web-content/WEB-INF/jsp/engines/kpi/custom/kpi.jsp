@@ -29,6 +29,7 @@ Authors - Monica Franceschini
 
 <%@ include file="/WEB-INF/jsp/engines/kpi/default/kpiinclusions/kpiDefaultHeaderForSpagoBI.jsp"%>
 
+
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
 <LINK rel='StyleSheet' 
       href='<%=urlBuilder.getResourceLinkByTheme(request, "css/kpi/kpi.css",currTheme)%>' 
@@ -66,7 +67,7 @@ Authors - Monica Franceschini
 			KpiResourceBlock block = (KpiResourceBlock) blocksIt.next();
 			KpiLine root = block.getRoot();
 			JSONObject modelInstJson =  KpiEngineUtil.recursiveGetJsonObject(root);
-			kpiRowsArray.put(modelInstJson);
+			kpiRowsArray.put(modelInstJson);						
 		}			
 	}
 
@@ -82,17 +83,18 @@ Authors - Monica Franceschini
 		Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
 			baseUrl: url
 		});
-
-		var config = {
+		
+		var grid = {
 			subtitle: '<%= subTitle%>',
 			json: <%=kpiRowsArray%>
 		};
-
+		var accordion ={};
+		
+		var config ={grid: grid, accordion: accordion};
 
 		Ext.onReady(function(){
 
 			var item = new Sbi.kpi.KpiGUILayout(config);
-			//var item = new Sbi.kpi.KpiGridPanel(config);
 
 		    var viewport = new Ext.Viewport({
 		        layout:'fit',

@@ -36,15 +36,12 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.kpi.bo.KpiLine;
 import it.eng.spagobi.engines.kpi.bo.KpiLineVisibilityOptions;
-import it.eng.spagobi.engines.kpi.utils.KpiInterval;
-import it.eng.spagobi.kpi.config.bo.Kpi;
-import it.eng.spagobi.kpi.config.bo.KpiRel;
+import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
+import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
-import java.awt.Color;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -406,9 +403,14 @@ public class KpiEngineUtil {
 			String color = detectColor(kpiLine.getValue());
 			jsonToReturn.put("status", color);
 
-			jsonToReturn.put("trend", "");
-			
+			Integer trend = getTrend(kpiLine);
+			if(trend != null){
+				jsonToReturn.put("trend", trend);
+			}
+						
 			jsonToReturn.put("expanded", true);
+			
+			setDetailInfos(kpiLine, jsonToReturn);
 
 			List<KpiLine> children = (List<KpiLine>) kpiLine.getChildren();
 			JSONArray JSONArrayChildren = new JSONArray();
@@ -430,7 +432,45 @@ public class KpiEngineUtil {
 		return jsonToReturn;
 
 	}
-	
+	private static void setDetailInfos(KpiLine kpiLine, JSONObject row){
+		JSONArray thresholds = new JSONArray();
+		if(kpiLine.getValue() != null){
+			Double weight = kpiLine.getValue().getWeight();
+			
+			List thrs = kpiLine.getValue().getThresholdValues();
+			if(thrs != null ){
+				
+				for(int i=0; i< thrs.size(); i++){
+					JSONObject threshold = new JSONObject();
+					ThresholdValue tv = (ThresholdValue)thrs.get(i);
+					String color = tv.getColourString();
+					String label = tv.getLabel();
+					String type = tv.getThresholdType();
+					Double max = tv.getMaxValue();
+					Double min = tv.getMinValue();
+					
+					try {
+						threshold.putOpt("color", color);
+						threshold.putOpt("label", label);
+						threshold.putOpt("type", type);
+						threshold.putOpt("max", max);
+						threshold.putOpt("min", min);
+						
+						thresholds.put(threshold);
+						
+					} catch (JSONException e) {
+						logger.error("Error setting threshold");
+					}
+				}
+				try {
+					row.put("thresholds", thresholds);
+					row.putOpt("weight", weight);
+				} catch (JSONException e) {
+					logger.error("Error setting thresholds");
+				}
+			}
+		}
+	}
 	private static String detectColor(KpiValue value){
 		String ret = "";
 		if(value == null){
@@ -468,5 +508,20 @@ public class KpiEngineUtil {
 		logger.debug("OUT");
 		return status;
 		
+	}
+	private static Integer getTrend(KpiLine kpiLine){
+		Integer toReturn = null;
+		KpiValue value = kpiLine.getValue();
+		Integer modelInstId = kpiLine.getModelInstanceNodeId();
+		try {
+			ModelInstanceNode node = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstId, null);
+			KpiInstance kpiInst= node.getKpiInstanceAssociated();
+			Integer kpiInstId = kpiInst.getKpiInstanceId();
+			toReturn = DAOFactory.getKpiDAO().getKpiTrend(null, kpiInstId, value.getBeginDate());
+
+		} catch (Exception e) {
+			logger.error("Error retrieving modelinstance "+modelInstId, e);
+		}
+		return toReturn;
 	}
 }

@@ -44,7 +44,7 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.KpiGridPanel =  function(config) {
-	
+		
 		var json = config.json;
 
 		var defaultSettings = {
@@ -83,8 +83,7 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	
 	, initGrid: function(){
 		var kpiColumns = new Array();
-		//onLoad="{[this.draw(values.name)]}"  
-		//
+
 		var ids = this.ids;
 	    var tpl = new Ext.XTemplate(
 			      '<tpl for=".">'
@@ -100,6 +99,21 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 			              ids.push(status);
 			          }
 			      }
+			);
+	    
+	    var tplTrend = new Ext.XTemplate(
+			      '<tpl for=".">'
+	    		  ,'<tpl if="values.trend !== undefined && values.trend === 1">'//positive
+			      ,'<div style="align: center;" class="trend-up">&nbsp;</div>'	     
+			      ,'</tpl>'
+	    		  ,'<tpl if="values.trend !== undefined && values.trend === -1">'//negative
+			      ,'<div style="align: center;" class="trend-down">&nbsp;</div>'	     
+			      ,'</tpl>'
+	    		  ,'<tpl if="values.trend !== undefined && values.trend === 0">'//equal
+			      ,'<div style="align: center;" class="trend-equal">&nbsp;</div>'	     
+			      ,'</tpl>'
+			      ,'</tpl>'
+
 			);
 		var col = {header:'Model Instance',
 		dataIndex:'name',
@@ -124,6 +138,7 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 		
 		var col4 = {header:'Trend',
 		dataIndex:'trend',
+		tpl: tplTrend,
 		width:70};
 		kpiColumns.push(col4);	
 		
@@ -138,7 +153,6 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	    		var canvas = document.getElementById(status.val);
 	    		try{
 		    		if(canvas.getContext("2d")){
-		    		//if(canvas.context !== undefined){
 		    			drawCanvasCircle(canvas, status.color);
 		    		}
 	    		}catch(error){
@@ -150,8 +164,23 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	    	}
 	    	this.show();
 	     }, this);
+		
+		this.addListener('click', this.selectNode, this);
+		this.addListener('select', this.selectNode, this);
 	}
+	,selectNode : function(field) {
+		
+		var node = this.getSelectionModel().getSelectedNode();
+		
+		if(node !== null){
+			if(node.attributes === undefined ){
 
+				alert(node.attributes);
+
+			}
+		}
+	}
+	
 });
 
 function drawCanvasCircle(canvas, color){
