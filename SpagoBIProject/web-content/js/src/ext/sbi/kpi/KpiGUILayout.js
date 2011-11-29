@@ -57,7 +57,7 @@ Sbi.kpi.KpiGUILayout =  function(config) {
 		var c = Ext.apply(defaultSettings);
 
 		Ext.apply(this, c);
-		
+		this.addEvents();
 		this.intPanels(config);
 		
 		c = {
@@ -75,7 +75,13 @@ Ext.extend(Sbi.kpi.KpiGUILayout , Ext.Panel, {
 		var gridconf= config.grid;
 		var accordionconf = config.accordion;
 		this.kpiGridPanel = new Sbi.kpi.KpiGridPanel(gridconf);
+		
 		this.kpiAccordionPanel = new Sbi.kpi.KpiAccordionPanel(accordionconf);
+		
+		this.kpiGridPanel.on('updateAccordion',function(field){
+			this.kpiAccordionPanel.updateAccordion(field);
+		},this);
 	}
+
 	
 });
