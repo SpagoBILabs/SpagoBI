@@ -261,9 +261,13 @@ public class QueryDetail  implements ILovDetail  {
 			Iterator iterOps = dependencies.iterator();
 			while(iterOps.hasNext())  {
 				ObjParuse op = (ObjParuse) iterOps.next();
-				buffer.append(" " + op.getPreCondition() + " ");
+				if (op.getPreCondition() != null )
+					buffer.append(" " + op.getPreCondition() + " ");				
 				addFilter(buffer, op, executionInstance);
-				buffer.append(" " + op.getPostCondition() + " " + op.getLogicOperator());
+				if (op.getPostCondition() != null)
+					buffer.append(" " + op.getPostCondition() + " ");
+				if (op.getLogicOperator() != null)
+					buffer.append(" " + op.getLogicOperator() + " ");
 			}
 		}
 	}
