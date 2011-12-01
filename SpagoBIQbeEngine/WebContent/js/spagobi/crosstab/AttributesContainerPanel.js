@@ -96,11 +96,6 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
         	}
         	, mouseout: function(e, t) {
         		this.targetRow = undefined;
-        		//clean the selection of the grid the mouse quit from the grid
-        		//to avoid focusing problem when the user navigate between different
-        		//AttributesContainerPanels
-        		var sm = this.getSelectionModel();
-        		sm.clearSelections();
         	}
         	, rowdblclick: this.rowDblClickHandler
 		}
@@ -113,6 +108,13 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
    
     this.on('render', this.initDropTarget, this);
     
+	//clean the selection of the grid the mouse quit from the grid
+	//to avoid focusing problem when the user navigate between different
+	//AttributesContainerPanels
+    this.on('mouseout',function(){        		
+		var sm = this.getSelectionModel();
+		sm.clearSelections();
+	},this);
 };
 
 Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
