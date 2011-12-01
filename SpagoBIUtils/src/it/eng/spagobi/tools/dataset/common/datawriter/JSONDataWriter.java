@@ -227,9 +227,9 @@ public class JSONDataWriter implements IDataWriter {
 					if ( format != null ) {
 						fieldMetaDataJSON.put("format", format);
 					}
-					String decimalPrecision = 	(String) fieldMetaData.getProperty(IMetaData.DECIMALPRECISION);	
+					String decimalPrecision = 	(String) fieldMetaData.getProperty(IFieldMetaData.DECIMALPRECISION);	
 					if(decimalPrecision!=null){
-						fieldMetaDataJSON.put("format", "{"+IMetaData.DECIMALPRECISION+": "+decimalPrecision+"}");
+						fieldMetaDataJSON.put("format", "{"+IFieldMetaData.DECIMALPRECISION+": "+decimalPrecision+"}");
 					}
 					
 				} else if( String.class.isAssignableFrom(clazz) ) {
