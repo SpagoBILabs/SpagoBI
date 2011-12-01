@@ -80,6 +80,7 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	    var item1 = new Ext.Panel({
 	        title: 'Dettaglio',
 	        items: [this.detail],
+	        autoScroll: true,
 	        cls:'empty'
 	    });
 	    
