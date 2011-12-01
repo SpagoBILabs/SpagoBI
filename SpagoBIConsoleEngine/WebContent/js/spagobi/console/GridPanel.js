@@ -106,8 +106,7 @@ Sbi.console.GridPanel = function(config) {
 				}, this);
 			}
 		}
-
-
+		
 		var c = Ext.apply(c, {
 			store: this.store
 			, cm: this.columnModel
@@ -121,7 +120,7 @@ Sbi.console.GridPanel = function(config) {
 		Sbi.console.GridPanel.superclass.constructor.call(this, c);
 		
 		this.addEvents('lock');
-		this.addEvents('unlock');
+		this.addEvents('unlock');	
 		
 };
 
@@ -607,9 +606,15 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		//load optional dataset with lables for i18N management:		
 		if (this.storeLabelsId !== undefined){
 			this.storeLabels = this.storeManager.getStore(this.storeLabelsId);
-			this.storeLabels.loadStore(); 						
+			
+			if (this.storeLabels === undefined) {
+				Sbi.Msg.showError('Dataset with identifier [' + this.storeId + '] is not correctly configurated');			
+			}else{
+				this.storeLabels.loadStore();		
+				this.storeLabels.on('exception', Sbi.exception.ExceptionHandler.onStoreLoadException, this);
+			}
 		}
-
+		
 		this.store = this.storeManager.getStore(this.storeId);
 		if (this.store === undefined) {
 			Sbi.Msg.showError('Dataset with identifier [' + this.storeId + '] is not correctly configurated');			
@@ -619,6 +624,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			this.store.on('load', this.onLoad, this);
 			this.store.on('metachange', this.onMetaChange, this);
 		}
+		
+		
 	}
 
 	, initColumnModel: function() {
@@ -682,7 +689,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	
 	// -- callbacks ---------------------------------------------------------------------------------------------
 	//defines the max, min and tot value on all records (only for columns visualized as chart)
-	, onLoad: function(){
+	, onLoad: function(){	
 		var numRec = this.store.getCount();
 		
 		//redefines the columns labels if they are dynamics
@@ -716,7 +723,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 			    	}
 				}else 
-					tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+					tmpMeta.fields[i] = Ext.apply({}, fields[i]);				
 		    }else if (fields[i].headerType !== undefined && fields[i].headerType.toUpperCase() === 'I18N'){
 		    	//-------------------------------------------------------------------------------//
 				// subsitutes the grid header values with the label presents into file 			 //
@@ -736,16 +743,13 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 				// 	subsitutes the grid header values with the specific dataset labels.
 		    	// This dataset should returns 3 fields: code, label, locale (it_IT, en_US, fr_FR, es_ES)
 		    	// Ex: cod_UnitSales, Unit Sales, en_US 													 
-				//-------------------------------------------------------------------------------//
-		    	//var idxLocale = this.storeLabels.getFieldMetaByAlias("locale").dataIndex;		
+				//-------------------------------------------------------------------------------//		
 		    	var idxLocale = (this.storeLabels.getFieldMetaByAlias("locale") !== undefined)?this.storeLabels.getFieldMetaByAlias("locale") :
 		    		this.storeLabels.getFieldMetaByAlias("LOCALE");
 		    	if (idxLocale !== undefined) idxLocale = idxLocale.dataIndex;
-		    	//var idxCode = this.storeLabels.getFieldMetaByAlias("code").dataIndex;
 		    	var idxCode = (this.storeLabels.getFieldMetaByAlias("code") !== undefined)?this.storeLabels.getFieldMetaByAlias("code") :
 		    		this.storeLabels.getFieldMetaByAlias("CODE");
 		    	if (idxCode !== undefined) idxCode = idxCode.dataIndex;		    	
-		    	//var idxLabel = this.storeLabels.getFieldMetaByAlias("label").dataIndex;
 		    	var idxLabel = (this.storeLabels.getFieldMetaByAlias("label") !== undefined)?this.storeLabels.getFieldMetaByAlias("label") :
 		    		this.storeLabels.getFieldMetaByAlias("LABEL");
 		    	if (idxLabel !== undefined) idxLabel = idxLabel.dataIndex;
@@ -776,8 +780,9 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 				    	}	
 					}else 
 						tmpMeta.fields[i] = Ext.apply({}, fields[i]);
-			    }
-		    }else{
+			    }		    
+	    	}else if (fields[i].headerType == undefined ){
+		    	//without substitution; manteins the header defined into the columnConfig section
 	    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 	    	}
 		}
@@ -795,7 +800,6 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			var nameFieldThreshold = "";
 			var nameTooltipField = "";
 			var tooltip = "";
-			metaIsChanged = false;
 			 
 			for(var p = 0, len = this.inlineCharts.length; p < len; p++) {
 				minValue = 0;
@@ -968,7 +972,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 				}
 			}
 		}
-
+		
 		//adds numeration column    
 		tmpMeta.fields[0] = new Ext.grid.RowNumberer();
 	    //update columnmodel configuration
