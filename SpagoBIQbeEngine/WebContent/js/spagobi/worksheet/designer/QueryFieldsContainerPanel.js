@@ -188,7 +188,7 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 		for (; i < rows.length; i++) {
 			var aRow = rows[i];
 			// if the attribute is already present show a warning
-			if (this.store.find('id', aRow.data.id) !== -1) {
+			if (this.store.findExact('id', aRow.data.id) !== -1) {
 				Ext.Msg.show({
 					   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
 					   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
@@ -258,7 +258,7 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 	}
 
 	, containsAttribute: function (attributeId) {
-		if (this.store.find('id', attributeId) !== -1) {
+		if (this.store.findExact('id', attributeId) !== -1) {
 			return true;
 		}
 		return false;
