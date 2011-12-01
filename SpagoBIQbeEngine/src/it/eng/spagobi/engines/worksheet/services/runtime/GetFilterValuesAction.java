@@ -20,6 +20,7 @@
  **/
 package it.eng.spagobi.engines.worksheet.services.runtime;
 
+import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.WhereField;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
@@ -96,6 +97,16 @@ public class GetFilterValuesAction extends AbstractWorksheetEngineAction {
 			// persist dataset into temporary table	
 			IDataSetTableDescriptor descriptor = this.persistDataSet();
 			IDataSet dataset = engineInstance.getDataSet();
+			
+			//Get the order type of the field values in the field metadata
+			int fieldIndex = dataset.getMetadata().getFieldIndex(fieldName);
+			IFieldMetaData dataSetFieldMetadata = dataset.getMetadata().getFieldMeta(fieldIndex);
+			String orderType = AbstractSelectField.ORDER_ASC;//default ascendant
+			String orderTypeMeta = (String)dataSetFieldMetadata.getProperty(IFieldMetaData.ORDERTYPE);
+			if(orderTypeMeta!=null && (orderTypeMeta.equals(AbstractSelectField.ORDER_ASC)||orderTypeMeta.equals(AbstractSelectField.ORDER_DESC))){
+				orderType = orderTypeMeta;
+			}
+			
 			// build SQL query against temporary table
 			List<WhereField> whereFields = new ArrayList<WhereField>();
 			if (!dataset.hasBehaviour(FilteringBehaviour.ID)) {
@@ -107,7 +118,7 @@ public class GetFilterValuesAction extends AbstractWorksheetEngineAction {
 			List<WhereField> temp = transformIntoWhereClauses(sheetFilters);
 			whereFields.addAll(temp);
 			
-			String worksheetQuery = this.buildSqlStatement(fieldName, descriptor, whereFields);
+			String worksheetQuery = this.buildSqlStatement(fieldName, descriptor, whereFields, orderType);
 			// execute SQL query against temporary table
 			logger.debug("Executing query on temporary table : " + worksheetQuery);
 			dataStore = this.executeWorksheetQuery(worksheetQuery, null, null);
@@ -240,10 +251,10 @@ public class GetFilterValuesAction extends AbstractWorksheetEngineAction {
 //		return dataStore;
 //	}
 
-	protected String buildSqlStatement(String fieldName, IDataSetTableDescriptor descriptor, List<WhereField> filters) {
+	protected String buildSqlStatement(String fieldName, IDataSetTableDescriptor descriptor, List<WhereField> filters, String ordeType) {
 		List<String> fieldNames = new ArrayList<String>();
 		fieldNames.add(fieldName);
-		return CrosstabQueryCreator.getTableQuery(fieldNames, true, descriptor, filters);
+		return CrosstabQueryCreator.getTableQuery(fieldNames, true, descriptor, filters, ordeType, fieldNames);
 	}
 	
 }

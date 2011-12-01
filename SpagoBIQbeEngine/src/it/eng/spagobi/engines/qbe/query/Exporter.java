@@ -161,7 +161,7 @@ public class Exporter {
 					    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleInt);
 					}else if( Number.class.isAssignableFrom(c) ) {
 			    	    IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);	    
-						String decimalPrecision = (String)fieldMetaData.getProperty(IMetaData.DECIMALPRECISION);
+						String decimalPrecision = (String)fieldMetaData.getProperty(IFieldMetaData.DECIMALPRECISION);
 						CellStyle cs ;
 					    if(decimalPrecision!=null){
 					    	cs = getNumberFormat(new Integer(decimalPrecision), wb, createHelper, dCellStyle);

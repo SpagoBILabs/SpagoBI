@@ -470,9 +470,9 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			IFieldMetaData dataSetFieldMetadata = dataSetMetadata.getFieldMeta(index);
 			logger.debug("Field metadata : " + dataSetFieldMetadata);
 			FieldMetadata newFieldMetadata = new FieldMetadata();
-			String decimalPrecision = (String) dataSetFieldMetadata.getProperty(IMetaData.DECIMALPRECISION);
+			String decimalPrecision = (String) dataSetFieldMetadata.getProperty(IFieldMetaData.DECIMALPRECISION);
 			if(decimalPrecision!=null){
-				newFieldMetadata.setProperty(IMetaData.DECIMALPRECISION,decimalPrecision);
+				newFieldMetadata.setProperty(IFieldMetaData.DECIMALPRECISION,decimalPrecision);
 			}
 			newFieldMetadata.setAlias(dataSetFieldMetadata.getAlias());
 			newFieldMetadata.setFieldType(dataSetFieldMetadata.getFieldType());

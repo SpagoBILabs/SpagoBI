@@ -144,7 +144,6 @@ public class CrosstabQueryCreator {
 			WhereField whereField = buildWhereField(attribute, valuesJSON);
 			whereFields.add(whereField);
 		}
-		
 	}
 
 	private static WhereField buildWhereField(Attribute attribute,
@@ -392,6 +391,19 @@ public class CrosstabQueryCreator {
 //	}
 	
 	public static String getTableQuery(List<String> fieldsName, boolean distinct, 
+			IDataSetTableDescriptor descriptor, List<WhereField> whereFields, String orderBy, List<String> orderByFieldsName ) {
+		logger.debug("IN");
+		
+		String query = getTableQuery(fieldsName, distinct, descriptor, whereFields);
+		StringBuffer buffer = new StringBuffer(query);
+		putOrderByClause(buffer, orderByFieldsName, orderBy, descriptor);
+		String toReturn = buffer.toString();
+
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
+	
+	public static String getTableQuery(List<String> fieldsName, boolean distinct, 
 			IDataSetTableDescriptor descriptor, List<WhereField> whereFields) {
 		logger.debug("IN");
 		StringBuffer buffer = new StringBuffer();
@@ -425,6 +437,33 @@ public class CrosstabQueryCreator {
 				throw new SpagoBIRuntimeException("Field [" + fieldName + "] not found on table descriptor");
 			}
 			buffer.append(columnName);
+			if (i < fieldsName.size() - 1) {
+				buffer.append(", ");
+			}
+		}
+
+		logger.debug("OUT");
+		
+	}
+	
+	private static void putOrderByClause(StringBuffer buffer, 
+			List<String> fieldsName,
+			String orderBy,
+			IDataSetTableDescriptor descriptor) {
+		
+		logger.debug("IN");
+		
+		buffer.append(" ORDER BY ");
+
+		for (int i = 0; i < fieldsName.size(); i++) {
+			String fieldName = fieldsName.get(i);
+			String columnName = descriptor.getColumnName(fieldName);
+			if (columnName == null) {
+				throw new SpagoBIRuntimeException("Field [" + fieldName + "] not found on table descriptor");
+			}
+			buffer.append(columnName);
+			buffer.append(" ");
+			buffer.append(orderBy);
 			if (i < fieldsName.size() - 1) {
 				buffer.append(", ");
 			}
