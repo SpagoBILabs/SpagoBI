@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -149,6 +150,27 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 		Iterator it;
 		
 		attributesMap = new HashMap <String , Object> ();
+		attributeNames = getSpagoBIRequestContainer().getKeys();
+		
+		it = attributeNames.iterator();
+		while( it.hasNext() ) {
+			attributeName = (String)it.next();
+			attributeVaue = getAttribute(attributeName);
+			attributesMap.put(attributeName, attributeVaue);
+		}
+		
+		return attributesMap;
+	}
+	
+public LinkedHashMap<String,Object> getAttributesAsLinkedMap() {
+		
+		List attributeNames;
+		String attributeName;
+		Object attributeVaue;
+		LinkedHashMap<String , Object> attributesMap;
+		Iterator it;
+		
+		attributesMap = new LinkedHashMap <String , Object> ();
 		attributeNames = getSpagoBIRequestContainer().getKeys();
 		
 		it = attributeNames.iterator();
