@@ -59,7 +59,8 @@ Sbi.worksheet.runtime.RuntimeSheetPanel = function(config) {
 	c = {
 		border: false,
 		title: this.sheetConfig.name,
-        items: [new Ext.Panel({})]
+        items: [new Ext.Panel({})],
+        autoScroll: true
 	};
 	
 	c = Ext.apply(config, c);
