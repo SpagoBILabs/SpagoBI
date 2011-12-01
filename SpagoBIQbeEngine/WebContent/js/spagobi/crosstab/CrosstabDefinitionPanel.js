@@ -279,10 +279,10 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 	, containsAttribute: function (attributeId) {
 		var storeRows = this.rowsContainerPanel.store;
 		var storeColumns = this.columnsContainerPanel.store;
-		if (storeRows.find('id', attributeId) !== -1) {
+		if (storeRows.findExact('id', attributeId) !== -1) {
 			return true;
 		}
-		if (storeColumns.find('id', attributeId) !== -1) {
+		if (storeColumns.findExact('id', attributeId) !== -1) {
 			return true;
 		}
 		return false;
