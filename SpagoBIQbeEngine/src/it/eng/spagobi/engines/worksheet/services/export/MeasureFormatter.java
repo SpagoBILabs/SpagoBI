@@ -22,7 +22,7 @@ package it.eng.spagobi.engines.worksheet.services.export;
 
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.engines.qbe.crosstable.serializer.json.CrosstabSerializationConstants;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 
 import java.text.DecimalFormat;
 
@@ -71,7 +71,7 @@ public class MeasureFormatter {
 				pos = positionJ%measureMetadata.length;
 			}
 			try {
-				String decimalPrecision =  (new JSONObject(measureMetadata[pos][1])).optString(IMetaData.DECIMALPRECISION);
+				String decimalPrecision =  (new JSONObject(measureMetadata[pos][1])).optString(IFieldMetaData.DECIMALPRECISION);
 				if(decimalPrecision!=null){
 					DecimalFormat numberFormat = new DecimalFormat(pattern);
 					numberFormat.setMinimumFractionDigits(new Integer(decimalPrecision));
@@ -93,7 +93,7 @@ public class MeasureFormatter {
 				pos = positionJ%measureMetadata.length;
 			}
 			try {
-				String decimalPrecision =  (new JSONObject(measureMetadata[pos][1])).optString(IMetaData.DECIMALPRECISION);
+				String decimalPrecision =  (new JSONObject(measureMetadata[pos][1])).optString(IFieldMetaData.DECIMALPRECISION);
 				return new Integer(decimalPrecision);
 			} catch (Exception e) {
 				return 2;

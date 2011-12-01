@@ -466,7 +466,7 @@ public class CrossTab {
 			   || Byte.class.isAssignableFrom(clazz)) {
 				return new MeasureInfo(fieldName, "int", null);
 			} else {
-				String decimalPrecision = (String)fieldMeta.getProperty(IMetaData.DECIMALPRECISION);
+				String decimalPrecision = (String)fieldMeta.getProperty(IFieldMetaData.DECIMALPRECISION);
 				if(decimalPrecision!=null){
 					return new MeasureInfo(fieldName, "float", "{decimalPrecision:"+decimalPrecision+"}");
 				}else{

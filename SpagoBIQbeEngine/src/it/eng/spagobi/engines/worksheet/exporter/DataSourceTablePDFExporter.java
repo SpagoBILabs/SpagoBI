@@ -157,7 +157,7 @@ public class DataSourceTablePDFExporter {
 			for(int fieldIndex =0; fieldIndex<length; fieldIndex++){
 				IField f = (IField)fields.get(fieldIndex);
 				IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);
-				String decimalPrecision = (String)fieldMetaData.getProperty(IMetaData.DECIMALPRECISION);
+				String decimalPrecision = (String)fieldMetaData.getProperty(IFieldMetaData.DECIMALPRECISION);
 				if (f == null || f.getValue()== null) {
 		    		cell = new PdfPCell(new Phrase(""));
 		    	}else{
