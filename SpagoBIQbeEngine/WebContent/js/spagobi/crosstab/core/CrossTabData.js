@@ -52,6 +52,14 @@ Sbi.crosstab.core.CrossTabData = function(entries) {
 	
 Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
 	entries: null // matrix with the data 
+	
+	, getColumnsNumber: function(){
+		return this.entries[0].length;
+	}
+
+	, getRowsNumber: function(){
+		return this.entries.length;
+	}
 
 	,getEntries: function(){
 		return this.entries;

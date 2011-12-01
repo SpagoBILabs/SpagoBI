@@ -123,6 +123,7 @@ Sbi.crosstab.core.CrossTab = function(config) {
     this.columnHeaderPanel = this.buildHeaderGroup(this.columnHeader, true);
 
     this.addDDArrowsToPage();
+    this.createColumnResizer();
     
     var c = {
   	//	layout:'fit',
@@ -387,13 +388,13 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	 if(misuresOnLine){
 	    	 for(var y=1; y<headers.length;y++){
 				if(y<headers.length-1){
-					var freshNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension: this.measuresMetadata.length, horizontal: horizontal, level: y});
+					var freshNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension: this.measuresMetadata.length, horizontal: horizontal, level: y, columnWidth: this.columnWidth});
 					freshNode.father = node;
 						node.childs.push(freshNode);	
 						node = freshNode;
 				}else{
 					for(var k=0; k<this.measuresMetadata.length; k++){
-						var freshNode =(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:this.measuresMetadata[k].name, thisDimension: 1, horizontal: horizontal, level: headers.length-1}));
+						var freshNode =(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:this.measuresMetadata[k].name, thisDimension: 1, horizontal: horizontal, level: headers.length-1,columnWidth: this.columnWidth}));
 						freshNode.father = node;
 						node.childs.push(freshNode);
 					}	
@@ -401,7 +402,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			}
 	     }else{
 				for(var y=1; y<headers.length;y++){
-					var freshNode =(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal, level: y}));
+					var freshNode =(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal, level: y,columnWidth: this.columnWidth}));
 					freshNode.father = node;
 					node.childs.push(freshNode);	
 					node = freshNode;
@@ -504,7 +505,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     		}
     		thisDimension =t;
     	}
-    	p = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:name, thisDimension:thisDimension, horizontal:horizontal, level:level});
+    	p = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:name, thisDimension:thisDimension, horizontal:horizontal, level:level,columnWidth: this.columnWidth});
     	this.setHeaderListener(p);
 
     	if(headers[level]==null){
@@ -972,6 +973,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			var headersPanel = new Array();
 			var headersPanelHidden = new Array();
 			for(var i=0; i<headers[y].length; i++){
+				headers[y][i].columnWidth= this.columnWidth;
 				if(!headers[y][i].hidden){
 					headersPanel.push(headers[y][i]);
 				}else{
@@ -986,14 +988,14 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				this.getVisibleMeasures(headers);
 				if(y<headers.length-1){
 					if(horizontal){
-						headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: this.visibleMeasuresMetadataLength, horizontal: horizontal, level: y, width: null , height: headers[y][0].height}));	
+						headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: this.visibleMeasuresMetadataLength, horizontal: horizontal, level: y, width: null , height: headers[y][0].height,columnWidth: this.columnWidth}));	
 					}else{
-						headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: this.visibleMeasuresMetadataLength, horizontal: horizontal, level: y, width: headers[y][0].width,  height: null}));
+						headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: this.visibleMeasuresMetadataLength, horizontal: horizontal, level: y, width: headers[y][0].width,  height: null,columnWidth: this.columnWidth}));
 					}
 				}else{
 					for(var k=0; k<this.measuresMetadata.length; k++){
 						if(this.measuresMetadata[k].visible){
-							headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:this.measuresMetadata[k].name, thisDimension: 1, horizontal: horizontal, level: headers.length-1, width: headers[y][headers[y].length-1].width, height: headers[y][headers[y].length-1].height}));
+							headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:this.measuresMetadata[k].name, thisDimension: 1, horizontal: horizontal, level: headers.length-1, width: headers[y][headers[y].length-1].width, height: headers[y][headers[y].length-1].height,columnWidth: this.columnWidth}));
 						}
 					}	
 				}
@@ -1001,9 +1003,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			
 			if((!horizontal && this.withColumnsSum && !this.misuresOnRow) || (horizontal && this.withRowsSum && this.misuresOnRow)){
 				if(horizontal){
-					headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal,level:  y, width: null , height: headers[y][0].height}));	
+					headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal,level:  y, width: null , height: headers[y][0].height,columnWidth: this.columnWidth}));	
 				}else{
-					headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal, level: y, width: headers[y][0].width, height:  null}));
+					headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal, level: y, width: headers[y][0].width, height:  null,columnWidth: this.columnWidth}));
 				}
 			}
 
@@ -1035,7 +1037,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     		this.rowHeader = headerGroup;
     	}
     	
-    	this.reloadHeadersAndTable(horizontal);
+    	this.reloadHeadersAndTable();
     }
 
     //Calculate the translation vector after a transformation (for example DD)
@@ -1151,6 +1153,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
                 rows: tableRows
             }
         });
+    	
+
+    	
     	
    	    this.entriesPanel = this.getEntries(true, true);
    		var rowForView = this.getRowsForView();
@@ -1411,7 +1416,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	}
     
     
-    , reloadHeadersAndTable: function(horizontal, lazy){
+    , reloadHeadersAndTable: function( lazy){
    // 	if(horizontal || horizontal==null){
     	
     		var span=1;
@@ -1464,6 +1469,33 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   	    });
  //   	}
 		this.reloadTable(lazy);
+    }
+    
+    , createColumnResizer : function(){
+		var thisPanel = this;
+		var headerPosition =0;
+		
+    	var iePinned = false;
+    	if(Ext.isIE){
+    		iePinned = true;
+    	}
+		
+    	
+    	//for(headerPosition=0; headerPosition<this.columnHeader[this.columnHeader.length-1].length; headerPosition++)
+    	var columnHeaderLeaf = this.columnHeader[this.columnHeader.length-1][headerPosition];
+    	
+    	columnHeaderLeaf.on('render', function() {
+			var resizer = new Ext.Resizable(this.id, {
+			    handles: "e",
+			    pinned: iePinned
+			});
+			resizer.on('resize', function(resizable, width, height, event) {
+				var columnWidth = width;
+				thisPanel.columnWidth = columnWidth;
+				thisPanel.reloadHeadersAndTable();
+			}, this);
+		}, columnHeaderLeaf);
+    	//}
     }
     
 	, createResizable: function(aPanel, heandles, items, horizontal) {
@@ -1822,9 +1854,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	
 	    	
 	    	if(header.horizontal){
-	    		var totalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:header.horizontal, level:header.level+1, width:null, height:header.childs[0].height});
+	    		var totalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:header.horizontal, level:header.level+1, width:null, height:header.childs[0].height,columnWidth: this.columnWidth});
 	    	}else{
-	    		var totalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:header.horizontal, level:header.level+1, width:header.childs[0].width, height:null});
+	    		var totalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:header.horizontal, level:header.level+1, width:header.childs[0].width, height:null,columnWidth: this.columnWidth});
 	    	}
 
 	    	totalNode.hidden = header.hidden;
@@ -1843,7 +1875,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		    	var freshFatherNode = totalNode;
 		    	
 		    	while(cousinNode.childs.length>0){
-		    		freshTotalChildNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:freshFatherNode.horizontal, level:freshFatherNode.level+1, width:cousinNode.childs[0].width, height:cousinNode.childs[0].height});
+		    		freshTotalChildNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:freshFatherNode.horizontal, level:freshFatherNode.level+1, width:cousinNode.childs[0].width, height:cousinNode.childs[0].height,columnWidth: this.columnWidth});
 		    		freshTotalChildNode.type=type;
 		    		freshTotalChildNode.father = freshFatherNode;
 		    		freshTotalChildNode.hidden = freshFatherNode.hidden;
@@ -2082,16 +2114,16 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 					    }
 					    
 					    if(headers[i][0].horizontal){
-					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: measuresNames.length, horizontal: headers[i][0].horizontal, level: headers.length-2, width: null , height: headers[headers.length-2][0].height});
+					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: measuresNames.length, horizontal: headers[i][0].horizontal, level: headers.length-2, width: null , height: headers[headers.length-2][0].height,columnWidth: this.columnWidth});
 					    }else{
-					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: measuresNames.length, horizontal: headers[i][0].horizontal, level: headers.length-2, width: headers[headers.length-2][0].width, height: null});	
+					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: measuresNames.length, horizontal: headers[i][0].horizontal, level: headers.length-2, width: headers[headers.length-2][0].width, height: null,columnWidth: this.columnWidth});	
 					    }
 					    partialTotalNode.type = 'partialsum';
 					    partialTotalNode.father = headers[i][j];
 					    this.setHeaderListener(partialTotalNode, true);
 					    
 						for(var k=0; k<measuresNames.length; k++){
-							freshChild = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:measuresNames[k], thisDimension: 1, horizontal: headers[i][0].horizontal, level: headers.length-1, width: headers[headers.length-1][0].width, height: headers[headers.length-1][0].height});
+							freshChild = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:measuresNames[k], thisDimension: 1, horizontal: headers[i][0].horizontal, level: headers.length-1, width: headers[headers.length-1][0].width, height: headers[headers.length-1][0].height,columnWidth: this.columnWidth});
 							partialTotalNode.childs.push(freshChild);
 							freshChild.father = partialTotalNode;
 							freshChild.type = 'partialsum';
@@ -2133,9 +2165,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	        	if(partialSumNode!=null){
 	    	        		//prepare the total node
 	    	        		if(partialSumNode.horizontal){
-	    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: null, height: headers[k][0].height});	
+	    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: null, height: headers[k][0].height,columnWidth: this.columnWidth});	
 	    	        		}else{
-	    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: headers[k][0].width, height: null});	
+	    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: headers[k][0].width, height: null,columnWidth: this.columnWidth});	
 	    	        		}
 		        	        
 		        	        totalNode.father = partialSumNode.father.father;
@@ -2533,9 +2565,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	, cloneNode: function(node,father, noHeaderMenu){
 		
 		if(node.horizontal){
-			var clonedNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:node.name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: null, height: node.height});
+			var clonedNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:node.name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: null, height: node.height,columnWidth: this.columnWidth});
 		}else{
-			var clonedNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:node.name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: node.width, height: null});
+			var clonedNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:node.name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: node.width, height: null,columnWidth: this.columnWidth});
 		}
 		clonedNode.type = node.type;
 		clonedNode.father = father;
