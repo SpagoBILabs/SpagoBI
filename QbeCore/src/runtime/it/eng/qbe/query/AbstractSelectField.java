@@ -35,6 +35,9 @@ public abstract class AbstractSelectField implements ISelectField {
 	
 	protected String nature;
 	
+	public static final String ORDER_ASC = "ASC";
+	public static final String ORDER_DESC = "DESC";
+	
 	public AbstractSelectField(String alias, String type, boolean included, boolean visible) {
 		setAlias(alias);
 		setType(type);
@@ -83,12 +86,12 @@ public abstract class AbstractSelectField implements ISelectField {
 	}
 
 	public boolean isOrderByField() {
-		return "ASC".equalsIgnoreCase( getOrderType() )
-			|| "DESC".equalsIgnoreCase( getOrderType() );
+		return ORDER_ASC.equalsIgnoreCase( getOrderType() )
+			|| ORDER_DESC.equalsIgnoreCase( getOrderType() );
 	}
 
 	public boolean isAscendingOrder() {
-		return "ASC".equalsIgnoreCase( getOrderType() );
+		return ORDER_ASC.equalsIgnoreCase( getOrderType() );
 	}
 	
 	public String getOrderType() {
