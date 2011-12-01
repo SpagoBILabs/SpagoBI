@@ -326,7 +326,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 			if(defaultSlot != null) {
 				newExpr += " ELSE '" + defaultSlot.getName() + "'";
 			} else {
-				newExpr += " ELSE (" + expr + ")";
+				newExpr += " ELSE (CONCAT(" + expr + ",''))";
 			}
 			newExpr += " END ";
 		} catch (Throwable t) {
