@@ -68,9 +68,10 @@ Sbi.crosstab.CrosstabPreviewPanel = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	c = Ext.apply(c, {
-      		layout:'fit',
+      		//layout:'fit',
       		border: false,
-      		id: 'CrosstabPreviewPanel'
+      		id: 'CrosstabPreviewPanel',
+      		autoWidth: true
     	});
 	
 	this.calculatedFields = new Array();
