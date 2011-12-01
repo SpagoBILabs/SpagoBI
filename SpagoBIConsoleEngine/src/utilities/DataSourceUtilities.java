@@ -28,8 +28,10 @@ import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -95,7 +97,7 @@ public class DataSourceUtilities {
 	 * @return a boolean value with the response of the operation.
 	 * 
 	 */
-	public boolean executeUpdateQuery(Map<String , Object> params, JSONObject metaParams) throws Throwable, Exception{
+	public boolean executeUpdateQuery(LinkedHashMap<String , Object> params, JSONObject metaParams) throws Throwable, Exception{
 		boolean toReturn = true;
 		DataConnection dataConnection = null;
 		SQLCommand sqlCommand = null;
@@ -111,7 +113,10 @@ public class DataSourceUtilities {
 
 			String statement = SQLStatements.getStatement((String)params.get( STMT )); 
 			logger.debug("Parameter [" + STMT + "] is equals to [" + statement + "]");			
-			Assert.assertTrue(!StringUtilities.isEmpty( statement ), "Parameter [" + STMT + "] cannot be null or empty");
+			Assert.assertTrue(!StringUtilities.isEmpty( statement ), "Parameter [" + STMT + "] cannot be null or empty");	
+			
+			statement = substituteListValuesInStmt(statement, params, metaParams );
+			logger.debug ("Statement after substitution of list of values (placeholder '$'):  " + statement);
 			
 			String numParsStr = (String) params.get( NUM_PARS );
 			int numPars = (numParsStr != null)?Integer.parseInt(numParsStr):0;
@@ -127,23 +132,25 @@ public class DataSourceUtilities {
 					Assert.assertTrue(metaParams == null, "Parameter [" + metaParams + "] cannot be null or empty.");					
 				}else{
 					JSONArray queryPars = (JSONArray)metaParams.get("queryParams");
-					//for (int j=0; j<queryPars.length(); j++){
-					for (int j=0; j<numPars; j++){
+					//for (int j=0; j<numPars; j++){
+					for (int j=0; j<queryPars.length(); j++){
 						JSONObject obj = (JSONObject)queryPars.get(j);
-						String paramType = (String)obj.get("type");
-						String paramName = (String)obj.get("name");
-						String paramValue = (String)params.get(paramName);
-						//if value isn't valorized, checks the defualt (if it's defined into meta section)
-						if (paramValue == null){ 
-							try{
-								paramValue =  (String)obj.get("default");
-							}catch(JSONException je ){
-								logger.error("param " + paramName + "in JSON template not found. Parameter value is null!");
-								paramValue = null;
+						if(!obj.isNull("name")){
+							String paramType = (String)obj.get("type");
+							String paramName = (String)obj.get("name");
+							String paramValue = (String)params.get(paramName);
+							//if value isn't valorized, checks the defualt (if it's defined into meta section)
+							if (paramValue == null){ 
+								try{
+									paramValue =  (String)obj.get("default");
+								}catch(JSONException je ){
+									logger.error("param " + paramName + "in JSON template not found. Parameter value is null!");
+									paramValue = null;
+								}
 							}
+							logger.debug("Parameter " + paramName + "  is equals to [" + paramValue + "]");
+							inputParameter.add(dataConnection.createDataField(paramName,getParamType(paramType), paramValue));
 						}
-						logger.debug("Parameter " + paramName + "  is equals to [" + paramValue + "]");
-						inputParameter.add(dataConnection.createDataField(paramName,getParamType(paramType), paramValue));							
 					}	
 				}				
 				dataResult = sqlCommand.execute(inputParameter);
@@ -353,4 +360,93 @@ public class DataSourceUtilities {
         }
         return cls;
 	 }
+	
+	/**
+	 * Substitute the placeholder $ into the statement with the list of values presents into params
+	 * following the positional substitution type.
+	 * 
+	 * @param stmt the statement
+	 * @param params the map of parameters (list too)
+	 * @param metaParams the metaparams obj where the type of the parameter could be: string, char, num, date, list...
+	 * 
+	 * @return The statement replaced of the $ chars with the list of values
+	 * 
+	 * @throws Exception
+	 */
+	private String substituteListValuesInStmt(String stmt, LinkedHashMap<String , Object> params, JSONObject metaParams)
+		throws Exception {
+		JSONArray metaPars = null;
+		
+		if (stmt == null || stmt.indexOf("$") < 0) return stmt;
+		if (metaParams == null) return stmt;
+		
+		metaPars = (JSONArray)metaParams.get("queryParams");
+		
+		StringBuffer sb = new StringBuffer();
+		StringTokenizer st = new StringTokenizer(stmt);
+		while(st.hasMoreTokens()){
+			String tok = st.nextToken();
+			if(tok.indexOf("$") != -1){
+				String preTok = tok.substring(0,tok.indexOf("$"));
+				String postTok = tok.substring(tok.indexOf("$")+1);
+				String newValues = "";
+				if (preTok != null) newValues += preTok;
+				newValues += getParamListValue(metaPars, params);
+				if (postTok != null) newValues += postTok;
+				if (newValues != null ){
+					sb.append(newValues);
+					sb.append(" ");
+				}								
+			}else{
+				sb.append(tok);
+				sb.append(" ");
+			}
+		}
+		return  sb.toString();
+	}
+	
+	private String getParamListValue(JSONArray metaPars,  LinkedHashMap<String , Object> pars) throws Exception{
+		String toReturn = "";
+		try{
+			for (int i=0, l=metaPars.length(); i<l; i++) {
+				JSONObject obj = (JSONObject)metaPars.get(i);				
+				if (obj == null || obj.isNull("name")) continue;
+				logger.debug("Get param value for : "  + (String)obj.get("name") + " . Its type is defined as : " + obj.get("type"));
+				String paramType = (String)obj.get("type");		
+				if (paramType.toUpperCase().startsWith("LIST")){
+					ArrayList values = new ArrayList();
+					String paramName = (String)obj.get("name");
+					Object objValues = pars.get(paramName);
+					if (objValues instanceof ArrayList )
+						values = (ArrayList)pars.get(paramName);
+					else //monovalue:
+						values.add((String)pars.get(paramName));
+					
+					if (values != null) {
+						String tmpReturn = (values.toString()).substring(1,(values.toString()).indexOf("]"));
+						//if the values must be string adds the ' char to each single value
+						String realType = (paramType.indexOf("_") != -1)?paramType.substring(paramType.indexOf("_") +1 ):"";
+						if (realType.equalsIgnoreCase("STRING")){
+							String[] strValues = tmpReturn.split(",");
+							for (int j=0, l2 = strValues.length; j < l2; j++){
+								toReturn += "'" + strValues[j].trim() + "'" + ((j <  (l2-1))?",":"");								
+							}							
+						}else 
+							toReturn = tmpReturn;	
+						
+					}
+					pars.remove(paramName);
+					//clean the meta param just managed
+					obj = new JSONObject();
+					metaPars.put(i, obj);
+					break;
+				}
+			}
+		}catch (Exception e){
+			logger.error("Error while replacing parameters in value: " + e.getMessage());
+			throw e;
+		}
+		return toReturn;
+	}
+
 }

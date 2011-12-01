@@ -34,17 +34,17 @@ import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import utilities.DataSourceUtilities;
+
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
-import utilities.DataSourceUtilities;
 
 
 
@@ -94,8 +94,8 @@ public class ExecuteUpdateAction extends AbstractConsoleEngineAction {
 			IDataSource ds = consoleEngineInstance.getDataSource();						
 			DataSourceUtilities utility = new DataSourceUtilities(ds);
 			//gets hashmap with all parameters			
-			Map<String , Object> params;
-			params = getAttributesAsMap();	
+			LinkedHashMap<String , Object> params;
+			params = getAttributesAsLinkedMap();	
 			JSONObject metaParams = getAttributeAsJSONObject( "metaParams" );
 			logger.debug("Parameter [metaParams] is equals to [" + metaParams + "]");
 			
