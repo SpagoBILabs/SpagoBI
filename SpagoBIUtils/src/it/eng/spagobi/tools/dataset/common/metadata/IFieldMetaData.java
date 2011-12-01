@@ -29,6 +29,9 @@ import java.util.Map;
  */
 public interface IFieldMetaData {
 
+	public static final String DECIMALPRECISION = "decimalPrecision";
+	public static final String ORDERTYPE = "oprdertype";
+	
 	public enum FieldType {ATTRIBUTE, MEASURE}
 
 	String getName();

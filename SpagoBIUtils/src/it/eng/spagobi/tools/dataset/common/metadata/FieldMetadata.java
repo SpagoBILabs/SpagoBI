@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FieldMetadata implements IFieldMetaData {
-
+	
 	String name;
 	String alias;
 	Class type;
