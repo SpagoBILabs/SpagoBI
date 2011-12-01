@@ -94,7 +94,12 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	        defaultType: 'fieldset',
 	        items: []
 	    });
+		if(Ext.isIE){
+			this.threshFields.style = 'margin-top: 150px;';
+
+		}
 		this.items =[this.chartPanel, this.threshFields];
+		
 	}
 	, calculateMax: function(threshold){
 		if(threshold.max > this.maxChartValue){
