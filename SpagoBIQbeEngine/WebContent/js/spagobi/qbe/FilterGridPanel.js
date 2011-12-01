@@ -392,7 +392,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
   	
   	, setPromptableFiltersLastValues: function(formState) {
     	for (var filterName in formState) {
-    		var index = this.grid.store.find('filterId', filterName);
+    		var index = this.grid.store.findExact('filterId', filterName);
     		if (index != -1) {
     			var record = this.grid.store.getAt(index);
     			var filterValue = formState[filterName];
@@ -406,7 +406,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
   	
   	, setPromptableFiltersDefaultValues: function(formState) {
     	for (var filterName in formState) {
-    		var index = this.grid.store.find('filterId', filterName);
+    		var index = this.grid.store.findExact('filterId', filterName);
     		if (index != -1) {
     			var record = this.grid.store.getAt(index);
     			var filterValue = formState[filterName];

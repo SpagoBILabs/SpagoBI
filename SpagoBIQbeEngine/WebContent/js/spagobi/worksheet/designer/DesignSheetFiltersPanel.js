@@ -153,7 +153,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		for (; i < rows.length; i++) {
 			var aRow = rows[i];
 			// if the attribute is already present show a warning
-			if (this.store.find('id', aRow.data.id) !== -1) {
+			if (this.store.findExact('id', aRow.data.id) !== -1) {
 				Ext.Msg.show({
 					   title: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.title'),
 					   msg: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.attributealreadypresent'),
@@ -329,7 +329,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	
 	, removeFilter: function(aRow) {
 		var rowId = aRow.data.id;
-		var recordIndex = this.store.find('id', rowId);
+		var recordIndex = this.store.findExact('id', rowId);
 		this.store.removeAt(recordIndex);
 		var item = null;
 		var i = this.contents.length-1;
@@ -401,7 +401,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	}
 	
 	, containsAttribute: function (attributeId) {
-		var toReturn = this.store.find('id', attributeId) !== -1;
+		var toReturn = this.store.findExact('id', attributeId) !== -1;
 		return toReturn;
 	}
 	
