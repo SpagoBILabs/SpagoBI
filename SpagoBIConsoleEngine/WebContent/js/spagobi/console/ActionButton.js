@@ -112,23 +112,32 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 	      	for (var i = 0, l = dynamicParams.length; i < l; i++) {      		     
 	      		var param = dynamicParams[i]; 
 	        	for(p in param) { 
-	        		if(p === 'scope') continue;
+	        		if(p === 'scope') continue;	        	
 	        			//Searchs into request
 	        			if (param.scope === 'env'){ 
+	        				var tmpNamePar =  param[p];
+			            	  if (p !== this.USER_ID && context[tmpNamePar] === undefined) {
+			            		  // msgErr += 'Parameter "' + tmpNamePar + '" undefined into request. <p>';
+		                      } else {   
+		                    	  results[p] = context[tmpNamePar];
+		                      }
+			            	  /*
 			            	if (p !== this.USER_ID && context[p] === undefined ) {
 			            		//search into filters
-			            		var paramValue = this.store.filterPlugin.getFilter(this.store.getFieldNameByAlias(p)); 
+			            		//var paramValue = this.store.filterPlugin.getFilter(this.store.getFieldNameByAlias(p)); 
+			            		alert("p: " + p + " - param[p]: " + param[p]);
+			            		var paramValue = this.store.filterPlugin.getFilter(this.store.getFieldNameByAlias(param[p]));
 			            		if (paramValue !== undefined){
 			            			//results[param[p]] = paramValue;
 			            			results[p] = paramValue;
 			            		}
 			            		else{
-			            		//	msgErr += 'Parameter "' + p + '" undefined into request or filter. <p>';
+			            			msgErr += 'Parameter "' + p + '" undefined into request or filter. <p>';
 			            		}
 		                    } else {          	 	 		           	 	 		  
 		                    	//results[param[p]] = context[p];
 		                    	results[p] = context[p];
-		                    } 	 		 
+		                    } 	 	*/	 
 	                }          	 	 		   
 	          		    
 	        	 }          			   

@@ -180,14 +180,28 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 			  while(it.hasNext()) {
 				String parameterName = (String)it.next();
 				String parameterValue = (String)analyticalDrivers.get(parameterName);
+				//if (parameterValue.indexOf("'")>=0) parameterValue = parameterValue.replaceAll("'","");
+				System.out.println("parameterName: " + parameterName);
+				System.out.println("parameterValue: " + parameterValue);
 				if (parameterValue != null && !parameterValue.equals("")){
-					if (parameterValue.startsWith("'")){
+					if  (parameterValue.startsWith("'")){
+						if ( parameterValue.indexOf(",") >= 0){					
+			%>
+							executionContext ['<%=parameterName%>'] = [<%=parameterValue%>];
+			<%			}else{
+			%>
+							executionContext ['<%=parameterName%>'] = <%=parameterValue%>;
+			<%
+						}
+					}else{
+						if ( parameterValue.indexOf(",") >= 0){	
 		   %>
-		   				executionContext ['<%=parameterName%>'] = <%=parameterValue%>;
-		   <%		}else{ %>
-						executionContext ['<%=parameterName%>'] = '<%=parameterValue%>';
-		   <%		}
-			    }
+		   					executionContext ['<%=parameterName%>'] = ['<%=parameterValue%>']';
+		   <%			}else{ %>
+							executionContext ['<%=parameterName%>'] = '<%=parameterValue%>';
+		   <%			}
+			    	}
+				} //if
         	  } //while
 	       %>
 	       template.executionContext = executionContext;
