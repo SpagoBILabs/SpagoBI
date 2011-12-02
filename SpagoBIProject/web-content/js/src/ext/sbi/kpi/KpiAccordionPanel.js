@@ -61,13 +61,14 @@ Sbi.kpi.KpiAccordionPanel =  function(config) {
 	        split:true,
 	        width: 300,
 	        minSize: 275,
-	        maxSize: 400,
+	        maxSize: 600,
 	        collapsible: true,
 	        layout:'accordion',
 	        items: []
 	    };
 	    this.initDetail();
 	    this.initDescription();
+	    this.initHistorical();
 		this.initAccordion(c);
    
 		Sbi.kpi.KpiAccordionPanel.superclass.constructor.call(this, c);
@@ -76,6 +77,7 @@ Sbi.kpi.KpiAccordionPanel =  function(config) {
 Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	detail: null
 	, description: null
+	, historical: null
 	
 	, initAccordion: function(c){
 
@@ -106,7 +108,8 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 
 	    var item5 = new Ext.Panel({
 	        title: 'Storico',
-	        html: '&lt;empty panel&gt;',
+	        items: [this.historical],
+	        autoScroll: true,
 	        cls:'empty'
 	    });
 	    c.items = [item1, item2, item3, item4, item5];
@@ -117,11 +120,16 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	, initDescription: function(){
 		this.description = new Sbi.kpi.KpiGUIDescription();
 	}
+	, initHistorical: function(){
+		this.historical = new Sbi.kpi.KpiGUIHistorical();
+	}
 	, updateAccordion: function(field){
 		//detail
 		this.detail.update(field);
 		//description
 		this.description.update(field);
+		//historical
+		this.historical.update(field);
 		this.render();
 	}
 });
