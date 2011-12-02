@@ -36,6 +36,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.kpi.bo.KpiLine;
 import it.eng.spagobi.engines.kpi.bo.KpiLineVisibilityOptions;
+import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
 import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
@@ -347,41 +348,7 @@ public class KpiEngineUtil {
 		return value;
 	}
 	
-//	public static JSONObject recursiveGetJsonObject(KpiLine kpiLine, JSONArray children){
-//		
-//		JSONObject jsonToReturn = new JSONObject();
-//		if(children == null){
-//			children = new JSONArray();
-//		}
-//		if(kpiLine != null){		
-//			
-//			for (int i = 0; i < kpiLine.getChildren().size(); i++) {
-//				
-//				KpiLine kpiChildLine = (KpiLine)kpiLine.getChildren().get(i);
-//				jsonToReturn = recursiveGetJsonObject(kpiChildLine, children);
-//				children.put(jsonToReturn);
-//			}	
-//			try {
-//				jsonToReturn.put("children", children);
-//				jsonToReturn.put("name", kpiLine.getModelNodeName());
-//				if(kpiLine.getValue() != null){
-//					jsonToReturn.put("actual", kpiLine.getValue().getValue());
-//					jsonToReturn.put("target", kpiLine.getValue().getTarget());
-//				}
-//				if(kpiLine.getThresholdOfValue() != null){
-//					jsonToReturn.put("status", kpiLine.getThresholdOfValue().getColourString());
-//				}
-//				jsonToReturn.put("trend", "");
-//				jsonToReturn.put("iconCls", "task-folder");
-//				jsonToReturn.put("expanded", true);
-//				
-//			} catch (JSONException e) {
-//				logger.error("Error setting children");
-//			}
-//		}
-//		return jsonToReturn;
-//		
-//	}
+
 
 	public static JSONObject recursiveGetJsonObject(KpiLine kpiLine) {
 
@@ -403,13 +370,9 @@ public class KpiEngineUtil {
 			String color = detectColor(kpiLine.getValue());
 			jsonToReturn.put("status", color);
 
-			Integer trend = getTrend(kpiLine);
-			if(trend != null){
-				jsonToReturn.put("trend", trend);
-			}
-						
 			jsonToReturn.put("expanded", true);
 			
+			setKpiInfos(kpiLine, jsonToReturn);
 			setDetailInfos(kpiLine, jsonToReturn);
 
 			List<KpiLine> children = (List<KpiLine>) kpiLine.getChildren();
@@ -430,6 +393,30 @@ public class KpiEngineUtil {
 		}
 
 		return jsonToReturn;
+
+	}
+	private static void setKpiInfos(KpiLine kpiLine, JSONObject row) throws JSONException{
+		Integer kpiInstId = getTrend(kpiLine, row);
+		
+		try {
+			if(kpiInstId != null){
+				KpiInstance kpiInst = DAOFactory.getKpiInstanceDAO().loadKpiInstanceById(kpiInstId);
+				Integer kpiId = kpiInst.getKpi();
+				Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiId);
+				row.putOpt("kpiDescr", kpi.getDescription());
+				row.putOpt("kpiName", kpi.getKpiName());
+				row.putOpt("kpiCode", kpi.getCode());
+				row.putOpt("kpiDsLbl", kpi.getDsLabel());
+				row.putOpt("kpiTypeCd", kpi.getKpiTypeCd());
+				row.putOpt("measureTypeCd", kpi.getMeasureTypeCd());
+				row.putOpt("scaleName", kpi.getScaleName());
+				row.putOpt("targetAudience", kpi.getTargetAudience());
+				
+				row.putOpt("kpiInstId", kpiInstId);
+			}
+		} catch (EMFUserError e) {
+			logger.error(e);
+		}
 
 	}
 	private static void setDetailInfos(KpiLine kpiLine, JSONObject row){
@@ -509,7 +496,8 @@ public class KpiEngineUtil {
 		return status;
 		
 	}
-	private static Integer getTrend(KpiLine kpiLine){
+	
+	private static Integer getTrend(KpiLine kpiLine, JSONObject row){
 		Integer toReturn = null;
 		KpiValue value = kpiLine.getValue();
 		Integer modelInstId = kpiLine.getModelInstanceNodeId();
@@ -517,8 +505,9 @@ public class KpiEngineUtil {
 			ModelInstanceNode node = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstId, null);
 			KpiInstance kpiInst= node.getKpiInstanceAssociated();
 			Integer kpiInstId = kpiInst.getKpiInstanceId();
-			toReturn = DAOFactory.getKpiDAO().getKpiTrend(null, kpiInstId, value.getBeginDate());
-
+			Integer trend = DAOFactory.getKpiDAO().getKpiTrend(null, kpiInstId, value.getBeginDate());
+			row.putOpt("trend", trend);
+			toReturn = kpiInstId;
 		} catch (Exception e) {
 			logger.error("Error retrieving modelinstance "+modelInstId, e);
 		}
