@@ -238,19 +238,21 @@ public class KpiValueComputation {
 						+ (scaleName != null ? scaleName : "scaleName null"));
 			}
 		}
-		kVal.setWeight(weight);
-		logger.debug("Setted the KpiValue weight:" + weight);
-		kVal.setThresholdValues(thresholdValues);
-		logger.debug("Setted the KpiValue thresholds");
-		kVal.setScaleCode(scaleCode);
-		logger.debug("Kpi value scale Code setted");
-		kVal.setScaleName(scaleName);
-		logger.debug("Kpi value scale Name setted");
-		kVal.setTarget(target);
-		logger.debug("Kpi value target setted");
-		if (chartType != null)
-			kVal.setChartType(chartType);
-		logger.debug("OUT");
+		if(kVal != null){
+			kVal.setWeight(weight);
+			logger.debug("Setted the KpiValue weight:" + weight);
+			kVal.setThresholdValues(thresholdValues);
+			logger.debug("Setted the KpiValue thresholds");
+			kVal.setScaleCode(scaleCode);
+			logger.debug("Kpi value scale Code setted");
+			kVal.setScaleName(scaleName);
+			logger.debug("Kpi value scale Name setted");
+			kVal.setTarget(target);
+			logger.debug("Kpi value target setted");
+			if (chartType != null)
+				kVal.setChartType(chartType);
+			logger.debug("OUT");
+		}
 		return kVal;
 	}
 
