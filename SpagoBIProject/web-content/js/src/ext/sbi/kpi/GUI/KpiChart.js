@@ -48,8 +48,7 @@ function setValue(value) {
          'L',
          centerX + pivotLength * Math.cos(angle), centerY + pivotLength * Math.sin(angle)
      ];//arrow
-    
-    //if (!pivot) {
+
 		if(pivot != undefined){
 			pivot.destroy();
 		}
@@ -59,11 +58,7 @@ function setValue(value) {
             'stroke-width': 3
         })
         .add();
-/*    } else {
-        pivot.attr({
-            d: path
-        });
-    }*/
+
 }
 function setRanges(ranges){
 	for(i=0; i<rangeElements.length; i++){
@@ -115,72 +110,12 @@ function setMax(maximumn){
     .add();
 }
 // background area
-/*
-maxValue = renderer.arc(centerX, centerY, backgroundRadius, 0, minAngle, maxAngle)
-    .attr({
-        fill: {
-            linearGradient: [0, 0, min, max],
-            stops: [
-                [0, '#FFF'],
-                [1, '#DDD']
-            ]
-        },
-        stroke: 'silver',
-        'stroke-width': 1
-    })
-    .add();
-*/
+
 maxValueElement = setMax(max);
 
 // ranges
 setRanges(ranges);
-/*
-$.each(ranges, function(i, rangesOptions) {
-	var rangeElement = renderer.arc(
-        centerX,
-        centerY,
-        arcMaxRadius,
-        arcMinRadius,
-        valueToAngle(rangesOptions.from),
-        valueToAngle(rangesOptions.to)
-    )
-    .attr({
-        fill: rangesOptions.color
-    })
-    .add();
-	rangeElements.push(rangeElement);
-});
-*/
-// ticks
-/*for (var i = min; i <= max; i += tickInterval) {
-    
-    angle = valueToAngle(i);
-    
-    // draw the tick marker
-    tickPathElement = renderer.path([
-            'M',
-            centerX + arcMaxRadius * Math.cos(angle), centerY + arcMaxRadius * Math.sin(angle),
-            'L',
-            centerX + arcMinRadius * Math.cos(angle), centerY + arcMinRadius * Math.sin(angle)
-        ])
-        .attr({
-            stroke: 'silver',
-            'stroke-width': 2
-        })
-        .add();
-    
-    // draw the text
-    tickTextElement = renderer.text(
-            i,
-            centerX + textRadius * Math.cos(angle),
-            centerY + textRadius * Math.sin(angle)
-        )
-        .attr({
-            align: 'center'
-        })
-        .add();
-    
-}*/
+
 function setTicks(maxim){
 	max = maxim
 	for (var i = min; i <= max; i += tickInterval) {
