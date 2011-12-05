@@ -429,10 +429,19 @@ public class DataSourceUtilities {
 						if (realType.equalsIgnoreCase("STRING")){
 							String[] strValues = tmpReturn.split(",");
 							for (int j=0, l2 = strValues.length; j < l2; j++){
-								toReturn += "'" + strValues[j].trim() + "'" + ((j <  (l2-1))?",":"");								
+								toReturn += "'" + strValues[j].trim() + "'" + ((j <  (l2-1))?",":"");
 							}							
-						}else 
+						}else {
 							toReturn = tmpReturn;	
+						}
+						//forces the default values if it isn't present into the request
+						if (toReturn == null || toReturn.equalsIgnoreCase("'null'")){
+							if (realType.equalsIgnoreCase("STRING")){
+								toReturn = "'" + (String)obj.get("default") +"'";
+							}else{
+								toReturn = (String)obj.get("default");
+							}
+						}
 						
 					}
 					pars.remove(paramName);
