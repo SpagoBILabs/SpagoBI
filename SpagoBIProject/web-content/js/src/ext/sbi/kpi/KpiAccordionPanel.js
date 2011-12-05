@@ -108,6 +108,11 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	        title: 'Doc collegato',
 	        items: [this.docs],
 	        scope: this,
+            listeners : {
+                expand: function(p){
+                    p.doLayout();
+                }
+            },
 	        autoScroll: true
 	    });
 
