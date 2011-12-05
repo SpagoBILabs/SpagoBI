@@ -38,7 +38,6 @@ public class KpiGUIUtil {
 			if (kpiLine.getValue() != null) {
 				jsonToReturn.put("actual", kpiLine.getValue().getValue());
 				jsonToReturn.put("target", kpiLine.getValue().getTarget());
-				//jsonToReturn.put("iconCls","has-kpi");
 				jsonToReturn.put("iconCls","");
 			}else{
 				jsonToReturn.put("actual", "");
@@ -64,7 +63,6 @@ public class KpiGUIUtil {
 
 				ExecutionInstance docExecInst = ExecutionInstance.getExecutionInstanceByLabel(kpiInstance, docLabel);
 				String executionUrl = docExecInst.getExecutionUrl(kpiInstanceLocale);
-				String encodedUrl = URLEncoder.encode(executionUrl);
 				jsonToReturn.putOpt("documentExecUrl", executionUrl);
 			}
 
