@@ -76,12 +76,10 @@ Ext.extend(Sbi.kpi.KpiGUIDocCollegato , Ext.Panel, {
 	, initWindow: function(conf){
 	
 		this.perWin = new Ext.Panel({
-			//title: 'Documento di dettaglio',   
-	        layout      : 'fit',
 	        scope		: this,
-	        minWidth: 475,
-	        minHeight: 350,
 	        autoScroll: true,
+	        border: false,
+	    	autoHeight: true,
 	        items       : [this.miframe]
 		});
 
@@ -94,6 +92,7 @@ Ext.extend(Sbi.kpi.KpiGUIDocCollegato , Ext.Panel, {
 	        , autoScroll: true
 	        , loadMask: {msg: 'Loading...'}
 			, minWidth: 475
+			, height: 400
 	        , defaultSrc: 'about:blank'
 
 	    });
@@ -112,6 +111,7 @@ Ext.extend(Sbi.kpi.KpiGUIDocCollegato , Ext.Panel, {
 		if(this.noDocText != null){
 			this.noDocText.destroy();
 		}
+
 		var url = this.getDocViewUrl(field);
 		if(url != null){
 			this.miframe.setSrc(url);
