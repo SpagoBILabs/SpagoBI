@@ -482,13 +482,13 @@ public class TemporaryTableManager {
 			tableName = tableName.substring(0, 30);
 		}
 		if (schema != null && !schema.trim().equals("")) {
-			tableName = schema + "." + tableName.substring(0, 30);
+			tableName = schema + "." + tableName;
 		}
 		
 		logger.debug("OUT: tableName = " + tableName);
 		return tableName;
 	}
-
+	
 	public static void setLastDataSetTableDescriptor(String tableName,
 			IDataSetTableDescriptor tableDescriptor) {
 		tableDescriptors.put(tableName, tableDescriptor);
