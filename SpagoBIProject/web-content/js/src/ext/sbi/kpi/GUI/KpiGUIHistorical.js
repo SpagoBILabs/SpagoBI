@@ -39,7 +39,7 @@
  * 
  * [list]
  * 
- * Authors - Monica Franceschini
+ * Authors - Antonella Giachino
  */
 Ext.ns("Sbi.kpi");
 
@@ -49,46 +49,63 @@ Sbi.kpi.KpiGUIHistorical =  function(config) {
 		if (Sbi.settings && Sbi.settings.kpi && Sbi.settings.kpi.KpiGUIHistorical) {
 			defaultSettings = Ext.apply(defaultSettings, Sbi.settings.kpi.KpiGUIHistorical);
 		}
+		
+		this.services = new Array();
+		this.services['loadHistoricalValues'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'GET_HISTORICAL_KPI_VALUES_ACTION'
+			, baseParams: {
+					LIGHT_NAVIGATOR_DISABLED: 'TRUE'
+			}
+		});
 
 		var c = Ext.apply(defaultSettings, config || {});
 
 		Ext.apply(this, c);
 		
-	//	this.initDetail(c);
+		//this.initHistorical(c);
    
 		Sbi.kpi.KpiGUIHistorical.superclass.constructor.call(this, c);
 };
 
 Ext.extend(Sbi.kpi.KpiGUIHistorical , Ext.form.FormPanel, {
-	items: null,
-	descrFields: null,
-	descrName: null,
+	items: null
+  , services: null
 	
-	initDescription: function(){
-		this.descrName = new Ext.form.DisplayField({fieldLabel: 'Nome', 
-			style: 'padding-left:5px; font-style: italic;'});
-
-		this.descrFields = new Ext.form.FieldSet({
-	        xtype:'fieldset',
-	        border: false,
-	        defaultType: 'displayfield',
-	        items: [this.descrName]
-	    });
-
-		
-		this.items =[this.descrFields];
+  ,	initHistorical: function(){
+		alert("initHistorical - " + this.kpiInstId);
+			
 	}
 	
 	, cleanPanel: function(){
 
 	}
 	, update:  function(field){
-	//	alert("updateHistorical- KPIINSTID: "+field.attributes.kpiInstId);
-		/*
-		this.descrName.setValue(field.attributes.kpiName);
-		this.descrName.show();
+		alert("updateHistorical- kpiInstId: "+field.attributes.kpiInstId);	
+		
+		Ext.Ajax.request({
+	       	url: this.services['loadHistoricalValues'] 			       
+	   	, params: this.kpiInstId  			       
+		, success: function(response, options) {
+			alert("Tutto OK!!");
+				/*
+			if(!response || !response.responseText) {
+				Sbi.Msg.showError('Server response is empty', 'Service Error');
+				return;
+			}
+			var content = Ext.util.JSON.decode( response.responseText );
+			action.setBoundColumnValue(r, content.pid);
+			this.waitWin.stop('Proecess stopped succesfully');
+			action.toggle(r);
+			
+			*/
+			}
+			, failure: function(response, options) {
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);				
+			}
+			, scope: this     
+		});	
+		
 		this.doLayout();
-        this.render();
-        */
+        this.render();        
 	}
 });
