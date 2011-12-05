@@ -91,6 +91,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	        // Fieldset thresholds
 	        xtype:'fieldset',
 	        border: false,
+	        width:350,
 	        defaultType: 'fieldset',
 	        items: []
 	    });
@@ -216,7 +217,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 				this.calculateMax(thr);
 				this.calculateRange(thr);
 			}
-
+			this.threshFields.doLayout();
 		}
 
 		//weight

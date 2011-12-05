@@ -150,10 +150,42 @@ public class ExecutionInstance implements Serializable{
 		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, displayToolbar);
 		this.displaySliders = displaySliders;
 	}
+	/**Used by Kpi Engine for detail documents
+	 * @param userProfile
+	 * @param flowId
+	 * @param executionId
+	 * @param biobjectLabel
+	 * @param executionRole
+	 * @param executionModality
+	 * @throws Exception
+	 */
+	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, 
+			String biobjectLabel, String executionRole, String executionModality) throws Exception {
+		logger.debug("IN: input parameters: userProfile = [" + userProfile + "]; flowId = [" + flowId + "]; executionId = [" + executionId + "]; " +
+				"biobjectLabel" + biobjectLabel + "]; executionRole = [" + executionRole + "]");
+		if (userProfile == null || flowId == null || executionId == null || biobjectLabel == null) {
+			throw new Exception("Invalid arguments.");
+		}
+		this.userProfile = userProfile;
+		this.flowId = flowId;
+		this.executionId = executionId;
+		this.object = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(biobjectLabel, executionRole);
+		this.calendar = new GregorianCalendar();
+		this.executionRole = executionRole;
+		this.executionModality = (executionModality == null) ? SpagoBIConstants.NORMAL_EXECUTION_MODALITY : executionModality;
+		initBIParameters();
+	}
 
-
-
-
+	public static ExecutionInstance getExecutionInstanceByLabel(ExecutionInstance instance, 
+			String biobjectLabel) throws Exception {
+		IEngUserProfile userProfile = instance.userProfile;
+		String flowId = instance.flowId;
+		String executionId = instance.executionId;
+		String executionRole = instance.executionRole;
+		String executionModality = instance.executionModality;
+		
+		return new ExecutionInstance(userProfile,flowId,executionId,biobjectLabel,executionRole,executionModality);
+	}
 
 	public void changeExecutionRole(String newRole) throws Exception {
 		logger.debug("IN");

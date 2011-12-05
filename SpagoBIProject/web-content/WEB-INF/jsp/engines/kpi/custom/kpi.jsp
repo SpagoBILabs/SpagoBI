@@ -57,8 +57,25 @@ Authors - Monica Franceschini
 		}
 	}
 	
-	JSONArray kpiRowsArray = new JSONArray();
+	ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
+	String parsToDetailDocs = "";
+	   if(instance!=null && instance.getBIObject()!=null){
+	   List pars = instance.getBIObject().getBiObjectParameters();			
+		if(pars!=null && !pars.isEmpty()){
+			Iterator ite=pars.iterator();
+			while(ite.hasNext()){
+				BIObjectParameter p = (BIObjectParameter)ite.next();
+				String url = p.getParameterUrlName();
+				String value = p.getParameterValuesAsString();
+				parsToDetailDocs += url+"="+value+"&";
+			}		
+		}
+	}
+
 	
+	JSONArray kpiRowsArray = new JSONArray();
+	KpiEngineUtil util = new KpiEngineUtil();
+	util.setExecutionInstance(instance, locale);
 	
 	if(!kpiRBlocks.isEmpty()){
 		Iterator blocksIt = kpiRBlocks.iterator();
@@ -66,10 +83,12 @@ Authors - Monica Franceschini
 		while(blocksIt.hasNext()){			
 			KpiResourceBlock block = (KpiResourceBlock) blocksIt.next();
 			KpiLine root = block.getRoot();
-			JSONObject modelInstJson =  KpiEngineUtil.recursiveGetJsonObject(root);
+			JSONObject modelInstJson =  util.recursiveGetJsonObject(root);
 			kpiRowsArray.put(modelInstJson);						
 		}			
 	}
+	
+	//determines execution instance for each detail document
 
 %>		
 <script type="text/javascript">
