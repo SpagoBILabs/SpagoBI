@@ -23,40 +23,31 @@ package it.eng.spagobi.engines.kpi;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.DomainDAOHibImpl;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.InternalEngineIFace;
 import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.engines.kpi.bo.KpiLine;
 import it.eng.spagobi.engines.kpi.bo.KpiLineVisibilityOptions;
 import it.eng.spagobi.engines.kpi.bo.KpiResourceBlock;
+import it.eng.spagobi.engines.kpi.utils.KpiEngineUtil;
 import it.eng.spagobi.engines.kpi.utils.StyleLabel;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
-import it.eng.spagobi.kpi.config.bo.KpiRel;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
 import it.eng.spagobi.kpi.config.dao.IKpiDAO;
 import it.eng.spagobi.kpi.config.dao.IKpiErrorDAO;
-import it.eng.spagobi.kpi.config.dao.KpiDAOImpl;
 import it.eng.spagobi.kpi.exceptions.MissingKpiValueException;
 import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
 import it.eng.spagobi.kpi.model.bo.Resource;
@@ -65,24 +56,18 @@ import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
 import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.exceptions.DatasetException;
 import it.eng.spagobi.tools.udp.bo.UdpValue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
@@ -128,21 +113,21 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	protected StyleLabel styleSubTitle;// Document's subtitle style
 	protected String userIdField=null;
 
-	protected List resources;// List of resources linked to the
+	public List resources;// List of resources linked to the
 	// ModelInstanceNode
 
 	protected Integer periodInstID = null;
 
 	protected Integer modelInstanceRootId = null;
 
-	protected KpiTemplateConfiguration templateConfiguration = new KpiTemplateConfiguration(
+	public KpiTemplateConfiguration templateConfiguration = new KpiTemplateConfiguration(
 			"KPI_DEFAULT_PUB", "KPI_METADATA_DEFAULT_PUB", "TREND_DEFAULT_PUB", false, "MODEL", null, null, null, null, null, false, true,
 			false, false, false, false, true, false, false, false, false,
 			false);
 	
-	protected KpiEnginData data;	
+	public KpiEnginData data;	
 	
-	protected KpiParametrization parameters = new KpiParametrization(
+	public KpiParametrization parameters = new KpiParametrization(
 			new Date(), null, "default", null, null, null, null);
 	
 	protected KpiValueComputation computation; 

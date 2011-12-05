@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Authors - Monica Franceschini
 --%>
-<%@page import="it.eng.spagobi.engines.kpi.KpiEngineUtil"%>
+<%@page import="it.eng.spagobi.engines.kpi.utils.KpiGUIUtil"%>
 <%@page import="org.json.JSONObject, 
 				 java.util.ArrayList,
 				 java.util.List,
@@ -74,7 +74,7 @@ Authors - Monica Franceschini
 
 	
 	JSONArray kpiRowsArray = new JSONArray();
-	KpiEngineUtil util = new KpiEngineUtil();
+	KpiGUIUtil util = new KpiGUIUtil();
 	util.setExecutionInstance(instance, locale);
 	
 	if(!kpiRBlocks.isEmpty()){
