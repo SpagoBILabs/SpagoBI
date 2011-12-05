@@ -59,8 +59,8 @@ Sbi.kpi.KpiAccordionPanel =  function(config) {
 	        region:'east',
 	        fill: true,
 	        split:true,
-	        width: 300,
-	        minSize: 275,
+	        width: 500,
+	        minSize: 475,
 	        maxSize: 600,
 	        collapsible: true,
 	        layout:'accordion',
@@ -68,15 +68,20 @@ Sbi.kpi.KpiAccordionPanel =  function(config) {
 	    };
 	    this.initDetail();
 	    this.initDescription();
+	    this.initDocCollegato();
+	    this.initComments();
 	    this.initHistorical();
 		this.initAccordion(c);
-   
+		
+		
 		Sbi.kpi.KpiAccordionPanel.superclass.constructor.call(this, c);
 };
 
 Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	detail: null
 	, description: null
+	, docs: null
+	, comments: null
 	, historical: null
 	
 	, initAccordion: function(c){
@@ -85,6 +90,11 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	        title: 'Dettaglio',
 	        items: [this.detail],
 	        autoScroll: true,
+            listeners : {
+                expand: function(p){
+                    p.doLayout();
+                }
+            },
 	        cls:'empty'
 	    });
 	    
@@ -95,15 +105,16 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	    });
 
 	    var item3 = new Ext.Panel({
-	        title: 'Doc collegati',
-	        html: '&lt;empty panel&gt;',
-	        cls:'empty'
+	        title: 'Doc collegato',
+	        items: [this.docs],
+	        scope: this,
+	        autoScroll: true
 	    });
 
 	    var item4 = new Ext.Panel({
 	        title: 'Commenti',
-	        html: '&lt;empty panel&gt;',
-	        cls:'empty'
+	        scope: this,
+	        items: [this.comments]
 	    });
 
 	    var item5 = new Ext.Panel({
@@ -123,13 +134,25 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	, initHistorical: function(){
 		this.historical = new Sbi.kpi.KpiGUIHistorical();
 	}
+	, initDocCollegato: function(){
+		this.docs = new Sbi.kpi.KpiGUIDocCollegato();
+
+	}
+	, initComments: function(){
+		this.comments = new Sbi.kpi.KpiGUIComments();
+
+	}
 	, updateAccordion: function(field){
 		//detail
 		this.detail.update(field);
 		//description
 		this.description.update(field);
+		//linked docs
+		this.docs.update(field);
+		
+		this.comments.update(field);
 		//historical
 		this.historical.update(field);
-		this.render();
+		this.render();		
 	}
 });
