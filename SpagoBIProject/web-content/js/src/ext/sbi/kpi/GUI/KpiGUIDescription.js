@@ -64,16 +64,38 @@ Ext.extend(Sbi.kpi.KpiGUIDescription , Ext.form.FormPanel, {
 	items: null,
 	descrFields: null,
 	descrName: null,
+	descrDescription: null,
 	
 	initDescription: function(){
 		this.descrName = new Ext.form.DisplayField({fieldLabel: 'Nome', 
 			style: 'padding-left:5px; font-style: italic;'});
-
+		this.descrDescription = new Ext.form.DisplayField({fieldLabel: 'Descrizione', 
+			style: 'padding-left:5px; font-style: italic;'});
+		this.descrCode = new Ext.form.DisplayField({fieldLabel: 'Codice', 
+			style: 'padding-left:5px; font-style: italic;'});
+		
+		this.descrDsLbl = new Ext.form.DisplayField({fieldLabel: 'Label Dataset', 
+			style: 'padding-left:5px; font-style: italic;'});
+		this.descrTypeCd = new Ext.form.DisplayField({fieldLabel: 'Codice Tipo', 
+			style: 'padding-left:5px; font-style: italic;'});
+		this.measureTypeCd = new Ext.form.DisplayField({fieldLabel: 'Misura', 
+			style: 'padding-left:5px; font-style: italic;'});
+		this.scaleName = new Ext.form.DisplayField({fieldLabel: 'Scala', 
+			style: 'padding-left:5px; font-style: italic;'});
+		this.targetAudience = new Ext.form.DisplayField({fieldLabel: 'Target Audience', 
+			style: 'padding-left:5px; font-style: italic;'});
 		this.descrFields = new Ext.form.FieldSet({
 	        xtype:'fieldset',
 	        border: false,
 	        defaultType: 'displayfield',
-	        items: [this.descrName]
+	        items: [this.descrName, 
+	                 this.descrCode,
+		             this.descrDescription,		             
+		             this.descrDsLbl,
+		             this.descrTypeCd,
+		             this.measureTypeCd,
+		             this.scaleName,
+		             this.targetAudience]
 	    });
 
 		
@@ -85,6 +107,14 @@ Ext.extend(Sbi.kpi.KpiGUIDescription , Ext.form.FormPanel, {
 	}
 	, update:  function(field){	
 		this.descrName.setValue(field.attributes.kpiName);
+		this.descrDescription.setValue(field.attributes.kpiDescr);
+		this.descrCode.setValue(field.attributes.kpiCode);
+		this.descrDsLbl.setValue(field.attributes.kpiDsLbl);
+		this.descrTypeCd.setValue(field.attributes.kpiTypeCd);
+		this.measureTypeCd.setValue(field.attributes.measureTypeCd);
+		this.targetAudience.setValue(field.attributes.targetAudience);
+		this.scaleName.setValue(field.attributes.scaleName);
+		
 		this.descrName.show();
 		this.doLayout();
         this.render();

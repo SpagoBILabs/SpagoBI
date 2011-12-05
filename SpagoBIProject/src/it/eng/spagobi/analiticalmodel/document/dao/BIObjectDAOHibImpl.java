@@ -2118,6 +2118,72 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		}
 		return toReturn;
 	}
+
+
+
+
+
+	public BIObject loadBIObjectForExecutionByLabelAndRole(String label,
+			String role) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		BIObject biObject = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			biObject = loadBIObjectByLabel(label);
+			String hql = "from SbiObjPar s where s.sbiObject.label = ? order by s.priority asc";
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setString(0, biObject.getLabel());
+			List hibObjectPars = hqlQuery.list();
+			SbiObjPar hibObjPar = null;
+			Iterator it = hibObjectPars.iterator();
+			BIObjectParameter tmpBIObjectParameter = null;
+			BIObjectParameterDAOHibImpl aBIObjectParameterDAOHibImpl = new BIObjectParameterDAOHibImpl();
+			IParameterDAO aParameterDAO = DAOFactory.getParameterDAO();
+			List biObjectParameters = new ArrayList();
+			Parameter aParameter = null;
+			int count = 1;
+			while (it.hasNext()) {
+				hibObjPar = (SbiObjPar) it.next();
+				tmpBIObjectParameter = aBIObjectParameterDAOHibImpl.toBIObjectParameter(hibObjPar);
+
+				//*****************************************************************
+				//**************** START PRIORITY RECALCULATION *******************
+				//*****************************************************************
+				Integer priority = tmpBIObjectParameter.getPriority();
+				if (priority == null || priority.intValue() != count) {
+					logger.warn("The priorities of the biparameters for the document with id = " + biObject.getId() + " are not sorted. Priority recalculation starts.");
+					aBIObjectParameterDAOHibImpl.recalculateBiParametersPriority(biObject.getId(), aSession);
+					tmpBIObjectParameter.setPriority(new Integer(count));
+				}
+				count++;
+				//*****************************************************************
+				//**************** END PRIORITY RECALCULATION *******************
+				//*****************************************************************
+
+				aParameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(
+						tmpBIObjectParameter.getParID(), role);
+				tmpBIObjectParameter.setParID(aParameter.getId());
+				tmpBIObjectParameter.setParameter(aParameter);
+				biObjectParameters.add(tmpBIObjectParameter);
+			}
+			biObject.setBiObjectParameters(biObjectParameters);
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return biObject;
+	}
 }
 
 

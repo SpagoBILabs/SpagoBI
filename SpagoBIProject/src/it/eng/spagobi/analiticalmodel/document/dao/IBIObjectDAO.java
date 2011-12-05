@@ -56,7 +56,21 @@ public interface IBIObjectDAO extends ISpagoBIDao{
 	 */
 	public  BIObject loadBIObjectForExecutionByIdAndRole(Integer id, String role)
 			throws EMFUserError;
-	
+	/**
+	 * Loads all  information for the execution of a BI Object identified by its
+	 * <code>label</code> and its <code>role</code>. All these information,
+	 * achived by a query to the DB, are stored into a <code>BIObject</code> object,
+	 * which is returned.
+	 * 
+	 * @param label The BI object label
+	 * @param role The BI object role
+	 * 
+	 * @return The BIobject execution information, stored into a <code>BIObject</code>
+	 * 
+	 * @throws EMFUserError If an Exception occurs
+	 */	
+	public  BIObject loadBIObjectForExecutionByLabelAndRole(String label, String role)
+			throws EMFUserError;
 	/**
 	 * Loads all  detail information  for a BI Object identified by its
 	 * <code>label</code> identifier. All these information,

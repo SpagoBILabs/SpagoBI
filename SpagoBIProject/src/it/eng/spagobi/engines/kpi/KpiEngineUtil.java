@@ -29,6 +29,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -43,6 +44,7 @@ import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,6 +64,8 @@ import org.json.JSONObject;
 public class KpiEngineUtil {
 	
 	static transient Logger logger = Logger.getLogger(KpiEngineUtil.class);
+	private static ExecutionInstance kpiInstance;
+	private static Locale kpiInstanceLocale;
 	
 	protected static SourceBean getTemplate(String documentId) throws EMFUserError{
 		logger.debug("IN");
@@ -348,9 +352,12 @@ public class KpiEngineUtil {
 		return value;
 	}
 	
+	public void setExecutionInstance(ExecutionInstance instance, Locale locale){
+		kpiInstance = instance;
+		kpiInstanceLocale = locale;
+	}
 
-
-	public static JSONObject recursiveGetJsonObject(KpiLine kpiLine) {
+	public JSONObject recursiveGetJsonObject(KpiLine kpiLine) {
 
 		JSONObject jsonToReturn = new JSONObject();
 		try {
@@ -374,6 +381,20 @@ public class KpiEngineUtil {
 			
 			setKpiInfos(kpiLine, jsonToReturn);
 			setDetailInfos(kpiLine, jsonToReturn);
+			
+			//documents
+			List documents = kpiLine.getDocuments();
+			if(documents != null && !documents.isEmpty()){
+				String docLabel =(String)documents.get(0);
+				//return only one document
+				jsonToReturn.putOpt("documentLabel", docLabel);
+				//gets url for execution
+
+				ExecutionInstance docExecInst = ExecutionInstance.getExecutionInstanceByLabel(kpiInstance, docLabel);
+				String executionUrl = docExecInst.getExecutionUrl(kpiInstanceLocale);
+				String encodedUrl = URLEncoder.encode(executionUrl);
+				jsonToReturn.putOpt("documentExecUrl", executionUrl);
+			}
 
 			List<KpiLine> children = (List<KpiLine>) kpiLine.getChildren();
 			JSONArray JSONArrayChildren = new JSONArray();
@@ -390,12 +411,14 @@ public class KpiEngineUtil {
 
 		} catch (JSONException e) {
 			logger.error("Error setting children");
+		} catch (Exception e) {
+			logger.error("Error getting execution instances");
 		}
 
 		return jsonToReturn;
 
 	}
-	private static void setKpiInfos(KpiLine kpiLine, JSONObject row) throws JSONException{
+	private void setKpiInfos(KpiLine kpiLine, JSONObject row) throws JSONException{
 		Integer kpiInstId = getTrend(kpiLine, row);
 		
 		try {
@@ -419,7 +442,7 @@ public class KpiEngineUtil {
 		}
 
 	}
-	private static void setDetailInfos(KpiLine kpiLine, JSONObject row){
+	private void setDetailInfos(KpiLine kpiLine, JSONObject row){
 		JSONArray thresholds = new JSONArray();
 		if(kpiLine.getValue() != null){
 			Double weight = kpiLine.getValue().getWeight();
@@ -458,7 +481,7 @@ public class KpiEngineUtil {
 			}
 		}
 	}
-	private static String detectColor(KpiValue value){
+	private String detectColor(KpiValue value){
 		String ret = "";
 		if(value == null){
 			return ret;
@@ -475,7 +498,7 @@ public class KpiEngineUtil {
 		return ret;
 		
 	}
-	public static String getStatus(List thresholdValues, double val) {
+	public String getStatus(List thresholdValues, double val) {
 		logger.debug("IN");
 		String status = "";
 		if(thresholdValues!=null && !thresholdValues.isEmpty()){
@@ -497,7 +520,7 @@ public class KpiEngineUtil {
 		
 	}
 	
-	private static Integer getTrend(KpiLine kpiLine, JSONObject row){
+	private Integer getTrend(KpiLine kpiLine, JSONObject row){
 		Integer toReturn = null;
 		KpiValue value = kpiLine.getValue();
 		Integer modelInstId = kpiLine.getModelInstanceNodeId();
