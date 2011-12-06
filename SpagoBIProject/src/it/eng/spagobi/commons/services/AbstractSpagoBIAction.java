@@ -32,7 +32,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.container.CoreContextManager;
 import it.eng.spagobi.container.IBeanContainer;
@@ -160,7 +159,8 @@ public abstract class AbstractSpagoBIAction extends AbstractBaseHttpAction {
 		IMessageBuilder msgBuilder;
 		
 		msgBuilder = MessageBuilderFactory.getMessageBuilder();
-		lnStr = msgBuilder.getUserMessage(str , SpagoBIConstants.DEFAULT_USER_BUNDLE, getLocale());	
+		//lnStr = msgBuilder.getUserMessage(str , SpagoBIConstants.DEFAULT_USER_BUNDLE, getLocale());	
+		lnStr =msgBuilder.getI18nMessage(getLocale(), str);
 		
 		return lnStr;
 	}

@@ -129,4 +129,9 @@
 <DOMAIN valueCd="TEST" valueNm="sbidomains.permissiononfolder.nm.test" domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder" valueDs="sbidomains.permissiononfolder.ds.test"/>
 <DOMAIN valueCd="EXECUTION" valueNm="sbidomains.permissiononfolder.nm.execute" domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder" valueDs="sbidomains.permissiononfolder.ds.execute"/>
 <DOMAIN valueCd="CREATION" valueNm="sbidomains.permissiononfolder.nm.create" domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder" valueDs="sbidomains.permissiononfolder.ds.create"/>
+<DOMAIN valueCd="ITA" valueNm="Italian" domainCd="LANG" domainNm="Language ISO code" valueDs="Italian"/>
+<DOMAIN valueCd="SPA" valueNm="Spanish" domainCd="LANG" domainNm="Language ISO code" valueDs="Spanish"/>
+<DOMAIN valueCd="ENG" valueNm="English" domainCd="LANG" domainNm="Language ISO code" valueDs="English"/>
+<DOMAIN valueCd="FRA" valueNm="French" domainCd="LANG" domainNm="Language ISO code" valueDs="French"/>
+
 </DOMAINS>

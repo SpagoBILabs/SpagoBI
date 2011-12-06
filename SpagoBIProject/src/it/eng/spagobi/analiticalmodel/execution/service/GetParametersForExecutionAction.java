@@ -206,7 +206,8 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			ExecutionInstance executionInstance =  getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 			
 			id = analyticalDocumentParameter.getParameterUrlName();
-			label = localize( analyticalDocumentParameter.getLabel() );
+			//label = localize( analyticalDocumentParameter.getLabel() );
+			label = analyticalDocumentParameter.getLabel();
 			analyticalDriver = analyticalDocumentParameter.getParameter();
 			parType = analyticalDriver.getType(); 
 			selectionType = analyticalDriver.getModalityValue().getSelectionType();

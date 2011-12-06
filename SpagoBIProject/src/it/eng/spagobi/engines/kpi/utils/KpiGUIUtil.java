@@ -61,7 +61,7 @@ public class KpiGUIUtil {
 				jsonToReturn.putOpt("documentLabel", docLabel);
 				//gets url for execution
 
-				ExecutionInstance docExecInst = ExecutionInstance.getExecutionInstanceByLabel(kpiInstance, docLabel);
+				ExecutionInstance docExecInst = ExecutionInstance.getExecutionInstanceByLabel(kpiInstance, docLabel, kpiInstanceLocale);
 				String executionUrl = docExecInst.getExecutionUrl(kpiInstanceLocale);
 				jsonToReturn.putOpt("documentExecUrl", executionUrl);
 			}

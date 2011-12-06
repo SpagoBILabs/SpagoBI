@@ -42,7 +42,6 @@ import it.eng.spagobi.commons.services.DelegatedBasicListService;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 
@@ -304,7 +303,9 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 	}
 
 	IMessageBuilder msgBuilder=MessageBuilderFactory.getMessageBuilder();
-	String localizedName=msgBuilder.getUserMessage(obj.getName(), SpagoBIConstants.DEFAULT_USER_BUNDLE, locale);
+	//String localizedName=msgBuilder.getUserMessage(obj.getName(), SpagoBIConstants.DEFAULT_USER_BUNDLE, locale);
+	// new localization in table I18NMessage
+	String localizedName=msgBuilder.getI18nMessage(locale, obj.getName());	
 	
 	 rowSBStr += "		canExec=\"" + canExec + "\"";   
 	 rowSBStr += "		canDev=\"" + canDev + "\"";

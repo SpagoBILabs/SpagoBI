@@ -241,7 +241,7 @@ public class ContentServiceImplSupplier {
     			"roleName = [" + roleName + "], parameters = [" + parameters + "]");
     	Monitor monitor =MonitorFactory.start("spagobi.service.ContentSupplier.checkParametersErrors");
 		try {
-			ExecutionInstance instance = new ExecutionInstance(profile, "", "", biobjectId, roleName, "", true, true);
+			ExecutionInstance instance = new ExecutionInstance(profile, "", "", biobjectId, roleName, "", true, true, null);
 			instance.refreshParametersValues(parameters, true);
 			List errors = instance.getParametersErrors();
 			if (errors != null && errors.size() > 0) {

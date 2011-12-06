@@ -21,15 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.commons.serializer;
 
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import it.eng.spagobi.analiticalmodel.documentsbrowser.service.GetFTreeFoldersAction;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -73,9 +72,12 @@ public class FoldersJSONSerializer implements Serializer {
 			result.put(PROG, lowFunct.getProg() );
 			result.put(PARENTID, lowFunct.getParentId() );
 			MessageBuilder msgBuild=new MessageBuilder();
-			String lowFunctName=msgBuild.getUserMessage(lowFunct.getName(),null, locale);
+			//String lowFunctName=msgBuild.getUserMessage(lowFunct.getName(),null, locale);
+			String lowFunctName=msgBuild.getI18nMessage(locale, lowFunct.getName());
+
 			result.put(NAME, lowFunctName );
-			String description = lowFunct.getDescription() != null ? msgBuild.getUserMessage(lowFunct.getDescription(), null,locale) : "";
+			//String description = lowFunct.getDescription() != null ? msgBuild.getUserMessage(lowFunct.getDescription(), null,locale) : "";
+			String description = msgBuild.getI18nMessage(locale, lowFunct.getDescription());
 			result.put(DESCRIPTION, description);	
 			result.put(DEVROLES, lowFunct.getDevRoles() );
 			result.put(TESTROLES, lowFunct.getTestRoles() );		

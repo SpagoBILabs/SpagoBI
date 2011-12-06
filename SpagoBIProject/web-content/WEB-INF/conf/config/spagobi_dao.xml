@@ -62,6 +62,9 @@
 		<DAO name="SbiConfigDAO" implementation="it.eng.spagobi.commons.dao.ConfigDAO"/>
 		<DAO name="UdpDAO" implementation="it.eng.spagobi.tools.udp.dao.UdpDAOHibImpl"/>
 		<DAO name="UdpDAOValue" implementation="it.eng.spagobi.tools.udp.dao.UdpValueDAOHibImpl"/>
+
+	  	<DAO name="I18NMessagesDAO" implementation="it.eng.spagobi.i18n.dao.I18NMessagesDAOHibImpl"/>
+
 	 </DAO-CONF>     
      
      <!-- ********************* END DAO CONFIGURATION ************************ -->

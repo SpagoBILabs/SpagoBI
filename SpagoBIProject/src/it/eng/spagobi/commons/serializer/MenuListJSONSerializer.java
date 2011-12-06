@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.spagobi.commons.serializer;
 
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -39,7 +39,7 @@ import org.json.JSONObject;
  * @author Chiarelli Chiara
  */
 public class MenuListJSONSerializer implements Serializer {
-	
+
 	public static final String ID = "id";
 	public static final String NAME = "name";
 	public static final String TEXT = "text";
@@ -71,12 +71,12 @@ public class MenuListJSONSerializer implements Serializer {
 		if( !(o instanceof List) ) {
 			throw new SerializationException("MenuListJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
-		
+
 		try {
 			List filteredMenuList = (List) o;
 			if(filteredMenuList!=null && !filteredMenuList.isEmpty()){
-			result = new JSONObject();
-			JSONArray tempFirstLevelMenuList = new JSONArray();
+				result = new JSONObject();
+				JSONArray tempFirstLevelMenuList = new JSONArray();
 				for (int i=0; i<filteredMenuList.size(); i++){
 					Menu menuElem = (Menu)filteredMenuList.get(i);
 					String path=MenuUtilities.getMenuPath(menuElem);
@@ -87,7 +87,8 @@ public class MenuListJSONSerializer implements Serializer {
 						MessageBuilder msgBuild=new MessageBuilder();
 						String text = "";
 						if (!menuElem.isAdminsMenu() || !menuElem.getName().startsWith("#"))
-							text = msgBuild.getUserMessage(menuElem.getName(),null, locale);
+							//text = msgBuild.getUserMessage(menuElem.getName(),null, locale);
+							text = msgBuild.getI18nMessage(locale, menuElem.getName());
 						else{							
 							if (menuElem.getName().startsWith("#")){				
 								String titleCode = menuElem.getName().substring(1);									
@@ -99,10 +100,10 @@ public class MenuListJSONSerializer implements Serializer {
 						temp.put(TEXT, text);
 						temp.put(PATH, path);
 						String icon=DetailMenuModule.assignImage(menuElem);
-				        if(menuElem.isViewIcons() && !icon.equalsIgnoreCase("")){ 				        	
-				           temp.put(ICON, contextName+defaultThemePath+icon);
-				        }
-						
+						if(menuElem.isViewIcons() && !icon.equalsIgnoreCase("")){ 				        	
+							temp.put(ICON, contextName+defaultThemePath+icon);
+						}
+
 						if(menuElem.getObjId()!=null){
 							temp.put(HREF, "execDirectUrl('"+contextName+"/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="+menuElem.getMenuId()+"', '"+path+"' )");
 						}else if(menuElem.getStaticPage()!=null){
@@ -118,9 +119,9 @@ public class MenuListJSONSerializer implements Serializer {
 							path = path.replace("#","");
 							temp.put(HREF, url+", '"+path+"')");
 						}
-											
+
 						if (menuElem.getHasChildren()){		
-							
+
 							List lstChildrenLev2 = menuElem.getLstChildren();
 							JSONArray tempMenuList =(JSONArray)getChildren(lstChildrenLev2, 1,locale);
 							temp.put(ITEMS, tempMenuList);
@@ -133,7 +134,7 @@ public class MenuListJSONSerializer implements Serializer {
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
-			
+
 		}
 		return result;
 	}
@@ -148,7 +149,10 @@ public class MenuListJSONSerializer implements Serializer {
 			MessageBuilder msgBuild=new MessageBuilder();
 			String text = "";
 			if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#"))
-				text = msgBuild.getUserMessage(childElem.getName(),null, locale);
+				//text = msgBuild.getUserMessage(childElem.getName(),null, locale);
+				text = msgBuild.getI18nMessage(locale, childElem.getName());
+
+
 			else{							
 				if (childElem.getName().startsWith("#")){				
 					String titleCode = childElem.getName().substring(1);									
@@ -162,9 +166,9 @@ public class MenuListJSONSerializer implements Serializer {
 			String path=MenuUtilities.getMenuPath(childElem);
 			temp2.put(PATH, path);
 			String icon=DetailMenuModule.assignImage(childElem);
-	        if(childElem.isViewIcons() && !icon.equalsIgnoreCase("")){ 
-	           temp2.put(ICON, contextName+defaultThemePath+icon);
-	        }
+			if(childElem.isViewIcons() && !icon.equalsIgnoreCase("")){ 
+				temp2.put(ICON, contextName+defaultThemePath+icon);
+			}
 			if(childElem.getObjId()!=null){
 				temp2.put(HREF, "javascript:execDirectUrl('"+contextName+"/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="+childElem.getMenuId()+"', '"+path+"' )");
 			}else if(childElem.getStaticPage()!=null){
@@ -187,8 +191,8 @@ public class MenuListJSONSerializer implements Serializer {
 				temp2.put(ITEMS, tempMenuList2);
 			}
 			tempMenuList.put(temp2);
-	   }	
-	  return tempMenuList;
+		}	
+		return tempMenuList;
 	}
-	
+
 }

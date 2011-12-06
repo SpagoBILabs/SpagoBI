@@ -459,7 +459,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		// create new execution instance
 		ExecutionInstance instance = null;
 		try {
-			instance = new ExecutionInstance(profile, executionFlowId, executionId, biobjectId, aRoleName, modality, displayToolbar, displaySlider);
+			instance = new ExecutionInstance(profile, executionFlowId, executionId, biobjectId, aRoleName, modality, displayToolbar, displaySlider, null);
 		} catch (Exception e) {
 			logger.error(e);
 		}

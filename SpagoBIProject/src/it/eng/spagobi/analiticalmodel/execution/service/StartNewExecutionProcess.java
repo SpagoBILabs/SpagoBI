@@ -24,6 +24,7 @@ package it.eng.spagobi.analiticalmodel.execution.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -143,7 +144,7 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 			
 			CoreContextManager ccm = createContext( executionContextId );
 			   // so far so good: everything has been validated successfully. Let's create a new ExecutionInstance.
-			instance = createExecutionInstance(obj.getId(), executionRole, executionContextId);
+			instance = createExecutionInstance(obj.getId(), executionRole, executionContextId, getLocale());
 			   
 			createContext( executionContextId ).set(ExecutionInstance.class.getName(), instance);
 			
@@ -178,7 +179,7 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 		}
 	}
 	
-	private ExecutionInstance createExecutionInstance(Integer biobjectId, String aRoleName, String execId) {
+	private ExecutionInstance createExecutionInstance(Integer biobjectId, String aRoleName, String execId, Locale locale) {
 		String executionFlowId = getAttributeAsString("EXECUTION_FLOW_ID");
 		Boolean displayToolbar = getAttributeAsBoolean(SpagoBIConstants.TOOLBAR_VISIBLE, true);
 		Boolean displaySlider = getAttributeAsBoolean(SpagoBIConstants.SLIDERS_VISIBLE, true);
@@ -198,7 +199,7 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 		ExecutionInstance instance = null;
 		try {
 			instance = new ExecutionInstance(getUserProfile(), executionFlowId, execId, biobjectId, aRoleName, modality, 
-					displayToolbar.booleanValue(), displaySlider.booleanValue());
+					displayToolbar.booleanValue(), displaySlider.booleanValue(), locale);
 		} catch (Exception e) {
 			logger.error(e);
 		}

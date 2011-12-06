@@ -4,11 +4,14 @@ import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.RequestContainerPortletAccess;
 import it.eng.spago.base.SessionContainer;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.message.MessageBundle;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 
 import java.util.Locale;
 
@@ -116,36 +119,6 @@ public class MessageBuilder
         return getMessageInternal(code, bundle, locale);
     }
 
-    public String getUserMessage(String code, String bundle, HttpServletRequest request)
-    {
-        Locale locale = getLocale(request);
-        String toReturn = code;
-        if(code.length() > 4)
-        {
-            String prefix = code.substring(0, 4);
-            if(prefix.equalsIgnoreCase("cod_"))
-            {
-                String newCode = code.substring(4);
-                toReturn = getMessageInternal(newCode, bundle, locale);
-            }
-        }
-        return toReturn;
-    }
-
-    public String getUserMessage(String code, String bundle, Locale locale)
-    {
-        String toReturn = code;
-        if(code.length() > 4)
-        {
-            String prefix = code.substring(0, 4);
-            if(prefix.equalsIgnoreCase("cod_"))
-            {
-                String newCode = code.substring(4);
-                toReturn = getMessageInternal(newCode, bundle, locale);
-            }
-        }
-        return toReturn;
-    }
 
     public String getMessage(String code, String bundle, HttpServletRequest request, Locale locale)
     {
@@ -338,5 +311,91 @@ public class MessageBuilder
         logger.debug("OUT");
         return message;
     }
+    
+    
+    
+    
+    
+    /** Internationalization of user messages via DB
+     * 
+     * @param locale
+     * @param code
+     * @return
+     */
+    
+public String getI18nMessage(Locale locale, String code) {
+		logger.debug("IN");
+		String toreturn = null;
+		if (code == null) return null;
+		if(locale != null){
+			if(code.startsWith("cod_") || code.startsWith("COD_")){
+				try{
+					I18NMessagesDAO dao = DAOFactory.getI18NMessageDAO();
+					toreturn = dao.getI18NMessages(locale, code);
+				}
+				catch (EMFUserError e) {
+					logger.error("error during internalization of "+code+" in table I18NMessages; original code will be kept",e);	
+				}
+			}
+		}
+		if(toreturn == null){
+			toreturn = code;
+		}
+		logger.debug("OUT");
+		return toreturn;
+	}
+	
+	/** Internationalization of user messages via DB
+	 * 
+	 * @param code
+	 * @param request
+	 * @return
+	 */
+	
+	public String getI18nMessage(String code, HttpServletRequest request){
+		Locale locale = getLocale(request);
+		  return getI18nMessage(locale, code);
+	}
+	
+	
+	
+    /**
+     * 
+     *  Previous user message, internazionalized with bundle
+     */
+    
+//  public String getUserMessage(String code, String bundle, HttpServletRequest request)
+//  {
+//      Locale locale = getLocale(request);
+//      String toReturn = code;
+//      if(code.length() > 4)
+//      {
+//          String prefix = code.substring(0, 4);
+//          if(prefix.equalsIgnoreCase("cod_"))
+//          {
+//              String newCode = code.substring(4);
+//              toReturn = getMessageInternal(newCode, bundle, locale);
+//          }
+//      }
+//      return toReturn;
+//  }
+
+//  public String getUserMessage(String code, String bundle, Locale locale)
+//  {
+//      String toReturn = code;
+//      if(code.length() > 4)
+//      {
+//          String prefix = code.substring(0, 4);
+//          if(prefix.equalsIgnoreCase("cod_"))
+//          {
+//              String newCode = code.substring(4);
+//              toReturn = getMessageInternal(newCode, bundle, locale);
+//          }
+//      }
+//      return toReturn;
+//  }
+
+    
+    
     
 }
