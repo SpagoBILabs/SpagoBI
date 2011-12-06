@@ -20,17 +20,19 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
-import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.datasource.transaction.ITransaction;
-import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.ISelectField;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.qbe.query.Exporter;
+import it.eng.spagobi.engines.qbe.exporter.QbeCSVExporter;
+import it.eng.spagobi.engines.qbe.exporter.QbeXLSExporter;
+import it.eng.spagobi.engines.qbe.exporter.QbeXLSXExporter;
 import it.eng.spagobi.engines.qbe.query.Field;
 import it.eng.spagobi.engines.qbe.query.ReportRunner;
 import it.eng.spagobi.engines.qbe.query.SQLFieldsReader;
@@ -48,13 +50,10 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.mime.MimeUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -64,7 +63,6 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.hibernate.Session;
 
 
 
@@ -184,128 +182,56 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			templateBuilder = new TemplateBuilder(sqlQuery, extractedFields, params, baseTemplateFile);
 			templateContent = templateBuilder.buildTemplate();
 			
-			if( !"text/jrxml".equalsIgnoreCase( mimeType ) ) {
-				if( "application/vnd.ms-excel".equalsIgnoreCase( mimeType ) ) {
-					
-					IDataStore dataStore = null;
-					
-					if (!isFormEngineInstance) {
-						// case of standard QBE
-						
-						IDataSet dataSet = null;
-						
-						Integer limit = 0;
-						Integer start = 0;
-						Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();	
-						boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
-						dataSet = QbeDatasetFactory.createDataSet(statement);
-						dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
-						
-						Map userAttributes = new HashMap();
-						UserProfile profile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-						Iterator it = profile.getUserAttributeNames().iterator();
-						while(it.hasNext()) {
-							String attributeName = (String)it.next();
-							Object attributeValue = profile.getUserAttribute(attributeName);
-							userAttributes.put(attributeName, attributeValue);
-						}
-						dataSet.addBinding("attributes", userAttributes);
-						dataSet.addBinding("parameters", this.getEnv());
-						logger.debug("Executing query ...");
-						dataSet.loadData(start, limit, (maxSize == null? -1: maxSize.intValue()));
-						
-						dataStore = dataSet.getDataStore();
-					
-					} else {
-						// case of FormEngine
-						
-						JDBCDataSet dataset = new JDBCDataSet();
-						IDataSource datasource = (IDataSource) this.getEnv().get( EngineConstants.ENV_DATASOURCE );
-						dataset.setDataSource(datasource);
-						dataset.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
-						dataset.setQuery(sqlQuery);
-						logger.debug("Executing query ...");
-						dataset.loadData();
-						dataStore = dataset.getDataStore();
-					}
-					
-					Exporter exp = new Exporter(dataStore);
-					exp.setExtractedFields(extractedFields);
-					
-					Workbook wb = exp.exportInExcel();
-					
-					File file = File.createTempFile("workbook", ".xls");
-					FileOutputStream stream = new FileOutputStream(file);
-					wb.write(stream);
-					stream.flush();
-					stream.close();
-					try {				
-						writeBackToClient(file, null, writeBackResponseInline, "workbook.xls", mimeType);
-					} catch (IOException ioe) {
-						throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
-					}	finally{
-						if(file != null && file.exists()) {
-							try {
-								file.delete();
-							} catch (Exception e) {
-								logger.warn("Impossible to delete temporary file " + file, e);
-							}
-						}
-					}
-			
-				}else{
-					
-					
-					if ("text/csv".equalsIgnoreCase( mimeType )) {
-						File csvFile = null;
-						try {
-							csvFile = File.createTempFile("csv", ".csv");
-							exportCsv(csvFile, transaction.getSQLConnection(), sqlQuery);
-							try {
-								writeBackToClient(csvFile, null, writeBackResponseInline, "report." + fileExtension, mimeType);
-							} catch (IOException ioe) {
-								throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
-							}
-						} finally {
-							if (csvFile != null) {
-								csvFile.delete();
-							}
-						}
-						
-					} else {
-					
-					
-						try {
-							reportFile = File.createTempFile("report", ".rpt");
-						} catch (IOException ioe) {
-							throw new SpagoBIEngineException("Impossible to create a temporary file to store the template generated on the fly", ioe);
-						}
-						
-						setJasperClasspath();
-						connection = transaction.getSQLConnection();
-						
-						runner = new ReportRunner( );
-						Locale locale = this.getLocale();
-						try {
-							runner.run( templateContent, reportFile, mimeType, connection, locale);
-						}  catch (Exception e) {
-							throw new SpagoBIEngineException("Impossible compile or to export the report", e);
-						}
-						
-						try {				
-							writeBackToClient(reportFile, null, writeBackResponseInline, "report." + fileExtension, mimeType);
-						} catch (IOException ioe) {
-							throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
-						}	
-					}
-				}
-			} else {
+			if ("text/jrxml".equalsIgnoreCase( mimeType ) ) {
+				// return the jrxml template
 				try {				
 					writeBackToClient(200, templateContent, writeBackResponseInline, "report." + fileExtension, mimeType);
 				} catch (IOException e) {
 					throw new SpagoBIEngineException("Impossible to write back the responce to the client", e);
 				}
+				
+			} else if( "application/vnd.ms-excel".equalsIgnoreCase( mimeType ) ) {
+				// export into XLS
+				exportIntoXLS(writeBackResponseInline, mimeType, statement,
+						sqlQuery, extractedFields);
+		
+			} else if( "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equalsIgnoreCase( mimeType ) ) {
+				// export into XLSX
+				exportIntoXLSX(writeBackResponseInline, mimeType, statement,
+						sqlQuery, extractedFields);
+				
+			} else if ("text/csv".equalsIgnoreCase( mimeType )) {
+				// export into CSV
+				exportIntoCSV(writeBackResponseInline, mimeType,
+						fileExtension, transaction, sqlQuery);
+				
+			} else {
+				// other export formats using JasperReport API
+				try {
+					reportFile = File.createTempFile("report", ".rpt");
+				} catch (IOException ioe) {
+					throw new SpagoBIEngineException("Impossible to create a temporary file to store the template generated on the fly", ioe);
+				}
+				
+				setJasperClasspath();
+				connection = transaction.getSQLConnection();
+				
+				runner = new ReportRunner( );
+				Locale locale = this.getLocale();
+				try {
+					runner.run( templateContent, reportFile, mimeType, connection, locale);
+				}  catch (Exception e) {
+					throw new SpagoBIEngineException("Impossible compile or to export the report", e);
+				}
+				
+				try {				
+					writeBackToClient(reportFile, null, writeBackResponseInline, "report." + fileExtension, mimeType);
+				} catch (IOException ioe) {
+					throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
+				}
+				
 			}
+
 		} catch (Throwable t) {			
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
@@ -317,7 +243,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				logger.warn("Impossible to close the connection used to execute the report in " + getActionName() + " service", e);
 			}
 			
-			if(reportFile != null && reportFile.exists()) {
+			if (reportFile != null && reportFile.exists()) {
 				try {
 					reportFile.delete();
 				} catch (Exception e) {
@@ -328,45 +254,138 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		
 		logger.debug("OUT");
 	}
-	
-	
 
 
-	
-
-
-
-
-	private void exportCsv(File csvFile, Connection connection, String sqlStatement) {
+	private void exportIntoCSV(boolean writeBackResponseInline,
+			String mimeType, String fileExtension, ITransaction transaction,
+			String sqlQuery) throws IOException, SpagoBIEngineException {
+		File csvFile = null;
 		try {
-			FileWriter writer = new FileWriter(csvFile);
-			Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			ResultSet resultSet = stmt.executeQuery( sqlStatement );
-			int columnCount = resultSet.getMetaData().getColumnCount();
-			while (resultSet.next()) {
-				writeRecordInfoCsvFile(writer, resultSet, columnCount);
+			csvFile = File.createTempFile("csv", ".csv");
+			QbeCSVExporter exporter = new QbeCSVExporter();
+			exporter.export(csvFile, transaction.getSQLConnection(), sqlQuery);
+			try {
+				writeBackToClient(csvFile, null, writeBackResponseInline, "report." + fileExtension, mimeType);
+			} catch (IOException ioe) {
+				throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
 			}
-			writer.flush();
-			writer.close();
-		} catch (Exception e) {
-			logger.error("Error exporting in CSV", e);
+		} finally {
+			if (csvFile != null) {
+				csvFile.delete();
+			}
 		}
 	}
 
 
-	private void writeRecordInfoCsvFile(FileWriter writer, ResultSet resultSet,
-			int columnCount) throws SQLException, IOException {
-		for (int i = 1; i <= columnCount; i++) {
-			Object temp = resultSet.getObject(i);
-			if (temp != null) {
-				writer.append(temp.toString());
+	private void exportIntoXLS(boolean writeBackResponseInline,
+			String mimeType, IStatement statement, String sqlQuery,
+			Vector extractedFields) throws EMFInternalError, IOException,
+			FileNotFoundException, SpagoBIEngineException {
+		IDataStore dataStore = getDataStore(statement, sqlQuery);
+		
+		QbeXLSExporter exp = new QbeXLSExporter(dataStore);
+		exp.setExtractedFields(extractedFields);
+		
+		Workbook wb = exp.export();
+		
+		File file = File.createTempFile("workbook", ".xls");
+		FileOutputStream stream = new FileOutputStream(file);
+		wb.write(stream);
+		stream.flush();
+		stream.close();
+		try {				
+			writeBackToClient(file, null, writeBackResponseInline, "workbook.xls", mimeType);
+		} catch (IOException ioe) {
+			throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
+		}	finally{
+			if(file != null && file.exists()) {
+				try {
+					file.delete();
+				} catch (Exception e) {
+					logger.warn("Impossible to delete temporary file " + file, e);
+				}
 			}
-			writer.append("\t");
 		}
-		writer.append("\n");
+	}
+	
+	private void exportIntoXLSX(boolean writeBackResponseInline,
+			String mimeType, IStatement statement, String sqlQuery,
+			Vector extractedFields) throws EMFInternalError, IOException,
+			FileNotFoundException, SpagoBIEngineException {
+		IDataStore dataStore = getDataStore(statement, sqlQuery);
+		
+		QbeXLSXExporter exp = new QbeXLSXExporter(dataStore);
+		exp.setExtractedFields(extractedFields);
+		
+		Workbook wb = exp.export();
+		
+		File file = File.createTempFile("workbook", ".xlsx");
+		FileOutputStream stream = new FileOutputStream(file);
+		wb.write(stream);
+		stream.flush();
+		stream.close();
+		try {				
+			writeBackToClient(file, null, writeBackResponseInline, "workbook.xlsx", mimeType);
+		} catch (IOException ioe) {
+			throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
+		}	finally{
+			if(file != null && file.exists()) {
+				try {
+					file.delete();
+				} catch (Exception e) {
+					logger.warn("Impossible to delete temporary file " + file, e);
+				}
+			}
+		}
 	}
 
 
+	private IDataStore getDataStore(IStatement statement, String sqlQuery) throws EMFInternalError {
+		IDataStore dataStore = null;
+		
+		boolean isFormEngineInstance = getEngineInstance().getTemplate().getProperty("formJSONTemplate") != null;
+		if (!isFormEngineInstance) {
+			// case of standard QBE
+			
+			IDataSet dataSet = null;
+			
+			Integer limit = 0;
+			Integer start = 0;
+			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();	
+			boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
+			dataSet = QbeDatasetFactory.createDataSet(statement);
+			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
+			
+			Map userAttributes = new HashMap();
+			UserProfile profile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			Iterator it = profile.getUserAttributeNames().iterator();
+			while(it.hasNext()) {
+				String attributeName = (String)it.next();
+				Object attributeValue = profile.getUserAttribute(attributeName);
+				userAttributes.put(attributeName, attributeValue);
+			}
+			dataSet.addBinding("attributes", userAttributes);
+			dataSet.addBinding("parameters", this.getEnv());
+			logger.debug("Executing query ...");
+			dataSet.loadData(start, limit, (maxSize == null? -1: maxSize.intValue()));
+			
+			dataStore = dataSet.getDataStore();
+		
+		} else {
+			// case of FormEngine
+			
+			JDBCDataSet dataset = new JDBCDataSet();
+			IDataSource datasource = (IDataSource) this.getEnv().get( EngineConstants.ENV_DATASOURCE );
+			dataset.setDataSource(datasource);
+			dataset.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
+			dataset.setQuery(sqlQuery);
+			logger.debug("Executing query ...");
+			dataset.loadData();
+			dataStore = dataset.getDataStore();
+		}
+		
+		return dataStore;
+	}
 
 	private void decorateExtractedFields(List extractedFields) {
 		List selectedFields = getEngineInstance().getActiveQuery().getSelectFields(true);

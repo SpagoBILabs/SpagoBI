@@ -24,7 +24,7 @@ package it.eng.spagobi.engines.worksheet.exporter;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.qbe.exporter.QbeXLSExporter;
+import it.eng.spagobi.engines.qbe.exporter.QbeXLSXExporter;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
@@ -48,11 +48,6 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.JPEGTranscoder;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -62,6 +57,11 @@ import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,11 +76,11 @@ import org.json.JSONObject;
  * 
  * @author Chiara Chiarelli
  */
-public class WorkSheetXLSExporter {
+public class WorkSheetXLSXExporter {
 
 	/** Logger component. */
 	public static transient Logger logger = Logger
-			.getLogger(WorkSheetXLSExporter.class);
+			.getLogger(WorkSheetXLSXExporter.class);
 
 	public static final String CROSSTAB_JSON_DESCENDANTS_NUMBER = "descendants_no";
 	public static final String SHEETS_NUM = "SHEETS_NUM";
@@ -142,12 +142,12 @@ public class WorkSheetXLSExporter {
 	public void designTableInWorksheet(Sheet sheet,Workbook wb, CreationHelper createHelper, 
 			  IDataStore dataStore, int startRow) throws SerializationException, JSONException{
 		
-		QbeXLSExporter exp = new QbeXLSExporter(dataStore);
+		QbeXLSXExporter exp = new QbeXLSXExporter(dataStore);
 		exp.fillSheet(sheet, wb, createHelper, startRow);
 	}
 
-	public int setHeader(HSSFSheet sheet, JSONObject header,
-			CreationHelper createHelper, HSSFWorkbook wb, HSSFPatriarch patriarch, int sheetRow) throws JSONException, IOException {
+	public int setHeader(XSSFSheet sheet, JSONObject header,
+			CreationHelper createHelper, XSSFWorkbook wb, XSSFDrawing patriarch, int sheetRow) throws JSONException, IOException {
 		String title = header.getString(TITLE);
 		String imgName = header.optString(IMG);
 		String imagePosition = header.getString(POSITION);
@@ -158,7 +158,7 @@ public class WorkSheetXLSExporter {
 			sheetRow++;
 			Cell cell = row.createCell(6);
 			cell.setCellValue(createHelper.createRichTextString(title));
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellType(XSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(cellStyle);
 		}
 		
@@ -193,8 +193,8 @@ public class WorkSheetXLSExporter {
 		
 	}
 
-	public int setFooter(HSSFSheet sheet, JSONObject footer,
-			CreationHelper createHelper, HSSFWorkbook wb, HSSFPatriarch patriarch, int sheetRow) throws JSONException, IOException {
+	public int setFooter(XSSFSheet sheet, JSONObject footer,
+			CreationHelper createHelper, XSSFWorkbook wb, XSSFDrawing patriarch, int sheetRow) throws JSONException, IOException {
 		String title = footer.getString(TITLE);
 		String imgName = footer.optString(IMG);
 		String imagePosition = footer.getString(POSITION);
@@ -205,7 +205,7 @@ public class WorkSheetXLSExporter {
 			sheetRow++;
 			Cell cell = row.createCell(6);
 			cell.setCellValue(createHelper.createRichTextString(title));
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellType(XSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(cellStyle);
 		}
 		
@@ -239,17 +239,17 @@ public class WorkSheetXLSExporter {
 	public int getImageType(String imgNameUpperCase){
 		int impgType = 0;
 		if(imgNameUpperCase.contains(".PNG")){
-			impgType = HSSFWorkbook.PICTURE_TYPE_PNG;
+			impgType = XSSFWorkbook.PICTURE_TYPE_PNG;
 		}else if(imgNameUpperCase.contains(".JPG") || imgNameUpperCase.contains(".JPEG")){
-			impgType = HSSFWorkbook.PICTURE_TYPE_JPEG;
+			impgType = XSSFWorkbook.PICTURE_TYPE_JPEG;
 		}else if(imgNameUpperCase.contains(".DIB") || imgNameUpperCase.contains(".BMP")){
-			impgType = HSSFWorkbook.PICTURE_TYPE_DIB;
+			impgType = XSSFWorkbook.PICTURE_TYPE_DIB;
 		}else if(imgNameUpperCase.contains(".EMF")){
-			impgType = HSSFWorkbook.PICTURE_TYPE_EMF;
+			impgType = XSSFWorkbook.PICTURE_TYPE_EMF;
 		}else if(imgNameUpperCase.contains(".PICT") || imgNameUpperCase.contains(".PCT") || imgNameUpperCase.contains(".PIC")){
-			impgType = HSSFWorkbook.PICTURE_TYPE_PICT;
+			impgType = XSSFWorkbook.PICTURE_TYPE_PICT;
 		}else if(imgNameUpperCase.contains(".WMF") || imgNameUpperCase.contains(".WMZ")){
-			impgType = HSSFWorkbook.PICTURE_TYPE_WMF;
+			impgType = XSSFWorkbook.PICTURE_TYPE_WMF;
 		}
 		return impgType;
 	}
@@ -276,7 +276,7 @@ public class WorkSheetXLSExporter {
 		return toReturn;
 	}
 
-	public void setImageIntoWorkSheet(HSSFWorkbook wb, HSSFPatriarch drawing ,
+	public void setImageIntoWorkSheet(XSSFWorkbook wb, XSSFDrawing drawing ,
 			File f, int col, int colend, int sheetRow, int height,int imgType) throws IOException {
 		FileInputStream fis = new FileInputStream(f);
 
@@ -294,7 +294,7 @@ public class WorkSheetXLSExporter {
 		imgBytes.close();
 		fis.close();
 		
-		HSSFClientAnchor anchor = new HSSFClientAnchor(dx1, dy1, dx2, dy2, (short) col,	sheetRow, (short) colend, sheetRow+height);
+		XSSFClientAnchor anchor = new XSSFClientAnchor(dx1, dy1, dx2, dy2, (short) col,	sheetRow, (short) colend, sheetRow+height);
 		Picture pict = drawing.createPicture(anchor, index);
 		
 		//HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
