@@ -78,16 +78,16 @@ public class CrosstabXLSXExporterFromJavaObject {
 		MeasureFormatter measureFormatter = new MeasureFormatter(crosstabJSON, new DecimalFormat("#0.00"),"#0.00");
 		int rowsNumber = cs.getDataMatrix().length;
 		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
-		for (int i = 0; i < totalRowsNumber + 10 + 2; i++) {
+		for (int i = 0; i < totalRowsNumber + 10 + 13; i++) {
 			sheet.createRow(i);
 		}
 //	
 		// build headers for column first ...
-		buildColumnsHeader(sheet, cs.getColumnsRoot().getChilds(), startRow + 2, rowsDepth + 2, createHelper);
+		buildColumnsHeader(sheet, cs.getColumnsRoot().getChilds(), startRow + 13, rowsDepth + 2, createHelper);
 		// ... then build headers for rows ....
-	    buildRowsHeaders(sheet, cs.getRowsRoot().getChilds(), columnsDepth + startRow - 1 + 2, 3, createHelper);
+	    buildRowsHeaders(sheet, cs.getRowsRoot().getChilds(), columnsDepth + startRow - 1 + 13, 3, createHelper);
 	    // then put the matrix data
-	    buildDataMatrix(sheet, cs, columnsDepth + startRow - 1 + 2, rowsDepth + 2, createHelper, measureFormatter);
+	    buildDataMatrix(sheet, cs, columnsDepth + startRow - 1 + 13, rowsDepth + 2, createHelper, measureFormatter);
 	    return startRow+totalRowsNumber;
 	}
 	
