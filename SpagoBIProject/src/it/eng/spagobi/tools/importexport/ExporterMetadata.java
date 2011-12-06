@@ -1150,7 +1150,7 @@ public class ExporterMetadata {
 			while(iterBIParams.hasNext()) {
 				BIObjectParameter biparam = (BIObjectParameter)iterBIParams.next();			    
 				IObjParviewDAO objparviewDao = DAOFactory.getObjParviewDAO();
-				List objparlist = objparviewDao.loadObjParviews(biparam.getId());
+				List objparlist = objparviewDao.loadObjParviews(biparam.getId() );
 				Iterator iterObjParview = objparlist.iterator();
 				while(iterObjParview.hasNext()) {
 					ObjParview objParview = (ObjParview)iterObjParview.next();

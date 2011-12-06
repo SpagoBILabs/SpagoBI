@@ -294,7 +294,8 @@ public class AdminTreeHtmlGenerator implements ITreeHtmlGenerator {
 			boolean isRoot, boolean isInitialPath) {
 		logger.debug("IN");
 		String nameLabel = folder.getName();
-		String name = msgBuilder.getUserMessage(nameLabel, null, httpRequest);
+		//String name = msgBuilder.getUserMessage(nameLabel, null, httpRequest);
+		String name = msgBuilder.getI18nMessage(nameLabel, httpRequest); 
 		name = StringEscapeUtils.escapeJavaScript(name);
 		String codeType = folder.getCodType();
 		Integer idFolder = folder.getId();
@@ -322,7 +323,9 @@ public class AdminTreeHtmlGenerator implements ITreeHtmlGenerator {
 					String stateIcon = urlBuilder.getResourceLinkByTheme(httpRequest, stateImgUrl, currTheme);
 					Integer idObj = obj.getId();		
 					String prog = idObj.toString();
-					String localizedName=msgBuilder.getUserMessage(obj.getName(), SpagoBIConstants.DEFAULT_USER_BUNDLE, httpRequest);
+					//String localizedName=msgBuilder.getUserMessage(obj.getName(), SpagoBIConstants.DEFAULT_USER_BUNDLE, httpRequest);
+					String localizedName=msgBuilder.getI18nMessage(obj.getName(), httpRequest);
+
 					localizedName = StringEscapeUtils.escapeJavaScript(localizedName);
 					if (biObjState.equals("DEV")) {
 						htmlStream.append(treeName + ".add(" + dTreeObjects-- + ", " + idFolder + ",'<img src=\\'" + stateIcon + "\\' /> " + localizedName + "', 'javascript:linkEmpty()', '', '', '" + userIcon + "', '', '', 'menu" + requestIdentity + "("+prog+", event, \\'" + createExecuteObjectLink(idObj) + "\\',\\'" + createMetadataObjectLink(idObj) + "\\', \\'" + createDetailObjectLink(idObj) + "\\', \\'" + createEraseObjectLink(idObj, idFolder) + "\\', \\'\\', \\'" +createMoveUpObjectLink(idObj) + "\\')' );\n");
@@ -358,7 +361,8 @@ public class AdminTreeHtmlGenerator implements ITreeHtmlGenerator {
 				String stateIcon = urlBuilder.getResourceLinkByTheme(httpRequest, stateImgUrl, currTheme);
 				Integer idObj = obj.getId();		
 				String prog = idObj.toString();
-				String localizedName=msgBuilder.getUserMessage(obj.getName(), SpagoBIConstants.DEFAULT_USER_BUNDLE, httpRequest);
+				//String localizedName=msgBuilder.getUserMessage(obj.getName(), SpagoBIConstants.DEFAULT_USER_BUNDLE, httpRequest);
+				String localizedName=msgBuilder.getI18nMessage(obj.getName(), httpRequest);
 				localizedName = StringEscapeUtils.escapeJavaScript(localizedName);
 				if (biObjState.equals("DEV")) {
 					htmlStream.append(treeName + ".add(" + dTreeObjects-- + ", " + idFolder + ",'<img src=\\'" + stateIcon + "\\' /> " + localizedName + "', 'javascript:linkEmpty()', '', '', '" + userIcon + "', '', '', 'menu" + requestIdentity + "("+prog+", event, \\'" + createExecuteObjectLink(idObj) + "\\',\\'" + createMetadataObjectLink(idObj) + "\\', \\'" + createDetailObjectLink(idObj) + "\\', \\'" + createEraseObjectLink(idObj, idFolder) + "\\', \\'\\', \\'" +createMoveUpObjectLink(idObj) + "\\')' );\n");

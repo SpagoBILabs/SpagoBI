@@ -381,7 +381,8 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 					boolean profileAttrsOk = ObjectsAccessVerifier.checkProfileVisibility(obj, profile);
 					if (profileAttrsOk) {
 						String execUrl = urlBuilder.getUrl(httpRequest, execUrlPars);
-						String localizedName=msgBuilder.getUserMessage(obj.getName(), SpagoBIConstants.DEFAULT_USER_BUNDLE, httpRequest);
+						//String localizedName=msgBuilder.getUserMessage(obj.getName(), SpagoBIConstants.DEFAULT_USER_BUNDLE, httpRequest);
+						String localizedName=msgBuilder.getI18nMessage(obj.getName(), httpRequest);
 						htmlStream.append(treeName + ".add(" + dTreeObjects-- + ", " + idFolder + ",'<img src=\\'" + stateIcon + "\\' /> " + localizedName + "', '" + execUrl + "', '', '', '" + userIcon + "', '', '', '' );\n");
 					} else {
 						logger.debug("NOT visible " + obj.getName() + " because user profile attribute constraint are not satisfied");

@@ -21,14 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.commons.serializer;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -37,6 +29,14 @@ import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.bo.Exporters;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -83,9 +83,13 @@ public class DocumentsJSONSerializer implements Serializer {
 			result.put(ID, obj.getId() );
 			result.put(LABEL, obj.getLabel() );
 			MessageBuilder msgBuild=new MessageBuilder();
-			String objName=msgBuild.getUserMessage(obj.getName(),null, locale);
+			String objName=null;
+			//objName = msgBuild.getUserMessage(obj.getName(),null, locale);
+			objName =msgBuild.getI18nMessage(locale, obj.getName());
 			result.put(NAME, objName );
-			String description=msgBuild.getUserMessage( obj.getDescription() ,null, locale);
+			String description= null;
+			//description = msgBuild.getUserMessage( obj.getDescription() ,null, locale);
+			description =msgBuild.getI18nMessage(locale, obj.getDescription());
 			result.put(DESCRIPTION, description);		
 			result.put(TYPECODE, obj.getBiObjectTypeCode());
 			result.put(TYPEID, obj.getBiObjectTypeID());

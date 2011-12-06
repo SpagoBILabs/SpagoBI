@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.services.sbidocument.service;
 
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
@@ -144,7 +143,9 @@ public class SbiDocumentSupplier {
 					JSONObject jsonParam = new JSONObject();
 					jsonParam.put("id", biparam.getParameterUrlName());
 					IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-					jsonParam.put("label", msgBuilder.getUserMessage(biparam.getLabel(), SpagoBIConstants.DEFAULT_USER_BUNDLE, locale));
+					//String interLabel = msgBuilder.getUserMessage(biparam.getLabel(), SpagoBIConstants.DEFAULT_USER_BUNDLE, locale);
+					String interLabel = msgBuilder.getI18nMessage(locale, biparam.getLabel());
+					jsonParam.put("label", interLabel);
 					jsonParam.put("type", biparam.getParameter().getType());
 					parametersJSON.put(jsonParam);
 				}

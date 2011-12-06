@@ -615,7 +615,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 		ExecutionInstance instance =null;
 		try{
-			instance = new ExecutionInstance(profile, "111", "111", idDocument, roleName, SpagoBIConstants.SDK_EXECUTION_SERVICE, false, false);
+			instance = new ExecutionInstance(profile, "111", "111", idDocument, roleName, SpagoBIConstants.SDK_EXECUTION_SERVICE, false, false, null);
 		}
 		catch (Exception e) {
 			logger.error("error while creating instance",e);

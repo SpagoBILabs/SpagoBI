@@ -272,7 +272,9 @@ public class DevTreeHtmlGenerator implements ITreeHtmlGenerator {
 	private void addItemForJSTree(StringBuffer htmlStream, LowFunctionality folder, boolean isRoot) {
 		
 		String nameLabel = folder.getName();
-		String name = msgBuilder.getUserMessage(nameLabel, null, httpRequest);
+		
+		//String name = msgBuilder.getUserMessage(nameLabel, null, httpRequest);
+		String name = msgBuilder.getI18nMessage(nameLabel, httpRequest);
 		name = StringEscapeUtils.escapeJavaScript(name);
 		Integer idFolder = folder.getId();
 		Integer parentId = folder.getParentId();
@@ -299,7 +301,8 @@ public class DevTreeHtmlGenerator implements ITreeHtmlGenerator {
 					Integer idObj = obj.getId();
 					String stateObj = obj.getStateCode();
 					String prog = idObj.toString();
-					String localizedName=msgBuilder.getUserMessage(obj.getName(), SpagoBIConstants.DEFAULT_USER_BUNDLE, httpRequest);
+					//String localizedName=msgBuilder.getUserMessage(obj.getName(), SpagoBIConstants.DEFAULT_USER_BUNDLE, httpRequest);
+					String localizedName=msgBuilder.getI18nMessage(obj.getName(), httpRequest);
 					localizedName = StringEscapeUtils.escapeJavaScript(localizedName);
 					if (canDev && (stateObj.equals("DEV"))) {
 						htmlStream.append("	treeDevObjects.add(" + dTreeObjects-- + ", " + idFolder + ",'<img src=\\'" + stateIcon + "\\' /> " + localizedName + "', 'javascript:linkEmpty()', '', '', '" + userIcon + "', '', '', 'menu" + requestIdentity + "("+prog+", event, \\'" + createExecuteObjectLink(idObj) + "\\',\\'" + createMetadataObjectLink(idObj) + "\\', \\'" + createDetailObjectLink(idObj) + "\\', \\'" + createEraseObjectLink(idObj, idFolder) + "\\', \\'\\', \\'" +createMoveUpObjectLink(idObj) + "\\')' );\n");

@@ -51,6 +51,7 @@ import it.eng.spagobi.engines.dossier.dao.IDossierDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPresentationsDAO;
 import it.eng.spagobi.hotlink.rememberme.dao.IRememberMeDAO;
+import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmContactDAO;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmDAO;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmEventDAO;
@@ -745,6 +746,17 @@ public class DAOFactory {
 	 */
 	public static IKpiErrorDAO getKpiErrorDAO() throws EMFUserError{
 		return (IKpiErrorDAO)createDAOInstance("KpiErrorDAO");
+	}
+	
+	/**
+	 * Creates a DAO instance for a BI i18n messages.
+	 * 
+	 * @return a DAO instance for the I18nmessage
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	public static I18NMessagesDAO getI18NMessageDAO() throws EMFUserError{
+		return (I18NMessagesDAO)createDAOInstance("I18NMessagesDAO");
 	}
 	
 }

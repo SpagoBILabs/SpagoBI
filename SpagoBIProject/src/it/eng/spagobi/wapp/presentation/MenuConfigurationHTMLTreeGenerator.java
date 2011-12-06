@@ -169,7 +169,9 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 		String nameLabel = menu.getName();
 
-		String name = msgBuilder.getUserMessage(nameLabel, SpagoBIConstants.DEFAULT_USER_BUNDLE, httpRequest);
+		//String name = msgBuilder.getUserMessage(nameLabel, SpagoBIConstants.DEFAULT_USER_BUNDLE, httpRequest);
+		String name = msgBuilder.getI18nMessage(nameLabel, httpRequest);
+		
 		name = StringEscapeUtils.escapeJavaScript(name);
 		//String name = msgBuilder.getMessage(nameLabel, "messages", httpRequest);
 		Integer id = menu.getMenuId();

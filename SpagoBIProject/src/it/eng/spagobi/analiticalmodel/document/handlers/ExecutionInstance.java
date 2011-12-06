@@ -52,6 +52,8 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.ParameterValuesDecoder;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.commons.validation.SpagoBIValidationImpl;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -112,6 +114,7 @@ public class ExecutionInstance implements Serializable{
 	private boolean displayToolbar = true;
 	private boolean displaySliders = true;
 	private Calendar calendar = null;
+	private Locale locale = null;
 
 
 	/**
@@ -123,7 +126,7 @@ public class ExecutionInstance implements Serializable{
 	 * @param executionRole the execution role
 	 * @throws Exception 
 	 */
-	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole, String executionModality) throws Exception {
+	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole, String executionModality, Locale locale) throws Exception {
 		logger.debug("IN: input parameters: userProfile = [" + userProfile + "]; flowId = [" + flowId + "]; executionId = [" + executionId + "]; " +
 				"biobjectId" + biobjectId + "]; executionRole = [" + executionRole + "]");
 		if (userProfile == null || flowId == null || executionId == null || biobjectId == null) {
@@ -136,18 +139,19 @@ public class ExecutionInstance implements Serializable{
 		this.calendar = new GregorianCalendar();
 		this.executionRole = executionRole;
 		this.executionModality = (executionModality == null) ? SpagoBIConstants.NORMAL_EXECUTION_MODALITY : executionModality;
+		this.locale = locale;
 		initBIParameters();
 	}
 
 	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, 
-			String executionRole, String executionModality, boolean displayToolbar) throws Exception {
-		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality);
+			String executionRole, String executionModality, boolean displayToolbar, Locale locale) throws Exception {
+		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, locale);
 		this.displayToolbar = displayToolbar;
 	}
 
 	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, 
-			String executionRole, String executionModality, boolean displayToolbar, boolean displaySliders) throws Exception {
-		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, displayToolbar);
+			String executionRole, String executionModality, boolean displayToolbar, boolean displaySliders, Locale locale) throws Exception {
+		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, displayToolbar, locale);
 		this.displaySliders = displaySliders;
 	}
 	/**Used by Kpi Engine for detail documents
@@ -160,9 +164,9 @@ public class ExecutionInstance implements Serializable{
 	 * @throws Exception
 	 */
 	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, 
-			String biobjectLabel, String executionRole, String executionModality) throws Exception {
+			String biobjectLabel, String executionRole, String executionModality, Locale locale) throws Exception {
 		logger.debug("IN: input parameters: userProfile = [" + userProfile + "]; flowId = [" + flowId + "]; executionId = [" + executionId + "]; " +
-				"biobjectLabel" + biobjectLabel + "]; executionRole = [" + executionRole + "]");
+				"biobjectLabel" + biobjectLabel + "]; executionRole = [" + executionRole + "]; Locale="+locale.getDisplayName());
 		if (userProfile == null || flowId == null || executionId == null || biobjectLabel == null) {
 			throw new Exception("Invalid arguments.");
 		}
@@ -173,18 +177,19 @@ public class ExecutionInstance implements Serializable{
 		this.calendar = new GregorianCalendar();
 		this.executionRole = executionRole;
 		this.executionModality = (executionModality == null) ? SpagoBIConstants.NORMAL_EXECUTION_MODALITY : executionModality;
+		this.locale = locale;
 		initBIParameters();
 	}
 
 	public static ExecutionInstance getExecutionInstanceByLabel(ExecutionInstance instance, 
-			String biobjectLabel) throws Exception {
+			String biobjectLabel, Locale locale) throws Exception {
 		IEngUserProfile userProfile = instance.userProfile;
 		String flowId = instance.flowId;
 		String executionId = instance.executionId;
 		String executionRole = instance.executionRole;
 		String executionModality = instance.executionModality;
-		
-		return new ExecutionInstance(userProfile,flowId,executionId,biobjectLabel,executionRole,executionModality);
+
+		return new ExecutionInstance(userProfile,flowId,executionId,biobjectLabel,executionRole,executionModality, locale);
 	}
 
 	public void changeExecutionRole(String newRole) throws Exception {
@@ -296,7 +301,7 @@ public class ExecutionInstance implements Serializable{
 			} catch (SourceBeanException e) {
 				continue;
 			}
-			*/
+			 */
 		}
 		if (countHidePar == biParameters.size())
 			return true;
@@ -589,7 +594,7 @@ public class ExecutionInstance implements Serializable{
 		logger.debug("OUT");
 		return isSingleValue;
 	}
-	*/
+	 */
 
 	public List getParametersErrors() throws Exception {
 		logger.debug("IN");
@@ -600,6 +605,13 @@ public class ExecutionInstance implements Serializable{
 		Iterator iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
 			BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
+			// internalization of the label for display 
+			String viewLabel = biparam.getLabel();
+			String oldViewLabel = viewLabel;
+			IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
+			viewLabel = msgBuilder.getI18nMessage(locale, viewLabel);
+			logger.debug(oldViewLabel+" is internazionalized in "+viewLabel);
+			biparam.setLabel(viewLabel);
 			logger.debug("Evaluating errors for biparameter " + biparam.getLabel() + " ...");
 			List errorsOnChecks = getValidationErrorsOnChecks(biparam);
 			if (errorsOnChecks != null && errorsOnChecks.size() > 0) {
@@ -663,6 +675,7 @@ public class ExecutionInstance implements Serializable{
 		String urlName = biparameter.getParameterUrlName();
 		String label = biparameter.getLabel();
 		List values = biparameter.getParameterValues();
+
 		if (check.getValueTypeCd().equalsIgnoreCase("MANDATORY")) {
 			if (values == null || values.isEmpty()) {
 				EMFValidationError error = SpagoBIValidationImpl.validateField(urlName, label, null, "MANDATORY", null, null, null);
@@ -768,7 +781,7 @@ public class ExecutionInstance implements Serializable{
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
+
 	private List getValidationErrorsOnValuesForQueries(QueryDetail queryDetail, BIObjectParameter biparam) throws Exception {
 		List toReturn = null;
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
@@ -791,7 +804,7 @@ public class ExecutionInstance implements Serializable{
 		}
 		return toReturn;
 	}
-	
+
 	private List getValidationErrorsOnValuesByLovResult(String lovResult, BIObjectParameter biparam, ILovDetail lovProvDet) throws Exception {
 		logger.debug("IN");
 		List toReturn = new ArrayList();
@@ -974,7 +987,7 @@ public class ExecutionInstance implements Serializable{
 		}
 		return lovProvDet;
 	}
-	
+
 	public List<ObjParuse> getDependencies(BIObjectParameter parameter) {
 		List<ObjParuse> biParameterExecDependencies = new ArrayList<ObjParuse>();
 		try {
@@ -1030,7 +1043,7 @@ public class ExecutionInstance implements Serializable{
 			buffer.append("&" + SpagoBIConstants.RUN_ANYWAY + "=TRUE" );
 			buffer.append("&" + SpagoBIConstants.IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS + "=TRUE" );
 			buffer.append("&SBI_EXECUTION_ID=" + this.executionId); //adds constants if it works!!
-			
+
 			String kpiClassName = SpagoBIKpiInternalEngine.class.getCanonicalName();
 			if(engine.getClassName().equals(kpiClassName)){
 				Integer auditId = createAuditId();

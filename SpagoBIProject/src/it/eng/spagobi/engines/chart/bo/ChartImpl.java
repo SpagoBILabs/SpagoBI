@@ -25,7 +25,6 @@ package it.eng.spagobi.engines.chart.bo;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.engines.chart.bo.charttypes.XYCharts.BlockChart;
@@ -1129,7 +1128,8 @@ public class ChartImpl implements IChart {
 	public void setLocalizedTitle() {
 		if(name!=null){
 		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-		String toSet=msgBuilder.getUserMessage(name, SpagoBIConstants.DEFAULT_USER_BUNDLE, locale);
+		//String toSet=msgBuilder.getUserMessage(name, SpagoBIConstants.DEFAULT_USER_BUNDLE, locale);
+		String toSet = msgBuilder.getI18nMessage(locale, name);
 		setName(toSet);
 		}
 		return;

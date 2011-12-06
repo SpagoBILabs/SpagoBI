@@ -52,7 +52,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.commons.utilities.urls.IUrlBuilder;
@@ -675,7 +674,9 @@ public class ParametersGeneratorTag extends TagSupport {
 				locale=new Locale(lang,country,"");
 			}
 			IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-			toInsert=msgBuilder.getUserMessage(toInsert, SpagoBIConstants.DEFAULT_USER_BUNDLE, locale);		
+			//toInsert=msgBuilder.getUserMessage(toInsert, SpagoBIConstants.DEFAULT_USER_BUNDLE, locale);		
+			// localization via DB
+			toInsert=msgBuilder.getI18nMessage(locale, toInsert);		
 		}
 
 		//Puts an * if the parameter is mandatory

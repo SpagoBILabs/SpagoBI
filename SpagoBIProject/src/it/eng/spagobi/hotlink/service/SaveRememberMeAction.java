@@ -42,6 +42,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import sun.security.action.GetLongAction;
+
 /**
  * 
  * @author Zerbetto (davide.zerbetto@eng.it)
@@ -122,8 +124,9 @@ public class SaveRememberMeAction extends AbstractHttpAction {
 				// if the remember me is pointing a subobject, parameters are not considered;
 				// if the remember me is pointing a main document, parameters are considered instead.
 				parameters = (String) serviceRequest.getAttribute("parameters");
-				ExecutionInstance instance = new ExecutionInstance(profile, "", "", docId, executionRole, "", true, true);
-				instance.setParameterValues(parameters, true);
+				ExecutionInstance instance = new ExecutionInstance(profile, "", "", docId, executionRole, "", true, true, null);
+				instance.setParameterValues(parameters, true); 
+				
 				List errors = instance.getParametersErrors();
 				if (errors != null && errors.size() > 0) {
 					logger.error("Current user [" + userId + "] CANNOT execute document with id = " + docId + " with parameters = [" + parameters + "]!!!!");

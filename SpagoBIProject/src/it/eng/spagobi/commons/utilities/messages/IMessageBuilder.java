@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.spagobi.commons.utilities.messages;
 
 import java.util.Locale;
@@ -39,7 +39,7 @@ public interface IMessageBuilder {
 	 * @return the message associated with code in the default bundle
 	 */
 	//public String getMessage(RequestContainer aRequestContainer, String code);
-	
+
 	/**
 	 * @param aRequestContainer: Spago Request Container
 	 * @param code: the message code
@@ -67,7 +67,7 @@ public interface IMessageBuilder {
 	 * otherwise returns the message associated with code in the default bundle with default locale
 	 */
 	public String getMessage(String code, Locale locale);
-	
+
 	/**
 	 * Returns the message associated with code in the given bundle.
 	 * 
@@ -77,7 +77,7 @@ public interface IMessageBuilder {
 	 * @return  the message associated with code in the given bundle
 	 */
 	public String getMessage(String code, String bundle);
-	
+
 	/**
 	 * If the specified locale is valid, returns the message associated with code in the input bundle with the specified locale;
 	 * otherwise returns the message associated with code in the input bundle with default locale.
@@ -90,7 +90,7 @@ public interface IMessageBuilder {
 	 * otherwise returns the message associated with code in the input bundle with default locale
 	 */
 	public String getMessage(String code, String bundle, Locale locale);
-	
+
 	/**
 	 * Returns the message associated with code in the default bundle.
 	 * 
@@ -100,7 +100,7 @@ public interface IMessageBuilder {
 	 * @return the message associated with code in the default bundle
 	 */
 	public String getMessage(String code, HttpServletRequest request);
-	
+
 	/**
 	 * If the specified locale is valid, returns the message associated with code in the default bundle with the specified locale;
 	 * otherwise returns the message associated with code in the default bundle with request locale.
@@ -113,7 +113,7 @@ public interface IMessageBuilder {
 	 * otherwise returns the message associated with code in the default bundle with request locale
 	 */
 	public String getMessage(String code, HttpServletRequest request, Locale locale);
-	
+
 	/**
 	 * Returns the message associated with code in the given bundle.
 	 * 
@@ -124,31 +124,7 @@ public interface IMessageBuilder {
 	 * @return  the message associated with code in the given bundle
 	 */
 	public String getMessage(String code, String bundle, HttpServletRequest request);
-	
-	/**
-	 * Returns the message associated with code in the given bundle only if starts with #.
-	 * 
-	 * @param code the code
-	 * @param bundle the bundle
-	 * @param locale the locale
-	 * 
-	 * @return  the message associated with code in the given bundle
-	 */
-	public String getUserMessage(String code, String bundle, Locale locale);
-	
-	/**
-	 * Returns the message associated with code in the given bundle only if starts with #.
-	 * 
-	 * @param code the code
-	 * @param bundle the bundle
-	 * @param request the request
-	 * 
-	 * @return  the message associated with code in the given bundle
-	 */
-	public String getUserMessage(String code, String bundle, HttpServletRequest request);
-	
-	
-	
+
 	/**
 	 * If the specified locale is valid, returns the message associated with code in the input bundle with the specified locale;
 	 * otherwise returns the message associated with code in the input bundle with request locale.
@@ -162,19 +138,19 @@ public interface IMessageBuilder {
 	 * otherwise returns the message associated with code in the input bundle with request locale
 	 */
 	public String getMessage(String code, String bundle, HttpServletRequest request, Locale locale);
-	
-	 /**
- 	 * Gets a localized information text given the resource name which contains the text
- 	 * information.
- 	 * The resource will be searched into the classpath of the application
- 	 * 
- 	 * @param resourceName The complete name of the resource.
- 	 * @param request The http request for locale retrieving
- 	 * 
- 	 * @return the localized text contained into the resource
- 	 */
+
+	/**
+	 * Gets a localized information text given the resource name which contains the text
+	 * information.
+	 * The resource will be searched into the classpath of the application
+	 * 
+	 * @param resourceName The complete name of the resource.
+	 * @param request The http request for locale retrieving
+	 * 
+	 * @return the localized text contained into the resource
+	 */
 	public String getMessageTextFromResource(String resourceName, HttpServletRequest request);
-	
+
 	/**
 	 * If the specified locale is valid, returns the localized text contained into the resource with the specified locale;
 	 * otherwise returns the localized text contained into the resource with default locale.
@@ -186,5 +162,28 @@ public interface IMessageBuilder {
 	 * otherwise returns the localized text contained into the resource with default locale
 	 */
 	public String getMessageTextFromResource(String resourceName, Locale locale);
-	
+
+	/** Internationalization of user messages via DB
+	 * 
+	 * @param locale
+	 * @param code
+	 * @return
+	 */
+	public String getI18nMessage(Locale locale, String code);
+
+	/** Internationalization of user messages via DB
+	 * 
+	 * @param code
+	 * @param request
+	 * @return
+	 */
+	public String getI18nMessage(String code, HttpServletRequest request);
+
+	/**
+	 *  Previous user messages internationalized via bundle	
+	 */
+	// public String getUserMessage(String code, String bundle, Locale locale);
+	// public String getUserMessage(String code, String bundle, HttpServletRequest request);
+
+
 }

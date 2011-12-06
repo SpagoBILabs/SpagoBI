@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-dic-2011 16.17.44 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.i18n.metadata.SbiI18NMessages" table="sbi_i18n_messages">
+        <composite-id name="id" class="it.eng.spagobi.i18n.metadata.SbiI18NMessagesId">
+            <key-property name="languageCd" type="integer">
+                <column name="LANGUAGE_CD" not-null="true" />
+            </key-property>
+            <key-property name="label" type="string">
+                <column name="LABEL" length="200" not-null="true" />
+            </key-property>
+        </composite-id>
+        <property name="message" type="string">
+            <column name="MESSAGE"/>
+        </property>
+    </class>
+</hibernate-mapping>
