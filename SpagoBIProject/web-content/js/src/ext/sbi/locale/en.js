@@ -509,6 +509,7 @@ Sbi.locale.ln['sbi.lookup.Select']= 'Select Value ...';
 
 Sbi.locale.ln['sbi.execution.PdfExport'] = 'PDF';
 Sbi.locale.ln['sbi.execution.XlsExport'] = 'XLS';
+Sbi.locale.ln['sbi.execution.XlsxExport'] = 'XLSX';
 Sbi.locale.ln['sbi.execution.CsvExport'] = 'CSV';
 Sbi.locale.ln['sbi.execution.JpgExport'] = 'JPG';
 Sbi.locale.ln['sbi.execution.XmlExport'] = 'XML';

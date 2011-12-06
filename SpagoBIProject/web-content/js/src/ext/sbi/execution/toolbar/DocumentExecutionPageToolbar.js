@@ -941,7 +941,21 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	
 				                        ); 
-						}
+						} else if(this.executionInstance.document.exporters[i]=='XLSX'){
+							menuItems.push(   new Ext.menu.Item({
+				                            id:  Ext.id()
+				                            , text: LN('sbi.execution.XlsxExport')
+				                            , group: 'group_2'
+				                            , iconCls: 'icon-xlsx' 
+									     	, scope: this
+											 , width: 15
+									    	, handler : function() { 
+									    		this.exportWorksheetsExecution('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); 
+									    	}
+											, href: ''   
+				                        })	
+				                       ); 
+			}
 					}
 					var menu0 = new Ext.menu.Menu({
 						id: 'basicMenu_0',
@@ -987,8 +1001,22 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				                            , group: 'group_2'
 				                            , iconCls: 'icon-xls' 
 									     	, scope: this
-											 , width: 15
+											, width: 15
 									    	, handler : function() { this.exportQbEExecution('application/vnd.ms-excel'); }
+											, href: ''   
+				                        })	
+				                        ); 
+						}else if(this.executionInstance.document.exporters[i]=='XLSX'){
+							menuItems.push(   new Ext.menu.Item({
+				                            id:  Ext.id()
+				                            , text: LN('sbi.execution.XlsxExport')
+				                            , group: 'group_2'
+				                            , iconCls: 'icon-xlsx' 
+									     	, scope: this
+											, width: 15
+									    	, handler : function() { 
+									    		this.exportQbEExecution('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+									    	}
 											, href: ''   
 				                        })	
 				                        ); 

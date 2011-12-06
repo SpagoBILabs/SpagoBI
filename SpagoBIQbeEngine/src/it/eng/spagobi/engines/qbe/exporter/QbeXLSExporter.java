@@ -1,6 +1,28 @@
-package it.eng.spagobi.engines.qbe.query;
+/**
+
+SpagoBI - The Business Intelligence Free Platform
+
+Copyright (C) 2005-2009 Engineering Ingegneria Informatica S.p.A.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+ **/
+package it.eng.spagobi.engines.qbe.exporter;
 
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
+import it.eng.spagobi.engines.qbe.query.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -26,17 +48,17 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-public class Exporter {
+public class QbeXLSExporter {
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(Exporter.class);
+    public static transient Logger logger = Logger.getLogger(QbeXLSExporter.class);
 	
     
 	IDataStore dataStore = null;
 	Vector extractedFields = null;
-	 Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
+	Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
 
-	public Exporter(IDataStore dataStore) {
+	public QbeXLSExporter(IDataStore dataStore) {
 		super();
 		this.dataStore = dataStore;
 	}
@@ -49,12 +71,12 @@ public class Exporter {
 		this.dataStore = dataStore;
 	}
 
-	public Exporter() {
+	public QbeXLSExporter() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Workbook exportInExcel(){
+	public Workbook export(){
 		Workbook wb = new HSSFWorkbook();
 	    CreationHelper createHelper = wb.getCreationHelper();
 	    Sheet sheet = wb.createSheet("new sheet");
