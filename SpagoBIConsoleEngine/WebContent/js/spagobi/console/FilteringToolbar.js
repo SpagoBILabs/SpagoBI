@@ -106,6 +106,10 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
       		for(var i=0; i < this.filterBar.actions.length; i++){
       		   if (this.filterBar.actions[i].type == undefined) this.filterBar.actions[i].type = this.filterBar.actions[i].name;
       		   conf.actionConf = this.filterBar.actions[i];
+      		   conf.actionConf.tooltip = Sbi.locale.getLNValue(conf.actionConf.tooltip);
+      		   conf.actionConf.tooltipInactive = Sbi.locale.getLNValue(conf.actionConf.tooltipInactive);
+      		   conf.actionConf.tooltipActive = Sbi.locale.getLNValue(conf.actionConf.tooltipActive);
+      		   conf.actionConf.msgConfirm = Sbi.locale.getLNValue(conf.actionConf.msgConfirm);
     		   b = new Sbi.console.ActionButton(conf);
     		   b.on('toggleIcons', this.onToggleIcons, this);
         	   this.addButton(b);	
@@ -412,6 +416,5 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 					btn.setCheckValue(btn.actionConf.checkColumn, flgCheck);   
 				}			
 			}
-    }
-
+    }	
 });

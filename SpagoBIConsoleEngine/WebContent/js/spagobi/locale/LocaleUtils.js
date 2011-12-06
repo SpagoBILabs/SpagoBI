@@ -42,6 +42,16 @@ Sbi.locale.localize = function(key) {
 	return Sbi.locale.ln[key] || key;
 };
 
+Sbi.locale.getLNValue = function(obj){
+    var value = obj; 
+	if (obj !== undefined && obj.indexOf('LN(')>=0){					
+			var lenIdx = (obj.indexOf(')')) - (obj.indexOf('LN(')+3);
+			var idx  = obj.substr(obj.indexOf('LN(')+3,lenIdx);
+			value = LN(idx);    			
+		}
+		return value;
+}
+
 // alias
 LN = Sbi.locale.localize;
 FORMATTERS = Sbi.locale.formatters;

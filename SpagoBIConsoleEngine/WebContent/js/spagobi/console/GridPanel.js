@@ -130,8 +130,12 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	// grid
 	, store: null
 	, storeLabels: null
+	, columnModelLabels: null
 	, columnModel: null
 	, selectionModel: null
+	, tempColumnModel: null
+	, headersToHide: null
+	, fieldsMap: null
 	
 	// popup
 	, waitWin: null
@@ -602,19 +606,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		}
     }
     
-	, initStore: function() {
-		//load optional dataset with lables for i18N management:		
-		if (this.storeLabelsId !== undefined){
-			this.storeLabels = this.storeManager.getStore(this.storeLabelsId);
-			
-			if (this.storeLabels === undefined) {
-				Sbi.Msg.showError('Dataset with identifier [' + this.storeId + '] is not correctly configurated');			
-			}else{
-				this.storeLabels.loadStore();		
-				this.storeLabels.on('exception', Sbi.exception.ExceptionHandler.onStoreLoadException, this);
-			}
-		}
-		
+	, initStore: function() {		
 		this.store = this.storeManager.getStore(this.storeId);
 		if (this.store === undefined) {
 			Sbi.Msg.showError('Dataset with identifier [' + this.storeId + '] is not correctly configurated');			
@@ -624,12 +616,9 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			this.store.on('load', this.onLoad, this);
 			this.store.on('metachange', this.onMetaChange, this);
 		}
-		
-		
 	}
 
-	, initColumnModel: function() {
-	
+	, initColumnModel: function() {	
 		this.columnModel = new Ext.grid.ColumnModel([
 			new Ext.grid.RowNumberer(), 
 			{
@@ -638,8 +627,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			    width: 150
 			}
 		]);
-		this.columnModel.defaultSortable = true;  
-		
+		this.columnModel.defaultSortable = true;  		
 	}
 	
 	, initSelectionModel: function() {
@@ -670,7 +658,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	, updateMetaStructure: function(cm, headerToHide, fieldsMap){
 		for(var i = 0, len = headerToHide.length; i < len; i++) {
 			//hides the column with the description of the header
-			cm.fields[fieldsMap[headerToHide[i]]].hidden = true;
+			if (cm.fields[fieldsMap[headerToHide[i]]] !== undefined)
+				cm.fields[fieldsMap[headerToHide[i]]].hidden = true;
 		}
 		//adds numeration column    
 		cm.fields[0] = new Ext.grid.RowNumberer();
@@ -689,7 +678,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	
 	// -- callbacks ---------------------------------------------------------------------------------------------
 	//defines the max, min and tot value on all records (only for columns visualized as chart)
-	, onLoad: function(){	
+	, onLoad: function(){
 		var numRec = this.store.getCount();
 		
 		//redefines the columns labels if they are dynamics
@@ -699,8 +688,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		var headerToHide = [];
 		var fieldsMap = {};
 		tmpMeta.fields = new Array(fields.length);
-		
-		
+	 
 		for(var i = 0, len = fields.length; i < len; i++) {
 			if(fields[i].headerType !== undefined && fields[i].headerType.toUpperCase() === 'DATASET'){
 				//-------------------------------------------------------------------------------//
@@ -738,50 +726,10 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 					tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 		    	}
 		    	
-		    }else if (fields[i].headerType !== undefined && fields[i].headerType.toUpperCase() === 'DATASETI18N'){
-		    	//-------------------------------------------------------------------------------//
-				// 	subsitutes the grid header values with the specific dataset labels.
-		    	// This dataset should returns 3 fields: code, label, locale (it_IT, en_US, fr_FR, es_ES)
-		    	// Ex: cod_UnitSales, Unit Sales, en_US 													 
-				//-------------------------------------------------------------------------------//		
-		    	var idxLocale = (this.storeLabels.getFieldMetaByAlias("locale") !== undefined)?this.storeLabels.getFieldMetaByAlias("locale") :
-		    		this.storeLabels.getFieldMetaByAlias("LOCALE");
-		    	if (idxLocale !== undefined) idxLocale = idxLocale.dataIndex;
-		    	var idxCode = (this.storeLabels.getFieldMetaByAlias("code") !== undefined)?this.storeLabels.getFieldMetaByAlias("code") :
-		    		this.storeLabels.getFieldMetaByAlias("CODE");
-		    	if (idxCode !== undefined) idxCode = idxCode.dataIndex;		    	
-		    	var idxLabel = (this.storeLabels.getFieldMetaByAlias("label") !== undefined)?this.storeLabels.getFieldMetaByAlias("label") :
-		    		this.storeLabels.getFieldMetaByAlias("LABEL");
-		    	if (idxLabel !== undefined) idxLabel = idxLabel.dataIndex;
-		    	
-		    	if (idxLocale == undefined || idxCode == undefined || idxLabel == undefined){
-		    		Sbi.Msg.showError(LN('sbi.console.localization.columnsKO'), 'Service Error');
-		    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
-		    	}else{
-			    	//apply filter on labelsStore:
-			    	var idxRec = this.storeLabels.findBy(function(record){				    		 
-			    	   if (idxLocale !== undefined && idxCode !== undefined){
-			    		  if(record.data[idxLocale] === Sbi.user.locale && 
-			    		     record.data[idxCode] === fields[i].header) {		
-	  						   return true;  						   
-	  					   }	
-			    	   } 		  		  
-			  		   return false;				   
-			  	   }, this);		    	 
-			    	var tmpRec = this.storeLabels.getAt(idxRec);		    	
-					if (tmpRec !== undefined) {
-						var tmpHeader =  tmpRec.get(idxLabel);
-				    	if (tmpHeader !== undefined){	
-				    		metaIsChanged = true;
-				    		fields[i].header = tmpHeader;		    		
-				    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
-				    	}else{
-							tmpMeta.fields[i] = Ext.apply({}, fields[i]);
-				    	}	
-					}else 
-						tmpMeta.fields[i] = Ext.apply({}, fields[i]);
-			    }		    
-	    	}else if (fields[i].headerType == undefined ){
+		    //}else if (fields[i].headerType == undefined ){
+	    	}/*else {
+	    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+	    	}	*/else{
 		    	//without substitution; manteins the header defined into the columnConfig section
 	    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 	    	}
@@ -800,7 +748,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			var nameFieldThreshold = "";
 			var nameTooltipField = "";
 			var tooltip = "";
-			 
+				
 			for(var p = 0, len = this.inlineCharts.length; p < len; p++) {
 				minValue = 0;
 				maxValue = 0;
@@ -819,7 +767,10 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 							if (headerToHide.indexOf(this.inlineCharts[p].threshold)<0) headerToHide.push(this.inlineCharts[p].threshold); //hides the column with the thresholds
 							nameFieldThreshold = this.store.getFieldNameByAlias(this.inlineCharts[p].threshold);
 							pointChartConfig.nameFieldThreshold = nameFieldThreshold;
-							//check the tooltip 
+							//check the tooltip, before try to international it, then substitutes the field value
+							pointChartConfig.tooltip =  Sbi.locale.getLNValue(pointChartConfig.tooltip);
+							pointChartConfig.tooltipLower =  Sbi.locale.getLNValue(pointChartConfig.tooltipLower);
+							pointChartConfig.tooltipHigher =  Sbi.locale.getLNValue(pointChartConfig.tooltipHigher);
 							if ((pointChartConfig.tooltip && pointChartConfig.tooltip.indexOf("$F{") !== -1) ||
 								(pointChartConfig.tooltipLower && pointChartConfig.tooltipLower.indexOf("$F{") !== -1) ||
 							    (pointChartConfig.tooltipHigher && pointChartConfig.tooltipHigher.indexOf("$F{") !== -1)){
@@ -837,7 +788,10 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 							pointChartConfig = Ext.apply({}, this.inlineCharts[p] || {});
 							metaIsChanged = true;
 							pointChartConfig.threshold = this.executionContext[this.inlineCharts[p].threshold];
-							//check the tooltip 
+							//check the tooltip, before try to international it, then substitutes the parameter value 
+							pointChartConfig.tooltip =  Sbi.locale.getLNValue(pointChartConfig.tooltip);
+							pointChartConfig.tooltipLower =  Sbi.locale.getLNValue(pointChartConfig.tooltipLower);
+							pointChartConfig.tooltipHigher =  Sbi.locale.getLNValue(pointChartConfig.tooltipHigher);
 							if ((pointChartConfig.tooltip && pointChartConfig.tooltip.indexOf("$P{") !== -1) ||
 								(pointChartConfig.tooltipLower && pointChartConfig.tooltipLower.indexOf("$P{") !== -1) ||
 								(pointChartConfig.tooltipHigher && pointChartConfig.tooltipHigher.indexOf("$P{") !== -1)){
@@ -870,7 +824,16 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			}
 		}
 		
-		if (metaIsChanged) this.updateMetaStructure(tmpMeta, headerToHide, fieldsMap);
+		if (this.storeLabelsId !== undefined){
+			//check to change headers with internationalized dataset
+  		this.tempColumnModel = tmpMeta;
+  		this.headersToHide = headerToHide;
+  		this.fieldsMap = fieldsMap;
+		  this.loadStoreForHeaders();
+		}
+		else{
+		  if (metaIsChanged) this.updateMetaStructure(tmpMeta, headerToHide, fieldsMap);
+		}
 	}
 	
 	, onMetaChange: function( store, meta ) {
@@ -1004,6 +967,10 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			, scope: this
 		//	, headerIconCls: inlineActionColumnConfig.type + '_header'
 		}, inlineActionColumnConfig);
+		
+		inlineActionColumnConfig.tooltip = Sbi.locale.getLNValue(inlineActionColumnConfig.tooltip);
+		inlineActionColumnConfig.tooltipInactive = Sbi.locale.getLNValue(inlineActionColumnConfig.tooltipInactive);
+		inlineActionColumnConfig.tooltipActive = Sbi.locale.getLNValue(inlineActionColumnConfig.tooltipActive);
 		
 		if (inlineActionColumnConfig.imgSrcActive !== undefined){
 			inlineActionColumnConfig.imgSrcActive = '../img/' + inlineActionColumnConfig.imgSrcActive;
@@ -1216,5 +1183,98 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			}
 		}
 		return chartConfig;
+	}
+	
+	, loadStoreForHeaders: function(){
+		//load optional dataset with lables for i18N management:			
+		this.storeLabels = this.storeManager.getStore(this.storeLabelsId);
+		
+		if (this.storeLabels === undefined) {
+			Sbi.Msg.showError('Dataset with identifier [' + this.storeLabelsId + '] is not correctly configurated');			
+		}else{					
+			this.storeLabels.on('exception', Sbi.exception.ExceptionHandler.onStoreLoadException, this);
+			this.storeLabels.on('metachange', this.onMetaChangeLabels, this);
+			this.storeLabels.on('load', this.changeLabelsByDatatset, this);
+			this.storeLabels.loadStore();	
+		}
+		
+	}
+	, onMetaChangeLabels: function( store, meta ) {
+	 	var fieldsMap = {};
+		var tmpMeta =  Ext.apply({}, meta); // meta;
+		var fields = tmpMeta.fields;
+		tmpMeta.fields = new Array(fields.length);
+		
+		for(i = 0; i < fields.length; i++) {
+			if( (typeof fields[i]) === 'string') {
+				fields[i] = {name: fields[i]};
+			}
+			
+			if (this.columnId !== undefined && this.columnId === fields[i].header ){
+				fields[i].hidden = true;
+			}
+			tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+			fieldsMap[fields[i].name] = i;
+		}
+		this.columnModelLabels = tmpMeta.fields;
+		if (this.storeLabels.alias2FieldMetaMap == null){
+			this.storeLabels.alias2FieldMetaMap = this.columnModelLabels;
+		}
+}
+	, changeLabelsByDatatset: function(){
+
+		var tmpMeta = this.tempColumnModel;
+		var fields = tmpMeta.config;
+		for(var i = 0, len = fields.length; i < len; i++) {
+			if (fields[i] !== undefined && fields[i].headerType !== undefined && fields[i].headerType.toUpperCase() === 'DATASETI18N'){
+		    	//-------------------------------------------------------------------------------//
+				// 	subsitutes the grid header values with the specific dataset labels.
+		    	// This dataset should returns 3 fields: code, label, locale (it_IT, en_US, fr_FR, es_ES)
+		    	// Ex: cod_UnitSales, Unit Sales, en_US 													 
+				//-------------------------------------------------------------------------------//		
+		    	if (this.storeLabels.alias2FieldMetaMap !== undefined && this.storeLabels.alias2FieldMetaMap !==  null){
+			    	var idxLocale = (this.storeLabels.getFieldMetaByAlias("LOCALE") !== undefined)?this.storeLabels.getFieldMetaByAlias("LOCALE") :
+			    		this.storeLabels.getFieldMetaByAlias("locale");
+			    	if (idxLocale !== undefined) idxLocale = idxLocale.dataIndex;
+			    	var idxCode = (this.storeLabels.getFieldMetaByAlias("CODE") !== undefined)?this.storeLabels.getFieldMetaByAlias("CODE") :
+			    		this.storeLabels.getFieldMetaByAlias("code");
+			    	if (idxCode !== undefined) idxCode = idxCode.dataIndex;		    	
+			    	var idxLabel = (this.storeLabels.getFieldMetaByAlias("LABEL") !== undefined)?this.storeLabels.getFieldMetaByAlias("LABEL") :
+			    		this.storeLabels.getFieldMetaByAlias("label");
+			    	if (idxLabel !== undefined) idxLabel = idxLabel.dataIndex;
+		    	}
+		    	if (idxLocale == undefined || idxCode == undefined || idxLabel == undefined){
+		    		Sbi.Msg.showError(LN('sbi.console.localization.columnsKO'), 'Service Error');
+		    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+		    	}else{
+			    	//apply filter on labelsStore:
+			    	var idxRec = this.storeLabels.findBy(function(record){				    		 
+			    	   if (idxLocale !== undefined && idxCode !== undefined){
+			    		  if(record.data[idxLocale] === Sbi.user.locale && 
+			    		     record.data[idxCode] === fields[i].header) {		
+	  						   return true;  						   
+	  					   }	
+			    	   } 		  		  
+			  		   return false;				   
+			  	   }, this);		    	 
+			    	var tmpRec = this.storeLabels.getAt(idxRec);		    	
+					if (tmpRec !== undefined) {
+						var tmpHeader =  tmpRec.get(idxLabel);
+				    	if (tmpHeader !== undefined){	
+				    		metaIsChanged = true;
+				    		fields[i].header = tmpHeader;		    		
+				    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+				    	}else{
+							tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+				    	}	
+					}else 
+						tmpMeta.fields[i] = Ext.apply({}, fields[i]);	
+		    	}
+	    	}else {
+	    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+	    	}	
+		}
+	
+		this.updateMetaStructure(tmpMeta, this.headersToHide, this.fieldsMap);
 	}
 });
