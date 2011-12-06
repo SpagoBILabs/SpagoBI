@@ -99,8 +99,9 @@ Ext.extend(Sbi.data.MemoryStore, Ext.ux.data.PagingJsonStore, {
 	
 	, getFieldMetaByAlias: function(alias) {
 		// assert
-		if(!this.alias2FieldMetaMap) {
-			Sbi.Msg.showError('Impossible to [getFieldMetaByAlias]. Store has not loaded yet.', 'Wrong function call');
+		if(!this.alias2FieldMetaMap) {			
+			Sbi.Msg.showError('Impossible to [getFieldMetaByAlias of '+ alias+' ]. Store '+this.dsLabel+' has not loaded yet.', 'Wrong function call');
+			//return null;
 		}
 	
 		var m = this.alias2FieldMetaMap[alias];
