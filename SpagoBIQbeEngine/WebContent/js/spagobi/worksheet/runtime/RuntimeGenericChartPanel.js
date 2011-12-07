@@ -104,7 +104,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 					, 'sheetName' : this.sheetName
 			};
 			if ( filters != null ) {
-				requestParameters.optionalfilters = Ext.encode(filters);
+				requestParameters.FILTERS = Ext.encode(filters);
 			}
 			Ext.Ajax.request({
 		        url: this.services['loadData'],//load the crosstab from the server

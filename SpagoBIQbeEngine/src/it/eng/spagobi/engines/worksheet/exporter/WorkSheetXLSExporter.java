@@ -111,10 +111,10 @@ public class WorkSheetXLSExporter {
 	
 	public JSONObject getOptionalUserFilters(JSONObject paramsJSON) throws JSONException{
 		JSONObject optionalUserFiltersJSON = null;
-		if(paramsJSON.has(QbeEngineStaticVariables.OPTIONAL_FILTERS)){
-			String optionalUserFilters = paramsJSON.getString(QbeEngineStaticVariables.OPTIONAL_FILTERS);
+		if(paramsJSON.has(QbeEngineStaticVariables.FILTERS)){
+			String optionalUserFilters = paramsJSON.getString(QbeEngineStaticVariables.FILTERS);
 			optionalUserFiltersJSON = new JSONObject(optionalUserFilters);	
-		}
+		} 
 		return optionalUserFiltersJSON;
 	}
 	

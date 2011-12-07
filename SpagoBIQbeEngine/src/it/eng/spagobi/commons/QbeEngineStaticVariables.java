@@ -42,7 +42,8 @@ public class QbeEngineStaticVariables {
 	
 	//LoadCrosstabAction
 	public static final String CROSSTAB_DEFINITION = "crosstabDefinition";
-	public static final String OPTIONAL_FILTERS = "optionalfilters";
+	//public static final String OPTIONAL_FILTERS = "optionalfilters";
+	public static final String FILTERS = "FILTERS";
 	public static final String OPTIONAL_VISIBLE_COLUMNS = "visibleselectfields";
 	
 }

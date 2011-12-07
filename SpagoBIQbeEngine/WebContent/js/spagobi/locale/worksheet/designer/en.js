@@ -85,7 +85,7 @@ Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.yes
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.no'] = 'No';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.apply'] = 'Apply';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.cancel'] = 'Cancel';
-
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.splittingFilter'] = 'Splitting filter';
 
 //===================================================================
 //Sbi.worksheet.designer.DesignToolsLayoutPanel
