@@ -59,6 +59,7 @@ public class CrosstabDefinition extends SheetContent {
 	private List<Measure> measures = null;
 	private JSONObject config = null;
 	private JSONArray calculatedFields = null;
+	private JSONObject additionalData = null;
 	
 	public CrosstabDefinition() {
 		cellLimit = new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) ;
@@ -180,4 +181,13 @@ public class CrosstabDefinition extends SheetContent {
 		return toReturn;
 	}
 
+	public JSONObject getAdditionalData() {
+		return additionalData;
+	}
+
+	public void setAdditionalData(JSONObject additionalData) {
+		this.additionalData = additionalData;
+	}
+
+	
 }
