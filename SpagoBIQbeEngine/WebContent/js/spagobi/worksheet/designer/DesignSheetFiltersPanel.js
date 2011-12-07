@@ -82,6 +82,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	
 	store: null
 	, emptyMsgPanel: null
+	, splittingFilter: null //id of the splitting filter
     , filters: null
 	, empty: null
 	, contents: null
@@ -228,6 +229,12 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 			this.empty = false;	
 		}
 
+		if(aRow.data.splittingFilter=='on'){
+			//the filter is a splitting filter
+			this.splittingFilterAlias=aRow.data.alias;
+			this.splittingFilterId=aRow.data.id;
+		}
+		
 		var newRow = this.addFilterIntoStore(aRow.data);
 		var item = this.createFilterPanel(newRow);
 
@@ -348,6 +355,12 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 			this.add(this.emptyMsgPanel);
 			this.empty = true;
 		}
+		
+		if(aRow.data.id==this.splittingFilterId){
+			//the filter is a splitting filter
+			this.splittingFilter=null;
+		}
+		
 		this.doLayout();
 	}
 	
@@ -360,6 +373,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		}
 		this.contents = new Array();
 		this.empty = true;
+		this.splittingFilter=null;
 	}
 	
 	, updateFilters: function(){
@@ -383,21 +397,18 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	, openEditItemWindow: function(button, event, aRow){
 		if(this.editItemWindow==null){
 			this.editItemWindow = new Sbi.worksheet.designer.DesignSheetFiltersEditWizard();
-			this.editItemWindow.on('apply', this.updateRecordProperties, this);
+			this.editItemWindow.on('apply', this.updateRecordProperties, this);			
 			this.editItemWindow.on('afterrender', function(){this.editItemWindow.setFormState(aRow.data)}, this);
 		};
-		this.selectedRecord = aRow;
-		this.editItemWindow.setFormState(aRow.data);
+		this.editItemWindow.setRowState(aRow);
+		this.editItemWindow.setSplitFilter(this.splittingFilter);
 		this.editItemWindow.show();
 	}
 
 	//Update the filter after edit
 	, updateRecordProperties: function(values){
-		if(this.selectedRecord!=null){
-			Ext.apply(this.selectedRecord.data, values||{});
-			this.store.commitChanges();
-			this.selectedRecord = null;
-		}	
+		this.store.commitChanges();
+		this.splittingFilter = this.editItemWindow.getSplitFilter();
 	}
 	
 	, containsAttribute: function (attributeId) {

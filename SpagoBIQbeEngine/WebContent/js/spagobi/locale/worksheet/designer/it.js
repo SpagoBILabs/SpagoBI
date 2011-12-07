@@ -60,7 +60,7 @@ Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.yes
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.no'] = 'Opzionale';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.apply'] = 'Applica';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.cancel'] = 'Cancella';
-
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.splittingFilter'] = 'Filtro di Splitting';
 	
 //===================================================================
 // DESIGNER SHEETCONTAINER

@@ -79,11 +79,17 @@ public class FilterJSONDeserializer extends AttributeJSONDeserializer implements
 		Attribute a = super.deserialize(obj);
 		String mandatoryString = obj.optString(FieldsSerializationConstants.MANDATORY);
 		String selectionString = obj.optString(FieldsSerializationConstants.SELECTION);
-		
+		String splittingFilter = obj.optString(FieldsSerializationConstants.SPLITTING_FILTER);
+				
 		boolean mandatory = (mandatoryString.equals("")) && (mandatoryString!=null) && (mandatoryString.equals("yes"));
 		boolean multivalue = (mandatoryString.equals("")) || (selectionString==null) || (selectionString.equals("multivalue"));
 		
 		Filter f = new Filter(a.getEntityId(), a.getAlias(), a.getIconCls(), a.getNature(), a.getValues(), mandatory, multivalue);
+		
+		if(splittingFilter!=null && splittingFilter.equals("on")){
+			f.setSplittingFilter(true);
+		}
+
 		return f;
 	}
 

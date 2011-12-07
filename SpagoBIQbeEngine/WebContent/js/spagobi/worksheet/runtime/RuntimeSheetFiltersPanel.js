@@ -173,6 +173,7 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 		   , width: this.baseConfig.fieldWidth
 		   , allowBlank: true
 		   , valueDelimiter: this.baseConfig.valueDelimiter
+		   , splittingFilter: openFilter.splittingFilter
 		};
 		
 		var store = this.createStore(openFilter);
@@ -253,19 +254,24 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 
 	// public methods
 	
-	, getFormState: function() {
+	, getFormState: function(forExport) {
 		var state = {};
 		for (var i = 0; i < this.combos.length; i++) {
 			var aCombo = this.combos[i];
 			// state[aCombo.name] = aCombo.getValuesList(); // it does not work
 			// in Ext 3.2.1
 			var concatenatedValues = aCombo.getValue();
-			
-			if (concatenatedValues == '') {
-				state[aCombo.name] = [];
-			} else {
-				state[aCombo.name] = concatenatedValues.split(aCombo.valueDelimiter);
+
+			if(forExport && aCombo.splittingFilter!=undefined && aCombo.splittingFilter!=null && aCombo.splittingFilter=='on'){
+				state[aCombo.name]='splittingFilter';
+			}else{
+				if (concatenatedValues == '') {
+					state[aCombo.name] = [];
+				} else {
+					state[aCombo.name] = concatenatedValues.split(aCombo.valueDelimiter);
+				}	
 			}
+			
 		}
 		return state;
 	}

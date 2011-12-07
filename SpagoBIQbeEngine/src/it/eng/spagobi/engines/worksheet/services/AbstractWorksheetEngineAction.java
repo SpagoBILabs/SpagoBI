@@ -20,6 +20,7 @@
  **/
 package it.eng.spagobi.engines.worksheet.services;
 
+import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
@@ -33,6 +34,7 @@ import it.eng.spagobi.engines.worksheet.bo.Field;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.exceptions.WrongConfigurationForFiltersOnDomainValuesException;
+import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
@@ -61,6 +63,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -365,7 +368,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		return toReturn;
 	}
 	
-	public List<WhereField> transformIntoWhereClauses(
+	public static List<WhereField> transformIntoWhereClauses(
 			Map<String, List<String>> filters) throws JSONException {
 		
 		List<WhereField> whereFields = new ArrayList<WhereField>();
@@ -398,39 +401,44 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		}
 	}
 	
-	private List<WhereField> transformIntoWhereClauses(
-			JSONObject optionalUserFilters) throws JSONException {
+	public static List<WhereField> transformIntoWhereClauses(JSONObject optionalUserFilters) throws JSONException {
 		String[] fields = JSONObject.getNames(optionalUserFilters);
 		List<WhereField> whereFields = new ArrayList<WhereField>();
 		for (int i = 0; i < fields.length; i++) {
 			String fieldName = fields[i];
-			JSONArray valuesArray = optionalUserFilters.getJSONArray(fieldName);
+			Object valuesObject = optionalUserFilters.get(fieldName);
+			if(valuesObject instanceof JSONArray){
+				JSONArray valuesArray = optionalUserFilters.getJSONArray(fieldName);
 
-			// if the filter has some value
-			if (valuesArray.length() > 0) {
-				String[] values = new String[1];
-				values[0] = fieldName;
+				// if the filter has some value
+				if (valuesArray.length() > 0) {
+					String[] values = new String[1];
+					values[0] = fieldName;
 
-				Operand leftOperand = new Operand(values, fieldName,
-						AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, values, values);
+					Operand leftOperand = new Operand(values, fieldName,
+							AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, values, values);
 
-				values = new String[valuesArray.length()];
-				for (int j = 0; j < valuesArray.length(); j++) {
-					values[j] = valuesArray.getString(j);
+					values = new String[valuesArray.length()];
+					for (int j = 0; j < valuesArray.length(); j++) {
+						values[j] = valuesArray.getString(j);
+					}
+
+					Operand rightOperand = new Operand(values, fieldName,
+							AbstractStatement.OPERAND_TYPE_STATIC, values, values);
+
+					String operator = "EQUALS TO";
+					if (valuesArray.length() > 1) {
+						operator = "IN";
+					}
+
+					whereFields.add(new WhereField("OptionalFilter" + i,
+							"OptionalFilter" + i, false, leftOperand, operator,
+							rightOperand, "AND"));
 				}
-
-				Operand rightOperand = new Operand(values, fieldName,
-						AbstractStatement.OPERAND_TYPE_STATIC, values, values);
-
-				String operator = "EQUALS TO";
-				if (valuesArray.length() > 1) {
-					operator = "IN";
-				}
-
-				whereFields.add(new WhereField("OptionalFilter" + i,
-						"OptionalFilter" + i, false, leftOperand, operator,
-						rightOperand, "AND"));
+			}else{
+				logger.debug("The values of the filter "+ fieldName +" are not a JSONArray but "+valuesObject);
 			}
+
 		}
 		return whereFields;
 	}
@@ -484,6 +492,94 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		dataStore.setMetaData(newdataStoreMetadata);
 	}
 	
+	
+	public it.eng.spagobi.tools.dataset.common.datastore.IDataStore getUserSheetFilterValues(String sheetName, String fieldName) throws JSONException{
+		
+		it.eng.spagobi.tools.dataset.common.datastore.IDataStore dataStore = null;
+		JSONObject gridDataFeed = null;
+		
 
-    
+		WorksheetEngineInstance engineInstance = getEngineInstance();
+		Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
+		
+		// persist dataset into temporary table	
+		IDataSetTableDescriptor descriptor = this.persistDataSet();
+		IDataSet dataset = engineInstance.getDataSet();
+		
+		//Get the order type of the field values in the field metadata
+		int fieldIndex = dataset.getMetadata().getFieldIndex(fieldName);
+		IFieldMetaData dataSetFieldMetadata = dataset.getMetadata().getFieldMeta(fieldIndex);
+		String orderType = AbstractSelectField.ORDER_ASC;//default ascendant
+		String orderTypeMeta = (String)dataSetFieldMetadata.getProperty(IFieldMetaData.ORDERTYPE);
+		if(orderTypeMeta!=null && (orderTypeMeta.equals(AbstractSelectField.ORDER_ASC)||orderTypeMeta.equals(AbstractSelectField.ORDER_DESC))){
+			orderType = orderTypeMeta;
+		}
+		
+		// build SQL query against temporary table
+		List<WhereField> whereFields = new ArrayList<WhereField>();
+		if (!dataset.hasBehaviour(FilteringBehaviour.ID)) {
+			Map<String, List<String>> globalFilters = getGlobalFiltersOnDomainValues();
+			List<WhereField> temp = transformIntoWhereClauses(globalFilters);
+			whereFields.addAll(temp);
+		}
+		Map<String, List<String>> sheetFilters = getSheetFiltersOnDomainValues(sheetName);
+		List<WhereField> temp = transformIntoWhereClauses(sheetFilters);
+		whereFields.addAll(temp);
+		
+		String worksheetQuery = this.buildSqlStatement(fieldName, descriptor, whereFields, orderType);
+		// execute SQL query against temporary table
+		logger.debug("Executing query on temporary table : " + worksheetQuery);
+		dataStore = this.executeWorksheetQuery(worksheetQuery, null, null);
+		LogMF.debug(logger, "Query on temporary table executed successfully; datastore obtained: {0}", dataStore);
+		Assert.assertNotNull(dataStore, "Datastore obatined is null!!");
+		/* since the datastore, at this point, is a JDBC datastore, 
+		* it does not contain information about measures/attributes, fields' name...
+		* therefore we adjust its metadata
+		*/
+		this.adjustMetadata((it.eng.spagobi.tools.dataset.common.datastore.DataStore) dataStore, dataset, descriptor);
+		LogMF.debug(logger, "Adjusted metadata: {0}", dataStore.getMetaData());
+		it.eng.spagobi.tools.dataset.common.datastore.DataStore clone = this.clone(dataStore);
+		logger.debug("Decoding dataset ...");
+		dataStore = dataset.decode(dataStore);
+		LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
+		
+		IMetaData metadata = dataStore.getMetaData();
+		IFieldMetaData fieldMetadata = metadata.getFieldMeta(0);
+		IMetaData newMetadata = new MetaData();
+		newMetadata.addFiedMeta(fieldMetadata);
+		newMetadata.addFiedMeta(new FieldMetadata(fieldMetadata.getName() + "_description", fieldMetadata.getType()));
+		clone.setMetaData(newMetadata);
+		long count = clone.getRecordsCount();
+		for (long i = 0; i < count; i++) {
+			it.eng.spagobi.tools.dataset.common.datastore.IRecord record = clone.getRecordAt((int) i);
+			Object value = dataStore.getRecordAt((int) i).getFieldAt(0);
+			record.appendField(new it.eng.spagobi.tools.dataset.common.datastore.Field(value.toString()));
+		}
+		
+		return clone;
+		
+	}
+	
+	private it.eng.spagobi.tools.dataset.common.datastore.DataStore clone(it.eng.spagobi.tools.dataset.common.datastore.IDataStore dataStore) {
+		it.eng.spagobi.tools.dataset.common.datastore.DataStore toReturn = new it.eng.spagobi.tools.dataset.common.datastore.DataStore();
+		IMetaData metadata = dataStore.getMetaData();
+		toReturn.setMetaData(metadata);
+		long count = dataStore.getRecordsCount();
+		for (long i = 0; i < count; i++) {
+			it.eng.spagobi.tools.dataset.common.datastore.IRecord record = dataStore.getRecordAt((int) i);
+			it.eng.spagobi.tools.dataset.common.datastore.IField field = record.getFieldAt(0);
+			Object value = field.getValue();
+			it.eng.spagobi.tools.dataset.common.datastore.IRecord newRecord = new it.eng.spagobi.tools.dataset.common.datastore.Record();
+			newRecord.appendField(new it.eng.spagobi.tools.dataset.common.datastore.Field(value));
+			toReturn.appendRecord(newRecord);
+		}
+		return toReturn;
+	}
+
+	protected String buildSqlStatement(String fieldName, IDataSetTableDescriptor descriptor, List<WhereField> filters, String ordeType) {
+		List<String> fieldNames = new ArrayList<String>();
+		fieldNames.add(fieldName);
+		return CrosstabQueryCreator.getTableQuery(fieldNames, true, descriptor, filters, ordeType, fieldNames);
+	}
+	
 }

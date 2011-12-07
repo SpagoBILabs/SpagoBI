@@ -23,7 +23,6 @@ package it.eng.spagobi.engines.worksheet.services.runtime;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
@@ -57,7 +56,7 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 	
 	// INPUT PARAMETERS
 	private static final String CROSSTAB_DEFINITION = QbeEngineStaticVariables.CROSSTAB_DEFINITION;
-	private static final String OPTIONAL_FILTERS = QbeEngineStaticVariables.OPTIONAL_FILTERS;
+	//private static final String OPTIONAL_FILTERS = QbeEngineStaticVariables.OPTIONAL_FILTERS;
 	public static final String SHEET = "sheetName";
 
 	private static final long serialVersionUID = -5780454016202425492L;
@@ -91,8 +90,8 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			String sheetName = this.getAttributeAsString(SHEET);
 			logger.debug("Parameter [" + SHEET + "] is equals to [" + sheetName + "]");
 			
-			JSONObject optionalFilters = getAttributeAsJSONObject(OPTIONAL_FILTERS);
-			logger.debug("Parameter [" + OPTIONAL_FILTERS + "] is equals to [" + optionalFilters + "]");
+			JSONObject optionalFilters = getAttributeAsJSONObject(QbeEngineStaticVariables.FILTERS);
+			logger.debug("Parameter [" + QbeEngineStaticVariables.FILTERS + "] is equals to [" + optionalFilters + "]");
 			// end reading input parameters
 			
 			// retrieve engine instance

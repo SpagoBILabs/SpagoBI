@@ -54,6 +54,12 @@ public class FilterJSONSerializer extends AttributeJSONSerializer implements ISe
 			
 			toReturn.put(FieldsSerializationConstants.SELECTION, selection);
 			toReturn.put(FieldsSerializationConstants.MANDATORY, mandatory);
+			
+			if(filter.isSplittingFilter()){
+				toReturn.put(FieldsSerializationConstants.SPLITTING_FILTER, "on");
+			}
+			
+			
 
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);

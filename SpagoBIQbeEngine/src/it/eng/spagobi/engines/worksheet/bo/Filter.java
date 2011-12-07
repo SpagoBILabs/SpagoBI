@@ -28,6 +28,7 @@ public class Filter extends Attribute {
 
 	private boolean mandatory;
 	private boolean multivalue;
+	private boolean splittingFilter;
 	
 	/**
 	 * @param entityId
@@ -58,6 +59,14 @@ public class Filter extends Attribute {
 
 	public void setMultivalue(boolean multivalue) {
 		this.multivalue = multivalue;
+	}
+
+	public boolean isSplittingFilter() {
+		return splittingFilter;
+	}
+
+	public void setSplittingFilter(boolean splittingFilter) {
+		this.splittingFilter = splittingFilter;
 	}
 	
 	

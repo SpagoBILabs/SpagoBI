@@ -49,7 +49,7 @@ Sbi.worksheet.designer.DesignSheetFiltersEditWizard = function(config) {
 		title: LN('sbi.worksheet.designer.designsheetfilterseditwizard.title')
 		, frame: true
 	};
-		
+
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.designSheetFiltersEditWizard) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.designSheetFiltersEditWizard);
 	}
@@ -65,7 +65,7 @@ Sbi.worksheet.designer.DesignSheetFiltersEditWizard = function(config) {
 		, width: 350
         , items:[this.detailsFormPanel]
 	});
-
+	
 	// constructor	
 	Sbi.worksheet.designer.DesignSheetFiltersEditWizard.superclass.constructor.call(this, c);
 
@@ -73,9 +73,33 @@ Sbi.worksheet.designer.DesignSheetFiltersEditWizard = function(config) {
 
 Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersEditWizard, Ext.Window, {
 	detailsFormPanel: null //the form panel
-
+	splittingFilterCheckboxGroup: null,
+	splittingFilterCheckbox: null,
+	splittingFilterLabel: null,
+	splittingFilter: null, //the split filter of the sheet
+	row: null// the row of the sheet
 	
 	, init: function(){
+
+		this.splittingFilterCheckbox = new Ext.form.Checkbox({
+			name: 'splittingFilter'
+		});
+
+		this.splittingFilterLabel = new Ext.form.Label({
+			text: '',
+			hidden: true
+		});
+
+		this.splittingFilterCheckboxGroup = new Ext.form.CheckboxGroup({
+		    id:'splittingFilterCheckboxGroup',
+		    fieldLabel: LN('sbi.worksheet.designer.designsheetfilterseditwizard.splittingFilter'),
+		    columns: 1,
+		    items: [
+		            this.splittingFilterCheckbox ,
+		            this.splittingFilterLabel
+		    ]
+		});
+		
 		this.detailsFormPanel = new Ext.form.FormPanel({
 			frame: true
 			, items: [
@@ -96,25 +120,37 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersEditWizard, Ext.Window, {
 		                  {boxLabel: LN('sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.yes'), name: 'mandatory', inputValue: 'yes'}
 		                , {boxLabel: LN('sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.no'), name: 'mandatory', inputValue: 'no', checked: true}
 		            ]
-	            }
+	            },
+	            this.splittingFilterCheckboxGroup
+
 			]
 			, buttons: [{
 				text: LN('sbi.worksheet.designer.designsheetfilterseditwizard.apply')
 			    , handler: function() {
-		    		this.fireEvent('apply', this.getFormState(), this);
+			    	Ext.apply(this.row.data, this.getFormState());
+		    		this.fireEvent('apply', this);
 	            	this.hide();
 	        	}
 	        	, scope: this
 		    },{
 			    text: LN('sbi.worksheet.designer.designsheetfilterseditwizard.cancel')
-			    , handler: function(){ this.hide(); }
+			    , handler: function(){ 
+			    	this.fireEvent('cancel', this);
+			    	this.hide(); 
+			    }
 	        	, scope: this
 			}]
 		});
 	}
 	
 	, getFormState: function() {
-		return this.detailsFormPanel.getForm().getValues();
+		var values = this.detailsFormPanel.getForm().getValues();
+		if(!this.splittingFilterCheckbox.hidden && (values.splittingFilter==undefined || values.splittingFilter==null)){
+			this.splittingFilter =null;
+		}else if(values.splittingFilter=='on'){
+			this.splittingFilter = this.row;
+		}
+		return values;
 	}
 	
 	, setFormState: function(values) {
@@ -122,5 +158,25 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersEditWizard, Ext.Window, {
 		this.detailsFormPanel.getForm().setValues(values);
 	}
 	
+	, setRowState: function(row) {
+		this.row = row;
+		this.setFormState(row.data);
+	}
+	
+	,getSplitFilter: function(){
+		return this.splittingFilter;
+	}
+	
+	,setSplitFilter: function(splittingFilter){
+		this.splittingFilter = splittingFilter;
+		if (this.splittingFilter!= undefined && this.splittingFilter!= null && this.splittingFilter.data.id!=this.row.data.id){
+			this.splittingFilterCheckbox.hide();
+			this.splittingFilterLabel.setText(this.splittingFilter.data.alias);
+			this.splittingFilterLabel.show();
+		}else{
+			this.splittingFilterCheckbox.show();
+			this.splittingFilterLabel.hide();
+		}
+	}
 	
 });

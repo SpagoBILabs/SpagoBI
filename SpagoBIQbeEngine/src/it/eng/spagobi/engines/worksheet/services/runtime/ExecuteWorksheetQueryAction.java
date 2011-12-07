@@ -20,6 +20,7 @@
  **/
 package it.eng.spagobi.engines.worksheet.services.runtime;
 
+import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
@@ -34,6 +35,10 @@ import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -48,6 +53,7 @@ import java.util.Map;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
@@ -67,7 +73,7 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 	public static final String LIMIT = "limit";
 	public static final String START = "start";
 	public static final String OPTIONAL_VISIBLE_COLUMNS = QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS;
-	public static final String OPTIONAL_FILTERS = QbeEngineStaticVariables.OPTIONAL_FILTERS;
+	//public static final String OPTIONAL_FILTERS = QbeEngineStaticVariables.OPTIONAL_FILTERS;
 	public static final String SHEET = "sheetName";
 	
 	/** Logger component. */
@@ -122,10 +128,11 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 	
 	protected IDataStore executeQuery(JSONArray jsonVisibleSelectFields) throws Exception {
 		String sheetName = this.getAttributeAsString(SHEET);
-		return executeQuery(jsonVisibleSelectFields, sheetName);
+		JSONObject optionalFilters = getAttributeAsJSONObject(QbeEngineStaticVariables.FILTERS);
+		return executeQuery(jsonVisibleSelectFields, optionalFilters, sheetName);
 	}
 	
-	protected IDataStore executeQuery(JSONArray jsonVisibleSelectFields, String sheetName) throws Exception {
+	protected IDataStore executeQuery(JSONArray jsonVisibleSelectFields, JSONObject optionalFilters, String sheetName) throws Exception {
 		
 		IDataStore dataStore = null;
 		
@@ -172,7 +179,7 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		List<WhereField> temp = transformIntoWhereClauses(sheetFilters);
 		whereFields.addAll(temp);
 		
-		temp = getOptionalFilters(getAttributeAsJSONObject(OPTIONAL_FILTERS));
+		temp = getOptionalFilters(optionalFilters);
 		whereFields.addAll(temp);
 		
 		String worksheetQuery = this.buildSqlStatement(fieldNames, descriptor, whereFields);
@@ -199,4 +206,5 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		return CrosstabQueryCreator.getTableQuery(fieldNames, false, descriptor, filters);	
 	}
 	
+
 }

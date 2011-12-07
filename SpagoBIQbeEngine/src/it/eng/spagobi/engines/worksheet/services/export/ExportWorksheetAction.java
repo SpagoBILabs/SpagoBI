@@ -38,6 +38,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -84,8 +85,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	public static final String EXPORTED_SHEETS = "EXPORTED_SHEETS";
 	public static final String CONTENT = "CONTENT";
 	public static final String CONTENT_PARS = "PARS";
-	public static final String FILTERS = "FILTERS";
-	public static final String SHEET = "sheetName";
+	public static final String SPLITTING_FILTER= "splittingFilter";
 	
 	// misc
 	public static final String RESPONSE_TYPE_INLINE = "RESPONSE_TYPE_INLINE";
@@ -212,163 +212,83 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	}
 	
 	public void exportToXLS(JSONObject worksheetJSON, OutputStream stream) throws Exception {
-		WorkSheetXLSExporter exporter = new WorkSheetXLSExporter();
+
 		HSSFWorkbook wb = new HSSFWorkbook();
-		CreationHelper createHelper = wb.getCreationHelper();
-		//The numeber of row of the sheet
-		int sheetRow;
-		
 		int sheetsNumber = worksheetJSON.getInt(SHEETS_NUM);
+		WorkSheetXLSExporter exporter = new WorkSheetXLSExporter();
+		CreationHelper createHelper = wb.getCreationHelper();
+		
 		JSONArray exportedSheets = worksheetJSON.getJSONArray(EXPORTED_SHEETS);
+			
+		
 		for (int i = 0; i < sheetsNumber; i++) {
-			sheetRow=0;
 			
 			JSONObject sheetJ = exportedSheets.getJSONObject(i);
+			JSONObject optionalFilters = sheetJ.optJSONObject(QbeEngineStaticVariables.FILTERS);
 			String sheetName = sheetJ.getString(SHEET);
-			HSSFSheet sheet = wb.createSheet(sheetName);
-
-			HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
-			
-			sheet.createRow(sheetRow);
-			sheetRow++;
-			
-			if(sheetJ.has(WorkSheetXLSExporter.HEADER)){
-				JSONObject header = sheetJ.getJSONObject(WorkSheetXLSExporter.HEADER);
-				if(header!=null){
-					sheetRow = exporter.setHeader(sheet, header, createHelper, wb, patriarch, sheetRow);
+			List<WhereField> splittingWF = getSplittingFieldValues(optionalFilters, sheetName);
+			WhereField splittingWhereField = null;
+			if(splittingWF==null || splittingWF.size()==0){
+				exportSheetToXLS(wb, sheetJ, exporter, createHelper, splittingWhereField);
+			}else{
+				for(int y=0; y< splittingWF.size(); y++){
+					splittingWhereField = splittingWF.get(y);
+					exportSheetToXLS( wb, sheetJ, exporter, createHelper, splittingWhereField);
 				}
-			}	
-			
-			sheet.createRow(sheetRow);
-			sheetRow++;
-			
-			if(sheetJ.has(WorkSheetXLSExporter.CONTENT)){
-				sheetRow = fillSheetContent(wb, sheet, sheetJ, createHelper, exporter, patriarch, sheetRow);
-			}			
-			
-			sheet.createRow(sheetRow);
-			sheetRow++;
-			
-			if(sheetJ.has(WorkSheetXLSExporter.FOOTER)){
-				JSONObject footer = sheetJ.getJSONObject(WorkSheetXLSExporter.FOOTER);
-				if(footer!=null){
-					exporter.setFooter(sheet, footer, createHelper, wb, patriarch, sheetRow);
-				}
-			}		
-		}
-		
-		wb.write(stream);
-		stream.flush();
-
-	}
-	
-	public void exportToXLSX(JSONObject worksheetJSON, OutputStream stream) throws Exception {
-		WorkSheetXLSXExporter exporter = new WorkSheetXLSXExporter();
-		XSSFWorkbook wb = new XSSFWorkbook();
-		CreationHelper createHelper = wb.getCreationHelper();
-		//The numeber of row of the sheet
-		int sheetRow;
-		
-		int sheetsNumber = worksheetJSON.getInt(SHEETS_NUM);
-		JSONArray exportedSheets = worksheetJSON.getJSONArray(EXPORTED_SHEETS);
-		for (int i = 0; i < sheetsNumber; i++) {
-			sheetRow=0;
-			
-			JSONObject sheetJ = exportedSheets.getJSONObject(i);
-			String sheetName = sheetJ.getString(SHEET);
-			XSSFSheet sheet = wb.createSheet(sheetName);
-
-			XSSFDrawing patriarch = sheet.createDrawingPatriarch();
-			
-			sheet.createRow(sheetRow);
-			sheetRow++;
-			
-			if(sheetJ.has(WorkSheetXLSExporter.HEADER)){
-				JSONObject header = sheetJ.getJSONObject(WorkSheetXLSExporter.HEADER);
-				if(header!=null){
-					sheetRow = exporter.setHeader(sheet, header, createHelper, wb, patriarch, sheetRow);
-				}
-			}	
-			
-			sheet.createRow(sheetRow);
-			sheetRow++;
-			
-			if(sheetJ.has(WorkSheetXLSExporter.CONTENT)){
-				sheetRow = fillSheetContent(wb, sheet, sheetJ, createHelper, exporter, patriarch, sheetRow);
-			}			
-			
-			sheet.createRow(sheetRow);
-			sheetRow++;
-			
-			if(sheetJ.has(WorkSheetXLSExporter.FOOTER)){
-				JSONObject footer = sheetJ.getJSONObject(WorkSheetXLSExporter.FOOTER);
-				if(footer!=null){
-					exporter.setFooter(sheet, footer, createHelper, wb, patriarch, sheetRow);
-				}
-			}		
-		}
-		
-		wb.write(stream);
-		stream.flush();
-
-	}
-	
-	public int fillSheetContent(XSSFWorkbook wb, XSSFSheet sheet, JSONObject sheetJ, 
-			CreationHelper createHelper, WorkSheetXLSXExporter exporter, XSSFDrawing patriarch, int sheetRow) throws Exception {
-		
-		JSONObject content = sheetJ.getJSONObject(WorkSheetXLSXExporter.CONTENT);
-		String sheetType = content.getString(WorkSheetXLSXExporter.SHEET_TYPE);
-		
-
-		if (sheetType != null && !sheetType.equals("")) {
-			
-			if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CHART)) {
-				File jpgImage = WorkSheetXLSXExporter.createJPGImage(content);
-				int col = 1;
-				int colend = 20;
-				int charHeight = 20;
-				for(int i=0; i<charHeight; i++){
-					sheet.createRow(sheetRow+i);
-				}
-				exporter.setImageIntoWorkSheet(wb, patriarch, jpgImage, col, colend, sheetRow, charHeight,XSSFWorkbook.PICTURE_TYPE_JPEG);
-				sheetRow= sheetRow+30;
-			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CROSSTAB)) {
-				JSONArray calculateFieldsJSON=null;
-				String crosstabDefinition = content.getString("CROSSTABDEFINITION");
-				String crosstab = content.getString(WorkSheetXLSExporter.CROSSTAB);
-				String sheetName = sheetJ.getString(SHEET);
-				JSONObject crosstabDefinitionJSON = new JSONObject(crosstabDefinition);
-				JSONObject crosstabJSON = new JSONObject(crosstab);	
-				
-				String calculateFields = content.optString("CF");
-				if(calculateFields!=null){
-					calculateFieldsJSON = new JSONArray(calculateFields);
-				}
-				
-				
-				CrossTab cs = getCrosstab(crosstabDefinitionJSON, sheetName, calculateFieldsJSON);
-				CrosstabXLSXExporterFromJavaObject expCr = new CrosstabXLSXExporterFromJavaObject();
-				int rows = expCr.initSheet(sheet, cs);
-				expCr.fillAlreadyCreatedSheet(sheet, cs, crosstabJSON, createHelper, sheetRow);
-				sheetRow = sheetRow+rows;
-			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
-
-				IDataStore dataStore = getTableDataStore(sheetJ);
-				long recCount = dataStore.getRecordsCount();
-				recCount = (new Long(recCount)).intValue() + 5;
-				int startRow = sheetRow;
-				for(int i=0; i<recCount; i++){
-					sheet.createRow(sheetRow);
-					sheetRow++;
-				}
-				exporter.designTableInWorksheet(sheet, wb, createHelper, dataStore,startRow);			
 			}
 		}
-		return sheetRow;
+		
+		wb.write(stream);
+		stream.flush();
+
 	}
 	
+	public void exportSheetToXLS(HSSFWorkbook wb,JSONObject sheetJ, WorkSheetXLSExporter exporter,CreationHelper createHelper, WhereField splittingWhereField) throws Exception{
+		
+		//The numeber of row of the sheet
+		int sheetRow;
+
+		String sheetName = sheetJ.getString(SHEET);
+		
+		sheetRow=0;
+
+		if(splittingWhereField!=null){
+			sheetName = sheetName+" ("+splittingWhereField.getRightOperand().values[0]+")";
+		}
+		
+		HSSFSheet sheet = wb.createSheet(sheetName);
+
+		HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+		
+		sheet.createRow(sheetRow);
+		sheetRow++;
+		
+		if(sheetJ.has(WorkSheetXLSExporter.HEADER)){
+			JSONObject header = sheetJ.getJSONObject(WorkSheetXLSExporter.HEADER);
+			if(header!=null){
+				sheetRow = exporter.setHeader(sheet, header, createHelper, wb, patriarch, sheetRow);
+			}
+		}	
+		
+		sheet.createRow(sheetRow);
+		sheetRow++;
+		
+		if(sheetJ.has(WorkSheetXLSExporter.CONTENT)){
+			sheetRow = fillSheetContent(wb, sheet, sheetJ,splittingWhereField, createHelper, exporter, patriarch, sheetRow);
+		}			
+		
+		sheet.createRow(sheetRow);
+		sheetRow++;
+		
+		if(sheetJ.has(WorkSheetXLSExporter.FOOTER)){
+			JSONObject footer = sheetJ.getJSONObject(WorkSheetXLSExporter.FOOTER);
+			if(footer!=null){
+				exporter.setFooter(sheet, footer, createHelper, wb, patriarch, sheetRow);
+			}
+		}	
+	}
 	
-	public int fillSheetContent(HSSFWorkbook wb, HSSFSheet sheet, JSONObject sheetJ, 
+	public int fillSheetContent(HSSFWorkbook wb, HSSFSheet sheet, JSONObject sheetJ, WhereField splittingWhereField,
 			CreationHelper createHelper, WorkSheetXLSExporter exporter, HSSFPatriarch patriarch, int sheetRow) throws Exception {
 		
 		JSONObject content = sheetJ.getJSONObject(WorkSheetXLSExporter.CONTENT);
@@ -392,6 +312,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				String crosstabDefinition = content.getString("CROSSTABDEFINITION");
 				String crosstab = content.getString(WorkSheetXLSExporter.CROSSTAB);
 				String sheetName = sheetJ.getString(SHEET);
+				JSONObject filters = sheetJ.optJSONObject(QbeEngineStaticVariables.FILTERS);
 				JSONObject crosstabDefinitionJSON = new JSONObject(crosstabDefinition);
 				JSONObject crosstabJSON = new JSONObject(crosstab);	
 				
@@ -401,11 +322,11 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				}
 				
 				
-				CrossTab cs = getCrosstab(crosstabDefinitionJSON, sheetName, calculateFieldsJSON);
+				CrossTab cs = getCrosstab(crosstabDefinitionJSON, filters, sheetName, splittingWhereField, calculateFieldsJSON);
 				CrosstabXLSExporterFromJavaObject expCr = new CrosstabXLSExporterFromJavaObject();
-				int rows = expCr.initSheet(sheet, cs);
-				expCr.fillAlreadyCreatedSheet(sheet, cs, crosstabJSON, createHelper, sheetRow);
-				sheetRow = sheetRow+rows;
+				//int rows = expCr.initSheet(sheet, cs);
+				sheetRow = expCr.fillAlreadyCreatedSheet(sheet, cs, crosstabJSON, createHelper, sheetRow);
+				//sheetRow = sheetRow+rows;
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
 
 				IDataStore dataStore = getTableDataStore(sheetJ);
@@ -422,7 +343,137 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		return sheetRow;
 	}
 	
+	public void exportToXLSX(JSONObject worksheetJSON, OutputStream stream) throws Exception {
 
+		XSSFWorkbook wb = new XSSFWorkbook();
+		int sheetsNumber = worksheetJSON.getInt(SHEETS_NUM);
+		WorkSheetXLSXExporter exporter = new WorkSheetXLSXExporter();
+		CreationHelper createHelper = wb.getCreationHelper();
+		
+		JSONArray exportedSheets = worksheetJSON.getJSONArray(EXPORTED_SHEETS);
+			
+		
+		for (int i = 0; i < sheetsNumber; i++) {
+			
+			JSONObject sheetJ = exportedSheets.getJSONObject(i);
+			JSONObject optionalFilters = sheetJ.optJSONObject(QbeEngineStaticVariables.FILTERS);
+			String sheetName = sheetJ.getString(SHEET);
+			List<WhereField> splittingWF = getSplittingFieldValues(optionalFilters, sheetName);
+			WhereField splittingWhereField = null;
+			if(splittingWF==null || splittingWF.size()==0){
+				exportSheetToXLSX(wb, sheetJ, exporter, createHelper, splittingWhereField);
+			}else{
+				for(int y=0; y< splittingWF.size(); y++){
+					splittingWhereField = splittingWF.get(y);
+					exportSheetToXLSX( wb, sheetJ, exporter, createHelper, splittingWhereField);
+				}
+			}
+		}
+		
+		wb.write(stream);
+		stream.flush();
+
+	}
+	
+	public void exportSheetToXLSX(XSSFWorkbook wb,JSONObject sheetJ, WorkSheetXLSXExporter exporter,CreationHelper createHelper, WhereField splittingWhereField) throws Exception{
+		
+		//The numeber of row of the sheet
+		int sheetRow;
+
+		String sheetName = sheetJ.getString(SHEET);
+		
+		sheetRow=0;
+
+		if(splittingWhereField!=null){
+			sheetName = sheetName+" ("+splittingWhereField.getRightOperand().values[0]+")";
+		}
+		
+		XSSFSheet sheet = wb.createSheet(sheetName);
+
+		XSSFDrawing patriarch = sheet.createDrawingPatriarch();
+		
+		sheet.createRow(sheetRow);
+		sheetRow++;
+		
+		if(sheetJ.has(WorkSheetXLSExporter.HEADER)){
+			JSONObject header = sheetJ.getJSONObject(WorkSheetXLSExporter.HEADER);
+			if(header!=null){
+				sheetRow = exporter.setHeader(sheet, header, createHelper, wb, patriarch, sheetRow);
+			}
+		}	
+		
+		sheet.createRow(sheetRow);
+		sheetRow++;
+		
+		if(sheetJ.has(WorkSheetXLSExporter.CONTENT)){
+			sheetRow = fillSheetContent(wb, sheet, sheetJ,splittingWhereField, createHelper, exporter, patriarch, sheetRow);
+		}			
+		
+		sheet.createRow(sheetRow);
+		sheetRow++;
+		
+		if(sheetJ.has(WorkSheetXLSExporter.FOOTER)){
+			JSONObject footer = sheetJ.getJSONObject(WorkSheetXLSExporter.FOOTER);
+			if(footer!=null){
+				exporter.setFooter(sheet, footer, createHelper, wb, patriarch, sheetRow);
+			}
+		}	
+	}
+	
+	public int fillSheetContent(XSSFWorkbook wb, XSSFSheet sheet, JSONObject sheetJ, WhereField splittingWhereField,
+			CreationHelper createHelper, WorkSheetXLSXExporter exporter, XSSFDrawing patriarch, int sheetRow) throws Exception {
+		
+		JSONObject content = sheetJ.getJSONObject(WorkSheetXLSXExporter.CONTENT);
+		String sheetType = content.getString(WorkSheetXLSXExporter.SHEET_TYPE);
+		
+
+		if (sheetType != null && !sheetType.equals("")) {
+			
+			if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CHART)) {
+				File jpgImage = WorkSheetXLSXExporter.createJPGImage(content);
+				int col = 1;
+				int colend = 20;
+				int charHeight = 20;
+				for(int i=0; i<charHeight; i++){
+					sheet.createRow(sheetRow+i);
+				}
+				exporter.setImageIntoWorkSheet(wb, patriarch, jpgImage, col, colend, sheetRow, charHeight,XSSFWorkbook.PICTURE_TYPE_JPEG);
+				sheetRow= sheetRow+30;
+			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CROSSTAB)) {
+				JSONArray calculateFieldsJSON=null;
+				String crosstabDefinition = content.getString("CROSSTABDEFINITION");
+				String crosstab = content.getString(WorkSheetXLSExporter.CROSSTAB);
+				String sheetName = sheetJ.getString(SHEET);
+				JSONObject filters = sheetJ.optJSONObject(QbeEngineStaticVariables.FILTERS);
+				JSONObject crosstabDefinitionJSON = new JSONObject(crosstabDefinition);
+				JSONObject crosstabJSON = new JSONObject(crosstab);	
+				
+				String calculateFields = content.optString("CF");
+				if(calculateFields!=null){
+					calculateFieldsJSON = new JSONArray(calculateFields);
+				}
+				
+				
+				CrossTab cs = getCrosstab(crosstabDefinitionJSON,filters, sheetName, splittingWhereField, calculateFieldsJSON);
+				CrosstabXLSXExporterFromJavaObject expCr = new CrosstabXLSXExporterFromJavaObject();
+				sheetRow  = expCr.fillAlreadyCreatedSheet(sheet, cs, crosstabJSON, createHelper, sheetRow);
+			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
+
+				IDataStore dataStore = getTableDataStore(sheetJ);
+				long recCount = dataStore.getRecordsCount();
+				recCount = (new Long(recCount)).intValue() + 5;
+				int startRow = sheetRow;
+				for(int i=0; i<recCount; i++){
+					sheet.createRow(sheetRow);
+					sheetRow++;
+				}
+				exporter.designTableInWorksheet(sheet, wb, createHelper, dataStore,startRow);			
+			}
+		}
+		return sheetRow;
+	}
+	
+	
 	
 	/**
 	 * Execute the query active in the engine instance and return
@@ -440,7 +491,8 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			jsonVisibleSelectFields = sheetContentPars
 					.optJSONArray(QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS);
 		}
-		IDataStore dataStore = executeQuery(jsonVisibleSelectFields, sheetName);
+		JSONObject filters = sheetJ.optJSONObject(QbeEngineStaticVariables.FILTERS);
+		IDataStore dataStore = executeQuery(jsonVisibleSelectFields, filters, sheetName);
 		return dataStore;
 	}
 	
@@ -460,8 +512,8 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	}
 	
 
-	public CrossTab getCrosstab(JSONObject crosstabDefinitionJSON,	String sheetName, JSONArray calculateFieldsJSON) throws Exception{
-		JSONObject optionalFilters = getAttributeAsJSONObject(OPTIONAL_FILTERS);
+	public CrossTab getCrosstab(JSONObject crosstabDefinitionJSON, JSONObject optionalFilters,String sheetName, WhereField splittingWhereField, JSONArray calculateFieldsJSON) throws Exception{
+
 		// retrieve engine instance
 		WorksheetEngineInstance engineInstance = getEngineInstance();
 		Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
@@ -493,7 +545,14 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		whereFields.addAll(temp);
 
 		temp = getOptionalFilters(optionalFilters);
+			
 		whereFields.addAll(temp);
+		
+		//ADD THE WHERE FIELD TO SPLIT THE CROSSTAB INTO DIFFERENT SHEET
+		if(splittingWhereField!=null){
+			whereFields.add(splittingWhereField);
+		}
+		
 
 		// deserialize crosstab definition
 		CrosstabDefinition crosstabDefinition = (CrosstabDefinition) SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
@@ -531,6 +590,36 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	protected String buildSqlStatement(CrosstabDefinition crosstabDefinition,
 			IDataSetTableDescriptor descriptor, List<WhereField> filters, IDataSource dataSource) {
 		return CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, descriptor, filters, dataSource);
+	}
+	
+	public List<WhereField> getSplittingFieldValues(JSONObject optionalFilters, String sheetName) throws JSONException{
+		String[] fields = JSONObject.getNames(optionalFilters);
+		
+		
+		List<WhereField> splittingWhereFields = new ArrayList<WhereField>();
+		
+		for (String field : fields) {
+			if(optionalFilters.getString(field).equals(SPLITTING_FILTER)){
+				IDataStore ds = getUserSheetFilterValues(sheetName, field);
+				JSONDataWriter dataSetWriter = new JSONDataWriter();
+				JSONObject gridDataFeed = (JSONObject) dataSetWriter.write(ds);
+				JSONArray rows = gridDataFeed.getJSONArray(JSONDataWriter.ROOT);
+				
+				for(int j=0; j<rows.length(); j++){
+					JSONArray ja = new JSONArray();
+					ja.put(((JSONObject)(rows.get(j))).get("column_1"));
+					JSONObject jo = new JSONObject();
+					jo.put(field, ja);
+					splittingWhereFields.addAll(transformIntoWhereClauses(jo));
+				}
+
+			}
+		}
+		return splittingWhereFields;
+		
+		
+//		
+
 	}
 	
 }

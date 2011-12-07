@@ -101,7 +101,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		}
 		var filters =null;
 		if(this.filtersPanel!=null && this.filtersPanel!=undefined){
-			filters = this.filtersPanel.getFormState();
+			filters = this.filtersPanel.getFormState(true);
 		}
 		var completedExportedContent = {
 				HEADER: header,
@@ -288,6 +288,10 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		if(aField.selection=='singlevalue'){
 			dynamicFilter.maxSelectedNumber=1;
 		}
+		if(aField.splittingFilter!=undefined && aField.splittingFilter!=null && (aField.splittingFilter=='on' )){
+			dynamicFilter.splittingFilter='on';
+		}
+		
 		// if a sheet filter on domain values is defined, put the filter admissible values
 		var sheetFilter = this.getSheetFilterOnDomainValues(aField);
 		if (sheetFilter != null) {
