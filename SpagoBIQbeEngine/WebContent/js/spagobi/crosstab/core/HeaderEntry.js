@@ -63,18 +63,13 @@ Sbi.crosstab.core.HeaderEntry = function(config) {
 		c = Ext.apply(c, Sbi.settings.qbe.crossTab);
 	}
 	Ext.apply(this, c);
-	
-
+	Ext.apply(this, config);
 	
 	this.level = config.level;
 	this.percenton = config.percenton;
 	this.horizontal = config.horizontal;
 	this.thisDimension = config.thisDimension;
 	this.leafsNumber = config.thisDimension;
-	
-	if(this.percenton!=undefined && this.percenton!=null && this.percenton!='no'){
-		this.columnWidth = this.columnWidthPercent;
-	}
 	
 	var h;
 	var w;
@@ -91,6 +86,8 @@ Sbi.crosstab.core.HeaderEntry = function(config) {
 	}
 		
 	this.name = config.name;
+	
+
 	
 	var sharedConf = {
 		hideMode: 'offsets',
@@ -158,7 +155,7 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 	name: null, // name of the node (displayed in the table)
 	thisDimension: null, //see the component description
 	leafsNumber: null,
-	columnWidth: 80,
+	//columnWidth: 80,
 	rowHeight: 25,
 	fontSize: 10
 	

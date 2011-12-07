@@ -90,7 +90,7 @@ Sbi.crosstab.core.CrossTab = function(config) {
 	}
 	
 	defaultSettings = Ext.apply(defaultSettings, config);
-
+	
 	Ext.apply(this, defaultSettings);
 
 	//add the percent of the value respect to the total of the row or the column
@@ -98,12 +98,6 @@ Sbi.crosstab.core.CrossTab = function(config) {
 	if(this.percenton==undefined || this.percenton==null || this.percenton==''){
 		this.percenton = 'no';
 	}
-	
-	if(this.percenton!='no'){
-		//if the user whant the percentage than the width of the cells should be bigger//add the percent of the value respect to the total of the row or the column
-		this.columnWidth = this.columnWidthPercent;
-	}
-	
 	
 	
 	this.manageDegenerateCrosstab(this.rowHeadersDefinition, this.columnHeadersDefinition);
@@ -1481,7 +1475,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	}
 		
     	
-    	//for(headerPosition=0; headerPosition<this.columnHeader[this.columnHeader.length-1].length; headerPosition++)
+    	for(headerPosition=0; headerPosition<this.columnHeader[this.columnHeader.length-1].length; headerPosition++){
     	var columnHeaderLeaf = this.columnHeader[this.columnHeader.length-1][headerPosition];
     	
     	columnHeaderLeaf.on('render', function() {
@@ -1495,7 +1489,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				thisPanel.reloadHeadersAndTable();
 			}, this);
 		}, columnHeaderLeaf);
-    	//}
+    	}
     }
     
 	, createResizable: function(aPanel, heandles, items, horizontal) {

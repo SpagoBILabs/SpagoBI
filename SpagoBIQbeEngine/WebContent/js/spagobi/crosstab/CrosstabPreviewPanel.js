@@ -110,7 +110,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 				, sheetName : this.sheetName
 			}
 			if(filters!=undefined && filters!=null){
-				this.requestParameters.optionalfilters = Ext.util.JSON.encode(filters);
+				this.requestParameters.FILTERS = Ext.util.JSON.encode(filters);
 			}
 			if (this.fireEvent('beforeload', this, this.requestParameters) !== false) { // this permits other objects 
 																						// to modify the crosstab requestParameters
@@ -162,6 +162,10 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 				, percenton: config.percenton
 				, measuresMetadata: measuresMetadata
 		};
+		
+		if (this.crosstabDefinition !== undefined && this.crosstabDefinition.additionalData !== undefined && this.crosstabDefinition.additionalData !== null ) {
+			c = Ext.apply(c, this.crosstabDefinition.additionalData);
+		}
 
 		c = Ext.apply(c,this.crosstabConfig||{});
 		
@@ -222,6 +226,14 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
     		return this.crosstab.getCalculatedFields();
     	} else {
     		return new Array();
+    	}
+    }
+    
+    , getCrosstabColumnWidth: function () {
+    	if (this.crosstab != null) {
+    		return this.crosstab.columnWidth;
+    	} else {
+    		return 80;
     	}
     }
 
