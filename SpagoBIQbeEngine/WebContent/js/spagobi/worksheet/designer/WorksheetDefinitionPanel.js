@@ -173,11 +173,8 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 				var sheets = sheetTemplate.sheets;
 				for(var i=0; i<sheets.length; i++){
 					if(additionalData[i].data!=undefined && additionalData[i].data!=null && !Ext.isEmpty(additionalData[i].data) && sheets[i].content.crosstabDefinition!=undefined && sheets[i].content.crosstabDefinition!=null){
-						//if(sheets[i].content.crosstabDefinition.calculatedFields==undefined || sheets[i].content.crosstabDefinition.calculatedFields==null){
-							sheets[i].content.crosstabDefinition.calculatedFields =additionalData[i].data.crosstabDefinition.calculatedFields;
-						//}else{
-						//	sheets[i].content.crosstabDefinition.calculatedFields = Ext.apply(sheets[i].content.crosstabDefinition.calculatedFields, additionalData[i].data.crosstabDefinition.calculatedFields);
-						//}
+						sheets[i].content.crosstabDefinition.calculatedFields =additionalData[i].data.crosstabDefinition.calculatedFields;
+						sheets[i].content.crosstabDefinition.additionalData =additionalData[i].data.crosstabDefinition.additionalData;
 					}
 				}	
 			}
@@ -196,7 +193,8 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 					for(var y=0; y<documentTemplateSheets.length; y++){
 						if(designerTemplateSheets[i].name == documentTemplateSheets[y].name){
 							if(designerTemplateSheets[i].content.crosstabDefinition!=undefined && designerTemplateSheets[i].content.crosstabDefinition!=null && documentTemplateSheets[y].content.crosstabDefinition!=undefined && documentTemplateSheets[y].content.crosstabDefinition!=null){
-								designerTemplateSheets[i].content.crosstabDefinition.calculatedFields =documentTemplateSheets[y].content.crosstabDefinition.calculatedFields; 
+								designerTemplateSheets[i].content.crosstabDefinition.calculatedFields =documentTemplateSheets[y].content.crosstabDefinition.calculatedFields;
+								designerTemplateSheets[i].content.crosstabDefinition.additionalData =documentTemplateSheets[y].content.crosstabDefinition.additionalData;
 							}
 							break;
 						}
