@@ -224,7 +224,7 @@ if (titleVisibile) {
 			}
 		}
 		%>
-			<%=msgBuilder.getI18nMessage(title, SpagoBIConstants.DEFAULT_USER_BUNDLE, request)
+			<%=msgBuilder.getI18nMessage(title,  request)
 			
 			%>
 		
