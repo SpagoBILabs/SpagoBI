@@ -71,7 +71,7 @@ String title = obj.getName();
 %>
 
 <div class='execution-page-title'>
-	<%=msgBuilder.getUserMessage(title, SpagoBIConstants.DEFAULT_USER_BUNDLE, request)%>
+	<%=msgBuilder.getI18nMessage(title, SpagoBIConstants.DEFAULT_USER_BUNDLE, request)%>
 </div>
 
 <spagobi:error/>
