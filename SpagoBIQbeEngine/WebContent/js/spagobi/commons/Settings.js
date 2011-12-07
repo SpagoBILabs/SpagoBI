@@ -68,7 +68,6 @@ Sbi.settings.qbe = {
 		
 		, crossTab: {
 			 columnWidth: 80
-			, columnWidthPercent: 105
 			, rowHeight: 25
 			, fontSize: 10
 			, percentageFontSize: 9
