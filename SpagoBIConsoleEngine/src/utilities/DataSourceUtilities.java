@@ -435,7 +435,8 @@ public class DataSourceUtilities {
 							toReturn = tmpReturn;	
 						}
 						//forces the default values if it isn't present into the request
-						if (toReturn == null || toReturn.equalsIgnoreCase("'null'")){
+						if (toReturn == null || toReturn.equals("") || toReturn.equals("''") || 
+							toReturn.equalsIgnoreCase("'null'")){
 							if (realType.equalsIgnoreCase("STRING")){
 								toReturn = "'" + (String)obj.get("default") +"'";
 							}else{
