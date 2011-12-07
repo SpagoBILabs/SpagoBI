@@ -34,4 +34,6 @@ public class CrosstabSerializationConstants {
 	public static final String CALCULATED_FIELDS = "calculatedFields";
 	public static final String MEASURESON = "measureson";
 	
+	public static final String ADDITIONAL_DATA = "additionalData";
+	
 }

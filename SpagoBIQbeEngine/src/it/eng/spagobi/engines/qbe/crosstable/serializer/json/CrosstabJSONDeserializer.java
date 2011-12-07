@@ -86,6 +86,9 @@ public class CrosstabJSONDeserializer implements IDeserializer {
 				JSONArray calculatedFields = crosstabDefinitionJSON.optJSONArray(CrosstabSerializationConstants.CALCULATED_FIELDS);
 				crosstabDefinition.setCalculatedFields(calculatedFields);
 				
+				JSONObject additionalData = crosstabDefinitionJSON.optJSONObject(CrosstabSerializationConstants.ADDITIONAL_DATA);
+				crosstabDefinition.setAdditionalData(additionalData);
+				
 			} catch (Exception e) {
 				throw new SerializationException("An error occurred while deserializing query: " + crosstabDefinitionJSON.toString(), e);
 			}

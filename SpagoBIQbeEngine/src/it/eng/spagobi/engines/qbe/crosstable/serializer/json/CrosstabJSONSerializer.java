@@ -78,7 +78,12 @@ public class CrosstabJSONSerializer implements ISerializer {
 			// measures
 			JSONArray measures = this.serializeMeasures(crosstabDefinition);
 			toReturn.put(CrosstabSerializationConstants.MEASURES, measures);
-
+			
+			//additional data
+			JSONObject additionalData = crosstabDefinition.getAdditionalData();
+			toReturn.put(CrosstabSerializationConstants.ADDITIONAL_DATA, additionalData);
+			
+			
 		} catch (SerializationException se) {
 			throw se;
 		} catch (Throwable t) {
