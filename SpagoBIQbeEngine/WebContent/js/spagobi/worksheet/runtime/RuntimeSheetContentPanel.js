@@ -194,7 +194,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	        case 'Table':
         		var params ={'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)};
         		if(filtersValue!=undefined && filtersValue!=null){
-        			params.optionalfilters = Ext.encode(filtersValue);
+        			params.FILTERS = Ext.encode(filtersValue);
         		}
         		this.content.execQuery(params);
 	        	break;
@@ -217,6 +217,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 		var data ={};
 		if(this.contentConfig.designer=='Pivot Table') {
 			data.crosstabDefinition = {'calculatedFields': this.content.getCalculatedFields()};
+			data.crosstabDefinition.additionalData = {'columnWidth': this.content.getCrosstabColumnWidth()};
 		}
 		return data;
 	}
