@@ -37,6 +37,7 @@ import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.Periodicity;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiComments;
 import it.eng.spagobi.kpi.goal.metadata.bo.Goal;
 import it.eng.spagobi.kpi.goal.metadata.bo.GoalNode;
 import it.eng.spagobi.kpi.model.bo.Model;
@@ -53,13 +54,7 @@ import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bo.UserBO;
-import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
-import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
-import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.metadata.SbiCustomDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
@@ -136,6 +131,7 @@ public class JSONSerializer implements Serializer {
 		
 		mappings.put( GoalNode.class, new GoalNodeJSONSerializer());
 		mappings.put( Goal.class, new GoalJSONSerializer());
+		mappings.put( SbiKpiComments.class, new SbiKpiCommentSerializer());
 	}
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {

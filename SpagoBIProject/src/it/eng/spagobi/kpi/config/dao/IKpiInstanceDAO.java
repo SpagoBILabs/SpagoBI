@@ -4,6 +4,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.config.bo.KpiAlarmInstance;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiComments;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 
 import java.util.Date;
@@ -57,5 +58,9 @@ public interface IKpiInstanceDAO extends ISpagoBIDao{
 	public String getChartType(Integer kpiInstanceID) throws EMFUserError;
 	
 	public List<KpiAlarmInstance> loadKpiAlarmInstances()throws EMFUserError;
+	
+	public List<SbiKpiComments> loadCommentsByKpiInstanceId(Integer kpiInstId) throws Exception;
+	
+	public Integer saveKpiComment(Integer idKpiInstance, String comment, String owner) throws EMFUserError;
 
 }

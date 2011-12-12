@@ -44,7 +44,8 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.KpiGUIDetail =  function(config) {
-		
+	
+		this.customChartName= config.customChartName;
 		var defaultSettings = {};
 
 		if (Sbi.settings && Sbi.settings.kpi && Sbi.settings.kpi.kpiGUIDetail) {
@@ -72,6 +73,9 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	dial: null,
 	maxChartValue: 0,
 	ranges: new Array(),
+	customChartName: null,
+	//custom chart
+	selectedThr: null,
 	
 	initDetail: function(){	
 		this.chartid = Ext.id();
@@ -84,6 +88,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		this.chartPanel = new Ext.Panel({
 			id: this.chartid,
 			border: false,
+			html: '&nbsp;',
 			height: 5
 		});
 
@@ -167,17 +172,24 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 
 		//chart
 		var val = field.attributes.actual;
-
-		this.on('afterlayout',function(){
-			this.drawChart(val);
-		},this);
-		
+		if(this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null'){
+			this.on('afterlayout',function(){
+				this.drawChart(val);
+			},this);
+		}else{
+			var x = this.calculateInnerThrChart(field);
+			this.chartPanel.setHeight(260);
+			var html = '<div style="float: left; margin-left:20px; text-align:center; background-color:'+field.attributes.status+'; height=260px; width: 250px;"><img height="255px" width="250" src="../themes/other_theme/img/'+this.customChartName+'_'+x+'.png"></img></div>'
+			+ '<div style="margin-top: 30px; float: left; background-color:white; width: 100px; padding-left:5px; font-style: italic; font-weight: bold;"> Valore: '+val+'</div>';
+			this.chartPanel.update(html);
+			this.doLayout();
+		}
 		
 		this.cleanPanel();
 		//value
 		this.valueItem = new Ext.form.DisplayField({fieldLabel: 'Valore', 
 													value: val, 
-													style: 'padding-left:5px; font-style: italic;'});
+													style: 'padding-left:5px; font-style: italic; font-weight: bold;'});
 		this.add(this.valueItem );
 		
 		//thresholds
@@ -185,6 +197,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		var thrArray = field.attributes.thresholds;
 
 		if(thrArray != undefined && thrArray !== null){
+
 			for(i=0; i<thrArray.length; i++){
 				var bItems = [];
 				var thrLine = new Ext.form.FieldSet({
@@ -207,7 +220,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 															columnWidth:0.3,
 															style: 'background-color:'+thr.color});
 				
-				thrLine.add([ {value: thr.label, columnWidth:0.3, style:'font-weight: bold'}, 
+				thrLine.add([ {value: thr.label, columnWidth:0.3, style:'font-weight: bold;'}, 
 				              {columnWidth:0.2, value: thr.min }, 
 				              {value: thr.max, columnWidth:0.2}, 
 				              colorBox]);
@@ -216,6 +229,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 				//calculate chart options
 				this.calculateMax(thr);
 				this.calculateRange(thr);
+
 			}
 			this.threshFields.doLayout();
 		}
@@ -234,5 +248,27 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		this.add(this.targetItem );
 		this.doLayout();
         this.render();
+	}
+	, calculateInnerThrChart: function(field){
+		var val = parseFloat(field.attributes.actual) ;
+		var thrArray = field.attributes.thresholds;
+
+		if(thrArray != undefined && thrArray !== null){
+			var valColor = field.attributes.status;
+			for(i=0; i<thrArray.length; i++){
+				var thr = thrArray[i];	
+				if(valColor !== undefined && valColor !== null){
+					if(thr.color === valColor){
+						//selected threshold
+						this.selectedThr = thr;
+					}
+				}
+			}
+		}
+		var total = parseFloat(this.selectedThr.max) - parseFloat(this.selectedThr.min);
+		//total/9 = val/x;
+		var sbtrct = val - parseFloat(this.selectedThr.min)
+		var x = Math.round(9*sbtrct/total);
+		return x;
 	}
 });

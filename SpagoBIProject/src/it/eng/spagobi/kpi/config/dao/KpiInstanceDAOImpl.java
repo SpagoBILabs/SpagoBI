@@ -2,12 +2,16 @@ package it.eng.spagobi.kpi.config.dao;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiBinContents;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.kpi.config.bo.KpiAlarmInstance;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiComments;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstanceHistory;
@@ -18,7 +22,6 @@ import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.dao.IThresholdDAO;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
-import it.eng.spagobi.profiling.bean.SbiUser;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,10 +30,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 
 public class KpiInstanceDAOImpl extends AbstractHibernateDAO implements IKpiInstanceDAO {
 
@@ -508,5 +513,92 @@ public class KpiInstanceDAOImpl extends AbstractHibernateDAO implements IKpiInst
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
+	public List<SbiKpiComments> loadCommentsByKpiInstanceId(Integer kpiInstId) throws Exception {
+		List<SbiKpiComments> list = new ArrayList<SbiKpiComments>();
+		//ObjNote objNote = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			String hql = "from SbiKpiComments c where c.sbiKpiInstance.idKpiInstance = ? ";
+			
+			Query query = aSession.createQuery(hql);
+			query.setInteger(0, kpiInstId.intValue());
+			
+
+			List result = query.list();
+			Iterator it = result.iterator();
+			while (it.hasNext()){
+				SbiKpiComments sbiComm = (SbiKpiComments)it.next();
+				Hibernate.initialize(sbiComm);
+				SbiBinContents content = sbiComm.getSbiBinContents();
+				Hibernate.initialize(content);
+				list.add(sbiComm);
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		return list;
+	}
+	public Integer saveKpiComment(Integer idKpiInstance, String comment, String owner) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer idToReturn;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			SbiKpiInstance sbiKpiInstance = (SbiKpiInstance) aSession.load(SbiKpiInstance.class, idKpiInstance);
+			
+			SbiBinContents hibBinContent = new SbiBinContents();
+			hibBinContent.setContent(comment.getBytes());
+			updateSbiCommonInfo4Insert(hibBinContent);
+			Integer idBin = (Integer)aSession.save(hibBinContent);
+			// recover the saved binary hibernate object
+			hibBinContent = (SbiBinContents) aSession.load(SbiBinContents.class, idBin);
+			
+			SbiKpiComments kpiComment = new SbiKpiComments();
+			//updateSbiCommonInfo4Insert(kpiComment);
+			
+			kpiComment.setCreationDate(new Date());
+			kpiComment.setOwner(owner);
+			kpiComment.setSbiBinContents(hibBinContent);
+			kpiComment.setSbiKpiInstance(sbiKpiInstance);
+			kpiComment.setLastChangeDate(new Date());
+			kpiComment.setUserIn(owner);
+			kpiComment.setTimeIn(new Date());
+			kpiComment.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+			
+			idToReturn = (Integer) aSession.save(kpiComment);
+			tx.commit();
+
+
+		} catch (HibernateException he) {
+			logger.error("Error while inserting kpi comment ", he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 10117);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return idToReturn;
+	}
+
 }

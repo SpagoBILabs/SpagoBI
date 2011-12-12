@@ -123,7 +123,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	public KpiTemplateConfiguration templateConfiguration = new KpiTemplateConfiguration(
 			"KPI_DEFAULT_PUB", "KPI_METADATA_DEFAULT_PUB", "TREND_DEFAULT_PUB", false, "MODEL", null, null, null, null, null, false, true,
 			false, false, false, false, true, false, false, false, false,
-			false);
+			false, null);
 	
 	public KpiEnginData data;	
 	
@@ -428,7 +428,11 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 			try {
 				logger.debug("Successfull kpis creation");
-
+				String customChartName = templateConfiguration.getCustom_chart_name();
+				if(customChartName != null){
+					response.setAttribute("custom_chart_name", customChartName);
+				}
+				
 				response.setAttribute(ObjectsTreeConstants.SESSION_OBJ_ATTR, obj);
 				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, templateConfiguration.getPublisher_Name());
 				response.setAttribute("metadata_publisher_Name", templateConfiguration.getMetadata_publisher_Name());
