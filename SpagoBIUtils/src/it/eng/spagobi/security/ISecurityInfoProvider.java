@@ -24,7 +24,7 @@ package it.eng.spagobi.security;
 import java.util.List;
 
 /**
- * This is interface for gethering security information from portal server.
+ * This is interface for gathering security information from portal server.
  * A Specific subclass exists for each portal server.
  */
 public interface ISecurityInfoProvider {
