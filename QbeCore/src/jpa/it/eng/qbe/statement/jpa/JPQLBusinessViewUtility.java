@@ -234,7 +234,6 @@ public class JPQLBusinessViewUtility {
 				viewRelations.addAll(buildRelationConditionString(relation.getSourceFileds(), relation.getDestinationFileds(), entityAliases, query));
 			}
 			if((view.getInnerEntities().contains(outEntity) && child!=null && inEntity.getType().equals(child.getType()))){    //outcome relation
-			//build the relation constraints
 				viewRelations.addAll(getJoinClauseBetweenFieldAndView(relation.getDestinationFileds(), leafField, entityAliases, query));
 			}
 		}
