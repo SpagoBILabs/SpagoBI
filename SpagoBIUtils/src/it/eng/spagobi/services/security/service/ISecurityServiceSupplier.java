@@ -35,31 +35,38 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
  */
 public interface ISecurityServiceSupplier {
     
-    	/**
-    	 * 
-    	 * @return SpagoBIUserProfile
-    	 */
-	SpagoBIUserProfile createUserProfile(String userId);	
+    /**
+     * 
+     * @return SpagoBIUserProfile
+     */
+	SpagoBIUserProfile createUserProfile(String userId);
+	
 	/**
-	 * 
-	 * @param userId
-	 * @param function
-	 * @return
-	 */
-        boolean checkAuthorization(String userId, String function);
-        /**
-         * if SpagoBIUserProfile is NULL the password is incorrect!!!!
-         * @param userId
-         * @param psw
-         * @return
-         */
-        SpagoBIUserProfile checkAuthentication(String userId, String psw);
+     * if SpagoBIUserProfile is NULL the password is incorrect!!!!
+     * @param userId
+     * @param psw
+     * @return
+     */
+    SpagoBIUserProfile checkAuthentication(String userId, String psw);
+	
+    /**
+     * if SpagoBIUserProfile is NULL the token is incorrect!!!!
+     * @param userId
+     * @param token
+     * @return
+     * 
+     * @deprecated
+     */
+     SpagoBIUserProfile checkAuthenticationWithToken(String userId, String token);
         
-        /**
-         * if SpagoBIUserProfile is NULL the token is incorrect!!!!
-         * @param userId
-         * @param token
-         * @return
-         */
-        SpagoBIUserProfile checkAuthenticationWithToken(String userId, String token);
+    /**
+     * 
+     * @param userId
+     * @param function
+     * @return
+     * 
+     * @deprecated
+     */
+     boolean checkAuthorization(String userId, String function); 
+            
 }
