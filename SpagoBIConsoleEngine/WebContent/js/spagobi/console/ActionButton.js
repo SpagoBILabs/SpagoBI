@@ -346,7 +346,16 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 					var content = Ext.util.JSON.decode( response.responseText );
 					if (content !== undefined) {				      			  
 					//	alert(content.toSource());
-					}				      		
+					}	
+					//if by configuration is required a refresh of the dataset, it executes the store's load method,
+					//otherwise it changes the icons by the toggle (default)
+					if (this.refreshDataAfterAction !== undefined && this.refreshDataAfterAction === true ){
+						this.store.loadStore();
+					} else {
+						//fire events to toggle all icons of the same type
+						this.setCheckValue(this.actionConf.checkColumn, flgCheck);    
+						this.fireEvent('toggleIcons', this, flgCheck);
+					}
 			} else {
 				Sbi.Msg.showError('Server response is empty', 'Service Error');
 			}
@@ -354,16 +363,6 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     	, failure: Sbi.exception.ExceptionHandler.onServiceRequestFailure
     	, scope: this     
 	    });  
-		
-		//if by configuration is required a refresh of the dataset, it executes the store's load method,
-		//otherwise it changes the icons by the toggle (default)
-		if (this.refreshDataAfterAction !== undefined && this.refreshDataAfterAction === true ){
-			this.store.loadStore();
-		} else {
-			//fire events to toggle all icons of the same type
-			this.setCheckValue(this.actionConf.checkColumn, flgCheck);    
-			this.fireEvent('toggleIcons', this, flgCheck);
-		}
     }
 });
     
