@@ -659,7 +659,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 			field = new Ext.form.ComboBox(Ext.apply(baseConfig, {
 				tpl: '<tpl for="."><div ext:qtip="{label} ({value}): {description}" class="x-combo-list-item">{label}&nbsp;</div></tpl>'
-                , editable  : true			    
+                , editable  : false			    
 			    , forceSelection : false
 			    , store :  store
 			    , displayField:'label'
