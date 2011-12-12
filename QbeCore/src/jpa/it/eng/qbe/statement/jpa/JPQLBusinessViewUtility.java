@@ -20,21 +20,19 @@
  **/
 package it.eng.qbe.statement.jpa;
 
-import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.ModelViewEntity;
 import it.eng.qbe.model.structure.ModelViewEntity.ViewRelationship;
-import it.eng.qbe.query.AbstractSelectField;
-import it.eng.qbe.query.ISelectField;
-import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.HavingField;
+import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.WhereField;
+import it.eng.spagobi.utilities.objects.Couple;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -65,20 +63,20 @@ public class JPQLBusinessViewUtility {
 	public String buildViewsRelations(Map entityAliasesMaps, Query query, String queryWhereClause) {
 		Set<ViewRalationClause> viewRelations;
 		StringBuffer whereClause = new StringBuffer("");
-		Set<IModelEntity> refferredEntities;
+		Set<IModelField> refferredFields;
 		String clauseToReturn;
 		
 		//get all referred entities
-		refferredEntities = new HashSet<IModelEntity>();
-		extractReferredEntitiesFromSelectClause(refferredEntities, query);
-		extractReferredEntitiesFromWhereClause(refferredEntities, query);
-		extractReferredEntitiesFromHavingClause(refferredEntities, query);
-		extractReferredEntitiesFromOrderByClause(refferredEntities, query);
-		extractReferredEntitiesFromGroupByClause(refferredEntities, query);
+		refferredFields = new HashSet<IModelField>();
+		extractReferredEntitiesFromSelectClause(refferredFields, query);
+		extractReferredEntitiesFromWhereClause(refferredFields, query);
+		extractReferredEntitiesFromHavingClause(refferredFields, query);
+		extractReferredEntitiesFromOrderByClause(refferredFields, query);
+		extractReferredEntitiesFromGroupByClause(refferredFields, query);
 		
 		viewRelations = new HashSet<ViewRalationClause>();
-		for (IModelEntity referredEntity : refferredEntities) {
-			buildViewsRelationsBackVistitPath(referredEntity, null, viewRelations, entityAliasesMaps, query);			
+		for (IModelField referredField : refferredFields) {
+			buildViewsRelationsBackVistitPath(referredField, referredField.getLogicalParent(), null, viewRelations, entityAliasesMaps, query);			
 		}
 				
 		String logicalConnector = " ";
@@ -100,15 +98,15 @@ public class JPQLBusinessViewUtility {
 		return clauseToReturn;
 	}
 	
-	private void extractReferredEntitiesFromSelectClause(Set<IModelEntity> refferredEntities, Query query) {
+	private void extractReferredEntitiesFromSelectClause(Set<IModelField> refferredEntities, Query query) {
 		extractReferredEntitiesFromSelectFields(refferredEntities, query.getSelectFields(false));
 	}
 	
-	private void extractReferredEntitiesFromOrderByClause(Set<IModelEntity> refferredEntities, Query query) {
+	private void extractReferredEntitiesFromOrderByClause(Set<IModelField> refferredEntities, Query query) {
 		extractReferredEntitiesFromSelectFields(refferredEntities, query.getOrderByFields());
 	}
 	
-	private void extractReferredEntitiesFromGroupByClause(Set<IModelEntity> refferredEntities, Query query) {
+	private void extractReferredEntitiesFromGroupByClause(Set<IModelField> refferredEntities, Query query) {
 		extractReferredEntitiesFromSelectFields(refferredEntities, query.getGroupByFields());
 	}
 	
@@ -117,7 +115,7 @@ public class JPQLBusinessViewUtility {
 	 
 	 * @param selectFields the list of ISelectFields from where the referred entities will be extracted
 	 */
-	private void extractReferredEntitiesFromSelectFields(Set<IModelEntity> refferredEntities, List<ISelectField> selectFields) {
+	private void extractReferredEntitiesFromSelectFields(Set<IModelField> refferredEntities, List<ISelectField> selectFields) {
 		SimpleSelectField simpleSelectField;
 		IModelField modelField;
 		
@@ -127,13 +125,13 @@ public class JPQLBusinessViewUtility {
 			if(selectField instanceof SimpleSelectField){
 				simpleSelectField = (SimpleSelectField)selectField;
 				modelField = statement.getDataSource().getModelStructure().getField(simpleSelectField.getUniqueName());
-				refferredEntities.add(modelField.getLogicalParent());
+				refferredEntities.add(modelField);
 			}
 		}
 	}
 	
 	
-	private void extractReferredEntitiesFromWhereClause(Set<IModelEntity> refferredEntities, Query query) {
+	private void extractReferredEntitiesFromWhereClause(Set<IModelField> refferredEntities, Query query) {
 		IModelField modelField;
 		
 		List<WhereField> whereFields = query.getWhereFields();
@@ -143,7 +141,7 @@ public class JPQLBusinessViewUtility {
 				Operand leftOperand = whereField.getLeftOperand();
 				if(statement.OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(leftOperand.type)){
 					modelField = statement.getDataSource().getModelStructure().getField( leftOperand.values[0] );
-					refferredEntities.add(modelField.getLogicalParent());
+					refferredEntities.add(modelField);
 				} else if (statement.OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(leftOperand.type)) {
 					// TODO extract referred entity also from in line calculated field
 				}
@@ -151,7 +149,7 @@ public class JPQLBusinessViewUtility {
 				Operand rightOperand = whereField.getRightOperand();
 				if(statement.OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(rightOperand.type)){
 					modelField = statement.getDataSource().getModelStructure().getField( rightOperand.values[0] );
-					refferredEntities.add(modelField.getLogicalParent());
+					refferredEntities.add(modelField);
 				} else if (statement.OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(rightOperand.type)) {
 					// TODO extract referred entity also from in line calculated field
 				}
@@ -159,7 +157,7 @@ public class JPQLBusinessViewUtility {
 		}
 	}
 	
-	private void extractReferredEntitiesFromHavingClause(Set<IModelEntity> refferredEntities, Query query) {
+	private void extractReferredEntitiesFromHavingClause(Set<IModelField> refferredEntities, Query query) {
 		IModelField datamartField;
 		
 		List<HavingField> havingFields = query.getHavingFields();
@@ -170,7 +168,7 @@ public class JPQLBusinessViewUtility {
 				Operand leftOperand = havingField.getLeftOperand();
 				if(statement.OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(leftOperand.type)){
 					datamartField = statement.getDataSource().getModelStructure().getField( leftOperand.values[0] );
-					refferredEntities.add(datamartField.getLogicalParent());
+					refferredEntities.add(datamartField);
 				} else if (statement.OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(leftOperand.type)) {
 					// TODO extract referred entity also from in line calculated field
 				}
@@ -178,7 +176,7 @@ public class JPQLBusinessViewUtility {
 				Operand rightOperand = havingField.getRightOperand();
 				if(statement.OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(rightOperand.type)){
 					datamartField = statement.getDataSource().getModelStructure().getField( rightOperand.values[0] );
-					refferredEntities.add(datamartField.getLogicalParent());
+					refferredEntities.add(datamartField);
 				} else if (statement.OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(rightOperand.type)) {
 					// TODO extract referred entity also from in line calculated field
 				}
@@ -201,14 +199,14 @@ public class JPQLBusinessViewUtility {
 	 * @param entityAliases
 	 * @param query
 	 */
-	private void buildViewsRelationsBackVistitPath(IModelEntity entity, IModelEntity child,  Set<ViewRalationClause> viewRelations,  Map entityAliases, Query query){
+	private void buildViewsRelationsBackVistitPath(IModelField field, IModelEntity entity, IModelEntity child,  Set<ViewRalationClause> viewRelations,  Map entityAliases, Query query){
 		
 		if(entity==null){
 			return;
 		} else if(entity instanceof ModelViewEntity){
-			addRelationForTheView(entity.getLogicalParent(), (ModelViewEntity)entity, child,viewRelations, entityAliases, query);
+			addRelationForTheView(field, entity.getLogicalParent(), (ModelViewEntity)entity, child,viewRelations, entityAliases, query);
 		}
-		buildViewsRelationsBackVistitPath(entity.getLogicalParent(), entity, viewRelations, entityAliases, query);
+		buildViewsRelationsBackVistitPath(field, entity.getLogicalParent(), entity, viewRelations, entityAliases, query);
 		
 	}
 	
@@ -222,7 +220,7 @@ public class JPQLBusinessViewUtility {
 	 * @param entityAliases
 	 * @param query the query
 	 */
-	private void addRelationForTheView(IModelEntity parent, ModelViewEntity view, IModelEntity child, Set<ViewRalationClause> viewRelations, Map entityAliases, Query query){
+	private void addRelationForTheView(IModelField leafField, IModelEntity parent, ModelViewEntity view, IModelEntity child, Set<ViewRalationClause> viewRelations, Map entityAliases, Query query){
 		List<ViewRelationship> relations = view.getRelationships();
 		IModelEntity inEntity,outEntity;
 		ViewRelationship relation;
@@ -235,7 +233,86 @@ public class JPQLBusinessViewUtility {
 				//build the relation constraints
 				viewRelations.addAll(buildRelationConditionString(relation.getSourceFileds(), relation.getDestinationFileds(), entityAliases, query));
 			}
+			if((view.getInnerEntities().contains(outEntity) && child!=null && inEntity.getType().equals(child.getType()))){    //outcome relation
+			//build the relation constraints
+				viewRelations.addAll(getJoinClauseBetweenFieldAndView(relation.getDestinationFileds(), leafField, entityAliases, query));
+			}
 		}
+	}
+	
+	/**
+	 * links the subentity of the view and the root entity of the selected field.. For example:
+	 * 	With out the clause: 
+	 * 	SELECT t_0.productFamily FROM  
+		ProductProduct t_1, 
+		ProductClass t_4, 
+		ProductProductClass t_2, 
+		SalesFact1998 t_3, 
+		ProductClass t_0 
+		WHERE
+		t_1.compId.productClassId=t_2.compId.productClassId  
+		(t_1.compId.productClassId = t_4.productClassId) 
+		(t_3.compId.productId = t_1.compId.productId)
+		
+		There are no relation between t0 and t4
+		   
+		SELECT t_0.productCategory FROM 
+		ProductProduct t_1, 
+		ProductClass t_4, 
+		ProductProductClass t_2,
+		SalesFact1998 t_3, 
+		ProductClass t_0  
+		WHERE 
+		t_1.compId.productClassId=t_2.compId.productClassId 
+		AND  (t_1.compId.productClassId = t_4.productClassId)  
+		AND (t_4.productClassId = t_0.productClassId) *****ADDS THIS ONE******
+		AND (t_3.compId.productId = t_1.compId.productId)
+	 * 
+	 * 
+	 * 
+	 * @param sourceFields
+	 * @param leafField
+	 * @param entityAliasesMaps
+	 * @param query
+	 * @return
+	 */
+	private Set<ViewRalationClause> getJoinClauseBetweenFieldAndView(List<IModelField> sourceFields, IModelField leafField, Map entityAliasesMaps, Query query){
+		Set<ViewRalationClause> clauses = new HashSet<ViewRalationClause>();
+		String queryNameS;
+		IModelEntity rootEntityL,rootEntityS;
+		Couple queryNameAndRootS, queryNameAndRootL;	
+		String rootEntityAliasS, rootEntityAliasL;
+		IModelField sourceField;
+		
+		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
+
+		queryNameAndRootL = leafField.getQueryName();
+		if(queryNameAndRootL.getSecond()!=null){
+			rootEntityL = (IModelEntity)queryNameAndRootL.getSecond(); 	
+		}else{
+			rootEntityL = leafField.getParent().getRoot(); 	
+		}
+		rootEntityAliasL = (String)entityAliases.get(rootEntityL.getUniqueName());
+		
+		for(int i=0; i<sourceFields.size(); i++){
+			sourceField = sourceFields.get(i);
+			queryNameAndRootS = sourceField.getQueryName();
+			queryNameS = (String) queryNameAndRootS.getFirst();
+			
+			if(queryNameAndRootS.getSecond()!=null){
+				rootEntityS = (IModelEntity)queryNameAndRootS.getSecond(); 	
+			}else{
+				rootEntityS = sourceField.getParent().getRoot(); 	
+			}
+			rootEntityAliasS = (String)entityAliases.get(rootEntityS.getUniqueName());
+			String filedName = 	"." + queryNameS.substring(0,1).toLowerCase()+queryNameS.substring(1);
+			//link the subentity of the view and the root entity of the selected field
+			clauses.add (new ViewRalationClause(rootEntityAliasS+filedName, rootEntityAliasL+filedName));
+		}
+		
+
+		
+		return clauses;
 	}
 	
 	/**
