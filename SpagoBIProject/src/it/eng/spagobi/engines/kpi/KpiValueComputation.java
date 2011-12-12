@@ -160,7 +160,7 @@ public class KpiValueComputation {
 	}
 
 	protected KpiValue setTimeAttributes(KpiValue kVal, KpiInstance kpiInst)
-			throws EMFUserError {
+				throws EMFUserError {
 		logger.debug("IN");
 		Date begD = this.parameters.getDateOfKPI();
 		Date endDate = null;

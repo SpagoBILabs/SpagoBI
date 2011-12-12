@@ -13,5 +13,8 @@
   <ACTION name="GET_KPI_METADATA" class="it.eng.spagobi.engines.kpi.service.CreateKpiMetadataAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
-
+<!-- NEW GUI -->
+  <ACTION name="MANAGE_COMMENTS" class="it.eng.spagobi.engines.kpi.service.ManageCommentsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
 </ACTIONS>

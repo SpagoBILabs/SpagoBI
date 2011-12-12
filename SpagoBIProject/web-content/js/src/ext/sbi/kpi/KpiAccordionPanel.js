@@ -66,10 +66,10 @@ Sbi.kpi.KpiAccordionPanel =  function(config) {
 	        layout:'accordion',
 	        items: []
 	    };
-	    this.initDetail();
+	    this.initDetail(config);
 	    this.initDescription();
 	    this.initDocCollegato();
-	    this.initComments();
+	    this.initComments(config);
 	    this.initHistorical();
 		this.initAccordion(c);
 		
@@ -119,7 +119,13 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	    var item4 = new Ext.Panel({
 	        title: 'Commenti',
 	        scope: this,
-	        items: [this.comments]
+	        items: [this.comments],
+	        
+	        listeners : {
+	            expand: function(p){
+	                p.doLayout();
+	            }
+	        }
 	    });
 
 	    var item5 = new Ext.Panel({
@@ -130,8 +136,8 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	    });
 	    c.items = [item1, item2, item3, item4, item5];
 	}
-	, initDetail: function(){
-		this.detail = new Sbi.kpi.KpiGUIDetail();
+	, initDetail: function(c){
+		this.detail = new Sbi.kpi.KpiGUIDetail(c);
 	}
 	, initDescription: function(){
 		this.description = new Sbi.kpi.KpiGUIDescription();
@@ -143,8 +149,8 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 		this.docs = new Sbi.kpi.KpiGUIDocCollegato();
 
 	}
-	, initComments: function(){
-		this.comments = new Sbi.kpi.KpiGUIComments();
+	, initComments: function(c){
+		this.comments = new Sbi.kpi.KpiGUIComments(c);
 
 	}
 	, updateAccordion: function(field){
@@ -154,7 +160,7 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 		this.description.update(field);
 		//linked docs
 		this.docs.update(field);
-		
+		//comments
 		this.comments.update(field);
 		//historical
 		this.historical.update(field);

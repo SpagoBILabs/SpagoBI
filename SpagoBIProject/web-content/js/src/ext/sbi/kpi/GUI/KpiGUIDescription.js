@@ -67,6 +67,7 @@ Ext.extend(Sbi.kpi.KpiGUIDescription , Ext.form.FormPanel, {
 	descrDescription: null,
 	
 	initDescription: function(){
+		this.border = false;
 		this.descrName = new Ext.form.DisplayField({fieldLabel: 'Nome', 
 			style: 'padding-left:5px; font-style: italic;'});
 		this.descrDescription = new Ext.form.DisplayField({fieldLabel: 'Descrizione', 
