@@ -218,7 +218,23 @@ public class TemporaryTableManager {
 					} else {
 						throw new SpagoBIRuntimeException("Cannot find metadata for table [" + tableName + "]");
 					}
-				} else {
+				} else if (driverName.toLowerCase().contains("postgresql")) {
+					/*
+					 * HSQL and Oracle have this problem: when creating a table with name, for example, "TMPSBIQBE_biadmin", 
+					 * it creates a table with actual name "tmpsbiqbe_biadmin" (all lower case) but the getColumns method 
+					 * is case sensitive, therefore we try also with putting the table name upper case
+					 */
+					String tableNameUpperCase = tableName.toLowerCase();
+					resultSet = dbMeta.getColumns(null, null, tableNameUpperCase, null);
+					//if (resultSet.first()) {
+					if (resultSet.next()) {
+						tableDescriptor = new DataSetTableDescriptor();
+						tableDescriptor.setTableName(tableNameUpperCase);
+						readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource), dbMeta);
+					} else {
+						throw new SpagoBIRuntimeException("Cannot find metadata for table [" + tableName + "]");
+					}
+				}  else {
 					throw new SpagoBIRuntimeException("Cannot find metadata for table [" + tableName + "]");
 				}
 			}
