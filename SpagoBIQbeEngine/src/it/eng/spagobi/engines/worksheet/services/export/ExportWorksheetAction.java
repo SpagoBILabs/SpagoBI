@@ -260,18 +260,17 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 
 		HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 		
-		sheet.createRow(sheetRow);
-		sheetRow++;
+//		sheet.createRow(sheetRow);
+//		sheetRow++;
 		
 		if(sheetJ.has(WorkSheetXLSExporter.HEADER)){
 			JSONObject header = sheetJ.getJSONObject(WorkSheetXLSExporter.HEADER);
 			if(header!=null){
 				sheetRow = exporter.setHeader(sheet, header, createHelper, wb, patriarch, sheetRow);
 			}
+			sheet.createRow(sheetRow);
+			sheetRow++;
 		}	
-		
-		sheet.createRow(sheetRow);
-		sheetRow++;
 		
 		if(sheetJ.has(WorkSheetXLSExporter.CONTENT)){
 			sheetRow = fillSheetContent(wb, sheet, sheetJ,splittingWhereField, createHelper, exporter, patriarch, sheetRow);
@@ -392,18 +391,17 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 
 		XSSFDrawing patriarch = sheet.createDrawingPatriarch();
 		
-		sheet.createRow(sheetRow);
-		sheetRow++;
+//		sheet.createRow(sheetRow);
+//		sheetRow++;
 		
 		if(sheetJ.has(WorkSheetXLSExporter.HEADER)){
 			JSONObject header = sheetJ.getJSONObject(WorkSheetXLSExporter.HEADER);
 			if(header!=null){
 				sheetRow = exporter.setHeader(sheet, header, createHelper, wb, patriarch, sheetRow);
 			}
+			sheet.createRow(sheetRow);
+			sheetRow++;
 		}	
-		
-		sheet.createRow(sheetRow);
-		sheetRow++;
 		
 		if(sheetJ.has(WorkSheetXLSExporter.CONTENT)){
 			sheetRow = fillSheetContent(wb, sheet, sheetJ,splittingWhereField, createHelper, exporter, patriarch, sheetRow);
@@ -452,8 +450,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				if(calculateFields!=null){
 					calculateFieldsJSON = new JSONArray(calculateFields);
 				}
-				
-				
+
 				CrossTab cs = getCrosstab(crosstabDefinitionJSON,filters, sheetName, splittingWhereField, calculateFieldsJSON);
 				CrosstabXLSXExporterFromJavaObject expCr = new CrosstabXLSXExporterFromJavaObject();
 				sheetRow  = expCr.fillAlreadyCreatedSheet(sheet, cs, crosstabJSON, createHelper, sheetRow);

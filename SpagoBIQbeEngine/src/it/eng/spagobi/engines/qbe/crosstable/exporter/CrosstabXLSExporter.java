@@ -111,15 +111,15 @@ public class CrosstabXLSExporter {
 		int rowsNumber = data.length();
 		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
 		for (int i = 0; i < totalRowsNumber + 10; i++) {
-			sheet.createRow(i);
+			sheet.createRow(startRow+i);
 		}
 	
 		// build headers for column first ...
-		buildColumnsHeader(sheet, columnsRootChilds, startRow, rowsDepth + 4, createHelper);
+		buildColumnsHeader(sheet, columnsRootChilds, startRow, rowsDepth + 0, createHelper);
 		// ... then build headers for rows ....
-	    buildRowsHeaders(sheet, rowsRootChilds, columnsDepth + startRow, 4, createHelper);
+	    buildRowsHeaders(sheet, rowsRootChilds, columnsDepth + startRow, 0, createHelper);
 	    // then put the matrix data
-	    buildDataMatrix(sheet, data, columnsDepth + startRow, rowsDepth + 4, createHelper, measureFormatter);
+	    buildDataMatrix(sheet, data, columnsDepth + startRow, rowsDepth + 0, createHelper, measureFormatter);
 	    return startRow+totalRowsNumber;
 	}
 	
