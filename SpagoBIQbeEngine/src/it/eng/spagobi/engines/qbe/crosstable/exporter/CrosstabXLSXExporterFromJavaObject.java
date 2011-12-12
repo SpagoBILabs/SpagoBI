@@ -79,15 +79,15 @@ public class CrosstabXLSXExporterFromJavaObject {
 		int rowsNumber = cs.getDataMatrix().length;
 		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
 		for (int i = 0; i < totalRowsNumber + 5; i++) {
-			sheet.createRow(i);
+			sheet.createRow(startRow+i);
 		}
 //	
 		// build headers for column first ...
-		buildColumnsHeader(sheet, cs.getColumnsRoot().getChilds(), startRow, rowsDepth + 2, createHelper);
+		buildColumnsHeader(sheet, cs.getColumnsRoot().getChilds(), startRow, rowsDepth -1, createHelper);
 		// ... then build headers for rows ....
-	    buildRowsHeaders(sheet, cs.getRowsRoot().getChilds(), columnsDepth + startRow-1, 3, createHelper);
+	    buildRowsHeaders(sheet, cs.getRowsRoot().getChilds(), columnsDepth + startRow-1, 0, createHelper);
 	    // then put the matrix data
-	    buildDataMatrix(sheet, cs, columnsDepth + startRow-1, rowsDepth + 2, createHelper, measureFormatter);
+	    buildDataMatrix(sheet, cs, columnsDepth + startRow-1, rowsDepth -1, createHelper, measureFormatter);
 	    return startRow+totalRowsNumber;
 	}
 	
