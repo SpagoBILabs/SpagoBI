@@ -110,10 +110,15 @@ Ext.extend(Sbi.kpi.KpiGUIDocCollegato , Ext.Panel, {
 	, update:  function(field){	
 		if(this.noDocText != null){
 			this.noDocText.destroy();
+		}else{
+			this.miframe.show();
+			this.miframe.doLayout();
+			this.doLayout();
 		}
 
 		var url = this.getDocViewUrl(field);
 		if(url != null){
+			
 			this.miframe.setSrc(url);
 			this.miframe.update();
 			this.miframe.show();
