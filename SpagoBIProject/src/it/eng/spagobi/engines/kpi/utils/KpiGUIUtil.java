@@ -197,10 +197,12 @@ public class KpiGUIUtil {
 		try {
 			ModelInstanceNode node = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstId, null);
 			KpiInstance kpiInst= node.getKpiInstanceAssociated();
-			Integer kpiInstId = kpiInst.getKpiInstanceId();
-			Integer trend = DAOFactory.getKpiDAO().getKpiTrend(null, kpiInstId, value.getBeginDate());
-			row.putOpt("trend", trend);
-			toReturn = kpiInstId;
+			if(kpiInst != null){
+				Integer kpiInstId = kpiInst.getKpiInstanceId();
+				Integer trend = DAOFactory.getKpiDAO().getKpiTrend(null, kpiInstId, value.getBeginDate());
+				row.putOpt("trend", trend);
+				toReturn = kpiInstId;
+			}
 		} catch (Exception e) {
 			logger.error("Error retrieving modelinstance "+modelInstId, e);
 		}
