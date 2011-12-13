@@ -76,7 +76,7 @@ Sbi.widgets.LookupField = function(config) {
 		triggerClass: 'x-form-search-trigger'
 		, enableKeyEvents: true
 		,  width: 150
-		, 	readOnly: true
+		//, 	readOnly: true
 	});   
 	
 	// constructor
