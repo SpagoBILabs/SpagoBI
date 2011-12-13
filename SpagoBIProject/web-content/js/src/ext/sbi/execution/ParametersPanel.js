@@ -705,6 +705,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			field = new Sbi.widgets.LookupField(Ext.apply(baseConfig, {
 				  store: store
 					, params: params
+					, readOnly: true
 					, singleSelect: (p.selectionType === 'LIST')
 			}));
 			
