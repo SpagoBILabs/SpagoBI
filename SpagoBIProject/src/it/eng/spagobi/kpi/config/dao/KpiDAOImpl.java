@@ -525,7 +525,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					return null;
 				}else{
 					logger.debug(lastValue.getValue() +"  "+previousValue.getValue());
-					if(lastValue != null && previousValue != null){
+					if(lastValue != null && lastValue.getValue() != null 
+							&& previousValue != null && previousValue.getValue() != null){
 						if(Double.parseDouble(lastValue.getValue()) > Double.parseDouble(previousValue.getValue()) ){
 							toReturn = 1;
 						}else if(Double.parseDouble(lastValue.getValue()) < Double.parseDouble(previousValue.getValue()) ){
