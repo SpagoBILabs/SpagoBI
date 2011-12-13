@@ -164,7 +164,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			//read the dataset with headers
 			dataSetHeaders = null;
 			dataStoreHeaders = null;
-			if (dataSetHeadersLabel != null){				
+			if (dataSetHeadersLabel != null && !dataSetHeadersLabel.equals("")){				
 				try {
 					dataSetHeaders = getConsoleEngineInstance().getDataSetServiceProxy().getDataSetByLabel( dataSetHeadersLabel );
 				} catch(Throwable t) {

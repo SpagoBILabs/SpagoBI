@@ -182,7 +182,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 		//gets store reader metadata to retrieve dataIndex
 		var storeMetaArray = gridConsole.store.reader.meta.fields;
 		
-		var dsHeadersLabel = (gridConsole.storeLabels !== undefined)? gridConsole.storeLabels.dsLabel : "";
+		var dsHeadersLabel = (gridConsole.storeLabels !== undefined && gridConsole.storeLabels !== null)? gridConsole.storeLabels.dsLabel : "";
 		
 		var meta = this.orderMetaColumns(colModArray, storeMetaArray , columnConfigs);
 		var output = 'application/vnd.ms-excel';

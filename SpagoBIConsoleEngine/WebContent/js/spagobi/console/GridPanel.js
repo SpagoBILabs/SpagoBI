@@ -1225,6 +1225,9 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 
 		var tmpMeta = this.tempColumnModel;
 		var fields = tmpMeta.config;
+		var idxLocale = null;
+		var idxLabel = null;
+		var idxCode = null;
 		for(var i = 0, len = fields.length; i < len; i++) {
 			if (fields[i] !== undefined && fields[i].headerType !== undefined && fields[i].headerType.toUpperCase() === 'DATASETI18N'){
 		    	//-------------------------------------------------------------------------------//
@@ -1232,31 +1235,36 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		    	// This dataset should returns 3 fields: code, label, locale (it_IT, en_US, fr_FR, es_ES)
 		    	// Ex: cod_UnitSales, Unit Sales, en_US 													 
 				//-------------------------------------------------------------------------------//		
-		    	if (this.storeLabels.alias2FieldMetaMap !== undefined && this.storeLabels.alias2FieldMetaMap !==  null){
-			    	var idxLocale = (this.storeLabels.getFieldMetaByAlias("LOCALE") !== undefined)?this.storeLabels.getFieldMetaByAlias("LOCALE") :
-			    		this.storeLabels.getFieldMetaByAlias("locale");
-			    	if (idxLocale !== undefined) idxLocale = idxLocale.dataIndex;
-			    	var idxCode = (this.storeLabels.getFieldMetaByAlias("CODE") !== undefined)?this.storeLabels.getFieldMetaByAlias("CODE") :
-			    		this.storeLabels.getFieldMetaByAlias("code");
-			    	if (idxCode !== undefined) idxCode = idxCode.dataIndex;		    	
-			    	var idxLabel = (this.storeLabels.getFieldMetaByAlias("LABEL") !== undefined)?this.storeLabels.getFieldMetaByAlias("LABEL") :
-			    		this.storeLabels.getFieldMetaByAlias("label");
-			    	if (idxLabel !== undefined) idxLabel = idxLabel.dataIndex;
+		    	if (this.storeLabels.alias2FieldMetaMap !== undefined && this.storeLabels.alias2FieldMetaMap !==  null ){
+		    		if (idxLabel == null || idxLocale == null || idxCode == null){
+				    	idxLocale = (this.storeLabels.getFieldMetaByAlias("LOCALE") !== undefined)?this.storeLabels.getFieldMetaByAlias("LOCALE") :
+				    		this.storeLabels.getFieldMetaByAlias("locale");
+				    	if (idxLocale !== undefined) idxLocale = idxLocale.dataIndex;
+				    	idxCode = (this.storeLabels.getFieldMetaByAlias("CODE") !== undefined)?this.storeLabels.getFieldMetaByAlias("CODE") :
+				    		this.storeLabels.getFieldMetaByAlias("code");
+				    	if (idxCode !== undefined) idxCode = idxCode.dataIndex;		    	
+				    	idxLabel = (this.storeLabels.getFieldMetaByAlias("LABEL") !== undefined)?this.storeLabels.getFieldMetaByAlias("LABEL") :
+				    		this.storeLabels.getFieldMetaByAlias("label");
+				    	if (idxLabel !== undefined) idxLabel = idxLabel.dataIndex;
+		    		}
 		    	}
 		    	if (idxLocale == undefined || idxCode == undefined || idxLabel == undefined){
 		    		Sbi.Msg.showError(LN('sbi.console.localization.columnsKO'), 'Service Error');
 		    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 		    	}else{
 			    	//apply filter on labelsStore:
-			    	var idxRec = this.storeLabels.findBy(function(record){				    		 
+		    		
+			    	var idxRec = this.storeLabels.findBy(function(record){				    		
 			    	   if (idxLocale !== undefined && idxCode !== undefined){
 			    		  if(record.data[idxLocale] === Sbi.user.locale && 
 			    		     record.data[idxCode] === fields[i].header) {		
 	  						   return true;  						   
 	  					   }	
-			    	   } 		  		  
+			    	   } 	
 			  		   return false;				   
-			  	   }, this);		    	 
+			  	   }, this);
+			  	   
+		    		//var idxRec = this.findByLocaleAndCode(idxLocale, Sbi.user.locale, idxCode, fields[i].header);
 			    	var tmpRec = this.storeLabels.getAt(idxRec);		    	
 					if (tmpRec !== undefined) {
 						var tmpHeader =  tmpRec.get(idxLabel);
@@ -1276,5 +1284,19 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		}
 	
 		this.updateMetaStructure(tmpMeta, this.headersToHide, this.fieldsMap);
+	}
+	
+	, findByLocaleAndCode: function(idxLocale, locale, idxCode, code) {
+		for (var count = 0; count < this.storeLabels.getCount(); count++) {			
+			var aRecord = this.storeLabels.getAt(count);
+			//alert("aRecord.get(idxLocale): " + aRecord.get(idxLocale) + " - locale: " + locale);
+			//alert("aRecord.get(idxCode): " + aRecord.get(idxCode)+ " - code: " + code);
+			if (aRecord.get(idxLocale) == locale  && aRecord.get(idxCode) == code ) {
+				alert("return: " + count);
+					return count;
+			}
+		}
+		
+		return -1;
 	}
 });
