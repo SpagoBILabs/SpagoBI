@@ -24,6 +24,7 @@ public class EnginesServiceProxy extends AbstractSDKServiceProxy implements it.e
 	        Stub axisPort = (Stub) remote;
 	        axisPort._setProperty(WSHandlerConstants.USER, cch.getUsername());
 	        axisPort._setProperty(WSHandlerConstants.PW_CALLBACK_REF, cch);
+	        //axisPort.setTimeout(30000); //used in SpagoBIStudio
 	        enginesService = (it.eng.spagobi.sdk.engines.stub.EnginesService) axisPort;
 			
 	      if (enginesService != null) {

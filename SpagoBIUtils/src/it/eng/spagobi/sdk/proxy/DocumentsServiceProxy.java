@@ -52,6 +52,7 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
         Stub axisPort = (Stub) remote;
         axisPort._setProperty(WSHandlerConstants.USER, cch.getUsername());
         axisPort._setProperty(WSHandlerConstants.PW_CALLBACK_REF, cch);
+      //axisPort.setTimeout(30000); //used in SpagoBIStudio
         documentsService = (it.eng.spagobi.sdk.documents.stub.DocumentsService) axisPort;
       if (documentsService != null) {
         if (_endpoint != null)

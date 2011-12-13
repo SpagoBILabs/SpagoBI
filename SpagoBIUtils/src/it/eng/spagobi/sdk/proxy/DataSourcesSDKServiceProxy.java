@@ -39,6 +39,7 @@ public class DataSourcesSDKServiceProxy extends AbstractSDKServiceProxy implemen
 			Stub axisPort = (Stub) remote;
 			axisPort._setProperty(WSHandlerConstants.USER, cch.getUsername());
 			axisPort._setProperty(WSHandlerConstants.PW_CALLBACK_REF, cch);
+			//axisPort.setTimeout(30000); //used in SpagoBIStudio
 			dataSourcesSDKService = (it.eng.spagobi.sdk.datasources.stub.DataSourcesSDKService) axisPort;        
 			//dataSourcesSDKService = (new DataSourcesSDKServiceServiceLocator()).getDataSourcesSDKService();
 			if (dataSourcesSDKService != null) {
