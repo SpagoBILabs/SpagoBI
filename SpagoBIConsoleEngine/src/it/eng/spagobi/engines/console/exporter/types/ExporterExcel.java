@@ -1,12 +1,10 @@
-package it.eng.spagobi.engines.console.exporter;
+package it.eng.spagobi.engines.console.exporter.types;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engines.console.ConsoleEngineConfig;
-import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.engines.console.exporter.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,15 +24,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-public class Exporter {
+public class ExporterExcel extends Exporter {
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(Exporter.class);
-	
-    
-	IDataStore dataStore = null;
-	Vector extractedFields = null;
-	List<IFieldMetaData> extractedFieldsMetaData = null;
+    public static transient Logger logger = Logger.getLogger(ExporterExcel.class);
+
 	private long numberOfRows;
 
 	public long getNumberOfRows() {
@@ -45,33 +39,19 @@ public class Exporter {
 		this.numberOfRows = numberOfRows;
 	}
 
-	public List<IFieldMetaData> getExtractedFieldsMetaData() {
-		return extractedFieldsMetaData;
-	}
 
-	public void setExtractedFieldsMetaData(List<IFieldMetaData> extractedFieldsMetaData) {
-		this.extractedFieldsMetaData = extractedFieldsMetaData;
-	}
 
-	public Exporter(IDataStore dataStore) {
+	public ExporterExcel(IDataStore dataStore) {
 		super();
 		this.dataStore = dataStore;
 	}
 
-	public IDataStore getDataStore() {
-		return dataStore;
-	}
-
-	public void setDataStore(IDataStore dataStore) {
-		this.dataStore = dataStore;
-	}
-
-	public Exporter() {
+	public ExporterExcel() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Workbook exportInExcel(){
+	public Workbook export(){
 		Workbook wb = new HSSFWorkbook();
 	    CreationHelper createHelper = wb.getCreationHelper();
 	    Sheet sheet = wb.createSheet("new sheet");
@@ -267,9 +247,7 @@ public class Exporter {
 		}
 	}
 
-	public void setExtractedFields(Vector extractedFields) {
-		this.extractedFields = extractedFields;
-	}
+
 	
 }
 
