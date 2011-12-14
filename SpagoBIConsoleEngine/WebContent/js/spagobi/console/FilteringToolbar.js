@@ -120,6 +120,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 		var menuItems = new Array();
 		var types = new Array();		
 		types.push('XLS');
+		types.push('CSV');
 		//types.push('PDF'); //to be implemented
 		var menuBtn = null;
 		if(types.length != 1){
@@ -188,6 +189,9 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 		var output = 'application/vnd.ms-excel';
 		if(format == 'PDF'){
 			output = 'application/pdf';
+		}
+		if(format == 'CSV'){
+			output = 'text/csv';
 		}
 		var params = {
 			mimeType: output
