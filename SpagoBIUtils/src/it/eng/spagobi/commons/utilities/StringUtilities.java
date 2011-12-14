@@ -783,7 +783,11 @@ public class StringUtilities {
 				//try to read engine_config settings
 				nullValueString = (String)((SourceBean)EnginConf.getInstance().getConfig().getAttribute("DATA_SET_NULL_VALUE")).getCharacters();
 				if(nullValueString != null){
-					newListOfValues = "'"+nullValueString+"'";
+					if(newListOfValues.equals("''")){
+						newListOfValues = "'"+nullValueString+"'";
+					}else{
+						newListOfValues = nullValueString;
+					}
 					
 				}
 			}
