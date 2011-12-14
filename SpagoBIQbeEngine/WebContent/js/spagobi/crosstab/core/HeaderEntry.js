@@ -57,6 +57,7 @@ Ext.ns("Sbi.crosstab.core");
 
 Sbi.crosstab.core.HeaderEntry = function(config) {
 	this.backgroundImg = "../img/crosstab/headerbackground.gif";
+	this.backgroundImgTitle = "../img/crosstab/headerbackgroundtitle.gif";
 	
 	var c ={};
 	if(Sbi.settings && Sbi.settings.qbe && Sbi.settings.qbe.crossTab) {
@@ -207,7 +208,14 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 	}
 
 	,getBackground : function(height, padding){
-		return '<IMG SRC=\"'+this.backgroundImg+'\" WIDTH=\"100%\" HEIGHT=\"'+height+'\" style=\"z-index:0\"><div style= \" position:relative; z-index:6; height:'+height+'; margin-top: -'+padding+';\">'+this.name+'<div>';
+		
+		
+		var backGroundI = this.backgroundImg;
+		if(this.titleHeader){
+			backGroundI = this.backgroundImgTitle ;
+		}
+		
+		return '<IMG SRC=\"'+ backGroundI +'\" WIDTH=\"100%\" HEIGHT=\"'+height+'\" style=\"z-index:0\"><div style= \" position:relative; z-index:6; height:'+height+'; margin-top: -'+padding+';\">'+this.name+'<div>';
 	}
 
 	

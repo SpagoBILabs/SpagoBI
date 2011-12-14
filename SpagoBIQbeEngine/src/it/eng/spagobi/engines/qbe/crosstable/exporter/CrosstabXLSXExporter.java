@@ -28,11 +28,13 @@ import it.eng.spagobi.engines.worksheet.services.export.MeasureFormatter;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -107,6 +109,7 @@ public class CrosstabXLSXExporter {
 		int rowsDepth = CrosstabExporterUtility.getDepth(rowsRoot);
 		JSONArray rowsRootChilds = rowsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
 		JSONArray data = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_DATA);
+		JSONArray titles = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_ROWS_HEADER_TITLE);
 		MeasureFormatter measureFormatter = new MeasureFormatter(json, new DecimalFormat("#0.00"),"#0.00");
 		int rowsNumber = data.length();
 		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
@@ -120,6 +123,9 @@ public class CrosstabXLSXExporter {
 	    buildRowsHeaders(sheet, rowsRootChilds, columnsDepth + startRow, 0, createHelper);
 	    // then put the matrix data
 	    buildDataMatrix(sheet, data, columnsDepth + startRow, rowsDepth , createHelper, measureFormatter);
+	    
+	    buildRowHeaderTitle(sheet, titles, columnsDepth-2, 0, startRow, createHelper);
+	    
 	    return startRow+totalRowsNumber;
 	}
 	
@@ -141,6 +147,33 @@ public class CrosstabXLSXExporter {
 			sheet.createRow(i);
 		}
 		return totalRowsNumber+4;
+	}
+	
+	
+	/**
+	 * Add the title of the columns in the row headers
+	 * @param sheet
+	 * @param titles list of titles
+	 * @param columnHeadersNumber number of column headers
+	 * @param startColumn first column of the crosstab in the xls
+	 * @param startRow first row of the crosstab in the xls
+	 * @param createHelper
+	 * @throws JSONException
+	 */
+	private void buildRowHeaderTitle(Sheet sheet, JSONArray titles, int columnHeadersNumber, int startColumn, int startRow, CreationHelper createHelper) throws JSONException {
+		if(titles!=null){
+			
+			Row row = sheet.getRow(startRow+columnHeadersNumber);
+			CellStyle cellStyle = buildHeaderCellStyle(sheet);
+			for (int i = 0; i < titles.length(); i++) {
+			
+				Cell cell = row.createCell(startColumn+i);
+				String text = titles.getString(i);
+				cell.setCellValue(createHelper.createRichTextString(text));
+			    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
+			    cell.setCellStyle(cellStyle);
+			}
+		}
 	}
 
 	private int buildDataMatrix(Sheet sheet, JSONArray data, int rowOffset, int columnOffset, CreationHelper createHelper, MeasureFormatter measureFormatter) throws JSONException {
