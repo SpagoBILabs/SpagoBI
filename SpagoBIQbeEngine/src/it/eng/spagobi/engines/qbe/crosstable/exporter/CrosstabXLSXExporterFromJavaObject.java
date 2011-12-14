@@ -35,6 +35,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -88,6 +89,8 @@ public class CrosstabXLSXExporterFromJavaObject {
 	    buildRowsHeaders(sheet, cs.getRowsRoot().getChilds(), columnsDepth + startRow-1, 0, createHelper);
 	    // then put the matrix data
 	    buildDataMatrix(sheet, cs, columnsDepth + startRow-1, rowsDepth -1, createHelper, measureFormatter);
+	    
+	    buildRowHeaderTitle(sheet, cs.getRowHeadersTitles(), columnsDepth-2, 0, startRow, createHelper);
 	    return startRow+totalRowsNumber;
 	}
 	
@@ -209,6 +212,31 @@ public class CrosstabXLSXExporterFromJavaObject {
 		
 	}
 
+	/**
+	 * Add the title of the columns in the row headers
+	 * @param sheet
+	 * @param titles list of titles
+	 * @param columnHeadersNumber number of column headers
+	 * @param startColumn first column of the crosstab in the xls
+	 * @param startRow first row of the crosstab in the xls
+	 * @param createHelper
+	 * @throws JSONException
+	 */
+	private void buildRowHeaderTitle(Sheet sheet, List<String> titles, int columnHeadersNumber, int startColumn, int startRow, CreationHelper createHelper) throws JSONException {
+		if(titles!=null){
+			
+			Row row = sheet.getRow(startRow+columnHeadersNumber);
+			CellStyle cellStyle = buildHeaderCellStyle(sheet);
+			for (int i = 0; i < titles.size(); i++) {
+			
+				Cell cell = row.createCell(startColumn+i);
+				String text = titles.get(i);
+				cell.setCellValue(createHelper.createRichTextString(text));
+			    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
+			    cell.setCellStyle(cellStyle);
+			}
+		}
+	}
 
 	public CellStyle buildHeaderCellStyle(Sheet sheet){
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();

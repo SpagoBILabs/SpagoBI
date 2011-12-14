@@ -154,6 +154,8 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     ,columnHeaderPanelContainer: null //Panel with the header for the columns
     ,rowHeader: null // Array. Every entry contains an array of HeaderEntry. At position 0 there is the external headers.
     ,columnHeader: null // Array. Every entry contains an array of HeaderEntry. At position 0 there is the external headers.
+    ,emptypanelTopLeftTablePanels: null
+    ,emptypanelTopLeftTableFirstPanels: null
     ,emptypanelTopLeft: null // The top-left corner of the table
     ,datapanel: null // The panel with the table of data
     ,rowHeaderPanel:null // An array. Every entry contains a Panel wich items are the rowHeader. i.e: rowHeaderPanel[0]= new Ext.Panel(...items :  rowHeader[0]), rowHeaderPanel[1]= new Ext.Panel(...items :  rowHeader[1])
@@ -179,10 +181,8 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	,visibleMeasuresMetadataLength: null
 	,measuresNames: null
 	,measuresPosition: null
-	,rowsTotalSumArray: null
 	,columnsTotalSumArray: null
 	,superSumArray: null //array with the sum of sums (panel in the bottom right if there are the sum either in the rows either in the columns)
-
 	
 	, manageDegenerateCrosstab: function(rowHeadersDefinition, columnHeadersDefinition) {
 		if (rowHeadersDefinition.length == 1) { // degenerate crosstab (everything on columns)
@@ -452,6 +452,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     		 this.rowHeader=rowHeaderBK;
     	 }
     	 serializedCrossTab.measures = this.measuresMetadata;
+    	 
+    	 serializedCrossTab.rowHeadersTitle = this.rowHeadersTitle;
+
     	 return serializedCrossTab;
      }
      
@@ -488,9 +491,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //horizontal: true for columnHeader and false for rowHeader 
      , build : function(line, level, headers, horizontal){
 		var name = line[0];
+		var leaf = false;
 		var thisDimension;
     	if(line.length==1){
     		thisDimension = 1;
+    		leaf = true;
     	}else{
     		var t=0;
     		var items = line[1];
@@ -499,7 +504,15 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     		}
     		thisDimension =t;
     	}
-    	p = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:name, thisDimension:thisDimension, horizontal:horizontal, level:level,columnWidth: this.columnWidth});
+    	
+    	var panelConfig = {percenton: this.percenton, name:name, thisDimension:thisDimension, horizontal:horizontal, level:level,columnWidth: this.columnWidth};
+    	
+    	if(level%2==1 && horizontal && !leaf){//its a title header
+    		panelConfig.titleHeader = true;	
+    	}
+    	 
+    		
+    	p = new Sbi.crosstab.core.HeaderEntry(panelConfig);
     	this.setHeaderListener(p);
 
     	if(headers[level]==null){
@@ -1013,7 +1026,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		    });
 		    var p = new Ext.Panel(c);  
 		   	    
-		    this.createResizable(p,resizeHeandles,headersPanel, horizontal);
+		    this.createResizable(p,resizeHeandles,headersPanel, horizontal, y);
 		    headerGroup.push(p);
 
 		}
@@ -1154,17 +1167,65 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    	    this.entriesPanel = this.getEntries(true, true);
    		var rowForView = this.getRowsForView();
    		var columnsForView = this.getColumnsForView();
-   		
+
+   		//Build the panel on the top, left.
+   		//this panel is a table with this.columnHeader.length-2 empty rows
+   		//and the title of the row headers
    		if(this.emptypanelTopLeft==null){
-	   		this.emptypanelTopLeft = new Ext.Panel({
-	   			//height: (this.columnHeader.length-1)*this.rowHeight,
-	   	        //width: (this.rowHeader.length-1)*this.columnWidth,
-	   	        cellCls: 'crosstab-table-empty-top-left-panel',
-	   	        border: false,
-	   	        html: ""
-	   	    });
+   			
+   			var emptypanelTopLeftItems = new Array();
+   			
+   	    	this.emptypanelTopLeftTableFirstPanels = new Ext.Panel({ 
+	    			colspan:  (this.rowHeader.length-1), 
+	    			rowspan:  1,
+	   	            width: (this.columnWidth*(this.rowHeader.length-1)),
+	   	            height: (this.rowHeight), 
+	    			cellCls: 'crosstab-table-empty-bottom-left-panel',
+	   	            border: false,
+	   	            html:"&nbsp; "
+	   	        });
+   				
+   	    	emptypanelTopLeftItems.push(this.emptypanelTopLeftTableFirstPanels);
+   	    	
+   	    	for(var col = 0; col<this.columnHeader.length-3; col++){
+   	    		emptypanelTopLeftItems.push(new Ext.Panel({ 
+   	    			colspan:  (this.rowHeader.length-1), 
+   	    			rowspan:  1,
+   	   	            width: (this.columnWidth*(this.rowHeader.length-1)),
+   	   	            height: (this.rowHeight), 
+   	    			cellCls: 'crosstab-table-empty-bottom-left-panel',
+   	   	            border: false,
+   	   	            html:"&nbsp; "
+   	   	        }));
+   	    	}
+
+   	    	this.emptypanelTopLeftTablePanels = new Array();
+   	    	
+   	    	for(var col = 0; col<this.rowHeader.length-1; col++){
+
+   	    		this.emptypanelTopLeftTablePanels.push(new Sbi.crosstab.core.HeaderEntry({name:this.rowHeadersTitle[col], thisDimension:1, horizontal:false, level:1, columnWidth: this.columnWidth, titleHeader: true}));
+   	    		if(col==0){
+   	    			this.emptypanelTopLeftTablePanels[0].cellCls = ' crosstab-table-empty-top-left-panel-leftmostcell ';
+   	    		}else{
+   	    			this.emptypanelTopLeftTablePanels[col].cellCls = ' crosstab-table-empty-top-left-panel-bottomcells ';
+   	    		}
+
+   	    		emptypanelTopLeftItems.push(this.emptypanelTopLeftTablePanels[col]);
+   	    	}
+   	    	
+   			this.emptypanelTopLeft = new Ext.Panel({  
+   	            layout:'table',
+   	            border: false,
+   	            cellCls: 'crosstab-table-empty-top-left',
+   	            layoutConfig: {
+   	                columns: (this.rowHeader.length-1),
+   	                rows:  (this.columnHeader.length-1)
+   	            },
+   	            items: emptypanelTopLeftItems
+   	        });
    		} 	
    		
+
    		if(this.withRowsSum && this.emptypanelTopRight==null){
 	   		this.emptypanelTopRight = new Ext.Panel({
 	   			//height: (this.columnHeader.length-1)*this.rowHeight,
@@ -1476,35 +1537,42 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		
     	
     	for(headerPosition=0; headerPosition<this.columnHeader[this.columnHeader.length-1].length; headerPosition++){
-    	var columnHeaderLeaf = this.columnHeader[this.columnHeader.length-1][headerPosition];
-    	
-    	columnHeaderLeaf.on('render', function() {
-			var resizer = new Ext.Resizable(this.id, {
-			    handles: "e",
-			    pinned: iePinned
-			});
-			resizer.on('resize', function(resizable, width, height, event) {
-				var columnWidth = width;
-				thisPanel.columnWidth = columnWidth;
-				thisPanel.reloadHeadersAndTable();
-			}, this);
-		}, columnHeaderLeaf);
+	    	var columnHeaderLeaf = this.columnHeader[this.columnHeader.length-1][headerPosition];
+	    	
+	    	columnHeaderLeaf.on('render', function() {
+				var resizer = new Ext.Resizable(this.id, {
+				    handles: "e",
+				    pinned: iePinned
+				});
+				resizer.on('resize', function(resizable, width, height, event ) {
+					var columnWidth = width;
+					thisPanel.columnWidth = columnWidth;
+					thisPanel.reloadHeadersAndTable();
+				}, this);
+			}, columnHeaderLeaf);
     	}
     }
     
-	, createResizable: function(aPanel, heandles, items, horizontal) {
+	, createResizable: function(aPanel, heandles, items, horizontal, headerLineIndex) {
 		
     	var iePinned = false;
     	if(Ext.isIE){
     		iePinned = true;
     	}
-		
+		var thisPanel = this;
 		aPanel.on('render', function() {
 			var resizer = new Ext.Resizable(this.id, {
 			    handles: heandles,
 			    pinned: iePinned
 			});
 			resizer.on('resize', function(resizable, width, height, event) {
+				//add the row names at the row header headers 
+				if(!horizontal){
+					(thisPanel.emptypanelTopLeftTablePanels[headerLineIndex-1]).updateStaticDimension(width);	
+				}else{
+					var originalH = thisPanel.emptypanelTopLeftTableFirstPanels.getHeight();
+					thisPanel.emptypanelTopLeftTableFirstPanels.setHeight(originalH + (height - items[0].height));
+				}
 				
 				for(var i=0; i<items.length; i++){
 					if(horizontal){
@@ -1653,7 +1721,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     }
     
     // Returns an array with the lower and upper bounds of a header:
-    // The lower bound is the id(position of the leaf inside the header[header.lenght-1] array) of the firs leaf, the upper is the id of the last one
+    // The lower bound is the id(position of the leaf inside the header[header.length-1] array) of the firs leaf, the upper is the id of the last one
 //    , getHeaderBounds: function(header, horizontal, level){
 //    	var headers;
 //    	var bounds = new Array();
@@ -1688,7 +1756,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 //    } 
     
     // Returns an array with the lower and upper bounds of a header:
-    // The lower bound is the id(position of the leaf inside the header[header.lenght-1] array) of the firs leaf, the upper is the id of the last one
+    // The lower bound is the id(position of the leaf inside the header[header.length-1] array) of the firs leaf, the upper is the id of the last one
     , getHeaderBounds: function(header, horizontal, level){
     	var headers;
     	var bounds = new Array();

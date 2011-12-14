@@ -22,6 +22,7 @@
 package it.eng.spagobi.engines.qbe.crosstable;
 
 import groovy.util.Eval;
+import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -61,10 +62,13 @@ public class CrossTab {
 	public static final String CROSSTAB_NODE_JSON_KEY = "node_key";
 	public static final String CROSSTAB_NODE_JSON_CHILDS = "node_childs";
 	public static final String CROSSTAB_JSON_ROWS_HEADERS = "rows";
+	public static final String CROSSTAB_JSON_ROWS_HEADERS_DESCRIPTION = "rows_description";
 	public static final String CROSSTAB_JSON_COLUMNS_HEADERS = "columns";
 	public static final String CROSSTAB_JSON_DATA = "data";
 	public static final String CROSSTAB_JSON_CONFIG = "config";
 	public static final String CROSSTAB_JSON_MEASURES_METADATA = "measures_metadata";
+	public static final String CROSSTAB_JSON_ROWS_HEADER_TITLE = "rowHeadersTitle";
+	
 	
 	public static final String MEASURE_NAME = "name";
 	public static final String MEASURE_TYPE = "type";
@@ -80,6 +84,8 @@ public class CrossTab {
 	String[][] dataMatrix;
 	private JSONObject config;
 	private List<MeasureInfo> measures;
+	private  CrosstabDefinition crosstabDefinition;
+	private  List<String> rowHeadersTitles;
 	//private boolean measuresOnRow;
 	
 	public enum CellType {DATA, CF, SUBTOTAL, TOTAL }
@@ -119,6 +125,7 @@ public class CrossTab {
 		String rowPath;
 		String columnPath;
 		this.config = crosstabDefinition.getConfig();
+		this.crosstabDefinition = crosstabDefinition;
 		int cellLimit = crosstabDefinition.getCellLimit();
 		boolean columnsOverflow = false; //true if the number of cell shown in the crosstab is less than the total number of cells
 		boolean measuresOnColumns = crosstabDefinition.isMeasuresOnColumns();
@@ -223,6 +230,29 @@ public class CrossTab {
 		
 	}
 	
+	private <T extends Attribute> void addHeaderTitles(List<T> lines, int linesIndex, Node node){
+		if(linesIndex<lines.size()){
+			Node descriptionNode = new Node(lines.get(linesIndex).getAlias());
+			linesIndex++;
+			List<Node> children = node.getChilds();
+			List<Node> newchildren = new ArrayList<Node>();
+			newchildren.add(descriptionNode);
+			for (int i = 0; i < children.size(); i++) {
+				descriptionNode.addChild(node.getChilds().get(i));
+				addHeaderTitles(lines,linesIndex , node.getChilds().get(i));
+			}
+			node.setChilds(newchildren);
+		}	
+	}
+	
+	private <T extends Attribute> JSONArray getHeaderDescriptions(List<T> lines){
+		JSONArray descriptions = new JSONArray();
+		for (int i = 0; i < lines.size(); i++) {
+			descriptions.put(lines.get(i).getAlias());
+		}
+		return descriptions;
+	}
+	
 
 	/**
 	 * Get the JSON representation of the cross tab  
@@ -233,7 +263,16 @@ public class CrossTab {
 		JSONObject crossTabDefinition = new JSONObject();
 		crossTabDefinition.put(CROSSTAB_JSON_MEASURES_METADATA, getJSONMeasuresMetadata());
 		crossTabDefinition.put(CROSSTAB_JSON_ROWS_HEADERS, rowsRoot.toJSONObject());
-		crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRoot.toJSONObject());
+		
+		JSONArray descriptions = getHeaderDescriptions( crosstabDefinition.getRows());
+		crossTabDefinition.put(CROSSTAB_JSON_ROWS_HEADERS_DESCRIPTION, descriptions);
+		
+		//add the headers in the columns
+		List<CrosstabDefinition.Column> columns =  crosstabDefinition.getColumns();
+		Node columnsRootWithHeaders = columnsRoot.clone();
+		addHeaderTitles(columns, 0, columnsRootWithHeaders);
+
+		crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRootWithHeaders.toJSONObject());
 		crossTabDefinition.put(CROSSTAB_JSON_DATA,  getJSONDataMatrix());
 		crossTabDefinition.put(CROSSTAB_JSON_CONFIG,  config);
 		return crossTabDefinition;
@@ -1124,6 +1163,17 @@ public class CrossTab {
 
 	public String[][] getDataMatrix() {
 		return dataMatrix;
+	}
+
+	public List<String> getRowHeadersTitles() {
+		if(rowHeadersTitles==null){
+			rowHeadersTitles = new ArrayList<String>();
+			List<CrosstabDefinition.Row> rows =  crosstabDefinition.getRows();
+			for(int i=0; i<rows.size(); i++){
+				rowHeadersTitles.add(rows.get(i).getAlias());
+			}
+		}
+		return rowHeadersTitles;
 	}
 	
 	

@@ -107,6 +107,7 @@ public class CrosstabXLSExporter {
 		int rowsDepth = CrosstabExporterUtility.getDepth(rowsRoot);
 		JSONArray rowsRootChilds = rowsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
 		JSONArray data = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_DATA);
+		JSONArray titles = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_ROWS_HEADER_TITLE);
 		MeasureFormatter measureFormatter = new MeasureFormatter(json, new DecimalFormat("#0.00"),"#0.00");
 		int rowsNumber = data.length();
 		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
@@ -120,6 +121,8 @@ public class CrosstabXLSExporter {
 	    buildRowsHeaders(sheet, rowsRootChilds, columnsDepth + startRow, 0, createHelper);
 	    // then put the matrix data
 	    buildDataMatrix(sheet, data, columnsDepth + startRow, rowsDepth + 0, createHelper, measureFormatter);
+	    
+	    buildRowHeaderTitle(sheet, titles, columnsDepth-2, 0, startRow, createHelper);
 	    return startRow+totalRowsNumber;
 	}
 	
@@ -340,6 +343,33 @@ public class CrosstabXLSExporter {
 		    }
 		    int increment = descendants > 1 ? descendants : 1;
 		    columnCounter = columnCounter + increment;
+		}
+	}
+
+	
+	/**
+	 * Add the title of the columns in the row headers
+	 * @param sheet
+	 * @param titles list of titles
+	 * @param columnHeadersNumber number of column headers
+	 * @param startColumn first column of the crosstab in the xls
+	 * @param startRow first row of the crosstab in the xls
+	 * @param createHelper
+	 * @throws JSONException
+	 */
+	private void buildRowHeaderTitle(Sheet sheet, JSONArray titles, int columnHeadersNumber, int startColumn, int startRow, CreationHelper createHelper) throws JSONException {
+		if(titles!=null){
+			
+			Row row = sheet.getRow(startRow+columnHeadersNumber);
+			CellStyle cellStyle = buildHeaderCellStyle(sheet);
+			for (int i = 0; i < titles.length(); i++) {
+			
+				Cell cell = row.createCell(startColumn+i);
+				String text = titles.getString(i);
+				cell.setCellValue(createHelper.createRichTextString(text));
+			    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
+			    cell.setCellStyle(cellStyle);
+			}
 		}
 	}
 

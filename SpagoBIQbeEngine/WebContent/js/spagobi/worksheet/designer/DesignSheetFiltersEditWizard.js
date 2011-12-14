@@ -72,7 +72,7 @@ Sbi.worksheet.designer.DesignSheetFiltersEditWizard = function(config) {
 };
 
 Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersEditWizard, Ext.Window, {
-	detailsFormPanel: null //the form panel
+	detailsFormPanel: null, //the form panel
 	splittingFilterCheckboxGroup: null,
 	splittingFilterCheckbox: null,
 	splittingFilterLabel: null,
