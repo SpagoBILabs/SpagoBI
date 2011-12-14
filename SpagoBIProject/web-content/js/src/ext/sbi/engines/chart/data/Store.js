@@ -80,7 +80,8 @@ Sbi.engines.chart.data.Store = function(config) {
 						var strParams = {};
 						var elem = pars[i];
 						for(e in elem) {
-							strParams[e] = elem[e];							
+							//strParams[e] = elem[e];
+							strParams[e] = encodeURIComponent(elem[e]);							
 							separator = ',';
 						}
 						arParams.push(strParams);
