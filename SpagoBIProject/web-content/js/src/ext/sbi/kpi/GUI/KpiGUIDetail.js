@@ -178,8 +178,8 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			},this);
 		}else{
 			var x = this.calculateInnerThrChart(field);
-			this.chartPanel.setHeight(260);
-			var html = '<div style="float: left; margin-left:20px; text-align:center; background-color:'+field.attributes.status+'; height=260px; width: 250px;"><img height="255px" width="250" src="../themes/other_theme/img/'+this.customChartName+'_'+x+'.png"></img></div>'
+			this.chartPanel.setHeight(180);
+			var html = '<div style="float: left; margin-left:20px; text-align:center; background-color:'+field.attributes.status+'; height=180px; width: 200px;"><img src="../themes/other_theme/img/'+this.customChartName+'_'+x+'.png"></img></div>'
 			+ '<div style="margin-top: 30px; float: left; background-color:white; width: 100px; padding-left:5px; font-style: italic; font-weight: bold;"> Valore: '+val+'</div>';
 			this.chartPanel.update(html);
 			this.doLayout();
