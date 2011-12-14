@@ -100,7 +100,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	        defaultType: 'fieldset',
 	        items: []
 	    });
-		if(Ext.isIE){
+		if(Ext.isIE && this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null'){
 			this.threshFields.style = 'margin-top: 150px;';
 
 		}
