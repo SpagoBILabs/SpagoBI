@@ -305,40 +305,42 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			   }
 			 }, this);
 		   
-		     this.on('validateedit', function(e) {
-		    	   var t = this.visibleColumns[e.column].type;
-				   var st = this.visibleColumns[e.column].subtype;
+		   this.on('validateedit', function(e) {
+	    	   var t = this.visibleColumns[e.column].type;
+			   var st = this.visibleColumns[e.column].subtype;
 
-				   if(t === 'float'){
-						   var dottedVal = e.value.replace(',', '.');
-						   var f = parseFloat(dottedVal);
-						   if(isNaN(f)){
-							   e.cancel = true;
-							   Ext.MessageBox.show({
-									title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
-									msg : LN('sbi.registry.registryeditorgridpanel.validation'),
-									buttons : Ext.MessageBox.OK,
-									width : 300,
-									icon : Ext.MessageBox.INFO
-								}); 
-						   }
-				   }
-	
-					   if(t === 'int'){
-						   var f = parseInt(e.value);
-						   if(isNaN(f)){
-							   e.cancel = true;
-							   Ext.MessageBox.show({
-									title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
-									msg : LN('sbi.registry.registryeditorgridpanel.validation'),
-									buttons : Ext.MessageBox.OK,
-									width : 300,
-									icon : Ext.MessageBox.INFO
-								}); 
-						   }
+			   if(t === 'float'){
+					   var dottedVal = e.value.replace(',', '.');
+					   var isfloat = isFloat(dottedVal);
+
+					   if(!isfloat){
+						   e.cancel = true;
+						   Ext.MessageBox.show({
+								title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
+								msg : LN('sbi.registry.registryeditorgridpanel.validation'),
+								buttons : Ext.MessageBox.OK,
+								width : 300,
+								icon : Ext.MessageBox.INFO
+							}); 
 					   }
+			   }
 
-			 }, this);
+			   if(t === 'int'){
+				   var isInt = isUnsignedInteger(e.value);
+
+				   if(!isInt){
+					   e.cancel = true;
+					   Ext.MessageBox.show({
+							title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
+							msg : LN('sbi.registry.registryeditorgridpanel.validation'),
+							buttons : Ext.MessageBox.OK,
+							width : 300,
+							icon : Ext.MessageBox.INFO
+						}); 
+				   }
+			   }
+
+		 }, this);
 
 		}, this);
 
@@ -690,3 +692,9 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	}
 	
 });
+function isUnsignedInteger(s) {
+	  return (s.search(/^[0-9]+$/) == 0);
+}
+function isFloat(s){
+	return (s.search(/^[0-9]*[.][0-9]+$/) == 0);
+}
