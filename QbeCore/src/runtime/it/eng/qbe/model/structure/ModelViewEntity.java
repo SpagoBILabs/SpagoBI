@@ -23,6 +23,7 @@ package it.eng.qbe.model.structure;
 
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewJoinDescriptor;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewRelationshipDescriptor;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
@@ -33,8 +34,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-
-import junit.framework.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -91,7 +90,7 @@ public class ModelViewEntity extends ModelEntity {
 					for(IModelField field : fields) {
 						str = field.getUniqueName() + ";  ";
 					}
-					Assert.assertNotNull("Impossible to find source field [" + fieldUniqueName + "]. Valid filed name are [" + str + "]", f);
+					Assert.assertNotNull(f, "Impossible to find source field [" + fieldUniqueName + "]. Valid filed name are [" + str + "]");
 				}
 				
 				sourceFields.add(f);
@@ -101,7 +100,7 @@ public class ModelViewEntity extends ModelEntity {
 			for(String fieldName : joinDescriptor.getDestinationColumns()) {
 				String fieldUniqueName = getFieldUniqueName(destinationEntity, fieldName);
 				IModelField f = destinationEntity.getField(fieldUniqueName);
-				Assert.assertNotNull("Impossible to find destination field [" + fieldUniqueName + "]", f);
+				Assert.assertNotNull(f, "Impossible to find destination field [" + fieldUniqueName + "]");
 				destinationFields.add(f);
 			}
 			
@@ -168,7 +167,7 @@ public class ModelViewEntity extends ModelEntity {
 							for(IModelField field : fields) {
 								str = field.getUniqueName() + ";  ";
 							}
-							Assert.assertNotNull("Impossible to find source field [" + fieldUniqueName + "]. Valid filed name are [" + str + "]", f);
+							Assert.assertNotNull(f, "Impossible to find source field [" + fieldUniqueName + "]. Valid filed name are [" + str + "]");
 						}
 						
 						sourceFields.add(f);
@@ -216,7 +215,7 @@ public class ModelViewEntity extends ModelEntity {
 							for(IModelField field : fields) {
 								str = field.getUniqueName() + ";  ";
 							}
-							Assert.assertNotNull("Impossible to find destination field [" + fieldUniqueName + "]. Valid filed name are [" + str + "]", f);
+							Assert.assertNotNull(f, "Impossible to find destination field [" + fieldUniqueName + "]. Valid filed name are [" + str + "]");
 						}
 						destinationFields.add(f);
 					}

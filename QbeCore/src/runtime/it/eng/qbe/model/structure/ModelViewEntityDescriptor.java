@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -72,7 +72,7 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 
 	public String getName() {
 		String name = viewJSON.optString("name");
-		Assert.assertNotNull("View name cannot be null", name);
+		Assert.assertNotNull(name, "View name cannot be null");
 		return name;
 	}
 
