@@ -70,6 +70,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	boolean isQueryValidationEnabled;
 	boolean isQueryValidationBlocking;
 	int timeout;
+	int crosstabCellLimit;
 	String spagobiServerHost;
 	String spagobiContext;
 	String spagobiSpagoController;
@@ -97,6 +98,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
     isQueryValidationEnabled = qbeEngineConfig.isQueryValidationEnabled();
     isQueryValidationBlocking = qbeEngineConfig.isQueryValidationBlocking();
     timeout = qbeEngineConfig.getQueryExecutionTimeout();
+    crosstabCellLimit = qbeEngineConfig.getCrosstabCellLimit();
     
     spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
     spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
@@ -146,6 +148,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			Sbi.config.queryValidation.isEnabled = <%= isQueryValidationEnabled %>;
 			Sbi.config.queryValidation.isBlocking = <%= isQueryValidationBlocking %>;
 			Sbi.config.queryExecutionTimeout = <%= timeout %>;
+			Sbi.config.crosstabCellLimit = <%= crosstabCellLimit %>;
 			
 			var url = {
 		    	host: '<%= request.getServerName()%>'
