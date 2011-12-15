@@ -1216,7 +1216,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    			this.emptypanelTopLeft = new Ext.Panel({  
    	            layout:'table',
    	            border: false,
-   	            cellCls: 'crosstab-table-empty-top-left',
    	            layoutConfig: {
    	                columns: (this.rowHeader.length-1),
    	                rows:  (this.columnHeader.length-1)
