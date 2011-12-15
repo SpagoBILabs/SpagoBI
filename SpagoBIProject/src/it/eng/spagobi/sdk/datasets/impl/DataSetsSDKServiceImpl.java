@@ -230,6 +230,8 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			
 		} catch(Exception e) {
 			logger.error("Error while saving dataset", e);
+			return null;
+			// TODO: throw an exception when error rises
 		}
 		logger.debug("OUT");
 		return toReturn;
