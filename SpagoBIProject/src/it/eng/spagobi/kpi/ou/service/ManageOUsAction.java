@@ -21,17 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.kpi.ou.service;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -51,9 +41,15 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ManageOUsAction extends AbstractSpagoBIAction {
@@ -285,7 +281,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	 * Load the list of grants and serialize them in a JSOMObject. The list live in the attributes with name rows
 	 */
 	private void getGrantsList(){
-		List<OrganizationalUnitGrant> grants = DAOFactory.getOrganizationalUnitDAO().getGrantsList();
+		List<OrganizationalUnitGrant> grants = orUnitDao.getGrantsList();
 	
 		try {
 			JSONArray grantsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize( grants, null);
@@ -424,18 +420,22 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 				logger.debug("modified grant");
 				grantNodes = deserializeOrganizationalUnitGrantNodesAndUpdateChilds(grantNodesJSON, grant);
 				logger.debug("modify grant");
-			}else{
+			} else {
 				logger.debug("insert");
 				orUnitDao.insertGrant(grant);
-				//first time save all
 				logger.debug("inserted grant");
+				// reload the grant in order to have its id
+				grant = orUnitDao.loadGrantByLabel(grant.getLabel());
+				//first time save all
 				grantNodes = getAllNodesToInsert(grant);
 			}
 			grant.setIsAvailable(true);
 			logger.debug("prepared nodes to save of size:"+grantNodes.size());
 			orUnitDao.insertNodeGrants(grantNodes, grant.getId());
 			logger.debug("end saving process");
-			writeBackToClient( new JSONAcknowledge() );
+			JSONObject response = new JSONObject();
+			response.put("id", grant.getId());
+			writeBackToClient( new JSONSuccess( response ) );
 		} catch (IOException e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client", e);
 		} catch (Exception e) {
@@ -459,6 +459,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 		}
 		return allnodestosave;
 	}
+	
 	private List<OrganizationalUnitGrantNode> buildGrantNodesForAll(OrganizationalUnitNode ouNode, List<ModelInstanceNode> miNodes,  OrganizationalUnitGrant grant) throws EMFUserError{
 		List<OrganizationalUnitGrantNode> nodes = new ArrayList<OrganizationalUnitGrantNode>();
 		OrganizationalUnitGrantNode childNode;
@@ -475,26 +476,31 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	}
 	/**
 	 * Deserialize a OrganizationalUnitGrant object
-	 * @param JSONGrant the JSON representation of the OrganizationalUnitGrant object
+	 * @param jsonGrant the JSON representation of the OrganizationalUnitGrant object
 	 * @return the OrganizationalUnitGrant
 	 * @throws Exception
 	 */
-	private OrganizationalUnitGrant deserializeOrganizationalUnitGrant(JSONObject JSONGrant) throws Exception{
+	private OrganizationalUnitGrant deserializeOrganizationalUnitGrant(JSONObject jsonGrant) throws Exception{
 		OrganizationalUnitGrant organizationalUnitGrant = new OrganizationalUnitGrant();
-		organizationalUnitGrant.setDescription(JSONGrant.getString("description"));
+		organizationalUnitGrant.setDescription(jsonGrant.getString("description"));
 		
-        SingletonConfig config = SingletonConfig.getInstance();
-        String format = config.getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
+//        ConfigSingleton config = ConfigSingleton.getInstance();
+//        SourceBean formatSB = (SourceBean) config.getAttribute("SPAGOBI.DATE-FORMAT-SERVER");
+//	    String format = (String) formatSB.getAttribute("format");
+		String format = "dd/MM/yyyy";
 	    
-		organizationalUnitGrant.setEndDate(toDate(JSONGrant.getString("enddate"), format));
-		organizationalUnitGrant.setStartDate(toDate(JSONGrant.getString("startdate"), format));
-		organizationalUnitGrant.setLabel(JSONGrant.getString("label"));
-		organizationalUnitGrant.setName(JSONGrant.getString("name"));
-		try{
-			organizationalUnitGrant.setId(JSONGrant.getInt("id"));
-		}catch(JSONException e){}
-		int hierarchyId = JSONGrant.getInt("hierarchy");
-		int modelInstanceId = JSONGrant.getInt("modelinstance");
+		organizationalUnitGrant.setEndDate(toDate(jsonGrant.getString("enddate"), format));
+		organizationalUnitGrant.setStartDate(toDate(jsonGrant.getString("startdate"), format));
+		organizationalUnitGrant.setLabel(jsonGrant.getString("label"));
+		organizationalUnitGrant.setName(jsonGrant.getString("name"));
+		int id = jsonGrant.optInt("id", -1);
+		logger.debug("Grant id = " + id);
+		if (id != -1) {
+			logger.debug("Grant id not found");
+			organizationalUnitGrant.setId(id);
+		}
+		int hierarchyId = jsonGrant.getJSONObject("hierarchy").getInt("id");
+		int modelInstanceId = jsonGrant.getJSONObject("modelinstance").getInt("modelInstId");
 		ModelInstance modelInstance = DAOFactory.getModelInstanceDAO().loadModelInstanceWithChildrenById(modelInstanceId);
 		OrganizationalUnitHierarchy organizationalUnitHierarchy = orUnitDao.getHierarchy(hierarchyId);
 		organizationalUnitGrant.setModelInstance(modelInstance);
@@ -763,10 +769,12 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 		}
 		return nodes;
 	}
+	
+	
 	public Date toDate(String dateStr, String format) throws Exception {
 		SimpleDateFormat dateFormat = new SimpleDateFormat();
 		Date date = null;
-		dateFormat.applyPattern("yyyy-MM-dd");
+		dateFormat.applyPattern(format);
 		dateFormat.setLenient(false);
 		date = dateFormat.parse(dateStr);
 		return date;

@@ -92,8 +92,7 @@ Sbi.kpi.ManageOUGrants = function(config, ref) {
 			, baseParams: paramsOUInsert
 	});	
 
-	this.addEvents();
-	
+	this.addEvents('changeOU_KPI', 'saved', 'formchange');
 
 	this.initConfigObject();
 
@@ -310,7 +309,8 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			allowBlank: false,
 			//validationEvent:true,
 			name: 'label'
-		});	  
+		});
+		this.detailFieldLabel.on('change', this.formChangeHandler, this);
 	
 		this.detailFieldName = new Ext.form.TextField({
 			maxLength:100,
@@ -320,6 +320,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			//validationEvent:true,
 			name: 'name'
 		});
+		this.detailFieldName.on('change', this.formChangeHandler, this);
 	
 	
 		this.detailFieldDescr = new Ext.form.TextArea({
@@ -331,6 +332,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			name: 'description',
 			allowBlank: false
 		});
+		this.detailFieldDescr.on('change', this.formChangeHandler, this);
 	
 		this.detailFieldFrom = new Ext.form.DateField({
 			id: 'from',
@@ -339,6 +341,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			format: 'd/m/Y',
 			allowBlank: false
 		});
+		this.detailFieldFrom.on('change', this.formChangeHandler, this);
 	
 		this.detailFieldTo = new Ext.form.DateField({
 			id: 'to',
@@ -347,6 +350,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			format: 'd/m/Y',
 			allowBlank: false
 		});
+		this.detailFieldTo.on('change', this.formChangeHandler, this);
 	
 		var baseConfig = {drawFilterToolbar:false}; 
 	
@@ -380,6 +384,10 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			                              }
 			                              ])
 		}));
+		/*
+		 * This does not work!!!
+		 * this.detailFieldOUHierarchy.on('change', this.formChangeHandler, this);
+		 */
 	
 		var kpiInstStore = new Ext.data.JsonStore({
 			root: 'rows',
@@ -409,6 +417,11 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			                              }
 			                              ])
 		}));
+		/*
+		 * This does not work!!!
+		 * this.detailFieldKpiHierarchy.on('change', this.formChangeHandler, this);
+		 */
+		
 	
 		var tbSave2 = new Ext.Toolbar( {
 			buttonAlign : 'right',
@@ -756,7 +769,8 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		if(this.detailsForm.getForm().isValid()){
 			var thisPanel = this;
 			var grantNodes = Ext.encode(this.getAllNodesWithAbilitation(this.leftTree.getRootNode()));
-			var grant =  Ext.encode(this.getGrantFormValues());
+			var grantFormState = this.getGrantFormValues();
+			var grant =  Ext.encode(grantFormState);
 			this.showMask();
 			
 			Ext.Ajax.request({
@@ -765,9 +779,12 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				method: 'POST',
 				timeout: 1200000,
 				success: function(response, options) {
-					if (response !== undefined) {
+					if (response !== undefined && response.responseText !== undefined) {
+						var temp = Ext.util.JSON.decode( response.responseText );
+						var newGrantId = temp.id;
+						var oldGrantId = grantFormState.id;
 						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
-						thisPanel.fireEvent('saved');
+						thisPanel.fireEvent('saved', newGrantId, oldGrantId);
 					} else {
 						Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
 					}
@@ -851,11 +868,19 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		var grant = {
 				label: this.detailFieldLabel.getValue(), 
 				name: this.detailFieldName.getValue(),  
-				description: this.detailFieldDescr.getValue(),
-				startdate: this.detailFieldFrom.getValue(), 
-				enddate: this.detailFieldTo.getValue(), 
-				hierarchy: this.detailFieldOUHierarchy.getValue(),
-				modelinstance: this.detailFieldKpiHierarchy.getValue(),
+				description: this.detailFieldDescr.getRawValue(),
+				startdate: this.detailFieldFrom.getRawValue(), 
+				enddate: this.detailFieldTo.getRawValue(), 
+				hierarchy: 
+					{
+					 'id' : this.detailFieldOUHierarchy.getValue()
+					 , 'name' : this.detailFieldOUHierarchy.getRawValue()
+					},
+				modelinstance: 
+					{
+					 'modelInstId' : this.detailFieldKpiHierarchy.getValue()
+					 , 'modelText' : this.detailFieldKpiHierarchy.getRawValue()
+					},
 				id: this.selectedGrantId
 		};
 		return grant;
@@ -1136,6 +1161,12 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		}
 		return list;
 	}
+	
+	, formChangeHandler :  function ( field, newValue, oldValue) {
+		var formState = this.getGrantFormValues();
+		this.fireEvent('formchange', this, formState);
+	}
+	
 });
 
 

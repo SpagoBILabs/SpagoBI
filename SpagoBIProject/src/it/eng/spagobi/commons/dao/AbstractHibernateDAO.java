@@ -102,4 +102,13 @@ public class AbstractHibernateDAO {
 			aSession.close();
 		}
 	}
+	
+	public void commitIfActiveAndClose(Transaction tx, Session aSession) {
+		if (tx != null && tx.isActive()) {
+			tx.commit();
+		}
+		if (aSession != null && aSession.isOpen()) {
+			aSession.close();
+		}
+	}
 }
