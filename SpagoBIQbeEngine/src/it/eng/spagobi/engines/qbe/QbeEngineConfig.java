@@ -277,4 +277,14 @@ public class QbeEngineConfig {
 		logger.debug("Returning " + timeout);
 		return timeout;
 	}
+	
+	public int getCrosstabCellLimit() {
+		int cellLimit = 0;
+		try {
+			cellLimit = new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) ;
+		} catch (Exception e) {
+			logger.debug("No cell limit has been defined in the qbe.xml");
+		}
+		return cellLimit;
+	}
 }

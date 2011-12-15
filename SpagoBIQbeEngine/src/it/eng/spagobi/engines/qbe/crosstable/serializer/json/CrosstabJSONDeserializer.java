@@ -78,9 +78,16 @@ public class CrosstabJSONDeserializer implements IDeserializer {
 				// config (measures on rows/columns, totals/subototals on rows/columns) remains a JSONObject 
 				JSONObject config = crosstabDefinitionJSON.optJSONObject(CrosstabSerializationConstants.CONFIG);
 				crosstabDefinition.setConfig(config);
-				Integer maxCells= config.optInt("maxcellnumber");
-				if (maxCells!=null){
-					crosstabDefinition.setCellLimit(maxCells);
+				
+				String maxCellsString= config.optString("maxcellnumber");
+				
+				if (maxCellsString!=null && !maxCellsString.equals("")){
+					try {
+						crosstabDefinition.setCellLimit(new Integer(maxCellsString));
+					} catch (Exception e) {
+						logger.error("The cell limit of the crosstab definition is not a number : "+maxCellsString+". We consier it 0");
+					}
+					
 				}
 				
 				JSONArray calculatedFields = crosstabDefinitionJSON.optJSONArray(CrosstabSerializationConstants.CALCULATED_FIELDS);
