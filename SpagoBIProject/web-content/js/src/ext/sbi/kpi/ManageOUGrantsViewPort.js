@@ -114,7 +114,7 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 	viewport: null,
 	lastRecSelected: null
 
-	,initPanels : function() {
+	, initPanels : function() {
 		
 		this.manageOUGrantsGrid.addListener('rowclick', this.sendSelectedItem, this);	
 		this.manageOUGrantsGrid.addListener('copytree', this.copyModelTree,  this);	
@@ -162,7 +162,7 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 		this.ManageOUGrants.setDisabled(true);
 	}
 
-	,sendSelectedItem: function(grid, rowIndex, e){
+	, sendSelectedItem: function(grid, rowIndex, e){
 		
 		// Workaround (work-around): this is needed in order to synchronize grid with the grant detail form
 		// since the 'change' event is not raised from LookupField

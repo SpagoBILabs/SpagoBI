@@ -783,6 +783,8 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 						var temp = Ext.util.JSON.decode( response.responseText );
 						var newGrantId = temp.id;
 						var oldGrantId = grantFormState.id;
+						// update grant id in this form
+						thisPanel.selectedGrantId = newGrantId;
 						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
 						thisPanel.fireEvent('saved', newGrantId, oldGrantId);
 					} else {
