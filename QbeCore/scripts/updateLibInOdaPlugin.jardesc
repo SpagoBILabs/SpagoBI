@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
-    <jar path="it.eng.spagobi.meta.oda/libs/qbecore/spagobi-qbecore-3.0.jar"/>
+    <jar path="it.eng.spagobi.meta.queryengine/libs/qbecore/spagobi-qbecore-3.0.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/QbeCore/scripts/updateLibInOdaPlugin.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
