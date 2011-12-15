@@ -76,26 +76,24 @@ Sbi.kpi.ManageOUGrantsViewPort = function(config) {
 	});
 	//DRAW center element
 	this.ManageOUGrants = new Sbi.kpi.ManageOUGrants(conf, this);
-	this.ManageOUGrants.addEvents('changeOU_KPI');
-	this.ManageOUGrants.addEvents('saved');
 	this.ManageOUGrants.on('changeOU_KPI',function(kpi,ou){this.displayTree(kpi,ou);},this);
+	this.ManageOUGrants.on('formchange', this.updateGrid, this);
 
 
 	this.manageOUGrantsGrid = new Sbi.kpi.ManageOUGrantsGrid(conf, this);
 
-	this.ManageOUGrants.on('saved',function(){
-		this.manageOUGrantsGrid.mainElementsStore.reload(); 
-		this.manageOUGrantsGrid.getView().refresh();
-		this.manageOUGrantsGrid.getView().on('refresh', function(){	
-			var n = this.manageOUGrantsGrid.getStore().getCount();
-			var rec = this.manageOUGrantsGrid.rowselModel.getSelected();
-			if(rec == undefined){
-				this.manageOUGrantsGrid.getView().focusRow(n - 1);
-				this.manageOUGrantsGrid.rowselModel.selectLastRow();
+	this.ManageOUGrants.on('saved', function(newGrantId, oldGrantId) {
+		// retrieve the record modified using its old id (remember that new grant have id = -1)
+		var recordIndex = this.manageOUGrantsGrid.getStore().findExact('id', oldGrantId);
+		if (recordIndex != -1) {
+			var rec = this.manageOUGrantsGrid.getStore().getAt(recordIndex);
+			// update the grant id (in case of a new record)
+			if (newGrantId != oldGrantId) {
+				rec.set('id', newGrantId);
 			}
-			this.manageOUGrantsGrid.fireEvent('rowclick');
-			}, this);
-	},this);
+			rec.commit();
+		}
+	}, this);
 
 	conf.readonlyStrict = true;
 	conf.dropToItem = 'kpinameField';
@@ -165,8 +163,13 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 	}
 
 	,sendSelectedItem: function(grid, rowIndex, e){
-		this.manageOUGrantsGrid.getStore().reload();
-		this.manageOUGrantsGrid.getView().refresh();
+		
+		// Workaround (work-around): this is needed in order to synchronize grid with the grant detail form
+		// since the 'change' event is not raised from LookupField
+		this.updateGrid(this.ManageOUGrants, this.ManageOUGrants.getGrantFormValues());
+		
+		//this.manageOUGrantsGrid.getStore().reload();
+		//this.manageOUGrantsGrid.getView().refresh();
 		this.ManageOUGrants.setDisabled(false);
 		var rec = this.manageOUGrantsGrid.rowselModel.getSelected();
 		if(rec.data.isAvailable == false){
@@ -180,7 +183,7 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 			Ext.fly(cell).highlight('FF0000',{attr:'color', duration:10 }); 
 			Ext.fly(cell1).highlight('00FF00',{attr:'color', duration:10 }); 
 			return;
-	 }
+		}
 
 		this.ManageOUGrants.detailFieldLabel.setValue(rec.data.label);
 		this.ManageOUGrants.detailFieldName.setValue(rec.data.name);
@@ -223,6 +226,14 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 		var newroot2 = this.ManageOUGrants.createRootNodeByRec(rec);
 		this.ManageOUGrants.leftTree.setRootNode(newroot2);
 		return newroot2;
+	}
+	
+	, updateGrid : function (ouDetailPanel, formState) {
+		var recordIndex = this.manageOUGrantsGrid.getStore().findExact('id', formState.id);
+		if (recordIndex != -1) {
+			var rec = this.manageOUGrantsGrid.getStore().getAt(recordIndex);
+			this.manageOUGrantsGrid.updateRecord(rec, formState);
+		}
 	}
 
 });

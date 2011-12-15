@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public interface IOrganizationalUnitDAO extends ISpagoBIDao{
+public interface IOrganizationalUnitDAO extends ISpagoBIDao {
 
 	/**
 	 * @return the list of OU
@@ -88,6 +88,9 @@ public interface IOrganizationalUnitDAO extends ISpagoBIDao{
 	 */
 	public void modifyHierarchy(OrganizationalUnitHierarchy h);
 	
+	
+	public boolean isInAHierarchy(OrganizationalUnit ou);
+	
 	/**
 	 * @return the root node for a single hierarchy
 	 */
@@ -135,6 +138,16 @@ public interface IOrganizationalUnitDAO extends ISpagoBIDao{
 	 * @return the list of grants for a single node of a hierarchy (i.e. association between a KPI model instance node and a OU hierarchy node)
 	 */
 	public List<OrganizationalUnitGrantNode> getNodeGrants(Integer nodeId, Integer grantId);
+	
+	/**
+	 * @return true if the input node has a grant 
+	 */
+	public boolean hasGrants(OrganizationalUnitNode node);
+	
+	/**
+	 * @return true if the input hierarchy has a grant 
+	 */
+	public boolean hasGrants(OrganizationalUnitHierarchy h);
 	
 	/**
 	 * Inserts a list of grant nodes (a grant node is an association between a hierarchy node and a KPI model instance node 
@@ -199,6 +212,14 @@ public interface IOrganizationalUnitDAO extends ISpagoBIDao{
 	 * @return the grant with grantId
 	 */
 	public OrganizationalUnitGrant getGrant(Integer grantId);
+	
+	
+	/**
+	 * Retrieves the grant by its label
+	 * @param label the label of the grant
+	 * @return the grant
+	 */
+	public OrganizationalUnitGrant loadGrantByLabel(String label);
 	
 	/**
 	 * Retrieves the grants associated the KPI model instance node identified by the input integer,

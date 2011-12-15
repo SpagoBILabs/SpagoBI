@@ -127,9 +127,8 @@ Ext.extend(Sbi.kpi.ManageOUGrantsGrid, Sbi.widgets.ListGridPanel, {
 	
 	, deleteSelectedItem: function(itemId) {
 		var deleteRow = this.rowselModel.getSelected();
-		if(deleteRow.data.id.length==0){
+		if(deleteRow.data.id == -1){
 			this.mainElementsStore.remove(deleteRow);
-			this.mainElementsStore.commitChanges();
 			if(this.mainElementsStore.getCount()>0){
 				this.rowselModel.selectRow(0);
 			}else{
@@ -191,8 +190,17 @@ Ext.extend(Sbi.kpi.ManageOUGrantsGrid, Sbi.widgets.ListGridPanel, {
 	}
 	
 	, addNewItem : function(){
+		// if a new grant exists, but it was not saved yet, do not create a new item, but focus on the new grant
+		var newRecordIndex = this.mainElementsStore.findExact('id', -1);
+		if (newRecordIndex != -1) {
+			this.rowselModel.selectRow(newRecordIndex);
+			var rec = this.mainElementsStore.getAt(newRecordIndex);
+			this.fireEvent('rowclick', rec, this);
+			return;
+		}
+		
 		var record = {
-				id:'', 
+				id:-1, 
 				label: '', 
 				name:'',
 				description:'',
@@ -212,16 +220,36 @@ Ext.extend(Sbi.kpi.ManageOUGrantsGrid, Sbi.widgets.ListGridPanel, {
 		Ext.Ajax.request({
 			url: this.configurationObject.synchronizeOUsService
 			, success: function(response, options) {
-				Ext.MessageBox.show({
-					title: LN('sbi.grants.synchronize.ous.performed.title')
-					, msg: LN('sbi.grants.synchronize.ous.performed.msg')
-					, icon: Ext.MessageBox.INFO
-					, buttons: Ext.MessageBox.OK
-				});
+				if ( response !== undefined && response.responseText !== undefined) {
+					var content = Ext.util.JSON.decode( response.responseText );
+					if (content.message == '') {
+						Ext.MessageBox.show({
+							title: LN('sbi.grants.synchronize.ous.performed.title')
+							, msg: LN('sbi.grants.synchronize.ous.performed.msg')
+							, icon: Ext.MessageBox.INFO
+							, buttons: Ext.MessageBox.OK
+						});
+					} else {
+						Sbi.exception.ExceptionHandler.showWarningMessage(content.message, LN('sbi.grants.synchronize.ous.performed.title'));
+					}
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
 			}
-		, scope: this
-		, failure: Sbi.exception.ExceptionHandler.handleFailure      
+			, scope: this
+			, failure: Sbi.exception.ExceptionHandler.handleFailure      
 		});
 	}
 
+	, updateRecord : function (record, newData) {
+		record.set('id', newData.id);
+		record.set('label', newData.label);
+		record.set('name', newData.name);
+		record.set('description', newData.description);
+		record.set('startdate', newData.startdate);
+		record.set('enddate', newData.enddate);
+		record.set('hierarchy', newData.hierarchy);
+		record.set('modelinstance', newData.modelinstance);
+	}
+	
 });
