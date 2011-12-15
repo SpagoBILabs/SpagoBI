@@ -83,6 +83,11 @@ Ext.extend(Sbi.crosstab.CrosstabDetailsWizard, Ext.Window, {
 		var checkboxTotalRows = new Ext.form.Checkbox({boxLabel: LN('sbi.crosstab.crosstabdetailswizard.calculatetotalsonrows'), name: 'calculatetotalsonrows'});
 		var checkboxTotalColumns = new Ext.form.Checkbox({boxLabel: LN('sbi.crosstab.crosstabdetailswizard.calculatetotalsoncolumns'), name: 'calculatetotalsoncolumns'});
 		
+		var crosstabCellLimit = Sbi.config.crosstabCellLimit;
+		if(crosstabCellLimit==null || crosstabCellLimit==undefined){
+			crosstabCellLimit=0;
+		}
+		
 		this.crosstabDetailsForm = new Ext.form.FormPanel({
 			frame: true
 			, labelWidth : 150
@@ -130,6 +135,7 @@ Ext.extend(Sbi.crosstab.CrosstabDetailsWizard, Ext.Window, {
 		            xtype: 'field'
 		            , name: 'maxcellnumber' 
 		            , fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.maxcellnumber')
+		            , value: crosstabCellLimit
 	            }
 			]
 			, buttons: [{

@@ -51,6 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	boolean isMaxResultLimitBlocking = false;
 	boolean isQueryValidationEnabled = false;
 	boolean isQueryValidationBlocking = false;
+	int crosstabCellLimit=0;
 	
 	ResponseContainer responseContainer = ResponseContainerAccess.getResponseContainer(request);
 	SourceBean serviceResponse = responseContainer.getServiceResponse();
@@ -65,6 +66,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		isMaxResultLimitBlocking = qbeEngineConfig.isMaxResultLimitBlocking();
 		isQueryValidationEnabled = qbeEngineConfig.isQueryValidationEnabled();
 		isQueryValidationBlocking = qbeEngineConfig.isQueryValidationBlocking();
+		crosstabCellLimit = qbeEngineConfig.getCrosstabCellLimit();
 	}
 	
 
@@ -97,6 +99,7 @@ end DOCTYPE declaration --%>
 
     	Sbi.config = {}; 
     	Sbi.config.worksheetVersion = <%= WorkSheetDefinition.CURRENT_VERSION %>;
+    	Sbi.config.crosstabCellLimit = <%= crosstabCellLimit %>;
     	
     	var url = {
 		    	host: '<%= request.getServerName()%>'
