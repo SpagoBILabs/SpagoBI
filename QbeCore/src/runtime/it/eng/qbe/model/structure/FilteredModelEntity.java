@@ -108,10 +108,25 @@ public class FilteredModelEntity implements IModelEntity{
 		return wrappedModelEntity.addKeyField(fieldName);
 	}
 
-	public IModelField getField(String fieldName) {
+	public IModelField getField(String fieldUniqueName) {
 		List<IModelField> list = new ArrayList<IModelField>();
 		List<IModelField> filteredList;
-		IModelField field = wrappedModelEntity.getField(fieldName);
+		IModelField field = wrappedModelEntity.getField(fieldUniqueName);
+		if(field==null){
+			return null;
+		}
+		list.add(field);
+		filteredList = qbeTreeFilter.filterFields(dataSource,list);
+		if(filteredList==null || filteredList.size()==0){
+			return null;
+		}
+		return filteredList.get(0);
+	}
+	
+	public IModelField getFieldByName(String fieldName) {
+		List<IModelField> list = new ArrayList<IModelField>();
+		List<IModelField> filteredList;
+		IModelField field = wrappedModelEntity.getFieldByName(fieldName);
 		if(field==null){
 			return null;
 		}

@@ -151,8 +151,22 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity{
 	
 	
 	
-	public IModelField getField(String fieldName) {
-		return (IModelField)fields.get(fieldName);
+	public IModelField getField(String fieldUniqueName) {
+		return (IModelField)fields.get(fieldUniqueName);
+	}
+	
+	public IModelField getFieldByName(String fieldName) {
+		IModelField field = null;
+		String key = null;
+		for(Iterator<String> it = fields.keySet().iterator(); it.hasNext(); ) {
+			key = (String)it.next();
+			IModelField f = (IModelField)fields.get(key);
+			if(f.getName().equals(fieldName)) {
+				field = f;
+				break;
+			}
+		}
+		return field;
 	}
 	
 	public void addCalculatedField(ModelCalculatedField calculatedField) {
