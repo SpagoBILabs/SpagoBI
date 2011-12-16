@@ -117,7 +117,7 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 			);
 		var col = {header:'Model Instance',
 		dataIndex:'name',
-		width:200};
+		width:250};
 		kpiColumns.push(col);
 		
 		var col1 = {header:'Actual',
@@ -127,7 +127,7 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 		
 		var col2 = {header:'Target',
 		dataIndex:'target',
-		width: 70};
+		width: 100};
 		kpiColumns.push(col2);
 		
 		var col3 = {header:'Status',

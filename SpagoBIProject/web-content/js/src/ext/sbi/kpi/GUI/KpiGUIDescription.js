@@ -68,27 +68,28 @@ Ext.extend(Sbi.kpi.KpiGUIDescription , Ext.form.FormPanel, {
 	
 	initDescription: function(){
 		this.border = false;
-		this.descrName = new Ext.form.DisplayField({fieldLabel: 'Nome', 
-			style: 'padding-left:5px; font-style: italic;'});
-		this.descrDescription = new Ext.form.DisplayField({fieldLabel: 'Descrizione', 
-			style: 'padding-left:5px; font-style: italic;'});
-		this.descrCode = new Ext.form.DisplayField({fieldLabel: 'Codice', 
-			style: 'padding-left:5px; font-style: italic;'});
+		this.descrName = new Ext.form.TextField({fieldLabel: 'Nome', 
+			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
+		this.descrDescription = new Ext.form.TextField({fieldLabel: 'Descrizione', 
+			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
+		this.descrCode = new Ext.form.TextField({fieldLabel: 'Codice', 
+			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
 		
-		this.descrDsLbl = new Ext.form.DisplayField({fieldLabel: 'Label Dataset', 
-			style: 'padding-left:5px; font-style: italic;'});
-		this.descrTypeCd = new Ext.form.DisplayField({fieldLabel: 'Codice Tipo', 
-			style: 'padding-left:5px; font-style: italic;'});
-		this.measureTypeCd = new Ext.form.DisplayField({fieldLabel: 'Misura', 
-			style: 'padding-left:5px; font-style: italic;'});
-		this.scaleName = new Ext.form.DisplayField({fieldLabel: 'Scala', 
-			style: 'padding-left:5px; font-style: italic;'});
-		this.targetAudience = new Ext.form.DisplayField({fieldLabel: 'Target Audience', 
-			style: 'padding-left:5px; font-style: italic;'});
+		this.descrDsLbl = new Ext.form.TextField({fieldLabel: 'Label Dataset', 
+			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
+		this.descrTypeCd = new Ext.form.TextField({fieldLabel: 'Codice Tipo', 
+			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
+		this.measureTypeCd = new Ext.form.TextField({fieldLabel: 'Misura', 
+			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
+		this.scaleName = new Ext.form.TextField({fieldLabel: 'Scala', 
+			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
+		this.targetAudience = new Ext.form.TextField({fieldLabel: 'Target Audience', 
+			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
 		this.descrFields = new Ext.form.FieldSet({
 	        xtype:'fieldset',
 	        border: false,
-	        defaultType: 'displayfield',
+	        defaultType: 'textfield',
+	        style: 'margin-top: 10px;',
 	        items: [this.descrName, 
 	                 this.descrCode,
 		             this.descrDescription,		             

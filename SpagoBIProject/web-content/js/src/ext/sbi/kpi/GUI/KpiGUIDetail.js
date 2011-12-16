@@ -76,6 +76,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	customChartName: null,
 	//custom chart
 	selectedThr: null,
+	val: null,
 	
 	initDetail: function(){	
 		this.chartid = Ext.id();
@@ -83,28 +84,44 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		this.defaultType= 'label';
 		this.style= 'padding-left:10px;';
 		this.border=false;
+		this.layout='column';
 		
 		
 		this.chartPanel = new Ext.Panel({
 			id: this.chartid,
-			border: false,
+			border: true,
 			html: '&nbsp;',
+			columnWidth: .55,
 			height: 5
+			, items: []
 		});
-
+		this.detailFields = new Ext.form.FieldSet({
+	        xtype:'fieldset',
+	        border: false,
+	        columnWidth: .4,
+	        width:300,
+	        style: 'padding: 5px; margin-top: 30px;',
+	        defaultType: 'displayfield',
+	        items: []
+	    });
 		this.threshFields = new Ext.form.FieldSet({
 	        // Fieldset thresholds
 	        xtype:'fieldset',
 	        border: false,
-	        width:350,
+	        //width:350,
+	        columnWidth: .95,
 	        defaultType: 'fieldset',
+	        style: 'padding: 5px;',
 	        items: []
 	    });
-		if(Ext.isIE && this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null'){
-			this.threshFields.style = 'margin-top: 150px;';
 
+		if(Ext.isIE && (this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null')){
+			this.threshFields.style = 'margin-top: 150px; padding: 5px; padding-right: 50px;';
+		}else{
+			this.threshFields.style = 'margin-top: 10px; padding: 5px; padding-right: 50px;';
 		}
-		this.items =[this.chartPanel, this.threshFields];
+
+		this.items =[this.chartPanel, this.detailFields, this.threshFields];
 		
 	}
 	, calculateMax: function(threshold){
@@ -122,7 +139,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			this.dial = drawDial({
 			    renderTo: this.chartid,
 			    value: value,
-			    centerX: 150,
+			    centerX: 135,
 			    centerY: 130,
 			    min: 0,
 			    max: this.maxChartValue,
@@ -157,13 +174,13 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			this.threshFields.removeAll();
 		}
 		if(this.valueItem != null){
-			this.remove(this.valueItem);
+			this.detailFields.remove(this.valueItem);
 		}
 		if(this.weightItem != null){
-			this.remove(this.weightItem);
+			this.detailFields.remove(this.weightItem);
 		}
 		if(this.targetItem != null){
-			this.remove(this.targetItem);
+			this.detailFields.remove(this.targetItem);
 		}
 		this.maxChartValue =0;
 		this.ranges = new Array();
@@ -171,26 +188,30 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	, update:  function(field){
 
 		//chart
-		var val = field.attributes.actual;
+		this.val = field.attributes.actual;
+		if(this.val !== null && this.val !== undefined){
+			this.threshFields.addClass( 'rounded-box' ) ;
+			this.detailFields.addClass( 'rounded-box' ) ;
+		}else{
+			this.threshFields.removeClass( 'rounded-box' ) ;
+			this.detailFields.removeClass( 'rounded-box' ) ;
+		}
+
 		if(this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null'){
 			this.on('afterlayout',function(){
-				this.drawChart(val);
+				this.drawChart(this.val);
 			},this);
 		}else{
 			var x = this.calculateInnerThrChart(field);
 			this.chartPanel.setHeight(180);
 			var html = '<div style="float: left; margin-left:20px; text-align:center; background-color:'+field.attributes.status+'; height=180px; width: 200px;"><img src="../themes/other_theme/img/'+this.customChartName+'_'+x+'.png"></img></div>'
-			+ '<div style="margin-top: 30px; float: left; background-color:white; width: 100px; padding-left:5px; font-style: italic; font-weight: bold;"> Valore: '+val+'</div>';
+			+ '<div style="margin-top: 30px; float: left; background-color:white; width: 100px; padding-left:5px; font-style: italic; font-weight: bold;"> Valore: '+this.val+'</div>';
 			this.chartPanel.update(html);
 			this.doLayout();
 		}
 		
 		this.cleanPanel();
-		//value
-		this.valueItem = new Ext.form.DisplayField({fieldLabel: 'Valore', 
-													value: val, 
-													style: 'padding-left:5px; font-style: italic; font-weight: bold;'});
-		this.add(this.valueItem );
+
 		
 		//thresholds
 
@@ -216,7 +237,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 				
 				
 				var thr = thrArray[i];	
-				var colorBox = new Ext.form.DisplayField({value: thr.color, 
+				var colorBox = new Ext.form.DisplayField({value: '&nbsp;', 
 															columnWidth:0.3,
 															style: 'background-color:'+thr.color});
 				
@@ -233,19 +254,26 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			}
 			this.threshFields.doLayout();
 		}
-
+		//value
+		this.valueItem = new Ext.form.DisplayField({fieldLabel: 'Valore', 
+													value: this.val, 
+													style: 'padding-left:5px; font-style: italic; font-weight: bold;'});
+		this.detailFields.add(this.valueItem );
 		//weight
 		var weight = field.attributes.weight;
 		this.weightItem = new Ext.form.DisplayField({fieldLabel: 'Peso',
 													style: 'margin-left:5px;',
 													value: weight});
-		this.add(this.weightItem );
+		this.detailFields.add(this.weightItem );
 		//target
 		var target = field.attributes.target;
 		this.targetItem = new Ext.form.DisplayField({fieldLabel: 'Target', 
 													style: 'padding-left:5px;',
 													value: target});
-		this.add(this.targetItem );
+		this.detailFields.add(this.targetItem );
+		
+
+		
 		this.doLayout();
         this.render();
 	}
