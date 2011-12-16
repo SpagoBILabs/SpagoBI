@@ -958,6 +958,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             plain       : false,
             modal		: true,
             scope		: this,
+            constrain   : true,
+            constrainHeader : true,
             y			: 20,
             items       : [this.manageKpiLinksWin]
 		});

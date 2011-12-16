@@ -311,6 +311,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
             modal		: true,
             plain       : true,
             scope		: this,
+            constrain   : true,
+            constrainHeader : true,
             items       : [managePeriodicities]
 		});
 		
@@ -338,6 +340,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
             closeAction :'close',
             plain       : true,
             scope		: this,
+            constrain   : true,
+            constrainHeader : true,
             items       : [manageThresholds]
 		});
 		manageThresholds.on('selectEvent', function(itemId ,index, code){

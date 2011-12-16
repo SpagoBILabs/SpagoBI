@@ -206,6 +206,8 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
             modal 		: true,
             plain       : true,
             scope		: this,
+            constrain   : true,
+            constrainHeader : true,
             items       : [manageModels]
 		});
 		
