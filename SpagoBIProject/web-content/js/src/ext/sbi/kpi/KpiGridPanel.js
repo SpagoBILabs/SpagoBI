@@ -158,7 +158,7 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	    		}catch(error){
 	    			var canvasEl = new Ext.Element(canvas);
 	    			canvasEl.setHeight(0);
-	    			Ext.DomHelper.insertHtml('beforeBegin', canvas, '<div width="10px" height="10px" style="display:inline; border: 1px solid black; background-color:'+status.color+'">&nbsp;&nbsp;&nbsp;</div>' )
+	    			Ext.DomHelper.insertHtml('beforeBegin', canvas, '<div width="15px" height="10px" style="display:inline; border: 1px solid black; background-color:'+status.color+'">&nbsp;&nbsp;&nbsp;&nbsp;</div>' )
 	    		
 	    		}
 	    	}
