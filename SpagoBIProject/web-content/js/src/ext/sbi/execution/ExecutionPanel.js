@@ -239,6 +239,7 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 			width: 500,
 			height: 300,	           	
 			closable: true,
+			constrain: true,
 			resizable: true, 
 			minimizable :false,
 			maximizable : false,
