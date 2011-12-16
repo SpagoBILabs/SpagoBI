@@ -81,6 +81,7 @@ Sbi.console.WaitWindow = function(config) {
 	c = Ext.apply(c, {  	
 		layout: 'fit',
 		closeAction:'hide',
+		constrain: true,
 		plain: true,
 		modal:true,
 		title: this.title,
