@@ -52,6 +52,7 @@ Sbi.qbe.QueryBuilderPanel = function(config) {
 		title: LN('sbi.qbe.queryeditor.title'),
 		frame: false, 
 		border: false,
+		collapseQueryCataloguePanel: true,
 		enableTreeContextMenu: true,
 		enableTreeToolbar: true,
 		enableTreeTbSaveBtn: true,
@@ -635,7 +636,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	        collapsible: true,
 	        //collapseMode: 'mini',
 	        collapseFirst: false,
-	        collapsed: false,
+	        collapsed: this.collapseQueryCataloguePanel,
 	        split: true,
 	        tools:[
 		        {
