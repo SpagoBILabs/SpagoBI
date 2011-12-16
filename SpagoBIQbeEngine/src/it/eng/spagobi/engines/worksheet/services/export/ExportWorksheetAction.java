@@ -590,10 +590,20 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	}
 	
 	public List<WhereField> getSplittingFieldValues(JSONObject optionalFilters, String sheetName) throws JSONException{
-		String[] fields = JSONObject.getNames(optionalFilters);
 		
 		
+		String[] fields = new String[0];
 		List<WhereField> splittingWhereFields = new ArrayList<WhereField>();
+		
+		try {
+			if(optionalFilters!=null){
+				fields = JSONObject.getNames(optionalFilters);
+			}
+			
+		} catch (Exception e) {
+			logger.error("Error loading the splitting filters from the string "+optionalFilters);
+		}
+
 		
 		for (String field : fields) {
 			if(optionalFilters.getString(field).equals(SPLITTING_FILTER)){
