@@ -231,8 +231,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 
 		if(aRow.data.splittingFilter=='on'){
 			//the filter is a splitting filter
-			this.splittingFilterAlias=aRow.data.alias;
-			this.splittingFilterId=aRow.data.id;
+			this.splittingFilter=aRow;
 		}
 		
 		var newRow = this.addFilterIntoStore(aRow.data);
@@ -356,7 +355,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 			this.empty = true;
 		}
 		
-		if(aRow.data.id==this.splittingFilterId){
+		if(aRow.data.id==this.splittingFilter.data.id){
 			//the filter is a splitting filter
 			this.splittingFilter=null;
 		}
