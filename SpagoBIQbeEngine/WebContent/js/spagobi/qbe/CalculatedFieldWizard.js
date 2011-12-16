@@ -35,7 +35,8 @@ Sbi.qbe.CalculatedFieldWizard = function(config) {
 		title: 'Expression wizard ...'
 		, width: 600
 		, height: 300
-		, hasBuddy: false		
+		, hasBuddy: false	
+		, constrainHeader : true
 	});
 
 	Ext.apply(this, c);
