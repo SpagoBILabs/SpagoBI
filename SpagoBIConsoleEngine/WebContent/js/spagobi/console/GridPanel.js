@@ -120,7 +120,7 @@ Sbi.console.GridPanel = function(config) {
 		Sbi.console.GridPanel.superclass.constructor.call(this, c);
 		
 		this.addEvents('lock');
-		this.addEvents('unlock');	
+		this.addEvents('unlock');
 		
 };
 
@@ -146,6 +146,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	// popup dataset label postfix (the complete name is given by <table_dataset_label><postfix> ie: 'testConsoleErrors')
 	, errorDs: 'Errors'
 	, alarmDs: 'Alarms'
+	, loadMask: null
 	
 	// configuration bloks
 	, filterBar: null
@@ -177,7 +178,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
     //  -- public methods ---------------------------------------------------------
     
     
-	, resolveParameters: function(parameters, record, context, callback) {
+	, resolveParameters: function(parameters, record, context, callback) {		
 		
 		if (parameters == undefined) return;
 		
@@ -245,11 +246,12 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
       			}, this);
       	}
       	else {
-      		callback.call (this, results);	  
+      		callback.call (this, results);      		
       	}
 	}
 	
-	, execCrossNav: function(actionName, record, index, options){		
+	, execCrossNav: function(actionName, record, index, options){	
+		this.showMask();
 		var msg = {
 			label: options.document.label
 	    	, windowName: this.name	||  parent.name // parent.name is used in document composition context			
@@ -271,10 +273,10 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			}else{
 				sendMessage(msg, 'crossnavigation');
 			}
+			this.hideMask.defer(2000, this);
 		};
 		
 		this.resolveParameters(options.document, record, this.executionContext, callback);
-		
 	}
 
 	
@@ -1299,4 +1301,26 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		
 		return -1;
 	}
+	
+
+	
+	/**
+	 * Opens the loading mask 
+	 */
+    , showMask : function(){
+    	this.un('afterlayout',this.showMask,this);
+    	if (this.loadMask == null) {    		
+    		this.loadMask = new Ext.LoadMask('GridPanel', {msg: "Loading.."});
+    	}
+    	this.loadMask.show();
+    }
+
+	/**
+	 * Closes the loading mask
+	*/
+	, hideMask: function() {
+    	if (this.loadMask != null) {	
+    		this.loadMask.hide();
+    	}
+	} 
 });
