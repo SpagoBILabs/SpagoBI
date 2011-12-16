@@ -98,6 +98,7 @@ Sbi.console.DownloadLogsWindow = function(config) {
 		layout: 'fit'
 	//,	closeAction:'hide'
 	,	closeAction:'close'
+	,	constrain: true
 	,	plain: true
 	,	modal:true
 	,	title: this.title
