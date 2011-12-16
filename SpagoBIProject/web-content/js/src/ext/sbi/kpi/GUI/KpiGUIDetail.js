@@ -84,23 +84,21 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		this.defaultType= 'label';
 		this.style= 'padding-left:10px;';
 		this.border=false;
-		this.layout='column';
-		
-		
+
 		this.chartPanel = new Ext.Panel({
 			id: this.chartid,
-			border: true,
+			border: false,
 			html: '&nbsp;',
-			columnWidth: .55,
+			width: 300,
+			style: 'float:left; margin-bottom: 10px;',
 			height: 5
 			, items: []
 		});
 		this.detailFields = new Ext.form.FieldSet({
 	        xtype:'fieldset',
 	        border: false,
-	        columnWidth: .4,
-	        width:300,
-	        style: 'padding: 5px; margin-top: 30px;',
+	        width:200,
+	        style: 'padding: 5px; margin-top: 30px;float:left;',
 	        defaultType: 'displayfield',
 	        items: []
 	    });
@@ -108,10 +106,9 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	        // Fieldset thresholds
 	        xtype:'fieldset',
 	        border: false,
-	        //width:350,
-	        columnWidth: .95,
+	        width:450,
 	        defaultType: 'fieldset',
-	        style: 'padding: 5px;',
+	        style: 'padding: 5px;float:left;',
 	        items: []
 	    });
 
