@@ -111,7 +111,7 @@ public class ExporterCSV extends Exporter {
 	public void fillData(CSVDocument csvDoc) {	
 		logger.debug("IN");
 
-		int rownum = 1;
+		int rownum = 0;
 
 		long rowsNumber = (int)dataStore.getRecordsCount();
 
