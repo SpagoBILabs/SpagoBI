@@ -31,7 +31,8 @@ public interface IModelEntity extends IModelNode {
 		public String getRole();
 		
 		public List<IModelField> getAllFields();
-		public IModelField getField(String fieldName);
+		public IModelField getField(String fieldUniqueName);
+		public IModelField getFieldByName(String fieldName);
 		public List<IModelField> getFieldsByType(boolean isKey);
 		public List<IModelField> getKeyFields() ;
 		public Iterator<IModelField> getKeyFieldIterator();
