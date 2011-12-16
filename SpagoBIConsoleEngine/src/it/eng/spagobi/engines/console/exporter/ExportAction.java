@@ -177,6 +177,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 				}
 				Assert.assertNotNull(dataSet, "Impossible to find a dataset whose label is [" + dataSetHeadersLabel + "]");
 				Map params = getConsoleEngineInstance().getAnalyticalDrivers();
+				params.put(LOCALE, locale);
 				dataSetHeaders.setParamsMap(params);
 				dataSetHeaders.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
 				dataSetHeaders.loadData();
@@ -220,7 +221,9 @@ public class ExportAction extends AbstractConsoleEngineAction {
 							int fieldValsize = ((List)dataStore.getFieldValues(posHeader)).size();
 							if(fieldValsize != 0){
 								fieldHeader =((List)dataStore.getFieldValues(posHeader)).get(0).toString();
-							}							
+							}else{
+								fieldHeader = null;
+							}						
 						}else if (fieldHeaderType.equalsIgnoreCase("datasetI18N") && dataStoreHeaders != null){
 							//gets the header value from the specific dataset (only with labels: code - label - locale) 
 							int headersFieldNo = dataStoreHeaders.getMetaData().getFieldCount();
@@ -269,19 +272,20 @@ public class ExportAction extends AbstractConsoleEngineAction {
 							 */
 							logger.debug("Export headers by locale file doesn't supported yet!");
 						}
-
-						Field headerF = new Field(fieldHeader, "java.lang.String", 100);
-						extractedFields.add(headerF);
-						for(int i = 0; i < fieldNo; i++) {
-							IFieldMetaData fFound = dataStore.getMetaData().getFieldMeta(i);
-							if(fFound.getName().equals(key)){
-								fFound.setProperty("visible", Boolean.TRUE);
-								fFound.setAlias(fieldHeader);
-								fFound.setProperty("index", k);							
-								extractedFieldsMetaData.add(fFound);
-								break;
+						if (fieldHeader != null){
+							Field headerF = new Field(fieldHeader, "java.lang.String", 100);
+							extractedFields.add(headerF);
+							for(int i = 0; i < fieldNo; i++) {
+								IFieldMetaData fFound = dataStore.getMetaData().getFieldMeta(i);
+								if(fFound.getName().equals(key)){
+									fFound.setProperty("visible", Boolean.TRUE);
+									fFound.setAlias(fieldHeader);
+									fFound.setProperty("index", k);							
+									extractedFieldsMetaData.add(fFound);
+									break;
+								}
+	
 							}
-
 						}
 
 					}
