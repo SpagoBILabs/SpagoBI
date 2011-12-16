@@ -72,7 +72,7 @@ Sbi.kpi.KpiGUIComments =  function(config) {
 	    	, id : 'id'		
 	        , fields: ['owner'
          	          , 'creationDate'
-          	          , 'lastModificationDate'
+          	          //, 'lastModificationDate'
           	          , 'comment'
           	          ]
 	    	, root: 'comments'
@@ -119,19 +119,24 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 	        },
 	        columns: [{
 	            header: 'Owner',       
-	            dataIndex: 'owner'
+	            dataIndex: 'owner',
+	            tooltip : 'Ownner'
 	        },{
 	            header: 'Creation Date',
 	            dataIndex: 'creationDate',
-	            tpl: '{lastmod:date("m-d h:i a")}'
-	        },{
+	            tpl: '{lastmod:date("m-d h:i a")}',
+	            tooltip : 'Creation Date'
+	        }
+/*	        ,{
 	            header: 'Last Modified',
 	            dataIndex: 'lastModificationDate',
 	            tpl: '{lastmod:date("m-d h:i a")}'
-	        },{
+	        }*/
+	        ,{
 	            header: 'Comment',
 	            dataIndex: 'comment',
-	            align: 'right'
+	            align: 'right',
+	            tooltip : 'Text Comment'
 	        }]
 	        ,fbar: [{
 	            text: 'Save comment'
