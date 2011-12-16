@@ -36,7 +36,8 @@ Sbi.qbe.SlotWizard = function(config) {
 		, width: 800
 		, height: 450
 		, resizable: true
-		, hasBuddy: false	
+		, hasBuddy: false
+		, constrain : true
 		
 	});
 

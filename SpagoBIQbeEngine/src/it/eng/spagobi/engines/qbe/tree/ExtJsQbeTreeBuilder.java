@@ -104,6 +104,13 @@ public class ExtJsQbeTreeBuilder  {
 	private String geFieldLabel(IModelField field) {
 		String label;
 		label = getDatamartLabels().getProperty(field, "label");
+		if( StringUtilities.isEmpty(label) ) {
+			IModelEntity parentEntity = field.getParent();
+			//IModelEntity parentEntity = field.getLogicalParent();
+			IModelEntity rootEntity = field.getStructure().getRootEntity(parentEntity);
+			IModelField rootField = rootEntity.getFieldByName(field.getName());
+			label = getDatamartLabels().getProperty(rootField, "label");
+		}
 		return StringUtilities.isEmpty(label)? field.getName(): label;
 	}
 
