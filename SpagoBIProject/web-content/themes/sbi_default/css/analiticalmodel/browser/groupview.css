@@ -276,6 +276,28 @@
 	background-repeat: no-repeat;
 }
 
+.group-view .item-control-panel .action-export {
+	width: 16px;
+	height: 16px;
+	margin: 2 2 2 2;
+	float: right;
+	background-image:
+		url('../../../img/analiticalmodel/browser/export.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.group-view .item-control-panel .action-schedule {
+	width: 16px;
+	height: 16px;
+	margin: 2 2 2 2;
+	float: right;
+	background-image:
+		url('../../../img/analiticalmodel/browser/schedule.gif');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
 .group-view .group-item .item-desc p {
 	color: #777;
 }
