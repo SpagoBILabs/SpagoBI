@@ -433,7 +433,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     		if(action === 'delete') {
     			//alert(docRecord.id + '; ' + this.folderId);
     			this.deleteDocument(docRecord.id);
-    		}else if(action === 'showmetadata' && Sbi.user.functionalities.contains('SeeMetadataFunctionality')) {
+    		} else if(action === 'showmetadata' && Sbi.user.functionalities.contains('SeeMetadataFunctionality')) {
     			//alert(docRecord.id + '; ' + this.folderId);
     			this.showDocumentMetadata(docRecord.id);
     		}
@@ -442,6 +442,11 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     
     , performActionOnFolder: function(dirRecord, action) {
     	if(this.fireEvent('beforeperformactiononfolder', this, dirRecord, action) !== false){
+    		if(action === 'export' && Sbi.user.functionalities.contains('SeeMetadataFunctionality')) {
+    			alert('export: ' + dirRecord.id);
+    		} else if(action === 'schedule' && Sbi.user.functionalities.contains('SeeMetadataFunctionality')) {
+    			alert('schedule: ' + dirRecord.id);
+    		}
     	}
     }
     

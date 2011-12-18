@@ -144,8 +144,30 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(Integer.valueOf(functID), false, profile);
 			
 			JSONArray foldersJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( functionalities,locale );			
+			
+			JSONObject exportAction = new JSONObject();
+			exportAction.put("name", "export");
+			exportAction.put("description", "Export");
+			
+			JSONObject scheduleAction = new JSONObject();
+			scheduleAction.put("name", "schedule");
+			scheduleAction.put("description", "Schedule");
+							
+			for(int i = 0; i < foldersJSON.length(); i++) {
+				if(func.contains("SeeMetadataFunctionality")){
+					JSONObject folderJSON = foldersJSON.getJSONObject(i);
+					folderJSON.getJSONArray("actions").put(exportAction);
+				}
+				if(func.contains("SeeMetadataFunctionality")){
+					JSONObject folderJSON = foldersJSON.getJSONObject(i);
+					folderJSON.getJSONArray("actions").put(scheduleAction);
+				}
+			}
+			
+			
 			JSONObject foldersResponseJSON =  createJSONResponseFolders(foldersJSON);
-		
+			
+			
 			try {
 				writeBackToClient( new JSONSuccess( createJSONResponse(foldersResponseJSON, documentsResponseJSON) ) );
 			} catch (IOException e) {
