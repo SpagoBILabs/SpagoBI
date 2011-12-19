@@ -1034,7 +1034,7 @@ function isBIObjectFormChanged() {
 	var label = document.getElementById('doc_label').value;
 	var name = document.getElementById('doc_name').value;
 	var description = document.getElementById('doc_description').value;	
-	var relName = document.getElementById('doc_relname').value;
+	//var relName = document.getElementById('doc_relname').value;
 	var type = document.getElementById('doc_type').value;
 	var engine = document.getElementById('doc_engine').value;
 	var datasource = document.getElementById('doc_datasource').value;
@@ -1046,7 +1046,7 @@ function isBIObjectFormChanged() {
 	if ((label != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObject.getLabel()))%>')
 		|| (name != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObject.getName()))%>')
 		|| (description != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObject.getDescription()))%>')
-		|| (relName != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObject.getRelName()))%>')
+		//|| (relName != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObject.getRelName()))%>')
 		|| (type != '<%=initialBIObject.getBiObjectTypeID()+","+initialBIObject.getBiObjectTypeCode()%>')
 		|| (engine != '<%=initialBIObject.getEngine().getId()%>')
 		|| (datasource != '<%=initialBIObject.getDataSourceId() != null ? initialBIObject.getDataSourceId().toString() : ""%>')
