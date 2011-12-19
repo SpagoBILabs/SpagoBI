@@ -84,7 +84,6 @@ public class CrosstabPDFExporter {
     	JSONArray columnsRootChilds = columnsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
 		JSONObject rowsRoot = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_ROWS_HEADERS);
 		JSONArray rowsRootChilds = rowsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
-		JSONArray rowHeadersDescription = json.getJSONArray(CrossTab.CROSSTAB_JSON_ROWS_HEADER_TITLE);
 		JSONArray data = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_DATA);
 		measureMetadata = new MeasureFormatter(json, numberFormat, "##,##0.00");
 		this.numberFormat = numberFormat;
@@ -102,7 +101,7 @@ public class CrosstabPDFExporter {
 		
 		//build the empty cell on the top left 
 		PdfPCell  topLeftCell = new PdfPCell(new Phrase(""));
-		topLeftCell.setRowspan(columnsDepth-1);//-1 because of the title of the rows header
+		topLeftCell.setRowspan(columnsDepth);
 		topLeftCell.setColspan(rowsDepth);
 		topLeftCell.setBorderColor(Color.WHITE);
 		table.addCell(topLeftCell);
@@ -110,8 +109,7 @@ public class CrosstabPDFExporter {
 		List<PdfPCell> cells = new ArrayList<PdfPCell>();
 
 		//builds the headers
-		int dataColumnNumber = ((JSONArray) data.get(0)).length();
-		cells.addAll(buildColumnsHeader(columnsRootChilds,rowHeadersDescription,dataColumnNumber));
+		cells.addAll(buildColumnsHeader(columnsRootChilds));
 		cells.addAll(buildRowsHeaders(rowsRootChilds));
 		
 		logger.debug("Addign the content");
@@ -203,24 +201,13 @@ public class CrosstabPDFExporter {
 	 * @throws JSONException
 	 * @throws BadElementException
 	 */
-	private List<PdfPCell> buildColumnsHeader(JSONArray siblings, JSONArray rowHeadersDescription, int dataColumnNumber) throws JSONException, BadElementException {
+	private List<PdfPCell> buildColumnsHeader(JSONArray siblings) throws JSONException, BadElementException {
 
 		List<PdfPCell> cells = new ArrayList<PdfPCell>();
 		
 		List<JSONObject> columnNodes = getAllNodes(siblings); 
 			
 		for (int i = 0; i < columnNodes.size(); i++) {
-			//adds the row headers
-			if(rowHeadersDescription!=null && i==columnNodes.size()-dataColumnNumber){
-				for(int y=0; y<rowHeadersDescription.length(); y++ ){
-					String text =  rowHeadersDescription.getString(y);
-					PdfPCell cell = new PdfPCell(new Phrase(text,cellFont));
-					cell.setBorderColor(cellsBorderColor);
-					cell.setBackgroundColor(headersBackgroundColor);
-					cells.add(cell);
-				}
-
-			}
 			JSONObject aNode = (JSONObject) columnNodes.get(i);
 			String text = (String) aNode.get(CrossTab.CROSSTAB_NODE_JSON_KEY);
 			int descendants = aNode.getInt(CrosstabExporterUtility.CROSSTAB_JSON_DESCENDANTS_NUMBER);

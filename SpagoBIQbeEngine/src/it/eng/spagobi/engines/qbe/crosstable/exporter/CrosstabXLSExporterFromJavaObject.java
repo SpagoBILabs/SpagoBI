@@ -89,7 +89,7 @@ public class CrosstabXLSExporterFromJavaObject {
 	    // then put the matrix data
 	    buildDataMatrix(sheet, cs, columnsDepth + startRow-1, rowsDepth - 1, createHelper, measureFormatter);
 	    
-	    buildRowHeaderTitle(sheet, cs.getRowHeadersTitles(), columnsDepth-2, 0, startRow, createHelper);
+	    buildRowHeaderTitle(sheet, null, columnsDepth-2, 0, startRow, createHelper);
 	    
 	    return startRow+totalRowsNumber;
 	}
