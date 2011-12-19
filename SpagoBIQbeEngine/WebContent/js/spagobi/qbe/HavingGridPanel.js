@@ -746,13 +746,15 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 	     }, this.grid);
 	    
 	    this.grid.on('keydown', function(e){ 
-	      if(e.keyCode === 46) {
-	        var sm=this.grid.getSelectionModel();
+	      if (e.keyCode === 46) {
+	        var sm = this.grid.getSelectionModel();
 	        var ds = this.grid.getStore();
-	        var rows=sm.getSelections();
+	        var rows = sm.getSelections();
 	        for (i = 0; i < rows.length; i++) {
 	          this.store.remove( ds.getById(rows[i].id) );
 	        }
+	        // remove active editing context
+	        delete this.activeEditingContext;
 	      }      
 	    }, this);
 	    
@@ -769,7 +771,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 			column - The grid column index
 			cancel - Set this to true to cancel the edit or return false from your handler.
 		 */
-		if(this.activeEditingContext) {
+		if (this.activeEditingContext) {
 			var filter = this.getFilterAt(this.activeEditingContext.row);
 			if(this.activeEditingContext.dataIndex === 'leftOperandDescription') {
 				if(this.activeEditingContext.dirty === true){
