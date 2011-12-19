@@ -122,17 +122,17 @@
 .trend-up {
 	 background-image:url(../../img/kpi/trend-up.png) !important;
 	 background-repeat:no-repeat;
-	 /*background-position: center;*/
+	 background-position: center;
 }
 .trend-down{
 	 background-image:url(../../img/kpi/trend-down.png) !important;
 	 	 background-repeat:no-repeat;
-	 /*background-position: center;*/
+	 background-position: center;
 }
 .trend-equal {
 	 background-image:url(../../img/kpi/trend-equal.png) !important;
 	 	 background-repeat:no-repeat;
-	 /*background-position: center;*/
+	 background-position: center;
 }
 .rounded-box{
   -webkit-border-radius: 10px;
