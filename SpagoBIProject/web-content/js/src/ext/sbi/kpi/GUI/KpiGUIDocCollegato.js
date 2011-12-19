@@ -111,9 +111,8 @@ Ext.extend(Sbi.kpi.KpiGUIDocCollegato , Ext.Panel, {
 		if(this.noDocText != null){
 			this.noDocText.destroy();
 		}else{
-			this.miframe.show();
-			this.miframe.doLayout();
-			this.doLayout();
+			this.miframe.hide();
+			this.perWin.doLayout();
 		}
 
 		var url = this.getDocViewUrl(field);
@@ -123,7 +122,7 @@ Ext.extend(Sbi.kpi.KpiGUIDocCollegato , Ext.Panel, {
 			this.miframe.update();
 			this.miframe.show();
 			this.miframe.doLayout();
-			this.doLayout();
+			this.perWin.doLayout();
 			
 		}
 		else{
