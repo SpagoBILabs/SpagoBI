@@ -286,7 +286,7 @@ public class JPQLStatementWhereClause extends AbstractJPQLStatementFilteringClau
 							if(((String)filed.getQueryName().getFirst()).endsWith("." + fieldName)) break;
 						}
 						String entityAlias = (String)entityAliases.get(entityUniqueName);
-						props.put(fieldName, entityAlias + "." + filed.getQueryName());
+						props.put(fieldName, entityAlias + "." + filed.getQueryName().getFirst());
 					}
 					
 					String filterCondition = null;
