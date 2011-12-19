@@ -343,22 +343,7 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 	border-top-style: none;
 }
 				
-.crosstab-table-empty-top-left-panel-leftmostcell{
-	border:1px solid;
-	border-color: #99BBE8;	
-	border-right-style: none;
-	border-bottom-style: none;
-}
-
-.crosstab-table-empty-top-left-panel-bottomcells{
-	border:1px solid;
-	border-color: #99BBE8;	
-	border-right-style: none;
-	border-left-style: none;
-	border-bottom-style: none;
-}
-
-.crosstab-table-empty-top-left-panel-table-left{
+.crosstab-table-empty-top-left-panel{
 	border:1px solid;
 	border-color: #99BBE8;	
 	border-left-style: none;
