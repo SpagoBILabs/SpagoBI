@@ -30,6 +30,10 @@ Sbi.locale.ln['sbi.generic.details'] = 'Detail';
 Sbi.locale.ln['sbi.generic.advanced'] = 'Advanced';
 Sbi.locale.ln['sbi.generic.select'] = 'Select';
 Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restore';
+Sbi.locale.ln['sbi.generic.run'] = 'Ejecutar';
+Sbi.locale.ln['sbi.kpi.trend.title'] = 'Tendencia de los recursos ';
+Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'No se encontraron datos! Seleccione el nodo específico para ver los datos de tendencia. ';
+
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Nombre';
 Sbi.locale.ln['sbi.generic.descr'] = 'Descripci\u00f3n';

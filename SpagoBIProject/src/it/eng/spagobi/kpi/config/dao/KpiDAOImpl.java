@@ -8,6 +8,7 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiRel;
@@ -37,8 +38,10 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.udp.dao.IUdpValueDAO;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -54,6 +57,8 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.hibernate.exception.ConstraintViolationException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
@@ -412,7 +417,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			String hql = "select max(s.idKpiInstanceValue), s.beginDt";
+			String hql = "select max(s.idKpiInstanceValue) as VALUE, s.beginDt as DATE ";
 			hql += " from SbiKpiValue s where s.sbiKpiInstance.idKpiInstance = ? ";
 			hql += " and s.beginDt <= ? and s.beginDt >= ? ";
 			if (resId != null) {
@@ -473,6 +478,101 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return toReturn;
 	}
 
+	public JSONObject getKpiTrendJSONResult(Integer kpiInstId, Date beginDate , Date endDate) throws SourceBeanException{
+		logger.debug("IN");
+		JSONObject toReturn = new JSONObject();
+		int numRows = 0;
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			String hql = "select max(s.idKpiInstanceValue), s.beginDt";
+			hql += " from SbiKpiValue s where s.sbiKpiInstance.idKpiInstance = ? ";
+			hql += " and s.beginDt <= ? and s.beginDt >= ? ";			
+			hql += "group by s.beginDt order by s.beginDt desc";         
+
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setInteger(0, kpiInstId);
+			hqlQuery.setDate(1, endDate);
+			hqlQuery.setDate(2, beginDate);
+				
+			//hqlQuery.setMaxResults(10);
+
+			List l = hqlQuery.list();
+			JSONArray jsonData = new JSONArray();
+			
+			if (!l.isEmpty()) {
+				logger.debug("The result list is not empty");
+				for (int k = l.size() - 1; k >= 0; k--) {
+					Object[] tempL =  (Object[])l.get(k);
+					JSONObject jsonObj = new JSONObject();
+					
+					Integer kpiValueId = (Integer) tempL[0];
+					SbiKpiValue temp = (SbiKpiValue) aSession.load(SbiKpiValue.class, kpiValueId);
+					if (temp !=null && temp.getValue() != null) {
+						try{
+							numRows++;
+							Date dt = temp.getBeginDt();							
+							SimpleDateFormat sdf;
+							sdf = new SimpleDateFormat("d");
+							String day = sdf.format(dt);
+							sdf = new SimpleDateFormat("MM");
+							String month = sdf.format(dt);
+							sdf = new SimpleDateFormat("yyyy");
+							String year = sdf.format(dt);
+							sdf = new SimpleDateFormat("H");
+							String hour = sdf.format(dt);
+							sdf = new SimpleDateFormat("m");
+							String min = sdf.format(dt);
+							sdf = new SimpleDateFormat("s");
+							String sec = sdf.format(dt);
+
+							String format  =  GeneralUtilities.getServerTimeStampFormat();
+							String strDtReturn = day + "/" + month + "/" + year + " " + hour + ":" + min + ":" + sec;	
+							sdf = new SimpleDateFormat(format);						
+							Float valueReturn = Float.parseFloat(temp.getValue());
+							
+							logger.debug("Date for KPI : " + dt );
+							logger.debug("Value of KPI: " + valueReturn );
+							
+							jsonObj.put("id", k+1);
+							jsonObj.put("KPI_DATE",  strDtReturn); //KPI_DATE
+							jsonObj.put("KPI_VALUE",  valueReturn); //KPI_VALUE
+							jsonData.put(jsonObj);
+						}catch (Exception e) {
+							logger.error("Error while getting trend data",e);
+							return null;		
+						}
+					}
+				}
+			} 
+
+			toReturn = new JSONObject();
+			toReturn.put("trends", jsonData);
+
+		} catch (HibernateException he) {
+
+			if (tx != null)
+				tx.rollback();
+			logger.error(he);
+		}catch (Exception e) {
+			logger.error("Error while getting trend data",e);
+			return null;		
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+
+		return toReturn;
+	}
+
+	
 	public Integer getKpiTrend(Integer resId, Integer kpiInstId, Date endDate) throws Exception{
 
 		logger.debug("IN");
@@ -2120,5 +2220,4 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
 }

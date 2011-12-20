@@ -14,6 +14,8 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import java.util.Date;
 import java.util.List;
 
+import org.json.JSONObject;
+
 public interface IKpiDAO extends ISpagoBIDao{
 	
 	
@@ -36,6 +38,15 @@ public interface IKpiDAO extends ISpagoBIDao{
 	 * @throws EMFUserError If an Exception occurred
 	 */
 	public String getKpiTrendXmlResult(Integer resId, Integer kpiInstId, Date endDate) throws SourceBeanException;
+	
+	/**
+	 * Returns a JSONOBject with all the the trend values of the KpiInstance
+	 * 
+	 * @param Integer kpiInstId, Date beginDate,  Date endDate
+	 * @return List of all the the values of the KpiInstance in JSONObject form
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	public JSONObject getKpiTrendJSONResult(Integer kpiInstId, Date beginDate , Date endDate) throws SourceBeanException;
 	
 	public IDataSet getDsFromKpiId(Integer kpiId) throws EMFUserError; 
 	

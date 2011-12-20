@@ -17,4 +17,7 @@
   <ACTION name="MANAGE_COMMENTS" class="it.eng.spagobi.engines.kpi.service.ManageCommentsAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
+ <ACTION name="GET_TREND_KPI_VALUES" class="it.eng.spagobi.engines.kpi.service.ManageTrendAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
 </ACTIONS>
