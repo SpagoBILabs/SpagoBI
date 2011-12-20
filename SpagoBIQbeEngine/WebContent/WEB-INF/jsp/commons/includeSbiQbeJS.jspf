@@ -191,5 +191,5 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION
-<script type="text/javascript" src='../js/spagobi/qbe-all-3.2.0.js'></script>
+<script type="text/javascript" src='../js/spagobi/qbe-all-3.3.0.js'></script>
 END-PRODUCTION -->
