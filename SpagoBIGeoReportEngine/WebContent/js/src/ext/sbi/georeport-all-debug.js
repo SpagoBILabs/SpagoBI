@@ -191,7 +191,7 @@ Sbi.settings.georeport = {
 /**
  * SpagoBI - The Business Intelligence Free Platform
  *
- * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -304,7 +304,7 @@ Sbi.exception.ExceptionHandler = function(){
 }();/**
  * SpagoBI - The Business Intelligence Free Platform
  *
- * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -587,7 +587,7 @@ FORMATTERS = Sbi.locale.formatters;
 /**
  * SpagoBI - The Business Intelligence Free Platform
  *
- * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -706,7 +706,7 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
 });/**
  * SpagoBI - The Business Intelligence Free Platform
  *
- * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -787,7 +787,7 @@ Sbi.georeport.GeoReportUtils = function(){
 	/**
  * SpagoBI - The Business Intelligence Free Platform
  *
- * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -861,7 +861,7 @@ Sbi.georeport.ControlFactory = function(){
 	/**
  * SpagoBI - The Business Intelligence Free Platform
  *
- * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -939,7 +939,7 @@ Sbi.georeport.LayerFactory = function(){
 	/**
  * SpagoBI - The Business Intelligence Free Platform
  *
- * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
