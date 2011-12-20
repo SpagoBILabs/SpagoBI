@@ -132,7 +132,14 @@ Authors - Monica Franceschini
 			kpiRowsArray.put(modelInstJson);						
 		}			
 	}
-	
+	SessionContainer permSession = aSessionContainer.getPermanentContainer();
+	String localeExtDateFormat = GeneralUtilities.getLocaleDateFormatForExtJs(permSession);
+	String serverExtTimestampFormat = GeneralUtilities.getServerTimestampFormatExtJs();
+	String serverDateFormat = GeneralUtilities.getServerDateFormatExtJs();
+	String engineContext = request.getContextPath();
+    if( engineContext.startsWith("/") || engineContext.startsWith("\\") ) {
+    	engineContext = request.getContextPath().substring(1);
+    }
 	//determines execution instance for each detail document
 
 %>		
@@ -155,7 +162,11 @@ Authors - Monica Franceschini
 			json: <%=kpiRowsArray%>
 		};
 		var accordion ={SBI_EXECUTION_ID: '<%=EXECUTION_ID%>', 
-						customChartName: '<%=customChartName%>'};
+						customChartName: '<%=customChartName%>',
+						localeExtDateFormat: '<%=localeExtDateFormat%>',
+						serverExtTimestampFormat: '<%=serverExtTimestampFormat%>',
+						chartBaseUrl: '/<%= engineContext %>/js/lib/ext-3.1.1/resources/charts.swf'
+						};
 		
 		var config ={grid: grid, accordion: accordion};
 

@@ -70,7 +70,7 @@ Sbi.kpi.KpiAccordionPanel =  function(config) {
 	    this.initDescription();
 	    this.initDocCollegato();
 	    this.initComments(config);
-	    this.initHistorical();
+	    this.initHistorical(config);
 		this.initAccordion(c);
 		
 		
@@ -142,8 +142,8 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	, initDescription: function(){
 		this.description = new Sbi.kpi.KpiGUIDescription();
 	}
-	, initHistorical: function(){
-		this.historical = new Sbi.kpi.KpiGUIHistorical();
+	, initHistorical: function(c){
+		this.historical = new Sbi.kpi.KpiGUIHistorical(c);
 	}
 	, initDocCollegato: function(){
 		this.docs = new Sbi.kpi.KpiGUIDocCollegato();
