@@ -98,7 +98,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	        xtype:'fieldset',
 	        border: false,
 	        width:200,
-	        style: 'padding: 5px; margin-top: 30px;float:left;',
+	        style: 'padding: 5px; margin-top: 60px;float:left;',
 	        defaultType: 'displayfield',
 	        items: []
 	    });
@@ -106,16 +106,15 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	        // Fieldset thresholds
 	        xtype:'fieldset',
 	        border: false,
-	        width:450,
+	        width:230,
 	        defaultType: 'fieldset',
-	        style: 'padding: 5px;float:left;',
 	        items: []
 	    });
 
 		if(Ext.isIE && (this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null')){
-			this.threshFields.style = 'margin-top: 150px; padding: 5px; padding-right: 50px;';
+			this.threshFields.style = 'margin-top: 140px; padding: 5px; float:right; margin-right: 35px;';
 		}else{
-			this.threshFields.style = 'margin-top: 10px; padding: 5px; padding-right: 50px;';
+			this.threshFields.style = 'margin-top: 0px; padding: 5px; float:right; margin-right: 35px;';
 		}
 
 		this.items =[this.chartPanel, this.detailFields, this.threshFields];
@@ -220,11 +219,10 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 				var bItems = [];
 				var thrLine = new Ext.form.FieldSet({
 			        xtype:'fieldset',			        
-			        style: 'padding:0px; margin: 1px;',
 			        border:false,
 			        layout: 'column',
 			        autoHeight:true,
-			        minHeight:20,
+			        style: 'border-bottom: 1px solid black; padding: 2px; margin:2px;',
 			        defaults: {
 			            anchor: '0'
 			        },
@@ -235,10 +233,10 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 				
 				var thr = thrArray[i];	
 				var colorBox = new Ext.form.DisplayField({value: '&nbsp;', 
-															columnWidth:0.3,
+															columnWidth:0.15,
 															style: 'background-color:'+thr.color});
 				
-				thrLine.add([ {value: thr.label, columnWidth:0.3, style:'font-weight: bold;'}, 
+				thrLine.add([ {value: thr.label, columnWidth:0.45, style:'font-weight: bold;'}, 
 				              {columnWidth:0.2, value: thr.min }, 
 				              {value: thr.max, columnWidth:0.2}, 
 				              colorBox]);
@@ -253,6 +251,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		}
 		//value
 		this.valueItem = new Ext.form.DisplayField({fieldLabel: 'Valore', 
+			 										labelStyle: 'width: 30px;',
 													value: this.val, 
 													style: 'padding-left:5px; font-style: italic; font-weight: bold;'});
 		this.detailFields.add(this.valueItem );

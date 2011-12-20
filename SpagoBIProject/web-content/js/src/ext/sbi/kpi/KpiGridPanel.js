@@ -104,13 +104,13 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	    var tplTrend = new Ext.XTemplate(
 			      '<tpl for=".">'
 	    		  ,'<tpl if="values.trend !== undefined && values.trend === 1">'//positive
-			      ,'<div style="align: center;" class="trend-up">&nbsp;</div>'	     
+			      ,'<div class="trend-up">&nbsp;</div>'	     
 			      ,'</tpl>'
 	    		  ,'<tpl if="values.trend !== undefined && values.trend === -1">'//negative
-			      ,'<div style="align: center;" class="trend-down">&nbsp;</div>'	     
+			      ,'<div class="trend-down">&nbsp;</div>'	     
 			      ,'</tpl>'
 	    		  ,'<tpl if="values.trend !== undefined && values.trend === 0">'//equal
-			      ,'<div style="align: center;" class="trend-equal">&nbsp;</div>'	     
+			      ,'<div class="trend-equal">&nbsp;</div>'	     
 			      ,'</tpl>'
 			      ,'</tpl>'
 
@@ -138,7 +138,7 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 		
 		var col4 = {header:'Trend',
 		dataIndex:'trend',
-		tpl: tplTrend,
+		tpl: tplTrend,	
 		width:70};
 		kpiColumns.push(col4);	
 		
