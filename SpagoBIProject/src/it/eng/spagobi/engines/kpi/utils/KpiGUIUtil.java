@@ -2,15 +2,18 @@ package it.eng.spagobi.engines.kpi.utils;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.kpi.bo.KpiLine;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
+import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
+import it.eng.spagobi.tools.udp.bo.UdpValue;
 
-import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -24,16 +27,81 @@ public class KpiGUIUtil {
 	static transient Logger logger = Logger.getLogger(KpiGUIUtil.class);
 	private static ExecutionInstance kpiInstance;
 	private static Locale kpiInstanceLocale;
+	private static List parameters ;
+	private static String visibilityParameterValues = null;
 	public void setExecutionInstance(ExecutionInstance instance, Locale locale){
 		kpiInstance = instance;
 		kpiInstanceLocale = locale;
+		parameters = kpiInstance.getBIObject().getBiObjectParameters();
+		if(parameters != null){
+			for(int i=0; i<parameters.size(); i++){
+				BIObjectParameter par = (BIObjectParameter)parameters.get(i);
+				if(par.getParameterUrlName().equals("visibilityParameter")){
+					visibilityParameterValues = par.getParameterValuesAsString();
+				}
+			}
+		}
+		
 	}
+	public boolean isVisible(KpiLine kpiLine){
+		boolean visible = false;
+		if(visibilityParameterValues == null){
+			return true;
+		}
+		Integer modelInstId = kpiLine.getModelInstanceNodeId();
+		try {
+			ModelInstanceNode node = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstId, null);
+			Integer modelId= node.getModelNodeId();
+			if(modelId != null){
+				Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(modelId);
+				List<UdpValue> udps = model.getUdpValues();
+				if(udps != null){
+					for(int i=0; i<udps.size(); i++){
+						UdpValue udpVal = udps.get(i);
+						String udpName = udpVal.getName();
+						if(udpName.equals("VISIBILITY")){
+							String val = udpVal.getValue();
+							if(val != null && !val.equals("")){
+								//can be multivalue with 'aa','bb','cc'...format
+								String [] multival = val.split(",");
+								if(multival.length != 0){
+									for(int k = 0; k< multival.length; k++){
+										String v = multival[k].replaceAll("'", "").trim();
+										logger.debug(v+"-"+visibilityParameterValues);
+										if(visibilityParameterValues.equals(v)){
+											visible = true;
+										}
+									}
+								}else{
+									//single value
+									if(visibilityParameterValues.equals(val)){
+										visible = true;									
+									}
+								}
+							}
+						}
 
+					}
+					logger.debug("if udp is present passes a upd name = parameter name to dataset, by ading it to HashMap pars");
+				}
+				
+			}
+			
+		} catch (Exception e) {
+			logger.error("Error retrieving modelinstance "+modelInstId, e);
+		}
+		
+		return visible;
+	}
 	public JSONObject recursiveGetJsonObject(KpiLine kpiLine) {
 
 		JSONObject jsonToReturn = new JSONObject();
 		try {
 
+			boolean isVisible = isVisible(kpiLine);
+			if(!isVisible){
+				jsonToReturn.put("hidden",true);
+			}
 			jsonToReturn.put("name", kpiLine.getModelNodeName());
 			if (kpiLine.getValue() != null) {
 				jsonToReturn.put("actual", kpiLine.getValue().getValue());
