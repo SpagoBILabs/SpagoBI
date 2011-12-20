@@ -103,7 +103,7 @@ Authors - Monica Franceschini
 	
 	ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
 	String EXECUTION_ID = instance.getExecutionId();
-	String parsToDetailDocs = "";
+	/*String parsToDetailDocs = "";
 	   if(instance!=null && instance.getBIObject()!=null){
 	   List pars = instance.getBIObject().getBiObjectParameters();			
 		if(pars!=null && !pars.isEmpty()){
@@ -115,7 +115,7 @@ Authors - Monica Franceschini
 				parsToDetailDocs += url+"="+value+"&";
 			}		
 		}
-	}
+	}*/
 
 	
 	JSONArray kpiRowsArray = new JSONArray();
