@@ -70,12 +70,12 @@ Ext.extend(Sbi.kpi.KpiGUIDescription , Ext.form.FormPanel, {
 		this.border = false;
 		this.descrName = new Ext.form.TextField({fieldLabel: 'Nome', 
 			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
-		this.descrDescription = new Ext.form.TextField({fieldLabel: 'Descrizione', 
-			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
-		this.descrCode = new Ext.form.TextField({fieldLabel: 'Codice', 
-			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
+		this.descrDescription = new Ext.form.TextArea({fieldLabel: 'Descrizione', 
+			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300, height: 60});
+/*		this.descrCode = new Ext.form.TextField({fieldLabel: 'Codice', 
+			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});*/
 		
-		this.descrDsLbl = new Ext.form.TextField({fieldLabel: 'Label Dataset', 
+		this.descrDsLbl = new Ext.form.TextField({fieldLabel: 'Dataset', 
 			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
 		this.descrTypeCd = new Ext.form.TextField({fieldLabel: 'Codice Tipo', 
 			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
@@ -91,7 +91,7 @@ Ext.extend(Sbi.kpi.KpiGUIDescription , Ext.form.FormPanel, {
 	        defaultType: 'textfield',
 	        style: 'margin-top: 10px;',
 	        items: [this.descrName, 
-	                 this.descrCode,
+	                 //this.descrCode,
 		             this.descrDescription,		             
 		             this.descrDsLbl,
 		             this.descrTypeCd,
@@ -110,7 +110,7 @@ Ext.extend(Sbi.kpi.KpiGUIDescription , Ext.form.FormPanel, {
 	, update:  function(field){	
 		this.descrName.setValue(field.attributes.kpiName);
 		this.descrDescription.setValue(field.attributes.kpiDescr);
-		this.descrCode.setValue(field.attributes.kpiCode);
+		//this.descrCode.setValue(field.attributes.kpiCode);
 		this.descrDsLbl.setValue(field.attributes.kpiDsLbl);
 		this.descrTypeCd.setValue(field.attributes.kpiTypeCd);
 		this.measureTypeCd.setValue(field.attributes.measureTypeCd);
