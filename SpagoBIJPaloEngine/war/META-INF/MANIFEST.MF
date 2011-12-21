@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: SpagoBIJPaloEngine.war
 Implementation-Title: SpagoBIJPaloEngine
-Implementation-Version: 3.0.0
+Implementation-Version: 3.3.0
 Included: Mondrian 3.2.1
