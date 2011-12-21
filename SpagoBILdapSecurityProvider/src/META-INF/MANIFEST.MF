@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: sbi.security.ldap-2.8.0.jar
 Implementation-Title: SpagoBILdapSecurityProvider
-Implementation-Version: 3.0.0
+Implementation-Version: 3.3.0
 
