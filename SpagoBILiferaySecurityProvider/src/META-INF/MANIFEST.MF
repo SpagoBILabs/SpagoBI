@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: sbi.security.liferay.xml-2.8.0.jar
 Implementation-Title: SpagoBILiferaySecurityProvider
-Implementation-Version: 3.0.0  (Liferay 5.2.3)
+Implementation-Version: 3.3.0  (Liferay 5.2.3)
 
