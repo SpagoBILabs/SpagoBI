@@ -499,42 +499,42 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 		return organizationalUnitGrant;
 	}
 
-	/**
-	 * Deserialize a list of OrganizationalUnitGrantNode objects
-	 * @param JSONGrantNodes the JSON representation of the list of OrganizationalUnitGrantNode
-	 * @param grant the grant of that list
-	 * @return the deserialized object
-	 * @throws Exception
-	 */
-	private List<OrganizationalUnitGrantNode> deserializeOrganizationalUnitGrantNodes(JSONArray JSONGrantNodes, OrganizationalUnitGrant grant) throws Exception{
-		List<OrganizationalUnitGrantNode> nodes = new ArrayList<OrganizationalUnitGrantNode>();
-		for(int i=0; i<JSONGrantNodes.length(); i++){
-			
-			nodes.add(deserializeOrganizationalUnitGrantNode( JSONGrantNodes.getJSONObject(i), grant));
-		}
-		return nodes;
-	}
+//	/**
+//	 * Deserialize a list of OrganizationalUnitGrantNode objects
+//	 * @param JSONGrantNodes the JSON representation of the list of OrganizationalUnitGrantNode
+//	 * @param grant the grant of that list
+//	 * @return the deserialized object
+//	 * @throws Exception
+//	 */
+//	private List<OrganizationalUnitGrantNode> deserializeOrganizationalUnitGrantNodes(JSONArray JSONGrantNodes, OrganizationalUnitGrant grant) throws Exception{
+//		List<OrganizationalUnitGrantNode> nodes = new ArrayList<OrganizationalUnitGrantNode>();
+//		for(int i=0; i<JSONGrantNodes.length(); i++){
+//			
+//			nodes.add(deserializeOrganizationalUnitGrantNode( JSONGrantNodes.getJSONObject(i), grant));
+//		}
+//		return nodes;
+//	}
 	
-	/**
-	 * Deserialize a OrganizationalUnitGrantNode object
-	 * @param JSONGrantNodes the JSON representation of the OrganizationalUnitGrantNode
-	 * @param grant the grant of that object
-	 * @return the deserialized object
-	 * @throws Exception
-	 */
-	private OrganizationalUnitGrantNode deserializeOrganizationalUnitGrantNode(JSONObject JSONGrantNode, OrganizationalUnitGrant grant) throws Exception{
-		OrganizationalUnitGrantNode node = new OrganizationalUnitGrantNode();
-		int hierarchyId = JSONGrantNode.getInt("hierarchyId");
-		int modelInstanceId = JSONGrantNode.getInt("modelinstance");
-		String ouPath = JSONGrantNode.getString("ouPath");
-		ModelInstanceNode modelInstanceNode = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstanceId, null);
-		OrganizationalUnitNode ouNode = orUnitDao.getOrganizationalUnitNode(ouPath, hierarchyId);
-		node.setGrant(grant);
-		node.setModelInstanceNode(modelInstanceNode);
-		node.setOuNode(ouNode);
-		return node;
-	}
-	
+//	/**
+//	 * Deserialize a OrganizationalUnitGrantNode object
+//	 * @param JSONGrantNodes the JSON representation of the OrganizationalUnitGrantNode
+//	 * @param grant the grant of that object
+//	 * @return the deserialized object
+//	 * @throws Exception
+//	 */
+//	private OrganizationalUnitGrantNode deserializeOrganizationalUnitGrantNode(JSONObject JSONGrantNode, OrganizationalUnitGrant grant) throws Exception{
+//		OrganizationalUnitGrantNode node = new OrganizationalUnitGrantNode();
+//		int hierarchyId = JSONGrantNode.getInt("hierarchyId");
+//		int modelInstanceId = JSONGrantNode.getInt("modelinstance");
+//		String ouPath = JSONGrantNode.getString("ouPath");
+//		ModelInstanceNode modelInstanceNode = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstanceId, null);
+//		OrganizationalUnitNode ouNode = orUnitDao.getOrganizationalUnitNode(ouPath, hierarchyId);
+//		node.setGrant(grant);
+//		node.setModelInstanceNode(modelInstanceNode);
+//		node.setOuNode(ouNode);
+//		return node;
+//	}
+//	
 
 	
 	/**
@@ -612,57 +612,60 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	 */
 	private List<OrganizationalUnitGrantNode> deserializeOrganizationalUnitGrantNodeAndUpdateChilds(JSONObject JSONGrantNode, OrganizationalUnitGrant grant) throws Exception{
 		OrganizationalUnitGrantNode node = new OrganizationalUnitGrantNode();
+		List<OrganizationalUnitGrantNode> nodes = new ArrayList<OrganizationalUnitGrantNode>();
 		int hierarchyId = JSONGrantNode.getInt("hierarchyId");
 		int modelInstanceId = JSONGrantNode.getInt("modelinstance");
 		String ouPath = JSONGrantNode.getString("ouPath");
-		ModelInstanceNode modelInstanceNode = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstanceId, null);
-		OrganizationalUnitNode ouNode = orUnitDao.getOrganizationalUnitNode(ouPath, hierarchyId);
-		node.setGrant(grant);
-		node.setModelInstanceNode(modelInstanceNode);
-		node.setOuNode(ouNode);
-		List<OrganizationalUnitGrantNode> nodes = new ArrayList<OrganizationalUnitGrantNode>();
+		if(modelInstanceId>=0){
+			ModelInstanceNode modelInstanceNode = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstanceId, null);
+			OrganizationalUnitNode ouNode = orUnitDao.getOrganizationalUnitNode(ouPath, hierarchyId);
+			node.setGrant(grant);
+			node.setModelInstanceNode(modelInstanceNode);
+			node.setOuNode(ouNode);
 
-		HashMap<Integer, Integer> tempGrantNodeIds = new HashMap<Integer, Integer>();
-		tempGrantNodeIds.put(modelInstanceNode.getModelInstanceNodeId(),ouNode.getNodeId());
-		if(!utilityGrantNodesCollection.contains(tempGrantNodeIds)  ){      
-			Integer modelInstancesToUncheck = JSONGrantNode.optInt("childrenToUncheck");
-			if(modelInstancesToUncheck!=null){
+			HashMap<Integer, Integer> tempGrantNodeIds = new HashMap<Integer, Integer>();
+			tempGrantNodeIds.put(modelInstanceNode.getModelInstanceNodeId(),ouNode.getNodeId());
+			if(!utilityGrantNodesCollection.contains(tempGrantNodeIds)  ){      
+				Integer modelInstancesToUncheck = JSONGrantNode.optInt("childrenToUncheck");
+				if(modelInstancesToUncheck!=null){
 
-				if(modelInstancesToUncheck.equals(modelInstanceNode.getModelInstanceNodeId())){
-					return nodes;
+					if(modelInstancesToUncheck.equals(modelInstanceNode.getModelInstanceNodeId())){
+						return nodes;
+					}
+
 				}
-
+				nodes.add(node);
+				utilityGrantNodesCollection.add(tempGrantNodeIds);
+			}else{
+				return nodes;
 			}
-			nodes.add(node);
-			utilityGrantNodesCollection.add(tempGrantNodeIds);
-		}else{
-			return nodes;
-		}
-		boolean expanded = JSONGrantNode.getBoolean("expanded");
-		if(!expanded){
-			//if(JSONGrantNode.opt("childrenToUncheck")== null || JSONGrantNode.getInt("childrenToUncheck")!=modelInstanceNode.getModelInstanceNodeId()){
-				nodes.addAll(buildGrantForChilds(ouNode, modelInstanceNode, grant));
-			//}
-		}
-		Integer checkChildren = null;
+			boolean expanded = JSONGrantNode.getBoolean("expanded");
+			if(!expanded){
+				//if(JSONGrantNode.opt("childrenToUncheck")== null || JSONGrantNode.getInt("childrenToUncheck")!=modelInstanceNode.getModelInstanceNodeId()){
+					nodes.addAll(buildGrantForChilds(ouNode, modelInstanceNode, grant));
+				//}
+			}
+			Integer checkChildren = null;
+			
+			try{
+				checkChildren = JSONGrantNode.getInt("childrenToCheck");
+				ModelInstanceNode modelInstNode = DAOFactory.getModelInstanceDAO().loadModelInstanceById(checkChildren, null);
+				List<OrganizationalUnitGrantNode> childrenChecked = buildGrantForModelInstChildren(ouNode, modelInstNode, grant);
+				for(int i=0; i< childrenChecked.size(); i++){
+					OrganizationalUnitGrantNode nodeToAdd = childrenChecked.get(i);
+					HashMap<Integer, Integer> temp2GrantNodeIds = new HashMap<Integer, Integer>();
+					temp2GrantNodeIds.put(nodeToAdd.getModelInstanceNode().getModelInstanceNodeId(), nodeToAdd.getOuNode().getNodeId());
+					if(!utilityGrantNodesCollection.contains(temp2GrantNodeIds)){
+						nodes.add(nodeToAdd);
+						utilityGrantNodesCollection.add(temp2GrantNodeIds);
+					}
+				}
 		
-		try{
-			checkChildren = JSONGrantNode.getInt("childrenToCheck");
-			ModelInstanceNode modelInstNode = DAOFactory.getModelInstanceDAO().loadModelInstanceById(checkChildren, null);
-			List<OrganizationalUnitGrantNode> childrenChecked = buildGrantForModelInstChildren(ouNode, modelInstNode, grant);
-			for(int i=0; i< childrenChecked.size(); i++){
-				OrganizationalUnitGrantNode nodeToAdd = childrenChecked.get(i);
-				HashMap<Integer, Integer> temp2GrantNodeIds = new HashMap<Integer, Integer>();
-				temp2GrantNodeIds.put(nodeToAdd.getModelInstanceNode().getModelInstanceNodeId(), nodeToAdd.getOuNode().getNodeId());
-				if(!utilityGrantNodesCollection.contains(temp2GrantNodeIds)){
-					nodes.add(nodeToAdd);
-					utilityGrantNodesCollection.add(temp2GrantNodeIds);
-				}
+			}catch(Throwable t){
+				logger.debug("childrenToCheck not present"); 
 			}
-	
-		}catch(Throwable t){
-			logger.debug("childrenToCheck not present"); 
 		}
+
 
 		return nodes;
 	}

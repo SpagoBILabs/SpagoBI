@@ -93,6 +93,12 @@ Sbi.kpi.ManageOUGrantsViewPort = function(config) {
 			}
 			rec.commit();
 		}
+		
+		//enable the second tab if the grant is new and the grant has been saved
+		if(this.ManageOUGrants.tabItems[1].disabled){
+			this.ManageOUGrants.tabItems[1].enable();
+		}
+		
 	}, this);
 
 	conf.readonlyStrict = true;
@@ -196,6 +202,12 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 		this.ManageOUGrants.detailFieldKpiHierarchy.setRawValue(rec.data.modelinstance.modelText);
 		this.ManageOUGrants.selectedGrantId = rec.data.id;
 		this.ManageOUGrants.loadTrees();
+		this.ManageOUGrants.setActiveTab(0);
+		//disable the second tab if the grant is new..
+		//this because we need to save the grant before add the grant nodes
+		if(rec.data.id==''){
+			this.ManageOUGrants.tabItems[1].disable();
+		}
 	}
 	
 	, displayTree: function(kpi, ou){
