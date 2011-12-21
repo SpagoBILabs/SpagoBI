@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: SpagoBICommonJEngine.war
 Implementation-Title: SpagoBICommonJEngine
-Implementation-Version: 3.0.0
+Implementation-Version: 3.3.0
 
