@@ -74,8 +74,11 @@ public abstract class AbstractEngineStartServlet extends AbstractBaseServlet {
     	String reponseMessage = servletIOManager.getLocalizedMessage("msg.error.generic");
     	if(t instanceof SpagoBIEngineException) {
     		SpagoBIEngineException e = (SpagoBIEngineException)t;
-    		reponseMessage = servletIOManager.getLocalizedMessage(e.getDescription());
-    		  		
+    		if(e.getDescription() != null) {
+    			reponseMessage = servletIOManager.getLocalizedMessage(e.getDescription());
+    		} else {
+    			reponseMessage = servletIOManager.getLocalizedMessage(e.getMessage());
+    		}		
     	} 		
     	
     	servletIOManager.tryToWriteBackToClient( reponseMessage );		
