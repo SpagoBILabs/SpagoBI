@@ -179,6 +179,18 @@ public class CrosstabDefinition extends SheetContent {
 	public void setAdditionalData(JSONObject additionalData) {
 		this.additionalData = additionalData;
 	}
+	
+	/**
+	 * 
+	 * @return true if the component is a pivot table (not a chart)
+	 */
+	public boolean isPivotTable(){
+		String type =  config.optString("type");
+		if(type!=null && type.equals(CrosstabSerializationConstants.PIVOT)){
+			return true;
+		}
+		return false;
+	}
 
 	
 }
