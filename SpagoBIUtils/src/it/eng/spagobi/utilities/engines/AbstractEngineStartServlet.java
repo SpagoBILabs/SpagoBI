@@ -74,7 +74,7 @@ public abstract class AbstractEngineStartServlet extends AbstractBaseServlet {
     	String reponseMessage = servletIOManager.getLocalizedMessage("an.unpredicted.error.occured");
     	if(t instanceof SpagoBIEngineException) {
     		SpagoBIEngineException e = (SpagoBIEngineException)t;
-    		reponseMessage = servletIOManager.getLocalizedMessage(e.getErrorDescription());
+    		reponseMessage = servletIOManager.getLocalizedMessage(e.getDescription());
     		  		
     	} 		
     	
