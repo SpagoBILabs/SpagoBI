@@ -100,7 +100,7 @@ public class EngineMessageBundle {
      * @return the message
      */
     public static String getMessage(String code, String bundle, Locale userLocale, String[] arguments) {
-    	String message = getMessage(code, DEFAULT_BUNDLE, userLocale);
+    	String message = getMessage(code, bundle, userLocale);
         for (int i = 0; i < arguments.length; i++){
         	message = replace(message, i, arguments[i].toString());
         }
