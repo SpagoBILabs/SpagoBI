@@ -99,7 +99,7 @@ public class CrosstabXLSXExporter {
 		int rowsDepth = CrosstabExporterUtility.getDepth(rowsRoot);
 		JSONArray rowsRootChilds = rowsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
 		JSONArray data = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_DATA);
-		JSONArray titles = null;
+		JSONArray titles = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_ROWS_HEADER_TITLE);
 		MeasureFormatter measureFormatter = new MeasureFormatter(json, new DecimalFormat("#0.00"),"#0.00");
 		int rowsNumber = data.length();
 		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
