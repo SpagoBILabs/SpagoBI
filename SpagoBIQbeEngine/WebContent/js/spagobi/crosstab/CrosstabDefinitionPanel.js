@@ -166,6 +166,7 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 		crosstabDef.columns = this.columnsContainerPanel.getContainedAttributes();
 		crosstabDef.measures = this.measuresContainerPanel.getContainedMeasures();
 		crosstabDef.config = this.measuresContainerPanel.getCrosstabConfig();
+		crosstabDef.config.type = 'pivot';
 		return crosstabDef;
 	}
 	

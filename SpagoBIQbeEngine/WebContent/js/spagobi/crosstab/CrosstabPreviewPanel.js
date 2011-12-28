@@ -151,6 +151,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		
 		var c = {
 				 rowHeadersDefinition: rows
+				, rowHeadersTitle: crosstab.rows_description
 				, columnHeadersDefinition: columns
 				, entries: data
 				, withRowsSum: config.calculatetotalsonrows=="on"
