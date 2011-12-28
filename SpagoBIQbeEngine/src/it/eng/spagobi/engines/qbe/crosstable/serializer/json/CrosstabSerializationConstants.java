@@ -26,4 +26,6 @@ public class CrosstabSerializationConstants {
 	
 	public static final String ADDITIONAL_DATA = "additionalData";
 	
+	public static final String PIVOT = "pivot";
+	
 }
