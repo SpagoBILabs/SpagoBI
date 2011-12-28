@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,7 +59,7 @@ public class CrossTab {
 	public static final String CROSSTAB_JSON_DATA = "data";
 	public static final String CROSSTAB_JSON_CONFIG = "config";
 	public static final String CROSSTAB_JSON_MEASURES_METADATA = "measures_metadata";
-	//public static final String CROSSTAB_JSON_ROWS_HEADER_TITLE = "rowHeadersTitle";
+	public static final String CROSSTAB_JSON_ROWS_HEADER_TITLE = "rowHeadersTitle";
 	
 	
 	public static final String MEASURE_NAME = "name";
@@ -70,13 +71,15 @@ public class CrossTab {
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy" );
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
 
+	private static Logger logger = Logger.getLogger(CrossTab.class);
+	
 	private Node columnsRoot;
 	private Node rowsRoot;
 	String[][] dataMatrix;
 	private JSONObject config;
 	private List<MeasureInfo> measures;
 	private  CrosstabDefinition crosstabDefinition;
-	//private  List<String> rowHeadersTitles;
+	private  List<String> rowHeadersTitles;
 	//private boolean measuresOnRow;
 	
 	public enum CellType {DATA, CF, SUBTOTAL, TOTAL }
@@ -126,7 +129,12 @@ public class CrossTab {
 		int measuresCount = crosstabDefinition.getMeasures().size();
 		int index;
 		
-		cellLimit = cellLimit/measuresCount;
+		if(crosstabDefinition.isPivotTable()){
+			cellLimit = cellLimit/measuresCount;
+		}else{
+			cellLimit=0;
+		}
+		
 		
 		List<String> rowCordinates = new ArrayList<String>();
 		List<String> columnCordinates = new ArrayList<String>();
@@ -254,7 +262,16 @@ public class CrossTab {
 		JSONObject crossTabDefinition = new JSONObject();
 		crossTabDefinition.put(CROSSTAB_JSON_MEASURES_METADATA, getJSONMeasuresMetadata());
 		crossTabDefinition.put(CROSSTAB_JSON_ROWS_HEADERS, rowsRoot.toJSONObject());
-		crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRoot.toJSONObject());
+		
+		JSONArray descriptions = getHeaderDescriptions( crosstabDefinition.getRows());
+		crossTabDefinition.put(CROSSTAB_JSON_ROWS_HEADERS_DESCRIPTION, descriptions);
+		
+		//add the headers in the columns
+		List<CrosstabDefinition.Column> columns =  crosstabDefinition.getColumns();
+		Node columnsRootWithHeaders = columnsRoot.clone();
+		addHeaderTitles(columns, 0, columnsRootWithHeaders);
+
+		crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRootWithHeaders.toJSONObject());
 		crossTabDefinition.put(CROSSTAB_JSON_DATA,  getJSONDataMatrix());
 		crossTabDefinition.put(CROSSTAB_JSON_CONFIG,  config);
 		return crossTabDefinition;
@@ -876,7 +893,11 @@ public class CrossTab {
 			st = new double[dataMatrix.length];
 			for(int i=0; i<dataMatrix.length; i++){
 				for(int j=0; j<iteration; j++){
-					st[i] = st[i] + new Double(dataMatrix[i][j*measures+measureId]);
+					try{
+						st[i] = st[i] + new Double(dataMatrix[i][j*measures+measureId]);
+					} catch (Exception e) {
+						logger.debug("Cant format the number "+ (dataMatrix[i*measures+measureId][j]));
+					}
 				}
 			}
 			sum.add(toStringArray(st));
@@ -909,7 +930,11 @@ public class CrossTab {
 			st = new double[dataMatrix[0].length];
 			for(int i=0; i<iteration; i++){
 				for(int j=0; j<dataMatrix[0].length; j++){
-					st[j] = st[j] + new Double(dataMatrix[i*measures+measureId][j]);
+					try {
+						st[j] = st[j] + new Double(dataMatrix[i*measures+measureId][j]);
+					} catch (Exception e) {
+						logger.debug("Cant format the number "+ (dataMatrix[i*measures+measureId][j]));
+					}
 				}
 			}
 			sum.add(toStringArray(st));
@@ -1147,16 +1172,16 @@ public class CrossTab {
 		return dataMatrix;
 	}
 
-//	public List<String> getRowHeadersTitles() {
-//		if(rowHeadersTitles==null){
-//			rowHeadersTitles = new ArrayList<String>();
-//			List<CrosstabDefinition.Row> rows =  crosstabDefinition.getRows();
-//			for(int i=0; i<rows.size(); i++){
-//				rowHeadersTitles.add(rows.get(i).getAlias());
-//			}
-//		}
-//		return rowHeadersTitles;
-//	}
+	public List<String> getRowHeadersTitles() {
+		if(rowHeadersTitles==null){
+			rowHeadersTitles = new ArrayList<String>();
+			List<CrosstabDefinition.Row> rows =  crosstabDefinition.getRows();
+			for(int i=0; i<rows.size(); i++){
+				rowHeadersTitles.add(rows.get(i).getAlias());
+			}
+		}
+		return rowHeadersTitles;
+	}
 	
 	
 }
