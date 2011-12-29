@@ -73,7 +73,7 @@ Sbi.formviewer.FormEnginePanel = function(formEngineConfig) {
 	this.initFormViewerPage(formEngineConfig.template, c.formViewerPageConfig || {},formEngineConfig.formValues);
 	this.initResultsPage(c.resultsPageConfig || {});
 	this.initWorksheetPage(formEngineConfig.worksheet || {});
-	
+	this.activePageNumber =0;
 	c = Ext.apply(c, {
 		closable: false
 		, border: false
@@ -93,6 +93,7 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
     services: null
     , formViewerPage: null
     , resultsPage: null
+    , activePageNumber: null
    
    
     // -- public methods ----------------------------------------------------------------------------------
@@ -115,22 +116,26 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
 	, initWorksheetPage: function(config) {
 		this.worksheetPage = new Sbi.formviewer.WorksheetPage(config);
 		this.worksheetPage.on('edit', this.moveToFormPage, this);
+		this.worksheetPage.on('contentexported', function(){sendMessage({}, 'contentexported');}, this);
 	}
 
     , moveToWorksheetPage: function(formState) {
     	this.getLayout().setActiveItem( 2 );
     	this.worksheetPage.setFormState(formState);
     	this.worksheetPage.updateWorksheetEngine();
+    	this.activePageNumber =2;
 	}
 	
     , moveToResultsPage: function(formState) {
     	this.getLayout().setActiveItem( 1 );
     	this.resultsPage.setFormState(formState);
     	this.resultsPage.loadResults(formState.groupingVariables);
+    	this.activePageNumber =1;
 	}
     
     , moveToFormPage: function() {
     	this.getLayout().setActiveItem( 0 );
+    	this.activePageNumber =0;
 	}
     
     , validate : function () {
@@ -157,6 +162,23 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
     
     , getFormState : function () {
     	return this.formViewerPage.getFormState();
+    }
+    
+    , exportContent: function(mimeType){
+    	if(this.isWorksheetPageActive()){
+	    	if( this.worksheetPage!=undefined && this.worksheetPage!=null){
+	    		this.worksheetPage.exportContent(mimeType);
+	    	}
+		}else{
+			sendMessage({}, 'worksheetexporttaberror');
+		}
+    }
+
+    , isWorksheetPageActive: function(){
+    	if( this.activePageNumber == 2 && this.worksheetPage!=undefined && this.worksheetPage!=null){
+    		return this.worksheetPage.tabs.getActiveTab().id=='WorkSheetPreviewPage';
+    	}
+    	return false;
     }
 	
 });

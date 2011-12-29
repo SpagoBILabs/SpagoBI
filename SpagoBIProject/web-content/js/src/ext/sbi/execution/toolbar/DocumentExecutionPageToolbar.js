@@ -441,10 +441,21 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	
 	, exportWorksheetsExecution: function (mimeType) {
 		try {
-			var frame = this.miframe.getFrame();
-			var worksheetWindow = frame.getWindow();
+			
 			this.fireEvent('showmask','Exporting..');
-			worksheetWindow.workSheetPanel.exportContent(mimeType);
+			
+			var thePanel = this.miframe.getFrame().getWindow().qbe;
+			if(thePanel==null){
+				//the worksheet has been constructed starting from a smart filter document
+				thePanel = this.miframe.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
+			}
+			if(thePanel==null){
+				//the worksheet is alone with out the qbe
+				thePanel = this.miframe.getFrame().getWindow().workSheetPanel;
+			}
+			
+			thePanel.exportContent(mimeType);
+
 		} catch (err) {
 			alert('Sorry, cannot perform operation.');
 			throw err;
@@ -541,39 +552,60 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    
    // edit mode buttons (at the moment used by Worksheet documents only)
    , addButtonsForEditMode: function () {
+
+	   this.toolbarConfig.expandBtnVisible = (this.toolbarConfig.expandBtnVisible === undefined)? true: this.toolbarConfig.expandBtnVisible ; 
+	   if (Sbi.user.ismodeweb && this.toolbarConfig.expandBtnVisible  === true) {
+		   this.addButton(new Ext.Toolbar.Button({
+			   iconCls: 'icon-expand' 
+				   , tooltip: LN('sbi.execution.executionpage.toolbar.expand')
+				   , scope: this
+				   , handler : function() {
+					   this.fireEvent('collapse3');
+				   }			
+		   }));
+	   }
+
+	   this.addButton(new Ext.Toolbar.Button({
+		   iconCls: 'icon-save' 
+			   , tooltip: LN('sbi.execution.executionpage.toolbar.save')
+			   , scope: this
+			   , handler : this.saveWorksheet
+	   }));
+	   this.addButton(new Ext.Toolbar.Button({
+		   iconCls: 'icon-saveas' 
+			   , tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
+			   , scope: this
+			   , handler : this.saveWorksheetAs	
+	   }));
+
+	   if(this.executionInstance.document.exporters.length > 0){
+			
+		   this.exportMenu = new Ext.menu.Menu({
+			   id: 'basicExportMenu_0',
+			   items: this.getWorksheetExportMenuItems(),
+			   listeners: {	'mouseexit': {fn: function(item) {item.hide();}}}
+		   });
+	       this.addButton(new Ext.Toolbar.MenuButton({
+			   id: Ext.id()
+			   , tooltip: 'Exporters'
+			   , path: 'Exporters'	
+			   , iconCls: 'icon-export' 	
+			   , menu: this.exportMenu
+			   , width: 15
+			   , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+		    }));	
+	   }
 	   
-		this.toolbarConfig.expandBtnVisible = (this.toolbarConfig.expandBtnVisible === undefined)? true: this.toolbarConfig.expandBtnVisible ; 
-		if (Sbi.user.ismodeweb && this.toolbarConfig.expandBtnVisible  === true) {
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-expand' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
-				, scope: this
-				, handler : function() {
-					this.fireEvent('collapse3');
-				}			
-			}));
-		}
-	   
-		this.addButton(new Ext.Toolbar.Button({
-			iconCls: 'icon-save' 
-			, tooltip: LN('sbi.execution.executionpage.toolbar.save')
-		    , scope: this
-		    , handler : this.saveWorksheet
-		}));
-		this.addButton(new Ext.Toolbar.Button({
-			iconCls: 'icon-saveas' 
-			, tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
-		    , scope: this
-		    , handler : this.saveWorksheetAs	
-		}));
-		this.addSeparator();
-		this.addButton(new Ext.Toolbar.Button({
-			iconCls: 'icon-view' 
-			, tooltip: LN('sbi.execution.executionpage.toolbar.view')
-		    , scope: this
-		    , handler : this.stopWorksheetEditing	
-		}));
+	   this.addSeparator();
+	   this.addButton(new Ext.Toolbar.Button({
+		   iconCls: 'icon-view' 
+			   , tooltip: LN('sbi.execution.executionpage.toolbar.view')
+			   , scope: this
+			   , handler : this.stopWorksheetEditing	
+	   }));
+
    }
+   
    
    , addButtonsForViewMode: function () {
 	   
@@ -913,54 +945,13 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 					, href: ''  
 				}));
 			}else if ( this.executionInstance.document.typeCode == 'WORKSHEET') {
-					var menuItems = new Array();
-					
-					for(i=0;i<this.executionInstance.document.exporters.length ;i++){
-						
-						if (this.executionInstance.document.exporters[i]=='PDF'){
-							menuItems.push(	new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.PdfExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-pdf' 
-									     	, scope: this
-									        , width: 15
-									    	, handler : function() { this.exportWorksheetsExecution('application/pdf'); }
-											, href: ''   
-				                        })	 
-				                       ); 
-						}else if(this.executionInstance.document.exporters[i]=='XLS'){
-							menuItems.push(   new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.XlsExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-xls' 
-									     	, scope: this
-											 , width: 15
-									    	, handler : function() { this.exportWorksheetsExecution('application/vnd.ms-excel'); }
-											, href: ''   
-				                        })	
-				                        ); 
-						} else if(this.executionInstance.document.exporters[i]=='XLSX'){
-							menuItems.push(   new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.XlsxExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-xlsx' 
-									     	, scope: this
-											 , width: 15
-									    	, handler : function() { 
-									    		this.exportWorksheetsExecution('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); 
-									    	}
-											, href: ''   
-				                        })	
-				                       ); 
-			}
-					}
+
 					var menu0 = new Ext.menu.Menu({
 						id: 'basicMenu_0',
-						items: menuItems    
+						items: this.getWorksheetExportMenuItems()  
 					});	
+
+					
 					
 					if(this.executionInstance.document.exporters.length > 0){
 						this.add(
@@ -978,106 +969,39 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			}else if ( this.executionInstance.document.typeCode == 'DATAMART' || 
 						this.executionInstance.document.typeCode == 'SMART_FILTER' ) {
 			
-					var menuItems = new Array();
-					
-					for(i=0;i<this.executionInstance.document.exporters.length ;i++){
-						
-						if (this.executionInstance.document.exporters[i]=='PDF'){
-							menuItems.push(	new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.PdfExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-pdf' 
-									     	, scope: this
-									        , width: 15
-									    	, handler : function() { this.exportQbEExecution('application/pdf'); }
-											, href: ''   
-				                        })	 
-				                       ); 
-						}else if(this.executionInstance.document.exporters[i]=='XLS'){
-							menuItems.push(   new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.XlsExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-xls' 
-									     	, scope: this
-											, width: 15
-									    	, handler : function() { this.exportQbEExecution('application/vnd.ms-excel'); }
-											, href: ''   
-				                        })	
-				                        ); 
-						}else if(this.executionInstance.document.exporters[i]=='XLSX'){
-							menuItems.push(   new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.XlsxExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-xlsx' 
-									     	, scope: this
-											, width: 15
-									    	, handler : function() { 
-									    		this.exportQbEExecution('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-									    	}
-											, href: ''   
-				                        })	
-				                        ); 
-						}else if(this.executionInstance.document.exporters[i]=='RTF'){
-							menuItems.push(   new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.rtfExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-rtf' 
-									     	, scope: this
-											 , width: 15
-									    	, handler : function() { this.exportQbEExecution('application/rtf'); }
-											, href: ''   
-				                        })	
-				                        ); 
-						}else if(this.executionInstance.document.exporters[i]=='CSV'){
-							menuItems.push(   new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.CsvExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-csv' 
-									     	, scope: this
-											 , width: 15
-									    	, handler : function() { this.exportQbEExecution('text/csv'); }
-											, href: ''   
-				                        })	
-				                        ); 
-						}else if(this.executionInstance.document.exporters[i]=='JRXML'){
-							menuItems.push(   new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.jrxmlExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-jrxml' 
-									     	, scope: this
-											 , width: 15
-									    	, handler : function() { this.exportQbEExecution('text/jrxml'); }
-											, href: ''   
-				                        })	
-				                        ); 
-						} else if(this.executionInstance.document.exporters[i]=='JSON'){
-							menuItems.push(   new Ext.menu.Item({
-	                            id:  Ext.id()
-	                            , text: LN('sbi.execution.jsonExport')
-	                            , group: 'group_2'
-	                            , iconCls: 'icon-json' 
-						     	, scope: this
-								, width: 15
-						    	, handler : function() { this.exportQbEExecution('application/json'); }
-								, href: ''   
-	                        })	
-	                        ); 
-						}
-						
-				    }
 					
 					var menu0 = new Ext.menu.Menu({
 						id: 'basicMenu_0',
-						listeners: {'mouseexit': function(item) {item.hide();}},
-						items: menuItems    
+						listeners: {
+							'mouseexit': {fn: function(item) {item.hide();}},
+							'beforeshow': {
+								fn: function(thisMenu){
+									var theWindow = this.miframe.getFrame().getWindow();
+									var thePanel = theWindow.qbe;
+									var isBuildingWorksheet;
+									if(thePanel==null){//smart filter
+										thePanel = theWindow.Sbi.formviewer.formEnginePanel;
+									}
+									isBuildingWorksheet =  thePanel.isWorksheetPageActive();
+									var newItems; 
+									thisMenu.removeAll(false);
+									if (isBuildingWorksheet) {
+										newItems = (this.getWorksheetExportMenuItems());
+									} else {
+										newItems = (this.getQbeExportMenuItems());
+									}
+									for(var i =0; i<newItems.length; i++){
+										thisMenu.add(newItems[i]);
+									}
+
+								},
+								scope: this
+							}
+						},
+						items: this.getQbeExportMenuItems()     
 					});
 					
+
 					/*
 					if (this.executionInstance.document.typeCode == 'DATAMART') {
 						var resultItem = new Ext.menu.Item({
@@ -1232,6 +1156,157 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			}			
 		}));
 	   
+   }
+
+   , getQbeExportMenuItems: function() {
+
+	   //if (this.qbeExportMenuItems ==undefined || this.qbeExportMenuItems ==null){
+		   var menuItems = new Array();
+
+		   for(i=0;i<this.executionInstance.document.exporters.length ;i++){
+
+			   if (this.executionInstance.document.exporters[i]=='PDF'){
+				   menuItems.push(	new Ext.menu.Item({
+					   id:  Ext.id()
+					   , text: LN('sbi.execution.PdfExport')
+					   , group: 'group_2'
+						   , iconCls: 'icon-pdf' 
+							   , scope: this
+							   , width: 15
+							   , handler : function() { this.exportQbEExecution('application/pdf'); }
+				   , href: ''   
+				   })	 
+				   ); 
+			   }else if(this.executionInstance.document.exporters[i]=='XLS'){
+				   menuItems.push(   new Ext.menu.Item({
+					   id:  Ext.id()
+					   , text: LN('sbi.execution.XlsExport')
+					   , group: 'group_2'
+						   , iconCls: 'icon-xls' 
+							   , scope: this
+							   , width: 15
+							   , handler : function() { this.exportQbEExecution('application/vnd.ms-excel'); }
+				   , href: ''   
+				   })	
+				   ); 
+			   }else if(this.executionInstance.document.exporters[i]=='XLSX'){
+				   menuItems.push(   new Ext.menu.Item({
+					   id:  Ext.id()
+					   , text: LN('sbi.execution.XlsxExport')
+					   , group: 'group_2'
+						   , iconCls: 'icon-xlsx' 
+							   , scope: this
+							   , width: 15
+							   , handler : function() { 
+								   this.exportQbEExecution('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+							   }
+				   , href: ''   
+				   })	
+				   ); 
+			   }else if(this.executionInstance.document.exporters[i]=='RTF'){
+				   menuItems.push(   new Ext.menu.Item({
+					   id:  Ext.id()
+					   , text: LN('sbi.execution.rtfExport')
+					   , group: 'group_2'
+						   , iconCls: 'icon-rtf' 
+							   , scope: this
+							   , width: 15
+							   , handler : function() { this.exportQbEExecution('application/rtf'); }
+				   , href: ''   
+				   })	
+				   ); 
+			   }else if(this.executionInstance.document.exporters[i]=='CSV'){
+				   menuItems.push(   new Ext.menu.Item({
+					   id:  Ext.id()
+					   , text: LN('sbi.execution.CsvExport')
+					   , group: 'group_2'
+						   , iconCls: 'icon-csv' 
+							   , scope: this
+							   , width: 15
+							   , handler : function() { this.exportQbEExecution('text/csv'); }
+				   , href: ''   
+				   })	
+				   ); 
+			   }else if(this.executionInstance.document.exporters[i]=='JRXML'){
+				   menuItems.push(   new Ext.menu.Item({
+					   id:  Ext.id()
+					   , text: LN('sbi.execution.jrxmlExport')
+					   , group: 'group_2'
+						   , iconCls: 'icon-jrxml' 
+							   , scope: this
+							   , width: 15
+							   , handler : function() { this.exportQbEExecution('text/jrxml'); }
+				   , href: ''   
+				   })	
+				   ); 
+			   } else if(this.executionInstance.document.exporters[i]=='JSON'){
+				   menuItems.push(   new Ext.menu.Item({
+					   id:  Ext.id()
+					   , text: LN('sbi.execution.jsonExport')
+					   , group: 'group_2'
+						   , iconCls: 'icon-json' 
+							   , scope: this
+							   , width: 15
+							   , handler : function() { this.exportQbEExecution('application/json'); }
+				   , href: ''   
+				   })	
+				   ); 
+			   }
+		   }
+	   //}
+
+	   return menuItems;
+   }
+
+   , getWorksheetExportMenuItems: function() {
+	  // if (this.worksheetExportMenuItems ==undefined || this.worksheetExportMenuItems ==null){
+		   var menuItems = new Array();
+
+		   for(i=0;i<this.executionInstance.document.exporters.length ;i++){
+
+			   if (this.executionInstance.document.exporters[i]=='PDF'){
+				   menuItems.push(	new Ext.menu.Item({
+					   id:  Ext.id()
+					   , text: LN('sbi.execution.PdfExport')
+					   , group: 'group_2'
+						   , iconCls: 'icon-pdf' 
+							   , scope: this
+							   , width: 15
+							   , handler : function() { this.exportWorksheetsExecution('application/pdf'); }
+				   , href: ''   
+				   })	 
+				   ); 
+			   }else if(this.executionInstance.document.exporters[i]=='XLS'){
+				   menuItems.push(   new Ext.menu.Item({
+					   id:  Ext.id()
+					   , text: LN('sbi.execution.XlsExport')
+					   , group: 'group_2'
+						   , iconCls: 'icon-xls' 
+							   , scope: this
+							   , width: 15
+							   , handler : function() { this.exportWorksheetsExecution('application/vnd.ms-excel'); }
+				   , href: ''   
+				   })	
+				   ); 
+			   } else if(this.executionInstance.document.exporters[i]=='XLSX'){
+				   menuItems.push(   new Ext.menu.Item({
+					   id:  Ext.id()
+					   , text: LN('sbi.execution.XlsxExport')
+					   , group: 'group_2'
+						   , iconCls: 'icon-xlsx' 
+							   , scope: this
+							   , width: 15
+							   , handler : function() { 
+								   this.exportWorksheetsExecution('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); 
+							   }
+				   , href: ''   
+				   })	
+				   ); 
+			   }
+		   }
+		   //this.worksheetExportMenuItems = menuItems;
+	   //}
+	   return menuItems;
    }
    
    , startWorksheetEditing: function() {

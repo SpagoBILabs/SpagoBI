@@ -524,6 +524,9 @@ Sbi.locale.ln['sbi.execution.jsonExport'] = 'JSON';
 Sbi.locale.ln['sbi.execution.export.qbe.results'] = 'Risultati';
 Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Crosstab';
 
+Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Per esportare il documento worksheet \u00e8 necesario andare in preview';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Export warning';
+
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Espandi/Riduci';
 
 Sbi.locale.ln['sbi.home.Welcome'] = 'Benvenuto: ';

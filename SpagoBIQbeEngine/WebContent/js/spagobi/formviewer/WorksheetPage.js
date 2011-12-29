@@ -100,7 +100,7 @@ Sbi.formviewer.WorksheetPage = function(config) {
 	// constructor
 	Sbi.formviewer.WorksheetPage.superclass.constructor.call(this, c);
 	
-	this.addEvents('edit');
+	this.addEvents('edit', 'contentexported');
 };
 
 Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
@@ -127,7 +127,7 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 		
 		items.push(this.worksheetDesignerPanel);
 		
-		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({closable: false});
+		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({id : 'WorkSheetPreviewPage', closable: false});
 			
 		this.worksheetPreviewPanel.on('activate', function() {
 			//validate
@@ -242,6 +242,19 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 		this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
 	}
 	
-
+    , exportContent: function(mimeType){
+    	if( this.worksheetPreviewPanel!=undefined && this.worksheetPreviewPanel!=null && 
+    		this.worksheetPreviewPanel.getFrame()!=undefined && this.worksheetPreviewPanel.getFrame()!=null &&
+    		this.worksheetPreviewPanel.getFrame().getWindow()!=undefined && this.worksheetPreviewPanel.getFrame().getWindow()!=null &&
+    		this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel!=undefined && this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel!=null){
+    			this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.un('contentexported', this.sendMessageToParentFrame,this);	
+    			this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.on('contentexported', this.sendMessageToParentFrame,this);	
+    			this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.exportContent(mimeType, true);
+    	}
+    }
+	
+    , sendMessageToParentFrame: function(){
+    	this.fireEvent('contentexported');
+    }
 
 });

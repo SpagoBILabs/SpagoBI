@@ -66,7 +66,7 @@ Sbi.worksheet.runtime.WorkSheetsRuntimePanel = function(template, config) {
 		autoScroll: true,
 		items: [this.sheetsContainerPanel]
 	}); 
-		
+	this.addEvents('contentexported');
 	Sbi.worksheet.runtime.WorkSheetsRuntimePanel.superclass.constructor.call(this, c);	
 };
 
@@ -75,10 +75,13 @@ Ext.extend(Sbi.worksheet.runtime.WorkSheetsRuntimePanel, Ext.Panel, {
 
 	initPanels: function(template){
 		this.sheetsContainerPanel = new Sbi.worksheet.runtime.RuntimeSheetsContainerPanel({},template);		
+		this.sheetsContainerPanel.on('contentexported',function(){this.fireEvent('contentexported');}, this);
 	},
 
-	exportContent: function(mimeType){
-		this.sheetsContainerPanel.exportContent(mimeType);
+	exportContent: function(mimeType, fromDesigner){
+		
+		this.sheetsContainerPanel.exportContent(mimeType, fromDesigner);
+
 //		var exportedContent = this.sheetsContainerPanel.exportContent();
 //		var encodedExportedContent = Ext.util.JSON.encode(exportedContent);
 //		return encodedExportedContent;

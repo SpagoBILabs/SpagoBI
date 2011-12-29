@@ -644,3 +644,6 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.category']='Categorie';
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.validation.error.title']='Erreur Validation';
 Sbi.locale.ln['sbi.worksheet.validation.error.text']='Certaines feuilles ne sont pas valides... V\u00E9rifier que toutes les feuilles ont un contenu valide.';
+
+Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Please open the worksheet preview tab to export the document';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Export warning';

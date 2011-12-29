@@ -117,7 +117,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 	}
 	
 	,
-	exportContent : function(mimeType) {
+	exportContent : function(mimeType, fromDesigner) {
 		// make sure all the sheets have been displayed (necessary for charts' export)
 		if (this.sheetItems !== undefined && this.sheetItems !== null) {
 			var i = 0;
@@ -125,17 +125,17 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 			for (; i < this.sheetItems.length; i++) {
 				if (this.sheetItems[i].contentLoaded === false) {
 					// register to the contentloaded event
-					this.sheetItems[i].on('contentloaded', function () {this.exportContent.defer(500, this, [mimeType]); }, this);
+					this.sheetItems[i].on('contentloaded', function () {this.exportContent.defer(500, this, [mimeType, fromDesigner]); }, this);
 					this.setActiveTab(i);
 					return;
 				}
 			}
 		}
-		this.doExportContent(mimeType);
+		this.doExportContent(mimeType, fromDesigner);
 	}
 
 	,
-	doExportContent : function(mimeType) {
+	doExportContent : function(mimeType, fromDesigner) {
 
 		var resultExport = this.exportRenderedContent(mimeType);
 
@@ -175,8 +175,13 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 		form.submit();
 		
 		// notify the exporting service has been invoked (in order to hide the load-mask)
-		sendMessage({}, 'contentexported'); 
+		
+		if(fromDesigner){
+			this.fireEvent('contentexported');
 			
+		}else{
+			sendMessage({}, 'contentexported'); 
+		}
 	}
 	
 	,
