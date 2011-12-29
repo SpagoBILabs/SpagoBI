@@ -515,3 +515,6 @@ Sbi.locale.ln['sbi.ds.customData'] = 'Attributes';
 //===================================================================
 Ext.Msg.buttonText.yes = 'S\u00ec'; 
 Ext.Msg.buttonText.no = 'No';
+
+Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Please open the worksheet preview tab to export the document';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Export warning';

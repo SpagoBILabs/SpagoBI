@@ -326,6 +326,17 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	        	    	}  
 	        		}
 	        		, scope: this
+	        	},
+			
+				'message:worksheetexporttaberror': {
+							
+	        		fn: function(srcFrame, message) {
+	        	    	if (this.loadMask != null) {
+	        	    		this.hideMask();
+	        	    	}  
+	        			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.worksheet.export.previewtab.msg'), LN('sbi.worksheet.export.previewtab.title'));
+	        		}
+	        		, scope: this
 	        	}
 	        
 			
