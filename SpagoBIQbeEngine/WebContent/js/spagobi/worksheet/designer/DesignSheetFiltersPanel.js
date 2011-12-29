@@ -355,7 +355,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 			this.empty = true;
 		}
 		
-		if(aRow.data.id==this.splittingFilter.data.id){
+		if(this.splittingFilter!=undefined && this.splittingFilter!=null && aRow.data.id==this.splittingFilter.data.id){
 			//the filter is a splitting filter
 			this.splittingFilter=null;
 		}
