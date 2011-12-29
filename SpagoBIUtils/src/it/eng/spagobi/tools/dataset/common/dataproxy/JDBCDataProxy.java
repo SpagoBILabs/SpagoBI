@@ -93,11 +93,14 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
 			}
-			
+			String dialect = dataSource.getHibDialectClass();
+			if(dialect==null){
+				 dialect = dataSource.getHibDialectName();
+			}
 			try {				
 				//ATTENTION: For the most db sets the stmt as a scrollable stmt, only for the compatibility with Ingres sets
 				//a stmt forward only 			
-				if (dataSource.getHibDialectClass().contains("Ingres")){
+				if (dialect.contains("Ingres")){
 					stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);	
 				}else{
 					stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);					
