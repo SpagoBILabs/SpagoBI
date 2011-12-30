@@ -7,19 +7,19 @@ ALTER TABLE sbi_data_set_history ADD COLUMN CUSTOM_DATA VARCHAR;
 
 update HIBERNATE_SEQUENCES set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
 commit;
-INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN)
+INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN)
 	VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),
-	'Custom','SbiCustomDataSet','DATA_SET_TYPE','Data Set Type','SbiCustomDataSet', 'biadmin');
+	'Custom','SbiCustomDataSet','DATA_SET_TYPE','Data Set Type','SbiCustomDataSet', 'biadmin', current_timestamp);
 	
 update HIBERNATE_SEQUENCES set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
 commit;
-INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN)
-	VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),	'DATE_DEFAULT','sbidomains.nm.date.default','PAR_TYPE','Parameter type','sbidomains.ds.date.default', 'biadmin');	
+INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN)
+	VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),	'DATE_DEFAULT','sbidomains.nm.date.default','PAR_TYPE','Parameter type','sbidomains.ds.date.default', 'biadmin', current_timestamp);	
 commit;
 update HIBERNATE_SEQUENCES set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
 commit;
-INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN)
-	VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),	'Day scale','Day scale','METRIC_SCALE_TYPE','Metric Scale Type','', 'biadmin');	
+INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN)
+	VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),	'Day scale','Day scale','METRIC_SCALE_TYPE','Metric Scale Type','', 'biadmin', current_timestamp);	
 commit;
 
 ALTER TABLE sbi_data_set_history ALTER COLUMN DS_METADATA VARCHAR;
