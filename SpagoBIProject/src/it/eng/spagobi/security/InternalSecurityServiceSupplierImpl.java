@@ -94,7 +94,7 @@ public class InternalSecurityServiceSupplierImpl implements
 		logger.debug("IN - userId: " + userId);
 		SpagoBIUserProfile profile = null;
 		try {
-			SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
+			SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId.toUpperCase());
 
 			if (user == null) {
 				logger.error("UserName [" + userId + "] not found!!");
