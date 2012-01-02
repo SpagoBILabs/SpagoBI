@@ -224,9 +224,11 @@ public class ExecutionInstance implements Serializable{
 						// if the lov is single value and the parameter value is not set, the parameter value 
 						// is the lov result
 						if(lovResultHandler.isSingleValue() && aBIObjectParameter.getParameterValues() == null) {
-							aBIObjectParameter.setParameterValues(lovResultHandler.getValues(lovProvDet.getValueColumnName()));
-							aBIObjectParameter.setHasValidValues(true);
-							aBIObjectParameter.setTransientParmeters(true);
+							if(!aBIObjectParameter.getParameter().getType().equals("DATE")){
+								aBIObjectParameter.setParameterValues(lovResultHandler.getValues(lovProvDet.getValueColumnName()));
+								aBIObjectParameter.setHasValidValues(true);
+								aBIObjectParameter.setTransientParmeters(true);
+							}
 						}
 					} catch (Exception e) {
 						logger.error(e);
