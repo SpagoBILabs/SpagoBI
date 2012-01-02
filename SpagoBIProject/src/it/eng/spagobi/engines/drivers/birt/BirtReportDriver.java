@@ -128,7 +128,12 @@ public class BirtReportDriver extends AbstractDriver implements IEngineDriver {
 		     * pars.put(biobjPar.getParameterUrlName(), value);
 		     */
 		    value = parValuesEncoder.encode(biobjPar);
-		    pars.put(biobjPar.getParameterUrlName(), value);
+			logger.debug("value:"+value);
+			logger.debug("biobjPar.getParameterUrlName()"+biobjPar.getParameterUrlName());
+		    if (biobjPar.getParameterUrlName()!=null && value!=null) {
+			pars.put(biobjPar.getParameterUrlName(), value);
+			}
+			
 		} catch (Exception e) {
 		    logger.debug("OUT");
 		    logger.warn("Error while processing a BIParameter", e);
