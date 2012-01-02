@@ -424,7 +424,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	
 	<div class='div_detail_label'>
 		<span class='portlet-form-field-label'>
-		<spagobi:message key = "SBIDev.ListParamUse.parInfo.Name"/>
+		  		<%if(parameter.getType().equals("DATE")){ %>
+  					<spagobi:message key = "SBIDev.ListParamUse.parInfo.Default"/>
+  				<%}else{ %>
+  					<spagobi:message key = "SBIDev.ListParamUse.parInfo.Name"/>
+  				<%} %>
+
 	</span>
 	</div>
 	
@@ -478,7 +483,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</span>
 	</div>	
 		<div class='div_detail_form' id = 'divForm' >
-		
+	<%if(!parameter.getType().equals("DATE")){ %>
 		<select class='portlet-form-input-field' NAME="selectionType" id="paruseSelType" <% if (isManualInput) { out.print("disabled='disabled'"); } %>>
 		<% 
 		 String curr_seltype_val = paruse.getSelectionType();
@@ -491,6 +496,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         	<%=domain.getTranslatedValueName(locale)%>
        <%} %>
        </select>  
+       	<%}else{ 
+	%>
+		<input type="hidden" NAME="selectionType" id="paruseSelType" value="COMBOBOX" />
+
+	<%}%>
        </div>	     
 	
 	
