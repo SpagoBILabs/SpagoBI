@@ -21,8 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
-<%@ page language="java" 
-	contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+
 	<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
    
    	
