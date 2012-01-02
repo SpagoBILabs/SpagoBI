@@ -32,7 +32,7 @@ I18NMessagesDAO {
 	.getLogger(I18NMessagesDAOHibImpl.class);
 
 	public String getI18NMessages(Locale locale, String code) throws EMFUserError {
-		logger.debug("IN");
+		logger.debug("IN. code="+code);
 		String toReturn = null;
 
 		Session aSession = null;
@@ -49,11 +49,13 @@ I18NMessagesDAO {
 			
 			String qDom = "from SbiDomains dom where dom.valueCd = :valueCd AND dom.domainCd = 'LANG'";
 			Query queryDom = aSession.createQuery(qDom);
-			String localeId = locale.getISO3Language();
+			String localeId = locale.getISO3Language().toUpperCase();
+			logger.debug("localeId="+localeId);
 			queryDom.setString("valueCd", localeId);
 			Object objDom = queryDom.uniqueResult();
 			if(objDom == null){
-				logger.warn("Could not find language domain for code "+code);				
+				logger.error("Could not find domain for locale "+locale.getISO3Language());	
+				return code;				
 			}
 			Integer domId = ((SbiDomains)objDom).getValueId();
 			
@@ -82,7 +84,7 @@ I18NMessagesDAO {
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		logger.debug("OUT.toReturn="+toReturn);
 		return toReturn;
 	}
 
