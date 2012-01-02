@@ -120,7 +120,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 			JSONArray attributesJSON = getAttributeAsJSONArray(ATTRIBUTES);
 			if (userId != null) {
 				SbiUser user = new SbiUser();
-				user.setUserId(userId);
+				user.setUserId(userId.toUpperCase());
 				user.setFullName(fullName);
 				if(password != null && password.length() > 0){
 					try {
