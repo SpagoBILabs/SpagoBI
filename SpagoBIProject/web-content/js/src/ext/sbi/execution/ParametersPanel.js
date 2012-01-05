@@ -492,7 +492,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if(field.behindParameter.selectionType === 'COMBOBOX'){ 
 			field.store.load();
 		}		
-		//field.reset();
+		field.reset();
 	}
 	
 	, updateVisualDependentField: function(fatherField, dependantConf) {
