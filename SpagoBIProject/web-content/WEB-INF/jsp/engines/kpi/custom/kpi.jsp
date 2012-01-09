@@ -158,7 +158,8 @@ Authors - Monica Franceschini
 		});
 		
 		var grid = {
-			subtitle: '<%= subTitle%>',			
+			subtitle: '<%= subTitle%>',		
+			autoScroll	:true,
 			json: <%=kpiRowsArray%>
 		};
 		var accordion ={SBI_EXECUTION_ID: '<%=EXECUTION_ID%>', 

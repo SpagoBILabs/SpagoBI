@@ -115,6 +115,8 @@ public class KpiGUIUtil {
 				jsonToReturn.put("hidden",true);
 			}
 			String name = kpiLine.getModelNodeName();
+			String label = kpiLine.getModelInstanceNodeId()+"";
+			jsonToReturn.put("statusLabel", label);
 			if(name.length() >= 30){
 				name = name.substring(0,30) + "...";
 			}
@@ -143,7 +145,7 @@ public class KpiGUIUtil {
 					jsonToReturn.put("iconCls", "folder");
 					jsonToReturn.put("cls", "node-folder");
 				}else{
-					jsonToReturn.put("iconCls","");
+					jsonToReturn.put("iconCls","has-kpi");
 				}
 			}else{				
 				jsonToReturn.put("actual", "");
@@ -152,7 +154,7 @@ public class KpiGUIUtil {
 					jsonToReturn.put("iconCls", "folder");
 					jsonToReturn.put("cls", "node-folder");
 				}else{
-					jsonToReturn.put("iconCls","");
+					jsonToReturn.put("iconCls","has-kpi");
 				}
 
 			}
