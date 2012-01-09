@@ -40,6 +40,7 @@ public class KpiGUIUtil {
 	private static Locale kpiInstanceLocale;
 	private static List parameters ;
 	private static String visibilityParameterValues = null;
+	
 	public void setExecutionInstance(ExecutionInstance instance, Locale locale){
 		kpiInstance = instance;
 		kpiInstanceLocale = locale;
@@ -113,20 +114,50 @@ public class KpiGUIUtil {
 			if(!isVisible){
 				jsonToReturn.put("hidden",true);
 			}
-			jsonToReturn.put("name", kpiLine.getModelNodeName());
-			if (kpiLine.getValue() != null) {
+			String name = kpiLine.getModelNodeName();
+			if(name.length() >= 30){
+				name = name.substring(0,30) + "...";
+			}
+			jsonToReturn.put("name", name);
+			jsonToReturn.put("qtip", kpiLine.getModelNodeName());
+			
+			List<KpiLine> children = (List<KpiLine>) kpiLine.getChildren();
+
+			if (children != null) {
+				
+				JSONArray jsonArrayChildren = new JSONArray();
+				for (int i = 0; i < children.size(); i++) {
+
+					KpiLine kpiChildLine = children.get(i);
+					JSONObject child  = recursiveGetJsonObject(kpiChildLine);
+					jsonArrayChildren.put(child);
+				}
+				jsonToReturn.put("children", jsonArrayChildren);
+			}
+			KpiValue kpivalue= kpiLine.getValue();
+			if (kpivalue != null) {
 				jsonToReturn.put("actual", kpiLine.getValue().getValue());
 				jsonToReturn.put("target", kpiLine.getValue().getTarget());
-				jsonToReturn.put("iconCls","");
-			}else{
+
+				if(children != null && !children.isEmpty()){
+					jsonToReturn.put("iconCls", "folder");
+					jsonToReturn.put("cls", "node-folder");
+				}else{
+					jsonToReturn.put("iconCls","");
+				}
+			}else{				
 				jsonToReturn.put("actual", "");
 				jsonToReturn.put("target", "");
-				jsonToReturn.put("iconCls", "folder");
-				jsonToReturn.put("cls", "node-folder");
-			}
-			String color = detectColor(kpiLine.getValue());
-			jsonToReturn.put("status", color);
+				if(children != null && !children.isEmpty()){
+					jsonToReturn.put("iconCls", "folder");
+					jsonToReturn.put("cls", "node-folder");
+				}else{
+					jsonToReturn.put("iconCls","");
+				}
 
+			}
+			String color = detectColor(kpivalue);
+			jsonToReturn.put("status", color);
 			jsonToReturn.put("expanded", true);
 			
 			setKpiInfos(kpiLine, jsonToReturn);
@@ -145,18 +176,7 @@ public class KpiGUIUtil {
 				jsonToReturn.putOpt("documentExecUrl", executionUrl);
 			}
 
-			List<KpiLine> children = (List<KpiLine>) kpiLine.getChildren();
-			JSONArray JSONArrayChildren = new JSONArray();
 
-			if (children != null) {
-				for (int i = 0; i < children.size(); i++) {
-
-					KpiLine kpiChildLine = children.get(i);
-					JSONObject child  = recursiveGetJsonObject(kpiChildLine);
-					JSONArrayChildren.put(child);
-				}
-				jsonToReturn.put("children", JSONArrayChildren);
-			}
 
 		} catch (JSONException e) {
 			logger.error("Error setting children");
@@ -232,11 +252,16 @@ public class KpiGUIUtil {
 	}
 	private String detectColor(KpiValue value){
 		String ret = "";
-		if(value == null){
+		if(value == null || value.getValue() == null){
 			return ret;
 		}
-		if(value.getThresholdOfValue() != null && value.getThresholdOfValue().getColourString() != null){
-			return value.getThresholdOfValue().getColourString();
+
+		ThresholdValue thrVal = value.getThresholdOfValue();
+		if(thrVal != null ){
+			if(thrVal.getColourString() != null){
+				return thrVal.getColourString();
+			}
+			
 		}else{
 			//calculate it
 			String val = value.getValue();

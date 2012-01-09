@@ -166,6 +166,7 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	     }, this);
 		
 		this.addListener('click', this.selectNode, this);
+		Ext.QuickTips.init() 
 		
 	}
 	,selectNode : function(field) {
