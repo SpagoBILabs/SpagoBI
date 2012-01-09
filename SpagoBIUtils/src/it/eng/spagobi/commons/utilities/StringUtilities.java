@@ -763,21 +763,13 @@ public class StringUtilities {
 			try{
 				nullValueString =  SingletonConfig.getInstance().getConfigValue("DATA_SET_NULL_VALUE");
 				if(nullValueString != null){
-					if(newListOfValues.equals("''")){
-						newListOfValues = "'"+nullValueString+"'";
-					}else{
-						newListOfValues = nullValueString;
-					}
+					newListOfValues = "'"+nullValueString+"'";
 				}	
 			}catch(Throwable e){
 				//try to read engine_config settings
 				nullValueString = (String)((SourceBean)EnginConf.getInstance().getConfig().getAttribute("DATA_SET_NULL_VALUE")).getCharacters();
 				if(nullValueString != null){
-					if(newListOfValues.equals("''")){
-						newListOfValues = "'"+nullValueString+"'";
-					}else{
-						newListOfValues = nullValueString;
-					}
+					newListOfValues = "'"+nullValueString+"'";
 					
 				}
 			}
