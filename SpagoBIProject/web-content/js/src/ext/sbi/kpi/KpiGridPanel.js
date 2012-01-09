@@ -88,13 +88,12 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	    var tpl = new Ext.XTemplate(
 			      '<tpl for=".">'
 	    		  ,'<tpl if="values.status">'
-			      ,'<canvas id="{values.name}" width="15px" height="15px" onLoad="{[this.draw(values.name, values.status)]}" style="align: center;"/>'	     
+			      ,'<canvas id="{values.statusLabel}" width="15px" height="15px" onLoad="{[this.draw(values.statusLabel, values.status)]}" style="align: center;"/>'	     
 			      ,'</tpl>'
 			      ,'</tpl>'
 			      ,{
 			          ids: this.ids,
 			          draw: function(val, color) {
-			    	  	  //console.log(val);
 			    	  	  var status = {val : val, color: color};
 			              ids.push(status);
 			          }
