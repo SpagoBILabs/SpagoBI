@@ -53,6 +53,12 @@ Sbi.worksheet.designer.PieChartDesignerPanel = function(config) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.pieChartDesignerPanel);
 	}
 	
+	this.chartLib = 'highcharts';
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.chartlib) {
+		this.chartLib = Sbi.settings.worksheet.chartlib;
+	}
+	this.chartLib = this.chartLib.toLowerCase();
+	
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	Ext.apply(this, c);
@@ -80,6 +86,7 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 	, showLegendCheck: null
 	, showPercentageCheck: null
 	, seriesPalette: null
+	, chartLib: null
 	
 	, init: function () {
 		
@@ -169,6 +176,18 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 			, closeAction: 'hide'
 		});
 	    
+		var controlsItems = new Array();
+		
+		switch (this.chartLib) {
+	        case 'ext3':
+	        	break;
+	        default: 
+	        	controlsItems.push(this.showValuesCheck);
+		} 
+		
+    	controlsItems.push(this.showLegendCheck);
+    	controlsItems.push(this.showPercentageCheck);
+		
 		this.form = new Ext.Panel({
 			border: false
 			, layout: 'form'
@@ -178,7 +197,7 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 					, style: 'padding: 10px 0px 0px 15px;'
 				//	, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.options')
 					, border: false
-					, items: [this.showValuesCheck, this.showLegendCheck, this.showPercentageCheck]
+					, items: controlsItems
 				}
 				, 
 				this.axisDefinitionPanel

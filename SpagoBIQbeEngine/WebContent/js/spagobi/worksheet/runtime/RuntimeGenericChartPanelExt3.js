@@ -134,21 +134,21 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.run
 			chartConf.extraStyle.legend = this.legendStyle;
 		}
 		
-		if((this.chartConfig.showvalues == undefined) || !this.chartConfig.showvalues){
-			if(!showTipMask){
-				chartConf.extraStyle.dataTip = {
-						border: {
-		                    size:0
-		                },
-		                background: {
-		                    alpha: .0
-		                }
-		            };
-			}
-			chartConf.tipRenderer = function(chart, record, index, series){
-	            return '';
-	        };
-		}
+//		if((this.chartConfig.showvalues == undefined) || !this.chartConfig.showvalues){
+//			if(!showTipMask){
+//				chartConf.extraStyle.dataTip = {
+//						border: {
+//		                    size:0
+//		                },
+//		                background: {
+//		                    alpha: .0
+//		                }
+//		            };
+//			}
+//			chartConf.tipRenderer = function(chart, record, index, series){
+//	            return '';
+//	        };
+//		}
 	}
 
 });

@@ -130,11 +130,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 					seriesum = seriesum + parseFloat(((storeObject.store.getAt(j)).data)[chartSerieNumber]);
 				}
 				itemChart.seriesum = seriesum;
-				if((this.chartConfig.showvalues == undefined) || !this.chartConfig.showvalues){
-					itemChart.tipRenderer = function(chart, record, index, series){
-						return  Ext.util.Format.number(100*record.data['series'+chart.serieNumber]/ chart.seriesum, '0.00') + '%';
-			        };
-				}
+				//if((this.chartConfig.showvalues == undefined) || !this.chartConfig.showvalues){
+//					itemChart.tipRenderer = function(chart, record, index, series){
+//						return  Ext.util.Format.number(100*record.data['series'+chart.serieNumber]/ chart.seriesum, '0.00') + '%';
+//			        };
+				//}
 			}
 			
 			var titlePanel = new Ext.Panel({
