@@ -83,10 +83,12 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	, docs: null
 	, comments: null
 	, historical: null
+	, itemDetail: null
+	, itemDocColl: null
 	
 	, initAccordion: function(c){
 
-	    var item1 = new Ext.Panel({
+	    this.itemDetail = new Ext.Panel({
 	        title: 'Dettaglio',
 	        items: [this.detail],
 	        autoScroll: true,
@@ -104,7 +106,7 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	        cls:'empty'
 	    });
 
-	    var item3 = new Ext.Panel({
+	    this.itemDocColl = new Ext.Panel({
 	        title: 'Doc collegato',
 	        items: [this.docs],
 	        scope: this,
@@ -134,7 +136,7 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	        autoScroll: true,
 	        cls:'empty'
 	    });
-	    c.items = [item1, item2, item3, item4, item5];
+	    c.items = [this.itemDetail, item2, this.itemDocColl, item4, item5];
 	}
 	, initDetail: function(c){
 		this.detail = new Sbi.kpi.KpiGUIDetail(c);
@@ -150,20 +152,29 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 
 	}
 	, initComments: function(c){
-		this.comments = new Sbi.kpi.KpiGUIComments(c);
+		this.comments = new Sbi.kpi.KpiGUIComments(c);	
 
 	}
 	, updateAccordion: function(field){
 		//detail
+		if(field.attributes != undefined && field.attributes.kpiName != undefined){
+			this.itemDetail.setTitle('Dettaglio '+field.attributes.kpiName);
+		}
 		this.detail.update(field);
 		//description
 		this.description.update(field);
 		//linked docs
+		if(field.attributes != undefined && field.attributes.documentLabel != undefined){
+			this.itemDocColl.setTitle('Doc collegato '+field.attributes.documentLabel);
+			this.itemDocColl.show();
+		}else{
+			this.itemDocColl.hide();
+		}
 		this.docs.update(field);
 		//comments
 		this.comments.update(field);
 		//historical
 		this.historical.update(field);
-		this.render();		
+		this.render();
 	}
 });
