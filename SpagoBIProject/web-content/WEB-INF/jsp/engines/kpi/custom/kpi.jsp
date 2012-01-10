@@ -166,6 +166,7 @@ Authors - Monica Franceschini
 						customChartName: '<%=customChartName%>',
 						localeExtDateFormat: '<%=localeExtDateFormat%>',
 						serverExtTimestampFormat: '<%=serverExtTimestampFormat%>',
+						serverDateFormat: '<%=serverDateFormat%>',
 						chartBaseUrl: '/<%= engineContext %>/js/lib/ext-3.1.1/resources/charts.swf'
 						};
 		
