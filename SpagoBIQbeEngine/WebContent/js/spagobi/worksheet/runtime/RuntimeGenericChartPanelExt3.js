@@ -47,6 +47,10 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3  = function(config) {
 	this.legendStyle = 		
 	{
 			display: 'bottom',
+			border:{
+				color: "bcbcbc",
+				size: 1
+			},
 			padding: 5,
 			font:
 			{
