@@ -266,12 +266,18 @@ public class CrossTab {
 		JSONArray descriptions = getHeaderDescriptions( crosstabDefinition.getRows());
 		crossTabDefinition.put(CROSSTAB_JSON_ROWS_HEADERS_DESCRIPTION, descriptions);
 		
-		//add the headers in the columns
-		List<CrosstabDefinition.Column> columns =  crosstabDefinition.getColumns();
-		Node columnsRootWithHeaders = columnsRoot.clone();
-		addHeaderTitles(columns, 0, columnsRootWithHeaders);
+		Node columnsRootToSerialize;
+		
+		if(this.crosstabDefinition.isPivotTable()){
+			//add the headers in the columns
+			List<CrosstabDefinition.Column> columns =  crosstabDefinition.getColumns();
+			columnsRootToSerialize = columnsRoot.clone();
+			addHeaderTitles(columns, 0, columnsRootToSerialize);
+		}else{
+			columnsRootToSerialize = columnsRoot;
+		}
 
-		crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRootWithHeaders.toJSONObject());
+		crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRootToSerialize.toJSONObject());
 		crossTabDefinition.put(CROSSTAB_JSON_DATA,  getJSONDataMatrix());
 		crossTabDefinition.put(CROSSTAB_JSON_CONFIG,  config);
 		return crossTabDefinition;
