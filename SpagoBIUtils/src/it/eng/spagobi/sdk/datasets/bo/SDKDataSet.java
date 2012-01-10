@@ -56,6 +56,9 @@ public class SDKDataSet  implements java.io.Serializable {
     private java.lang.String webServiceAddress;
 
     private java.lang.String webServiceOperation;
+    
+    private java.lang.String customData;
+    
 
     public SDKDataSet() {
     }
@@ -90,7 +93,8 @@ public class SDKDataSet  implements java.io.Serializable {
            java.lang.String jsonQuery,
            java.lang.String datamarts,
            java.lang.String webServiceAddress,
-           java.lang.String webServiceOperation) {
+           java.lang.String webServiceOperation,
+           java.lang.String customData) {
            this.description = description;
            this.fileName = fileName;
            this.id = id;
@@ -113,6 +117,7 @@ public class SDKDataSet  implements java.io.Serializable {
            this.datamarts = datamarts;
            this.webServiceAddress = webServiceAddress;
            this.webServiceOperation = webServiceOperation;
+           this.customData = customData;
     }
 
 
@@ -554,7 +559,19 @@ public class SDKDataSet  implements java.io.Serializable {
         this.webServiceOperation = webServiceOperation;
     }
 
-    private java.lang.Object __equalsCalc = null;
+    
+    public java.lang.String getCustomData() {
+		return customData;
+	}
+
+	public void setCustomData(java.lang.String customData) {
+		this.customData = customData;
+	}
+
+
+
+
+	private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof SDKDataSet)) return false;
         SDKDataSet other = (SDKDataSet) obj;
@@ -629,6 +646,9 @@ public class SDKDataSet  implements java.io.Serializable {
             ((this.webServiceAddress==null && other.getWebServiceAddress()==null) || 
              (this.webServiceAddress!=null &&
               this.webServiceAddress.equals(other.getWebServiceAddress()))) &&
+              ((this.customData==null && other.getCustomData()==null) || 
+                      (this.customData!=null &&
+                       this.customData.equals(other.getCustomData()))) &&              
             ((this.webServiceOperation==null && other.getWebServiceOperation()==null) || 
              (this.webServiceOperation!=null &&
               this.webServiceOperation.equals(other.getWebServiceOperation())));
@@ -717,6 +737,9 @@ public class SDKDataSet  implements java.io.Serializable {
         if (getWebServiceOperation() != null) {
             _hashCode += getWebServiceOperation().hashCode();
         }
+        if (getCustomData() != null) {
+            _hashCode += getCustomData().hashCode();
+        }        
         __hashCodeCalc = false;
         return _hashCode;
     }
@@ -907,6 +930,12 @@ public class SDKDataSet  implements java.io.Serializable {
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("customData");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "customData"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);        
     }
 
     /**
