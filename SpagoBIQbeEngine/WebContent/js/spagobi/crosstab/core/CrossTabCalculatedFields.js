@@ -295,7 +295,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     	return CF;
     }
     
-    //This methot perform the operation
+    //This method perform the operation
     //the input is the skeleton of the operation and the values of the variables
     , executeSingleOp: function(listOfExp, op){
     	var indexComma = 0;
