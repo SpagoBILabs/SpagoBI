@@ -114,15 +114,7 @@ Sbi.kpi.ManageOUGrants = function(config, ref) {
 	
 	c.id = 'ManageOUGrants';
 	
-
 	Sbi.kpi.ManageOUGrants.superclass.constructor.call(this, c);	 	
-
-	//after the 2 trees have been displayed we select the root node of the ou tree
-	this.treePanel.on('afterlayout', function(){		
-		this.leftTree.getSelectionModel().select(this.leftTree.getRootNode());
-		this.updateKpisCheck(this.leftTree.getRootNode());	
-		},
-		this);
 
 };
 
@@ -258,7 +250,10 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		//loader for the tree of the ous
 		this.outreeLoader =new Ext.tree.TreeLoader({
 			dataUrl: thisPanel.configurationObject.manageOUChildService,
-			baseParams : {'grantId': thisPanel.selectedGrantId},
+			baseParams : {
+				'grantId' : thisPanel.selectedGrantId,
+				'ouHierarchy' : thisPanel.ouHierarchy
+			},
 			createNode: function(attr) {
 				
 				if (attr.nodeId) {
@@ -294,6 +289,15 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 					if(childNode.attributes.modelinstancenodes==null || childNode.attributes.modelinstancenodes.length==0){
 						childNode.attributes.modelinstancenodes = thisNode.attributes.modelinstancenodesOfThisSession.slice(0);//copy the array
 						childNode.attributes.modelinstancenodesOfThisSession = thisNode.attributes.modelinstancenodesOfThisSession.slice(0);//copy the array
+					}else{
+						var childChildren = childNode.attributes.modelinstancenodes.slice(0);
+						for(var i=0; i<childChildren.length; i++){
+							if(thisNode.attributes.modelinstancenodes.indexOf(childChildren[i])>=0 || thisNode.attributes.modelinstancenodesOfThisSession.indexOf(childChildren[i])>=0 ){
+								continue;
+							}else{
+								childNode.attributes.modelinstancenodes = thisPanel.listRemove(childNode.attributes.modelinstancenodes, childChildren[i]);							
+							}
+						}						
 					}
 					},this);
 
@@ -606,8 +610,8 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		}
 		
 		//disable the kpis not living in the father list.
-		//If the node is the root it enables all the nodes
 		this.deepDisableCheck(this.rightTree.getRootNode(), node);
+		
 	}
 
 	//Set disable all the nodes of the subtree rooted in ouNode.. 
@@ -616,7 +620,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	,deepDisableCheck: function(kpiNode, ouNode){
 		var children = kpiNode.childNodes;
 	
-		if(ouNode.parentNode!=null){
+		if(ouNode.parentNode!=null && ouNode.parentNode.id != -1){
 			kpiNode.getUI().checkbox.disabled=true;
 			var parentKpis = ouNode.parentNode.attributes.modelinstancenodes;
 			if(parentKpis!=null){
@@ -653,7 +657,6 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	
 
 	,deepDisableChildren: function(kpiNode, ouNode, checked){
-		
 		var children = kpiNode.childNodes;
 		if(children!=null){
 			for(var i=0; i<children.length; i++){
@@ -811,10 +814,11 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	//Load the trees from the server
 	loadTrees:	function() {
 		var thisPanel = this;
-		thisPanel.outreeLoader.baseParams.grantId=thisPanel.selectedGrantId;
 		var modelInstId = thisPanel.detailFieldKpiHierarchy.getValue();
 		var ouHierarchyId = thisPanel.detailFieldOUHierarchy.getValue();
 		this.ouHierarchy = ouHierarchyId;
+		thisPanel.outreeLoader.baseParams.grantId = thisPanel.selectedGrantId;
+		thisPanel.outreeLoader.baseParams.ouHierarchy = thisPanel.ouHierarchy;
 		if(modelInstId!=null && ouHierarchyId!=null && modelInstId!='undefined' && ouHierarchyId!='undefined' && modelInstId!='' && ouHierarchyId!=''){
 			//Ajax request used to load the model instance tree
 			Ext.Ajax.request({
@@ -1018,6 +1022,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 
 		var tip = rec.ou.name;
 		var node = new Ext.tree.AsyncTreeNode({
+			expanded	: true,
 			text		: rec.ou.name,
 			nodeId		: rec.ou.id,
 			expanded	: true,

@@ -161,9 +161,9 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		return toReturn;
 	}
 	
-	public OrganizationalUnitNode getRootNode(Integer hierarchyId) {
+	public List<OrganizationalUnitNode> getRootNodes(Integer hierarchyId) {
 		logger.debug("IN: hierarchyId = " + hierarchyId);
-		OrganizationalUnitNode toReturn = null;
+		List<OrganizationalUnitNode> toReturn = new ArrayList<OrganizationalUnitNode>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -174,10 +174,14 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 					" and n.sbiOrgUnitNodes is null");
 			hibQuery.setInteger(0, hierarchyId);
 			
-			SbiOrgUnitNodes root = (SbiOrgUnitNodes) hibQuery.uniqueResult();
+			List roots = hibQuery.list();
 
-			if (root != null) {
-				toReturn = toOrganizationalUnitNode(root);
+			if (roots != null && !roots.isEmpty()) {
+				Iterator it = roots.iterator();
+				while (it.hasNext()) {
+					SbiOrgUnitNodes root = (SbiOrgUnitNodes) it.next();
+					toReturn.add(toOrganizationalUnitNode(root));
+				}
 			}
 		} finally {
 			rollbackIfActiveAndClose(tx, aSession);
@@ -762,10 +766,10 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 	}
 	
 
-	public OrganizationalUnitNodeWithGrant getRootNodeWithGrants(
+	public List<OrganizationalUnitNodeWithGrant> getRootNodesWithGrants(
 			Integer hierarchyId, Integer grantId) {
 		logger.debug("IN: hierarchyId = " + hierarchyId + ", grantId = " + grantId);
-		OrganizationalUnitNodeWithGrant toReturn = null;
+		List<OrganizationalUnitNodeWithGrant> toReturn = new ArrayList<OrganizationalUnitNodeWithGrant>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -776,11 +780,16 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 					" and n.sbiOrgUnitNodes is null");
 			hibQuery.setInteger(0, hierarchyId);
 			
-			SbiOrgUnitNodes root = (SbiOrgUnitNodes) hibQuery.uniqueResult();
+			List roots = hibQuery.list();
 
-			if (root != null) {
-				OrganizationalUnitNode node = toOrganizationalUnitNode(root);
-				toReturn = getNodeWithGrants(node, grantId, aSession);
+			if (roots != null && !roots.isEmpty()) {
+				Iterator it = roots.iterator();
+				while (it.hasNext()) {
+					SbiOrgUnitNodes root = (SbiOrgUnitNodes) it.next();
+					OrganizationalUnitNode node = toOrganizationalUnitNode(root);
+					OrganizationalUnitNodeWithGrant nodeWithGrant = getNodeWithGrants(node, grantId, aSession);
+					toReturn.add(nodeWithGrant);
+				}
 			}
 		} finally {
 			rollbackIfActiveAndClose(tx, aSession);

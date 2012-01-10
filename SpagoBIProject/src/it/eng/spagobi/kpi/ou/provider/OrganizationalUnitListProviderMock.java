@@ -55,11 +55,13 @@ public class OrganizationalUnitListProviderMock extends
 	}
 
 	@Override
-	public Tree<OrganizationalUnit> getHierarchyStructure(
+	public List<Tree<OrganizationalUnit>> getHierarchyStructure(
 			OrganizationalUnitHierarchy hierarchy) {
 		
+		List<Tree<OrganizationalUnit>> toReturn = new ArrayList<Tree<OrganizationalUnit>>();
+		
 		Node<OrganizationalUnit> rootNode = new Node<OrganizationalUnit>(root, S + root.getLabel(), null);
-		Tree<OrganizationalUnit> toReturn = new Tree<OrganizationalUnit>(rootNode);
+		Tree<OrganizationalUnit> tree = new Tree<OrganizationalUnit>(rootNode);
 		
 		if (hierarchy.getLabel().equals("AZ1 - h2")) {
 			
@@ -98,6 +100,8 @@ public class OrganizationalUnitListProviderMock extends
 			
 			rootNode.setChildren(Arrays.asList(nodeo1, nodeo2, nodeo3));
 		}
+		
+		toReturn.add(tree);
 		
 		return toReturn;
 	}
