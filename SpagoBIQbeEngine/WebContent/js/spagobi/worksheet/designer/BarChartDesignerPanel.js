@@ -57,6 +57,12 @@ Sbi.worksheet.designer.BarChartDesignerPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
+	this.chartLib = 'highcharts';
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.chartlib) {
+		this.chartLib = Sbi.settings.worksheet.chartlib;
+	}
+	this.chartLib = this.chartLib.toLowerCase();
+	
 	this.addEvents("attributeDblClick", "attributeRemoved");
 	
 	this.init();
@@ -88,6 +94,7 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 	, axisDefinitionPanel: null
 	, showLegendCheck: null
 	, radioGroupIds: null
+	, chartLib: null
 	
 	, init: function () {
 		
@@ -196,6 +203,18 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 		    ]
 	    });
 	    
+		var controlsItems = new Array();
+		
+		controlsItems.push(this.orientationCombo);
+		
+		switch (this.chartLib) {
+	        case 'ext3':
+	        	break;
+	        default: 
+	        	controlsItems.push(this.showValuesCheck);
+		} 
+
+    	controlsItems.push(this.showLegendCheck);
 	    
 		this.form = new Ext.form.FormPanel({
 			border: false
@@ -217,7 +236,7 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 //							, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.options')
 							, columnWidth : .3
 							, border: false
-							, items: [this.orientationCombo, this.showValuesCheck, this.showLegendCheck]
+							, items: controlsItems
 						}
 			    	]
 			    }
