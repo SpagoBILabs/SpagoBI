@@ -43,13 +43,13 @@
  */
 Ext.ns("Sbi.worksheet.runtime");
 
-Sbi.worksheet.runtime.RuntimeLineChartPanel = function(config) {
+Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts = function(config) {
 	
 	var defaultSettings = {
 	};
 
-	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.runtime.runtimeLineChartPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.runtime.runtimeLineChartPanel);
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.runtime.runtimeBarChartPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.runtime.runtimeBarChartPanel);
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
@@ -62,20 +62,20 @@ Sbi.worksheet.runtime.RuntimeLineChartPanel = function(config) {
 		html : '<div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>'
 	});
 	
-	Sbi.worksheet.runtime.RuntimeLineChartPanel.superclass.constructor.call(this, c);
+	Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts.superclass.constructor.call(this, c);
 	
 	this.init();
 	
 };
 
-Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.RuntimeGenericChartPanel, {
+Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.runtime.RuntimeGenericChartPanel, {
 	
 	chartDivId : null
 	, chart : null
 	, chartConfig : null // mandatory object to be passed as a property of the constructor input object. The template is:
 //							template: {
-//								type:"stacked-linechart", 
-//								colorarea:true, 
+//								type:"stacked-barchart", 
+//								orientation:"horizontal", 
 //								showvalues:true, 
 //								showlegend:true, 
 //								category:
@@ -90,7 +90,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 	, init : function () {
 		this.loadChartData({'rows':[this.chartConfig.category],'measures':this.chartConfig.series});
 	}
-
+	
 	, createChart: function () {
 		  this.chart = new Highcharts.Chart({
 			exporting : {
@@ -102,7 +102,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 			},
 			chart : {
 				renderTo : this.chartDivId,
-				defaultSeriesType : (this.chartConfig.colorarea === true) ?  'area' : 'line',
+				defaultSeriesType : (this.chartConfig.orientation === 'horizontal') ?  'bar' : 'column',
 				spacingTop : 25,
 				spacingRight : 75,
 				spacingBottom : 25,
@@ -151,10 +151,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 	
 	, getPlotOptions : function () {
 		var plotOptions = null;
-
-		if (this.chartConfig.colorarea === true) {
+		if (this.chartConfig.orientation === 'horizontal') {
 			plotOptions = {
-				area: {
+				bar: {
 					stacking: this.getStacking(),
 					dataLabels: {
 						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true,
@@ -164,7 +163,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 			};
 		} else {
 			plotOptions = {
-				line: {
+				column: {
 					stacking: this.getStacking(),
 					dataLabels: {
 						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true,
@@ -178,11 +177,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 	
 	, getStacking : function () {
 		switch (this.chartConfig.type) {
-	        case 'side-by-side-linechart':
+	        case 'side-by-side-barchart':
 	        	return null;
-	        case 'stacked-linechart':
+	        case 'stacked-barchart':
 	        	return 'normal';
-	        case 'percent-stacked-linechart':
+	        case 'percent-stacked-barchart':
 	        	return 'percent';
 	        default: 
 	        	alert('Unknown chart type!');

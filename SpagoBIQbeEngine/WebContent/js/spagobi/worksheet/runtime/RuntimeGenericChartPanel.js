@@ -75,6 +75,8 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanel  = function(config) {
 //		, baseParams: params
 //	});
 
+
+	
 	this.addEvents('contentloaded');
 	Sbi.worksheet.runtime.RuntimeGenericChartPanel.superclass.constructor.call(this, c);	 	
 };
@@ -83,7 +85,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	loadMask: null,
 	services: null,
 	sheetName: null,
-	dataContainerObject: null//the object with the data for the panel
+	dataContainerObject: null,//the object with the data for the panel
+	legendStyle: null
 	
 	/**
 	 * Loads the data for the chart.. Call the action which loads the crosstab 
@@ -333,5 +336,19 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		var exportedChart = {SVG: svg, SHEET_TYPE: 'CHART'};
 		return exportedChart;
 	}
+	
+	
+	, getColors : function () {
+		var colors = [];
+		if (this.chartConfig !== undefined && this.chartConfig.series !== undefined && this.chartConfig.series.length > 0) {
+			var i = 0;
+			for (; i < this.chartConfig.series.length; i++) {
+				colors.push(this.chartConfig.series[i].color);
+			}
+		}
+		return colors;
+	}
+	
+	
 
 });

@@ -47,7 +47,7 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 
 	var defaultSettings = {};
 		
-	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.runtime.runtimeSheetContentPanel) {
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.runtime && Sbi.settings.worksheet.runtime.runtimeSheetContentPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.runtime.runtimeSheetContentPanel);
 	}
 	
@@ -110,11 +110,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	        case 'Pivot Table':
 	        	return this.initCrossTab(c);
 	        case 'Bar Chart':
-	        	return new Sbi.worksheet.runtime.RuntimeBarChartPanel({'chartConfig':this.contentConfig, sheetName : this.sheetName});
+	        	return Sbi.worksheet.runtime.RuntimeChartFactory.createBarChart({'chartConfig':this.contentConfig, sheetName : this.sheetName});
 	        case 'Line Chart':
-	        	return new Sbi.worksheet.runtime.RuntimeLineChartPanel({'chartConfig':this.contentConfig, sheetName : this.sheetName});
+	        	return Sbi.worksheet.runtime.RuntimeChartFactory.createLineChart({'chartConfig':this.contentConfig, sheetName : this.sheetName});
 	        case 'Pie Chart':
-	        	return new Sbi.worksheet.runtime.RuntimePieChartPanel({'chartConfig':this.contentConfig, sheetName : this.sheetName});
+	        	return Sbi.worksheet.runtime.RuntimeChartFactory.createPieChart({'chartConfig':this.contentConfig, sheetName : this.sheetName});
 	        case 'Table':
 	        	return this.initTable(c);
 	        default: 
