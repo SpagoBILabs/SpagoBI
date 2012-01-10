@@ -169,11 +169,9 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 		
 	}
 	,selectNode : function(field) {
-
+		
 		if(field !== null){
-			if(field.attributes != undefined ){
-//				var parent = this.ownerCt;
-//				var accordion = parent.items[1];
+			if(field.attributes != undefined && field.attributes.kpiName != undefined){
 				this.fireEvent('updateAccordion',field);				
 			}
 		}

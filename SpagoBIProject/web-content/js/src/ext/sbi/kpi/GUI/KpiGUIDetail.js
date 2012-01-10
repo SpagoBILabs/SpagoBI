@@ -90,7 +90,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			border: false,
 			html: '&nbsp;',
 			width: 300,
-			style: 'float:left; margin-bottom: 10px;',
+			style: 'float:left; margin-bottom: 10px; margin-top: 15px;',
 			height: 5
 			, items: []
 		});
@@ -98,7 +98,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	        xtype:'fieldset',
 	        border: false,
 	        width:200,
-	        style: 'padding: 5px; margin-top: 60px;float:left;',
+	        style: 'padding: 5px; margin-top: 20px;float:left;',
 	        defaultType: 'displayfield',
 	        items: []
 	    });
@@ -106,15 +106,15 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	        // Fieldset thresholds
 	        xtype:'fieldset',
 	        border: false,
-	        width:230,
+	        width:250,
 	        defaultType: 'fieldset',
 	        items: []
 	    });
 
 		if(Ext.isIE && (this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null')){
-			this.threshFields.style = 'margin-top: 140px; padding: 5px; float:right; margin-right: 35px;';
+			this.threshFields.style = 'margin-top: 40px; padding: 5px; float:left; margin-left: 10px;';
 		}else{
-			this.threshFields.style = 'margin-top: 0px; padding: 5px; float:right; margin-right: 35px;';
+			this.threshFields.style = 'margin-top: 10px; padding: 5px; float:left; margin-left: 10px;';
 		}
 
 		this.items =[this.chartPanel, this.detailFields, this.threshFields];
@@ -188,23 +188,29 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		if(this.val !== null && this.val !== undefined){
 			this.threshFields.addClass( 'rounded-box' ) ;
 			this.detailFields.addClass( 'rounded-box' ) ;
+			if(this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null'){
+				this.on('afterlayout',function(){
+					this.drawChart(this.val);
+				},this);
+			}else{
+				var x = this.calculateInnerThrChart(field);
+				this.chartPanel.setHeight(180);
+				var html = '<div style="float: left; margin-left:20px; text-align:center; background-color:'+field.attributes.status+'; height=180px; width: 200px;"><img src="../themes/other_theme/img/'+this.customChartName+'_'+x+'.png"></img></div>'
+				+ '<div style="margin-top: 30px; float: left; background-color:white; width: 100px; padding-left:5px; font-style: italic; font-weight: bold;"> Valore: '+this.val+'</div>';
+				this.chartPanel.update(html);
+				this.doLayout();
+			}
 		}else{
-			this.threshFields.removeClass( 'rounded-box' ) ;
-			this.detailFields.removeClass( 'rounded-box' ) ;
-		}
+			//this.threshFields.removeClass( 'rounded-box' ) ;
+			//this.detailFields.removeClass( 'rounded-box' ) ;
 
-		if(this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null'){
-			this.on('afterlayout',function(){
-				this.drawChart(this.val);
-			},this);
-		}else{
-			var x = this.calculateInnerThrChart(field);
 			this.chartPanel.setHeight(180);
-			var html = '<div style="float: left; margin-left:20px; text-align:center; background-color:'+field.attributes.status+'; height=180px; width: 200px;"><img src="../themes/other_theme/img/'+this.customChartName+'_'+x+'.png"></img></div>'
-			+ '<div style="margin-top: 30px; float: left; background-color:white; width: 100px; padding-left:5px; font-style: italic; font-weight: bold;"> Valore: '+this.val+'</div>';
+			var html = '<div style="float: left; margin-left:20px; text-align:center; background-color: white; height=180px; width: 200px;"><img src="../themes/other_theme/img/'+this.customChartName+'_'+0+'.png"></img></div>';
 			this.chartPanel.update(html);
 			this.doLayout();
 		}
+
+
 		
 		this.cleanPanel();
 

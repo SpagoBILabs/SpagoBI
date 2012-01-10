@@ -203,7 +203,7 @@ public class KpiGUIUtil {
 				row.putOpt("kpiDsLbl", kpi.getDsLabel());
 				row.putOpt("kpiTypeCd", kpi.getKpiTypeCd());
 				row.putOpt("measureTypeCd", kpi.getMeasureTypeCd());
-				row.putOpt("scaleName", kpi.getScaleName());
+				row.putOpt("scaleName", kpi.getMetricScaleCd());
 				row.putOpt("targetAudience", kpi.getTargetAudience());
 				
 				row.putOpt("kpiInstId", kpiInstId);
