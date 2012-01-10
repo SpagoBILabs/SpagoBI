@@ -43,7 +43,7 @@
  */
 Ext.ns("Sbi.worksheet.runtime");
 
-Sbi.worksheet.runtime.RuntimePieChartPanel = function(config) {
+Sbi.worksheet.runtime.RuntimePieChartPanelHighcharts = function(config) {
 	
 	var defaultSettings = {
 	};
@@ -62,13 +62,13 @@ Sbi.worksheet.runtime.RuntimePieChartPanel = function(config) {
 		html : '<div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>'
 	});
 	
-	Sbi.worksheet.runtime.RuntimePieChartPanel.superclass.constructor.call(this, c);
+	Sbi.worksheet.runtime.RuntimePieChartPanelHighcharts.superclass.constructor.call(this, c);
 	
 	this.init();
 	
 };
 
-Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanel, Sbi.worksheet.runtime.RuntimeGenericChartPanel, {
+Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelHighcharts, Sbi.worksheet.runtime.RuntimeGenericChartPanel, {
 	
 	chartDivId : null
 	, chart : null
@@ -168,7 +168,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanel, Sbi.worksheet.runtime.Run
 //	}
 	
 	, getSeries: function () {
-		var superSeries = Sbi.worksheet.runtime.RuntimePieChartPanel.superclass.getSeries.call(this);
+		var superSeries = Sbi.worksheet.runtime.RuntimePieChartPanelHighcharts.superclass.getSeries.call(this);
 		var theSerie = superSeries[0];
 		var categories = this.getCategories();
 		var series = [];

@@ -95,4 +95,5 @@ Sbi.settings.worksheet = {
 				height: 400
 			}
 		}
+		,chartlib : 'ext3'
 };

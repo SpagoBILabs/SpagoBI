@@ -178,11 +178,17 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeSheetFiltersPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/WorkSheetsRuntimePanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeSheetContentPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeGenericChartPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeBarChartPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeLineChartPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimePieChartPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/WorkSheetPreviewPage.js'></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeGenericChartPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeGenericChartPanelExt3.js'></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeChartFactory.js'></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeBarChartPanelHighcharts.js'></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeLineChartPanelHighcharts.js'></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimePieChartPanelHighcharts.js'></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeGenericChartPanelExt3.js'></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeBarChartPanelExt3.js'></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeLineChartPanelExt3.js'></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimePieChartPanelExt3.js'></script>
 
 <script type="text/javascript" src='../js/spagobi/registry/RegistryPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/registry/RegistryEditorGridPanel.js'></script>

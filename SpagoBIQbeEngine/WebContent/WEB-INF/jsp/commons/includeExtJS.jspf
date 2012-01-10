@@ -26,6 +26,7 @@
 
 
 <script type="text/javascript">
+	Ext.chart.Chart.CHART_URL = '../js/lib/ext-3.2.1/resources/charts.swf';
 	Ext.Ajax.timeout = 300000;
 	Ext.Ajax.defaultHeaders = {
 		'Powered-By': 'Ext'
