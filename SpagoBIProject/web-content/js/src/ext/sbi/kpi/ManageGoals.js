@@ -591,13 +591,19 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		
 		this.ouTreeRoot = {
 			id: this.ouId,
-			text: ouRootName
+			text: ouRootName,
+			disabled : true
 		}	
 		
 		var treeLoaderBaseParameters = {'grantId': this.selectedGrantId};
 		this.ouTree.loader.baseParams = treeLoaderBaseParameters;
 		
 		this.ouTree.setRootNode(this.ouTreeRoot);
+		this.ouTree.getRootNode().on('expand', function(node){
+			if(node.childNodes !=undefined && node.childNodes !=null && node.childNodes.length>0){
+				this.ouTree.getSelectionModel().select(node.childNodes[0]);
+			}
+		}, this);
 		this.ouTree.getRootNode().expand(false, /*no anim*/false);
 		
 		if(this.ouTree.getRootNode().rendered){

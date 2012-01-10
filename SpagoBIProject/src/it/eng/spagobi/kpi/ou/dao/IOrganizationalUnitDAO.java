@@ -82,14 +82,14 @@ public interface IOrganizationalUnitDAO extends ISpagoBIDao {
 	public boolean isInAHierarchy(OrganizationalUnit ou);
 	
 	/**
-	 * @return the root node for a single hierarchy
+	 * @return the root nodes for a single hierarchy
 	 */
-	public OrganizationalUnitNode getRootNode(Integer hierarchyId);
+	public List<OrganizationalUnitNode> getRootNodes(Integer hierarchyId);
 	
 	/**
-	 * @return the root node (with grants) for a single hierarchy
+	 * @return the root nodes (with grants) for a single hierarchy
 	 */
-	public OrganizationalUnitNodeWithGrant getRootNodeWithGrants(Integer hierarchyId, Integer grantId);
+	public List<OrganizationalUnitNodeWithGrant> getRootNodesWithGrants(Integer hierarchyId, Integer grantId);
 	
 	/**
 	 * @return the list of children nodes for a single node of a hierarchy

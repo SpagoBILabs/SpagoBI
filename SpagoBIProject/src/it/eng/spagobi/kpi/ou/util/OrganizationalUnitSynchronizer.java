@@ -158,18 +158,18 @@ public class OrganizationalUnitSynchronizer {
 			OrganizationalUnitHierarchy hierarchy) {
 		logger.debug("IN");
 		boolean success = true;
-		Tree<OrganizationalUnit> tree = provider.getHierarchyStructure(hierarchy);
+		List<Tree<OrganizationalUnit>> list = provider.getHierarchyStructure(hierarchy);
 		logger.debug("Tree structure for hierarchy " + hierarchy + ":");
-		logger.debug(tree);
-		if (tree != null ) {
-			success = synchronizeHierarchyStructure(tree, hierarchy);
+		logger.debug(list);
+		if (list != null ) {
+			success = synchronizeHierarchyStructure(list, hierarchy);
 			logger.debug("Structure of hierarchy " + hierarchy + " synchronized");
 		}
 		logger.debug("OUT : returning " + success);
 		return success;
 	}
 	
-	private boolean synchronizeHierarchyStructure(Tree<OrganizationalUnit> tree, OrganizationalUnitHierarchy hierarchy) {
+	private boolean synchronizeHierarchyStructure(List<Tree<OrganizationalUnit>> list, OrganizationalUnitHierarchy hierarchy) {
 		logger.debug("IN");
 		String hierarchyName = hierarchy.getName();
 		Session session = null;
@@ -178,19 +178,33 @@ public class OrganizationalUnitSynchronizer {
 		try  {
 			session = ((AbstractHibernateDAO) dao).getSession();
 			tx = session.beginTransaction();
-			success = removeNoMoreExistingNodes(tree, hierarchy, session);
-			insertNewNodes(tree, hierarchy, session);
-			if (success) {
-				// if synchronization was successful then commit
-				((AbstractHibernateDAO) dao).commitIfActiveAndClose(tx, session);
-			} else {
-				// if synchronization wasn't successful then rollbak
-				((AbstractHibernateDAO) dao).rollbackIfActiveAndClose(tx, session);
+			
+			Iterator<Tree<OrganizationalUnit>> it = list.iterator();
+			while (it.hasNext()) {
+				Tree<OrganizationalUnit> tree = it.next();
+				success = synchronizeHierarchyStructure(tree, hierarchy, session);
+				if (success) {
+					// if synchronization was successful then commit
+					((AbstractHibernateDAO) dao).commitIfActiveAndClose(tx, session);
+				} else {
+					// if synchronization wasn't successful then rollbak
+					((AbstractHibernateDAO) dao).rollbackIfActiveAndClose(tx, session);
+				}
 			}
 		} catch (Throwable t) {
 			logger.error("Error while synchronizing hierarchy structure for hierarchy " + hierarchyName, t);
 			((AbstractHibernateDAO) dao).rollbackIfActiveAndClose(tx, session);
 		}
+		logger.debug("OUT : returning " + success);
+		
+		return success;
+	}
+	
+	private boolean synchronizeHierarchyStructure(Tree<OrganizationalUnit> tree, OrganizationalUnitHierarchy hierarchy, Session session) {
+		logger.debug("IN");
+		boolean success = true;
+		success = removeNoMoreExistingNodes(tree, hierarchy, session);
+		insertNewNodes(tree, hierarchy, session);
 		logger.debug("OUT : returning " + success);
 		return success;
 	}
@@ -256,11 +270,9 @@ public class OrganizationalUnitSynchronizer {
 	private boolean removeNoMoreExistingNodes(Tree<OrganizationalUnit> tree, OrganizationalUnitHierarchy hierarchy, Session session) {
 		logger.debug("IN");
 		boolean toReturn = true;
-		OrganizationalUnitNode rootNode = dao.getRootNode(hierarchy.getId());
-		if (rootNode != null) {
-			List<OrganizationalUnitNode> nodes = new ArrayList<OrganizationalUnitNode>();
-			nodes.add(rootNode);
-			toReturn = removeNoMoreExistingNodes(tree, nodes, hierarchy, session);
+		List<OrganizationalUnitNode> rootNodes = dao.getRootNodes(hierarchy.getId());
+		if (rootNodes != null && !rootNodes.isEmpty()) {
+			toReturn = removeNoMoreExistingNodes(tree, rootNodes, hierarchy, session);
 		}
 		logger.debug("OUT : returning " + toReturn);
 		return toReturn;

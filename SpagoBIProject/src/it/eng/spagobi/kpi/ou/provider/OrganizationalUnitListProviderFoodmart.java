@@ -123,27 +123,26 @@ public class OrganizationalUnitListProviderFoodmart extends
 	}
 	
 	@Override
-	public Tree<OrganizationalUnit> getHierarchyStructure(
+	public List<Tree<OrganizationalUnit>> getHierarchyStructure(
 			OrganizationalUnitHierarchy hierarchy) {
-		OrganizationalUnit root = new OrganizationalUnit();
+		List<Tree<OrganizationalUnit>> toReturn = new ArrayList<Tree<OrganizationalUnit>>();
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put(HIERARCHY, hierarchy.getName());
 		params.put(COMPANY, hierarchy.getCompany());
-		Tree<OrganizationalUnit> toReturn = null;
+		Tree<OrganizationalUnit> tree = null;
 		try {
 			Node<OrganizationalUnit> rootNode = getRootByQueryString(getRootByHierarchy, params, null);
 			if(rootNode != null){
-				toReturn = new Tree<OrganizationalUnit>(rootNode);
+				tree = new Tree<OrganizationalUnit>(rootNode);
 
 				getChildrenByLevel(hierarchy.getName(), hierarchy.getCompany(), rootNode);
 
+				toReturn.add(tree);
 			}
 		} catch (Exception e) {
 			logger.error("Unable to get root node for hiererchy "+hierarchy.getName());
-		}finally{
-			return toReturn;
 		}
-
+		return toReturn;
 	}
 
 

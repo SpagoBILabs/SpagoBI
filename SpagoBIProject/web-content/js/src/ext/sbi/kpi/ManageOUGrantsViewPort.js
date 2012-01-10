@@ -205,8 +205,10 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 		this.ManageOUGrants.setActiveTab(0);
 		//disable the second tab if the grant is new..
 		//this because we need to save the grant before add the grant nodes
-		if(rec.data.id==''){
+		if( rec.data.id=='' ){
 			this.ManageOUGrants.tabItems[1].disable();
+		}else if (this.ManageOUGrants.tabItems[1].disabled){
+			this.ManageOUGrants.tabItems[1].enable();
 		}
 	}
 	
@@ -215,6 +217,17 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 		var newKpiRoot = this.displayKpiTree(kpi);
 		this.ManageOUGrants.treePanel.doLayout();
 
+		//disable the root and select the first child
+		newOURoot.on('expand', function(node){
+			if(node.childNodes !=undefined && node.childNodes !=null && node.childNodes.length>0){
+				this.ManageOUGrants.leftTree.getSelectionModel().select(node.childNodes[0]);
+				this.ManageOUGrants.updateKpisCheck(node.childNodes[0]);	
+				node.disable();
+			}else{
+				this.ManageOUGrants.leftTree.getSelectionModel().select(node);
+				this.ManageOUGrants.updateKpisCheck(node);				
+			}	
+		}, this); 
 		
 //		if(ou.modelinstancenodes == undefined 
 //			|| ou.modelinstancenodes == null 
