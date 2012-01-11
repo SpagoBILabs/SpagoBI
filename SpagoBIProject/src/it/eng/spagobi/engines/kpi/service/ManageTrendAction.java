@@ -35,13 +35,24 @@ public class ManageTrendAction extends AbstractSpagoBIAction{
 	public void doService() {
 		logger.debug("IN");
 		try {
+			String format  = GeneralUtilities.getServerTimeStampFormat();			
+			logger.debug("Got Date format: "+(format!=null ? format : "null"));
+			String timeFromFormat = " 00:00:00"; 
+			String timeToFormat = " 23:59:59"; 
+			/* it couldn't be necessary:
+			if (format.contains("hh")) {
+				timeFromFormat = " 01:00:00";
+				timeToFormat = " 11:59:59";
+			}*/
+			
 			String kpiInstanceID = this.getAttributeAsString("kpiInstId");
-			String kpiBeginDate = this.getAttributeAsString("dateFrom");
-			String kpiEndDate = this.getAttributeAsString("dateTo");
+			logger.debug("Got Instance ID: "+ kpiInstanceID);
+			String kpiBeginDate = this.getAttributeAsString("dateFrom") + timeFromFormat;
+			logger.debug("Got Begin Date: "+ kpiBeginDate);
+			String kpiEndDate = this.getAttributeAsString("dateTo") + timeToFormat;
+			logger.debug("Got End Date: "+ kpiEndDate);
 			
 			//converts the params string in date type 
-			String format  = GeneralUtilities.getServerDateFormat();
-			logger.debug("Got Date format: "+(format!=null ? format : "null"));
 			SimpleDateFormat f = new SimpleDateFormat();
 			f.applyPattern(format);	
 			Date dKpiBeginDate = new Date();

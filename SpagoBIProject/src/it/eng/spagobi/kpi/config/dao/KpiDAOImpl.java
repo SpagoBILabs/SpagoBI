@@ -52,7 +52,6 @@ import it.eng.spagobi.tools.udp.dao.IUdpValueDAO;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -507,9 +506,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, kpiInstId);
-			hqlQuery.setDate(1, endDate);
-			hqlQuery.setDate(2, beginDate);
-				
+			//hqlQuery.setDate(1, endDate);
+			//hqlQuery.setDate(2, beginDate);	
+			hqlQuery.setTimestamp(1, endDate);
+			hqlQuery.setTimestamp(2, beginDate);
+
 			//hqlQuery.setMaxResults(10);
 
 			List l = hqlQuery.list();
