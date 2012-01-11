@@ -12,6 +12,7 @@
 package it.eng.spagobi.services.sbidocument.service;
 
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
@@ -56,11 +57,11 @@ public class SbiDocumentSupplier {
 			int i = 0;
 			for (Iterator iterator = listPars.iterator(); iterator.hasNext();) {
 				BIObjectParameter par = (BIObjectParameter) iterator.next();
-
+				Parameter parameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(par.getParameter().getId());
 				SpagobiAnalyticalDriver toAdd = new SpagobiAnalyticalDriver(
 						par.getId(),	
 						par.getLabel(),
-						par.getParameter().getType(),
+						parameter.getType(),
 						par.getParameterUrlName(),
 						null		// values, not needed
 				);
@@ -136,7 +137,8 @@ public class SbiDocumentSupplier {
 					//String interLabel = msgBuilder.getUserMessage(biparam.getLabel(), SpagoBIConstants.DEFAULT_USER_BUNDLE, locale);
 					String interLabel = msgBuilder.getI18nMessage(locale, biparam.getLabel());
 					jsonParam.put("label", interLabel);
-					jsonParam.put("type", biparam.getParameter().getType());
+					Parameter parameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(biparam.getParameter().getId());
+					jsonParam.put("type", parameter.getType());
 					parametersJSON.put(jsonParam);
 				}
 			}
