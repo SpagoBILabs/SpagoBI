@@ -233,7 +233,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	private String getParameterKey(String fieldValue) {
 		int beginIndex = fieldValue.indexOf("P{");
 		int endIndex = fieldValue.indexOf("}");
-		if (beginIndex > 0 && endIndex > 0 && endIndex > beginIndex) {
+		if (beginIndex >= 0 && endIndex > 0 && endIndex > beginIndex) {
 			return fieldValue.substring(beginIndex + 2, endIndex);
 		} else {
 			return null;

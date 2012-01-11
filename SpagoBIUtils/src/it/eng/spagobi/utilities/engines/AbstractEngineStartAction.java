@@ -11,20 +11,6 @@
  */
 package it.eng.spagobi.utilities.engines;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import sun.misc.BASE64Decoder;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
@@ -40,11 +26,34 @@ import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
+import it.eng.spagobi.services.proxy.SbiDocumentServiceProxy;
+import it.eng.spagobi.services.sbidocument.bo.SpagobiAnalyticalDriver;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
+
+import java.io.IOException;
+import java.rmi.RemoteException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import sun.misc.BASE64Decoder;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -52,6 +61,8 @@ import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
  */
 public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
+	public enum AnalyticalDriverType {STRING, NUMBER, DATE};
+	
 	private String engineName;
 
 	private ContextManager conetxtManager;
@@ -67,11 +78,13 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	protected byte[] analysisStateRowData;
 
 	private Content template;
+	private SpagobiAnalyticalDriver[] analyticalDrivers;
 
 	private ContentServiceProxy contentProxy;
 	private AuditServiceProxy auditProxy;
 	private DataSourceServiceProxy datasourceProxy;
 	private DataSetServiceProxy datasetProxy;
+	private SbiDocumentServiceProxy documentProxy;
 
 
 	protected static final BASE64Decoder DECODER = new BASE64Decoder();
@@ -485,7 +498,6 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 if(contentProxy == null) {
 			 contentProxy = new ContentServiceProxy(getUserIdentifier(), getHttpSession());
 		 }	   
-
 		 return contentProxy;
 	 }
 
@@ -493,7 +505,6 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 if(auditProxy == null && getAuditId() != null) {
 			 auditProxy = new AuditServiceProxy(getAuditId(), getUserIdentifier(), getHttpSession());
 		 }	   
-
 		 return auditProxy;
 	 }
 
@@ -501,7 +512,6 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 if(datasourceProxy == null) {
 			 datasourceProxy = new DataSourceServiceProxy( getUserIdentifier() , getHttpSession() );
 		 }	   
-
 		 return datasourceProxy;
 	 }
 
@@ -509,11 +519,41 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 if(datasetProxy == null) {
 			 datasetProxy = new DataSetServiceProxy(getUserIdentifier() , getHttpSession());
 		 }	   
-
 		 return datasetProxy;
 	 }
 
-
+	 public SbiDocumentServiceProxy getDocumentServiceProxy() {
+		 if (documentProxy == null) {
+			 documentProxy = new SbiDocumentServiceProxy(getUserIdentifier() , getHttpSession());
+		 }	   
+		 return documentProxy;
+	 }
+	 
+	public SpagobiAnalyticalDriver[] getAnalyticalDriversDefinition() {
+		if (analyticalDrivers == null) {
+			SbiDocumentServiceProxy proxy = getDocumentServiceProxy();
+			String documentIdStr = getDocumentId();
+			if (documentIdStr == null) {
+				logger.error("Trying to retrieve analytical drivers but the document id was not found!!");
+				throw new SpagoBIRuntimeException(
+						"Trying to retrieve analytical drivers but the document id was not found!!");
+			}
+			try {
+				Integer documentId = new Integer(documentIdStr);
+				Locale locale = getLocale();
+				analyticalDrivers = proxy.getDocumentAnalyticalDrivers(documentId,
+						locale.getLanguage(), locale.getCountry());
+			} catch (RemoteException e) {
+				logger.error("Error while retrieving analytical drivers", e);
+				throw new SpagoBIRuntimeException(
+						"Error while retrieving analytical drivers", e);
+			}
+			if (analyticalDrivers == null) {
+				analyticalDrivers = new SpagobiAnalyticalDriver[]{};
+			}
+		}
+		return analyticalDrivers;
+	}
 
 	 public Map getEnv() {
 		 Map env = new HashMap();
@@ -523,18 +563,21 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 // document id can be null (when using QbE for dataset definition)
 		 if (getDocumentId() != null) {
 			 env.put(EngineConstants.ENV_DOCUMENT_ID, getDocumentId());
+			 env.put(EngineConstants.ENV_PARAMETERS, getAnalyticalDriversDefinition());
 		 }
 		 env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
 		 env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
 		 env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy() );
 		 env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy());
 		 env.put(EngineConstants.ENV_DATASOURCE_PROXY, getDataSourceServiceProxy()); 
+		 env.put(EngineConstants.ENV_DOCUMENT_PROXY, getDocumentServiceProxy()); 
 		 env.put(EngineConstants.ENV_LOCALE, getLocale()); 
 
 		 return env;
 	 }
 
-	 /**
+
+	/**
 	  * Copy request parameters into env.
 	  * 
 	  * @param env the env
@@ -552,11 +595,18 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 parameterStopList.add("NEW_SESSION");
 		 parameterStopList.add("document");
 		 parameterStopList.add("spagobicontext");
+		 parameterStopList.add("dateformat");
 		 parameterStopList.add("BACK_END_SPAGOBI_CONTEXT");
 		 parameterStopList.add("userId");
 		 parameterStopList.add("auditId");
 
-
+		 String dateFormat = (String) ((SpagoBIRequestContainer)request).getRequest().getAttribute("dateformat");
+		 logger.debug("Date format is [" + dateFormat + "]");
+		 if (dateFormat == null || dateFormat.trim().equals("")) {
+			 logger.warn("Date format not set. Using default, that is dd/MM/yyyy");
+			 dateFormat = "dd/MM/yyyy";
+		 }
+		 
 		 requestParameters = ((SpagoBIRequestContainer)request).getRequest().getContainedAttributes();
 		 for(int i = 0; i < requestParameters.size(); i++) {
 			 SourceBeanAttribute attrSB = (SourceBeanAttribute)requestParameters.get(i);
@@ -568,8 +618,16 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 				 logger.debug("Parameter [" + attrSB.getKey() + "] copyed into environment parameters list: FALSE");
 				 continue;
 			 }
-
-			 env.put(attrSB.getKey(), decodeParameterValue(attrSB.getValue().toString()) );
+			 String attrName = attrSB.getKey();
+			 String documentId = getDocumentId();
+			 SpagobiAnalyticalDriver analyticalDriver = null;
+			 if (documentId != null && ( analyticalDriver = getAnalyticalDriver(attrName) ) != null ) {
+				 logger.debug("Parameter [" + attrName + "] corresponds to an analytical driver");
+				 env.put(attrName, decodeParameterValues(attrSB.getValue().toString(), analyticalDriver, dateFormat) );
+			 } else {
+				 logger.debug("Parameter [" + attrName + "] does not correspond to an analytical driver");
+				 env.put(attrName, attrSB.getValue().toString() );
+			 }
 			 logger.debug("Parameter [" + attrSB.getKey() + "] copyed into environment parameters list: TRUE");
 		 }
 
@@ -577,29 +635,87 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	 }
 
 
-	 /**
+	 private SpagobiAnalyticalDriver getAnalyticalDriver(String urlName) {
+		 SpagobiAnalyticalDriver toReturn = null;
+		 SpagobiAnalyticalDriver[] ads = getAnalyticalDriversDefinition();
+		 for (int i = 0; i < ads.length; i++) {
+			 SpagobiAnalyticalDriver ad = ads[i];
+			 if (ad.getUrlName().equals(urlName)) {
+				 toReturn = ad;
+				 break;
+			 }
+		 }
+		 return toReturn;
+	}
+
+
+	/**
 	  * Decode parameter value.
 	  * 
 	  * @param parValue the par value
+	  * @param parDefinition the definition of the parameter
+	  * @param dateFormat the date format to be considered
 	  * 
-	  * @return the string
+	  * @return List of values: each element if this list can be a Number, a String or a java.util.Date
 	  */
-	 private String decodeParameterValue(String parValue) {
-		 String newParValue;
-
+	 private List decodeParameterValues(String parValue, SpagobiAnalyticalDriver parDefinition, String dateFormat) {
+		 List values = new ArrayList();
+		 Class clazz = getAnalyticalDriverClass(parDefinition);
 		 ParametersDecoder decoder = new ParametersDecoder();
-		 if(decoder.isMultiValues(parValue)) {			
-			 List values = decoder.decode(parValue);
-			 newParValue = "";
-			 for(int i = 0; i < values.size(); i++) {
-				 newParValue += (i>0?",":"");
-				 newParValue += values.get(i);
+		 if (decoder.isMultiValues(parValue)) {
+			 List valuesAsString = decoder.getOriginalValues(parValue);
+			 for (int i = 0; i < valuesAsString.size(); i++) {
+				 String aValueStr = (String) valuesAsString.get(i);
+				 Object value = decodeParameterValue(aValueStr, clazz, dateFormat);
+				 values.add(value);
 			 }
 		 } else {
-			 newParValue = parValue;
+			 Object value = decodeParameterValue(parValue, clazz, dateFormat);
+			 values.add(value);
 		 }
-
-		 return newParValue;
+		 return values;
 	 }
+	 
+	 private Class getAnalyticalDriverClass(SpagobiAnalyticalDriver parDefinition) {
+		Class toReturn  = null;
+		String typeStr = parDefinition.getType();
+		AnalyticalDriverType type = AnalyticalDriverType.valueOf(typeStr);
+        switch (type) {
+	        case NUMBER : 	toReturn = Number.class;       	break;
+	        case DATE :  	toReturn = Date.class;		    break;
+	        default: 		toReturn = String.class; 		break;
+        }
+		return toReturn;
+	}
+
+	private Object decodeParameterValue(String value, Class clazz, String dateFormatStr) {
+		if (value == null) {
+			return null;
+		}
+		Object toReturn = null;
+		if (clazz.equals(Date.class)) {
+			DateFormat dateFormat = new SimpleDateFormat(dateFormatStr);
+			try {
+				toReturn = dateFormat.parse(value);
+			} catch (ParseException e) {
+				logger.error("Error parsing the string[" + value
+						+ "] as a date with format [" + dateFormatStr + "]", e);
+				throw new SpagoBIEngineRuntimeException(
+						"Error parsing the string[" + value
+								+ "] as a date with format [" + dateFormatStr + "]", e);
+			}
+		} else if (clazz.equals(Number.class)) {
+			Double d = new Double(value);
+			int i = d.intValue();
+			if ( d - i == 0) {
+				toReturn = d;
+			} else {
+				toReturn = new Integer(i);
+			}
+		} else {
+			toReturn = value;
+		}
+		return toReturn;
+	}
 
 }
