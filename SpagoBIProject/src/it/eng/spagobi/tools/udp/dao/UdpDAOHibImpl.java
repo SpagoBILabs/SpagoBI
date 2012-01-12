@@ -248,12 +248,15 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 			// get familyId
-			Criterion labelCriterrionFam = Expression.eq("valueCd", family);	
-			Criteria criteria = tmpSession.createCriteria(SbiDomains.class);
-			criteria.add(labelCriterrionFam);	
-			Criterion labelCriterrionFamDom = Expression.eq("domainCd", "UDP_FAMILY");	
-			criteria.add(labelCriterrionFamDom);	
-			SbiDomains famiDom = (SbiDomains) criteria.uniqueResult();
+			String hql = "from SbiDomains s " +
+			"	where lower(s.valueCd) = lower(?) AND " +
+			"         s.domainCd = ?";
+			Query hqlQuery = tmpSession.createQuery(hql);
+			hqlQuery.setString(0, family);
+			hqlQuery.setString(1, "UDP_FAMILY");
+			
+
+			SbiDomains famiDom = (SbiDomains) hqlQuery.uniqueResult();
 			if (famiDom == null) return null;
 
 			Criterion labelCriterrion = Expression.eq("label", label);

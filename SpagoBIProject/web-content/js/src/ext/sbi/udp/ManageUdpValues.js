@@ -166,7 +166,7 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 				data.familyId = type;
 				var stop = false;
 				for ( var j = 0; j < this.udpList.length && stop == false; j++) {
-					var udpVal = config.udpList[j];
+					var udpVal = this.udpList[j];
 					if(udpVal.label == data.name){
 						data.dataTypeCd = udpVal.dataTypeCd;
 						stop = true;
