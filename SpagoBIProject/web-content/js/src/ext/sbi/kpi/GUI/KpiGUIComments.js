@@ -161,23 +161,24 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 	}
 	
 	, loadComments: function (field) {
-		
-		Ext.Ajax.request({
-	        url: this.services['commentsList'],
-	        params: {kpiInstId: field.attributes.kpiInstId},
-	        success : function(response, options) {
-	      		if(response !== undefined && response.responseText !== undefined) {
-	      			var content = Ext.util.JSON.decode( response.responseText );
-	      			if (content !== undefined) {
-	      				this.listPanel.store.loadData(content);	      				
-	      			} 
-	      		} else {
-	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-	      		}
-	        },
-	        scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure      
-		});
+		if(field.attributes.kpiInstId != null && field.attributes.kpiInstId !== undefined){
+			Ext.Ajax.request({
+		        url: this.services['commentsList'],
+		        params: {kpiInstId: field.attributes.kpiInstId},
+		        success : function(response, options) {
+		      		if(response !== undefined && response.responseText !== undefined) {
+		      			var content = Ext.util.JSON.decode( response.responseText );
+		      			if (content !== undefined) {
+		      				this.listPanel.store.loadData(content);	      				
+		      			} 
+		      		} else {
+		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		      		}
+		        },
+		        scope: this,
+				failure: Sbi.exception.ExceptionHandler.handleFailure      
+			});
+		}
 	}
 	, saveComment: function () {
 		Ext.Ajax.request({

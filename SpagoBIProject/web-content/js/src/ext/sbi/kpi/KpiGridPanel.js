@@ -171,9 +171,9 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	,selectNode : function(field) {
 		
 		if(field !== null){
-			if(field.attributes != undefined && field.attributes.kpiName != undefined){
+			//if(field.attributes != undefined && field.attributes.kpiName != undefined){
 				this.fireEvent('updateAccordion',field);				
-			}
+			//}
 		}
 	}
 	
