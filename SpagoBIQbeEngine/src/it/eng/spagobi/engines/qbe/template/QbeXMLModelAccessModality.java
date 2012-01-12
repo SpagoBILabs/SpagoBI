@@ -275,22 +275,6 @@ public class QbeXMLModelAccessModality extends AbstractModelAccessModality {
 		return new ArrayList();
 	}
 	
-	
-	public List getEntityFilterConditions(String entityName, Properties parameters) {
-		List newFilterConditions = new ArrayList();
-		List filterConditions = getEntityFilterConditions(entityName);
-		for(int i = 0; i < filterConditions.size(); i++) {
-			String filterCondition = (String)filterConditions.get(i);
-			try {
-			filterCondition = StringUtils.replaceParameters(filterCondition, "P", parameters);
-			} catch (Throwable t) {
-				throw new SpagoBIRuntimeException("Impossible to replace parameters into filter condition [" + filterCondition +"]", t);
-			}
-			newFilterConditions.add(filterCondition);
-		}
-		return newFilterConditions;
-	}
-	
 	public Boolean getRecursiveFiltering() {
 		return recursiveFiltering;
 	}
