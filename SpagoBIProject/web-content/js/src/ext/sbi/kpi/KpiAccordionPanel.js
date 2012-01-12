@@ -85,12 +85,16 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	, historical: null
 	, itemDetail: null
 	, itemDocColl: null
+	, itemNoKpi: null
 	
 	, initAccordion: function(c){
 
+		this.itemNoKpi = new Ext.form.DisplayField({value: 'Nessun Kpi associato.', 
+			style: 'font-weight: bold; align:center; margin: 20px;'});
+		
 	    this.itemDetail = new Ext.Panel({
 	        title: 'Dettaglio',
-	        items: [this.detail],
+	        items: [this.detail, this.itemNoKpi ],
 	        autoScroll: true,
             listeners : {
                 expand: function(p){
@@ -140,6 +144,7 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	}
 	, initDetail: function(c){
 		this.detail = new Sbi.kpi.KpiGUIDetail(c);
+
 	}
 	, initDescription: function(){
 		this.description = new Sbi.kpi.KpiGUIDescription();
@@ -157,12 +162,17 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	}
 	, updateAccordion: function(field){
 		//detail
-		if(field.attributes != undefined && field.attributes.kpiName != undefined){
-			this.itemDetail.setTitle('Dettaglio '+field.attributes.kpiName);
+		if(field.attributes == undefined || field.attributes.kpiName === undefined || field.attributes.kpiName === null){
+			this.detail.updateEmpy();
+			this.itemNoKpi.show();
+		}else{
+			this.detail.update(field);
+			this.itemNoKpi.hide();
 		}
-		this.detail.update(field);
+		
 		//description
 		this.description.update(field);
+		
 		//linked docs
 		if(field.attributes != undefined && field.attributes.documentLabel != undefined){
 			this.itemDocColl.setTitle('Doc collegato '+field.attributes.documentLabel);

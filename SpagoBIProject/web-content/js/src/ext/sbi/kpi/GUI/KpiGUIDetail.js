@@ -68,6 +68,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	weightItem: null,
 	targetItem: null,
 	chartPanel : null,
+	titleItem: null,
 	chartid: null,
 	//chart
 	dial: null,
@@ -82,42 +83,50 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		this.chartid = Ext.id();
 		
 		this.defaultType= 'label';
-		this.style= 'padding-left:10px;';
-		this.border=false;
+		this.style= 'padding-left:10px; padding-top:10px;';
+		this.border = false;
 
+		//title
+		this.titleItem = new Ext.form.DisplayField({
+			style: 'text-align: left; font-weight: bold; width: 100%; '});
+		
 		this.chartPanel = new Ext.Panel({
 			id: this.chartid,
 			border: false,
 			html: '&nbsp;',
 			width: 300,
-			style: 'float:left; margin-bottom: 10px; margin-top: 15px;',
+			style: 'float:left; margin-bottom: 10px; margin-top: 5px;',
 			height: 5
 			, items: []
 		});
+		if(Ext.isIE && (this.customChartName !== undefined && this.customChartName != null && this.customChartName !== 'null')){
+			this.chartPanel.style = 'float:left; margin-bottom: 10px; margin-top: 15px;';
+		}
 		this.detailFields = new Ext.form.FieldSet({
 	        xtype:'fieldset',
 	        border: false,
 	        width:200,
 	        style: 'padding: 5px; margin-top: 20px;float:left;',
 	        defaultType: 'displayfield',
+	        labelWidth: 30,
 	        items: []
 	    });
 		this.threshFields = new Ext.form.FieldSet({
 	        // Fieldset thresholds
 	        xtype:'fieldset',
 	        border: false,
-	        width:250,
+	        width:300,
 	        defaultType: 'fieldset',
 	        items: []
 	    });
 
 		if(Ext.isIE && (this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null')){
-			this.threshFields.style = 'margin-top: 40px; padding: 5px; float:left; margin-left: 10px;';
+			this.threshFields.style = 'margin-top: 50px; padding: 5px; float:left; margin-left: 10px;';
 		}else{
-			this.threshFields.style = 'margin-top: 10px; padding: 5px; float:left; margin-left: 10px;';
+			this.threshFields.style = 'margin-top: 18px; padding: 5px; float:left; margin-left: 10px;';
 		}
 
-		this.items =[this.chartPanel, this.detailFields, this.threshFields];
+		this.items =[this.titleItem, this.chartPanel, this.detailFields, this.threshFields];
 		
 	}
 	, calculateMax: function(threshold){
@@ -129,14 +138,19 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		var range = {from: thr.min, to: thr.max, color: thr.color};
 		this.ranges.push(range);
 	}
+	
 	, drawChart: function(value){
+		var y = 130;
+		if(Ext.isIE && (this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null')){
+			y = 155;
+		}
 		if(this.dial == null){
 			// Build the dial
 			this.dial = drawDial({
 			    renderTo: this.chartid,
 			    value: value,
 			    centerX: 135,
-			    centerY: 130,
+			    centerY: y,
 			    min: 0,
 			    max: this.maxChartValue,
 			    
@@ -162,6 +176,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		
 	}
 	, cleanPanel: function(){
+
 		if(this.chartPanel != null){
 			this.chartPanel.removeAll(true);
 			
@@ -181,10 +196,17 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		this.maxChartValue =0;
 		this.ranges = new Array();
 	}
+	, updateEmpy: function(){
+		this.hide();
+	}
 	, update:  function(field){
-
+		this.show();
+		//title
+		this.titleItem.setValue(field.attributes.kpiName);
+		
 		//chart
 		this.val = field.attributes.actual;
+
 		if(this.val !== null && this.val !== undefined){
 			this.threshFields.addClass( 'rounded-box' ) ;
 			this.detailFields.addClass( 'rounded-box' ) ;
@@ -201,19 +223,18 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 				this.doLayout();
 			}
 		}else{
-			//this.threshFields.removeClass( 'rounded-box' ) ;
-			//this.detailFields.removeClass( 'rounded-box' ) ;
 
-			this.chartPanel.setHeight(180);
-			var html = '<div style="float: left; margin-left:20px; text-align:center; background-color: white; height=180px; width: 200px;"><img src="../themes/other_theme/img/'+this.customChartName+'_'+0+'.png"></img></div>';
-			this.chartPanel.update(html);
-			this.doLayout();
+			if(this.customChartName !== undefined && this.customChartName != null && this.customChartName !== 'null'){
+				this.chartPanel.setHeight(180);
+				var html = '<div style="float: left; margin-left:20px; text-align:center; background-color: white; height=180px; width: 200px;"><img src="../themes/other_theme/img/'+this.customChartName+'_'+0+'.png"></img></div>';
+				this.chartPanel.update(html);
+				this.doLayout();
+			}else{
+				this.chartPanel.removeAll();
+			}
 		}
-
-
 		
 		this.cleanPanel();
-
 		
 		//thresholds
 
@@ -239,12 +260,12 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 				
 				var thr = thrArray[i];	
 				var colorBox = new Ext.form.DisplayField({value: '&nbsp;', 
-															columnWidth:0.15,
+															columnWidth:0.10,
 															style: 'background-color:'+thr.color});
 				
-				thrLine.add([ {value: thr.label, columnWidth:0.45, style:'font-weight: bold;'}, 
-				              {columnWidth:0.2, value: thr.min }, 
-				              {value: thr.max, columnWidth:0.2}, 
+				thrLine.add([ {value: thr.label, columnWidth:0.6, style:'font-weight: bold;'}, 
+				              {columnWidth:0.15, value: thr.min }, 
+				              {value: thr.max, columnWidth:0.15}, 
 				              colorBox]);
 				
 				this.threshFields.add(thrLine);
@@ -257,9 +278,9 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		}
 		//value
 		this.valueItem = new Ext.form.DisplayField({fieldLabel: 'Valore', 
-			 										labelStyle: 'width: 30px;',
 													value: this.val, 
-													style: 'padding-left:5px; font-style: italic; font-weight: bold;'});
+													style: 'margin-left:5px; padding-left:5px; font-style: italic; font-weight: bold;'
+														});
 		this.detailFields.add(this.valueItem );
 		//weight
 		var weight = field.attributes.weight;
