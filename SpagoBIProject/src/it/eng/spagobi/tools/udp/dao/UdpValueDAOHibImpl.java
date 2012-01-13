@@ -275,7 +275,6 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			Query hqlQuery = tmpSession.createQuery(hql);
 			hqlQuery.setInteger(0, referenceId);
 			hqlQuery.setInteger(1, udpId);
-			hqlQuery.setString(2, family);
 
 			SbiUdpValue hibValueUDP = (SbiUdpValue) hqlQuery.uniqueResult();
 			if (hibValueUDP == null) return null;
