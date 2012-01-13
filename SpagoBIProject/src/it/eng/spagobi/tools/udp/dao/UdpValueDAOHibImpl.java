@@ -268,7 +268,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			tx = tmpSession.beginTransaction();
 			String hql = "from SbiUdpValue s " +
 			"	where s.referenceId = ? AND " +
-			"         s.udpValueId = ? AND "+
+			"         s.sbiUdp.udpId = ? AND "+
 			"         lower(s.family) = lower('"+family+"') AND "+
 			"         s.endTs is NULL " +
 			" order by s.label asc";
