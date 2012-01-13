@@ -266,18 +266,18 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		Transaction tx = null;
 		try {
 			tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("referenceId", referenceId);
-			Criteria criteria = tmpSession.createCriteria(SbiUdpValue.class	);
-			criteria.add(labelCriterrion);	
-			Criterion labelCriterrion2 = Expression.eq("sbiUdp.udpId", udpId);
-			criteria.add(labelCriterrion2);	
-			Criterion labelCriterrion3 = Expression.eq("family", family);
-			criteria.add(labelCriterrion3);	
-			// take not closed ones!
-			Criterion labelCriterrion4 = Expression.isNull("endTs");
-			criteria.add(labelCriterrion4);	
+			String hql = "from SbiUdpValue s " +
+			"	where s.referenceId = ? AND " +
+			"         s.udpValueId = ? AND "+
+			"         lower(s.family) = lower('"+family+"') AND "+
+			"         s.endTs is NULL " +
+			" order by s.label asc";
+			Query hqlQuery = tmpSession.createQuery(hql);
+			hqlQuery.setInteger(0, referenceId);
+			hqlQuery.setInteger(1, udpId);
+			hqlQuery.setString(2, family);
 
-			SbiUdpValue hibValueUDP = (SbiUdpValue) criteria.uniqueResult();
+			SbiUdpValue hibValueUDP = (SbiUdpValue) hqlQuery.uniqueResult();
 			if (hibValueUDP == null) return null;
 			toReturn = toUdpValue(hibValueUDP);				
 
