@@ -29,6 +29,7 @@ Sbi.locale.ln['sbi.generic.advanced'] = 'Advanced';
 Sbi.locale.ln['sbi.generic.select'] = 'Select';
 Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restore';
 Sbi.locale.ln['sbi.generic.run'] = 'Run';
+Sbi.locale.ln['sbi.generic.update2'] = 'Update';
 Sbi.locale.ln['sbi.kpi.trend.title'] = 'Trend for resource ';
 Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'No data found! Select the specific node to view the data trend. ';
 
