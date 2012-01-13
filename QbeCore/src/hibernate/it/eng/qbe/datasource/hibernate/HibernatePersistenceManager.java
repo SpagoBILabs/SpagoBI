@@ -151,6 +151,10 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 		
 		if( Number.class.isAssignableFrom(clazz) ) {
 			//BigInteger, Integer, Long, Short, Byte
+			if(value.equals("NaN") || value.equals("null")){
+				toReturn = null;
+				return toReturn;
+			}
 			if (Integer.class.isAssignableFrom(clazz)) {
 				toReturn = Integer.parseInt(value);
 			} else if (BigInteger.class.isAssignableFrom(clazz)) {

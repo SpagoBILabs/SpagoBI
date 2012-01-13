@@ -193,8 +193,13 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		Class clazz = attribute.getJavaType();
 		
 		if( Number.class.isAssignableFrom(clazz) ) {
+			if(value.equals("NaN") || value.equals("null")){
+				toReturn = null;
+				return toReturn;
+			}
 			//BigInteger, Integer, Long, Short, Byte
 			if (Integer.class.isAssignableFrom(clazz)) {
+
 				toReturn = Integer.parseInt(value);
 			} else if (BigInteger.class.isAssignableFrom(clazz)) {
 				toReturn = new BigInteger(value);
