@@ -116,7 +116,7 @@ Ext.extend(Sbi.kpi.KpiGUIHistorical , Ext.form.FormPanel, {
 			value: new Date()
 		});
 		this.btnUpdate = new Ext.Button({
-			text: LN('sbi.generic.run'),
+			text: LN('sbi.generic.update2'),
 			handler: function(){	
 				var tmpField = {attributes: {kpiInstId: this.kpiInstId,
 											 kpiDescr: this.kpiDescr}};
@@ -173,7 +173,8 @@ Ext.extend(Sbi.kpi.KpiGUIHistorical , Ext.form.FormPanel, {
 	        autoScroll: true,
 	        border: false,
 	        height: 400,
-	    	title: LN('sbi.kpi.trend.title') + this.kpiDescr ,
+	    	//title: LN('sbi.kpi.trend.title') + this.kpiDescr ,
+	    	title: LN('sbi.kpi.trend.title') ,
 	    	items: [this.chartPanel]			
 		});		
 		this.add(this.perWin);
