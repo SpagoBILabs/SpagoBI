@@ -314,6 +314,11 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					   var isfloat = isFloat(dottedVal);
 
 					   if(!isfloat){
+						   if(e.value == ''){
+							   //removed
+							   e.value = NaN;
+							   return;
+						   }
 						   e.cancel = true;
 						   Ext.MessageBox.show({
 								title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
@@ -329,6 +334,11 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   var isInt = isUnsignedInteger(e.value);
 
 				   if(!isInt){
+					   if(e.value == ''){
+						   //removed
+						   e.value = NaN;
+						   return;
+					   }
 					   e.cancel = true;
 					   Ext.MessageBox.show({
 							title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
