@@ -577,7 +577,7 @@ public class HQLStatement extends AbstractStatement {
 			Assert.assertNotNull(operand, "Input parameter [operand] cannot be null in order to execute method [buildUserProvidedWhereField]");
 			operandElement = new String[] {""};
 			
-			if(OPERAND_TYPE_STATIC.equalsIgnoreCase(operand.type)) {
+			if(OPERAND_TYPE_STATIC.equalsIgnoreCase(operand.type) ||  "Static Value".equalsIgnoreCase(operand.type)) {
 				operandElement = buildStaticOperand(operand);
 			} else if (OPERAND_TYPE_SUBQUERY.equalsIgnoreCase(operand.type)) {
 				operandElement = new String[] {buildQueryOperand(operand)};
@@ -767,7 +767,8 @@ public class HQLStatement extends AbstractStatement {
 				
 				leftOperandElements = buildOperand(whereField.getLeftOperand(), query, entityAliasesMaps);
 				
-				if (OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getRightOperand().type) 
+				if ((OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getRightOperand().type)  
+						|| "Static Value".equalsIgnoreCase(whereField.getRightOperand().type))
 						&& whereField.isPromptable()) {
 					// get last value first (the last value edited by the user)
 					rightOperandElements = whereField.getRightOperand().lastValues;
@@ -776,11 +777,11 @@ public class HQLStatement extends AbstractStatement {
 					rightOperandElements = buildOperand(whereField.getRightOperand(), query, entityAliasesMaps);
 				}
 				
-				if (OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getLeftOperand().type) )  {
+				if (OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getLeftOperand().type) || "Static Value".equalsIgnoreCase(whereField.getLeftOperand().type))  {
 					leftOperandElements = getTypeBoundedStaticOperand(whereField.getRightOperand(), whereField.getOperator(), leftOperandElements);
 				}
 				
-				if (OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getRightOperand().type) )  {
+				if (OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getRightOperand().type) ||"Static Value".equalsIgnoreCase(whereField.getRightOperand().type)  )  {
 					rightOperandElements = getTypeBoundedStaticOperand(whereField.getLeftOperand(), whereField.getOperator(), rightOperandElements);
 				}
 				
@@ -825,14 +826,14 @@ public class HQLStatement extends AbstractStatement {
 				
 		logger.debug("IN");
 					
-		if (OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) && isPromptable) {
+		if ((OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) || "Static Value".equalsIgnoreCase(rightOperand.type))&& isPromptable) {
 			// get last value first (the last value edited by the user)
 			rightOperandElements = rightOperand.lastValues;
 		} else {
 			rightOperandElements = buildOperand(rightOperand, query, entityAliasesMaps);
 		}
 		
-		if (OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) )  {
+		if (OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) || "Static Value".equalsIgnoreCase(rightOperand.type))  {
 			rightOperandElements = getTypeBoundedStaticOperand(leftOperand, operator, rightOperandElements);
 		}
 		
@@ -966,7 +967,7 @@ public class HQLStatement extends AbstractStatement {
 			
 			leftOperandElements = buildOperand(havingField.getLeftOperand(), query, entityAliasesMaps);
 			
-			if (OPERAND_TYPE_STATIC.equalsIgnoreCase(havingField.getRightOperand().type) 
+			if ( (OPERAND_TYPE_STATIC.equalsIgnoreCase(havingField.getRightOperand().type) || "Static Value".equalsIgnoreCase(havingField.getRightOperand().type))
 					&& havingField.isPromptable()) {
 				// get last value first (the last value edited by the user)
 				rightOperandElements = havingField.getRightOperand().lastValues;
@@ -974,11 +975,11 @@ public class HQLStatement extends AbstractStatement {
 				rightOperandElements = buildOperand(havingField.getRightOperand(), query, entityAliasesMaps);
 			}
 			
-			if (OPERAND_TYPE_STATIC.equalsIgnoreCase(havingField.getLeftOperand().type) )  {
+			if ((OPERAND_TYPE_STATIC.equalsIgnoreCase(havingField.getLeftOperand().type) || "Static Value".equalsIgnoreCase(havingField.getLeftOperand().type)))  {
 				leftOperandElements = getTypeBoundedStaticOperand(havingField.getRightOperand(), havingField.getOperator(), leftOperandElements);
 			}
 			
-			if (OPERAND_TYPE_STATIC.equalsIgnoreCase(havingField.getRightOperand().type) )  {
+			if (OPERAND_TYPE_STATIC.equalsIgnoreCase(havingField.getRightOperand().type) || "Static Value".equalsIgnoreCase(havingField.getRightOperand().type) )  {
 				rightOperandElements = getTypeBoundedStaticOperand(havingField.getLeftOperand(), havingField.getOperator(), rightOperandElements);
 			}
 			
