@@ -118,14 +118,6 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 			switch (type) {
 			case ATTRIBUTE:
 				Object isSegmentAttributeObj = fieldMetaData.getProperty(PROPERTY_IS_SEGMENT_ATTRIBUTE);
-				if(isSegmentAttributeObj instanceof Boolean){
-					System.out.println("boolean");
-				}
-				if(isSegmentAttributeObj instanceof String){
-					System.out.println("String");
-					
-				}
-				
 				logger.debug("Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
 				String attributeNature = (isSegmentAttributeObj != null
 						&& (Boolean.parseBoolean(isSegmentAttributeObj.toString())==true)) ? "segment_attribute" : "attribute";
