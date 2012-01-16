@@ -280,7 +280,7 @@ public class GeoDriver extends AbstractDriver implements IEngineDriver {
 	    logger.warn("Language " + portalLocale.getLanguage() + " is not supported by SpagoBI");
 	    logger.warn("Portal locale will be replaced with the default lacale (country: US; language: en).");
 	    map.put(COUNTRY, "US");
-	    map.put(COUNTRY, "en");
+	    map.put(LANGUAGE, "en");
 	    logger.debug("Added parameter: country/US");
 	    logger.debug("Added parameter: language/en");
 	}
