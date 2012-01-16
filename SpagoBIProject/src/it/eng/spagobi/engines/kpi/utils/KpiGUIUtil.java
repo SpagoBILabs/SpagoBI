@@ -36,10 +36,10 @@ import org.json.JSONObject;
 
 public class KpiGUIUtil {
 	static transient Logger logger = Logger.getLogger(KpiGUIUtil.class);
-	private static ExecutionInstance kpiInstance;
-	private static Locale kpiInstanceLocale;
-	private static List parameters ;
-	private static String visibilityParameterValues = null;
+	private ExecutionInstance kpiInstance;
+	private Locale kpiInstanceLocale;
+	private List parameters ;
+	private String visibilityParameterValues = null;
 	
 	public void setExecutionInstance(ExecutionInstance instance, Locale locale){
 		kpiInstance = instance;
