@@ -97,9 +97,9 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 
 			Object propertyRawValue = fieldMetaData.getProperty(PROPERTY_VISIBLE);
 			logger.debug("Read property " + PROPERTY_VISIBLE + ": its value is [" + propertyRawValue + "]");
-			if (propertyRawValue != null
-					&& (propertyRawValue instanceof Boolean)
-					&& ((Boolean) propertyRawValue).booleanValue() == false) {
+			
+			if (propertyRawValue != null && !propertyRawValue.toString().equals("")
+					&& (Boolean.parseBoolean(propertyRawValue.toString()) == false)) {
 				logger.debug("The field is not visible");
 				continue;
 			} else {
@@ -118,10 +118,18 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 			switch (type) {
 			case ATTRIBUTE:
 				Object isSegmentAttributeObj = fieldMetaData.getProperty(PROPERTY_IS_SEGMENT_ATTRIBUTE);
+				if(isSegmentAttributeObj instanceof Boolean){
+					System.out.println("boolean");
+				}
+				if(isSegmentAttributeObj instanceof String){
+					System.out.println("String");
+					
+				}
+				
 				logger.debug("Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
 				String attributeNature = (isSegmentAttributeObj != null
-						&& (isSegmentAttributeObj instanceof Boolean)
-						&& ((Boolean) isSegmentAttributeObj).booleanValue()) ? "segment_attribute" : "attribute";
+						&& (Boolean.parseBoolean(isSegmentAttributeObj.toString())==true)) ? "segment_attribute" : "attribute";
+				
 				logger.debug("The nature of the attribute is recognized as " + attributeNature);
 				fieldMetaDataJSON.put("nature", attributeNature);
 				fieldMetaDataJSON.put("funct", AggregationFunctions.NONE);
@@ -131,8 +139,7 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 				Object isMandatoryMeasureObj = fieldMetaData.getProperty(PROPERTY_IS_MANDATORY_MEASURE);
 				logger.debug("Read property " + PROPERTY_IS_MANDATORY_MEASURE + ": its value is [" + isMandatoryMeasureObj + "]");
 				String measureNature = (isMandatoryMeasureObj != null
-						&& (isMandatoryMeasureObj instanceof Boolean)
-						&& ((Boolean) isMandatoryMeasureObj).booleanValue()) ? "mandatory_measure" : "measure";
+						&& (Boolean.parseBoolean(isMandatoryMeasureObj.toString())==true)) ? "mandatory_measure" : "measure";
 				logger.debug("The nature of the measure is recognized as " + measureNature);
 				fieldMetaDataJSON.put("nature", measureNature);
 				String aggregationFunction = (String) fieldMetaData.getProperty(PROPERTY_AGGREGATION_FUNCTION);
