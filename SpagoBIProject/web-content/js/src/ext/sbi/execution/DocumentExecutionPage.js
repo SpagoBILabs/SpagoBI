@@ -78,7 +78,8 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
     	this.northPanel.collapse();
     	this.parametersPanel.applyViewPoint(v);
     	// save parameters into session
-		Sbi.execution.SessionParametersManager.saveState(this.parametersPanel);
+    	Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
+		Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersPanel);
 		this.refreshExecution();
     }, this);
     
@@ -86,7 +87,8 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
     	this.southPanel.collapse();
     	this.northPanel.collapse();
     	// save parameters into session
-		Sbi.execution.SessionParametersManager.saveState(this.parametersPanel);
+    	Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
+		Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersPanel);
 		this.executionInstance.SBI_SUBOBJECT_ID = subObjectId;
 		var formState = this.parametersPanel.getFormState();
 		var formStateStr = Sbi.commons.JSON.encode( formState );
@@ -254,10 +256,10 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	, initNorthPanel: function( config ) {
 		Ext.apply(config, {pageNumber: 3}); // this let the ParametersPanel know that it is on execution page
 		this.parametersPanel = new Sbi.execution.ParametersPanel(config);
-		
-		
-		
-		
+		this.parametersPanel.on('synchronize', function() {
+			// restore memento (= the list of last N value inputed for each parameters)
+			Sbi.execution.SessionParametersManager.restoreMementoObject(this.parametersPanel);
+		}, this);
 		
 		this.northPanel = new Ext.Panel({
 				region:'north'

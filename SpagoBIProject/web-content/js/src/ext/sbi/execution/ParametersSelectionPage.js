@@ -158,7 +158,9 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 				this.isParameterPanelReadyForExecution = true;
 			}
 			// try to find from session the value used for execution
-			Sbi.execution.SessionParametersManager.restoreState(panel);
+			Sbi.execution.SessionParametersManager.restoreStateObject(panel);
+			// restore memento (= the list of last N value inputed for each parameters)
+			Sbi.execution.SessionParametersManager.restoreMementoObject(panel);
 			this.checkAutomaticStart();
 		}
 	, this);

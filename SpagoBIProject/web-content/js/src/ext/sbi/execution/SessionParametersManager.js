@@ -50,22 +50,29 @@ Ext.ns("Sbi.execution");
 Sbi.execution.SessionParametersManager = function() {
 	
     // private variables
-	var storeName = 'Sbi_execution_SessionParametersManager'; // dots are not allowed in the store name by the Persist library
+	var STORE_NAME = 'Sbi_execution_SessionParametersManager'; // dots are not allowed in the store name by the Persist library
 	
-	var key = 'state';
+	var PARAMETR_STATE_OBJECT_KEY = 'parameterState'; 
+	var PARAMETR_MEMENTO_OBJECT_KEY = 'parameterMemento';
 	
-	var isEnabled = Sbi.config.sessionParametersManagerEnabled;
-
+	// configurations
+	var isStatePersistenceEnabled = Sbi.config.sessionParametersManagerEnabled;
+	// TODO read the following configuration from global config
+	var statePersistenceScope = 'SESSION'; // create a new state at every login
+	var isMementoPersistenceEnabled = Sbi.config.sessionParametersManagerEnabled;
+	var mementoPersistenceScope = 'BROWSER'; // create a new memento for each browser. persist it upon different logins/users
+	var mementoPersistenceDepth = 5 // how many states for each parameter the memento object must store
+	
 	// public space
 	return {
 
 		init: function() {
 			try {
-			if (isEnabled) {
-				Sbi.execution.SessionParametersManager.store = new Persist.Store(storeName, {
-				      swf_path: Sbi.config.contextName + '/js/lib/persist-0.1.0/persist.swf'
-			    });
-			}
+				if (isStatePersistenceEnabled) {
+					Sbi.execution.SessionParametersManager.store = new Persist.Store(STORE_NAME, {
+					      swf_path: Sbi.config.contextName + '/js/lib/persist-0.1.0/persist.swf'
+				    });
+				}
 			} catch (err) {}
 		}
 		
@@ -73,47 +80,79 @@ Sbi.execution.SessionParametersManager = function() {
 		 * restores the state of all parameters used in the input parameters panel
 		 * The input parametersPanel is an instance of class Sbi.execution.ParametersPanel
 		 */
-		, restoreState: function(parametersPanel) {
+		, restoreStateObject: function(parametersPanel) {
 			try {
-			if (isEnabled) {
-				Sbi.execution.SessionParametersManager.store.get(key, function(ok, value) {
-					if (ok && value !== undefined && value !== null) {
-						var storedParameters = Sbi.commons.JSON.decode(value);
-						var state = {};
-						for(var p in parametersPanel.fields) {
-							var field = parametersPanel.fields[p];
-							if (!field.isTransient) {
-								var parameterStateObject = storedParameters[Sbi.execution.SessionParametersManager.getParameterStorageKey(field)];
-								if (parameterStateObject && parameterStateObject.value) {
-									state[field.name] = parameterStateObject.value;
-									if (parameterStateObject.description) {
-										state[field.name + '_field_visible_description'] = parameterStateObject.description;
+				if (isStatePersistenceEnabled) {
+					Sbi.execution.SessionParametersManager.store.get(PARAMETR_STATE_OBJECT_KEY, function(ok, value) {
+						if (ok && value !== undefined && value !== null) {
+							var storedParameters = Sbi.commons.JSON.decode(value);
+							var state = {};
+							for(var p in parametersPanel.fields) {
+								var field = parametersPanel.fields[p];
+																
+								if (!field.isTransient) {
+									var parameterStateObject = storedParameters[Sbi.execution.SessionParametersManager.getParameterStorageKey(field)];
+									if (parameterStateObject && parameterStateObject.value) {
+										state[field.name] = parameterStateObject.value;
+										if (parameterStateObject.description) {
+											state[field.name + '_field_visible_description'] = parameterStateObject.description;
+										}
 									}
 								}
 							}
+							parametersPanel.setFormState(state);
 						}
-						//alert('restoring ' + state.toSource());
-						parametersPanel.setFormState(state);
-					}
-				});
-			}
+					});
+				}
 			} catch (err) {}
 		}
-	
+		
+		/**
+		 * restores the memento of all parameters used in the input parameters panel
+		 * The input parametersPanel is an instance of class Sbi.execution.ParametersPanel
+		 */
+		, restoreMementoObject: function(parametersPanel) {
+			try {
+				if (isStatePersistenceEnabled) {
+					Sbi.execution.SessionParametersManager.store.get(PARAMETR_MEMENTO_OBJECT_KEY, function(ok, value) {
+						if (ok && value !== undefined && value !== null) {
+							//alert(value);
+							
+							var mementoObject = Sbi.commons.JSON.decode(value);
+							
+							var state = {};
+							for(var p in parametersPanel.fields) {
+								var field = parametersPanel.fields[p];
+																
+								if (!field.isTransient) {
+									var parameterMementoObject = mementoObject[Sbi.execution.SessionParametersManager.getParameterStorageKey(field)];
+									if(parameterMementoObject) {
+										parameterMementoObject.readCursor = parameterMementoObject.insertCursor;
+									}
+									field.memento = parameterMementoObject;
+								}
+							}							
+						}
+					});
+				}
+			} catch (err) {}
+		}
+		
+		
 		/**
 		 * saves the state of all parameters used in the input parameters panel
 		 * The input parametersPanel is an instance of class Sbi.execution.ParametersPanel
 		 */
-		, saveState: function(parametersPanel) {
+		, saveStateObject: function(parametersPanel) {
 			try {
-			if (isEnabled) {
-				for (var p in parametersPanel.fields) {
-					var field = parametersPanel.fields[p];
-					if (!field.isTransient) {
-						Sbi.execution.SessionParametersManager.save(field);
+				if (isStatePersistenceEnabled) {
+					for (var p in parametersPanel.fields) {
+						var field = parametersPanel.fields[p];
+						if (!field.isTransient) {
+							Sbi.execution.SessionParametersManager.saveParameterState(field);
+						}
 					}
 				}
-			}
 			} catch (err) {}
 		}
 		
@@ -121,36 +160,142 @@ Sbi.execution.SessionParametersManager = function() {
 		 * saves a parameter state
 		 * The input field is a field belonging to class Sbi.execution.ParametersPanel
 		 */
-		, save: function(field) {
+		, saveParameterState: function(field) {
 			try {
-			if (isEnabled) {
-				Sbi.execution.SessionParametersManager.store.get(key, function(ok, value) {
-					if (ok) {
-						var storedParameters = null;
-						if (value === undefined || value === null) {
-							storedParameters = {};
-						} else {
-							storedParameters = Sbi.commons.JSON.decode(value);
-						}
-						var fieldValue = field.getValue();
-						if (fieldValue === undefined || fieldValue === null || fieldValue === '' || fieldValue.length === 0) {
-							Sbi.execution.SessionParametersManager.clear(field);
-						} else {
-							var parameterStateObject = {};
-							parameterStateObject.value = fieldValue;
-							var rawValue = field.getRawValue();
-							if (rawValue !== undefined) {
-								parameterStateObject.description = rawValue;
+				if (isStatePersistenceEnabled) {
+					Sbi.execution.SessionParametersManager.store.get(PARAMETR_STATE_OBJECT_KEY, function(ok, value) {
+						if (ok) {
+							var storedParameters = null;
+							if (value === undefined || value === null) {
+								storedParameters = {};
+							} else {
+								storedParameters = Sbi.commons.JSON.decode(value);
 							}
-							//alert('saving ' + parameterStateObject.toSource());
-							storedParameters[Sbi.execution.SessionParametersManager.getParameterStorageKey(field)] = parameterStateObject;
-							Sbi.execution.SessionParametersManager.store.set(key, Sbi.commons.JSON.encode(storedParameters));
+							var fieldValue = field.getValue();
+							if (fieldValue === undefined || fieldValue === null || fieldValue === '' || fieldValue.length === 0) {
+								Sbi.execution.SessionParametersManager.clear(field);
+							} else {
+								var parameterStateObject = {};
+								parameterStateObject.value = fieldValue;
+								var rawValue = field.getRawValue();
+								if (rawValue !== undefined) {
+									parameterStateObject.description = rawValue;
+								}
+								storedParameters[Sbi.execution.SessionParametersManager.getParameterStorageKey(field)] = parameterStateObject;
+								Sbi.execution.SessionParametersManager.store.set(PARAMETR_STATE_OBJECT_KEY, Sbi.commons.JSON.encode(storedParameters));
+							}
 						}
-					}
-				});
-			}
+					});
+				}
 			} catch (err) {}
 		}
+		
+		/**
+		 * update the memento object with the values used in the input parameters panel
+		 * The input parametersPanel is an instance of class Sbi.execution.ParametersPanel
+		 */
+		, updateMementoObject: function(parametersPanel) {
+			try {
+				if (isMementoPersistenceEnabled) {
+					for (var p in parametersPanel.fields) {
+						var field = parametersPanel.fields[p];
+						if (!field.isTransient) {
+							if(field.behindParameter.typeCode == 'MAN_IN' && field.behindParameter.type === 'STRING'){
+								Sbi.execution.SessionParametersManager.updateParameterMemento(field);
+							}
+						}
+					}
+				}
+			} catch (err) {}
+			
+			
+			//Sbi.execution.SessionParametersManager.debug();
+		}
+		
+		/**
+		 * update a parameter memento
+		 * The input field is a field belonging to class Sbi.execution.ParametersPanel
+		 */
+		, updateParameterMemento: function(field) {
+			try {
+				if (isMementoPersistenceEnabled) {
+					Sbi.execution.SessionParametersManager.store.get(PARAMETR_MEMENTO_OBJECT_KEY, function(ok, value) {
+						if (ok) {
+							var mementoObject = null;
+							if (value === undefined || value === null) {
+								mementoObject = {};
+							} else {
+								mementoObject = Sbi.commons.JSON.decode(value);
+							}
+							
+							var fieldValue = field.getValue();
+							if (fieldValue === undefined || fieldValue === null || fieldValue === '' || fieldValue.length === 0) {
+								// do nothing
+							} else {
+								
+								var parameterStorageKey = Sbi.execution.SessionParametersManager.getParameterStorageKey(field);
+								
+								var parameterMementoObject = mementoObject[parameterStorageKey];
+								if(!parameterMementoObject) {
+									var parameterMementoObject = {};
+									parameterMementoObject.size = 0;
+									parameterMementoObject.insertCursor = -1;
+									parameterMementoObject.states = new Array(mementoPersistenceDepth);
+									parameterMementoObject.distinctValues = {};
+								}
+																
+								var state = {};
+								state.value = fieldValue;
+								var rawValue = field.getRawValue();
+								if (rawValue !== undefined) {
+									state.description = rawValue;
+								}
+								
+								if(!parameterMementoObject.distinctValues[state.value]) {
+									parameterMementoObject.insertCursor = (parameterMementoObject.insertCursor + 1)%5;
+									
+									var removedState = parameterMementoObject.states[parameterMementoObject.insertCursor];
+									parameterMementoObject.states[parameterMementoObject.insertCursor] = state;
+									
+									
+									if(parameterMementoObject.size < mementoPersistenceDepth) {
+										parameterMementoObject.distinctValues[state.value] = true;
+										parameterMementoObject.size++;
+									} else {
+										delete parameterMementoObject.distinctValues[removedState.value];
+										//alert('removed value: ' + removedState.value + '; removed status:' + (!parameterMementoObject.distinctValues[removedState.value]));
+									}
+
+									mementoObject[parameterStorageKey] = parameterMementoObject;
+									Sbi.execution.SessionParametersManager.store.set(PARAMETR_MEMENTO_OBJECT_KEY, Sbi.commons.JSON.encode(mementoObject));
+									
+									parameterMementoObject.readCursor = parameterMementoObject.insertCursor;
+									field.memento = parameterMementoObject;
+									//alert(field.memento.toSource());
+								} else {
+									//alert('alredy in');
+								}
+							}
+						}
+					});
+				}
+			} catch (err) {}
+		}
+		
+		
+		, debug: function(field) {
+			try {
+				if (isMementoPersistenceEnabled) {
+					Sbi.execution.SessionParametersManager.store.get(PARAMETR_MEMENTO_OBJECT_KEY, function(ok, value) {
+						if (ok) {
+							alert(value);
+						}
+					});
+				}
+			} catch (err) {}
+		}
+		
+		
 		
 		/**
 		 * clears a stored parameter
@@ -158,14 +303,14 @@ Sbi.execution.SessionParametersManager = function() {
 		 */
 		, clear: function(field) {
 			try {
-			if (isEnabled) {
-				Sbi.execution.SessionParametersManager.store.get(key, function(ok, value) {
+			if (isStatePersistenceEnabled) {
+				Sbi.execution.SessionParametersManager.store.get(PARAMETR_STATE_OBJECT_KEY, function(ok, value) {
 					if (ok) {
 						var storedParameters = Sbi.commons.JSON.decode(value);
 						if (storedParameters !== undefined && storedParameters !== null) {
 							delete storedParameters[Sbi.execution.SessionParametersManager.getParameterStorageKey(field)];
 						}
-						Sbi.execution.SessionParametersManager.store.set(key, Sbi.commons.JSON.encode(storedParameters));
+						Sbi.execution.SessionParametersManager.store.set(PARAMETR_STATE_OBJECT_KEY, Sbi.commons.JSON.encode(storedParameters));
 					}
 				});
 			}
@@ -177,9 +322,9 @@ Sbi.execution.SessionParametersManager = function() {
 		 */
 		, reset: function() {
 			try {
-			if (isEnabled) {
-				//Sbi.execution.SessionParametersManager.store.remove(key);
-				Sbi.execution.SessionParametersManager.store.set(key, Sbi.commons.JSON.encode({}));
+			if (isStatePersistenceEnabled) {
+				//Sbi.execution.SessionParametersManager.store.remove(PARAMETR_STATE_OBJECT_KEY);
+				Sbi.execution.SessionParametersManager.store.set(PARAMETR_STATE_OBJECT_KEY, Sbi.commons.JSON.encode({}));
 			}
 			} catch (err) {}
 		}
