@@ -23,6 +23,8 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 import org.apache.log4j.Logger;
 
+import com.fdsapi.parser.FDSMathParser.ParseException;
+
 /**
  * 
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -51,6 +53,10 @@ public class RegistryConfigurationXMLParser {
 	public static String ATTRIBUTE_FOREIGNKEY = "foreignKey";
 	public static String ATTRIBUTE_MANDATORY_COLUMN = "mandatoryColumn";
 	public static String ATTRIBUTE_MANDATORY_VALUE = "mandatoryValue";
+	public static String ATTRIBUTE_COLUMNS_MAX_SIZE = "maxSize";
+	public static String ATTRIBUTE_COLUMN_SIZE = "size";
+	public static String ATTRIBUTE_SORTER = "sorter";
+	public static String ATTRIBUTE_UNSIGNED = "unsigned";
 
 	public static String PRESENTATION_TYPE_MANUAL = "MANUAL";
 	public static String PRESENTATION_TYPE_COMBO = "COMBO";
@@ -112,6 +118,9 @@ public class RegistryConfigurationXMLParser {
 			RegistryConfiguration toReturn) {
 		List<RegistryConfiguration.Column> list = new ArrayList<RegistryConfiguration.Column>();
 		SourceBean filtersSB = (SourceBean) entitySB.getAttribute(TAG_COLUMNS);
+		//columns max size
+		String columnsMaxSize = (String)filtersSB.getAttribute(ATTRIBUTE_COLUMNS_MAX_SIZE);
+		toReturn.setColumnsMaxSize(columnsMaxSize);
 		List filters = filtersSB == null ? null : filtersSB
 				.getAttributeAsList(TAG_COLUMN);
 		if (filters != null && filters.size() > 0) {
@@ -125,6 +134,23 @@ public class RegistryConfigurationXMLParser {
 				if (subEntity != null && subEntity.trim().equals("")) {
 					subEntity = null;
 				}
+				String size = (String) aColumn.getAttribute(ATTRIBUTE_COLUMN_SIZE);
+				Integer intSize = null;
+				try{
+					intSize = Integer.parseInt(size);
+				}catch(NumberFormatException e){
+					logger.debug("Column size not integer");
+				}
+				String sorter = (String) aColumn.getAttribute(ATTRIBUTE_SORTER);
+				boolean unsigned = false;
+				if(aColumn.getAttribute(ATTRIBUTE_UNSIGNED) != null){
+					try{
+						unsigned = Boolean.parseBoolean((String)aColumn.getAttribute(ATTRIBUTE_UNSIGNED));
+					}catch(Exception e){
+						logger.debug("Column unsigned not boolean");
+					}
+				}
+
 				String foreignKey = (String) aColumn
 						.getAttribute(ATTRIBUTE_FOREIGNKEY);
 				boolean isEditable = !"false".equalsIgnoreCase((String) aColumn
@@ -146,6 +172,9 @@ public class RegistryConfigurationXMLParser {
 								+ " attribute is specified, the attribute "
 								+ ATTRIBUTE_FOREIGNKEY + " is also requested.");
 				column.setField(field);
+				column.setSize(intSize);
+				column.setSorter(sorter);
+				column.setUnsigned(unsigned);
 				column.setSubEntity(subEntity);
 				column.setForeignKey(foreignKey);
 				column.setEditable(isEditable);
