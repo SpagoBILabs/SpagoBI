@@ -95,11 +95,10 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 		var storeObject = this.getJsonStoreExt3();
 		var extraStyle ={};
 		var items = new Array();
-		
-		
-
+	
 		for(var i=0; i<storeObject.serieNames.length; i++){
 			var chartSerieNumber = 'series'+i;
+			
 			
 			var itemChart = {
 				xtype: 'piechart',
@@ -107,9 +106,14 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 				categoryField: 'categories',
 				title: 'Month',
 				serieNumber: i,
-				//displayName: storeObject.serieNames[i],
+				serieName: storeObject.serieNames[i],
 	            dataField: chartSerieNumber,
-	            extraStyle: extraStyle
+	            extraStyle: extraStyle,
+	            series:[{
+	                style: {
+	                    colors: this.chartConfig.colors
+	                    }
+	                }]
 			};
 			//alert(storeObject.serieNames[i]);
 			
@@ -119,8 +123,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 					return record.data.categories+'\n'+ record.data['series'+chart.serieNumber];
 		        };
 		        //configuration (legend and values)
-		        //Do not put this line outside the if block because
-		        //it can override the tipRenderer
 				this.addChartConfExt3(itemChart);
 			}else{
 				//configuration (legend and values)
