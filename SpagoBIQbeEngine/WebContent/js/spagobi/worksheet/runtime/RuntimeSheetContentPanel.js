@@ -69,7 +69,10 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 	
 	//catch the event of the contentloaded and throws it to the parent
 	this.content.on('contentloaded',function(empty){this.fireEvent('contentloaded', empty);},this);
-		
+	
+	this.on('render', function(panel){
+		(panel.getEl().on('click', function(event, element, object){this.content.fireEvent('contentclick', event )}, this));
+	}, this);	
 	c = {
 		border: false,
 		style:'padding:5px 15px 5px; text-align:center;',

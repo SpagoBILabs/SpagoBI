@@ -84,14 +84,16 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 		
 		var items = {
 				store: storeObject.store,
-				extraStyle: extraStyle
+				extraStyle: extraStyle,
+				hiddenseries: new Array(),
+				horizontal: this.chartConfig.orientation === 'horizontal'
 		};
 
 		
 		if(this.chartConfig.orientation === 'horizontal'){
 			items.yField = 'categories';
 			items.series = this.getChartSeriesExt3(storeObject.serieNames, colors, true);
-			items.xtype = this.getTypeExt3('barchart');
+			
 			//if percent stacked set the max of the axis
 			if(percent){
 				this.setPercentageStyleExt3(items, true);
@@ -99,7 +101,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 		}else{
 			items.xField = 'categories';
 			items.series = this.getChartSeriesExt3(storeObject.serieNames, colors);
-			items.xtype =  this.getTypeExt3('columnchart');
+			
 			//if percent stacked set the max of the axis
 			if(percent){
 				this.setPercentageStyleExt3(items, false);
@@ -108,11 +110,20 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 		
 		this.addChartConfExt3(items);
 		
+		var barChartPanel = this.getChartExt3(this.chartConfig.orientation === 'horizontal', items);
+		this.on('contentclick', function(event){
+			this.headerClickHandler(event,null,null,barChartPanel);
+		}, this);
+		
+		barChartPanel.on('render', function(panel){
+			panel.el.on('click', this.headerClickHandler.createDelegate(this, [panel], true), this);
+		}, this);
+		
 		var chartConf ={
 			renderTo : this.chartDivId,
 			layout: 'fit',
 			border: false,
-			items: items
+			items: barChartPanel
 		};
 		
 		new Ext.Panel(chartConf);
@@ -138,15 +149,19 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
         };
 	}
 		
-	, getTypeExt3 : function (type) {
-		switch (this.chartConfig.type) {
-	        case 'stacked-barchart':
-	        	return 'stacked'+type;
-	        case 'percent-stacked-barchart':
-	        	return 'stacked'+type;
-	        default: 
-	        	return type;
-	        return null;
+	, getChartExt3 : function (horizontal, config) {
+		if(horizontal){
+			if(this.chartConfig.type == 'stacked-barchart' || this.chartConfig.type == 'percent-stacked-barchart'){
+				return new Ext.chart.StackedBarChart(config);
+			}else{
+				return new Ext.chart.BarChart(config);
+			}
+		} else {
+			if(this.chartConfig.type == 'stacked-barchart' || this.chartConfig.type == 'percent-stacked-barchart'){
+				return new Ext.chart.StackedColumnChart(config);
+			}else{
+				return new Ext.chart.ColumnChart(config);
+			}
 		}
 	}
 
