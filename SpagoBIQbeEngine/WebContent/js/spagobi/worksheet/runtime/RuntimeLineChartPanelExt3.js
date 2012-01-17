@@ -92,6 +92,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 				series: this.getChartSeriesExt3(storeObject.serieNames, 'line', colors),
                 extraStyle: extraStyle
 			};
+		//set the height if ie
+    	if(Ext.isIE){
+    		items.height = this.ieChartHeight;
+    	}
+		
 		
 		this.addChartConfExt3(items);
 		
@@ -116,10 +121,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 			this.headerClickHandler(event,null,null,lineChartPanel);
 		}, this);
 		
-		lineChartPanel.on('render', function(panel){
-			(panel.getEl().on('render', function(){alert('ciao');}, this));//panel.el.on('click', this.headerClickHandler.createDelegate(this, [panel], true), this);
-		}, this);
-		
+
 		var chartConf = {
 				renderTo : this.chartDivId,
 				layout: 'fit',
