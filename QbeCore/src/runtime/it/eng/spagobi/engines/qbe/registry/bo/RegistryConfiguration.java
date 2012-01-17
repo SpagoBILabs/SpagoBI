@@ -38,7 +38,16 @@ public class RegistryConfiguration {
 	private List<Column> columns = null;
 
 	private String entity = null;
+	private String columnsMaxSize = null;
 	
+	public String getColumnsMaxSize() {
+		return columnsMaxSize;
+	}
+
+	public void setColumnsMaxSize(String columnsMaxSize) {
+		this.columnsMaxSize = columnsMaxSize;
+	}
+
 	public String getEntity() {
 		return entity;
 	}
@@ -137,6 +146,38 @@ public class RegistryConfiguration {
 		private boolean isVisible = true;
 		//mandatory depending on another column value
 		private String mandatoryColumn = null;
+		//sets the column width
+		private Integer size = null;
+		//sets if the result set is ordered by this column and can assume values "asc" or "desc"
+		private String sorter = null;
+		//sets if the column of type number must be signed or unsigned (only positive numbers) by false or true values
+		private boolean unsigned = false;
+		
+
+		public boolean isUnsigned() {
+			return unsigned;
+		}
+
+		public void setUnsigned(boolean unsigned) {
+			this.unsigned = unsigned;
+		}
+
+		public Integer getSize() {
+			return size;
+		}
+
+		public void setSize(Integer size) {
+			this.size = size;
+		}
+
+		public String getSorter() {
+			return sorter;
+		}
+
+		public void setSorter(String sorter) {
+			this.sorter = sorter;
+		}
+
 		
 		public String getMandatoryColumn() {
 			return mandatoryColumn;
