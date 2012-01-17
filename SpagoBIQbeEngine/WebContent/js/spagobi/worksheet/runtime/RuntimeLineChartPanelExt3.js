@@ -56,7 +56,7 @@ Sbi.worksheet.runtime.RuntimeLineChartPanelExt3 = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});
 
 	Ext.apply(this, c);
-	
+	this.addEvents();
 	this.chartDivId = Ext.id();
 	
 	c = Ext.apply(c, {
@@ -85,9 +85,10 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 		var extraStyle ={};
 		
 		var items = {
-				xtype: 'linechart',
+				//xtype: 'linechart',
 				store: storeObject.store,
 				xField: 'categories',
+				hiddenseries: new Array(),
 				series: this.getChartSeriesExt3(storeObject.serieNames, 'line', colors),
                 extraStyle: extraStyle
 			};
@@ -109,11 +110,21 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 			items.yAxis = axis;
 		}
 		
+		var lineChartPanel = new Ext.chart.LineChart(items);
+		
+		this.on('contentclick', function(event){
+			this.headerClickHandler(event,null,null,lineChartPanel);
+		}, this);
+		
+		lineChartPanel.on('render', function(panel){
+			(panel.getEl().on('render', function(){alert('ciao');}, this));//panel.el.on('click', this.headerClickHandler.createDelegate(this, [panel], true), this);
+		}, this);
+		
 		var chartConf = {
 				renderTo : this.chartDivId,
 				layout: 'fit',
 				border: false,
-				items:items
+				items: lineChartPanel
 			};
 
 		new Ext.Panel(chartConf);
