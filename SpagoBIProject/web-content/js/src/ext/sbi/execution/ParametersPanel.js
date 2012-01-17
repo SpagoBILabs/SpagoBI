@@ -418,8 +418,20 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			} else if(theField.behindParameter.typeCode == 'MAN_IN') {
 				// if input field has an element (it means that the field was displayed)
 				if (theField.el !== undefined) {
+					
 					theField.el.on('keydown', 
 						this.updateDependentFields.createDelegate(this, [theField]), this, {buffer: 350});
+					
+					
+					var onKeyDown = function(event, element, options , field){
+						//alert(event.keyCode + " " + event.ctrlKey);
+						if( (event.keyCode == 38 || event.keyCode == 40) && event.ctrlKey == true ) {
+							var moveDown = (event.keyCode == 40);
+							this.setValueFromMemento(field, moveDown);
+						} 
+					}
+					
+					theField.el.on( 'keydown', onKeyDown.createDelegate(this, theField, true), this );
 				}
 			} else {
 				alert("Unable to manage dependencies on input field of type [" + theField.behindParameter.selectionType + "]");
@@ -448,25 +460,44 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			//alert('formState: ' + this.getFormState().toSource());
 		}
 		
-		
-		// initially hide field if it has visual conditions,
-//		for(var z = 0; z < parameters.length; z++) {
-//			var field = this.fields[parameters[z].id];
-//			var dependencies = field.dependencies;
-//			if(dependencies){
-//				for(var j = 0; j < dependencies.length; j++) {
-//					var dep = dependencies[j];
-//					if(dep && dep.hasVisualDependency == true){
-//						this.hideFieldLabel(field);
-//						field.setVisible(false);
-//						}					
-//					}
-//				}
-//			}
-				
-		
 		this.fireEvent('synchronize', this, isReadyForExecution, this.parametersPreference);
 		
+	}
+	
+	, setValueFromMemento: function(f, moveDown) {
+		if(!f.memento) return;
+		//alert('setValueFromMemento');
+		
+		if(moveDown) {
+			f.memento.readCursor--;
+			//alert("MOVE DOWN ->" + f.memento.readCursor);
+		} else {
+			f.memento.readCursor++;
+			//alert("MOVE UP - > " + f.memento.readCursor);
+		}
+		
+		var lastStateIndex = f.memento.size - 1;
+		if(f.memento.readCursor < 0) {
+			f.memento.readCursor = lastStateIndex; 
+			//alert('vai alla fine >' + f.memento.readCursor);
+		}
+		else if(f.memento.readCursor > lastStateIndex) {
+			f.memento.readCursor = 0;
+			//alert('torna all inizio > '+ f.memento.readCursor);
+		}
+		
+		
+		var state;
+				
+		state = f.memento.states[f.memento.readCursor];
+		
+		f.setValue( state.value );
+		var fieldDescription = f.name + '_field_visible_description';
+		var rawValue = state.description;
+		if (state.description !== undefined && state.description != null && f.rendered === true) {
+			f.setRawValue( state.description );
+			this.updateDependentFields( f );
+		}		
 	}
 	
 	, updateDependentFields: function(f) {
@@ -721,7 +752,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				
 			} else if(p.type === 'NUMBER') {
 				field = new Ext.form.NumberField(baseConfig);
-			} else {
+			} else {	
 				field = new Ext.form.TextField(baseConfig);
 			}			
 		}

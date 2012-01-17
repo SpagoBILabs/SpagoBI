@@ -1131,7 +1131,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
             					LN('sbi.execution.executionpage.toolbar.qberefresh'),            
             					function(btn, text) {
                 					if (btn=='yes') {
-										Sbi.execution.SessionParametersManager.saveState(this.parametersPanel);
+										Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
+										Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersPanel);
 										this.southPanel.collapse();
 										this.northPanel.collapse();
 										this.fireEvent('refreshexecution');
@@ -1141,14 +1142,16 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 								);
 							}else{
 								//user who cannot build qbe queries
-								Sbi.execution.SessionParametersManager.saveState(this.parametersPanel);
+								Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
+								Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersPanel);
 								this.southPanel.collapse();
 								this.northPanel.collapse();
 								this.fireEvent('refreshexecution');
 							}
 					} // it 's not a qbe
 					else {
-						Sbi.execution.SessionParametersManager.saveState(this.parametersPanel);
+						Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
+						Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersPanel);
 						this.southPanel.collapse();
 						this.northPanel.collapse();
 						this.fireEvent('refreshexecution');

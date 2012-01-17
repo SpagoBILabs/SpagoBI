@@ -212,8 +212,7 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		
 		this.prevActivePageNumber = this.activePageNumber;
 		this.activePageNumber = pageNumber;
-		//alert(this.prevActivePageNumber + ' - ' + this.activePageNumber);
-		
+	
 		// up-hill ->
 		if(this.prevActivePageNumber == this.ROLE_SELECTION_PAGE_NUMBER && this.activePageNumber == this.PARAMETER_SELECTION_PAGE_NUMBER) {
 			this.roleSelectionPage.loadingMask.hide();
@@ -221,7 +220,8 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		}
 		if(this.prevActivePageNumber == this.PARAMETER_SELECTION_PAGE_NUMBER && this.activePageNumber == this.EXECUTION_PAGE_NUMBER) {
 			// save parameters into session
-			Sbi.execution.SessionParametersManager.saveState(this.parametersSelectionPage.parametersPanel);
+			Sbi.execution.SessionParametersManager.saveStateObject(this.parametersSelectionPage.parametersPanel);
+			Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersSelectionPage.parametersPanel);
 			
 			// init document execution page, in case it was not initialized yet
     		if (this.documentExecutionPage == null) {
@@ -249,6 +249,7 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		if(this.prevActivePageNumber == this.EXECUTION_PAGE_NUMBER && this.activePageNumber == this.PARAMETER_SELECTION_PAGE_NUMBER) {
 			delete this.executionInstance.SBI_SUBOBJECT_ID;
 			delete this.executionInstance.SBI_SNAPSHOT_ID;
+			Sbi.execution.SessionParametersManager.restoreMementoObject(this.parametersSelectionPage.parametersPanel);
 			// force synchronization, since subobject, snapshots, viewpoints may have been deleted, or a new subobject may have been created
 			this.parametersSelectionPage.shortcutsPanel.synchronize(this.executionInstance);
 		}
