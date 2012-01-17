@@ -115,7 +115,10 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 	                    }
 	                }]
 			};
-			//alert(storeObject.serieNames[i]);
+			//set the height if ie
+	    	if(Ext.isIE){
+	    		itemChart.height = this.ieChartHeight;
+	    	}
 			
 			//percentage
 			if (this.chartConfig.showpercentage==undefined || (!this.chartConfig.showpercentage)) {

@@ -69,6 +69,8 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3  = function(config) {
 
 Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.runtime.RuntimeGenericChartPanel, {
 
+	ieChartHeight: 400,
+	
 	headerClickHandler: function(event, element, object, chart) {	
 		
 //		var t = document.getElementsByTagName('object');

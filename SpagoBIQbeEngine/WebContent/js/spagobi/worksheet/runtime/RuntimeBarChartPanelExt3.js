@@ -88,6 +88,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 				hiddenseries: new Array(),
 				horizontal: this.chartConfig.orientation === 'horizontal'
 		};
+		
+		//set the height if ie
+    	if(Ext.isIE){
+    		items.height = this.ieChartHeight;
+    	}
 
 		
 		if(this.chartConfig.orientation === 'horizontal'){
