@@ -46,6 +46,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	private String ID_COLUMN = "ID_COLUMN";
 	
 	private JSONArray mandatories = new JSONArray();
+	private JSONArray columnsInfos = new JSONArray();
+	private String columnMaxSize = null;
 
 	@Override
 	public Query getQuery() {
@@ -75,6 +77,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		RegistryJSONDataWriter dataSetWriter = new RegistryJSONDataWriter();
 		JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
 		setMandatoryMetadata(gridDataFeed);
+		setColumnMaxSize(gridDataFeed);
+		setColumnsInfos(gridDataFeed);
 		return gridDataFeed;
 	}
 	private void setMandatoryMetadata(JSONObject gridDataFeed){
@@ -83,6 +87,22 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 		} catch (JSONException e) {
 			logger.error("Error setting mandatory informations "+e.getMessage() );
+		}
+	}
+	private void setColumnsInfos(JSONObject gridDataFeed){
+		try {
+			((JSONObject)gridDataFeed.get("metaData")).put("columnsInfos", columnsInfos);
+
+		} catch (JSONException e) {
+			logger.error("Error setting columns size informations "+e.getMessage() );
+		}
+	}
+	private void setColumnMaxSize(JSONObject gridDataFeed){
+		try {
+			((JSONObject)gridDataFeed.get("metaData")).put("maxSize", columnMaxSize);
+
+		} catch (JSONException e) {
+			logger.error("Error setting max columns size informations "+e.getMessage() );
 		}
 	}
 	private void getMandatoryMetadata(Column column){
@@ -102,6 +122,25 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			logger.error("Error getting mandatory informations from template "+e.getMessage() );
 		}
 	}
+	private void getColumnsInfos(Column column){
+		try {
+			Integer size = column.getSize();
+			String sizeColumn = column.getField();
+			boolean unsigned = column.isUnsigned();
+			JSONObject infoObj = new JSONObject();
+			
+			infoObj.putOpt("sizeColumn", sizeColumn);
+			infoObj.putOpt("size", size);	
+
+			infoObj.putOpt("unsigned", unsigned);
+			if(size != null || unsigned != false){
+				columnsInfos.put(infoObj);
+			}
+			
+		} catch (JSONException e) {
+			logger.error("Error getting size column informations from template "+e.getMessage() );
+		}
+	}
 	private Query buildQuery() {
 		logger.debug("IN");
 		Query query = null;
@@ -114,15 +153,19 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			QbeTemplate template = engineInstance.getTemplate();
 			RegistryConfiguration registryConfig = (RegistryConfiguration) template.getProperty("registryConfiguration");
 			List<Column> columns = registryConfig.getColumns();
+			columnMaxSize = registryConfig.getColumnsMaxSize();
 			Iterator<Column> it = columns.iterator();
+			String orderCol = null;
 			while (it.hasNext()) {
 				Column column = it.next();
 				getMandatoryMetadata(column);
+				getColumnsInfos(column);
 				IModelField field = getColumnModelField(column, entity);
 				if (field == null) {
 					logger.error("Field " + column.getField() + " not found!!");
 				} else {
-					query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, null, field.getPropertyAsString("format"));
+					orderCol = column.getSorter();
+					query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, orderCol, field.getPropertyAsString("format"));
 				}
 			}
 		} finally {
@@ -168,7 +211,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			// takes the only datamart's name configured
 			String modelName = (String) template.getDatamartNames().get(0);
 			RegistryConfiguration registryConfig = (RegistryConfiguration) template.getProperty("registryConfiguration");
-			String entityName = registryConfig.getEntity();
+			String entityName = registryConfig.getEntity();			
+			
 			int index = entityName.lastIndexOf(".");
 			entityName = entityName + "::" + entityName.substring(index + 1);  // entity name is something like it.eng.Store::Store
 			logger.debug("Looking for entity [" + entityName + "] in model [" + modelName + "] ...");
