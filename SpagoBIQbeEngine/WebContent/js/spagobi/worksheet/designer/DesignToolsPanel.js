@@ -63,7 +63,7 @@ Sbi.worksheet.designer.DesignToolsPanel = function(config) {
 		, baseParams: new Object()
 	});
 	
-	this.addEvents("attributeDblClick");
+	this.addEvents("attributeDblClick", "fieldRightClick");
 	
 	this.initPanels();
 	
@@ -85,6 +85,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	designToolsPallettePanel: null,
 	designToolsLayoutPanel: null,
 	globalFilters: null,
+	fieldsOptions: null, // JSON object that contains options for attributes (code/description visualization) and measures (scale factor) 
 
 	initPanels: function() {
 		
@@ -102,6 +103,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 		this.designToolsFieldsPanel.store.on('load', this.fieldsLoadedHandler, this);
 		this.designToolsFieldsPanel.store.on('beforeload', this.getGlobalFilters, this); // forces a calculation of global filters
 		this.designToolsFieldsPanel.grid.on('rowdblclick', this.fieldDblClickHandler, this);
+		this.designToolsFieldsPanel.grid.on('rowcontextmenu', this.fieldRightClickHandler, this);
 		
 		this.designToolsPallettePanel = new Sbi.worksheet.designer.DesignToolsPallettePanel({region : 'center'});
 		this.designToolsLayoutPanel = new Sbi.worksheet.designer.DesignToolsLayoutPanel({region : 'south', height : 130 , split: true});
@@ -124,6 +126,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	}
 	
 	, fieldsLoadedHandler : function (store, records, options) {
+		store.each(this.initOptions, this);
 		store.each(this.initAttributeValues, this);
 	}
 
@@ -138,12 +141,35 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 		}
 	}
 	
+	, initOptions : function (record) {
+		var recordWithOptions = this.getOptionsForRecord(record);
+		if (recordWithOptions != undefined && recordWithOptions != null) {
+			// options were found
+			record.data.options = recordWithOptions.options;
+		} else {
+			// options were not found
+			record.data.options = {};
+		}
+	}
+	
 	, getGlobalFilterForRecord : function (record) {
 		var toReturn = null;
 		for (var i = 0; i < this.globalFilters.length; i++) {
 			var aGlobalFilter = this.globalFilters[i];
 			if (record.data.alias == aGlobalFilter.alias) {
 				toReturn = aGlobalFilter;
+				break;
+			}
+		}
+		return toReturn;
+	}
+	
+	, getOptionsForRecord : function (record) {
+		var toReturn = null;
+		for (var i = 0; i < this.fieldsOptions.length; i++) {
+			var aFieldOptions = this.fieldsOptions[i];
+			if (record.data.alias == aFieldOptions.alias) {
+				toReturn = aFieldOptions;
 				break;
 			}
 		}
@@ -181,9 +207,30 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 		}
 		return this.globalFilters;
 	}
+	
+	, getFieldsOptions : function () {
+		var fields = this.getFields();
+		if (fields.length == 0) {
+			// fields were not loaded
+			return this.fieldsOptions;
+		}
+		// fields were already loaded and initialized by the fieldsLoadedHandler function
+		this.fieldsOptions = [];
+		for (var i = 0; i < fields.length; i++) {
+			var aField = fields[i];
+			if ( !Sbi.qbe.commons.Utils.isEmpty(aField.options) ) { // stands for if aField.options != {}
+				this.fieldsOptions.push(aField);
+			}
+		}
+		return this.fieldsOptions;
+	}
     
 	, setGlobalFilters : function (globalFilters) {
 		this.globalFilters = globalFilters;
+	}
+	
+	, setFieldsOptions : function (fieldsOptions) {
+		this.fieldsOptions = fieldsOptions;
 	}
 	
 	, getGlobalFilterForAttribute : function (attribute) {
@@ -197,5 +244,10 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 			}
 		}
 		return toReturn;
+	}
+	
+	, fieldRightClickHandler : function ( grid, rowIndex, e ) {
+		var record = grid.store.getAt(rowIndex);
+		this.fireEvent("fieldRightClick", this, record.data, e);
 	}
 });

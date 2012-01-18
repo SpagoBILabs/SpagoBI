@@ -16,6 +16,9 @@ import it.eng.qbe.serializer.IDeserializer;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.worksheet.bo.Field;
+import it.eng.spagobi.engines.worksheet.bo.FieldOption;
+import it.eng.spagobi.engines.worksheet.bo.FieldOptions;
 import it.eng.spagobi.engines.worksheet.bo.Filter;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.engines.worksheet.bo.Serie;
@@ -23,12 +26,14 @@ import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.Sheet.FiltersPosition;
 import it.eng.spagobi.engines.worksheet.bo.SheetContent;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
+import it.eng.spagobi.engines.worksheet.bo.WorksheetFieldsOptions;
 import it.eng.spagobi.engines.worksheet.widgets.ChartDefinition;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.engines.worksheet.widgets.TableDefinition;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -72,6 +77,7 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 			try {
 				deserializeSheets(workSheetDefinitionJSON, workSheetDefinition);
 				deserializeGlobalFilters(workSheetDefinitionJSON, workSheetDefinition);
+				deserializeOptions(workSheetDefinitionJSON, workSheetDefinition);
 			} catch (Exception e) {
 				throw new SerializationException("An error occurred while deserializing worksheet: " + workSheetDefinitionJSON.toString(), e);
 			}
@@ -91,6 +97,43 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 			globalFilters.add(deserializeAttribute(gfJSON.getJSONObject(i)));
 		}
 		workSheetDefinition.setGlobalFilters(globalFilters);
+	}
+	
+	private void deserializeOptions(JSONObject workSheetDefinitionJSON,
+			WorkSheetDefinition workSheetDefinition) throws Exception {
+		JSONArray optionsJSON = workSheetDefinitionJSON.getJSONArray(WorkSheetSerializationCostants.FIELDS_OPTIONS);
+		WorksheetFieldsOptions options = new WorksheetFieldsOptions();
+		for (int i = 0 ; i < optionsJSON.length() ; i++) {
+			
+			JSONObject aField = optionsJSON.getJSONObject(i);
+			String nature = aField.getString("nature");
+			Field field = null;
+			if (nature.equals("postLineCalculated") || nature.equals("segment_attribute") || nature.equals("attribute")) {
+				Attribute attribute = (Attribute) SerializationManager.deserialize(aField, "application/json", Attribute.class);
+				field = attribute;
+			} else {
+				Measure measure = (Measure) SerializationManager.deserialize(aField, "application/json", Measure.class);
+				field = measure;
+			}
+			
+			JSONObject optionsForFieldJSON = aField.getJSONObject(WorkSheetSerializationCostants.OPTIONS);
+			Iterator optionsForFieldKeysIt = optionsForFieldJSON.keys();
+			List<FieldOption> fieldOptionList = new ArrayList<FieldOption>();
+			while (optionsForFieldKeysIt.hasNext()) {
+				String name = (String) optionsForFieldKeysIt.next();
+				Object value = optionsForFieldJSON.get(name);
+				FieldOption o = WorksheetFieldsOptions.createOption(field, name, value);
+				fieldOptionList.add(o);
+			}
+			
+			FieldOptions fieldOptions = new FieldOptions();
+			fieldOptions.setField(field);
+			fieldOptions.setOptions(fieldOptionList);
+			
+			options.addFieldOptions(fieldOptions);
+			
+		}
+		workSheetDefinition.setFieldsOptions(options);
 	}
 
 	private Attribute deserializeAttribute(JSONObject jsonObject) throws SerializationException {

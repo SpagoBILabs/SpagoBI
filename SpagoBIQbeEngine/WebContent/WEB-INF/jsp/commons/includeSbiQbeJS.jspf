@@ -17,6 +17,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/locale/crosstab/<%=locale.getLanguage()%>.js'></script>
 <script type="text/javascript" src='../js/spagobi/locale/worksheet/designer/<%=locale.getLanguage()%>.js'></script>
 <script type="text/javascript" src='../js/spagobi/locale/worksheet/runtime/<%=locale.getLanguage()%>.js'></script>
+<script type="text/javascript" src='../js/spagobi/locale/worksheet/config/<%=locale.getLanguage()%>.js'></script>
 <script type="text/javascript" src='../js/spagobi/locale/registry/<%=locale.getLanguage()%>.js'></script>
 
 <script type="text/javascript" src='../js/spagobi/commons/Settings.js'></script>	
@@ -71,6 +72,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/widgets/SeriesPalette.js'></script>
 <script type="text/javascript" src='../js/spagobi/widgets/SimpleValuesChooserWindow.js'></script>
 <script type="text/javascript" src='../js/spagobi/widgets/FilterLookupPopupWindow.js'></script>
+<script type="text/javascript" src='../js/spagobi/widgets/ConfigurableForm.js'></script>
 
 
 <script type="text/javascript" src='../js/spagobi/qbe/FilterComboBox.js'></script>
@@ -190,6 +192,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeLineChartPanelExt3.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimePieChartPanelExt3.js'></script>
 
+<script type="text/javascript" src='../js/spagobi/worksheet/config/OptionsWindow.js'></script>
+
 <script type="text/javascript" src='../js/spagobi/registry/RegistryPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/registry/RegistryEditorGridPanel.js'></script>
 
@@ -199,3 +203,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- START-PRODUCTION
 <script type="text/javascript" src='../js/spagobi/qbe-all-3.3.0.js'></script>
 END-PRODUCTION -->
+
+
+<script type="text/javascript" src='../js/spagobi/worksheet/config/Options.js'></script>

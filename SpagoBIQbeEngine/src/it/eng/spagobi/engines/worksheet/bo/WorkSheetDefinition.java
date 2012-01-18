@@ -39,7 +39,7 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 	
 	private static transient Logger logger = Logger.getLogger(WorkSheetDefinition.class);
 	
-	public static final String CURRENT_VERSION = "1";
+	public static final String CURRENT_VERSION = "2";
 	
 	public static final WorkSheetDefinition EMPTY_WORKSHEET;
 	
@@ -50,10 +50,12 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 	private List<Sheet> sheets;
 	
 	private List<Attribute> globalFilters;
+	private WorksheetFieldsOptions fieldsOptions;
 	
 	public WorkSheetDefinition(){
 		sheets = new ArrayList<Sheet>();
 		globalFilters = new ArrayList<Attribute>();
+		fieldsOptions = new WorksheetFieldsOptions();
 	}
 	
 	public WorkSheetDefinition(List<Sheet> sheets){
@@ -74,6 +76,14 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 
 	public void setGlobalFilters(List<Attribute> globalFilters) {
 		this.globalFilters = globalFilters;
+	}
+
+	public void setFieldsOptions(WorksheetFieldsOptions fieldsOptions) {
+		this.fieldsOptions = fieldsOptions;
+	}
+	
+	public WorksheetFieldsOptions getFieldsOptions() {
+		return this.fieldsOptions;
 	}
 	
 	public Map<String, List<String>> getGlobalFiltersAsMap() {
@@ -149,6 +159,7 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 			WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) SerializationManager.deserialize(worksheetStateJSON, "application/json", WorkSheetDefinition.class);
 			this.setSheets(workSheetDefinition.getSheets());
 			this.setGlobalFilters(workSheetDefinition.getGlobalFilters());
+			this.setFieldsOptions(workSheetDefinition.getFieldsOptions());
 			
 			logger.debug("analysis state loaded succsfully from row data");
 			
