@@ -102,11 +102,11 @@ public class CreationUtilities {
 		}
 		catch (ValidationException e) {
 			logger.error("Failed validation of dataset "+dataSet.getLabel()+" with cause: "+e.getValidationMessage());
-			throw new RuntimeException(e.getValidationMessage());
+			throw new RuntimeException(e.getValidationMessage(), e);
 		}
 		catch (EMFUserError e) {
 			logger.error("EmfUserError ",e);
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException("EmfUserError ",e);
 		}
 
 		// want to save metadata needed for execution
@@ -197,7 +197,7 @@ public class CreationUtilities {
 					}
 					catch (ValidationException e) {
 						logger.error("Failed validation of parameter "+parameter.getParameterUrlName()+" with cause: "+e.getValidationMessage());
-						throw new RuntimeException(e.getValidationMessage());
+						throw new RuntimeException(e.getValidationMessage(), e);
 					}
 				}
 			}
@@ -225,11 +225,11 @@ public class CreationUtilities {
 		}
 		catch (ValidationException e) {
 			logger.error("Failed validation of objject "+biObject.getLabel()+" with cause: "+e.getValidationMessage());
-			throw new RuntimeException(e.getValidationMessage());
+			throw new RuntimeException(e.getValidationMessage(), e);
 		}
 		catch (EMFUserError e) {
 			logger.error("EmfUserError ",e);
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException(e.getMessage(), e);
 		}
 
 
@@ -265,7 +265,7 @@ public class CreationUtilities {
 				isThere = DAOFactory.getParameterDAO().loadForDetailByParameterID(parId);
 			}
 			catch (EMFUserError e) {
-				throw new ValidationException("Parameter with id "+parId+" was not found");
+				throw new ValidationException("Parameter with id "+parId+" was not found", e);
 
 			}
 			if(isThere == null){
@@ -291,7 +291,7 @@ public class CreationUtilities {
 				isThere = DAOFactory.getEngineDAO().loadEngineByLabel(eng.getLabel());
 			}
 			catch (EMFUserError e) {
-				throw new ValidationException("Datasource with id "+eng.getId()+" was not found");
+				throw new ValidationException("Datasource with id "+eng.getId()+" was not found", e);
 
 			}
 			if(isThere == null){
@@ -309,7 +309,7 @@ public class CreationUtilities {
 				isThere = DAOFactory.getDataSourceDAO().loadDataSourceByID(dSourceId);
 			}
 			catch (EMFUserError e) {
-				throw new ValidationException("Datasource with id "+dSourceId+" was not found");
+				throw new ValidationException("Datasource with id "+dSourceId+" was not found", e);
 
 			}
 			if(isThere == null){
@@ -326,7 +326,7 @@ public class CreationUtilities {
 				isThere = DAOFactory.getDataSetDAO().loadDataSetById(dSetId);
 			}
 			catch (EMFUserError e) {
-				throw new ValidationException("Datasource with id "+dSetId+" was not found");
+				throw new ValidationException("Datasource with id "+dSetId+" was not found", e);
 
 			}
 			if(isThere == null){
@@ -381,6 +381,11 @@ public class CreationUtilities {
 		private String validationMessage;
 		ValidationException(String _validationMessage) {
 			super();
+			this.validationMessage = _validationMessage;
+		}
+		
+		ValidationException(String _validationMessage, Throwable e) {
+			super(e);
 			this.validationMessage = _validationMessage;
 		}
 		public String getValidationMessage(){
