@@ -24,12 +24,14 @@ public class WorksheetFieldsOptions {
 	private List<FieldOptions> options = null;
 
 	private static String ATTRIBUTE_PRESENTATION = "attributePresentation";
+	private static String MEASURE_SCALE_FACTOR = "measureScaleFactor";
 	
 	private static Map<String, Class> generators = null;
 	
 	static {
 		generators = new HashMap<String, Class>();
 		generators.put(ATTRIBUTE_PRESENTATION, AttributePresentationOption.class);
+		generators.put(MEASURE_SCALE_FACTOR, MeasureScaleFactorOption.class);
 	}
 	
 	
