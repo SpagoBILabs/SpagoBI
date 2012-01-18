@@ -57,9 +57,7 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
-	this.initPanels(config);
-	
-	this.setGlobalFilters(this.worksheetTemplate.globalFilters || []);
+	this.init(config);
 	
 	c = Ext.apply(c, {
 			layout: 'border',
@@ -96,7 +94,15 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	designToolsPanel: null,
 	sheetsContainerPanel: null,
 	worksheetTemplate: {},   // the initial worksheet template; to be passed as a property of the constructor's input object!!!
+	contextMenu: null,
 
+	init : function (config) {
+		this.initPanels(config);
+		this.initContextMenu();
+		this.setGlobalFilters(this.worksheetTemplate.globalFilters || []);
+		this.setFieldsOptions(this.worksheetTemplate.fieldsOptions || {});
+	},
+	
 	initPanels: function(config){
 		this.designToolsPanel = new Sbi.worksheet.designer.DesignToolsPanel();
 		this.designToolsPanel.on('toolschange',function(change){
@@ -105,6 +111,11 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 		this.designToolsPanel.on(
 				'attributeDblClick', 
 				this.attributeDblClickHandler, 
+				this
+			);
+		this.designToolsPanel.on(
+				'fieldRightClick', 
+				this.fieldRightClickHandler, 
 				this
 			);
 
@@ -121,6 +132,24 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 		this.sheetsContainerPanel.on('sheetchange',function(activeSheet){
 			this.designToolsPanel.updateToolsForActiveTab(activeSheet);
 		},this);
+	}
+	
+	, initContextMenu : function () {
+		var items = [{
+			text : LN('sbi.config.optionswindow.title')
+			, scope : this
+			, handler : this.showOptions
+		}];
+	   	this.contextMenu = 
+			new Ext.menu.Menu({
+				items: items
+		});
+	   	this.contextMenu.setField = function (field) {
+	   		this.contextField = field;
+	   	}
+	   	this.contextMenu.getField = function () {
+	   		return this.contextField;
+	   	}
 	}
 	
 	, attributeDblClickHandler : function (thePanel, attribute, theSheet) {
@@ -164,6 +193,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	, getWorksheetDefinition: function () {
 		var	worksheetDefinition = this.sheetsContainerPanel.getSheetsState();
 		worksheetDefinition.globalFilters = this.getGlobalFilters();
+		worksheetDefinition.fieldsOptions = this.getFieldsOptions();
 		worksheetDefinition.version = Sbi.config.worksheetVersion;
 		return worksheetDefinition;
 	}
@@ -184,6 +214,10 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 		return this.designToolsPanel.getGlobalFilters();
 	}
 	
+	, getFieldsOptions : function () {
+		return this.designToolsPanel.getFieldsOptions();
+	}
+	
     , showValidationErrors : function(errorsArray) {
     	errMessage = '';
     	
@@ -202,8 +236,54 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
     	return this.designToolsPanel.getGlobalFilterForAttribute(attribute);
     }
     
+    , getOptionsForField : function (field) {
+    	return this.designToolsPanel.getOptionsForField(field);
+    }
+    
 	, setGlobalFilters : function (globalFilters) {
 		this.designToolsPanel.setGlobalFilters(globalFilters);
+	}
+	
+	, setFieldsOptions : function (fieldsOptions) {
+		this.designToolsPanel.setFieldsOptions(fieldsOptions);
+	}
+	
+	, fieldRightClickHandler : function (thePanel, field, e) {
+		e.stopEvent();
+		if (
+				(field.nature == 'attribute' || field.nature == 'segment_attribute')
+				&& // field is an attribute and there are options for attributes
+				(Sbi.worksheet.config.options.attributes && Sbi.worksheet.config.options.attributes.length > 0)
+				||
+				(field.nature == 'measure' || field.nature == 'mandatory_measure')
+				&& // field is a measure and there are options for measures
+				(Sbi.worksheet.config.options.measures && Sbi.worksheet.config.options.measures.length > 0)
+			) {
+			this.contextMenu.setField(field);
+			this.contextMenu.showAt(e.getXY());
+		}
+	}
+	
+	, showOptions : function (item) {
+		var field = item.parentMenu.getField();
+		var optionsToDisplay = null;
+		if (field.nature == 'attribute' || field.nature == 'segment_attribute') {
+			optionsToDisplay = Sbi.worksheet.config.options.attributes;
+		} else {
+			optionsToDisplay = Sbi.worksheet.config.options.measures;
+		}
+		
+     	var optionsWindow = new Sbi.worksheet.config.OptionsWindow({
+     		options : optionsToDisplay
+     	});
+     	optionsWindow.on('render', function(theWindow) {
+     		var state = field.options;
+     		theWindow.setFormState(state);
+     	}, this);
+     	optionsWindow.on('apply', function(theWindow, formState) {
+     		field.options = formState;
+     	}, this);
+     	optionsWindow.show();
 	}
 	
 });

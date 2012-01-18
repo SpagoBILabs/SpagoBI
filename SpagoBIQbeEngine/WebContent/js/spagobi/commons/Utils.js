@@ -96,6 +96,24 @@ Sbi.qbe.commons.Utils = function(){
 			encodedHtml = encodedHtml.replace(/>/g,"&gt;");
 			return encodedHtml;
 		}
+		
+		
+        /**
+         * It is similar to Ext.isEmpty but it doesn't have the allowBlank input parameter 
+         * and it checks also for empty JSON objects (i.e. {} object is considered to be empty).
+         * @param {Mixed} value The value to test
+         * @return {Boolean}
+         */
+		, isEmpty: function(obj) {
+			if (v === null || v === undefined || ((Ext.isArray(v) && !v.length)) || v === '') {
+				return true;
+			}
+		    for ( var prop in obj ) {
+		        if ( obj.hasOwnProperty( prop ) )
+		            return false;
+		    }
+		    return true;
+		}
         
 	};
 }();

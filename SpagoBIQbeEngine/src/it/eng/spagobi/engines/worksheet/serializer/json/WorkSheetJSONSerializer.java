@@ -17,9 +17,12 @@ import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Field;
+import it.eng.spagobi.engines.worksheet.bo.FieldOption;
+import it.eng.spagobi.engines.worksheet.bo.FieldOptions;
 import it.eng.spagobi.engines.worksheet.bo.Filter;
 import it.eng.spagobi.engines.worksheet.bo.Serie;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
+import it.eng.spagobi.engines.worksheet.bo.WorksheetFieldsOptions;
 import it.eng.spagobi.engines.worksheet.bo.Sheet.FiltersPosition;
 import it.eng.spagobi.engines.worksheet.bo.SheetContent;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
@@ -72,6 +75,9 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			
 			JSONArray globalFilters = serializeGlobalFilters(workSheetDefinition.getGlobalFilters());
 			toReturn.put(WorkSheetSerializationCostants.GLOBAL_FILTERS, globalFilters);
+			
+			JSONArray fieldsOptions = serializeFieldsOptions(workSheetDefinition.getFieldsOptions());
+			toReturn.put(WorkSheetSerializationCostants.FIELDS_OPTIONS, fieldsOptions);
 			
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
@@ -236,6 +242,28 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			}
 		}
 		logger.debug("OUT");
+	}
+	
+	private JSONArray serializeFieldsOptions(WorksheetFieldsOptions fieldsOptions) throws SerializationException, JSONException {
+		JSONArray fieldsOptionsJSON = new JSONArray();
+		List<FieldOptions> optionsList = fieldsOptions.getFieldsOptions();
+		Iterator<FieldOptions> it = optionsList.iterator();
+		while (it.hasNext()) {
+			FieldOptions fieldOptions = it.next();
+			JSONObject fieldJSON = (JSONObject) SerializationManager.serialize(fieldOptions.getField(), "application/json");
+			List<FieldOption> options = fieldOptions.getOptions();
+			Iterator<FieldOption> optionsIt = options.iterator();
+			JSONObject optionsJSON = new JSONObject();
+			while (optionsIt.hasNext()) {
+				FieldOption option = optionsIt.next();
+				String name = option.getName();
+				Object value = option.getValue();
+				optionsJSON.put(name, value);
+			}
+			fieldJSON.put(WorkSheetSerializationCostants.OPTIONS, optionsJSON);
+			fieldsOptionsJSON.put(fieldJSON);
+		}
+		return fieldsOptionsJSON;
 	}
 
 }

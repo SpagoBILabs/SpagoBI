@@ -108,7 +108,7 @@ Ext.extend(Sbi.formbuilder.QueryFieldsPanel, Ext.Panel, {
 	
 		this.store = new Ext.data.JsonStore({
 			root: 'results'
-			, fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'precision' ]
+			, fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'precision', 'options']
 			, url: this.services['getQueryFields']
 		}); 
 		

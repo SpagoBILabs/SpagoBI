@@ -27,6 +27,10 @@ public class WorksheetStateLoaderFactory {
 		loaderRegistry.put("0", 
 			new Version0WorksheetStateLoader()
 		);
+		
+		loaderRegistry.put("1", 
+				new Version1WorksheetStateLoader()
+		);
 	}
 	
 	private static WorksheetStateLoaderFactory instance;
