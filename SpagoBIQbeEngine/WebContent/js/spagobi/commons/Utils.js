@@ -104,12 +104,12 @@ Sbi.qbe.commons.Utils = function(){
          * @param {Mixed} value The value to test
          * @return {Boolean}
          */
-		, isEmpty: function(obj) {
-			if (v === undefined || v === null || ((Ext.isArray(v) && !v.length)) || v === '') {
+		, isEmpty: function(v) {
+			if (v === null || v === undefined || ((Ext.isArray(v) && !v.length)) || v === '') {
 				return true;
 			}
-		    for ( var prop in obj ) {
-		        if ( obj.hasOwnProperty( prop ) )
+		    for ( var prop in v ) {
+		        if ( v.hasOwnProperty( prop ) )
 		            return false;
 		    }
 		    return true;
