@@ -105,7 +105,7 @@ Sbi.qbe.commons.Utils = function(){
          * @return {Boolean}
          */
 		, isEmpty: function(obj) {
-			if (v === null || v === undefined || ((Ext.isArray(v) && !v.length)) || v === '') {
+			if (v === undefined || v === null || ((Ext.isArray(v) && !v.length)) || v === '') {
 				return true;
 			}
 		    for ( var prop in obj ) {
