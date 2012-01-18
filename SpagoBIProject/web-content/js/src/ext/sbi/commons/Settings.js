@@ -8,6 +8,7 @@ Sbi.settings.execution = {
 			, fieldWidth: 190	
 			, maskOnRender: false
 			, fieldLabelWidth: 100
+			, moveInMementoUsingCtrlKey: false
 		}
 		, shortcutsPanel: {
 			panelsOrder: {

@@ -48,22 +48,33 @@
 Ext.ns("Sbi.execution");
 
 Sbi.execution.ParametersPanel = function(config) {
-	
-	var settings = {
+	defaultSettings
+	var defaultSettings = {
 		columnNo: 3
 		, columnWidth: 350
 		, labelAlign: 'left'
 		, fieldWidth: 200	
 		, maskOnRender: false
 		, fieldLabelWidth: 100
+		, moveInMementoUsingCtrlKey: false
 	};
-	if(Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.parametersPanel) {
-		settings = Sbi.settings.execution.parametersPanel;
+	
+	
+	if (Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.parametersPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.execution.parametersPanel);
 	}
+	
+	var c = Ext.apply(defaultSettings, config || {});	
+	Ext.apply(this, c);
+	
+	
+//	if(Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.parametersPanel) {
+//		defaultSettings = Sbi.settings.execution.parametersPanel;
+//	}
 	
 	// create a new variable and store settings into this new variable
 	var temp = {};
-	temp = Ext.apply(temp, settings);
+	temp = Ext.apply(temp, defaultSettings);
 	
 	// merge settings and input configuration
 	var c = Ext.apply(temp, config || {});
@@ -424,10 +435,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 					
 					
 					var onKeyDown = function(event, element, options , field){
-						//alert(event.keyCode + " " + event.ctrlKey);
-						if( (event.keyCode == 38 || event.keyCode == 40) && event.ctrlKey == true ) {
-							var moveDown = (event.keyCode == 40);
-							this.setValueFromMemento(field, moveDown);
+						if( event.keyCode == 38 || event.keyCode == 40 ) {
+							if(!this.moveInMementoUsingCtrlKey || event.ctrlKey == true) {
+								var moveDown = (event.keyCode == 40);
+								this.setValueFromMemento(field, moveDown);
+							}
 						} 
 					}
 					
