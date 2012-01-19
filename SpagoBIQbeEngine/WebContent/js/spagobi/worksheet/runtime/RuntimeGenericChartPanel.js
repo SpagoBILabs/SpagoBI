@@ -282,7 +282,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		var showPercentage = this.chartConfig.showpercentage;
 		var chartType = this.chartConfig.designer;
 		var allSeries = this.chartConfig.series;
-		
+		var thisPanel = this;		
 		var toReturn = function () {
 			
 			var theSerieName = this.series.name;
@@ -314,9 +314,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			
 			var tooltip = null;
 			if (chartType == 'Pie Chart') {
-				tooltip = '<b>' + this.point.name + '</b><br/>' + this.series.name + ': ' + value;
+				tooltip = '<b>' + this.point.name + '</b><br/>' + thisPanel.formatLegendWithScale(this.series.name) + ': ' + value;
 			} else {
-				tooltip = '<b>' + this.x + '</b><br/> ' + this.series.name + ': ' + value;
+				tooltip = '<b>' + this.x + '</b><br/> ' + thisPanel.formatLegendWithScale(this.series.name) + ': ' + value;
 			}
 			
 			// display percentage if needed
@@ -349,6 +349,55 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		return colors;
 	}
 	
+	, formatLegendWithScale : function(theSerieName){
+		
+		var fieldsOptions = this.fieldsOptions;
+		
+		var optionDefinition = null;
+		var legendSuffix ='';
+		
+		// find the serie configuration
+		var i = 0;
+		for (; i < fieldsOptions.length; i++) {
+			if (fieldsOptions[i].alias === theSerieName) {
+				optionDefinition = fieldsOptions[i];
+				break;
+			}
+		}
+		
+		if(optionDefinition!=null){
+			legendSuffix = optionDefinition.options.measureScaleFactor;
+			if(legendSuffix != undefined && legendSuffix != null){
+				return theSerieName + legendSuffix;
+			}
+		}
+		
+		
+		return theSerieName;
+		
+//		var allSeries = this.chartConfig.series;
+//		var serieDefinition = null;
+//		var legendSuffix ='';
+//		
+//		// find the serie configuration
+//		var i = 0;
+//		for (; i < allSeries.length; i++) {
+//			if (allSeries[i].seriename === theSerieName) {
+//				serieDefinition = allSeries[i];
+//				break;
+//			}
+//		}
+//		
+//		if(serieDefinition!=null){
+//			legendSuffix = serieDefinition.scale;
+//			if(legendSuffix != undefined && legendSuffix != null){
+//				return theSerieName + legendSuffix;
+//			}
+//		}
+//		
+//		
+//		return theSerieName;
+	}
 	
 
 });

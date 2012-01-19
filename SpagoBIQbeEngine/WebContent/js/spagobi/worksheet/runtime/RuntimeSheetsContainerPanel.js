@@ -62,8 +62,9 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) {
 	
 	this.config = config;
 	this.sheetItems = [ new Ext.Panel({}) ];
+	
 	if (sheets != undefined && sheets != null) {
-		this.sheetItems = this.buildSheets(config, sheets.sheets);
+		this.sheetItems = this.buildSheets(config, sheets.sheets, sheets.fieldsOptions);
 	}
 	
 
@@ -97,12 +98,14 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 	//build the sheets
 	
 	,
-	buildSheets: function(config, sheetsConfig){
+	buildSheets: function(config, sheetsConfig, fieldsOptions){
+		
+		
 		var items = [];
 		if(sheetsConfig!=undefined && sheetsConfig!=null){
 			var i=0;
 			for(; i<sheetsConfig.length; i++){
-				items.push(new Sbi.worksheet.runtime.RuntimeSheetPanel(Ext.apply(config||{},{sheetConfig: sheetsConfig[i]})));
+				items.push(new Sbi.worksheet.runtime.RuntimeSheetPanel(Ext.apply(config||{},{sheetConfig: sheetsConfig[i], fieldsOptions: fieldsOptions})));
 			}
 		}
 		return items;

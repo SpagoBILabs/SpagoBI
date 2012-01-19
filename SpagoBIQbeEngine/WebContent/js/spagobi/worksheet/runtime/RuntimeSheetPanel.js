@@ -140,6 +140,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 				}, {
 					contentConfig : this.sheetConfig.content
 					, sheetName : this.sheetConfig.name
+					, fieldsOptions: this.fieldsOptions
 				})
 		);
 		//catch the event of the contentloaded from the component and hide the loading mask

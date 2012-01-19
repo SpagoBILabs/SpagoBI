@@ -80,7 +80,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 	}
 
 	, createChart: function () {
-		var storeObject = this.getJsonStoreExt3(this.getStacking()=='percent', this.getStacking()=='normal');
+		var storeObject = this.getJsonStoreLineExt3();
 		var colors = this.getColors();
 		var extraStyle ={};
 		
@@ -96,31 +96,39 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
     	if(Ext.isIE){
     		items.height = this.ieChartHeight;
     	}
-		
-		
-		this.addChartConfExt3(items);
-		
-		if(this.getStacking()=='normal'){
-			items.tipRenderer = function(chart, record, index, series){
-	            return series.displayName+'\n'+record.data.categories+'\n'+ record.data[series.yField.substring(0,series.yField.length-3)];
-	        };
-		} else if(this.getStacking()=='percent'){
-			items.tipRenderer = function(chart, record, index, series){
-	            return series.displayName+'\n'+record.data.categories+'\n'+  Ext.util.Format.number(record.data[series.yField.substring(0,series.yField.length-3)], '0.00') + '%';
-	        };
+
+		//set the maximum of the axis
+		if(this.getStacking()=='percent'){
 			var axis =  new Ext.chart.NumericAxis({
 	            minimum: 0,
 	            maximum: 100
 			});
 			items.yAxis = axis;
 		}
-		
+    	
+		this.addChartConfExt3(items);
+			
 		var lineChartPanel = new Ext.chart.LineChart(items);
 		
 		this.on('contentclick', function(event){
-			this.headerClickHandler(event,null,null,lineChartPanel);
+			this.headerClickHandler(event,null,null,lineChartPanel, this.reloadJsonStoreExt3, this);
 		}, this);
 		
+		
+		if(this.getStacking()=='normal'){
+			lineChartPanel.tipRenderer = function(chart, record, index, series){
+	            return series.displayName+'\n'+record.data.categories+'\n'+ record.data[series.yField.substring(0,series.yField.length-3)];
+	        };
+		} else if(this.getStacking()=='percent'){
+			lineChartPanel.tipRenderer = function(chart, record, index, series){
+	            return series.displayName+'\n'+record.data.categories+'\n'+  Ext.util.Format.number(record.data[series.yField.substring(0,series.yField.length-3)], '0.00') + '%';
+	        };
+		} else {
+			//Its a workaround because if you change the display name the chart is not able to write the tooltips
+			lineChartPanel.tipRenderer = function(chart, record, index, series){
+	            return series.displayName+'\n'+record.data.categories+'\n'+ record.data[series.yField];
+	        };
+		}
 
 		var chartConf = {
 				renderTo : this.chartDivId,
@@ -143,10 +151,16 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 			}
 			var serie = {
 					type:type,
-	                displayName: serieNames[i],
 	                yField: yField,
 	                style: {}
 			};
+			
+			if( this.getStacking()=='percent'){
+				serie.displayName =(serieNames[i]);
+			}else{
+				serie.displayName = this.formatLegendWithScale(serieNames[i]);
+			}
+			
 			if(colors!=null){
 				serie.style.color= colors[i];
 			}
@@ -155,8 +169,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 		return seriesForChart;
 	}
 	
-	,getJsonStoreExt3: function(percent, increment){
+	,getJsonStoreLineExt3: function(){
 		var storeObject = {};
+		
+		var percent = this.getStacking()=='percent';
+		var increment = this.getStacking()=='normal';
 
 		var series = this.getSeries();
 		var categories = this.getCategories();
@@ -208,6 +225,48 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 	    storeObject.serieNames = serieNames;
 
 	    return storeObject;
+	}
+	
+	//reload the store after hide a series
+	, reloadJsonStoreExt3 : function(chart,reloadCallbackFunctionScope ){
+		var oldDataStore= chart.store;
+		var hiddenseries= chart.hiddenseries;
+		
+		var percent = reloadCallbackFunctionScope.getStacking()=='percent';
+		var increment = reloadCallbackFunctionScope.getStacking()=='normal';
+
+		
+		var series = reloadCallbackFunctionScope.getSeries();
+		var categories = reloadCallbackFunctionScope.getCategories();
+		
+		var data = new Array();
+		var fields = new Array();
+		var serieNames = new Array();
+		
+		for(var i=0; i<categories.length; i++){
+			var z = {};
+			var seriesum = 0;
+			for(var j=0; j<series.length; j++){
+				if(hiddenseries.indexOf(j)<0){
+					seriesum = seriesum + parseFloat(((series[j]).data)[i]);
+				}
+				z['series'+j] = ((series[j]).data)[i];
+				if(percent || increment){
+					z['series'+j+'inc'] = seriesum;
+				}			
+			}
+			if(percent){
+				for(var j=0; j<series.length; j++){
+					z['series'+j] = (z['series'+j]/seriesum)*100;
+					z['series'+j+'inc'] = (z['series'+j+'inc']/seriesum)*100;
+				}	
+			}
+			z['seriesum'] = seriesum;
+			z['categories'] = categories[i];
+			data.push(z);
+		}
+		
+		oldDataStore.loadData(data);
 	}
 	
 	, getStacking : function () {

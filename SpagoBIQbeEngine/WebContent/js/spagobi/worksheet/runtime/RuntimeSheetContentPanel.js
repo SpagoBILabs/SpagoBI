@@ -61,7 +61,7 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 	}
 	
 	Ext.apply(this, c);
-
+	
     this.addEvents('contentloaded');
     this.addEvents('contentloading');
     
@@ -108,16 +108,16 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	
 	initContent: function (c) {
 		var items = [];
-	
+
 		switch (this.contentConfig.designer) {
 	        case 'Pivot Table':
 	        	return this.initCrossTab(c);
 	        case 'Bar Chart':
-	        	return Sbi.worksheet.runtime.RuntimeChartFactory.createBarChart({'chartConfig':this.contentConfig, sheetName : this.sheetName});
+	        	return Sbi.worksheet.runtime.RuntimeChartFactory.createBarChart({'chartConfig':this.contentConfig, sheetName : this.sheetName, fieldsOptions: this.fieldsOptions});
 	        case 'Line Chart':
-	        	return Sbi.worksheet.runtime.RuntimeChartFactory.createLineChart({'chartConfig':this.contentConfig, sheetName : this.sheetName});
+	        	return Sbi.worksheet.runtime.RuntimeChartFactory.createLineChart({'chartConfig':this.contentConfig, sheetName : this.sheetName, fieldsOptions: this.fieldsOptions});
 	        case 'Pie Chart':
-	        	return Sbi.worksheet.runtime.RuntimeChartFactory.createPieChart({'chartConfig':this.contentConfig, sheetName : this.sheetName});
+	        	return Sbi.worksheet.runtime.RuntimeChartFactory.createPieChart({'chartConfig':this.contentConfig, sheetName : this.sheetName, fieldsOptions: this.fieldsOptions});
 	        case 'Table':
 	        	return this.initTable(c);
 	        default: 
@@ -172,6 +172,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 			hideLoadingMask: true,
 			sheetName : this.sheetName,
 			crosstabConfig: {autoHeight: true}, 
+			fieldsOptions: c.fieldsOptions,
 			title: false}));
 		if(!c.hiddenContent){
 			this.on('afterlayout',this.loadCrosstab,this);

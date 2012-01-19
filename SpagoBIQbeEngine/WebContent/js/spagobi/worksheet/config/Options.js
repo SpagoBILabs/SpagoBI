@@ -37,5 +37,21 @@ Sbi.worksheet.config.options = {
 			    ]
 		 }
 		]
-	, 'measures' : []
+	, 'measures' :
+		[
+		 {
+			  name : 'measureScaleFactor'
+			, description : 'The scale factor of a measure'
+			, type : 'radiogroup'
+			, applyTo : 'datasetdata'
+			, label : LN('sbi.worksheet.config.options.attributepresentation.label')
+			, items: 
+				[
+	                 {boxLabel: "nessuno", inputValue: "NONE", checked: true}
+	               , {boxLabel: "migliaia", inputValue: "K"}
+	               , {boxLabel: "miglioni", inputValue: "M"}
+	               , {boxLabel: "migliardi", inputValue: "G"}
+			    ]
+		 }
+		]
 };

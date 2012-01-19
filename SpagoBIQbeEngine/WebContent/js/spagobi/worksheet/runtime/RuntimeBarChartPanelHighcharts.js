@@ -92,6 +92,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 	}
 	
 	, createChart: function () {
+		  var thisPanel = this;
 		  this.chart = new Highcharts.Chart({
 			exporting : {
 				//url : this.services['exportChart']
@@ -110,7 +111,10 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 			},
 			plotOptions: this.getPlotOptions(),
 			legend: {
-				enabled: (this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true
+				enabled: (this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true,
+				labelFormatter: function() {
+					return thisPanel.formatLegendWithScale(this.name)
+				}
 			},
 			tooltip: {
 				enabled: true,
