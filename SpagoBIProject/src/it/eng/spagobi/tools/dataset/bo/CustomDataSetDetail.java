@@ -35,4 +35,10 @@ public class CustomDataSetDetail extends GuiDataSetDetail {
 		this.javaClassName = javaClassName;
 	}
 
+	@Override
+	public String toString() {
+		return "CustomDataSetDetail [customData=" + customData
+				+ ", javaClassName=" + javaClassName + "]";
+	}
+
 }

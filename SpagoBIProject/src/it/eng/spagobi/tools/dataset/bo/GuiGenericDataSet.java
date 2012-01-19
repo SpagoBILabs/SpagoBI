@@ -215,4 +215,12 @@ public class GuiGenericDataSet implements Serializable{
 	public void setNonActiveDetails(List<GuiDataSetDetail> nonActiveDetails) {
 		this.nonActiveDetails = nonActiveDetails;
 	}
+
+	@Override
+	public String toString() {
+		return "GuiGenericDataSet [dsId=" + dsId + ", name=" + name
+				+ ", description=" + description + ", label=" + label
+				+ ", activeDetail=" + activeDetail + ", nonActiveDetails="
+				+ nonActiveDetails + "]";
+	}
 }
