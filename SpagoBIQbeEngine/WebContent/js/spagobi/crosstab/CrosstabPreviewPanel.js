@@ -73,7 +73,7 @@ Sbi.crosstab.CrosstabPreviewPanel = function(config) {
       		id: 'CrosstabPreviewPanel',
       		autoWidth: true
     	});
-	
+
 	this.calculatedFields = new Array();
 	if (config.crosstabDefinition !== undefined && config.crosstabDefinition.calculatedFields !== undefined) {
 		this.calculatedFields = config.crosstabDefinition.calculatedFields;
@@ -148,7 +148,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		var config = crosstab.config;
 		this.config = config;
 		var measuresMetadata = crosstab.measures_metadata;
-		
+
 		var c = {
 				 rowHeadersDefinition: rows
 				, rowHeadersTitle: crosstab.rows_description
@@ -162,6 +162,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 				, misuresOnRow: config.measureson=='rows'
 				, percenton: config.percenton
 				, measuresMetadata: measuresMetadata
+				, fieldsOptions: this.fieldsOptions
 		};
 		
 		if (this.crosstabDefinition !== undefined && this.crosstabDefinition.additionalData !== undefined && this.crosstabDefinition.additionalData !== null ) {
