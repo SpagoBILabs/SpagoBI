@@ -309,13 +309,31 @@ public class FakeDataset extends AbstractCustomDataSet {
 		
 		// considero i driver analitici anno ed ente
 		buffer.append("Analytical drivers:");
-		String yearStr = (String) this.getParamsMap().get("anno");
-		String[] years = yearStr.split(","); // i valori sono separati da virgola
+		Object annoObj = this.getParamsMap().get("anno");
+		String[] years = new String[]{};
+		if (annoObj instanceof String) {
+			String yearStr = (String) annoObj;
+			years = yearStr.split(","); // i valori sono separati da virgola
+		} else if (annoObj instanceof List) {
+			List list = (List) annoObj;
+			years = (String[]) list.toArray(new String[0]);
+		} else {
+			throw new RuntimeException("cannot recognize values : [" + annoObj + "]");
+		}
 		Arrays.sort(years); // li ordino in modo che l'ordine con cui vengono impostati sia irrilevante
 		buffer.append("anno=" + join(years, ",") + ";");
 		
-		String enteStr = (String) this.getParamsMap().get("ente");
-		String[] ente = enteStr.split(","); // i valori sono separati da virgola
+		Object enteObj = this.getParamsMap().get("ente");
+		String[] ente = null;
+		if (enteObj instanceof String) {
+			String enteStr = (String) enteObj;
+			ente = enteStr.split(","); // i valori sono separati da virgola
+		} else if (enteObj instanceof List) {
+			List list = (List) enteObj;
+			ente = (String[]) list.toArray(new String[0]);
+		} else {
+			throw new RuntimeException("cannot recognize values : [" + enteObj + "]");
+		}
 		Arrays.sort(ente); // li ordino in modo che l'ordine con cui vengono impostati sia irrilevante
 		buffer.append("ente=" + join(ente, ",") + ";");
 		
@@ -417,16 +435,35 @@ public class FakeDataset extends AbstractCustomDataSet {
 
 	private boolean satisfyFilters(IRecord record) {
 		// considero i driver analitici anno ed ente
-		String annoStr = (String) this.getParamsMap().get("anno");
-		String[] annoArr = annoStr.split(","); // i valori sono separati da virgola
+		Object annoObj = this.getParamsMap().get("anno");
+		String[] annoArr = null;
+		if (annoObj instanceof String) {
+			String yearStr = (String) annoObj;
+			annoArr = yearStr.split(","); // i valori sono separati da virgola
+		} else if (annoObj instanceof List) {
+			List list = (List) annoObj;
+			annoArr = (String[]) list.toArray(new String[0]);
+		} else {
+			throw new RuntimeException("cannot recognize values : [" + annoObj + "]");
+		}
 		List<String> anno = Arrays.asList(annoArr);
 		String recordAnno = record.getFieldAt(7).getValue().toString();
 		if (!anno.contains(recordAnno)) {
 			return false;
 		}
 		
-		String enteStr = (String) this.getParamsMap().get("ente");
-		String[] enteArr = enteStr.split(","); // i valori sono separati da virgola
+		
+		Object enteObj = this.getParamsMap().get("ente");
+		String[] enteArr = null;
+		if (enteObj instanceof String) {
+			String enteStr = (String) enteObj;
+			enteArr = enteStr.split(","); // i valori sono separati da virgola
+		} else if (enteObj instanceof List) {
+			List list = (List) enteObj;
+			enteArr = (String[]) list.toArray(new String[0]);
+		} else {
+			throw new RuntimeException("cannot recognize values : [" + enteObj + "]");
+		}
 		List<String> ente = Arrays.asList(enteArr);
 		String recordEnte = record.getFieldAt(8).getValue().toString();
 		if (!ente.contains(recordEnte)) {
