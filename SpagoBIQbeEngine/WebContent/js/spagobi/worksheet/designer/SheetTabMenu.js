@@ -128,7 +128,9 @@ Sbi.worksheet.designer.SheetTabMenu = Ext.extend(Object, {
     		}]
 		});
     	this.renameWindow = new Ext.Window({
-    		closeAction : 'close'
+    		constrain: true
+    		, width: 300
+    		, closeAction : 'close'
     		, items : [form]
     	});
         this.sheetNameInput.setValue( this.active.title );
