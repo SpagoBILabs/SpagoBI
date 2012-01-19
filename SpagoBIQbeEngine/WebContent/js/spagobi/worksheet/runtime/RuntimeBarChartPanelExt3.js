@@ -117,13 +117,23 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 		
 		var barChartPanel = this.getChartExt3(this.chartConfig.orientation === 'horizontal', items);
 		this.on('contentclick', function(event){
-			this.headerClickHandler(event,null,null,barChartPanel);
+			this.headerClickHandler(event,null,null,barChartPanel, this.reloadJsonStoreExt3, this);
 		}, this);
 		
-		barChartPanel.on('render', function(panel){
-			panel.el.on('click', this.headerClickHandler.createDelegate(this, [panel], true), this);
-		}, this);
-		
+	
+		//Its a workaround because if you change the display name the chart is not able to write the tooltips
+		if(this.chartConfig.type != 'percent-stacked-barchart'){
+			if(this.chartConfig.orientation === 'horizontal'){
+				barChartPanel.tipRenderer = function(chart, record, index, series){
+		            return series.displayName+'\n'+record.data.categories+'\n'+ record.data[series.xField];
+		        };
+			}else{
+				barChartPanel.tipRenderer = function(chart, record, index, series){
+		            return series.displayName+'\n'+record.data.categories+'\n'+ record.data[series.yField];
+		        };
+			}
+		}
+        
 		var chartConf ={
 			renderTo : this.chartDivId,
 			layout: 'fit',
@@ -175,9 +185,14 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 		var seriesForChart = new Array();
 		for(var i=0; i<serieNames.length; i++){
 			var serie = {	
-	                displayName: serieNames[i],
 	                style: {}
 			};
+			
+			if(this.chartConfig.type == 'percent-stacked-barchart'){
+				serie.displayName =  (serieNames[i]);//if percent doesn't matter the scale 
+			}else{
+				serie.displayName =  this.formatLegendWithScale(serieNames[i]);
+			}
 
 			if(horizontal){
 				serie.xField = 'series'+i;
@@ -192,6 +207,43 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 			seriesForChart.push(serie);
 		}
 		return seriesForChart;
+	}
+	
+	//reload the store after hide a series
+	, reloadJsonStoreExt3: function(chart,reloadCallbackFunctionScope ){
+		var oldDataStore= chart.store;
+		var hiddenseries= chart.hiddenseries;
+		var percent = ((reloadCallbackFunctionScope.chartConfig.type).indexOf('percent')>=0);
+		
+		if(percent){
+			var series = reloadCallbackFunctionScope.getSeries();
+			var categories = reloadCallbackFunctionScope.getCategories();
+			
+			var data = new Array();
+			var fields = new Array();
+			var serieNames = new Array();
+
+			for(var i=0; i<categories.length; i++){
+				var z = {};
+				var seriesum = 0;
+				for(var j=0; j<series.length; j++){
+					z['series'+j] = ((series[j]).data)[i];
+					if(hiddenseries.indexOf(j)<0){
+						seriesum = seriesum + parseFloat(((series[j]).data)[i]);
+					}
+				}
+				for(var j=0; j<series.length; j++){
+					z['series'+j] = (z['series'+j]/seriesum)*100;;
+				}
+				z['seriesum'] = seriesum;
+				z['categories'] = categories[i];
+				data.push(z);
+			}
+			oldDataStore.loadData(data);
+		}else{
+			chart.refresh();
+		}
+
 	}
 
 });

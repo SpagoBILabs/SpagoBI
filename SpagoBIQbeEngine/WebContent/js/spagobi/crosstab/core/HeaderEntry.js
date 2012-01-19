@@ -85,8 +85,8 @@ Sbi.crosstab.core.HeaderEntry = function(config) {
 	}else{
 		h = this.rowHeight;
 	}
-		
-	this.name = config.name;
+	
+	this.name = this.applyMeasureScaleFactor(config.crosstab.fieldsOptions, config.name);
 	
 
 	
@@ -284,6 +284,20 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 			}
 		}
 		return childs;
+	}
+	
+	/*
+	Apply the scale factor to the name of the measure
+	*/
+	,applyMeasureScaleFactor: function(fieldOptions, fieldName){
+		if(fieldOptions!=undefined && fieldOptions!=null){
+			for(var i=0; i<fieldOptions.length; i++){
+				if(fieldName==fieldOptions[i].alias){
+					return fieldName+fieldOptions[i].options.measureScaleFactor;
+				}
+			}
+		}
+		return fieldName;
 	}
 	
 });			

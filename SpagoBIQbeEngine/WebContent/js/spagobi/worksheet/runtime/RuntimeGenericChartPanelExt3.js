@@ -71,7 +71,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.run
 
 	ieChartHeight: 400,
 	
-	headerClickHandler: function(event, element, object, chart) {	
+	headerClickHandler: function(event, element, object, chart, reloadCallbackFunction, reloadCallbackFunctionScope) {	
 		
 //		var t = document.getElementsByTagName('object');
 //		for(var i=0; i<t.length; i++){
@@ -115,7 +115,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.run
 					}
 
 					chart.series = visibleSeries;
-					chart.refresh();
+					if(reloadCallbackFunctionScope){
+						reloadCallbackFunction(chart, reloadCallbackFunctionScope);
+					}else{
+						chart.refresh();
+					}
+
 				}, this);
 				clickMenuItems.push(freshCheck);
 				

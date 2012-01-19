@@ -382,13 +382,13 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	 if(misuresOnLine){
 	    	 for(var y=1; y<headers.length;y++){
 				if(y<headers.length-1){
-					var freshNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension: this.measuresMetadata.length, horizontal: horizontal, level: y, columnWidth: this.columnWidth});
+					var freshNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension: this.measuresMetadata.length, horizontal: horizontal, level: y, columnWidth: this.columnWidth});
 					freshNode.father = node;
 						node.childs.push(freshNode);	
 						node = freshNode;
 				}else{
 					for(var k=0; k<this.measuresMetadata.length; k++){
-						var freshNode =(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:this.measuresMetadata[k].name, thisDimension: 1, horizontal: horizontal, level: headers.length-1,columnWidth: this.columnWidth}));
+						var freshNode =(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:this.measuresMetadata[k].name, thisDimension: 1, horizontal: horizontal, level: headers.length-1,columnWidth: this.columnWidth}));
 						freshNode.father = node;
 						node.childs.push(freshNode);
 					}	
@@ -396,7 +396,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			}
 	     }else{
 				for(var y=1; y<headers.length;y++){
-					var freshNode =(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal, level: y,columnWidth: this.columnWidth}));
+					var freshNode =(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal, level: y,columnWidth: this.columnWidth}));
 					freshNode.father = node;
 					node.childs.push(freshNode);	
 					node = freshNode;
@@ -505,7 +505,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     		thisDimension =t;
     	}
     	
-    	var panelConfig = {percenton: this.percenton, name:name, thisDimension:thisDimension, horizontal:horizontal, level:level,columnWidth: this.columnWidth};
+    	var panelConfig = {crosstab:this, percenton: this.percenton, name:name, thisDimension:thisDimension, horizontal:horizontal, level:level,columnWidth: this.columnWidth};
     	
     	if(level%2==1 && horizontal && !leaf){//its a title header
     		panelConfig.titleHeader = true;	
@@ -995,14 +995,14 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				this.getVisibleMeasures(headers);
 				if(y<headers.length-1){
 					if(horizontal){
-						headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: this.visibleMeasuresMetadataLength, horizontal: horizontal, level: y, width: null , height: headers[y][0].height,columnWidth: this.columnWidth}));	
+						headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: this.visibleMeasuresMetadataLength, horizontal: horizontal, level: y, width: null , height: headers[y][0].height,columnWidth: this.columnWidth}));	
 					}else{
-						headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: this.visibleMeasuresMetadataLength, horizontal: horizontal, level: y, width: headers[y][0].width,  height: null,columnWidth: this.columnWidth}));
+						headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: this.visibleMeasuresMetadataLength, horizontal: horizontal, level: y, width: headers[y][0].width,  height: null,columnWidth: this.columnWidth}));
 					}
 				}else{
 					for(var k=0; k<this.measuresMetadata.length; k++){
 						if(this.measuresMetadata[k].visible){
-							headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:this.measuresMetadata[k].name, thisDimension: 1, horizontal: horizontal, level: headers.length-1, width: headers[y][headers[y].length-1].width, height: headers[y][headers[y].length-1].height,columnWidth: this.columnWidth}));
+							headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:this.measuresMetadata[k].name, thisDimension: 1, horizontal: horizontal, level: headers.length-1, width: headers[y][headers[y].length-1].width, height: headers[y][headers[y].length-1].height,columnWidth: this.columnWidth}));
 						}
 					}	
 				}
@@ -1010,9 +1010,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			
 			if((!horizontal && this.withColumnsSum && !this.misuresOnRow) || (horizontal && this.withRowsSum && this.misuresOnRow)){
 				if(horizontal){
-					headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal,level:  y, width: null , height: headers[y][0].height,columnWidth: this.columnWidth}));	
+					headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal,level:  y, width: null , height: headers[y][0].height,columnWidth: this.columnWidth}));	
 				}else{
-					headersPanel.push(new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal, level: y, width: headers[y][0].width, height:  null,columnWidth: this.columnWidth}));
+					headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal, level: y, width: headers[y][0].width, height:  null,columnWidth: this.columnWidth}));
 				}
 			}
 
@@ -1203,7 +1203,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    	    	
    	    	for(var col = 0; col<this.rowHeader.length-1; col++){
 
-   	    		this.emptypanelTopLeftTablePanels.push(new Sbi.crosstab.core.HeaderEntry({name:this.rowHeadersTitle[col], thisDimension:1, horizontal:false, level:1, columnWidth: this.columnWidth, titleHeader: true}));
+   	    		this.emptypanelTopLeftTablePanels.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, name:this.rowHeadersTitle[col], thisDimension:1, horizontal:false, level:1, columnWidth: this.columnWidth, titleHeader: true}));
    	    		if(col==0){
    	    			this.emptypanelTopLeftTablePanels[0].cellCls = ' crosstab-table-empty-top-left-panel-leftmostcell ';
    	    		}else{
@@ -1915,9 +1915,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	
 	    	
 	    	if(header.horizontal){
-	    		var totalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:header.horizontal, level:header.level+1, width:null, height:header.childs[0].height,columnWidth: this.columnWidth});
+	    		var totalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:header.horizontal, level:header.level+1, width:null, height:header.childs[0].height,columnWidth: this.columnWidth});
 	    	}else{
-	    		var totalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:header.horizontal, level:header.level+1, width:header.childs[0].width, height:null,columnWidth: this.columnWidth});
+	    		var totalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:header.horizontal, level:header.level+1, width:header.childs[0].width, height:null,columnWidth: this.columnWidth});
 	    	}
 
 	    	totalNode.hidden = header.hidden;
@@ -1936,7 +1936,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		    	var freshFatherNode = totalNode;
 		    	
 		    	while(cousinNode.childs.length>0){
-		    		freshTotalChildNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:freshFatherNode.horizontal, level:freshFatherNode.level+1, width:cousinNode.childs[0].width, height:cousinNode.childs[0].height,columnWidth: this.columnWidth});
+		    		freshTotalChildNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:freshFatherNode.horizontal, level:freshFatherNode.level+1, width:cousinNode.childs[0].width, height:cousinNode.childs[0].height,columnWidth: this.columnWidth});
 		    		freshTotalChildNode.type=type;
 		    		freshTotalChildNode.father = freshFatherNode;
 		    		freshTotalChildNode.hidden = freshFatherNode.hidden;
@@ -2175,16 +2175,16 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 					    }
 					    
 					    if(headers[i][0].horizontal){
-					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: measuresNames.length, horizontal: headers[i][0].horizontal, level: headers.length-2, width: null , height: headers[headers.length-2][0].height,columnWidth: this.columnWidth});
+					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: measuresNames.length, horizontal: headers[i][0].horizontal, level: headers.length-2, width: null , height: headers[headers.length-2][0].height,columnWidth: this.columnWidth});
 					    }else{
-					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: measuresNames.length, horizontal: headers[i][0].horizontal, level: headers.length-2, width: headers[headers.length-2][0].width, height: null,columnWidth: this.columnWidth});	
+					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: measuresNames.length, horizontal: headers[i][0].horizontal, level: headers.length-2, width: headers[headers.length-2][0].width, height: null,columnWidth: this.columnWidth});	
 					    }
 					    partialTotalNode.type = 'partialsum';
 					    partialTotalNode.father = headers[i][j];
 					    this.setHeaderListener(partialTotalNode, true);
 					    
 						for(var k=0; k<measuresNames.length; k++){
-							freshChild = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:measuresNames[k], thisDimension: 1, horizontal: headers[i][0].horizontal, level: headers.length-1, width: headers[headers.length-1][0].width, height: headers[headers.length-1][0].height,columnWidth: this.columnWidth});
+							freshChild = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:measuresNames[k], thisDimension: 1, horizontal: headers[i][0].horizontal, level: headers.length-1, width: headers[headers.length-1][0].width, height: headers[headers.length-1][0].height,columnWidth: this.columnWidth});
 							partialTotalNode.childs.push(freshChild);
 							freshChild.father = partialTotalNode;
 							freshChild.type = 'partialsum';
@@ -2226,9 +2226,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	        	if(partialSumNode!=null){
 	    	        		//prepare the total node
 	    	        		if(partialSumNode.horizontal){
-	    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: null, height: headers[k][0].height,columnWidth: this.columnWidth});	
+	    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: null, height: headers[k][0].height,columnWidth: this.columnWidth});	
 	    	        		}else{
-	    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: headers[k][0].width, height: null,columnWidth: this.columnWidth});	
+	    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: headers[k][0].width, height: null,columnWidth: this.columnWidth});	
 	    	        		}
 		        	        
 		        	        totalNode.father = partialSumNode.father.father;
@@ -2626,9 +2626,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	, cloneNode: function(node,father, noHeaderMenu){
 		
 		if(node.horizontal){
-			var clonedNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:node.name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: null, height: node.height,columnWidth: this.columnWidth});
+			var clonedNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:node.name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: null, height: node.height,columnWidth: this.columnWidth});
 		}else{
-			var clonedNode = new Sbi.crosstab.core.HeaderEntry({percenton: this.percenton, name:node.name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: node.width, height: null,columnWidth: this.columnWidth});
+			var clonedNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:node.name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: node.width, height: null,columnWidth: this.columnWidth});
 		}
 		clonedNode.type = node.type;
 		clonedNode.father = father;

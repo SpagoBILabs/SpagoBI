@@ -106,7 +106,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 				categoryField: 'categories',
 				title: 'Month',
 				serieNumber: i,
-				serieName: storeObject.serieNames[i],
+				serieName: this.formatLegendWithScale(storeObject.serieNames[i]),
 	            dataField: chartSerieNumber,
 	            extraStyle: extraStyle,
 	            series:[{
@@ -135,12 +135,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 					seriesum = seriesum + parseFloat(((storeObject.store.getAt(j)).data)[chartSerieNumber]);
 				}
 				itemChart.seriesum = seriesum;
-				//if((this.chartConfig.showvalues == undefined) || !this.chartConfig.showvalues){
-//					itemChart.tipRenderer = function(chart, record, index, series){
-//						return  Ext.util.Format.number(100*record.data['series'+chart.serieNumber]/ chart.seriesum, '0.00') + '%';
-//			        };
-				//}
+				//Its a workaround because if you change the display name the chart is not able to write the tooltips
+				itemChart.tipRenderer = function(chart, record, index, series){
+					return  record.data.categories+'\n'+ record.data['series'+chart.serieNumber] +'\n'+Ext.util.Format.number(100*record.data['series'+chart.serieNumber]/ chart.seriesum, '0.00') + '%';
+			    };
 			}
+						
 			
 			var titlePanel = new Ext.Panel({
 				border: false,
