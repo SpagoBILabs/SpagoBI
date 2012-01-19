@@ -17,47 +17,47 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.utils.CreationUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 
 
-/** Action that get in request infos to build a biObject (of type Worksheet) or a dataset (o ftype custom)
+/** 
+ * Action that create a new dataset and prepare the url to call the 
+ * worksheeet's edit service (WORKSHEET_WITH_DATASET_START_EDIT_ACTION) in 
+ * order to build a worksheet document on the brandnew dataset
  * 
- * @author Giulio gavardi
+ * @author Giulio Gavardi, Andrea Gioia (andrea.gioia@eng.it)
  */
 public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String SERVICE_NAME = "CREATE_DATASET_FOR_WORKSHEET_ACTION";
-
-
-
-	/**  FIELDS EXPECTED IN REQUEST
-	 * 	
-	 * label       
-		name      
-		description   
-		jClassName        
-		customData      
-		parametersDefinition 
-		parametersValues  
-		metadata  
-	 */
+	public static final String  WORKSHEET_EDIT_ACTION = "WORKSHEET_WITH_DATASET_START_EDIT_ACTION";
+	
 	public static final String  INPUT_PARAMETER_DS_LABEL = DataSetConstants.LABEL;
 	public static final String  INPUT_PARAMETER_DS_NAME = DataSetConstants.NAME;
 	public static final String  INPUT_PARAMETER_DS_DESCRIPTION = DataSetConstants.DESCRIPTION;
@@ -66,30 +66,54 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	public static final String  INPUT_PARAMETER_DS_METADATA = DataSetConstants.DS_METADATA;
 	public static final String  INPUT_PARAMETER_DS_PARAMETER_DEFINITION = "parametersDefinition";
 	public static final String  INPUT_PARAMETER_DS_PARAMETERS_VALUES = "parametersValues";	
+	public static final String  INPUT_PARAMETER_BUSINESS_METADATA = "businessMetadata";
+		
+	public static final String  OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL = "serviceUrl";
+	public static final String  OUTPUT_PARAMETER_EXECUTION_ID = "executionId";
+	public static final String  OUTPUT_PARAMETER_DATASET_LABEL = "datasetLabel";
+	public static final String  OUTPUT_PARAMETER_BUSINESS_METADATA = "businessMetadata";
 	
-	public static final String  OUTPUT_PARAMETER_DS_ID = "dataset_id";	
-	public static final String  OUTPUT_PARAMETER_DS_LABEL = "dataset_label";
-	public static final String  OUTPUT_PARAMETER_DS_PARAMETERS_VALUES_PREFIX = "PAR_";	
-	
-
 	
 	// logger component
 	private static Logger logger = Logger.getLogger(CreateDatasetForWorksheetAction.class);
+	
 	
 	public void doService() {
 		
 		CreationUtilities creationUtilities;
 		GuiGenericDataSet datasetBean;
-		Integer datasetId;
+	
 		
 		logger.debug("IN");
-
-		datasetId = null;
 		
 		try {
-				
-			logger.trace("Creating the dataset...");
+			
+			// create the input parameters to pass to the WorkSheet Edit Service
+			Map worksheetEditActionParameters = buildWorksheetEditServiceBaseParametersMap();
+			
+			String executionId = createNewExecutionId();
+			worksheetEditActionParameters.put("SBI_EXECUTION_ID" , executionId);
+						
+			Engine worksheetEngine = getWorksheetEngine();
+			LogMF.debug(logger, "Engine label is equal to [{0}]", worksheetEngine.getLabel());
+			
+			String datasourceLabel = getDatasourceLabel(worksheetEngine);
+			LogMF.debug(logger, "Datasource label is equal to [{0}]", datasourceLabel);
+			worksheetEditActionParameters.put("datasource_label" , datasourceLabel);
+			
 			datasetBean = getDatasetAttributesFromRequest();
+			worksheetEditActionParameters.put("dataset_label" , datasetBean.getLabel());
+			
+			Map<String, String> datasetParameterValuesMap = getDatasetParameterValuesMapFromRequest();
+			worksheetEditActionParameters.putAll( datasetParameterValuesMap );
+			
+			// create the WorkSheet Edit Service's URL
+			String worksheetEditActionUrl = GeneralUtilities.getUrl(worksheetEngine.getUrl(), worksheetEditActionParameters);
+			LogMF.debug(logger, "Worksheet edit service invocation url is equal to [{}]", worksheetEditActionUrl);
+			
+			// create the dataset
+			logger.trace("Creating the dataset...");
+			Integer datasetId = null;
 			try{		
 				creationUtilities = new CreationUtilities();
 				datasetId = creationUtilities.creatDataSet(datasetBean);
@@ -99,17 +123,16 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 			}			
 			LogMF.debug(logger, "Datset [{0}]succesfully created with id [{1}]", datasetBean, datasetId);
 			
-					
 			logger.trace("Copying output parameters to response...");
 			try {
+				getServiceResponse().setAttribute(OUTPUT_PARAMETER_EXECUTION_ID, executionId);
+				getServiceResponse().setAttribute(OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL, worksheetEditActionUrl);
+				getServiceResponse().setAttribute(OUTPUT_PARAMETER_DATASET_LABEL, datasetBean.getLabel());
 				
-				getServiceResponse().setAttribute("OUTPUT_PARAMETER_DS_ID", datasetId);					
-				getServiceResponse().setAttribute("OUTPUT_PARAMETER_DS_LABEL", datasetBean.getLabel());	
-
-				Map<String, String> parametersMap = getDatasetParametersMapFromRequest();
-				for (String key : parametersMap.keySet()) {		
-					Object value = parametersMap.get(key);
-					getServiceResponse().setAttribute(OUTPUT_PARAMETER_DS_PARAMETERS_VALUES_PREFIX + key, value);
+				// business metadata
+				JSONObject businessMetadata = getBusinessMetadataFromRequest();
+				if(businessMetadata != null) {
+					getServiceResponse().setAttribute(OUTPUT_PARAMETER_BUSINESS_METADATA, businessMetadata.toString());
 				}
 			} catch (Throwable t) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating dataset from bean [" + datasetBean + "]", t);				
@@ -123,6 +146,93 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	}
 
 	
+	private Engine getWorksheetEngine() {
+		Engine worksheetEngine;
+		List<Engine> engines;
+		
+		worksheetEngine = null;
+		try {
+			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
+			engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType("WORKSHEET");
+			if (engines == null || engines.size() == 0) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "There are no engines for documents of type [WORKSHEET] available");
+			} else {
+				worksheetEngine = (Engine) engines.get(0);
+				LogMF.warn(logger, "There are more than one engine for document of type [WORKSHEET]. We will use the one whose label is equal to [{0}]", worksheetEngine.getLabel());
+			}
+		} catch(Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load a valid engine for document of type [WORKSHEET]", t);				
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return worksheetEngine;
+	}
+
+	private String getDatasourceLabel(Engine engine) {
+		
+		String datasourceLabel;
+		
+		logger.debug("IN");
+		
+		datasourceLabel = null;
+		try {
+			Integer datasourceId = engine.getDataSourceId();
+			if (datasourceId == null) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Worksheet engine [" + engine.getLabel() + "] has no datasource.");
+			}
+			DataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(datasourceId);
+			datasourceLabel = dataSource.getLabel();;
+		} catch(Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load the datasource of dataset [" + engine.getLabel() + "]", t);				
+		} finally {
+			logger.debug("OUT");
+		}
+		return datasourceLabel;
+	}
+	
+	private Map<String, String> buildWorksheetEditServiceBaseParametersMap() {
+		HashMap<String, String> parametersMap = new HashMap<String, String>();
+		
+		parametersMap.put("ACTION_NAME", WORKSHEET_EDIT_ACTION);
+		parametersMap.put("NEW_SESSION", "TRUE");
+		
+		parametersMap.put(SpagoBIConstants.SBI_CONTEXT, GeneralUtilities.getSpagoBiContext());
+		parametersMap.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
+		
+		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, getLocale().getLanguage());
+		parametersMap.put(SpagoBIConstants.SBI_COUNTRY, getLocale().getCountry());
+		
+		if (!GeneralUtilities.isSSOEnabled()) {
+			UserProfile userProfile = (UserProfile)getUserProfile();
+			parametersMap.put(SsoServiceInterface.USER_ID, (String)userProfile.getUserId());
+		}
+		
+		return parametersMap;
+	}
+
+
+	private String createNewExecutionId() {
+		String executionId;
+		
+		logger.debug("IN");
+		
+		executionId = null;
+		try {
+			UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+			UUID uuidObj = uuidGen.generateTimeBasedUUID();
+			executionId = uuidObj.toString();
+			executionId = executionId.replaceAll("-", "");
+		} catch(Throwable t) {
+			
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return executionId;
+	}
+
+
 	/** 
 	 * Read dataset's attributes from request and save them in a bean object.
 	 * 
@@ -215,7 +325,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		return datasetBean;
 	}
 
-	private Map<String, String> getDatasetParametersMapFromRequest() {
+	private Map<String, String> getDatasetParameterValuesMapFromRequest() {
 		Map<String, String> parametersMap;
 		
 		parametersMap = new HashMap<String, String>(); 
@@ -231,12 +341,33 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 					String value = parameterValues.getString(key);
 					parametersMap.put(key, value);
 				}			
+			} else {
+				LogMF.trace(logger, "Input parameter [{0}] not valorized", INPUT_PARAMETER_DS_PARAMETERS_VALUES);
 			}
 		} catch(Throwable t) {
 			logger.error("Impossible to parse input parameter [" + INPUT_PARAMETER_DS_PARAMETERS_VALUES+ "]", t);
 		}
 		
 		return parametersMap;
+	}
+	
+	private JSONObject getBusinessMetadataFromRequest() {
+		JSONObject businessMetadata;
+		
+		businessMetadata = null;
+		try {
+			if(requestContainsAttribute(INPUT_PARAMETER_BUSINESS_METADATA)){
+				logger.trace("Reading input parametr [" + INPUT_PARAMETER_BUSINESS_METADATA + "] from request...");
+				businessMetadata = this.getAttributeAsJSONObject( INPUT_PARAMETER_BUSINESS_METADATA );
+				logger.debug("Input parameter [" + INPUT_PARAMETER_BUSINESS_METADATA + "] is equal to [" + businessMetadata + "]");		
+			} else {
+				LogMF.trace(logger, "Input parameter [{0}] not valorized", INPUT_PARAMETER_BUSINESS_METADATA);
+			}
+		} catch(Throwable t) {
+			logger.error("Impossible to parse input parameter [" + INPUT_PARAMETER_BUSINESS_METADATA+ "]", t);
+		}
+		
+		return businessMetadata;
 	}
 	
 	private String parametersJsonToXML(String parsJson) {
