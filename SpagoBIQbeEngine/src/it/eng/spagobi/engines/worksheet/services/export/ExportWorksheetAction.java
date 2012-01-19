@@ -559,6 +559,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		this.adjustMetadata((DataStore) dataStore, dataset, descriptor);
 		LogMF.debug(logger, "Adjusted metadata: {0}", dataStore.getMetaData());
 		logger.debug("Decoding dataset ...");
+		this.applyOptions(dataStore);
 		dataStore = dataset.decode(dataStore);
 		LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
 		
