@@ -22,8 +22,11 @@ import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Field;
+import it.eng.spagobi.engines.worksheet.bo.FieldOption;
+import it.eng.spagobi.engines.worksheet.bo.FieldOptions;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
+import it.eng.spagobi.engines.worksheet.bo.WorksheetFieldsOptions;
 import it.eng.spagobi.engines.worksheet.exceptions.WrongConfigurationForFiltersOnDomainValuesException;
 import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -531,6 +534,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		LogMF.debug(logger, "Adjusted metadata: {0}", dataStore.getMetaData());
 		it.eng.spagobi.tools.dataset.common.datastore.DataStore clone = this.clone(dataStore);
 		logger.debug("Decoding dataset ...");
+		this.applyOptions(dataStore);
 		dataStore = dataset.decode(dataStore);
 		LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
 		
@@ -551,6 +555,36 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		
 	}
 	
+	public void applyOptions(IDataStore dataStore) {
+		WorksheetEngineInstance engineInstance = this.getEngineInstance();
+		WorkSheetDefinition definition = engineInstance.getTemplate().getWorkSheetDefinition();
+		WorksheetFieldsOptions options = definition.getFieldsOptions();
+		IMetaData metadata = dataStore.getMetaData();
+		int fieldsCount = metadata.getFieldCount();
+		for (int i = 0 ; i < fieldsCount ; i++ ) {
+			IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
+			FieldOptions fieldOptions = options.getOptionsForFieldByFieldId(fieldMetadata.getName());
+			if (fieldOptions != null) {
+				// there are options for the field
+				logger.debug("Field [name : " + fieldMetadata.getName() + " ; alias : " + fieldMetadata.getAlias() + "] has options set");
+				Map properties = fieldMetadata.getProperties();
+				List<FieldOption> list = fieldOptions.getOptions();
+				Iterator<FieldOption> it = list.iterator();
+				while (it.hasNext()) {
+					FieldOption option = it.next();
+					String name = option.getName();
+					Object value = option.getValue();
+					logger.debug("Putting option [name : " + name + " ; value : " + value + 
+							"] into field [name : " + fieldMetadata.getName() + " ; alias : " + fieldMetadata.getAlias() + "]");
+					properties.put(name, value);
+				}
+			} else {
+				logger.debug("Field [name : " + fieldMetadata.getName() + " ; alias : " + fieldMetadata.getAlias() + "] has no options set");
+			}
+		}
+		
+	}
+
 	private it.eng.spagobi.tools.dataset.common.datastore.DataStore clone(it.eng.spagobi.tools.dataset.common.datastore.IDataStore dataStore) {
 		it.eng.spagobi.tools.dataset.common.datastore.DataStore toReturn = new it.eng.spagobi.tools.dataset.common.datastore.DataStore();
 		IMetaData metadata = dataStore.getMetaData();

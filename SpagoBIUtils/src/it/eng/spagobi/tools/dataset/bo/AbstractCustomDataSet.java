@@ -168,16 +168,28 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 			if (fieldMetadata.getFieldType().ordinal() == FieldType.MEASURE.ordinal()) {
 				continue;
 			}
+			// find the attribute presentation option
+			Object attributePresentationObj = fieldMetadata.getProperty(IFieldMetaData.PROPERTY_ATTRIBUTE_PRESENTATION);
+			logger.debug("attributePresentationObj required for field [name : " + fieldMetadata.getName() 
+					+ "; alias : " + fieldMetadata.getAlias() + "] : " + attributePresentationObj);
+			if (attributePresentationObj == null) {
+				attributePresentationObj = IFieldMetaData.PROPERTY_ATTRIBUTE_PRESENTATION_DESCRIPTION; // default value
+			}
+			if (attributePresentationObj.toString().equals(IFieldMetaData.PROPERTY_ATTRIBUTE_PRESENTATION_CODE)) {
+				continue;
+			}
+			// the option can be "description" or "both", "both" stands for code + description
+			boolean append = !attributePresentationObj.toString().equals(IFieldMetaData.PROPERTY_ATTRIBUTE_PRESENTATION_DESCRIPTION);
 			String key = fieldMetadata.getName();
 			if (descriptions.containsKey(key)) {
 				// se esiste la descrizione, allora la sostituisco ai codici
-				substituteCodeWithDescriptionsOnColumn(i, datastore, codes.get(key), descriptions.get(key));
+				substituteCodeWithDescriptionsOnColumn(i, datastore, codes.get(key), descriptions.get(key), append);
 			}
 		}
 	}
 
 	private void substituteCodeWithDescriptionsOnColumn(int columnIndex,
-			IDataStore datastore, List<String> codes, List<String> descriptions) {
+			IDataStore datastore, List<String> codes, List<String> descriptions, boolean append) {
 		Iterator it = datastore.iterator();
 		while (it.hasNext()) {
 			IRecord record = (IRecord) it.next();
@@ -188,7 +200,12 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 			int index = codes.indexOf(code);
 			// recupero la relativa descrizione prendendolo dalla stessa posizione nella lista delle descrizioni
 			String newValue = descriptions.get(index);
-			field.setValue(newValue);
+			if (append) {
+				field.setValue(code + " - " + newValue); // appendo la descrizione al codice
+			} else {
+				field.setValue(newValue); // metto solo la descrizione
+			}
+			
 		}
 	}
 
@@ -203,6 +220,15 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 			if (fieldMetadata.getFieldType().ordinal() == FieldType.MEASURE.ordinal()) {
 				continue;
 			}
+			// find the attribute presentation option
+			Object attributePresentationObj = fieldMetadata.getProperty(IFieldMetaData.PROPERTY_ATTRIBUTE_PRESENTATION);
+			// if option is specified and it is "code" then the attribute is not translated
+			if (attributePresentationObj != null 
+					&& 
+					attributePresentationObj.toString().equals(IFieldMetaData.PROPERTY_ATTRIBUTE_PRESENTATION_CODE)) {
+				continue;
+			}
+			
 			String key = fieldMetadata.getName();
 			Set value = datastore.getFieldDistinctValues(i);
 			List<String> strings = new ArrayList<String>();

@@ -23,6 +23,11 @@ public interface IFieldMetaData {
 	public static final String DECIMALPRECISION = "decimalPrecision";
 	public static final String ORDERTYPE = "oprdertype";
 	
+	public static final String PROPERTY_ATTRIBUTE_PRESENTATION = "attributePresentation";
+	public static final String PROPERTY_ATTRIBUTE_PRESENTATION_CODE = "code";
+	public static final String PROPERTY_ATTRIBUTE_PRESENTATION_DESCRIPTION = "description";
+	public static final String PROPERTY_ATTRIBUTE_PRESENTATION_CODE_AND_DESCRIPTION = "both";
+	
 	public enum FieldType {ATTRIBUTE, MEASURE}
 
 	String getName();
