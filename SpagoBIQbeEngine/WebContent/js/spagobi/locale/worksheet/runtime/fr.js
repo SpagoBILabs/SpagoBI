@@ -25,7 +25,7 @@ Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.mandatory
 Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.toomuch'] = 'Those filters have too much values:';
 Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.maxselection'] = 'maximum allowed';
 
-===========================================================
-	//Sbi.worksheet.runtime.xxxChart
-	//===================================================================
-	Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.chart.visibleseries']= 'Visible series';
+//===========================================================
+//Sbi.worksheet.runtime.xxxChart
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.chart.visibleseries']= 'Visible series';
