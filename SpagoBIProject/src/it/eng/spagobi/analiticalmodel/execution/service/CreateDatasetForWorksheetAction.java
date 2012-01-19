@@ -17,6 +17,7 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -40,11 +41,13 @@ import org.json.JSONObject;
  */
 public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 
+	private static final long serialVersionUID = 1L;
+
 	public static final String SERVICE_NAME = "CREATE_DATASET_FOR_WORKSHEET_ACTION";
 
 
 
-	/**  FIELDS EXPECTEDIN REQUEST
+	/**  FIELDS EXPECTED IN REQUEST
 	 * 	
 	 * label       
 		name      
@@ -55,114 +58,63 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		parametersValues  
 		metadata  
 	 */
-	public static final String  PARAMETERS_DEFINITION = "parametersDefinition";
-	public static final String  PARAMETERS_VALUES = "parametersValues";	
+	public static final String  INPUT_PARAMETER_DS_LABEL = DataSetConstants.LABEL;
+	public static final String  INPUT_PARAMETER_DS_NAME = DataSetConstants.NAME;
+	public static final String  INPUT_PARAMETER_DS_DESCRIPTION = DataSetConstants.DESCRIPTION;
+	public static final String  INPUT_PARAMETER_DS_CUSTOM_DATA = DataSetConstants.CUSTOM_DATA;
+	public static final String  INPUT_PARAMETER_DS_JCLASS_NAME = DataSetConstants.JCLASS_NAME;
+	public static final String  INPUT_PARAMETER_DS_METADATA = DataSetConstants.DS_METADATA;
+	public static final String  INPUT_PARAMETER_DS_PARAMETER_DEFINITION = "parametersDefinition";
+	public static final String  INPUT_PARAMETER_DS_PARAMETERS_VALUES = "parametersValues";	
+	
+	public static final String  OUTPUT_PARAMETER_DS_ID = "dataset_id";	
+	public static final String  OUTPUT_PARAMETER_DS_LABEL = "dataset_label";
+	public static final String  OUTPUT_PARAMETER_DS_PARAMETERS_VALUES_PREFIX = "PAR_";	
+	
 
-
-	// request parameters for dataset	 (Taken from DatsetConstants)
-
-	//	public static String MODALITY = "MODALITY";
-	//	public static String MODALITY_DATASET = "DATASET";
-	//	public static String MODALITY_BIOBJECT = "BIOBJECT";
-	//
-	//	public static final String OBJ_LABEL ="label";
-	//	public static final String OBJ_NAME ="name";
-	//	public static final String OBJ_DESCR ="descr";
-	//	public static final String OBJ_PARS ="pars";
-	//	public static final String OBJ_FUNCTIONALITY ="functionality";
-	//	public static final String OBJ_ENGINE_ID ="engineId";
-	//	public static final String OBJ_DATASOURCE_ID ="dataSourceId";
-	//	public static final String OBJ_DATASET_ID ="dataSetId";
-	//	public static final String OBJ_STATE_ID ="stateId";
-
-	public static final String DS_TYPE = DataSetConstants.DS_CUSTOM;	
-
-	public static final String WORKSHEET_VALUE_CODE ="WORKSHEET";
-	public static final String BIOBJ_TYPE_DOMAIN_CD ="BIOBJ_TYPE";
-
-	// JSON Object representing object parameters
-	//	public static final String OBJPAR_PAR_ID ="parId";
-	//	public static final String OBJPAR_PARAMETER_URL_NAME ="parameterUrlName";
-	//	public static final String OBJPAR_LABEL ="label";
-
-
+	
 	// logger component
 	private static Logger logger = Logger.getLogger(CreateDatasetForWorksheetAction.class);
-
-	GuiGenericDataSet ds;
-	CustomDataSetDetail dsDetail;
-
-	BIObject biObj;
-
-
-
+	
 	public void doService() {
-		ExecutionInstance instance;
-
-		//	String modality;
-
-
-		IEngUserProfile profile;
-
+		
+		CreationUtilities creationUtilities;
+		GuiGenericDataSet datasetBean;
+		Integer datasetId;
+		
 		logger.debug("IN");
 
+		datasetId = null;
+		
 		try {
-
-			profile = getUserProfile();
-
-			ds = collectDatasetInformations();
-
-			CreationUtilities creatUtils = new CreationUtilities();
-			Integer returnId = null;
-
-			try{			
-				returnId = creatUtils.creatDataSet(ds);
-			}
-			catch (Exception e) {
-				logger.error("Error during creation method.", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, 
-						"Error during dataset creation method "+e.getMessage());				
-			}
-
-			// check and id has been returned.
-			if(returnId == null){
-				throw new SpagoBIServiceException(SERVICE_NAME, 
-				" dataset creation method did not return any result: check log");	
-			}
-			
-			logger.debug("Getting PARAMETERS_VALUES from the request");
-			String valsJson = getAttributeAsString( PARAMETERS_VALUES );
-			
-			// put in response parameters 
-			Map valsMap = null;
-			if(valsJson != null && !valsJson.equals("")){
-				valsMap = getParameterValues(valsJson);
-				LogMF.debug(logger,"The PARAMETERS_VALUES are: {0}", valsJson);
-			}else{
-				logger.debug("No PARAMETERS_VALUES is empty ");
-			}
 				
-
-
-			// ExecutionInstance has been created it's time to prepare the response with the instance unique id and flush it to the client
-
+			logger.trace("Creating the dataset...");
+			datasetBean = getDatasetAttributesFromRequest();
+			try{		
+				creationUtilities = new CreationUtilities();
+				datasetId = creationUtilities.creatDataSet(datasetBean);
+				Assert.assertNotNull(datasetId, "Dataset Id cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating dataset from bean [" + datasetBean + "]", t);				
+			}			
+			LogMF.debug(logger, "Datset [{0}]succesfully created with id [{1}]", datasetBean, datasetId);
+			
+					
+			logger.trace("Copying output parameters to response...");
 			try {
-				getServiceResponse().setAttribute("dataset_id", returnId);					
-				getServiceResponse().setAttribute("dataset_label", ds.getLabel());	
+				
+				getServiceResponse().setAttribute("OUTPUT_PARAMETER_DS_ID", datasetId);					
+				getServiceResponse().setAttribute("OUTPUT_PARAMETER_DS_LABEL", datasetBean.getLabel());	
 
-				if(valsMap != null){
-					for (Iterator iterator = valsMap.keySet().iterator(); iterator.hasNext();) {
-						String n = (String) iterator.next();
-						Object v = valsMap.get(n);
-						// passing parameters with prefix PAR_
-						getServiceResponse().setAttribute("PAR_"+n, v);
-					}
-
+				Map<String, String> parametersMap = getDatasetParametersMapFromRequest();
+				for (String key : parametersMap.keySet()) {		
+					Object value = parametersMap.get(key);
+					getServiceResponse().setAttribute(OUTPUT_PARAMETER_DS_PARAMETERS_VALUES_PREFIX + key, value);
 				}
-
-			} catch (SourceBeanException e1) {
-				logger.error("Error ins etting response",e1);
+			} catch (Throwable t) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating dataset from bean [" + datasetBean + "]", t);				
 			}
+			logger.trace("Output parameter succesfully copied to response");
 
 
 		} finally {
@@ -170,112 +122,127 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		}
 	}
 
-	private Map getParameterValues(String valsJson){
-		logger.debug("Getting the parameters value");
-		Map parsValuesMap = new HashMap<String, String>();
-		try{
-			JSONObject json = new JSONObject(valsJson);
-			for (Iterator iterator = json.keys(); iterator.hasNext();) {
-				String key = (String) iterator.next();
-				String v = json.getString(key);
-				parsValuesMap.put(key, v);
-			}
-
-		}
-		catch (Exception e) {
-			logger.error("error in parsing "+valsJson,e);
-			parsValuesMap = null;
-		}
-		Assert.assertNotNull(parsValuesMap, "error in parsing "+valsJson);
-		LogMF.debug(logger, "Parameters map loaded.. {0}", parsValuesMap);
-		return parsValuesMap;
-	}
-
-
-	/** get dataset information from request
+	
+	/** 
+	 * Read dataset's attributes from request and save them in a bean object.
 	 * 
-	 * @return  GuiGenericDataSet
+	 * @return  GuiGenericDataSet the bean object that collect all the dataset 
+	 * attributes read from request.
 	 */
-	private GuiGenericDataSet collectDatasetInformations(){
+	private GuiGenericDataSet getDatasetAttributesFromRequest(){
+		
+		
+		GuiGenericDataSet datasetBean;
+		
+		String label;
+		String name;
+		String description;
+		String customData;
+		String jClassName;
+		String metadata;
+		String parametersDefinitionJson;
+		String parametersDefinitionXML;
+
 		logger.debug("IN");
-		// Dataset Fields
-		String dsLabel;
-		String dsName;
-		String dsDescr;
-		String dsPars;
-		String dsCustomData;
-		String dsJClassName;
-		String dsMetadata;
-		String parametersDefinitionJson = null;
-		String parametersDefinitionXML = null;
-
-		logger.debug("Collecting information necessary for build thd dataset:");
-		logger.debug("Getting LABEL from request");
-		dsLabel = getAttributeAsString( DataSetConstants.LABEL );
-		logger.debug("LABEL= "+dsLabel);
-		logger.debug("Getting NAME from request");
-		dsName = getAttributeAsString( DataSetConstants.NAME );
-		logger.debug("NAME= "+dsLabel);
-		logger.debug("Getting DESCRIPTION from request");
-		dsDescr = getAttributeAsString( DataSetConstants.DESCRIPTION );
-		logger.debug("DESCRIPTION= "+dsLabel);
-		logger.debug("Getting PARS from request");
-		dsPars = getAttributeAsString( DataSetConstants.PARS );
-		logger.debug("PARS= "+dsLabel);
-		logger.debug("Getting CUSTOM_DATA from request");
-		dsCustomData = getAttributeAsString( DataSetConstants.CUSTOM_DATA );
-		logger.debug("CUSTOM_DATA= "+dsLabel);
-		logger.debug("Getting JCLASS_NAME from request");
-		dsJClassName = getAttributeAsString( DataSetConstants.JCLASS_NAME );
-		logger.debug("JCLASS_NAME= "+dsLabel);
-		logger.debug("Getting DS_METADATA from request");
-		dsMetadata = getAttributeAsString( DataSetConstants.DS_METADATA );
-		logger.debug("DS_METADATA= "+dsLabel);
+		
+		datasetBean = null;
+		
+		try {
+			logger.trace("Reading from request attributes used to build the new dataset...");
 			
-		
-		if(getAttributeAsString( PARAMETERS_DEFINITION ) != null && !getAttributeAsString( PARAMETERS_DEFINITION ).equals("")){
-			logger.debug("Getting PARAMETERS_DEFINITION from request");
-			parametersDefinitionJson = getAttributeAsString( PARAMETERS_DEFINITION );
-			logger.debug("parametersDefinitionJson = "+parametersDefinitionJson);
-			parametersDefinitionXML = parametersJsonToXML(parametersDefinitionJson);
-			logger.debug("parametersJsonToXML = "+parametersDefinitionXML);
-		}else{
-			logger.debug("No PARAMETERS_DEFINITION in the request");
+			LogMF.trace(logger, "Reading input parametr [{0}] from request...", INPUT_PARAMETER_DS_LABEL);
+			label = getAttributeAsString( INPUT_PARAMETER_DS_LABEL );
+			LogMF.debug(logger, "Input parameter [{0}] is equal to [{1}]", INPUT_PARAMETER_DS_LABEL, label);
+			Assert.assertNotNull(label, "Input parameter [" + INPUT_PARAMETER_DS_LABEL + "] cannot be null");
+			
+			LogMF.trace(logger, "Reading input parametr [{0}] from request...", INPUT_PARAMETER_DS_NAME);
+			name = getAttributeAsString( INPUT_PARAMETER_DS_NAME );
+			LogMF.debug(logger, "Input parameter [{0}] is equal to [{1}]", INPUT_PARAMETER_DS_LABEL, name);
+			
+			LogMF.trace(logger, "Reading input parametr [{0}] from request...", INPUT_PARAMETER_DS_DESCRIPTION);
+			description = getAttributeAsString( INPUT_PARAMETER_DS_DESCRIPTION );
+			LogMF.debug(logger, "Input parameter [{0}] is equal to [{1}]", INPUT_PARAMETER_DS_DESCRIPTION, description);
+			
+			LogMF.trace(logger, "Reading input parametr [{0}] from request...", INPUT_PARAMETER_DS_CUSTOM_DATA);
+			customData = getAttributeAsString( INPUT_PARAMETER_DS_CUSTOM_DATA );
+			LogMF.debug(logger, "Input parameter [{0}] is equal to [{1}]", INPUT_PARAMETER_DS_CUSTOM_DATA, customData);
+			
+			LogMF.trace(logger, "Reading input parametr [{0}] from request...", INPUT_PARAMETER_DS_JCLASS_NAME);
+			jClassName = getAttributeAsString( INPUT_PARAMETER_DS_JCLASS_NAME );
+			LogMF.debug(logger, "Input parameter [{0}] is equal to [{1}]", INPUT_PARAMETER_DS_JCLASS_NAME, jClassName);
+			
+			LogMF.trace(logger, "Reading input parametr [{0}] from request...", INPUT_PARAMETER_DS_METADATA);
+			metadata = getAttributeAsString( INPUT_PARAMETER_DS_METADATA );
+			LogMF.debug(logger, "Input parameter [{0}] is equal to [{1}]", INPUT_PARAMETER_DS_METADATA, metadata);
+			
+			LogMF.trace(logger, "Reading input parametr [{0}] from request...", INPUT_PARAMETER_DS_PARAMETER_DEFINITION);
+			parametersDefinitionJson = getAttributeAsString( INPUT_PARAMETER_DS_PARAMETER_DEFINITION );
+			LogMF.debug(logger, "Input parameter [{0}] is equal to [{1}]", INPUT_PARAMETER_DS_METADATA, parametersDefinitionJson);
+			
+			
+			parametersDefinitionXML = null;
+			if(!StringUtilities.isEmpty(parametersDefinitionJson)){
+				LogMF.trace(logger, "Coverting input parameter [{0}] from JSON format to XML format ...", INPUT_PARAMETER_DS_PARAMETER_DEFINITION);
+				parametersDefinitionXML = parametersJsonToXML(parametersDefinitionJson);
+				LogMF.trace(logger, "Input parameter [{0}] succesfully converted to xml formt [{1}]", INPUT_PARAMETER_DS_PARAMETER_DEFINITION, parametersDefinitionXML);
+			} 
+			
+			logger.trace("Attributes used to build the new dataset succesfully read from request");
+	
+			CustomDataSetDetail customDataSetDetail = new CustomDataSetDetail();
+			customDataSetDetail.setCustomData(customData);
+			customDataSetDetail.setJavaClassName(jClassName);
+			customDataSetDetail.setParameters(parametersDefinitionXML);
+			customDataSetDetail.setDsType(DataSetConstants.DS_CUSTOM);
+			if(!StringUtilities.isEmpty(metadata)) {
+				customDataSetDetail.setDsMetadata(metadata);
+			}
+			
+			logger.trace("Building the dataset bean...");
+			datasetBean = new GuiGenericDataSet();
+			datasetBean.setLabel(label);
+			datasetBean.setName(name);
+			datasetBean.setDescription(description);
+			datasetBean.setActiveDetail(customDataSetDetail);
+			logger.trace("Dataset bean succesfully built");
+						
+		} catch(Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read from request all parameters required to create the new dataset", t);
+		} finally {
+			logger.debug("OUT");
 		}
-
-		if(dsLabel== null){
-			logger.error("Action "+SERVICE_NAME+ " ");
-			throw new SpagoBIServiceException(SERVICE_NAME, "Could not find label for dataset in request: label is mandatory.");
-		}
-
-		dsDetail = new CustomDataSetDetail();
-		dsDetail.setCustomData(dsCustomData);
-		dsDetail.setJavaClassName(dsJClassName);
-		dsDetail.setParameters(parametersDefinitionXML);
-		dsDetail.setDsType(DataSetConstants.DS_CUSTOM);
 		
-		if(dsMetadata != null && !dsMetadata.equals(""))
-			dsDetail.setDsMetadata(dsMetadata);
-		
-		logger.debug("Start building the GuiGenericDataSet...");
-		ds = new GuiGenericDataSet();
-		ds.setLabel(dsLabel);
-		ds.setName(dsName);
-		ds.setDescription(dsDescr);
-
-		ds.setActiveDetail(dsDetail);
-		logger.debug("GuiGenericDataSet builded...");
-		logger.debug("OUT");
-
-		return ds;
+		return datasetBean;
 	}
 
-
+	private Map<String, String> getDatasetParametersMapFromRequest() {
+		Map<String, String> parametersMap;
+		
+		parametersMap = new HashMap<String, String>(); 
+		
+		try {
+			if(requestContainsAttribute(INPUT_PARAMETER_DS_PARAMETERS_VALUES)){
+				logger.trace("Reading input parametr [" + INPUT_PARAMETER_DS_PARAMETERS_VALUES + "] from request...");
+				JSONObject parameterValues = this.getAttributeAsJSONObject( INPUT_PARAMETER_DS_PARAMETERS_VALUES );
+				logger.debug("Input parameter [" + INPUT_PARAMETER_DS_PARAMETERS_VALUES + "] is equal to [" + parameterValues + "]");
+				
+				for (Iterator<String> iterator = parameterValues.keys(); iterator.hasNext();) {
+					String key = iterator.next();
+					String value = parameterValues.getString(key);
+					parametersMap.put(key, value);
+				}			
+			}
+		} catch(Throwable t) {
+			logger.error("Impossible to parse input parameter [" + INPUT_PARAMETER_DS_PARAMETERS_VALUES+ "]", t);
+		}
+		
+		return parametersMap;
+	}
+	
 	private String parametersJsonToXML(String parsJson) {
 		String xml = null;
 		SourceBean sb = null;
-
-
+		
 		try{
 			JSONObject json = new JSONObject(parsJson);
 			sb = new SourceBean("PARAMETERSLIST");	
