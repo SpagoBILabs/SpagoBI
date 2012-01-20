@@ -443,6 +443,10 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 .icon-refresh {
 	background-image: url('../img/refresh16.png') !important;
 }
+.x-grid3-hd-inner:hover
+{
+	cursor:e-resize;
+}
 /*******************************************************************************************************
  * Slot
  ********************************************************************************************************/
