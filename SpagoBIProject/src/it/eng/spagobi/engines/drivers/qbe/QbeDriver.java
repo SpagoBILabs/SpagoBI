@@ -17,7 +17,6 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
@@ -70,19 +69,10 @@ public class QbeDriver extends AbstractDriver implements IEngineDriver {
 			parameters = applySecurity(parameters, profile);
 			//parameters = addDocumentParametersInfo(parameters, biObject);
 			parameters = applyService(parameters, biObject);
-			parameters = addDateFormat(parameters, biObject);
 		} finally {
 			logger.debug("OUT");
 		}
 		
-		return parameters;
-	}
-	
-	private Map addDateFormat(Map parameters, BIObject biObject) {
-		SingletonConfig config = SingletonConfig.getInstance();
-		String formatSB = config.getConfigValue("SPAGOBI.DATE-FORMAT.format");
-		String format = (formatSB == null) ? "dd/MM/yyyy" : formatSB;
-		parameters.put("dateformat", format);
 		return parameters;
 	}
 

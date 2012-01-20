@@ -176,8 +176,7 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 		
 		if (dropColDataIndex === 'rightOperandDescription') {
 			filter = {
-				//rightOperandValue: (rows[0].data.type == 'NUM') ? 'P{' + rows[0].data.id + '}' : '\'P{' + rows[0].data.id + '}\''
-				rightOperandValue: 'P{' + rows[0].data.id + '}'
+				rightOperandValue: (rows[0].data.type == 'NUM') ? 'P{' + rows[0].data.id + '}' : '\'P{' + rows[0].data.id + '}\''
 				, rightOperandDescription: '[' + rows[0].data.label + ']'
 				, rightOperandType: Sbi.constants.qbe.OPERAND_TYPE_STATIC_VALUE
 				, rightOperandAggregator: 'NONE'
@@ -187,8 +186,7 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 		} else if (dropColDataIndex === 'leftOperandDescription') {
 			
 			filter = {
-				//leftOperandValue: (rows[0].data.type == 'NUM') ? 'P{' + rows[0].data.id + '}' : '\'P{' + rows[0].data.id + '}\''
-				leftOperandValue: 'P{' + rows[0].data.id + '}'
+				leftOperandValue: (rows[0].data.type == 'NUM') ? 'P{' + rows[0].data.id + '}' : '\'P{' + rows[0].data.id + '}\''
 				, leftOperandDescription: '[' + rows[0].data.label + ']'
 				, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_STATIC_VALUE
 				, leftOperandAggregator: 'NONE'
@@ -232,8 +230,7 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 		
 		if (dropColDataIndex === 'rightOperandDescription') {
 			filter = {
-				//rightOperandValue: (rows[0].data.type == 'NUM') ? 'P{' + rows[0].data.name + '}' : '\'P{' + rows[0].data.name + '}\''
-				rightOperandValue: 'P{' + rows[0].data.name + '}'
+				rightOperandValue: (rows[0].data.type == 'NUM') ? 'P{' + rows[0].data.name + '}' : '\'P{' + rows[0].data.name + '}\''
 				, rightOperandDescription: '[' + rows[0].data.name + ']'
 				, rightOperandType: Sbi.constants.qbe.OPERAND_TYPE_STATIC_VALUE
 				, rightOperandAggregator: 'NONE'

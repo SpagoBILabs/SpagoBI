@@ -29,13 +29,13 @@ import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.CriteriaConstants;
-import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Filter;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statement.AbstractStatement;
@@ -1282,8 +1282,7 @@ public class HQLStatement extends AbstractStatement {
 		
 		if(getParameters() != null) {
 			try {
-				Map parametersAsString = getParametersAsString();
-				queryStr = StringUtils.replaceParameters(queryStr.trim(), "P", parametersAsString);
+				queryStr = StringUtils.replaceParameters(queryStr.trim(), "P", getParameters());
 			} catch (IOException e) {
 				throw new SpagoBIRuntimeException("Impossible to set parameters in query", e);
 			}
@@ -1291,60 +1290,6 @@ public class HQLStatement extends AbstractStatement {
 		}	
 		
 		setQueryString(queryStr);	
-	}
-		
-	
-	private Map<String, String> getParametersAsString() {
-		logger.debug("IN");
-		Map<String, String> toReturn = new HashMap<String, String>();
-		Map parameters = this.getParameters();
-		Set keys = parameters.keySet();
-		Iterator keysIt = keys.iterator();
-		while (keysIt.hasNext()) {
-			String aKey = (String) keysIt.next();
-			logger.debug("Evaluating parameter [" + aKey + "] ...");
-			Object value = parameters.get(aKey);
-			logger.debug("It's value is [" + aKey + "] ...");
-			if (value instanceof List) {
-				// only Lists are actual parameters
-				List values = (List) value;
-				String valuesAsString = getParametersAsString(values);
-				logger.debug("String representation is [" + valuesAsString + "] ...");
-				toReturn.put(aKey, valuesAsString);
-			}
-		}
-		logger.debug("OUT");
-		return toReturn;
-	}
-
-	private String getParametersAsString(List values) {
-		logger.debug("IN");
-		StringBuffer toReturn = new StringBuffer("");
-		if (values != null && !values.isEmpty()) {
-			Iterator it = values.iterator();
-			while ( it.hasNext() ) {
-				Object aValue = it.next();
-				logger.debug("Value is [" + aValue + "]");
-				Class clazz = aValue.getClass();
-				logger.debug("Class is [" + clazz + "]");
-				if ( aValue instanceof Date ) {
-					logger.debug("Value is a date");
-					String userDateFormatPattern = (String) getParameters().get(EngineConstants.ENV_USER_DATE_FORMAT);
-					logger.debug("Using date format [" + userDateFormatPattern + "] ...");
-					DateFormat userDataFormat = new SimpleDateFormat(userDateFormatPattern);
-					aValue = userDataFormat.format(aValue);
-					logger.debug("Date as a string is [" + aValue + "]");
-				}
-				String valueStr = getValueBounded(aValue.toString(), clazz.getName());
-				logger.debug("Value as a string is [" + valueStr + "]");
-				toReturn.append(valueStr);
-				if ( it.hasNext() ) {
-					toReturn.append(",");
-				}
-			}
-		}
-		logger.debug("OUT");
-		return toReturn.toString();
 	}
 
 

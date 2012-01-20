@@ -12,13 +12,11 @@
 package it.eng.spagobi.utilities;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * The Class StringUtils.
@@ -91,12 +89,7 @@ public class StringUtils {
 			String parameterName = (String)it.next();
 			String parameterValue = parameters.getProperty(parameterName);
 			if(parameterValue == null) throw new IOException("No value for the parameter: " + parameterName);
-			String placeHolder = parameterTypeIdentifier + "{" + parameterName + "}";
-			// regular expression looks for P{parameter name} or 'P{parameter name}' (since parameterValue is supposed to be already quoted)
-			String regexp = Pattern.quote(placeHolder);
-			result = result.replaceAll(regexp, parameterValue);
-			
-//			result = filterCondition.replaceAll(parameterTypeIdentifier + "\\{" + parameterName + "\\}", parameterValue);
+			result = filterCondition.replaceAll(parameterTypeIdentifier + "\\{" + parameterName + "\\}", parameterValue);
 		}		
 		
 		return result;
@@ -124,13 +117,9 @@ public class StringUtils {
 			if(!parameters.containsKey(parameterName)) {
 				throw new IOException("No value for the parameter: " + parameterName);
 			}
-			String parameterValue = parameters.get(parameterName) == null ? null : parameters.get(parameterName).toString();
-//			parameterValue = escapeHQL(parameterValue);
-			// place holder is something like P{parameter name}
-			String placeHolder = parameterTypeIdentifier + "{" + parameterName + "}";
-			// regular expression looks for P{parameter name} or 'P{parameter name}' (since parameterValue is supposed to be already quoted)
-			String regexp = Pattern.quote(placeHolder) + "|" + Pattern.quote("'" + placeHolder + "'");
-			result = result.replaceAll(regexp, parameterValue);
+			String parameterValue = parameters.get(parameterName)== null?null:parameters.get(parameterName).toString();
+			parameterValue = escapeHQL(parameterValue);
+			result = result.replaceAll(parameterTypeIdentifier + "\\{" + parameterName + "\\}", parameterValue);
 		}		
 		
 		return result;
@@ -240,13 +229,9 @@ public class StringUtils {
 				"ciao {pi} mondo",
 				//"ciao P{p mondo",
 				"P{p1} uguale P{p2}",
-				"'P{p1}' uguale P{p2}",
-				"P{p1} uguale 'P{p2}'",
-				"'P{p1}' uguale P{p2}"
 		};
 		
 		Properties props = new Properties();
-//		Map props = new HashMap();
 		props.put("p1", "P1");
 		props.put("p2", "P2");
 		
@@ -256,12 +241,12 @@ public class StringUtils {
 			Set parameters;
 			try {
 				System.out.println("String: " + replaceParameters(str[i], "P", props));
-//				parameters = getParameters(str[i], "P");
-//				Iterator it = parameters.iterator();
-//				while(it.hasNext()) {
-//					String parameter = (String)it.next();
-//					System.out.println(" - " + parameter);
-//				}
+				parameters = getParameters(str[i], "P");
+				Iterator it = parameters.iterator();
+				while(it.hasNext()) {
+					String parameter = (String)it.next();
+					System.out.println(" - " + parameter);
+				}
 			} catch (IOException e) {
 				//System.err.println("ERROR: malformed string: " + str[i]);
 				e.printStackTrace();
