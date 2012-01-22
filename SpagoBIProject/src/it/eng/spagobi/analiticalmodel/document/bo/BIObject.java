@@ -180,6 +180,14 @@ public class BIObject implements Serializable {
 		this.visible = visible;
 	}
 	
+	public void setVisible(boolean visible) {
+		this.visible = visible? new Integer(1): new Integer(0);
+	}
+	
+	public boolean isVisible() {
+		return (this.visible != null && this.visible.intValue() == 1);
+	}
+	
 	/**
 	 * Gets the engine.
 	 * 
