@@ -434,6 +434,10 @@ public class StringUtilities {
 	public static boolean isEmpty(String str) {
 		return isNull( str ) || "".equals( str.trim() );
 	}
+	
+	public static boolean isNotEmpty(String str) {
+		return !isEmpty(str);
+	}
 
 	public static boolean containsOnlySpaces(String str) {
 		return !isNull( str ) && isEmpty( str );
