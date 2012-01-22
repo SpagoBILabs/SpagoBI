@@ -1,17 +1,17 @@
-/**
- * 
+/*
+ * SpagoBI, the Open Source Business Intelligence suite
+ * © 2005-2015 Engineering Group
+ *
+ * This file is part of SpagoBI. SpagoBI is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version. 
+ * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received
+ * a copy of the GNU Lesser General Public License along with SpagoBI. If not, see: http://www.gnu.org/licenses/.
+ * The complete text of SpagoBI license is included in the COPYING.LESSER file. 
  */
 package it.eng.spagobi.analiticalmodel.document;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
@@ -20,13 +20,26 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
+import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
+import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
+import it.eng.spagobi.tools.objmetadata.dao.ObjMetadataDAOHibImpl;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -37,8 +50,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
  */
 public class AnalyticalModelDocumentManagementAPI {
 	
-	private IBIObjectDAO biObjectDAO;
-	IBIObjectParameterDAO biObjParameterDAO;
+	private IBIObjectDAO documentDAO;
+	private IBIObjectParameterDAO documentParameterDAO;
+	private IObjMetacontentDAO documentMetadataPropertyDAO;
+	private IObjMetadataDAO metadataPropertyDAO;
 	
 	// default for document parameters
 	public static final Integer REQUIRED = 0;
@@ -50,10 +65,18 @@ public class AnalyticalModelDocumentManagementAPI {
 	
 	public AnalyticalModelDocumentManagementAPI(IEngUserProfile userProfile) {
 		try {
-			biObjectDAO = DAOFactory.getBIObjectDAO();
-			biObjectDAO.setUserProfile(userProfile);
+			documentDAO = DAOFactory.getBIObjectDAO();
+			documentDAO.setUserProfile(userProfile);
 			
-			biObjParameterDAO = DAOFactory.getBIObjectParameterDAO();
+			documentParameterDAO = DAOFactory.getBIObjectParameterDAO();
+			documentParameterDAO.setUserProfile(userProfile);
+			
+			documentMetadataPropertyDAO = DAOFactory.getObjMetacontentDAO();
+			documentMetadataPropertyDAO.setUserProfile(userProfile);
+			
+			metadataPropertyDAO = new ObjMetadataDAOHibImpl();
+			metadataPropertyDAO.setUserProfile(userProfile);
+			
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Impossible to instatiate BIObjectDAO", t);
 		}
@@ -81,13 +104,13 @@ public class AnalyticalModelDocumentManagementAPI {
 				if( !isAnExistingDocument(document) ) document = null;
 			} else if(docDescriptor instanceof Integer) {
 				try {
-					document = biObjectDAO.loadBIObjectById((Integer)docDescriptor);
+					document = documentDAO.loadBIObjectById((Integer)docDescriptor);
 				} catch (Throwable t) {
 					throw new SpagoBIRuntimeException("Impossible to load document whose id is equal to [" + docDescriptor + "]", t);
 				}
 			} else if(docDescriptor instanceof String) {
 				try {
-					document = biObjectDAO.loadBIObjectByLabel((String)docDescriptor);
+					document = documentDAO.loadBIObjectByLabel((String)docDescriptor);
 				} catch (Throwable t) {
 					throw new SpagoBIRuntimeException("Impossible to load document whose label is equal to [" + docDescriptor + "]", t);
 				}
@@ -126,7 +149,7 @@ public class AnalyticalModelDocumentManagementAPI {
 					throw new SpagoBIRuntimeException("Analytical driver " + analyticalDriver + " cannot be loaded", t);
 				}
 			} else {
-				throw new SpagoBIRuntimeException("Unable to manage a analytical driver descriptor of type [" + analyticalDriverDescriptor.getClass().getName() + "]");
+				throw new SpagoBIRuntimeException("Unable to manage an analytical driver descriptor of type [" + analyticalDriverDescriptor.getClass().getName() + "]");
 			}
 		} catch (SpagoBIRuntimeException t) {
 			throw t; // nothing to add just re-throw
@@ -135,6 +158,40 @@ public class AnalyticalModelDocumentManagementAPI {
 		}
 		
 		return analyticalDriver;
+	}
+	
+	/**
+	 * Utility method. Returns the metadata property associated to the descriptor object.
+	 * 
+	 * @param matadataPropertyDescriptor Could be the metadata property's id (an object of type Integer)
+ 	 * or its label (an object of type String)
+	 * 
+	 * @return the analytical driver associated to the descriptor object if it exist, null otherwise.
+	 */
+	public ObjMetadata getMetadataProperty(Object matadataPropertyDescriptor) {
+		
+		ObjMetadata metadataProperty;
+		
+		logger.debug("IN");
+		
+		metadataProperty = null;
+		try {
+			if(matadataPropertyDescriptor instanceof Integer) {
+				Integer id = (Integer)matadataPropertyDescriptor;
+				metadataProperty = metadataPropertyDAO.loadObjMetaDataByID(id);
+			} else if (matadataPropertyDescriptor instanceof String){
+				String label = (String)matadataPropertyDescriptor;
+				metadataProperty = metadataPropertyDAO.loadObjMetadataByLabel(label);
+			} else {
+				throw new SpagoBIRuntimeException("Unable to manage a metadata descriptor of type [" + matadataPropertyDescriptor.getClass().getName() + "]");
+			}
+		} catch (SpagoBIRuntimeException t) {
+			throw t; // nothing to add just re-throw
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An unsespected error occured while loading metadata [" + matadataPropertyDescriptor + "]", t);
+		}
+		
+		return metadataProperty;
 	}
 	
 	/**
@@ -169,7 +226,7 @@ public class AnalyticalModelDocumentManagementAPI {
 		
 		if( isAnExistingDocument(document) ){										
 			try {
-				biObjectDAO.modifyBIObject(document, template);
+				documentDAO.modifyBIObject(document, template);
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("Impossible to update object [" + document.getLabel() + "]", t);
 			}
@@ -177,7 +234,7 @@ public class AnalyticalModelDocumentManagementAPI {
 			logger.debug("Document [" + document.getLabel() + "] succesfully updated");
 		} else {
 			try {
-				biObjectDAO.insertBIObject(document, template);
+				documentDAO.insertBIObject(document, template);
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("Impossible to insert object [" + document.getLabel() + "]", t);
 			}
@@ -187,6 +244,107 @@ public class AnalyticalModelDocumentManagementAPI {
 		}
 		
 		return overwrite;
+	}
+	
+
+	/**
+	 * 
+	 * @param documentDescriptor The descriptor of the target document
+	 * @param subObjectId The id of the target subobject (optional). If it is nos specified the metadata properties 
+	 * will be applied to the main object
+	 * @param metadataJSON The metadata properties to add. They are encoded as an array of object like the following one
+	 * <code>
+	 * {
+	 * 	meta_id: NUMBER
+	 * , meta_name: STRING
+	 * , meta_content: STRING
+	 * }
+	 * </code> 
+	 * at least one between attributes meta_id and meta_name must be set.
+	 * 
+	 * TODO use this method to refactor class SaveMetadataAction
+	 * 
+	 */
+	public void saveDocumentMetadataProperties(Object documentDescriptor, Integer subObjectId, JSONArray metadataJSON) {
+		
+		logger.debug("IN");
+		
+		try {
+			Assert.assertNotNull(documentDescriptor, "Input parameter [documentDescriptor] cannot be null");
+			Assert.assertNotNull(metadataJSON, "Input parameter [metadataJSON] cannot be null");
+			
+			
+			BIObject document = getDocument(documentDescriptor);
+			if(document == null) {
+				throw new SpagoBIRuntimeException("Impossible to resolve document [" + documentDescriptor + "]");
+			}
+			
+					
+			for (int i = 0; i < metadataJSON.length(); i++) {					
+				JSONObject documentMatadataPropertyJSON = metadataJSON.getJSONObject(i);
+				
+				Integer metadataPropertyId = null;
+				if(documentMatadataPropertyJSON.has( MetadataJSONSerializer.METADATA_ID )) {
+					metadataPropertyId = documentMatadataPropertyJSON.optInt(MetadataJSONSerializer.METADATA_ID);
+				}
+				String metadataPropertyName = documentMatadataPropertyJSON.optString(MetadataJSONSerializer.NAME);
+				if(metadataPropertyId == null && metadataPropertyName == null) {
+					throw new SpagoBIRuntimeException("Attributes [" + MetadataJSONSerializer.METADATA_ID + "] and [" + MetadataJSONSerializer.NAME + "] cannot be both null");
+				}
+				
+				if(metadataPropertyId == null) {
+					ObjMetadata metadataProperty = getMetadataProperty(metadataPropertyName);
+					if(metadataProperty != null){
+						metadataPropertyId = metadataProperty.getObjMetaId();
+					}
+					
+					if(metadataPropertyId == null) {
+						logger.warn("Impossible to resolve metadata property [" + metadataPropertyName+ "]");
+						continue;
+					}
+				}
+				
+				
+				String documentMetadataPropertyValue = documentMatadataPropertyJSON.getString(MetadataJSONSerializer.TEXT);
+				if(documentMetadataPropertyValue == null) {
+					throw new SpagoBIRuntimeException("Attributes [" + MetadataJSONSerializer.TEXT + "] of metadata property cannot [" + metadataPropertyId + "] be null");
+				}
+				
+		
+				ObjMetacontent documentMatadataProperty = 
+					documentMetadataPropertyDAO.loadObjMetacontent(metadataPropertyId, document.getId(), subObjectId); // TODO manage subobjects
+				
+				if (documentMatadataProperty == null) {
+					logger.debug("ObjMetacontent for metadata id = " + metadataPropertyId + ", biobject id = " + document.getId() + 
+							", subobject id = " + subObjectId + " was not found, creating a new one...");
+					documentMatadataProperty = new ObjMetacontent();
+					documentMatadataProperty.setObjmetaId(metadataPropertyId);
+					documentMatadataProperty.setBiobjId( document.getId() );
+					documentMatadataProperty.setSubobjId( subObjectId );
+					documentMatadataProperty.setContent(documentMetadataPropertyValue.getBytes("UTF-8"));
+					documentMatadataProperty.setCreationDate(new Date());
+					documentMatadataProperty.setLastChangeDate(new Date());
+					
+					documentMetadataPropertyDAO.insertObjMetacontent(documentMatadataProperty);
+				} else {
+					logger.debug("ObjMetacontent for metadata id = " + metadataPropertyId + ", biobject id = " + document.getId() + 
+							", subobject id = " + subObjectId + " was found, it will be modified...");
+					documentMatadataProperty.setContent(documentMetadataPropertyValue.getBytes("UTF-8"));
+					documentMatadataProperty.setLastChangeDate(new Date());
+					
+					documentMetadataPropertyDAO.modifyObjMetacontent(documentMatadataProperty);
+				}
+
+			}	
+	
+			BIObject biObjToIndex = DAOFactory.getBIObjectDAO().loadBIObjectById( document.getId() );
+			LuceneIndexer.updateBiobjInIndex(biObjToIndex, false);
+		
+		} catch (Throwable e) {
+			throw new SpagoBIRuntimeException("Exception occurred while saving metadata", e);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 	
 
@@ -298,7 +456,7 @@ public class AnalyticalModelDocumentManagementAPI {
 			documentParameter.setPriority( priority );
 			
 			try {
-				biObjParameterDAO.insertBIObjectParameter(documentParameter);
+				documentParameterDAO.insertBIObjectParameter(documentParameter);
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("Impossible to save parameter whose label is equal to [" + analyticalDriverDescriptor + "] to document [" + document + "]", t);
 			}
