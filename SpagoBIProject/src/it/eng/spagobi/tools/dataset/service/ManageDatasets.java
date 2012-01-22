@@ -103,15 +103,15 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			datatsetInsert(dsDao, locale);
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_TEST)) {	
 			datatsetTest(dsDao, locale);
-		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_DELETE)) {
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_DELETE)) {
 			datatsetDelete(dsDao, locale);
-		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_DELETE)) {
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_DELETE)) {
 			datatsetVersionDelete(dsDao, locale);
-		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_ALL_VERSIONS_DELETE)) {
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_ALL_VERSIONS_DELETE)) {
 			datatsetAllVersionsDelete(dsDao, locale);
-		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_RESTORE)) {
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_RESTORE)) {
 			datatsetVersionRestore(dsDao, locale);
-		}else if(serviceType == null){
+		} else if(serviceType == null){
 			setUsefulItemsInSession(dsDao, locale);
 		}
 		logger.debug("OUT");

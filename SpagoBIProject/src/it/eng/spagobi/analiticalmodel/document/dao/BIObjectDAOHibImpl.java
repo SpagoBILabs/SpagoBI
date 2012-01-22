@@ -84,11 +84,6 @@ import org.safehaus.uuid.UUIDGenerator;
  */
 public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjectDAO {
 
-
-
-
-
-
 	public static final String COLUMN_LABEL = "LABEL";
 	public static final String COLUMN_NAME = "NAME";
 	public static final String COLUMN_ENGINE = "ENGINE";
@@ -672,7 +667,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			hibBIObject.setSbiObjFuncs(hibObjFunc);	
 
-			// we must close transaction before saving ObjTemplate, since ObjTemplateDAO opens a new transaction and it would fail in Ingres
+			// we must close transaction before saving ObjTemplate, 
+			// since ObjTemplateDAO opens a new transaction and it would fail in Ingres
 			tx.commit();
 			obj.setId(id);
 

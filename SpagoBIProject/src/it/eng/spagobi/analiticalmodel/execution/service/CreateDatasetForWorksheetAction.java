@@ -24,11 +24,11 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.utils.CreationUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -80,7 +80,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	
 	public void doService() {
 		
-		CreationUtilities creationUtilities;
+		DatasetManagementAPI creationUtilities;
 		GuiGenericDataSet datasetBean;
 	
 		
@@ -115,7 +115,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 			logger.trace("Creating the dataset...");
 			Integer datasetId = null;
 			try{		
-				creationUtilities = new CreationUtilities();
+				creationUtilities = new DatasetManagementAPI();
 				datasetId = creationUtilities.creatDataSet(datasetBean);
 				Assert.assertNotNull(datasetId, "Dataset Id cannot be null");
 			} catch (Throwable t) {

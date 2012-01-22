@@ -50,19 +50,25 @@ Sbi.execution.SaveDocumentWindow = function(config) {
 
 	this.services = new Array();
 	
-	var saveDocParams;
+	var saveDocParams= {
+		LIGHT_NAVIGATOR_DISABLED: 'TRUE'
+	};
 	
 	// case coming from createWorksheetObject.jsp
 	if(config.MESSAGE_DET != undefined && config.MESSAGE_DET != null ){
+		saveDocParams.MESSAGE_DET = config.MESSAGE_DET;
+	
 		if(config.dataset_label != undefined && config.dataset_label != null ){
-			saveDocParams = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: config.MESSAGE_DET, dataset_label: config.dataset_label};
+			saveDocParams.dataset_label = config.dataset_label;
 		}
-		else{
-			saveDocParams = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: config.MESSAGE_DET};		
+		
+		if(config.business_metadata != undefined && config.business_metadata != null ){
+			saveDocParams.business_metadata = Ext.util.JSON.encode(config.business_metadata);
+			alert(config.business_metadata.toSource());
 		}
-	}
-	else{
-		saveDocParams = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: 'DOC_SAVE'};		
+		
+	} else{
+		saveDocParams.MESSAGE_DET = 'DOC_SAVE';		
 	}
 	
 

@@ -71,6 +71,7 @@ Ext.onReady(function(){
 	    					'OBJECT_TYPE': 'WORKSHEET',
 	    					//'template': wkDefinition,
 	    					'OBJECT_WK_DEFINITION': wkDefinition,
+	    					'business_metadata': <%= businessMetadata %>,
 	    					'MESSAGE_DET': 'DOC_SAVE_FROM_DATASET',
 	    					'dataset_label': '<%=datasetLabel%>',
 	    					'typeid': 'WORKSHEET' 
