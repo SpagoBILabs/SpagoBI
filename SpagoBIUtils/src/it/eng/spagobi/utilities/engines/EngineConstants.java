@@ -32,6 +32,7 @@ public class EngineConstants {
 	public static final String ENV_DATASET_PROXY = "ENV_DATASET_PROXY";
 	public static final String ENV_DATASOURCE_PROXY = "ENV_DATASOURCE_PROXY";
 	public static final String ENV_DOCUMENT_ID = "DOCUMENT_ID";
+	public static final String ENV_DOCUMENT_LABEL = "DOCUMENT_LABEL";
 	public static final String ENV_CONTENT_SERVICE_PROXY = "CONTENT_SERVICE_PROXY";
 	public static final String ENV_DOCUMENT_EXECUTE_SERVICE_PROXY = "DOCUMENT_EXECUTE_SERVICE_PROXY";
 	public static final String ENV_AUDIT_SERVICE_PROXY = "AUDIT_SERVICE_PROXY";
