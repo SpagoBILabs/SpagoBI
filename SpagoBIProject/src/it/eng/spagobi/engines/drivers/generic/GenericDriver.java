@@ -25,6 +25,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
@@ -42,6 +43,11 @@ import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 public class GenericDriver extends AbstractDriver implements IEngineDriver {
 	
 	private final static String PARAM_NEW_SESSION = "NEW_SESSION";
+    public static final String DOCUMENT_ID = "document";
+    public static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
+
+    public static final String COUNTRY = "country";
+    public static final String LANGUAGE = "language";
 	
 	static private Logger logger = Logger.getLogger(GenericDriver.class);
 	
@@ -106,8 +112,11 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 			map.put("descriptionSubObject", subObjectDetail.getDescription() != null? subObjectDetail.getDescription(): "");
 			map.put("visibilitySubObject", subObjectDetail.getIsPublic().booleanValue()?"Public":"Private" );
 	        map.put("subobjectId", subObjectDetail.getId());
-		
-			
+	        //adds the format date for specific parameters date type
+	        SingletonConfig config = SingletonConfig.getInstance();
+			String formatSB = config.getConfigValue("SPAGOBI.DATE-FORMAT.format");
+			String format = (formatSB == null) ? "dd/MM/yyyy" : formatSB;
+			map.put("dateformat", format);
 		} catch (ClassCastException cce) {
 		    logger.error("The second parameter is not a SubObjectDetail type", cce);
 		}
@@ -138,6 +147,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 		ObjTemplate objtemplate;
 		byte[] template;
 		String documentId;
+		String documentlabel;
 		
 		pars = new Hashtable();
 		try {
@@ -153,8 +163,12 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 			}
 			
 			documentId = biobj.getId().toString();
-			pars.put("document", documentId);
-			logger.debug("Add document parameter:" + documentId);
+			pars.put(DOCUMENT_ID, documentId);
+			logger.debug("Add " + DOCUMENT_ID + " parameter:" + documentId);
+			
+			documentlabel = biobj.getLabel().toString();
+		    pars.put(DOCUMENT_LABEL, documentlabel);
+		    logger.debug("Add " + DOCUMENT_LABEL + " parameter: " + documentlabel);
 	        
 			pars = addBIParameters(biobj, pars);
 			pars = addBIParameterDescriptions(biobj, pars);
@@ -262,15 +276,15 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 		}
 		
 		if(languageSB != null) {
-			map.put("country", (String)languageSB.getAttribute("country"));
-			map.put("language", (String)languageSB.getAttribute("language"));
+			map.put(COUNTRY, (String)languageSB.getAttribute("country"));
+			map.put(LANGUAGE, (String)languageSB.getAttribute("language"));
 			logger.debug("Added parameter: country/" + (String)languageSB.getAttribute("country"));
 			logger.debug("Added parameter: language/" + (String)languageSB.getAttribute("language"));
 		} else {
 			logger.warn("Language " + portalLocale.getLanguage() + " is not supported by SpagoBI");
 			logger.warn("Portal locale will be replaced with the default lacale (country: US; language: en).");
-			map.put("country", "US");
-			map.put("language", "en");
+			map.put(COUNTRY, "US");
+			map.put(LANGUAGE, "en");
 			logger.debug("Added parameter: country/US");
 			logger.debug("Added parameter: language/en");
 		}			
@@ -278,5 +292,6 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 		logger.debug("OUT");
 		return map;
 	}
+
 }
 
