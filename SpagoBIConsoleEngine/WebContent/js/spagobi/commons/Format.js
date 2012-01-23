@@ -242,28 +242,47 @@ Sbi.console.commons.Format = function(){
         	 * p: position (?)
         	 * rec: actual record data
         	 * */
-            return function(v, p, rec){        
+            return function(v, p, rec){               	
                var localThreshold = format.threshold;
-               var localTooltip = format.tooltip;
-               //gets threshold from each rows of the dataset and gets relative tooltip
-               if (format.thresholdType == 'dataset' && format.threshold !== undefined ){            	 
-            	 localThreshold = rec.get(format.nameFieldThreshold);            	      
-            	 if (format.nameTooltipField && format.nameTooltipValue){								
-						var tmpTooltipValue = rec.get(format.nameTooltipValue);
-						if (tmpTooltipValue){
-							var newTooltip = format.tooltip.replace("$F{" + format.nameTooltipField + "}", tmpTooltipValue);
-							localTooltip =  newTooltip;							
-						}
-					}
+               var width = (format.width === undefined) ? "100%" : format.width+"px";
+               var originalTooltip;
+               var localTooltip;
+               var srcIcon;              
+               var nameTooltipFields;
+               var updateFieldsInTooltip = false;
+               
+               if (format.thresholdType == 'dataset' && format.nameFieldThr !== undefined){            	 
+            	   localThreshold = rec.get(format.nameFieldThr);           	      
+	        	   updateFieldsInTooltip = true;
                }
-                               
+               
                if (v > localThreshold) { 
-                  var width = (format.width === undefined) ? "100%" : format.width+"px";                  
-                  return '<div align=center title="'+ localTooltip + '" style="width:'+ width +'"><img  src="../img/ico_point_'+ format.color +'.gif"></img></div>';             
-                } else {  
-                  return '';
-
-                }
+            	   originalTooltip = format.tooltip;
+            	   srcIcon = "../img/ico_point_"+ format.color +".gif";
+            	   nameTooltipFields = format.nameTooltipField;
+               }else {  
+            	   return '';
+               }
+               
+               localTooltip = originalTooltip;
+               
+               //gets threshold from each rows of the dataset and gets relative tooltip
+               if (updateFieldsInTooltip){            	 
+            	 //substitute tooltips fields
+            	 if (nameTooltipFields && nameTooltipFields !== undefined ){	
+            		 for (var e in nameTooltipFields){
+        		    	var elem = nameTooltipFields[e];
+						var tmpTooltipValue = rec.get(elem.value);
+						if (tmpTooltipValue){
+							var newTooltip = originalTooltip.replace("$F{" + elem.name + "}", tmpTooltipValue);
+							originalTooltip =  newTooltip;
+						}
+        		    }
+            		 localTooltip = originalTooltip;
+            	 }            	
+               }
+                
+               return '<div align=center title="'+ localTooltip + '" style="width:'+ width +'"><img src="'+ srcIcon + '"></img></div>';
             };
         }
         
@@ -272,47 +291,59 @@ Sbi.console.commons.Format = function(){
         	 * p: position (?)
         	 * rec: actual record data
         	 * */
-            return function(v, p, rec){     
-               var localThreshold = format.threshold;
-               var localTooltipLower = format.tooltipLower ||  format.tooltip;
-               var localTooltipHigher = format.tooltipHigher ||  format.tooltip;
-               //gets threshold from each rows of the dataset and gets relative tooltip
-               if (format.thresholdType == 'dataset' && format.threshold !== undefined ){            	 
-            	 localThreshold = rec.get(format.nameFieldThreshold);            	      
-            	 if (format.nameTooltipLowerValue && format.nameTooltipLowerField){	
-						var tmpTooltipLowerValue = rec.get(format.nameTooltipLowerValue);
-						if (tmpTooltipLowerValue){
-							var newTooltipLower = format.tooltipLower.replace("$F{" + format.nameTooltipLowerField + "}", tmpTooltipLowerValue);
-							localTooltipLower =  newTooltipLower;
-						}
-            	 }
-            	 if (format.nameTooltipHigherValue && format.nameTooltipHigherField){	
-						var tmpTooltipHigherValue = rec.get(format.nameTooltipHigherValue);
-						if (tmpTooltipHigherValue){
-							var newTooltipHigher = format.tooltipHigher.replace("$F{" + format.nameTooltipHigherField + "}", tmpTooltipHigherValue);
-							localTooltipHigher =  newTooltipHigher;
-						}
-					}
+            return function(v, p, rec){              
+               var localThrFirstInt = format.thresholdFirstInt;
+               var localThrSecondInt = format.thresholdSecondInt;   
+               var width = (format.width === undefined) ? "100%" : format.width+"px";
+               var originalTooltip;
+               var localTooltip;
+               var srcIcon;              
+               var nameTooltipFields;
+               var updateFieldsInTooltip = false;
+               
+               if (format.thresholdType == 'dataset' && format.thresholdFirstInt !== undefined
+            		   && format.thresholdSecondInt !== undefined){            	 
+	        	   localThrFirstInt = rec.get(format.nameFieldThrFirstInt);            	      
+	        	   localThrSecondInt = rec.get(format.nameFieldThrSecondInt);
+	        	   updateFieldsInTooltip = true;
                }
-                               
-               if (v > localThreshold) { 
-                  var width = (format.width === undefined) ? "100%" : format.width+"px";                    
-                  return '<div align=center title="'+ localTooltipHigher + '" style="width:'+ width +'"><img  src="../img/ico_point_red.gif"></img></div>';
-                } else {  
-                    var width = (format.width === undefined) ? "100%" : format.width+"px";                  
-                    return '<div align=center title="'+ localTooltipLower + '" style="width:'+ width +'"><img  src="../img/ico_point_green.gif"></img></div>';  
-                }
+               
+               if (v > localThrSecondInt) { 
+            	   originalTooltip = format.tooltipRed || format.tooltip;
+            	   srcIcon = "../img/ico_point_red.gif";
+            	   nameTooltipFields = format.nameTooltipFieldRed;
+               } else if (v <= localThrSecondInt && v >= localThrFirstInt) { 
+            	   originalTooltip = format.tooltipYellow || format.tooltip;
+            	   srcIcon = "../img/ico_point_yellow.gif";
+            	   nameTooltipFields = format.nameTooltipFieldYellow;
+               } else {  
+            	   originalTooltip = format.tooltipGreen || format.tooltip;
+            	   srcIcon = "../img/ico_point_green.gif";
+            	   nameTooltipFields = format.nameTooltipFieldGreen;
+               }
+               
+               localTooltip = originalTooltip;
+               
+               //gets threshold from each rows of the dataset and gets relative tooltip
+               if (updateFieldsInTooltip){            	 
+            	 //substitute tooltips fields
+            	 if (nameTooltipFields && nameTooltipFields !== undefined ){	
+            		 for (var e in nameTooltipFields){
+        		    	var elem = nameTooltipFields[e];
+						var tmpTooltipValue = rec.get(elem.value);
+						if (tmpTooltipValue){
+							var newTooltip = originalTooltip.replace("$F{" + elem.name + "}", tmpTooltipValue);
+							originalTooltip =  newTooltip;
+						}
+        		    }
+            		 localTooltip = originalTooltip;
+            	 }            	
+               }
+                
+               return '<div align=center title="'+ localTooltip + '" style="width:'+ width +'"><img src="'+ srcIcon + '"></img></div>';
             };
         }
         
 	};
 	
 }();
-
-
-
-
-
-
-
-	
