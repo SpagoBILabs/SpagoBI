@@ -85,15 +85,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
    
    <%
     String movie = ChannelUtilities.getSpagoBIContextName(request);
-    //String movie = renderRequest.getContextPath();
     String relMovie = (String)sbModuleResponse.getAttribute("movie");
     if(relMovie.startsWith("/"))
     	movie = movie + relMovie;
-    else movie = movie + "/" + relMovie;
+    else 
+    	movie = movie + "/" + relMovie;
 	String width = (String)sbModuleResponse.getAttribute("width");
 	String height = (String)sbModuleResponse.getAttribute("height");
 	String dataurl = ChannelUtilities.getSpagoBIContextName(request);
-	//String dataurl = renderRequest.getContextPath();
 	String dataurlRel = (String)sbModuleResponse.getAttribute("dataurl");
 	if(dataurlRel.startsWith("/"))
 		dataurl = dataurl + dataurlRel;
@@ -128,9 +127,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	Set confKeys = confParameters.keySet();
 	Iterator iterConfKeys = confKeys.iterator();
 	while(iterConfKeys.hasNext()) {
-		String name = (String)iterConfKeys.next();	
-		String value = (String)confParameters.get(name);
-		movie += "&" + name + "=" + value; 
+		String name = (String)iterConfKeys.next();
+		if (!name.startsWith("dash__")){
+			String value = (String)confParameters.get(name);
+			movie += "&" + name + "=" + value;
+		}
 	}
 	
 	// for drill parameter append to the movie url  
@@ -148,12 +149,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     
 	//defines dynamic parameters for multichart management (ie. recNum)
 	int numCharts = (confParameters.get("numCharts")==null)? 1:Integer.valueOf((String)confParameters.get("numCharts")).intValue();
+	int numChartsForRow = (confParameters.get("numChartsForRow")==null)? numCharts:Integer.valueOf((String)confParameters.get("numChartsForRow")).intValue();
 	String multichart = (confParameters.get("multichart")==null)?"false":(String)confParameters.get("multichart");
 	String orientation = (confParameters.get("orientation_multichart")==null)?"vertical":(String)confParameters.get("orientation_multichart");
 	String legend = (confParameters.get("legend")==null)?"true":(String)confParameters.get("legend");
 	String displayTitle = (confParameters.get("displayTitleBar")==null)?"false":(String)confParameters.get("displayTitleBar");
-	//int numItems = (confParameters.get("numNeedles")==null)? 1:Integer.valueOf((String)confParameters.get("numNeedles"));
-	
+	String title =(confParameters.get("title")==null)?"":(String)confParameters.get("title");	
 	//defines radius for get dynamic height : only the last chart with the legend uses the total height; the others are riduced.
 	double radiusByWidth = (Integer.valueOf(width).intValue()-2*10)/2;
 	double radiusByHeight = (Integer.valueOf(height).intValue()-2*10)/(1+(1/4));
@@ -165,15 +166,38 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     } else {
 		radius = radiusByHeight;
 	}
-    
-	if (orientation.equalsIgnoreCase("horizontal")){ %>
+   
+	if (orientation.equalsIgnoreCase("horizontal")){
+		dinHeight = String.valueOf(Integer.valueOf(height).intValue()-radius+20);
+	%>
 	<br>
-		<table align="center">
-			<tr>
+		<table align="center" >
+		  <caption><%=title%></caption>
+		  <tr>
 	<%	 
 	}
 	for (int idx = 0; idx < numCharts; idx++){
-		
+		//add the single chart configuration (lowValue, minValue, ...)
+		Map singleDashConf = (Map)confParameters.get("dash__" + idx);
+		if (singleDashConf != null){
+			Set singleConfKeys = singleDashConf.keySet();
+			Iterator iterSingleConfKeys = singleConfKeys.iterator();
+			while(iterSingleConfKeys.hasNext()) {
+				String name = (String)iterSingleConfKeys.next();
+				String value = (String)singleDashConf.get(name);
+				if (movie.indexOf(name) != -1){
+					//replace the old parameter value
+					int posStart = movie.indexOf(name);
+					int posEnd = movie.indexOf("&", posStart);
+					String oldParam = movie.substring(posStart, posEnd);
+					String newParam = name + "=" + value;		
+					movie = movie.replace(oldParam, newParam);
+				}else{
+					//add the new parameter value
+					movie += "&" + name + "=" + value;
+				}
+			}
+		}
 		if (idx==0){
 		 	movie += "&recNumber="+String.valueOf(idx);
 		 	/*if it's a multichart type and it's required the legend  
@@ -209,8 +233,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				}
 		 	}
 		}
-		
-		//System.out.println("dinHeight: " + dinHeight);
  		if (orientation.equalsIgnoreCase("horizontal")){%>
 			<td> 
 	<%  } 
@@ -240,8 +262,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 </div>  
 
 <% if (orientation.equalsIgnoreCase("horizontal")){%>
-  </td>
-<%}
+  </td>  
+<%   //checks for new rows
+	 if (idx == numChartsForRow -1){
+		 numChartsForRow += numChartsForRow; 
+%>
+		
+		</tr>
+		<tr>	
+<%	 } 
+   }
 } //for 
 if (orientation.equalsIgnoreCase("horizontal")){%>
 	</tr>

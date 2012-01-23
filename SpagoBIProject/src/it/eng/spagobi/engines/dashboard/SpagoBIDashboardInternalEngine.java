@@ -44,6 +44,9 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
     private static transient Logger logger = Logger.getLogger(SpagoBIDashboardInternalEngine.class);
 
     public static final String messageBundle = "MessageFiles.component_spagobidashboardIE_messages";
+    private static final String CONF_FROM_DATASET = "CONF_FROM_DATASET";
+    private static final String CONF_FROM_DATASET_VALUE = "CONF_FROM_DATASET_VALUE";
+    private static final String CONF_FROM_TEMPLATE = "CONF_FROM_TEMPLATE";
     
     Map confParameters;
     Map dataParameters;
@@ -121,7 +124,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 		    defineConfParameters(content, profile);
 		    defineLinkParameters(content, serviceRequest);
 		    
-		    // set information into reponse
+		    // set information into response
 		    response.setAttribute(ObjectsTreeConstants.SESSION_OBJ_ATTR, obj);
 		    response.setAttribute("movie", movie);
 		    response.setAttribute("dataurl", dataurl);
@@ -216,6 +219,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 		
 		boolean isDsConfDefined = false;
 		String confDataset = "";
+		String confType = "";
 	
 		// get all the parameters for dash configuration
 	    confParameters = new LinkedHashMap();
@@ -229,8 +233,9 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 			String valueParam = replaceParsInString((String) param.getAttribute("value"));	
 			
 			confParameters.put(nameParam, valueParam);
-	    }		
-	    //defines if configuration is by dataset
+	    }	
+	    
+	    //defines if configuration is by specific dataset
 	    if(confParameters.get("confdataset")!=null && !(((String)confParameters.get("confdataset")).equalsIgnoreCase("") )){	
 			confDataset=(String)confParameters.get("confdataset");
 			isDsConfDefined=true;
@@ -238,8 +243,24 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 		else {
 			isDsConfDefined=false;
 		}
-	    //if the configuration is by dataset reading it and compiles attributes with its values.
-		if(isDsConfDefined){
+	    
+	    //gets the configuration type (by template, specific dataset or value's dataset
+	    if(confParameters.get("conftype")!=null && !(((String)confParameters.get("conftype")).equalsIgnoreCase("") )){	
+			confType=(String)confParameters.get("conftype");
+		}
+		else {
+			//force the value for compatibility to previous version
+			if (isDsConfDefined){
+				confType = CONF_FROM_DATASET; 
+			}
+			else
+				confType = CONF_FROM_TEMPLATE;
+		}
+	    // if the configuration is defined into template goes out
+	    if (confType.equalsIgnoreCase(CONF_FROM_TEMPLATE)) return;
+
+	    //if the configuration is defined into specific dataset reading it and compiles attributes with its values.
+		if(confType.equalsIgnoreCase(CONF_FROM_DATASET) && isDsConfDefined){
 			logger.debug("configuration defined in dataset "+confDataset);
 			
 			String parameters=DataSetAccessFunctions.getDataSetResultFromLabel(profile, confDataset, dataParameters);
@@ -250,66 +271,44 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 				logger.error("error in reading configuration lov");
 				throw new Exception("error in reading configuration lov");
 			}
-			confParameters = new LinkedHashMap();
-			SourceBean sbRow=(SourceBean)sourceBeanResult.getAttribute("ROW");
-			String parValue = "";
-			parValue = (sbRow.getAttribute("minValue")!=null)?(String)sbRow.getAttribute("minValue"):(String)sbRow.getAttribute("MINVALUE");
-			confParameters.put("minValue", parValue);
-			parValue = (sbRow.getAttribute("maxValue")!=null)?(String)sbRow.getAttribute("maxValue"):(String)sbRow.getAttribute("MAXVALUE");
-			confParameters.put("maxValue", parValue);
-			parValue = (sbRow.getAttribute("lowValue")!=null)?(String)sbRow.getAttribute("lowValue"):(String)sbRow.getAttribute("LOWVALUE");
-			confParameters.put("lowValue", parValue);
-			parValue = (sbRow.getAttribute("highValue")!=null)?(String)sbRow.getAttribute("highValue"):(String)sbRow.getAttribute("HIGHVALUE");
-			confParameters.put("highValue", parValue);
-			parValue = (sbRow.getAttribute("refreshRate")!=null)?(String)sbRow.getAttribute("refreshRate"):(String)sbRow.getAttribute("REFRESHRATE");
-			confParameters.put("refreshRate", parValue);
-			parValue = (sbRow.getAttribute("multichart")!=null)?(String)sbRow.getAttribute("multichart"):(String)sbRow.getAttribute("MULTICHART");
-			confParameters.put("multichart", parValue);
-			parValue = (sbRow.getAttribute("numCharts")!=null)?(String)sbRow.getAttribute("numCharts"):(String)sbRow.getAttribute("NUMCHARTS");
-			confParameters.put("numCharts", parValue);
-			parValue = (sbRow.getAttribute("orientation_multichart")!=null)?(String)sbRow.getAttribute("orientation_multichart"):(String)sbRow.getAttribute("ORIENTATION_MULTICHART");
-			confParameters.put("orientation_multichart", parValue);
-			//defining title and legend variables			
-			parValue = (sbRow.getAttribute("displayTitleBar")!=null)?(String)sbRow.getAttribute("displayTitleBar"):(String)sbRow.getAttribute("DISPLAYTITLEBAR");
-			confParameters.put("displayTitleBar", parValue);
-			parValue = (sbRow.getAttribute("title")!=null)?(String)sbRow.getAttribute("title"):(String)sbRow.getAttribute("TITLE");
-			confParameters.put("title", parValue);
-			parValue = (sbRow.getAttribute("colorTitle")!=null)?(String)sbRow.getAttribute("colorTitle"):(String)sbRow.getAttribute("COLORTITLE");
-			confParameters.put("colorTitle", parValue);
-			parValue = (sbRow.getAttribute("sizeTitle")!=null)?(String)sbRow.getAttribute("sizeTitle"):(String)sbRow.getAttribute("SIZETITLE");
-			confParameters.put("sizeTitle", parValue);
-			parValue = (sbRow.getAttribute("fontTitle")!=null)?(String)sbRow.getAttribute("fontTitle"):(String)sbRow.getAttribute("FONTTITLE");
-			confParameters.put("fontTitle", parValue);
-			parValue = (sbRow.getAttribute("colorTitleSerie")!=null)?(String)sbRow.getAttribute("colorTitleSerie"):(String)sbRow.getAttribute("COLORTITLESERIE");
-			confParameters.put("colocolorTitleSerierTitle", parValue);
-			parValue = (sbRow.getAttribute("sizeTitleSerie")!=null)?(String)sbRow.getAttribute("sizeTitleSerie"):(String)sbRow.getAttribute("SIZETITLESERIE");
-			confParameters.put("sizeTitleSerie", parValue);
-			parValue = (sbRow.getAttribute("fontTitleSerie")!=null)?(String)sbRow.getAttribute("fontTitleSerie"):(String)sbRow.getAttribute("FONTTITLESERIE");
-			confParameters.put("fontTitleSerie", parValue);
-			parValue = (sbRow.getAttribute("legend")!=null)?(String)sbRow.getAttribute("legend"):(String)sbRow.getAttribute("LEGEND");
-			confParameters.put("legend", parValue);
-			
-			parValue = (sbRow.getAttribute("numNeedles")!=null)?(String)sbRow.getAttribute("numNeedles"):(String)sbRow.getAttribute("NUMNEEDLES");
-			confParameters.put("numNeedles",parValue);
-			int numNeedles = 0;
-			try{
-				numNeedles = Integer.parseInt(parValue);
-			}catch(Exception e){
-				logger.error("error in reading configuration dataset. Number of needles is invalid." );
-				throw new Exception("error in reading configuration dataset. Number of needles is invalid.");
+			SourceBean sbRow = (SourceBean)sourceBeanResult.getAttribute("ROW");
+			if (sbRow == null){
+				logger.error("The specific configuration dataset '" + confDataset +"' doesn't return rows. Get configuration by template. ATTENTION: the widget could not be created correctly!");
+				//throw new EMFUserError(EMFErrorSeverity.ERROR, "1001", messageBundle);
+			}else{
+				addDashboardConfigValues(1, sbRow);
+				addGenericConfigValues(sbRow);
 			}
+		}else if(confType.equalsIgnoreCase(CONF_FROM_DATASET_VALUE)){
+			logger.debug("configuration defined in dataset of data values (dynamic case) " + confDataset);
 			
-			for (int i=0 ; i < numNeedles; i++){	
-				parValue = (sbRow.getAttribute("colorNeedle"+(i+1))!=null)?(String)sbRow.getAttribute("colorNeedle"+(i+1)):(String)sbRow.getAttribute("COLORNEEDLE"+(i+1));
-				confParameters.put("colorNeedle"+(i+1),parValue);
-				parValue = (sbRow.getAttribute("value"+(i+1))!=null)?(String)sbRow.getAttribute("value"+(i+1)):(String)sbRow.getAttribute("VALUE"+(i+1));
-				confParameters.put("value"+(i+1), parValue);
+			String datasetID =(String)dataParameters.get("datasetid");
+			String series = DataSetAccessFunctions.getDataSetResultFromId(profile, datasetID, dataParameters);
+			SourceBean sourceBeanResult = null;
+			try {
+				sourceBeanResult = SourceBean.fromXMLString(series);
+			} catch (SourceBeanException e) {
+				logger.error("error in reading configuration lov");
+				throw new Exception("error in reading configuration lov");
 			}
+			List<SourceBean> sbRows = (List)sourceBeanResult.getAttributeAsList("ROW");
+			//defines the number of the dashboards from the number or rows (1 row = 1 serie)
+			int numCharts = sbRows.size();
+			confParameters.put("numCharts", String.valueOf(numCharts));
+			for(int i=0; i<sbRows.size(); i++){
+				SourceBean sbRow = (SourceBean)sbRows.get(i);
+				if (sbRow == null){
+					logger.error("The configuration getted by value's dataset with identifier '" + datasetID +"' doesn't return rows. \n Get configuration by template. ATTENTION: the widget could not be created correctly!");
+					break;
+				}else{
+					addDashboardConfigValues(i, sbRow);
+				}
+			}			
 		}
 		else
 			logger.debug("Configuration set in template");
 		
-		logger.debug("out");
+		logger.debug("OUT");
 	}
 	
     /**
@@ -322,6 +321,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 	 * @return A chart that displays a value as a dial.
 	 */
 	private void defineDataParameters(SourceBean content, BIObject obj, IEngUserProfile profile) throws Exception {
+		logger.debug("IN");
 		SourceBean dataSB = (SourceBean) content.getAttribute("DATA");
 	    List dataAttrsList = dataSB.getContainedSourceBeanAttributes();
 	    Iterator dataAttrsIter = dataAttrsList.iterator();
@@ -394,6 +394,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 				}
 			}	
 		}
+		logger.debug("OUT");
 	}
 	
     /**
@@ -498,6 +499,105 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 		
 		logger.debug("OUT");
 		return strRet;
+	}
+	
+	private void addDashboardConfigValues(int idx, SourceBean sbRow) throws Exception{
+		LinkedHashMap singleConfParameters = new LinkedHashMap();
+		String parValue = "";
+		parValue = (sbRow.getAttribute("minValue")!=null)?(String)sbRow.getAttribute("minValue"):(String)sbRow.getAttribute("MINVALUE");
+		if (parValue != null) singleConfParameters.put("minValue", parValue);
+		parValue = (sbRow.getAttribute("maxValue")!=null)?(String)sbRow.getAttribute("maxValue"):(String)sbRow.getAttribute("MAXVALUE");
+		if (parValue != null) singleConfParameters.put("maxValue", parValue);
+		parValue = (sbRow.getAttribute("lowValue")!=null)?(String)sbRow.getAttribute("lowValue"):(String)sbRow.getAttribute("LOWVALUE");
+		if (parValue != null) singleConfParameters.put("lowValue", parValue);
+		parValue = (sbRow.getAttribute("highValue")!=null)?(String)sbRow.getAttribute("highValue"):(String)sbRow.getAttribute("HIGHVALUE");
+		if (parValue != null) singleConfParameters.put("highValue", parValue);
+		parValue = (sbRow.getAttribute("highValue")!=null)?(String)sbRow.getAttribute("highValue"):(String)sbRow.getAttribute("HIGHVALUE");
+		if (parValue != null) singleConfParameters.put("colorArc1", parValue);
+		parValue = (sbRow.getAttribute("colorArc1")!=null)?(String)sbRow.getAttribute("colorArc1"):(String)sbRow.getAttribute("COLORARC1");
+		if (parValue != null) singleConfParameters.put("colorArc1", parValue);
+		parValue = (sbRow.getAttribute("colorArc2")!=null)?(String)sbRow.getAttribute("colorArc2"):(String)sbRow.getAttribute("COLORARC2");
+		if (parValue != null) singleConfParameters.put("colorArc2", parValue);		
+		parValue = (sbRow.getAttribute("colorArc3")!=null)?(String)sbRow.getAttribute("colorArc3"):(String)sbRow.getAttribute("COLORARC3");
+		if (parValue != null) singleConfParameters.put("colorArc3", parValue);
+
+		//defining needles configuration
+		parValue = (sbRow.getAttribute("numNeedles")!=null)?(String)sbRow.getAttribute("numNeedles"):(String)sbRow.getAttribute("NUMNEEDLES");
+		singleConfParameters.put("numNeedles",parValue);
+	
+		int numNeedles = 0;
+		try{
+			numNeedles = Integer.parseInt(parValue);
+		}catch(Exception e){
+			logger.error("error in reading configuration dataset. Number of needles is invalid." );
+			throw new Exception("error in reading configuration dataset. Number of needles is invalid.");
+		}
+		
+		for (int i=0 ; i < numNeedles; i++){				
+			parValue = (sbRow.getAttribute("colorNeedle"+(i+1))!=null)?(String)sbRow.getAttribute("colorNeedle"+(i+1)):(String)sbRow.getAttribute("COLORNEEDLE"+(i+1));
+			if (parValue != null) singleConfParameters.put("colorNeedle"+(i+1),parValue);
+			parValue = (sbRow.getAttribute("value"+(i+1))!=null)?(String)sbRow.getAttribute("value"+(i+1)):(String)sbRow.getAttribute("VALUE"+(i+1));
+			if (parValue != null) singleConfParameters.put("value"+(i+1), parValue);
+		}
+		confParameters.put("dash__" + idx, singleConfParameters);
+	}
+	
+	private void addGenericConfigValues(SourceBean sbRow) throws Exception{
+		String parValue = "";
+		if (!confParameters.containsKey("multichart")){
+			parValue = (sbRow.getAttribute("multichart")!=null)?(String)sbRow.getAttribute("multichart"):(String)sbRow.getAttribute("MULTICHART");
+			if (parValue != null) confParameters.put("multichart", parValue);
+		}
+		if (!confParameters.containsKey("numCharts")){
+			parValue = (sbRow.getAttribute("numCharts")!=null)?(String)sbRow.getAttribute("numCharts"):(String)sbRow.getAttribute("NUMCHARTS");
+			if (parValue != null) confParameters.put("numCharts", parValue);
+		}
+		if (!confParameters.containsKey("orientation_multichart")){
+			parValue = (sbRow.getAttribute("orientation_multichart")!=null)?(String)sbRow.getAttribute("orientation_multichart"):(String)sbRow.getAttribute("ORIENTATION_MULTICHART");
+			if (parValue != null) confParameters.put("orientation_multichart", parValue);
+		}
+		if (!confParameters.containsKey("numChartsForRow")){
+			parValue = (sbRow.getAttribute("numChartsForRow")!=null)?(String)sbRow.getAttribute("numChartsForRow"):(String)sbRow.getAttribute("NUMCHARTSFORROW");
+			if (parValue != null) confParameters.put("numChartsForRow", parValue);
+		}
+
+		//defining title and legend variables			
+		if (!confParameters.containsKey("displayTitleBar")){			
+			parValue = (sbRow.getAttribute("displayTitleBar")!=null)?(String)sbRow.getAttribute("displayTitleBar"):(String)sbRow.getAttribute("DISPLAYTITLEBAR");
+			if (parValue != null) confParameters.put("displayTitleBar", parValue);
+		}
+		if (!confParameters.containsKey("title")){
+			parValue = (sbRow.getAttribute("title")!=null)?(String)sbRow.getAttribute("title"):(String)sbRow.getAttribute("TITLE");
+			if (parValue != null) confParameters.put("title", parValue);
+		}
+		if (!confParameters.containsKey("colorTitle")){
+			parValue = (sbRow.getAttribute("colorTitle")!=null)?(String)sbRow.getAttribute("colorTitle"):(String)sbRow.getAttribute("COLORTITLE");
+			if (parValue != null) confParameters.put("colorTitle", parValue);
+		}
+		if (!confParameters.containsKey("sizeTitle")){
+			parValue = (sbRow.getAttribute("sizeTitle")!=null)?(String)sbRow.getAttribute("sizeTitle"):(String)sbRow.getAttribute("SIZETITLE");
+			if (parValue != null) confParameters.put("sizeTitle", parValue);
+		}
+		if (!confParameters.containsKey("fontTitle")){
+			parValue = (sbRow.getAttribute("fontTitle")!=null)?(String)sbRow.getAttribute("fontTitle"):(String)sbRow.getAttribute("FONTTITLE");
+			if (parValue != null) confParameters.put("fontTitle", parValue);
+		}
+		if (!confParameters.containsKey("colorTitleSerie")){
+			parValue = (sbRow.getAttribute("colorTitleSerie")!=null)?(String)sbRow.getAttribute("colorTitleSerie"):(String)sbRow.getAttribute("COLORTITLESERIE");
+			if (parValue != null) confParameters.put("colorTitleSerie", parValue);
+		}
+		if (!confParameters.containsKey("sizeTitleSerie")){
+			parValue = (sbRow.getAttribute("sizeTitleSerie")!=null)?(String)sbRow.getAttribute("sizeTitleSerie"):(String)sbRow.getAttribute("SIZETITLESERIE");
+			if (parValue != null) confParameters.put("sizeTitleSerie", parValue);
+		}
+		if (!confParameters.containsKey("fontTitleSerie")){
+			parValue = (sbRow.getAttribute("fontTitleSerie")!=null)?(String)sbRow.getAttribute("fontTitleSerie"):(String)sbRow.getAttribute("FONTTITLESERIE");
+			if (parValue != null) confParameters.put("fontTitleSerie", parValue);
+		}
+		if (!confParameters.containsKey("legend")){
+			parValue = (sbRow.getAttribute("legend")!=null)?(String)sbRow.getAttribute("legend"):(String)sbRow.getAttribute("LEGEND");
+			if (parValue != null) confParameters.put("legend", parValue);
+		}
 	}
 	
 	/**
