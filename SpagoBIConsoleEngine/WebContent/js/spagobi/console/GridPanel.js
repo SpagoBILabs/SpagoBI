@@ -44,7 +44,7 @@
   * - Andrea Gioia (andrea.gioia@eng.it)
   * - Antonella Giachino (antonella.giachino@eng.it)
   */
-
+ 
 Ext.ns("Sbi.console");
 
 Sbi.console.GridPanel = function(config) {
@@ -267,9 +267,17 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 				separator = '&';
 			}
 			if (this.executionContext.EXECUTION_CONTEXT !== undefined && 
-					this.executionContext.EXECUTION_CONTEXT === 'DOCUMENT_COMPOSITION'){
-				//document composition context
-				parent.sendMessage(msg, 'crossnavigation'); 
+					this.executionContext.EXECUTION_CONTEXT === 'DOCUMENT_COMPOSITION'){				
+				//document composition context				
+				if (params.typeCross !== undefined && params.typeCross == 'INTERNAL'){
+					//internal cross	
+					var frameName = "iframe_" + this.executionContext.DOCUMENT_LABEL;
+		    		parent.execCrossNavigation(frameName, msg.label ,  msg.parameters );
+		    		
+				}else{
+					//external cross
+					parent.sendMessage(msg, 'crossnavigation');
+				}
 			}else{
 				sendMessage(msg, 'crossnavigation');
 			}
@@ -747,9 +755,11 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			var idxFieldThreshold = 0;
 			var idxFieldColumn = 0;
 			var pointChartConfig = {};		
-			var nameFieldThreshold = "";
-			var nameTooltipField = "";
+			var nameFieldThr = "";
+			var nameFieldThrFirstInt = "";
+			var nameFieldThrSecondInt = "";
 			var tooltip = "";
+			var fieldsMap = {};
 				
 			for(var p = 0, len = this.inlineCharts.length; p < len; p++) {
 				minValue = 0;
@@ -760,49 +770,61 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 						var tmpRec = this.store.getAt(i);
 						var tmpValue = tmpRec.get(this.store.getFieldNameByAlias(this.inlineCharts[p].column));						
 						if ((this.inlineCharts[p].type == 'point' || this.inlineCharts[p].type == 'semaphore') &&
-							 this.inlineCharts[p].thresholdType == 'dataset' && this.inlineCharts[p].threshold !== undefined){
-							pointChartConfig = Ext.apply({}, this.inlineCharts[p] || {});
-							metaIsChanged = true;
-							idxFieldColumn = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].column));
-							idxFieldThreshold = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].threshold));
-							fieldsMap[pointChartConfig.threshold] = idxFieldThreshold;						
-							if (headerToHide.indexOf(this.inlineCharts[p].threshold)<0) headerToHide.push(this.inlineCharts[p].threshold); //hides the column with the thresholds
-							nameFieldThreshold = this.store.getFieldNameByAlias(this.inlineCharts[p].threshold);
-							pointChartConfig.nameFieldThreshold = nameFieldThreshold;
-							//check the tooltip, before try to international it, then substitutes the field value
-							pointChartConfig.tooltip =  Sbi.locale.getLNValue(pointChartConfig.tooltip);
-							pointChartConfig.tooltipLower =  Sbi.locale.getLNValue(pointChartConfig.tooltipLower);
-							pointChartConfig.tooltipHigher =  Sbi.locale.getLNValue(pointChartConfig.tooltipHigher);
-							if ((pointChartConfig.tooltip && pointChartConfig.tooltip.indexOf("$F{") !== -1) ||
-								(pointChartConfig.tooltipLower && pointChartConfig.tooltipLower.indexOf("$F{") !== -1) ||
-							    (pointChartConfig.tooltipHigher && pointChartConfig.tooltipHigher.indexOf("$F{") !== -1)){
-								pointChartConfig = this.getTooltipFromField(pointChartConfig, fieldsMap, headerToHide );
-							}
+							 this.inlineCharts[p].thresholdType == 'dataset'){ 
+							if(this.inlineCharts[p].threshold !== undefined || this.inlineCharts[p].thresholdFirstInt !== undefined || 
+								  this.inlineCharts[p].thresholdSecondInt !== undefined) {
+								//gets thresholds value dinamically (from dataset)
+								pointChartConfig = Ext.apply({}, this.inlineCharts[p] || {});
+								//internationalize tooltips
+								pointChartConfig.tooltip =  Sbi.locale.getLNValue(pointChartConfig.tooltip);
+								pointChartConfig.tooltipGreen =  Sbi.locale.getLNValue(pointChartConfig.tooltipGreen);
+								pointChartConfig.tooltipYellow =  Sbi.locale.getLNValue(pointChartConfig.tooltipYellow);
+								pointChartConfig.tooltipRed =  Sbi.locale.getLNValue(pointChartConfig.tooltipRed);
+								metaIsChanged = true;
+								idxFieldColumn = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].column));
+								if (this.inlineCharts[p].threshold !== undefined){
+									nameFieldThr = this.getNameFieldForThreshold(this.inlineCharts[p].threshold, fieldsMap, headerToHide);
+									pointChartConfig.nameFieldThr = nameFieldThr;
+								}
+								if (this.inlineCharts[p].thresholdFirstInt !== undefined){
+									nameFieldThrFirstInt = this.getNameFieldForThreshold(this.inlineCharts[p].thresholdFirstInt, fieldsMap, headerToHide);
+									pointChartConfig.nameFieldThrFirstInt = nameFieldThrFirstInt;
+								}
+								if (this.inlineCharts[p].thresholdSecondInt !== undefined){
+									nameFieldThrSecondInt = this.getNameFieldForThreshold(this.inlineCharts[p].thresholdSecondInt, fieldsMap, headerToHide);
+									pointChartConfig.nameFieldThrSecondInt = nameFieldThrSecondInt;
+								}
+								//check the tooltip, before try to international it, then substitutes the field value														
+								pointChartConfig = this.getTooltipFromFields(pointChartConfig, fieldsMap, headerToHide );
 
-							var renderer = this.createInlineChartRenderer(pointChartConfig);
-							if( renderer !== null ) {
-								fields[idxFieldColumn].renderer = renderer;
-					    		tmpMeta.fields[idxFieldColumn] = Ext.apply({}, fields[idxFieldColumn]);
+								var renderer = this.createInlineChartRenderer(pointChartConfig);
+								if( renderer !== null ) {
+									fields[idxFieldColumn].renderer = renderer;
+						    		tmpMeta.fields[idxFieldColumn] = Ext.apply({}, fields[idxFieldColumn]);
+								}
 							}
 						}else if ((this.inlineCharts[p].type == 'point' || this.inlineCharts[p].type == 'semaphore') && 
-								   this.inlineCharts[p].thresholdType == 'env' && this.inlineCharts[p].threshold !== undefined ){
-							idxFieldColumn = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].column));
-							pointChartConfig = Ext.apply({}, this.inlineCharts[p] || {});
-							metaIsChanged = true;
-							pointChartConfig.threshold = this.executionContext[this.inlineCharts[p].threshold];
-							//check the tooltip, before try to international it, then substitutes the parameter value 
-							pointChartConfig.tooltip =  Sbi.locale.getLNValue(pointChartConfig.tooltip);
-							pointChartConfig.tooltipLower =  Sbi.locale.getLNValue(pointChartConfig.tooltipLower);
-							pointChartConfig.tooltipHigher =  Sbi.locale.getLNValue(pointChartConfig.tooltipHigher);
-							if ((pointChartConfig.tooltip && pointChartConfig.tooltip.indexOf("$P{") !== -1) ||
-								(pointChartConfig.tooltipLower && pointChartConfig.tooltipLower.indexOf("$P{") !== -1) ||
-								(pointChartConfig.tooltipHigher && pointChartConfig.tooltipHigher.indexOf("$P{") !== -1)){
+								   this.inlineCharts[p].thresholdType == 'env'){
+							if(this.inlineCharts[p].threshold !== undefined || this.inlineCharts[p].thresholdFirstInt !== undefined || 
+									  this.inlineCharts[p].thresholdSecondInt !== undefined) {
+								idxFieldColumn = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].column));
+								pointChartConfig = Ext.apply({}, this.inlineCharts[p] || {});
+								//internationalize tooltips
+								pointChartConfig.tooltip =  Sbi.locale.getLNValue(pointChartConfig.tooltip);
+								pointChartConfig.tooltipGreen =  Sbi.locale.getLNValue(pointChartConfig.tooltipGreen);
+								pointChartConfig.tooltipYellow =  Sbi.locale.getLNValue(pointChartConfig.tooltipYellow);
+								pointChartConfig.tooltipRed =  Sbi.locale.getLNValue(pointChartConfig.tooltipRed);
+								metaIsChanged = true;
+								pointChartConfig.threshold = this.executionContext[this.inlineCharts[p].threshold];
+								pointChartConfig.thresholdFirstInt = this.executionContext[this.inlineCharts[p].thresholdFirstInt];
+								pointChartConfig.thresholdSecondInt = this.executionContext[this.inlineCharts[p].thresholdSecondInt];
 								pointChartConfig = this.getTooltipFromEnv(pointChartConfig);
-							}							
-	  						var renderer = this.createInlineChartRenderer(pointChartConfig);
-							if( renderer !== null ) {
-								fields[idxFieldColumn].renderer = renderer;
-					    		tmpMeta.fields[idxFieldColumn] = Ext.apply({}, fields[idxFieldColumn]);
+								
+		  						var renderer = this.createInlineChartRenderer(pointChartConfig);
+								if( renderer !== null ) {
+									fields[idxFieldColumn].renderer = renderer;
+						    		tmpMeta.fields[idxFieldColumn] = Ext.apply({}, fields[idxFieldColumn]);
+								}
 							}
 			            }else if (this.inlineCharts[p].type == 'bar'){
 							if (tmpValue !== undefined){
@@ -1102,89 +1124,112 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		return toReturn;
 	}
 	
-	, getTooltipFromField: function(chartConfig, fieldsMap, headerToHide){
-		var startFieldTooltip;
-		var lenFieldTooltip;
-		var nameTooltipField;
-		var idxFieldTooltip;
-	
+	, getTooltipFromFields: function(chartConfig, fieldsMap, headerToHide){			
+		var tooltipToCheck;
+		
+		if ((chartConfig.tooltip && chartConfig.tooltip.indexOf("$F{") === -1) &&
+			(chartConfig.tooltipGreen && chartConfig.tooltipGreen.indexOf("$F{") === -1) &&
+			(chartConfig.tooltipYellow && chartConfig.tooltipYellow.indexOf("$F{") === -1) &&
+			(chartConfig.tooltipRed && chartConfig.tooltipRed.indexOf("$F{") === -1)){
+			return chartConfig;
+		}
+		
 		if (chartConfig.tooltip !== undefined){
-			startFieldTooltip = chartConfig.tooltip.indexOf("$F{")+3;
-			lenFieldTooltip = chartConfig.tooltip.indexOf("}")-startFieldTooltip;
-			nameTooltipField =  chartConfig.tooltip.substr(startFieldTooltip,lenFieldTooltip);
-			idxFieldTooltip = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(nameTooltipField));
-			fieldsMap[nameTooltipField] = idxFieldTooltip;					
-			if (headerToHide.indexOf(nameTooltipField)<0) headerToHide.push(nameTooltipField); //hides the column with the tooltip
-			chartConfig.nameTooltipField = nameTooltipField;
-			chartConfig.nameTooltipValue = this.store.getFieldNameByAlias(nameTooltipField);
+			chartConfig.nameTooltipField = this.getFieldsConfiguration(chartConfig.tooltip, fieldsMap, headerToHide);
 		}
-		if (chartConfig.tooltipLower !== undefined){
-			startFieldTooltip = chartConfig.tooltipLower.indexOf("$F{")+3;
-			lenFieldTooltip = chartConfig.tooltipLower.indexOf("}")-startFieldTooltip;
-			nameTooltipField =  chartConfig.tooltipLower.substr(startFieldTooltip,lenFieldTooltip);
-			idxFieldTooltip = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(nameTooltipField));
-			fieldsMap[nameTooltipField] = idxFieldTooltip;					
-			if (headerToHide.indexOf(nameTooltipField)<0) headerToHide.push(nameTooltipField); //hides the column with the tooltip
-			chartConfig.nameTooltipLowerField = nameTooltipField;
-			chartConfig.nameTooltipLowerValue = this.store.getFieldNameByAlias(nameTooltipField);
+		if (chartConfig.tooltipGreen !== undefined){
+			chartConfig.nameTooltipFieldGreen = this.getFieldsConfiguration(chartConfig.tooltipGreen, fieldsMap, headerToHide);
 		}
-		if (chartConfig.tooltipHigher !== undefined){
-			startFieldTooltip = chartConfig.tooltipHigher.indexOf("$F{")+3;
-			lenFieldTooltip = chartConfig.tooltipHigher.indexOf("}")-startFieldTooltip;
-			nameTooltipField =  chartConfig.tooltipHigher.substr(startFieldTooltip,lenFieldTooltip);
-			idxFieldTooltip = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(nameTooltipField));
-			fieldsMap[nameTooltipField] = idxFieldTooltip;					
-			if (headerToHide.indexOf(nameTooltipField)<0) headerToHide.push(nameTooltipField); //hides the column with the tooltip
-			chartConfig.nameTooltipHigherField = nameTooltipField;
-			chartConfig.nameTooltipHigherValue = this.store.getFieldNameByAlias(nameTooltipField);
+		if (chartConfig.tooltipYellow !== undefined){
+			chartConfig.nameTooltipFieldYellow = this.getFieldsConfiguration(chartConfig.tooltipYellow, fieldsMap, headerToHide);
 		}
+		if (chartConfig.tooltipRed !== undefined){
+			chartConfig.nameTooltipFieldRed = this.getFieldsConfiguration(chartConfig.tooltipRed, fieldsMap, headerToHide);
+		}
+				
 		return chartConfig;
 	}
 	
-	, getTooltipFromEnv: function(chartConfig){
+	, getFieldsConfiguration: function(tooltipToCheck, fieldsMap, headerToHide){
+		var startFieldTooltip;
+		var lenFieldTooltip;
+		var nameTooltipField;
+		var idxFieldTooltip;	
+		var arNameTooltipField;
+		var elTooltipField;
+		
+		arNameTooltipField = new Array();								
+		while (tooltipToCheck.indexOf("$F{") !== -1){
+			elTooltipField = {};
+			startFieldTooltip = tooltipToCheck.indexOf("$F{")+3;
+			lenFieldTooltip = tooltipToCheck.indexOf("}")-startFieldTooltip;
+			nameTooltipField =  tooltipToCheck.substr(startFieldTooltip,lenFieldTooltip);
+			idxFieldTooltip = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(nameTooltipField));
+			fieldsMap[nameTooltipField] = idxFieldTooltip;					
+			if (headerToHide.indexOf(nameTooltipField)<0) headerToHide.push(nameTooltipField); //hides the column with the tooltip
+			
+			elTooltipField.name = nameTooltipField;
+			elTooltipField.value = this.store.getFieldNameByAlias(nameTooltipField);
+			arNameTooltipField.push(elTooltipField);
+			
+			tooltipToCheck = tooltipToCheck.replace("$F{" + nameTooltipField + "}", "");
+		}
+		return arNameTooltipField;
+	}
+	
+	, getTooltipFromEnv: function(chartConfig){			
+		var tooltipToCheck;
+		
+		if ((chartConfig.tooltip && chartConfig.tooltip.indexOf("$P{") === -1) &&
+			(chartConfig.tooltipGreen && chartConfig.tooltipGreen.indexOf("$P{") === -1) &&
+			(chartConfig.tooltipYellow && chartConfig.tooltipYellow.indexOf("$P{") === -1) &&
+			(chartConfig.tooltipRed && chartConfig.tooltipRed.indexOf("$P{") === -1)){
+			return chartConfig;
+		}
+		
+		if (chartConfig.tooltip !== undefined){
+			chartConfig.tooltip = this.getVarConfiguration(chartConfig.tooltip);
+		}
+		if (chartConfig.tooltipGreen !== undefined){
+			chartConfig.tooltipGreen = this.getVarConfiguration(chartConfig.tooltipGreen);
+		}
+		if (chartConfig.tooltipYellow !== undefined){
+			chartConfig.tooltipYellow = this.getVarConfiguration(chartConfig.tooltipYellow);
+		}
+		if (chartConfig.tooltipRed !== undefined){
+			chartConfig.tooltipRed = this.getVarConfiguration(chartConfig.tooltipRed);
+		}
+				
+		return chartConfig;
+	}
+	
+	, getVarConfiguration: function(tooltipToCheck){
 		var startFieldTooltip;
 		var lenFieldTooltip;
 		var nameTooltipField;
 	
-		if (chartConfig.tooltip !== undefined){
-			startFieldTooltip = chartConfig.tooltip.indexOf("$P{")+3;
-			lenFieldTooltip = chartConfig.tooltip.indexOf("}")-startFieldTooltip;
-			nameTooltipField =  chartConfig.tooltip.substr(startFieldTooltip,lenFieldTooltip);																
+		while (tooltipToCheck.indexOf("$P{") !== -1){
+			startFieldTooltip = tooltipToCheck.indexOf("$P{")+3;
+			lenFieldTooltip = tooltipToCheck.indexOf("}")-startFieldTooltip;
+			nameTooltipField =  tooltipToCheck.substr(startFieldTooltip,lenFieldTooltip);																
 			if (nameTooltipField){
 					var tmpTooltipValue = this.executionContext[nameTooltipField];
 					if (tmpTooltipValue){
-						var newTooltip = chartConfig.tooltip.replace("$P{" + nameTooltipField + "}", tmpTooltipValue);
-						chartConfig.tooltip = newTooltip;
+						var newTooltip = tooltipToCheck.replace("$P{" + nameTooltipField + "}", tmpTooltipValue);
+						tooltipToCheck = newTooltip;
 					}
 			}
 		}
 		
-		if (chartConfig.tooltipLower !== undefined){
-			startFieldTooltip = chartConfig.tooltipLower.indexOf("$P{")+3;
-			lenFieldTooltip = chartConfig.tooltipLower.indexOf("}")-startFieldTooltip;
-			nameTooltipField =  chartConfig.tooltipLower.substr(startFieldTooltip,lenFieldTooltip);																
-			if (nameTooltipField){
-					var tmpTooltipValue = this.executionContext[nameTooltipField];
-					if (tmpTooltipValue){
-						var newTooltip = chartConfig.tooltipLower.replace("$P{" + nameTooltipField + "}", tmpTooltipValue);
-						chartConfig.tooltipLower = newTooltip;
-					}
-			}
-		}
-		
-		if (chartConfig.tooltipHigher !== undefined){
-			startFieldTooltip = chartConfig.tooltipHigher.indexOf("$P{")+3;
-			lenFieldTooltip = chartConfig.tooltipHigher.indexOf("}")-startFieldTooltip;
-			nameTooltipField =  chartConfig.tooltipHigher.substr(startFieldTooltip,lenFieldTooltip);																
-			if (nameTooltipField){
-					var tmpTooltipValue = this.executionContext[nameTooltipField];
-					if (tmpTooltipValue){
-						var newTooltip = chartConfig.tooltipHigher.replace("$P{" + nameTooltipField + "}", tmpTooltipValue);
-						chartConfig.tooltipHigher = newTooltip;
-					}
-			}
-		}
-		return chartConfig;
+		return tooltipToCheck;
+	}
+	
+	, getNameFieldForThreshold: function(labelThr, fieldsMap, headerToHide){
+		idxFieldThreshold = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(labelThr));
+		fieldsMap[labelThr] = idxFieldThreshold;
+		if (headerToHide.indexOf(labelThr)<0) headerToHide.push(labelThr); //hides the column with the configuration
+		nameFieldThreshold = this.store.getFieldNameByAlias(labelThr);
+		return nameFieldThreshold;
 	}
 	
 	, loadStoreForHeaders: function(){
@@ -1222,7 +1267,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		if (this.storeLabels.alias2FieldMetaMap == null){
 			this.storeLabels.alias2FieldMetaMap = this.columnModelLabels;
 		}
-}
+	}
 	, changeLabelsByDatatset: function(){
 
 		var tmpMeta = this.tempColumnModel;
@@ -1291,18 +1336,13 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	, findByLocaleAndCode: function(idxLocale, locale, idxCode, code) {
 		for (var count = 0; count < this.storeLabels.getCount(); count++) {			
 			var aRecord = this.storeLabels.getAt(count);
-			//alert("aRecord.get(idxLocale): " + aRecord.get(idxLocale) + " - locale: " + locale);
-			//alert("aRecord.get(idxCode): " + aRecord.get(idxCode)+ " - code: " + code);
 			if (aRecord.get(idxLocale) == locale  && aRecord.get(idxCode) == code ) {
 				alert("return: " + count);
 					return count;
 			}
-		}
-		
+		}		
 		return -1;
 	}
-	
-
 	
 	/**
 	 * Opens the loading mask 
@@ -1312,14 +1352,16 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
     	if (this.loadMask == null) {    		
     		this.loadMask = new Ext.LoadMask('GridPanel', {msg: "Loading.."});
     	}
-    	this.loadMask.show();
+    	if (this.loadMask){
+    		this.loadMask.show();
+    	}
     }
 
 	/**
 	 * Closes the loading mask
 	*/
 	, hideMask: function() {
-    	if (this.loadMask != null) {	
+    	if (this.loadMask && this.loadMask != null) {	
     		this.loadMask.hide();
     	}
 	} 

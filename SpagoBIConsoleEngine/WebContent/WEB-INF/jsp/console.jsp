@@ -51,6 +51,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	ConsoleEngineInstance consoleEngineInstance;	
 	UserProfile profile;
 	Locale locale;	
+	String documentLabel;
 	
 	String engineContext;
 	String engineServerHost;
@@ -66,6 +67,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	
 	profile = (UserProfile)consoleEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);	
 	locale = (Locale)consoleEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
+	documentLabel = (String)consoleEngineInstance.getEnv().get(EngineConstants.ENV_DOCUMENT_LABEL);
 	    
 	// used in remote ServiceRegistry
     spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
@@ -145,6 +147,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 			var params = {
 				SBI_EXECUTION_ID: <%=executionId %>
 				, LOCALE: '<%=locale%>'
+				, DOCUMENT_LABEL: '<%=documentLabel%>'
 				, LIGHT_NAVIGATOR_DISABLED: 'TRUE'
 			};
 		
@@ -171,7 +174,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 			
 
 			// javascript-side user profile object
-	        Ext.ns("Sbi.user");
+	         Ext.ns("Sbi.user");
 	        Sbi.user.userId = "<%= profile.getUserId() %>";
 	        Sbi.user.locale = "<%= locale%>";
 
@@ -179,9 +182,9 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	       <% Iterator it = analyticalDrivers.keySet().iterator();
 			  while(it.hasNext()) {
 				String parameterName = (String)it.next();
-				String parameterValue = (String)analyticalDrivers.get(parameterName);
-				//if (parameterValue.indexOf("'")>=0) parameterValue = parameterValue.replaceAll("'","");
 				System.out.println("parameterName: " + parameterName);
+				String parameterValue = (String)analyticalDrivers.get(parameterName);
+				//if (parameterValue.indexOf("'")>=0) parameterValue = parameterValue.replaceAll("'","");				
 				System.out.println("parameterValue: " + parameterValue);
 				if (parameterValue != null && !parameterValue.equals("")){
 					if  (parameterValue.startsWith("'")){

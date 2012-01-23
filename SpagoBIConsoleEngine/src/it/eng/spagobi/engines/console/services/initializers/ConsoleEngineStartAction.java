@@ -36,6 +36,7 @@ public class ConsoleEngineStartAction extends AbstractEngineStartAction {
 	// OUTPUT PARAMETERS
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
+	public static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
 	public static final String PROXY_DATASET = "PROXY_DATASET";
 	
 	// SESSION PARAMETRES	
@@ -45,6 +46,7 @@ public class ConsoleEngineStartAction extends AbstractEngineStartAction {
     public static transient Logger logger = Logger.getLogger(ConsoleEngineStartAction.class);
     
     private static final String ENGINE_NAME = "SpagoBIConsoleEngine";
+    private String documentLabel;
 	
 
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse)  {
@@ -61,6 +63,7 @@ public class ConsoleEngineStartAction extends AbstractEngineStartAction {
 			logger.debug("User Id: " + getUserId());
 			logger.debug("Audit Id: " + getAuditId());
 			logger.debug("Document Id: " + getDocumentId());
+			logger.debug("Document Label: " + getDocumentLabel());
 			logger.debug("Template: " + getTemplateAsString());
 						
 			if(getAuditServiceProxy() != null) {
@@ -91,7 +94,9 @@ public class ConsoleEngineStartAction extends AbstractEngineStartAction {
 			logger.debug("Engine instance succesfully created");
 			
 			locale = (Locale)consoleEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
-			
+			documentLabel = getDocumentLabel();
+			logger.debug("Parameter [" + DOCUMENT_LABEL + "] is equal to [" + documentLabel + "]");
+			setAttribute(DOCUMENT_LABEL, documentLabel);
 			setAttributeInSession( ENGINE_INSTANCE, consoleEngineInstance);		
 			setAttribute(ENGINE_INSTANCE, consoleEngineInstance);
 			
@@ -122,4 +127,23 @@ public class ConsoleEngineStartAction extends AbstractEngineStartAction {
 			logger.debug("OUT");
 		}
 	}
+	
+	 /**
+	  * Gets the document label.
+	  * 
+	  * @return the document label
+	  */
+	 private String getDocumentLabel() {
+		 if(documentLabel == null) {
+
+			 logger.debug("IN");
+
+			 documentLabel = getAttributeAsString( DOCUMENT_LABEL );			 
+			 logger.debug("Document Label parameter received: documentLabel = [" + documentLabel + "]");
+			 
+			 logger.debug("OUT");
+		 }
+
+		 return documentLabel;
+	 }
 }
