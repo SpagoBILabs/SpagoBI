@@ -31,6 +31,10 @@ var asStylePanels = new Object();
 var asExportTypes = new Object();
 var numDocs = 0;
 
+//constants to manage multivalue params
+var DEFAULT_SEPARATOR = "%3B" //";";
+var DEFAULT_OPEN_BLOCK_MARKER = "%7B" //"{";
+var DEFAULT_CLOSE_BLOCK_MARKER = "%7D" //"}";
 
 function setDocs(pUrls, pTitle, pZoom, pExport, pExportTypes, pDocTypes){
 	for (i in pUrls)
@@ -73,6 +77,7 @@ function execCrossNavigation(windowName, label, parameters) {
 	var labelDocClicked = windowName.substring(baseName.length);
 	var tmpUrl = "";
 	var extDocsExecute = [];
+	
 	
 	for(var docMaster in asUrls){
 		var reload = false;
@@ -165,6 +170,9 @@ function execCrossNavigation(windowName, label, parameters) {
 													tmpOldValue = tmpOldValue.substring(tmpOldValue.indexOf("=")+1);
 													//if ( tmpNewValue != ""){													
 													    if (tmpNewValue == "%") tmpNewValue = "%25";
+													    if (tmpOldValue.indexOf(DEFAULT_OPEN_BLOCK_MARKER + DEFAULT_SEPARATOR + DEFAULT_OPEN_BLOCK_MARKER) != -1){
+													    	tmpNewValue = setMultivalueFormat(tmpNewValue, tmpOldValue);														    
+													    }
 														finalUrl = finalUrl.replace(tmpOldLabel+"="+tmpOldValue, tmpNewLabel+"="+tmpNewValue);
 														newUrl[0] = finalUrl;
 														tmpOldValue = "";
@@ -196,6 +204,9 @@ function execCrossNavigation(windowName, label, parameters) {
 														tmpOldValue = tmpOldValue.substring(tmpOldValue.indexOf("=")+1);
 														if (tmpOldValue != "" && tmpNewValue != ""){
 														    if (tmpNewValue == "%") tmpNewValue = "%25";
+														    if (tmpOldValue.indexOf(DEFAULT_OPEN_BLOCK_MARKER + DEFAULT_SEPARATOR + DEFAULT_OPEN_BLOCK_MARKER) != -1){
+														    	tmpNewValue = setMultivalueFormat(tmpNewValue, tmpOldValue);														    
+														    }
 															finalUrl = finalUrl.replace(sbiLabelPar+"="+tmpOldValue, sbiLabelPar+"="+tmpNewValue);															
 															newUrl[0] = finalUrl;
 															tmpOldValue = "";
@@ -305,12 +316,20 @@ function getNewValues(newLabel, paramsNewValues){
    			tmpValues.substring(tmpValues.indexOf("=")+1) !== ""){
    			var singleValue = tmpValues.substring(tmpValues.indexOf("=")+1);
    			newValues += (newValues=="")?"":",";
-			//if the value is a string puts the ' , otherwise not
-			//newValues +=  (isNaN(parseFloat(singleValue)))? "'"+singleValue+"'" : parseFloat(singleValue);
    			newValues +=  singleValue;
    		}
    	}
    	return newValues;
+}
+
+function setMultivalueFormat(newValue, oldValue){
+	//set the format =%7B%3B%newValue%7DSTRING%7D; the type (ie. STRING) is manteined by the original parameter value
+	var typePar = oldValue.substring(oldValue.indexOf(DEFAULT_CLOSE_BLOCK_MARKER)+3 , oldValue.length-3 );
+	RE = new RegExp(",", "ig");
+	var value = newValue.replace(RE,DEFAULT_SEPARATOR);
+	value = DEFAULT_OPEN_BLOCK_MARKER + DEFAULT_SEPARATOR + DEFAULT_OPEN_BLOCK_MARKER + 
+		    value + DEFAULT_CLOSE_BLOCK_MARKER + typePar + DEFAULT_CLOSE_BLOCK_MARKER;
+	return value;
 }
 
 //create panels for each document
