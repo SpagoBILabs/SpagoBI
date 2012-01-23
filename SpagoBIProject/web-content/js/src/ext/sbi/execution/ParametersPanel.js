@@ -286,7 +286,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				this.columns[field.columnNo].add( field );
 
 			}
-			else if(parameters[i].valuesCount !== undefined && parameters[i].valuesCount == 1) {
+			else if(parameters[i].valuesCount !== undefined && parameters[i].valuesCount == 1 && parameters[i].type !== 'DATE') {
 				field.isTransient = true;
 				field.setValue(parameters[i].value);
 				
@@ -651,8 +651,17 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		baseConfig.labelStyle = labelStyle;
 		
 		//if(p.dependencies.length > 0) baseConfig.fieldClass = 'background-color:yellow;';
+		if(p.type === 'DATE' && p.selectionType !== 'MAN_IN') {		
+			baseConfig.format = Sbi.config.localizedDateFormat;
+			
+			field = new Ext.form.DateField(baseConfig);
+			
+			if(p.value !== undefined && p.value !== null) {	
+				var dt = Sbi.commons.Format.date(p.value, Sbi.config.clientServerDateFormat);
+				field.setValue(p.value);				
+			}
 		
-		if(p.selectionType === 'COMBOBOX') {
+		} else if(p.selectionType === 'COMBOBOX') {
 			var baseParams = {};
 			Ext.apply(baseParams, executionInstance);
 			Ext.apply(baseParams, {
