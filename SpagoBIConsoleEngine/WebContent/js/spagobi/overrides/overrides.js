@@ -13,7 +13,13 @@ Ext.override(Ext.grid.GridView, {
                 '{value}<img class="x-grid3-sort-icon" src="', Ext.BLANK_IMAGE_URL, '" />',
                 '</div></td>'
         );
-    	
+    	//enable the text selection of the grid cell (IE)
+    	this.templates.cell = new Ext.Template(
+    	                    '<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} {css}" style="{style}" tabIndex="0" {cellAttr}>',
+    	                    '<div class="x-grid3-cell-inner x-grid3-col-{id}" {attr}>{value}</div>',
+    	                    "</td>"
+    	);
+
     	this.initTemplates();
     	this.initData(grid.store, grid.colModel);
     	this.initUI(grid);

@@ -24,3 +24,10 @@ http://extjs.com/forum/showthread.php?p=282928#post282928
 .x-grid3 table {
     table-layout:fixed;
 }
+/* enable the cell selection in grid  panels on FF and Chrome */ 
+.x-grid3-row td
+{
+    -moz-user-select:text;
+    -khtml-user-select:text;
+}
+/*
