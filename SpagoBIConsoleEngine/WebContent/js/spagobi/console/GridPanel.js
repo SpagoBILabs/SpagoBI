@@ -1009,11 +1009,15 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		}
 		
 		if (inlineActionColumnConfig.type === 'crossnav'){
-			// for default
-			inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['cross_detail'];
-			if (inlineActionColumnConfig.config){			
-				if (inlineActionColumnConfig.config.target === 'self') {					
-					inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['popup_detail'];	
+			if (inlineActionColumnConfig.imgSrc !== undefined){
+				inlineActionColumnConfig.imgSrc = '../img/' + inlineActionColumnConfig.imgSrc;
+			}else{
+				// for default
+				inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['cross_detail'];
+				if (inlineActionColumnConfig.config){			
+					if (inlineActionColumnConfig.config.target === 'self') {					
+						inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['popup_detail'];	
+					}
 				}
 			}
 			inlineActionColumnConfig.handler = this.execCrossNav;
@@ -1213,12 +1217,13 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			lenFieldTooltip = tooltipToCheck.indexOf("}")-startFieldTooltip;
 			nameTooltipField =  tooltipToCheck.substr(startFieldTooltip,lenFieldTooltip);																
 			if (nameTooltipField){
-					var tmpTooltipValue = this.executionContext[nameTooltipField];
+					var tmpTooltipValue = this.executionContext[nameTooltipField] || " ";
 					if (tmpTooltipValue){
 						var newTooltip = tooltipToCheck.replace("$P{" + nameTooltipField + "}", tmpTooltipValue);
 						tooltipToCheck = newTooltip;
 					}
-			}
+			}else 
+				break;
 		}
 		
 		return tooltipToCheck;
