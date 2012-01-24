@@ -759,7 +759,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			var nameFieldThrFirstInt = "";
 			var nameFieldThrSecondInt = "";
 			var tooltip = "";
-			var fieldsMap = {};
+			//var fieldsMap = {};
 				
 			for(var p = 0, len = this.inlineCharts.length; p < len; p++) {
 				minValue = 0;
