@@ -869,7 +869,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		tmpMeta.fields = new Array(fields.length);
 		
 		for(i = 0; i < fields.length; i++) {
-			if( (typeof fields[i]) === 'string') {
+			if( (typeof fields[i]) === 'string') {				
 				fields[i] = {name: fields[i]};
 			}
 			
@@ -893,7 +893,11 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		    
 			if(tmpMeta.fields[i].type) {
 				var tmpType = tmpMeta.fields[i].type;					
-				tmpMeta.fields[i].renderer  =  Sbi.locale.formatters[tmpType];			   
+				if (tmpType == 'date'){
+					tmpMeta.fields[i].renderer  =  Sbi.locale.formatters[tmpType];
+				}else{							
+					tmpMeta.fields[i].renderer = this.renderTooltip.createDelegate(this);
+				}
 			}
 			   
 			if(tmpMeta.fields[i].subtype && tmpMeta.fields[i].subtype === 'html') {
@@ -1370,4 +1374,13 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
     		this.loadMask.hide();
     	}
 	} 
+	
+	,renderTooltip:function(val, cell, record) {	
+		// get data
+		var data = record.data;
+		 
+		// return markup
+		return '<div qtip="' + val +'">' + val + '</div>';
+		}
+	,
 });
