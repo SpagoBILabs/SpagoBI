@@ -31,6 +31,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.batik.transcoder.TranscoderException;
@@ -124,15 +125,15 @@ public class WorkSheetXLSExporter {
 				}	
 			}
 		} catch (Exception e) {
-			logger.debug("The optional attribute visibleselectfields is not valued. No visible select field selected.. All fields will be taken..");
+			logger.debug("The optional attribute visible select fields is not valued. No visible select field selected.. All fields will be taken..");
 		}
 		return visibleSelectFields;
 	}
 	
 	public void designTableInWorksheet(Sheet sheet,Workbook wb, CreationHelper createHelper, 
-			  IDataStore dataStore, int startRow) throws SerializationException, JSONException{
+			  IDataStore dataStore, int startRow, Locale locale) throws SerializationException, JSONException{
 		
-		QbeXLSExporter exp = new QbeXLSExporter(dataStore);
+		QbeXLSExporter exp = new QbeXLSExporter(dataStore, locale);
 		exp.fillSheet(sheet, wb, createHelper, startRow);
 	}
 

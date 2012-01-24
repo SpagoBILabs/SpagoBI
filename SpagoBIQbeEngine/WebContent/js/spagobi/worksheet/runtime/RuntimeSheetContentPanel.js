@@ -136,7 +136,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 				style:'width: 95%'
 			}
 		}
-		
+
     	var table =  new Sbi.formviewer.DataStorePanel(Ext.apply({
     		split: true,
     		collapsible: false,
@@ -155,7 +155,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
     		services: {
     			loadDataStore: Sbi.config.serviceRegistry.getServiceUrl({
     				serviceName: 'EXECUTE_WORKSHEET_QUERY_ACTION'
-    				, baseParams: {sheetName : this.sheetName}//baseParams: {'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)}
+    				, baseParams: {sheetName : this.sheetName, fieldsOptions:  Ext.encode(c.fieldsOptions)}//baseParams: {'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)}
     			})
     		}
     	},ieFixVar));
@@ -213,7 +213,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	        	break;
 		}
 
-		
 		this.show();
 	}
 

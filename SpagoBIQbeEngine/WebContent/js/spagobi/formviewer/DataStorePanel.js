@@ -138,6 +138,8 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 	
 	, initStore: function(config) {
 		
+		var numberFormatterFunction;
+		
 		this.proxy = new Ext.data.HttpProxy({
 	           url: this.services['loadDataStore']
 	           , timeout : 300000
@@ -167,12 +169,19 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 						   }
 					   }
 					   var f = Ext.apply( Sbi.locale.formats[t], formatDataSet);
-					   meta.fields[i].renderer = Sbi.qbe.commons.Format.numberRenderer(f);
+					   numberFormatterFunction = Sbi.qbe.commons.Format.numberRenderer(f);
 				   } else {
-					   meta.fields[i].renderer = Sbi.locale.formatters[t];
-				   }			   
+					   numberFormatterFunction = Sbi.locale.formatters[t];
+				   }	
+
+				   
+				   if (meta.fields[i].measureScaleFactor && (t === 'float' || t ==='int')) { // format is applied only to numbers
+					  this.getScaleFunction(numberFormatterFunction,meta.fields[i]);
+				   }else{
+					   meta.fields[i].renderer = numberFormatterFunction;
+				   }
 			   }
-			   
+	
 			   if(meta.fields[i].subtype && meta.fields[i].subtype === 'html') {
 				   meta.fields[i].renderer  =  Sbi.locale.formatters['html'];
 			   }
@@ -192,13 +201,43 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 		   meta.fields[0] = new Ext.grid.RowNumberer();
 		   this.grid.getColumnModel().setConfig(meta.fields);
 
-
 			//this.colorSegmentColumn();
 			
 		}, this);
 		
 		this.store.on('load', this.onDataStoreLoaded, this);
 		
+	}
+	
+	, getScaleFunction: function(numberFormatterFunction, field) {
+		
+		var scaleFactor = field.measureScaleFactor;
+		
+		if(scaleFactor!=null && scaleFactor!=null && scaleFactor!='NONE'){
+			var scaleFactorNumber;
+			switch (scaleFactor){
+				case 'K':
+					scaleFactorNumber=1000;
+					break;
+				case 'M':
+					scaleFactorNumber=1000000;
+					break;
+				case 'G':
+					scaleFactorNumber=1000000000;
+					break;
+				default:
+					scaleFactorNumber=1;
+			}
+		
+			field.renderer = function(v){
+				 var scaledValue = v/scaleFactorNumber;
+				 return numberFormatterFunction.call(this,scaledValue);	
+			}
+			
+			field.header = field.header +' '+ LN('sbi.worksheet.config.options.measurepresentation.'+scaleFactor);
+		}else{
+			field.renderer =numberFormatterFunction;
+		}
 	}
 
 	, initPanel: function(config) {
@@ -211,7 +250,6 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 			}
 		]);
 		
-
 		
 		this.exportTBar = new Ext.Toolbar({
 			items: [

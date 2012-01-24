@@ -145,6 +145,10 @@ Sbi.crosstab.core.CrossTab = function(config) {
     	}, this);
     }
     
+    if(this.measuresMetadata==undefined || this.measuresMetadata==null){
+    	this.measuresMetadata = new Array();
+    }
+    
     Sbi.crosstab.core.CrossTab.superclass.constructor.call(this, c);
 };
 	
@@ -223,12 +227,15 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     					} else {
     						measureName = this.columnHeader[this.columnHeader.length-1][j].name;
     					}
+    					
     					var measureMetadata = this.getMeasureMetadata(measureName);
     					// in case of calculated fields made with measures, measureMetadata is null!!!
-    					var datatype = measureMetadata !== null ? measureMetadata.type : 'float';
+    					var datatype =  measureMetadata.type;
     					var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
     					// get also type of the cell (data, CF = calculated fields, partialsum)
     					var celltype = this.getCellType(this.rowHeader[this.rowHeader.length-1][i], this.columnHeader[this.columnHeader.length-1][j]);
+    					var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
+    					
     					// put measure value and metadata into an array
     					var a = new Array();
     					a.push(entries[i][j]);
@@ -236,6 +243,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     					a.push(datatype);
     					a.push(format);
     					a.push(celltype);
+    					a.push(scaleFactor);
 	    				toReturn.push(a);
 	    				visiblej++;
     				}   				
@@ -260,12 +268,21 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	}
 
 	, getMeasureMetadata: function (measureName) {
+		//alert(measureName);
 		for (var i = 0; i < this.measuresMetadata.length; i++) {
 			if (this.measuresMetadata[i].name === measureName) {
+				this.measuresMetadata[i].scaleFactor = (this.getMeasureScaleFactor(measureName).value);
 				return this.measuresMetadata[i];
 			}
 		}
-		return null;
+		var measureMeta = {
+				type: 'float',
+				format: null,
+				scaleFactor: (this.getMeasureScaleFactor(measureName).value),
+				name: measureName
+		}
+		this.measuresMetadata.push(measureMeta);
+		return measureMeta;
 	}
 	    	
 	//returns the number of the visible (not hidden) rows		
@@ -524,8 +541,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 
      //Adds the listeners to the header
     , setHeaderListener: function(header, noMenu){
-    	
-
     	if(noMenu){
 	    	header.addListener({render: function(theHeader) {
 				//color the rows/columns when the mouse enter in the header
@@ -1030,7 +1045,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		    headerGroup.push(p);
 
 		}
-	//	alert('finito headerGroup');
 		return headerGroup;
 	}
 	
@@ -1160,9 +1174,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
                 rows: tableRows
             }
         });
-    	
 
-    	
     	
    	    this.entriesPanel = this.getEntries(true, true);
    		var rowForView = this.getRowsForView();
@@ -1175,6 +1187,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    			
    			var emptypanelTopLeftItems = new Array();
    			
+   			//empty rows
    	    	this.emptypanelTopLeftTableFirstPanels = new Ext.Panel({ 
 	    			colspan:  (this.rowHeader.length-1), 
 	    			rowspan:  1,
@@ -1201,7 +1214,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 
    	    	this.emptypanelTopLeftTablePanels = new Array();
    	    	
-   	    	for(var col = 0; col<this.rowHeader.length-1; col++){
+   	    	for(var col = 0; col<this.rowHeadersTitle.length; col++){
 
    	    		this.emptypanelTopLeftTablePanels.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, name:this.rowHeadersTitle[col], thisDimension:1, horizontal:false, level:1, columnWidth: this.columnWidth, titleHeader: true}));
    	    		if(col==0){
@@ -1210,6 +1223,18 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    	    			this.emptypanelTopLeftTablePanels[col].cellCls = ' crosstab-table-empty-top-left-panel-bottomcells ';
    	    		}
 
+   	    		emptypanelTopLeftItems.push(this.emptypanelTopLeftTablePanels[col]);
+   	    	}
+   	    	
+   	    	//add the measures title if the measures are on row
+   	    	if(this.misuresOnRow){
+   	    		this.emptypanelTopLeftTablePanels.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, name:LN('sbi.crosstab.crosstabdefinitionpanel.measures'), thisDimension:1, horizontal:false, level:1, columnWidth: this.columnWidth, titleHeader: true}));
+   	    		if(this.rowHeadersTitle.length=0){
+   	    			this.emptypanelTopLeftTablePanels[0].cellCls = ' crosstab-table-empty-top-left-panel-leftmostcell ';
+   	    		}else{
+   	    			this.emptypanelTopLeftTablePanels[col].cellCls = ' crosstab-table-empty-top-left-panel-bottomcells ';
+   	    		}
+   	    		
    	    		emptypanelTopLeftItems.push(this.emptypanelTopLeftTablePanels[col]);
    	    	}
    	    	
@@ -1264,6 +1289,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	             {name: 'datatype'},
     	             {name: 'format'},
     	             {name: 'celltype'},
+    	             {name: 'scaleFactor'},
     	             {name: 'percent'}
     	    ]
     	});
@@ -1329,7 +1355,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	    , ' style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left;" >'
     	    , '  <div class="x-panel-bwrap"> '
     	    , '    <div style="width:'+(this.columnWidth-2)+'px; overflow:hidden; padding-top:'+(this.rowHeight-4-this.fontSize)/2+'px;font-size:'+this.fontSize+'px;">'
-    	    , '    {[this.format(values.name, values.datatype, values.format, values.percent,'+this.percentageFontSize+' )]}'
+    	    , '    {[this.format(values.name, values.datatype, values.format, values.percent,'+this.percentageFontSize+', values.scaleFactor )]}'
     	    , '    </div> '
     	    , '  </div>'
     	    , '</div>'
@@ -1427,7 +1453,8 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     }
     
     
-    , format: function(value, type, format, percent, percentFontSize) {
+    , format: function(value, type, format, percent, percentFontSize, scaleFactor) {
+    	
     	if(value=='NA'){
     		return value;
     	}
@@ -1436,8 +1463,14 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			var valueObj = value;
 			if (type == 'int') {
 				valueObj = parseInt(value);
+				if(scaleFactor!=undefined && scaleFactor!=null){
+					valueObj = valueObj/scaleFactor;
+				}
 			} else if (type == 'float') {
 				valueObj = parseFloat(value);
+				if(scaleFactor!=undefined && scaleFactor!=null){
+					valueObj = valueObj/scaleFactor;
+				}
 			} else if (type == 'date') {
 				valueObj = Date.parseDate(value, format);
 			} else if (type == 'timestamp') {
@@ -2147,7 +2180,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		        for(var j=0; j<headers[i].length; j++){
 
 		        	bounds = this.getHeaderBounds(headers[i][j]);
-		        	//alert(headers[i][j].name+" "+bounds.toSource());
 			    	measuresNames = new Array();
 			    	measuresPosition = new Array();
 
@@ -2378,7 +2410,8 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	             'divId',
     	             {name: 'datatype'},
     	             {name: 'format'},
-    	             {name: 'celltype'}
+    	             {name: 'celltype'},
+    	             {name: 'scaleFactor'}
     	    ]
     	});
     	var sumColumnsStore = new Array();
@@ -2393,6 +2426,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   		
 	   		for(var j=0; j<sumColumns.length; j++){
 	   			superSumColumns=0;
+	   			
+				var measureMetadata = this.getMeasureMetadata(this.rowHeader[this.rowHeader.length-1][j].name);
+				//var datatype =  measureMetadata.type;
+				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
+				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
+			
 	   			for(var i=0; i<sumColumns[j].length; i++){
 			
 		   			//in the total sum we not consider calculated fields and partial sums
@@ -2401,13 +2440,13 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   						superSumColumns = (superSumColumns+parseFloat(sumColumns[j][i]));
 	   				}
 	   				
-	   				
 	   				var a = new Array();
 					a.push(sumColumns[j][i]);
 					a.push('[sumC'+j+','+i+']');
 					a.push('float');
 					a.push(null);
 					a.push('totals');
+					a.push(scaleFactor);
 					sumColumnsStore.push(a);
 	   			}
 	   			superSumColumnsArray.push(superSumColumns);
@@ -2415,14 +2454,21 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   		dataViewHeight = (this.rowHeight)*sumColumns.length;
 	   		this.buildSuperTotalPanel(superSumColumnsArray, tpl, dataViewHeight, this.columnWidth);
 		}else{
-	   		
+	   				
 	   		for(var j=0; j<sumColumns.length; j++){
+	   			
+				var measureMetadata = this.getMeasureMetadata(this.columnHeader[this.columnHeader.length-1][j].name);
+				//var datatype =  measureMetadata.type;
+				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
+				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
+	   			
 	   			var a = new Array();
 	   			a.push(sumColumns[j]);
 	   			a.push('[sumC'+j+']');
 				a.push('float');
 				a.push(null);
 				a.push('totals');
+				a.push(scaleFactor);
 	   			sumColumnsStore.push(a);
 	   		}
 	   		dataViewHeight = (this.rowHeight);
@@ -2459,7 +2505,8 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	             'divId',
     	             {name: 'datatype'},
     	             {name: 'format'},
-    	             {name: 'celltype'}
+    	             {name: 'celltype'},
+    	             {name: 'scaleFactor'}
     	    ]
     	});
 		var sumRowsStore = new Array();
@@ -2475,19 +2522,26 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    				superSumColumnsArray[i] =0;
    			}
 	   		for(var j=0; j<sumRows[0].length; j++){
+	   			
+				var measureMetadata = this.getMeasureMetadata(this.columnHeader[this.columnHeader.length-1][i].name);
+				//var datatype =  measureMetadata.type;
+				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
+				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
+	   			
 	   			for(var i=0; i<sumRows.length; i++){
 		   			//in the total sum we not consider calculated fields and partial sums
 	   				if(!this.rowHeader[this.rowHeader.length-1][j].type!='CF' &&
 	 	   			   !this.rowHeader[this.rowHeader.length-1][j].type!='partialsum'){
 	   					superSumColumnsArray[i] = superSumColumnsArray[i]+parseFloat(sumRows[i][j]);
 	 	   			}
-
+		   				
 					var a = new Array();
 					a.push(sumRows[i][j]);
 					a.push('[sumR'+i+','+j+']');
 					a.push('float');
 					a.push(null);
 					a.push('totals');
+					a.push(scaleFactor);
 					sumRowsStore.push(a);
 	   			}
 	   		}
@@ -2496,12 +2550,19 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		}else{
 	   		
 	   		for(var j=0; j<sumRows.length; j++){
+	   			
+				var measureMetadata = this.getMeasureMetadata(this.rowHeader[this.rowHeader.length-1][j].name);
+				//var datatype =  measureMetadata.type;
+				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
+				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
+
 				var a = new Array();
 				a.push(sumRows[j]);
 				a.push('[sumR'+j+']');
 				a.push('float');
 				a.push(null);
 				a.push('totals');
+				a.push(scaleFactor);
 				sumRowsStore.push(a);
 	   		}
 	   		dataViewWidth=this.columnWidth;
@@ -2548,18 +2609,24 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		    	             'divId',
 		    	             {name: 'datatype'},
 		    	             {name: 'format'},
-		    	             {name: 'celltype'}
+		    	             {name: 'celltype'},
+		    	             {name: 'scaleFactor'}
 		    	    ]
 		    	});
 	
+				
+				
+   				
 		    	var sumSuperColumnsStore = new Array();
 		   		for(var j=0; j<superSumColumnsArray.length; j++){
+		   			var scaleFactor = (this.getMeasureScaleFactor(this.measuresMetadata[j].name).value);
 		   			a = new Array();
 		   			a.push(superSumColumnsArray[j]);
 		   			a.push('[sumCT'+j+']');
 					a.push('float');
 					a.push(null);
 					a.push('supertotals');
+					a.push(scaleFactor);
 					sumSuperColumnsStore.push(a);
 					this.superSumArray.push(""+superSumColumnsArray[j]);
 		   		}
@@ -2692,6 +2759,39 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     		return a;
     	}
     }
+    
+	, getMeasureScaleFactor: function (theMeasureName){
+		var i=0;
+		var scaleFactor={value:1, text:''};
+		var optionDefinition = null;
+		for (; i < this.fieldsOptions.length; i++) {
+			if (this.fieldsOptions[i].alias === theMeasureName) {
+				optionDefinition = this.fieldsOptions[i];
+				break;
+			}
+		}
+		if(optionDefinition!=null){
+			legendSuffix = optionDefinition.options.measureScaleFactor;
+			if(legendSuffix != undefined && legendSuffix != null && legendSuffix!='NONE'){
+				scaleFactor.text = LN('sbi.worksheet.config.options.measurepresentation.'+legendSuffix);
+				switch (legendSuffix)
+				{
+				case 'K':
+					scaleFactor.value=1000;
+					break;
+				case 'M':
+					scaleFactor.value=1000000;
+					break;
+				case 'G':
+					scaleFactor.value=1000000000;
+					break;
+				default:
+					scaleFactor.value=1;
+				}
+			}
+		}
+		return scaleFactor;
+	}
     
 });
 

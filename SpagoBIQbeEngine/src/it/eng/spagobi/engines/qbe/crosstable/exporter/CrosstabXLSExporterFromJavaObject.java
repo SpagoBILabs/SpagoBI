@@ -16,11 +16,14 @@ import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab.CellType;
 import it.eng.spagobi.engines.qbe.crosstable.Node;
+import it.eng.spagobi.engines.worksheet.bo.MeasureScaleFactorOption;
 import it.eng.spagobi.engines.worksheet.services.export.MeasureFormatter;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -50,22 +53,20 @@ public class CrosstabXLSExporterFromJavaObject {
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(CrosstabXLSExporterFromJavaObject.class);
-
-
 	
-	public int fillAlreadyCreatedSheet(Sheet sheet,CrossTab cs, JSONObject crosstabJSON, CreationHelper createHelper, int startRow) throws JSONException, SerializationException{		
+	public int fillAlreadyCreatedSheet(Sheet sheet,CrossTab cs, JSONObject crosstabJSON, CreationHelper createHelper, int startRow, Locale locale) throws JSONException, SerializationException{		
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
-    	int totalRowNum = commonFillSheet(sheet, cs, crosstabJSON, createHelper,startRow);
+    	int totalRowNum = commonFillSheet(sheet, cs, crosstabJSON, createHelper,startRow, locale);
     	return totalRowNum;
 	}
 	
-	public int commonFillSheet(Sheet sheet,CrossTab cs, JSONObject crosstabJSON, CreationHelper createHelper, int startRow) throws SerializationException, JSONException{	
+	public int commonFillSheet(Sheet sheet,CrossTab cs, JSONObject crosstabJSON, CreationHelper createHelper, int startRow, Locale locale) throws SerializationException, JSONException{	
     	int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
 		int rowsDepth = cs.getRowsRoot().getSubTreeDepth();
 
 		
-		MeasureFormatter measureFormatter = new MeasureFormatter(crosstabJSON, new DecimalFormat("#0.00"),"#0.00");
+		MeasureFormatter measureFormatter = new MeasureFormatter(cs, new DecimalFormat("#0.00"),"#0.00");
 		int rowsNumber = cs.getDataMatrix().length;
 		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
 		for (int i = 0; i < totalRowsNumber + 5; i++) {
@@ -73,13 +74,13 @@ public class CrosstabXLSExporterFromJavaObject {
 		}
 //	
 		// build headers for column first ...
-		buildColumnsHeader(sheet, cs.getColumnsRoot().getChilds(), startRow, rowsDepth - 1, createHelper);
+		buildColumnsHeader(sheet,cs, cs.getColumnsRoot().getChilds(), startRow, rowsDepth - 1, createHelper, locale);
 		// ... then build headers for rows ....
-	    buildRowsHeaders(sheet, cs.getRowsRoot().getChilds(), columnsDepth - 1 + startRow, 0, createHelper);
+	    buildRowsHeaders(sheet,cs, cs.getRowsRoot().getChilds(), columnsDepth - 1 + startRow, 0, createHelper, locale);
 	    // then put the matrix data
 	    buildDataMatrix(sheet, cs, columnsDepth + startRow-1, rowsDepth - 1, createHelper, measureFormatter);
 	    
-	    buildRowHeaderTitle(sheet, cs.getRowHeadersTitles(), columnsDepth-2, 0, startRow, createHelper);
+	    buildRowHeaderTitle(sheet, cs, columnsDepth-2, 0, startRow, createHelper, locale);
 	    
 	    return startRow+totalRowsNumber;
 	}
@@ -128,7 +129,8 @@ public class CrosstabXLSExporterFromJavaObject {
 
 					double value = Double.parseDouble(text);
 					int decimals = measureFormatter.getFormatXLS(i, j);
-					cell.setCellValue(new Double(value));
+					Double valueFormatted = measureFormatter.applyScaleFactor(value, i, j);
+					cell.setCellValue(valueFormatted);
 					cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
 					cell.setCellStyle(getNumberFormat(decimals, decimalFormats, sheet, createHelper,cs.getCellType(i,j) ));
 				} catch (NumberFormatException e) {
@@ -168,16 +170,22 @@ public class CrosstabXLSExporterFromJavaObject {
 	 * @param createHelper The file creation helper
 	 * @throws JSONException
 	 */
-	private void buildRowsHeaders(Sheet sheet, List<Node> siblings, int rowNum, int columnNum, CreationHelper createHelper) throws JSONException {
+	private void buildRowsHeaders(Sheet sheet, CrossTab cs, List<Node> siblings, int rowNum, int columnNum, CreationHelper createHelper, Locale locale) throws JSONException {
 		int rowsCounter = rowNum;
 		
 		CellStyle cellStyle = buildHeaderCellStyle(sheet);
         
 		for (int i = 0; i < siblings.size(); i++) {
 			Node aNode =  siblings.get(i);
+			List<Node> childs = aNode.getChilds();
 			Row row = sheet.getRow(rowsCounter);
 			Cell cell = row.createCell(columnNum);
 			String text = (String) aNode.getValue();
+			
+			if (cs.isMeasureOnRow() && (childs == null || childs.size() <= 0)) {
+		    	//apply the measure scale factor
+		    	text = MeasureScaleFactorOption.getScaledName(text, cs.getMeasureScaleFactor(text), locale);
+			}
 			cell.setCellValue(createHelper.createRichTextString(text));
 		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 
@@ -192,9 +200,9 @@ public class CrosstabXLSExporterFromJavaObject {
 			    		columnNum //last column  (0-based)
 			    ));
 		    }
-		    List<Node> childs = aNode.getChilds();
+		   
 		    if (childs != null && childs.size() > 0) {
-		    	buildRowsHeaders(sheet, childs, rowsCounter, columnNum + 1, createHelper);
+		    	buildRowsHeaders(sheet,cs, childs, rowsCounter, columnNum + 1, createHelper, locale);
 		    }
 		    int increment = descendants > 1 ? descendants : 1;
 		    rowsCounter = rowsCounter + increment;
@@ -211,7 +219,9 @@ public class CrosstabXLSExporterFromJavaObject {
 	 * @param createHelper
 	 * @throws JSONException
 	 */
-	private void buildRowHeaderTitle(Sheet sheet, List<String> titles, int columnHeadersNumber, int startColumn, int startRow, CreationHelper createHelper) throws JSONException {
+	private void buildRowHeaderTitle(Sheet sheet, CrossTab cs, int columnHeadersNumber, int startColumn, int startRow, CreationHelper createHelper, Locale locale) throws JSONException {
+		List<String> titles = cs.getRowHeadersTitles();
+		 
 		if(titles!=null){
 			
 			Row row = sheet.getRow(startRow+columnHeadersNumber);
@@ -220,6 +230,16 @@ public class CrosstabXLSExporterFromJavaObject {
 			
 				Cell cell = row.createCell(startColumn+i);
 				String text = titles.get(i);
+				cell.setCellValue(createHelper.createRichTextString(text));
+			    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
+			    cell.setCellStyle(cellStyle);
+			}
+			if(cs.isMeasureOnRow()){
+				Cell cell = row.createCell(startColumn+titles.size());
+				String text = "Measures";
+				if(locale!=null){
+					text = EngineMessageBundle.getMessage("worksheet.export.crosstab.header.measures", locale);
+				}
 				cell.setCellValue(createHelper.createRichTextString(text));
 			    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
 			    cell.setCellStyle(cellStyle);
@@ -293,14 +313,20 @@ public class CrosstabXLSExporterFromJavaObject {
 	 * @param createHelper The file creation helper
 	 * @throws JSONException
 	 */
-	private void buildColumnsHeader(Sheet sheet, List<Node> siblings, int rowNum, int columnNum, CreationHelper createHelper) throws JSONException {
+	private void buildColumnsHeader(Sheet sheet, CrossTab cs, List<Node> siblings, int rowNum, int columnNum, CreationHelper createHelper, Locale locale) throws JSONException {
 		int columnCounter = columnNum;
 		CellStyle cellStyle = buildHeaderCellStyle(sheet);
 		for (int i = 0; i < siblings.size(); i++) {
 			Node aNode = (Node) siblings.get(i);
+			List<Node> childs = aNode.getChilds();
 			Row row = sheet.getRow(rowNum);
 			Cell cell = row.createCell(columnCounter);
 			String text = (String) aNode.getValue();
+			if (!cs.isMeasureOnRow() && (childs == null || childs.size() <= 0)) {
+		    	//apply the measure scale factor
+		    	text = MeasureScaleFactorOption.getScaledName(text, cs.getMeasureScaleFactor(text), locale);
+			}
+			
 			cell.setCellValue(createHelper.createRichTextString(text));
 		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
 		    int descendants = aNode.getLeafsNumber();
@@ -314,9 +340,9 @@ public class CrosstabXLSExporterFromJavaObject {
 		    }
 		    cell.setCellStyle(cellStyle);
 		    
-		    List<Node> childs = aNode.getChilds();
+		    
 		    if (childs != null && childs.size() > 0) {
-		    	buildColumnsHeader(sheet, childs, rowNum + 1, columnCounter, createHelper);
+		    	buildColumnsHeader(sheet ,cs , childs, rowNum + 1, columnCounter, createHelper, locale);
 		    }
 		    int increment = descendants > 1 ? descendants : 1;
 		    columnCounter = columnCounter + increment;

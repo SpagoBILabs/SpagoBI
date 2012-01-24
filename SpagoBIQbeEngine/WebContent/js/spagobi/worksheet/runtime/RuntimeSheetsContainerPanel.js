@@ -62,9 +62,11 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) {
 	
 	this.config = config;
 	this.sheetItems = [ new Ext.Panel({}) ];
-	
+	this.worksheetAdditionalData = {};
+
 	if (sheets != undefined && sheets != null) {
 		this.sheetItems = this.buildSheets(config, sheets.sheets, sheets.fieldsOptions);
+		this.worksheetAdditionalData.fieldsOptions = sheets.fieldsOptions;
 	}
 	
 
@@ -262,7 +264,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 		}
 		var resultExport = {
 			SHEETS_NUM : this.sheetItems.length,
-			EXPORTED_SHEETS : items
+			EXPORTED_SHEETS : items,
+			WORKSHEETS_ADDITIONAL_DATA: this.worksheetAdditionalData
 		};
 		return resultExport;
 	}

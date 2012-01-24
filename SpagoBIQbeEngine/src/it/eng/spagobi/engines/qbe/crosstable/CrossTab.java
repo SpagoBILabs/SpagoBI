@@ -15,6 +15,7 @@ package it.eng.spagobi.engines.qbe.crosstable;
 import groovy.util.Eval;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetSerializationUtils;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -22,6 +23,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -46,7 +48,7 @@ import org.json.JSONObject;
  * The publics methods are:
  * - CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition) that builds
  *   the crossTab (headers structure and data)
- *-  getJSONCrossTab() that returns the JSON representation of the crosstab
+ * - getJSONCrossTab() that returns the JSON representation of the crosstab
  */
 
 public class CrossTab {
@@ -80,7 +82,7 @@ public class CrossTab {
 	private List<MeasureInfo> measures;
 	private  CrosstabDefinition crosstabDefinition;
 	private  List<String> rowHeadersTitles;
-	//private boolean measuresOnRow;
+	private boolean measuresOnRow;
 	
 	public enum CellType {DATA, CF, SUBTOTAL, TOTAL }
 	
@@ -95,7 +97,7 @@ public class CrossTab {
 	 * @param crosstabDefinition: the definition of the crossTab
 	 * @param calculateFields: array of JSONObjects the CF
 	 */
-	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray calculateFields) throws JSONException{
+	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray fieldOptions, JSONArray calculateFields) throws JSONException{
 		this(dataStore, crosstabDefinition);
 		if(calculateFields!=null){
 			for(int i=0; i<calculateFields.length(); i++){
@@ -105,6 +107,7 @@ public class CrossTab {
 				calculateCF(cf.getString("operation"), horizontal, cf.getInt("level"), cf.getString("name"), CellType.CF);
 			}
 		}
+		addMeasuresScaleFactor(fieldOptions);
 		addTotals();
 		addSubtotals();
 	}
@@ -508,22 +511,22 @@ public class CrossTab {
 			   || Long.class.isAssignableFrom(clazz) 
 			   || Short.class.isAssignableFrom(clazz)
 			   || Byte.class.isAssignableFrom(clazz)) {
-				return new MeasureInfo(fieldName, "int", null);
+				return new MeasureInfo(fieldName, measure.getEntityId(), "int", null);
 			} else {
 				String decimalPrecision = (String)fieldMeta.getProperty(IFieldMetaData.DECIMALPRECISION);
 				if(decimalPrecision!=null){
-					return new MeasureInfo(fieldName, "float", "{decimalPrecision:"+decimalPrecision+"}");
+					return new MeasureInfo(fieldName,measure.getEntityId(), "float", "{decimalPrecision:"+decimalPrecision+"}");
 				}else{
-					return new MeasureInfo(fieldName, "float", null);
+					return new MeasureInfo(fieldName,measure.getEntityId(), "float", null);
 				}
 			}
 			
 		} else if( Timestamp.class.isAssignableFrom(clazz) ) {
-			return new MeasureInfo(fieldName, "timestamp", "d/m/Y H:i:s");
+			return new MeasureInfo(fieldName, measure.getEntityId(),"timestamp", "d/m/Y H:i:s");
 		} else if( Date.class.isAssignableFrom(clazz) ) {
-			return new MeasureInfo(fieldName, "date", "d/m/Y");
+			return new MeasureInfo(fieldName,measure.getEntityId(), "date", "d/m/Y");
 		} else {
-			return new MeasureInfo(fieldName, "string", null);
+			return new MeasureInfo(fieldName,measure.getEntityId(), "string", null);
 		}
 	}
 	
@@ -542,16 +545,30 @@ public class CrossTab {
 		return array;
 	}
 	
-	public class MeasureInfo {
+	public String getMeasureScaleFactor(String name) {
+		Iterator<MeasureInfo> it = measures.iterator();
+		while (it.hasNext()) {
+			MeasureInfo mi = it.next();
+			if(mi.getName().equals(name)){
+				return mi.getScaleFactor();
+			}
+		}
+		return "";
+	}
+	
+	public static class MeasureInfo {
 		
 		String name;
 		String type;
 		String format;
+		String id;
+		String scaleFactor;
 		
-		public MeasureInfo(String name, String type, String format) {
+		public MeasureInfo(String name, String id, String type, String format) {
 			this.name = name;
 			this.type = type;
 			this.format = format;
+			this.id = id;
 		}
 
 		public String getName() {
@@ -563,6 +580,20 @@ public class CrossTab {
 		public String getFormat() {
 			return format;
 		}
+
+		public String getScaleFactor() {
+			return scaleFactor;
+		}
+
+		public void setScaleFactor(String scaleFactor) {
+			this.scaleFactor = scaleFactor;
+		}
+
+		public String getId() {
+			return id;
+		}
+		
+		
 	}
 	
 
@@ -1177,6 +1208,25 @@ public class CrossTab {
 	public String[][] getDataMatrix() {
 		return dataMatrix;
 	}
+	
+	private void addMeasuresScaleFactor(JSONArray fieldOptions){
+		for (int i = 0; i < fieldOptions.length(); i++) {
+			try {
+				JSONObject field = fieldOptions.getJSONObject(i);
+				JSONObject aFieldOptions = field.getJSONObject(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
+				String fieldId = field.getString("id");
+				for (int j = 0; j < measures.size(); j++) {
+					if(fieldId.equals(measures.get(j).getId())){
+						measures.get(j).setScaleFactor(aFieldOptions.getString(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR));
+						break;
+					}
+				}
+			} catch (Exception e) {
+				logger.error("No scale factor setted for the measures "+fieldOptions,e);
+			}
+		}
+	}
+
 
 	public List<String> getRowHeadersTitles() {
 		if(rowHeadersTitles==null){
@@ -1187,6 +1237,19 @@ public class CrossTab {
 			}
 		}
 		return rowHeadersTitles;
+	}
+
+	public List<MeasureInfo> getMeasures() {
+		return measures;
+	}
+	
+	public boolean isMeasureOnRow(){
+		try {
+			return config.getString("measureson").equals("rows");
+		} catch (Exception e) {
+			logger.error("Error reading the configuration of the crosstab", e);
+			throw new SpagoBIRuntimeException("Error reading the configuration of the crosstab", e);
+		}
 	}
 	
 	

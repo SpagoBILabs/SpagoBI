@@ -11,11 +11,14 @@
  */
 package it.eng.spagobi.engines.worksheet.serializer.json;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-public class WorkSheetSerializationCostants {
+public class WorkSheetSerializationUtils {
 	
 	public static final String SHEETS = "sheets";
 	public static final String NAME = "name";
@@ -36,5 +39,18 @@ public class WorkSheetSerializationCostants {
 	public static final String SERIES = "series";
 	public static final String CROSSTABDEFINITION = "crosstabDefinition";
 	public static final String FILTERS_ON_DOMAIN_VALUES = "filtersOnDomainValues";
+	public static final String WORKSHEETS_ADDITIONAL_DATA = "WORKSHEETS_ADDITIONAL_DATA";
+	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS = "fieldsOptions";
+	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
+	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
+	
+	
+	public static JSONArray getFieldOptions(JSONObject worksheetJSON){
+		JSONObject worksheetAdditionalData = worksheetJSON.optJSONObject(WORKSHEETS_ADDITIONAL_DATA);
+		if (worksheetAdditionalData!=null){
+			return worksheetAdditionalData.optJSONArray(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS);
+		}
+		return null;
+	}
 	
 }
