@@ -11,7 +11,6 @@
  */
 package it.eng.spagobi.engines.worksheet.services.runtime;
 
-import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
@@ -19,6 +18,7 @@ import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetSerializationUtils;
 import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -26,10 +26,6 @@ import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -44,7 +40,6 @@ import java.util.Map;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
@@ -111,9 +106,11 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		}	
 	}
 	
-	public JSONObject serializeDataStore(IDataStore dataStore) {
+
+	public JSONObject serializeDataStore(IDataStore dataStore)  {
 		JSONDataWriter dataSetWriter = new JSONDataWriter();
-		JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
+		JSONArray fieldOptions = this.getAttributeAsJSONArray(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS);
+		JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore,fieldOptions);
 		return gridDataFeed;
 	}
 	
@@ -123,7 +120,12 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		return executeQuery(jsonVisibleSelectFields, optionalFilters, sheetName);
 	}
 	
+	
 	protected IDataStore executeQuery(JSONArray jsonVisibleSelectFields, JSONObject optionalFilters, String sheetName) throws Exception {
+		return executeQuery(jsonVisibleSelectFields, optionalFilters, sheetName, null);
+	}
+	
+	protected IDataStore executeQuery(JSONArray jsonVisibleSelectFields, JSONObject optionalFilters, String sheetName, JSONArray fieldOptions) throws Exception {
 		
 		IDataStore dataStore = null;
 		
@@ -183,7 +185,7 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		* it does not contain information about measures/attributes, fields' name...
 		* therefore we adjust its metadata
 		*/
-		this.adjustMetadata((DataStore) dataStore, dataset, descriptor);
+		this.adjustMetadata((DataStore) dataStore, dataset, descriptor,fieldOptions);
 		LogMF.debug(logger, "Adjusted metadata: {0}", dataStore.getMetaData());
 		logger.debug("Decoding dataset ...");
 		this.applyOptions(dataStore);

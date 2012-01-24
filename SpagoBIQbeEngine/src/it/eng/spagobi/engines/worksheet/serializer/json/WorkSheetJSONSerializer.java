@@ -71,13 +71,13 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			workSheetDefinition = (WorkSheetDefinition)o;
 			
 			JSONArray sheets = serializeSheets(workSheetDefinition.getSheets());
-			toReturn.put(WorkSheetSerializationCostants.SHEETS, sheets);
+			toReturn.put(WorkSheetSerializationUtils.SHEETS, sheets);
 			
 			JSONArray globalFilters = serializeGlobalFilters(workSheetDefinition.getGlobalFilters());
-			toReturn.put(WorkSheetSerializationCostants.GLOBAL_FILTERS, globalFilters);
+			toReturn.put(WorkSheetSerializationUtils.GLOBAL_FILTERS, globalFilters);
 			
 			JSONArray fieldsOptions = serializeFieldsOptions(workSheetDefinition.getFieldsOptions());
-			toReturn.put(WorkSheetSerializationCostants.FIELDS_OPTIONS, fieldsOptions);
+			toReturn.put(WorkSheetSerializationUtils.FIELDS_OPTIONS, fieldsOptions);
 			
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
@@ -103,8 +103,8 @@ public class WorkSheetJSONSerializer implements ISerializer {
 	private JSONObject serializeSheetFilters(List<Filter> filters, FiltersPosition filtersPosition) throws SerializationException, JSONException {
 		JSONArray globalFiltersJSON = serializeSheetFilters(filters);
 		JSONObject toReturn = new JSONObject();
-		toReturn.put(WorkSheetSerializationCostants.FILTERS, globalFiltersJSON);
-		toReturn.put(WorkSheetSerializationCostants.POSITION, filtersPosition.name().toLowerCase());
+		toReturn.put(WorkSheetSerializationUtils.FILTERS, globalFiltersJSON);
+		toReturn.put(WorkSheetSerializationUtils.POSITION, filtersPosition.name().toLowerCase());
 		return toReturn;
 	}
 	
@@ -143,13 +143,13 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		
 		try {
 				
-			jsonSheet.put(WorkSheetSerializationCostants.NAME, sheet.getName());
-			jsonSheet.put(WorkSheetSerializationCostants.LAYOUT, sheet.getLayout());
-			jsonSheet.put(WorkSheetSerializationCostants.HEADER, sheet.getHeader());
-			jsonSheet.put(WorkSheetSerializationCostants.FILTERS, serializeSheetFilters(sheet.getFilters(), sheet.getFiltersPosition()));
-			jsonSheet.put(WorkSheetSerializationCostants.CONTENT, serializeContent(sheet.getContent()));
-			jsonSheet.put(WorkSheetSerializationCostants.FILTERS_ON_DOMAIN_VALUES, serializeGlobalFilters(sheet.getFiltersOnDomainValues()));
-			jsonSheet.put(WorkSheetSerializationCostants.FOOTER, sheet.getFooter());
+			jsonSheet.put(WorkSheetSerializationUtils.NAME, sheet.getName());
+			jsonSheet.put(WorkSheetSerializationUtils.LAYOUT, sheet.getLayout());
+			jsonSheet.put(WorkSheetSerializationUtils.HEADER, sheet.getHeader());
+			jsonSheet.put(WorkSheetSerializationUtils.FILTERS, serializeSheetFilters(sheet.getFilters(), sheet.getFiltersPosition()));
+			jsonSheet.put(WorkSheetSerializationUtils.CONTENT, serializeContent(sheet.getContent()));
+			jsonSheet.put(WorkSheetSerializationUtils.FILTERS_ON_DOMAIN_VALUES, serializeGlobalFilters(sheet.getFiltersOnDomainValues()));
+			jsonSheet.put(WorkSheetSerializationUtils.FOOTER, sheet.getFooter());
 
 
 			
@@ -170,9 +170,9 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		}
 		if (content instanceof CrosstabDefinition) {
 			JSONObject toReturn = new JSONObject();
-			toReturn.put(WorkSheetSerializationCostants.CROSSTABDEFINITION, 
+			toReturn.put(WorkSheetSerializationUtils.CROSSTABDEFINITION, 
 					(JSONObject) SerializationManager.serialize(content, "application/json"));
-			toReturn.put(WorkSheetSerializationCostants.DESIGNER, WorkSheetSerializationCostants.DESIGNER_PIVOT);
+			toReturn.put(WorkSheetSerializationUtils.DESIGNER, WorkSheetSerializationUtils.DESIGNER_PIVOT);
 			return toReturn;
 		}
 		if (content instanceof ChartDefinition) {
@@ -193,15 +193,15 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			Field field = fields.get(i);
 			fieldsJSON.put(SerializationManager.serialize(field, "application/json"));
 		}
-		toReturn.put(WorkSheetSerializationCostants.VISIBLE_SELECT_FIELDS, fieldsJSON);
-		toReturn.put(WorkSheetSerializationCostants.DESIGNER, WorkSheetSerializationCostants.DESIGNER_TABLE);
+		toReturn.put(WorkSheetSerializationUtils.VISIBLE_SELECT_FIELDS, fieldsJSON);
+		toReturn.put(WorkSheetSerializationUtils.DESIGNER, WorkSheetSerializationUtils.DESIGNER_TABLE);
 		return toReturn;
 	}
 
 	private JSONObject serializeChart(ChartDefinition chart) throws SerializationException, JSONException {
 		String config = chart.getConfig().toString();
 		JSONObject toReturn = new JSONObject(config);
-		toReturn.put(WorkSheetSerializationCostants.CATEGORY, SerializationManager.serialize(chart.getCategory(), "application/json"));
+		toReturn.put(WorkSheetSerializationUtils.CATEGORY, SerializationManager.serialize(chart.getCategory(), "application/json"));
 
 		JSONArray seriesJSON = new JSONArray();
 		List<Serie> series = chart.getSeries();
@@ -209,7 +209,7 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		for (int i = 0; i < series.size(); i++) {
 			seriesJSON.put(serialier.serialize(series.get(i)));
 		}
-		toReturn.put(WorkSheetSerializationCostants.SERIES, seriesJSON);
+		toReturn.put(WorkSheetSerializationUtils.SERIES, seriesJSON);
 		
 		return toReturn;
 	}
@@ -260,7 +260,7 @@ public class WorkSheetJSONSerializer implements ISerializer {
 				Object value = option.getValue();
 				optionsJSON.put(name, value);
 			}
-			fieldJSON.put(WorkSheetSerializationCostants.OPTIONS, optionsJSON);
+			fieldJSON.put(WorkSheetSerializationUtils.OPTIONS, optionsJSON);
 			fieldsOptionsJSON.put(fieldJSON);
 		}
 		return fieldsOptionsJSON;

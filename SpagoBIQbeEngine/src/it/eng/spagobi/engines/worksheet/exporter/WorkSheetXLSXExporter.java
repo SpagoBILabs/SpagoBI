@@ -31,6 +31,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.batik.transcoder.TranscoderException;
@@ -130,9 +131,9 @@ public class WorkSheetXLSXExporter {
 	}
 	
 	public void designTableInWorksheet(Sheet sheet,Workbook wb, CreationHelper createHelper, 
-			  IDataStore dataStore, int startRow) throws SerializationException, JSONException{
+			  IDataStore dataStore, int startRow, Locale locale) throws SerializationException, JSONException{
 		
-		QbeXLSXExporter exp = new QbeXLSXExporter(dataStore);
+		QbeXLSXExporter exp = new QbeXLSXExporter(dataStore, locale);
 		exp.fillSheet(sheet, wb, createHelper, startRow);
 	}
 
@@ -352,16 +353,6 @@ public class WorkSheetXLSXExporter {
 		}
 	}
 
-	private String getNumberFormat(String decimal){
-		int j = new Integer(decimal);
-		if(decimalFormats.get(j)!=null)
-			return decimalFormats.get(j);
-		String decimals="";
-		for(int i=0; i<j; i++){
-			decimals+="0";
-		}
-		decimalFormats.put(j, decimals);
-		return decimals;
-	}
+
 	
 }

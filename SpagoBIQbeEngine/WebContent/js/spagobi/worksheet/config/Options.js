@@ -47,10 +47,10 @@ Sbi.worksheet.config.options = {
 			, label : LN('sbi.worksheet.config.options.attributepresentation.label')
 			, items: 
 				[
-	                 {boxLabel: "nessuno", inputValue: "NONE", checked: true}
-	               , {boxLabel: "migliaia", inputValue: "K"}
-	               , {boxLabel: "miglioni", inputValue: "M"}
-	               , {boxLabel: "migliardi", inputValue: "G"}
+	                 {boxLabel: LN('sbi.worksheet.config.options.measurepresentation.NONE'), inputValue: "NONE", checked: true}
+	               , {boxLabel: LN('sbi.worksheet.config.options.measurepresentation.K'), inputValue: "K"}
+	               , {boxLabel: LN('sbi.worksheet.config.options.measurepresentation.M'), inputValue: "M"}
+	               , {boxLabel: LN('sbi.worksheet.config.options.measurepresentation.G'), inputValue: "G"}
 			    ]
 		 }
 		]

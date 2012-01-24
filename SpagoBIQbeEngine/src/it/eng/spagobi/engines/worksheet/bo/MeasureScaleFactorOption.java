@@ -11,7 +11,11 @@
  */
 package it.eng.spagobi.engines.worksheet.bo;
 
+import java.util.Locale;
+
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
+
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -47,6 +51,27 @@ public class MeasureScaleFactorOption extends FieldOption {
 	public Object getValue() {
 		AdmissibleValues value = (AdmissibleValues) super.getValue();
 		return value.name();
+	}
+	
+	public static Double applyScaleFactor(Double value, String scaleFactor){
+		if(scaleFactor!=null){
+			
+			if(scaleFactor.equals("K")){
+				return value/1000;
+			} else if(scaleFactor.equals("M")){
+				return value/1000000;
+			} else if(scaleFactor.equals("G")){
+				return value/1000000000;
+			} 
+		}
+		return value;
+	}
+	
+	public static String getScaledName(String name, String scaleFactor, Locale locale){
+		if(scaleFactor!=null && !scaleFactor.equals("") && locale!=null && !scaleFactor.equals("NONE") ){
+			return name+" "+EngineMessageBundle.getMessage("worksheet.export.scaleFactor."+scaleFactor, locale);
+		}
+		return name;
 	}
 
 }

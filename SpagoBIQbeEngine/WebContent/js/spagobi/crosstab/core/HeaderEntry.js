@@ -86,7 +86,10 @@ Sbi.crosstab.core.HeaderEntry = function(config) {
 		h = this.rowHeight;
 	}
 	
-	this.name = this.applyMeasureScaleFactor(config.crosstab.fieldsOptions, config.name);
+	//get the value to display
+	this.formattedName = this.applyMeasureScaleFactor(config.crosstab.fieldsOptions, config.name);
+	
+	this.name = config.name;
 	
 
 	
@@ -101,7 +104,6 @@ Sbi.crosstab.core.HeaderEntry = function(config) {
 				width: this.thisDimension*this.columnWidth,
 				height: h,
 				html: this.getBackground(h+'px',(this.fontSize+(h/2))+'px')
-
 		};
 	}else{
 		c = {
@@ -127,7 +129,7 @@ Sbi.crosstab.core.HeaderEntry = function(config) {
 		//tooltip with the name
 		new Ext.ToolTip({
 			target: this.id,
-			html: this.name
+			html: this.formattedName
 		});
 		
 	}, this);
@@ -154,6 +156,7 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 	horizontal: null,
 	childs: null, //childs of the node
 	name: null, // name of the node (displayed in the table)
+	formattedName: null, // the formatted name (for example wit the scale factor)
 	thisDimension: null, //see the component description
 	leafsNumber: null,
 	//columnWidth: 80,
@@ -215,7 +218,7 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 			backGroundI = this.backgroundImgTitle ;
 		}
 		
-		return '<IMG SRC=\"'+ backGroundI +'\" WIDTH=\"100%\" HEIGHT=\"'+height+'\" style=\"z-index:0\"><div style= \" position:relative; z-index:6; height:'+height+'; margin-top: -'+padding+';\">'+this.name+'<div>';
+		return '<IMG SRC=\"'+ backGroundI +'\" WIDTH=\"100%\" HEIGHT=\"'+height+'\" style=\"z-index:0\"><div style= \" position:relative; z-index:6; height:'+height+'; margin-top: -'+padding+';\">'+this.formattedName+'<div>';
 	}
 
 	
@@ -292,8 +295,8 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 	,applyMeasureScaleFactor: function(fieldOptions, fieldName){
 		if(fieldOptions!=undefined && fieldOptions!=null){
 			for(var i=0; i<fieldOptions.length; i++){
-				if(fieldName==fieldOptions[i].alias){
-					return fieldName+fieldOptions[i].options.measureScaleFactor;
+				if(fieldName==fieldOptions[i].alias && fieldOptions[i].options.measureScaleFactor!=undefined && fieldOptions[i].options.measureScaleFactor!=null && fieldOptions[i].options.measureScaleFactor!='NONE'){
+					return fieldName+' '+LN('sbi.worksheet.config.options.measurepresentation.'+fieldOptions[i].options.measureScaleFactor);
 				}
 			}
 		}

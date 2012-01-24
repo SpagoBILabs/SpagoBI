@@ -273,8 +273,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			Vector extractedFields) throws EMFInternalError, IOException,
 			FileNotFoundException, SpagoBIEngineException {
 		IDataStore dataStore = getDataStore(statement, sqlQuery);
-		
-		QbeXLSExporter exp = new QbeXLSExporter(dataStore);
+		Locale locale = (Locale)getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);	
+		QbeXLSExporter exp = new QbeXLSExporter(dataStore, locale);
 		exp.setExtractedFields(extractedFields);
 		
 		Workbook wb = exp.export();
@@ -305,7 +305,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			FileNotFoundException, SpagoBIEngineException {
 		IDataStore dataStore = getDataStore(statement, sqlQuery);
 		
-		QbeXLSXExporter exp = new QbeXLSXExporter(dataStore);
+		Locale locale = (Locale)getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);	
+		QbeXLSExporter exp = new QbeXLSExporter(dataStore, locale);
 		exp.setExtractedFields(extractedFields);
 		
 		Workbook wb = exp.export();

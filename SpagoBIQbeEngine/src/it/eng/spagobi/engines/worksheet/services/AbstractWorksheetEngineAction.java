@@ -28,6 +28,7 @@ import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.bo.WorksheetFieldsOptions;
 import it.eng.spagobi.engines.worksheet.exceptions.WrongConfigurationForFiltersOnDomainValuesException;
+import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetSerializationUtils;
 import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
@@ -453,9 +454,19 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 	}
 	
 	
+	
+	
 	protected void adjustMetadata(DataStore dataStore,
 			IDataSet dataset,
 			IDataSetTableDescriptor descriptor) {
+		adjustMetadata(dataStore, dataset, descriptor, null);
+	}
+		
+	
+	protected void adjustMetadata(DataStore dataStore,
+			IDataSet dataset,
+			IDataSetTableDescriptor descriptor,
+			JSONArray fieldOptions) {
 		
 		IMetaData dataStoreMetadata = dataStore.getMetaData();
 		IMetaData dataSetMetadata = dataset.getMetadata();
@@ -476,6 +487,9 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			if(decimalPrecision!=null){
 				newFieldMetadata.setProperty(IFieldMetaData.DECIMALPRECISION,decimalPrecision);
 			}
+			if(fieldOptions!=null){
+				addMeasuresScaleFactor(fieldOptions, dataSetFieldMetadata.getName(), newFieldMetadata);
+			}
 			newFieldMetadata.setAlias(dataSetFieldMetadata.getAlias());
 			newFieldMetadata.setFieldType(dataSetFieldMetadata.getFieldType());
 			newFieldMetadata.setName(dataSetFieldMetadata.getName());
@@ -486,6 +500,25 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		dataStore.setMetaData(newdataStoreMetadata);
 	}
 	
+	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId, FieldMetadata newFieldMetadata){
+		if(fieldOptions!=null){
+			for (int i = 0; i < fieldOptions.length(); i++) {
+				try {
+					JSONObject afield = fieldOptions.getJSONObject(i);
+					JSONObject aFieldOptions = afield.getJSONObject(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
+					String afieldId = afield.getString("id");
+					
+						if(afieldId.equals(fieldId)){
+							newFieldMetadata.setProperty(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR, aFieldOptions.getString(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR));
+							return;
+							
+						}
+				} catch (Exception e) {
+					logger.error("No scale factor setted for the measures "+fieldOptions,e);
+				}
+			}	
+		}
+	}
 	
 	public it.eng.spagobi.tools.dataset.common.datastore.IDataStore getUserSheetFilterValues(String sheetName, String fieldName) throws JSONException{
 		

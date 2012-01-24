@@ -13,6 +13,8 @@ package it.eng.spagobi.engines.qbe.exporter;
 
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
 import it.eng.spagobi.engines.qbe.query.Field;
+import it.eng.spagobi.engines.worksheet.bo.MeasureScaleFactorOption;
+import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetSerializationUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -23,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
@@ -42,15 +45,16 @@ public class QbeXLSExporter {
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(QbeXLSExporter.class);
-	
+	private Locale locale;
     
 	IDataStore dataStore = null;
 	Vector extractedFields = null;
 	Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
 
-	public QbeXLSExporter(IDataStore dataStore) {
+	public QbeXLSExporter(IDataStore dataStore, Locale locale ) {
 		super();
 		this.dataStore = dataStore;
+		this.locale = locale;
 	}
 
 	public IDataStore getDataStore() {
@@ -101,7 +105,9 @@ public class QbeXLSExporter {
     	    IFieldMetaData fieldMetaData = d.getFieldMeta(j);
     	    String format = (String) fieldMetaData.getProperty("format");
     	    String alias = (String) fieldMetaData.getAlias();
-
+    	    String scaleFactorHeader = (String) fieldMetaData.getProperty(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+    	    String header ;
+    	    
             if (extractedFields != null && extractedFields.get(j) != null) {
     	    	Field field = (Field) extractedFields.get(j);
     	    	fieldName = field.getAlias();
@@ -117,15 +123,21 @@ public class QbeXLSExporter {
             }
 
            	if(alias!=null && !alias.equals("")){
-           		cell.setCellValue(createHelper.createRichTextString(alias));
+           		header = alias;
            	}else{
-           		cell.setCellValue(createHelper.createRichTextString(fieldName));
+           		header = fieldName;
            	}	 
+
+           	header = MeasureScaleFactorOption.getScaledName(header, scaleFactorHeader, locale);
+       		cell.setCellValue(createHelper.createRichTextString(header));
+       		
+       		
            	cell.setCellStyle(hCellStyle);
 
     	}
     	return cellTypes;
 	}
+	
 	
 	public void fillSheetData(Sheet sheet,Workbook wb, CreationHelper createHelper,CellStyle[] cellTypes, int beginRowData, int beginColumnData) {	
 		CrosstabXLSExporter xlsExp = new CrosstabXLSExporter();
@@ -184,7 +196,10 @@ public class QbeXLSExporter {
 						logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "NUMBER" + "]");
 					    Number val = (Number)f.getValue();
 
-					    cell.setCellValue(val.doubleValue());			    
+					    Double value = val.doubleValue();
+						String scaleFactor = (String) fieldMetaData.getProperty(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+												
+					    cell.setCellValue(MeasureScaleFactorOption.applyScaleFactor(value, scaleFactor));			    
 					    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
 					    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cs);
 					}else if( String.class.isAssignableFrom(c)){
@@ -213,6 +228,7 @@ public class QbeXLSExporter {
 		   rownum ++;
 		}
 	}
+	
 
 	public void setExtractedFields(Vector extractedFields) {
 		this.extractedFields = extractedFields;

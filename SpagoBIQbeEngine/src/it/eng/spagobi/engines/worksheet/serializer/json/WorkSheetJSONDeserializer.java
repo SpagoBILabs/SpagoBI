@@ -91,7 +91,7 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 	
 	private void deserializeGlobalFilters(JSONObject workSheetDefinitionJSON,
 			WorkSheetDefinition workSheetDefinition) throws Exception {
-		JSONArray gfJSON = workSheetDefinitionJSON.getJSONArray(WorkSheetSerializationCostants.GLOBAL_FILTERS);
+		JSONArray gfJSON = workSheetDefinitionJSON.getJSONArray(WorkSheetSerializationUtils.GLOBAL_FILTERS);
 		List<Attribute> globalFilters = new ArrayList<Attribute>();
 		for (int i = 0; i < gfJSON.length(); i++) {
 			globalFilters.add(deserializeAttribute(gfJSON.getJSONObject(i)));
@@ -101,7 +101,7 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 	
 	private void deserializeOptions(JSONObject workSheetDefinitionJSON,
 			WorkSheetDefinition workSheetDefinition) throws Exception {
-		JSONArray optionsJSON = workSheetDefinitionJSON.getJSONArray(WorkSheetSerializationCostants.FIELDS_OPTIONS);
+		JSONArray optionsJSON = workSheetDefinitionJSON.getJSONArray(WorkSheetSerializationUtils.FIELDS_OPTIONS);
 		WorksheetFieldsOptions options = new WorksheetFieldsOptions();
 		for (int i = 0 ; i < optionsJSON.length() ; i++) {
 			
@@ -116,7 +116,7 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 				field = measure;
 			}
 			
-			JSONObject optionsForFieldJSON = aField.getJSONObject(WorkSheetSerializationCostants.OPTIONS);
+			JSONObject optionsForFieldJSON = aField.getJSONObject(WorkSheetSerializationUtils.OPTIONS);
 			Iterator optionsForFieldKeysIt = optionsForFieldJSON.keys();
 			List<FieldOption> fieldOptionList = new ArrayList<FieldOption>();
 			while (optionsForFieldKeysIt.hasNext()) {
@@ -148,7 +148,7 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 	 * @throws Exception
 	 */
 	private void deserializeSheets(JSONObject crosstabDefinitionJSON, WorkSheetDefinition crosstabDefinition) throws Exception {
-		JSONArray sheetsJSON = crosstabDefinitionJSON.getJSONArray(WorkSheetSerializationCostants.SHEETS);
+		JSONArray sheetsJSON = crosstabDefinitionJSON.getJSONArray(WorkSheetSerializationUtils.SHEETS);
 		List<Sheet> workSheets = new ArrayList<Sheet>();
 		for(int i=0; i<sheetsJSON.length(); i++){
 			workSheets.add(deserializeSheet(sheetsJSON.getJSONObject(i)));
@@ -163,19 +163,19 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 	 * @throws Exception
 	 */
 	private Sheet deserializeSheet(JSONObject sheetJSON) throws Exception {
-		String name = sheetJSON.getString(WorkSheetSerializationCostants.NAME);
-		JSONObject header = sheetJSON.optJSONObject(WorkSheetSerializationCostants.HEADER);
-		String layout = sheetJSON.optString(WorkSheetSerializationCostants.LAYOUT);
-		JSONObject footer = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FOOTER);
+		String name = sheetJSON.getString(WorkSheetSerializationUtils.NAME);
+		JSONObject header = sheetJSON.optJSONObject(WorkSheetSerializationUtils.HEADER);
+		String layout = sheetJSON.optString(WorkSheetSerializationUtils.LAYOUT);
+		JSONObject footer = sheetJSON.optJSONObject(WorkSheetSerializationUtils.FOOTER);
 		
-		JSONObject filtersJSON = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FILTERS);
+		JSONObject filtersJSON = sheetJSON.optJSONObject(WorkSheetSerializationUtils.FILTERS);
 		List<Filter> filters = deserializeSheetFilters(filtersJSON);
 		FiltersPosition position = FiltersPosition.TOP;
 		if (filtersJSON != null) {
-			position = FiltersPosition.valueOf(filtersJSON.getString(WorkSheetSerializationCostants.POSITION).toUpperCase());
+			position = FiltersPosition.valueOf(filtersJSON.getString(WorkSheetSerializationUtils.POSITION).toUpperCase());
 		}
 		
-		JSONArray filtersOnDomainValuesJSON = sheetJSON.optJSONArray(WorkSheetSerializationCostants.FILTERS_ON_DOMAIN_VALUES);
+		JSONArray filtersOnDomainValuesJSON = sheetJSON.optJSONArray(WorkSheetSerializationUtils.FILTERS_ON_DOMAIN_VALUES);
 		List<Attribute> filtersOnDomainValues = deserializeSheetFiltersOnDomainValues(filtersOnDomainValuesJSON);
 		
 		logger.debug("Deserializing sheet " + name);
@@ -187,15 +187,15 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 	
 	private SheetContent deserializeContent(JSONObject sheetJSON) throws Exception {
 		SheetContent toReturn = null;
-		JSONObject content = sheetJSON.optJSONObject(WorkSheetSerializationCostants.CONTENT);
+		JSONObject content = sheetJSON.optJSONObject(WorkSheetSerializationUtils.CONTENT);
 		if (content == null) {
-			logger.warn("Sheet content not found for sheet [" + sheetJSON.getString(WorkSheetSerializationCostants.NAME) + "].");
+			logger.warn("Sheet content not found for sheet [" + sheetJSON.getString(WorkSheetSerializationUtils.NAME) + "].");
 			return null;
 		}
-		String designer = content.getString(WorkSheetSerializationCostants.DESIGNER);
-		if (WorkSheetSerializationCostants.DESIGNER_PIVOT.equals(designer)) {
-			toReturn = (CrosstabDefinition) SerializationManager.deserialize(content.getJSONObject(WorkSheetSerializationCostants.CROSSTABDEFINITION), "application/json", CrosstabDefinition.class);
-		} else if (WorkSheetSerializationCostants.DESIGNER_TABLE.equals(designer)) {
+		String designer = content.getString(WorkSheetSerializationUtils.DESIGNER);
+		if (WorkSheetSerializationUtils.DESIGNER_PIVOT.equals(designer)) {
+			toReturn = (CrosstabDefinition) SerializationManager.deserialize(content.getJSONObject(WorkSheetSerializationUtils.CROSSTABDEFINITION), "application/json", CrosstabDefinition.class);
+		} else if (WorkSheetSerializationUtils.DESIGNER_TABLE.equals(designer)) {
 			toReturn = deserializeTable(content);
 		} else {
 			toReturn = deserializeChart(content);
@@ -208,14 +208,14 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 		SheetContent toReturn;
 		ChartDefinition chart = new ChartDefinition();
 		
-		JSONObject categoryJSON = content.optJSONObject(WorkSheetSerializationCostants.CATEGORY);
+		JSONObject categoryJSON = content.optJSONObject(WorkSheetSerializationUtils.CATEGORY);
 		if (categoryJSON != null) {
 			Attribute category = (Attribute) SerializationManager.deserialize(categoryJSON, "application/json", Attribute.class);
 			chart.setCategory(category);
 		}
 		
 		List<Serie> series = new ArrayList<Serie>();
-		JSONArray seriesJSON = content.getJSONArray(WorkSheetSerializationCostants.SERIES);
+		JSONArray seriesJSON = content.getJSONArray(WorkSheetSerializationUtils.SERIES);
 		SerieJSONDeserializer deserialier = new SerieJSONDeserializer();
 		for (int i = 0; i < seriesJSON.length(); i++) {
 			JSONObject aSerie = seriesJSON.getJSONObject(i);
@@ -224,8 +224,8 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 		}
 		chart.setSeries(series);
 		
-		content.remove(WorkSheetSerializationCostants.CATEGORY);
-		content.remove(WorkSheetSerializationCostants.SERIES);
+		content.remove(WorkSheetSerializationUtils.CATEGORY);
+		content.remove(WorkSheetSerializationUtils.SERIES);
 		chart.setConfig(content);
 		
 		toReturn = chart;
@@ -236,7 +236,7 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 			throws JSONException, SerializationException {
 		SheetContent toReturn;
 		TableDefinition table = new TableDefinition();
-		JSONArray fields = content.getJSONArray(WorkSheetSerializationCostants.VISIBLE_SELECT_FIELDS);
+		JSONArray fields = content.getJSONArray(WorkSheetSerializationUtils.VISIBLE_SELECT_FIELDS);
 		for (int i = 0; i < fields.length(); i++) {
 			JSONObject aField = fields.getJSONObject(i);
 			String nature = aField.getString("nature");

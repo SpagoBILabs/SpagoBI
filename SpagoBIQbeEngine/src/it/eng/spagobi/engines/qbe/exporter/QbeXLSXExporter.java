@@ -13,6 +13,8 @@ package it.eng.spagobi.engines.qbe.exporter;
 
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
 import it.eng.spagobi.engines.qbe.query.Field;
+import it.eng.spagobi.engines.worksheet.bo.MeasureScaleFactorOption;
+import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetSerializationUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -23,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
@@ -43,15 +46,17 @@ public class QbeXLSXExporter {
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(QbeXLSXExporter.class);
 	
-    
+    private Locale locale;
 	IDataStore dataStore = null;
 	Vector extractedFields = null;
 	Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
 
-	public QbeXLSXExporter(IDataStore dataStore) {
-		super();
+	public QbeXLSXExporter(IDataStore dataStore, Locale locale) {
+			super();
 		this.dataStore = dataStore;
+		this.locale = locale;
 	}
+
 
 	public IDataStore getDataStore() {
 		return dataStore;
@@ -101,6 +106,8 @@ public class QbeXLSXExporter {
     	    IFieldMetaData fieldMetaData = d.getFieldMeta(j);
     	    String format = (String) fieldMetaData.getProperty("format");
     	    String alias = (String) fieldMetaData.getAlias();
+    	    String scaleFactorHeader = (String) fieldMetaData.getProperty(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+    	    String header ;
 
             if (extractedFields != null && extractedFields.get(j) != null) {
     	    	Field field = (Field) extractedFields.get(j);
@@ -117,10 +124,14 @@ public class QbeXLSXExporter {
             }
 
            	if(alias!=null && !alias.equals("")){
-           		cell.setCellValue(createHelper.createRichTextString(alias));
+           		header = alias;
            	}else{
-           		cell.setCellValue(createHelper.createRichTextString(fieldName));
+           		header = fieldName;
            	}	 
+
+           	header = MeasureScaleFactorOption.getScaledName(header, scaleFactorHeader, locale);
+       		cell.setCellValue(createHelper.createRichTextString(header)); 
+       		
            	cell.setCellStyle(hCellStyle);
 
     	}

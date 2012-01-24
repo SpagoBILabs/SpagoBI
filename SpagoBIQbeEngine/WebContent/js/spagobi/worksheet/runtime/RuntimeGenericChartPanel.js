@@ -181,8 +181,10 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			var measures_metadata_map = {};
 			//load the metadata of the measures (we need the type)
 			var i=0;
+
 			for(; i<measures_metadata.length; i++){
 				measures_metadata_map[measures_metadata[i].name] ={'format':measures_metadata[i].format, 'type': measures_metadata[i].type};
+				measures_metadata_map[measures_metadata[i].name].scaleFactorValue = (this.getMeasureScaleFactor(measures_metadata[i].name)).value;
 			}
 			var series = [];
 			var serie;
@@ -197,7 +199,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			      var j=0;
 			      for(; j<serieData.length; j++){
 			    	  map = measures_metadata_map[serie.name];
-			    	  serieDataFormatted.push(this.format(serieData[j], map.type, map.format ));
+			    	  serieDataFormatted.push(this.format(serieData[j], map.type, map.format, map.scaleFactorValue ));
 			      }
 			      serie.data = serieDataFormatted;
 			      series.push(serie);
@@ -206,16 +208,16 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		}
 	}
 	
-    , format: function(value, type, format) {
+    , format: function(value, type, format, scaleFactor) {
     	if(value==null){
     		return value;
     	}
 		try {
 			var valueObj = value;
 			if (type == 'int') {
-				valueObj = parseInt(value);
+				valueObj = (parseInt(value))/scaleFactor;
 			} else if (type == 'float') {
-				valueObj = parseFloat(value);
+				valueObj = (parseFloat(value))/scaleFactor;
 			} else if (type == 'date') {
 				valueObj = Date.parseDate(value, format);
 			} else if (type == 'timestamp') {
@@ -354,50 +356,46 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		var fieldsOptions = this.fieldsOptions;
 		
 		var optionDefinition = null;
-		var legendSuffix ='';
+		var legendSuffix = (this.getMeasureScaleFactor(theSerieName)).text;
 		
-		// find the serie configuration
-		var i = 0;
-		for (; i < fieldsOptions.length; i++) {
-			if (fieldsOptions[i].alias === theSerieName) {
-				optionDefinition = fieldsOptions[i];
+		if(legendSuffix!=''){
+			return theSerieName +' '+legendSuffix;
+		}
+		
+		return theSerieName;
+	}
+	
+	, getMeasureScaleFactor: function (theMeasureName){
+		var i=0;
+		var scaleFactor={value:1, text:''};
+		var optionDefinition = null;
+		for (; i < this.fieldsOptions.length; i++) {
+			if (this.fieldsOptions[i].alias === theMeasureName) {
+				optionDefinition = this.fieldsOptions[i];
 				break;
 			}
 		}
-		
 		if(optionDefinition!=null){
 			legendSuffix = optionDefinition.options.measureScaleFactor;
-			if(legendSuffix != undefined && legendSuffix != null){
-				return theSerieName + legendSuffix;
+			if(legendSuffix != undefined && legendSuffix != null && legendSuffix!='NONE'){
+				scaleFactor.text = LN('sbi.worksheet.config.options.measurepresentation.'+legendSuffix);
+				switch (legendSuffix)
+				{
+				case 'K':
+					scaleFactor.value=1000;
+					break;
+				case 'M':
+					scaleFactor.value=1000000;
+					break;
+				case 'G':
+					scaleFactor.value=1000000000;
+					break;
+				default:
+					scaleFactor.value=1;
+				}
 			}
 		}
-		
-		
-		return theSerieName;
-		
-//		var allSeries = this.chartConfig.series;
-//		var serieDefinition = null;
-//		var legendSuffix ='';
-//		
-//		// find the serie configuration
-//		var i = 0;
-//		for (; i < allSeries.length; i++) {
-//			if (allSeries[i].seriename === theSerieName) {
-//				serieDefinition = allSeries[i];
-//				break;
-//			}
-//		}
-//		
-//		if(serieDefinition!=null){
-//			legendSuffix = serieDefinition.scale;
-//			if(legendSuffix != undefined && legendSuffix != null){
-//				return theSerieName + legendSuffix;
-//			}
-//		}
-//		
-//		
-//		return theSerieName;
+		return scaleFactor;
 	}
 	
-
 });
