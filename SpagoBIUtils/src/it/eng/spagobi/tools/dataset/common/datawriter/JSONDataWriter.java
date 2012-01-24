@@ -44,6 +44,8 @@ public class JSONDataWriter implements IDataWriter {
 	
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy" );
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
+	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
+	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
 
 	public JSONDataWriter() {}
 	
@@ -58,8 +60,12 @@ public class JSONDataWriter implements IDataWriter {
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(JSONDataWriter.class);
-	
-	public Object write(IDataStore dataStore) throws RuntimeException {
+    
+    public Object write(IDataStore dataStore) throws RuntimeException {
+    	return write(dataStore, null);
+    }
+    
+	public Object write(IDataStore dataStore, JSONArray fieldsOptions) throws RuntimeException {
 		JSONObject  result = null;
 		JSONObject metadata;
 		IField field;
@@ -74,7 +80,7 @@ public class JSONDataWriter implements IDataWriter {
 		
 		Assert.assertNotNull(dataStore, "Object to be serialized connot be null");
 		
-		metadata = (JSONObject) write(dataStore.getMetaData());
+		metadata = (JSONObject) write(dataStore.getMetaData(), fieldsOptions);
 		
 		try {
 			result = new JSONObject();
@@ -159,6 +165,10 @@ public class JSONDataWriter implements IDataWriter {
 	}
 
 	public Object write(IMetaData metadata) {
+		return write(metadata, null);
+	}
+	
+	public Object write(IMetaData metadata, JSONArray fieldsOptions) {
 		
 		try {
 		
@@ -190,7 +200,7 @@ public class JSONDataWriter implements IDataWriter {
 				fieldMetaDataJSON.put("name", fieldName);						
 				fieldMetaDataJSON.put("dataIndex", fieldName);
 				fieldMetaDataJSON.put("header", fieldHeader);
-				
+				addMeasuresScaleFactor(fieldsOptions,fieldMetaData.getName(),fieldMetaDataJSON);
 				
 				Class clazz = fieldMetaData.getType();
 				if (clazz == null) {
@@ -273,4 +283,25 @@ public class JSONDataWriter implements IDataWriter {
 			
 		}
 	}
+	
+	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId, JSONObject fieldMetaDataJSON){
+		if(fieldOptions!=null){
+			for (int i = 0; i < fieldOptions.length(); i++) {
+				try {
+					JSONObject afield = fieldOptions.getJSONObject(i);
+					JSONObject aFieldOptions = afield.getJSONObject(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
+					String afieldId = afield.getString("id");
+					
+						if(afieldId.equals(fieldId)){
+							fieldMetaDataJSON.put(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR, aFieldOptions.getString(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR));;
+							return;
+							
+						}
+				} catch (Exception e) {
+					logger.error("No scale factor setted for the measures "+fieldOptions,e);
+				}
+			}	
+		}
+	}
+
 }
