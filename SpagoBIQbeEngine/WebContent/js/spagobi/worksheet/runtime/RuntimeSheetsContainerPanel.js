@@ -120,7 +120,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 	}
 	
 	,
-	exportContent : function(mimeType, fromDesigner) {
+	exportContent : function(mimeType, fromDesigner, metadata) {
 		// make sure all the sheets have been displayed (necessary for charts' export)
 		if (this.sheetItems !== undefined && this.sheetItems !== null) {
 			var i = 0;
@@ -128,17 +128,17 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 			for (; i < this.sheetItems.length; i++) {
 				if (this.sheetItems[i].contentLoaded === false) {
 					// register to the contentloaded event
-					this.sheetItems[i].on('contentloaded', function () {this.exportContent.defer(500, this, [mimeType, fromDesigner]); }, this);
+					this.sheetItems[i].on('contentloaded', function () {this.exportContent.defer(500, this, [mimeType, fromDesigner, metadata]); }, this);
 					this.setActiveTab(i);
 					return;
 				}
 			}
 		}
-		this.doExportContent(mimeType, fromDesigner);
+		this.doExportContent(mimeType, fromDesigner, metadata);
 	}
 
 	,
-	doExportContent : function(mimeType, fromDesigner) {
+	doExportContentOld : function(mimeType, fromDesigner) {
 
 		var resultExport = this.exportRenderedContent(mimeType);
 
@@ -187,8 +187,68 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 		}
 	}
 	
-	,
-	exportRenderedContent : function(mimeType) {
+	, doExportContent : function(mimeType, fromDesigner, metadata) {
+		
+
+		var resultExport = this.exportRenderedContent(mimeType);
+
+		var worksheetDataEncoded = Ext.encode(resultExport);
+		var worksheetMetadataEncoded = Ext.encode(metadata);
+		
+	    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
+					 // but, if a value contains a " character, then the html produced is not correct!!! 
+					 // See source of DomHelper.append and DomHelper.overwrite methods
+					 // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+		var dh = Ext.DomHelper;
+		
+		//alert('debug 1: ' + mimeType);
+		//alert('debug 1: ' + worksheetDataEncoded);
+		
+		var form = document.getElementById('export-worksheet-form');
+		if (!form) {
+			form = dh.append(Ext.getBody(), { // creating the hidden form
+				id: 'export-crosstab-form'
+				, tag: 'form'
+				, method: 'post'
+				, cls: 'export-form'
+			});
+			dh.append(form, {					// creating WORKSHEETS hidden input in form
+				tag: 'input'
+				, type: 'hidden'
+				, name: 'WORKSHEETS'
+				, value: ''  // do not put WORKSHEETS value now since DomHelper.overwrite does not work properly!!
+			});
+			dh.append(form, {					// creating MIME_TYPE hidden input in form
+				tag: 'input'
+				, type: 'hidden'
+				, name: 'METADATA'
+				, value: ''  // do not put METADATA value now since DomHelper.overwrite does not work properly!!
+			});
+			dh.append(form, {					// creating MIME_TYPE hidden input in form
+				tag: 'input'
+				, type: 'hidden'
+				, name: 'MIME_TYPE' 
+				, value: mimeType  
+			});
+		}
+		
+		
+		// putting the crosstab data into CROSSTAB hidden input
+		form.elements[0].value = worksheetDataEncoded;
+		form.elements[1].value = worksheetMetadataEncoded;
+		form.action = this.services['exportWorksheet'];
+		form.target = '_blank';				// result into a new browser tab
+		form.submit();
+		// notify the exporting service has been invoked (in order to hide the load-mask)
+		
+		if(fromDesigner){
+			this.fireEvent('contentexported');
+		}else{
+			sendMessage({}, 'contentexported'); 
+		}
+	}
+	
+	, exportRenderedContent : function(mimeType) {
 		var items = new Array();
 
 		if (this.sheetItems != undefined && this.sheetItems != null) {
