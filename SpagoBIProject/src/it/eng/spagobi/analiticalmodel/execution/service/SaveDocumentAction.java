@@ -650,9 +650,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		logger.info(new String(objTemp.getContent()));
 		documentManagementAPI.saveDocument(biobj, objTemp);
 		logger.debug("Template of document with id " + biobj.getId() + ", label " + biobj.getLabel() + ", name " + biobj.getName() + " updated");
-		JSONObject response = new JSONObject();
-		response.put("text", "Operation succeded");
-		writeBackToClient( new JSONSuccess(response) );
 		logger.debug("OUT");
 	}
 
