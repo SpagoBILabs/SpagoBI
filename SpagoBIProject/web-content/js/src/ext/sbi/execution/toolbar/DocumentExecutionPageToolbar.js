@@ -1291,7 +1291,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	        success : function(response, options) {
 	      		if(response !== undefined && response.responseText !== undefined) {
 	      			var content = Ext.util.JSON.decode( response.responseText );
-	      			if (content.text !== 'Operation succeded') {
+	      			if (content.text !== 'Operation succeded' && content.responseText !== 'Operation succeded') {
 	                    Ext.MessageBox.show({
 	                        title: LN('sbi.generic.error'),
 	                        msg: content,
