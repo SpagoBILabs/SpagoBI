@@ -385,138 +385,87 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	    }
 	}
 	
-	/*
-	, exportQbECrosstab: function (exportType) {
-	    var mf = this.miframe;
-		var frame = mf.getFrame();
-	    var docurl = frame.getDocumentURI();
-	    var baseUrl = docurl.substring(0,docurl.indexOf('?')+1);   
-	    if (baseUrl=="") baseUrl = docurl;
-	 
-	    var docurlPar = "ACTION_NAME=EXPORT_CROSSTAB_ACTION&SBI_EXECUTION_ID="+this.executionInstance.SBI_EXECUTION_ID+"&MIME_TYPE="+exportType+"&RESPONSE_TYPE=RESPONSE_TYPE_ATTACHMENT";
-	    var endUrl = baseUrl + docurlPar;
-	    
-		var crosstabDataEncoded = this.retrieveQbeCrosstabData(frame);    // retieving crosstab data (already encoded) from Qbe window
-		
-	    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
-	    							 // but, if a value contains a " character, then the html produced is not correct!!! 
-	    							 // See source of DomHelper.append and DomHelper.overwrite methods
-	    							 // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
-	    var dh = Ext.DomHelper;
-	    
-	    var form = document.getElementById('export-crosstab-form');
-	    if (!form) {
-			form = dh.append(Ext.getBody(), { // creating the hidden form
-			    id: 'export-crosstab-form'
-			    , tag: 'form'
-			    , method: 'post'
-			    , cls: 'export-form'
-			});
-			dh.append(form, {					// creating CROSSTAB hidden input in form
-			    tag: 'input'
-			    , type: 'hidden'
-			    , name: 'CROSSTAB'
-			    , value: ''  // do not put CROSSTAB value now since DomHelper.overwrite does not work properly!!
-			});
-	    }
-	    // putting the crosstab data into CROSSTAB hidden input
-	    //form.CROSSTAB.value = crosstabDataEncoded; // this does not work on IE, don't know why....
-	    form.elements[0].value = crosstabDataEncoded;
-		form.action = endUrl;
-		form.target = '_blank';				// result into a new browser tab
-		form.submit();
-	}
 	
-	, retrieveQbeCrosstabData: function (frame) {
-		try {
-			var qbeWindow = frame.getWindow();
-			var crosstabData = qbeWindow.qbe.getCrosstabDataEncoded();
-			return crosstabData;
-		} catch (err) {
-			alert('Sorry, cannot perform operation.');
-			throw err;
-		}
-	}
-	*/
 	
-	, exportWorksheetsExecution: function (mimeType) {
+	, exportWorksheetsExecution: function (mimeType, records) {
 		try {
 			
 			this.fireEvent('showmask','Exporting..');
 			
-			var thePanel = this.miframe.getFrame().getWindow().qbe;
-			if(thePanel==null){
-				//the worksheet has been constructed starting from a smart filter document
-				thePanel = this.miframe.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
-			}
-			if(thePanel==null){
-				//the worksheet is alone with out the qbe
-				thePanel = this.miframe.getFrame().getWindow().workSheetPanel;
-			}
+						    
+			if(!records) {
+								
+				var params = {
+					LIGHT_NAVIGATOR_DISABLED : 'TRUE',
+					OBJECT_ID: this.executionInstance.OBJECT_ID
+				};
+				
+				var subObjectId = this.executionInstance.SBI_SUBOBJECT_ID;
+				if(subObjectId) {
+					params.SUBOBJECT_ID = subObjectId;
+				}
 			
-			thePanel.exportContent(mimeType);
+				this.services = new Array();
 
-		} catch (err) {
-			alert('Sorry, cannot perform operation.');
-			throw err;
-		}
-	}
-	
-	
-	/*
-	, exportWorksheetsExecution: function (exportType) {
-		var frame = this.miframe.getFrame();
-	    var docurl = frame.getDocumentURI();
-	    var baseUrl = docurl.substring(0,docurl.indexOf('?')+1);   
-	    if (baseUrl=="") baseUrl = docurl;
-	 
-	    var docurlPar = "ACTION_NAME=EXPORT_WORKSHEETS_ACTION&SBI_EXECUTION_ID="+this.executionInstance.SBI_EXECUTION_ID+"&MIME_TYPE="+exportType+"&RESPONSE_TYPE=RESPONSE_TYPE_ATTACHMENT";
-	    var endUrl = baseUrl + docurlPar;
-		var worksheetDataEncoded = this.retrieveWorksheetsContentData(frame);    // retieving crosstab data (already encoded) from Qbe window
+				this.services['getMetadataService'] = Sbi.config.serviceRegistry.getServiceUrl({
+					serviceName : 'GET_METADATA_ACTION',
+					baseParams : params
+				});
+					
+				var metadataStore = new Ext.data.JsonStore({
+			        autoLoad: false,
+			        fields: [
+			           'meta_id'
+			           , 'biobject_id'
+			           , 'subobject_id'
+			           , 'meta_name'
+			           , 'meta_type'
+			           , 'meta_content'
+			           , 'meta_creation_date'
+			           , 'meta_change_date'
+			        ]
+			        , url: this.services['getMetadataService']
+			    });
+			    metadataStore.on('load', function(store, records, options ) {
+			    	this.exportWorksheetsExecution(mimeType, records);
+		    	}, this);
+			    
+			    metadataStore.load();
+			} else {
+				
 		
-	    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
-	    							 // but, if a value contains a " character, then the html produced is not correct!!! 
-	    							 // See source of DomHelper.append and DomHelper.overwrite methods
-	    							 // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
-	    var dh = Ext.DomHelper;
-	    
-	    var form = document.getElementById('export-crosstab-form');
-	    if (!form) {
-			form = dh.append(Ext.getBody(), { // creating the hidden form
-			    id: 'export-crosstab-form'
-			    , tag: 'form'
-			    , method: 'post'
-			    , cls: 'export-form'
-			});
-			dh.append(form, {					// creating CROSSTAB hidden input in form
-			    tag: 'input'
-			    , type: 'hidden'
-			    , name: 'WORKSHEETS'
-			    , value: ''  // do not put CROSSTAB value now since DomHelper.overwrite does not work properly!!
-			});
-	    }
-	    // putting the crosstab data into CROSSTAB hidden input
-	    form.elements[0].value = worksheetDataEncoded;
-		form.action = endUrl;
-		form.target = '_blank';				// result into a new browser tab
-		form.submit();
-	}
-	*/
-	
-	/*
-	, retrieveWorksheetsContentData: function (frame) {
-		try {
-			var worksheetWindow = frame.getWindow();
-			var exportedData = worksheetWindow.workSheetPanel.exportContent();
-			
-			return exportedData;
+				var metadata = [];
+				for(var i = 0; i < records.length; i++) {
+					var record = records[i];
+					metadata.push(record.data);
+					//alert(record.data.toSource());
+				}
+					
+				
+//				var metadata = [
+//	                 {name: 'name1', content: 'content1'}
+//				     ,{name: 'name2', content: 'content2'}
+//				   	 ,{name: 'name3', content: 'content3'}
+//				];
+				 
+				var thePanel = this.miframe.getFrame().getWindow().qbe;
+				if(thePanel==null){
+					//the worksheet has been constructed starting from a smart filter document
+					thePanel = this.miframe.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
+				}
+				if(thePanel==null){
+					//the worksheet is alone with out the qbe
+					thePanel = this.miframe.getFrame().getWindow().workSheetPanel;
+				}
+				
+				thePanel.exportContent(mimeType, false, metadata);
+			}
 		} catch (err) {
-			alert('Sorry, cannot perform operation.');
+			alert('Sorry, cannot perform operation');
 			throw err;
 		}
 	}
-	*/
-	
+
 	, updateFrame: function(miframe){
 		this.miframe = miframe;
 	}   
@@ -1264,7 +1213,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    , getWorksheetExportMenuItems: function() {
 	  // if (this.worksheetExportMenuItems ==undefined || this.worksheetExportMenuItems ==null){
 		   var menuItems = new Array();
-
+	   
 		   for(i=0;i<this.executionInstance.document.exporters.length ;i++){
 
 			   if (this.executionInstance.document.exporters[i]=='PDF'){
