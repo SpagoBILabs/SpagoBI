@@ -456,7 +456,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		return sheetRow;
 	}
 	
-	public void exportToXLSX(JSONObject worksheetJSON, OutputStream stream) throws Exception {
+	public void exportToXLSX(JSONObject worksheetJSON , JSONArray metadataPropertiesJSON, OutputStream stream) throws Exception {
 
 		XSSFWorkbook wb = new XSSFWorkbook();
 		int sheetsNumber = worksheetJSON.getInt(SHEETS_NUM);
