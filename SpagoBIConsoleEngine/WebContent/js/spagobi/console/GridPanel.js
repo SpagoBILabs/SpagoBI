@@ -1381,6 +1381,5 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		 
 		// return markup
 		return '<div qtip="' + val +'">' + val + '</div>';
-		}
-	,
+	}
 });
