@@ -50,10 +50,17 @@ import java.util.Map;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -72,6 +79,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	public static final String MIME_TYPE = "MIME_TYPE";
 	public static final String RESPONSE_TYPE = "RESPONSE_TYPE";
 	public static final String WORKSHEETS = "WORKSHEETS";
+	public static final String METADATA = "METADATA";
 	public static final String SHEETS_NUM = "SHEETS_NUM";
 	public static final String EXPORTED_SHEETS = "EXPORTED_SHEETS";
 	public static final String CONTENT = "CONTENT";
@@ -105,6 +113,8 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		String mimeType = null;
 		JSONObject worksheetJSON = null;
 		File exportFile = null;
+		JSONArray metadataPropertiesJSON = null;
+		
 
     	try {
 			setSpagoBIRequestContainer( request );
@@ -124,6 +134,12 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			worksheetJSON = getAttributeAsJSONObject( WORKSHEETS );	
 			logger.debug(WORKSHEETS + ": " + worksheetJSON);
 			
+			
+			if( requestContainsAttribute(METADATA) ) {
+				metadataPropertiesJSON = getAttributeAsJSONArray( METADATA );	
+				logger.debug(METADATA + ": " + metadataPropertiesJSON);
+			}
+			
 			writeBackResponseInline = RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType);
 			
 			if( "application/vnd.ms-excel".equalsIgnoreCase( mimeType ) ) {
@@ -131,7 +147,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				exportFile = File.createTempFile("worksheet", ".xls");
 				FileOutputStream stream = new FileOutputStream(exportFile);
 				try {
-					exportToXLS(worksheetJSON, stream);
+					exportToXLS(worksheetJSON, metadataPropertiesJSON, stream);
 				} finally {
 					if (stream != null) {
 						stream.close();
@@ -143,7 +159,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				exportFile = File.createTempFile("worksheet", ".xlsx");
 				FileOutputStream stream = new FileOutputStream(exportFile);
 				try {
-					exportToXLSX(worksheetJSON, stream);
+					exportToXLSX(worksheetJSON, metadataPropertiesJSON, stream);
 				} finally {
 					if (stream != null) {
 						stream.close();
@@ -202,15 +218,18 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		outputStream.flush();
 	}
 	
-	public void exportToXLS(JSONObject worksheetJSON, OutputStream stream) throws Exception {
+	public void exportToXLS(JSONObject worksheetJSON, JSONArray metadataPropertiesJSON, OutputStream stream) throws Exception {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
 		int sheetsNumber = worksheetJSON.getInt(SHEETS_NUM);
 		WorkSheetXLSExporter exporter = new WorkSheetXLSExporter();
 		CreationHelper createHelper = wb.getCreationHelper();
 		
+		if(metadataPropertiesJSON != null) {
+			exportMetadataToXLS(wb, exporter, createHelper, metadataPropertiesJSON);
+		}
+		
 		JSONArray exportedSheets = worksheetJSON.getJSONArray(EXPORTED_SHEETS);
-			
 		
 		for (int i = 0; i < sheetsNumber; i++) {
 			
@@ -232,6 +251,107 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		wb.write(stream);
 		stream.flush();
 
+	}
+	
+	public void exportMetadataToXLS(HSSFWorkbook wb, WorkSheetXLSExporter exporter, CreationHelper createHelper, JSONArray metadataPropertiesJSON) throws Exception{
+		
+		int FIRST_ROW = 2;
+		int FIRST_COLUMN = 1;
+		JSONArray shortBusinessMetadataProperty;
+		JSONArray longtBusinessMetadataProperty;;
+		
+		HSSFSheet sheet = wb.createSheet("Metadata");
+		
+		sheet.setColumnWidth(FIRST_COLUMN, 256*25);
+		sheet.setColumnWidth(FIRST_COLUMN+1, 256*90);
+		
+		Row row = sheet.createRow(FIRST_ROW);
+		
+		//meta_type:"GENERAL_META",
+		//meta_type:"SHORT_TEXT",
+		//meta_type:"LONG_TEXT",
+
+        CellStyle headerCellStyle = exporter.buildHeaderTitleCellStyle(sheet);
+        
+		Cell nameCell = row.createCell(FIRST_COLUMN);
+		nameCell.setCellValue(createHelper.createRichTextString("Name"));
+		nameCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		nameCell.setCellStyle(headerCellStyle);
+		
+		Cell valueCell = row.createCell(FIRST_COLUMN + 1);
+		valueCell.setCellValue(createHelper.createRichTextString("Value"));
+		valueCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		valueCell.setCellStyle(headerCellStyle);
+		
+		shortBusinessMetadataProperty = new JSONArray();
+		longtBusinessMetadataProperty = new JSONArray();
+		CellStyle metaCellStyle =  exporter.buildMetadataCellStyle(sheet);
+		int rowCount = 0;
+		for(int i = 0; i < metadataPropertiesJSON.length(); i++) {
+			JSONObject metadataProperty = metadataPropertiesJSON.getJSONObject(i);		
+			String  metadataPropertyType = metadataProperty.getString("meta_type");
+			if("SHORT_TEXT".equalsIgnoreCase(metadataPropertyType)) {
+				shortBusinessMetadataProperty.put(metadataProperty);
+				continue;
+			} else if("LONG_TEXT".equalsIgnoreCase(metadataPropertyType)) {
+				longtBusinessMetadataProperty.put(metadataProperty);
+				continue;
+			}
+			
+			String  metadataPropertyName = metadataProperty.getString("meta_name");
+			String  metadataPropertyValue = metadataProperty.getString("meta_content");
+			row = sheet.createRow((FIRST_ROW+1) + rowCount);
+			
+			nameCell = row.createCell(FIRST_COLUMN);
+			nameCell.setCellValue(createHelper.createRichTextString(metadataPropertyName));
+			nameCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			nameCell.setCellStyle(metaCellStyle);
+			
+			valueCell = row.createCell(FIRST_COLUMN + 1);
+			valueCell.setCellValue(createHelper.createRichTextString(metadataPropertyValue));
+			valueCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			valueCell.setCellStyle(metaCellStyle);
+			rowCount++;
+		}
+		
+		for(int i = 0; i < shortBusinessMetadataProperty.length(); i++, rowCount++) {
+			
+			JSONObject metadataProperty = shortBusinessMetadataProperty.getJSONObject(i);	
+			
+			String  metadataPropertyName = metadataProperty.getString("meta_name");
+			String  metadataPropertyValue = metadataProperty.getString("meta_content");
+			row = sheet.createRow((FIRST_ROW+1) + rowCount);
+			
+			nameCell = row.createCell(FIRST_COLUMN);
+			nameCell.setCellValue(createHelper.createRichTextString(metadataPropertyName));
+			nameCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			nameCell.setCellStyle(metaCellStyle);
+			
+			valueCell = row.createCell(FIRST_COLUMN + 1);
+			valueCell.setCellValue(createHelper.createRichTextString(metadataPropertyValue));
+			valueCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			valueCell.setCellStyle(metaCellStyle);
+		}
+		
+		for(int i = 0; i < longtBusinessMetadataProperty.length(); i++, rowCount++) {
+			
+			JSONObject metadataProperty = longtBusinessMetadataProperty.getJSONObject(i);	
+			
+			String  metadataPropertyName = metadataProperty.getString("meta_name");
+			String  metadataPropertyValue = metadataProperty.getString("meta_content");
+			
+			row = sheet.createRow((FIRST_ROW+1) + rowCount);
+			
+			nameCell = row.createCell(FIRST_COLUMN);
+			nameCell.setCellValue(createHelper.createRichTextString(metadataPropertyName));
+			nameCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			nameCell.setCellStyle(metaCellStyle);
+			
+			valueCell = row.createCell(FIRST_COLUMN + 1);
+			valueCell.setCellValue(createHelper.createRichTextString(metadataPropertyValue));
+			valueCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			valueCell.setCellStyle(metaCellStyle);
+		}
 	}
 	
 	public void exportSheetToXLS(HSSFWorkbook wb,JSONObject sheetJ, WorkSheetXLSExporter exporter,CreationHelper createHelper, WhereField splittingWhereField) throws Exception{
@@ -333,12 +453,16 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		return sheetRow;
 	}
 	
-	public void exportToXLSX(JSONObject worksheetJSON, OutputStream stream) throws Exception {
+	public void exportToXLSX(JSONObject worksheetJSON, JSONArray metadataPropertiesJSON, OutputStream stream) throws Exception {
 
 		XSSFWorkbook wb = new XSSFWorkbook();
 		int sheetsNumber = worksheetJSON.getInt(SHEETS_NUM);
 		WorkSheetXLSXExporter exporter = new WorkSheetXLSXExporter();
 		CreationHelper createHelper = wb.getCreationHelper();
+		
+		if(metadataPropertiesJSON != null) {
+			exportMetadataToXLSX(wb, exporter, createHelper, metadataPropertiesJSON);
+		}
 		
 		JSONArray exportedSheets = worksheetJSON.getJSONArray(EXPORTED_SHEETS);
 			
@@ -363,6 +487,103 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		wb.write(stream);
 		stream.flush();
 
+	}
+	
+	public void exportMetadataToXLSX(XSSFWorkbook wb, WorkSheetXLSXExporter exporter, CreationHelper createHelper, JSONArray metadataPropertiesJSON) throws Exception{
+		
+		int FIRST_ROW = 2;
+		int FIRST_COLUMN = 1;
+		JSONArray shortBusinessMetadataProperty;
+		JSONArray longtBusinessMetadataProperty;;
+		
+		XSSFSheet sheet = wb.createSheet("Metadata");
+		
+		sheet.setColumnWidth(FIRST_COLUMN, 256*25);
+		sheet.setColumnWidth(FIRST_COLUMN+1, 256*90);
+		
+		Row row = sheet.createRow(FIRST_ROW);
+	
+        CellStyle headerCellStyle = exporter.buildHeaderTitleCellStyle(sheet);
+        
+		Cell nameCell = row.createCell(FIRST_COLUMN);
+		nameCell.setCellValue(createHelper.createRichTextString("Name"));
+		nameCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		nameCell.setCellStyle(headerCellStyle);
+		
+		Cell valueCell = row.createCell(FIRST_COLUMN + 1);
+		valueCell.setCellValue(createHelper.createRichTextString("Value"));
+		valueCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		valueCell.setCellStyle(headerCellStyle);
+		
+		shortBusinessMetadataProperty = new JSONArray();
+		longtBusinessMetadataProperty = new JSONArray();
+		CellStyle metaCellStyle =  exporter.buildMetadataCellStyle(sheet);
+		int rowCount = 0;
+		for(int i = 0; i < metadataPropertiesJSON.length(); i++) {
+			JSONObject metadataProperty = metadataPropertiesJSON.getJSONObject(i);		
+			String  metadataPropertyType = metadataProperty.getString("meta_type");
+			if("SHORT_TEXT".equalsIgnoreCase(metadataPropertyType)) {
+				shortBusinessMetadataProperty.put(metadataProperty);
+				continue;
+			} else if("LONG_TEXT".equalsIgnoreCase(metadataPropertyType)) {
+				longtBusinessMetadataProperty.put(metadataProperty);
+				continue;
+			}
+			
+			String  metadataPropertyName = metadataProperty.getString("meta_name");
+			String  metadataPropertyValue = metadataProperty.getString("meta_content");
+			row = sheet.createRow((FIRST_ROW+1) + rowCount);
+			
+			nameCell = row.createCell(FIRST_COLUMN);
+			nameCell.setCellValue(createHelper.createRichTextString(metadataPropertyName));
+			nameCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			nameCell.setCellStyle(metaCellStyle);
+			
+			valueCell = row.createCell(FIRST_COLUMN + 1);
+			valueCell.setCellValue(createHelper.createRichTextString(metadataPropertyValue));
+			valueCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			valueCell.setCellStyle(metaCellStyle);
+			rowCount++;
+		}
+		
+		for(int i = 0; i < shortBusinessMetadataProperty.length(); i++, rowCount++) {
+			
+			JSONObject metadataProperty = shortBusinessMetadataProperty.getJSONObject(i);	
+			
+			String  metadataPropertyName = metadataProperty.getString("meta_name");
+			String  metadataPropertyValue = metadataProperty.getString("meta_content");
+			row = sheet.createRow((FIRST_ROW+1) + rowCount);
+			
+			nameCell = row.createCell(FIRST_COLUMN);
+			nameCell.setCellValue(createHelper.createRichTextString(metadataPropertyName));
+			nameCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			nameCell.setCellStyle(metaCellStyle);
+			
+			valueCell = row.createCell(FIRST_COLUMN + 1);
+			valueCell.setCellValue(createHelper.createRichTextString(metadataPropertyValue));
+			valueCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			valueCell.setCellStyle(metaCellStyle);
+		}
+		
+		for(int i = 0; i < longtBusinessMetadataProperty.length(); i++, rowCount++) {
+			
+			JSONObject metadataProperty = longtBusinessMetadataProperty.getJSONObject(i);	
+			
+			String  metadataPropertyName = metadataProperty.getString("meta_name");
+			String  metadataPropertyValue = metadataProperty.getString("meta_content");
+			
+			row = sheet.createRow((FIRST_ROW+1) + rowCount);
+			
+			nameCell = row.createCell(FIRST_COLUMN);
+			nameCell.setCellValue(createHelper.createRichTextString(metadataPropertyName));
+			nameCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			nameCell.setCellStyle(metaCellStyle);
+			
+			valueCell = row.createCell(FIRST_COLUMN + 1);
+			valueCell.setCellValue(createHelper.createRichTextString(metadataPropertyValue));
+			valueCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			valueCell.setCellStyle(metaCellStyle);
+		}
 	}
 	
 	public void exportSheetToXLSX(XSSFWorkbook wb,JSONObject sheetJ, WorkSheetXLSXExporter exporter,CreationHelper createHelper, WhereField splittingWhereField) throws Exception{

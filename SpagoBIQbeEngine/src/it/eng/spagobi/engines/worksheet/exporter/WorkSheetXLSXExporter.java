@@ -257,6 +257,14 @@ public class WorkSheetXLSXExporter {
         return cellStyle;
 	}
 	
+	public CellStyle buildMetadataCellStyle(Sheet sheet){
+		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_TOP); 
+        cellStyle.setWrapText(true);
+        return cellStyle;
+	}
+	
 	private File getImage(String fileName) {
 		logger.debug("IN");
 		File toReturn = null;

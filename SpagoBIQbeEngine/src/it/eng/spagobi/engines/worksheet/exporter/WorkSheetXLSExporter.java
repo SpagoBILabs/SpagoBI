@@ -247,13 +247,21 @@ public class WorkSheetXLSExporter {
 	public CellStyle buildHeaderTitleCellStyle(Sheet sheet){
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
-        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);  
+        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER); 
         Font font = sheet.getWorkbook().createFont();
         font.setFontHeightInPoints((short)16);
         font.setFontName("Arial");
         font.setColor(IndexedColors.DARK_BLUE.getIndex());
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         cellStyle.setFont(font);
+        return cellStyle;
+	}
+	
+	public CellStyle buildMetadataCellStyle(Sheet sheet){
+		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_TOP); 
+        cellStyle.setWrapText(true);
         return cellStyle;
 	}
 	
