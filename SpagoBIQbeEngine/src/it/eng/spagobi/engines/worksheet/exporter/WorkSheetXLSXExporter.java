@@ -258,7 +258,18 @@ public class WorkSheetXLSXExporter {
         return cellStyle;
 	}
 	
-	public CellStyle buildMetadataCellStyle(Sheet sheet){
+	public CellStyle buildMetadataNameCellStyle(Sheet sheet){
+		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_TOP); 
+        cellStyle.setWrapText(true);
+        Font font = sheet.getWorkbook().createFont();
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        cellStyle.setFont(font);
+        return cellStyle;
+	}
+	
+	public CellStyle buildMetadataValueCellStyle(Sheet sheet){
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
         cellStyle.setVerticalAlignment(CellStyle.VERTICAL_TOP); 
