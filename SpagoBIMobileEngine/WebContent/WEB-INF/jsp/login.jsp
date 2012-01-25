@@ -71,20 +71,24 @@ author: Monica Franceschini
             onReady: function() {
 
                 var form;
-
-				Sbi.config = {};
+	    	    Sbi.config = {};
 				
 				var url = {
-			    	host: 'localhost'
-			    	, port: '8080'
-			    	    
+			    	host: '<%= request.getServerName()%>'
+			    	, port: '<%= request.getServerPort()%>'
+ 
 			    };
+
+		        var executionContext = {};
+		        
 			    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
 			    	baseUrl: url
+	        
 			    });
 				var loginUrl = Sbi.config.serviceRegistry.getServiceUrl({
 					serviceName: 'LOGIN_SUBMIT_ACTION'
 				});	
+				console.log(loginUrl);
 
                 var formBase = {
                     scroll : 'vertical',
