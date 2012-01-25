@@ -122,7 +122,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 	}
 	
 	,
-	exportContent : function(mimeType, fromDesigner, metadata) {
+	exportContent : function(mimeType, fromDesigner, metadata, parameters) {
 		// make sure all the sheets have been displayed (necessary for charts' export)
 		if (this.sheetItems !== undefined && this.sheetItems !== null) {
 			var i = 0;
@@ -136,66 +136,18 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 				}
 			}
 		}
-		this.doExportContent(mimeType, fromDesigner, metadata);
+		this.doExportContent(mimeType, fromDesigner, metadata, parameters);
 	}
 
-	,
-	doExportContentOld : function(mimeType, fromDesigner) {
-
-		var resultExport = this.exportRenderedContent(mimeType);
-
-		var worksheetDataEncoded = Ext.encode(resultExport);
-		
-	    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
-					 // but, if a value contains a " character, then the html produced is not correct!!! 
-					 // See source of DomHelper.append and DomHelper.overwrite methods
-					 // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
-		var dh = Ext.DomHelper;
-		
-		var form = document.getElementById('export-worksheet-form');
-		if (!form) {
-			form = dh.append(Ext.getBody(), { // creating the hidden form
-				id: 'export-crosstab-form'
-				, tag: 'form'
-				, method: 'post'
-				, cls: 'export-form'
-			});
-			dh.append(form, {					// creating WORKSHEETS hidden input in form
-				tag: 'input'
-				, type: 'hidden'
-				, name: 'WORKSHEETS'
-				, value: ''  // do not put WORKSHEETS value now since DomHelper.overwrite does not work properly!!
-			});
-			dh.append(form, {					// creating MIME_TYPE hidden input in form
-				tag: 'input'
-				, type: 'hidden'
-				, name: 'MIME_TYPE'
-				, value: mimeType  
-			});
-		}
-		// putting the crosstab data into CROSSTAB hidden input
-		form.elements[0].value = worksheetDataEncoded;
-		form.action = this.services['exportWorksheet'];
-		form.target = '_blank';				// result into a new browser tab
-		form.submit();
-		
-		// notify the exporting service has been invoked (in order to hide the load-mask)
-		
-		if(fromDesigner){
-			this.fireEvent('contentexported');
-			
-		}else{
-			sendMessage({}, 'contentexported'); 
-		}
-	}
 	
-	, doExportContent : function(mimeType, fromDesigner, metadata) {
+	, doExportContent : function(mimeType, fromDesigner, metadata, parameters) {
 		
 
 		var resultExport = this.exportRenderedContent(mimeType);
 
 		var worksheetDataEncoded = Ext.encode(resultExport);
 		var worksheetMetadataEncoded = Ext.encode(metadata);
+		var worksheetParametersEncoded = Ext.encode(parameters);
 		
 	    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
 					 // but, if a value contains a " character, then the html produced is not correct!!! 
@@ -229,6 +181,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 			dh.append(form, {					// creating MIME_TYPE hidden input in form
 				tag: 'input'
 				, type: 'hidden'
+				, name: 'PARAMETERS'
+				, value: ''  // do not put PARAMETERS value now since DomHelper.overwrite does not work properly!!
+			});
+			dh.append(form, {					// creating MIME_TYPE hidden input in form
+				tag: 'input'
+				, type: 'hidden'
 				, name: 'MIME_TYPE' 
 				, value: mimeType  
 			});
@@ -238,6 +196,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 		// putting the crosstab data into CROSSTAB hidden input
 		form.elements[0].value = worksheetDataEncoded;
 		form.elements[1].value = worksheetMetadataEncoded;
+		form.elements[2].value = worksheetParametersEncoded;
 		form.action = this.services['exportWorksheet'];
 		form.target = '_blank';				// result into a new browser tab
 		form.submit();
