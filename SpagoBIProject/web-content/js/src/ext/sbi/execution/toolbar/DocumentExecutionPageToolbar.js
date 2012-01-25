@@ -438,15 +438,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				for(var i = 0; i < records.length; i++) {
 					var record = records[i];
 					metadata.push(record.data);
-					//alert(record.data.toSource());
 				}
-					
-				
-//				var metadata = [
-//	                 {name: 'name1', content: 'content1'}
-//				     ,{name: 'name2', content: 'content2'}
-//				   	 ,{name: 'name3', content: 'content3'}
-//				];
+
 				 
 				var thePanel = this.miframe.getFrame().getWindow().qbe;
 				if(thePanel==null){
@@ -458,7 +451,18 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 					thePanel = this.miframe.getFrame().getWindow().workSheetPanel;
 				}
 				
-				thePanel.exportContent(mimeType, false, metadata);
+				var parameters = [];
+				var formState = this.parametersPanel.getFormState();
+				for(f in formState) {
+					if(f.indexOf('_field_visible_description') == -1) {
+						var p = {name: f, value: formState[f]};
+						var description = formState[f + '_field_visible_description'];
+						if(description) p.description = description;
+						parameters.push(p);
+					}
+				}
+				
+				thePanel.exportContent(mimeType, false, metadata, parameters);
 			}
 		} catch (err) {
 			alert('Sorry, cannot perform operation');

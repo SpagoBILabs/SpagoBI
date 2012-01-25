@@ -78,13 +78,9 @@ Ext.extend(Sbi.worksheet.runtime.WorkSheetsRuntimePanel, Ext.Panel, {
 		this.sheetsContainerPanel.on('contentexported',function(){this.fireEvent('contentexported');}, this);
 	},
 
-	exportContent: function(mimeType, fromDesigner, metadata){
+	exportContent: function(mimeType, fromDesigner, metadata, parameters){
 		
-		this.sheetsContainerPanel.exportContent(mimeType, fromDesigner, metadata);
-
-//		var exportedContent = this.sheetsContainerPanel.exportContent();
-//		var encodedExportedContent = Ext.util.JSON.encode(exportedContent);
-//		return encodedExportedContent;
+		this.sheetsContainerPanel.exportContent(mimeType, fromDesigner, metadata, parameters);
 	}
 	
 	,getAdditionalData: function(){
