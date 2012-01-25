@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
-  <display-name>SpagoBIMobileEngine</display-name>
-  	<filter>
-		<filter-name>EngineCheckSessionFilter</filter-name>
-		<filter-class>it.eng.spagobi.utilities.filters.EngineCheckSessionFilter</filter-class>
-	</filter>	
-<!-- START-CAS
+<web-app id="SpagoBIMobileEngine" 
+		 version="2.4" 
+		 xmlns="http://java.sun.com/xml/ns/j2ee" 
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	
+	<display-name>SpagoBIMobileEngine</display-name>
+	<description>
+		Spago BI - Mobile Version
+	</description>
+
+
+	<!--  ============================================================================ -->
+	<!--  FILTERS								 									   -->
+	<!--  ============================================================================ -->	
+<!-- START-CAS 
 <filter>
   <filter-name>CAS Authentication Filter</filter-name>
   <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
@@ -34,10 +43,10 @@
     <param-name>proxyReceptorUrl</param-name>
     <param-value>/proxyCallback</param-value>
   </init-param> 
-	<init-param>
+  <init-param>
 		<param-name>proxyCallbackUrl</param-name>
-		<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBIMobileEngine/proxyCallback</param-value>
-	</init-param>  
+		<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBIGeoEngine/proxyCallback</param-value>
+   </init-param>  
 </filter>
 
 <filter>
@@ -45,20 +54,18 @@
   <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
 </filter>
 END-CAS -->
-
+	 
+	
 	<filter>
-		<filter-name>SpagoBIAccessFilter</filter-name>
-		<filter-class>
-			it.eng.spagobi.utilities.filters.SpagoBIAccessFilter
-		</filter-class>
+		 <filter-name>SpagoBIAccessFilter</filter-name>
+		<filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
 	</filter>
 	
-	<filter-mapping>
-        <filter-name>EngineCheckSessionFilter</filter-name>
-        <url-pattern>*.jsp</url-pattern>
-    </filter-mapping>
-
-<!-- START-CAS  
+	
+	<!--  ============================================================================ -->
+	<!--  FILTER MAPPINGS						 									   -->
+	<!--  ============================================================================ -->
+<!-- START-CAS 
   <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
@@ -69,97 +76,90 @@ END-CAS -->
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping> 
    	
-
-   <filter-mapping>
+  <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping> 
   
-	<filter-mapping>
+  <filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
 		<url-pattern>/proxyCallback</url-pattern>	
-	</filter-mapping>
+   </filter-mapping>
 END-CAS -->
 
 	<filter-mapping>
-    		<filter-name>SpagoBIAccessFilter</filter-name>
-    		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    	<filter-name>SpagoBIAccessFilter</filter-name>
+    	<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
-    		<filter-name>SpagoBIAccessFilter</filter-name>
-    		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
+    	<filter-name>SpagoBIAccessFilter</filter-name>
+    	<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
 	</filter-mapping>
-	 
-	 <!--  ============================================================================ -->
+	
+	
+	<!--  ============================================================================ -->
 	<!--  SERVLETS								 									   -->
 	<!--  ============================================================================ -->
 	<servlet>
 		<servlet-name>ConfigServlet</servlet-name>
 		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
-		 
 		<init-param>
 			<param-name>AF_CONFIG_FILE</param-name>
-			<param-value>\WEB-INF\conf\master.xml</param-value>
+			<param-value>/WEB-INF/conf/master.xml</param-value>
 		</init-param>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
 	
-	 <servlet>
+	<servlet>
 		<servlet-name>AdapterHTTP</servlet-name>
 		<servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</servlet-class>
 	</servlet>
-	<servlet>
+
+   
+    <servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>
 			it.eng.spagobi.utilities.engines.EngineTestServlet
 		</servlet-class>
 	</servlet>
-	
-	<!--  ============================================================================ -->
+
+   	
+    <!--  ============================================================================ -->
 	<!--  SERVLET MAPPINGS						 									   -->
 	<!--  ============================================================================ -->
   	
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</servlet-mapping>
 	
-	<servlet-mapping>
+		<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
 		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
 	</servlet-mapping>
+
     
     <servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/servlet/AdapterHTTPTest</url-pattern>
 	</servlet-mapping>
+    
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
 	
-	  <welcome-file-list>
-	    <welcome-file>index.html</welcome-file>
-
-	  </welcome-file-list>
-
-	  <error-page>
-	  	<exception-type>java.lang.Throwable</exception-type>
-	  	<location>/html/error.html</location>
-	  </error-page>
-		 
-	  <error-page>
-	  	<error-code>404</error-code>
-	  	<location>/html/error.html</location>
-	  </error-page>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>login.html</welcome-file>
+		
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+    
+  	<error-page>
+    	<error-code>404</error-code>
+    	<location>/jsp/errors/error404.jsp</location>
+  	</error-page> 
+   
   
-	  <error-page>
-	  	<error-code>500</error-code>
-	  	<location>/html/error.html</location>
-	  </error-page>
-
-    <resource-ref>
-      <description>Spagobi db</description>
-      <res-ref-name>jdbc/spagobi</res-ref-name>
-      <res-type>javax.sql.DataSource</res-type>
-      <res-auth>Container</res-auth>
-    </resource-ref>
-
 </web-app>
