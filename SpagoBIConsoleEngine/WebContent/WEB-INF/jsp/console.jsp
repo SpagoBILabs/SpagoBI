@@ -182,10 +182,10 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	       <% Iterator it = analyticalDrivers.keySet().iterator();
 			  while(it.hasNext()) {
 				String parameterName = (String)it.next();
-				System.out.println("parameterName: " + parameterName);
+				//System.out.println("parameterName: " + parameterName);
 				String parameterValue = (String)analyticalDrivers.get(parameterName);
 				//if (parameterValue.indexOf("'")>=0) parameterValue = parameterValue.replaceAll("'","");				
-				System.out.println("parameterValue: " + parameterValue);
+				//System.out.println("parameterValue: " + parameterValue);
 				if (parameterValue != null && !parameterValue.equals("")){
 					if  (parameterValue.startsWith("'")){
 						if ( parameterValue.indexOf(",") >= 0){					
