@@ -30,4 +30,8 @@ http://extjs.com/forum/showthread.php?p=282928#post282928
     -moz-user-select:text;
     -khtml-user-select:text;
 }
-/*
+
+/* IE workaround*/
+.x-grid3-header{
+	cursor:e-resize  !important;
+}
