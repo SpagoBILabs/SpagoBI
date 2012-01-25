@@ -497,6 +497,8 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		
 		int FIRST_ROW = 2;
 		int FIRST_COLUMN = 1;
+		int rowCount = 0;
+		
 		JSONArray shortBusinessMetadataProperty;
 		JSONArray longtBusinessMetadataProperty;;
 		
@@ -505,24 +507,42 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		sheet.setColumnWidth(FIRST_COLUMN, 256*25);
 		sheet.setColumnWidth(FIRST_COLUMN+1, 256*90);
 		
-		Row row = sheet.createRow(FIRST_ROW);
-	
-        CellStyle headerCellStyle = exporter.buildHeaderTitleCellStyle(sheet);
-        
-		Cell nameCell = row.createCell(FIRST_COLUMN);
-		nameCell.setCellValue(createHelper.createRichTextString("Name"));
-		nameCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		nameCell.setCellStyle(headerCellStyle);
 		
-		Cell valueCell = row.createCell(FIRST_COLUMN + 1);
-		valueCell.setCellValue(createHelper.createRichTextString("Value"));
-		valueCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		valueCell.setCellStyle(headerCellStyle);
+		CellStyle headerCellStyle = exporter.buildHeaderTitleCellStyle(sheet);
 		
+		Row row;
+		Cell nameCell;
+		Cell valueCell;
+		
+//		row = sheet.createRow(FIRST_ROW + rowCount);
+
+//		Cell nameCell = row.createCell(FIRST_COLUMN);
+//		nameCell.setCellValue(createHelper.createRichTextString("Name"));
+//		nameCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+//		nameCell.setCellStyle(headerCellStyle);
+//		
+//		Cell valueCell = row.createCell(FIRST_COLUMN + 1);
+//		valueCell.setCellValue(createHelper.createRichTextString("Value"));
+//		valueCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+//		valueCell.setCellStyle(headerCellStyle);
+//		
+//		
+//		rowCount++;
+		
+		row = sheet.createRow((FIRST_ROW) + rowCount);
+		Cell headerCell = row.createCell(FIRST_COLUMN + 1);
+		headerCell = row.createCell(FIRST_COLUMN + 1);
+		headerCell.setCellValue(createHelper.createRichTextString("Technical metadata"));
+		headerCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		headerCell.setCellStyle(headerCellStyle);
+		
+		rowCount++;
+
 		shortBusinessMetadataProperty = new JSONArray();
 		longtBusinessMetadataProperty = new JSONArray();
-		CellStyle metaCellStyle =  exporter.buildMetadataCellStyle(sheet);
-		int rowCount = 0;
+		CellStyle metaNameCellStyle =  exporter.buildMetadataNameCellStyle(sheet);
+		CellStyle metaValueCellStyle =  exporter.buildMetadataValueCellStyle(sheet);
+		
 		for(int i = 0; i < metadataPropertiesJSON.length(); i++) {
 			JSONObject metadataProperty = metadataPropertiesJSON.getJSONObject(i);		
 			String  metadataPropertyType = metadataProperty.getString("meta_type");
@@ -536,19 +556,29 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			
 			String  metadataPropertyName = metadataProperty.getString("meta_name");
 			String  metadataPropertyValue = metadataProperty.getString("meta_content");
-			row = sheet.createRow((FIRST_ROW+1) + rowCount);
+			row = sheet.createRow((FIRST_ROW) + rowCount);
 			
 			nameCell = row.createCell(FIRST_COLUMN);
 			nameCell.setCellValue(createHelper.createRichTextString(metadataPropertyName));
 			nameCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			nameCell.setCellStyle(metaCellStyle);
+			nameCell.setCellStyle(metaNameCellStyle);
 			
 			valueCell = row.createCell(FIRST_COLUMN + 1);
 			valueCell.setCellValue(createHelper.createRichTextString(metadataPropertyValue));
 			valueCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			valueCell.setCellStyle(metaCellStyle);
+			valueCell.setCellStyle(metaValueCellStyle);
 			rowCount++;
 		}
+		
+		rowCount = rowCount + 2;
+		row = sheet.createRow((FIRST_ROW) + rowCount);
+		headerCell = row.createCell(FIRST_COLUMN + 1);
+		headerCell = row.createCell(FIRST_COLUMN + 1);
+		headerCell.setCellValue(createHelper.createRichTextString("Business metadata"));
+		headerCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		headerCell.setCellStyle(headerCellStyle);
+		rowCount++;
+		
 		
 		for(int i = 0; i < shortBusinessMetadataProperty.length(); i++, rowCount++) {
 			
@@ -561,12 +591,12 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			nameCell = row.createCell(FIRST_COLUMN);
 			nameCell.setCellValue(createHelper.createRichTextString(metadataPropertyName));
 			nameCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			nameCell.setCellStyle(metaCellStyle);
+			nameCell.setCellStyle(metaNameCellStyle);
 			
 			valueCell = row.createCell(FIRST_COLUMN + 1);
 			valueCell.setCellValue(createHelper.createRichTextString(metadataPropertyValue));
 			valueCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			valueCell.setCellStyle(metaCellStyle);
+			valueCell.setCellStyle(metaValueCellStyle);
 		}
 		
 		for(int i = 0; i < longtBusinessMetadataProperty.length(); i++, rowCount++) {
@@ -581,12 +611,12 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			nameCell = row.createCell(FIRST_COLUMN);
 			nameCell.setCellValue(createHelper.createRichTextString(metadataPropertyName));
 			nameCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			nameCell.setCellStyle(metaCellStyle);
+			nameCell.setCellStyle(metaNameCellStyle);
 			
 			valueCell = row.createCell(FIRST_COLUMN + 1);
 			valueCell.setCellValue(createHelper.createRichTextString(metadataPropertyValue));
 			valueCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			valueCell.setCellStyle(metaCellStyle);
+			valueCell.setCellStyle(metaValueCellStyle);
 		}
 	}
 	
