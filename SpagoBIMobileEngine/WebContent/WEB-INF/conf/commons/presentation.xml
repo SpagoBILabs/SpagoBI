@@ -5,9 +5,11 @@
 <!-- ================================================================================= -->
 
 <PRESENTATION>
-	<!-- 		 
 	<MAPPING business_type="ACTION" 
-			 business_name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION" 
-			 publisher_name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION_PUBLISHER"/>	
-	 -->		 
+			 business_name="LOGIN_ACTION" 
+			 publisher_name="MOBILE_LOGIN_ACTION_PUBLISHER"/>	 
+	<MAPPING business_type="ACTION" 
+			 business_name="LOGIN_SUBMIT_ACTION" 
+			 publisher_name="MOBILE_BROWSER_PUBLISHER"/>			 
+			 
 </PRESENTATION>
