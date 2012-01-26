@@ -222,6 +222,7 @@ public class ImportUtilities {
 		newRole.setIsAbleToSeeViewpoints(role.getIsAbleToSeeViewpoints());
 		newRole.setIsAbleToSendMail(role.getIsAbleToSendMail());
 		newRole.setIsAbleToBuildQbeQuery(role.getIsAbleToBuildQbeQuery());
+		newRole.setIsAbleToDoMassiveExport(role.getIsAbleToDoMassiveExport());
 		logger.debug("OUT");
 		return newRole;
 	}

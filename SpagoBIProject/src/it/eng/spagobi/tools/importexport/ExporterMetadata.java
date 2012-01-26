@@ -1499,6 +1499,8 @@ public class ExporterMetadata {
 			hibRole.setIsAbleToSeeViewpoints(new Boolean(role.isAbleToSeeViewpoints()));
 			hibRole.setIsAbleToSendMail(new Boolean(role.isAbleToSendMail()));
 			hibRole.setIsAbleToBuildQbeQuery(role.isAbleToBuildQbeQuery());
+			hibRole.setIsAbleToDoMassiveExport(role.isAbleToDoMassiveExport());
+			
 			session.save(hibRole);
 			tx.commit();
 		} catch (Exception e) {
