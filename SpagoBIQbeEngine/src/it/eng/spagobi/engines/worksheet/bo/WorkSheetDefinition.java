@@ -18,6 +18,7 @@ import it.eng.spagobi.engines.worksheet.exceptions.WrongConfigurationForFiltersO
 import it.eng.spagobi.utilities.engines.EngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.json.AbstractJSONDecorator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,9 +99,13 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 		return toReturn;
 	}
 	
-	public JSONObject getConf(){
+	public JSONObject getConf(AbstractJSONDecorator decorator){
 		try {
-			return (JSONObject) SerializationManager.serialize(this, "application/json");
+			JSONObject toReturn = (JSONObject) SerializationManager.serialize(this, "application/json");
+			if (decorator != null) {
+				decorator.decorate(toReturn);
+			}
+			return toReturn;
 		} catch (Exception e) {
 			 throw new SpagoBIEngineRuntimeException("Error while serializing worksheet definition", e);
 		}
@@ -278,4 +283,5 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 		}
 		return toReturn;
 	}
+	
 }

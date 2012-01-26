@@ -127,7 +127,7 @@ end DOCTYPE declaration --%>
         Ext.onReady(function() {
         	Ext.QuickTips.init();
 
-			var worksheet = <%= ((WorkSheetDefinition)(worksheetEngineInstance.getAnalysisState())).getConf().toString() %>;
+			var worksheet = <%= ((WorkSheetDefinition)(worksheetEngineInstance.getAnalysisState())).getConf(null).toString() %>;
         	workSheetPanel = new Sbi.worksheet.designer.WorksheetDefinitionPanel(worksheet, {
         		header: false
         	});

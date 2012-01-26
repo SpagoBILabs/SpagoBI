@@ -29,3 +29,12 @@ Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.maxselect
 //Sbi.worksheet.runtime.xxxChart
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.chart.visibleseries']= 'Visible series';
+
+
+//===========================================================
+//Sbi.worksheet.runtime.RuntimeSheetFiltersInfoPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.title']= 'Filters\' details';
+Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.empty']= 'No filters are set';
+Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.columns.attribute']= 'Attribute';
+Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.columns.values']= 'Values';

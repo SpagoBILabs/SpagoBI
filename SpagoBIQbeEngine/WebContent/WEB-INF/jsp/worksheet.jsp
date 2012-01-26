@@ -37,12 +37,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.services.common.EnginConf"%>
 <%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
 <%@page import="it.eng.spagobi.engines.worksheet.WorksheetEngineInstance"%>
+<%@page import="it.eng.spagobi.engines.worksheet.serializer.json.decorator.FiltersInfoJSONDecorator"%>
+<%@page import="org.json.JSONObject"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%
 	WorksheetEngineInstance worksheetEngineInstance;
+	WorkSheetDefinition workSheetDefinition; 
 	UserProfile profile;
 	Locale locale;
 	String isFromCross;
@@ -53,6 +56,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	boolean isQueryValidationBlocking = false;
 	int crosstabCellLimit=0;
 	int crosstabCalculatedFieldsDecimalePrecison=1;
+	FiltersInfoJSONDecorator decorator = null;
 	
 	ResponseContainer responseContainer = ResponseContainerAccess.getResponseContainer(request);
 	SourceBean serviceResponse = responseContainer.getServiceResponse();
@@ -71,6 +75,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		crosstabCalculatedFieldsDecimalePrecison = qbeEngineConfig.getCrosstabCFDecimalPrecision();
 	}
 	
+	workSheetDefinition = (WorkSheetDefinition) worksheetEngineInstance.getAnalysisState();
+	decorator = new FiltersInfoJSONDecorator(workSheetDefinition, worksheetEngineInstance.getDataSet());
+	JSONObject workSheetDefinitionJSON = workSheetDefinition.getConf(decorator);
 
 %>
 
@@ -133,7 +140,7 @@ end DOCTYPE declaration --%>
         Ext.onReady(function() {
         	Ext.QuickTips.init();
 
-			var worksheet = <%= ((WorkSheetDefinition)(worksheetEngineInstance.getAnalysisState())).getConf().toString() %>;
+			var worksheet = <%= workSheetDefinitionJSON.toString() %>;
         	workSheetPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel(worksheet, {
         		header: false
         	});

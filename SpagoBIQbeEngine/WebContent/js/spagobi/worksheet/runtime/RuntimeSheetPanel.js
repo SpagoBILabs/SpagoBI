@@ -76,6 +76,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	content: null,
 	filtersPanel : null,
 	contentLoaded: false,
+	filtersInfoPanel : null,
 	
 	exportContent: function(mimeType){
 		var exportedContent = this.content.exportContent();
@@ -212,6 +213,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			items.push(this.content);
 		}
 		
+		this.addFiltersInfoPanel(items);
 		
 		//Builds the footer
 		if (this.sheetConfig.footer!=undefined && this.sheetConfig.footer!=null){
@@ -219,7 +221,15 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		}
 
 		return items;
-	},
+	}
+	
+	
+	, addFiltersInfoPanel : function(items) {
+		this.filtersInfoPanel = new Sbi.worksheet.runtime.RuntimeSheetFiltersInfoPanel({
+			filtersInfo : this.sheetConfig.filtersInfo
+		});
+		items.push(this.filtersInfoPanel);
+	}
 	
 	/**
 	 * Build the html for the header or the footer
@@ -228,7 +238,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	 * @param: header: true if it builds the header, false otherwise
 	 * @return: the html for the title
 	 */
-	addTitle: function(title, items, header){
+	, addTitle: function(title, items, header){
 		if(title.title!='' || title.img!=null){
 
 			var titleHTML = '<div style="width: 100%; padding: 4px">'+title.title+'</div>';
@@ -322,6 +332,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	
 	, applyFilters: function(filterPanel, formState){
 		this.content.applyFilters(formState);
+		var filtersInfo = filterPanel.getFiltersInfo();
+		this.filtersInfoPanel.update(filtersInfo);
 	}
 	
 	/**

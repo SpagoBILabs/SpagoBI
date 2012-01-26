@@ -43,7 +43,7 @@ public class WorkSheetSerializationUtils {
 	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS = "fieldsOptions";
 	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
-	
+	public static final String SHEET_FILTERS_INFO = "filtersInfo";
 	
 	public static JSONArray getFieldOptions(JSONObject worksheetJSON){
 		JSONObject worksheetAdditionalData = worksheetJSON.optJSONObject(WORKSHEETS_ADDITIONAL_DATA);
