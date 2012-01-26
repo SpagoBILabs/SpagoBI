@@ -114,6 +114,20 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 			      ,'</tpl>'
 
 			);
+	 // && values.scaleName === \'Day scale\'
+	    var tplActual = new Ext.XTemplate(
+	    		
+			      '<tpl for=".">'
+	    		  ,'{values.actual}'
+	    		  ,'<tpl if="values.scaleName !== undefined && values.scaleName === \'Day scale\'">'//days
+			      ,' gg'	     
+			      ,'</tpl>'
+	    		  ,'<tpl if="values.scaleName !== undefined && values.scaleName === \'Ratio scale\'">'//percentage
+			      ,' %'	     
+			      ,'</tpl>'
+			      ,'</tpl>'
+
+			);
 		var col = {header:'Model Instance',
 		dataIndex:'name',
 		width:250};
@@ -121,6 +135,7 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 		
 		var col1 = {header:'Actual',
 		dataIndex: 'actual',
+		tpl: tplActual,	
 		width: 100};
 		kpiColumns.push(col1);	
 		

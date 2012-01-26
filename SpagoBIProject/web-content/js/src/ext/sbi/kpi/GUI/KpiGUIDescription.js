@@ -93,10 +93,10 @@ Ext.extend(Sbi.kpi.KpiGUIDescription , Ext.form.FormPanel, {
 	        items: [this.descrName, 
 	                 //this.descrCode,
 		             this.descrDescription,		             
-		             this.descrDsLbl,
-		             this.descrTypeCd,
-		             this.measureTypeCd,
-		             this.scaleName,
+		             //this.descrDsLbl,
+		             //this.descrTypeCd,
+		             //this.measureTypeCd,
+		             //this.scaleName,
 		             this.targetAudience]
 	    });
 
