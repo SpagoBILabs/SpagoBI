@@ -387,6 +387,8 @@ Sbi.locale.ln['sbi.roles.sendMail'] = 'Invio Mail';
 Sbi.locale.ln['sbi.roles.send'] = 'Invio';
 Sbi.locale.ln['sbi.roles.build'] = 'Costruisce';
 Sbi.locale.ln['sbi.roles.buildQbe'] = 'Crea Query QbE';
+Sbi.locale.ln['sbi.roles.export'] = 'Esportare';
+Sbi.locale.ln['sbi.roles.doMassiveExport'] = 'Eseguire Export Massivo';
 Sbi.locale.ln['sbi.roles.headerName'] = 'Nome';
 Sbi.locale.ln['sbi.roles.headerDescr'] = 'Descrizione';
 Sbi.locale.ln['sbi.roles.headerCode'] = 'Codice';
@@ -653,3 +655,21 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.clearFilter'] = 'Cancella filtri';
 Sbi.locale.ln['sbi.config.manageconfig.fields.selectCategory'] = 'Selecziona Categoria';
 Sbi.locale.ln['sbi.config.manageconfig.fields.searchName'] = 'Cerca Name';
 Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Cerca Etichetta';
+
+//===================================================================
+//MASSIVE EXPORT
+//===================================================================
+Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.title'] = 'Opzioni di esportazione';
+Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.docsList'] = 'Lista di documetni worksheet da esportare';
+Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.cycleOnFilter'] = 'Split sul filtro';
+
+Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.title'] = 'Wizard per esportazione amssiva di worksheet';
+
+Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.back'] = 'Indietro';
+Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.next'] = 'Avanti';
+Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.finish'] = 'Finito';
+
+Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.NoDoc'] = 'Nessun documento Worksheet da esportare'; 
+
+Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Esecuzioni di export massivo'; 
+
