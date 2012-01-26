@@ -16,7 +16,6 @@ import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.dispatching.service.DefaultRequestContext;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -32,6 +31,7 @@ import it.eng.spagobi.engines.chart.SpagoBIChartInternalEngine;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.geo.GeoDriver;
+import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
 import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -60,9 +60,15 @@ public class ExecutionProxy {
 	static private String sendMailOperation = "SEND_MAIL";
 	static private String  exportOperation = "EXPORT";
 
+ 
+	
 	private BIObject biObject = null;
 
 	private String returnedContentType = null;
+	
+	// used for worksheetExecution
+	private boolean splittingFilter = false; 
+	
 
 	/**
 	 * Gets the bi object.
@@ -243,16 +249,16 @@ public class ExecutionProxy {
 			}
 
 
-			adjustParametersForExecutionProxy(aEngineDriver,mapPars);
+			adjustParametersForExecutionProxy(aEngineDriver,mapPars, modality);
 
 			// pass ticket ...
 			String pass = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.PASS");
 			if (pass==null) logger.warn("Pass Ticket is null");
 			mapPars.put(SpagoBIConstants.PASS_TICKET,pass);
 
-			
+
 			// TODO merge with ExecutionInstance.addSystemParametersForExternalEngines for SBI_CONTEXT, locale parameters, etc...
-			
+
 			// set spagobi context
 			if (!mapPars.containsKey(SpagoBIConstants.SBI_CONTEXT)) {
 				String sbicontext = GeneralUtilities.getSpagoBiContext();
@@ -271,14 +277,14 @@ public class ExecutionProxy {
 		}
 	    }
 			 */
-//			// set spagobi  url for backend invocation
-//			if (!mapPars.containsKey(SpagoBIConstants.SBI_HOST)) {
-//			//String sbiconturl = GeneralUtilities.getSpagoBiContextAddress();
-//			String sbiconturl = GeneralUtilities.getSpagoBiHost();
-//			if (sbiconturl != null) {
-//			mapPars.put(SpagoBIConstants.SBI_HOST, sbiconturl);
-//			}
-//			}	    
+			//			// set spagobi  url for backend invocation
+			//			if (!mapPars.containsKey(SpagoBIConstants.SBI_HOST)) {
+			//			//String sbiconturl = GeneralUtilities.getSpagoBiContextAddress();
+			//			String sbiconturl = GeneralUtilities.getSpagoBiHost();
+			//			if (sbiconturl != null) {
+			//			mapPars.put(SpagoBIConstants.SBI_HOST, sbiconturl);
+			//			}
+			//			}	    
 
 			// set country and language (locale)
 			Locale locale = GeneralUtilities.getDefaultLocale();
@@ -295,7 +301,7 @@ public class ExecutionProxy {
 			if (sendMailOperation.equals(modality) || exportOperation.equals(modality)) {
 				mapPars.put(SsoServiceInterface.USER_ID, ((UserProfile) profile).getUserUniqueIdentifier());
 			}
-			
+
 			// adding SBI_EXECUTION_ID parameter
 			if (!mapPars.containsKey("SBI_EXECUTION_ID")) {
 				UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
@@ -364,20 +370,20 @@ public class ExecutionProxy {
 		logger.debug("OUT: returning " + urlEngine);
 		return urlEngine;
 	}
-	
+
 	private String resolveRelativeUrls(String url) {
 		logger.debug("IN: url = " + url);
 		if (url.startsWith("/")) {
 			logger.debug("Url is relative");
 			String domain = GeneralUtilities.getSpagoBiHost();
-		    logger.debug("SpagoBI domain is " + domain);
-		    url = domain + url;
-		    logger.debug("Absolute url is " + url);
+			logger.debug("SpagoBI domain is " + domain);
+			url = domain + url;
+			logger.debug("Absolute url is " + url);
 		}
 		logger.debug("OUT: returning " + url);
 		return url;
 	}
-	
+
 	/**
 	 * Gets the returned content type.
 	 * 
@@ -443,16 +449,32 @@ public class ExecutionProxy {
 	 * 
 	 */
 
-	public void adjustParametersForExecutionProxy(IEngineDriver driver, Map mapPars){
+	public void adjustParametersForExecutionProxy(IEngineDriver driver, Map mapPars, String modality){
 		if(driver instanceof GeoDriver){
 			mapPars.remove("ACTION_NAME");
 			mapPars.put("ACTION_NAME", "EXECUTION_PROXY_GEO_ACTION");
 			mapPars.remove("outputType");
 			mapPars.put("outputType", "JPEG");
-		
-			
-			
+
 		}
+		else if(driver instanceof WorksheetDriver && modality.equals(SpagoBIConstants.MASSIVE_EXPORT_MODALITY)){
+			mapPars.remove("ACTION_NAME");
+			mapPars.put("ACTION_NAME", WorksheetDriver.EXPORT_ACTION_NAME);
+			mapPars.remove("outputType");
+			mapPars.put("outputType", "XLS");
+			mapPars.remove("MIME_TYPE");
+			mapPars.put("MIME_TYPE", "application/vnd.ms-excel");
+			mapPars.put("SPLITTING_FILTER", splittingFilter);
+
+		}
+	}
+
+	public boolean isSplittingFilter() {
+		return splittingFilter;
+	}
+
+	public void setSplittingFilter(boolean splittingFilter) {
+		this.splittingFilter = splittingFilter;
 	}
 
 

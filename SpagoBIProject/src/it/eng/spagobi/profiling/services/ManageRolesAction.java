@@ -70,6 +70,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 	private final String SEE_METADATA="seeMeta";
 	private final String SAVE_METADATA="saveMeta";
 	private final String BUILD_QBE_QUERY="buildQbe";
+	private final String DO_MASSIVE_EXPORT="doMassiveExport";
 	
 	public static String START = "start";
 	public static String LIMIT = "limit";
@@ -140,7 +141,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 			Boolean seeMetadata= getAttributeAsBoolean(SEE_METADATA);
 			Boolean saveMetadata= getAttributeAsBoolean(SAVE_METADATA);
 			Boolean buildQbeQuery= getAttributeAsBoolean(BUILD_QBE_QUERY);
-
+			Boolean doMassiveExport = getAttributeAsBoolean(DO_MASSIVE_EXPORT);
+			
 			if (name != null) {
 				//checks for unique role name
 				try {
@@ -177,6 +179,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 				role.setRoleTypeCD(roleTypeCD);
 				role.setRoleTypeID(roleTypeID);
 				role.setIsAbleToBuildQbeQuery(buildQbeQuery);
+				role.setIsAbleToDoMassiveExport(doMassiveExport);
 				role.setIsAbleToSaveIntoPersonalFolder(saveIntoPersonalFolder);
 				role.setIsAbleToSaveMetadata(saveMetadata);
 				role.setIsAbleToSaveRememberMe(saveRememberMe);
@@ -293,6 +296,9 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 		Boolean qbeQuery = role.isAbleToBuildQbeQuery();
 		if(qbeQuery != null)
 			object.put(BUILD_QBE_QUERY, qbeQuery.booleanValue());
+		Boolean doMassiveExport = role.isAbleToDoMassiveExport();
+		if(doMassiveExport != null)
+			object.put(DO_MASSIVE_EXPORT, doMassiveExport.booleanValue());
 		Boolean saveSub = role.isAbleToSaveSubobjects();
 		if(saveSub != null)
 			object.put(SAVE_SUBOBJECTS,saveSub.booleanValue());

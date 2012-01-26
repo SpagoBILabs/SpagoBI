@@ -44,6 +44,7 @@ import it.eng.spagobi.sdk.maps.bo.SDKFeature;
 import it.eng.spagobi.sdk.maps.bo.SDKMap;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.tools.dataset.bo.CustomDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
@@ -440,6 +441,9 @@ public class SDKObjectsConverter {
 
 			toReturn.setType(type);
 			 */
+			
+			toReturn.setCustomData(spagoBiDataSet.getCustomData());
+			
 			toReturn.setType(spagoBiDataSet.getType());
 			
 			List dataSetParameterItemList = null;
@@ -612,7 +616,18 @@ public class SDKObjectsConverter {
 				if(wsAddress!=null && !wsAddress.equals("")){
 					((WSDataSetDetail)dsDetail).setAddress(wsAddress);
 				}
+			} else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_CUSTOM)){
+				dsDetail = new WSDataSetDetail();
+				String javaClassName = dataset.getJavaClassName();
+				String customData = dataset.getCustomData();
+				if(javaClassName!=null && !javaClassName.equals("")){
+					((CustomDataSetDetail)dsDetail).setJavaClassName(javaClassName);
+				}
+				if(customData!=null && !customData.equals("")){
+					((CustomDataSetDetail)dsDetail).setCustomData(customData);
+				}
 			}
+			
 			//sets other general GuiDetailDataset object's fields
 			if(dataset.getPivotColumnName()!=null && !dataset.getPivotColumnName().equals("")){
 				dsDetail.setPivotColumnName(dataset.getPivotColumnName());

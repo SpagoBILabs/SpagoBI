@@ -41,6 +41,7 @@ public class SbiExtRoles  extends SbiHibernateModel{
      private Boolean isAbleToSeeMetadata;
      private Boolean isAbleToSaveMetadata;
      private Boolean isAbleToBuildQbeQuery;
+     private Boolean isAbleToDoMassiveExport;
      private Set sbiFuncRoles;
      private Set sbiParuseDets;
 
@@ -385,6 +386,14 @@ public class SbiExtRoles  extends SbiHibernateModel{
 
 	public void setIsAbleToBuildQbeQuery(Boolean isAbleToBuildQbeQuery) {
 		this.isAbleToBuildQbeQuery = isAbleToBuildQbeQuery;
+	}
+
+	public Boolean getIsAbleToDoMassiveExport() {
+		return isAbleToDoMassiveExport;
+	}
+
+	public void setIsAbleToDoMassiveExport(Boolean isAbleToDoMassiveExport) {
+		this.isAbleToDoMassiveExport = isAbleToDoMassiveExport;
 	}
 
 }

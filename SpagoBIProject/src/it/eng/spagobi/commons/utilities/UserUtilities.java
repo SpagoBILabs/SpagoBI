@@ -322,6 +322,9 @@ public class UserUtilities {
 			if (virtualRole.isAbleToBuildQbeQuery()) {
 				roleFunctionalities.add(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY);
 			}
+			if (virtualRole.isAbleToDoMassiveExport()) {
+				roleFunctionalities.add(SpagoBIConstants.DO_MASSIVE_EXPORT_FUNCTIONALITY);
+			}
 			
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
@@ -362,6 +365,7 @@ public class UserUtilities {
 		virtualRole.setIsAbleToSaveRememberMe(false);
 		virtualRole.setIsAbleToSaveIntoPersonalFolder(false);
 		virtualRole.setIsAbleToBuildQbeQuery(false);
+		virtualRole.setIsAbleToDoMassiveExport(false);
 		if (roles != null) {
 			for (int i = 0; i < roles.length; i++) {
 				String roleName = roles[i];
@@ -411,6 +415,10 @@ public class UserUtilities {
 					if (anotherRole.isAbleToBuildQbeQuery()) {
 						logger.debug("User has role " + roleName + " that is able to build QBE queries.");
 						virtualRole.setIsAbleToBuildQbeQuery(true);
+					}
+					if (anotherRole.isAbleToDoMassiveExport()) {
+						logger.debug("User has role " + roleName + " that is able to do massive export.");
+						virtualRole.setIsAbleToDoMassiveExport(true);
 					}
 				}
 			}

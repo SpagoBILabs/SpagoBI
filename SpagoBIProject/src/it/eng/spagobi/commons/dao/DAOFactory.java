@@ -67,6 +67,7 @@ import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
+import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 import it.eng.spagobi.tools.udp.dao.IUdpDAO;
@@ -748,5 +749,16 @@ public class DAOFactory {
 	public static I18NMessagesDAO getI18NMessageDAO() throws EMFUserError{
 		return (I18NMessagesDAO)createDAOInstance("I18NMessagesDAO");
 	}
+
 	
+	/**
+	 * Creates a DAO instance for a progress Thread.
+	 * 
+	 * @return a DAO instance for the progress Thread
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	public static IProgressThreadDAO getProgressThreadDAO() throws EMFUserError{
+		return (IProgressThreadDAO)createDAOInstance("ProgressThreadDAO");
+	}
 }
