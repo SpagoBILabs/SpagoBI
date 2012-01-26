@@ -325,4 +325,35 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 		}
 	}
 	
+	/**
+	 * Similar to getFormState, but it retrieves the form as seen by the user 
+	 * (i.e. it return an object of this kind:
+	 * {
+	 * 	"label 1" : "values 1"  // label is the label of the input field
+	 *  , "label 2" : "values 2"  // value is the content of the input field as seen by the user
+	 * }
+	 * )
+	 */
+	, getFiltersInfo : function () {
+		var state = {};
+		for (var i = 0; i < this.combos.length; i++) {
+			var aCombo = this.combos[i];
+			var key = aCombo.initialConfig.fieldLabel;
+			var values = this.getValuesDescription(aCombo);
+			state[key] = values;
+		}
+		return state;
+	}
+	
+	, getValuesDescription : function (aCombo) {
+		var array = [];
+		var valuesArrayObj = aCombo.getValueEx();
+		for (var i = 0 ; i < valuesArrayObj.length ; i++) {
+			var obj = valuesArrayObj[i];
+			var aValueDescription = obj['column_2'];
+			array.push(aValueDescription);
+		}
+		return array;
+	}
+	
 });

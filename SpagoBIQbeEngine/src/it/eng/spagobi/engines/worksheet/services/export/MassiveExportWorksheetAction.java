@@ -19,8 +19,8 @@ import it.eng.spagobi.engines.worksheet.bo.Filter;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.SheetContent;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
-import it.eng.spagobi.engines.worksheet.bo.WorksheetFieldsOptions;
 import it.eng.spagobi.engines.worksheet.exporter.WorkSheetXLSExporter;
+import it.eng.spagobi.engines.worksheet.serializer.json.decorator.FiltersInfoJSONDecorator;
 import it.eng.spagobi.engines.worksheet.template.WorksheetTemplate;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.engines.worksheet.widgets.TableDefinition;
@@ -91,11 +91,13 @@ public class MassiveExportWorksheetAction extends ExportWorksheetAction {
 			String splittingFilterS = getAttributeAsString( SPLITTING_FILTER );
 			if(splittingFilterS != null) splittingFilter = Boolean.valueOf(splittingFilterS);
 
-			WorksheetEngineInstance inst = getEngineInstance();
+			WorksheetEngineInstance engineInstance = getEngineInstance();
+			WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
 
-			logger.debug("Worksheet instance created "+inst.toString());
+			logger.debug("Worksheet instance created "+engineInstance.toString());
 
-			worksheetJSON = ((WorkSheetDefinition)(inst.getAnalysisState())).getConf();
+			FiltersInfoJSONDecorator decorator = new FiltersInfoJSONDecorator(workSheetDefinition, engineInstance.getDataSet());
+			worksheetJSON = workSheetDefinition.getConf(decorator);
 
 			logger.debug(WORKSHEETS + ": " + worksheetJSON);
 
@@ -106,7 +108,7 @@ public class MassiveExportWorksheetAction extends ExportWorksheetAction {
 				exportFile = File.createTempFile("worksheet", ".xls");
 				FileOutputStream stream = new FileOutputStream(exportFile);
 				try {
-					JSONObject exportJSON = convertToExportJSON(inst, worksheetJSON);
+					JSONObject exportJSON = convertToExportJSON(engineInstance, worksheetJSON);
 					logger.debug("JSOn modified as for export: "+exportJSON.toString());
 					exportToXLS(exportJSON, null, null, stream);
 					logger.debug("Export executed");

@@ -21,11 +21,14 @@ import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporterFromJavaObject;
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSXExporterFromJavaObject;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
+import it.eng.spagobi.engines.worksheet.bo.FiltersInfo;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
+import it.eng.spagobi.engines.worksheet.exceptions.WrongConfigurationForFiltersOnDomainValuesException;
 import it.eng.spagobi.engines.worksheet.exporter.WorkSheetPDFExporter;
 import it.eng.spagobi.engines.worksheet.exporter.WorkSheetXLSExporter;
 import it.eng.spagobi.engines.worksheet.exporter.WorkSheetXLSXExporter;
 import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetSerializationUtils;
+import it.eng.spagobi.engines.worksheet.serializer.json.decorator.FiltersInfoJSONDecorator;
 import it.eng.spagobi.engines.worksheet.services.runtime.ExecuteWorksheetQueryAction;
 import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
@@ -36,9 +39,12 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.EngineMessageBundle;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 
 import java.io.File;
@@ -48,6 +54,7 @@ import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -56,6 +63,7 @@ import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -64,9 +72,12 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
@@ -143,9 +154,9 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			logger.debug(RESPONSE_TYPE + ": " + responseType);
 
 			worksheetJSON = getAttributeAsJSONObject( WORKSHEETS );	
-			if(worksheetJSON==null){
-				WorksheetEngineInstance inst = getEngineInstance();
-				worksheetJSON = ((WorkSheetDefinition)(inst.getAnalysisState())).getConf(); 
+			if ( worksheetJSON == null ) {
+				WorksheetEngineInstance engineInstance = getEngineInstance();
+				worksheetJSON = ((WorkSheetDefinition)(engineInstance.getAnalysisState())).getConf(null); 
 			}
 
 			logger.debug(WORKSHEETS + ": " + worksheetJSON);
@@ -469,7 +480,19 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			}
 			sheet.createRow(sheetRow);
 			sheetRow++;
-		}	
+		}
+		
+		JSONObject optionalFiltersJSON = sheetJ.optJSONObject(QbeEngineStaticVariables.FILTERS);
+		List<WhereField> optionalFilters = getOptionalFilters(optionalFiltersJSON);
+		if (splittingWhereField != null) {
+			optionalFilters.add(splittingWhereField);
+		}
+    	Map<String, List<String>> filters = getSheetFiltersInfo(sheetJ.getString(SHEET), optionalFilters);
+		if (filters != null && !filters.isEmpty()) {
+			sheetRow = fillFiltersInfo(filters, wb, sheet, splittingWhereField, createHelper, sheetRow, 0);
+			sheet.createRow(sheetRow);
+			sheetRow++;
+		}
 
 		if(sheetJ.has(WorkSheetXLSExporter.CONTENT)){
 			sheetRow = fillSheetContent(wb, sheet, sheetJ, fieldOptions,splittingWhereField, createHelper, exporter, patriarch, sheetRow);
@@ -486,6 +509,65 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		}	
 	}
 
+	private int fillFiltersInfo(Map<String, List<String>> filters, HSSFWorkbook wb, HSSFSheet sheet,
+			WhereField splittingWhereField, CreationHelper createHelper,
+			int beginRowHeaderData, int beginColumnHeaderData) {
+
+		int sheetRow = beginRowHeaderData;
+
+		sheet.createRow(sheetRow); // row for filters title
+		sheetRow++;
+		for (int i = 0 ; i < filters.size() ; i++) {
+			sheet.createRow(sheetRow);  // a row for each filter
+			sheetRow++;
+		}
+
+		// table title
+		HSSFRow row = sheet.getRow(beginRowHeaderData);
+		Cell cell = row.createCell(beginColumnHeaderData);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		String text = EngineMessageBundle.getMessage("worksheet.export.filters.info.title", this.getLocale());
+		cell.setCellValue(createHelper.createRichTextString(text));
+		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+		Font font = sheet.getWorkbook().createFont();
+		font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		cellStyle.setFont(font);
+		cell.setCellStyle(cellStyle);
+
+		// table content
+		int rowCounter = beginRowHeaderData + 1;
+		Iterator<String> it = filters.keySet().iterator();
+		while (it.hasNext()) {
+
+			// Filter name and values
+			String aKey = it.next();
+			List<String> values = filters.get(aKey);
+			String[] array = values.toArray(new String[]{});
+			String allFilterValues = StringUtils.join(array, FiltersInfoJSONDecorator.VALUES_SEPARATOR);
+			Row aRow = sheet.getRow(rowCounter);
+			Cell aCell = aRow.createCell(beginColumnHeaderData);
+			aCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			aCell.setCellValue(aKey + " : " + allFilterValues);
+			rowCounter++;
+		}
+
+		return sheetRow;
+	}
+
+	private Map<String, List<String>> getSheetFiltersInfo(String sheetName, List<WhereField> additionalFilters) {
+		WorksheetEngineInstance worksheetEngineInstance = getEngineInstance();
+		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) worksheetEngineInstance.getAnalysisState();
+		Map<String, List<String>> toReturn = null;
+		FiltersInfo infos = new FiltersInfo(workSheetDefinition, worksheetEngineInstance.getDataSet());
+		infos.setAdditionalFilters(additionalFilters);
+		try {
+			toReturn = infos.getFiltersInfoAsMap(sheetName);
+		} catch (WrongConfigurationForFiltersOnDomainValuesException e) {
+			throw new SpagoBIEngineRuntimeException("Wrong filters configuration", e);
+		}
+		return toReturn;
+	}
+	
 	public int fillSheetContent(HSSFWorkbook wb, HSSFSheet sheet, JSONObject sheetJ, JSONArray fieldOptions, WhereField splittingWhereField,
 			CreationHelper createHelper, WorkSheetXLSExporter exporter, HSSFPatriarch patriarch, int sheetRow) throws Exception {
 
@@ -785,7 +867,19 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			}
 			sheet.createRow(sheetRow);
 			sheetRow++;
-		}	
+		}
+		
+		JSONObject optionalFiltersJSON = sheetJ.optJSONObject(QbeEngineStaticVariables.FILTERS);
+		List<WhereField> optionalFilters = getOptionalFilters(optionalFiltersJSON);
+		if (splittingWhereField != null) {
+			optionalFilters.add(splittingWhereField);
+		}
+    	Map<String, List<String>> filters = getSheetFiltersInfo(sheetJ.getString(SHEET), optionalFilters);
+		if (filters != null && !filters.isEmpty()) {
+			sheetRow = fillFiltersInfo(filters, wb, sheet, splittingWhereField, createHelper, sheetRow, 0);
+			sheet.createRow(sheetRow);
+			sheetRow++;
+		}
 
 		if(sheetJ.has(WorkSheetXLSExporter.CONTENT)){
 			sheetRow = fillSheetContent(wb, sheet, sheetJ, fieldOptions,splittingWhereField, createHelper, exporter, patriarch, sheetRow);
@@ -800,6 +894,51 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				exporter.setFooter(sheet, footer, createHelper, wb, patriarch, sheetRow);
 			}
 		}	
+	}
+	
+	private int fillFiltersInfo(Map<String, List<String>> filters,
+			XSSFWorkbook wb, XSSFSheet sheet, WhereField splittingWhereField,
+			CreationHelper createHelper, int beginRowHeaderData, int beginColumnHeaderData) {
+		
+		int sheetRow = beginRowHeaderData;
+		
+		sheet.createRow(sheetRow); // row for filters title
+		sheetRow++;
+		for (int i = 0 ; i < filters.size() ; i++) {
+			sheet.createRow(sheetRow);  // a row for each filter
+			sheetRow++;
+		}
+		
+		// table title
+		XSSFRow row = sheet.getRow(beginRowHeaderData);
+		Cell cell = row.createCell(beginColumnHeaderData);
+	    cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+	    String text = EngineMessageBundle.getMessage("worksheet.export.filters.info.title", this.getLocale());
+	    cell.setCellValue(createHelper.createRichTextString(text));
+	    CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        Font font = sheet.getWorkbook().createFont();
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        cellStyle.setFont(font);
+	    cell.setCellStyle(cellStyle);
+	    
+	    // table content
+	    int rowCounter = beginRowHeaderData + 1;
+	    Iterator<String> it = filters.keySet().iterator();
+	    while (it.hasNext()) {
+	    	
+	    	// Filter name and values
+			String aKey = it.next();
+			List<String> values = filters.get(aKey);
+			String[] array = values.toArray(new String[]{});
+			String allFilterValues = StringUtils.join(array, FiltersInfoJSONDecorator.VALUES_SEPARATOR);
+	    	Row aRow = sheet.getRow(rowCounter);
+			Cell aCell = aRow.createCell(beginColumnHeaderData);
+			aCell.setCellType(XSSFCell.CELL_TYPE_STRING);
+			aCell.setCellValue(aKey + " : " + allFilterValues);
+			rowCounter++;
+	    }
+	    
+		return sheetRow;
 	}
 
 	public int fillSheetContent(XSSFWorkbook wb, XSSFSheet sheet, JSONObject sheetJ , JSONArray fieldOptions, WhereField splittingWhereField,
