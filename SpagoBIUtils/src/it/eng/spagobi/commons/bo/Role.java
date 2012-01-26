@@ -40,7 +40,8 @@ public class Role  implements Serializable  {
     private boolean isAbleToSeeMetadata;
     private boolean isAbleToSaveMetadata;
     private boolean isAbleToBuildQbeQuery;
-
+    private boolean isAbleToDoMassiveExport;
+    
     private boolean defaultRole;
     
 	/**
@@ -378,6 +379,14 @@ public class Role  implements Serializable  {
 
 	public void setDefaultRole(boolean defaultRole) {
 		this.defaultRole = defaultRole;
+	}
+
+	public boolean isAbleToDoMassiveExport() {
+		return isAbleToDoMassiveExport;
+	}
+
+	public void setIsAbleToDoMassiveExport(boolean isAbleToDoMassiveExport) {
+		this.isAbleToDoMassiveExport = isAbleToDoMassiveExport;
 	}
 	
 	
