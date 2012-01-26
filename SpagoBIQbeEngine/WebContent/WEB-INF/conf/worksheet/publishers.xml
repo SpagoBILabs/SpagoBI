@@ -43,4 +43,26 @@
 		</RENDERING>    	
 	</PUBLISHER>
   	
+  	  		<PUBLISHER name="MASSIVE_EXPORT_WORKSHEET_PUBLISHER">
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      <!--<PARAMETER name="" type="RELATIVE" value="MODULE_RESPONSE.SERVICE_REQUEST" scope="SERVICE_RESPONSE" /> -->
+    <PARAMETER name="ACTION_NAME" type="ABSOLUTE" scope="" value="WORKSHEET_ENGINE_MASSIVE_EXPORT_ACTION" />
+               <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="0" />
+      			<PARAMETER name="LANGUAGE" type="RELATIVE" scope="SERVICE_REQUEST" value="LANGUAGE" />
+				<PARAMETER name="COUNTRY" type="RELATIVE" scope="SERVICE_REQUEST" value="COUNTRY" />
+				<PARAMETER name="SBI_EXECUTION_ID" type="RELATIVE" scope="SERVICE_REQUEST" value="SBI_EXECUTION_ID" />     
+				<PARAMETER name="MIME_TYPE" type="RELATIVE" scope="SERVICE_REQUEST" value="MIME_TYPE" />     
+				<PARAMETER name="SPLITTING_FILTER" type="RELATIVE" scope="SERVICE_REQUEST" value="SPLITTING_FILTER" />     
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+<!--                <PARAMETER name="OBJECT_ID" type="RELATIVE" scope="SERVICE_RESPONSE" value="ExecuteBIObjectModule.OBJECT_ID" />
+     			<PARAMETER name="ROLE" type="RELATIVE" scope="SERVICE_RESPONSE" value="ExecuteBIObjectModule.ROLE" />
+      			<PARAMETER name="LANGUAGE" type="RELATIVE" scope="SERVICE_RESPONSE" value="MassiveExportWorksheetEngineStartAction.LANGUAGE" />
+				<PARAMETER name="COUNTRY" type="RELATIVE" scope="SERVICE_RESPONSE" value="MassiveExportWorksheetEngineStartAction.COUNTRY" />
+
+ -->  	
 </PUBLISHERS>
