@@ -48,6 +48,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
 	
+	protected WorksheetEngineInstance worksheetEngineInstance = null;
 	
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(WorksheetEngineStartAction.class);
@@ -55,7 +56,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
     public static final String ENGINE_NAME = "SpagoBIWorksheetEngine";
 		
     public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
-    	WorksheetEngineInstance worksheetEngineInstance = null;
+    	worksheetEngineInstance = null;
     	WorksheetEngineAnalysisState analysisState;
     	Locale locale;
     	
@@ -222,4 +223,15 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		}
 		worksheetEngineInstance.setDataSource(datasource);
     }
+
+	public WorksheetEngineInstance getWorksheetEngineInstance() {
+		return worksheetEngineInstance;
+	}
+
+	public void setWorksheetEngineInstance(
+			WorksheetEngineInstance worksheetEngineInstance) {
+		this.worksheetEngineInstance = worksheetEngineInstance;
+	}
+    
+    
 }
