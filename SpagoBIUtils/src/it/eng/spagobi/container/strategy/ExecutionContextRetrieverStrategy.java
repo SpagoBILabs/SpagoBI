@@ -36,7 +36,7 @@ public class ExecutionContextRetrieverStrategy implements IContextRetrieverStrat
 	static private Logger logger = Logger.getLogger(ExecutionContextRetrieverStrategy.class);
 	
 	private static final String SPAGOBI_SESSION_ATTRIBUTE = "SPAGOBI_SESSION_ATTRIBUTE";
-	private static final String EXECUTION_ID = "SBI_EXECUTION_ID";
+	public static final String EXECUTION_ID = "SBI_EXECUTION_ID";
 	
 	private String contextId;
 	

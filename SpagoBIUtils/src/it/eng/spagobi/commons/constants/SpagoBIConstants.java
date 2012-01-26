@@ -35,6 +35,7 @@ public class SpagoBIConstants {
 	public static final String ADMIN_MODALITY = "ADMIN_MODALITY";
 	public static final String OBJECT_TREE_MODALITY = "OBJECT_TREE_MODALITY";
 	
+	
 	public static final String IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS = "IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS";
 	
 	public static final String RUN_ANYWAY = "RUN_ANYWAY";
@@ -177,6 +178,7 @@ public class SpagoBIConstants {
 	
 	public static final String SINGLE_OBJECT_EXECUTION_MODALITY = "SINGLE_OBJECT_EXECUTION_MODALITY";
 	public static final String NORMAL_EXECUTION_MODALITY = "NORMAL_EXECUTION_MODALITY";
+	public static final String MASSIVE_EXPORT_MODALITY = "MASSIVE_EXPORT_MODALITY";
 	
 	public static final String FILTER_TREE_MODALITY = "FILTER_TREE_MODALITY";
 	public static final String ENTIRE_TREE_MODALITY = "ENTIRE_TREE_MODALITY";
@@ -350,6 +352,7 @@ public class SpagoBIConstants {
 	public static final String SEE_METADATA_FUNCTIONALITY = "SeeMetadataFunctionality";
 	public static final String SAVE_METADATA_FUNCTIONALITY = "SaveMetadataFunctionality";
 	public static final String BUILD_QBE_QUERIES_FUNCTIONALITY = "BuildQbeQueriesFunctionality";
+	public static final String DO_MASSIVE_EXPORT_FUNCTIONALITY = "DoMassiveExportFunctionality";
 	
 	public static final String DOCUMENT_MOVE_DOWN_STATE = "DocumentMoveDownState" ;
 	public static final String DOCUMENT_MOVE_UP_STATE = "DocumentMoveUpState" ;
@@ -384,5 +387,8 @@ public class SpagoBIConstants {
 	public static final String PERMISSION_ON_FOLDER_TO_TEST  = "TEST";
 	public static final String PERMISSION_ON_FOLDER_TO_EXECUTE  = "EXECUTION";
 	public static final String PERMISSION_ON_FOLDER_TO_CREATE  = "CREATION";
+
+	public static final String JNDI_THREAD_MANAGER  = "JNDI_THREAD_MANAGER";
+
 	
 }

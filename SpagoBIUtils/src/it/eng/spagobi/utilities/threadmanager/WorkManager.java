@@ -50,6 +50,11 @@ public class WorkManager {
 	public WorkManager() throws NamingException {
 		init();
 	}
+	
+	
+	public WorkManager(String jndiServerManager) throws NamingException {
+		init(jndiServerManager);
+	}
 
 	/**
 	 * Run.
@@ -173,6 +178,49 @@ public class WorkManager {
 
 	}
 
+	
+	
+/**
+ *  JNDI string passed as parameter	
+ * @param jndi
+ * @throws NamingException
+ */
+	
+	public void init(String jndi) throws NamingException {
+
+		Context ctx;
+		logger.debug("IN");
+
+		try {
+			Assert.assertNotNull(jndi, "jndi is empty");
+
+			logger.debug("WorkManager jndi name is [" + jndi + "]");
+
+			logger.debug("Looking up for JNDI resource [" + jndi + "] ...");
+			ctx = new InitialContext();
+			Object o = ctx.lookup(jndi);
+			
+			wm = (FooWorkManager) o;
+			logger.debug("JNDI resource lookup successfully terminated");
+		} catch (Throwable t) {
+			throw new RuntimeException("An error occurred while initializing the WorkManager", t);
+		} finally {
+			logger.debug("OUT");
+		}
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public void shutdown(){
 		wm.shutdown();
 	}
