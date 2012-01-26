@@ -53,6 +53,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element name="script" nillable="true" type="soapenc:string"/>
      <element name="transformerId" nillable="true" type="soapenc:int"/>
      <element name="type" nillable="true" type="soapenc:string"/>
+     <element name="customData" nillable="true" type="soapenc:string"/>
     </sequence>
    </complexType>
   </schema>

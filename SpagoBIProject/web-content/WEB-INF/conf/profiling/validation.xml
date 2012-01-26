@@ -57,6 +57,9 @@
 				<FIELD name="buildQbe" label="buildQbe">
 					<VALIDATOR validatorName="BOOLEAN"/>
 				</FIELD>
+				<FIELD name="doMassiveExport" label="doMassiveExport">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
 				
 			</FIELDS>
 		</VALIDATION>

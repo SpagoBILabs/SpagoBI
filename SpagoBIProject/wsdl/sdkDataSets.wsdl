@@ -73,6 +73,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element name="datamarts" nillable="true" type="soapenc:string"/>
      <element name="webServiceAddress" nillable="true" type="soapenc:string"/>
      <element name="webServiceOperation" nillable="true" type="soapenc:string"/>
+     <element name="customData" nillable="true" type="soapenc:string"/>     
     </sequence>
    </complexType>
    <complexType name="SDKDataStoreFieldMetadata">

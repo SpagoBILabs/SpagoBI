@@ -37,6 +37,8 @@
 		
 		<MAP_ACTION actionName="MANAGE_BIOBJECTS_ACTION"  businessProcess="KpiManagement"/>
 		<MAP_ACTION actionName="SAVE_DOCUMENT_ACTION"  businessProcess="UserSaveDocumentFunctionality"/>
+		<MAP_ACTION actionName="SAVE_DOCUMENT_ACTION1"  businessProcess="DocumentUserManagement"/>
+
 
 	</MAP_ACTIONS>
 	
