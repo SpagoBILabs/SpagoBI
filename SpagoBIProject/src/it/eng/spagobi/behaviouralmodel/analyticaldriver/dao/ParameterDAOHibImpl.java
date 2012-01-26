@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -207,13 +208,19 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements
 				}
 				ParameterUse aParameterUse = DAOFactory.getParameterUseDAO().loadByUseID(hibParuse.getUseId());
 				parameter.setChecks(aParameterUse.getAssociatedChecks());  
-			} else {
+			} else if (parUseAssociated.size() > 1){
 				// this part of code wouldn't never be executed because one role can have only one parameteruse
 				// for each parameter. The control is executed before the load of the object so 
 				// the list would have to contain only one element but if the list contains more than one
 				// object it's an error
 				logger.error("the parameter with id "+parameterID+" has more than one parameteruse for the role "+roleName);
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			}
+			else {
+				logger.error("No parameteruse for association among parameter "+parameterID+" and role "+roleName);
+				Vector v = new Vector();
+				v.add(roleName);
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 1078, v);			
 			}
 			tx.commit();
 			return parameter;
