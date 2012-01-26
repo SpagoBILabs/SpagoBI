@@ -107,6 +107,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                        	          , 'seeViewpoints'
 	                        	          , 'sendMail'
 	                        	          , 'buildQbe'
+	                        	          , 'doMassiveExport'
 	                        	        ];
 		
 		this.configurationObject.emptyRecToAdd = new Ext.data.Record({
@@ -126,7 +127,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 											saveRemember:true,
 											seeMeta:true,
 											saveMeta:true,
-											buildQbe:true
+											buildQbe:true,
+											doMassiveExport:true
 										});
 		
 		this.configurationObject.gridColItems = [
@@ -337,6 +339,17 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            items: [
 		                {boxLabel: LN('sbi.roles.buildQbe'), name: 'buildQbe', checked:'buildQbe',inputValue: 1}
 		            ]
+		        },
+		        {
+		            xtype: 'checkboxgroup',
+		            columns: 1,
+		            boxMinWidth  : 150,
+		            hideLabel  : false,
+		            fieldLabel: LN('sbi.roles.export'),
+		            itemId: 'isAbleToDo',
+		            items: [
+		                {boxLabel: LN('sbi.roles.doMassiveExport'), name: 'doMassiveExport', checked:'doMassiveExport',inputValue: 1}
+		            ]
 		        }
            ]
  	    };
@@ -367,6 +380,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
             		  item.setValue('sendMail', rec.get('sendMail'));
         		  }else if(item.getItemId() == 'isAbleToBuild'){
             		  item.setValue('buildQbe', rec.get('buildQbe'));
+        		  }else if(item.getItemId() == 'isAbleToDo'){
+            		  item.setValue('doMassiveExport', rec.get('doMassiveExport'));
         		  }
 
      	  });
@@ -397,7 +412,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 								saveRemember:true,
 								seeMeta:true,
 								saveMeta:true,
-								buildQbe:true
+								buildQbe:true,
+								doMassiveExport:true
 							});
 		
 		this.getForm().loadRecord(emptyRecToAdd); 
@@ -422,6 +438,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         var seeMe =values['seeMeta'];
         var saveMe =values['saveMeta'];
         var builQ =values['buildQbe'];             
+        var doMassiveExport =values['doMassiveExport'];             
 
 		if(savePf == 1){
         	record.set('savePersonalFolder', true);
@@ -478,6 +495,11 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         }else{
         	record.set('buildQbe', false);
         }
+        if(doMassiveExport == 1){
+        	record.set('doMassiveExport', true);
+        }else{
+        	record.set('doMassiveExport', false);
+        }
 
 		return record;		
 	}
@@ -530,7 +552,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			saveRemember:newRec.data.saveRemember,
 			seeMeta:newRec.data.seeMeta,
 			saveMeta:newRec.data.saveMeta,
-			buildQbe:newRec.data.buildQbe
+			buildQbe:newRec.data.buildQbe,
+			doMassiveExport:newRec.data.doMassiveExport
         };
         if(idRec){
         	params.id = newRec.data.id;

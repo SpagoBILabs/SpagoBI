@@ -7,4 +7,5 @@
         <ResourceLink global="spagobi_sso_class" name="spagobi_sso_class" type="java.lang.String"/>
         <ResourceLink global="spagobi_host_url" name="spagobi_host_url" type="java.lang.String"/>
         <!--ResourceLink global="spagobi_domain" name="spagobi_domain" type="java.lang.String"/-->
+		<ResourceLink global="wm/SpagoWorkManager" name="wm/SpagoWorkManager" type="jcommonj.work.WorkManager"/>
 </Context>

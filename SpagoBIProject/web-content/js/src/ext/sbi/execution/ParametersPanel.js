@@ -87,13 +87,15 @@ Sbi.execution.ParametersPanel = function(config) {
 	//if(c.isFromCross) alert('parametersPreference: ' + this.parametersPreference.toSource());
 	
 	// always declare exploited services first!
-	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
-	this.services = new Array();
-	this.services['getParametersForExecutionService'] = Sbi.config.serviceRegistry.getServiceUrl({
+	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null, CONTEST: this.contest};
+	//this.services = new Array();
+	this.services = config.services || new Array();
+	
+	this.services['getParametersForExecutionService'] = this.services['getParametersForExecutionService'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_PARAMETERS_FOR_EXECUTION_ACTION'
 		, baseParams: params
 	});
-	this.services['getParameterValueForExecutionService'] = Sbi.config.serviceRegistry.getServiceUrl({
+	this.services['getParameterValueForExecutionService'] = this.services['getParameterValueForExecutionService'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_PARAMETER_VALUES_FOR_EXECUTION_ACTION'
 		, baseParams: params
 	});
@@ -132,7 +134,7 @@ Sbi.execution.ParametersPanel = function(config) {
 		this.columns[i] = columnContainer.items.get(i);
 	}
 	
-    this.addEvents('beforesynchronize', 'synchronize');	
+    this.addEvents('beforesynchronize', 'synchronize', 'parametersForExecutionLoaded');	
 };
 
 Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
@@ -144,6 +146,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     , fields: null
     , columns: null
     , baseConfig: null
+    , modality : null
     
     
    
@@ -178,6 +181,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				// Conflicts with other parameters are avoided since the parameter url name max lenght is 20
 				state[field.name + '_field_visible_description'] = rawValue;
 			}
+			
+			// add objParsId information if present (massive export case)
+			if(field.objParameterIds){
+				state[field.name + '_objParameterIds']=field.objParameterIds;
+			}
+			
 		}
 		return state;
 	}
@@ -235,6 +244,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		      		if(response.responseText !== undefined) {
 		      			var content = Ext.util.JSON.decode( response.responseText );
 		      			if(content !== undefined) {
+			      			//this.fireEvent('parametersForExecutionLoaded', this, content);
 		      				this.onParametersForExecutionLoaded(executionInstance, content);
 		      			} 
 		      		} else {
@@ -667,6 +677,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			Ext.apply(baseParams, {
 				PARAMETER_ID: p.id
 				, MODE: 'simple'
+				, OBJ_PARAMETER_IDS: p.objParameterIds  // ONly in massive export case
 			});
 			delete baseParams.PARAMETERS;
 			
@@ -737,6 +748,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 			}));
 			
+
 			
 			
 		} else if(p.selectionType === 'LIST' || p.selectionType ===  'CHECK_LIST') {
@@ -744,6 +756,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			var params = Ext.apply({}, {
 				PARAMETER_ID: p.id
 				, MODE: 'complete'
+				, OBJ_PARAMETER_IDS: p.objParameterIds  // ONly in massive export case
 			}, executionInstance);
 			delete params.PARAMETERS;
 			
@@ -780,6 +793,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		field.behindParameter = p;
 		field.dependencies = p.dependencies;
+		
+		// add information: objParameterIds if present (massive export case)
+		if(p.objParameterIds){
+			field.objParameterIds = p.objParameterIds;	
+		}
 		
 		return field;
 	}
