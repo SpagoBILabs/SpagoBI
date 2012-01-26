@@ -711,7 +711,7 @@ public class CrossTab {
 			rootNode = rowsRoot;
 		}
 		
-		List<Node> fathersOfTheNodesOfTheLevel = rootNode.getLevel(level-1);
+		List<Node> fathersOfTheNodesOfTheLevel = rootNode.getLevel(level-2);
 		
 		for(int i=0; i<fathersOfTheNodesOfTheLevel.size(); i++){
 			rootNode.setLeafPositions();
