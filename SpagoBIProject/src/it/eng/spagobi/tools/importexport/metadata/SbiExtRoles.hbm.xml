@@ -55,6 +55,9 @@
         <property name="isAbleToBuildQbeQuery" type="boolean">
             <column name="BUILD_QBE_QUERY" />
         </property>
+        <property name="isAbleToDoMassiveExport" type="boolean">
+            <column name="DO_MASSIVE_EXPORT" />
+        </property>        
         <set name="sbiFuncRoles" inverse="true">
             <key>
                 <column name="ROLE_ID" not-null="true" />
