@@ -383,6 +383,8 @@ Sbi.locale.ln['sbi.roles.sendMail']='Envoyer par email';
 Sbi.locale.ln['sbi.roles.send']='Envoyer';
 Sbi.locale.ln['sbi.roles.build']='Construire';
 Sbi.locale.ln['sbi.roles.buildQbe']='Construire Interrogations QbE';
+Sbi.locale.ln['sbi.roles.export'] = 'Exporter';
+Sbi.locale.ln['sbi.roles.doMassiveExport'] = 'Ex\u00E9cuter Massive Export';
 Sbi.locale.ln['sbi.roles.headerName']='Nom';
 Sbi.locale.ln['sbi.roles.headerDescr']='Description';
 Sbi.locale.ln['sbi.roles.headerCode']='Code';
@@ -648,3 +650,19 @@ Sbi.locale.ln['sbi.worksheet.validation.error.text']='Certaines feuilles ne sont
 
 Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Please open the worksheet preview tab to export the document';
 Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Export warning';
+
+
+//===================================================================
+//MASSIVE EXPORT
+//===================================================================
+Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.title'] = 'Options du export';
+Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.docsList'] = 'Liste des documents a exporter';
+Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.cycleOnFilter'] = 'Divide Filtrer';
+
+Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.title'] = 'Wizard pur Export des Worksheet ';
+
+Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.back'] = 'Page Pr\u00E9c\u00E9dante';
+Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.next'] = 'Page Suivante';
+Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.finish'] = 'Fin';
+
+Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.NoDoc'] = 'Aucun documents Worksheet a exporter'; 
