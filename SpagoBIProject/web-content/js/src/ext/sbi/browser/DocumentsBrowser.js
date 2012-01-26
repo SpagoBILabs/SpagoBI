@@ -46,6 +46,16 @@ Sbi.browser.DocumentsBrowser = function(config) {
         , metaDocument: config.metaDocument	
     });
 	
+	this.progressPanel = new Sbi.browser.ProgressPanel({
+        title: LN('sbi.browser.progresspanel.title')
+        , border:true
+        , metaFolder: config.metaFolder
+        , metaDocument: config.metaDocument	
+        //, html : 'ciao'
+    });
+	
+	
+	
 	this.searchPanel = new Sbi.browser.SearchPanel({
         title: LN('sbi.browser.searchpanel.title')
         , border:true
@@ -67,6 +77,7 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	               this.treePanel
 	               , this.filterPanel
 	               , this.searchPanel
+	               , this.progressPanel
 	       ]
 	});
 	
@@ -199,6 +210,8 @@ Sbi.browser.DocumentsBrowser = function(config) {
     this.filterPanel.addListener('ongroup', this.onGroup, this);
     this.filterPanel.addListener('onfilter', this.onFilter, this);
     
+    this.progressPanel.addListener('click', this.onTreeNodeClick, this);
+    
     
    
     
@@ -217,6 +230,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
     , treePanel: null
     , filterPanel: null
     , searchPanel: null
+    , progressPanel: null
     
     , centerRegionContainer: null
     , detailPanel: null

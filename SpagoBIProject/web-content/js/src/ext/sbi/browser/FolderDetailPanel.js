@@ -443,7 +443,18 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     , performActionOnFolder: function(dirRecord, action) {
     	if(this.fireEvent('beforeperformactiononfolder', this, dirRecord, action) !== false){
     		if(action === 'export' && Sbi.user.functionalities.contains('SeeMetadataFunctionality')) {
-    			alert('export: ' + dirRecord.id);
+    			//alert('export: ' + dirRecord.id);
+
+    				var popupWin = 
+    					new Sbi.tools.massiveExport.MassiveExportWizardWindow(
+    							{
+    								functId : dirRecord.id
+    								, functCd : dirRecord.code
+    							}
+    						);
+	popupWin.show();
+    popupWin.doLayout();
+    		
     		} else if(action === 'schedule' && Sbi.user.functionalities.contains('SeeMetadataFunctionality')) {
     			alert('schedule: ' + dirRecord.id);
     		}
