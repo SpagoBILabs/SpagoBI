@@ -40,7 +40,6 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 
 
 /**
- * @author Antonella Giachino (antonella.giachino@eng.it)
  *
  */
 public class GetFolderContentAction extends AbstractBaseHttpAction{
@@ -144,16 +143,16 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			scheduleAction.put("name", "schedule");
 			scheduleAction.put("description", "Schedule");
 							
-//			for(int i = 0; i < foldersJSON.length(); i++) {
-//				if(func.contains("SeeMetadataFunctionality")){
-//					JSONObject folderJSON = foldersJSON.getJSONObject(i);
-//					folderJSON.getJSONArray("actions").put(exportAction);
-//				}
-//				if(func.contains("SeeMetadataFunctionality")){
-//					JSONObject folderJSON = foldersJSON.getJSONObject(i);
-//					folderJSON.getJSONArray("actions").put(scheduleAction);
-//				}
-//			}
+			for(int i = 0; i < foldersJSON.length(); i++) {
+				if(func.contains("DoMassiveExportFunctionality")){
+					JSONObject folderJSON = foldersJSON.getJSONObject(i);
+					folderJSON.getJSONArray("actions").put(exportAction);
+				}
+				if(func.contains("DoMassiveExportFunctionality")){
+					JSONObject folderJSON = foldersJSON.getJSONObject(i);
+					folderJSON.getJSONArray("actions").put(scheduleAction);
+				}
+			}
 			
 			
 			JSONObject foldersResponseJSON =  createJSONResponseFolders(foldersJSON);
