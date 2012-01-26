@@ -219,6 +219,7 @@
 			  <file name='./spagobi/widgets/SeriesPalette.js'/>
 			  <file name='./spagobi/widgets/SimpleValuesChooserWindow.js'/>
 			  <file name='./spagobi/widgets/FilterLookupPopupWindow.js'/>
+		      <file name='./spagobi/widgets/ConfigurableForm.js'/>
 
 
 			  <file name='./spagobi/qbe/FilterComboBox.js'/>
@@ -324,6 +325,7 @@
 			  <file name='./spagobi/worksheet/runtime/RuntimeSheetsContainerPanel.js'/>
 			  <file name='./spagobi/worksheet/runtime/RuntimeSheetPanel.js'/>
 			  <file name='./spagobi/worksheet/runtime/RuntimeSheetFiltersPanel.js'/>
+		      <file name='./spagobi/worksheet/runtime/RuntimeSheetFiltersInfoPanel.js'/>
 			  <file name='./spagobi/worksheet/runtime/WorkSheetsRuntimePanel.js'/>
 			  <file name='./spagobi/worksheet/runtime/RuntimeSheetContentPanel.js'/>
 			  <file name='./spagobi/worksheet/runtime/RuntimeGenericChartPanel.js'/>
@@ -331,6 +333,8 @@
 			  <file name='./spagobi/worksheet/runtime/RuntimeLineChartPanel.js'/>
 			  <file name='./spagobi/worksheet/runtime/RuntimePieChartPanel.js'/>
 			  <file name='./spagobi/worksheet/runtime/WorkSheetPreviewPage.js'/>
+		      
+		      <file name='./spagobi/worksheet/config/OptionsWindow.js'/>
 
 			  <file name='./spagobi/registry/RegistryPanel.js'/>
 			  <file name='./spagobi/registry/RegistryEditorGridPanel.js'/>
