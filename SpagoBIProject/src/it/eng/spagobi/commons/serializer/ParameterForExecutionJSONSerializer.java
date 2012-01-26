@@ -53,6 +53,16 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 			result.put("visible", parameter.isVisible() );
 			result.put("valuesCount", parameter.getValuesCount() );
 			if(parameter.getValuesCount() == 1) result.put("value", parameter.getValue() );
+			
+			if(parameter.getObjParameterIds() != null){
+				JSONArray objParameterIds = new JSONArray();
+				for (Iterator iterator = parameter.getObjParameterIds().iterator(); iterator.hasNext();) {
+					Integer id = (Integer) iterator.next();
+					objParameterIds.put(id);
+				}
+				result.put("objParameterIds", objParameterIds);
+			}
+			
 			JSONArray dependencies = new JSONArray();
 			Iterator it = parameter.getDependencies().keySet().iterator();
 			while( it.hasNext() ) {
