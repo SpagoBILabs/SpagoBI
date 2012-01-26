@@ -143,6 +143,11 @@
         <!-- messages -->
    		<mapping resource="it/eng/spagobi/i18n/metadata/mapping/SbiI18NMessages.hbm.xml" />   
         
+        <!-- massive export -->
+       <!--  -->
+       <mapping resource="it/eng/spagobi/tools/massiveExport/metadata/mapping/SbiProgressThread.hbm.xml"/> 
+                
+        
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiComments.hbm.xml" />
         <!-- end mapping -->
         
@@ -151,7 +156,9 @@
         <class-cache class="it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig" usage="nonstrict-read-write"/>
         <class-cache class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" usage="nonstrict-read-write"/>
         <class-cache class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole" usage="nonstrict-read-write"/>
-        
+     
+     
+
         <!-- 
         <class-cache class="it.eng.spagobi.commons.metadata.SbiExtRoles" usage="read-only"/>
 	 	-->
