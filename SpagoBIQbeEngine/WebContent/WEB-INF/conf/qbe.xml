@@ -31,6 +31,7 @@
 	
 	<!-- limit of the cross tab cells number -->
 	<QBE-CROSSTAB-CELLS-LIMIT value="2000" isBlocking="true"/> 
+	<QBE-CROSSTAB-CALCULATEDFIELDS-DECIMAL value="1"/> 
 	
 	<QBE_TEMPORARY_TABLE prefix="TMPSBIQBE_" suffix="" /> <!-- TEMPORARY_TABLE mechanism is always enabled -->
 
