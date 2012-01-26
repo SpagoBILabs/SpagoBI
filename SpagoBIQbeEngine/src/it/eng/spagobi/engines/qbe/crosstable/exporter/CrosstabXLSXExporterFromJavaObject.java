@@ -52,10 +52,20 @@ import org.json.JSONObject;
  */
 public class CrosstabXLSXExporterFromJavaObject {
 	
+	private int calculatedFieldsDecimals;
+	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(CrosstabXLSXExporterFromJavaObject.class);
 
 	
+	/**
+	 * @param calculatedFieldsDecimals
+	 */
+	public CrosstabXLSXExporterFromJavaObject(int calculatedFieldsDecimals) {
+		super();
+		this.calculatedFieldsDecimals = calculatedFieldsDecimals;
+	}
+
 	public int fillAlreadyCreatedSheet(Sheet sheet,CrossTab cs, JSONObject crosstabJSON, CreationHelper createHelper, int startRow, Locale locale) throws JSONException, SerializationException{		
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
@@ -367,6 +377,11 @@ public class CrosstabXLSXExporterFromJavaObject {
 		if(decimalFormats.get(mapPosition)!=null)
 			return decimalFormats.get(mapPosition);
 		String decimals="";
+		
+		if(celltype.equals(CellType.CF)){
+			j = calculatedFieldsDecimals;
+		}
+		
 		for(int i=0; i<j; i++){
 			decimals+="0";
 		}

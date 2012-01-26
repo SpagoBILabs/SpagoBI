@@ -234,6 +234,15 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     					var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
     					// get also type of the cell (data, CF = calculated fields, partialsum)
     					var celltype = this.getCellType(this.rowHeader[this.rowHeader.length-1][i], this.columnHeader[this.columnHeader.length-1][j]);
+    					
+    					//Add the format to the format to the calculated fields
+    					if(celltype=='CF' && Sbi.config.crosstabCalculatedFieldsDecimalePrecison!=undefined && Sbi.config.crosstabCalculatedFieldsDecimalePrecison!=null){
+    						format = {};
+    						format.decimalPrecision = Sbi.config.crosstabCalculatedFieldsDecimalePrecison;
+    						format = Ext.encode(format);
+    						datatype= 'float';
+    					}
+    					
     					var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
     					
     					// put measure value and metadata into an array
@@ -1454,7 +1463,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     
     
     , format: function(value, type, format, percent, percentFontSize, scaleFactor) {
-    	
+
     	if(value=='NA'){
     		return value;
     	}

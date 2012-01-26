@@ -278,4 +278,14 @@ public class QbeEngineConfig {
 		}
 		return cellLimit;
 	}
+	
+	public int getCrosstabCFDecimalPrecision() {
+		int precision = 2;
+		try {
+			precision = new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CALCULATEDFIELDS-DECIMAL.value")) ;
+		} catch (Exception e) {
+			logger.debug("No decimal precision for the crosstab has been defined in the qbe.xml");
+		}
+		return precision;
+	}
 }

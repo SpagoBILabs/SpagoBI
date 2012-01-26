@@ -71,6 +71,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	boolean isQueryValidationBlocking;
 	int timeout;
 	int crosstabCellLimit;
+	int crosstabCalculatedFieldsDecimalePrecison;
 	String spagobiServerHost;
 	String spagobiContext;
 	String spagobiSpagoController;
@@ -99,7 +100,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
     isQueryValidationBlocking = qbeEngineConfig.isQueryValidationBlocking();
     timeout = qbeEngineConfig.getQueryExecutionTimeout();
     crosstabCellLimit = qbeEngineConfig.getCrosstabCellLimit();
-    
+    crosstabCalculatedFieldsDecimalePrecison = qbeEngineConfig.getCrosstabCFDecimalPrecision();
     spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
     spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
     spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
@@ -149,6 +150,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			Sbi.config.queryValidation.isBlocking = <%= isQueryValidationBlocking %>;
 			Sbi.config.queryExecutionTimeout = <%= timeout %>;
 			Sbi.config.crosstabCellLimit = <%= crosstabCellLimit %>;
+			Sbi.config.crosstabCalculatedFieldsDecimalePrecison = <%= crosstabCalculatedFieldsDecimalePrecison %>;
 			
 			var url = {
 		    	host: '<%= request.getServerName()%>'

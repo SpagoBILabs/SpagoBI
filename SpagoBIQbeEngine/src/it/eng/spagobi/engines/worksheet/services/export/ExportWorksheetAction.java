@@ -14,6 +14,7 @@ package it.eng.spagobi.engines.worksheet.services.export;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
@@ -62,11 +63,8 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -513,7 +511,13 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				
 				
 				CrossTab cs = getCrosstab(crosstabDefinitionJSON, fieldOptions, filters, sheetName, splittingWhereField, calculateFieldsJSON);
-				CrosstabXLSExporterFromJavaObject expCr = new CrosstabXLSExporterFromJavaObject();
+				
+				String calculatedFieldsDecimalsString = (String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CALCULATEDFIELDS-DECIMAL.value");
+				int calculatedFieldsDecimals = 0;
+				if(calculatedFieldsDecimalsString!=null){
+					calculatedFieldsDecimals = Integer.valueOf(calculatedFieldsDecimalsString);
+				}
+				CrosstabXLSExporterFromJavaObject expCr = new CrosstabXLSExporterFromJavaObject(calculatedFieldsDecimals);
 				//int rows = expCr.initSheet(sheet, cs);
 				
 				sheetRow = expCr.fillAlreadyCreatedSheet(sheet, cs, crosstabJSON, createHelper, sheetRow, locale);
@@ -815,8 +819,14 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 					calculateFieldsJSON = new JSONArray(calculateFields);
 				}
 
+				String calculatedFieldsDecimalsString = (String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CALCULATEDFIELDS-DECIMAL.value");
+				int calculatedFieldsDecimals = 0;
+				if(calculatedFieldsDecimalsString!=null){
+					calculatedFieldsDecimals = Integer.valueOf(calculatedFieldsDecimalsString);
+				}
+				
 				CrossTab cs = getCrosstab(crosstabDefinitionJSON, fieldOptions,filters, sheetName, splittingWhereField, calculateFieldsJSON);
-				CrosstabXLSXExporterFromJavaObject expCr = new CrosstabXLSXExporterFromJavaObject();
+				CrosstabXLSXExporterFromJavaObject expCr = new CrosstabXLSXExporterFromJavaObject(calculatedFieldsDecimals);
 				sheetRow  = expCr.fillAlreadyCreatedSheet(sheet, cs, crosstabJSON, createHelper, sheetRow, locale);
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
 
