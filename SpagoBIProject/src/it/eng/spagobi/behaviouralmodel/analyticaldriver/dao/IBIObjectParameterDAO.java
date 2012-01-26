@@ -50,8 +50,16 @@ public interface IBIObjectParameterDAO extends ISpagoBIDao{
 	 */
 	
 	public SbiObjPar loadById(Integer id) throws EMFUserError;
+
 	
+	/** 
+	 * Loads all detail information for a BI Object Parameter identified by its
+	 * <code>objParId</code>. return a wrapper object
+ * @return
+ * @throws EMFUserError
+ */
 	
+	public BIObjectParameter loadBiObjParameterById(Integer id) throws EMFUserError;
 	
 	/**
 	 * Loads all detail information for a BI Object Parameter identified by its

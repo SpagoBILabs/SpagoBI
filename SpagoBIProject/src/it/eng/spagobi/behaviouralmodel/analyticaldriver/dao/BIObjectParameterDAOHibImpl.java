@@ -80,6 +80,31 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 		}
 		return hibObjPar;
 	}
+	
+	
+	public BIObjectParameter loadBiObjParameterById(Integer id) throws EMFUserError {
+		BIObjectParameter objPar = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			SbiObjPar hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class,  id);
+			if(hibObjPar != null)
+				objPar = toBIObjectParameter(hibObjPar);
+			
+			tx.commit();
+		} catch(HibernateException he) {
+			logException(he);
+			if (tx != null) tx.rollback();	
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);  
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		return objPar;
+	}
 
 	/**
 	 * Load for detail by obj par id.
