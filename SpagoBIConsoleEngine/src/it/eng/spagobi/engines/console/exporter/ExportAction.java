@@ -46,6 +46,7 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import utilities.DataSourceUtilities;
@@ -62,6 +63,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 	public static final String DATASET_HEADERS_LABEL = "datasetHeadersLabel";
 	public static final String LOCALE = "LOCALE";
 	public static final String META = "meta";
+	public static final String DATASET_EXPORT = "datasetExport";
 
 	// misc
 	public static final String RESPONSE_TYPE_INLINE = "inline";
@@ -86,6 +88,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 		String mimeType;
 		String responseType;
 		String locale;
+		String datasetExport;
 		JSONArray jsonArray;
 
 		IDataSet dataSet;
@@ -108,6 +111,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			Assert.assertNotNull(getConsoleEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			Assert.assertNotNull(getConsoleEngineInstance().getDataSetServiceProxy(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of DatasetServiceProxy class");			
 
+		
 			dataSetLabel = getAttributeAsString( DATASET_LABEL );
 			logger.debug("Parameter [" + DATASET_LABEL + "] is equals to [" + dataSetLabel + "]");			
 			Assert.assertTrue(!StringUtilities.isEmpty( dataSetLabel ), "Parameter [" + DATASET_LABEL + "] cannot be null or empty");
@@ -197,6 +201,23 @@ public class ExportAction extends AbstractConsoleEngineAction {
 				}
 
 				List actionColumns = new ArrayList();
+
+				for(int i = 0; i < fieldNo; i++) {
+					IFieldMetaData fFound = dataStore.getMetaData().getFieldMeta(i);
+
+					String fieldHeader = getFieldHeader(fFound.getName(), jsonArray, dataStore, dataStoreHeaders, locale );
+					if (fieldHeader != null) {
+						Field headerF = new Field(fieldHeader, "java.lang.String", 100);
+						extractedFields.add(headerF);
+						fFound.setProperty("visible", Boolean.TRUE);
+						fFound.setAlias(fieldHeader);
+						fFound.setProperty("index", i);		
+
+						extractedFieldsMetaData.add(fFound);
+					}		
+
+				}
+				/*
 				for(int k = 0; k < jsonArray.length(); k++){
 					JSONObject resultHeaders = jsonArray.getJSONObject(k);
 					Iterator it = resultHeaders.keys();
@@ -256,32 +277,20 @@ public class ExportAction extends AbstractConsoleEngineAction {
 													}
 						}else if (fieldHeaderType.equalsIgnoreCase("I18N")){						
 							//gets the header value from the locale files 
-							/*
-							EnginConf tmp = conf.getEngineConfig();
-							System.out.println(tmp);
-							 */
+							
+							//EnginConf tmp = conf.getEngineConfig();
+							//System.out.println(tmp);
+							 
 							logger.debug("Export headers by locale file doesn't supported yet!");
 						}
 						if (fieldHeader != null){
-							Field headerF = new Field(fieldHeader, "java.lang.String", 100);
-							extractedFields.add(headerF);
-							for(int i = 0; i < fieldNo; i++) {
-								IFieldMetaData fFound = dataStore.getMetaData().getFieldMeta(i);
-								if(fFound.getName().equals(key)){
-									fFound.setProperty("visible", Boolean.TRUE);
-									fFound.setAlias(fieldHeader);
-									fFound.setProperty("index", k);							
-									extractedFieldsMetaData.add(fFound);
-									break;
-								}
-	
-							}
+
 						}
 
-					}
+					} 
 
 
-				}
+				}*/
 
 				dataStore.getMetaData().setProperty("actionColumns", actionColumns);
 			}
@@ -368,6 +377,101 @@ public class ExportAction extends AbstractConsoleEngineAction {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+	
+	private String getFieldHeader(String datasetHeader, JSONArray jsonArray, IDataStore dataStore, IDataStore dataStoreHeaders, String locale ) throws JSONException{
+		String fieldHeader = null;
+		for(int k = 0; k < jsonArray.length(); k++){
+			JSONObject resultHeaders = jsonArray.getJSONObject(k);
+			Iterator it = resultHeaders.keys();
+			while(it.hasNext()) {
+				String key = (String)it.next();
+				if (key.equalsIgnoreCase(datasetHeader)) {
+					JSONObject header = resultHeaders.getJSONObject(key);
+					fieldHeader = header.optString("header", "");
+					String fieldHeaderType =  header.optString("headerType", "");		
+					//					// in case of dynamic headers gets the value from the dataset (of data)
+					if (fieldHeaderType.equalsIgnoreCase("dataset")){
+						int posHeader = dataStore.getMetaData().getFieldIndex(fieldHeader);
+						int fieldValsize = ((List)dataStore.getFieldValues(posHeader)).size();
+						if(fieldValsize != 0){
+							fieldHeader =((List)dataStore.getFieldValues(posHeader)).get(0).toString();
+						}else{
+							fieldHeader = null;
+						}						
+					}else if (fieldHeaderType.equalsIgnoreCase("datasetI18N") && dataStoreHeaders != null){
+						//gets the header value from the specific dataset (only with labels: code - label - locale) 
+						int headersFieldNo = dataStoreHeaders.getMetaData().getFieldCount();
+						//adds index informations to the metadata properties
+						for(int i = 0; i < headersFieldNo; i++) {
+							dataStoreHeaders.getMetaData().getFieldMeta(i).setProperty("index", i+1);
+						}
+						// gets the specific label using the code and the locale
+						int posCode = (dataStoreHeaders.getMetaData().getFieldIndex("code") != -1) ?
+								dataStoreHeaders.getMetaData().getFieldIndex("code") : 
+									dataStoreHeaders.getMetaData().getFieldIndex("CODE");
+
+								int posLabel = (dataStoreHeaders.getMetaData().getFieldIndex("label") != -1) ?
+										dataStoreHeaders.getMetaData().getFieldIndex("label") : 
+											dataStoreHeaders.getMetaData().getFieldIndex("LABEL");
+
+										int posLocale = (dataStoreHeaders.getMetaData().getFieldIndex("locale") != -1) ?
+												dataStoreHeaders.getMetaData().getFieldIndex("locale") : 
+													dataStoreHeaders.getMetaData().getFieldIndex("LOCALE");
+
+												List filterCodes = new ArrayList<String>();
+												List filterValues = new ArrayList<String>();
+												filterCodes.add(posCode);
+												filterValues.add(fieldHeader);
+												filterCodes.add(posLocale);
+												filterValues.add(locale);
+
+												List headersFieldValues = (List)dataStoreHeaders.findRecords(filterCodes, filterValues);
+												if (headersFieldValues != null && headersFieldValues.size() > 0){
+													Record headerRec = (Record)headersFieldValues.get(0);
+													IField headerField = null;
+													if (headerRec != null){
+														headerField = (IField) headerRec.getFieldAt(posLabel);
+													}
+													String label = (headerField != null) ? headerField.toString() : "";
+
+													if(label != null && !("").equalsIgnoreCase(label)){
+														fieldHeader = label;
+													}
+												}
+					}else if (fieldHeaderType.equalsIgnoreCase("I18N")){						
+						//gets the header value from the locale files 
+						/*
+						EnginConf tmp = conf.getEngineConfig();
+						System.out.println(tmp);
+						 */
+						logger.debug("Export headers by locale file doesn't supported yet!");
+					}
+					break;
+				}
+				
+				/*
+				if (fieldHeader != null){
+					Field headerF = new Field(fieldHeader, "java.lang.String", 100);
+					extractedFields.add(headerF);
+					for(int i = 0; i < fieldNo; i++) {
+						IFieldMetaData fFound = dataStore.getMetaData().getFieldMeta(i);
+						if(fFound.getName().equals(key)){
+							fFound.setProperty("visible", Boolean.TRUE);
+							fFound.setAlias(fieldHeader);
+							fFound.setProperty("index", i);							
+							extractedFieldsMetaData.add(fFound);
+							break;
+						}
+
+					}
+				}*/
+
+			}
+
+
+		}		
+		return fieldHeader;
 	}
 }
 

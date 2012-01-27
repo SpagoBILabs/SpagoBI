@@ -191,10 +191,9 @@ Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
 		var dsHeadersLabel = (detailPage.getStoreLabels() !== undefined)?detailPage.getStoreLabels().getDsLabel() : "";
 		var params = {
 			mimeType: 'application/pdf'
-			, datasetHeadersLabel: 'testConsoleLabels'
 			, responseType: 'attachment'
-			, datasetHeadersLabel: dsHeadersLabel		
-			, meta: Ext.util.JSON.encode(columnConfigs)
+			, datasetHeadersLabel: dsHeadersLabel	
+			,meta: Ext.util.JSON.encode(columnConfigs)
 		};
 		Sbi.Sync.request({
 			url: this.services['export']
