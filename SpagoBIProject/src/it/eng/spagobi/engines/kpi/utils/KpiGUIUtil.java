@@ -229,13 +229,14 @@ public class KpiGUIUtil {
 					String type = tv.getThresholdType();
 					Double max = tv.getMaxValue();
 					Double min = tv.getMinValue();
-					
+					Double achieve = tv.getValue();//used to define the value to achieve
 					try {
 						threshold.putOpt("color", color);
 						threshold.putOpt("label", label);
 						threshold.putOpt("type", type);
 						threshold.putOpt("max", max);
 						threshold.putOpt("min", min);
+						threshold.putOpt("achieve", achieve);
 						
 						thresholds.put(threshold);
 						
