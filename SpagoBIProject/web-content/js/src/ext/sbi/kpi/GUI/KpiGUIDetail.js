@@ -216,6 +216,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 				},this);
 			}else{
 				var x = this.calculateInnerThrChart(field);
+				
 				this.chartPanel.setHeight(180);
 				var html = '<div style="float: left; margin-left:20px; text-align:center; background-color:'+field.attributes.status+'; height=180px; width: 200px;"><img src="../themes/other_theme/img/'+this.customChartName+'_'+x+'.png"></img></div>'
 				+ '<div style="margin-top: 30px; float: left; background-color:white; width: 100px; padding-left:5px; font-style: italic; font-weight: bold;"> Valore: '+this.val+'</div>';
@@ -320,6 +321,18 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		//total/9 = val/x;
 		var sbtrct = val - parseFloat(this.selectedThr.min)
 		var x = Math.round(9*sbtrct/total);
+		//determines if the value to achieve is set and eventually reverse the chart
+		x = this.recalculateByAchievement(x);
 		return x;
+	}
+	, recalculateByAchievement: function( x){
+		var newX = x;
+		if(this.selectedThr.achieve !== undefined){			
+			if(this.selectedThr.min == this.selectedThr.achieve){
+				//then reverse
+				newX = 9 - x;
+			}
+		}
+		return newX;
 	}
 });
