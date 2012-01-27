@@ -71,7 +71,7 @@ Ext.extend(Sbi.kpi.KpiGUIDescription , Ext.form.FormPanel, {
 		this.descrName = new Ext.form.TextField({fieldLabel: 'Nome', 
 			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});
 		this.descrDescription = new Ext.form.TextArea({fieldLabel: 'Descrizione', 
-			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300, height: 60});
+			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300, height: 120});
 /*		this.descrCode = new Ext.form.TextField({fieldLabel: 'Codice', 
 			style: 'padding-left:5px; font-style: italic;', readOnly : true, width: 300});*/
 		
