@@ -182,10 +182,42 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 		
 		//gets store reader metadata to retrieve dataIndex
 		var storeMetaArray = gridConsole.store.reader.meta.fields;
+
+		//different dataset to export
+		var dsExport;
+		var metaCols = new Array();
+		if (gridConsole.datasetExport != null){
+			dsExport = gridConsole.datasetExport.datasetExp || "";
+			var exportColumnConfig = gridConsole.datasetExport.columnConfig;
+			
+			for(p in exportColumnConfig) {
+				var column = {};
+				column[p] = exportColumnConfig[p];
+				metaCols.push(column);    
+			}
+		}
 		
 		var dsHeadersLabel = (gridConsole.storeLabels !== undefined && gridConsole.storeLabels !== null)? gridConsole.storeLabels.dsLabel : "";
 		
-		var meta = this.orderMetaColumns(colModArray, storeMetaArray , columnConfigs);
+		//var meta = this.orderMetaColumns(colModArray, storeMetaArray , columnConfigs);
+		var meta = new Array();
+		for(p in columnConfigs) {
+			var column = {};
+			column[p] = columnConfigs[p];
+			meta.push(column);    
+		}
+		
+		
+		if (gridConsole.datasetExport != null){
+			dsExport = gridConsole.datasetExport.datasetExp || "";
+			var exportColumnConfig = gridConsole.datasetExport.columnConfig;
+			
+			for(p in exportColumnConfig) {
+				var column = {};
+				column[p] = exportColumnConfig[p];
+				metaCols.push(column);    
+			}
+		}
 		var output = 'application/vnd.ms-excel';
 		if(format == 'PDF'){
 			output = 'application/pdf';
@@ -193,13 +225,28 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 		if(format == 'CSV'){
 			output = 'text/csv';
 		}
-		var params = {
-			mimeType: output
-			, responseType: 'attachment'
-			, datasetLabel: gridConsole.store.dsLabel
-			, datasetHeadersLabel: dsHeadersLabel
-			, meta: Ext.util.JSON.encode(meta)
-		};
+		
+		//check if specific datasource for export is definied
+		if (gridConsole.datasetExport != null){
+			var params = {
+					mimeType: output
+					, responseType: 'attachment'
+					, datasetLabel: dsExport
+					, datasetHeadersLabel: dsHeadersLabel
+					, meta: Ext.util.JSON.encode(metaCols)
+				};
+		}
+		else {
+			var params = {
+					mimeType: output
+					, responseType: 'attachment'
+					, datasetLabel: gridConsole.store.dsLabel
+					, datasetHeadersLabel: dsHeadersLabel
+					, meta: Ext.util.JSON.encode(meta)
+				};
+		}
+		
+
 		
 		Sbi.Sync.request({
 			url: this.services['export']
