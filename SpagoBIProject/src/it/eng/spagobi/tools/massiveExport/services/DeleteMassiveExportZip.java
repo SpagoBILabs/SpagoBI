@@ -29,6 +29,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.massiveExport.utils.Utilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,13 +38,14 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
-public class DownloadMassiveExportZip extends AbstractSpagoBIAction {
+public class DeleteMassiveExportZip extends AbstractSpagoBIAction {
 
 	private final String SERVICE_NAME = "DOWNLOAD_MASSIVE_EXPORT_ZIP";
 
 	// logger component
-	private static Logger logger = Logger.getLogger(DownloadMassiveExportZip.class);
+	private static Logger logger = Logger.getLogger(DeleteMassiveExportZip.class);
 
 
 	public static final String  RANDOM_KEY = "RANDOM_KEY";
@@ -60,7 +62,8 @@ public class DownloadMassiveExportZip extends AbstractSpagoBIAction {
 		String functCd = null;
 		Integer progressThreadId = null;
 
-
+		String fileName = "";
+		
 		try{
 
 			randomKey = getAttributeAsString( RANDOM_KEY);
@@ -73,52 +76,38 @@ public class DownloadMassiveExportZip extends AbstractSpagoBIAction {
 
 
 			// delete the record
-//			IProgressThreadDAO progressThreadDAO = DAOFactory.getProgressThreadDAO();
-//			boolean deleted = progressThreadDAO.deleteProgressThread(progressThreadId);
-//			if(!deleted){
-//				logger.warn("progress thread with id "+progressThreadId+" was not deleted, probably due to asynchron call");
-//				return;
-//			}
-//			logger.debug("progress thread with id "+progressThreadId+" has been deleted");
+			IProgressThreadDAO progressThreadDAO = DAOFactory.getProgressThreadDAO();
+			boolean deleted = progressThreadDAO.deleteProgressThread(progressThreadId);
+			if(!deleted){
+				logger.warn("progress thread with id "+progressThreadId+" was not deleted, probably due to asynchron call");
+				return;
+			}
+			logger.debug("progress thread with id "+progressThreadId+" has been deleted");
 
-			logger.debug("RandomKey = "+randomKey+" FunctCd = "+functCd+ " ProgressThreadId = "+progressThreadId);
+			logger.debug("Delete zipFile RandomKey = "+randomKey+" FunctCd = "+functCd+ " ProgressThreadId = "+progressThreadId);
 
 			File zip = Utilities.getZipFile(randomKey, functCd);
-			
-			logger.debug("found file "+zip.getAbsolutePath());
+			fileName = zip.getAbsolutePath();
 
-			writeBackToClient(zip, null, false, zip.getName(), "application/zip");
+			boolean del =zip.delete();
+			if(del){
+				logger.debug("file "+fileName+ " has been deleted");
+			}
+			else{
+				logger.debug("could not delete file "+fileName+ "");
+
+			}
+
+			writeBackToClient(new JSONSuccess(new JSONObject()));
 
 		}
-		catch (Throwable err) {
+		catch (Exception err) {
 			logger.error("Error in retrieving file", err);
-			throw new SpagoBIServiceException("Error in retrieving zip file ", err);
+			throw new SpagoBIServiceException("Error during delete: cannot retrieve zip file "+fileName, err);
 		}
 	}
 
 
 
-	private void manageDownload(File zipFile, String fileExtension, HttpServletResponse response) throws IOException {
-		logger.debug("IN");
-		try {
-
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + zipFile + "." + fileExtension + "\";");
-			byte[] exportContent = "".getBytes();
-			FileInputStream fis = null;
-			fis = new FileInputStream(zipFile);
-			exportContent = GeneralUtilities.getByteArrayFromInputStream(fis);
-			response.setContentLength(exportContent.length);
-			response.getOutputStream().write(exportContent);
-			response.getOutputStream().flush();
-			if (fis != null)
-				fis.close();
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	
-	
-	
 
 }

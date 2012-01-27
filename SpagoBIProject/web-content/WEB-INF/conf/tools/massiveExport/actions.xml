@@ -20,5 +20,9 @@
  	class="it.eng.spagobi.tools.massiveExport.services.DownloadMassiveExportZip" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
+      <ACTION name="DELETE_MASSIVE_EXPORT_ZIP" 
+ 	class="it.eng.spagobi.tools.massiveExport.services.DeleteMassiveExportZip" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
  
 </ACTIONS> 

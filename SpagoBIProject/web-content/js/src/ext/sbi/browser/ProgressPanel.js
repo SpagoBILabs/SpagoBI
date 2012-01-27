@@ -51,6 +51,10 @@ Sbi.browser.ProgressPanel = function(config) {
 		serviceName: 'DOWNLOAD_MASSIVE_EXPORT_ZIP'
 		, baseParams: new Object()
 		});
+    this.services['DeleteMassiveExportZip'] = this.services['DeleteMassiveExportZip'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'DELETE_MASSIVE_EXPORT_ZIP'
+		, baseParams: new Object()
+		});
 	
     
     
@@ -359,9 +363,9 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	    		disabled: true,
 	    		handler: function(){
 	    			window.open(urlToCall,'name','resizable=1,height=750,width=1000');
-	    			this.downloadButtons[functCd+randomKey].hide();
-	    			this.downloadButtons[functCd+randomKey].destroy();
-	    			this.downloadButtons[functCd+randomKey] = null;
+//	    			this.downloadButtons[functCd+randomKey].hide();
+//	    			this.downloadButtons[functCd+randomKey].destroy();
+//	    			this.downloadButtons[functCd+randomKey] = null;
 	    			
 					}
 				});
@@ -376,7 +380,10 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	
 	}
 	, createDeleteForm: function(functCd, randomKey, progressThreadId){
-	    if(this.deleteButtons[functCd+randomKey]){
+	   
+		var pars = {FUNCT_CD: functCd, RANDOM_KEY: randomKey, PROGRESS_THREAD_ID: progressThreadId };
+		
+		if(this.deleteButtons[functCd+randomKey]){
 	    }
 	    else{
 	    	this.deleteButtons[functCd+randomKey] = new Ext.Button({
@@ -387,17 +394,28 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	    		scope: this,
 	    		disabled: true,
 	    		handler: function(){
-	    			window.open(urlToCall,'name','resizable=1,height=750,width=1000');
-	    			this.deleteButtons[functCd+randomKey].hide();
-	    			this.deleteButtons[functCd+randomKey].destroy();
-	    			this.deleteButtons[functCd+randomKey] = null;
-					}
-				});
+	    			Ext.Ajax.request({
+	    	        url: this.services['DeleteMassiveExportZip'],
+	    	        params: pars,
+	    	        success : function(response, options) {
+	    				if(response !== undefined) {   
+	    		    		//window.open(urlToCall,'name','resizable=1,height=750,width=1000');
+	    	    			this.downloadButtons[functCd+randomKey].hide();
+	    	    			this.downloadButtons[functCd+randomKey].destroy();
+	    	    			this.downloadButtons[functCd+randomKey] = null;
+	    					this.deleteButtons[functCd+randomKey].hide();
+	    	    			this.deleteButtons[functCd+randomKey].destroy();
+	    	    			this.deleteButtons[functCd+randomKey] = null;
+	    				}
+	    			},
+	    	        scope: this,
+	    			failure: Sbi.exception.ExceptionHandler.handleFailure      
+	    		});	
+				}
+			});
 	    }
 	    this.deleteButtons[functCd+randomKey].enable();
 	    this.downloadedPanel.add(this.deleteButtons[functCd+randomKey]);
-//	    this.downloadedPanel.doLayout();
-//	    this.doLayout();
 	}
 	, cycleProgress: function(){
 		// for better performances wanted to draw bars only when expanded, but execution must go on aniway
