@@ -81,6 +81,8 @@ Sbi.browser.ProgressPanel = function(config) {
 	this.downloadButtons = new Object();
 	// 
 	this.toBeDeleted = new Array();
+
+	this.initPanels();
 	// Start cycle
 	this.cycleProgress();
 
@@ -91,6 +93,9 @@ Sbi.browser.ProgressPanel = function(config) {
 Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
     
 	progressGroup : null
+	, startedPanel : null
+	, downloadedPanel : null
+	, scheduledPanel : null
 	, services : null
 	, expanded : false
 	, currentWorks : null
@@ -98,15 +103,48 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	, downloadButtons : null
 	, canAccess: true
 		// Progress Bar creation
+	, initPanels : function(){
+		this.startedPanel = new Ext.Panel({  
+			title: 'Started Export',
+			//layout: 'card',  
+			layout: 'anchor',  
+			//activeItem: 0,  
+			scope: this,
+			height: 220,
+			autoWidth: true,
+			//html: '<h1>Picchio</h1>',
+			defaults: {border:false}
+		});
+		this.add(this.startedPanel);
+		this.doLayout();
+		
+		this.downloadedPanel = new Ext.Panel({  
+			title: 'Download Exports',
+		//	layout: 'card',  
+			//layout: 'vBox',
+			layout: 'anchor', 
+			//activeItem: 0,  
+			scope: this,
+			height: 320,
+			autoWidth: true,
+			//html: '<h1>Picchio</h1>',
+			defaults: {border:false}
+		});
+		this.add(this.downloadedPanel);
+		this.doLayout();
+		
+		
+	}
 	, createProgressBar : function(functCd, randomKey) {
 		// create progress bar
-    //alert('98 - '+functCd+''+randomKey);  
-	var progressBar = new Ext.ProgressBar({
+		//alert('98 - '+functCd+''+randomKey);  
+		var progressBar = new Ext.ProgressBar({
             text:'Initializing...'+functCd+' - '+randomKey
          });
         // add progress bar to array
         this.progressGroup[functCd+''+randomKey] = progressBar;
-    	this.add(progressBar);
+    	this.startedPanel.add(progressBar);
+    	this.startedPanel.doLayout();
     	this.currentWorks[functCd+''+randomKey] = true;
 		this.progressGroup[functCd+''+randomKey].on('render', function() {
 			this.doLayout();
@@ -120,7 +158,8 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		});
 		// add progress bar to array
 		this.progressGroup[functCd+''+randomKey] = progressBar;
-		this.add(progressBar);
+		this.startedPanel.add(progressBar);
+		this.startedPanel.doLayout();
 		this.currentWorks[functCd+''+randomKey] = true;
 		
 		this.progressGroup[functCd+''+randomKey].on('render', function() {
@@ -243,19 +282,19 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 				}
 				this.toBeDeleted.push(this.progressGroup[key]);
 
-				//var that = this;
+				var that = this;
 				// destroy bar only after a while
-//				setTimeout(function(){
+				setTimeout(function(){
 				// clean bar finished
-					for(i=0;i<this.toBeDeleted.length;i++){
-						var progBar = 	this.toBeDeleted[i];
+					for(i=0;i<that.toBeDeleted.length;i++){
+						var progBar = 	that.toBeDeleted[i];
               	        progBar.reset(true);
 						progBar.destroy();
 					}
-					this.doLayout();
-					this.toBeDeleted = new Array();
+					that.doLayout();
+					that.toBeDeleted = new Array();
 					
-//				}, 5000);
+				}, 5000);
 				}
 				
 				//delete this.progressGroup.'functCd';
@@ -273,7 +312,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		urlToCall += '&PROGRESS_THREAD_ID='+progressThreadId;
 		
 		if(!progressBar){
-			this.createCompletedProgressBar(functCd, randomKey);
+			//this.createCompletedProgressBar(functCd, randomKey);
 		}
 		else{
 			var msg = functCd+' - '+randomKey
@@ -282,31 +321,37 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 			progressBar.updateProgress(1, msg);
 		}
 		
-
+    	// delete th progressBar
+		if(progressBar){
+			//alert('delete 299');
+			this.deleteWork(functCd+''+randomKey);
+		}
+    	
 	    if(this.downloadButtons[functCd+randomKey]){
 	    	
 	    }
 	    else{
 	    	this.downloadButtons[functCd+randomKey] = new Ext.Button({
-	        id: functCd+randomKey,
-	        text: 'download '+functCd+'-'+randomKey,
-	        disabled: false,
-	        scope: this,
-	        disabled: true,
-	        handler: function(){
-	    		window.open(urlToCall,'name','resizable=1,height=750,width=1000');
-				if(progressBar){
-					//alert('delete 299');
-					this.deleteWork(functCd+''+randomKey);
-				}
-				this.downloadButtons[functCd+randomKey].hide();
-				this.downloadButtons[functCd+randomKey].destroy();
-	    		
-				}
-			});
+	    		id: functCd+randomKey,
+	    		text: 'download '+functCd+'-'+randomKey,
+	    		disabled: false,
+	    		scope: this,
+	    		disabled: true,
+	    		handler: function(){
+	    			window.open(urlToCall,'name','resizable=1,height=750,width=1000');
+//	    			if(progressBar){
+//	    				//alert('delete 299');
+//	    				this.deleteWork(functCd+''+randomKey);
+//	    			}
+	    			this.downloadButtons[functCd+randomKey].hide();
+	    			this.downloadButtons[functCd+randomKey].destroy();
+					}
+				});
 	    }
 	    this.downloadButtons[functCd+randomKey].enable();
-	    this.add(this.downloadButtons[functCd+randomKey]);
+	    this.downloadedPanel.add(this.downloadButtons[functCd+randomKey]);
+	    //this.add(this.downloadButtons[functCd+randomKey]);
+	    this.downloadedPanel.doLayout();
 	    this.doLayout();
 	    
 	    
