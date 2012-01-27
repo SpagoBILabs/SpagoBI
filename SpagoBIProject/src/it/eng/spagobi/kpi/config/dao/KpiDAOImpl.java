@@ -608,7 +608,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, kpiInstId);
-			hqlQuery.setDate(1, endDate);
+			hqlQuery.setTimestamp(1, endDate);
 			if (resId != null) {
 				hqlQuery.setInteger(3, resId);
 				logger.debug("Resource setted");
@@ -623,7 +623,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			SbiKpiValue previousValue = null;
 			if (!l.isEmpty()) {
 				logger.debug("The result list is not empty");
-				for (int k = l.size() - 1; k >= 0; k--) {
+				//for (int k = l.size() - 1; k >= 0; k--) {
+				for (int k = 0; k < l.size(); k++) {
 					Object[] tempL =  (Object[])l.get(k);
 					Integer kpiValueId = (Integer) tempL[0];
 					SbiKpiValue temp = (SbiKpiValue) aSession.load(SbiKpiValue.class, kpiValueId);
