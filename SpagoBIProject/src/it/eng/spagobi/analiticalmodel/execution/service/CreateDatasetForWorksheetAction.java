@@ -71,6 +71,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	public static final String  OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL = "serviceUrl";
 	public static final String  OUTPUT_PARAMETER_EXECUTION_ID = "executionId";
 	public static final String  OUTPUT_PARAMETER_DATASET_LABEL = "datasetLabel";
+	public static final String  OUTPUT_PARAMETER_DATASET_PARAMETERS = "datasetParameters";
 	public static final String  OUTPUT_PARAMETER_BUSINESS_METADATA = "businessMetadata";
 	
 	
@@ -128,6 +129,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 				getServiceResponse().setAttribute(OUTPUT_PARAMETER_EXECUTION_ID, executionId);
 				getServiceResponse().setAttribute(OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL, worksheetEditActionUrl);
 				getServiceResponse().setAttribute(OUTPUT_PARAMETER_DATASET_LABEL, datasetBean.getLabel());
+				getServiceResponse().setAttribute(OUTPUT_PARAMETER_DATASET_PARAMETERS, datasetParameterValuesMap);
 				
 				// business metadata
 				JSONObject businessMetadata = getBusinessMetadataFromRequest();
