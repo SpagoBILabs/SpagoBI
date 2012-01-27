@@ -79,6 +79,7 @@ Sbi.browser.ProgressPanel = function(config) {
 	// keep track of current works going on (as from database)
 	this.currentWorks = new Object();
 	this.downloadButtons = new Object();
+	this.deleteButtons = new Object();
 	// 
 	this.toBeDeleted = new Array();
 
@@ -101,6 +102,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	, currentWorks : null
 	, toBeDeleted : null
 	, downloadButtons : null
+	, deleteButtons : null
 	, canAccess: true
 		// Progress Bar creation
 	, initPanels : function(){
@@ -110,7 +112,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 			layout: 'anchor',  
 			//activeItem: 0,  
 			scope: this,
-			height: 220,
+			height: 120,
 			autoWidth: true,
 			//html: '<h1>Picchio</h1>',
 			defaults: {border:false}
@@ -122,15 +124,33 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 			title: 'Download Exports',
 		//	layout: 'card',  
 			//layout: 'vBox',
-			layout: 'anchor', 
+			layout: 'anchor',
+			//columnWidth: 0.5,
 			//activeItem: 0,  
 			scope: this,
 			height: 320,
+			//autoidth: true,
+			//html: '<h1>Picchio</h1>',
+			defaults: {border:false
+			//, columnWidth: 0.5
+			}
+		});
+		this.add(this.downloadedPanel);
+		this.doLayout();
+		
+		this.scheduledPanel = new Ext.Panel({  
+			title: 'Scheduled Exports',
+		//	layout: 'card',  
+			//layout: 'vBox',
+			layout: 'anchor', 
+			//activeItem: 0,  
+			scope: this,
+			height: 120,
 			autoWidth: true,
 			//html: '<h1>Picchio</h1>',
 			defaults: {border:false}
 		});
-		this.add(this.downloadedPanel);
+		this.add(this.scheduledPanel);
 		this.doLayout();
 		
 		
@@ -332,34 +352,54 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	    }
 	    else{
 	    	this.downloadButtons[functCd+randomKey] = new Ext.Button({
-	    		id: functCd+randomKey,
+	    		id: functCd+randomKey+'download',
 	    		text: 'download '+functCd+'-'+randomKey,
 	    		disabled: false,
 	    		scope: this,
 	    		disabled: true,
 	    		handler: function(){
 	    			window.open(urlToCall,'name','resizable=1,height=750,width=1000');
-//	    			if(progressBar){
-//	    				//alert('delete 299');
-//	    				this.deleteWork(functCd+''+randomKey);
-//	    			}
 	    			this.downloadButtons[functCd+randomKey].hide();
 	    			this.downloadButtons[functCd+randomKey].destroy();
+	    			this.downloadButtons[functCd+randomKey] = null;
+	    			
 					}
 				});
 	    }
 	    this.downloadButtons[functCd+randomKey].enable();
 	    this.downloadedPanel.add(this.downloadButtons[functCd+randomKey]);
-	    //this.add(this.downloadButtons[functCd+randomKey]);
+
+	    this.createDeleteForm(functCd, randomKey, progressThreadId);
+
 	    this.downloadedPanel.doLayout();
 	    this.doLayout();
-	    
-	    
-	    
 	
 	}
-
-	,cycleProgress: function(){
+	, createDeleteForm: function(functCd, randomKey, progressThreadId){
+	    if(this.deleteButtons[functCd+randomKey]){
+	    }
+	    else{
+	    	this.deleteButtons[functCd+randomKey] = new Ext.Button({
+	    		id: functCd+randomKey+'delete',
+	    		//text: 'delete '+functCd+'-'+randomKey,
+				iconCls: 'icon-clear',
+	    		disabled: false,
+	    		scope: this,
+	    		disabled: true,
+	    		handler: function(){
+	    			window.open(urlToCall,'name','resizable=1,height=750,width=1000');
+	    			this.deleteButtons[functCd+randomKey].hide();
+	    			this.deleteButtons[functCd+randomKey].destroy();
+	    			this.deleteButtons[functCd+randomKey] = null;
+					}
+				});
+	    }
+	    this.deleteButtons[functCd+randomKey].enable();
+	    this.downloadedPanel.add(this.deleteButtons[functCd+randomKey]);
+//	    this.downloadedPanel.doLayout();
+//	    this.doLayout();
+	}
+	, cycleProgress: function(){
 		// for better performances wanted to draw bars only when expanded, but execution must go on aniway
 		// true means to cycle
 		if(this.canAccess==true){		
