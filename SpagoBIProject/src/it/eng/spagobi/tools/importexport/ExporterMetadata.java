@@ -127,21 +127,19 @@ import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeaturesId;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
-import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.CustomDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JClassDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.QbeDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.metadata.SbiCustomDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
 import it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet;
@@ -462,6 +460,16 @@ public class ExporterMetadata {
 					if(((ScriptDataSetDetail)dataSetActiveDetail).getLanguageScript()!=null){
 						((SbiScriptDataSet)hibDataSetHistory).setLanguageScript(((ScriptDataSetDetail)dataSetActiveDetail).getLanguageScript());
 					}
+				}
+				
+				else if (dataSetActiveDetail instanceof CustomDataSetDetail) {
+					hibDataSetHistory=new SbiCustomDataSet();
+					if (((CustomDataSetDetail)dataSetActiveDetail).getCustomData() != null) {
+						((SbiCustomDataSet)hibDataSetHistory).setCustomData(((CustomDataSetDetail)dataSetActiveDetail).getCustomData());
+					}
+					if (((CustomDataSetDetail)dataSetActiveDetail).getJavaClassName() != null) {
+						((SbiCustomDataSet)hibDataSetHistory).setJavaClassName(((CustomDataSetDetail)dataSetActiveDetail).getJavaClassName());
+					}	
 				}
 
 				SbiDomains transformer = null;
@@ -3235,3 +3243,4 @@ public class ExporterMetadata {
 	}
 	//Query hibQuery = session.createQuery(" from SbiOrgUnitGrant where grant.id = " + ou.getGrant().getId());
 }
+
