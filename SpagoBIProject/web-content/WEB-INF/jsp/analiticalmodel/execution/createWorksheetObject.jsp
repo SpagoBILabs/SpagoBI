@@ -18,6 +18,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --%>
 
+<%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.spagobi.analiticalmodel.execution.service.CreateDatasetForWorksheetAction"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 
@@ -31,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String executionId = (String) aResponseContainer.getServiceResponse().getAttribute(CreateDatasetForWorksheetAction.OUTPUT_PARAMETER_EXECUTION_ID);
 	String worksheetEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(CreateDatasetForWorksheetAction.OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL);
 	String datasetLabel = (String) aResponseContainer.getServiceResponse().getAttribute(CreateDatasetForWorksheetAction.OUTPUT_PARAMETER_DATASET_LABEL);
+	Map<String, String> datasetParameterValuesMap = (Map<String, String>) aResponseContainer.getServiceResponse().getAttribute(CreateDatasetForWorksheetAction.OUTPUT_PARAMETER_DATASET_PARAMETERS);
 	String businessMetadata = (String) aResponseContainer.getServiceResponse().getAttribute(CreateDatasetForWorksheetAction.OUTPUT_PARAMETER_BUSINESS_METADATA);
 	
 	String title ="";
@@ -38,90 +40,50 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 <script type="text/javascript">
 
-var url = {
-    	host: '<%= request.getServerName()%>'
-    	, port: '<%= request.getServerPort()%>'
-    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
-    	   				  request.getContextPath().substring(1):
-    	   				  request.getContextPath()%>'
-    	    
-};
-
-var params = {};
-
-Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
-	baseUrl: url
-    , baseParams: params
-});
-
-Ext.onReady(function(){
-
-	var saveButton = new Ext.Toolbar.Button({
-				iconCls: 'icon-saveas' 
-				, scope: this
-	    	    , handler : function() {
-	    	    	var thePanel = this.templateEditIFrame.getFrame().getWindow().workSheetPanel;
-	    	    	var template = thePanel.validate();	
-	    	    	if (template == null){
-	    	    		return;
-	    	    	}
-	    	    	var templateJSON = Ext.util.JSON.decode(template);
-	    			var wkDefinition = templateJSON.OBJECT_WK_DEFINITION;
-	    			var documentWindowsParams = {
-	    					'OBJECT_TYPE': 'WORKSHEET',
-	    					//'template': wkDefinition,
-	    					'OBJECT_WK_DEFINITION': wkDefinition,
-	    					'business_metadata': <%= businessMetadata %>,
-	    					'MESSAGE_DET': 'DOC_SAVE_FROM_DATASET',
-	    					'dataset_label': '<%=datasetLabel%>',
-	    					'typeid': 'WORKSHEET' 
-	    				};
-	    			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow(documentWindowsParams);
-	    			this.win_saveDoc.show();
+	var url = {
+	    	host: '<%= request.getServerName()%>'
+	    	, port: '<%= request.getServerPort()%>'
+	    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
+	    	   				  request.getContextPath().substring(1):
+	    	   				  request.getContextPath()%>'
 	    	    
-	    	    }	
-	});
-
-    var backButton = new Ext.Toolbar.Button({
-    	iconCls: 'icon-back'
-		, scope: this
-		, handler : function() {this.fireEvent('backToAdmin');}
-    });
-
-	var items;
-	if (Sbi.user.ismodeweb) {
-		//items = ['->', saveButton, backButton];
-		items = ['->', saveButton];
-	} 
-
-	var toolbar = new Ext.Toolbar({
-		  items: items
-	});
-
-	this.templateEditIFrame = new Ext.ux.ManagedIframePanel({
-		title: '<%= StringEscapeUtils.escapeJavaScript(title) %>'
-		, defaultSrc: '<%= StringEscapeUtils.escapeJavaScript(worksheetEditActionUrl) %>'
-		, autoLoad: true
-        , loadMask: true
-        , disableMessaging: true
-        , tbar: toolbar
-	});
-
+	};
 	
-	if (Sbi.user.ismodeweb) {
-		var viewport = new Ext.Viewport({
-			layout: 'border'
-			, items: [
-			    {
-			       region: 'center',
-			       layout: 'fit',
-			       items: [templateEditIFrame]
-			    }
-			]
+	var params = {
+	    SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+	    , LIGHT_NAVIGATOR_DISABLED: 'TRUE'
+	};
+	
+	Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+		baseUrl: url
+	    , baseParams: params
+	});
+	
+	Ext.onReady(function(){
+	
+		var templateEditIFrame = new Sbi.worksheet.WorksheetEditorIframePanel({
+			title: '<%= StringEscapeUtils.escapeJavaScript(title) %>'
+			, defaultSrc: '<%= StringEscapeUtils.escapeJavaScript(worksheetEditActionUrl) %>'
+			, businessMetadata : <%= businessMetadata %>
+			, datasetLabel : '<%= datasetLabel %>'
+			, datasetParameters : <%= new JSONObject(datasetParameterValuesMap).toString() %>
 		});
-	}
+	
 		
-});
+		if (Sbi.user.ismodeweb) {
+			var viewport = new Ext.Viewport({
+				layout: 'border'
+				, items: [
+				    {
+				       region: 'center',
+				       layout: 'fit',
+				       items: [templateEditIFrame]
+				    }
+				]
+			});
+		}
+			
+	});
 
 </script>
  

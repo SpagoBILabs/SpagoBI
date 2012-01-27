@@ -205,18 +205,16 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 		}
 	}
 	
-	, exportContent: function(mimeType){
-		if(this.isWorksheetPageActive()){
-			if( this.worksheetPreviewPanel!=undefined && this.worksheetPreviewPanel!=null && 
-				this.worksheetPreviewPanel.getFrame()!=undefined && this.worksheetPreviewPanel.getFrame()!=null &&
-				this.worksheetPreviewPanel.getFrame().getWindow()!=undefined && this.worksheetPreviewPanel.getFrame().getWindow()!=null &&
-				this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel!=undefined && this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel!=null){
-					this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.un('contentexported', this.sendMessageToParentFrame,this);	
-					this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.on('contentexported', this.sendMessageToParentFrame,this);	
-					this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.exportContent(mimeType, true);
-					
-			}
-		}else{
+	, exportContent : function(mimeType, metadata, parameters) {
+		if (this.isWorksheetPageActive()) {
+			var frame = this.worksheetPreviewPanel.getFrame();
+			var theWindow = frame.getWindow();
+			var workSheetPanel = theWindow.workSheetPanel;
+			workSheetPanel.on('contentexported', this.sendMessageToParentFrame, this, {single : true});	
+//			workSheetPanel.un('contentexported', this.sendMessageToParentFrame, this);	
+//			workSheetPanel.on('contentexported', this.sendMessageToParentFrame, this);	
+			workSheetPanel.exportContent(mimeType, true, metadata, parameters);
+		} else {
 			sendMessage({}, 'worksheetexporttaberror');
 		}
 	}
