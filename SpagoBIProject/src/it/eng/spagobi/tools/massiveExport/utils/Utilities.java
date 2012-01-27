@@ -13,7 +13,10 @@ package it.eng.spagobi.tools.massiveExport.utils;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,8 +26,8 @@ import org.apache.log4j.Logger;
 public class Utilities {
 
 	private static Logger logger = Logger.getLogger(Utilities.class);
-	
-	
+
+
 	public static List getContainedObjFilteredbyType(LowFunctionality funct, String docType){
 		logger.debug("IN");
 		List objList = funct.getBiObjects();
@@ -45,4 +48,39 @@ public class Utilities {
 		logger.debug("OUT");
 		return selectedObjects;
 	}
+
+
+
+	public static File getZipFile(String randomKey, String functionalityCd) throws SpagoBIServiceException{
+		logger.debug("IN");
+		// get Zip file
+		String dirS = System.getProperty("java.io.tmpdir");
+		if(!dirS.endsWith(File.separator)){
+			dirS+=File.separator;
+		}
+		dirS += functionalityCd;
+		if(!dirS.endsWith(File.separator)){
+			dirS+=File.separator;
+		}
+		String filePath = dirS+randomKey+".zip";
+
+		logger.debug("directory with zip is "+dirS);
+
+		if(!(new File(dirS)).exists()){
+			logger.error("not existing directory "+dirS);
+			throw new SpagoBIRuntimeException("not existing directory "+dirS, null);
+		}
+
+		File zip = new File(filePath);
+		if(!(zip.exists())){
+			logger.error("not existing zip file "+filePath);
+			throw new SpagoBIRuntimeException("not existing zip file "+filePath, null);
+		}
+		
+		logger.debug("OUT");
+		return zip;
+	}
+
+	
+	
 }
