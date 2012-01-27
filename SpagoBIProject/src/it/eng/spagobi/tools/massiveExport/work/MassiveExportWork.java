@@ -19,6 +19,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
+import it.eng.spagobi.tools.massiveExport.utils.Utilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.File;
@@ -50,6 +51,12 @@ public class MassiveExportWork implements Work{
 
 	private static transient Logger logger = Logger.getLogger(MassiveExportWork.class);
 
+	public static final String PREPARED = "PREPARED";
+	public static final String STARTED = "STARTED";
+	public static final String DOWNLOAD = "DOWNLOAD";
+	public static final String ERROR = "ERROR";
+	
+	
 	IEngUserProfile profile;
 	List biObjects;
 	LowFunctionality functionality;
@@ -98,6 +105,8 @@ public class MassiveExportWork implements Work{
 
 		try {
 			threadDAO = DAOFactory.getProgressThreadDAO();
+			threadDAO.setStartedProgressThread(progressThreadId);
+			
 		}catch (Exception e) {
 			logger.error("Error setting DAO");
 			deleteDBRowInCaseOfError(threadDAO, progressThreadId);
@@ -196,31 +205,19 @@ public class MassiveExportWork implements Work{
 		logger.debug("OUT");
 	}
 
+	/**
+	 *  Zip file placed under resource_directory/massiveExport/functionalityCd
+	 * @param filesToZip
+	 * @param randomNamesToName
+	 * @return
+	 * @throws ZipException
+	 * @throws IOException
+	 */
 
 	public File createZipFile(List<File> filesToZip, Map<String, String> randomNamesToName) throws ZipException, IOException{
 		logger.debug("IN");
-
-		String dirS = System.getProperty("java.io.tmpdir");
-		if(!dirS.endsWith(File.separator)){
-			dirS+=File.separator;
-		}
-
-		dirS+=functionality.getCode();
-		logger.debug("write zip file in "+dirS);
-		File dir = new File(dirS);
-		// if not exists create directory
-		dir.mkdir();		
-
-		String folde = dir.getAbsolutePath();
-		if(!folde.endsWith(File.separator)){
-			folde+=File.separator;
-		}
-
-		//File zipFile = File.createTempFile(zipKey, ".zip");
-		File zipFile = new File(folde+zipKey+".zip");
-		zipFile.createNewFile();
-		logger.debug("Zip file is "+zipFile.getAbsolutePath());
-
+		File zipFile = Utilities.createMassiveExportZip(functionality.getCode(), zipKey);
+		logger.debug("zip file written "+zipFile.getAbsolutePath());
 		ZipOutputStream out = null;
 		FileInputStream in = null;
 		try{
@@ -254,6 +251,65 @@ public class MassiveExportWork implements Work{
 		logger.debug("OUT");
 		return zipFile;
 	}
+
+
+	//	public File createZipFile(List<File> filesToZip, Map<String, String> randomNamesToName) throws ZipException, IOException{
+	//		logger.debug("IN");
+	//
+	//		String dirS = System.getProperty("java.io.tmpdir");
+	//		if(!dirS.endsWith(File.separator)){
+	//			dirS+=File.separator;
+	//		}
+	//
+	//		dirS+=functionality.getCode();
+	//		logger.debug("write zip file in "+dirS);
+	//		File dir = new File(dirS);
+	//		// if not exists create directory
+	//		dir.mkdir();		
+	//
+	//		String folde = dir.getAbsolutePath();
+	//		if(!folde.endsWith(File.separator)){
+	//			folde+=File.separator;
+	//		}
+	//
+	//		//File zipFile = File.createTempFile(zipKey, ".zip");
+	//		File zipFile = new File(folde+zipKey+".zip");
+	//		zipFile.createNewFile();
+	//		logger.debug("Zip file is "+zipFile.getAbsolutePath());
+	//
+	//		ZipOutputStream out = null;
+	//		FileInputStream in = null;
+	//		try{
+	//			out = new ZipOutputStream(new FileOutputStream(zipFile)); 
+	//			for (Iterator iterator = filesToZip.iterator(); iterator.hasNext();) {
+	//				File file = (File) iterator.next();
+	//				in = new FileInputStream(file); 
+	//				String fileName = file.getName();
+	//				String realName = randomNamesToName.get(fileName);
+	//				ZipEntry zipEntry=new ZipEntry(realName);
+	//				out.putNextEntry(zipEntry);
+	//
+	//				int len; 
+	//				while ((len = in.read(buf)) > 0) 
+	//				{ 
+	//					out.write(buf, 0, len); 
+	//				} 
+	//
+	//				out.closeEntry(); 
+	//				in.close(); 
+	//			}
+	//			out.flush();
+	//			out.close();
+	//		}
+	//		finally{
+	//			if(in != null) in.close();
+	//			if(out != null) out.close();
+	//		}
+	//
+	//		//filesToZip
+	//		logger.debug("OUT");
+	//		return zipFile;
+	//	}
 
 
 	public File createErrorFile(BIObject biObj, Throwable error, Map randomNamesToName){

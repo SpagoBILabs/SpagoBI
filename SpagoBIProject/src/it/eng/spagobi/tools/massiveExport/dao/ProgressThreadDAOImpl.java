@@ -11,16 +11,16 @@
  */
 package it.eng.spagobi.tools.massiveExport.dao;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
 import it.eng.spagobi.tools.massiveExport.metadata.SbiProgressThread;
+import it.eng.spagobi.tools.massiveExport.work.MassiveExportWork;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -71,7 +71,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 
 
 
-	public List<ProgressThread> loadStartedProgressThreadsByUserId(
+	public List<ProgressThread> loadActiveProgressThreadsByUserId(
 			String userId) throws EMFUserError {
 		logger.debug("IN");
 		List<ProgressThread> toReturn = null;
@@ -83,7 +83,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.userId = ? AND h.message = 'STARTED'" );
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.userId = ? AND (h.message = '"+MassiveExportWork.STARTED+"' OR h.message = '"+MassiveExportWork.PREPARED+"')" );
 			hibPT.setString(0, userId);
 
 			List sbiProgressThreadList = hibPT.list();
@@ -99,7 +99,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			tx.commit();
 
 		} catch (HibernateException he) {
-			logger.error("Error while loading Progress Threads with userId"+userId + " and message STARTED", he);			
+			logger.error("Error while loading Progress Threads with userId"+userId + " and message STARTED or prepared", he);			
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -161,7 +161,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 
 
 
-	public ProgressThread loadProgressThreadByUserIdAndFuncCd(String userId, String functCd, String message) throws EMFUserError {
+	public ProgressThread loadActiveProgressThreadByUserIdAndFuncCd(String userId, String functCd) throws EMFUserError {
 		logger.debug("IN");
 		ProgressThread toReturn = null;
 
@@ -172,10 +172,9 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.userId = ? AND h.functionCd = ? AND h.message = ?" );
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.userId = ? AND h.functionCd = ? AND (h.message = '"+MassiveExportWork.STARTED+"' OR h.message ='"+MassiveExportWork.PREPARED+"') " );
 			hibPT.setString(0, userId);
 			hibPT.setString(1, functCd);
-			hibPT.setString(2, message);
 
 			SbiProgressThread sbiProgressThread =(SbiProgressThread)hibPT.uniqueResult();
 			if(sbiProgressThread!=null){
@@ -253,7 +252,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 
 			sbiPT.setTotal(progThread.getTotal());
 			sbiPT.setPartial(0);
-			sbiPT.setMessage("STARTED");
+			sbiPT.setMessage(MassiveExportWork.PREPARED);
 			sbiPT.setRandomKey(progThread.getRandomKey());
 
 			aSession.save(sbiPT);
@@ -295,6 +294,38 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 	}
 
 
+	public void setStartedProgressThread(Integer progressThreadId) throws EMFUserError{
+		logger.debug("IN");
+		ProgressThread toReturn = null;
+
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ?" );
+			hibPT.setInteger(0, progressThreadId);
+			SbiProgressThread sbiProgressThread =(SbiProgressThread)hibPT.uniqueResult();
+			sbiProgressThread.setMessage(MassiveExportWork.STARTED);
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading Progress Thread with progressThreadId = "+progressThreadId, he);			
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		logger.debug("OUT");
+
+	}
+	
 
 	public void setDownloadProgressThread(Integer progressThreadId) throws EMFUserError{
 		logger.debug("IN");
@@ -310,7 +341,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ?" );
 			hibPT.setInteger(0, progressThreadId);
 			SbiProgressThread sbiProgressThread =(SbiProgressThread)hibPT.uniqueResult();
-			sbiProgressThread.setMessage("DOWNLOAD");
+			sbiProgressThread.setMessage(MassiveExportWork.DOWNLOAD);
 			tx.commit();
 
 		} catch (HibernateException he) {

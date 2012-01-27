@@ -23,10 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.massiveExport.services;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.massiveExport.utils.Utilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -83,7 +81,7 @@ public class DownloadMassiveExportZip extends AbstractSpagoBIAction {
 
 			logger.debug("RandomKey = "+randomKey+" FunctCd = "+functCd+ " ProgressThreadId = "+progressThreadId);
 
-			File zip = Utilities.getZipFile(randomKey, functCd);
+			File zip = Utilities.getMassiveExportZipFile(functCd, randomKey);
 			
 			logger.debug("found file "+zip.getAbsolutePath());
 

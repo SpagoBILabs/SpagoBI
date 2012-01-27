@@ -86,7 +86,8 @@ public class DeleteMassiveExportZip extends AbstractSpagoBIAction {
 
 			logger.debug("Delete zipFile RandomKey = "+randomKey+" FunctCd = "+functCd+ " ProgressThreadId = "+progressThreadId);
 
-			File zip = Utilities.getZipFile(randomKey, functCd);
+			File zip = Utilities.getMassiveExportZipFile(functCd, randomKey);
+
 			fileName = zip.getAbsolutePath();
 
 			boolean del =zip.delete();
@@ -95,8 +96,9 @@ public class DeleteMassiveExportZip extends AbstractSpagoBIAction {
 			}
 			else{
 				logger.debug("could not delete file "+fileName+ "");
-
 			}
+			//delte folder directory if no more used
+			Utilities.deleteMassiveExportDirectoryIfEmpty(functCd);
 
 			writeBackToClient(new JSONSuccess(new JSONObject()));
 
