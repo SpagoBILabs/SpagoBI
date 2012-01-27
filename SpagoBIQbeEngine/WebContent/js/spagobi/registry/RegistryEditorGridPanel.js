@@ -99,6 +99,7 @@ Sbi.registry.RegistryEditorGridPanel = function(config) {
         , border : true
         , collapsible : false
         , loadMask : true
+        , enableHdMenu : false ///set true to eneable drob down menu on the header (which causes the loss of mouse control for resize column....)
         , viewConfig : {
             forceFit : false
             , autoFill : true
@@ -106,7 +107,8 @@ Sbi.registry.RegistryEditorGridPanel = function(config) {
         }
 		,listeners: {headerdblclick : function( grid, columnIndex, e ){
 			this.showExpandPointer(grid, columnIndex);
-		}} 
+		}
+		} 
 	});
 	
 	// constructor
