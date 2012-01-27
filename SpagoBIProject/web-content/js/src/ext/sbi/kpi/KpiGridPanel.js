@@ -114,19 +114,24 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 			      ,'</tpl>'
 
 			);
-	 // && values.scaleName === \'Day scale\'
+	    var tplStringForScale = '<tpl if="values.scaleName !== undefined && values.scaleName === \'Day scale\'">'//days
+	      +' gg'	     
+	      +'</tpl>'
+		  +'<tpl if="values.scaleName !== undefined && values.scaleName === \'Ratio scale\'">'//percentage
+	      +' %'	     
+	      +'</tpl>'
+	      +'</tpl>';
+	    var tplTarget = new Ext.XTemplate(
+	    		
+			      '<tpl for=".">'
+	    		  ,'{values.target}'
+	    		  ,tplStringForScale
+			);
 	    var tplActual = new Ext.XTemplate(
 	    		
 			      '<tpl for=".">'
 	    		  ,'{values.actual}'
-	    		  ,'<tpl if="values.scaleName !== undefined && values.scaleName === \'Day scale\'">'//days
-			      ,' gg'	     
-			      ,'</tpl>'
-	    		  ,'<tpl if="values.scaleName !== undefined && values.scaleName === \'Ratio scale\'">'//percentage
-			      ,' %'	     
-			      ,'</tpl>'
-			      ,'</tpl>'
-
+	    		  ,tplStringForScale
 			);
 		var col = {header:'Model Instance',
 		dataIndex:'name',
@@ -141,6 +146,7 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 		
 		var col2 = {header:'Target',
 		dataIndex:'target',
+		tpl: tplTarget,
 		width: 100};
 		kpiColumns.push(col2);
 		
