@@ -112,13 +112,10 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	, initPanels : function(){
 		this.startedPanel = new Ext.Panel({  
 			title: 'Started Export',
-			//layout: 'card',  
 			layout: 'anchor',  
-			//activeItem: 0,  
 			scope: this,
 			height: 120,
 			autoWidth: true,
-			//html: '<h1>Picchio</h1>',
 			defaults: {border:false}
 		});
 		this.add(this.startedPanel);
@@ -126,17 +123,10 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		
 		this.downloadedPanel = new Ext.Panel({  
 			title: 'Download Exports',
-		//	layout: 'card',  
-			//layout: 'vBox',
 			layout: 'anchor',
-			//columnWidth: 0.5,
-			//activeItem: 0,  
 			scope: this,
 			height: 320,
-			//autoidth: true,
-			//html: '<h1>Picchio</h1>',
 			defaults: {border:false
-			//, columnWidth: 0.5
 			}
 		});
 		this.add(this.downloadedPanel);
@@ -144,14 +134,10 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		
 		this.scheduledPanel = new Ext.Panel({  
 			title: 'Scheduled Exports',
-		//	layout: 'card',  
-			//layout: 'vBox',
 			layout: 'anchor', 
-			//activeItem: 0,  
 			scope: this,
 			height: 120,
 			autoWidth: true,
-			//html: '<h1>Picchio</h1>',
 			defaults: {border:false}
 		});
 		this.add(this.scheduledPanel);
@@ -160,8 +146,6 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		
 	}
 	, createProgressBar : function(functCd, randomKey) {
-		// create progress bar
-		//alert('98 - '+functCd+''+randomKey);  
 		var progressBar = new Ext.ProgressBar({
             text:'Initializing...'+functCd+' - '+randomKey
          });
@@ -174,32 +158,14 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 			this.doLayout();
 		} , this );
 		}
-	, createCompletedProgressBar : function(functCd, randomKey) {
-		// create progress bar
-	    //alert('112 - '+functCd+''+randomKey);  
-		var progressBar = new Ext.ProgressBar({
-			text: functCd+''+randomKey
-		});
-		// add progress bar to array
-		this.progressGroup[functCd+''+randomKey] = progressBar;
-		this.startedPanel.add(progressBar);
-		this.startedPanel.doLayout();
-		this.currentWorks[functCd+''+randomKey] = true;
-		
-		this.progressGroup[functCd+''+randomKey].on('render', function() {
-			////alert('eccomi 121 '+functCd+''+randomKey);
-		    //alert('123 - '+functCd+''+randomKey); 
-			this.progressGroup[functCd+''+randomKey].updateProgress(1, functCd+' - '+randomKey);
-			//this.doLayout();
-	} , this );
-	}
 
 	, updateProgressStatus: function(cycling){ 
 
-			// search for pending trhread in database
+			// search for pending thrread in database
 		Ext.Ajax.request({
       	        url: this.services['GetMassiveExportProgressStatus'],
-      	        params: {MESSAGE : 'STARTED'},
+      	        params: {//MESSAGE : 'STARTED'
+      	        	},
       	        success : function(response, options){
       		  	if(response !== undefined) {   
       	      		if(response.responseText !== undefined) {
@@ -213,7 +179,6 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
       	      					var randomKey= prog.randomKey;
       	      					this.handleProgressThreadResult(prog, functCd, randomKey, worksFound);
       	      				}
-      	      				
       	      				// clean work no more present
       	      				this.cleanNoMorePresentWork(worksFound);
         	      			}
@@ -228,7 +193,6 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
       	      			} else{ // wait longer if not expanded
       	      				setTimeout(function(){that.cycleProgress()}, 5000);
       	      			}
-      	      			
       	      		}
       		  	}else {
       	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
@@ -243,19 +207,11 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		worksFound[functCd+''+randomKey]= true;
 			// value progress thread status
 			var progressBar = this.progressGroup[functCd+''+randomKey];
-
 			// if in download state make download and delete work
 			if(prog.message && prog.message=='DOWNLOAD'){
-				
-				// if progressBar is null means execution eneded before progress bar was created, it means we must hide a completed progressBar
-					
-				// call action that downloads zip
 				this.createDownloadForm(progressBar, functCd, randomKey, prog.progressThreadId);
-//				if(progressBar){
-//						this.deleteWork(functCd);
-//					}
 				}
-			else if(prog.message && prog.message=='STARTED'){
+			else if(prog.message && ( prog.message=='STARTED' || prog.message=='PREPARED')){
 					// check if progress exist then update otherwise create
 					var partial = prog.partial;
 					var total = prog.total;
@@ -267,7 +223,6 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		// if progress bar has already been created update it otherwise create
 		if(progressBar){
 			if(progressBar.rendered){
-			    //alert('202 - '+functCd+''+randomKey); 
 				progressBar.updateProgress(partial/total, 'Exporting '+functCd+' item ' + partial + ' of '+total+'...');
 				this.doLayout();
 			}
@@ -286,13 +241,11 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	
 	}
 	, cleanNoMorePresentWork : function(worksFound){
-
 		for (var key in this.currentWorks) {
 			var obj = this.currentWorks[key];
 			if(obj && obj == true){
 				// if it is not among works found delete it
 				if(!(worksFound[key] && worksFound[key]==true)){
-					//alert('delete 232 '+key);
 					this.deleteWork(key); 
 				}
 			}
@@ -301,15 +254,12 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	, deleteWork : function(key){
 			if(this.progressGroup[key]){
 				if(this.progressGroup[key].rendered){
-				    //alert('235 - '+key); 
 					this.progressGroup[key].updateProgress(1, 'Exporting '+key+' item finished');
 				}
 				this.toBeDeleted.push(this.progressGroup[key]);
-
 				var that = this;
 				// destroy bar only after a while
 				setTimeout(function(){
-				// clean bar finished
 					for(i=0;i<that.toBeDeleted.length;i++){
 						var progBar = 	that.toBeDeleted[i];
               	        progBar.reset(true);
@@ -317,15 +267,11 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 					}
 					that.doLayout();
 					that.toBeDeleted = new Array();
-					
 				}, 5000);
 				}
-				
-				//delete this.progressGroup.'functCd';
 			this.progressGroup[key] = null;	
 			this.currentWorks[key]=null;
 				this.doLayout();
-
 	}
 	
 	, createDownloadForm: function(progressBar, functCd, randomKey, progressThreadId){
@@ -336,23 +282,17 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		urlToCall += '&PROGRESS_THREAD_ID='+progressThreadId;
 		
 		if(!progressBar){
-			//this.createCompletedProgressBar(functCd, randomKey);
 		}
 		else{
 			var msg = functCd+' - '+randomKey
-			////alert('eccomi 269 '+msg);
-			
 			progressBar.updateProgress(1, msg);
 		}
-		
-    	// delete th progressBar
+    	// delete the progressBar
 		if(progressBar){
-			//alert('delete 299');
 			this.deleteWork(functCd+''+randomKey);
 		}
     	
 	    if(this.downloadButtons[functCd+randomKey]){
-	    	
 	    }
 	    else{
 	    	this.downloadButtons[functCd+randomKey] = new Ext.Button({
@@ -363,10 +303,6 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	    		disabled: true,
 	    		handler: function(){
 	    			window.open(urlToCall,'name','resizable=1,height=750,width=1000');
-//	    			this.downloadButtons[functCd+randomKey].hide();
-//	    			this.downloadButtons[functCd+randomKey].destroy();
-//	    			this.downloadButtons[functCd+randomKey] = null;
-	    			
 					}
 				});
 	    }
@@ -399,7 +335,6 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	    	        params: pars,
 	    	        success : function(response, options) {
 	    				if(response !== undefined) {   
-	    		    		//window.open(urlToCall,'name','resizable=1,height=750,width=1000');
 	    	    			this.downloadButtons[functCd+randomKey].hide();
 	    	    			this.downloadButtons[functCd+randomKey].destroy();
 	    	    			this.downloadButtons[functCd+randomKey] = null;

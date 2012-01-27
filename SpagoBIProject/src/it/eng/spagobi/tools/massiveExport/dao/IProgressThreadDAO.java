@@ -40,7 +40,7 @@ public interface IProgressThreadDAO extends ISpagoBIDao{
 	 * @return
 	 * @throws EMFUserError
 	 */
-	public ProgressThread loadProgressThreadByUserIdAndFuncCd(String userId, String functCd, String message) throws EMFUserError;
+	public ProgressThread loadActiveProgressThreadByUserIdAndFuncCd(String userId, String functCd) throws EMFUserError;
 
 	
 	/**
@@ -49,7 +49,7 @@ public interface IProgressThreadDAO extends ISpagoBIDao{
 	 * @return
 	 * @throws EMFUserError
 	 */
-	public List<ProgressThread> loadStartedProgressThreadsByUserId(String userId) throws EMFUserError;
+	public List<ProgressThread> loadActiveProgressThreadsByUserId(String userId) throws EMFUserError;
 
 	/**
 	 * 
@@ -86,6 +86,9 @@ public interface IProgressThreadDAO extends ISpagoBIDao{
 	
 	
 	public void setErrorProgressThread(Integer progressThreadId) throws EMFUserError;
+
+	public void setStartedProgressThread(Integer progressThreadId) throws EMFUserError;
+
 	
 	public boolean deleteProgressThread(Integer progressThreadId) throws EMFUserError;
 }

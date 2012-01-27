@@ -107,7 +107,7 @@ public class StartMassiveExportThreadAction extends GetParametersForExecutionAct
 
 			IProgressThreadDAO threadDAO = DAOFactory.getProgressThreadDAO();
 			// search if already exists
-			ProgressThread pT = threadDAO.loadProgressThreadByUserIdAndFuncCd(getUserProfile().getUserUniqueIdentifier().toString(), funct.getCode(), "STARTED");
+			ProgressThread pT = threadDAO.loadActiveProgressThreadByUserIdAndFuncCd(getUserProfile().getUserUniqueIdentifier().toString(), funct.getCode());
 			if(pT != null){
 				logger.warn("A massive export process is still opened for userId "+getUserProfile().getUserUniqueIdentifier()+" on functionality "+funct.getCode());
 				throw new SpagoBIServiceException(SERVICE_NAME, "A massive export process is still opened for userId "+getUserProfile().getUserUniqueIdentifier()+" on functionality "+funct.getCode());
