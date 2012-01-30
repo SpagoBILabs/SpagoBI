@@ -143,8 +143,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		movie += "&" + name + "=" + value; 
 	}
 	
-    // append to the calling url the dataurl	
-	movie += "&dataurl=" + URLEncoder.encode(dataurl);
+    // append to the calling url the dataurl
+    movie += "&dataurl=" + URLEncoder.encode(dataurl);
   
     
 	//defines dynamic parameters for multichart management (ie. recNum)

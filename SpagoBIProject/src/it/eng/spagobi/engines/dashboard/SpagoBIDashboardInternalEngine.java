@@ -27,10 +27,10 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.engines.InternalEngineIFace;
 import it.eng.spagobi.engines.chart.utils.DataSetAccessFunctions;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
-import it.eng.spagobi.utilities.ParametersDecoder;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -133,7 +133,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 		    
 		    response.delAttribute("confParameters");
 		    response.setAttribute("confParameters", getConfParameters());
-		    response.delAttribute("dataParameters");
+		    response.delAttribute("dataParameters");		    
 		    response.setAttribute("dataParameters", getDataParameters());	
 		    response.delAttribute("drillParameters");
 		    response.setAttribute("drillParameters", getDrillParameters());	
@@ -263,7 +263,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 		if(confType.equalsIgnoreCase(CONF_FROM_DATASET) && isDsConfDefined){
 			logger.debug("configuration defined in dataset "+confDataset);
 			
-			String parameters=DataSetAccessFunctions.getDataSetResultFromLabel(profile, confDataset, dataParameters);
+			String parameters=DataSetAccessFunctions.getDataSetResultFromLabel(profile, confDataset, dataParameters);			
 			SourceBean sourceBeanResult=null;
 			try {
 				sourceBeanResult = SourceBean.fromXMLString(parameters);
@@ -342,7 +342,6 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 	    // puts the document id
 	    dataParameters.put("documentId", obj.getId().toString());
 	    // puts the userId into parameters for data recovery
-	    
 	    dataParameters.put("userid", ((UserProfile)profile).getUserUniqueIdentifier());
 
 	    // create the title
@@ -352,9 +351,10 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 	    if ((objDescr != null) && !objDescr.trim().equals("")) {
 	    	title += ": " + objDescr;
 	    }
-	    
-		String parameters="";
+	    	
 	    //Search if the chart has parameters
+	    /*
+		String parameters="";
 		List parametersList=obj.getBiObjectParameters();
 		logger.debug("Check for BIparameters and relative values");
 		if(parametersList!=null){
@@ -366,23 +366,9 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 				
 				
 				if(values!=null){
-					/*
-					if ((values.size() >=1)) {
-					    List values = decoder.decode(parValue);
-					    newParValue = "";
-					    for (int i = 0; i < values.size(); i++) {
-							newParValue += (i > 0 ? "," : "");
-							newParValue += values.get(i);
-					    }
-
-					} else {
-					    newParValue = parValue;
-					}
-					*/
+					
 					if(values.size()==1){
 						String value=(String)values.get(0);
-						if (value.equals("%")) value = "%25";
-					    else if (value.equals(";%")) value = ";%25";
 						dataParameters.put(url, value);
 					}else if(values.size() >=1){
 						String value = "'"+(String)values.get(0)+"'";					
@@ -394,7 +380,74 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 				}
 			}	
 		}
+		*/
+		dataParameters = addBIParameters (obj, dataParameters);
 		logger.debug("OUT");
+	}
+	
+	
+	/**
+     * Add into the parameters map the BIObject's BIParameter names and values
+     * @param biobj BIOBject to execute
+     * @param pars Map of the parameters for the execution call  
+     * @return Map The map of the execution call parameters
+     */
+	private Map addBIParameters(BIObject biobj, Map pars) {
+		logger.debug("IN");
+		
+		if(biobj==null) {
+			logger.warn("BIObject parameter null");	    
+		    return pars;
+		}
+		
+		ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
+		if(biobj.getBiObjectParameters() != null){
+			BIObjectParameter biobjPar = null;
+			for(Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();){
+				try {
+					biobjPar = (BIObjectParameter)it.next();									
+					String value = parValuesEncoder.encode(biobjPar);
+          if (biobjPar!=null && biobjPar.getParameterUrlName()!=null && value!=null) {
+					 pars.put(biobjPar.getParameterUrlName(), value);
+					 logger.debug("Add parameter:"+biobjPar.getParameterUrlName()+"/"+value);
+          }  else {
+             logger.warn("NO parameter are added... something is null");
+          }
+				} catch (Exception e) {
+					logger.error("Error while processing a BIParameter",e);
+				}
+			}
+		}
+		
+		logger.debug("OUT");
+  		return pars;
+	}
+	
+	/**
+     * Decode special chars into the parameters map (ie. for %25 that otherwise isn't decodified)
+     * @param pars Map of the parameters for the execution call  
+     * @return Map The map of the execution call parameters
+     */
+	private Map encodePars(Map pars) {
+		logger.debug("IN");
+		
+		if(pars==null) {
+			logger.warn("There aren't parameters to decode");	    
+		    return pars;
+		}
+		
+		Map toReturn = new LinkedHashMap(); 
+		Iterator parsIter = pars.entrySet().iterator();		
+		while (parsIter.hasNext()) {
+			Map.Entry obj = (Map.Entry)parsIter.next();
+		    String name = (String)obj.getKey();
+		    String value = (String) obj.getValue();			
+		    if (value.equals("%")) value = "%25";
+		    else if (value.equals(";%")) value = ";%25";
+		    toReturn.put(name, value);
+		 }
+		logger.debug("OUT");
+  		return toReturn;
 	}
 	
     /**
@@ -512,8 +565,8 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 		if (parValue != null) singleConfParameters.put("lowValue", parValue);
 		parValue = (sbRow.getAttribute("highValue")!=null)?(String)sbRow.getAttribute("highValue"):(String)sbRow.getAttribute("HIGHVALUE");
 		if (parValue != null) singleConfParameters.put("highValue", parValue);
-		parValue = (sbRow.getAttribute("highValue")!=null)?(String)sbRow.getAttribute("highValue"):(String)sbRow.getAttribute("HIGHVALUE");
-		if (parValue != null) singleConfParameters.put("colorArc1", parValue);
+		//parValue = (sbRow.getAttribute("highValue")!=null)?(String)sbRow.getAttribute("highValue"):(String)sbRow.getAttribute("HIGHVALUE");
+		//if (parValue != null) singleConfParameters.put("colorArc1", parValue);
 		parValue = (sbRow.getAttribute("colorArc1")!=null)?(String)sbRow.getAttribute("colorArc1"):(String)sbRow.getAttribute("COLORARC1");
 		if (parValue != null) singleConfParameters.put("colorArc1", parValue);
 		parValue = (sbRow.getAttribute("colorArc2")!=null)?(String)sbRow.getAttribute("colorArc2"):(String)sbRow.getAttribute("COLORARC2");
@@ -618,7 +671,8 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 	 * @return the dataParameters
 	 */
 	public Map getDataParameters() {
-		return dataParameters;
+		Map encodedDataParameters = encodePars(dataParameters);
+		return encodedDataParameters;
 	}
 
 	/**
