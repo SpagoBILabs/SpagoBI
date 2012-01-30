@@ -150,8 +150,9 @@ author: Monica Franceschini
 	                                                console.log('call Error! ');
 	                                          },
 	                                          success: function(response, opts) {
-	                                              
-	                                              var esito = response.responseText.text;
+	                                        	  var content = Ext.util.JSON.decode( response.responseText );
+	                      		      			 
+	                                              var esito = content.text;
 	                                              if(esito=='userhome'){
 	                                            	  alert('login success!');
 		                                          }else{
