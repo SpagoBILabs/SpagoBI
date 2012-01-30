@@ -17,6 +17,9 @@
 	<CONFIGURATOR path="/WEB-INF/conf/commons/validators.xml" />	
 	<CONFIGURATOR path="/WEB-INF/conf/commons/renderers.xml" />	
 	<CONFIGURATOR path="/WEB-INF/conf/commons/errors.xml" />
+	
+	<!-- imported from spagobi server to read settings for login -->
+	<CONFIGURATOR path="/WEB-INF/conf/commons/configs.xml" />
 
 		<!-- start mobile INITILAIZERS module -->
 	<CONFIGURATOR path="/WEB-INF/conf/commons/initializers/actions.xml" />

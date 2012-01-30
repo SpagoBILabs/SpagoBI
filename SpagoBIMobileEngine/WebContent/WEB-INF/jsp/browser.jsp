@@ -58,17 +58,7 @@ author: Monica Franceschini
 <html>
 
 	<head>
-		<link rel="stylesheet" href="../css/sencha-touch-debug.css" type="text/css">
 
-		<link rel="stylesheet" href="../css/Ext.ux.TouchGridPanel.css" type="text/css">
-
-		<script type="text/javascript" src="../js/sencha/sencha-touch-debug.js"></script>
-
-		<script type="text/javascript" src="../js/sencha/Ext.ux.TouchGridPanel.js"></script>
-		
-		<script type="text/javascript" src="../js/sencha/Ext.ux.touch.PagingToolbar.js"></script>
-		<script type="text/javascript" src="../js/spagobi/service/ServiceRegistry.js"></script>
-		
 	</head>
 
 	<body>

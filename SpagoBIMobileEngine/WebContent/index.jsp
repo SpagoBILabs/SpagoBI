@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"%>
 <% 
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
-	String redirectURL = contextName + "/servlet/AdapterHTTP?ACTION_NAME=LOGIN_ACTION&NEW_SESSION=TRUE";
+	String redirectURL = contextName + "/servlet/AdapterHTTP?ACTION_NAME=START_ACTION&NEW_SESSION=TRUE";
     response.sendRedirect(redirectURL);
 %>
 
