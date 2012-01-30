@@ -5,16 +5,22 @@
 <!-- ================================================================================= -->
 
 <ACTIONS>
-	<ACTION name="LOGIN_ACTION" 
+	<ACTION name="START_ACTION" 
 			class="it.eng.spago.dispatching.action.EmptyAction"
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
-	<ACTION name="LOGIN_SUBMIT_ACTION" 
-			class="it.eng.spagobi.engine.mobile.service.LoginSubmitAction"
+	<ACTION name="LOGIN_ACTION" 
+			class="it.eng.spagobi.engine.mobile.service.LoginAction"
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
+	<ACTION name="BROWSER_ACTION" 
+			class="it.eng.spago.dispatching.action.EmptyAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 	<ACTION name="TABLE_ACTION" 
 			class="it.eng.spagobi.engine.mobile.service.MobileTableAction"
 			scope="REQUEST">

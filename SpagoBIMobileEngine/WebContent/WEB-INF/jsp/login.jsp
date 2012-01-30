@@ -61,7 +61,7 @@ author: Monica Franceschini
 	<body>
 
 		
-		        <script>
+	<script>
         Ext.setup({
             icon: 'icon.png',
             tabletStartupScreen: 'tablet_startup.png',
@@ -86,10 +86,21 @@ author: Monica Franceschini
 	        
 			    });
 				var loginUrl = Sbi.config.serviceRegistry.getServiceUrl({
-					serviceName: 'LOGIN_SUBMIT_ACTION'
+					serviceName: 'LOGIN_ACTION'
 				});	
 				console.log(loginUrl);
 
+				var userIDField = new Ext.form.TextField({                                
+					xtype: 'textfield',
+                    name : 'userID',
+                    label: 'Username',
+                    useClearIcon: true});
+				var pwdField = new Ext.form.TextField({                                
+                    xtype: 'passwordfield',
+                    name : 'password',
+                    label: 'Password',
+                    useClearIcon: false});
+                
                 var formBase = {
                     scroll : 'vertical',
                     url    : loginUrl,
@@ -105,18 +116,10 @@ author: Monica Franceschini
                                 labelWidth: '45%'
                             },
                             items: [
-                            {
-                                xtype: 'textfield',
-                                name : 'username',
-                                label: 'Username',
-                                useClearIcon: true
-                            }, {
-                                xtype: 'passwordfield',
-                                name : 'password',
-                                label: 'Password',
-                                useClearIcon: false
-                            }]
+                            	userIDField, 
+                            	pwdField]
                         }],
+                        
                     listeners : {
                         submit : function(form, result){
                             console.log('success', Ext.toArray(arguments));
@@ -128,7 +131,7 @@ author: Monica Franceschini
 
                         }
                     },
-
+					
                     dockedItems: [
                         {
                             xtype: 'toolbar',
@@ -138,39 +141,28 @@ author: Monica Franceschini
                                     text: 'Login',
                                     ui: 'confirm',
                                     handler: function() {
-                                        form.submit({
-                                            waitMsg : {message:'Logging in ...', cls : 'demos-loading'}
-                                        });
-                                      console.log('submitting to ', formBase.url);
-                                      console.log('submitting ', formBase.items);
-                                      Ext.Ajax.request({
-                                          url: formBase.url,
-                                          method: 'post',
-                                          params: formBase.getValues, //{username: formBase.getValues().username, password : formBase.getValues().password},
-                                          failure : function(response){
-                                               //data = Ext.decode(response.responseText);
-                                               //Ext.Msg.alert('Login Error', data.errorMessage, Ext.emptyFn);
-                                                console.log('Login Error! ' + response.responseText);
-                                          },
-                                          success: function(response, opts) {
-                                              console.log('Login success!');
-                                              data = Ext.decode(response.responseText);
-                                              if (data.errorMessage != null)
-                                              {
-                                                  console.log('Login Error after success!');
-                                                  //Ext.Msg.alert('Login Error', data.errorMessage, Ext.emptyFn);
-                                                  //mainPanel.setLoading(false);
-                                              } else {
-                                                  //hide the Loading mask
-                                                  //mainPanel.setLoading(false);
-                                                  //show the next screen
-                                                  //mainPanel.setActiveItem(dashboard, 'slide');
-                                                  //Ext.Msg.alert('Login success!');
-                                                  console.log('Login success after data check!');
-                                              }
-                                          }
-                                      });
 
+	                                      Ext.Ajax.request({
+	                                          url: formBase.url,
+	                                          method: 'post',
+	                                          params: {userID: userIDField.getValue(), password : pwdField.getValue()},
+	                                          failure : function(response){
+	                                                console.log('call Error! ');
+	                                          },
+	                                          success: function(response, opts) {
+	                                              
+	                                              var esito = response.PUBLISHER_NAME;
+	                                              if(esito=='userhome'){
+	                                            	  console.log('login success!');
+		                                          }else{
+		                                        	  alert('Authentication failure!');
+		                                        	  return;
+			                                      }
+	                                          }
+	                                      });
+	                                      form.submit({
+	                                          waitMsg : {message:'Submitting', cls : 'loading'}
+	                                      });
                                     }
                                 }
                             ]
@@ -196,7 +188,7 @@ author: Monica Franceschini
                 form.show();
             }
         });
-    </script>
+</script>
 		
 		 
 	</body>
