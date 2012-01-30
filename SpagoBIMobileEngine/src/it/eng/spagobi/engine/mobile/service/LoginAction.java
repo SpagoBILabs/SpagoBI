@@ -123,6 +123,8 @@ public class LoginAction extends AbstractEngineAction{
 			try {	
 
 				writeBackToClient(new JSONSuccess("userhome"));
+/*				String url = getServletConfig().getServletContext().getContextPath()+"/private-jsp/browser.jsp";
+				getHttpResponse().sendRedirect(url);*/
 
 			} catch (Throwable e) {
 				logger.error("Exception occurred writing back to client", e);
