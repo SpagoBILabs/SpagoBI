@@ -24,7 +24,7 @@ import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.massiveExport.utils.Utilities;
 import it.eng.spagobi.tools.massiveExport.work.MassiveExportWork;
-import it.eng.spagobi.tools.massiveExport.work.MassiveExportWorkListener;
+//import it.eng.spagobi.tools.massiveExport.work.MassiveExportWorkListener;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
@@ -125,15 +125,17 @@ public class StartMassiveExportThreadAction extends GetParametersForExecutionAct
 			Config config = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel(SpagoBIConstants.JNDI_THREAD_MANAGER);
 
 			WorkManager wm = new WorkManager(config.getValueCheck());
-			MassiveExportWorkListener mewListener = new MassiveExportWorkListener(getUserProfile(), funct, progressThreadId);
+			//MassiveExportWorkListener mewListener = new MassiveExportWorkListener(getUserProfile(), funct, progressThreadId);
 			
 			MassiveExportWork mew = new MassiveExportWork(selObjects, getUserProfile(), funct , progressThreadId, randomName, splittingFilter);
-			FooRemoteWorkItem fooRemoteWorkItem=wm.buildFooRemoteWorkItem(mew, mewListener);
-
+			//FooRemoteWorkItem fooRemoteWorkItem=wm.buildFooRemoteWorkItem(mew, mewListener);
+			FooRemoteWorkItem fooRemoteWorkItem=wm.buildFooRemoteWorkItem(mew, null);
+			
 			// Check if work was accepted
 			if(fooRemoteWorkItem.getStatus()==WorkEvent.WORK_ACCEPTED){
 				logger.debug("run work item");
-				WorkItem workItem=(WorkItem)wm.runWithReturnWI(mew, mewListener);
+				//WorkItem workItem=(WorkItem)wm.runWithReturnWI(mew, mewListener);
+				WorkItem workItem=(WorkItem)wm.runWithReturnWI(mew, null);
 				int statusWI=workItem.getStatus();
 
 

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.massiveExport.services;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
@@ -31,6 +32,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.container.CoreContextManager;
 import it.eng.spagobi.tools.massiveExport.utils.Utilities;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -104,7 +106,8 @@ public class StartMassiveExportExecutionProcessAction extends GetParametersForEx
 
 
 		JSONObject responseJSON = null;
-
+		IEngUserProfile profile = getUserProfile();
+		logger.debug("user is "+profile.getUserUniqueIdentifier());
 		try {
 
 			LowFunctionality funct = funcDao.loadLowFunctionalityByID(folderId, true);
@@ -115,8 +118,22 @@ public class StartMassiveExportExecutionProcessAction extends GetParametersForEx
 				JSONArray docsArray = new JSONArray();
 				for (int i =0; i < selObjects.size() ;i++) {
 					BIObject obj = (BIObject) selObjects.get(i);
-					String label = obj.getName();
-					docsArray.put(i, label);
+
+					boolean canSee = ObjectsAccessVerifier.canSee(obj, profile);
+					if(canSee){
+						boolean canExec = ObjectsAccessVerifier.isAbleToExec(obj.getStateCode(), profile);
+						if(canExec){
+							String label = obj.getName();
+							docsArray.put(i, label);
+							logger.debug("retrieve document "+label);
+						}
+						else{
+							logger.debug(profile + " user cannot exec document "+obj.getName());
+						}
+					}
+					else{
+						logger.debug(profile + " user cannot see document "+obj.getName());
+					}
 				}
 				logger.debug("retrieved "+docsArray.length()+" documents of type "+documentType);
 
@@ -144,6 +161,7 @@ public class StartMassiveExportExecutionProcessAction extends GetParametersForEx
 
 		} 
 		catch (Exception e) {
+			logger.error("Error happened during action "+SERVICE_NAME+" called with modality "+modality);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Error happened while retrieving documents", e);
 		}
 
@@ -176,7 +194,7 @@ public class StartMassiveExportExecutionProcessAction extends GetParametersForEx
 		String executionId = uuidObj.toString();
 		String executionContextId = executionId.replaceAll("-", "");
 		logger.debug("created random execution id "+executionId);
-		
+
 		CoreContextManager ccm = createContext( executionContextId );
 
 		instances = new HashMap<Integer, ExecutionInstance>();
