@@ -99,7 +99,8 @@ public class GetDatasetResultAction extends AbstractHttpAction {
 					String name=item.getName();
 					// check if parameter is in request
 					if(requestSB.getAttribute(name)!=null){
-						String value=((Object)requestSB.getAttribute(name)).toString();
+						String value=((Object)requestSB.getAttribute(name)).toString();						
+						logger.debug("Processed parameter " + name + " with value -" + value +"-");
 						parameters.put(name, value);
 						
 					}
@@ -126,11 +127,11 @@ public class GetDatasetResultAction extends AbstractHttpAction {
 	    
 	    // replace special characters
 	    result = result.replaceAll("&lt;", "<");
-	    result = result.replaceAll("&gt;", ">");
+	    result = result.replaceAll("&gt;", ">");	
 	    //result = result.replaceAll("\"", "'");
 	    result= result.replaceAll("<ROWS", "<rows");
 	    result= result.replaceAll("<ROW", "<row");
-	    
+	    logger.debug("result: " + result);
 	    
 	    // write the result into response
 	    response.getOutputStream().write(result.getBytes());
