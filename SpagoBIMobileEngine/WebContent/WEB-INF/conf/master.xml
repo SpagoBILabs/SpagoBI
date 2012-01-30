@@ -20,6 +20,10 @@
 	
 	<!-- imported from spagobi server to read settings for login -->
 	<CONFIGURATOR path="/WEB-INF/conf/commons/configs.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/internal_profiling.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/tree_initialization.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/spagobi_dao.xml" />	
+	<CONFIGURATOR path="/WEB-INF/conf/config/security.xml" />	
 
 		<!-- start mobile INITILAIZERS module -->
 	<CONFIGURATOR path="/WEB-INF/conf/commons/initializers/actions.xml" />

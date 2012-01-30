@@ -31,13 +31,14 @@
         <property name="hibernate.hbm2ddl.auto">create</property>
         -->
         
-        <mapping resource="mapping/SbiEvents.hbm.xml" />
-        <mapping resource="mapping/SbiEventsLog.hbm.xml" />
-        <mapping resource="mapping/SbiDomains.hbm.xml" />
-        <mapping resource="mapping/SbiConfig.hbm.xml" />
-        <mapping resource="mapping/SbiEventRole.hbm.xml" /> 
-        <mapping resource="mapping/SbiExtRoles.hbm.xml" />
-        <mapping resource="mapping/SbiUserFunctionality.hbm.xml" />
+  
+        <mapping resource="it/eng/spagobi/events/metadata/mapping/SbiEvents.hbm.xml" />
+        <mapping resource="it/eng/spagobi/events/metadata/mapping/SbiEventsLog.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiDomains.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiConfig.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiEventRole.hbm.xml" /> 
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiExtRoles.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiUserFunctionality.hbm.xml" />
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParameters.hbm.xml" />
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParuseDet.hbm.xml" />
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParuse.hbm.xml" />
