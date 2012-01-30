@@ -85,7 +85,7 @@ Sbi.tools.massiveExport.MassiveExportWizardWindow = function(config) {
 
 	c = Ext.apply(c, {
 		layout: 'fit'
-		,  html:'swswsws'
+		//,  html:'swswsws'
 	});
 
 	// constructor
