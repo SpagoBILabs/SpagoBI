@@ -43,6 +43,8 @@ import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.engines.AbstractEngineAction;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONSuccess;
 import it.eng.spagobi.wapp.util.MenuUtilities;
 
 import java.text.SimpleDateFormat;
@@ -115,10 +117,17 @@ public class LoginAction extends AbstractEngineAction{
 				logger.error("Reading user information... ERROR");
 				throw new SecurityException("Reading user information... ERROR",e);
 			}
-			MenuUtilities.getMenuItems(request, response, profile);
+			//MenuUtilities.getMenuItems(request, response, profile);
 
 			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+			try {	
 
+				writeBackToClient(new JSONSuccess("userhome"));
+
+			} catch (Throwable e) {
+				logger.error("Exception occurred writing back to client", e);
+                                                                                                                                                                                                                                                   
+			}
 			logger.debug("OUT");		
 
 		} catch (EMFUserError e) {

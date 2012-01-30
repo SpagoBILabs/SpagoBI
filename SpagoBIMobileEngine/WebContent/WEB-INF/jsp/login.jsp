@@ -151,9 +151,9 @@ author: Monica Franceschini
 	                                          },
 	                                          success: function(response, opts) {
 	                                              
-	                                              var esito = response.PUBLISHER_NAME;
+	                                              var esito = response.responseText.text;
 	                                              if(esito=='userhome'){
-	                                            	  console.log('login success!');
+	                                            	  alert('login success!');
 		                                          }else{
 		                                        	  alert('Authentication failure!');
 		                                        	  return;
