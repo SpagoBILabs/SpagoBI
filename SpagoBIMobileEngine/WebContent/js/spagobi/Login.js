@@ -1,5 +1,6 @@
 app.views.LoginForm = Ext.extend(Ext.form.FormPanel,
 		{
+		name: 'login-form',	
         autoRender: true,
         floating: true,
         modal: true,
@@ -13,54 +14,60 @@ app.views.LoginForm = Ext.extend(Ext.form.FormPanel,
         userIDField: null, 
         pwdField: null,
         loginUrl: null,
-            
-        listeners : {
-            submit : function(form, result){
-                console.log('success', Ext.toArray(arguments));
-
-            },
-            exception : function(form, result){
-                console.log('failure', result);
-                //this.form.close();
-
-            }
-        },
-		
+        fullscreen : false,
+	
         dockedItems: [
             {
                 xtype: 'toolbar',
                 dock: 'bottom',
+                scope:this,
                 items: [
                     {
                         text: 'Login',
                         ui: 'confirm',
                         scope: this,
                         handler: function() {
-
+                    		  var form = app.views.loginForm;
+                    		  var userid = form.userIDField.getValue();
+                    		  var pwd = form.pwdField.getValue();
                               Ext.Ajax.request({
-                                  url: formBase.url,
+                                  url: form.loginUrl,
+                                  scope: this,
                                   method: 'post',
-                                  params: {userID: this.userIDField.getValue(), password : this.pwdField.getValue()},
+                                  params: {userID: userid, password : pwd},
                                   failure : function(response){
                                         console.log('call Error! ');
                                   }
                                   
                                   ,success: function(response, opts) {
-                                	  var content = Ext.util.JSON.decode( response.responseText );
-              		      			 
-                                      var esito = content.text;
-                                      if(esito=='userhome'){
-                                    	  alert('login OK!!!!');
-                                      }else{
-                                    	  alert('Authentication failure!');
+                                	  if(response.responseText.indexOf('<') == -1){
+	                                	  var content = Ext.util.JSON.decode( response.responseText );	              		      			 
+	                                      var esito = content.text;
+	                                      if(esito=='userhome'){
+	                                    	  alert('login OK!!!!');
+	                                    	  Ext.dispatch({
+	                                    		  controller: app.controllers.mobileController,
+	                                    		  action: 'login',
+	                                    		  animation: {
+	                                    		  type: 'slide',
+	                                    		  direction: 'right'
+	                                    		  }
+	                                    	  });
+	                                      }else{
+	                                    	  alert('Authentication failure!');
+	                                    	  return;
+	                                      }
+                                	  }else{
+                                		  alert('Authentication failure!');
                                     	  return;
-                                      }
+                                	  }
                                   }
                                   
                               });
-                              this.submit({
-                                  waitMsg : {message:'Submitting', cls : 'loading'}
-                              });
+/*                              form.submit({
+                                  waitMsg : {message:'Submitting', cls : 'loading'},
+                
+                              });*/
                         }
                     }
                 ]
@@ -87,13 +94,13 @@ app.views.LoginForm = Ext.extend(Ext.form.FormPanel,
 			});	
 			console.log(this.loginUrl);
 		
-			this.userIDField = new Ext.form.TextField({                                
+			this.userIDField = new Ext.form.Text({                                
 				xtype: 'textfield',
 		        name : 'userID',
 		        label: 'Username',
 		        useClearIcon: true});
 			
-			this.pwdField = new Ext.form.TextField({                                
+			this.pwdField = new Ext.form.Text({                                
 		        xtype: 'passwordfield',
 		        name : 'password',
 		        label: 'Password',
