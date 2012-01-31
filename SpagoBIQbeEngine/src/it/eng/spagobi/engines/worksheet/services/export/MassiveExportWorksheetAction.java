@@ -54,9 +54,11 @@ public class MassiveExportWorksheetAction extends ExportWorksheetAction {
 	public static final String ENGINE_NAME = "SpagoBIWorksheetEngine";
 
 	public static final String SPLITTING_FILTER = "SPLITTING_FILTER";
-	
-	
-	
+
+	public final static String METADATA_AND_METACONTENT = "METADATA_AND_METACONTENT";
+
+	public final static String PARAMETERS = "PARAMETERS";
+
 
 	boolean splittingFilter = false;
 
@@ -91,6 +93,14 @@ public class MassiveExportWorksheetAction extends ExportWorksheetAction {
 			String splittingFilterS = getAttributeAsString( SPLITTING_FILTER );
 			if(splittingFilterS != null) splittingFilter = Boolean.valueOf(splittingFilterS);
 
+			JSONArray metaArray = getAttributeAsJSONArray(METADATA_AND_METACONTENT);
+			logger.debug(METADATA_AND_METACONTENT+" found is "+metaArray);
+
+			JSONArray parametersJSON = getAttributeAsJSONArray(PARAMETERS);
+			logger.debug(PARAMETERS+" found is "+parametersJSON);
+			if(parametersJSON == null) parametersJSON = new JSONArray();
+
+
 			WorksheetEngineInstance engineInstance = getEngineInstance();
 			WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
 
@@ -110,7 +120,7 @@ public class MassiveExportWorksheetAction extends ExportWorksheetAction {
 				try {
 					JSONObject exportJSON = convertToExportJSON(engineInstance, worksheetJSON);
 					logger.debug("JSOn modified as for export: "+exportJSON.toString());
-					exportToXLS(exportJSON, null, null, stream);
+					exportToXLS(exportJSON, metaArray, parametersJSON, stream);
 					logger.debug("Export executed");
 
 				} finally {
@@ -221,21 +231,21 @@ public class MassiveExportWorksheetAction extends ExportWorksheetAction {
 				sheetToInsert.put("FILTERS", filtersJSON);
 			}
 			else if(filters.size() == 1){				// SINGLE FILTER CASE
-					JSONObject filterJSON = new JSONObject();
-					Filter filter = filters.get(0);
-					if(splittingFilter==true && filter.isSplittingFilter()){
-						filterJSON.put(filter.getEntityId(), "splittingFilter");
-					}
-					else{
-						filterJSON.put(filter.getEntityId(), filter.getValues());				
-					}
-					sheetToInsert.put("FILTERS", filterJSON);
+				JSONObject filterJSON = new JSONObject();
+				Filter filter = filters.get(0);
+				if(splittingFilter==true && filter.isSplittingFilter()){
+					filterJSON.put(filter.getEntityId(), "splittingFilter");
+				}
+				else{
+					filterJSON.put(filter.getEntityId(), filter.getValues());				
+				}
+				sheetToInsert.put("FILTERS", filterJSON);
 			}
 
 			exportedSheetsJSON.put(sheetToInsert);
 		}
-			// *** end SHEETs
-		
+		// *** end SHEETs
+
 		tobuild.put("SHEETS_NUM", sheetsNum.toString());
 
 		tobuild.put(ExportWorksheetAction.EXPORTED_SHEETS, exportedSheetsJSON);
@@ -246,7 +256,7 @@ public class MassiveExportWorksheetAction extends ExportWorksheetAction {
 		JSONObject additionalData = new JSONObject();
 		additionalData.put(ExportWorksheetAction.FIELDS_OPTIONS, fielsdOption);
 		tobuild.put(ExportWorksheetAction.WORKSHEETS_ADDITIONAL_DATA, additionalData);
-		
+
 		//System.out.println(tobuild);
 		logger.debug(tobuild);
 		logger.debug("OUT");
