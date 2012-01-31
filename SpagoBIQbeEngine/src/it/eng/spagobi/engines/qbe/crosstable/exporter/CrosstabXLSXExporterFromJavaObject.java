@@ -25,10 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -52,11 +52,40 @@ import org.json.JSONObject;
  */
 public class CrosstabXLSXExporterFromJavaObject {
 	
+	/** Logger component. */
+    public static transient Logger logger = Logger.getLogger(CrosstabXLSExporterFromJavaObject.class);
+	
+    
+    /** Configuration properties */
+    public static final String PROPERTY_HEADER_FONT_SIZE = "HEADER_FONT_SIZE";
+    public static final String PROPERTY_HEADER_COLOR = "HEADER_COLOR";
+    public static final String PROPERTY_HEADER_BACKGROUND_COLOR = "HEADER_BACKGROUND_COLOR";
+    public static final String PROPERTY_HEADER_BORDER_COLOR = "HEADER_BORDER_COLOR";
+    public static final String PROPERTY_CELL_FONT_SIZE = "CELL_FONT_SIZE";
+    public static final String PROPERTY_CELL_COLOR = "CELL_COLOR";
+    public static final String PROPERTY_CELL_BACKGROUND_COLOR = "CELL_BACKGROUND_COLOR";
+    public static final String PROPERTY_CELL_BORDER_COLOR = "CELL_BORDER_COLOR";
+    public static final String PROPERTY_DIMENSION_NAME_COLOR = "DIMENSION_NAME_COLOR";
+    public static final String PROPERTY_DIMENSION_NAME_BACKGROUND_COLOR = "HEADER_DIMENSION_NAME_BACKGROUND_COLOR";
+    public static final String PROPERTY_FONT_NAME = "FONT_NAME";
+    
+    public static final short DEFAULT_HEADER_FONT_SIZE = 8;
+    public static final String DEFAULT_HEADER_COLOR = "BLACK";
+    public static final String DEFAULT_HEADER_BACKGROUND_COLOR = "GREY_25_PERCENT";
+    public static final String DEFAULT_HEADER_BORDER_COLOR = "WHITE";
+    public static final short DEFAULT_CELL_FONT_SIZE = 8;
+    public static final String DEFAULT_CELL_COLOR = "BLACK";
+    public static final String DEFAULT_CELL_BACKGROUND_COLOR = "WHITE";
+    public static final String DEFAULT_CELL_BORDER_COLOR = "BLACK";
+    public static final String DEFAULT_DIMENSION_NAME_COLOR = "BLACK";
+    public static final String DEFAULT_DIMENSION_NAME_BACKGROUND_COLOR = "LIGHT_BLUE";
+	public static final String DEFAULT_FONT_NAME = "Verdana";
+	
+	
+	private Properties properties;
+	
 	private int calculatedFieldsDecimals;
 	
-	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(CrosstabXLSXExporterFromJavaObject.class);
-
 	
 	/**
 	 * @param calculatedFieldsDecimals
@@ -64,6 +93,15 @@ public class CrosstabXLSXExporterFromJavaObject {
 	public CrosstabXLSXExporterFromJavaObject(int calculatedFieldsDecimals) {
 		super();
 		this.calculatedFieldsDecimals = calculatedFieldsDecimals;
+		this.properties = new Properties();
+	}
+	
+	public void setProperty(String propertyName, Object propertyValue) {
+		this.properties.put(propertyName, propertyValue);
+	}
+	
+	public Object getProperty(String propertyName) {
+		return this.properties.get(propertyName);
 	}
 
 	public int fillAlreadyCreatedSheet(Sheet sheet,CrossTab cs, JSONObject crosstabJSON, CreationHelper createHelper, int startRow, Locale locale) throws JSONException, SerializationException{		
@@ -84,7 +122,7 @@ public class CrosstabXLSXExporterFromJavaObject {
 		for (int i = 0; i < totalRowsNumber + 5; i++) {
 			sheet.createRow(startRow+i);
 		}
-//	
+
 		// build headers for column first ...
 		buildColumnsHeader(sheet, cs, cs.getColumnsRoot().getChilds(), startRow, rowsDepth -1, createHelper, locale);
 		// ... then build headers for rows ....
@@ -232,49 +270,139 @@ public class CrosstabXLSXExporterFromJavaObject {
 	 */
 	private void buildRowHeaderTitle(Sheet sheet, CrossTab cs, int columnHeadersNumber, int startColumn, int startRow, CreationHelper createHelper, Locale locale) throws JSONException {
 		List<String> titles = cs.getRowHeadersTitles();
-		if(titles!=null){
-			
-			Row row = sheet.getRow(startRow+columnHeadersNumber);
-			CellStyle cellStyle = buildHeaderCellStyle(sheet);
+		 
+		if (titles != null) {
+
+			Row row = sheet.getRow(startRow + columnHeadersNumber);
+			CellStyle cellStyle = this.buildDimensionCellStyle(sheet);
 			for (int i = 0; i < titles.size(); i++) {
-			
-				Cell cell = row.createCell(startColumn+i);
+
+				Cell cell = row.createCell(startColumn + i);
 				String text = titles.get(i);
 				cell.setCellValue(createHelper.createRichTextString(text));
-			    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
-			    cell.setCellStyle(cellStyle);
+				cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(cellStyle);
 			}
-			if(cs.isMeasureOnRow()){
-				Cell cell = row.createCell(startColumn+titles.size());
+			if (cs.isMeasureOnRow()) {
+				Cell cell = row.createCell(startColumn + titles.size());
 				String text = "Measures";
-				if(locale!=null){
-					text = EngineMessageBundle.getMessage("worksheet.export.crosstab.header.measures", locale);
+				if (locale != null) {
+					text = EngineMessageBundle
+							.getMessage(
+									"worksheet.export.crosstab.header.measures",
+									locale);
 				}
 				cell.setCellValue(createHelper.createRichTextString(text));
-			    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
-			    cell.setCellStyle(cellStyle);
+				cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(cellStyle);
 			}
 		}
 	}
-
-	public CellStyle buildHeaderCellStyle(Sheet sheet){
+	
+	public CellStyle buildDimensionCellStyle(Sheet sheet) {
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
-        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);  
-        cellStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
+        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
+        
+        String headerBGColor = (String) this.getProperty(PROPERTY_DIMENSION_NAME_BACKGROUND_COLOR);
+        logger.debug("Header background color : " + headerBGColor);
+		short backgroundColorIndex = headerBGColor != null ? IndexedColors.valueOf(
+				headerBGColor).getIndex() : IndexedColors.valueOf(
+						DEFAULT_DIMENSION_NAME_BACKGROUND_COLOR).getIndex();
+		cellStyle.setFillForegroundColor(backgroundColorIndex);
+		
         cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        
         cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
         cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
         cellStyle.setBorderRight(CellStyle.BORDER_THIN);
         cellStyle.setBorderTop(CellStyle.BORDER_THIN);
-        cellStyle.setLeftBorderColor(IndexedColors.DARK_BLUE.getIndex());
-        cellStyle.setRightBorderColor(IndexedColors.DARK_BLUE.getIndex());
-        cellStyle.setBottomBorderColor(IndexedColors.DARK_BLUE.getIndex());
-        cellStyle.setTopBorderColor(IndexedColors.DARK_BLUE.getIndex());
+
+        String bordeBorderColor = (String) this.getProperty(PROPERTY_HEADER_BORDER_COLOR);
+        logger.debug("Header border color : " + bordeBorderColor);
+		short borderColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(
+				bordeBorderColor).getIndex() : IndexedColors.valueOf(
+				DEFAULT_HEADER_BORDER_COLOR).getIndex();
+				
+        cellStyle.setLeftBorderColor(borderColorIndex);
+        cellStyle.setRightBorderColor(borderColorIndex);
+        cellStyle.setBottomBorderColor(borderColorIndex);
+        cellStyle.setTopBorderColor(borderColorIndex);
+        
         Font font = sheet.getWorkbook().createFont();
-        font.setFontHeightInPoints((short)14);
-        font.setFontName("Arial");
-        font.setColor(IndexedColors.DARK_BLUE.getIndex());
+        
+        Short headerFontSize = (Short) this.getProperty(PROPERTY_HEADER_FONT_SIZE);
+        logger.debug("Header font size : " + headerFontSize);
+		short headerFontSizeShort = headerFontSize != null ? headerFontSize.shortValue() : DEFAULT_HEADER_FONT_SIZE;
+        font.setFontHeightInPoints(headerFontSizeShort);
+        
+        String fontName = (String) this.getProperty(PROPERTY_FONT_NAME);
+        logger.debug("Font name : " + fontName);
+        fontName = fontName != null ? fontName : DEFAULT_FONT_NAME;
+        font.setFontName(fontName);
+        
+        String color = (String) this.getProperty(PROPERTY_DIMENSION_NAME_COLOR);
+        logger.debug("Dimension color : " + color);
+		short colorIndex = bordeBorderColor != null ? IndexedColors.valueOf(
+				color).getIndex() : IndexedColors.valueOf(
+				DEFAULT_DIMENSION_NAME_COLOR).getIndex();
+        font.setColor(colorIndex);
+        
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        font.setItalic(true);
+        cellStyle.setFont(font);
+        return cellStyle;
+	}
+
+	public CellStyle buildHeaderCellStyle(Sheet sheet) {
+		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
+        
+        String headerBGColor = (String) this.getProperty(PROPERTY_HEADER_BACKGROUND_COLOR);
+        logger.debug("Header background color : " + headerBGColor);
+		short backgroundColorIndex = headerBGColor != null ? IndexedColors.valueOf(
+				headerBGColor).getIndex() : IndexedColors.valueOf(
+				DEFAULT_HEADER_BACKGROUND_COLOR).getIndex();
+		cellStyle.setFillForegroundColor(backgroundColorIndex);
+		
+        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        
+        cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+        cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+        cellStyle.setBorderRight(CellStyle.BORDER_THIN);
+        cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+
+        String bordeBorderColor = (String) this.getProperty(PROPERTY_HEADER_BORDER_COLOR);
+        logger.debug("Header border color : " + bordeBorderColor);
+		short borderColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(
+				bordeBorderColor).getIndex() : IndexedColors.valueOf(
+				DEFAULT_HEADER_BORDER_COLOR).getIndex();
+				
+        cellStyle.setLeftBorderColor(borderColorIndex);
+        cellStyle.setRightBorderColor(borderColorIndex);
+        cellStyle.setBottomBorderColor(borderColorIndex);
+        cellStyle.setTopBorderColor(borderColorIndex);
+        
+        Font font = sheet.getWorkbook().createFont();
+        
+        Short headerFontSize = (Short) this.getProperty(PROPERTY_HEADER_FONT_SIZE);
+        logger.debug("Header font size : " + headerFontSize);
+		short headerFontSizeShort = headerFontSize != null ? headerFontSize.shortValue() : DEFAULT_HEADER_FONT_SIZE;
+        font.setFontHeightInPoints(headerFontSizeShort);
+        
+        String fontName = (String) this.getProperty(PROPERTY_FONT_NAME);
+        logger.debug("Font name : " + fontName);
+        fontName = fontName != null ? fontName : DEFAULT_FONT_NAME;
+        font.setFontName(fontName);
+        
+        String headerColor = (String) this.getProperty(PROPERTY_HEADER_COLOR);
+        logger.debug("Header color : " + headerColor);
+		short headerColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(
+				headerColor).getIndex() : IndexedColors.valueOf(
+				DEFAULT_HEADER_COLOR).getIndex();
+        font.setColor(headerColorIndex);
+        
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         cellStyle.setFont(font);
         return cellStyle;
@@ -284,20 +412,51 @@ public class CrosstabXLSXExporterFromJavaObject {
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
         cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
-        cellStyle.setFillForegroundColor(IndexedColors.WHITE.getIndex());
-        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);    
+        
+        String cellBGColor = (String) this.getProperty(PROPERTY_CELL_BACKGROUND_COLOR);
+        logger.debug("Cell background color : " + cellBGColor);
+		short backgroundColorIndex = cellBGColor != null ? IndexedColors.valueOf(
+				cellBGColor).getIndex() : IndexedColors.valueOf(
+				DEFAULT_CELL_BACKGROUND_COLOR).getIndex();
+		cellStyle.setFillForegroundColor(backgroundColorIndex);
+		
+        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        
         cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
         cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
         cellStyle.setBorderRight(CellStyle.BORDER_THIN);
         cellStyle.setBorderTop(CellStyle.BORDER_THIN);
-        cellStyle.setLeftBorderColor(IndexedColors.BLUE.getIndex());
-        cellStyle.setRightBorderColor(IndexedColors.BLUE.getIndex());
-        cellStyle.setBottomBorderColor(IndexedColors.BLUE.getIndex());
-        cellStyle.setTopBorderColor(IndexedColors.BLUE.getIndex());
+
+        String bordeBorderColor = (String) this.getProperty(PROPERTY_CELL_BORDER_COLOR);
+        logger.debug("Cell border color : " + bordeBorderColor);
+		short borderColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(
+				bordeBorderColor).getIndex() : IndexedColors.valueOf(
+				DEFAULT_CELL_BORDER_COLOR).getIndex();
+				
+        cellStyle.setLeftBorderColor(borderColorIndex);
+        cellStyle.setRightBorderColor(borderColorIndex);
+        cellStyle.setBottomBorderColor(borderColorIndex);
+        cellStyle.setTopBorderColor(borderColorIndex);
+        
         Font font = sheet.getWorkbook().createFont();
-        font.setFontHeightInPoints((short)12);
-        font.setFontName("Arial");
-        font.setColor(IndexedColors.BLACK.getIndex());
+        
+        Short cellFontSize = (Short) this.getProperty(PROPERTY_CELL_FONT_SIZE);
+        logger.debug("Cell font size : " + cellFontSize);
+		short cellFontSizeShort = cellFontSize != null ? cellFontSize.shortValue() : DEFAULT_CELL_FONT_SIZE;
+        font.setFontHeightInPoints(cellFontSizeShort);
+        
+        String fontName = (String) this.getProperty(PROPERTY_FONT_NAME);
+        logger.debug("Font name : " + fontName);
+        fontName = fontName != null ? fontName : DEFAULT_FONT_NAME;
+        font.setFontName(fontName);
+        
+        String cellColor = (String) this.getProperty(PROPERTY_CELL_COLOR);
+        logger.debug("Cell color : " + cellColor);
+		short cellColorIndex = cellColor != null ? IndexedColors.valueOf(
+				cellColor).getIndex() : IndexedColors.valueOf(
+				DEFAULT_CELL_COLOR).getIndex();
+        font.setColor(cellColorIndex);
+        
         cellStyle.setFont(font);
         return cellStyle;
 	}
