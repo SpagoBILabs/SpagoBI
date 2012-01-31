@@ -222,6 +222,7 @@ Ext.extend(Sbi.tools.massiveExport.MassiveExportWizardWindow, Ext.Window, {
 	config = {
 		services : ser	
 		, contest : 'massiveExport'
+		, drawHelpMessage : false	
 	};
 	
 	this.parametersPanel = new Sbi.execution.ParametersPanel(config);
