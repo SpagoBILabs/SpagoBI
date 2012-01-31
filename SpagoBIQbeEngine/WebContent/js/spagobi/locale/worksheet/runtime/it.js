@@ -36,7 +36,7 @@ Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.chart.visibleseries']
 //===========================================================
 //Sbi.worksheet.runtime.RuntimeSheetFiltersInfoPanel
 //===================================================================
-Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.title']= 'Filtri impostati';
+Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.title']= 'Filtri sui valori di dominio';
 Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.empty']= 'Non sono stati impostati filtri';
 Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.columns.attribute']= 'Attributo';
 Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.columns.values']= 'Valori';
