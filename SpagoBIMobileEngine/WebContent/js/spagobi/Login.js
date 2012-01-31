@@ -44,7 +44,7 @@ app.views.LoginForm = Ext.extend(Ext.form.FormPanel,
 	                                	  var content = Ext.util.JSON.decode( response.responseText );	              		      			 
 	                                      var esito = content.text;
 	                                      if(esito=='userhome'){
-	                                    	  alert('login OK!!!!');
+	                                    	  //alert('login OK!!!!');
 	                                    	  Ext.dispatch({
 	                                    		  controller: app.controllers.mobileController,
 	                                    		  action: 'login',
