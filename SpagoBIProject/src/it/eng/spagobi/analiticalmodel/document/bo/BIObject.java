@@ -89,6 +89,8 @@ public class BIObject implements Serializable {
 
 	private Integer refreshSeconds=null;	
 
+	private List<ObjMetaDataAndContent> objMetaDataAndContents = null;
+	
 	
 	/**
 	 * Gets the id.
@@ -522,6 +524,16 @@ public class BIObject implements Serializable {
 	public void setProfiledVisibility(String profiledVisibility) {
 		this.profiledVisibility = profiledVisibility;
 	}
+
+	public List<ObjMetaDataAndContent> getObjMetaDataAndContents() {
+		return objMetaDataAndContents;
+	}
+
+	public void setObjMetaDataAndContents(List<ObjMetaDataAndContent> objMetaDataAndContents) {
+		this.objMetaDataAndContents = objMetaDataAndContents;
+	}
+
+
 	
 	
 	

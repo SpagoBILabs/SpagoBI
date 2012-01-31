@@ -14,13 +14,20 @@ package it.eng.spagobi.tools.massiveExport.work;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjMetaDataAndContent;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.massiveExport.utils.Utilities;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONFailure;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,6 +44,8 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import commonj.work.Work;
 
@@ -55,8 +64,8 @@ public class MassiveExportWork implements Work{
 	public static final String STARTED = "STARTED";
 	public static final String DOWNLOAD = "DOWNLOAD";
 	public static final String ERROR = "ERROR";
-	
-	
+
+
 	IEngUserProfile profile;
 	List biObjects;
 	LowFunctionality functionality;
@@ -92,6 +101,8 @@ public class MassiveExportWork implements Work{
 	public void run() {
 		logger.debug("IN");
 		IProgressThreadDAO threadDAO = null;
+		IObjMetadataDAO metaDAO = null;
+		IObjMetacontentDAO contentDAO = null;
 
 		String output = null;
 		Thread thread = Thread.currentThread();
@@ -106,7 +117,11 @@ public class MassiveExportWork implements Work{
 		try {
 			threadDAO = DAOFactory.getProgressThreadDAO();
 			threadDAO.setStartedProgressThread(progressThreadId);
+
+			metaDAO = DAOFactory.getObjMetadataDAO();
+			contentDAO = DAOFactory.getObjMetacontentDAO();
 			
+
 		}catch (Exception e) {
 			logger.error("Error setting DAO");
 			deleteDBRowInCaseOfError(threadDAO, progressThreadId);
@@ -125,10 +140,15 @@ public class MassiveExportWork implements Work{
 			File exportFile = null;
 
 			ExecutionProxy proxy = new ExecutionProxy();
-			proxy.setBiObject(biObj);
-			proxy.setSplittingFilter(splittingFilter);
 			byte[] returnByteArray = null;
+
 			try{
+				// get Obj Metadata
+				List<ObjMetaDataAndContent> listObjMetaContent = getMetaDataAndContent(metaDAO, contentDAO, biObj);
+				biObj.setObjMetaDataAndContents(listObjMetaContent);
+
+				proxy.setBiObject(biObj);
+				proxy.setSplittingFilter(splittingFilter);
 				returnByteArray = proxy.exec(profile, SpagoBIConstants.MASSIVE_EXPORT_MODALITY, output);
 			}
 			catch (Throwable e) {
@@ -147,7 +167,7 @@ public class MassiveExportWork implements Work{
 			else{
 				try{
 					String checkerror = new String(returnByteArray);
-					if(checkerror.startsWith("error")){
+					if(checkerror.startsWith("error") || checkerror.startsWith("{\"errors\":")){
 						logger.error("Error found in execution, make txt file");
 						String fileName = "Error "+biObj.getLabel()+"-"+biObj.getName();
 						exportFile = File.createTempFile(fileName, ".txt");
@@ -253,63 +273,39 @@ public class MassiveExportWork implements Work{
 	}
 
 
-	//	public File createZipFile(List<File> filesToZip, Map<String, String> randomNamesToName) throws ZipException, IOException{
-	//		logger.debug("IN");
-	//
-	//		String dirS = System.getProperty("java.io.tmpdir");
-	//		if(!dirS.endsWith(File.separator)){
-	//			dirS+=File.separator;
-	//		}
-	//
-	//		dirS+=functionality.getCode();
-	//		logger.debug("write zip file in "+dirS);
-	//		File dir = new File(dirS);
-	//		// if not exists create directory
-	//		dir.mkdir();		
-	//
-	//		String folde = dir.getAbsolutePath();
-	//		if(!folde.endsWith(File.separator)){
-	//			folde+=File.separator;
-	//		}
-	//
-	//		//File zipFile = File.createTempFile(zipKey, ".zip");
-	//		File zipFile = new File(folde+zipKey+".zip");
-	//		zipFile.createNewFile();
-	//		logger.debug("Zip file is "+zipFile.getAbsolutePath());
-	//
-	//		ZipOutputStream out = null;
-	//		FileInputStream in = null;
-	//		try{
-	//			out = new ZipOutputStream(new FileOutputStream(zipFile)); 
-	//			for (Iterator iterator = filesToZip.iterator(); iterator.hasNext();) {
-	//				File file = (File) iterator.next();
-	//				in = new FileInputStream(file); 
-	//				String fileName = file.getName();
-	//				String realName = randomNamesToName.get(fileName);
-	//				ZipEntry zipEntry=new ZipEntry(realName);
-	//				out.putNextEntry(zipEntry);
-	//
-	//				int len; 
-	//				while ((len = in.read(buf)) > 0) 
-	//				{ 
-	//					out.write(buf, 0, len); 
-	//				} 
-	//
-	//				out.closeEntry(); 
-	//				in.close(); 
-	//			}
-	//			out.flush();
-	//			out.close();
-	//		}
-	//		finally{
-	//			if(in != null) in.close();
-	//			if(out != null) out.close();
-	//		}
-	//
-	//		//filesToZip
-	//		logger.debug("OUT");
-	//		return zipFile;
-	//	}
+	private List<ObjMetaDataAndContent> getMetaDataAndContent(IObjMetadataDAO metaDao, IObjMetacontentDAO metaContentDAO, BIObject obj) throws Exception{
+		logger.debug("IN");
+		List toReturn = null; 
+
+		try{
+			ObjMetaDataAndContent objMetaDataAndContent = null;
+			List<ObjMetadata> allMetas =metaDao.loadAllObjMetadata();
+			Map<Integer, ObjMetacontent> values =  new HashMap<Integer, ObjMetacontent>();
+			
+			List list = metaContentDAO.loadObjOrSubObjMetacontents(obj.getId(), null);
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				ObjMetacontent content = (ObjMetacontent) iterator.next();
+				Integer metaid = content.getObjmetaId();
+				values.put(metaid, content);
+			}
+			
+			for (Iterator iterator = allMetas.iterator(); iterator.hasNext();) {
+				ObjMetadata meta = (ObjMetadata) iterator.next();
+				objMetaDataAndContent = new ObjMetaDataAndContent();
+				objMetaDataAndContent.setMeta(meta);
+				objMetaDataAndContent.setMetacontent(values.get(meta.getObjMetaId()));
+				if(toReturn == null) toReturn = new ArrayList<ObjMetaDataAndContent>();
+				toReturn.add(objMetaDataAndContent);
+			}
+
+		}
+		catch (Exception e) {
+			logger.error("error in retrieving metadata and metacontent for biobj  id "+obj.getId(), e);	
+			throw e;
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
 
 
 	public File createErrorFile(BIObject biObj, Throwable error, Map randomNamesToName){
