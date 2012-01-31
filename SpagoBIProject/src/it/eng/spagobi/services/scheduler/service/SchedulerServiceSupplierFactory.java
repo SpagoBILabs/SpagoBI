@@ -9,26 +9,16 @@
  * a copy of the GNU Lesser General Public License along with SpagoBI. If not, see: http://www.gnu.org/licenses/.
  * The complete text of SpagoBI license is included in the COPYING.LESSER file. 
  */
+package it.eng.spagobi.services.scheduler.service;
 
-package it.eng.spagobi.commons.serializer;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
+ *
  */
-public class SerializerFactory {
-	
-	static Map<String, Serializer> mappings;
-	
-	static {
-		mappings = new HashMap();
-		mappings.put( "application/json", new JSONSerializer() );
-		mappings.put( "application/xml", new XMLSerializer() );
-	}
-	
-	public static Serializer getSerializer(String mimeType) {
-		return mappings.get( mimeType );
+public class SchedulerServiceSupplierFactory {
+	public static ISchedulerServiceSupplier  getSupplier() {
+		//return new XSchedulerServiceSupplier(); // only the brave!
+		return new SchedulerServiceSupplier();
 	}
 }

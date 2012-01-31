@@ -27,7 +27,9 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplier;
+import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
 import it.eng.spagobi.tools.scheduler.Formula;
 import it.eng.spagobi.tools.scheduler.FormulaParameterValuesRetriever;
 import it.eng.spagobi.tools.scheduler.RuntimeLoadingParameterValuesRetriever;
@@ -113,7 +115,7 @@ public class JobManagementModule extends AbstractModule {
 		try {
 			// create the sourcebean of the list
 			SourceBean pageListSB  = new SourceBean("PAGED_LIST");
-			SchedulerServiceSupplier schedulerService=new SchedulerServiceSupplier();
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			String xmlList = schedulerService.getJobList();
 			//SourceBean schedModRespSB = SchedulerUtilities.getSBFromWebServiceResponse(wsresp);
 			SourceBean rowsSB = SourceBean.fromXMLString(xmlList);
@@ -201,7 +203,7 @@ public class JobManagementModule extends AbstractModule {
 	
 	private void deleteJob(SourceBean request, SourceBean response) throws EMFUserError {
 		try {
-		        SchedulerServiceSupplier schedulerService=new SchedulerServiceSupplier();
+		    ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			String jobName = (String)request.getAttribute("jobName");
 			String jobGroupName = (String)request.getAttribute("jobGroupName");
 			String xmlSchedList = schedulerService.getJobSchedulationList(jobName, jobGroupName);
@@ -379,7 +381,7 @@ public class JobManagementModule extends AbstractModule {
 	
 	private void saveJob(JobInfo jobInfo) throws EMFUserError {
 		try {
-			SchedulerServiceSupplier schedulerService=new SchedulerServiceSupplier();
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			// create message to define the new job (for the web service)
 			String jobGroupName = JOB_GROUP;
 			StringBuffer message = new StringBuffer();
@@ -501,7 +503,7 @@ public class JobManagementModule extends AbstractModule {
 
 	private void getJobDetail(SourceBean request, SourceBean response) throws EMFUserError {
 		try {
-		    SchedulerServiceSupplier schedulerService=new SchedulerServiceSupplier();
+		    ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			List functionalities = DAOFactory.getLowFunctionalityDAO().loadAllLowFunctionalities(true);
 			String jobName = (String)request.getAttribute("jobName");
 			String jobGroupName = (String)request.getAttribute("jobGroupName");

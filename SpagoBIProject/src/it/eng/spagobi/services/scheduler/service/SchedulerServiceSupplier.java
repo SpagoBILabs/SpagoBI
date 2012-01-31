@@ -16,6 +16,7 @@ import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,11 +35,10 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerUtils;
 import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.xml.JobSchedulingDataProcessor.MisfireInstructionRule;
 import org.safehaus.uuid.UUIDGenerator;
 
 
-public class SchedulerServiceSupplier {
+public class SchedulerServiceSupplier implements ISchedulerServiceSupplier{
 
     static private Logger logger = Logger.getLogger(SchedulerServiceSupplier.class);
     

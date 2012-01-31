@@ -18,5 +18,6 @@ import java.util.Locale;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public interface Serializer {
-	public Object serialize(Object o, Locale locale) throws SerializationException;
+	Object serialize(Object o, Locale locale) throws SerializationException;
+	//void setProperty(String name, String value);
 }

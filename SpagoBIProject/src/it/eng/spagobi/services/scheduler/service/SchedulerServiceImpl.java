@@ -23,7 +23,7 @@ import com.jamonapi.MonitorFactory;
 public class SchedulerServiceImpl extends AbstractServiceImpl{
 
     static private Logger logger = Logger.getLogger(SchedulerServiceImpl.class);
-    private SchedulerServiceSupplier supplier=new SchedulerServiceSupplier();
+    private ISchedulerServiceSupplier supplier = SchedulerServiceSupplierFactory.getSupplier();
     
 	/**
 	 * Gets the job list.
