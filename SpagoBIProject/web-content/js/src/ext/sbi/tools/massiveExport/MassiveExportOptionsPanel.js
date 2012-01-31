@@ -68,11 +68,12 @@ Sbi.tools.massiveExport.MassiveExportOptionsPanel = function(config) {
 
 	this.addEvents('noDocsEvent');
 
+	this.initFormPanel();
 	this.initRolesCombo(Sbi.user.roles);
 
 	c = Ext.apply(c, {
 		layout: 'fit',       
-		items: [this.rolesCombo]
+		items: [this.formPanel]
 	});
 
 	// constructor
@@ -83,11 +84,20 @@ Sbi.tools.massiveExport.MassiveExportOptionsPanel = function(config) {
 Ext.extend(Sbi.tools.massiveExport.MassiveExportOptionsPanel, Ext.Panel, {
 
 	selectedRole : null
+	, formPanel : null
 	, functId : null
 	, rolesCombo : null
 	, docsPanel : null
 	, checkBox : null
 	// methods
+	, initFormPanel: function(){
+		this.formPanel = new Ext.form.FormPanel({
+			id: 'formPanel',
+			//layout: 'fit',
+			
+		});
+	
+	}
 	, initRolesCombo: function (rolesArray) {
 		//rolesArray (building with multidimensional array)	  
 		var multiArray = new Array(); 
@@ -108,11 +118,13 @@ Ext.extend(Sbi.tools.massiveExport.MassiveExportOptionsPanel, Ext.Panel, {
 
 		this.rolesCombo = new Ext.form.ComboBox({
 				  tpl: '<tpl for="."><div ext:qtip="{role}" class="x-combo-list-item">{role}</div></tpl>'
-				, title: LN('nazionalizzami')
+				//, title: LN('nazionalizzami')
 				, editable  : true
 				, forceSelection : true
+				, fieldLabel : LN('sbi.tools.massiveExport.MassiveExportOptionsPanel.roleSelection')
+				, labelAlign : 'left'
 				, name : 'roles'
-				, emptyText: LN('nazionalizzami')
+				, emptyText: LN('sbi.tools.massiveExport.MassiveExportOptionsPanel.roleSelection')
 				, mode : 'local'
 				, typeAhead: true
 				, triggerAction: 'all'
@@ -124,12 +136,13 @@ Ext.extend(Sbi.tools.massiveExport.MassiveExportOptionsPanel, Ext.Panel, {
 						fn: function(){ 
 						selectedRole = this.rolesCombo.getValue();
 						this.rolesCombo.setValue(selectedRole);
-						//this.rolesCombo.select();
 						}
 				, scope: this
 						}
 					}
 				});	
+		
+		this.formPanel.add(this.rolesCombo);
 
 		// select first as default
 		this.rolesCombo.on('render', function() {
@@ -175,10 +188,10 @@ Ext.extend(Sbi.tools.massiveExport.MassiveExportOptionsPanel, Ext.Panel, {
 					}
 					list+='</ul>';
 					
-					// draw documents list
-					this.buildDocsPanel(list);
 					// checkbox
 					this.buildCycleCheck(); 
+					// draw documents list
+					this.buildDocsPanel(list);
 					this.doLayout();
 				} 
 			} else {
@@ -207,18 +220,24 @@ Ext.extend(Sbi.tools.massiveExport.MassiveExportOptionsPanel, Ext.Panel, {
   	      	, title : LN('sbi.tools.massiveExport.MassiveExportOptionsPanel.docsList')
 			, html : list
 	});
-	this.add(this.docsPanel);
+	this.formPanel.add(this.docsPanel);
 	
 }
 , buildCycleCheck : function(){
-	this.checkBox = new Ext.form.Checkbox({id: 'idCycle' , name : LN('sbi.tools.massiveExport.MassiveExportOptionsPanel.cycleOnFilter') });
-	var checkPanel = new Ext.Panel({
- 		name : 'ciao'
-	    , title : 'Split on Filters'
-		//, 	layout: 'fit'
-		, items: [this.checkBox]
-	});
-	this.add(checkPanel);
+	this.checkBox = new Ext.form.Checkbox(
+			{id: 'idCycle' 
+			, name : LN('sbi.tools.massiveExport.MassiveExportOptionsPanel.cycleOnFilter') 
+			, fieldLabel : LN('sbi.tools.massiveExport.MassiveExportOptionsPanel.cycleOnFilter')
+			});
+//	var checkPanel = new Ext.Panel({
+// 		name : 'ciao'
+//	    , title : 'Split on Filters'
+//		//, 	layout: 'fit'
+//		, items: [this.checkBox]
+//	});
+	this.formPanel.add(this.checkBox);
+	this.formPanel.doLayout();
+	this.doLayout();
 }
 , getSelectedRole : function(){
 	return selectedRole;

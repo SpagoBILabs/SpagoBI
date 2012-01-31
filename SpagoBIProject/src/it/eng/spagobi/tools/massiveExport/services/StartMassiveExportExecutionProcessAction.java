@@ -160,8 +160,12 @@ public class StartMassiveExportExecutionProcessAction extends GetParametersForEx
 			writeBackToClient( new JSONSuccess( responseJSON ) );
 
 		} 
-		catch (Exception e) {
-			logger.error("Error happened during action "+SERVICE_NAME+" called with modality "+modality);
+		catch (EMFUserError e) {
+			logger.error("EMFUserError happened during action "+SERVICE_NAME+" called with modality "+modality, e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Error happened while retrieving documents: \n"+e.getDescription(), e);
+		}
+		catch (Throwable e) {
+			logger.error("generic error happened during action "+SERVICE_NAME+" called with modality "+modality, e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Error happened while retrieving documents", e);
 		}
 
