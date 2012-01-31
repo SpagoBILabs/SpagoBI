@@ -528,8 +528,9 @@ Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Export warning';
 Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.title'] = 'Export options';
 Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.docsList'] = 'Worksheet documents list to export';
 Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.cycleOnFilter'] = 'Cycle on filters';
-
 Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.title'] = 'Wizard for worksheet massive export';
+Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.roleSelection'] = 'Role Selection';
+
 
 Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.back'] = 'Back';
 Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.next'] = 'Next';

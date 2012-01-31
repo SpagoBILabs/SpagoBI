@@ -660,6 +660,7 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Enter search Labe
 Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.title'] = 'Export options';
 Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.docsList'] = 'Worksheet documents list to export';
 Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.cycleOnFilter'] = 'Cycle on filters';
+Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.roleSelection'] = 'Role Selection';
 
 Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.title'] = 'Wizard for worksheet massive export';
 

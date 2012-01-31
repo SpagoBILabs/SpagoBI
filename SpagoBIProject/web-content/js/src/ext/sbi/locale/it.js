@@ -662,7 +662,7 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Cerca Etichetta';
 Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.title'] = 'Opzioni di esportazione';
 Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.docsList'] = 'Lista di documetni worksheet da esportare';
 Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.cycleOnFilter'] = 'Split sul filtro';
-
+Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.roleSelection'] = 'Selezione del ruolo';
 Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.title'] = 'Wizard per esportazione amssiva di worksheet';
 
 Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.back'] = 'Indietro';
