@@ -359,11 +359,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		// the panel, but a function for width calculation is necessary (this function does not work on page 3 when executing in
 		// document browser with tree structure initially opened, since containerWidth is 0).
 		// TODO: try to remove the on resize method and the width calculation
-		if (this.messageElement == undefined && this.rendered) {
+		if (this.messageElement == undefined && this.rendered && (this.contest != 'massiveExport')) {
 			var containerWidth = this.getInnerWidth();
 			this.widthDiscrepancy = Ext.isIE ? 1 : 5;
 			var initialWidth = containerWidth > this.formWidth ? containerWidth - this.widthDiscrepancy: this.formWidth;
+			
 			var message = this.getHelpMessage(executionInstance, thereAreParametersToBeFilled);
+			
 			this.messageElement = Ext.DomHelper.insertFirst(this.body, 
 					'<div style="font-size: 12px; font-family: tahoma,verdana,helvetica; margin-bottom: 14px; color: rgb(24, 18, 241);' 
 					+ (containerWidth === 0 ? '' : 'width: ' + initialWidth + 'px;') + '"'  
