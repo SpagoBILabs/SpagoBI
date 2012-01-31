@@ -6,15 +6,16 @@
 	initComponent: function() 
 	
 	  {
-		app.views.loginForm = new app.views.LoginForm();
-		
-	    Ext.apply(this, 
-	    {
-	      items: 
-	      [
-	         app.views.loginForm
-	        
-	      ]
+	    //put instances of login into app.views namespace
+	    Ext.apply(app.views, {
+	        loginForm: new app.views.LoginForm()
+
+	    });
+	    //put instances of loginForm into viewport
+	    Ext.apply(this, {
+	        items: [
+	            app.views.loginForm
+	        ]
 	    });
 
 	    app.views.Viewport.superclass.initComponent.apply(this, arguments);

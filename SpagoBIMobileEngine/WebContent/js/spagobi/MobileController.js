@@ -9,9 +9,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,
 		}
 		else	{
 			
-		}
-	  
+		}  
 
 	  }
-
 });
