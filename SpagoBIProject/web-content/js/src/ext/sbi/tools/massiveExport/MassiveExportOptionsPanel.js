@@ -108,16 +108,17 @@ Ext.extend(Sbi.tools.massiveExport.MassiveExportOptionsPanel, Ext.Panel, {
 
 		this.rolesCombo = new Ext.form.ComboBox({
 				  tpl: '<tpl for="."><div ext:qtip="{role}" class="x-combo-list-item">{role}</div></tpl>'
-				, title: 'role'
+				, title: LN('nazionalizzami')
 				, editable  : true
 				, forceSelection : true
 				, name : 'roles'
-				, emptyText:'Select a role...'
+				, emptyText: LN('nazionalizzami')
 				, mode : 'local'
 				, typeAhead: true
 				, triggerAction: 'all'
 				, store: scopeComboBoxStore
-				, valueField: 'role'
+			    , displayField:'role'
+				, valueField:'role'
 			    , listeners: {
 					'select': {
 						fn: function(){ 

@@ -53,6 +53,7 @@ public class TransformerFrom3_1_0To3_2_0 implements ITransformer {
 		try {
 			conn = TransformersUtilities.getConnectionToDatabase(pathImpTmpFolder, archiveName);
 			fixParView(conn);
+			fixDataSet(conn);
 			conn.commit();
 		} catch (Exception e) {
 			logger.error("Error while changing database", e);	
@@ -86,5 +87,16 @@ public class TransformerFrom3_1_0To3_2_0 implements ITransformer {
 		logger.debug("OUT");
 	}
 
+	private void fixDataSet(Connection conn) throws Exception {
+		logger.debug("IN");
+
+		Statement stmt = conn.createStatement();
+		
+		String sql = "ALTER TABLE SBI_DATA_SET_HISTORY ADD COLUMN CUSTOM_DATA VARCHAR DEFAULT NULL;";
+
+		stmt.executeUpdate(sql);
+
+		logger.debug("OUT");
+	}
 
 }
