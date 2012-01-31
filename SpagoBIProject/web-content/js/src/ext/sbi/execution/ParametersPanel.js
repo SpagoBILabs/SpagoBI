@@ -147,7 +147,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     , columns: null
     , baseConfig: null
     , modality : null
-    
+    , drawHelpMessage : true
     
    
     // ----------------------------------------------------------------------------------------
@@ -359,7 +359,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		// the panel, but a function for width calculation is necessary (this function does not work on page 3 when executing in
 		// document browser with tree structure initially opened, since containerWidth is 0).
 		// TODO: try to remove the on resize method and the width calculation
-		if (this.messageElement == undefined && this.rendered && (this.contest != 'massiveExport')) {
+		if (this.messageElement == undefined && this.rendered && (this.drawHelpMessage == true)) {
 			var containerWidth = this.getInnerWidth();
 			this.widthDiscrepancy = Ext.isIE ? 1 : 5;
 			var initialWidth = containerWidth > this.formWidth ? containerWidth - this.widthDiscrepancy: this.formWidth;
