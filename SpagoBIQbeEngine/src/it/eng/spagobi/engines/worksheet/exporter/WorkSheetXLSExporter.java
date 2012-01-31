@@ -49,7 +49,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -97,6 +96,17 @@ public class WorkSheetXLSExporter {
 	public static final String CENTER = "center";
 	public static final String RIGHT = "right";
 	public static final String LEFT = "left";
+	
+	public static final short METADATA_TITLE_FONT_SIZE = 9;
+	public static final short METADATA_NAME_FONT_SIZE = 8;
+	public static final short METADATA_VALUE_FONT_SIZE = 8;
+	public static final short FILTERS_TITLE_FONT_SIZE = 9;
+	public static final short FILTERS_VALUES_FONT_SIZE = 8;
+	public static final short TABLE_HEADER_FONT_SIZE = 8;
+	public static final short TABLE_CELL_CONTENT_FONT_SIZE = 8;
+	public static final short HEADER_FONT_SIZE = 16;
+	
+	public static final String FONT_NAME = "Verdana";
 
 	Map<Integer, String> decimalFormats = new HashMap<Integer, String>();
 	
@@ -133,8 +143,11 @@ public class WorkSheetXLSExporter {
 	public void designTableInWorksheet(Sheet sheet,Workbook wb, CreationHelper createHelper, 
 			  IDataStore dataStore, int startRow, Locale locale) throws SerializationException, JSONException{
 		
-		QbeXLSExporter exp = new QbeXLSExporter(dataStore, locale);
-		exp.fillSheet(sheet, wb, createHelper, startRow);
+		QbeXLSExporter qbeXLSExporter = new QbeXLSExporter(dataStore, locale);
+		qbeXLSExporter.setProperty(QbeXLSExporter.PROPERTY_HEADER_FONT_SIZE, TABLE_HEADER_FONT_SIZE);
+		qbeXLSExporter.setProperty(QbeXLSExporter.PROPERTY_CONTENT_FONT_SIZE, TABLE_CELL_CONTENT_FONT_SIZE);
+		qbeXLSExporter.setProperty(QbeXLSExporter.PROPERTY_FONT_NAME, FONT_NAME);
+		qbeXLSExporter.fillSheet(sheet, wb, createHelper, startRow);
 	}
 
 	public int setHeader(HSSFSheet sheet, JSONObject header,
@@ -142,7 +155,7 @@ public class WorkSheetXLSExporter {
 		String title = header.getString(TITLE);
 		String imgName = header.optString(IMG);
 		String imagePosition = header.getString(POSITION);
-		CellStyle cellStyle = buildHeaderTitleCellStyle(sheet);
+		CellStyle cellStyle = this.buildHeaderTitleCellStyle(sheet);
 		
 		if(title!=null && !title.equals("")){			
 			Row row = sheet.createRow(sheetRow);
@@ -158,16 +171,16 @@ public class WorkSheetXLSExporter {
 			String imgNameUpperCase = imgName.toUpperCase();
 			int impgType = getImageType(imgNameUpperCase);
 			
-			int c = 7;
-			int colend = 9;
+			int c = 2;
+			int colend = 3;
 
 			if(imagePosition!=null && !imagePosition.equals("")){
 				if(imagePosition.equals(LEFT)){
-					c = 1;
-					colend = 3;
+					c = 0;
+					colend = 1;
 				}else if(imagePosition.equals(RIGHT)){
-					c = 11;
-					colend = 13;
+					c = 4;
+					colend = 5;
 				}
 			}
 			if(impgType!=0){
@@ -206,16 +219,16 @@ public class WorkSheetXLSExporter {
 			int impgType = getImageType(imgNameUpperCase);
 			
 
-			int c = 7;
-			int colend = 9;
+			int c = 2;
+			int colend = 3;
 			
 			if(imagePosition!=null && !imagePosition.equals("")){
 				if(imagePosition.equals(LEFT)){
-					c = 1;
-					colend = 3;			
+					c = 0;
+					colend = 1;			
 				}else if(imagePosition.equals(RIGHT)){
-					c = 11;
-					colend = 13;
+					c = 4;
+					colend = 5;
 				}
 			}
 			if(impgType!=0){
@@ -245,15 +258,28 @@ public class WorkSheetXLSExporter {
 		return impgType;
 	}
 	
-	public CellStyle buildHeaderTitleCellStyle(Sheet sheet){
+	public CellStyle buildHeaderTitleCellStyle(Sheet sheet) {
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
         cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER); 
         Font font = sheet.getWorkbook().createFont();
-        font.setFontHeightInPoints((short)16);
-        font.setFontName("Arial");
+        font.setFontHeightInPoints(HEADER_FONT_SIZE);
+        font.setFontName(FONT_NAME);
         font.setColor(IndexedColors.DARK_BLUE.getIndex());
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        cellStyle.setFont(font);
+        return cellStyle;
+	}
+	
+	public CellStyle buildMetadataTitleCellStyle(Sheet sheet){
+		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_TOP); 
+        cellStyle.setWrapText(true);
+        Font font = sheet.getWorkbook().createFont();
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        font.setFontHeightInPoints(METADATA_TITLE_FONT_SIZE);
+        font.setFontName(FONT_NAME);
         cellStyle.setFont(font);
         return cellStyle;
 	}
@@ -265,6 +291,8 @@ public class WorkSheetXLSExporter {
         cellStyle.setWrapText(true);
         Font font = sheet.getWorkbook().createFont();
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        font.setFontHeightInPoints(METADATA_NAME_FONT_SIZE);
+        font.setFontName(FONT_NAME);
         cellStyle.setFont(font);
         return cellStyle;
 	}
@@ -274,6 +302,35 @@ public class WorkSheetXLSExporter {
         cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
         cellStyle.setVerticalAlignment(CellStyle.VERTICAL_TOP); 
         cellStyle.setWrapText(true);
+        Font font = sheet.getWorkbook().createFont();
+        font.setFontHeightInPoints(METADATA_VALUE_FONT_SIZE);
+        font.setFontName(FONT_NAME);
+        cellStyle.setFont(font);
+        return cellStyle;
+	}
+	
+	public CellStyle buildFiltersTitleCellStyle(Sheet sheet){
+		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER); 
+        cellStyle.setWrapText(false);
+        Font font = sheet.getWorkbook().createFont();
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        font.setFontHeightInPoints(FILTERS_TITLE_FONT_SIZE);
+        font.setFontName(FONT_NAME);
+        cellStyle.setFont(font);
+        return cellStyle;
+	}
+	
+	public CellStyle buildFiltersValuesCellStyle(Sheet sheet){
+		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER); 
+        cellStyle.setWrapText(false);
+        Font font = sheet.getWorkbook().createFont();
+        font.setFontHeightInPoints(FILTERS_VALUES_FONT_SIZE);
+        font.setFontName(FONT_NAME);
+        cellStyle.setFont(font);
         return cellStyle;
 	}
 	
@@ -305,7 +362,7 @@ public class WorkSheetXLSExporter {
 		fis.close();
 		
 		HSSFClientAnchor anchor = new HSSFClientAnchor(dx1, dy1, dx2, dy2, (short) col,	sheetRow, (short) colend, sheetRow+height);
-		Picture pict = drawing.createPicture(anchor, index);
+		drawing.createPicture(anchor, index);
 		
 		//HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 		//patriarch.createPicture(anchor, index);
@@ -362,18 +419,6 @@ public class WorkSheetXLSExporter {
 			throw new SpagoBIEngineRuntimeException(
 					"Impossible to convert svg to jpeg: " + e.getCause(), e);
 		}
-	}
-
-	private String getNumberFormat(String decimal){
-		int j = new Integer(decimal);
-		if(decimalFormats.get(j)!=null)
-			return decimalFormats.get(j);
-		String decimals="";
-		for(int i=0; i<j; i++){
-			decimals+="0";
-		}
-		decimalFormats.put(j, decimals);
-		return decimals;
 	}
 	
 }
