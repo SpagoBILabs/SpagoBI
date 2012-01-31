@@ -70,6 +70,7 @@ import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.udp.dao.IUdpDAO;
 import it.eng.spagobi.tools.udp.dao.IUdpValueDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -760,5 +761,16 @@ public class DAOFactory {
 	 */
 	public static IProgressThreadDAO getProgressThreadDAO() throws EMFUserError{
 		return (IProgressThreadDAO)createDAOInstance("ProgressThreadDAO");
+	}
+	
+	/**
+	 * Creates a DAO instance for a scheduler.
+	 * 
+	 * @return a DAO instance for the scheduler
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	public static ISchedulerDAO getSchedulerDAO() throws EMFUserError{
+		return (ISchedulerDAO)createDAOInstance("SchedulerDAO");
 	}
 }

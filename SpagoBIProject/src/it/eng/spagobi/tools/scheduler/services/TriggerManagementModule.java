@@ -26,7 +26,9 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplier;
+import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
 import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
@@ -116,7 +118,7 @@ public class TriggerManagementModule extends AbstractModule {
 			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 			
-		    SchedulerServiceSupplier schedulerService=new SchedulerServiceSupplier();
+		    ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			String jobName = (String)request.getAttribute("jobName");
 			String jobGroupName = (String)request.getAttribute("jobGroupName");
 			getSchedule(request, response);
@@ -148,7 +150,7 @@ public class TriggerManagementModule extends AbstractModule {
 		String triggerGroup = (String) request.getAttribute("triggerGroup");
 		try {
 				DAOFactory.getDistributionListDAO().eraseAllRelatedDistributionListObjects(triggerName);
-		        SchedulerServiceSupplier schedulerService=new SchedulerServiceSupplier();
+		        ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			String resp = schedulerService.deleteSchedulation(triggerName, triggerGroup);
 			SourceBean schedModRespSB = SchedulerUtilities.getSBFromWebServiceResponse(resp);
 			if(schedModRespSB!=null) {
@@ -168,7 +170,7 @@ public class TriggerManagementModule extends AbstractModule {
 
 	private void getSchedule(SourceBean request, SourceBean response) throws EMFUserError {
 		try {
-		    SchedulerServiceSupplier schedulerService=new SchedulerServiceSupplier();
+		    ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			String jobName = (String)request.getAttribute("jobName");
 			String jobGroupName = (String)request.getAttribute("jobGroupName");
 			String triggerName = (String) request.getAttribute("triggerName");
@@ -206,7 +208,7 @@ public class TriggerManagementModule extends AbstractModule {
 			SessionContainer sessCont = reqCont.getSessionContainer();
 			SessionContainer permSess = sessCont.getPermanentContainer();
 			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		    SchedulerServiceSupplier schedulerService=new SchedulerServiceSupplier();
+		    ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			TriggerInfo triggerInfo = (TriggerInfo)sessCont.getAttribute(SpagoBIConstants.TRIGGER_INFO);
 			JobInfo jobInfo = triggerInfo.getJobInfo();
 			String jobName = jobInfo.getJobName();
@@ -436,7 +438,7 @@ public class TriggerManagementModule extends AbstractModule {
 	private void newScheduleForJob(SourceBean request, SourceBean response) throws EMFUserError {
 		String jobName = "";
 		try{
-		    SchedulerServiceSupplier schedulerService=new SchedulerServiceSupplier();
+		    ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			jobName = (String)request.getAttribute("jobName");
 			String jobGroupName = (String)request.getAttribute("jobGroupName");
 			TriggerInfo ti = new TriggerInfo();
@@ -475,7 +477,7 @@ public class TriggerManagementModule extends AbstractModule {
 	private void getTriggersForJob(SourceBean request, SourceBean response) throws EMFUserError {
 		String jobName = "";
 		try{
-		    SchedulerServiceSupplier schedulerService=new SchedulerServiceSupplier();
+		    ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			// create the sourcebean of the list
 			SourceBean pageListSB  = new SourceBean("PAGED_LIST");
 			jobName = (String)request.getAttribute("jobName");

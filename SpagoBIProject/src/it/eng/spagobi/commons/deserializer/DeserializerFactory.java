@@ -10,7 +10,7 @@
  * The complete text of SpagoBI license is included in the COPYING.LESSER file. 
  */
 
-package it.eng.spagobi.commons.serializer;
+package it.eng.spagobi.commons.deserializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,17 +18,17 @@ import java.util.Map;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class SerializerFactory {
+public class DeserializerFactory {
 	
-	static Map<String, Serializer> mappings;
+	static Map<String, Deserializer> mappings;
 	
 	static {
 		mappings = new HashMap();
-		mappings.put( "application/json", new JSONSerializer() );
-		mappings.put( "application/xml", new XMLSerializer() );
+		//mappings.put( "application/json", new JSONSerializer() );
+		mappings.put( "application/xml", new XMLDeserializer() );
 	}
 	
-	public static Serializer getSerializer(String mimeType) {
+	public static Deserializer getDeserializer(String mimeType) {
 		return mappings.get( mimeType );
 	}
 }

@@ -9,26 +9,28 @@
  * a copy of the GNU Lesser General Public License along with SpagoBI. If not, see: http://www.gnu.org/licenses/.
  * The complete text of SpagoBI license is included in the COPYING.LESSER file. 
  */
+package it.eng.spagobi.commons.dao;
 
-package it.eng.spagobi.commons.serializer;
-
-import java.util.HashMap;
-import java.util.Map;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
+ *
  */
-public class SerializerFactory {
+public class SpagoBIDOAException extends SpagoBIRuntimeException {
+
+	private static final long serialVersionUID = 1L;
 	
-	static Map<String, Serializer> mappings;
-	
-	static {
-		mappings = new HashMap();
-		mappings.put( "application/json", new JSONSerializer() );
-		mappings.put( "application/xml", new XMLSerializer() );
+	public SpagoBIDOAException(String message) {
+		super(message);
 	}
 	
-	public static Serializer getSerializer(String mimeType) {
-		return mappings.get( mimeType );
+	public SpagoBIDOAException(Throwable ex) {
+		super(ex);
+	}
+
+	
+	public SpagoBIDOAException(String message, Throwable ex) {
+		super(message, ex);
 	}
 }

@@ -17,5 +17,5 @@ import it.eng.spagobi.commons.serializer.SerializationException;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public interface Deserializer {
-	public Object deserialize(Object o) throws SerializationException;
+	public Object deserialize(Object o, Class clazz) throws DeserializationException;
 }
