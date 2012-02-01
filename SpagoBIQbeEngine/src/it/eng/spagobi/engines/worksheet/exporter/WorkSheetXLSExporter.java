@@ -375,7 +375,7 @@ public class WorkSheetXLSExporter {
 	}
 
 	
-	public static File getImage(JSONObject content){
+	public static List<File> getImage(JSONObject content){
 		String chartType = content.optString("CHART_TYPE"); //check If the chart to export is ext
 		if(chartType!=null && chartType.equals("ext3")){
 			return createPNGImage(content); 
@@ -383,7 +383,8 @@ public class WorkSheetXLSExporter {
 		return createJPGImage(content);
 	}
 	
-	public static File createPNGImage(JSONObject content) {
+	public static List<File> createPNGImage(JSONObject content) {
+		List<File> exportFiles = new ArrayList<File>();
 		File exportFile = null;
 		try {
 			
@@ -392,21 +393,25 @@ public class WorkSheetXLSExporter {
 			if(images==null || images.length()==0){
 				return null;
 			}
-			inputStream = new ByteArrayInputStream(ExportWorksheetAction.decodeToByteArray(images.getString(0)));
-			String ext = ".png";
-			BufferedImage image = ImageIO.read(inputStream);
-			exportFile = File.createTempFile("chart", ext);
-			ImageIO.write(image, "png", exportFile);
+			for(int i=0; i<images.length(); i++){
+				inputStream = new ByteArrayInputStream(ExportWorksheetAction.decodeToByteArray(images.getString(i)));
+				String ext = ".png";
+				BufferedImage image = ImageIO.read(inputStream);
+				exportFile = File.createTempFile("chart", ext);
+				ImageIO.write(image, "png", exportFile);
+				exportFiles.add(exportFile);
+			}
 
 		} catch (IOException e) {
 			logger.error(e);
 		} catch (JSONException e) {
 			logger.error(e);
 		}
-		return exportFile;
+		return exportFiles;
 	}
 	
-	public static File createJPGImage(JSONObject content) {
+	public static List<File> createJPGImage(JSONObject content) {
+		List<File> exportFiles = new ArrayList<File>();
 		File exportFile = null;
 		try {
 			InputStream inputStream = null;
@@ -423,7 +428,8 @@ public class WorkSheetXLSExporter {
 		} catch (JSONException e) {
 			logger.error(e);
 		}
-		return exportFile;
+		exportFiles.add(exportFile);
+		return exportFiles;
 	}
 
 	public static void transformSVGIntoJPEG(InputStream inputStream,
