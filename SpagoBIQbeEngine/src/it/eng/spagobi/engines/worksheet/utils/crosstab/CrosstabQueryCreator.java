@@ -11,15 +11,9 @@
  */
 package it.eng.spagobi.engines.worksheet.utils.crosstab;
 
-import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.WhereField.Operand;
-import it.eng.qbe.statement.AbstractStatement;
-import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
-import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition.Column;
-import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition.Row;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
@@ -32,8 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
 
 
 /**
@@ -47,7 +39,9 @@ public class CrosstabQueryCreator {
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(CrosstabQueryCreator.class);
 	
-    public static final String QBE_SMARTFILTER_COUNT = "qbe_smartfilter_count"; 
+    public static final String QBE_SMARTFILTER_COUNT = "qbe_smartfilter_count";
+    
+    public static final String DEFAULT_ORDER_TYPE = "ASC";
     
 	public static String getCrosstabQuery(
 			CrosstabDefinition crosstabDefinition,
@@ -63,6 +57,8 @@ public class CrosstabQueryCreator {
 		putWhereClause(buffer, whereFields, descriptor, dataSource.getHibDialectClass());
 		
 		putGroupByClause(buffer, crosstabDefinition, descriptor);
+		
+		putOrderByClause(buffer, crosstabDefinition, descriptor);
 		
 		String toReturn = buffer.toString();
 		logger.debug("OUT: returning " + toReturn);
@@ -103,55 +99,55 @@ public class CrosstabQueryCreator {
 //		return toReturn;
 //	}
 	
-	private static void addColumnsValuesToWhereClause(List<Column> columns,
-			List<WhereField> whereFields) {
-		Iterator<CrosstabDefinition.Column> it = columns.iterator();
-		while (it.hasNext()) {
-			CrosstabDefinition.Column aColumn = it.next();
-			addAttributeToWhereClause(aColumn, whereFields);
-		}
-	}
-	
-	private static void addRowsValuesToWhereClause(List<Row> rows,
-			List<WhereField> whereFields) {
-		Iterator<CrosstabDefinition.Row> it = rows.iterator();
-		while (it.hasNext()) {
-			CrosstabDefinition.Row aRow = it.next();
-			addAttributeToWhereClause(aRow, whereFields);
-		}
-	}
+//	private static void addColumnsValuesToWhereClause(List<Column> columns,
+//			List<WhereField> whereFields) {
+//		Iterator<CrosstabDefinition.Column> it = columns.iterator();
+//		while (it.hasNext()) {
+//			CrosstabDefinition.Column aColumn = it.next();
+//			addAttributeToWhereClause(aColumn, whereFields);
+//		}
+//	}
+//	
+//	private static void addRowsValuesToWhereClause(List<Row> rows,
+//			List<WhereField> whereFields) {
+//		Iterator<CrosstabDefinition.Row> it = rows.iterator();
+//		while (it.hasNext()) {
+//			CrosstabDefinition.Row aRow = it.next();
+//			addAttributeToWhereClause(aRow, whereFields);
+//		}
+//	}
 
-	private static void addAttributeToWhereClause(Attribute attribute,
-			List<WhereField> whereFields) {
-		String valuesStr = attribute.getValues();
-		JSONArray valuesJSON = null;
-		try {
-			valuesJSON = new JSONArray(valuesStr);
-		} catch (JSONException e) {
-			throw new RuntimeException(e);
-		}
-		if (valuesJSON.length() > 0) {
-			WhereField whereField = buildWhereField(attribute, valuesJSON);
-			whereFields.add(whereField);
-		}
-	}
+//	private static void addAttributeToWhereClause(Attribute attribute,
+//			List<WhereField> whereFields) {
+//		String valuesStr = attribute.getValues();
+//		JSONArray valuesJSON = null;
+//		try {
+//			valuesJSON = new JSONArray(valuesStr);
+//		} catch (JSONException e) {
+//			throw new RuntimeException(e);
+//		}
+//		if (valuesJSON.length() > 0) {
+//			WhereField whereField = buildWhereField(attribute, valuesJSON);
+//			whereFields.add(whereField);
+//		}
+//	}
 
-	private static WhereField buildWhereField(Attribute attribute,
-			JSONArray valuesJSON) {
-		String operator = valuesJSON.length() > 1 ? CriteriaConstants.IN : CriteriaConstants.EQUALS_TO;
-		Operand leftOperand = new Operand(new String[] {attribute.getEntityId()}, attribute.getAlias(), AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
-		String[] values = new String[valuesJSON.length()];
-		for (int i = 0; i < valuesJSON.length(); i++) {
-			try {
-				values[i] = valuesJSON.getString(i);
-			} catch (JSONException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		Operand rightOperand = new Operand(values, attribute.getAlias(), AbstractStatement.OPERAND_TYPE_STATIC, null, null);
-		WhereField whereField = new WhereField(attribute.getAlias(), attribute.getAlias(), false, leftOperand, operator, rightOperand, "AND");
-		return whereField;
-	}
+//	private static WhereField buildWhereField(Attribute attribute,
+//			JSONArray valuesJSON) {
+//		String operator = valuesJSON.length() > 1 ? CriteriaConstants.IN : CriteriaConstants.EQUALS_TO;
+//		Operand leftOperand = new Operand(new String[] {attribute.getEntityId()}, attribute.getAlias(), AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
+//		String[] values = new String[valuesJSON.length()];
+//		for (int i = 0; i < valuesJSON.length(); i++) {
+//			try {
+//				values[i] = valuesJSON.getString(i);
+//			} catch (JSONException e) {
+//				throw new RuntimeException(e);
+//			}
+//		}
+//		Operand rightOperand = new Operand(values, attribute.getAlias(), AbstractStatement.OPERAND_TYPE_STATIC, null, null);
+//		WhereField whereField = new WhereField(attribute.getAlias(), attribute.getAlias(), false, leftOperand, operator, rightOperand, "AND");
+//		return whereField;
+//	}
 
 	private static void putSelectClause(StringBuffer toReturn,
 			CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor, IDataSource dataSource) {
@@ -249,6 +245,46 @@ public class CrosstabQueryCreator {
 		}
 		logger.debug("OUT");
 		
+	}
+	
+	private static void putOrderByClause(StringBuffer toReturn,
+			CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor) {
+		logger.debug("IN");
+		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
+		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
+		
+		toReturn.append(" ORDER BY ");
+		
+		// appends columns
+		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
+		while (columsIt.hasNext()) {
+			CrosstabDefinition.Column aColumn = columsIt.next();
+			String columnName = descriptor.getColumnName(aColumn.getEntityId());
+			toReturn.append(columnName);
+			toReturn.append(" " + DEFAULT_ORDER_TYPE);
+			if (columsIt.hasNext()) {
+				toReturn.append(", ");
+			}
+		}
+		
+		// append an extra comma between grouping on columns and grouping on rows, if necessary
+		if (colums.size() > 0 && rows.size() > 0) {
+			toReturn.append(", ");
+		}
+		
+		// appends rows
+		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
+		while (rowsIt.hasNext()) {
+			CrosstabDefinition.Row aRow = rowsIt.next();
+			String columnName = descriptor.getColumnName(aRow.getEntityId());
+			toReturn.append(columnName);
+			toReturn.append(" " + DEFAULT_ORDER_TYPE);
+			if (rowsIt.hasNext()) {
+				toReturn.append(", ");
+			}
+		}
+		
+		logger.debug("OUT");
 	}
 	
 //	public static String getColumnName(String elementElias, Query baseQuery, List baseQuerySelectedFields) {
