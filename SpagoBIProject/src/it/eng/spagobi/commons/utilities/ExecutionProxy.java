@@ -459,7 +459,7 @@ public class ExecutionProxy {
 		}
 		else if(driver instanceof WorksheetDriver && modality.equals(SpagoBIConstants.MASSIVE_EXPORT_MODALITY)){
 			mapPars.remove("ACTION_NAME");
-			mapPars.put("ACTION_NAME", WorksheetDriver.EXPORT_ACTION_NAME);
+			mapPars.put("ACTION_NAME", WorksheetDriver.PARAM_ACTION_NAME);
 			mapPars.remove("outputType");
 			mapPars.put("outputType", "XLS");
 			mapPars.remove("MIME_TYPE");
