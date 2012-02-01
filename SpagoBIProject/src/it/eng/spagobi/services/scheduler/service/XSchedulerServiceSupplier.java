@@ -43,7 +43,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier{
     	try {
 			schedulerDAO = DAOFactory.getSchedulerDAO();
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("Impossible to load scheduler DAO");
+			throw new SpagoBIRuntimeException("Impossible to load scheduler DAO", t);
 		}
     }
 	
@@ -147,7 +147,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier{
 		} catch (SpagoBIRuntimeException t) {
 			throw t;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while loading trigger [" + triggerName + "] from group [" + triggerGroupName + "]");
+			throw new SpagoBIRuntimeException("An unexpected error occured while loading trigger [" + triggerName + "] from group [" + triggerGroupName + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}

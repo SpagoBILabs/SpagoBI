@@ -42,13 +42,14 @@ public class XMLSerializer implements Serializer {
 		
 		try {
 			if(o instanceof Collection) {
-				StringBuffer buffer = new StringBuffer("<ROWS>");
-				Collection c = (Collection)o;
-				Iterator it = c.iterator();
-				while(it.hasNext()) {
-					buffer.append( serialize( it.next() ,locale) );
+				StringBuffer buffer = new StringBuffer();
+				
+				buffer.append("<ROWS>");
+				Collection objectCollection = (Collection)o;
+				for(Object object : objectCollection) {
+					buffer.append( serialize( object, locale) );
 				}
-				buffer = new StringBuffer("</ROWS>");
+				buffer.append("</ROWS>");
 				result = buffer.toString();
 			} else {
 				if( !mappings.containsKey(o.getClass())) {
@@ -59,7 +60,10 @@ public class XMLSerializer implements Serializer {
 				if(serializer instanceof JobXMLSerializer) {
 					JobXMLSerializer jobXMLSerializer = (JobXMLSerializer)serializer;
 					jobXMLSerializer.setProperties(properties);
-				} 
+				} else if(serializer instanceof TriggerXMLSerializer) {
+					TriggerXMLSerializer triggerXMLSerializer = (TriggerXMLSerializer)serializer;
+					triggerXMLSerializer.setProperties(properties);
+				}
 				result = serializer.serialize(o,locale);
 			}			
 			

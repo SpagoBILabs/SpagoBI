@@ -23,6 +23,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.serializer.TriggerXMLSerializer;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
@@ -60,6 +61,7 @@ import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 import it.eng.spagobi.utilities.assertion.Assert;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -79,7 +81,7 @@ public class XMLDeserializer implements Deserializer {
 	public XMLDeserializer() {
 		mappings = new HashMap();
 		mappings.put( Job.class, new JobXMLDeserializer() );
-		//mappings.put( Trigger.class, new TriggerXMLSerializer() );
+		mappings.put( Trigger.class, new TriggerXMLDeserializer() );
 	}
 
 	public Object deserialize(Object o, Class clazz) throws DeserializationException {
@@ -104,12 +106,14 @@ public class XMLDeserializer implements Deserializer {
 			}
 			
 			if(xml.getAttribute("ROWS") != null) {
+				List list = new ArrayList();
 				List<SourceBean> rows = xml.getAttributeAsList("ROWS.ROW");
 				for(SourceBean row: rows) {
-					deserializer.deserialize(row, clazz);
+					list.add( deserializer.deserialize(row, clazz) );
 				}
+				result = list;
 			} else {
-				deserializer.deserialize(o, clazz);
+				result = deserializer.deserialize(o, clazz);
 			}
 		} catch (Throwable t) {
 			throw new DeserializationException("An error occurred while deserializing object: " + o, t);

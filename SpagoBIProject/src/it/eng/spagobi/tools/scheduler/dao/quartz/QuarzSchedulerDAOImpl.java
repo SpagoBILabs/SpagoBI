@@ -32,13 +32,13 @@ import org.quartz.impl.StdSchedulerFactory;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class QuarzSchedulerDAO implements ISchedulerDAO {
+public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 	
 	private Scheduler scheduler;
 	
-	static private Logger logger = Logger.getLogger(QuarzSchedulerDAO.class);
+	static private Logger logger = Logger.getLogger(QuarzSchedulerDAOImpl.class);
 	
-	public QuarzSchedulerDAO() {
+	public QuarzSchedulerDAOImpl() {
 		logger.debug("IN");
 		try {
 			scheduler = StdSchedulerFactory.getDefaultScheduler(); 
@@ -168,7 +168,7 @@ public class QuarzSchedulerDAO implements ISchedulerDAO {
 			if (jobNames != null) {
 				logger.debug("Job group [" + jobGroupName + "] contains [" + jobNames.length + "] job(s)");
 				for (int j = 0; j < jobNames.length; j++) {
-					Job job = loadJob(jobNames[j], jobGroupName);
+					Job job = loadJob(jobGroupName, jobNames[j]);
 					if(job != null) {
 						jobs.add(job);
 					} else {
@@ -268,7 +268,7 @@ public class QuarzSchedulerDAO implements ISchedulerDAO {
 			Assert.assertTrue(StringUtilities.isNotEmpty(spagobiTrigger.getJob().getName()), "The attribute [name] of the job associated to the trigger cannot be empty]");
 			Assert.assertTrue(StringUtilities.isNotEmpty(spagobiTrigger.getJob().getGroupName()), "The attribute [groupName] of the job associated to the trigger cannot be empty]");
 			
-			List<Trigger> jobTriggers = loadTriggers( spagobiTrigger.getJob().getName(), spagobiTrigger.getJob().getGroupName() );
+			List<Trigger> jobTriggers = loadTriggers( spagobiTrigger.getJob().getGroupName(), spagobiTrigger.getJob().getName() );
 	        for(Trigger jobTrigger : jobTriggers) {
 	           	if(jobTrigger.getName().equals(spagobiTrigger.getName())) {
 	           		exists = true;

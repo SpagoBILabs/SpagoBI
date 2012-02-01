@@ -49,6 +49,9 @@ class QuartzNativeObjectsConverter {
 		quartzJob.setRequestsRecovery( spagobiJob.isRequestsRecovery() );
 		quartzJob.setVolatility( spagobiJob.isVolatile() );
 		
+		JobDataMap parameters = convertParametersToNativeObject(spagobiJob.getParameters());
+		quartzJob.setJobDataMap(parameters);
+		
 		return quartzJob;
 	}
 	
@@ -63,6 +66,9 @@ class QuartzNativeObjectsConverter {
 		spagobiJob.setDurable( quartzJob.isDurable() );
 		spagobiJob.setRequestsRecovery( quartzJob.requestsRecovery() );
 		spagobiJob.setVolatile( quartzJob.isVolatile() );
+		
+		Map<String, String> parameters = convertParametersFromNativeObject(quartzJob.getJobDataMap());
+		spagobiJob.addParameters(parameters);
 		
 		return spagobiJob;
 	}
@@ -153,8 +159,10 @@ class QuartzNativeObjectsConverter {
 		job.setGroupName( quartzTrigger.getJobGroup() );
 		job.setVolatile(quartzTrigger.isVolatile() );
 		Map<String, String> parameters = convertParametersFromNativeObject( quartzTrigger.getJobDataMap() );
-		job.addParameters(parameters);
-				
+		job.addParameters(parameters);	
+		
+		spagobiTrigger.setJob(job);
+		
 		return spagobiTrigger;
 	}
 	
