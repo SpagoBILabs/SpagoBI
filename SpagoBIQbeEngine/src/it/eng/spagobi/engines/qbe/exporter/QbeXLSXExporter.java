@@ -11,7 +11,6 @@
  */
 package it.eng.spagobi.engines.qbe.exporter;
 
-import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
 import it.eng.spagobi.engines.qbe.query.Field;
 import it.eng.spagobi.engines.worksheet.bo.MeasureScaleFactorOption;
 import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetSerializationUtils;
@@ -51,15 +50,25 @@ public class QbeXLSXExporter {
 	/** Configuration properties */
     public static final String PROPERTY_HEADER_FONT_SIZE = "HEADER_FONT_SIZE";
     public static final String PROPERTY_HEADER_COLOR = "HEADER_COLOR";
-    public static final String PROPERTY_CONTENT_FONT_SIZE = "CONTENT_FONT_SIZE";
-    public static final String PROPERTY_CONTENT_COLOR = "CONTENT_COLOR";
+    public static final String PROPERTY_HEADER_BACKGROUND_COLOR = "HEADER_BACKGROUND_COLOR";
+    public static final String PROPERTY_HEADER_BORDER_COLOR = "HEADER_BORDER_COLOR";
+    public static final String PROPERTY_CELL_FONT_SIZE = "CELL_FONT_SIZE";
+    public static final String PROPERTY_CELL_COLOR = "CELL_COLOR";
+    public static final String PROPERTY_CELL_BACKGROUND_COLOR = "CELL_BACKGROUND_COLOR";
+    public static final String PROPERTY_CELL_BORDER_COLOR = "CELL_BORDER_COLOR";
     public static final String PROPERTY_FONT_NAME = "FONT_NAME";
     
-	public static final short DEFAULT_HEADER_FONT_SIZE = 8;
-	public static final short DEFAULT_CONTENT_FONT_SIZE = 8;
+    public static final short DEFAULT_HEADER_FONT_SIZE = 8;
+    public static final String DEFAULT_HEADER_COLOR = "BLACK";
+    public static final String DEFAULT_HEADER_BACKGROUND_COLOR = "GREY_25_PERCENT";
+    public static final String DEFAULT_HEADER_BORDER_COLOR = "WHITE";
+    public static final short DEFAULT_CELL_FONT_SIZE = 8;
+    public static final String DEFAULT_CELL_COLOR = "BLACK";
+    public static final String DEFAULT_CELL_BACKGROUND_COLOR = "WHITE";
+    public static final String DEFAULT_CELL_BORDER_COLOR = "BLACK";
+    public static final String DEFAULT_DIMENSION_NAME_COLOR = "BLACK";
+    public static final String DEFAULT_DIMENSION_NAME_BACKGROUND_COLOR = "LIGHT_BLUE";
 	public static final String DEFAULT_FONT_NAME = "Verdana";
-	public static final String DEFAULT_HEADER_COLOR = "BLACK";
-	public static final String DEFAULT_CONTENT_COLOR = "BLACK";
 	
 	public static final int DEFAULT_DECIMAL_PRECISION = 8;
 	
@@ -144,7 +153,7 @@ public class QbeXLSXExporter {
     	    		format = field.getPattern();
     	    	}
     	    }
-            CellStyle aCellStyle = this.buildContentCellStyle(sheet);
+            CellStyle aCellStyle = this.buildCellStyle(sheet);
             if (format != null) {
 	    		short formatInt = (short) BuiltinFormats.getBuiltinFormat(format);  		  
 	    		aCellStyle.setDataFormat(formatInt);
@@ -167,47 +176,124 @@ public class QbeXLSXExporter {
 	}
 	
 	public CellStyle buildHeaderCellStyle(Sheet sheet) {
+		
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
-        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER); 
+        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
+        
+        String headerBGColor = (String) this.getProperty(PROPERTY_HEADER_BACKGROUND_COLOR);
+        logger.debug("Header background color : " + headerBGColor);
+		short backgroundColorIndex = headerBGColor != null ? IndexedColors.valueOf(
+				headerBGColor).getIndex() : IndexedColors.valueOf(
+				DEFAULT_HEADER_BACKGROUND_COLOR).getIndex();
+		cellStyle.setFillForegroundColor(backgroundColorIndex);
+		
+        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        
+        cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+        cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+        cellStyle.setBorderRight(CellStyle.BORDER_THIN);
+        cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+
+        String bordeBorderColor = (String) this.getProperty(PROPERTY_HEADER_BORDER_COLOR);
+        logger.debug("Header border color : " + bordeBorderColor);
+		short borderColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(
+				bordeBorderColor).getIndex() : IndexedColors.valueOf(
+				DEFAULT_HEADER_BORDER_COLOR).getIndex();
+				
+        cellStyle.setLeftBorderColor(borderColorIndex);
+        cellStyle.setRightBorderColor(borderColorIndex);
+        cellStyle.setBottomBorderColor(borderColorIndex);
+        cellStyle.setTopBorderColor(borderColorIndex);
+        
         Font font = sheet.getWorkbook().createFont();
-        Short fontSize = (Short) this.getProperty(PROPERTY_HEADER_FONT_SIZE);
-        font.setFontHeightInPoints( fontSize != null ? fontSize : DEFAULT_HEADER_FONT_SIZE );
+        
+        Short headerFontSize = (Short) this.getProperty(PROPERTY_HEADER_FONT_SIZE);
+        logger.debug("Header font size : " + headerFontSize);
+		short headerFontSizeShort = headerFontSize != null ? headerFontSize.shortValue() : DEFAULT_HEADER_FONT_SIZE;
+        font.setFontHeightInPoints(headerFontSizeShort);
+        
         String fontName = (String) this.getProperty(PROPERTY_FONT_NAME);
-        font.setFontName( fontName != null ? fontName : DEFAULT_FONT_NAME );
-        String color = (String) this.getProperty(PROPERTY_HEADER_COLOR);
-        font.setColor( color != null ? IndexedColors.valueOf(color).getIndex() : IndexedColors.valueOf(DEFAULT_HEADER_COLOR).getIndex() );
+        logger.debug("Font name : " + fontName);
+        fontName = fontName != null ? fontName : DEFAULT_FONT_NAME;
+        font.setFontName(fontName);
+        
+        String headerColor = (String) this.getProperty(PROPERTY_HEADER_COLOR);
+        logger.debug("Header color : " + headerColor);
+		short headerColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(
+				headerColor).getIndex() : IndexedColors.valueOf(
+				DEFAULT_HEADER_COLOR).getIndex();
+        font.setColor(headerColorIndex);
+        
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         cellStyle.setFont(font);
         return cellStyle;
 	}
 	
-	public CellStyle buildContentCellStyle(Sheet sheet) {
+	public CellStyle buildCellStyle(Sheet sheet) {
+		
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-        cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
-        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER); 
+        cellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
+        
+        String cellBGColor = (String) this.getProperty(PROPERTY_CELL_BACKGROUND_COLOR);
+        logger.debug("Cell background color : " + cellBGColor);
+		short backgroundColorIndex = cellBGColor != null ? IndexedColors.valueOf(
+				cellBGColor).getIndex() : IndexedColors.valueOf(
+				DEFAULT_CELL_BACKGROUND_COLOR).getIndex();
+		cellStyle.setFillForegroundColor(backgroundColorIndex);
+		
+        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        
+        cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+        cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+        cellStyle.setBorderRight(CellStyle.BORDER_THIN);
+        cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+
+        String bordeBorderColor = (String) this.getProperty(PROPERTY_CELL_BORDER_COLOR);
+        logger.debug("Cell border color : " + bordeBorderColor);
+		short borderColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(
+				bordeBorderColor).getIndex() : IndexedColors.valueOf(
+				DEFAULT_CELL_BORDER_COLOR).getIndex();
+				
+        cellStyle.setLeftBorderColor(borderColorIndex);
+        cellStyle.setRightBorderColor(borderColorIndex);
+        cellStyle.setBottomBorderColor(borderColorIndex);
+        cellStyle.setTopBorderColor(borderColorIndex);
+        
         Font font = sheet.getWorkbook().createFont();
-        Short fontSize = (Short) this.getProperty(PROPERTY_CONTENT_FONT_SIZE);
-        font.setFontHeightInPoints( fontSize != null ? fontSize : DEFAULT_CONTENT_FONT_SIZE );
+        
+        Short cellFontSize = (Short) this.getProperty(PROPERTY_CELL_FONT_SIZE);
+        logger.debug("Cell font size : " + cellFontSize);
+		short cellFontSizeShort = cellFontSize != null ? cellFontSize.shortValue() : DEFAULT_CELL_FONT_SIZE;
+        font.setFontHeightInPoints(cellFontSizeShort);
+        
         String fontName = (String) this.getProperty(PROPERTY_FONT_NAME);
-        font.setFontName( fontName != null ? fontName : DEFAULT_FONT_NAME );
-        String color = (String) this.getProperty(PROPERTY_CONTENT_COLOR);
-        font.setColor( color != null ? IndexedColors.valueOf(color).getIndex() : IndexedColors.valueOf(DEFAULT_CONTENT_COLOR).getIndex() );
+        logger.debug("Font name : " + fontName);
+        fontName = fontName != null ? fontName : DEFAULT_FONT_NAME;
+        font.setFontName(fontName);
+        
+        String cellColor = (String) this.getProperty(PROPERTY_CELL_COLOR);
+        logger.debug("Cell color : " + cellColor);
+		short cellColorIndex = cellColor != null ? IndexedColors.valueOf(
+				cellColor).getIndex() : IndexedColors.valueOf(
+				DEFAULT_CELL_COLOR).getIndex();
+        font.setColor(cellColorIndex);
+        
         cellStyle.setFont(font);
         return cellStyle;
 	}
 	
 	public void fillSheetData(Sheet sheet,Workbook wb, CreationHelper createHelper,CellStyle[] cellTypes, int beginRowData, int beginColumnData) {	
-		CellStyle dCellStyle = this.buildContentCellStyle(sheet);
-		DataFormat df = createHelper.createDataFormat();
+		CellStyle dCellStyle = this.buildCellStyle(sheet);
 		Iterator it = dataStore.iterator();
     	int rownum = beginRowData;
     	short formatIndexInt = (short) BuiltinFormats.getBuiltinFormat("#,##0");
-    	CellStyle cellStyleInt = this.buildContentCellStyle(sheet);  // cellStyleInt is the default cell style for integers
+    	CellStyle cellStyleInt = this.buildCellStyle(sheet);  // cellStyleInt is the default cell style for integers
 	    cellStyleInt.cloneStyleFrom(dCellStyle);
 	    cellStyleInt.setDataFormat(formatIndexInt);
 	    
-		CellStyle cellStyleDate = this.buildContentCellStyle(sheet); // cellStyleDate is the default cell style for dates
+		CellStyle cellStyleDate = this.buildCellStyle(sheet); // cellStyleDate is the default cell style for dates
 		cellStyleDate.cloneStyleFrom(dCellStyle);
 		cellStyleDate.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy"));
 		
@@ -292,7 +378,7 @@ public class QbeXLSXExporter {
 			decimals += "0";
 		}
 		
-	    CellStyle cellStyleDoub = this.buildContentCellStyle(sheet); // cellStyleDoub is the default cell style for doubles
+	    CellStyle cellStyleDoub = this.buildCellStyle(sheet); // cellStyleDoub is the default cell style for doubles
 	    cellStyleDoub.cloneStyleFrom(dCellStyle);
 	    DataFormat df = createHelper.createDataFormat();
 	    cellStyleDoub.setDataFormat(df.getFormat("#,##0."+decimals));

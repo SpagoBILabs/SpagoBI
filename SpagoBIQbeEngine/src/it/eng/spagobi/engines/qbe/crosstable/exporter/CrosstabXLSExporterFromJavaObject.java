@@ -156,9 +156,8 @@ public class CrosstabXLSExporterFromJavaObject {
 	}
 
 	private int buildDataMatrix(Sheet sheet, CrossTab cs, int rowOffset, int columnOffset, CreationHelper createHelper, MeasureFormatter measureFormatter) throws JSONException {
-		//CellStyle cellStyle = buildDataCellStyle(sheet);
 		
-		//CellStyle sumCellStyle = buildDataCellStyle(sheet);
+		CellStyle cellStyleForNA = buildNACellStyle(sheet);
 		
 		Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
 		int endRowNum = 0;
@@ -188,6 +187,7 @@ public class CrosstabXLSExporterFromJavaObject {
 					logger.debug("Text " + text + " is not recognized as a number");
 					cell.setCellValue(createHelper.createRichTextString(text));
 				    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				    cell.setCellStyle(cellStyleForNA);
 				}
 				
 			}
@@ -195,6 +195,12 @@ public class CrosstabXLSExporterFromJavaObject {
 		return endRowNum;
 	}
 
+
+	private CellStyle buildNACellStyle(Sheet sheet) {
+		CellStyle cellStyleForNA = this.buildDataCellStyle(sheet);
+		cellStyleForNA.setAlignment(CellStyle.ALIGN_CENTER);
+		return cellStyleForNA;
+	}
 
 	/**
 	 * Builds the rows' headers recursively with this order:
