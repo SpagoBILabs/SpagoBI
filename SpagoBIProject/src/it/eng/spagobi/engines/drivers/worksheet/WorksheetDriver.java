@@ -28,7 +28,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
-import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -59,8 +58,10 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 	public final static String PARAM_SERVICE_NAME = "ACTION_NAME";
 	public final static String PARAM_NEW_SESSION = "NEW_SESSION";
 	public final static String QUERY = "QUERY";
-	public final static String PARAM_ACTION_NAME = "MASSIVE_EXPORT_WORKSHEET_ENGINE_START_ACTION";
+	public final static String MASSIVE_EXPORT_PARAM_ACTION_NAME = "MASSIVE_EXPORT_WORKSHEET_ENGINE_START_ACTION";
+	public final static String PARAM_ACTION_NAME = "WORKSHEET_ENGINE_START_ACTION";
 
+	
 	public final static String METADATA_AND_METACONTENT = "METADATA_AND_METACONTENT";
 	public final static String PARAMETERS = "PARAMETERS";
 
@@ -194,7 +195,6 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			addBIParameterDescriptions(biObject, parameters);
 
 			addMetadataAndContent(biObject, parameters);
-			//addParametersContent(biObject, parameters);
 
 		} finally {
 			logger.debug("OUT");
@@ -448,34 +448,34 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 	}
 
 
-	private void addParametersContent(BIObject biobj, Map pars) {
-		logger.debug("IN");
-		JSONArray parsArray = null;
-		if(biobj.getBiObjectParameters() != null){
-			ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
-			for(Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();){
-				BIObjectParameter biobjPar = (BIObjectParameter)it.next();									
-				try {
-					String name = biobjPar.getLabel();
-					String value = parValuesEncoder.encode(biobjPar);
-					JSONObject objectJSON = new JSONObject();
-					objectJSON.put("name", name);
-					objectJSON.put("value", value);
-					if(parsArray == null){
-						parsArray = new JSONArray();
-					}
-					parsArray.put(objectJSON);
-					logger.debug("Add to metadata parameter:"+biobjPar.getParameterUrlName()+"/"+value);
-				} catch (Exception e) {
-					logger.error("Error while processing metadata for BIParameter "+biobjPar.getLabel(),e);
-				}
-			}
-			pars.put(PARAMETERS, parsArray);
-
-		}
-
-		logger.debug("OUT");
-	}
+//	private void addParametersContent(BIObject biobj, Map pars) {
+//		logger.debug("IN");
+//		JSONArray parsArray = null;
+//		if(biobj.getBiObjectParameters() != null){
+//			ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
+//			for(Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();){
+//				BIObjectParameter biobjPar = (BIObjectParameter)it.next();									
+//				try {
+//					String name = biobjPar.getLabel();
+//					String value = parValuesEncoder.encode(biobjPar);
+//					JSONObject objectJSON = new JSONObject();
+//					objectJSON.put("name", name);
+//					objectJSON.put("value", value);
+//					if(parsArray == null){
+//						parsArray = new JSONArray();
+//					}
+//					parsArray.put(objectJSON);
+//					logger.debug("Add to metadata parameter:"+biobjPar.getParameterUrlName()+"/"+value);
+//				} catch (Exception e) {
+//					logger.error("Error while processing metadata for BIParameter "+biobjPar.getLabel(),e);
+//				}
+//			}
+//			pars.put(PARAMETERS, parsArray);
+//
+//		}
+//
+//		logger.debug("OUT");
+//	}
 
 
 	private void addMetadataAndContent(BIObject biObject, Map pars){
