@@ -149,6 +149,36 @@ public class Node implements Cloneable{
 		}
 		
 		/**
+		 * Returns the depth level of the node: root is depth 0, its children are depth 1 and so on...
+		 * @return the depth level of the node: root is depth 0, its children are depth 1 and so on...
+		 */
+		public int getDistanceFromRoot() {
+			if (this.fatherNode == null) {
+				return 0;
+			} else {
+				return this.fatherNode.getDistanceFromRoot() + 1;
+			}
+		}
+		
+		/**
+		 * Returns the level distance between the node and its leaves (it is assumed
+		 * that the tree is balanced, therefore every leaf has the same distance to
+		 * this node).
+		 * If the node is a leaf, 0 is returned.
+		 * 
+		 * @return the level distance between the node and its leaves (it is assumed
+		 *         that the tree is balanced, therefore every leaf has the same
+		 *         distance to this node). If the node is a leaf, 0 is returned.
+		 */
+		public int getDistanceFromLeaves() {
+			if (this.getChilds() == null || this.getChilds().isEmpty()) {
+				return 0;
+			} else {
+				return this.getChilds().get(0).getDistanceFromLeaves() + 1;
+			}
+		}
+		
+		/**
 		 * Return the list of leafs of the subtree with this node as radix
 		 * @return
 		 */
