@@ -95,13 +95,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 		var storeObject = this.getJsonStoreExt3();
 		var extraStyle ={};
 		var items = new Array();
-	
+		this.byteArrays=new Array();
 		for(var i=0; i<storeObject.serieNames.length; i++){
 			var chartSerieNumber = 'series'+i;
 			
 			
 			var itemChart = {
-				xtype: 'piechart',
 				store: storeObject.store,
 				categoryField: 'categories',
 				title: 'Month',
@@ -119,38 +118,41 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 	    	if(Ext.isIE){
 	    		itemChart.height = this.ieChartHeight;
 	    	}
-			
+
+			//configuration (legend and values)
+	    	this.addChartConfExt3(itemChart);
+	    	
 			//percentage
-			if (this.chartConfig.showpercentage==undefined || (!this.chartConfig.showpercentage)) {
-				itemChart.tipRenderer = function(chart, record, index, series){
-					return record.data.categories+'\n'+ record.data['series'+chart.serieNumber];
-		        };
-		        //configuration (legend and values)
-				this.addChartConfExt3(itemChart);
-			}else{
-				//configuration (legend and values)
-				this.addChartConfExt3(itemChart, true);
+			if (this.chartConfig.showpercentage) {
+
 				var seriesum=0;
 				for(var j=0; j<storeObject.serieNames.length; j++){
 					seriesum = seriesum + parseFloat(((storeObject.store.getAt(j)).data)[chartSerieNumber]);
 				}
 				itemChart.seriesum = seriesum;
-				//Its a workaround because if you change the display name the chart is not able to write the tooltips
-				itemChart.tipRenderer = function(chart, record, index, series){
-					return  record.data.categories+'\n'+ record.data['series'+chart.serieNumber] +'\n'+Ext.util.Format.number(100*record.data['series'+chart.serieNumber]/ chart.seriesum, '0.00') + '%';
-			    };
 			}
-						
 			
 			var titlePanel = new Ext.Panel({
 				border: false,
 				html: '<div style=\"padding-top: 5px; color: rgb(255, 102, 0);\" align=\"center\"><font size=\"4\"><b>'+storeObject.serieNames[i]+'</b></font></div>'
 			});
 			
-			items.push(new Ext.Panel({
+			var chartPanel =  new Ext.chart.PieChart(itemChart);
+			
+			var chartContainer = new Ext.Panel({
 				border: false,
-				items: [titlePanel, itemChart]
-			}));
+				items: [titlePanel,chartPanel]
+			});
+			
+			items.push(chartContainer);
+			this.on('contentclick', function(event){
+				chartContainer.fireEvent('contentclick');	
+			}, this);
+			
+			chartContainer.on('contentclick', function(event){
+				alert(chartPanel.exportPNG().toSource());
+				this.byteArrays.push(chartPanel.exportPNG());		
+			}, this);
 		}
 		
 		
@@ -161,6 +163,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 			items: items
 		});
 		
+		//this.on('contentclick', function(event){
 		
 	}	
 	
@@ -168,6 +171,68 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 		return this.chartConfig.colors;
 	}
 	
+	, getTooltipFormatter: function () {
+		var showPercentage = this.chartConfig.showpercentage;
+		var allSeries = this.chartConfig.series;
 	
+		var getFormattedValueExt3 = this.getFormattedValueExt3;
+
+		var toReturn = function (chart, record, index, series) {
+		
+			var valuePrefix= '';
+			var valueSuffix = '';
+
+			var value = getFormattedValueExt3(chart, record, series, allSeries);
+
+			valuePrefix = record.data.categories+'\n';
+
+			if(showPercentage){
+				valueSuffix = '\n'+ +Ext.util.Format.number(100*record.data['series'+chart.serieNumber]/ chart.seriesum, '0.00') + '%';
+			}
+
+			return valuePrefix+value+valueSuffix;
+
+		};
+		return toReturn;
+	}
+
+//	Format the value to display
+	, getFormattedValueExt3: function (chart, record, series, allSeries){
+		var theSerieNam;
+		var value ;
+		var serieDefinition;
+
+		value = record.data['series'+chart.serieNumber];
+		theSerieName = chart.serieName;
+		
+		// find the serie configuration
+		var i = 0;
+		for (; i < allSeries.length; i++) {
+			//substring to remove the scale factor
+			if (allSeries[i].seriename === theSerieName.substring(0, allSeries[i].seriename.length)) {
+				serieDefinition = allSeries[i];
+				break;
+			}
+		}
+
+
+		// format the value according to serie configuration
+		value = Sbi.qbe.commons.Format.number(value, {
+			decimalSeparator: Sbi.locale.formats['float'].decimalSeparator,
+			decimalPrecision: serieDefinition.precision,
+			groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats['float'].groupingSeparator : '',
+					groupingSize: 3,
+					currencySymbol: '',
+					nullValue: ''
+		});
+		
+
+		// add suffix
+		if (serieDefinition.suffix !== undefined && serieDefinition.suffix !== null && serieDefinition.suffix !== '') {
+			value = value + ' ' + serieDefinition.suffix;
+		}
+		return value;
+
+	}
 
 });
