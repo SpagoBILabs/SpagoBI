@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<ACTIONS>
+	
+	<!-- XXX_ENGINE Initializations -->
+	<ACTION name="XXX_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.xxx.services.initializers.XXXEngineStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+</ACTIONS>
+
