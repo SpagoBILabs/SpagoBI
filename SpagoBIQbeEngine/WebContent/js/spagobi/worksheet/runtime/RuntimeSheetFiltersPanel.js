@@ -46,7 +46,7 @@
 Ext.ns("Sbi.worksheet");
 
 Sbi.worksheet.RuntimeSheetFiltersPanel = function(openFilters, config) {
-	
+
 	var defaultSettings = {
 		// set default values here
 		header: false
@@ -221,36 +221,25 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 
 
 	, createStore: function(openFilter) {
-		var store = null;
-//		if (openFilter.values != '[]') {
-//			// case of fixed values
-//			var data = [];
-//			var temp = Ext.decode(openFilter.values);
-//			for (var i = 0; i < temp.length; i++) {
-//				data[i] = [temp[i]];
-//			}
-//			store = new Ext.data.ArrayStore({
-//			    fields : ['column_1']
-//				, data : data
-//			});
-//		} else {
-			// we must load the values from server
-			store = new Ext.data.JsonStore({
-				url: this.services['getFilterValuesService']
-			});
-			var baseParams = {
-					'fieldName': openFilter.field
-					, 'sheetName' : this.baseConfig.sheetName
-			};
-			store.baseParams = baseParams;
-			store.on('loadexception', function(store, options, response, e) {
-				Sbi.exception.ExceptionHandler.handleFailure(response, options);
-			});
-//		}
+		var store = new Ext.data.JsonStore({
+			url: this.services['getFilterValuesService']
+			, sortInfo : {
+				field: 'column_1' // we order on the first column retrieved by the server (remember that first column contains codes)
+			    , direction: openFilter.orderType || 'ASC'  // ASC is default
+			}
+		});
+		var baseParams = {
+				'fieldName': openFilter.field
+				, 'sheetName' : this.baseConfig.sheetName
+		};
+		store.baseParams = baseParams;
+		store.on('loadexception', function(store, options, response, e) {
+			Sbi.exception.ExceptionHandler.handleFailure(response, options);
+		});
 		
 		return store;
 		
-	}	
+	}
 
 	// public methods
 	
