@@ -11,6 +11,8 @@
  */
 package it.eng.spagobi.engines.qbe.crosstable;
 
+import it.eng.spagobi.engines.qbe.crosstable.CrossTab.CellType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,7 @@ public class Node implements Cloneable{
 		public static final String CROSSTAB_NODE_JSON_KEY = "node_key";
 	
 		private String value;//the value of the node
+		private CellType cellType;//the value of the node
 		private List<Node> childs;//list of childs
 		private int leafPosition =-1;//position of the leafs in the tree.. If this is the right most leaf the value is 0 and so on
 		private List<Integer> leafPositionsForCF;//Uset for the CF (The node is the result of a merging of nodes.. This list contains the position of the lines of the data matrix with header equals to the value of this node)
@@ -282,4 +285,14 @@ public class Node implements Cloneable{
 				}
 			}
 		}
+
+		public CellType getCellType() {
+			return cellType;
+		}
+
+		public void setCellType(CellType cellType) {
+			this.cellType = cellType;
+		}
+		
+		
 }
