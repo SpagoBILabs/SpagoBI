@@ -62,6 +62,8 @@ public class QbeXLSXExporter {
 	public static final String DEFAULT_CONTENT_COLOR = "BLACK";
 	
 	public static final int DEFAULT_DECIMAL_PRECISION = 8;
+	
+	public static final int DEFAULT_START_COLUMN = 0;
     
     private Locale locale;
     private Map<String, Object> properties;
@@ -114,8 +116,8 @@ public class QbeXLSXExporter {
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
 		 if (dataStore!=null  && !dataStore.isEmpty()) {
-			    CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper, startRow, 4);
-			    fillSheetData(sheet, wb, createHelper, cellTypes, startRow+1, 4);    	
+			    CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper, startRow, DEFAULT_START_COLUMN);
+			    fillSheetData(sheet, wb, createHelper, cellTypes, startRow+1, DEFAULT_START_COLUMN);    	
 		    }
 	}
 	
@@ -171,7 +173,7 @@ public class QbeXLSXExporter {
         Font font = sheet.getWorkbook().createFont();
         Short fontSize = (Short) this.getProperty(PROPERTY_HEADER_FONT_SIZE);
         font.setFontHeightInPoints( fontSize != null ? fontSize : DEFAULT_HEADER_FONT_SIZE );
-        String fontName = (String) this.getProperty(PROPERTY_HEADER_FONT_SIZE);
+        String fontName = (String) this.getProperty(PROPERTY_FONT_NAME);
         font.setFontName( fontName != null ? fontName : DEFAULT_FONT_NAME );
         String color = (String) this.getProperty(PROPERTY_HEADER_COLOR);
         font.setColor( color != null ? IndexedColors.valueOf(color).getIndex() : IndexedColors.valueOf(DEFAULT_HEADER_COLOR).getIndex() );
@@ -187,7 +189,7 @@ public class QbeXLSXExporter {
         Font font = sheet.getWorkbook().createFont();
         Short fontSize = (Short) this.getProperty(PROPERTY_CONTENT_FONT_SIZE);
         font.setFontHeightInPoints( fontSize != null ? fontSize : DEFAULT_CONTENT_FONT_SIZE );
-        String fontName = (String) this.getProperty(PROPERTY_CONTENT_FONT_SIZE);
+        String fontName = (String) this.getProperty(PROPERTY_FONT_NAME);
         font.setFontName( fontName != null ? fontName : DEFAULT_FONT_NAME );
         String color = (String) this.getProperty(PROPERTY_CONTENT_COLOR);
         font.setColor( color != null ? IndexedColors.valueOf(color).getIndex() : IndexedColors.valueOf(DEFAULT_CONTENT_COLOR).getIndex() );
