@@ -81,6 +81,7 @@ public class JobXMLSerializer implements Serializer {
 			result.append(" " + JOB_REQUEST_RECOVERY + "=\"" + jobRequestRecovery + "\"");
 			result.append(" " + USE_VOLATILITY + "=\"" + jobVolatility + "\"");
 			if( isForServiceConsumer ) {
+				result.append(">");
 				result.append("<JOB_PARAMETERS>");
 				
 				Set<String> keys = parameters.keySet();

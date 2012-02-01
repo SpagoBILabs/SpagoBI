@@ -65,6 +65,9 @@
 
 	  	<DAO name="I18NMessagesDAO" implementation="it.eng.spagobi.i18n.dao.I18NMessagesDAOHibImpl"/>
 	  	<DAO name="ProgressThreadDAO" implementation="it.eng.spagobi.tools.massiveExport.dao.ProgressThreadDAOImpl"/>
+	  	
+	  	<DAO name="SchedulerDAO" implementation="it.eng.spagobi.tools.scheduler.dao.quartz.QuarzSchedulerDAOImpl"/>
+	  	
 
 	 </DAO-CONF>     
      

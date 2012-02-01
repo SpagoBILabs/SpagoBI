@@ -18,7 +18,7 @@ package it.eng.spagobi.services.scheduler.service;
  */
 public class SchedulerServiceSupplierFactory {
 	public static ISchedulerServiceSupplier  getSupplier() {
-		//return new XSchedulerServiceSupplier(); // only the brave!
-		return new SchedulerServiceSupplier();
+		return new XSchedulerServiceSupplier(); // only the brave!
+		//return new SchedulerServiceSupplier();
 	}
 }

@@ -122,12 +122,13 @@ public class TriggerXMLDeserializer implements Deserializer {
 				startCalendar = deserializeStartCalendarAttribute(xml);
 				startTime = startCalendar.getTime();
 				endCalendar = deserializeEndCalendarAttribute(xml);
-				endTime = endCalendar.getTime();
+				endTime = (endCalendar != null)? endCalendar.getTime(): null;
 				chronString = (String) xml.getAttribute(CHRON_STRING);
 				
 				jobName = (String)xml.getAttribute( JOB_NAME );
 				jobGroup = (String)xml.getAttribute( JOB_GROUP );
 				jobParameters = deserializeParametersAttribute(xml);
+				if(chronString != null) jobParameters.put("chronString", chronString);
 				
 			}
 			

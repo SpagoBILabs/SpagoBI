@@ -33,16 +33,15 @@ public class TriggerXMLSerializer implements Serializer {
 	
 	public static final String PROPERTY_CONSUMER = "consumer";
 	
-	public static final String TRIGGER_NAME = "jobName";
-	public static final String TRIGGER_GROUP = "jobGroupName";
-	public static final String TRIGGER_DESCRIPTION = "jobDescription";	
-	public static final String TRIGGER_CALENDAR_NAME = "jobClass";
+	public static final String TRIGGER_NAME = "triggerName";
+	public static final String TRIGGER_GROUP = "triggerGroup";
+	public static final String TRIGGER_DESCRIPTION = "triggerDescription";	
+	public static final String TRIGGER_CALENDAR_NAME = "triggerCalendarName";
 	public static final String TRIGGER_START_DATE = "triggerStartDate";
 	public static final String TRIGGER_START_TIME = "triggerStartTime";	
 	public static final String TRIGGER_END_DATE = "triggerEndDate";
 	public static final String TRIGGER_END_TIME = "triggerEndTime";	
-	public static final String USE_VOLATILITY = "jobVolatility";
-	
+		
 	private static Logger logger = Logger.getLogger(TriggerXMLSerializer.class);
 	
 	public TriggerXMLSerializer() {
@@ -78,7 +77,7 @@ public class TriggerXMLSerializer implements Serializer {
 			Date triggerEndTime = trigger.getEndTime();
 			String triggerEndDateSerialized = "";
 			String triggerEndTimeSerialized = "";
-			if(triggerStartTime != null) {
+			if(triggerEndTime != null) {
 				triggerEndDateSerialized = serailizeDate(triggerEndTime);
 				triggerEndTimeSerialized = serailizeTime(triggerEndTime);
 			}
