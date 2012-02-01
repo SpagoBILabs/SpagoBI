@@ -128,6 +128,8 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	private static int CHART_START_COLUMN = 0;
 	private static int CHART_END_COLUMN = 4;
 	private static int CHART_HEIGHT_IN_ROWS = 25;
+	
+	private static final String BASE64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 	protected DecimalFormat numberFormat;
 	protected String userDateFormat;
@@ -629,13 +631,26 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 
 			Locale locale = (Locale)getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);	
 			if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CHART)) {
-				File jpgImage = WorkSheetXLSExporter.createJPGImage(content);
-				for (int i = 0; i < CHART_HEIGHT_IN_ROWS; i++) {
-					sheet.createRow(sheetRow + i);
+				File jpgImage = WorkSheetXLSExporter.getImage(content);
+				
+				if(jpgImage!=null){
+					int col = 1;
+					int colend = 20;
+					int charHeight = 20;
+					for(int i=0; i<charHeight; i++){
+						sheet.createRow(sheetRow+i);
+					}
+					exporter.setImageIntoWorkSheet(wb, patriarch, jpgImage, col, colend, sheetRow, charHeight,HSSFWorkbook.PICTURE_TYPE_JPEG);
+					sheetRow= sheetRow+30;
+				
+				
+					for (int i = 0; i < CHART_HEIGHT_IN_ROWS; i++) {
+						sheet.createRow(sheetRow + i);
+					}
+					exporter.setImageIntoWorkSheet(wb, patriarch, jpgImage, CHART_START_COLUMN,
+							CHART_END_COLUMN, sheetRow, CHART_HEIGHT_IN_ROWS,
+							HSSFWorkbook.PICTURE_TYPE_JPEG);
 				}
-				exporter.setImageIntoWorkSheet(wb, patriarch, jpgImage, CHART_START_COLUMN,
-						CHART_END_COLUMN, sheetRow, CHART_HEIGHT_IN_ROWS,
-						HSSFWorkbook.PICTURE_TYPE_JPEG);
 				sheetRow = sheetRow + 30;
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CROSSTAB)) {
 				JSONArray calculateFieldsJSON = null;
@@ -1354,4 +1369,39 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 
 	}
 	
+	  public static byte[] decodeToByteArray(String data) {
+	        // Initialise output ByteArray for decoded data
+	        List<Byte> output = new ArrayList<Byte>();
+	       
+	        // Create data and output buffers
+	        int[] dataBuffer = new int[4];
+	        byte[] outputBuffer = new byte[3];
+
+	        // While there are data bytes left to be processed
+	        for (int i=0; i < data.length(); i = i+4) {
+	                // Populate data buffer with position of Base64 characters for
+	                // next 4 bytes from encoded data
+	                for (int j = 0; j < 4 && i + j < data.length(); j++) {
+	                        dataBuffer[j] = BASE64_CHARS.indexOf(data.charAt(i + j));
+	                }
+	       
+	        // Decode data buffer back into bytes
+	                outputBuffer[0] = (byte)((dataBuffer[0] << 2) + ((dataBuffer[1] & 0x30) >> 4));
+	                outputBuffer[1] = (byte)(((dataBuffer[1] & 0x0f) << 4) + ((dataBuffer[2] & 0x3c) >> 2));                
+	                outputBuffer[2] = (byte)(((dataBuffer[2] & 0x03) << 6) + dataBuffer[3]);
+	               
+	                // Add all non-padded bytes in output buffer to decoded data
+	                for (int k = 0; k < outputBuffer.length; k++) {
+	                        if (dataBuffer[k+1] == 64) break;
+	                        output.add(outputBuffer[k]);
+	                }
+	        }
+	        byte[] toReturn = new byte[output.size()];
+	        for(int i=0; i<output.size(); i++){
+	        	toReturn[i]=output.get(i);
+	        }
+	       
+	        // Return decoded data
+	        return toReturn;
+	}	
 }

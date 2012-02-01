@@ -104,3 +104,17 @@ Ext.override(Ext.form.Checkbox, {
 	    }
 	  }
 });
+
+Ext.override(Ext.chart.Chart, {
+    setSeriesStylesByIndex: function(index, styles){
+        this.swf.setSeriesStylesByIndex();
+    }
+});
+
+Ext.override(Ext.chart.Chart, {
+	exportPNG: function(){
+		var r = this.swf.exportPNG();
+        
+        return r;
+    }
+});

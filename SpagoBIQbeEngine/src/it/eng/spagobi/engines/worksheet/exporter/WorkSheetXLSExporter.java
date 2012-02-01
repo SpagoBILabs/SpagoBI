@@ -15,9 +15,11 @@ import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.exporter.QbeXLSExporter;
+import it.eng.spagobi.engines.worksheet.services.export.ExportWorksheetAction;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,6 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -52,6 +56,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.codehaus.groovy.tools.shell.IO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -369,6 +374,38 @@ public class WorkSheetXLSExporter {
 		//anchor.setAnchorType(0);
 	}
 
+	
+	public static File getImage(JSONObject content){
+		String chartType = content.optString("CHART_TYPE"); //check If the chart to export is ext
+		if(chartType!=null && chartType.equals("ext3")){
+			return createPNGImage(content); 
+		}
+		return createJPGImage(content);
+	}
+	
+	public static File createPNGImage(JSONObject content) {
+		File exportFile = null;
+		try {
+			
+			InputStream inputStream = null;
+			JSONArray images = content.optJSONArray("CHARTS_ARRAY");
+			if(images==null || images.length()==0){
+				return null;
+			}
+			inputStream = new ByteArrayInputStream(ExportWorksheetAction.decodeToByteArray(images.getString(0)));
+			String ext = ".png";
+			BufferedImage image = ImageIO.read(inputStream);
+			exportFile = File.createTempFile("chart", ext);
+			ImageIO.write(image, "png", exportFile);
+
+		} catch (IOException e) {
+			logger.error(e);
+		} catch (JSONException e) {
+			logger.error(e);
+		}
+		return exportFile;
+	}
+	
 	public static File createJPGImage(JSONObject content) {
 		File exportFile = null;
 		try {
