@@ -145,7 +145,7 @@ public class WorkSheetXLSXExporter {
 		
 		QbeXLSXExporter qbeXLSExporter = new QbeXLSXExporter(dataStore, locale);
 		qbeXLSExporter.setProperty(QbeXLSXExporter.PROPERTY_HEADER_FONT_SIZE, TABLE_HEADER_FONT_SIZE);
-		qbeXLSExporter.setProperty(QbeXLSXExporter.PROPERTY_CONTENT_FONT_SIZE, TABLE_CELL_CONTENT_FONT_SIZE);
+		qbeXLSExporter.setProperty(QbeXLSXExporter.PROPERTY_CELL_FONT_SIZE, TABLE_CELL_CONTENT_FONT_SIZE);
 		qbeXLSExporter.setProperty(QbeXLSXExporter.PROPERTY_FONT_NAME, FONT_NAME);
 		qbeXLSExporter.fillSheet(sheet, wb, createHelper, startRow);
 	}
