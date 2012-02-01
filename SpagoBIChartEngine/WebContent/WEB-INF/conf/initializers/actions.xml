@@ -2,9 +2,9 @@
 
 <ACTIONS>
 	
-	<!-- XXX_ENGINE Initializations -->
-	<ACTION name="XXX_ENGINE_START_ACTION" 
-			class="it.eng.spagobi.engines.xxx.services.initializers.XXXEngineStartAction" 
+	<!-- CHART_ENGINE Initializations -->
+	<ACTION name="CHART_ENGINE_EXTJS_START_ACTION" 
+			class="it.eng.spagobi.engines.chart.services.initializers.ChartEngineEXTJSStartAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>

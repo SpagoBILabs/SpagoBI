@@ -3,8 +3,8 @@
 <PRESENTATION>
 
 	<MAPPING business_type="ACTION" 
-			 business_name="XXX_ENGINE_START_ACTION" 
-			 publisher_name="XXX_ENGINE_START_ACTION_PUBLISHER"/>
+			 business_name="CHART_ENGINE_EXTJS_START_ACTION" 
+			 publisher_name="CHART_ENGINE_EXTJS_START_ACTION_PUBLISHER"/>
 			
 </PRESENTATION>
 

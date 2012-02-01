@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --%>
 
 <%-- 
-author:...
+author: Antonella Giachino (antonella.giachino@eng.it)
 --%>
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
@@ -31,8 +31,8 @@ author:...
 <%-- ---------------------------------------------------------------------- --%>
 <%@page import="it.eng.spago.configuration.*"%>
 <%@page import="it.eng.spago.base.*"%>
-<%@page import="it.eng.spagobi.engines.xxx.XXXEngineConfig"%>
-<%@page import="it.eng.spagobi.engines.xxx.XXXEngineInstance"%>
+<%@page import="it.eng.spagobi.engines.chart.ChartEngineConfig"%>
+<%@page import="it.eng.spagobi.engines.chart.ChartEngineInstance"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
@@ -47,7 +47,7 @@ author:...
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%
-	XXXEngineInstance xxxEngineInstance;
+	ChartEngineInstance chartEngineInstance;
 	UserProfile profile;
 	Locale locale;
 	String isFromCross;
@@ -55,16 +55,16 @@ author:...
 	String spagobiContext;
 	String spagobiSpagoController;
 	
-	xxxEngineInstance = (XXXEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute("ENGINE_INSTANCE");
-	profile = (UserProfile)xxxEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-	locale = (Locale)xxxEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
+	chartEngineInstance = (ChartEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute("ENGINE_INSTANCE");
+	profile = (UserProfile)chartEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+	locale = (Locale)chartEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	
-	isFromCross = (String)xxxEngineInstance.getEnv().get("isFromCross");
+	isFromCross = (String)chartEngineInstance.getEnv().get("isFromCross");
 	if (isFromCross == null) {
 		isFromCross = "false";
 	}
 	
-	XXXEngineConfig xxxEngineConfig = XXXEngineConfig.getInstance();
+	ChartEngineConfig chartEngineConfig = ChartEngineConfig.getInstance();
     
     spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
     spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
@@ -79,7 +79,7 @@ author:...
 	
 	<head>
 		<%@include file="commons/includeExtJS.jspf" %>
-		<%@include file="commons/includeSbiXXXJS.jspf"%>
+		<%@include file="commons/includeSbiChartJS.jspf"%>
 		
 		<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
 		<script type="text/javascript">
@@ -94,7 +94,7 @@ author:...
     	<script type="text/javascript">  
 		        //...
 	    </script>
-	
+	ciaoo...mò se ride...
 	</body>
 
 </html>

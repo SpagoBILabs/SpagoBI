@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 /**
  * Entry point action.
  */
-public class ChartEngineStartAction extends AbstractEngineStartAction {
+public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 	
 
 	// INPUT PARAMETERS
@@ -39,7 +39,7 @@ public class ChartEngineStartAction extends AbstractEngineStartAction {
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(ChartEngineStartAction.class);
+    public static transient Logger logger = Logger.getLogger(ChartEngineEXTJSStartAction.class);
     
     private static final String ENGINE_NAME = "SpagoBIChartEngine";
     private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/chart.jsp";
