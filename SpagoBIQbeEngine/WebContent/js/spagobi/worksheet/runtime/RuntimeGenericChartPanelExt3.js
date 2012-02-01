@@ -70,19 +70,21 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3  = function(config) {
 Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.runtime.RuntimeGenericChartPanel, {
 
 	ieChartHeight: 400,
+	charts: null, //the list of charts of the panel. Should be 1 for bar and line and can be more than one for pie
 	
-	headerClickHandler: function(event, element, object, chart, reloadCallbackFunction, reloadCallbackFunctionScope) {	
-		
-//		var t = document.getElementsByTagName('object');
-//		for(var i=0; i<t.length; i++){
-//			
-//			if(t[i].id.substring(0,11)==('extflashcmp')){
-//				alert(t[i].toSource());
-//				//t[i].oncontextmenu = function(){alert('ciao');};
+	exportContent: function() {
+		var chartsByteArrays = new Array();
+//		if(this.charts!=undefined && this.charts!=null){
+//			for(var i =0; i<this.charts.length; i++){
+//				chartsByteArrays.push((this.charts[i]).swf.exportPNG());
 //			}
 //		}
 		
-		//document.oncontextmenu = function(){alert('ciao');};
+		var exportedChart = {CHARTS_ARRAY:this.byteArrays, SHEET_TYPE: 'CHART', CHART_TYPE:'ext3'};
+		return exportedChart;
+	}
+	
+	,headerClickHandler: function(event, element, object, chart, reloadCallbackFunction, reloadCallbackFunctionScope) {	
 		
 		if(!this.clickMenu){
 			var clickMenuItems = new Array();
@@ -141,20 +143,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.run
 			y = event.getPageY();
 		}
 		this.clickMenu.showAt([event.getPageX(), event.getPageY()]);
-		
-		
-//		this.clickMenu = new Ext.menu.Menu({
-//			items: {
-//				text: LN('sbi.crosstab.menu.hideheadertype'),
-//				iconCls:'hide',
-//				handler:function(){
-//					//alert(chart.swf.toSource());
-//					chart.setSeriesStylesByIndex(0,{visibility: 'hidden'});
-//				},
-//				scope: this
-//			}
-//		});
-//		this.clickMenu.showAt([event.getPageX(), event.getPageY()]);
 
 	}
 
@@ -211,26 +199,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.run
 	    return storeObject;
 	}
 	
-//	, getJsonStore: function(){
-//	var series = (this.getSeries())[0].data;
-//	var categories = this.getCategories();
-//	
-//	var data = new Array();
-//
-//	for(var i=0; i<categories.length; i++){
-//		var z = {};
-//		z.series = series[i];
-//		z.categories = categories[i];
-//		data.push(z);
-//	}
-//	
-//    var store = new Ext.data.JsonStore({
-//        fields:['series', 'categories'],
-//        data: data
-//    });
-//    
-//    return store;
-//}
 	
 	, addChartConfExt3: function(chartConf, showTipMask){
 		if((this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true){
@@ -238,104 +206,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.run
 		}
 		chartConf.tipRenderer = this.getTooltipFormatter();
     
-		 
-		
-//		if((this.chartConfig.showvalues == undefined) || !this.chartConfig.showvalues){
-//			if(!showTipMask){
-//				chartConf.extraStyle.dataTip = {
-//						border: {
-//		                    size:0
-//		                },
-//		                background: {
-//		                    alpha: .0
-//		                }
-//		            };
-//			}
-//			chartConf.tipRenderer = function(chart, record, index, series){
-//	            return '';
-//	        };
-//		}
-	}
-	
-	, getTooltipFormatter: function () {
-		var showPercentage = this.chartConfig.showpercentage;
-		var chartType = this.chartConfig.designer;
-		var allSeries = this.chartConfig.series;
-		var percentStacked = ((this.chartConfig.type) && ((this.chartConfig.type).indexOf('percent')>=0));
-		var getFormattedValueExt3 = this.getFormattedValueExt3;
-			
-		var toReturn = function (chart, record, index, series) {
-			
-			var valuePrefix= '';
-			var valueSuffix = '';
-			
-			var value = getFormattedValueExt3(chart, record, series, chartType, allSeries, percentStacked);
-			
-			if (chartType == 'Pie Chart') {
-				//pie
-				valuePrefix = record.data.categories+'\n';
-			}else{
-		        //bar e line
-				valuePrefix = series.displayName+'\n'+record.data.categories+'\n';
-			}
-			
-			if(showPercentage){
-				valueSuffix = '\n'+ Ext.util.Format.number(100*record.data['series'+chart.serieNumber]/ chart.seriesum, '0.00') + '%';
-			}
-			
-			return valuePrefix+value+valueSuffix;
-			
-		};
-		return toReturn;
-	}
-	
-	//Format the value to display
-	, getFormattedValueExt3: function (chart, record, series, chartType, allSeries, percentStacked){
-		var theSerieNam;
-		var value ;
-		var serieDefinition;
-		
-		if (chartType == 'Pie Chart') {
-			 value = record.data['series'+chart.serieNumber];
-			 theSerieName = chart.serieName;
-		}else{
-	        //bar e line
-			if(!chart.horizontal){
-				value = record.data[series.yField];
-			}else{
-				value = record.data[series.xField];
-			}
-			theSerieName = series.displayName;
-		}
-		// find the serie configuration
-		var i = 0;
-		for (; i < allSeries.length; i++) {
-			if (allSeries[i].seriename === theSerieName) {
-				serieDefinition = allSeries[i];
-				break;
-			}
-		}
-		
-		if(percentStacked){
-			value =  Ext.util.Format.number(value, '0.00') + '%';
-		}else{
-			// format the value according to serie configuration
-			value = Sbi.qbe.commons.Format.number(value, {
-	    		decimalSeparator: Sbi.locale.formats['float'].decimalSeparator,
-	    		decimalPrecision: serieDefinition.precision,
-	    		groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats['float'].groupingSeparator : '',
-	    		groupingSize: 3,
-	    		currencySymbol: '',
-	    		nullValue: ''
-			});
-		}
-			
-		// add suffix
-		if (serieDefinition.suffix !== undefined && serieDefinition.suffix !== null && serieDefinition.suffix !== '') {
-			value = value + ' ' + serieDefinition.suffix;
-		}
-		return value;
 
 	}
+
 
 });

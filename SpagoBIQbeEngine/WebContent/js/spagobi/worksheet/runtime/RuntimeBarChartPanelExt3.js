@@ -75,6 +75,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 		this.loadChartData({'rows':[this.chartConfig.category],'measures':this.chartConfig.series});
 	}
 	
+	, getByteArraysForExport: function(){
+		var byteArrays = new Array();
+		for(var i=0; i<this.charts; i++){
+			byteArrays.push((this.charts[i]).exportPNG());
+		}	
+	}
 	
 	, createChart: function () {
 		var percent = ((this.chartConfig.type).indexOf('percent')>=0);
@@ -117,22 +123,13 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 		
 		var barChartPanel = this.getChartExt3(this.chartConfig.orientation === 'horizontal', items);
 		this.on('contentclick', function(event){
+			this.byteArrays=new Array();
+			this.byteArrays.push(barChartPanel.exportPNG());		
 			this.headerClickHandler(event,null,null,barChartPanel, this.reloadJsonStoreExt3, this);
 		}, this);
 		
 	
 		//Its a workaround because if you change the display name the chart is not able to write the tooltips
-		if(this.chartConfig.type != 'percent-stacked-barchart'){
-			if(this.chartConfig.orientation === 'horizontal'){
-				barChartPanel.tipRenderer = function(chart, record, index, series){
-		            return series.displayName+'\n'+record.data.categories+'\n'+ record.data[series.xField];
-		        };
-			}else{
-				barChartPanel.tipRenderer = function(chart, record, index, series){
-		            return series.displayName+'\n'+record.data.categories+'\n'+ record.data[series.yField];
-		        };
-			}
-		}
         
 		var chartConf ={
 			renderTo : this.chartDivId,
@@ -159,9 +156,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 			chart.yAxis = axis;
 		}
 		
-		chart.tipRenderer = function(chart, record, index, series){
-            return series.displayName+'\n'+record.data.categories+'\n'+ Ext.util.Format.number(record.data[series.xField], '0.00') + '%';
-        };
+
 	}
 		
 	, getChartExt3 : function (horizontal, config) {
@@ -244,6 +239,79 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 			chart.refresh();
 		}
 
+	}
+	
+	, getTooltipFormatter: function () {
+	
+		var chartType = this.chartConfig.designer;
+		var allSeries = this.chartConfig.series;
+		var type  = this.chartConfig.type;
+		var horizontal = this.chartConfig.orientation === 'horizontal';
+		
+		var getFormattedValueExt3 = this.getFormattedValueExt3;
+		
+		var toReturn = function (chart, record, index, series) {
+			var valuePrefix= '';
+			
+			var value = getFormattedValueExt3(chart, record, series, chartType, allSeries, type, horizontal);
+		
+			valuePrefix = series.displayName+'\n'+record.data.categories+'\n';
+
+			return valuePrefix+value;
+			
+		};
+		return toReturn;
+	}
+	
+	//Format the value to display
+	, getFormattedValueExt3: function (chart, record, series, chartType, allSeries, type, horizontal){
+		var theSerieName  = series.displayName;
+		var value ;
+		var serieDefinition;
+		
+
+		
+		if(type != 'percent-stacked-barchart'){
+			if(horizontal){
+				value =  record.data[series.xField];
+		        
+			}else{
+				value = record.data[series.yField];
+			}
+		}else{
+			value = Ext.util.Format.number(record.data[series.xField], '0.00');
+		}
+		
+		
+		// find the serie configuration
+		var i = 0;
+		for (; i < allSeries.length; i++) {
+			//substring to remove the scale factor
+			if (allSeries[i].seriename === theSerieName.substring(0, allSeries[i].seriename.length)) {
+				serieDefinition = allSeries[i];
+				break;
+			}
+		}
+
+		if(type != 'percent-stacked-barchart'){
+			// format the value according to serie configuration
+			value = Sbi.qbe.commons.Format.number(value, {
+	    		decimalSeparator: Sbi.locale.formats['float'].decimalSeparator,
+	    		decimalPrecision: serieDefinition.precision,
+	    		groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats['float'].groupingSeparator : '',
+	    		groupingSize: 3,
+	    		currencySymbol: '',
+	    		nullValue: ''
+			});
+		}else{
+			value = value + '%';
+		}
+		// add suffix
+		if (serieDefinition.suffix !== undefined && serieDefinition.suffix !== null && serieDefinition.suffix !== '') {
+			value = value + ' ' + serieDefinition.suffix;
+		}
+
+		return value;
 	}
 
 });

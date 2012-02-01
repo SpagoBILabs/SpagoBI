@@ -72,7 +72,7 @@ Sbi.worksheet.runtime.RuntimeLineChartPanelExt3 = function(config) {
 Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, {
 	
 	chartDivId : null
-	, chart : null
+	//, chart : null
 	, chartConfig : null 
 	
 	, init : function () {
@@ -89,8 +89,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 				store: storeObject.store,
 				xField: 'categories',
 				hiddenseries: new Array(),
-				series: this.getChartSeriesExt3(storeObject.serieNames, 'line', colors),
-                extraStyle: extraStyle
+				series: this.getChartSeriesExt3(storeObject, 'line', colors),
+                extraStyle: extraStyle,
+                scope: this
 			};
 		//set the height if ie
     	if(Ext.isIE){
@@ -105,30 +106,21 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 			});
 			items.yAxis = axis;
 		}
-    	
+		
 		this.addChartConfExt3(items);
 			
 		var lineChartPanel = new Ext.chart.LineChart(items);
 		
+
+		
+		var thispanel = this;
+		
 		this.on('contentclick', function(event){
+			this.byteArrays=new Array();
+			this.byteArrays.push(lineChartPanel.exportPNG());
 			this.headerClickHandler(event,null,null,lineChartPanel, this.reloadJsonStoreExt3, this);
 		}, this);
 		
-		
-		if(this.getStacking()=='normal'){
-			lineChartPanel.tipRenderer = function(chart, record, index, series){
-	            return series.displayName+'\n'+record.data.categories+'\n'+ record.data[series.yField.substring(0,series.yField.length-3)];
-	        };
-		} else if(this.getStacking()=='percent'){
-			lineChartPanel.tipRenderer = function(chart, record, index, series){
-	            return series.displayName+'\n'+record.data.categories+'\n'+  Ext.util.Format.number(record.data[series.yField.substring(0,series.yField.length-3)], '0.00') + '%';
-	        };
-		} else {
-			//Its a workaround because if you change the display name the chart is not able to write the tooltips
-			lineChartPanel.tipRenderer = function(chart, record, index, series){
-	            return series.displayName+'\n'+record.data.categories+'\n'+ record.data[series.yField];
-	        };
-		}
 
 		var chartConf = {
 				renderTo : this.chartDivId,
@@ -140,11 +132,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 		new Ext.Panel(chartConf);
 	}
 	
-	, getChartSeriesExt3: function(serieNames, type, colors){
+	, getChartSeriesExt3: function(store, type, colors){
 
 		var seriesForChart = new Array();
 
-		for(var i=0; i<serieNames.length; i++){
+		for(var i=0; i<store.serieNames.length; i++){
 			var yField = 'series'+i;
 			if(this.getStacking()=='normal' || this.getStacking()=='percent'){
 				yField = 'series'+i+'inc';
@@ -156,10 +148,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 			};
 			
 			if( this.getStacking()=='percent'){
-				serie.displayName =(serieNames[i]);
+				serie.displayName =(store.serieNames[i]);
 			}else{
-				serie.displayName = this.formatLegendWithScale(serieNames[i]);
+				serie.displayName = this.formatLegendWithScale(store.serieNames[i]);
 			}
+			
+			serie.displayName =(store.serieNames[i]);
 			
 			if(colors!=null){
 				serie.style.color= colors[i];
@@ -181,6 +175,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 		var data = new Array();
 		var fields = new Array();
 		var serieNames = new Array();
+		var serieAlias = new Array();
 		
 		for(var i=0; i<categories.length; i++){
 			var z = {};
@@ -209,7 +204,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 				fields.push('series'+j+'inc');
 			}
 			serieNames.push(series[j].name);	
-			
+			serieAlias.push(series[j].alias);
 		}
 		
 		fields.push('seriesum');
@@ -223,6 +218,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 	    
 	    storeObject.store = store;
 	    storeObject.serieNames = serieNames;
+	    storeObject.serieAlias = serieAlias;
 
 	    return storeObject;
 	}
@@ -281,6 +277,71 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 	        	alert('Unknown chart type!');
 	        return null;
 		}
+	}
+	
+	, getTooltipFormatter: function () {
+
+		var chartType = this.chartConfig.designer;
+		var allSeries = this.chartConfig.series;
+		var stacking  =this.getStacking();
+		
+		var getFormattedValueExt3 = this.getFormattedValueExt3;
+		
+		var toReturn = function (chart, record, index, series) {
+			var valuePrefix= '';
+			
+			var value = getFormattedValueExt3(chart, record, series, chartType, allSeries, stacking);
+		
+			valuePrefix = series.displayName+'\n'+record.data.categories+'\n';
+
+			return valuePrefix+value;
+			
+		};
+		return toReturn;
+	}
+	
+	//Format the value to display
+	, getFormattedValueExt3: function (chart, record, series, chartType, allSeries, stacking){
+		var theSerieName  = series.displayName;
+		var value ;
+		var serieDefinition;
+		
+		if(stacking=='normal'){
+			value = record.data[series.yField.substring(0,series.yField.length-3)];
+		} else if(stacking=='percent'){
+			value = Ext.util.Format.number(record.data[series.yField], '0.00') + '%';
+		}else{
+			value = record.data[series.yField];
+		}
+		
+		// find the serie configuration
+		var i = 0;
+		for (; i < allSeries.length; i++) {
+			//substring to remove the scale factor
+			if (allSeries[i].seriename === theSerieName.substring(0, allSeries[i].seriename.length)) {
+				serieDefinition = allSeries[i];
+				break;
+			}
+		}
+
+		if(stacking!='percent'){
+			// format the value according to serie configuration
+			value = Sbi.qbe.commons.Format.number(value, {
+	    		decimalSeparator: Sbi.locale.formats['float'].decimalSeparator,
+	    		decimalPrecision: serieDefinition.precision,
+	    		groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats['float'].groupingSeparator : '',
+	    		groupingSize: 3,
+	    		currencySymbol: '',
+	    		nullValue: ''
+			});
+		}else{
+			value = value + '%';
+		}
+		// add suffix
+		if (serieDefinition.suffix !== undefined && serieDefinition.suffix !== null && serieDefinition.suffix !== '') {
+			value = value + ' ' + serieDefinition.suffix;
+		}
+		return value;
 	}
 
 });
