@@ -54,155 +54,163 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
 	//execute the calculations
 		
     calculateCF: function(level, horizontal, op, CFName, crossTab, lazy, type, percenton){
+    	//try{
+        	var headers;
+        	if (type==null){
+        		type = 'CF';
+        	}
+        	if(horizontal){
+        		headers = crossTab.columnHeader;
+        	}else{
+        		headers = crossTab.rowHeader;
+        	}
+        	var operation = new Array();
+        	var operationExpsNames = new Array();
+        	var operationExpsIds = new Array();
+        	var attributes = new Array();
+        	var freshOp = " "+op;
+        	var index;
+        	var hiddenPannels = new Array();
+       
+        	//show all the hidden panels
+        	for(var y=0; y<headers[headers.length-1].length; y++){
+        		if(headers[headers.length-1][y].hidden){
+        			headerEntry = headers[headers.length-1][y];
+        			hiddenPannels.push(headerEntry);
+        		    headerEntry.show();
+        		    var father = headerEntry.father;
+        		    while(father!=null && father!=undefined){
+        		    	father.thisDimension = father.thisDimension+1;
+        		       	if(father.thisDimension == 1){
+        		       		father.show();
+        		       	}
+        		    	father = father.father;
+        		    }
+        		}
+        	}
 
-    	var headers;
-    	if (type==null){
-    		type = 'CF';
-    	}
-    	if(horizontal){
-    		headers = crossTab.columnHeader;
-    	}else{
-    		headers = crossTab.rowHeader;
-    	}
-    	var operation = new Array();
-    	var operationExpsNames = new Array();
-    	var operationExpsIds = new Array();
-    	var attributes = new Array();
-    	var freshOp = " "+op;
-    	var index;
-    	var hiddenPannels = new Array();
-   
-    	//show all the hidden panels
-    	for(var y=0; y<headers[headers.length-1].length; y++){
-    		if(headers[headers.length-1][y].hidden){
-    			headerEntry = headers[headers.length-1][y];
-    			hiddenPannels.push(headerEntry);
-    		    headerEntry.show();
-    		    var father = headerEntry.father;
-    		    while(father!=null && father!=undefined){
-    		    	father.thisDimension = father.thisDimension+1;
-    		       	if(father.thisDimension == 1){
-    		       		father.show();
-    		       	}
-    		    	father = father.father;
-    		    }
-    		}
-    	}
-
-    	
-    	//parse the operation
-    	while(freshOp.indexOf("field[")>=0){
-    		index =  freshOp.indexOf("field[")+6;
-    		operation.push(freshOp.substring(0,index-6));
-    		freshOp = freshOp.substring(index);
-    		index = freshOp.indexOf("]");
-    		operationExpsNames.push(freshOp.substring(0, index));
-    		freshOp = freshOp.substring(index+1);
-    	}
-    	operation.push(freshOp);
-
-
-    	//operationExpsNames: the name of the elements of the operation, for example z1,z2
-    	//operationExpsIds: The ids of the elements inside the list of header
-    	//                  es: z1-->[0,2,4,6]  z2-->[1,3,5,7]
-    	//					operationExpsIds = [[0,1][2,3],[4,5],[6,7]]
-    	
-    	var pos =0;
-    	var operationExpsIdsItem;
-    	for(var j=0; j<headers[level-1].length; j++){
-    		operationExpsIdsItem = new Array();
-    		operationExpsIdsItem.length = operationExpsNames.length;
-    		var count =0;
-    		for(var y=0; y<headers[level-1][j].childs.length; y++){
-	    		for(var i=0; i<operationExpsNames.length; i++){
-	    			if(headers[level-1][j].childs[y].name==operationExpsNames[i]){
-	    				operationExpsIdsItem[i]=(pos+y);
-	    				count++;
-	        		}
-	    		}
-    		}
-    		pos = headers[level-1][j].childs.length+ pos;
-			if(count==operationExpsNames.length){
-				operationExpsIds.push(operationExpsIdsItem);
-			}
-    	}
         	
-    	var linesValueForHeader = this.getLinesForCF(level, headers);
-    	
-    	//For every appearance of the elements of the operation inside the header we calculate the calculated field
-    	for(var j=0; j<operationExpsIds.length; j++){
-        	var expIds = operationExpsIds[j];
+        	//parse the operation
+        	while(freshOp.indexOf("field[")>=0){
+        		index =  freshOp.indexOf("field[")+6;
+        		operation.push(freshOp.substring(0,index-6));
+        		freshOp = freshOp.substring(index);
+        		index = freshOp.indexOf("]");
+        		operationExpsNames.push(freshOp.substring(0, index));
+        		freshOp = freshOp.substring(index+1);
+        	}
+        	operation.push(freshOp);
+
+
+        	//operationExpsNames: the name of the elements of the operation, for example z1,z2
+        	//operationExpsIds: The ids of the elements inside the list of header
+        	//                  es: z1-->[0,2,4,6]  z2-->[1,3,5,7]
+        	//					operationExpsIds = [[0,1][2,3],[4,5],[6,7]]
         	
-        	//execute the operation
-	    	var entries = this.executeOp(operation,horizontal,linesValueForHeader,expIds,crossTab);
-	    	
-	    	
-	    	if(CFName==null){
-	    		CFName = "CF";
-	    	}
-	    	//build the structure of the subtree
-	    	
-	    	var cfNode = new Sbi.crosstab.core.HeaderEntry({crosstab:crossTab, percenton: percenton, name:CFName, thisDimension: 1, horizontal: horizontal, level: level,  width: headers[level][operationExpsIds[j][0]].width,  height: headers[level][operationExpsIds[j][0]].height});
-	    	cfNode.type=type;
-	    	cfNode.cfExpression=op;
-	    	//alert(operationExpsIds[j]);
-	    	var childs = new Array();
-	    	for(var o=0; o<operationExpsIds[j].length; o++){
-	    		childs = this.mergeNodesChilds(childs, (headers[level][operationExpsIds[j][o]]).childs);
-	    	}
-	    	
-	    	var clonedChild;
+        	var pos =0;
+        	var operationExpsIdsItem;
+        	for(var j=0; j<headers[level-1].length; j++){
+        		operationExpsIdsItem = new Array();
+        		operationExpsIdsItem.length = operationExpsNames.length;
+        		var count =0;
+        		for(var y=0; y<headers[level-1][j].childs.length; y++){
+    	    		for(var i=0; i<operationExpsNames.length; i++){
+    	    			if(headers[level-1][j].childs[y].name==operationExpsNames[i]){
+    	    				operationExpsIdsItem[i]=(pos+y);
+    	    				count++;
+    	        		}
+    	    		}
+        		}
+        		pos = headers[level-1][j].childs.length+ pos;
+    			if(count==operationExpsNames.length){
+    				operationExpsIds.push(operationExpsIdsItem);
+    			}
+        	}
+            	
+        	var linesValueForHeader = this.getLinesForCF(level, headers);
+        	
+        	//For every appearance of the elements of the operation inside the header we calculate the calculated field
+        	for(var j=0; j<operationExpsIds.length; j++){
+            	var expIds = operationExpsIds[j];
+            	var entriesSum =null;
+            	//execute the operation
+    	    	var entries = this.executeOp(operation,horizontal,linesValueForHeader,expIds,crossTab);
 
-	    	var fatherDimension = 0;
-	    	for(var o=0; o<childs.length; o++){
-	    		clonedChild = this.buildHeadersStructure(null, childs[o], crossTab, type, percenton);
-	    		clonedChild.father = cfNode;
-	    		fatherDimension = fatherDimension + clonedChild.thisDimension;
-	    		cfNode.childs.push(clonedChild);
-	    		crossTab.setHeaderListener(clonedChild); 
-	    	}
-	    	if(fatherDimension == 0){
-	    		fatherDimension=1;
-	    	}
-	    	cfNode.thisDimension = fatherDimension;
-	    	
-	    	//var cfNode = this.buildHeadersStructure(CFName, panel1, crossTab);
+    	    	if((crossTab.withColumnsSum && horizontal) || (crossTab.withRowsSum && !horizontal)){
+    	    		entriesSum = (this.calculateCFOnTotals(operation,horizontal,linesValueForHeader,expIds,crossTab));
+    	    	}
+    	    	 
+    	    	
+    	    	if(CFName==null){
+    	    		CFName = "CF";
+    	    	}
+    	    	//build the structure of the subtree
+    	    	
+    	    	var cfNode = new Sbi.crosstab.core.HeaderEntry({crosstab:crossTab, percenton: percenton, name:CFName, thisDimension: 1, horizontal: horizontal, level: level,  width: headers[level][operationExpsIds[j][0]].width,  height: headers[level][operationExpsIds[j][0]].height});
+    	    	cfNode.type=type;
+    	    	cfNode.cfExpression=op;
+    	    	//alert(operationExpsIds[j]);
+    	    	var childs = new Array();
+    	    	for(var o=0; o<operationExpsIds[j].length; o++){
+    	    		childs = this.mergeNodesChilds(childs, (headers[level][operationExpsIds[j][o]]).childs);
+    	    	}
+    	    	
+    	    	var clonedChild;
 
-	    	cfNode.father = (headers[level][operationExpsIds[j][0]]).father;
-	    	crossTab.setHeaderListener(cfNode); 
+    	    	var fatherDimension = 0;
+    	    	for(var o=0; o<childs.length; o++){
+    	    		clonedChild = this.buildHeadersStructure(null, childs[o], crossTab, type, percenton);
+    	    		clonedChild.father = cfNode;
+    	    		fatherDimension = fatherDimension + clonedChild.thisDimension;
+    	    		cfNode.childs.push(clonedChild);
+    	    		crossTab.setHeaderListener(clonedChild); 
+    	    	}
+    	    	if(fatherDimension == 0){
+    	    		fatherDimension=1;
+    	    	}
+    	    	cfNode.thisDimension = fatherDimension;
+    	    	
+    	    	//var cfNode = this.buildHeadersStructure(CFName, panel1, crossTab);
 
-	    	attributes.push([cfNode, entries]);   
-    	
-    	}
-    	
-    	//add the entries in the table
-    	for(var j=0; j<attributes.length; j++){
-    		crossTab.addNewEntries(level,attributes[j][0],headers, attributes[j][1], horizontal,true);
-    		//alert(attributes[j][1].length);
-    	}
-//    	if(attributes.length>0){
-//    		crossTab.addNewEntries(level,attributes[attributes.length-1][0],headers, attributes[attributes.length-1][1], horizontal,false);
-//    		//alert(attributes[j][1].length);
+    	    	cfNode.father = (headers[level][operationExpsIds[j][0]]).father;
+    	    	crossTab.setHeaderListener(cfNode); 
+
+    	    	attributes.push([cfNode, entries, entriesSum]);   
+        	
+        	}
+        	
+        	//add the entries in the table
+        	for(var j=0; j<attributes.length; j++){
+        		crossTab.addNewEntries(level,attributes[j][0],headers, attributes[j][1], horizontal,true,attributes[j][2]);
+        		//alert(attributes[j][1].length);
+        	}
+//        	if(attributes.length>0){
+//        		crossTab.addNewEntries(level,attributes[attributes.length-1][0],headers, attributes[attributes.length-1][1], horizontal,false);
+//        		//alert(attributes[j][1].length);
+//        	}
+        	
+        	//hide the hidden panels
+        	for(var y=0; y<hiddenPannels.length; y++){
+        		var headerEntry=hiddenPannels[y];
+        		headerEntry.hide();
+    	    	var father = headerEntry.father;
+    	    	while(father!=null && father!=undefined){
+    	    		father.thisDimension = (father.thisDimension-1);
+    	        	if(father.thisDimension == 0){
+    	        		father.hide();
+    	        	}
+    	    		father = father.father;
+    	    	}
+        	}
+        	this.updateHeadersDimensions(headers);
+        	if(!lazy){
+        		
+        		crossTab.reloadHeadersAndTable();
+        	}
+//    	}catch(e){
+//    		alert('Error adding the calculated field '+op+'. '+e);
 //    	}
-    	
-    	//hide the hidden panels
-    	for(var y=0; y<hiddenPannels.length; y++){
-    		var headerEntry=hiddenPannels[y];
-    		headerEntry.hide();
-	    	var father = headerEntry.father;
-	    	while(father!=null && father!=undefined){
-	    		father.thisDimension = (father.thisDimension-1);
-	        	if(father.thisDimension == 0){
-	        		father.hide();
-	        	}
-	    		father = father.father;
-	    	}
-    	}
-    	this.updateHeadersDimensions(headers);
-    	if(!lazy){
-    		
-    		crossTab.reloadHeadersAndTable();
-    	}
+
     	
     }
 	
@@ -242,7 +250,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     //linesValueForHeader
     //expIds: the ids of the columns or rows that stay for the elements of the operation 
     ,executeOp: function(op, horizontal, linesValueForHeader, expIds, crossTab){
-    	
+
     	var exps = new Array();
     	var CF = new Array();
     	var lineLength;
@@ -256,6 +264,8 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     	
   	   	for(var j=0; j<linesValueForHeader.length; j++){
   	   		var CFFresh = new Array();
+  	   		var lineTotals = new Array();
+  	   	
   	   		if(linesValueForHeader[j].length>0){
   	   			var y;
   	   			var novalues=0;
@@ -271,6 +281,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
   	   						exps.push(crossTab.entries.getRow(linesValueForHeader[j][expIds[y]]));	
   	   					}
   	   				}
+  	   				lineTotals.push(0);
   	   			}
   	   			
   	   			if(novalues<expIds.length && novalues>0){
@@ -283,15 +294,99 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
 			    		listOfExp  = new Array();
 			    		for(var i=0; i<exps.length; i++){//estraggo gli indici delle colonne/righe
 				    		listOfExp.push(exps[i][m]);
+				    		
+				    		if(exps[i][m]!="NA" && exps[i][m]!="null"){
+				    			lineTotals[i] = lineTotals[i]+parseFloat(exps[i][m]);
+				    		}
 					    }
 			    		CFFresh.push(""+this.executeSingleOp(listOfExp,op));
 				    }
+			    	//add the calculated fields calculated in the totals
+			    	//CFFresh.push((""+this.executeSingleOp(lineTotals,op)));
 			    	CF.push(CFFresh);
   	   			}
   	   			
   	   		}
     	}
  // 	   	alert("CF "+CF.length);
+    	return CF;
+    }
+    
+    , calculateCFOnTotals: function(op, horizontal, linesValueForHeader, expIds, crossTab){
+    	var exps = new Array();
+    	var CF = new Array();
+    	var lineLength;
+    	var listOfExp  = new Array();
+
+    	if(horizontal){
+    		lineLength = crossTab.entries.getEntries().length;
+    	}else{
+    		lineLength = crossTab.entries.getEntries()[0].length;
+    	}
+    	
+  	   	for(var j=0; j<linesValueForHeader.length; j++){
+  	   		var CFFresh = new Array();
+  	   		var lineTotals = new Array();
+  	   	
+  	   		if(linesValueForHeader[j].length>0){
+  	   			var y;
+  	   			var novalues=0;
+  	   			exps = new Array();
+  	   			//get the lines and the columns
+  	   			for(y=0; y<expIds.length; y++){
+  	   				if(linesValueForHeader[j][expIds[y]]==null || linesValueForHeader[j][expIds[y]]==undefined ){
+  	   					novalues++;
+  	   				}else{
+  	   					if(horizontal){  	   						
+  	   						if(crossTab.misuresOnRow){
+  	   							var lineSumWithMeasure = new Array();
+  	   							for(var t=0; t<crossTab.columnsTotalSumArray.length; t++){
+  	   								lineSumWithMeasure.push(crossTab.columnsTotalSumArray[t][linesValueForHeader[j][expIds[y]]]);
+  	   							}
+  	   							exps.push(lineSumWithMeasure);	
+  	   						}else{
+  	   							exps.push(crossTab.columnsTotalSumArray[linesValueForHeader[j][expIds[y]]]);
+  	   						}
+  	   						
+  	   					}else{
+  	   						if(!crossTab.misuresOnRow){
+  	   							var lineSumWithMeasure = new Array();
+  	   							for(var t=0; t<crossTab.rowsTotalSumArray.length; t++){
+  	   								lineSumWithMeasure.push(crossTab.rowsTotalSumArray[t][linesValueForHeader[j][expIds[y]]]);
+  	   							}
+  	   							exps.push(lineSumWithMeasure);	
+  	   						}else{
+  	   							exps.push(crossTab.rowsTotalSumArray[linesValueForHeader[j][expIds[y]]]);	
+  	   						}
+  	   					}
+  	   				}
+  	   			}
+  	   			
+  	   			if(novalues<expIds.length && novalues>0){
+  	   				for(var i=0; i<lineLength; i++){
+			    		CFFresh.push("NA");
+			    	}
+  	   				CF.push(CFFresh);
+  	   			}else if(novalues==0){
+  	   				if(exps[0] instanceof Array){
+  	   				
+  				    	for(var m=0; m<exps[0].length; m++){//per ogni riga/colonna
+  				    		listOfExp  = new Array();
+  				    		for(var i=0; i<exps.length; i++){//estraggo gli indici delle colonne/righe
+  					    		listOfExp.push(exps[i][m]);
+  						    }
+  				    		CFFresh.push(""+this.executeSingleOp(listOfExp,op));
+  					    }
+  				    	//add the calculated fields calculated in the totals
+
+  				    	CF.push(CFFresh);
+  	   				}
+  	   				else{
+  	   					CF.push(""+this.executeSingleOp(exps,op));
+  	   				}
+  	   			}
+  	   		}
+    	}
     	return CF;
     }
     

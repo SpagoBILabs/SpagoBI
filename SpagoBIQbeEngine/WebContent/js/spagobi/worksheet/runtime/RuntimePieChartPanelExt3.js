@@ -150,7 +150,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 			}, this);
 			
 			chartContainer.on('contentclick', function(event){
-				alert(chartPanel.exportPNG().toSource());
 				this.byteArrays.push(chartPanel.exportPNG());		
 			}, this);
 		}
