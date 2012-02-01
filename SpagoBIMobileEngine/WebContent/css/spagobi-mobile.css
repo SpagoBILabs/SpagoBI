@@ -1,0 +1,86 @@
+.card1 {
+	        background-color: #376daa;
+	        text-align: center;
+	        color: #204167;
+	        text-shadow: #3F80CA 0 1px 0;
+	        font-size: 36px;
+            padding-top: 100px;
+	    }
+
+.card2 {
+	        background-color: rgba(255, 255, 255, .1);
+	        text-align: left;
+	        color: #A0A0A0;
+	        font-size: 12px;
+            padding-top: 20px;
+           	border-style: solid;
+  			border-color: #A0A0A0;
+  			border-radius: 10pt;
+	    }
+	    
+.card3 {
+	        background-color: grey;
+	        text-align: center;
+	        color: #black;
+	        font-size: 16px;
+            padding-top: 0px;
+	    }
+	    
+	    
+.card-icons > .x-panel-body {
+	       padding: 20px;
+	       text-align: center;
+	       color: rgba(0,0,0,.5);
+	   }
+	   
+.card4 {
+	        /*background-color: white;*/
+	        text-align: left;
+	        color: #204167;
+	        text-shadow: #3F80CA 0 1px 0;
+	        font-size: 16px;
+            padding-top: 0px;
+            border: 10px;
+	    }
+    
+.navigationtoolbar {
+	        text-align: left;
+	        color: #204167;
+	        text-shadow: #3F80CA 0 1px 0;
+	        font-size: 12px;
+            padding: 0px;
+            border: 10px;
+	    }	    
+.dashboard-panel {
+  			color: rgba(255, 255, 255, .1);
+  			/* border-style: solid;
+  			border-color: #A0A0A0;
+  			border-radius: 10pt;*/ 			
+  
+}
+.legend {
+			float: left;
+			align: center;
+			width:80%;
+			margin: 2px;
+			margin-left: 10%;
+           	border-style: solid;
+  			border-color: #D5D5D5;
+  			border-radius: 10pt;
+			font-size:10px;
+	    }
+   
+.x-toolbar-title {
+	 text-align: right;
+	 padding-right:20px;
+}
+.x-list-header{
+	font-size: 9pt;
+	color: white;
+}
+.spagobi-background{
+	background:#2B425B url("../img/Logo_SpagoBI4.png") 2px 2px no-repeat;
+}
+.x-toolbar-title{
+	margin-top: 10px;
+}

@@ -15,9 +15,10 @@
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
-	<ACTION name="BROWSER_ACTION" 
-			class="it.eng.spago.dispatching.action.EmptyAction"
-			scope="REQUEST">
+ 	<ACTION name="GET_FOLDER_CONTENT_ACTION" 
+			class="it.eng.spagobi.analiticalmodel.documentsbrowser.service.GetFolderContentAction"  
+			scope="REQUEST">	
+		
 		<CONFIG></CONFIG>
 	</ACTION>
 	

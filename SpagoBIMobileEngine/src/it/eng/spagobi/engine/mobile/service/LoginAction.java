@@ -37,11 +37,13 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineAction;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -121,10 +123,19 @@ public class LoginAction extends AbstractEngineAction{
 
 			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
 			try {	
+				logger.info("User ["+ userId + "] has been autheticated succesfully");
+				
+				profile = UserUtilities.getUserProfile( userId );
+				Assert.assertNotNull(profile, "Impossible to load profile for the user [" + userId + "]");
 
+				
+				logger.info("User ["+ userId + "] profile has been loaded succesfully");
+				
+				// Propagate user profile
+				getSessionContainer().getPermanentContainer().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
 				writeBackToClient(new JSONSuccess("userhome"));
-/*				String url = getServletConfig().getServletContext().getContextPath()+"/private-jsp/browser.jsp";
-				getHttpResponse().sendRedirect(url);*/
+				
+
 
 			} catch (Throwable e) {
 				logger.error("Exception occurred writing back to client", e);

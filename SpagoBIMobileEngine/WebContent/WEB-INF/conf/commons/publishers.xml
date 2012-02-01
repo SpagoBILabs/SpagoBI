@@ -13,13 +13,6 @@
 		</RENDERING>
 	</PUBLISHER>
 
-  	<PUBLISHER name="BROWSER_PUBLISHER">
-    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
-      		<RESOURCES>
-        		<ITEM prog="0" resource="/private-jsp/browser.jsp"/>
-      		</RESOURCES>
-    	</RENDERING>
-  	</PUBLISHER>
 
   	
 
