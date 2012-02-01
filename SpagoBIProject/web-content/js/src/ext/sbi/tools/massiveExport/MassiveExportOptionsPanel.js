@@ -116,7 +116,15 @@ Ext.extend(Sbi.tools.massiveExport.MassiveExportOptionsPanel, Ext.Panel, {
 			selectedRole = rolesArray[0];
 		}
 
-		this.rolesCombo = new Ext.form.ComboBox({
+		// if there is only one role don't draw combo
+		if(rolesArray.length==1){
+			selectedRole = rolesArray[0];
+			this.rolesCombo = null;
+			this.retrieveDocuments();
+		}
+		else {
+			// in the casse of more roles
+			this.rolesCombo = new Ext.form.ComboBox({
 				  tpl: '<tpl for="."><div ext:qtip="{role}" class="x-combo-list-item">{role}</div></tpl>'
 				//, title: LN('nazionalizzami')
 				, editable  : true
@@ -142,24 +150,19 @@ Ext.extend(Sbi.tools.massiveExport.MassiveExportOptionsPanel, Ext.Panel, {
 					}
 				});	
 		
-		this.formPanel.add(this.rolesCombo);
+				this.formPanel.add(this.rolesCombo);
 
-		// select first as default
-		this.rolesCombo.on('render', function() {
-		if(rolesArray.length>0){
-			var sel = rolesArray[0];
-			this.rolesCombo.setValue(sel);
-		}
-		// if there is only one role disable combo
-		if(rolesArray.length==1){
-			this.rolesCombo.disable();
-		}
+				// select first as default
+				this.rolesCombo.on('render', function() {
+						if(rolesArray.length>0){
+							var sel = rolesArray[0];
+							this.rolesCombo.setValue(sel);
+						}
+						this.retrieveDocuments();
+					}, this);  
+			} // close multi-role case
 
-		this.retrieveDocuments();
-
-		}, this);  
-
-		}
+	}
 , retrieveDocuments: function (rolesArray) {
 
 	//	calls ervice to get export documents list
