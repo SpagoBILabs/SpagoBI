@@ -631,27 +631,22 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 
 			Locale locale = (Locale)getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);	
 			if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CHART)) {
-				File jpgImage = WorkSheetXLSExporter.getImage(content);
+				List<File> images = WorkSheetXLSExporter.getImage(content);
 				
-				if(jpgImage!=null){
-					int col = 1;
-					int colend = 20;
-					int charHeight = 20;
-					for(int i=0; i<charHeight; i++){
-						sheet.createRow(sheetRow+i);
+				if(images!=null){
+
+					for (int j=0; j< images.size(); j++){
+						for (int i = 0; i < CHART_HEIGHT_IN_ROWS; i++) {
+							sheet.createRow(sheetRow + i);
+						}
+						exporter.setImageIntoWorkSheet(wb, patriarch, images.get(j), CHART_START_COLUMN,
+								CHART_END_COLUMN, sheetRow, CHART_HEIGHT_IN_ROWS,
+								HSSFWorkbook.PICTURE_TYPE_JPEG);
+						sheetRow = sheetRow + CHART_HEIGHT_IN_ROWS;
 					}
-					exporter.setImageIntoWorkSheet(wb, patriarch, jpgImage, col, colend, sheetRow, charHeight,HSSFWorkbook.PICTURE_TYPE_JPEG);
-					sheetRow= sheetRow+30;
-				
-				
-					for (int i = 0; i < CHART_HEIGHT_IN_ROWS; i++) {
-						sheet.createRow(sheetRow + i);
-					}
-					exporter.setImageIntoWorkSheet(wb, patriarch, jpgImage, CHART_START_COLUMN,
-							CHART_END_COLUMN, sheetRow, CHART_HEIGHT_IN_ROWS,
-							HSSFWorkbook.PICTURE_TYPE_JPEG);
+
 				}
-				sheetRow = sheetRow + 30;
+				
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CROSSTAB)) {
 				JSONArray calculateFieldsJSON = null;
 				String crosstabDefinition = content
@@ -1050,14 +1045,21 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 
 			Locale locale = (Locale)getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);	
 			if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CHART)) {
-				File jpgImage = WorkSheetXLSXExporter.createJPGImage(content);
-				for (int i = 0; i < CHART_HEIGHT_IN_ROWS; i++) {
-					sheet.createRow(sheetRow + i);
+
+				List<File> images = WorkSheetXLSExporter.getImage(content);
+				
+				if(images!=null){
+					for (int j=0; j< images.size(); j++){
+						for (int i = 0; i < CHART_HEIGHT_IN_ROWS; i++) {
+							sheet.createRow(sheetRow + i);
+						}
+						exporter.setImageIntoWorkSheet(wb, patriarch, images.get(j), CHART_START_COLUMN,
+								CHART_END_COLUMN, sheetRow, CHART_HEIGHT_IN_ROWS,
+								HSSFWorkbook.PICTURE_TYPE_JPEG);
+						sheetRow = sheetRow + CHART_HEIGHT_IN_ROWS;
+					}
 				}
-				exporter.setImageIntoWorkSheet(wb, patriarch, jpgImage, CHART_START_COLUMN,
-						CHART_END_COLUMN, sheetRow, CHART_HEIGHT_IN_ROWS,
-						XSSFWorkbook.PICTURE_TYPE_JPEG);
-				sheetRow = sheetRow + 30;
+				
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CROSSTAB)) {
 				JSONArray calculateFieldsJSON = null;
 				String crosstabDefinition = content
