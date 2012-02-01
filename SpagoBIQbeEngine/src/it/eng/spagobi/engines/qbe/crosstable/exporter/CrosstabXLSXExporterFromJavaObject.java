@@ -307,7 +307,7 @@ public class CrosstabXLSXExporterFromJavaObject {
 	
 	public CellStyle buildDimensionCellStyle(Sheet sheet) {
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-        cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
         cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
         
         String headerBGColor = (String) this.getProperty(PROPERTY_DIMENSION_NAME_BACKGROUND_COLOR);
@@ -489,11 +489,12 @@ public class CrosstabXLSXExporterFromJavaObject {
 	
 	
 	
-	private void buildColumnsHeader(Sheet sheet, CrossTab cs, List<Node> siblings, int rowNum, int columnNum, CreationHelper createHelper, Locale locale) throws JSONException {
+	private void buildColumnsHeader(Sheet sheet, CrossTab cs,
+			List<Node> siblings, int rowNum, int columnNum,
+			CreationHelper createHelper, Locale locale) throws JSONException {
 		int columnCounter = columnNum;
-		CellStyle cellStyle = buildHeaderCellStyle(sheet);
-		
-		
+		CellStyle memberCellStyle = buildHeaderCellStyle(sheet);
+		CellStyle dimensionCellStyle = buildDimensionCellStyle(sheet);
 		
 		for (int i = 0; i < siblings.size(); i++) {
 			Node aNode = (Node) siblings.get(i);
@@ -516,7 +517,25 @@ public class CrosstabXLSXExporterFromJavaObject {
 			    		columnCounter + descendants - 1  //last column  (0-based)
 			    ));
 		    }
-		    cell.setCellStyle(cellStyle);
+		    
+			/*
+			 * Now we have to set the style properly according to the nature of
+			 * the node: if it contains the name of a dimension or a member.
+			 * Since the structure foresees that a list of members follows a
+			 * dimension, we calculate the position of the node with respect to
+			 * the leaves; in case it is odd, the cell contains a dimension; in
+			 * case it is even, the cell contains a dimension.
+			 */
+		    int distanceToLeaves = aNode.getDistanceFromLeaves();
+		    if ( !cs.isMeasureOnRow() ) {
+		    	distanceToLeaves--;
+		    }
+		    boolean isDimensionNameCell = distanceToLeaves > 0 && (distanceToLeaves % 2) == 1;
+		    if (isDimensionNameCell) {
+		    	cell.setCellStyle(dimensionCellStyle);
+		    } else {
+		    	cell.setCellStyle(memberCellStyle);
+		    }
 		    
 		    if (childs != null && childs.size() > 0) {
 		    	buildColumnsHeader(sheet, cs, childs, rowNum + 1, columnCounter, createHelper, locale);
