@@ -657,18 +657,21 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Enter search Labe
 //===================================================================
 //MASSIVE EXPORT
 //===================================================================
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.title'] = 'Export options';
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.docsList'] = 'Worksheet documents list to export';
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.cycleOnFilter'] = 'Cycle on filters';
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.roleSelection'] = 'Role Selection';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.title'] = 'Wizard for worksheet massive export';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.back'] = 'Back';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.next'] = 'Next';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.finish'] = 'Finish';
 
-Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.title'] = 'Wizard for worksheet massive export';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.title'] = 'Export options';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.cycle.label'] = 'Cycle on filters';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.label'] = 'Role';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.emptyText'] = 'Select a role';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.documents.label'] = 'Worksheet documents to export';
 
-Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.back'] = 'Back';
-Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.next'] = 'Next';
-Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.finish'] = 'Finish';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.msg.noDoc'] = 'No Worksheet documents to export';
 
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.NoDoc'] = 'No Worksheet documents to export'; 
+
+ 
 
 Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Massive Export progress '; 
 
