@@ -145,9 +145,15 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersEditWizard, Ext.Window, {
 	
 	, getFormState: function() {
 		var values = this.detailsFormPanel.getForm().getValues();
-		if(!this.splittingFilterCheckbox.hidden && (values.splittingFilter==undefined || values.splittingFilter==null)){
-			this.splittingFilter =null;
-		}else if(values.splittingFilter=='on'){
+		if ( this.splittingFilterCheckbox.hidden.valueOf() || !this.splittingFilterCheckbox.getValue().valueOf() ) {
+			values.splittingFilter = 'off';
+		} else {
+			values.splittingFilter = 'on';
+		}
+		
+		if ( !this.splittingFilterCheckbox.hidden.valueOf() && values.splittingFilter == 'off' ) {
+			this.splittingFilter = null;
+		} else if (values.splittingFilter == 'on') {
 			this.splittingFilter = this.row;
 		}
 		return values;
@@ -163,7 +169,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersEditWizard, Ext.Window, {
 		this.setFormState(row.data);
 	}
 	
-	,getSplitFilter: function(){
+	, getSplitFilter: function() {
 		return this.splittingFilter;
 	}
 	

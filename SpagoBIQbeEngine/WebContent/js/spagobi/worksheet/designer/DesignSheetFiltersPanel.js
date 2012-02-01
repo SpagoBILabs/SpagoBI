@@ -405,7 +405,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	}
 
 	//Update the filter after edit
-	, updateRecordProperties: function(values){
+	, updateRecordProperties: function(theWizard){
 		this.store.commitChanges();
 		this.splittingFilter = this.editItemWindow.getSplitFilter();
 	}
