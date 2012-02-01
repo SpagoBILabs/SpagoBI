@@ -294,6 +294,7 @@
               <file name="./src/ext/sbi/browser/DocumentsTree.js"/>
               <file name="./src/ext/sbi/browser/FilterPanel.js"/>
               <file name="./src/ext/sbi/browser/SearchPanel.js"/>
+			  <file name="./src/ext/sbi/browser/ProgressPanel.js"/>
               <file name="./src/ext/sbi/browser/FolderViewTemplate.js"/>
               <file name="./src/ext/sbi/browser/FolderView.js"/>
               <file name="./src/ext/sbi/browser/FolderDetailPanel.js"/>  
@@ -403,6 +404,8 @@
 				<file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js"/>
 				<file name="./src/ext/sbi/tools/dataset/PreviewWindow.js"/>
 				<file name="./src/ext/sbi/tools/dataset/CustomDataGrid.js"/>
+				<file name="./src/ext/sbi/tools/massiveExport/MassiveExportOptionsPanel.js"/>
+				<file name="./src/ext/sbi/tools/massiveExport/MassiveExportWizardWindow.js"/>
 
 				<file name="./src/ext/sbi/domain/ManageDomains.js"/>
 				<file name="./src/ext/sbi/config/ManageConfig.js"/>
