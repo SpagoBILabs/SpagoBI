@@ -32,7 +32,7 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 			    model: 'folder',
 			    root: this.data,
 			    proxy: {
-			        type: 'ajax',
+					type: 'memory',
 			        reader: {
 			            type: 'tree',
 			            root: 'samples'
@@ -41,20 +41,22 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 			});
 
 			this.store.sync();
-
 			
 			app.views.DocumentBrowser.superclass.initComponent.apply(this, arguments);
 		
-		
+
+			this.on('itemtap', this.populateList, this);
+
 		},
-		populateList: function()	{
-			
-/*			var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
+		populateList: function(id)	{
+			alert('popola list '+id);
+			var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
 			this.services = new Array();
 			this.services['loadFolderContentService'] = Sbi.config.serviceRegistry.getServiceUrl({
 				serviceName: 'GET_FOLDER_CONTENT_ACTION'
 				, baseParams: params
 			});
+			/*
 		    this.store = new Ext.data.TreeStore({
 		    	model: 'folderContent',
 				proxy: {
@@ -70,8 +72,8 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 		    });
 		    
 		    this.store.load();
-		    */
 		    
+			
 		    
 /*			this.store = new Ext.data.JsonStore({
 				proxy: {
@@ -85,22 +87,29 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 				 , root: 'folderContent'
 				 , fields: ['title', 'icon', 'samples']
 			});	*/ 
+			var items = {};
 
-/*		    Ext.Ajax.request({
+			Ext.Ajax.request({
                 url: this.services['loadFolderContentService'],
                 scope: this,
                 method: 'post',
+                //params: {folderId: id},
                 success: function(response, opts) {
               	  if(response.responseText.indexOf('<') == -1){
                   	  var content = Ext.util.JSON.decode( response.responseText );	              		      			 
-                      alert(content);
+                  	  items = content.folderContent[0];
+                  	  this.data = items;
+                  	  this.store.root= items;
+                  	  this.store.root= items;
+                  	  this.store.load(items);
+                  	  //this.show();
               	  }else{
-              		  alert('cannot !');
+              		  alert('cannot produce tree!');
                   	  return;
               	  }
                 }
-		    });    */
-
+		    });    
+			
 			
 		}
 });

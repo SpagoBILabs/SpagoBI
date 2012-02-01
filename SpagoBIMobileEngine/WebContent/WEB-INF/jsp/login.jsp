@@ -63,6 +63,8 @@ author: Monica Franceschini
 		<script type="text/javascript" src="../js/spagobi/MainContainer.js"></script>
 		<script type="text/javascript" src="../js/spagobi/DocumentBrowser.js"></script>
 		<script type="text/javascript" src="../js/spagobi/DocumentPreview.js"></script>
+		
+		<script type="text/javascript" src="../js/spagobi/Utils.js"></script>
 	</head>
 
 	<body>

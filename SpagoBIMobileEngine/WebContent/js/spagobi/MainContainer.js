@@ -4,6 +4,7 @@ app.views.MainContainer = Ext.extend(Ext.Panel,
 		browser: null,
 		preview: null,
 	    dockedItems: [],
+	   
 
 		initComponent: function ()	{
 			this.title = 'Main container';
@@ -18,10 +19,12 @@ app.views.MainContainer = Ext.extend(Ext.Panel,
 			this.preview = new app.views.DocumentPreview();
 			
 			this.items =[this.browser , this.preview ];
+			
 			app.views.MainContainer.superclass.initComponent.apply(this, arguments);
+			
+			
 		}
-		, showDocumentBrowser: function(){
-			this.browser.populateList();
-		}
+
+		
 
 	});
