@@ -444,7 +444,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     	if(this.fireEvent('beforeperformactiononfolder', this, dirRecord, action) !== false){
     		if(action === 'export' && Sbi.user.functionalities.contains('SeeMetadataFunctionality')) {
     			
-    			var popupWin = new Sbi.tools.massiveExport.MassiveExportWizardWindow({
+    			var popupWin = new Sbi.browser.mexport.MassiveExportWizard({
     				functId : dirRecord.id
     				, functCd : dirRecord.code
     			});
@@ -452,7 +452,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     			popupWin.doLayout();
     		
     		} else if(action === 'schedule' && Sbi.user.functionalities.contains('SeeMetadataFunctionality')) {
-    			var popupWin = new Sbi.tools.massiveExport.MassiveExportWizardWindow({
+    			var popupWin = new Sbi.browser.mexport.MassiveExportWizard({
     				functId : dirRecord.id
     				, functCd : dirRecord.code
     			});
