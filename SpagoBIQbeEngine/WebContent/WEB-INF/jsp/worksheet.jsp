@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
 <%@page import="it.eng.spagobi.engines.worksheet.WorksheetEngineInstance"%>
 <%@page import="it.eng.spagobi.engines.worksheet.serializer.json.decorator.FiltersInfoJSONDecorator"%>
+<%@page import="it.eng.spagobi.engines.worksheet.serializer.json.decorator.FiltersOrderTypeJSONDecorator"%>
 <%@page import="org.json.JSONObject"%>
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -65,7 +66,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	locale = (Locale) worksheetEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	
 	QbeEngineConfig qbeEngineConfig = QbeEngineConfig.getInstance();
-	if(qbeEngineConfig!=null){
+	if (qbeEngineConfig != null ) {
 		// settings for max records number limit
 		resultLimit = qbeEngineConfig.getResultLimit();
 		isMaxResultLimitBlocking = qbeEngineConfig.isMaxResultLimitBlocking();
@@ -77,6 +78,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	
 	workSheetDefinition = (WorkSheetDefinition) worksheetEngineInstance.getAnalysisState();
 	decorator = new FiltersInfoJSONDecorator(workSheetDefinition, worksheetEngineInstance.getDataSet());
+	decorator.setNextDecorator(new FiltersOrderTypeJSONDecorator(worksheetEngineInstance.getDataSet()));
 	JSONObject workSheetDefinitionJSON = workSheetDefinition.getConf(decorator);
 
 %>
