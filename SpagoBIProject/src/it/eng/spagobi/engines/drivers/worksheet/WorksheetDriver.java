@@ -59,7 +59,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 	public final static String PARAM_SERVICE_NAME = "ACTION_NAME";
 	public final static String PARAM_NEW_SESSION = "NEW_SESSION";
 	public final static String QUERY = "QUERY";
-	public final static String PARAM_ACTION_NAME = "WORKSHEET_ENGINE_START_ACTION";
+	public final static String PARAM_ACTION_NAME = "MASSIVE_EXPORT_WORKSHEET_ENGINE_START_ACTION";
 
 	public final static String METADATA_AND_METACONTENT = "METADATA_AND_METACONTENT";
 	public final static String PARAMETERS = "PARAMETERS";
@@ -194,7 +194,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			addBIParameterDescriptions(biObject, parameters);
 
 			addMetadataAndContent(biObject, parameters);
-			addParametersContent(biObject, parameters);
+			//addParametersContent(biObject, parameters);
 
 		} finally {
 			logger.debug("OUT");
