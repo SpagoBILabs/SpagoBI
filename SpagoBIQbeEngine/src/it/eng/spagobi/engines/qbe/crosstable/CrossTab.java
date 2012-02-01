@@ -979,7 +979,7 @@ public class CrossTab {
     		operation = operation+op.get(i);
     		operation = operation+data.get(i);
     		if(data.get(i)=="NA" || data.get(i)=="null"  || data.get(i)==null){
-    			return "NA";
+    			return "0";
     		}
     	}
     	operation = operation + op.get(i);
@@ -1184,11 +1184,12 @@ public class CrossTab {
 	public void addSubtotalsToTheNode(Node n, boolean horizontal, int level, boolean measuresOnRow){
 		List<Node> childs = n.getChilds();
 		if(measuresOnRow){
-			if(!horizontal && level<3){
+			if((!horizontal && level<2) ||  //if level == 1 the subtotals are equals to the total
+				(childs.size()>0 && childs.get(0).getChilds().size()==0 ) ){ //don't calculate the subtotals between neasures
 				return;
 			}
 		}else{
-			if(horizontal && level<3){
+			if(horizontal && level<2 || (childs.size()>0 && childs.get(0).getChilds().size()==0 )){
 				return;
 			}
 		}

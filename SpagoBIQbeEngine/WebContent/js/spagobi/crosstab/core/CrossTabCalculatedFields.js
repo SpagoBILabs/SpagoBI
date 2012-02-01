@@ -364,7 +364,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
   	   			
   	   			if(novalues<expIds.length && novalues>0){
   	   				for(var i=0; i<lineLength; i++){
-			    		CFFresh.push("NA");
+			    		CFFresh.push("0");
 			    	}
   	   				CF.push(CFFresh);
   	   			}else if(novalues==0){
@@ -400,7 +400,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     		operation = operation+op[i];
     		operation = operation+listOfExp[i];
     		if(listOfExp[i]=="NA" || listOfExp[i]=="null"){
-    			return "NA";
+    			return "0";
     		}
     	}
     	operation = operation + op[i];
