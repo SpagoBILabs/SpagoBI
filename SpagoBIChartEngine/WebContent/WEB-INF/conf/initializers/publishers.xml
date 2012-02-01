@@ -2,10 +2,10 @@
 
 <PUBLISHERS>
      
-     <PUBLISHER name="XXX_ENGINE_START_ACTION_PUBLISHER">		
+     <PUBLISHER name="CHART_ENGINE_EXTJS_START_ACTION_PUBLISHER">		
 		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
 			<RESOURCES>
-				<ITEM prog="0" resource="/WEB-INF/jsp/xxx.jsp" />
+				<ITEM prog="0" resource="/WEB-INF/jsp/extJSChart.jsp" />
 			</RESOURCES>
 		</RENDERING>    	
 	</PUBLISHER>	
