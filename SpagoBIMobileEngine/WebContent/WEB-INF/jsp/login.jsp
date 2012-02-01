@@ -48,7 +48,7 @@ author: Monica Franceschini
 
 	<head>
 		<link rel="stylesheet" href="../css/sencha-touch-debug.css" type="text/css">
-
+		<link rel="stylesheet" href="../css/spagobi-mobile.css" type="text/css">
 		<link rel="stylesheet" href="../css/Ext.ux.TouchGridPanel.css" type="text/css">
 
 		<script type="text/javascript" src="../js/sencha/sencha-touch-debug.js"></script>
@@ -56,11 +56,13 @@ author: Monica Franceschini
 		<script type="text/javascript" src="../js/sencha/Ext.ux.touch.PagingToolbar.js"></script>
 		<script type="text/javascript" src="../js/spagobi/service/ServiceRegistry.js"></script>
 		<script type="text/javascript" src="../js/spagobi/app.js"></script>		
-		
+		<script type="text/javascript" src="../js/spagobi/MobileModels.js"></script>
 		<script type="text/javascript" src="../js/spagobi/MobileController.js"></script>
 		<script type="text/javascript" src="../js/spagobi/Viewport.js"></script>
 		<script type="text/javascript" src="../js/spagobi/Login.js"></script>
 		<script type="text/javascript" src="../js/spagobi/MainContainer.js"></script>
+		<script type="text/javascript" src="../js/spagobi/DocumentBrowser.js"></script>
+		<script type="text/javascript" src="../js/spagobi/DocumentPreview.js"></script>
 	</head>
 
 	<body>
