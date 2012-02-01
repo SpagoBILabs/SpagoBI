@@ -116,6 +116,17 @@ Sbi.crosstab.core.CrossTab = function(config) {
     this.columnHeader[0][0].hidden=true;//hide the fake root header
     this.columnHeaderPanel = this.buildHeaderGroup(this.columnHeader, true);
 
+    
+	this.calculatedFieldsSumRow = new Array();
+	for(var i=0; i<this.rowHeader[this.rowHeader.length-1].length; i++){
+		this.calculatedFieldsSumRow.push('NN');
+	}
+	
+	this.calculatedFieldsSumColumn = new Array();
+	for(var i=0; i<this.columnHeader[this.columnHeader.length-1].length; i++){
+		this.calculatedFieldsSumColumn.push('NN');
+	}
+		
     this.addDDArrowsToPage();
     this.createColumnResizer();
     
@@ -1636,7 +1647,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //lazy: true if we only want to insert the row/columns in the data structures, but not in spread the data in the GUI.
     //      it's usefull if we call this method more than one time: we call it with lazy=true far all the iteration and with lazy=false in the last one +
     //       (take a look at the method calculateCF)
-    , addNewEntries: function(level,node,headers,entries, horizontal, lazy){
+    , addNewEntries: function(level,node,headers,entries, horizontal, lazy, entriesSum){
     	
     	var father = node.father;
     	var dimensionToAdd= node.thisDimension;
@@ -1711,11 +1722,39 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	
     	//add the columns or the rows
     	if(horizontal){
+    		//The last element of the entries is the calculated field applied on the totals
+    		//so we have to remove it and store in a local variable
+    		if(entriesSum!=null){
+        		for(var f=0; f<entriesSum.length; f++){
+        			this.calculatedFieldsSumColumn.splice(nodePosition+f,0,entriesSum[f]);
+        		}
+    		}
+    		
+    		if(node.type=='partialsum'){
+        		for(var f=0; f<entries.length; f++){
+        			this.calculatedFieldsSumColumn.splice(nodePosition+f,0,"NN");
+        		}
+    		}
+
     		this.entries.addColumns(nodePosition,entries);
+
     	}else{
+    		//The last element of the entries is the calculated field applied on the totals
+    		//so we have to remove it and store in a local variable
+    		if(entriesSum!=null){
+        		for(var f=0; f<entriesSum.length; f++){
+        			this.calculatedFieldsSumRow.splice(nodePosition+f,0,entriesSum[f]);
+        		}
+    		}
+    		if(node.type=='partialsum'){
+        		for(var f=0; f<entries.length; f++){
+        			this.calculatedFieldsSumColumn.splice(nodePosition+f,0,"NN");
+        		}
+    		}
     		this.entries.addRows(nodePosition,entries);
+    		
     	}
-    	
+
     	if(horizontal){
     		this.columnHeader = headers;
     	}else{
@@ -2063,7 +2102,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     		if(withHidden || !this.rowHeader[this.rowHeader.length-1][i].hidden){
 	        	for(var j=0; j<lines.length; j++){
 	        		
-	        		if(withHidden || !this.columnHeader[this.columnHeader.length-1][lines[j]].hidden ){//}&& this.columnHeader[this.columnHeader.length-1][lines[j]].type=='data'){
+	        		if((withHidden || !this.columnHeader[this.columnHeader.length-1][lines[j]].hidden) && this.columnHeader[this.columnHeader.length-1][lines[j]].type=='data'){
 	        			number = parseFloat(entries[i][lines[j]]);
 	        			if(!isNaN(number)){
 	        				partialSum = partialSum + number;
@@ -2092,7 +2131,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
        		partialSum =0;
 	       	if(withHidden || !this.columnHeader[this.columnHeader.length-1][j].hidden){
 	        	for(var i=0; i<lines.length; i++){
-	        		if(withHidden || !this.rowHeader[this.rowHeader.length-1][lines[i]].hidden ){//&& this.rowHeader[this.rowHeader.length-1][lines[i]].type=='data'){
+	        		if((withHidden || !this.rowHeader[this.rowHeader.length-1][lines[i]].hidden) && this.rowHeader[this.rowHeader.length-1][lines[i]].type=='data'){
 	        			number = parseFloat(entries[lines[i]][j]);
 	        			if(!isNaN(number)){
 	        				partialSum = partialSum + number;
@@ -2406,9 +2445,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
         }
     }
     
-    
-    
-    
     //Build the panel with the sum of the columns
     , getColumnsSumPanel : function(tpl, columnsForView, withRowsSum){
     	var storeColumns = new Ext.data.ArrayStore({
@@ -2428,11 +2464,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		var sumColumns = this.columnsTotalSumArray;
 		
 		if(this.misuresOnRow){
-			
+
 	    	var superSumColumnsArray= new Array();
 	    	var superSumColumns=0;			
 	   		//we use superSumColumnsArray, superSumColumns for the total of totals
-	   		
+
+	    	
 	   		for(var j=0; j<sumColumns.length; j++){
 	   			superSumColumns=0;
 	   			
@@ -2440,12 +2477,16 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				//var datatype =  measureMetadata.type;
 				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
 				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
-			
+				
 	   			for(var i=0; i<sumColumns[j].length; i++){
-			
+	   				
+		   			if(this.calculatedFieldsSumColumn[j]!=undefined && this.calculatedFieldsSumColumn[j]!=null && this.calculatedFieldsSumColumn[j]!='NN'){
+		   				sumColumns[j][i]=this.calculatedFieldsSumColumn[i][j];
+		   			}
+	   				
 		   			//in the total sum we not consider calculated fields and partial sums
-	   				if( !this.columnHeader[this.columnHeader.length-1][i].type!='CF' &&
-	   					!this.columnHeader[this.columnHeader.length-1][i].type!='partialsum'){
+	   				if( this.columnHeader[this.columnHeader.length-1][i].type=='data'){
+	   					
 	   						superSumColumns = (superSumColumns+parseFloat(sumColumns[j][i]));
 	   				}
 	   				
@@ -2463,11 +2504,13 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   		dataViewHeight = (this.rowHeight)*sumColumns.length;
 	   		this.buildSuperTotalPanel(superSumColumnsArray, tpl, dataViewHeight, this.columnWidth);
 		}else{
-	   				
 	   		for(var j=0; j<sumColumns.length; j++){
+	   			//add the sum of the calculated field
+	   			if(this.calculatedFieldsSumColumn[j]!=undefined && this.calculatedFieldsSumColumn[j]!=null && this.calculatedFieldsSumColumn[j]!='NN'){
+	   				sumColumns[j]=this.calculatedFieldsSumColumn[j];
+	   			}
 	   			
 				var measureMetadata = this.getMeasureMetadata(this.columnHeader[this.columnHeader.length-1][j].name);
-				//var datatype =  measureMetadata.type;
 				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
 				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
 	   			
@@ -2522,7 +2565,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    		var dataViewWidth;
 
 		var sumRows = this.rowsTotalSumArray;
-		
+
 		if(!this.misuresOnRow){//there is one column for each measure
 			
 	    	//we use superSumColumnsArray for the total of totals
@@ -2532,15 +2575,20 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    			}
 	   		for(var j=0; j<sumRows[0].length; j++){
 	   			
+
 				var measureMetadata = this.getMeasureMetadata(this.columnHeader[this.columnHeader.length-1][i].name);
 				//var datatype =  measureMetadata.type;
 				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
 				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
 	   			
 	   			for(var i=0; i<sumRows.length; i++){
+	   				
+		   			if(this.calculatedFieldsSumRow[j]!=undefined && this.calculatedFieldsSumRow[j]!=null && this.calculatedFieldsSumRow[i]!='NN'){
+		   				sumRows[i][j]=this.calculatedFieldsSumRow[i][j];
+		   			}
+	   				
 		   			//in the total sum we not consider calculated fields and partial sums
-	   				if(!this.rowHeader[this.rowHeader.length-1][j].type!='CF' &&
-	 	   			   !this.rowHeader[this.rowHeader.length-1][j].type!='partialsum'){
+	   				if(this.rowHeader[this.rowHeader.length-1][j].type=='data'){
 	   					superSumColumnsArray[i] = superSumColumnsArray[i]+parseFloat(sumRows[i][j]);
 	 	   			}
 		   				
@@ -2559,7 +2607,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		}else{
 	   		
 	   		for(var j=0; j<sumRows.length; j++){
-	   			
+	   			if(this.calculatedFieldsSumRow[j]!=undefined && this.calculatedFieldsSumRow[j]!=null && this.calculatedFieldsSumRow[j]!='NN'){
+	   				sumRows[j]=this.calculatedFieldsSumRow[j];
+	   			}
 				var measureMetadata = this.getMeasureMetadata(this.rowHeader[this.rowHeader.length-1][j].name);
 				//var datatype =  measureMetadata.type;
 				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
@@ -2574,6 +2624,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				a.push(scaleFactor);
 				sumRowsStore.push(a);
 	   		}
+
 	   		dataViewWidth=this.columnWidth;
 		}	
 		storeRows.loadData(sumRowsStore);	
@@ -2622,10 +2673,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		    	             {name: 'scaleFactor'}
 		    	    ]
 		    	});
-	
-				
-				
-   				
+
 		    	var sumSuperColumnsStore = new Array();
 		   		for(var j=0; j<superSumColumnsArray.length; j++){
 		   			var scaleFactor = (this.getMeasureScaleFactor(this.measuresMetadata[j].name).value);
