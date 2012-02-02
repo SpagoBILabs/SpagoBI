@@ -85,7 +85,11 @@
 	margin-top: 10px;
 }
 /*document preview*/
-
+.preview-item {
+	width:40%; 
+	float: left; 
+	text-align:center;
+}
 .document-item-icon {
 	margin: 5px 0 0 5px;
 	float: left;
