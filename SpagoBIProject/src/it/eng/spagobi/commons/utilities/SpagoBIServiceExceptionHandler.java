@@ -103,7 +103,7 @@ public class SpagoBIServiceExceptionHandler {
 			}
 			String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
 			str = msgBuild.getMessage(str, locale);	
-			String message = "An unpredicted error occurred while executing service."
+			String message = "An unexpecetd error occurred while executing service."
 							 + "\nThe root cause of the error is: " + str;
 			
 			serviceException = new SpagoBIServiceException(serviceName, message, e);
