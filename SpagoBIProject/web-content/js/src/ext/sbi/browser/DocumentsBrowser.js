@@ -46,14 +46,14 @@ Sbi.browser.DocumentsBrowser = function(config) {
         , metaDocument: config.metaDocument	
     });
 	
-	this.progressPanel = new Sbi.browser.ProgressPanel({
-        title: LN('sbi.browser.progresspanel.title')
-        , border:true
-        , metaFolder: config.metaFolder
-        , metaDocument: config.metaDocument	
-        //, html : 'ciao'
-    });
-	
+	if (Sbi.user.functionalities.contains('DoMassiveExportFunctionality')) {
+		this.progressPanel = new Sbi.browser.ProgressPanel({
+			title: LN('sbi.browser.progresspanel.title')
+			, border:true
+			, metaFolder: config.metaFolder
+			, metaDocument: config.metaDocument	
+		});
+	}
 	
 	
 	this.searchPanel = new Sbi.browser.SearchPanel({
@@ -77,10 +77,13 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	               this.treePanel
 	               , this.filterPanel
 	               , this.searchPanel
-	               , this.progressPanel
 	       ]
 	});
-	
+
+	if(this.progressPanel){
+	// defined and added only if user has massive export functionality	
+		this.westRegionContainer.add(this.progressPanel);
+	}
 	
 	
 	this.detailPanel = new Sbi.browser.FolderDetailPanel({ 
@@ -209,9 +212,10 @@ Sbi.browser.DocumentsBrowser = function(config) {
     this.filterPanel.addListener('onsort', this.onSort, this);
     this.filterPanel.addListener('ongroup', this.onGroup, this);
     this.filterPanel.addListener('onfilter', this.onFilter, this);
-    
-    this.progressPanel.addListener('click', this.onTreeNodeClick, this);
-    
+   
+    if(this.progressPanel){ 
+    	this.progressPanel.addListener('click', this.onTreeNodeClick, this);
+    }
     
    
     

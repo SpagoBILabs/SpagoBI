@@ -82,8 +82,8 @@ Sbi.browser.ProgressPanel = function(config) {
 	
 	// keep track of current works going on (as from database)
 	this.currentWorks = new Object();
-	this.downloadButtons = new Object();
-	this.deleteButtons = new Object();
+	this.downloadButtonPanels = new Object();
+	this.deleteButtonPanels = new Object();
 	// 
 	this.toBeDeleted = new Array();
 
@@ -105,8 +105,8 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	, expanded : false
 	, currentWorks : null
 	, toBeDeleted : null
-	, downloadButtons : null
-	, deleteButtons : null
+	, downloadButtonPanels : null
+	, deleteButtonPanels : null
 	, canAccess: true
 		// Progress Bar creation
 	, initPanels : function(){
@@ -123,7 +123,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		
 		this.downloadedPanel = new Ext.Panel({  
 			title: 'Download Exports',
-			layout: 'anchor',
+			layout: 'column',
 			scope: this,
 			height: 320,
 			defaults: {border:false
@@ -292,12 +292,24 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 			this.deleteWork(functCd+''+randomKey);
 		}
     	
-	    if(this.downloadButtons[functCd+randomKey]){
+	    if(this.downloadButtonPanels[functCd+randomKey]){
 	    }
 	    else{
-	    	this.downloadButtons[functCd+randomKey] = new Ext.Button({
+	    	// create panel and put inside button
+	    	this.downloadButtonPanels[functCd+randomKey] = new Ext.Panel({  
+				//title: 'Started Export',
+				//layout: 'fit',  
+				scope: this,
+				//height: 120,
+				autoWidth: true,
+				//columnWidth : 0.5,
+				defaults: {border:false}
+			});
+
+	    	
+	    	var button = new Ext.Button({
 	    		id: functCd+randomKey+'download',
-	    		text: 'download '+functCd+'-'+randomKey,
+	    		text: ''+functCd+'-'+randomKey,
 	    		disabled: false,
 	    		scope: this,
 	    		disabled: true,
@@ -305,9 +317,15 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	    			window.open(urlToCall,'name','resizable=1,height=750,width=1000');
 					}
 				});
+	    	button.enable();
+	    	this.downloadButtonPanels[functCd+randomKey].add(button);
+	    	
 	    }
-	    this.downloadButtons[functCd+randomKey].enable();
-	    this.downloadedPanel.add(this.downloadButtons[functCd+randomKey]);
+	   // this.downloadButtons[functCd+randomKey].enable();
+	   
+	    
+	    this.downloadedPanel.add(this.downloadButtonPanels[functCd+randomKey]);
+	    //this.downloadedPanel.add(this.downloadButtons[functCd+randomKey]);
 
 	    this.createDeleteForm(functCd, randomKey, progressThreadId);
 
@@ -319,10 +337,23 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	   
 		var pars = {FUNCT_CD: functCd, RANDOM_KEY: randomKey, PROGRESS_THREAD_ID: progressThreadId };
 		
-		if(this.deleteButtons[functCd+randomKey]){
+		if(this.deleteButtonPanels[functCd+randomKey]){
 	    }
 	    else{
-	    	this.deleteButtons[functCd+randomKey] = new Ext.Button({
+	    	
+	    	this.deleteButtonPanels[functCd+randomKey] = new Ext.Panel({  
+				//title: 'Started Export',
+				//layout: 'fit',  
+				scope: this,
+				//height: 120,
+				autoWidth: true,
+				//columnWidth : 0.5,
+				defaults: {border:false}
+			});
+	    	
+	    	
+	    	
+	    	var button = new Ext.Button({
 	    		id: functCd+randomKey+'delete',
 	    		//text: 'delete '+functCd+'-'+randomKey,
 				iconCls: 'icon-clear',
@@ -335,12 +366,12 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	    	        params: pars,
 	    	        success : function(response, options) {
 	    				if(response !== undefined) {   
-	    	    			this.downloadButtons[functCd+randomKey].hide();
-	    	    			this.downloadButtons[functCd+randomKey].destroy();
-	    	    			this.downloadButtons[functCd+randomKey] = null;
-	    					this.deleteButtons[functCd+randomKey].hide();
-	    	    			this.deleteButtons[functCd+randomKey].destroy();
-	    	    			this.deleteButtons[functCd+randomKey] = null;
+	    	    			this.downloadButtonPanels[functCd+randomKey].hide();
+	    	    			this.downloadButtonPanels[functCd+randomKey].destroy();
+	    	    			this.downloadButtonPanels[functCd+randomKey] = null;
+	    					this.deleteButtonPanels[functCd+randomKey].hide();
+	    	    			this.deleteButtonPanels[functCd+randomKey].destroy();
+	    	    			this.deleteButtonPanels[functCd+randomKey] = null;
 	    				}
 	    			},
 	    	        scope: this,
@@ -348,9 +379,12 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	    		});	
 				}
 			});
+	    	button.enable();
+	    	this.deleteButtonPanels[functCd+randomKey].add(button);
 	    }
-	    this.deleteButtons[functCd+randomKey].enable();
-	    this.downloadedPanel.add(this.deleteButtons[functCd+randomKey]);
+
+	    this.downloadedPanel.add(this.deleteButtonPanels[functCd+randomKey]);
+	
 	}
 	, cycleProgress: function(){
 		// for better performances wanted to draw bars only when expanded, but execution must go on aniway
