@@ -163,7 +163,10 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction{
 	private JSONObject createJSONResponse(JSONArray folders, JSONArray documents) throws JSONException {
 		JSONObject results = new JSONObject();
 		if(documents.length() != 0){
-			folders.put(folders.length(), documents);
+			for(int i=0; i< documents.length(); i++){
+				JSONObject doc = documents.getJSONObject(i);
+				folders.put(doc);
+			}
 		}
 		results.put("name", "Document browser");
 		results.put("samples", folders);

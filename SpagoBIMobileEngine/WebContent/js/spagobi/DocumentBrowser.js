@@ -9,7 +9,7 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 	    store: null,
 	    data: null,
 	    flex:1,
-	    displayField: 'name' || 'label',
+	    displayField: 'name',
 	    
 		initComponent: function(){
 			
