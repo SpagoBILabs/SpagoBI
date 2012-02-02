@@ -117,12 +117,12 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 		         , autoLoad: true
 		}); 
 		if(!this.selectedRole){
-			selectedRole = rolesArray[0];
+			this.selectedRole = rolesArray[0];
 		}
 
 		// if there is only one role don't draw combo
 		if(rolesArray.length==1){
-			selectedRole = rolesArray[0];
+			this.selectedRole = rolesArray[0];
 			this.rolesCombo = null;
 			this.retrieveDocuments();
 		}
@@ -145,8 +145,8 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 			    , listeners: {
 					'select': {
 						fn: function(){ 
-						selectedRole = this.rolesCombo.getValue();
-						this.rolesCombo.setValue(selectedRole);
+						this.selectedRole = this.rolesCombo.getValue();
+						this.rolesCombo.setValue(this.selectedRole);
 						}
 				, scope: this
 						}
@@ -280,7 +280,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 	}
 	
 	, getSelectedRole : function(){
-		return selectedRole;
+		return this.selectedRole;
 	}
 	, getSelectedOutput : function(){
 		return selectedOutput;
