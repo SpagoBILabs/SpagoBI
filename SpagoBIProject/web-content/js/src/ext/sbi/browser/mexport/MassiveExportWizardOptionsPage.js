@@ -268,7 +268,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 				'select': {
 					fn: function(){ 
 					this.selectedOutput = this.comboBoxOutput.getValue();
-					comboBoxOutput.setValue(this.selectedOutput);
+					this.comboBoxOutput.setValue(this.selectedOutput);
 						}
 			, scope: this
 					}
