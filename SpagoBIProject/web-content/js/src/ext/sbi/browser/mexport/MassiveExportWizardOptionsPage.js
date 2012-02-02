@@ -267,8 +267,8 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 			, listeners: {
 				'select': {
 					fn: function(){ 
-					selectedOutput = this.comboBoxOutput.getValue();
-					this.selectedOutput.setValue(selectedOutput);
+					this.selectedOutput = this.comboBoxOutput.getValue();
+					comboBoxOutput.setValue(this.selectedOutput);
 						}
 			, scope: this
 					}
@@ -283,7 +283,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 		return this.selectedRole;
 	}
 	, getSelectedOutput : function(){
-		return selectedOutput;
+		return this.selectedOutput;
 	}
 	
 	, isCycleOnFilterSelected : function(){
@@ -311,7 +311,9 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 		return this.currentPage;
 	}
 	
-	
+	, getName: function(){
+		return 'Sbi.browser.mexport.MassiveExportWizardOptionsPage';
+	}
 	
 
 });
