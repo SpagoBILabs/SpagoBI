@@ -68,11 +68,6 @@ Sbi.browser.mexport.MassiveExportWizard = function(config) {
 
 	this.services = this.services || new Array();
 
-	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null, TYPE: 'WORKSHEET'};
-	this.services['StartMassiveExportExecutionProcessAction'] = this.services['StartMassiveExportExecutionProcessAction'] || Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'START_MASSIVE_EXPORT_EXECUTION_PROCESS_ACTION'
-		, baseParams: new Object()
-	});	
 	this.services['getAnalyticalDriversFromDocsInFolderAction'] = this.services['getAnalyticalDriversFromDocsInFolderAction'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_ANALYTICAL_DRIVER_FROM_DOCS_IN_FOLDER_ACTION'
 			, baseParams: new Object()
@@ -81,6 +76,13 @@ Sbi.browser.mexport.MassiveExportWizard = function(config) {
 		serviceName: 'START_MASSIVE_EXPORT_THREAD_ACTION'
 		, baseParams: new Object()
 	});
+	
+	this.services['startMassiveScheduleAction'] = this.services['startMassiveScheduleAction'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'START_MASSIVE_SCHEDULE_ACTION'
+		, baseParams: new Object()
+	});
+	
+	
 	
 	//this.addEvents();
 	this.initMainPanel(c);	
