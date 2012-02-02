@@ -150,8 +150,71 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
 	// ----------------------------------------------------------------------------------------
 
     , initMainPanel: function() {
-		this.mainPanel = new Ext.Panel({
-			html: 'Trigger panel'
+		this.mainPanel = new Ext.FormPanel({
+			labelWidth: 75, // label settings here cascade unless overridden
+		    frame:true,
+		    bodyStyle:'padding:5px 5px 0',
+		    width: 350,
+		    autoScroll: true,
+	        items: [
+	        {
+	            xtype:'fieldset',
+	            //checkboxToggle:true,
+	            collapsible: true,
+	            collapsed: false,
+	            title: 'General info',
+	            autoHeight:true,
+	            defaults: {width: 210},
+	            defaultType: 'textfield',
+	            items :[{
+	                    fieldLabel: 'Name',
+	                    name: 'name',
+	                    allowBlank:false
+	                },{
+	                    fieldLabel: 'Description',
+	                    name: 'description'
+	                },{
+	                    fieldLabel: 'Start date',
+	                    name: 'startDate'
+	                }, {
+	                    fieldLabel: 'Start time',
+	                    name: 'startTime'
+	                },{
+	                    fieldLabel: 'End date',
+	                    name: 'endDate'
+	                }, {
+	                    fieldLabel: 'End time',
+	                    name: 'endTime'
+	                }
+	            ]
+	        },{
+	            xtype:'fieldset',
+	            checkboxToggle:true,
+	            title: 'Per minute Execution',
+	            autoHeight:true,
+	            defaults: {width: 210},
+	            defaultType: 'textfield',
+	            collapsed: true,
+	            items :[{
+	            	fieldLabel: 'Every n minutes',
+	                name: 'first',
+	                allowBlank:false
+	            }]
+	        },{
+	            xtype:'fieldset',
+	            title: 'Per hour execution ',
+	            checkboxToggle:true,
+	            //collapsible: true,
+	            collapsed: true,
+	            autoHeight:true,
+	            defaults: {width: 210},
+	            defaultType: 'textfield',
+	            items :[{
+	            	fieldLabel: 'Every n hours',
+	                name: 'first',
+	                allowBlank:false
+	            }]
+	        }]
 		});
     }	
 });
