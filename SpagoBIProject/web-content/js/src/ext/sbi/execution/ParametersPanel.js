@@ -67,10 +67,7 @@ Sbi.execution.ParametersPanel = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});	
 	Ext.apply(this, c);
 	
-	
-//	if(Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.parametersPanel) {
-//		defaultSettings = Sbi.settings.execution.parametersPanel;
-//	}
+
 	
 	// create a new variable and store settings into this new variable
 	var temp = {};
@@ -88,8 +85,8 @@ Sbi.execution.ParametersPanel = function(config) {
 	
 	// always declare exploited services first!
 	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null, CONTEST: this.contest};
-	//this.services = new Array();
-	this.services = config.services || new Array();
+	
+	this.services = this.services || new Array();
 	
 	this.services['getParametersForExecutionService'] = this.services['getParametersForExecutionService'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_PARAMETERS_FOR_EXECUTION_ACTION'
