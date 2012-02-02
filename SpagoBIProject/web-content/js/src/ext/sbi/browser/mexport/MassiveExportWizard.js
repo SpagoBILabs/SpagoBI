@@ -129,9 +129,9 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 			var page = this.pages[i];
 			var name = page.getName();
 			var content = page.getContent();
-			params[name] = content;
+			params[name] = Ext.util.JSON.encode(content);
 		}
-
+		
 		// Start massive export
 		Ext.Ajax.request({
 		        url: this.services['performFinishAction']// this.services['startMassiveExportThreadAction']

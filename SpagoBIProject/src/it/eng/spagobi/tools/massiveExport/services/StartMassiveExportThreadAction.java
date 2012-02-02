@@ -52,53 +52,78 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 
 	private final String SERVICE_NAME = "START_MASSIVE_EXPORT_THREAD_ACTION";
 
+	// Objects recieved
+	private final String PARAMETERS_PAGE = "Sbi.browser.mexport.MassiveExportWizardParametersPage";
+	private final String OPTIONS_PAGE = "Sbi.browser.mexport.MassiveExportWizardOptionsPage";
+	private final String TRIGGER_PAGE = "Sbi.browser.mexport.MassiveExportWizardTriggerPage";
+
+
 	private final String FUNCTIONALITY_ID = "functId";
 	private final String PARAMETER_VALUES = "parameterValues";
 	private final String ROLE = "selectedRole";
+	private final String OUTPUT = "selectedOutput";
 	private final String TYPE = "type";  
 	private final String SPLITTING_FILTER = "splittingFilter"; 
-	
+
+
+
+
 	// logger component
 	private static Logger logger = Logger.getLogger(StartMassiveExportThreadAction.class); 
 
 	@Override
 	public void doService() {
-		
+
 		logger.debug("IN");
-		
+
 		LowFunctionality folder = null;
-		
+
 		List<BIObject> documentsToExport = null;
 		Integer progressThreadId = null;
-		
-		Integer folderId = this.getAttributeAsInteger(FUNCTIONALITY_ID);
-		logger.debug("Input parameter [" + FUNCTIONALITY_ID + "] is equal to [" + folderId + "]");
-		Assert.assertNotNull(folderId, "Input parameter [" + FUNCTIONALITY_ID + "] cannot be null");
 
-		String role = this.getAttributeAsString(ROLE);
-		logger.debug("Input parameter [" + ROLE + "] is equal to [" + role + "]");
-		
-		String state = this.getAttributeAsString(PARAMETER_VALUES);
-		logger.debug("Input parameter [" + PARAMETER_VALUES + "] is equal to [" + state + "]");
-		
-		String documentType = this.getAttributeAsString(TYPE);
-		logger.debug("Input parameter [" + documentType + "] is equal to [" + TYPE + "]");
-		
-		String cycleOnFilters = this.getAttributeAsString(SPLITTING_FILTER);
-		logger.debug("Input parameter [" + SPLITTING_FILTER + "] is equal to [" + cycleOnFilters + "]");
-		
-		boolean splittingFilter = false;
-		if(cycleOnFilters != null) splittingFilter = Boolean.valueOf(cycleOnFilters);
-		
-		JSONObject parametersJSON = null;
-		try {
-			parametersJSON = new JSONObject(state);
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException("Could not parse JSON of parameters values: " + state, t);
-		} 
+		try{
+			Integer folderId = null;
+			String documentType = null;
+			String role = null; 
+			String output = null;
+			boolean splittingFilter = false;
+			JSONObject parametersJSON = null;
+			
+			try{
+				folderId = this.getAttributeAsInteger(FUNCTIONALITY_ID);
+				logger.debug("Input parameter [" + FUNCTIONALITY_ID + "] is equal to [" + folderId + "]");
+				Assert.assertNotNull(folderId, "Input parameter [" + FUNCTIONALITY_ID + "] cannot be null");
+
+				documentType = this.getAttributeAsString(TYPE);
+				logger.debug("Input parameter [" + TYPE + "] is equal to [" + documentType + "]");
+
+				// get infos from option wizard page
+				JSONObject optionsObject = this.getAttributeAsJSONObject(OPTIONS_PAGE);
+				logger.debug("Input parameter [" + OPTIONS_PAGE + "] is equal to [" + optionsObject + "]");
+				Assert.assertNotNull(optionsObject, "Input parameter [" + OPTIONS_PAGE + "] cannot be null");
+
+				role = optionsObject.getString(ROLE);
+				logger.debug("Input parameter [" + ROLE + "] is equal to [" + role + "]");
+				Assert.assertNotNull(role, "Input parameter [" + ROLE + "] cannot be null");
+
+				output = optionsObject.getString(OUTPUT);
+				logger.debug("Input parameter [" + OUTPUT + "] is equal to [" + output + "]");
+				Assert.assertNotNull(output, "Input parameter [" + OUTPUT + "] cannot be null");
+
+				String cycleOnFilters = optionsObject.getString(SPLITTING_FILTER);
+				logger.debug("Input parameter [" + SPLITTING_FILTER + "] is equal to [" + cycleOnFilters + "]");
+				splittingFilter = false;
+				if(cycleOnFilters != null) splittingFilter = Boolean.valueOf(cycleOnFilters);
+
+				parametersJSON = this.getAttributeAsJSONObject(PARAMETERS_PAGE);
+				logger.debug("Input parameter [" + PARAMETERS_PAGE + "] is equal to [" + parametersJSON + "]");
+				Assert.assertNotNull(parametersJSON, "Input parameter [" + PARAMETERS_PAGE + "] cannot be null");
+
+			} catch (Throwable t) {
+				throw new SpagoBIServiceException("Error in retrieving parameters: ", t);
+			} 
 
 
-		try {
 			ILowFunctionalityDAO functionalityTreeDao = DAOFactory.getLowFunctionalityDAO();
 			IProgressThreadDAO progressThreadDAO = DAOFactory.getProgressThreadDAO();
 			IConfigDAO configDAO = DAOFactory.getSbiConfigDAO();
@@ -121,8 +146,8 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 			String randomName = getRandomName();
 			ProgressThread progressThread = new ProgressThread(getUserProfile().getUserUniqueIdentifier().toString(), documentsToExport.size(), folder.getCode(), null, randomName);
 			progressThreadId = progressThreadDAO.insertProgressThread(progressThread);
-			
-			
+
+
 			Config config = configDAO.loadConfigParametersByLabel(SpagoBIConstants.JNDI_THREAD_MANAGER);
 			if(config == null) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to retrive from the configuration the property [" + SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
@@ -131,7 +156,7 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 			WorkManager workManager = new WorkManager(config.getValueCheck());
 			MassiveExportWork massiveExportWork = new MassiveExportWork(documentsToExport, getUserProfile(), folder , progressThreadId, randomName, splittingFilter);
 			FooRemoteWorkItem remoteWorkItem = workManager.buildFooRemoteWorkItem(massiveExportWork, null);
-			
+
 			// Check if work was accepted
 			if(remoteWorkItem.getStatus() != WorkEvent.WORK_ACCEPTED){
 				int statusWI = remoteWorkItem.getStatus();
@@ -161,7 +186,7 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 
 	private void deleteDBRowInCaseOfError(Integer progressThreadId){
 		IProgressThreadDAO threadDAO ;
-		
+
 		logger.debug("IN");
 		try {
 			threadDAO = DAOFactory.getProgressThreadDAO();
@@ -176,14 +201,14 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 
 	void fillDriverValues(List<BIObject> documents, JSONObject parametersJSON) throws JSONException {
 		logger.debug("IN");
-		
+
 		for (BIObject document : documents) {
 			logger.debug("fill values of object "+document.getLabel());
 			List<BIObjectParameter> documentParameters = document.getBiObjectParameters();
 			for (BIObjectParameter documentParameter : documentParameters) {
 				logger.debug("search value for obj par with id  "+documentParameter.getId());
 				String documentParameterLabel = parametersJSON.getString(documentParameter.getId().toString()+"_objParameterId");
-				
+
 				List<String> documentParameterValues = new ArrayList<String>();
 				if(documentParameterLabel != null){
 
@@ -199,7 +224,7 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 					catch (JSONException e) {
 						isMultivalueParameter = false;
 					}
-					
+
 					if(isMultivalueParameter == false){
 						String value = parametersJSON.getString(documentParameterLabel);
 						if(value != null){
@@ -233,5 +258,5 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 		return randomName;
 
 	}
-	
+
 }
