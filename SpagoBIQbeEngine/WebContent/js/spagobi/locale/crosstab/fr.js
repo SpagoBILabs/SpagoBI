@@ -48,7 +48,7 @@ Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.apply'] = 'A
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.cancel'] = 'Annuler';
 
 Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.title'] = 'Aper\u00E7u Tableau crois\u00E9';
-Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'Le nombre de cellule est plus grand que celui par d\u00E9faut';
+Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'Le nombre de cellule est plus grand que celui par d\u00E9faut. Pour avoir le Tableau Crois\u00E9 complet il faut exporter le document en XLS';
 
 Sbi.locale.ln['sbi.crosstab.crossTabValidation.title'] = 'cross Tab n\'est pas valide';
 Sbi.locale.ln['sbi.crosstab.crossTabValidation.noMeasure'] = 'Utilise au moin une mesure';

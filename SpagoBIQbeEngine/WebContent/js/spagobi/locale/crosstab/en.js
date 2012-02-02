@@ -49,7 +49,7 @@ Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.apply'] = 'A
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.cancel'] = 'Cancel';
 
 Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.title'] = 'Crosstab preview';
-Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'The cells number is highter than the default one. You can find all the data with the XML export.';
+Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'The cells number is highter than the default one. You can find all the data with the XLS export.';
 
 Sbi.locale.ln['sbi.crosstab.crossTabValidation.title'] = 'Crosstab validation failed';
 Sbi.locale.ln['sbi.crosstab.crossTabValidation.noMeasure'] = 'You have not included any measure in pivot table';
