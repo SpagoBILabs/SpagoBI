@@ -240,7 +240,7 @@ public class StartMassiveExportThreadAction extends GetParametersForExecutionAct
 
 
 	private String getRandomName(){
-		DateFormat formatter = new SimpleDateFormat("dd-MMM-yy hh:mm:ss");
+		DateFormat formatter = new SimpleDateFormat("dd-MMM-yy hh:mm:ss.SSS");
 		String randomName = formatter.format(new Date());			
 		randomName=randomName.replaceAll(" ", "_");
 		randomName=randomName.replaceAll(":", "-");
