@@ -51,6 +51,10 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	UserProfile profile;
 	Locale locale;
 	String isFromCross;
+	String engineContext;
+	String engineServerHost;
+	String enginePort;
+	String executionId;
 	String spagobiServerHost;
 	String spagobiContext;
 	String spagobiSpagoController;
@@ -69,6 +73,24 @@ author: Antonella Giachino (antonella.giachino@eng.it)
     spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
     spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
     spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
+    
+ // used in local ServiceRegistry
+ 	engineServerHost = request.getServerName();
+ 	enginePort = "" + request.getServerPort();
+    engineContext = request.getContextPath();
+    if( engineContext.startsWith("/") || engineContext.startsWith("\\") ) {
+    	engineContext = request.getContextPath().substring(1);
+    }
+    
+    executionId = request.getParameter("SBI_EXECUTION_ID");
+    if(executionId != null) {
+    	executionId = "'" + request.getParameter("SBI_EXECUTION_ID") + "'";
+    } else {
+    	executionId = "null";
+    }   
+    // gets analytical driver
+    //Map analyticalDrivers  = chartEngineInstance.getAnalyticalDrivers();
+
 %>
 
 
@@ -80,21 +102,56 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	<head>
 		<%@include file="commons/includeExtJS.jspf" %>
 		<%@include file="commons/includeSbiChartJS.jspf"%>
-		
-		<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
-		<script type="text/javascript">
-		document.domain='<%= EnginConf.getInstance().getSpagoBiDomain() %>';
-		</script>
-		<-- END SCRIPT FOR DOMAIN DEFINITION --%>
-	
 	</head>
 	
 	<body>
-	
     	<script type="text/javascript">  
-		        //...
+	    	var template = Sbi.template || <%= chartEngineInstance.getTemplate().toString()  %>;
+			
+			Sbi.config = {};
+			
+			var url = {
+				  host: '<%= engineServerHost %>'
+				, port: '<%= enginePort %>'
+				, contextPath: '<%= engineContext %>'
+			};
+		
+			var params = {
+				SBI_EXECUTION_ID: <%=executionId %>			
+			  , LIGHT_NAVIGATOR_DISABLED: 'TRUE'
+			};
+		
+			Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+				  baseUrl: url
+			    , baseParams: params
+			});
+	
+			
+			Sbi.config.spagobiServiceRegistry = new Sbi.service.ServiceRegistry({
+				baseUrl: {
+					contextPath: '<%= spagobiContext %>'
+				}
+			    , baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
+			});
+			
+	
+		    // javascript-side user profile object
+	        //Ext.ns("Sbi.user");
+	
+	        //add to executionContext all parameters... it's really necessary??
+	        //var executionContext = {};	       
+	        //template.executionContext = executionContext;
+	
+	        template.divId = "<%=executionId%>";
+			Ext.onReady(function() { 
+				Ext.QuickTips.init();				
+				var chartPanel = new Sbi.extjs.chart.ExtJSChartPanel(template);
+				var viewport = new Ext.Viewport(chartPanel);  
+			});
 	    </script>
-	ciaoo...mò se ride...
+	    <%-- dinamicizzare height & width --%>
+	    <div id="<%=executionId%>" style="height:80%; width:80%; float:left;"></div>
+	    
 	</body>
 
 </html>
