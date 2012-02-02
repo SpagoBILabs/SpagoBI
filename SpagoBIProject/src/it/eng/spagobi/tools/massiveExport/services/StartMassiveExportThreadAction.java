@@ -11,7 +11,6 @@
  */
 package it.eng.spagobi.tools.massiveExport.services;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
@@ -20,11 +19,11 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.massiveExport.utils.Utilities;
 import it.eng.spagobi.tools.massiveExport.work.MassiveExportWork;
-//import it.eng.spagobi.tools.massiveExport.work.MassiveExportWorkListener;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
@@ -47,87 +46,95 @@ import commonj.work.WorkItem;
 import de.myfoo.commonj.work.FooRemoteWorkItem;
 
 public class StartMassiveExportThreadAction extends GetParametersForExecutionAction {
-	private final String SERVICE_NAME = "START_MASSIVE_EXPORT_THREAD_ACTION";
 
-	// logger component
-	private static Logger logger = Logger.getLogger(StartMassiveExportThreadAction.class);
+	private static final long serialVersionUID = 1L;
+
+	private final String SERVICE_NAME = "START_MASSIVE_EXPORT_THREAD_ACTION";
 
 	private final String FUNCTIONALITY_ID = "functId";
 	private final String PARAMETER_VALUES = "parameterValues";
 	private final String ROLE = "selectedRole";
 	private final String TYPE = "type";  
-	private final String SPLITTING_FILTER = "splittingFilter";  
+	private final String SPLITTING_FILTER = "splittingFilter"; 
+	
+	// logger component
+	private static Logger logger = Logger.getLogger(StartMassiveExportThreadAction.class); 
 
 	@Override
 	public void doService() {
+		
 		logger.debug("IN");
-		ILowFunctionalityDAO funcDao;
-		List selObjects = null;
+		
+		LowFunctionality folder = null;
+		
+		List<BIObject> documentsToExport = null;
 		Integer progressThreadId = null;
 		
-		Integer folderId = this.getAttributeAsInteger(FUNCTIONALITY_ID);	
+		Integer folderId = this.getAttributeAsInteger(FUNCTIONALITY_ID);
+		logger.debug("Input parameter [" + FUNCTIONALITY_ID + "] is equal to [" + folderId + "]");
+		Assert.assertNotNull(folderId, "Input parameter [" + FUNCTIONALITY_ID + "] cannot be null");
 
-		Assert.assertNotNull(folderId, "Functionality id cannot be null");
-
-		String execRole = this.getAttributeAsString(ROLE);
+		String role = this.getAttributeAsString(ROLE);
+		logger.debug("Input parameter [" + ROLE + "] is equal to [" + role + "]");
+		
 		String state = this.getAttributeAsString(PARAMETER_VALUES);
+		logger.debug("Input parameter [" + PARAMETER_VALUES + "] is equal to [" + state + "]");
+		
 		String documentType = this.getAttributeAsString(TYPE);
+		logger.debug("Input parameter [" + documentType + "] is equal to [" + TYPE + "]");
+		
 		String cycleOnFilters = this.getAttributeAsString(SPLITTING_FILTER);
+		logger.debug("Input parameter [" + SPLITTING_FILTER + "] is equal to [" + cycleOnFilters + "]");
+		
 		boolean splittingFilter = false;
 		if(cycleOnFilters != null) splittingFilter = Boolean.valueOf(cycleOnFilters);
-		logger.debug(ROLE+": "+execRole);;
-		logger.debug(PARAMETER_VALUES+": "+state);;
-		logger.debug(TYPE+": "+documentType);;
-		logger.debug(SPLITTING_FILTER+": "+cycleOnFilters);;
 		
-		LowFunctionality funct = null;
-
-
-		JSONObject parValuesJSON = null;
+		JSONObject parametersJSON = null;
 		try {
-			parValuesJSON = new JSONObject(state);
-			logger.debug("parValuesJSON");
-		} catch (JSONException e) {
-			logger.error("Could not parse JSON of parameters values: "+state);
-			throw new SpagoBIServiceException("Could not parse JSON of parameters values: "+state, e);
+			parametersJSON = new JSONObject(state);
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("Could not parse JSON of parameters values: " + state, t);
 		} 
 
 
 		try {
-			funcDao = DAOFactory.getLowFunctionalityDAO();
+			ILowFunctionalityDAO functionalityTreeDao = DAOFactory.getLowFunctionalityDAO();
+			IProgressThreadDAO progressThreadDAO = DAOFactory.getProgressThreadDAO();
+			IConfigDAO configDAO = DAOFactory.getSbiConfigDAO();
 
 			// Get all the documents
-			logger.debug("Search folder "+folderId+ " for documents of type "+TYPE);		
-			funct = funcDao.loadLowFunctionalityByID(folderId, true);
-			Assert.assertNotNull(funct, "functionality with id "+folderId);
-			selObjects = Utilities.getContainedObjFilteredbyType(funct, documentType );
+			logger.debug("Search folder " + folderId + " for documents of type " + documentType);		
+			folder = functionalityTreeDao.loadLowFunctionalityByID(folderId, true);
+			Assert.assertNotNull(folder, "Folder [" + folderId + "] cannot be loaded");
+			documentsToExport = Utilities.getContainedObjFilteredbyType(folder, documentType );
 
 
-			logger.debug("Check if userid "+getUserProfile().getUserUniqueIdentifier()+ " and functionality "+funct.getCode()+ " has already a work in execution");
-
-			IProgressThreadDAO threadDAO = DAOFactory.getProgressThreadDAO();
+			logger.debug("Check if userid "+getUserProfile().getUserUniqueIdentifier()+ " and functionality "+folder.getCode()+ " has already a work in execution");
 			// search if already exists
-			ProgressThread pT = threadDAO.loadActiveProgressThreadByUserIdAndFuncCd(getUserProfile().getUserUniqueIdentifier().toString(), funct.getCode());
-			if(pT != null){
-				logger.warn("A massive export process is still opened for userId "+getUserProfile().getUserUniqueIdentifier()+" on functionality "+funct.getCode());
-				throw new SpagoBIServiceException(SERVICE_NAME, "A massive export process is still opened for userId "+getUserProfile().getUserUniqueIdentifier()+" on functionality "+funct.getCode());
+			ProgressThread t = progressThreadDAO.loadActiveProgressThreadByUserIdAndFuncCd(getUserProfile().getUserUniqueIdentifier().toString(), folder.getCode());
+			if(t != null){
+				logger.warn("A massive export process is still opened for userId "+getUserProfile().getUserUniqueIdentifier()+" on functionality "+folder.getCode());
+				throw new SpagoBIServiceException(SERVICE_NAME, "A massive export process is still opened for userId "+getUserProfile().getUserUniqueIdentifier()+" on functionality "+folder.getCode());
 			}
 
 			String randomName = getRandomName();
 			
-			ProgressThread progressThread = new ProgressThread(getUserProfile().getUserUniqueIdentifier().toString(), selObjects.size(), funct.getCode(), null, randomName);
-			progressThreadId= threadDAO.insertProgressThread(progressThread);
+			ProgressThread progressThread = new ProgressThread(getUserProfile().getUserUniqueIdentifier().toString(), documentsToExport.size(), folder.getCode(), null, randomName);
+			progressThreadId= progressThreadDAO.insertProgressThread(progressThread);
 
-			fillDriverValues(selObjects, parValuesJSON);
+			fillDriverValues(documentsToExport, parametersJSON);
 			// Object has parameters values set
 
 			// cycle on Objects, fill parameters and call thread
-			Config config = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel(SpagoBIConstants.JNDI_THREAD_MANAGER);
+			Config config = configDAO.loadConfigParametersByLabel(SpagoBIConstants.JNDI_THREAD_MANAGER);
+			if(config == null) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to retrive from the configuration the property [" + SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
+			}
 
 			WorkManager wm = new WorkManager(config.getValueCheck());
 			//MassiveExportWorkListener mewListener = new MassiveExportWorkListener(getUserProfile(), funct, progressThreadId);
 			
-			MassiveExportWork mew = new MassiveExportWork(selObjects, getUserProfile(), funct , progressThreadId, randomName, splittingFilter);
+			MassiveExportWork mew = new MassiveExportWork(documentsToExport, getUserProfile(), folder , progressThreadId, randomName, splittingFilter);
 			//FooRemoteWorkItem fooRemoteWorkItem=wm.buildFooRemoteWorkItem(mew, mewListener);
 			FooRemoteWorkItem fooRemoteWorkItem=wm.buildFooRemoteWorkItem(mew, null);
 			
@@ -149,20 +156,18 @@ public class StartMassiveExportThreadAction extends GetParametersForExecutionAct
 				throw new SpagoBIServiceException(SERVICE_NAME, "Massive export Work thread was rejected with status "+statusWI);
 			}
 
-		} 
-		catch (JSONException e1) {
+		} catch (JSONException e1) {
 			logger.error("Error in reading parameters values",e1);
 			if(progressThreadId != null){
 				deleteDBRowInCaseOfError(progressThreadId);
 			}
 			throw new SpagoBIServiceException(SERVICE_NAME, "Error in reading parameters values", e1);
-		}
-		catch (Exception e) {
-			logger.error("error in starting export thread",e);
+		
+		} catch (Exception e) {
 			if(progressThreadId != null){
 				deleteDBRowInCaseOfError(progressThreadId);
 			}
-			throw new SpagoBIServiceException(SERVICE_NAME, "error in starting export thread: \n"+e.getLocalizedMessage(), e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Error in starting export thread: \n"+e.getLocalizedMessage(), e);
 		}
 		logger.debug("OUT");
 
@@ -174,7 +179,7 @@ public class StartMassiveExportThreadAction extends GetParametersForExecutionAct
 			IProgressThreadDAO threadDAO = DAOFactory.getProgressThreadDAO();
 			logger.error("delete row progress thread with id "+progressThreadId);
 			threadDAO.deleteProgressThread(progressThreadId);
-		} catch (EMFUserError e1) {
+		} catch (Throwable e1) {
 			logger.error("Error in deleting the row with the progress id "+progressThreadId);
 		}
 		logger.debug("OUT");
