@@ -178,6 +178,8 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
     	
     	this.initButtons();
 		this.initPages()
+		this.titlePanel;
+		this.pagePanel;
 		
 		this.mainPanel = new Ext.Panel({  
 			layout: 'card',  
