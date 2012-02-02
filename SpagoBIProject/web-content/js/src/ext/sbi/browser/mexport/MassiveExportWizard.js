@@ -134,18 +134,19 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 	 * Called by the wizard when the Finish button is pressed.
 	 */
 	, performFinish: function() {
-		// get all values
-		var parametersPageContent = this.parametersPage.getContent();
-		var optionsPageContent = this.optionsPage.getContent();
-	
 		var params = {
-			functId : this.functId
-			, type : 'WORKSHEET'
-	    	, selectedRole : optionsPageContent.selectedRole
-	    	, splittingFilter : optionsPageContent.splittingFilter
-	       	, parameterValues : Sbi.commons.JSON.encode( parametersPageContent )
+				functId : this.functId
+				, type : 'WORKSHEET'
 		};
 		
+		//cycle on page to get contents
+		for(i = 0; i < this.pages.length; i++){
+			var page = this.pages[i];
+			var name = page.getName();
+			var content = page.getContent();
+			params[name] = content;
+		}
+
 		// Start massive export
 		Ext.Ajax.request({
 		        url: this.services['startMassiveExportThreadAction']
