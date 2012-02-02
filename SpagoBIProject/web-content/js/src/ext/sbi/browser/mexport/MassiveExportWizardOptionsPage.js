@@ -39,17 +39,16 @@ Sbi.browser.mexport.MassiveExportWizardOptionsPage = function(config) {
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
-
+	
 	Ext.apply(this, c);
 
-	this.services = new Array();
+	this.services = this.services || new Array();
 	this.services['StartMassiveExportExecutionProcessAction'] = this.services['StartMassiveExportExecutionProcessAction'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'START_MASSIVE_EXPORT_EXECUTION_PROCESS_ACTION'
 			, baseParams: new Object()
 	});
 
-	this.addEvents('noDocsEvent');
-
+	
 	this.initFormPanel();
 	this.initRolesCombo(Sbi.user.roles);
 
@@ -146,12 +145,17 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 	}
 	, retrieveDocuments: function (rolesArray) {
 	
-		//	calls ervice to get export documents list
+		var params = {
+			LIGHT_NAVIGATOR_DISABLED: 'TRUE'
+			, SBI_EXECUTION_ID: null
+			, TYPE: 'WORKSHEET'
+			, MODALITY : 'RETRIEVE_DOCUMENTS_MODALITY'
+			, functId: this.functId
+		};
+		
 		Ext.Ajax.request({
 			url: this.services['StartMassiveExportExecutionProcessAction'],
-	
-			params: {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null, TYPE: 'WORKSHEET', MODALITY : 'RETRIEVE_DOCUMENTS_MODALITY', functId: this.functId},
-	
+			params: params,
 			success : function(response, options){
 			if(response !== undefined) {   
 				if(response.responseText !== undefined) {
@@ -162,7 +166,8 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 						var list ='<ul>'
 						if(docsArray.length==0){
 							list = LN('sbi.browser.mexport.massiveExportWizardOptionsPage.msg.noDoc');
-							this.fireEvent('noDocsEvent', this, this);	
+							this.wizard.btnNext.disable();
+							this.wizard.btnFinish.disable();
 						}
 						else{
 							for(i=0;i<docsArray.length;i++){
@@ -223,6 +228,14 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 	}
 	, isCycleOnFilterSelected : function(){
 		return this.checkBox.checked;
+	}
+	
+	, getContent: function() {
+		var content = {};
+		
+		content.selectedRole = this.getSelectedRole();
+		content.splittingFilter = this.isCycleOnFilterSelected();
+		return content;
 	}
 
 });

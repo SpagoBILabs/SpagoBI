@@ -44,7 +44,7 @@
  * - Giulio gavardi (giulio.gavardi@eng.it)
  */
 
-Ext.ns("Sbi.browser.mexport.");
+Ext.ns("Sbi.browser.mexport");
 
 Sbi.browser.mexport.MassiveExportWizardTriggerPage = function(config) {
 
@@ -86,28 +86,72 @@ Sbi.browser.mexport.MassiveExportWizardTriggerPage = function(config) {
 	// constructor
 	Sbi.browser.mexport.MassiveExportWizardTriggerPage.superclass.constructor.call(this, c);
 	
-	//this.addEvents();
+	
+	this.addEvents('select', 'unselect');
+	
+	this.on('select', this.onSelection, this);
+	this.on('unselect', this.onDeselection, this);	
 };
 
 Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
 
-	services: null
+	sservices: null
     , mainPanel: null
+    , currentPage: null
     
     
 	// ----------------------------------------------------------------------------------------
 	// public methods
 	// ----------------------------------------------------------------------------------------
 
+	, onSelection: function() {
+		this.currentPage = true;
+	}
 	
+	, onDeselection: function() {
+		this.currentPage = false;
+	}
+	
+	, isTheCurrentPage: function() {
+		return this.currentPage;
+	}
+	
+	, getPageIndex: function() {
+		var i;		
+		for(i = 0; i < this.wizard.pages.length; i++) {
+			if(this.wizard.pages[i] == this) break;
+		}		
+		return i;
+	}
+	
+	, getPreviousPage: function() {
+		var pages = this.wizard.pages;
+		var i = this.getPageIndex();
+		return (i != 0)? this.wizard.pages[i-1]: null;
+	}
+	
+	, getNextPage: function() {
+		var pages = this.wizard.pages;
+		var i = this.getPageIndex();
+		return (i != (pages.length-1))? this.wizard.pages[i+1]: null;
+	}
+	
+
+	, getContent: function() {
+		var state;
+		
+		state = {};
+
+		return state;
+	}
 	
     // ----------------------------------------------------------------------------------------
 	// private methods
 	// ----------------------------------------------------------------------------------------
 
     , initMainPanel: function() {
-    	this.mainPanel = new Ext.Panel({
-    		html: 'Io sono lo scheduler! Non avrai altro scheduler all\'infuori di me'
-    	});
-    }
+		this.mainPanel = new Ext.Panel({
+			html: 'Trigger panel'
+		});
+    }	
 });

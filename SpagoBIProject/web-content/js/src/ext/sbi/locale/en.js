@@ -658,18 +658,22 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Enter search Labe
 //MASSIVE EXPORT
 //===================================================================
 Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.title'] = 'Wizard for worksheet massive export';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.back'] = 'Back';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.next'] = 'Next';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.back'] = '< Back';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.next'] = 'Next >';
 Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.finish'] = 'Finish';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.cancel'] = 'Cancel';
+
 
 Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.title'] = 'Export options';
 Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.cycle.label'] = 'Cycle on filters';
 Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.label'] = 'Role';
 Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.emptyText'] = 'Select a role';
 Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.documents.label'] = 'Worksheet documents to export';
-
 Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.msg.noDoc'] = 'No Worksheet documents to export';
 
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardParametersPage.title'] = 'Parameters';
+
+Sbi.locale.ln['Sbi.browser.mexport.massiveExportWizardTriggerPage.title'] = 'Trigger';
 
  
 

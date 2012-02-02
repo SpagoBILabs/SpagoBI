@@ -51,8 +51,8 @@ Sbi.browser.mexport.MassiveExportWizard = function(config) {
 	var defaultSettings = {
 			title: LN('sbi.browser.mexport.massiveExportWizard.title')
 			, layout: 'fit'
-			, width: 800
-			, height: 300           	
+			, width: 500
+			, height: 380           	
 			, closable: true
 			, constrain: true
 			, hasBuddy: false
@@ -102,16 +102,15 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
     , btnPrev: null
 	, btnNext: null
 	, btnFinish: null
+	, btnCancel: null
+	
 	, activePageNumber: null
 	, pages: null
-	
     , optionsPage: null
     , parametersPage: null
-    , OPTIONS_PAGE_NUMBER: null
-	, PARAMETERS_PAGE_NUMBER: null
+    , triggerPage : null
     
     , functId: null
-    , functCd: null
 	, executionInstances: null
     
 	// ----------------------------------------------------------------------------------------
@@ -132,19 +131,18 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 	 */
 	, performFinish: function() {
 		// get all values
-		var state = this.getParametersPanelFormState();
-		var jsonState = Sbi.commons.JSON.encode( state );
-		var selRole = this.optionsPage.getSelectedRole();
-		var splittingFiltersB = this.optionsPage.isCycleOnFilterSelected();
+		var parametersPageContent = this.parametersPage.getContent();
+		var optionsPageContent = this.optionsPage.getContent();
+	
 		var params = {
-	    	selectedRole : selRole
-	       	, functId : this.functId
-	       	, type : 'WORKSHEET'
-	       	, splittingFilter : splittingFiltersB
-	       	, parameterValues : jsonState
+			functId : this.functId
+			, type : 'WORKSHEET'
+	    	, selectedRole : optionsPageContent.selectedRole
+	    	, splittingFilter : optionsPageContent.splittingFilter
+	       	, parameterValues : Sbi.commons.JSON.encode( parametersPageContent )
 		};
 		
-		// Start mamssive export
+		// Start massive export
 		Ext.Ajax.request({
 		        url: this.services['startMassiveExportThreadAction']
 		        , params: params
@@ -165,6 +163,13 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 		this.close();
 	}
 	
+	/**
+	 * Called by the wizard when the Cancel button is pressed.
+	 */
+	, performCancel: function() {
+		this.close();
+	}
+	
     // ----------------------------------------------------------------------------------------
 	// private methods
 	// ----------------------------------------------------------------------------------------
@@ -174,7 +179,6 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
     	this.initButtons();
 		this.initPages()
 		
-	
 		this.mainPanel = new Ext.Panel({  
 			layout: 'card',  
 			activeItem: 0,  
@@ -184,10 +188,13 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 			resizable: true,
 			defaults: {border:false},  
 			bbar: [
-			       this.btnPrev,
-			       '->', // greedy spacer so that the buttons are aligned to each side
-			       this.btnNext,
-			       this.btnFinish
+			       '->'
+			       , this.btnPrev
+			       , this.btnNext
+			       , '-'
+			       , this.btnFinish
+			       , '-'
+			       , this.btnCancel
 			], 
 			items: this.pages
 		});
@@ -209,7 +216,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 	        text: LN('sbi.browser.mexport.massiveExportWizard.button.next')
 	        , handler: this.moveToNextPage
 	        , scope: this
-	        , bdisabled : false
+	        , disabled : false
 		});
 	
 		this.btnFinish = new Ext.Button({
@@ -218,122 +225,40 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 	        , scope: this
 	        , disabled: true
 		});
+		
+		this.btnCancel = new Ext.Button({
+	        text: LN('sbi.browser.mexport.massiveExportWizard.button.cancel')
+	        , handler: this.performCancel
+	        , scope: this
+		});
     }
     
 	, initPages: function() {
 		this.pages = [];
 		this.initOptionsPage();
 		this.initParametersPage();
+		this.initTriggerPage();
 	}
 	
 	, initOptionsPage: function() {
-		var config = {functId: this.functId};
-		this.optionsPage = new Sbi.browser.mexport.MassiveExportWizardOptionsPage(config);
-		this.optionsPage.on('noDocsEvent', 
-				function() {
-					this.btnNext.disable();
-					this.btnFinish.disable();
-				}
-			, this
-		);
-		
-		this.OPTIONS_PAGE_NUMBER = this.pages.length;
+		this.optionsPage = new Sbi.browser.mexport.MassiveExportWizardOptionsPage({wizard:this, functId: this.functId});	
 		this.pages.push(this.optionsPage);
 	}
 	
 	, initParametersPage: function() {
-		var ser = new Array();
-		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'
-					   , SBI_EXECUTION_ID: null
-					   
-		};
-		ser['getParametersForExecutionService'] = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'GET_ANALYTICAL_DRIVER_FROM_DOCS_IN_FOLDER_ACTION'
-			, baseParams: params
-		});
-	
-		var config = {
-			services : ser	
-			, contest : 'massiveExport'
-			, drawHelpMessage : false	
-		};
-		
-		this.parametersPage = new Sbi.execution.ParametersPanel(config);
-		
-		this.PARAMETERS_PAGE_NUMBER = this.pages.length;
+		this.parametersPage = new Sbi.browser.mexport.MassiveExportWizardParametersPage({wizard:this, functId: this.functId});
 		this.pages.push(this.parametersPage);
 	}
-
-	, createExecutionInstances: function(pars) {
-		pars = Ext.apply(pars, {modality: 'CREATE_EXEC_CONTEST_ID_MODALITY'});
-		Ext.Ajax.request({
-	        url: this.services['StartMassiveExportExecutionProcessAction'],
-	       
-	        params: pars,
-	        
-	        //callback : function(options , success, response){
-	        success : function(response, options) {
-	        if(response !== undefined) {   
-	      		if(response.responseText !== undefined) {
-	      			var content = Ext.util.JSON.decode( response.responseText );
-	      			if(content !== undefined) {
-	      				this.executionInstances = {
-	      						SBI_EXECUTION_ID: content.execContextId
-	      					};
-	      		  		for(p in this.parametersPage.fields){
-	      		  			var field = this.parametersPage.fields[p];
-	      		  			field.enable();
-	      		  		}
-	      		  		this.btnFinish.enable();
-	      				pars = Ext.apply(pars, this.executionInstances);
-	      				this.parametersPage.loadParametersForExecution(pars);
-	      			} 
-	      		} else {
-	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-	      		}
-		  	}
-		  	else{
-		  	//clear preceding store if error happened
-		  		for(p in this.parametersPage.fields){
-		  			var field = this.parametersPage.fields[p];
-		  			field.disable();
-		  		}
-		  		this.btnFinish.disable();
-		  	}
-	      },
-	        scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure      
-	   });
-	}	
 	
-	/**
-	 * returns the value selected of the parameters in parametersPanel,
-	 * and for each also the objparameterId (for label rinomination: name  => nameB)
-	 */
-	, getParametersPanelFormState: function() {
-		var state;
-		//to avoid synchronization problem
-		
-		state = {};
-		for(p in this.parametersPage.fields) {
-			var field = this.parametersPage.fields[p];
-			var value = field.getValue();
-			state[field.name] = value;
-			var rawValue = field.getRawValue();
-			if(value == "" && rawValue != ""){
-				state[field.name] = rawValue;
-			}
-			
-			// add objParsId information if present (massive export case)
-			if(field.objParameterIds){
-				for(pr=0;pr < field.objParameterIds.length;pr++){
-					val = field.objParameterIds[pr];
-					state[val+ '_objParameterId']=field.name;
-				}
-			}
-		}
-		return state;
+	, initTriggerPage: function() {
+		this.triggerPage = new Sbi.browser.mexport.MassiveExportWizardTriggerPage({wizard:this, functId: this.functId});
+		this.pages.push(this.triggerPage);
 	}
+
+
+	
+	
+	
 	
 	, moveToPreviousPage: function() {
 		this.moveToPage(this.activePageNumber - 1);
@@ -345,32 +270,19 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 
 	, moveToPage: function(page) {
 		
-		var curr = this.mainPanel.layout.activeItem;
-		if(page == this.PARAMETERS_PAGE_NUMBER){ 
-			
-			// clear the fields in case you are coming to panel for the second time
-			this.parametersPage.clear();
-
-			this.mainPanel.layout.setActiveItem(this.PARAMETERS_PAGE_NUMBER);
-			this.activePageNumber = this.PARAMETERS_PAGE_NUMBER;
-
-			// create ExecutionInstances and  get parameters 
-			var selectedRole = this.optionsPage.getSelectedRole();		
-			var params = {
-				selectedRole : selectedRole
-				, functId : this.functId
-				, type : 'WORKSHEET'						
-			}				
-			this.createExecutionInstances(params);
-			
-		} else if(page == this.OPTIONS_PAGE_NUMBER) { 
-				this.mainPanel.layout.setActiveItem(this.OPTIONS_PAGE_NUMBER);
-				this.activePageNumber = this.OPTIONS_PAGE_NUMBER;
-		} else {
-			alert('page [' + page + '] not available in wizard');
+		if(page < 0 || page >= this.pages.length) {
+			alert('Page number [' + page + '] out of range [0,' + (this.pages.length-1) + ']');
 		}
 		
+		this.pages[this.activePageNumber].fireEvent('unselect');
+		this.mainPanel.layout.setActiveItem(page);
+		this.activePageNumber = page;
+		this.pages[this.activePageNumber].fireEvent('select');
 		
+		this.updateButtons(page);
+	}
+	
+	, updateButtons: function(page) {
 		if(page === 0) {
 			this.btnPrev.disable();
 		} else {
