@@ -50,10 +50,10 @@ import org.json.JSONObject;
  * 
  * @author Alberto Ghedin (alberto.ghedin@eng.it), Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class CrosstabXLSExporterFromJavaObject {
+public class CrosstabXLSExporter {
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(CrosstabXLSExporterFromJavaObject.class);
+    public static transient Logger logger = Logger.getLogger(CrosstabXLSExporter.class);
 	
     
     /** Configuration properties */
@@ -91,7 +91,7 @@ public class CrosstabXLSExporterFromJavaObject {
 	/**
 	 * @param calculatedFieldsDecimals
 	 */
-	public CrosstabXLSExporterFromJavaObject(int calculatedFieldsDecimals) {
+	public CrosstabXLSExporter(int calculatedFieldsDecimals) {
 		super();
 		this.calculatedFieldsDecimals = calculatedFieldsDecimals;
 		this.properties = new Properties();
