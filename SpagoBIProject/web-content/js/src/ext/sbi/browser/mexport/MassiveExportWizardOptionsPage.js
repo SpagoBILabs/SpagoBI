@@ -53,7 +53,9 @@ Sbi.browser.mexport.MassiveExportWizardOptionsPage = function(config) {
 	this.initRolesCombo(Sbi.user.roles);
 
 	c = Ext.apply(c, {
-		layout: 'fit',       
+		layout: 'fit', 
+		border: false,
+		bodyBorder: false,
 		items: [this.formPanel]
 	});
 
@@ -70,14 +72,18 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 	, rolesCombo : null
 	, docsPanel : null
 	, checkBox : null
+	
 	// methods
 	, initFormPanel: function(){
 		this.formPanel = new Ext.form.FormPanel({
-			id: 'formPanel',
-			//layout: 'fit',
-			
-		});
-	
+			labelWidth: 130, // label settings here cascade unless overridden
+		    frame:true,
+		    border: false,
+		    bodyBorder: false,
+		    bodyStyle:'padding:5px 5px 0',
+		    width: 350,
+		    autoScroll: true
+		});	
 	}
 	, initRolesCombo: function (rolesArray) {
 		//rolesArray (building with multidimensional array)	  

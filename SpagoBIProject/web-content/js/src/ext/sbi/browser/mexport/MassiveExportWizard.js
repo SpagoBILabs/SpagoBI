@@ -178,10 +178,13 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
     	
     	this.initButtons();
 		this.initPages()
-		this.titlePanel;
-		this.pagePanel;
-		
-		this.mainPanel = new Ext.Panel({  
+		this.titlePanel = new Ext.Panel({
+			region: 'north',
+			height: 35,
+			frame: true,
+			html: '<H1>Questo è il titolo</H1>'
+		});
+		this.pagePanel = new Ext.Panel({
 			layout: 'card',  
 			activeItem: 0,  
 			scope: this,
@@ -199,6 +202,17 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 			       , this.btnCancel
 			], 
 			items: this.pages
+		});
+		
+		this.mainPanel = new Ext.Panel({
+			layout: 'border'
+			, items: [this.titlePanel, new Ext.Panel({
+				layout:'fit', 
+				region: 'center',
+				border: false,
+				bodyBorder: false,
+				items: [this.pagePanel]
+			})]
 		});
 		
 		this.mainPanel.doLayout();
@@ -277,7 +291,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 		}
 		
 		this.pages[this.activePageNumber].fireEvent('unselect');
-		this.mainPanel.layout.setActiveItem(page);
+		this.pagePanel.layout.setActiveItem(page);
 		this.activePageNumber = page;
 		this.pages[this.activePageNumber].fireEvent('select');
 		
