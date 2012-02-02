@@ -442,19 +442,27 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     
     , performActionOnFolder: function(dirRecord, action) {
     	if(this.fireEvent('beforeperformactiononfolder', this, dirRecord, action) !== false){
+    	
+    		var services['performFinishAction'] = Sbi.config.serviceRegistry.getServiceUrl({
+    			baseParams: new Object()
+    		});
+    		
     		if(action === 'export' && Sbi.user.functionalities.contains('SeeMetadataFunctionality')) {
-    			
+    			services['performFinishAction'].serviceName = 'START_MASSIVE_EXPORT_THREAD_ACTION';
     			var popupWin = new Sbi.browser.mexport.MassiveExportWizard({
     				functId : dirRecord.id
     				, functCd : dirRecord.code
+    				, services: services
     			});
     			popupWin.show();
     			popupWin.doLayout();
     		
     		} else if(action === 'schedule' && Sbi.user.functionalities.contains('SeeMetadataFunctionality')) {
+    			services['performFinishAction'].serviceName = 'START_MASSIVE_SCHEDULE_ACTION';
     			var popupWin = new Sbi.browser.mexport.MassiveExportWizard({
     				functId : dirRecord.id
     				, functCd : dirRecord.code
+    				, services: services
     			});
     			popupWin.show();
     			popupWin.doLayout();

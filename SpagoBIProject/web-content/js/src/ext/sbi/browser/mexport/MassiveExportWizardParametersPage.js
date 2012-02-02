@@ -147,6 +147,10 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardParametersPage, Ext.Panel, {
 		return (i != (pages.length-1))? this.wizard.pages[i+1]: null;
 	}
 	
+	, getName: function(){
+		return 'Sbi.browser.mexport.MassiveExportWizardParametersPage';
+	}
+	
 	/**
 	 * returns the value selected of the parameters in parametersPanel,
 	 * and for each also the objparameterId (for label rinomination: name  => nameB)
@@ -247,7 +251,5 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardParametersPage, Ext.Panel, {
 			failure: Sbi.exception.ExceptionHandler.handleFailure      
 	   });
 	}	
-	, getName: function(){
-		return 'Sbi.browser.mexport.MassiveExportWizardParametersPage';
-	}
+	
 });
