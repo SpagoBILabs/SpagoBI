@@ -67,11 +67,7 @@ Sbi.browser.mexport.MassiveExportWizard = function(config) {
 	Ext.apply(this, c);
 
 	this.services = this.services || new Array();
-
-	this.services['getAnalyticalDriversFromDocsInFolderAction'] = this.services['getAnalyticalDriversFromDocsInFolderAction'] || Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'GET_ANALYTICAL_DRIVER_FROM_DOCS_IN_FOLDER_ACTION'
-			, baseParams: new Object()
-	});	
+	
 	this.services['startMassiveExportThreadAction'] = this.services['startMassiveExportThreadAction'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'START_MASSIVE_EXPORT_THREAD_ACTION'
 		, baseParams: new Object()
@@ -149,7 +145,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 
 		// Start massive export
 		Ext.Ajax.request({
-		        url: this.services['startMassiveExportThreadAction']
+		        url: this.services['performFinishAction']// this.services['startMassiveExportThreadAction']
 		        , params: params
 		        , success : function(response, options){}
 				, failure: Sbi.exception.ExceptionHandler.handleFailure      
