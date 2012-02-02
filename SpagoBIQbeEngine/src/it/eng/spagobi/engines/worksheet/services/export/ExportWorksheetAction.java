@@ -18,8 +18,8 @@ import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
-import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporterFromJavaObject;
-import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSXExporterFromJavaObject;
+import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
+import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSXExporter;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.Filter;
 import it.eng.spagobi.engines.worksheet.bo.FiltersInfo;
@@ -680,7 +680,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 					calculatedFieldsDecimals = Integer
 							.valueOf(calculatedFieldsDecimalsString);
 				}
-				CrosstabXLSExporterFromJavaObject expCr = new CrosstabXLSExporterFromJavaObject(
+				CrosstabXLSExporter expCr = new CrosstabXLSExporter(
 						calculatedFieldsDecimals);
 
 				sheetRow = expCr.fillAlreadyCreatedSheet(sheet, cs,
@@ -1091,7 +1091,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				CrossTab cs = getCrosstab(crosstabDefinitionJSON, fieldOptions,
 						filters, sheetName, splittingWhereField,
 						calculateFieldsJSON);
-				CrosstabXLSXExporterFromJavaObject expCr = new CrosstabXLSXExporterFromJavaObject(
+				CrosstabXLSXExporter expCr = new CrosstabXLSXExporter(
 						calculatedFieldsDecimals);
 				sheetRow = expCr.fillAlreadyCreatedSheet(sheet, cs,
 						crosstabJSON, createHelper, sheetRow, locale);
