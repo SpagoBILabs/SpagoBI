@@ -49,9 +49,6 @@
 	<CONFIGURATOR path="/WEB-INF/conf/formbuilder/presentation.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/formbuilder/publishers.xml" />
 	
-	<!-- start Crosstab configuration -->
-	<CONFIGURATOR path="/WEB-INF/conf/crosstab/actions.xml" />
-	
 	<!-- start dataset configuration -->
 	<CONFIGURATOR path="/WEB-INF/conf/dataset/actions.xml" />
 	
