@@ -10,14 +10,18 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,
 	  }
 	, showDetail: function(record) 
 	{
-		var rec = record.record.id;
+		var id = record.record.id;
 		//determines if it is a document available for mobile presentetation
-		var engine = record.record.attributes.record.data.engine;
-		var name= record.record.attributes.record.data.name;
-		var descr= record.record.attributes.record.data.description;
-		var date= record.record.attributes.record.data.creationDate;
+		var rec = record.record.attributes.record.data;
+		var engine = rec.engine;
+		var name= rec.name;
+		var descr= rec.description;
+		var date= rec.creationDate;
 		if(engine != null && engine !== undefined && engine == 'Mobile Engine'){
-			var documentTpl = '<div style="width:40%; float: left; text-align:center;">' +
+			
+			//onClick="executeDocument();"
+			var documentTpl = '<div class="preview-item" id="preview-'+id+'" '+
+			'onClick="javascript: executeDocument('+id+');">' +
 			'<div class="document-item-icon">' +			
 			'<img src="' + Ext.BLANK_IMAGE_URL + '" ></img>' +
 			'</div>' +
@@ -33,9 +37,9 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,
 		}
 		
 	}
-	, executeDocument: function(record) 
+	, executeDocument: function(options) 
 	  {
-		var rec = record.record.id;
+		alert(options.id);
 		
 		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
 		this.services = new Array();
@@ -43,7 +47,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,
 			serviceName: 'EXECUTE_ACTION'
 			, baseParams: params
 		});
-		
+		/*
 		Ext.Ajax.request({
             url: this.services['executeDocumentService'],
             scope: this,
@@ -68,7 +72,8 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,
               	  return;
           	  }
             }
-	    });  
+	    }); 
+	    */ 
 	  }
 
 });

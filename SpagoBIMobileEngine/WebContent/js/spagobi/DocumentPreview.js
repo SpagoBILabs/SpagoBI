@@ -5,6 +5,9 @@ app.views.DocumentPreview = Ext.extend(Ext.Panel,
 	    flex:2,
 
 	    previewItem: null,
+	    listeners: {
+	
+		},
 		initComponent: function ()	{
 			this.title = 'Document preview';
 			this.items = [];
@@ -17,18 +20,24 @@ app.views.DocumentPreview = Ext.extend(Ext.Panel,
 			this.removeAll();
 			this.update('');
 		    this.previewItem = new Ext.DataView({
-				    frame:true
-				    , overItemCls: 'over'
-				    , itemSelector: 'dd'
-				    , groups: null
-				    , lookup: null
-				    , viewState: null
-				    , ready: false				    
-				    , tpl : tpl	
-				    , store: null
+			    frame:true
+			    , overItemCls: 'over'
+			    , itemSelector: 'dd'
+			    , groups: null
+			    , lookup: null
+			    , viewState: null
+			    , ready: false				    
+			    , tpl : tpl	
+			    , store: null
+			    , listeners:{
+		    		itemtap: function( dataView , index, item, e ){
+		    			alert('aaaaaaaaaaaaaaaaaHHH');
+		    		}
+		    	}
 		    });
-		    //this.update(this.previewItem);
+		    this.add(this.previewItem);
 		    this.update(tpl);
+		    console.log('preview items: '+this.items.length);
 		}
 
 	});

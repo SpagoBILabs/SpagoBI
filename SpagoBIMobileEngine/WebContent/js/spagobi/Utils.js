@@ -1,12 +1,8 @@
-var browserTreeCreation = function(jsonData){
-	//alert(jsonData);
-	var treeModel ={};
-	var folders = jsonData.folderContent[0];
-	if(folders !== undefined && folders.title == 'Folders'){
-		var children = folders.samples;
-		treeModel = folders;
-	}
-	
-	return treeModel;
-	
+var executeDocument = function(id){
+	//alert(id);
+	  Ext.dispatch({
+		  controller: app.controllers.mobileController,
+		  action: 'executeDocument',
+		  id: id
+	  });
 };
