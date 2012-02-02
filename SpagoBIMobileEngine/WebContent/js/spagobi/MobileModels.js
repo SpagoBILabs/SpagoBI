@@ -1,10 +1,5 @@
-Ext.namespace('app.models');
-Ext.namespace('app.views');
-Ext.namespace('app.data');
-Ext.namespace('app.controllers');
-
-Ext.regModel('folder',	{
-
+Ext.regModel('browserItems',	{
+	//foolder atributes
 	fields: [{name: 'devRoles',		type:'array'},	         
 	       	 {name: 'biObjects',	type:'array'},
 	       	 {name: 'code',	type:'string'},
@@ -18,21 +13,30 @@ Ext.regModel('folder',	{
 	       	 {name: 'path',		type:'string'},
 	       	 {name: 'execRoles',		type:'array'},	         
 	       	 {name: 'actions',	type:'array'}
-	       	 ],
-
+	       	 //document attributes
 	       	 
-	 belongsTo: 'folderContent' 
+	       	,{name: 'profiledVisibility',	type:'string'},
+	       	{name: 'creationUser',	type:'string'},
+	       	{name: 'visible',	type:'integer'},
+	       	{name: 'exporters',	type:'array'},
+	       	{name: 'engine',	type:'string'},
+	       	{name: 'stateCode',	type:'string'},
+	       	{name: 'typeCode',	type:'string'},
+	       	{name: 'label',	type:'string'},
+	       	{name: 'creationDate',	type:'string'},
+	       	{name: 'engineid',	type:'integer'},
+	       	{name: 'stateId',	type:'integer'},
+	       	{name: 'description',	type:'string'},
+	       	{name: 'encrypt',	type:'integer'},
+	       	{name: 'functionalities',	type:'array'},
+	       	{name: 'uuid',	type:'string'},
+	       	{name: 'relname',	type:'string'},
+	       	{name: 'typeId',	type:'integer'},
+	       	{name: 'refreshSeconds',	type:'integer'}
+	       	 ]
  
 });
 
-Ext.regModel('folderContent', 	{
-	//"icon":"folder.png","title":"Folders","samples
-	fields: [{name: 'icon',		type:'string'},	
-	      	 {name: 'title',		type:'string'},
-	       	 {name: 'samples',		type:'string'}
-	       	 ],
-	hasMany: [{model: 'folder',	name: 'samples'} ]
-});
 
 
 
