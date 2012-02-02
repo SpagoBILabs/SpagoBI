@@ -49,8 +49,8 @@ Ext.ns("Sbi.browser.mexport");
 Sbi.browser.mexport.MassiveExportWizardTriggerPage = function(config) {
 
 	var defaultSettings = {
-			title: LN('Sbi.browser.mexport.massiveExportWizardTriggerPage.title')
-			, layout: 'fit'
+			//title: LN('Sbi.browser.mexport.massiveExportWizardTriggerPage.title')
+			layout: 'fit'
 			, width: 800
 			, height: 300           	
 			, closable: true
@@ -106,6 +106,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
 
 	, onSelection: function() {
 		this.currentPage = true;
+		this.wizard.setPageTitle('Trigger', 'Setup trigger\'s configuration');
 	}
 	
 	, onDeselection: function() {

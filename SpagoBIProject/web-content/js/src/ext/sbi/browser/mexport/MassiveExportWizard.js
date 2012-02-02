@@ -170,6 +170,11 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 		this.close();
 	}
 	
+	, setPageTitle: function(title, description) {
+		description = description || '';
+		this.titlePanel.body.update('<H1>' + title +'</H1><P>&nbsp;&nbsp;&nbsp;' + description +'</P>');
+	}
+	
     // ----------------------------------------------------------------------------------------
 	// private methods
 	// ----------------------------------------------------------------------------------------
@@ -180,9 +185,9 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 		this.initPages()
 		this.titlePanel = new Ext.Panel({
 			region: 'north',
-			height: 35,
+			height: 45,
 			frame: true,
-			html: '<H1>Questo è il titolo</H1>'
+			html: '<H1>Questo è il titolo</H1><P>&nbsp;&nbsp;&nbsp;long long description, but not longer than that</P>'
 		});
 		this.pagePanel = new Ext.Panel({
 			layout: 'card',  
