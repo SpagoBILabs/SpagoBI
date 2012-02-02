@@ -306,10 +306,13 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 				defaults: {border:false}
 			});
 
+	    	var buttonText = ''+functCd+'-'+randomKey;
+	    	// remove milliseconds
+	    	buttonText = buttonText.substring(0, (buttonText.length-7));
 	    	
 	    	var button = new Ext.Button({
 	    		id: functCd+randomKey+'download',
-	    		text: ''+functCd+'-'+randomKey,
+	    		text: buttonText,
 	    		disabled: false,
 	    		scope: this,
 	    		disabled: true,
