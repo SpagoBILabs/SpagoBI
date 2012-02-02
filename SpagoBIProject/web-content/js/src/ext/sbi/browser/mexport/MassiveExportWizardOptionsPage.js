@@ -29,9 +29,21 @@ Ext.ns("Sbi.browser.mexport");
 
 Sbi.browser.mexport.MassiveExportWizardOptionsPage = function(config) {
 
+//	var defaultSettings = {
+//			title: LN('sbi.browser.mexport.massiveExportWizardOptionsPage.title')
+//	};
+	
 	var defaultSettings = {
-			title: LN('sbi.browser.mexport.massiveExportWizardOptionsPage.title')
+			title: LN('sbi.browser.mexport.massiveExportWizardOptionsPage.title')			//layout: 'fit'
+			//, width: 500
+			//, height: 300   
+			, frame: true
+			, closable: true
+			, constrain: true
+			, hasBuddy: false
+			, resizable: true
 	};
+	
 
 	if (Sbi.settings && Sbi.settings.browser 
 			&& Sbi.settings.browser.mexport && Sbi.settings.browser.mexport.massiveExportWizardOptionsPage) {
@@ -39,7 +51,6 @@ Sbi.browser.mexport.MassiveExportWizardOptionsPage = function(config) {
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
-	
 	Ext.apply(this, c);
 
 	this.services = this.services || new Array();
@@ -62,16 +73,22 @@ Sbi.browser.mexport.MassiveExportWizardOptionsPage = function(config) {
 	// constructor
 	Sbi.browser.mexport.MassiveExportWizardOptionsPage.superclass.constructor.call(this, c);
 
+	this.addEvents('select', 'unselect');
+	this.on('select', this.onSelection, this);
+	this.on('unselect', this.onDeselection, this);	
 };
 
 Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 
 	selectedRole : null
+	, selectedOutput : null
 	, formPanel : null
 	, functId : null
 	, rolesCombo : null
 	, docsPanel : null
-	, checkBox : null
+	, checkBoxCycle : null
+	, comboBoxType : null
+
 	
 	// methods
 	, initFormPanel: function(){
@@ -182,9 +199,11 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 							}
 						}
 						list+='</ul>';
-						
-						// checkbox
+						list = '<h1>'+LN('sbi.browser.mexport.massiveExportWizardOptionsPage.field.documents.label')+':</h1>'+list;
+						// checkBoxCycle
 						this.buildCycleCheck(); 
+						// output type combo
+						this.buildOutputTypeCombo();
 						// draw documents list
 						this.buildDocsPanel(list);
 						this.doLayout();
@@ -212,36 +231,87 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 		
 		this.docsPanel = new Ext.Panel({
 	    	name : 'DocToExport'
-	  	   	, title : LN('sbi.browser.mexport.massiveExportWizardOptionsPage.field.documents.label')
 			, html : list
 		});
 		this.formPanel.add(this.docsPanel);
 		
 	}
 	, buildCycleCheck : function(){
-		this.checkBox = new Ext.form.Checkbox({
+		this.checkBoxCycle = new Ext.form.Checkbox({
 			name : 'cycle'
 			, fieldLabel : LN('sbi.browser.mexport.massiveExportWizardOptionsPage.field.cycle.label')
 		});
 	
-		this.formPanel.add(this.checkBox);
+		this.formPanel.add(this.checkBoxCycle);
 		this.formPanel.doLayout();
 		this.doLayout();
+	}
+	, buildOutputTypeCombo : function(){ 
+		var arrayOutput = [['XLS'], ['XLSX']];
+		
+		var scopeComboOutputStore = new Ext.data.SimpleStore({
+			 fields: ['type']
+	         , data : arrayOutput
+		}); 
+		this.comboBoxOutput = new Ext.form.ComboBox({
+			tpl: '<tpl for="."><div ext:qtip="{type}" class="x-combo-list-item">{type}</div></tpl>'
+			, editable  : false
+			, forceSelection : true
+			, fieldLabel : LN('Output type')
+			, store: scopeComboOutputStore
+		    , displayField:'type'
+			, valueField:'type'
+			, mode : 'local'
+			, value : 'XLS'
+			, triggerAction : 'all'
+			, listeners: {
+				'select': {
+					fn: function(){ 
+					selectedOutput = this.comboBoxOutput.getValue();
+					this.selectedOutput.setValue(selectedOutput);
+						}
+			, scope: this
+					}
+				}
+			});		
+		this.formPanel.add(this.comboBoxOutput);
+		this.formPanel.doLayout();
+		this.selectedOutput = 'XLS';
 	}
 	
 	, getSelectedRole : function(){
 		return selectedRole;
 	}
+	, getSelectedOutput : function(){
+		return selectedOutput;
+	}
+	
 	, isCycleOnFilterSelected : function(){
-		return this.checkBox.checked;
+		return this.checkBoxCycle.checked;
 	}
 	
 	, getContent: function() {
 		var content = {};
-		
 		content.selectedRole = this.getSelectedRole();
 		content.splittingFilter = this.isCycleOnFilterSelected();
+		content.selectedOutput = this.getSelectedOutput();
 		return content;
 	}
+	
+	, onSelection: function() {
+		this.currentPage = true;
+		this.wizard.setPageTitle('Options', 'Setup massive export options');
+	}
+	
+	, onDeselection: function() {
+		this.currentPage = false;
+	}
+	
+	, isTheCurrentPage: function() {
+		return this.currentPage;
+	}
+	
+	
+	
 
 });
