@@ -15,8 +15,8 @@
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
- 	<ACTION name="GET_FOLDER_CONTENT_ACTION" 
-			class="it.eng.spagobi.analiticalmodel.documentsbrowser.service.GetFolderContentAction"  
+ 	<ACTION name="DOCUMENT_BROWSER_ACTION" 
+			class="it.eng.spagobi.engine.mobile.service.DocumentBrowserAction"  
 			scope="REQUEST">	
 		
 		<CONFIG></CONFIG>
