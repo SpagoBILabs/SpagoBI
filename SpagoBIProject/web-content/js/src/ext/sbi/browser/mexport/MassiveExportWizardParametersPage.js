@@ -247,4 +247,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardParametersPage, Ext.Panel, {
 			failure: Sbi.exception.ExceptionHandler.handleFailure      
 	   });
 	}	
+	, getName: function(){
+		return 'Sbi.browser.mexport.MassiveExportWizardParametersPage';
+	}
 });
