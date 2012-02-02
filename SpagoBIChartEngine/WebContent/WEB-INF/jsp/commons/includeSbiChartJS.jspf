@@ -10,6 +10,16 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/locale/<%=locale.getLanguage()%>.js'/></script>
 
 <!-- START-DEBUG -->
+<script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
+<script type="text/javascript" src='../js/spagobi/overrides/overrides.js'/></script>
+<script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
+<script type="text/javascript" src='../js/spagobi/service/ServiceRegistry.js'/></script>
+<!-- <script type="text/javascript" src='../js/spagobi/service/Sync.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/JSON.js'/></script>-->
+<script type="text/javascript" src='../js/spagobi/commons/Format.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/locale/LocaleUtils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/extJSChart/ExtJSChartPanel.js'/></script>
 
 <!-- END-DEBUG -->
 
