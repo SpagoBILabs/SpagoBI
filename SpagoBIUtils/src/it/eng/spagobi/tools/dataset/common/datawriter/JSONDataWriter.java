@@ -284,23 +284,29 @@ public class JSONDataWriter implements IDataWriter {
 		}
 	}
 	
-	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId, JSONObject fieldMetaDataJSON){
-		if(fieldOptions!=null){
+	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId,
+			JSONObject fieldMetaDataJSON) {
+		if (fieldOptions != null) {
 			for (int i = 0; i < fieldOptions.length(); i++) {
 				try {
 					JSONObject afield = fieldOptions.getJSONObject(i);
-					JSONObject aFieldOptions = afield.getJSONObject(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
+					JSONObject aFieldOptions = afield
+							.getJSONObject(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
 					String afieldId = afield.getString("id");
-					
-						if(afieldId.equals(fieldId)){
-							fieldMetaDataJSON.put(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR, aFieldOptions.getString(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR));;
-							return;
-							
-						}
+					String scaleFactor = aFieldOptions
+							.optString(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+					if (afieldId.equals(fieldId) && scaleFactor != null) {
+						fieldMetaDataJSON
+								.put(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR,
+										scaleFactor);
+						return;
+					}
 				} catch (Exception e) {
-					logger.error("No scale factor setted for the measures "+fieldOptions,e);
+					throw new RuntimeException(
+							"An unpredicted error occurred while adding measures scale factor",
+							e);
 				}
-			}	
+			}
 		}
 	}
 
