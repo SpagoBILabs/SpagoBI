@@ -124,14 +124,22 @@ public class CrosstabXLSExporterFromJavaObject {
 			sheet.createRow(startRow+i);
 		}
 		
+		CellStyle memberCellStyle = this.buildHeaderCellStyle(sheet);
+		CellStyle dimensionCellStyle = this.buildDimensionCellStyle(sheet);
+		
 		// build headers for column first ...
-		buildColumnsHeader(sheet,cs, cs.getColumnsRoot().getChilds(), startRow, rowsDepth - 1, createHelper, locale);
+		buildColumnsHeader(sheet, cs, cs.getColumnsRoot().getChilds(),
+				startRow, rowsDepth - 1, createHelper, locale, memberCellStyle,
+				dimensionCellStyle);
 		// ... then build headers for rows ....
-	    buildRowsHeaders(sheet,cs, cs.getRowsRoot().getChilds(), columnsDepth - 1 + startRow, 0, createHelper, locale);
-	    // then put the matrix data
-	    buildDataMatrix(sheet, cs, columnsDepth + startRow-1, rowsDepth - 1, createHelper, measureFormatter);
-	    
-	    buildRowHeaderTitle(sheet, cs, columnsDepth-2, 0, startRow, createHelper, locale);
+		buildRowsHeaders(sheet, cs, cs.getRowsRoot().getChilds(), columnsDepth
+				- 1 + startRow, 0, createHelper, locale, memberCellStyle);
+		// then put the matrix data
+		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1,
+				createHelper, measureFormatter);
+
+		buildRowHeaderTitle(sheet, cs, columnsDepth - 2, 0, startRow,
+				createHelper, locale, dimensionCellStyle);
 	    
 	    return startRow+totalRowsNumber;
 	}
@@ -227,11 +235,12 @@ public class CrosstabXLSExporterFromJavaObject {
 	 * @param createHelper The file creation helper
 	 * @throws JSONException
 	 */
-	private void buildRowsHeaders(Sheet sheet, CrossTab cs, List<Node> siblings, int rowNum, int columnNum, CreationHelper createHelper, Locale locale) throws JSONException {
+	private void buildRowsHeaders(Sheet sheet, CrossTab cs,
+			List<Node> siblings, int rowNum, int columnNum,
+			CreationHelper createHelper, Locale locale, CellStyle cellStyle)
+			throws JSONException {
 		int rowsCounter = rowNum;
 		
-		CellStyle cellStyle = buildHeaderCellStyle(sheet);
-        
 		for (int i = 0; i < siblings.size(); i++) {
 			Node aNode =  siblings.get(i);
 			List<Node> childs = aNode.getChilds();
@@ -259,7 +268,7 @@ public class CrosstabXLSExporterFromJavaObject {
 		    }
 		   
 		    if (childs != null && childs.size() > 0) {
-		    	buildRowsHeaders(sheet,cs, childs, rowsCounter, columnNum + 1, createHelper, locale);
+		    	buildRowsHeaders(sheet,cs, childs, rowsCounter, columnNum + 1, createHelper, locale, cellStyle);
 		    }
 		    int increment = descendants > 1 ? descendants : 1;
 		    rowsCounter = rowsCounter + increment;
@@ -276,13 +285,15 @@ public class CrosstabXLSExporterFromJavaObject {
 	 * @param createHelper
 	 * @throws JSONException
 	 */
-	private void buildRowHeaderTitle(Sheet sheet, CrossTab cs, int columnHeadersNumber, int startColumn, int startRow, CreationHelper createHelper, Locale locale) throws JSONException {
+	private void buildRowHeaderTitle(Sheet sheet, CrossTab cs,
+			int columnHeadersNumber, int startColumn, int startRow,
+			CreationHelper createHelper, Locale locale, CellStyle cellStyle)
+			throws JSONException {
 		List<String> titles = cs.getRowHeadersTitles();
 		 
 		if (titles != null) {
 
 			Row row = sheet.getRow(startRow + columnHeadersNumber);
-			CellStyle cellStyle = this.buildDimensionCellStyle(sheet);
 			for (int i = 0; i < titles.size(); i++) {
 
 				Cell cell = row.createCell(startColumn + i);
@@ -486,14 +497,16 @@ public class CrosstabXLSExporterFromJavaObject {
 	 * @param rowNum The row number where the siblings must be inserted
 	 * @param columnNum The column number where the first sibling must be inserted
 	 * @param createHelper The file creation helper
+	 * @param dimensionCellStyle The cell style for cells containing dimensions (i.e. attributes' names)
+	 * @param memberCellStyle The cell style for cells containing members (i.e. attributes' values)
 	 * @throws JSONException
 	 */
 	private void buildColumnsHeader(Sheet sheet, CrossTab cs,
 			List<Node> siblings, int rowNum, int columnNum,
-			CreationHelper createHelper, Locale locale) throws JSONException {
+			CreationHelper createHelper, Locale locale,
+			CellStyle memberCellStyle, CellStyle dimensionCellStyle)
+			throws JSONException {
 		int columnCounter = columnNum;
-		CellStyle memberCellStyle = buildHeaderCellStyle(sheet);
-		CellStyle dimensionCellStyle = buildDimensionCellStyle(sheet);
 		
 		for (int i = 0; i < siblings.size(); i++) {
 			Node aNode = (Node) siblings.get(i);
@@ -538,7 +551,9 @@ public class CrosstabXLSExporterFromJavaObject {
 		    }
 		    
 		    if (childs != null && childs.size() > 0) {
-		    	buildColumnsHeader(sheet ,cs , childs, rowNum + 1, columnCounter, createHelper, locale);
+				buildColumnsHeader(sheet, cs, childs, rowNum + 1,
+						columnCounter, createHelper, locale, memberCellStyle,
+						dimensionCellStyle);
 		    }
 		    int increment = descendants > 1 ? descendants : 1;
 		    columnCounter = columnCounter + increment;
@@ -571,18 +586,21 @@ public class CrosstabXLSExporterFromJavaObject {
 			decimals+="0";
 		}
 		
-		CellStyle cellStyle = buildDataCellStyle(sheet);
+		CellStyle cellStyle = this.buildDataCellStyle(sheet);
 		DataFormat df = createHelper.createDataFormat();
-		cellStyle.setDataFormat(df.getFormat("#,##0."+decimals));
+		cellStyle.setDataFormat(df.getFormat("#,##0." + decimals));
 		
-		if(celltype.equals(CellType.TOTAL)){
-			cellStyle.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
+		if (celltype.equals(CellType.TOTAL)) {
+			cellStyle.setFillForegroundColor(IndexedColors.GREY_40_PERCENT
+					.getIndex());
 		}
-		if(celltype.equals(CellType.CF)){
-			cellStyle.setFillForegroundColor(IndexedColors.DARK_YELLOW.getIndex());
+		if (celltype.equals(CellType.CF)) {
+			cellStyle.setFillForegroundColor(IndexedColors.DARK_YELLOW
+					.getIndex());
 		}
-		if(celltype.equals(CellType.SUBTOTAL)){
-			cellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		if (celltype.equals(CellType.SUBTOTAL)) {
+			cellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT
+					.getIndex());
 		}
 		
 		decimalFormats.put(mapPosition, cellStyle);
