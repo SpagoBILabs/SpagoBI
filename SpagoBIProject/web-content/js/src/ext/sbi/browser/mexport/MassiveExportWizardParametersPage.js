@@ -49,10 +49,11 @@ Ext.ns("Sbi.browser.mexport");
 Sbi.browser.mexport.MassiveExportWizardParametersPage = function(config) {
 
 	var defaultSettings = {
-			title: LN('sbi.browser.mexport.massiveExportWizardParametersPage.title')  //LN('Sbi.browser.mexport.massiveExportWizardParametersPage.title')
-			, layout: 'fit'
+			//title: LN('sbi.browser.mexport.massiveExportWizardParametersPage.title')  //LN('Sbi.browser.mexport.massiveExportWizardParametersPage.title')
+			layout: 'fit'
 			//, width: 500
-			//, height: 300           	
+			//, height: 300   
+			, frame: true
 			, closable: true
 			, constrain: true
 			, hasBuddy: false
@@ -102,6 +103,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardParametersPage, Ext.Panel, {
 
 	, onSelection: function() {
 		this.currentPage = true;
+		this.wizard.setPageTitle('Parameters', 'Setup parameters\' configuration');
 		
 		// clear the fields in case you are coming to panel for the second time
 		this.mainPanel.clear();
