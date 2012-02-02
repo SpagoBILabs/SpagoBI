@@ -68,18 +68,7 @@ Sbi.browser.mexport.MassiveExportWizard = function(config) {
 
 	this.services = this.services || new Array();
 	
-	this.services['startMassiveExportThreadAction'] = this.services['startMassiveExportThreadAction'] || Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'START_MASSIVE_EXPORT_THREAD_ACTION'
-		, baseParams: new Object()
-	});
-	
-	this.services['startMassiveScheduleAction'] = this.services['startMassiveScheduleAction'] || Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'START_MASSIVE_SCHEDULE_ACTION'
-		, baseParams: new Object()
-	});
-	
-	
-	
+
 	//this.addEvents();
 	this.initMainPanel(c);	
 	c = Ext.apply(c, {
@@ -258,7 +247,9 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 		this.pages = [];
 		this.initOptionsPage();
 		this.initParametersPage();
-		this.initTriggerPage();
+		if(this.wizardType === 'schedule') {
+			this.initTriggerPage();
+		}
 	}
 	
 	, initOptionsPage: function() {
@@ -277,10 +268,6 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 	}
 
 
-	
-	
-	
-	
 	, moveToPreviousPage: function() {
 		this.moveToPage(this.activePageNumber - 1);
 	}

@@ -454,6 +454,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     			var popupWin = new Sbi.browser.mexport.MassiveExportWizard({
     				functId : dirRecord.id
     				, functCd : dirRecord.code
+    				, wizardType: 'export'
     				, services: services
     			});
     			popupWin.show();
@@ -465,6 +466,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     			var popupWin = new Sbi.browser.mexport.MassiveExportWizard({
     				functId : dirRecord.id
     				, functCd : dirRecord.code
+    				, wizardType: 'schedule'
     				, services: services
     			});
     			popupWin.show();
