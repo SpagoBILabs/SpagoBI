@@ -32,7 +32,8 @@ Ext.regModel('browserItems',	{
 	       	{name: 'uuid',	type:'string'},
 	       	{name: 'relname',	type:'string'},
 	       	{name: 'typeId',	type:'integer'},
-	       	{name: 'refreshSeconds',	type:'integer'}
+	       	{name: 'refreshSeconds',	type:'integer'},
+	       	{name: 'leaf',	type:'boolean'}
 	       	 ]
  
 });

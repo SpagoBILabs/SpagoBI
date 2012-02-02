@@ -165,6 +165,7 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction{
 		if(documents.length() != 0){
 			for(int i=0; i< documents.length(); i++){
 				JSONObject doc = documents.getJSONObject(i);
+				doc.put("leaf", true);
 				folders.put(doc);
 			}
 		}

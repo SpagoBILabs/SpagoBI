@@ -10,7 +10,23 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 	    data: null,
 	    flex:1,
 	    displayField: 'name',
+/*		displayField: '<tpl>'+
+			'<tpl if="engine != null && engine != \'\'"><div style="color: red;">{name}</div></tpl>'+
+			'<tpl if="engine == null || engine == \'\'"">{name}</tpl>'+
+			'</tpl>',*/
 	    
+
+	    getDetailCard: function( record, parentRecord ){
+       	
+            Ext.dispatch(
+            {
+              controller: app.controllers.mobileController,
+              action: 'showDetail',
+              record: record
+              
+            });
+        },
+
 		initComponent: function(){
 			
 			var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
