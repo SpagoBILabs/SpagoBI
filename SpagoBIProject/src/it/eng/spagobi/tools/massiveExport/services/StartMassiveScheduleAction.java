@@ -11,7 +11,6 @@
  */
 package it.eng.spagobi.tools.massiveExport.services;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
@@ -20,11 +19,12 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.massiveExport.utils.Utilities;
 import it.eng.spagobi.tools.massiveExport.work.MassiveExportWork;
-//import it.eng.spagobi.tools.massiveExport.work.MassiveExportWorkListener;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
@@ -46,188 +46,173 @@ import commonj.work.WorkItem;
 
 import de.myfoo.commonj.work.FooRemoteWorkItem;
 
-public class StartMassiveScheduleAction extends GetParametersForExecutionAction {
-	private final String SERVICE_NAME = "START_MASSIVE_EXPORT_THREAD_ACTION";
+public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 
-	// logger component
-	private static Logger logger = Logger.getLogger(StartMassiveScheduleAction.class);
+	private static final long serialVersionUID = 1L;
+
+	private final String SERVICE_NAME = "START_MASSIVE_EXPORT_THREAD_ACTION";
 
 	private final String FUNCTIONALITY_ID = "functId";
 	private final String PARAMETER_VALUES = "parameterValues";
 	private final String ROLE = "selectedRole";
 	private final String TYPE = "type";  
-	private final String SPLITTING_FILTER = "splittingFilter";  
+	private final String SPLITTING_FILTER = "splittingFilter"; 
+	
+	// logger component
+	private static Logger logger = Logger.getLogger(StartMassiveScheduleAction.class); 
 
 	@Override
 	public void doService() {
+		
 		logger.debug("IN");
-		ILowFunctionalityDAO funcDao;
-		List selObjects = null;
+		
+		LowFunctionality folder = null;
+		
+		List<BIObject> documentsToExport = null;
 		Integer progressThreadId = null;
 		
-		Integer folderId = this.getAttributeAsInteger(FUNCTIONALITY_ID);	
+		Integer folderId = this.getAttributeAsInteger(FUNCTIONALITY_ID);
+		logger.debug("Input parameter [" + FUNCTIONALITY_ID + "] is equal to [" + folderId + "]");
+		Assert.assertNotNull(folderId, "Input parameter [" + FUNCTIONALITY_ID + "] cannot be null");
 
-		Assert.assertNotNull(folderId, "Functionality id cannot be null");
-
-		String execRole = this.getAttributeAsString(ROLE);
+		String role = this.getAttributeAsString(ROLE);
+		logger.debug("Input parameter [" + ROLE + "] is equal to [" + role + "]");
+		
 		String state = this.getAttributeAsString(PARAMETER_VALUES);
+		logger.debug("Input parameter [" + PARAMETER_VALUES + "] is equal to [" + state + "]");
+		
 		String documentType = this.getAttributeAsString(TYPE);
+		logger.debug("Input parameter [" + documentType + "] is equal to [" + TYPE + "]");
+		
 		String cycleOnFilters = this.getAttributeAsString(SPLITTING_FILTER);
+		logger.debug("Input parameter [" + SPLITTING_FILTER + "] is equal to [" + cycleOnFilters + "]");
+		
 		boolean splittingFilter = false;
 		if(cycleOnFilters != null) splittingFilter = Boolean.valueOf(cycleOnFilters);
-		logger.debug(ROLE+": "+execRole);;
-		logger.debug(PARAMETER_VALUES+": "+state);;
-		logger.debug(TYPE+": "+documentType);;
-		logger.debug(SPLITTING_FILTER+": "+cycleOnFilters);;
 		
-		LowFunctionality funct = null;
-
-
-		JSONObject parValuesJSON = null;
+		JSONObject parametersJSON = null;
 		try {
-			parValuesJSON = new JSONObject(state);
-			logger.debug("parValuesJSON");
-		} catch (JSONException e) {
-			logger.error("Could not parse JSON of parameters values: "+state);
-			throw new SpagoBIServiceException("Could not parse JSON of parameters values: "+state, e);
+			parametersJSON = new JSONObject(state);
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("Could not parse JSON of parameters values: " + state, t);
 		} 
 
 
 		try {
-			funcDao = DAOFactory.getLowFunctionalityDAO();
+			ILowFunctionalityDAO functionalityTreeDao = DAOFactory.getLowFunctionalityDAO();
+			IProgressThreadDAO progressThreadDAO = DAOFactory.getProgressThreadDAO();
+			IConfigDAO configDAO = DAOFactory.getSbiConfigDAO();
 
 			// Get all the documents
-			logger.debug("Search folder "+folderId+ " for documents of type "+TYPE);		
-			funct = funcDao.loadLowFunctionalityByID(folderId, true);
-			Assert.assertNotNull(funct, "functionality with id "+folderId);
-			selObjects = Utilities.getContainedObjFilteredbyType(funct, documentType );
+			logger.debug("Search folder " + folderId + " for documents of type " + documentType);		
+			folder = functionalityTreeDao.loadLowFunctionalityByID(folderId, true);
+			Assert.assertNotNull(folder, "Folder [" + folderId + "] cannot be loaded");
+			documentsToExport = Utilities.getContainedObjFilteredbyType(folder, documentType );
+			fillDriverValues(documentsToExport, parametersJSON);
 
-
-			logger.debug("Check if userid "+getUserProfile().getUserUniqueIdentifier()+ " and functionality "+funct.getCode()+ " has already a work in execution");
-
-			IProgressThreadDAO threadDAO = DAOFactory.getProgressThreadDAO();
+			logger.debug("Check if userid "+getUserProfile().getUserUniqueIdentifier()+ " and functionality "+folder.getCode()+ " has already a work in execution");
 			// search if already exists
-			ProgressThread pT = threadDAO.loadActiveProgressThreadByUserIdAndFuncCd(getUserProfile().getUserUniqueIdentifier().toString(), funct.getCode());
-			if(pT != null){
-				logger.warn("A massive export process is still opened for userId "+getUserProfile().getUserUniqueIdentifier()+" on functionality "+funct.getCode());
-				throw new SpagoBIServiceException(SERVICE_NAME, "A massive export process is still opened for userId "+getUserProfile().getUserUniqueIdentifier()+" on functionality "+funct.getCode());
+			ProgressThread t = progressThreadDAO.loadActiveProgressThreadByUserIdAndFuncCd(getUserProfile().getUserUniqueIdentifier().toString(), folder.getCode());
+			if(t != null){
+				logger.warn("A massive export process is still opened for userId "+getUserProfile().getUserUniqueIdentifier()+" on functionality "+folder.getCode());
+				throw new SpagoBIServiceException(SERVICE_NAME, "A massive export process is still opened for userId "+getUserProfile().getUserUniqueIdentifier()+" on functionality "+folder.getCode());
 			}
 
 			String randomName = getRandomName();
+			ProgressThread progressThread = new ProgressThread(getUserProfile().getUserUniqueIdentifier().toString(), documentsToExport.size(), folder.getCode(), null, randomName);
+			progressThreadId = progressThreadDAO.insertProgressThread(progressThread);
 			
-			ProgressThread progressThread = new ProgressThread(getUserProfile().getUserUniqueIdentifier().toString(), selObjects.size(), funct.getCode(), null, randomName);
-			progressThreadId= threadDAO.insertProgressThread(progressThread);
-
-			fillDriverValues(selObjects, parValuesJSON);
-			// Object has parameters values set
-
-			// cycle on Objects, fill parameters and call thread
-			Config config = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel(SpagoBIConstants.JNDI_THREAD_MANAGER);
-
-			WorkManager wm = new WorkManager(config.getValueCheck());
-			//MassiveExportWorkListener mewListener = new MassiveExportWorkListener(getUserProfile(), funct, progressThreadId);
 			
-			MassiveExportWork mew = new MassiveExportWork(selObjects, getUserProfile(), funct , progressThreadId, randomName, splittingFilter);
-			//FooRemoteWorkItem fooRemoteWorkItem=wm.buildFooRemoteWorkItem(mew, mewListener);
-			FooRemoteWorkItem fooRemoteWorkItem=wm.buildFooRemoteWorkItem(mew, null);
+			Config config = configDAO.loadConfigParametersByLabel(SpagoBIConstants.JNDI_THREAD_MANAGER);
+			if(config == null) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to retrive from the configuration the property [" + SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
+			}
+
+			WorkManager workManager = new WorkManager(config.getValueCheck());
+			MassiveExportWork massiveExportWork = new MassiveExportWork(documentsToExport, getUserProfile(), folder , progressThreadId, randomName, splittingFilter);
+			FooRemoteWorkItem remoteWorkItem = workManager.buildFooRemoteWorkItem(massiveExportWork, null);
 			
 			// Check if work was accepted
-			if(fooRemoteWorkItem.getStatus()==WorkEvent.WORK_ACCEPTED){
+			if(remoteWorkItem.getStatus() != WorkEvent.WORK_ACCEPTED){
+				int statusWI = remoteWorkItem.getStatus();
+				throw new SpagoBIServiceException(SERVICE_NAME, "Massive export Work thread was rejected with status "+statusWI);
+			} else {
 				logger.debug("run work item");
 				//WorkItem workItem=(WorkItem)wm.runWithReturnWI(mew, mewListener);
-				WorkItem workItem=(WorkItem)wm.runWithReturnWI(mew, null);
+				WorkItem workItem=(WorkItem)workManager.runWithReturnWI(massiveExportWork, null);
 				int statusWI=workItem.getStatus();
-
-
-			}
-			else{
-				int statusWI=fooRemoteWorkItem.getStatus();
-				logger.error("Massive export Work thread was rejected with status "+statusWI);
-				if(progressThreadId != null){
-					deleteDBRowInCaseOfError(progressThreadId);
-				}
-				throw new SpagoBIServiceException(SERVICE_NAME, "Massive export Work thread was rejected with status "+statusWI);
 			}
 
-		} 
-		catch (JSONException e1) {
-			logger.error("Error in reading parameters values",e1);
+		} catch (SpagoBIServiceException t) {
 			if(progressThreadId != null){
 				deleteDBRowInCaseOfError(progressThreadId);
 			}
-			throw new SpagoBIServiceException(SERVICE_NAME, "Error in reading parameters values", e1);
-		}
-		catch (Exception e) {
-			logger.error("error in starting export thread",e);
+			throw (t);		
+		} catch (Throwable t) {
 			if(progressThreadId != null){
 				deleteDBRowInCaseOfError(progressThreadId);
 			}
-			throw new SpagoBIServiceException(SERVICE_NAME, "error in starting export thread: \n"+e.getLocalizedMessage(), e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occuerd while executing service ["+ SERVICE_NAME + "]", t);
+		} finally {
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
 
 	}
 
-	public void deleteDBRowInCaseOfError(Integer progressThreadId){
+	private void deleteDBRowInCaseOfError(Integer progressThreadId){
+		IProgressThreadDAO threadDAO ;
+		
 		logger.debug("IN");
 		try {
-			IProgressThreadDAO threadDAO = DAOFactory.getProgressThreadDAO();
-			logger.error("delete row progress thread with id "+progressThreadId);
+			threadDAO = DAOFactory.getProgressThreadDAO();
 			threadDAO.deleteProgressThread(progressThreadId);
-		} catch (EMFUserError e1) {
-			logger.error("Error in deleting the row with the progress id "+progressThreadId);
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occuerd while edeleting the row with progress id equal to [" + progressThreadId + "]", t);
+		} finally {
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
 
 	}
-	
-	
-	
-	
-	
 
-	void fillDriverValues(List<BIObject> obj, JSONObject values) throws JSONException{
+	void fillDriverValues(List<BIObject> documents, JSONObject parametersJSON) throws JSONException {
 		logger.debug("IN");
-		// for all objects
-		for (Iterator iterator = obj.iterator(); iterator.hasNext();) {
-			BIObject biObject = (BIObject) iterator.next();
-			logger.debug("fill values of object "+biObject.getLabel());
-			List pars = biObject.getBiObjectParameters();
-			for (Iterator iterator2 = pars.iterator(); iterator2.hasNext();) {
-				BIObjectParameter par = (BIObjectParameter) iterator2.next();
-				logger.debug("search value for obj par with id  "+par.getId());
-				// get the label passed
-				String parLabel = values.getString(par.getId().toString()+"_objParameterId");
-				List valuesToInsert = null;
-				if(parLabel != null){
+		
+		for (BIObject document : documents) {
+			logger.debug("fill values of object "+document.getLabel());
+			List<BIObjectParameter> documentParameters = document.getBiObjectParameters();
+			for (BIObjectParameter documentParameter : documentParameters) {
+				logger.debug("search value for obj par with id  "+documentParameter.getId());
+				String documentParameterLabel = parametersJSON.getString(documentParameter.getId().toString()+"_objParameterId");
+				
+				List<String> documentParameterValues = new ArrayList<String>();
+				if(documentParameterLabel != null){
 
+					boolean isMultivalueParameter;
 					try{
-						JSONArray arr = values.getJSONArray(parLabel);
-						valuesToInsert = new ArrayList();
-						for (int i = 0; i < arr.length(); i++) {
-							String ob = arr.getString(i);
-							valuesToInsert.add(ob);
+						JSONArray values = parametersJSON.getJSONArray(documentParameterLabel);
+						for (int i = 0; i < values.length(); i++) {
+							String ob = values.getString(i);
+							documentParameterValues.add(ob);
 						}
+						isMultivalueParameter = true;
 					}
 					catch (JSONException e) {
-						// to catch case it is not multivalue
+						isMultivalueParameter = false;
 					}
-					if(valuesToInsert == null){
-						String value = values.getString(parLabel);
+					
+					if(isMultivalueParameter == false){
+						String value = parametersJSON.getString(documentParameterLabel);
 						if(value != null){
-							valuesToInsert = new ArrayList();
-							valuesToInsert.add(value);
+							documentParameterValues.add(value);
 						}
-
 					}
 
-				}
-				else{
-					logger.warn("parameter value not defined  "+par.getLabel());
+				} else{
+					logger.warn("parameter value not defined  "+documentParameter.getLabel());
 				}
 
-				logger.debug("insert for "+par.getLabel()+" value"+ valuesToInsert.toString());
-				par.setParameterValues(valuesToInsert);
+				logger.debug("insert for "+documentParameter.getLabel()+" value"+ documentParameterValues.toString());
+				documentParameter.setParameterValues(documentParameterValues);
 
 			}
 

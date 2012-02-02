@@ -137,7 +137,10 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
 		return (i != (pages.length-1))? this.wizard.pages[i+1]: null;
 	}
 	
-
+	, getName: function(){
+		return 'Sbi.browser.mexport.MassiveExportWizardTriggerPage';
+	}
+	
 	, getContent: function() {
 		var state;
 		
