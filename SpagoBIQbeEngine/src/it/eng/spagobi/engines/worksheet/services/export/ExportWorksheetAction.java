@@ -63,6 +63,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -680,8 +681,9 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 					calculatedFieldsDecimals = Integer
 							.valueOf(calculatedFieldsDecimalsString);
 				}
-				CrosstabXLSExporter expCr = new CrosstabXLSExporter(
-						calculatedFieldsDecimals);
+				Properties properties = new Properties();
+				properties.put(CrosstabXLSExporter.PROPERTY_CALCULATED_FIELD_DECIMALS, calculatedFieldsDecimals);
+				CrosstabXLSExporter expCr = new CrosstabXLSExporter(properties);
 
 				sheetRow = expCr.fillAlreadyCreatedSheet(sheet, cs,
 						crosstabDefinitionJSON, createHelper, sheetRow, locale);
@@ -1091,8 +1093,9 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				CrossTab cs = getCrosstab(crosstabDefinitionJSON, fieldOptions,
 						filters, sheetName, splittingWhereField,
 						calculateFieldsJSON);
-				CrosstabXLSXExporter expCr = new CrosstabXLSXExporter(
-						calculatedFieldsDecimals);
+				Properties properties = new Properties();
+				properties.put(CrosstabXLSXExporter.PROPERTY_CALCULATED_FIELD_DECIMALS, calculatedFieldsDecimals);
+				CrosstabXLSXExporter expCr = new CrosstabXLSXExporter(properties);
 				sheetRow = expCr.fillAlreadyCreatedSheet(sheet, cs,
 						crosstabJSON, createHelper, sheetRow, locale);
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {

@@ -69,6 +69,8 @@ public class CrosstabXLSExporter {
     public static final String PROPERTY_DIMENSION_NAME_BACKGROUND_COLOR = "HEADER_DIMENSION_NAME_BACKGROUND_COLOR";
     public static final String PROPERTY_FONT_NAME = "FONT_NAME";
     
+    public static final String PROPERTY_CALCULATED_FIELD_DECIMALS = "CALCULATED_FIELD_DECIMALS";
+    
     public static final short DEFAULT_HEADER_FONT_SIZE = 8;
     public static final String DEFAULT_HEADER_COLOR = "BLACK";
     public static final String DEFAULT_HEADER_BACKGROUND_COLOR = "GREY_25_PERCENT";
@@ -80,21 +82,19 @@ public class CrosstabXLSExporter {
     public static final String DEFAULT_DIMENSION_NAME_COLOR = "BLACK";
     public static final String DEFAULT_DIMENSION_NAME_BACKGROUND_COLOR = "LIGHT_BLUE";
 	public static final String DEFAULT_FONT_NAME = "Verdana";
-	
+	public static final int DEFAULT_CALCULATED_FIELD_DECIMALS = 2;
 	
 	private Properties properties;
 	
-	private int calculatedFieldsDecimals;
-	
 
-    
-	/**
-	 * @param calculatedFieldsDecimals
-	 */
-	public CrosstabXLSExporter(int calculatedFieldsDecimals) {
+	public CrosstabXLSExporter(Properties properties) {
 		super();
-		this.calculatedFieldsDecimals = calculatedFieldsDecimals;
-		this.properties = new Properties();
+		if (properties == null) {
+			this.properties = new Properties();
+		} else {
+			this.properties = properties;
+		}
+		
 	}
 	
 	public void setProperty(String propertyName, Object propertyValue) {
@@ -105,28 +105,35 @@ public class CrosstabXLSExporter {
 		return this.properties.get(propertyName);
 	}
 
-	public int fillAlreadyCreatedSheet(Sheet sheet,CrossTab cs, JSONObject crosstabJSON, CreationHelper createHelper, int startRow, Locale locale) throws JSONException, SerializationException{		
-	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
-	    // and when initializing the sheet
-    	int totalRowNum = commonFillSheet(sheet, cs, crosstabJSON, createHelper,startRow, locale);
-    	return totalRowNum;
+	public int fillAlreadyCreatedSheet(Sheet sheet, CrossTab cs,
+			JSONObject crosstabJSON, CreationHelper createHelper, int startRow,
+			Locale locale) throws JSONException, SerializationException {
+		// we enrich the JSON object putting every node the descendants_no
+		// property: it is useful when merging cell into rows/columns headers
+		// and when initializing the sheet
+		int totalRowNum = commonFillSheet(sheet, cs, crosstabJSON,
+				createHelper, startRow, locale);
+		return totalRowNum;
 	}
 	
-	public int commonFillSheet(Sheet sheet,CrossTab cs, JSONObject crosstabJSON, CreationHelper createHelper, int startRow, Locale locale) throws SerializationException, JSONException{	
-    	int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
+	public int commonFillSheet(Sheet sheet, CrossTab cs,
+			JSONObject crosstabJSON, CreationHelper createHelper, int startRow,
+			Locale locale) throws SerializationException, JSONException {
+		int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
 		int rowsDepth = cs.getRowsRoot().getSubTreeDepth();
 
-		
-		MeasureFormatter measureFormatter = new MeasureFormatter(cs, new DecimalFormat("#0.00"),"#0.00");
+		MeasureFormatter measureFormatter = new MeasureFormatter(cs,
+				new DecimalFormat("#0.00"), "#0.00");
 		int rowsNumber = cs.getDataMatrix().length;
-		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
+		// + 1 because there may be also the bottom row with the totals
+		int totalRowsNumber = columnsDepth + rowsNumber + 1;
 		for (int i = 0; i < totalRowsNumber + 5; i++) {
-			sheet.createRow(startRow+i);
+			sheet.createRow(startRow + i);
 		}
-		
+
 		CellStyle memberCellStyle = this.buildHeaderCellStyle(sheet);
 		CellStyle dimensionCellStyle = this.buildDimensionCellStyle(sheet);
-		
+
 		// build headers for column first ...
 		buildColumnsHeader(sheet, cs, cs.getColumnsRoot().getChilds(),
 				startRow, rowsDepth - 1, createHelper, locale, memberCellStyle,
@@ -140,8 +147,8 @@ public class CrosstabXLSExporter {
 
 		buildRowHeaderTitle(sheet, cs, columnsDepth - 2, 0, startRow,
 				createHelper, locale, dimensionCellStyle);
-	    
-	    return startRow+totalRowsNumber;
+
+		return startRow + totalRowsNumber;
 	}
 	
 
@@ -153,58 +160,68 @@ public class CrosstabXLSExporter {
 	 * @throws JSONException
 	 */
 	public int initSheet(Sheet sheet, CrossTab cs) throws JSONException {
-		
+
 		int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
-		int rowsNumber =  cs.getRowsRoot().getSubTreeDepth();
-		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
+		int rowsNumber = cs.getRowsRoot().getSubTreeDepth();
+		// + 1 because there may be also the bottom row with the totals
+		int totalRowsNumber = columnsDepth + rowsNumber + 1;
 		for (int i = 0; i < totalRowsNumber + 4; i++) {
 			sheet.createRow(i);
 		}
-		return totalRowsNumber+4;
+		return totalRowsNumber + 4;
 	}
 
-	private int buildDataMatrix(Sheet sheet, CrossTab cs, int rowOffset, int columnOffset, CreationHelper createHelper, MeasureFormatter measureFormatter) throws JSONException {
-		
+	protected int buildDataMatrix(Sheet sheet, CrossTab cs, int rowOffset,
+			int columnOffset, CreationHelper createHelper,
+			MeasureFormatter measureFormatter) throws JSONException {
+
 		CellStyle cellStyleForNA = buildNACellStyle(sheet);
-		
+
 		Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
 		int endRowNum = 0;
 		for (int i = 0; i < cs.getDataMatrix().length; i++) {
 			for (int j = 0; j < cs.getDataMatrix()[0].length; j++) {
 				String text = (String) cs.getDataMatrix()[i][j];
-				int rowNum = rowOffset + i ;
-				int columnNum = columnOffset + j ;
+				int rowNum = rowOffset + i;
+				int columnNum = columnOffset + j;
 				Row row = sheet.getRow(rowNum);
-				if(row==null){
+				if (row == null) {
 					row = sheet.createRow(rowNum);
 				}
 				endRowNum = rowNum;
 				Cell cell = row.createCell(columnNum);
-				//cell.setCellStyle(cellStyle);
-				
-				
 				try {
-
 					double value = Double.parseDouble(text);
 					int decimals = measureFormatter.getFormatXLS(i, j);
-					Double valueFormatted = measureFormatter.applyScaleFactor(value, i, j);
+					Double valueFormatted = measureFormatter.applyScaleFactor(
+							value, i, j);
 					cell.setCellValue(valueFormatted);
-					cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-					cell.setCellStyle(getNumberFormat(decimals, decimalFormats, sheet, createHelper,cs.getCellType(i,j) ));
+					cell.setCellType(this.getCellTypeNumeric());
+					cell.setCellStyle(getNumberFormat(decimals, decimalFormats,
+							sheet, createHelper, cs.getCellType(i, j)));
 				} catch (NumberFormatException e) {
-					logger.debug("Text " + text + " is not recognized as a number");
+					logger.debug("Text " + text
+							+ " is not recognized as a number");
 					cell.setCellValue(createHelper.createRichTextString(text));
-				    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				    cell.setCellStyle(cellStyleForNA);
+					cell.setCellType(this.getCellTypeString());
+					cell.setCellStyle(cellStyleForNA);
 				}
-				
+
 			}
 		}
 		return endRowNum;
 	}
 
+	protected int getCellTypeNumeric () {
+		return HSSFCell.CELL_TYPE_NUMERIC;
+	}
+	
+	protected int getCellTypeString () {
+		return HSSFCell.CELL_TYPE_STRING;
+	}
+	
 
-	private CellStyle buildNACellStyle(Sheet sheet) {
+	public CellStyle buildNACellStyle(Sheet sheet) {
 		CellStyle cellStyleForNA = this.buildDataCellStyle(sheet);
 		cellStyleForNA.setAlignment(CellStyle.ALIGN_CENTER);
 		return cellStyleForNA;
@@ -235,7 +252,7 @@ public class CrosstabXLSExporter {
 	 * @param createHelper The file creation helper
 	 * @throws JSONException
 	 */
-	private void buildRowsHeaders(Sheet sheet, CrossTab cs,
+	protected void buildRowsHeaders(Sheet sheet, CrossTab cs,
 			List<Node> siblings, int rowNum, int columnNum,
 			CreationHelper createHelper, Locale locale, CellStyle cellStyle)
 			throws JSONException {
@@ -253,7 +270,7 @@ public class CrosstabXLSExporter {
 		    	text = MeasureScaleFactorOption.getScaledName(text, cs.getMeasureScaleFactor(text), locale);
 			}
 			cell.setCellValue(createHelper.createRichTextString(text));
-		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		    cell.setCellType(this.getCellTypeString());
 
 	        cell.setCellStyle(cellStyle);
 	       
@@ -285,7 +302,7 @@ public class CrosstabXLSExporter {
 	 * @param createHelper
 	 * @throws JSONException
 	 */
-	private void buildRowHeaderTitle(Sheet sheet, CrossTab cs,
+	protected void buildRowHeaderTitle(Sheet sheet, CrossTab cs,
 			int columnHeadersNumber, int startColumn, int startRow,
 			CreationHelper createHelper, Locale locale, CellStyle cellStyle)
 			throws JSONException {
@@ -299,7 +316,7 @@ public class CrosstabXLSExporter {
 				Cell cell = row.createCell(startColumn + i);
 				String text = titles.get(i);
 				cell.setCellValue(createHelper.createRichTextString(text));
-				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellType(this.getCellTypeString());
 				cell.setCellStyle(cellStyle);
 			}
 			if (cs.isMeasureOnRow()) {
@@ -312,7 +329,7 @@ public class CrosstabXLSExporter {
 									locale);
 				}
 				cell.setCellValue(createHelper.createRichTextString(text));
-				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellType(this.getCellTypeString());
 				cell.setCellStyle(cellStyle);
 			}
 		}
@@ -501,7 +518,7 @@ public class CrosstabXLSExporter {
 	 * @param memberCellStyle The cell style for cells containing members (i.e. attributes' values)
 	 * @throws JSONException
 	 */
-	private void buildColumnsHeader(Sheet sheet, CrossTab cs,
+	protected void buildColumnsHeader(Sheet sheet, CrossTab cs,
 			List<Node> siblings, int rowNum, int columnNum,
 			CreationHelper createHelper, Locale locale,
 			CellStyle memberCellStyle, CellStyle dimensionCellStyle)
@@ -520,7 +537,7 @@ public class CrosstabXLSExporter {
 			}
 			
 			cell.setCellValue(createHelper.createRichTextString(text));
-		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
+		    cell.setCellType(this.getCellTypeString());	    
 		    int descendants = aNode.getLeafsNumber();
 		    if (descendants > 1) {
 			    sheet.addMergedRegion(new CellRangeAddress(
@@ -561,35 +578,37 @@ public class CrosstabXLSExporter {
 	}
 
 	
-	private CellStyle getNumberFormat(int j, Map<Integer, CellStyle> decimalFormats, Sheet sheet, CreationHelper createHelper, CellType celltype){
+	public CellStyle getNumberFormat(int j,
+			Map<Integer, CellStyle> decimalFormats, Sheet sheet,
+			CreationHelper createHelper, CellType celltype) {
 
-		int mapPosition =  j;
-		
-		if(celltype.equals(CellType.TOTAL)){
-			mapPosition = j+90000;
-		}else if(celltype.equals(CellType.SUBTOTAL)){
-			mapPosition = j+80000;
-		}else if(celltype.equals(CellType.CF)){
-			mapPosition = j+60000;
+		int mapPosition = j;
+
+		if (celltype.equals(CellType.TOTAL)) {
+			mapPosition = j + 90000;
+		} else if (celltype.equals(CellType.SUBTOTAL)) {
+			mapPosition = j + 80000;
+		} else if (celltype.equals(CellType.CF)) {
+			mapPosition = j + 60000;
 		}
-		
-		if(decimalFormats.get(mapPosition)!=null)
+
+		if (decimalFormats.get(mapPosition) != null)
 			return decimalFormats.get(mapPosition);
-		
-		if(celltype.equals(CellType.CF)){
-			j = calculatedFieldsDecimals;
+
+		if (celltype.equals(CellType.CF)) {
+			j = this.getCalculatedFieldDecimals();
 		}
-		
-		String decimals="";
-		
-		for(int i=0; i<j; i++){
-			decimals+="0";
+
+		String decimals = "";
+
+		for (int i = 0; i < j; i++) {
+			decimals += "0";
 		}
-		
+
 		CellStyle cellStyle = this.buildDataCellStyle(sheet);
 		DataFormat df = createHelper.createDataFormat();
 		cellStyle.setDataFormat(df.getFormat("#,##0." + decimals));
-		
+
 		if (celltype.equals(CellType.TOTAL)) {
 			cellStyle.setFillForegroundColor(IndexedColors.GREY_40_PERCENT
 					.getIndex());
@@ -602,9 +621,17 @@ public class CrosstabXLSExporter {
 			cellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT
 					.getIndex());
 		}
-		
+
 		decimalFormats.put(mapPosition, cellStyle);
 		return cellStyle;
+	}
+	
+	public int getCalculatedFieldDecimals() {
+		Integer decimals = (Integer) this.getProperty(PROPERTY_CALCULATED_FIELD_DECIMALS);
+		if (decimals == null) {
+			return DEFAULT_CALCULATED_FIELD_DECIMALS;
+		}
+		return decimals;
 	}
 
 
