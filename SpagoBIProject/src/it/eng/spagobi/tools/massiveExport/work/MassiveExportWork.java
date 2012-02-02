@@ -120,7 +120,7 @@ public class MassiveExportWork implements Work{
 
 			metaDAO = DAOFactory.getObjMetadataDAO();
 			contentDAO = DAOFactory.getObjMetacontentDAO();
-			
+
 
 		}catch (Exception e) {
 			logger.error("Error setting DAO");
@@ -152,20 +152,19 @@ public class MassiveExportWork implements Work{
 				returnByteArray = proxy.exec(profile, SpagoBIConstants.MASSIVE_EXPORT_MODALITY, output);
 			}
 			catch (Throwable e) {
-				logger.error("Error while executing export for object with label "+biObj.getLabel());
-				exportFile = createErrorFile(biObj, e , randomNamesToName);
+				logger.error("Error while executing export for object with label "+biObj.getLabel(), e);
 				returnByteArray = null;
 			}
 
-
-
-
-			if(returnByteArray == null){
-				logger.error("execution proxy returned null document for BiObjectDocumetn: "+biObj.getLabel());
-				exportFile = createErrorFile(biObj, null , randomNamesToName);
-			}
-			else{
-				try{
+			try{
+				if(returnByteArray == null){
+					logger.error("execution proxy returned null document for BiObjectDocumetn: "+biObj.getLabel());
+					exportFile = createErrorFile(biObj, null , randomNamesToName);
+					// update progress table
+					threadDAO.incrementProgressThread(progressThreadId);
+					logger.debug("progress Id incremented");
+				}
+				else{
 					String checkerror = new String(returnByteArray);
 					if(checkerror.startsWith("error") || checkerror.startsWith("{\"errors\":")){
 						logger.error("Error found in execution, make txt file");
@@ -192,13 +191,14 @@ public class MassiveExportWork implements Work{
 					logger.debug("progress Id incremented");
 
 				}
-				catch (Exception e) {
-					logger.error("Exception in  writeing export file for BiObject with label: "+biObj.getLabel()+": delete DB row",e);
-					deleteDBRowInCaseOfError(threadDAO, progressThreadId);
-					throw new SpagoBIServiceException("Exception in  writeing export file for BiObject with label "+biObj.getLabel()+" delete DB row", e);
-				}
 			}
-		}
+			catch (Exception e) {
+				logger.error("Exception in  writeing export file for BiObject with label: "+biObj.getLabel()+": delete DB row",e);
+				deleteDBRowInCaseOfError(threadDAO, progressThreadId);
+				throw new SpagoBIServiceException("Exception in  writeing export file for BiObject with label "+biObj.getLabel()+" delete DB row", e);
+			}
+
+		} // close For
 		File zipFile = null;
 		try{
 			zipFile = createZipFile(filesToZip, randomNamesToName);
@@ -281,14 +281,14 @@ public class MassiveExportWork implements Work{
 			ObjMetaDataAndContent objMetaDataAndContent = null;
 			List<ObjMetadata> allMetas =metaDao.loadAllObjMetadata();
 			Map<Integer, ObjMetacontent> values =  new HashMap<Integer, ObjMetacontent>();
-			
+
 			List list = metaContentDAO.loadObjOrSubObjMetacontents(obj.getId(), null);
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				ObjMetacontent content = (ObjMetacontent) iterator.next();
 				Integer metaid = content.getObjmetaId();
 				values.put(metaid, content);
 			}
-			
+
 			for (Iterator iterator = allMetas.iterator(); iterator.hasNext();) {
 				ObjMetadata meta = (ObjMetadata) iterator.next();
 				objMetaDataAndContent = new ObjMetaDataAndContent();
