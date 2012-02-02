@@ -94,6 +94,8 @@ Sbi.browser.mexport.MassiveExportWizard = function(config) {
 	// constructor
 	Sbi.browser.mexport.MassiveExportWizard.superclass.constructor.call(this, c);
 	
+	//this.on('render', function() {this.pages[this.activePageNumber].fireEvent('select').defer(5000);}, this);
+	
 	//this.addEvents();
 };
 
@@ -182,14 +184,13 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 	// ----------------------------------------------------------------------------------------
 	
     , initMainPanel: function(c) {
-    	
     	this.initButtons();
 		this.initPages()
 		this.titlePanel = new Ext.Panel({
 			region: 'north',
 			height: 45,
 			frame: true,
-			html: '<H1>Questo è il titolo</H1><P>&nbsp;&nbsp;&nbsp;long long description, but not longer than that</P>'
+			html: '<H1>Options</H1><P>&nbsp;&nbsp;&nbsp;Setup massive export options</P>'
 		});
 		this.pagePanel = new Ext.Panel({
 			layout: 'card',  
