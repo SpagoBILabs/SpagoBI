@@ -257,7 +257,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 			tpl: '<tpl for="."><div ext:qtip="{typeDesc}" class="x-combo-list-item">{typeDesc}</div></tpl>'
 			, editable  : false
 			, forceSelection : true
-			, fieldLabel : LN('Output type')
+			, fieldLabel : LN('Sbi.browser.mexport.MassiveExportWizardOptionsPage.exportFormat')
 			, store: scopeComboOutputStore
 		    , displayField:'typeDesc'
 			, valueField:'type'
@@ -300,7 +300,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 	
 	, onSelection: function() {
 		this.currentPage = true;
-		this.wizard.setPageTitle('Options', 'Setup massive export options');
+		this.wizard.setPageTitle(LN('Sbi.browser.mexport.MassiveExportWizardOptionsPage.options'), LN('Sbi.browser.mexport.MassiveExportWizardOptionsPage.title'));
 	}
 	
 	, onDeselection: function() {

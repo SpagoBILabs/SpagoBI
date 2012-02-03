@@ -665,3 +665,20 @@ Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.next'] = 'Page 
 Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.finish'] = 'Fin';
 
 Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.NoDoc'] = 'Aucun documents Worksheet a exporter'; 
+
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noProgresse'] = 'Aucun export en execution';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noDownload'] = 'Aucun export pour download';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.exporting'] = 'En exportant ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.document'] = ' document ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.of'] = ' sur ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.finished'] = ' export terminee';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.startedExport'] = 'Started Exports';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.completedExport'] = 'Export terminee';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.scheduledExport'] = 'Scheduled Exports';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.initializing'] = 'Initializing';
+
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.title'] = 'Setup massive export options';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.exportFormat'] = 'Export format';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.options'] = 'Options';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters'] = 'Parameters';
+	Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = 'Setup parameters\' configuration';

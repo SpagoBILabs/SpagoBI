@@ -88,6 +88,9 @@ Sbi.browser.ProgressPanel = function(config) {
 	this.toBeDeleted = new Array();
 
 	this.initPanels();
+	this.progressCounter = 0;
+	this.buttonCounter = 0;
+	
 	// Start cycle
 	this.cycleProgress();
 
@@ -108,10 +111,15 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	, downloadButtonPanels : null
 	, deleteButtonPanels : null
 	, canAccess: true
+	, progressCounter: null
+	, buttonCounter : null
+	, progressEmptyPanel : null
+	, buttonEmptyPanel : null
+	
 		// Progress Bar creation
 	, initPanels : function(){
 		this.startedPanel = new Ext.Panel({  
-			title: 'Started Export',
+			title: LN('Sbi.browser.ProgressPanel.startedExport'),
 			layout: 'anchor',  
 			scope: this,
 			height: 120,
@@ -122,7 +130,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		this.doLayout();
 		
 		this.downloadedPanel = new Ext.Panel({  
-			title: 'Download Exports',
+			title: LN('Sbi.browser.ProgressPanel.completedExport'),
 			layout: 'column',
 			scope: this,
 			height: 320,
@@ -133,7 +141,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		this.doLayout();
 		
 		this.scheduledPanel = new Ext.Panel({  
-			title: 'Scheduled Exports',
+			title: LN('Sbi.browser.ProgressPanel.scheduledExport'),
 			layout: 'anchor', 
 			scope: this,
 			height: 120,
@@ -143,14 +151,39 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		this.add(this.scheduledPanel);
 		this.doLayout();
 		
+		// create and hide two empty case panel
+		this.progressEmptyPanel = new Ext.Panel({  
+			//layout: 'anchor',  
+			scope: this,
+			height: 20,
+			autoWidth: true,
+			html : '<i>'+LN('Sbi.browser.ProgressPanel.noProgress')+'</i>',
+			defaults: {border:false}
+		});
+		this.startedPanel.add(this.progressEmptyPanel);
+		this.progressEmptyPanel.hide();
+		
+		// create and hide two empty case panel
+		this.buttonEmptyPanel = new Ext.Panel({  
+			//layout: 'anchor',  
+			scope: this,
+			height: 20,
+			autoWidth: true,
+			html : '<i>'+LN('Sbi.browser.ProgressPanel.noDownload')+'</i>',
+			defaults: {border:false}
+		});
+		this.downloadedPanel.add(this.buttonEmptyPanel);
+		this.buttonEmptyPanel.hide();
+
 		
 	}
 	, createProgressBar : function(functCd, randomKey) {
 		var progressBar = new Ext.ProgressBar({
-            text:'Initializing...'+functCd+' - '+randomKey
+            text: LN('Sbi.browser.ProgressPanel.initializing')+'...'+functCd+' - '+randomKey
          });
         // add progress bar to array
         this.progressGroup[functCd+''+randomKey] = progressBar;
+        this.progressCounter++;
     	this.startedPanel.add(progressBar);
     	this.startedPanel.doLayout();
     	this.currentWorks[functCd+''+randomKey] = true;
@@ -183,7 +216,8 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
       	      				this.cleanNoMorePresentWork(worksFound);
         	      			}
           	      		} 
-      	      			
+      	      		this.checkEmptyPanels();
+      	      		
       	      		// only if called from cycle
       	      		if(cycling == true){
       	      			// if(expanded timeout is faster, else take more time before next call
@@ -223,7 +257,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		// if progress bar has already been created update it otherwise create
 		if(progressBar){
 			if(progressBar.rendered){
-				progressBar.updateProgress(partial/total, 'Exporting '+functCd+' item ' + partial + ' of '+total+'...');
+				progressBar.updateProgress(partial/total, LN('Sbi.browser.ProgressPanel.exporting')+' '+functCd+' '+LN('Sbi.browser.ProgressPanel.document')+' ' + partial + ' '+LN('Sbi.browser.ProgressPanel.of')+' '+total+'...');
 				this.doLayout();
 			}
 		}
@@ -233,7 +267,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 
 		this.progressGroup[functCd+''+randomKey].on('render', function() {
 		    //alert('212 - '+functCd+''+randomKey); 
-				this.progressGroup[functCd+''+randomKey].updateProgress(partial/total, 'Exporting '+functCd+' item ' + partial + ' of '+total+'...');
+				this.progressGroup[functCd+''+randomKey].updateProgress(partial/total, LN('Sbi.browser.ProgressPanel.exporting')+' '+functCd+' '+LN('Sbi.browser.ProgressPanel.document')+' ' + partial + ' '+LN('Sbi.browser.ProgressPanel.of')+' '+total+'...');
 			this.doLayout();
 		} , this );
 			
@@ -254,7 +288,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	, deleteWork : function(key){
 			if(this.progressGroup[key]){
 				if(this.progressGroup[key].rendered){
-					this.progressGroup[key].updateProgress(1, 'Exporting '+key+' item finished');
+					this.progressGroup[key].updateProgress(1, key+': '+LN('Sbi.browser.ProgressPanel.finished'));
 				}
 				this.toBeDeleted.push(this.progressGroup[key]);
 				var that = this;
@@ -264,6 +298,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 						var progBar = 	that.toBeDeleted[i];
               	        progBar.reset(true);
 						progBar.destroy();
+						that.progressCounter = that.progressCounter-1;
 					}
 					that.doLayout();
 					that.toBeDeleted = new Array();
@@ -324,6 +359,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 				});
 	    	button.enable();
 	    	this.downloadButtonPanels[functCd+randomKey].add(button);
+	    	this.buttonCounter++;
 	    	
 	    }
 	   // this.downloadButtons[functCd+randomKey].enable();
@@ -377,6 +413,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	    					this.deleteButtonPanels[functCd+randomKey].hide();
 	    	    			this.deleteButtonPanels[functCd+randomKey].destroy();
 	    	    			this.deleteButtonPanels[functCd+randomKey] = null;
+	    	    			this.buttonCounter = this.buttonCounter -1;
 	    				}
 	    			},
 	    	        scope: this,
@@ -405,6 +442,25 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 				setTimeout(function(){that.cycleProgress()}, 5000);
 		}
 
+	}
+	, checkEmptyPanels: function(){
+		if(this.progressCounter<1){
+			if(this.progressEmptyPanel){
+				this.progressEmptyPanel.show();
+			}
+		}
+		else{
+			this.progressEmptyPanel.hide();
+		}	
+		
+		if(this.buttonCounter<1){
+			if(this.buttonEmptyPanel){
+				this.buttonEmptyPanel.show();
+			}
+		}
+		else{
+			this.buttonEmptyPanel.hide();
+		}	
 	}
 	
     

@@ -676,7 +676,21 @@ Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardParametersPage.title'] = '
 
 Sbi.locale.ln['Sbi.browser.mexport.massiveExportWizardTriggerPage.title'] = 'Trigger';
 
-
-
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noProgress'] = 'Nessuna attività in esecuzione';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noDownload'] = 'Nessuna attività da scaricare';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.exporting'] = 'Esportando ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.document'] = ' documento ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.of'] = ' di ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.finished'] = ' Esportazione terminata';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.startedExport'] = 'Esportazioni iniziate';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.completedExport'] = 'Esportazioni completate';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.scheduledExport'] = 'Esportazioni schedulate';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.initializing'] = 'Inizializzazione';
 
 Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Attività schedulate'; 
+
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.title'] = 'Opzioni per esportazione massiva';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.exportFormat'] = 'Formato di esportazione';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.options'] = 'Opzioni';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters'] = 'Parametri';
+	Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = 'Definire la configurazione dei parametri';
