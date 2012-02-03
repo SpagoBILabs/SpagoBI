@@ -338,8 +338,9 @@
               <file name="./src/ext/sbi/home/Banner.js"/>
               <file name="./src/ext/sbi/execution/toolbar/ListNotesWindow.js"/> 
               <file name="./src/ext/sbi/home/DefaultRoleWindow.js"/> 
-              <file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js"/>  
-			    </filelist>
+              <file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js"/>
+			  <file name="./src/ext/sbi/worksheet/WorksheetEditorIframePanel.js"/>  
+			 </filelist>
 
 			</concat>
 
