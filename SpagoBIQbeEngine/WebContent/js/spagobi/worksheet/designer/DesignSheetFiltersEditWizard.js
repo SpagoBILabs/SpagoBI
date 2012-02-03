@@ -91,7 +91,6 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersEditWizard, Ext.Window, {
 		});
 
 		this.splittingFilterCheckboxGroup = new Ext.form.CheckboxGroup({
-		    id:'splittingFilterCheckboxGroup',
 		    fieldLabel: LN('sbi.worksheet.designer.designsheetfilterseditwizard.splittingFilter'),
 		    columns: 1,
 		    items: [
