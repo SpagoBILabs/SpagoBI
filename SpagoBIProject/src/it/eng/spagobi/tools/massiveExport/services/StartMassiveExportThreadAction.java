@@ -61,7 +61,7 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 	private final String FUNCTIONALITY_ID = "functId";
 	private final String PARAMETER_VALUES = "parameterValues";
 	private final String ROLE = "selectedRole";
-	private final String OUTPUT = "selectedOutput";
+	private final String MIME_TYPE = "mimeType";
 	private final String TYPE = "type";  
 	private final String SPLITTING_FILTER = "splittingFilter"; 
 
@@ -106,9 +106,9 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 				logger.debug("Input parameter [" + ROLE + "] is equal to [" + role + "]");
 				Assert.assertNotNull(role, "Input parameter [" + ROLE + "] cannot be null");
 
-				output = optionsObject.getString(OUTPUT);
-				logger.debug("Input parameter [" + OUTPUT + "] is equal to [" + output + "]");
-				Assert.assertNotNull(output, "Input parameter [" + OUTPUT + "] cannot be null");
+				output = optionsObject.getString(MIME_TYPE);
+				logger.debug("Input parameter [" + MIME_TYPE + "] is equal to [" + output + "]");
+				Assert.assertNotNull(output, "Input parameter [" + MIME_TYPE + "] cannot be null");
 
 				String cycleOnFilters = optionsObject.getString(SPLITTING_FILTER);
 				logger.debug("Input parameter [" + SPLITTING_FILTER + "] is equal to [" + cycleOnFilters + "]");
@@ -154,7 +154,7 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 			}
 
 			WorkManager workManager = new WorkManager(config.getValueCheck());
-			MassiveExportWork massiveExportWork = new MassiveExportWork(documentsToExport, getUserProfile(), folder , progressThreadId, randomName, splittingFilter);
+			MassiveExportWork massiveExportWork = new MassiveExportWork(documentsToExport, getUserProfile(), folder , progressThreadId, randomName, splittingFilter, output);
 			FooRemoteWorkItem remoteWorkItem = workManager.buildFooRemoteWorkItem(massiveExportWork, null);
 
 			// Check if work was accepted

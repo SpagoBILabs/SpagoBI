@@ -64,7 +64,10 @@ public class MassiveExportWork implements Work{
 	public static final String STARTED = "STARTED";
 	public static final String DOWNLOAD = "DOWNLOAD";
 	public static final String ERROR = "ERROR";
-
+	public static final String OUTPUT_XLS = "application/vnd.ms-excel";
+	public static final String OUTPUT_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	
+	
 
 	IEngUserProfile profile;
 	List biObjects;
@@ -77,6 +80,7 @@ public class MassiveExportWork implements Work{
 	List<File> filesToZip = null;
 
 	boolean splittingFilter = false;
+	String selectedOutput;
 
 	static byte[] buf = new byte[1024]; 
 
@@ -84,7 +88,7 @@ public class MassiveExportWork implements Work{
 	IProgressThreadDAO threadDAO;
 
 	public MassiveExportWork(List biObjects, IEngUserProfile profile, LowFunctionality func, 
-			Integer progressThreadId, String zipKey, boolean splittingFilter) {
+			Integer progressThreadId, String zipKey, boolean splittingFilter, String selectedOutput) {
 		super();
 		this.biObjects = biObjects;
 		this.profile = profile;
@@ -92,6 +96,7 @@ public class MassiveExportWork implements Work{
 		this.progressThreadId = progressThreadId;
 		this.zipKey = zipKey;
 		this.splittingFilter = splittingFilter;
+		this.selectedOutput = selectedOutput;
 	}
 
 
@@ -129,6 +134,19 @@ public class MassiveExportWork implements Work{
 		}
 
 
+		String fileExtension = null;
+		if(selectedOutput.equals(OUTPUT_XLS)){
+			fileExtension = ".xls";
+		}
+		else if(selectedOutput.equals(OUTPUT_XLSX)){
+			fileExtension = ".xlsx";
+		}
+		else{
+			logger.debug("output type nopt found, put default .xls");
+			fileExtension = ".xls";	
+		}
+		logger.debug("Export File extension: "+fileExtension);
+		
 		filesToZip = new ArrayList<File>();
 
 		// map used to recover real name to put inside zip
@@ -149,6 +167,7 @@ public class MassiveExportWork implements Work{
 
 				proxy.setBiObject(biObj);
 				proxy.setSplittingFilter(splittingFilter);
+				proxy.setMimeType(selectedOutput);
 				returnByteArray = proxy.exec(profile, SpagoBIConstants.MASSIVE_EXPORT_MODALITY, output);
 			}
 			catch (Throwable e) {
@@ -175,8 +194,8 @@ public class MassiveExportWork implements Work{
 					else{
 						logger.error("Export ok for biObj with label "+biObj.getLabel());
 						String fileName = biObj.getLabel()+"-"+biObj.getName();
-						exportFile = File.createTempFile(fileName, ".xls");
-						randomNamesToName.put(exportFile.getName(), fileName+".xls");
+						exportFile = File.createTempFile(fileName, fileExtension); 
+						randomNamesToName.put(exportFile.getName(), fileName+fileExtension);
 					}
 
 					FileOutputStream stream = new FileOutputStream(exportFile);

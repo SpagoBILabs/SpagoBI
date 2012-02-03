@@ -129,7 +129,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 			}
 
 			WorkManager workManager = new WorkManager(config.getValueCheck());
-			MassiveExportWork massiveExportWork = new MassiveExportWork(documentsToExport, getUserProfile(), folder , progressThreadId, randomName, splittingFilter);
+			MassiveExportWork massiveExportWork = new MassiveExportWork(documentsToExport, getUserProfile(), folder , progressThreadId, randomName, splittingFilter, null);
 			FooRemoteWorkItem remoteWorkItem = workManager.buildFooRemoteWorkItem(massiveExportWork, null);
 			
 			// Check if work was accepted
