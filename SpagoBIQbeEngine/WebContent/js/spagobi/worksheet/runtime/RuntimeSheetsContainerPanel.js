@@ -130,7 +130,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 			for (; i < this.sheetItems.length; i++) {
 				if (this.sheetItems[i].contentLoaded === false) {
 					// register to the contentloaded event
-					this.sheetItems[i].on('contentloaded', function () {this.exportContent.defer(500, this, [mimeType, fromDesigner, metadata]); }, this);
+					this.sheetItems[i].on('contentloaded', function () {this.exportContent.defer(500, this, [mimeType, fromDesigner, metadata, parameters]); }, this);
 					this.setActiveTab(i);
 					return;
 				}
