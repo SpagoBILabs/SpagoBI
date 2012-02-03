@@ -142,7 +142,6 @@ public class FiltersInfo {
 			AdmissibleValues presentation = getAttributePresentation(key);
 			if (!presentation.equals(AdmissibleValues.code)) {
 				toReturn.put(key, filters.get(key));
-				break;
 			}
 		}
 		return toReturn;
@@ -152,18 +151,20 @@ public class FiltersInfo {
 	private AdmissibleValues getAttributePresentation(String fieldId) {
 		WorksheetFieldsOptions options = workSheetDefinition.getFieldsOptions();
 		FieldOptions fieldOptions = options.getOptionsForFieldByFieldId(fieldId);
-		List<FieldOption> list = fieldOptions.getOptions();
-		Iterator<FieldOption> it = list.iterator();
-		while (it.hasNext()) {
-			FieldOption option = it.next();
-			if (option instanceof AttributePresentationOption) {
-				AttributePresentationOption theOption = (AttributePresentationOption) option;
-				String valueStr = theOption.getValue().toString();
-				AdmissibleValues value = AdmissibleValues.valueOf(valueStr);
-				return value;
+		if (fieldOptions != null) {
+			List<FieldOption> list = fieldOptions.getOptions();
+			Iterator<FieldOption> it = list.iterator();
+			while (it.hasNext()) {
+				FieldOption option = it.next();
+				if (option instanceof AttributePresentationOption) {
+					AttributePresentationOption theOption = (AttributePresentationOption) option;
+					String valueStr = theOption.getValue().toString();
+					AdmissibleValues value = AdmissibleValues.valueOf(valueStr);
+					return value;
+				}
 			}
 		}
-		return null;
+		return AdmissibleValues.description; // default value is description
 	}
 
 	public void setAdditionalFilters(List<WhereField> additionalFilters) {
