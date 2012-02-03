@@ -65,6 +65,7 @@ public class ExecutionProxy {
 	private BIObject biObject = null;
 
 	private String returnedContentType = null;
+	String mimeType = null;
 	
 	// used for worksheetExecution
 	private boolean splittingFilter = false; 
@@ -460,10 +461,9 @@ public class ExecutionProxy {
 		else if(driver instanceof WorksheetDriver && modality.equals(SpagoBIConstants.MASSIVE_EXPORT_MODALITY)){
 			mapPars.remove("ACTION_NAME");
 			mapPars.put("ACTION_NAME", WorksheetDriver.MASSIVE_EXPORT_PARAM_ACTION_NAME);
-			mapPars.remove("outputType");
-			mapPars.put("outputType", "XLS");
 			mapPars.remove("MIME_TYPE");
-			mapPars.put("MIME_TYPE", "application/vnd.ms-excel");
+			mapPars.put("MIME_TYPE", mimeType);
+			mapPars.remove("SPLITTING_FILTER");
 			mapPars.put("SPLITTING_FILTER", splittingFilter);
 
 		}
@@ -477,5 +477,14 @@ public class ExecutionProxy {
 		this.splittingFilter = splittingFilter;
 	}
 
+	public String getMimeType() {
+		return mimeType;
+	}
+
+	public void setMimeType(String outputType) {
+		this.mimeType = outputType;
+	}
+
+	
 
 }

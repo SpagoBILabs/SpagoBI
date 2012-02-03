@@ -81,7 +81,7 @@ Sbi.browser.mexport.MassiveExportWizardOptionsPage = function(config) {
 Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 
 	selectedRole : null
-	, selectedOutput : null
+	, mimeType : null
 	, formPanel : null
 	, functId : null
 	, rolesCombo : null
@@ -247,28 +247,28 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 		this.doLayout();
 	}
 	, buildOutputTypeCombo : function(){ 
-		var arrayOutput = [['XLS'], ['XLSX']];
+		var arrayOutput = [['XLS', 'application/vnd.ms-excel'], ['XLSX', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ]];
 		
 		var scopeComboOutputStore = new Ext.data.SimpleStore({
-			 fields: ['type']
+			 fields: ['typeDesc', 'type']
 	         , data : arrayOutput
 		}); 
 		this.comboBoxOutput = new Ext.form.ComboBox({
-			tpl: '<tpl for="."><div ext:qtip="{type}" class="x-combo-list-item">{type}</div></tpl>'
+			tpl: '<tpl for="."><div ext:qtip="{typeDesc}" class="x-combo-list-item">{typeDesc}</div></tpl>'
 			, editable  : false
 			, forceSelection : true
 			, fieldLabel : LN('Output type')
 			, store: scopeComboOutputStore
-		    , displayField:'type'
+		    , displayField:'typeDesc'
 			, valueField:'type'
 			, mode : 'local'
-			, value : 'XLS'
+			, value : 'application/vnd.ms-excel'
 			, triggerAction : 'all'
 			, listeners: {
 				'select': {
 					fn: function(){ 
-					this.selectedOutput = this.comboBoxOutput.getValue();
-					this.comboBoxOutput.setValue(this.selectedOutput);
+					this.mimeType = this.comboBoxOutput.getValue();
+					this.comboBoxOutput.setValue(this.mimeType);
 						}
 			, scope: this
 					}
@@ -276,14 +276,14 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 			});		
 		this.formPanel.add(this.comboBoxOutput);
 		this.formPanel.doLayout();
-		this.selectedOutput = 'XLS';
+		this.mimeType = 'application/vnd.ms-excel';
 	}
 	
 	, getSelectedRole : function(){
 		return this.selectedRole;
 	}
-	, getSelectedOutput : function(){
-		return this.selectedOutput;
+	, getMimeType : function(){
+		return this.mimeType;
 	}
 	
 	, isCycleOnFilterSelected : function(){
@@ -294,7 +294,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardOptionsPage, Ext.Panel, {
 		var content = {};
 		content.selectedRole = this.getSelectedRole();
 		content.splittingFilter = this.isCycleOnFilterSelected();
-		content.selectedOutput = this.getSelectedOutput();
+		content.mimeType = this.getMimeType();
 		return content;
 	}
 	
