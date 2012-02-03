@@ -103,7 +103,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardParametersPage, Ext.Panel, {
 
 	, onSelection: function() {
 		this.currentPage = true;
-		this.wizard.setPageTitle('Parameters', 'Setup parameters\' configuration');
+		this.wizard.setPageTitle(LN('Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters'), LN('Sbi.browser.mexport.MassiveExportWizardParametersPage.title'));
 		
 		// clear the fields in case you are coming to panel for the second time
 		this.mainPanel.clear();
