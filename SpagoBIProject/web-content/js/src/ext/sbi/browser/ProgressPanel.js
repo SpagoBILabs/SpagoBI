@@ -189,9 +189,9 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
       	      			// if(expanded timeout is faster, else take more time before next call
       	      			var that = this;
       	      			if(this.expanded== true){
-      	      				setTimeout(function(){that.cycleProgress()}, 2000);
-      	      			} else{ // wait longer if not expanded
       	      				setTimeout(function(){that.cycleProgress()}, 5000);
+      	      			} else{ // wait longer if not expanded
+      	      				setTimeout(function(){that.cycleProgress()}, 20000);
       	      			}
       	      		}
       		  	}else {
@@ -306,13 +306,15 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 				defaults: {border:false}
 			});
 
-	    	var buttonText = ''+functCd+'-'+randomKey;
+	    	var tooltipText = ''+functCd+'-'+randomKey;
 	    	// remove milliseconds
-	    	buttonText = buttonText.substring(0, (buttonText.length-7));
+	    	tooltipText = tooltipText.substring(0, (tooltipText.length-7));
+	    	var buttonText = Ext.util.Format.ellipsis(tooltipText, 40);
 	    	
 	    	var button = new Ext.Button({
 	    		id: functCd+randomKey+'download',
 	    		text: buttonText,
+	    		tooltip: tooltipText,
 	    		disabled: false,
 	    		scope: this,
 	    		disabled: true,
