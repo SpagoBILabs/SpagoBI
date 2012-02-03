@@ -28,7 +28,20 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
         },
 
 		initComponent: function(){
+		    Sbi.config = {};
 			
+			var url = {
+		    	host: hostGlobal
+		    	, port: portGlobal
+		
+		    };
+		
+		    var executionContext = {};
+		    
+		    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+		    	baseUrl: url
+		
+		    });
 			var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
 			this.services = new Array();
 			this.services['loadFolderContentService'] = Sbi.config.serviceRegistry.getServiceUrl({

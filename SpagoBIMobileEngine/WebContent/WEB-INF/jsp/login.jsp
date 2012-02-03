@@ -69,7 +69,11 @@ author: Monica Franceschini
 
 	<body>
 
-		 
+		 <script>
+			var hostGlobal= '<%= request.getServerName()%>';
+			var portGlobal= '<%= request.getServerPort()%>';
+
+		 </script>
 	</body>
  
 </html>
