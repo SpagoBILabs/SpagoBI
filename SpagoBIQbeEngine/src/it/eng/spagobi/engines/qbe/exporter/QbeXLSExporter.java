@@ -47,6 +47,7 @@ public class QbeXLSExporter {
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(QbeXLSExporter.class);
     
+    /** Configuration properties */
     public static final String PROPERTY_HEADER_FONT_SIZE = "HEADER_FONT_SIZE";
     public static final String PROPERTY_HEADER_COLOR = "HEADER_COLOR";
     public static final String PROPERTY_HEADER_BACKGROUND_COLOR = "HEADER_BACKGROUND_COLOR";
@@ -108,16 +109,15 @@ public class QbeXLSExporter {
 		return this.properties.get(propertyName);
 	}
 	
-	public Workbook export(){
-		Workbook wb = new HSSFWorkbook();
-	    CreationHelper createHelper = wb.getCreationHelper();
-	    Sheet sheet = wb.createSheet("new sheet");
+	public Workbook export() {
+		Workbook workbook = this.instantiateWorkbook();
+	    CreationHelper createHelper = workbook.getCreationHelper();
+	    Sheet sheet = workbook.createSheet("new sheet");
 	    for(int j = 0; j < 50; j++){
 			sheet.createRow(j);
 		}
-	    fillSheet(sheet, wb, createHelper, 0);
-
-	    return wb;
+	    fillSheet(sheet, workbook, createHelper, 0);
+	    return workbook;
 	}
 	
 	public void fillSheet(Sheet sheet,Workbook wb, CreationHelper createHelper, int startRow) {		
@@ -137,7 +137,7 @@ public class QbeXLSExporter {
     	CellStyle[] cellTypes = new CellStyle[colnum]; // array for numbers patterns storage
     	for(int j = 0; j < colnum; j++){
     		Cell cell = row.createCell(j + beginColumnHeaderData);
-    	    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+    	    cell.setCellType(this.getCellTypeString());
     	    String fieldName = d.getFieldName(j);
     	    IFieldMetaData fieldMetaData = d.getFieldMeta(j);
     	    String format = (String) fieldMetaData.getProperty("format");
@@ -154,7 +154,7 @@ public class QbeXLSExporter {
     	    }
             CellStyle aCellStyle = this.buildCellStyle(sheet);
             if (format != null) {
-	    		short formatInt = HSSFDataFormat.getBuiltinFormat(format);  		  
+	    		short formatInt = this.getBuiltinFormat(format);
 	    		aCellStyle.setDataFormat(formatInt);
 		    	cellTypes[j] = aCellStyle;
             }
@@ -287,7 +287,7 @@ public class QbeXLSExporter {
 		CellStyle dCellStyle = this.buildCellStyle(sheet);
 		Iterator it = dataStore.iterator();
     	int rownum = beginRowData;
-    	short formatIndexInt = HSSFDataFormat.getBuiltinFormat("#,##0");
+    	short formatIndexInt = this.getBuiltinFormat("#,##0");
 	    CellStyle cellStyleInt = this.buildCellStyle(sheet); // cellStyleInt is the default cell style for integers
 	    cellStyleInt.cloneStyleFrom(dCellStyle);
 	    cellStyleInt.setDataFormat(formatIndexInt);
@@ -318,7 +318,7 @@ public class QbeXLSExporter {
 						logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "INTEGER" + "]");					
 					    Number val = (Number)f.getValue();
 					    cell.setCellValue(val.intValue());
-					    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+					    cell.setCellType(this.getCellTypeNumeric());
 					    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleInt);
 					}else if( Number.class.isAssignableFrom(c) ) {
 			    	    IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);	    
@@ -337,18 +337,18 @@ public class QbeXLSExporter {
 						String scaleFactor = (String) fieldMetaData.getProperty(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
 												
 					    cell.setCellValue(MeasureScaleFactorOption.applyScaleFactor(value, scaleFactor));			    
-					    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+					    cell.setCellType(this.getCellTypeNumeric());
 					    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cs);
 					}else if( String.class.isAssignableFrom(c)){
 						logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "STRING" + "]");	    
 					    String val = (String)f.getValue();
 					    cell.setCellValue(createHelper.createRichTextString(val));
-					    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					    cell.setCellType(this.getCellTypeString());
 					}else if( Boolean.class.isAssignableFrom(c) ) {
 						logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "BOOLEAN" + "]");
 					    Boolean val = (Boolean)f.getValue();
 					    cell.setCellValue(val.booleanValue());
-					    cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+					    cell.setCellType(this.getCellTypeBoolean());
 					}else if(Date.class.isAssignableFrom(c)){
 						logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "DATE" + "]");	    
 					    Date val = (Date)f.getValue();
@@ -358,7 +358,7 @@ public class QbeXLSExporter {
 						logger.warn("Column [" + (fieldIndex+1) + "] type is equal to [" + "???" + "]");
 					    String val = f.getValue().toString();
 					    cell.setCellValue(createHelper.createRichTextString(val));
-					    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
+					    cell.setCellType(this.getCellTypeString());	    
 					}
 				}
 			}
@@ -390,5 +390,26 @@ public class QbeXLSExporter {
 		return cellStyleDoub;
 	}
 
+	protected Workbook instantiateWorkbook() {
+		Workbook workbook = new HSSFWorkbook();
+		return workbook;
+	}
+	
+	protected int getCellTypeNumeric () {
+		return HSSFCell.CELL_TYPE_NUMERIC;
+	}
+	
+	protected int getCellTypeString () {
+		return HSSFCell.CELL_TYPE_STRING;
+	}
+
+	protected int getCellTypeBoolean () {
+		return HSSFCell.CELL_TYPE_BOOLEAN;
+	}
+	
+	protected short getBuiltinFormat (String formatStr) {
+		short format = HSSFDataFormat.getBuiltinFormat(formatStr); 
+		return format;
+	}
 	
 }
