@@ -108,6 +108,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	public static final String CONTENT = "CONTENT";
 	public static final String CONTENT_PARS = "PARS";
 	public static final String SPLITTING_FILTER= "splittingFilter";
+	
 	public static String WORKSHEETS_ADDITIONAL_DATA = "WORKSHEETS_ADDITIONAL_DATA";
 	public static String FIELDS_OPTIONS = "fieldsOptions";
 	
@@ -118,7 +119,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	public static final String RESPONSE_TYPE_ATTACHMENT = "RESPONSE_TYPE_ATTACHMENT";
 
 	public static String SVG = "svg";
-	public static String OUTPUT_FORMAT = "type";
+//	public static String OUTPUT_FORMAT = "type";
 
 	public static String OUTPUT_FORMAT_PNG = "image/png";
 	public static String OUTPUT_FORMAT_JPEG = "image/jpeg";
@@ -1064,19 +1065,22 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CROSSTAB)) {
 				JSONArray calculateFieldsJSON = null;
-				String crosstabDefinition = content
-						.getString("CROSSTABDEFINITION");
-				String crosstab = content
-						.getString(WorkSheetXLSExporter.CROSSTAB);
+				String crosstabDefinition = content.optString("CROSSTABDEFINITION");
+				if (crosstabDefinition.equals("")) {
+					crosstabDefinition = content.getString("crosstabDefinition");
+				}
+				
+//				String crosstab = content
+//						.getString(WorkSheetXLSExporter.CROSSTAB);
 				String sheetName = sheetJ.getString(SHEET);
 				JSONObject filters = sheetJ
 						.optJSONObject(QbeEngineStaticVariables.FILTERS);
 				JSONObject crosstabDefinitionJSON = new JSONObject(
 						crosstabDefinition);
-				JSONObject crosstabJSON = new JSONObject(crosstab);
+				//JSONObject crosstabJSON = new JSONObject(crosstab);
 
 				String calculateFields = content.optString("CF");
-				if (calculateFields != null) {
+				if (calculateFields != null && !calculateFields.equals("")) {
 					calculateFieldsJSON = new JSONArray(calculateFields);
 				}
 
@@ -1097,7 +1101,9 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				properties.put(CrosstabXLSXExporter.PROPERTY_CALCULATED_FIELD_DECIMALS, calculatedFieldsDecimals);
 				CrosstabXLSXExporter expCr = new CrosstabXLSXExporter(properties);
 				sheetRow = expCr.fillAlreadyCreatedSheet(sheet, cs,
-						crosstabJSON, createHelper, sheetRow, locale);
+						//crosstabJSON,
+						crosstabDefinitionJSON,
+						createHelper, sheetRow, locale);
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
 
 				IDataStore dataStore = getTableDataStore(sheetJ,  fieldOptions);
