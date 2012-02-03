@@ -70,7 +70,7 @@ public class QbeXLSExporter {
     public static final String DEFAULT_DIMENSION_NAME_BACKGROUND_COLOR = "LIGHT_BLUE";
 	public static final String DEFAULT_FONT_NAME = "Verdana";
     
-	public static final int DEFAULT_DECIMAL_PRECISION = 8;
+	public static final int DEFAULT_DECIMAL_PRECISION = 2;
     
 	public static final int DEFAULT_START_COLUMN = 0;
 	
@@ -120,58 +120,67 @@ public class QbeXLSExporter {
 	    return workbook;
 	}
 	
-	public void fillSheet(Sheet sheet,Workbook wb, CreationHelper createHelper, int startRow) {		
-	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
-	    // and when initializing the sheet
-		 if (dataStore!=null  && !dataStore.isEmpty()) {
-			    CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper, startRow, DEFAULT_START_COLUMN);
-			    fillSheetData(sheet, wb, createHelper, cellTypes, startRow+1, DEFAULT_START_COLUMN);    	
-		    }
+	public void fillSheet(Sheet sheet, Workbook wb,
+			CreationHelper createHelper, int startRow) {
+		// we enrich the JSON object putting every node the descendants_no
+		// property: it is useful when merging cell into rows/columns headers
+		// and when initializing the sheet
+		if (dataStore != null && !dataStore.isEmpty()) {
+			CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper,
+					startRow, DEFAULT_START_COLUMN);
+			fillSheetData(sheet, wb, createHelper, cellTypes, startRow + 1,
+					DEFAULT_START_COLUMN);
+		}
 	}
 	
-	public CellStyle[] fillSheetHeader(Sheet sheet,Workbook wb, CreationHelper createHelper, int beginRowHeaderData, int beginColumnHeaderData) {	
+	public CellStyle[] fillSheetHeader(Sheet sheet, Workbook wb,
+			CreationHelper createHelper, int beginRowHeaderData,
+			int beginColumnHeaderData) {
 		CellStyle hCellStyle = this.buildHeaderCellStyle(sheet);
-		IMetaData d = dataStore.getMetaData();	
-    	int colnum = d.getFieldCount();
-    	Row row = sheet.getRow(beginRowHeaderData);
-    	CellStyle[] cellTypes = new CellStyle[colnum]; // array for numbers patterns storage
-    	for(int j = 0; j < colnum; j++){
-    		Cell cell = row.createCell(j + beginColumnHeaderData);
-    	    cell.setCellType(this.getCellTypeString());
-    	    String fieldName = d.getFieldName(j);
-    	    IFieldMetaData fieldMetaData = d.getFieldMeta(j);
-    	    String format = (String) fieldMetaData.getProperty("format");
-    	    String alias = (String) fieldMetaData.getAlias();
-    	    String scaleFactorHeader = (String) fieldMetaData.getProperty(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
-    	    String header ;
-    	    
-            if (extractedFields != null && extractedFields.get(j) != null) {
-    	    	Field field = (Field) extractedFields.get(j);
-    	    	fieldName = field.getAlias();
-    	    	if (field.getPattern() != null) {
-    	    		format = field.getPattern();
-    	    	}
-    	    }
-            CellStyle aCellStyle = this.buildCellStyle(sheet);
-            if (format != null) {
-	    		short formatInt = this.getBuiltinFormat(format);
-	    		aCellStyle.setDataFormat(formatInt);
-		    	cellTypes[j] = aCellStyle;
-            }
+		IMetaData d = dataStore.getMetaData();
+		int colnum = d.getFieldCount();
+		Row row = sheet.getRow(beginRowHeaderData);
+		CellStyle[] cellTypes = new CellStyle[colnum]; // array for numbers
+														// patterns storage
+		for (int j = 0; j < colnum; j++) {
+			Cell cell = row.createCell(j + beginColumnHeaderData);
+			cell.setCellType(this.getCellTypeString());
+			String fieldName = d.getFieldName(j);
+			IFieldMetaData fieldMetaData = d.getFieldMeta(j);
+			String format = (String) fieldMetaData.getProperty("format");
+			String alias = (String) fieldMetaData.getAlias();
+			String scaleFactorHeader = (String) fieldMetaData
+					.getProperty(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+			String header;
 
-           	if (alias!=null && !alias.equals("")) {
-           		header = alias;
-           	} else {
-           		header = fieldName;
-           	}	 
+			if (extractedFields != null && extractedFields.get(j) != null) {
+				Field field = (Field) extractedFields.get(j);
+				fieldName = field.getAlias();
+				if (field.getPattern() != null) {
+					format = field.getPattern();
+				}
+			}
+			CellStyle aCellStyle = this.buildCellStyle(sheet);
+			if (format != null) {
+				short formatInt = this.getBuiltinFormat(format);
+				aCellStyle.setDataFormat(formatInt);
+				cellTypes[j] = aCellStyle;
+			}
 
-           	header = MeasureScaleFactorOption.getScaledName(header, scaleFactorHeader, locale);
-       		cell.setCellValue(createHelper.createRichTextString(header));
-       		
-           	cell.setCellStyle(hCellStyle);
+			if (alias != null && !alias.equals("")) {
+				header = alias;
+			} else {
+				header = fieldName;
+			}
 
-    	}
-    	return cellTypes;
+			header = MeasureScaleFactorOption.getScaledName(header,
+					scaleFactorHeader, locale);
+			cell.setCellValue(createHelper.createRichTextString(header));
+
+			cell.setCellStyle(hCellStyle);
+
+		}
+		return cellTypes;
 	}
 	
 	public CellStyle buildHeaderCellStyle(Sheet sheet) {
