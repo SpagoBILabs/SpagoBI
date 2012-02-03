@@ -176,6 +176,8 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 			}
 		return arrayUdps;
 	}
-	
+	, clearGrid: function(){
+		this.fillUdpValues(new Array());
+	}
 });
 

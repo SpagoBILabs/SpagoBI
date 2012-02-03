@@ -613,6 +613,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.getForm().loadRecord(emptyRecToAdd); 
 		this.fillIsAdditive(0, emptyRecToAdd);   
 		this.tabs.setActiveTab(0);
+		//resets udp tab
+		this.udpValueGrid.clearGrid();
 	}
 	
 	
