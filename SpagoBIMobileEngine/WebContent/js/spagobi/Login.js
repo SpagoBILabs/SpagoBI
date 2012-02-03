@@ -64,10 +64,6 @@ app.views.LoginForm = Ext.extend(Ext.form.FormPanel,
                                   }
                                   
                               });
-/*                              form.submit({
-                                  waitMsg : {message:'Submitting', cls : 'loading'},
-                
-                              });*/
                         }
                     }
                 ]
@@ -78,8 +74,8 @@ app.views.LoginForm = Ext.extend(Ext.form.FormPanel,
 		    Sbi.config = {};
 			
 			var url = {
-		    	host: 'localhost'
-		    	, port: '8080'
+		    	host: hostGlobal
+		    	, port: portGlobal
 		
 		    };
 		
