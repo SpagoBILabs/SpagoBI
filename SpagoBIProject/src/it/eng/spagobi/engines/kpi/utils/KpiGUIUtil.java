@@ -268,7 +268,7 @@ public class KpiGUIUtil {
 		}else{
 			//calculate it
 			String val = value.getValue();
-			getStatus(value.getThresholdValues(), Double.parseDouble(val));
+			ret = getStatus(value.getThresholdValues(), Double.parseDouble(val));
 			
 		}
 
