@@ -85,10 +85,11 @@ Sbi.worksheet.WorksheetEditorIframePanel = function(config) {
 			, 'message:worksheetexporttaberror': {
 						
         		fn: function(srcFrame, message) {
+        			// must show warning message BEFORE mask management, otherwise the message will not be displayed, don't know why...
+        			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.worksheet.export.previewtab.msg'), LN('sbi.worksheet.export.previewtab.title'));
         	    	if (this.loadMask != null) {
         	    		this.hideMask();
         	    	}  
-        			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.worksheet.export.previewtab.msg'), LN('sbi.worksheet.export.previewtab.title'));
         		}
         		, scope: this
         	}
