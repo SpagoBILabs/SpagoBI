@@ -36,7 +36,7 @@ public class AuthorizationsBusinessMapper {
      * Instantiates a new authorizations business mapper.
      */
     public AuthorizationsBusinessMapper() {
-	logger.debug("IN");
+	//logger.debug("IN");
 	ConfigSingleton config = ConfigSingleton.getInstance();
 	_mapActions = new HashMap();
 	List actions =config.getAttributeAsList("BUSINESS_MAP.MAP_ACTIONS");
@@ -50,7 +50,7 @@ public class AuthorizationsBusinessMapper {
     	    	String actionName = (String) mapAction.getAttribute("actionName");
     	    	String businessProcessName = (String) mapAction.getAttribute("businessProcess");
     	    	String actStr = "ACTION[" + actionName + "]";
-    	    	logger.debug("PUT:actStr"+actStr);
+    	    	//logger.debug("PUT:actStr"+actStr);
     	    	_mapActions.put(actStr.toUpperCase(), businessProcessName);
 	    }
 	}
@@ -69,16 +69,16 @@ public class AuthorizationsBusinessMapper {
 		String businessProcessName = (String) mapModules.getAttribute("businessProcess");
 		if (moduleName == null) {
 		    String pgStr = "PAGE[" + pageName + "]";
-		    logger.debug("PUT:pgStr"+pgStr);
+		    //logger.debug("PUT:pgStr"+pgStr);
 		    _mapPages.put(pgStr.toUpperCase(), businessProcessName);
 		} else {
 		    String pgMdlStr = "PAGE[" + pageName + "]MODULE[" + moduleName + "]";
-		    logger.debug("PUT:pgMdlStr"+pgMdlStr);
+		    //logger.debug("PUT:pgMdlStr"+pgMdlStr);
 		    _mapPagesModules.put(pgMdlStr.toUpperCase(), businessProcessName);
 	    	}
 	    }
 	}
-	logger.debug("OUT");
+	//logger.debug("OUT");
     }
 
     /**
@@ -109,13 +109,13 @@ public class AuthorizationsBusinessMapper {
      * @return the string
      */
     public String mapActionToBusinessProcess(String actionName) {
-	logger.debug("IN. actionName="+actionName);
+	//logger.debug("IN. actionName="+actionName);
 	String actStr = "ACTION[" + actionName + "]";
 	String businessProcessName = (String) _mapActions.get(actStr.toUpperCase());
 	if (businessProcessName == null) {
 	    logger.warn("mapping per action [" + actionName + "] non trovato");
 	}
-	logger.debug("OUT,businessProcessName="+businessProcessName);
+	//logger.debug("OUT,businessProcessName="+businessProcessName);
 	return businessProcessName;
     }
 
@@ -128,7 +128,7 @@ public class AuthorizationsBusinessMapper {
      * @return the string
      */
     public String mapPageModuleToBusinessProcess(String pageName, String moduleName) {
-	logger.debug("IN. pageName="+pageName+" moduleName="+moduleName);
+	//logger.debug("IN. pageName="+pageName+" moduleName="+moduleName);
 	String pgMdlStr = "PAGE[" + pageName + "]MODULE[" + moduleName + "]";
 	String businessProcessName = (String) _mapPagesModules.get(pgMdlStr.toUpperCase());
 	if (businessProcessName == null) {
@@ -139,7 +139,7 @@ public class AuthorizationsBusinessMapper {
 		logger.warn(" mapping per page [" + pageName + "] non trovato");
 	    }
 	}
-	logger.debug("OUT,businessProcessName="+businessProcessName);
+	//logger.debug("OUT,businessProcessName="+businessProcessName);
 	return businessProcessName;
     }
 }
