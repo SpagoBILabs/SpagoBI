@@ -81,8 +81,6 @@ public class JobXMLDeserializer implements Deserializer {
 			job.setName(jobName);
 			job.setGroupName(jobGroupName);
 			job.setDescription(jobDescription);
-			job.setDurable(true);
-			job.setVolatile(false);
 			job.setRequestsRecovery(jobRequestRecovery);
 			job.addParameters(jobParameters);
 			job.setJobClass(jobClass);

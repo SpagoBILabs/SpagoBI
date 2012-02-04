@@ -60,10 +60,10 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 		} finally {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
-				logger.debug("OUT");
+				//logger.debug("OUT");
 			}
 		}
-		logger.debug("OUT");
+		//logger.debug("OUT");
 		return null;
 	}
 
@@ -73,7 +73,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 
 	public List<ProgressThread> loadActiveProgressThreadsByUserId(
 			String userId) throws EMFUserError {
-		logger.debug("IN");
+		//logger.debug("IN");
 		List<ProgressThread> toReturn = null;
 
 		Session aSession = null;
@@ -106,16 +106,16 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 		} finally {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
-				logger.debug("OUT");
+				//logger.debug("OUT");
 			}
 		}
-		logger.debug("OUT");
+		//logger.debug("OUT");
 		return toReturn;
 	}
 
 	public List<ProgressThread> loadNotClosedProgressThreadsByUserId(
 			String userId) throws EMFUserError {
-		logger.debug("IN");
+		//logger.debug("IN");
 		List<ProgressThread> toReturn = null;
 
 		Session aSession = null;
@@ -148,10 +148,10 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 		} finally {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
-				logger.debug("OUT");
+				//logger.debug("OUT");
 			}
 		}
-		logger.debug("OUT");
+		//logger.debug("OUT");
 		return toReturn;
 	}
 
@@ -162,7 +162,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 
 
 	public ProgressThread loadActiveProgressThreadByUserIdAndFuncCd(String userId, String functCd) throws EMFUserError {
-		logger.debug("IN");
+		//logger.debug("IN");
 		ProgressThread toReturn = null;
 
 		Session aSession = null;
@@ -190,10 +190,10 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 		} finally {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
-				logger.debug("OUT");
+				//logger.debug("OUT");
 			}
 		}
-		logger.debug("OUT");
+		//logger.debug("OUT");
 		return toReturn;
 	}
 
@@ -201,7 +201,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 
 
 	public boolean incrementProgressThread(Integer progressThreadId) throws EMFUserError{
-		logger.debug("IN");
+		//logger.debug("IN");
 		ProgressThread toReturn = null;
 
 		Session aSession = null;
@@ -229,16 +229,16 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 		} finally {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
-				logger.debug("OUT");
+				//logger.debug("OUT");
 			}
 		}
-		logger.debug("OUT");
+		//logger.debug("OUT");
 		return true;
 
 	}
 
 	public Integer insertProgressThread(ProgressThread progThread) throws EMFUserError {
-		logger.debug("IN");
+		//logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		SbiProgressThread sbiPT = null;
@@ -267,10 +267,10 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 		} finally {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
-				logger.debug("OUT");
+				//logger.debug("OUT");
 			}
 		}
-		logger.debug("OUT");
+		//logger.debug("OUT");
 		return sbiPT.getProgressThreadId();
 	}
 
@@ -278,7 +278,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 
 
 	public ProgressThread toProgressThread(SbiProgressThread sbiPT){
-		logger.debug("IN");
+		//logger.debug("IN");
 		ProgressThread toReturn = new ProgressThread();
 
 		toReturn.setUserId(sbiPT.getUserId());
@@ -289,13 +289,13 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 
 		toReturn.setTotal(sbiPT.getTotal());
 		toReturn.setPartial(sbiPT.getPartial());
-		logger.debug("OUT");
+		//logger.debug("OUT");
 		return toReturn;
 	}
 
 
 	public void setStartedProgressThread(Integer progressThreadId) throws EMFUserError{
-		logger.debug("IN");
+		//logger.debug("IN");
 		ProgressThread toReturn = null;
 
 		Session aSession = null;
@@ -319,16 +319,16 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 		} finally {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
-				logger.debug("OUT");
+				//logger.debug("OUT");
 			}
 		}
-		logger.debug("OUT");
+		//logger.debug("OUT");
 
 	}
 	
 
 	public void setDownloadProgressThread(Integer progressThreadId) throws EMFUserError{
-		logger.debug("IN");
+		//logger.debug("IN");
 		ProgressThread toReturn = null;
 
 		Session aSession = null;
@@ -352,15 +352,15 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 		} finally {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
-				logger.debug("OUT");
+				//logger.debug("OUT");
 			}
 		}
-		logger.debug("OUT");
+		//logger.debug("OUT");
 
 	}
 
 	public void closeProgressThread(Integer progressThreadId) throws EMFUserError{
-		logger.debug("IN");
+		//logger.debug("IN");
 		ProgressThread toReturn = null;
 
 		Session aSession = null;
@@ -384,10 +384,10 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 		} finally {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
-				logger.debug("OUT");
+				//logger.debug("OUT");
 			}
 		}
-		logger.debug("OUT");
+		//logger.debug("OUT");
 
 	}
 
@@ -396,7 +396,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 
 
 	public boolean deleteProgressThread(Integer progressThreadId) throws EMFUserError{
-		logger.debug("IN");
+		//logger.debug("IN");
 
 		boolean found = false;
 
@@ -426,10 +426,10 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 		} finally {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
-				logger.debug("OUT");
+				//logger.debug("OUT");
 			}
 		}
-		logger.debug("OUT");
+		//logger.debug("OUT");
 		return found;
 	}
 
@@ -439,7 +439,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 
 
 	public void setErrorProgressThread(Integer progressThreadId) throws EMFUserError{
-		logger.debug("IN");
+		//logger.debug("IN");
 		ProgressThread toReturn = null;
 
 		Session aSession = null;
@@ -463,10 +463,10 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 		} finally {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
-				logger.debug("OUT");
+				//logger.debug("OUT");
 			}
 		}
-		logger.debug("OUT");
+		//logger.debug("OUT");
 
 	}
 

@@ -68,7 +68,7 @@ public class GetMassiveExportProgressStatus extends AbstractSpagoBIAction {
 
 	@Override
 	public void doService() {
-		logger.debug("IN");
+		//logger.debug("IN");
 
 		IEngUserProfile profile = getUserProfile();
 		String userId = profile.getUserUniqueIdentifier().toString();
@@ -85,7 +85,7 @@ public class GetMassiveExportProgressStatus extends AbstractSpagoBIAction {
 			JSONArray array = new JSONArray();
 		
 			if(listPT != null){
-				logger.debug("Progress Thread for userId="+userId+ " retrieved "+listPT.size()+" documents");
+				//logger.debug("Progress Thread for userId="+userId+ " retrieved "+listPT.size()+" documents");
 				for (Iterator iterator = listPT.iterator(); iterator.hasNext();) {
 					ProgressThread pT = (ProgressThread) iterator.next();
 					JSONObject obj = new JSONObject();
@@ -97,19 +97,19 @@ public class GetMassiveExportProgressStatus extends AbstractSpagoBIAction {
 					obj.put(RANDOM_KEY, pT.getRandomKey());
 					obj.put(PROGRESS_THREAD_ID, pT.getProgressThreadId());
 					if(partial>=total){
-						logger.debug("Work is completed");  // if finish mark as downlod
+						//logger.debug("Work is completed");  // if finish mark as downlod
 						obj.put(MESSAGE, MESSAGE_DOWNLOAD);					
 					}
 					else{
 						obj.put(MESSAGE, MESSAGE_STARTED);											
 					}
 					array.put(obj);
-				logger.debug(""+pT);
+				//logger.debug(""+pT);
 				}				
 
 			}
 			else{
-				logger.debug("Progress Threads for userId="+userId+ " no more present; set as complete");
+				//logger.debug("Progress Threads for userId="+userId+ " no more present; set as complete");
 				noWorkPresent = true;
 				//object.put(NO_WORK_PRESENT, true);
 			}

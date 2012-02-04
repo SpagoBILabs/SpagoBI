@@ -13,6 +13,7 @@ package it.eng.spagobi.commons.deserializer;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spagobi.tools.scheduler.bo.CronExpression;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -25,10 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.quartz.JobDataMap;
-import org.quartz.Scheduler;
-import org.quartz.Trigger;
-import org.quartz.TriggerUtils;
 import org.safehaus.uuid.UUIDGenerator;
 
 /**
@@ -55,7 +52,7 @@ public class TriggerXMLDeserializer implements Deserializer {
 	public static String JOB_GROUP = "jobGroup";
 	public static String JOB_PARAMETERS = "PARAMETERS";
 	
-	public static String CHRON_STRING = "chronString";
+	public static String CRON_STRING = "chronString";
 	
 	
 	
@@ -70,13 +67,11 @@ public class TriggerXMLDeserializer implements Deserializer {
 		String triggerName;
 		String triggerGroupName;
 		String triggerDescription;
-		Calendar startCalendar;
 		Date startTime;
-		Calendar endCalendar;
 		Date endTime;
 		String jobName;
 		String jobGroup;
-		String chronString;
+		String cronString;
 		
 		Map<String, String> jobParameters;
 	
@@ -104,11 +99,9 @@ public class TriggerXMLDeserializer implements Deserializer {
 				triggerName = "schedule_uuid_" + UUIDGenerator.getInstance().generateTimeBasedUUID().toString();
 				triggerGroupName = null;
 				triggerDescription = null;
-				startCalendar = null;
 				startTime = null;
-				endCalendar = null;
 				endTime = null;
-				chronString = null;
+				cronString = null;
 				
 				jobName = (String)xml.getAttribute( JOB_NAME );
 				jobGroup = (String)xml.getAttribute( JOB_GROUP );
@@ -119,17 +112,13 @@ public class TriggerXMLDeserializer implements Deserializer {
 				triggerName = (String)xml.getAttribute( TRIGGER_NAME );
 				triggerGroupName = (String)xml.getAttribute( TRIGGER_GROUP );
 				triggerDescription = (String)xml.getAttribute( TRIGGER_DESCRIPTION );
-				startCalendar = deserializeStartCalendarAttribute(xml);
-				startTime = startCalendar.getTime();
-				endCalendar = deserializeEndCalendarAttribute(xml);
-				endTime = (endCalendar != null)? endCalendar.getTime(): null;
-				chronString = (String) xml.getAttribute(CHRON_STRING);
+				startTime = deserializeStartTimeAttribute(xml);
+				endTime = deserializeEndTimeAttribute(xml);
+				cronString = (String) xml.getAttribute(CRON_STRING);
 				
 				jobName = (String)xml.getAttribute( JOB_NAME );
 				jobGroup = (String)xml.getAttribute( JOB_GROUP );
 				jobParameters = deserializeParametersAttribute(xml);
-				if(chronString != null) jobParameters.put("chronString", chronString);
-				
 			}
 			
 			
@@ -141,11 +130,10 @@ public class TriggerXMLDeserializer implements Deserializer {
 			
 			trigger.setRunImmediately(runImmediately);
 			
-			trigger.setStartCalendar(startCalendar);
+			
 			trigger.setStartTime(startTime);
-			trigger.setEndCalendar(endCalendar);
 			trigger.setEndTime(endTime);
-			trigger.setChronString(chronString);
+			trigger.setCronExpression( new CronExpression(cronString) );
 			
 			job = new Job();
 			job.setName(jobName);
@@ -164,6 +152,7 @@ public class TriggerXMLDeserializer implements Deserializer {
 		return trigger;
 	}
 	
+	
 	private boolean deserializeRunImmediatelyAttribute(SourceBean xml) {
 		boolean runImmediately;
 		
@@ -177,7 +166,12 @@ public class TriggerXMLDeserializer implements Deserializer {
 		return runImmediately;
 	}
 	
-	private Calendar deserializeStartCalendarAttribute(SourceBean xml) {
+	// NOTE: start date and and date are encoded with different formats. That's sick!
+	
+	/**
+	 * get the start date param (format dd-mm-yyyy) and end time (format hh:mm:ss)
+	 */
+	private Date deserializeStartTimeAttribute(SourceBean xml) {
 		Calendar calendar;
 		
 		String startDateStr = (String)xml.getAttribute( TRIGGER_START_DATE );
@@ -197,16 +191,13 @@ public class TriggerXMLDeserializer implements Deserializer {
 			calendar.set(calendar.MINUTE, new Integer(startMinute).intValue());
 		}
 		
-		return calendar;
+		return calendar != null? calendar.getTime(): null;
 	}
 	
 	/**
 	 * get the end date param (format yyyy-mm-gg) and end time (format hh:mm:ss)
-	 * 
-	 * @param xml
-	 * @return
 	 */
-	private Calendar deserializeEndCalendarAttribute(SourceBean xml) {
+	private Date deserializeEndTimeAttribute(SourceBean xml) {
 		Calendar calendar = null;
 		String endDateStr = (String)xml.getAttribute( TRIGGER_END_DATE );
 		if(endDateStr!=null){
@@ -226,7 +217,7 @@ public class TriggerXMLDeserializer implements Deserializer {
 			}
 		}
 		
-		return calendar;
+		return calendar != null? calendar.getTime(): null;
 	}
 	
 	private  Map<String, String> deserializeParametersAttribute(SourceBean xml) {

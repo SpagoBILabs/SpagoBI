@@ -65,7 +65,6 @@ public class TriggerXMLSerializer implements Serializer {
 			String triggerName = (trigger.getName() != null)? trigger.getName(): "";
 			String triggerGroup = (trigger.getGroupName() != null)? trigger.getGroupName(): "";
 			String triggerDescription = (trigger.getDescription() != null)? trigger.getDescription(): "";
-			String triggerCalendarName = (trigger.getCalendarName() != null)? trigger.getCalendarName(): "";
 			
 			Date triggerStartTime = trigger.getStartTime();
 			String triggerStartDateSerialized = "";
@@ -91,18 +90,14 @@ public class TriggerXMLSerializer implements Serializer {
 			result.append(" " + TRIGGER_NAME + "=\"" + triggerName + "\"");
 			result.append(" " + TRIGGER_GROUP + "=\"" + triggerGroup + "\"");
 			result.append(" " + TRIGGER_DESCRIPTION + "=\"" + triggerDescription + "\"");
-			result.append(" " + TRIGGER_CALENDAR_NAME + "=\"" + triggerCalendarName + "\"");
 			result.append(" " + TRIGGER_START_DATE + "=\"" + triggerStartDateSerialized + "\"");
 			result.append(" " + TRIGGER_START_TIME + "=\"" + triggerStartTimeSerialized + "\"");
 			result.append(" " + TRIGGER_END_DATE + "=\"" + triggerEndDateSerialized + "\"");
 			result.append(" " + TRIGGER_END_TIME + "=\"" + triggerEndTimeSerialized + "\"");
 			if( isForServiceConsumer ) {
 				Map<String,String> jobParameters = trigger.getJob().getParameters();
-				String chronStr = jobParameters.get("chronString");
-				if(StringUtilities.isEmpty(chronStr)) {
-					chronStr = "single{}";
-				}
-				result.append(" triggerChronString=\"" + chronStr + "\"");
+				String triggerCronExpression =  trigger.getChronExpression().getExpression();
+				result.append(" triggerChronString=\"" + triggerCronExpression + "\"");
 				result.append(" >");	
 				
 				result.append("<JOB_PARAMETERS>");
@@ -111,9 +106,9 @@ public class TriggerXMLSerializer implements Serializer {
 				for (String jobParameterName : jobParametersName) {
 					String jobParameterValue = jobParameters.get(jobParameterName);
 					// already extracted and processed
-					if(jobParameterName.equals("chronString")) {
-						continue;
-					}
+//					if(jobParameterName.equals("chronString")) {
+//						continue;
+//					}
 					
 					result.append("<JOB_PARAMETER ");
 					if (jobParameterValue == null) {
