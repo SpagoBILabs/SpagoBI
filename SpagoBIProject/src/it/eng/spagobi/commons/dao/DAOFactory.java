@@ -97,18 +97,18 @@ public class DAOFactory {
 	 */
 	
 	private static Object createDAOInstance(String daoName) {
-		logger.debug("Begin Istantiation of DAO ["+daoName+"]");
+		//logger.trace("Begin Istantiation of DAO ["+daoName+"]");
 		Object daoObject = null;
 		try {
 			ConfigSingleton configSingleton=ConfigSingleton.getInstance();
 			SourceBean daoConfigSourceBean =(SourceBean) configSingleton.getFilteredSourceBeanAttribute("SPAGOBI.DAO-CONF.DAO","name", daoName);
 			String daoClassName = (String)daoConfigSourceBean.getAttribute("implementation");
-			logger.debug("DAO ["+daoName+"] Implementation class ["+daoClassName+"]");
+			//logger.trace("DAO ["+daoName+"] Implementation class ["+daoClassName+"]");
 			daoObject = Class.forName(daoClassName).newInstance();
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot instantiate " + daoName, e);
 		}
-		logger.debug("DAO ["+daoName+"] instantiated successfully");
+		//logger.trace("DAO ["+daoName+"] instantiated successfully");
 		return daoObject;
 		
 	}

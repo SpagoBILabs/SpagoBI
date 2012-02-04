@@ -48,7 +48,7 @@ public class ProfileFilter implements Filter {
 	}
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		logger.debug("IN");
+		//logger.debug("IN");
 		try {
 			if (request instanceof HttpServletRequest) {
 				HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -103,7 +103,7 @@ public class ProfileFilter implements Filter {
 		} catch (Exception e) {
 			logger.error(e);
 		} finally {
-			logger.debug("OUT");
+			//logger.debug("OUT");
 			chain.doFilter(request, response);
 		}
 	}

@@ -95,9 +95,14 @@ Sbi.browser.mexport.MassiveExportWizardTriggerPage = function(config) {
 
 Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
 
-	sservices: null
+	services: null
     , mainPanel: null
+    , generalConfFields: null
+	, cronConfFields: null
     , currentPage: null
+    , generalInfoFieldSet: null
+    , perMinuteOptionsFieldSet: null
+    , perHoureOptionsFieldSet: null
     
     
 	// ----------------------------------------------------------------------------------------
@@ -145,6 +150,28 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
 		var state;
 		
 		state = {};
+		
+		state.generalConf = {}; // job + trigger			
+		for(var fieldSet in this.generalConfFields) {
+			state.generalConf[fieldSet] = {};
+			var fieldsInFieldSet = this.generalConfFields[fieldSet];
+			for(var i = 0; i < fieldsInFieldSet.length; i++) {
+				var field = fieldsInFieldSet[i];
+				state.generalConf[fieldSet][field.getName()] = field.getValue();
+			}
+		}
+		
+		state.cronConf = {};
+		for(var fieldSet in this.cronConfFields) {
+			state.cronConf[fieldSet] = {};
+			var fieldsInFieldSet = this.cronConfFields[fieldSet];
+			for(var i = 0; i < fieldsInFieldSet.length; i++) {
+				var field = fieldsInFieldSet[i];
+				state.cronConf[fieldSet][field.getName()] = field.getValue();
+			}
+		}
+		
+		alert(state.toSource());
 
 		return state;
 	}
@@ -154,6 +181,12 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
 	// ----------------------------------------------------------------------------------------
 
     , initMainPanel: function() {
+    	
+    	this.initGeneralConfFieldSet();
+    	this.initCronConfFiledSet();
+    	
+    	
+    	
 		this.mainPanel = new Ext.FormPanel({
 			labelWidth: 75, // label settings here cascade unless overridden
 		    frame:true,
@@ -161,64 +194,151 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
 		    width: 350,
 		    autoScroll: true,
 	        items: [
-	        {
-	            xtype:'fieldset',
-	            //checkboxToggle:true,
-	            collapsible: true,
-	            collapsed: false,
-	            title: 'General info',
-	            autoHeight:true,
-	            defaults: {width: 210},
-	            defaultType: 'textfield',
-	            items :[{
-	                    fieldLabel: 'Name',
-	                    name: 'name',
-	                    allowBlank:false
-	                },{
-	                    fieldLabel: 'Description',
-	                    name: 'description'
-	                },{
-	                    fieldLabel: 'Start date',
-	                    name: 'startDate'
-	                }, {
-	                    fieldLabel: 'Start time',
-	                    name: 'startTime'
-	                },{
-	                    fieldLabel: 'End date',
-	                    name: 'endDate'
-	                }, {
-	                    fieldLabel: 'End time',
-	                    name: 'endTime'
-	                }
-	            ]
-	        },{
-	            xtype:'fieldset',
-	            checkboxToggle:true,
-	            title: 'Per minute Execution',
-	            autoHeight:true,
-	            defaults: {width: 210},
-	            defaultType: 'textfield',
-	            collapsed: true,
-	            items :[{
-	            	fieldLabel: 'Every n minutes',
-	                name: 'first',
-	                allowBlank:false
-	            }]
-	        },{
-	            xtype:'fieldset',
-	            title: 'Per hour execution ',
-	            checkboxToggle:true,
-	            //collapsible: true,
-	            collapsed: true,
-	            autoHeight:true,
-	            defaults: {width: 210},
-	            defaultType: 'textfield',
-	            items :[{
-	            	fieldLabel: 'Every n hours',
-	                name: 'first',
-	                allowBlank:false
-	            }]
-	        }]
+				this.generalInfoFieldSet
+				, this.perMinuteOptionsFieldSet
+				, this.perHoureOptionsFieldSet
+			]
 		});
     }	
+    
+    /**
+     * Initialize general info conf (job + trigger)
+     */
+    , initGeneralConfFieldSet: function() {
+    	var field;
+
+    	this.generalConfFields = {};
+    	this.initJobConfFields();
+    	this.initTriggerConfFields();
+    	
+    	var fields = this.generalConfFields['job'].concat(this.generalConfFields['trigger']);
+    	
+    	this.generalInfoFieldSet = new Ext.form.FieldSet({
+    		//checkboxToggle:true,
+            collapsible: true,
+            collapsed: false,
+            title: 'General info',
+            autoHeight:true,
+            defaults: {width: 210},
+            defaultType: 'textfield',
+            items : fields
+    	});
+    }
+    
+    , initJobConfFields: function() {
+    	
+    	this.generalConfFields['job'] = [];
+    	
+    	field = new Ext.form.TextField({
+            fieldLabel: 'Name',
+            name: 'name',
+            allowBlank:false
+        });
+    	this.generalConfFields['job'].push(field);
+    	
+    	field = new Ext.form.TextField({
+            fieldLabel: 'Description',
+            name: 'description',
+            allowBlank:false
+        });
+    	this.generalConfFields['job'].push(field);
+    }
+    
+    
+    , initTriggerConfFields: function() {
+    	
+    	this.generalConfFields['trigger'] = [];
+    	
+    	field = new Ext.form.DateField({
+            fieldLabel: 'Start date',
+            name: 'startDate',
+            format: Sbi.config.localizedDateFormat || 'm/d/Y',
+            allowBlank:false
+        });
+    	this.generalConfFields['trigger'].push(field);
+    	
+    	field = new Ext.form.TimeField({
+    		fieldLabel: 'Start time',
+            name: 'startTime',
+            maxHeight: 180,
+            //format: 'H:i',
+            increment: 30,
+            allowBlank:true
+        });
+    	this.generalConfFields['trigger'].push(field);
+    	
+    	field = new Ext.form.DateField({
+    		fieldLabel: 'End date',
+            name: 'endDate',
+            format: Sbi.config.localizedDateFormat || 'm/d/Y',
+			allowBlank:true
+    	});
+    	this.generalConfFields['trigger'].push(field);
+    	
+    	field = new Ext.form.TimeField({
+   		 	fieldLabel: 'End time',
+            name: 'endTime',
+            maxHeight: 180,
+            //format: 'H:i',
+            increment: 30,
+            allowBlank:true
+    	});
+    	this.generalConfFields['trigger'].push(field);
+    }
+    
+    
+    /**
+     * Initialize cron conf (minute, hourly, weekly, monthly, yearly)
+     */    
+    , initCronConfFiledSet: function() {
+    	this.cronConfFields = {};
+    	this.initMinuteConfFieldSet();
+    	this.initPerHourlyConfFieldSet();
+    }
+    
+    , initMinuteConfFieldSet: function() {
+    	var field;
+    	
+    	this.cronConfFields['minutes'] = [];
+    	
+    	field = new Ext.form.NumberField({
+    		fieldLabel: 'Every n minutes',
+            name: 'minutes',
+            allowBlank:false
+    	});
+    	this.cronConfFields['minutes'].push(field);
+    	
+    	this.perMinuteOptionsFieldSet = new Ext.form.FieldSet({
+    		checkboxToggle:true,
+            title: 'Minutes',
+            autoHeight:true,
+            defaults: {width: 210},
+            defaultType: 'textfield',
+            collapsed: true,
+            items : this.cronConfFields['minutes']
+    	});	
+    }
+    
+    , initPerHourlyConfFieldSet: function() {
+    	var field;
+    	
+    	this.cronConfFields['hourly'] = [];
+    	
+    	field = new Ext.form.NumberField({
+    		fieldLabel: 'Every n houres',
+            name: 'houres',
+            allowBlank:false
+    	});
+    	this.cronConfFields['hourly'].push(field);
+    	
+    	this.perHoureOptionsFieldSet = new Ext.form.FieldSet({
+    		checkboxToggle:true,
+            title: 'Hourly',
+            autoHeight:true,
+            defaults: {width: 210},
+            defaultType: 'textfield',
+            collapsed: true,
+            items : this.cronConfFields['hourly']
+    	});	
+    }
 });

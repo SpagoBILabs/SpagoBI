@@ -11,7 +11,9 @@
  */
 package it.eng.spagobi.tools.scheduler.dao.quartz;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +24,10 @@ import org.quartz.Scheduler;
 import org.quartz.SimpleTrigger;
 import org.quartz.TriggerUtils;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.deserializer.TriggerXMLDeserializer;
+import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.tools.scheduler.bo.CronExpression;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -34,6 +39,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  *
  */
 class QuartzNativeObjectsConverter {
+	
+	private static String SPAGOBI_CRON_EXPRESSION_DEPRECATED = "chronString";
+	private static String SPAGOBI_CRON_EXPRESSION = "spagoBIcronExpression";
 	
 	private static Logger logger = Logger.getLogger(QuartzNativeObjectsConverter.class);
 	
@@ -96,8 +104,11 @@ class QuartzNativeObjectsConverter {
 					quartzTrigger = new org.quartz.SimpleTrigger();
 				} else {
 					org.quartz.CronTrigger quartzCronTrigger = new org.quartz.CronTrigger();
-					quartzCronTrigger.setCronExpression(spagobiTrigger.getChronExpression());
+					String quartzCronExpression = convertCronExpressionToNativeObject(spagobiTrigger.getChronExpression(), spagobiTrigger.getStartTime());
+					quartzCronTrigger.setCronExpression(quartzCronExpression);
 					quartzTrigger = quartzCronTrigger;
+					// dirty trick
+					spagobiTrigger.getJob().addParameter(SPAGOBI_CRON_EXPRESSION, spagobiTrigger.getChronExpression().getExpression());
 				}	
 				
 				quartzTrigger.setName(spagobiTrigger.getName());
@@ -141,7 +152,10 @@ class QuartzNativeObjectsConverter {
 		spagobiTrigger.setName( quartzTrigger.getName() );
 		spagobiTrigger.setGroupName( quartzTrigger.getGroup() );
 		spagobiTrigger.setDescription( quartzTrigger.getDescription() );
-		spagobiTrigger.setCalendarName( quartzTrigger.getCalendarName() );
+		
+		//spagobiTrigger.setCalendarName( quartzTrigger.getCalendarName() );
+		Assert.assertTrue(quartzTrigger.getCalendarName() == null, "quartz trigger calendar name is not null: " + quartzTrigger.getCalendarName());
+		
 		spagobiTrigger.setStartTime( quartzTrigger.getStartTime() );
 		spagobiTrigger.setEndTime( quartzTrigger.getEndTime() );
 		
@@ -151,7 +165,16 @@ class QuartzNativeObjectsConverter {
 	
 		if(quartzTrigger instanceof org.quartz.CronTrigger) {
 			org.quartz.CronTrigger quartzCronTrigger = (org.quartz.CronTrigger)quartzTrigger;
-			spagobiTrigger.setChronExpression( quartzCronTrigger.getCronExpression() ) ;
+			// dirty trick
+			String expression = (String)quartzCronTrigger.getJobDataMap().get(SPAGOBI_CRON_EXPRESSION);
+			if(expression != null) {
+				quartzCronTrigger.getJobDataMap().remove(SPAGOBI_CRON_EXPRESSION); 
+			} else {
+				// for back compatibility
+				expression = (String)quartzCronTrigger.getJobDataMap().get(SPAGOBI_CRON_EXPRESSION_DEPRECATED);
+				quartzCronTrigger.getJobDataMap().remove(SPAGOBI_CRON_EXPRESSION_DEPRECATED); 
+			}
+			spagobiTrigger.setCronExpression( new CronExpression(expression) ) ;
 		} 
 		
 		Job job = new Job();
@@ -187,5 +210,115 @@ class QuartzNativeObjectsConverter {
 			spagobiParameters.put(parameterName, parameterValue);
 		}
 		return spagobiParameters;
+	}
+	
+	private static String convertCronExpressionToNativeObject(CronExpression cronString, Date startTime) {
+		String chronExpression = null;
+		try{
+			
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(startTime);
+			
+			int day = calendar.get(Calendar.DAY_OF_MONTH);
+			int month = calendar.get(Calendar.MONTH);
+			int year = calendar.get(Calendar.YEAR);
+			int hour = calendar.get(Calendar.HOUR_OF_DAY);
+			int minute = calendar.get(Calendar.MINUTE);
+			
+			String type = "";
+	    	String params = "";
+	    	if(cronString.getExpression().indexOf("{")!=-1) {
+	    		int indFirstBra = cronString.getExpression().indexOf("{");
+	    		type = cronString.getExpression().substring(0, indFirstBra);
+	    		params = cronString.getExpression().substring((indFirstBra+1), (cronString.getExpression().length()-1));
+	    	} else {
+	    		return chronExpression;
+	    	}
+	    	if(type.equals("single")) {
+	    		return chronExpression; // this will be a normal trigger
+	    	}
+	    	if(type.equals("minute")) {
+	    		int indeq = params.indexOf("=");
+	    		String numrep = params.substring(indeq+1);
+	    		chronExpression = "0 0/"+numrep+" * * * ? *";
+	    	}
+	    	if(type.equals("hour")) {
+	    		int indeq = params.indexOf("=");
+	    		String numrep = params.substring(indeq+1);
+	    		chronExpression = "0 "+minute+" 0/"+numrep+" * * ? *";
+	    	}
+	    	if(type.equals("day")) {
+	    		int indeq = params.indexOf("=");
+	    		String numrep = params.substring(indeq+1);
+	    		chronExpression = "0 "+minute+" "+hour+" 1/"+numrep+" * ? *";
+	    	}
+	    	if(type.equals("week")) {
+	    		int indeq = params.indexOf("=");
+	    		int indsplit = params.indexOf(";");
+	    		int ind2eq = params.indexOf("=", (indeq + 1));
+	    		String numrep = params.substring((indeq+1), indsplit);
+	    		Integer numrepInt = new Integer(numrep);
+	    		String daysstr = params.substring(ind2eq+1);
+	    		if( (daysstr==null) || (daysstr.trim().equals(""))) daysstr = "MON";
+	    		if(daysstr.endsWith(",")) daysstr = daysstr.substring(0, (daysstr.length() - 1));
+	    		chronExpression = "0 "+minute+" "+hour+" ? * "+daysstr+"/"+numrep+" *";
+	    	}
+	    	if(type.equals("month")) {
+	    		String numRep = "";
+	    		String selmonths = "";
+	    		String dayRep = "";
+	    		String weeks = "";
+	    		String days = "";
+	    		String[] parchuncks = params.split(";");
+	    		for(int i=0; i<parchuncks.length; i++) {
+	    			String parchunk = parchuncks[i];
+	    			String[] singleparchunks = parchunk.split("=");
+	    			String key = singleparchunks[0];
+	    			String value = singleparchunks[1];
+	    			value = value.trim();
+	    			if(value.endsWith(",")) {
+    					value = value.substring(0, (value.length()-1));
+    				}
+	    			if(key.equals("numRepetition")) numRep= value;
+	    			if(key.equals("months")) selmonths= value;
+	    			if(key.equals("dayRepetition")) dayRep= value;
+	    			if(key.equals("weeks")) weeks= value;
+	    			if(key.equals("days")) days= value; 
+	    		}
+	            String monthcron = "";
+	            if(selmonths.equals("NONE")){
+	            	monthcron = (month + 1) + "/" + numRep;
+	            } else {
+	            	if(selmonths.equals("")) selmonths = "*";
+	            	monthcron = selmonths;
+	            }
+	            String daycron = "?";
+	            if( weeks.equals("NONE") && days.equals("NONE") ){
+	            	if(dayRep.equals("0")) dayRep = "1";
+	            	daycron = dayRep;
+	            }
+	            String dayinweekcron = "?";
+	            if(!days.equals("NONE")){
+	            	if(days.equals("")) days = "*";
+	            	dayinweekcron = days;
+	            }
+	            if( !weeks.equals("NONE")  ){
+	            	if(!weeks.equals("")) 
+	            		if(weeks.equals("L")) dayinweekcron = dayinweekcron + weeks;
+	            		else dayinweekcron = dayinweekcron + "#" + weeks;
+	            		dayinweekcron = dayinweekcron.replaceFirst("SUN", "1");
+	            		dayinweekcron = dayinweekcron.replaceFirst("MON", "2");
+	            		dayinweekcron = dayinweekcron.replaceFirst("TUE", "3");
+	            		dayinweekcron = dayinweekcron.replaceFirst("WED", "4");
+	            		dayinweekcron = dayinweekcron.replaceFirst("THU", "5");
+	            		dayinweekcron = dayinweekcron.replaceFirst("FRI", "6");
+	            		dayinweekcron = dayinweekcron.replaceFirst("SAT", "7");
+	            }
+	    		chronExpression = "0 "+minute+" "+hour+" "+daycron+" "+monthcron+" "+dayinweekcron+ " *";
+	    	}
+	    } catch (Throwable t) {
+	    	throw new SpagoBIRuntimeException("Error while converting spagobi chron expression [" + cronString + "] to quartz cron expression", t);
+	    }
+		return chronExpression;
 	}
 }

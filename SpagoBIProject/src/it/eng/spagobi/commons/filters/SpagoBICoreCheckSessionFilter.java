@@ -56,7 +56,7 @@ public class SpagoBICoreCheckSessionFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
     	throws IOException, ServletException {
     	
-    	logger.debug("IN");
+    	//logger.debug("IN");
     	
     	try {
     		
@@ -71,12 +71,12 @@ public class SpagoBICoreCheckSessionFilter implements Filter {
 	        	boolean isRequestedSessionIdValid = httpRequest.isRequestedSessionIdValid();
 				if (!isValidSession && !isRequestedSessionIdValid && !isRequiredNewSession) {
 					// session has expired
-					logger.debug("Session has expired!!");
+					//logger.debug("Session has expired!!");
 					String sessionExpiredUrl = GeneralUtilities.getSessionExpiredURL();
 					if (sessionExpiredUrl == null || sessionExpiredUrl.trim().equals("")) {
 						logger.warn("Session expired URL not set!!! check engine-config.xml configuration");
 					} else {
-						logger.debug("Forwarding to " + sessionExpiredUrl);
+						//logger.debug("Forwarding to " + sessionExpiredUrl);
 						httpRequest.getRequestDispatcher(sessionExpiredUrl).forward(request, response);
 						return;
 					}
@@ -100,7 +100,7 @@ public class SpagoBICoreCheckSessionFilter implements Filter {
 			t.printStackTrace(); 
 	    	throw new ServletException(t);
 		} finally {
-			logger.debug("OUT");
+			//logger.debug("OUT");
 		}
 	
     }

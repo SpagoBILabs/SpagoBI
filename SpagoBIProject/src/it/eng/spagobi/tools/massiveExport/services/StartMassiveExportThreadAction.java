@@ -59,7 +59,6 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 
 
 	private final String FUNCTIONALITY_ID = "functId";
-	private final String PARAMETER_VALUES = "parameterValues";
 	private final String ROLE = "selectedRole";
 	private final String MIME_TYPE = "mimeType";
 	private final String TYPE = "type";  
