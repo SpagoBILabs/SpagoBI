@@ -171,8 +171,6 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
 			}
 		}
 		
-		alert(state.toSource());
-
 		return state;
 	}
 	
