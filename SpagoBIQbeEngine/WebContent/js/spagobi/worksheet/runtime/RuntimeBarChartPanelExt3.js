@@ -183,11 +183,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 	                style: {}
 			};
 			
-			if(this.chartConfig.type == 'percent-stacked-barchart'){
-				serie.displayName =  (serieNames[i]);//if percent doesn't matter the scale 
-			}else{
+//			if(this.chartConfig.type == 'percent-stacked-barchart'){
+//				serie.displayName =  (serieNames[i]);//if percent doesn't matter the scale 
+//			}else{
 				serie.displayName =  this.formatLegendWithScale(serieNames[i]);
-			}
+//			}
 
 			if(horizontal){
 				serie.xField = 'series'+i;
@@ -228,6 +228,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 					}
 				}
 				for(var j=0; j<series.length; j++){
+					z['seriesflatvalue'+j] = z['series'+j];
 					z['series'+j] = (z['series'+j]/seriesum)*100;;
 				}
 				z['seriesum'] = seriesum;
@@ -268,18 +269,22 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 		var theSerieName  = series.displayName;
 		var value ;
 		var serieDefinition;
-		
 
-		
 		if(type != 'percent-stacked-barchart'){
 			if(horizontal){
 				value =  record.data[series.xField];
-		        
 			}else{
 				value = record.data[series.yField];
 			}
 		}else{
-			value = Ext.util.Format.number(record.data[series.xField], '0.00');
+			//value = Ext.util.Format.number(record.data[series.xField], '0.00');
+			if(horizontal){
+				value = record.data['seriesflatvalue'+series.xField.substring(series.xField.length-1)];		        
+			}else{
+				value = record.data['seriesflatvalue'+series.yField.substring(series.yField.length-1)];
+			}
+			
+			
 		}
 		
 		
@@ -293,7 +298,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 			}
 		}
 
-		if(type != 'percent-stacked-barchart'){
+		//if(type != 'percent-stacked-barchart'){
 			// format the value according to serie configuration
 			value = Sbi.qbe.commons.Format.number(value, {
 	    		decimalSeparator: Sbi.locale.formats['float'].decimalSeparator,
@@ -303,9 +308,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 	    		currencySymbol: '',
 	    		nullValue: ''
 			});
-		}else{
-			value = value + '%';
-		}
+//		}else{
+//			value = value + '%';
+//		}
 		// add suffix
 		if (serieDefinition.suffix !== undefined && serieDefinition.suffix !== null && serieDefinition.suffix !== '') {
 			value = value + ' ' + serieDefinition.suffix;
