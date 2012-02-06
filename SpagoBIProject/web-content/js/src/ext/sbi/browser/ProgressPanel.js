@@ -36,13 +36,7 @@ Sbi.browser.ProgressPanel = function(config) {
 	
 	var c = Ext.apply(defaultSettings, config || {} );
 
-	
-	Sbi.browser.ProgressPanel.superclass.constructor.call(this, c);   
-
-	this.progressGroup = new Object();
-
-	
-    this.services = this.services || new Array();
+	this.services = this.services || new Array();
     this.services['GetMassiveExportProgressStatus'] = this.services['GetMassiveExportProgressStatus'] || Sbi.config.serviceRegistry.getServiceUrl({
     			serviceName: 'GET_MASSIVE_EXPORT_PROGRESS_STATUS'
     			, baseParams: new Object()
@@ -55,57 +49,41 @@ Sbi.browser.ProgressPanel = function(config) {
 		serviceName: 'DELETE_MASSIVE_EXPORT_ZIP'
 		, baseParams: new Object()
 		});
-	
     
-    
-	this.on('expand',
-			function () {
-			this.expanded = true;
-			// false because is executing only for one time because of expansion
-			if(this.canAccess == true){
-				this.canAccess=false;
-				this.updateProgressStatus(false); // NO MORE CALL to avoid synchronization problem
-		
-				this.canAccess=true;
-			}
-			this.doLayout();
-	}
-					   , this
-					);
-	
-	this.on('collapse',
-			function () {
-				this.expanded = false;
-					   }
-					   , this
-					);
-	
-	// keep track of current works going on (as from database)
+    // keep track of current works going on (as from database)
+	this.progressGroup = new Object();
 	this.currentWorks = new Object();
 	this.downloadButtonPanels = new Object();
 	this.deleteButtonPanels = new Object();
-	// 
 	this.toBeDeleted = new Array();
 
 	this.initPanels();
+
+	//this.addEvents();
+	c = Ext.apply(c, {
+		items: [this.startedPanel, this.downloadedPanel, this.scheduledPanel]	
+	});
+	Sbi.browser.ProgressPanel.superclass.constructor.call(this, c);  
+	
+	this.on('expand', this.onXExpand , this);	
+	this.on('collapse', this.onXCollapse, this);
+
 	this.progressCounter = 0;
 	this.buttonCounter = 0;
 	
 	// Start cycle
-	this.cycleProgress();
-
-	
+	this.serverPooling();
 
 };
 
 Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
     
-	progressGroup : null
-	, startedPanel : null
+	startedPanel : null
 	, downloadedPanel : null
 	, scheduledPanel : null
+	, progressGroup : null
 	, services : null
-	, expanded : false
+	, xexpanded : false
 	, currentWorks : null
 	, toBeDeleted : null
 	, downloadButtonPanels : null
@@ -126,34 +104,8 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 			autoWidth: true,
 			defaults: {border:false}
 		});
-		this.add(this.startedPanel);
-		this.doLayout();
 		
-		this.downloadedPanel = new Ext.Panel({  
-			title: LN('Sbi.browser.ProgressPanel.completedExport'),
-			layout: 'column',
-			scope: this,
-			height: 320,
-			defaults: {border:false
-			}
-		});
-		this.add(this.downloadedPanel);
-		this.doLayout();
-		
-		this.scheduledPanel = new Ext.Panel({  
-			title: LN('Sbi.browser.ProgressPanel.scheduledExport'),
-			layout: 'anchor', 
-			scope: this,
-			height: 120,
-			autoWidth: true,
-			defaults: {border:false}
-		});
-		this.add(this.scheduledPanel);
-		this.doLayout();
-		
-		// create and hide two empty case panel
 		this.progressEmptyPanel = new Ext.Panel({  
-			//layout: 'anchor',  
 			scope: this,
 			height: 20,
 			autoWidth: true,
@@ -162,6 +114,16 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		});
 		this.startedPanel.add(this.progressEmptyPanel);
 		this.progressEmptyPanel.hide();
+			
+		
+		this.downloadedPanel = new Ext.Panel({  
+			title: LN('Sbi.browser.ProgressPanel.completedExport'),
+			layout: 'column',
+			scope: this,
+			height: 200,
+			collapsible: true,
+			defaults: {border:false}
+		});
 		
 		// create and hide two empty case panel
 		this.buttonEmptyPanel = new Ext.Panel({  
@@ -174,31 +136,41 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		});
 		this.downloadedPanel.add(this.buttonEmptyPanel);
 		this.buttonEmptyPanel.hide();
-
 		
+		
+		this.scheduledPanel = new Ext.Panel({  
+			title: LN('Sbi.browser.ProgressPanel.scheduledExport'),
+			layout: 'anchor', 
+			scope: this,
+			height: 200,
+			collapsible: true,
+			autoWidth: true,
+			defaults: {border:false}
+		});
 	}
-	, createProgressBar : function(functCd, randomKey) {
-		var progressBar = new Ext.ProgressBar({
-            text: LN('Sbi.browser.ProgressPanel.initializing')+'...'+functCd+' - '+randomKey
-         });
-        // add progress bar to array
-        this.progressGroup[functCd+''+randomKey] = progressBar;
-        this.progressCounter++;
-    	this.startedPanel.add(progressBar);
-    	this.startedPanel.doLayout();
-    	this.currentWorks[functCd+''+randomKey] = true;
-		this.progressGroup[functCd+''+randomKey].on('render', function() {
-			this.doLayout();
-		} , this );
-		}
 
-	, updateProgressStatus: function(cycling){ 
+	, serverPooling: function(){
+		// for better performances wanted to draw bars only when expanded, but execution must go on aniway
+		// true means to cycle
+		if(this.canAccess==true){		
+			this.canAccess = false;
+			this.updateProgressStatus(true);
+			this.doLayout();
+			this.canAccess = true;
+		} else{
+			var that = this;
+			setTimeout(function(){that.serverPooling()}, 5000);
+		}
+	}
+
+	, updateProgressStatus: function(pooling){ 
 
 			// search for pending thrread in database
 		Ext.Ajax.request({
       	        url: this.services['GetMassiveExportProgressStatus'],
-      	        params: {//MESSAGE : 'STARTED'
-      	        	},
+      	        params: {
+      	        	//MESSAGE : 'STARTED'
+      	        },
       	        success : function(response, options){
       		  	if(response !== undefined) {   
       	      		if(response.responseText !== undefined) {
@@ -214,43 +186,102 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
       	      				}
       	      				// clean work no more present
       	      				this.cleanNoMorePresentWork(worksFound);
-        	      			}
-          	      		} 
+        	      		}
+          	      	} 
       	      		this.checkEmptyPanels();
       	      		
-      	      		// only if called from cycle
-      	      		if(cycling == true){
+      	      		// only if called from poolingServer
+      	      		if(pooling == true){
       	      			// if(expanded timeout is faster, else take more time before next call
       	      			var that = this;
-      	      			if(this.expanded== true){
-      	      				setTimeout(function(){that.cycleProgress()}, 5000);
+      	      			if(this.xexpanded== true){
+      	      				setTimeout(function(){that.serverPooling()}, 5000);
       	      			} else{ // wait longer if not expanded
-      	      				setTimeout(function(){that.cycleProgress()}, 20000);
+      	      				setTimeout(function(){that.serverPooling()}, 20000);
       	      			}
       	      		}
-      		  	}else {
-      	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-          	      		}
-      	        },
-      	        scope: this,
-      			failure: Sbi.exception.ExceptionHandler.handleFailure      
+      		  	} else {
+      		  		Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+          	    }
+      	       },
+      	       scope: this,
+      	       failure: Sbi.exception.ExceptionHandler.handleFailure      
       	   });
-	
 	}
+	
 	, handleProgressThreadResult : function(prog, functCd, randomKey, worksFound){	
 		worksFound[functCd+''+randomKey]= true;
-			// value progress thread status
-			var progressBar = this.progressGroup[functCd+''+randomKey];
-			// if in download state make download and delete work
-			if(prog.message && prog.message=='DOWNLOAD'){
-				this.createDownloadForm(progressBar, functCd, randomKey, prog.progressThreadId);
+		// value progress thread status
+	
+		var progressBar = this.progressGroup[functCd+''+randomKey];
+		// if in download state make download and delete work
+		if(prog.message && prog.message=='DOWNLOAD'){
+			this.createDownloadForm(progressBar, functCd, randomKey, prog.progressThreadId);
+		} else if(prog.message && ( prog.message=='STARTED' || prog.message=='PREPARED')){
+			// check if progress exist then update otherwise create
+			var partial = prog.partial;
+			var total = prog.total;
+			this.handleStartedProgressThreadResult(progressBar, functCd, randomKey, partial, total);
+		}
+	}
+	
+	, createDownloadForm: function(progressBar, functCd, randomKey, progressThreadId){
+		
+		var urlToCall = Sbi.config.serviceRegistry.getBaseUrlStr({});	
+		urlToCall += '?ACTION_NAME=DOWNLOAD_MASSIVE_EXPORT_ZIP';
+		urlToCall += '&FUNCT_CD='+functCd;
+		urlToCall += '&RANDOM_KEY='+randomKey;
+		urlToCall += '&PROGRESS_THREAD_ID='+progressThreadId;
+		
+		if(!progressBar){
+			// do nothings
+		} else{
+			var msg = functCd + ' - ' + randomKey
+			progressBar.updateProgress(1, msg);
+		}
+    	
+		// delete the progressBar
+		if(progressBar){
+			this.deleteWork(functCd + '' + randomKey);
+		}
+    	
+	    if(this.downloadButtonPanels[functCd+randomKey]){
+	    	// do nothings
+	    } else{
+	    	// create panel and put inside button
+	    	this.downloadButtonPanels[functCd+randomKey] = new Ext.Panel({  
+				scope: this,
+				autoWidth: true,
+				defaults: {border:false}
+			});
+
+	    	var tooltipText = '' + functCd + '-' + randomKey;
+	    	// remove milliseconds
+	    	tooltipText = tooltipText.substring(0, (tooltipText.length-7));
+	    	
+	    	var buttonText = Ext.util.Format.ellipsis(tooltipText, 40);
+	    	var button = new Ext.Button({
+	    		id: functCd+randomKey+'download',
+	    		text: buttonText,
+	    		tooltip: tooltipText,
+	    		disabled: false,
+	    		scope: this,
+	    		disabled: true,
+	    		handler: function(){
+	    			window.open(urlToCall,'name','resizable=1,height=750,width=1000');
 				}
-			else if(prog.message && ( prog.message=='STARTED' || prog.message=='PREPARED')){
-					// check if progress exist then update otherwise create
-					var partial = prog.partial;
-					var total = prog.total;
-					this.handleStartedProgressThreadResult(progressBar, functCd, randomKey, partial, total);
-				}
+			});
+	    	button.enable();
+	    	this.downloadButtonPanels[functCd+randomKey].add(button);
+	    	this.buttonCounter++;
+	    }
+	 
+	    this.downloadedPanel.add(this.downloadButtonPanels[functCd+randomKey]);
+	   
+	    this.createDeleteForm(functCd, randomKey, progressThreadId);
+
+	    this.downloadedPanel.doLayout();
+	    this.doLayout();
 	}
 	
 	, handleStartedProgressThreadResult: function(progressBar, functCd, randomKey, partial, total){
@@ -272,8 +303,26 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		} , this );
 			
 		}	
-	
 	}
+	
+	, createProgressBar : function(functCd, randomKey) {
+		var progressBar = new Ext.ProgressBar({
+            text: LN('Sbi.browser.ProgressPanel.initializing')+'...'+functCd+' - '+randomKey
+         });
+        // add progress bar to array
+        this.progressGroup[functCd+''+randomKey] = progressBar;
+        this.progressCounter++;
+    	this.startedPanel.add(progressBar);
+    	this.startedPanel.doLayout();
+    	this.currentWorks[functCd+''+randomKey] = true;
+		this.progressGroup[functCd+''+randomKey].on('render', function() {
+			this.doLayout();
+		} , this );
+	}
+	
+
+	
+
 	, cleanNoMorePresentWork : function(worksFound){
 		for (var key in this.currentWorks) {
 			var obj = this.currentWorks[key];
@@ -309,71 +358,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 				this.doLayout();
 	}
 	
-	, createDownloadForm: function(progressBar, functCd, randomKey, progressThreadId){
-		var urlToCall = Sbi.config.serviceRegistry.getBaseUrlStr({});	
-		urlToCall += '?ACTION_NAME=DOWNLOAD_MASSIVE_EXPORT_ZIP';
-		urlToCall += '&FUNCT_CD='+functCd;
-		urlToCall += '&RANDOM_KEY='+randomKey;
-		urlToCall += '&PROGRESS_THREAD_ID='+progressThreadId;
-		
-		if(!progressBar){
-		}
-		else{
-			var msg = functCd+' - '+randomKey
-			progressBar.updateProgress(1, msg);
-		}
-    	// delete the progressBar
-		if(progressBar){
-			this.deleteWork(functCd+''+randomKey);
-		}
-    	
-	    if(this.downloadButtonPanels[functCd+randomKey]){
-	    }
-	    else{
-	    	// create panel and put inside button
-	    	this.downloadButtonPanels[functCd+randomKey] = new Ext.Panel({  
-				//title: 'Started Export',
-				//layout: 'fit',  
-				scope: this,
-				//height: 120,
-				autoWidth: true,
-				//columnWidth : 0.5,
-				defaults: {border:false}
-			});
-
-	    	var tooltipText = ''+functCd+'-'+randomKey;
-	    	// remove milliseconds
-	    	tooltipText = tooltipText.substring(0, (tooltipText.length-7));
-	    	var buttonText = Ext.util.Format.ellipsis(tooltipText, 40);
-	    	
-	    	var button = new Ext.Button({
-	    		id: functCd+randomKey+'download',
-	    		text: buttonText,
-	    		tooltip: tooltipText,
-	    		disabled: false,
-	    		scope: this,
-	    		disabled: true,
-	    		handler: function(){
-	    			window.open(urlToCall,'name','resizable=1,height=750,width=1000');
-					}
-				});
-	    	button.enable();
-	    	this.downloadButtonPanels[functCd+randomKey].add(button);
-	    	this.buttonCounter++;
-	    	
-	    }
-	   // this.downloadButtons[functCd+randomKey].enable();
-	   
-	    
-	    this.downloadedPanel.add(this.downloadButtonPanels[functCd+randomKey]);
-	    //this.downloadedPanel.add(this.downloadButtons[functCd+randomKey]);
-
-	    this.createDeleteForm(functCd, randomKey, progressThreadId);
-
-	    this.downloadedPanel.doLayout();
-	    this.doLayout();
 	
-	}
 	, createDeleteForm: function(functCd, randomKey, progressThreadId){
 	   
 		var pars = {FUNCT_CD: functCd, RANDOM_KEY: randomKey, PROGRESS_THREAD_ID: progressThreadId };
@@ -428,21 +413,8 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	    this.downloadedPanel.add(this.deleteButtonPanels[functCd+randomKey]);
 	
 	}
-	, cycleProgress: function(){
-		// for better performances wanted to draw bars only when expanded, but execution must go on aniway
-		// true means to cycle
-		if(this.canAccess==true){		
-			this.canAccess=false;
-			this.updateProgressStatus(true);
-			this.doLayout();
-			this.canAccess=true;
-		}
-		else{
-				var that = this;
-				setTimeout(function(){that.cycleProgress()}, 5000);
-		}
+	
 
-	}
 	, checkEmptyPanels: function(){
 		if(this.progressCounter<1){
 			if(this.progressEmptyPanel){
@@ -461,6 +433,22 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		else{
 			this.buttonEmptyPanel.hide();
 		}	
+	}
+	
+	, onXExpand: function () {
+		this.xexpanded = true;
+		// false because is executing only for one time because of expansion
+		if(this.canAccess == true){
+			this.canAccess = false;
+			this.updateProgressStatus(false); // NO MORE CALL to avoid synchronization problem
+	
+			this.canAccess=true;
+		}
+		this.doLayout();
+	}
+	
+	, onXCollapse: function () {
+		this.xexpanded = false;
 	}
 	
     

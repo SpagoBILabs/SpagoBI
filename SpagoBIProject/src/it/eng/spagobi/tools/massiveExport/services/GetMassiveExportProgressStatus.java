@@ -77,44 +77,37 @@ public class GetMassiveExportProgressStatus extends AbstractSpagoBIAction {
 		Integer partial = null;
 
 		IProgressThreadDAO progressThreadDAO = null;
-		boolean noWorkPresent = false;
+			
 		try{
 			progressThreadDAO = DAOFactory.getProgressThreadDAO();
 
-			List<ProgressThread> listPT = progressThreadDAO.loadNotClosedProgressThreadsByUserId(userId);
-			JSONArray array = new JSONArray();
+			List<ProgressThread> progressThreads = progressThreadDAO.loadNotClosedProgressThreadsByUserId(userId);
+			JSONArray response = new JSONArray();
 		
-			if(listPT != null){
-				//logger.debug("Progress Thread for userId="+userId+ " retrieved "+listPT.size()+" documents");
-				for (Iterator iterator = listPT.iterator(); iterator.hasNext();) {
-					ProgressThread pT = (ProgressThread) iterator.next();
+			if(progressThreads != null){
+				
+				for (ProgressThread progressThread : progressThreads) {
+					
 					JSONObject obj = new JSONObject();
-					partial = pT.getPartial();
-					total = pT.getTotal();
-					obj.put(FUNCT_CD, pT.getFunctionCd());
+					partial = progressThread.getPartial();
+					total = progressThread.getTotal();
+					obj.put(FUNCT_CD, progressThread.getFunctionCd());
 					obj.put(TOTAL, total);
 					obj.put(PARTIAL, partial);
-					obj.put(RANDOM_KEY, pT.getRandomKey());
-					obj.put(PROGRESS_THREAD_ID, pT.getProgressThreadId());
-					if(partial>=total){
-						//logger.debug("Work is completed");  // if finish mark as downlod
+					obj.put(RANDOM_KEY, progressThread.getRandomKey());
+					obj.put(PROGRESS_THREAD_ID, progressThread.getProgressThreadId());
+					
+					if(partial >= total){
 						obj.put(MESSAGE, MESSAGE_DOWNLOAD);					
-					}
-					else{
+					} else{
 						obj.put(MESSAGE, MESSAGE_STARTED);											
 					}
-					array.put(obj);
-				//logger.debug(""+pT);
+					response.put(obj);
 				}				
 
 			}
-			else{
-				//logger.debug("Progress Threads for userId="+userId+ " no more present; set as complete");
-				noWorkPresent = true;
-				//object.put(NO_WORK_PRESENT, true);
-			}
-
-			writeBackToClient(new JSONSuccess(array));
+		
+			writeBackToClient(new JSONSuccess(response));
 
 		} catch (EMFUserError err) {
 			throw new SpagoBIServiceException("Impossible to write back the responce to the client", err);
