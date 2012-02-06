@@ -152,14 +152,14 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	, serverPooling: function(){
 		// for better performances wanted to draw bars only when expanded, but execution must go on aniway
 		// true means to cycle
-		if(this.canAccess==true){		
+		if(this.canAccess==true && this.xexpanded){		
 			this.canAccess = false;
 			this.updateProgressStatus(true);
 			this.doLayout();
 			this.canAccess = true;
 		} else{
 			var that = this;
-			setTimeout(function(){that.serverPooling()}, 5000);
+			setTimeout(function(){that.serverPooling()}, 10000);
 		}
 	}
 
