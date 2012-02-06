@@ -158,11 +158,6 @@ Ext.extend(Sbi.console.DetailPanel, Ext.Panel, {
     , getTitlePage: function(conf){
     	//internationalizes and substitutes parameter values if its necessary
     	var titlePage =  Sbi.locale.getLNValue(conf.title);
-    	/*if (conf.title !== undefined && conf.title.indexOf('LN(')>=0){					
-			var lenIdx = (obj.indexOf(')')) - (obj.indexOf('LN(')+3);
-			var idx  = obj.substr(obj.indexOf('LN(')+3,lenIdx);
-			value = LN(idx);    			
-    	}*/
     	if (titlePage.indexOf("$P{") !== -1){
     		titlePage = this.getVarConfiguration(titlePage, conf);
     	}
