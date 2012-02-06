@@ -1085,7 +1085,7 @@ toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId
 	<div> &nbsp;</div>		
     <br/>
 		<input type="checkbox" id="saveasdocument_<%=biobj.getId()%>__<%=index%>"  name="saveasdocument_<%=biobj.getId()%>__<%=index%>" 
-		       <%if(sInfo.isFunctionalityTreeDispatchChannelEnabled()){out.write(" checked='checked' " );}%> />
+		       <%if( sInfo.isFunctionalityTreeDispatchChannelEnabled() ){out.write(" checked='checked' " );}%> />
 		<span class='portlet-form-field-label'>
 			<spagobi:message key="scheduler.saveasdoc" bundle="component_scheduler_messages" />
 		</span>
