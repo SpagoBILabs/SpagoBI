@@ -288,6 +288,8 @@ public class XExecuteBIDocumentJob implements Job {
 						dispatchContext.setContentType(contentType);
 						dispatchContext.setFileExtension(fileExtension);
 						dispatchContext.setParametersMap(parametersMap);
+						dispatchContext.setTotalNumberOfDocumentsToDispatch(documentLabels.length);
+						dispatchContext.setIndexNumberOfDocumentToDispatch(documentIndex);
 						
 						documentDispatcher.setDispatchContext(dispatchContext);
 						documentDispatcher.dispatch(document, executionOutput);

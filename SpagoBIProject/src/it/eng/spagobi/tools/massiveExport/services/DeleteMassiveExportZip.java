@@ -26,6 +26,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.massiveExport.utils.Utilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -51,6 +52,7 @@ public class DeleteMassiveExportZip extends AbstractSpagoBIAction {
 	public static final String  RANDOM_KEY = "RANDOM_KEY";
 	public static final String  PROGRESS_THREAD_ID = "PROGRESS_THREAD_ID";
 	public static final String  FUNCT_CD = "FUNCT_CD";
+	public static final String  PROGRESS_THREAD_TYPE = "PROGRESS_THREAD_TYPE";
 
 	@Override
 	public void doService() {
@@ -58,20 +60,24 @@ public class DeleteMassiveExportZip extends AbstractSpagoBIAction {
 
 		IEngUserProfile profile = getUserProfile();
 
-		String randomKey = null;
-		String functCd = null;
+		String zipFileName = null;
+		String folderLabel = null;
 		Integer progressThreadId = null;
+		String progressThreadType = null;
 		File zipFile = null;
+		
 		
 		try{
 
-			randomKey = getAttributeAsString( RANDOM_KEY);
-			functCd = getAttributeAsString( FUNCT_CD);
+			zipFileName = getAttributeAsString( RANDOM_KEY);
+			folderLabel = getAttributeAsString( FUNCT_CD);
 			progressThreadId = getAttributeAsInteger( PROGRESS_THREAD_ID);
-
-			logger.debug(RANDOM_KEY+": "+randomKey);
-			logger.debug(FUNCT_CD+": "+functCd);
+			progressThreadType = getAttributeAsString( PROGRESS_THREAD_TYPE );
+			
+			logger.debug(RANDOM_KEY+": "+zipFileName);
+			logger.debug(FUNCT_CD+": "+folderLabel);
 			logger.debug(PROGRESS_THREAD_ID+": "+progressThreadId);
+			logger.debug(PROGRESS_THREAD_TYPE + ": " + progressThreadType);
 
 
 			// delete the record
@@ -83,9 +89,14 @@ public class DeleteMassiveExportZip extends AbstractSpagoBIAction {
 			}
 			logger.debug("progress thread with id "+progressThreadId+" has been deleted");
 
-			logger.debug("Delete zipFile RandomKey = "+randomKey+" FunctCd = "+functCd+ " ProgressThreadId = "+progressThreadId);
+			logger.debug("Delete zipFile RandomKey = "+zipFileName+" FunctCd = "+folderLabel+ " ProgressThreadId = "+progressThreadId);
 
-			zipFile = Utilities.getMassiveExportZipFile(functCd, randomKey);
+			if(ProgressThread.TYPE_MASSIVE_EXPORT.equalsIgnoreCase(progressThreadType)) {
+				zipFile = Utilities.getMassiveExportZipFile(folderLabel, zipFileName);
+			} else if(ProgressThread.TYPE_MASSIVE_SCHEDULE.equalsIgnoreCase(progressThreadType)) {
+				zipFile = Utilities.getMassiveScheduleZipFile((String)getUserProfile().getUserUniqueIdentifier(), folderLabel, zipFileName);				
+			}
+		
 			if(zipFile.exists()) {
 				boolean zipFileDeleted = zipFile.delete();
 				if(zipFileDeleted){
@@ -98,7 +109,7 @@ public class DeleteMassiveExportZip extends AbstractSpagoBIAction {
 			}
 			
 			//delte folder directory if no more used
-			Utilities.deleteMassiveExportFolderIfEmpty(functCd);
+			Utilities.deleteMassiveExportFolderIfEmpty(folderLabel);
 
 			writeBackToClient(new JSONSuccess(new JSONObject()));
 

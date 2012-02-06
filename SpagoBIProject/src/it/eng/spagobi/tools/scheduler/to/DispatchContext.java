@@ -34,6 +34,9 @@ public class DispatchContext implements Serializable {
 	private boolean fileSystemDisptachChannelEnabled = false;
 	
 	private String destinationFolder = "";
+	private String functionalityTreeFolderLabel = "";
+	private String  owner = "";
+
 	private String snapshotName = "";
 	private String snapshotDescription = "";
 	private String snapshotHistoryLength = "";
@@ -72,7 +75,8 @@ public class DispatchContext implements Serializable {
 	private String contentType;
 	private IDataStore emailDispatchDataStore;
 	private Map<String, String> parametersMap;
-	
+	private int totalNumberOfDocumentsToDispatch;
+	private int indexNumberOfDocumentToDispatch;
 	
 	public boolean isDistributionListDispatchChannelEnabled() {
 		return distributionListDispatchChannelEnabled;
@@ -578,6 +582,32 @@ public class DispatchContext implements Serializable {
 	}
 	public void setDestinationFolder(String destinationFolder) {
 		this.destinationFolder = destinationFolder;
+	}
+	public String getFunctionalityTreeFolderLabel() {
+		return functionalityTreeFolderLabel;
+	}
+	public void setFunctionalityTreeFolderLabel(String functionalityTreeFolderLabel) {
+		this.functionalityTreeFolderLabel = functionalityTreeFolderLabel;
+	}
+	public String getOwner() {
+		return owner;
+	}
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+	public int getTotalNumberOfDocumentsToDispatch() {
+		return totalNumberOfDocumentsToDispatch;
+	}
+	public void setTotalNumberOfDocumentsToDispatch(
+			int totalNumberOfDocumentsToDispatch) {
+		this.totalNumberOfDocumentsToDispatch = totalNumberOfDocumentsToDispatch;
+	}
+	public int getIndexNumberOfDocumentToDispatch() {
+		return indexNumberOfDocumentToDispatch;
+	}
+	public void setIndexNumberOfDocumentToDispatch(
+			int indexNumberOfDocumentToDispatch) {
+		this.indexNumberOfDocumentToDispatch = indexNumberOfDocumentToDispatch;
 	}
 	
 	

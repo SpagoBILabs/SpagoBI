@@ -60,6 +60,8 @@ public class GetMassiveExportProgressStatus extends AbstractSpagoBIAction {
 	public static final String  RANDOM_KEY = "randomKey";
 	public static final String  PROGRESS_THREAD_ID = "progressThreadId";
 	public static final String  MESSAGE = "message";
+	public static final String  TYPE = "type";
+	
 	
 	
 	
@@ -96,6 +98,7 @@ public class GetMassiveExportProgressStatus extends AbstractSpagoBIAction {
 					obj.put(PARTIAL, partial);
 					obj.put(RANDOM_KEY, progressThread.getRandomKey());
 					obj.put(PROGRESS_THREAD_ID, progressThread.getProgressThreadId());
+					obj.put(TYPE, progressThread.getType());
 					
 					if(partial >= total){
 						obj.put(MESSAGE, MESSAGE_DOWNLOAD);					

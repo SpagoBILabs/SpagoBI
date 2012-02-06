@@ -12,6 +12,9 @@ public class ProgressThread {
 	private String randomKey;
 	private String type;
 	
+	public static final String TYPE_MASSIVE_SCHEDULE = "MASSIVE_SCHEDULE";
+	public static final String TYPE_MASSIVE_EXPORT = "MASSIVE_EXPORT";
+	
 	public String getUserId() {
 		return userId;
 	}
@@ -62,7 +65,6 @@ public class ProgressThread {
 		this.status = status;
 		this.randomKey = randomKey;
 		this.type = type;
-		
 	}
 	public ProgressThread() {
 		super();
