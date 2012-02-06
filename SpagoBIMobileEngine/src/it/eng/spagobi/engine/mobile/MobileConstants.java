@@ -21,6 +21,9 @@
 package it.eng.spagobi.engine.mobile;
 
 public class MobileConstants {
+	public static String TABLE_TAG = "TABLE_WIDGET";
+	public static String CHART_TAG = "CHART_WIDGET";
+	public static String COMPOSED_TAG = "COMPOSED_WIDGET";
 	public static String TITLE_TAG = "TITLE";
 	public static String TITLE_VALUE_ATTR = "value";
 	public static String TITLE_STYLE_ATTR = "style";

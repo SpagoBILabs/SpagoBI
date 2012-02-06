@@ -36,6 +36,7 @@ public class MobileDatasetTableSerializer {
 	private static final String MODEL_ERROR = "error";
 
 	public static transient Logger logger = Logger.getLogger(MobileDatasetTableSerializer.class);
+	
 	public Object write(IDataStore dataStore, JSONArray conditions) throws RuntimeException {
 		JSONObject  result = null;
 		int recNo;
