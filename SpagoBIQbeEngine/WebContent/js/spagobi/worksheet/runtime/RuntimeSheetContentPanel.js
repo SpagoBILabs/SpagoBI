@@ -93,9 +93,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 
 	, exportContent: function(filtersValue){
 		//if the content is hidden we return an empty type content
-		if(this.hidden){
-			return {SHEET_TYPE: 'EMPTY'};
-		}
+//		if(this.hidden){
+//			return {SHEET_TYPE: 'EMPTY'};
+//		}
 		
 		if(this.contentConfig.designer == 'Table') {
 			var visibleselectfields = (this.contentConfig.visibleselectfields);
