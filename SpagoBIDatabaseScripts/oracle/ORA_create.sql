@@ -2009,8 +2009,9 @@ CREATE TABLE SBI_PROGRESS_THREAD (
        PARTIAL              INTEGER,
        TOTAL        	      INTEGER,
        FUNCTION_CD         VARCHAR2(200),
-       MESSAGE              VARCHAR2(4000),
-       RANDOM_KEY			VARCHAR2(4000),	
+       STATUS              VARCHAR2(4000),
+       RANDOM_KEY			VARCHAR2(4000),
+       TYPE 				VARCHAR2(200),	
        PRIMARY KEY (PROGRESS_THREAD_ID)
 );
 
