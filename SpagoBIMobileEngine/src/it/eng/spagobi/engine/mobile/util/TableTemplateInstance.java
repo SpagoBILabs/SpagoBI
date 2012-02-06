@@ -116,7 +116,7 @@ public class TableTemplateInstance implements IMobileTemplateInstance{
 	@Override
 	public String getDocumentType() {
 		// TODO Auto-generated method stub
-		return null;
+		return MobileConstants.TABLE_TYPE;
 	}
 
 	public void setFeatures() {
