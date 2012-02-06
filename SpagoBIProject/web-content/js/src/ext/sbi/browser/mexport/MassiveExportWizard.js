@@ -176,7 +176,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 			region: 'north',
 			height: 45,
 			frame: true,
-			html: '<H1>Options</H1><P>&nbsp;&nbsp;&nbsp;Setup massive export options</P>'
+			html: '<H1>'+LN('Sbi.browser.mexport.MassiveExportWizardOptionsPage.options')+'</H1><P>&nbsp;&nbsp;&nbsp;'+LN('sbi.browser.mexport.massiveExportWizardOptionsPage.title')+'</P>'
 		});
 		this.pagePanel = new Ext.Panel({
 			layout: 'card',  
