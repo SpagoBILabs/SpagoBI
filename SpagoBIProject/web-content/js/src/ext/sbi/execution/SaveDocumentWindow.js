@@ -64,7 +64,6 @@ Sbi.execution.SaveDocumentWindow = function(config) {
 		
 		if(config.business_metadata != undefined && config.business_metadata != null ){
 			saveDocParams.business_metadata = Ext.util.JSON.encode(config.business_metadata);
-			alert(config.business_metadata.toSource());
 		}
 		
 	} else{
