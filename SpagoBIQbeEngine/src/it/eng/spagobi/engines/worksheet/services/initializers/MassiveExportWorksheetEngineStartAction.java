@@ -56,7 +56,8 @@ public class MassiveExportWorksheetEngineStartAction extends WorksheetEngineStar
 					// put name, description and value
 					par.put("name", name);
 					if(nameDescription != null) par.put("description", nameDescription);
-					if(value != null) par.put("value", value);				
+					if(value != null) par.put("value", value);
+					else par.put("value", "");
 				}
 				logger.debug("add parameters JSON array "+array);
 				serviceResponse.setAttribute(ExportWorksheetAction.PARAMETERS, array);
