@@ -94,6 +94,11 @@ Sbi.execution.toolbar.DocumentExecutionPageToolbar = function(config) {
 		, baseParams: params
 	});
 	
+	this.services['getMetadataService'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName : 'GET_METADATA_ACTION',
+		baseParams : params
+	});
+	
 	var updateDocParams = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: 'DOC_UPDATE'};
 	this.services['updateDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'SAVE_DOCUMENT_ACTION'
@@ -392,26 +397,14 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			
 			this.fireEvent('showmask','Exporting..');
 			
-						    
 			if(!records) {
-								
-				var params = {
-					LIGHT_NAVIGATOR_DISABLED : 'TRUE',
-					OBJECT_ID: this.executionInstance.OBJECT_ID
-				};
 				
-				var subObjectId = this.executionInstance.SBI_SUBOBJECT_ID;
-				if(subObjectId) {
-					params.SUBOBJECT_ID = subObjectId;
+				var urlForMetadata = this.services['getMetadataService'];
+				urlForMetadata += "&OBJECT_ID=" + this.executionInstance.OBJECT_ID;
+				if (this.executionInstance.SBI_SUBOBJECT_ID) {
+					urlForMetadata += "&SUBOBJECT_ID=" + this.executionInstance.SBI_SUBOBJECT_ID;
 				}
 			
-				this.services = new Array();
-
-				this.services['getMetadataService'] = Sbi.config.serviceRegistry.getServiceUrl({
-					serviceName : 'GET_METADATA_ACTION',
-					baseParams : params
-				});
-					
 				var metadataStore = new Ext.data.JsonStore({
 			        autoLoad: false,
 			        fields: [
@@ -424,7 +417,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			           , 'meta_creation_date'
 			           , 'meta_change_date'
 			        ]
-			        , url: this.services['getMetadataService']
+			        , url: urlForMetadata
 			    });
 			    metadataStore.on('load', function(store, records, options ) {
 			    	this.exportWorksheetsExecution(mimeType, records);
@@ -1288,7 +1281,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		if(formValues!=null){//the values of the smart filter
 			params = Ext.apply(params, {'formValues': Ext.util.JSON.encode(formValues)});
 		}
-		
+
 		Ext.Ajax.request({
 	        url: this.services['updateDocumentService'],
 	        params: params,
