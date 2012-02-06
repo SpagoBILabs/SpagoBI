@@ -11,21 +11,29 @@
  */
 package it.eng.spagobi.tools.scheduler.to;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class SaveInfo implements Serializable{
+import org.quartz.JobExecutionContext;
 
-	private boolean saveAsSnapshot = false;
-	private boolean saveAsDocument = false;
+public class DispatchContext implements Serializable {
 
-	private boolean sendMail = false;
-	private boolean sendToDl = false;
-	private boolean addToDl = false;
-	private boolean sendToJavaClass = false;
+	private static final long serialVersionUID = 1L;
 	
-
+	// stored properties
+	private boolean snapshootDispatchChannelEnabled = false;
+	private boolean functionalityTreeDispatchChannelEnabled = false;
+	private boolean mailDispatchChannelEnabled = false;
+	private boolean distributionListDispatchChannelEnabled = false;
+	private boolean javaClassDispatchChannelEnabled = false;
+	private boolean fileSystemDisptachChannelEnabled = false;
+	
+	private String destinationFolder = "";
 	private String snapshotName = "";
 	private String snapshotDescription = "";
 	private String snapshotHistoryLength = "";
@@ -37,6 +45,91 @@ public class SaveInfo implements Serializable{
 	private boolean useFolderDataSet = false;
 	private String dataSetFolderLabel = null;
 	private String dataSetFolderParameterLabel = null;
+	
+	private boolean useFixedRecipients = false;
+	private String mailTos = "";
+	private boolean useDataSet = false;
+	private String dataSetLabel = null;
+	private String dataSetParameterLabel = null;
+	private boolean useExpression = false;
+	private String expression = "";
+	private String functionalityIds = "";
+	private String mailSubj = "";
+	private String mailTxt = "";
+	private String javaClassPath = "";	
+	private int biobjId = 0;
+	private List dlIds = new ArrayList();
+	
+	// injected properties
+	private IEngUserProfile userProfile;
+	private String nameSuffix = "";
+	private String descriptionSuffix = "";
+	
+	private JobExecutionContext jobExecutionContext; 
+	private String fileExtension;
+	private IDataStore folderDispatchDataSotre;
+	
+	private String contentType;
+	private IDataStore emailDispatchDataStore;
+	private Map<String, String> parametersMap;
+	
+	
+	public boolean isDistributionListDispatchChannelEnabled() {
+		return distributionListDispatchChannelEnabled;
+	}
+	public void setDistributionListDispatchChannelEnabled(boolean enabled) {
+		this.distributionListDispatchChannelEnabled = enabled;
+	}
+	
+	public boolean isFileSystemDispatchChannelEnabled() {
+		return fileSystemDisptachChannelEnabled;
+	}
+	public void setFileSystemDisptachChannelEnabled(boolean enabled) {
+		fileSystemDisptachChannelEnabled = enabled;
+	}
+
+	public boolean isFunctionalityTreeDispatchChannelEnabled() {
+		return functionalityTreeDispatchChannelEnabled;
+	}
+	public void setFunctionalityTreeDispatchChannelEnabled(boolean enabled) {
+		this.functionalityTreeDispatchChannelEnabled = enabled;
+	}
+	
+	public boolean isSnapshootDispatchChannelEnabled() {
+		return snapshootDispatchChannelEnabled;
+	}
+	public void setSnapshootDispatchChannelEnabled(boolean enabled) {
+		this.snapshootDispatchChannelEnabled = enabled;
+	}
+
+	public boolean isMailDispatchChannelEnabled() {
+		return mailDispatchChannelEnabled;
+	}
+	public void setMailDispatchChannelEnabled(boolean enabled) {
+		this.mailDispatchChannelEnabled = enabled;
+	}
+	
+	public boolean isJavaClassDispatchChannelEnabled() {
+		return javaClassDispatchChannelEnabled;
+	}
+
+	public void setJavaClassDispatchChannelEnabled(boolean enabled) {
+		this.javaClassDispatchChannelEnabled = enabled;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * @return the useFixedFolder
 	 */
@@ -107,19 +200,7 @@ public class SaveInfo implements Serializable{
 		this.dataSetFolderParameterLabel = dataSetFolderParameterLabel;
 	}
 
-	private boolean useFixedRecipients = false;
-	private String mailTos = "";
-	private boolean useDataSet = false;
-	private String dataSetLabel = null;
-	private String dataSetParameterLabel = null;
-	private boolean useExpression = false;
-	private String expression = "";
-	private String functionalityIds = "";
-	private String mailSubj = "";
-	private String mailTxt = "";
-	private String javaClassPath = "";	
-	private int biobjId = 0;
-	private List dlIds = new ArrayList();
+
 	
 	/**
 	 * Removes the dl id.
@@ -247,59 +328,7 @@ public class SaveInfo implements Serializable{
 		this.mailTxt = mailTxt;
 	}
 	
-	/**
-	 * Checks if is save as document.
-	 * 
-	 * @return true, if is save as document
-	 */
-	public boolean isSaveAsDocument() {
-		return saveAsDocument;
-	}
 	
-	/**
-	 * Sets the save as document.
-	 * 
-	 * @param saveAsDocument the new save as document
-	 */
-	public void setSaveAsDocument(boolean saveAsDocument) {
-		this.saveAsDocument = saveAsDocument;
-	}
-	
-	/**
-	 * Checks if is save as snapshot.
-	 * 
-	 * @return true, if is save as snapshot
-	 */
-	public boolean isSaveAsSnapshot() {
-		return saveAsSnapshot;
-	}
-	
-	/**
-	 * Sets the save as snapshot.
-	 * 
-	 * @param saveAsSnapshot the new save as snapshot
-	 */
-	public void setSaveAsSnapshot(boolean saveAsSnapshot) {
-		this.saveAsSnapshot = saveAsSnapshot;
-	}
-	
-	/**
-	 * Checks if is send mail.
-	 * 
-	 * @return true, if is send mail
-	 */
-	public boolean isSendMail() {
-		return sendMail;
-	}
-	
-	/**
-	 * Sets the send mail.
-	 * 
-	 * @param sendMail the new send mail
-	 */
-	public void setSendMail(boolean sendMail) {
-		this.sendMail = sendMail;
-	}
 	
 	/**
 	 * Gets the snapshot description.
@@ -391,41 +420,11 @@ public class SaveInfo implements Serializable{
 		this.dlIds = dlIds;
 	}
 
-	/**
-	 * Checks if is send to dl.
-	 * 
-	 * @return true, if is send to dl
-	 */
-	public boolean isSendToDl() {
-		return sendToDl;
-	}
+	
 
-	/**
-	 * Sets the send to dl.
-	 * 
-	 * @param sendToDl the new send to dl
-	 */
-	public void setSendToDl(boolean sendToDl) {
-		this.sendToDl = sendToDl;
-	}
 
-	/**
-	 * Checks if is adds the to dl.
-	 * 
-	 * @return true, if is adds the to dl
-	 */
-	public boolean isAddToDl() {
-		return addToDl;
-	}
-
-	/**
-	 * Sets the adds the to dl.
-	 * 
-	 * @param addToDl the new adds the to dl
-	 */
-	public void setAddToDl(boolean addToDl) {
-		this.addToDl = addToDl;
-	}
+	
+	
 
 	/**
 	 * Gets the biobj id.
@@ -493,13 +492,7 @@ public class SaveInfo implements Serializable{
 		this.useFixedRecipients = useFixedRecipients;
 	}
 
-	public boolean isSendToJavaClass() {
-		return sendToJavaClass;
-	}
-
-	public void setSendToJavaClass(boolean sendToJavaClass) {
-		this.sendToJavaClass = sendToJavaClass;
-	}
+	
 
 	public String getJavaClassPath() {
 		return javaClassPath;
@@ -507,6 +500,84 @@ public class SaveInfo implements Serializable{
 
 	public void setJavaClassPath(String javaClassPath) {
 		this.javaClassPath = javaClassPath;
+	}
+
+	public String getNameSuffix() {
+		return nameSuffix;
+	}
+
+	public void setNameSuffix(String nameSuffix) {
+		this.nameSuffix = nameSuffix;
+	}
+
+	public String getDescriptionSuffix() {
+		return descriptionSuffix;
+	}
+
+	public void setDescriptionSuffix(String descriptionSuffix) {
+		this.descriptionSuffix = descriptionSuffix;
+	}
+
+	public IEngUserProfile getUserProfile() {
+		return userProfile;
+	}
+
+	public void setUserProfile(IEngUserProfile userProfile) {
+		this.userProfile = userProfile;
+	}
+
+	public JobExecutionContext getJobExecutionContext() {
+		return jobExecutionContext;
+	}
+
+	public void setJobExecutionContext(JobExecutionContext jobExecutionContext) {
+		this.jobExecutionContext = jobExecutionContext;
+	}
+
+	public String getFileExtension() {
+		return fileExtension;
+	}
+
+	public void setFileExtension(String fileExtension) {
+		this.fileExtension = fileExtension;
+	}
+
+	public IDataStore getFolderDispatchDataSotre() {
+		return folderDispatchDataSotre;
+	}
+
+	public void setFolderDispatchDataSotre(IDataStore folderDispatchDataSotre) {
+		this.folderDispatchDataSotre = folderDispatchDataSotre;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public IDataStore getEmailDispatchDataStore() {
+		return emailDispatchDataStore;
+	}
+
+	public void setEmailDispatchDataStore(IDataStore emailDispatchDataStore) {
+		this.emailDispatchDataStore = emailDispatchDataStore;
+	}
+
+	public Map<String, String> getParametersMap() {
+		return parametersMap;
+	}
+
+	public void setParametersMap(Map<String, String> parametersMap) {
+		this.parametersMap = parametersMap;
+	}
+	public String getDestinationFolder() {
+		return destinationFolder;
+	}
+	public void setDestinationFolder(String destinationFolder) {
+		this.destinationFolder = destinationFolder;
 	}
 	
 	

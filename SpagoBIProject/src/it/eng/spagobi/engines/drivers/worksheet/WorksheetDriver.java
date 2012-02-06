@@ -17,7 +17,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjMetaDataAndContent;
+import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
@@ -521,7 +521,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 				
 				
 				for (Iterator iterator = biObject.getObjMetaDataAndContents().iterator(); iterator.hasNext();) {
-					ObjMetaDataAndContent type = (ObjMetaDataAndContent) iterator.next();
+					DocumentMetadataProperty type = (DocumentMetadataProperty) iterator.next();
 					Object o = jsonSerializer.serialize(type, locale);
 					metaArray.put(o);
 					logger.debug("Metadata serialzied "+o);

@@ -20,7 +20,7 @@ import it.eng.spagobi.kpi.alarm.dao.SbiAlarmEventDAOHibImpl;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmEvent;
-import it.eng.spagobi.tools.scheduler.to.SaveInfo;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -172,7 +172,7 @@ public class AlarmInspectorJob implements Job {
 	    logger.debug("IN");
 	    
 	    Set<SbiAlarmContact> keySet = alertSendingSessionMap.keySet();
-	    SaveInfo sInfo = new SaveInfo();
+	    DispatchContext sInfo = new DispatchContext();
 	    
                                             if(logger.isDebugEnabled())
                                             logger.debug("Distribution list parsing.");
@@ -259,7 +259,7 @@ public class AlarmInspectorJob implements Job {
 	}
 	
 	
-	private void sendMail(SaveInfo sInfo, byte[] response, String retCT, String fileExt) 
+	private void sendMail(DispatchContext sInfo, byte[] response, String retCT, String fileExt) 
 	{
 	    logger.debug("IN");
 		try

@@ -22,7 +22,7 @@ import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.commons.utilities.urls.IUrlBuilder;
 import it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory;
-import it.eng.spagobi.tools.scheduler.to.SaveInfo;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 
@@ -131,7 +131,7 @@ public class SelectFunctionalityTreeHtmlGenerator implements ITreeHtmlGenerator 
 		String indexStr = idObjStr.substring(idObjStr.lastIndexOf("__"));
 		Integer idBiobj = Integer.valueOf(idObjStr.substring(0, idObjStr.lastIndexOf("__")));
 		Map saveOpts = tInfo.getSaveOptions();
-		SaveInfo sInfo = (SaveInfo)saveOpts.get(idBiobj+indexStr);
+		DispatchContext sInfo = (DispatchContext)saveOpts.get(idBiobj+indexStr);
 		String functIdsConcat = sInfo.getFunctionalityIds();
 		String[] functIds =  functIdsConcat.split(",");
 		for(int i=0; i<functIds.length; i++) {

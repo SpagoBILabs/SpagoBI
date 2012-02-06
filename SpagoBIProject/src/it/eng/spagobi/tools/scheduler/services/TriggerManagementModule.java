@@ -32,7 +32,7 @@ import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory
 import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
-import it.eng.spagobi.tools.scheduler.to.SaveInfo;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
 import it.eng.spagobi.tools.scheduler.utils.JavaClassDestination;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
@@ -236,11 +236,11 @@ public class TriggerManagementModule extends AbstractModule {
 			int index = 0;
 			while(iterBiobjIds.hasNext()){
 				index ++;
-				SaveInfo sInfo = new SaveInfo();
+				DispatchContext sInfo = new DispatchContext();
 				Integer biobId = (Integer)iterBiobjIds.next();
 				String saveassnap = (String)request.getAttribute("saveassnapshot_"+biobId+"__"+index);	
 				if(saveassnap!=null) {
-					sInfo.setSaveAsSnapshot(true);
+					sInfo.setSnapshootDispatchChannelEnabled(true);
 					String snapname = (String)request.getAttribute("snapshotname_"+biobId+"__"+index);	
 					sInfo.setSnapshotName(snapname);
 					String snapdescr = (String)request.getAttribute("snapshotdescription_"+biobId+"__"+index);
@@ -251,7 +251,7 @@ public class TriggerManagementModule extends AbstractModule {
 			
 				String sendToJavaClass = (String)request.getAttribute("sendtojavaclass_"+biobId+"__"+index);	
 				if(sendToJavaClass!=null) {
-					sInfo.setSendToJavaClass(true);
+					sInfo.setJavaClassDispatchChannelEnabled(true);
 					String javaClassPath = (String)request.getAttribute("javaclasspath_"+biobId+"__"+index);	
 					JavaClassDestination tryClass=null;
 					try{
@@ -274,7 +274,7 @@ public class TriggerManagementModule extends AbstractModule {
 				
 				String saveasdoc = (String)request.getAttribute("saveasdocument_"+biobId+"__"+index);	
 				if(saveasdoc!=null) {
-					sInfo.setSaveAsDocument(true);
+					sInfo.setFunctionalityTreeDispatchChannelEnabled(true);
 					String docname = (String)request.getAttribute("documentname_"+biobId+"__"+index);	
 					sInfo.setDocumentName(docname);
 					String docdescr = (String)request.getAttribute("documentdescription_"+biobId+"__"+index);	
@@ -320,7 +320,7 @@ public class TriggerManagementModule extends AbstractModule {
 				}
 				String sendmail = (String)request.getAttribute("sendmail_"+biobId+"__"+index);	
 				if(sendmail!=null) {
-					sInfo.setSendMail(true);
+					sInfo.setMailDispatchChannelEnabled(true);
 					boolean useFixedRecipients = "true".equalsIgnoreCase((String) request.getAttribute("useFixedRecipients_"+biobId+"__"+index));
 					sInfo.setUseFixedRecipients(useFixedRecipients);
 					if (useFixedRecipients) {
@@ -380,7 +380,7 @@ public class TriggerManagementModule extends AbstractModule {
 				}
 				String sendtodl = (String)request.getAttribute("saveasdl_"+biobId+"__"+index);	
 				if(sendtodl!=null) {
-					sInfo.setSendToDl(true);
+					sInfo.setDistributionListDispatchChannelEnabled(true);
 					sInfo.setBiobjId(biobId.intValue());
 					List dlist = DAOFactory.getDistributionListDAO().loadAllDistributionLists();	
 					Iterator it = dlist.iterator();
@@ -454,7 +454,7 @@ public class TriggerManagementModule extends AbstractModule {
 				while(iterbiobjids.hasNext()) {
 					index ++;
 					Integer idobj = (Integer)iterbiobjids.next();
-					saveOptions.put(idobj+"__" + index, new SaveInfo());
+					saveOptions.put(idobj+"__" + index, new DispatchContext());
 				}
 				ti.setSaveOptions(saveOptions);
 			} else {
@@ -556,9 +556,9 @@ public class TriggerManagementModule extends AbstractModule {
 		while(iterbiobjids_s.hasNext()) {
 			String biobjidstr_so =  (String)iterbiobjids_s.next();
 		//	Integer biobjid_so = Integer.valueOf(biobjidstr_so.substring(0, biobjidstr_so.lastIndexOf("__")));
-			SaveInfo sInfo = (SaveInfo)saveOptions.get(biobjidstr_so);
+			DispatchContext sInfo = (DispatchContext)saveOptions.get(biobjidstr_so);
 			String saveOptString = "";
-			if(sInfo.isSaveAsSnapshot()) {
+			if(sInfo.isSnapshootDispatchChannelEnabled()) {
 				saveOptString += "saveassnapshot=true%26";
 				if( (sInfo.getSnapshotName()!=null) && !sInfo.getSnapshotName().trim().equals("") ) {
 					saveOptString += "snapshotname="+sInfo.getSnapshotName()+"%26";
@@ -570,13 +570,13 @@ public class TriggerManagementModule extends AbstractModule {
 					saveOptString += "snapshothistorylength="+sInfo.getSnapshotHistoryLength()+"%26";
 				}
 			}
-			if(sInfo.isSendToJavaClass()) {
+			if(sInfo.isJavaClassDispatchChannelEnabled()) {
 				saveOptString += "sendtojavaclass=true%26";
 				if( (sInfo.getJavaClassPath()!=null) && !sInfo.getJavaClassPath().trim().equals("") ) {
 					saveOptString += "javaclasspath="+sInfo.getJavaClassPath()+"%26";
 				}
 			}			
-			if(sInfo.isSaveAsDocument()) {
+			if(sInfo.isFunctionalityTreeDispatchChannelEnabled()) {
 				saveOptString += "saveasdocument=true%26";
 				if( (sInfo.getDocumentName()!=null) && !sInfo.getDocumentName().trim().equals("") ) {
 					saveOptString += "documentname="+sInfo.getDocumentName()+"%26";
@@ -600,7 +600,7 @@ public class TriggerManagementModule extends AbstractModule {
 					saveOptString += "functionalityids="+sInfo.getFunctionalityIds()+"%26";
 				}
 			}
-			if(sInfo.isSendMail()) {
+			if(sInfo.isMailDispatchChannelEnabled()) {
 				saveOptString += "sendmail=true%26";
 				if(sInfo.isUseFixedRecipients() && sInfo.getMailTos() != null && !sInfo.getMailTos().trim().equals("")) {
 					saveOptString += "mailtos="+sInfo.getMailTos()+"%26";
@@ -621,7 +621,7 @@ public class TriggerManagementModule extends AbstractModule {
 					saveOptString += "mailtxt="+sInfo.getMailTxt()+"%26";
 				}
 			}
-			if(sInfo.isSendToDl()) {
+			if(sInfo.isDistributionListDispatchChannelEnabled()) {
 				String xml = "";
 				if(!runImmediately){
 					xml += "<SCHEDULE ";

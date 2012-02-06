@@ -89,7 +89,7 @@ public class BIObject implements Serializable {
 
 	private Integer refreshSeconds=null;	
 
-	private List<ObjMetaDataAndContent> objMetaDataAndContents = null;
+	private List<DocumentMetadataProperty> objMetaDataAndContents = null;
 	
 	
 	/**
@@ -525,15 +525,20 @@ public class BIObject implements Serializable {
 		this.profiledVisibility = profiledVisibility;
 	}
 
-	public List<ObjMetaDataAndContent> getObjMetaDataAndContents() {
+	public List<DocumentMetadataProperty> getObjMetaDataAndContents() {
 		return objMetaDataAndContents;
 	}
 
-	public void setObjMetaDataAndContents(List<ObjMetaDataAndContent> objMetaDataAndContents) {
+	public void setObjMetaDataAndContents(List<DocumentMetadataProperty> objMetaDataAndContents) {
 		this.objMetaDataAndContents = objMetaDataAndContents;
 	}
 
+	@Override
+	public String toString() {
+		return "Document [label=" + label + "]";
+	}
 
+	
 	
 	
 	

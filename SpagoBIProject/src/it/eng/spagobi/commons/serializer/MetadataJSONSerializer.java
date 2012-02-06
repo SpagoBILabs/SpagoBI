@@ -11,7 +11,7 @@
  */
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spagobi.analiticalmodel.document.bo.ObjMetaDataAndContent;
+import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 
@@ -41,12 +41,12 @@ public class MetadataJSONSerializer implements Serializer {
 		logger.debug("IN");
 		JSONObject result = new JSONObject();
 
-		if ( !(o instanceof ObjMetaDataAndContent) ) {
+		if ( !(o instanceof DocumentMetadataProperty) ) {
 			throw new SerializationException("MetadataJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 		
 		try {
-			ObjMetaDataAndContent both = (ObjMetaDataAndContent)o;
+			DocumentMetadataProperty both = (DocumentMetadataProperty)o;
 			ObjMetadata meta = both.getMeta();
 			ObjMetacontent content = both.getMetacontent();
 

@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="java.util.HashMap"%>
 <%@page import="it.eng.spagobi.tools.scheduler.to.TriggerInfo"%>
 <%@page import="it.eng.spagobi.tools.scheduler.to.JobInfo"%>
-<%@page import="it.eng.spagobi.tools.scheduler.to.SaveInfo"%>
+<%@page import="it.eng.spagobi.tools.scheduler.to.DispatchContext"%>
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@page import="it.eng.spagobi.commons.dao.IDomainDAO"%>
 <%@page import="it.eng.spagobi.tools.distributionlist.bo.DistributionList"%>
@@ -44,8 +44,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.tools.dataset.bo.IDataSet"%>
 <%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter"%>
 
-<%  
-   	SourceBean moduleResponse = (SourceBean)aServiceResponse.getAttribute("TriggerManagementModule"); 
+<%
+	SourceBean moduleResponse = (SourceBean)aServiceResponse.getAttribute("TriggerManagementModule"); 
 	TriggerInfo triggerInfo = (TriggerInfo)aSessionContainer.getAttribute(SpagoBIConstants.TRIGGER_INFO);
 	JobInfo jobInfo = triggerInfo.getJobInfo();
 	List jobBiobjects = jobInfo.getBiobjects();
@@ -71,7 +71,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		origTime = dd.getTime();
 	}
 	String message = msgBuilder.getMessage("scheduler.reschedule.date.alert", "component_scheduler_messages", request);
-
 %>
 
 <!-- ********************** SCRIPT FOR DOJO **************************** -->
@@ -118,7 +117,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 	function saveCall() {
 		var form = document.getElementById('triggerdetailform');
-		var origDt = <%= origTime%>;
+		var origDt = <%=origTime%>;
 		if(origDt != 0){
 			var newDt = form.startdate.value;
 			var newTm = form.starttime.value;
@@ -134,7 +133,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			//current date
 			var currentDt = new Date();
 			if(newTimestamp.getElapsed(oldDate) == 0 || newTimestamp < currentDt ){
-				answer = confirm('<%= message%>');
+				answer = confirm('<%=message%>');
 				if(!answer){			
 					chronStr = getRepetitionString();	
 					$('chronstring').value=chronStr;
@@ -509,8 +508,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <form id="triggerdetailform" method="post" action="<%=formUrl%>" >
 	
 	<input type="hidden" name="PAGE" value="TriggerManagementPage" />
-	<input type="hidden" name="MESSAGEDET" value="<%= SpagoBIConstants.MESSAGE_SAVE_SCHEDULE %>" />
-	<input type="hidden" name="<%= LightNavigationManager.LIGHT_NAVIGATOR_DISABLED %>" value="TRUE" />
+	<input type="hidden" name="MESSAGEDET" value="<%=SpagoBIConstants.MESSAGE_SAVE_SCHEDULE%>" />
+	<input type="hidden" name="<%=LightNavigationManager.LIGHT_NAVIGATOR_DISABLED%>" value="TRUE" />
 
 	<table class='header-table-portlet-section'>
 		<tr class='header-row-portlet-section'>
@@ -522,7 +521,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<a href='<%=backUrl%>'> 
 	      			<img class='header-button-image-portlet-section' 
 	      				 title='<spagobi:message key = "scheduler.back" bundle="component_scheduler_messages" />' 
-	      				 src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/tools/scheduler/back.png", currTheme)%>' 
+	      				 src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/tools/scheduler/back.png", currTheme)%>' 
 	      				 alt='<spagobi:message key = "scheduler.back"  bundle="component_scheduler_messages"/>' />
 				</a>
 			</td>
@@ -531,7 +530,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<a href='javascript:saveCall()'> 
 	      			<img class='header-button-image-portlet-section' 
 	      				 title='<spagobi:message key = "scheduler.save" bundle="component_scheduler_messages" />' 
-	      				 src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/tools/scheduler/save.png", currTheme)%>' 
+	      				 src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/tools/scheduler/save.png", currTheme)%>' 
 	      				 alt='<spagobi:message key = "scheduler.save"  bundle="component_scheduler_messages"/>' />
 				</a>
 			</td>
@@ -551,44 +550,43 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					</span>
 				</div>
 				<%
-				String readonly  = "";
-				String trigName = triggerInfo.getTriggerName();
-				if(trigName!=null) {
-					trigName = trigName.trim();
-					if(!trigName.equals("")) {
-						readonly = " readonly ";
-					} else {
-						Calendar cal = new GregorianCalendar();
-					    int hour24 = cal.get(Calendar.HOUR_OF_DAY);     
-					    int min = cal.get(Calendar.MINUTE);             
-					    int sec = cal.get(Calendar.SECOND);   
-					    int nameL = jobInfo.getJobName().length();
-					    if(nameL<=40){
-					    	trigName = jobInfo.getJobName() + "_" + hour24 + "" + min + "" + sec; 
-					    }else{
-							trigName = jobInfo.getJobName().substring(0,39) + "_" + hour24 + "" + min + "" + sec; 
-					    }
-					}
-				}
-				String saveFormat = "dd/MM/yyyy";
-				String startDate = triggerInfo.getStartDate();
-				String trigStartDate = "";
-				
-				SimpleDateFormat f =  new SimpleDateFormat();
-				f.applyPattern(saveFormat);
-				Date d = new Date();
-				try {if (!startDate.equals("")){
-						d = f.parse(startDate);
-					}
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-				if (!startDate.equals("")){
-					
-					String datePickerFormat = "MM/dd/yyyy";
-					trigStartDate = StringUtils.dateToString(d, datePickerFormat);
-				}else {trigStartDate = startDate ; }
-				
+					String readonly  = "";
+						String trigName = triggerInfo.getTriggerName();
+						if(trigName!=null) {
+							trigName = trigName.trim();
+							if(!trigName.equals("")) {
+								readonly = " readonly ";
+							} else {
+								Calendar cal = new GregorianCalendar();
+							    int hour24 = cal.get(Calendar.HOUR_OF_DAY);     
+							    int min = cal.get(Calendar.MINUTE);             
+							    int sec = cal.get(Calendar.SECOND);   
+							    int nameL = jobInfo.getJobName().length();
+							    if(nameL<=40){
+							    	trigName = jobInfo.getJobName() + "_" + hour24 + "" + min + "" + sec; 
+							    }else{
+									trigName = jobInfo.getJobName().substring(0,39) + "_" + hour24 + "" + min + "" + sec; 
+							    }
+							}
+						}
+						String saveFormat = "dd/MM/yyyy";
+						String startDate = triggerInfo.getStartDate();
+						String trigStartDate = "";
+						
+						SimpleDateFormat f =  new SimpleDateFormat();
+						f.applyPattern(saveFormat);
+						Date d = new Date();
+						try {if (!startDate.equals("")){
+								d = f.parse(startDate);
+							}
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+						if (!startDate.equals("")){
+							
+							String datePickerFormat = "MM/dd/yyyy";
+							trigStartDate = StringUtils.dateToString(d, datePickerFormat);
+						}else {trigStartDate = startDate ; }
 				%>
 				<div class='div_form_field'>
 					<input id="triggername" value="<%=StringEscapeUtils.escapeHtml(trigName)%>" type="text" name="triggername" size="50" <%=readonly%> />
@@ -660,14 +658,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				</div>
 			</div>
 			<%
-			String repInterv = triggerInfo.getRepeatInterval();
-			if(repInterv!=null) {
-			   	if(repInterv.trim().equals("0")) {
-			   		repInterv = "";
-			   	}
-			} else {
-			   	repInterv = "";
-			}
+				String repInterv = triggerInfo.getRepeatInterval();
+				if(repInterv!=null) {
+				   	if(repInterv.trim().equals("0")) {
+				   		repInterv = "";
+				   	}
+				} else {
+				   	repInterv = "";
+				}
 			%>
 			<input type="hidden" value="<%=StringEscapeUtils.escapeHtml(repInterv)%>" name="repeatInterval" />
 			
@@ -709,9 +707,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<div class='div_form_field'>
 								<select name='minute_repetition_n' id='minute_repetition_n' >
 								<%
-								for(int i=1; i<=60; i++) {
-									out.write("<option value='"+i+"'>"+i+"</option>");
-								}
+									for(int i=1; i<=60; i++) {
+															out.write("<option value='"+i+"'>"+i+"</option>");
+														}
 								%>
 								</select>
 							</div>	
@@ -746,9 +744,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<div class='div_form_field'>
 								<select name='hour_repetition_n' id='hour_repetition_n' >
 								<%
-								for(int i=1; i<=24; i++) {
-									out.write("<option value='"+i+"'>"+i+"</option>");
-								}
+									for(int i=1; i<=24; i++) {
+															out.write("<option value='"+i+"'>"+i+"</option>");
+														}
 								%>
 								</select>
 							</div>	
@@ -783,9 +781,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<div class='div_form_field'>
 								<select name='day_repetition_n' id='day_repetition_n' >
 								<%
-								for(int i=1; i<=31; i++) {
-									out.write("<option value='"+i+"'>"+i+"</option>");
-								}
+									for(int i=1; i<=31; i++) {
+															out.write("<option value='"+i+"'>"+i+"</option>");
+														}
 								%>
 								</select>
 							</div>	
@@ -820,9 +818,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<div class='div_form_field'>
 								<select name='week_repetition_n' id='week_repetition_n' >
 								<%
-								for(int i=1; i<=52; i++) {
-									out.write("<option value='"+i+"'>"+i+"</option>");
-								}
+									for(int i=1; i<=52; i++) {
+															out.write("<option value='"+i+"'>"+i+"</option>");
+														}
 								%>
 								</select>
 							</div>	
@@ -874,9 +872,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<div class='div_form_field'>
 								<select name='monthrep_n' id='monthrep_n' >
 								<%
-								for(int i=1; i<=12; i++) {
-									out.write("<option value='"+i+"'>"+i+"</option>");
-								}
+									for(int i=1; i<=12; i++) {
+															out.write("<option value='"+i+"'>"+i+"</option>");
+														}
 								%>
 								</select>
 							</div>	
@@ -914,9 +912,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<div class='div_form_field'>
 								<select name='dayinmonthrep_n' id='dayinmonthrep_n' >
 								<%
-								for(int i=1; i<=31; i++) {
-									out.write("<option value='"+i+"'>"+i+"</option>");
-								}
+									for(int i=1; i<=31; i++) {
+															out.write("<option value='"+i+"'>"+i+"</option>");
+														}
 								%>
 								</select>
 							</div>	
@@ -985,32 +983,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<div style="overflow: hidden; width:  100%">
 	
 	<%
-		if(jobBiobjects.size()==0){
-	%>
+			if(jobBiobjects.size()==0){
+		%>
 				<br/>
 				<spagobi:message key = "scheduler.jobhasnodocument"  bundle="component_scheduler_messages"/>
 				<br/>
-	<%			
+	<%
 		} else {
-			Iterator iterJobBiobjs = jobBiobjects.iterator();
-	    	int index = 0;
-	    	String tabClass = "tab selected"; 
-			while(iterJobBiobjs.hasNext()) {
-				BIObject biobj = (BIObject)iterJobBiobjs.next();
-				String biobjName = biobj.getName();
-				if(index > 0) {
-					tabClass = "tab"; 
-				}
-				index ++;
+		Iterator iterJobBiobjs = jobBiobjects.iterator();
+		    	int index = 0;
+		    	String tabClass = "tab selected"; 
+		while(iterJobBiobjs.hasNext()) {
+			BIObject biobj = (BIObject)iterJobBiobjs.next();
+			String biobjName = biobj.getName();
+			if(index > 0) {
+				tabClass = "tab"; 
+			}
+			index ++;
 	%>
-				<div id="tabbiobj<%=biobj.getId()%>__<%=index%>"  class='<%= tabClass%>'>
+				<div id="tabbiobj<%=biobj.getId()%>__<%=index%>"  class='<%=tabClass%>'>
 					<a href="javascript:changeTab('<%=biobj.getId()%>__<%=index%>')" style="color:black;"> 
 							<%=StringEscapeUtils.escapeHtml(biobjName)%>
 					</a>
 				</div>
-	<%	
-			}
+	<%
 		}
+			}
 	%>
 			</div>
 		</div>
@@ -1018,12 +1016,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 	<%
-		Iterator iterJobBiobjs = jobBiobjects.iterator();
-	    int index = 0;
-	    String setTabOpened = "";
-	    String setIndexTabOpened = "";
-	    String displaytab = "inline";
-		while(iterJobBiobjs.hasNext()) {
+			Iterator iterJobBiobjs = jobBiobjects.iterator();
+			    int index = 0;
+			    String setTabOpened = "";
+			    String setIndexTabOpened = "";
+			    String displaytab = "inline";
+				while(iterJobBiobjs.hasNext()) {
 			BIObject biobj = (BIObject)iterJobBiobjs.next();
 			 
 			if(index > 0) {
@@ -1036,8 +1034,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			
 			String treeName = "tree_" + biobj.getId() + "__" + index;
 			Integer biobjid = biobj.getId();
-			SaveInfo sInfo = (SaveInfo)saveOptions.get(biobjid+"__"+index);
-	%>
+			DispatchContext sInfo = (DispatchContext)saveOptions.get(biobjid+"__"+index);
+		%>
 	
 	<%=setTabOpened%>
 	<%=setIndexTabOpened%>
@@ -1046,7 +1044,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<div class="div_detail_area_forms_scheduler" >    	
         
         <input type="checkbox" id="saveassnapshot_<%=biobj.getId()%>__<%=index%>" name="saveassnapshot_<%=biobj.getId()%>__<%=index%>" 
-               <%if(sInfo.isSaveAsSnapshot()){out.write(" checked='checked' " );} %> />
+               <%if(sInfo.hasSnapshootAsDispatchTarget()){out.write(" checked='checked' " );}%> />
 			  <span class='portlet-form-field-label'>
 					<spagobi:message key="scheduler.saveassnap" bundle="component_scheduler_messages" />
 			  </span>
@@ -1081,13 +1079,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         </div>
         
 <script>  
-toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isSaveAsSnapshot()%> );
+toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId()%>__<%=index%>', <%=sInfo.%> );
 </script> 
 		    <!-- anto: inizio gestione salvataggio doc -->
 	<div> &nbsp;</div>		
     <br/>
 		<input type="checkbox" id="saveasdocument_<%=biobj.getId()%>__<%=index%>"  name="saveasdocument_<%=biobj.getId()%>__<%=index%>" 
-		       <%if(sInfo.isSaveAsDocument()){out.write(" checked='checked' " );} %> />
+		       <%if(sInfo.hasFunctionalityTreeAsDispatchTarget()){out.write(" checked='checked' " );}%> />
 		<span class='portlet-form-field-label'>
 			<spagobi:message key="scheduler.saveasdoc" bundle="component_scheduler_messages" />
 		</span>
@@ -1114,13 +1112,13 @@ toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId
 	        </div>   
 	       
 	        <input  type="checkbox" name="useFixedFolder_<%=biobj.getId()%>__<%=index%>" value="true"
-					<%= sInfo.isUseFixedFolder() ? "checked='checked'" : "" %> />
+					<%=sInfo.isUseFixedFolder() ? "checked='checked'" : ""%> />
 			<span class='portlet-form-field-label'>
 				<spagobi:message key="scheduler.fixedFolder" bundle="component_scheduler_messages" />
 			</span>
 			<a href="javascript:void(0);" id="folderTo_<%=biobj.getId()%>__<%=index%>_help">
 	      			<img title="<spagobi:message key = "scheduler.help" bundle="component_scheduler_messages" />" 
-	      				 src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/question.gif", currTheme)%>' 
+	      				 src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/question.gif", currTheme)%>' 
 	      				 alt="<spagobi:message key = "scheduler.help"  bundle="component_scheduler_messages"/>" 
 	      				 style="vertical-align:bottom;" />
 	      	</a>
@@ -1144,13 +1142,13 @@ toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId
 								treeName="<%=treeName%>" />
 
 		    <input  type="checkbox" name="useFolderDataset_<%=biobj.getId()%>__<%=index%>" value="true"
-		               <%= sInfo.isUseFolderDataSet() ? "checked='checked'" :"" %> />
+		               <%=sInfo.isUseFolderDataSet() ? "checked='checked'" :""%> />
 			<span class='portlet-form-field-label'>
 				<spagobi:message key="scheduler.useFolderDataset" bundle="component_scheduler_messages" />
 			</span>
 			<a href="javascript:void(0);" id="folderToDataset_<%=biobj.getId()%>__<%=index%>_help">
 		    			<img title="<spagobi:message key = "scheduler.help" bundle="component_scheduler_messages" />" 
-		    				 src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/question.gif", currTheme)%>' 
+		    				 src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/question.gif", currTheme)%>' 
 		    				 alt="<spagobi:message key = "scheduler.help"  bundle="component_scheduler_messages"/>" 
 		    				 style="vertical-align:bottom;" />
 			</a>
@@ -1179,20 +1177,20 @@ toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId
 				  	<select name='datasetFolderLabel_<%=biobj.getId()%>__<%=index%>'>
 						<option></option>
 		  		        <%
-		  		        String dsFolderLabel = sInfo.getDataSetFolderLabel();
-		  		        List allFolderDatasets = (List) moduleResponse.getAttribute(SpagoBIConstants.DATASETS_LIST);
-		  		        if (allFolderDatasets != null && !allFolderDatasets.isEmpty()) {
-			  		        Iterator dsIt = allFolderDatasets.iterator();
-			  		        while (dsIt.hasNext()) {
-			  		        	IDataSet ds = (IDataSet) dsIt.next();
-			  		        	%>
-			  		        	<option value='<%= StringEscapeUtils.escapeHtml(ds.getLabel()) %>' <%= ds.getLabel().equalsIgnoreCase(dsFolderLabel) ? "selected='selected'" : ""%>>
-			  		        		<%= StringEscapeUtils.escapeHtml(ds.getName()) %>
+		  		        	String dsFolderLabel = sInfo.getDataSetFolderLabel();
+		  		        		  		        List allFolderDatasets = (List) moduleResponse.getAttribute(SpagoBIConstants.DATASETS_LIST);
+		  		        		  		        if (allFolderDatasets != null && !allFolderDatasets.isEmpty()) {
+		  		        	  		        Iterator dsIt = allFolderDatasets.iterator();
+		  		        	  		        while (dsIt.hasNext()) {
+		  		        	  		        	IDataSet ds = (IDataSet) dsIt.next();
+		  		        %>
+			  		        	<option value='<%=StringEscapeUtils.escapeHtml(ds.getLabel())%>' <%=ds.getLabel().equalsIgnoreCase(dsFolderLabel) ? "selected='selected'" : ""%>>
+			  		        		<%=StringEscapeUtils.escapeHtml(ds.getName())%>
 			  		        	</option>
 			  		        	<%
-			  		        }
-		  		        }
-		  		        %>
+			  		        		}
+			  		        			  		        }
+			  		        	%>
 					    </select>
 		  	    </div>
 		  		<div  class='div_detail_label_scheduler'>
@@ -1204,33 +1202,33 @@ toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId
 				  	<select name='datasetFolderParameter_<%=biobj.getId()%>__<%=index%>'>
 				  		<option></option>
 		  		        <%
-		  		        List folderParameters = biobj.getBiObjectParameters();
-		  		      	if (folderParameters != null && !folderParameters.isEmpty()) {
-			  		        String parameterLabel = sInfo.getDataSetFolderParameterLabel();
-			  		        Iterator parametersIt = folderParameters.iterator();
-			  		        while (parametersIt.hasNext()) {
-			  		        	BIObjectParameter aParameter = (BIObjectParameter) parametersIt.next();
-			  		        	%>
-			  		        	<option value='<%= StringEscapeUtils.escapeHtml(aParameter.getLabel()) %>' <%= aParameter.getLabel().equalsIgnoreCase(parameterLabel) ? "selected='selected'" : ""%>>
-			  		        		<%= StringEscapeUtils.escapeHtml(aParameter.getLabel()) %>
+		  		        	List folderParameters = biobj.getBiObjectParameters();
+		  		        		  		      	if (folderParameters != null && !folderParameters.isEmpty()) {
+		  		        	  		        String parameterLabel = sInfo.getDataSetFolderParameterLabel();
+		  		        	  		        Iterator parametersIt = folderParameters.iterator();
+		  		        	  		        while (parametersIt.hasNext()) {
+		  		        	  		        	BIObjectParameter aParameter = (BIObjectParameter) parametersIt.next();
+		  		        %>
+			  		        	<option value='<%=StringEscapeUtils.escapeHtml(aParameter.getLabel())%>' <%=aParameter.getLabel().equalsIgnoreCase(parameterLabel) ? "selected='selected'" : ""%>>
+			  		        		<%=StringEscapeUtils.escapeHtml(aParameter.getLabel())%>
 			  		        	</option>
 			  		        	<%
-			  		        }
-		  		      	}
-		  		        %>
+			  		        		}
+			  		        			  		      	}
+			  		        	%>
 					   </select>
 		  	    </div>
 	      	</div>
     	</div>
 <script>
-toggle('document_<%=biobj.getId()%>__<%=index%>', 'saveasdocument_<%=biobj.getId()%>__<%=index%>', <%= sInfo.isSaveAsDocument()%>);
+toggle('document_<%=biobj.getId()%>__<%=index%>', 'saveasdocument_<%=biobj.getId()%>__<%=index%>', <%=sInfo.%>);
 </script>  
 		<div> &nbsp;</div>			
         <br/>
 
 	<!--  ADD JAVA CLASS OPTION -->	  	
         <input type="checkbox" id="sendtojavaclass_<%=biobj.getId()%>__<%=index%>" name="sendtojavaclass_<%=biobj.getId()%>__<%=index%>" 
-               <%if(sInfo.isSendToJavaClass()){out.write(" checked='checked' " );} %> />
+               <%if(sInfo.hasJavaClassAsDispatchTarget()){out.write(" checked='checked' " );}%> />
 			  <span class='portlet-form-field-label'>
 					<spagobi:message key="scheduler.sendtojavaclass" bundle="component_scheduler_messages" />
 			  </span>
@@ -1246,7 +1244,7 @@ toggle('document_<%=biobj.getId()%>__<%=index%>', 'saveasdocument_<%=biobj.getId
 	        </div>
         </div>
 <script>  
-toggle('javaclass_<%=biobj.getId()%>__<%=index%>', 'sendtojavaclass_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isSendToJavaClass()%> );
+toggle('javaclass_<%=biobj.getId()%>__<%=index%>', 'sendtojavaclass_<%=biobj.getId()%>__<%=index%>', <%=sInfo.%> );
 </script> 
 
 		<div> &nbsp;</div>		
@@ -1447,7 +1445,7 @@ toggle('mail_<%=biobj.getId()%>__<%=index%>', 'sendmail_<%=biobj.getId()%>__<%=i
 <!--  DISTRIBUTION LIST -->
 
 		<input type="checkbox" id="saveasdl_<%=biobj.getId()%>__<%=index%>" name="saveasdl_<%=biobj.getId()%>__<%=index%>" 
-				       <%if(sInfo.isSendToDl()){out.write(" checked='checked' " );} %>/>
+				       <%if(sInfo.hasDistributionListAsDispatchTarget()){out.write(" checked='checked' " );}%>/>
 				<span class='portlet-form-field-label'>
 					<spagobi:message key="scheduler.distributionlist" bundle="component_scheduler_messages" />
 				</span>
@@ -1475,25 +1473,23 @@ toggle('mail_<%=biobj.getId()%>__<%=index%>', 'sendmail_<%=biobj.getId()%>__<%=i
 	</tr>				
 		
 		<%
-			
-			Iterator it2 = dlist.iterator();
-			while(it2.hasNext()){
-				
-				DistributionList dl = (DistributionList)it2.next();
-				int listID = dl.getId();
-				String listName = dl.getName();
-				String listDescr = dl.getDescr();
-				if((listName==null) || (listName.equalsIgnoreCase("null"))  ) {
-					listName = "";
-				   }
-				if((listDescr==null) || (listDescr.equalsIgnoreCase("null"))  ) {
-					listDescr = "";
-				   }
-				
-		 %>
+									Iterator it2 = dlist.iterator();
+									while(it2.hasNext()){
+										
+										DistributionList dl = (DistributionList)it2.next();
+										int listID = dl.getId();
+										String listName = dl.getName();
+										String listDescr = dl.getDescr();
+										if((listName==null) || (listName.equalsIgnoreCase("null"))  ) {
+											listName = "";
+										   }
+										if((listDescr==null) || (listDescr.equalsIgnoreCase("null"))  ) {
+											listDescr = "";
+										   }
+								%>
 		 <tr class='portlet-font'>
 		 	<td  style='vertical-align:right;text-align:right;'> <input type="checkbox" name="sendtodl_<%=listID%>_<%=biobj.getId()%>__<%=index%>"  value=<%=listID%>
-               	<%if(sInfo.getDlIds().contains(new Integer(listID))){out.write(" checked='checked' " );} %> />
+               	<%if(sInfo.getDlIds().contains(new Integer(listID))){out.write(" checked='checked' " );}%> />
 			</td>
 		 	<td class='portlet-section-body' style='vertical-align:middle;text-align:left;'> &nbsp; &nbsp;  <%=StringEscapeUtils.escapeHtml(listName)%>	 			
 			</td>	
@@ -1501,15 +1497,18 @@ toggle('mail_<%=biobj.getId()%>__<%=index%>', 'sendmail_<%=biobj.getId()%>__<%=i
 			</td>
 	    </tr>
 				   		
-		<% 
-		} %>
-	<% } %>	
+		<%
+				   					}
+				   				%>
+	<%
+		}
+	%>	
   	</table>
   </div>
   
    </div>						
 <script>
-toggle('dl_<%=biobj.getId()%>__<%=index%>', 'saveasdl_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isSendToDl()%> );
+toggle('dl_<%=biobj.getId()%>__<%=index%>', 'saveasdl_<%=biobj.getId()%>__<%=index%>', <%=sInfo.%> );
 </script> 
   	    <div> &nbsp;
 		</div>	

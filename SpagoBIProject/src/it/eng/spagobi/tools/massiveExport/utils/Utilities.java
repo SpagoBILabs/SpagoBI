@@ -87,7 +87,7 @@ public class Utilities {
 	//	}
 
 
-	public static File getMassiveExportDirectory(){
+	public static File getMassiveExportFolder(){
 		logger.debug("IN");
 
 		//		EnginConf enginConf = EnginConf.getInstance();
@@ -119,6 +119,33 @@ public class Utilities {
 
 	}
 
+
+	public static File getMassiveExportZipFile(String folderName, String fileName) {
+		
+		File zipFolder = getMassiveExportZipFolder(folderName);
+		
+		File zipFile = new File(zipFolder, fileName+".zip");
+		if(!(zipFile.exists())){
+			throw new SpagoBIRuntimeException("not existing zip file " + zipFile);
+		}
+
+		return zipFile;
+	}
+
+
+	public static File getMassiveExportZipFolder(String folderName) {
+		
+		File massiveExportFolder = getMassiveExportFolder();
+
+		File zipDirectory = new File(massiveExportFolder, folderName);
+		if(!zipDirectory.exists()){
+			zipDirectory.mkdir();
+		}
+
+		return zipDirectory;	
+	}
+	
+
 	public static String addSeparatorIfNeeded(String path){
 		if(!path.endsWith(File.separator)){
 			path+=File.separator;
@@ -127,45 +154,11 @@ public class Utilities {
 	}
 
 
-	public static File getMassiveExportZipFolder(String functionalityCd) throws SpagoBIServiceException{
+	
+
+	public static File createMassiveExportZip(String functionalityCd, String randomKey) throws IOException {
 		logger.debug("IN");
-		File directoryResourceMassive = getMassiveExportDirectory();
-
-		String directoryResourceMassivePath =directoryResourceMassive.getAbsolutePath();
-
-		directoryResourceMassivePath = addSeparatorIfNeeded(directoryResourceMassivePath);
-
-		String directoryResourceMassiveFunctCdPath = directoryResourceMassivePath+functionalityCd;
-
-		File zipDirectory = new File(directoryResourceMassiveFunctCdPath);
-		if(!zipDirectory.exists()){
-			zipDirectory.mkdir();
-		}
-
-		logger.debug("directory with zip is "+directoryResourceMassiveFunctCdPath);
-		return zipDirectory;	
-	}
-
-
-	public static File getMassiveExportZipFile(String functionalityCd, String randomKey) throws SpagoBIServiceException{
-		logger.debug("IN");
-		File zipFolder = getMassiveExportZipFolder(functionalityCd);
-		String zipFolderPath = addSeparatorIfNeeded(zipFolder.getAbsolutePath());
-		String filePath = zipFolderPath+randomKey+".zip";
-
-		File zip = new File(filePath);
-		if(!(zip.exists())){
-			logger.error("not existing zip file "+filePath);
-			throw new SpagoBIRuntimeException("not existing zip file "+filePath, null);
-		}
-
-		logger.debug("OUT");
-		return zip;
-	}
-
-
-	public static File createMassiveExportZip(String functionalityCd, String randomKey) throws IOException{
-		logger.debug("IN");
+		
 		File zipFolder = getMassiveExportZipFolder(functionalityCd);
 		String zipFolderPath = addSeparatorIfNeeded(zipFolder.getAbsolutePath());
 		String filePath = zipFolderPath+randomKey+".zip";

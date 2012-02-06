@@ -16,6 +16,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -26,10 +27,12 @@ import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.scheduler.jobs.ExecuteBIDocumentJob;
+import it.eng.spagobi.tools.scheduler.jobs.XExecuteBIDocumentJob;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,7 +60,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 
 	private final String FUNCTIONALITY_ID = "functId";
 	private final String ROLE = "selectedRole";
-	private final String OUTPUT = "selectedOutput";
+	private final String MIME_TYPE = "mimeType";
 	private final String TYPE = "type";  
 	private final String SPLITTING_FILTER = "splittingFilter"; 
 
@@ -74,7 +77,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 		Integer folderId = null;
 		String documentType = null;
 		String role = null; 
-		String output = null;
+		String outputMIMEType = null;
 		boolean splittingFilter = false;
 		JSONObject optionsPageContentJSON = null;
 		JSONObject parametersPageContentJSON = null;
@@ -104,9 +107,9 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 				logger.debug("Input parameter [" + ROLE + "] is equal to [" + role + "]");
 				Assert.assertNotNull(role, "Input parameter [" + ROLE + "] cannot be null");
 
-				output = optionsPageContentJSON.getString(OUTPUT);
-				logger.debug("Input parameter [" + OUTPUT + "] is equal to [" + output + "]");
-				Assert.assertNotNull(output, "Input parameter [" + OUTPUT + "] cannot be null");
+				outputMIMEType = optionsPageContentJSON.getString(MIME_TYPE);
+				logger.debug("Input parameter [" + MIME_TYPE + "] is equal to [" + outputMIMEType + "]");
+				Assert.assertNotNull(outputMIMEType, "Input parameter [" + MIME_TYPE + "] cannot be null");
 
 				String cycleOnFilters = optionsPageContentJSON.getString(SPLITTING_FILTER);
 				logger.debug("Input parameter [" + SPLITTING_FILTER + "] is equal to [" + cycleOnFilters + "]");
@@ -137,8 +140,15 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 			try {
 					
 				jobConfJSON.put("name", getName(getUserProfile(), folder));
+				jobConfJSON.put("description", getDescription(getUserProfile(), folder));
 				jobConfJSON.put("groupName", getGroupName(getUserProfile(), folder));
 				job = createJob(jobConfJSON, documentsToExport, parametersPageContentJSON);
+				
+				job.addParameters( createDistpachChannelParameters(documentsToExport, getUserProfile(), folder) );				
+				job.addParameter("modality", SpagoBIConstants.MASSIVE_EXPORT_MODALITY);
+				job.addParameter("outputMIMEType", outputMIMEType);
+				job.addParameter("isSplittingFilter", splittingFilter? "true": "false");
+				
 				
 				Assert.assertNotNull(job, "Impossible to create job [" + jobConfJSON + "]");
 				logger.debug("Job [" + job + "] succesfully created");
@@ -153,6 +163,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 			JSONObject triggerConfJSON = generalConfJSON.getJSONObject("trigger");
 			try {
 				triggerConfJSON.put("name", getName(getUserProfile(), folder));
+				triggerConfJSON.put("description", getDescription(getUserProfile(), folder));
 				triggerConfJSON.put("groupName", getGroupName(getUserProfile(), folder));
 				
 				trigger = createTrigger(triggerConfJSON);
@@ -217,8 +228,14 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 	
 	// we use the same name for job and trigger
 	private String getName(IEngUserProfile userProfile, LowFunctionality folder) {
-		String name = userProfile.getUserUniqueIdentifier() + "@" + folder.getName();
+		String name = userProfile.getUserUniqueIdentifier() + "@" + folder.getCode();
 		return name;
+	}
+	
+	// we use the same name for job and trigger
+	private String getDescription(IEngUserProfile userProfile, LowFunctionality folder) {
+		String description = "Massive scheduling defined by user [" + userProfile.getUserUniqueIdentifier() + "] on folder [" + folder.getName() + "]";
+		return description;
 	}
 	
 	private LowFunctionality getFolder(Integer folderId) {
@@ -258,7 +275,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 			job.setDescription( jobConfJSON.optString("description") );
 			job.setGroupName( jobConfJSON.getString("groupName") );
 			job.setRequestsRecovery(false);
-			job.setJobClass(ExecuteBIDocumentJob.class);
+			job.setJobClass(XExecuteBIDocumentJob.class);
 			
 			Map<String, String> parameters = createJobParameters(documentsToExport, documentsParameterValuesJSON);			
 			job.addParameters(parameters);
@@ -279,6 +296,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 		
 		parameters = new HashMap<String,String>();
 		try {
+			// documentLabel__num this is necessary because the same document can be added to one scheduled activity more than one time
 			int docNo = 1;
 			for(BIObject document : documentsToExport) {
 				String pName = document.getLabel() + "__" + docNo++;
@@ -293,8 +311,6 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 				}
 				parameters.put(pName, pValue);
 			}
-			
-			parameters.putAll( createDistpachCannelParameters(documentsToExport) );
 			
 			String value = createDocumentLabelsParameterValue(documentsToExport);
 			parameters.put("documentLabels", value);
@@ -320,20 +336,38 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 		return value;
 	}
 	
-	private Map<String, String> createDistpachCannelParameters(List<BIObject> documentsToExport) {
+	private Map<String, String> createDistpachChannelParameters(List<BIObject> documentsToExport, IEngUserProfile userProfile, LowFunctionality folder) {
 		Map<String, String> parameters;
-	
+		String name;
+		String value;
+		
 		parameters = new HashMap<String, String>();
-		int docNo = 1;
-		for(BIObject document : documentsToExport) {
-			String name = "biobject_id_" + document.getId() + "__" + docNo++;
-			String value = "saveassnapshot=true"
-				+ "%26" + "snapshotname=" + "scheduler"	
-				+ "%26" + "snapshotdescription=" + "generatedByScheduler"
-				+ "%26" + "snapshothistorylength=" + "5";
-			
-			parameters.put(name, value);
-		}
+//		int docNo = 1;
+//		for(BIObject document : documentsToExport) {
+//			name = "biobject_id_" + document.getId() + "__" + docNo++;
+//			value = "saveassnapshot=true"
+//				+ "%26" + "snapshotname=" + "scheduler"	
+//				+ "%26" + "snapshotdescription=" + "generatedByScheduler"
+//				+ "%26" + "snapshothistorylength=" + "5";
+//			
+//			parameters.put(name, value);
+//			
+//			name = "biobject_id_" + document.getId() + "__" + docNo++;
+//			value = "saveasfile=true";
+//
+//			
+//			parameters.put(name, value);
+//		}
+		
+		
+		File massiveExportFolder = Utilities.getMassiveExportFolder();
+		File userFolder = new File(massiveExportFolder, (String)userProfile.getUserUniqueIdentifier());
+		File functionalityFolder = new File(userFolder, folder.getCode());
+		name = "globalDispatcherContext";
+		value = "saveasfile=true"
+			+ "%26" + "destinationfolder=" + functionalityFolder.getAbsolutePath()	;
+	
+		parameters.put(name, value);
 		
 		return parameters;   	   
 	}
@@ -418,7 +452,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 	        
 	    	if(minutesOptionsJSON != null) {
 	    		String minutes = minutesOptionsJSON.optString("minutes");
-	    		if(minutes != null) {
+	    		if( StringUtilities.isNotEmpty(minutes) ) {
 		    		expression.append("minute{");    		
 		    		expression.append("numRepetition=");
 		    		expression.append(minutes);
@@ -428,7 +462,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 	    	
 	    	if(hourlyOptionsJSON != null) {
 	    		String houres = hourlyOptionsJSON.optString("houres");
-	    		if(houres != null) {
+	    		if( StringUtilities.isNotEmpty(houres)) {
 		    		expression.append("hour{");
 		    		expression.append("numRepetition=");
 		    		expression.append(houres);

@@ -14,7 +14,7 @@ package it.eng.spagobi.tools.massiveExport.work;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjMetaDataAndContent;
+import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -49,8 +49,9 @@ import org.json.JSONException;
 
 import commonj.work.Work;
 
-/** Thread of massive export; cycle on documetns to be exported calling engine for export, meanwhile keeps updated the record of the export,
- * finally create the zip and store it in temporary table
+/** 
+ * Thread of massive export; cycle on documetns to be exported calling engine for export
+ * , meanwhile keeps updated the record of the export, finally create the zip and store it in temporary table
  * 
  * @author gavardi
  *
@@ -64,13 +65,14 @@ public class MassiveExportWork implements Work{
 	public static final String STARTED = "STARTED";
 	public static final String DOWNLOAD = "DOWNLOAD";
 	public static final String ERROR = "ERROR";
+	
 	public static final String OUTPUT_XLS = "application/vnd.ms-excel";
 	public static final String OUTPUT_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 	
 	
 
-	IEngUserProfile profile;
-	List biObjects;
+	IEngUserProfile userProfile;
+	List<BIObject> documents;
 	LowFunctionality functionality;
 
 	Integer progressThreadId;
@@ -80,32 +82,29 @@ public class MassiveExportWork implements Work{
 	List<File> filesToZip = null;
 
 	boolean splittingFilter = false;
-	String selectedOutput;
+	String outputMIMEType;
 
 	static byte[] buf = new byte[1024]; 
 
 	private boolean completeWithoutError = false;
-	IProgressThreadDAO threadDAO;
+	IProgressThreadDAO progressThreadDAO;
 
-	public MassiveExportWork(List biObjects, IEngUserProfile profile, LowFunctionality func, 
-			Integer progressThreadId, String zipKey, boolean splittingFilter, String selectedOutput) {
+	public MassiveExportWork(List<BIObject> documents, IEngUserProfile userProfile, LowFunctionality functionality, 
+			Integer progressThreadId, String zipKey, boolean splittingFilter, String outputMIMEType) {
 		super();
-		this.biObjects = biObjects;
-		this.profile = profile;
-		this.functionality = func;
+		this.documents = documents;
+		this.userProfile = userProfile;
+		this.functionality = functionality;
 		this.progressThreadId = progressThreadId;
 		this.zipKey = zipKey;
 		this.splittingFilter = splittingFilter;
-		this.selectedOutput = selectedOutput;
+		this.outputMIMEType = outputMIMEType;
 	}
-
-
-
-
 
 	public void run() {
 		logger.debug("IN");
-		IProgressThreadDAO threadDAO = null;
+
+		progressThreadDAO = null;
 		IObjMetadataDAO metaDAO = null;
 		IObjMetacontentDAO contentDAO = null;
 
@@ -113,32 +112,32 @@ public class MassiveExportWork implements Work{
 		Thread thread = Thread.currentThread();
 		Long threadId = thread.getId();
 
-		logger.debug("Started thread Id "+threadId+" from user id: "+profile.getUserUniqueIdentifier());
+		logger.debug("Started thread Id "+threadId+" from user id: "+userProfile.getUserUniqueIdentifier());
 
-		Integer totalDocs = biObjects.size();
+		Integer totalDocs = documents.size();
 		logger.debug("# of documents: "+totalDocs);
 
 
 		try {
-			threadDAO = DAOFactory.getProgressThreadDAO();
-			threadDAO.setStartedProgressThread(progressThreadId);
+			progressThreadDAO = DAOFactory.getProgressThreadDAO();
+			progressThreadDAO.setStartedProgressThread(progressThreadId);
 
 			metaDAO = DAOFactory.getObjMetadataDAO();
 			contentDAO = DAOFactory.getObjMetacontentDAO();
 
 
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Error setting DAO");
-			deleteDBRowInCaseOfError(threadDAO, progressThreadId);
+			deleteDBRowInCaseOfError(progressThreadDAO, progressThreadId);
 			throw new SpagoBIServiceException("Error setting DAO", e);
 		}
 
 
 		String fileExtension = null;
-		if(selectedOutput.equals(OUTPUT_XLS)){
+		if(outputMIMEType.equals(OUTPUT_XLS)){
 			fileExtension = ".xls";
 		}
-		else if(selectedOutput.equals(OUTPUT_XLSX)){
+		else if(outputMIMEType.equals(OUTPUT_XLSX)){
 			fileExtension = ".xlsx";
 		}
 		else{
@@ -152,9 +151,8 @@ public class MassiveExportWork implements Work{
 		// map used to recover real name to put inside zip
 		Map<String, String> randomNamesToName = new HashMap<String, String>();
 
-		for (Iterator iterator = biObjects.iterator(); iterator.hasNext();) {
-			BIObject biObj = (BIObject) iterator.next();
-
+		for (BIObject document : documents) {
+			
 			File exportFile = null;
 
 			ExecutionProxy proxy = new ExecutionProxy();
@@ -162,38 +160,38 @@ public class MassiveExportWork implements Work{
 
 			try{
 				// get Obj Metadata
-				List<ObjMetaDataAndContent> listObjMetaContent = getMetaDataAndContent(metaDAO, contentDAO, biObj);
-				biObj.setObjMetaDataAndContents(listObjMetaContent);
+				List<DocumentMetadataProperty> listObjMetaContent = getMetaDataAndContent(metaDAO, contentDAO, document);
+				document.setObjMetaDataAndContents(listObjMetaContent);
 
-				proxy.setBiObject(biObj);
+				proxy.setBiObject(document);
 				proxy.setSplittingFilter(splittingFilter);
-				proxy.setMimeType(selectedOutput);
-				returnByteArray = proxy.exec(profile, SpagoBIConstants.MASSIVE_EXPORT_MODALITY, output);
+				proxy.setMimeType(outputMIMEType);
+				returnByteArray = proxy.exec(userProfile, SpagoBIConstants.MASSIVE_EXPORT_MODALITY, output);
 			}
 			catch (Throwable e) {
-				logger.error("Error while executing export for object with label "+biObj.getLabel(), e);
+				logger.error("Error while executing export for object with label "+document.getLabel(), e);
 				returnByteArray = null;
 			}
 
 			try{
 				if(returnByteArray == null){
-					logger.error("execution proxy returned null document for BiObjectDocumetn: "+biObj.getLabel());
-					exportFile = createErrorFile(biObj, null , randomNamesToName);
+					logger.error("execution proxy returned null document for BiObjectDocumetn: "+document.getLabel());
+					exportFile = createErrorFile(document, null , randomNamesToName);
 					// update progress table
-					threadDAO.incrementProgressThread(progressThreadId);
+					progressThreadDAO.incrementProgressThread(progressThreadId);
 					logger.debug("progress Id incremented");
 				}
 				else{
 					String checkerror = new String(returnByteArray);
 					if(checkerror.startsWith("error") || checkerror.startsWith("{\"errors\":")){
 						logger.error("Error found in execution, make txt file");
-						String fileName = "Error "+biObj.getLabel()+"-"+biObj.getName();
+						String fileName = "Error "+document.getLabel()+"-"+document.getName();
 						exportFile = File.createTempFile(fileName, ".txt");
 						randomNamesToName.put(exportFile.getName(), fileName+".txt");
 					}
 					else{
-						logger.error("Export ok for biObj with label "+biObj.getLabel());
-						String fileName = biObj.getLabel()+"-"+biObj.getName();
+						logger.error("Export ok for biObj with label "+document.getLabel());
+						String fileName = document.getLabel()+"-"+document.getName();
 						exportFile = File.createTempFile(fileName, fileExtension); 
 						randomNamesToName.put(exportFile.getName(), fileName+fileExtension);
 					}
@@ -206,15 +204,14 @@ public class MassiveExportWork implements Work{
 					filesToZip.add(exportFile);
 
 					// update progress table
-					threadDAO.incrementProgressThread(progressThreadId);
+					progressThreadDAO.incrementProgressThread(progressThreadId);
 					logger.debug("progress Id incremented");
 
 				}
-			}
-			catch (Exception e) {
-				logger.error("Exception in  writeing export file for BiObject with label: "+biObj.getLabel()+": delete DB row",e);
-				deleteDBRowInCaseOfError(threadDAO, progressThreadId);
-				throw new SpagoBIServiceException("Exception in  writeing export file for BiObject with label "+biObj.getLabel()+" delete DB row", e);
+			} catch (Exception e) {
+				logger.error("Exception in  writeing export file for BiObject with label: "+document.getLabel()+": delete DB row",e);
+				deleteDBRowInCaseOfError(progressThreadDAO, progressThreadId);
+				throw new SpagoBIServiceException("Exception in  writeing export file for BiObject with label "+document.getLabel()+" delete DB row", e);
 			}
 
 		} // close For
@@ -225,18 +222,18 @@ public class MassiveExportWork implements Work{
 		}
 		catch (Exception e) {
 			logger.error("Error in writeing the zip file: DB row will be deleted to avoid cycling problems");
-			deleteDBRowInCaseOfError(threadDAO, progressThreadId);
+			deleteDBRowInCaseOfError(progressThreadDAO, progressThreadId);
 			throw new SpagoBIServiceException("Error in writeing the zip file; DB row will be deleted to avoid cycling problems", e);
 		}
 
 		try{
 
-			threadDAO.setDownloadProgressThread(progressThreadId);
+			progressThreadDAO.setDownloadProgressThread(progressThreadId);
 			logger.debug("Thread row in database set as download state");
 		}
 		catch (EMFUserError e) {
 			logger.error("Error in closing database row relative to thread "+progressThreadId+" row will be deleted");
-			deleteDBRowInCaseOfError(threadDAO, progressThreadId);
+			deleteDBRowInCaseOfError(progressThreadDAO, progressThreadId);
 			throw new SpagoBIServiceException("Error in closing database row relative to thread "+progressThreadId+" row will be deleted", e);
 		}
 
@@ -292,12 +289,12 @@ public class MassiveExportWork implements Work{
 	}
 
 
-	private List<ObjMetaDataAndContent> getMetaDataAndContent(IObjMetadataDAO metaDao, IObjMetacontentDAO metaContentDAO, BIObject obj) throws Exception{
+	private List<DocumentMetadataProperty> getMetaDataAndContent(IObjMetadataDAO metaDao, IObjMetacontentDAO metaContentDAO, BIObject obj) throws Exception{
 		logger.debug("IN");
 		List toReturn = null; 
 
 		try{
-			ObjMetaDataAndContent objMetaDataAndContent = null;
+			DocumentMetadataProperty objMetaDataAndContent = null;
 			List<ObjMetadata> allMetas =metaDao.loadAllObjMetadata();
 			Map<Integer, ObjMetacontent> values =  new HashMap<Integer, ObjMetacontent>();
 
@@ -310,10 +307,10 @@ public class MassiveExportWork implements Work{
 
 			for (Iterator iterator = allMetas.iterator(); iterator.hasNext();) {
 				ObjMetadata meta = (ObjMetadata) iterator.next();
-				objMetaDataAndContent = new ObjMetaDataAndContent();
-				objMetaDataAndContent.setMeta(meta);
-				objMetaDataAndContent.setMetacontent(values.get(meta.getObjMetaId()));
-				if(toReturn == null) toReturn = new ArrayList<ObjMetaDataAndContent>();
+				objMetaDataAndContent = new DocumentMetadataProperty();
+				objMetaDataAndContent.setMetadataPropertyDefinition(meta);
+				objMetaDataAndContent.setMetadataPropertyValue(values.get(meta.getObjMetaId()));
+				if(toReturn == null) toReturn = new ArrayList<DocumentMetadataProperty>();
 				toReturn.add(objMetaDataAndContent);
 			}
 
@@ -349,7 +346,7 @@ public class MassiveExportWork implements Work{
 		}
 		catch (Exception e) {
 			logger.error("Error in wirting error file for biObj "+biObj.getLabel());
-			deleteDBRowInCaseOfError(threadDAO, progressThreadId);
+			deleteDBRowInCaseOfError(progressThreadDAO, progressThreadId);
 			throw new SpagoBIServiceException("Error in wirting error file for biObj "+biObj.getLabel(), e);			
 		}
 		finally{
@@ -378,7 +375,7 @@ public class MassiveExportWork implements Work{
 
 
 	public List getBiObjects() {
-		return biObjects;
+		return documents;
 	}
 
 
@@ -386,7 +383,7 @@ public class MassiveExportWork implements Work{
 
 
 	public void setBiObjects(List biObjects) {
-		this.biObjects = biObjects;
+		this.documents = biObjects;
 	}
 
 
@@ -407,7 +404,7 @@ public class MassiveExportWork implements Work{
 
 
 	public IEngUserProfile getProfile() {
-		return profile;
+		return userProfile;
 	}
 
 
@@ -415,7 +412,7 @@ public class MassiveExportWork implements Work{
 
 
 	public void setProfile(IEngUserProfile profile) {
-		this.profile = profile;
+		this.userProfile = profile;
 	}
 
 
