@@ -8,8 +8,9 @@ public class ProgressThread {
 	private Integer partial;
 	private Integer total;
 	private String functionCd;
-	private String message;
+	private String status;
 	private String randomKey;
+	private String type;
 	
 	public String getUserId() {
 		return userId;
@@ -41,24 +42,27 @@ public class ProgressThread {
 	public void setFunctionCd(String functionCd) {
 		this.functionCd = functionCd;
 	}
-	public String getMessage() {
-		return message;
+	public String getStatus() {
+		return status;
 	}
-	public void setMessage(String message) {
-		this.message = message;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 	public ProgressThread( String userId,
 			Integer total, 
 			String functionCd, 
-			String message,
-			String randomKey) {
+			String status,
+			String randomKey,
+			String type) {
 		super();
 		this.userId = userId;
 		this.total = total;
 		this.functionCd = functionCd;
-		this.message = message;
+		this.status = status;
 		this.randomKey = randomKey;
+		this.type = type;
+		
 	}
 	public ProgressThread() {
 		super();
@@ -71,10 +75,16 @@ public class ProgressThread {
 		this.randomKey = randomKey;
 	}
 
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "userID: "+getUserId()+" functionCd: "+getFunctionCd() + "Partial/Total:"+getPartial()+"/"+getTotal()+" Messgae: "+getMessage();
+		return "userID: "+getUserId()+" functionCd: "+getFunctionCd() + "Partial/Total:"+getPartial()+"/"+getTotal()+" Messgae: "+getStatus()+" Type:"+type;
 	}
 	
 }

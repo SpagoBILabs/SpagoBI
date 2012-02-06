@@ -22,8 +22,9 @@ public class SbiProgressThread implements java.io.Serializable {
 	private Integer partial;
 	private Integer total;
 	private String functionCd;
-	private String message;
+	private String status;
 	private String randomKey;
+	private String type;
 
 	public SbiProgressThread() {
 	}
@@ -34,14 +35,15 @@ public class SbiProgressThread implements java.io.Serializable {
 	}
 
 	public SbiProgressThread(int progressThreadId, String userId,
-			Integer partial, Integer total, String functionCd, String message, String randomKey) {
+			Integer partial, Integer total, String functionCd, String status, String randomKey, String type) {
 		this.progressThreadId = progressThreadId;
 		this.userId = userId;
 		this.partial = partial;
 		this.total = total;
 		this.functionCd = functionCd;
-		this.message = message;
+		this.status = status;
 		this.randomKey = randomKey;
+		this.type = type;
 	}
 
 	public int getProgressThreadId() {
@@ -84,12 +86,12 @@ public class SbiProgressThread implements java.io.Serializable {
 		this.functionCd = functionCd;
 	}
 
-	public String getMessage() {
-		return this.message;
+	public String getStatus() {
+		return this.status;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getRandomKey() {
@@ -98,6 +100,14 @@ public class SbiProgressThread implements java.io.Serializable {
 
 	public void setRandomKey(String randomKey) {
 		this.randomKey = randomKey;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

@@ -143,7 +143,7 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 			}
 
 			String randomName = getRandomName();
-			ProgressThread progressThread = new ProgressThread(getUserProfile().getUserUniqueIdentifier().toString(), documentsToExport.size(), folder.getCode(), null, randomName);
+			ProgressThread progressThread = new ProgressThread(getUserProfile().getUserUniqueIdentifier().toString(), documentsToExport.size(), folder.getCode(), null, randomName, null);
 			progressThreadId = progressThreadDAO.insertProgressThread(progressThread);
 
 
