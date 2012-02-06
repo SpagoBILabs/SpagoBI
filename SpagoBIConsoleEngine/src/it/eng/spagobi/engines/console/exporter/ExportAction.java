@@ -180,6 +180,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			}
 
 			Map params = getConsoleEngineInstance().getAnalyticalDrivers();
+			params.put(LOCALE, locale);
 			dataSet.setParamsMap(params);
 			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
 			dataSet.loadData();
