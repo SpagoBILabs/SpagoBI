@@ -324,12 +324,16 @@ public class QbeXLSExporter {
 					Cell cell = rowVal.createCell(fieldIndex + beginColumnData);
 					cell.setCellStyle(dCellStyle);
 					if( Integer.class.isAssignableFrom(c) || Short.class.isAssignableFrom(c)) {
-						logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "INTEGER" + "]");					
+						logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "INTEGER" + "]");
+						IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);
+						String scaleFactor = (String) fieldMetaData.getProperty(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
 					    Number val = (Number)f.getValue();
-					    cell.setCellValue(val.intValue());
+					    Double doubleValue = MeasureScaleFactorOption.applyScaleFactor(val.doubleValue(), scaleFactor);
+					    cell.setCellValue(doubleValue);
 					    cell.setCellType(this.getCellTypeNumeric());
 					    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleInt);
 					}else if( Number.class.isAssignableFrom(c) ) {
+						logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "NUMBER" + "]");
 			    	    IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);	    
 						String decimalPrecision = (String)fieldMetaData.getProperty(IFieldMetaData.DECIMALPRECISION);
 						CellStyle cs ;
@@ -338,14 +342,10 @@ public class QbeXLSExporter {
 					    } else {
 					    	cs = getDecimalNumberFormat(DEFAULT_DECIMAL_PRECISION, sheet, createHelper, dCellStyle);
 					    }
-
-						logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "NUMBER" + "]");
 					    Number val = (Number)f.getValue();
-
 					    Double value = val.doubleValue();
 						String scaleFactor = (String) fieldMetaData.getProperty(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
-												
-					    cell.setCellValue(MeasureScaleFactorOption.applyScaleFactor(value, scaleFactor));			    
+					    cell.setCellValue(MeasureScaleFactorOption.applyScaleFactor(value, scaleFactor));
 					    cell.setCellType(this.getCellTypeNumeric());
 					    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cs);
 					}else if( String.class.isAssignableFrom(c)){
