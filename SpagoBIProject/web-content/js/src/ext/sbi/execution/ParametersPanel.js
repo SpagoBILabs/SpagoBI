@@ -180,7 +180,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 			
 			// add objParsId information if present (massive export case)
-			if(field.objParameterIds){
+			if(field.objParameterIds && this.contest=='massiveExport'){
 				state[field.name + '_objParameterIds']=field.objParameterIds;
 			}
 			
