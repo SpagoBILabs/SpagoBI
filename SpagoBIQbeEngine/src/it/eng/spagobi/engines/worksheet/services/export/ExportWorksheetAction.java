@@ -292,12 +292,14 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			String sheetName = sheetJ.getString(SHEET);
 			List<WhereField> splittingWF = getSplittingFieldValues(optionalFilters, sheetName);
 			WhereField splittingWhereField = null;
-			if(splittingWF==null || splittingWF.size()==0){
-				exportSheetToXLS(wb, sheetJ, fieldOptions, exporter, createHelper, splittingWhereField);
-			}else{
-				for(int y=0; y< splittingWF.size(); y++){
+			if (splittingWF == null || splittingWF.size() == 0) {
+				exportSheetToXLS(wb, sheetJ, fieldOptions, exporter,
+						createHelper, splittingWhereField);
+			} else {
+				for (int y = 0; y < splittingWF.size(); y++) {
 					splittingWhereField = splittingWF.get(y);
-					exportSheetToXLS( wb, sheetJ, fieldOptions, exporter, createHelper, splittingWhereField);
+					exportSheetToXLS(wb, sheetJ, fieldOptions, exporter,
+							createHelper, splittingWhereField);
 				}
 			}
 		}
@@ -502,17 +504,16 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	public void exportSheetToXLS(Workbook wb,JSONObject sheetJ, JSONArray fieldOptions, WorkSheetXLSExporter exporter,CreationHelper createHelper, WhereField splittingWhereField) throws Exception{
 
 		//The number of row of the sheet
-		int sheetRow;
+		int sheetRow = 0;
 
 		String sheetName = sheetJ.getString(SHEET);
-
-		sheetRow=0;
-
-		if(splittingWhereField!=null){
-			sheetName = sheetName+" ("+splittingWhereField.getRightOperand().values[0]+")";
+		String finalSheetName = sheetName;
+		if (splittingWhereField != null) {
+			finalSheetName = sheetName + " ("
+					+ splittingWhereField.getRightOperand().values[0] + ")";
 		}
 
-		org.apache.poi.ss.usermodel.Sheet sheet = wb.createSheet(sheetName);
+		org.apache.poi.ss.usermodel.Sheet sheet = wb.createSheet(finalSheetName);
 		sheet.setDefaultColumnWidth(DEFAULT_COLUMN_WIDTH);
 
 		Drawing patriarch = sheet.createDrawingPatriarch();
@@ -538,8 +539,19 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			sheetRow++;
 		}
 
-		if(sheetJ.has(WorkSheetXLSExporter.CONTENT)){
-			sheetRow = fillSheetContent(wb, sheet, sheetJ, fieldOptions,splittingWhereField, createHelper, exporter, patriarch, sheetRow);
+		if (sheetJ.has(WorkSheetXLSExporter.CONTENT)) {
+			// if there are mandatory (non-splitting) filters with no values, we cannot get the content of the sheet
+			boolean filtersOk = this.checkMandatoryFilters(optionalFilters, sheetName);
+			if (!filtersOk) {
+				Row row = sheet.createRow(sheetRow++);
+				Cell cell = row.createCell(0);
+				cell.setCellType(Cell.CELL_TYPE_STRING);
+				cell.setCellValue(EngineMessageBundle.getMessage("worksheet.export.missingMandatoryFilter", this.getLocale()));
+			} else {
+				sheetRow = fillSheetContent(wb, sheet, sheetJ, fieldOptions,
+						splittingWhereField, createHelper, exporter, patriarch,
+						sheetRow);
+			}
 		}			
 
 		sheet.createRow(sheetRow);
@@ -617,7 +629,6 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		JSONObject content = sheetJ.getJSONObject(WorkSheetXLSExporter.CONTENT);
 		String sheetType = content.getString(WorkSheetXLSExporter.SHEET_TYPE);
 
-
 		if (sheetType != null && !sheetType.equals("")) {
 
 			Locale locale = (Locale)getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);	
@@ -648,8 +659,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				}
 
 				String sheetName = sheetJ.getString(SHEET);
-				JSONObject filters = sheetJ
-						.optJSONObject(QbeEngineStaticVariables.FILTERS);
+
 				JSONObject crosstabDefinitionJSON = new JSONObject(
 						crosstabDefinition);
 
@@ -658,6 +668,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 					calculateFieldsJSON = new JSONArray(calculateFields);
 				}
 
+				JSONObject filters = sheetJ.optJSONObject(QbeEngineStaticVariables.FILTERS);
 				CrossTab cs = getCrosstab(crosstabDefinitionJSON, fieldOptions,
 						filters, sheetName, splittingWhereField,
 						calculateFieldsJSON);
@@ -694,6 +705,42 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		return sheetRow;
 	}
 	
+
+	private boolean checkMandatoryFilters(List<WhereField> filters, String sheetName) {
+		logger.debug("IN : sheetName " + sheetName);
+		boolean toReturn = true;
+		WorksheetEngineInstance engineInstance = this.getEngineInstance();
+		WorkSheetDefinition definition = (WorkSheetDefinition) engineInstance.getAnalysisState();
+		Sheet sheet = definition.getSheet(sheetName);
+		List<Filter> filtersList = sheet.getFilters();
+		Iterator<Filter> it = filtersList.iterator();
+		while (it.hasNext()) {
+			Filter aFilter = it.next();
+			if (aFilter.isMandatory() && !aFilter.isSplittingFilter()) {
+				logger.debug("Filter on [" + aFilter.getEntityId() + "] is mandatory and NOT splitting");
+				String entityId = aFilter.getEntityId();
+				String[] values = this.getFilterValues(filters, entityId);
+				if (values == null || values.length == 0) {
+					logger.warn("Filter on [" + aFilter.getEntityId() + "] has no values");
+					toReturn = false;
+					break;
+				}
+			}
+		}
+		logger.debug("OUT : " + toReturn);
+		return toReturn;
+	}
+	
+	private String[] getFilterValues(List<WhereField> filters, String entityId) {
+		Iterator<WhereField> it = filters.iterator();
+		while (it.hasNext()) {
+			WhereField aFilter = it.next();
+			if (aFilter.getLeftOperand().values[0].equals(entityId)) {
+				return aFilter.getRightOperand().values;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Execute the query active in the engine instance and return
