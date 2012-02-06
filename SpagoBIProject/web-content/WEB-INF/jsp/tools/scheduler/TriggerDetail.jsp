@@ -1079,7 +1079,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         </div>
         
 <script>  
-toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId()%>__<%=index%>', <%=sInfo.%> );
+toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId()%>__<%=index%>', <%=sInfo%> );
 </script> 
 		    <!-- anto: inizio gestione salvataggio doc -->
 	<div> &nbsp;</div>		
@@ -1221,7 +1221,7 @@ toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId
 	      	</div>
     	</div>
 <script>
-toggle('document_<%=biobj.getId()%>__<%=index%>', 'saveasdocument_<%=biobj.getId()%>__<%=index%>', <%=sInfo.%>);
+toggle('document_<%=biobj.getId()%>__<%=index%>', 'saveasdocument_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isFunctionalityTreeDispatchChannelEnabled()%>);
 </script>  
 		<div> &nbsp;</div>			
         <br/>
@@ -1244,7 +1244,7 @@ toggle('document_<%=biobj.getId()%>__<%=index%>', 'saveasdocument_<%=biobj.getId
 	        </div>
         </div>
 <script>  
-toggle('javaclass_<%=biobj.getId()%>__<%=index%>', 'sendtojavaclass_<%=biobj.getId()%>__<%=index%>', <%=sInfo.%> );
+toggle('javaclass_<%=biobj.getId()%>__<%=index%>', 'sendtojavaclass_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isJavaClassDispatchChannelEnabled()%> );
 </script> 
 
 		<div> &nbsp;</div>		
@@ -1253,7 +1253,7 @@ toggle('javaclass_<%=biobj.getId()%>__<%=index%>', 'sendtojavaclass_<%=biobj.get
 
 <!--  MAIL SEND -->
 			<input type="checkbox" id="sendmail_<%=biobj.getId()%>__<%=index%>"   name="sendmail_<%=biobj.getId()%>__<%=index%>" 
-				       <%if(sInfo.isSendMail()){out.write(" checked='checked' " );} %> />
+				       <%if(sInfo.isMailDispatchChannelEnabled()){out.write(" checked='checked' " );} %> />
 				<span class='portlet-form-field-label'>
 					<spagobi:message key="scheduler.sendmail" bundle="component_scheduler_messages" />
 				</span>
@@ -1434,7 +1434,7 @@ toggle('javaclass_<%=biobj.getId()%>__<%=index%>', 'sendtojavaclass_<%=biobj.get
   	     </div>
 
 <script>
-toggle('mail_<%=biobj.getId()%>__<%=index%>', 'sendmail_<%=biobj.getId()%>__<%=index%>', <%= sInfo.isSendMail() %>);
+toggle('mail_<%=biobj.getId()%>__<%=index%>', 'sendmail_<%=biobj.getId()%>__<%=index%>', <%= sInfo.isMailDispatchChannelEnabled() %>);
 </script>  	
 	<div> &nbsp;
 		</div>	    
@@ -1508,7 +1508,7 @@ toggle('mail_<%=biobj.getId()%>__<%=index%>', 'sendmail_<%=biobj.getId()%>__<%=i
   
    </div>						
 <script>
-toggle('dl_<%=biobj.getId()%>__<%=index%>', 'saveasdl_<%=biobj.getId()%>__<%=index%>', <%=sInfo.%> );
+toggle('dl_<%=biobj.getId()%>__<%=index%>', 'saveasdl_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isDistributionListDispatchChannelEnabled()%> );
 </script> 
   	    <div> &nbsp;
 		</div>	
