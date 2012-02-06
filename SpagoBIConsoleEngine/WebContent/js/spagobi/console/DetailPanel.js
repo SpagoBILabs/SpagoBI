@@ -105,6 +105,8 @@ Ext.extend(Sbi.console.DetailPanel, Ext.Panel, {
 		  var conf = pagesConfig[i];
 		  conf.executionContext = pagesConfig.executionContext; 
 		  conf.storeManager = pagesConfig.storeManager;
+		  var pageTitle = this.getTitlePage(conf);
+		  conf.title = pageTitle;
 		  detailPage = new Sbi.console.DetailPage(conf);
 		  this.pages.push(detailPage);
 		  //actives only the first tab dataset
@@ -153,6 +155,40 @@ Ext.extend(Sbi.console.DetailPanel, Ext.Panel, {
 			this.activePage = tab;
 		}, this );
 	}
-    
+    , getTitlePage: function(conf){
+    	//internationalizes and substitutes parameter values if its necessary
+    	var titlePage =  Sbi.locale.getLNValue(conf.title);
+    	/*if (conf.title !== undefined && conf.title.indexOf('LN(')>=0){					
+			var lenIdx = (obj.indexOf(')')) - (obj.indexOf('LN(')+3);
+			var idx  = obj.substr(obj.indexOf('LN(')+3,lenIdx);
+			value = LN(idx);    			
+    	}*/
+    	if (titlePage.indexOf("$P{") !== -1){
+    		titlePage = this.getVarConfiguration(titlePage, conf);
+    	}
+    	return titlePage;
+    	
+    }
+    , getVarConfiguration: function(titleToCheck, conf){
+		var startFieldTitle;
+		var lenFieldTitle;
+		var nameTitleField;
+	
+		while (titleToCheck.indexOf("$P{") !== -1){
+			startFieldTitle = titleToCheck.indexOf("$P{")+3;
+			lenFieldTitle = titleToCheck.indexOf("}")-startFieldTitle;
+			nameTitleField =  titleToCheck.substr(startFieldTitle,lenFieldTitle);																
+			if (nameTitleField){
+					var tmpTitleValue = conf.executionContext[nameTitleField] || " ";
+					if (tmpTitleValue){
+						var newTitle = titleToCheck.replace("$P{" + nameTitleField + "}", tmpTitleValue);
+						titleToCheck = newTitle;
+					}
+			}else 
+				break;
+		}
+		
+		return titleToCheck;
+	}
     
 });
