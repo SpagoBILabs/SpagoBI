@@ -175,6 +175,8 @@ Ext.extend(Sbi.console.DetailPanel, Ext.Panel, {
 			nameTitleField =  titleToCheck.substr(startFieldTitle,lenFieldTitle);																
 			if (nameTitleField){
 					var tmpTitleValue = conf.executionContext[nameTitleField] || " ";
+					if (tmpTitleValue == "%") tmpTitleValue = " ";					
+					
 					if (tmpTitleValue){
 						var newTitle = titleToCheck.replace("$P{" + nameTitleField + "}", tmpTitleValue);
 						titleToCheck = newTitle;
