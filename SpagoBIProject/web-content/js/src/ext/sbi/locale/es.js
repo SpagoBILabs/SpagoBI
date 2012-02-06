@@ -522,20 +522,41 @@ Ext.Msg.buttonText.no = 'No';
 Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Please open the worksheet preview tab to export the document';
 Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Export warning';
 
+
 //===================================================================
 //MASSIVE EXPORT
 //===================================================================
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.title'] = 'Export options';
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.docsList'] = 'Worksheet documents list to export';
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.cycleOnFilter'] = 'Cycle on filters';
-Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.title'] = 'Wizard for worksheet massive export';
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.roleSelection'] = 'Role Selection';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.title'] = 'Wizard for worksheet massive export';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.back'] = '< Back';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.next'] = 'Next >';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.finish'] = 'Finish';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.cancel'] = 'Cancel';
 
 
-Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.back'] = 'Back';
-Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.next'] = 'Next';
-Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.finish'] = 'Finish';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.title'] = 'Export options';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.cycle.label'] = 'Cycle on filters';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.label'] = 'Role';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.emptyText'] = 'Select a role';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.documents.label'] = 'Worksheet documents to export';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.msg.noDoc'] = 'No Worksheet documents to export';
 
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.NoDoc'] = 'No Worksheet documents to export'; 
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardParametersPage.title'] = 'Parameters';
 
+Sbi.locale.ln['Sbi.browser.mexport.massiveExportWizardTriggerPage.title'] = 'Trigger';
 Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Massive Export progress '; 
+
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noProgress'] = 'No export running';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noDownload'] = 'No export to be downloaded';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.exporting'] = 'Exporting ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.document'] = ' document ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.of'] = ' of ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.finished'] = ' export finished';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.startedExport'] = 'Started Exports';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.completedExport'] = 'Completed Exports';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.scheduledExport'] = 'Scheduled Exports';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.initializing'] = 'Initializing';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.title'] = 'Setup massive export options';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.exportFormat'] = 'Export format';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.options'] = 'Options';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters'] = 'Parameters';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = 'Setup parameters\' configuration';
