@@ -48,8 +48,8 @@ Sbi.locale.getLNValue = function(obj){
 			var lenIdx = (obj.indexOf(')')) - (obj.indexOf('LN(')+3);
 			var idx  = obj.substr(obj.indexOf('LN(')+3,lenIdx);
 			value = LN(idx);    			
-		}
-		return value;
+	}
+	return value;
 }
 
 // alias
