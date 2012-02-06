@@ -691,7 +691,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		for(i =0; i<this.mandatory.length; i++){
 			var columnToCheck = this.mandatory[i].column;
 			var col = aRecordData[columnToCheck];
-			if(col === undefined || col == null || col === ''){
+			if(col === undefined || col == null || col === '' || isNaN(col)){
 				var columnRef = this.mandatory[i].mandatoryColumn;
 				var valueRef = this.mandatory[i].mandatoryValue;
 				var value = aRecordData[columnRef];
