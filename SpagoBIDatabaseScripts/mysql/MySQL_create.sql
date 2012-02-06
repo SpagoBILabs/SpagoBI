@@ -2001,8 +2001,9 @@ CREATE TABLE  SBI_KPI_COMMENTS(
        PARTIAL              INTEGER,
        TOTAL        	      INTEGER,
        FUNCTION_CD         VARCHAR(200),
-       MESSAGE              VARCHAR(4000),
-       RANDOM_KEY			VARCHAR(4000),	
+       STATUS              VARCHAR(4000),
+       RANDOM_KEY			VARCHAR(4000),
+       TYPE 				VARCHAR(200),	
        PRIMARY KEY (PROGRESS_THREAD_ID)
 );
   
