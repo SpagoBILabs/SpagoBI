@@ -426,11 +426,14 @@ public class WorkSheetPDFExporter {
 			
 			CrosstabPDFExporter csExporter = new CrosstabPDFExporter();
 			String crosstab = content.getString(WorkSheetXLSExporter.CROSSTAB);
-			JSONObject crosstabJSON = new JSONObject(crosstab);	
-			csExporter.export(crosstabJSON, pdfDocument,numberFormat);
+			// TODO: calculate crosstab server-side
+			if (crosstab != null && !crosstab.equals("null")) {
+				JSONObject crosstabJSON = new JSONObject(crosstab);	
+				csExporter.export(crosstabJSON, pdfDocument,numberFormat);
+			}
 		    
 		} catch (Exception e) {
-			throw new RuntimeException("Error while adding chart", e);
+			throw new RuntimeException("Error while adding the crosstab", e);
 		}
 	}
 	
