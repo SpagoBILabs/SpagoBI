@@ -61,8 +61,7 @@ public class DeleteMassiveExportZip extends AbstractSpagoBIAction {
 		String randomKey = null;
 		String functCd = null;
 		Integer progressThreadId = null;
-
-		String fileName = "";
+		File zipFile = null;
 		
 		try{
 
@@ -77,8 +76,8 @@ public class DeleteMassiveExportZip extends AbstractSpagoBIAction {
 
 			// delete the record
 			IProgressThreadDAO progressThreadDAO = DAOFactory.getProgressThreadDAO();
-			boolean deleted = progressThreadDAO.deleteProgressThread(progressThreadId);
-			if(!deleted){
+			boolean progressThreadDeleted = progressThreadDAO.deleteProgressThread(progressThreadId);
+			if(!progressThreadDeleted){
 				logger.warn("progress thread with id "+progressThreadId+" was not deleted, probably due to asynchron call");
 				return;
 			}
@@ -86,26 +85,27 @@ public class DeleteMassiveExportZip extends AbstractSpagoBIAction {
 
 			logger.debug("Delete zipFile RandomKey = "+randomKey+" FunctCd = "+functCd+ " ProgressThreadId = "+progressThreadId);
 
-			File zip = Utilities.getMassiveExportZipFile(functCd, randomKey);
-
-			fileName = zip.getAbsolutePath();
-
-			boolean del =zip.delete();
-			if(del){
-				logger.debug("file "+fileName+ " has been deleted");
+			zipFile = Utilities.getMassiveExportZipFile(functCd, randomKey);
+			if(zipFile.exists()) {
+				boolean zipFileDeleted = zipFile.delete();
+				if(zipFileDeleted){
+					logger.debug("File [" + zipFile + "] has been deleted");
+				} else{
+					logger.debug("could not delete file [" + zipFile + "]");
+				} 
+			} else {
+				logger.warn("File [" + zipFile + "] does not exist");
 			}
-			else{
-				logger.debug("could not delete file "+fileName+ "");
-			}
+			
 			//delte folder directory if no more used
-			Utilities.deleteMassiveExportDirectoryIfEmpty(functCd);
+			Utilities.deleteMassiveExportFolderIfEmpty(functCd);
 
 			writeBackToClient(new JSONSuccess(new JSONObject()));
 
 		}
 		catch (Exception err) {
 			logger.error("Error in retrieving file", err);
-			throw new SpagoBIServiceException("Error during delete: cannot retrieve zip file "+fileName, err);
+			throw new SpagoBIServiceException("Error during delete: cannot retrieve zip file ["+ zipFile + "]", err);
 		}
 	}
 

@@ -177,15 +177,15 @@ public class Utilities {
 
 
 
-	public static void deleteMassiveExportDirectoryIfEmpty(String functionalityCd) throws IOException{
+	public static void deleteMassiveExportFolderIfEmpty(String functionalityCd) throws IOException{
 		logger.debug("IN");
-		File dir = getMassiveExportZipFolder(functionalityCd);
+		File folder = getMassiveExportZipFolder(functionalityCd);
 
-		if(dir.isDirectory()){
-			File[] files = 	dir.listFiles();
+		if(folder.exists() && folder.isDirectory()){
+			File[] files = 	folder.listFiles();
 			if(files == null || files.length == 0){
-				dir.delete();		
-				logger.debug("directory deleted "+dir.getAbsolutePath());
+				folder.delete();		
+				logger.debug("directory deleted "+folder.getAbsolutePath());
 			}
 		}
 		logger.debug("OUT");
