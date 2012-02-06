@@ -1044,7 +1044,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<div class="div_detail_area_forms_scheduler" >    	
         
         <input type="checkbox" id="saveassnapshot_<%=biobj.getId()%>__<%=index%>" name="saveassnapshot_<%=biobj.getId()%>__<%=index%>" 
-               <%if(sInfo.hasSnapshootAsDispatchTarget()){out.write(" checked='checked' " );}%> />
+               <%if(sInfo.isSnapshootDispatchChannelEnabled()){out.write(" checked='checked' " );}%> />
 			  <span class='portlet-form-field-label'>
 					<spagobi:message key="scheduler.saveassnap" bundle="component_scheduler_messages" />
 			  </span>
@@ -1085,7 +1085,7 @@ toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId
 	<div> &nbsp;</div>		
     <br/>
 		<input type="checkbox" id="saveasdocument_<%=biobj.getId()%>__<%=index%>"  name="saveasdocument_<%=biobj.getId()%>__<%=index%>" 
-		       <%if(sInfo.hasFunctionalityTreeAsDispatchTarget()){out.write(" checked='checked' " );}%> />
+		       <%if(sInfo.isFunctionalityTreeDispatchChannelEnabled()){out.write(" checked='checked' " );}%> />
 		<span class='portlet-form-field-label'>
 			<spagobi:message key="scheduler.saveasdoc" bundle="component_scheduler_messages" />
 		</span>
@@ -1228,7 +1228,7 @@ toggle('document_<%=biobj.getId()%>__<%=index%>', 'saveasdocument_<%=biobj.getId
 
 	<!--  ADD JAVA CLASS OPTION -->	  	
         <input type="checkbox" id="sendtojavaclass_<%=biobj.getId()%>__<%=index%>" name="sendtojavaclass_<%=biobj.getId()%>__<%=index%>" 
-               <%if(sInfo.hasJavaClassAsDispatchTarget()){out.write(" checked='checked' " );}%> />
+               <%if(sInfo.isJavaClassDispatchChannelEnabled()){out.write(" checked='checked' " );}%> />
 			  <span class='portlet-form-field-label'>
 					<spagobi:message key="scheduler.sendtojavaclass" bundle="component_scheduler_messages" />
 			  </span>
@@ -1445,7 +1445,7 @@ toggle('mail_<%=biobj.getId()%>__<%=index%>', 'sendmail_<%=biobj.getId()%>__<%=i
 <!--  DISTRIBUTION LIST -->
 
 		<input type="checkbox" id="saveasdl_<%=biobj.getId()%>__<%=index%>" name="saveasdl_<%=biobj.getId()%>__<%=index%>" 
-				       <%if(sInfo.hasDistributionListAsDispatchTarget()){out.write(" checked='checked' " );}%>/>
+				       <%if(sInfo.isDistributionListDispatchChannelEnabled()){out.write(" checked='checked' " );}%>/>
 				<span class='portlet-form-field-label'>
 					<spagobi:message key="scheduler.distributionlist" bundle="component_scheduler_messages" />
 				</span>
