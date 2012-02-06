@@ -136,11 +136,7 @@ public class CrossTab {
 		List<CrosstabDefinition.Column> columns =  crosstabDefinition.getColumns();
 		addHeaderTitles(columns, 0, columnsRoot);
 	}
-	
-//	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition) throws JSONException{
-//		this(dataStore, crosstabDefinition, null,null);
-//	}
-	
+
 	/**
 	 * Builds the crossTab (headers structure and data)
 	 * @param dataStore: the source of the data
@@ -1246,25 +1242,24 @@ public class CrossTab {
 			addCrosstabDataRow(dataMatrix.length, columnsSum, CellType.TOTAL);
 		}
 		
-		//add the total of totals
-		int measures = this.measures.size();
-		String[] superTotals = getSuperTotal(measures);
-		
-		if(measuresOnRow){
-			String[] freshRowsSum = Arrays.copyOf(rowsSum.get(0), rowsSum.get(0).length+measures);
-			for (int j = 0; j < superTotals.length; j++) {
-				freshRowsSum[rowsSum.get(0).length+j] = superTotals[j];
-			}
-			rowsSum.set(0,freshRowsSum);
-		}else{
-			for (int j = 0; j < superTotals.length; j++) {
-				String[] freshRowsSum = Arrays.copyOf(rowsSum.get(j), rowsSum.get(j).length+1);
-				freshRowsSum[rowsSum.get(j).length] = superTotals[j];
-				rowsSum.set(j,freshRowsSum);
-			}
-		}
-
 		if(columnsTotals!=null && columnsTotals.equals("on")){
+			//add the total of totals
+			int measures = this.measures.size();
+			String[] superTotals = getSuperTotal(measures);
+			
+			if(measuresOnRow){
+				String[] freshRowsSum = Arrays.copyOf(rowsSum.get(0), rowsSum.get(0).length+measures);
+				for (int j = 0; j < superTotals.length; j++) {
+					freshRowsSum[rowsSum.get(0).length+j] = superTotals[j];
+				}
+				rowsSum.set(0,freshRowsSum);
+			}else{
+				for (int j = 0; j < superTotals.length; j++) {
+					String[] freshRowsSum = Arrays.copyOf(rowsSum.get(j), rowsSum.get(j).length+1);
+					freshRowsSum[rowsSum.get(j).length] = superTotals[j];
+					rowsSum.set(j,freshRowsSum);
+				}
+			}
 			columnsRoot.addChild(getHeaderTotalSubTree(!measuresOnRow, columnsRoot.getSubTreeDepth()-1));
 			addCrosstabDataColumns(dataMatrix[0].length, rowsSum, CellType.TOTAL);
 		}
