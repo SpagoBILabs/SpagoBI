@@ -110,9 +110,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 		this.addChartConfExt3(items);
 			
 		var lineChartPanel = new Ext.chart.LineChart(items);
-		
 
-		
 		var thispanel = this;
 		
 		this.on('contentclick', function(event){
@@ -147,13 +145,13 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 	                style: {}
 			};
 			
-			if( this.getStacking()=='percent'){
-				serie.displayName =(store.serieNames[i]);
-			}else{
+//			if( this.getStacking()=='percent'){
+//				serie.displayName =(store.serieNames[i]);
+//			}else{
 				serie.displayName = this.formatLegendWithScale(store.serieNames[i]);
-			}
+//			}
 			
-			serie.displayName =(store.serieNames[i]);
+//			serie.displayName =(store.serieNames[i]);
 			
 			if(colors!=null){
 				serie.style.color= colors[i];
@@ -189,6 +187,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 			}
 			if(percent){
 				for(var j=0; j<series.length; j++){
+					z['seriesflatvalue'+j] = z['series'+j];
 					z['series'+j] = (z['series'+j]/seriesum)*100;
 					z['series'+j+'inc'] = (z['series'+j+'inc']/seriesum)*100;
 				}	
@@ -202,6 +201,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 			fields.push('series'+j);
 			if(percent || increment){
 				fields.push('series'+j+'inc');
+			}
+			if(percent){
+				fields.push('seriesflatvalue'+j);
 			}
 			serieNames.push(series[j].name);	
 			serieAlias.push(series[j].alias);
@@ -253,6 +255,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 			}
 			if(percent){
 				for(var j=0; j<series.length; j++){
+					z['seriesflatvalue'+j] = z['series'+j];
 					z['series'+j] = (z['series'+j]/seriesum)*100;
 					z['series'+j+'inc'] = (z['series'+j+'inc']/seriesum)*100;
 				}	
@@ -306,10 +309,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 		var value ;
 		var serieDefinition;
 		
+		
 		if(stacking=='normal'){
 			value = record.data[series.yField.substring(0,series.yField.length-3)];
 		} else if(stacking=='percent'){
-			value = Ext.util.Format.number(record.data[series.yField], '0.00') + '%';
+//			valuepercent = Ext.util.Format.number(record.data[series.yField], '0.00') + '%';
+			value = record.data['seriesflatvalue'+series.yField.substring(series.yField.length-4,series.yField.length-3)];
 		}else{
 			value = record.data[series.yField];
 		}
@@ -324,7 +329,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 			}
 		}
 
-		if(stacking!='percent'){
+		//if(stacking!='percent'){
 			// format the value according to serie configuration
 			value = Sbi.qbe.commons.Format.number(value, {
 	    		decimalSeparator: Sbi.locale.formats['float'].decimalSeparator,
@@ -334,9 +339,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 	    		currencySymbol: '',
 	    		nullValue: ''
 			});
-		}else{
-			value = value + '%';
-		}
+		//}
 		// add suffix
 		if (serieDefinition.suffix !== undefined && serieDefinition.suffix !== null && serieDefinition.suffix !== '') {
 			value = value + ' ' + serieDefinition.suffix;

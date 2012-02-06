@@ -357,7 +357,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		
 		var optionDefinition = null;
 		var legendSuffix = (this.getMeasureScaleFactor(theSerieName)).text;
-		
+		//alert(theSerieName+' '+legendSuffix);
 		if(legendSuffix!=''){
 			return theSerieName +' '+legendSuffix;
 		}

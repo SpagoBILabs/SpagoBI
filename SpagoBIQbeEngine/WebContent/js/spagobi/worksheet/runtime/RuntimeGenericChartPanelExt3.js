@@ -171,6 +171,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.run
 			}
 			if(percent){
 				for(var j=0; j<series.length; j++){
+					z['seriesflatvalue'+j] = z['series'+j];
 					z['series'+j] = (z['series'+j]/seriesum)*100;;
 				}	
 			}
@@ -181,6 +182,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.run
 		
 		for(var j=0; j<series.length; j++){
 			fields.push('series'+j);
+			fields.push('seriesflatvalue'+j);
 			serieNames.push(series[j].name);
 		}
 		
@@ -205,8 +207,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.run
 			chartConf.extraStyle.legend = this.legendStyle;
 		}
 		chartConf.tipRenderer = this.getTooltipFormatter();
-    
-
 	}
 
 
