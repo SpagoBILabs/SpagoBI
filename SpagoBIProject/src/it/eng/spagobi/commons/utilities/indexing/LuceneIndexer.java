@@ -14,7 +14,7 @@ package it.eng.spagobi.commons.utilities.indexing;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjMetaDataAndContent;
+import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;

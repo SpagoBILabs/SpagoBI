@@ -25,7 +25,7 @@ import it.eng.spagobi.tools.scheduler.Formula;
 import it.eng.spagobi.tools.scheduler.FormulaParameterValuesRetriever;
 import it.eng.spagobi.tools.scheduler.RuntimeLoadingParameterValuesRetriever;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
-import it.eng.spagobi.tools.scheduler.to.SaveInfo;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
 
 import java.util.ArrayList;
@@ -320,12 +320,12 @@ public class SchedulerUtilities {
 		int index = 0;
 		while(iterBiobjIds.hasNext()) {
 			index ++;
-			SaveInfo sInfo = new SaveInfo();
+			DispatchContext sInfo = new DispatchContext();
 			Integer biobjid = (Integer)iterBiobjIds.next();
 			SourceBean objParSB = (SourceBean)triggerDetSB.getFilteredSourceBeanAttribute("JOB_PARAMETERS.JOB_PARAMETER", "name", "biobject_id_" + biobjid.toString()+"__"+index);
 			if(objParSB!=null) {
 				String parString = (String)objParSB.getAttribute("value");
-				sInfo = SchedulerUtilities.fromSaveInfoString(parString);
+				sInfo = SchedulerUtilities.decodeDispatchContext(parString);
 			}
 			saveOptions.put(biobjid+"__"+index, sInfo);
 		}
@@ -344,8 +344,8 @@ public class SchedulerUtilities {
 	 * 
 	 * @return the save info
 	 */
-	public static SaveInfo fromSaveInfoString(String saveinfostr) {
-		SaveInfo sInfo = new SaveInfo();
+	public static DispatchContext decodeDispatchContext(String saveinfostr) {
+		DispatchContext dispatchContext = new DispatchContext();
 		String[] couples = saveinfostr.split("%26");
 		for(int i=0; i<couples.length; i++) {
 			String couple = couples[i];
@@ -355,86 +355,93 @@ public class SchedulerUtilities {
 			String[] couplevals = couple.split("=");
 			String name = couplevals[0];
 			String value = couplevals[1];
+			
+			if(name.equals("saveasfile")) {
+				dispatchContext.setFileSystemDisptachChannelEnabled(true);
+			}
+			if(name.equals("destinationfolder")) {
+				dispatchContext.setDestinationFolder(value);
+			}
 			if(name.equals("saveassnapshot")) {
-				sInfo.setSaveAsSnapshot(true);
+				dispatchContext.setSnapshootDispatchChannelEnabled(true);
 			}
 			if(name.equals("snapshotname")) {
-				sInfo.setSnapshotName(value);
+				dispatchContext.setSnapshotName(value);
 			}
 			if(name.equals("snapshotdescription")) {
-				sInfo.setSnapshotDescription(value);
+				dispatchContext.setSnapshotDescription(value);
 			}
 			if(name.equals("snapshothistorylength")) {
-				sInfo.setSnapshotHistoryLength(value);
+				dispatchContext.setSnapshotHistoryLength(value);
 			}
 			if(name.equals("sendtojavaclass")) {
-				sInfo.setSendToJavaClass(true);
+				dispatchContext.setJavaClassDispatchChannelEnabled(true);
 			}
 			if(name.equals("javaclasspath")) {
-				sInfo.setJavaClassPath(value);
+				dispatchContext.setJavaClassPath(value);
 			}
 			if(name.equals("saveasdocument")) {
-				sInfo.setSaveAsDocument(true);
+				dispatchContext.setFunctionalityTreeDispatchChannelEnabled(true);
 			}
 			if(name.equals("documentname")) {
-				sInfo.setDocumentName(value);
+				dispatchContext.setDocumentName(value);
 			}
 			if(name.equals("documentdescription")) {
-				sInfo.setDocumentDescription(value);
+				dispatchContext.setDocumentDescription(value);
 			}
 			if(name.equals("documenthistorylength")) {
-				sInfo.setDocumentHistoryLength(value);
+				dispatchContext.setDocumentHistoryLength(value);
 			}
 			if(name.equals("datasetFolderLabel")) {
-				sInfo.setUseFolderDataSet(true);
-				sInfo.setDataSetFolderLabel(value);
+				dispatchContext.setUseFolderDataSet(true);
+				dispatchContext.setDataSetFolderLabel(value);
 			}
 			if(name.equals("datasetFolderParameterLabel")) {
-				sInfo.setDataSetFolderParameterLabel(value);
+				dispatchContext.setDataSetFolderParameterLabel(value);
 			}
 			if(name.equals("functionalityids")) {
-				sInfo.setUseFixedFolder(true);
-				sInfo.setFunctionalityIds(value);
+				dispatchContext.setUseFixedFolder(true);
+				dispatchContext.setFunctionalityIds(value);
 			}
 			if(name.equals("sendmail")) {
-				sInfo.setSendMail(true);
+				dispatchContext.setMailDispatchChannelEnabled(true);
 			}
 			if(name.equals("mailtos")) {
-				sInfo.setUseFixedRecipients(true);
-				sInfo.setMailTos(value);
+				dispatchContext.setUseFixedRecipients(true);
+				dispatchContext.setMailTos(value);
 			}
 			if(name.equals("datasetLabel")) {
-				sInfo.setUseDataSet(true);
-				sInfo.setDataSetLabel(value);
+				dispatchContext.setUseDataSet(true);
+				dispatchContext.setDataSetLabel(value);
 			}
 			if(name.equals("datasetParameterLabel")) {
-				sInfo.setDataSetParameterLabel(value);
+				dispatchContext.setDataSetParameterLabel(value);
 			}
 			if(name.equals("expression")) {
-				sInfo.setUseExpression(true);
-				sInfo.setExpression(value);
+				dispatchContext.setUseExpression(true);
+				dispatchContext.setExpression(value);
 			}
 			if(name.equals("mailsubj")) {
-				sInfo.setMailSubj(value);
+				dispatchContext.setMailSubj(value);
 			}
 			if(name.equals("mailtxt")) {
-				sInfo.setMailTxt(value);
+				dispatchContext.setMailTxt(value);
 			}
 			if(name.equals("sendtodl")) {
-				sInfo.setSendToDl(true);
+				dispatchContext.setDistributionListDispatchChannelEnabled(true);
 			}
 			if(name.equals("dlId")) {
 				
 				String[] dlIds = value.split(",");
 				for (int j=0; j<dlIds.length; j++){
 					String dlId = dlIds[j];					
-					sInfo.addDlId(new Integer(dlId));
+					dispatchContext.addDlId(new Integer(dlId));
 				}
 				
-				sInfo.setSendToDl(true);
+				dispatchContext.setDistributionListDispatchChannelEnabled(true);
 			}
 		}
-		return sInfo;
+		return dispatchContext;
 	}
 	
 }

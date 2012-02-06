@@ -12,7 +12,7 @@
 package it.eng.spagobi.analiticalmodel.execution.service;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjMetaDataAndContent;
+import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -86,9 +86,9 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 				ObjMetacontent metaContentSubObjName = new ObjMetacontent();
 				SubObject subobj = DAOFactory.getSubObjectDAO().getSubObject(subObjectId);
 				metaContentSubObjName.setContent(subobj.getName().getBytes());
-				ObjMetaDataAndContent metaAndContentSubObjName = new ObjMetaDataAndContent();
-				metaAndContentSubObjName.setMeta(metaSubObjName);
-				metaAndContentSubObjName.setMetacontent(metaContentSubObjName);
+				DocumentMetadataProperty metaAndContentSubObjName = new DocumentMetadataProperty();
+				metaAndContentSubObjName.setMetadataPropertyDefinition(metaSubObjName);
+				metaAndContentSubObjName.setMetadataPropertyValue(metaContentSubObjName);
 				metaDataAndContents.add(metaAndContentSubObjName);
 			}		
 			
@@ -100,9 +100,9 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			metaObjLabel.setDataTypeCode("GENERAL_META");
 			ObjMetacontent metaContentObjLabel = new ObjMetacontent();
 			metaContentObjLabel.setContent(obj.getLabel().getBytes());
-			ObjMetaDataAndContent metaAndContentObjLabel = new ObjMetaDataAndContent();
-			metaAndContentObjLabel.setMeta(metaObjLabel);
-			metaAndContentObjLabel.setMetacontent(metaContentObjLabel);
+			DocumentMetadataProperty metaAndContentObjLabel = new DocumentMetadataProperty();
+			metaAndContentObjLabel.setMetadataPropertyDefinition(metaObjLabel);
+			metaAndContentObjLabel.setMetadataPropertyValue(metaContentObjLabel);
 			metaDataAndContents.add(metaAndContentObjLabel);
 			
 			//Obj Name
@@ -112,9 +112,9 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			metaObjName.setDataTypeCode("GENERAL_META");
 			ObjMetacontent metaContentObjName = new ObjMetacontent();
 			metaContentObjName.setContent(obj.getName().getBytes());
-			ObjMetaDataAndContent metaAndContentObjName = new ObjMetaDataAndContent();
-			metaAndContentObjName.setMeta(metaObjName);
-			metaAndContentObjName.setMetacontent(metaContentObjName);
+			DocumentMetadataProperty metaAndContentObjName = new DocumentMetadataProperty();
+			metaAndContentObjName.setMetadataPropertyDefinition(metaObjName);
+			metaAndContentObjName.setMetadataPropertyValue(metaContentObjName);
 			metaDataAndContents.add(metaAndContentObjName);
 
 			
@@ -125,9 +125,9 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			metaObjType.setDataTypeCode("GENERAL_META");
 			ObjMetacontent metaContentObjType = new ObjMetacontent();
 			metaContentObjType.setContent(obj.getBiObjectTypeCode().getBytes());
-			ObjMetaDataAndContent metaAndContentObjType = new ObjMetaDataAndContent();
-			metaAndContentObjType.setMeta(metaObjType);
-			metaAndContentObjType.setMetacontent(metaContentObjType);
+			DocumentMetadataProperty metaAndContentObjType = new DocumentMetadataProperty();
+			metaAndContentObjType.setMetadataPropertyDefinition(metaObjType);
+			metaAndContentObjType.setMetadataPropertyValue(metaContentObjType);
 			metaDataAndContents.add(metaAndContentObjType);
 			
 			/*
@@ -152,9 +152,9 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			metaObjEngineName.setDataTypeCode("GENERAL_META");
 			ObjMetacontent metaContentObjEngineName = new ObjMetacontent();
 			metaContentObjEngineName.setContent(obj.getEngine().getName().getBytes());
-			ObjMetaDataAndContent metaAndContentObjEngineName = new ObjMetaDataAndContent();
-			metaAndContentObjEngineName.setMeta(metaObjEngineName);
-			metaAndContentObjEngineName.setMetacontent(metaContentObjEngineName);
+			DocumentMetadataProperty metaAndContentObjEngineName = new DocumentMetadataProperty();
+			metaAndContentObjEngineName.setMetadataPropertyDefinition(metaObjEngineName);
+			metaAndContentObjEngineName.setMetadataPropertyValue(metaContentObjEngineName);
 			metaDataAndContents.add(metaAndContentObjEngineName);
 			
 			//END GENERAL METADATA
@@ -166,9 +166,9 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 				while (it.hasNext()) {
 					ObjMetadata objMetadata = (ObjMetadata) it.next();
 					ObjMetacontent objMetacontent = (ObjMetacontent) DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(), objectId, subObjectId);
-					ObjMetaDataAndContent metaAndContent = new ObjMetaDataAndContent();
-					metaAndContent.setMeta(objMetadata);
-					metaAndContent.setMetacontent(objMetacontent);	
+					DocumentMetadataProperty metaAndContent = new DocumentMetadataProperty();
+					metaAndContent.setMetadataPropertyDefinition(objMetadata);
+					metaAndContent.setMetadataPropertyValue(objMetacontent);	
 					metaDataAndContents.add(metaAndContent);
 				}
 			}

@@ -13,7 +13,7 @@ package it.eng.spagobi.commons.deserializer;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjMetaDataAndContent;
+import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjNote;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;

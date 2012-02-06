@@ -94,7 +94,8 @@ public class ExecutionProxy {
 	 * 
 	 * @param profile The user profile
 	 * @param modality The execution modality (for auditing)
-	 * @param defaultOutputFormat The default output format (optional), considered if the document has no output format parameter set
+	 * @param defaultOutputFormat The default output format (optional)
+	 * , considered if the document has no output format parameter set
 	 * 
 	 * @return the byte[]
 	 */
@@ -266,26 +267,7 @@ public class ExecutionProxy {
 				if (sbicontext != null) {
 					mapPars.put(SpagoBIConstants.SBI_CONTEXT, sbicontext);
 				}
-			}
-
-			// set spagobi  url
-			/*
-	    if (!mapPars.containsKey(SpagoBIConstants.SBI_BACK_END_HOST)) {
-		//String sbiconturl = GeneralUtilities.getSpagoBiContextAddress();
-		String sbiconturl = GeneralUtilities.getSpagoBiHostBackEnd();
-		if (sbiconturl != null) {
-		    mapPars.put(SpagoBIConstants.SBI_BACK_END_HOST, sbiconturl);
-		}
-	    }
-			 */
-			//			// set spagobi  url for backend invocation
-			//			if (!mapPars.containsKey(SpagoBIConstants.SBI_HOST)) {
-			//			//String sbiconturl = GeneralUtilities.getSpagoBiContextAddress();
-			//			String sbiconturl = GeneralUtilities.getSpagoBiHost();
-			//			if (sbiconturl != null) {
-			//			mapPars.put(SpagoBIConstants.SBI_HOST, sbiconturl);
-			//			}
-			//			}	    
+			}    
 
 			// set country and language (locale)
 			Locale locale = GeneralUtilities.getDefaultLocale();
@@ -484,7 +466,4 @@ public class ExecutionProxy {
 	public void setMimeType(String outputType) {
 		this.mimeType = outputType;
 	}
-
-	
-
 }

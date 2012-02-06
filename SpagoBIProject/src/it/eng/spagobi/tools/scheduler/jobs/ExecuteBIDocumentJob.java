@@ -83,7 +83,7 @@ import it.eng.spagobi.tools.distributionlist.bo.Email;
 import it.eng.spagobi.tools.scheduler.Formula;
 import it.eng.spagobi.tools.scheduler.FormulaParameterValuesRetriever;
 import it.eng.spagobi.tools.scheduler.RuntimeLoadingParameterValuesRetriever;
-import it.eng.spagobi.tools.scheduler.to.SaveInfo;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.utils.BIObjectParametersIterator;
 import it.eng.spagobi.tools.scheduler.utils.JavaClassDestination;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
@@ -142,7 +142,7 @@ public class ExecuteBIDocumentJob implements Job {
 				
 				// get the save options
 				String saveOptString = jobDataMap.getString("biobject_id_" + biobj.getId() + "__"+ (ind+1));
-				SaveInfo saveInfo = SchedulerUtilities.fromSaveInfoString(saveOptString);
+				DispatchContext saveInfo = SchedulerUtilities.decodeDispatchContext(saveOptString);
 				
 				// create the execution controller 
 				executionController = new ExecutionController();
@@ -256,15 +256,15 @@ public class ExecuteBIDocumentJob implements Job {
 					// exec the document only if all its parameter are filled
 					if(executionController.directExecution()) {
 						
-						logger.debug("Save as snapshot is eual to [" + saveInfo.isSaveAsSnapshot() + "]");
-						logger.debug("Dispatch to a distribution list is eual to [" + saveInfo.isSendToDl() + "]");
-						logger.debug("Dispatch to a java class is eual to [" + saveInfo.isSendToJavaClass() + "]");
-						logger.debug("Dispatch by mail-list is eual to [" + saveInfo.isSendMail() + "]");
-						logger.debug("Dispatch by folder-list is eual to [" + saveInfo.isSaveAsDocument() + "]");
+						logger.debug("Save as snapshot is eual to [" + saveInfo.isSnapshootDispatchChannelEnabled() + "]");
+						logger.debug("Dispatch to a distribution list is eual to [" + saveInfo.isDistributionListDispatchChannelEnabled() + "]");
+						logger.debug("Dispatch to a java class is eual to [" + saveInfo.isJavaClassDispatchChannelEnabled() + "]");
+						logger.debug("Dispatch by mail-list is eual to [" + saveInfo.isMailDispatchChannelEnabled() + "]");
+						logger.debug("Dispatch by folder-list is eual to [" + saveInfo.isFunctionalityTreeDispatchChannelEnabled() + "]");
 						
-						if(!saveInfo.isSaveAsSnapshot() && !saveInfo.isSendToDl() && !saveInfo.isSendToJavaClass()) {
+						if(!saveInfo.isSnapshootDispatchChannelEnabled() && !saveInfo.isDistributionListDispatchChannelEnabled() && !saveInfo.isJavaClassDispatchChannelEnabled()) {
 							boolean noValidDispatchTarget = false;
-							if(saveInfo.isSendMail()) {
+							if(saveInfo.isMailDispatchChannelEnabled()) {
 								String[] recipients = findRecipients(saveInfo, biobj, emailDispatchDataStore);
 								if (recipients != null && recipients.length > 0) {
 									noValidDispatchTarget = false;
@@ -274,7 +274,7 @@ public class ExecuteBIDocumentJob implements Job {
 								}
 							} 
 							
-							if(saveInfo.isSaveAsDocument()) {
+							if(saveInfo.isFunctionalityTreeDispatchChannelEnabled()) {
 								List storeInFunctionalities = findFolders(saveInfo, biobj, folderDispatchDataSotre);
 								if(storeInFunctionalities != null && !storeInFunctionalities.isEmpty()) {
 									noValidDispatchTarget = false;
@@ -288,7 +288,7 @@ public class ExecuteBIDocumentJob implements Job {
 								logger.debug("No valid dispatch target for document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters [" + toBeAppendedToDescription +"]");
 								logger.info("Document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription + " not executed: no valid dispatch target");
 								continue;
-							} else if(!saveInfo.isSaveAsDocument() && !saveInfo.isSendMail()){
+							} else if(!saveInfo.isFunctionalityTreeDispatchChannelEnabled() && !saveInfo.isMailDispatchChannelEnabled()){
 								logger.debug("There are no dispatch targets for document with label [" + documentInstanceName + "] - if not an ETL, WEKA or KPI document a dispatch target should be added");
 							}else{
 								logger.debug("There is at list one dispatch target for document with label [" + documentInstanceName + "]");
@@ -314,18 +314,18 @@ public class ExecuteBIDocumentJob implements Job {
 						logger.info("Document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription +" executed in [" + elapsed + "]");
 						
 						
-						if(saveInfo.isSaveAsSnapshot()) {
+						if(saveInfo.isSnapshootDispatchChannelEnabled()) {
 							saveAsSnap(saveInfo, biobj, response, toBeAppendedToName.toString(), toBeAppendedToDescription.toString(),profile);
 						}
 
-						if(saveInfo.isSaveAsDocument()) {
+						if(saveInfo.isFunctionalityTreeDispatchChannelEnabled()) {
 							saveAsDocument(saveInfo, biobj,jobExecutionContext, response, fileextension, folderDispatchDataSotre, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
 						}
 
-						if(saveInfo.isSendMail()) {
+						if(saveInfo.isMailDispatchChannelEnabled()) {
 							sendMail(saveInfo, biobj, tempParMap, response, retCT, fileextension, emailDispatchDataStore, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
 						}
-						if(saveInfo.isSendToDl()) {
+						if(saveInfo.isDistributionListDispatchChannelEnabled()) {
 							sendToDl(saveInfo, biobj, response, retCT, fileextension, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
 							if(jobExecutionContext.getNextFireTime()== null){
 								String triggername = jobExecutionContext.getTrigger().getName();
@@ -339,7 +339,7 @@ public class ExecuteBIDocumentJob implements Job {
 							}
 						}
 
-						if(saveInfo.isSendToJavaClass()) {
+						if(saveInfo.isJavaClassDispatchChannelEnabled()) {
 							sendToJavaClass(saveInfo, biobj, response);
 						}
 
@@ -520,7 +520,7 @@ public class ExecuteBIDocumentJob implements Job {
 	}
 
 
-	private void sendToJavaClass(SaveInfo sInfo,BIObject biobj, byte[] response) throws Exception {
+	private void sendToJavaClass(DispatchContext sInfo,BIObject biobj, byte[] response) throws Exception {
 		logger.debug("IN");
 
 		String javaClass = sInfo.getJavaClassPath();
@@ -562,7 +562,7 @@ public class ExecuteBIDocumentJob implements Job {
 	}
 
 
-	private void saveAsSnap(SaveInfo sInfo,BIObject biobj, byte[] response, String toBeAppendedToName, String toBeAppendedToDescription,IEngUserProfile profile) {
+	private void saveAsSnap(DispatchContext sInfo,BIObject biobj, byte[] response, String toBeAppendedToName, String toBeAppendedToDescription,IEngUserProfile profile) {
 		logger.debug("IN");
 		try {
 			String snapName = sInfo.getSnapshotName();
@@ -622,7 +622,7 @@ public class ExecuteBIDocumentJob implements Job {
 
 
 
-	private void saveAsDocument(SaveInfo sInfo,BIObject biobj, JobExecutionContext jex, byte[] response, String fileExt, IDataStore dataStore, String toBeAppendedToName, String toBeAppendedToDescription) {
+	private void saveAsDocument(DispatchContext sInfo,BIObject biobj, JobExecutionContext jex, byte[] response, String fileExt, IDataStore dataStore, String toBeAppendedToName, String toBeAppendedToDescription) {
 		logger.debug("IN");
 		try{
 			String docName = sInfo.getDocumentName();
@@ -705,7 +705,7 @@ public class ExecuteBIDocumentJob implements Job {
 
 
 
-	private void sendMail(SaveInfo sInfo, BIObject biobj,Map parMap, byte[] response, String retCT, String fileExt, IDataStore dataStore, String toBeAppendedToName, String toBeAppendedToDescription) {
+	private void sendMail(DispatchContext sInfo, BIObject biobj,Map parMap, byte[] response, String retCT, String fileExt, IDataStore dataStore, String toBeAppendedToName, String toBeAppendedToDescription) {
 		logger.debug("IN");
 		try{
 
@@ -791,7 +791,7 @@ public class ExecuteBIDocumentJob implements Job {
 		}
 	}
 
-	private String[] findRecipients(SaveInfo info, BIObject biobj,
+	private String[] findRecipients(DispatchContext info, BIObject biobj,
 			IDataStore dataStore) {
 		logger.debug("IN");
 		String[] toReturn = null;
@@ -829,7 +829,7 @@ public class ExecuteBIDocumentJob implements Job {
 		return toReturn;
 	}
 
-	private List<String> findRecipientsFromFixedList(SaveInfo info) throws Exception {
+	private List<String> findRecipientsFromFixedList(DispatchContext info) throws Exception {
 		logger.debug("IN");
 		List<String> recipients = new ArrayList();
 		if (info.isUseFixedRecipients()) {
@@ -846,7 +846,7 @@ public class ExecuteBIDocumentJob implements Job {
 		return recipients;
 	}
 
-	private List<String> findRecipientsFromExpression(SaveInfo info, BIObject biobj) throws Exception {
+	private List<String> findRecipientsFromExpression(DispatchContext info, BIObject biobj) throws Exception {
 		logger.debug("IN");
 		List<String> recipients = new ArrayList();
 		if (info.isUseExpression()) {
@@ -879,7 +879,7 @@ public class ExecuteBIDocumentJob implements Job {
 		return recipients;
 	}
 
-	private List<String> findRecipientsFromDataSet(SaveInfo info, BIObject biobj,
+	private List<String> findRecipientsFromDataSet(DispatchContext info, BIObject biobj,
 			IDataStore dataStore) throws Exception {
 		logger.debug("IN");
 		List<String> recipients = new ArrayList();
@@ -949,7 +949,7 @@ public class ExecuteBIDocumentJob implements Job {
 		return recipients;
 	}
 
-	private List findFolders(SaveInfo info, BIObject biobj, IDataStore dataStore) {
+	private List findFolders(DispatchContext info, BIObject biobj, IDataStore dataStore) {
 		logger.debug("IN");
 		List toReturn = null;
 		List<String> folders = new ArrayList();
@@ -971,7 +971,7 @@ public class ExecuteBIDocumentJob implements Job {
 		return toReturn;
 	}
 	
-	private List findFoldersFromFixedList(SaveInfo info) throws Exception {
+	private List findFoldersFromFixedList(DispatchContext info) throws Exception {
 		logger.debug("IN");
 		List folders = new ArrayList();
 		String functIdsConcat = info.getFunctionalityIds();
@@ -987,7 +987,7 @@ public class ExecuteBIDocumentJob implements Job {
 		return folders;
 	}
 
-	private List findFoldersFromDataSet(SaveInfo info, BIObject biobj,IDataStore dataStore) throws Exception {
+	private List findFoldersFromDataSet(DispatchContext info, BIObject biobj,IDataStore dataStore) throws Exception {
 		logger.debug("IN");
 		List folders = new ArrayList();
 		if (info.isUseFolderDataSet()) {
@@ -1062,7 +1062,7 @@ public class ExecuteBIDocumentJob implements Job {
 		return folders;
 	}
 	
-	private void sendToDl(SaveInfo sInfo, BIObject biobj, byte[] response, String retCT, String fileExt, String toBeAppendedToName, String toBeAppendedToDescription) {
+	private void sendToDl(DispatchContext sInfo, BIObject biobj, byte[] response, String retCT, String fileExt, String toBeAppendedToName, String toBeAppendedToDescription) {
 		logger.debug("IN");
 		try{
 

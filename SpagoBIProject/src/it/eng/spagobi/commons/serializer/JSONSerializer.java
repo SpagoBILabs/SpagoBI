@@ -12,7 +12,7 @@
 package it.eng.spagobi.commons.serializer;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjMetaDataAndContent;
+import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjNote;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
@@ -84,7 +84,7 @@ public class JSONSerializer implements Serializer {
 		mappings.put( Snapshot.class, new SnapshotJSONSerializer() );
 		mappings.put( DataStore.class, new DataStoreJSONSerializer() );
 		mappings.put( ObjNote.class, new ObjectNotesJSONSerializer() );
-		mappings.put( ObjMetaDataAndContent.class, new MetadataJSONSerializer());	
+		mappings.put( DocumentMetadataProperty.class, new MetadataJSONSerializer());	
 		mappings.put( ObjMetadata.class, new ShortMetadataJSONSerializer());	
 		mappings.put( SbiUser.class, new SbiUserJSONSerializer());
 		mappings.put( UserBO.class, new UserJSONSerializer());

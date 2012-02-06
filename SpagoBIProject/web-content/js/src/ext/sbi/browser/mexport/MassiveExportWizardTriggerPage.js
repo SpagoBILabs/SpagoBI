@@ -227,6 +227,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
     	
     	this.generalConfFields['job'] = [];
     	
+    	/*
     	field = new Ext.form.TextField({
             fieldLabel: 'Name',
             name: 'name',
@@ -238,8 +239,10 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
             fieldLabel: 'Description',
             name: 'description',
             allowBlank:false
-        });
+        });    	
     	this.generalConfFields['job'].push(field);
+    	*/
+    	
     }
     
     
@@ -260,7 +263,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
             name: 'startTime',
             maxHeight: 180,
             //format: 'H:i',
-            increment: 30,
+            increment: 10,
             allowBlank:true
         });
     	this.generalConfFields['trigger'].push(field);
@@ -278,7 +281,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
             name: 'endTime',
             maxHeight: 180,
             //format: 'H:i',
-            increment: 30,
+            increment: 10,
             allowBlank:true
     	});
     	this.generalConfFields['trigger'].push(field);

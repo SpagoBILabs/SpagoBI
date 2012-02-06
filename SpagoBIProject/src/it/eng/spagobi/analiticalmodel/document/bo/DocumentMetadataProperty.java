@@ -14,7 +14,7 @@ package it.eng.spagobi.analiticalmodel.document.bo;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 
-public class ObjMetaDataAndContent {
+public class DocumentMetadataProperty {
 	
 	private ObjMetadata meta = null;
 	private ObjMetacontent metacontent = null;
@@ -22,13 +22,13 @@ public class ObjMetaDataAndContent {
 	public ObjMetadata getMeta() {
 		return meta;
 	}
-	public void setMeta(ObjMetadata meta) {
+	public void setMetadataPropertyDefinition(ObjMetadata meta) {
 		this.meta = meta;
 	}
 	public ObjMetacontent getMetacontent() {
 		return metacontent;
 	}
-	public void setMetacontent(ObjMetacontent metacontent) {
+	public void setMetadataPropertyValue(ObjMetacontent metacontent) {
 		this.metacontent = metacontent;
 	}
 
