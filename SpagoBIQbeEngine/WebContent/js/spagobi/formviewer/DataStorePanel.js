@@ -168,7 +168,9 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 							   formatDataSet = meta.fields[i].format;
 						   }
 					   }
-					   var f = Ext.apply( Sbi.locale.formats[t], formatDataSet);
+					   var f = Ext.apply( {}, Sbi.locale.formats[t]);
+					   f = Ext.apply( f, formatDataSet);
+
 					   numberFormatterFunction = Sbi.qbe.commons.Format.numberRenderer(f);
 				   } else {
 					   numberFormatterFunction = Sbi.locale.formatters[t];
