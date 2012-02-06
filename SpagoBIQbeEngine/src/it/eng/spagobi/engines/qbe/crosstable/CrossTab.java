@@ -63,13 +63,17 @@ public class CrossTab {
 	public static final String CROSSTAB_JSON_CONFIG = "config";
 	public static final String CROSSTAB_JSON_MEASURES_METADATA = "measures_metadata";
 	public static final String CROSSTAB_JSON_ROWS_HEADER_TITLE = "rowHeadersTitle";
+	public static final String CROSSTAB_CELLTYPEOFCOLUMNS = "celltypeOfColumns";
+	public static final String CROSSTAB_CELLTYPEOFROWS = "celltypeOfRows";
 	
 	
 	public static final String MEASURE_NAME = "name";
 	public static final String MEASURE_TYPE = "type";
 	public static final String MEASURE_FORMAT = "format";
+	public static final String MEASURE_POSITION = "measurePosition";
 	public static final String TOTAL = "Total";
 	public static final String SUBTOTAL = "SubTotal";
+
 
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy" );
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
@@ -87,7 +91,18 @@ public class CrossTab {
 	private List<String[]> columnsSum; //sum calculate for the rows (summ the row 1.. )
 	private boolean measuresOnRow;
 	
-	public enum CellType {DATA, CF, SUBTOTAL, TOTAL }
+	public enum CellType {
+		DATA("data"), CF("cf"), SUBTOTAL("partialsum"), TOTAL("totals");
+			CellType(String value){
+				this.value = value;
+			}
+			private String value;
+			
+			public String getValue(){
+				return this.value;
+			}
+			
+		}
 	
 	private List<CellType> celltypeOfColumns;
 	private List<CellType> celltypeOfRows;
@@ -103,13 +118,6 @@ public class CrossTab {
 	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray fieldOptions, JSONArray calculateFields) throws JSONException{
 		this(dataStore, crosstabDefinition);
 		
-		//if(this.crosstabDefinition.isPivotTable()){
-			//add the headers in the columns
-			List<CrosstabDefinition.Column> columns =  crosstabDefinition.getColumns();
-			//columnsRootToSerialize = columnsRoot.clone();
-			addHeaderTitles(columns, 0, columnsRoot);
-		//}	
-		
 		rowsSum =  getTotalsOnRows(measuresOnRow);
 		columnsSum =  getTotalsOnColumns(measuresOnRow);
 		
@@ -123,8 +131,15 @@ public class CrossTab {
 		}
 		addMeasuresScaleFactor(fieldOptions);
 		addSubtotals();
+		
 		addTotals();
+		List<CrosstabDefinition.Column> columns =  crosstabDefinition.getColumns();
+		addHeaderTitles(columns, 0, columnsRoot);
 	}
+	
+//	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition) throws JSONException{
+//		this(dataStore, crosstabDefinition, null,null);
+//	}
 	
 	/**
 	 * Builds the crossTab (headers structure and data)
@@ -248,7 +263,12 @@ public class CrossTab {
 	
 	private <T extends Attribute> void addHeaderTitles(List<T> lines, int linesIndex, Node node){
 		if(linesIndex<lines.size()){
-			Node descriptionNode = new Node(lines.get(linesIndex).getAlias());
+			Node descriptionNode;
+			if(node.getValue().equals(TOTAL)){
+				descriptionNode = new Node(TOTAL);	
+			}else{
+				descriptionNode = new Node(lines.get(linesIndex).getAlias());
+			}
 			linesIndex++;
 			List<Node> children = node.getChilds();
 			List<Node> newchildren = new ArrayList<Node>();
@@ -283,21 +303,32 @@ public class CrossTab {
 		JSONArray descriptions = getHeaderDescriptions( crosstabDefinition.getRows());
 		crossTabDefinition.put(CROSSTAB_JSON_ROWS_HEADERS_DESCRIPTION, descriptions);
 		
-		Node columnsRootToSerialize;
+//		Node columnsRootToSerialize;
 		
-		if(this.crosstabDefinition.isPivotTable()){
-			//add the headers in the columns
-			List<CrosstabDefinition.Column> columns =  crosstabDefinition.getColumns();
-			columnsRootToSerialize = columnsRoot.clone();
-			addHeaderTitles(columns, 0, columnsRootToSerialize);
-		}else{
-			columnsRootToSerialize = columnsRoot;
-		}
+//		if(this.crosstabDefinition.isPivotTable()){
+//			//add the headers in the columns
+//			List<CrosstabDefinition.Column> columns =  crosstabDefinition.getColumns();
+//			columnsRootToSerialize = columnsRoot.clone();
+//			addHeaderTitles(columns, 0, columnsRootToSerialize);
+//		}else{
+//			columnsRootToSerialize = columnsRoot;
+//		}
 
-		crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRootToSerialize.toJSONObject());
+		//crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRootToSerialize.toJSONObject());
+		crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRoot.toJSONObject());
 		crossTabDefinition.put(CROSSTAB_JSON_DATA,  getJSONDataMatrix());
+		crossTabDefinition.put(CROSSTAB_CELLTYPEOFCOLUMNS,  serializeCellType(this.celltypeOfColumns));
+		crossTabDefinition.put(CROSSTAB_CELLTYPEOFROWS,  serializeCellType(this.celltypeOfRows));
 		crossTabDefinition.put(CROSSTAB_JSON_CONFIG,  config);
 		return crossTabDefinition;
+	}
+	
+	private JSONArray serializeCellType(List<CellType> celltypes){
+		JSONArray types = new JSONArray();
+		for(int i=0; i<celltypes.size(); i++){
+			types.put(celltypes.get(i).getValue());
+		}
+		return types;
 	}
 	
 
@@ -547,13 +578,13 @@ public class CrossTab {
 	
 	private JSONArray getJSONMeasuresMetadata() throws JSONException {
 		JSONArray array = new JSONArray();
-		Iterator<MeasureInfo> it = measures.iterator();
-		while (it.hasNext()) {
-			MeasureInfo mi = it.next();
+		for(int i=0; i<measures.size(); i++){
+			MeasureInfo mi = measures.get(i);
 			JSONObject jsonMi = new JSONObject();
 			jsonMi.put(MEASURE_NAME, mi.getName());
 			jsonMi.put(MEASURE_TYPE, mi.getType());
 			jsonMi.put(MEASURE_FORMAT, mi.getFormat() != null ? mi.getFormat() : "");
+			jsonMi.put(MEASURE_POSITION, i);
 			array.put(jsonMi);
 		}
 		return array;
@@ -1023,6 +1054,24 @@ public class CrossTab {
 		return sum;
 	}
 	
+	private String[] getTotalsOfRows(int start, int length){
+		double[] st = new double[dataMatrix[0].length];
+
+		for(int i=0; i<dataMatrix[0].length; i++){
+			for(int j=start; j<length+start; j++){
+				try {
+					if(getCellType(j,i).equals(CellType.DATA)){
+						st[i] = st[i] + new Double(dataMatrix[j][i]);
+					}
+				} catch (Exception e) {
+					logger.debug("Cant format the number "+ (dataMatrix[j][i]));
+				}
+			}
+		}
+
+		return toStringArray(st);
+	}
+	
 	private String[] toStringArray(double[] doubleArray){
 		String[] strings = new String[doubleArray.length];
 		for(int i=0; i<doubleArray.length; i++){
@@ -1061,6 +1110,78 @@ public class CrossTab {
 		}
 		return sum;
 	}
+	
+	private String[] getTotalsOfColumns(int start, int length){
+		double[] st = new double[dataMatrix.length];
+
+		for(int i=0; i<dataMatrix.length; i++){
+			for(int j=start; j<length+start; j++){
+				try {
+					if(getCellType(i,j).equals(CellType.DATA)){
+						st[i] = st[i] + new Double(dataMatrix[i][j]);
+					}
+				} catch (Exception e) {
+					logger.debug("Cant format the number "+ (dataMatrix[i][j]));
+				}
+			}
+		}
+
+		return toStringArray(st);
+	}
+	
+	
+	private double getTotalsOfColumn(int colunm, CellType type){
+
+		double sum =0;
+		for(int y=0; y<dataMatrix.length; y++){
+			if( celltypeOfColumns.get(colunm).equals(type)){
+				sum = sum+new Double(dataMatrix[y][colunm]);
+			}
+		}
+		return sum;
+	}
+	
+	private String[] getTotalsOfColumnWithMeasure(int colunm){
+
+		double[] st = new double[measures.size()];
+		int measurescount =0;
+
+		for(int y=0; y<dataMatrix.length; y++){
+			if( !celltypeOfRows.get(y).equals(CellType.CF)){
+				st[measurescount%measures.size()] = st[measurescount%measures.size()]+new Double(dataMatrix[y][colunm]);
+				measurescount++;
+			}
+		}
+		
+		return toStringArray(st);
+	}
+	
+	private double getTotalsOfRow(int row, CellType type){
+
+		double sum =0;
+		for(int y=0; y<dataMatrix[0].length; y++){
+			if( celltypeOfRows.get(y).equals(type)){
+				sum = sum+new Double(dataMatrix[row][y]);
+			}
+		}
+		return sum;
+	}
+	
+	private String[] getTotalsOfRowWithMeasure(int row){
+
+		double[] st = new double[measures.size()];
+		int measurescount =0;
+
+		for(int y=0; y<dataMatrix[0].length; y++){
+			if( !celltypeOfColumns.get(y).equals(CellType.CF)){
+				st[measurescount%measures.size()] = st[measurescount%measures.size()]+new Double(dataMatrix[row][y]);
+				measurescount++;
+			}
+		}
+		
+		return toStringArray(st);
+	}
+
 	
 	/**
 	 * Get the super total (sum of sums)
@@ -1116,9 +1237,9 @@ public class CrossTab {
 	
 	private void addTotals() throws JSONException{
 		
-		String rowsTotals = config.optString("calculatetotalsoncolumns");
-		String columnsTotals = config.optString("calculatetotalsonrows");
-		boolean measuresOnRow = config.getString("measureson").equals("rows");
+		String rowsTotals =  config.optString("calculatetotalsoncolumns");
+		String columnsTotals =  config.optString("calculatetotalsonrows");
+		
 		
 		if(rowsTotals!=null && rowsTotals.equals("on")){
 			rowsRoot.addChild(getHeaderTotalSubTree(measuresOnRow, rowsRoot.getSubTreeDepth()-1));
@@ -1142,9 +1263,7 @@ public class CrossTab {
 				rowsSum.set(j,freshRowsSum);
 			}
 		}
-		
 
-		
 		if(columnsTotals!=null && columnsTotals.equals("on")){
 			columnsRoot.addChild(getHeaderTotalSubTree(!measuresOnRow, columnsRoot.getSubTreeDepth()-1));
 			addCrosstabDataColumns(dataMatrix[0].length, rowsSum, CellType.TOTAL);
@@ -1156,59 +1275,290 @@ public class CrossTab {
 	 *								 SUBTOTALS
 	********************************************************************** */
 	public void addSubtotals(){
-		String rowsTotals = config.optString("calculatesubtotalsonrows");
-		String columnsTotals = config.optString("calculatesubtotalsoncolumns");
+		String rowsTotals = "ads";//"on";//config.optString("calculatesubtotalsonrows");
+		String columnsTotals =  "ads";//"on";//config.optString("calculatesubtotalsoncolumns");
 
-		if(rowsTotals!=null && rowsTotals.equals("on")){
-			List<Node> childOfRoot = columnsRoot.getChilds();
-			for(int i=0; i<childOfRoot.size(); i++){
-				addSubtotalsToTheNode(childOfRoot.get(i), true, 2, measuresOnRow);
+		if(measuresOnRow){
+			if(rowsTotals!=null && rowsTotals.equals("on")){
+				if(!measuresOnRow){
+					addSubtotalsToTheNodeFirstLevel(columnsRoot, true, 0);
+					addSubtotalsToTheTree(columnsRoot, true, 0);	
+				}else{
+					int startPosition = 0;
+					for(int i=0; i<columnsRoot.getChilds().size();i++){
+						startPosition = addSubtotalsToTheTreeNoMeasure(columnsRoot.getChilds().get(i), true, startPosition);
+					}
+				}
+			}
+			
+			if(columnsTotals!=null && columnsTotals.equals("on")){
+				if(measuresOnRow){
+					addSubtotalsToTheNodeFirstLevel(rowsRoot, false, 0);
+					addSubtotalsToTheTree(rowsRoot, false, 0);	
+				}else{
+					int startPosition = 0;
+					for(int i=0; i<rowsRoot.getChilds().size();i++){
+						startPosition = addSubtotalsToTheTreeNoMeasure(rowsRoot.getChilds().get(i), false, startPosition);
+					}
+				}
+			}
+		}else{
+		
+			if(columnsTotals!=null && columnsTotals.equals("on")){
+				if(measuresOnRow){
+					addSubtotalsToTheNodeFirstLevel(rowsRoot, false, 0);
+					addSubtotalsToTheTree(rowsRoot, false, 0);	
+				}else{
+					int startPosition = 0;
+					for(int i=0; i<rowsRoot.getChilds().size();i++){
+						startPosition = addSubtotalsToTheTreeNoMeasure(rowsRoot.getChilds().get(i), false, startPosition);
+					}
+				}
+			}
+			if(rowsTotals!=null && rowsTotals.equals("on")){
+				if(!measuresOnRow){
+					addSubtotalsToTheNodeFirstLevel(columnsRoot, true, 0);
+					addSubtotalsToTheTree(columnsRoot, true, 0);	
+				}else{
+					int startPosition = 0;
+					for(int i=0; i<columnsRoot.getChilds().size();i++){
+						startPosition = addSubtotalsToTheTreeNoMeasure(columnsRoot.getChilds().get(i), true, startPosition);
+					}
+				}
 			}
 		}
 		
-		if(columnsTotals!=null && columnsTotals.equals("on")){
-			List<Node> childOfRoot = rowsRoot.getChilds();
-			for(int i=0; i<childOfRoot.size(); i++){
-				addSubtotalsToTheNode(childOfRoot.get(i), false, 2, measuresOnRow);
+
+		
+		
+//		addSubtotalsToTheNodeFirstLevel(columnsRoot, true, 0);
+//		addSubtotalsToTheTree(columnsRoot, true, 0);
+//		if(rowsTotals!=null && rowsTotals.equals("on")){
+//			List<Node> childOfRoot = columnsRoot.getChilds();
+//			for(int i=0; i<childOfRoot.size(); i++){
+//				addSubtotalsToTheNodeFirstLevel(childOfRoot.get(i), true, 2, measuresOnRow);
+//			}
+//		}
+		
+//		if(columnsTotals!=null && columnsTotals.equals("on")){
+//			List<Node> childOfRoot = rowsRoot.getChilds();
+//			for(int i=0; i<childOfRoot.size(); i++){
+//				addSubtotalsToTheNodeFirstLevel(childOfRoot.get(i), false, 2, measuresOnRow);
+//			}
+//		}
+	}
+
+//	/**
+//	 * Prepare and execute a CF for the subtotals
+//	 * @param n
+//	 * @param horizontal
+//	 * @param level
+//	 * @param measuresOnRow
+//	 */
+//	public void addSubtotalsToTheNode(Node n, boolean horizontal, int level, boolean measuresOnRow){
+//		List<Node> childs = n.getChilds();
+//		if(measuresOnRow){
+//			if((!horizontal && level<2) ||  //if level == 1 the subtotals are equals to the total
+//				(childs.size()>0 && childs.get(0).getChilds().size()==0 ) ){ //don't calculate the subtotals between neasures
+//				return;
+//			}
+//		}else{
+//			if(horizontal && level<2 || (childs.size()>0 && childs.get(0).getChilds().size()==0 )){
+//				return;
+//			}
+//		}
+//		if(n.getCellType()!=CellType.CF && childs.size()>0 && n.getValue()!=TOTAL && n.getValue()!=SUBTOTAL ){
+//			//build the calcuated field for the sum
+//			StringBuilder sb = new StringBuilder(" ");
+//			for(int i=0; i<childs.size(); i++){
+//				if(childs.get(i).getCellType()!=CellType.CF && childs.get(i).getValue()!=TOTAL && childs.get(i).getValue()!=SUBTOTAL ){
+//					sb.append("field[");
+//					sb.append(childs.get(i).getValue());
+//					sb.append("] +");
+//				}
+//			}
+//			sb.delete(sb.length()-1, sb.length());		
+//			calculateCF(sb.toString(), n, horizontal, level, SUBTOTAL, CellType.SUBTOTAL);
+//			for(int i=0; i<childs.size(); i++){
+//				addSubtotalsToTheNode(childs.get(i), horizontal, level-1, measuresOnRow);
+//			}
+//		}
+//	}
+	
+	
+	
+//	/**
+//	 * Prepare and execute a CF for the subtotals
+//	 * @param n
+//	 * @param horizontal
+//	 * @param level
+//	 * @param measuresOnRow
+//	 */
+//	public void addSubtotalsToTheNodeFirstLevel(Node n, boolean horizontal, int level, boolean measuresOnRow){
+//		List<Node> childs = n.getChilds();
+//		
+//		
+//		
+//		if(n.getCellType()!=CellType.CF && childs.size()>0 && n.getValue()!=TOTAL && n.getValue()!=SUBTOTAL ){
+//			//build the calcuated field for the sum
+//			StringBuilder sb = new StringBuilder(" ");
+//			for(int i=0; i<childs.size(); i++){
+//				if(childs.get(i).getCellType()!=CellType.CF && childs.get(i).getValue()!=TOTAL && childs.get(i).getValue()!=SUBTOTAL ){
+//					sb.append("field[");
+//					sb.append(childs.get(i).getValue());
+//					sb.append("] +");
+//				}
+//			}
+//			sb.delete(sb.length()-1, sb.length());		
+//			calculateCF(sb.toString(), n, horizontal, level, SUBTOTAL, CellType.SUBTOTAL);
+//		}
+//	}
+	
+	public int addSubtotalsToTheTreeNoMeasure(Node node, boolean horizontal, int startingPosition){
+		int start = startingPosition;
+		int length = node.getLeafsNumber();
+		String[] total;
+		List<Node> children = node.getChilds();
+		if(children.size()>0){
+			int freshStartingPosition = startingPosition;
+			
+			if(horizontal){
+				total = getTotalsOfColumns(start, length);
+			}else{
+				total = getTotalsOfRows(start, length);
+			}
+				
+			List<String[]> linesums = new ArrayList<String[]>();
+			linesums.add(total);
+			addCrosstabDataLine(freshStartingPosition+node.getLeafsNumber(), linesums, horizontal, CellType.SUBTOTAL);
+					
+			for(int i=0; i<children.size(); i++){
+				freshStartingPosition = addSubtotalsToTheTreeNoMeasure(children.get(i), horizontal, freshStartingPosition);
+			}
+			
+			Node totalNode = buildSubtotalNode(node.getSubTreeDepth()-1, false);
+			node.addChild(totalNode);
+			return startingPosition+node.getLeafsNumber();
+		}
+		return startingPosition+1;
+		
+
+	}
+
+	public void addSubtotalsToTheTree(Node node, boolean horizontal, int startingPosition){
+		if(node.getSubTreeDepth()<=4){
+			return;
+		}else{
+			for(int i=0; i<node.getChilds().size(); i++){
+				addSubtotalsToTheTree(node.getChilds().get(i), horizontal, startingPosition);
+				startingPosition = addSubtotalsToTheNodeUpLevel(node.getChilds().get(i), horizontal, startingPosition);
 			}
 		}
 	}
-
-	/**
-	 * Prepare and execute a CF for the subtotals
-	 * @param n
-	 * @param horizontal
-	 * @param level
-	 * @param measuresOnRow
-	 */
-	public void addSubtotalsToTheNode(Node n, boolean horizontal, int level, boolean measuresOnRow){
-		List<Node> childs = n.getChilds();
-		if(measuresOnRow){
-			if((!horizontal && level<2) ||  //if level == 1 the subtotals are equals to the total
-				(childs.size()>0 && childs.get(0).getChilds().size()==0 ) ){ //don't calculate the subtotals between neasures
-				return;
+	
+	public int addSubtotalsToTheNodeUpLevel(Node node, boolean horizontal, int startingPosition){
+		List<Node> children = node.getChilds();
+		List<List<Integer>> valuesTosum = new ArrayList<List<Integer>>(); 
+		List<String[]> linesums = new ArrayList<String[]>();
+		
+		for(int y=0; y<measures.size(); y++){
+			valuesTosum.add(new ArrayList<Integer>());
+		}
+		
+		for(int i=0; i<children.size(); i++){
+			startingPosition = startingPosition+children.get(i).getLeafsNumber();
+			for(int y=0; y<measures.size(); y++){
+				List<Integer> indexformeasuery = valuesTosum.get(y);
+				indexformeasuery.add(startingPosition-measures.size()+y);
+			}
+		}
+		
+		Node subtotalNode = buildSubtotalNode(node.getSubTreeDepth()-2, true);
+		node.addChild(subtotalNode);
+		
+		for(int y=0; y<valuesTosum.size(); y++){
+			List<Integer> linesToSum = valuesTosum.get(y);
+			linesums.add(getTotals(linesToSum, horizontal));
+		}
+		
+		addCrosstabDataLine(startingPosition, linesums, horizontal, CellType.SUBTOTAL);
+		
+		return startingPosition+measures.size();
+	}
+	
+	public int addSubtotalsToTheNodeFirstLevel(Node node, boolean horizontal, int positionToAddNode){
+		Node n = node;
+		List<String[]> linesums = new ArrayList<String[]>();
+		if(n.getChilds().size()>0 && //has children
+			  n.getChilds().get(0).getChilds().size()>0 && //has granchildren 
+			  n.getChilds().get(0).getChilds().get(0).getChilds().size()>0){ //the granchildren are not leaf 
+			for(int i=0; i<n.getChilds().size(); i++){
+				positionToAddNode = addSubtotalsToTheNodeFirstLevel(n.getChilds().get(i),horizontal, positionToAddNode);
 			}
 		}else{
-			if(horizontal && level<2 || (childs.size()>0 && childs.get(0).getChilds().size()==0 )){
-				return;
+			Node subtotalNode = buildSubtotalNode(1, true);
+			for(int y=0; y<measures.size(); y++){
+				List<Integer> linesToSum = new ArrayList<Integer>();
+				for(int k=0; k<n.getChilds().size(); k++){
+					linesToSum.add(positionToAddNode+measures.size()*k+y);
+				}
+				linesums.add(getTotals(linesToSum, horizontal));
+			}
+			positionToAddNode = positionToAddNode+measures.size()*n.getChilds().size();
+			node.addChild(subtotalNode);
+			addCrosstabDataLine(positionToAddNode, linesums, horizontal, CellType.SUBTOTAL);
+			positionToAddNode = positionToAddNode+linesums.size();
+		}
+		return positionToAddNode;
+		
+	}
+	
+	
+	public Node buildSubtotalNode(int totalHeadersNumber, boolean withMeasures){
+		Node node = new Node(SUBTOTAL);
+		Node toReturn;
+		int i=1;
+		if(withMeasures){
+			for(int j=0; j<measures.size(); j++){
+				node.addChild(new Node(measures.get(j).getName()));
 			}
 		}
-		if(n.getCellType()!=CellType.CF && childs.size()>0 && n.getValue()!=TOTAL && n.getValue()!=SUBTOTAL ){
-			//build the calcuated field for the sum
-			StringBuilder sb = new StringBuilder(" ");
-			for(int i=0; i<childs.size(); i++){
-				if(childs.get(i).getCellType()!=CellType.CF && childs.get(i).getValue()!=TOTAL && childs.get(i).getValue()!=SUBTOTAL ){
-					sb.append("field[");
-					sb.append(childs.get(i).getValue());
-					sb.append("] +");
+		toReturn = node;
+		for(; i<totalHeadersNumber;i++){
+			toReturn = new Node(SUBTOTAL);
+			toReturn.addChild(node);
+			node = toReturn;
+		}	
+		
+		return toReturn;
+		
+	}
+	
+	private String[] getTotals(List<Integer> lines, boolean horizontal){
+		double sum[];
+		if(!horizontal){
+			sum = new double[dataMatrix[0].length];
+			for(int i=0; i<dataMatrix[0].length; i++){
+				sum[i] = new Double(dataMatrix[lines.get(0)][i]);
+			}
+			for(int j=1; j<lines.size(); j++){
+				for(int i=0; i<dataMatrix[0].length; i++){
+					sum[i] = sum[i] + new Double(dataMatrix[lines.get(j)][i]);
 				}
 			}
-			sb.delete(sb.length()-1, sb.length());		
-			calculateCF(sb.toString(), n, horizontal, level, SUBTOTAL, CellType.SUBTOTAL);
-			for(int i=0; i<childs.size(); i++){
-				addSubtotalsToTheNode(childs.get(i), horizontal, level-1, measuresOnRow);
+		}else{
+			sum = new double[dataMatrix.length];
+			for(int i=0; i<dataMatrix.length; i++){
+				sum[i] = new Double(dataMatrix[i][lines.get(0)]);
+			}
+			for(int j=1; j<lines.size(); j++){
+				for(int i=0; i<dataMatrix.length; i++){
+					sum[i] = sum[i] + new Double(dataMatrix[i][lines.get(j)]);
+				}
 			}
 		}
+
+		return toStringArray(sum);
 	}
 
 
@@ -1282,7 +1632,47 @@ public class CrossTab {
 		for(int i=0; i< colums.size(); i++){
 			celltypeOfColumns.add(i+startposition, type);
 		}
+		
 		dataMatrix = newData;
+		
+		if(type.equals(CellType.SUBTOTAL)){
+			if(!measuresOnRow){
+				for(int j=0; j<columnsSum.size(); j++){
+					String[] aColumnsSum = new String[columnsSum.get(j).length+colums.size()];
+					for(int y=0; y<startposition; y++){
+						aColumnsSum[y]= columnsSum.get(j)[y];
+					}
+					
+					for(int y=0; y<colums.size(); y++){
+						aColumnsSum[startposition+y]= ""+getTotalsOfColumn(startposition+y, CellType.SUBTOTAL);
+					}
+					
+					for(int y=startposition; y<columnsSum.get(j).length; y++){
+						aColumnsSum[y+colums.size()]= columnsSum.get(j)[y];
+					}
+					columnsSum.set(j, aColumnsSum);
+				}	
+			}else{
+				//colums.size() is 1
+				String[] subtotal = getTotalsOfColumnWithMeasure(startposition);
+				for(int j=0; j<columnsSum.size(); j++){
+					
+					String[] aColumnsSum = new String[columnsSum.get(j).length+1];
+					for(int y=0; y<startposition; y++){
+						aColumnsSum[y]= columnsSum.get(j)[y];
+					}
+				
+					aColumnsSum[startposition]= subtotal[j];
+					
+					for(int y=startposition; y<columnsSum.get(j).length; y++){
+						aColumnsSum[y+1]= columnsSum.get(j)[y];
+					}
+					columnsSum.set(j, aColumnsSum);
+				}	
+			}
+			
+		}
+		
 	}
 	
 	/**
@@ -1315,6 +1705,42 @@ public class CrossTab {
 		}
 		
 		dataMatrix = newData;
+		
+		if(type.equals(CellType.SUBTOTAL)){
+			if(measuresOnRow){
+				for(int j=0; j<rowsSum.size(); j++){
+					String[] aRowsSum = new String[rowsSum.get(j).length+rows.size()];
+					for(int y=0; y<startposition; y++){
+						aRowsSum[y]= rowsSum.get(j)[y];
+					}
+					
+					for(int y=0; y<rows.size(); y++){
+						aRowsSum[startposition+y]= ""+getTotalsOfRow(startposition+y, CellType.SUBTOTAL);
+					}
+					
+					for(int y=startposition; y<rowsSum.get(j).length; y++){
+						aRowsSum[y+rows.size()]= rowsSum.get(j)[y];
+					}
+					rowsSum.set(j, aRowsSum);
+				}	
+			}else{
+				//colums.size() is 1
+				String[] subtotal = getTotalsOfRowWithMeasure(startposition);
+				for(int j=0; j<rowsSum.size(); j++){
+					String[] aRowsSum = new String[rowsSum.get(j).length+rows.size()];
+					for(int y=0; y<startposition; y++){
+						aRowsSum[y]= rowsSum.get(j)[y];
+					}
+					
+					aRowsSum[startposition]= subtotal[j];
+					
+					for(int y=startposition; y<rowsSum.get(j).length; y++){
+						aRowsSum[y+rows.size()]= rowsSum.get(j)[y];
+					}
+					rowsSum.set(j, aRowsSum);
+				}	
+			}
+		}
 	}
 
 	/**
@@ -1347,21 +1773,24 @@ public class CrossTab {
 	}
 	
 	private void addMeasuresScaleFactor(JSONArray fieldOptions){
-		for (int i = 0; i < fieldOptions.length(); i++) {
-			try {
-				JSONObject field = fieldOptions.getJSONObject(i);
-				JSONObject aFieldOptions = field.getJSONObject(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
-				String fieldId = field.getString("id");
-				for (int j = 0; j < measures.size(); j++) {
-					if(fieldId.equals(measures.get(j).getId())){
-						measures.get(j).setScaleFactor(aFieldOptions.getString(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR));
-						break;
+		if(fieldOptions!=null){
+			for (int i = 0; i < fieldOptions.length(); i++) {
+				try {
+					JSONObject field = fieldOptions.getJSONObject(i);
+					JSONObject aFieldOptions = field.getJSONObject(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
+					String fieldId = field.getString("id");
+					for (int j = 0; j < measures.size(); j++) {
+						if(fieldId.equals(measures.get(j).getId())){
+							measures.get(j).setScaleFactor(aFieldOptions.getString(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR));
+							break;
+						}
 					}
+				} catch (Exception e) {
+					logger.error("No scale factor setted for the measures "+fieldOptions,e);
 				}
-			} catch (Exception e) {
-				logger.error("No scale factor setted for the measures "+fieldOptions,e);
 			}
 		}
+
 	}
 
 	public List<String> getRowHeadersTitles() {

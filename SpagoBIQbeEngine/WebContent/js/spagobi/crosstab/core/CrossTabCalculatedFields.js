@@ -132,20 +132,19 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
         	//For every appearance of the elements of the operation inside the header we calculate the calculated field
         	for(var j=0; j<operationExpsIds.length; j++){
             	var expIds = operationExpsIds[j];
-            	var entriesSum =null;
+            	//var entriesSum =null;
             	//execute the operation
     	    	var entries = this.executeOp(operation,horizontal,linesValueForHeader,expIds,crossTab);
 
-    	    	if((crossTab.withColumnsSum && horizontal) || (crossTab.withRowsSum && !horizontal)){
-    	    		entriesSum = (this.calculateCFOnTotals(operation,horizontal,linesValueForHeader,expIds,crossTab));
-    	    	}
+//    	    	if((crossTab.withColumnsSum && horizontal) || (crossTab.withRowsSum && !horizontal)){
+//    	    		entriesSum = (this.calculateCFOnTotals(operation,horizontal,linesValueForHeader,expIds,crossTab));
+//    	    	}
     	    	 
     	    	
     	    	if(CFName==null){
     	    		CFName = "CF";
     	    	}
     	    	//build the structure of the subtree
-    	    	
     	    	var cfNode = new Sbi.crosstab.core.HeaderEntry({crosstab:crossTab, percenton: percenton, name:CFName, thisDimension: 1, horizontal: horizontal, level: level,  width: headers[level][operationExpsIds[j][0]].width,  height: headers[level][operationExpsIds[j][0]].height});
     	    	cfNode.type=type;
     	    	cfNode.cfExpression=op;
@@ -175,13 +174,14 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     	    	cfNode.father = (headers[level][operationExpsIds[j][0]]).father;
     	    	crossTab.setHeaderListener(cfNode); 
 
-    	    	attributes.push([cfNode, entries, entriesSum]);   
+    	    	attributes.push([cfNode, entries]);   
         	
         	}
         	
         	//add the entries in the table
         	for(var j=0; j<attributes.length; j++){
-        		crossTab.addNewEntries(level,attributes[j][0],headers, attributes[j][1], horizontal,true,attributes[j][2]);
+
+        		crossTab.addNewEntries(level,attributes[j][0],headers, attributes[j][1], horizontal,true);
         		//alert(attributes[j][1].length);
         	}
 //        	if(attributes.length>0){
@@ -312,83 +312,83 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     	return CF;
     }
     
-    , calculateCFOnTotals: function(op, horizontal, linesValueForHeader, expIds, crossTab){
-    	var exps = new Array();
-    	var CF = new Array();
-    	var lineLength;
-    	var listOfExp  = new Array();
-
-    	if(horizontal){
-    		lineLength = crossTab.entries.getEntries().length;
-    	}else{
-    		lineLength = crossTab.entries.getEntries()[0].length;
-    	}
-    	
-  	   	for(var j=0; j<linesValueForHeader.length; j++){
-  	   		var CFFresh = new Array();
-  	   		var lineTotals = new Array();
-  	   	
-  	   		if(linesValueForHeader[j].length>0){
-  	   			var y;
-  	   			var novalues=0;
-  	   			exps = new Array();
-  	   			//get the lines and the columns
-  	   			for(y=0; y<expIds.length; y++){
-  	   				if(linesValueForHeader[j][expIds[y]]==null || linesValueForHeader[j][expIds[y]]==undefined ){
-  	   					novalues++;
-  	   				}else{
-  	   					if(horizontal){  	   						
-  	   						if(crossTab.misuresOnRow){
-  	   							var lineSumWithMeasure = new Array();
-  	   							for(var t=0; t<crossTab.columnsTotalSumArray.length; t++){
-  	   								lineSumWithMeasure.push(crossTab.columnsTotalSumArray[t][linesValueForHeader[j][expIds[y]]]);
-  	   							}
-  	   							exps.push(lineSumWithMeasure);	
-  	   						}else{
-  	   							exps.push(crossTab.columnsTotalSumArray[linesValueForHeader[j][expIds[y]]]);
-  	   						}
-  	   						
-  	   					}else{
-  	   						if(!crossTab.misuresOnRow){
-  	   							var lineSumWithMeasure = new Array();
-  	   							for(var t=0; t<crossTab.rowsTotalSumArray.length; t++){
-  	   								lineSumWithMeasure.push(crossTab.rowsTotalSumArray[t][linesValueForHeader[j][expIds[y]]]);
-  	   							}
-  	   							exps.push(lineSumWithMeasure);	
-  	   						}else{
-  	   							exps.push(crossTab.rowsTotalSumArray[linesValueForHeader[j][expIds[y]]]);	
-  	   						}
-  	   					}
-  	   				}
-  	   			}
-  	   			
-  	   			if(novalues<expIds.length && novalues>0){
-  	   				for(var i=0; i<lineLength; i++){
-			    		CFFresh.push("0");
-			    	}
-  	   				CF.push(CFFresh);
-  	   			}else if(novalues==0){
-  	   				if(exps[0] instanceof Array){
-  	   				
-  				    	for(var m=0; m<exps[0].length; m++){//per ogni riga/colonna
-  				    		listOfExp  = new Array();
-  				    		for(var i=0; i<exps.length; i++){//estraggo gli indici delle colonne/righe
-  					    		listOfExp.push(exps[i][m]);
-  						    }
-  				    		CFFresh.push(""+this.executeSingleOp(listOfExp,op));
-  					    }
-  				    	//add the calculated fields calculated in the totals
-
-  				    	CF.push(CFFresh);
-  	   				}
-  	   				else{
-  	   					CF.push(""+this.executeSingleOp(exps,op));
-  	   				}
-  	   			}
-  	   		}
-    	}
-    	return CF;
-    }
+//    , calculateCFOnTotals: function(op, horizontal, linesValueForHeader, expIds, crossTab){
+//    	var exps = new Array();
+//    	var CF = new Array();
+//    	var lineLength;
+//    	var listOfExp  = new Array();
+//
+//    	if(horizontal){
+//    		lineLength = crossTab.entries.getEntries().length;
+//    	}else{
+//    		lineLength = crossTab.entries.getEntries()[0].length;
+//    	}
+//    	
+//  	   	for(var j=0; j<linesValueForHeader.length; j++){
+//  	   		var CFFresh = new Array();
+//  	   		var lineTotals = new Array();
+//  	   	
+//  	   		if(linesValueForHeader[j].length>0){
+//  	   			var y;
+//  	   			var novalues=0;
+//  	   			exps = new Array();
+//  	   			//get the lines and the columns
+//  	   			for(y=0; y<expIds.length; y++){
+//  	   				if(linesValueForHeader[j][expIds[y]]==null || linesValueForHeader[j][expIds[y]]==undefined ){
+//  	   					novalues++;
+//  	   				}else{
+//  	   					if(horizontal){  	   						
+//  	   						if(crossTab.misuresOnRow){
+//  	   							var lineSumWithMeasure = new Array();
+//  	   							for(var t=0; t<crossTab.columnsTotalSumArray.length; t++){
+//  	   								lineSumWithMeasure.push(crossTab.columnsTotalSumArray[t][linesValueForHeader[j][expIds[y]]]);
+//  	   							}
+//  	   							exps.push(lineSumWithMeasure);	
+//  	   						}else{
+//  	   							exps.push(crossTab.columnsTotalSumArray[linesValueForHeader[j][expIds[y]]]);
+//  	   						}
+//  	   						
+//  	   					}else{
+//  	   						if(!crossTab.misuresOnRow){
+//  	   							var lineSumWithMeasure = new Array();
+//  	   							for(var t=0; t<crossTab.rowsTotalSumArray.length; t++){
+//  	   								lineSumWithMeasure.push(crossTab.rowsTotalSumArray[t][linesValueForHeader[j][expIds[y]]]);
+//  	   							}
+//  	   							exps.push(lineSumWithMeasure);	
+//  	   						}else{
+//  	   							exps.push(crossTab.rowsTotalSumArray[linesValueForHeader[j][expIds[y]]]);	
+//  	   						}
+//  	   					}
+//  	   				}
+//  	   			}
+//  	   			
+//  	   			if(novalues<expIds.length && novalues>0){
+//  	   				for(var i=0; i<lineLength; i++){
+//			    		CFFresh.push("0");
+//			    	}
+//  	   				CF.push(CFFresh);
+//  	   			}else if(novalues==0){
+//  	   				if(exps[0] instanceof Array){
+//  	   				
+//  				    	for(var m=0; m<exps[0].length; m++){//per ogni riga/colonna
+//  				    		listOfExp  = new Array();
+//  				    		for(var i=0; i<exps.length; i++){//estraggo gli indici delle colonne/righe
+//  					    		listOfExp.push(exps[i][m]);
+//  						    }
+//  				    		CFFresh.push(""+this.executeSingleOp(listOfExp,op));
+//  					    }
+//  				    	//add the calculated fields calculated in the totals
+//
+//  				    	CF.push(CFFresh);
+//  	   				}
+//  	   				else{
+//  	   					CF.push(""+this.executeSingleOp(exps,op));
+//  	   				}
+//  	   			}
+//  	   		}
+//    	}
+//    	return CF;
+//    }
     
     //This method perform the operation
     //the input is the skeleton of the operation and the values of the variables
@@ -555,11 +555,14 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     
     //build the structure of the subtree to add
     ,buildHeadersStructure: function(name, node, crossTab, type, percenton){
-    	//alert(node.name);
+    	var titleHeader = false;
+		if(node.level%2==1 && node.horizontal){//its a title header
+    		titleHeader = true;	
+    	}
     	if(name!=null){
-    		var clonedNode = new Sbi.crosstab.core.HeaderEntry({crosstab:crossTab,percenton: percenton, name:name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: node.width, height: node.height});
+    		var clonedNode = new Sbi.crosstab.core.HeaderEntry({crosstab:crossTab,percenton: percenton, name:name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: node.width, height: node.height, titleHeader:titleHeader});
     	}else{
-    		var clonedNode = new Sbi.crosstab.core.HeaderEntry({crosstab:crossTab,percenton: percenton, name:node.name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: node.width, height: node.height});
+    		var clonedNode = new Sbi.crosstab.core.HeaderEntry({crosstab:crossTab,percenton: percenton, name:node.name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: node.width, height: node.height, titleHeader:titleHeader});
     	}
     	clonedNode.type=type;
     	var childs =node.childs;
@@ -573,7 +576,9 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     			clonedNode.childs.push(this.buildHeadersStructure(childs[i].name, childs[i], crossTab, type));
     			clonedNode.childs[i].father = clonedNode;
     			newDimension = newDimension+clonedNode.childs[i].thisDimension;
-    			crossTab.setHeaderListener(clonedNode.childs[i]); 
+            	if(!titleHeader){
+            		crossTab.setHeaderListener(clonedNode.childs[i]);
+            	}  
     		}
     		clonedNode.thisDimension = newDimension;
     	}else{

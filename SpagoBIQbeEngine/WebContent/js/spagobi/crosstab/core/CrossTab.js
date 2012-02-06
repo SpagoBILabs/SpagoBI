@@ -117,15 +117,15 @@ Sbi.crosstab.core.CrossTab = function(config) {
     this.columnHeaderPanel = this.buildHeaderGroup(this.columnHeader, true);
 
     
-	this.calculatedFieldsSumRow = new Array();
-	for(var i=0; i<this.rowHeader[this.rowHeader.length-1].length; i++){
-		this.calculatedFieldsSumRow.push('NN');
-	}
-	
-	this.calculatedFieldsSumColumn = new Array();
-	for(var i=0; i<this.columnHeader[this.columnHeader.length-1].length; i++){
-		this.calculatedFieldsSumColumn.push('NN');
-	}
+//	this.calculatedFieldsSumRow = new Array();
+//	for(var i=0; i<this.rowHeader[this.rowHeader.length-1].length; i++){
+//		this.calculatedFieldsSumRow.push('NN');
+//	}
+//	
+//	this.calculatedFieldsSumColumn = new Array();
+//	for(var i=0; i<this.columnHeader[this.columnHeader.length-1].length; i++){
+//		this.calculatedFieldsSumColumn.push('NN');
+//	}
 		
     this.addDDArrowsToPage();
     this.createColumnResizer();
@@ -146,18 +146,32 @@ Sbi.crosstab.core.CrossTab = function(config) {
     		for(i=0; i<this.calculatedFields.length; i++){
     			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(this.calculatedFields[i].level, this.calculatedFields[i].horizontal, this.calculatedFields[i].operation, this.calculatedFields[i].name, this, true, null, this.percenton);
     		}
-   			this.calculatePartialSum(null, true);
+//   			this.calculatePartialSum(null, true);
    	    	this.reloadHeadersAndTable();
     		
     	}, this);
     }else{
-    	this.on('afterrender', function(){
-    		this.calculatePartialSum();
-    	}, this);
+//    	this.on('afterrender', function(){
+//    		this.calculatePartialSum();
+//    	}, this);
     }
+    
     
     if(this.measuresMetadata==undefined || this.measuresMetadata==null){
     	this.measuresMetadata = new Array();
+    }
+    
+    //total position
+    if(!this.rowSumStartColumn){
+    	var entries = this.entries.getEntries();
+    	
+    	if(this.misuresOnRow){
+    	    this.rowSumStartColumn = entries[0].length-1;  
+    	    this.columnSumStartRow = entries.length-this.measuresMetadata.length;		
+    	}else{
+    	    this.rowSumStartColumn = entries[0].length-this.measuresMetadata.length;
+    	    this.columnSumStartRow = entries.length-1;
+    	}	
     }
     
     Sbi.crosstab.core.CrossTab.superclass.constructor.call(this, c);
@@ -196,9 +210,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	,visibleMeasuresMetadataLength: null
 	,measuresNames: null
 	,measuresPosition: null
-	,columnsTotalSumArray: null
-	,superSumArray: null //array with the sum of sums (panel in the bottom right if there are the sum either in the rows either in the columns)
-	
+//	,columnsTotalSumArray: null
+//	,superSumArray: null //array with the sum of sums (panel in the bottom right if there are the sum either in the rows either in the columns)
+//	
 	, manageDegenerateCrosstab: function(rowHeadersDefinition, columnHeadersDefinition) {
 		if (rowHeadersDefinition.length == 1) { // degenerate crosstab (everything on columns)
 			var array = ["Data"];
@@ -223,11 +237,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var entries = this.entries.getEntries();
     	var toReturn = new Array();
     	var visiblei=0;//the visible row index. If i=2 and row[0].hidden=true, row[1].hidden=false  then  visiblei=i-1 = 1
-
+        
     	for(var i=0; i<entries.length; i++){
     		if(!this.rowHeader[this.rowHeader.length-1][i].hidden){
     			var visiblej=0;
-    			partialSum =0;
+//    			partialSum =0;
     			for(var j=0; j<entries[i].length; j++){
 
     				if(!this.columnHeader[this.columnHeader.length-1][j].hidden){
@@ -253,8 +267,10 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     						format = Ext.encode(format);
     						datatype= 'float';
     					}
-    					
+    					var backgroundColor = this.getCellBackgroundColor(i,j);
     					var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
+    					var percent = this.calculatePercent(entries[i][j],i,j,measureMetadata,entries);
+    					
     					
     					// put measure value and metadata into an array
     					var a = new Array();
@@ -264,8 +280,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     					a.push(format);
     					a.push(celltype);
     					a.push(scaleFactor);
+    					a.push(backgroundColor);
+    					a.push(percent);
 	    				toReturn.push(a);
 	    				visiblej++;
+
     				}   				
     			}
     			visiblei++;
@@ -274,6 +293,24 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	this.visibleColumns=visiblej;
     	this.visibleRows=visiblei;
     	return toReturn;
+    }
+    
+    , calculatePercent: function(value, i, j, measureMetadata, entries){
+		//Add the percentage to the entries
+		if(this.percenton=='column'){
+			if(!this.misuresOnRow){
+				return 100*parseFloat(value)/parseFloat(entries[i][measureMetadata.measurePosition+this.rowSumStartColumn]);
+			}else{
+				return 100*parseFloat(value)/parseFloat(entries[i][this.rowSumStartColumn]);	
+			}
+		} else if(this.percenton=='row'){
+			if(this.misuresOnRow){
+				return 100*parseFloat(value)/parseFloat(entries[measureMetadata.measurePosition+this.columnSumStartRow][j]);
+			}else{
+				return 100*parseFloat(value)/parseFloat(entries[this.columnSumStartRow][j]);	
+			}
+		}
+		return null;
     }
 
 	// returns the type of the cell (data, CF = calculated fields, partialsum) by the cell headers
@@ -299,7 +336,8 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				type: 'float',
 				format: null,
 				scaleFactor: (this.getMeasureScaleFactor(measureName).value),
-				name: measureName
+				name: measureName,
+				measurePosition: this.measuresMetadata.length 
 		}
 		this.measuresMetadata.push(measureMeta);
 		return measureMeta;
@@ -352,34 +390,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
 		}
     }
-
-//    //highlight a row of the table by adding a class to the cell elements (the additional class sets a background color)
-//    //i: the number of the row (visible)
-//    ,highlightRowWithTimeOut: function(i){
-//    	if(this.selectedRowId!=null){
-//    		this.removeHighlightOnRow(this.selectedRowId);
-//    	}
-//    	this.selectedRowId = i;
-//    	for(var y = 0; ; y++){
-//	   		var cel = document.getElementById('['+i+','+y+']');
-//	   		if (cel == null) return;
-//	   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
-//		}
-//    }
-    
-//    //highlight a column of the table by adding a class to the cell elements (the additional class sets a background color)
-//    //j: the number of the column (visible)
-//    ,highlightColumnWithTimeOut: function(j){
-//    	if(this.selectedColumnId!=null){
-//    		this.removeHighlightOnColumn(this.selectedColumnId);
-//    	}
-//    	this.selectedColumnId = j;        
-//		for (var y = 0; ; y++) {
-//	   		var cel = document.getElementById('['+y+','+j+']');
-//	   		if (cel == null) return;
-//	   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
-//		}
-//    }
     
     //remove highlight of a row of the table by removing an additional class 
     //i: the number of the row (visible)
@@ -413,81 +423,81 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		}
      }
      
-     ,buildTotalSubTree: function(headers, misuresOnLine){
-		 var node = headers[0][0];
-		 var horizontal = headers[0][0].horizontal;
-    	 if(misuresOnLine){
-	    	 for(var y=1; y<headers.length;y++){
-				if(y<headers.length-1){
-					var freshNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension: this.measuresMetadata.length, horizontal: horizontal, level: y, columnWidth: this.columnWidth});
-					freshNode.father = node;
-						node.childs.push(freshNode);	
-						node = freshNode;
-				}else{
-					for(var k=0; k<this.measuresMetadata.length; k++){
-						var freshNode =(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:this.measuresMetadata[k].name, thisDimension: 1, horizontal: horizontal, level: headers.length-1,columnWidth: this.columnWidth}));
-						freshNode.father = node;
-						node.childs.push(freshNode);
-					}	
-				}
-			}
-	     }else{
-				for(var y=1; y<headers.length;y++){
-					var freshNode =(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal, level: y,columnWidth: this.columnWidth}));
-					freshNode.father = node;
-					node.childs.push(freshNode);	
-					node = freshNode;
-				}
-	     }
-     }
+//     ,buildTotalSubTree: function(headers, misuresOnLine){
+//		 var node = headers[0][0];
+//		 var horizontal = headers[0][0].horizontal;
+//    	 if(misuresOnLine){
+//	    	 for(var y=1; y<headers.length;y++){
+//				if(y<headers.length-1){
+//					var freshNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension: this.measuresMetadata.length, horizontal: horizontal, level: y, columnWidth: this.columnWidth});
+//					freshNode.father = node;
+//						node.childs.push(freshNode);	
+//						node = freshNode;
+//				}else{
+//					for(var k=0; k<this.measuresMetadata.length; k++){
+//						var freshNode =(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:this.measuresMetadata[k].name, thisDimension: 1, horizontal: horizontal, level: headers.length-1,columnWidth: this.columnWidth}));
+//						freshNode.father = node;
+//						node.childs.push(freshNode);
+//					}	
+//				}
+//			}
+//	     }else{
+//				for(var y=1; y<headers.length;y++){
+//					var freshNode =(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal, level: y,columnWidth: this.columnWidth}));
+//					freshNode.father = node;
+//					node.childs.push(freshNode);	
+//					node = freshNode;
+//				}
+//	     }
+//     }
      
      //serialize the crossTab: 
      //Create a JSONObject with the properties: data, columns, rows
      ,serializeCrossTab: function(){
 
-    	 var columnsum = null;
-    	 var rowsum = null;
+//    	 var columnsum = null;
+//    	 var rowsum = null;
+//    	 
+//    	 if(this.withColumnsSum || this.withRowsSum){
+//			 var columnHeaderBK = this.cloneHeader(this.columnHeader);
+//			 var rowHeaderBK = this.cloneHeader(this.rowHeader);
+//    	 }
+//    	 
+//    	 if(this.withColumnsSum){
+//    		 //save the column headers because buildTotalSubTree change the structure 
+//    		 //of the headers
+//
+//    		 this.buildTotalSubTree(this.rowHeader, this.misuresOnRow);
+//    		
+//    		 if(this.misuresOnRow){	
+//    			columnsum = this.calculateTotalSum(true);
+//    		 }else{
+//    			columnsum = new Array();
+//    			columnsum.push(this.columnsSum(true, true));
+//    		 }   		 
+//    	 }
     	 
-    	 if(this.withColumnsSum || this.withRowsSum){
-			 var columnHeaderBK = this.cloneHeader(this.columnHeader);
-			 var rowHeaderBK = this.cloneHeader(this.rowHeader);
-    	 }
-    	 
-    	 if(this.withColumnsSum){
-    		 //save the column headers because buildTotalSubTree change the structure 
-    		 //of the headers
-
-    		 this.buildTotalSubTree(this.rowHeader, this.misuresOnRow);
-    		
-    		 if(this.misuresOnRow){	
-    			columnsum = this.calculateTotalSum(true);
-    		 }else{
-    			columnsum = new Array();
-    			columnsum.push(this.columnsSum(true, true));
-    		 }   		 
-    	 }
-    	 
-    	 if(this.withRowsSum){
-    		 //save the row headers because buildTotalSubTree change the structure 
-    		 //of the headers
- 
-    	  	this.buildTotalSubTree(this.columnHeader, !this.misuresOnRow);
-    		 if(!this.misuresOnRow){
-    			 rowsum = this.calculateTotalSum(true);
-    		 }else{
-    			 rowsum = new Array();
-    			 rowsum.push(this.rowsSum(true, true));
-    		 }
-    	 }
+//    	 if(this.withRowsSum){
+//    		 //save the row headers because buildTotalSubTree change the structure 
+//    		 //of the headers
+// 
+//    	  	this.buildTotalSubTree(this.columnHeader, !this.misuresOnRow);
+//    		 if(!this.misuresOnRow){
+//    			 rowsum = this.calculateTotalSum(true);
+//    		 }else{
+//    			 rowsum = new Array();
+//    			 rowsum.push(this.rowsSum(true, true));
+//    		 }
+//    	 }
 
     	 var serializedCrossTab = {}; 
-    	 serializedCrossTab.data= this.entries.serializeEntries(rowsum, columnsum,this.misuresOnRow, this.percenton);
+    	 serializedCrossTab.data= this.entries.serializeEntries(this);
     	 serializedCrossTab.columns=  this.serializeHeader(this.columnHeader[0][0]);
     	 serializedCrossTab.rows=  this.serializeHeader(this.rowHeader[0][0]);
-    	 if(this.withColumnsSum || this.withRowsSum){
-    		 this.columnHeader = columnHeaderBK;
-    		 this.rowHeader=rowHeaderBK;
-    	 }
+//    	 if(this.withColumnsSum || this.withRowsSum){
+//    		 this.columnHeader = columnHeaderBK;
+//    		 this.rowHeader=rowHeaderBK;
+//    	 }
     	 serializedCrossTab.measures = this.measuresMetadata;
     	 
     	 serializedCrossTab.rowHeadersTitle = this.rowHeadersTitle;
@@ -547,10 +557,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	if(level%2==1 && horizontal && !leaf){//its a title header
     		panelConfig.titleHeader = true;	
     	}
-    	 
     		
     	p = new Sbi.crosstab.core.HeaderEntry(panelConfig);
-    	this.setHeaderListener(p);
+    	
+    	if(!panelConfig.titleHeader){//if it is not a title header
+    		this.setHeaderListener(p);
+    	}
 
     	if(headers[level]==null){
     		headers[level]= new Array();
@@ -1026,30 +1038,30 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			}
 			
 			
-			if((!horizontal && this.withColumnsSum && this.misuresOnRow) || (horizontal && this.withRowsSum && !this.misuresOnRow)){
-				this.getVisibleMeasures(headers);
-				if(y<headers.length-1){
-					if(horizontal){
-						headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: this.visibleMeasuresMetadataLength, horizontal: horizontal, level: y, width: null , height: headers[y][0].height,columnWidth: this.columnWidth}));	
-					}else{
-						headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: this.visibleMeasuresMetadataLength, horizontal: horizontal, level: y, width: headers[y][0].width,  height: null,columnWidth: this.columnWidth}));
-					}
-				}else{
-					for(var k=0; k<this.measuresMetadata.length; k++){
-						if(this.measuresMetadata[k].visible){
-							headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:this.measuresMetadata[k].name, thisDimension: 1, horizontal: horizontal, level: headers.length-1, width: headers[y][headers[y].length-1].width, height: headers[y][headers[y].length-1].height,columnWidth: this.columnWidth}));
-						}
-					}	
-				}
-			}
+//			if((!horizontal && this.withColumnsSum && this.misuresOnRow) || (horizontal && this.withRowsSum && !this.misuresOnRow)){
+//				this.getVisibleMeasures(headers);
+//				if(y<headers.length-1){
+//					if(horizontal){
+//						headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: this.visibleMeasuresMetadataLength, horizontal: horizontal, level: y, width: null , height: headers[y][0].height,columnWidth: this.columnWidth}));	
+//					}else{
+//						headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: this.visibleMeasuresMetadataLength, horizontal: horizontal, level: y, width: headers[y][0].width,  height: null,columnWidth: this.columnWidth}));
+//					}
+//				}else{
+//					for(var k=0; k<this.measuresMetadata.length; k++){
+//						if(this.measuresMetadata[k].visible){
+//							headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:this.measuresMetadata[k].name, thisDimension: 1, horizontal: horizontal, level: headers.length-1, width: headers[y][headers[y].length-1].width, height: headers[y][headers[y].length-1].height,columnWidth: this.columnWidth}));
+//						}
+//					}	
+//				}
+//			}
 			
-			if((!horizontal && this.withColumnsSum && !this.misuresOnRow) || (horizontal && this.withRowsSum && this.misuresOnRow)){
-				if(horizontal){
-					headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal,level:  y, width: null , height: headers[y][0].height,columnWidth: this.columnWidth}));	
-				}else{
-					headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal, level: y, width: headers[y][0].width, height:  null,columnWidth: this.columnWidth}));
-				}
-			}
+//			if((!horizontal && this.withColumnsSum && !this.misuresOnRow) || (horizontal && this.withRowsSum && this.misuresOnRow)){
+//				if(horizontal){
+//					headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal,level:  y, width: null , height: headers[y][0].height,columnWidth: this.columnWidth}));	
+//				}else{
+//					headersPanel.push(new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: 1, horizontal: horizontal, level: y, width: headers[y][0].width, height:  null,columnWidth: this.columnWidth}));
+//				}
+//			}
 
 			headersPanel = headersPanel.concat(headersPanelHidden);
 			c = Ext.apply(c,{
@@ -1162,28 +1174,28 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	
     	if(this.table!=null && this.datapanel!=null){
     		this.datapanel.destroy();
-    		if(this.withRowsSum && this.datapanelRowSum!=null){
-    			this.datapanelRowSum.destroy();
-    		}
-    		if(this.withColumnsSum  && this.datapanelColumnSum!=null){
-    			this.datapanelColumnSum.destroy();
-    		}
-    		this.table.hide();
+//    		if(this.withRowsSum && this.datapanelRowSum!=null){
+//    			this.datapanelRowSum.destroy();
+//    		}
+//    		if(this.withColumnsSum  && this.datapanelColumnSum!=null){
+//    			this.datapanelColumnSum.destroy();
+//    		}
+//    		this.table.hide();
     		this.remove(this.table, false);
     	}
     	
-		if(this.withRowsSum){
-			tableColumns = 3;
-			dataPanelStyle = dataPanelStyle+ " crosstab-none-right-border-panel";
-		}else{
+//		if(this.withRowsSum){
+//			tableColumns = 3;
+//			dataPanelStyle = dataPanelStyle+ " crosstab-none-right-border-panel";
+//		}else{
 			classEmptyBottomRight = classEmptyBottomRight+' crosstab-none-top-border-panel';
-		}
-    	if(this.withColumnsSum){
-    		tableRows = 3;
-    		dataPanelStyle = dataPanelStyle+" crosstab-none-bottom-border-panel";
-    	}else{
+//		}
+//    	if(this.withColumnsSum){
+//    		tableRows = 3;
+//    		dataPanelStyle = dataPanelStyle+" crosstab-none-bottom-border-panel";
+//    	}else{
     		classEmptyBottomRight = classEmptyBottomRight+' crosstab-none-left-border-panel';
-    	}
+//    	}
     	   	
     	this.table = new Ext.Panel({  
     		cls: 'centered-panel',
@@ -1270,35 +1282,35 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    		} 	
    		
 
-   		if(this.withRowsSum && this.emptypanelTopRight==null){
-	   		this.emptypanelTopRight = new Ext.Panel({
-	   			//height: (this.columnHeader.length-1)*this.rowHeight,
-	   	        //width: this.columnWidth,
-	   	        cellCls: 'crosstab-table-empty-top-right-panel',
-	   	        border: false,
-	   	        html: ""
-	   	    });
-   		} 
-   		
-   		if(this.withColumnsSum && this.emptypanelBottomLeft==null){
-	   		this.emptypanelBottomLeft = new Ext.Panel({
-	   			//height: this.rowHeight,
-	   	        //width: this.columnWidth,
-	   	        cellCls: 'crosstab-table-empty-bottom-left-panel',
-	   	        border: false,
-	            layout:'table'
-	   		});
-   		} 
-   		
-   		if((this.withColumnsSum || this.withRowsSum) && this.emptypanelBottomRight==null){
-	   		this.emptypanelBottomRight = new Ext.Panel({
-	   			//height: this.rowHeight,
-	   	        //width: this.columnWidth,
-	   	        cellCls: classEmptyBottomRight,
-	   	        border: false,
-	   	        html: ""
-	   	    });
-   		} 
+//   		if(this.withRowsSum && this.emptypanelTopRight==null){
+//	   		this.emptypanelTopRight = new Ext.Panel({
+//	   			//height: (this.columnHeader.length-1)*this.rowHeight,
+//	   	        //width: this.columnWidth,
+//	   	        cellCls: 'crosstab-table-empty-top-right-panel',
+//	   	        border: false,
+//	   	        html: ""
+//	   	    });
+//   		} 
+//   		
+//   		if(this.withColumnsSum && this.emptypanelBottomLeft==null){
+//	   		this.emptypanelBottomLeft = new Ext.Panel({
+//	   			//height: this.rowHeight,
+//	   	        //width: this.columnWidth,
+//	   	        cellCls: 'crosstab-table-empty-bottom-left-panel',
+//	   	        border: false,
+//	            layout:'table'
+//	   		});
+//   		} 
+//   		
+//   		if((this.withColumnsSum || this.withRowsSum) && this.emptypanelBottomRight==null){
+//	   		this.emptypanelBottomRight = new Ext.Panel({
+//	   			//height: this.rowHeight,
+//	   	        //width: this.columnWidth,
+//	   	        cellCls: classEmptyBottomRight,
+//	   	        border: false,
+//	   	        html: ""
+//	   	    });
+//   		} 
    		   		
     	var store = new Ext.data.ArrayStore({
     	    autoDestroy: true,
@@ -1310,56 +1322,28 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	             {name: 'format'},
     	             {name: 'celltype'},
     	             {name: 'scaleFactor'},
+    	             {name: 'backgroundColor'},
     	             {name: 'percent'}
+    	             
     	    ]
     	});
 
-		if(this.misuresOnRow){
-			if(this.withColumnsSum || this.percenton=='column'){
-				this.columnsTotalSumArray = this.calculateTotalSum();
-			}
-			if(this.withRowsSum || this.percenton=='row'){
-				this.rowsTotalSumArray = this.rowsSum(true);
-			}
-		}else{
-			if(this.withColumnsSum || this.percenton=='column'){
-				this.columnsTotalSumArray = this.columnsSum(true);
-			}
-			if(this.withRowsSum || this.percenton=='row'){
-				this.rowsTotalSumArray = this.calculateTotalSum();
-			}	
-		}
+//		if(this.misuresOnRow){
+//			if(this.withColumnsSum || this.percenton=='column'){
+//				this.columnsTotalSumArray = this.calculateTotalSum();
+//			}
+//			if(this.withRowsSum || this.percenton=='row'){
+//				this.rowsTotalSumArray = this.rowsSum(true);
+//			}
+//		}else{
+//			if(this.withColumnsSum || this.percenton=='column'){
+//				this.columnsTotalSumArray = this.columnsSum(true);
+//			}
+//			if(this.withRowsSum || this.percenton=='row'){
+//				this.rowsTotalSumArray = this.calculateTotalSum();
+//			}	
+//		}
 		
-		//Add the percentage to the entries
-		if(this.percenton=='column'){
-			if(!this.misuresOnRow){
-				for(var i=0; i< this.visibleRows; i++){
-		        	for(var j=0; j< this.visibleColumns; j++){
-		        		this.entriesPanel[i*this.visibleColumns+j].push(100*parseFloat(this.entriesPanel[i*this.visibleColumns+j][0])/parseFloat(this.columnsTotalSumArray[j]));
-		        	}
-		    	}
-			}else{
-		    	for(var i=0; i< this.visibleRows; i++){
-		        	for(var j=0; j< this.visibleColumns; j++){
-		        		this.entriesPanel[i*this.visibleColumns+j].push(100*parseFloat(this.entriesPanel[i*this.visibleColumns+j][0])/parseFloat(this.columnsTotalSumArray[i%this.columnsTotalSumArray.length][j]));
-		        	}
-		    	}	
-			}
-		} else if(this.percenton=='row'){
-			if(this.misuresOnRow){
-		    	for(var i=0; i< this.visibleRows; i++){
-		        	for(var j=0; j< this.visibleColumns; j++){
-		        		this.entriesPanel[i*this.visibleColumns+j].push(100*parseFloat(this.entriesPanel[i*this.visibleColumns+j][0])/parseFloat(this.rowsTotalSumArray[i]));
-		        	}
-		    	}	
-			}else{
-		    	for(var i=0; i< this.visibleRows; i++){
-		        	for(var j=0; j< this.visibleColumns; j++){
-		        		this.entriesPanel[i*this.visibleColumns+j].push(100*parseFloat(this.entriesPanel[i*this.visibleColumns+j][0])/parseFloat(this.rowsTotalSumArray[j%this.rowsTotalSumArray.length][i]));
-		        	}
-		    	}
-			}
-		}
 		   	
     	store.loadData(this.entriesPanel);
     	var columnsForView = this.getColumnsForView();
@@ -1372,7 +1356,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var tpl = new Ext.XTemplate(
     	    '<tpl for=".">'
     	    , '<div id="{divId}" class="x-panel crosstab-table-cells crosstab-table-cells-{celltype}" ' // the crosstab-table-cells class is needed as itemSelector
-    	    , ' style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left;" >'
+    	    , ' style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left; background-color: {backgroundColor}" >'
     	    , '  <div class="x-panel-bwrap"> '
     	    , '    <div style="width:'+(this.columnWidth-2)+'px; overflow:hidden; padding-top:'+(this.rowHeight-4-this.fontSize)/2+'px;font-size:'+this.fontSize+'px;">'
     	    , '    {[this.format(values.name, values.datatype, values.format, values.percent,'+this.percentageFontSize+', values.scaleFactor )]}'
@@ -1431,19 +1415,19 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    		this.table.add(this.columnHeaderPanelContainer);
    		this.table.add(this.rowHeaderPanelContainer);
    		this.table.add(this.datapanel);
-		if(this.withRowsSum){
-			this.datapanelRowSum = this.getRowsSumPanel(tpl, rowForView, this.withColumnsSum);
-			this.table.add(this.datapanelRowSum);
-		}
+//		if(this.withRowsSum){
+//			this.datapanelRowSum = this.getRowsSumPanel(tpl, rowForView, this.withColumnsSum);
+//			this.table.add(this.datapanelRowSum);
+//		}
 		
-    	if(this.withColumnsSum){
-	   		this.datapanelColumnSum = this.getColumnsSumPanel(tpl, columnsForView, this.withRowsSum);
-	   		this.table.add(this.datapanelColumnSum);
-	   		// add the total of totals
-	   		if(this.withRowsSum && this.withColumnsSum){
-	   			this.table.add(this.superSumPanel);	
-	   		}
-    	}
+//    	if(this.withColumnsSum){
+//	   		this.datapanelColumnSum = this.getColumnsSumPanel(tpl, columnsForView, this.withRowsSum);
+//	   		this.table.add(this.datapanelColumnSum);
+//	   		// add the total of totals
+//	   		if(this.withRowsSum && this.withColumnsSum){
+//	   			this.table.add(this.superSumPanel);	
+//	   		}
+//    	}
     	
     	
    		this.add(this.table);
@@ -1472,6 +1456,46 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    		
     }
     
+    , getCellNewType: function(rowId, columnId){
+    	var datacolor = 'FFF';
+    	var cfcolor = 'EEE';
+    	var partialcolor = 'DDD';
+    	var totalcolor = 'CCC';
+    	var rowtype = this.celltypeOfRows[rowId];
+    	var columntype = this.celltypeOfColumns[columnId];
+    	if(columntype=='data'){
+    		return rowtype;	
+    	}else if(columntype=='cf'){
+    		if(rowtype=='data'){
+        		return 'cf';
+        	} else {
+        		return rowtype;
+        	}	
+    	}else if(columntype=='partialsum'){
+    		if(rowtype=='totals'){
+        		return 'totals';
+        	} else {
+        		return columntype;
+        	}
+    	}
+    	return 'totals';
+    }
+    
+    , getCellBackgroundColor: function(rowId, columnId){
+  
+    	var type = this.getCellNewType(rowId, columnId);
+    	
+    	if(type=='data'){
+    		return 'FFF';	
+    	}
+    	if(type=='cf'){
+    		return 'EEE';
+    	}
+    	if(type=='partialsum'){
+    		return 'DDD'
+    	}
+    	return 'CCC';
+    }
     
     , format: function(value, type, format, percent, percentFontSize, scaleFactor) {
 
@@ -1500,8 +1524,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			
 			if(type=='float' || type=='int'){
 				if(type=='float' && format!=null && format!=undefined){
-					//str = (Sbi.qbe.commons.Format.numberRenderer( Ext.apply(Sbi.locale.formats[type], Ext.decode(format)||{}) )).call(this, valueObj);
-					str = Sbi.qbe.commons.Format.number(valueObj,Ext.apply(Sbi.locale.formats[type], Ext.decode(format)||{}));
+					
+					var formatOfCell= Ext.apply({},Sbi.locale.formats[type]);
+					Ext.apply(formatOfCell,Ext.decode(format));
+					
+					str = Sbi.qbe.commons.Format.number(valueObj,formatOfCell);
 				}else{
 					str = Sbi.qbe.commons.Format.number(valueObj,Sbi.locale.formats[type]);
 				}
@@ -1515,7 +1542,8 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				}
 			}
 
-		
+			//alert(value+" "+str+" "+format);
+			
 			return str;
 		} catch (err) {
 			return value;
@@ -1527,9 +1555,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    // 	if(horizontal || horizontal==null){
     	
     		var span=1;
-    		if(this.withRowsSum){
-    			span=2;
-    		}
+//    		if(this.withRowsSum){
+//    			span=2;
+//    		}
         	this.columnHeaderPanel = this.buildHeaderGroup(this.columnHeader, true);
         	if(this.columnHeaderPanelContainer!=null){
         		this.columnHeaderPanelContainer.destroy();
@@ -1550,11 +1578,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 //    	}
 //    	
 //    	if(!horizontal || horizontal==null){
-    		if(this.withColumnsSum){
-    			span=2;
-    		}else{
+//    		if(this.withColumnsSum){
+//    			span=2;
+//    		}else{
     			span=1;
-    		}
+//    		}
 	    	this.rowHeaderPanel = this.buildHeaderGroup(this.rowHeader, false);
 	    	if(this.rowHeaderPanelContainer!=null){
 	    		this.rowHeaderPanelContainer.destroy();
@@ -1647,7 +1675,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //lazy: true if we only want to insert the row/columns in the data structures, but not in spread the data in the GUI.
     //      it's usefull if we call this method more than one time: we call it with lazy=true far all the iteration and with lazy=false in the last one +
     //       (take a look at the method calculateCF)
-    , addNewEntries: function(level,node,headers,entries, horizontal, lazy, entriesSum){
+    , addNewEntries: function(level,node,headers,entries, horizontal, lazy){//, entriesSum){
     	
     	var father = node.father;
     	var dimensionToAdd= node.thisDimension;
@@ -1679,6 +1707,18 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			}
 			startDimension = startDimension+this.getLeafsNumber(nodeS);
 		}
+		
+		
+		//add the node before the totals
+		if(level==2 && horizontal && this.withRowsSum && startDimension==headers[headers.length-1].length){
+			if(this.misuresOnRow){
+				startDimension = startDimension-1;	
+			}else{
+				startDimension = startDimension-this.measuresMetadata.length;
+			}
+			startPos = startPos-1;
+    	}
+		
 		nodePosition=startDimension;
 		
 		//when we add a new node, we have to move forward all the
@@ -1719,38 +1759,50 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				}
 			}
     	}
+    	//UPDATE THE CELLTYPES
+    	if(!horizontal){
+    		for(var f=0; f<entries.length; f++){
+    			this.celltypeOfRows.splice(nodePosition+f,0,"cf");
+    		}
+    	}else{
+    		for(var f=0; f<entries.length; f++){
+    			this.celltypeOfColumns.splice(nodePosition+f,0,"cf");
+    		}
+    	}
+    	
+    	
     	
     	//add the columns or the rows
     	if(horizontal){
     		//The last element of the entries is the calculated field applied on the totals
     		//so we have to remove it and store in a local variable
-    		if(entriesSum!=null){
-        		for(var f=0; f<entriesSum.length; f++){
-        			this.calculatedFieldsSumColumn.splice(nodePosition+f,0,entriesSum[f]);
-        		}
-    		}
-    		
-    		if(node.type=='partialsum'){
-        		for(var f=0; f<entries.length; f++){
-        			this.calculatedFieldsSumColumn.splice(nodePosition+f,0,"NN");
-        		}
-    		}
+//    		if(entriesSum!=null){
+//        		for(var f=0; f<entriesSum.length; f++){
+//        			this.calculatedFieldsSumColumn.splice(nodePosition+f,0,entriesSum[f]);
+//        		}
+//    		}
+//    		
+//    		if(node.type=='partialsum'){
+//        		for(var f=0; f<entries.length; f++){
+//        			this.calculatedFieldsSumColumn.splice(nodePosition+f,0,"NN");
+//        		}
+//    		}
 
     		this.entries.addColumns(nodePosition,entries);
 
     	}else{
     		//The last element of the entries is the calculated field applied on the totals
     		//so we have to remove it and store in a local variable
-    		if(entriesSum!=null){
-        		for(var f=0; f<entriesSum.length; f++){
-        			this.calculatedFieldsSumRow.splice(nodePosition+f,0,entriesSum[f]);
-        		}
-    		}
-    		if(node.type=='partialsum'){
-        		for(var f=0; f<entries.length; f++){
-        			this.calculatedFieldsSumColumn.splice(nodePosition+f,0,"NN");
-        		}
-    		}
+//    		if(entriesSum!=null){
+//        		for(var f=0; f<entriesSum.length; f++){
+//        			this.calculatedFieldsSumRow.splice(nodePosition+f,0,entriesSum[f]);
+//        		}
+//    		}
+//    		if(node.type=='partialsum'){
+//        		for(var f=0; f<entries.length; f++){
+//        			this.calculatedFieldsSumColumn.splice(nodePosition+f,0,"NN");
+//        		}
+//    		}
     		this.entries.addRows(nodePosition,entries);
     		
     	}
@@ -1970,743 +2022,830 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
   //Partial Sum
   //============================
     
-    //Calculate the partial sum of the rows
-    , rowsSum : function(isATotalSum, withHidden){
-    	return this.rowsHeaderSum(0, this.entries.getEntries()[0].length-1, isATotalSum, withHidden);
-    }
-    
-    //Calculate the partial sum of the columns
-    , columnsSum : function(isATotalSum, withHidden){
-    	return this.columnsHeaderSum(0, this.entries.getEntries().length-1, isATotalSum, withHidden);
-    }  
-
-    , addHeaderSum: function(header, type){
-    	if(header.type=='data'){
-	    	var bounds = this.getHeaderBounds(header);
-	    	var sum; 
-	    	var headers;
-	    	if(header.horizontal){
-	    		sum = this.rowsHeaderSum(bounds[0],bounds[1]);
-	    		headers = this.columnHeader;
-	    	}else{
-	    		sum = this.columnsHeaderSum(bounds[0],bounds[1]);
-	    		headers = this.rowHeader;
-	    	}
-	    	var sums = new Array();
-	    	
-	    	
-	    	if(header.horizontal){
-	    		var totalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:header.horizontal, level:header.level+1, width:null, height:header.childs[0].height,columnWidth: this.columnWidth});
-	    	}else{
-	    		var totalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:header.horizontal, level:header.level+1, width:header.childs[0].width, height:null,columnWidth: this.columnWidth});
-	    	}
-
-	    	totalNode.hidden = header.hidden;
-	    	if(totalNode.hidden){
-	    		totalNode.thisDimension=0;
-	    	}
-	    	
-	    	totalNode.type=type;
-	    	totalNode.father = header;
-	    	this.setHeaderListener(totalNode, true);
-	    	
-	    	if (header.childs[0].childs.length>0){
-	    	
-		    	var cousinNode = header.childs[0];
-		    	var freshTotalChildNode;
-		    	var freshFatherNode = totalNode;
-		    	
-		    	while(cousinNode.childs.length>0){
-		    		freshTotalChildNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:freshFatherNode.horizontal, level:freshFatherNode.level+1, width:cousinNode.childs[0].width, height:cousinNode.childs[0].height,columnWidth: this.columnWidth});
-		    		freshTotalChildNode.type=type;
-		    		freshTotalChildNode.father = freshFatherNode;
-		    		freshTotalChildNode.hidden = freshFatherNode.hidden;
-		    		freshFatherNode.childs.push(freshTotalChildNode);
-		    		freshFatherNode = freshTotalChildNode;
-		    		cousinNode = cousinNode.childs[0];
-		    		this.setHeaderListener(freshTotalChildNode, true);
-			    	if(totalNode.hidden){
-			    		freshTotalChildNode.thisDimension=0;
-			    	}
-		    	}
-	    	}
-	    	sums.push(sum);
-	    	this.addNewEntries(header.level+1,totalNode,headers,sums, header.horizontal, true);
-    	}
-    }
-    
-      //Calculate the partial sum of the rows
-    , rowsHeaderSum : function(start, end, isATotalSum, withHidden){
-    	var entries = this.entries.getEntries();
-    	var sum = new Array();
-    	var partialSum;
-    	var number;
-    	for(var i=0; i<entries.length; i++){
-    		partialSum =0;
-    		if(withHidden || !this.rowHeader[this.rowHeader.length-1][i].hidden){
-	        	for(var j=start; j<entries[0].length && j<=end; j++){
-	        		if((withHidden || !this.columnHeader[this.columnHeader.length-1][j].hidden) && this.columnHeader[this.columnHeader.length-1][j].type=='data'){
-	        			number = parseFloat(entries[i][j]);
-	        			if(!isNaN(number)){
-	        				partialSum = partialSum + number;
-	        			}
-	        		}
-	        	}
-	    		if(isATotalSum){
-	    			sum.push(''+partialSum);
-	    		}
-    		}
-    		if(!isATotalSum){
-    			sum.push(''+partialSum);
-    		}
-    	}
-    	return sum;
-    }
-    
-    //Calculate the partial sum of the columns
-    , columnsHeaderSum : function(start, end, isATotalSum, withHidden){
-    	var entries = this.entries.getEntries();
-    	var sum = new Array();
-    	var partialSum;
-    	var number;
-       	for(var j=0; j<entries[0].length; j++){
-	       	partialSum =0;
-	       	if(withHidden || !this.columnHeader[this.columnHeader.length-1][j].hidden){
-	        	for(var i=start; i<entries.length && i<=end; i++){
-	        		if((withHidden || !this.rowHeader[this.rowHeader.length-1][i].hidden) && this.rowHeader[this.rowHeader.length-1][i].type=='data'){
-	        			number = parseFloat(entries[i][j]);
-	        			if(!isNaN(number)){
-	        				partialSum = partialSum + number;
-	        			}
-	        		}
-	        	}
-	    		if(isATotalSum){
-	    			sum.push(''+partialSum);
-	    		}
-    		}
-    		if(!isATotalSum){
-    			sum.push(''+partialSum);
-    		}
-    	}
-    	return sum;
-    } 
-
-    //Calculate the sum of the rows
-    , rowsHeaderListSum : function(lines, isATotalSum, withHidden){
-    	var entries = this.entries.getEntries();
-    	var sum = new Array();
-    	var partialSum;
-    	var number;
-    	for(var i=0; i<entries.length; i++){
-    		partialSum =0;
-    		if(withHidden || !this.rowHeader[this.rowHeader.length-1][i].hidden){
-	        	for(var j=0; j<lines.length; j++){
-	        		
-	        		if((withHidden || !this.columnHeader[this.columnHeader.length-1][lines[j]].hidden) && this.columnHeader[this.columnHeader.length-1][lines[j]].type=='data'){
-	        			number = parseFloat(entries[i][lines[j]]);
-	        			if(!isNaN(number)){
-	        				partialSum = partialSum + number;
-	        			}
-	        		}
-	        	}
-	    		if(isATotalSum){
-	    			sum.push(''+partialSum);
-	    		}
-    		}
-    		if(!isATotalSum){
-    			sum.push(''+partialSum);
-    		}
-    	}
-    	return sum;
-    }
-    
-    //Calculate the sum of the columns
-    , columnsHeaderListSum : function(lines, isATotalSum, withHidden){
-    	
-    	var entries = this.entries.getEntries();
-    	var sum = new Array();
-    	var partialSum;
-    	var number;
-       	for(var j=0; j<entries[0].length; j++){
-       		partialSum =0;
-	       	if(withHidden || !this.columnHeader[this.columnHeader.length-1][j].hidden){
-	        	for(var i=0; i<lines.length; i++){
-	        		if((withHidden || !this.rowHeader[this.rowHeader.length-1][lines[i]].hidden) && this.rowHeader[this.rowHeader.length-1][lines[i]].type=='data'){
-	        			number = parseFloat(entries[lines[i]][j]);
-	        			if(!isNaN(number)){
-	        				partialSum = partialSum + number;
-	        			}
-	        		}
-	        	}
-	    		if(isATotalSum){
-	    			sum.push(''+partialSum);
-	    		}
-    		}
-    		if(!isATotalSum){
-    			sum.push(''+partialSum);
-    		}
-    	}
-    	return sum;
-    } 
-  
-  
-    , removePartialSum: function(lazy){
-    	for(var j=0; j<2; j++){
-			var headers;
-			var horizontal = j==0;
-			if(horizontal){
-				if(this.misuresOnRow){
-					headers = this.columnHeader[this.columnHeader.length-1];
-				}else{
-					headers = this.columnHeader[this.columnHeader.length-2];
-				}
-			}else{
-				if(this.misuresOnRow){
-					headers = this.rowHeader[this.rowHeader.length-2];
-				}else{
-					headers = this.rowHeader[this.rowHeader.length-1];
-				}
-			}  		
-			for(var i=headers.length-1; i>=0; i--){
-				if(headers[i].type == 'partialsum'){
-					this.removeEntries(headers[i], true);
-				}
-			}
-    	}
-    	if(!lazy){
-    		this.reloadHeadersAndTable();
-    	}
-
-    }
-    
-    
-    , calculatePartialSum: function(horizontal, lazy){
-    	var withRowsPartialSumLocal = this.withRowsPartialSum;
-    	var withColumnsPartialSumLocal = this.withColumnsPartialSum;
-    	
-    	if(horizontal!=null){
-    		withRowsPartialSumLocal = withRowsPartialSumLocal && !horizontal;
-    		withColumnsPartialSumLocal = withColumnsPartialSumLocal && horizontal;
-    	}
-    	
-		if(withRowsPartialSumLocal && !this.misuresOnRow){
-		    for(var i=0; i<this.rowHeader.length-1; i++){
-		        for(var j=0; j<this.rowHeader[i].length; j++){
-		        	this.addHeaderSum(this.rowHeader[i][j], 'partialsum');
-		        }
-		    }
-		}
-		if(withColumnsPartialSumLocal && this.misuresOnRow){
-			for(var i=0; i<this.columnHeader.length-1; i++){
-		        for(var j=0; j<this.columnHeader[i].length; j++){
-		        	this.addHeaderSum(this.columnHeader[i][j], 'partialsum');
-		        }
-		    }
-		}
-		
-	//	this.reloadHeadersAndTable();
-
-	    if((withRowsPartialSumLocal && this.misuresOnRow) || (withColumnsPartialSumLocal && !this.misuresOnRow)){
-		
-    		if(!this.misuresOnRow){
-    			headers = this.columnHeader;
-    		}else{
-    			headers = this.rowHeader;
-    		}
-    		
-		    var check = false;
-		    var bounds;
-		    var sums;
-		    var measuresNames;
-		    var measuresPosition;
-		    var partialTotalNode;
-		    var freshChild;
-		    var measurePosition;
-		    if(headers.length>=3){//if there are more than one level
-		    	//calculate the partial sum and prepare the header of the level above the measures
-		    	var i = headers.length-3;
-		        for(var j=0; j<headers[i].length; j++){
-
-		        	bounds = this.getHeaderBounds(headers[i][j]);
-			    	measuresNames = new Array();
-			    	measuresPosition = new Array();
-
-				    for(var k=bounds[0]; k<=bounds[1]; k++){
-				    	if(headers[headers.length-1][k].type=='data' && !headers[headers.length-1][k].hidden){
-				    		measurePosition = measuresNames.indexOf(headers[headers.length-1][k].name);
-				    		if(measurePosition<0){
-				    			measuresNames.push(headers[headers.length-1][k].name);
-				    			measurePosition = measuresNames.length-1;
-				    			measuresPosition.push(new Array());
-				    		}
-				    		measuresPosition[measurePosition].push(k);
-					    }
-				    }
-				    
-				    if(measuresNames.length>0){
-				    
-					    sums = new Array(); 
-					    for(var x=0; x<measuresNames.length;x++){
-					    	if(this.misuresOnRow){
-			 		    		sums.push(this.columnsHeaderListSum(measuresPosition[x]));
-					    	}else{
-					    		sums.push(this.rowsHeaderListSum(measuresPosition[x]));
-					    	}
-					    }
-					    
-					    if(headers[i][0].horizontal){
-					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: measuresNames.length, horizontal: headers[i][0].horizontal, level: headers.length-2, width: null , height: headers[headers.length-2][0].height,columnWidth: this.columnWidth});
-					    }else{
-					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: measuresNames.length, horizontal: headers[i][0].horizontal, level: headers.length-2, width: headers[headers.length-2][0].width, height: null,columnWidth: this.columnWidth});	
-					    }
-					    partialTotalNode.type = 'partialsum';
-					    partialTotalNode.father = headers[i][j];
-					    this.setHeaderListener(partialTotalNode, true);
-					    
-						for(var k=0; k<measuresNames.length; k++){
-							freshChild = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:measuresNames[k], thisDimension: 1, horizontal: headers[i][0].horizontal, level: headers.length-1, width: headers[headers.length-1][0].width, height: headers[headers.length-1][0].height,columnWidth: this.columnWidth});
-							partialTotalNode.childs.push(freshChild);
-							freshChild.father = partialTotalNode;
-							freshChild.type = 'partialsum';
-							this.setHeaderListener(freshChild, true);
-						}	
-
-						this.addNewEntries(partialTotalNode.level,partialTotalNode,headers,sums, partialTotalNode.horizontal, true);
-						
-				    }
-		        }
-		        
-		        //build the headres of all the others levels
-		        var measuresSum = new Array();
-		        var lineCount=0;
-		        for(var k=i; k>1; k--){
-		        	
-		        	if(!this.misuresOnRow){
-	        			headers = this.columnHeader;
-	        		}else{
-	        			headers = this.rowHeader;
-	        		}
-		        	
-		        	lineCount=0;
-		        	var partialSumNode;
-		        	var grandFather = headers[k][0].father;
-		        	var j=0;
-		        	var headers_k1_length = headers[k+1].length;
-		        	while(j<headers[k+1].length){
-		        		var measuresPosition = new Array();
-	    	        	while( j<headers[k+1].length && grandFather.name == headers[k+1][j].father.father.name){
-		        	       	if(headers[k+1][j].type=='partialsum'){
-		        	       		measuresPosition.push(lineCount);
-		        	       		partialSumNode=headers[k+1][j];
-		        	       	}
-		        	       	lineCount = lineCount+ this.getLeafsNumber(headers[k+1][j]);
-		        	       	j++;
-	        	        }
-	
-	    	        	if(partialSumNode!=null){
-	    	        		//prepare the total node
-	    	        		if(partialSumNode.horizontal){
-	    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: null, height: headers[k][0].height,columnWidth: this.columnWidth});	
-	    	        		}else{
-	    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: headers[k][0].width, height: null,columnWidth: this.columnWidth});	
-	    	        		}
-		        	        
-		        	        totalNode.father = partialSumNode.father.father;
-		        	        totalNode.type = 'partialsum';
-		        	        var totalNodeChild = this.cloneNode(partialSumNode,totalNode,true);
-		        	        totalNode.childs.push(totalNodeChild);
-		        	        this.setHeaderListener(totalNode, true);
-
-		        	        var totalSum = new Array();
-		        	        for(var y=0; y<this.getLeafsNumber(partialSumNode); y++){//the number of the leafs(measures)
-		        	        	var lineToSum = new Array();
-		        	        	var sum;
-			        	        for(var x=0; x<measuresPosition.length; x++){
-			        	        	lineToSum.push(measuresPosition[x]+y);
-			        	        }	
-			        	        if(!totalNode.horizontal){
-			        	        	totalSum.push(this.columnsHeaderListSum(lineToSum));
-			        	        }else{
-			        	        	totalSum.push(this.rowsHeaderListSum(lineToSum));
-			        	        }
-		        	        }
-
-		        	        this.addNewEntries( k,totalNode,headers,totalSum, totalNode.horizontal, true);
-		        	        //prepare for the next step
-		        	        if(j+2<headers[k+1].length){//2 perchè bisogna aggiunge i per il subtotale del livello k+1 piu il totale che sto aggiungendo ora
-	        	        		j=j+1; //the totalNode entry
-	        	        		grandFather = headers[k+1][j].father.father;
-	        	        		lineCount = lineCount+this.getLeafsNumber(partialSumNode);
-	        	        		partialSumNode = null;
-	        	        	}else{
-	        	        		break;
-	        	        	}
-	    	        	}else{
-	    	        		break;
-	    	        	}
-		        	}
-		        }
-		    }
-	    }
-	    
-	    if((withRowsPartialSumLocal || withColumnsPartialSumLocal) &&!lazy){
-	    	this.reloadHeadersAndTable();
-	    }
-	    
-    }
+//    //Calculate the partial sum of the rows
+//    , rowsSum : function(isATotalSum, withHidden){
+//    	return this.rowsHeaderSum(0, this.entries.getEntries()[0].length-1, isATotalSum, withHidden);
+//    }
+//    
+//    //Calculate the partial sum of the columns
+//    , columnsSum : function(isATotalSum, withHidden){
+//    	return this.columnsHeaderSum(0, this.entries.getEntries().length-1, isATotalSum, withHidden);
+//    }  
+//
+//    , addHeaderSum: function(header, type){
+//    	if(header.type=='data'){
+//	    	var bounds = this.getHeaderBounds(header);
+//	    	var sum; 
+//	    	var headers;
+//	    	if(header.horizontal){
+//	    		sum = this.rowsHeaderSum(bounds[0],bounds[1]);
+//	    		headers = this.columnHeader;
+//	    	}else{
+//	    		sum = this.columnsHeaderSum(bounds[0],bounds[1]);
+//	    		headers = this.rowHeader;
+//	    	}
+//	    	var sums = new Array();
+//	    	
+//	    	
+//	    	if(header.horizontal){
+//	    		var totalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:header.horizontal, level:header.level+1, width:null, height:header.childs[0].height,columnWidth: this.columnWidth});
+//	    	}else{
+//	    		var totalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:header.horizontal, level:header.level+1, width:header.childs[0].width, height:null,columnWidth: this.columnWidth});
+//	    	}
+//
+//	    	totalNode.hidden = header.hidden;
+//	    	if(totalNode.hidden){
+//	    		totalNode.thisDimension=0;
+//	    	}
+//	    	
+//	    	totalNode.type=type;
+//	    	totalNode.father = header;
+//	    	this.setHeaderListener(totalNode, true);
+//	    	
+//	    	if (header.childs[0].childs.length>0){
+//	    	
+//		    	var cousinNode = header.childs[0];
+//		    	var freshTotalChildNode;
+//		    	var freshFatherNode = totalNode;
+//		    	
+//		    	while(cousinNode.childs.length>0){
+//		    		freshTotalChildNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name: LN('sbi.crosstab.header.total.text'), thisDimension:1, horizontal:freshFatherNode.horizontal, level:freshFatherNode.level+1, width:cousinNode.childs[0].width, height:cousinNode.childs[0].height,columnWidth: this.columnWidth});
+//		    		freshTotalChildNode.type=type;
+//		    		freshTotalChildNode.father = freshFatherNode;
+//		    		freshTotalChildNode.hidden = freshFatherNode.hidden;
+//		    		freshFatherNode.childs.push(freshTotalChildNode);
+//		    		freshFatherNode = freshTotalChildNode;
+//		    		cousinNode = cousinNode.childs[0];
+//		    		this.setHeaderListener(freshTotalChildNode, true);
+//			    	if(totalNode.hidden){
+//			    		freshTotalChildNode.thisDimension=0;
+//			    	}
+//		    	}
+//	    	}
+//	    	sums.push(sum);
+//	    	this.addNewEntries(header.level+1,totalNode,headers,sums, header.horizontal, true);
+//    	}
+//    }
+//    
+//      //Calculate the partial sum of the rows
+//    , rowsHeaderSum : function(start, end, isATotalSum, withHidden){
+//    	var entries = this.entries.getEntries();
+//    	var sum = new Array();
+//    	var partialSum;
+//    	var number;
+//    	for(var i=0; i<entries.length; i++){
+//    		partialSum =0;
+//    		if(withHidden || !this.rowHeader[this.rowHeader.length-1][i].hidden){
+//	        	for(var j=start; j<entries[0].length && j<=end; j++){
+//	        		if((withHidden || !this.columnHeader[this.columnHeader.length-1][j].hidden) && this.columnHeader[this.columnHeader.length-1][j].type=='data'){
+//	        			number = parseFloat(entries[i][j]);
+//	        			if(!isNaN(number)){
+//	        				partialSum = partialSum + number;
+//	        			}
+//	        		}
+//	        	}
+//	    		if(isATotalSum){
+//	    			sum.push(''+partialSum);
+//	    		}
+//    		}
+//    		if(!isATotalSum){
+//    			sum.push(''+partialSum);
+//    		}
+//    	}
+//    	return sum;
+//    }
+//    
+//    //Calculate the partial sum of the columns
+//    , columnsHeaderSum : function(start, end, isATotalSum, withHidden){
+//    	var entries = this.entries.getEntries();
+//    	var sum = new Array();
+//    	var partialSum;
+//    	var number;
+//       	for(var j=0; j<entries[0].length; j++){
+//	       	partialSum =0;
+//	       	if(withHidden || !this.columnHeader[this.columnHeader.length-1][j].hidden){
+//	        	for(var i=start; i<entries.length && i<=end; i++){
+//	        		if((withHidden || !this.rowHeader[this.rowHeader.length-1][i].hidden) && this.rowHeader[this.rowHeader.length-1][i].type=='data'){
+//	        			number = parseFloat(entries[i][j]);
+//	        			if(!isNaN(number)){
+//	        				partialSum = partialSum + number;
+//	        			}
+//	        		}
+//	        	}
+//	    		if(isATotalSum){
+//	    			sum.push(''+partialSum);
+//	    		}
+//    		}
+//    		if(!isATotalSum){
+//    			sum.push(''+partialSum);
+//    		}
+//    	}
+//    	return sum;
+//    } 
+//
+//    //Calculate the sum of the rows
+//    , rowsHeaderListSum : function(lines, isATotalSum, withHidden, usetotal){
+//    	var entries = this.entries.getEntries();
+//    	var sum = new Array();
+//    	var partialSum;
+//    	var number;
+//    	for(var i=0; i<entries.length; i++){
+//    		partialSum =0;
+//    		if(withHidden || !this.rowHeader[this.rowHeader.length-1][i].hidden){
+//	        	for(var j=0; j<lines.length; j++){
+//	        		
+//	        		if((withHidden || !this.columnHeader[this.columnHeader.length-1][lines[j]].hidden) && ( usetotal || this.columnHeader[this.columnHeader.length-1][lines[j]].type=='data')){
+//	        			number = parseFloat(entries[i][lines[j]]);
+//	        			if(!isNaN(number)){
+//	        				partialSum = partialSum + number;
+//	        			}
+//	        		}
+//	        	}
+//	    		if(isATotalSum){
+//	    			sum.push(''+partialSum);
+//	    		}
+//    		}
+//    		if(!isATotalSum){
+//    			sum.push(''+partialSum);
+//    		}
+//    	}
+//    	return sum;
+//    }
+//    
+//    //Calculate the sum of the columns
+//    , columnsHeaderListSum : function(lines, isATotalSum, withHidden, usetotals){
+//    	
+//    	var entries = this.entries.getEntries();
+//    	var sum = new Array();
+//    	var partialSum;
+//    	var number;
+//       	for(var j=0; j<entries[0].length; j++){
+//       		partialSum =0;
+//	       	if(withHidden || !this.columnHeader[this.columnHeader.length-1][j].hidden){
+//	        	for(var i=0; i<lines.length; i++){
+//	        		if((withHidden || !this.rowHeader[this.rowHeader.length-1][lines[i]].hidden) && (usetotals || this.rowHeader[this.rowHeader.length-1][lines[i]].type=='data')){
+//	        			number = parseFloat(entries[lines[i]][j]);
+//	        			if(!isNaN(number)){
+//	        				partialSum = partialSum + number;
+//	        			}
+//	        		}
+//	        	}
+//	    		if(isATotalSum){
+//	    			sum.push(''+partialSum);
+//	    		}
+//    		}
+//    		if(!isATotalSum){
+//    			sum.push(''+partialSum);
+//    		}
+//    	}
+//    	return sum;
+//    } 
+//  
+//  
+//    , removePartialSum: function(lazy){
+//    	for(var j=0; j<2; j++){
+//			var headers;
+//			var horizontal = j==0;
+//			if(horizontal){
+//				if(this.misuresOnRow){
+//					headers = this.columnHeader[this.columnHeader.length-1];
+//				}else{
+//					headers = this.columnHeader[this.columnHeader.length-2];
+//				}
+//			}else{
+//				if(this.misuresOnRow){
+//					headers = this.rowHeader[this.rowHeader.length-2];
+//				}else{
+//					headers = this.rowHeader[this.rowHeader.length-1];
+//				}
+//			}  		
+//			for(var i=headers.length-1; i>=0; i--){
+//				if(headers[i].type == 'partialsum'){
+//					this.removeEntries(headers[i], true);
+//				}
+//			}
+//    	}
+//    	if(!lazy){
+//    		this.reloadHeadersAndTable();
+//    	}
+//
+//    }
+//    
+//    
+//    , calculatePartialSum: function(horizontal, lazy){
+//    	var withRowsPartialSumLocal = this.withRowsPartialSum;
+//    	var withColumnsPartialSumLocal = this.withColumnsPartialSum;
+//    	
+//    	if(horizontal!=null){
+//    		withRowsPartialSumLocal = withRowsPartialSumLocal && !horizontal;
+//    		withColumnsPartialSumLocal = withColumnsPartialSumLocal && horizontal;
+//    	}
+//    	
+//		if(withRowsPartialSumLocal && !this.misuresOnRow){
+//		    for(var i=0; i<this.rowHeader.length-1; i++){
+//		        for(var j=0; j<this.rowHeader[i].length; j++){
+//		        	this.addHeaderSum(this.rowHeader[i][j], 'partialsum');
+//		        }
+//		    }
+//		}
+//		if(withColumnsPartialSumLocal && this.misuresOnRow){
+//			for(var i=0; i<this.columnHeader.length-1; i++){
+//				if(this.columnHeader[i][0].titleHeader){//dont show the subtotals for the title headers
+//			        for(var j=0; j<this.columnHeader[i].length; j++){
+//			        	this.addHeaderSum(this.columnHeader[i][j], 'partialsum');
+//			        }
+//				}
+//		    }
+//		}
+//
+//	    if((withRowsPartialSumLocal && this.misuresOnRow) || (withColumnsPartialSumLocal && !this.misuresOnRow)){
+//		
+//    		if(!this.misuresOnRow){
+//    			headers = this.columnHeader;
+//    		}else{
+//    			headers = this.rowHeader;
+//    		}
+//    		
+//		    var check = false;
+//		    var bounds;
+//		    var sums;
+//		    var measuresNames;
+//		    var measuresPosition;
+//		    var partialTotalNode;
+//		    var freshChild;
+//		    var measurePosition;
+//		    
+//		    if(headers.length>=3){//if there are more than one level
+//		    	//calculate the partial sum and prepare the header of the level above the measures
+//		    	var i = headers.length-3;
+//		    	
+//		        for(var j=0; j<headers[i].length; j++){
+//		        	bounds = this.getHeaderBounds(headers[i][j]);
+//			    	measuresNames = new Array();
+//			    	measuresPosition = new Array();
+//
+//				    for(var k=bounds[0]; k<=bounds[1]; k++){
+//				    	if(headers[headers.length-1][k].type=='data' && !headers[headers.length-1][k].hidden){
+//				    		measurePosition = measuresNames.indexOf(headers[headers.length-1][k].name);
+//				    		if(measurePosition<0){
+//				    			measuresNames.push(headers[headers.length-1][k].name);
+//				    			measurePosition = measuresNames.length-1;
+//				    			measuresPosition.push(new Array());
+//				    		}
+//				    		measuresPosition[measurePosition].push(k);
+//					    }
+//				    }
+//				    
+//				    if(measuresNames.length>0){
+//				    
+//					    sums = new Array(); 
+//					    for(var x=0; x<measuresNames.length;x++){
+//					    	if(this.misuresOnRow){
+//			 		    		sums.push(this.columnsHeaderListSum(measuresPosition[x]));
+//					    	}else{
+//					    		sums.push(this.rowsHeaderListSum(measuresPosition[x]));
+//					    	}
+//					    }
+//					    
+//					    if(headers[i][0].horizontal){
+//					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: measuresNames.length, horizontal: headers[i][0].horizontal, level: headers.length-2, width: null , height: headers[headers.length-2][0].height,columnWidth: this.columnWidth});
+//					    }else{
+//					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: measuresNames.length, horizontal: headers[i][0].horizontal, level: headers.length-2, width: headers[headers.length-2][0].width, height: null,columnWidth: this.columnWidth});	
+//					    }
+//					    partialTotalNode.type = 'partialsum';
+//					    partialTotalNode.father = headers[i][j];
+//					    this.setHeaderListener(partialTotalNode, true);
+//					    
+//						for(var k=0; k<measuresNames.length; k++){
+//							freshChild = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:measuresNames[k], thisDimension: 1, horizontal: headers[i][0].horizontal, level: headers.length-1, width: headers[headers.length-1][0].width, height: headers[headers.length-1][0].height,columnWidth: this.columnWidth});
+//							partialTotalNode.childs.push(freshChild);
+//							freshChild.father = partialTotalNode;
+//							freshChild.type = 'partialsum';
+//							this.setHeaderListener(freshChild, true);
+//						}	
+//						
+//						this.addNewEntries(partialTotalNode.level,partialTotalNode,headers,sums, partialTotalNode.horizontal, true);
+//				    }
+//		        }
+//		        
+//		        
+//		        if(!this.misuresOnRow){
+//		        //THE COLUMNS ARE DIFFERENT BECAUSE OF THE HEADER TITLES
+//		        i=i-1;
+//
+//		        //build the headres of all the others levels
+//		        var measuresSum = new Array();
+//		        var lineCount=0;
+//		        for(var k=i; k>2; k=k-2){
+//
+//		        	if(!this.misuresOnRow){
+//	        			headers = this.columnHeader;
+//	        		}else{
+//	        			headers = this.rowHeader;
+//	        		}
+//		        	
+//		        	lineCount=0;
+//		        	var partialSumNode;
+//		        	var grandFather = headers[k][0].father.father;
+//		        	
+//		        	var j=0;
+//		        	
+//		        	while(j<headers[k+2].length){
+//
+//		        		var measuresPosition = new Array();
+//	    	        	while( j<headers[k+2].length && grandFather.name == headers[k+2][j].father.father.father.father.name){
+//		        	       	if(headers[k+2][j].type=='partialsum'){
+//		        	       		measuresPosition.push(lineCount);
+//		        	       		partialSumNode=headers[k+2][j];
+//		        	       	}
+//		        	       	lineCount = lineCount+ this.getLeafsNumber(headers[k+2][j]);
+//		        	       	j++;
+//	        	        }
+//
+//	    	        	if(partialSumNode!=null){
+//	    	        		//prepare the total node
+//	    	        		if(partialSumNode.horizontal){
+//	    	        			var totalNode1 = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: null, height: headers[k][0].height,columnWidth: this.columnWidth});	
+//	    	        			var totalNode2 = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: null, height: headers[k][0].height,columnWidth: this.columnWidth});
+//	    	        		}else{
+//	    	        			var totalNode1 = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: headers[k][0].width, height: null,columnWidth: this.columnWidth});	
+//	    	        			var totalNode2 = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: headers[k][0].width, height: null,columnWidth: this.columnWidth});
+//	    	        		}
+//		        	        
+//	    	        		//alert(this.printHeader(partialSumNode).toSource());
+//	    	        		
+//		        	        totalNode1.father = partialSumNode.father.father.father;
+//		        	        totalNode1.type = 'partialsum';
+//		        	        
+//		        	        totalNode2.father = totalNode1;
+//		        	        totalNode2.type = 'partialsum';
+//		        	        
+//		        	        totalNode1.childs.push(totalNode2);
+//		        	        
+//		        	        var totalNodeChild = this.cloneNode(partialSumNode,totalNode2,true);
+//		        	        totalNode2.childs.push(totalNodeChild);
+//		        	        this.setHeaderListener(totalNode2, true);
+//
+//		        	        var totalSum = new Array();
+//		        	        for(var y=0; y<this.getLeafsNumber(partialSumNode); y++){//the number of the leafs(measures)
+//		        	        	var lineToSum = new Array();
+//		        	        	var sum;
+//			        	        for(var x=0; x<measuresPosition.length; x++){
+//			        	        	lineToSum.push(measuresPosition[x]+y);
+//			        	        }	
+//
+//			        	        if(!totalNode2.horizontal){
+//			        	        	totalSum.push(this.columnsHeaderListSum(lineToSum, null,null, true));
+//			        	        }else{
+//			        	        	totalSum.push(this.rowsHeaderListSum(lineToSum, null,null, true));
+//			        	        }
+//		        	        }
+//
+//		        	        this.addNewEntries( k,totalNode1,headers,totalSum, totalNode1.horizontal, true);
+//		        	        //prepare for the next step
+//		        	        if(j+2<headers[k+2].length){//2 perchè bisogna aggiunge i per il subtotale del livello k+1 piu il totale che sto aggiungendo ora
+//	        	        		j=j+1; //the totalNode entry
+//	        	        		grandFather = headers[k+2][j].father.father.father.father;
+//	        	        		lineCount = lineCount+this.getLeafsNumber(partialSumNode);
+//	        	        		partialSumNode = null;
+//	        	        	}else{
+//	        	        		break;
+//	        	        	}
+//	    	        	}else{
+//	    	        		break;
+//	    	        	}
+//		        	}
+//		        }
+//		    }else{
+//		        	 for(var k=i; k>1; k--){
+//				        	
+//				        	if(!this.misuresOnRow){
+//			        			headers = this.columnHeader;
+//			        		}else{
+//			        			headers = this.rowHeader;
+//			        		}
+//				        	
+//				        	lineCount=0;
+//				        	var partialSumNode;
+//				        	var grandFather = headers[k][0].father;
+//				        	var j=0;
+//				        	var headers_k1_length = headers[k+1].length;
+//				        	while(j<headers[k+1].length){
+//				        		var measuresPosition = new Array();
+//			    	        	while( j<headers[k+1].length && grandFather.name == headers[k+1][j].father.father.name){
+//				        	       	if(headers[k+1][j].type=='partialsum'){
+//				        	       		measuresPosition.push(lineCount);
+//				        	       		partialSumNode=headers[k+1][j];
+//				        	       	}
+//				        	       	lineCount = lineCount+ this.getLeafsNumber(headers[k+1][j]);
+//				        	       	j++;
+//			        	        }
+//			
+//			    	        	if(partialSumNode!=null){
+//			    	        		//prepare the total node
+//			    	        		if(partialSumNode.horizontal){
+//			    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: null, height: headers[k][0].height,columnWidth: this.columnWidth});	
+//			    	        		}else{
+//			    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry({crosstab:this, percenton: this.percenton, name:LN('sbi.crosstab.header.total.text'), thisDimension: partialSumNode.thisDimension, horizontal: partialSumNode.horizontal, level: k, width: headers[k][0].width, height: null,columnWidth: this.columnWidth});	
+//			    	        		}
+//				        	        
+//				        	        totalNode.father = partialSumNode.father.father;
+//				        	        totalNode.type = 'partialsum';
+//				        	        var totalNodeChild = this.cloneNode(partialSumNode,totalNode,true);
+//				        	        totalNode.childs.push(totalNodeChild);
+//				        	        this.setHeaderListener(totalNode, true);
+//
+//				        	        var totalSum = new Array();
+//				        	        for(var y=0; y<this.getLeafsNumber(partialSumNode); y++){//the number of the leafs(measures)
+//				        	        	var lineToSum = new Array();
+//				        	        	var sum;
+//					        	        for(var x=0; x<measuresPosition.length; x++){
+//					        	        	lineToSum.push(measuresPosition[x]+y);
+//					        	        }	
+//					        	        if(!totalNode.horizontal){
+//					        	        	totalSum.push(this.columnsHeaderListSum(lineToSum));
+//					        	        }else{
+//					        	        	totalSum.push(this.rowsHeaderListSum(lineToSum));
+//					        	        }
+//				        	        }
+//
+//				        	        this.addNewEntries( k,totalNode,headers,totalSum, totalNode.horizontal, true);
+//				        	        //prepare for the next step
+//				        	        if(j+2<headers[k+1].length){//2 perchè bisogna aggiunge i per il subtotale del livello k+1 piu il totale che sto aggiungendo ora
+//			        	        		j=j+1; //the totalNode entry
+//			        	        		grandFather = headers[k+1][j].father.father;
+//			        	        		lineCount = lineCount+this.getLeafsNumber(partialSumNode);
+//			        	        		partialSumNode = null;
+//			        	        	}else{
+//			        	        		break;
+//			        	        	}
+//			    	        	}else{
+//			    	        		break;
+//			    	        	}
+//				        	}
+//				        }
+//		        }
+// 
+//		    }
+//	    }
+//	    
+//	    if((withRowsPartialSumLocal || withColumnsPartialSumLocal) &&!lazy){
+//	    	this.reloadHeadersAndTable();
+//	    }
+//	    
+//    }
     
     //calculate the totals
-    , calculateTotalSum: function(withHidden){
-	    if((this.withColumnsSum && this.misuresOnRow) || (this.withRowsSum && !this.misuresOnRow)){
-    		if(!this.misuresOnRow){
-    			headers = this.columnHeader;
-    		}else{
-    			headers = this.rowHeader;
-    		}
-		    var sums = new Array();
-		    var sumsLine;
-		    var measuresNumber;
-		    var measuresPosition;
-		    
-		    if(!withHidden){
-		    	measuresNumber = this.measuresNames.length
-		    	measuresPosition = this.measuresPosition;
-		    }else{
-		    	measuresNumber = this.measuresNumber;
-		    	measuresPosition = this.allMeasuresPosition;
-		    }
-		    
-		    if(headers.length>=2){//if there are more than zero level
-		    	
-		        for(var j=0; j<measuresNumber;j++){
-		        	//if(measuresPosition[j].length>0){
-			    	if(this.misuresOnRow){
-			    		sumsLine = this.columnsHeaderListSum(measuresPosition[j], true, withHidden);
-			    	}else{
-			    		sumsLine = this.rowsHeaderListSum(measuresPosition[j], true, withHidden);
-			    	}
-			    	//if we add rows and there is the sum also for the rows, so we have to
-			    	//remove the last line (the total line)
-//			    	if((this.withColumnsSum && this.misuresOnRow && this.withRowsSum) || (this.withRowsSum && !this.misuresOnRow && this.withColumnsSum)){
-//			    		sumsLine.length = sumsLine.length-1;
+//    , calculateTotalSum: function(withHidden){
+//	    if((this.withColumnsSum && this.misuresOnRow) || (this.withRowsSum && !this.misuresOnRow)){
+//    		if(!this.misuresOnRow){
+//    			headers = this.columnHeader;
+//    		}else{
+//    			headers = this.rowHeader;
+//    		}
+//		    var sums = new Array();
+//		    var sumsLine;
+//		    var measuresNumber;
+//		    var measuresPosition;
+//		    
+//		    if(!withHidden){
+//		    	measuresNumber = this.measuresNames.length
+//		    	measuresPosition = this.measuresPosition;
+//		    }else{
+//		    	measuresNumber = this.measuresNumber;
+//		    	measuresPosition = this.allMeasuresPosition;
+//		    }
+//		    
+//		    if(headers.length>=2){//if there are more than zero level
+//		    	
+//		        for(var j=0; j<measuresNumber;j++){
+//		        	//if(measuresPosition[j].length>0){
+//			    	if(this.misuresOnRow){
+//			    		sumsLine = this.columnsHeaderListSum(measuresPosition[j], true, withHidden);
+//			    	}else{
+//			    		sumsLine = this.rowsHeaderListSum(measuresPosition[j], true, withHidden);
 //			    	}
-			    	sums.push(sumsLine);
-			    	
-		        }
-		    }
-		    return sums;
-		   
-	    }
-	   
-    }
+//			    	//if we add rows and there is the sum also for the rows, so we have to
+//			    	//remove the last line (the total line)
+////			    	if((this.withColumnsSum && this.misuresOnRow && this.withRowsSum) || (this.withRowsSum && !this.misuresOnRow && this.withColumnsSum)){
+////			    		sumsLine.length = sumsLine.length-1;
+////			    	}
+//			    	sums.push(sumsLine);
+//			    	
+//		        }
+//		    }
+//		    return sums;
+//		   
+//	    }
+//	   
+//    }
     
-    , getVisibleMeasures: function(headers){
-    	var i = headers.length-1;
-    	
-    	//not hidden
-    	this.measuresNames = new Array();
-    	this.measuresPosition = new Array();
-
-    	//also hidden
-    	this.allMeasuresPosition = new Array();
-    	this.allMeasuresNames = new Array();
-    	this.measuresNumber = 0;
-        for(var j=0; j<headers[i].length; j++){
-        	if(headers[i][j].type=='data'){
-        		var measurePositionAll = this.allMeasuresNames.indexOf(headers[i][j].name);
-        		if(measurePositionAll<0){
-        			this.measuresNumber++;
-	        		this.allMeasuresNames.push(headers[i][j].name);
-	        		measurePositionAll = this.allMeasuresNames.length-1;
-	        		this.allMeasuresPosition.push(new Array());
-	        	}
-	        	this.allMeasuresPosition[measurePositionAll].push(j)
-        		if(!headers[i][j].hidden){
-    	        	var measurePosition = this.measuresNames.indexOf(headers[i][j].name);
-    	        	if(measurePosition<0){
-    	        		this.measuresNames.push(headers[i][j].name);
-    	        		measurePosition = this.measuresNames.length-1;
-    	        		this.measuresPosition.push(new Array());
-    	        	}
-    	        	this.measuresPosition[measurePosition].push(j);
-        		}
-	        }
-        }
-        
-        this.visibleMeasuresMetadataLength=0;
-        
-        for(var j=0; j<this.measuresMetadata.length; j++){
-        	if(this.measuresNames.indexOf(this.measuresMetadata[j].name)>=0){
-        		this.measuresMetadata[j].visible = true;
-        		this.visibleMeasuresMetadataLength++;
-        	}else{
-        		this.measuresMetadata[j].visible = false;
-        	}
-        }
-    }
+//    , getVisibleMeasures: function(headers){
+//    	var i = headers.length-1;
+//    	
+//    	//not hidden
+//    	this.measuresNames = new Array();
+//    	this.measuresPosition = new Array();
+//
+//    	//also hidden
+//    	this.allMeasuresPosition = new Array();
+//    	this.allMeasuresNames = new Array();
+//    	this.measuresNumber = 0;
+//        for(var j=0; j<headers[i].length; j++){
+//        	if(headers[i][j].type=='data'){
+//        		var measurePositionAll = this.allMeasuresNames.indexOf(headers[i][j].name);
+//        		if(measurePositionAll<0){
+//        			this.measuresNumber++;
+//	        		this.allMeasuresNames.push(headers[i][j].name);
+//	        		measurePositionAll = this.allMeasuresNames.length-1;
+//	        		this.allMeasuresPosition.push(new Array());
+//	        	}
+//	        	this.allMeasuresPosition[measurePositionAll].push(j)
+//        		if(!headers[i][j].hidden){
+//    	        	var measurePosition = this.measuresNames.indexOf(headers[i][j].name);
+//    	        	if(measurePosition<0){
+//    	        		this.measuresNames.push(headers[i][j].name);
+//    	        		measurePosition = this.measuresNames.length-1;
+//    	        		this.measuresPosition.push(new Array());
+//    	        	}
+//    	        	this.measuresPosition[measurePosition].push(j);
+//        		}
+//	        }
+//        }
+//        
+//        this.visibleMeasuresMetadataLength=0;
+//        
+//        for(var j=0; j<this.measuresMetadata.length; j++){
+//        	if(this.measuresNames.indexOf(this.measuresMetadata[j].name)>=0){
+//        		this.measuresMetadata[j].visible = true;
+//        		this.visibleMeasuresMetadataLength++;
+//        	}else{
+//        		this.measuresMetadata[j].visible = false;
+//        	}
+//        }
+//    }
     
     //Build the panel with the sum of the columns
-    , getColumnsSumPanel : function(tpl, columnsForView, withRowsSum){
-    	var storeColumns = new Ext.data.ArrayStore({
-    	    autoDestroy: true,
-    	    storeId: 'myStore',
-    	    fields: [
-    	             {name: 'name'},
-    	             'divId',
-    	             {name: 'datatype'},
-    	             {name: 'format'},
-    	             {name: 'celltype'},
-    	             {name: 'scaleFactor'}
-    	    ]
-    	});
-    	var sumColumnsStore = new Array();
-    	var dataViewWidth;    	
-		var sumColumns = this.columnsTotalSumArray;
-		
-		if(this.misuresOnRow){
-
-	    	var superSumColumnsArray= new Array();
-	    	var superSumColumns=0;			
-	   		//we use superSumColumnsArray, superSumColumns for the total of totals
-
-	    	
-	   		for(var j=0; j<sumColumns.length; j++){
-	   			superSumColumns=0;
-	   			
-				var measureMetadata = this.getMeasureMetadata(this.rowHeader[this.rowHeader.length-1][j].name);
-				//var datatype =  measureMetadata.type;
-				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
-				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
-				
-	   			for(var i=0; i<sumColumns[j].length; i++){
-	   				
-		   			if(this.calculatedFieldsSumColumn[j]!=undefined && this.calculatedFieldsSumColumn[j]!=null && this.calculatedFieldsSumColumn[j]!='NN'){
-		   				sumColumns[j][i]=this.calculatedFieldsSumColumn[i][j];
-		   			}
-	   				
-		   			//in the total sum we not consider calculated fields and partial sums
-	   				if( this.columnHeader[this.columnHeader.length-1][i].type=='data'){
-	   					
-	   						superSumColumns = (superSumColumns+parseFloat(sumColumns[j][i]));
-	   				}
-	   				
-	   				var a = new Array();
-					a.push(sumColumns[j][i]);
-					a.push('[sumC'+j+','+i+']');
-					a.push('float');
-					a.push(null);
-					a.push('totals');
-					a.push(scaleFactor);
-					sumColumnsStore.push(a);
-	   			}
-	   			superSumColumnsArray.push(superSumColumns);
-	   		}
-	   		dataViewHeight = (this.rowHeight)*sumColumns.length;
-	   		this.buildSuperTotalPanel(superSumColumnsArray, tpl, dataViewHeight, this.columnWidth);
-		}else{
-	   		for(var j=0; j<sumColumns.length; j++){
-	   			//add the sum of the calculated field
-	   			if(this.calculatedFieldsSumColumn[j]!=undefined && this.calculatedFieldsSumColumn[j]!=null && this.calculatedFieldsSumColumn[j]!='NN'){
-	   				sumColumns[j]=this.calculatedFieldsSumColumn[j];
-	   			}
-	   			
-				var measureMetadata = this.getMeasureMetadata(this.columnHeader[this.columnHeader.length-1][j].name);
-				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
-				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
-	   			
-	   			var a = new Array();
-	   			a.push(sumColumns[j]);
-	   			a.push('[sumC'+j+']');
-				a.push('float');
-				a.push(null);
-				a.push('totals');
-				a.push(scaleFactor);
-	   			sumColumnsStore.push(a);
-	   		}
-	   		dataViewHeight = (this.rowHeight);
-		}
-
-    	storeColumns.loadData(sumColumnsStore);
-    	
-		var cellCls = 'crosstab-column-sum-panel-container';
-		if(withRowsSum){
-			cellCls = cellCls + ' crosstab-none-right-border-panel';
-		}
-    	var datapanelColumnSum = new Ext.Panel({
-    		cellCls: cellCls,
-            width: (columnsForView)*(this.columnWidth),
-            height: dataViewHeight,
-            border: false,
-    	    layout:'fit',
-    	    items: new Ext.DataView({
-    	        store: storeColumns,
-    	        tpl: tpl,
-    	        itemSelector: 'div.crosstab-table-cells'
-    	    })
-    	});
-    	return datapanelColumnSum;
-    }
-    
-    //Build the panel with the partial sum of the rows
-    , getRowsSumPanel : function(tpl,rowForView, withColumnsSum){
-    	var storeRows = new Ext.data.ArrayStore({
-    	    autoDestroy: true,
-    	    storeId: 'myStore',
-    	    fields: [
-    	             {name: 'name'},
-    	             'divId',
-    	             {name: 'datatype'},
-    	             {name: 'format'},
-    	             {name: 'celltype'},
-    	             {name: 'scaleFactor'}
-    	    ]
-    	});
-		var sumRowsStore = new Array();
-   		var dataViewWidth;
-
-		var sumRows = this.rowsTotalSumArray;
-
-		if(!this.misuresOnRow){//there is one column for each measure
-			
-	    	//we use superSumColumnsArray for the total of totals
-	    	var superSumColumnsArray= new Array();
-   			for(var i=0; i<sumRows.length; i++){
-   				superSumColumnsArray[i] =0;
-   			}
-	   		for(var j=0; j<sumRows[0].length; j++){
-	   			
-
-				var measureMetadata = this.getMeasureMetadata(this.columnHeader[this.columnHeader.length-1][i].name);
-				//var datatype =  measureMetadata.type;
-				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
-				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
-	   			
-	   			for(var i=0; i<sumRows.length; i++){
-	   				
-		   			if(this.calculatedFieldsSumRow[j]!=undefined && this.calculatedFieldsSumRow[j]!=null && this.calculatedFieldsSumRow[i]!='NN'){
-		   				sumRows[i][j]=this.calculatedFieldsSumRow[i][j];
-		   			}
-	   				
-		   			//in the total sum we not consider calculated fields and partial sums
-	   				if(this.rowHeader[this.rowHeader.length-1][j].type=='data'){
-	   					superSumColumnsArray[i] = superSumColumnsArray[i]+parseFloat(sumRows[i][j]);
-	 	   			}
-		   				
-					var a = new Array();
-					a.push(sumRows[i][j]);
-					a.push('[sumR'+i+','+j+']');
-					a.push('float');
-					a.push(null);
-					a.push('totals');
-					a.push(scaleFactor);
-					sumRowsStore.push(a);
-	   			}
-	   		}
-	   		dataViewWidth=this.columnWidth*sumRows.length;
-	   		this.buildSuperTotalPanel(superSumColumnsArray, tpl, this.rowHeight, dataViewWidth);
-		}else{
-	   		
-	   		for(var j=0; j<sumRows.length; j++){
-	   			if(this.calculatedFieldsSumRow[j]!=undefined && this.calculatedFieldsSumRow[j]!=null && this.calculatedFieldsSumRow[j]!='NN'){
-	   				sumRows[j]=this.calculatedFieldsSumRow[j];
-	   			}
-				var measureMetadata = this.getMeasureMetadata(this.rowHeader[this.rowHeader.length-1][j].name);
-				//var datatype =  measureMetadata.type;
-				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
-				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
-
-				var a = new Array();
-				a.push(sumRows[j]);
-				a.push('[sumR'+j+']');
-				a.push('float');
-				a.push(null);
-				a.push('totals');
-				a.push(scaleFactor);
-				sumRowsStore.push(a);
-	   		}
-
-	   		dataViewWidth=this.columnWidth;
-		}	
-		storeRows.loadData(sumRowsStore);	
-		
-		var cellCls = 'crosstab-row-sum-panel-container';
-		if(withColumnsSum){
-			cellCls = cellCls + ' crosstab-none-bottom-border-panel';
-		}
-		
-    	var datapanelRowSum = new Ext.Panel({
-    		cellCls: cellCls,
-            width: dataViewWidth,
-            height: (rowForView)*(this.rowHeight),
-            border: false,
-    	    layout:'fit',
-    	    items: new Ext.DataView({
-    	        store: storeRows,
-    	        tpl: tpl,
-    	        itemSelector: 'div.crosstab-table-cells'
-    	    })
-    	});
-    	return datapanelRowSum;
-    }
-    
-    /**
-	* Build the pannel of total of totals
-	*/
-    , buildSuperTotalPanel: function(superSumColumnsArray, tpl, dataViewHeight, dataViewWidth){
-    	
-    	//with the if not commented the total sum is computed only at the biginning..
-    	//in this way the partial sums and the calculated fields are not counted
-    	//if(this.superSumArray == null){
-    		this.superSumArray = new Array();
-			if(this.withRowsSum && this.withColumnsSum){
-	    	
-		    	
-		    	var storeSumColumns = new Ext.data.ArrayStore({
-		    	    autoDestroy: true,
-		    	    storeId: 'myStore3',
-		    	    fields: [
-		    	             {name: 'name'},
-		    	             'divId',
-		    	             {name: 'datatype'},
-		    	             {name: 'format'},
-		    	             {name: 'celltype'},
-		    	             {name: 'scaleFactor'}
-		    	    ]
-		    	});
-
-		    	var sumSuperColumnsStore = new Array();
-		   		for(var j=0; j<superSumColumnsArray.length; j++){
-		   			var scaleFactor = (this.getMeasureScaleFactor(this.measuresMetadata[j].name).value);
-		   			a = new Array();
-		   			a.push(superSumColumnsArray[j]);
-		   			a.push('[sumCT'+j+']');
-					a.push('float');
-					a.push(null);
-					a.push('supertotals');
-					a.push(scaleFactor);
-					sumSuperColumnsStore.push(a);
-					this.superSumArray.push(""+superSumColumnsArray[j]);
-		   		}
-		
-				var cellCls = 'crosstab-row-sum-panel-container  crosstab-none-top-border-panel';
-		   		
-		   		storeSumColumns.loadData(sumSuperColumnsStore);
-		   		
-		   		this.superSumPanel = new Ext.Panel({
-		    		cellCls: cellCls,
-		            width: dataViewWidth,
-		            height: dataViewHeight,
-		            border: false,
-		    	    layout:'fit',
-		    	    items: new Ext.DataView({
-		    	        store: storeSumColumns,
-		    	        tpl: tpl,
-		    	        itemSelector: 'div.crosstab-table-cells'
-		    	    })
-		    	});
-			}    	
-       	//}
-    }
+//    , getColumnsSumPanel : function(tpl, columnsForView, withRowsSum){
+//    	var storeColumns = new Ext.data.ArrayStore({
+//    	    autoDestroy: true,
+//    	    storeId: 'myStore',
+//    	    fields: [
+//    	             {name: 'name'},
+//    	             'divId',
+//    	             {name: 'datatype'},
+//    	             {name: 'format'},
+//    	             {name: 'celltype'},
+//    	             {name: 'scaleFactor'}
+//    	    ]
+//    	});
+//    	var sumColumnsStore = new Array();
+//    	var dataViewWidth;    	
+//		var sumColumns = this.columnsTotalSumArray;
+//		
+//		if(this.misuresOnRow){
+//
+//	    	var superSumColumnsArray= new Array();
+//	    	var superSumColumns=0;			
+//	   		//we use superSumColumnsArray, superSumColumns for the total of totals
+//
+//	    	
+//	   		for(var j=0; j<sumColumns.length; j++){
+//	   			superSumColumns=0;
+//	   			
+//				var measureMetadata = this.getMeasureMetadata(this.columnHeader[this.columnHeader.length-1][j].name);
+//				//var datatype =  measureMetadata.type;
+//				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
+//				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
+//				
+//	   			for(var i=0; i<sumColumns[j].length; i++){
+//	   				
+//		   			if(this.calculatedFieldsSumColumn[j]!=undefined && this.calculatedFieldsSumColumn[j]!=null && this.calculatedFieldsSumColumn[j]!='NN'){
+//		   				sumColumns[j][i]=this.calculatedFieldsSumColumn[i][j];
+//		   			}
+//	   				
+//		   			//in the total sum we not consider calculated fields and partial sums
+//	   				if( this.columnHeader[this.columnHeader.length-1][i].type=='data'){
+//	   					
+//	   						superSumColumns = (superSumColumns+parseFloat(sumColumns[j][i]));
+//	   				}
+//	   				
+//	   				var a = new Array();
+//					a.push(sumColumns[j][i]);
+//					a.push('[sumC'+j+','+i+']');
+//					a.push('float');
+//					a.push(null);
+//					a.push('totals');
+//					a.push(scaleFactor);
+//					sumColumnsStore.push(a);
+//	   			}
+//	   			superSumColumnsArray.push(superSumColumns);
+//	   		}
+//	   		dataViewHeight = (this.rowHeight)*sumColumns.length;
+//	   		this.buildSuperTotalPanel(superSumColumnsArray, tpl, dataViewHeight, this.columnWidth);
+//		}else{
+//	   		for(var j=0; j<sumColumns.length; j++){
+//	   			//add the sum of the calculated field
+//	   			if(this.calculatedFieldsSumColumn[j]!=undefined && this.calculatedFieldsSumColumn[j]!=null && this.calculatedFieldsSumColumn[j]!='NN'){
+//	   				sumColumns[j]=this.calculatedFieldsSumColumn[j];
+//	   			}
+//	   			
+//				var measureMetadata = this.getMeasureMetadata(this.columnHeader[this.columnHeader.length-1][j].name);
+//				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
+//				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
+//	   			
+//	   			var a = new Array();
+//	   			a.push(sumColumns[j]);
+//	   			a.push('[sumC'+j+']');
+//				a.push('float');
+//				a.push(null);
+//				a.push('totals');
+//				a.push(scaleFactor);
+//	   			sumColumnsStore.push(a);
+//	   		}
+//	   		dataViewHeight = (this.rowHeight);
+//		}
+//
+//    	storeColumns.loadData(sumColumnsStore);
+//    	
+//		var cellCls = 'crosstab-column-sum-panel-container';
+//		if(withRowsSum){
+//			cellCls = cellCls + ' crosstab-none-right-border-panel';
+//		}
+//    	var datapanelColumnSum = new Ext.Panel({
+//    		cellCls: cellCls,
+//            width: (columnsForView)*(this.columnWidth),
+//            height: dataViewHeight,
+//            border: false,
+//    	    layout:'fit',
+//    	    items: new Ext.DataView({
+//    	        store: storeColumns,
+//    	        tpl: tpl,
+//    	        itemSelector: 'div.crosstab-table-cells'
+//    	    })
+//    	});
+//    	return datapanelColumnSum;
+//    }
+//    
+//    //Build the panel with the partial sum of the rows
+//    , getRowsSumPanel : function(tpl,rowForView, withColumnsSum){
+//    	var storeRows = new Ext.data.ArrayStore({
+//    	    autoDestroy: true,
+//    	    storeId: 'myStore',
+//    	    fields: [
+//    	             {name: 'name'},
+//    	             'divId',
+//    	             {name: 'datatype'},
+//    	             {name: 'format'},
+//    	             {name: 'celltype'},
+//    	             {name: 'scaleFactor'}
+//    	    ]
+//    	});
+//		var sumRowsStore = new Array();
+//   		var dataViewWidth;
+//
+//		var sumRows = this.rowsTotalSumArray;
+//
+//		if(!this.misuresOnRow){//there is one column for each measure
+//			
+//	    	//we use superSumColumnsArray for the total of totals
+//	    	var superSumColumnsArray= new Array();
+//   			for(var i=0; i<sumRows.length; i++){
+//   				superSumColumnsArray[i] =0;
+//   			}
+//	   		for(var j=0; j<sumRows[0].length; j++){
+//	   			
+//	   			
+//				var measureMetadata = this.getMeasureMetadata(this.rowHeader[this.rowHeader.length-1][j].name);
+//				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
+//				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
+//	   			
+//	   			for(var i=0; i<sumRows.length; i++){
+//	   				
+//		   			if(this.calculatedFieldsSumRow[i]!=undefined && this.calculatedFieldsSumRow[i]!=null && this.calculatedFieldsSumRow[i]!='NN'){
+//		   				sumRows[i][j]=this.calculatedFieldsSumRow[i][j];
+//		   			}
+//	   				
+//		   			//in the total sum we not consider calculated fields and partial sums
+//	   				if(this.rowHeader[this.rowHeader.length-1][j].type=='data'){
+//	   					superSumColumnsArray[i] = superSumColumnsArray[i]+parseFloat(sumRows[i][j]);
+//	 	   			}
+//		   				
+//					var a = new Array();
+//					a.push(sumRows[i][j]);
+//					a.push('[sumR'+i+','+j+']');
+//					a.push('float');
+//					a.push(null);
+//					a.push('totals');
+//					a.push(scaleFactor);
+//					sumRowsStore.push(a);
+//	   			}
+//	   		}
+//	   		dataViewWidth=this.columnWidth*sumRows.length;
+//	   		this.buildSuperTotalPanel(superSumColumnsArray, tpl, this.rowHeight, dataViewWidth);
+//		}else{
+//	   		
+//	   		for(var j=0; j<sumRows.length; j++){
+//	   			if(this.calculatedFieldsSumRow[j]!=undefined && this.calculatedFieldsSumRow[j]!=null && this.calculatedFieldsSumRow[j]!='NN'){
+//	   				sumRows[j]=this.calculatedFieldsSumRow[j];
+//	   			}
+//				var measureMetadata = this.getMeasureMetadata(this.rowHeader[this.rowHeader.length-1][j].name);
+//				//var datatype =  measureMetadata.type;
+//				var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
+//				var scaleFactor = measureMetadata !== null ? measureMetadata.scaleFactor : 1;
+//
+//				var a = new Array();
+//				a.push(sumRows[j]);
+//				a.push('[sumR'+j+']');
+//				a.push('float');
+//				a.push(null);
+//				a.push('totals');
+//				a.push(scaleFactor);
+//				sumRowsStore.push(a);
+//	   		}
+//
+//	   		dataViewWidth=this.columnWidth;
+//		}	
+//		storeRows.loadData(sumRowsStore);	
+//		
+//		var cellCls = 'crosstab-row-sum-panel-container';
+//		if(withColumnsSum){
+//			cellCls = cellCls + ' crosstab-none-bottom-border-panel';
+//		}
+//		
+//    	var datapanelRowSum = new Ext.Panel({
+//    		cellCls: cellCls,
+//            width: dataViewWidth,
+//            height: (rowForView)*(this.rowHeight),
+//            border: false,
+//    	    layout:'fit',
+//    	    items: new Ext.DataView({
+//    	        store: storeRows,
+//    	        tpl: tpl,
+//    	        itemSelector: 'div.crosstab-table-cells'
+//    	    })
+//    	});
+//    	return datapanelRowSum;
+//    }
+//    
+//    /**
+//	* Build the pannel of total of totals
+//	*/
+//    , buildSuperTotalPanel: function(superSumColumnsArray, tpl, dataViewHeight, dataViewWidth){
+//    	
+//    	//with the if not commented the total sum is computed only at the biginning..
+//    	//in this way the partial sums and the calculated fields are not counted
+//    	//if(this.superSumArray == null){
+//    		this.superSumArray = new Array();
+//			if(this.withRowsSum && this.withColumnsSum){
+//	    	
+//		    	
+//		    	var storeSumColumns = new Ext.data.ArrayStore({
+//		    	    autoDestroy: true,
+//		    	    storeId: 'myStore3',
+//		    	    fields: [
+//		    	             {name: 'name'},
+//		    	             'divId',
+//		    	             {name: 'datatype'},
+//		    	             {name: 'format'},
+//		    	             {name: 'celltype'},
+//		    	             {name: 'scaleFactor'}
+//		    	    ]
+//		    	});
+//
+//		    	var sumSuperColumnsStore = new Array();
+//		   		for(var j=0; j<superSumColumnsArray.length; j++){
+//		   			var scaleFactor = (this.getMeasureScaleFactor(this.measuresMetadata[j].name).value);
+//		   			a = new Array();
+//		   			a.push(superSumColumnsArray[j]);
+//		   			a.push('[sumCT'+j+']');
+//					a.push('float');
+//					a.push(null);
+//					a.push('supertotals');
+//					a.push(scaleFactor);
+//					sumSuperColumnsStore.push(a);
+//					this.superSumArray.push(""+superSumColumnsArray[j]);
+//		   		}
+//		
+//				var cellCls = 'crosstab-row-sum-panel-container  crosstab-none-top-border-panel';
+//		   		
+//		   		storeSumColumns.loadData(sumSuperColumnsStore);
+//		   		
+//		   		this.superSumPanel = new Ext.Panel({
+//		    		cellCls: cellCls,
+//		            width: dataViewWidth,
+//		            height: dataViewHeight,
+//		            border: false,
+//		    	    layout:'fit',
+//		    	    items: new Ext.DataView({
+//		    	        store: storeSumColumns,
+//		    	        tpl: tpl,
+//		    	        itemSelector: 'div.crosstab-table-cells'
+//		    	    })
+//		    	});
+//			}    	
+//       	//}
+//    }
     
     , showCFWizard: function(node, modality) {
    		this.crossTabCFWizard = new Sbi.crosstab.core.CrossTabCFWizard({
@@ -2716,10 +2855,10 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    		this.crossTabCFWizard.show(this);  
    		this.crossTabCFWizard.on('applyCalculatedField', function(theNode, level, horizontal, op, CFName){
    			
-    		this.removePartialSum(true);
+//    		this.removePartialSum(true);
     		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this, null, null, this.percenton);	
     		this.addCalculatedField(level, horizontal, op, CFName);
-     		this.calculatePartialSum();
+ //    		this.calculatePartialSum();
     		
    		}, this); 
    		this.crossTabCFWizard.on('modifyCalculatedField', function(theNode, level, horizontal, op, CFName){
@@ -2736,11 +2875,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    					this.removeEntries(headers[i], true);
    				}
    			}
-   			this.removePartialSum(true);
+//   			this.removePartialSum(true);
    			//add the new CF
    			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this, null, null, this.percenton);
     		this.modifyCalculatedField(level, horizontal, op, CFName);
-    		this.calculatePartialSum();
+//    		this.calculatePartialSum();
    		}, this); 
     }
     

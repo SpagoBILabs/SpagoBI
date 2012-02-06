@@ -59,6 +59,7 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 	
 	public void service(SourceBean request, SourceBean response)  {				
 				
+		CrossTab crossTab;
 		IDataStore dataStore = null;
 		CrosstabDefinition crosstabDefinition = null;
 		
@@ -139,8 +140,15 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
 			
 			// serialize crosstab
+			if(crosstabDefinition.isPivotTable()){
+				//load the crosstab for a crosstab widget (with headers, sum, ...)
+				crossTab= new CrossTab(dataStore, crosstabDefinition);
+			}else{
+				//load the crosstab data structure for all other widgets
+				crossTab= new CrossTab(dataStore, crosstabDefinition);
+			}
 			
-			CrossTab crossTab = new CrossTab(dataStore, crosstabDefinition);
+			
 			
 			JSONObject crossTabDefinition = crossTab.getJSONCrossTab();
 			
