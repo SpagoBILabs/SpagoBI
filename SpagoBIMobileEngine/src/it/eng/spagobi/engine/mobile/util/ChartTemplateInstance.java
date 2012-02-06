@@ -1,6 +1,7 @@
 package it.eng.spagobi.engine.mobile.util;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engine.mobile.MobileConstants;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -25,8 +26,7 @@ public class ChartTemplateInstance implements IMobileTemplateInstance{
 
 	@Override
 	public String getDocumentType() {
-		// TODO Auto-generated method stub
-		return null;
+		return MobileConstants.CHART_TYPE;
 	}
 
 
