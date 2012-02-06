@@ -167,6 +167,9 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardParametersPage, Ext.Panel, {
 			if(value == "" && rawValue != ""){
 				state[field.name] = rawValue;
 			}
+			if (rawValue !== undefined) {
+				state[field.name + '_field_visible_description'] = rawValue;
+			}
 			
 			// add objParsId information if present (massive export case)
 			if(field.objParameterIds){
