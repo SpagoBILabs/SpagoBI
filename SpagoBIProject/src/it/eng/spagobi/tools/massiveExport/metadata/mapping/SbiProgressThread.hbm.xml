@@ -24,11 +24,14 @@
         <property name="functionCd" type="string">
             <column name="FUNCTION_CD" length="200" />
         </property>
-        <property name="message" type="string">
-            <column name="MESSAGE" length="4000" />
+        <property name="status" type="string">
+            <column name="STATUS" length="4000" />
         </property>
         <property name="randomKey" type="string">
             <column name="RANDOM_KEY" length="4000" />
-        </property>        
+        </property>
+		<property name="type" type="string">
+            <column name="TYPE" length="200" />
+        </property>                   
     </class>
 </hibernate-mapping>
