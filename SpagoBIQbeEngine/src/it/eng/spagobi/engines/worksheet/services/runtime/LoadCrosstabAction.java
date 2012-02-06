@@ -142,7 +142,7 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			// serialize crosstab
 			if(crosstabDefinition.isPivotTable()){
 				//load the crosstab for a crosstab widget (with headers, sum, ...)
-				crossTab= new CrossTab(dataStore, crosstabDefinition);
+				crossTab= new CrossTab(dataStore, crosstabDefinition, null, null);
 			}else{
 				//load the crosstab data structure for all other widgets
 				crossTab= new CrossTab(dataStore, crosstabDefinition);
