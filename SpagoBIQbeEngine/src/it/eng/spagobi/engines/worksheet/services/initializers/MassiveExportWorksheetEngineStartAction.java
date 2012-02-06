@@ -50,9 +50,12 @@ public class MassiveExportWorksheetEngineStartAction extends WorksheetEngineStar
 				// add name and values
 				for (int i =0; i <array.length(); i++){
 					JSONObject par = (JSONObject) array.get(i);
+					//String name = par.getString("label");
+					String id = par.getString("id");
 					String name = par.getString("label");
-					String nameDescription = getAttributeAsString(name+"_description");
-					String value = getAttributeAsString(name);
+
+					String nameDescription = getAttributeAsString(id+"_description");
+					String value = getAttributeAsString(id);
 					// put name, description and value
 					par.put("name", name);
 					if(nameDescription != null) par.put("description", nameDescription);
