@@ -655,18 +655,24 @@ Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Export warning';
 //===================================================================
 //MASSIVE EXPORT
 //===================================================================
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.title'] = 'Options du export';
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.docsList'] = 'Liste des documents a exporter';
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.cycleOnFilter'] = 'Divide Filtrer';
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.roleSelection'] = 'Selectionner les R\u00F4le';
-Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.title'] = 'Wizard pur Export des Worksheet ';
-Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.back'] = 'Page Pr\u00E9c\u00E9dante';
-Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.next'] = 'Page Suivante';
-Sbi.locale.ln['Sbi.tools.massiveExport.MassiveExportWizardWindow.finish'] = 'Fin';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.title'] = 'Options du export';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.documents.label'] = 'Liste des documents a exporter';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.cycle.label'] = 'Divide Filtrer';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.label'] = 'Selectionner les R\u00F4le';
+
+Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Massive Export progress '; 
+
+
+
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.title'] = 'Wizard pur Export des Worksheet ';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.back'] = '< Page Pr\u00E9c\u00E9dante';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.next'] = 'Page Suivante >';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.finish'] = 'Fin';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.cancel'] = 'Cancel';
 
 Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.NoDoc'] = 'Aucun documents Worksheet a exporter'; 
 
-Sbi.locale.ln['Sbi.browser.ProgressPanel.noProgresse'] = 'Aucun export en execution';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noProgress'] = 'Aucun export en execution';
 Sbi.locale.ln['Sbi.browser.ProgressPanel.noDownload'] = 'Aucun export pour telecharger';
 Sbi.locale.ln['Sbi.browser.ProgressPanel.exporting'] = 'En exportant ';
 Sbi.locale.ln['Sbi.browser.ProgressPanel.document'] = ' document ';
