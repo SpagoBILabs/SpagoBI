@@ -11,7 +11,6 @@
  */
 package it.eng.spagobi.engines.worksheet.exporter;
 
-import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.exporter.QbeXLSExporter;
@@ -45,18 +44,17 @@ import org.apache.batik.transcoder.image.JPEGTranscoder;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.codehaus.groovy.tools.shell.IO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -145,8 +143,8 @@ public class WorkSheetXLSExporter {
 		return visibleSelectFields;
 	}
 	
-	public void designTableInWorksheet(Sheet sheet,Workbook wb, CreationHelper createHelper, 
-			  IDataStore dataStore, int startRow, Locale locale) throws SerializationException, JSONException{
+	public void designTableInWorksheet(Sheet sheet, Workbook wb, CreationHelper createHelper, 
+			  IDataStore dataStore, int startRow, Locale locale) throws JSONException{
 		
 		QbeXLSExporter qbeXLSExporter = new QbeXLSExporter(dataStore, locale);
 		qbeXLSExporter.setProperty(QbeXLSExporter.PROPERTY_HEADER_FONT_SIZE, TABLE_HEADER_FONT_SIZE);
@@ -155,8 +153,8 @@ public class WorkSheetXLSExporter {
 		qbeXLSExporter.fillSheet(sheet, wb, createHelper, startRow);
 	}
 
-	public int setHeader(HSSFSheet sheet, JSONObject header,
-			CreationHelper createHelper, HSSFWorkbook wb, HSSFPatriarch patriarch, int sheetRow) throws JSONException, IOException {
+	public int setHeader(Sheet sheet, JSONObject header,
+			CreationHelper createHelper, Workbook wb, Drawing patriarch, int sheetRow) throws JSONException, IOException {
 		String title = header.getString(TITLE);
 		String imgName = header.optString(IMG);
 		String imagePosition = header.getString(POSITION);
@@ -167,7 +165,7 @@ public class WorkSheetXLSExporter {
 			sheetRow++;
 			Cell cell = row.createCell(6);
 			cell.setCellValue(createHelper.createRichTextString(title));
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellType(this.getCellTypeString());
 			cell.setCellStyle(cellStyle);
 		}
 		
@@ -202,8 +200,8 @@ public class WorkSheetXLSExporter {
 		
 	}
 
-	public int setFooter(HSSFSheet sheet, JSONObject footer,
-			CreationHelper createHelper, HSSFWorkbook wb, HSSFPatriarch patriarch, int sheetRow) throws JSONException, IOException {
+	public int setFooter(Sheet sheet, JSONObject footer,
+			CreationHelper createHelper, Workbook wb, Drawing patriarch, int sheetRow) throws JSONException, IOException {
 		String title = footer.getString(TITLE);
 		String imgName = footer.optString(IMG);
 		String imagePosition = footer.getString(POSITION);
@@ -214,7 +212,7 @@ public class WorkSheetXLSExporter {
 			sheetRow++;
 			Cell cell = row.createCell(6);
 			cell.setCellValue(createHelper.createRichTextString(title));
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellType(this.getCellTypeString());
 			cell.setCellStyle(cellStyle);
 		}
 		
@@ -245,19 +243,24 @@ public class WorkSheetXLSExporter {
 		return sheetRow;
 	}
 	
-	public int getImageType(String imgNameUpperCase){
+	public int getImageType(String imgNameUpperCase) {
 		int impgType = 0;
-		if(imgNameUpperCase.contains(".PNG")){
+		if (imgNameUpperCase.contains(".PNG")) {
 			impgType = HSSFWorkbook.PICTURE_TYPE_PNG;
-		}else if(imgNameUpperCase.contains(".JPG") || imgNameUpperCase.contains(".JPEG")){
+		} else if (imgNameUpperCase.contains(".JPG")
+				|| imgNameUpperCase.contains(".JPEG")) {
 			impgType = HSSFWorkbook.PICTURE_TYPE_JPEG;
-		}else if(imgNameUpperCase.contains(".DIB") || imgNameUpperCase.contains(".BMP")){
+		} else if (imgNameUpperCase.contains(".DIB")
+				|| imgNameUpperCase.contains(".BMP")) {
 			impgType = HSSFWorkbook.PICTURE_TYPE_DIB;
-		}else if(imgNameUpperCase.contains(".EMF")){
+		} else if (imgNameUpperCase.contains(".EMF")) {
 			impgType = HSSFWorkbook.PICTURE_TYPE_EMF;
-		}else if(imgNameUpperCase.contains(".PICT") || imgNameUpperCase.contains(".PCT") || imgNameUpperCase.contains(".PIC")){
+		} else if (imgNameUpperCase.contains(".PICT")
+				|| imgNameUpperCase.contains(".PCT")
+				|| imgNameUpperCase.contains(".PIC")) {
 			impgType = HSSFWorkbook.PICTURE_TYPE_PICT;
-		}else if(imgNameUpperCase.contains(".WMF") || imgNameUpperCase.contains(".WMZ")){
+		} else if (imgNameUpperCase.contains(".WMF")
+				|| imgNameUpperCase.contains(".WMZ")) {
 			impgType = HSSFWorkbook.PICTURE_TYPE_WMF;
 		}
 		return impgType;
@@ -348,7 +351,7 @@ public class WorkSheetXLSExporter {
 		return toReturn;
 	}
 
-	public void setImageIntoWorkSheet(HSSFWorkbook wb, HSSFPatriarch drawing ,
+	public void setImageIntoWorkSheet(Workbook wb, Drawing drawing ,
 			File f, int col, int colend, int sheetRow, int height,int imgType) throws IOException {
 		FileInputStream fis = new FileInputStream(f);
 
@@ -366,15 +369,12 @@ public class WorkSheetXLSExporter {
 		imgBytes.close();
 		fis.close();
 		
-		HSSFClientAnchor anchor = new HSSFClientAnchor(dx1, dy1, dx2, dy2, (short) col,	sheetRow, (short) colend, sheetRow+height);
+		ClientAnchor anchor = getClientAnchor(col, colend, sheetRow,
+				height, dx1, dy1, dx2, dy2);
 		drawing.createPicture(anchor, index);
-		
-		//HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
-		//patriarch.createPicture(anchor, index);
-		//anchor.setAnchorType(0);
+
 	}
 
-	
 	public static List<File> getImage(JSONObject content){
 		String chartType = content.optString("CHART_TYPE"); //check If the chart to export is ext
 		if(chartType!=null && chartType.equals("ext3")){
@@ -462,6 +462,25 @@ public class WorkSheetXLSExporter {
 			throw new SpagoBIEngineRuntimeException(
 					"Impossible to convert svg to jpeg: " + e.getCause(), e);
 		}
+	}
+	
+	public int getCellTypeNumeric () {
+		return HSSFCell.CELL_TYPE_NUMERIC;
+	}
+	
+	public int getCellTypeString () {
+		return HSSFCell.CELL_TYPE_STRING;
+	}
+	
+	public int getCellTypeBoolean () {
+		return HSSFCell.CELL_TYPE_BOOLEAN;
+	}
+	
+	protected ClientAnchor getClientAnchor(int col, int colend, int sheetRow,
+			int height, int dx1, int dy1, int dx2, int dy2) {
+		HSSFClientAnchor anchor = new HSSFClientAnchor(dx1, dy1, dx2, dy2,
+				(short) col, sheetRow, (short) colend, sheetRow + height);
+		return anchor;
 	}
 	
 }
