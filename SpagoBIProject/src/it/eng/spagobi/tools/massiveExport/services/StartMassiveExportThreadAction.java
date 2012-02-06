@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONString;
 
 import commonj.work.WorkEvent;
 import commonj.work.WorkItem;
@@ -209,34 +210,42 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 				String documentParameterLabel = parametersJSON.getString(documentParameter.getId().toString()+"_objParameterId");
 
 				List<String> documentParameterValues = new ArrayList<String>();
-				if(documentParameterLabel != null){
+				List<String> documentParameterValuesDescription = new ArrayList<String>();
 
-					boolean isMultivalueParameter;
-					try{
-						JSONArray values = parametersJSON.getJSONArray(documentParameterLabel);
+				if(documentParameterLabel != null){
+					boolean isMultivalueParameter = false;
+					JSONArray values = parametersJSON.optJSONArray(documentParameterLabel);
+					if(values != null && values.length()>0){
+						isMultivalueParameter = true;	
 						for (int i = 0; i < values.length(); i++) {
 							String ob = values.getString(i);
 							documentParameterValues.add(ob);
+							logger.debug("multivalue, value is "+ob);
 						}
-						isMultivalueParameter = true;
 					}
-					catch (JSONException e) {
-						isMultivalueParameter = false;
-					}
-
 					if(isMultivalueParameter == false){
 						String value = parametersJSON.getString(documentParameterLabel);
 						if(value != null){
 							documentParameterValues.add(value);
+							logger.debug("single value, value is "+value);
 						}
+
 					}
 
+					 // get also descriptions
+					String valuesDescr = parametersJSON.optString(documentParameterLabel+"_field_visible_description");
+					if(valuesDescr != null){
+							documentParameterValuesDescription.add(valuesDescr);
+							logger.debug("multivalue, description value is "+valuesDescr);				
+						}							
+					
 				} else{
 					logger.warn("parameter value not defined  "+documentParameter.getLabel());
 				}
 
 				logger.debug("insert for "+documentParameter.getLabel()+" value"+ documentParameterValues.toString());
 				documentParameter.setParameterValues(documentParameterValues);
+				documentParameter.setParameterValuesDescription(documentParameterValuesDescription);
 
 			}
 
