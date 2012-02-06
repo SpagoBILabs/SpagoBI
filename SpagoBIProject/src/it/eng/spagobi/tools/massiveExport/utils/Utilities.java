@@ -56,37 +56,7 @@ public class Utilities {
 
 
 
-	//	public static File getZipFile(String randomKey, String functionalityCd) throws SpagoBIServiceException{
-	//		logger.debug("IN");
-	//		// get Zip file
-	//		String dirS = System.getProperty("java.io.tmpdir");
-	//		if(!dirS.endsWith(File.separator)){
-	//			dirS+=File.separator;
-	//		}
-	//		dirS += functionalityCd;
-	//		if(!dirS.endsWith(File.separator)){
-	//			dirS+=File.separator;
-	//		}
-	//		String filePath = dirS+randomKey+".zip";
-	//
-	//		logger.debug("directory with zip is "+dirS);
-	//
-	//		if(!(new File(dirS)).exists()){
-	//			logger.error("not existing directory "+dirS);
-	//			throw new SpagoBIRuntimeException("not existing directory "+dirS, null);
-	//		}
-	//
-	//		File zip = new File(filePath);
-	//		if(!(zip.exists())){
-	//			logger.error("not existing zip file "+filePath);
-	//			throw new SpagoBIRuntimeException("not existing zip file "+filePath, null);
-	//		}
-	//		
-	//		logger.debug("OUT");
-	//		return zip;
-	//	}
-
-
+	
 	public static File getMassiveExportFolder(){
 		logger.debug("IN");
 
@@ -132,6 +102,15 @@ public class Utilities {
 		return zipFile;
 	}
 
+	public static File getMassiveScheduleZipFile(String userIdentifier, String folderLabel, String zipFileName) {
+		File zipFolder = getMassiveScheduleZipFolder(userIdentifier, folderLabel);
+		File zipFile = new File(zipFolder, zipFileName + ".zip");
+		if(!(zipFile.exists())){
+			throw new SpagoBIRuntimeException("not existing zip file " + zipFile);
+		}
+
+		return zipFile;
+	}
 
 	public static File getMassiveExportZipFolder(String folderName) {
 		
@@ -143,6 +122,13 @@ public class Utilities {
 		}
 
 		return zipDirectory;	
+	}
+	
+	public static File getMassiveScheduleZipFolder(String userIdentifier, String folderLabel) {
+		File massiveExportFolder = Utilities.getMassiveExportFolder();
+		File userFolder = new File(massiveExportFolder, userIdentifier);
+		File destinationFolder = new File(userFolder, folderLabel);
+		return destinationFolder;
 	}
 	
 

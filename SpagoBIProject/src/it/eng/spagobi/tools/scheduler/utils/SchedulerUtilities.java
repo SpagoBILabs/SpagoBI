@@ -362,6 +362,12 @@ public class SchedulerUtilities {
 			if(name.equals("destinationfolder")) {
 				dispatchContext.setDestinationFolder(value);
 			}
+			if(name.equals("functionalitytreefolderlabel")) {
+				dispatchContext.setFunctionalityTreeFolderLabel(value);
+			}
+			if(name.equals("owner")) {
+				dispatchContext.setOwner(value);
+			}
 			if(name.equals("saveassnapshot")) {
 				dispatchContext.setSnapshootDispatchChannelEnabled(true);
 			}

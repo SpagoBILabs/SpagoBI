@@ -182,7 +182,8 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
       	      					var prog = content[i];
       	      					var functCd = prog.functCd;
       	      					var randomKey= prog.randomKey;
-      	      					this.handleProgressThreadResult(prog, functCd, randomKey, worksFound);
+      	      					var type = prog.type;
+      	      					this.handleProgressThreadResult(prog, functCd, randomKey, worksFound, type);
       	      				}
       	      				// clean work no more present
       	      				this.cleanNoMorePresentWork(worksFound);
@@ -209,14 +210,14 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
       	   });
 	}
 	
-	, handleProgressThreadResult : function(prog, functCd, randomKey, worksFound){	
+	, handleProgressThreadResult : function(prog, functCd, randomKey, worksFound, type){	
 		worksFound[functCd+''+randomKey]= true;
 		// value progress thread status
 	
 		var progressBar = this.progressGroup[functCd+''+randomKey];
 		// if in download state make download and delete work
 		if(prog.message && prog.message=='DOWNLOAD'){
-			this.createDownloadForm(progressBar, functCd, randomKey, prog.progressThreadId);
+			this.createDownloadForm(progressBar, functCd, randomKey, prog.progressThreadId, type);
 		} else if(prog.message && ( prog.message=='STARTED' || prog.message=='PREPARED')){
 			// check if progress exist then update otherwise create
 			var partial = prog.partial;
@@ -225,13 +226,14 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 		}
 	}
 	
-	, createDownloadForm: function(progressBar, functCd, randomKey, progressThreadId){
+	, createDownloadForm: function(progressBar, functCd, randomKey, progressThreadId, type){
 		
 		var urlToCall = Sbi.config.serviceRegistry.getBaseUrlStr({});	
 		urlToCall += '?ACTION_NAME=DOWNLOAD_MASSIVE_EXPORT_ZIP';
 		urlToCall += '&FUNCT_CD='+functCd;
 		urlToCall += '&RANDOM_KEY='+randomKey;
 		urlToCall += '&PROGRESS_THREAD_ID='+progressThreadId;
+		urlToCall += '&PROGRESS_THREAD_TYPE='+type;
 		
 		if(!progressBar){
 			// do nothings
@@ -278,7 +280,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	 
 	    this.downloadedPanel.add(this.downloadButtonPanels[functCd+randomKey]);
 	   
-	    this.createDeleteForm(functCd, randomKey, progressThreadId);
+	    this.createDeleteForm(functCd, randomKey, progressThreadId, type);
 
 	    this.downloadedPanel.doLayout();
 	    this.doLayout();
@@ -359,9 +361,14 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	}
 	
 	
-	, createDeleteForm: function(functCd, randomKey, progressThreadId){
+	, createDeleteForm: function(functCd, randomKey, progressThreadId, type){
 	   
-		var pars = {FUNCT_CD: functCd, RANDOM_KEY: randomKey, PROGRESS_THREAD_ID: progressThreadId };
+		var pars = {
+			FUNCT_CD: functCd
+			, RANDOM_KEY: randomKey
+			, PROGRESS_THREAD_ID: progressThreadId 
+			, PROGRESS_THREAD_TYPE: type
+		};
 		
 		if(this.deleteButtonPanels[functCd+randomKey]){
 	    }

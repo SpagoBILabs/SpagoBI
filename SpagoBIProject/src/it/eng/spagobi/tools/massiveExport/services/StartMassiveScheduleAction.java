@@ -150,6 +150,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 				job.addParameter("isSplittingFilter", splittingFilter? "true": "false");
 				
 				
+				
 				Assert.assertNotNull(job, "Impossible to create job [" + jobConfJSON + "]");
 				logger.debug("Job [" + job + "] succesfully created");
 			} catch (SpagoBIServiceException t) {
@@ -342,6 +343,22 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 		String value;
 		
 		parameters = new HashMap<String, String>();
+
+		File destinationFolder = Utilities.getMassiveScheduleZipFolder(
+				(String)userProfile.getUserUniqueIdentifier(), folder.getCode());
+		
+		
+		name = "globalDispatcherContext";
+		value = "saveasfile=true"
+			+ "%26" + "destinationfolder=" + destinationFolder.getAbsolutePath()
+			+ "%26" + "functionalitytreefolderlabel=" + folder.getCode()
+			+ "%26" + "owner=" + (String)userProfile.getUserUniqueIdentifier();
+	
+
+		parameters.put(name, value);
+		
+		return parameters;   	   
+		
 //		int docNo = 1;
 //		for(BIObject document : documentsToExport) {
 //			name = "biobject_id_" + document.getId() + "__" + docNo++;
@@ -358,18 +375,6 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 //			
 //			parameters.put(name, value);
 //		}
-		
-		
-		File massiveExportFolder = Utilities.getMassiveExportFolder();
-		File userFolder = new File(massiveExportFolder, (String)userProfile.getUserUniqueIdentifier());
-		File functionalityFolder = new File(userFolder, folder.getCode());
-		name = "globalDispatcherContext";
-		value = "saveasfile=true"
-			+ "%26" + "destinationfolder=" + functionalityFolder.getAbsolutePath()	;
-	
-		parameters.put(name, value);
-		
-		return parameters;   	   
 	}
 
 	private Date getTime(String dateStr, String timeStr) throws ParseException {

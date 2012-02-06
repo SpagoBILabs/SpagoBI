@@ -36,6 +36,8 @@ import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
+import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
+import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.massiveExport.services.StartMassiveScheduleAction;
 import it.eng.spagobi.tools.massiveExport.utils.Utilities;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
@@ -58,7 +60,12 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 	
 	private DispatchContext dispatchContext;
 	List<File> filesToZip;
+	String zipFileName;
 	Map<String, String> randomNamesToName;
+	ProgressThread progressThread;
+	Integer progressThreadId;
+	IProgressThreadDAO progressThreadDAO;
+
 	
 	// logger component
 	private static Logger logger = Logger.getLogger(FileSystemDocumentDispatcher.class); 
@@ -66,6 +73,7 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 	public FileSystemDocumentDispatcher(DispatchContext dispatchContext) {
 		this.dispatchContext = dispatchContext;
 		this.filesToZip = new ArrayList<File>();
+		this.zipFileName = generateZipFileName();
 		this.randomNamesToName = new HashMap<String, String>();
 	}
 	
@@ -79,8 +87,23 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 		String fileExtension = dispatchContext.getFileExtension();
 
 		try {
+			progressThreadDAO = DAOFactory.getProgressThreadDAO();
+			
+//			ProgressThread runningProgressThread = progressThreadDAO.loadActiveProgressThreadByUserIdAndFuncCd(
+//					dispatchContext.getOwner(), dispatchContext.getFunctionalityTreeFolderLabel());
+			
+			if(progressThread == null) {
+				progressThread = new ProgressThread(
+						dispatchContext.getOwner(), 
+						dispatchContext.getTotalNumberOfDocumentsToDispatch(), 
+						dispatchContext.getFunctionalityTreeFolderLabel(), null, zipFileName, ProgressThread.TYPE_MASSIVE_SCHEDULE);
+				
+				progressThreadId = progressThreadDAO.insertProgressThread(progressThread);
+				progressThreadDAO.setStartedProgressThread(progressThreadId);
+			}
+			
 		
-			if(executionOutput == null){
+			if(executionOutput == null) {
 				logger.error("execution proxy returned null document for BiObjectDocumetn: " + document.getLabel());
 				exportFile = createErrorFile(document, null , randomNamesToName);
 			} else{
@@ -103,6 +126,7 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 				logger.debug("create an export file named " + exportFile.getName());
 
 				filesToZip.add(exportFile);
+				progressThreadDAO.incrementProgressThread(progressThreadId);
 			}
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Exception in  writeing export file for BiObject with label "+document.getLabel()+" delete DB row", e);
@@ -126,7 +150,7 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 				destinationFolder.mkdirs();
 			}
 			
-			File zipFile = new File(destinationFolder, getRandomName() + ".zip");
+			File zipFile = new File(destinationFolder, zipFileName + ".zip");
 	
 			logger.debug("zip file written "+zipFile.getAbsolutePath());
 	
@@ -150,6 +174,8 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 			}
 			out.flush();
 			out.close();
+			
+			progressThreadDAO.setDownloadProgressThread(progressThreadId);
 		} catch(Throwable t) {
 			throw new DispatchException("An unexpected error occured while closing dipatcher", t);
 		} finally{
@@ -170,12 +196,11 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 		}
 	}
 	
-	private String getRandomName(){
+	private String generateZipFileName(){
 		DateFormat formatter = new SimpleDateFormat("dd-MMM-yy hh:mm:ss.SSS");
 		String randomName = formatter.format(new Date());			
 		randomName=randomName.replaceAll(" ", "_");
 		randomName=randomName.replaceAll(":", "-");
-		//randomName = "Massive_Export_"+randomName;
 		return randomName;
 
 	}
