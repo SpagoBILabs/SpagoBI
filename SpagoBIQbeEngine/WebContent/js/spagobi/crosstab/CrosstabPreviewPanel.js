@@ -163,6 +163,8 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 				, percenton: config.percenton
 				, measuresMetadata: measuresMetadata
 				, fieldsOptions: this.fieldsOptions
+				, celltypeOfColumns: crosstab.celltypeOfColumns
+				, celltypeOfRows: crosstab.celltypeOfRows
 		};
 		
 		if (this.crosstabDefinition !== undefined && this.crosstabDefinition.additionalData !== undefined && this.crosstabDefinition.additionalData !== null ) {
