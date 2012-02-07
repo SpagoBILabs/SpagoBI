@@ -260,7 +260,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		for (int i = 0; i < sheetsNumber; i++) {
 			JSONObject sheetJ = exportedSheets.getJSONObject(i);
 			if (isTableContent(sheetJ)) {
-				IDataStore dataStore = getTableDataStore(sheetJ, null);
+				IDataStore dataStore = getTableDataStore(sheetJ, null, null);
 				exporter.addSheet(sheetJ, dataStore);
 			} else {
 				exporter.addSheet(sheetJ);
@@ -501,7 +501,10 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		
 	}
 
-	public void exportSheetToXLS(Workbook wb,JSONObject sheetJ, JSONArray fieldOptions, WorkSheetXLSExporter exporter,CreationHelper createHelper, WhereField splittingWhereField) throws Exception{
+	public void exportSheetToXLS(Workbook wb, JSONObject sheetJ,
+			JSONArray fieldOptions, WorkSheetXLSExporter exporter,
+			CreationHelper createHelper, WhereField splittingWhereField)
+			throws Exception {
 
 		//The number of row of the sheet
 		int sheetRow = 0;
@@ -623,8 +626,11 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		return toReturn;
 	}
 	
-	public int fillSheetContent(Workbook wb, org.apache.poi.ss.usermodel.Sheet sheet, JSONObject sheetJ, JSONArray fieldOptions, WhereField splittingWhereField,
-			CreationHelper createHelper, WorkSheetXLSExporter exporter, Drawing patriarch, int sheetRow) throws Exception {
+	public int fillSheetContent(Workbook wb,
+			org.apache.poi.ss.usermodel.Sheet sheet, JSONObject sheetJ,
+			JSONArray fieldOptions, WhereField splittingWhereField,
+			CreationHelper createHelper, WorkSheetXLSExporter exporter,
+			Drawing patriarch, int sheetRow) throws Exception {
 
 		JSONObject content = sheetJ.getJSONObject(WorkSheetXLSExporter.CONTENT);
 		String sheetType = content.getString(WorkSheetXLSExporter.SHEET_TYPE);
@@ -691,7 +697,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
 
-				IDataStore dataStore = getTableDataStore(sheetJ, fieldOptions);
+				IDataStore dataStore = getTableDataStore(sheetJ, fieldOptions, splittingWhereField);
 				long recCount = dataStore.getRecordsCount();
 				recCount = (new Long(recCount)).intValue() + 5;
 				int startRow = sheetRow;
@@ -745,9 +751,10 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	/**
 	 * Execute the query active in the engine instance and return
 	 * the data store
+	 * @param splittingWhereField The sheet's splitting filter, if any
 	 * @return the data store after the execution of the active query
 	 */
-	private IDataStore getTableDataStore(JSONObject sheetJ, JSONArray fieldOptions) throws Exception {
+	private IDataStore getTableDataStore(JSONObject sheetJ, JSONArray fieldOptions, WhereField splittingWhereField) throws Exception {
 		JSONObject sheetContentPars = null;
 		JSONArray jsonVisibleSelectFields = null;
 		String sheetName = sheetJ.getString(SHEET);
@@ -759,6 +766,15 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			.optJSONArray(QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS);
 		}
 		JSONObject filters = sheetJ.optJSONObject(QbeEngineStaticVariables.FILTERS);
+		if (splittingWhereField != null) {
+			if (filters == null) {
+				filters = new JSONObject();
+			}
+			String key = splittingWhereField.getLeftOperand().values[0];
+			String[] values = splittingWhereField.getRightOperand().values;
+			JSONArray value = new JSONArray(values);
+			filters.put(key, value);
+		}
 		IDataStore dataStore = executeQuery(jsonVisibleSelectFields, filters, sheetName, fieldOptions);
 		return dataStore;
 	}
@@ -779,7 +795,10 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	}
 
 
-	public CrossTab getCrosstab(JSONObject crosstabDefinitionJSON, JSONArray fieldOptions, JSONObject optionalFilters,String sheetName, WhereField splittingWhereField, JSONArray calculateFieldsJSON) throws Exception{
+	public CrossTab getCrosstab(JSONObject crosstabDefinitionJSON,
+			JSONArray fieldOptions, JSONObject optionalFilters,
+			String sheetName, WhereField splittingWhereField,
+			JSONArray calculateFieldsJSON) throws Exception {
 
 		// retrieve engine instance
 		WorksheetEngineInstance engineInstance = getEngineInstance();
@@ -816,7 +835,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		whereFields.addAll(temp);
 
 		//ADD THE WHERE FIELD TO SPLIT THE CROSSTAB INTO DIFFERENT SHEET
-		if(splittingWhereField!=null){
+		if (splittingWhereField != null) {
 			whereFields.add(splittingWhereField);
 		}
 
