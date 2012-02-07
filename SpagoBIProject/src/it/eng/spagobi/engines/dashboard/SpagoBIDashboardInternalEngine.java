@@ -573,7 +573,8 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 		if (parValue != null) singleConfParameters.put("colorArc2", parValue);		
 		parValue = (sbRow.getAttribute("colorArc3")!=null)?(String)sbRow.getAttribute("colorArc3"):(String)sbRow.getAttribute("COLORARC3");
 		if (parValue != null) singleConfParameters.put("colorArc3", parValue);
-
+		parValue = (sbRow.getAttribute("valueDesc")!=null)?(String)sbRow.getAttribute("valueDesc"):(String)sbRow.getAttribute("VALUEDESC");
+		if (parValue != null) singleConfParameters.put("valueDesc", parValue);
 		//defining needles configuration
 		parValue = (sbRow.getAttribute("numNeedles")!=null)?(String)sbRow.getAttribute("numNeedles"):(String)sbRow.getAttribute("NUMNEEDLES");
 		singleConfParameters.put("numNeedles",parValue);
