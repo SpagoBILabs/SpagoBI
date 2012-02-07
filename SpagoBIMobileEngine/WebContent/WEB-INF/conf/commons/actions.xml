@@ -28,5 +28,31 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	
+<!-- ================================================================================= -->
+<!-- DOCUMENT EXECUTION ACTIONS															   -->
+<!-- ================================================================================= -->
+	
+	<ACTION name="LOAD_MOBILE_DOCUMENT_ACTION" 
+			class="it.eng.spagobi.engine.mobile.service.LoadMobileDocumentAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_ROLES_FOR_EXECUTION_ACTION" 
+ 		class="it.eng.spagobi.analiticalmodel.execution.service.GetRolesForExecutionAction" scope="REQUEST">
+ 	<CONFIG/>
+	 </ACTION>
+	 
+	 <ACTION name="START_EXECUTION_PROCESS_ACTION" 
+	 	class="it.eng.spagobi.analiticalmodel.execution.service.StartNewExecutionProcess" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION>
+	 
+	  <ACTION name="GET_PARAMETERS_FOR_EXECUTION_ACTION" 
+	 	class="it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION>
+	
 
 </ACTIONS>

@@ -1,4 +1,4 @@
-package it.eng.spagobi.engine.mobile.util;
+package it.eng.spagobi.engine.mobile.template;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engine.mobile.MobileConstants;

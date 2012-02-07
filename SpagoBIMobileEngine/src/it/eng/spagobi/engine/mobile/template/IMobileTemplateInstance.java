@@ -1,4 +1,4 @@
-package it.eng.spagobi.engine.mobile.util;
+package it.eng.spagobi.engine.mobile.template;
 
 import org.json.JSONException;
 import org.json.JSONObject;
