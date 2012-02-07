@@ -14,6 +14,7 @@ package it.eng.spagobi.engines.chart.services.initializers;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.chart.ChartEngine;
 import it.eng.spagobi.engines.chart.ChartEngineInstance;
+import it.eng.spagobi.engines.chart.utilities.TemplateEXT;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
@@ -21,6 +22,8 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 /**
@@ -49,6 +52,8 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 		logger.debug("IN");		
 		Locale locale;
 		ChartEngineInstance chartEngineInstance = null;
+		TemplateEXT templateUtil = new TemplateEXT();
+
 		
 		try {
 			setEngineName(ENGINE_NAME);
@@ -69,6 +74,11 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 			logger.debug("Creating engine instance ...");
 			
 			try {
+				JSONArray parsJSON = new JSONArray();
+				SourceBean content = SourceBean.fromXMLString(getTemplateAsString());
+				JSONObject template = templateUtil.getJSONTemplateFromXml( content, parsJSON); 
+				System.out.println(template.toString(4));
+
 				chartEngineInstance = ChartEngine.createInstance( getTemplateAsString(), getEnv() );
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
@@ -116,5 +126,7 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 			logger.debug("OUT");
 		}
 	}
+	
+
 	
 }
