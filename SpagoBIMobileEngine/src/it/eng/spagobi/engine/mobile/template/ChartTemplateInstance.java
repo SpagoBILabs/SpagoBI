@@ -1,4 +1,4 @@
-package it.eng.spagobi.engine.mobile.util;
+package it.eng.spagobi.engine.mobile.template;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engine.mobile.MobileConstants;
@@ -6,11 +6,14 @@ import it.eng.spagobi.engine.mobile.MobileConstants;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-public class ComposedTemplateInstance implements IMobileTemplateInstance{
-	private static transient Logger logger = Logger.getLogger(ComposedTemplateInstance.class);
+public class ChartTemplateInstance implements IMobileTemplateInstance{
+	private SourceBean template;
+	
+	private static transient Logger logger = Logger.getLogger(ChartTemplateInstance.class);
 
 
-	public ComposedTemplateInstance(SourceBean template) {
+	public ChartTemplateInstance(SourceBean template) {
+		this.template = template;
 	}
 
 
@@ -23,8 +26,7 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 
 	@Override
 	public String getDocumentType() {
-		// TODO Auto-generated method stub
-		return MobileConstants.COMPOSED_TYPE;
+		return MobileConstants.CHART_TYPE;
 	}
 
 

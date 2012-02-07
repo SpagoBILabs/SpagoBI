@@ -1,8 +1,9 @@
-var executeDocument = function(id){
-	//alert(id);
+var executeDocument = function(id, label){
+
 	  Ext.dispatch({
 		  controller: app.controllers.mobileController,
 		  action: 'executeDocument',
-		  id: id
+		  id: id,
+		  label: label
 	  });
 };

@@ -23,7 +23,7 @@ package it.eng.spagobi.engine.mobile.service;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engine.mobile.MobileEngine;
 import it.eng.spagobi.engine.mobile.MobileEngineInstance;
-import it.eng.spagobi.engine.mobile.util.MobileDatasetTableSerializer;
+import it.eng.spagobi.engine.mobile.table.serializer.MobileDatasetTableSerializer;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
