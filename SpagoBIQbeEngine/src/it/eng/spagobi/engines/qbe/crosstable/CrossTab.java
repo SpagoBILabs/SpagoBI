@@ -1270,8 +1270,8 @@ public class CrossTab {
 	 *								 SUBTOTALS
 	********************************************************************** */
 	public void addSubtotals(){
-		String rowsTotals = "ads";//"on";//config.optString("calculatesubtotalsonrows");
-		String columnsTotals =  "ads";//"on";//config.optString("calculatesubtotalsoncolumns");
+		String rowsTotals = config.optString("calculatesubtotalsonrows");
+		String columnsTotals =  config.optString("calculatesubtotalsoncolumns");
 
 		if(measuresOnRow){
 			if(rowsTotals!=null && rowsTotals.equals("on")){
