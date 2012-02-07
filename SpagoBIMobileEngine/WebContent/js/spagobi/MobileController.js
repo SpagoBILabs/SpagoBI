@@ -28,8 +28,8 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 			, baseParams: params
 		});
 
-		this.services['executeMobileDocumentAction'] = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'EXECUTE_MOBILE_DOCUMENT_ACTION'
+		this.services['executeMobileTableAction'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'EXECUTE_MOBILE_TABLE_ACTION'
 			, baseParams: params
 		});
 	}
@@ -150,7 +150,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 
 		
 		Ext.Ajax.request({
-            url: this.services['executeMobileDocumentAction'],
+            url: this.services['executeMobileTableAction'],
             scope: this,
             method: 'post',
             params: {OBJECT_ID: id, OBJECT_LABEL: label, isFromCross:false, ROLE:roleName, SBI_EXECUTION_ID: sbiExecutionId},

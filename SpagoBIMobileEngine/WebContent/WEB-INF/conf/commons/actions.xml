@@ -21,12 +21,7 @@
 		
 		<CONFIG></CONFIG>
 	</ACTION>
-	
-	<ACTION name="TABLE_ACTION" 
-			class="it.eng.spagobi.engine.mobile.service.MobileTableAction"
-			scope="REQUEST">
-		<CONFIG></CONFIG>
-	</ACTION>
+
 	
 	
 <!-- ================================================================================= -->
@@ -54,8 +49,8 @@
 	 	<CONFIG/>
 	 </ACTION>
 	 
-	 <ACTION name="EXECUTE_MOBILE_DOCUMENT_ACTION" 
-	 	class="it.eng.spagobi.engine.mobile.service.ExecuteMobileDocumentAction" scope="REQUEST">
+	 <ACTION name="EXECUTE_MOBILE_TABLE_ACTION" 
+	 	class="it.eng.spagobi.engine.mobile.table.service.ExecuteMobileTableAction" scope="REQUEST">
 	 	<CONFIG/>
 	 </ACTION>
 	
