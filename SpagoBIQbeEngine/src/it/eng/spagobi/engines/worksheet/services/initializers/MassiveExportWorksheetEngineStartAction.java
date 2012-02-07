@@ -14,6 +14,7 @@ package it.eng.spagobi.engines.worksheet.services.initializers;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.worksheet.services.export.ExportWorksheetAction;
 import it.eng.spagobi.services.proxy.SbiDocumentServiceProxy;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.Locale;
 
@@ -32,9 +33,12 @@ public class MassiveExportWorksheetEngineStartAction extends WorksheetEngineStar
 	/** Logger component. */
 	private static transient Logger logger = Logger.getLogger(MassiveExportWorksheetEngineStartAction.class);
 
+	private final String SERVICE_NAME = "MASSIVE_EXPORT_WORKSHEET_ENGINE_START_ACTION";
+	
 	@Override
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
 		logger.debug("IN");
+		try{
 		super.service(serviceRequest, serviceResponse);
 		Locale locale = getLocale();
 		String docId = getDocumentId();
@@ -70,7 +74,11 @@ public class MassiveExportWorksheetEngineStartAction extends WorksheetEngineStar
 			logger.debug("Error in retrieving parameters information for metadata purpose, go on aniway");
 		}
 
-
+		}
+		catch (Throwable e) {
+			logger.error("Error during initialziation of worksheet document ",e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Error during initialziation of worksheet document ");
+		}
 
 
 
