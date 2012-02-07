@@ -328,13 +328,9 @@
 		      <file name='./spagobi/worksheet/runtime/RuntimeSheetFiltersInfoPanel.js'/>
 			  <file name='./spagobi/worksheet/runtime/WorkSheetsRuntimePanel.js'/>
 			  <file name='./spagobi/worksheet/runtime/RuntimeSheetContentPanel.js'/>
-			  <file name='./spagobi/worksheet/runtime/RuntimeGenericChartPanel.js'/>
-			  <file name='./spagobi/worksheet/runtime/RuntimeBarChartPanel.js'/>
-			  <file name='./spagobi/worksheet/runtime/RuntimeLineChartPanel.js'/>
-			  <file name='./spagobi/worksheet/runtime/RuntimePieChartPanel.js'/>
 			  <file name='./spagobi/worksheet/runtime/WorkSheetPreviewPage.js'/>
+
 			  <file name='./spagobi/worksheet/runtime/RuntimeGenericChartPanel.js'/>
-			  <file name='./spagobi/worksheet/runtime/RuntimeGenericChartPanelExt3.js'/>
 			  <file name='./spagobi/worksheet/runtime/RuntimeChartFactory.js'/>
 		      <file name='./spagobi/worksheet/runtime/RuntimeBarChartPanelHighcharts.js'/>
 		      <file name='./spagobi/worksheet/runtime/RuntimeLineChartPanelHighcharts.js'/>
