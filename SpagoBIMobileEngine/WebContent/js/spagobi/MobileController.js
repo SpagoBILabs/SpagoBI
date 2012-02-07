@@ -27,6 +27,11 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 			serviceName: 'GET_PARAMETERS_FOR_EXECUTION_ACTION'
 			, baseParams: params
 		});
+
+		this.services['executeMobileDocumentAction'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'EXECUTE_MOBILE_DOCUMENT_ACTION'
+			, baseParams: params
+		});
 	}
 
 	, login: function(options){
@@ -118,7 +123,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
             	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
             		var responseJson = Ext.decode(response.responseText);
             		var execContextId = responseJson.execContextId;
-            		this.getParametersForExecutionAction(id, name, roleName, execContextId);
+            		this.getParametersForExecutionAction(id, label, roleName, execContextId);
             	}
             }
 	    }); 
@@ -134,21 +139,37 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
             success: function(response, opts) {
             	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
             		var responseJson = Ext.decode(response.responseText);
+            		var execContextId = responseJson.execContextId;
+            		this.executeTemplate(id, label, roleName, execContextId);
             	}
             }
 	    }); 
 	}
 	
 	, executeTemplate: function(id, label, roleName, sbiExecutionId){
-	
+
+		
 		Ext.Ajax.request({
-            url: this.services['getParametersForExecutionAction'],
+            url: this.services['executeMobileDocumentAction'],
             scope: this,
             method: 'post',
             params: {OBJECT_ID: id, OBJECT_LABEL: label, isFromCross:false, ROLE:roleName, SBI_EXECUTION_ID: sbiExecutionId},
             success: function(response, opts) {
             	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
             		var responseJson = Ext.decode(response.responseText);
+            		//these are settings for table object
+            		app.views.tableExecution = new app.views.TableExecution();
+        		    //adds table execution directly to viewport
+        		    var viewport = app.views.viewport;
+        		    Ext.apply(viewport, {
+        		        items: [
+        		            app.views.tableExecution
+        		        ]
+        		    });
+        			
+        			app.views.TableExecution.superclass.initComponent.apply(this, arguments);
+        			
+        			viewport.setActiveItem(app.views.tableExecution, { type: 'slide', direction: 'left' });
             	}
             }
 	    }); 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!-- ================================================================================= -->
-<!-- CONSOLE BASE ACTIONS 																   -->
+<!-- MOBILE BASE ACTIONS 																   -->
 <!-- ================================================================================= -->
 
 <ACTIONS>
@@ -51,6 +51,11 @@
 	 
 	  <ACTION name="GET_PARAMETERS_FOR_EXECUTION_ACTION" 
 	 	class="it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION>
+	 
+	 <ACTION name="EXECUTE_MOBILE_DOCUMENT_ACTION" 
+	 	class="it.eng.spagobi.engine.mobile.service.ExecuteMobileDocumentAction" scope="REQUEST">
 	 	<CONFIG/>
 	 </ACTION>
 	
