@@ -156,24 +156,59 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
             params: {OBJECT_ID: id, OBJECT_LABEL: label, isFromCross:false, ROLE:roleName, SBI_EXECUTION_ID: sbiExecutionId},
             success: function(response, opts) {
             	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
-            		var responseJson = Ext.decode(response.responseText);
+            		var resp = Ext.decode(response.responseText);
             		//these are settings for table object
-            		app.views.tableExecution = new app.views.TableExecution();
+            		app.views.tableExecution = this.createTableExecution(resp);
         		    //adds table execution directly to viewport
         		    var viewport = app.views.viewport;
-        		    Ext.apply(viewport, {
+        		    Ext.apply(app.views.preview, {
         		        items: [
         		            app.views.tableExecution
         		        ]
         		    });
-        			
-        			app.views.TableExecution.superclass.initComponent.apply(this, arguments);
-        			
+        			        			
         			viewport.setActiveItem(app.views.tableExecution, { type: 'slide', direction: 'left' });
             	}
             }
 	    }); 
 	}
-	
+	, createTableExecution: function(resp){
+	      var store = new Ext.data.Store({
+	     		root: 'values'
+	     		, fields: resp.features.fields
+	      		, pageSize: 5
+	      		, data: resp
+	     		, proxy: {
+		              type: 'memory',	              
+		              reader: {
+		                  type: 'json',
+		                  root: 'values',	 
+		                  totalProperty: "total",    
+		                  totalCount: 'total'
+		              }
+	          }
+	      });
+	      
+	      store.load();
+	      var colMod = resp.features.columns;
+	      app.views.tableExecution = new Ext.ux.TouchGridPanel({
+				fullscreen  : true,
+				store       : store,
+	            plugins    : [new Ext.ux.touch.PagingToolbar()],
+	            
+				multiSelect : false,
+				dockedItems : [{
+					xtype : "toolbar",
+					dock  : "top",
+					title : resp.features.title.value,
+					style:  resp.features.title.style
+				}],
+				conditions  : resp.features.conditions,
+				colModel    : resp.features.columns
+			});
+	      
+	      
+	      return app.views.tableExecution;
+  	    }
 
 });

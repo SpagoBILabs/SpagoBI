@@ -37,7 +37,7 @@ public class MobileDatasetTableSerializer {
 
 	public static transient Logger logger = Logger.getLogger(MobileDatasetTableSerializer.class);
 	
-	public Object write(IDataStore dataStore, JSONArray conditions) throws RuntimeException {
+	public Object write(IDataStore dataStore, JSONObject features) throws RuntimeException {
 		JSONObject  result = null;
 		int recNo;
 		IRecord record;
@@ -75,8 +75,9 @@ public class MobileDatasetTableSerializer {
 				dsValuesJSON.put(recordJSON);
 				recNo++;
 			}
-			result.put("columns", dsValuesJSON);
-			result.put("conditions", conditions);
+			result.put("values", dsValuesJSON);
+
+			result.put("features", features);
 			result.put("total", recNo);
 		} catch (JSONException e) {
 			logger.error(e);

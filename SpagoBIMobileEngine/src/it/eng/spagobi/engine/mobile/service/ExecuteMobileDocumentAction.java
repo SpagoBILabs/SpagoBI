@@ -72,8 +72,8 @@ public class ExecuteMobileDocumentAction extends AbstractSpagoBIAction {
 			try {
 				MobileDatasetTableSerializer writer = new MobileDatasetTableSerializer();
 				JSONObject features = templInst.getFeatures();
-				JSONArray conditions = (JSONArray)features.get("conditions");
-				dataSetJSON = (JSONObject)writer.write(dataStore, conditions);
+				//JSONArray conditions = (JSONArray)features.get("conditions");
+				dataSetJSON = (JSONObject)writer.write(dataStore, features);
 
 				
 			} catch (Throwable e) {
