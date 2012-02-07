@@ -98,6 +98,7 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 			logger.debug("there are "+parsToInsert.size()+" pars to pass to panel");
 
 			// eliminate dependencies
+			Map<String, Boolean> usedIds = new HashMap<String, Boolean>();
 			logger.debug("eliminate dependencies for "+parsToInsert+" analytical drivers");
 			for (Iterator iterator = parsToInsert.iterator(); iterator.hasNext();) {
 				ParameterForExecution parameterForExecution = (ParameterForExecution) iterator
@@ -107,9 +108,17 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 				parameterForExecution.setVisualDependencies(new ArrayList());
 				parameterForExecution.setVisible(true);
 				parameterForExecution.setMandatory(false);
-
+				
+				if(usedIds.get(parameterForExecution.getId())== null){
+						usedIds.put(parameterForExecution.getId(), true);
+				}
+				else{
+					throw new SpagoBIServiceException(SERVICE_NAME, "Error while retrieving parameters; two analytical driver with different label and different driver are referring to the same url name '"+parameterForExecution.getId()+"'; plese change url name or contact system administrator");
+				}
 				
 			}
+			
+			
 			
 			JSONArray parametersJSON = null;
 			try {
@@ -121,6 +130,9 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 			writeBackToClient(new JSONSuccess(parametersJSON));
 
 
+		}
+		catch (SpagoBIServiceException e) {
+			throw e;
 		}
 		catch (Throwable e) {
 			logger.error("Exception while retrieving analytical drivers in folder with id "+folderId, e);
