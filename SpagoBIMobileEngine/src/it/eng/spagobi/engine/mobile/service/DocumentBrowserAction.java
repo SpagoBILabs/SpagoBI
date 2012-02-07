@@ -86,7 +86,8 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction{
 			
 			///case user not logged provides a fake store
 			if(profile == null || functID.equals("root")){
-				JSONObject foldersAndDocsResponseJSON =  createJSONResponse(new JSONArray("[{name: Document Browser}]"), new JSONArray());
+
+				JSONObject foldersAndDocsResponseJSON =  createJSONResponse(new JSONArray("[{name: browser-root}]"), new JSONArray());
 				
 				try {
 					writeBackToClient( new JSONSuccess( foldersAndDocsResponseJSON ) );
@@ -112,26 +113,7 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction{
 			MessageBuilder m = new MessageBuilder();
 			Locale locale = m.getLocale(httpRequest);
 			JSONArray documentsJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( objects ,locale);
-			Collection func = profile.getFunctionalities();
-			
-			if(func.contains("SeeMetadataFunctionality")){
-				JSONObject showmetadataAction = new JSONObject();
-				showmetadataAction.put("name", "showmetadata");
-				showmetadataAction.put("description", "Show Metadata");
-				for(int i = 0; i < documentsJSON.length(); i++) {
-					JSONObject documentJSON = documentsJSON.getJSONObject(i);
-					documentJSON.getJSONArray("actions").put(showmetadataAction);
-				}
-			}
-			if(isHome) {
-				JSONObject deleteAction = new JSONObject();
-				deleteAction.put("name", "delete");
-				deleteAction.put("description", "Delete this item");
-				for(int i = 0; i < documentsJSON.length(); i++) {
-					JSONObject documentJSON = documentsJSON.getJSONObject(i);
-					documentJSON.getJSONArray("actions").put(deleteAction);
-				}
-			}
+
 
 			functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(Integer.valueOf(functID), false, profile);
 			
@@ -169,7 +151,7 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction{
 				folders.put(doc);
 			}
 		}
-		results.put("name", "Document browser");
+		results.put("name", "User Home");
 		results.put("samples", folders);
 
 		return results;
