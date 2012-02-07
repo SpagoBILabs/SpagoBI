@@ -6,7 +6,18 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,
 		console.log('MobileController: Received event of login successfull');
 		var viewport = app.views.viewport;
 		viewport.setActiveItem(app.views.main, { type: 'slide', direction: 'left' });
+		
+/*		var active = app.views.browser.getActiveItem();
 
+		active.store.filter([
+		              {filterFn: function(item) { 
+		            	  var ite = item.get("id");
+		            	  return ite == 0; }}
+		          ]);*/
+
+/*		app.views.browser.store.load({params:{node: 0}});
+		app.views.browser.store.sync();
+		app.views.browser.update();*/
 	  }
 	, showDetail: function(record) 
 	{
