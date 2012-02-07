@@ -300,9 +300,10 @@
               <file name="./src/ext/sbi/browser/FolderDetailPanel.js"/>  
 			  
 			  <file name="./src/ext/sbi/browser/mexport/MassiveExportWizard.js"/>  
-			  <file name="./src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js.js"/>  
+			  <file name="./src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js"/>  
 			  <file name="./src/ext/sbi/browser/mexport/MassiveExportWizardOptionsPage.js"/>  
-			  <!--
+			  <file name="./src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js"/>  
+			    	<!--
 			  <file name="./src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js"/>  
 			  <file name="./src/ext/sbi/browser/mexport/MassiveExportWizardOptionsPage.js"/>  
 			  -->	
