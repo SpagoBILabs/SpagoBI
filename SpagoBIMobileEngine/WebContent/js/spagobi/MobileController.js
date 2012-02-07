@@ -1,8 +1,35 @@
-app.controllers.MobileController = Ext.extend(Ext.Controller,
-	{
+app.controllers.MobileController = Ext.extend(Ext.Controller,{
+	
+	init: function()  {
+		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
+		
+		this.services = new Array();
+		this.services['loadDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'LOAD_MOBILE_DOCUMENT_ACTION'
+		});   
+		
+		this.services['getRolesForExecutionService'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'GET_ROLES_FOR_EXECUTION_ACTION'
+			, baseParams: params
+		});
+		
+		this.services['startNewExecutionProcess'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'START_EXECUTION_PROCESS_ACTION'
+			, baseParams: params
+		});
+		
+		this.services['getParametersForExecutionAction'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'GET_PARAMETERS_FOR_EXECUTION_ACTION'
+			, baseParams: params
+		});
+		
+		this.services['getParametersForExecutionAction'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'GET_PARAMETERS_FOR_EXECUTION_ACTION'
+			, baseParams: params
+		});
+	}
 
-	login: function(options) 
-	  {
+	, login: function(options){
 		console.log('MobileController: Received event of login successfull');
 		var viewport = app.views.viewport;
 		viewport.setActiveItem(app.views.main, { type: 'slide', direction: 'left' });
@@ -18,9 +45,9 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,
 /*		app.views.browser.store.load({params:{node: 0}});
 		app.views.browser.store.sync();
 		app.views.browser.update();*/
-	  }
-	, showDetail: function(record) 
-	{
+	}
+	
+	, showDetail: function(record) {
 		var id = record.record.id;
 		//determines if it is a document available for mobile presentetation
 		var rec = record.record.attributes.record.data;
@@ -33,7 +60,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,
 
 			//onClick="executeDocument();"
 			var documentTpl = '<div class="preview-item" id="preview-'+id+'" '+
-			'onClick="javascript: executeDocument('+id+','+label+');">' +
+			'onClick="javascript: executeDocument('+id+',\''+label+'\');">' +
 			'<div class="document-item-icon">' +			
 			'<img src="' + Ext.BLANK_IMAGE_URL + '" ></img>' +
 			'</div>' +
@@ -47,17 +74,9 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,
 		}else{
 			app.views.preview.showPreview( '');
 		}
-		
 	}
-	, executeDocument: function(options) 
-	  {
-
-		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
-
-		this.services = new Array();
-		this.services['loadDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'LOAD_MOBILE_DOCUMENT_ACTION'
-		});
+	
+	, executeDocument: function(options) {
 		
 		Ext.Ajax.request({
             url: this.services['loadDocumentService'],
@@ -72,12 +91,6 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,
 	  }
 	
 	, getRoles: function(id, label){
-		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
-		this.services = new Array();
-		this.services['getRolesForExecutionService'] = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'GET_ROLES_FOR_EXECUTION_ACTION'
-			, baseParams: params
-		});
 		
 		Ext.Ajax.request({
             url: this.services['getRolesForExecutionService'],
@@ -95,13 +108,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,
 	}
 	
 	, startNewExecutionProcess: function(id, label, roleName){
-		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
-		this.services = new Array();
-		this.services['startNewExecutionProcess'] = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'START_EXECUTION_PROCESS_ACTION'
-			, baseParams: params
-		});
-		
+
 		Ext.Ajax.request({
             url: this.services['startNewExecutionProcess'],
             scope: this,
@@ -118,12 +125,6 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,
 	}
 	
 	, getParametersForExecutionAction: function(id, label, roleName, sbiExecutionId){
-		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
-		this.services = new Array();
-		this.services['getParametersForExecutionAction'] = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'GET_PARAMETERS_FOR_EXECUTION_ACTION'
-			, baseParams: params
-		});
 		
 		Ext.Ajax.request({
             url: this.services['getParametersForExecutionAction'],
@@ -139,13 +140,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,
 	}
 	
 	, executeTemplate: function(id, label, roleName, sbiExecutionId){
-		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
-		this.services = new Array();
-		this.services['getParametersForExecutionAction'] = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'GET_PARAMETERS_FOR_EXECUTION_ACTION'
-			, baseParams: params
-		});
-		
+	
 		Ext.Ajax.request({
             url: this.services['getParametersForExecutionAction'],
             scope: this,

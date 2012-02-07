@@ -10,6 +10,7 @@ Ext.regApplication({
     	app.views.viewport = new app.views.Viewport();
     	console.log('viewport created');
     	app.controllers.mobileController = new app.controllers.MobileController();
+    	app.controllers.mobileController.init();
     	console.log('controller created');
 
     }
