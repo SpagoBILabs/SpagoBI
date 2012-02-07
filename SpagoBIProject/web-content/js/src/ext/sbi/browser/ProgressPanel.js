@@ -61,7 +61,7 @@ Sbi.browser.ProgressPanel = function(config) {
 
 	//this.addEvents();
 	c = Ext.apply(c, {
-		items: [this.startedPanel, this.downloadedPanel, this.scheduledPanel]	
+		items: [this.startedPanel, this.downloadedPanel] //, this.scheduledPanel]	
 	});
 	Sbi.browser.ProgressPanel.superclass.constructor.call(this, c);  
 	

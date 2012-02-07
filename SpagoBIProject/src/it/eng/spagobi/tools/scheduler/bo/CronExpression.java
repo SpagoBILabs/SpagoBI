@@ -37,7 +37,7 @@ public class CronExpression {
 	}
 	
 	public boolean isSimpleExpression() {
-		return "single{}".equalsIgnoreCase("expression");
+		return "single{}".equalsIgnoreCase(expression);
 	}
 	
 	@Override

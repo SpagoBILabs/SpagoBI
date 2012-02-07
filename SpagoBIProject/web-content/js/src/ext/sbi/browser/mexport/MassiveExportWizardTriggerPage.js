@@ -49,7 +49,6 @@ Ext.ns("Sbi.browser.mexport");
 Sbi.browser.mexport.MassiveExportWizardTriggerPage = function(config) {
 
 	var defaultSettings = {
-			//title: LN('Sbi.browser.mexport.massiveExportWizardTriggerPage.title')
 			layout: 'fit'
 			, width: 800
 			, height: 300           	
@@ -57,6 +56,10 @@ Sbi.browser.mexport.MassiveExportWizardTriggerPage = function(config) {
 			, constrain: true
 			, hasBuddy: false
 			, resizable: true
+			
+			, showJobDetails: false
+			, timeFledsMaxHeight: 180
+	        , timeFledsIncrement: 10
 	};
 	if (Sbi.settings && Sbi.settings.browser 
 			&& Sbi.settings.browser.mexport && Sbi.settings.browser.mexport.massiveExportWizardTriggerPage) {
@@ -68,15 +71,6 @@ Sbi.browser.mexport.MassiveExportWizardTriggerPage = function(config) {
 
 	this.services = this.services || new Array();
 
-//	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null, TYPE: 'WORKSHEET'};
-//	this.services['StartMassiveExportExecutionProcessAction'] = this.services['StartMassiveExportExecutionProcessAction'] || Sbi.config.serviceRegistry.getServiceUrl({
-//		serviceName: 'START_MASSIVE_EXPORT_EXECUTION_PROCESS_ACTION'
-//		, baseParams: new Object()
-//	});	
-	
-	
-	//this.addEvents();
-	
 	this.initMainPanel(c);	
 	c = Ext.apply(c, {
 		layout: 'fit'
@@ -101,8 +95,12 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
 	, cronConfFields: null
     , currentPage: null
     , generalInfoFieldSet: null
-    , perMinuteOptionsFieldSet: null
-    , perHoureOptionsFieldSet: null
+    , oneShotOptionsFieldSet: null
+    , minuteOptionsFieldSet: null
+    , hourlyOptionsFieldSet: null
+    , dailyOptionsFieldSet: null
+    , weeklyOptionsFieldSet: null
+    , monthlyOptionsFieldSet: null
     
     
 	// ----------------------------------------------------------------------------------------
@@ -162,14 +160,28 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
 		}
 		
 		state.cronConf = {};
+		//alert(this.activeFieldSet.title + " : " + this.activeFieldSet.name);
 		for(var fieldSet in this.cronConfFields) {
+			//alert(this.fieldSet + " = " + this.activeFieldSet.name);
+			if(fieldSet != this.activeFieldSet.name) continue;
 			state.cronConf[fieldSet] = {};
 			var fieldsInFieldSet = this.cronConfFields[fieldSet];
 			for(var i = 0; i < fieldsInFieldSet.length; i++) {
 				var field = fieldsInFieldSet[i];
-				state.cronConf[fieldSet][field.getName()] = field.getValue();
+				if(field.getName() == 'inDays') {
+					if(!state.cronConf[fieldSet][field.getName()]) {
+						state.cronConf[fieldSet][field.getName()] = [];
+					}
+					if(field.getValue()) {
+						state.cronConf[fieldSet][field.getName()].push(field.data);
+					}
+				} else {
+					state.cronConf[fieldSet][field.getName()] = field.getValue();
+				}
 			}
 		}
+		
+		//alert(state.toSource());
 		
 		return state;
 	}
@@ -193,8 +205,12 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
 		    autoScroll: true,
 	        items: [
 				this.generalInfoFieldSet
-				, this.perMinuteOptionsFieldSet
-				, this.perHoureOptionsFieldSet
+				, this.oneShotOptionsFieldSet
+				, this.minuteOptionsFieldSet
+				, this.hourlyOptionsFieldSet
+				, this.dailyOptionsFieldSet
+				, this.weeklyOptionsFieldSet
+				, this.monthlyOptionsFieldSet
 			]
 		});
     }	
@@ -227,22 +243,21 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
     	
     	this.generalConfFields['job'] = [];
     	
-    	/*
-    	field = new Ext.form.TextField({
-            fieldLabel: 'Name',
-            name: 'name',
-            allowBlank:false
-        });
-    	this.generalConfFields['job'].push(field);
-    	
-    	field = new Ext.form.TextField({
-            fieldLabel: 'Description',
-            name: 'description',
-            allowBlank:false
-        });    	
-    	this.generalConfFields['job'].push(field);
-    	*/
-    	
+    	if(this.showJobDetails) {
+	    	field = new Ext.form.TextField({
+	            fieldLabel: 'Name',
+	            name: 'name',
+	            allowBlank:false
+	        });
+	    	this.generalConfFields['job'].push(field);
+	    	
+	    	field = new Ext.form.TextField({
+	            fieldLabel: 'Description',
+	            name: 'description',
+	            allowBlank:false
+	        });    	
+	    	this.generalConfFields['job'].push(field);
+    	}
     }
     
     
@@ -261,9 +276,9 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
     	field = new Ext.form.TimeField({
     		fieldLabel: 'Start time',
             name: 'startTime',
-            maxHeight: 180,
+            maxHeight: this.timeFledsMaxHeight,
             //format: 'H:i',
-            increment: 10,
+            increment: this.timeFledsIncrement,
             allowBlank:true
         });
     	this.generalConfFields['trigger'].push(field);
@@ -279,9 +294,9 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
     	field = new Ext.form.TimeField({
    		 	fieldLabel: 'End time',
             name: 'endTime',
-            maxHeight: 180,
+            maxHeight: this.timeFledsMaxHeight,
             //format: 'H:i',
-            increment: 10,
+            increment: this.timeFledsIncrement,
             allowBlank:true
     	});
     	this.generalConfFields['trigger'].push(field);
@@ -293,8 +308,39 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
      */    
     , initCronConfFiledSet: function() {
     	this.cronConfFields = {};
+    	this.initOneShotConfFieldSet();
     	this.initMinuteConfFieldSet();
-    	this.initPerHourlyConfFieldSet();
+    	this.initHourlyConfFieldSet();
+    	this.initDailyConfFieldSet();
+    	this.initWeeklyConfFieldSet();
+    	this.initMonthlyConfFieldSet();
+    }
+    
+    , initOneShotConfFieldSet: function() {
+    	var field;
+    	
+    	this.cronConfFields['oneshot'] = [];
+    	
+    	field = new Ext.form.Checkbox({
+    		fieldLabel: 'Enable',
+            name: 'enabled',
+            checked: false,
+            allowBlank:false
+    	});
+    	this.cronConfFields['oneshot'].push(field);
+    	
+    	this.oneShotOptionsFieldSet = new Ext.form.FieldSet({
+    		checkboxToggle:true,
+            title: 'Oneshot',
+            name: 'oneshot',
+            autoHeight:true,
+            defaults: {width: 210},
+            defaultType: 'textfield',
+            collapsed: true,
+            items : this.cronConfFields['oneshot']
+    	});	
+    	
+    	this.oneShotOptionsFieldSet.on('expand', this.onExpand, this);
     }
     
     , initMinuteConfFieldSet: function() {
@@ -309,18 +355,20 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
     	});
     	this.cronConfFields['minutes'].push(field);
     	
-    	this.perMinuteOptionsFieldSet = new Ext.form.FieldSet({
+    	this.minuteOptionsFieldSet = new Ext.form.FieldSet({
     		checkboxToggle:true,
             title: 'Minutes',
+            name: 'minutes',
             autoHeight:true,
             defaults: {width: 210},
             defaultType: 'textfield',
             collapsed: true,
             items : this.cronConfFields['minutes']
     	});	
+    	this.minuteOptionsFieldSet.on('expand', this.onExpand, this);
     }
     
-    , initPerHourlyConfFieldSet: function() {
+    , initHourlyConfFieldSet: function() {
     	var field;
     	
     	this.cronConfFields['hourly'] = [];
@@ -332,14 +380,122 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardTriggerPage, Ext.Panel, {
     	});
     	this.cronConfFields['hourly'].push(field);
     	
-    	this.perHoureOptionsFieldSet = new Ext.form.FieldSet({
+    	this.hourlyOptionsFieldSet = new Ext.form.FieldSet({
     		checkboxToggle:true,
             title: 'Hourly',
+            name: 'hourly',
             autoHeight:true,
             defaults: {width: 210},
             defaultType: 'textfield',
             collapsed: true,
             items : this.cronConfFields['hourly']
+    	});
+    	this.hourlyOptionsFieldSet.on('expand', this.onExpand, this);
+    }
+    
+    , initDailyConfFieldSet: function() {
+    	var field;
+    	
+    	this.cronConfFields['daily'] = [];
+    	
+    	field = new Ext.form.NumberField({
+    		fieldLabel: 'Every n days',
+            name: 'days',
+            allowBlank:false
+    	});
+    	this.cronConfFields['daily'].push(field);
+    	
+    	this.dailyOptionsFieldSet = new Ext.form.FieldSet({
+    		checkboxToggle:true,
+            title: 'Daily',
+            name: 'daily',
+            autoHeight:true,
+            defaults: {width: 210},
+            defaultType: 'textfield',
+            collapsed: true,
+            items : this.cronConfFields['daily']
     	});	
+    	this.dailyOptionsFieldSet.on('expand', this.onExpand, this);
+    }
+    
+    , initWeeklyConfFieldSet: function() {
+    	var field;
+    	
+    	this.cronConfFields['weekly'] = [];
+    	
+    	var dayOfTheWeekName = ['Monday', 'Tuesday', 'Wednesday'
+    	                    , 'Thursday', 'Friday', 'Saturday'
+    	                    , 'Sunday'];
+    	
+    	var dayOfTheWeekId = ['MON', 'TUE', 'WED'
+        	                  , 'THU', 'FRI', 'SAT'
+        	                  , 'SUN'];
+    	
+    	field = new Ext.form.Checkbox({
+    		fieldLabel: 'In day',
+    		boxLabel: dayOfTheWeekName[0],
+    		data: dayOfTheWeekId[0],
+            name: 'inDays',
+            allowBlank:false
+    	});
+    	this.cronConfFields['weekly'].push(field);
+    	
+    	for(var i = 1; i < dayOfTheWeekName.length; i++)  {
+	    	field = new Ext.form.Checkbox({
+	    		boxLabel: dayOfTheWeekName[i],
+	    		data: dayOfTheWeekId[i],
+	    		fieldLabel: '',
+	            labelSeparator: '',
+	            name: 'inDays',
+	            allowBlank:false
+	    	});
+	    	this.cronConfFields['weekly'].push(field);
+    	}
+    	
+    	
+    	this.weeklyOptionsFieldSet = new Ext.form.FieldSet({
+    		checkboxToggle:true,
+            title: 'Weekly',
+            name: 'weekly',
+            autoHeight:true,
+            defaults: {width: 210},
+            defaultType: 'textfield',
+            collapsed: true,
+            items : this.cronConfFields['weekly']
+    	});	
+    	this.weeklyOptionsFieldSet.on('expand', this.onExpand, this);
+    }
+    
+    , initMonthlyConfFieldSet: function() {
+    	var field;
+    	
+    	this.cronConfFields['monthly'] = [];
+    	
+    	field = new Ext.form.NumberField({
+    		fieldLabel: 'In day [1-31]',
+    		minValue: 0,
+    		maxValue: 31,    		
+            name: 'inDay',
+            allowBlank:false
+    	});
+    	this.cronConfFields['monthly'].push(field);
+    	
+    	this.monthlyOptionsFieldSet = new Ext.form.FieldSet({
+    		checkboxToggle:true,
+            title: 'Monthly',
+            name: 'monthly',
+            autoHeight:true,
+            defaults: {width: 210},
+            defaultType: 'textfield',
+            collapsed: true,
+            items : this.cronConfFields['monthly']
+    	});	
+    	this.monthlyOptionsFieldSet.on('expand', this.onExpand, this);
+    }
+    
+    , onExpand: function(fieldSet) {
+    	//alert('expanded');
+    	if(this.activeFieldSet) this.activeFieldSet.collapse();
+    	this.activeFieldSet = fieldSet;
     }
 });
