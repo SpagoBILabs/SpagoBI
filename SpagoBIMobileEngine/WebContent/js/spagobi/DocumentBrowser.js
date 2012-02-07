@@ -3,7 +3,7 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 	    scroll: 'vertical',
 	    dock : 'left',
 	    layout:'card',
-	   
+	    //activeItem: 1,
 		cardSwitchAnimation: 'slide',
 	    backText : '&lt;',
 	    store: null,
@@ -51,6 +51,7 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 			
 			this.store = new Ext.data.TreeStore({
 			    model: 'browserItems',
+
 			    proxy: {
 					type: 'ajax',
 					url: this.services['loadFolderContentService'],

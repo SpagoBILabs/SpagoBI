@@ -15,10 +15,7 @@ app.views.MainContainer = Ext.extend(Ext.Panel,
 		    };
 			console.log('init main container');
 			
-/*			this.browser = new app.views.DocumentBrowser();
-			this.preview = new app.views.DocumentPreview();
-			
-			this.items =[this.browser , this.preview ];*/
+
 		    //put instances of login into app.views namespace
 		    Ext.apply(app.views, {
 		    	browser: 	  new app.views.DocumentBrowser(),
