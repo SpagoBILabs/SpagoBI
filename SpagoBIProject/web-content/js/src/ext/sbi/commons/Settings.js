@@ -1,5 +1,8 @@
 Ext.ns("Sbi.settings");
 
+/**
+ * Execution  panel settings
+ */
 Sbi.settings.execution = {
 		parametersPanel: {
 			columnNo: 3
@@ -10,6 +13,7 @@ Sbi.settings.execution = {
 			, fieldLabelWidth: 100
 			, moveInMementoUsingCtrlKey: false
 		}
+
 		, shortcutsPanel: {
 			panelsOrder: {
 				subobjects: 1
@@ -20,6 +24,29 @@ Sbi.settings.execution = {
 		}
 };
 
+/**
+ * Document browser settings
+ */
+Sbi.settings.browser = {
+		mexport: {
+			massiveExportWizard: {
+				resizable: true
+			}
+			, massiveExportWizardOptionsPage: {
+				
+			}, massiveExportWizardParametersPage: {
+				
+			}
+			, massiveExportWizardTriggerPage: {
+				showJobDetails: false
+			}
+		}
+}
+
+
+/**
+ * KPI
+ */
 Sbi.settings.kpi = {
 		goalModelInstanceTreeUI: {
 			goalCustom: false

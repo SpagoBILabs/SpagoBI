@@ -136,21 +136,22 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizard, Ext.Window, {
 		Ext.Ajax.request({
 		        url: this.services['performFinishAction']// this.services['startMassiveExportThreadAction']
 		        , params: params
-		        , success : function(response, options){}
+		        , success : function(response, options){
+		        	Ext.MessageBox.show({
+						title: 'Success',
+						msg: 'Execution of documents contained in selected folder has been succesfully scheduled',
+						modal: true,
+						buttons: Ext.MessageBox.OK,
+						width:500,
+						icon: Ext.MessageBox.INFO,
+						animEl: 'root-menu'        			
+		        	});
+		        	this.close();
+		        }
 				, failure: Sbi.exception.ExceptionHandler.handleFailure      
 				, scope: this
 		});
 		
-		var messageBox = Ext.MessageBox.show({
-				title: 'Status',
-				msg: LN('Export thread started for worksheet in functionality '+this.functCd+"; check Progress Panel on the left to know progress"),
-				modal: true,
-				buttons: Ext.MessageBox.OK,
-				width:500,
-				icon: Ext.MessageBox.INFO,
-				animEl: 'root-menu'        			
-		});
-		this.close();
 	}
 	
 	/**

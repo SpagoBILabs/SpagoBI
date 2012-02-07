@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
@@ -128,6 +129,8 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Error in retrieving parameters: ", t);
 			} 
 
+			
+			
 			LowFunctionality folder = getFolder(folderId);
 			logger.debug("Target folder is [" + folder.getName() + "]");
 			List<BIObject> documentsToExport = getDocumentsToExport(folder, documentType);
@@ -423,11 +426,15 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 			trigger.setStartTime(startTime);
 			
 			String endDateStr = triggerConfJSON.optString("endDate");
-			String endTimeStr = triggerConfJSON.optString("endTime");
-			Date endTime = getTime(endDateStr, endTimeStr);
-			trigger.setEndTime(endTime);		
+			if( StringUtilities.isEmpty(endDateStr) ) {
+				String endTimeStr = triggerConfJSON.optString("endTime");
+				Date endTime = getTime(endDateStr, endTimeStr);
+				trigger.setEndTime(endTime);	
+			}
+		} catch(SpagoBIServiceException t) {
+			throw t;
 		} catch(Throwable t) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occuerd while creating job's parameters", t);
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occuerd while creating trigger", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -438,22 +445,32 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 	private CronExpression getChronExpression(JSONObject cronConfJSON) {
        
 		StringBuffer expression;
+		JSONObject oneshotOptionsJSON;
 		JSONObject minutesOptionsJSON;
 		JSONObject hourlyOptionsJSON;
+		
+		JSONObject dailyOptionsJSON;
+		JSONObject weeklyOptionsJSON;
+		JSONObject monthlyOptionsJSON;
         
-        // TODO manage no cron
-        //boolean noRepetition = triggerJSON.optBoolean("noRepetition");
-        
+     
 		logger.debug("IN");
 		try {
+			oneshotOptionsJSON = cronConfJSON.optJSONObject("oneshot");
 	        minutesOptionsJSON = cronConfJSON.optJSONObject("minutes");
 	        hourlyOptionsJSON = cronConfJSON.optJSONObject("hourly");
-	//       
-	//    	if($('single_repetitionKind').checked) {
-	//    		repStr = repStr + 'single{}';
-	//    	}
-	//    	
+	        dailyOptionsJSON = cronConfJSON.optJSONObject("daily");
+	        weeklyOptionsJSON = cronConfJSON.optJSONObject("weekly");
+	        monthlyOptionsJSON = cronConfJSON.optJSONObject("monthly");
+	       
 	        expression = new StringBuffer();
+	        
+	        if(oneshotOptionsJSON != null) {
+	        	String enabled = oneshotOptionsJSON.optString("enabled");
+	    		if( StringUtilities.isNotEmpty(enabled) && "TRUE".equalsIgnoreCase(enabled)) {
+	    			expression.append("single{}");
+	    		}
+	    	}
 	        
 	    	if(minutesOptionsJSON != null) {
 	    		String minutes = minutesOptionsJSON.optString("minutes");
@@ -474,6 +491,54 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 		    		expression.append("}");
 	    		}
 	    	}
+	    	
+	    	if(dailyOptionsJSON != null) {
+	    		String days = dailyOptionsJSON.optString("days");
+	    		if( StringUtilities.isNotEmpty(days)) {
+		    		expression.append("day{");
+		    		expression.append("numRepetition=");
+		    		expression.append(days);
+		    		expression.append("}");
+	    		}
+	    	}
+	    	
+	    	// week{numRepetition=1;days=SUN,MON,TUE,WED,THU,FRI,SAT,}
+	    	if(weeklyOptionsJSON != null) {
+	    		JSONArray inDays = weeklyOptionsJSON.optJSONArray("inDays");
+	    		if( inDays != null && inDays.length() > 0) {
+		    		expression.append("week{");
+		    		expression.append("numRepetition=1;");
+		    		expression.append("days=");
+		    		for(int i = 0; i < inDays.length(); i++) {
+		    			String separator = ((i+1) == inDays.length())? "": ",";
+		    			expression.append(inDays.getString(i) + separator);
+		    		}
+		    		expression.append("}");
+	    		}
+	    	}
+	    	
+	    	//month{numRepetition=1;months=NONE;dayRepetition=10;weeks=NONE;days=NONE;}
+	    	if(monthlyOptionsJSON != null) {
+	    		String inDay = monthlyOptionsJSON.optString("inDay");
+	    		if( StringUtilities.isNotEmpty(inDay)) {
+		    		expression.append("month{");
+		    		expression.append("numRepetition=1;");
+		    		expression.append("months=NONE;");
+		    		expression.append("dayRepetition=");
+		    		expression.append(inDay  + ";");
+		    		expression.append("weeks=NONE;");
+		    		expression.append("days=NONE;");
+		    		expression.append("}");
+		    		
+//	    			rep_n = $('dayinmonthrep_n').options[$('dayinmonthrep_n').selectedIndex].value;
+//	    			repStr = repStr + 'dayRepetition='+rep_n+';';
+//	    			repStr = repStr + 'weeks=NONE;';
+//	    			repStr = repStr + 'days=NONE;';
+	    		}
+	    	}
+	    	
+
+
 		} catch(Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected error occuerd while creating cron expression", t);
 		} finally {
@@ -482,12 +547,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
     	
     	return new CronExpression(expression.toString());
     	
-//    	if($('day_repetitionKind').checked) {
-//    		repStr = repStr + 'day{';
-//    		rep_n = $('day_repetition_n').options[$('day_repetition_n').selectedIndex].value;
-//    		repStr = repStr + 'numRepetition='+rep_n;
-//    		repStr = repStr + '}';
-//    	}
+
 //    	if($('week_repetitionKind').checked) {
 //    		repStr = repStr + 'week{';
 //    		rep_n = $('week_repetition_n').options[$('week_repetition_n').selectedIndex].value;
