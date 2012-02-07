@@ -11,23 +11,25 @@ public class MobileTemplateFactory{
 
 	private static transient Logger logger = Logger.getLogger(MobileTemplateFactory.class);
 
-	public static IMobileTemplateInstance createMobileTemplateInstance(SourceBean template) {
+	public static IMobileTemplateInstance createMobileTemplateInstance(SourceBean template) throws Exception {
 		IMobileTemplateInstance instance = null;
 		
 		logger.debug("IN");
-		SourceBean tableInst = (SourceBean)template.getAttribute(MobileConstants.TABLE_TAG);
-		if(tableInst != null){
-			return new TableTemplateInstance(template);			
-		}
-		SourceBean chartInst = (SourceBean)template.getAttribute(MobileConstants.CHART_TAG);
-		if(chartInst != null){
-			return new ChartTemplateInstance(template);			
-		}
-		SourceBean composedInst = (SourceBean)template.getAttribute(MobileConstants.COMPOSED_TAG);
-		if(composedInst != null){
-			return new ComposedTemplateInstance(template);			
+		String name = template.getName();
+		if(MobileConstants.TABLE_TAG.equals(name)){
+			instance =  new TableTemplateInstance(template);			
 		}
 
+		else if(MobileConstants.CHART_TAG.equals(name)){
+			instance = new ChartTemplateInstance(template);			
+		}
+
+		else if(MobileConstants.COMPOSED_TAG.equals(name)){
+			instance = new ComposedTemplateInstance(template);			
+		}
+		if(instance != null){
+			instance.loadTemplateFeatures();
+		}
 		logger.debug("OUT");	
 		
 		return instance;

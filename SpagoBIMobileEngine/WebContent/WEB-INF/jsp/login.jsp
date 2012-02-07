@@ -53,6 +53,7 @@ author: Monica Franceschini
 
 		<script type="text/javascript" src="../js/sencha/sencha-touch-debug.js"></script>
 		
+		<script type="text/javascript" src="../js/sencha/Ext.ux.TouchGridPanel.js"></script>
 		<script type="text/javascript" src="../js/sencha/Ext.ux.touch.PagingToolbar.js"></script>
 		<script type="text/javascript" src="../js/spagobi/service/ServiceRegistry.js"></script>
 		<script type="text/javascript" src="../js/spagobi/app.js"></script>		
@@ -62,8 +63,8 @@ author: Monica Franceschini
 		<script type="text/javascript" src="../js/spagobi/Login.js"></script>
 		<script type="text/javascript" src="../js/spagobi/MainContainer.js"></script>
 		<script type="text/javascript" src="../js/spagobi/DocumentBrowser.js"></script>
-		<script type="text/javascript" src="../js/spagobi/DocumentPreview.js"></script>
-		
+		<script type="text/javascript" src="../js/spagobi/DocumentPreview.js"></script>		
+		<script type="text/javascript" src="../js/spagobi/service/TableExecution.js"></script>
 		<script type="text/javascript" src="../js/spagobi/Utils.js"></script>
 	</head>
 
