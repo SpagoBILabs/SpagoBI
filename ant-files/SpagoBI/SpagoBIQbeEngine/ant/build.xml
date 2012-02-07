@@ -333,6 +333,17 @@
 			  <file name='./spagobi/worksheet/runtime/RuntimeLineChartPanel.js'/>
 			  <file name='./spagobi/worksheet/runtime/RuntimePieChartPanel.js'/>
 			  <file name='./spagobi/worksheet/runtime/WorkSheetPreviewPage.js'/>
+			  <file name='./spagobi/worksheet/runtime/RuntimeGenericChartPanel.js'/>
+			  <file name='./spagobi/worksheet/runtime/RuntimeGenericChartPanelExt3.js'/>
+			  <file name='./spagobi/worksheet/runtime/RuntimeChartFactory.js'/>
+		      <file name='./spagobi/worksheet/runtime/RuntimeBarChartPanelHighcharts.js'/>
+		      <file name='./spagobi/worksheet/runtime/RuntimeLineChartPanelHighcharts.js'/>
+		      <file name='./spagobi/worksheet/runtime/RuntimePieChartPanelHighcharts.js'/>
+		      <file name='./spagobi/worksheet/runtime/RuntimeGenericChartPanelExt3.js'/>
+		      <file name='./spagobi/worksheet/runtime/RuntimeBarChartPanelExt3.js'/>
+		      <file name='./spagobi/worksheet/runtime/RuntimeLineChartPanelExt3.js'/>
+		      <file name='./spagobi/worksheet/runtime/RuntimePieChartPanelExt3.js'/>
+
 		      
 		      <file name='./spagobi/worksheet/config/OptionsWindow.js'/>
 
