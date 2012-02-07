@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<canvas debug="fasle" width="100%" height="100%">
+<canvas debug="false" width="100%" height="100%">
 	
   <include href="incubator/ulink.lzx"/>
   <include href="incubator/tooltip/tooltip.lzx"/>
@@ -30,6 +30,9 @@
 	var xSerieAttributeName = typeof(global.serie)!="undefined" ? global.serie : "serie";
 	if (xSerieAttributeName == undefined || xSerieAttributeName == "undefined")
 	 	xSerieAttributeName = typeof(global.SERIE)!="undefined" ? global.SERIE : "SERIE";
+	var valueAttributeDesc = typeof(global.valueDesc)!="undefined" ? global.valueDesc : "";
+	if (valueAttributeDesc == undefined || valueAttributeDesc == "undefined")
+	 	valueAttributeDesc = typeof(global.VALUEDESC)!="undefined" ? global.VALUEDESC : "";	
 	var min = typeof(global.minValue)!="undefined" ? parseInt(global.minValue) : 100;	
     var low = typeof(global.lowValue)!="undefined" ? parseInt(global.lowValue) : 295;
     var high = typeof(global.highValue)!="undefined" ? parseInt(global.highValue) : 340;
@@ -172,6 +175,9 @@
 		else
 			centerY = appHeight-radius+appMargin;
 		
+		if (valueAttributeDesc != undefined &amp;&amp; valueAttributeDesc != ""){
+			centerY = centerY - 10;
+		}
 		centerX = (appWidth-2*appMargin)/2+appMargin;
 		
 		Debug.write("heightMargin: " + heightMargin);
@@ -280,6 +286,26 @@
 	
 		this.rotDisplay.sphere.setSphere(centerX,centerY,radius*innerSphereRate);
 		this.rotDisplay.createAnimators();
+		
+		<!-- setting description of value -->
+		if (valueAttributeDesc != undefined  &amp;&amp; valueAttributeDesc != ""){
+			Debug.write("valueAttributeDesc: -" + valueAttributeDesc +"-");
+			var valueDescY = centerY + 5;
+			Debug.write("valueDescY: -" + valueDescY + "-");
+			 <![CDATA[
+			new LzText(this,
+						{name:"valueSerie"
+						 ,font:serieTitleFont
+						 ,fontsize:serieTitleSize 
+						 ,fgcolor:serieTitleColor	
+						 ,fontstyle:"bold"					 
+						 ,selectable:false
+						 ,text:""
+						 ,y:valueDescY
+						 });
+			]]>
+		}
+		
 	
 		<!--this.shadow.showShadow(centerX,centerY,radius);-->	
     </method>
@@ -608,23 +634,34 @@
 			  		 	}
 			  		}
 			  		Debug.write("*** xSerieAttributeName: -" + xSerieAttributeName + "-");
+			  		Debug.write("*** valueAttributeDesc: -" + valueAttributeDesc + "-");
 			  	 	var serieName = rotationresponse.getNodeAttribute(xSerieAttributeName);			       	
 				    if (serieName == undefined || serieName == "undefined")
 				       	 serieName = rotationresponse.getNodeAttribute(xSerieAttributeName.toUpperCase());
-				       	 
+				    var serieDesc = rotationresponse.getNodeAttribute(valueAttributeDesc);			       	
+				    if (serieDesc == undefined || serieDesc == "undefined")
+				       	 serieDesc = rotationresponse.getNodeAttribute(valueAttributeDesc.toUpperCase());
+				    Debug.write("*** serieDesc: -" + serieDesc + "-");
+				    
 				    if (serieName != undefined && serieName != "undefined" && serieName != ""){	
 				    	Debug.write("serieName: -" + serieName + "-");
 				  		// defines needles
 			  		 	 for (var i = 0; i < nNeedles; i++) {
 					   		 var valuePar = canvas.display.getValuePar("valueAttributeName"+(i+1)+"");
 					       	 var rotation = rotationresponse.getNodeAttribute(valuePar);
-					       	 Debug.write("***valuePar1: -" + valuePar + "-");
-					       	 Debug.write("***rotation1: -" + rotation + "-");
 					       	 if (rotation == undefined || rotation == "undefined")
 				       	 		rotation = rotationresponse.getNodeAttribute(valuePar.toUpperCase());
-				       	 	 Debug.write("***valuePar2: -" + valuePar + "-");
-					       	 Debug.write("***rotation2: -" + rotation + "-");
 					       	 
+					       	 //force the maxvalue constant if the real value is greather. So the needle doesn't crazy!!
+					       	 if (rotation < min) {
+					       	 	rotation = min;
+					       	 	Debug.write("new rotation: " + rotation);
+					       	 }
+					       	 Debug.write("rotation: " + rotation + " - max: " + max);
+					       	 if (rotation > max) {
+					       	 	rotation = max;
+					       	 	Debug.write("new rotation: " + rotation);
+					       	 }
 					       	 canvas.display.changeRotation(rotation, i);  	
 						     var newX = centerX - (serieName.length*3);
 						      	 	      	 	
@@ -657,8 +694,15 @@
 					      	 		canvas.display.titleSerie.setAttribute("text",linkUrl);	 
 					      	 	} 
 					      	 }
-					      	 canvas.display.titleSerie.setAttribute("x", newX); 
+					      	 canvas.display.titleSerie.setAttribute("x", newX); 	
 						 }
+						 //updating value desc if is setted
+						 if (serieDesc != undefined && serieDesc != "undefined" && serieDesc != ""){
+						 	Debug.write("*** serieDesc2: -" + serieDesc + "-");
+						 	canvas.display.valueSerie.setAttribute("text",serieDesc);	
+						 	canvas.display.valueSerie.setAttribute("x",  centerX - (serieDesc.length*3)); 
+						 	canvas.display.valueSerie.setVisible(true);
+						 }	 
 					}				 
 		  		}
 	  		}            		  
