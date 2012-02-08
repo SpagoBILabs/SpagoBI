@@ -6,7 +6,11 @@
     <class name="it.eng.spagobi.tools.udp.metadata.SbiUdpValue" table="SBI_UDP_VALUE" >
         <id name="udpValueId" type="integer">
             <column name="UDP_VALUE_ID" />
-            <generator class="increment" />
+		   <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">UDP_VALUE_ID</param>	
+				<param name="initial_value">1</param>	
+		   </generator>
         </id>
         
                 <component name="commonInfo" insert="true" update="true" 
