@@ -46,6 +46,7 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
     alias: 'widget.ExtJSChartPanel',
     extend: 'Ext.panel.Panel',
     constructor: function(config) {
+    	//alert(config.toSource());
     	var defaultSettings = {
     	};
 
@@ -70,7 +71,15 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 		        { 'name': 'metric five',  'data1':27, 'data2':38, 'data3':36, 'data4':13, 'data5':33 }
 		    ]
 		});
-
+	   
+	   	config.animate=true;
+	   	config.store=store;
+	   	config.width=500;
+	   	config.height=300;
+	   	config.renderTo=config.divId;
+	   	config.theme='Base:gradients';
+	   	
+	   	/*
 		this.chart = Ext.create('Ext.chart.Chart', {
 							    renderTo: config.divId ,
 							    width: 500,
@@ -80,7 +89,7 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 							    axes: [{
 							        type: 'Numeric',
 							        position: 'bottom',
-							        fields: ['data1'],
+							        fields: ["data1"],
 							        label: {
 							            renderer: Ext.util.Format.numberRenderer('0,0')
 							        },
@@ -90,7 +99,7 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 							    }, {
 							        type: 'Category',
 							        position: 'left',
-							        fields: ['name'],
+							        fields: ["name"],
 							        title: 'Sample Metrics'
 							    }],
 							    series: [{
@@ -114,9 +123,10 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 							            'text-anchor': 'middle'
 							        },
 							        xField: 'name',
-							        yField: ['data1']
+							        yField: ["data1"]
 							    }]
-							});
+							});*/
+	   	this.chart = Ext.create('Ext.chart.Chart',config);
 
   	} 
 });

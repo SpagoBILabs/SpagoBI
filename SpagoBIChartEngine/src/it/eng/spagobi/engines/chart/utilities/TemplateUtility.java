@@ -30,7 +30,7 @@ import org.json.JSONObject;
  * @author Antonella Giachino (antonella.giachino@eng.it)
  * Utility Class for ext charts integration
  */
-public class TemplateEXT {
+public class TemplateUtility {
 	
 	//template constants
 
@@ -54,7 +54,7 @@ public class TemplateEXT {
 	
 	
 	
-	private static transient Logger logger = Logger.getLogger(TemplateEXT.class);
+	private static transient Logger logger = Logger.getLogger(TemplateUtility.class);
 	
 	private String divWidth = "100%";
 	private String divHeight = "100%";
