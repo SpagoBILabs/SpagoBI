@@ -106,7 +106,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	
 	<body>
     	<script type="text/javascript">  
-	    	var template = Sbi.template || <%= chartEngineInstance.getTemplate().toString()  %>;
+	    	var template =  <%= chartEngineInstance.getTemplate().toString()  %>;
 			
 			Sbi.config = {};
 			
@@ -150,7 +150,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 			});
 	    </script>
 	    <%-- dinamicizzare height & width --%>
-	    <div id="<%=executionId%>" style="height:80%; width:80%; float:left;"></div>
+	    <div id="<%=executionId%>"></div>
 	    
 	</body>
 
