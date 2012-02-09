@@ -16,10 +16,12 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.console.ConsoleEngineConfig;
+import it.eng.spagobi.engines.console.ConsoleEngineInstance;
 import it.eng.spagobi.engines.console.exporter.types.ExporterCSV;
 import it.eng.spagobi.engines.console.exporter.types.ExporterExcel;
 import it.eng.spagobi.engines.console.exporter.types.utils.CSVDocument;
 import it.eng.spagobi.engines.console.services.AbstractConsoleEngineAction;
+import it.eng.spagobi.sdk.proxy.DocumentsServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -36,7 +38,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -64,6 +68,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 	public static final String LOCALE = "LOCALE";
 	public static final String META = "meta";
 	public static final String DATASET_EXPORT = "datasetExport";
+	public static final String EXPORT_NAME = "exportName";
 
 	// misc
 	public static final String RESPONSE_TYPE_INLINE = "inline";
@@ -297,8 +302,9 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			}
 			params = new HashMap();
 			params.put("pagination", "false" );
-
-
+			
+			String docName = getExportName(request);
+	
 			if( "application/vnd.ms-excel".equalsIgnoreCase( mimeType ) ) {
 				logger.debug("export excel");
 				ExporterExcel exp = new ExporterExcel(dataStore);
@@ -319,9 +325,9 @@ public class ExportAction extends AbstractConsoleEngineAction {
 				exp.setExtractedFieldsMetaData(extractedFieldsMetaData);
 
 				Workbook wb = exp.export();
-
-				file = File.createTempFile("console", ".xls");
-				fileName = "console.xls";
+				
+				file = File.createTempFile(docName, ".xls");
+				fileName = docName+".xls";
 				FileOutputStream stream = new FileOutputStream(file);
 				wb.write(stream);
 				stream.flush();
@@ -337,8 +343,8 @@ public class ExportAction extends AbstractConsoleEngineAction {
 
 				CSVDocument csvDocument = exp.export();
 				logger.debug("A CSV document has to be written with "+csvDocument.getHeader().size()+" headers and "+csvDocument.getRows().size()+" rows");
-				file = File.createTempFile("console", ".csv");
-				fileName = "console.csv";
+				file = File.createTempFile(docName, ".csv");
+				fileName = docName+".csv";
 
 				FileWriter fw = null;
 				try {
@@ -474,5 +480,17 @@ public class ExportAction extends AbstractConsoleEngineAction {
 		}		
 		return fieldHeader;
 	}
+	 private String getExportName(SourceBean request) throws JSONException {
+		 String docName ="console";
+		 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		 Date currDate = new Date();
+		 
+		 String name = (String)request.getAttribute(EXPORT_NAME);
+/*		 JSONObject template = ((ConsoleEngineInstance)getEngineInstance()).getTemplate();
+		 String st = (String)template.get("detailPanel");*/
+		 docName = name+"_"+sdf.format(currDate);
+
+		 return docName;
+	 }
 }
 

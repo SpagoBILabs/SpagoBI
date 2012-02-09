@@ -73,7 +73,9 @@ Sbi.console.GridPanel = function(config) {
 		delete c.dataset;	
 		var tableConfig = c.table || {};
 		var filterConfig =  c.filterBar || {};
+
 		filterConfig.executionContext = c.executionContext;
+		filterConfig.exportName = c.exportName;
 		Ext.apply(this, c);
 		
 		this.initServices();

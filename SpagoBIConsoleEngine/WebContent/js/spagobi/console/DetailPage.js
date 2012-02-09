@@ -65,6 +65,7 @@ Sbi.console.DetailPage = function(config) {
 		var tableConfig = c.table || {};
 		tableConfig.executionContext = c.executionContext;
 		tableConfig.storeManager = c.storeManager;
+		tableConfig.exportName = c.exportName;
 		delete c.table;
 		Ext.apply(this, c);
 		
