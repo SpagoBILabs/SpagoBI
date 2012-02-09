@@ -204,10 +204,18 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	    	this.show();
 	    }, this);
 
-
 		this.addListener('click', this.selectNode, this);
 		Ext.QuickTips.init() ;
-		Ext.QuickTips.tips( {dismissDelay: 0, title: 'tooltip'} );
+		Ext.apply(Ext.QuickTips.getQuickTip(), {
+		    maxWidth: 200,
+		    minWidth: 100,
+		    showDelay: 50,
+		    dismissDelay: 0,
+		    closable: true,
+		    title: 'Valore',
+		    trackMouse: true
+		});
+
 		
 	}
 	,selectNode : function(field) {
