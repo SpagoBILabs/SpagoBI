@@ -59,9 +59,8 @@ Sbi.kpi.KpiAccordionPanel =  function(config) {
 	        region:'east',
 	        fill: true,
 	        split:true,
-	        width: 550,
+	        width: 700,
 	        minSize: 500,
-	        maxSize: 600,
 	        collapsible: true,
 	        layout:'accordion',
 	        items: []

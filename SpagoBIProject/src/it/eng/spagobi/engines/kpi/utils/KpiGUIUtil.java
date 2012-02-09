@@ -117,10 +117,20 @@ public class KpiGUIUtil {
 			String name = kpiLine.getModelNodeName();
 			String label = kpiLine.getModelInstanceNodeId()+"";
 			jsonToReturn.put("statusLabel", label);
-			if(name.length() >= 30){
-				name = name.substring(0,30) + "...";
+			if(name.length() >= 50){
+				name = name.substring(0,50) + "...";
 			}
 			jsonToReturn.put("name", name);
+/*			JSONObject qtipConf = new JSONObject();;
+			qtipConf.put("value", kpiLine.getModelNodeName());
+			qtipConf.put("dismissDelay", 0);
+			qtipConf.put("closable", true);
+			qtipConf.put("xtype", "quicktip");*/
+			
+			String qtipConf = "{text: '" +kpiLine.getModelNodeName()+
+					"', dismissDelay: 0, closable: true, xtype: 'quicktip'}";
+			
+			jsonToReturn.put("qtipCfg", qtipConf);
 			jsonToReturn.put("qtip", kpiLine.getModelNodeName());
 			
 			List<KpiLine> children = (List<KpiLine>) kpiLine.getChildren();

@@ -141,3 +141,12 @@
   border: 1px solid silver;
   padding: 5px;
 }
+.kpi-grid-header:hover
+{
+	cursor:e-resize;
+}
+/*
+.x-treegrid-col{
+	word-wrap: break-word;
+	width: 100%;
+}*/

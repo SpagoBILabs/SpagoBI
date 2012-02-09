@@ -80,15 +80,18 @@ Sbi.kpi.KpiGridPanel =  function(config) {
 Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	columns: null,
 	ids : new Array()
-	
+	, enableHdMenu : false
+	, enableSort : false
+
 	, initGrid: function(){
+        
 		var kpiColumns = new Array();
 
 		var ids = this.ids;
 	    var tpl = new Ext.XTemplate(
 			      '<tpl for=".">'
 	    		  ,'<tpl if="values.status">'
-			      ,'<canvas id="{values.statusLabel}" width="15px" height="15px" onLoad="{[this.draw(values.statusLabel, values.status)]}" style="align: center;"/>'	     
+			      ,'<canvas id="{values.statusLabel}" width="15px" height="15px" onLoad="{[this.draw(values.statusLabel, values.status)]}" style="padding-left:15px;"/>'	     
 			      ,'</tpl>'
 			      ,'</tpl>'
 			      ,{
@@ -99,7 +102,7 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 			          }
 			      }
 			);
-	    
+
 	    var tplTrend = new Ext.XTemplate(
 			      '<tpl for=".">'
 	    		  ,'<tpl if="values.trend !== undefined && values.trend === 1">'//positive
@@ -133,38 +136,54 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	    		  ,'{values.actual}'
 	    		  ,tplStringForScale
 			);
-		var col = {header:'Model Instance',
+		var col = {header:'Key Performance Indicator',
 		dataIndex:'name',
-		width:250};
+		width:320};
 		kpiColumns.push(col);
 		
 		var col1 = {header:'Actual',
 		dataIndex: 'actual',
 		tpl: tplActual,	
-		width: 100};
+		width: 70};
 		kpiColumns.push(col1);	
 		
 		var col2 = {header:'Target',
 		dataIndex:'target',
 		tpl: tplTarget,
-		width: 100};
+		width: 70};
 		kpiColumns.push(col2);
 		
 		var col3 = {header:'Status',
 		dataIndex:'status',
 		tpl: tpl,
-		width:70};
+		width:40};
 		kpiColumns.push(col3);
 		
 		var col4 = {header:'Trend',
 		dataIndex:'trend',
 		tpl: tplTrend,	
-		width:70};
+		width:40};
 		kpiColumns.push(col4);	
 		
 		this.columns = kpiColumns;
 
 
+	}
+
+	, getTruncateText: function(colWidth, text) {
+		var toReturn = '';
+		var pixelPerChar = 6;
+
+		var textLength = text.length;
+
+		if ( (textLength * pixelPerChar) < tcolWidth) { 
+			// no need to truncate
+			return text;
+		}else{
+			toReturn = Ext.util.Format.ellipsis(text, colWidth-2);
+		}
+
+		return toReturn;
 	}
 	, initGridListeners: function() {
 		this.on("afterrender", function(grid){
@@ -178,15 +197,17 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	    		}catch(error){
 	    			var canvasEl = new Ext.Element(canvas);
 	    			canvasEl.setHeight(0);
-	    			Ext.DomHelper.insertHtml('beforeBegin', canvas, '<div width="15px" height="10px" style="display:inline; border: 1px solid black; background-color:'+status.color+'">&nbsp;&nbsp;&nbsp;&nbsp;</div>' )
+	    			Ext.DomHelper.insertHtml('beforeBegin', canvas, '<div width="15px" height="10px" style="text-align:center; margin-left:15px;display:inline; border: 1px solid black; background-color:'+status.color+'">&nbsp;&nbsp;&nbsp;&nbsp;</div>' )
 	    		
 	    		}
 	    	}
 	    	this.show();
-	     }, this);
-		
+	    }, this);
+
+
 		this.addListener('click', this.selectNode, this);
-		Ext.QuickTips.init() 
+		Ext.QuickTips.init() ;
+		Ext.QuickTips.tips( {dismissDelay: 0, title: 'tooltip'} );
 		
 	}
 	,selectNode : function(field) {
