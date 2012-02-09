@@ -138,9 +138,9 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		var data = record.data;
 		 
 		// return markup
-		return '<div qtip="' + val +'">' + val + '</div>';
-		}
-	,
+		return '<div ext:qtip="' + val +'" ext:qtitle="Valore:" ext:qwidth="300" ext:qdismissDelay="1000" ext:closable="true">' + val + '</div>';
+		
+	},
 	showExpandPointer: function(grid, columnIndex){
 		grid.getColumnModel().setColumnWidth( columnIndex, this.columnsMaxSize, false ) 
 	}
