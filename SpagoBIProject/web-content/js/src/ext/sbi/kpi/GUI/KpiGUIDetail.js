@@ -105,10 +105,11 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		this.detailFields = new Ext.form.FieldSet({
 	        xtype:'fieldset',
 	        border: false,
-	        width:200,
-	        style: 'padding: 5px; margin-top: 20px;float:left;',
+	        width:300,
+	        style: 'padding: 5px; margin-top: 20px;float:left; margin-left:7px;',
 	        defaultType: 'displayfield',
 	        labelWidth: 30,
+	        //layout: 'hbox',
 	        items: []
 	    });
 		this.threshFields = new Ext.form.FieldSet({
@@ -116,7 +117,9 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	        xtype:'fieldset',
 	        border: false,
 	        width:300,
+	        
 	        defaultType: 'fieldset',
+	        style: 'float:left;',
 	        items: []
 	    });
 
@@ -284,23 +287,32 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		//value
 		this.valueItem = new Ext.form.DisplayField({fieldLabel: 'Valore', 
 													value: this.val, 
+													width: 0.49,
 													style: 'margin-left:5px; padding-left:5px; font-style: italic; font-weight: bold;'
 														});
 		this.detailFields.add(this.valueItem );
-		//weight
-		var weight = field.attributes.weight;
-		this.weightItem = new Ext.form.DisplayField({fieldLabel: 'Peso',
-													style: 'margin-left:5px;',
-													value: weight});
-		this.detailFields.add(this.weightItem );
+
 		//target
 		var target = field.attributes.target;
 		this.targetItem = new Ext.form.DisplayField({fieldLabel: 'Target', 
 													style: 'padding-left:5px;',
+													width: 145,
+													labelWidth:45,
 													value: target});
 		this.detailFields.add(this.targetItem );
 		
-
+		//weight
+		var weight = field.attributes.weight;
+		
+		this.weightItem = new Ext.form.DisplayField({fieldLabel: 'Peso',
+													style: 'margin-left:5px;',
+													width: 145,
+													labelWidth:45,
+													value: weight});
+		
+		if(weight !== undefined && weight != null && weight  != ''){
+			this.detailFields.add(this.weightItem );
+		}
 		
 		this.doLayout();
         this.render();
