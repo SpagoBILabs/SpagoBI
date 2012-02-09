@@ -607,7 +607,11 @@ public class CrosstabXLSExporter {
 
 		CellStyle cellStyle = this.buildDataCellStyle(sheet);
 		DataFormat df = createHelper.createDataFormat();
-		cellStyle.setDataFormat(df.getFormat("#,##0." + decimals));
+		String format = "#,##0";
+		if (decimals.length() > 0) {
+			format += "." + decimals;
+		}
+		cellStyle.setDataFormat(df.getFormat(format));
 
 		if (celltype.equals(CellType.TOTAL)) {
 			cellStyle.setFillForegroundColor(IndexedColors.GREY_40_PERCENT

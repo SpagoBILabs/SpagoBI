@@ -393,7 +393,11 @@ public class QbeXLSExporter {
 	    CellStyle cellStyleDoub = this.buildCellStyle(sheet); // cellStyleDoub is the default cell style for doubles
 	    cellStyleDoub.cloneStyleFrom(dCellStyle);
 	    DataFormat df = createHelper.createDataFormat();
-	    cellStyleDoub.setDataFormat(df.getFormat("#,##0."+decimals));
+		String format = "#,##0";
+		if (decimals.length() > 0) {
+			format += "." + decimals;
+		}
+	    cellStyleDoub.setDataFormat(df.getFormat(format));
 		
 		decimalFormats.put(j, cellStyleDoub);
 		return cellStyleDoub;
