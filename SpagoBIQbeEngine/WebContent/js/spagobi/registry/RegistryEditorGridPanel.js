@@ -138,7 +138,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		var data = record.data;
 		 
 		// return markup
-		return '<div ext:qtip="' + val +'" ext:qtitle="Valore:" ext:qwidth="300" ext:qdismissDelay="1000" ext:closable="true">' + val + '</div>';
+		return '<div ext:qtip="' + val +'" ext:qtitle="Valore:" ext:qwidth="300" ext:qdismissDelay="0" ext:closable="true">' + val + '</div>';
 		
 	},
 	showExpandPointer: function(grid, columnIndex){
@@ -157,7 +157,16 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	init : function () {
 		this.initStore();
 		this.initToolbar();
-		Ext.QuickTips.init();
+		Ext.QuickTips.init() ;
+		Ext.apply(Ext.QuickTips.getQuickTip(), {
+		    maxWidth: 200,
+		    minWidth: 100,
+		    showDelay: 50,
+		    dismissDelay: 0,
+		    closable: true,
+		    title: 'Valore',
+		    trackMouse: true
+		});
 
 	}
 
