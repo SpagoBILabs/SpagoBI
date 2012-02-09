@@ -130,7 +130,7 @@ public class KpiGUIUtil {
 			String qtipConf = "{text: '" +kpiLine.getModelNodeName()+
 					"', dismissDelay: 0, closable: true, xtype: 'quicktip'}";
 			
-			jsonToReturn.put("qtipCfg", qtipConf);
+			//jsonToReturn.put("qtipCfg", qtipConf);
 			jsonToReturn.put("qtip", kpiLine.getModelNodeName());
 			
 			List<KpiLine> children = (List<KpiLine>) kpiLine.getChildren();
