@@ -98,7 +98,8 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 	, addActionButtons: function(){
   	    var b;
   	    var conf = {}; 
-        conf.executionContext = this.filterBar.executionContext;     
+        conf.executionContext = this.filterBar.executionContext;
+        var exportName = this.filterBar.exportName;
         conf.store = this.store;
         conf.refreshDataAfterAction = this.filterBar.refreshDataAfterAction;
 		this.addFill();
@@ -136,6 +137,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 					, scope:this
 					, docType : type
 					, href: ''
+					, exportName: exportName
 		        });
 				itemExp.addListener('click', this.exportConsole, this, type);
 				menuItems.push(itemExp); 
@@ -173,6 +175,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 	}
 	, exportConsole: function(item) {
 		var format = item.docType;
+		var exportName= item.exportName;
 	
 		var gridConsole = this.ownerCt;
 		var columnConfigs = gridConsole.columnConfig;
@@ -225,7 +228,9 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 		if(format == 'CSV'){
 			output = 'text/csv';
 		}
-		
+		if(exportName == undefined){
+			exportName ='';
+		}
 		//check if specific datasource for export is definied
 		if (gridConsole.datasetExport != null){
 			var params = {
@@ -234,6 +239,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 					, datasetLabel: dsExport
 					, datasetHeadersLabel: dsHeadersLabel
 					, meta: Ext.util.JSON.encode(metaCols)
+					, exportName: exportName
 				};
 		}
 		else {
@@ -243,6 +249,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 					, datasetLabel: gridConsole.store.dsLabel
 					, datasetHeadersLabel: dsHeadersLabel
 					, meta: Ext.util.JSON.encode(meta)
+					, exportName: exportName
 				};
 		}
 		
