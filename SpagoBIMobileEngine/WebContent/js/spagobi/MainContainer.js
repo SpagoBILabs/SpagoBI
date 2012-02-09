@@ -3,10 +3,12 @@ app.views.MainContainer = Ext.extend(Ext.Panel,
 		{
 		browser: null,
 		preview: null,
-	    dockedItems: [],
-	   
+
+	    fullscreen: true,
+	    autoRender: true,
 
 		initComponent: function ()	{
+	
 			this.title = 'Main container';
 			this.cls = 'card4',
 			this.layout = {

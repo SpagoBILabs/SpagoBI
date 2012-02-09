@@ -96,7 +96,7 @@ app.views.LoginForm = Ext.extend(Ext.form.FormPanel,
 		        label: 'Username',
 		        useClearIcon: true});
 			
-			this.pwdField = new Ext.form.Text({                                
+			this.pwdField = new Ext.form.Password({                                
 		        xtype: 'passwordfield',
 		        name : 'password',
 		        label: 'Password',

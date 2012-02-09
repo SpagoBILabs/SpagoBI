@@ -64,8 +64,10 @@ author: Monica Franceschini
 		<script type="text/javascript" src="../js/spagobi/MainContainer.js"></script>
 		<script type="text/javascript" src="../js/spagobi/DocumentBrowser.js"></script>
 		<script type="text/javascript" src="../js/spagobi/DocumentPreview.js"></script>		
-		<script type="text/javascript" src="../js/spagobi/service/TableExecution.js"></script>
+		<script type="text/javascript" src="../js/spagobi/execution/TableExecution.js"></script>
 		<script type="text/javascript" src="../js/spagobi/Utils.js"></script>
+		<script type="text/javascript" src="../js/spagobi/execution/ExecutionView.js"></script>
+		
 	</head>
 
 	<body>
