@@ -9,14 +9,16 @@
 	    //put instances of login into app.views namespace
 	    Ext.apply(app.views, {
 	        loginForm: new app.views.LoginForm(),
-	        main:      new app.views.MainContainer()
+	        main:      new app.views.MainContainer(),
+	        execution: new app.views.ExecutionView ()
 
 	    });
 	    //put instances of loginForm into viewport
 	    Ext.apply(this, {
 	        items: [
 	            app.views.loginForm,
-	            app.views.main
+	            app.views.main,
+	            app.views.execution
 	        ]
 	    });
 	    
