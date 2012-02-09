@@ -26,13 +26,31 @@ app.views.ExecutionView = Ext.extend(Ext.TabPanel,
 			    title: 'Home',    		    
 			    iconCls: 'reply',
 			    text: 'Home',
+			    //style: 'border: 1px solid grey;',
 	            handler: function () {
 	        		Ext.dispatch({
 	                    controller: app.controllers.mobileController,
 	                    action: 'backToBrowser'
 	        		});
 	
-	            }
+	            }},
+	            {
+			    title: 'Parametri',    		    
+			    iconCls: 'settings',
+			    text: 'Parametri',
+			    //style: 'border: 1px solid grey;',
+	            handler: function () {
+	        		Ext.dispatch({
+	                    controller: app.controllers.mobileController,
+	                    action: 'backToBrowser'
+	        		});
+	
+	            }},
+	            {
+			    title: 'Info',    		    
+			    iconCls: 'info',
+			    text: 'Info'
+			    //style: 'border: 1px solid grey;'
 	        }]
   
         }],
