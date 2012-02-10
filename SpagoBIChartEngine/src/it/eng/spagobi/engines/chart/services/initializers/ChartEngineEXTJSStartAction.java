@@ -14,10 +14,10 @@ package it.eng.spagobi.engines.chart.services.initializers;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.chart.ChartEngine;
 import it.eng.spagobi.engines.chart.ChartEngineInstance;
-import it.eng.spagobi.engines.chart.utilities.TemplateUtility;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
+import it.eng.spagobi.utilities.json.JSONTemplateUtils;
 
 import java.util.Locale;
 
@@ -37,6 +37,7 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 	// OUTPUT PARAMETERS
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
+
 	
 	// SESSION PARAMETRES	
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
@@ -52,7 +53,7 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 		logger.debug("IN");		
 		Locale locale;
 		ChartEngineInstance chartEngineInstance = null;
-		TemplateUtility templateUtil = new TemplateUtility();
+		JSONTemplateUtils templateUtil = new JSONTemplateUtils();
 
 		
 		try {
@@ -76,10 +77,10 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 			try {
 				JSONArray parsJSON = new JSONArray();
 				SourceBean content = SourceBean.fromXMLString(getTemplateAsString());
-				JSONObject template = templateUtil.getJSONTemplateFromXml( content, parsJSON); 
+				JSONObject template = templateUtil.getJSONTemplateFromXml( content, parsJSON); 				
 				System.out.println(template.toString(4));
 
-				chartEngineInstance = ChartEngine.createInstance( template, getEnv() );
+				chartEngineInstance = ChartEngine.createInstance( template, getEnv() );				
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";
@@ -95,9 +96,10 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 				throw serviceException;
 			}
 			logger.debug("Engine instance succesfully created");
+			//sets the dataset
+			chartEngineInstance.setDataSet(getDataSet());
 			
 			locale = (Locale)chartEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
-			
 			setAttributeInSession( ENGINE_INSTANCE, chartEngineInstance);		
 			setAttribute(ENGINE_INSTANCE, chartEngineInstance);
 			
