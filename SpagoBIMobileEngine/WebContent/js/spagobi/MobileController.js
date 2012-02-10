@@ -132,8 +132,13 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 		  });
 	}
 	
-	, executeTemplate: function(id, label, roleName, sbiExecutionId){
+	, executeTemplate: function(option){
 
+		var id = option.id;
+		var label = option.label;
+		var roleName = option.roleName;
+		var sbiExecutionId = option.sbiExecutionId;
+		
 		Ext.Ajax.request({
             url: this.services['executeMobileTableAction'],
             scope: this,
