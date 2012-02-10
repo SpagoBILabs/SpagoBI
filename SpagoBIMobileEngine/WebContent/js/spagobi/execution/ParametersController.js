@@ -35,7 +35,7 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 					
 					if(responseJson==undefined || responseJson==null || responseJson.length==0  ){
 						  Ext.dispatch({
-							  controller: app.controllers.mobileController,
+							  controller: app.controllers.executionController,
 							  action: 'executeTemplate',
 							  id: id,
 							  label: label,
