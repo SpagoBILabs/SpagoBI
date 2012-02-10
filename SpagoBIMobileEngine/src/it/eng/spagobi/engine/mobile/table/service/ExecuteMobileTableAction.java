@@ -17,8 +17,6 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.engine.mobile.MobileConstants;
-import it.eng.spagobi.engine.mobile.service.DocumentBrowserAction;
 import it.eng.spagobi.engine.mobile.table.serializer.MobileDatasetTableSerializer;
 import it.eng.spagobi.engine.mobile.template.IMobileTemplateInstance;
 import it.eng.spagobi.engine.mobile.template.MobileTemplateFactory;
