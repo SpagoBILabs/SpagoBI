@@ -131,40 +131,11 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 			  sbiExecutionId : sbiExecutionId
 		  });
 	}
-	
-	, executeTemplate: function(option){
 
-		var id = option.id;
-		var label = option.label;
-		var roleName = option.roleName;
-		var sbiExecutionId = option.sbiExecutionId;
-		
-		Ext.Ajax.request({
-            url: this.services['executeMobileTableAction'],
-            scope: this,
-            method: 'post',
-            params: {OBJECT_ID: id, OBJECT_LABEL: label, isFromCross:false, ROLE:roleName, SBI_EXECUTION_ID: sbiExecutionId},
-            success: function(response, opts) {
-            	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
-            		var resp = Ext.decode(response.responseText);
-            		this.createTableExecution(resp);
-            	}
-            }
-	    }); 
-	}
-	
-	, createTableExecution: function(resp){
-		
-		//these are settings for table object
-		app.views.execView = new app.views.ExecutionView(resp);
-	    //adds execution view directly to viewport
-	    var viewport = app.views.viewport;
-	    viewport.add(app.views.execView);
-	    app.views.execView.setWidget(resp, 'table');
-	    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
-  	}
 	, backToBrowser: function(){
-		app.views.table.destroy();
+		if(app.views.table != undefined && app.views.table != null){
+			app.views.table.destroy();
+		}
 	    app.views.viewport.setActiveItem(app.views.main, { type: 'fade' });
 	    
   	}

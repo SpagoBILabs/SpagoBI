@@ -48,6 +48,7 @@ app.views.TableExecution = Ext.extend(Ext.Panel,
 					conditions  : resp.features.conditions,
 					colModel    : resp.features.columns
 				});
+		      
 		      this.add(app.views.table);
 		      
 		}
