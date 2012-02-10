@@ -28,7 +28,7 @@ app.views.ParametersView = Ext.extend(Ext.form.FormPanel,{
 		    text: 'Esegui',
             handler: function () {
         		Ext.dispatch({
-                    controller: app.controllers.mobileController,
+                    controller: app.controllers.executionController,
                     action: 'executeTemplate'
         		});
 

@@ -1,4 +1,4 @@
-app.views.TableExecution = Ext.extend(Ext.Panel,
+app.views.TableExecutionPanel = Ext.extend(Ext.Panel,
 
 		{
 	    scroll: 'vertical',
@@ -7,7 +7,7 @@ app.views.TableExecution = Ext.extend(Ext.Panel,
 
 			console.log('init table execution');
 		    
-			app.views.TableExecution.superclass.initComponent.apply(this, arguments);
+			app.views.TableExecutionPanel.superclass.initComponent.apply(this, arguments);
 			
 		},
 		setTableWidget: function(resp){
