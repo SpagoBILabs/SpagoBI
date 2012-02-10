@@ -35,7 +35,7 @@ app.views.ExecutionView = Ext.extend(Ext.TabPanel,
 	            }},
 	            {
 			    title: 'Parametri',    		    
-			    iconCls: 'settings',
+			    iconCls: 'compose',
 			    text: 'Parametri',
 	            handler: function () {
 	        		Ext.dispatch({
@@ -56,7 +56,6 @@ app.views.ExecutionView = Ext.extend(Ext.TabPanel,
 		initComponent: function ()	{
 			this.title = 'Execution view';
 			console.log('init Execution view');
-
 
 			app.views.tableExecution = new app.views.TableExecution();
 		    Ext.apply(this, {

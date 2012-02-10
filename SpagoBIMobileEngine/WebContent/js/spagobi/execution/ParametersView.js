@@ -1,7 +1,49 @@
-app.views.ParametersView = Ext.extend(Ext.form.FormPanel,
+app.views.ParametersView = Ext.extend(Ext.form.FormPanel,{
+		
+    dockedItems: [{
+        xtype: 'toolbar',
+        dock: 'bottom',
+        defaults: {
+            ui: 'plain',
+            iconMask: true
+        },
+        scroll: 'horizontal',
+        layout: {
+            pack: 'center'
+        },
+        items: [{
+		    title: 'Home',    		    
+		    iconCls: 'reply',			    
+		    text: 'Home',
+            handler: function () {
+        		Ext.dispatch({
+                    controller: app.controllers.mobileController,
+                    action: 'backToBrowser'
+        		});
 
-		{
-	    dockedItems: [],
+            }},
+            {
+		    title: 'Esegui',    		    
+		    iconCls: 'settings',
+		    text: 'Esegui',
+            handler: function () {
+        		Ext.dispatch({
+                    controller: app.controllers.mobileController,
+                    action: 'executeTemplate'
+        		});
+
+            }},
+            {
+		    title: 'Info',    		    
+		    iconCls: 'info',
+		    text: 'Info'
+
+        }]
+
+    }],
+
+	    
+	    
 	    previewItem: null,
 
 		initComponent: function ()	{

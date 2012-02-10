@@ -14,7 +14,6 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 			serviceName: 'GET_PARAMETER_VALUES_FOR_EXECUTION_ACTION'
 				, baseParams: params
 		});
-
 	}
 
 	
@@ -33,16 +32,28 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 			success: function(response, opts) {
 				if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 					var responseJson = Ext.decode(response.responseText);
-					var executionInstance = {
-							OBJECT_ID: id, 
-							OBJECT_LABEL: label, 
-							isFromCross:false, 
-							ROLE:roleName, 
-							SBI_EXECUTION_ID: sbiExecutionId	
-					};
-					var parameters = this.onParametersForExecutionLoaded(executionInstance,responseJson);
-					app.views.parameters.refresh(parameters);
-					app.views.viewport.setActiveItem(app.views.parameters);
+					
+					if(responseJson==undefined || responseJson==null || responseJson.length==0  ){
+						  Ext.dispatch({
+							  controller: app.controllers.mobileController,
+							  action: 'executeTemplate',
+							  id: id,
+							  label: label,
+							  roleName : roleName, 
+							  sbiExecutionId : sbiExecutionId
+						  });
+					}else{
+						var executionInstance = {
+								OBJECT_ID: id, 
+								OBJECT_LABEL: label, 
+								isFromCross:false, 
+								ROLE:roleName, 
+								SBI_EXECUTION_ID: sbiExecutionId	
+						};
+						var parameters = this.onParametersForExecutionLoaded(executionInstance,responseJson);
+						app.views.parameters.refresh(parameters);
+						app.views.viewport.setActiveItem(app.views.parameters);
+					}
 				}
 			}
 		}); 
@@ -127,6 +138,7 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 		var state;
 		state = {};
 		for(var i=0; i<this.fields.length; i++) {
+			state[field.name + '_field_visible_description'] = '';
 			try{
 				var field = this.fields[i];
 				var value = field.getValue();
