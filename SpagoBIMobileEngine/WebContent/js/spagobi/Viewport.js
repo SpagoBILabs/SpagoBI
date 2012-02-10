@@ -10,6 +10,7 @@
 	    Ext.apply(app.views, {
 	        loginForm: new app.views.LoginForm(),
 	        main:      new app.views.MainContainer(),
+	        parameters:new app.views.ParametersView(),
 	        execution: new app.views.ExecutionView ()
 
 	    });
@@ -18,6 +19,7 @@
 	        items: [
 	            app.views.loginForm,
 	            app.views.main,
+	            app.views.parameters,
 	            app.views.execution
 	        ]
 	    });

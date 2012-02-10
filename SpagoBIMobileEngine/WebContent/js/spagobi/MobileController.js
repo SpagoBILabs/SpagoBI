@@ -17,16 +17,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 			serviceName: 'START_EXECUTION_PROCESS_ACTION'
 			, baseParams: params
 		});
-		
-		this.services['getParametersForExecutionAction'] = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'GET_PARAMETERS_FOR_EXECUTION_ACTION'
-			, baseParams: params
-		});
-		
-		this.services['getParametersForExecutionAction'] = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'GET_PARAMETERS_FOR_EXECUTION_ACTION'
-			, baseParams: params
-		});
+
 
 		this.services['executeMobileTableAction'] = Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'EXECUTE_MOBILE_TABLE_ACTION'
@@ -130,25 +121,19 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 	}
 	
 	, getParametersForExecutionAction: function(id, label, roleName, sbiExecutionId){
-		
-		Ext.Ajax.request({
-            url: this.services['getParametersForExecutionAction'],
-            scope: this,
-            method: 'post',
-            params: {OBJECT_ID: id, OBJECT_LABEL: label, isFromCross:false, ROLE:roleName, SBI_EXECUTION_ID: sbiExecutionId},
-            success: function(response, opts) {
-            	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
-            		var responseJson = Ext.decode(response.responseText);
-            		var execContextId = responseJson.execContextId;
-            		this.executeTemplate(id, label, roleName, execContextId);
-            	}
-            }
-	    }); 
+				
+		  Ext.dispatch({
+			  controller: app.controllers.parametersController,
+			  action: 'getParametersForExecutionAction',
+			  id: id,
+			  label: label,
+			  roleName : roleName, 
+			  sbiExecutionId : sbiExecutionId
+		  });
 	}
 	
 	, executeTemplate: function(id, label, roleName, sbiExecutionId){
 
-		
 		Ext.Ajax.request({
             url: this.services['executeMobileTableAction'],
             scope: this,
@@ -162,6 +147,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
             }
 	    }); 
 	}
+	
 	, createTableExecution: function(resp){
 		
 		//these are settings for table object
@@ -177,4 +163,5 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 	    app.views.viewport.setActiveItem(app.views.main, { type: 'fade' });
 	    
   	}
+
 });
