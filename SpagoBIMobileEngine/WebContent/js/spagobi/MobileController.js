@@ -52,24 +52,29 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 		var label= rec.label;
 		var descr= rec.description;
 		var date= rec.creationDate;
-		if(engine != null && engine !== undefined && engine == 'Mobile Engine'){
+		var imageClass ="preview-item";
+		if(engine != null && engine !== undefined && (engine == 'TableMobileEngine' || engine == 'Table Mobile Engine')){
+			imageClass ="preview-item-table";
 
-			//onClick="executeDocument();"
-			var documentTpl = '<div class="preview-item" id="preview-'+id+'" '+
-			'onClick="javascript: executeDocument('+id+',\''+label+'\');">' +
-			'<div class="document-item-icon">' +			
-			'<img src="' + Ext.BLANK_IMAGE_URL + '" ></img>' +
-			'</div>' +
-		    '<div class="item-desc">' +name+ '</div>'+
-		    '<div class="item-desc"><b>engine: </b>' +engine+ '</div>'+
-		    '<div class="item-desc"><b>description: </b>' +descr+ '</div>'+
-		    '<div class="item-desc">' +date+ '</div>'+
-		    '</div>';
-			app.views.preview.showPreview( documentTpl);
-
+		}else if(engine != null && engine !== undefined && (engine == 'ChartMobileEngine' || engine == 'Chart Mobile Engine')){
+			imageClass ="preview-item-chart";
+		}else if(engine != null && engine !== undefined && (engine == 'ComposedMobileEngine' || engine == 'Composed Mobile Engine')){
+			imageClass ="preview-item-composed";
 		}else{
-			app.views.preview.showPreview( '');
+			return;
 		}
+		
+		var documentTpl = '<div class="preview-item" id="preview-'+id+'" '+
+		'onClick="javascript: executeDocument('+id+',\''+label+'\');">' +
+		'<div class="'+imageClass+'">' +			
+		'<img src="' + Ext.BLANK_IMAGE_URL + '" ></img>' +
+		'</div>' +
+	    '<div class="item-desc">' +name+ '</div>'+
+	    '<div class="item-desc"><b>engine: </b>' +engine+ '</div>'+
+	    '<div class="item-desc"><b>description: </b>' +descr+ '</div>'+
+	    '<div class="item-desc">' +date+ '</div>'+
+	    '</div>';
+		app.views.preview.showPreview( documentTpl);
 	}
 	
 	, executeDocument: function(options) {

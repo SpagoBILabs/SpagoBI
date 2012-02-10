@@ -96,11 +96,23 @@
 	width: 100%;
 }
 
-.document-item-icon img {
+.preview-item-table img {
 	width: 128px;
 	height: 128px;
 	background-image:
 		url('../img/mobileDocTable.png') !important;
+}
+.preview-item-chart img {
+	width: 128px;
+	height: 128px;
+	background-image:
+		url('../img/mobileDocChart.png') !important;
+}
+.preview-item-composed img {
+	width: 128px;
+	height: 128px;
+	background-image:
+		url('../img/mobileDocComp.png') !important;
 }
 .item-desc {
 	float: left;
