@@ -58,10 +58,10 @@ app.views.ExecutionView = Ext.extend(Ext.TabPanel,
 			console.log('init Execution view');
 
 
-			app.views.tableExecution = new app.views.TableExecution();
+			app.views.tableExecutionPanel = new app.views.TableExecutionPanel();
 		    Ext.apply(this, {
 		        items: [
-		            app.views.tableExecution
+		            app.views.tableExecutionPanel
 		        ]
 		    });
 			app.views.ExecutionView.superclass.initComponent.apply(this, arguments);
@@ -69,7 +69,7 @@ app.views.ExecutionView = Ext.extend(Ext.TabPanel,
 		}
 		, setWidget: function(resp, type){
 			
-			app.views.tableExecution.setTableWidget(resp);
+			app.views.tableExecutionPanel.setTableWidget(resp);
 
 		}
 
