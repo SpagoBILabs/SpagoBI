@@ -16,6 +16,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
@@ -166,7 +167,8 @@ public class MassiveExportWork implements Work{
 				proxy.setBiObject(document);
 				proxy.setSplittingFilter(splittingFilter);
 				proxy.setMimeType(outputMIMEType);
-				returnByteArray = proxy.exec(userProfile, SpagoBIConstants.MASSIVE_EXPORT_MODALITY, output);
+				UserProfile scheduler = UserProfile.createSchedulerUserProfile();
+				returnByteArray = proxy.exec(scheduler, SpagoBIConstants.MASSIVE_EXPORT_MODALITY, output);
 			}
 			catch (Throwable e) {
 				logger.error("Error while executing export for object with label "+document.getLabel(), e);
