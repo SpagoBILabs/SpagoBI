@@ -14,6 +14,7 @@ package it.eng.spagobi.engines.worksheet.services.initializers;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.worksheet.services.export.ExportWorksheetAction;
 import it.eng.spagobi.services.proxy.SbiDocumentServiceProxy;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.Locale;
@@ -75,9 +76,15 @@ public class MassiveExportWorksheetEngineStartAction extends WorksheetEngineStar
 		}
 
 		}
+		catch (SpagoBIEngineStartupException e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Error during initialziation of worksheet document", e);
+		}
+		catch (SpagoBIServiceException e) {
+			throw e;
+		}
 		catch (Throwable e) {
 			logger.error("Error during initialziation of worksheet document ",e);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Error during initialziation of worksheet document ");
+			throw new SpagoBIServiceException(SERVICE_NAME, "Error during initialziation of worksheet document ", e);
 		}
 
 
