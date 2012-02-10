@@ -447,6 +447,8 @@ public class ExecutionProxy {
 			mapPars.put("MIME_TYPE", mimeType);
 			mapPars.remove("SPLITTING_FILTER");
 			mapPars.put("SPLITTING_FILTER", splittingFilter);
+			mapPars.put(SpagoBIConstants.EXECUTION_MODALITY, SpagoBIConstants.MASSIVE_EXPORT_MODALITY);
+			
 
 		}
 	}
