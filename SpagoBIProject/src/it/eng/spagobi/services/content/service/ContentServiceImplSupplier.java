@@ -231,7 +231,11 @@ public class ContentServiceImplSupplier {
     			"roleName = [" + roleName + "], parameters = [" + parameters + "]");
     	Monitor monitor =MonitorFactory.start("spagobi.service.ContentSupplier.checkParametersErrors");
 		try {
-			ExecutionInstance instance = new ExecutionInstance(profile, "", "", biobjectId, roleName, "", true, true, null);
+			
+			String modality = (String) parameters.get(SpagoBIConstants.EXECUTION_MODALITY);
+			logger.debug("Execution modality retrieved : " + modality);
+			ExecutionInstance instance = new ExecutionInstance(profile, "", "", biobjectId, roleName, modality, true, true, null);
+
 			instance.refreshParametersValues(parameters, true);
 			List errors = instance.getParametersErrors();
 			if (errors != null && errors.size() > 0) {
