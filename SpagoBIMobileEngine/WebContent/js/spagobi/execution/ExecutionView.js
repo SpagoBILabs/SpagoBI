@@ -57,6 +57,7 @@ app.views.ExecutionView = Ext.extend(Ext.TabPanel,
 			this.title = 'Execution view';
 			console.log('init Execution view');
 
+
 			app.views.tableExecution = new app.views.TableExecution();
 		    Ext.apply(this, {
 		        items: [
@@ -67,6 +68,7 @@ app.views.ExecutionView = Ext.extend(Ext.TabPanel,
 
 		}
 		, setWidget: function(resp, type){
+			
 			app.views.tableExecution.setTableWidget(resp);
 
 		}
