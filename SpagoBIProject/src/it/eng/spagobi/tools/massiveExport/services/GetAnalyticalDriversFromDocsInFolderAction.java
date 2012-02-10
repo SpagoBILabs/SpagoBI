@@ -107,7 +107,8 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 				parameterForExecution.setDataDependencies(new ArrayList());
 				parameterForExecution.setVisualDependencies(new ArrayList());
 				parameterForExecution.setVisible(true);
-				parameterForExecution.setMandatory(false);
+				
+				//mandatory if one of represented pars is mandatory: parameterForExecution.setMandatory(false);
 				
 				if(usedIds.get(parameterForExecution.getId())== null){
 						usedIds.put(parameterForExecution.getId(), true);
@@ -205,6 +206,11 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 					// already found, add the anchor to the object par
 					logger.debug("to object parameter with id "+found.getId()+" is associated also object parameter with id "+par.getId());	
 					found.getObjParameterIds().add(par.getId());
+					// if new parameter found is amndatory also the general becomes mandatory
+					ParameterForExecution checkmandatoryPar = new ParameterForExecution(par);
+					if(checkmandatoryPar.isMandatory()){
+						found.setMandatory(true);
+					}
 				}
 				else{
 					// not found, add a new one

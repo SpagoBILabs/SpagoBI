@@ -178,6 +178,14 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardParametersPage, Ext.Panel, {
 					state[val+ '_objParameterId']=field.name;
 				}
 			}
+			
+			if(field.allowBlank==false){
+				state[field.name+'_isMandatory']=true;
+			}
+			else{
+				state[field.name+'_isMandatory']=false;
+			}
+			
 		}
 		return state;
 	}

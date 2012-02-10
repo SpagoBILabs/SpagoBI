@@ -211,15 +211,18 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 
 				List<String> documentParameterValues = new ArrayList<String>();
 				List<String> documentParameterValuesDescription = new ArrayList<String>();
-
+				boolean isMultivalueParameter = false;
+				
 				if(documentParameterLabel != null){
-					boolean isMultivalueParameter = false;
+					
 					JSONArray values = parametersJSON.optJSONArray(documentParameterLabel);
+					boolean isValued = false;
 					if(values != null && values.length()>0){
 						isMultivalueParameter = true;	
 						for (int i = 0; i < values.length(); i++) {
 							String ob = values.getString(i);
 							documentParameterValues.add(ob);
+							isValued = true;
 							logger.debug("multivalue, value is "+ob);
 						}
 					}
@@ -227,6 +230,7 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 						String value = parametersJSON.getString(documentParameterLabel);
 						if(value != null){
 							documentParameterValues.add(value);
+							isValued = true;
 							logger.debug("single value, value is "+value);
 						}
 
@@ -238,11 +242,14 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 							documentParameterValuesDescription.add(valuesDescr);
 							logger.debug("multivalue, description value is "+valuesDescr);				
 						}							
-					
+
+
 				} else{
 					logger.warn("parameter value not defined  "+documentParameter.getLabel());
 				}
 
+				// check for mandatory violation
+				isMandatoryViolation(documentParameter, parametersJSON, documentParameterValues, isMultivalueParameter);
 				logger.debug("insert for "+documentParameter.getLabel()+" value"+ documentParameterValues.toString());
 				documentParameter.setParameterValues(documentParameterValues);
 				documentParameter.setParameterValuesDescription(documentParameterValuesDescription);
@@ -267,4 +274,25 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 
 	}
 
+	private void isMandatoryViolation(BIObjectParameter parameter
+			, JSONObject parametersJSON, List<String> values, boolean isMultivalueParameter) throws JSONException{
+		logger.debug("IN");
+		boolean mandatory = false;
+		Boolean mandatoryString = parametersJSON.optBoolean(parameter.getLabel()+"_isMandatory");
+		if(mandatoryString != null && mandatoryString.equals(true) ){
+			mandatory = true;
+		}
+		logger.debug("parameter with label "+parameter.getLabel()+" is mandatory: "+mandatory);
+		// check if mandatory and value is empty throw exception
+		if(mandatory){
+			logger.debug("value of parameter "+parameter.getLabel()+" is "+values);
+			if(values == null || values.size()==0 || values.get(0).equals("") || values.get(0).equals("[]")){
+				logger.error("Mandatory parameter "+parameter.getLabel()+" must be filled");
+				throw new SpagoBIServiceException(SERVICE_NAME, "Mandatory parameter "+parameter.getLabel()+" must be filled", null);
+				}
+		}
+
+		logger.debug("OUT");
+	}
+	
 }
