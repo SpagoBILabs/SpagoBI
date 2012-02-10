@@ -217,7 +217,7 @@ public class FakeDataset extends AbstractCustomDataSet {
 		FieldMetadata guadagno = new FieldMetadata("guadagno", Integer.class);
 		guadagno.setAlias("Guadagno");
 		guadagno.setProperty("aggregationFunction", "SUM");
-		guadagno.setProperty("decimalPrecision", "2");
+		guadagno.setProperty("decimalPrecision", "0");
 		guadagno.setFieldType(FieldType.MEASURE);
 		meta.addFiedMeta(guadagno);
 		
