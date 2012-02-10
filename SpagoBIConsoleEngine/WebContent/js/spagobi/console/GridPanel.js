@@ -901,7 +901,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		    
 			if(tmpMeta.fields[i].type) {
 				var tmpType = tmpMeta.fields[i].type;					
-				if (tmpType == 'date'){
+				if (tmpType == 'date' || tmpType == 'timestamp'){
 					tmpMeta.fields[i].renderer  =  Sbi.locale.formatters[tmpType];
 				}else{							
 					tmpMeta.fields[i].renderer = this.renderTooltip.createDelegate(this);

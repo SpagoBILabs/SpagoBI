@@ -44,10 +44,7 @@ Sbi.console.commons.Format = function(){
          * Cut and paste from Ext.util.Format
          */
         date : function(v, format){
-			
-		
-		
-		
+
 			format = format || "m/d/Y";
 			
 			if(typeof format === 'string') {
@@ -78,6 +75,42 @@ Sbi.console.commons.Format = function(){
         , dateRenderer : function(format){
             return function(v){
                 return Sbi.console.commons.Format.date(v, format);
+            };
+         
+        }
+        
+        ,timestamp : function(v, format){
+
+			format = format || "m/d/Y H:i:s";
+			
+			if(typeof format === 'string') {
+				format = {
+					timestampFormat: format,
+			    	nullValue: ''
+				};
+			}
+			
+			
+            if(!v){
+                return format.nullValue;
+            }
+            
+            if(!(v instanceof Date)){
+                v = new Date(Date.parse(v));
+            }
+          
+            
+            v = v.dateFormat(format.dateFormat);
+         
+            return v;
+        }
+
+        /**
+         * Cut and paste from Ext.util.Format
+         */
+        , timestampRenderer : function(format){
+            return function(v){
+                return Sbi.console.commons.Format.timestamp(v, format);
             };
          
         }
