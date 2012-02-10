@@ -87,7 +87,7 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction{
 			///case user not logged provides a fake store
 			if(profile == null || functID.equals("root")){
 
-				JSONObject foldersAndDocsResponseJSON =  createJSONResponse(new JSONArray("[{name: browser-root}]"), new JSONArray());
+				JSONObject foldersAndDocsResponseJSON =  createJSONResponse(new JSONArray("[{name: Document Browser}]"), new JSONArray());
 				
 				try {
 					writeBackToClient( new JSONSuccess( foldersAndDocsResponseJSON ) );
