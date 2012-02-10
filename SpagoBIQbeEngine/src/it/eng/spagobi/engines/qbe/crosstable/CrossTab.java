@@ -753,9 +753,13 @@ public class CrossTab {
 		}else{
 			rootNode = rowsRoot;
 		}
-
-		fathersOfTheNodesOfTheLevel = rootNode.getLevel(level-1);
 		
+		if(horizontal){
+			fathersOfTheNodesOfTheLevel = rootNode.getLevel(level-2);//because of the title of the headers
+		}else{
+			fathersOfTheNodesOfTheLevel = rootNode.getLevel(level-1);
+		}
+	
 		for(int i=0; i<fathersOfTheNodesOfTheLevel.size(); i++){
 			rootNode.setLeafPositions();
 			calculateCFSub(operation, fathersOfTheNodesOfTheLevel.get(i), horizontal, level, cfName, celltype);
@@ -1004,9 +1008,11 @@ public class CrossTab {
     	int i=0;
     	for(i=0; i<op.size()-1; i++){
     		operation = operation+op.get(i);
-    		operation = operation+data.get(i);
+    		
     		if(data.get(i)=="NA" || data.get(i)=="null"  || data.get(i)==null){
-    			return "0";
+    			operation = operation+"0";
+    		}else{
+    			operation = operation+data.get(i);
     		}
     	}
     	operation = operation + op.get(i);
@@ -1270,7 +1276,7 @@ public class CrossTab {
 	 *								 SUBTOTALS
 	********************************************************************** */
 	public void addSubtotals(){
-		String rowsTotals = config.optString("calculatesubtotalsonrows");
+		String  rowsTotals = config.optString("calculatesubtotalsonrows");
 		String columnsTotals =  config.optString("calculatesubtotalsoncolumns");
 
 		if(measuresOnRow){
