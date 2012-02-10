@@ -52,6 +52,8 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 	private static final long serialVersionUID = 1L;
 
 	private final String SERVICE_NAME = "START_MASSIVE_SCHEDULE_ACTION";
+	
+	public final String ANALYTICAL_DRIVER_VALUES_SEPARATOR = ";";
 
 	// Objects recieved
 	private final String PARAMETERS_PAGE = "Sbi.browser.mexport.MassiveExportWizardParametersPage";
@@ -308,9 +310,24 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 				String separetor = "";
 				List<BIObjectParameter> documentParameters = document.getBiObjectParameters();
 				for(BIObjectParameter documentParameter : documentParameters) {
-					String documentParameterLabel = documentParameter.getLabel();
-					String value = documentsParameterValuesJSON.getString(documentParameterLabel);
-					pValue += separetor + documentParameterLabel + "="+ value;
+					String documentParameterUrl = documentParameter.getParameterUrlName();
+					String value = null;
+					Object valueObj = documentsParameterValuesJSON.get(documentParameterUrl);
+					if (valueObj instanceof JSONArray) {
+						JSONArray array = (JSONArray) valueObj;
+						StringBuffer buffer = new StringBuffer(); 
+						for (int i = 0 ; i < array.length() ; i++) {
+							buffer.append(array.getString(i));
+							if ( i < array.length() - 1 ) {
+								buffer.append(ANALYTICAL_DRIVER_VALUES_SEPARATOR);
+							}
+						}
+						value = buffer.toString();
+					} else {
+						value = valueObj.toString();
+					}
+					//String value = documentsParameterValuesJSON.getString(documentParameterUrl);
+					pValue += separetor + documentParameterUrl + "="+ value;
 					separetor = "%26";
 				}
 				parameters.put(pName, pValue);
