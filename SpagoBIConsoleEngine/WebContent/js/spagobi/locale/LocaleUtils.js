@@ -7,6 +7,7 @@ Sbi.locale.formatters = {
 	float: Sbi.locale.dummyFormatter,
 	string: Sbi.locale.dummyFormatter,		
 	date: Sbi.locale.dummyFormatter,		
+	timestamp: Sbi.locale.dummyFormatter,
 	boolean: Sbi.locale.dummyFormatter,
 	html: Sbi.locale.dummyFormatter,
 	inlineBar: Sbi.locale.dummyFormatter,
@@ -20,6 +21,7 @@ if(Sbi.console.commons.Format){
 		Sbi.locale.formatters.float  = Sbi.console.commons.Format.numberRenderer(Sbi.locale.formats['float']);		
 		Sbi.locale.formatters.string  = Sbi.console.commons.Format.stringRenderer(Sbi.locale.formats['string']);		
 		Sbi.locale.formatters.date    = Sbi.console.commons.Format.dateRenderer(Sbi.locale.formats['date']);		
+		Sbi.locale.formatters.timestamp   = Sbi.console.commons.Format.dateRenderer(Sbi.locale.formats['timestamp']);
 		Sbi.locale.formatters.boolean = Sbi.console.commons.Format.booleanRenderer(Sbi.locale.formats['boolean']);
 		Sbi.locale.formatters.html    = Sbi.console.commons.Format.htmlRenderer();
 		Sbi.locale.formatters.inlineBar    = Sbi.console.commons.Format.inlineBarRenderer();
@@ -29,6 +31,7 @@ if(Sbi.console.commons.Format){
 		Sbi.locale.formatters.float  = Sbi.console.commons.Format.numberRenderer( );	
 		Sbi.locale.formatters.string  = Sbi.console.commons.Format.stringRenderer( );		
 		Sbi.locale.formatters.date    = Sbi.console.commons.Format.dateRenderer( );		
+		Sbi.locale.formatters.timestamp = Sbi.console.commons.Format.timestampRenderer( );
 		Sbi.locale.formatters.boolean = Sbi.console.commons.Format.booleanRenderer( );
 		Sbi.locale.formatters.html    = Sbi.console.commons.Format.htmlRenderer();
 		Sbi.locale.formatters.inlineBar   = Sbi.console.commons.Format.inlineBarRenderer();

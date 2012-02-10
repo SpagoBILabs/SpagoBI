@@ -17,7 +17,7 @@ Sbi.settings.console = {
     
 	, gridPanel: {
 		limit: 15		//number of rows for the page in the grid
-	  , loadMask: false //enable the 'loading...' mask on the grid. Default false.
+	  , loadMask: true //enable the 'loading...' mask on the grid. Default false.
  	}
 };
 
