@@ -44,8 +44,15 @@
 	 	<CONFIG/>
 	 </ACTION>
 	 
+	<!-- PARAMETERS -->
+	 
 	  <ACTION name="GET_PARAMETERS_FOR_EXECUTION_ACTION" 
-	 	class="it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction" scope="REQUEST">
+	 	class="it.eng.spagobi.engine.mobile.service.GetDocumentParametersAction" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION>
+	 
+	 <ACTION name="GET_PARAMETER_VALUES_FOR_EXECUTION_ACTION" 
+	 	class="it.eng.spagobi.analiticalmodel.execution.service.GetParameterValuesForExecutionAction" scope="REQUEST">
 	 	<CONFIG/>
 	 </ACTION>
 	 
