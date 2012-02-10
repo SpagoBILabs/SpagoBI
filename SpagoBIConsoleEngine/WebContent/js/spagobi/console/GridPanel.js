@@ -73,7 +73,6 @@ Sbi.console.GridPanel = function(config) {
 		delete c.dataset;	
 		var tableConfig = c.table || {};
 		var filterConfig =  c.filterBar || {};
-
 		filterConfig.executionContext = c.executionContext;
 		filterConfig.exportName = c.exportName;
 		Ext.apply(this, c);
@@ -84,6 +83,17 @@ Sbi.console.GridPanel = function(config) {
 		this.initSelectionModel();	
 		this.initFilterBar(filterConfig);
 		this.initPagingBar();
+		
+		Ext.QuickTips.init() ;
+		Ext.apply(Ext.QuickTips.getQuickTip(), {
+		    maxWidth: 200,
+		    minWidth: 100,
+		    showDelay: 50,
+		    dismissDelay: 0,
+		    closable: true,
+		 //   title: 'Valore',
+		    trackMouse: true
+		});
 		
 		if (this.store !== undefined){
 			this.store.pagingParams = {
@@ -737,11 +747,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		    	}else{
 					tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 		    	}
-		    	
-		    //}else if (fields[i].headerType == undefined ){
-	    	}/*else {
-	    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
-	    	}	*/else{
+	    	}else{
 		    	//without substitution; manteins the header defined into the columnConfig section
 	    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 	    	}
