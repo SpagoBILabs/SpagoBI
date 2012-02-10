@@ -41,6 +41,7 @@ import it.eng.spagobi.tools.scheduler.utils.BIObjectParametersIterator;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.mime.MimeUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -276,7 +277,7 @@ public class XExecuteBIDocumentJob implements Job {
 							logger.debug("Document executed without any response");
 						}
 						String contentType = executionProxy.getReturnedContentType();
-						String fileExtension = executionProxy.getFileExtensionFromContType(contentType);
+						String fileExtension = MimeUtils.getFileExtension(contentType);
 						long end = System.currentTimeMillis();			
 						long elapsed = (end - start)/1000;
 						logger.info("Document [" + (documentIndex+1) + "] with label [" + documentInstanceName + "] and parameters " + descriptionSuffix +" executed in [" + elapsed + "]");
@@ -286,7 +287,7 @@ public class XExecuteBIDocumentJob implements Job {
 						dispatchContext.setDescriptionSuffix( descriptionSuffix.toString() );
 						dispatchContext.setJobExecutionContext(jobExecutionContext);
 						dispatchContext.setContentType(contentType);
-						dispatchContext.setFileExtension(fileExtension);
+						dispatchContext.setFileExtension("." + fileExtension);
 						dispatchContext.setParametersMap(parametersMap);
 						dispatchContext.setTotalNumberOfDocumentsToDispatch(documentLabels.length);
 						dispatchContext.setIndexNumberOfDocumentToDispatch(documentIndex);
