@@ -55,6 +55,7 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 			    proxy: {
 					type: 'ajax',
 					url: this.services['loadFolderContentService'],
+				    params: {node: 0},
 			        reader: {
 			            type: 'tree',
 			            root: 'samples'
