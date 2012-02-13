@@ -33,18 +33,18 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 	}
 	
 	, executeTemplate: function(params){
-		var id = params.executionInstance.OBJECT_ID;
-		var label = params.executionInstance.OBJECT_LABEL;
-		var roleName = params.executionInstance.ROLE;
-		var sbiExecutionId = params.executionInstance.SBI_EXECUTION_ID;
-		var typeCode = params.executionInstance.TYPE_CODE;
-		var engine = params.executionInstance.ENGINE;
+//		var id = params.executionInstance.OBJECT_ID;
+//		var label = params.executionInstance.OBJECT_LABEL;
+//		var roleName = params.executionInstance.ROLE;
+//		var sbiExecutionId = params.executionInstance.SBI_EXECUTION_ID;
+		var typeCode = params.TYPE_CODE;
+		var engine = params.ENGINE;
 		if((engine == 'TableMobileEngine' || engine == 'Table Mobile Engine') && typeCode =='MOBILE'){
 			Ext.Ajax.request({
 		        url: this.services['executeMobileTableAction'],
 		        scope: this,
 		        method: 'post',
-		        params: {OBJECT_ID: id, OBJECT_LABEL: label, isFromCross:false, ROLE:roleName, SBI_EXECUTION_ID: sbiExecutionId},
+		        params: params,
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
