@@ -33,20 +33,30 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 	}
 	
 	, executeTemplate: function(params){
-
-		
-		Ext.Ajax.request({
-	        url: this.services['executeMobileTableAction'],
-	        scope: this,
-	        method: 'post',
-	        params: params,
-	        success: function(response, opts) {
-	        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
-	        		var resp = Ext.decode(response.responseText);
-	        		this.createTableExecution(resp);
-	        	}
-	        }
-	    }); 
+		var id = params.id;
+		var label = params.label;
+		var roleName = params.roleName;
+		var sbiExecutionId = params.sbiExecutionId;
+		var typeCode = params.typeCode;
+		var engine = params.engine;
+		if((engine == 'TableMobileEngine' || engine == 'Table Mobile Engine') && typeCode =='MOBILE'){
+			Ext.Ajax.request({
+		        url: this.services['executeMobileTableAction'],
+		        scope: this,
+		        method: 'post',
+		        params: {OBJECT_ID: id, OBJECT_LABEL: label, isFromCross:false, ROLE:roleName, SBI_EXECUTION_ID: sbiExecutionId},
+		        success: function(response, opts) {
+		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
+		        		var resp = Ext.decode(response.responseText);
+		        		this.createTableExecution(resp);
+		        	}
+		        }
+		    }); 
+		}else if((engine == 'ChartMobileEngine' || engine == 'Chart Mobile Engine') && typeCode =='MOBILE'){
+			//put code here for chart execution action
+		}else if((engine == 'ComposedMobileEngine' || engine == 'Composed Mobile Engine') && typeCode =='MOBILE'){
+			//put code here for composed mobile execution action
+		}
 	}
 	
 	, createTableExecution: function(resp){
