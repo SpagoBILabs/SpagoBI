@@ -13,6 +13,7 @@ package it.eng.spagobi.engine.mobile.table.service;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.DataSetExecutorForBIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -66,8 +67,13 @@ public class ExecuteMobileTableAction extends AbstractSpagoBIAction {
 			dataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(id);
 			logger.debug("Got document dataset");
 			//LOAD DATA
-			dataSet.loadData();
-			dataStore = dataSet.getDataStore();
+			
+			DataSetExecutorForBIObject dataSetExecutorForBIObject = new DataSetExecutorForBIObject(dataSet, documentBIObject, this.getUserProfile());
+			dataStore = dataSetExecutorForBIObject.executeDataSet();
+			logger.debug("Execute the data set");
+			
+/*			dataSet.loadData();
+			dataStore = dataSet.getDataStore();*/
 			logger.debug("Loaded datastore from dataset");
 			dataSetJSON = null;
 			JSONArray fieldsJSON= null;

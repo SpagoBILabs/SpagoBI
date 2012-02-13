@@ -11,56 +11,19 @@ app.views.ExecutionView = Ext.extend(Ext.TabPanel,
             }
         },
 
-        dockedItems: [{
-            xtype: 'toolbar',
-            dock: 'bottom',
-            defaults: {
-                ui: 'plain',
-                iconMask: true
-            },
-            scroll: 'horizontal',
-            layout: {
-                pack: 'center'
-            },
-	        items: [{
-			    title: 'Home',    		    
-			    iconCls: 'reply',			    
-			    text: 'Home',
-	            handler: function () {
-	        		Ext.dispatch({
-	                    controller: app.controllers.mobileController,
-	                    action: 'backToBrowser'
-	        		});
-	
-	            }},
-	            {
-			    title: 'Parametri',    		    
-			    iconCls: 'compose',
-			    text: 'Parametri',
-	            handler: function () {
-	        		Ext.dispatch({
-	                    controller: app.controllers.mobileController,
-	                    action: 'backToBrowser'
-	        		});
-	
-	            }},
-	            {
-			    title: 'Info',    		    
-			    iconCls: 'info',
-			    text: 'Info'
-
-	        }]
-  
-        }],
 
 		initComponent: function ()	{
 			this.title = 'Execution view';
 			console.log('init Execution view');
-
-
+	        this.bottomTools = new app.views.BottomToolbar({parameters: this.parameters});
+	        this.dockedItems= [this.bottomTools];
+			//var toolbar = new app.views.BottomToolbar(this.parameters);
+			//this.dockedItems = [bottomTools];
+			
 			app.views.tableExecutionPanel = new app.views.TableExecutionPanel();
 			app.views.chartExecutionPanel = new app.views.ChartExecutionPanel();
 			app.views.composedExecutionPanel = new app.views.ComposedExecutionPanel();
+			
 		    Ext.apply(this, {
 		        items: [
 		            app.views.tableExecutionPanel,
