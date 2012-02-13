@@ -19,8 +19,6 @@ package it.eng.spagobi.commons.utilities;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -66,7 +64,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 
 	public static final int MAX_DEFAULT_TEMPLATE_SIZE = 5242880;
 	private static String SPAGOBI_HOST = null; 
-	private static String SPAGOBI_DOMAIN = null;
+//	private static String SPAGOBI_DOMAIN = null;
 
 	/**
 	 * Substitutes the substrings with sintax "${code,bundle}" or "${code}" (in
@@ -453,22 +451,28 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	 */
 	public static Locale getDefaultLocale() {
 		logger.debug("IN");
-		String country = null;
-		String language = null;
 		Locale locale = null;
-		String languageConfig = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
-		if (language != null ) {
-			language = languageConfig.substring(0, 2);
-			country = languageConfig.substring(3);
-			if ((country == null) || country.trim().equals("") || (language == null) || language.trim().equals("")) {
+		String languageConfig = null;
+		try {
+			String country = null;
+			String language = null;
+			languageConfig = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+			logger.debug("Default locale found: " + languageConfig);
+			if (languageConfig != null && !languageConfig.trim().equals("")) {
+				language = languageConfig.substring(0, 2);
+				country = languageConfig.substring(3);
+				if ((country == null) || country.trim().equals("") || (language == null) || language.trim().equals("")) {
+					country = "US";
+					language = "en";
+				}
+			} else {
 				country = "US";
 				language = "en";
 			}
-		} else {
-			country = "US";
-			language = "en";
+			locale = new Locale(language, country);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Error while getting default locale", t);
 		}
-		locale = new Locale(language, country);
 		logger.debug("OUT:" + locale.toString());
 		return locale;
 	}
