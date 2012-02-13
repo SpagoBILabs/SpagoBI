@@ -5,12 +5,12 @@ app.views.ComposedExecutionPanel = Ext.extend(Ext.Panel,
 	    fullscreen: true
 		, initComponent: function (options)	{
 
-			console.log('init chart execution');
+			console.log('init composed execution');
 		    
 			app.views.ComposedExecutionPanel.superclass.initComponent.apply(this, arguments);
 			
 		},
-		setChartWidget: function(resp){
+		setComposedWidget: function(resp){
 			
 
 		}
