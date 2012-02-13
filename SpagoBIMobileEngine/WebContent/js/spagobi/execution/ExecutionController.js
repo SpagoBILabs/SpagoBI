@@ -24,21 +24,21 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        method: 'post',
 		        params: params,
 		        success: function(response, opts) {
-		        	this.executeTemplate(params);
+		        	this.executeTemplate(option);
 		        }
 		    }); 
 		}else{
-			this.executeTemplate(params);
+			this.executeTemplate(option);
 		}
 	}
 	
-	, executeTemplate: function(params){
-//		var id = params.executionInstance.OBJECT_ID;
-//		var label = params.executionInstance.OBJECT_LABEL;
-//		var roleName = params.executionInstance.ROLE;
-//		var sbiExecutionId = params.executionInstance.SBI_EXECUTION_ID;
-		var typeCode = params.TYPE_CODE;
-		var engine = params.ENGINE;
+	, executeTemplate: function(option){
+		var id = option.executionInstance.OBJECT_ID;
+		var label = option.executionInstance.OBJECT_LABEL;
+		var roleName = option.executionInstance.ROLE;
+		var sbiExecutionId = option.executionInstance.SBI_EXECUTION_ID;
+		var typeCode =  option.executionInstance.TYPE_CODE;
+		var engine =  option.executionInstance.ENGINE;
 		if((engine == 'TableMobileEngine' || engine == 'Table Mobile Engine') && typeCode =='MOBILE'){
 			Ext.Ajax.request({
 		        url: this.services['executeMobileTableAction'],
