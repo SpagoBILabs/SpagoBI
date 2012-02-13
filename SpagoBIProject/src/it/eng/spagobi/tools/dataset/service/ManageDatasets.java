@@ -64,6 +64,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -421,27 +422,48 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 			IDataSet ds = null;		
 			try {
-				if ( dsType!=null && !dsType.equals("")) {
-
-					ds = instantiateCorrectIDataSetType(dsType);		
-					if(ds!=null){									
-						if(trasfTypeCd!=null && !trasfTypeCd.equals("")){
+				if (dsType != null && !dsType.equals("")) {
+					ds = instantiateCorrectIDataSetType(dsType);
+					if (ds != null) {
+						if (trasfTypeCd != null && !trasfTypeCd.equals("")) {
 							ds = setTransformer(ds, trasfTypeCd);
 						}
-						HashMap h = new HashMap();
-						if(parsJSON!=null){
-							h = deserializeParValuesListJSONArray(parsJSON);
+						String recalculateMetadata = this.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA);
+						String dsMetadata = null;
+						if (recalculateMetadata == null || recalculateMetadata.trim().equals("yes")) {
+							// recalculate metadata
+							logger.debug("Recalculating dataset's metadata: executing the dataset...");
+							HashMap parametersMap = new HashMap();
+							if (parsJSON != null) {
+								parametersMap = deserializeParValuesListJSONArray(parsJSON);
+							}
+							IEngUserProfile profile = getUserProfile();
+							dsMetadata = getDatasetTestMetadata(ds,
+									parametersMap, profile);
+							LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
+						} else {
+							// load existing metadata
+							logger.debug("Loading existing dataset...");
+							String id = getAttributeAsString(DataSetConstants.ID);
+							if (id != null && !id.equals("") && !id.equals("0")) {
+								IDataSet existingDataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer(id));
+								dsMetadata = existingDataSet.getDsMetadata();
+								LogMF.debug(logger, "Reloaded metadata : [{0}]", dsMetadata);
+							} else {
+								throw new SpagoBIServiceException(SERVICE_NAME,
+										"Missing dataset id, cannot retrieve its metadata");
+							}
+							
 						}
-						IEngUserProfile profile = getUserProfile();
-						String dsMetadata = getDatasetTestMetadata(ds, h, profile);	
 						dsActiveDetail.setDsMetadata(dsMetadata);
-					}							
-				}else{
+					}
+				} else {
 					logger.error("DataSet type is not existent");
-					throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.dsTypeError");
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"sbi.ds.dsTypeError");
 				}
 			} catch (Exception e) {
-				logger.error("Error while getting dataset metadataa",e);
+				logger.error("Error while getting dataset metadataa", e);
 			}
 		}	
 		return dsActiveDetail;

@@ -71,6 +71,8 @@ public class DataSetConstants {
 	public static final String PIVOT_ROW_NAME = "pivotRowName";
 	public static final String PIVOT_IS_NUM_ROWS = "pivotIsNumRows";
 	
+	public static final String RECALCULATE_METADATA = "recalculateMetadata";
+	
 	public static final String DS_WS = "SbiWSDataSet";
 	public static final String DS_FILE = "SbiFileDataSet";
 	public static final String DS_JCLASS = "SbiJClassDataSet";

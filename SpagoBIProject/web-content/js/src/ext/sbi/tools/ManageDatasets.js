@@ -1451,13 +1451,30 @@ Ext.extend(
 				
 				// OVERRIDING save method
 				,
-				save : function() {
+				save : function () {
+					var values = this.getForm().getFieldValues();
+					var idRec = values['id'];
+					if (idRec == 0 || idRec == null || idRec === '') {
+						this.doSave("yes");
+					} else {
+						Ext.MessageBox.confirm(
+							LN('sbi.ds.recalculatemetadataconfirm.title')
+							, LN('sbi.ds.recalculatemetadataconfirm.msg')
+							, this.doSave
+							, this
+						);
+					}
+				}
+				
+				,
+				doSave : function(recalculateMetadata) {
 					var values = this.getForm().getFieldValues();
 					var idRec = values['id'];
 					var newRec;
 					var newDsVersion;
 					var isNewRec = false;
 					var params = this.buildParamsToSendToServer(values);
+					params.recalculateMetadata = recalculateMetadata;
 					var arrayPars = this.manageParsGrid.getParsArray();
 					var customString = this.customDataGrid.getDataString();
 					
