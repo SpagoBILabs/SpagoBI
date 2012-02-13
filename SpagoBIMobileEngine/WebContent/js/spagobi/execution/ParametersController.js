@@ -33,23 +33,21 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 				if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 					var responseJson = Ext.decode(response.responseText);
 					
+					var executionInstance = {
+							OBJECT_ID: id, 
+							OBJECT_LABEL: label, 
+							isFromCross:false, 
+							ROLE:roleName, 
+							SBI_EXECUTION_ID: sbiExecutionId	
+					};
+					
 					if(responseJson==undefined || responseJson==null || responseJson.length==0  ){
 						  Ext.dispatch({
 							  controller: app.controllers.executionController,
 							  action: 'executeTemplate',
-							  id: id,
-							  label: label,
-							  roleName : roleName, 
-							  sbiExecutionId : sbiExecutionId
+							  executionInstance: executionInstance
 						  });
 					}else{
-						var executionInstance = {
-								OBJECT_ID: id, 
-								OBJECT_LABEL: label, 
-								isFromCross:false, 
-								ROLE:roleName, 
-								SBI_EXECUTION_ID: sbiExecutionId	
-						};
 						var parameters = this.onParametersForExecutionLoaded(executionInstance,responseJson);
 						app.views.parameters.refresh(parameters);
 						app.views.viewport.setActiveItem(app.views.parameters);
@@ -62,6 +60,7 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 	
 	, onParametersForExecutionLoaded: function( executionInstance, parameters ) {
 	
+		this.executionInstance = executionInstance;
 		this.fields = new Array();
 	
 		for(var i = 0; i < parameters.length; i++) {
@@ -138,9 +137,10 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 		var state;
 		state = {};
 		for(var i=0; i<this.fields.length; i++) {
-			state[field.name + '_field_visible_description'] = '';
+			
 			try{
 				var field = this.fields[i];
+				state[field.name + '_field_visible_description'] = '';
 				var value = field.getValue();
 				if(value==undefined || value==null){
 					state[field.name] = '';

@@ -11,16 +11,10 @@
  */
 package it.eng.spagobi.engine.mobile.service;
 
-import org.json.JSONObject;
-
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.engine.mobile.MobileConstants;
-import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 /**
@@ -40,13 +34,9 @@ public class LoadMobileDocumentAction extends AbstractSpagoBIAction{
 			//Load the BIObject
 			BIObject documentBIObject = DAOFactory.getBIObjectDAO().loadBIObjectById(biObjectID);
 
-			//Load the template of the document
-			//ObjTemplate objTemp = documentBIObject.getActiveTemplate();	
-			
 			setAttributeInSession(ObjectsTreeConstants.OBJECT_ID, documentBIObject);
-			//setAttributeInSession(MobileConstants.DOCUMENT_TEMPLATE_OBJECT, objTemp);
 			
-			writeBackToClient(new JSONSuccess("userhome"));
+			writeBackToClient(new JSONSuccess("documenloaded"));
 			
 		}catch (Exception e) {
 			// TODO: handle exception

@@ -60,6 +60,16 @@
 	 	class="it.eng.spagobi.engine.mobile.table.service.ExecuteMobileTableAction" scope="REQUEST">
 	 	<CONFIG/>
 	 </ACTION>
+	 
+	 <ACTION name="PREPARE_DOCUMENT_FOR_EXECUTION_ACTION" 
+	 	class="it.eng.spagobi.engine.mobile.service.PrepareDocumentForExecutionAction" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION>
+	 
+	 <ACTION name="EXECUTE_MOBILE_TABLE_ACTION" 
+	 	class="it.eng.spagobi.engine.mobile.chart.service.ExecuteMobileChartAction" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION>
 	
 
 </ACTIONS>
