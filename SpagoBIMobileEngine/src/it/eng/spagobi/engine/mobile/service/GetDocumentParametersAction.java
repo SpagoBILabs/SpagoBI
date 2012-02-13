@@ -36,6 +36,9 @@ import org.json.JSONObject;
  */
 public class GetDocumentParametersAction extends GetParametersForExecutionAction {
 
+
+	private static final long serialVersionUID = 7908624899621065025L;
+
 	public static final String SERVICE_NAME = "GET_PARAMETERS_FOR_EXECUTION_SERVICE";
 
 	// request parameters
@@ -139,8 +142,7 @@ public class GetDocumentParametersAction extends GetParametersForExecutionAction
 				String[] visiblecolumns;
 
 				if (MODE_COMPLETE.equalsIgnoreCase(mode)) {
-					visiblecolumns = (String[]) lovProvDet
-							.getVisibleColumnNames().toArray(new String[0]);
+					visiblecolumns = (String[]) lovProvDet.getVisibleColumnNames().toArray(new String[0]);
 					for (int j = 0; j < visiblecolumns.length; j++) {
 						visiblecolumns[j] = visiblecolumns[j].toUpperCase();
 					}

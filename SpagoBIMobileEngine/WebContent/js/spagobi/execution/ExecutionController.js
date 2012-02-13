@@ -8,20 +8,38 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 			serviceName: 'EXECUTE_MOBILE_TABLE_ACTION'
 			, baseParams: params
 		});
+		
+		this.services['prepareDocumentForExecution'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'PREPARE_DOCUMENT_FOR_EXECUTION_ACTION'
+			, baseParams: params
+		});
 	}
 
+	, prepareDocumentForExecution: function(option){
+		var params = Ext.apply({PARAMETERS: Ext.encode(option.parameters)},option.executionInstance);
+		if(option.parameters!=undefined && option.parameters!=null){
+			Ext.Ajax.request({
+		        url: this.services['prepareDocumentForExecution'],
+		        scope: this,
+		        method: 'post',
+		        params: params,
+		        success: function(response, opts) {
+		        	this.executeTemplate(params);
+		        }
+		    }); 
+		}else{
+			this.executeTemplate(params);
+		}
+	}
 	
-	, executeTemplate: function(option){
-		var id = option.id;
-		var label = option.label;
-		var roleName = option.roleName;
-		var sbiExecutionId = option.sbiExecutionId;
+	, executeTemplate: function(params){
+
 		
 		Ext.Ajax.request({
 	        url: this.services['executeMobileTableAction'],
 	        scope: this,
 	        method: 'post',
-	        params: {OBJECT_ID: id, OBJECT_LABEL: label, isFromCross:false, ROLE:roleName, SBI_EXECUTION_ID: sbiExecutionId},
+	        params: params,
 	        success: function(response, opts) {
 	        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 	        		var resp = Ext.decode(response.responseText);
