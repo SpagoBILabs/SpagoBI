@@ -1,9 +1,11 @@
-var executeDocument = function(id, label){
+var executeDocument = function(id, label, engine, typeCode){
 
 	  Ext.dispatch({
 		  controller: app.controllers.mobileController,
 		  action: 'executeDocument',
 		  id: id,
-		  label: label
+		  label: label, 
+		  engine: engine, 
+		  typeCode: typeCode
 	  });
 };
