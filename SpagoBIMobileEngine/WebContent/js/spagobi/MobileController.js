@@ -52,6 +52,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 		var label= rec.label;
 		var descr= rec.description;
 		var date= rec.creationDate;
+		var typeCode= rec.typeCode;
 		var imageClass ="preview-item";
 		if(engine != null && engine !== undefined && (engine == 'TableMobileEngine' || engine == 'Table Mobile Engine')){
 			imageClass ="preview-item-table";
@@ -65,7 +66,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 		}
 		
 		var documentTpl = '<div class="preview-item" id="preview-'+id+'" '+
-		'onClick="javascript: executeDocument('+id+',\''+label+'\');">' +
+		'onClick="javascript: executeDocument('+id+',\''+label+'\', \''+engine+'\', \''+typeCode+'\');">' +
 		'<div class="'+imageClass+'">' +			
 		'<img src="' + Ext.BLANK_IMAGE_URL + '" ></img>' +
 		'</div>' +
@@ -85,13 +86,13 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
             method: 'post',
             params: {OBJECT_ID: options.id},
             success: function(response, opts) {
-            	this.getRoles(options.id, options.label);
+            	this.getRoles(options.id, options.label, options.engine, options.typeCode);
             }
 	    }); 
 
 	  }
 	
-	, getRoles: function(id, label){
+	, getRoles: function(id, label, engine, typeCode){
 		
 		Ext.Ajax.request({
             url: this.services['getRolesForExecutionService'],
@@ -102,13 +103,13 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
             	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
             		var responseJson = Ext.decode(response.responseText);
                     var roleName = responseJson.root[0].name;
-                    this.startNewExecutionProcess(id, label, roleName);
+                    this.startNewExecutionProcess(id, label, roleName, engine, typeCode);
             	}
           	}
 	    }); 
 	}
 	
-	, startNewExecutionProcess: function(id, label, roleName){
+	, startNewExecutionProcess: function(id, label, roleName, engine, typeCode){
 
 		Ext.Ajax.request({
             url: this.services['startNewExecutionProcess'],
@@ -119,13 +120,13 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
             	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
             		var responseJson = Ext.decode(response.responseText);
             		var execContextId = responseJson.execContextId;
-            		this.getParametersForExecutionAction(id, label, roleName, execContextId);
+            		this.getParametersForExecutionAction(id, label, roleName, execContextId, engine, typeCode);
             	}
             }
 	    }); 
 	}
 	
-	, getParametersForExecutionAction: function(id, label, roleName, sbiExecutionId){
+	, getParametersForExecutionAction: function(id, label, roleName, sbiExecutionId, engine, typeCode){
 				
 		  Ext.dispatch({
 			  controller: app.controllers.parametersController,
@@ -133,7 +134,9 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 			  id: id,
 			  label: label,
 			  roleName : roleName, 
-			  sbiExecutionId : sbiExecutionId
+			  sbiExecutionId : sbiExecutionId,
+			  engine: engine, 
+			  typeCode: typeCode
 		  });
 	}
 

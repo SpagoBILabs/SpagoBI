@@ -23,7 +23,8 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 		var label = option.label;
 		var roleName = option.roleName;
 		var sbiExecutionId = option.sbiExecutionId;
-	
+		var typeCode = option.typeCode;
+		var engine = option.engine;
 		Ext.Ajax.request({
 			url: this.services['getParametersForExecutionAction'],
 			scope: this,
@@ -38,7 +39,9 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 							OBJECT_LABEL: label, 
 							isFromCross:false, 
 							ROLE:roleName, 
-							SBI_EXECUTION_ID: sbiExecutionId	
+							SBI_EXECUTION_ID: sbiExecutionId,
+							engine: engine, 
+							typeCode: typeCode
 					};
 					
 					if(responseJson==undefined || responseJson==null || responseJson.length==0  ){
