@@ -40,8 +40,8 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 							isFromCross:false, 
 							ROLE:roleName, 
 							SBI_EXECUTION_ID: sbiExecutionId,
-							engine: engine, 
-							typeCode: typeCode
+							ENGINE: engine, 
+							TYPE_CODE: typeCode
 					};
 					
 					if(responseJson==undefined || responseJson==null || responseJson.length==0  ){
