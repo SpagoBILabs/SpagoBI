@@ -33,12 +33,12 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 	}
 	
 	, executeTemplate: function(params){
-		var id = params.id;
-		var label = params.label;
-		var roleName = params.roleName;
-		var sbiExecutionId = params.sbiExecutionId;
-		var typeCode = params.typeCode;
-		var engine = params.engine;
+		var id = params.executionInstance.OBJECT_ID;
+		var label = params.executionInstance.OBJECT_LABEL;
+		var roleName = params.executionInstance.ROLE;
+		var sbiExecutionId = params.executionInstance.SBI_EXECUTION_ID;
+		var typeCode = params.executionInstance.TYPE_CODE;
+		var engine = params.executionInstance.ENGINE;
 		if((engine == 'TableMobileEngine' || engine == 'Table Mobile Engine') && typeCode =='MOBILE'){
 			Ext.Ajax.request({
 		        url: this.services['executeMobileTableAction'],
