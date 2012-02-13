@@ -48,7 +48,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createTableExecution(resp);
+		        		this.createTableExecution(resp, params.PARAMETERS);
 		        	}
 		        }
 		    }); 
@@ -59,14 +59,15 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		}
 	}
 	
-	, createTableExecution: function(resp){
+	, createTableExecution: function(resp, parameters){
 		
 		//these are settings for table object
-		app.views.execView = new app.views.ExecutionView(resp);
+		app.views.execView = new app.views.ExecutionView({parameters: parameters});
 	    //adds execution view directly to viewport
 	    var viewport = app.views.viewport;
 	    viewport.add(app.views.execView);
 	    app.views.execView.setWidget(resp, 'table');
+
 	    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
 	}
 
