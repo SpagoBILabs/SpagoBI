@@ -46,7 +46,8 @@ public class JSONDataWriter implements IDataWriter {
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
 	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
-
+	public static final String METADATA = "metaData";
+	
 	public JSONDataWriter() {}
 	
 	public JSONDataWriter(Map<String, Object> properties) {
@@ -85,7 +86,7 @@ public class JSONDataWriter implements IDataWriter {
 		try {
 			result = new JSONObject();
 			
-			result.put("metaData", metadata);
+			result.put(METADATA, metadata);
 			
 			propertyRawValue = dataStore.getMetaData().getProperty("resultNumber");
 			if ( propertyRawValue == null ) {
