@@ -70,6 +70,9 @@
 	 	class="it.eng.spagobi.engine.mobile.chart.service.ExecuteMobileChartAction" scope="REQUEST">
 	 	<CONFIG/>
 	 </ACTION>
-	
 
+	<ACTION name="EXECUTE_MOBILE_COMPOSED_ACTION" 
+	 	class="it.eng.spagobi.engine.mobile.composed.service.ExecuteMobileComposedAction" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION>
 </ACTIONS>
