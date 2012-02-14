@@ -10,6 +10,7 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 	    data: null,
 	    flex:1,
 	    displayField: 'name',
+	    
 /*		displayField: '<tpl>'+
 			'<tpl if="engine != null && engine != \'\'"><div style="color: red;">{name}</div></tpl>'+
 			'<tpl if="engine == null || engine == \'\'"">{name}</tpl>'+
@@ -55,7 +56,7 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 			    proxy: {
 					type: 'ajax',
 					url: this.services['loadFolderContentService'],
-				    params: {node: 0},
+
 			        reader: {
 			            type: 'tree',
 			            root: 'samples'
@@ -67,7 +68,7 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 			
 			app.views.DocumentBrowser.superclass.initComponent.apply(this, arguments);
 
+		}
 
-		}			
 		
 });
