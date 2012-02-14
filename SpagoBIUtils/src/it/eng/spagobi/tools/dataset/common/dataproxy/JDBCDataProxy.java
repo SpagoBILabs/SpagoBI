@@ -12,6 +12,7 @@
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -37,14 +38,18 @@ public class JDBCDataProxy extends AbstractDataProxy {
 	private static transient Logger logger = Logger.getLogger(JDBCDataProxy.class);
 	
 	
-	public JDBCDataProxy() { }
+	public JDBCDataProxy() {
+		this.setCalculateResultNumberOnLoad(true);
+	}
 	
 	public JDBCDataProxy(IDataSource dataSource, String statement) {
+		this();
 		setDataSource(dataSource);
 		setStatement(statement);
 	}
 	
 	public JDBCDataProxy(IDataSource dataSource) {
+		this();
 		setDataSource(dataSource);
 		setStatement(statement);
 	}
@@ -78,7 +83,8 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		stmt = null;
 		resultSet = null;
 		
-		try {			
+		try {
+			
 			try {
 				connection = getDataSource().getConnection( getSchema() );
 			} catch (Throwable t) {
@@ -115,13 +121,21 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			
 			dataStore = null;
 			try {
+				// tells the data reader not to read the result number since this class maybe enabled for that and since, in case
+				// it is enabled, it is able to perform this operation (using INLINE VIEW strategy)
+				dataReader.setCalculateResultNumberEnabled(false);
+				// read data
 				dataStore = dataReader.read( resultSet );
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("An error occurred while parsing resultset", t);
 			}
 			
 			if( isCalculateResultNumberOnLoadEnabled() ) {
-				
+				logger.debug("Calculation of result set number is enabled");
+    			int resultNumber = getResultNumber(connection);
+    			dataStore.getMetaData().setProperty("resultNumber", new Integer(resultNumber));
+			} else {
+				logger.debug("Calculation of result set number is NOT enabled");
 			}
 			
 		} finally {		
@@ -133,6 +147,27 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		}
 		
 		return dataStore;
+	}
+
+	protected int getResultNumber(Connection connection) {
+		logger.debug("IN");
+		int resultNumber = 0;
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			String sqlQuery = "SELECT COUNT(*) FROM (" + this.getStatement() + ") temptable";
+			logger.debug("Executing query " + sqlQuery + " ...");
+			stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			rs = stmt.executeQuery(sqlQuery);
+			rs.next();
+			resultNumber = rs.getInt(1);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
+		} finally {
+			releaseResources(null, stmt, rs);
+		}
+		logger.debug("OUT : returning " + resultNumber);
+		return resultNumber;
 	}
 
 	public IDataSource getDataSource() {

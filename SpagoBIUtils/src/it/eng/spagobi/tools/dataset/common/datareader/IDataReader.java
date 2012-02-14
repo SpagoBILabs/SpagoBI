@@ -33,4 +33,16 @@ public interface IDataReader {
 	boolean isMaxResultsSupported();
 	int getMaxResults();
 	void setMaxResults(int maxResults);
+	
+	/**
+	 * Return if the calculation of the total result number is enabled or not (may be it is not necessary)
+	 */
+	public boolean isCalculateResultNumberEnabled();
+	
+	/**
+	 * Set if the calculation of the total result number is enabled or not.
+	 * In case this calculation is required, invoke this method with true, otherwise with false.
+	 */
+	public void setCalculateResultNumberEnabled(boolean enabled);
+	
 }

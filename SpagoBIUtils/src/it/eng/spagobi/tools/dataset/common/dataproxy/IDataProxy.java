@@ -48,7 +48,15 @@ public interface IDataProxy {
 	int getMaxResults();
 	void setMaxResults(int maxResults);
 	
+	/**
+	 * Return if the calculation of the total result number is enabled or not (may be it is not necessary)
+	 */
 	boolean isCalculateResultNumberOnLoadEnabled();
+	
+	/**
+	 * Set if the calculation of the total result number is enabled or not.
+	 * In case this calculation is required, invoke this method with true, otherwise with false.
+	 */
 	void setCalculateResultNumberOnLoad(boolean enabled);
 	long getResultNumber();
 	
