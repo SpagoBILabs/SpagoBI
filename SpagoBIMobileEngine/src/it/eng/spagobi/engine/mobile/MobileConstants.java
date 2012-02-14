@@ -42,4 +42,11 @@ public class MobileConstants {
 	public static final String DOCUMENT_BI_OBJECT = "DOCUMENT_BI_OBJECT";
 	public static final String DOCUMENT_TEMPLATE_OBJECT = "DOCUMENT_TEMPLATE_OBJECT";
 	public static final String PARAMETERS = "PARAMETERS";
+	public static String DOCUMENTS_TAG = "DOCUMENTS";
+	public static String DOCUMENT_TAG = "DOCUMENT";
+	public static String DOCUMENT_LABEL_ATTR = "label";
+	public static String DOCUMENT_WIDTH_ATTR = "width";
+	public static String DOCUMENT_HEIGHT_ATTR = "height";
+	public static String DOCUMENTS_WIDTH_ATTR = "width";
+	public static String DOCUMENTS_HEIGHT_ATTR = "height";
 }
