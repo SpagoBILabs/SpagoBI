@@ -20,7 +20,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.engine.mobile.table.serializer.MobileDatasetTableSerializer;
 import it.eng.spagobi.engine.mobile.template.IMobileTemplateInstance;
-import it.eng.spagobi.engine.mobile.template.MobileTemplateFactory;
+import it.eng.spagobi.engine.mobile.template.TableTemplateInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -60,7 +60,7 @@ public class ExecuteMobileTableAction extends AbstractSpagoBIAction {
 			String templContString = new String(templateContent);
 			SourceBean template = SourceBean.fromXMLString( templContString );
 			logger.debug("Created template source bean");
-			IMobileTemplateInstance templInst = MobileTemplateFactory.createMobileTemplateInstance(template);
+			IMobileTemplateInstance templInst = new TableTemplateInstance(template);
 			logger.debug("Created template instance");
 			//Load the dataset
 			Integer id = documentBIObject.getDataSetId();

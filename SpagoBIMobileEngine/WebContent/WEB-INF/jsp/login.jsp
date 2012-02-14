@@ -50,6 +50,7 @@ author: Monica Franceschini
 		<link rel="stylesheet" href="../css/sencha-touch-debug.css" type="text/css">
 		<link rel="stylesheet" href="../css/spagobi-mobile.css" type="text/css">
 		<link rel="stylesheet" href="../css/Ext.ux.TouchGridPanel.css" type="text/css">
+		<link rel="stylesheet" href="../css/touch-charts-demo.css" type="text/css">
 
 		<script type="text/javascript" src="../js/sencha/sencha-touch-debug.js"></script>
 		<script type="text/javascript" src="../js/sencha/touch-charts-debug.js"></script>

@@ -1,4 +1,4 @@
-app.views.ExecutionView = Ext.extend(Ext.TabPanel,
+app.views.ExecutionView = Ext.extend(Ext.Panel,
 
 		{
 	    fullscreen: true,
@@ -36,6 +36,9 @@ app.views.ExecutionView = Ext.extend(Ext.TabPanel,
 		, setWidget: function(resp, type){
 			if(type == 'table'){
 				app.views.tableExecutionPanel.setTableWidget(resp);
+			}
+			if(type == 'chart'){
+				app.views.chartExecutionPanel.setChartWidget(resp);
 			}
 
 		}

@@ -11,14 +11,14 @@
  */
 package it.eng.spagobi.engine.mobile.service;
 
-import java.io.IOException;
-
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
-import it.eng.spagobi.analiticalmodel.execution.service.GetUrlForExecutionAction;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.engine.mobile.MobileConstants;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
+
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -30,8 +30,6 @@ import org.json.JSONObject;
 public class PrepareDocumentForExecutionAction extends AbstractSpagoBIAction {
 	
 	private static final long serialVersionUID = -4708339969302528709L;
-
-	public static final String PARAMETERS = "PARAMETERS";
 
 	// logger component
 	private static Logger logger = Logger.getLogger(PrepareDocumentForExecutionAction.class);
@@ -49,7 +47,7 @@ public class PrepareDocumentForExecutionAction extends AbstractSpagoBIAction {
 			// we are not executing a subobject or a snapshot, so delete subobject/snapshot if existing
 			executionInstance.setSubObject(null);
 			executionInstance.setSnapshot(null);
-			JSONObject executionInstanceJSON = this.getAttributeAsJSONObject( PARAMETERS );
+			JSONObject executionInstanceJSON = this.getAttributeAsJSONObject( MobileConstants.PARAMETERS );
 			executionInstance.refreshParametersValues(executionInstanceJSON, false);
 			
 			writeBackToClient( new JSONAcknowledge());

@@ -41,4 +41,5 @@ public class MobileConstants {
 	public static String CONDITION_STYLE_ATTR = "style";
 	public static final String DOCUMENT_BI_OBJECT = "DOCUMENT_BI_OBJECT";
 	public static final String DOCUMENT_TEMPLATE_OBJECT = "DOCUMENT_TEMPLATE_OBJECT";
+	public static final String PARAMETERS = "PARAMETERS";
 }
