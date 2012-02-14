@@ -18,6 +18,7 @@ public abstract class AbstractDataReader implements IDataReader {
 	int offset;
 	int fetchSize;
 	int maxResults;
+	boolean calculateResultNumberEnabled;
 	
 	public AbstractDataReader() {
 		offset = -1;
@@ -63,5 +64,13 @@ public abstract class AbstractDataReader implements IDataReader {
 
 	public void setMaxResults(int maxResults) {
 		this.maxResults = maxResults;
+	}
+
+	public boolean isCalculateResultNumberEnabled() {
+		return calculateResultNumberEnabled;
+	}
+
+	public void setCalculateResultNumberEnabled(boolean enabled) {
+		this.calculateResultNumberEnabled = enabled;
 	}
 }

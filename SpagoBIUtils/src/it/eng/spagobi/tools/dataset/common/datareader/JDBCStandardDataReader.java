@@ -11,12 +11,6 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -28,6 +22,11 @@ import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -134,37 +133,14 @@ public class JDBCStandardDataReader extends AbstractDataReader {
     		logger.debug("Readed [" + recCount+ "] records");
     		logger.debug("Data readed succcesfully");
     		
-    		logger.debug("resultset type [" + rs.getType() + "] (" + (rs.getType()  == rs.TYPE_FORWARD_ONLY) + ")");
-    		if (rs.getType()  == ResultSet.TYPE_FORWARD_ONLY) {
-//    			while (!rs.isLast()) {
-//    				rs.next();    // INFINITE LOOP ON MYSQL!!!!!
-//    			}
-    			
-//    			while (rs.next()) {
-//    								// IT DOES NOT WORK SINCE, WHEN EXECUTING rs.next() ON LAST ROW,
-//									// THEN rs.getRow() RETURNS 0, SINCE THE ROW IN NOT VALID
-//    			}
-    			
-    			int recordsCount = 0;
-    			if (recCount < maxRecToParse) {
-    				// records read where less then max records to read, therefore the resultset has been completely read
-    				recordsCount = getOffset() + recCount;
-    			} else {
-        			recordsCount = rs.getRow();
-        			while (rs.next()) {
-        				recordsCount++;
-        				// do nothing, just scroll result set
-        			}
-    			}
-
-    			resultNumber = recordsCount;
+    		if (this.isCalculateResultNumberEnabled()) {
+    			logger.debug("Calculation of result set number is enabled");
+    			resultNumber = getResultNumber(rs, maxRecToParse, recCount);
+    			dataStore.getMetaData().setProperty("resultNumber", new Integer(resultNumber));
     		} else {
-    			rs.last();
-    			resultNumber = rs.getRow();
+    			logger.debug("Calculation of result set number is NOT enabled");
     		}
-    		
-    		dataStore.getMetaData().setProperty("resultNumber", new Integer(resultNumber));
-    		logger.debug("Reading total record numeber is equal to [" + resultNumber + "]");
+
     	} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -176,5 +152,46 @@ public class JDBCStandardDataReader extends AbstractDataReader {
     	
     	return dataStore;
     }
+
+	private int getResultNumber(ResultSet rs, long maxRecToParse, int recCount)
+			throws SQLException {
+		logger.debug("IN");
+		
+		int toReturn;
+		
+		logger.debug("resultset type [" + rs.getType() + "] (" + (rs.getType()  == ResultSet.TYPE_FORWARD_ONLY) + ")");
+		if (rs.getType()  == ResultSet.TYPE_FORWARD_ONLY) {
+//    			while (!rs.isLast()) {
+//    				rs.next();    // INFINITE LOOP ON MYSQL!!!!!
+//    			}
+			
+//    			while (rs.next()) {
+//    								// IT DOES NOT WORK SINCE, WHEN EXECUTING rs.next() ON LAST ROW,
+//									// THEN rs.getRow() RETURNS 0, SINCE THE ROW IN NOT VALID
+//    			}
+			
+			int recordsCount = 0;
+			if (recCount < maxRecToParse) {
+				// records read where less then max records to read, therefore the resultset has been completely read
+				recordsCount = getOffset() + recCount;
+			} else {
+				recordsCount = rs.getRow();
+				while (rs.next()) {
+					recordsCount++;
+					// do nothing, just scroll result set
+				}
+			}
+
+			toReturn = recordsCount;
+		} else {
+			rs.last();
+			toReturn = rs.getRow();
+		}
+		
+		logger.debug("Reading total record numeber is equal to [" + toReturn + "]");
+		logger.debug("OUT " + toReturn);
+		return toReturn;
+	}
+	
 }
 
