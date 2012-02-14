@@ -175,8 +175,9 @@ public class ExtendedAccountStatusGetter extends AbstractAccountStatusGetter {
 				List pars = new LinkedList();
 				Date tmp = new Date();
 				pars.add(new Date());
-	        	pars.add(userID);
-	        	int res = utility.executeUpdate("UPDATE SBI_USER SET DT_LAST_ACCESS = ? WHERE USER_ID = ?", pars);
+				// CASE INSENSITVE SEARCH ON USER ID
+	        	pars.add(userID.toUpperCase());
+	        	int res = utility.executeUpdate("UPDATE SBI_USER SET DT_LAST_ACCESS = ? WHERE UPPER(USER_ID) = ?", pars);
 			}catch(Exception e){
 	        	logger.error("Error while check pwd: " + e);
 	        	e.printStackTrace();
@@ -198,8 +199,9 @@ public class ExtendedAccountStatusGetter extends AbstractAccountStatusGetter {
         try{
         	AuthenticationUtility utility = new AuthenticationUtility();
         	List pars = new LinkedList();
-        	pars.add(userID);
-        	lstResult = utility.executeQuery("SELECT DT_PWD_BEGIN, DT_PWD_END, FLG_PWD_BLOCKED, DT_LAST_ACCESS FROM SBI_USER WHERE USER_ID = ?", pars);
+        	// CASE INSENSITVE SEARCH ON USER ID
+        	pars.add(userID.toUpperCase());
+        	lstResult = utility.executeQuery("SELECT DT_PWD_BEGIN, DT_PWD_END, FLG_PWD_BLOCKED, DT_LAST_ACCESS FROM SBI_USER WHERE UPPER(USER_ID) = ?", pars);
         }catch(Exception e){
         	logger.error("Error while check pwd: " + e);
         	e.printStackTrace();
@@ -234,10 +236,11 @@ public class ExtendedAccountStatusGetter extends AbstractAccountStatusGetter {
         //define query to get roles to check pwd from database
         try{
         	AuthenticationUtility utility = new AuthenticationUtility();
+        	// CASE INSENSITVE SEARCH ON USER ID
         	String query = "SELECT U.ID, NAME FROM  SBI_EXT_USER_ROLES UR, SBI_EXT_ROLES R, SBI_USER U " +
-        					"WHERE U.USER_ID = ? AND UR.ID = U.ID  AND R.EXT_ROLE_ID = UR.EXT_ROLE_ID AND R.ROLE_TYPE_CD =? ";
+        					"WHERE UPPER(U.USER_ID) = ? AND UR.ID = U.ID  AND R.EXT_ROLE_ID = UR.EXT_ROLE_ID AND R.ROLE_TYPE_CD =? ";
         	List pars = new LinkedList();
-        	pars.add(userID);
+        	pars.add(userID.toUpperCase());
         	pars.add(ADMIN_ROLE);
         	
         	List lstResult = utility.executeQuery(query, pars);

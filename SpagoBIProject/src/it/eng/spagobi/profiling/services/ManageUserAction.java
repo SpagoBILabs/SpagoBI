@@ -13,7 +13,6 @@ package it.eng.spagobi.profiling.services;
 
 
 import it.eng.spago.error.EMFUserError;
-
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -27,7 +26,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -112,95 +110,129 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 						"Exception occurred while retrieving users", e);
 			}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(USER_INSERT)) {
-			Integer id = getAttributeAsInteger(ID);
-			String userId = getAttributeAsString(USER_ID);
-			String fullName = getAttributeAsString(FULL_NAME);
-			String password = getAttributeAsString(PASSWORD);
-			JSONArray rolesJSON = getAttributeAsJSONArray(ROLES);
-			JSONArray attributesJSON = getAttributeAsJSONArray(ATTRIBUTES);
-			if (userId != null) {
-				SbiUser user = new SbiUser();
-				user.setUserId(userId);
-				user.setFullName(fullName);
-				if(password != null && password.length() > 0){
-					try {
-						user.setPassword(Password.encriptPassword(password));
-					} catch (Exception e) {
-						logger.error("Impossible to encript Password", e);
-						throw new SpagoBIServiceException(SERVICE_NAME,
-								"Impossible to encript Password",e);
-					}
-				}
-				
-				if(id!=null){
-					user.setId(id);
-				}
-				try {
-					HashMap<Integer, String> attrList = null;
-					if(attributesJSON != null){
-						attrList = deserializeAttributesJSONArray(attributesJSON);
-					}
-					
-					List rolesList = null;
-					if(rolesJSON != null){
-						rolesList = deserializeRolesJSONArray(rolesJSON);
-					}
-					
-					id = userDao.fullSaveOrUpdateSbiUser(user, rolesList, attrList);
-					logger.debug("User updated or Inserted");
-					JSONObject attributesResponseSuccessJSON = new JSONObject();
-					attributesResponseSuccessJSON.put("success", true);
-					attributesResponseSuccessJSON.put("responseText", "Operation succeded");
-					attributesResponseSuccessJSON.put("id", id);
-					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-
-				} catch (EMFUserError e) {
-					logger.error("Exception occurred while saving new user", e);
-					//swriteErrorsBackToClient();
-					throw new SpagoBIServiceException(SERVICE_NAME,	""+e.getDescription(),	null);
-				} catch (IOException e) {
-					logger.error("Exception occurred while writing response to client", e);
-					throw new SpagoBIServiceException(SERVICE_NAME,
-							"Exception occurred while writing response to client",
-							e);
-				} catch (JSONException e) {
-					logger.error("JSON Exception", e);
-					e.printStackTrace();
-				}
-			}else{
-				logger.error("User name missing");
-				throw new SpagoBIServiceException(SERVICE_NAME,	"Please enter user name");
-			}
+			saveUser(userDao);
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(USER_DELETE)) {
-			Integer id = getAttributeAsInteger(ID);
-			try {
-				userDao.deleteSbiUserById(id);
-				logger.debug("User deleted");
-				writeBackToClient( new JSONAcknowledge("Operation succeded") );
-
-			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving user to delete", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving user to delete",
-						e);
-			}
+			deleteUser(userDao);
 		}else if(serviceType == null){
-			try {
-				List<SbiAttribute> attributes = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
-				List<SbiExtRoles> roles = DAOFactory.getRoleDAO().loadAllRoles();
-				getSessionContainer().setAttribute("attributesList", attributes);
-				getSessionContainer().setAttribute("rolesList", roles);
-				
-			} catch (EMFUserError e) {
-				logger.error(e.getMessage(), e);
-				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception retrieving role types",
-						e);
-			}
+			setAttributesAndRolesInResponse();
 		}
 		logger.debug("OUT");
 
 	}
+
+
+	protected void saveUser(ISbiUserDAO userDao) {
+		Integer id = getAttributeAsInteger(ID);
+		String userId = getAttributeAsString(USER_ID);
+		String fullName = getAttributeAsString(FULL_NAME);
+		String password = getAttributeAsString(PASSWORD);
+		JSONArray rolesJSON = getAttributeAsJSONArray(ROLES);
+		JSONArray attributesJSON = getAttributeAsJSONArray(ATTRIBUTES);
+		
+		if (userId == null) {
+			logger.error("User name missing");
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"User name missing");
+		}
+		
+		SbiUser user = new SbiUser();
+		user.setUserId(userId);
+		user.setFullName(fullName);
+		if (password != null && password.length() > 0) {
+			try {
+				user.setPassword(Password.encriptPassword(password));
+			} catch (Exception e) {
+				logger.error("Impossible to encrypt Password", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Impossible to encrypt Password", e);
+			}
+		}
+
+		if (id != null) {
+			user.setId(id);
+		}
+		
+		HashMap<Integer, String> attrList = null;
+		List rolesList = null;
+		try {
+			if (attributesJSON != null) {
+				attrList = deserializeAttributesJSONArray(attributesJSON);
+			}
+			if (rolesJSON != null) {
+				rolesList = deserializeRolesJSONArray(rolesJSON);
+			}
+		} catch (JSONException e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while deserializing attributes and roles", e);
+		}
+		
+		// check if user id is valid: in case it is not, an exception will be thrown
+		checkUserId(userId, id);
+		
+		try {
+			id = userDao.fullSaveOrUpdateSbiUser(user, rolesList, attrList);
+			logger.debug("User updated or Inserted");
+		} catch (Throwable t) {
+			logger.error("Exception occurred while saving user", t);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while saving user", t);
+		}
+		
+		try {
+			JSONObject attributesResponseSuccessJSON = new JSONObject();
+			attributesResponseSuccessJSON.put("success", true);
+			attributesResponseSuccessJSON.put("responseText",
+					"Operation succeded");
+			attributesResponseSuccessJSON.put("id", id);
+			writeBackToClient(new JSONSuccess(attributesResponseSuccessJSON));
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client", e);
+		}
+	}
+
+
+	protected void deleteUser(ISbiUserDAO userDao) {
+		Integer id = getAttributeAsInteger(ID);
+		try {
+			userDao.deleteSbiUserById(id);
+			logger.debug("User deleted");
+			writeBackToClient(new JSONAcknowledge("Operation succeded"));
+		} catch (Throwable e) {
+			logger.error("Exception occurred while deleting user",
+					e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Exception occurred while deleting user", e);
+		}
+	}
+
+
+	protected void setAttributesAndRolesInResponse() {
+		try {
+			List<SbiAttribute> attributes = DAOFactory.getSbiAttributeDAO()
+					.loadSbiAttributes();
+			List<SbiExtRoles> roles = DAOFactory.getRoleDAO().loadAllRoles();
+			getSessionContainer().setAttribute("attributesList", attributes);
+			getSessionContainer().setAttribute("rolesList", roles);
+		} catch (EMFUserError e) {
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Exception retrieving role types", e);
+		}
+	}
+
+
+	protected void checkUserId(String userId, Integer id) {
+		logger.debug("Validating user id " + userId + " ...");
+		try {
+			DAOFactory.getSbiUserDAO().checkUserId(userId, id);
+		} catch (EMFUserError e) {
+			if (e.getErrorCode().equals("400")) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "User id " + userId + " already in use");
+			} else {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Error checking if user identifier is valid", e);
+			}
+		}
+		logger.debug("User id " + userId + " is valid");
+	}
+
 
 	/**
 	 * Creates a json array with children users informations
