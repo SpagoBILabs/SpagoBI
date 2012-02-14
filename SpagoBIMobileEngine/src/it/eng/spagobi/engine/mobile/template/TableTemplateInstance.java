@@ -127,9 +127,7 @@ public class TableTemplateInstance implements IMobileTemplateInstance{
 			features.put("conditions", conditions);
 		} catch (JSONException e) {
 			logger.error("Unable to set features");
-		}
-
-		 
+		}		 
 	}
 
 	@Override
