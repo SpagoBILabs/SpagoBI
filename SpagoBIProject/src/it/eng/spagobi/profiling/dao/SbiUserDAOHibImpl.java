@@ -14,15 +14,14 @@ package it.eng.spagobi.profiling.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
 import it.eng.spagobi.profiling.bo.UserBO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -38,22 +38,13 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 
-public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserDAO{
+public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserDAO {
+	
 	static private Logger logger = Logger.getLogger(SbiUserDAOHibImpl.class);
-	/**
-	 * Load SbiUser by userId.
-	 * 
-	 * @param userId the user id	/**
-	 * Load SbiUser by id.
-	 * 
-	 * @param id the bi object id
-	 * 
-	 * @return the BI object
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
-	 */
+	
 	public Integer loadByUserId(String userId) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
@@ -62,11 +53,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			String q = "from SbiUser us where us.userId = :userId";
-			Query query = aSession.createQuery(q);
-			query.setString("userId", userId);
-
-			SbiUser user = (SbiUser)query.uniqueResult();			
+			SbiUser user = getSbiUserByUserId(userId, aSession);
 
 			if(user != null)
 				return Integer.valueOf(user.getId());
@@ -141,19 +128,12 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			//checks if user with same userId exists
-			String q = "from SbiUser us where us.userId = :userId";
-			Query query = aSession.createQuery(q);
-			query.setString("userId", user.getUserId());
-
-			SbiUser userExists = (SbiUser)query.uniqueResult();
-			if(userExists == null){
-				Integer id = (Integer)aSession.save(user);				
-				tx.commit();
-				return id;
-			}else{
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 15001);
-			}
+			
+			this.checkUserId(user.getUserId(), user.getId());
+			
+			Integer id = (Integer) aSession.save(user);
+			tx.commit();
+			return id;
 
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
@@ -244,11 +224,9 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			String q = "from SbiUser us where us.userId = :userId";
-			Query query = aSession.createQuery(q);
-			query.setString("userId", userId);
-
-			SbiUser user = (SbiUser)query.uniqueResult();
+			
+			SbiUser user = getSbiUserByUserId(userId, aSession);
+			
 			tx.commit();
 			return user;
 		} catch (HibernateException he) {
@@ -425,37 +403,24 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			boolean save = true;
 
 			SbiUser userToUpdate = user;
 			id = userToUpdate.getId();
 			Set<SbiExtUserRoles> extUserRoles = new HashSet<SbiExtUserRoles>();
 			Set<SbiUserAttributes> userAttrList = new HashSet<SbiUserAttributes>();
 
-			if(id!=0){
-				save = false;
+			this.checkUserId(user.getUserId(), id);
+			
+			if (id != 0) {
 				userToUpdate =(SbiUser)aSession.load(SbiUser.class, id);
-				if(user.getPassword() != null && user.getPassword().length() > 0){
+				if (user.getPassword() != null && user.getPassword().length() > 0){
 					userToUpdate.setPassword(user.getPassword());
 				}
 				userToUpdate.setFullName(user.getFullName());
 				userToUpdate.setUserId(user.getUserId());
 				userToUpdate.setId(id);
 				updateSbiCommonInfo4Update(userToUpdate);
-
-			}
-			else {
-				// if id == 0 means you are in insert case check user name is not already used
-				logger.debug("check userId "+user.getUserId()+" is not already present");
-				SbiUser sbiUser = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(user.getUserId());
-				if(sbiUser != null) { 
-					logger.error("Cannot insert user cause userId is already present "+user.getUserId());
-					throw new EMFUserError(EMFErrorSeverity.ERROR, 400);
-				}
-
-			}
-
-			if(save){
+			} else {
 				updateSbiCommonInfo4Insert(userToUpdate);
 				id = (Integer)aSession.save(userToUpdate);	
 				userToUpdate.setId(id);
@@ -570,6 +535,36 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		return id ;
 
 	}
+	
+	/**
+	 * Check if the user identifier in input is valid (for insertion or modification) for the user with the input integer id.
+	 * In case of user insertion, id should be null.
+	 * 
+	 * @param userId The user identifier to check
+	 * @param id The id of the user to which the user identifier should be validated
+	 * 
+	 * @throws a EMFUserError with severity EMFErrorSeverity.ERROR and code 400 in case the user id is already in use
+	 */
+	public void checkUserId(String userId, Integer id) throws EMFUserError {
+		// if id == 0 means you are in insert case check user name is not already used
+		logger.debug("Check if user identifier " + userId + " is already present ...");
+		Integer existingId = this.isUserIdAlreadyInUse(userId);
+		if (id != null) {
+			// case of user modification
+			if (existingId != null && !id.equals(existingId)) {
+				logger.error("User identifier is already present : [" + userId + "]");
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "400");
+			}
+		} else {
+			// case of user insertion
+			if (existingId != null) {
+				logger.error("User identifier is already present : [" + userId + "]");
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "400");
+			}
+		}
+		logger.debug("User identifier " + userId + " is valid.");
+	}
+	
 	public UserBO loadUserById(Integer id) throws EMFUserError {
 		// TODO Auto-generated method stub
 		return null;
@@ -738,5 +733,49 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		return toReturn;
 	}
 
+	public Integer isUserIdAlreadyInUse(String userId) {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			SbiUser user = getSbiUserByUserId(userId, aSession);
+
+			if (user != null) {
+				return Integer.valueOf(user.getId());
+			}
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIRuntimeException("Error while checking if user identifier is already in use", he);
+		} finally {
+			logger.debug("OUT");
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get the SbiUser object with the input user identifier.
+	 * The search method is CASE INSENSITIVE!!! 
+	 * 
+	 * @param userId The user identifier
+	 * @param aSession The Hibernate session 
+	 * @return the SbiUser object with the input user identifier
+	 */
+	protected SbiUser getSbiUserByUserId(String userId, Session aSession) {
+		LogMF.debug(logger, "IN : user id = [{0}]", userId);
+		// case insensitive search!!!!
+		Criteria criteria = aSession.createCriteria(SbiUser.class);
+		criteria.add(Restrictions.ilike("userId", userId, MatchMode.EXACT));
+		SbiUser user = (SbiUser) criteria.uniqueResult();
+		LogMF.debug(logger, "OUT : returning [{0}]", user);
+		return user;
+	}
 
 }

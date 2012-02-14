@@ -37,12 +37,10 @@ public class InternalSecurityServiceSupplierImpl implements
 	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
 		logger.debug("IN - userId: " + userId);
 		
-		if (userId==null) return null;
-		
-		// get request container
-		RequestContainer reqCont = RequestContainer.getRequestContainer();
-		// get user name
-		String userName = userId;
+		if (userId == null) {
+			return null;
+		}
+
 		// get user from database
 		
 		try {
@@ -62,10 +60,10 @@ public class InternalSecurityServiceSupplierImpl implements
 				logger.error("UserName/pws not found into database");
 				return null;
 			}
-			SpagoBIUserProfile obj=new SpagoBIUserProfile();
-			obj.setUniqueIdentifier(userId);
-			obj.setUserId(userId);
-			obj.setUserName(userId);
+			SpagoBIUserProfile obj = new SpagoBIUserProfile();
+			obj.setUniqueIdentifier(user.getUserId());
+			obj.setUserId(user.getUserId());
+			obj.setUserName(user.getFullName());
 			
 			logger.debug("OUT");
 			return obj;
@@ -102,8 +100,8 @@ public class InternalSecurityServiceSupplierImpl implements
 			}
 	
 			profile = new SpagoBIUserProfile();
-			profile.setUniqueIdentifier(userId);
-			profile.setUserId(userId);
+			profile.setUniqueIdentifier(user.getUserId());
+			profile.setUserId(user.getUserId());
 			profile.setUserName(user.getFullName());
 	
 			// get user name

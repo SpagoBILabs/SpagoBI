@@ -67,8 +67,9 @@ public class BaseAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         	encrPass = Password.encriptPassword(password);
         	AuthenticationUtility utility = new AuthenticationUtility();
         	List pars = new LinkedList();
-        	pars.add(username);
-        	lstResult = utility.executeQuery("SELECT PASSWORD FROM SBI_USER WHERE USER_ID = ?", pars);
+        	// CASE INSENSITVE SEARCH ON USER ID
+        	pars.add(username.toUpperCase());
+        	lstResult = utility.executeQuery("SELECT PASSWORD FROM SBI_USER WHERE UPPER(USER_ID) = ?", pars);
         }catch(Exception e){
         	logger.error("Error while check pwd: " + e);
         	e.printStackTrace();
