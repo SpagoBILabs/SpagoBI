@@ -14,6 +14,11 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 			, baseParams: params
 		});
 		
+		this.services['executeMobileComposedAction'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'EXECUTE_MOBILE_COMPOSED_ACTION'
+			, baseParams: params
+		});
+		
 		this.services['prepareDocumentForExecution'] = Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'PREPARE_DOCUMENT_FOR_EXECUTION_ACTION'
 			, baseParams: params
@@ -53,7 +58,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createTableExecution(resp, params.PARAMETERS);
+		        		this.createWidgetExecution(resp, params.PARAMETERS, 'table');
 		        	}
 		        }
 		    }); 
@@ -66,37 +71,34 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createChartExecution(resp);
+		        		this.createWidgetExecution(resp,params.PARAMETERS, 'chart');
 		        	}
 		        }
 		    }); 
 		}else if((engine == 'ComposedMobileEngine' || engine == 'Composed Mobile Engine') && typeCode =='MOBILE'){
-			//put code here for composed mobile execution action
+			Ext.Ajax.request({
+		        url: this.services['executeMobileComposedAction'],
+		        scope: this,
+		        method: 'post',
+		        params: params,
+		        success: function(response, opts) {
+		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
+		        		var resp = Ext.decode(response.responseText);
+		        		this.createWidgetExecution(resp, params.PARAMETERS, 'composed');
+		        	}
+		        }
+		    }); 
 		}
 	}
-	
-	, createTableExecution: function(resp, parameters){
-		
-		//these are settings for table object
+	, createWidgetExecution: function(resp, parameters, type){
+
 		app.views.execView = new app.views.ExecutionView({parameters: parameters});
-	    //adds execution view directly to viewport
+
 	    var viewport = app.views.viewport;
 	    viewport.add(app.views.execView);
-	    app.views.execView.setWidget(resp, 'table');
+	    app.views.execView.setWidget(resp, type);
 
 	    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
 	}
-	
-	, createChartExecution: function(resp){
-		
-		//these are settings for table object
-		app.views.execView = new app.views.ExecutionView(resp);
-	    //adds execution view directly to viewport
-	    var viewport = app.views.viewport;
-	    viewport.add(app.views.execView);
-	    app.views.execView.setWidget(resp, 'chart');
-	    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
-	}
-
 
 });

@@ -62,7 +62,7 @@
 	 </ACTION>
 	 
 	 <ACTION name="EXECUTE_MOBILE_TABLE_ACTION" 
-	 	class="it.eng.spagobi.engine.mobile.chart.service.ExecuteMobileChartAction" scope="REQUEST">
+	 	class="it.eng.spagobi.engine.mobile.table.service.ExecuteMobileTableAction" scope="REQUEST">
 	 	<CONFIG/>
 	 </ACTION>
 	 

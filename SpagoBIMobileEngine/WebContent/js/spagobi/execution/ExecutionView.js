@@ -40,7 +40,9 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 			if(type == 'chart'){
 				app.views.chartExecutionPanel.setChartWidget(resp);
 			}
-
+			if(type == 'composed'){
+				app.views.composedExecutionPanel.setComposedWidget(resp);
+			}
 		}
 
 });

@@ -70,7 +70,7 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 			logger.warn("Cannot find columns configuration settings: tag name " + MobileConstants.DOCUMENTS_TAG+"."+MobileConstants.DOCUMENT_TAG);
 		}else{
 			//get total dimensions
-			SourceBean docsTag = (SourceBean)template.getAttributeAsList(MobileConstants.DOCUMENTS_TAG);
+			SourceBean docsTag = (SourceBean)template.getAttribute(MobileConstants.DOCUMENTS_TAG);
 			String totWidth = (String)docsTag.getAttribute(MobileConstants.DOCUMENTS_WIDTH_ATTR);
 			String totHeight = (String)docsTag.getAttribute(MobileConstants.DOCUMENTS_HEIGHT_ATTR);
 			documents.put("totWidth", totWidth);

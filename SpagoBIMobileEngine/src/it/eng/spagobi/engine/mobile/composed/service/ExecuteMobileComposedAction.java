@@ -42,6 +42,7 @@ public class ExecuteMobileComposedAction extends AbstractSpagoBIAction{
 			
 			
 			ComposedTemplateInstance templInst = new ComposedTemplateInstance(template);
+			templInst.loadTemplateFeatures();
 			logger.debug("Created template instance");
 			JSONObject features = templInst.getFeatures();
 			//this engine doesn't need dataset, cause it just encapsulates other mobile docs

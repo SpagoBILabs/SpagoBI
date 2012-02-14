@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<COMPOSED_WIDGET>
+	<TITLE value="Composed document over Foodmart" style="font-weight:bold; font-family: Verdana; font-size: 16px;"/>
+	<DOCUMENTS width="650" height="600">
+		<DOCUMENT label="mobileneg1" width="300" height="200"/>
+		<DOCUMENT label="testmobile" width="300" height="200"/>
+	</DOCUMENTS>
+</COMPOSED_WIDGET>
