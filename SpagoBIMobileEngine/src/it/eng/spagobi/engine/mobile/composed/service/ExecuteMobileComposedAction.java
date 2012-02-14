@@ -5,15 +5,15 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.engine.mobile.table.serializer.MobileDatasetTableSerializer;
-import it.eng.spagobi.engine.mobile.template.IMobileTemplateInstance;
-import it.eng.spagobi.engine.mobile.template.TableTemplateInstance;
+import it.eng.spagobi.engine.mobile.template.ComposedTemplateInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ExecuteMobileComposedAction extends AbstractSpagoBIAction{
@@ -39,34 +39,22 @@ public class ExecuteMobileComposedAction extends AbstractSpagoBIAction{
 			String templContString = new String(templateContent);
 			SourceBean template = SourceBean.fromXMLString( templContString );
 			logger.debug("Created template source bean");
-			TableTemplateInstance templInst = new TableTemplateInstance(template);
+			
+			
+			ComposedTemplateInstance templInst = new ComposedTemplateInstance(template);
 			logger.debug("Created template instance");
-
+			JSONObject features = templInst.getFeatures();
 			//this engine doesn't need dataset, cause it just encapsulates other mobile docs
 
-			JSONArray fieldsJSON= null;
-
-			JSONArray conditionsJSON = null;
 			try {
-				MobileDatasetTableSerializer writer = new MobileDatasetTableSerializer();
-/*				JSONObject features = templInst.getFeatures();
-				//JSONArray conditions = (JSONArray)features.get("conditions");
-				dataSetJSON = (JSONObject)writer.write(features);*/
-				logger.debug("Serialized response");
-				
-			} catch (Throwable e) {
-				throw new SpagoBIServiceException("Impossible to serialize composed informations", e);
+				logger.debug("OUT");
+				writeBackToClient( new JSONSuccess( features) );
+			} catch (IOException e) {
+				throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
 			}
 			
-			//try {
-				logger.debug("OUT");
-				//writeBackToClient( new JSONSuccess( dataSetJSON) );
-/*			} catch (IOException e) {
-				throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
-			}*/
-			
 		}catch (Exception e) {
-			logger.error("Unable to execute table document",e);
+			logger.error("Unable to execute composed document",e);
 		}
 	}
 
