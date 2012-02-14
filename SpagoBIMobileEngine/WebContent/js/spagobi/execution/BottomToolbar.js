@@ -20,13 +20,19 @@ app.views.BottomToolbar = Ext.extend(Ext.Toolbar,
 				    title: 'Parametri',    		    
 				    iconCls: 'compose',
 				    text: 'Parametri',
-		            handler: function () {
-		        		Ext.dispatch({
-		                    controller: app.controllers.mobileController,
-		                    action: 'backToBrowser'
-		        		});
-		
-		            }});
+				    scope: this,
+					listeners:{
+						scope: this,
+						tap: function(){
+
+							Ext.dispatch({
+			                    controller: app.controllers.mobileController,
+			                    action: 'setParametersView',
+			                    params : this.parameters
+			        		});
+						}
+					}
+				});
 			this.docHome = {
 				    title: 'Home',    		    
 				    iconCls: 'reply',			    
@@ -45,20 +51,16 @@ app.views.BottomToolbar = Ext.extend(Ext.Toolbar,
 
 		        };
 			this.items =[this.docHome, this.docParams, this.docInfo];
-			this.configureItems(this.parameters);
-			app.views.BottomToolbar.superclass.initComponent.apply(this, arguments);
 			
+			app.views.BottomToolbar.superclass.initComponent.apply(this, arguments);
+			this.configureItems(this.parameters);
 
 		}
 		, configureItems: function(par){
 
 			if(par == undefined || par == null){
 				this.docParams.hide();
-			}else{
-				app.views.parameters.refresh(par);
-				app.views.viewport.setActiveItem(app.views.parameters);
 			}
 
 		}
-
 });
