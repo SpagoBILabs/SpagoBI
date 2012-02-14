@@ -11,6 +11,7 @@
  */
 package it.eng.spagobi.engine.mobile.chart.service;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.DataSetExecutorForBIObject;
@@ -18,10 +19,14 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.engine.mobile.MobileConstants;
+import it.eng.spagobi.engine.mobile.template.ChartTemplateInstance;
+import it.eng.spagobi.engine.mobile.template.IMobileTemplateInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.json.JSONTemplateUtils;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
@@ -44,31 +49,45 @@ public class ExecuteMobileChartAction extends AbstractSpagoBIAction {
 	public void doService() {
 		logger.debug("IN");
 		IDataStore dataStore;
-		JSONObject dataSetJSON;
 		IDataSet dataSet;
 		JSONObject toReturn = new JSONObject();
+		JSONArray parametersJSON= new JSONArray();
+		JSONObject parameterJSON;
 		
 		try{
 			//Load the BIObject
 			BIObject documentBIObject = (BIObject)getAttributeFromSession(ObjectsTreeConstants.OBJECT_ID);
+			JSONObject parameters = this.getAttributeAsJSONObject( MobileConstants.PARAMETERS );
+			
+			if(parameters!=null){
+				String[] fields =  JSONObject.getNames(parameters);
+				for (String field : fields) {
+					parameterJSON = new JSONObject();
+					parameterJSON.put("name",field);
+					parameterJSON.put("value",parameters.getString(field));
+				}
+			}
+
+			
 			logger.debug("Got BIObject from session");
 			//Load the template of the document
 			ObjTemplate objTemp = documentBIObject.getActiveTemplate();	
 			logger.debug("Got ObjTemplate ");
-//			
-//			byte [] templateContent = objTemp.getContent();
-//			String templContString = new String(templateContent);
-//			SourceBean template = SourceBean.fromXMLString( templContString );
-//			logger.debug("Created template source bean");
-//			IMobileTemplateInstance templInst = MobileTemplateFactory.createMobileTemplateInstance(template);
-//			logger.debug("Created template instance");
-//			//Load the dataset
+
+			logger.debug("Elaboranting the template... ");
+			byte [] templateContent = objTemp.getContent();
+			String templContString = new String(templateContent);
+			SourceBean template = SourceBean.fromXMLString( templContString );
+			IMobileTemplateInstance templateInstance = new ChartTemplateInstance(template, parametersJSON);
+			templateInstance.loadTemplateFeatures();
+			JSONObject chartConfigFromTemplate = templateInstance.getFeatures();
+			logger.debug("Finished to get the chart config from the template. ");
 			
+			logger.debug("Getting the document dataset...");
 			Integer id = documentBIObject.getDataSetId();
 			dataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(id);
 			logger.debug("Got document dataset");
 			//LOAD DATA
-
 			DataSetExecutorForBIObject dataSetExecutorForBIObject = new DataSetExecutorForBIObject(dataSet, documentBIObject, this.getUserProfile());
 			dataSetExecutorForBIObject.executeDataSet();
 			logger.debug("Execute the data set");
@@ -78,27 +97,35 @@ public class ExecuteMobileChartAction extends AbstractSpagoBIAction {
 			JSONDataWriter dataSetWriter = new JSONDataWriter();
 			JSONObject dataStroreJSON =  (JSONObject) dataSetWriter.write(dataStore);
 			JSONObject dataStroreJSONMetdaData = dataStroreJSON.getJSONObject(JSONDataWriter.METADATA);
+
 			JSONObject extDataStore = new JSONObject();
 			String dataPosition = dataStroreJSONMetdaData.getString("root");
 			JSONArray data = dataStroreJSON.getJSONArray(dataPosition);
 			extDataStore.put("fields", dataStroreJSONMetdaData.getJSONArray("fields"));
 			extDataStore.put("data", data);
-			toReturn.put("store", extDataStore);
+			extDataStore.put("xtype", "jsonstore");
 			logger.debug("Data store builded");
+
+			chartConfigFromTemplate.put("store", extDataStore);
+			toReturn.put("config", chartConfigFromTemplate);
+			toReturn.put("store", extDataStore);
+			
 			
 			writeBackToClient( new JSONSuccess( toReturn ) );
 			
 		} catch (EMFUserError emf) {
 			logger.error("Error loading the data set from the biobject", emf);
 			throw new SpagoBIServiceException("Error loading the data set from the biobject", emf);
-			
 		} catch (JSONException je) {
 			logger.error("Error managing the json object", je);
 			throw new SpagoBIServiceException("Error managing the json object", je);
 		} catch (IOException ioe) {
 			logger.error("Impossible to write back the responce to the client", ioe);
 			throw new SpagoBIServiceException("Impossible to write back the responce to the client", ioe);
-		} finally {
+		} catch (Exception e) {
+			logger.error("Generic error execiting the Chart Action", e);
+			throw new SpagoBIServiceException("Generic error execiting the Chart Action", e);
+		}finally {
 			logger.debug("OUT");
 		}
 		
