@@ -60,7 +60,8 @@ public class ExecuteMobileTableAction extends AbstractSpagoBIAction {
 			String templContString = new String(templateContent);
 			SourceBean template = SourceBean.fromXMLString( templContString );
 			logger.debug("Created template source bean");
-			IMobileTemplateInstance templInst = new TableTemplateInstance(template);
+			TableTemplateInstance templInst = new TableTemplateInstance(template);
+			templInst.loadTemplateFeatures();
 			logger.debug("Created template instance");
 			//Load the dataset
 			Integer id = documentBIObject.getDataSetId();
@@ -72,8 +73,7 @@ public class ExecuteMobileTableAction extends AbstractSpagoBIAction {
 			dataStore = dataSetExecutorForBIObject.executeDataSet();
 			logger.debug("Execute the data set");
 			
-/*			dataSet.loadData();
-			dataStore = dataSet.getDataStore();*/
+
 			logger.debug("Loaded datastore from dataset");
 			dataSetJSON = null;
 			JSONArray fieldsJSON= null;
