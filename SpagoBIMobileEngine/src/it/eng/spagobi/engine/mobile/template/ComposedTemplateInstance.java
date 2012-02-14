@@ -1,10 +1,13 @@
 package it.eng.spagobi.engine.mobile.template;
 
-import java.util.List;
-import java.util.Vector;
-
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engine.mobile.MobileConstants;
+import it.eng.spagobi.engines.config.bo.Engine;
+
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -89,7 +92,13 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 	
 				String height = (String)doc.getAttribute(MobileConstants.DOCUMENT_HEIGHT_ATTR);
 				docJSON.put("height", height);
-
+				//calls dao to get document type and id
+				BIObject biDoc = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
+				Engine engine =biDoc.getEngine();
+				String engineName = engine.getName();
+				docJSON.put("engine", engineName);
+				Integer id = biDoc.getId();
+				docJSON.put(ObjectsTreeConstants.OBJECT_ID, id);
 				docsArray.put(docJSON);
 			}
 			documents.put("docs", docsArray);
