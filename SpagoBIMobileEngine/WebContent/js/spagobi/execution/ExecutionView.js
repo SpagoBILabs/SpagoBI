@@ -17,8 +17,7 @@ app.views.ExecutionView = Ext.extend(Ext.TabPanel,
 			console.log('init Execution view');
 	        this.bottomTools = new app.views.BottomToolbar({parameters: this.parameters});
 	        this.dockedItems= [this.bottomTools];
-			//var toolbar = new app.views.BottomToolbar(this.parameters);
-			//this.dockedItems = [bottomTools];
+
 			
 			app.views.tableExecutionPanel = new app.views.TableExecutionPanel();
 			app.views.chartExecutionPanel = new app.views.ChartExecutionPanel();
