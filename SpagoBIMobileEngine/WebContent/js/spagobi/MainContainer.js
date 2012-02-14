@@ -1,8 +1,6 @@
 app.views.MainContainer = Ext.extend(Ext.Panel,
 
 		{
-		browser: null,
-		preview: null,
 
 	    fullscreen: true,
 	    autoRender: true,
@@ -17,26 +15,26 @@ app.views.MainContainer = Ext.extend(Ext.Panel,
 		    };
 			console.log('init main container');
 			
+			app.views.MainContainer.superclass.initComponent.apply(this, arguments);
 
-		    //put instances of login into app.views namespace
+			
+		}
+		, setItems: function(){
+			
+			this.fullscreen= true;
+
 		    Ext.apply(app.views, {
 		    	browser: 	  new app.views.DocumentBrowser(),
 		    	preview:      new app.views.DocumentPreview()
 
 		    });
-		    //put instances of loginForm into viewport
-		    Ext.apply(this, {
-		        items: [
-		            app.views.browser,
-		            app.views.preview
-		        ]
-		    });
-			
-			app.views.MainContainer.superclass.initComponent.apply(this, arguments);
-			
-			
-		}
+		    this.add(app.views.browser);
+		    this.add(app.views.preview);
+		    /*PAY ATTENTION TO INVOKE DO LAYOUT METHOD OF MAIN CONTAINER...otherwise no child item is displayed!!!!*/
+		    this.doLayout();  
 
+
+		}
 		
 
 	});

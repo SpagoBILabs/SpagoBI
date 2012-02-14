@@ -27,20 +27,10 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 
 	, login: function(options){
 		console.log('MobileController: Received event of login successfull');
-		var viewport = app.views.viewport;
-		viewport.setActiveItem(app.views.main, { type: 'slide', direction: 'left' });
-		
-/*		var active = app.views.browser.getActiveItem();
 
-		active.store.filter([
-		              {filterFn: function(item) { 
-		            	  var ite = item.get("id");
-		            	  return ite == 0; }}
-		          ]);*/
+		app.views.main.setItems();
 
-/*		app.views.browser.store.load({params:{node: 0}});
-		app.views.browser.store.sync();
-		app.views.browser.update();*/
+		app.views.viewport.setActiveItem(app.views.main, { type: 'slide', direction: 'left' });
 	}
 	
 	, showDetail: function(record) {
@@ -151,6 +141,6 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 			app.views.table.destroy();
 		}
 	    app.views.viewport.setActiveItem(app.views.parameters, { type: 'fade' });	    
-	    app.views.parameters.refresh(option.params);
+	    app.views.parameters.refresh([option.params]);
   	}
 });
