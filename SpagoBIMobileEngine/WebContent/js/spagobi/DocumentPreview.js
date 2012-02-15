@@ -3,7 +3,7 @@ app.views.DocumentPreview = Ext.extend(Ext.Panel,
 		{
 	    dockedItems: [],
 	    flex:2,
-
+	    cls: 'spagobi-bg',
 	    previewItem: null,
 	    listeners: {
 	
