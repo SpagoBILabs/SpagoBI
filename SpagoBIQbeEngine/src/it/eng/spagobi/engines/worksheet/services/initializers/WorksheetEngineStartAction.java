@@ -14,6 +14,7 @@ package it.eng.spagobi.engines.worksheet.services.initializers;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.worksheet.WorksheetEngine;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineAnalysisState;
@@ -194,6 +195,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		// update parameters into the dataset
 		logger.debug("Setting parameters into dataset...");
 		logger.debug( worksheetEngineInstance.getEnv() );
+		// putting all env patameters into dataset's parameters, also the SpagoBIConstants.TEMPORARY_TABLE_NAME
 		dataset.setParamsMap( worksheetEngineInstance.getEnv() );
 		
 		// update profile attributes into dataset

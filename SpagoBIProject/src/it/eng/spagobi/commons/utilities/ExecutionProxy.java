@@ -438,7 +438,6 @@ public class ExecutionProxy {
 			mapPars.put("ACTION_NAME", "EXECUTION_PROXY_GEO_ACTION");
 			mapPars.remove("outputType");
 			mapPars.put("outputType", "JPEG");
-
 		}
 		else if(driver instanceof WorksheetDriver && modality.equals(SpagoBIConstants.MASSIVE_EXPORT_MODALITY)){
 			mapPars.remove("ACTION_NAME");
@@ -448,9 +447,16 @@ public class ExecutionProxy {
 			mapPars.remove("SPLITTING_FILTER");
 			mapPars.put("SPLITTING_FILTER", splittingFilter);
 			mapPars.put(SpagoBIConstants.EXECUTION_MODALITY, SpagoBIConstants.MASSIVE_EXPORT_MODALITY);
-			
-
+			mapPars.put(SpagoBIConstants.TEMPORARY_TABLE_ROOT_NAME, this.getTemporaryTableName());
+			mapPars.put(SpagoBIConstants.DROP_TEMPORARY_TABLE_ON_EXIT, "TRUE");
 		}
+	}
+
+	private String getTemporaryTableName() {
+		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		String executionId = uuidObj.toString();
+		return executionId.replaceAll("-", "");
 	}
 
 	public boolean isSplittingFilter() {

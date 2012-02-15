@@ -11,6 +11,8 @@
  */
 package it.eng.spagobi.engines.worksheet;
 
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.qbe.QbeEngineException;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
@@ -19,7 +21,9 @@ import it.eng.spagobi.engines.worksheet.template.WorksheetTemplateParser;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.util.Map;
 
@@ -34,6 +38,8 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 	IDataSource dataSource;
 	IDataSet dataSet;
 	WorksheetTemplate template;
+	/** The temporary table name to be considered for this analysis */
+	private String temporaryTableName;
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(QbeEngineInstance.class);
@@ -47,6 +53,7 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 		super( env );
 		logger.debug("IN");
 		this.template = template;
+		this.setTemporaryTableName();
 		logger.debug("OUT");
 	}
 
@@ -102,6 +109,28 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 	
 	public void setQbeEngineInstance(QbeEngineInstance qbeEngineInstance){
 		template.setQbeEngineInstance(qbeEngineInstance);
+	}
+	
+	private void setTemporaryTableName() {
+		logger.debug("IN");
+		String temporaryTableNameRoot = (String) this.getEnv().get(SpagoBIConstants.TEMPORARY_TABLE_ROOT_NAME);
+		logger.debug("Temporary table name root specified on the environment : [" + temporaryTableNameRoot + "]");
+		// if temporaryTableNameRadix is not specified on the environment, create a new name using the user profile
+		if (temporaryTableNameRoot == null) {
+			logger.debug("Temporary table name root not specified on the environment, creating a new one using user identifier ...");
+			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			temporaryTableNameRoot = userProfile.getUserId().toString();
+		}
+		logger.debug("Temporary table root name : [" + temporaryTableNameRoot + "]");
+		String temporaryTableNameComplete = TemporaryTableManager.getTableName(temporaryTableNameRoot);
+		logger.debug("Temporary table name : [" + temporaryTableNameComplete + "]. Putting it into the environment");
+		this.getEnv().put(SpagoBIConstants.TEMPORARY_TABLE_NAME, temporaryTableNameComplete);
+		logger.debug("OUT : temporaryTableName = [" + temporaryTableNameComplete + "]");
+		this.temporaryTableName = temporaryTableNameComplete;
+	}
+	
+	public String getTemporaryTableName() {
+		return temporaryTableName;
 	}
 
 }

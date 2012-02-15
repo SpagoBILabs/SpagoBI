@@ -11,10 +11,10 @@
  */
 package it.eng.spagobi.engines.worksheet.exporter;
 
-import java.util.Locale;
-
 import it.eng.spagobi.engines.qbe.exporter.QbeXLSXExporter;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -42,6 +42,11 @@ public class WorkSheetXLSXExporter extends WorkSheetXLSExporter {
 	public static transient Logger logger = Logger
 			.getLogger(WorkSheetXLSXExporter.class);
 
+	@Override
+	public Workbook createNewWorkbook() {
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		return workbook;
+	}
 	
 	public void designTableInWorksheet(Sheet sheet,Workbook wb, CreationHelper createHelper, 
 			  IDataStore dataStore, int startRow, Locale locale) throws JSONException {
@@ -88,6 +93,7 @@ public class WorkSheetXLSXExporter extends WorkSheetXLSExporter {
 		return impgType;
 	}
 	
+	@Override
 	protected ClientAnchor getClientAnchor(int col, int colend, int sheetRow,
 			int height, int dx1, int dy1, int dx2, int dy2) {
 		XSSFClientAnchor anchor = new XSSFClientAnchor(dx1, dy1, dx2, dy2,

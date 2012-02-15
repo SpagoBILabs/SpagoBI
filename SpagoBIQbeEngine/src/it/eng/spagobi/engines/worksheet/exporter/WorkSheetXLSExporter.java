@@ -122,6 +122,11 @@ public class WorkSheetXLSExporter {
 		return optionalUserFiltersJSON;
 	}
 	
+	public Workbook createNewWorkbook() {
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		return workbook;
+	}
+	
 	public List<String> getJsonVisibleSelectFields(JSONObject paramsJSON) throws JSONException{
 		JSONArray jsonVisibleSelectFields = null;
 		if(paramsJSON.has(QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS)){
@@ -482,5 +487,5 @@ public class WorkSheetXLSExporter {
 				(short) col, sheetRow, (short) colend, sheetRow + height);
 		return anchor;
 	}
-	
+
 }

@@ -195,8 +195,12 @@ public static String DS_TYPE = "SbiQueryDataSet";
 	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
 		IDataStore toReturn = null;
 		try{
-			String userId = getUserId();
-			String tableName = TemporaryTableManager.getTableName(userId);
+			String tableName = this.getTemporaryTableName();
+			logger.debug("Temporary table name : [" + tableName + "]");
+			if (tableName == null) {
+				logger.error("Temporary table name not set, cannot proceed!!");
+				throw new SpagoBIEngineRuntimeException("Temporary table name not set");
+			}
 			IDataSetTableDescriptor tableDescriptor = null;
 			if (((String)query).equals(TemporaryTableManager.getLastDataSetSignature(tableName))) {
 				// signature matches: no need to create a TemporaryTable
