@@ -33,7 +33,6 @@ app.views.MainContainer = Ext.extend(Ext.Panel,
 		    /*PAY ATTENTION TO INVOKE DO LAYOUT METHOD OF MAIN CONTAINER...otherwise no child item is displayed!!!!*/
 		    this.doLayout();  
 
-
 		}
 		
 

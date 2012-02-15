@@ -17,6 +17,7 @@ app.views.DocumentPreview = Ext.extend(Ext.Panel,
 			
 		}
 		, showPreview: function (tpl){
+			
 			this.removeAll();
 			this.update('');
 		    this.previewItem = new Ext.DataView({
@@ -29,11 +30,7 @@ app.views.DocumentPreview = Ext.extend(Ext.Panel,
 			    , ready: false				    
 			    , tpl : tpl	
 			    , store: null
-			    , listeners:{
-		    		itemtap: function( dataView , index, item, e ){
-		    			alert('aaaaaaaaaaaaaaaaaHHH');
-		    		}
-		    	}
+			    
 		    });
 		    this.add(this.previewItem);
 		    this.update(tpl);
