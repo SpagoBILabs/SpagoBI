@@ -49,4 +49,6 @@ public class MobileConstants {
 	public static String DOCUMENT_HEIGHT_ATTR = "height";
 	public static String DOCUMENTS_WIDTH_ATTR = "width";
 	public static String DOCUMENTS_HEIGHT_ATTR = "height";
+	public static String IS_FROM_COMPOSED = "IS_FROM_COMPOSED";
+	
 }

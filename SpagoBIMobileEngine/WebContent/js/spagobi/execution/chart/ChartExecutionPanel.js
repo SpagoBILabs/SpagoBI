@@ -3,7 +3,7 @@ app.views.ChartExecutionPanel = Ext.extend(Ext.Panel,
 		{
 	    scroll: 'vertical',
 	    fullscreen: true
-		, initComponent: function (options)	{
+		, initComponent: function ()	{
 
 			console.log('init chart execution');
 		    
