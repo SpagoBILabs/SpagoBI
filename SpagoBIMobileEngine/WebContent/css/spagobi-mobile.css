@@ -89,6 +89,8 @@
 	width:40%; 
 	float: left; 
 	text-align:center;
+	margin-top: 50px;
+	margin-left: 30px;
 }
 .document-item-icon {
 	margin: 5px 0 0 5px;
