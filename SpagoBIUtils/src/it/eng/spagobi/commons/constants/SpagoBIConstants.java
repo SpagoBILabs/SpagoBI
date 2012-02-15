@@ -390,5 +390,8 @@ public class SpagoBIConstants {
 
 	public static final String JNDI_THREAD_MANAGER  = "JNDI_THREAD_MANAGER";
 
+	public static final String TEMPORARY_TABLE_NAME  = "SBI_TEMPORARY_TABLE_NAME";
+	public static final String TEMPORARY_TABLE_ROOT_NAME  = "SBI_TEMPORARY_TABLE_ROOT_NAME";
+	public static final String DROP_TEMPORARY_TABLE_ON_EXIT  = "SBI_DROP_TEMPORARY_TABLE_ON_EXIT";
 	
 }

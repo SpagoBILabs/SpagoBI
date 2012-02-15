@@ -18,6 +18,7 @@ import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
@@ -192,17 +193,12 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
     	engineInstance.setDataSource(dataSource);
 	}
 	
-	public String getTemporaryTableName() {
-		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
-		return TemporaryTableManager.getTableName(userProfile.getUserId().toString());
-	}
-	
 	public IDataSetTableDescriptor persistDataSet() {
 		
 		WorksheetEngineInstance engineInstance = getEngineInstance();
 		
 		// get temporary table name
-		String tableName = this.getTemporaryTableName();
+		String tableName = engineInstance.getTemporaryTableName();
 		logger.debug("Temporary table name is [" + tableName + "]");
 		
 		// set all filters into dataset, because dataset's getSignature() and persist() methods may depend on them

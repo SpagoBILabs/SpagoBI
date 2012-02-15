@@ -449,10 +449,10 @@ public class TemporaryTableManager {
 		tables.put(tableName, signature);
 	}
 	
-	public static String getTableName(String userId) {
+	public static String getTableName(String root) {
 		logger.debug("IN");
 		
-		Assert.assertNotNull(userId, "User identifier is null!!");
+		Assert.assertNotNull(root, "Root is null!!");
 		
 		String tableNamePrefix = getTableNamePrefix();
 		String schema = null;
@@ -464,25 +464,25 @@ public class TemporaryTableManager {
 			logger.debug("Actual table prefix : [" + schema + "]");
 		}
 		String tableNameSuffix = getTableNameSuffix();
-		String cleanUserId = StringUtils.convertNonAscii(userId);
+		String cleanRoot = StringUtils.convertNonAscii(root);
 		// removing non letters
 	    StringBuilder sb = new StringBuilder();
-	    int n = cleanUserId.length();
+	    int n = cleanRoot.length();
 	    for (int i = 0; i < n; i++) {
-	        char c = cleanUserId.charAt(i);
+	        char c = cleanRoot.charAt(i);
 	        if (Character.isLetter(c)) {
 	        	sb.append(c);
 	        }
 	    }
-	    cleanUserId = sb.toString();
+	    cleanRoot = sb.toString();
 		
 		/*
 		// removing non-ASCII characters
 		String cleanUserId = userId.replaceAll("[^\\p{ASCII}]","");
 		*/
 		
-		logger.debug("Cleaned user id : " + cleanUserId);
-		String tableName = tableNamePrefix + cleanUserId + tableNameSuffix;
+		logger.debug("Cleaned root : " + cleanRoot);
+		String tableName = tableNamePrefix + cleanRoot + tableNameSuffix;
 		// in most cases, table name length is lower than 30 characters
 		if (tableName.length() > 30) {
 			tableName = tableName.substring(0, 30);

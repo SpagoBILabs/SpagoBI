@@ -16,6 +16,7 @@ import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
@@ -28,6 +29,7 @@ import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.exceptions.WrongConfigurationForFiltersOnDomainValuesException;
 import it.eng.spagobi.engines.worksheet.exporter.WorkSheetPDFExporter;
 import it.eng.spagobi.engines.worksheet.exporter.WorkSheetXLSExporter;
+import it.eng.spagobi.engines.worksheet.exporter.WorkSheetXLSXExporter;
 import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetSerializationUtils;
 import it.eng.spagobi.engines.worksheet.serializer.json.decorator.FiltersInfoJSONDecorator;
 import it.eng.spagobi.engines.worksheet.services.runtime.ExecuteWorksheetQueryAction;
@@ -49,6 +51,7 @@ import it.eng.spagobi.utilities.engines.EngineMessageBundle;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -65,7 +68,6 @@ import java.util.Properties;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -75,7 +77,6 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -198,8 +199,8 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				exportFile = File.createTempFile("worksheet", ".xls");
 				FileOutputStream stream = new FileOutputStream(exportFile);
 				try {
-					HSSFWorkbook wb = new HSSFWorkbook();
-					exportToXLS(wb, worksheetJSON, metadataPropertiesJSON, parametersJSON, stream);
+					WorkSheetXLSExporter exporter = new WorkSheetXLSExporter();
+					exportToXLS(exporter, worksheetJSON, metadataPropertiesJSON, parametersJSON, stream);
 				} finally {
 					if (stream != null) {
 						stream.close();
@@ -211,8 +212,8 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				exportFile = File.createTempFile("worksheet", ".xlsx");
 				FileOutputStream stream = new FileOutputStream(exportFile);
 				try {
-					XSSFWorkbook wb = new XSSFWorkbook();
-					exportToXLS(wb, worksheetJSON, metadataPropertiesJSON, parametersJSON, stream);
+					WorkSheetXLSXExporter exporter = new WorkSheetXLSXExporter();
+					exportToXLS(exporter, worksheetJSON, metadataPropertiesJSON, parametersJSON, stream);
 				} finally {
 					if (stream != null) {
 						stream.close();
@@ -244,8 +245,26 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		} catch (Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
+			this.dropTemporaryTableIfRequested();
 			logger.debug("OUT");
 		}	
+	}
+	
+	protected void dropTemporaryTableIfRequested() {
+		logger.debug("IN");
+		boolean dropTemporaryTable = this.getAttributeAsBoolean(SpagoBIConstants.DROP_TEMPORARY_TABLE_ON_EXIT, false);
+		if (dropTemporaryTable) {
+			WorksheetEngineInstance engineInstance = this.getEngineInstance();
+			String temporaryTableName = engineInstance.getTemporaryTableName();
+			logger.debug("Dropping temporary table [" + temporaryTableName + "] ... ");
+			try {
+				TemporaryTableManager.dropTableIfExists(temporaryTableName, engineInstance.getDataSource());
+				logger.debug("Temporary table [" + temporaryTableName + "] dropped");
+			} catch (Exception e) {
+				logger.error("Cannot drop temporary table [" + temporaryTableName + "]", e);
+			}
+		}
+		logger.debug("OUT");
 	}
 
 	public void exportToPDF(JSONObject worksheetJSON, OutputStream outputStream) throws Exception {
@@ -271,10 +290,12 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		outputStream.flush();
 	}
 
-	public void exportToXLS(Workbook wb, JSONObject worksheetJSON, JSONArray metadataPropertiesJSON, JSONArray parametersJSON, OutputStream stream) throws Exception {
+	public void exportToXLS(WorkSheetXLSExporter exporter, JSONObject worksheetJSON, JSONArray metadataPropertiesJSON, JSONArray parametersJSON, OutputStream stream) throws Exception {
 		
 		int sheetsNumber = worksheetJSON.getInt(SHEETS_NUM);
-		WorkSheetXLSExporter exporter = new WorkSheetXLSExporter();
+		
+		Workbook wb = exporter.createNewWorkbook();
+		
 		CreationHelper createHelper = wb.getCreationHelper();
 
 		if (metadataPropertiesJSON != null) {
@@ -537,7 +558,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		}
     	Map<String, List<String>> filters = getSheetFiltersInfo(sheetJ.getString(SHEET), optionalFilters);
 		if (filters != null && !filters.isEmpty()) {
-			sheetRow = fillFiltersInfo(filters, wb, sheet, splittingWhereField, createHelper, sheetRow, 0);
+			sheetRow = fillFiltersInfo(filters, wb, sheet, exporter, splittingWhereField, createHelper, sheetRow, 0);
 			sheet.createRow(sheetRow);
 			sheetRow++;
 		}
@@ -569,14 +590,12 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	}
 
 	private int fillFiltersInfo(Map<String, List<String>> filters, Workbook wb, org.apache.poi.ss.usermodel.Sheet sheet,
-			WhereField splittingWhereField, CreationHelper createHelper,
+			WorkSheetXLSExporter exporter, WhereField splittingWhereField, CreationHelper createHelper,
 			int beginRowHeaderData, int beginColumnHeaderData) {
 
 		int sheetRow = beginRowHeaderData;
 		
 		if (filters != null && !filters.isEmpty()) {
-			
-			WorkSheetXLSExporter exporter = new WorkSheetXLSExporter();
 			
 			CellStyle titleCellStyle = exporter.buildFiltersTitleCellStyle(sheet);
 			CellStyle contentCellStyle = exporter.buildFiltersValuesCellStyle(sheet);

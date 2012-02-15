@@ -17,6 +17,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -327,6 +328,13 @@ public abstract class AbstractDataSet implements IDataSet {
 		this.properties = map;		
 	}
 
+	public String getTemporaryTableName() {
+		if (this.paramsMap == null) {
+			return null;
+		}
+		String toReturn = (String) this.paramsMap.get(SpagoBIConstants.TEMPORARY_TABLE_NAME);
+		return toReturn;
+	}
 
 	
 }
