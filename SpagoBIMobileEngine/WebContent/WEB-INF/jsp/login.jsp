@@ -51,9 +51,11 @@ author: Monica Franceschini
 		<link rel="stylesheet" href="../css/spagobi-mobile.css" type="text/css">
 		<link rel="stylesheet" href="../css/Ext.ux.TouchGridPanel.css" type="text/css">
 		<link rel="stylesheet" href="../css/touch-charts-demo.css" type="text/css">
+		<link rel="stylesheet" href="../css/add2home.css" type="text/css">
 
 		<script type="text/javascript" src="../js/sencha/sencha-touch-debug.js"></script>
 		<script type="text/javascript" src="../js/sencha/touch-charts-debug.js"></script>
+		<script type="text/javascript" src="../js/add2home/add2home.js"></script>
 		
 		<script type="text/javascript" src="../js/sencha/Ext.ux.TouchGridPanel.js"></script>
 		<script type="text/javascript" src="../js/sencha/Ext.ux.touch.PagingToolbar.js"></script>
