@@ -144,42 +144,81 @@ public class ExecutionController {
 				}
 				String parUrlName = chunks[0];
 				if (parUrlName == null || parUrlName.trim().equals("")) continue;
-				BIObjectParameter biparameter = null;
-				Iterator it = biparameters.iterator();
-				while (it.hasNext()) {
-					BIObjectParameter temp = (BIObjectParameter) it.next();
-					if (temp.getParameterUrlName().equals(parUrlName)) {
-						biparameter = temp;
-						break;
-					}
-				}
-				if (biparameter == null) {
-					SpagoBITracer.info(ObjectsTreeConstants.NAME_MODULE, this.getClass().getName(), 
-	 				                   "refreshParameters", "No BIObjectParameter with url name = ['" + parUrlName + "'] was found.");
-					continue;
-				}
+				
+				String value = "";
 				// if the user specified the parameter value it is considered, elsewhere an empty String is considered
-				String parValue = "";
 				if (chunks.length == 2) {
-					parValue = chunks[1];
+					value = chunks[1];
 				}
-				if (parValue != null && parValue.equalsIgnoreCase("NULL")) {
-					biparameter.setParameterValues(null);
+				
+				if (parUrlName.endsWith("_field_visible_description")) {
+					parUrlName = parUrlName.substring(0, parUrlName.indexOf("_field_visible_description"));
+					setBIObjectParameterDescriptions(biparameters, parUrlName, value);
 				} else {
-					if (parValue.startsWith("ITERATE:{")) {
-						biparameter.setIterative(true);
-						parValue = parValue.substring("ITERATE:{".length(), parValue.length() - 1);
-					} else {
-						biparameter.setIterative(false);
-					}
-					String[] values = parValue.split(";");
-					List parameterValues = Arrays.asList(values);
-					biparameter.setParameterValues(parameterValues);
+					setBIObjectParameterValues(biparameters, parUrlName, value);
 				}
-				biparameter.setTransientParmeters(true);
 			}
 			obj.setBiObjectParameters(biparameters);
 		}
+	}
+	
+	private void setBIObjectParameterDescriptions(List biparameters, String parUrlName, String parDescriptionsEconded) {
+		BIObjectParameter biparameter = getBIObjectParameter(biparameters, parUrlName);
+		if (biparameter == null) {
+			SpagoBITracer.info(ObjectsTreeConstants.NAME_MODULE, this.getClass().getName(), 
+				                   "refreshParameters", "No BIObjectParameter with url name = ['" + parUrlName + "'] was found.");
+			return;
+		}
+		if (parDescriptionsEconded != null && parDescriptionsEconded.equalsIgnoreCase("NULL")) {
+			biparameter.setParameterValuesDescription(null);
+		} else {
+			if (parDescriptionsEconded.startsWith("ITERATE:{")) {
+				biparameter.setIterative(true);
+				parDescriptionsEconded = parDescriptionsEconded.substring("ITERATE:{".length(), parDescriptionsEconded.length() - 1);
+			} else {
+				biparameter.setIterative(false);
+			}
+			String[] descriptions = parDescriptionsEconded.split(";");
+			List parameterDescriptions = Arrays.asList(descriptions);
+			biparameter.setParameterValuesDescription(parameterDescriptions);
+		}
+		biparameter.setTransientParmeters(true);
+	}
+	
+	private void setBIObjectParameterValues(List biparameters, String parUrlName, String parValuesEconded) {
+		BIObjectParameter biparameter = getBIObjectParameter(biparameters, parUrlName);
+		if (biparameter == null) {
+			SpagoBITracer.info(ObjectsTreeConstants.NAME_MODULE, this.getClass().getName(), 
+				                   "refreshParameters", "No BIObjectParameter with url name = ['" + parUrlName + "'] was found.");
+			return;
+		}
+		if (parValuesEconded != null && parValuesEconded.equalsIgnoreCase("NULL")) {
+			biparameter.setParameterValues(null);
+		} else {
+			if (parValuesEconded.startsWith("ITERATE:{")) {
+				biparameter.setIterative(true);
+				parValuesEconded = parValuesEconded.substring("ITERATE:{".length(), parValuesEconded.length() - 1);
+			} else {
+				biparameter.setIterative(false);
+			}
+			String[] values = parValuesEconded.split(";");
+			List parameterValues = Arrays.asList(values);
+			biparameter.setParameterValues(parameterValues);
+		}
+		biparameter.setTransientParmeters(true);
+	}
+	
+	private BIObjectParameter getBIObjectParameter(List biparameters, String parUrlName) {
+		BIObjectParameter biparameter = null;
+		Iterator it = biparameters.iterator();
+		while (it.hasNext()) {
+			BIObjectParameter temp = (BIObjectParameter) it.next();
+			if (temp.getParameterUrlName().equals(parUrlName)) {
+				biparameter = temp;
+				break;
+			}
+		}
+		return biparameter;
 	}
 	
 	
