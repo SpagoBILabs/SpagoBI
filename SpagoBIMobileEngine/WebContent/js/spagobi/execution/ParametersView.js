@@ -61,7 +61,6 @@ app.views.ParametersView = Ext.extend(Ext.form.FormPanel,{
 			var fieldset = {
 					title: 'Document Parameters',
 					xtype: 'fieldset',
-					scope: this,
 					items: items
 			};
 			

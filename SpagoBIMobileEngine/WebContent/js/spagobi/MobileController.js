@@ -54,18 +54,8 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 		}else{
 			return;
 		}
-		
-		var documentTpl = '<div class="preview-item" id="preview-'+id+'" '+
-		'onClick="javascript: executeDocument('+id+',\''+label+'\', \''+engine+'\', \''+typeCode+'\');">' +
-		'<div class="'+imageClass+'">' +			
-		'<img src="' + Ext.BLANK_IMAGE_URL + '" ></img>' +
-		'</div>' +
-	    '<div class="item-desc">' +name+ '</div>'+
-	    '<div class="item-desc"><b>engine: </b>' +engine+ '</div>'+
-	    '<div class="item-desc"><b>description: </b>' +descr+ '</div>'+
-	    '<div class="item-desc">' +date+ '</div>'+
-	    '</div>';
-		app.views.preview.showPreview( documentTpl);
+
+		app.views.preview.showPreview( imageClass, rec);
 	}
 	
 	, executeDocument: function(options) {
