@@ -307,11 +307,13 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 			for(BIObject document : documentsToExport) {
 				String pName = document.getLabel() + "__" + docNo++;
 				String pValue = "";
-				String separetor = "";
+				String separator = "";
 				List<BIObjectParameter> documentParameters = document.getBiObjectParameters();
 				for(BIObjectParameter documentParameter : documentParameters) {
 					String documentParameterUrl = documentParameter.getParameterUrlName();
 					String value = null;
+					// descriptions are already concatenated with ANALYTICAL_DRIVER_VALUES_SEPARATOR (i.e. ";")
+					String descriptions = documentsParameterValuesJSON.getString(documentParameterUrl + "_field_visible_description");
 					Object valueObj = documentsParameterValuesJSON.get(documentParameterUrl);
 					if (valueObj instanceof JSONArray) {
 						JSONArray array = (JSONArray) valueObj;
@@ -327,8 +329,9 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 						value = valueObj.toString();
 					}
 					//String value = documentsParameterValuesJSON.getString(documentParameterUrl);
-					pValue += separetor + documentParameterUrl + "="+ value;
-					separetor = "%26";
+					pValue += separator + documentParameterUrl + "="+ value;
+					separator = "%26";
+					pValue += separator + documentParameterUrl + "_field_visible_description=" + descriptions;
 				}
 				parameters.put(pName, pValue);
 			}
