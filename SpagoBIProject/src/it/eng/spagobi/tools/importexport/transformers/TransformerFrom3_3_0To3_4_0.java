@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 
 public class TransformerFrom3_3_0To3_4_0 implements ITransformer {
 
-	static private Logger logger = Logger.getLogger(TransformerFrom3_1_0To3_2_0.class);
+	static private Logger logger = Logger.getLogger(TransformerFrom3_3_0To3_4_0.class);
 
 	public byte[] transform(byte[] content, String pathImpTmpFolder, String archiveName) {
 		logger.debug("IN");
