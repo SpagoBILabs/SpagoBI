@@ -1,29 +1,30 @@
-app.views.ChartExecutionPanel = Ext.extend(Ext.Panel,
-
-		{
+app.views.ChartExecutionPanel = Ext.extend(Ext.Panel,	{
+		dockedItems: [],
 	    scroll: 'vertical',
-	    fullscreen: true
-		, initComponent: function ()	{
 
-			console.log('init chart execution');
-		    
+		initComponent: function ()	{
+			console.log('init chart execution');  
 			app.views.ChartExecutionPanel.superclass.initComponent.apply(this, arguments);
 			
 		},
-		setChartWidget : function(resp) {
+		setChartWidget : function(resp, fromcomposition) {
 
 			var config = resp.config;
 
-			var r =	   new Ext.chart.Panel({
-	            fullscreen: true,
-	            bodyMargin: '50px 50px 100px 50px',
-	            title: 'Area Chart',
-	            items: [config]});
+			var chartConfig ={
+	            items: [config]
+			};
 
-			
-			app.views.chart =  r;
-	
-			this.add(app.views.chart);
+			if(fromcomposition){
+				chartConfig.width='100%';
+				chartConfig.height='100%';
+			}else{
+				chartConfig.bodyMargin='50px 50px 100px 50px';
+				chartConfig.fullscreen=true;
+			}
+			var r =	new Ext.chart.Panel(chartConfig);
+			this.insert(0,r);
+			this.doLayout();
 
 	}
 

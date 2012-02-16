@@ -18,8 +18,8 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.engine.mobile.service.AbstractExecuteMobileAction;
 import it.eng.spagobi.engine.mobile.table.serializer.MobileDatasetTableSerializer;
-import it.eng.spagobi.engine.mobile.template.IMobileTemplateInstance;
 import it.eng.spagobi.engine.mobile.template.TableTemplateInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -27,6 +27,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -37,7 +38,7 @@ import org.json.JSONObject;
  * Monica Franceschini
  *
  */
-public class ExecuteMobileTableAction extends AbstractSpagoBIAction {	
+public class ExecuteMobileTableAction extends AbstractExecuteMobileAction {	
 
 	private static final long serialVersionUID = -349776903181827582L;
 	// logger component
@@ -49,8 +50,12 @@ public class ExecuteMobileTableAction extends AbstractSpagoBIAction {
 		JSONObject dataSetJSON;
 		IDataSet dataSet;
 		try{
+			
+			
 			//Load the BIObject
-			BIObject documentBIObject = (BIObject)getAttributeFromSession(ObjectsTreeConstants.OBJECT_ID);
+			BIObject documentBIObject = getAndValidateBIObject();
+			List parametersError = getParamErrors();
+			
 			logger.debug("Got BIObject from session");
 			//Load the template of the document
 			ObjTemplate objTemp = documentBIObject.getActiveTemplate();	
