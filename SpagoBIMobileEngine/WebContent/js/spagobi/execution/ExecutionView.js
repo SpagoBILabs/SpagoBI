@@ -20,7 +20,7 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 
 			
 			app.views.tableExecutionPanel = new app.views.TableExecutionPanel();
-			app.views.chartExecutionPanel = new app.views.ChartExecutionPanel();
+			app.views.chartExecutionPanel = new app.views.ChartExecutionPanel({fullscreen: true});
 			app.views.composedExecutionPanel = new app.views.ComposedExecutionPanel();
 			
 		    Ext.apply(this, {
@@ -44,5 +44,17 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 				app.views.composedExecutionPanel.setComposedWidget(resp);
 			}
 		}
-
+		
+		, setWidgetComposed: function(resp, type, panel){
+			if(type == 'table'){
+				panel.setTableWidget(resp);
+				return tablePanel;
+			}
+			if(type == 'chart'){
+				panel.setChartWidget(resp, true);
+			}
+			if(type == 'composed'){
+				panel.setComposedWidget(resp, true);
+			}
+		}
 });

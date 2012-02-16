@@ -71,6 +71,7 @@ author: Monica Franceschini
 		<script type="text/javascript" src="../js/spagobi/execution/table/TableExecutionPanel.js"></script>
 		<script type="text/javascript" src="../js/spagobi/execution/chart/ChartExecutionPanel.js"></script>
 		<script type="text/javascript" src="../js/spagobi/execution/composed/ComposedExecutionPanel.js"></script>
+		<script type="text/javascript" src="../js/spagobi/execution/composed/ComposedExecutionController.js"></script>
 		<!-- script type="text/javascript" src="../js/spagobi/Utils.js"></script-->
 		<script type="text/javascript" src="../js/spagobi/execution/BottomToolbar.js"></script>
 		<script type="text/javascript" src="../js/spagobi/execution/ExecutionView.js"></script>
@@ -79,6 +80,8 @@ author: Monica Franceschini
 		
 		<script type="text/javascript" src="../js/spagobi/execution/ParametersView.js"></script>
 		<script type="text/javascript" src="../js/spagobi/execution/ParametersController.js"></script>
+
+		
 		
 	</head>
 

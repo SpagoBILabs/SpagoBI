@@ -42,7 +42,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		}
 	}
 	
-	, executeTemplate: function(option){
+	, executeTemplate: function(option, documentContainerPanel){
 
 		var typeCode =  option.executionInstance.TYPE_CODE;
 		var engine =  option.executionInstance.ENGINE;
@@ -58,7 +58,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createWidgetExecution(resp, params.PARAMETERS, 'table');
+		        		this.createWidgetExecution(resp, params.PARAMETERS, 'table', documentContainerPanel);
 		        	}
 		        }
 		    }); 
@@ -71,7 +71,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createWidgetExecution(resp,params.PARAMETERS, 'chart');
+		        		this.createWidgetExecution(resp,params.PARAMETERS, 'chart', documentContainerPanel);
 		        	}
 		        }
 		    }); 
@@ -84,21 +84,28 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
+		        		resp.executionInstance = params;
 		        		this.createWidgetExecution(resp, params.PARAMETERS, 'composed');
 		        	}
 		        }
 		    }); 
 		}
 	}
-	, createWidgetExecution: function(resp, parameters, type){
+	, createWidgetExecution: function(resp, parameters, type, documentContainerPanel){
 
-		app.views.execView = new app.views.ExecutionView({parameters: parameters});
+		if(documentContainerPanel==undefined || documentContainerPanel==null){
+			app.views.execView = new app.views.ExecutionView({parameters: parameters});
 
-	    var viewport = app.views.viewport;
-	    viewport.add(app.views.execView);
-	    app.views.execView.setWidget(resp, type);
+		    var viewport = app.views.viewport;
+		    viewport.add(app.views.execView);
+		    app.views.execView.setWidget(resp, type);
 
-	    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
+		    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
+	
+		}else{
+			app.views.execView.setWidgetComposed(resp, type, documentContainerPanel);
+		}
+		
 	}
 
 });

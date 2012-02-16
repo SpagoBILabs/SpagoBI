@@ -6,6 +6,7 @@ import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engine.mobile.MobileConstants;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 import java.util.List;
 
@@ -19,6 +20,9 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 
 	private static transient Logger logger = Logger.getLogger(ComposedTemplateInstance.class);
 	
+
+	
+		
 	private SourceBean template;
 	private JSONObject title = new JSONObject();
 	private JSONObject documents = new JSONObject();
@@ -85,7 +89,7 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 				SourceBean doc = (SourceBean)docs.get(i);
 				JSONObject docJSON = new JSONObject();
 				String label = (String)doc.getAttribute(MobileConstants.DOCUMENT_LABEL_ATTR);
-				docJSON.put("label", label);
+				docJSON.put(ObjectsTreeConstants.OBJECT_LABEL, label);
 				
 				String width = (String)doc.getAttribute(MobileConstants.DOCUMENT_WIDTH_ATTR);
 				docJSON.put("width", width);
@@ -96,10 +100,12 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 				BIObject biDoc = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
 				Engine engine =biDoc.getEngine();
 				String engineName = engine.getName();
-				docJSON.put("engine", engineName);
+				docJSON.put(MobileConstants.ENGINE, engineName);
 				Integer id = biDoc.getId();
 				docJSON.put(ObjectsTreeConstants.OBJECT_ID, id);
 				docsArray.put(docJSON);
+				docJSON.put(MobileConstants.DOCUMENT_TYPE,getDocumentTypeFromEngine(engineName));
+				
 			}
 			documents.put("docs", docsArray);
 		}
@@ -117,6 +123,16 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 	@Override
 	public JSONObject getFeatures() {
 		return features;
+	}
+	
+	private String getDocumentTypeFromEngine(String engineName) throws SpagoBIEngineException{
+		if((engineName.toLowerCase()).contains("chart")){
+			return MobileConstants.DOCUMENT_TYPE_CHART;
+		} else if((engineName.toLowerCase()).contains("table")){
+			return MobileConstants.DOCUMENT_TYPE_TABLE;
+		}
+		throw new SpagoBIEngineException("Wrong engine name.. "+engineName);
+		
 	}
 
 }
