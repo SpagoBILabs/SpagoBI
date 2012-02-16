@@ -35,6 +35,7 @@ import it.eng.spagobi.engines.worksheet.serializer.json.decorator.FiltersInfoJSO
 import it.eng.spagobi.engines.worksheet.services.runtime.ExecuteWorksheetQueryAction;
 import it.eng.spagobi.engines.worksheet.template.WorksheetTemplate;
 import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
+import it.eng.spagobi.engines.worksheet.widgets.ChartDefinition;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.engines.worksheet.widgets.TableDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -95,34 +96,34 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	public static final String METADATA = "METADATA";
 	public static final String PARAMETERS = "PARAMETERS";
 	public static final String SHEETS_NUM = "SHEETS_NUM";
-	
+
 	public static final String EXPORTED_SHEETS = "EXPORTED_SHEETS";
 	public static final String CONTENT = "CONTENT";
 	public static final String CONTENT_PARS = "PARS";
 	public static final String SPLITTING_FILTER= "splittingFilter";
-	
+
 	public static String WORKSHEETS_ADDITIONAL_DATA = "WORKSHEETS_ADDITIONAL_DATA";
 	public static String FIELDS_OPTIONS = "fieldsOptions";
-	
+
 	public static final String MASSIVE_SPLITTING_FILTER= "SPLITTING_FILTER";
-	
+
 	// misc
 	public static final String RESPONSE_TYPE_INLINE = "RESPONSE_TYPE_INLINE";
 	public static final String RESPONSE_TYPE_ATTACHMENT = "RESPONSE_TYPE_ATTACHMENT";
 
 	public static String SVG = "svg";
-//	public static String OUTPUT_FORMAT = "type";
+	//	public static String OUTPUT_FORMAT = "type";
 
 	public static String OUTPUT_FORMAT_PNG = "image/png";
 	public static String OUTPUT_FORMAT_JPEG = "image/jpeg";
 	public static String OUTPUT_FORMAT_PDF = "application/pdf";
 	public static String OUTPUT_FORMAT_SVG = "image/svg+xml";
-	
+
 	private static int DEFAULT_COLUMN_WIDTH = 30;
 	private static int CHART_START_COLUMN = 0;
 	private static int CHART_END_COLUMN = 4;
 	private static int CHART_HEIGHT_IN_ROWS = 25;
-	
+
 	private static final String BASE64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 	protected DecimalFormat numberFormat;
@@ -144,12 +145,15 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		File exportFile = null;
 		JSONArray metadataPropertiesJSON = null;
 		JSONArray parametersJSON = null;
-		
+
 
 		try {
 			setSpagoBIRequestContainer( request );
 			setSpagoBIResponseContainer( response );
 
+			WorksheetEngineInstance engineInstance = getEngineInstance();
+			Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class: check document template");
+			
 			Locale locale = (Locale)getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);	
 			numberFormat =  (DecimalFormat) NumberFormat.getInstance(locale);
 			numberFormat.applyPattern("##,##0.00");
@@ -160,7 +164,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			logger.debug(MIME_TYPE + ": " + mimeType);		
 			responseType = getAttributeAsString( RESPONSE_TYPE );
 			logger.debug(RESPONSE_TYPE + ": " + responseType);
-			
+
 			String splittingFilterS = getAttributeAsString(MASSIVE_SPLITTING_FILTER);
 			if (splittingFilterS != null) {
 				splittingFilter = Boolean.valueOf(splittingFilterS);
@@ -170,7 +174,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			worksheetJSON = getAttributeAsJSONObject( WORKSHEETS );	
 			if ( worksheetJSON == null ) {
 				logger.debug("worksheet JSON conversion: massive export case");
-				WorksheetEngineInstance engineInstance = getEngineInstance();
+				engineInstance = getEngineInstance();
 				WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
 				FiltersInfoJSONDecorator decorator = new FiltersInfoJSONDecorator(workSheetDefinition, engineInstance.getDataSet());
 				JSONObject prevWorksheetJSON = workSheetDefinition.getConf(decorator);
@@ -181,17 +185,17 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 
 			logger.debug(WORKSHEETS + ": " + worksheetJSON);
 
-			
+
 			if( requestContainsAttribute(METADATA) ) {
 				metadataPropertiesJSON = getAttributeAsJSONArray( METADATA );	
 				logger.debug(METADATA + ": " + metadataPropertiesJSON);
 			}
-			
+
 			if( requestContainsAttribute(PARAMETERS) ) {
 				parametersJSON = getAttributeAsJSONArray( PARAMETERS );	
 				logger.debug(PARAMETERS + ": " + parametersJSON);
 			}
-			
+
 			writeBackResponseInline = RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType);
 
 			if( "application/vnd.ms-excel".equalsIgnoreCase( mimeType ) ) {
@@ -291,7 +295,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	}
 
 	public void exportToXLS(WorkSheetXLSExporter exporter, JSONObject worksheetJSON, JSONArray metadataPropertiesJSON, JSONArray parametersJSON, OutputStream stream) throws Exception {
-		
+
 		int sheetsNumber = worksheetJSON.getInt(SHEETS_NUM);
 		
 		Workbook wb = exporter.createNewWorkbook();
@@ -301,65 +305,72 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		if (metadataPropertiesJSON != null) {
 			exportMetadataToXLS(wb, exporter, createHelper, metadataPropertiesJSON, parametersJSON);
 		}
-		
+
 		JSONArray exportedSheets = worksheetJSON.getJSONArray(EXPORTED_SHEETS);
 
 		JSONArray fieldOptions = WorkSheetSerializationUtils.getFieldOptions(worksheetJSON);
-		
-		for (int i = 0; i < sheetsNumber; i++) {
 
-			JSONObject sheetJ = exportedSheets.getJSONObject(i);
-			JSONObject optionalFilters = sheetJ.optJSONObject(QbeEngineStaticVariables.FILTERS);
-			String sheetName = sheetJ.getString(SHEET);
-			List<WhereField> splittingWF = getSplittingFieldValues(optionalFilters, sheetName);
-			WhereField splittingWhereField = null;
-			if (splittingWF == null || splittingWF.size() == 0) {
-				exportSheetToXLS(wb, sheetJ, fieldOptions, exporter,
-						createHelper, splittingWhereField);
-			} else {
-				for (int y = 0; y < splittingWF.size(); y++) {
-					splittingWhereField = splittingWF.get(y);
+		for (int i = 0; i < sheetsNumber; i++) {
+			// sheets could be null if containing charts in massive export
+			if(!exportedSheets.isNull(i)){
+				logger.debug("found non empty sheet at index "+i);
+				JSONObject sheetJ = exportedSheets.getJSONObject(i);
+				JSONObject optionalFilters = sheetJ.optJSONObject(QbeEngineStaticVariables.FILTERS);
+				String sheetName = sheetJ.getString(SHEET);
+				List<WhereField> splittingWF = getSplittingFieldValues(optionalFilters, sheetName);
+				WhereField splittingWhereField = null;
+				if (splittingWF == null || splittingWF.size() == 0) {
 					exportSheetToXLS(wb, sheetJ, fieldOptions, exporter,
 							createHelper, splittingWhereField);
+				} else {
+					for (int y = 0; y < splittingWF.size(); y++) {
+						splittingWhereField = splittingWF.get(y);
+						exportSheetToXLS(wb, sheetJ, fieldOptions, exporter,
+								createHelper, splittingWhereField);
+					}
 				}
+			}
+			else{
+				logger.debug("found empty sheet at index "+i);
+
 			}
 		}
 
 		wb.write(stream);
 		stream.flush();
 	}
-	
+
 	public void exportMetadataToXLS(Workbook wb, WorkSheetXLSExporter exporter, CreationHelper createHelper
 			, JSONArray metadataPropertiesJSON, JSONArray parametersJSON) throws Exception{
-		
+
 		int FIRST_ROW = 0;
 		int FIRST_COLUMN = 0;
 		int rowCount = 0;
-		
+
 		JSONArray technicalMetadataProperty;
 		JSONArray shortBusinessMetadataProperty;
 		JSONArray longBusinessMetadataProperty;
-		
+
 		org.apache.poi.ss.usermodel.Sheet sheet = wb.createSheet(EngineMessageBundle.getMessage("worksheet.export.metadata.title", this.getLocale()));
-		
+
 		sheet.setColumnWidth(FIRST_COLUMN, 256*25);
 		sheet.setColumnWidth(FIRST_COLUMN + 1, 256*90);
-		
-		
+
+
 		CellStyle headerCellStyle = exporter.buildMetadataTitleCellStyle(sheet);
 		CellStyle metaNameCellStyle =  exporter.buildMetadataNameCellStyle(sheet);
 		CellStyle metaValueCellStyle =  exporter.buildMetadataValueCellStyle(sheet);
-		
+
 		Row row;
 		Cell nameCell;
 		Cell valueCell;
 		Cell headerCell;
 		String text;
-		
+
 		technicalMetadataProperty = new JSONArray();
 		shortBusinessMetadataProperty = new JSONArray();
 		longBusinessMetadataProperty = new JSONArray();
-		
+
 		for (int i = 0; i < metadataPropertiesJSON.length(); i++) {
 			JSONObject metadataProperty = metadataPropertiesJSON.getJSONObject(i);		
 			String  metadataPropertyType = metadataProperty.getString("meta_type");
@@ -372,11 +383,11 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			} else {
 				technicalMetadataProperty.put(metadataProperty);
 			}
-			
+
 		}
-		
+
 		if (technicalMetadataProperty.length() > 0) {
-			
+
 			row = sheet.createRow((FIRST_ROW) + rowCount);
 			headerCell = row.createCell(FIRST_COLUMN + 1);
 			headerCell = row.createCell(FIRST_COLUMN + 1);
@@ -384,34 +395,34 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			headerCell.setCellValue(createHelper.createRichTextString(text));
 			headerCell.setCellType(exporter.getCellTypeString());
 			headerCell.setCellStyle(headerCellStyle);
-			
+
 			rowCount++;
-			
+
 			for (int i = 0; i < technicalMetadataProperty.length(); i++) {
 				JSONObject metadataProperty = technicalMetadataProperty.getJSONObject(i);	
-				
+
 				String  metadataPropertyName = metadataProperty.getString("meta_name");
 				String  metadataPropertyValue = metadataProperty.getString("meta_content");
 				row = sheet.createRow((FIRST_ROW) + rowCount);
-				
+
 				nameCell = row.createCell(FIRST_COLUMN);
 				nameCell.setCellValue(createHelper.createRichTextString(metadataPropertyName));
 				nameCell.setCellType(exporter.getCellTypeString());
 				nameCell.setCellStyle(metaNameCellStyle);
-				
+
 				valueCell = row.createCell(FIRST_COLUMN + 1);
 				valueCell.setCellValue(createHelper.createRichTextString(metadataPropertyValue));
 				valueCell.setCellType(exporter.getCellTypeString());
 				valueCell.setCellStyle(metaValueCellStyle);
 				rowCount++;
 			}
-			
+
 			rowCount = rowCount + 2;
-			
+
 		}
-		
+
 		if (shortBusinessMetadataProperty.length() + longBusinessMetadataProperty.length() > 0) {
-		
+
 			row = sheet.createRow((FIRST_ROW) + rowCount);
 			headerCell = row.createCell(FIRST_COLUMN + 1);
 			headerCell = row.createCell(FIRST_COLUMN + 1);
@@ -420,53 +431,53 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			headerCell.setCellType(exporter.getCellTypeString());
 			headerCell.setCellStyle(headerCellStyle);
 			rowCount++;
-			
-			
+
+
 			for(int i = 0; i < shortBusinessMetadataProperty.length(); i++, rowCount++) {
-				
+
 				JSONObject metadataProperty = shortBusinessMetadataProperty.getJSONObject(i);	
-				
+
 				String  metadataPropertyName = metadataProperty.getString("meta_name");
 				String  metadataPropertyValue = metadataProperty.getString("meta_content");
 				row = sheet.createRow((FIRST_ROW) + rowCount);
-				
+
 				nameCell = row.createCell(FIRST_COLUMN);
 				nameCell.setCellValue(createHelper.createRichTextString(metadataPropertyName));
 				nameCell.setCellType(exporter.getCellTypeString());
 				nameCell.setCellStyle(metaNameCellStyle);
-				
+
 				valueCell = row.createCell(FIRST_COLUMN + 1);
 				valueCell.setCellValue(createHelper.createRichTextString(metadataPropertyValue));
 				valueCell.setCellType(exporter.getCellTypeString());
 				valueCell.setCellStyle(metaValueCellStyle);
 			}
-			
+
 			for(int i = 0; i < longBusinessMetadataProperty.length(); i++, rowCount++) {
-				
+
 				JSONObject metadataProperty = longBusinessMetadataProperty.getJSONObject(i);	
-				
+
 				String  metadataPropertyName = metadataProperty.getString("meta_name");
 				String  metadataPropertyValue = metadataProperty.getString("meta_content");
-				
+
 				row = sheet.createRow((FIRST_ROW) + rowCount);
-				
+
 				nameCell = row.createCell(FIRST_COLUMN);
 				nameCell.setCellValue(createHelper.createRichTextString(metadataPropertyName));
 				nameCell.setCellType(exporter.getCellTypeString());
 				nameCell.setCellStyle(metaNameCellStyle);
-				
+
 				valueCell = row.createCell(FIRST_COLUMN + 1);
 				valueCell.setCellValue(createHelper.createRichTextString(metadataPropertyValue));
 				valueCell.setCellType(exporter.getCellTypeString());
 				valueCell.setCellStyle(metaValueCellStyle);
 			}
-			
+
 			rowCount = rowCount + 2;
-		
+
 		}
-		
+
 		if (parametersJSON.length() > 0) {
-		
+
 			row = sheet.createRow((FIRST_ROW) + rowCount);
 			headerCell = row.createCell(FIRST_COLUMN + 1);
 			headerCell = row.createCell(FIRST_COLUMN + 1);
@@ -474,41 +485,41 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			headerCell.setCellValue(createHelper.createRichTextString(text));
 			headerCell.setCellType(exporter.getCellTypeString());
 			headerCell.setCellStyle(headerCellStyle);
-			
+
 			rowCount++;
-			
+
 			Drawing drawing = sheet.createDrawingPatriarch();
-			
+
 			for (int i = 0; i < parametersJSON.length(); i++) {
 				JSONObject parameterJSON = parametersJSON.getJSONObject(i);
 				String name = parameterJSON.getString("name");
 				String value = parameterJSON.getString("value");
 				String description = parameterJSON.optString("description");
-				
+
 				row = sheet.createRow((FIRST_ROW) + rowCount);
-				
+
 				nameCell = row.createCell(FIRST_COLUMN);
 				nameCell.setCellValue(createHelper.createRichTextString(name));
 				nameCell.setCellType(exporter.getCellTypeString());
 				nameCell.setCellStyle(metaNameCellStyle);
-				
+
 				valueCell = row.createCell(FIRST_COLUMN + 1);
-				
+
 				if (StringUtilities.isNotEmpty(description)) {
-					 
+
 					valueCell.setCellValue(createHelper.createRichTextString(description));
-					
-				    ClientAnchor anchor = createHelper.createClientAnchor();
-				    anchor.setCol1(valueCell.getColumnIndex());
-				    anchor.setCol2(valueCell.getColumnIndex()+1);
-				    anchor.setRow1(row.getRowNum());
-				    anchor.setRow2(row.getRowNum()+3);
-	
-				    Comment comment = drawing.createCellComment(anchor);
-				    RichTextString str = createHelper.createRichTextString(value);
-				    comment.setString(str);
-				    comment.setAuthor("SpagoBI");
-	
+
+					ClientAnchor anchor = createHelper.createClientAnchor();
+					anchor.setCol1(valueCell.getColumnIndex());
+					anchor.setCol2(valueCell.getColumnIndex()+1);
+					anchor.setRow1(row.getRowNum());
+					anchor.setRow2(row.getRowNum()+3);
+
+					Comment comment = drawing.createCellComment(anchor);
+					RichTextString str = createHelper.createRichTextString(value);
+					comment.setString(str);
+					comment.setAuthor("SpagoBI");
+
 					valueCell.setCellComment(comment);
 				} else {
 					valueCell.setCellValue(createHelper.createRichTextString(value));
@@ -517,15 +528,15 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				valueCell.setCellStyle(metaValueCellStyle);
 				rowCount++;
 			}
-			
+
 		}
-		
+
 	}
 
 	public void exportSheetToXLS(Workbook wb, JSONObject sheetJ,
 			JSONArray fieldOptions, WorkSheetXLSExporter exporter,
 			CreationHelper createHelper, WhereField splittingWhereField)
-			throws Exception {
+	throws Exception {
 
 		//The number of row of the sheet
 		int sheetRow = 0;
@@ -534,7 +545,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		String finalSheetName = sheetName;
 		if (splittingWhereField != null) {
 			finalSheetName = sheetName + " ("
-					+ splittingWhereField.getRightOperand().values[0] + ")";
+			+ splittingWhereField.getRightOperand().values[0] + ")";
 		}
 
 		org.apache.poi.ss.usermodel.Sheet sheet = wb.createSheet(finalSheetName);
@@ -550,13 +561,13 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			sheet.createRow(sheetRow);
 			sheetRow++;
 		}
-		
+
 		JSONObject optionalFiltersJSON = sheetJ.optJSONObject(QbeEngineStaticVariables.FILTERS);
 		List<WhereField> optionalFilters = getOptionalFilters(optionalFiltersJSON);
 		if (splittingWhereField != null) {
 			optionalFilters.add(splittingWhereField);
 		}
-    	Map<String, List<String>> filters = getSheetFiltersInfo(sheetJ.getString(SHEET), optionalFilters);
+		Map<String, List<String>> filters = getSheetFiltersInfo(sheetJ.getString(SHEET), optionalFilters);
 		if (filters != null && !filters.isEmpty()) {
 			sheetRow = fillFiltersInfo(filters, wb, sheet, exporter, splittingWhereField, createHelper, sheetRow, 0);
 			sheet.createRow(sheetRow);
@@ -594,12 +605,12 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			int beginRowHeaderData, int beginColumnHeaderData) {
 
 		int sheetRow = beginRowHeaderData;
-		
+
 		if (filters != null && !filters.isEmpty()) {
-			
+
 			CellStyle titleCellStyle = exporter.buildFiltersTitleCellStyle(sheet);
 			CellStyle contentCellStyle = exporter.buildFiltersValuesCellStyle(sheet);
-			
+
 			// table title
 			Row row = sheet.createRow(sheetRow); // row for filters title
 			Cell cell = row.createCell(beginColumnHeaderData);
@@ -607,9 +618,9 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			String text = EngineMessageBundle.getMessage("worksheet.export.filters.info.title", this.getLocale());
 			cell.setCellValue(createHelper.createRichTextString(text));
 			cell.setCellStyle(titleCellStyle);
-			
+
 			sheetRow++;
-	
+
 			// table content
 			Iterator<String> it = filters.keySet().iterator();
 			while (it.hasNext()) {
@@ -625,7 +636,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				aCell.setCellStyle(contentCellStyle);
 				sheetRow++;
 			}
-			
+
 		}
 
 		return sheetRow;
@@ -644,7 +655,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		}
 		return toReturn;
 	}
-	
+
 	public int fillSheetContent(Workbook wb,
 			org.apache.poi.ss.usermodel.Sheet sheet, JSONObject sheetJ,
 			JSONArray fieldOptions, WhereField splittingWhereField,
@@ -659,7 +670,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			Locale locale = (Locale)getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);	
 			if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CHART)) {
 				List<File> images = WorkSheetXLSExporter.getImage(content);
-				
+
 				if(images!=null){
 
 					for (int j=0; j< images.size(); j++){
@@ -673,14 +684,14 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 					}
 
 				}
-				
+
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CROSSTAB)) {
 				JSONArray calculateFieldsJSON = null;
 				String crosstabDefinition = content
-						.optString("CROSSTABDEFINITION");
+				.optString("CROSSTABDEFINITION");
 				if (crosstabDefinition.equals("")) {
 					crosstabDefinition = content
-							.getString("crosstabDefinition");
+					.getString("crosstabDefinition");
 				}
 
 				String sheetName = sheetJ.getString(SHEET);
@@ -699,13 +710,13 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 						calculateFieldsJSON);
 
 				String calculatedFieldsDecimalsString = (String) ConfigSingleton
-						.getInstance()
-						.getAttribute(
-								"QBE.QBE-CROSSTAB-CALCULATEDFIELDS-DECIMAL.value");
+				.getInstance()
+				.getAttribute(
+						"QBE.QBE-CROSSTAB-CALCULATEDFIELDS-DECIMAL.value");
 				int calculatedFieldsDecimals = 0;
 				if (calculatedFieldsDecimalsString != null) {
 					calculatedFieldsDecimals = Integer
-							.valueOf(calculatedFieldsDecimalsString);
+					.valueOf(calculatedFieldsDecimalsString);
 				}
 				Properties properties = new Properties();
 				properties.put(CrosstabXLSExporter.PROPERTY_CALCULATED_FIELD_DECIMALS, calculatedFieldsDecimals);
@@ -713,7 +724,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 
 				sheetRow = expCr.fillAlreadyCreatedSheet(sheet, cs,
 						crosstabDefinitionJSON, createHelper, sheetRow, locale);
-				
+
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
 
 				IDataStore dataStore = getTableDataStore(sheetJ, fieldOptions, splittingWhereField);
@@ -729,7 +740,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		}
 		return sheetRow;
 	}
-	
+
 
 	private boolean checkMandatoryFilters(List<WhereField> filters, String sheetName) {
 		logger.debug("IN : sheetName " + sheetName);
@@ -755,7 +766,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		logger.debug("OUT : " + toReturn);
 		return toReturn;
 	}
-	
+
 	private String[] getFilterValues(List<WhereField> filters, String entityId) {
 		Iterator<WhereField> it = filters.iterator();
 		while (it.hasNext()) {
@@ -933,7 +944,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			}
 		}
 		return splittingWhereFields;
-		
+
 	}
 
 	public JSONObject convertToExportJSON(WorksheetEngineInstance engineInstance, JSONObject worksheetJSON) throws JSONException{
@@ -974,8 +985,13 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				sheetType = WorkSheetXLSExporter.CROSSTAB;
 				contentJSON = sheetObjContent;
 
-			} else{
-				// others not handled
+			} else if( content instanceof ChartDefinition){
+				logger.warn("Chart definition not handled by massive export, exclude dthe sheet");
+				continue;
+			}
+			else{
+				logger.error(content+" not handled by massive Export, ingfore the sheet");
+				continue;
 			}
 
 			contentJSON.put("SHEET_TYPE", sheetType);
@@ -1037,40 +1053,40 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		return tobuild;
 
 	}
-	
-	  public static byte[] decodeToByteArray(String data) {
-	        // Initialise output ByteArray for decoded data
-	        List<Byte> output = new ArrayList<Byte>();
-	       
-	        // Create data and output buffers
-	        int[] dataBuffer = new int[4];
-	        byte[] outputBuffer = new byte[3];
 
-	        // While there are data bytes left to be processed
-	        for (int i=0; i < data.length(); i = i+4) {
-	                // Populate data buffer with position of Base64 characters for
-	                // next 4 bytes from encoded data
-	                for (int j = 0; j < 4 && i + j < data.length(); j++) {
-	                        dataBuffer[j] = BASE64_CHARS.indexOf(data.charAt(i + j));
-	                }
-	       
-	        // Decode data buffer back into bytes
-	                outputBuffer[0] = (byte)((dataBuffer[0] << 2) + ((dataBuffer[1] & 0x30) >> 4));
-	                outputBuffer[1] = (byte)(((dataBuffer[1] & 0x0f) << 4) + ((dataBuffer[2] & 0x3c) >> 2));                
-	                outputBuffer[2] = (byte)(((dataBuffer[2] & 0x03) << 6) + dataBuffer[3]);
-	               
-	                // Add all non-padded bytes in output buffer to decoded data
-	                for (int k = 0; k < outputBuffer.length; k++) {
-	                        if (dataBuffer[k+1] == 64) break;
-	                        output.add(outputBuffer[k]);
-	                }
-	        }
-	        byte[] toReturn = new byte[output.size()];
-	        for(int i=0; i<output.size(); i++){
-	        	toReturn[i]=output.get(i);
-	        }
-	       
-	        // Return decoded data
-	        return toReturn;
+	public static byte[] decodeToByteArray(String data) {
+		// Initialise output ByteArray for decoded data
+		List<Byte> output = new ArrayList<Byte>();
+
+		// Create data and output buffers
+		int[] dataBuffer = new int[4];
+		byte[] outputBuffer = new byte[3];
+
+		// While there are data bytes left to be processed
+		for (int i=0; i < data.length(); i = i+4) {
+			// Populate data buffer with position of Base64 characters for
+			// next 4 bytes from encoded data
+			for (int j = 0; j < 4 && i + j < data.length(); j++) {
+				dataBuffer[j] = BASE64_CHARS.indexOf(data.charAt(i + j));
+			}
+
+			// Decode data buffer back into bytes
+			outputBuffer[0] = (byte)((dataBuffer[0] << 2) + ((dataBuffer[1] & 0x30) >> 4));
+			outputBuffer[1] = (byte)(((dataBuffer[1] & 0x0f) << 4) + ((dataBuffer[2] & 0x3c) >> 2));                
+			outputBuffer[2] = (byte)(((dataBuffer[2] & 0x03) << 6) + dataBuffer[3]);
+
+			// Add all non-padded bytes in output buffer to decoded data
+			for (int k = 0; k < outputBuffer.length; k++) {
+				if (dataBuffer[k+1] == 64) break;
+				output.add(outputBuffer[k]);
+			}
+		}
+		byte[] toReturn = new byte[output.size()];
+		for(int i=0; i<output.size(); i++){
+			toReturn[i]=output.get(i);
+		}
+
+		// Return decoded data
+		return toReturn;
 	}	
 }
