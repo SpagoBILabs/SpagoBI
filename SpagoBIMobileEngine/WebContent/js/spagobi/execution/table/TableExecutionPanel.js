@@ -5,12 +5,16 @@ app.views.TableExecutionPanel = Ext.extend(Ext.Panel,
 	    , initComponent: function (options)	{
 
 			console.log('init table execution');
-		    
 			app.views.TableExecutionPanel.superclass.initComponent.apply(this, arguments);
-			
+
+
 		},
 		setTableWidget: function(resp, fromcomposition){
 			
+			  var mask = new Ext.LoadMask(this.el, {msg:"Loading table..."});
+				
+			  this.on('render', mask.show());
+			  
 		      var store = new Ext.data.Store({
 		     		root: 'values'
 		     		, fields: resp.features.fields
@@ -38,7 +42,7 @@ app.views.TableExecutionPanel = Ext.extend(Ext.Panel,
 	                
 				});
 		      
-		      var chartConfig = {
+		      var tbConfig = {
 					store       : store,
 					multiSelect : false,
 					dockedItems: [toolbarForTable],
@@ -46,17 +50,18 @@ app.views.TableExecutionPanel = Ext.extend(Ext.Panel,
 					colModel    : resp.features.columns
 		      };
 				if(fromcomposition){
-					chartConfig.width='100%';
-					chartConfig.height='100%';
+					tbConfig.width='100%';
+					tbConfig.height='100%';
 				}else{
-					chartConfig.bodyMargin='50px 50px 100px 50px';
-					chartConfig.fullscreen=true;
+					tbConfig.bodyMargin='2px 2px 2px 2px';
+					tbConfig.fullscreen=true;
 				}
 				
-		      app.views.table = new Ext.ux.TouchGridPanel(chartConfig);
+		      app.views.table = new Ext.ux.TouchGridPanel(tbConfig);
 		      
 		      this.add(app.views.table);
-		      
+		      this.doLayout();
+		      mask.hide();
 		}
 
 		
