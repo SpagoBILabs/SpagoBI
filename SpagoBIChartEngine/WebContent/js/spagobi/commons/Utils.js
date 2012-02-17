@@ -1,7 +1,7 @@
 /**
  * SpagoBI - The Business Intelligence Free Platform
  *
- * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,9 +32,64 @@
   * 
   * Authors
   * 
-  * - Andrea Gioia (adrea.gioia@eng.it)
+  * - Antonella Giachino (antonella.giachino@eng.it)
   */
 
+Ext.define('Sbi.chart.commons.Utils', {
+	statics: {
+		unimplementedFunction: function(fnName) {
+			var msg = fnName? 
+				'Sorry, the functionality [' + fnName + '] has not been implemented yet':
+				'Sorry, this functionality has not been implemented yet';
+				
+			Ext.Msg.show({
+				   title:'Unimplemented functionality',
+				   msg: msg,
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.INFO
+			});
+		}
+	
+	    , deprectadeFunction: function(fnClass, fnName) {
+			var msg = fnName + ' in class ' + fnClass + 'is deprecated';
+				
+			Ext.Msg.show({
+				   title:'Deprecated functionality',
+				   msg: msg,
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.ERROR
+			});
+		}
+	
+		
+		, log: function(severity, message) {
+			this.unimplementedFunction('Sbi.chart.commons.log');
+		}
+		
+		, assertTrue: function(condition, msg) {
+			this.unimplementedFunction('Sbi.chart.commons.assertTrue');
+		}
+		
+		, toStr : function(o) {
+			var str = "";
+			
+			if(o === 'undefined') return 'undefined';
+			
+			str += "Type: [" + typeof(o) + "]\n------------------------\n";
+			
+	        for(p in o) {
+	        	str += p + ": " +  o[p] + "\n";
+	        }
+	        return str;
+		},
+		
+		dump : function(o) {
+			alert(this.toStr(o));
+		}
+	}
+});
+
+/*
 Ext.ns("Sbi.qbe.commons");
 
 Sbi.qbe.commons.Utils = function(){
@@ -126,5 +181,5 @@ it.eng.spagobi.engines.qbe.commons = function(){
 
 //----- deprecated ------------------------------------------------------------------------------
 
-
+*/
 						

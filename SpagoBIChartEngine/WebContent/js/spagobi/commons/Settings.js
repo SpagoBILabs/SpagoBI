@@ -1,37 +1,40 @@
-Ext.ns("Sbi.settings");
+/**
+ * SpagoBI - The Business Intelligence Free Platform
+ *
+ * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
 
-Sbi.settings.qbe = {
-		queryBuilderPanel: {
-			enableTreeToolbar: true,
-			enableTreeTbPinBtn: true,
-			enableTreeTbUnpinBtn: true,
-			
-			
-			enableQueryTbExecuteBtn: true,
-			enableQueryTbSaveBtn: true,
-			enableQueryTbValidateBtn: false,
-			
-			enableCatalogueTbDeleteBtn: true,
-			enableCatalogueTbAddBtn: false,
-			enableCatalogueTbInsertBtn: true
-		}
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ **/
+ 
+/**
+  * Object name 
+  * 
+  * [description]
+  * 
+  * 
+  * Public Functions
+  * 
+  *  [list]
+  * 
+  * 
+  * Authors
+  * 
+  * - Antonella Giachino (antonella.giachino@eng.it)
+  */
 
-		, selectGridPanel: {
-		
-			enableTbHideNonvisibleBtn: true
-			, enableTbAddCalculatedBtn: true
-			, enableTbDeleteAllBtn: true
-			, columns : {
-				'entity': {hideable: true, hidden: false, sortable: false}
-				, 'field': {hideable: true, hidden: false, sortable: false}
-				, 'alias': {hideable: true, hidden: false, sortable: false}	
-				, 'funct': {hideable: true, hidden: false, width: 50, sortable: false}
-				, 'group': {hideable: true, hidden: false, width: 50, sortable: false}
-				, 'order': {hideable: true, hidden: false, width: 50, sortable: false}
-				, 'visible': {hideable: true, hidden: false, width: 50, sortable: false}
-				, 'include': {hideable: true, hidden: false, width: 50, sortable: false}
-				, 'filter': {hideable: true, hidden: false, width: 50, sortable: false}
-				, 'having': {hideable: true, hidden: false, width: 50, sortable: false}			
-			}
-		}
-}; 
+Ext.define('Sbi.settings.chart', {
+
+});
