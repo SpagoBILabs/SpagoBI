@@ -1,7 +1,7 @@
 /**
  * SpagoBI - The Business Intelligence Free Platform
  *
- * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,20 +41,11 @@
   * 
   * Authors
   * 
-  * - Andrea Gioia (andrea.gioia@eng.it)
+  * - Antonella Giachino (antonella.giachino@eng.it)
   */
 
-
-Ext.ns("Sbi.exception.ExceptionHandler");
-
-Sbi.exception.ExceptionHandler = function(){
-	// do NOT access DOM from here; elements don't exist yet
- 
-    // private variables
- 
-    // public space
-	return {
-	
+Ext.define('Sbi.exception.ExceptionHandler', {
+	statics: {
 		init : function() {
 			//alert("init");
 		},
@@ -109,6 +100,9 @@ Sbi.exception.ExceptionHandler = function(){
            		, modal: false
        		});
         }
-
-	};
-}();
+        
+       , onStoreLoadException : function(proxy, type, action, options, response, arg) {
+        	Sbi.exception.ExceptionHandler.handleFailure(response, options);
+        }
+	}//statics
+});
