@@ -47,8 +47,7 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 		
 		, setWidgetComposed: function(resp, type, panel){
 			if(type == 'table'){
-				panel.setTableWidget(resp);
-				return tablePanel;
+				panel.setTableWidget(resp, true);
 			}
 			if(type == 'chart'){
 				panel.setChartWidget(resp, true);
