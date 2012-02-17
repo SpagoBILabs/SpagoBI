@@ -42,13 +42,25 @@ app.views.TableExecutionPanel = Ext.extend(Ext.Panel,
 	                
 				});
 		      
-		      var tbConfig = {
+		      	var tbConfig = {
 					store       : store,
 					multiSelect : false,
 					dockedItems: [toolbarForTable],
 					conditions  : resp.features.conditions,
 					colModel    : resp.features.columns
-		      };
+			    	,listeners: { el:{ tap:function(e){
+		      					//captures event e on target
+		      					var target = e.target;
+		      					var textCell = target.innerText;
+		      					var row = target.parentNode;
+		      					var cellsOfRow = row.cells;
+		      					var rowIdx = row.rowIndex;
+			  			  		//			alert(e);
+		      					//put cross navigation code here!
+			    							} 
+		      						} 
+		      		}
+		      	};
 				if(fromcomposition){
 					tbConfig.width='100%';
 					tbConfig.height='100%';
@@ -58,9 +70,10 @@ app.views.TableExecutionPanel = Ext.extend(Ext.Panel,
 				}
 				
 		      app.views.table = new Ext.ux.TouchGridPanel(tbConfig);
-		      
-		      this.add(app.views.table);
-		      this.doLayout();
+				if(fromcomposition){
+				      this.add(app.views.table);		      
+				      this.doLayout();
+				}
 		      mask.hide();
 		}
 
