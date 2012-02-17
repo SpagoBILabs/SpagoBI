@@ -50,7 +50,7 @@ app.views.LoginView = Ext.extend(Ext.Panel,
 	                hideOnMaskTap: false,
 	                height: 350,
 	                width: 450,
-	                submitOnAction : true,
+	                submitOnAction : false,
 	                items: [
 				             {
 				                 xtype: 'fieldset',
