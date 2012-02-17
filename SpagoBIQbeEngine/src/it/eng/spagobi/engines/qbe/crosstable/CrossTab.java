@@ -74,7 +74,7 @@ public class CrossTab {
 	public static final String TOTAL = "Total";
 	public static final String SUBTOTAL = "SubTotal";
 
-
+	private static final String DATA_MATRIX_NA = "NA";
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy" );
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
 
@@ -356,7 +356,7 @@ public class CrossTab {
 		//init the matrix
 		for(int i=0; i<rowsN; i++){
 			for(int j=0; j<columnsN; j++){
-				dataMatrix[i][j] = "NA";
+				dataMatrix[i][j] = DATA_MATRIX_NA;
 			}
 		}
 		
@@ -1009,7 +1009,7 @@ public class CrossTab {
     	for(i=0; i<op.size()-1; i++){
     		operation = operation+op.get(i);
     		
-    		if(data.get(i)=="NA" || data.get(i)=="null"  || data.get(i)==null){
+    		if(data.get(i)==DATA_MATRIX_NA|| data.get(i)=="null"  || data.get(i)==null){
     			operation = operation+"0";
     		}else{
     			operation = operation+data.get(i);
@@ -1044,7 +1044,10 @@ public class CrossTab {
 				for(int j=0; j<iteration; j++){
 					try{
 						if(getCellType(i,j*measures+measureId).equals(CellType.DATA) || getCellType(i,j*measures+measureId).equals(CellType.TOTAL)){
-							st[i] = st[i] + new Double(dataMatrix[i][j*measures+measureId]);
+							String value = dataMatrix[i][j*measures+measureId];
+							if(!value.equals(DATA_MATRIX_NA)){
+								st[i] = st[i] + new Double(value);
+							}
 						}
 					} catch (Exception e) {
 						logger.debug("Cant format the number "+ (dataMatrix[i][j*measures+measureId]));
@@ -1063,7 +1066,10 @@ public class CrossTab {
 			for(int j=start; j<length+start; j++){
 				try {
 					if(getCellType(j,i).equals(CellType.DATA)){
-						st[i] = st[i] + new Double(dataMatrix[j][i]);
+						String value = dataMatrix[j][i];
+						if(!value.equals(DATA_MATRIX_NA)){
+							st[i] = st[i] + new Double(value);
+						}
 					}
 				} catch (Exception e) {
 					logger.debug("Cant format the number "+ (dataMatrix[j][i]));
@@ -1101,7 +1107,10 @@ public class CrossTab {
 				for(int j=0; j<dataMatrix[0].length; j++){
 					try {
 						if(getCellType(i*measures+measureId,j).equals(CellType.DATA) || getCellType(i*measures+measureId,j).equals(CellType.TOTAL)){
-							st[j] = st[j] + new Double(dataMatrix[i*measures+measureId][j]);
+							String value = dataMatrix[i*measures+measureId][j];
+							if(!value.equals(DATA_MATRIX_NA)){
+								st[j] = st[j] + new Double(value);	
+							}
 						}
 					} catch (Exception e) {
 						logger.debug("Cant format the number "+ (dataMatrix[i*measures+measureId][j]));
@@ -1120,7 +1129,10 @@ public class CrossTab {
 			for(int j=start; j<length+start; j++){
 				try {
 					if(getCellType(i,j).equals(CellType.DATA)){
-						st[i] = st[i] + new Double(dataMatrix[i][j]);
+						String value = dataMatrix[i][j];
+						if(!value.equals(DATA_MATRIX_NA)){
+							st[i] = st[i] + new Double(value);
+						}
 					}
 				} catch (Exception e) {
 					logger.debug("Cant format the number "+ (dataMatrix[i][j]));
@@ -1137,7 +1149,10 @@ public class CrossTab {
 		double sum =0;
 		for(int y=0; y<dataMatrix.length; y++){
 			if( celltypeOfColumns.get(colunm).equals(type)){
-				sum = sum+new Double(dataMatrix[y][colunm]);
+				String value = dataMatrix[y][colunm];
+				if(!value.equals(DATA_MATRIX_NA)){
+					sum = sum+new Double(value);
+				}
 			}
 		}
 		return sum;
@@ -1163,7 +1178,10 @@ public class CrossTab {
 		double sum =0;
 		for(int y=0; y<dataMatrix[0].length; y++){
 			if( celltypeOfRows.get(y).equals(type)){
-				sum = sum+new Double(dataMatrix[row][y]);
+				String value = dataMatrix[row][y];
+				if(!value.equals(DATA_MATRIX_NA)){
+					sum = sum+new Double(value);
+				}
 			}
 		}
 		return sum;
@@ -1176,7 +1194,10 @@ public class CrossTab {
 
 		for(int y=0; y<dataMatrix[0].length; y++){
 			if( !celltypeOfColumns.get(y).equals(CellType.CF)){
-				st[measurescount%measures.size()] = st[measurescount%measures.size()]+new Double(dataMatrix[row][y]);
+				String value = dataMatrix[row][y];
+				if(!value.equals(DATA_MATRIX_NA)){
+					st[measurescount%measures.size()] = st[measurescount%measures.size()]+new Double(value);
+				}
 				measurescount++;
 			}
 		}
@@ -1199,7 +1220,10 @@ public class CrossTab {
 			for(int i=0; i<measuresNumber; i++){
 				for(int y=0; y<columnsSum.get(0).length; y++){
 					if( celltypeOfColumns.get(y).equals(CellType.DATA)){
-						st[i] = st[i]+new Double(columnsSum.get(i)[y]);
+						String value = columnsSum.get(i)[y];
+						if(!value.equals(DATA_MATRIX_NA)){
+							st[i] = st[i]+new Double(value);
+						}
 					}
 				}
 			}
@@ -1207,7 +1231,10 @@ public class CrossTab {
 			int measureIteration =0;
 			for(int y=0; y<columnsSum.get(0).length; y++){
 				if( celltypeOfColumns.get(y).equals(CellType.DATA)){
-					st[measureIteration%measuresNumber] = st[measureIteration%measuresNumber]+new Double(columnsSum.get(0)[y]);
+					String value = columnsSum.get(0)[y];
+					if(!value.equals(DATA_MATRIX_NA)){
+						st[measureIteration%measuresNumber] = st[measureIteration%measuresNumber]+new Double(value);	
+					}
 					measureIteration++;
 				}
 			}
@@ -1540,21 +1567,34 @@ public class CrossTab {
 		if(!horizontal){
 			sum = new double[dataMatrix[0].length];
 			for(int i=0; i<dataMatrix[0].length; i++){
-				sum[i] = new Double(dataMatrix[lines.get(0)][i]);
+				String value = dataMatrix[lines.get(0)][i];
+				if(!value.equals(DATA_MATRIX_NA)){
+					sum[i] = new Double(value);
+				}
 			}
 			for(int j=1; j<lines.size(); j++){
 				for(int i=0; i<dataMatrix[0].length; i++){
-					sum[i] = sum[i] + new Double(dataMatrix[lines.get(j)][i]);
+					String value = dataMatrix[lines.get(j)][i];
+					if(!value.equals(DATA_MATRIX_NA)){
+						sum[i] = sum[i] + new Double(value);
+					}
 				}
 			}
 		}else{
 			sum = new double[dataMatrix.length];
 			for(int i=0; i<dataMatrix.length; i++){
-				sum[i] = new Double(dataMatrix[i][lines.get(0)]);
+				String value = dataMatrix[i][lines.get(0)];
+				if(!value.equals(DATA_MATRIX_NA)){
+					sum[i] = new Double(value);
+				}
 			}
 			for(int j=1; j<lines.size(); j++){
 				for(int i=0; i<dataMatrix.length; i++){
-					sum[i] = sum[i] + new Double(dataMatrix[i][lines.get(j)]);
+					String value = dataMatrix[i][lines.get(j)];
+					if(!value.equals(DATA_MATRIX_NA)){
+						sum[i] = sum[i] + new Double(value);
+					}
+					
 				}
 			}
 		}
