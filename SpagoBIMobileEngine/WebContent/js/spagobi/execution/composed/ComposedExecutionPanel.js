@@ -55,7 +55,7 @@ app.views.ComposedExecutionPanel = Ext.extend(Ext.Panel,
 			if(config.type == 'chart'){
 				panel = new app.views.ChartExecutionPanel(config);
 			}else{
-				panel = new app.views.app.views.TableExecutionPanel(config);
+				panel = new app.views.TableExecutionPanel(config);
 			}
 		
 			return panel;
