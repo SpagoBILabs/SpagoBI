@@ -36,20 +36,16 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.FetchType;
 import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.BasicType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 
 import org.apache.log4j.Logger;
+import org.hibernate.ejb.metamodel.PluralAttributeImpl;
 import org.hibernate.ejb.metamodel.SingularAttributeImpl;
-import org.hibernate.mapping.Property;
-import org.hibernate.type.Type;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -172,10 +168,16 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		javax.persistence.metamodel.Type keyT = entity.getIdType();
 		String keyName = "";
 		for(Object attribute : entity.getAttributes()) {
-			SingularAttributeImpl s = (SingularAttributeImpl)attribute;
-			if(s.isId()) {
-				keyName = s.getName();
-				break;
+			try{
+				SingularAttributeImpl s = (SingularAttributeImpl)attribute;
+				logger.debug("Attribute: "+s.getName()+" is a singular attribute.");
+				if(s.isId()) {
+					keyName = s.getName();
+					break;
+				}
+			}catch(Throwable t){
+				PluralAttributeImpl p = (PluralAttributeImpl)attribute;
+				logger.error("Attribute: "+p.getName()+" is a plural attribute attribute.");
 			}
 		}
 		return keyName;
