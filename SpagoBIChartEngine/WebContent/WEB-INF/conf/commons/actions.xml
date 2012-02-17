@@ -6,14 +6,25 @@
 
 <ACTIONS>
 	
-	<!-- ================================================================================= -->
+	<ACTION name="GET_CHART_DATA_ACTION" 
+			class="it.eng.spagobi.engines.chart.services.GetChartDataAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+<!-- ================================================================================= -->
 	<!-- TRAPS																			   -->
 	<!-- ================================================================================= -->
+	
+	<ACTION name="SERVICE_EXCEPTION_TRAP_ACTION" 
+			class="it.eng.spagobi.engines.console.services.ServiceExceptionAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
 	
 	<ACTION name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION" 
 			class="it.eng.spagobi.utilities.engines.EngineStartupExceptionTrapAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
-
 </ACTIONS>
