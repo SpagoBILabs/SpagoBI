@@ -50,7 +50,7 @@ app.views.ComposedExecutionPanel = Ext.extend(Ext.Panel,
 		buildPanel: function(config){
 
 			var panel;
-			config = Ext.apply(config,{style: 'float: left;'});
+			config = Ext.apply(config,{style: 'float: left;', bodyMargin:10});
 			
 			if(config.type == 'chart'){
 				panel = new app.views.ChartExecutionPanel(config);
