@@ -38,6 +38,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.Locale"%>
+<%@page import="it.eng.spagobi.tools.dataset.bo.IDataSet"%>
 <%@page import="it.eng.spagobi.services.common.EnginConf"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.List"%>
@@ -50,6 +51,10 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	ChartEngineInstance chartEngineInstance;
 	UserProfile profile;
 	Locale locale;
+	IDataSet ds;
+	String dsLabel;
+	String dsTypeCd;
+	String transformerType;
 	String isFromCross;
 	String engineContext;
 	String engineServerHost;
@@ -62,6 +67,10 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	chartEngineInstance = (ChartEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute("ENGINE_INSTANCE");
 	profile = (UserProfile)chartEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	locale = (Locale)chartEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
+	ds =  (IDataSet)chartEngineInstance.getDataSet();
+	dsLabel = (ds != null) ? ds.getLabel() : "";
+	dsTypeCd = (ds != null) ? ds.getDsType() : "";
+	transformerType = (ds != null) ? ds.getTransformerCd() : "";
 	
 	isFromCross = (String)chartEngineInstance.getEnv().get("isFromCross");
 	if (isFromCross == null) {
@@ -100,7 +109,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 <html>
 	
 	<head>
-		<%@include file="commons/includeExtJS.jspf" %>
+		<%@include file="commons/includeExtJS_410.jspf" %> 
 		<%@include file="commons/includeSbiChartJS.jspf"%>
 	</head>
 	
@@ -120,57 +129,30 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 				SBI_EXECUTION_ID: <%=executionId %>			
 			  , LIGHT_NAVIGATOR_DISABLED: 'TRUE'
 			};
-		
-			Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
-				  baseUrl: url
-			    , baseParams: params
-			});
-	
-			
-			Sbi.config.spagobiServiceRegistry = new Sbi.service.ServiceRegistry({
-				baseUrl: {
-					contextPath: '<%= spagobiContext %>'
-				}
-			    , baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
-			});
-			
-	
-		    // javascript-side user profile object
-	        //Ext.ns("Sbi.user");
-	
+			Sbi.config.serviceRegistry = Ext.create('Sbi.service.ServiceRegistry',{ baseUrl: url
+    																			  , baseParams: params
+    									  }); 
+			Sbi.config.spagobiServiceRegistry = Ext.create('Sbi.service.ServiceRegistry',{
+															baseUrl: {contextPath: '<%= spagobiContext %>'}
+														  , baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
+												});
 	        //add to executionContext all parameters... it's really necessary??
 	        //var executionContext = {};	       
 	        //template.executionContext = executionContext;
-	
-	        template.divId = "<%=executionId%>";
+	        var config ={};
+	        config.template = template
+	        config.divId = "<%=executionId%>";
+	        config.dsLabel = "<%=dsLabel%>";
+	        config.dsTypeCd = "<%=dsTypeCd%>";
+	        config.dsTransformerType= "<%=transformerType%>";
+	        config.dsPars = []; //temporaneo
 			Ext.onReady(function() { 
-				Ext.QuickTips.init();				
-				var chartPanel = new Sbi.extjs.chart.ExtJSChartPanel(template);
-				var viewport = new Ext.Viewport(chartPanel);  
+				Ext.QuickTips.init();			
+				var chartPanel = Ext.widget('ExtJSChartPanel',config); //by alias
+				var viewport = new Ext.Viewport(chartPanel);
 			});
 	    </script>
-	    <%-- dinamicizzare height & width --%>
-	    <div id="<%=executionId%>"></div>
-	    
+	    <div id="<%=executionId%>"></div>	    
 	</body>
 
 </html>
-
-
-
-
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-    
