@@ -8,7 +8,7 @@ app.views.ChartExecutionPanel = Ext.extend(Ext.Panel,	{
 			
 		},
 		setChartWidget : function(resp, fromcomposition) {
-			var mask = new Ext.LoadMask(this.el, {msg:"Loading table..."});
+			var mask = new Ext.LoadMask(this.el, {msg:"Loading chart..."});
 				
 			this.on('render', mask.show());
 			var config = resp.config;
