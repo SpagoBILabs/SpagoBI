@@ -11,6 +11,7 @@
  */
 package it.eng.spagobi.engines.chart;
 
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -34,8 +35,11 @@ import org.json.JSONObject;
 public class ChartEngineInstance extends AbstractEngineInstance {
 	private String[] lstEnvVariables = {"SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", 
 										"SBI_SPAGO_CONTROLLER",  "SBI_EXECUTION_ROLE", "SBI_HOST", 
-										"DOCUMENT_ID", "isFromCross", "country", "language",  "user_id" };
+										"DOCUMENT_ID", "isFromCross", "country", "language",  "user_id",
+										"DATASET"};
 	private JSONObject template;
+	
+	private IDataSet dataset;
 
 	public ChartEngineInstance(Object template, Map env) {
 		super( env );	
@@ -69,13 +73,22 @@ public class ChartEngineInstance extends AbstractEngineInstance {
 	}
 	
 	public IDataSet getDataSet() {
-		return (IDataSet)this.getEnv().get(EngineConstants.ENV_DATASET);
+		//return (IDataSet)this.getEnv().get(EngineConstants.ENV_DATASET);
+		return this.dataset;
+	}
+	
+	public void setDataSet(IDataSet dataset) {
+		this.dataset = dataset;
 	}
 	
 	public Locale getLocale() {
 		return (Locale)this.getEnv().get(EngineConstants.ENV_LOCALE);
 	}
-	
+
+	public DataSetServiceProxy getDataSetServiceProxy() {
+		return (DataSetServiceProxy)this.getEnv().get(EngineConstants.ENV_DATASET_PROXY);
+	}
+
 	public AuditServiceProxy getAuditServiceProxy() {
 		return (AuditServiceProxy)this.getEnv().get(EngineConstants.ENV_AUDIT_SERVICE_PROXY);
 	}
