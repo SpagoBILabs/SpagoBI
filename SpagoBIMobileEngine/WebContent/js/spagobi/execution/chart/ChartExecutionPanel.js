@@ -5,7 +5,6 @@ app.views.ChartExecutionPanel = Ext.extend(Ext.Panel,	{
 		initComponent: function ()	{
 			console.log('init chart execution');  
 			app.views.ChartExecutionPanel.superclass.initComponent.apply(this, arguments);
-			
 		},
 		setChartWidget : function(resp, fromcomposition) {
 

@@ -124,6 +124,13 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 		if(app.views.table != undefined && app.views.table != null){
 			app.views.table.destroy();
 		}
+		if(app.views.chart != undefined && app.views.chart != null){
+			app.views.chart.destroy();
+		}
+		if(app.views.composed != undefined && app.views.composed != null){
+			app.views.composed.destroy();
+		}
+
 	    app.views.viewport.setActiveItem(app.views.main, { type: 'fade' });	    
   	}
 	, setParametersView: function(option){
