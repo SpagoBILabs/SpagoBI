@@ -119,23 +119,37 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement", t);
 			}
 			
+	        boolean inlineViewStrategyUsedSuccessfully = false;
+	        int resultNumber = -1;
+			if( isCalculateResultNumberOnLoadEnabled() ) {
+				logger.debug("Calculation of result set total number is enabled");
+				try {
+					// try to calculate the query total result number using inline view
+					resultNumber = getResultNumber(connection);
+					logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
+					// ok, no need to ask the datareader to calculate the query total result number
+					dataReader.setCalculateResultNumberEnabled(false);
+					inlineViewStrategyUsedSuccessfully = true;
+				} catch (Throwable t) {
+					logger.warn("Error while try to get query total result number using inline view stategy", t);
+					// something went wrong, we need to ask the datareader to calculate the query total result number
+					dataReader.setCalculateResultNumberEnabled(true);
+				}
+			} else {
+				logger.debug("Calculation of result set total number is NOT enabled");
+				dataReader.setCalculateResultNumberEnabled(false);
+			}
+	        
 			dataStore = null;
 			try {
-				// tells the data reader not to read the result number since this class maybe enabled for that and since, in case
-				// it is enabled, it is able to perform this operation (using INLINE VIEW strategy)
-				dataReader.setCalculateResultNumberEnabled(false);
 				// read data
 				dataStore = dataReader.read( resultSet );
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("An error occurred while parsing resultset", t);
 			}
 			
-			if( isCalculateResultNumberOnLoadEnabled() ) {
-				logger.debug("Calculation of result set number is enabled");
-    			int resultNumber = getResultNumber(connection);
-    			dataStore.getMetaData().setProperty("resultNumber", new Integer(resultNumber));
-			} else {
-				logger.debug("Calculation of result set number is NOT enabled");
+			if (inlineViewStrategyUsedSuccessfully) {
+				dataStore.getMetaData().setProperty("resultNumber", new Integer(resultNumber));
 			}
 			
 		} finally {		
