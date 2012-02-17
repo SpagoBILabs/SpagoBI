@@ -5,9 +5,12 @@ app.views.ChartExecutionPanel = Ext.extend(Ext.Panel,	{
 		initComponent: function ()	{
 			console.log('init chart execution');  
 			app.views.ChartExecutionPanel.superclass.initComponent.apply(this, arguments);
+			
 		},
 		setChartWidget : function(resp, fromcomposition) {
-
+			var mask = new Ext.LoadMask(this.el, {msg:"Loading table..."});
+				
+			this.on('render', mask.show());
 			var config = resp.config;
 
 			var chartConfig ={
@@ -24,7 +27,7 @@ app.views.ChartExecutionPanel = Ext.extend(Ext.Panel,	{
 			var r =	new Ext.chart.Panel(chartConfig);
 			this.insert(0,r);
 			this.doLayout();
-
+			mask.hide();
 	}
 
 		
