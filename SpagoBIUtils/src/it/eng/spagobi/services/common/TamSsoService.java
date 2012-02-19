@@ -36,9 +36,9 @@ public class TamSsoService implements SsoServiceInterface {
      * @return String
      */
     public String readUserIdentifier(HttpServletRequest request){
-	String user=request.getHeader("iv-user");
-	logger.debug("User in HttpHeader (TAM):"+user);
-	return user;
+    	String user=request.getHeader("iv-user");
+    	logger.debug("User in HttpHeader (TAM):"+user);
+    	return user;
     }
     
     /**
@@ -49,8 +49,8 @@ public class TamSsoService implements SsoServiceInterface {
      * @return String
      */
     public String readUserIdentifier(PortletSession session){
-	logger.warn("NOT Implemented");
-	return "";
+    	logger.warn("NOT Implemented");
+    	return "";
     }
     
     /**
