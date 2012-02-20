@@ -207,13 +207,14 @@ public class JSONDataWriter implements IDataWriter {
 				String fieldHeader = getFieldHeader(fieldMetaData, i);
 				
 				JSONObject fieldMetaDataJSON = new JSONObject();
-				fieldMetaDataJSON.put("name", fieldName);						
-				fieldMetaDataJSON.put("dataIndex", fieldName);
 				if(adjust){
-					fieldMetaDataJSON.put("header", fieldName);
+					fieldMetaDataJSON.put("name", fieldHeader);
 				}else{
-					fieldMetaDataJSON.put("header", fieldHeader);
+					fieldMetaDataJSON.put("name", fieldName);
 				}
+				fieldMetaDataJSON.put("name", fieldHeader);						
+				fieldMetaDataJSON.put("dataIndex", fieldName);
+
 				
 				addMeasuresScaleFactor(fieldsOptions,fieldMetaData.getName(),fieldMetaDataJSON);
 				
