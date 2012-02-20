@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<CHART_WIDGET  width='80%' height='80%'>
+  
+  <!-- chart object properties -->
+  <LEGEND position='right'/>
+  
+  <ANIMATE easing='bounceOut' duration='750'/>
+  
+  <SERIES_LIST>
+  	<SERIE  xField='x' yField='perc' type='column' axis='left'>
+  	      <LABEL field='perc' contrast='true' font='18px Arial' display='insideEnd' text-anchor='middle'/>   
+    </SERIE>
+  </SERIES_LIST>
+  
+  <AXES_LIST>
+    <AXES  type='Numeric' position='left' title='perc'>
+         <FIELDS_LIST>
+            <FIELDS>perc</FIELDS>
+         </FIELDS_LIST>
+    </AXES>
+    <AXES  type='Category' position='bottom' title='x'>
+         <FIELDS_LIST>
+            <FIELDS>x</FIELDS>
+         </FIELDS_LIST>
+    </AXES>
+  </AXES_LIST>
+  
+         <INTERACTIONS_LIST>
+            <INTERACTIONS type='panzoom'>
+            	<AXES>
+            		<BOTTOM></BOTTOM>
+            	</AXES>
+            </INTERACTIONS>
+         </INTERACTIONS_LIST>
+
+</CHART_WIDGET>
+
