@@ -29,7 +29,7 @@ app.views.ParametersView = Ext.extend(Ext.form.FormPanel,{
             handler: function () {
         		Ext.dispatch({
                     controller: app.controllers.executionController,
-                    action: 'prepareDocumentForExecution',
+                    action: 'executeTemplate',
                     parameters:  app.controllers.parametersController.getFormState(),
                     executionInstance: app.controllers.parametersController.executionInstance
         		});

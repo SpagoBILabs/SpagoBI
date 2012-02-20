@@ -28,12 +28,6 @@
 <!-- DOCUMENT EXECUTION ACTIONS															   -->
 <!-- ================================================================================= -->
 	
-	<ACTION name="LOAD_MOBILE_DOCUMENT_ACTION" 
-			class="it.eng.spagobi.engine.mobile.service.LoadMobileDocumentAction"
-			scope="REQUEST">
-		<CONFIG></CONFIG>
-	</ACTION>
-	
 	<ACTION name="GET_ROLES_FOR_EXECUTION_ACTION" 
  		class="it.eng.spagobi.analiticalmodel.execution.service.GetRolesForExecutionAction" scope="REQUEST">
  	<CONFIG/>
@@ -53,11 +47,6 @@
 	 
 	 <ACTION name="GET_PARAMETER_VALUES_FOR_EXECUTION_ACTION" 
 	 	class="it.eng.spagobi.analiticalmodel.execution.service.GetParameterValuesForExecutionAction" scope="REQUEST">
-	 	<CONFIG/>
-	 </ACTION>
-	 
-	 <ACTION name="PREPARE_DOCUMENT_FOR_EXECUTION_ACTION" 
-	 	class="it.eng.spagobi.engine.mobile.service.PrepareDocumentForExecutionAction" scope="REQUEST">
 	 	<CONFIG/>
 	 </ACTION>
 	 

@@ -39,7 +39,7 @@ app.views.DocumentPreview = Ext.extend(Ext.Panel,
 		    	listeners: { el:{ tap:function(e){ 
 		  			  Ext.dispatch({
 						  controller: app.controllers.mobileController,
-						  action: 'executeDocument',
+						  action: 'getRoles',
 						  id: rec.id,
 						  label: rec.label, 
 						  engine: rec.engine, 
