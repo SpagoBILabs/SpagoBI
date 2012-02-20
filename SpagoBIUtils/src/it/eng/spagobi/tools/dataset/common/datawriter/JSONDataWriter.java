@@ -41,12 +41,16 @@ public class JSONDataWriter implements IDataWriter {
 	public static final String PROPERTY_PUT_IDS = "putIDs";
 	
 	private boolean putIDs = true;
+	private boolean adjust = false;
+	private JSONArray fieldsOptions;
 	
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy" );
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
 	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
 	public static final String METADATA = "metaData";
+	public static final String PROPERTY_FIELD_OPTION = "PROPERTY_FIELD_OPTION";
+	public static final String PROPERTY_ADJUST = "PROPERTY_ADJUST";
 	
 	public JSONDataWriter() {}
 	
@@ -56,32 +60,36 @@ public class JSONDataWriter implements IDataWriter {
 			if (o != null) {
 				this.putIDs = Boolean.parseBoolean(o.toString());
 			}
+			o = properties.get(PROPERTY_FIELD_OPTION);
+			if (o != null) {
+				this.fieldsOptions = (JSONArray)o;
+			}
+			o = properties.get(PROPERTY_ADJUST);
+			if (o != null) {
+				this.adjust = Boolean.parseBoolean(o.toString());
+			}
 		}
 	}
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(JSONDataWriter.class);
     
-    public Object write(IDataStore dataStore) throws RuntimeException {
-    	return write(dataStore, null);
-    }
+
     
-	public Object write(IDataStore dataStore, JSONArray fieldsOptions) throws RuntimeException {
+	public Object write(IDataStore dataStore) throws RuntimeException {
 		JSONObject  result = null;
 		JSONObject metadata;
 		IField field;
 		IRecord record;
 		JSONObject recordJSON;
 		int recNo;
-		
-		
 		JSONArray recordsJSON;
 		int resultNumber;
 		Object propertyRawValue;
 		
 		Assert.assertNotNull(dataStore, "Object to be serialized connot be null");
 		
-		metadata = (JSONObject) write(dataStore.getMetaData(), fieldsOptions);
+		metadata = (JSONObject) write(dataStore.getMetaData());
 		
 		try {
 			result = new JSONObject();
@@ -135,8 +143,13 @@ public class JSONDataWriter implements IDataWriter {
 							fieldValue =  field.getValue().toString();
 						}
 					}
+					String fieldName;
 					
-					String fieldName = getFieldName(fieldMetaData, i);
+					if(adjust){
+						fieldName = fieldMetaData.getName();
+					}else{
+						fieldName = getFieldName(fieldMetaData, i);
+					}
 					recordJSON.put(fieldName, fieldValue);
 				}
 				
@@ -164,12 +177,8 @@ public class JSONDataWriter implements IDataWriter {
 		String fieldName = "column_" + (i+1);
 		return fieldName;
 	}
-
-	public Object write(IMetaData metadata) {
-		return write(metadata, null);
-	}
 	
-	public Object write(IMetaData metadata, JSONArray fieldsOptions) {
+	public Object write(IMetaData metadata) {
 		
 		try {
 		
@@ -200,7 +209,12 @@ public class JSONDataWriter implements IDataWriter {
 				JSONObject fieldMetaDataJSON = new JSONObject();
 				fieldMetaDataJSON.put("name", fieldName);						
 				fieldMetaDataJSON.put("dataIndex", fieldName);
-				fieldMetaDataJSON.put("header", fieldHeader);
+				if(adjust){
+					fieldMetaDataJSON.put("header", fieldName);
+				}else{
+					fieldMetaDataJSON.put("header", fieldHeader);
+				}
+				
 				addMeasuresScaleFactor(fieldsOptions,fieldMetaData.getName(),fieldMetaDataJSON);
 				
 				Class clazz = fieldMetaData.getType();
