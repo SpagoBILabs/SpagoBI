@@ -27,7 +27,7 @@ app.views.BottomToolbar = Ext.extend(Ext.Toolbar,
 
 							Ext.dispatch({
 			                    controller: app.controllers.mobileController,
-			                    action: 'setParametersView',
+			                    action: 'backToParametersView',
 			                    params : this.parameters
 			        		});
 						}

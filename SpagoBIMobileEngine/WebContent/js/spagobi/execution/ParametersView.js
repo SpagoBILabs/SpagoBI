@@ -1,70 +1,74 @@
-app.views.ParametersView = Ext.extend(Ext.form.FormPanel,{
-		
-    dockedItems: [{
-        xtype: 'toolbar',
-        dock: 'bottom',
-        defaults: {
-            ui: 'plain',
-            iconMask: true
-        },
-        scroll: 'horizontal',
-        layout: {
-            pack: 'center'
-        },
-        items: [{
-		    title: 'Home',    		    
-		    iconCls: 'reply',			    
-		    text: 'Home',
-            handler: function () {
-        		Ext.dispatch({
-                    controller: app.controllers.mobileController,
-                    action: 'backToBrowser'
-        		});
+app.views.ParametersView = Ext.extend(
+		Ext.form.FormPanel,
+		{
 
-            }},
-            {
-		    title: 'Esegui',    		    
-		    iconCls: 'settings',
-		    text: 'Esegui',
-            handler: function () {
-        		Ext.dispatch({
-                    controller: app.controllers.executionController,
-                    action: 'executeTemplate',
-                    parameters:  app.controllers.parametersController.getFormState(),
-                    executionInstance: app.controllers.parametersController.executionInstance
-        		});
+			dockedItems : [ {
+				xtype : 'toolbar',
+				dock : 'bottom',
+				defaults : {
+					ui : 'plain',
+					iconMask : true
+				},
+				scroll : 'horizontal',
+				layout : {
+					pack : 'center'
+				},
+				items : [
+				         {
+				        	 title : 'Home',
+				        	 iconCls : 'reply',
+				        	 text : 'Home',
+				        	 handler : function() {
+				        		 Ext
+				        		 .dispatch({
+				        			 controller : app.controllers.mobileController,
+				        			 action : 'backToBrowser'
+				        		 });
 
-            }},
-            {
-		    title: 'Info',    		    
-		    iconCls: 'info',
-		    text: 'Info'
+				        	 }
+				         },
+				         {
+				        	 title : 'Esegui',
+				        	 iconCls : 'settings',
+				        	 text : 'Esegui',
+				        	 handler : function() {
+				        		 Ext
+				        		 .dispatch({
+				        			 controller : app.controllers.executionController,
+				        			 action : 'executeTemplate',
+				        			 parameters : app.controllers.parametersController
+				        			 .getFormState(),
+				        			 executionInstance : app.controllers.parametersController.executionInstance
+				        		 });
 
-        }]
+				        	 }
+				         }, {
+				        	 title : 'Info',
+				        	 iconCls : 'info',
+				        	 text : 'Info'
 
-    }],
+				         } ]
 
-	    
-	    
-	    previewItem: null,
+			} ],
 
-		initComponent: function ()	{
-			this.html = '  ';		
-			app.views.ParametersView.superclass.initComponent.apply(this, arguments);
-			
-		}
-		
-		, refresh: function(items){
+			initComponent : function() {
+				this.html = '  ';
+				app.views.ParametersView.superclass.initComponent
+				.apply(this, arguments);
 
-			this.removeAll();
+			}
 
-			var fieldset = {
-					title: 'Document Parameters',
-					xtype: 'fieldset',
-					items: items
-			};
-			
-			this.add(fieldset);
-
-		}
-	});
+			,refresh : function(items) {
+	
+				this.removeAll();
+	
+				var fieldset = {
+						title : 'Document Parameters',
+						xtype : 'fieldset',
+						items : items
+				};
+	
+				this.add(fieldset);
+	
+			}
+});

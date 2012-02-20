@@ -104,6 +104,16 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 	}
 
 	, backToBrowser: function(){
+		this.destroyExecutionView();
+	    app.views.viewport.setActiveItem(app.views.main, { type: 'fade' });	    
+  	}
+	
+	, backToParametersView: function(option){
+		this.destroyExecutionView();
+	    app.views.viewport.setActiveItem(app.views.parameters, { type: 'fade' });
+  	}
+	
+	, destroyExecutionView: function(){
 		if(app.views.table != undefined && app.views.table != null){
 			app.views.table.destroy();
 		}
@@ -113,14 +123,5 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 		if(app.views.composed != undefined && app.views.composed != null){
 			app.views.composed.destroy();
 		}
-
-	    app.views.viewport.setActiveItem(app.views.main, { type: 'fade' });	    
-  	}
-	, setParametersView: function(option){
-		if(app.views.table != undefined && app.views.table != null){
-			app.views.table.destroy();
-		}
-	    app.views.viewport.setActiveItem(app.views.parameters, { type: 'fade' });	    
-	    app.views.parameters.refresh([option.params]);
-  	}
+	}
 });
