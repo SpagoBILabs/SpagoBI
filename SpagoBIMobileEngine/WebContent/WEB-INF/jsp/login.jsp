@@ -47,11 +47,19 @@ author: Monica Franceschini
 <html>
 
 	<head>
+		<link rel="stylesheet" href="../css/add2home.css" type="text/css">
+		<link rel="apple-touch-icon" href="../img/iOS-57.png" /> 
+		<link rel="apple-touch-icon" sizes="72x72" href="../img/iOS-72.png" /> 
+		<link rel="apple-touch-icon" sizes="114x114" href="../img/iOS-114.png" /> 
+		<link rel="apple-touch-startup-image" href="../img/startup.png">
+		<script type="text/javascript">var addToHomeConfig = { touchIcon:true };</script> 
+		<script type="text/javascript" src="../js/add2home/add2home.js"></script> 
+
 		<link rel="stylesheet" href="../css/sencha-touch-debug.css" type="text/css">
 		<link rel="stylesheet" href="../css/spagobi-mobile.css" type="text/css">
 		<link rel="stylesheet" href="../css/Ext.ux.TouchGridPanel.css" type="text/css">
 		<link rel="stylesheet" href="../css/touch-charts-demo.css" type="text/css">
-		<link rel="stylesheet" href="../css/add2home.css" type="text/css">
+		
 
 		<script type="text/javascript" src="../js/sencha/sencha-touch-debug.js"></script>
 		<script type="text/javascript" src="../js/sencha/touch-charts-debug.js"></script>
