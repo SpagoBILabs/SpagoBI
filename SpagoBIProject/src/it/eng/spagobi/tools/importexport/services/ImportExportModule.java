@@ -220,11 +220,15 @@ public class ImportExportModule extends AbstractModule {
 		String assKindFromReq = (String) request.getAttribute("importAssociationKind");
 		boolean isNoAssociationModality = assKindFromReq != null && assKindFromReq.equalsIgnoreCase("noassociations");
 		List uplFiles = request.getAttributeAsList("UPLOADED_FILE");
+		if(uplFiles != null) {
+			logger.debug("Uploded files [" + uplFiles.size() + "]");
+		}
 		Iterator uplFilesIter = uplFiles.iterator();
 		while (uplFilesIter.hasNext()) {
-		    //UploadedFile uplFile = (UploadedFile) uplFilesIter.next();
 			FileItem uplFile = (FileItem) uplFilesIter.next();
-		    //String nameInForm = uplFile.getFieldNameInForm();
+		   
+			logger.debug("Uploded file name [" + uplFile + "]");
+			
 			String nameInForm = uplFile.getFieldName();
 		    if (nameInForm.equals("exportedArchive")) {
 		    	archive = uplFile;
@@ -235,8 +239,9 @@ public class ImportExportModule extends AbstractModule {
 		// check that the name of the uploaded archive is not empty
 		//String archiveName = archive.getFileName();
 		String archiveName = GeneralUtilities.getRelativeFileNames(archive.getName());
+		logger.debug("Archive file name [" + archiveName + "]");
 		if (archiveName.trim().equals("")) {
-		    logger.error("Missing exported file");
+			logger.error("Missing exported file");
 			response.setAttribute(ImportExportConstants.PUBLISHER_NAME, "ImportExportLoopbackStopImport");
 		    throw new EMFValidationError(EMFErrorSeverity.ERROR, "exportedArchive", "8007", "component_impexp_messages");
 		}
@@ -306,6 +311,7 @@ public class ImportExportModule extends AbstractModule {
 	    // apply transformation
 	    TransformManager transManager = new TransformManager();
 	    archiveBytes = transManager.applyTransformations(archiveBytes, archiveName, pathImpTmpFolder);
+	    logger.debug("Transformation applied succesfully");
 
 	    impManager = ImportUtilities.getImportManagerInstance();
 	    // prepare import environment
@@ -346,8 +352,9 @@ public class ImportExportModule extends AbstractModule {
 			response.setAttribute(ImportExportConstants.PUBLISHER_NAME, "ImportExportRoleAssociation");
 		}
 	} catch (EMFUserError emfue) {
-	    if (impManager != null)
-		impManager.stopImport();
+	    if (impManager != null) {
+	    	impManager.stopImport();
+	    }
 	    throw emfue;
 	} catch (ClassNotFoundException cnde) {
 	    logger.error("Importer class not found", cnde);
@@ -370,9 +377,10 @@ public class ImportExportModule extends AbstractModule {
 			impManager.stopImport();
 		throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
 	} catch (Exception e) {
-		logger.error(e);
-	    if (impManager != null)
+		logger.error("An unexpected error occured while performing import", e);
+	    if (impManager != null) {
 			impManager.stopImport();
+	    }
 		throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
 	} finally {
 	    if (impManager != null)
