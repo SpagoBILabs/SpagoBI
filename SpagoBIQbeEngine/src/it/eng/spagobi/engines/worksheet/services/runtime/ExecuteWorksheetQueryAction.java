@@ -34,6 +34,7 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -108,9 +109,11 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 	
 
 	public JSONObject serializeDataStore(IDataStore dataStore)  {
-		JSONDataWriter dataSetWriter = new JSONDataWriter();
+		Map<String, Object> properties = new HashMap<String, Object>();
 		JSONArray fieldOptions = this.getAttributeAsJSONArray(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS);
-		JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore,fieldOptions);
+		properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
+		JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
+		JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
 		return gridDataFeed;
 	}
 	
