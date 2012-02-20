@@ -4,10 +4,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
 		
 		this.services = new Array();
-		this.services['loadDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'LOAD_MOBILE_DOCUMENT_ACTION'
-		});   
-		
+
 		this.services['getRolesForExecutionService'] = Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'GET_ROLES_FOR_EXECUTION_ACTION'
 			, baseParams: params
@@ -57,33 +54,19 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 
 		app.views.preview.showPreview( imageClass, rec);
 	}
-	
-	, executeDocument: function(options) {
 		
-		Ext.Ajax.request({
-            url: this.services['loadDocumentService'],
-            scope: this,
-            method: 'post',
-            params: {OBJECT_ID: options.id},
-            success: function(response, opts) {
-            	this.getRoles(options.id, options.label, options.engine, options.typeCode);
-            }
-	    }); 
-
-	  }
-	
-	, getRoles: function(id, label, engine, typeCode){
+	, getRoles: function(options){
 		
 		Ext.Ajax.request({
             url: this.services['getRolesForExecutionService'],
             scope: this,
             method: 'post',
-            params: {OBJECT_ID: id, OBJECT_LABEL: label, isFromCross:false},
+            params: {OBJECT_ID: options.id, OBJECT_LABEL: options.label, isFromCross:false},
             success: function(response, opts) {
             	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
             		var responseJson = Ext.decode(response.responseText);
                     var roleName = responseJson.root[0].name;
-                    this.startNewExecutionProcess(id, label, roleName, engine, typeCode);
+                    this.startNewExecutionProcess(options.id, options.label, roleName,  options.engine, options.typeCode);
             	}
           	}
 	    }); 

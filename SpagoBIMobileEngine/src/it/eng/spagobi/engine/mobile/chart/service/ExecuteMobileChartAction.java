@@ -118,7 +118,6 @@ public class ExecuteMobileChartAction extends AbstractExecuteMobileAction {
 			toReturn.put("config", chartConfigFromTemplate);
 			toReturn.put("store", extDataStore);
 			
-			
 			writeBackToClient( new JSONSuccess( toReturn ) );
 			
 		} catch (EMFUserError emf) {

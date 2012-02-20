@@ -77,16 +77,17 @@ public abstract class AbstractExecuteMobileAction extends AbstractSpagoBIAction 
 			paramErrors = null;
 			
 			boolean isFromComposed = this.getAttributeAsBoolean( MobileConstants.IS_FROM_COMPOSED );
-
+			userProvidedParametersStr = getAttributeAsString(ObjectsTreeConstants.PARAMETERS);
+			
+			
 			if(!isFromComposed){
 				instance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
-				obj =  (BIObject)getAttributeFromSession(ObjectsTreeConstants.OBJECT_ID);
 			}else{
 				profile = getUserProfile();
 				documentId = requestContainsAttribute( DOCUMENT_ID )? getAttributeAsInteger( DOCUMENT_ID ): null;
 				documentLabel = getAttributeAsString( DOCUMENT_LABEL );
 				executionRole = getAttributeAsString( EXECUTION_ROLE );
-				userProvidedParametersStr = getAttributeAsString(ObjectsTreeConstants.PARAMETERS);
+				
 				
 				logger.debug("Parameter [" + DOCUMENT_ID + "] is equals to [" + documentId + "]");
 				logger.debug("Parameter [" + DOCUMENT_LABEL + "] is equals to [" + documentLabel + "]");
@@ -146,15 +147,13 @@ public abstract class AbstractExecuteMobileAction extends AbstractSpagoBIAction 
 				   // so far so good: everything has been validated successfully. Let's create a new ExecutionInstance.
 				instance = createExecutionInstance(obj.getId(), executionRole, executionContextId, getLocale());
 				   
-				//createContext( executionContextId ).set(ExecutionInstance.class.getName(), instance);
-				
-				//check the parameters
-				instance.refreshParametersValues(getSpagoBIRequestContainer().getRequest(), true);
-				instance.setParameterValues(userProvidedParametersStr, true);	
-				instance.getBIObject();
 			}
 			
 			try {
+				//check the parameters
+				instance.refreshParametersValues(getSpagoBIRequestContainer().getRequest(), true);
+				instance.setParameterValues(userProvidedParametersStr, true);	
+				obj = instance.getBIObject();
 				paramErrors = instance.getParametersErrors();
 			} catch (Exception e) {
 				logger.error("Error validating the parameters", e);

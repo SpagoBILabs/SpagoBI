@@ -19,29 +19,8 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 			, baseParams: params
 		});
 		
-		this.services['prepareDocumentForExecution'] = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'PREPARE_DOCUMENT_FOR_EXECUTION_ACTION'
-			, baseParams: params
-		});
 	}
 
-	, prepareDocumentForExecution: function(option){
-		var params = Ext.apply({PARAMETERS: Ext.encode(option.parameters)},option.executionInstance);
-		if(option.parameters!=undefined && option.parameters!=null){
-			Ext.Ajax.request({
-		        url: this.services['prepareDocumentForExecution'],
-		        scope: this,
-		        method: 'post',
-		        params: params,
-		        success: function(response, opts) {
-		        	this.executeTemplate(option);
-		        }
-		    }); 
-		}else{
-			this.executeTemplate(option);
-		}
-	}
-	
 	, executeTemplate: function(option, documentContainerPanel){
 
 		var typeCode =  option.executionInstance.TYPE_CODE;
