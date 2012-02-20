@@ -28,7 +28,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -96,7 +98,11 @@ public class ExecuteMobileChartAction extends AbstractExecuteMobileAction {
 			
 			logger.debug("Building the data store..");
 			dataStore = dataSet.getDataStore();
-			JSONDataWriter dataSetWriter = new JSONDataWriter();
+			
+			Map<String,Object> parametersForWriter = new HashMap<String,Object>();
+			parametersForWriter.put(JSONDataWriter.PROPERTY_ADJUST, true);
+			
+			JSONDataWriter dataSetWriter = new JSONDataWriter(parametersForWriter);
 			JSONObject dataStroreJSON =  (JSONObject) dataSetWriter.write(dataStore);
 			JSONObject dataStroreJSONMetdaData = dataStroreJSON.getJSONObject(JSONDataWriter.METADATA);
 

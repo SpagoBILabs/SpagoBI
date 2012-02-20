@@ -1,34 +1,41 @@
-app.views.ChartExecutionPanel = Ext.extend(Ext.Panel,	{
-		dockedItems: [],
-	    scroll: 'vertical',
+app.views.ChartExecutionPanel = Ext.extend(Ext.Panel, {
+	dockedItems : [],
+	scroll : 'vertical',
 
-		initComponent: function ()	{
-			console.log('init chart execution');  
-			app.views.ChartExecutionPanel.superclass.initComponent.apply(this, arguments);
-			
-		},
-		setChartWidget : function(resp, fromcomposition) {
-			var mask = new Ext.LoadMask(this.el, {msg:"Loading chart..."});
-				
-			this.on('render', mask.show());
-			var config = resp.config;
+	initComponent : function() {
+		console.log('init chart execution');
+		app.views.ChartExecutionPanel.superclass.initComponent.apply(this,
+				arguments);
+	},
+	setChartWidget : function(resp, fromcomposition) {
+		var mask = new Ext.LoadMask(this.el, {msg:"Loading chart..."});
+		this.on('render', mask.show());
+	
+		var r;
+		var config = resp.config;
+		config.animate = true;
 
-			var chartConfig ={
-	            items: [config]
-			};
+		config.listeners = {
+            'itemtap': function(series, item, event) {  }
+        };
+		var chartConfig = {
+			items : [ config ]
+		};
 
-			if(fromcomposition){
-				chartConfig.width='100%';
-				chartConfig.height='100%';
-			}else{
-				chartConfig.bodyMargin='50px 50px 100px 50px';
-				chartConfig.fullscreen=true;
-			}
-			var r =	new Ext.chart.Panel(chartConfig);
-			this.insert(0,r);
+		if (fromcomposition) {
+			chartConfig.width = '100%';
+			chartConfig.height = '100%';
+			chartConfig.defaultType = 'chart';
+			chartConfig.layout = 'fit';
+			r = new Ext.Panel(chartConfig);
+			this.insert(0, r);
 			this.doLayout();
-			mask.hide();
+		} else {
+			chartConfig.bodyMargin = '10% 1px 60% 1px';
+			chartConfig.fullscreen = true;
+			app.views.chart = new Ext.chart.Panel(chartConfig);
+		}
+		mask.hide();
 	}
 
-		
 });
