@@ -55,4 +55,15 @@ public class MobileConstants {
 	public static final String DOCUMENT_TYPE_TABLE = "table";
 	public static final String DOCUMENT_TYPE_COMPOSED = "composed";
 	public static final String DOCUMENT_TYPE = "type";
+	public static final String DRILL_TAG = "DRILL";
+	public static final String PARAM_TAG = "PARAM";
+	public static final String DRILL_DOCUMENT_ATTR = "document";
+	public static final String PARAM_NAME_ATTR = "name";
+	public static final String PARAM_TYPE_ATTR = "type";
+	public static final String PARAM_VALUE_ATTR = "value";
+	
+	public static final String PARAM_TYPE_RELATIVE = "RELATIVE";
+	public static final String PARAM_TYPE_ABSOLUTE = "ABSOLUTE";
+	public static final String PARAM_TYPE_SERIE = "SERIE";
+	public static final String PARAM_TYPE_CATEGORY = "CATEGORY";
 }

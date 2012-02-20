@@ -11,6 +11,7 @@
  */
 package it.eng.spagobi.engine.mobile.table.service;
 
+import it.eng.qbe.query.WhereField;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.DataSetExecutorForBIObject;
@@ -23,14 +24,18 @@ import it.eng.spagobi.engine.mobile.table.serializer.MobileDatasetTableSerialize
 import it.eng.spagobi.engine.mobile.template.TableTemplateInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -65,7 +70,10 @@ public class ExecuteMobileTableAction extends AbstractExecuteMobileAction {
 			String templContString = new String(templateContent);
 			SourceBean template = SourceBean.fromXMLString( templContString );
 			logger.debug("Created template source bean");
-			TableTemplateInstance templInst = new TableTemplateInstance(template);
+			//GETS PARAMETERS VALUES
+			HashMap paramMap = getParametersList(getAttributeAsJSONObject("PARAMETERS"));
+
+			TableTemplateInstance templInst = new TableTemplateInstance(template, paramMap);
 			templInst.loadTemplateFeatures();
 			logger.debug("Created template instance");
 			//Load the dataset
@@ -106,5 +114,24 @@ public class ExecuteMobileTableAction extends AbstractExecuteMobileAction {
 			logger.error("Unable to execute table document",e);
 		}
 	}
-	
+	public HashMap<String, String> getParametersList(JSONObject parameters) throws JSONException{
+		
+		String[] names = new String[0];
+		HashMap<String, String> params = new HashMap<String, String>();
+		
+		try {
+			if(parameters!=null){
+				names = JSONObject.getNames(parameters);
+			}
+			
+		} catch (Exception e) {
+			logger.error("Error loading parameters from the string "+parameters);
+		}
+
+		
+		for (String name : names) {
+			params.put(name, parameters.getString(name));
+		}
+		return params;
+	}
 }

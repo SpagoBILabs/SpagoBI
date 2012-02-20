@@ -15,6 +15,9 @@ app.views.TableExecutionPanel = Ext.extend(Ext.Panel,
 				
 			  this.on('render', mask.show());
 			  
+			  var crossParams = new Array();
+
+			  
 		      var store = new Ext.data.Store({
 		     		root: 'values'
 		     		, fields: resp.features.fields
@@ -47,18 +50,15 @@ app.views.TableExecutionPanel = Ext.extend(Ext.Panel,
 					multiSelect : false,
 					dockedItems: [toolbarForTable],
 					conditions  : resp.features.conditions,
-					colModel    : resp.features.columns
+					colModel    : resp.features.columns,
+					scope: this
 			    	,listeners: { el:{ tap:function(e){
-		      					//captures event e on target
 		      					var target = e.target;
-		      					var textCell = target.innerText;
-		      					var row = target.parentNode;
-		      					var cellsOfRow = row.cells;
-		      					var rowIdx = row.rowIndex;
-			  			  		//			alert(e);
-		      					//put cross navigation code here!
-			    							} 
-		      						} 
+		      					app.views.tableExecutionPanel.setCrossNavigation(resp, target, crossParams);
+		      					app.views.tableExecutionPanel.fireEvent('execCrossNavigation', [crossParams]);
+		      					crossParams = new Array();
+    							} 
+  						} 
 		      		}
 		      	};
 				if(fromcomposition){
@@ -75,6 +75,45 @@ app.views.TableExecutionPanel = Ext.extend(Ext.Panel,
 				      this.doLayout();
 				}
 		      mask.hide();
+		}
+		, setCrossNavigation: function(resp, target, crossParams){
+			
+			var drill = resp.features.drill;
+			if(drill != null && drill != undefined){
+				var params = drill.params;
+				
+				//captures event e on target				
+				var textCell = target.innerText;
+				var row = target.parentNode;
+				var cellsOfRow = row.cells;
+				var rowIdx = row.rowIndex;
+				var attributes = target.attributes;
+				var column= '';
+				for(i = 0; i<attributes.length; i++){
+					var at = attributes[i];
+					if(at.name == 'mapping'){
+						column = at.value;
+					}
+				}
+				if(params != null && params != undefined){
+					for(i=0; i< params.length; i++){
+						var param = params[i];
+						var name = param.paramName;
+						var type = param.paramType;
+
+						/*	RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE */
+						if(type == 'SERIE'){
+							crossParams.push({name : name, value : textCell});
+						}else if(type == 'CATEGORY'){
+							crossParams.push({name : name, value : column});
+						}else{
+							crossParams.push({name : name, value : param.paramValue});
+						}
+
+					}
+				}				
+			}
+			return crossParams;
 		}
 
 		

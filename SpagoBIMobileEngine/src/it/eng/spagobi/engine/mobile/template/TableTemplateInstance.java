@@ -3,6 +3,7 @@ package it.eng.spagobi.engine.mobile.template;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engine.mobile.MobileConstants;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -18,19 +19,22 @@ public class TableTemplateInstance implements IMobileTemplateInstance{
 	private JSONArray columns = new JSONArray();
 	private JSONArray fields = new JSONArray();
 	private JSONArray conditions = new JSONArray();
+	private JSONObject drill = new JSONObject();
+
 	
 	private JSONObject features = new JSONObject();
 	
 
 
 	private SourceBean template;
+	private HashMap<String, String> paramsMap = new HashMap<String, String>();
 	
 	private static transient Logger logger = Logger.getLogger(TableTemplateInstance.class);
 
 
-	public TableTemplateInstance(SourceBean template) {
+	public TableTemplateInstance(SourceBean template, HashMap<String, String> params) {
 		this.template = template;
-		
+		this.paramsMap = params;
 	}
 
 	private void buildColumnsJSON() throws Exception {
@@ -39,6 +43,7 @@ public class TableTemplateInstance implements IMobileTemplateInstance{
 		List cols = (List)template.getAttributeAsList(MobileConstants.COLUMNS_TAG+"."+MobileConstants.COLUMN_TAG);
 		if(cols == null) {
 			logger.warn("Cannot find columns configuration settings: tag name " + MobileConstants.COLUMNS_TAG+"."+MobileConstants.COLUMN_TAG);
+			return;
 		}
 		Vector alarms = new Vector();
 		for(int i=0; i<cols.size(); i++){
@@ -85,7 +90,48 @@ public class TableTemplateInstance implements IMobileTemplateInstance{
 		logger.debug("OUT");		
 
 	}
-	
+	private void buildDrillJSON() throws Exception {
+		
+		SourceBean confSB = null;
+		String documentName = null;
+		
+		logger.debug("IN");
+		confSB = (SourceBean)template.getAttribute(MobileConstants.DRILL_TAG);
+		if(confSB == null) {
+			logger.debug("Cannot find title drill settings: tag name " + MobileConstants.DRILL_TAG);
+			return;
+		}
+		documentName = (String)confSB.getAttribute(MobileConstants.DRILL_DOCUMENT_ATTR);
+		List paramslist = (List)template.getAttributeAsList(MobileConstants.DRILL_TAG+"."+MobileConstants.PARAM_TAG);
+
+		if(paramslist != null){
+			JSONArray params = new JSONArray();
+			for(int k=0; k<paramslist.size(); k++){
+				SourceBean param = (SourceBean)paramslist.get(k);
+				String paramName = (String)param.getAttribute(MobileConstants.PARAM_NAME_ATTR);
+				String paramType = (String)param.getAttribute(MobileConstants.PARAM_TYPE_ATTR);
+				String paramValue = (String)param.getAttribute(MobileConstants.PARAM_VALUE_ATTR);
+				JSONObject paramJSON = new JSONObject();
+				paramJSON.put("paramName", paramName);
+				paramJSON.put("paramType", paramType);
+				
+				//FILLS RELATIVE TYPE PARAMETERS' VALUE FROM REQUEST
+				if(paramType.equalsIgnoreCase(MobileConstants.PARAM_TYPE_RELATIVE)){
+					paramJSON.putOpt("paramValue", paramsMap.get(paramName));
+				}else{
+					paramJSON.putOpt("paramValue", paramValue);//should be applied only on absolute type
+				}
+				params.put(paramJSON);
+
+			}
+			drill.put("params", params);
+		}
+		
+		drill.put("document", documentName);
+
+		logger.debug("OUT");		
+
+	}
 	private void buildTitleJSON() throws Exception {
 		
 		SourceBean confSB = null;
@@ -95,6 +141,7 @@ public class TableTemplateInstance implements IMobileTemplateInstance{
 		confSB = (SourceBean)template.getAttribute(MobileConstants.TITLE_TAG);
 		if(confSB == null) {
 			logger.warn("Cannot find title configuration settings: tag name " + MobileConstants.TITLE_TAG);
+			return;
 		}
 		titleName = (String)confSB.getAttribute(MobileConstants.TITLE_VALUE_ATTR);
 		String titleStyle = (String)confSB.getAttribute(MobileConstants.TITLE_STYLE_ATTR);
@@ -110,6 +157,7 @@ public class TableTemplateInstance implements IMobileTemplateInstance{
 	public void loadTemplateFeatures() throws Exception {
 		buildTitleJSON();
 		buildColumnsJSON();
+		buildDrillJSON();
 		setFeatures();
 	}
 
@@ -125,6 +173,7 @@ public class TableTemplateInstance implements IMobileTemplateInstance{
 			features.put("columns", columns);
 			features.put("fields", fields);
 			features.put("conditions", conditions);
+			features.put("drill", drill);
 		} catch (JSONException e) {
 			logger.error("Unable to set features");
 		}		 
