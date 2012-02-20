@@ -52,6 +52,7 @@ author: Monica Franceschini
 		<link rel="apple-touch-icon" sizes="72x72" href="../img/iOS-72.png" /> 
 		<link rel="apple-touch-icon" sizes="114x114" href="../img/iOS-114.png" /> 
 		<link rel="apple-touch-startup-image" href="../img/startup.png">
+		
 		<script type="text/javascript">var addToHomeConfig = { touchIcon:true };</script> 
 		<script type="text/javascript" src="../js/add2home/add2home.js"></script> 
 
