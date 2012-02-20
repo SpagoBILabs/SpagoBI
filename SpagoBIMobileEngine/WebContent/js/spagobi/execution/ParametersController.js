@@ -157,5 +157,20 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 		}
 		return state;
 	}
+	
+	, setFormState: function(state) {
+		var state;
+		state = {};
+		if(this.fields!=undefined && this.fields!=null){
+			for(var i=0; i<this.fields.length; i++) {
+				
+				var field = this.fields[i];
+				var newValue = state.fieldName;
+				if(newValue!=undefined && newValue!=null){
+					field.setValue(newValue);
+				}
+			}
+		}
+	}
 
 });
