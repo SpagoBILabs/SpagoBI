@@ -51,6 +51,7 @@ public class MobileConstants {
 	public static final String DOCUMENTS_HEIGHT_ATTR = "height";
 	public static final String IS_FROM_COMPOSED = "IS_FROM_COMPOSED";
 	public static final String ENGINE = "ENGINE";
+	public static final String TYPE_CODE = "TYPE_CODE";
 	public static final String DOCUMENT_TYPE_CHART = "chart";
 	public static final String DOCUMENT_TYPE_TABLE = "table";
 	public static final String DOCUMENT_TYPE_COMPOSED = "composed";
