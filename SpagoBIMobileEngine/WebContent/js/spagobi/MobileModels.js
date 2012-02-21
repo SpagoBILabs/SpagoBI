@@ -33,8 +33,7 @@ Ext.regModel('browserItems',	{
 	       	{name: 'relname',	type:'string'},
 	       	{name: 'typeId',	type:'integer'},
 	       	{name: 'refreshSeconds',	type:'integer'},
-	       	{name: 'leaf',	type:'boolean'}
-	       	 ]
+	       	{name: 'leaf',	type:'boolean'}]
  
 });
 

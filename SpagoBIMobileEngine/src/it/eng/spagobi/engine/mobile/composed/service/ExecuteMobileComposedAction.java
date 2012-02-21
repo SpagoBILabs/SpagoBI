@@ -3,8 +3,7 @@ package it.eng.spagobi.engine.mobile.composed.service;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
-import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.engine.mobile.service.AbstractExecuteMobileAction;
 import it.eng.spagobi.engine.mobile.template.ComposedTemplateInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -12,11 +11,12 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-public class ExecuteMobileComposedAction extends AbstractSpagoBIAction{
+public class ExecuteMobileComposedAction extends AbstractExecuteMobileAction{
 	
 	private static Logger logger = Logger.getLogger(ExecuteMobileComposedAction.class);
 	
@@ -29,7 +29,8 @@ public class ExecuteMobileComposedAction extends AbstractSpagoBIAction{
 		IDataSet dataSet;
 		try{
 			//Load the BIObject
-			BIObject documentBIObject = (BIObject)getAttributeFromSession(ObjectsTreeConstants.OBJECT_ID);
+			BIObject documentBIObject = getAndValidateBIObject();
+			List parametersError = getParamErrors();
 			logger.debug("Got BIObject from session");
 			//Load the template of the document
 			ObjTemplate objTemp = documentBIObject.getActiveTemplate();	

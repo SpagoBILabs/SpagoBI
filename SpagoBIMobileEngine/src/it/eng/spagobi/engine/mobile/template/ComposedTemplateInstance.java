@@ -81,7 +81,7 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 			String totWidth = (String)docsTag.getAttribute(MobileConstants.DOCUMENTS_WIDTH_ATTR);
 			String totHeight = (String)docsTag.getAttribute(MobileConstants.DOCUMENTS_HEIGHT_ATTR);
 			documents.put("totWidth", totWidth);
-			documents.put("totHeight", totWidth);
+			documents.put("totHeight", totHeight);
 			
 			
 			JSONArray docsArray = new JSONArray();
