@@ -146,16 +146,19 @@
 	 background-repeat:no-repeat;
 	 background-position: left; 
 	 padding-left: 28px;
+	 padding-bottom: 3px;
 }  
 .chart-item {
 	 background-image:url('../img/chart.png') !important;
 	 background-repeat:no-repeat;
 	 background-position: left; 
 	 padding-left: 28px;
+	 padding-bottom: 3px;
 }
 .composed-item {
 	 background-image:url('../img/composed.png') !important;
 	 background-repeat:no-repeat;
 	 background-position: left; 
 	 padding-left: 28px;
+	 padding-bottom: 3px;
 }             
