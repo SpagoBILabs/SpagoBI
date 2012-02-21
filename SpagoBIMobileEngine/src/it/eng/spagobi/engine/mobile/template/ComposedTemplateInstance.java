@@ -101,6 +101,7 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 				Engine engine =biDoc.getEngine();
 				String engineName = engine.getName();
 				docJSON.put(MobileConstants.ENGINE, engineName);
+				docJSON.put(MobileConstants.TYPE_CODE, biDoc.getBiObjectTypeCode());
 				Integer id = biDoc.getId();
 				docJSON.put(ObjectsTreeConstants.OBJECT_ID, id);
 				docsArray.put(docJSON);
