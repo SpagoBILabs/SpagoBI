@@ -28,7 +28,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		
 		var params = Ext.apply({PARAMETERS: Ext.encode(option.parameters)},option.executionInstance);
 		
-		if((engine == 'TableMobileEngine' || engine == 'Table Mobile Engine') && typeCode =='MOBILE'){
+		if(typeCode != null && typeCode !== undefined && (typeCode == 'MOBILE_TABLE')){
 			Ext.Ajax.request({
 		        url: this.services['executeMobileTableAction'],
 		        scope: this,
@@ -41,7 +41,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        	}
 		        }
 		    }); 
-		}else if((engine == 'ChartMobileEngine' || engine == 'Chart Mobile Engine') && typeCode =='MOBILE'){
+		}else if(typeCode != null && typeCode !== undefined && (typeCode == 'MOBILE_CHART')){
 			Ext.Ajax.request({
 		        url: this.services['executeMobileChartAction'],
 		        scope: this,
@@ -54,7 +54,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        	}
 		        }
 		    }); 
-		}else if((engine == 'ComposedMobileEngine' || engine == 'Composed Mobile Engine') && typeCode =='MOBILE'){
+		}else if(typeCode != null && typeCode !== undefined && (typeCode == 'MOBILE_COMPOSED')){
 			Ext.Ajax.request({
 		        url: this.services['executeMobileComposedAction'],
 		        scope: this,
