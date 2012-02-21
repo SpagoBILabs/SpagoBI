@@ -11,13 +11,11 @@ app.views.TableExecutionPanel = Ext.extend(Ext.Panel,
 		},
 		setTableWidget: function(resp, fromcomposition){
 			
-			  var mask = new Ext.LoadMask(this.el, {msg:"Loading table..."});
-				
+			  var mask = new Ext.LoadMask(this.el, {msg:"Loading table..."});				
 			  this.on('render', mask.show());
 			  
 			  var crossParams = new Array();
 
-			  
 		      var store = new Ext.data.Store({
 		     		root: 'values'
 		     		, fields: resp.features.fields
