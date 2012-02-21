@@ -146,9 +146,14 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction{
 		JSONObject results = new JSONObject();
 		if(documents.length() != 0){
 			for(int i=0; i< documents.length(); i++){
+				
 				JSONObject doc = documents.getJSONObject(i);
-				doc.put("leaf", true);
-				folders.put(doc);
+				if(((String)doc.get("typeCode")).equalsIgnoreCase("MOBILE_TABLE") || 
+						((String)doc.get("typeCode")).equalsIgnoreCase("MOBILE_CHART")||
+						((String)doc.get("typeCode")).equalsIgnoreCase("MOBILE_COMPOSED")){
+					doc.put("leaf", true);
+					folders.put(doc);
+				}
 			}
 		}
 		results.put("name", "User Home");
