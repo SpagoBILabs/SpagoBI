@@ -134,10 +134,28 @@
 	background-repeat:no-repeat;
 	background-position: center; 
 }
+/*
 .x-list-item-leaf {
 	 background-image:url('../img/mobile-doc-item.png') !important;
 	 background-repeat:no-repeat;
 	 background-position: left; 
 	 padding-left: 20px;
+}*/
+.table-item {
+	 background-image:url('../img/table.png') !important;
+	 background-repeat:no-repeat;
+	 background-position: left; 
+	 padding-left: 28px;
+}  
+.chart-item {
+	 background-image:url('../img/chart.png') !important;
+	 background-repeat:no-repeat;
+	 background-position: left; 
+	 padding-left: 28px;
 }
-                
+.composed-item {
+	 background-image:url('../img/composed.png') !important;
+	 background-repeat:no-repeat;
+	 background-position: left; 
+	 padding-left: 28px;
+}             

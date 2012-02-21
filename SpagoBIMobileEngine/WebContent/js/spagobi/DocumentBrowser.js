@@ -11,7 +11,21 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 	    flex:1,
 	    displayField: 'name',
 
-
+		getItemTextTpl: function(node) {
+			var tplTxt = '<tpl if="typeCode == \'MOBILE_TABLE\'">'+
+	        '<div class="table-item">{name}</div>'+
+    	    '</tpl>'+
+    	    '<tpl if="typeCode == \'MOBILE_CHART\'">'+
+	        	'<div class="chart-item">{name}</div>'+
+	        '</tpl>'+
+    	    '<tpl if="typeCode == \'MOBILE_COMPOSED\'">'+
+		        '<div class="composed-item">{name}</div>'+
+		    '</tpl>'+
+		    '<tpl if="typeCode == undefined || typeCode == null || typeCode ==\'\'">'+
+		        '<div>{name}</div>'+
+		    '</tpl>';
+		    return tplTxt;
+		},
 	    getDetailCard: function( record, parentRecord ){
        	
             Ext.dispatch(
@@ -24,6 +38,7 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
         },
 
 		initComponent: function(){
+
 		    Sbi.config = {};
 			
 			var url = {
