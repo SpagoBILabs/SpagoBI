@@ -94,9 +94,10 @@ public class DocumentCompositionUtils {
 					new LightNavigatorContextRetrieverStrategy(requestSB));
 			ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
 			String executionRole = instance.getExecutionRole();
-			Integer objId = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel).getId();
-			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(objId, executionRole);
-			if (obj == null){
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel);
+			//Integer objId = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel).getId();
+			//BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(objId, executionRole);
+			if (obj == null){ 
 				logger.error("Cannot obtain engine url. Document with label " + objLabel +" doesn't exist into database.");		
 				List l = new ArrayList();
 				l.add(objLabel);
@@ -202,7 +203,7 @@ public class DocumentCompositionUtils {
 				mapPars.put("EXECUTION_CONTEXT", "DOCUMENT_COMPOSITION");
 				// Auditing
 				AuditManager auditManager = AuditManager.getInstance();
-				Integer executionAuditId = auditManager.insertAudit(instance.getBIObject(), null, profile, instance.getExecutionRole(), instance.getExecutionModality());
+				Integer executionAuditId = auditManager.insertAudit(instance.getBIObject(), null, profile, executionRole, instance.getExecutionModality());
 				// adding parameters for AUDIT updating
 				if (executionAuditId != null) {
 					mapPars.put(AuditManager.AUDIT_ID, executionAuditId.toString());
@@ -440,12 +441,13 @@ public class DocumentCompositionUtils {
 			SessionContainer permSession = sessionContainer.getPermanentContainer();
 			IEngUserProfile profile = (IEngUserProfile)permSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// get the execution role
-			CoreContextManager contextManager = new CoreContextManager(new SpagoBISessionContainer(sessionContainer), 
-					new LightNavigatorContextRetrieverStrategy(requestSB));
-			ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
-			String executionRole = instance.getExecutionRole();
-			Integer objId = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel).getId();
-			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(objId, executionRole);
+			//CoreContextManager contextManager = new CoreContextManager(new SpagoBISessionContainer(sessionContainer), 
+			//		new LightNavigatorContextRetrieverStrategy(requestSB));
+			//ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
+			//String executionRole = instance.getExecutionRole();
+			//Integer objId = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel).getId();
+			//BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(objId, executionRole);
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel);
 			if (obj == null){
 				logger.error("Cannot obtain engine url. Document with label " + objLabel +" doesn't exist into database.");		
 				List l = new ArrayList();
