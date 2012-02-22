@@ -68,6 +68,27 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 
 	public void doService() {
 
+		List parametersForExecution = getParameters();
+
+		JSONArray parametersJSON = null;
+		try {
+			parametersJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( parametersForExecution, getLocale() );
+		} catch (SerializationException e) {
+			e.printStackTrace();
+		}
+
+		String callback = getAttributeAsString( CALLBACK );
+		logger.debug("Parameter [" + CALLBACK + "] is equals to [" + callback + "]");
+
+		try {
+			writeBackToClient( new JSONSuccess( parametersJSON, callback )  );
+		} catch (IOException e) {
+			throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
+		}
+	}
+	
+	public List getParameters() {
+		
 		List parametersForExecution;
 		ExecutionInstance executionInstance;
 
@@ -89,22 +110,10 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			}
 		}
 
-		JSONArray parametersJSON = null;
-		try {
-			parametersJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( parametersForExecution, getLocale() );
-		} catch (SerializationException e) {
-			e.printStackTrace();
-		}
 
-		String callback = getAttributeAsString( CALLBACK );
-		logger.debug("Parameter [" + CALLBACK + "] is equals to [" + callback + "]");
-
-		try {
-			writeBackToClient( new JSONSuccess( parametersJSON, callback )  );
-		} catch (IOException e) {
-			throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
-		}
+		return parametersForExecution;
 	}
+	
 
 
 	public class ParameterForExecution {
