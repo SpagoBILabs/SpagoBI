@@ -21,6 +21,7 @@ import it.eng.spagobi.commons.serializer.JSONStoreFeedTransformer;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -60,7 +61,8 @@ public class GetDocumentParametersAction extends GetParametersForExecutionAction
 		try {
 			parametersJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( parametersForExecution, getLocale() );
 		} catch (SerializationException e) {
-			e.printStackTrace();
+			logger.debug("Error serializing the parameters",e);
+			throw new SpagoBIRuntimeException(" Error serializing the parameters", e);
 		}
 		
 		try {

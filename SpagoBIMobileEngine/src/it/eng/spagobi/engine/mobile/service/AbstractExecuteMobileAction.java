@@ -153,7 +153,9 @@ public abstract class AbstractExecuteMobileAction extends AbstractSpagoBIAction 
 			
 			try {
 				//check the parameters
-				instance.refreshParametersValues(userProvidedParametersJSONObject, true);	
+				if(userProvidedParametersJSONObject!=null){
+					instance.refreshParametersValues(userProvidedParametersJSONObject, true);	
+				}
 				obj = instance.getBIObject();
 				paramErrors = instance.getParametersErrors();
 			} catch (Exception e) {
