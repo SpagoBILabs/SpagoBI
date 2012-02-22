@@ -33,16 +33,24 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 			app.views.ExecutionView.superclass.initComponent.apply(this, arguments);
 
 		}
-		, setWidget: function(resp, type){
-			if(type == 'table'){
+		, setWidget: function(resp, type) {
+			if (type == 'table'){
 				app.views.tableExecutionPanel.setTableWidget(resp);
+				this.widget = app.views.tableExecutionPanel;
 			}
-			if(type == 'chart'){
+			if (type == 'chart'){
 				app.views.chartExecutionPanel.setChartWidget(resp);
+				this.widget = app.views.chartExecutionPanel;
 			}
-			if(type == 'composed'){
+			if (type == 'composed'){
 				app.views.composedExecutionPanel.setComposedWidget(resp);
+				this.widget = app.views.composedExecutionPanel;
 			}
+		}
+		
+		,
+		setExecutionInstance : function (executionInstance) {
+			this.widget.setExecutionInstance(executionInstance);
 		}
 		
 		, setWidgetComposed: function(resp, type, panel){

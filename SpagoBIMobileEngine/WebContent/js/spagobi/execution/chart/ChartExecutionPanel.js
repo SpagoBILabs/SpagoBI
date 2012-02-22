@@ -1,4 +1,4 @@
-app.views.ChartExecutionPanel = Ext.extend(Ext.Panel, {
+app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 	dockedItems : [],
 	scroll : 'vertical',
 
