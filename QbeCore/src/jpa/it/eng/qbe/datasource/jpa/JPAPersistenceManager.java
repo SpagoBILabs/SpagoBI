@@ -74,7 +74,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		EntityTransaction entityTransaction = null;
 		
 		logger.debug("IN");
-		
+		EntityManager entityManager =null;
 		try {
 			Assert.assertNotNull(aRecord, "Input parameter [record] cannot be null");
 			Assert.assertNotNull(aRecord, "Input parameter [registryConf] cannot be null");
@@ -82,7 +82,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			logger.debug("New record: " + aRecord.toString(3));
 			logger.debug("Target entity: " + registryConf.getEntity());
 			
-			EntityManager entityManager = dataSource.getEntityManager();
+			entityManager = dataSource.getEntityManager();
 			Assert.assertNotNull(entityManager, "entityManager cannot be null");
 			
 			entityTransaction = entityManager.getTransaction();
@@ -135,6 +135,11 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			logger.error(t);
 			throw new SpagoBIRuntimeException("Error saving entity", t);
 		} finally {
+			if ( entityManager != null ) {
+				if ( entityManager.isOpen() ) {
+					entityManager.close();
+				}
+			}
 			logger.debug("OUT");
 		}
 		
