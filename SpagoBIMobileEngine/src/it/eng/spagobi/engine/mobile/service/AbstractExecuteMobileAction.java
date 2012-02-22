@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -66,6 +67,7 @@ public abstract class AbstractExecuteMobileAction extends AbstractSpagoBIAction 
 		String documentLabel;
 		String executionRole;
 		String userProvidedParametersStr;
+		JSONObject userProvidedParametersJSONObject;
 				
 		BIObject obj;
 		IEngUserProfile profile;
@@ -77,8 +79,8 @@ public abstract class AbstractExecuteMobileAction extends AbstractSpagoBIAction 
 			paramErrors = null;
 			
 			boolean isFromComposed = this.getAttributeAsBoolean( MobileConstants.IS_FROM_COMPOSED );
-			userProvidedParametersStr = getAttributeAsString(ObjectsTreeConstants.PARAMETERS);
-			
+			userProvidedParametersJSONObject = getAttributeAsJSONObject(ObjectsTreeConstants.PARAMETERS);
+			userProvidedParametersStr = getParametersString(userProvidedParametersJSONObject);
 			
 			if(!isFromComposed){
 				instance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
@@ -198,5 +200,29 @@ public abstract class AbstractExecuteMobileAction extends AbstractSpagoBIAction 
 
 	public List getParamErrors() {
 		return paramErrors;
+	}
+	
+	private String getParametersString(JSONObject parametersObject){
+		StringBuilder parametersString = new StringBuilder("");
+		String[] fields = new String[0];
+		
+		try {
+			if(parametersObject!=null){
+				fields = JSONObject.getNames(parametersObject);
+			}
+
+			for (String field : fields) {
+				parametersString.append(field);
+				parametersString.append("=");
+				parametersString.append(parametersObject.getString(field));
+				parametersString.append("&");
+			}
+			if(parametersString.length()>0){
+				parametersString.deleteCharAt(parametersString.length()-1);
+			}
+		} catch (Exception e) {
+			logger.error("Error loading the parameters");
+		}
+		return parametersString.toString();
 	}
 }

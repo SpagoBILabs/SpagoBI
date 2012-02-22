@@ -5,8 +5,6 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.engine.mobile.service.AbstractExecuteMobileAction;
 import it.eng.spagobi.engine.mobile.template.ComposedTemplateInstance;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -24,9 +22,7 @@ public class ExecuteMobileComposedAction extends AbstractExecuteMobileAction{
 	public void doService() {
 		// TODO Auto-generated method stub
 		logger.debug("IN");
-		IDataStore dataStore;
-		JSONObject dataSetJSON;
-		IDataSet dataSet;
+
 		try{
 			//Load the BIObject
 			BIObject documentBIObject = getAndValidateBIObject();
