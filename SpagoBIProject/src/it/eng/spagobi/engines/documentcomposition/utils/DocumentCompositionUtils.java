@@ -94,9 +94,9 @@ public class DocumentCompositionUtils {
 					new LightNavigatorContextRetrieverStrategy(requestSB));
 			ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
 			String executionRole = instance.getExecutionRole();
-			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel);
 			//Integer objId = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel).getId();
-			//BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(objId, executionRole);
+			//BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(obj2.getId(), executionRole);
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(objLabel, executionRole);
 			if (obj == null){ 
 				logger.error("Cannot obtain engine url. Document with label " + objLabel +" doesn't exist into database.");		
 				List l = new ArrayList();
@@ -104,7 +104,9 @@ public class DocumentCompositionUtils {
 				throw new EMFUserError(EMFErrorSeverity.ERROR, "1005", l, messageBundle);
 			}
 			Engine engine = obj.getEngine();
-			// GET THE TYPE OF ENGINE (INTERNAL / EXTERNAL) AND THE SUITABLE BIOBJECT TYPES
+			
+			/*ALL CONTROLS OF COMPATIBILITY ARE REMANDED TO THE SINGLE ENGINE CALLED
+			// GET THE TYPE OF ENGINE (INTERNAL / EXTERNAL) AND THE SUITABLE BIOBJECT TYPES			
 			Domain engineType = null;
 			Domain compatibleBiobjType = null;
 			try {
@@ -117,11 +119,12 @@ public class DocumentCompositionUtils {
 				logger.error("Error retrieving document's engine information", error);
 				return "1009|";
 			}
-
+			
 			String compatibleBiobjTypeCd = compatibleBiobjType.getValueCd();
 			String biobjTypeCd = obj.getBiObjectTypeCode();
 
 			// CHECK IF THE BIOBJECT IS COMPATIBLE WITH THE TYPES SUITABLE FOR THE ENGINE
+			
 			if (!compatibleBiobjTypeCd.equalsIgnoreCase(biobjTypeCd)) {
 				// the engine document type and the biobject type are not compatible
 				logger.error("Engine cannot execute input document type: " +
@@ -134,9 +137,9 @@ public class DocumentCompositionUtils {
 				//errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 2002, params));
 				return "2002|";
 			}
-
+			 */
 			// IF USER CAN'T EXECUTE THE OBJECT RETURN
-			if (!ObjectsAccessVerifier.canSee(obj, profile)) return "1010|"; 
+			//if (!ObjectsAccessVerifier.canSee(obj, profile)) return "1010|"; 
 
 			//get object configuration
 			DocumentCompositionConfiguration docConfig = null;
@@ -440,13 +443,6 @@ public class DocumentCompositionUtils {
 			// get the user profile from session
 			SessionContainer permSession = sessionContainer.getPermanentContainer();
 			IEngUserProfile profile = (IEngUserProfile)permSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			// get the execution role
-			//CoreContextManager contextManager = new CoreContextManager(new SpagoBISessionContainer(sessionContainer), 
-			//		new LightNavigatorContextRetrieverStrategy(requestSB));
-			//ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
-			//String executionRole = instance.getExecutionRole();
-			//Integer objId = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel).getId();
-			//BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(objId, executionRole);
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel);
 			if (obj == null){
 				logger.error("Cannot obtain engine url. Document with label " + objLabel +" doesn't exist into database.");		
