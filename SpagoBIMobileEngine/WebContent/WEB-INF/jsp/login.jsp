@@ -76,7 +76,8 @@ author: Monica Franceschini
 		<script type="text/javascript" src="../js/spagobi/Login.js"></script>
 		<script type="text/javascript" src="../js/spagobi/MainContainer.js"></script>
 		<script type="text/javascript" src="../js/spagobi/DocumentBrowser.js"></script>
-		<script type="text/javascript" src="../js/spagobi/DocumentPreview.js"></script>		
+		<script type="text/javascript" src="../js/spagobi/DocumentPreview.js"></script>
+		<script type="text/javascript" src="../js/spagobi/execution/WidgetPanel.js"></script>		
 		<script type="text/javascript" src="../js/spagobi/execution/table/TableExecutionPanel.js"></script>
 		<script type="text/javascript" src="../js/spagobi/execution/chart/ChartExecutionPanel.js"></script>
 		<script type="text/javascript" src="../js/spagobi/execution/composed/ComposedExecutionPanel.js"></script>
@@ -99,7 +100,6 @@ author: Monica Franceschini
 		 <script>
 			var hostGlobal= '<%= request.getServerName()%>';
 			var portGlobal= '<%= request.getServerPort()%>';
-
 		 </script>
 	</body>
  

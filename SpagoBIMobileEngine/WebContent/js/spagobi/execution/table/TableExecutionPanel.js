@@ -1,12 +1,14 @@
-app.views.TableExecutionPanel = Ext.extend(Ext.Panel,
+app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 
 		{
 	    scroll: 'vertical'
 	    , initComponent: function (options)	{
 
 			console.log('init table execution');
+			
 			app.views.TableExecutionPanel.superclass.initComponent.apply(this, arguments);
-
+			
+			this.addEvents('execCrossNavigation');
 
 		},
 		setTableWidget: function(resp, fromcomposition){
@@ -49,14 +51,18 @@ app.views.TableExecutionPanel = Ext.extend(Ext.Panel,
 					dockedItems: [toolbarForTable],
 					conditions  : resp.features.conditions,
 					colModel    : resp.features.columns,
-					scope: this
-			    	,listeners: { el:{ tap:function(e){
-		      					var target = e.target;
-		      					app.views.tableExecutionPanel.setCrossNavigation(resp, target, crossParams);
-		      					app.views.tableExecutionPanel.fireEvent('execCrossNavigation', [crossParams]);
-		      					crossParams = new Array();
-    							} 
-  						} 
+					scope: this,
+			    	listeners: { 
+			    		tap: { 
+			    			element : 'el',
+			    			fn : function(e) {
+	      						var target = e.target;
+	      						this.setCrossNavigation(resp, target, crossParams);
+	      						this.fireEvent('execCrossNavigation', this, crossParams);
+	      						crossParams = new Array();
+    						},
+    						scope : this
+  						}
 		      		}
 		      	};
 				if(fromcomposition){

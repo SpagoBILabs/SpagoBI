@@ -23,10 +23,12 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 
 	, executeTemplate: function(option, documentContainerPanel){
 
-		var typeCode =  option.executionInstance.TYPE_CODE;
-		var engine =  option.executionInstance.ENGINE;
+		var executionInstance = option.executionInstance;
+		var parameters = option.parameters;
+		var typeCode =  executionInstance.TYPE_CODE;
+		var engine =  executionInstance.ENGINE;
 		
-		var params = Ext.apply({PARAMETERS: Ext.encode(option.parameters)},option.executionInstance);
+		var params = Ext.apply({PARAMETERS: Ext.encode(parameters)}, executionInstance);
 		
 		if(typeCode != null && typeCode !== undefined && (typeCode == 'MOBILE_TABLE')){
 			Ext.Ajax.request({
@@ -37,7 +39,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createWidgetExecution(resp, params.PARAMETERS, 'table', documentContainerPanel);
+		        		this.createWidgetExecution(resp, params.PARAMETERS, 'table', documentContainerPanel, executionInstance);
 		        	}
 		        }
 		    }); 
@@ -50,7 +52,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createWidgetExecution(resp,params.PARAMETERS, 'chart', documentContainerPanel);
+		        		this.createWidgetExecution(resp,params.PARAMETERS, 'chart', documentContainerPanel, executionInstance);
 		        	}
 		        }
 		    }); 
@@ -64,15 +66,15 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
 		        		resp.executionInstance = params;
-		        		this.createWidgetExecution(resp, params.PARAMETERS, 'composed');
+		        		this.createWidgetExecution(resp, params.PARAMETERS, 'composed', null, executionInstance);
 		        	}
 		        }
 		    }); 
 		}
 	}
-	, createWidgetExecution: function(resp, parameters, type, documentContainerPanel){
+	, createWidgetExecution: function(resp, parameters, type, documentContainerPanel, executionInstance){
 
-		if(documentContainerPanel==undefined || documentContainerPanel==null){
+		if (documentContainerPanel == undefined || documentContainerPanel == null) {
 			app.views.execView = new app.views.ExecutionView({parameters: parameters});
 
 		    var viewport = app.views.viewport;
@@ -81,9 +83,13 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 
 		    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
 	
-		}else{
+		    app.views.execView.setExecutionInstance(executionInstance);
+		    
+		} else {
 			app.views.execView.setWidgetComposed(resp, type, documentContainerPanel);
+			documentContainerPanel.setExecutionInstance(executionInstance);
 		}
+		
 		
 	}
 
