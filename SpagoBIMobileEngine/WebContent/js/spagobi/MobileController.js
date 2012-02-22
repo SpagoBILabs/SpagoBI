@@ -112,6 +112,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 	    app.views.viewport.setActiveItem(app.views.parameters, { type: 'fade' });
   	}
 	
+	//Destroy the execution panel
 	, destroyExecutionView: function(){
 		if(app.views.table != undefined && app.views.table != null){
 			app.views.table.destroy();

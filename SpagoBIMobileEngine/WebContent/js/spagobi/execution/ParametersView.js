@@ -1,5 +1,5 @@
 app.views.ParametersView = Ext.extend(
-		Ext.form.FormPanel,
+		Ext.Panel,
 		{
 
 			dockedItems : [ {
@@ -68,7 +68,9 @@ app.views.ParametersView = Ext.extend(
 						items : items
 				};
 	
-				this.add(fieldset);
-	
+				var formPanel = new Ext.form.FormPanel({items: [fieldset]});
+				
+				this.add(formPanel);
+				this.doLayout();
 			}
 });
