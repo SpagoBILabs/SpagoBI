@@ -24,11 +24,11 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 	, executeTemplate: function(option, documentContainerPanel){
 
 		var executionInstance = option.executionInstance;
-		var parameters = option.parameters;
 		var typeCode =  executionInstance.TYPE_CODE;
 		var engine =  executionInstance.ENGINE;
 		
-		var params = Ext.apply({PARAMETERS: Ext.encode(parameters)}, executionInstance);
+		var params = Ext.apply({}, executionInstance);
+		params.PARAMETERS =  Ext.encode(executionInstance.PARAMETERS);
 		
 		if(typeCode != null && typeCode !== undefined && (typeCode == 'MOBILE_TABLE')){
 			Ext.Ajax.request({
@@ -39,7 +39,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createWidgetExecution(resp, params.PARAMETERS, 'table', documentContainerPanel, executionInstance);
+		        		this.createWidgetExecution(resp, 'table', documentContainerPanel, executionInstance);
 		        	}
 		        }
 		    }); 
@@ -52,7 +52,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createWidgetExecution(resp,params.PARAMETERS, 'chart', documentContainerPanel, executionInstance);
+		        		this.createWidgetExecution(resp, 'chart', documentContainerPanel, executionInstance);
 		        	}
 		        }
 		    }); 
@@ -66,16 +66,16 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
 		        		resp.executionInstance = params;
-		        		this.createWidgetExecution(resp, params.PARAMETERS, 'composed', null, executionInstance);
+		        		this.createWidgetExecution(resp,  'composed', null, executionInstance);
 		        	}
 		        }
 		    }); 
 		}
 	}
-	, createWidgetExecution: function(resp, parameters, type, documentContainerPanel, executionInstance){
+	, createWidgetExecution: function(resp, type, documentContainerPanel, executionInstance){
 
 		if (documentContainerPanel == undefined || documentContainerPanel == null) {
-			app.views.execView = new app.views.ExecutionView({parameters: parameters});
+			app.views.execView = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
 
 		    var viewport = app.views.viewport;
 		    viewport.add(app.views.execView);

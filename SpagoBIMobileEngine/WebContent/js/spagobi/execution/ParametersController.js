@@ -62,7 +62,7 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 	
 	
 	, onParametersForExecutionLoaded: function( executionInstance, parameters ) {
-	
+		executionInstance.PARAMETERS = parameters;
 		this.executionInstance = executionInstance;
 		this.fields = new Array();
 	

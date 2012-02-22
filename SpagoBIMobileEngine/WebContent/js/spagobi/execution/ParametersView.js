@@ -32,15 +32,13 @@ app.views.ParametersView = Ext.extend(
 				        	 iconCls : 'settings',
 				        	 text : 'Esegui',
 				        	 handler : function() {
-				        		 Ext
-				        		 .dispatch({
+				        		 var executionInstance = app.controllers.parametersController.executionInstance;
+				        		 executionInstance.PARAMETERS = app.controllers.parametersController.getFormState();
+				        		 Ext.dispatch({
 				        			 controller : app.controllers.executionController,
 				        			 action : 'executeTemplate',
-				        			 parameters : app.controllers.parametersController
-				        			 .getFormState(),
-				        			 executionInstance : app.controllers.parametersController.executionInstance
+				        			 executionInstance : executionInstance
 				        		 });
-
 				        	 }
 				         }, {
 				        	 title : 'Info',
