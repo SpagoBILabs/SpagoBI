@@ -5,6 +5,10 @@
   <!-- chart object properties -->
   <LEGEND position='right'/>
   
+  <OPTIONS showValueTip='true'/>
+  
+  <TITLE value="Bar Chart"/>
+  
   <ANIMATE easing='bounceOut' duration='750'/>
   
   <SERIES_LIST>
@@ -12,7 +16,7 @@
   	      <LABEL field='perc' contrast='true' font='18px Arial' display='insideEnd' text-anchor='middle'/>   
     </SERIE>
   </SERIES_LIST>
-  
+                     
   <AXES_LIST>
     <AXES  type='Numeric' position='left' title='perc'>
          <FIELDS_LIST>
