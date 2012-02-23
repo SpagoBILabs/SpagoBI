@@ -17,20 +17,23 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 		config.animate = true;
 
 		config.listeners = {
-            'itemtap': function(series, item, event) {  
-            	var t =5;
-            }
+            'itemtap': function(series, item, event) { 
+	 			var crossParams = new Array();
+				var target = event.target;
+				//this.setCrossNavigation(resp, target, crossParams);
+				this.fireEvent('execCrossNavigation', this, crossParams);
+			}
         };
 		
-		if(config.dockedItems==undefined || config.dockedItems==undefined){
+		if(config.dockedItems==undefined || config.dockedItems==null){
 			config.dockedItems = new Array();
 		}
 		
-		if(config.interactions==undefined || config.interactions==undefined){
+		if(config.interactions==undefined || config.interactions==null){
 			config.interactions = new Array();
 		}
-		
-		if(config.options.showValueTip){
+
+		if(config.options !== undefined && config.options !== null && config.options.showValueTip){
 			this.addValueTip(config);
 		}
 

@@ -25,10 +25,12 @@ import it.eng.spagobi.engine.mobile.MobileConstants;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
@@ -225,5 +227,25 @@ public abstract class AbstractExecuteMobileAction extends AbstractSpagoBIAction 
 			logger.error("Error loading the parameters");
 		}
 		return parametersString.toString();
+	}
+	public HashMap<String, String> getParametersList(JSONObject parameters) throws JSONException{
+		
+		String[] names = new String[0];
+		HashMap<String, String> params = new HashMap<String, String>();
+		
+		try {
+			if(parameters!=null){
+				names = JSONObject.getNames(parameters);
+			}
+			
+		} catch (Exception e) {
+			logger.error("Error loading parameters from the string "+parameters);
+		}
+
+		
+		for (String name : names) {
+			params.put(name, parameters.getString(name));
+		}
+		return params;
 	}
 }

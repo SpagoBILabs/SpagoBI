@@ -12,32 +12,38 @@
 
 package it.eng.spagobi.engine.mobile.template;
 
+import java.util.HashMap;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engine.mobile.MobileConstants;
 import it.eng.spagobi.utilities.json.JSONTemplateUtils;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ChartTemplateInstance implements IMobileTemplateInstance{
-	private SourceBean template;
+public class ChartTemplateInstance extends AbstractTemplateInstance  implements IMobileTemplateInstance{
 	private JSONArray parameters;
 	private JSONObject features;
+
 	
 	private static transient Logger logger = Logger.getLogger(ChartTemplateInstance.class);
 
 
-	public ChartTemplateInstance(SourceBean template, JSONArray parameters) {
+	public ChartTemplateInstance(SourceBean template, JSONArray parameters, HashMap<String, String> paramsMap) {
 		this.template = template;
 		this.parameters = parameters;
+		this.paramsMap = paramsMap;
 	}
 
 
 	@Override
 	public void loadTemplateFeatures() throws Exception {
-		JSONTemplateUtils ju = new JSONTemplateUtils();
+		JSONTemplateUtils ju = new JSONTemplateUtils();		
 		features = ju.getJSONTemplateFromXml(template, parameters);
+		buildDrillJSON();
+		setFeatures();
 	}
 
 
@@ -51,5 +57,12 @@ public class ChartTemplateInstance implements IMobileTemplateInstance{
 	public JSONObject getFeatures() {
 		return features;
 	}
-
+	
+	public void setFeatures() {
+		try {
+			features.put("drill", drill);
+		} catch (JSONException e) {
+			logger.error("Unable to set features");
+		}		 
+	}
 }

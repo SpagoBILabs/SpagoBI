@@ -161,10 +161,20 @@
 	 background-position: left; 
 	 padding-left: 28px;
 	 padding-bottom: 3px;
-}   
+}
+.folder-item {
+	 color: grey;
+}
 .login-fieldset{
 	 background-image:url('../img/Logo_SpagoBI.png') !important;
 	 background-repeat:no-repeat;
 	 background-position: right bottom; 
-	 padding-bottom:95px;
-}          
+	 padding-bottom: 90px;
+}
+
+.login-fieldset-top{
+	 background-image:url('../img/Logo_SpagoBI.png') !important;
+	 background-repeat:no-repeat;
+	 background-position: center top; 
+	 padding-top: 60px;
+}      

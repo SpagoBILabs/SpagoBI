@@ -17,7 +17,7 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 
 		,setTableWidget: function(resp, fromcomposition){
   
-			  var crossParams = new Array();
+			 
 
 		      var store = new Ext.data.Store({
 		     		root: 'values'
@@ -57,10 +57,10 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 			    		tap: { 
 			    			element : 'el',
 			    			fn : function(e) {
+		      		 			var crossParams = new Array();
 	      						var target = e.target;
 	      						this.setCrossNavigation(resp, target, crossParams);
 	      						this.fireEvent('execCrossNavigation', this, crossParams);
-	      						crossParams = new Array();
     						},
     						scope : this
   						}
@@ -83,6 +83,7 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 					this.loadingMask.hide();
 				}
 		}
+
 		, setCrossNavigation: function(resp, target, crossParams){
 			
 			var drill = resp.features.drill;
@@ -122,6 +123,5 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 			}
 			return crossParams;
 		}
-
 		
 });
