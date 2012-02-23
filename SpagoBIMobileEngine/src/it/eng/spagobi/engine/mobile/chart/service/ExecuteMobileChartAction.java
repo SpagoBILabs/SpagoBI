@@ -65,10 +65,12 @@ public class ExecuteMobileChartAction extends AbstractExecuteMobileAction {
 
 			if(parameters!=null){
 				String[] fields =  JSONObject.getNames(parameters);
-				for (String field : fields) {
-					parameterJSON = new JSONObject();
-					parameterJSON.put("name",field);
-					parameterJSON.put("value",parameters.getString(field));
+				if (fields != null) {
+					for (String field : fields) {
+						parameterJSON = new JSONObject();
+						parameterJSON.put("name",field);
+						parameterJSON.put("value",parameters.getString(field));
+					}
 				}
 			}
 

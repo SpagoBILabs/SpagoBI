@@ -19,13 +19,19 @@ app.views.ComposedExecutionPanel = Ext.extend(app.views.WidgetPanel,
 			
 			var items = new Array();
 			
+			var executionInstance = Ext.apply({}, resp.executionInstance);
+			
 			if (documentsList != undefined && documentsList != null) {
 				for (var i = 0; i < documentsList.length; i++) {
-					documentsList[i].IS_FROM_COMPOSED = true;
 					var subDocumentPanel = this.buildPanel(documentsList[i]);
-					var executionInstance = Ext.apply({}, resp.executionInstance);
-					Ext.apply(executionInstance, documentsList[i]);
-					app.controllers.composedExecutionController.executeSubDocument(executionInstance, subDocumentPanel);
+					var mainDocumentParameters = executionInstance.PARAMETERS;
+					var subDocumentDefaultParameters = documentsList[i].IN_PARAMETERS;
+					var subDocumentParameters = Ext.apply(subDocumentDefaultParameters, mainDocumentParameters);
+					var subDocumentExecutionInstance = Ext.apply({}, documentsList[i]);
+					subDocumentExecutionInstance.PARAMETERS = subDocumentParameters;
+					subDocumentExecutionInstance.IS_FROM_COMPOSED = true;
+					subDocumentExecutionInstance.ROLE = executionInstance.ROLE;
+					app.controllers.composedExecutionController.executeSubDocument(subDocumentExecutionInstance, subDocumentPanel);
 					items.push(subDocumentPanel);
 				}
 			}
@@ -65,9 +71,14 @@ app.views.ComposedExecutionPanel = Ext.extend(app.views.WidgetPanel,
 			 */
 			//this.on('execCrossNavigation', Ext.createDelegate(this.execCrossNavigationHandler, this, [panel], true));
 			
-			this.on('execCrossNavigation', function (sourcePanel, params) {
+			this.on('execCrossNavigation', function (sourcePanel, paramsArray) {
 				console.log('app.views.ComposedExecutionPanel:execCrossNavigationHandler: IN');
 				if (panel != sourcePanel) {
+					var params = {};
+					for (var i = 0 ; i < paramsArray.length ; i++) {
+						var aParam = paramsArray[i];
+						params[aParam.name] = aParam.value;
+					}
 					app.controllers.composedExecutionController.refreshSubDocument(panel, params);
 				}
 			}, this);
