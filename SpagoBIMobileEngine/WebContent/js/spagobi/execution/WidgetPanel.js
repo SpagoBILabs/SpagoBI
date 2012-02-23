@@ -12,7 +12,7 @@ app.views.WidgetPanel = Ext.extend(Ext.Panel, {
 		this.executionInstance = executionInstance;
 	}
 	,showLoadingMask : function(panel){
-		this.loadingMask = new Ext.LoadMask(panel.id, {msg:"Loading table..."});					
+		this.loadingMask = new Ext.LoadMask(panel.id, {msg:"Loading..."});					
 		this.loadingMask.show();
 		this.un('afterlayout',this.showLoadingMask,this);
 	}
