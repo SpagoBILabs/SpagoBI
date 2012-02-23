@@ -2,12 +2,14 @@ package it.eng.spagobi.engine.mobile.template;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engine.mobile.MobileConstants;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -98,7 +100,7 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 				docJSON.put("height", height);
 				//calls dao to get document type and id
 				BIObject biDoc = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
-				Engine engine =biDoc.getEngine();
+				Engine engine = biDoc.getEngine();
 				String engineName = engine.getName();
 				docJSON.put(MobileConstants.ENGINE, engineName);
 				docJSON.put(MobileConstants.TYPE_CODE, biDoc.getBiObjectTypeCode());
@@ -107,6 +109,9 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 				docsArray.put(docJSON);
 				docJSON.put(MobileConstants.DOCUMENT_TYPE,getDocumentTypeFromEngine(engineName));
 				
+				JSONObject inParameters = readInputParameters(doc, biDoc);
+				docJSON.put(MobileConstants.IN_PARAMETERS, inParameters);
+				
 			}
 			documents.put("docs", docsArray);
 		}
@@ -114,6 +119,40 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 		logger.debug("OUT");		
 
 	}
+	
+	
+	private JSONObject readInputParameters(SourceBean documentTemplate, BIObject biObject) throws Exception {
+		JSONObject toReturn = new JSONObject();
+		// reading biobject drivers
+		List biParamenters = biObject.getBiObjectParameters();
+		Iterator it = biParamenters.iterator();
+		while (it.hasNext()) {
+			BIObjectParameter aBiParameter = (BIObjectParameter) it.next();
+			toReturn.put(aBiParameter.getParameterUrlName(), JSONObject.NULL);
+		}
+		
+		// reading template for default values
+		SourceBean inParameters = (SourceBean) documentTemplate.getAttribute(MobileConstants.IN_PARAMETERS);
+		if (inParameters != null) {
+			List inParametersList = inParameters.getAttributeAsList(MobileConstants.PARAMETER);
+			if (inParametersList != null && inParametersList.size() > 0) {
+				Iterator inParametersListIt = inParametersList.iterator();
+				while (inParametersListIt.hasNext()) {
+					SourceBean aInParameter = (SourceBean) inParametersListIt.next();
+					String urlName = (String) aInParameter.getAttribute(MobileConstants.PARAMETER_URL_NAME);
+					String defaultValue = (String) aInParameter.getAttribute(MobileConstants.PARAMETER_DEFAULT_VALUE);
+					if (toReturn.has(urlName)) {
+						logger.debug("Found default value for parameter [" + urlName + "]");
+						toReturn.put(urlName, defaultValue);
+					} else {
+						logger.error("Template document contains a [" + urlName + "] parameter but the document hasn't");
+					}
+				}
+			}
+		}
+		return toReturn;
+	}
+
 	@Override
 	public String getDocumentType() {
 		// TODO Auto-generated method stub

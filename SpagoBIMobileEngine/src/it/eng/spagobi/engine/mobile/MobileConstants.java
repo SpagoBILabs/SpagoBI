@@ -62,6 +62,12 @@ public class MobileConstants {
 	public static final String PARAM_NAME_ATTR = "name";
 	public static final String PARAM_TYPE_ATTR = "type";
 	public static final String PARAM_VALUE_ATTR = "value";
+	public static final String IN_PARAMETERS = "IN_PARAMETERS";
+	public static final String PARAMETER = "PARAMETER";
+	public static final String PARAMETER_URL_NAME = "urlName";
+	public static final String PARAMETER_DEFAULT_VALUE = "defaultValue";
+	
+	
 	
 	public static final String PARAM_TYPE_RELATIVE = "RELATIVE";
 	public static final String PARAM_TYPE_ABSOLUTE = "ABSOLUTE";
