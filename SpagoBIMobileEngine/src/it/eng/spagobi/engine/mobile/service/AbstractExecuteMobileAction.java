@@ -228,6 +228,7 @@ public abstract class AbstractExecuteMobileAction extends AbstractSpagoBIAction 
 		}
 		return parametersString.toString();
 	}
+	
 	public HashMap<String, String> getParametersList(JSONObject parameters) throws JSONException{
 		
 		String[] names = new String[0];
@@ -242,9 +243,10 @@ public abstract class AbstractExecuteMobileAction extends AbstractSpagoBIAction 
 			logger.error("Error loading parameters from the string "+parameters);
 		}
 
-		
-		for (String name : names) {
-			params.put(name, parameters.getString(name));
+		if(names != null){
+			for (String name : names) {
+				params.put(name, parameters.getString(name));
+			}
 		}
 		return params;
 	}
