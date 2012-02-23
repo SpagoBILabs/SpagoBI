@@ -161,4 +161,10 @@
 	 background-position: left; 
 	 padding-left: 28px;
 	 padding-bottom: 3px;
-}             
+}   
+.login-fieldset{
+	 background-image:url('../img/Logo_SpagoBI.png') !important;
+	 background-repeat:no-repeat;
+	 background-position: right bottom; 
+	 padding-bottom:95px;
+}          

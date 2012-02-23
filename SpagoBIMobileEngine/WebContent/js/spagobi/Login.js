@@ -51,11 +51,12 @@ app.views.LoginView = Ext.extend(Ext.Panel, {
 			hideOnMaskTap : false,
 			height : 350,
 			width : 450,
+			
 			items : [ {
 				xtype : 'fieldset',
 				title : 'SpagoBI Mobile Login',
 				instructions : 'Please login.',
-
+				cls: 'login-fieldset',
 				defaults : {
 					required : true,
 					labelAlign : 'left',
