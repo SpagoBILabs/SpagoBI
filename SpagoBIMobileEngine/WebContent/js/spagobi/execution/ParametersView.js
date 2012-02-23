@@ -40,11 +40,6 @@ app.views.ParametersView = Ext.extend(
 				        			 executionInstance : executionInstance
 				        		 });
 				        	 }
-				         }, {
-				        	 title : 'Info',
-				        	 iconCls : 'info',
-				        	 text : 'Info'
-
 				         } ]
 
 			} ],
