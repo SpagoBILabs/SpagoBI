@@ -5,17 +5,18 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 	    , initComponent: function (options)	{
 
 			console.log('init table execution');
-			
-			app.views.TableExecutionPanel.superclass.initComponent.apply(this, arguments);
-			
-			this.addEvents('execCrossNavigation');
 
-		},
-		setTableWidget: function(resp, fromcomposition){
+			app.views.TableExecutionPanel.superclass.initComponent.apply(this, arguments);
+			if(this.IS_FROM_COMPOSED){
+				this.on('afterlayout',this.showLoadingMask,this);
+			}
+			this.addEvents('execCrossNavigation');
 			
-			  var mask = new Ext.LoadMask(this.el, {msg:"Loading table..."});				
-			  this.on('render', mask.show());
-			  
+
+		}
+
+		,setTableWidget: function(resp, fromcomposition){
+  
 			  var crossParams = new Array();
 
 		      var store = new Ext.data.Store({
@@ -78,7 +79,7 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 				      this.add(app.views.table);		      
 				      this.doLayout();
 				}
-		      mask.hide();
+				this.loadingMask.hide();
 		}
 		, setCrossNavigation: function(resp, target, crossParams){
 			
