@@ -107,7 +107,7 @@ app.views.LoginView = Ext.extend(Ext.Panel, {
 					var content = Ext.util.JSON.decode(response.responseText);
 					var esito = content.text;
 					if (esito == 'userhome') {
-						//alert('login OK!!!!');
+
 						app.views.form.hide();
 						Ext.dispatch({
 							controller : app.controllers.mobileController,
@@ -118,11 +118,11 @@ app.views.LoginView = Ext.extend(Ext.Panel, {
 							}
 						});
 					} else {
-						alert('Authentication failure!');
+						Ext.Msg.alert('','<p style="color:#fff; font-weight: bold;">Login</p><br/>Authentication failure!',Ext.emptyFn).doLayout();
 						return;
 					}
 				} else {
-					alert('Authentication failure!');
+					Ext.Msg.alert('','<p style="color:#fff;font-weight: bold;">Login</p><br/>Authentication failure!',Ext.emptyFn).doLayout();
 					return;
 				}
 			}

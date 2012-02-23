@@ -44,18 +44,14 @@ app.views.BottomToolbar = Ext.extend(Ext.Toolbar,
 		        		});
 		
 		            }};
-			this.docInfo = {
-				    title: 'Info',    		    
-				    iconCls: 'info',
-				    text: 'Info'
 
-		        };
-			this.items =[this.docHome, this.docParams, this.docInfo];
+			this.items =[this.docHome, this.docParams];
 			
 			app.views.BottomToolbar.superclass.initComponent.apply(this, arguments);
 			this.configureItems(this.parameters);
 
 		}
+
 		, configureItems: function(par){
 
 			if(par == undefined || par == null){
