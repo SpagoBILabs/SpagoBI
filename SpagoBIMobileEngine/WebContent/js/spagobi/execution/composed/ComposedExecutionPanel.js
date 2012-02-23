@@ -21,10 +21,10 @@ app.views.ComposedExecutionPanel = Ext.extend(app.views.WidgetPanel,
 			
 			if (documentsList != undefined && documentsList != null) {
 				for (var i = 0; i < documentsList.length; i++) {
+					documentsList[i].IS_FROM_COMPOSED = true;
 					var subDocumentPanel = this.buildPanel(documentsList[i]);
 					var executionInstance = Ext.apply({}, resp.executionInstance);
 					Ext.apply(executionInstance, documentsList[i]);
-					executionInstance.IS_FROM_COMPOSED = true;
 					app.controllers.composedExecutionController.executeSubDocument(executionInstance, subDocumentPanel);
 					items.push(subDocumentPanel);
 				}

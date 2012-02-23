@@ -6,10 +6,11 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 		console.log('init chart execution');
 		app.views.ChartExecutionPanel.superclass.initComponent.apply(this,
 				arguments);
+		if(this.IS_FROM_COMPOSED){
+			this.on('afterlayout',this.showLoadingMask,this);
+		}
 	},
 	setChartWidget : function(resp, fromcomposition) {
-		var mask = new Ext.LoadMask(this.el, {msg:"Loading chart..."});
-		this.on('render', mask.show());
 	
 		var r;
 		var config = resp.config;
@@ -35,7 +36,7 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 			chartConfig.fullscreen = true;
 			app.views.chart = new Ext.chart.Panel(chartConfig);
 		}
-		mask.hide();
+		this.loadingMask.hide();
 	}
 
 });
