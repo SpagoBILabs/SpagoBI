@@ -84,7 +84,9 @@ public class ExecuteMobileChartAction extends AbstractExecuteMobileAction {
 			byte [] templateContent = objTemp.getContent();
 			String templContString = new String(templateContent);
 			SourceBean template = SourceBean.fromXMLString( templContString );
-			IMobileTemplateInstance templateInstance = new ChartTemplateInstance(template, parametersJSON);
+			
+			HashMap paramMap = getParametersList(getAttributeAsJSONObject("PARAMETERS"));
+			IMobileTemplateInstance templateInstance = new ChartTemplateInstance(template, parametersJSON, paramMap);
 			templateInstance.loadTemplateFeatures();
 			JSONObject chartConfigFromTemplate = templateInstance.getFeatures();
 			logger.debug("Finished to get the chart config from the template. ");

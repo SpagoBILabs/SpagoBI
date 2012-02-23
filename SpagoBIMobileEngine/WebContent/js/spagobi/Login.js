@@ -28,7 +28,7 @@ app.views.LoginView = Ext.extend(Ext.Panel, {
 		this.userIDField = new Ext.form.Text({
 			xtype : 'textfield',
 			name : 'userID',
-			label : 'Username',
+			//label : 'Username',
 			placeHolder : 'Username',
 			useClearIcon : true
 		});
@@ -36,7 +36,7 @@ app.views.LoginView = Ext.extend(Ext.Panel, {
 		this.pwdField = new Ext.form.Password({
 			xtype : 'passwordfield',
 			name : 'password',
-			label : 'Password',
+			//label : 'Password',
 			placeHolder : 'Password',
 			useClearIcon : false
 		});
@@ -49,26 +49,19 @@ app.views.LoginView = Ext.extend(Ext.Panel, {
 			modal : true,
 			centered : true,
 			hideOnMaskTap : false,
-			height : 350,
-			width : 450,
-			
+			height : 280,
+			width : 320,
 			items : [ {
 				xtype : 'fieldset',
-				title : 'SpagoBI Mobile Login',
-				instructions : 'Please login.',
-				cls: 'login-fieldset',
-				defaults : {
-					required : true,
-					labelAlign : 'left',
-					labelWidth : '45%'
-				},
+				cls: 'login-fieldset-top',
 				items : [ this.userIDField, this.pwdField ]
 			} ],
+
 			dockedItems : [ {
 				xtype : 'toolbar',
 				dock : 'bottom',
 				scope : this,
-				items : [ {
+				items : [ {xtype: 'spacer'},{
 					text : 'Login',
 					ui : 'confirm',
 					scope : this,

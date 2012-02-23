@@ -114,21 +114,5 @@ public class ExecuteMobileTableAction extends AbstractExecuteMobileAction {
 			logger.error("Unable to execute table document",e);
 		}
 	}
-	public HashMap<String, String> getParametersList(JSONObject parameters) throws JSONException {
-		
-		String[] names = new String[0];
-		HashMap<String, String> params = new HashMap<String, String>();
-		
-		if (parameters != null) {
-			names = JSONObject.getNames(parameters);
-		}
-
-		if (names != null) {
-			for (String name : names) {
-				params.put(name, parameters.getString(name));
-			}
-		}
-
-		return params;
-	}
+	
 }
