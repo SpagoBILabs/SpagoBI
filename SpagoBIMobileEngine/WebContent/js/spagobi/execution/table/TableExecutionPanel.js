@@ -79,7 +79,9 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 				      this.add(app.views.table);		      
 				      this.doLayout();
 				}
-				this.loadingMask.hide();
+				if(this.IS_FROM_COMPOSED){
+					this.loadingMask.hide();
+				}
 		}
 		, setCrossNavigation: function(resp, target, crossParams){
 			

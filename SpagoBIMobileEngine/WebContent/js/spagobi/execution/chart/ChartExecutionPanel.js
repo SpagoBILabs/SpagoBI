@@ -36,7 +36,9 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 			chartConfig.fullscreen = true;
 			app.views.chart = new Ext.chart.Panel(chartConfig);
 		}
-		this.loadingMask.hide();
+		if(this.IS_FROM_COMPOSED){
+			this.loadingMask.hide();
+		}
 	}
 
 });
