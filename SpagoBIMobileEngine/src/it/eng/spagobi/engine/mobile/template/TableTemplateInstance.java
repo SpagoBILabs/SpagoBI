@@ -35,9 +35,7 @@ public class TableTemplateInstance extends AbstractTemplateInstance implements I
 	private JSONArray columns = new JSONArray();
 	private JSONArray fields = new JSONArray();
 	private JSONArray conditions = new JSONArray();
-	private JSONObject drill = new JSONObject();
 
-	
 	private JSONObject features = new JSONObject();
 
 	
