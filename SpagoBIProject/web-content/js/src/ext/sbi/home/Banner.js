@@ -471,7 +471,7 @@ Ext.extend(Sbi.home.Banner, Ext.Panel, {
 	
 	  logout: function() {
 		  // reset parameters stored in session
-		  Sbi.execution.SessionParametersManager.reset();
+		  Sbi.execution.SessionParametersManager.resetSessionObjects();
 		  //logouturl taken by the homepage
 		  window.location =logoutUrl;
 	  }

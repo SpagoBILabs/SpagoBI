@@ -52,8 +52,8 @@ Sbi.execution.SessionParametersManager = function() {
     // private variables
 	var STORE_NAME = 'Sbi_execution_SessionParametersManager'; // dots are not allowed in the store name by the Persist library
 	
-	var PARAMETR_STATE_OBJECT_KEY = 'parameterState'; 
-	var PARAMETR_MEMENTO_OBJECT_KEY = 'parameterMemento';
+	var PARAMETER_STATE_OBJECT_KEY = 'parameterState'; 
+	var PARAMETER_MEMENTO_OBJECT_KEY = 'parameterMemento';
 	
 	
 	// configurations
@@ -62,11 +62,24 @@ Sbi.execution.SessionParametersManager = function() {
 	var isMementoPersistenceEnabled = Sbi.config.isParametersMementoPersistenceEnabled;
 	var mementoPersistenceScope = Sbi.config.parameterMementoPersistenceScope; // = 'SESSION' ||  'BROWSER'
 	var mementoPersistenceDepth = Sbi.config.parameterMementoPersistenceDepth; // how many states for each parameter the memento object must store
-	
+
 	// public space
 	return {
 
 		init: function() {
+			
+			isStatePersistenceEnabled = Sbi.config.isParametersStatePersistenceEnabled;
+			statePersistenceScope = Sbi.config.parameterStatePersistenceScope; // = 'SESSION' ||  'BROWSER'
+			isMementoPersistenceEnabled = Sbi.config.isParametersMementoPersistenceEnabled;
+			mementoPersistenceScope = Sbi.config.parameterMementoPersistenceScope; // = 'SESSION' ||  'BROWSER'
+			mementoPersistenceDepth = Sbi.config.parameterMementoPersistenceDepth; // how many states for each parameter the memento object must store
+			
+			if(isStatePersistenceEnabled === undefined) isStatePersistenceEnabled = false;
+			if(statePersistenceScope != 'BROWSER' && statePersistenceScope != 'SESSION') statePersistenceScope = 'SESSION';
+			if(isMementoPersistenceEnabled === undefined) isMementoPersistenceEnabled = true;
+			if(mementoPersistenceScope != 'BROWSER' && mementoPersistenceScope != 'SESSION') mementoPersistenceScope = 'BROWSER';
+			if(mementoPersistenceDepth === undefined) mementoPersistenceDepth = 5;
+			
 			try {
 				if (isStatePersistenceEnabled || isMementoPersistenceEnabled) {
 					Sbi.execution.SessionParametersManager.store = new Persist.Store(STORE_NAME, {
@@ -83,7 +96,7 @@ Sbi.execution.SessionParametersManager = function() {
 		, restoreStateObject: function(parametersPanel) {
 			try {
 				if (isStatePersistenceEnabled) {
-					Sbi.execution.SessionParametersManager.store.get(PARAMETR_STATE_OBJECT_KEY, function(ok, value) {
+					Sbi.execution.SessionParametersManager.store.get(PARAMETER_STATE_OBJECT_KEY, function(ok, value) {
 						if (ok && value !== undefined && value !== null) {
 							var storedParameters = Sbi.commons.JSON.decode(value);
 							var state = {};
@@ -114,7 +127,7 @@ Sbi.execution.SessionParametersManager = function() {
 		, restoreMementoObject: function(parametersPanel) {
 			try {
 				if (isMementoPersistenceEnabled) {
-					Sbi.execution.SessionParametersManager.store.get(PARAMETR_MEMENTO_OBJECT_KEY, function(ok, value) {
+					Sbi.execution.SessionParametersManager.store.get(PARAMETER_MEMENTO_OBJECT_KEY, function(ok, value) {
 						if (ok && value !== undefined && value !== null) {
 							//alert(value);
 							
@@ -163,7 +176,7 @@ Sbi.execution.SessionParametersManager = function() {
 		, saveParameterState: function(field) {
 			try {
 				if (isStatePersistenceEnabled) {
-					Sbi.execution.SessionParametersManager.store.get(PARAMETR_STATE_OBJECT_KEY, function(ok, value) {
+					Sbi.execution.SessionParametersManager.store.get(PARAMETER_STATE_OBJECT_KEY, function(ok, value) {
 						if (ok) {
 							var storedParameters = null;
 							if (value === undefined || value === null) {
@@ -182,7 +195,7 @@ Sbi.execution.SessionParametersManager = function() {
 									parameterStateObject.description = rawValue;
 								}
 								storedParameters[Sbi.execution.SessionParametersManager.getParameterStorageKey(field)] = parameterStateObject;
-								Sbi.execution.SessionParametersManager.store.set(PARAMETR_STATE_OBJECT_KEY, Sbi.commons.JSON.encode(storedParameters));
+								Sbi.execution.SessionParametersManager.store.set(PARAMETER_STATE_OBJECT_KEY, Sbi.commons.JSON.encode(storedParameters));
 							}
 						}
 					});
@@ -219,7 +232,7 @@ Sbi.execution.SessionParametersManager = function() {
 		, updateParameterMemento: function(field) {
 			try {
 				if (isMementoPersistenceEnabled) {
-					Sbi.execution.SessionParametersManager.store.get(PARAMETR_MEMENTO_OBJECT_KEY, function(ok, value) {
+					Sbi.execution.SessionParametersManager.store.get(PARAMETER_MEMENTO_OBJECT_KEY, function(ok, value) {
 						if (ok) {
 							var mementoObject = null;
 							if (value === undefined || value === null) {
@@ -267,7 +280,7 @@ Sbi.execution.SessionParametersManager = function() {
 									}
 
 									mementoObject[parameterStorageKey] = parameterMementoObject;
-									Sbi.execution.SessionParametersManager.store.set(PARAMETR_MEMENTO_OBJECT_KEY, Sbi.commons.JSON.encode(mementoObject));
+									Sbi.execution.SessionParametersManager.store.set(PARAMETER_MEMENTO_OBJECT_KEY, Sbi.commons.JSON.encode(mementoObject));
 									
 									parameterMementoObject.readCursor = parameterMementoObject.insertCursor;
 									field.memento = parameterMementoObject;
@@ -286,7 +299,7 @@ Sbi.execution.SessionParametersManager = function() {
 		, debug: function(field) {
 			try {
 				if (isMementoPersistenceEnabled) {
-					Sbi.execution.SessionParametersManager.store.get(PARAMETR_MEMENTO_OBJECT_KEY, function(ok, value) {
+					Sbi.execution.SessionParametersManager.store.get(PARAMETER_MEMENTO_OBJECT_KEY, function(ok, value) {
 						if (ok) {
 							alert(value);
 						}
@@ -303,29 +316,32 @@ Sbi.execution.SessionParametersManager = function() {
 		 */
 		, clear: function(field) {
 			try {
-			if (isStatePersistenceEnabled) {
-				Sbi.execution.SessionParametersManager.store.get(PARAMETR_STATE_OBJECT_KEY, function(ok, value) {
-					if (ok) {
-						var storedParameters = Sbi.commons.JSON.decode(value);
-						if (storedParameters !== undefined && storedParameters !== null) {
-							delete storedParameters[Sbi.execution.SessionParametersManager.getParameterStorageKey(field)];
+				if (isStatePersistenceEnabled) {
+					Sbi.execution.SessionParametersManager.store.get(PARAMETER_STATE_OBJECT_KEY, function(ok, value) {
+						if (ok) {
+							var storedParameters = Sbi.commons.JSON.decode(value);
+							if (storedParameters !== undefined && storedParameters !== null) {
+								delete storedParameters[Sbi.execution.SessionParametersManager.getParameterStorageKey(field)];
+							}
+							Sbi.execution.SessionParametersManager.store.set(PARAMETER_STATE_OBJECT_KEY, Sbi.commons.JSON.encode(storedParameters));
 						}
-						Sbi.execution.SessionParametersManager.store.set(PARAMETR_STATE_OBJECT_KEY, Sbi.commons.JSON.encode(storedParameters));
-					}
-				});
-			}
+					});
+				}
 			} catch (err) {}
 		}
 		
 		/**
 		 * resets all stored parameters
 		 */
-		, reset: function() {
+		, resetSessionObjects: function() {
 			try {
-			if (isStatePersistenceEnabled) {
-				//Sbi.execution.SessionParametersManager.store.remove(PARAMETR_STATE_OBJECT_KEY);
-				Sbi.execution.SessionParametersManager.store.set(PARAMETR_STATE_OBJECT_KEY, Sbi.commons.JSON.encode({}));
-			}
+				if (isStatePersistenceEnabled && statePersistenceScope === 'SESSION') {
+					Sbi.execution.SessionParametersManager.store.set(PARAMETER_STATE_OBJECT_KEY, Sbi.commons.JSON.encode({}));
+				}
+				
+				if (isMementoPersistenceEnabled && mementoPersistenceScope === 'SESSION') {
+					Sbi.execution.SessionParametersManager.store.set(PARAMETER_MEMENTO_OBJECT_KEY, Sbi.commons.JSON.encode({}));
+				}
 			} catch (err) {}
 		}
 		

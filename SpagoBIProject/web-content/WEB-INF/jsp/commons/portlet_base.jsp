@@ -228,11 +228,25 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
         	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
         	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>,
         	
+         	<%if(parametersStatePersistenceEnabled != null) {%>
         	isParametersStatePersistenceEnabled: <%= Boolean.valueOf(parametersStatePersistenceEnabled) %>,
-        	parameterStatePersistenceScope: '<%= parameterStatePersistenceScope %>',
+        	<%}%>
+        	
+        	<%if(parameterStatePersistenceScope != null) {%>
+        	parameterStatePersistenceScope: '<%= parameterStatePersistenceScope.toUpperCase() %>',
+        	<%}%>
+        	
+        	<%if(parametersMementoPersistenceEnabled != null) {%>
         	isParametersMementoPersistenceEnabled: <%= Boolean.valueOf(parametersMementoPersistenceEnabled) %>,
-        	parameterMementoPersistenceScope: '<%= parameterMementoPersistenceScope %>',
+        	<%}%>
+        	
+        	<%if(parameterMementoPersistenceScope != null) {%>
+        	parameterMementoPersistenceScope: '<%= parameterMementoPersistenceScope.toUpperCase() %>',
+        	<%}%>
+        	
+        	<%if(parameterMementoPersistenceDepth != null) {%>
         	parameterMementoPersistenceDepth: <%= parameterMementoPersistenceDepth %>,
+        	<%}%>
         	
         	isSSOEnabled: <%= GeneralUtilities.isSSOEnabled() %>
         };
