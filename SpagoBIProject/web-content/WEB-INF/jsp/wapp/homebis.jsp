@@ -481,7 +481,7 @@ if(showfooter){%>
 
 	  <% if (userHasChanged != null && userHasChanged.booleanValue()) { %>
 	  // reset parameters stored in session
-	  Sbi.execution.SessionParametersManager.reset();
+	  Sbi.execution.SessionParametersManager.resetSessionObjects();
 	  <% } %>
     });
     
