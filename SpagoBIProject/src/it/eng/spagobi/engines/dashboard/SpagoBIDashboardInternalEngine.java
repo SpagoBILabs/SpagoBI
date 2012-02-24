@@ -276,7 +276,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 				logger.error("The specific configuration dataset '" + confDataset +"' doesn't return rows. Get configuration by template. ATTENTION: the widget could not be created correctly!");
 				//throw new EMFUserError(EMFErrorSeverity.ERROR, "1001", messageBundle);
 			}else{
-				addDashboardConfigValues(1, sbRow);
+				addDashboardConfigValues(0, sbRow);
 				addGenericConfigValues(sbRow);
 			}
 		}else if(confType.equalsIgnoreCase(CONF_FROM_DATASET_VALUE)){
