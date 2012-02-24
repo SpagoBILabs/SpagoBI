@@ -139,11 +139,16 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			if( (from==null) || from.trim().equals(""))
 				from = "spagobi.scheduler@eng.it";
 			String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.user");
-			if( (user==null) || user.trim().equals(""))
-				throw new Exception("Smtp user not configured");
+			if( (user==null) || user.trim().equals("")){
+				logger.debug("Smtp user not configured");	
+				user=null;
+			}
+			//	throw new Exception("Smtp user not configured");
 			String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.password");
-			if( (pass==null) || pass.trim().equals(""))
-				throw new Exception("Smtp password not configured");
+			if( (pass==null) || pass.trim().equals("")){
+			logger.debug("Smtp password not configured");	
+			}
+			//	throw new Exception("Smtp password not configured");
 			
 			String mailSubj = dispatchContext.getMailSubj();
 			mailSubj = StringUtilities.substituteParametersInString(mailSubj, parametersMap, null, false);
@@ -161,11 +166,22 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			props.put("mail.smtp.host", smtphost);
 			props.put("mail.smtp.port", smptPort);
 			
-			props.put("mail.smtp.auth", "true");
-			// create autheticator object
-			Authenticator auth = new SMTPAuthenticator(user, pass);
 			// open session
-			Session session = Session.getDefaultInstance(props, auth);
+			Session session=null;
+			
+			// create autheticator object
+			Authenticator auth = null;
+			if (user!=null) {
+				auth = new SMTPAuthenticator(user, pass);
+				props.put("mail.smtp.auth", "true");
+				session = Session.getDefaultInstance(props, auth);
+				logger.error("Session.getDefaultInstance(props, auth)");
+			}else{
+				session = Session.getDefaultInstance(props);
+				logger.error("Session.getDefaultInstance(props)");
+			}
+			
+
 			// create a message
 			Message msg = new MimeMessage(session);
 			// set the from and to address
