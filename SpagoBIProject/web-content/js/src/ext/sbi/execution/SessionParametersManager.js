@@ -55,20 +55,20 @@ Sbi.execution.SessionParametersManager = function() {
 	var PARAMETR_STATE_OBJECT_KEY = 'parameterState'; 
 	var PARAMETR_MEMENTO_OBJECT_KEY = 'parameterMemento';
 	
+	
 	// configurations
-	var isStatePersistenceEnabled = Sbi.config.sessionParametersManagerEnabled;
-	// TODO read the following configuration from global config
-	var statePersistenceScope = 'SESSION'; // create a new state at every login
-	var isMementoPersistenceEnabled = Sbi.config.sessionParametersManagerEnabled;
-	var mementoPersistenceScope = 'BROWSER'; // create a new memento for each browser. persist it upon different logins/users
-	var mementoPersistenceDepth = 5 // how many states for each parameter the memento object must store
+	var isStatePersistenceEnabled = Sbi.config.isParametersStatePersistenceEnabled;
+	var statePersistenceScope = Sbi.config.parameterStatePersistenceScope; // = 'SESSION' ||  'BROWSER'
+	var isMementoPersistenceEnabled = Sbi.config.isParametersMementoPersistenceEnabled;
+	var mementoPersistenceScope = Sbi.config.parameterMementoPersistenceScope; // = 'SESSION' ||  'BROWSER'
+	var mementoPersistenceDepth = Sbi.config.parameterMementoPersistenceDepth; // how many states for each parameter the memento object must store
 	
 	// public space
 	return {
 
 		init: function() {
 			try {
-				if (isStatePersistenceEnabled) {
+				if (isStatePersistenceEnabled || isMementoPersistenceEnabled) {
 					Sbi.execution.SessionParametersManager.store = new Persist.Store(STORE_NAME, {
 					      swf_path: Sbi.config.contextName + '/js/lib/persist-0.1.0/persist.swf'
 				    });
@@ -113,7 +113,7 @@ Sbi.execution.SessionParametersManager = function() {
 		 */
 		, restoreMementoObject: function(parametersPanel) {
 			try {
-				if (isStatePersistenceEnabled) {
+				if (isMementoPersistenceEnabled) {
 					Sbi.execution.SessionParametersManager.store.get(PARAMETR_MEMENTO_OBJECT_KEY, function(ok, value) {
 						if (ok && value !== undefined && value !== null) {
 							//alert(value);
