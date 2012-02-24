@@ -17,6 +17,8 @@ app.controllers.ComposedExecutionController = Ext.extend(Ext.Controller,{
 			console.log('app.controllers.ComposedExecutionController:refreshSubDocument: parameters have been changed');
 			
 			var newDocumentParameters = app.controllers.composedExecutionController.applyNewParameters(newParameters, oldParameters);
+			// TODO this is reduntant, or remove 'parameters' on app.controllers.executionController.executeTemplate call
+			executionInstance.PARAMETERS = newDocumentParameters;
 			
 			app.controllers.executionController.executeTemplate({
 				executionInstance : executionInstance
