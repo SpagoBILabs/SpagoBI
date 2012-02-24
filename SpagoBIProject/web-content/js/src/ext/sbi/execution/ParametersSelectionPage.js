@@ -139,7 +139,15 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 			listeners: {
 			    'render': {
 	            	fn: function() {
-	          	 		this.loadingMask = new Sbi.decorator.LoadMask(this.body, {msg:LN('sbi.execution.parametersselection.loadingmsg')}); 
+	            		if (!this.loadingMask) {
+	            			this.loadingMask = new Sbi.decorator.LoadMask(this.body, {
+	            				msg:LN('sbi.execution.parametersselection.loadingmsg')
+	            			});
+	            		}
+	            		this.loadingMask.hide(); /*
+	            								this is a workaround (work-around): when executing a document from administration tree or
+	            								from menu, this loading mask does not appear. Invoking hide() solve the issue.
+	            		 						*/
 	          	 		if(this.maskOnRender === true) this.loadingMask.show();
 	            	},
 	            	scope: this
@@ -149,8 +157,6 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 		}]
 	});   
 	
-	
-	this.parametersPanel.on('beforesynchronize', function(){if(this.loadingMask) this.loadingMask.show();}, this);
 	this.parametersPanel.on('synchronize', 
 		function(panel, readyForExecution, parametersPreference) {
 			this.isParameterPanelReady = true;
@@ -402,7 +408,18 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 		config.isFromCross = this.isFromCross;
 		this.parametersPanel = new Sbi.execution.ParametersPanel(config);
 		
-		
+		this.parametersPanel.on('beforesynchronize', function() {
+			if (!this.loadingMask) {
+				this.loadingMask = new Sbi.decorator.LoadMask(this.body, {
+					msg:LN('sbi.execution.parametersselection.loadingmsg')
+				}); 
+			}
+			this.loadingMask.hide(); /*
+									this is a workaround (work-around): when executing a document from administration tree or
+									from menu, this loading mask does not appear. Invoking hide() solve the issue.
+									 */
+			this.loadingMask.show();
+		}, this);
 		
 		this.parametersPanel.on('synchronize', function() {
 			if(this.shortcutsPanelSynchronizationPending === false) {
