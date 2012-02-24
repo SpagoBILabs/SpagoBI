@@ -170,7 +170,20 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	
 	String currViewThemeName = ThemesManager.getCurrentThemeName(currTheme);
 	
-	String sessionParamsManagerEnabled = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled");
+	//String sessionParamsManagerEnabled = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled");
+	
+	
+	String parametersStatePersistenceEnabled = SingletonConfig.getInstance().getConfigValue("SPAGOBI.EXECUTION.PARAMETERS.statePersistenceEnabled");
+	String parameterStatePersistenceScope = SingletonConfig.getInstance().getConfigValue("SPAGOBI.EXECUTION.PARAMETERS.statePersistenceScope");
+	// to ensure back compatibility
+	if(parametersStatePersistenceEnabled == null) {
+		parametersStatePersistenceEnabled = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled");
+	}
+	String parametersMementoPersistenceEnabled= SingletonConfig.getInstance().getConfigValue("SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceEnabled");
+	String parameterMementoPersistenceScope = SingletonConfig.getInstance().getConfigValue("SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceScope");
+	String parameterMementoPersistenceDepth = SingletonConfig.getInstance().getConfigValue("SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceDepth");
+	
+
 	
 	%>
 
@@ -227,11 +240,19 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
         	contextName: '<%= GeneralUtilities.getSpagoBiContext() %>',
         	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
         	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>,
-        	sessionParametersManagerEnabled: <%= Boolean.valueOf(sessionParamsManagerEnabled) %>,
+        
+        	isParametersStatePersistenceEnabled: <%= Boolean.valueOf(parametersStatePersistenceEnabled) %>,
+        	parameterStatePersistenceScope: '<%= parameterStatePersistenceScope %>',
+        	isParametersMementoPersistenceEnabled: <%= Boolean.valueOf(parametersMementoPersistenceEnabled) %>,
+        	parameterMementoPersistenceScope: '<%= parameterMementoPersistenceScope %>',
+        	parameterMementoPersistenceDepth: <%= parameterMementoPersistenceDepth %>,
+        	
         	isSSOEnabled: <%= GeneralUtilities.isSSOEnabled() %>
         };
     }();
+    
 
+	
     // javascript-side user profile object
     Ext.ns("Sbi.user");
     Sbi.user.userUniqueIdentifier = '<%= StringEscapeUtils.escapeJavaScript(userUniqueIdentifier) %>';
