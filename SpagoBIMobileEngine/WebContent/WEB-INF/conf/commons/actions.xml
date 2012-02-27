@@ -64,4 +64,9 @@
 	 	class="it.eng.spagobi.engine.mobile.composed.service.ExecuteMobileComposedAction" scope="REQUEST">
 	 	<CONFIG/>
 	 </ACTION>
+		<ACTION name="GET_DOCUMENT_INFO_ACTION" 
+	 	class="it.eng.spagobi.analiticalmodel.execution.service.GetDocumentInfoAction" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION> 
+	 
 </ACTIONS>

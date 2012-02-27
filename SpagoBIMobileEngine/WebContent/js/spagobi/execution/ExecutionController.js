@@ -18,9 +18,38 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 			serviceName: 'EXECUTE_MOBILE_COMPOSED_ACTION'
 			, baseParams: params
 		});
-		
+		this.services['getDocumentInfoAction'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'GET_DOCUMENT_INFO_ACTION'
+			, baseParams: params
+		});
 	}
-
+	, getDocumentInfoForCrossNavExecution: function(options){
+		var targetDoc = options.targetDoc;
+		var params = options.params;
+		Ext.Ajax.request({
+	        url: this.services['getDocumentInfoAction'],
+	        scope: this,
+	        method: 'post',
+	        params: {OBJECT_LABEL: targetDoc},
+	        success: function(response, opts) {
+	        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
+	        		var resp = Ext.decode(response.responseText);
+	        		var doc = resp['document'];
+	        		var type = doc.typeCode;
+		  			Ext.dispatch({
+						  controller: app.controllers.mobileController,
+						  action: 'getRoles',
+						  id: doc.id,
+						  label: doc.label, 
+						  engine: doc.engine, 
+						  typeCode: doc.typeCode,
+						  parameters: params,
+						  isFromCross: true
+					});
+	        	}
+	        }
+	    });
+	}
 	, executeTemplate: function(option, documentContainerPanel){
 
 		var executionInstance = option.executionInstance;

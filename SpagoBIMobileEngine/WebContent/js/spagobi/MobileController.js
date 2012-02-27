@@ -55,7 +55,7 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 	}
 		
 	, getRoles: function(options){
-		
+
 		Ext.Ajax.request({
             url: this.services['getRolesForExecutionService'],
             scope: this,
@@ -65,13 +65,20 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
             	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
             		var responseJson = Ext.decode(response.responseText);
                     var roleName = responseJson.root[0].name;
-                    this.startNewExecutionProcess(options.id, options.label, roleName,  options.engine, options.typeCode);
+                    this.startNewExecutionProcess(options.id, 
+                    								options.label, 
+                    								roleName,  
+                    								options.engine, 
+                    								options.typeCode, 
+                    								options.isFromCross,
+                    								options.parameters//filled only from cross navigation 
+                    								);
             	}
           	}
 	    }); 
 	}
 	
-	, startNewExecutionProcess: function(id, label, roleName, engine, typeCode){
+	, startNewExecutionProcess: function(id, label, roleName, engine, typeCode, isFromCross, params){
 
 		Ext.Ajax.request({
             url: this.services['startNewExecutionProcess'],
@@ -82,13 +89,13 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
             	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
             		var responseJson = Ext.decode(response.responseText);
             		var execContextId = responseJson.execContextId;
-            		this.getParametersForExecutionAction(id, label, roleName, execContextId, engine, typeCode);
+            		this.getParametersForExecutionAction(id, label, roleName, execContextId, engine, typeCode, isFromCross, params);
             	}
             }
 	    }); 
 	}
-	
-	, getParametersForExecutionAction: function(id, label, roleName, sbiExecutionId, engine, typeCode){
+	//params filled only from cross navigation
+	, getParametersForExecutionAction: function(id, label, roleName, sbiExecutionId, engine, typeCode, isFromCross, params){
 				
 		  Ext.dispatch({
 			  controller: app.controllers.parametersController,
@@ -98,7 +105,9 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 			  roleName : roleName, 
 			  sbiExecutionId : sbiExecutionId,
 			  engine: engine, 
-			  typeCode: typeCode
+			  typeCode: typeCode,
+			  isFromCross : isFromCross,
+			  params: params //filled only from cross navigation
 		  });
 	}
 
