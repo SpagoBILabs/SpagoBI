@@ -17,10 +17,10 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 		config.animate = true;
 
 		config.listeners = {
+			scope: this,
             'itemtap': function(series, item, event) { 
 	 			var crossParams = new Array();
-				var target = event.target;
-				//this.setCrossNavigation(resp, target, crossParams);
+				this.setCrossNavigation(resp, item, crossParams);
 				this.fireEvent('execCrossNavigation', this, crossParams);
 			}
         };
@@ -96,5 +96,56 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
             }
         });
 	}
+	, setCrossNavigation: function(resp, item, crossParams){
+		
+		var drill = resp.config.drill;
+		if(drill != null && drill != undefined){
+			var params = drill.params;
+			var series = item.series;
+			
+			if(params != null && params != undefined){
+				for(i=0; i< params.length; i++){
+					var param = params[i];
+					var name = param.paramName;
+					var type = param.paramType;
+					
+					//case multi-series
+					if (typeof series == 'array'){
+						for(k = 0; k<series.length; k++){
+							var serieField = series[k].field;
+							var categoryField = series[k].label.field;
+							
+							var cat = item.storeItem.data[categoryField];
+							var ser = item.storeItem.data[serieField];
+							/*	RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE */
+							if(type == 'SERIE'){
+								crossParams.push({name : name, value : ser});
+							}else if(type == 'CATEGORY'){
+								crossParams.push({name : name, value : cat});
+							}else{
+								crossParams.push({name : name, value : param.paramValue});
+							}
+						}
 
+					}else{
+						//single serie
+						var serieField = series.field;
+						var categoryField = series.label.field;
+						
+						var cat = item.storeItem.data[categoryField];
+						var ser = item.storeItem.data[serieField];
+						/*	RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE */
+						if(type == 'SERIE'){
+							crossParams.push({name : name, value : ser});
+						}else if(type == 'CATEGORY'){
+							crossParams.push({name : name, value : cat});
+						}else{
+							crossParams.push({name : name, value : param.paramValue});
+						}
+					}
+				}
+			}				
+		}
+		return crossParams;
+	}
 });
