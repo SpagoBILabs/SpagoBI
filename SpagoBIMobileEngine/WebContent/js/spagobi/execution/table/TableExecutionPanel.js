@@ -59,7 +59,10 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 	      						var target = e.target;
 
 	      						this.setCrossNavigation(resp, target, crossParams);
-	      						var targetDoc = this.setTargetDocument(resp);
+	      						var targetDoc;
+	      						if(resp.config != undefined && resp.config.drill != undefined){
+		      						targetDoc = this.setTargetDocument(resp);		      						
+	      						}
 	      						this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
     						},
     						scope : this

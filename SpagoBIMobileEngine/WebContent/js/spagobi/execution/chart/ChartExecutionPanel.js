@@ -21,7 +21,10 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
             'itemtap': function(series, item, event) { 
 	 			var crossParams = new Array();
 				this.setCrossNavigation(resp, item, crossParams);
-				var targetDoc = this.setTargetDocument(resp);
+				var targetDoc;
+				if(resp.config != undefined && resp.config.drill != undefined){
+					targetDoc = this.setTargetDocument(resp);					
+				}
 				this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
 			}
         };
