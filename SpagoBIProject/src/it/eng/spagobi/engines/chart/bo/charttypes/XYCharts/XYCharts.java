@@ -207,33 +207,66 @@ public class XYCharts extends ChartImpl{
 		while(confAttrsIter.hasNext()) {
 			SourceBean param = (SourceBean)confAttrsIter.next();
 			String nameParam = (String)param.getAttribute("name");
-			if (nameParam.equals("grid")){
-				blockW = (String)param.getAttribute("width");
-				blockH = (String)param.getAttribute("height");
-			}
+//			if (nameParam.equals("grid")){
+//				blockW = (String)param.getAttribute("width");
+//				blockH = (String)param.getAttribute("height");
+//			}
 			String valueParam = (String)param.getAttribute("value");
 			confParameters.put(nameParam, valueParam);
 		}	
 		
 		if(confSB==null) return;
-		List confAttrsList2 = content.getAttributeAsList("PARAMETER");
+		
+		
+		
+		// get grid dimensions (changed way in 3.4)		
+		Object gridWidth = confParameters.get("grid_width");
+		Object gridHeight = confParameters.get("grid_height");
+		if(gridWidth != null){
+			blockW = gridWidth.toString();
+		}
+		if(gridHeight != null){
+			blockH = gridHeight.toString();
+		}
+		
+		// get x and y range dimensions (changed way in 3.4)
+		Object xLow = confParameters.get("xrange_value_low");
+		Object xHigh = confParameters.get("xrange_value_high");
+		Object yLow = confParameters.get("yrange_value_low");
+		Object yHigh = confParameters.get("yrange_value_high");
+		if(xLow != null){
+			xrangeMin = xLow.toString();
+		}
+		if(xHigh != null){
+			xrangeMax = xHigh.toString();
+		}
+		if(yLow != null){
+			yrangeMin = yLow.toString();
+		}
+		if(yHigh != null){
+			yrangeMax = yHigh.toString();
+		}
+		
+		
+		// chenge
+//		List confAttrsList2 = content.getAttributeAsList("PARAMETER");
 
-		Iterator confAttrsIter2 = confAttrsList2.iterator();
-		while(confAttrsIter2.hasNext()) {
-			SourceBean param = (SourceBean)confAttrsIter2.next();
-			String nameParam = (String)param.getAttribute("name");
-			
-			if (nameParam.equals("xrange")){
-				xrangeMin = (String)param.getAttribute("value_low");
-				xrangeMax = (String)param.getAttribute("value_high");
-			}else if (nameParam.equals("yrange")){
-				yrangeMin = (String)param.getAttribute("value_low");
-				yrangeMax = (String)param.getAttribute("value_high");
-			}
-			
-			String valueParam = (String)param.getAttribute("value");
-			confParameters.put(nameParam, valueParam);
-		}	
+//		Iterator confAttrsIter2 = confAttrsList2.iterator();
+//		while(confAttrsIter2.hasNext()) {
+//			SourceBean param = (SourceBean)confAttrsIter2.next();
+//			String nameParam = (String)param.getAttribute("name");
+//			
+//			if (nameParam.equals("xrange")){
+//				xrangeMin = (String)param.getAttribute("value_low");
+//				xrangeMax = (String)param.getAttribute("value_high");
+//			}else if (nameParam.equals("yrange")){
+//				yrangeMin = (String)param.getAttribute("value_low");
+//				yrangeMax = (String)param.getAttribute("value_high");
+//			}
+//			
+//			String valueParam = (String)param.getAttribute("value");
+//			confParameters.put(nameParam, valueParam);
+//		}	
 		
 		if(yrange!=null) {		
 			List ranges = yrange.getAttributeAsList("RANGE");
