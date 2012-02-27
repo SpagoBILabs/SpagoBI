@@ -52,7 +52,6 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 					dockedItems: [toolbarForTable],
 					conditions  : resp.features.conditions,
 					colModel    : resp.features.columns,
-					scope: this,
 			    	listeners: { 
 			    		tap: { 
 			    			element : 'el',
@@ -69,14 +68,15 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 				if(fromcomposition){
 					tbConfig.width='100%';
 					tbConfig.height='100%';
+					tbConfig.layout = 'fit';
 				}else{
 					tbConfig.bodyMargin='2px 2px 2px 2px';
 					tbConfig.fullscreen=true;
 				}
 				
-		      app.views.table = new Ext.ux.TouchGridPanel(tbConfig);
+				app.views.table = new Ext.ux.TouchGridPanel(tbConfig);
 				if(fromcomposition){
-				      this.add(app.views.table);		      
+					  this.insert(0, app.views.table);
 				      this.doLayout();
 				}
 				if(this.IS_FROM_COMPOSED){
