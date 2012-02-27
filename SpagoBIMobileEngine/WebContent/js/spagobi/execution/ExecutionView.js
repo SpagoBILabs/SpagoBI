@@ -33,17 +33,7 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 		    
 		    app.views.tableExecutionPanel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 		    app.views.chartExecutionPanel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
-		    
-			this.on('execCrossNavigation', function (sourcePanel, paramsArray, targetDoc) {
-				console.log('execution view catches execCrossNavigation event');
-				
-				var params = {};
-					for (var i = 0 ; i < paramsArray.length ; i++) {
-						var aParam = paramsArray[i];
-						params[aParam.name] = aParam.value;
-					}
-					//app.controllers.executionController.refreshSubDocument(sourcePanel, params);
-				}, this);
+
 			app.views.ExecutionView.superclass.initComponent.apply(this, arguments);
 
 		}
