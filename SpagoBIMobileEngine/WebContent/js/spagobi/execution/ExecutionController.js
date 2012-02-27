@@ -31,9 +31,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		params.PARAMETERS =  Ext.encode(executionInstance.PARAMETERS);
 
 		if(typeCode != null && typeCode !== undefined && (typeCode == 'MOBILE_TABLE')){
-		    //app.views.mask = new Ext.LoadMask(app.views.tableExecutionPanel.el, {msg:"Loading table..."});				
-		    //app.views.tableExecutionPanel.on('render', app.views.mask.show());
-		    
+
 			Ext.Ajax.request({
 		        url: this.services['executeMobileTableAction'],
 		        scope: this,

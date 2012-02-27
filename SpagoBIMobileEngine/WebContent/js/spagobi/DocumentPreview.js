@@ -2,7 +2,7 @@ app.views.DocumentPreview = Ext.extend(Ext.Panel,
 
 		{
 	    dockedItems: [],
-	    flex:2,
+	    flex:1.5,
 	    cls: 'spagobi-bg',
 	    layout: 'vbox',
 		initComponent: function ()	{
