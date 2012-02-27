@@ -72,7 +72,6 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 				if(fromcomposition){
 					tbConfig.width='100%';
 					tbConfig.height='100%';
-					tbConfig.layout = 'fit';
 				}else{
 					tbConfig.bodyMargin='2px 2px 2px 2px';
 					tbConfig.fullscreen=true;

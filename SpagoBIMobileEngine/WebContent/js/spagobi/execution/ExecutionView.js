@@ -9,8 +9,6 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
                 pack: 'center'
             }
         },
-    	layout: 'card',
-    	cardSwitchAnimation: 'slide',
 
 		initComponent: function ()	{
 			this.title = 'Execution view';
