@@ -257,18 +257,19 @@ public abstract class AbstractExecuteMobileAction extends AbstractSpagoBIAction 
 			if (parametersObject != null) {
 				fields = JSONObject.getNames(parametersObject);
 			}
-
-			for (String field : fields) {
-				parametersString.append(field);
-				parametersString.append("=");
-				parametersString.append(parametersObject.getString(field));
-				parametersString.append("&");
-			}
-			if (parametersString.length() > 0) {
-				parametersString.deleteCharAt(parametersString.length() - 1);
+			if (fields != null) {
+				for (String field : fields) {
+					parametersString.append(field);
+					parametersString.append("=");
+					parametersString.append(parametersObject.getString(field));
+					parametersString.append("&");
+				}
+				if (parametersString.length() > 0) {
+					parametersString.deleteCharAt(parametersString.length() - 1);
+				}
 			}
 		} catch (Exception e) {
-			logger.error("Error loading the parameters");
+			logger.error("Error loading the parameters", e);
 		}
 		return parametersString.toString();
 	}
