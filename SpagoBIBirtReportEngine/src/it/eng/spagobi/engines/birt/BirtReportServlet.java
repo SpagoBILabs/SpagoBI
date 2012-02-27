@@ -137,7 +137,7 @@ public class BirtReportServlet extends HttpServlet {
 	public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
 		logger.debug("Start processing a new request...");
-		
+
 		// USER PROFILE
 		HttpSession session = request.getSession();
 		IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -234,7 +234,7 @@ public class BirtReportServlet extends HttpServlet {
 		return renderOption;
 
 	}
-	
+
 
 	private InputStream getTemplateContent(HttpServletRequest servletRequest,ServletContext servletContext) throws IOException {
 		logger.debug("IN");
@@ -251,7 +251,7 @@ public class BirtReportServlet extends HttpServlet {
 		HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(servletRequest);
 		Content template = contentProxy.readTemplate(documentId,requestParameters);
 		logger.debug("Read the template=" + template.getFileName());
-		
+
 		InputStream is = null;
 		byte[] templateContent = null;
 		try {
@@ -261,14 +261,14 @@ public class BirtReportServlet extends HttpServlet {
 		}catch (Throwable t){
 			logger.warn("Error on decompile",t); 
 		}
-		
+
 		String flgTemplateStandard = "true";
 		if (template.getFileName().indexOf(".zip") > -1) {
 			flgTemplateStandard = "false";
 		}else{
 			flgTemplateStandard = "true";
 		}
-		
+
 		SpagoBIAccessUtils util = new SpagoBIAccessUtils();
 		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
 		UUID uuid_local = uuidGen.generateTimeBasedUUID();
@@ -310,9 +310,9 @@ public class BirtReportServlet extends HttpServlet {
 			if(resourcePath!=null){
 				this.birtReportEngine.getConfig().setResourcePath(resourcePath);
 			}
-			
+
 		}else{
-			
+
 			SourceBean engineConfig=null;
 			if (getClass().getResource("/engine-config.xml")!=null){
 				InputSource source=new InputSource(getClass().getResourceAsStream("/engine-config.xml"));
@@ -323,7 +323,7 @@ public class BirtReportServlet extends HttpServlet {
 					e.printStackTrace();
 				}   
 			}
-			
+
 			SourceBean sb = (SourceBean)engineConfig.getAttribute("RESOURCE_PATH_JNDI_NAME");
 			String path = (String) sb.getCharacters();
 			String resPath= SpagoBIUtilities.readJndiResource(path);			
@@ -333,8 +333,8 @@ public class BirtReportServlet extends HttpServlet {
 				this.birtReportEngine.getConfig().setResourcePath(resPath);
 			}
 		}
-		
-		
+
+
 		logger.debug("OUT");
 		return is;
 	}
@@ -386,8 +386,8 @@ public class BirtReportServlet extends HttpServlet {
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
-	
+
+
 	private String getJRTempDirName(ServletContext servletContext, String executionId) {	
 		logger.debug("IN");
 		String jrTempDir = servletContext.getRealPath("tmpdir") + System.getProperty("file.separator") +
@@ -396,7 +396,7 @@ public class BirtReportServlet extends HttpServlet {
 		logger.debug("OUT");
 		return jrTempDir;		
 	}
-	
+
 	private File getJRTempDir(ServletContext servletContext, String executionId) {
 		logger.debug("IN");
 		File jrTempDir = null;		
@@ -407,33 +407,33 @@ public class BirtReportServlet extends HttpServlet {
 		logger.debug("OUT");
 		return jrTempDir;		
 	}
-	
-	 /**
-     * @param params
-     * @param parName
-     * @param parValue
-     */
-    private void addParToParMap(Map params, String parName, String parValue) {
-	logger.debug("IN.parName:"+parName+" /parValue:"+parValue);
-	String newParValue;
 
-	ParametersDecoder decoder = new ParametersDecoder();
-	if (decoder.isMultiValues(parValue)) {
-	    List values = decoder.decode(parValue);
-	    newParValue = "";
-	    for (int i = 0; i < values.size(); i++) {
-		newParValue += (i > 0 ? "," : "");
-		newParValue += values.get(i);
-	    }
+	/**
+	 * @param params
+	 * @param parName
+	 * @param parValue
+	 */
+	private void addParToParMap(Map params, String parName, String parValue) {
+		logger.debug("IN.parName:"+parName+" /parValue:"+parValue);
+		String newParValue;
 
-	} else {
-	    newParValue = parValue;
+		ParametersDecoder decoder = new ParametersDecoder();
+		if (decoder.isMultiValues(parValue)) {
+			List values = decoder.decode(parValue);
+			newParValue = "";
+			for (int i = 0; i < values.size(); i++) {
+				newParValue += (i > 0 ? "," : "");
+				newParValue += values.get(i);
+			}
+
+		} else {
+			newParValue = parValue;
+		}
+
+		params.put(parName, newParValue);
+		logger.debug("OUT");
 	}
 
-	params.put(parName, newParValue);
-	logger.debug("OUT");
-    }
-	
 	/**
 	 * 
 	 * @param documentId
@@ -479,31 +479,31 @@ public class BirtReportServlet extends HttpServlet {
 		logger.debug( "runReport(): template document retrieved.");
 		// Open the report design
 		design = birtReportEngine.openReportDesign(is);
-		
+
 		Map params = new HashMap();
 		Enumeration enumer = request.getParameterNames();
 		String parName = null;
 		String parValue = null;
 		logger.debug("Reading request parameters...");
 		while (enumer.hasMoreElements()) {
-		    parName = (String) enumer.nextElement();
-		    parValue = request.getParameter(parName);
-		    addParToParMap(params, parName, parValue);
-		    logger.debug("Read parameter [" + parName + "] with value ["+ parValue + "] from request");
+			parName = (String) enumer.nextElement();
+			parValue = request.getParameter(parName);
+			addParToParMap(params, parName, parValue);
+			logger.debug("Read parameter [" + parName + "] with value ["+ parValue + "] from request");
 		}
 		logger.debug("Request parameters read sucesfully" + params);
-		
+
 		SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
 		String token = proxyService.readTicket(session);
-		
+
 		String kpiUrl = EnginConf.getInstance().getSpagoBiServerUrl()+"/publicjsp/kpiValueXml.jsp?SECURITY_TOKEN="+token+"&USERID="+userId;
 		//String kpiUrl = EnginConf.getInstance().getSpagoBiServerUrl()+"/testXml.jsp?"+"USERID="+userId;
-		
+
 		Locale locale = null;
-		
+
 		String language=null;
 		String country=null;
-		
+
 		String languageOverride = request.getParameter("LanguageOverride");
 		if (languageOverride != null){
 			language = languageOverride;
@@ -516,8 +516,8 @@ public class BirtReportServlet extends HttpServlet {
 		}else{
 			country=request.getParameter("SBI_COUNTRY");
 		}
-		
-		
+
+
 		if(language!=null && country!=null){
 			locale=new Locale(language,country,"");
 		}
@@ -526,7 +526,7 @@ public class BirtReportServlet extends HttpServlet {
 		}
 		String outputFormat = request.getParameter("outputType");		
 		logger.debug("outputType -- [" + outputFormat + "]");
-		
+
 		logger.debug( "runReport(): report design opened successfully.");
 		// Create task to run and render the report,
 		IRunAndRenderTask task = birtReportEngine.createRunAndRenderTask(design);
@@ -540,14 +540,14 @@ public class BirtReportServlet extends HttpServlet {
 		IDataSource ds = findDataSource(request.getSession(), userId, documentId,requestConnectionName);
 		if (ds != null) {
 			logger.debug("DataSource founded.");
-		
+
 			if (ds.checkIsJndi() ) {
-				
+
 				if (ds.checkIsMultiSchema()){
 					String schema=null;
 					try {
-							String attrname=ds.getSchemaAttribute();
-							if (attrname!=null) schema = (String)profile.getUserAttribute(attrname);						
+						String attrname=ds.getSchemaAttribute();
+						if (attrname!=null) schema = (String)profile.getUserAttribute(attrname);						
 					} catch (EMFInternalError e) {
 						logger.error("Cannot retrive ENTE", e);
 					}
@@ -556,7 +556,7 @@ public class BirtReportServlet extends HttpServlet {
 					reportParams.put("connectionName", ds.getJndi());
 				}
 
-				
+
 			} else {
 				reportParams.put("driver", ds.getDriver());
 				reportParams.put("url", ds.getUrlConnection());
@@ -567,7 +567,7 @@ public class BirtReportServlet extends HttpServlet {
 		}
 
 		reportParams.put("KpiDSXmlUrl", kpiUrl);
-		
+
 		//gets static resources with SBI_RESOURCE_PATH system's parameter
 		String resPathJNDI = EnginConf.getInstance().getResourcePath();
 		String resourcePath = resPathJNDI+"/img/";
@@ -612,11 +612,42 @@ public class BirtReportServlet extends HttpServlet {
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".rtf");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("xls")) {
 			renderOption = prepareHtmlRenderOption(servletContext, request);
+			// change emitter according to engine config.xml
+			SourceBean engineConfig = EnginConf.getInstance().getConfig();
+			String emitter = null;
+			if(engineConfig!=null){
+				SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute("XLS_EMITTER");
+				if(sourceBeanConf != null){
+					emitter = (String) sourceBeanConf.getCharacters();
+					renderOption.setOption(IRenderOption.EMITTER_ID, emitter);
+				}
+			}
+			// render
 			renderOption.setOutputFormat("xls");
 			// renderOption.setOutputFileName(templateFileName + ".xls");
 			response.setContentType("application/vnd.ms-excel");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xls");
-		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("ppt")) {
+} 
+//			else if (outputFormat != null && outputFormat.equalsIgnoreCase("xlsx")) {
+//			renderOption = prepareHtmlRenderOption(servletContext, request);
+//			// change emitter according to engine config.xml
+//			SourceBean engineConfig = EnginConf.getInstance().getConfig();
+//			String emitter = null;
+//			if(engineConfig!=null){
+//				SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute("XLS_EMITTER");
+//				if(sourceBeanConf != null){
+//					emitter = (String) sourceBeanConf.getCharacters();
+//					renderOption.setOption(IRenderOption.EMITTER_ID, emitter);
+//				}
+//			}
+//			// render
+//			renderOption.setOutputFormat("xlsx");
+//			// renderOption.setOutputFileName(templateFileName + ".xls");
+//			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+//			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xlsx");
+//
+//		}
+		else if (outputFormat != null && outputFormat.equalsIgnoreCase("ppt")) {
 			renderOption = prepareHtmlRenderOption(servletContext, request);
 			renderOption.setOutputFormat("ppt");
 			// renderOption.setOutputFileName(templateFileName + ".ppt");
@@ -631,7 +662,7 @@ public class BirtReportServlet extends HttpServlet {
 			logger.debug(" Output format parameter is CSV. Create document obj .");
 			prepareCSVRender(reportParams, request, design, userId, documentId, profile, kpiUrl, response);
 			return;
-			
+
 		}else {
 			logger.debug(" Output format parameter not set or not valid. Using default output format: HTML.");
 			outputFormat = IBirtConstants.HTML_RENDER_FORMAT;
@@ -647,7 +678,7 @@ public class BirtReportServlet extends HttpServlet {
 		task.setAppContext(context);
 		renderOption.setOutputStream((OutputStream) response.getOutputStream());
 		task.setRenderOption(renderOption);
-		
+
 		// setting HTML header if output format is HTML: this is necessary in order to inject the document.domain directive
 		// commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library
 		/*
@@ -655,71 +686,72 @@ public class BirtReportServlet extends HttpServlet {
 			((HTMLRenderOption) renderOption).setEmbeddable(true);
 			injectHTMLHeader(response);
 		}
-		*/
-		
+		 */
+
 		try {
 			task.run();
 		} catch(Exception e) {
 			logger.error("Error while running the report: " + e);
+			e.printStackTrace();
 		}
 		task.close();
-		
+
 		// commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library
 		/*
 		if (outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT)) {
 			injectHTMLFooter(response);
 		}
-		*/
-		
+		 */
+
 		logger.debug("OUT");
 
 	}
-	
+
 	private Map getTaskContext(String userId, Map reportParams, HttpServletRequest request, String resourcePath, Map userProfileAttrs) throws IOException {
-		  Map context = BirtUtility.getAppContext(request);
-		  
-		  String pass = EnginConf.getInstance().getPass();
-		  String spagoBiServerURL = EnginConf.getInstance().getSpagoBiServerUrl();
-		  HttpSession session = request.getSession();
-		  String secureAttributes = (String)session.getAttribute( "isBackend" );
-		  String serviceUrlStr = null;
-		  SourceBean engineConfig = EnginConf.getInstance().getConfig();
-		  if(engineConfig!=null){
-			  SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute("DataSetServiceProxy_URL");
-			  serviceUrlStr = (String) sourceBeanConf.getCharacters();
-		  }
-		  String token = null;
-		  boolean isSecure = true;
-		  if (secureAttributes!=null && secureAttributes.equals("true")){
-			    isSecure = false;
-		  }
-		  
-		  if (!isSecure){
-			  token = pass;
-			}
-			if ( ! UserProfile.isSchedulerUser(userId) ) {
-			    SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
-			    token = proxyService.readTicket(session);
-			}else{
-				token = "";
-			}
-			
-		  context.put("RESOURCE_PATH_JNDI_NAME", resourcePath);
-		  context.put("SBI_BIRT_RUNTIME_IS_RUNTIME", "true"); 
-		  context.put("SBI_BIRT_RUNTIME_USER_ID", userId); 
-		  context.put("SBI_BIRT_RUNTIME_SECURE_ATTRS", secureAttributes);
-		  context.put("SBI_BIRT_RUNTIME_SERVICE_URL", serviceUrlStr);
-		  context.put("SBI_BIRT_RUNTIME_SERVER_URL", spagoBiServerURL);
-		  context.put("SBI_BIRT_RUNTIME_TOKEN", token);
-		  context.put("SBI_BIRT_RUNTIME_PASS", pass);
-		  context.put("SBI_BIRT_RUNTIME_PARS_MAP", reportParams);
-		  context.put("SBI_BIRT_RUNTIME_PROFILE_USER_ATTRS", userProfileAttrs);
-		  context.put("SBI_BIRT_RUNTIME_GROOVY_SCRIPT_FILE_NAME", predefinedGroovyScriptFileName);
-		  context.put("SBI_BIRT_RUNTIME_JS_SCRIPT_FILE_NAME", predefinedJsScriptFileName);
-		  
-		  return context;
+		Map context = BirtUtility.getAppContext(request);
+
+		String pass = EnginConf.getInstance().getPass();
+		String spagoBiServerURL = EnginConf.getInstance().getSpagoBiServerUrl();
+		HttpSession session = request.getSession();
+		String secureAttributes = (String)session.getAttribute( "isBackend" );
+		String serviceUrlStr = null;
+		SourceBean engineConfig = EnginConf.getInstance().getConfig();
+		if(engineConfig!=null){
+			SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute("DataSetServiceProxy_URL");
+			serviceUrlStr = (String) sourceBeanConf.getCharacters();
+		}
+		String token = null;
+		boolean isSecure = true;
+		if (secureAttributes!=null && secureAttributes.equals("true")){
+			isSecure = false;
+		}
+
+		if (!isSecure){
+			token = pass;
+		}
+		if ( ! UserProfile.isSchedulerUser(userId) ) {
+			SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
+			token = proxyService.readTicket(session);
+		}else{
+			token = "";
+		}
+
+		context.put("RESOURCE_PATH_JNDI_NAME", resourcePath);
+		context.put("SBI_BIRT_RUNTIME_IS_RUNTIME", "true"); 
+		context.put("SBI_BIRT_RUNTIME_USER_ID", userId); 
+		context.put("SBI_BIRT_RUNTIME_SECURE_ATTRS", secureAttributes);
+		context.put("SBI_BIRT_RUNTIME_SERVICE_URL", serviceUrlStr);
+		context.put("SBI_BIRT_RUNTIME_SERVER_URL", spagoBiServerURL);
+		context.put("SBI_BIRT_RUNTIME_TOKEN", token);
+		context.put("SBI_BIRT_RUNTIME_PASS", pass);
+		context.put("SBI_BIRT_RUNTIME_PARS_MAP", reportParams);
+		context.put("SBI_BIRT_RUNTIME_PROFILE_USER_ATTRS", userProfileAttrs);
+		context.put("SBI_BIRT_RUNTIME_GROOVY_SCRIPT_FILE_NAME", predefinedGroovyScriptFileName);
+		context.put("SBI_BIRT_RUNTIME_JS_SCRIPT_FILE_NAME", predefinedJsScriptFileName);
+
+		return context;
 	}
-	
+
 	/**
 	 * This method injects the HTML header into the report HTML output.
 	 * This is necessary in order to inject the document.domain javascript directive
@@ -751,8 +783,8 @@ public class BirtReportServlet extends HttpServlet {
 		response.getOutputStream().write(header.getBytes());
 		logger.debug("OUT");
 	}
-	*/
-	
+	 */
+
 	/**
 	 * This method injects the HTML footer into the report HTML output.
 	 * See injectHTMLHeader method
@@ -778,29 +810,29 @@ public class BirtReportServlet extends HttpServlet {
 		response.getOutputStream().write(footer.getBytes());
 		logger.debug("OUT");
 	}
-	*/
-	
+	 */
+
 	private void prepareCSVRender (Map reportParams, HttpServletRequest request, IReportRunnable design, String userId, String documentId, IEngUserProfile profile, String kpiUrl, HttpServletResponse response) throws Exception {
 		logger.debug("IN");
 
 		//Create task to run the report 
 		logger.debug("design: " + design.getReportName());
 		IRunTask CSVtask = birtReportEngine.createRunTask(design); 
-			
+
 		//**** Set parameters for the report ****	
-			
+
 		CSVtask.setParameterValues(reportParams);
 		CSVtask.validateParameters();
-		 
+
 		//************************************
-		 
+
 		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
 		UUID uuid_local = uuidGen.generateTimeBasedUUID();
 		String executionId = uuid_local.toString();
 		executionId = executionId.replaceAll("-", "");
-		 
+
 		String nameFile = getJRTempDirName(getServletContext(), executionId)+ "csvreport.rptdocument";
-		 
+
 		Map context = BirtUtility.getAppContext(request);
 		CSVtask.setAppContext(context);
 
@@ -816,34 +848,34 @@ public class BirtReportServlet extends HttpServlet {
 		//*** Create the data extraction task ****
 		IDataExtractionTask iDataExtract = birtReportEngine.createDataExtractionTask(rptdoc);
 		ArrayList resultSetList = (ArrayList)iDataExtract.getResultSetList( );
-			    
-	    ICSVDataExtractionOption extractionOptions = new CSVDataExtractionOption();
-	    OutputStream responseOut = response.getOutputStream();
 
-	    extractionOptions.setOutputFormat("csv");
-	    extractionOptions.setSeparator(";");
-	    
-	    //flag for exportdata found
-	    boolean ed_found = false;
-	    
-	    
-	    //check if there is the ExportData element
-	    for (int j=0; j<resultSetList.size();j++){
-			
-	    	//get an item
+		ICSVDataExtractionOption extractionOptions = new CSVDataExtractionOption();
+		OutputStream responseOut = response.getOutputStream();
+
+		extractionOptions.setOutputFormat("csv");
+		extractionOptions.setSeparator(";");
+
+		//flag for exportdata found
+		boolean ed_found = false;
+
+
+		//check if there is the ExportData element
+		for (int j=0; j<resultSetList.size();j++){
+
+			//get an item
 			IResultSetItem resultItem = (IResultSetItem)resultSetList.get(j);
-			
+
 			//get the name of the resultSet
 			String dispName = resultItem.getResultSetName();
-			
+
 			if (dispName.equalsIgnoreCase("exportdata")){
 				logger.debug("Found ExportData Element in report ");
 				ed_found = true;
-				
+
 				//output directly on the response OutputStream
-		    	extractionOptions.setOutputStream(responseOut);
-		    	
-		    	//Set the HTTP response
+				extractionOptions.setOutputStream(responseOut);
+
+				//Set the HTTP response
 				response.setContentType("text/csv");
 				response.setHeader("Content-disposition", "inline; filename=reportcsv.csv");
 				iDataExtract.selectResultSet( dispName );
@@ -851,109 +883,109 @@ public class BirtReportServlet extends HttpServlet {
 				logger.debug("Extraction successfull "+dispName);
 				break;
 			}
-	    }
-	    
-	    if (ed_found){
-			
-	    	//close the extract
+		}
+
+		if (ed_found){
+
+			//close the extract
 			iDataExtract.close();
-		
+
 			//close the task
 			CSVtask.close();
 
 			logger.debug("Finished");
 			logger.debug("OUT");
-	    }
-	    
-	    
-	    //ExtractData element not found, search all element to export
+		}
+
+
+		//ExtractData element not found, search all element to export
 		if (!ed_found) {
 			//check if there is only a result set and generate one CSV file
 			if (resultSetList.size() <= 1){
-	    	
-	    		//output directly on the response OutputStream
-	    		extractionOptions.setOutputStream(responseOut);
-	    	
-	    		//Set the HTTP response
+
+				//output directly on the response OutputStream
+				extractionOptions.setOutputStream(responseOut);
+
+				//Set the HTTP response
 				response.setContentType("text/csv");
 				response.setHeader("Content-disposition", "inline; filename=reportcsv.csv");
-	    	
-	    		IResultSetItem resultItem = (IResultSetItem)resultSetList.get(0);
-			
-	    		//Set the name of the element you want to retrieve.
+
+				IResultSetItem resultItem = (IResultSetItem)resultSetList.get(0);
+
+				//Set the name of the element you want to retrieve.
 				String dispName = resultItem.getResultSetName( );
 				iDataExtract.selectResultSet( dispName );
 				iDataExtract.extract(extractionOptions);
 				logger.debug("Extraction successfull "+dispName);
-	    	}
-	    	else {
-	    		//with more resultSet generate a zip file containing more CSV file
-	    		try {
+			}
+			else {
+				//with more resultSet generate a zip file containing more CSV file
+				try {
 					//Set the HTTP response
 					response.setContentType("application/zip");
 					response.setHeader("Content-disposition", "attachment; filename=reportcsv.zip");
-	    		
-	    			//ZipOutputStream directly on the response OutputStream
-	    			ZipOutputStream outZip = new ZipOutputStream(responseOut); 
-	    		
-		    		//temporary output buffer that contain a single csv
-	    			OutputStream tempOut = new ByteArrayOutputStream();
-	    		
-	    			//temporary input buffer
-	    			InputStream tempIn;
-	    		
-	    			// Create a buffer for reading the files 
-	    			byte[] buf = new byte[1024]; 
-	    		
-	    			//extracted csv is writed on the temp buffer 
-		    		extractionOptions.setOutputStream(tempOut);
-		    	
-			    	//iterate the resultSetList
-				 	for (int i=0; i<resultSetList.size();i++){
-					
-					 	//get an item
-					 	IResultSetItem resultItem = (IResultSetItem)resultSetList.get(i);
-					
+
+					//ZipOutputStream directly on the response OutputStream
+					ZipOutputStream outZip = new ZipOutputStream(responseOut); 
+
+					//temporary output buffer that contain a single csv
+					OutputStream tempOut = new ByteArrayOutputStream();
+
+					//temporary input buffer
+					InputStream tempIn;
+
+					// Create a buffer for reading the files 
+					byte[] buf = new byte[1024]; 
+
+					//extracted csv is writed on the temp buffer 
+					extractionOptions.setOutputStream(tempOut);
+
+					//iterate the resultSetList
+					for (int i=0; i<resultSetList.size();i++){
+
+						//get an item
+						IResultSetItem resultItem = (IResultSetItem)resultSetList.get(i);
+
 						//Set the name of the element you want to retrieve.
 						String dispName = resultItem.getResultSetName( );
 						iDataExtract.selectResultSet( dispName );
 						iDataExtract.extract(extractionOptions);
 						logger.debug("Extraction successfull "+dispName);
-					 
+
 						// Add ZIP entry to ZIP output stream
 						outZip.putNextEntry(new ZipEntry("reportcsv"+i+".csv"));
-					
+
 						//convert temp outputStream to InputStream
 						tempIn = new ByteArrayInputStream (((ByteArrayOutputStream) tempOut).toByteArray());
-					
-				    	// Transfer bytes from the temp buffer to the ZIP file 
+
+						// Transfer bytes from the temp buffer to the ZIP file 
 						int len; 
 						while ((len = tempIn.read(buf)) > 0) { 
 							outZip.write(buf, 0, len); 
-				    	} 
-					
+						} 
+
 						// Complete the entry 
 						outZip.closeEntry();
 						tempIn.close(); 
-					
+
 						//reset the temp output buffer
 						((ByteArrayOutputStream)tempOut).reset();
-				 	}
-				 //**************************
-			    
-				 // Complete the ZIP file
-				 outZip.close();  
+					}
+					//**************************
 
-	    		}
-	    		catch (IOException e){
-	    			logger.error("Error while generating csv zip file: " + e);
-	    		}
+					// Complete the ZIP file
+					outZip.close();  
 
-	    	}
+				}
+				catch (IOException e){
+					logger.error("Error while generating csv zip file: " + e);
+				}
+
+			}
 
 			//close the extract
 			iDataExtract.close();
-		
+
 			//close the task
 			CSVtask.close();
 
