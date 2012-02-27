@@ -2,7 +2,6 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 
 		{
 	    fullscreen: true,
-	    //type: 'light',
 	    tabBar: {
             dock: 'top',
             height: 0,
@@ -10,7 +9,8 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
                 pack: 'center'
             }
         },
-
+    	layout: 'card',
+    	cardSwitchAnimation: 'slide',
 
 		initComponent: function ()	{
 			this.title = 'Execution view';
@@ -30,6 +30,20 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 		            app.views.composedExecutionPanel
 		        ]
 		    });
+		    
+		    app.views.tableExecutionPanel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
+		    app.views.chartExecutionPanel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
+		    
+			this.on('execCrossNavigation', function (sourcePanel, paramsArray, targetDoc) {
+				console.log('execution view catches execCrossNavigation event');
+				
+				var params = {};
+					for (var i = 0 ; i < paramsArray.length ; i++) {
+						var aParam = paramsArray[i];
+						params[aParam.name] = aParam.value;
+					}
+					//app.controllers.executionController.refreshSubDocument(sourcePanel, params);
+				}, this);
 			app.views.ExecutionView.superclass.initComponent.apply(this, arguments);
 
 		}
@@ -63,5 +77,18 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 			if(type == 'composed'){
 				panel.setComposedWidget(resp, true);
 			}
+		}
+		,
+		propagateCrossNavigationEvent : function(sourcePanel, params, targetDoc) {
+			
+			console.log('propagating cross nav');
+			//alert(targetDoc);
+			
+			  Ext.dispatch({
+				  controller: app.controllers.executionController,
+				  action: 'getDocumentInfoForCrossNavExecution',
+				  targetDoc: targetDoc,
+				  params: params
+			  });
 		}
 });

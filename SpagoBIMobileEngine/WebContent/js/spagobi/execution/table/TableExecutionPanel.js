@@ -16,8 +16,6 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 		}
 
 		,setTableWidget: function(resp, fromcomposition){
-  
-			 
 
 		      var store = new Ext.data.Store({
 		     		root: 'values'
@@ -52,14 +50,17 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 					dockedItems: [toolbarForTable],
 					conditions  : resp.features.conditions,
 					colModel    : resp.features.columns,
+					scope: this,
 			    	listeners: { 
 			    		tap: { 
 			    			element : 'el',
 			    			fn : function(e) {
 		      		 			var crossParams = new Array();
 	      						var target = e.target;
+
 	      						this.setCrossNavigation(resp, target, crossParams);
-	      						this.fireEvent('execCrossNavigation', this, crossParams);
+	      						var targetDoc = this.setTargetDocument(resp);
+	      						this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
     						},
     						scope : this
   						}

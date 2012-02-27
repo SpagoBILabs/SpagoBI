@@ -20,5 +20,9 @@ app.views.WidgetPanel = Ext.extend(Ext.Panel, {
 	getExecutionInstance : function () {
 		return this.executionInstance;
 	}
-
+	, setTargetDocument: function(resp){
+		var drill = resp.config.drill;
+		var targetDoc = drill.document;
+		return targetDoc;
+	}
 });

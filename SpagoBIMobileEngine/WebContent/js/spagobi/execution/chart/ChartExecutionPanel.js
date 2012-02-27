@@ -21,7 +21,8 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
             'itemtap': function(series, item, event) { 
 	 			var crossParams = new Array();
 				this.setCrossNavigation(resp, item, crossParams);
-				this.fireEvent('execCrossNavigation', this, crossParams);
+				var targetDoc = this.setTargetDocument(resp);
+				this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
 			}
         };
 		
@@ -96,6 +97,7 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
             }
         });
 	}
+
 	, setCrossNavigation: function(resp, item, crossParams){
 		
 		var drill = resp.config.drill;
@@ -122,11 +124,10 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 								crossParams.push({name : name, value : ser});
 							}else if(type == 'CATEGORY'){
 								crossParams.push({name : name, value : cat});
-							}else{
-								crossParams.push({name : name, value : param.paramValue});
 							}
+	
 						}
-
+						crossParams.push({name : name, value : param.paramValue});
 					}else{
 						//single serie
 						var serieField = series.field;
@@ -146,6 +147,7 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 				}
 			}				
 		}
+
 		return crossParams;
 	}
 });
