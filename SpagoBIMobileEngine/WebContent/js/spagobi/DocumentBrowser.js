@@ -9,7 +9,12 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 	    store: null,
 	    data: null,
 	    flex:1,
+	    title: 'Document Browser',
+	    useTitleAsBackText: false,
 	    displayField: 'name',
+	    toolbar:{style:'-webkit-border-radius: 0.55em; border-radius: 0.55em;'
+				,height: 60
+				},
 
 		getItemTextTpl: function(node) {
 			var tplTxt = '<tpl if="typeCode == \'MOBILE_TABLE\'">'+
@@ -22,7 +27,7 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 		        '<div class="composed-item">{name}</div>'+
 		    '</tpl>'+
 		    '<tpl if="typeCode == undefined || typeCode == null || typeCode ==\'\'">'+
-		        '<div>{name}</div>'+
+		        '<div class="navigate">{name}</div>'+
 		    '</tpl>';
 		    return tplTxt;
 		},
