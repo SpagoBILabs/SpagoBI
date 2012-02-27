@@ -44,7 +44,7 @@ author: Monica Franceschini
 <%@page import="org.json.JSONObject"%>
 <%@page import="org.json.JSONArray"%>
 
-<html>
+<html manifest="mobilespagobi.manifest">
 
 	<head>
 		<link rel="stylesheet" href="../css/add2home.css" type="text/css">
