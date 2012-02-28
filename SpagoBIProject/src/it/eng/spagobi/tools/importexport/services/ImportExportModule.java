@@ -111,6 +111,7 @@ public class ImportExportModule extends AbstractModule {
 		backMetadataAssociation(request, response);
 	    }
 	} catch (EMFUserError emfu) {
+		logger.error("Error during the service execution", emfu);
 	    errorHandler.addError(emfu);
 	} catch (Exception ex) {
 	    logger.error("Error during the service execution", ex);
