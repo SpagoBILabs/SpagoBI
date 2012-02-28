@@ -6,7 +6,9 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 
 			console.log('init table execution');
 
+
 			app.views.TableExecutionPanel.superclass.initComponent.apply(this, arguments);
+			
 			if(this.IS_FROM_COMPOSED){
 				this.on('afterlayout',this.showLoadingMask,this);
 			}
@@ -75,6 +77,7 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 				}else{
 					tbConfig.bodyMargin='2px 2px 2px 2px';
 					tbConfig.fullscreen=true;
+
 				}
 				
 				app.views.table = new Ext.ux.TouchGridPanel(tbConfig);

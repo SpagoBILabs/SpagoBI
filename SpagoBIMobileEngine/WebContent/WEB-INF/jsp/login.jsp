@@ -87,7 +87,7 @@ author: Monica Franceschini
 		<script type="text/javascript" src="../js/spagobi/execution/ExecutionView.js"></script>
 		<script type="text/javascript" src="../js/spagobi/execution/ExecutionController.js"></script>
 		
-		
+		<script type="text/javascript" src="../js/spagobi/execution/CrossExecutionView.js"></script>
 		<script type="text/javascript" src="../js/spagobi/execution/ParametersView.js"></script>
 		<script type="text/javascript" src="../js/spagobi/execution/ParametersController.js"></script>
 

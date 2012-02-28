@@ -2,21 +2,13 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 
 		{
 	    fullscreen: true,
-	    tabBar: {
-            dock: 'top',
-            height: 0,
-            layout: {
-                pack: 'center'
-            }
-        },
-
 		initComponent: function ()	{
 			this.title = 'Execution view';
 			console.log('init Execution view');
 	        this.bottomTools = new app.views.BottomToolbar({parameters: this.parameters});
+
 	        this.dockedItems= [this.bottomTools];
 
-			
 			app.views.tableExecutionPanel = new app.views.TableExecutionPanel();
 			app.views.chartExecutionPanel = new app.views.ChartExecutionPanel({fullscreen: true});
 			app.views.composedExecutionPanel = new app.views.ComposedExecutionPanel();
@@ -36,6 +28,7 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 
 		}
 		, setWidget: function(resp, type) {
+
 			if (type == 'table'){
 				app.views.tableExecutionPanel.setTableWidget(resp);
 				this.widget = app.views.tableExecutionPanel;
@@ -48,13 +41,19 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 				app.views.composedExecutionPanel.setComposedWidget(resp);
 				this.widget = app.views.composedExecutionPanel;
 			}
+
 		}
-		
+		,hideBottomToolbar: function(){
+			this.bottomTools.hide();
+		}
+		,showBottomToolbar: function(){
+			this.bottomTools.show();
+		}
 		,
 		setExecutionInstance : function (executionInstance) {
 			this.widget.setExecutionInstance(executionInstance);
 		}
-		
+
 		, setWidgetComposed: function(resp, type, panel){
 			if(type == 'table'){
 				panel.setTableWidget(resp, true);
@@ -69,8 +68,8 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 		,
 		propagateCrossNavigationEvent : function(sourcePanel, params, targetDoc) {
 			
-			console.log('propagating cross nav');
-			//alert(targetDoc);
+			  console.log('propagating cross nav');
+
 			
 			  Ext.dispatch({
 				  controller: app.controllers.executionController,

@@ -70,8 +70,8 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 									  executionInstance: executionInstance
 								});
 							}else{
-								app.views.parameters.refresh(parameters);
-								app.views.viewport.setActiveItem(app.views.parameters);
+								app.views.parameters.refresh(paramsFromCrossFilled);
+								app.views.crossExecView.setActiveItem(app.views.parameters);
 							}
 						}else{
 							var parameters = this.onParametersForExecutionLoaded(executionInstance,responseJson);
@@ -93,7 +93,7 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 				var label = p.label;
 				for(k =0; k<parametersFromCross.length; k++){
 					var pCross = parametersFromCross[k];
-					if(label == pCross.name){
+					if(label == pCross.name && pCross.value != null && pCross.value != ''){
 						parametersFilled[label] = pCross.value;
 						paramsToBeFilled.remove(p);
 						p.value = pCross.value;
