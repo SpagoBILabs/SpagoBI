@@ -172,6 +172,7 @@ public class ImportExportModule extends AbstractModule {
 	    expManager.createExportArchive();
 	    response.setAttribute(ImportExportConstants.EXPORT_FILE_PATH, exportFileName);
 	} catch (EMFUserError emfue) {
+	    logger.error("Error while exporting ", emfue);
 	    expManager.cleanExportEnvironment();
 	    throw emfue;
 	} catch (Exception e) {
@@ -353,6 +354,7 @@ public class ImportExportModule extends AbstractModule {
 			response.setAttribute(ImportExportConstants.PUBLISHER_NAME, "ImportExportRoleAssociation");
 		}
 	} catch (EMFUserError emfue) {
+	    logger.error("Error inr etrieving import configuration ", emfue);
 	    if (impManager != null) {
 	    	impManager.stopImport();
 	    }
@@ -454,6 +456,7 @@ public class ImportExportModule extends AbstractModule {
 			response.setAttribute(ImportExportConstants.PUBLISHER_NAME, "ImportExportEngineAssociation");
 		}
 	} catch (EMFUserError emfue) {
+		logger.error("Error in associating roles: " + emfue);
 	    if (impManager != null)
 		impManager.stopImport();
 	    throw emfue;
@@ -539,6 +542,7 @@ public class ImportExportModule extends AbstractModule {
 		}
 
 	} catch (EMFUserError emfue) {
+		logger.error("Error in associating engines: " + emfue);
 	    if (impManager != null)
 		impManager.stopImport();
 	    throw emfue;
@@ -615,8 +619,10 @@ public class ImportExportModule extends AbstractModule {
 			    "ImportExportExistingMetadataAssociation");
 	    }
 	} catch (EMFValidationError emfve) {
+		logger.error("Error ina ssocia6ting daytsource: " + emfve);
 	    throw emfve;
 	} catch (EMFUserError emfue) {
+		logger.error("Error in associating engines: " + emfue);
 	    if (impManager != null)
 		impManager.stopImport();
 	    throw emfue;
@@ -665,6 +671,7 @@ public class ImportExportModule extends AbstractModule {
 		AssociationFile assFile = impManager.getAssociationFile();
 		if (assFile != null) response.setAttribute(ImportExportConstants.IMPORT_ASSOCIATION_FILE, assFile);
 	} catch (EMFUserError emfue) {
+		logger.error("Error in associating engines: " + emfue);
 	    if (impManager != null)
 		impManager.stopImport();
 	    throw emfue;
