@@ -1,10 +1,12 @@
 app.views.WidgetPanel = Ext.extend(Ext.Panel, {
 	
 	executionInstance : null
+	,layout: 'fit'
+    
+    ,initComponent: function (options) {
 
-    ,
-    initComponent: function (options) {
     	app.views.WidgetPanel.superclass.initComponent.apply(this, arguments);
+
 	}
 	
 	,

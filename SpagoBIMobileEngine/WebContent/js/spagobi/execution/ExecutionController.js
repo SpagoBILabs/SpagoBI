@@ -102,19 +102,52 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		    }); 
 		}
 	}
+	, crossNavigationManagement: function(resp, type, executionInstance){
+		var crumb = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
+		
+		if(app.views.crossExecView == undefined || app.views.crossExecView == null){
+			//when executing back to home this will be destroyed
+			app.views.crossExecView = new app.views.CrossExecutionView();
+			app.views.crossExecView.add(app.views.parameters);
+		}
+		app.views.execView = crumb;
+		
+		app.views.crossExecView.setBreadCrumb(crumb);
+		app.views.crossExecView.add(crumb);
+		crumb.setWidget(resp, type);
+		crumb.hideBottomToolbar();
+		app.views.crossExecView.setActiveItem(crumb, { type: 'fade', direction: 'left' });
+		app.views.viewport.add(app.views.crossExecView);
+		app.views.viewport.setActiveItem(app.views.crossExecView, { type: 'slide', direction: 'left' });
+
+	}
+	, simpleNavigationManagement: function(resp, type, executionInstance){
+		app.views.execView = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
+		app.views.execView.showBottomToolbar();
+	    var viewport = app.views.viewport;	    
+	    viewport.add(app.views.execView);	    
+	    app.views.execView.setWidget(resp, type);
+	    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
+	}
+
 	, createWidgetExecution: function(resp, type, documentContainerPanel, executionInstance){
 
 		if (documentContainerPanel == undefined || documentContainerPanel == null) {
-			app.views.execView = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
-
-		    var viewport = app.views.viewport;
-		    viewport.add(app.views.execView);
-		    app.views.execView.setWidget(resp, type);
-
-		    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
-	
-		    app.views.execView.setExecutionInstance(executionInstance);
-		    
+			
+			var drill; //first cross navigation document (master document just has drill attribute)
+			if(type == 'chart' && (resp.config != null && resp.config != undefined)){
+				drill = resp.config.drill;
+			}else if(type == 'table' && (resp.features != null && resp.features != undefined)){
+				drill = resp.features.drill;
+			}
+			if(executionInstance.isFromCross || drill!= undefined){
+				//cross navigation
+				this.crossNavigationManagement(resp, type, executionInstance);
+			}else{
+				//default navigation
+				this.simpleNavigationManagement(resp, type, executionInstance);
+			}
+			app.views.execView.setExecutionInstance(executionInstance);
 		} else {
 			app.views.execView.setWidgetComposed(resp, type, documentContainerPanel);
 			documentContainerPanel.setExecutionInstance(executionInstance);

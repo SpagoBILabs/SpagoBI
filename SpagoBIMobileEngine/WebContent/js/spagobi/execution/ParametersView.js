@@ -1,7 +1,7 @@
 app.views.ParametersView = Ext.extend(
 		Ext.Panel,
 		{
-
+			fullScreen: true,
 			dockedItems : [ {
 				xtype : 'toolbar',
 				dock : 'bottom',

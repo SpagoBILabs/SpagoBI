@@ -111,16 +111,51 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 		  });
 	}
 
-	, backToBrowser: function(){
+	, backToBrowser: function(opt){
 		this.destroyExecutionView();
-	    app.views.viewport.setActiveItem(app.views.main, { type: 'fade' });	    
+		if(opt != undefined && opt.fromCross){
+			app.views.execView.destroy();
+			app.views.crossExecView.destroy();
+			app.views.viewport.setActiveItem(app.views.main, { type: 'fade' });	
+		}else{
+			app.views.viewport.setActiveItem(app.views.main, { type: 'fade' });	    
+		}
   	}
-	
+
 	, backToParametersView: function(option){
 		this.destroyExecutionView();
 	    app.views.viewport.setActiveItem(app.views.parameters, { type: 'fade' });
   	}
-	
+	, backToPreviousViewFromCross: function(){
+		//this.hideExecutionView();
+		var pos = app.views.crossExecView.breadCrumbs.length;
+		app.views.execView = app.views.crossExecView.breadCrumbs[pos-1];
+		this.showExecutionView();
+		app.views.crossExecView.setActiveItem(app.views.execView, { type: 'fade', direction: 'left' });
+	}
+	//to be used from cross
+	, hideExecutionView: function(){
+		if(app.views.table != undefined && app.views.table != null){
+			app.views.table.hide();
+		}
+		if(app.views.chart != undefined && app.views.chart != null){
+			app.views.chart.hide();
+		}
+		if(app.views.composed != undefined && app.views.composed != null){
+			app.views.composed.hide();
+		}
+	} 
+	, showExecutionView: function(){
+		if(app.views.table != undefined && app.views.table != null){
+			app.views.table.show();
+		}
+		if(app.views.chart != undefined && app.views.chart != null){
+			app.views.chart.show();
+		}
+		if(app.views.composed != undefined && app.views.composed != null){
+			app.views.composed.show();
+		}
+	} 
 	//Destroy the execution panel
 	, destroyExecutionView: function(){
 		if(app.views.table != undefined && app.views.table != null){

@@ -3,7 +3,7 @@ app.views.LoginView = Ext.extend(Ext.Panel, {
 	userIDField : null,
 	pwdField : null,
 	loginUrl : null,
-
+	style: 'background-color: #747474;',
 	initComponent : function() {
 
 		Sbi.config = {};
