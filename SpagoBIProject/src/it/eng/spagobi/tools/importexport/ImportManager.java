@@ -410,7 +410,7 @@ public class ImportManager implements IImportManager, Serializable {
 				if (otherRoleExpId.compareTo(roleExpId) != 0) {
 					Integer otherRoleAssId = (Integer) roleAssociations.get(otherRoleExpId);
 					if (otherRoleAssId.compareTo(roleAssId) == 0) {
-						logger.debug("OUT. The checkRoleReferences method doesn't work ");
+						logger.error("OUT. The checkRoleReferences method did not pass: there are two roles exported with id "+otherRoleAssId+" and "+roleExpId+" referring two same role in current system with id "+roleAssId);
 						throw new EMFUserError(EMFErrorSeverity.ERROR, "8001", "component_impexp_messages");
 					}
 				}
