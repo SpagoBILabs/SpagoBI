@@ -208,7 +208,8 @@ public class JSONTemplateUtils {
 	    	for (int i=0; i< atts.size();i++) {
 
 				SourceBeanAttribute object = (SourceBeanAttribute) atts.get(i);
-
+				
+				//object.getValue();
 				String key=(String)object.getKey();
 				if(key.endsWith("_LIST")){
 					String arrayKey = key.substring(0, key.indexOf("_LIST"));
@@ -216,9 +217,17 @@ public class JSONTemplateUtils {
 					toReturn = getAllArrayAttributes(object, toReturn);
 					toReturn.write("       ]\n");
 				}else{
-					toReturn.write("      " + convertKeyString(key) +": { \n");	
-					toReturn = getAllAttributes(object, ow);
-					toReturn.write("       }\n");
+					if (object.getValue() instanceof SourceBean){
+						toReturn.write("      " + convertKeyString(key) +": { \n");	
+						toReturn = getAllAttributes(object, ow);
+						toReturn.write("       }\n");
+					}
+					else {
+						//only for root node attributes
+						toReturn.write("      " + convertKeyString(key) +": '");	
+						toReturn = getAllAttributes(object, ow);
+						toReturn.write("'\n");
+					}
 				}
 				if(i != atts.size()-1){
 					toReturn.write(", ");		
@@ -244,6 +253,7 @@ public class JSONTemplateUtils {
 		
 		try{
 			if (sb.getValue() instanceof SourceBean){
+                //toReturn.write("      " + convertKeyString(sb.getKey()) +": { \n");    
 				SourceBean sbSubConfig = (SourceBean)sb.getValue();
 				List subAtts = sbSubConfig.getContainedAttributes();
 				List containedSB = sbSubConfig.getContainedSourceBeanAttributes();
@@ -278,8 +288,12 @@ public class JSONTemplateUtils {
 						}
 					}
 				}
-			
-			}	
+                //toReturn.write("       }\n");
+            }else{
+                //puts the simple value attribute
+                toReturn.write(String.valueOf(sb.getValue()));
+            }
+				
 		}catch (IOException ioe){
 	    	logger.error("Error while defining json chart template: " + ioe.getMessage());
 	    }catch (Exception e){
