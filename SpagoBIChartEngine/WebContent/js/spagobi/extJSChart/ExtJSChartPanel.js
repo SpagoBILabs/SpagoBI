@@ -85,7 +85,7 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 		var requestParameters = {
 			    id: dataConfig.dsLabel
 			  , label: dataConfig.dsLabel
-			  , refreshTime: dataConfig.refreshTime || 0
+			  , refreshTime: this.template.refreshtime || 0
 			  , dsTypeCd: dataConfig.dsTypeCd
 			  , pars: dataConfig.dsPars || []
 			  , trasfTypeCd: dataConfig.dsTransformerType || ""
@@ -156,7 +156,7 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 	   	//da recuperare del template:	   	
 	   	config.width=500;
 	   	config.height=300;	   	
-	   	config.theme='Base:gradients';
+	   //	config.theme='Base:gradients';
         if (this.chart){
         	//update the store and redraw the chart
         	this.chart.store = this.chartStore;
