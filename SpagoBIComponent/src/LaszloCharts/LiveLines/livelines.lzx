@@ -52,26 +52,38 @@
 		global.title = global.title || 'Livelines';
 		Debug.write("title: " + title);
 		
-		global.rangeMinValue = global.rangeMinValue || 0;
-		Debug.write("rangeMinValue: " + rangeMinValue);
+		global.rangeMinValue = parseInt(global.rangeMinValue) || 0;
+		Debug.write("rangeMinValue: " + global.rangeMinValue);
 		
-		global.rangeMaxValue = global.rangeMaxValue || 200;
-		Debug.write("rangeMaxValue: " + rangeMaxValue);
+		global.rangeMaxValue = parseInt(global.rangeMaxValue) || 200;
+		Debug.write("rangeMaxValue: " + global.rangeMaxValue);
 		
 		
 		global.domainValues = global.domainValues || null; // ['01/02/2010', '15/02/2010', '28/02/210'];
         if(global.domainValues !== null) {
             global.domainValues = decode(global.domainValues); 
         }		
-		Debug.write("domainValues: " + domainValues);
+		Debug.write("domainValues: " + global.domainValues);		
 		
+		global.domainValueNumber = (global.domainValueNumber) || 10;
+		Debug.write("domainValueNumber: " + global.domainValueNumber);
 		
-		global.domainValueNumber = global.domainValueNumber || 5;
-		Debug.write("domainValueNumber: " + domainValueNumber);
+		global.isDomainTime = global.domainTime || false;
+		//global.isDomainTime = global.domainTime || true;
+		Debug.write("isDomainTime: " + global.isDomainTime);
 		
-		global.stepY = global.stepY || 20;
-		Debug.write("stepY: " + stepY);
+		global.domainFormat = global.domainTimeFormat || 'hh:mm';
+		Debug.write("domainFormat: " + global.domainFormat);
 		
+		global.domainInterval =  parseInt(global.domainTimeInterval) || 60;
+		Debug.write("domainInterval: " + global.domainInterval);
+		
+		global.stepY = (global.stepY) || 20;
+		Debug.write("stepY: " + global.stepY);
+		
+		global.fillColor =  global.bgColor || "0xBBBDDD";
+		Debug.write("fillColor: " + global.fillColor);
+
 		// -- style ----------------------------------------------------------------------
 		
 		// Style to use in rendering text fields appearing inside the view; 
@@ -89,14 +101,6 @@
 			// the edges of the chart's plot area
 			, padding: {top: 30, right: 50, bottom: 0, left: 50}
 			
-			, plot: {
-				//width: 300
-				//, height: 400
-				//, widthScale: .5
-				//, heightScale: .5
-				//, valign: 'center'
-				//, halign: 'center'
-			}
 			, legend: {
 				text: 'Legenda'
 				, active: false
@@ -109,8 +113,14 @@
 		global.styles = decode(global.styles);	
 		global.styles = apply(stylesDefault, global.styles);
 		
+		// -- deprecated ---------------------------------------------------------------    
+		//var fillColor = typeof(global.bgColor)!="undefined" ? global.bgColor : "0xBBBDDD";
+		var colors = [0xf92525, 0x17e512, 0xbe4ce3, 0x5420ff, 0xf442ff, 0xfb7819, 0x006600, 0x99FF00, 0xFFFF00, 0xFF9966, 0x19fbee, 0xe570ad, 0xfd0c23, 0x4618de];
+		if (typeof(global.serieColors)!="undefined"){		
+			colors = decode(global.serieColors);	
+		}
+		
 		// -- private ----------------------------------------------------------------------
-		var colors = [0xf92525, 0x17e512, 0xbe4ce3, 0x5420ff, 0xf442ff, 0xfb7819, 0x006600, 0x99FF00,0xFFFF00, 0xFF9966, 0x19fbee, 0xe570ad, 0xfd0c23, 0x4618de];
 	    var isSetup = true;
 	    
 	    flash.external.ExternalInterface.addCallback("loadData", null, loadData);
@@ -331,7 +341,8 @@
 			
 			var background = new lz.Background(this.plot, {
 				name : "chartBackground",
-				fillColor: "0xBBBDDD",
+				//fillColor: "0xBBBDDD",
+				fillColor: fillColor,
 				enableGradient: true,
 				gradientLbColor: "0x000000",
 				gradientLbGlobalAlpha: 0,
@@ -466,7 +477,7 @@
     </method>
 
     
- </drawview>
+ </drawview> <!-- <drawview name="chart">  --> 
 
 
 
@@ -506,7 +517,8 @@
 			//canvas.chart.debug.setAttribute('text', '-> 1');
 			data = [];			
 			//canvas.chart.debug.setAttribute('text', '-> 2');
-			this.clear();
+			this.clear();			
+			canvas.chart.plot["chartAxis"].renderDomainAxis();
 			//canvas.chart.debug.setAttribute('text', '-> 3');
 			this.beginPath();
 			//canvas.chart.debug.setAttribute('text', '-> 4');
@@ -535,12 +547,6 @@
 	]]>	
 	</method>
 </class>
-
-
-
-
-
-
 
 <class name="Label" extends="drawview">
 	<text name="textContent" resize="true">
@@ -625,7 +631,8 @@
 	    var posY = 0;
 	    for (var i = 0; i < rangeMajorTickNumber; i++){
 	    	var txt = rangeMaxValue - (i*majorInterval);
-			var label = new LzText(this ,{name : "xlabel"+i, align:"center"});
+	    	Debug.write("ylabel__Text: " + txt);
+			var label = new LzText(this ,{name : "ylabel"+i, align:"center"});
 			
 		
 			label.setAttribute("fontsize", 10);
@@ -652,6 +659,87 @@
 	
 	]]>
 	</method>
+	
+	<method name="getNow">
+
+	var d = new Date();
+	var nowHour = d.getHours();
+	var nowMinute = d.getMinutes();
+	var nowSecond = d.getSeconds();
+	
+	Debug.write("nowHour: " + nowHour);
+	Debug.write("nowMinute: " + nowMinute);
+	Debug.write("nowSecond: " + nowSecond);
+	
+	Debug.write(nowHour+":"+nowMinute+":"+nowSecond);
+	
+	if (domainFormat.toLowerCase() == 'hh:mm:ss'){
+		return (nowHour*3600+nowMinute*60+nowSecond);
+	}else{ 
+		return (nowHour*3600+nowMinute*60);
+	}
+   
+    </method>
+    
+	<method name="setText"  args="startTime, pos">
+		Debug.write("setText.IN");
+		
+		var label = "";
+		var hours = 0;
+		var minutes = 0;
+		var seconds = 0;
+		var temp = startTime;
+		
+		
+		for (var c = 0; c &lt; pos; c++){
+			
+			Debug.write("for");
+			
+			temp += domainInterval;
+
+			Debug.write("temp__" + c + " :" + temp);
+		}
+		
+		hours = Math.floor(temp/3600);		
+		minutes = parseInt((temp-(hours*3600))/60);
+		
+		Debug.write("temp: " + temp);
+		Debug.write("hours: " + hours);
+		Debug.write("minutes: " + minutes);
+		
+		if (domainFormat.toLowerCase() == 'hh:mm:ss'){
+			seconds = parseInt(temp -(hours*3600)-(minutes*60));
+			Debug.write("seconds: " + seconds);
+		}
+
+		if (hours &lt; 10) {
+			label = "0" + hours;
+		}
+		else {
+			label = hours;
+		}
+
+		if (minutes &lt; 10) {
+			label = label + ":0" + minutes;
+		}
+		else {
+		 label = label + ":" + minutes;
+		}
+		
+		if (domainFormat.toLowerCase() == 'hh:mm:ss'){
+			if (seconds &lt; 10) {
+				label = label + ":0" + seconds;
+			} 	
+			else {
+				label = label + ":" + seconds;
+			}
+		}
+		
+		Debug.write("label: " + label);
+		Debug.write("setText.OUT");
+		return label;
+
+	</method>
 
 	<method name="renderDomainAxis" >
 	<![CDATA[
@@ -677,23 +765,33 @@
 
 		
 		var posX = 0;
-
+		var startTime = getNow();
+		Debug.write("startTime: " + startTime);
 		for (var i = 0; i < domainMajorTickNumber; i++){
 			
 			var txt = (domainValues != null)? domainValues[i]: i;
-			var label = new LzText(this ,{name : "xlabel"+i, align:"center"});
 			
+			Debug.write("isDomainTime: " + isDomainTime);
+			if (isDomainTime){
+				txt = this.setText(startTime, i);
+			}
 			
-			//var label = new lz.Label(canvas.chart, {x: this.x + posX-10, y: this.y + this.height + 5});
-			//label.render(txt);
-			
-			
+			if (this["xlabel"+i] !== undefined){
+				Debug.write("label  gia definita !!");
+				 var label = this["xlabel"+i];
+		//		 label.setText(txt);
+			}else{
+				var label = new LzText(this ,{name : "xlabel"+i, align:"center"});
+			}
 			label.setAttribute("fontsize", 10);
 			label.setColor(0x000000);
+			label.setText("");
 			label.setText(txt);
 			
 			label.setX(posX-(label.width/2));					
 			label.setY(this.height + 5);
+		
+			Debug.write("label_TEXT:  " + label.getText()) ;
 			
 			this.beginPath(); 
 			this.moveTo(posX,this.height);
