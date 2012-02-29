@@ -133,14 +133,8 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 	, createWidgetExecution: function(resp, type, documentContainerPanel, executionInstance){
 
 		if (documentContainerPanel == undefined || documentContainerPanel == null) {
-			
-			var drill; //first cross navigation document (master document just has drill attribute)
-			if(type == 'chart' && (resp.config != null && resp.config != undefined)){
-				drill = resp.config.drill;
-			}else if(type == 'table' && (resp.features != null && resp.features != undefined)){
-				drill = resp.features.drill;
-			}
-			if(executionInstance.isFromCross || drill!= undefined){
+
+			if(executionInstance.isFromCross){
 				//cross navigation
 				this.crossNavigationManagement(resp, type, executionInstance);
 			}else{
