@@ -261,11 +261,8 @@ END-CAS -->
         <servlet-name>SpagoBIDrillServlet</servlet-name>
         <servlet-class>it.eng.spagobi.utilities.callbacks.drill.SpagoBIDrillServlet</servlet-class>
     </servlet>
-
-    <servlet>
-        <servlet-name>ReadTicketServlet</servlet-name>
-        <servlet-class>it.eng.spagobi.utilities.callbacks.ticket.ReadTicketServlet</servlet-class>
-    </servlet>    
+    
+ 
     
     <servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
@@ -275,10 +272,7 @@ END-CAS -->
 	</servlet>
 
 
-    <servlet-mapping>
-        <servlet-name>ReadTicketServlet</servlet-name>
-        <url-pattern>/servlet/ReadTicket</url-pattern>
-    </servlet-mapping>
+   
     
     <servlet-mapping>
         <servlet-name>SpagoBIDrillServlet</servlet-name>
