@@ -182,6 +182,7 @@ Ext.extend(Sbi.console.ChartWidget, Sbi.console.Widget, {
 				|| chartType === this.SBI_CHART_MULTILEDS
 				|| chartType === this.SBI_CHART_SEMAPHORE){
 			
+			chartConfig.domainTimeInterval = this.store.refreshTime;
 			chart = this.createSpagoBIChart(chartConfig);
 			
 		} else if(chartType === this.OFC_CHART_BAR){
