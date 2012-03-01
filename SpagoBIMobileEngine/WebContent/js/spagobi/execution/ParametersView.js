@@ -63,11 +63,9 @@ app.views.ParametersView = Ext.extend(
 				var formPanel = new Ext.form.FormPanel({items: [fieldset]});
 				
 				this.insert(0,formPanel);
-				try{
-					this.doLayout();
-				}catch(error){
-					app.views.parameters.doLayout();
-				}
+
+				this.doLayout();
+
 
 			}
 });
