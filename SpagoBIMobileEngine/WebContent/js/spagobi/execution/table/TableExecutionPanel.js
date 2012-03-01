@@ -17,7 +17,7 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 
 		}
 
-		,setTableWidget: function(resp, fromcomposition){
+		,setTableWidget: function(resp, fromcomposition, fromCross){
 
 		      var store = new Ext.data.Store({
 		     		root: 'values'
@@ -71,9 +71,10 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
   						}
 		      		}
 		      	};
-				if(fromcomposition){
+				if(fromcomposition || fromCross){
 					tbConfig.width='100%';
 					tbConfig.height='100%';
+
 				}else{
 					tbConfig.bodyMargin='2px 2px 2px 2px';
 					tbConfig.fullscreen=true;
@@ -84,6 +85,18 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 				if(fromcomposition){
 					  this.insert(0, app.views.table);
 				      this.doLayout();
+				}
+				if(fromCross){
+					var r = new Ext.Panel({
+						style:'z-index:100',
+						height:'100%',
+						items: [app.views.table]
+						        
+					});
+					
+					this.insert(0, r);
+					r.doLayout();
+					this.doLayout();
 				}
 				if(this.IS_FROM_COMPOSED){
 					this.loadingMask.hide();
