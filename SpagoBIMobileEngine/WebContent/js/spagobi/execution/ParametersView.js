@@ -1,7 +1,7 @@
 app.views.ParametersView = Ext.extend(
 		Ext.Panel,
 		{
-			fullScreen: true,
+			fullscreen: true,
 			dockedItems : [ {
 				xtype : 'toolbar',
 				dock : 'bottom',
@@ -46,24 +46,28 @@ app.views.ParametersView = Ext.extend(
 
 			initComponent : function() {
 				this.html = '  ';
-				app.views.ParametersView.superclass.initComponent
-				.apply(this, arguments);
+				app.views.ParametersView.superclass.initComponent.apply(this, arguments);
 
 			}
 
 			,refresh : function(items) {
-	
+
 				this.removeAll();
 	
-				var fieldset = {
+				var fieldset = new Ext.form.FieldSet({
 						title : 'Document Parameters',
 						xtype : 'fieldset',
 						items : items
-				};
+				});
 	
 				var formPanel = new Ext.form.FormPanel({items: [fieldset]});
 				
-				this.add(formPanel);
-				this.doLayout();
+				this.insert(0,formPanel);
+				try{
+					this.doLayout();
+				}catch(error){
+					app.views.parameters.doLayout();
+				}
+
 			}
 });

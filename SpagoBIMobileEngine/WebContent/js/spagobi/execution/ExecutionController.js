@@ -35,17 +35,19 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 	        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 	        		var resp = Ext.decode(response.responseText);
 	        		var doc = resp['document'];
-	        		var type = doc.typeCode;
-		  			Ext.dispatch({
-						  controller: app.controllers.mobileController,
-						  action: 'getRoles',
-						  id: doc.id,
-						  label: doc.label, 
-						  engine: doc.engine, 
-						  typeCode: doc.typeCode,
-						  parameters: params,
-						  isFromCross: true
-					});
+	        		if(doc != undefined && doc != null){
+		        		var type = doc.typeCode;
+			  			Ext.dispatch({
+							  controller: app.controllers.mobileController,
+							  action: 'getRoles',
+							  id: doc.id,
+							  label: doc.label, 
+							  engine: doc.engine, 
+							  typeCode: doc.typeCode,
+							  parameters: params,
+							  isFromCross: true
+						});
+	        		}
 	        	}
 	        }
 	    });
@@ -103,29 +105,31 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		}
 	}
 	, crossNavigationManagement: function(resp, type, executionInstance){
-		var crumb = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
+		app.views.execView = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
 		
 		if(app.views.crossExecView == undefined || app.views.crossExecView == null){
 			//when executing back to home this will be destroyed
 			app.views.crossExecView = new app.views.CrossExecutionView();
-			app.views.crossExecView.add(app.views.parameters);
 		}
-		app.views.execView = crumb;
-		
-		app.views.crossExecView.setBreadCrumb(crumb);
-		app.views.crossExecView.add(crumb);
-		crumb.setWidget(resp, type);
-		crumb.hideBottomToolbar();
-		app.views.crossExecView.setActiveItem(crumb, { type: 'fade', direction: 'left' });
+		app.views.execView.hideBottomToolbar();
+		app.views.execView.title= executionInstance.OBJECT_LABEL;
+		app.views.execView.setWidget(resp, type, true);
+		app.views.crossExecView.setBreadCrumb(executionInstance.OBJECT_LABEL, 
+				executionInstance.OBJECT_ID,
+				executionInstance.TYPE_CODE,
+				executionInstance.PARAMETERS);
+		app.views.crossExecView.add(app.views.execView );
+
+		app.views.crossExecView.setActiveItem(app.views.execView , { type: 'fade', direction: 'left' });
 		app.views.viewport.add(app.views.crossExecView);
 		app.views.viewport.setActiveItem(app.views.crossExecView, { type: 'slide', direction: 'left' });
 
 	}
 	, simpleNavigationManagement: function(resp, type, executionInstance){
 		app.views.execView = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
-		app.views.execView.showBottomToolbar();
 	    var viewport = app.views.viewport;	    
-	    viewport.add(app.views.execView);	    
+	    viewport.add(app.views.execView);	
+	    app.views.execView.showBottomToolbar();
 	    app.views.execView.setWidget(resp, type);
 	    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
 	}
@@ -133,7 +137,21 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 	, createWidgetExecution: function(resp, type, documentContainerPanel, executionInstance){
 
 		if (documentContainerPanel == undefined || documentContainerPanel == null) {
-
+			var drill; //first cross navigation document (master document just has drill attribute)
+			if(type == 'chart' && (resp.config != null && resp.config != undefined)){
+				drill = resp.config.drill;
+			}else if(type == 'table' && (resp.features != null && resp.features != undefined)){
+				drill = resp.features.drill;
+			}
+			if(drill !== undefined && drill != null){
+				if(app.views.crossExecView == undefined || app.views.crossExecView  == null){
+					app.views.crossExecView = new app.views.CrossExecutionView();
+					app.views.crossExecView.setBreadCrumb(executionInstance.OBJECT_LABEL, 
+															executionInstance.OBJECT_ID,
+															executionInstance.TYPE_CODE,
+															executionInstance.PARAMETERS);
+				}
+			}
 			if(executionInstance.isFromCross){
 				//cross navigation
 				this.crossNavigationManagement(resp, type, executionInstance);

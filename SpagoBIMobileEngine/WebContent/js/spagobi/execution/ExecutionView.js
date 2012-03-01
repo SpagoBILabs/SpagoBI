@@ -2,6 +2,7 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 
 		{
 	    fullscreen: true,
+	    layout: 'fit',
 		initComponent: function ()	{
 			this.title = 'Execution view';
 			console.log('init Execution view');
@@ -27,14 +28,14 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 			app.views.ExecutionView.superclass.initComponent.apply(this, arguments);
 
 		}
-		, setWidget: function(resp, type) {
+		, setWidget: function(resp, type, fromCross) {
 
 			if (type == 'table'){
-				app.views.tableExecutionPanel.setTableWidget(resp);
+				app.views.tableExecutionPanel.setTableWidget(resp, false, fromCross);
 				this.widget = app.views.tableExecutionPanel;
 			}
 			if (type == 'chart'){
-				app.views.chartExecutionPanel.setChartWidget(resp);
+				app.views.chartExecutionPanel.setChartWidget(resp, false, fromCross);
 				this.widget = app.views.chartExecutionPanel;
 			}
 			if (type == 'composed'){

@@ -64,14 +64,21 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 							if(paramsToBeFilled.length == 0){
 								//execute now!
 								executionInstance.PARAMETERS = paramsFromCross;
+								executionInstance.isFromCross = true;
 								Ext.dispatch({
 									  controller: app.controllers.executionController,
 									  action: 'executeTemplate',
 									  executionInstance: executionInstance
 								});
 							}else{
-								app.views.parameters.refresh(paramsFromCrossFilled);
+								if(app.views.crossExecView == undefined || app.views.crossExecView == null){
+									app.views.crossExecView = new app.views.CrossExecutionView();
+								}
+								app.views.parameters = new app.views.ParametersView();
+								app.views.parameters.refresh(paramsToBeFilled);
+								app.views.crossExecView.add(app.views.parameters);
 								app.views.crossExecView.setActiveItem(app.views.parameters);
+
 							}
 						}else{
 							var parameters = this.onParametersForExecutionLoaded(executionInstance,responseJson);

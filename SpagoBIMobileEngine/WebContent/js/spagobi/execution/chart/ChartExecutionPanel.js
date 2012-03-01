@@ -10,8 +10,8 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 			this.on('afterlayout',this.showLoadingMask,this);
 		}
 	},
-	setChartWidget : function(resp, fromcomposition) {
-	
+	setChartWidget : function(resp, fromcomposition, fromCross) {
+
 		var r;
 		var config = resp.config;
 		config.animate = true;
@@ -62,9 +62,30 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 			r = new Ext.Panel(chartConfig);
 			this.insert(0, r);
 			this.doLayout();
+		}else if (fromCross) {
+			chartConfig.width = '100%';
+			chartConfig.height = '100%';
+			chartConfig.bodyMargin = '10% 1px 60% 1px';
+			chartConfig.defaultType = 'chart';
+			chartConfig.layout = 'fit';
+			chartConfig.style = 'z-index:100;';//nedded to render charts border informations (like axis..)
+			if(config.title){
+				chartConfig.dockedItems = [{
+	                dock: 'top',
+	                xtype: 'toolbar',
+	                ui: 'light',
+	                title: config.title.value
+	            }];
+			}
+			r = new Ext.Panel(chartConfig);
+			this.insert(0, r);
+			r.doLayout();
+			this.doLayout();
 		} else {
+
 			chartConfig.bodyMargin = '10% 1px 60% 1px';
 			chartConfig.fullscreen = true;
+			
 			if(config.title){
 				chartConfig.title = config.title.value;
 			}
