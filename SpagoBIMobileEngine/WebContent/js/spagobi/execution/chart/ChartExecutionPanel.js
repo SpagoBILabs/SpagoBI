@@ -134,40 +134,48 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 					var param = params[i];
 					var name = param.paramName;
 					var type = param.paramType;
-					
-					//case multi-series
-					if (typeof series == 'array'){
-						for(k = 0; k<series.length; k++){
-							var serieField = series[k].field;
-							var categoryField = series[k].label.field;
+
+
+					if(Ext.isArray(resp.config.series)){
+						for (t = 0; t < resp.config.series.length ; t++){
+							//chart type
+							var charttype = resp.config.series[t].type;
 							
-							var cat = item.storeItem.data[categoryField];
-							var ser = item.storeItem.data[serieField];
-							/*	RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE */
-							if(type == 'SERIE'){
-								crossParams.push({name : name, value : ser});
-							}else if(type == 'CATEGORY'){
-								crossParams.push({name : name, value : cat});
+							if (charttype == 'area'){
+								for(k = 0; k<series.items.length; k++){
+								
+									var cat = series.items[k].storeField;
+									if(item.storeField == cat){
+										var ser = item.storeItem.data[cat];
+										/*	RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE */
+										if(type == 'SERIE'){
+											crossParams.push({name : name, value : ser});
+										}else if(type == 'CATEGORY'){
+											crossParams.push({name : name, value : cat});
+										}else{
+											crossParams.push({name : name, value : param.paramValue});
+										}
+									}
+								}
+								
+							}else{
+								var serieField = series.field;
+								var categoryField = series.label.field;
+								
+								var cat = item.storeItem.data[categoryField];
+								var ser = item.storeItem.data[serieField];
+								/*	RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE */
+								if(type == 'SERIE'){
+									crossParams.push({name : name, value : ser});
+								}else if(type == 'CATEGORY'){
+									crossParams.push({name : name, value : cat});
+								}else{
+									crossParams.push({name : name, value : param.paramValue});
+								}
 							}
-	
-						}
-						crossParams.push({name : name, value : param.paramValue});
-					}else{
-						//single serie
-						var serieField = series.field;
-						var categoryField = series.label.field;
-						
-						var cat = item.storeItem.data[categoryField];
-						var ser = item.storeItem.data[serieField];
-						/*	RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE */
-						if(type == 'SERIE'){
-							crossParams.push({name : name, value : ser});
-						}else if(type == 'CATEGORY'){
-							crossParams.push({name : name, value : cat});
-						}else{
-							crossParams.push({name : name, value : param.paramValue});
 						}
 					}
+					
 				}
 			}				
 		}
