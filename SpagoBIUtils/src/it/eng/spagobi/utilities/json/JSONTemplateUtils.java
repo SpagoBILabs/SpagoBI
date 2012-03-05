@@ -417,7 +417,15 @@ public class JSONTemplateUtils {
 			if(isTag){
 				toReturn.write("      " + convertKeyString(sb.getKey()) + ": " + subValue + "\n" );	
 			}else{				
-				toReturn.write("      " + sb.getKey() + ": " + subValue + "\n" );	
+				//attribute with list of values
+				if (sb.getKey().endsWith("_list")){
+					String originalKey = sb.getKey().replace("_list","");
+					String originalValue = ((String)subValue).replace("'", "");
+					toReturn.write("      " + originalKey + ": [" + originalValue + "] \n" );	
+				}
+				else{
+					toReturn.write("      " + sb.getKey() + ": " + subValue + "\n" );	
+				}
 			}
 
 		}
