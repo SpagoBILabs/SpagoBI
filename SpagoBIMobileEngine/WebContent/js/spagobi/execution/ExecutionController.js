@@ -68,6 +68,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        scope: this,
 		        method: 'post',
 		        params: params,
+		        timeout : ajaxReqGlobalTimeout,
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
@@ -81,6 +82,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        scope: this,
 		        method: 'post',
 		        params: params,
+		        timeout : ajaxReqGlobalTimeout,
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);

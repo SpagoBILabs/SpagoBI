@@ -44,8 +44,7 @@ author: Monica Franceschini
 <%@page import="org.json.JSONObject"%>
 <%@page import="org.json.JSONArray"%>
 
-<html manifest="mobilespagobi.manifest">
-
+<html>
 	<head>
 		<link rel="stylesheet" href="../css/add2home.css" type="text/css">
 		<link rel="apple-touch-icon" href="../img/iOS-57.png" /> 
@@ -98,6 +97,7 @@ author: Monica Franceschini
 	<body>
 
 		 <script>
+		 	var ajaxReqGlobalTimeout = 120000;
 			var hostGlobal= '<%= request.getServerName()%>';
 			var portGlobal= '<%= request.getServerPort()%>';
 		 </script>

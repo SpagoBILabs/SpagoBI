@@ -59,9 +59,12 @@ app.views.ParametersView = Ext.extend(
 						xtype : 'fieldset',
 						items : items
 				});
-	
+				this.emptyText = ' ';
 				var formPanel = new Ext.form.FormPanel({items: [fieldset]});
-				
+				if ( ! this.items)
+				{
+					this.html = '<p class="emptyText"><span>'+ this.emptyText +'</span></p>';
+				}
 				this.insert(0,formPanel);
 
 				this.doLayout();
