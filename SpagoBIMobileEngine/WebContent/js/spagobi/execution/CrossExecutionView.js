@@ -40,15 +40,18 @@
 	, setBreadCrumb: function(objectLabel, 
 								objectId,
 								typeCode,
-								parameters){
-		if(this.breadCrumbs.indexOf(objectLabel) == -1){
+								parameters){ 
+		var current = this.breadCrumbs.indexOf(objectLabel);
+		if(current == -1){
 
 			this.breadCrumbs.push(objectLabel);
 			var pos = this.breadCrumbs.length;
+
 			this.toolbarForCross.insert(pos,{
 				title: objectLabel,    		    
 			    iconCls: 'arrow_left',			    
 			    text: objectLabel,
+			    disabled: true,
 	            handler: function () {
 	  			Ext.dispatch({
 					  controller: app.controllers.mobileController,
@@ -62,6 +65,27 @@
 	
 	            }
 			});
+			//disables current link
+			//enables previous
+			var idxPrev = pos-1;
+			if(idxPrev != 0){
+				var prev = this.toolbarForCross.items.items[idxPrev];
+				prev.setDisabled(false);
+			}
+			this.toolbarForCross.doLayout();
+			this.doLayout();
+		}else{
+			//on the way back
+			var curr = this.toolbarForCross.items.items[current+1];	
+			if(curr == undefined ){
+				this.breadCrumbs = new Array();
+				return;
+			}
+			for(i =1; i<this.breadCrumbs.length+1; i++){
+				var other = this.toolbarForCross.items.items[i];
+				other.setDisabled(false);
+			}
+			curr.setDisabled(true);
 			this.toolbarForCross.doLayout();
 			this.doLayout();
 		}
