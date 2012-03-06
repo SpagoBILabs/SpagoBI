@@ -156,7 +156,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 			});
 
 	    </script>
-	    <div id="<%=executionId%>" align="center" style="width:100%;height:100%';"></div>    
+	    <div id="<%=executionId%>" align="center" style="width:90%;height:90%';"></div>    
 	</body>
 
 </html>
