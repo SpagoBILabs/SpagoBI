@@ -73,6 +73,7 @@ app.views.ParametersView = Ext.extend(
 					height : 500,
 					width : 600,
 					scroll: 'vertical',
+					hideOnMaskTap : false,
 					items: [fieldset]
 				});
 				formPanel.show();

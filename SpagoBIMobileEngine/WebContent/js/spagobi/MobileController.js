@@ -123,6 +123,9 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 
 	, backToParametersView: function(option){
 		this.destroyExecutionView();
+		if(app.views.crossExecView != undefined && app.views.crossExecView != null){
+			app.views.crossExecView.clearNavigation();
+		}
 	    app.views.viewport.setActiveItem(app.views.parameters, { type: 'fade' });
   	}
 
