@@ -97,6 +97,8 @@ author: Antonella Giachino (antonella.giachino@eng.it)
     } else {
     	executionId = "null";
     }   
+    
+    String chartTemplate = chartEngineInstance.getTemplate().toString();
     // gets analytical driver
     //Map analyticalDrivers  = chartEngineInstance.getAnalyticalDrivers();
 
@@ -113,11 +115,11 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 		<%@include file="commons/includeSbiChartJS.jspf"%>
 	</head>
 	
-	<body>
+	<body>		
     	<script type="text/javascript">  
-	    	var template =  <%= chartEngineInstance.getTemplate().toString()  %>;
+	    	var template =  <%= chartTemplate  %>;	    	
 			
-			Sbi.config = {};
+	    	Sbi.config = {};
 			
 			var url = {
 				  host: '<%= engineServerHost %>'
@@ -147,12 +149,14 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	        config.dsTransformerType= "<%=transformerType%>";
 	        config.dsPars = []; //temporaneo
 			Ext.onReady(function() { 
-				Ext.QuickTips.init();			
+				Ext.QuickTips.init();
+		    	
 				var chartPanel = Ext.widget('ExtJSChartPanel',config); //by alias
 				var viewport = new Ext.Viewport(chartPanel);
 			});
+
 	    </script>
-	    <div id="<%=executionId%>"></div>	    
+	    <div id="<%=executionId%>"></div>    
 	</body>
 
 </html>
