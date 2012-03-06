@@ -75,8 +75,8 @@ public class JSONTemplateUtils {
 			//subtype for master/detail chart
 			//setSubType((xmlTemplate.getAttribute(HIGH_CHART+"."+ HIGH_SUBTYPE)!=null)?(String)xmlTemplate.getAttribute(HIGH_CHART+"."+ HIGH_SUBTYPE):"");
 			
-			xmlTemplate.delAttribute(WIDTH);
-			xmlTemplate.delAttribute(HEIGHT);
+			//xmlTemplate.delAttribute(WIDTH);
+			//xmlTemplate.delAttribute(HEIGHT);
 			//xmlTemplate.delAttribute(HIGH_NUMCHARTS);
 			//xmlTemplate.delAttribute(HIGH_SUBTYPE);
 
