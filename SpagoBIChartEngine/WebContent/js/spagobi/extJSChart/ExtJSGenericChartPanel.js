@@ -168,25 +168,39 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
   , getConfigStyle: function (config, numEl) {
 	  var localFont = "";
 	  var localFill = "";
-	  var objX = 10;	 
+	  var objX = 10;
+	  var objY =  10;	 
+	  var width = 100;
+	  var height = 50;
+	  var text = "";
+	  
 	  if (numEl == undefined ) numEl = 1;
-	  var objY =  (numEl == 1)? 10 : (10 * numEl) + 10;
+	  	
+	  if (config !== undefined){
+		  objX = parseInt(config.x) || (this.width/2) - (config.text.length /2) - size;		
+		  objY = parseInt(config.y) ||  (numEl == 1)? 10 : (10 * numEl) + 10;
+		  width =  parseInt(config.width);
+		  height = parseInt(config.height);
+		  text = config.text;	
+	  }
+	  
 	  if (config !== undefined && config.style !== undefined){
 		  var size = parseInt(config.style.fontSize) || 18;
 		  var weigth  = config.style.fontWeight || "bold";
 		  localFont = weigth + " " + size + " Arial";
-		  localFill = config.style.color || "#6D869F";
-		  objX = (this.width/2) - (config.text.length /2) - size;		
+		  localFill = config.style.color || "#6D869F";		  	  
 	  }
 	 
-	  var tagStyle = {text: config.text || "",
-			       	   font: localFont || "bold 18 Arial",
-			           fill: localFill || "#6D869F",
-			    	   x: config.x || objX,
-			    	   y: config.y || objY,
-			    	   width: config.width || 100,
-			    	   height: config.height || 50 
+	  var tagStyle = {text: text || "",
+			       	  font: localFont || "bold 18 Arial",
+			          fill: localFill || "#6D869F",
+			    	  x: objX,
+			    	  y: objY,
+			    	  width: width,
+			    	  height: height 
 			    	};
+	  
+	  
 	 return tagStyle;
   }
 
