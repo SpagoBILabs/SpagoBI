@@ -22,6 +22,7 @@ import it.eng.spago.base.Constants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
@@ -69,7 +70,7 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 		String theme;
 		String backUrl;
 		SourceBean settingSB;
-		boolean isSSOActive;
+		boolean isSSOActive = false;
 		String usr = null;
 		String pwd;
 		
@@ -80,7 +81,7 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			setSpagoBIRequestContainer( request );
 			setSpagoBIResponseContainer( response );
 		
-			Assert.assertNotNull(ConfigSingleton.getInstance(), "Impossible to load SpagoBI configuration file");
+			//Assert.assertNotNull(ConfigSingleton.getInstance(), "Impossible to load SpagoBI configuration file");
 			
 			callback = getAttributeAsString( CALLBACK );
 			logger.debug("Parameter [" + CALLBACK + "] is equals to [" + callback + "]");
@@ -98,13 +99,17 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			logger.debug("Parameter [" + BACK_URL + "] is equals to [" + backUrl + "]");
 			
 			
+			String activeStr = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE");
+
+			if (activeStr != null && activeStr.equalsIgnoreCase("true")) {
+				isSSOActive=true;
+			}
 			
-			
-			settingSB = (SourceBean)ConfigSingleton.getInstance().getAttribute( SSO_ACTIVE );
-			Assert.assertNotNull(settingSB, "Impossible to read from static configuration the block [" + SSO_ACTIVE + "]");
-			Assert.assertTrue(!StringUtilities.isEmpty(settingSB.getCharacters()), "Impossible to read from static configuration the value associated to block [" + SSO_ACTIVE + "]");
-			logger.debug("Configuration parameter [" + SSO_ACTIVE + "] is equals to [" + settingSB.getCharacters() + "]");
-			isSSOActive = "TRUE".equalsIgnoreCase(settingSB.getCharacters());
+			//settingSB = (SourceBean)ConfigSingleton.getInstance().getAttribute( SSO_ACTIVE );
+//			Assert.assertNotNull(settingSB, "Impossible to read from static configuration the block [" + SSO_ACTIVE + "]");
+//			Assert.assertTrue(!StringUtilities.isEmpty(settingSB.getCharacters()), "Impossible to read from static configuration the value associated to block [" + SSO_ACTIVE + "]");
+			logger.debug("Configuration parameter [" + SSO_ACTIVE + "] is equals to [" + isSSOActive + "]");
+		
 			logger.info("SSO is " + (isSSOActive?"enabled" : "disabled"));
 			
 						
