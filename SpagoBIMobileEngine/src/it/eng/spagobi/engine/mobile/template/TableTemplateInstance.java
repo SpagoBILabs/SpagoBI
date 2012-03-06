@@ -130,12 +130,6 @@ public class TableTemplateInstance extends AbstractTemplateInstance implements I
 		setFeatures();
 	}
 
-	@Override
-	public String getDocumentType() {
-		// TODO Auto-generated method stub
-		return MobileConstants.TABLE_TYPE;
-	}
-
 	public void setFeatures() {
 		try {
 			features.put("title", title);
