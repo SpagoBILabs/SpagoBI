@@ -68,7 +68,7 @@ app.views.ParametersView = Ext.extend(
 						
 					autoRender : true,
 					floating : true,
-					modal : true,
+					modal : false,
 					centered : true,
 					height : 500,
 					width : 600,
