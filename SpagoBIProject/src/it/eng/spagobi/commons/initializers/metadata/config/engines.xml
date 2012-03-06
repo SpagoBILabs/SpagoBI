@@ -21,6 +21,11 @@
 <ENGINE label="ConsoleEngine" name="ConsoleEngine" descr="ConsoleEngine" mainUrl="/SpagoBIConsoleEngine/servlet/AdapterHTTP?ACTION_NAME=CONSOLE_ENGINE_START_ACTION" driverNm="it.eng.spagobi.engines.drivers.generic.GenericDriver"  engineTypeCd="EXT" classNm="" biobjTypeCd="CONSOLE" useDataSet="true" useDataSource="true" encrypt="0" />
 <ENGINE label="WorksheetEngine" name="Worksheet Engine" descr="Worksheet Engine" mainUrl="/SpagoBIQbeEngine/servlet/AdapterHTTP" driverNm="it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver"  engineTypeCd="EXT" classNm="" biobjTypeCd="WORKSHEET" useDataSet="false" useDataSource="true" encrypt="0" />
 <ENGINE label="ChartEngineExternal" name="Chart Engine External" descr="Chart Engine External" mainUrl="/SpagoBIChartEngine/servlet/AdapterHTTP?ACTION_NAME=CHART_ENGINE_EXTJS_START_ACTION" driverNm="it.eng.spagobi.engines.drivers.generic.GenericDriver"  engineTypeCd="EXT" classNm="" biobjTypeCd="CHART" useDataSet="false" useDataSource="true" encrypt="0" />
-<!-- <ENGINE label="MobileEngine" name="Mobile Engine" descr="Mobile Engine" mainUrl="/SpagoBIMobileEngine/servlet/AdapterHTTP" driverNm="it.eng.spagobi.engines.drivers.mobile.MobileDriver"  engineTypeCd="EXT" classNm="" biobjTypeCd="MOBILE" useDataSet="true" useDataSource="true" encrypt="0" />-->
+
+<!-- start mobile engines -->
+<ENGINE label="SpagoBIMobileReportEngine" name="Mobile Report Engine" descr="Report engine for mobile devices" mainUrl="/SpagoBIMobileEngine/servlet/AdapterHTTP?ACTION_NAME=MOBILE_ENGINE_START_ACTION" driverNm="it.eng.spagobi.engines.drivers.mobile.report.MobileReportDriver" engineTypeCd="EXT" classNm="" biobjTypeCd="MOBILE_REPORT" useDataSet="true" useDataSource="true" encrypt="0" />
+<ENGINE label="SpagoBIMobileChartEngine" name="Mobile Chart Engine" descr="Chart engine for mobile devices" mainUrl="/SpagoBIMobileEngine/servlet/AdapterHTTP?ACTION_NAME=MOBILE_ENGINE_START_ACTION" driverNm="it.eng.spagobi.engines.drivers.mobile.chart.MobileChartDriver" engineTypeCd="EXT" classNm="" biobjTypeCd="MOBILE_CHART" useDataSet="true" useDataSource="true" encrypt="0" />
+<ENGINE label="SpagoBIMobileCockpitEngine" name="Mobile Cockpit Engine" descr="Cockpit engine for mobile devices" mainUrl="/SpagoBIMobileEngine/servlet/AdapterHTTP?ACTION_NAME=MOBILE_ENGINE_START_ACTION" driverNm="it.eng.spagobi.engines.drivers.mobile.cockpit.MobileCockpitDriver" engineTypeCd="EXT" classNm="" biobjTypeCd="MOBILE_COCKPIT" useDataSet="false" useDataSource="false" encrypt="0" />
+<!-- end mobile engines -->
 
 </ENGINES>
