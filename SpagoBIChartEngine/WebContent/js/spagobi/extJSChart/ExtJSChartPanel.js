@@ -43,12 +43,8 @@
  */
 Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
     alias: 'widget.ExtJSChartPanel',
-    extend: 'Ext.panel.Panel',
+    extend: 'Sbi.extjs.chart.ExtJSGenericChartPanel',
     chart: null,
-    template: null, 
-    store: null,
-    storeManager: null,
-    chartStore: null,
     
     constructor: function(config) {
     	var defaultSettings = {
@@ -56,7 +52,7 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 
     	var c = Ext.apply(defaultSettings, config || {});
     	
-    	c = Ext.apply(c, {id: 'ExtJSChartPanel'});
+    	c = Ext.apply(c, {id: 'ExtJSGenericChartPanel'});
     	
     	c.storeId = c.dsLabel;
     	
@@ -69,94 +65,79 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
         this.callParent(arguments);
     }
 
-	, init : function (dataConfig) {
-		//gets dataset values
-		this.loadChartData(dataConfig);
-		
-		//show the loading mask
-		if(this.rendered){
-			this.showMask();
-		} else{
-		//	this.on('afterlayout',this.showMask,this);
-		}
-	}
-	
-	, loadChartData: function(dataConfig){
-		var requestParameters = {
-			    id: dataConfig.dsLabel
-			  , label: dataConfig.dsLabel
-			  , refreshTime: this.template.refreshtime || 0
-			  , dsTypeCd: dataConfig.dsTypeCd
-			  , pars: dataConfig.dsPars || []
-			  , trasfTypeCd: dataConfig.dsTransformerType || ""
-		};
-		var datasets = [];
-		datasets.push(requestParameters);	
-		this.initStore(datasets, dataConfig.dsLabel);
-	}
-	
-    , initStore: function(config, dsLabel) {
-    	this.storeManager = Ext.create('Sbi.extjs.chart.data.StoreManager',{datasetsConfig: config});
-		this.store = this.storeManager.getStore(dsLabel);
-		if (this.store === undefined) {
-			Sbi.exception.ExceptionHandler.showErrorMessage('Dataset with identifier [' + this.storeId + '] is not correctly configurated');			
-		}else{		
-			this.store.on('load', this.onLoad, this);
-			this.store.on('exception', Sbi.exception.ExceptionHandler.onStoreLoadException, this);
-		}		
-	}
-
-    , adaptStoreForChart: function () {
-    	if(this.store!=null){
-        	var meta = [],
-    	    fields = [],
-    	    storeRec = {},
-    	    store = {};
-        	
-        	//defines new fields for the store chart
-        	for (var m in this.store.alias2FieldMetaMap){
-        		var tmpMeta = this.store.alias2FieldMetaMap[m];
-        		var tmpField = tmpMeta[0];
-        		meta.push(tmpField.header);        		
-        	}
-        	// defines new data for the store chart
-        	var records = this.store.getRange();
-        	for (var i = 0; i < records.length; i++) {
-        		storeRec = {};
-	    		var rec = records[i];
-				if(rec ) {
-					for (var j in meta){
-						var fieldName =	this.store.getFieldNameByAlias(meta[j]); 
-						var fieldValue = rec.get(fieldName);
-						if (fieldValue !== undefined) storeRec[meta[j]] = fieldValue;
-					}	
-					fields.push(storeRec);
-				}
-	        }
-
-        	this.chartStore  = Ext.create('Ext.data.JsonStore', {
-     		    fields: meta,
-     		    data: fields
-     		});        	
-
-    	}
-    }
-    
-  , onLoad: function(){
-	  this.adaptStoreForChart();
-      this.createChart();
-  }
-  
   , createChart: function(){
 	    var config =  Ext.apply(this.template || {});	    
 		config.renderTo = config.divId;
 	   	config.store = this.chartStore;
 	   	config.animate = (!config.animate)?true:config.animate;	
+	   	
+	   	//defines dimension
+	   	this.width = (!config.width)?500:parseInt(config.width);
+	   	this.height =  ((!config.height)?500:parseInt(config.height));
+	   	if (config.title !== undefined) 	this.height += 50;
+	   	if (config.subtitle !== undefined) 	this.height += 50;
+	   	config.width = this.width;
+	   	config.height = this.height;
+	   	
+	   	//updates theme
+	   	var localColors = ['#b1da5a', '#4ce0e7', '#e84b67', '#da5abd', '#4d7fe6', '#fec935'];
+	   	var localBaseColor = '#6D869F';
+	   	
+	   	var themeConfig = {
+            axis: {
+                fill: localBaseColor,
+                stroke: localBaseColor
+            },
+            axisLabelLeft: {
+                fill: localBaseColor
+            },
+            axisLabelBottom: {
+                fill: localBaseColor
+            },
+            axisTitleLeft: {
+                fill: localBaseColor
+            },
+            axisTitleBottom: {
+                fill: localBaseColor
+            },
+            colors: localColors,
+    	    baseColor: localBaseColor
+        };
+
+
+	   	var theme = Ext.create('Ext.chart.theme.ExtJSChartTheme', themeConfig);
 	   
-	   	//da recuperare del template:	   	
-	   	config.width=500;
-	   	config.height=300;	   	
-	   //	config.theme='Base:gradients';
+	   	/*
+	   	Ext.define('Ext.chart.theme.ExtJSChartTheme', {
+	   	    extend: 'Ext.chart.theme.Base',
+	   	    colors : ['#b1da5a', '#4ce0e7', '#e84b67', '#da5abd', '#4d7fe6', '#fec935'],
+
+	   	   	baseColor : '#b1da5a',
+	   	        
+	   	    constructor: function(config) {
+	   	        this.callParent([Ext.apply({
+	   	            axis: {
+	   	                fill: config.baseColor,
+	   	                stroke: baseColor
+	   	            },
+	   	            axisLabelLeft: {
+	   	                fill: baseColor
+	   	            },
+	   	            axisLabelBottom: {
+	   	                fill: baseColor
+	   	            },
+	   	            axisTitleLeft: {
+	   	                fill: baseColor
+	   	            },
+	   	            axisTitleBottom: {
+	   	                fill: baseColor
+	   	            },
+	   	            colors: colors
+	   	        }, config)]);
+	   	    }});
+*/
+	  	config.theme = 'ExtJSChartTheme';
+	   	
         if (this.chart){
         	//update the store and redraw the chart
         	this.chart.store = this.chartStore;
@@ -164,7 +145,14 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
         }else{
         	//Creates the new (initial) instance of chart
         	this.chart = Ext.create('Ext.chart.Chart',config);
+        	//Adds title and subtitle
+        	var configTitle = this.getConfigStyle(config.title);
+        	var title = this.createTextObject(configTitle);        	        	
+        	title.show(true);
+        	var configSubtitle = this.getConfigStyle(config.subtitle, 2);
+			var subtitle = this.createTextObject(configSubtitle);        	        	
+			subtitle.show(true);
         }
   }
 
-  });
+});
