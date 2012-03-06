@@ -8,7 +8,7 @@
 	,breadCrumbs: new Array()
 
 	,initComponent: function() 	  {
-	
+		this.breadCrumbs = new Array();
 		this.docHome = {
 		    title: 'Home',    		    
 		    iconCls: 'reply',			    
@@ -89,6 +89,22 @@
 			this.toolbarForCross.doLayout();
 			this.doLayout();
 		}
+
+	}
+	,clearNavigation: function(){
+		this.breadCrumbs = new Array();
+		this.toolbarForCross = new Ext.Toolbar({xtype: 'toolbar',
+	        dock: 'bottom',
+	        defaults: {
+	            ui: 'plain',
+	            iconMask: true
+	        },
+	        scroll: 'horizontal',
+	        layout: {
+	            pack: 'center'
+	        }
+	        ,items:[this.docHome]
+		});
 	}
 });
 		
