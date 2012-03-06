@@ -2,6 +2,7 @@ app.views.ParametersView = Ext.extend(
 		Ext.Panel,
 		{
 			fullscreen: true,
+			style: 'background-color: #747474;',
 			dockedItems : [ {
 				xtype : 'toolbar',
 				dock : 'bottom',
@@ -57,18 +58,29 @@ app.views.ParametersView = Ext.extend(
 				var fieldset = new Ext.form.FieldSet({
 						title : 'Document Parameters',
 						xtype : 'fieldset',
+
 						items : items
 				});
-				this.emptyText = ' ';
-				var formPanel = new Ext.form.FormPanel({items: [fieldset]});
-				if ( ! this.items)
-				{
-					this.html = '<p class="emptyText"><span>'+ this.emptyText +'</span></p>';
-				}
+
+
+				
+				var formPanel = new Ext.form.FormPanel({
+						
+					autoRender : true,
+					floating : true,
+					modal : true,
+					centered : true,
+					height : 500,
+					width : 600,
+					scroll: 'vertical',
+					items: [fieldset]
+				});
+				formPanel.show();
 				this.insert(0,formPanel);
 
 				this.doLayout();
 
+				
 
 			}
 });
