@@ -18,10 +18,10 @@
 <DOMAIN valueCd="SMART_FILTER" valueNm="sbidomains.nm.smart_filter" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.smart_filter"/>
 <DOMAIN valueCd="CONSOLE" valueNm="Console" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.console"/>
 <DOMAIN valueCd="WORKSHEET" valueNm="sbidomains.nm.worksheet" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.worksheet"/>
-<DOMAIN valueCd="MOBILE_TABLE" valueNm="sbidomains.nm.mobile.table" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.table"/>
-<DOMAIN valueCd="MOBILE_CHART" valueNm="sbidomains.nm.mobile.chart" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.chart"/>
-<DOMAIN valueCd="MOBILE_COMPOSED" valueNm="sbidomains.nm.mobile.composed" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.composed"/>
 <DOMAIN valueCd="CHART" valueNm="sbidomains.nm.chart" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.chart"/>
+<DOMAIN valueCd="MOBILE_REPORT" valueNm="sbidomains.nm.mobile.report" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.report"/>
+<DOMAIN valueCd="MOBILE_CHART" valueNm="sbidomains.nm.mobile.chart" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.chart"/>
+<DOMAIN valueCd="MOBILE_COCKPIT" valueNm="sbidomains.nm.mobile.cockpit" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.cockpit"/>
 <DOMAIN valueCd="BOOL" valueNm="sbidomains.nm.bool" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.bool"/>
 <DOMAIN valueCd="SINGLE" valueNm="sbidomains.nm.single" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.single"/>
 <DOMAIN valueCd="MULTI" valueNm="sbidomains.nm.multi" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.multi"/>
@@ -137,5 +137,4 @@
 <DOMAIN valueCd="SPA" valueNm="Spanish" domainCd="LANG" domainNm="Language ISO code" valueDs="Spanish"/>
 <DOMAIN valueCd="ENG" valueNm="English" domainCd="LANG" domainNm="Language ISO code" valueDs="English"/>
 <DOMAIN valueCd="FRA" valueNm="French" domainCd="LANG" domainNm="Language ISO code" valueDs="French"/>
-
 </DOMAINS>
