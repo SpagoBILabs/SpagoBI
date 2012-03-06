@@ -61,7 +61,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		var params = Ext.apply({}, executionInstance);
 		params.PARAMETERS =  Ext.encode(executionInstance.PARAMETERS);
 
-		if(typeCode != null && typeCode !== undefined && (typeCode == 'MOBILE_TABLE')){
+		if(typeCode != null && typeCode !== undefined && (typeCode == Sbi.constants.documenttype.report)){
 
 			Ext.Ajax.request({
 		        url: this.services['executeMobileTableAction'],
@@ -76,7 +76,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        	}
 		        }
 		    }); 
-		}else if(typeCode != null && typeCode !== undefined && (typeCode == 'MOBILE_CHART')){
+		}else if(typeCode != null && typeCode !== undefined && (typeCode == Sbi.constants.documenttype.chart)){
 			Ext.Ajax.request({
 		        url: this.services['executeMobileChartAction'],
 		        scope: this,
@@ -90,7 +90,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        	}
 		        }
 		    }); 
-		}else if(typeCode != null && typeCode !== undefined && (typeCode == 'MOBILE_COMPOSED')){
+		}else if(typeCode != null && typeCode !== undefined && (typeCode == Sbi.constants.documenttype.cockpit)){
 			Ext.Ajax.request({
 		        url: this.services['executeMobileComposedAction'],
 		        scope: this,

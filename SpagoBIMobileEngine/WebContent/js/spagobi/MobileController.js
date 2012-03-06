@@ -41,11 +41,11 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 		var date= rec.creationDate;
 		var typeCode= rec.typeCode;
 		var imageClass ="preview-item";
-		if(typeCode != null && typeCode !== undefined && (typeCode == 'MOBILE_TABLE')){
+		if(typeCode != null && typeCode !== undefined && (typeCode == Sbi.constants.documenttype.report)){
 			imageClass ="preview-item-table";
-		}else if(typeCode != null && typeCode !== undefined && (typeCode == 'MOBILE_CHART')){
+		}else if(typeCode != null && typeCode !== undefined && (typeCode == Sbi.constants.documenttype.chart)){
 			imageClass ="preview-item-chart";
-		}else if(typeCode != null && typeCode !== undefined && (typeCode == 'MOBILE_COMPOSED')){
+		}else if(typeCode != null && typeCode !== undefined && (typeCode == Sbi.constants.documenttype.cockpit)){
 			imageClass ="preview-item-composed";
 		}else{
 			return;
