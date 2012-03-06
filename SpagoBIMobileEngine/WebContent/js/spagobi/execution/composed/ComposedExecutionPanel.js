@@ -60,7 +60,7 @@ app.views.ComposedExecutionPanel = Ext.extend(app.views.WidgetPanel,
 				, IS_FROM_COMPOSED: true
 				});
 			
-			if (config.type == 'chart') {
+			if (config.TYPE_CODE == Sbi.constants.documenttype.chart) {
 				panel = new app.views.ChartExecutionPanel(config);
 			} else {
 				panel = new app.views.TableExecutionPanel(config);
