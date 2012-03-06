@@ -11,8 +11,8 @@
  */
 package it.eng.spagobi.engines.drivers.mobile.chart;
 
-import it.eng.spagobi.engines.drivers.generic.GenericDriver;
+import it.eng.spagobi.engines.drivers.mobile.report.MobileReportDriver;
 
-public class MobileChartDriver extends GenericDriver {
+public class MobileChartDriver extends MobileReportDriver {
 
 }

@@ -11,8 +11,8 @@
  */
 package it.eng.spagobi.engines.drivers.mobile.cockpit;
 
-import it.eng.spagobi.engines.drivers.generic.GenericDriver;
+import it.eng.spagobi.engines.drivers.mobile.report.MobileReportDriver;
 
-public class MobileCockpitDriver extends GenericDriver {
+public class MobileCockpitDriver extends MobileReportDriver {
 
 }
