@@ -8,6 +8,7 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 				arguments);
 		if(this.IS_FROM_COMPOSED){
 			this.on('afterlayout',this.showLoadingMask,this);
+			app.views.execution.loadingMaskForExec.hide();
 		}
 	},
 	setChartWidget : function(resp, fromcomposition, fromCross) {

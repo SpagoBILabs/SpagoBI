@@ -10,7 +10,9 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 			app.views.TableExecutionPanel.superclass.initComponent.apply(this, arguments);
 			
 			if(this.IS_FROM_COMPOSED){
+				app.views.execution.loadingMaskForExec.hide();
 				this.on('afterlayout',this.showLoadingMask,this);
+				
 			}
 			this.addEvents('execCrossNavigation');
 			

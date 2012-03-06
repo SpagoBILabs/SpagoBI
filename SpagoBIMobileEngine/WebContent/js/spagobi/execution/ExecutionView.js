@@ -3,6 +3,7 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 		{
 	    fullscreen: true,
 	    layout: 'fit',
+	    loadingMaskForExec: null,
 		initComponent: function ()	{
 			this.title = 'Execution view';
 			console.log('init Execution view');
@@ -26,6 +27,7 @@ app.views.ExecutionView = Ext.extend(Ext.Panel,
 		    app.views.chartExecutionPanel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 
 			app.views.ExecutionView.superclass.initComponent.apply(this, arguments);
+
 
 		}
 		, setWidget: function(resp, type, fromCross) {

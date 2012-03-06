@@ -17,6 +17,7 @@ Ext.regApplication({
     	app.controllers.executionController.init();
     	app.controllers.composedExecutionController = new app.controllers.ComposedExecutionController();
     	console.log('controller created');
+    	
 
     }
 });
