@@ -172,7 +172,7 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 				displayField : metadata.displayField,
 				store : store
 			},baseConfig));
-	
+
 	
 		} else { 
 			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
