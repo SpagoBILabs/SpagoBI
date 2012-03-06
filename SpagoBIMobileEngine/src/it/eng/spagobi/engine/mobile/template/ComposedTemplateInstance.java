@@ -107,7 +107,6 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 				Integer id = biDoc.getId();
 				docJSON.put(ObjectsTreeConstants.OBJECT_ID, id);
 				docsArray.put(docJSON);
-				docJSON.put(MobileConstants.DOCUMENT_TYPE,getDocumentTypeFromEngine(engineName));
 				
 				JSONObject inParameters = readInputParameters(doc, biDoc);
 				docJSON.put(MobileConstants.IN_PARAMETERS, inParameters);
@@ -154,25 +153,8 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 	}
 
 	@Override
-	public String getDocumentType() {
-		// TODO Auto-generated method stub
-		return MobileConstants.COMPOSED_TYPE;
-	}
-
-
-	@Override
 	public JSONObject getFeatures() {
 		return features;
-	}
-	
-	private String getDocumentTypeFromEngine(String engineName) throws SpagoBIEngineException{
-		if((engineName.toLowerCase()).contains("chart")){
-			return MobileConstants.DOCUMENT_TYPE_CHART;
-		} else if((engineName.toLowerCase()).contains("table")){
-			return MobileConstants.DOCUMENT_TYPE_TABLE;
-		}
-		throw new SpagoBIEngineException("Wrong engine name.. "+engineName);
-		
 	}
 
 }

@@ -46,13 +46,6 @@ public class ChartTemplateInstance extends AbstractTemplateInstance  implements 
 		setFeatures();
 	}
 
-
-	@Override
-	public String getDocumentType() {
-		return MobileConstants.CHART_TYPE;
-	}
-
-
 	@Override
 	public JSONObject getFeatures() {
 		return features;
