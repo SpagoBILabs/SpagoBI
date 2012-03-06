@@ -21,6 +21,11 @@
 package it.eng.spagobi.engine.mobile;
 
 public class MobileConstants {
+	
+	public static final String DOCUMENT_TYPE_MOBILE_REPORT = "MOBILE_REPORT";
+	public static final String DOCUMENT_TYPE_MOBILE_CHART = "MOBILE_CHART";
+	public static final String DOCUMENT_TYPE_MOBILE_COCKPIT = "MOBILE_COCKPIT";
+	
 	public static final String TABLE_TYPE = "TABLE_TYPE";
 	public static final String CHART_TYPE = "CHART_TYPE";
 	public static final String COMPOSED_TYPE = "COMPOSED_TYPE";

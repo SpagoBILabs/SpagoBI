@@ -17,13 +17,13 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 				},
 
 		getItemTextTpl: function(node) {
-			var tplTxt = '<tpl if="typeCode == \'MOBILE_TABLE\'">'+
+			var tplTxt = '<tpl if="typeCode == \'' + Sbi.constants.documenttype.report + '\'">'+
 	        '<div class="table-item">{name}</div>'+
     	    '</tpl>'+
-    	    '<tpl if="typeCode == \'MOBILE_CHART\'">'+
+    	    '<tpl if="typeCode == \'' + Sbi.constants.documenttype.chart + '\'">'+
 	        	'<div class="chart-item">{name}</div>'+
 	        '</tpl>'+
-    	    '<tpl if="typeCode == \'MOBILE_COMPOSED\'">'+
+    	    '<tpl if="typeCode == \'' + Sbi.constants.documenttype.cockpit + '\'">'+
 		        '<div class="composed-item">{name}</div>'+
 		    '</tpl>'+
 		    '<tpl if="typeCode == undefined || typeCode == null || typeCode ==\'\'">'+

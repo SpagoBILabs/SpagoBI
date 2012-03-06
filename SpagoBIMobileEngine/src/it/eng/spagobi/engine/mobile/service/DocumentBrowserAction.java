@@ -34,6 +34,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.engine.mobile.MobileConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -148,9 +149,9 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction{
 			for(int i=0; i< documents.length(); i++){
 				
 				JSONObject doc = documents.getJSONObject(i);
-				if(((String)doc.get("typeCode")).equalsIgnoreCase("MOBILE_TABLE") || 
-						((String)doc.get("typeCode")).equalsIgnoreCase("MOBILE_CHART")||
-						((String)doc.get("typeCode")).equalsIgnoreCase("MOBILE_COMPOSED")){
+				if(((String)doc.get("typeCode")).equalsIgnoreCase(MobileConstants.DOCUMENT_TYPE_MOBILE_REPORT) || 
+						((String)doc.get("typeCode")).equalsIgnoreCase(MobileConstants.DOCUMENT_TYPE_MOBILE_CHART)||
+						((String)doc.get("typeCode")).equalsIgnoreCase(MobileConstants.DOCUMENT_TYPE_MOBILE_COCKPIT)){
 					doc.put("leaf", true);
 					folders.put(doc);
 				}
