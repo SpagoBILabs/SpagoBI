@@ -21,6 +21,8 @@ Sbi.sdk.apply(Sbi.sdk.services, {
             name: 'LOGIN_ACTION_WEB', 
             baseParams: {NEW_SESSION: 'TRUE'}
         };
+        
+     // no more called
         this.services.execute = {
             type: 'PAGE', 
             name: 'ExecuteBIObjectPage', 

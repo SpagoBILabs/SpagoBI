@@ -47,11 +47,12 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 		if (config.displaySliders !== undefined) params.SLIDERS_VISIBLE = config.displaySliders;
 		if (config.theme !== undefined)	params.theme = config.theme;
 		
-		if(config.useExtUI === true) {
+		//if(config.useExtUI === true) {
+		// no more modality different from ext
 			documentUrl = Sbi.sdk.services.getServiceUrl('executewithext', params);
-		} else {
-			documentUrl = Sbi.sdk.services.getServiceUrl('execute', params);
-		}
+//		} else {
+//			documentUrl = Sbi.sdk.services.getServiceUrl('execute', params);
+//		}
 		
 		return documentUrl;
 	}
