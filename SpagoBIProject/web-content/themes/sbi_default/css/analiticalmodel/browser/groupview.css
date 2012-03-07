@@ -151,6 +151,24 @@
     background-image:url('../../../img/analiticalmodel/browser/document_console.gif')!important;
 }
 
+.group-view .document-item-icon .MOBILE_REPORT-icon {
+   	width:96px;
+    height:96px;
+    background-image:url('../../../img/analiticalmodel/browser/document_mobile_report.png')!important;
+}
+
+.group-view .document-item-icon .MOBILE_CHART-icon {
+   	width:96px;
+    height:96px;
+    background-image:url('../../../img/analiticalmodel/browser/document_mobile_chart.png')!important;
+}
+
+.group-view .document-item-icon .MOBILE_COCKPIT-icon {
+   	width:96px;
+    height:96px;
+    background-image:url('../../../img/analiticalmodel/browser/document_mobile_cockpit.png')!important;
+}
+
 .group-view  #icon {
 	width: 96px;
 	height: 96px;
