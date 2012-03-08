@@ -41,6 +41,8 @@
 								objectId,
 								typeCode,
 								parameters){ 
+		
+	
 		var current = this.breadCrumbs.indexOf(objectLabel);
 		if(current == -1){
 
@@ -105,6 +107,8 @@
 	        }
 	        ,items:[this.docHome]
 		});
+/*		this.toolbarForCross.removeAll();
+		this.add(this.docHome);*/
 	}
 });
 		
