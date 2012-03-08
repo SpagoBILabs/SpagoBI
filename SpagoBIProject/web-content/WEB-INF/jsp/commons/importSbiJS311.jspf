@@ -98,10 +98,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js")%>'></script> 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/mexport/MassiveExportWizardOptionsPage.js")%>'></script> 
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js")%>'></script
-<!--
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js")%>'></script>
+<%--
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/export/TriggerPanel.js")%>'></script>  
--->
+--%>
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/domain/ManageDomains.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/config/ManageConfig.js")%>'></script>
@@ -126,6 +126,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi-all-ext311-3.3.0.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi-all-ext311-3.4.0.js")%>'></script>
 
  END-PRODUCTION -->
