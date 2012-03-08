@@ -71,72 +71,20 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 	   	config.store = this.chartStore;
 	   	config.animate = (!config.animate)?true:config.animate;	
 	   	
-	   	//defines dimension
-	   	this.width = (!config.width)?500:parseInt(config.width);
-	   	this.height =  ((!config.height)?500:parseInt(config.height));
-	   	if (config.title !== undefined) 	this.height += 50;
-	   	if (config.subtitle !== undefined) 	this.height += 50;
-	   	config.width = this.width;
-	   	config.height = this.height;
+	   	//defines dimensions 
+	   	config.width = (!config.width)?500:parseInt(config.width);
+	   	config.height = ((!config.height)?500:parseInt(config.height));
 	   	
 	   	//updates theme
-	   	var localColors = ['#b1da5a', '#4ce0e7', '#e84b67', '#da5abd', '#4d7fe6', '#fec935'];
-	   	var localBaseColor = '#6D869F';
-	   	
-	   	var themeConfig = {
-            axis: {
-                fill: localBaseColor,
-                stroke: localBaseColor
-            },
-            axisLabelLeft: {
-                fill: localBaseColor
-            },
-            axisLabelBottom: {
-                fill: localBaseColor
-            },
-            axisTitleLeft: {
-                fill: localBaseColor
-            },
-            axisTitleBottom: {
-                fill: localBaseColor
-            },
-            colors: localColors,
-    	    baseColor: localBaseColor
-        };
-
-
-	   	var theme = Ext.create('Ext.chart.theme.ExtJSChartTheme', themeConfig);
-	   
-	   	/*
-	   	Ext.define('Ext.chart.theme.ExtJSChartTheme', {
-	   	    extend: 'Ext.chart.theme.Base',
-	   	    colors : ['#b1da5a', '#4ce0e7', '#e84b67', '#da5abd', '#4d7fe6', '#fec935'],
-
-	   	   	baseColor : '#b1da5a',
-	   	        
-	   	    constructor: function(config) {
-	   	        this.callParent([Ext.apply({
-	   	            axis: {
-	   	                fill: config.baseColor,
-	   	                stroke: baseColor
-	   	            },
-	   	            axisLabelLeft: {
-	   	                fill: baseColor
-	   	            },
-	   	            axisLabelBottom: {
-	   	                fill: baseColor
-	   	            },
-	   	            axisTitleLeft: {
-	   	                fill: baseColor
-	   	            },
-	   	            axisTitleBottom: {
-	   	                fill: baseColor
-	   	            },
-	   	            colors: colors
-	   	        }, config)]);
-	   	    }});
-*/
-	  	config.theme = 'ExtJSChartTheme';
+	   	var themeConfig = this.getThemeConfiguration(config);
+	   	if (themeConfig !== null){
+		   	Ext.define('Ext.chart.theme.ExtJSChartTheme', {
+		   	    extend: 'Ext.chart.theme.Base',	       
+		   	    constructor: function(config) {
+		   	        this.callParent([Ext.apply(themeConfig, config)]);
+		   	    }});		
+		    config.theme = 'ExtJSChartTheme';
+	   	}
 	   	
         if (this.chart){
         	//update the store and redraw the chart
@@ -145,13 +93,14 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
         }else{
         	//Creates the new (initial) instance of chart
         	this.chart = Ext.create('Ext.chart.Chart',config);
-        	//Adds title and subtitle
+	    	
+        	//Adds title and subtitle        	
         	var configTitle = this.getConfigStyle(config.title);
+        	configTitle.renderTo = config.divId + '_title';
         	var title = this.createTextObject(configTitle);        	        	
-        	title.show(true);
         	var configSubtitle = this.getConfigStyle(config.subtitle, 2);
-			var subtitle = this.createTextObject(configSubtitle);        	        	
-			subtitle.show(true);
+        	configSubtitle.renderTo = config.divId + '_subtitle';
+			var subtitle = this.createTextObject(configSubtitle);                	
         }
   }
 
