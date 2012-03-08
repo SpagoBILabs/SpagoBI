@@ -14,12 +14,18 @@ package it.eng.spagobi.engines.chart.services.initializers;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.chart.ChartEngine;
 import it.eng.spagobi.engines.chart.ChartEngineInstance;
+import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.json.JSONTemplateUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -75,7 +81,7 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 			logger.debug("Creating engine instance ...");
 			
 			try {
-				JSONArray parsJSON = new JSONArray();
+				JSONArray parsJSON = getParametersAsJSON();
 				SourceBean content = SourceBean.fromXMLString(getTemplateAsString());
 				JSONObject template = templateUtil.getJSONTemplateFromXml( content, parsJSON); 				
 				System.out.println(template.toString(4));
@@ -130,5 +136,43 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 	}
 	
 
+	/** Returns a JSONArray with all params of documents
+	 * 
+	 * @param obj
+	 * @return
+	 */
+
+	public JSONArray getParametersAsJSON(){
+		JSONArray JSONPars = new JSONArray();
+		
+		HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(this.getHttpRequest());
+		
+		for (Iterator iterator = requestParameters.keySet().iterator(); iterator.hasNext();) {
+			 String key = (String) iterator.next();
+			 String value = "";
+			 if (requestParameters.get(key) instanceof String){
+				 value = (String)requestParameters.get(key);
+			 }else {
+				 //it's a list
+				Object[] values =  (Object[]) requestParameters.get(key);
+				for (int i=0, l=values.length; i<l; i++ ){
+					 value  += (String) values[i];
+					 if (i < values.length-1) value += ",";
+				}
+			 }
+			 try{
+					JSONObject JSONObj = new JSONObject();						
+					JSONObj.put("name",key);
+					JSONObj.put("value",value);
+					JSONPars.put(JSONObj);				
+				} catch (Exception e) {
+					logger.warn("Impossible to load parameter object " + key 
+							+ " whose value is " + value
+							+ " to JSONObject", e);
+				}
+		}	
+
+		return JSONPars;
+	}
 	
 }

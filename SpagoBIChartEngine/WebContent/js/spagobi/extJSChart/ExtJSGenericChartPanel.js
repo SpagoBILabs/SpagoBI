@@ -150,58 +150,105 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
   }
  
   , createTextObject: function (config){
-	  var txtObject = Ext.create('Ext.draw.Sprite', {
-  	    type: 'text',
-  	    surface: this.chart.surface,
-  	    text: config.text,
-  	    font: config.font, 
-        fill: config.fill, 
-  	    x: config.x, 
-  	    y: config.y, 
-  	    width: config.width, 
-  	    height: config.height 
-  	});
-	  
-	return txtObject;
+	  return txtObject = Ext.create('Ext.form.Label', config); 
   }
   
-  , getConfigStyle: function (config, numEl) {
-	  var localFont = "";
-	  var localFill = "";
-	  var objX = 10;
-	  var objY =  10;	 
+  , getConfigStyle: function (config) {
+	  var localStyle = "";
+	  var localFont = "Arial";
+	  var localFill = "#6D869F"; 	  
+	  var localWeight = "bold";
+	  var localSize = 16;
 	  var width = 100;
 	  var height = 50;
 	  var text = "";
-	  
-	  if (numEl == undefined ) numEl = 1;
 	  	
 	  if (config !== undefined){
-		  objX = parseInt(config.x) || (this.width/2) - (config.text.length /2) - size;		
-		  objY = parseInt(config.y) ||  (numEl == 1)? 10 : (10 * numEl) + 10;
-		  width =  parseInt(config.width);
-		  height = parseInt(config.height);
+		  width =  parseInt(config.width) || 100;
+		  height = parseInt(config.height) || 50;
 		  text = config.text;	
 	  }
 	  
 	  if (config !== undefined && config.style !== undefined){
-		  var size = parseInt(config.style.fontSize) || 18;
-		  var weigth  = config.style.fontWeight || "bold";
-		  localFont = weigth + " " + size + " Arial";
-		  localFill = config.style.color || "#6D869F";		  	  
+		  localSize = parseInt(config.style.fontSize) || 18;
+		  localWeight  = config.style.fontWeight || "bold";
+		  localFont = config.style.fontFamily || " Arial";
+		  localFill = config.style.color || "#6D869F";		 		  
 	  }
+	  localStyle = 'font-weight:' + localWeight + ';font-size:' + localSize + 'px;font-family:' + localFont +';color:' + localFill + ';';
 	 
 	  var tagStyle = {text: text || "",
-			       	  font: localFont || "bold 18 Arial",
-			          fill: localFill || "#6D869F",
-			    	  x: objX,
-			    	  y: objY,
 			    	  width: width,
-			    	  height: height 
+			    	  height: height,
+			    	  style: localStyle	    	 
 			    	};
-	  
-	  
 	 return tagStyle;
   }
+  
+ , getThemeConfiguration: function(config) {
+       if (config.colors === undefined){
+    	   return null;
+       }
+	   	var  localColors = config.colors.color.split(","),
+		   	 localBaseColor = config.colors.baseColor,
+		   	 localTitleFill = "",
+		   	 localTitleFont = "",
+		   	 localLableFill = "",
+		   	 localLableFont = "";
+	   	
+	   	if (config.axesStyle !== undefined){
+		   	localTitleFill = config.axesStyle.color || localBaseColor;
+		   	localTitleFont = config.axesStyle.fontWeight + " " + config.axesStyle.fontSize + " " + config.axesStyle.fontFamily; 
+	   	}else{
+	   		localTitleFill = '#6D869F';
+	   		localTitleFont: 'bold 18px Arial';
+	   	}
+	   	if (config.labelsStyle !== undefined){
+	   		localLableFill = config.labelsStyle.color || localBaseColor;
+		   	localLabelFont = config.labelsStyle.fontWeight + " " + config.labelsStyle.fontSize + " " + config.labelsStyle.fontFamily; 
+	   	}else{
+	   		localLableFill = '#6D869F';
+	   		localLabelFont: 'bold 12px Arial';
+	   	}
+	   	var themeConfig = {
+	        axis: {
+	            fill: localTitleFill,
+	            stroke: localTitleFill
+	        },
+	        axisLabelLeft: {
+	            fill: localLableFill
+	        },
+	        axisLabelBottom: {
+	            fill: localLableFill
+	        }, 
+	        axisLabelTop: {
+                fill: localLableFill,
+                font: localLabelFont
+            },
+            axisLabelRight: {
+                fill: localLableFill,
+                font: localLabelFont
+            },
+	        axisTitleLeft: {
+	        	font: localTitleFont,
+	            fill: localTitleFill
+	        },
+	        axisTitleBottom: {
+	        	font: localTitleFont,
+	            fill: localTitleFill
+	        },
+	        axisTitleTop: {
+	        	font: localTitleFont,
+	            fill: localTitleFill
+            },
+            axisTitleRight: {
+            	font: localTitleFont,
+	            fill: localTitleFill             
+            },
+	        colors: localColors
+	    };
+	   	return themeConfig;
+ }
+   
 
 });

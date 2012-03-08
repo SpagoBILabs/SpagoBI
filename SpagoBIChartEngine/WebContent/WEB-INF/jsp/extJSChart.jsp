@@ -150,13 +150,14 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	        config.dsPars = []; //temporaneo
 			Ext.onReady(function() { 
 				Ext.QuickTips.init();
-		    	
 				var chartPanel = Ext.widget('ExtJSChartPanel',config); //by alias
 				var viewport = new Ext.Viewport(chartPanel);
 			});
 
 	    </script>
-	    <div id="<%=executionId%>" align="center" style="width:90%;height:90%';"></div>    
+	    <div id="<%=executionId%>_title" align="center" style="width:90%;"></div>
+	    <div id="<%=executionId%>_subtitle" align="center" style="width:90%;"></div>
+	    <div id="<%=executionId%>" align="center" style="width:90%;"></div>    
 	</body>
 
 </html>
