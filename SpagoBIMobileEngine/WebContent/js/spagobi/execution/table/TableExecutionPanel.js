@@ -90,7 +90,7 @@ app.views.TableExecutionPanel = Ext.extend(app.views.WidgetPanel,
 				}
 				if(fromCross){
 					var r = new Ext.Panel({
-						style:'z-index:100',
+						style:'z-index:100;',
 						height:'100%',
 						items: [app.views.table]
 						        
