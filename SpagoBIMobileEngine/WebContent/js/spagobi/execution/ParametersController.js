@@ -97,11 +97,11 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 		
 			for(i =0; i<parametersNeeded.length; i++){
 				var p = parametersNeeded[i];
-				var label = p.label;
+				var nm = p.name;
 				for(k =0; k<parametersFromCross.length; k++){
 					var pCross = parametersFromCross[k];
-					if(label == pCross.name && pCross.value != null && pCross.value != ''){
-						parametersFilled[label] = pCross.value;
+					if(nm == pCross.name && pCross.value != null && pCross.value != ''){
+						parametersFilled[nm] = pCross.value;
 						paramsToBeFilled.remove(p);
 						p.value = pCross.value;
 						break;
