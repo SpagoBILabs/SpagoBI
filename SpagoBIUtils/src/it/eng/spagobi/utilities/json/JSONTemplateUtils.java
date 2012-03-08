@@ -394,8 +394,10 @@ public class JSONTemplateUtils {
 							JSONObject objPar = (JSONObject)parametersJSON.get(i);								
 							if(((String)objPar.get("name")).equals(parName)){
 								String val = ((String)objPar.get("value")).replaceAll("'", "");
-								sb.append(val);
-								sb.append(" ");
+								if (!val.equals("%")) {
+									sb.append(val);
+									sb.append(" ");
+								}
 							}
 						} catch (JSONException e1) {
 							logger.error("Error while replacing parameters in value: " + e1.getMessage());
