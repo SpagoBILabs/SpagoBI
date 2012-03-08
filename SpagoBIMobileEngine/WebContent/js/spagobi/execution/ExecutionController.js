@@ -107,6 +107,8 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		}
 	}
 	, crossNavigationManagement: function(resp, type, executionInstance){
+		
+		app.controllers.mobileController.destroyExecutionView();
 		app.views.execView = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
 		
 		if(app.views.crossExecView == undefined || app.views.crossExecView == null){
