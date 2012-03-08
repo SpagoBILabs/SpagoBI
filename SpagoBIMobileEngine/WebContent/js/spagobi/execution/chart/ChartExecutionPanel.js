@@ -148,7 +148,7 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 									var cat = series.items[k].storeField;
 									if(item.storeField == cat){
 										var ser = item.storeItem.data[cat];
-										/*	RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE */
+										//RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE 
 										if(type == 'SERIE'){
 											crossParams.push({name : name, value : ser});
 										}else if(type == 'CATEGORY'){
@@ -160,23 +160,59 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 								}
 								
 							}else{
-								var serieField = series.field;
-								var categoryField = series.label.field;
-								
-								var cat = item.storeItem.data[categoryField];
-								var ser = item.storeItem.data[serieField];
-								/*	RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE */
-								if(type == 'SERIE'){
-									crossParams.push({name : name, value : ser});
-								}else if(type == 'CATEGORY'){
-									crossParams.push({name : name, value : cat});
+			                	var storeItem = item.storeItem;
+			                	var values = item.value;
+								if(values!= undefined){
+									//for bar chart multiseries
+				                	
+				                	//series 
+				                	var seriesField = series.label.field;//array
+				                	
+									var cat;
+									var ser;
+									
+				                	for(var propertyName in storeItem.data){
+				                	   if((storeItem.data).hasOwnProperty(propertyName) ){
+				                		   var propertyValue = (storeItem.data)[propertyName];
+				                		   if(seriesField.indexOf(propertyName) != -1){
+				                			   if(values.indexOf(propertyValue) != -1){ 
+				                				   ser = propertyValue;
+				                			   }
+				                		   }else{
+				                			   if(propertyName != 'id' && propertyName != 'recNo' ){
+				                				   cat = propertyValue;
+				                			   }
+				                		   }
+				                	   }
+				                	}
+				                	//RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE 
+									if(type == 'SERIE'){
+										crossParams.push({name : name, value : ser});
+									}else if(type == 'CATEGORY'){
+										crossParams.push({name : name, value : cat});
+									}else{
+										crossParams.push({name : name, value : param.paramValue});
+									}
 								}else{
-									crossParams.push({name : name, value : param.paramValue});
+									//for pie chart
+									var serieField = series.field;
+									var categoryField = series.label.field;
+									
+									var cat = item.storeItem.data[categoryField];
+									var ser = item.storeItem.data[serieField];
+									/*	RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE */
+									if(type == 'SERIE'){
+										crossParams.push({name : name, value : ser});
+									}else if(type == 'CATEGORY'){
+										crossParams.push({name : name, value : cat});
+									}else{
+										crossParams.push({name : name, value : param.paramValue});
+									}
 								}
+
 							}
 						}
-					}
-					
+					}					
 				}
 			}				
 		}
