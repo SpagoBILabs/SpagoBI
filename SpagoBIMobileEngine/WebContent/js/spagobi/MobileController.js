@@ -113,9 +113,11 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 
 	, backToBrowser: function(opt){
 		this.destroyExecutionView();
-		if(app.views.crossExecView != undefined && app.views.crossExecView != null){
+		if(app.views.crossExecView != undefined && app.views.crossExecView != null){						
+			
 			app.views.crossExecView.clearNavigation();
 			app.views.crossExecView.destroy();
+			app.views.crossExecView = null;
 		}
 		app.views.viewport.setActiveItem(app.views.main, { type: 'fade' });	
 
