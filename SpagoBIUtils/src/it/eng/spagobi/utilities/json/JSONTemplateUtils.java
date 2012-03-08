@@ -224,9 +224,15 @@ public class JSONTemplateUtils {
 					}
 					else {
 						//only for root node attributes
-						toReturn.write("      " + convertKeyString(key) +": '");	
-						toReturn = getAllAttributes(object, ow);
-						toReturn.write("'\n");
+						if (key.endsWith("_list")){
+							String originalKey = key.replace("_list","");
+							String originalValue = ((String)object.getValue()).replace("'", "");
+							toReturn.write("      " + originalKey + ": [" + originalValue + "] \n" );	
+						}else{
+							toReturn.write("      " + convertKeyString(key) +": '");	
+							toReturn = getAllAttributes(object, ow);
+							toReturn.write("'\n");
+						}
 					}
 				}
 				if(i != atts.size()-1){
