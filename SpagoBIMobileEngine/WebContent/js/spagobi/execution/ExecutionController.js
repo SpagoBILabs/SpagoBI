@@ -106,31 +106,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		    }); 
 		}
 	}
-/*	, crossNavigationManagement: function(resp, type, executionInstance){
-		
-		app.controllers.mobileController.destroyExecutionView();
-		var exe = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
-		
-		if(app.views.crossExecView == undefined || app.views.crossExecView == null){
-			//when executing back to home this will be destroyed
-			app.views.crossExecView = new app.views.CrossExecutionView();
-		}
-		exe.hideBottomToolbar();
-		exe.title= executionInstance.OBJECT_LABEL;
-		exe.setWidget(resp, type, true);
-		app.views.crossExecView.setBreadCrumb(executionInstance.OBJECT_LABEL, 
-				executionInstance.OBJECT_ID,
-				executionInstance.TYPE_CODE,
-				executionInstance.PARAMETERS);
-		
-		app.views.crossExecView.add(exe);
 
-		app.views.viewport.add(app.views.crossExecView);
-		
-		
-		app.views.viewport.setActiveItem(app.views.crossExecView, { type: 'slide', direction: 'left' });
-		app.views.crossExecView.setActiveItem(exe , { type: 'fade'});
-	}*/
 	, simpleNavigationManagement: function(resp, type, executionInstance){
 		app.controllers.mobileController.destroyExecutionView();
 		if(app.views.execView == undefined || app.views.execView == null){
@@ -151,16 +127,7 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 
 		if (documentContainerPanel == undefined || documentContainerPanel == null) {
 
-			if(executionInstance.isFromCross){
-				//cross navigation
-				//this.crossNavigationManagement(resp, type, executionInstance);
-
-				this.simpleNavigationManagement(resp, type, executionInstance);
-
-			}else{
-				//default navigation
-				this.simpleNavigationManagement(resp, type, executionInstance);
-			}
+			this.simpleNavigationManagement(resp, type, executionInstance);
 			app.views.execView.setExecutionInstance(executionInstance);
 		} else {
 			app.views.execView.setWidgetComposed(resp, type, documentContainerPanel);
