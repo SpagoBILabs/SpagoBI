@@ -59,6 +59,12 @@
         background-image:url('../../../img/analiticalmodel/browser/document_chart.png')!important;
     }
     
+    .list-view .document-item-icon .CHART-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_chart.png')!important;
+    }
+    
     .list-view .document-item-icon .DATA_MINING-icon {
     	width:96px;
         height:96px;
