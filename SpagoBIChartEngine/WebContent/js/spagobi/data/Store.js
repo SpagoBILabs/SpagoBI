@@ -76,9 +76,7 @@ Ext.define('Sbi.extjs.chart.data.Store', {
 		var serviceConfig;
 		var params = config.baseParams || {};		
 		params.id = config.storeId;
-		params.ds_label = config.datasetLabel;
-		params.dsTypeCd = config.dsTypeCd || "";
-		params.trasfTypeCd = config.dsTransformerType || "";
+		params.ds_label = config.datasetLabel;		
 
 		var pars =  config.dsPars;
 		var separator = '';
@@ -103,7 +101,6 @@ Ext.define('Sbi.extjs.chart.data.Store', {
 		delete config.datasetLabel;	
 		delete config.dsTypeCd;	
 		delete config.dsPars;	
-		delete config.dsTransformerType;
 		
 		var proxyUrl = Sbi.config.serviceRegistry.getServiceUrl({serviceName:  'GET_CHART_DATA_ACTION'
 			   , baseParams:params

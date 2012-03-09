@@ -90,7 +90,6 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
 			  , refreshTime: this.template.refreshtime || 0
 			  , dsTypeCd: dataConfig.dsTypeCd
 			  , pars: dataConfig.dsPars || []
-			  , trasfTypeCd: dataConfig.dsTransformerType || ""
 		};
 		var datasets = [];
 		datasets.push(requestParameters);	
