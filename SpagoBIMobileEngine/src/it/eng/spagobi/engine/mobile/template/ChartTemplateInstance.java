@@ -13,6 +13,7 @@
 package it.eng.spagobi.engine.mobile.template;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engine.mobile.MobileConstants;
@@ -24,27 +25,47 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ChartTemplateInstance extends AbstractTemplateInstance  implements IMobileTemplateInstance{
-	private JSONArray parameters;
+	
 	private JSONObject features;
 
 	
 	private static transient Logger logger = Logger.getLogger(ChartTemplateInstance.class);
 
 
-	public ChartTemplateInstance(SourceBean template, JSONArray parameters, HashMap<String, String> paramsMap) {
+	public ChartTemplateInstance(SourceBean template, HashMap<String, String> paramsMap) {
 		this.template = template;
-		this.parameters = parameters;
 		this.paramsMap = paramsMap;
 	}
 
 
 	@Override
 	public void loadTemplateFeatures() throws Exception {
-		JSONTemplateUtils ju = new JSONTemplateUtils();		
-		features = ju.getJSONTemplateFromXml(template, parameters);
+		JSONTemplateUtils ju = new JSONTemplateUtils();
+		JSONArray array = toJSONArray(this.paramsMap);
+		features = ju.getJSONTemplateFromXml(this.template, array);
 		buildDrillJSON();
 		setFeatures();
 	}
+
+	private JSONArray toJSONArray(HashMap<String, String> paramsMap) {
+		JSONArray array = new JSONArray();
+		if (paramsMap != null && !paramsMap.isEmpty()) {
+			Iterator<String> it = paramsMap.keySet().iterator();
+			while (it.hasNext()) {
+				String name = it.next();
+				JSONObject obj = new JSONObject();
+				try {
+					obj.put("name", name);
+					obj.put("value", paramsMap.get(name));
+				} catch (JSONException e) {
+					throw new RuntimeException("cannot convert [" + paramsMap.toString() + "] into a JSONArray");
+				}
+				array.put(obj);
+			}
+		}
+		return array;
+	}
+
 
 	@Override
 	public JSONObject getFeatures() {

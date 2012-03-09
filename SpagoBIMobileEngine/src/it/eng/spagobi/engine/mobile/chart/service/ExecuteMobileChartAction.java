@@ -52,7 +52,6 @@ public class ExecuteMobileChartAction extends AbstractExecuteMobileAction {
 		IDataStore dataStore;
 		IDataSet dataSet;
 		JSONObject toReturn = new JSONObject();
-		JSONArray parametersJSON= new JSONArray();
 		JSONObject parameterJSON;
 		BIObject documentBIObject;
 		
@@ -86,7 +85,7 @@ public class ExecuteMobileChartAction extends AbstractExecuteMobileAction {
 			SourceBean template = SourceBean.fromXMLString( templContString );
 			
 			HashMap paramMap = getParametersList(getAttributeAsJSONObject("PARAMETERS"));
-			IMobileTemplateInstance templateInstance = new ChartTemplateInstance(template, parametersJSON, paramMap);
+			IMobileTemplateInstance templateInstance = new ChartTemplateInstance(template, paramMap);
 			templateInstance.loadTemplateFeatures();
 			JSONObject chartConfigFromTemplate = templateInstance.getFeatures();
 			logger.debug("Finished to get the chart config from the template. ");
