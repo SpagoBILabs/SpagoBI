@@ -18,6 +18,7 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 		var r;
 		var config = resp.config;
 		config.animate = true;
+		config.shadow = true;
 
 		config.listeners = {
 			scope: this,
