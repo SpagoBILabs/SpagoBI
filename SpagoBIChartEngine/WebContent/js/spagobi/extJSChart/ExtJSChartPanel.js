@@ -66,10 +66,11 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
     }
 
   , createChart: function(){
-	    var config =  Ext.apply(this.template || {});	    
-		config.renderTo = config.divId;
-	   	config.store = this.chartStore;
-	   	config.animate = (!config.animate)?true:config.animate;	
+	  // gets JSON template
+	  var config =  Ext.apply(this.template || {});	    
+	  config.renderTo = config.divId;
+	  config.store = this.chartStore;
+	  config.animate = (!config.animate)?true:config.animate;	
 	   	
 	   	//defines dimensions 
 	   	config.width = (!config.width)?500:parseInt(config.width);
@@ -86,60 +87,62 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 		    config.theme = 'ExtJSChartTheme';
 	   	}
 	   	
-	   	var themeConfig = {
-            axis: {
-                fill: localBaseColor,
-                stroke: localBaseColor
-            },
-            axisLabelLeft: {
-                fill: localBaseColor
-            },
-            axisLabelBottom: {
-                fill: localBaseColor
-            },
-            axisTitleLeft: {
-                fill: localBaseColor
-            },
-            axisTitleBottom: {
-                fill: localBaseColor
-            },
-            colors: localColors,
-    	    baseColor: localBaseColor
-        };
-
-
-	   	var theme = Ext.create('Ext.chart.theme.ExtJSChartTheme', themeConfig);
-	   
-	   	/*
-	   	Ext.define('Ext.chart.theme.ExtJSChartTheme', {
-	   	    extend: 'Ext.chart.theme.Base',
-	   	    colors : ['#b1da5a', '#4ce0e7', '#e84b67', '#da5abd', '#4d7fe6', '#fec935'],
-
-	   	   	baseColor : '#b1da5a',
-	   	        
-	   	    constructor: function(config) {
-	   	        this.callParent([Ext.apply({
-	   	            axis: {
-	   	                fill: config.baseColor,
-	   	                stroke: baseColor
-	   	            },
-	   	            axisLabelLeft: {
-	   	                fill: baseColor
-	   	            },
-	   	            axisLabelBottom: {
-	   	                fill: baseColor
-	   	            },
-	   	            axisTitleLeft: {
-	   	                fill: baseColor
-	   	            },
-	   	            axisTitleBottom: {
-	   	                fill: baseColor
-	   	            },
-	   	            colors: colors
-	   	        }, config)]);
-	   	    }});
-*/
-	  	config.theme = 'ExtJSChartTheme';
+	   	//defines tips	   	
+	   	for(var j = 0; j< config.series.length; j++){
+	        if (config.series[j].tips !== undefined){
+	        	config.series[j].tips.renderer = function(storeItem, item) {
+	        		var cat = "";
+	        		var value = "";
+	        		
+	        		 var type = item.series.alias[0] || "";	        		
+	        		
+	        		 switch (type) {
+	        		     case 'series.bar':
+	        		    	cat = item.value[0]; 
+	        		    	value = item.value[1];     
+	        		     	break;
+	        		     case 'series.line':
+	        		    	cat = storeItem.get(item.series.xField);
+	        		    	value = storeItem.get(item.series.yField);        
+	        		     	break;	 
+	        		     case 'series.pie': 
+		        		    	cat = storeItem.get(item.series.label.field);
+		        		    	value = storeItem.get(item.series.field);        
+		        		     	break;	
+	        		     case 'series.gauge':
+		        		    	cat = storeItem.get(item.series.label.field);
+		        		    	value = storeItem.get(item.series.field);        
+		        		     	break;	
+	        		     case 'series.radar':
+	        		    	 	cat = storeItem.get(item.series.xField);
+		        		    	value = storeItem.get(item.series.yField);       
+		        		     	break;	
+	        		     case 'series.scatter':
+	        		    	 	cat = storeItem.get(item.series.xField);
+		        		    	value = storeItem.get(item.series.yField);       
+		        		     	break;	
+	        		     case 'series.area':
+	        		    	 	cat = storeItem.get(item.series.xField);
+		        		    	value = storeItem.get(item.storeField);       
+		        		     	break;	
+	        		     default: 
+	        		    	cat = undefined;
+	        		     	value = undefined;
+	        		     	break;      
+	        		 }
+	        		 if (cat && value){
+	        			 var text = cat + ': ' + value ; //default
+	        			 var tip = item.series.tips.text;	        			 
+	        			 if (tip){
+	        				 tip = tip.replace('{CATEGORY}', cat);	        						
+	        				 tip = tip.replace('{SERIE}', value);
+	        				 text = tip;
+	        			 }
+	        			 this.setTitle(text);	 
+	        		 }	        	
+	        	};
+	        }
+	   	}
 	  	
 	  	var docLabel = this.documentLabel;
 	  	
@@ -224,10 +227,7 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 		  		    }
 		  	};
 	  	}
-	  	
 
-
-	   	
         if (this.chart){
         	//update the store and redraw the chart
         	this.chart.store = this.chartStore;

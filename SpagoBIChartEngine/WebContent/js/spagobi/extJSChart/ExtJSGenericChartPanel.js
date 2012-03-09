@@ -249,6 +249,5 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
 	    };
 	   	return themeConfig;
  }
-   
-
+ 
 });
