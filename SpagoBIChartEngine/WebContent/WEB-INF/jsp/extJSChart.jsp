@@ -63,10 +63,13 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	String spagobiServerHost;
 	String spagobiContext;
 	String spagobiSpagoController;
+	String documentLabel;
 	
 	chartEngineInstance = (ChartEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute("ENGINE_INSTANCE");
 	profile = (UserProfile)chartEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	locale = (Locale)chartEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
+	documentLabel = (String)chartEngineInstance.getEnv().get(EngineConstants.ENV_DOCUMENT_LABEL);
+
 	ds =  (IDataSet)chartEngineInstance.getDataSet();
 	dsLabel = (ds != null) ? ds.getLabel() : "";
 	dsTypeCd = (ds != null) ? ds.getDsType() : "";
@@ -144,6 +147,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	        var config ={};
 	        config.template = template
 	        config.divId = "<%=executionId%>";
+	        config.documentLabel = "<%=documentLabel%>";
 	        config.dsLabel = "<%=dsLabel%>";
 	        config.dsTypeCd = "<%=dsTypeCd%>";
 	        config.dsTransformerType= "<%=transformerType%>";
