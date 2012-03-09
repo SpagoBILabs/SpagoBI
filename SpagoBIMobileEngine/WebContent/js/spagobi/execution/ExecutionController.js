@@ -106,59 +106,57 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		    }); 
 		}
 	}
-	, crossNavigationManagement: function(resp, type, executionInstance){
+/*	, crossNavigationManagement: function(resp, type, executionInstance){
 		
 		app.controllers.mobileController.destroyExecutionView();
-		app.views.execView = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
+		var exe = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
 		
 		if(app.views.crossExecView == undefined || app.views.crossExecView == null){
 			//when executing back to home this will be destroyed
 			app.views.crossExecView = new app.views.CrossExecutionView();
 		}
-		app.views.execView.hideBottomToolbar();
-		app.views.execView.title= executionInstance.OBJECT_LABEL;
-		app.views.execView.setWidget(resp, type, true);
+		exe.hideBottomToolbar();
+		exe.title= executionInstance.OBJECT_LABEL;
+		exe.setWidget(resp, type, true);
 		app.views.crossExecView.setBreadCrumb(executionInstance.OBJECT_LABEL, 
 				executionInstance.OBJECT_ID,
 				executionInstance.TYPE_CODE,
 				executionInstance.PARAMETERS);
-		app.views.crossExecView.add(app.views.execView );
+		
+		app.views.crossExecView.add(exe);
 
-		app.views.crossExecView.setActiveItem(app.views.execView , { type: 'fade', direction: 'left' });
 		app.views.viewport.add(app.views.crossExecView);
+		
+		
 		app.views.viewport.setActiveItem(app.views.crossExecView, { type: 'slide', direction: 'left' });
-
-	}
+		app.views.crossExecView.setActiveItem(exe , { type: 'fade'});
+	}*/
 	, simpleNavigationManagement: function(resp, type, executionInstance){
-		app.views.execView = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
+		app.controllers.mobileController.destroyExecutionView();
+		if(app.views.execView == undefined || app.views.execView == null){
+			app.views.execView = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
+		}
 	    var viewport = app.views.viewport;	    
 	    viewport.add(app.views.execView);	
 	    app.views.execView.showBottomToolbar();
 	    app.views.execView.setWidget(resp, type);
+		app.views.execView.bottomTools.setBreadCrumb(executionInstance.OBJECT_LABEL, 
+				executionInstance.OBJECT_ID,
+				executionInstance.TYPE_CODE,
+				executionInstance.PARAMETERS);
 	    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
 	}
 
 	, createWidgetExecution: function(resp, type, documentContainerPanel, executionInstance){
 
 		if (documentContainerPanel == undefined || documentContainerPanel == null) {
-			var drill; //first cross navigation document (master document just has drill attribute)
-			if(type == 'chart' && (resp.config != null && resp.config != undefined)){
-				drill = resp.config.drill;
-			}else if(type == 'table' && (resp.features != null && resp.features != undefined)){
-				drill = resp.features.drill;
-			}
-			if(drill !== undefined && drill != null){
-				if(app.views.crossExecView == undefined || app.views.crossExecView  == null){
-					app.views.crossExecView = new app.views.CrossExecutionView();
-					app.views.crossExecView.setBreadCrumb(executionInstance.OBJECT_LABEL, 
-															executionInstance.OBJECT_ID,
-															executionInstance.TYPE_CODE,
-															executionInstance.PARAMETERS);
-				}
-			}
+
 			if(executionInstance.isFromCross){
 				//cross navigation
-				this.crossNavigationManagement(resp, type, executionInstance);
+				//this.crossNavigationManagement(resp, type, executionInstance);
+
+				this.simpleNavigationManagement(resp, type, executionInstance);
+
 			}else{
 				//default navigation
 				this.simpleNavigationManagement(resp, type, executionInstance);
