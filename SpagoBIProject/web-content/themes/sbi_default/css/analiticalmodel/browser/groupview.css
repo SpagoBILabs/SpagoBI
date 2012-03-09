@@ -65,6 +65,14 @@
 		!important;
 }
 
+.group-view .document-item-icon .CHART-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_chart.png')
+		!important;
+}
+
 .group-view .document-item-icon .DOCUMENT_COMPOSITE-icon {
 	width: 96px;
 	height: 96px;
