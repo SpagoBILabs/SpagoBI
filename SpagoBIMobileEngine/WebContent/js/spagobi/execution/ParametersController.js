@@ -71,13 +71,10 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 									  executionInstance: executionInstance
 								});
 							}else{
-								if(app.views.crossExecView == undefined || app.views.crossExecView == null){
-									app.views.crossExecView = new app.views.CrossExecutionView();
-								}
 								app.views.parameters = new app.views.ParametersView();
 								app.views.parameters.refresh(paramsToBeFilled);
-								app.views.crossExecView.add(app.views.parameters);
-								app.views.crossExecView.setActiveItem(app.views.parameters);
+								app.views.viewport.add(app.views.parameters);
+								app.views.viewport.setActiveItem(app.views.parameters);
 
 							}
 						}else{
