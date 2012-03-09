@@ -212,7 +212,7 @@ public class JSONDataWriter implements IDataWriter {
 				}else{
 					fieldMetaDataJSON.put("name", fieldName);
 				}
-				fieldMetaDataJSON.put("name", fieldHeader);						
+				fieldMetaDataJSON.put("header", fieldHeader);						
 				fieldMetaDataJSON.put("dataIndex", fieldName);
 
 				
