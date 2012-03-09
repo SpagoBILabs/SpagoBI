@@ -145,6 +145,7 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 	   	}
 	  	
 	  	var docLabel = this.documentLabel;
+	  	var docParameters = config.DOCUMENT_PARAMETERS;
 	  	
 	  	//Adding click listener for Cross Navigation
 	  	for(var j = 0; j< config.series.length; j++){
@@ -205,6 +206,21 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 		  			    			}
 		  			    			
 		  			    		}
+		  			    		
+		  			    		var relParams = docParameters[0];
+				        		for(var i = 0; i< drill.param.length; i++){
+				        			if(drill.param[i].type == 'RELATIVE'){
+				        				for(var y =0; y<relParams.length; y++){		        					
+				        					if(relParams[y].name == drill.param[i].name){
+				        						if(params !== ""){
+						    	    				params+="&";
+						    	    			}
+						        				params+= drill.param[i].name +"="+relParams[y].value+"";
+					    	    				params+="&";
+				        					}
+				        				}
+				        			}
+				        		}	
 		  			    		for(var i = 0; i< drill.param.length; i++){
 		  			    			if(drill.param[i].type == 'SERIE'){
 		  			    				if(params !== ""){

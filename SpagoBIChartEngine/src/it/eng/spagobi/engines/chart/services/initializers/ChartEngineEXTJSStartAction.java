@@ -44,6 +44,8 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
 	public static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
+	public static final String DOCUMENT_PARAMETERS = "DOCUMENT_PARAMETERS";
+
 
 
 	
@@ -90,6 +92,8 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 				SourceBean content = SourceBean.fromXMLString(getTemplateAsString());
 				JSONObject template = templateUtil.getJSONTemplateFromXml( content, parsJSON); 				
 				System.out.println(template.toString(4));
+				
+				template.append(DOCUMENT_PARAMETERS, parsJSON);
 
 				chartEngineInstance = ChartEngine.createInstance( template, getEnv() );				
 			} catch(Throwable t) {
