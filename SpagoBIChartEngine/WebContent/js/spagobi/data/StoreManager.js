@@ -145,7 +145,6 @@ Ext.define('Sbi.extjs.chart.data.StoreManager', {
 				, datasetLabel: c[i].label
 				, dsTypeCd: c[i].dsTypeCd
 				, dsPars: c[i].pars
-				, dsTransformerType: c[i].dsTransformerType
 				, refreshTime: c[i].refreshTime 
 				, autoLoad: loading
 			}); 

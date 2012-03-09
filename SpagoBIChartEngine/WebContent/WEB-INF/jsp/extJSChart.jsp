@@ -54,7 +54,6 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	IDataSet ds;
 	String dsLabel;
 	String dsTypeCd;
-	String transformerType;
 	String isFromCross;
 	String engineContext;
 	String engineServerHost;
@@ -73,7 +72,6 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	ds =  (IDataSet)chartEngineInstance.getDataSet();
 	dsLabel = (ds != null) ? ds.getLabel() : "";
 	dsTypeCd = (ds != null) ? ds.getDsType() : "";
-	transformerType = (ds != null) ? ds.getTransformerCd() : "";
 	
 	isFromCross = (String)chartEngineInstance.getEnv().get("isFromCross");
 	if (isFromCross == null) {
@@ -150,7 +148,6 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	        config.documentLabel = "<%=documentLabel%>";
 	        config.dsLabel = "<%=dsLabel%>";
 	        config.dsTypeCd = "<%=dsTypeCd%>";
-	        config.dsTransformerType= "<%=transformerType%>";
 	        config.dsPars = []; //temporaneo
 			Ext.onReady(function() { 
 				Ext.QuickTips.init();
