@@ -3,47 +3,7 @@ app.views.ParametersView = Ext.extend(
 		{
 			fullscreen: true,
 			style: 'background-color: #747474;',
-			dockedItems : [ {
-				xtype : 'toolbar',
-				dock : 'bottom',
-				defaults : {
-					ui : 'plain',
-					iconMask : true
-				},
-				scroll : 'horizontal',
-				layout : {
-					pack : 'center'
-				},
-				items : [
-				         {
-				        	 title : 'Home',
-				        	 iconCls : 'reply',
-				        	 text : 'Home',
-				        	 handler : function() {
-				        		 Ext
-				        		 .dispatch({
-				        			 controller : app.controllers.mobileController,
-				        			 action : 'backToBrowser'
-				        		 });
 
-				        	 }
-				         },
-				         {
-				        	 title : 'Esegui',
-				        	 iconCls : 'settings',
-				        	 text : 'Esegui',
-				        	 handler : function() {
-				        		 var executionInstance = app.controllers.parametersController.executionInstance;
-				        		 executionInstance.PARAMETERS = app.controllers.parametersController.getFormState();
-				        		 Ext.dispatch({
-				        			 controller : app.controllers.executionController,
-				        			 action : 'executeTemplate',
-				        			 executionInstance : executionInstance
-				        		 });
-				        	 }
-				         } ]
-
-			} ],
 
 			initComponent : function() {
 				this.html = '  ';
@@ -74,7 +34,48 @@ app.views.ParametersView = Ext.extend(
 					width : 600,
 					scroll: 'vertical',
 					hideOnMaskTap : false,
-					items: [fieldset]
+					items: [fieldset],
+					dockedItems : [ {
+						xtype : 'toolbar',
+						dock : 'bottom',
+						defaults : {
+							ui : 'plain',
+							iconMask : true
+						},
+						scroll : 'horizontal',
+						layout : {
+							pack : 'center'
+						},
+						items : [
+						         {
+						        	 title : 'Home',
+						        	 iconCls : 'reply',
+						        	 text : 'Home',
+						        	 handler : function() {
+						        		 Ext
+						        		 .dispatch({
+						        			 controller : app.controllers.mobileController,
+						        			 action : 'backToBrowser'
+						        		 });
+
+						        	 }
+						         },
+						         {
+						        	 title : 'Esegui',
+						        	 iconCls : 'settings',
+						        	 text : 'Esegui',
+						        	 handler : function() {
+						        		 var executionInstance = app.controllers.parametersController.executionInstance;
+						        		 executionInstance.PARAMETERS = app.controllers.parametersController.getFormState();
+						        		 Ext.dispatch({
+						        			 controller : app.controllers.executionController,
+						        			 action : 'executeTemplate',
+						        			 executionInstance : executionInstance
+						        		 });
+						        	 }
+						         } ]
+
+					} ]
 				});
 				formPanel.show();
 				this.insert(0,formPanel);
