@@ -43,6 +43,8 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 	// OUTPUT PARAMETERS
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
+	public static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
+
 
 	
 	// SESSION PARAMETRES	
@@ -50,6 +52,8 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(ChartEngineEXTJSStartAction.class);
+    
+    private String documentLabel;
     
     private static final String ENGINE_NAME = "SpagoBIChartEngine";
     private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/chart.jsp";
@@ -69,6 +73,7 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 			logger.debug("User Id: " + getUserId());
 			logger.debug("Audit Id: " + getAuditId());
 			logger.debug("Document Id: " + getDocumentId());
+			logger.debug("Document Label: " + getDocumentLabel());
 			logger.debug("Template: " + getTemplateAsString());
 						
 			if(getAuditServiceProxy() != null) {
@@ -108,6 +113,9 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 			locale = (Locale)chartEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 			setAttributeInSession( ENGINE_INSTANCE, chartEngineInstance);		
 			setAttribute(ENGINE_INSTANCE, chartEngineInstance);
+			documentLabel = getDocumentLabel();
+			logger.debug("Parameter [" + DOCUMENT_LABEL + "] is equal to [" + documentLabel + "]");
+			setAttribute(DOCUMENT_LABEL, documentLabel);
 			
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());
@@ -135,6 +143,24 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 		}
 	}
 	
+	 /**
+	  * Gets the document label.
+	  * 
+	  * @return the document label
+	  */
+	 private String getDocumentLabel() {
+		 if(documentLabel == null) {
+
+			 logger.debug("IN");
+
+			 documentLabel = getAttributeAsString( DOCUMENT_LABEL );			 
+			 logger.debug("Document Label parameter received: documentLabel = [" + documentLabel + "]");
+			 
+			 logger.debug("OUT");
+		 }
+
+		 return documentLabel;
+	 }
 
 	/** Returns a JSONArray with all params of documents
 	 * 
