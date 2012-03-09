@@ -100,6 +100,7 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 	, addValueTip: function(config){
 		config.interactions.push({
             type: 'iteminfo',
+            gesture: 'longpress',
             listeners: {
                 show: function(interaction, item, panel) {
                 	panel.setWidth(400);
