@@ -30,4 +30,6 @@
 <EXPORTER domain="PDF" engine="WorksheetEngine" defaultValue="false"/>
 <EXPORTER domain="PDF" engine="DashboardInternalEng" defaultValue="true"/>
 <EXPORTER domain="PDF" engine="ConsoleEngine" defaultValue="true"/>
+<EXPORTER domain="JPG" engine="ChartExternalEngine" defaultValue="true"/>
+<EXPORTER domain="PDF" engine="ChartExternalEngine" defaultValue="false"/>
 </EXPORTERS>
