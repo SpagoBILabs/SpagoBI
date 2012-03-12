@@ -118,7 +118,8 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	
 	<body>		
     	<script type="text/javascript">  
-	    	var template =  <%= chartTemplate  %>;	    	
+	    	var template =  <%= chartTemplate  %>;	    
+	    	var chartPanel = {};
 			
 	    	Sbi.config = {};
 			
@@ -139,19 +140,60 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 															baseUrl: {contextPath: '<%= spagobiContext %>'}
 														  , baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
 												});
-	        //add to executionContext all parameters... it's really necessary??
-	        //var executionContext = {};	       
-	        //template.executionContext = executionContext;
+			
+			function exportChart(exportType) {								
+			  	var top = 0,
+				  	width = 0,
+				  	finalSvg = '';
+				  
+			  	var chart = chartPanel.chart;
+	          	var svg = chart.save({type:'image/svg'});
+	          	params.type = exportType;
+		  	  	urlExporter = Sbi.config.serviceRegistry.getServiceUrl({serviceName: 'EXPORT_EXTCHART_ACTION'
+																	 , baseParams:params
+																	   });
+	          	Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation,
+	          // but, if a value contains a " character, then the html produced is not correct!!!
+	          // See source of DomHelper.append and DomHelper.overwrite methods
+	          // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+	          var dh = Ext.DomHelper;
+
+	          var form = document.getElementById('export-chart-form');
+	          if (form === undefined || form === null) {
+		          var form = dh.append(Ext.getBody(), { // creating the hidden form
+		          id: 'export-chart-form'
+		          , tag: 'form'
+		          , method: 'post'
+		          , cls: 'export-form'
+		          });
+		          
+		          dh.append(form, {					// creating the hidden input in form
+						tag: 'input'
+						, type: 'hidden'
+						, name: 'svg'
+						, value: ''  // do not put value now since DomHelper.overwrite does not work properly!!
+					});
+	          }          
+	          // putting the chart data into hidden input
+	          //form.elements[0].value = Ext.encode(svg);
+	          form.elements[0].value = svg;
+	          form.action = urlExporter;
+	          form.target = '_blank'; // result into a new browser tab
+	          form.submit();		 
+	          
+			}
+
+			
 	        var config ={};
 	        config.template = template
 	        config.divId = "<%=executionId%>";
 	        config.documentLabel = "<%=documentLabel%>";
 	        config.dsLabel = "<%=dsLabel%>";
 	        config.dsTypeCd = "<%=dsTypeCd%>";
-	        config.dsPars = []; //temporaneo
+	        
 			Ext.onReady(function() { 
 				Ext.QuickTips.init();
-				var chartPanel = Ext.widget('ExtJSChartPanel',config); //by alias
+				chartPanel = Ext.widget('ExtJSChartPanel',config); //by alias
 				var viewport = new Ext.Viewport(chartPanel);
 			});
 
