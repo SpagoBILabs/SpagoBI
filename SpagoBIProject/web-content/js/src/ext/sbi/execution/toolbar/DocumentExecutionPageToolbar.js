@@ -890,6 +890,49 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			    	, handler :  function() { this.exportChartExecution('PDF'); }
 					, href: ''  
 				}));
+			}else if ( this.executionInstance.document.typeCode == 'CHART') {
+				var menuItems = new Array();
+				
+				for(i=0;i<this.executionInstance.document.exporters.length ;i++){
+					if (this.executionInstance.document.exporters[i]=='PDF'){
+						menuItems.push(	new Ext.menu.Item({
+											  id:  Ext.id()
+											, iconCls: 'icon-pdf' 
+											, text: LN('sbi.execution.PdfExport')
+									     	, scope: this
+									    	, handler :  function() { this.exportChartExecution('PDF'); }
+											, href: ''  
+										}));
+					}if (this.executionInstance.document.exporters[i]=='JPG'){
+						menuItems.push(	new Ext.menu.Item({
+								  id:  Ext.id()
+								, iconCls: 'icon-jpg' 
+								, text: LN('sbi.execution.JpgExport')
+						     	, scope: this
+						    	, handler :  function() { this.exportChartExecution('JPG'); }
+								, href: ''  
+							}));
+						}
+					}
+				
+					var menu0 = new Ext.menu.Menu({
+					id: 'basicMenu_0',
+					items: menuItems    
+					});	
+					
+					if(this.executionInstance.document.exporters.length > 0){
+						this.add(
+									new Ext.Toolbar.MenuButton({
+										id: Ext.id()
+							            , tooltip: 'Exporters'
+										, path: 'Exporters'	
+										, iconCls: 'icon-export' 	
+							            , menu: menu0
+							            , width: 15
+							            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+							        })					    				        				
+						);	
+					}				
 			}else if ( this.executionInstance.document.typeCode == 'WORKSHEET') {
 
 					var menu0 = new Ext.menu.Menu({
