@@ -721,6 +721,9 @@ public class ImportUtilities {
 
 			// deletes existing associations between object and parameters 
 			Set objPars = existingObj.getSbiObjPars();
+			
+			
+			
 			Iterator objParsIt = objPars.iterator();
 			while (objParsIt.hasNext()) {
 				SbiObjPar objPar = (SbiObjPar) objParsIt.next();
@@ -739,24 +742,36 @@ public class ImportUtilities {
 				// for each biobjectparameter deletes all its visual dependencies, if any
 				Query visQuery = sessionCurrDB.createQuery(" from SbiObjParview where id.sbiObjPar.objParId = " + objPar.getObjParId());
 				logger.debug("delete visual dependencies");
+
 				List visdependencies = visQuery.list();
 				if (visdependencies != null && !visdependencies.isEmpty()) {
 					Iterator it = visdependencies.iterator();
 					while (it.hasNext()) {
 						SbiObjParview aSbiObjParview = (SbiObjParview) it.next();
+						logger.debug("Delete parView "+aSbiObjParview.getId().getSbiObjPar().getLabel());
 						sessionCurrDB.delete(aSbiObjParview);
 					}
 				}				
-				logger.debug("delete objPar");
-				sessionCurrDB.delete(objPar);
-				
 			}
+			// delete par only after having deleted alll parviews otherwise constraint fails
+			Iterator objParsItAgain = objPars.iterator();
+			while (objParsItAgain.hasNext()){
+					SbiObjPar objPar = (SbiObjPar) objParsItAgain.next();
+					logger.debug("delete objPar with label "+objPar.getLabel());
+					sessionCurrDB.delete(objPar);
+				}			
+			
 		} finally {
 			logger.debug("OUT");
 		}
 		return existingObj;
 	}
 
+
+	
+
+	
+	
 	/**
 	 * Load an existing parameter and make modifications as per the exported parameter in input
 	 * (existing associations with biobjects are maintained, while parameter uses are deleted).
