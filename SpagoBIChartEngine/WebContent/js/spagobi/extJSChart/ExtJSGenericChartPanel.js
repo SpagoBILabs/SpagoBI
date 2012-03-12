@@ -45,6 +45,7 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
     alias: 'widget.ExtJSChartPanel',
     extend: 'Ext.panel.Panel',
    // chart: null,
+	loadMask: null,
     template: null, 
     store: null,
     storeManager: null,
@@ -79,7 +80,7 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
 		if(this.rendered){
 			this.showMask();
 		} else{
-		//	this.on('afterlayout',this.showMask,this);
+			//this.on('afterlayout',this.showMask,this);
 		}
 	}
 	
@@ -248,5 +249,24 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
 	    };
 	   	return themeConfig;
  }
+	 /**
+     * Opens the loading mask 
+	 */
+	 , showMask : function(){
+	 	this.un('afterlayout',this.showMask,this);
+	 	if (this.loadMask == null) {    		
+	 		this.loadMask = new Ext.LoadMask('GenericChartPanel', {msg: "Loading.."});
+	 	}
+	 	this.loadMask.show();
+	 }
+	
+	/**
+	* Closes the loading mask
+	*/
+	, hideMask: function() {
+	 	if (this.loadMask != null) {
+	 		this.loadMask.hide();
+	 	}
+	} 
  
 });

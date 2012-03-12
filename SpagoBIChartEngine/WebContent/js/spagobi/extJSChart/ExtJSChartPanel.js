@@ -260,6 +260,8 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
         	configSubtitle.renderTo = config.divId + '_subtitle';
 			var subtitle = this.createTextObject(configSubtitle);                	
         }
+		this.hideMask();
+
   }
 
 });
