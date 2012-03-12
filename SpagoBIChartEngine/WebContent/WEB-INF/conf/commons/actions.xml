@@ -12,6 +12,11 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="EXPORT_EXTCHART_ACTION" class="it.eng.spagobi.engines.chart.services.ExportExtChartsAction"
+	    scope="REQUEST">
+	    <CONFIG></CONFIG>
+	</ACTION>  
+	
 <!-- ================================================================================= -->
 	<!-- TRAPS																			   -->
 	<!-- ================================================================================= -->
