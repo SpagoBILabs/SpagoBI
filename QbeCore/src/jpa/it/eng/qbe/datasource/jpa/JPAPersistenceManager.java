@@ -39,12 +39,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
-import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 
 import org.apache.log4j.Logger;
-import org.hibernate.ejb.metamodel.PluralAttributeImpl;
 import org.hibernate.ejb.metamodel.SingularAttributeImpl;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,7 +86,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			
 			entityTransaction = entityManager.getTransaction();
 			
-			EntityType targetEntity = getTargetEntity(registryConf);
+			EntityType targetEntity = getTargetEntity(registryConf, entityManager);
 			String keyColumnName = getKeyColumnName(targetEntity);
 			logger.debug("Key column name is equal to " + keyColumnName);
 			
@@ -112,7 +111,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				
 				if (column.getSubEntity() != null) {
 					logger.debug("Column [" + columnName + "] is a foreign key");
-					manageForeignKey(targetEntity, column, obj, columnName, aRecord);
+					manageForeignKey(targetEntity, column, obj, columnName, aRecord, entityManager);
 				} else {
 					logger.debug("Column [" + columnName + "] is a normal column");
 					manageProperty(targetEntity, obj, columnName, aRecord);
@@ -145,13 +144,12 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		
 	}
 	
-	public EntityType getTargetEntity(RegistryConfiguration registryConf) {
+	public EntityType getTargetEntity(RegistryConfiguration registryConf, EntityManager entityManager) {
 		
 		EntityType targetEntity;
 		
 		String targetEntityName = getTargetEntityName(registryConf);
 	
-		EntityManager entityManager = dataSource.getEntityManager();
 		Metamodel classMetadata = entityManager.getMetamodel();
 		Iterator it = classMetadata.getEntities().iterator();
 
@@ -170,19 +168,17 @@ public class JPAPersistenceManager implements IPersistenceManager {
 	}
 	
 	public String getKeyColumnName(EntityType entity) {
-		javax.persistence.metamodel.Type keyT = entity.getIdType();
 		String keyName = "";
 		for(Object attribute : entity.getAttributes()) {
-			try{
+			if (attribute instanceof SingularAttributeImpl) {
 				SingularAttributeImpl s = (SingularAttributeImpl)attribute;
 				logger.debug("Attribute: "+s.getName()+" is a singular attribute.");
 				if(s.isId()) {
 					keyName = s.getName();
 					break;
 				}
-			}catch(Throwable t){
-				PluralAttributeImpl p = (PluralAttributeImpl)attribute;
-				logger.error("Attribute: "+p.getName()+" is a plural attribute attribute.");
+			} else {
+				throw new SpagoBIRuntimeException("Attribute " + attribute + " is not singular attribute, cannot manage it");
 			}
 		}
 		return keyName;
@@ -190,11 +186,9 @@ public class JPAPersistenceManager implements IPersistenceManager {
 	
 	// case of foreign key
 	private void manageForeignKey(EntityType targetEntity, Column c, 
-			Object obj, String aKey, JSONObject aRecord) {
+			Object obj, String aKey, JSONObject aRecord, EntityManager entityManager) {
 		
 		logger.debug("column " + aKey + " is a FK");
-		
-		EntityManager entityManager = dataSource.getEntityManager();
 		
 		Attribute a = targetEntity.getAttribute(c.getSubEntity());
 		
