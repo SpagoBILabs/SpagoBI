@@ -44,7 +44,7 @@
   </init-param> 
 	<init-param>
 		<param-name>proxyCallbackUrl</param-name>
-		<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBIBirtReportEngine/proxyCallback</param-value>
+		<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBIChartEngine/proxyCallback</param-value>
 	</init-param>  
 </filter>
 
