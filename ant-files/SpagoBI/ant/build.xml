@@ -236,6 +236,17 @@
 	    <mkdir dir="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
 	    <unzip src="../../../SpagoBIConsoleEngine/dist/SpagoBIConsoleEngine.war" dest="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
 	</target>  
+
+	<target name="create.SpagoBIChartEngine.war" depends="create.sbi.utils.jar">
+	    <ant dir="../SpagoBIChartEngine/ant" />
+	  </target>
+	  <target name="deploy.SpagoBIChartEngine.war" depends="create.sbi.utils.jar,create.SpagoBIChartEngine.war">
+	  <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIChartEngine" />
+	    <delete dir="${tomcat.home}/webapps/SpagoBIChartEngine" />
+	    <mkdir dir="${tomcat.home}/webapps/SpagoBIChartEngine" />
+	    <unzip src="../../../SpagoBIChartEngine/dist/SpagoBIChartEngine.war" dest="${tomcat.home}/webapps/SpagoBIChartEngine" />
+	</target>  	
+	
 	
 	<!-- MOBILE ENGINE -->
 	<target name="create.SpagoBIMobileEngine.war" depends="create.sbi.utils.jar,create.SpagoBI.war">
@@ -262,6 +273,10 @@
         
     <antcall target="create.SpagoBIConsoleEngine.war" />
     <copy file="../../../SpagoBIConsoleEngine/dist/SpagoBIConsoleEngine.war" 
+        todir="../../../dist" overwrite="true" />
+  	
+    <antcall target="create.SpagoBIChartEngine.war" />
+    <copy file="../../../SpagoBIChartEngine/dist/SpagoBIChartEngine.war" 
         todir="../../../dist" overwrite="true" />
                     
     <antcall target="create.SpagoBI.war" />
@@ -335,7 +350,8 @@
   	<antcall target="deploy.SpagoBIJPXMLAEngine.war" />
   	<antcall target="deploy.SpagoBIAccessibilityEngine.war" />
   	<antcall target="deploy.SpagoBICommonJEngine.war" />
-  	<antcall target="deploy.SpagoBIConsoleEngine.war" />      	
+  	<antcall target="deploy.SpagoBIConsoleEngine.war" />    
+  	<antcall target="deploy.SpagoBIChartEngine.war" /> 
   	<antcall target="deploy.SpagoBIMobileEngine.war" />    
   </target>
 
@@ -381,6 +397,8 @@
   <delete dir="../../../SpagoBICommonJEngine/dist"/>	
   <delete dir="../../../SpagoBIConsoleEngine/ant-build"/>
   <delete dir="../../../SpagoBIConsoleEngine/dist"/>
+  <delete dir="../../../SpagoBIChartEngine/ant-build"/>
+  <delete dir="../../../SpagoBIChartEngine/dist"/>   	
   <delete dir="../../../SpagoBIMobileEngine/ant-build"/>
   <delete dir="../../../SpagoBIMobileEngine/dist"/>	 
    </target>
@@ -426,6 +444,7 @@
   	<ant dir="../SpagoBIAccessibilityEngine/ant" target="svn.checkout"/>
   	<ant dir="../SpagoBICommonJEngine/ant" target="svn.checkout"/>
   	<ant dir="../SpagoBIConsoleEngine/ant" target="svn.checkout"/> 
+  	<ant dir="../SpagoBIChartEngine/ant" target="svn.checkout"/> 
   	<ant dir="../LibraryRepo" target="svn.checkout"/> 
   	<ant dir="../SpagoBIMobileEngine/ant" target="svn.checkout"/>
   </target>
@@ -451,6 +470,7 @@
     <ant dir="../SpagoBIAccessibilityEngine/ant" target="javadoc"/>
     <ant dir="../SpagoBICommonJEngine/ant" target="javadoc"/>
     <ant dir="../SpagoBIConsoleEngine/ant" target="javadoc"/>
+    <ant dir="../SpagoBIChartEngine/ant" target="javadoc"/>  	
   	<ant dir="../SpagoBIMobileEngine/ant" target="javadoc"/>
   </target>
 
@@ -469,7 +489,8 @@
   		  <ant dir="../SpagoBIJPXMLAEngine/ant" target="package"/> 
   	    <ant dir="../SpagoBIAccessibilityEngine/ant" target="package"/>
   	    <ant dir="../SpagoBICommonJEngine/ant" target="package"/>
-  	    <ant dir="../SpagoBIConsoleEngine/ant" target="package"/>        
+  	    <ant dir="../SpagoBIConsoleEngine/ant" target="package"/>  
+	    <ant dir="../SpagoBIChartEngine/ant" target="package"/>    	
   		<ant dir="../SpagoBIMobileEngine/ant" target="package"/> 
   </target>
  
