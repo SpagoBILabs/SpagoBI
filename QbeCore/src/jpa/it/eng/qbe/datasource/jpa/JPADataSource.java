@@ -34,32 +34,17 @@ import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.jpa.JPAModelStructureBuilder;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.FetchType;
 import javax.persistence.Persistence;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.BasicType;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
-import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 /**
@@ -68,7 +53,6 @@ import org.json.JSONObject;
 public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 	
 	private EntityManagerFactory factory;
-	private EntityManager entityManager;
 	private boolean classLoaderExtended = false;	
 	
 	private static transient Logger logger = Logger.getLogger(JPADataSource.class);
@@ -98,12 +82,6 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 	public FileDataSourceConfiguration getFileDataSourceConfiguration() {
 		return (FileDataSourceConfiguration)configuration;
 	}
-
-
-	public void createEntityManager(String name){
-		initEntityManagerFactory(name);
-		EntityManager em = factory.createEntityManager();
-	}
 	
 	protected void initEntityManagerFactory(String name){
 		factory = Persistence.createEntityManagerFactory(name, buildEmptyConfiguration());
@@ -130,12 +108,10 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 	 * @see it.eng.qbe.datasource.jpa.IJPAataSource#getEntityManager()
 	 */
 	public EntityManager getEntityManager() {
-		if(entityManager==null){
-			if(factory == null) {
-				open();
-			}
-			entityManager = factory.createEntityManager();
+		if(factory == null) {
+			open();
 		}
+		EntityManager entityManager = factory.createEntityManager();
 		return entityManager;
 	}
 	
