@@ -42,9 +42,9 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
+import javax.persistence.metamodel.SingularAttribute;
 
 import org.apache.log4j.Logger;
-import org.hibernate.ejb.metamodel.SingularAttributeImpl;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -73,7 +73,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		EntityTransaction entityTransaction = null;
 		
 		logger.debug("IN");
-		EntityManager entityManager =null;
+		EntityManager entityManager = null;
 		try {
 			Assert.assertNotNull(aRecord, "Input parameter [record] cannot be null");
 			Assert.assertNotNull(aRecord, "Input parameter [registryConf] cannot be null");
@@ -87,34 +87,34 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			entityTransaction = entityManager.getTransaction();
 			
 			EntityType targetEntity = getTargetEntity(registryConf, entityManager);
-			String keyColumnName = getKeyColumnName(targetEntity);
-			logger.debug("Key column name is equal to " + keyColumnName);
+			String keyAttributeName = getKeyAttributeName(targetEntity);
+			logger.debug("Key attribute name is equal to " + keyAttributeName);
 			
 			Iterator it = aRecord.keys();
 				
-			Object keyColumnValue = aRecord.get(keyColumnName);
+			Object keyColumnValue = aRecord.get(keyAttributeName);
 			logger.debug("Key of new record is equal to " + keyColumnValue);
 			logger.debug("Key column java type equal to [" + targetEntity.getJavaType() + "]");
-			Attribute a = targetEntity.getAttribute(keyColumnName);
+			Attribute a = targetEntity.getAttribute(keyAttributeName);
 			Object obj = entityManager.find(targetEntity.getJavaType(), this.convertValue(keyColumnValue, a));
 			logger.debug("Key column class is equal to [" + obj.getClass().getName() + "]");
 				
 			while (it.hasNext()) {
-				String columnName = (String) it.next();
-				logger.debug("Processing column [" + columnName + "] ...");
+				String attributeName = (String) it.next();
+				logger.debug("Processing column [" + attributeName + "] ...");
 				
-				if (keyColumnName.equals(columnName)) {
-					logger.debug("Skip column [" + columnName + "] because it is the key of the table");
+				if (keyAttributeName.equals(attributeName)) {
+					logger.debug("Skip column [" + attributeName + "] because it is the key of the table");
 					continue;
 				}
-				Column column = registryConf.getColumnConfiguration(columnName);
+				Column column = registryConf.getColumnConfiguration(attributeName);
 				
 				if (column.getSubEntity() != null) {
-					logger.debug("Column [" + columnName + "] is a foreign key");
-					manageForeignKey(targetEntity, column, obj, columnName, aRecord, entityManager);
+					logger.debug("Column [" + attributeName + "] is a foreign key");
+					manageForeignKey(targetEntity, column, obj, attributeName, aRecord, entityManager);
 				} else {
-					logger.debug("Column [" + columnName + "] is a normal column");
-					manageProperty(targetEntity, obj, columnName, aRecord);
+					logger.debug("Column [" + attributeName + "] is a normal column");
+					manageProperty(targetEntity, obj, attributeName, aRecord);
 				}
 			}
 
@@ -167,20 +167,23 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		return targetEntity;
 	}
 	
-	public String getKeyColumnName(EntityType entity) {
-		String keyName = "";
+	public String getKeyAttributeName(EntityType entity) {
+		logger.debug("IN : entity = [" + entity + "]");
+		String keyName = null;
 		for(Object attribute : entity.getAttributes()) {
-			if (attribute instanceof SingularAttributeImpl) {
-				SingularAttributeImpl s = (SingularAttributeImpl)attribute;
+			if (attribute instanceof SingularAttribute) {
+				SingularAttribute s = (SingularAttribute) attribute;
 				logger.debug("Attribute: "+s.getName()+" is a singular attribute.");
-				if(s.isId()) {
+				if (s.isId()) {
 					keyName = s.getName();
 					break;
 				}
 			} else {
-				throw new SpagoBIRuntimeException("Attribute " + attribute + " is not singular attribute, cannot manage it");
+				logger.debug("Attribute " + attribute + " is not singular attribute, cannot manage it");
 			}
 		}
+		Assert.assertNotNull(keyName, "Key attribute name was not found!");
+		logger.debug("OUT : " + keyName);
 		return keyName;
 	}
 	
