@@ -114,8 +114,8 @@ public class ExporterCSV extends Exporter {
 			for(int fieldIndex =0; fieldIndex< length; fieldIndex++){
 				IFieldMetaData metaField = extractedFieldsMetaData.get(fieldIndex);
 				IField f = (IField)record.getFieldAt((Integer)metaField.getProperty("index"));
-				if (f != null && f.getValue()!= null) {
 
+				if (f != null) {
 					Boolean visible = (Boolean) metaField.getProperty("visible");
 					if(visible){
 						String b = f.getValue() != null ? f.getValue().toString() : ""; 
