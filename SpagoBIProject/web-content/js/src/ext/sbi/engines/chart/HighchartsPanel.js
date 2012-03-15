@@ -119,10 +119,22 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			    singleChartConfig.series.formatter = formatterCode;
 			}				
 			
-			//defines tooltip			
+			//defines tooltip
+			/* orig:
 			if(singleChartConfig.tooltip && singleChartConfig.tooltip.formatter){
 				var formatterCode = this.getFormatter(singleChartConfig.tooltip.formatter);				
 				singleChartConfig.tooltip.formatter = formatterCode;
+			}*/
+			if(singleChartConfig.tooltip){
+				if (singleChartConfig.tooltip.formatter){
+					var formatterCode = this.getFormatter(singleChartConfig.tooltip.formatter);				
+					singleChartConfig.tooltip.formatter = formatterCode;					
+				}
+				else if (singleChartConfig.tooltip.text){					
+			    	var aliasFields = this.getFieldLabels(singleChartConfig.tooltip.text);
+					var formatterCode = this.getFormatterText(singleChartConfig.tooltip.text, this.store, aliasFields);
+					singleChartConfig.tooltip.formatter = formatterCode;		
+				}
 			}
 			
 			if(singleChartConfig.xAxis && singleChartConfig.xAxis.labels && singleChartConfig.xAxis.labels.formatter){
@@ -273,12 +285,22 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	, formatWithNameValue: function (){
 		return function (){return '<b>'+ this.series.name+ '</b><br/>'+ this.point.name ;};
 	}	
-	, formatSubstringLabel: function (){
-		return function (){return '<b>'+ this.value.substring(0,10)+ '</b>';};
+	, formatSubstringLabel: function (len){
+		return function (){return '<b>'+ this.value.substring(0,len)+ '</b>';};
 	}
 	, getFormatter: function(obj){
 		var formatterCode = "";
-		switch (obj) {
+		var formatFunc = "";
+		var len = obj.indexOf("(") ;
+		if (len != -1){
+			formatFunc = obj.substring(0, len);
+			len = obj.substring(obj.indexOf("(")+1, obj.length-1);			
+		}else {
+			formatFunc = obj;
+			len = 10;
+		}
+
+		switch (formatFunc) {
         case 'name_percentage':
         	formatterCode = this.formatWithNamePercentage();        	
         	break;
@@ -296,13 +318,60 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
         	formatterCode =  this.formatWithName();
         	break;
         case 'substringLabel':
-        	formatterCode = this.formatSubstringLabel();
-        	break;
+        	formatterCode = this.formatSubstringLabel(len);
+        	break;        	
         default: 
         	formatterCode = this.formatWithName();
         	break	       
 		}
 		return formatterCode;
+	}
+	
+	, getFormatterText: function(obj, store, aliasFields){
+		return function (){
+	    	var prefix = "";
+	    	var suffix = "";
+	    	var text = obj;
+	    	
+	    	if (obj.indexOf("{CATEGORY}")) aliasFields.push("CATEGORY");
+	    	if (obj.indexOf("{SERIE}")) aliasFields.push("SERIE");					    		
+	    	
+	    	if (aliasFields.length == 0) return text;
+	    	var spanText = "<span style='color:"+ this.series.color +"'>";
+	    	text = spanText + text;
+			for(var i=0;i<this.series.data.length;i++){				
+	            var item = this.series.data[i];
+	            if((item.x == this.x || item.category == this.x) && item.y == this.y){
+	            	for (var j=0, jl=aliasFields.length; j<jl; j++){
+	    				var alias = aliasFields[j];
+	    				var fieldColumn = "";
+	    				var fieldValue = "";
+	    				if (alias == "CATEGORY"){
+	    					prefix = "{";
+	    					suffix = "}";
+	    					fieldValue += this.point.category || this.point.x ;	    				
+	    				}else if (alias == "SERIE"){
+	    					prefix = "{";
+	    					suffix = "}";
+	    					fieldValue = this.point.y;
+	    				}else {
+	    					prefix = "$F{";
+	    					suffix = "}";
+	    					fieldColumn = store.getFieldNameByAlias(alias);	    						    				
+			        		var rec = store.getAt(i);
+			    			if(rec) fieldValue = rec.get(fieldColumn);		
+	    				}
+	    				
+	    				if (fieldValue !== null){
+	    					var tmpText = text.replace(prefix + alias + suffix, "<b>" + fieldValue + "</b>");
+	    					text = tmpText;
+	    				}	    				
+	    			}          	
+	            }
+	        }
+			text += "</span>";
+			return text;	 
+		};
 	}
 	
 });
