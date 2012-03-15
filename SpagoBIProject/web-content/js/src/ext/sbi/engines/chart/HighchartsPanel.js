@@ -334,7 +334,8 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	    	var text = obj;
 	    	
 	    	if (obj.indexOf("{CATEGORY}")) aliasFields.push("CATEGORY");
-	    	if (obj.indexOf("{SERIE}")) aliasFields.push("SERIE");					    		
+	    	if (obj.indexOf("{SERIE}")) aliasFields.push("SERIE");			
+	    	if (obj.indexOf("{SERIE_NAME}")) aliasFields.push("SERIE_NAME");
 	    	
 	    	if (aliasFields.length == 0) return text;
 	    	var spanText = "<span style='color:"+ this.series.color +"'>";
@@ -354,6 +355,10 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	    					prefix = "{";
 	    					suffix = "}";
 	    					fieldValue = this.point.y;
+	    				}else if (alias == "SERIE_NAME"){
+	    					prefix = "{";
+	    					suffix = "}";
+	    					fieldValue = this.point.name || this.series.name;
 	    				}else {
 	    					prefix = "$F{";
 	    					suffix = "}";
