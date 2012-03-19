@@ -94,7 +94,7 @@ class QuartzNativeObjectsConverter {
 				
 				quartzTrigger = TriggerUtils.makeImmediateTrigger(spagobiTrigger.getName(), 0, 10000);
 				quartzTrigger.setJobName(spagobiTrigger.getJob().getName());
-				quartzTrigger.setJobGroup(spagobiTrigger.getGroupName());
+				quartzTrigger.setJobGroup(spagobiTrigger.getJob().getGroupName());
 				JobDataMap jobDataMap = convertParametersToNativeObject(spagobiTrigger.getJob().getParameters());
 				quartzTrigger.setJobDataMap(jobDataMap);
 				
