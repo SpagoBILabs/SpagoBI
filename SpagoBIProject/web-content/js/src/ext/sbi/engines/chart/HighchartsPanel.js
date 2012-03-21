@@ -368,7 +368,8 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	    				}
 	    				
 	    				if (fieldValue !== null){
-	    					var tmpText = text.replace(prefix + alias + suffix, "<b>" + fieldValue + "</b>");
+	    					//var tmpText = text.replace(prefix + alias + suffix, "<b>" + fieldValue + "</b>");
+	    					var tmpText = text.replace(prefix + alias + suffix,  fieldValue );
 	    					text = tmpText;
 	    				}	    				
 	    			}          	
