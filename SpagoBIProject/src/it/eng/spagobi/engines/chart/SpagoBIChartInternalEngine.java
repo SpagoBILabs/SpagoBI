@@ -134,6 +134,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 			//if it's an highcharts document get the png file by the svg content presents into the
 			// description of the biobject
+			/*
 			if (type != null && type.startsWith(HIGHCHART_TEMPLATE)){				
 				//create the png file using the svg
 				InputStream inputStream = null;
@@ -171,7 +172,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 				logger.debug("OUT");
 				return toReturn;
 			}
-
+			 */
 			String data="";
 			try{
 				logger.debug("Getting Data Set ID");

@@ -302,7 +302,7 @@ function  exportExecution(item) {
     if(item.docType == 'REPORT' || (item.docType == 'MAP')){
     	window.open(endUrl, 'name', 'resizable=1,height=750,width=1000');
     
-    }else if(item.docType == 'DASH'){
+    }else if(item.docType == 'DASH' || item.docType == 'CHART'){
     	exportChartExecution(exportType, doclabel);
     }
 	

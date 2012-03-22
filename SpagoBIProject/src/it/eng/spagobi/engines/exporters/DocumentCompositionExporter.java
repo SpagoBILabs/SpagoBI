@@ -18,6 +18,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
+import it.eng.spagobi.engines.chart.utils.ExportHighCharts;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration;
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration.Document;
@@ -26,14 +27,20 @@ import it.eng.spagobi.engines.documentcomposition.exporterUtils.DocumentContaine
 import it.eng.spagobi.engines.documentcomposition.exporterUtils.PdfCreator;
 import it.eng.spagobi.utilities.ParametersDecoder;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -51,107 +58,161 @@ public class DocumentCompositionExporter {
 
 		logger.debug("IN");
 		String output=null;
-
-		// Cycle on all documents in document composition
-		Map docMap=dcConf.getDocumentsMap();
-		for (Iterator iterator = docMap.keySet().iterator(); iterator.hasNext();) {
-			Object key = (Object) iterator.next();
-			Document doc=(Document)docMap.get(key);
-			String label=doc.getSbiObjLabel();
-			logger.debug("Document "+label);
-
-			// get document container information
-			DocumentContainer documentContainer=documentsMap.get(label);
-			
-			if (documentContainer == null) continue;
-
-			// Recover BIObject			
-			IBIObjectDAO dao=DAOFactory.getBIObjectDAO();
-			BIObject objectID=dao.loadBIObjectByLabel(label);
-			BIObject object=null;
-
-			// get roles
-			Collection roles = null;
-			roles = ((UserProfile)profile).getRolesForUse();
-
-
-			for (Iterator iterator2 = roles.iterator(); iterator2.hasNext();) {
-				Object role = (Object) iterator2.next();
-				try{
-					object=dao.loadBIObjectForExecutionByIdAndRole(objectID.getId(), role.toString());
+		InputStream svgInputStream = null;    	
+    	InputStream pngInputStream = null;
+    	OutputStream svgOutputStream = null;
+	    try{
+			// Cycle on all documents in document composition
+			Map docMap=dcConf.getDocumentsMap();
+			for (Iterator iterator = docMap.keySet().iterator(); iterator.hasNext();) {
+				Object key = (Object) iterator.next();
+				Document doc=(Document)docMap.get(key);
+				String label=doc.getSbiObjLabel();
+				logger.debug("Document "+label);
+	
+				// get document container information
+				DocumentContainer documentContainer=documentsMap.get(label);
+				
+				if (documentContainer == null) continue;
+	
+				// Recover BIObject			
+				IBIObjectDAO dao=DAOFactory.getBIObjectDAO();
+				BIObject objectID=dao.loadBIObjectByLabel(label);
+				BIObject object=null;
+	
+				// get roles
+				Collection roles = null;
+				roles = ((UserProfile)profile).getRolesForUse();
+	
+	
+				for (Iterator iterator2 = roles.iterator(); iterator2.hasNext();) {
+					Object role = (Object) iterator2.next();
+					try{
+						object=dao.loadBIObjectForExecutionByIdAndRole(objectID.getId(), role.toString());
+					}
+					catch (Exception e) {
+						logger.error("error in recovering the role");
+					}
+					if(object!=null) break;
 				}
-				catch (Exception e) {
-					logger.error("error in recovering the role");
+	
+				// set parameters: from url retrieved by iframe, fill BiObjectParameters with value
+				logger.debug("fill parameters from URL");
+				fillBIObjectWithParameterValues(object, currentConfs.get(label));
+				
+				//only for HIGHCHARTS and EXT charts documents (SVG_label is not null) isn't necessary 
+				//ri-execute the document but enough to pass the svg and tranform it into png				
+				byte[] returnByteArray = null;
+				if (currentConfs.get("SVG_"+label) != null){
+					
+					Map tmpSvg = currentConfs.get("SVG_"+label).getParameters();
+					String tmpContent = tmpSvg.get("SVG_"+label).toString();
+					//create the png file using the svg
+					String svg = tmpContent;		
+					svgInputStream = new ByteArrayInputStream(svg.getBytes("UTF-8"));
+					File dir = new File(System.getProperty("java.io.tmpdir"));
+					Random generator = new Random();
+					int randomInt = generator.nextInt();
+					File imgFile = File.createTempFile(Integer.valueOf(randomInt).toString(), ".png", dir);
+					svgOutputStream = new FileOutputStream(imgFile);
+					ExportHighCharts.transformSVGIntoPNG(svgInputStream, svgOutputStream);	
+					// read input from file
+					pngInputStream = new FileInputStream(imgFile);
+
+					// Get the size of the file
+					long length = imgFile.length();
+
+					if (length > Integer.MAX_VALUE) {
+						logger.error("file too large");
+						return null;
+					}
+
+					// Create the byte array to hold the data
+					returnByteArray = new byte[(int)length];
+
+					// Read in the bytes
+					int offset = 0;
+					int numRead = 0;
+
+					while (offset < returnByteArray.length
+							&& (numRead=pngInputStream.read(returnByteArray, offset, returnByteArray.length-offset)) >= 0) {
+						offset += numRead;
+					}
+
+					// Ensure all the bytes have been read in
+					if (offset < returnByteArray.length) {
+						logger.warn("Could not read all the file");
+					}
+					
+				}else if (!doc.getType().equals("CHART")){
+					logger.debug("call execution proxy");
+		
+					// Calling execution proxy
+					ExecutionProxy proxy = new ExecutionProxy();
+					
+					proxy.setBiObject(object);
+					
+					// if engine is Birt, export in PDF, elsewhere in JPG
+					Engine engine = object.getEngine();
+					String driverName = engine.getDriverName();
+					if (driverName != null && driverName.endsWith("BirtReportDriver")) {
+						output = "PDF";
+					} else {
+						output = "JPG";
+					}
+					returnByteArray = proxy.exec(profile, "EXPORT", output);
 				}
-				if(object!=null) break;
+				// add content retrieved to Document Container
+				logger.debug("add content retrieved to Document Container");
+				if (returnByteArray != null){
+					if( returnByteArray.length==0)logger.warn("empty byte array retrieved for document "+label);
+					documentContainer.setContent(returnByteArray);			
+					documentContainer.setDocumentLabel(label);
+					documentContainer.setDocumentType(object.getBiObjectTypeCode());
+				}
 			}
-
-			// set parameters: from url retrieved by iframe, fill BiObjectParameters with value
-			logger.debug("fill parameters from URL");
-			fillBIObjectWithParameterValues(object, currentConfs.get(label));
-			
-			//only for highcharts document is necessary to pass the svg parameter to the engine.
-			//At the moment it force the svgContent into description attribute of the object (only for background execution)
-			if (currentConfs.get("SVG_"+label) != null){
-				Map tmpSvg = currentConfs.get("SVG_"+label).getParameters();
-				String tmpContent = tmpSvg.get("SVG_"+label).toString();
-				object.setDescription(tmpContent);
+		
+			FileOutputStream fileOutputStream=new FileOutputStream(tmpFile);
+			PdfCreator pdfCreator=new PdfCreator();
+			logger.debug("Call PDF Creation");
+			pdfCreator.setVideoHeight(dcConf.getVideoHeight());
+			pdfCreator.setVideoWidth(dcConf.getVideoWidth());		
+	
+			FileOutputStream pdfFile=pdfCreator.createPdfFile(fileOutputStream, documentsMap, defaultStyle);
+	
+			pdfFile.flush();
+			pdfFile.close();
+	
+			logger.debug("OUT");
+	
+			return tmpFile;
+	    } catch (Exception e) {
+			logger.error(e);
+			return null;
+		} finally{
+	    	// Close the input stream 
+			if (pngInputStream != null) {
+				try {
+					pngInputStream.close();
+				} catch (IOException e) {
+					logger.error(e);
+				}
 			}
-			logger.debug("call execution proxy");
-			// Calling execution proxy
-			ExecutionProxy proxy = new ExecutionProxy();
-			
-			proxy.setBiObject(object);
-			
-			// if engine is Birt, export in PDF, elsewhere in JPG
-			Engine engine = object.getEngine();
-			String driverName = engine.getDriverName();
-			if (driverName != null && driverName.endsWith("BirtReportDriver")) {
-				output = "PDF";
-			} else {
-				output = "JPG";
+			if (svgInputStream != null) {
+				try {
+					svgInputStream.close();
+				} catch (IOException e) {
+					logger.error(e);
+				}
 			}
-			byte[] returnByteArray = proxy.exec(profile, "EXPORT", output);
-
-			// add content retrieved to Document Container
-			logger.debug("add content retrieved to Document Container");
-			if( returnByteArray.length==0)logger.warn("empty byte array retrieved for document "+label);
-			documentContainer.setContent(returnByteArray);			
-			documentContainer.setDocumentLabel(label);
-			documentContainer.setDocumentType(object.getBiObjectTypeCode());
-
-//			FileOutputStream fos=null;
-//			File dir = new File("C:/zzzEsportazione.pdf");
-//			File toReturn=null;
-//			if(i==0){
-//			toReturn=File.createTempFile("zzzEsportazione", ".jpeg", new File("C:/"));
-//			i++;
-//			}
-//			else{
-//			toReturn=File.createTempFile("zzzEsportazione", ".png", new File("C:/"));
-//			}
-//			fos=new FileOutputStream(toReturn);
-//			fos.write(returnByteArray);
-//			fos.flush();
-//			fos.close();
-
-		}
-
-		FileOutputStream fileOutputStream=new FileOutputStream(tmpFile);
-		PdfCreator pdfCreator=new PdfCreator();
-		logger.debug("Call PDF Creation");
-		pdfCreator.setVideoHeight(dcConf.getVideoHeight());
-		pdfCreator.setVideoWidth(dcConf.getVideoWidth());		
-
-		FileOutputStream pdfFile=pdfCreator.createPdfFile(fileOutputStream, documentsMap, defaultStyle);
-
-		pdfFile.flush();
-		pdfFile.close();
-
-
-		logger.debug("OUT");
-
-		return tmpFile;
+			if (svgOutputStream != null) {
+				try {
+					svgOutputStream.close();
+				} catch (IOException e) {
+					logger.error(e);
+				}
+			} 	
+	    }
 	}
 
 
