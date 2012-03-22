@@ -94,7 +94,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
     
     executionId = request.getParameter("SBI_EXECUTION_ID");
     if(executionId != null) {
-    	executionId = "'" + request.getParameter("SBI_EXECUTION_ID") + "'";
+    	executionId = "'" + request.getParameter("SBI_EXECUTION_ID") + "'";;
     } else {
     	executionId = "null";
     }   
@@ -102,7 +102,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
     String chartTemplate = chartEngineInstance.getTemplate().toString();
     // gets analytical driver
     //Map analyticalDrivers  = chartEngineInstance.getAnalyticalDrivers();
-
+ 
 %>
 
 
@@ -144,13 +144,38 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 			function exportChart(exportType) {								
 			  	var top = 0,
 				  	width = 0,
-				  	finalSvg = '';
+				  	groupIsCreated = false;
 				  
 			  	var chart = chartPanel.chart;
-	          	var svg = chart.save({type:'image/svg'});
+	          	var svg = chart.save({type:'image/svg'});	          	
+				svg = svg.substring(svg.indexOf("<svg"));
+
+	          	var tmpSvg = svg.replace("<svg","<g transform='translate(10,50)'");
+				tmpSvg = tmpSvg.replace("</svg>", "</g>");
+				
+				svg = "<svg height='100%' width='100%' version='1.1' xmlns='http://www.w3.org/2000/svg'>";
+				svg += tmpSvg;
+	          	
+	          	//adds title and subtitle
+	          	if (chartPanel.title){
+	          		//var nameEl = "'"+<%=executionId%>+"'_title";
+	          		//var tmpTitle = document.getElementById(nameEl);
+	          		//var titleX = (tmpTitle.offsetWidth-chartPanel.title.text.length)/2;
+	          		var titleStyle = chartPanel.title.style;
+	          		titleStyle = titleStyle.replace("color","fill");
+	          		svg += "<text y='25' style='" + titleStyle +"'>"+chartPanel.title.text+"</text>";
+	          	}
+	          	if (chartPanel.subtitle){
+	          		var subtitleStyle = chartPanel.subtitle.style;
+	          		subtitleStyle = subtitleStyle.replace("color","fill");
+	          		svg += "<text y='45' style='" + subtitleStyle +"'>"+chartPanel.subtitle.text+"</text>";	          		
+	          	}
+	          				
+				svg += "</svg>";
+	          		          	
 	          	params.type = exportType;
 		  	  	urlExporter = Sbi.config.serviceRegistry.getServiceUrl({serviceName: 'EXPORT_EXTCHART_ACTION'
-																	 , baseParams:params
+																  	  , baseParams:params
 																	   });
 	          	Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation,
 	          // but, if a value contains a " character, then the html produced is not correct!!!
@@ -196,6 +221,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 				chartPanel = Ext.widget('ExtJSChartPanel',config); //by alias
 				var viewport = new Ext.Viewport(chartPanel);
 			});
+
 
 	    </script>
 	    <div id="<%=executionId%>_title" align="center" style="width:90%;"></div>

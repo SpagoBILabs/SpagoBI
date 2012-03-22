@@ -159,15 +159,9 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
 	  var localFill = "#6D869F"; 	  
 	  var localWeight = "bold";
 	  var localSize = 16;
-	  var width = 100;
-	  var height = 50;
 	  var text = "";
 	  	
-	  if (config !== undefined){
-		  width =  parseInt(config.width) || 100;
-		  height = parseInt(config.height) || 50;
-		  text = config.text;	
-	  }
+	  if (config !== undefined)  text = config.text;	
 	  
 	  if (config !== undefined && config.style !== undefined){
 		  localSize = parseInt(config.style.fontSize) || 18;
@@ -178,8 +172,8 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
 	  localStyle = 'font-weight:' + localWeight + ';font-size:' + localSize + 'px;font-family:' + localFont +';color:' + localFill + ';';
 	 
 	  var tagStyle = {text: text || "",
-			    	  width: width,
-			    	  height: height,
+			  		  autoWidth: true,
+			  		  autoHeight: true,			    	  
 			    	  style: localStyle	    	 
 			    	};
 	 return tagStyle;

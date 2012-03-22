@@ -36,8 +36,13 @@ import org.json.JSONObject;
  * Entry point action.
  */
 public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
-	
 
+	/*private String[] lstEnvVariables = {"SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", 
+			"SBI_SPAGO_CONTROLLER",  "SBI_EXECUTION_ROLE", "SBI_HOST", 
+			"DOCUMENT_ID", "isFromCross", "country", "language",  "user_id",
+			"DATASET", "NEW_SESSION", "ACTION_NAME", "ROLE"};
+	*/
+	
 	// INPUT PARAMETERS
 	
 	// OUTPUT PARAMETERS
@@ -66,7 +71,7 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 		Locale locale;
 		ChartEngineInstance chartEngineInstance = null;
 		JSONTemplateUtils templateUtil = new JSONTemplateUtils();
-
+		JSONArray parsJSON;
 		
 		try {
 			setEngineName(ENGINE_NAME);
@@ -88,14 +93,18 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 			logger.debug("Creating engine instance ...");
 			
 			try {
-				JSONArray parsJSON = getParametersAsJSON();
+				parsJSON = getParametersAsJSON();
 				SourceBean content = SourceBean.fromXMLString(getTemplateAsString());
 				JSONObject template = templateUtil.getJSONTemplateFromXml( content, parsJSON); 				
-				System.out.println(template.toString(4));
+				//System.out.println(template.toString(4));
 				
 				template.append(DOCUMENT_PARAMETERS, parsJSON);
 
-				chartEngineInstance = ChartEngine.createInstance( template, getEnv() );				
+				chartEngineInstance = ChartEngine.createInstance( template, getEnv() );	
+				
+				//clean parameters to pass at client (only documents params)
+				//Map docPpars = chartEngineInstance.getAnalyticalDrivers();
+				
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";
@@ -120,6 +129,7 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 			documentLabel = getDocumentLabel();
 			logger.debug("Parameter [" + DOCUMENT_LABEL + "] is equal to [" + documentLabel + "]");
 			setAttribute(DOCUMENT_LABEL, documentLabel);
+			setAttribute(DOCUMENT_PARAMETERS, parsJSON);
 			
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());
@@ -175,10 +185,11 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 	public JSONArray getParametersAsJSON(){
 		JSONArray JSONPars = new JSONArray();
 		
-		HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(this.getHttpRequest());
+		HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(this.getHttpRequest());		
 		
 		for (Iterator iterator = requestParameters.keySet().iterator(); iterator.hasNext();) {
 			 String key = (String) iterator.next();
+			// if (!isAnalyticalDriver(key)) continue;
 			 String value = "";
 			 if (requestParameters.get(key) instanceof String){
 				 value = (String)requestParameters.get(key);
@@ -204,5 +215,29 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 
 		return JSONPars;
 	}
+	/*
+	public Map getAnalyticalDrivers() {
+		Map toReturn = new HashMap();
+		Iterator it = getEnv().keySet().iterator();
+		while(it.hasNext()) {
+			String parameterName = (String)it.next();
+			Object parameterValue = (Object) getEnv().get(parameterName);
+
+			if (parameterValue != null && 
+				parameterValue.getClass().getName().equals("java.lang.String") && isAnalyticalDriver(parameterName)){
+				toReturn.put(parameterName, parameterValue);
+			}
+		}
+		return toReturn;
+	}
 	
+	private boolean isAnalyticalDriver (String parName){
+		for (int i=0; i < lstEnvVariables.length; i++){
+			if (lstEnvVariables[i].equalsIgnoreCase(parName)){
+				return false;
+			}
+		}
+		return true;
+	}
+	*/
 }

@@ -45,6 +45,8 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
     alias: 'widget.ExtJSChartPanel',
     extend: 'Sbi.extjs.chart.ExtJSGenericChartPanel',
     chart: null,
+    title: null,
+    subtitle: null,
     
     constructor: function(config) {
     	var defaultSettings = {
@@ -67,10 +69,10 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 
   , createChart: function(){
 	  // gets JSON template
-	  var config =  Ext.apply(this.template || {});	    
-	  config.renderTo = config.divId;
-	  config.store = this.chartStore;
-	  config.animate = (!config.animate)?true:config.animate;	
+	  	var config =  Ext.apply(this.template || {});	    
+		config.renderTo = config.divId;
+		config.store = this.chartStore;
+		config.animate = (!config.animate)?true:config.animate;	
 	   	
 	   	//defines dimensions 
 	   	config.width = (!config.width)?500:parseInt(config.width);
@@ -255,10 +257,10 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
         	//Adds title and subtitle        	
         	var configTitle = this.getConfigStyle(config.title);
         	configTitle.renderTo = config.divId + '_title';
-        	var title = this.createTextObject(configTitle);        	        	
+        	this.title = this.createTextObject(configTitle);        	        	
         	var configSubtitle = this.getConfigStyle(config.subtitle, 2);
         	configSubtitle.renderTo = config.divId + '_subtitle';
-			var subtitle = this.createTextObject(configSubtitle);                	
+			this.subtitle = this.createTextObject(configSubtitle);                	
         }
 		this.hideMask();
 
