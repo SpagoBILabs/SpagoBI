@@ -398,6 +398,7 @@ public class JSONTemplateUtils {
 									sb.append(val);
 									sb.append(" ");
 								}
+								break;
 							}
 						} catch (JSONException e1) {
 							logger.error("Error while replacing parameters in value: " + e1.getMessage());
