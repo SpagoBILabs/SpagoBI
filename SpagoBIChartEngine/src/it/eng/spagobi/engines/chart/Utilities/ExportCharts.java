@@ -58,7 +58,7 @@ public class ExportCharts{
     
     public static final String ENGINE_NAME = "SpagoBIChartEngine";
 		
-   
+    
 	public static void transformSVGIntoPDF(InputStream inputStream,
 			OutputStream outputStream) throws IOException, DocumentException {
 		FileOutputStream imageFileOutputStream = null;

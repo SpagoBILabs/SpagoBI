@@ -19,17 +19,24 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.mime.MimeUtils;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.apache.batik.util.XMLResourceDescriptor;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.svg.SVGDocument;
 
 import sun.misc.BASE64Decoder;
-
 
 
 
@@ -42,6 +49,8 @@ public class ExportExtChartsAction extends AbstractEngineAction {
 	
 	// INPUT PARAMETERS
 	public static String SVG = "svg";
+	public static String TITLE = "title";
+	public static String SUBTITLE = "subtitle";
 	public static String OUTPUT_FORMAT = "type";
  
 
@@ -72,6 +81,8 @@ public class ExportExtChartsAction extends AbstractEngineAction {
 			if (!svg.startsWith("<svg")){
 				svg = svg.substring(svg.indexOf("<svg"));
 			}
+			//System.out.println("svg: " + svg);
+			
 			inputStream = new ByteArrayInputStream(svg.getBytes("UTF-8"));
 			String outputType = this.getAttributeAsString(OUTPUT_FORMAT);
 			if (outputType == null || outputType.trim().equals("")) {
@@ -135,4 +146,17 @@ public class ExportExtChartsAction extends AbstractEngineAction {
 		}		
 
 	}
+    
+    private String readFile( String file ) throws IOException {
+        BufferedReader reader = new BufferedReader( new FileReader (file));
+        String line  = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        String ls = System.getProperty("line.separator");
+        while( ( line = reader.readLine() ) != null ) {
+            stringBuilder.append( line );
+            stringBuilder.append( ls );
+        }
+        return stringBuilder.toString();
+     }
+
 }

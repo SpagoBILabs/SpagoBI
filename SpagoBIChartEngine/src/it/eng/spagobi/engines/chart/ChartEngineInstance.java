@@ -33,10 +33,12 @@ import org.json.JSONObject;
  * @author Antonella Giachino (antonella.giachino@eng.it)
  */
 public class ChartEngineInstance extends AbstractEngineInstance {
+	
 	private String[] lstEnvVariables = {"SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", 
-										"SBI_SPAGO_CONTROLLER",  "SBI_EXECUTION_ROLE", "SBI_HOST", 
-										"DOCUMENT_ID", "isFromCross", "country", "language",  "user_id",
-										"DATASET"};
+			"SBI_SPAGO_CONTROLLER",  "SBI_EXECUTION_ROLE", "SBI_HOST", 
+			"DOCUMENT_ID", "isFromCross", "country", "language",  "user_id",
+			"DATASET", "NEW_SESSION", "ACTION_NAME", "ROLE"};
+	
 	private JSONObject template;
 	
 	private IDataSet dataset;
@@ -119,6 +121,7 @@ public class ChartEngineInstance extends AbstractEngineInstance {
 		}
 		return true;
 	}
+	
 	
 	// -- unimplemented methods ------------------------------------------------------------
 
