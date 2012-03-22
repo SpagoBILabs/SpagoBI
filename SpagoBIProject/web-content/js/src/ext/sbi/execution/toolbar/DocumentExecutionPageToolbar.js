@@ -229,14 +229,11 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		windowO=mainFrame.getWindow();
 		newPars='';
 		var isHighchart = false;
-		var randUUID = Math.random(); 
+		var isExtChart = false;
+		var randUUID = Math.random();
+		var idxElements = 0;
 		for (var i=0; i<windowO.frames.length; i++)
 		{
-			var svgArr = [],
-	   	    top = 0,
-	  	    width = 0,
-	  	    svg = '';
-		
 			childFrame=windowO.frames[i];
 			//if the iframe contains a console document, it's not exported!
 			if (childFrame.Sbi !== undefined && childFrame.Sbi.console !== undefined  ){
@@ -250,30 +247,16 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			urlNotEncoded = urlNotEncoded.replace(/%20/g,' ');
 			urlEncoded=encodeURIComponent(urlNotEncoded);
 			newPars+='&TRACE_PAR_'+cutName+'='+urlEncoded;
-			//for highcharts documents gets the SVG and send it as a hidden form
+			//for highcharts and ext charts documents gets the SVG and send it as a hidden form
 			if (childFrame.chartPanel !== undefined && childFrame.chartPanel.chart !== undefined){
-				isHighchart = true;
-				 //in case of multiple charts redefines the svg object as a global (transforms each single svg in a group tag <g>)
-				 for (var c=0; c < childFrame.chartPanel.chartsArr.length; c++){
-					var singleChart = childFrame.chartPanel.chartsArr[c];
-				    if (singleChart !== undefined && singleChart !== null){
-			          	var singleSvg = singleChart.getSVG();
-			          	singleSvg = singleSvg.replace('<svg', '<g transform="translate(0,' + top + ')" ');
-			          	singleSvg = singleSvg.replace('</svg>', '</g>');
-			
-			            top += singleChart.chartHeight;
-			            width = Math.max(width, singleChart.chartWidth);
-			
-			            svgArr.push(singleSvg);
-			         }
+				var svg = '';
+				if (childFrame.chartPanel.chartsArr !== undefined){
+					isHighchart = true;
+					svg = this.getHighchartSvg(childFrame);
+				}else{
+					isExtChart = true;
+					svg = this.getExtchartSvg(childFrame);
 				}
-				//defines the global svg (for master/detail chart)
-		        svg = '<svg height="'+ top +'" width="' + width + '" version="1.1" xmlns="http://www.w3.org/2000/svg">';
-		        for (var s=0; s < svgArr.length; s++){
-		        	svg += svgArr[s];
-		        }
-		        svg += '</svg>';
-		        
 				Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation,
 				 // but, if a value contains a " character, then the html produced is not correct!!!
 				 // See source of DomHelper.append and DomHelper.overwrite methods
@@ -287,6 +270,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 								  , method: 'post'
 							  });
 				 }	  
+				 
 				 dh.append(form, {		// creating the hidden input in form
 						tag: 'input'
 						, type: 'hidden'
@@ -296,14 +280,16 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				 
 				// putting the chart data into hidden input
 				//form.elements[i].value =  Ext.encode(svg);     
-				form.elements[i].value = svg;  
+				form.elements[idxElements].value = svg;  
+				idxElements ++;
+				
 			}
 				
 		}//for 
 		var urlExporter = this.services['toDCPdf'] + '&OBJECT_ID=' + this.executionInstance.OBJECT_ID;
 		urlExporter += newPars;
 		window.open(urlExporter,'exportWindow','resizable=1,height=750,width=1000');
-		if (isHighchart){
+		if (isHighchart || isExtChart){
 		    form.action = urlExporter;
 			//form.target = '_blank'; // result into a new browser tab
 			form.target = 'exportWindow'; // result into a popup
@@ -311,6 +297,63 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		}
 		Ext.DomHelper.useDom = false; //reset configuration for dom management
 	}		
+	
+	, getHighchartSvg: function (childFrame) {
+		var svgArr = [],
+   	    top = 0,
+  	    width = 0,
+  	    svg = '';
+		//in case of multiple charts redefines the svg object as a global (transforms each single svg in a group tag <g>)
+		 for (var c=0; c < childFrame.chartPanel.chartsArr.length; c++){
+			var singleChart = childFrame.chartPanel.chartsArr[c];
+		    if (singleChart !== undefined && singleChart !== null){
+	          	var singleSvg = singleChart.getSVG();
+	          	singleSvg = singleSvg.replace('<svg', '<g transform="translate(0,' + top + ')" ');
+	          	singleSvg = singleSvg.replace('</svg>', '</g>');
+	
+	            top += singleChart.chartHeight;
+	            width = Math.max(width, singleChart.chartWidth);
+	
+	            svgArr.push(singleSvg);
+	         }
+		}
+		//defines the global svg (for master/detail chart)
+       svg = '<svg height="'+ top +'" width="' + width + '" version="1.1" xmlns="http://www.w3.org/2000/svg">';
+       for (var s=0; s < svgArr.length; s++){
+       	svg += svgArr[s];
+       }
+       svg += '</svg>';	   
+		
+	   return svg;
+	}
+	
+	, getExtchartSvg: function (childFrame) {
+		var chartPanel = childFrame.chartPanel;
+		var svg = chartPanel.chart.save({type:'image/svg'});	          	
+		svg = svg.substring(svg.indexOf("<svg"));
+
+      	var tmpSvg = svg.replace("<svg","<g transform='translate(10,50)'");
+		tmpSvg = tmpSvg.replace("</svg>", "</g>");
+		
+		svg = "<svg height='100%' width='100%' version='1.1' xmlns='http://www.w3.org/2000/svg'>";
+		svg += tmpSvg;
+      	
+      	//adds title and subtitle
+      	if (chartPanel.title){
+      		var titleStyle = chartPanel.title.style;
+      		titleStyle = titleStyle.replace("color","fill");
+      		svg += "<text x='10'  y='25' style='" + titleStyle +"'>"+chartPanel.title.text+"</text>";
+      	}
+      	if (chartPanel.subtitle){
+      		var subtitleStyle = chartPanel.subtitle.style;
+      		subtitleStyle = subtitleStyle.replace("color","fill");
+      		svg += "<text x='10' y='45' style='" + subtitleStyle +"'>"+chartPanel.subtitle.text+"</text>";	          		
+      	}
+      				
+		svg += "</svg>";
+		
+	    return svg;
+	}
 	, exportGeoExecution: function (exportType) {	
 	    var mf = this.miframe;
 		var frame = mf.getFrame();

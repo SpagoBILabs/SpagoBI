@@ -61,7 +61,8 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 	    int randomInt = generator.nextInt();
 	    String path=dir+"/"+Integer.valueOf(randomInt).toString()+".pdf";
 		
-		File tmpFile=new File("path");
+		//File tmpFile=new File("path");
+		File tmpFile=new File(path);
 
 		// map that associates document labels and DOcument Containers (containing informations)
 		Map<String, DocumentContainer> documents=new LinkedHashMap<String, DocumentContainer>();
@@ -122,8 +123,6 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 			}
 		}
 
-
-
 		try{
 			// recover BiObject Name
 			Integer id = this.getAttributeAsInteger(SpagoBIConstants.OBJECT_ID);
@@ -141,25 +140,25 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 			DocumentCompositionExporter exporter=new DocumentCompositionExporter();
 			tmpFile=exporter.exportDocumentCompositionPDF(tmpFile,docCompConf, document, profile, currentConfigurationsMap, documents, defaultStyle);
 
-			String outputType = "PDF";
-
-			String mimeType = "application/pdf";
-
-
-			logger.debug("Report exported succesfully");
-
-			HttpServletResponse response = getHttpResponse();
-			response.setContentType(mimeType);							
-			response.setHeader("Content-Disposition", "filename=\"report." + outputType + "\";");
-			response.setContentLength((int) tmpFile.length());
-
-			BufferedInputStream in = new BufferedInputStream(new FileInputStream(tmpFile));
-			int b = -1;
-			while ((b = in.read()) != -1) {
-				response.getOutputStream().write(b);
+			if (tmpFile != null){
+				String outputType = "PDF";
+				String mimeType = "application/pdf";
+	
+				logger.debug("Report exported succesfully");
+	
+				HttpServletResponse response = getHttpResponse();
+				response.setContentType(mimeType);							
+				response.setHeader("Content-Disposition", "filename=\"report." + outputType + "\";");
+				response.setContentLength((int) tmpFile.length());
+	
+				BufferedInputStream in = new BufferedInputStream(new FileInputStream(tmpFile));
+				int b = -1;
+				while ((b = in.read()) != -1) {
+					response.getOutputStream().write(b);
+				}
+				response.getOutputStream().flush();
+				in.close();
 			}
-			response.getOutputStream().flush();
-			in.close();
 			logger.debug("OUT");
 
 
@@ -167,18 +166,8 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 			logger.error("An exception has occured", e);
 			//throw new Exception(e);
 		} finally {
-
-			tmpFile.delete();
-
+			if (tmpFile != null)
+				tmpFile.delete();
 		}
-
-
-
-
-
-
 	}
-
-
-
 }
