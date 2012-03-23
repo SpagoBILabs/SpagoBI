@@ -14,14 +14,11 @@ package it.eng.spagobi.engines.console.services;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.console.ConsoleEngineConfig;
 import it.eng.spagobi.engines.console.ConsoleEngineInstance;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -58,6 +55,7 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 	public static String ROWS_LIMIT = "ds_rowsLimit";
 	public static String LIMIT_SS = "ds_limitSS";
 	public static String MEMORY_PAGINATION = "ds_memoryPagination";
+	public static String TOTAL_RESULT = "TOTAL_RESULT";
 	
 	// logger component
 	private static Logger logger = Logger.getLogger(GetConsoleDataAction.class);
@@ -129,6 +127,11 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 				rowsLimit = -1; //serverSide 
 				limit = limitSS;
 			}
+			int totalResults = this.getDataSetTotalResult(dataSet);
+			if (totalResults != -1) {
+				// total results was already loaded, no need to recalculate it
+				dataSet.setCalculateResultNumberOnLoad(false);
+			}
 			
 			dataSet.loadData(start, limit, rowsLimit);
 			
@@ -136,12 +139,23 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
 			
+			Object resultNumber = dataStore.getMetaData().getProperty("resultNumber");
+			if (resultNumber != null) {
+				this.setDataSetTotalResult(dataSet, (Integer) resultNumber);
+			}
+			
 			JSONObject results = new JSONObject();
 			try {
 				JSONDataWriter writer = new JSONDataWriter();
+				if (totalResults != -1) {
+					// if total result was previously loaded, set this information into dataStore
+					dataStore.getMetaData().setProperty("resultNumber", totalResults);
+				}
 				
-				Object resultNumber = dataStore.getMetaData().getProperty("resultNumber");
-				if(resultNumber == null) dataStore.getMetaData().setProperty("resultNumber", new Integer((int)dataStore.getRecordsCount()));
+				resultNumber = dataStore.getMetaData().getProperty("resultNumber");
+				if (resultNumber == null) {
+					dataStore.getMetaData().setProperty("resultNumber", new Integer((int)dataStore.getRecordsCount()));
+				}
 				JSONObject dataSetJSON = (JSONObject)writer.write(dataStore);				
 				results = dataSetJSON;
 			} catch (Throwable e) {
@@ -161,6 +175,31 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 		}
 	}
 	
+	private void setDataSetTotalResult(IDataSet dataSet, Integer resultNumber) {
+		logger.debug("IN");
+		String key = this.getDataSetTotalResultKeyName(dataSet);
+		this.setAttributeInSession(key, resultNumber);
+		logger.debug("OUT");
+	}
+
+	private String getDataSetTotalResultKeyName(IDataSet dataSet) {
+		String key = dataSet.getSignature() + "_" + TOTAL_RESULT;
+		return key;
+	}
+
+	private int getDataSetTotalResult(IDataSet dataSet) {
+		logger.debug("IN");
+		int toReturn = -1;
+		String key = this.getDataSetTotalResultKeyName(dataSet);
+		Object obj = this.getAttributeFromSession(key);
+		if (obj != null) {
+			Integer integer = (Integer) obj;
+			toReturn = integer.intValue();
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
 	private IDataSet getDataSet(String label) {
 		IDataSet dataSet;
 		DataSetServiceProxy datasetProxy;
