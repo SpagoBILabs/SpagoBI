@@ -80,3 +80,5 @@ INSERT INTO SBI_EXPORTERS (ENGINE_ID,DOMAIN_ID,DEFAULT_VALUE)
 	(SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD = 'EXPORT_TYPE' AND VALUE_CD = 'JPG'), 
 	true);
 commit;
+UPDATE SBI_ENGINES SET MAIN_URL = '/SpagoBIConsoleEngine/servlet/AdapterHTTP', DRIVER_NM = 'it.eng.spagobi.engines.drivers.console.ConsoleDriver' WHERE LABEL = 'ConsoleEngine';
+COMMIT;
