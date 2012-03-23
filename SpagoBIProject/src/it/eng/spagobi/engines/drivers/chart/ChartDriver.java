@@ -16,7 +16,6 @@ import it.eng.spago.base.SessionContainer;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -26,14 +25,11 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.EngineURL;
-import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
+import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 import it.eng.spagobi.utilities.assertion.Assert;
 
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -49,7 +45,7 @@ import org.json.JSONObject;
 /**
  * Driver Implementation (IEngineDriver Interface) for Chart External Engine. 
  */
-public class ChartDriver extends AbstractDriver implements IEngineDriver {
+public class ChartDriver extends GenericDriver {
 	
 	static private Logger logger = Logger.getLogger(ChartDriver.class);
 	 
@@ -71,16 +67,8 @@ public class ChartDriver extends AbstractDriver implements IEngineDriver {
 		logger.debug("IN");
 		
 		try {
-			Assert.assertNotNull(analyticalDocument, "Input parameter [analyticalDocument] cannot be null");
-			Assert.assertTrue((analyticalDocument instanceof BIObject), "Input parameter [analyticalDocument] cannot be an instance of [" + analyticalDocument.getClass().getName()+ "]");
-			
-			biObject = (BIObject)analyticalDocument;
-			
-			parameters = new Hashtable();
-			parameters = getRequestParameters(biObject);
-			parameters = applySecurity(parameters, profile);
-			parameters = addDocumentParametersInfo(parameters, biObject);
-			parameters = applyService(parameters, biObject);
+			parameters = super.getParameterMap(analyticalDocument, profile, roleName);
+			parameters = applyService(parameters, null);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -99,154 +87,9 @@ public class ChartDriver extends AbstractDriver implements IEngineDriver {
 	 * 
 	 * @return Map The map of the execution call parameters
 	 */
-	public Map getParameterMap(Object analyticalDocument, Object analyticalDocumentSubObject, IEngUserProfile profile, String roleName) {
+	public Map getParameterMap(Object analyticalDocument, Object analyticalDocumentSubObject, IEngUserProfile profile, String roleName) {		
+		return super.getParameterMap(analyticalDocument, analyticalDocumentSubObject, profile, roleName);	
 		
-		Map parameters;
-		BIObject biObject;
-		SubObject subObject;
-		
-		logger.debug("IN");
-		
-		try{
-			Assert.assertNotNull(analyticalDocument, "Input parameter [analyticalDocument] cannot be null");
-			Assert.assertTrue((analyticalDocument instanceof BIObject), "Input parameter [analyticalDocument] cannot be an instance of [" + analyticalDocument.getClass().getName()+ "]");
-			biObject = (BIObject)analyticalDocument;
-			
-			if(analyticalDocumentSubObject == null) {
-				logger.warn("Input parameter [subObject] is null");
-				return getParameterMap(analyticalDocument, profile, roleName);
-			}				
-			Assert.assertTrue((analyticalDocumentSubObject instanceof SubObject), "Input parameter [subObjectDetail] cannot be an instance of [" + analyticalDocumentSubObject.getClass().getName()+ "]");
-			subObject = (SubObject) analyticalDocumentSubObject;
-						
-			parameters = getRequestParameters(biObject);
-			
-			parameters.put("nameSubObject",  subObject.getName() != null? subObject.getName(): "" );
-			parameters.put("descriptionSubObject", subObject.getDescription() != null? subObject.getDescription(): "");
-			parameters.put("visibilitySubObject", subObject.getIsPublic().booleanValue()?"Public":"Private" );
-			parameters.put("subobjectId", subObject.getId());
-			
-			parameters = applySecurity(parameters, profile);
-			parameters = addDocumentParametersInfo(parameters, biObject);
-			parameters = applyService(parameters, biObject);
-			parameters.put("isFromCross", "false");
-		
-		} finally {
-			logger.debug("OUT");
-		}
-		return parameters;
-		
-	}
-	
-	/**
-	 * Adds a system parameter contaning info about document parameters (url name, label, type)
-	 * @param biobject The BIObject under execution
-	 * @param map The parameters map
-	 * @return the modified map with the new parameter
-	 */
-    private Map addDocumentParametersInfo(Map map, BIObject biobject) {
-    	logger.debug("IN");
-    	JSONArray parametersJSON = new JSONArray();
-    	try {
-	    	Locale locale = getLocale();
-			List parameters = biobject.getBiObjectParameters();
-			if (parameters != null && parameters.size() > 0) {
-				Iterator iter = parameters.iterator();
-				while (iter.hasNext()) {
-					BIObjectParameter biparam = (BIObjectParameter) iter.next();
-					JSONObject jsonParam = new JSONObject();
-					jsonParam.put("id", biparam.getParameterUrlName());
-					IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-					//String interLabel = msgBuilder.getUserMessage(biparam.getLabel(), SpagoBIConstants.DEFAULT_USER_BUNDLE, locale);
-					String interLabel = msgBuilder.getI18nMessage(locale, biparam.getLabel());
-					jsonParam.put("label", interLabel);
-					jsonParam.put("type", biparam.getParameter().getType());
-					parametersJSON.put(jsonParam);
-				}
-			}
-    	} catch (Exception e) {
-    		logger.error("Error while adding document parameters info", e);
-    	}
-    	map.put("SBI_DOCUMENT_PARAMETERS", parametersJSON.toString());
-    	logger.debug("OUT");
-		return map;
-	}
-
-	/**
-     * Starting from a BIObject extracts from it the map of the paramaeters for the
-     * execution call
-     * @param biObject BIObject to execute
-     * @return Map The map of the execution call parameters
-     */    
-	private Map getRequestParameters(BIObject biObject) {
-		logger.debug("IN");
-		
-		Map parameters;
-		ObjTemplate template;
-		IBinContentDAO contentDAO;
-		byte[] content;
-		
-		logger.debug("IN");
-		
-		parameters = null;
-		
-		try {		
-			parameters = new Hashtable();
-			template = this.getTemplate(biObject);
-			
-			try {
-				contentDAO = DAOFactory.getBinContentDAO();
-				Assert.assertNotNull(contentDAO, "Impossible to instantiate contentDAO");
-				
-				content = contentDAO.getBinContent(template.getBinId());		    
-				Assert.assertNotNull(content, "Template content cannot be null");
-			} catch (Throwable t){
-				throw new RuntimeException("Impossible to load template content for document [" + biObject.getLabel()+ "]", t);
-			}
-					
-			appendRequestParameter(parameters, "document", biObject.getId().toString());
-			appendAnalyticalDriversToRequestParameters(biObject, parameters);
-			addBIParameterDescriptions(biObject, parameters);
-		} finally {
-			logger.debug("OUT");
-		}
-		
-		return parameters;
-	} 
-	
-	
-	
-    /**
-     * Add into the parameters map the BIObject's BIParameter names and values
-     * @param biobj BIOBject to execute
-     * @param pars Map of the parameters for the execution call  
-     * @return Map The map of the execution call parameters
-     */
-	private Map appendAnalyticalDriversToRequestParameters(BIObject biobj, Map pars) {
-		logger.debug("IN");
-		
-		if(biobj==null) {
-			logger.warn("BIObject parameter null");	    
-		    return pars;
-		}
-		
-		ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
-		if(biobj.getBiObjectParameters() != null){
-			BIObjectParameter biobjPar = null;
-			for(Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();){
-				try {
-					biobjPar = (BIObjectParameter)it.next();									
-					String value = parValuesEncoder.encode(biobjPar);
-					pars.put(biobjPar.getParameterUrlName(), value);
-					logger.debug("Add parameter:"+biobjPar.getParameterUrlName()+"/"+value);
-				} catch (Exception e) {
-					logger.error("Error while processing a BIParameter",e);
-				}
-			}
-		}
-		
-		logger.debug("OUT");
-  		return pars;
 	}
 	
 	 /**
@@ -261,48 +104,12 @@ public class ChartDriver extends AbstractDriver implements IEngineDriver {
  	 */
     public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
 	throws InvalidOperationRequest {
-    	
-    	EngineURL engineURL;
-    	BIObject obj;
-    	String documentId;
-    	Engine engine;
-    	String url;
-    	HashMap parameters;
-    	
-    	logger.debug("IN");
-    	
-    	try {
-	    	obj = null;			
-			try {
-				obj = (BIObject) biobject;
-			} catch (ClassCastException cce) {
-				logger.error("The input object is not a BIObject type", cce);
-				return null;
-			}
-			
-			documentId = obj.getId().toString();
-			engine = obj.getEngine();
-			url = engine.getUrl();
-			//url = url.replaceFirst("/servlet/AdapterHTTP", "");
-			//url += "/templateBuilder.jsp";
-				
-			parameters = new HashMap();
-			parameters.put("document", documentId);
-			parameters.put(PARAM_SERVICE_NAME, "FORM_ENGINE_TEMPLATE_BUILD_ACTION");
-			parameters.put(PARAM_NEW_SESSION, "TRUE");
-			parameters.put(PARAM_MODALITY, "EDIT");
-			applySecurity(parameters, profile);
-			
-			engineURL = new EngineURL(url, parameters);
-    	} finally {
-			logger.debug("OUT");
-		}
-    	
-		return engineURL;
+    	logger.warn("Function not implemented");
+    	throw new InvalidOperationRequest();
     }
 
     /**
-     * Function not implemented. This method should not be called
+     * Function not implemented. Thid method should not be called
      * 
      * @param biobject  The BIOBject to edit
      * @param profile the profile
@@ -313,48 +120,10 @@ public class ChartDriver extends AbstractDriver implements IEngineDriver {
      */
     public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
 	throws InvalidOperationRequest {
-    	
-    	EngineURL engineURL;
-    	BIObject obj;
-    	String documentId;
-    	Engine engine;
-    	String url;
-    	HashMap parameters;
-    	
-    	logger.debug("IN");
-    	
-    	try {
-	    	obj = null;			
-			try {
-				obj = (BIObject) biobject;
-			} catch (ClassCastException cce) {
-				logger.error("The input object is not a BIObject type", cce);
-				return null;
-			}
-			
-			documentId = obj.getId().toString();
-			engine = obj.getEngine();
-			url = engine.getUrl();
-			//url = url.replaceFirst("/servlet/AdapterHTTP", "");
-			//url += "/templateBuilder.jsp";
-				
-			parameters = new HashMap();
-			parameters.put("document", documentId);
-			parameters.put(PARAM_SERVICE_NAME, "FORM_ENGINE_TEMPLATE_BUILD_ACTION");
-			parameters.put(PARAM_NEW_SESSION, "TRUE");
-			parameters.put(PARAM_MODALITY, "NEW");
-			applySecurity(parameters, profile);
-			
-			engineURL = new EngineURL(url, parameters);
-    	} finally {
-			logger.debug("OUT");
-		}
-    	
-		return engineURL;
+    	logger.warn("Function not implemented");
+    	throw new InvalidOperationRequest();
     }
 
-    
-    
     private final static String PARAM_SERVICE_NAME = "ACTION_NAME";
     private final static String PARAM_NEW_SESSION = "NEW_SESSION";
     private final static String PARAM_MODALITY = "MODALITY";
@@ -365,6 +134,7 @@ public class ChartDriver extends AbstractDriver implements IEngineDriver {
 		logger.debug("IN");
 		
 		try {
+			//template = getTemplate(biObject);
 			Assert.assertNotNull(parameters, "Input [parameters] cannot be null");
 			//at the moment the initial aztion_name is fixed for extJS... in the future it will be set
 			//by the template content (firstTag EXTCHART,...)
@@ -423,12 +193,6 @@ public class ChartDriver extends AbstractDriver implements IEngineDriver {
 			logger.debug("OUT");
 		}	
 	}
-    
-    private void appendRequestParameter(Map parameters, String pname, String pvalue) {
-		parameters.put(pname, pvalue);
-		logger.debug("Added parameter [" + pname + "] with value [" + pvalue + "] to request parameters list");
-	}
-    
-    
+ 
 }
 
