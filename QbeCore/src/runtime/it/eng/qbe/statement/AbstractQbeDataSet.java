@@ -57,6 +57,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	protected boolean abortOnOverflow;	
 	protected Map bindings;
 	protected Map userProfileAttributes;
+	private boolean calculateResultNumberOnLoad = true;
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(AbstractQbeDataSet.class);
@@ -518,6 +519,15 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	public void setMetadata(IMetaData metadata) {
 		// TODO Auto-generated method stub
 
+	}
+	
+
+	public boolean isCalculateResultNumberOnLoadEnabled() {
+		return calculateResultNumberOnLoad;
+	}
+
+	public void setCalculateResultNumberOnLoad(boolean enabled) {
+		calculateResultNumberOnLoad = enabled;
 	}
 
 }

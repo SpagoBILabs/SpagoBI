@@ -49,7 +49,6 @@ public class HQLDataSet extends AbstractQbeDataSet {
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(HQLDataSet.class);
 
-
 	public HQLDataSet(HQLStatement statement) {
 		super(statement);
 
@@ -58,8 +57,8 @@ public class HQLDataSet extends AbstractQbeDataSet {
 	public void loadData(int offset, int fetchSize, int maxResults)  {
 		Session session = null;
 		org.hibernate.Query hibernateQuery;
-		int resultNumber;
-		boolean overflow;
+		int resultNumber = -1;
+		boolean overflow = false;
 
 		try{		
 			session = ((IHibernateDataSource)statement.getDataSource()).getHibernateSessionFactory().openSession();
@@ -73,9 +72,11 @@ public class HQLDataSet extends AbstractQbeDataSet {
 			// execute query
 			hibernateQuery = session.createQuery( statement.getQueryString() );
 
-			resultNumber = getResultNumber(hibernateQuery, session);
-			logger.info("Number of fetched records: " + resultNumber + " for query " + statement.getQueryString());
-			overflow = (maxResults > 0) && (resultNumber >= maxResults);
+			if (this.isCalculateResultNumberOnLoadEnabled()) {
+				resultNumber = getResultNumber(hibernateQuery, session);
+				logger.info("Number of fetched records: " + resultNumber + " for query " + statement.getQueryString());
+				overflow = (maxResults > 0) && (resultNumber >= maxResults);
+			}
 
 			List result = null;
 
@@ -95,7 +96,9 @@ public class HQLDataSet extends AbstractQbeDataSet {
 			}	
 
 			dataStore = toDataStore(result);
-			dataStore.getMetaData().setProperty("resultNumber", resultNumber);			
+			if (this.isCalculateResultNumberOnLoadEnabled()) {
+				dataStore.getMetaData().setProperty("resultNumber", resultNumber);
+			}
 
 			if(hasDataStoreTransformer()) {
 				getDataStoreTransformer().transform(dataStore);
@@ -207,7 +210,5 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		}
 
 	}
-
-
 
 }

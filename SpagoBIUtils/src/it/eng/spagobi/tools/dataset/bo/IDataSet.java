@@ -148,6 +148,10 @@ public interface IDataSet {
 	public IDataStore getDomainValues(String fieldName, 
             Integer start, Integer limit, IDataStoreFilter filter);
 	
-	public IDataStore decode(IDataStore datastore); 
+	public IDataStore decode(IDataStore datastore);
+	
+	boolean isCalculateResultNumberOnLoadEnabled();
+	
+	void setCalculateResultNumberOnLoad(boolean enabled); 
 	
 }

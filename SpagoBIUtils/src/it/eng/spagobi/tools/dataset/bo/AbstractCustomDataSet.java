@@ -243,4 +243,12 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 		return codes;
 	}
 	
+	public boolean isCalculateResultNumberOnLoadEnabled() {
+		return true;
+	}
+
+	public void setCalculateResultNumberOnLoad(boolean enabled) {
+		
+	}
+	
 }
