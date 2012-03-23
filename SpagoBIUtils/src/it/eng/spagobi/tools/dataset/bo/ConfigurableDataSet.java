@@ -37,6 +37,7 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 	IDataStore dataStore;
 	protected boolean abortOnOverflow;	
 	protected Map bindings;
+	private boolean calculateResultNumberOnLoad = true;
 
 	Object query;	
 
@@ -94,7 +95,9 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 			String stm = querableBehaviour.getStatement();
 			stm = stm.replaceAll("''", "'");
 			dataProxy.setStatement(stm);	
-		} 
+		}
+		
+		dataProxy.setCalculateResultNumberOnLoad(this.isCalculateResultNumberOnLoadEnabled());
 
 		dataStore = dataProxy.load(dataReader); 
 
@@ -221,6 +224,14 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 	public IDataStore decode(
 			IDataStore datastore) {
 		return datastore;
+	}
+
+	public boolean isCalculateResultNumberOnLoadEnabled() {
+		return calculateResultNumberOnLoad;
+	}
+
+	public void setCalculateResultNumberOnLoad(boolean enabled) {
+		calculateResultNumberOnLoad = enabled;
 	}
 
 }

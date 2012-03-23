@@ -26,7 +26,6 @@ import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -72,7 +71,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 		javax.persistence.Query jpqlQuery;
 		boolean overflow = false;
-		int resultNumber;
+		int resultNumber = -1;
 		it.eng.qbe.query.Query query = this.statement.getQuery();
 		Map params = this.getParamsMap();
 		if (params != null && !params.isEmpty()) {
@@ -86,9 +85,12 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			throw new RuntimeException("Impossible to compile query statement [" + statementStr + "]", t);
 		}
 			
-		resultNumber = getResultNumber(statementStr, jpqlQuery, entityManager);
-		logger.info("Number of fetched records: " + resultNumber + " for query " + statement.getQueryString());
-		overflow = (maxResults > 0) && (resultNumber >= maxResults);
+		if (this.isCalculateResultNumberOnLoadEnabled()) {
+			resultNumber = getResultNumber(statementStr, jpqlQuery, entityManager);
+			logger.info("Number of fetched records: " + resultNumber + " for query " + statement.getQueryString());
+			overflow = (maxResults > 0) && (resultNumber >= maxResults);
+		}
+
 
 		List result = null;
 
@@ -116,7 +118,10 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		}	
 
 		dataStore = toDataStore(result);
-		dataStore.getMetaData().setProperty("resultNumber", resultNumber);	
+		
+		if (this.isCalculateResultNumberOnLoadEnabled()) {
+			dataStore.getMetaData().setProperty("resultNumber", resultNumber);
+		}
 				
 		if(hasDataStoreTransformer()) {
 			getDataStoreTransformer().transform(dataStore);
@@ -239,8 +244,5 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			return null;
 		}
 	}
-
-
-
 
 }
