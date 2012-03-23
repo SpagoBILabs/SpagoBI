@@ -19,9 +19,9 @@ app.views.BottomToolbar = Ext.extend(Ext.Toolbar,
 				var par = this.parameters;
 
 				this.docParams = new Ext.Button( {
-					title : 'Parametri',
+					title : 'Parameters',
 					iconCls : 'compose',
-					text : 'Parametri',
+					text : 'Parameters',
 					scope : this,
 					listeners : {
 						scope : this,

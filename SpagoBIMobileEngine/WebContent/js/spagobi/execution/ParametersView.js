@@ -61,9 +61,9 @@ app.views.ParametersView = Ext.extend(
 						        	 }
 						         },
 						         {
-						        	 title : 'Esegui',
+						        	 title : 'Execute',
 						        	 iconCls : 'settings',
-						        	 text : 'Esegui',
+						        	 text : 'Execute',
 						        	 handler : function() {
 						        		 var executionInstance = app.controllers.parametersController.executionInstance;
 						        		 executionInstance.PARAMETERS = app.controllers.parametersController.getFormState();
