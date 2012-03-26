@@ -186,8 +186,10 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
 			Sbi.widgets.LookupField.superclass.setValue.call(this, displayText);
 		} else {
 			this.xvalue = {};
-			this.xvalue[v] = v;
-			Sbi.widgets.LookupField.superclass.setValue.call(this, v);
+			if(v != undefined){
+				this.xvalue[v] = v;
+				Sbi.widgets.LookupField.superclass.setValue.call(this, v);
+			}
 		}
 		
 		this.fireEvent('select', this, v);
