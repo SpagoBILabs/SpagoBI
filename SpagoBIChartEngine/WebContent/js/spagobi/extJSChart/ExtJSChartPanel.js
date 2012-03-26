@@ -107,6 +107,10 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 	        		    	cat = item.value[0]; 
 	        		    	value = item.value[1];     
 	        		     	break;
+	        		     case 'series.column':
+		        		    	cat = item.value[0]; 
+		        		    	value = item.value[1];     
+		        		     	break;
 	        		     case 'series.line':
 	        		    	cat = storeItem.get(item.series.xField);
 	        		    	value = storeItem.get(item.series.yField);        
@@ -116,7 +120,8 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 		        		    	value = storeItem.get(item.series.field);        
 		        		     	break;	
 	        		     case 'series.gauge':
-		        		    	cat = storeItem.get(item.series.label.field);
+		        		    	//cat = storeItem.get(item.series.label.field);
+		        		    	cat = " ";
 		        		    	value = storeItem.get(item.series.field);        
 		        		     	break;	
 	        		     case 'series.radar':
@@ -136,7 +141,7 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 	        		     	value = undefined;
 	        		     	break;      
 	        		 }
-	        		 if (cat && value){
+	        		 if (cat != undefined && value != undefined){
 	        			 var text = cat + ': ' + value ; //default
 	        			 var tip = item.series.tips.text;	        			 
 	        			 if (tip){
