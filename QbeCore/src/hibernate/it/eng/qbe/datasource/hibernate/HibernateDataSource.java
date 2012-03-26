@@ -201,7 +201,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	}
 	
 	protected Configuration buildEmptyConfiguration() {
-		Configuration cfg = null;
+Configuration cfg = null;
 		
 		cfg = new Configuration();
 		
@@ -209,11 +209,15 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		
 		if(connection.isJndiConncetion()) {
 			cfg.setProperty("hibernate.connection.datasource", connection.getJndiName());
+			cfg.setProperty("hibernate.validator.apply_to_ddl", "false");
+			cfg.setProperty("hibernate.validator.autoregister_listeners", "false");
 		} else {
 			cfg.setProperty("hibernate.connection.url", connection.getUrl());
 			cfg.setProperty("hibernate.connection.password", connection.getPassword());
 			cfg.setProperty("hibernate.connection.username", connection.getUsername());
 			cfg.setProperty("hibernate.connection.driver_class", connection.getDriverClass());
+			cfg.setProperty("hibernate.validator.apply_to_ddl", "false");
+			cfg.setProperty("hibernate.validator.autoregister_listeners", "false");
 		}
 				
 		cfg.setProperty("hibernate.dialect", connection.getDialect());
