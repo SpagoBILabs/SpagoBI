@@ -47,6 +47,8 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
     chart: null,
     title: null,
     subtitle: null,
+    width: null,
+    height: null,
     
     constructor: function(config) {
     	var defaultSettings = {
@@ -77,6 +79,8 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 	   	//defines dimensions 
 	   	config.width = (!config.width)?500:parseInt(config.width);
 	   	config.height = ((!config.height)?500:parseInt(config.height));
+	   	this.width = config.width;
+	   	this.height = config.height;
 	   	
 	   	//updates theme
 	   	var themeConfig = this.getThemeConfiguration(config);

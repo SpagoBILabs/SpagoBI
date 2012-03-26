@@ -144,7 +144,9 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 			function exportChart(exportType) {								
 			  	var top = 0,
 				  	width = 0,
-				  	groupIsCreated = false;
+				  	groupIsCreated = false,
+				  	svgTitle = "",
+				  	svgSubtitle = "";
 				  
 			  	var chart = chartPanel.chart;
 	          	var svg = chart.save({type:'image/svg'});	          	
@@ -152,9 +154,8 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 
 	          	var tmpSvg = svg.replace("<svg","<g transform='translate(10,50)'");
 				tmpSvg = tmpSvg.replace("</svg>", "</g>");
+				var tmpHeight = chartPanel.height;			
 				
-				svg = "<svg height='100%' width='100%' version='1.1' xmlns='http://www.w3.org/2000/svg'>";
-				svg += tmpSvg;
 	          	
 	          	//adds title and subtitle
 	          	if (chartPanel.title){
@@ -163,14 +164,20 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	          		//var titleX = (tmpTitle.offsetWidth-chartPanel.title.text.length)/2;
 	          		var titleStyle = chartPanel.title.style;
 	          		titleStyle = titleStyle.replace("color","fill");
-	          		svg += "<text y='25' style='" + titleStyle +"'>"+chartPanel.title.text+"</text>";
+	          		svgTitle += "<text y='25' style='" + titleStyle +"'>"+chartPanel.title.text+"</text>";
+	          		tmpHeight += 100;
 	          	}
 	          	if (chartPanel.subtitle){
 	          		var subtitleStyle = chartPanel.subtitle.style;
 	          		subtitleStyle = subtitleStyle.replace("color","fill");
-	          		svg += "<text y='45' style='" + subtitleStyle +"'>"+chartPanel.subtitle.text+"</text>";	          		
+	          		svgSubtitle += "<text y='45' style='" + subtitleStyle +"'>"+chartPanel.subtitle.text+"</text>";
+	          		tmpHeight += 100;
 	          	}
 	          				
+	          	svg = "<svg height='"+tmpHeight+"px' width='100%' version='1.1' xmlns='http://www.w3.org/2000/svg'>";
+				svg += tmpSvg;
+				svg += svgTitle;
+				svg += svgSubtitle;
 				svg += "</svg>";
 	          		          	
 	          	params.type = exportType;
