@@ -127,6 +127,7 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 			}
 			aSession.saveOrUpdate(obj);
 			tx.commit();
+			
 		} catch (Exception e) {
 
 			if ( tx != null ) {
