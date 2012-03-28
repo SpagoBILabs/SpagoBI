@@ -433,6 +433,10 @@ public class DocumentCompositionConfiguration {
 				
 				
 				BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(attributeValue);
+				if (obj == null){
+					logger.error ("Document with label " + attributeValue +  " doesn't exist in SpagoBI. Check the label!");
+					continue;
+				}
 				String typeCD = obj.getBiObjectTypeCode();
 				document.setType(typeCD);
 				
