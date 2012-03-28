@@ -73,10 +73,6 @@ public class HQL2SQLStatementRewriter {
 		ASTQueryTranslatorFactory astQueryTranslatorFactory = new ASTQueryTranslatorFactory();
 		QueryTranslator queryTranslator = null; 
 		
-		EntityPersister persister = sessionFactoryImplementor.getEntityPersister( "it.eng.spagobi.meta.VBufferAntit" );
-		String tableName = (( Joinable )persister).getTableName();
-		
-		
 		Class[] parsTypes = null;
 
 		Method createQueryTranslatorMethod = null;
