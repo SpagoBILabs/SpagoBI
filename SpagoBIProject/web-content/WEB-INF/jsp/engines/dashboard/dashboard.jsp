@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="java.net.URLEncoder"%>
 
 
-<% 
+<%
    SourceBean sbModuleResponse = (SourceBean) aServiceResponse.getAttribute("ExecuteBIObjectModule");
    ExecutionInstance instanceO = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
 
@@ -153,8 +153,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String multichart = (confParameters.get("multichart")==null)?"false":(String)confParameters.get("multichart");
 	String orientation = (confParameters.get("orientation_multichart")==null)?"vertical":(String)confParameters.get("orientation_multichart");
 	String legend = (confParameters.get("legend")==null)?"true":(String)confParameters.get("legend");
-	String displayTitle = (confParameters.get("displayTitleBar")==null)?"false":(String)confParameters.get("displayTitleBar");
+	//String displayTitle = (confParameters.get("displayTitleBar")==null)?"false":(String)confParameters.get("displayTitleBar");
 	String title =(confParameters.get("title")==null)?"":(String)confParameters.get("title");	
+	String styleTitle = "text-align:center;font-weight:bold;";
+	styleTitle = styleTitle + "color:" + (confParameters.get("colorTitle")==null?"":(String)confParameters.get("colorTitle")) + ";";
+	styleTitle = styleTitle + "fontSize:" + (confParameters.get("sizeTitle")==null?"":(String)confParameters.get("sizeTitle")) + ";";
+	styleTitle = styleTitle + "fontStyle:" + (confParameters.get("fontTitle")==null?"":(String)confParameters.get("fontTitle")) + ";";
 	//defines radius for get dynamic height : only the last chart with the legend uses the total height; the others are riduced.
 	double radiusByWidth = (Integer.valueOf(width).intValue()-2*10)/2;
 	double radiusByHeight = (Integer.valueOf(height).intValue()-2*10)/(1+(1/4));
@@ -169,13 +173,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
    
 	if (orientation.equalsIgnoreCase("horizontal")){
 		dinHeight = String.valueOf(Integer.valueOf(height).intValue()-radius+20);
+	}
 	%>
 	<br>
+		<div align="center" ><span style="<%=styleTitle%>"><%=title%></span></div>
 		<table align="center" >
-		  <caption><%=title%></caption>
 		  <tr>
 	<%	 
-	}
+	//}
 	for (int idx = 0; idx < numCharts; idx++){
 		//add the single chart configuration (lowValue, minValue, ...)
 		Map singleDashConf = (Map)confParameters.get("dash__" + idx);
@@ -208,13 +213,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			 		dinHeight = String.valueOf(Integer.valueOf(height).intValue()-radius+20);
 				}
 		 	}
+		 	/*
 		 	if (displayTitle.equalsIgnoreCase("true")){
 		 		int heightMargin = 40;
 		 		dinHeight = String.valueOf(Double.valueOf(dinHeight).intValue()+heightMargin);
 		 		movie +="&winHeightMargin="+heightMargin;
-			}
+			}*/
 		}
-		else{
+		else{ 
 			movie = movie.replace("&recNumber="+(idx-1),"&recNumber="+idx);
 			if (multichart.equalsIgnoreCase("true")){
 				if (legend.equalsIgnoreCase("true")){
@@ -227,9 +233,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					//	dinHeight = height;
 						 dinHeight = String.valueOf(Integer.valueOf(height).intValue()+20);
 					}
+					/*
 					if (displayTitle.equalsIgnoreCase("true")){
 						movie = movie.replace("&displayTitleBar=true","&displayTitleBar=false");
-					}
+					}*/
 				}
 		 	}
 		}
