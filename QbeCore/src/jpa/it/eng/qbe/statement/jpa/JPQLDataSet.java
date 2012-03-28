@@ -163,12 +163,23 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	
 	private int getResultNumber(String statementStr, Query jpqlQuery, EntityManager entityManager) {
 		int resultNumber = 0;
+		
 		try {
+			logger.debug("Reading result number using an inline-view");
 			resultNumber = getResultNumberUsingInlineView(statementStr,entityManager);
-		} catch (Exception e) {
-			logger.warn("Error getting result number using inline view!!", e);
-			resultNumber = (jpqlQuery).getResultList().size();
+			logger.debug("Result number sucesfully read using an inline view (resultNumber=[" + resultNumber + "])");
+		} catch (Throwable t1) {
+			logger.warn("Error reading result number using inline view", t1);
+			
+			logger.debug("Reading result number executing the original query");
+			try {
+				resultNumber = (jpqlQuery).getResultList().size();
+			} catch (Throwable t2) {
+				throw new RuntimeException("Impossible to read result number");
+			}
+			logger.debug("Result number sucesfully read using the original query(resultNumber=[" + resultNumber + "])");
 		}
+		
 		return resultNumber;
 	}
 	
@@ -186,9 +197,9 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		JPQL2SQLStatementRewriter translator = new JPQL2SQLStatementRewriter(entityManager);
 		String sqlQueryString = translator.rewrite(jpqlQuery);
 		javax.persistence.Query countQuery = entityManager.createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") temp");
-
-		logger.debug("Count query prepared and parameters setted..");
-		logger.debug("Executing query..");
+		
+		logger.debug("Count query prepared and parameters setted...");
+		logger.debug("Executing query...");
 		resultNumber = ((Number)countQuery.getResultList().get(0)).intValue();
 		logger.debug("Query " + "SELECT COUNT(*) FROM (" + sqlQueryString + ")" + " executed");
 		logger.debug("Result number is " + resultNumber);

@@ -33,6 +33,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.hql.QueryTranslator;
 import org.hibernate.hql.ast.ASTQueryTranslatorFactory;
+import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.persister.entity.Joinable;
 
 /**
  * The Class HqlToSqlQueryRewriter.
@@ -66,29 +68,36 @@ public class HQL2SQLStatementRewriter {
 		
 		
 		Query hibQuery = session.createQuery(query);
-		SessionFactory sessFact = session.getSessionFactory();
-		SessionFactoryImplementor imple = (SessionFactoryImplementor) sessFact;
-		ASTQueryTranslatorFactory factory = new ASTQueryTranslatorFactory();
-		QueryTranslator trans = null; 
-		// Hibernate 3.0
+		SessionFactory sessionFactory = session.getSessionFactory();
+		SessionFactoryImplementor sessionFactoryImplementor = (SessionFactoryImplementor) sessionFactory;
+		ASTQueryTranslatorFactory astQueryTranslatorFactory = new ASTQueryTranslatorFactory();
+		QueryTranslator queryTranslator = null; 
+		
+		EntityPersister persister = sessionFactoryImplementor.getEntityPersister( "it.eng.spagobi.meta.VBufferAntit" );
+		String tableName = (( Joinable )persister).getTableName();
+		
+		
 		Class[] parsTypes = null;
-		
-		parsTypes = new Class[3];
-		
-		parsTypes[0] = String.class;
-		parsTypes[1] = Map.class;
-		parsTypes[2] = SessionFactoryImplementor.class;
-		
+
 		Method createQueryTranslatorMethod = null;
-		try{
+		try {
+			// Hibernate 3.0
+			parsTypes = new Class[3];
+			parsTypes[0] = String.class;
+			parsTypes[1] = Map.class;
+			parsTypes[2] = SessionFactoryImplementor.class;
 			
-			createQueryTranslatorMethod = factory.getClass().getMethod("createQueryTranslator", parsTypes);
+			createQueryTranslatorMethod = astQueryTranslatorFactory.getClass().getMethod("createQueryTranslator", parsTypes);
 			try{
-				trans = (QueryTranslator)createQueryTranslatorMethod.invoke(factory, new Object[]{hibQuery.getQueryString(), Collections.EMPTY_MAP, imple});
+				queryTranslator = (QueryTranslator)createQueryTranslatorMethod.invoke(astQueryTranslatorFactory, new Object[]{
+						hibQuery.getQueryString()
+						, Collections.EMPTY_MAP
+						, sessionFactoryImplementor
+				});
 			}catch (Throwable e) {
 				e.printStackTrace();
 			}
-		}catch (NoSuchMethodException e) {
+		} catch (NoSuchMethodException e) {
 			
 			parsTypes = new Class[4];
 			
@@ -98,22 +107,30 @@ public class HQL2SQLStatementRewriter {
 			parsTypes[3] = SessionFactoryImplementor.class;
 			
 			try{
-				createQueryTranslatorMethod = factory.getClass().getMethod("createQueryTranslator", parsTypes); 
+				createQueryTranslatorMethod = astQueryTranslatorFactory.getClass().getMethod("createQueryTranslator", parsTypes); 
 			
 				if (createQueryTranslatorMethod != null){
 					try{
-						trans = (QueryTranslator)createQueryTranslatorMethod.invoke(factory, new Object[]{String.valueOf(System.currentTimeMillis()), hibQuery.getQueryString(),Collections.EMPTY_MAP, imple});
+						queryTranslator = (QueryTranslator)createQueryTranslatorMethod.invoke(
+								astQueryTranslatorFactory, 
+								new Object[]{String.valueOf(
+										System.currentTimeMillis())
+										, hibQuery.getQueryString()
+										,Collections.EMPTY_MAP
+										, sessionFactoryImplementor
+								}
+						);
 					}catch (Throwable t) {
 						t.printStackTrace();
 					}
 				}
-			}catch (NoSuchMethodException ex) {
+			} catch (NoSuchMethodException ex) {
 				e.printStackTrace();
 			}
 		}
 		
-		trans.compile(new HashMap(), false);
-		sqlQuery = trans.getSQLString();
+		queryTranslator.compile(new HashMap(), false);
+		sqlQuery = queryTranslator.getSQLString();
 		
 		logger.debug("rewrite: generated SQL query: " + sqlQuery);		
 		
