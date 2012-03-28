@@ -53,7 +53,7 @@
         var actualang = -1;  
 
 
-	var clickID = 0;
+	//var clickID = 0;
 
   </script>  
 
@@ -129,7 +129,7 @@
 		
 		this.rotDisplay.sphere.setSphere(centerX,centerY,radius*innerSphereRate);
 
-		this.shadow.showShadow(centerX,centerY,radius);
+		//this.shadow.showShadow(centerX,centerY,radius);
 		
        	</method>
 
@@ -178,7 +178,7 @@
 
 	</method>
 
-<!-- ***CANVAS.DISPLAY.SHADOW*********************************************************************-->
+<!-- ***CANVAS.DISPLAY.SHADOW*********************************************************************
 	<drawview name="shadow">	        
 		<method name="showShadow" args="centerX,centerY,radius"> 
 
@@ -210,10 +210,10 @@
 		        this.stroke();
 		</method>
 
-		<method event="onclick">
+		 <method event="onclick">
 			this.setVisible(false);
-		</method>
-	</drawview>	        
+		</method> 
+	</drawview>	     -->   
 
 
 
@@ -486,7 +486,7 @@
     
     <method name="refresh" >
        	dataset.doRequest();
-       	canvas.display.timer();
+      	canvas.display.timer(); 
     </method>
 
 
@@ -496,7 +496,7 @@
           canvas.display.timer();
     </method>
 
-    <method event="onclick">
+    <!-- <method event="onclick">
 	Debug.write("clickID"+clickID);
 		<![CDATA[ 
 	      switch(clickID ++){
@@ -529,7 +529,7 @@
 			clickID =1;
 		}
 	       ]]>
-     </method>
+     </method> -->
 
      
  </drawview> <!-- **CANVAS.DISPLAY**************************************************************-->
