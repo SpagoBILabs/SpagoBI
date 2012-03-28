@@ -43,7 +43,7 @@
 	var refRate = typeof(global.refreshRate)!="undefined" ? parseInt(global.refreshRate) : 15000;
 	var numDiv = typeof(global.numOfDivisions)!="undefined" ? global.numOfDivisions : 10;
 	var appMargin = typeof(global.windowMargin)!="undefined" ? parseInt(global.windowMargin) : 10;
-	var heightMargin = typeof(global.winHeightMargin)!="undefined" ? parseInt(global.winHeightMargin) : 10;
+	//var heightMargin = typeof(global.winHeightMargin)!="undefined" ? parseInt(global.winHeightMargin) : 10;
 	var withMainDiv=typeof(global.showMainDiv)!="undefined" ? global.showMainDiv : true;
 	var withSecDiv=typeof(global.showSecDiv)!="undefined" ? global.showSecDiv : true;	
 	var withMainText=typeof(global.showMainText)!="undefined" ? global.showMainText : true;
@@ -58,11 +58,6 @@
 	var serieTitleColor = typeof(global.colorTitleSerie)!="undefined" ? global.colorTitleSerie : "blue";
 	var serieTitleSize = typeof(global.sizeTitleSerie)!="undefined" ? global.sizeTitleSerie : "12";
 	var serieTitleFont = typeof(global.fontTitleSerie)!="undefined" ? global.fontTitleSerie : "Arial";
-	var viewTitle = typeof(global.displayTitleBar)!="undefined" ? global.displayTitleBar : "false";
-	var titleText= typeof(global.title)!="undefined" ? global.title : "";
-	var titleColor= typeof(global.colorTitle)!="undefined" ? global.colorTitle : "purple";
-	var titleSize = typeof(global.sizeTitle)!="undefined" ? global.sizeTitle : "14";
-	var titleFont = typeof(global.fontTitle)!="undefined" ? global.fontTitle : "Arial";
 	
 	var ismultichart = typeof(global.multichart)!="undefined" ? global.multichart : "false";
 	var recNum = typeof(global.recNumber)!="undefined" ? parseInt(global.recNumber) : 0;
@@ -168,19 +163,14 @@
 	<!-- ORIG 
 		centerY = (appHeight-2*appMargin)-radius/4+appMargin;
 		centerX = (appWidth-2*appMargin)/2+appMargin;
-		-->
-		<!-- defines the centerY coordinate: if ther'is a title it adds the height margins -->
-		if (viewTitle != undefined &amp;&amp; viewTitle == "true")
-			centerY = appHeight-radius+heightMargin;
-		else
-			centerY = appHeight-radius+appMargin;
+		-->	
+		centerY = appHeight-radius+appMargin;
 		
 		if (valueAttributeDesc != undefined &amp;&amp; valueAttributeDesc != ""){
 			centerY = centerY - 10;
 		}
 		centerX = (appWidth-2*appMargin)/2+appMargin;
 		
-		Debug.write("heightMargin: " + heightMargin);
 		Debug.write("centerY: " + centerY);
 	    Debug.write("centerX: " + centerX);
 	
@@ -229,25 +219,6 @@
 		Debug.write(angLow*180/Math.PI);
 		Debug.write(angHigh*180/Math.PI);
 -->
-		<!-- setting general title  -->
-		Debug.write("viewTitle: " + viewTitle );
-		if (viewTitle != undefined &amp;&amp; viewTitle == "true"){
-			var titleX = centerX - (titleText.length*3.5);
-			var titleY = centerY-(radius+(titleSize*4));
-			if (10 &lt; titleY) titleY = 10;
-			new LzText(this,
-						{name:"title"
-						 ,text:titleText
-						 ,font:titleFont
-						 ,fontsize:titleSize 
-						 ,fgcolor:titleColor
-						 ,fontstyle:"bold"
-						 ,selectable:false
-						 ,y:titleY
-						 ,x:titleX
-						 });
-		}
-		
 		<!-- setting title serie -->
 		Debug.write("linkUrl: -" + linkUrl +"-");
 		if (linkUrl == undefined || linkUrl == ""){
@@ -655,12 +626,9 @@
 					       	 //force the maxvalue constant if the real value is greather. So the needle doesn't crazy!!
 					       	 if (rotation < min) {
 					       	 	rotation = min;
-					       	 	Debug.write("new rotation: " + rotation);
 					       	 }
-					       	 Debug.write("rotation: " + rotation + " - max: " + max);
 					       	 if (rotation > max) {
-					       	 	rotation = max;
-					       	 	Debug.write("new rotation: " + rotation);
+					       	 	rotation = max;					       	 
 					       	 }
 					       	 canvas.display.changeRotation(rotation, i);  	
 						     var newX = centerX - (serieName.length*3);
