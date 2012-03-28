@@ -31,6 +31,7 @@ import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.engines.InternalEngineIFace;
 import it.eng.spagobi.engines.chart.utils.DataSetAccessFunctions;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
+import it.eng.spagobi.utilities.ParametersDecoder;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -230,7 +231,9 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 			SourceBeanAttribute paramSBA = (SourceBeanAttribute) confAttrsIter.next();
 			SourceBean param = (SourceBean) paramSBA.getValue();
 			String nameParam = (String) param.getAttribute("name");
-			String valueParam = replaceParsInString((String) param.getAttribute("value"));	
+			boolean isTitle = false;
+			if (nameParam.equals("title")) isTitle = true;
+			String valueParam = replaceParsInString((String) param.getAttribute("value"), isTitle);	
 			
 			confParameters.put(nameParam, valueParam);
 	    }	
@@ -345,13 +348,14 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 	    dataParameters.put("userid", ((UserProfile)profile).getUserUniqueIdentifier());
 
 	    // create the title
+	    /*
 	    String title = "";
 	    title += obj.getName();
 	    String objDescr = obj.getDescription();
 	    if ((objDescr != null) && !objDescr.trim().equals("")) {
 	    	title += ": " + objDescr;
 	    }
-	    	
+	    */
 	    //Search if the chart has parameters
 	    /*
 		String parameters="";
@@ -407,12 +411,12 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 				try {
 					biobjPar = (BIObjectParameter)it.next();									
 					String value = parValuesEncoder.encode(biobjPar);
-          if (biobjPar!=null && biobjPar.getParameterUrlName()!=null && value!=null) {
-					 pars.put(biobjPar.getParameterUrlName(), value);
-					 logger.debug("Add parameter:"+biobjPar.getParameterUrlName()+"/"+value);
-          }  else {
-             logger.warn("NO parameter are added... something is null");
-          }
+		            if (biobjPar!=null && biobjPar.getParameterUrlName()!=null && value!=null) {
+						 pars.put(biobjPar.getParameterUrlName(), value);
+						 logger.debug("Add parameter:"+biobjPar.getParameterUrlName()+"/"+value);
+		             } else {
+		                 logger.warn("NO parameter are added... something is null");
+		             }
 				} catch (Exception e) {
 					logger.error("Error while processing a BIParameter",e);
 				}
@@ -477,7 +481,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 					SourceBean att = (SourceBean) iterator.next();
 					String name=(String)att.getAttribute("name");
 					String type=(String)att.getAttribute("type");
-					String value=replaceParsInString((String)att.getAttribute("value"));
+					String value=replaceParsInString((String)att.getAttribute("value"), false);
 
 					//looking for the parameter before into the request, then into data parameters.
 					//if the value is a dataset value it leaves the tag field $F{...}. The swf file will replace the value.
@@ -530,7 +534,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 	 * 
 	 * @return A chart that displays a value as a dial.
 	 */
-	private String replaceParsInString(String strToRep) throws Exception {
+	private String replaceParsInString(String strToRep, boolean isTitle) throws Exception {
 		logger.debug("IN");
 		
 		if (strToRep == null) return "";
@@ -541,11 +545,27 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 		int startIdx = strToRep.indexOf("$P{");
 		int endIdx = strToRep.indexOf("}");
 		
-		if (startIdx > -1 && endIdx > -1){
-			String namePar = strToRep.substring(startIdx+3, endIdx);
-			String valuePar = (String)getDataParameters().get(namePar);
-			if (valuePar != null)
+		while (startIdx != -1){
+			if (startIdx > -1 && endIdx > -1){
+				String namePar = strToRep.substring(startIdx+3, endIdx);
+				String valuePar = (getDataParameters().get(namePar)==null)?"":(String)getDataParameters().get(namePar);
+				if (isTitle){
+					//for the title replaces the % char (it's doesn't viewed) and decode a multivalue list 
+					//like a simple string list
+					ParametersDecoder decoder = new ParametersDecoder();
+				    List values = decoder.decode(valuePar);
+				    String finalValuePar = "";
+				    for (int i=0, l=values.size(); i<l; i++){
+				    	finalValuePar += (values.get(i).equals("%25"))?"" : values.get(i);				    	
+				    	if (i < l-1) finalValuePar += ", ";
+				    }
+					valuePar = finalValuePar.replaceAll("'","");				 
+				}
 				strRet = strRet.replace("$P{"+namePar+"}", valuePar);
+			}
+			strToRep = strRet; 
+			startIdx = strToRep.indexOf("$P{");
+			endIdx = strToRep.indexOf("}");
 		}
 		
 		logger.debug("String replaced: " + strRet);
@@ -615,11 +635,13 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 			if (parValue != null) confParameters.put("numChartsForRow", parValue);
 		}
 
-		//defining title and legend variables			
+		//defining title and legend variables	
+		/*
 		if (!confParameters.containsKey("displayTitleBar")){			
 			parValue = (sbRow.getAttribute("displayTitleBar")!=null)?(String)sbRow.getAttribute("displayTitleBar"):(String)sbRow.getAttribute("DISPLAYTITLEBAR");
 			if (parValue != null) confParameters.put("displayTitleBar", parValue);
 		}
+		*/
 		if (!confParameters.containsKey("title")){
 			parValue = (sbRow.getAttribute("title")!=null)?(String)sbRow.getAttribute("title"):(String)sbRow.getAttribute("TITLE");
 			if (parValue != null) confParameters.put("title", parValue);
