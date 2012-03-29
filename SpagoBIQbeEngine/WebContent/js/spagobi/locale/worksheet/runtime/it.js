@@ -17,7 +17,7 @@ Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetpanel.filterspanel.filter.qtip'
 //Sbi.worksheet.designer.WorkSheetPreviewPage
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.runtime.worksheetpreviewpage.title'] = 'Anteprima Worksheet';
-
+Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.chart.includeInTheExport']= 'Cliccare qui per includere il grafico nel processo di esportazione';
 
 //===================================================================
 //Sbi.worksheet.RuntimeSheetFiltersPanel

@@ -121,22 +121,37 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 		
 		this.addChartConfExt3(items);
 		
-		var barChartPanel = this.getChartExt3(this.chartConfig.orientation === 'horizontal', items);
-		this.on('contentclick', function(event){
-			this.byteArrays=new Array();
-			this.byteArrays.push(barChartPanel.exportPNG());		
-			this.headerClickHandler(event,null,null,barChartPanel, this.reloadJsonStoreExt3, this);
-		}, this);
 		
+		items.region = 'center';
+		var barChartPanel = this.getChartExt3(this.chartConfig.orientation === 'horizontal', items);
 	
 		//Its a workaround because if you change the display name the chart is not able to write the tooltips
         
+		var exportChartPanel  = new Ext.Panel({
+			border: false,
+			region: 'north',
+			height: 20,
+			html: '<div style=\"padding-top: 5px; padding-bottom: 5px; font: 11px tahoma,arial,helvetica,sans-serif;\">'+LN('sbi.worksheet.runtime.worksheetruntimepanel.chart.includeInTheExport')+'</div>'
+		});
+		
 		var chartConf ={
 			renderTo : this.chartDivId,
-			layout: 'fit',
+			layout: 'border',
+			bodyStyle: 'height: 100%; width: 100%;',
 			border: false,
-			items: barChartPanel
+			items: [barChartPanel,exportChartPanel]
 		};
+		
+		this.on('contentclick', function(event){
+			this.byteArrays=new Array();
+			try{
+				this.byteArrays.push(barChartPanel.exportPNG());	
+			}catch(e){}
+
+			exportChartPanel.update('');
+			this.headerClickHandler(event,null,null,barChartPanel, this.reloadJsonStoreExt3, this);
+		}, this);
+		
 		
 		new Ext.Panel(chartConf);
 

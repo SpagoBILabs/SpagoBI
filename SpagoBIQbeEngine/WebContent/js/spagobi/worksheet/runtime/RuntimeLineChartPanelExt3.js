@@ -108,24 +108,36 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 		}
 		
 		this.addChartConfExt3(items);
-			
+		items.region= 'center';
 		var lineChartPanel = new Ext.chart.LineChart(items);
 
 		var thispanel = this;
 		
+
+		var exportChartPanel  = new Ext.Panel({
+			border: false,
+			region: 'north',
+			height: 20,
+			html: '<div style=\"padding-top: 5px; padding-bottom: 5px; font: 11px tahoma,arial,helvetica,sans-serif;\">'+LN('sbi.worksheet.runtime.worksheetruntimepanel.chart.includeInTheExport')+'</div>'
+		});
+		
+		var chartConf ={
+			renderTo : this.chartDivId,
+			layout: 'border',
+			bodyStyle: 'height: 100%; width: 100%;',
+			border: false,
+			items: [lineChartPanel,exportChartPanel]
+		}
+		
 		this.on('contentclick', function(event){
 			this.byteArrays=new Array();
-			this.byteArrays.push(lineChartPanel.exportPNG());
+			try{
+				this.byteArrays.push(lineChartPanel.exportPNG());
+			}catch(e){}
+			
+			exportChartPanel.update('');
 			this.headerClickHandler(event,null,null,lineChartPanel, this.reloadJsonStoreExt3, this);
 		}, this);
-		
-
-		var chartConf = {
-				renderTo : this.chartDivId,
-				layout: 'fit',
-				border: false,
-				items: lineChartPanel
-			};
 
 		new Ext.Panel(chartConf);
 	}

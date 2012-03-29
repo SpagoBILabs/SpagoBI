@@ -115,8 +115,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		        success : function(response, opts) {
 		        	
 		        	this.dataContainerObject = Ext.util.JSON.decode( response.responseText );
+		        	this.update(' <div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>');
 		        	if (this.isEmpty()) {
-		        		this.update(' <div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>');
+//		        		this.update(' <div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>');
 		    			Ext.Msg.show({
 		 				   title: LN('sbi.qbe.messagewin.info.title'),
 		 				   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
