@@ -73,19 +73,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 	chartDivId : null
 	, chart : null
 	, chartConfig : null // mandatory object to be passed as a property of the constructor input object. The template is:
-//							template: {
-//								showvalues: true, 
-//								showlegend: true,
-//								category: {id:"it.eng.spagobi.SalesFact1998:product(product_id):productClass(product_class_id):productFamily", alias:"Product Family", funct:"NONE", iconCls:"attribute", nature:"attribute"},
-//								series: [
-//								    {id:"it.eng.spagobi.SalesFact1998:storeCost", alias:"Store Cost", funct:"SUM", iconCls:"measure", nature:"measure", seriename:"Store Cost", color:"#FFFFCC"}, 
-//								    {id:"it.eng.spagobi.SalesFact1998:storeSales", alias:"Store Sales", funct:"SUM", iconCls:"measure", nature:"measure", seriename:"Store Sales", color:"#FFBBAA"}
-//								],
-//							    colors: ['#4572A7', '#DB843D', '#56AFC7', '#80699B', '#89A54E', '#AA4643', '#50B432'
-//									    , '#1EA6E0', '#DDDF00', '#ED561B', '#64E572', '#9C9C9C', '#4EC0B1', "#C3198E"
-//										, "#6B976B", "#B0AF3D", "#E7913A", "#82AEE9", "#7C3454", "#A08C1F", "#84D3D1", "#586B8A", "#B999CC"]
-//							}
-	
+
 	
 	, init : function () {
 		this.loadChartData({'rows':[this.chartConfig.category],'measures':this.chartConfig.series});
@@ -139,9 +127,17 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 			
 			var chartPanel =  new Ext.chart.PieChart(itemChart);
 			
+			
+			var exportChartPanel  = new Ext.Panel({
+				border: false,
+				
+				
+				html: '<div style=\"padding-top: 5px; padding-bottom: 5px; font: 11px tahoma,arial,helvetica,sans-serif;\">'+LN('sbi.worksheet.runtime.worksheetruntimepanel.chart.includeInTheExport')+'</div>'
+			});
+			
 			var chartContainer = new Ext.Panel({
 				border: false,
-				items: [titlePanel,chartPanel]
+				items: [exportChartPanel, titlePanel,chartPanel]
 			});
 			
 			items.push(chartContainer);
@@ -150,7 +146,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 			}, this);
 			
 			chartContainer.on('contentclick', function(event){
-				this.byteArrays.push(chartPanel.exportPNG());		
+				try{
+					this.byteArrays.push(chartPanel.exportPNG());	
+				}catch(e){}
+			
+				exportChartPanel.update('');
 			}, this);
 		}
 		

@@ -29,6 +29,7 @@ Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.maxselect
 //Sbi.worksheet.runtime.xxxChart
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.chart.visibleseries']= 'Visible series';
+Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.chart.includeInTheExport']= 'Click here to include the chart in the exportation process';
 
 
 //===========================================================
