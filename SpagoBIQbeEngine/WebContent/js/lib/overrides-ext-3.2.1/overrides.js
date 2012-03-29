@@ -118,3 +118,88 @@ Ext.override(Ext.chart.Chart, {
         return r;
     }
 });
+
+/* =============================================================================
+* Added by Alberto Ghedin (July 2010)
+* In Ext 3.2.1 the method onFirstFocus add the check if(s!=undefined && s!=null)
+* In Ext 3.2.1 the method updateToolbar add the try catch conditions
+============================================================================= */
+Ext.override(Ext.form.HtmlEditor, {
+
+	onFirstFocus : function(){
+	    this.activated = true;
+	    this.disableItems(this.readOnly);
+	    if(Ext.isGecko){ // prevent silly gecko errors
+	        this.win.focus();
+	        var s = this.win.getSelection();
+	        if(s!=undefined && s!=null && (!s.focusNode || s.focusNode.nodeType != 3)){
+	            var r = s.getRangeAt(0);
+	            r.selectNodeContents(this.getEditorBody());
+	            r.collapse(true);
+	            this.deferFocus();
+	        }
+	        try{
+	            this.execCmd('useCSS', true);
+	            this.execCmd('styleWithCSS', false);
+	        }catch(e){}
+	    }
+	    this.fireEvent('activate', this);
+	},
+	
+	
+	/**
+	 * Protected method that will not generally be called directly. It triggers
+	 * a toolbar update by reading the markup state of the current selection in the editor.
+	 */
+	updateToolbar: function(){
+	
+	    if(this.readOnly){
+	        return;
+	    }
+	
+	    if(!this.activated){
+	        this.onFirstFocus();
+	        return;
+	    }
+	
+	    var btns = this.tb.items.map,
+	        doc = this.getDoc();
+	
+	    try{
+		    if(this.enableFont && !Ext.isSafari2){
+		        var name = (doc.queryCommandValue('FontName')||this.defaultFont).toLowerCase();
+		        if(name != this.fontSelect.dom.value){
+		            this.fontSelect.dom.value = name;
+		        }
+		    }
+	    }catch(e){}
+	    
+	    try{
+		    if(this.enableFormat){
+		        btns.bold.toggle(doc.queryCommandState('bold'));
+		        btns.italic.toggle(doc.queryCommandState('italic'));
+		        btns.underline.toggle(doc.queryCommandState('underline'));
+		    }
+	    }catch(e){}
+	    
+	    try{
+		    if(this.enableAlignments){
+		        btns.justifyleft.toggle(doc.queryCommandState('justifyleft'));
+		        btns.justifycenter.toggle(doc.queryCommandState('justifycenter'));
+		        btns.justifyright.toggle(doc.queryCommandState('justifyright'));
+		    }
+	    }catch(e){}
+	    	    
+	    try{
+		    if(!Ext.isSafari2 && this.enableLists){
+		        btns.insertorderedlist.toggle(doc.queryCommandState('insertorderedlist'));
+		        btns.insertunorderedlist.toggle(doc.queryCommandState('insertunorderedlist'));
+		    }
+	    }catch(e){}
+	
+	    Ext.menu.MenuMgr.hideAll();
+	
+	    this.syncValue();
+	}
+
+});
