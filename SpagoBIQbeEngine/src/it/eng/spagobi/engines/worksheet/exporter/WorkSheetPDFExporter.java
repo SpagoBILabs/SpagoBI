@@ -11,26 +11,27 @@
  */
 package it.eng.spagobi.engines.worksheet.exporter;
 
-import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabPDFExporter;
-import it.eng.spagobi.engines.qbe.crosstable.serializer.json.CrosstabSerializationConstants;
-import it.eng.spagobi.engines.worksheet.bo.Measure;
-import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
+import it.eng.spagobi.engines.worksheet.services.export.ExportWorksheetAction;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -40,6 +41,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.lowagie.text.BadElementException;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -384,31 +386,52 @@ public class WorkSheetPDFExporter {
 		try {
 			InputStream inputStream = null;
 			OutputStream outputStream = null;
-			String svg = content.getString(SVG);
-			//Don't change ISO-8859-1 because it's the only way to export specific symbols
-			inputStream = new ByteArrayInputStream(svg.getBytes("ISO-8859-1"));
-			File imageFile = File.createTempFile("chart", ".jpg");
-			outputStream = new FileOutputStream(imageFile);
-			transformSVGIntoJPEG(inputStream, outputStream);
+			File imageFile = null;
 			
-		    Image jpg = Image.getInstance(imageFile.getPath());
-		    
-		    float topMargin = margins[0];
-		    float bottomMargin = margins[1];
-		    
-		    float chartMaxHeight = PageSize.A4.getWidth() - (topMargin + bottomMargin);  // remember that the page is A4 rotated
-		    float chartMaxWidth = PageSize.A4.getHeight() - (MARGIN_LEFT + MARGIN_RIGHT);  // remember that the page is A4 rotated
-		    
-		    float[] newDimensions = fitImage( jpg, chartMaxWidth, chartMaxHeight );
+			String chartType = content.optString("CHART_TYPE"); //check If the chart to export is ext
+			if(chartType!=null && chartType.equals("ext3")){
+				JSONArray images = content.optJSONArray("CHARTS_ARRAY");
+				if(images==null || images.length()==0){
+					return;
+				}
+				for(int i=0; i<images.length(); i++){
+					inputStream = new ByteArrayInputStream(ExportWorksheetAction.decodeToByteArray(images.getString(i)));
+					String ext = ".png";
+					BufferedImage image = ImageIO.read(inputStream);
+					imageFile = File.createTempFile("chart", ext);
+					ImageIO.write(image, "png", imageFile);
+					addChart(imageFile, content, margins);
+				}
+			}else{
+				String svg = content.getString(SVG);
+				//Don't change ISO-8859-1 because it's the only way to export specific symbols
+				inputStream = new ByteArrayInputStream(svg.getBytes("ISO-8859-1"));
+				imageFile = File.createTempFile("chart", ".jpg");
+				outputStream = new FileOutputStream(imageFile);
+				transformSVGIntoJPEG(inputStream, outputStream);
+				addChart(imageFile, content, margins);
+			}
 
-		    float positionX = (PageSize.A4.getHeight() - newDimensions[0]) / 2;
-		    float positionY = bottomMargin + (chartMaxHeight - newDimensions[1]) / 2; // center the image into the available height
-		    jpg.setAbsolutePosition(positionX, positionY);
-		    
-		    pdfDocument.add(jpg);
 		} catch (Exception e) {
 			throw new RuntimeException("Error while adding chart", e);
 		}
+	}
+	
+	private void addChart(File imageFile, JSONObject content, float[] margins) throws MalformedURLException, IOException, DocumentException {
+	    Image jpg = Image.getInstance(imageFile.getPath());
+	    
+	    float topMargin = margins[0];
+	    float bottomMargin = margins[1];
+	    
+	    float chartMaxHeight = PageSize.A4.getWidth() - (topMargin + bottomMargin);  // remember that the page is A4 rotated
+	    float chartMaxWidth = PageSize.A4.getHeight() - (MARGIN_LEFT + MARGIN_RIGHT);  // remember that the page is A4 rotated
+	    
+	    float[] newDimensions = fitImage( jpg, chartMaxWidth, chartMaxHeight );
+
+	    float positionX = (PageSize.A4.getHeight() - newDimensions[0]) / 2;
+	    float positionY = bottomMargin + (chartMaxHeight - newDimensions[1]) / 2; // center the image into the available height
+	    jpg.setAbsolutePosition(positionX, positionY);
+	    pdfDocument.add(jpg);
 	}
 	
 	private void addTable(JSONObject content) {
@@ -439,8 +462,8 @@ public class WorkSheetPDFExporter {
 	
 	
 	private float[] fitImage(Image jpg, float maxWidth, float maxHeight) {
-		float newWidth = 0;
-		float newHeight = 0;
+		float newWidth = jpg.getWidth();
+		float newHeight = jpg.getHeight();
 		if (jpg.getWidth() > maxWidth) {
 			newWidth = maxWidth;
 			newHeight = (newWidth / jpg.getWidth())
