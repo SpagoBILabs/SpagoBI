@@ -500,7 +500,7 @@ refreshWorksheetPreview : function () {
 		if(additionalData!=undefined && additionalData!=null){
 			var sheets = sheetTemplate.sheets;
 			for(var i=0; i<sheets.length; i++){
-				if(additionalData[i].data!=undefined && additionalData[i].data!=null && !Ext.isEmpty(additionalData[i].data) && sheets[i].content.crosstabDefinition!=undefined && sheets[i].content.crosstabDefinition!=null){
+				if(additionalData[i]!=undefined && additionalData[i]!=null && additionalData[i].data!=undefined && additionalData[i].data!=null && !Ext.isEmpty(additionalData[i].data) && sheets[i].content.crosstabDefinition!=undefined && sheets[i].content.crosstabDefinition!=null){
 					if(additionalData[i].data!=undefined && additionalData[i].data!=null && !Ext.isEmpty(additionalData[i].data) && sheets[i].content.crosstabDefinition!=undefined && sheets[i].content.crosstabDefinition!=null){
 						sheets[i].content.crosstabDefinition.calculatedFields =additionalData[i].data.crosstabDefinition.calculatedFields;
 						sheets[i].content.crosstabDefinition.additionalData =additionalData[i].data.crosstabDefinition.additionalData;

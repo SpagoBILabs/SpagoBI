@@ -208,8 +208,6 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		},sharedConf));
 	},
 	
-
-	
 	getTitleState: function(messageBox){
 		var values={};
 		var titleToNormalize =  this.titlePanel.getValue();
