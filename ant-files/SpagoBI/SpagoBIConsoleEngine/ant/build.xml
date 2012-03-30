@@ -125,6 +125,113 @@
   
  <target name="liferay.tomcat">                            
   </target> 
+	
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <!--   ATTIVITA' SPECIFICHE PER COMPRESSIONE CODICE JS                              -->
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
+	  
+	<target name="production" depends="create-production">
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiConsoleJS.jspf">
+			<replacetoken>
+				<![CDATA[<!-- START-PRODUCTION]]>
+			</replacetoken>
+			<replacevalue>
+				<![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiConsoleJS.jspf">
+			<replacetoken>
+				<![CDATA[END-PRODUCTION -->]]></replacetoken>
+			<replacevalue>
+				<![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
+		</replace>
+
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiConsoleJS.jspf">
+			<replacetoken>
+				<![CDATA[<!-- START-DEBUG -->]]></replacetoken>
+			<replacevalue>
+				<![CDATA[<!-- START-DEBUG]]>
+			</replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiConsoleJS.jspf">
+			<replacetoken>
+				<![CDATA[<!-- END-DEBUG -->]]></replacetoken>
+			<replacevalue>
+				<![CDATA[END-DEBUG -->]]></replacevalue>
+		</replace>
+	</target>
+			
+	<target name="delete-debug">
+		<delete file="${build}/${webapp_name}/js/spagobi/console-all-${project.version}.js" />
+		<delete file="${build}/${webapp_name}/js/spagobi/console-all-debug.js" />
+	</target>
+
+	<target name="create-debug" depends="delete-debug">
+		<concat destfile="${build}/${webapp_name}/js/spagobi/console-all-debug.js" append="true">
+			<filelist dir="${build}/${webapp_name}/js">
+
+				<file name='./spagobi/commons/Settings.js' />
+				<file name='./spagobi/overrides/overrides.js' />
+
+				<file name='./spagobi/exception/ExceptionHandler.js' />
+				<file name='./spagobi/service/ServiceRegistry.js' />
+				<file name='./spagobi/service/Sync.js' />
+				<file name='./spagobi/commons/Format.js' />
+				<file name='./spagobi/commons/Utils.js' />
+				<file name='./spagobi/commons/JSON.js' />
+				<file name='./spagobi/locale/LocaleUtils.js' />
+				<file name='./spagobi/data/StorePlugin.js' />
+
+				<file name='./spagobi/data/PagingStore.js' />
+				<file name='./spagobi/data/MemoryStore.js' />
+				<file name='./spagobi/data/Store.js' />
+				<file name='./spagobi/data/StoreManager.js' />
+				<file name='./spagobi/chart/FusionFreeChart.js' />
+				<file name='./spagobi/chart/OpenFlashChart.js' />
+				<file name='./spagobi/chart/SpagoBIChart.js' />
+
+				<file name='./spagobi/console/widgets/Widget.js' />
+				<file name='./spagobi/console/widgets/WidgetContainer.js' />
+				<file name='./spagobi/console/widgets/WidgetPanel.js' />
+				<file name='./spagobi/console/ChartWidget.js' />
+				<file name='./spagobi/console/SummaryPanel.js' />
+				<file name='./spagobi/console/DownloadLogsWindow.js' />
+				<file name='./spagobi/console/MasterDetailWindow.js' />
+				<file name='./spagobi/console/WaitWindow.js' />
+				<file name='./spagobi/console/NavigationToolbar.js' />
+				<file name='./spagobi/console/ButtonColumn.js' />
+				<file name='./spagobi/console/InlineActionColumn.js' />
+				<file name='./spagobi/console/InlineToggleActionColumn.js' />
+				<file name='./spagobi/console/ActionButton.js' />
+
+				<file name='./spagobi/console/FilteringToolbar.js' />
+				<file name='./spagobi/console/CustomFilteringToolbar.js' />
+				<file name='./spagobi/console/LookupField.js' />
+
+				<file name='./spagobi/console/PromptablesWindow.js' />
+				<file name='./spagobi/console/GridPanel.js' />
+				<file name='./spagobi/console/DetailPage.js' />
+				<file name='./spagobi/console/DetailPanel.js' />
+				<file name='./spagobi/console/ConsolePanel.js' />
+				
+				
+
+			</filelist>
+
+		</concat>
+	</target>
+
+	<target name="create-production" depends="create-debug">
+		<java jar="./yuicompressor-2.4.2.jar" fork="true">
+			<arg line="-o ${build}/${webapp_name}/js/spagobi/console-all-${project.version}.js ${build}/${webapp_name}/js/spagobi/console-all-debug.js" />
+		</java>
+	</target>
+
+
+	<target name="development">
+
+
+	</target>
+	
    
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <!--   ATTIVITA' SPECIFICHE PER LA GESTIONE DEL SSI                          -->
