@@ -152,19 +152,24 @@ public class MenuUtilities {
 									if (!containsMenuChildren(lstFinalMenu, tmpObjChild)){		
 										tmpNewObjChildren.add(tmpObjChild);
 									}
-									else{
-										//if (!tmpNewObjChildren.contains(originalChild))
+									else if (tmpObjChild.getHasChildren()) {
+
 										if (!containsMenuChildren(tmpNewObjChildren, originalChild))
 											tmpNewObjChildren.add(originalChild);
 									}
-								}		
-
-								tmpObj.setLstChildren(tmpNewObjChildren);
-								if (positionChild >= 0)
-									lstFinalMenu.set(positionChild, tmpObj);
-
+								}	
+								// ONLY if there are some new children for an existing node , 
+								// they are ADDED at the final object's children list.
+								if (tmpNewObjChildren.size()>0){
+									List tmpFinalChildren = (List)((Menu)lstFinalMenu.get(positionChild)).getLstChildren();
+									for (int idx=0; idx<tmpNewObjChildren.size();idx++){
+										tmpFinalChildren.add(tmpNewObjChildren.get(idx));
+									}
+									tmpObj.setLstChildren(tmpFinalChildren);
+									if (positionChild >= 0)
+										lstFinalMenu.set(positionChild, tmpObj);
+								}
 							}
-
 						}
 					}
 
