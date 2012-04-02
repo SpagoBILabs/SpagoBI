@@ -111,11 +111,11 @@ if(Sbi.chart.commons.Format){
 		Sbi.locale.formatters.boolean = Sbi.chart.commons.Format.booleanRenderer( );
 		Sbi.locale.formatters.html    = Sbi.chart.commons.Format.htmlRenderer();
 	}
-};
+}
 
 
 Sbi.locale.localize = function(key) {
-	if(!Sbi.locale.ln) return key;
+	if(!Sbi.locale.ln) {return key;}
 	return Sbi.locale.ln[key] || key;
 };
 

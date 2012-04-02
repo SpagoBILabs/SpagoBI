@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
- 
 /**
   * Object name 
   * 
@@ -46,13 +45,10 @@
 
 Ext.define('Sbi.exception.ExceptionHandler', {
 	statics: {
-		init : function() {
+		init : function () {
 			//alert("init");
 		},
-		
-		
-        handleFailure : function(response, options) {
-        	
+		handleFailure : function (response, options) {
         	var errMessage = null;
         	if(response !== undefined) {        		
         		if(response.responseText !== undefined) {
