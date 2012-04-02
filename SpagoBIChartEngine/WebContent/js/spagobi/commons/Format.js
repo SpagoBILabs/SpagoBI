@@ -204,14 +204,14 @@ Ext.define('Sbi.chart.commons.Format', {
         	
         	return v;
         }
-        */
+        
         
         , booleanRenderer : function(format){
             return function(v){
                 return Sbi.chart.commons.Format.boolean(v, format);
             };
         }
-        
+        */
         , html : function(v, format) {
         	// format is not used yet but it is reserve for future use
         	// ex. format.cls, format.style
