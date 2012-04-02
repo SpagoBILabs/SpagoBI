@@ -3,7 +3,6 @@ Ext.ns("Sbi.locale");
 Sbi.locale.dummyFormatter = function(v){return v;};
 
 Sbi.locale.formatters = {
-	//number: Sbi.locale.dummyFormatter,
 	int: Sbi.locale.dummyFormatter,
 	float: Sbi.locale.dummyFormatter,
 	string: Sbi.locale.dummyFormatter,		
