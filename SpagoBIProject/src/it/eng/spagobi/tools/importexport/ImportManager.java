@@ -1136,11 +1136,23 @@ public class ImportManager implements IImportManager, Serializable {
 				}
 				importParuse(oldId);
 			}
-		} catch (Exception e) {
+		} 
+		catch (EMFUserError e) {
+			if (exportedParameter != null) {
+			logger.error("Error while importing exported parameter with label [" + exportedParameter.getLabel() + "]");
+			}
+			else{
+				logger.error("Error while inserting parameter", e);
+				}
+			throw e;
+					}
+		catch (Exception e) {
 			if (exportedParameter != null) {
 				logger.error("Error while importing exported parameter with label [" + exportedParameter.getLabel() + "].", e);
 			}
-			logger.error("Error while inserting object ", e);
+			else{
+			logger.error("Error while inserting parameter", e);
+			}
 			List params = new ArrayList();
 			params.add("Sbi_parameters");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
@@ -1247,11 +1259,24 @@ public class ImportManager implements IImportManager, Serializable {
 				// TODO controllare che fa questo e se serve!!!
 				//updateSubObject(obj, exportedObj.getBiobjId());
 			}
-		} catch (Exception e) {
+		} 
+
+		catch (EMFUserError e) {
+			if (exportedObj != null) {
+			logger.error("Error while importing exported biobject with label [" + exportedObj.getLabel() + "]");
+			}
+			else{
+			logger.error("Error while inserting object ", e);
+			}
+			throw e;
+					}
+		catch (Exception e) {
 			if (exportedObj != null) {
 				logger.error("Error while importing exported biobject with label [" + exportedObj.getLabel() + "]", e);
 			}
-			logger.error("Error while inserting object ", e);
+			else{
+				logger.error("Error while inserting object ", e);
+			}
 			List params = new ArrayList();
 			params.add("Sbi_objects");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
@@ -1639,11 +1664,24 @@ public class ImportManager implements IImportManager, Serializable {
 				importParuseDet(oldId);
 				importParuseCheck(oldId);
 			}
-		} catch (Exception e) {
+		} 
+
+		catch (EMFUserError e) {
+			if (paruse != null) {
+			logger.error("Error while importing exported parameter use with label [" + paruse.getLabel() + "].");
+			}
+			else{
+			 logger.error("Error while inserting parameter use ", e);
+			}
+			throw e;
+					}
+		catch (Exception e) {
 			if (paruse != null) {
 				logger.error("Error while importing exported parameter use with label [" + paruse.getLabel() + "].", e);
 			}
-			logger.error("Error while inserting object ", e);
+			else{
+				logger.error("Error while inserting parameter use ", e);
+			}
 			List params = new ArrayList();
 			params.add("Sbi_paruse");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
@@ -3429,7 +3467,18 @@ public class ImportManager implements IImportManager, Serializable {
 				}
 				importUdpValues(oldId, "Model", overwrite);
 			}
-		} catch (Exception e) {
+		} 
+
+		catch (EMFUserError e) {
+			if (exportedModel != null) {
+			logger.error("Error while importing exported model with code [" + exportedModel.getKpiModelCd() + "].");
+			}
+			else{
+				logger.error("Error while inserting model ", e);
+			}
+			throw e;
+					}
+		catch (Exception e) {
 			if (exportedModel != null) {
 				logger.error("Error while importing exported model with code [" + exportedModel.getKpiModelCd() + "].", e);
 			}
@@ -3572,7 +3621,18 @@ public class ImportManager implements IImportManager, Serializable {
 				exportedKpi = (SbiKpi) iterSbiKpisForRel.next();
 				importKpiRel(exportedKpi.getKpiId(), overwrite);
 			}	
-		} catch (Exception e) {
+		} 
+
+		catch (EMFUserError e) {
+			if (exportedKpi != null) {
+			logger.error("Error while importing exported kpi with code [" + exportedKpi.getCode() + "].");
+			}
+			else{
+				logger.error("Error while inserting kpi ", e);
+			}
+			throw e;
+					}
+		catch (Exception e) {
 			if (exportedKpi != null) {
 				logger.error("Error while importing exported kpi with code [" + exportedKpi.getCode() + "].", e);
 			}
@@ -3740,7 +3800,18 @@ public class ImportManager implements IImportManager, Serializable {
 					metaAss.insertCoupleThreshold(oldId, newId);
 				}
 			}
-		} catch (Exception e) {
+		} 
+
+		catch (EMFUserError e) {
+			if (exportedTh != null) {
+				logger.error("Error while importing exported threshold with coe [" + exportedTh.getCode() + "].", e);
+			}
+			else{
+				logger.error("Error while inserting threshold ", e);
+			}
+			throw e;
+					}
+		catch (Exception e) {
 			if (exportedTh != null) {
 				logger.error("Error while importing exported threshold with coe [" + exportedTh.getCode() + "].", e);
 			}
