@@ -169,7 +169,7 @@
 		<concat destfile="${build}/${webapp_name}/js/spagobi/console-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
 
-			<!--	<file name='./spagobi/commons/Settings.js' />
+				<file name='./spagobi/commons/Settings.js' />
 				<file name='./spagobi/overrides/overrides.js' />
 
 				<file name='./spagobi/exception/ExceptionHandler.js' />
@@ -177,9 +177,9 @@
 				<file name='./spagobi/service/Sync.js' />
 				<file name='./spagobi/commons/Format.js' />
 				<file name='./spagobi/commons/Utils.js' />
-				<file name='./spagobi/commons/JSON.js' /> -->
+				<file name='./spagobi/commons/JSON.js' /> 
 				<file name='./spagobi/locale/LocaleUtils.js' />
-		<!--		<file name='./spagobi/data/StorePlugin.js' />
+		        <file name='./spagobi/data/StorePlugin.js' />
 
 				<file name='./spagobi/data/PagingStore.js' />
 				<file name='./spagobi/data/MemoryStore.js' />
@@ -211,7 +211,7 @@
 				<file name='./spagobi/console/GridPanel.js' />
 				<file name='./spagobi/console/DetailPage.js' />
 				<file name='./spagobi/console/DetailPanel.js' />
-				<file name='./spagobi/console/ConsolePanel.js' /> -->
+				<file name='./spagobi/console/ConsolePanel.js' /> 
 				
 				
 
