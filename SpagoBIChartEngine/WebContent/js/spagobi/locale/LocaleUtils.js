@@ -84,6 +84,7 @@ Ext.define('Sbi.locale', {
 Ext.ns("Sbi.locale");
 
 Sbi.locale.dummyFormatter = function(v){return v;};
+/*
 Sbi.locale.formatters = {
 	//number: Sbi.locale.dummyFormatter,
 	int: Sbi.locale.dummyFormatter,
@@ -112,6 +113,7 @@ if(Sbi.chart.commons.Format){
 		Sbi.locale.formatters.html    = Sbi.chart.commons.Format.htmlRenderer();
 	}
 }
+*/
 
 
 Sbi.locale.localize = function(key) {
