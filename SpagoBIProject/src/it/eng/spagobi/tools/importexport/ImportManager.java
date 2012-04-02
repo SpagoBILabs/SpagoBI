@@ -117,6 +117,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.opensaml.artifact.NullArgumentException;
 
 /**
  * Implements the interface which defines methods for managing the import
@@ -143,6 +144,7 @@ public class ImportManager implements IImportManager, Serializable {
 	private AssociationFile associationFile = null;
 	private String impAssMode = IMPORT_ASS_DEFAULT_MODE;
 
+	public static final String messageBundle = "MessageFiles.component_impexp_messages";
 
 	/**
 	 * Prepare the environment for the import procedure.
@@ -169,7 +171,7 @@ public class ImportManager implements IImportManager, Serializable {
 			fos.flush();
 		} catch (Exception ioe) {
 			logger.error("Error while writing archive content into a tmp file ", ioe);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8017", ImportManager.messageBundle);
 		} finally {
 			if (fos != null) {
 				try {
@@ -197,7 +199,7 @@ public class ImportManager implements IImportManager, Serializable {
 			props.load(fis);
 		} catch (Exception e) {
 			logger.error("Error while reading properties file ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8011", ImportManager.messageBundle);
 		} finally {
 			if (fis != null)
 				try {
@@ -223,7 +225,7 @@ public class ImportManager implements IImportManager, Serializable {
 			txCurrDB = sessionCurrDB.beginTransaction();
 		} catch (Exception e) {
 			logger.error("Error while opening session. May be the import manager was not correctly initialized.", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8012", ImportManager.messageBundle);
 		}
 		logger.debug("OUT");
 	}
@@ -411,7 +413,7 @@ public class ImportManager implements IImportManager, Serializable {
 					Integer otherRoleAssId = (Integer) roleAssociations.get(otherRoleExpId);
 					if (otherRoleAssId.compareTo(roleAssId) == 0) {
 						logger.error("OUT. The checkRoleReferences method did not pass: there are two roles exported with id "+otherRoleAssId+" and "+roleExpId+" referring two same role in current system with id "+roleAssId);
-						throw new EMFUserError(EMFErrorSeverity.ERROR, "8001", "component_impexp_messages");
+						throw new EMFUserError(EMFErrorSeverity.ERROR, "8018", ImportManager.messageBundle);
 					}
 				}
 			}
@@ -611,7 +613,9 @@ public class ImportManager implements IImportManager, Serializable {
 				logger.error("Error while importing exported role with name [" + role.getName() + "].", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("SbiExtRoles");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -669,13 +673,16 @@ public class ImportManager implements IImportManager, Serializable {
 				metaLog.log("Inserted new engine " + engine.getName());
 				Integer newId = newEng.getEngineId();
 				metaAss.insertCoupleEngine(oldId, newId);
+
 			}
 		} catch (Exception e) {
 			if (engine != null) {
 				logger.error("Error while importing exported engine with label [" + engine.getLabel() + "].", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("SbiEngines");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -731,7 +738,9 @@ public class ImportManager implements IImportManager, Serializable {
 				logger.error("Error while importing exported ObjectMetadata with label [" + exportedObjMetadata.getLabel() + "].", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_obj_metadata");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -790,7 +799,9 @@ public class ImportManager implements IImportManager, Serializable {
 				logger.error("Error while importing exported datasource with label [" + dataSource.getLabel() + "].", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_data_source");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -839,7 +850,9 @@ public class ImportManager implements IImportManager, Serializable {
 				logger.error("Error while importing exported dataset with label [" + exportedDataSet.getLabel() + "].", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_data_set");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -932,7 +945,9 @@ public class ImportManager implements IImportManager, Serializable {
 				logger.error("Error while importing exported functionality with path [" + functToInsert.getPath() + "].", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_functions");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -997,7 +1012,9 @@ public class ImportManager implements IImportManager, Serializable {
 				logger.error("Error while importing exported lov with label [" + exportedLov.getLabel() + "].", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_lov");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1045,7 +1062,9 @@ public class ImportManager implements IImportManager, Serializable {
 				logger.error("Error while importing exported check with label [" + check.getLabel() + "].", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_checks");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1122,7 +1141,9 @@ public class ImportManager implements IImportManager, Serializable {
 				logger.error("Error while importing exported parameter with label [" + exportedParameter.getLabel() + "].", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_parameters");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1231,7 +1252,9 @@ public class ImportManager implements IImportManager, Serializable {
 				logger.error("Error while importing exported biobject with label [" + exportedObj.getLabel() + "]", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_objects");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1273,7 +1296,9 @@ public class ImportManager implements IImportManager, Serializable {
 						"of biobject with label [" + obj.getLabel() + "]", e);
 			}
 			logger.error("Error while getting exported template objects ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_snapshots");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1333,7 +1358,9 @@ public class ImportManager implements IImportManager, Serializable {
 						"of biobject with label [" + obj.getLabel() + "]", e);
 			}
 			logger.error("Error while getting exported template objects ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_snapshots");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1379,7 +1406,9 @@ public class ImportManager implements IImportManager, Serializable {
 
 		} catch (HibernateException he) {
 			logger.error("Error while getting exported template objects ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_subobject");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1427,7 +1456,9 @@ public class ImportManager implements IImportManager, Serializable {
 						"of biobject with label [" + exportedObj.getLabel() + "]", e);
 			}
 			logger.error("Error while getting exported template objects ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_subobjects");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1489,7 +1520,9 @@ public class ImportManager implements IImportManager, Serializable {
 			sessionCurrDB.save(newObj);
 		} catch (Exception he) {
 			logger.error("Error while getting exported template objects ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_obj_template");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1537,7 +1570,9 @@ public class ImportManager implements IImportManager, Serializable {
 
 		} catch (HibernateException he) {
 			logger.error("Error while getting exported binary content objects ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_bianry_contents");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1609,7 +1644,9 @@ public class ImportManager implements IImportManager, Serializable {
 				logger.error("Error while importing exported parameter use with label [" + paruse.getLabel() + "].", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_paruse");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1661,7 +1698,7 @@ public class ImportManager implements IImportManager, Serializable {
 	//	+ "] and exported role with name [" + parusedet.getId().getSbiExtRoles().getName() + "]", e);
 	//	}
 	//	logger.error("Error while inserting object ", e);
-	//	throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+	//	throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	//	} finally {
 	//	logger.debug("OUT");
 	//	}
@@ -1707,7 +1744,9 @@ public class ImportManager implements IImportManager, Serializable {
 						+ "] and exported role with name [" + parusedet.getId().getSbiExtRoles().getName() + "]", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_paruse_det");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1774,7 +1813,9 @@ public class ImportManager implements IImportManager, Serializable {
 						+ "] and exported check with label [" + paruseck.getId().getSbiChecks().getLabel() + "]", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("Sbi_paruse_ck");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1837,7 +1878,9 @@ public class ImportManager implements IImportManager, Serializable {
 						+ "] and exported sub biobject with label [" + objlink.getId().getSubReport().getLabel() + "]", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("SbiobjectLink");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1897,10 +1940,14 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while inserting object ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_obj_functions");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_obj_functions");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1961,7 +2008,9 @@ public class ImportManager implements IImportManager, Serializable {
 						+ "] and exported role with name [" + functrole.getId().getRole().getName() + "]", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_func_roles");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -2023,10 +2072,14 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while inserting object ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_obj_par");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019",params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_obj_par");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -2099,10 +2152,16 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while inserting object ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_obj_paruse");
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params,  ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_obj_paruse");
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -2113,7 +2172,8 @@ public class ImportManager implements IImportManager, Serializable {
 	 */
 	public void stopImport() {
 		logger.debug("IN");
-		metaAss.clear();
+		if(metaAss != null)
+			metaAss.clear();
 		rollback();
 		FileUtilities.deleteDir(new File(pathBaseFolder));
 		logger.debug("OUT");
@@ -2188,10 +2248,15 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while inserting object ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_obj_parview");
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_obj_parview");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params,  ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -3299,7 +3364,7 @@ public class ImportManager implements IImportManager, Serializable {
 					        fos.flush();
 						} catch (Exception e) {
 						    logger.error("Error while coping map catalogue files ", e);
-						    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+						    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 						} finally {
 				        	try {
 					        	if (fos != null) {
@@ -3371,7 +3436,9 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting model ", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_model");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -3422,7 +3489,9 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting model instance ", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_kpi_model_inst");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -3510,7 +3579,9 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting kpi ", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_kpi");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -3564,7 +3635,9 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting kpi instance ", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_kpi_inst");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -3620,7 +3693,9 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting threshold value ", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_threshold_value");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -3672,7 +3747,9 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting threshold ", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_threshold");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -3727,7 +3804,9 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting resource ", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_resources");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -3782,7 +3861,9 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting model resources ", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_kpi_model_resources");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -3833,7 +3914,9 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting periodicity ", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_kpi_periodicity");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -3888,7 +3971,9 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting instance period ", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_kpi_inst_periodicity");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -3942,7 +4027,9 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting Alarm ", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_alarm");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -3996,7 +4083,7 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting KpiModelAttr with label = [" + exportedKpiModelAttr.getKpiModelAttrCd() + " and referring to domain "+ exportedKpiModelAttr.getSbiDomains().getDomainCd() +" / "+exportedKpiModelAttr.getSbiDomains().getValueCd()+"] will be updated.", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}*/
@@ -4054,7 +4141,7 @@ public class ImportManager implements IImportManager, Serializable {
 				logger.error("Error while inserting KpiModelAttrVal referring to model " + exportedKpiModelAttrVal.getSbiKpiModel().getKpiModelNm() + " and " +
 						" referring to attribute  "+ exportedKpiModelAttrVal.getSbiKpiModelAttr().getKpiModelAttrNm() +"  will be updated.", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}*/
@@ -4105,7 +4192,9 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting alarm contact ", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_alarm_contact");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -4175,7 +4264,9 @@ public class ImportManager implements IImportManager, Serializable {
 			else{
 				logger.error("Error while inserting SbiObjMetacontents ", e);
 			}
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_obj_metacontent");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -4232,7 +4323,9 @@ public class ImportManager implements IImportManager, Serializable {
 				logger.error("Error while importing exported udp with name [" + udp.getName() + "].", e);
 			}
 			logger.error("Error while inserting object ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_udp");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -4296,10 +4389,14 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while inserting udp value ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_udp_value");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting udp value ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_udp_value");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -4358,10 +4455,14 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while inserting kpi relation ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_kpi_rel");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting kpi relation ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_kpi_rel");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -4403,10 +4504,14 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while inserting grant ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_grant");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting grant ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_grant");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -4448,10 +4553,14 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while inserting grant node ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_grant_nodes");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting grant node ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+			List params = new ArrayList();
+			params.add("sbi_grant_nodes");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
