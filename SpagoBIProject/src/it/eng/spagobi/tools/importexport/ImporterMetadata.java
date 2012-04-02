@@ -713,12 +713,23 @@ public class ImporterMetadata {
 		logger.debug("IN");
 		String hql = null;
 		Query hqlQuery = null;
+		try{
 		if (hibObj instanceof SbiDomains) {
 			hql = "from SbiDomains where valueCd = '" + valueCd + "'"+"AND domainCd = '"+domainCd+"'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiDomains hibDs = (SbiDomains) hqlQuery.uniqueResult();
 			return hibDs;
-		} 	
+			} 	
+		}
+		catch (Exception e) {
+			logger.error("Error: Found in import database more than one SbiDomains with the same key");
+			List params = new ArrayList();
+			params.add("SbiDomains");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "9000", params, ImportManager.messageBundle);
+			
+		}
+		
+		
 		logger.debug("OUT");
 		return null;
 	}
