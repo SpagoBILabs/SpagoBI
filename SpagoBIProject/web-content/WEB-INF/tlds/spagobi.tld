@@ -19,7 +19,7 @@
    <tag>
        <name>list</name>
        <tag-class>it.eng.spagobi.commons.presentation.tags.ListTag</tag-class>
-       <body-content>EMPTY</body-content>
+       <body-content>empty</body-content>
        <description>Rendering of a list</description>
        <attribute>
            <name>moduleName</name>
@@ -47,7 +47,7 @@
 	<tag>
         <name>checklist</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.CheckListTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of a check list</description>
         <attribute>
             <name>moduleName</name>
@@ -66,7 +66,7 @@
 	<tag>
         <name>checkbox</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.CheckBoxTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of a check list</description>
         <attribute>
             <name>moduleName</name>
@@ -84,7 +84,7 @@
     <tag>
         <name>listBiParameters</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.ListBIParametersTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of a list</description>
         <attribute>
             <name>moduleName</name>
@@ -104,7 +104,7 @@
     <tag>
         <name>treeObjects</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.TreeObjectsTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of the objects tree</description>
         <attribute>
             <name>moduleName</name>
@@ -138,7 +138,7 @@
     <tag>
         <name>error</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.ErrorTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Esegue il rendering degli errori, versione HTML</description>
     </tag>
     
@@ -152,7 +152,7 @@
     <tag>
         <name>dynamicPage</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.DynamicPageTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of the parameters form</description>
         <attribute>
             <name>modality</name>
@@ -178,7 +178,7 @@
     <tag>
         <name>ParametersGenerator</name>
         <tag-class>it.eng.spagobi.analiticalmodel.execution.presentation.tag.ParametersGeneratorTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of the parameters form</description>
         <attribute>
             <name>modality</name>
@@ -206,7 +206,7 @@
 	<tag>
         <name>message</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.SpagoBIMessageTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Esegue il rendering dei messagi prevedendo 5 parametri opzionali</description>
         <attribute>
             <name>key</name>
@@ -239,7 +239,7 @@
     <tag>
         <name>queryWizard</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.QueryWizardTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of the query wizard form</description>
         <attribute>
             <name>dataSourceLabel</name>
@@ -256,7 +256,7 @@
     <tag>
         <name>scriptWizard</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.ScriptWizardTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of the script wizard form</description>
         <attribute>
             <name>script</name>
@@ -274,7 +274,7 @@
     <tag>
         <name>javaClassWizard</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.JavaClassWizardTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of the java class wizard form</description>
         <attribute>
             <name>javaClassName</name>
@@ -287,7 +287,7 @@
     <tag>
         <name>lovWizard</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.LovWizardTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of the fixed lov wizard form</description>
         <attribute>
             <name>lovProvider</name>
@@ -299,7 +299,7 @@
         <tag>
         <name>datasetWizard</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.DatasetWizardTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of the dataset parameters form</description>
         <attribute>
             <name>parametersXML</name>
@@ -312,7 +312,7 @@
     <tag>
         <name>LovColumnsSelector</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.LovColumnsSelectorTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of the lov column selector</description>
         <attribute>
             <name>moduleName</name>
@@ -351,7 +351,7 @@
      <tag>
         <name>infoTag</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.InfoTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of same information</description>
         <attribute>
             <name>infoTitle</name>
@@ -375,7 +375,7 @@
     <tag>
         <name>viewPointsList</name>
         <tag-class>it.eng.spagobi.analiticalmodel.execution.presentation.tag.ViewPointsListTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of the viewpoints list</description>
         <attribute>
             <name>biobjectId</name>
@@ -389,7 +389,7 @@
     <tag>
         <name>subObjectsList</name>
         <tag-class>it.eng.spagobi.analiticalmodel.execution.presentation.tag.SubObjectsListTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of the SubObjects list</description>
         <attribute>
             <name>biobjectId</name>
@@ -403,7 +403,7 @@
     <tag>
         <name>snapshotsList</name>
         <tag-class>it.eng.spagobi.analiticalmodel.execution.presentation.tag.SnapshotsListTag</tag-class>
-        <body-content>EMPTY</body-content>
+        <body-content>empty</body-content>
         <description>Rendering of the snapshots list</description>
         <attribute>
             <name>snapshotsList</name>
