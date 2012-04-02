@@ -216,6 +216,18 @@ public class StringUtils {
 	}
 	
 	/**
+	 * Escapes the characters for the html code:
+	 * ' -->  &#39;
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static String escapeForHtml(String str){
+		str = it.eng.spago.util.StringUtils.replace(str, "'", "&#39;");
+		return str;
+	}
+	
+	/**
 	 * The main method.
 	 * 
 	 * @param args the arguments
