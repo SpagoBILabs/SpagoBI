@@ -28,6 +28,7 @@ import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.commons.utilities.urls.IUrlBuilder;
 import it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 
 import java.util.HashMap;
@@ -142,6 +143,7 @@ public class FunctionalitiesTreeHtmlGenerator implements ITreeHtmlGenerator {
 
 		String nameLabel = folder.getName();
 		String name = msgBuilder.getMessage(nameLabel, "messages", httpRequest);
+		name = StringUtils.escapeForHtml(name);
 		String path = folder.getPath();
 		String codeType = folder.getCodType();
 		boolean user_funct=codeType.equalsIgnoreCase("USER_FUNCT") ? true : false;
