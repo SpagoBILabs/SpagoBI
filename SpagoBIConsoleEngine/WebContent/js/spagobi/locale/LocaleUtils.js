@@ -38,11 +38,11 @@ if(Sbi.console.commons.Format){
 		Sbi.locale.formatters.inlineBar   = Sbi.console.commons.Format.inlineBarRenderer();
 		Sbi.locale.formatters.inlinePoint = Sbi.console.commons.Format.inlinePointRenderer();
 	}
-};
+}
 
 
 Sbi.locale.localize = function(key) {
-	if(!Sbi.locale.ln) return key;
+	if(!Sbi.locale.ln) {return key;}
 	return Sbi.locale.ln[key] || key;
 };
 
