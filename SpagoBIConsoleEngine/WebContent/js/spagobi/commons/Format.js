@@ -222,8 +222,8 @@ Sbi.console.commons.Format = function(){
                 return Sbi.console.commons.Format.string(v, format);
             };
         }
-/*        
-        , boolean : function(v, format) {
+       
+        , 'boolean' : function(v, format) {
         	format = Ext.apply({}, format || {}, {
 	    		trueSymbol: 'true',
 	    		falseSymbol: 'false',
@@ -243,10 +243,10 @@ Sbi.console.commons.Format = function(){
         
         , booleanRenderer : function(format){
             return function(v){
-                return Sbi.console.commons.Format.boolean(v, format);
+                return Sbi.console.commons.Format['boolean'](v, format);
             };
         }
-*/        
+       
         
         , html : function(v, format) {
         	// format is not used yet but it is reserve for future use
