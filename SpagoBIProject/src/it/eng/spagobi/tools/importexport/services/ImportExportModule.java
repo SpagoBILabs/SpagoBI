@@ -34,8 +34,10 @@ import it.eng.spagobi.tools.importexport.ExportUtilities;
 import it.eng.spagobi.tools.importexport.IExportManager;
 import it.eng.spagobi.tools.importexport.IImportManager;
 import it.eng.spagobi.tools.importexport.ImportExportConstants;
+import it.eng.spagobi.tools.importexport.ImportManager;
 import it.eng.spagobi.tools.importexport.ImportResultInfo;
 import it.eng.spagobi.tools.importexport.ImportUtilities;
+import it.eng.spagobi.tools.importexport.ImporterMetadata;
 import it.eng.spagobi.tools.importexport.MetadataAssociations;
 import it.eng.spagobi.tools.importexport.TransformManager;
 import it.eng.spagobi.tools.importexport.UserAssociationsKeeper;
@@ -115,7 +117,7 @@ public class ImportExportModule extends AbstractModule {
 	    errorHandler.addError(emfu);
 	} catch (Exception ex) {
 	    logger.error("Error during the service execution", ex);
-	    EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, "100", "component_impexp_messages");
+	    EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, "100", ImportManager.messageBundle);
 	    errorHandler.addError(error);
 	    return;
 	} finally {
@@ -138,7 +140,7 @@ public class ImportExportModule extends AbstractModule {
 	String exportFileName = (String) request.getAttribute("exportFileName");
 	if ((exportFileName == null) || (exportFileName.trim().equals(""))) {
 	    logger.error("Missing name of the exported file");
-	    throw new EMFValidationError(EMFErrorSeverity.ERROR, "exportFileName", "8006", "component_impexp_messages");
+	    throw new EMFValidationError(EMFErrorSeverity.ERROR, "exportFileName", "8006", ImportManager.messageBundle);
 
 	}
 	try {
@@ -178,7 +180,7 @@ public class ImportExportModule extends AbstractModule {
 	} catch (Exception e) {
 	    expManager.cleanExportEnvironment();
 	    logger.error("Error while exporting ", e);
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 	} finally {
 	    logger.debug("OUT");
 	}
@@ -245,7 +247,7 @@ public class ImportExportModule extends AbstractModule {
 		if (archiveName.trim().equals("")) {
 			logger.error("Missing exported file");
 			response.setAttribute(ImportExportConstants.PUBLISHER_NAME, "ImportExportLoopbackStopImport");
-		    throw new EMFValidationError(EMFErrorSeverity.ERROR, "exportedArchive", "8007", "component_impexp_messages");
+		    throw new EMFValidationError(EMFErrorSeverity.ERROR, "exportedArchive", "8007", ImportManager.messageBundle);
 		}
 		
 		int maxSize = ImportUtilities.getImportFileMaxSize();
@@ -330,7 +332,7 @@ public class ImportExportModule extends AbstractModule {
 			} catch (Exception e) {
 				logger.error("Error while loading association file content:\n " + e);
 				response.setAttribute(ImportExportConstants.PUBLISHER_NAME, "ImportExportLoopbackStopImport");
-				throw new EMFValidationError(EMFErrorSeverity.ERROR, "exportedArchive", "8009", "component_impexp_messages");
+				throw new EMFValidationError(EMFErrorSeverity.ERROR, "exportedArchive", "8009", ImportManager.messageBundle);
 			}
 		}
 
@@ -363,28 +365,28 @@ public class ImportExportModule extends AbstractModule {
 	    logger.error("Importer class not found", cnde);
 	    if (impManager != null)
 		impManager.stopImport();
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} catch (InstantiationException ie) {
 	    logger.error("Cannot create an instance of importer class ", ie);
 	    if (impManager != null)
 		impManager.stopImport();
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} catch (IllegalAccessException iae) {
 	    logger.error("Cannot create an instance of importer class ", iae);
 	    if (impManager != null)
 		impManager.stopImport();
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} catch (SourceBeanException sbe) {
 		logger.error("Error: " + sbe);
 	    if (impManager != null)
 			impManager.stopImport();
-		throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+		throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} catch (Exception e) {
 		logger.error("An unexpected error occured while performing import", e);
 	    if (impManager != null) {
 			impManager.stopImport();
 	    }
-		throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+		throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} finally {
 	    if (impManager != null)
 			impManager.closeSession();
@@ -464,12 +466,12 @@ public class ImportExportModule extends AbstractModule {
 		logger.error("Error: " + sbe);
 	    if (impManager != null)
 			impManager.stopImport();
-		throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+		throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} catch (Exception e) {
 	    logger.error("Error while getting role association ", e);
 	    if (impManager != null)
 		impManager.stopImport();
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} finally {
 	    if (impManager != null)
 			impManager.closeSession();
@@ -550,12 +552,12 @@ public class ImportExportModule extends AbstractModule {
 		logger.error("Error: " + sbe);
 	    if (impManager != null)
 			impManager.stopImport();
-		throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+		throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} catch (Exception e) {
 	    logger.error("Error while getting engine association ", e);
 	    if (impManager != null)
 		impManager.stopImport();
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} finally {
 	    if (impManager != null)
 			impManager.closeSession();
@@ -628,12 +630,12 @@ public class ImportExportModule extends AbstractModule {
 	    throw emfue;
 	} catch (SourceBeanException sbe) {
 	    logger.error("Cannot populate response ", sbe);
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} catch (Exception e) {
 	    logger.error("Error while getting  association ", e);
 	    if (impManager != null)
 		impManager.stopImport();
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8003", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8003", ImportManager.messageBundle);
 	} finally {
 	    if (impManager != null)
 			impManager.closeSession();
@@ -677,12 +679,12 @@ public class ImportExportModule extends AbstractModule {
 	    throw emfue;
 	} catch (SourceBeanException sbe) {
 	    logger.error("Cannot populate response ", sbe);
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} catch (Exception e) {
 	    if (impManager != null)
 		impManager.stopImport();
 	    logger.error("error after data source association ", e);
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} finally {
 	    if (impManager != null)
 			impManager.closeSession();
@@ -709,7 +711,7 @@ public class ImportExportModule extends AbstractModule {
 	    response.setAttribute(ImportExportConstants.PUBLISHER_NAME, "ImportExportLoopbackStopImport");
 	} catch (SourceBeanException sbe) {
 	    logger.error("Error while populating response source bean ", sbe);
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} finally {
 	    logger.debug("OUT");
 	}
@@ -742,7 +744,7 @@ public class ImportExportModule extends AbstractModule {
 	} catch (SourceBeanException sbe) {
 	    logger.error("Error while populating response source bean ", sbe);
 	    impManager.stopImport();
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} finally {
 		if (impManager != null) 
 			impManager.closeSession();
@@ -777,7 +779,7 @@ public class ImportExportModule extends AbstractModule {
 	} catch (SourceBeanException sbe) {
 	    logger.error("Error while populating response source bean ", sbe);
 	    impManager.stopImport();
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} finally {
 		if (impManager != null) 
 			impManager.closeSession();
@@ -811,7 +813,7 @@ public class ImportExportModule extends AbstractModule {
 	    response.setAttribute(ImportExportConstants.PUBLISHER_NAME, "ImportExportDataSourceAssociation");
 	} catch (SourceBeanException sbe) {
 	    logger.error("Error while populating response source bean ", sbe);
-	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} finally {
 		if (impManager != null) 
 			impManager.closeSession();
