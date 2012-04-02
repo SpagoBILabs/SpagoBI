@@ -71,7 +71,7 @@ Sbi.console.WidgetPanel = function(config) {
 			c.layoutConfig.columns = c.columnNumber;
 			c.layoutConfig.tableAttrs = {};
 			c.layoutConfig.tableAttrs.style = {};
-			c.layoutConfig.tableAttrs.style.float = 'left';
+		//	c.layoutConfig.tableAttrs.style.float = 'left';
 		//	c.layoutConfig.tableAttrs.style.width = '100%';
 
 			delete c.columnNumber;
