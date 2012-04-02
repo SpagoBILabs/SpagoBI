@@ -660,8 +660,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		labelStyle += 'width: '+this.baseConfig.fieldLabelWidth+'px;';
 		baseConfig.labelStyle = labelStyle;
 		
-		if((this.mandatoryFieldAdditionalString!=null && this.mandatoryFieldAdditionalString!=undefined) && p.mandatory === true && baseConfig.fieldDefaultLabel!=undefined && baseConfig.fieldDefaultLabel!=null){
-			baseConfig.fieldDefaultLabel =  baseConfig.fieldDefaultLabel+' *';
+		if((this.mandatoryFieldAdditionalString!=null && this.mandatoryFieldAdditionalString!=undefined) && p.mandatory === true ){
+			if(baseConfig.fieldDefaultLabel!=undefined && baseConfig.fieldDefaultLabel!=null){
+				baseConfig.fieldDefaultLabel =  baseConfig.fieldDefaultLabel+' *';
+			}
+			if(baseConfig.fieldLabel!=undefined && baseConfig.fieldLabel!=null){
+				baseConfig.fieldLabel =  baseConfig.fieldLabel+' *';
+			}
 		}
 		
 		//if(p.dependencies.length > 0) baseConfig.fieldClass = 'background-color:yellow;';
