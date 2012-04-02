@@ -222,7 +222,7 @@ Sbi.console.commons.Format = function(){
                 return Sbi.console.commons.Format.string(v, format);
             };
         }
-        
+/*        
         , boolean : function(v, format) {
         	format = Ext.apply({}, format || {}, {
 	    		trueSymbol: 'true',
@@ -246,7 +246,7 @@ Sbi.console.commons.Format = function(){
                 return Sbi.console.commons.Format.boolean(v, format);
             };
         }
-        
+*/        
         
         , html : function(v, format) {
         	// format is not used yet but it is reserve for future use
