@@ -1,7 +1,7 @@
 Ext.ns("Sbi.locale");
 
 Sbi.locale.dummyFormatter = function(v){return v;};
-/*
+
 Sbi.locale.formatters = {
 	//number: Sbi.locale.dummyFormatter,
 	int: Sbi.locale.dummyFormatter,
@@ -39,7 +39,7 @@ if(Sbi.console.commons.Format){
 		Sbi.locale.formatters.inlinePoint = Sbi.console.commons.Format.inlinePointRenderer();
 	}
 };
-*/
+
 
 Sbi.locale.localize = function(key) {
 	if(!Sbi.locale.ln) return key;
@@ -54,7 +54,7 @@ Sbi.locale.getLNValue = function(obj){
 			value = LN(idx);    			
 	}
 	return value;
-}
+};
 
 // alias
 LN = Sbi.locale.localize;
