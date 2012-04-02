@@ -6,6 +6,7 @@ Ext.ns("Sbi.settings");
 Sbi.settings.execution = {
 		parametersPanel: {
 			columnNo: 3
+			, mandatoryFieldAdditionalString: '*' // a String that will be added in the label of the mandatory fields
 			, columnWidth: 325
 			, labelAlign: 'left'
 			, fieldWidth: 190	
