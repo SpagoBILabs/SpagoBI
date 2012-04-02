@@ -109,7 +109,7 @@ Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
 	        fields: ['value', 'label'],
 	        data : [
 	                ['string', 'string']
-	                , ['number', 'number']
+	                , ['num', 'number']
 	                , ['date', 'date']
 	        ]
 	    });	    
@@ -130,7 +130,7 @@ Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
 	    this.filterStore = new Ext.data.SimpleStore({
 	        fields: ['value', 'label'],
 	        data : [
-	                ['contain', 'contains']
+	                ['contains', 'contains']
 	                , ['start', 'starts with']
 	                , ['end', 'ends with']
 	                , ['equal', '=']
