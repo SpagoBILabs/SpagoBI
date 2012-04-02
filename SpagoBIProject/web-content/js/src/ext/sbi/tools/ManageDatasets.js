@@ -629,7 +629,7 @@ Ext.extend(
 						store : this.dataSourceStore,
 						width : 180,
 						fieldLabel : LN('sbi.ds.dataSource'),
-						displayField : 'name', // what the user
+						displayField : 'dataSource', // what the user
 						// sees in the
 						// popup
 						valueField : 'dataSource', // what is passed to the
