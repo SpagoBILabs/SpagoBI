@@ -186,7 +186,7 @@ Ext.define('Sbi.chart.commons.Format', {
                 return Sbi.chart.commons.Format.string(v, format);
             };
         }
-        
+        /*
         , boolean : function(v, format) {
         	format = Ext.apply({}, format || {}, {
 	    		trueSymbol: 'true',
@@ -204,6 +204,7 @@ Ext.define('Sbi.chart.commons.Format', {
         	
         	return v;
         }
+        */
         
         , booleanRenderer : function(format){
             return function(v){
