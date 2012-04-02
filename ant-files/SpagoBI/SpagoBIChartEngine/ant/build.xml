@@ -177,7 +177,6 @@
 				
 				<file name='./spagobi/commons/Format.js' />
 				<file name='./spagobi/commons/Utils.js' />
-				<file name='./spagobi/commons/JSON.js' />
 				
 				<file name='./spagobi/locale/LocaleUtils.js' />
 
@@ -196,7 +195,7 @@
 
 	<target name="create-production" depends="create-debug">
 		<java jar="./yuicompressor-2.4.2.jar" fork="true">
-			<arg line="-o -v ${build}/${webapp_name}/js/spagobi/chart-all-${project.version}.js ${build}/${webapp_name}/js/spagobi/chart-all-debug.js" />
+			<arg line="-o ${build}/${webapp_name}/js/spagobi/chart-all-${project.version}.js ${build}/${webapp_name}/js/spagobi/chart-all-debug.js" />
 		</java>
 	</target>
 
