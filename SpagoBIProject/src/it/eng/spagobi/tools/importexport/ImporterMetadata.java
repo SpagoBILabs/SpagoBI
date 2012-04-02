@@ -65,6 +65,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.management.RuntimeErrorException;
+
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -108,7 +110,7 @@ public class ImporterMetadata {
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while getting exported roles ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8013", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -150,7 +152,7 @@ public class ImporterMetadata {
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while getting exported engine ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8015", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -180,7 +182,7 @@ public class ImporterMetadata {
 			hibList = hibQuery.list();
 		} catch (HibernateException he) {
 			logger.error("Error while getting exported sbi objects ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8014", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -203,7 +205,7 @@ public class ImporterMetadata {
 			hibList = hibQuery.list();
 		} catch (HibernateException he) {
 			logger.error("Error while getting exported sbi objects ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8014", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -280,7 +282,7 @@ public class ImporterMetadata {
 				logger.error("Error while updating connection reference for exported lov with label [" + lov.getLabel() + "].", e);
 			}
 			logger.error("Error while updating connection references ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8016", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -306,49 +308,59 @@ public class ImporterMetadata {
 		logger.debug("IN");
 		String hql = null;
 		Query hqlQuery = null;
+		String param = null;
+		try{
 		if (hibObj instanceof SbiParameters) {
+			param = "SbiParameters";
 			String label = (String) unique;
 			hql = "from SbiParameters sp where sp.label = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiParameters hibPar = (SbiParameters) hqlQuery.uniqueResult();
 			return hibPar;
 		} else if (hibObj instanceof SbiExtRoles) {
+			param = "SbiExtRoles";
 			String roleName = (String) unique;
 			hql = "from SbiExtRoles er where er.name = '" + roleName + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiExtRoles hibRole = (SbiExtRoles) hqlQuery.uniqueResult();
 			return hibRole;
 		} else if (hibObj instanceof SbiObjects) {
+			param = "SbiObjects";
 			String label = (String) unique;
 			hql = "from SbiObjects obj where obj.label = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiObjects hibBIObj = (SbiObjects) hqlQuery.uniqueResult();
 			return hibBIObj;
 		} else if (hibObj instanceof SbiLov) {
+			param = "SbiLov";
 			String label = (String) unique;
 			hql = "from SbiLov lov where lov.label = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiLov hibLov = (SbiLov) hqlQuery.uniqueResult();
 			return hibLov;
 		} else if (hibObj instanceof SbiFunctions) {
+			param = "SbiFunctions";
 			String code = (String) unique;
 			hql = "from SbiFunctions f where f.code = '" + code + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiFunctions hibFunct = (SbiFunctions) hqlQuery.uniqueResult();
 			return hibFunct;
 		} else if (hibObj instanceof SbiEngines) {
+			param = "SbiEngines";
 			String label = (String) unique;
 			hql = "from SbiEngines eng where eng.label = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiEngines hibEng = (SbiEngines) hqlQuery.uniqueResult();
 			return hibEng;
 		} else if (hibObj instanceof SbiChecks) {
+			param = "SbiChecks";
 			String label = (String) unique;
 			hql = "from SbiChecks ch where ch.label = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiChecks hibCheck = (SbiChecks) hqlQuery.uniqueResult();
 			return hibCheck;
 		} else if (hibObj instanceof SbiParuse) {
+			param = "SbiParuse";
 			Map uniqueMap = (Map) unique;
 			String label = (String) uniqueMap.get("label");
 			Integer parid = (Integer) uniqueMap.get("idpar");
@@ -358,6 +370,7 @@ public class ImporterMetadata {
 			return hibParuse;
 		} 
 		else if (hibObj instanceof SbiFuncRole) {
+			param = "SbiFuncRole";
 			Map uniqueMap = (Map) unique;
 			Integer stateid = (Integer) uniqueMap.get("stateid");
 			Integer roleid = (Integer) uniqueMap.get("roleid");
@@ -368,6 +381,7 @@ public class ImporterMetadata {
 			SbiFuncRole hibFunctRole = (SbiFuncRole) hqlQuery.uniqueResult();
 			return hibFunctRole;
 		} else if (hibObj instanceof SbiParuseDet) {
+			param = "SbiParuseDet";
 			Map uniqueMap = (Map) unique;
 			Integer paruseid = (Integer) uniqueMap.get("paruseid");
 			Integer roleid = (Integer) uniqueMap.get("roleid");
@@ -377,6 +391,7 @@ public class ImporterMetadata {
 			SbiParuseDet hibParuseDet = (SbiParuseDet) hqlQuery.uniqueResult();
 			return hibParuseDet;
 		} else if (hibObj instanceof SbiParuseCk) {
+			param = "SbiParuseCk";
 			Map uniqueMap = (Map) unique;
 			Integer paruseid = (Integer) uniqueMap.get("paruseid");
 			Integer checkid = (Integer) uniqueMap.get("checkid");
@@ -386,6 +401,7 @@ public class ImporterMetadata {
 			SbiParuseCk hibParuseCk = (SbiParuseCk) hqlQuery.uniqueResult();
 			return hibParuseCk;
 		} else if (hibObj instanceof SbiObjPar) {
+			param = "SbiObjPar";
 			Map uniqueMap = (Map) unique;
 			Integer paramid = (Integer) uniqueMap.get("paramid");
 			Integer biobjid = (Integer) uniqueMap.get("biobjid");
@@ -396,6 +412,7 @@ public class ImporterMetadata {
 			SbiObjPar hibObjPar = (SbiObjPar) hqlQuery.uniqueResult();
 			return hibObjPar;
 		} else if (hibObj instanceof SbiDomains) {
+			param = "SbiDomains";
 			Map uniqueMap = (Map) unique;
 			String valuecd = (String) uniqueMap.get("valuecd");
 			String domaincd = (String) uniqueMap.get("domaincd");
@@ -404,6 +421,7 @@ public class ImporterMetadata {
 			SbiDomains hibDom = (SbiDomains) hqlQuery.uniqueResult();
 			return hibDom;
 		} else if (hibObj instanceof SbiObjFunc) {
+			param = "SbiObjFunc";
 			Map uniqueMap = (Map) unique;
 			Integer objid = (Integer) uniqueMap.get("objectid");
 			Integer functionid = (Integer) uniqueMap.get("functionid");
@@ -413,6 +431,7 @@ public class ImporterMetadata {
 			SbiObjFunc hibObjFunct = (SbiObjFunc) hqlQuery.uniqueResult();
 			return hibObjFunct;
 		} else if (hibObj instanceof SbiSubreports) {
+			param = "SbiSubreports";
 			Map uniqueMap = (Map) unique;
 			Integer masterid = (Integer) uniqueMap.get("masterid");
 			Integer subid = (Integer) uniqueMap.get("subid");
@@ -422,6 +441,7 @@ public class ImporterMetadata {
 			SbiSubreports hibSubRep = (SbiSubreports) hqlQuery.uniqueResult();
 			return hibSubRep;
 		} else if (hibObj instanceof SbiObjParuse) {
+			param = "SbiObjParuse";
 			Map uniqueMap = (Map) unique;
 			Integer objparid = (Integer) uniqueMap.get("objparid");
 			Integer paruseid = (Integer) uniqueMap.get("paruseid");
@@ -435,6 +455,7 @@ public class ImporterMetadata {
 			SbiObjParuse hibObjParUse = (SbiObjParuse) hqlQuery.uniqueResult();
 			return hibObjParUse;
 		} else if (hibObj instanceof SbiObjParview) {
+			param = "SbiObjParview";
 			Map uniqueMap = (Map) unique;
 			Integer objparid = (Integer) uniqueMap.get("objparid");
 			Integer objparfathid = (Integer) uniqueMap.get("objparfathid");
@@ -449,30 +470,35 @@ public class ImporterMetadata {
 			return hibObjParview;
 		} 
 		else if (hibObj instanceof SbiDataSetConfig) {
+			param = "SbiDataSetConfig";
 			String label = (String) unique;
 			hql = "from SbiDataSetConfig ds where ds.label = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiDataSetConfig hibDs = (SbiDataSetConfig) hqlQuery.uniqueResult();
 			return hibDs;
 		} else if (hibObj instanceof SbiDataSource) {
+			param = "SbiDataSource";
 			String label = (String) unique;
 			hql = "from SbiDataSource ds where ds.label = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiDataSource hibDs = (SbiDataSource) hqlQuery.uniqueResult();
 			return hibDs;
 		} else if (hibObj instanceof SbiGeoMaps) {
+			param = "SbiGeoMaps";
 			String name = (String) unique;
 			hql = "from SbiGeoMaps where name = '" + name + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiGeoMaps hibMap = (SbiGeoMaps) hqlQuery.uniqueResult();
 			return hibMap;
 		} else if (hibObj instanceof SbiGeoFeatures) {
+			param = "SbiGeoFeatures";
 			String name = (String) unique;
 			hql = "from SbiGeoFeatures where name = '" + name + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiGeoFeatures hibMap = (SbiGeoFeatures) hqlQuery.uniqueResult();
 			return hibMap;
 		} else if (hibObj instanceof SbiGeoMapFeatures) {
+			param = "SbiGeoMapFeatures";
 			Map uniqueMap = (Map) unique;
 			Integer mapId = (Integer) uniqueMap.get("mapId");
 			Integer featureId = (Integer) uniqueMap.get("featureId");
@@ -481,16 +507,12 @@ public class ImporterMetadata {
 			SbiGeoMapFeatures hibMapFeature = (SbiGeoMapFeatures) hqlQuery.uniqueResult();
 			return hibMapFeature;
 		} else if (hibObj instanceof it.eng.spagobi.kpi.threshold.metadata.SbiThreshold) {
+			param = "SbiThreshold";
 			String label = (String) unique;
 			hql = "from SbiThreshold ds where ds.code = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiThreshold hibDs = null;
-			try{
-				hibDs = (SbiThreshold) hqlQuery.uniqueResult();
-			}
-			catch (Exception e) {
-				throw new EMFUserError(EMFErrorSeverity.ERROR, "9001", "component_impexp_messages");
-			}
+			hibDs = (SbiThreshold) hqlQuery.uniqueResult();
 			return hibDs;
 		}
 		/*else if (hibObj instanceof SbiThresholdValue) {
@@ -500,99 +522,74 @@ public class ImporterMetadata {
 			SbiThresholdValue hibDs = (SbiThresholdValue) hqlQuery.uniqueResult();
 			return hibDs;
 		} */	else if (hibObj instanceof SbiKpi) {
+			param = "SbiKpi";
 			String label = (String) unique;
 			hql = "from SbiKpi ds where ds.code = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiKpi hibDs =null;
-			try{
-				hibDs= (SbiKpi) hqlQuery.uniqueResult();
-			}
-			catch (Exception e) {
-				throw new EMFUserError(EMFErrorSeverity.ERROR, "9002", "component_impexp_messages");
-			}
+			hibDs= (SbiKpi) hqlQuery.uniqueResult();
 			return hibDs;
 		} 	else if (hibObj instanceof SbiKpiModel) {
+			param = "SbiKpiModel";
 			// if unique == null means we are importing form a SpagoBI version < 2.4
 			if(unique == null) return null;
 			String label = (String) unique;
 			hql = "from SbiKpiModel ds where ds.kpiModelLabel = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiKpiModel hibDs =null;
-			try{
-				hibDs=(SbiKpiModel) hqlQuery.uniqueResult();
-			}
-			catch (Exception e) {
-				throw new EMFUserError(EMFErrorSeverity.ERROR, "9003", "component_impexp_messages");
-			}
+			hibDs=(SbiKpiModel) hqlQuery.uniqueResult();
 			return hibDs;
 		} 	else if (hibObj instanceof SbiKpiModelInst) {
+			param = "SbiKpiModelInst";
 			String label = (String) unique;
 			hql = "from SbiKpiModelInst ds where ds.label = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiKpiModelInst hibDs = null;
-			try{
-				hibDs=(SbiKpiModelInst) hqlQuery.uniqueResult();
-			}
-			catch (Exception e) {
-				throw new EMFUserError(EMFErrorSeverity.ERROR, "9004", "component_impexp_messages");
-			}
+			hibDs=(SbiKpiModelInst) hqlQuery.uniqueResult();
 			return hibDs;
 		} 	else if (hibObj instanceof SbiResources) {
+			param = "SbiResources";
+
 			String label = (String) unique;
 			hql = "from SbiResources ds where ds.resourceCode = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiResources hibDs = null;
-			try{
-				hibDs=(SbiResources) hqlQuery.uniqueResult();
-			}
-			catch (Exception e) {
-				throw new EMFUserError(EMFErrorSeverity.ERROR, "9005", "component_impexp_messages");
-			}
+			hibDs=(SbiResources) hqlQuery.uniqueResult();
 			return hibDs;
 		} 	else if (hibObj instanceof SbiKpiPeriodicity) {
+			param = "SbiKpiPeriodicity";
 			String label = (String) unique;
 			hql = "from SbiKpiPeriodicity ds where ds.name = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiKpiPeriodicity hibDs = null;
-			try{
-				hibDs=(SbiKpiPeriodicity) hqlQuery.uniqueResult();
-			}
-			catch (Exception e) {
-				throw new EMFUserError(EMFErrorSeverity.ERROR, "9006", "component_impexp_messages");
-			}
+			hibDs=(SbiKpiPeriodicity) hqlQuery.uniqueResult();
 			return hibDs;
 		}  	else if (hibObj instanceof SbiAlarm) {
+			param = "SbiAlarm";
 			String label = (String) unique;
 			hql = "from SbiAlarm ds where ds.label = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiAlarm hibDs = null;
-			try{
 				hibDs=(SbiAlarm) hqlQuery.uniqueResult();
-			}
-			catch (Exception e) {
-				throw new EMFUserError(EMFErrorSeverity.ERROR, "9007", "component_impexp_messages");
-			}
 			return hibDs;
 		}  	else if (hibObj instanceof SbiAlarmContact) {
+			param = "SbiAlarmContact";
 			String label = (String) unique;
 			hql = "from SbiAlarmContact ds where ds.name = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiAlarmContact hibDs = null;
-			try{
-				hibDs=(SbiAlarmContact) hqlQuery.uniqueResult();
-			}
-			catch (Exception e) {
-				throw new EMFUserError(EMFErrorSeverity.ERROR, "9008", "component_impexp_messages");
-			}
+			hibDs=(SbiAlarmContact) hqlQuery.uniqueResult();
 			return hibDs;
 		}
 		else if (hibObj instanceof SbiObjMetadata) {
+			param = "SbiObjMetadata";
 			String metaName = (String) unique;
 			hql = "from SbiObjMetadata er where er.label = '" + metaName + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiObjMetadata hibMeta = (SbiObjMetadata) hqlQuery.uniqueResult();
 			return hibMeta;		
 		}else if (hibObj instanceof SbiKpiRel) {
+			param = "SbiKpiRel";
 			Map uniqueMap = (Map) unique;
 			Integer fatherId = (Integer) uniqueMap.get("fatherId");
 			Integer childId = (Integer) uniqueMap.get("childId");
@@ -601,14 +598,10 @@ public class ImporterMetadata {
 			+ " and kr.parameter = '" + parameter+ "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiKpiRel hibKpiRel = null;
-			try{
 				hibKpiRel = (SbiKpiRel) hqlQuery.uniqueResult();
-			}
-			catch (Exception e) {
-				throw new EMFUserError(EMFErrorSeverity.ERROR, "9010", "component_impexp_messages");
-			}
 			return hibKpiRel;	
 		}else if (hibObj instanceof SbiUdpValue) {
+			param = "SbiUdpValue";
 			Map uniqueMap = (Map) unique;
 			String family = (String) uniqueMap.get("family");
 			Integer udpId = (Integer) uniqueMap.get("udpId");
@@ -629,7 +622,7 @@ public class ImporterMetadata {
 			Integer familyId = (Integer) uniqueMap.get("familyId");
 			String label = (String) uniqueMap.get("label");
 			hql = "from SbiUdp u where u.label = '" + label + "' and u.typeId ="+typeId+" and u.familyId = "+familyId;*/
-						
+			param = "SbiUdp";
 			String label = (String) unique;
 			hql = "from SbiUdp u where u.label = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
@@ -637,6 +630,7 @@ public class ImporterMetadata {
 			return hibUdp;		
 		}else if (hibObj instanceof SbiOrgUnit) {
 			//checks existence in import db
+			param = "SbiOrgUnit";
 			Map uniqueMap = (Map) unique;
 			String label = (String) uniqueMap.get("label");
 			String name = (String) uniqueMap.get("name");
@@ -648,7 +642,7 @@ public class ImporterMetadata {
 			SbiOrgUnit hibOu = (SbiOrgUnit) hqlQuery.uniqueResult();
 			return hibOu;		
 		}else if (hibObj instanceof SbiOrgUnitHierarchies) {
-
+			param = "SbiOrgUnitHierarchies";
 			Map uniqueMap = (Map) unique;
 			String label = (String) uniqueMap.get("label");
 			String company = (String) uniqueMap.get("company");
@@ -658,6 +652,7 @@ public class ImporterMetadata {
 			SbiOrgUnitHierarchies hibHier = (SbiOrgUnitHierarchies) hqlQuery.uniqueResult();
 			return hibHier;		
 		}else if (hibObj instanceof SbiOrgUnitNodes) {
+			param = "SbiOrgUnitNodes";
 			Map uniqueMap = (Map) unique;
 			Integer ouId = (Integer) uniqueMap.get("ouId");
 			Integer hierarchyId = (Integer) uniqueMap.get("hierarchyId");
@@ -666,12 +661,14 @@ public class ImporterMetadata {
 			SbiOrgUnitNodes hibnode = (SbiOrgUnitNodes) hqlQuery.uniqueResult();
 			return hibnode;		
 		}else if (hibObj instanceof SbiOrgUnitGrant) {
+			param = "SbiOrgUnitGrant";
 			String label = (String) unique;
 			hql = "from SbiOrgUnitGrant u where u.label = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiOrgUnitGrant hibOu = (SbiOrgUnitGrant) hqlQuery.uniqueResult();
 			return hibOu;		
 		}else if (hibObj instanceof SbiOrgUnitGrantNodes) {
+			param = "SbiOrgUnitGrantNodes";
 			Map uniqueMap = (Map) unique;
 			Integer nodeId = (Integer) uniqueMap.get("nodeId");
 			Integer grantId = (Integer) uniqueMap.get("grantId");
@@ -680,6 +677,14 @@ public class ImporterMetadata {
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiOrgUnitGrantNodes hibOu = (SbiOrgUnitGrantNodes) hqlQuery.uniqueResult();
 			return hibOu;		
+		}
+		}
+		catch (Exception e) {
+			logger.error("Error: Found in import database more than one "+param+" with the same key");
+			List params = new ArrayList();
+			params.add(param);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "9000", params, ImportManager.messageBundle);
+			
 		}
 
 
@@ -748,7 +753,7 @@ public class ImporterMetadata {
 			hibDs = (SbiThresholdValue) hqlQuery.uniqueResult();
 		}
 		catch (Exception e) {
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "9009", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "9009", ImportManager.messageBundle);
 		}
 		return hibDs;
 	}
