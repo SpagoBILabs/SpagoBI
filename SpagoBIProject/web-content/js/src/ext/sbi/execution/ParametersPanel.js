@@ -145,6 +145,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     , baseConfig: null
     , modality : null
     , drawHelpMessage : true
+    , mandatoryFieldAdditionalString: null
     
    
     // ----------------------------------------------------------------------------------------
@@ -658,6 +659,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		labelStyle += (p.dependencies.length > 0)?'font-style: italic;': '';
 		labelStyle += 'width: '+this.baseConfig.fieldLabelWidth+'px;';
 		baseConfig.labelStyle = labelStyle;
+		
+		if((this.mandatoryFieldAdditionalString!=null && this.mandatoryFieldAdditionalString!=undefined) && p.mandatory === true && baseConfig.fieldDefaultLabel!=undefined && baseConfig.fieldDefaultLabel!=null){
+			baseConfig.fieldDefaultLabel =  baseConfig.fieldDefaultLabel+' *';
+		}
 		
 		//if(p.dependencies.length > 0) baseConfig.fieldClass = 'background-color:yellow;';
 		if(p.type === 'DATE' && p.selectionType !== 'MAN_IN') {		
