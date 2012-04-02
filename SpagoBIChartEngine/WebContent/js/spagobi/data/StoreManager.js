@@ -76,7 +76,7 @@ Ext.define('Sbi.extjs.chart.data.StoreManager', {
 			var task = {
 				run: function(){
 					//if the chart is hidden doesn't refresh the datastore
-					if(s.stopped) return;
+					if(s.stopped) {return;}
 					
 					// if store is paging...
 					if(s.lastParams) {
@@ -92,7 +92,7 @@ Ext.define('Sbi.extjs.chart.data.StoreManager', {
 					});
 				},
 				interval: s.refreshTime * 1000 //1 second
-			}
+			};
 			Ext.TaskManager.start(task);
 		}
 	}

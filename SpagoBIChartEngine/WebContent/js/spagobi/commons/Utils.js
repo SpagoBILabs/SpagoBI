@@ -73,7 +73,7 @@ Ext.define('Sbi.chart.commons.Utils', {
 		, toStr : function(o) {
 			var str = "";
 			
-			if(o === 'undefined') return 'undefined';
+			if(o === 'undefined') {return 'undefined';}
 			
 			str += "Type: [" + typeof(o) + "]\n------------------------\n";
 			
