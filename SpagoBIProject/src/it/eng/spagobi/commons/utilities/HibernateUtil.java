@@ -12,15 +12,14 @@
 package it.eng.spagobi.commons.utilities;
 
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 public class HibernateUtil {
 	
-	private static Log log = LogFactory.getLog(HibernateUtil.class);
+	public static transient Logger logger = Logger.getLogger(HibernateUtil.class);
 
 	private static final SessionFactory sessionFactory;
 	static {
@@ -29,14 +28,14 @@ public class HibernateUtil {
 
 				String fileCfg = "hibernate.cfg.xml";
 				fileCfg = fileCfg.trim();
-				log.info( "Initializing hibernate Session Factory Described by [" + fileCfg +"]");
+				logger.info( "Initializing hibernate Session Factory Described by [" + fileCfg +"]");
 				Configuration conf = new Configuration();
 				conf = conf.configure(fileCfg);
 				sessionFactory = conf.buildSessionFactory();
 
 		} catch (Throwable ex) {
 			// Make sure you log the exception, as it might be swallowed
-			log.error("Initial SessionFactory creation failed.", ex);
+			logger.error("Initial SessionFactory creation failed.", ex);
 			throw new ExceptionInInitializerError(ex);
 		}
 	}
