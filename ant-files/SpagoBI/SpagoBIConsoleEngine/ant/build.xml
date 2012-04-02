@@ -265,6 +265,7 @@
 	<target name="create.war" depends="init,copy.artifacts" >
 		<antcall target="${sso}" />
 		<antcall target="${specific.ant.task}" />
+		<antcall target="${ext.deploy}" />
 		<antcall target="upgrade.mf" />
 	      <mkdir dir="${dist}"/>
 	      <delete file="${dist}/${war_name}" />
