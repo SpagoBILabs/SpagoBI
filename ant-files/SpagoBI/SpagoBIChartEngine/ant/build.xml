@@ -196,7 +196,7 @@
 
 	<target name="create-production" depends="create-debug">
 		<java jar="./yuicompressor-2.4.2.jar" fork="true">
-			<arg line="-o ${build}/${webapp_name}/js/spagobi/chart-all-${project.version}.js ${build}/${webapp_name}/js/spagobi/chart-all-debug.js" />
+			<arg line="-o -v ${build}/${webapp_name}/js/spagobi/chart-all-${project.version}.js ${build}/${webapp_name}/js/spagobi/chart-all-debug.js" />
 		</java>
 	</target>
 
@@ -238,6 +238,7 @@
 	<target name="create.war" depends="init,copy.artifacts" >
 		<antcall target="${sso}" />
 		<antcall target="${specific.ant.task}" />
+	    <antcall target="${ext.deploy}" />
 		<antcall target="upgrade.mf" />
 	      <mkdir dir="${dist}"/>
 	      <delete file="${dist}/${war_name}" />
