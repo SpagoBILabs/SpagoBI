@@ -87,6 +87,7 @@ public class TestConnectionAction extends AbstractHttpAction {
 			}
 		 if (connection != null){
 			    	message = "sbi.connTestOk";
+			    	logger.debug("connection is ok");
 			   }
 		} catch (NamingException ne) {
 		    logger.error("JNDI error", ne);
