@@ -186,8 +186,8 @@ Ext.define('Sbi.chart.commons.Format', {
                 return Sbi.chart.commons.Format.string(v, format);
             };
         }
-        /*
-        , boolean : function(v, format) {
+        
+        , 'boolean' : function(v, format) {
         	format = Ext.apply({}, format || {}, {
 	    		trueSymbol: 'true',
 	    		falseSymbol: 'false',
@@ -208,10 +208,10 @@ Ext.define('Sbi.chart.commons.Format', {
         
         , booleanRenderer : function(format){
             return function(v){
-                return Sbi.chart.commons.Format.boolean(v, format);
+                return Sbi.chart.commons.Format['boolean'](v, format);
             };
         }
-        */
+        
         , html : function(v, format) {
         	// format is not used yet but it is reserve for future use
         	// ex. format.cls, format.style
