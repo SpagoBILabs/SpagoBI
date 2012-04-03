@@ -181,8 +181,10 @@ public class ImporterMetadata {
 			Query hibQuery = session.createQuery(hql);
 			hibList = hibQuery.list();
 		} catch (HibernateException he) {
-			logger.error("Error while getting exported sbi objects ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8014", ImportManager.messageBundle);
+			logger.error("Error while getting exported sbi objects from table "+table, he);
+			List params = new ArrayList();
+			params.add(table);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8014", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -204,8 +206,10 @@ public class ImporterMetadata {
 			Query hibQuery = session.createQuery(hql);
 			hibList = hibQuery.list();
 		} catch (HibernateException he) {
-			logger.error("Error while getting exported sbi objects ", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8014", ImportManager.messageBundle);
+			logger.error("Error while getting exported from table "+table +" and field name "+fieldName + "with field value "+fieldValue, he);
+			List params = new ArrayList();
+			params.add(table);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8014", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
