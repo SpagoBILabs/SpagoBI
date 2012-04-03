@@ -26,18 +26,18 @@ import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.CalculatedSelectField;
-import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.IQuerySerializer;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.statement.StatementTockenizer;
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
@@ -46,7 +46,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -297,7 +296,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 	 */
 	public static String getInLinecalculatedFieldNature(String expr, Map<String, String> datamartFields){
 		
-		StringTokenizer stk = new StringTokenizer(expr, "+-|*/(),");
+		StatementTockenizer stk = new StatementTockenizer(expr);
 		while(stk.hasMoreTokens()){
 			String alias = stk.nextToken().trim();
 			// alias can contain "DISTINCT" HQL/SQL key: we have to remove it

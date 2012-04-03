@@ -39,6 +39,7 @@ import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.statement.StatementTockenizer;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -58,7 +59,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -851,7 +851,7 @@ public class HQLStatement extends AbstractStatement {
 		List<String> aliasEntityMapping = new  ArrayList<String>();
 		List<String> aliases = new  ArrayList<String>();
 		
-		StringTokenizer stk = new StringTokenizer(expr, "+-|*/()");
+		StatementTockenizer stk = new StatementTockenizer(expr);
 		while(stk.hasMoreTokens()){
 			String cfExpressionField = stk.nextToken().trim();
 			// alias can contain "DISTINCT" HQL/SQL key: we have to remove it
@@ -879,8 +879,8 @@ public class HQLStatement extends AbstractStatement {
 		
 		String freshExpr = expr;
 		int ind =0;
-		int pos =0;
-		stk = new StringTokenizer(expr.replace("\'", ""), "+-|*/()");
+		int pos =0; 
+		stk = new StatementTockenizer(expr.replace("\'", ""));
 		while(stk.hasMoreTokens()){
 			String alias = stk.nextToken().trim();
 			// alias can contain "DISTINCT" HQL/SQL key: we have to remove it
