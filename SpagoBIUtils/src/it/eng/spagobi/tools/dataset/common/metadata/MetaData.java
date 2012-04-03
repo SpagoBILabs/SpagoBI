@@ -24,15 +24,23 @@ import java.util.Map;
 public class MetaData implements IMetaData {
 	
 	int idFieldIndex;
-	List fieldsMeta;
-	Map name2IndexMap;
+	
+	List<IFieldMetaData> fieldsMeta;
 	Map<String, Object> properties;
+	
+	// @deprecated this map is used only by deprecated method getFieldIndex. Once this method will be removed
+	// remove also this map and all the references to it made within this class
+	Map<String, Integer> name2IndexMap;
 
 	public MetaData() {
 		idFieldIndex = -1;
-		name2IndexMap = new HashMap();
-		fieldsMeta = new ArrayList();
-		properties = new HashMap();
+		name2IndexMap = new HashMap<String, Integer>();
+		fieldsMeta = new ArrayList<IFieldMetaData>();
+		properties = new HashMap<String, Object>();
+	}
+	
+	public int getFieldCount() {
+		return fieldsMeta.size();
 	}
 	
 	public int getIdFieldIndex() {
@@ -42,18 +50,17 @@ public class MetaData implements IMetaData {
 	public void setIdField(int fieldIndex) {
 		this.idFieldIndex = fieldIndex;
 	}
-
-	public int getFieldCount() {
-		return fieldsMeta.size();
-	}
 	
-
 	public int getFieldIndex(String fieldName) {
 		Integer columnIndex = null;
 		
 		columnIndex = (Integer)name2IndexMap.get(fieldName.toUpperCase());
 		
 		return columnIndex == null? -1: columnIndex.intValue();
+	}
+	
+	public int getFieldIndex(IFieldMetaData fieldMeta) {
+		return fieldsMeta.indexOf(fieldMeta);
 	}
 
 	public IFieldMetaData getFieldMeta(int fieldIndex) {
@@ -123,8 +130,8 @@ public class MetaData implements IMetaData {
 	public void addFiedMeta(IFieldMetaData fieldMetaData) {
 		Integer fieldIndex = new Integer(fieldsMeta.size());
 		fieldsMeta.add(fieldMetaData);
-		String fieldKey = fieldMetaData.getName();
-		name2IndexMap.put(fieldKey.toUpperCase(), fieldIndex);
+		String fieldName = fieldMetaData.getName();
+		name2IndexMap.put(fieldName.toUpperCase(), fieldIndex);
 	}
 
 	public String toString() {

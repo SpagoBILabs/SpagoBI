@@ -23,7 +23,7 @@ import java.util.Map;
 public interface IMetaData {
 	
 	/**
-	 * @return Returns the index of identfier field if any. -1 otherwaise. 
+	 * @return Returns the index of identifier field if any. -1 otherwise. 
 	 */
 	int getIdFieldIndex();
 	
@@ -40,8 +40,15 @@ public interface IMetaData {
 	 * @param columnIndex the first column is 0, the second is 1, ... 
 	 * 
 	 * @return column index 
+	 * 
+	 * @deprecated use getFieldIndex(IFieldMetaData fieldMeta) instead. This method is ambiguous because
+	 * field name is not unique among fields contained in a result set. The same field can be used more then
+	 * one time in the select statement of the same query. This is a problem when different aggregation functions
+	 * are applied on the different occurrences of the same fields (see SPAGOBI-757)
 	 */
 	int getFieldIndex(String fieldName);
+	
+	int getFieldIndex(IFieldMetaData fieldMeta);
 	
 	/**
 	 * Get the designated column's name. 

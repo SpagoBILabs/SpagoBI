@@ -37,6 +37,18 @@ public class FieldMetadata implements IFieldMetaData {
 		fieldType = FieldType.ATTRIBUTE;
 	}
 
+	private String getId() {
+		String id = null;
+		String aggregationFunction = (String)properties.get("aggregationFunction");
+		if(aggregationFunction == null || "NONE".equalsIgnoreCase(aggregationFunction)) {
+			id = getName();
+		} else {
+			id = aggregationFunction + "(" +  getName() + ")";
+		}
+		
+		return id;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -91,5 +103,34 @@ public class FieldMetadata implements IFieldMetaData {
 				+ type + ", properties=" + properties + ", fieldType="
 				+ fieldType + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FieldMetadata other = (FieldMetadata) obj;
+		if (getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!getId().equals(other.getId())) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
 	
 }
