@@ -329,6 +329,10 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 	 * @return the date in the db format
 	 */
 	String parseDate(String date){
+		if (date==null || date.equals("")){
+			return "";
+		}
+		
 		String toReturn = "'" +date+ "'";
 		
 		//String userDfString = (String)parentStatement.getParameters().get("userDateFormatPattern");
