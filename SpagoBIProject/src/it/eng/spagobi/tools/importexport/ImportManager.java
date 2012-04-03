@@ -608,7 +608,11 @@ public class ImportManager implements IImportManager, Serializable {
 				Integer newId = newRole.getExtRoleId();
 				metaAss.insertCoupleRole(oldId, newId);
 			}
-		} catch (Exception e) {
+		} 
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		catch (Exception e) {
 			if (role != null) {
 				logger.error("Error while importing exported role with name [" + role.getName() + "].", e);
 			}
@@ -675,7 +679,11 @@ public class ImportManager implements IImportManager, Serializable {
 				metaAss.insertCoupleEngine(oldId, newId);
 
 			}
-		} catch (Exception e) {
+		} 
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		catch (Exception e) {
 			if (engine != null) {
 				logger.error("Error while importing exported engine with label [" + engine.getLabel() + "].", e);
 			}
@@ -733,7 +741,11 @@ public class ImportManager implements IImportManager, Serializable {
 					metaAss.insertCoupleObjMetadataIDAssociation(oldId, newId);
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (exportedObjMetadata != null) {
 				logger.error("Error while importing exported ObjectMetadata with label [" + exportedObjMetadata.getLabel() + "].", e);
 			}
@@ -794,7 +806,11 @@ public class ImportManager implements IImportManager, Serializable {
 					metaLog.log("Not inserted data source with ID " + oldId);					
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		catch (Exception e) {
 			if (dataSource != null) {
 				logger.error("Error while importing exported datasource with label [" + dataSource.getLabel() + "].", e);
 			}
@@ -845,7 +861,11 @@ public class ImportManager implements IImportManager, Serializable {
 					metaAss.insertCoupleDataSets(oldId, newId);
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (exportedDataSet != null) {
 				logger.error("Error while importing exported dataset with label [" + exportedDataSet.getLabel() + "].", e);
 			}
@@ -940,7 +960,11 @@ public class ImportManager implements IImportManager, Serializable {
 				metaAss.insertCoupleFunct(expId, newId);
 
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (functToInsert != null) {
 				logger.error("Error while importing exported functionality with path [" + functToInsert.getPath() + "].", e);
 			}
@@ -1007,7 +1031,11 @@ public class ImportManager implements IImportManager, Serializable {
 					metaAss.insertCoupleLov(oldId, newId);
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (exportedLov != null) {
 				logger.error("Error while importing exported lov with label [" + exportedLov.getLabel() + "].", e);
 			}
@@ -1057,7 +1085,11 @@ public class ImportManager implements IImportManager, Serializable {
 				Integer newId = newck.getCheckId();
 				metaAss.insertCoupleCheck(oldId, newId);
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (check != null) {
 				logger.error("Error while importing exported check with label [" + check.getLabel() + "].", e);
 			}
@@ -1315,7 +1347,11 @@ public class ImportManager implements IImportManager, Serializable {
 					sessionCurrDB.save(newSnapshots);
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (expSbiSnapshots != null) {
 				logger.error("Error while importing exported snapshot with name [" + expSbiSnapshots.getName() + "] " +
 						"of biobject with label [" + obj.getLabel() + "]", e);
@@ -1377,7 +1413,11 @@ public class ImportManager implements IImportManager, Serializable {
 			existingSbiSnapshots.setSbiBinContents(binary);
 			sessionCurrDB.update(existingSbiSnapshots);
 
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (expSbiSnapshots != null) {
 				logger.error("Error while updating exported snapshot with name [" + expSbiSnapshots.getName() + "] " +
 						"of biobject with label [" + obj.getLabel() + "]", e);
@@ -1429,7 +1469,11 @@ public class ImportManager implements IImportManager, Serializable {
 			existingSubObject.setSbiBinContents(binary);
 			sessionCurrDB.update(existingSubObject);
 
-		} catch (HibernateException he) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (HibernateException he) {
 			logger.error("Error while getting exported template objects ", he);
 			List params = new ArrayList();
 			params.add("Sbi_subobject");
@@ -1475,7 +1519,11 @@ public class ImportManager implements IImportManager, Serializable {
 					idAssociation.put(expSubObject.getSubObjId(), newSubObj.getSubObjId());
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (expSubObject != null) {
 				logger.error("Error while importing exported subobject with name [" + expSubObject.getName() + "] " +
 						"of biobject with label [" + exportedObj.getLabel() + "]", e);
@@ -1543,7 +1591,11 @@ public class ImportManager implements IImportManager, Serializable {
 			SbiBinContents binary = insertBinaryContent(expTemplate.getSbiBinContents());
 			newObj.setSbiBinContents(binary);
 			sessionCurrDB.save(newObj);
-		} catch (Exception he) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception he) {
 			logger.error("Error while getting exported template objects ", he);
 			List params = new ArrayList();
 			params.add("Sbi_obj_template");
@@ -1776,7 +1828,11 @@ public class ImportManager implements IImportManager, Serializable {
 				}
 
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (parusedet != null) {
 				logger.error("Error while importing association between exported parameter use with label [" + parusedet.getId().getSbiParuse().getLabel()
 						+ "] and exported role with name [" + parusedet.getId().getSbiExtRoles().getName() + "]", e);
@@ -1845,7 +1901,11 @@ public class ImportManager implements IImportManager, Serializable {
 				paruseck.setId(parusecheckid);
 
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (paruseck != null) {
 				logger.error("Error while importing association between exported parameter use with label [" + paruseck.getId().getSbiParuse().getLabel()
 						+ "] and exported check with label [" + paruseck.getId().getSbiChecks().getLabel() + "]", e);
@@ -1910,7 +1970,11 @@ public class ImportManager implements IImportManager, Serializable {
 							+ " and sub object " + subBIObj.getLabel());
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (objlink != null) {
 				logger.error("Error while importing association between exported master biobject with label [" + objlink.getId().getMasterReport().getLabel()
 						+ "] and exported sub biobject with label [" + objlink.getId().getSubReport().getLabel() + "]", e);
@@ -1976,7 +2040,11 @@ public class ImportManager implements IImportManager, Serializable {
 							+ objfunct.getId().getSbiObjects().getName());
 				}
 			}
-		} catch (HibernateException he) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (HibernateException he) {
 			logger.error("Error while inserting object ", he);
 			List params = new ArrayList();
 			params.add("sbi_obj_functions");
@@ -2040,7 +2108,11 @@ public class ImportManager implements IImportManager, Serializable {
 							+ functrole.getId().getRole().getName());
 				}
 			}
-		} catch (Exception e) {
+		}
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (functrole != null) {
 				logger.error("Error while importing association between exported function with path [" + functrole.getId().getFunction().getPath()
 						+ "] and exported role with name [" + functrole.getId().getRole().getName() + "]", e);
@@ -2108,7 +2180,11 @@ public class ImportManager implements IImportManager, Serializable {
 				sessionExpDB.evict(objpar);
 				metaAss.insertCoupleObjpar(oldId, newId);
 			}
-		} catch (HibernateException he) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (HibernateException he) {
 			logger.error("Error while inserting object ", he);
 			List params = new ArrayList();
 			params.add("sbi_obj_par");
@@ -2188,7 +2264,11 @@ public class ImportManager implements IImportManager, Serializable {
 							+ pardep.getId().getSbiParuse().getLabel());
 				}
 			}
-		} catch (HibernateException he) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (HibernateException he) {
 			logger.error("Error while inserting object ", he);
 			List params = new ArrayList();
 			params.add("sbi_obj_paruse");
@@ -2284,7 +2364,11 @@ public class ImportManager implements IImportManager, Serializable {
 							+ pardep.getId().getOperation()+ " and compareValue "+pardep.getId().getCompareValue());
 				}
 			}
-		} catch (HibernateException he) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (HibernateException he) {
 			logger.error("Error while inserting object ", he);
 			List params = new ArrayList();
 			params.add("sbi_obj_parview");
@@ -3531,7 +3615,11 @@ public class ImportManager implements IImportManager, Serializable {
 					metaAss.insertCoupleModelInstance(oldId, newId);
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (exportedModelInst != null) {
 				logger.error("Error while importing exported kpi with code [" + exportedModelInst.getLabel() + "].", e);
 			}
@@ -3688,7 +3776,11 @@ public class ImportManager implements IImportManager, Serializable {
 					metaAss.insertCoupleKpiInstance(oldId, newId);
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (exportedKpiInst != null) {
 				logger.error("Error while importing exported kpi instance with id [" + exportedKpiInst.getIdKpiInstance() + "].", e);
 			}
@@ -3746,7 +3838,11 @@ public class ImportManager implements IImportManager, Serializable {
 				}
 
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (exportedThValue != null) {
 				logger.error("Error while importing exported threshold value with coe [" + exportedThValue.getLabel() + "].", e);
 			}
@@ -3868,7 +3964,11 @@ public class ImportManager implements IImportManager, Serializable {
 					metaAss.insertCoupleResources(oldId, newId);
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (exportedResource != null) {
 				logger.error("Error while importing exported resource with name [" + exportedResource.getResourceName() + "].", e);
 			}
@@ -3925,7 +4025,11 @@ public class ImportManager implements IImportManager, Serializable {
 					metaAss.insertCoupleModelResources(oldId, newId);
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (exportedModResource != null) {
 				logger.error("Error while importing exported model resource with id [" + exportedModResource.getKpiModelResourcesId() + "].", e);
 			}
@@ -3978,7 +4082,11 @@ public class ImportManager implements IImportManager, Serializable {
 					metaAss.insertCouplePeriodicity(oldId, newId);
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (exportedPeriodicity != null) {
 				logger.error("Error while importing exported resource with name [" + exportedPeriodicity.getName() + "].", e);
 			}
@@ -4035,7 +4143,11 @@ public class ImportManager implements IImportManager, Serializable {
 					metaAss.insertCoupleKpiInstPeriod(oldId, newId);
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (exportedKpiInstPeriod != null) {
 				logger.error("Error while importing exported kpi Inst Period  with id [" + exportedKpiInstPeriod.getKpiInstPeriodId() + "].", e);
 			}
@@ -4091,7 +4203,11 @@ public class ImportManager implements IImportManager, Serializable {
 					metaAss.insertCoupleAlarm(oldId, newId);
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (exportedAlarm != null) {
 				logger.error("Error while importing exported Alarm with label [" + exportedAlarm.getLabel() + "].", e);
 			}
@@ -4256,7 +4372,11 @@ public class ImportManager implements IImportManager, Serializable {
 					metaAss.insertCoupleAlarmContact(oldId, newId);
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (exportedAlarmContact != null) {
 				logger.error("Error while importing exported Alarm Contact with label [" + exportedAlarmContact.getName() + "].", e);
 			}
@@ -4328,7 +4448,11 @@ public class ImportManager implements IImportManager, Serializable {
 					metaAss.insertCoupleObjMetacontentsIDAssociation(oldId, newId);
 				}
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (exportedMetacontent != null) {
 				logger.error("Error while importing exported Metacontent with original id [" + exportedMetacontent.getObjMetacontentId() + "]. and associated to object "+exportedMetacontent.getSbiObjects().getLabel(), e);
 			}
@@ -4389,7 +4513,11 @@ public class ImportManager implements IImportManager, Serializable {
 				}
 
 			}
-		} catch (Exception e) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (Exception e) {
 			if (udp != null) {
 				logger.error("Error while importing exported udp with name [" + udp.getName() + "].", e);
 			}
@@ -4458,7 +4586,11 @@ public class ImportManager implements IImportManager, Serializable {
 				}
 
 			}
-		} catch (HibernateException he) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (HibernateException he) {
 			logger.error("Error while inserting udp value ", he);
 			List params = new ArrayList();
 			params.add("sbi_udp_value");
@@ -4524,7 +4656,11 @@ public class ImportManager implements IImportManager, Serializable {
 
 				}
 			}
-		} catch (HibernateException he) {
+		} catch (EMFUserError he) {
+			logger.error("Error while inserting kpi relation ", he);
+			throw he;
+		}
+		catch (HibernateException he) {
 			logger.error("Error while inserting kpi relation ", he);
 			List params = new ArrayList();
 			params.add("sbi_kpi_rel");
@@ -4573,7 +4709,11 @@ public class ImportManager implements IImportManager, Serializable {
 				}
 
 			}
-		} catch (HibernateException he) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (HibernateException he) {
 			logger.error("Error while inserting grant ", he);
 			List params = new ArrayList();
 			params.add("sbi_grant");
@@ -4622,7 +4762,11 @@ public class ImportManager implements IImportManager, Serializable {
 				}
 
 			}
-		} catch (HibernateException he) {
+		}  
+		 catch (EMFUserError he) {
+				throw he;
+			}
+		 catch (HibernateException he) {
 			logger.error("Error while inserting grant node ", he);
 			List params = new ArrayList();
 			params.add("sbi_grant_nodes");
