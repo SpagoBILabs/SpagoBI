@@ -49,6 +49,7 @@ Ext.ns("Sbi.console");
 Sbi.console.ActionButton = function(config) {
 
 		var defaultSettings = {
+			//id: 'ActionButton'
 			iconCls: config.actionConf.type
 			,tooltip: (config.actionConf.tooltip === undefined)?config.actionConf.type : config.actionConf.tooltip 
 			,hidden: config.actionConf.hidden
@@ -72,7 +73,13 @@ Sbi.console.ActionButton = function(config) {
 	    Sbi.console.ActionButton.superclass.constructor.call(this, c);
 	    this.on('click', this.execAction, this);
 	    this.store.on('load', this.initButton, this);
-        this.addEvents('toggleIcons');
+        this.addEvents('toggleIcons');      
+        // invokes before each ajax request 
+        //Ext.Ajax.on('beforerequest', this.showMask, this);   
+        // invokes after request completed 
+        //Ext.Ajax.on('requestcomplete', this.hideMask, this);            
+        // invokes if exception occured 
+        //Ext.Ajax.on('requestexception', this.hideMask, this);   
 }; 
 
 Ext.extend(Sbi.console.ActionButton, Ext.Button, {
@@ -87,6 +94,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 	, VIEWS: 'views'
 	, MONITOR: 'monitor'
 	, MONITOR_INACTIVE: 'monitor_inactive'
+	, loadMask: null
 		
 	, FILTERBAR_ACTIONS: {		
 		  monitor: {serviceName: 'UPDATE_ACTION', images: 'monitor'}
@@ -278,8 +286,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     	}
     }
 
-    , execRealAction: function(){
-    	
+    , execRealAction: function(){    	
     	checkCol = this.actionConf.checkColumn;
     	
     	if (this.actionConf.type === 'monitor' || this.actionConf.type === 'monitor_inactive'){     		
@@ -288,6 +295,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     		newFilter.push((this.actionConf.type === 'monitor') ? this.ACTIVE_VALUE : this.INACTIVE_VALUE);    	
     		this.store.filterPlugin.addFilter(this.store.getFieldNameByAlias(this.actionConf.checkColumn), newFilter);    		
     		this.store.filterPlugin.applyFilters();	   
+    		this.hideMask();
     		return;
     	}else if (this.actionConf.type === 'refresh'){    	
     		if(this.store.pagingParams && this.store.pagingParams.paginator) {
@@ -299,7 +307,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     		} else {
     			this.store.loadStore();    
     		}
-    				
+    		this.hideMask();
     		return;
     	} else if (this.actionConf.type === 'errors' || this.actionConf.type === 'errors_inactive'){  
     		if (this.isActive !== undefined && this.isActive == true){
@@ -329,7 +337,10 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     	
     	//if in configuration is set that the action is usable only once, it doesn't change the check if it's yet checked
         if(flgCheck != null  && flgCheck === this.INACTIVE_VALUE &&
-        		this.actionConf.singleExecution !== undefined && this.actionConf.singleExecution == true) return;            	
+        		this.actionConf.singleExecution !== undefined && this.actionConf.singleExecution == true){
+        	this.hideMask();
+        	return;            	
+        }
     	
     	this.executionContext[checkCol] = flgCheck;
 		var params = this.resolveParameters(this.actionConf.config, this.executionContext);
@@ -337,7 +348,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 				message: this.actionConf.type, 
 				userId: Sbi.user.userId 
 			}); 
-				
+		this.showMask();		
 		Ext.Ajax.request({
 		url: this.services[this.actionConf.type]	       
        	, params: params 			       
@@ -349,6 +360,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 					}	
 					//if by configuration is required a refresh of the dataset, it executes the store's load method,
 					//otherwise it changes the icons by the toggle (default)
+					this.hideMask();
 					if (this.refreshDataAfterAction !== undefined && this.refreshDataAfterAction === true ){
 						this.store.loadStore();
 					} else {
@@ -357,12 +369,39 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 						this.fireEvent('toggleIcons', this, flgCheck);
 					}
 			} else {
+				this.hideMask();
 				Sbi.Msg.showError('Server response is empty', 'Service Error');
 			}
     	}
     	, failure: Sbi.exception.ExceptionHandler.onServiceRequestFailure
     	, scope: this     
 	    });  
+		
+		//this.hideMask.defer(2000, this);
+		
     }
+    
+    /**
+	 * Opens the loading mask 
+	 */
+    , showMask : function(){
+    	this.un('afterlayout',this.showMask,this);
+    	if (this.loadMask == null) {        		    	    		
+    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "Loading.."});
+    	}
+    	if (this.loadMask){
+    		this.loadMask.show();
+    	}
+    }
+
+	/**
+	 * Closes the loading mask
+	*/
+	, hideMask: function() {
+    	if (this.loadMask && this.loadMask != null) {	
+    		this.loadMask.hide();
+    	}
+	} 
+	
 });
     
