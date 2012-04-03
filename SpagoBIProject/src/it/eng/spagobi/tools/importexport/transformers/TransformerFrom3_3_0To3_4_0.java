@@ -53,6 +53,7 @@ public class TransformerFrom3_3_0To3_4_0 implements ITransformer {
 		try {
 			conn = TransformersUtilities.getConnectionToDatabase(pathImpTmpFolder, archiveName);
 			fixExtRoles(conn);
+			fixDataset(conn);
 			conn.commit();
 		} catch (Exception e) {
 			logger.error("Error while changing database", e);	
@@ -85,6 +86,31 @@ public class TransformerFrom3_3_0To3_4_0 implements ITransformer {
 		}
 		catch (Exception e) {
 			logger.error("Error adding column: if add column fails may mean that column already esists; means you ar enot using an exact version spagobi DB",e);	
+		}
+
+		logger.debug("OUT");
+	}
+
+	/**
+	 *  This fix is referring to an update from version 3.1
+	 *  Because of a bug in updating the scripts, it is needed that from 3.3 to 3.4 
+	 *  the column CUSTOM_DATA is added,
+	 *  if the exported version is lesser than 3.2 this fix will produce an error that is catched and traced, but the import goes on 
+	 * @param conn
+	 * @throws Exception
+	 */
+	private void fixDataset(Connection conn) throws Exception {
+		logger.debug("IN");
+
+		try{
+			Statement stmt = conn.createStatement();
+
+			String sql = "ALTER TABLE SBI_DATA_SET_HISTORY ADD COLUMN CUSTOM_DATA VARCHAR DEFAULT NULL;";
+
+			stmt.executeUpdate(sql);
+		}
+		catch (Exception e) {
+			logger.warn("Could not add the table CUSTOM_DATA: this is just a bugfix from 3.3 to 3.4, if your exported version is lesser than 3.1 this is not needed");
 		}
 
 		logger.debug("OUT");
