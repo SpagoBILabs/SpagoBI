@@ -135,9 +135,9 @@ public class JSONDataWriter implements IDataWriter {
 					
 					String fieldValue = "";
 					if(field.getValue() != null) {
-						if(Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
+						if(Timestamp.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != "") {
 							fieldValue =  TIMESTAMP_FORMATTER.format(  field.getValue() );
-						} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
+						} else if (Date.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != "") {
 							fieldValue =  DATE_FORMATTER.format(  field.getValue() );
 						} else {
 							fieldValue =  field.getValue().toString();

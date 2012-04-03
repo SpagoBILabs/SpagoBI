@@ -14,6 +14,7 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.IStatementClause;
+import it.eng.qbe.statement.StatementTockenizer;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.objects.Couple;
 
@@ -35,7 +36,6 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 	
 	JPQLStatement parentStatement;
 	
-	public static final String EXPRESSION_TOKEN_DELIMITERS = "+-|*/(),";
 	
 	public static transient Logger logger = Logger.getLogger(JPQLStatementSelectClause.class);
 	
@@ -87,7 +87,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		fieldExpressionNames = new  ArrayList<String>();
 		
 		try  {		
-			StringTokenizer tokenizer = new StringTokenizer(expression, EXPRESSION_TOKEN_DELIMITERS);
+			StatementTockenizer tokenizer = new StatementTockenizer(expression);
 			while(tokenizer.hasMoreTokens()) {
 				String token = tokenizer.nextToken().trim();
 				
@@ -144,7 +144,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 	
 			int fieldIndex =0;
 			int expressionCursorIndex = 0;
-			tokenizer = new StringTokenizer(expression.replace("\'", ""), "+-|*/(),");
+			tokenizer = new StatementTockenizer(expression.replace("\'", ""));
 			while(tokenizer.hasMoreTokens()){
 				String token = tokenizer.nextToken().trim();
 				expressionCursorIndex = newExpression.indexOf(token, expressionCursorIndex);
@@ -239,7 +239,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		String codeFunc = ((InLineFunction)mapFuncs.get(nameFunc)).getCode();
 		newExpression = codeFunc;
 		//substitutes paramters in the new function code
-		StringTokenizer stk = new StringTokenizer(expression, "+-|*/(),");
+		StatementTockenizer stk = new StatementTockenizer(expression);
 		int idx = 0;
 		while(stk.hasMoreTokens()){
 			String alias = stk.nextToken().trim();
