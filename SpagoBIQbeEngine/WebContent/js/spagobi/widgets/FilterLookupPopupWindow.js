@@ -309,7 +309,7 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
 			this.grid.getStore().each(function(rec) {
 				var valueToLookFor = rec.data[this.valueField];
 				
-	    		if (this.grid.getColumnModel().getColumnById('1').type == 'date') {
+	    		if (valueToLookFor!= null && valueToLookFor!="" && this.grid.getColumnModel().getColumnById('1').type == 'date') {
 	    			valueToLookFor = valueToLookFor.format('d/m/Y H:i:s');
 	    		}
 	    		else{
