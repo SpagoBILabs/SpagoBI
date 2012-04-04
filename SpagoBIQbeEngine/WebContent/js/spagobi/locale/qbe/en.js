@@ -401,6 +401,7 @@ Sbi.locale.ln['sbi.qbe.calculatedFields.datefunctions'] = 'Date Functions';
 Sbi.locale.ln['sbi.qbe.calculatedFields.string.type'] = 'If the expression script returns a plain text string';
 Sbi.locale.ln['sbi.qbe.calculatedFields.html.type'] = 'If the expression script returns a valid html fragment';
 Sbi.locale.ln['sbi.qbe.calculatedFields.num.type'] = 'If the expression script returns a number';
+Sbi.locale.ln['sbi.qbe.calculatedFields.date.type'] = 'If the expression script returns a date';
 Sbi.locale.ln['sbi.qbe.calculatedFields.add'] = 'Add Calculated Field';
 Sbi.locale.ln['sbi.qbe.calculatedFields.remove'] = 'Remove Calculated Field';
 Sbi.locale.ln['sbi.qbe.calculatedFields.edit'] = 'Edit Field';

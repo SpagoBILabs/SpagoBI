@@ -196,7 +196,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 						
 						formState = {
 								alias: LN('sbi.qbe.bands.prefix') + this.fieldForSlot.text
-								, type: 'STRING'
+								, type: 'undefined'
 								, nature:'ATTRIBUTE'
 								, expression: fieldUniqueName
 						};

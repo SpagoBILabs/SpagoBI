@@ -99,7 +99,7 @@ public class JPQLStatementSelectClause extends AbstractJPQLStatementClause {
 					String expression = selectInLineField.getExpression();
 					String slots = selectInLineField.getSlots();
 					
-					expression = parseInLinecalculatedField(expression, slots, query, entityAliasesMaps);
+					expression = parseInLinecalculatedField(selectInLineField, slots, query, entityAliasesMaps);
 					//expr = addSlots(expr, selectInLineField);
 					expression = selectInLineField.getFunction().apply(expression);
 					

@@ -12,16 +12,8 @@
 package it.eng.spagobi.engines.qbe;
 
 import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.engines.qbe.crosstable.serializer.CrosstabDeserializerFactory;
-import it.eng.spagobi.engines.qbe.crosstable.serializer.CrosstabSerializerFactory;
 import it.eng.spagobi.engines.qbe.serializer.SlotDeserializerFactory;
 import it.eng.spagobi.engines.qbe.serializer.SlotSerializerFactory;
-import it.eng.spagobi.engines.worksheet.serializer.AttributeDeserializerFactory;
-import it.eng.spagobi.engines.worksheet.serializer.AttributeSerializerFactory;
-import it.eng.spagobi.engines.worksheet.serializer.MeasureDeserializerFactory;
-import it.eng.spagobi.engines.worksheet.serializer.MeasureSerializerFactory;
-import it.eng.spagobi.engines.worksheet.serializer.WorkSheetDeserializerFactory;
-import it.eng.spagobi.engines.worksheet.serializer.WorkSheetSerializerFactory;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
 import java.util.Locale;

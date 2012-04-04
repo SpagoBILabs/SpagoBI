@@ -333,7 +333,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	    		expertMode: false,
 	        	scopeComboBoxData :[
 	        	    ['STRING','String', 'If the expression script returns a plain text string'],
-	        	    ['NUMBER', 'Number', 'If the expression script returns a number']
+	        	    ['NUMBER', 'Number', 'If the expression script returns a number'],
+	        	    ['DATE', 'Date', LN('sbi.qbe.calculatedFields.num.type')]
 	        	],
 	        	validationService: {
 					serviceName: 'VALIDATE_EXPRESSION_ACTION'
@@ -433,7 +434,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				 		  
  	        	scopeComboBoxData :[
  	        	    ['STRING','String', 'If the expression script returns a plain text string'],
- 	        	    ['NUMBER', 'Number', 'If the expression script returns a number']
+ 	        	    ['NUMBER', 'Number', 'If the expression script returns a number'],
+ 	        	     ['DATE', 'Date', LN('sbi.qbe.calculatedFields.num.type')]
  	        	],
  	        	validationService: {
  					serviceName: 'VALIDATE_EXPRESSION_ACTION'
@@ -550,8 +552,9 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     		expertMode: false,
         	scopeComboBoxData :[
         	    ['STRING','String',  LN('sbi.qbe.calculatedFields.string.type')],
-        	    ['NUMBER', 'Number', LN('sbi.qbe.calculatedFields.num.type')]
-        	],
+        	    ['NUMBER', 'Number', LN('sbi.qbe.calculatedFields.num.type')],
+        	    ['DATE', 'Date', LN('sbi.qbe.calculatedFields.num.type')]
+        	    ],
         	validationService: {
 				serviceName: 'VALIDATE_EXPRESSION_ACTION'
 				, baseParams: {contextType: 'datamart'}

@@ -60,7 +60,7 @@ public class JPQLStatementGroupByClause  extends AbstractJPQLStatementClause {
 			fieldName = null;			
 			if(groupByField.isInLineCalculatedField()){
 				InLineCalculatedSelectField inlineCalculatedField = (InLineCalculatedSelectField)groupByField;
-				fieldName = parseInLinecalculatedField(inlineCalculatedField.getExpression(), inlineCalculatedField.getSlots(), query, entityAliasesMaps);
+				fieldName = parseInLinecalculatedField(inlineCalculatedField, inlineCalculatedField.getSlots(), query, entityAliasesMaps);
 			} else if(groupByField.isSimpleField()){			
 				SimpleSelectField simpleField = (SimpleSelectField)groupByField;
 				IModelField datamartField = parentStatement.getDataSource().getModelStructure().getField(simpleField.getUniqueName());

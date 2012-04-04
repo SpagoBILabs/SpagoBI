@@ -6,6 +6,7 @@ package it.eng.qbe.statement.jpa;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.HavingField;
+import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.jpa.JPQLStatementConditionalOperators.IConditionalOperator;
@@ -39,23 +40,38 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 			JSONObject leftOperandJSON = new JSONObject(leftOperand.values[0]);
 			
 			String expression = leftOperandJSON.getString("expression");
+			String type  = leftOperandJSON.optString("type");
+			if(type==null){
+				type = "STRING";
+			}
+			String nature  = leftOperandJSON.optString("nature");
+			if(nature==null){
+				nature = "ATTRIBUTE";
+			}
+			String alias  = leftOperandJSON.optString("alias");
+			if(alias==null){
+				alias = "";
+			}
+			
 			String slots = null;
 			String s = leftOperandJSON.optString("slots");
 			if(s != null && s.trim().length() > 0) {
 				slots = leftOperandJSON.getString("slots");
 			}
 			
-			expression = parseInLinecalculatedField(expression, slots, query, entityAliasesMaps);
+			expression = parseInLinecalculatedField(new InLineCalculatedSelectField(alias, expression, slots, type,nature, true, true, false, "", ""), slots, query, entityAliasesMaps);
 					
-			if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) && isPromptable) {
+			if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) && isPromptable ) {
 				// get last value first (the last value edited by the user)
 				rightOperandElements = rightOperand.lastValues;
 			} else {
 				rightOperandElements = buildOperand(rightOperand, query, entityAliasesMaps);
 			}
 			
-			if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) )  {
+			if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) && slots==null)  {
 				rightOperandElements = getTypeBoundedStaticOperand(leftOperand, operator, rightOperandElements);
+			}else{
+				rightOperandElements = getTypeBoundedStaticOperand("STRING", rightOperandElements);
 			}
 			
 			String operandElement = null;
@@ -288,6 +304,21 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 				boundedValue = getValueBounded(operandValueToBound, datamartField.getType());
 			}
 
+			boundedValues[i] = boundedValue;
+		
+		}
+		
+		return boundedValues;
+	}
+	
+	String[] getTypeBoundedStaticOperand(String type, String[] operandValuesToBound) {
+		String[] boundedValues = new String[operandValuesToBound.length];
+
+		for (int i = 0; i < operandValuesToBound.length; i++) {
+		
+			String operandValueToBound = operandValuesToBound[i];
+			String boundedValue = operandValueToBound;
+			boundedValue = getValueBounded(operandValueToBound, type);
 			boundedValues[i] = boundedValue;
 		
 		}

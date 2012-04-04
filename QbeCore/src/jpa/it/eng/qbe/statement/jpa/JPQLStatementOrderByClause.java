@@ -84,7 +84,7 @@ public class JPQLStatementOrderByClause  extends AbstractJPQLStatementClause {
 			
 			} else if(orderByField.isInLineCalculatedField()) {
 				InLineCalculatedSelectField inlineCalculatedField = (InLineCalculatedSelectField)orderByField;
-				String fieldName = parseInLinecalculatedField(inlineCalculatedField.getExpression(), inlineCalculatedField.getSlots(), query, entityAliasesMaps);
+				String fieldName = parseInLinecalculatedField(inlineCalculatedField, inlineCalculatedField.getSlots(), query, entityAliasesMaps);
 				
 				buffer.append(" " + inlineCalculatedField.getFunction().apply(fieldName));
 			} else {

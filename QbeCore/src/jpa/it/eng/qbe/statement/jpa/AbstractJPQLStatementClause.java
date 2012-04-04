@@ -12,8 +12,8 @@ import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesPunctualDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesRangeDescriptor;
+import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.IStatementClause;
@@ -47,26 +47,26 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
 	public static transient Logger logger = Logger.getLogger(JPQLStatementSelectClause.class);
 	
-	public String parseInLinecalculatedField(String expression, String slots, Query query, Map entityAliasesMaps){
+	public String parseInLinecalculatedField(InLineCalculatedSelectField cf, String slots, Query query, Map entityAliasesMaps){
 		String newExpression;
 		
 		logger.debug("IN");
 		
-		newExpression = expression;
+		newExpression = cf.getExpression();
 		
 		try {
-			Assert.assertNotNull(parentStatement, "Class member [parentStatement] cannot be null in orser to properly parse inline calculated field expression [" + expression + "]");
-			Assert.assertNotNull(expression, "Input parameter [espression] cannot be null");
+			Assert.assertNotNull(parentStatement, "Class member [parentStatement] cannot be null in orser to properly parse inline calculated field expression [" + cf.getExpression() + "]");
+			Assert.assertNotNull(cf.getExpression(), "Input parameter [espression] cannot be null");
 			Assert.assertNotNull(query, "Input parameter [query] cannot be null");
 			Assert.assertNotNull(entityAliasesMaps, "Input parameter [entityAliasesMaps] cannot be null");
 			
-			logger.debug("Parsing expression [" + expression + "] ...");
-			newExpression = replaceFields(newExpression, query, entityAliasesMaps);
+			logger.debug("Parsing expression [" + cf.getExpression() + "] ...");
+			newExpression = replaceFields(cf, false, query, entityAliasesMaps);
 			newExpression = replaceInLineFunctions(newExpression, query, entityAliasesMaps);
-			newExpression = replaceSlotDefinitions(newExpression, slots, query, entityAliasesMaps);
-			logger.debug("Expression [" + expression + "] paresed succesfully into [" + newExpression + "]");
+			newExpression = replaceSlotDefinitions(newExpression, cf.getType(), slots, query, entityAliasesMaps);
+			logger.debug("Expression [" + cf.getExpression() + "] paresed succesfully into [" + newExpression + "]");
 		} catch(Throwable t) {
-			throw new RuntimeException("An unpredicted error occurred while parsing expression [" + expression + "]", t);
+			throw new RuntimeException("An unpredicted error occurred while parsing expression [" + cf.getExpression() + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -75,7 +75,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 	}
 	
 
-	private String replaceFields(String expression, Query query, Map entityAliasesMaps) {
+	private String replaceFields(InLineCalculatedSelectField cf, boolean isTransientExpression, Query query, Map entityAliasesMaps) {
 		String newExpression;
 		IModelEntity rootEntity;
 		IModelField modelField;
@@ -88,14 +88,14 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		
 		logger.debug("IN");
 		
-		newExpression = expression;
+		newExpression = cf.getExpression();
 		
 		entityAliases = (Map)entityAliasesMaps.get(query.getId());
 		fieldQueryNames = new  ArrayList<String>();
 		fieldExpressionNames = new  ArrayList<String>();
 		
 		try  {		
-			StatementTockenizer tokenizer = new StatementTockenizer(expression);
+			StatementTockenizer tokenizer = new StatementTockenizer(cf.getExpression());
 			while(tokenizer.hasMoreTokens()) {
 				
 				String token = tokenizer.nextTokenInStatement();
@@ -108,7 +108,13 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 				modelField = parentStatement.getDataSource().getModelStructure().getField(decodedToken);
 			
 				
+				
 				if(modelField != null) {
+					if(cf.getType().equals("undefined")){
+						if(modelField.getType().toLowerCase().contains("timestamp") || modelField.getType().toLowerCase().contains("date")){
+							cf.setType("DATE");
+						}
+					}
 					logger.debug("Expression token [" + token + "] references the model field whose unique name is [" + modelField.getUniqueName()+ "]");
 					
 					Couple queryNameAndRoot = modelField.getQueryName();
@@ -143,7 +149,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 	
 			int fieldIndex =0;
 			int expressionCursorIndex = 0;
-			tokenizer = new StatementTockenizer(expression.replace("\'", ""));
+			tokenizer = new StatementTockenizer(cf.getExpression().replace("\'", ""));
 			while(tokenizer.hasMoreTokens()){
 				String token = tokenizer.nextTokenInStatement();
 				expressionCursorIndex = newExpression.indexOf(token, expressionCursorIndex);
@@ -155,11 +161,18 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 					expressionCursorIndex = expressionCursorIndex + token.length();
 				}
 			}
+			
+			if(cf.getType().equals("undefined")){
+				cf.setType("STRING");
+			}
 		} catch(Throwable t) {
-			throw new RuntimeException("An unpredicted error occurred while parsing expression [" + expression + "]", t);
+			throw new RuntimeException("An unpredicted error occurred while parsing expression [" + cf.getExpression() + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
+		
+
+		
 		return newExpression;
 	}
 	
@@ -228,7 +241,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 	
 	
 	
-	private String replaceSlotDefinitions(String expr, String s, Query query, Map entityAliasesMaps) {
+	private String replaceSlotDefinitions(String expr, String cfType, String s, Query query, Map entityAliasesMaps) {
 		String newExpr;
 		
 		newExpr = null;
@@ -246,6 +259,8 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 			
 			Slot defaultSlot = null;
 			
+
+			
 			newExpr = "CASE";
 			for(Slot slot : slots) {
 				List<Slot.IMappedValuesDescriptor> descriptors =  slot.getMappedValuesDescriptors();
@@ -261,7 +276,12 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 						String valueSeparator = "";
 						Set<String> values = punctualDescriptor.getValues();
 						for(String value : values) {
-							newExpr += valueSeparator + "'" + value + "'";
+							if(cfType.equals("DATE")){
+								newExpr += valueSeparator + parseDate(value);
+							}else{
+								newExpr += valueSeparator + "'" + value + "'";
+							}
+							
 							valueSeparator = ", ";
 						}
 						newExpr += ") THEN '" + slot.getName() + "'";
@@ -272,14 +292,25 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 						String minCondition = null;
 						String maxCondition = null;
 						if(punctualDescriptor.getMinValue() != null) {
+
 							minCondition = " (" + expr + ")";
 							minCondition += (punctualDescriptor.isIncludeMinValue())? " >= " : ">";
-							minCondition += punctualDescriptor.getMinValue();
+							if(cfType.equals("DATE")){
+								minCondition +=  parseDate(punctualDescriptor.getMinValue());
+							}else{
+								minCondition += punctualDescriptor.getMinValue();
+							}
+							
 						}
 						if(punctualDescriptor.getMaxValue() != null) {
 							maxCondition = " (" + expr + ")";
 							maxCondition += (punctualDescriptor.isIncludeMaxValue())? " <= " : "<";
-							maxCondition += punctualDescriptor.getMaxValue();
+							if(cfType.equals("DATE")){
+								maxCondition +=  parseDate(punctualDescriptor.getMaxValue());
+							}else{
+								maxCondition += punctualDescriptor.getMaxValue();
+							}
+							
 						}
 						String completeCondition = "";
 						if(minCondition != null) {
