@@ -189,10 +189,10 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 					if(this.startFromFirstPage == undefined || this.startFromFirstPage == null || this.startFromFirstPage == false){
 						
 						var fieldUniqueName = this.fieldForSlot.attributes.id ;
-						alert(fieldUniqueName);
+					
 						fieldUniqueName = fieldUniqueName.replace(new RegExp('\\(' , 'g'), '[');
 						fieldUniqueName = fieldUniqueName.replace(new RegExp('\\)' , 'g'), ']');
-						alert(fieldUniqueName);
+			
 						
 						formState = {
 								alias: LN('sbi.qbe.bands.prefix') + this.fieldForSlot.text
