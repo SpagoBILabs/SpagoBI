@@ -19,21 +19,34 @@ import java.util.StringTokenizer;
  */
 public class StatementTockenizer extends StringTokenizer{
 
+	private String satement;
+	private String currentToken;
+	
 	private static final String DELIMITERS = "+-|*/()";
 	
 	/**
 	 * @param str
 	 */
 	public StatementTockenizer(String str) {
-		super(str, DELIMITERS);
+		super(str);
+		satement = str;
+		currentToken = null;
 	}
 	
-	@Override
-	public String nextToken(){
-		String nextToken =  super.nextToken();
-		if(nextToken.contains("::")){
-			return nextToken+super.nextToken("+-|*/");
+	public String nextTokenInStatement(){
+		String nextToken;
+		
+		nextToken = null;
+		try {
+			nextToken =  super.nextToken();
+//			if(nextToken.contains("::")){
+//				nextToken =  nextToken + super.nextToken("+-|*/");
+//			}		
+			currentToken = nextToken;
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured during tokenization of statement [" + satement + "] (current token: [" + currentToken + "]; next: token: [" + nextToken + "])", t);
 		}
+		
 		return nextToken;
 	}
 

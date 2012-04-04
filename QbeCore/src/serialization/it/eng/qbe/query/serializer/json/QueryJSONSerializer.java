@@ -298,7 +298,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 		
 		StatementTockenizer stk = new StatementTockenizer(expr);
 		while(stk.hasMoreTokens()){
-			String alias = stk.nextToken().trim();
+			String alias = stk.nextTokenInStatement().trim();
 			// alias can contain "DISTINCT" HQL/SQL key: we have to remove it
 			if (alias.toUpperCase().startsWith("DISTINCT ")) {
 				alias = alias.substring("DISTINCT ".length());
