@@ -240,7 +240,12 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 				nature = fieldDescriptor.getString("nature");
 			}
 			
-			query.addInLineCalculatedFiled("Valori", fieldDescriptor.getString("expression"), slots, DataSetVariable.STRING, nature, true, true, false, "asc", "NONE");
+			String cftype = DataSetVariable.STRING;
+			if(fieldDescriptor.has("type")) {
+				cftype = fieldDescriptor.getString("type");
+			}
+			
+			query.addInLineCalculatedFiled("Valori", fieldDescriptor.getString("expression"), slots, cftype, nature, true, true, false, "asc", "NONE");
 			value = fieldDescriptor.getString("expression");
 		}else{
 			query.addSelectFiled(fieldDescriptor.getString("entity"), "NONE", "Valori", true, true, false, "asc", null);

@@ -400,6 +400,7 @@ Sbi.locale.ln['sbi.qbe.calculatedFields.datefunctions'] = 'Funzioni sulle date';
 Sbi.locale.ln['sbi.qbe.calculatedFields.string.type'] = 'Se l\'espressione ritorna una stringa';
 Sbi.locale.ln['sbi.qbe.calculatedFields.html.type'] = 'Se l\'espressione ritorna un codice HTML';
 Sbi.locale.ln['sbi.qbe.calculatedFields.num.type'] = 'Se l\'espressione ritorna un numero';
+Sbi.locale.ln['sbi.qbe.calculatedFields.date.type'] = 'Se l\'espressione ritorna una data';
 Sbi.locale.ln['sbi.qbe.calculatedFields.add'] = 'Aggiungi campo calcolato';
 Sbi.locale.ln['sbi.qbe.calculatedFields.remove'] = 'Rimuovi campo calcolato';
 Sbi.locale.ln['sbi.qbe.calculatedFields.edit'] = 'Edita campo';

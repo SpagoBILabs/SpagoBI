@@ -653,7 +653,8 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
     		expertMode: false,
         	scopeComboBoxData :[
         	     ['STRING','String', LN('sbi.qbe.calculatedFields.string.type')],
-    	         ['NUMBER', 'Number', LN('sbi.qbe.calculatedFields.num.type')]
+    	         ['NUMBER', 'Number', LN('sbi.qbe.calculatedFields.num.type')],
+    	         ['DATE', 'Date', LN('sbi.qbe.calculatedFields.num.type')]
     	    ],
     		validationService: {
 				serviceName: 'VALIDATE_EXPRESSION_ACTION'
