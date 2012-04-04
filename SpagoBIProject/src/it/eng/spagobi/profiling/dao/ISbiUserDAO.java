@@ -60,5 +60,7 @@ public interface ISbiUserDAO extends ISpagoBIDao{
 	public void checkUserId(String userId, Integer id) throws EMFUserError;
 	
 	public Integer isUserIdAlreadyInUse(String userId);
+	
+	public List<UserBO> loadSbiUserListFiltered(String hsql,Integer offset, Integer fetchSize) throws EMFUserError;
 
 }
