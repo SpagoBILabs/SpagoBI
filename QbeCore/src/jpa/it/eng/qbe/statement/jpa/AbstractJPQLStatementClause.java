@@ -4,6 +4,8 @@
 package it.eng.qbe.statement.jpa;
 
 import it.eng.qbe.datasource.ConnectionDescriptor;
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
@@ -59,7 +61,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 			Assert.assertNotNull(entityAliasesMaps, "Input parameter [entityAliasesMaps] cannot be null");
 			
 			logger.debug("Parsing expression [" + expression + "] ...");
-			newExpression = replaceFields(newExpression, false, query, entityAliasesMaps);
+			newExpression = replaceFields(newExpression, query, entityAliasesMaps);
 			newExpression = replaceInLineFunctions(newExpression, query, entityAliasesMaps);
 			newExpression = replaceSlotDefinitions(newExpression, slots, query, entityAliasesMaps);
 			logger.debug("Expression [" + expression + "] paresed succesfully into [" + newExpression + "]");
@@ -73,7 +75,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 	}
 	
 
-	private String replaceFields(String expression, boolean isTransientExpression, Query query, Map entityAliasesMaps) {
+	private String replaceFields(String expression, Query query, Map entityAliasesMaps) {
 		String newExpression;
 		IModelEntity rootEntity;
 		IModelField modelField;
@@ -95,25 +97,16 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		try  {		
 			StatementTockenizer tokenizer = new StatementTockenizer(expression);
 			while(tokenizer.hasMoreTokens()) {
-				String token = tokenizer.nextTokenInStatement().trim();
 				
+				String token = tokenizer.nextTokenInStatement();
 				logger.debug("Processing expression token [" + token + "] ...");
 					
 				modelField = null;
-				if(isTransientExpression) {
-					SimpleSelectField fieldMatchingAlias = null;
-					List<SimpleSelectField> fieldsMatchingAlias = query.getSelectSimpleFieldsByAlias(token);
-					if(!fieldsMatchingAlias.isEmpty()) {
-						fieldMatchingAlias = fieldsMatchingAlias.get(0);
-						modelField = parentStatement.getDataSource().getModelStructure().getField(fieldMatchingAlias.getUniqueName());
-					}
-				} else {
-					String decodedToken = token;
-					decodedToken = decodedToken.replaceAll("\\[", "(");
-					decodedToken = decodedToken.replaceAll("\\]", ")");
-					modelField = parentStatement.getDataSource().getModelStructure().getField(decodedToken);
-				}
-				
+				String decodedToken = token;
+				decodedToken = decodedToken.replaceAll("\\[", "(");
+				decodedToken = decodedToken.replaceAll("\\]", ")");
+				modelField = parentStatement.getDataSource().getModelStructure().getField(decodedToken);
+			
 				
 				if(modelField != null) {
 					logger.debug("Expression token [" + token + "] references the model field whose unique name is [" + modelField.getUniqueName()+ "]");
@@ -127,8 +120,8 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 					}else{
 						rootEntity = modelField.getParent().getRoot(); 	
 					}
+					
 					rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
-					//queryName = fieldMatchingAlias.getFunction().apply(rootEntityAlias + "." + queryName);
 					if(rootEntityAlias == null) {
 						rootEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
 						entityAliases.put(rootEntity.getUniqueName(), rootEntityAlias);
@@ -152,7 +145,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 			int expressionCursorIndex = 0;
 			tokenizer = new StatementTockenizer(expression.replace("\'", ""));
 			while(tokenizer.hasMoreTokens()){
-				String token = tokenizer.nextToken().trim();
+				String token = tokenizer.nextTokenInStatement();
 				expressionCursorIndex = newExpression.indexOf(token, expressionCursorIndex);
 				if(fieldIndex < fieldExpressionNames.size() && fieldExpressionNames.get(fieldIndex).equals(token)){
 					newExpression = newExpression.substring(0, expressionCursorIndex)+ fieldQueryNames.get(fieldIndex)+newExpression.substring(expressionCursorIndex+token.length());
@@ -170,86 +163,38 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		return newExpression;
 	}
 	
-//	private String replaceFields(String expression, Query query, Map entityAliasesMaps) {
-//		IModelEntity rootEntity;
-//		IModelField modelField;
-//		String queryName;
-//		String rootEntityAlias;
-//		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
-//		
-//		List<String> aliasEntityMapping = new  ArrayList<String>();
-//		List<String> aliases = new  ArrayList<String>();
-//		
-//		StringTokenizer stk = new StringTokenizer(expression, "+-|*/(),");
-//		while(stk.hasMoreTokens()) {
-//			String alias = stk.nextToken().trim();
-//			List<SimpleSelectField> fieldsMatchingAlias = query.getSelectSimpleFieldsByAlias(alias);
-//			if(!fieldsMatchingAlias.isEmpty()) {
-//				SimpleSelectField fieldMatchingAlias = fieldsMatchingAlias.get(0);
-//				
-//				String uniqueName = fieldMatchingAlias.getUniqueName();
-//				modelField = parentStatement.getDataSource().getModelStructure().getField(uniqueName);	
-//				Couple queryNameAndRoot = modelField.getQueryName();
-//				queryName = (String) queryNameAndRoot.getFirst();
-//				logger.debug("select field query name [" + queryName + "]");
-//				
-//				if(queryNameAndRoot.getSecond()!=null){
-//					rootEntity = (IModelEntity)queryNameAndRoot.getSecond(); 	
-//				}else{
-//					rootEntity = modelField.getParent().getRoot(); 	
-//				}
-//				rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
-//				queryName = fieldMatchingAlias.getFunction().apply(rootEntityAlias+"."+queryName);
-//				
-//				aliasEntityMapping.add(queryName);
-//				aliases.add(alias);
-//			}
-//		}
-//
-//		String freshExpr = expression;
-//		int ind =0;
-//		int pos =0;
-//		stk = new StringTokenizer(expression.replace("\'", ""), "+-|*/(),");
-//		while(stk.hasMoreTokens()){
-//			String alias = stk.nextToken().trim();
-//			pos = freshExpr.indexOf(alias, pos);
-//			if(ind<aliases.size() && aliases.get(ind).equals(alias)){
-//				freshExpr = freshExpr.substring(0, pos)+ aliasEntityMapping.get(ind)+freshExpr.substring(pos+alias.length());
-//				pos = pos+ aliasEntityMapping.get(ind).length();
-//				ind++;
-//			}else{
-//				//freshExpr = freshExpr.substring(0, pos)+ alias+freshExpr.substring(pos+alias.length());
-//				pos = pos+ alias.length();
-//			}
-//		}
-//		return freshExpr;
-//	}
+
 	
 	
 	
 	private String replaceInLineFunctions(String expression, Query query, Map entityAliasesMaps) {
 		String newExpression;
  
-		ConnectionDescriptor connection = (ConnectionDescriptor)this.parentStatement.getDataSource().getConfiguration().loadDataSourceProperties().get("connection");		
-		String dbDialect = connection.getDialect(); 
-		HashMap<String, InLineFunction>  mapFuncs = this.parentStatement.getDataSource().getConfiguration().loadInLineFunctions(dbDialect);
+		HashMap<String, InLineFunction>  inlineFunctionsMap = getInlineFunctions();
 
-		if (expression.startsWith("(")) expression = (expression.substring(expression.indexOf("(")+1,expression.lastIndexOf(")"))).trim();
+		expression = expression.trim();
+		
+		if (expression.startsWith("(")) {
+			expression = expression.substring(expression.indexOf("(")+1,expression.lastIndexOf(")"));
+			expression = expression.trim();
+		}
+		
 		//if is not a real function (ex. only a field) returns the expression in input
 		if (expression.indexOf("(") < 0) return expression;
 
-		String nameFunc = expression.substring(0, expression.indexOf("("));
+		String functionName = expression.substring(0, expression.indexOf("("));
 		
-		if (mapFuncs.get(nameFunc) == null) return expression;
+		if (inlineFunctionsMap.get(functionName) == null) return expression;
 		
-		String codeFunc = ((InLineFunction)mapFuncs.get(nameFunc)).getCode();
-		newExpression = codeFunc;
-		//substitutes paramters in the new function code
-		StatementTockenizer stk = new StatementTockenizer(expression);
+		String functionCode = inlineFunctionsMap.get(functionName).getCode();
+		newExpression = functionCode;
+		
+		//substitutes parameters in the new function code
+		StatementTockenizer statementTockenizer = new StatementTockenizer(expression);
 		int idx = 0;
-		while(stk.hasMoreTokens()){
-			String alias = stk.nextTokenInStatement().trim();
-			if (!alias.equalsIgnoreCase(nameFunc)) {
+		while(statementTockenizer.hasMoreTokens()){
+			String alias = statementTockenizer.nextTokenInStatement();
+			if (!alias.equalsIgnoreCase(functionName)) {
 				newExpression = newExpression.replaceAll("\\$"+(idx+1), alias);
 				idx++;
 			}
@@ -257,6 +202,31 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		
 		return newExpression;
 	}
+	
+	private HashMap<String, InLineFunction> getInlineFunctions() {
+		HashMap<String, InLineFunction> inlineFunctionsMap;
+		
+		inlineFunctionsMap = null;
+		try {
+			Assert.assertNotNull(parentStatement, "[parentStatement] cannot be null");
+			IDataSource dataSource = parentStatement.getDataSource();
+			IDataSourceConfiguration dataSourceConfiguration = parentStatement.getDataSource().getConfiguration();
+			
+			ConnectionDescriptor connection = (ConnectionDescriptor)dataSourceConfiguration.loadDataSourceProperties().get("connection");	
+			String dialect = connection.getDialect(); 
+			
+			inlineFunctionsMap = dataSourceConfiguration.loadInLineFunctions(dialect);
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while getting dialect from datasource", t);
+		}
+		
+		return inlineFunctionsMap;
+	}
+	
+	
+	
+	
+	
 	
 	private String replaceSlotDefinitions(String expr, String s, Query query, Map entityAliasesMaps) {
 		String newExpr;

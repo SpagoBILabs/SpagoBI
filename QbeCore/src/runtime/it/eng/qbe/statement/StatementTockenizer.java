@@ -28,7 +28,7 @@ public class StatementTockenizer extends StringTokenizer{
 	 * @param str
 	 */
 	public StatementTockenizer(String str) {
-		super(str);
+		super(str, DELIMITERS);
 		satement = str;
 		currentToken = null;
 	}
@@ -39,6 +39,7 @@ public class StatementTockenizer extends StringTokenizer{
 		nextToken = null;
 		try {
 			nextToken =  super.nextToken();
+			if(nextToken != null) nextToken = nextToken.trim();
 //			if(nextToken.contains("::")){
 //				nextToken =  nextToken + super.nextToken("+-|*/");
 //			}		
