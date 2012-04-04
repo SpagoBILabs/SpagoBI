@@ -12,18 +12,24 @@ import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesPunctual
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesRangeDescriptor;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
+import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.IStatementClause;
 import it.eng.qbe.statement.StatementTockenizer;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.objects.Couple;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -36,7 +42,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 	
 	JPQLStatement parentStatement;
 	
-	
+	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
 	public static transient Logger logger = Logger.getLogger(JPQLStatementSelectClause.class);
 	
 	public String parseInLinecalculatedField(String expression, String slots, Query query, Map entityAliasesMaps){
@@ -266,8 +272,6 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 				slots.add(slot);
 			}
 			
-			
-			
 			if(slots.isEmpty()) return expr;
 			
 			Slot defaultSlot = null;
@@ -335,6 +339,114 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		}
 		
 		return newExpr;
+	}
+	
+	/**
+	 * Parse the date: get the user locale and format the date in the db format
+	 * @param date the localized date
+	 * @return the date in the db format
+	 */
+	protected String parseDate(String date){
+		if (date==null || date.equals("")){
+			return "";
+		}
+		
+		String toReturn = "'" +date+ "'";
+		
+		Date operandValueToBoundDate = null;
+		try {			
+			operandValueToBoundDate = TIMESTAMP_FORMATTER.parse(date);
+			DateFormat stagingDataFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");	
+			toReturn = stagingDataFormat.format(operandValueToBoundDate);
+		} catch (ParseException e) {
+			logger.error("Error parsing the date " + date, e);
+			throw new SpagoBIRuntimeException("Error parsing the date "+date);
+		}
+		
+		ConnectionDescriptor connection = (ConnectionDescriptor)parentStatement.getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
+		String dialect = connection.getDialect();
+		
+		if(dialect!=null){
+			
+			if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)){
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " STR_TO_DATE("+toReturn+",'%d/%m/%Y %H:%i:%s') ";
+				}else{
+					toReturn = " STR_TO_DATE('"+toReturn+"','%d/%m/%Y %H:%i:%s') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)){
+				try {
+					DateFormat daf;
+					if ( StringUtils.isBounded(toReturn, "'") ) {
+						daf = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
+					}else{
+						daf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
+					}
+					
+					Date myDate = daf.parse(toReturn);
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");		
+					toReturn =  "'"+df.format(myDate)+"'";
+
+				} catch (Exception e) {
+					toReturn = "'" +toReturn+ "'";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)){
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " STR_TO_DATE("+toReturn+",'%d/%m/%Y') ";
+				}else{
+					toReturn = " STR_TO_DATE('"+toReturn+"','%d/%m/%Y') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)){
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_TIMESTAMP("+toReturn+",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				}else{
+					toReturn = " TO_TIMESTAMP('"+toReturn+"','DD/MM/YYYY HH24:MI:SS.FF') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)){
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_TIMESTAMP("+toReturn+",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				}else{
+					toReturn = " TO_TIMESTAMP('"+toReturn+"','DD/MM/YYYY HH24:MI:SS.FF') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)){
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_TIMESTAMP("+toReturn+",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				}else{
+					toReturn = " TO_TIMESTAMP('"+toReturn+"','DD/MM/YYYY HH24:MI:SS.FF') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)){
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = toReturn;
+				}else{
+					toReturn = "'"+toReturn+"'";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
+				/*
+				 * Unfortunately we cannot use neither
+				 * CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') 
+				 * nor
+				 * CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy')) As Date)
+				 * because Hibernate does not recognize (and validate) those SQL functions.
+				 * Therefore we must use a predefined date format (yyyy-MM-dd).
+				 */
+				try {
+					DateFormat dateFormat;
+					if ( StringUtils.isBounded(toReturn, "'") ) {
+						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
+					} else {
+						dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+					}
+					Date myDate = dateFormat.parse(toReturn);
+					dateFormat = new SimpleDateFormat("yyyy-MM-dd");		
+					toReturn = "'" + dateFormat.format(myDate) + "'";
+				} catch (Exception e) {
+					logger.error("Error parsing the date " + toReturn, e);
+					throw new SpagoBIRuntimeException("Error parsing the date " + toReturn + ".");
+				}
+			}
+		}
+		
+		return toReturn;
 	}
 	
 }

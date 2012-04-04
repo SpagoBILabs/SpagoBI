@@ -127,7 +127,7 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
 	       	  header: "Values",
 	          dataIndex: 'Values',
 	          width: 75
-	          //renderer: Ext.util.Format.dateRenderer('d/m/Y H:i:s')
+	          //renderer: Ext.util.Format.dateRenderer('m/d/Y H:i:s')
 	       }
 	    ]);
 
@@ -246,8 +246,11 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
 			meta.fields[0] = new Ext.grid.RowNumberer();
 			meta.fields[ meta.fields.length ] = this.sm;
 
-			if(meta.fields[1].type == 'date'){
-				meta.fields[1].renderer = Ext.util.Format.dateRenderer('d/m/Y H:i:s');
+			if(meta.fields[1].type && meta.fields[1].type == 'date'){
+				meta.fields[1].renderer = Sbi.locale.formatters['date'];
+			}
+			if(meta.fields[1].type && meta.fields[1].type === 'timestamp') {
+				meta.fields[1].renderer  =  Sbi.locale.formatters['timestamp'];
 			}
 	
 			this.grid.getColumnModel().setConfig(meta.fields);		
