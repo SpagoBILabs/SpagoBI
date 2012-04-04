@@ -148,7 +148,7 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 					var fs = this.firstCalculatedFiledPanel.getFormState();
 					this.expression = fs.expression;
 
-				}else{
+				} else {
 					//back
 					this.mainPanel.layout.setActiveItem(0);
 					//this.firstCalculatedFiledPanel.detailsFormPanel.syncSize()();
@@ -187,11 +187,18 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 				if(this.modality === undefined || this.modality == null || this.modality !='edit'){
 
 					if(this.startFromFirstPage == undefined || this.startFromFirstPage == null || this.startFromFirstPage == false){
+						
+						var fieldUniqueName = this.fieldForSlot.attributes.id ;
+						alert(fieldUniqueName);
+						fieldUniqueName = fieldUniqueName.replace(new RegExp('\\(' , 'g'), '[');
+						fieldUniqueName = fieldUniqueName.replace(new RegExp('\\)' , 'g'), ']');
+						alert(fieldUniqueName);
+						
 						formState = {
 								alias: LN('sbi.qbe.bands.prefix') + this.fieldForSlot.text
 								, type: 'STRING'
 								, nature:'ATTRIBUTE'
-								, expression: this.fieldForSlot.attributes.id 
+								, expression: fieldUniqueName
 						};
 						target = this.fieldForSlot.parentNode;
 					}else{
