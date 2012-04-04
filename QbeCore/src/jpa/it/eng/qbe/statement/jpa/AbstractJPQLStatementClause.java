@@ -64,7 +64,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 			newExpression = replaceSlotDefinitions(newExpression, slots, query, entityAliasesMaps);
 			logger.debug("Expression [" + expression + "] paresed succesfully into [" + newExpression + "]");
 		} catch(Throwable t) {
-			throw new RuntimeException("An unpredicted error occurred while parsing expression [" + expression + "]");
+			throw new RuntimeException("An unpredicted error occurred while parsing expression [" + expression + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -95,7 +95,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		try  {		
 			StatementTockenizer tokenizer = new StatementTockenizer(expression);
 			while(tokenizer.hasMoreTokens()) {
-				String token = tokenizer.nextToken().trim();
+				String token = tokenizer.nextTokenInStatement().trim();
 				
 				logger.debug("Processing expression token [" + token + "] ...");
 					
@@ -163,7 +163,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 				}
 			}
 		} catch(Throwable t) {
-			throw new RuntimeException("An unpredicted error occurred while parsing expression [" + expression + "]");
+			throw new RuntimeException("An unpredicted error occurred while parsing expression [" + expression + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -248,7 +248,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		StatementTockenizer stk = new StatementTockenizer(expression);
 		int idx = 0;
 		while(stk.hasMoreTokens()){
-			String alias = stk.nextToken().trim();
+			String alias = stk.nextTokenInStatement().trim();
 			if (!alias.equalsIgnoreCase(nameFunc)) {
 				newExpression = newExpression.replaceAll("\\$"+(idx+1), alias);
 				idx++;

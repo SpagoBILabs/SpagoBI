@@ -853,7 +853,7 @@ public class HQLStatement extends AbstractStatement {
 		
 		StatementTockenizer stk = new StatementTockenizer(expr);
 		while(stk.hasMoreTokens()){
-			String cfExpressionField = stk.nextToken().trim();
+			String cfExpressionField = stk.nextTokenInStatement().trim();
 			// alias can contain "DISTINCT" HQL/SQL key: we have to remove it
 			if (cfExpressionField.toUpperCase().startsWith("DISTINCT ")) {
 				cfExpressionField = cfExpressionField.substring("DISTINCT ".length());
