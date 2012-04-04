@@ -15,12 +15,17 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.kpi.config.bo.Kpi;
+import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
 import it.eng.spagobi.profiling.bo.UserBO;
+import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
@@ -778,4 +783,61 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		return user;
 	}
 
+	
+	
+	public List<UserBO> loadSbiUserListFiltered(String hsql,Integer offset, Integer fetchSize) throws EMFUserError {
+		logger.debug("IN");
+		List<UserBO> toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		Query hibernateQuery;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			toReturn = new ArrayList();
+			List toTransform = null;
+
+			String hql = "select count(*) "+hsql;
+			Query hqlQuery = aSession.createQuery(hql);
+			Long temp = (Long)hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
+
+			offset = offset < 0 ? 0 : offset;
+			if(resultNumber > 0) {
+				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+			}
+
+			hibernateQuery = aSession.createQuery(hsql);
+			hibernateQuery.setFirstResult(offset);
+			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
+
+			toTransform = hibernateQuery.list();			
+
+			for (Iterator iterator = toTransform.iterator(); iterator.hasNext();) {
+				SbiUser hibuser = (SbiUser) iterator.next();
+				toReturn.add(toUserBO(hibuser));
+			}
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of users", he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return toReturn;
+	}
+
+
+	
 }

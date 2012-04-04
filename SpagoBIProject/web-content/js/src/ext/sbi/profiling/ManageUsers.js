@@ -65,8 +65,14 @@ Sbi.profiling.ManageUsers = function(config) {
 	});
 	
 	this.initConfigObject();
+	this.configurationObject.filter = true;
+	this.configurationObject.columnName = [['userId', LN('sbi.users.userId')],
+	                                       ['fullName', LN('sbi.users.fullName')]
+	                	                   ];
+	
 	config.configurationObject = this.configurationObject;
 	config.singleSelection = true;
+	
 	
 	var c = Ext.apply({}, config || {}, {});
 
