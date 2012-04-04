@@ -315,7 +315,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     	var i=0;
     	for(i=0; i<op.length-1; i++){
     		operation = operation+op[i];
-    		if(listOfExp[i]==null || listOfExp[i]==undefined|| listOfExp[i]=="NaN" || listOfExp[i]=="NA" || listOfExp[i]=="null"){
+    		if(listOfExp[i]==null || listOfExp[i]==undefined|| listOfExp[i]=="NaN" || listOfExp[i]=="NA" || listOfExp[i]=="null" || listOfExp[i]=="NULL"){
     			listOfExp[i] = "0";
     		}
     		operation = operation+listOfExp[i];
