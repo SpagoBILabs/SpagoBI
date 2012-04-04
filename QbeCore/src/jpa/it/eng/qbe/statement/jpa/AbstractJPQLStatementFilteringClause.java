@@ -3,29 +3,20 @@
  */
 package it.eng.qbe.statement.jpa;
 
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statement.jpa.JPQLStatementConditionalOperators.IConditionalOperator;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.objects.Couple;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -34,7 +25,7 @@ import org.json.JSONObject;
  */
 public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQLStatementClause {
 	
-
+	
 	public static transient Logger logger = Logger.getLogger(AbstractJPQLStatementFilteringClause.class);
 	
 
@@ -323,120 +314,7 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 		return boundedValue;
 	}
 	
-	/**
-	 * Parse the date: get the user locale and format the date in the db format
-	 * @param date the localized date
-	 * @return the date in the db format
-	 */
-	String parseDate(String date){
-		if (date==null || date.equals("")){
-			return "";
-		}
-		
-		String toReturn = "'" +date+ "'";
-		
-		//String userDfString = (String)parentStatement.getParameters().get("userDateFormatPattern");
-		//String dbDfString = (String)parentStatement.getParameters().get("databaseDateFormatPattern");
-		String userDfString = (String)parentStatement.getParameters().get(EngineConstants.ENV_USER_DATE_FORMAT);
-		String dbDfString = (String)parentStatement.getParameters().get(EngineConstants.ENV_DB_DATE_FORMAT);
-		DateFormat df = new SimpleDateFormat(userDfString);
-		Date operandValueToBoundDate = null;
-		try {			
-			operandValueToBoundDate = df.parse(date);
-			//df = new SimpleDateFormat(dbDfString);		
-			//toReturn =  "'"+df.format(operandValueToBoundDate)+"'";
-			DateFormat stagingDataFormat = new SimpleDateFormat("dd/MM/yyyy");	
-			toReturn = stagingDataFormat.format(operandValueToBoundDate);
-		} catch (ParseException e) {
-			logger.error("Error parsing the date " + date, e);
-			throw new SpagoBIRuntimeException("Error parsing the date "+date+". Check the format, it should be "+userDfString);
-		}
-		
-		ConnectionDescriptor connection = (ConnectionDescriptor)parentStatement.getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-		String dialect = connection.getDialect();
-		
-		if(dialect!=null){
-			
-			if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)){
-				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
-					toReturn = " STR_TO_DATE("+toReturn+",'%d/%m/%Y %h:%i:%s') ";
-				}else{
-					toReturn = " STR_TO_DATE('"+toReturn+"','%d/%m/%Y %h:%i:%s') ";
-				}
-			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)){
-				try {
-					DateFormat daf;
-					if ( StringUtils.isBounded(toReturn, "'") ) {
-						daf = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
-					}else{
-						daf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
-					}
-					
-					Date myDate = df.parse(toReturn);
-					df = new SimpleDateFormat("yyyy-MM-dd");		
-					toReturn =  "'"+df.format(myDate)+"'";
 
-				} catch (Exception e) {
-					toReturn = "'" +toReturn+ "'";
-				}
-			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)){
-				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
-					toReturn = " STR_TO_DATE("+toReturn+",'%d/%m/%Y') ";
-				}else{
-					toReturn = " STR_TO_DATE('"+toReturn+"','%d/%m/%Y') ";
-				}
-			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)){
-				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
-					toReturn = " TO_TIMESTAMP("+toReturn+",'DD/MM/YYYY HH24:MI:SS.FF') ";
-				}else{
-					toReturn = " TO_TIMESTAMP('"+toReturn+"','DD/MM/YYYY HH24:MI:SS.FF') ";
-				}
-			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)){
-				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
-					toReturn = " TO_TIMESTAMP("+toReturn+",'DD/MM/YYYY HH24:MI:SS.FF') ";
-				}else{
-					toReturn = " TO_TIMESTAMP('"+toReturn+"','DD/MM/YYYY HH24:MI:SS.FF') ";
-				}
-			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)){
-				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
-					toReturn = " TO_TIMESTAMP("+toReturn+",'DD/MM/YYYY HH24:MI:SS.FF') ";
-				}else{
-					toReturn = " TO_TIMESTAMP('"+toReturn+"','DD/MM/YYYY HH24:MI:SS.FF') ";
-				}
-			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)){
-				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
-					toReturn = toReturn;
-				}else{
-					toReturn = "'"+toReturn+"'";
-				}
-			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
-				/*
-				 * Unfortunately we cannot use neither
-				 * CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') 
-				 * nor
-				 * CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy')) As Date)
-				 * because Hibernate does not recognize (and validate) those SQL functions.
-				 * Therefore we must use a predefined date format (yyyy-MM-dd).
-				 */
-				try {
-					DateFormat dateFormat;
-					if ( StringUtils.isBounded(toReturn, "'") ) {
-						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
-					} else {
-						dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-					}
-					Date myDate = dateFormat.parse(toReturn);
-					dateFormat = new SimpleDateFormat("yyyy-MM-dd");		
-					toReturn = "'" + dateFormat.format(myDate) + "'";
-				} catch (Exception e) {
-					logger.error("Error parsing the date " + toReturn, e);
-					throw new SpagoBIRuntimeException("Error parsing the date " + toReturn + ".");
-				}
-			}
-		}
-		
-		return toReturn;
-	}
 	
 	
 }
