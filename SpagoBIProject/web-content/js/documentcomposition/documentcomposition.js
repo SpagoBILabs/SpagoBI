@@ -327,6 +327,11 @@ function setMultivalueFormat(newValue, oldValue){
 	var typePar = oldValue.substring(oldValue.indexOf(DEFAULT_CLOSE_BLOCK_MARKER)+3 , oldValue.length-3 );
 	RE = new RegExp(",", "ig");
 	var value = newValue.replace(RE,DEFAULT_SEPARATOR);
+	if (typePar === 'STRING'){
+		//remove ' if are present
+		RE = new RegExp("'", "ig");
+		value = value.replace(RE,"");		
+	}
 	value = DEFAULT_OPEN_BLOCK_MARKER + DEFAULT_SEPARATOR + DEFAULT_OPEN_BLOCK_MARKER + 
 		    value + DEFAULT_CLOSE_BLOCK_MARKER + typePar + DEFAULT_CLOSE_BLOCK_MARKER;
 	return value;
