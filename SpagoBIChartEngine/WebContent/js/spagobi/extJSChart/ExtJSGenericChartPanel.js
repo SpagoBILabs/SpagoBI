@@ -59,7 +59,7 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
 
     	var c = Ext.apply(defaultSettings, config || {});
     	
-    	c = Ext.apply(c, {id: 'ExtJSChartPanel'});
+    	c = Ext.apply(c, {id: 'ExtJSGenericChartPanel'});
     	
     	c.storeId = c.dsLabel;
     	
@@ -152,7 +152,7 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
   , createTextObject: function (config){
 	  return txtObject = Ext.create('Ext.form.Label', config); 
   }
-  
+   
   , getConfigStyle: function (config) {
 	  var localStyle = "";
 	  var localFont = "Arial";
@@ -249,7 +249,7 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
 	 , showMask : function(){
 	 	this.un('afterlayout',this.showMask,this);
 	 	if (this.loadMask == null) {    		
-	 		this.loadMask = new Ext.LoadMask('GenericChartPanel', {msg: "Loading.."});
+	 		this.loadMask = new Ext.LoadMask('ExtJSGenericChartPanel', {msg: "Loading.."});
 	 	}
 	 	this.loadMask.show();
 	 }
