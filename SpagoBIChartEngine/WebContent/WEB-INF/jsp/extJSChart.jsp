@@ -112,7 +112,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 <html>
 	
 	<head>
-		<%@include file="commons/includeExtJS_410.jspf" %> 
+		<%@include file="commons/includeExtJS_410_RC.jspf" %>
 		<%@include file="commons/includeSbiChartJS.jspf"%>
 	</head>
 	
