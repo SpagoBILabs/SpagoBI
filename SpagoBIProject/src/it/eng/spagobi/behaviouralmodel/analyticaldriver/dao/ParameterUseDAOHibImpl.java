@@ -637,7 +637,14 @@ IParameterUseDAO {
 			aParameterUse.setIdLov(hibParUse.getSbiLov().getLovId());
 		}
 		aParameterUse.setManualInput(hibParUse.getManualInput());
-
+		
+		List checkList = getAssociatedChecks(hibParUse);
+		aParameterUse.setAssociatedChecks(checkList);
+		List roleList = getAssociatedRoles(hibParUse);
+		aParameterUse.setAssociatedRoles(roleList);
+	}
+	
+	public List getAssociatedChecks(SbiParuse hibParUse) {
 		Set hibParUseCheks = hibParUse.getSbiParuseCks();
 		SbiParuseCk aSbiParuseCk = null; 
 		CheckDAOHibImpl checkDAOHibImpl = new CheckDAOHibImpl();
@@ -649,8 +656,11 @@ IParameterUseDAO {
 			tmpCheck = checkDAOHibImpl.toCheck(aSbiParuseCk.getId().getSbiChecks());
 			checkList.add(tmpCheck);
 		}
-
-
+		
+		return checkList;
+	}
+	
+	public List getAssociatedRoles(SbiParuse hibParUse) {
 		Set hibParUseDets = hibParUse.getSbiParuseDets();
 		SbiParuseDet aSbiParuseDet = null; 
 		RoleDAOHibImpl roleDAOHibImpl = new RoleDAOHibImpl();
@@ -662,10 +672,8 @@ IParameterUseDAO {
 			tmpRole = roleDAOHibImpl.toRole(aSbiParuseDet.getId().getSbiExtRoles());
 			roleList.add(tmpRole);
 		}
-
-		aParameterUse.setAssociatedChecks(checkList);
-		aParameterUse.setAssociatedRoles(roleList);
-
+		
+		return roleList;
 	}
 
 	/**

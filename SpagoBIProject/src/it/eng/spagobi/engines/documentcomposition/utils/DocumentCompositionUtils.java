@@ -55,6 +55,9 @@ import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  * Utility Class for document composition
@@ -77,6 +80,9 @@ public class DocumentCompositionUtils {
 	 */
 	public static String getExecutionUrl(String objLabel, SessionContainer sessionContainer, SourceBean requestSB) {
 		logger.debug("IN");
+		
+		Monitor monitor = MonitorFactory.start("spagobi.engines.DocumentCompositionUtils.getExecutionUrl");
+		
 		String baseUrlReturn = "";
 		String urlReturn = "";
 
@@ -94,16 +100,17 @@ public class DocumentCompositionUtils {
 					new LightNavigatorContextRetrieverStrategy(requestSB));
 			ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
 			String executionRole = instance.getExecutionRole();
-			//Integer objId = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel).getId();
-			//BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(obj2.getId(), executionRole);
-			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(objLabel, executionRole);
+			Integer objId = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel).getId();
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(objId, executionRole);
+//			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(objLabel, executionRole);
+//			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel);
 			if (obj == null){ 
 				logger.error("Cannot obtain engine url. Document with label " + objLabel +" doesn't exist into database.");		
 				List l = new ArrayList();
 				l.add(objLabel);
 				throw new EMFUserError(EMFErrorSeverity.ERROR, "1005", l, messageBundle);
 			}
-			Engine engine = obj.getEngine();
+//			Engine engine = obj.getEngine();
 			
 			/*ALL CONTROLS OF COMPATIBILITY ARE REMANDED TO THE SINGLE ENGINE CALLED
 			// GET THE TYPE OF ENGINE (INTERNAL / EXTERNAL) AND THE SUITABLE BIOBJECT TYPES			
@@ -263,6 +270,8 @@ public class DocumentCompositionUtils {
 		}catch(Exception ex){
 			logger.error("Error while getting execution url: " + ex);
 			return null;
+		} finally {
+			monitor.stop();
 		}
 
 		logger.debug("OUT");

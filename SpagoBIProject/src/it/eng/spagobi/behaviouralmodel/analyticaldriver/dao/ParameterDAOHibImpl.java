@@ -160,55 +160,88 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements
 			
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Criterion domainCdCriterrion = null;
-			Criteria criteria = null;
 			
-			// load all the paruse with the given parmaeter id
-			domainCdCriterrion = Expression.eq("sbiParameters.parId", parameter.getId());
-			criteria = aSession.createCriteria(SbiParuse.class);
-			criteria.add(domainCdCriterrion);
-			List paruses = criteria.list();
+//			Criterion domainCdCriterrion = null;
+//			Criteria criteria = null;
+//			
+//			// load all the paruse with the given parmaeter id
+//			domainCdCriterrion = Expression.eq("sbiParameters.parId", parameter.getId());
+//			criteria = aSession.createCriteria(SbiParuse.class);
+//			criteria.add(domainCdCriterrion);
+//			List paruses = criteria.list();
+//			
+//			
+//			List parUseAssociated = new ArrayList();
+//			Iterator parusesIter = paruses.iterator();
+//			while(parusesIter.hasNext()) {
+//				SbiParuse hibParuse = (SbiParuse)parusesIter.next();
+//				Iterator paruseDetsIter = hibParuse.getSbiParuseDets().iterator();
+//				
+//				
+//				while(paruseDetsIter.hasNext()){
+//					SbiParuseDet hibParuseDet = (SbiParuseDet)paruseDetsIter.next();
+//					if (hibParuseDet.getId().getSbiExtRoles().getExtRoleId().equals(role.getId())){
+//						parUseAssociated.add(hibParuse);
+//					}
+//				}
+//			}
+//			
+//			if(parUseAssociated.size() == 1) {
+//				SbiParuse hibParuse = (SbiParuse)parUseAssociated.get(0);
+//				SbiLov sbiLov = hibParuse.getSbiLov();
+//				
+//				//if modval is null, then the parameter always has a man_in modality
+//				//force the man_in modality to the parameter
+//				Integer man_in = hibParuse.getManualInput();
+//				//Integer sbiLovId = sbiLov.getLovId();
+//				if(man_in.intValue() == 1){
+//					ModalitiesValue manInModVal = new ModalitiesValue();
+//					manInModVal.setITypeCd("MAN_IN");
+//					manInModVal.setITypeId("37");
+//					parameter.setModalityValue(manInModVal);
+//					
+//				}else{
+//				ModalitiesValue modVal  = DAOFactory.getModalitiesValueDAO().loadModalitiesValueByID(hibParuse.getSbiLov().getLovId());
+//				modVal.setSelectionType(hibParuse.getSelectionType());
+//				modVal.setMultivalue(hibParuse.getMultivalue() != null && hibParuse.getMultivalue().intValue() > 0);
+//				parameter.setModalityValue(modVal);
+//				}
+//				ParameterUse aParameterUse = DAOFactory.getParameterUseDAO().loadByUseID(hibParuse.getUseId());
+//				parameter.setChecks(aParameterUse.getAssociatedChecks());  
+//			} else if (parUseAssociated.size() > 1){
+//				// this part of code wouldn't never be executed because one role can have only one parameteruse
+//				// for each parameter. The control is executed before the load of the object so 
+//				// the list would have to contain only one element but if the list contains more than one
+//				// object it's an error
+//				logger.error("the parameter with id "+parameterID+" has more than one parameteruse for the role "+roleName);
+//				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+//			}
+//			else {
+//				logger.error("No parameteruse for association among parameter "+parameterID+" and role "+roleName);
+//				Vector v = new Vector();
+//				v.add(roleName);
+//				throw new EMFUserError(EMFErrorSeverity.ERROR, 1078, v);			
+//			}
 			
 			
-			List parUseAssociated = new ArrayList();
-			Iterator parusesIter = paruses.iterator();
-			while(parusesIter.hasNext()) {
-				SbiParuse hibParuse = (SbiParuse)parusesIter.next();
-				Iterator paruseDetsIter = hibParuse.getSbiParuseDets().iterator();
-				
-				
-				while(paruseDetsIter.hasNext()){
-					SbiParuseDet hibParuseDet = (SbiParuseDet)paruseDetsIter.next();
-					if (hibParuseDet.getId().getSbiExtRoles().getExtRoleId().equals(role.getId())){
-						parUseAssociated.add(hibParuse);
-					}
-				}
-			}
+			
+			
 		
+			Query hibQuery = aSession.createQuery("select pu from SbiParuse pu, SbiParuseDet pud where pu.sbiParameters.parId = ? " +
+					" and pud.id.sbiParuse.useId = pu.useId and pud.id.sbiExtRoles.extRoleId = ?");
+			hibQuery.setInteger(0, parameter.getId());
+			hibQuery.setInteger(1, role.getId());
 			
-			if(parUseAssociated.size() == 1) {
-				SbiParuse hibParuse = (SbiParuse)parUseAssociated.get(0);
-				SbiLov sbiLov = hibParuse.getSbiLov();
-				
-				//if modval is null, then the parameter always has a man_in modality
-				//force the man_in modality to the parameter
-				Integer man_in = hibParuse.getManualInput();
-				//Integer sbiLovId = sbiLov.getLovId();
-				if(man_in.intValue() == 1){
-					ModalitiesValue manInModVal = new ModalitiesValue();
-					manInModVal.setITypeCd("MAN_IN");
-					manInModVal.setITypeId("37");
-					parameter.setModalityValue(manInModVal);
-					
-				}else{
-				ModalitiesValue modVal  = DAOFactory.getModalitiesValueDAO().loadModalitiesValueByID(hibParuse.getSbiLov().getLovId());
-				modVal.setSelectionType(hibParuse.getSelectionType());
-				modVal.setMultivalue(hibParuse.getMultivalue() != null && hibParuse.getMultivalue().intValue() > 0);
-				parameter.setModalityValue(modVal);
-				}
-				ParameterUse aParameterUse = DAOFactory.getParameterUseDAO().loadByUseID(hibParuse.getUseId());
-				parameter.setChecks(aParameterUse.getAssociatedChecks());  
-			} else if (parUseAssociated.size() > 1){
+			List results = hibQuery.list();
+			
+			if (results == null || results.size() == 0) {
+				logger.error("No parameteruse for association among parameter " + parameterID + " and role " + roleName);
+				Vector v = new Vector();
+				v.add(roleName);
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 1078, v);
+			}
+			
+			if (results.size() > 1) {
 				// this part of code wouldn't never be executed because one role can have only one parameteruse
 				// for each parameter. The control is executed before the load of the object so 
 				// the list would have to contain only one element but if the list contains more than one
@@ -216,12 +249,33 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements
 				logger.error("the parameter with id "+parameterID+" has more than one parameteruse for the role "+roleName);
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 			}
-			else {
-				logger.error("No parameteruse for association among parameter "+parameterID+" and role "+roleName);
-				Vector v = new Vector();
-				v.add(roleName);
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 1078, v);			
+			
+			SbiParuse hibParuse = (SbiParuse) results.get(0);
+
+			
+			//if modval is null, then the parameter always has a man_in modality
+			//force the man_in modality to the parameter
+			Integer man_in = hibParuse.getManualInput();
+			//Integer sbiLovId = sbiLov.getLovId();
+			if (man_in.intValue() == 1) {
+				ModalitiesValue manInModVal = new ModalitiesValue();
+				manInModVal.setITypeCd("MAN_IN");
+				manInModVal.setITypeId("37");
+				parameter.setModalityValue(manInModVal);
+			} else {
+				ModalitiesValue modVal = DAOFactory.getModalitiesValueDAO()
+						.loadModalitiesValueByID(
+								hibParuse.getSbiLov().getLovId());
+				modVal.setSelectionType(hibParuse.getSelectionType());
+				modVal.setMultivalue(hibParuse.getMultivalue() != null
+						&& hibParuse.getMultivalue().intValue() > 0);
+				parameter.setModalityValue(modVal);
 			}
+//			ParameterUse aParameterUse = DAOFactory.getParameterUseDAO().loadByUseID(hibParuse.getUseId());
+			ParameterUseDAOHibImpl dao = new ParameterUseDAOHibImpl();
+			List checks = dao.getAssociatedChecks(hibParuse);
+			parameter.setChecks(checks);  
+
 			tx.commit();
 			return parameter;
 			
