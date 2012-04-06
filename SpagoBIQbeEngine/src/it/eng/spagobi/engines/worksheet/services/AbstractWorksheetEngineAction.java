@@ -18,7 +18,6 @@ import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
@@ -48,7 +47,9 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTable;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTableRecorder;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -255,6 +256,8 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			logger.debug("Persisting dataset ...");
 			td = dataset.persist(tableName, connection);
 			
+			this.recordTemporaryTable(tableName, getEngineInstance().getDataSource());
+			
 			try {
 				if (!connection.getAutoCommit() && !connection.isClosed()) {
 					logger.debug("Committing changes ...");
@@ -284,6 +287,16 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		TemporaryTableManager.setLastDataSetSignature(tableName, signature);
 		TemporaryTableManager.setLastDataSetTableDescriptor(tableName, td);
 		return td;
+	}
+
+	private void recordTemporaryTable(String tableName, IDataSource dataSource) {
+		String attributeName = TemporaryTableRecorder.class.getName();
+		TemporaryTableRecorder recorder = (TemporaryTableRecorder) this.getHttpSession().getAttribute(attributeName);
+		if (recorder == null) {
+			recorder = new TemporaryTableRecorder();
+		}
+		recorder.addTemporaryTable(new TemporaryTable(tableName, dataSource));
+		this.getHttpSession().setAttribute(attributeName, recorder);
 	}
 
 	public Connection getConnection() {
