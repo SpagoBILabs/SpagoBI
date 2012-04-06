@@ -329,10 +329,10 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	public String getTemporaryTableName() {
-		if (this.paramsMap == null) {
+		if (this.getParamsMap() == null) {
 			return null;
 		}
-		String toReturn = (String) this.paramsMap.get(SpagoBIConstants.TEMPORARY_TABLE_NAME);
+		String toReturn = (String) this.getParamsMap().get(SpagoBIConstants.TEMPORARY_TABLE_NAME);
 		return toReturn;
 	}
 
