@@ -449,6 +449,11 @@ public class TemporaryTableManager {
 		tables.put(tableName, signature);
 	}
 	
+	public static void removeLastDataSetSignature(String tableName) {
+		logger.debug("Removing table name : [" + tableName + "]");
+		tables.remove(tableName);
+	}
+	
 	public static String getTableName(String root) {
 		logger.debug("IN");
 		
@@ -498,6 +503,10 @@ public class TemporaryTableManager {
 	public static void setLastDataSetTableDescriptor(String tableName,
 			IDataSetTableDescriptor tableDescriptor) {
 		tableDescriptors.put(tableName, tableDescriptor);
+	}
+	
+	public static void removeLastDataSetTableDescriptor(String tableName) {
+		tableDescriptors.remove(tableName);
 	}
 	
 	public static IDataSetTableDescriptor getLastDataSetTableDescriptor(String tableName) {
