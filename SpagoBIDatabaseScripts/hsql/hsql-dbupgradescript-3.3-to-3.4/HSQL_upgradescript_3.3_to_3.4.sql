@@ -16,7 +16,7 @@ update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_
 	
 --update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_DOMAINS';
 
-INSERT INTO SBI_EXPORTERS (ENGINE_ID,DOMAIN_ID,DEFAULT_VALUE)values((SELECT ENGINE_ID FROM SBI_ENGINES WHERE LABEL='WorksheetEngine'),(SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD = 'EXPORT_TYPE' AND VALUE_CD = 'XLSX'), false);
+--INSERT INTO SBI_EXPORTERS (ENGINE_ID,DOMAIN_ID,DEFAULT_VALUE)values((SELECT ENGINE_ID FROM SBI_ENGINES WHERE LABEL='WorksheetEngine'),(SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD = 'EXPORT_TYPE' AND VALUE_CD = 'XLSX'), false);
 
 commit;
 delete from SBI_DOMAINS where VALUE_CD like '%MOBILE%';
