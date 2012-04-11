@@ -373,7 +373,10 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 				Sbi.Msg.showError('Server response is empty', 'Service Error');
 			}
     	}
-    	, failure: Sbi.exception.ExceptionHandler.onServiceRequestFailure
+    	, failure: function (response, options){
+    		this.hideMask();
+    		Sbi.exception.ExceptionHandler.onServiceRequestFailure(response, options);
+    	}
     	, scope: this     
 	    });  
 		
