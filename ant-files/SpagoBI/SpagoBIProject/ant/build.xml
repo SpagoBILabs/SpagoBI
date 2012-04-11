@@ -357,6 +357,8 @@
 					<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridLoader.js"/> 
 					<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridColumns.js"/> 
 					<file name="./lib/ext-3.1.1/ux/treegrid/TreeGrid.js"/> 
+				    <file name="./lib/ext-3.1.1/ux/imageeditor/ImageEditor.js"/> 
+				    <file name="./lib/ext-3.1.1/ux/imageeditor/PanPanel.js"/>
 			  
 					<file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js"/>
 					<file name="./src/ext/sbi/widgets/FilteringToolbar.js"/>
