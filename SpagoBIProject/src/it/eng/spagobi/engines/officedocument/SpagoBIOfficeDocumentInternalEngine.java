@@ -12,6 +12,8 @@
 
 package it.eng.spagobi.engines.officedocument;
 
+import java.util.Locale;
+
 import javax.servlet.http.HttpServletResponse;
 
 import it.eng.spago.base.RequestContainer;
@@ -23,6 +25,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.container.ContextManager;
 import it.eng.spagobi.container.SpagoBISessionContainer;
 import it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy;
@@ -83,6 +86,8 @@ public class SpagoBIOfficeDocumentInternalEngine implements InternalEngineIFace 
 				logger.warn("Template has no name");
 				templateFileName="";
 			}
+			Locale locale = GeneralUtilities.getDefaultLocale();
+			response.setAttribute("LOCALE", locale);
 			
 			String mimeType = MimeUtils.getMimeType(templateFileName);
 			logger.debug("Mime type is = " + mimeType);
