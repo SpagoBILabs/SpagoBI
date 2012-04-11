@@ -690,4 +690,8 @@ Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.title'] = 'Org
 Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.exportFormat'] = 'Export format';
 Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.options'] = 'Options';
 Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters'] = 'Parameters';
-	Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = 'Organis\u00E9ces configuration des param\u00E8tres';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = 'Organis\u00E9ces configuration des param\u00E8tres';
+
+//OFFICE DOCUMENTS - ZOOM 
+Sbi.locale.ln['Sbi.office.zoomIn'] = 'Augmenter la taille';
+Sbi.locale.ln['Sbi.office.zoomOut'] = 'Diminuer la taille ';

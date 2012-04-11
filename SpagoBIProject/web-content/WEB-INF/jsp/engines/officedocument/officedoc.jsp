@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance"%>
 <%@page import="it.eng.spagobi.services.common.SsoServiceInterface"%>
 <%@page import="java.net.URLEncoder"%>
+<%@page import="java.util.Locale"%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
@@ -46,35 +47,63 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String executionRole = instanceO.getExecutionRole();
 	executionAuditId_office = auditManager.insertAudit(biObj, null, userProfile, executionRole, modality);
 	
-	//if (!isImage){
-		//get the url for document retrieval
-		String officeDocUrl = GeneralUtilities.getSpagoBIProfileBaseUrl(userUniqueIdentifier);
-		officeDocUrl += "&ACTION_NAME=GET_OFFICE_DOC&documentId=" + biObj.getId().toString() + "&" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
-		// adding parameters for AUDIT updating
-		if (executionAuditId_office != null) {
-			officeDocUrl += "&" + AuditManager.AUDIT_ID + "=" + executionAuditId_office.toString();
-		}
+	//get the url for document retrieval
+	String officeDocUrl = GeneralUtilities.getSpagoBIProfileBaseUrl(userUniqueIdentifier);
+	officeDocUrl += "&ACTION_NAME=GET_OFFICE_DOC&documentId=" + biObj.getId().toString() + "&" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
+	// adding parameters for AUDIT updating
+	if (executionAuditId_office != null) {
+		officeDocUrl += "&" + AuditManager.AUDIT_ID + "=" + executionAuditId_office.toString();
+	}
 	if (!isImage){
 		response.sendRedirect(officeDocUrl);
 	}else{
+    %>
+	<%-- ---------------------------------------------------------------------- --%>
+	<%-- HTML CODE FOR ZOOM FUNCTIONALITY										--%>
+	<%-- ---------------------------------------------------------------------- --%>
+	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-3.1.1/ux/imageeditor/ImageEditor.js")%>'></script>
+	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-3.1.1/ux/imageeditor/PanPanel.js")%>'></script>
+	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/"+ locale.getLanguage() +".js")%>'></script>
+	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/LocaleUtils.js")%>'></script> 
+	<script type="text/javascript">
+		Ext.onReady(function() { 
+			Ext.QuickTips.init();		
+			
+			var image = document.createElement('img');
+            image.src = '<%=officeDocUrl%>';
+            var editor = new Ext.ux.ImageEditor();
+            var p = new Ext.ux.PanPanel({
+                frame: true,
+                border: false,
+                client: image,  		
+		  		autoHeight: true,
+		  		autoWidth: true,
+                floating: true,
+                plugins: [editor],
+                autoScroll: true,
+                x: 5, y: 5,
+                renderTo: Ext.getBody(),
+                listeners: {
+                    render: function(p) {
+                        new Ext.Resizable(p.getEl(), {
+                            handles: 'all',
+                            pinned: true,
+                            transparent: true,
+                            resizeElement: function() {
+                                var box = this.proxy.getBox();
+                                p.updateBox(box);
+                                if (p.layout) {
+                                    p.doLayout();
+                                }
+                                return box;
+                            }
+                        });
+                    }
+                },
+                tbar: []
+            });
+            p.show();
+		});
 		
-	String src = "/" + spagobiContext + "/swf/keenerview.swf?image_url=" + URLEncoder.encode(officeDocUrl);
-// HTML CODE FOR THE FLASH COMPONENT %>
-		 <div align="center" style="width:100%; height:98%; overflow:auto;"> 
-		   <object  	classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"  
-		   				style="width:100%; height:98%;"
-		                codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0"
-		                type="application/x-shockwave-flash"
-		                width="100%" 
-                		height="98%" >
-		       	<param name="src" value="<%=src%>" />
-		       	<param name="wmode" value="transparent">
-		        <EMBED  src="<%=src%>"  	                 
-		                wmode="transparent" 
-		                width="100%" 
-                		height="98%" 
-		   			    TYPE="application/x-shockwave-flash">
-		   		</EMBED>
-			</object>    
-		</div> 
+	</script>
 <%} %>
