@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="../css/spagobi-mobile.css" type="text/css">
 
 <script type="text/javascript" src="../js/spagobi/service/ServiceRegistry.js"></script>
+<script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'></script>
 <script type="text/javascript" src="../js/spagobi/app.js"></script>		
 <script type="text/javascript" src="../js/spagobi/MobileModels.js"></script>
 <script type="text/javascript" src="../js/spagobi/MobileController.js"></script>

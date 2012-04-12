@@ -21,8 +21,10 @@ import it.eng.spagobi.commons.serializer.JSONStoreFeedTransformer;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.util.List;
@@ -76,6 +78,13 @@ public class GetDocumentParametersAction extends GetParametersForExecutionAction
 
 			writeBackToClient( new JSONSuccess( parametersJSON, callback )  );
 		} catch (Exception e) {
+			SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Error getting parameters");
+			try {
+				writeBackToClient(new JSONFailure(serviceError));
+			} catch (Exception ex) {
+				logger.error("Exception occurred writing back to client", ex);
+				throw new SpagoBIServiceException("Exception occurred writing back to client", ex);
+			}
 			throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
 		}
 	}

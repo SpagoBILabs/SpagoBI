@@ -24,7 +24,9 @@ import it.eng.spagobi.engine.mobile.template.IMobileTemplateInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
@@ -124,15 +126,43 @@ public class ExecuteMobileChartAction extends AbstractExecuteMobileAction {
 			writeBackToClient( new JSONSuccess( toReturn ) );
 			
 		} catch (EMFUserError emf) {
+			SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Error loading the data set from the biobject");
+			try {
+				writeBackToClient(new JSONFailure(serviceError));
+			} catch (Exception e) {
+				logger.error("Exception occurred writing back to client", e);
+				throw new SpagoBIServiceException("Exception occurred writing back to client", e);
+			} 
 			logger.error("Error loading the data set from the biobject", emf);
 			throw new SpagoBIServiceException("Error loading the data set from the biobject", emf);
 		} catch (JSONException je) {
+			SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Error managing the json object");
+			try {
+				writeBackToClient(new JSONFailure(serviceError));
+			} catch (Exception e) {
+				logger.error("Exception occurred writing back to client", e);
+				throw new SpagoBIServiceException("Exception occurred writing back to client", e);
+			} 
 			logger.error("Error managing the json object", je);
 			throw new SpagoBIServiceException("Error managing the json object", je);
 		} catch (IOException ioe) {
+			SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Impossible to write back the responce to the client");
+			try {
+				writeBackToClient(new JSONFailure(serviceError));
+			} catch (Exception e) {
+				logger.error("Exception occurred writing back to client", e);
+				throw new SpagoBIServiceException("Exception occurred writing back to client", e);
+			} 
 			logger.error("Impossible to write back the responce to the client", ioe);
 			throw new SpagoBIServiceException("Impossible to write back the responce to the client", ioe);
 		} catch (Exception e) {
+			SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Generic error execiting the Chart Action");
+			try {
+				writeBackToClient(new JSONFailure(serviceError));
+			} catch (Exception ex) {
+				logger.error("Exception occurred writing back to client", ex);
+				throw new SpagoBIServiceException("Exception occurred writing back to client", ex);
+			} 
 			logger.error("Generic error execiting the Chart Action", e);
 			throw new SpagoBIServiceException("Generic error execiting the Chart Action", e);
 		}finally {

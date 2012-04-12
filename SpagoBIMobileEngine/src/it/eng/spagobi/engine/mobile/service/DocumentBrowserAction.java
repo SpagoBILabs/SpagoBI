@@ -35,8 +35,10 @@ import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engine.mobile.MobileConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
+import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 
@@ -94,7 +96,10 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction{
 					writeBackToClient( new JSONSuccess( foldersAndDocsResponseJSON ) );
 					return;
 				} catch (IOException e) {
+					SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Document Browser", "Document browser failure");
+					writeBackToClient(new JSONFailure(serviceError));
 					throw new SpagoBIException("Impossible to write back the responce to the client", e);
+					
 				}
 			}
 			
@@ -126,10 +131,13 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction{
 			try {
 				writeBackToClient( new JSONSuccess( foldersAndDocsResponseJSON ) );
 			} catch (IOException e) {
+				SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Document Browser", "Document browser failure");
+				writeBackToClient(new JSONFailure(serviceError));
 				throw new SpagoBIException("Impossible to write back the responce to the client", e);
 			}
 			
 		} catch (Throwable t) {
+
 			throw new SpagoBIException("An unexpected error occured while executing " + getActionName(), t);
 		} finally {
 			logger.debug("OUT");

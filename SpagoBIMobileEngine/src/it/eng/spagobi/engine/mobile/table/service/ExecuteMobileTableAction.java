@@ -25,7 +25,9 @@ import it.eng.spagobi.engine.mobile.template.TableTemplateInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
@@ -100,6 +102,13 @@ public class ExecuteMobileTableAction extends AbstractExecuteMobileAction {
 				logger.debug("Serialized response");
 				
 			} catch (Throwable e) {
+				SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Error serializing result set");
+				try {
+					writeBackToClient(new JSONFailure(serviceError));
+				} catch (Exception ex) {
+					logger.error("Exception occurred writing back to client", ex);
+					throw new SpagoBIServiceException("Exception occurred writing back to client", ex);
+				}
 				throw new SpagoBIServiceException("Impossible to serialize datastore", e);
 			}
 			
@@ -107,10 +116,18 @@ public class ExecuteMobileTableAction extends AbstractExecuteMobileAction {
 				logger.debug("OUT");
 				writeBackToClient( new JSONSuccess( dataSetJSON) );
 			} catch (IOException e) {
+
 				throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
 			}
 			
 		}catch (Exception e) {
+			SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Error executing table");
+			try {
+				writeBackToClient(new JSONFailure(serviceError));
+			} catch (Exception ex) {
+				logger.error("Exception occurred writing back to client", ex);
+				throw new SpagoBIServiceException("Exception occurred writing back to client", ex);
+			}
 			logger.error("Unable to execute table document",e);
 		}
 	}

@@ -75,6 +75,9 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
                     								);
             	}
           	}
+            ,failure: function(response, options) {
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			}
 	    }); 
 	}
 	
@@ -92,6 +95,9 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
             		this.getParametersForExecutionAction(id, label, roleName, execContextId, engine, typeCode, isFromCross, params);
             	}
             }
+            ,failure: function(response, options) {
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			}
 	    }); 
 	}
 	//params filled only from cross navigation

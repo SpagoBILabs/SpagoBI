@@ -5,7 +5,9 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.engine.mobile.service.AbstractExecuteMobileAction;
 import it.eng.spagobi.engine.mobile.template.ComposedTemplateInstance;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
@@ -48,6 +50,13 @@ public class ExecuteMobileComposedAction extends AbstractExecuteMobileAction{
 				logger.debug("OUT");
 				writeBackToClient( new JSONSuccess( features) );
 			} catch (IOException e) {
+				SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Error executing the cockpit");
+				try {
+					writeBackToClient(new JSONFailure(serviceError));
+				} catch (Exception ex) {
+					logger.error("Exception occurred writing back to client", ex);
+					throw new SpagoBIServiceException("Exception occurred writing back to client", ex);
+				} 
 				throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
 			}
 			
