@@ -113,8 +113,11 @@ app.controllers.MobileController = Ext.extend(Ext.Controller,{
 
 	, backToBrowser: function(opt){
 		this.destroyExecutionView();
-		app.views.execView.bottomTools.clearNavigation();
-
+		try{
+			app.views.execView.bottomTools.clearNavigation();
+		}catch(error){
+			app.views.execution.bottomTools.clearNavigation();
+		}
 		app.views.viewport.setActiveItem(app.views.main, { type: 'fade' });	
 		app.views.viewport.doLayout();
   	}
