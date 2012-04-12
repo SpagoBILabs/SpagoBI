@@ -50,6 +50,9 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 	        		}
 	        	}
 	        }
+	        ,failure: function(response, options) {
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			} 
 	    });
 	}
 	, executeTemplate: function(option, documentContainerPanel){
@@ -75,6 +78,9 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        		this.createWidgetExecution(resp, 'table', documentContainerPanel, executionInstance);
 		        	}
 		        }
+				,failure: function(response, options) {
+					Sbi.exception.ExceptionHandler.handleFailure(response, options);
+				}
 		    }); 
 		}else if(typeCode != null && typeCode !== undefined && (typeCode == Sbi.constants.documenttype.chart)){
 			Ext.Ajax.request({
@@ -89,6 +95,9 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        		this.createWidgetExecution(resp, 'chart', documentContainerPanel, executionInstance);
 		        	}
 		        }
+				,failure: function(response, options) {
+					Sbi.exception.ExceptionHandler.handleFailure(response, options);
+				}
 		    }); 
 		}else if(typeCode != null && typeCode !== undefined && (typeCode == Sbi.constants.documenttype.cockpit)){
 			Ext.Ajax.request({
@@ -103,6 +112,9 @@ app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
 		        		this.createWidgetExecution(resp,  'composed', null, executionInstance);
 		        	}
 		        }
+				,failure: function(response, options) {
+					Sbi.exception.ExceptionHandler.handleFailure(response, options);
+				}
 		    }); 
 		}
 	}

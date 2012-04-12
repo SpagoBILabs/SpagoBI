@@ -28,24 +28,21 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineAction;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 import it.eng.spagobi.wapp.util.MenuUtilities;
 
@@ -55,7 +52,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -117,6 +113,8 @@ public class LoginAction extends AbstractEngineAction{
 				}
 			} catch (Exception e) {
 				logger.error("Reading user information... ERROR");
+				SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Login", "Authentication failure");
+				writeBackToClient(new JSONFailure(serviceError));
 				throw new SecurityException("Reading user information... ERROR",e);
 			}
 			//MenuUtilities.getMenuItems(request, response, profile);
@@ -137,18 +135,23 @@ public class LoginAction extends AbstractEngineAction{
 				
 
 
-			} catch (Throwable e) {
+			} catch (Exception e) {
+				SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Login", "Authentication failure");
 				logger.error("Exception occurred writing back to client", e);
+				writeBackToClient(new JSONFailure(serviceError));
                                                                                                                                                                                                                                                    
 			}
 			logger.debug("OUT");		
 
 		} catch (EMFUserError e) {
+			
 			logger.error("Error retrieving menu items", e);
 		} catch (SourceBeanException e) {
 			logger.error("Error reading response", e);
 		} catch (Exception e) {
+			
 			logger.error("Error checking password", e);
+			
 		}
 		
 	}	

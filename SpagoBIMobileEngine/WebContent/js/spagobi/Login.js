@@ -93,6 +93,7 @@ app.views.LoginView = Ext.extend(Ext.Panel, {
 			},
 			failure : function(response) {
 				console.log('call Error! ');
+				Sbi.exception.ExceptionHandler.handleFailure(response);
 			}
 
 			,

@@ -85,6 +85,9 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 					}
 				}
 			}
+			,failure: function(response, options) {
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			}
 		}); 
 	}
 	, fillParametersFromCross: function(parametersNeeded, parametersFromCross, paramsToBeFilled){
