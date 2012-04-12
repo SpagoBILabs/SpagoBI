@@ -156,7 +156,7 @@ public class ExecuteMobileChartAction extends AbstractExecuteMobileAction {
 			logger.error("Impossible to write back the responce to the client", ioe);
 			throw new SpagoBIServiceException("Impossible to write back the responce to the client", ioe);
 		} catch (Exception e) {
-			SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Generic error execiting the Chart Action");
+			SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Generic error executing the Chart Action");
 			try {
 				writeBackToClient(new JSONFailure(serviceError));
 			} catch (Exception ex) {
