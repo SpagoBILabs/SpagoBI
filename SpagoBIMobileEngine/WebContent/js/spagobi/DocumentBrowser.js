@@ -32,14 +32,24 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 		    return tplTxt;
 		},
 	    getDetailCard: function( record, parentRecord ){
-       	
-            Ext.dispatch(
+			Ext.dispatch(
             {
               controller: app.controllers.mobileController,
               action: 'showDetail',
               record: record
               
             });
+			//direct execution: no preview
+			var rec = record.attributes.record.data;
+			  Ext.dispatch({
+				  controller: app.controllers.mobileController,
+				  action: 'getRoles',
+				  id: rec.id,
+				  label: rec.label, 
+				  engine: rec.engine, 
+				  typeCode: rec.typeCode
+			  });
+
         },
 
 		initComponent: function(){
