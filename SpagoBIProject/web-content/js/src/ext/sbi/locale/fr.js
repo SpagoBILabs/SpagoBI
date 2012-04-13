@@ -29,7 +29,7 @@ Sbi.locale.ln['sbi.generic.advanced']='Avanc\u00E9';
 Sbi.locale.ln['sbi.generic.select']='S\u00E9lectionner';
 Sbi.locale.ln['sbi.generic.confirmRestore']='Restaurer';
 Sbi.locale.ln['sbi.generic.run'] = 'Ex\u00E9cuter';
-Sbi.locale.ln['sbi.generic.update2'] = 'Mise \u00E0\u00A0 jour';
+Sbi.locale.ln['sbi.generic.update2'] = 'Mise \u00e0 jour';
 Sbi.locale.ln['sbi.kpi.trend.title'] = 'Tendance de la ressource ';
 Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'Aucune donn\u00E9e trouv\u00E9e! S\u00E9lectionnez le noeud sp\u00E9cifique pour afficher la tendance des donn\u00E9es. ';
 
@@ -384,7 +384,7 @@ Sbi.locale.ln['sbi.roles.send']='Envoyer';
 Sbi.locale.ln['sbi.roles.build']='Construire';
 Sbi.locale.ln['sbi.roles.buildQbe']='Construire Interrogations QbE';
 Sbi.locale.ln['sbi.roles.export'] = 'Exporter';
-Sbi.locale.ln['sbi.roles.doMassiveExport'] = 'Ex\u00E9cuter Massive Export';
+Sbi.locale.ln['sbi.roles.doMassiveExport'] = 'Exportation massive';
 Sbi.locale.ln['sbi.roles.headerName']='Nom';
 Sbi.locale.ln['sbi.roles.headerDescr']='Description';
 Sbi.locale.ln['sbi.roles.headerCode']='Code';
@@ -565,8 +565,8 @@ Sbi.locale.ln['sbi.ds.openQbeQizard']='Ouvrir l\'assistant QbE';
 Sbi.locale.ln['sbi.ds.help']='Aide';
 Sbi.locale.ln['sbi.ds.pars']='Attributs de profil disponibles';
 Sbi.locale.ln['sbi.ds.customData'] = 'Attributs';
-Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Recalculate metadata?';
-Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = 'Do you want the system to recalculate dataset\'s metadata? (the dataset will be executed by the system: this is required if you modified the dataset significantly)';
+Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Recalculer les m\u00e9tadonn\u00e9es?';
+Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = 'Voulez-vous que le syst\u00e8me recalcule les m\u00e9tadonn\u00e9es? (l\'ensemble des donn\u00e9es sera ex\u00e9cut\u00e9 par le syst\u00e8me: cela est n\u00e9cessaire si vous avez modifi\u00e9 l\'ensemble des donn\u00e9es de mani\u00e8re significative)';
 
 
 //===================================================================
@@ -651,47 +651,41 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.category']='Categorie';
 Sbi.locale.ln['sbi.worksheet.validation.error.title']='Erreur Validation';
 Sbi.locale.ln['sbi.worksheet.validation.error.text']='Certaines feuilles ne sont pas valides... V\u00E9rifier que toutes les feuilles ont un contenu valide.';
 
-Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Please open the worksheet preview tab to export the document';
-Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Export warning';
-
+Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'S\'il vous pla\u00eet, ouvrez l\'onglet de aper\u00e7u du worksheet pour exporter le document';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Alerte Exportation';
 
 //===================================================================
 //MASSIVE EXPORT
 //===================================================================
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.title'] = 'Options du export';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.documents.label'] = 'Liste des documents a exporter';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.cycle.label'] = 'Divide Filtrer';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.label'] = 'Selectionner les R\u00F4le';
-
-Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Massive Export progress '; 
-
-
-
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.title'] = 'Wizard pur Export des Worksheet ';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.back'] = '< Page Pr\u00E9c\u00E9dante';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.next'] = 'Page Suivante >';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.finish'] = 'Fin';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.cancel'] = 'Cancel';
-
-Sbi.locale.ln['sbi.tools.massiveExport.MassiveExportOptionsPanel.NoDoc'] = 'Aucun documents Worksheet a exporter'; 
-
-Sbi.locale.ln['Sbi.browser.ProgressPanel.noProgress'] = 'Aucun export en execution';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.noDownload'] = 'Aucun export pour telecharger';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.exporting'] = 'En exportant ';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.title'] = 'Wizard pour l\'exportation massive du worksheet';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.back'] = '< Retour';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.next'] = 'Suivant >';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.finish'] = 'Terminer';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.cancel'] = 'Annuler';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.title'] = 'Options d\'exportation';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.cycle.label'] = 'Cycle sur les filtres'
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.label'] = 'R\u00f4le';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.emptyText'] = 'S\u00e9lectionner un r\u00f4le';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.documents.label'] = 'Documents Worksheet \u00e0 exporter';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.msg.noDoc'] = 'Pas de documents Worksheet \u00e0 exporter';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardParametersPage.title'] = 'Param\u00e8tres';
+Sbi.locale.ln['Sbi.browser.mexport.massiveExportWizardTriggerPage.title'] = 'Trigger';
+Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Progression de l\'exportation massive'; 
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noProgress'] = 'Pas d\'exportation en cours d\'ex\u00e9cution';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noDownload'] = 'Pas d\'exportation \u00e0 t\u00e9l\u00e9charger';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.exporting'] = 'Exportation ';
 Sbi.locale.ln['Sbi.browser.ProgressPanel.document'] = ' document ';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.of'] = ' sur ';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.finished'] = ' Export termin\u00E9e';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.startedExport'] = 'Exports commecnc\u00E9es';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.completedExport'] = 'Export termin\u00E9e';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.scheduledExport'] = 'Exports planifi\u00E9e';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.initializing'] = 'En commenceant';
-
-Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.title'] = 'Organis\u00E9ces massive export options';
-Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.exportFormat'] = 'Export format';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.of'] = ' de ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.finished'] = ' Exportation termin\u00e9';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.startedExport'] = 'Exportation  d\u00e9marr\u00e9';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.completedExport'] = 'Exportation achev\u00e9s ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.scheduledExport'] = 'Exportation planifi\u00e9es ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.initializing'] = 'Initialisation';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.title'] = 'Options de configuration pour l\'exportation massives';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.exportFormat'] = 'Format d\'exportation';
 Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.options'] = 'Options';
-Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters'] = 'Parameters';
-Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = 'Organis\u00E9ces configuration des param\u00E8tres';
-
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters'] = 'Param\u00e8tres';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = 'Configuration  param\u00e8tres\' configuration';
 //OFFICE DOCUMENTS - ZOOM 
-Sbi.locale.ln['Sbi.office.zoomIn'] = 'Augmenter la taille';
-Sbi.locale.ln['Sbi.office.zoomOut'] = 'Diminuer la taille ';
+Sbi.locale.ln['Sbi.office.zoomIn'] = 'Augmente les dimensions';
+Sbi.locale.ln['Sbi.office.zoomOut'] = 'D\u00e9cr\u00e9mente les dimensions';
