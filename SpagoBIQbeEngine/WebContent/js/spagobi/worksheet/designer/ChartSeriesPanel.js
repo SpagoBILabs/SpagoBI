@@ -58,6 +58,10 @@ Sbi.worksheet.designer.ChartSeriesPanel = function(config) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.chartSeriesPanel);
 	}
 	
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.common) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.common);
+	}
+	
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	Ext.apply(this, c);
@@ -349,14 +353,22 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 				return;
 			}
 			// if the measure is missing the aggregation function, user must select it
-			if (aRow.data.funct === null || aRow.data.funct === '' || aRow.data.funct === 'NONE') {
-				var aWindow = new Sbi.crosstab.ChooseAggregationFunctionWindow({
+			
+			if(this.defaultAggregationFunction){
+					var measure = Ext.apply({}, aRow.data) ;
+					measure.funct = this.defaultAggregationFunction;
+					this.addMeasure(new this.Record(measure));
+			}else{
+				if (aRow.data.funct === null || aRow.data.funct === '' || aRow.data.funct === 'NONE') {
+					var aWindow = new Sbi.crosstab.ChooseAggregationFunctionWindow({
 					behindMeasure: Ext.apply({}, aRow.data) // creates a clone
-        	  	});
-        	  	aWindow.show();
-        	  	aWindow.on('apply', function(modifiedMeasure, theWindow) {this.addMeasure(new this.Record(modifiedMeasure));}, this);
-			} else {
-				this.addMeasure(aRow);
+					});
+					aWindow.show();
+					aWindow.on('apply', function(modifiedMeasure, theWindow) {this.addMeasure(new this.Record(modifiedMeasure));}, this);
+				
+				} else {
+					this.addMeasure(aRow);
+				}
 			}
 			
 		}
