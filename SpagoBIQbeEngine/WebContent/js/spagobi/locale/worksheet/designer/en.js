@@ -46,7 +46,8 @@ Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.title'] = 'Please confirm';
 Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.msg'] = 'Confirm item delete?';
 Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.title'] = 'New sheet';
 Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.msg'] = 'A new sheet has been added';
-
+Sbi.locale.ln['sbi.worksheet.designer.msg.emptyworksheet'] = 'The worksheet document contains no sheets';
+Sbi.locale.ln['sbi.worksheet.designer.msg.samenamesheets'] =  'Another sheet with the same name exists'
 
 //===================================================================
 //DESIGNER SHEET
