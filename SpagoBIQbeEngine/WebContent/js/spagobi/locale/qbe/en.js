@@ -35,6 +35,8 @@ Sbi.locale.ln['sbi.qbe.sessionexpired.msg'] = 'Session has expired. Try re-execu
 //QBE PANEL
 //===================================================================
 Sbi.locale.ln['sbi.qbe.qbepanel.worksheetdesignerpanel.tools.preview'] = 'Show worksheet preview';
+Sbi.locale.ln['sbi.qbe.qbepanel.emptyquerytitle'] = 'Query is empty';
+Sbi.locale.ln['sbi.qbe.qbepanel.emptyquerymessage'] = 'Query is empty and you don\'t have the permission to create new queries. Select a saved query from the customized views\' list.';
 
 
 //===================================================================
