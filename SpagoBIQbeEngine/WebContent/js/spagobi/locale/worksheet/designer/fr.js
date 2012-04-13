@@ -22,7 +22,7 @@ Sbi.locale.ln['sbi.worksheet.designer.title.position'] = 'Position';
 Sbi.locale.ln['sbi.worksheet.designer.title.imgTriggerFieldId.tooltip'] = 'S\u00E9lectionnez une immage pour le titre';
 Sbi.locale.ln['sbi.worksheet.designer.title.imgPositionId.tooltip'] = 'S\u00E9lectionnez la position de l\'image dans le bloc du titre';
 Sbi.locale.ln['sbi.worksheet.designer.title.position.left'] = 'gauche';
-Sbi.locale.ln['sbi.worksheet.designer.title.position.right'] = 'droit';
+Sbi.locale.ln['sbi.worksheet.designer.title.position.right'] = 'droite';
 Sbi.locale.ln['sbi.worksheet.designer.title.position.center'] = 'centre';
 Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.title'] = 'Non valide';
 Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.msg'] = 'Les valeurs des champs sont invalides ou incompl\u00E8tes.';
@@ -77,16 +77,16 @@ Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.pos
 //===================================================================
 //Sbi.worksheet.designer.DesignSheetFiltersEditWizard
 //===================================================================
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.title'] = 'Edit Filter Wizard';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.selection'] = 'Selection';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.siglevalue'] = 'Single value';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.multivalue'] = 'Multi Value';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory'] = 'Mandatory';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.yes'] = 'Yes';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.no'] = 'No';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.apply'] = 'Apply';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.cancel'] = 'Cancel';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.splittingFilter'] = 'Splitting filter';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.title'] = 'Modifier le filtre Wizard';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.selection'] = 'S\u00e9lection';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.siglevalue'] = 'Valeur simple';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.multivalue'] = 'Multi Valeur';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory'] = 'obligatoire';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.yes'] = 'Oui';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.no'] = 'Non';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.apply'] = 'Appliquer';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.cancel'] = 'Annuler';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.splittingFilter'] = 'Fractionnement du filtre';
 
 //===================================================================
 //Sbi.worksheet.designer.DesignToolsLayoutPanel
@@ -175,8 +175,8 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['
 //Sbi.worksheet.designer.TableDesignerPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.title']='Concepteur table aplatie';
-Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields']='Visible fields';
-Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields.emptymsg']='Drag & drop here the attributes and measures that you want to visualize in the table';
+Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields']='Champs visibles';
+Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields.emptymsg']='Drag & drop ici les attributs et les mesures que vous souhaitez visualiser dans le tableau';
 
 
 //===================================================================

@@ -17,7 +17,7 @@ Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealr
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.measures'] = 'Impossible de glisser la mesure sur les lignes ou les colonnes : vous devez les glisser dans la section centrale du tableau crois\u00E9';
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.tools.tt.removeall'] = ['Tout Supprimer'];
 
-Sbi.locale.ln['sbi.crosstab.measurescontainerpanel.cannotdrophere.title'] = 'Suppression Impossible';
+Sbi.locale.ln['sbi.crosstab.measurescontainerpanel.cannotdrophere.title'] = 'Impossible supprimer';
 Sbi.locale.ln['sbi.crosstab.measurescontainerpanel.cannotdrophere.measurealreadypresent'] = 'La mesure est a d\u00E9j\u00E0 \u00E9t\u00E9 choisie';
 Sbi.locale.ln['sbi.crosstab.measurescontainerpanel.cannotdrophere.attributes'] = 'Impossible de glisser les attributs dans la section centrale : vous devez les placer sur les lignes ou les colonnes';
 Sbi.locale.ln['sbi.crosstab.measurescontainerpanel.cannotdrophere.postlinecalculated'] = 'Vous ne pouvez pas utiliser les champs calcul\u00E9s dans un tableau crois\u00E9';
@@ -37,11 +37,11 @@ Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.calculatetotalsoncolumns'] = '
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.calculatesubtotalsoncolumns'] = 'Pr\u00E9senter sous-totaux';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.buttons.apply'] = 'Appliquer';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.buttons.cancel'] = 'Annuler';
-Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.percenton'] = 'Percentage calculated on';
-Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.row'] = 'row';
-Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.column'] = 'column';
-Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.nopercent'] = 'no';
-Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.maxcellnumber'] = 'Max cells number';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.percenton'] = 'Pourcentage calcul\u00e9 sur';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.row'] = 'Ligne';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.column'] = 'Colonne';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.nopercent'] = 'non';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.maxcellnumber'] = 'Maximum nombre de cellules';
 
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.title'] = 'Choisissez la fonction d\'agr\u00E9gation pour la mesure';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.apply'] = 'Appliquer';
