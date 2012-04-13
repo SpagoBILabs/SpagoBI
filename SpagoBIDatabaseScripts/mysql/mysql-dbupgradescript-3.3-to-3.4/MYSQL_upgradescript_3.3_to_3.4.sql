@@ -8,7 +8,7 @@ CREATE TABLE SBI_PROGRESS_THREAD (
        RANDOM_KEY			VARCHAR(4000),	
        TYPE           VARCHAR(200),
        PRIMARY KEY (PROGRESS_THREAD_ID)
-)
+);
  
 insert into hibernate_sequences(next_val,sequence_name) values (1, 'SBI_PROGRESS_THREAD');
 
@@ -18,8 +18,7 @@ INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, V
 
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
 
-ALTER TABLE SBI_UDP_VALUE MODIFY COLUMN VALUE VARCHAR(1000) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL;
-
+ALTER TABLE sbi_udp_value MODIFY COLUMN VALUE VARCHAR(1000);
 
 commit;
 
