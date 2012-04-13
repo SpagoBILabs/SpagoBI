@@ -591,6 +591,10 @@ public class ImportManager implements IImportManager, Serializable {
 					metaLog.log("Exported role " + role.getName() + " not inserted"
 							+ " because it has been associated to an existing role or it has the same name "
 							+ " of an existing role");
+					logger.debug("Exported role " + role.getName() + " not inserted"
+							+ " because it has been associated to an existing role or it has the same name "
+							+ " of an existing role");
+					
 					continue;
 				}
 				SbiExtRoles newRole = ImportUtilities.makeNewSbiExtRole(role);
@@ -605,6 +609,7 @@ public class ImportManager implements IImportManager, Serializable {
 				}
 				sessionCurrDB.save(newRole);
 				metaLog.log("Inserted new role " + newRole.getName());
+				logger.debug("Inserted new role " + newRole.getName());
 				Integer newId = newRole.getExtRoleId();
 				metaAss.insertCoupleRole(oldId, newId);
 			}
@@ -645,6 +650,9 @@ public class ImportManager implements IImportManager, Serializable {
 					metaLog.log("Exported engine " + engine.getName() + " not inserted"
 							+ " because it has been associated to an existing engine or it has the same label "
 							+ " of an existing engine");
+					logger.debug("Exported engine " + engine.getName() + " not inserted"
+							+ " because it has been associated to an existing engine or it has the same label "
+							+ " of an existing engine");
 					continue;
 				}
 				SbiEngines newEng = ImportUtilities.makeNewSbiEngine(engine);
@@ -675,6 +683,7 @@ public class ImportManager implements IImportManager, Serializable {
 				}
 				sessionCurrDB.save(newEng);
 				metaLog.log("Inserted new engine " + engine.getName());
+				logger.debug("Inserted new engine " + engine.getName());
 				Integer newId = newEng.getEngineId();
 				metaAss.insertCoupleEngine(oldId, newId);
 
@@ -722,13 +731,15 @@ public class ImportManager implements IImportManager, Serializable {
 				if (metadataIdAssSet.contains(oldId) && !overwrite) {
 					metaLog.log("Exported objMetadata " + exportedObjMetadata.getLabel() + " not inserted"
 							+ " because exist objMetadata with the same label ");
+					logger.debug("Exported objMetadata " + exportedObjMetadata.getLabel() + " not inserted"
+							+ " because exist objMetadata with the same label ");
 					continue;
 				} else {
 					existingMetadataId = (Integer) metadataIdAss.get(oldId);
 				}
 
 				if (existingMetadataId != null) {
-					logger.info("The objMetadata with label:[" + exportedObjMetadata.getLabel() + "] is just present. It will be updated.");
+					logger.debug("The objMetadata with label:[" + exportedObjMetadata.getLabel() + "] is just present. It will be updated.");
 					metaLog.log("The objMetadata with label = [" + exportedObjMetadata.getLabel() + "] will be updated.");
 					SbiObjMetadata existingObjMetadata = ImportUtilities.modifyExistingSbiObjMetadata(exportedObjMetadata, sessionCurrDB, existingMetadataId, metaAss,importer);
 
@@ -736,6 +747,7 @@ public class ImportManager implements IImportManager, Serializable {
 				} else {
 					SbiObjMetadata newObjM= ImportUtilities.makeNewSbiObjMetadata(exportedObjMetadata, sessionCurrDB, metaAss, importer);
 					sessionCurrDB.save(newObjM);
+					logger.debug("Inserted new ObjectMetadata " + newObjM.getLabel());
 					metaLog.log("Inserted new ObjectMetadata " + newObjM.getLabel());
 					Integer newId = new Integer(newObjM.getObjMetaId());
 					metaAss.insertCoupleObjMetadataIDAssociation(oldId, newId);
@@ -779,6 +791,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map dsIdAss = metaAss.getDataSourceIDAssociation();
 				Set engIdAssSet = dsIdAss.keySet();
 				if (engIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported dataSource " + dataSource.getLabel() + " not inserted"
+							+ " because exist dataSource with the same label ");
 					metaLog.log("Exported dataSource " + dataSource.getLabel() + " not inserted"
 							+ " because exist dataSource with the same label ");
 					continue;
@@ -789,7 +803,7 @@ public class ImportManager implements IImportManager, Serializable {
 				// if association made by user do not update!
 				if(!getUserAssociation().isDataSourceAssociated(oldId)){
 					if (existingDatasourceId != null) {
-						logger.info("The data source with label:[" + dataSource.getLabel() + "] is just present. It will be updated.");
+						logger.debug("The data source with label:[" + dataSource.getLabel() + "] is just present. It will be updated.");
 						metaLog.log("The data source with label = [" + dataSource.getLabel() + "] will be updated.");
 						SbiDataSource existingDs = ImportUtilities.modifyExistingSbiDataSource(dataSource, sessionCurrDB, existingDatasourceId);
 						ImportUtilities.associateWithExistingEntities(existingDs, dataSource, sessionCurrDB, importer, metaAss);
@@ -799,11 +813,13 @@ public class ImportManager implements IImportManager, Serializable {
 						ImportUtilities.associateWithExistingEntities(newDS, dataSource, sessionCurrDB, importer, metaAss);
 						Integer newId = (Integer) sessionCurrDB.save(newDS);
 						metaLog.log("Inserted new datasource " + newDS.getLabel());
+						logger.debug("Inserted new datasource " + newDS.getLabel());
 						metaAss.insertCoupleDataSources(oldId, newId);
 					}
 				}
 				else{
-					metaLog.log("Not inserted data source with ID " + oldId);					
+					metaLog.log("Not inserted data source with ID " + oldId);		
+					logger.debug("Not inserted data source with ID " + oldId);
 				}
 			}
 		}  
@@ -841,12 +857,14 @@ public class ImportManager implements IImportManager, Serializable {
 				if (datasetAssSet.contains(oldId) && !overwrite) {
 					metaLog.log("Exported dataset " + exportedDataSet.getLabel() + " not inserted"
 							+ " because exist dataset with the same label ");
+					logger.debug("Exported dataset " + exportedDataSet.getLabel() + " not inserted"
+							+ " because exist dataset with the same label ");
 					continue;
 				} else {
 					existingDatasetId = (Integer) datasetAss.get(oldId);
 				}
 				if (existingDatasetId != null) {
-					logger.info("The dataset with label:[" + exportedDataSet.getLabel() + "] is just present. It will be updated. Existing one has id "+existingDatasetId);
+					logger.debug("The dataset with label:[" + exportedDataSet.getLabel() + "] is just present. It will be updated. Existing one has id "+existingDatasetId);
 					metaLog.log("The dataset with label = [" + exportedDataSet.getLabel() + "] will be updated.");
 					SbiDataSetConfig existingDataset = ImportUtilities.modifyExistingSbiDataSet(exportedDataSet, sessionCurrDB, existingDatasetId, sessionExpDB, session);
 					ImportUtilities.associateNewSbiDataSethistory(existingDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, session);
@@ -855,7 +873,7 @@ public class ImportManager implements IImportManager, Serializable {
 					SbiDataSetConfig newDataset = ImportUtilities.makeNewSbiDataSet(exportedDataSet, session);
 					sessionCurrDB.save(newDataset);
 					ImportUtilities.associateNewSbiDataSethistory(newDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, session);
-
+					logger.debug("Inserted new dataset " + newDataset.getName());
 					metaLog.log("Inserted new dataset " + newDataset.getName());
 					Integer newId = new Integer(newDataset.getDsId());
 					metaAss.insertCoupleDataSets(oldId, newId);
@@ -917,7 +935,7 @@ public class ImportManager implements IImportManager, Serializable {
 				Set functIdAssSet = functIdAss.keySet();
 				// if the functionality is present skip the insert
 				if (functIdAssSet.contains(expId)) {
-					logger.info("Exported functionality " + functToInsert.getName() + " not inserted"
+					logger.debug("Exported functionality " + functToInsert.getName() + " not inserted"
 							+ " because it has the same label (and the same path) of an existing functionality");
 					metaLog.log("Exported functionality " + functToInsert.getName() + " not inserted"
 							+ " because it has the same label (and the same path) of an existing functionality");
@@ -955,6 +973,7 @@ public class ImportManager implements IImportManager, Serializable {
 						newFunct.setProg(new Integer(1));
 				}
 				sessionCurrDB.save(newFunct);
+				logger.debug("Inserted new functionality " + newFunct.getName() + " with path " + newFunct.getPath());
 				metaLog.log("Inserted new functionality " + newFunct.getName() + " with path " + newFunct.getPath());
 				Integer newId = newFunct.getFunctId();
 				metaAss.insertCoupleFunct(expId, newId);
@@ -1010,6 +1029,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map lovIdAss = metaAss.getLovIDAssociation();
 				Set lovIdAssSet = lovIdAss.keySet();
 				if (lovIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported lov " + exportedLov.getName() + " not inserted"
+							+ " because it has the same label of an existing lov");
 					metaLog.log("Exported lov " + exportedLov.getName() + " not inserted"
 							+ " because it has the same label of an existing lov");
 					continue;
@@ -1017,7 +1038,7 @@ public class ImportManager implements IImportManager, Serializable {
 					existingLovId = (Integer) lovIdAss.get(oldId);
 				}
 				if (existingLovId != null) {
-					logger.info("The lov with label:[" + exportedLov.getLabel() + "] is just present. It will be updated.");
+					logger.debug("The lov with label:[" + exportedLov.getLabel() + "] is just present. It will be updated.");
 					metaLog.log("The lov with label = [" + exportedLov.getLabel() + "] will be updated.");
 					SbiLov existinglov = ImportUtilities.modifyExistingSbiLov(exportedLov, sessionCurrDB, existingLovId, getUserAssociation().getDsExportedToUserLabel());
 					ImportUtilities.associateWithExistingEntities(existinglov, exportedLov, sessionCurrDB, importer, metaAss);
@@ -1026,6 +1047,7 @@ public class ImportManager implements IImportManager, Serializable {
 					SbiLov newlov = ImportUtilities.makeNewSbiLov(exportedLov, getUserAssociation().getDsExportedToUserLabel());
 					ImportUtilities.associateWithExistingEntities(newlov, exportedLov, sessionCurrDB, importer, metaAss);
 					sessionCurrDB.save(newlov); 
+					logger.debug("Inserted new lov " + newlov.getName());
 					metaLog.log("Inserted new lov " + newlov.getName());
 					Integer newId = newlov.getLovId();
 					metaAss.insertCoupleLov(oldId, newId);
@@ -1065,6 +1087,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map checkIdAss = metaAss.getCheckIDAssociation();
 				Set checkIdAssSet = checkIdAss.keySet();
 				if (checkIdAssSet.contains(oldId)) {
+					logger.debug("Exported check " + check.getName() + " not inserted"
+							+ " because it has the same label of an existing check");
 					metaLog.log("Exported check " + check.getName() + " not inserted"
 							+ " because it has the same label of an existing check");
 					continue;
@@ -1080,7 +1104,7 @@ public class ImportManager implements IImportManager, Serializable {
 					newck.setValueTypeCd(existDom.getValueCd());
 				}
 				sessionCurrDB.save(newck);
-
+				logger.debug("Inserted new check " + newck.getName());
 				metaLog.log("Inserted new check " + newck.getName());
 				Integer newId = newck.getCheckId();
 				metaAss.insertCoupleCheck(oldId, newId);
@@ -1120,6 +1144,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map paramIdAss = metaAss.getParameterIDAssociation();
 				Set paramIdAssSet = paramIdAss.keySet();
 				if (paramIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported parameter " + exportedParameter.getName() + " not inserted"
+							+ " because it has the same label of an existing parameter");
 					metaLog.log("Exported parameter " + exportedParameter.getName() + " not inserted"
 							+ " because it has the same label of an existing parameter");
 					continue;
@@ -1129,7 +1155,7 @@ public class ImportManager implements IImportManager, Serializable {
 				Integer newIdPar=null;
 				// parameter is already present and overwrite==true b(exstingParId)
 				if (existingParId != null) {
-					logger.info("The parameter with label:[" + exportedParameter.getLabel() + "] is just present. It will be updated.");
+					logger.debug("The parameter with label:[" + exportedParameter.getLabel() + "] is just present. It will be updated.");
 					metaLog.log("The parameter with label = [" + exportedParameter.getLabel() + "] will be updated.");
 					SbiParameters existingParameter = ImportUtilities.modifyExistingSbiParameter(exportedParameter, sessionCurrDB, existingParId);
 					ImportUtilities.associateWithExistingEntities(existingParameter, exportedParameter, sessionCurrDB, importer, metaAss);
@@ -1161,6 +1187,7 @@ public class ImportManager implements IImportManager, Serializable {
 					SbiParameters newPar = ImportUtilities.makeNewSbiParameter(exportedParameter);
 					ImportUtilities.associateWithExistingEntities(newPar, exportedParameter, sessionCurrDB, importer, metaAss);
 					sessionCurrDB.save(newPar);
+					logger.debug("Inserted new parameter " + newPar.getName());
 					metaLog.log("Inserted new parameter " + newPar.getName());
 					Integer newId = newPar.getParId();
 					metaAss.insertCoupleParameter(oldId, newId);
@@ -1244,6 +1271,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map objIdAss = metaAss.getBIobjIDAssociation();
 				Set objIdAssSet = objIdAss.keySet();
 				if (objIdAssSet.contains(expId) && !overwrite) {
+					logger.debug("Exported biobject "+exportedObj.getName()+" not inserted" +
+							" because it has the same label of an existing biobject");
 					metaLog.log("Exported biobject "+exportedObj.getName()+" not inserted" +
 					" because it has the same label of an existing biobject");
 					continue;
@@ -1253,7 +1282,7 @@ public class ImportManager implements IImportManager, Serializable {
 
 				SbiObjects obj = null;
 				if (existingObjId != null) {
-					logger.info("The document with label:[" + exportedObj.getLabel() + "] is just present. It will be updated.");
+					logger.debug("The document with label:[" + exportedObj.getLabel() + "] is just present. It will be updated.");
 					metaLog.log("The document with label = [" + exportedObj.getLabel() + "] will be updated.");
 					obj = ImportUtilities.modifyExistingSbiObject(exportedObj, sessionCurrDB, existingObjId);
 					ImportUtilities.associateWithExistingEntities(obj, exportedObj, sessionCurrDB, importer, metaAss);
@@ -1263,6 +1292,7 @@ public class ImportManager implements IImportManager, Serializable {
 					ImportUtilities.associateWithExistingEntities(obj, exportedObj, sessionCurrDB, importer, metaAss);
 					// insert document
 					Integer newId = (Integer) sessionCurrDB.save(obj);
+					logger.debug("Inserted new biobject " + obj.getName());
 					metaLog.log("Inserted new biobject " + obj.getName());
 					metaAss.insertCoupleBIObj(expId, newId);
 				}
@@ -1336,7 +1366,7 @@ public class ImportManager implements IImportManager, Serializable {
 			while (exportedSnapshotsListIt.hasNext()) {
 				expSbiSnapshots = (SbiSnapshots) exportedSnapshotsListIt.next();
 				if (isAlreadyExisting(expSbiSnapshots, currentSnapshotsList)) {
-					logger.info("Exported snaphost with name = [" + expSbiSnapshots.getName() + "] and creation date = [" + expSbiSnapshots.getCreationDate() + "] (of document with name = [" + exportedObj.getName() + "] and label = [" + exportedObj.getLabel() + "]) is already existing, most likely it is the same snapshot, so it will not be inserted.");
+					logger.debug("Exported snaphost with name = [" + expSbiSnapshots.getName() + "] and creation date = [" + expSbiSnapshots.getCreationDate() + "] (of document with name = [" + exportedObj.getName() + "] and label = [" + exportedObj.getLabel() + "]) is already existing, most likely it is the same snapshot, so it will not be inserted.");
 					metaLog.log("Exported snaphost with name = [" + expSbiSnapshots.getName() + "] and creation date = [" + expSbiSnapshots.getCreationDate() + "] (of document with name = [" + exportedObj.getName() + "] and label = [" + exportedObj.getLabel() + "]) is already existing, most likely it is the same snapshot, so it will not be inserted.");
 					continue;
 				} else {
@@ -1505,7 +1535,7 @@ public class ImportManager implements IImportManager, Serializable {
 				expSubObject = (SbiSubObjects) exportedSubObjListIt.next();
 				SbiSubObjects current = isAlreadyExisting(expSubObject, currentSubObjList) ;
 				if (current != null) {
-					logger.info("Exported subobject with name = [" + expSubObject.getName() + "] and owner = [" + expSubObject.getOwner() + "] and visibility = [" + expSubObject.getIsPublic() + "] and creation date = [" + expSubObject.getCreationDate() + "] (of document with name = [" + exportedObj.getName() + "] and label = [" + exportedObj.getLabel() + "]) is already existing, so it will not be inserted.");
+					logger.debug("Exported subobject with name = [" + expSubObject.getName() + "] and owner = [" + expSubObject.getOwner() + "] and visibility = [" + expSubObject.getIsPublic() + "] and creation date = [" + expSubObject.getCreationDate() + "] (of document with name = [" + exportedObj.getName() + "] and label = [" + exportedObj.getLabel() + "]) is already existing, so it will not be inserted.");
 					metaLog.log("Exported subobject with name = [" + expSubObject.getName() + "] and owner = [" + expSubObject.getOwner() + "] and visibility = [" + expSubObject.getIsPublic() + "] and creation date = [" + expSubObject.getCreationDate() + "] (of document with name = [" + exportedObj.getName() + "] and label = [" + exportedObj.getLabel() + "]) is already existing, most likely it is the same subobject, so it will not be inserted.");
 					// if already present don't modify the subObject so don't map the ID!
 					//idAssociation.put(expSubObject.getSubObjId(), current.getSubObjId());
@@ -1709,6 +1739,7 @@ public class ImportManager implements IImportManager, Serializable {
 
 				SbiParuse newParuse = ImportUtilities.makeNewSbiParuse(paruse);
 				sessionCurrDB.save(newParuse);
+				logger.debug("Inserted new parameter use " + newParuse.getName() + " for param " + param.getName());
 				metaLog.log("Inserted new parameter use " + newParuse.getName() + " for param " + param.getName());
 				Integer newId = newParuse.getUseId();
 				sessionExpDB.evict(paruse);
@@ -1823,6 +1854,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Object existObj = importer.checkExistence(unique, sessionCurrDB, new SbiParuseDet());
 				if (existObj == null) {
 					sessionCurrDB.save(newParuseDet);
+					logger.debug("Inserted new association between paruse " + parusedet.getId().getSbiParuse().getName()
+							+ " and role " + parusedet.getId().getSbiExtRoles().getName());
 					metaLog.log("Inserted new association between paruse " + parusedet.getId().getSbiParuse().getName()
 							+ " and role " + parusedet.getId().getSbiExtRoles().getName());
 				}
@@ -1880,6 +1913,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Object existObj = importer.checkExistence(unique, sessionCurrDB, new SbiParuseCk());
 				if (existObj == null) {
 					sessionCurrDB.save(newParuseCk);
+					logger.debug("Inserted new association between paruse " + paruseck.getId().getSbiParuse().getName()
+							+ " and check " + paruseck.getId().getSbiChecks().getName());
 					metaLog.log("Inserted new association between paruse " + paruseck.getId().getSbiParuse().getName()
 							+ " and check " + paruseck.getId().getSbiChecks().getName());
 				}
@@ -1966,6 +2001,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Object existObj = importer.checkExistence(unique, sessionCurrDB, new SbiSubreports());
 				if (existObj == null) {
 					sessionCurrDB.save(newSubReport);
+					logger.debug("Inserted new link between master object " + masterBIObj.getLabel()
+							+ " and sub object " + subBIObj.getLabel());
 					metaLog.log("Inserted new link between master object " + masterBIObj.getLabel()
 							+ " and sub object " + subBIObj.getLabel());
 				}
@@ -2035,6 +2072,9 @@ public class ImportManager implements IImportManager, Serializable {
 				Object existObj = importer.checkExistence(unique, sessionCurrDB, new SbiObjFunc());
 				if (existObj == null) {
 					sessionCurrDB.save(objfunct);
+					logger.debug("Inserted new association between function "
+							+ objfunct.getId().getSbiFunctions().getName() + " and object "
+							+ objfunct.getId().getSbiObjects().getName());
 					metaLog.log("Inserted new association between function "
 							+ objfunct.getId().getSbiFunctions().getName() + " and object "
 							+ objfunct.getId().getSbiObjects().getName());
@@ -2103,6 +2143,9 @@ public class ImportManager implements IImportManager, Serializable {
 				Object existObj = importer.checkExistence(unique, sessionCurrDB, new SbiFuncRole());
 				if (existObj == null) {
 					sessionCurrDB.save(newFunctRole);
+					logger.debug("Inserted new association between function "
+							+ functrole.getId().getFunction().getName() + " and role "
+							+ functrole.getId().getRole().getName());
 					metaLog.log("Inserted new association between function "
 							+ functrole.getId().getFunction().getName() + " and role "
 							+ functrole.getId().getRole().getName());
@@ -2165,6 +2208,10 @@ public class ImportManager implements IImportManager, Serializable {
 				uniqueMap.put("urlname", objpar.getParurlNm());
 				Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiObjPar());
 				if (existObj != null) {
+					logger.debug("Exported association between object " + objpar.getSbiObject().getName() + " "
+							+ " and parameter " + objpar.getSbiParameter().getName() + " with url name "
+							+ objpar.getParurlNm() + " not inserted"
+							+ " because already existing into the current database");
 					metaLog.log("Exported association between object " + objpar.getSbiObject().getName() + " "
 							+ " and parameter " + objpar.getSbiParameter().getName() + " with url name "
 							+ objpar.getParurlNm() + " not inserted"
@@ -2174,6 +2221,8 @@ public class ImportManager implements IImportManager, Serializable {
 
 				SbiObjPar newObjpar = ImportUtilities.makeNewSbiObjpar(objpar);
 				sessionCurrDB.save(newObjpar);
+				logger.debug("Inserted new biobject parameter with " + newObjpar.getParurlNm() + " for biobject "
+						+ newObjpar.getSbiObject().getName());
 				metaLog.log("Inserted new biobject parameter with " + newObjpar.getParurlNm() + " for biobject "
 						+ newObjpar.getSbiObject().getName());
 				Integer newId = newObjpar.getObjParId();
@@ -2258,6 +2307,10 @@ public class ImportManager implements IImportManager, Serializable {
 				Object existObj = importer.checkExistence(unique, sessionCurrDB, new SbiObjParuse());
 				if (existObj == null) {
 					sessionCurrDB.save(pardep);
+					logger.debug("Inserted new dependecies between biparameter "
+							+ pardep.getId().getSbiObjPar().getLabel() + " of the biobject "
+							+ pardep.getId().getSbiObjPar().getSbiObject().getLabel() + " and paruse "
+							+ pardep.getId().getSbiParuse().getLabel());
 					metaLog.log("Inserted new dependecies between biparameter "
 							+ pardep.getId().getSbiObjPar().getLabel() + " of the biobject "
 							+ pardep.getId().getSbiObjPar().getSbiObject().getLabel() + " and paruse "
@@ -2358,6 +2411,10 @@ public class ImportManager implements IImportManager, Serializable {
 				Object existObj = importer.checkExistence(unique, sessionCurrDB, new SbiObjParview());
 				if (existObj == null) {
 					sessionCurrDB.save(pardep);
+					logger.debug("Inserted new visual dependecies (parview) between biparameter "
+							+ pardep.getId().getSbiObjPar().getLabel() + " of the biobject "
+							+ pardep.getId().getSbiObjPar().getSbiObject().getLabel() + " with operation "
+							+ pardep.getId().getOperation()+ " and compareValue "+pardep.getId().getCompareValue());
 					metaLog.log("Inserted new visual dependecies (parview) between biparameter "
 							+ pardep.getId().getSbiObjPar().getLabel() + " of the biobject "
 							+ pardep.getId().getSbiObjPar().getSbiObject().getLabel() + " with operation "
@@ -2451,6 +2508,8 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiObjMetadata metaCurr = (SbiObjMetadata) existObj;
 				metaAss.insertCoupleObjMetadataIDAssociation(metaExp.getObjMetaId(), metaCurr.getObjMetaId());
 				metaAss.insertCoupleObjMetadataAssociation(metaExp, metaCurr);
+				logger.debug("Found an existing ObjMetadata " + metaCurr.getName() + " with "
+						+ "the same label of the exported ObjMetadata " + metaExp.getName());
 				metaLog.log("Found an existing ObjMetadata " + metaCurr.getName() + " with "
 						+ "the same label of the exported ObjMetadata " + metaExp.getName());
 			}
@@ -2467,6 +2526,8 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiParameters paramCurr = (SbiParameters) existObj;
 				metaAss.insertCoupleParameter(paramExp.getParId(), paramCurr.getParId());
 				metaAss.insertCoupleParameter(paramExp, paramCurr);
+				logger.debug("Found an existing Parameter " + paramCurr.getName() + " with "
+						+ "the same label of the exported parameter " + paramExp.getName());
 				metaLog.log("Found an existing Parameter " + paramCurr.getName() + " with "
 						+ "the same label of the exported parameter " + paramExp.getName());
 			}
@@ -2487,6 +2548,8 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiExtRoles roleCurr = (SbiExtRoles) existObj;
 				metaAss.insertCoupleRole(roleExp.getExtRoleId(), roleCurr.getExtRoleId());
 				metaAss.insertCoupleRole(roleExp, roleCurr);
+				logger.debug("Found an existing Role " + roleCurr.getName() + " with "
+						+ "the same name of the exported role " + roleExp.getName());
 				metaLog.log("Found an existing Role " + roleCurr.getName() + " with "
 						+ "the same name of the exported role " + roleExp.getName());
 			}
@@ -2512,6 +2575,8 @@ public class ImportManager implements IImportManager, Serializable {
 					SbiParuse paruseCurr = (SbiParuse) existObj;
 					metaAss.insertCoupleParuse(paruseExp.getUseId(), paruseCurr.getUseId());
 					metaAss.insertCoupleParuse(paruseExp, paruseCurr);
+					logger.debug("Found an existing Parameter use " + paruseCurr.getName() + " with "
+							+ "the same label of the exported parameter use " + paruseExp.getName());
 					metaLog.log("Found an existing Parameter use " + paruseCurr.getName() + " with "
 							+ "the same label of the exported parameter use " + paruseExp.getName());
 				}
@@ -2527,6 +2592,8 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiObjects objCurr = (SbiObjects) existObj;
 				metaAss.insertCoupleBIObj(objExp.getBiobjId(), objCurr.getBiobjId());
 				metaAss.insertCoupleBIObj(objExp, objCurr);
+				logger.debug("Found an existing BIObject " + objCurr.getName() + " with "
+						+ "the same label and path of the exported BIObject " + objExp.getName());
 				metaLog.log("Found an existing BIObject " + objCurr.getName() + " with "
 						+ "the same label and path of the exported BIObject " + objExp.getName());
 			}
@@ -2541,6 +2608,8 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiLov lovCurr = (SbiLov) existObj;
 				metaAss.insertCoupleLov(lovExp.getLovId(), lovCurr.getLovId());
 				metaAss.insertCoupleLov(lovExp, lovCurr);
+				logger.debug("Found an existing Lov " + lovCurr.getName() + " with "
+						+ "the same label of the exported lov " + lovExp.getName());
 				metaLog.log("Found an existing Lov " + lovCurr.getName() + " with "
 						+ "the same label of the exported lov " + lovExp.getName());
 			}
@@ -2555,6 +2624,8 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiFunctions functCurr = (SbiFunctions) existObj;
 				metaAss.insertCoupleFunct(functExp.getFunctId(), functCurr.getFunctId());
 				metaAss.insertCoupleFunct(functExp, functCurr);
+				logger.debug("Found an existing Functionality " + functCurr.getName() + " with "
+						+ "the same CODE of the exported functionality " + functExp.getName());
 				metaLog.log("Found an existing Functionality " + functCurr.getName() + " with "
 						+ "the same CODE of the exported functionality " + functExp.getName());
 			}
@@ -2574,6 +2645,8 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiEngines engCurr = (SbiEngines) existObj;
 				metaAss.insertCoupleEngine(engExp.getEngineId(), engCurr.getEngineId());
 				metaAss.insertCoupleEngine(engExp, engCurr);
+				logger.debug("Found an existing Engine " + engCurr.getName() + " with "
+						+ "the same label of the exported engine " + engExp.getName());
 				metaLog.log("Found an existing Engine " + engCurr.getName() + " with "
 						+ "the same label of the exported engine " + engExp.getName());
 			}
@@ -2588,6 +2661,8 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiChecks checkCurr = (SbiChecks) existObj;
 				metaAss.insertCoupleCheck(checkExp.getCheckId(), checkCurr.getCheckId());
 				metaAss.insertCoupleCheck(checkExp, checkCurr);
+				logger.debug("Found an existing check " + checkCurr.getName() + " with "
+						+ "the same label of the exported check " + checkExp.getName());
 				metaLog.log("Found an existing check " + checkCurr.getName() + " with "
 						+ "the same label of the exported check " + checkExp.getName());
 			}
@@ -2622,6 +2697,9 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiObjPar objParCurr = (SbiObjPar) existObj;
 				metaAss.insertCoupleObjpar(objparExp.getObjParId(), objParCurr.getObjParId());
 				metaAss.insertCoupleObjpar(objparExp, objParCurr);
+				logger.debug("Found an existing association between object " + objparExp.getSbiObject().getName()
+						+ " and parameter " + objparExp.getSbiParameter().getName() + " with " + " the same url "
+						+ objparExp.getParurlNm() + " name of the exported objpar ");
 				metaLog.log("Found an existing association between object " + objparExp.getSbiObject().getName()
 						+ " and parameter " + objparExp.getSbiParameter().getName() + " with " + " the same url "
 						+ objparExp.getParurlNm() + " name of the exported objpar ");
@@ -2637,11 +2715,14 @@ public class ImportManager implements IImportManager, Serializable {
 				if (existObj != null) {
 					SbiDataSource dsCurr = (SbiDataSource) existObj;
 					metaAss.insertCoupleDataSources(new Integer(dsExp.getDsId()), new Integer(dsCurr.getDsId()));
+					logger.debug("Found an existing data source " + dsCurr.getLabel() + " with "
+							+ "the same label of one exported data source");
 					metaLog.log("Found an existing data source " + dsCurr.getLabel() + " with "
 							+ "the same label of one exported data source");
 				}
 			}
 			else{
+				logger.debug("User already defined association  for datasource with label" + dsExp.getLabel());
 				metaLog.log("User already defined association  for datasource with label" + dsExp.getLabel());				
 			}			
 		}
@@ -2654,6 +2735,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiDataSetConfig dsCurr = (SbiDataSetConfig) existObj;
 				metaAss.insertCoupleDataSets(new Integer(dsExp.getDsId()), new Integer(dsCurr.getDsId()));
+				logger.debug("Found an existing dataset " + dsCurr.getLabel() + " with "
+						+ "the same label of one exported dataset");
 				metaLog.log("Found an existing dataset " + dsCurr.getLabel() + " with "
 						+ "the same label of one exported dataset");
 			}
@@ -2669,6 +2752,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiThreshold dsCurr = (SbiThreshold) existObj;
 				metaAss.insertCoupleThreshold(new Integer(dsExp.getThresholdId()), new Integer(dsCurr.getThresholdId()));
+				logger.debug("Found an existing threshold " + dsCurr.getCode() + " with "
+						+ "the same label of one exported Threshold");
 				metaLog.log("Found an existing threshold " + dsCurr.getCode() + " with "
 						+ "the same label of one exported Threshold");
 			}
@@ -2696,6 +2781,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiThresholdValue dsCurr = (SbiThresholdValue) existObj;
 				metaAss.insertCoupleThresholdValue(new Integer(dsExp.getIdThresholdValue()), new Integer(dsCurr.getIdThresholdValue()));
+				logger.debug("Found an existing thresholdValue " + dsCurr.getLabel() + " with "
+						+ "the same label of one exported ThresholdValue");
 				metaLog.log("Found an existing thresholdValue " + dsCurr.getLabel() + " with "
 						+ "the same label of one exported ThresholdValue");
 			}
@@ -2715,6 +2802,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiKpi dsCurr = (SbiKpi) existObj;
 				metaAss.insertCoupleKpi(new Integer(dsExp.getKpiId()), new Integer(dsCurr.getKpiId()));
+				logger.debug("Found an existing kpi " + dsCurr.getCode() + " with "
+						+ "the same label of one exported kpi");
 				metaLog.log("Found an existing kpi " + dsCurr.getCode() + " with "
 						+ "the same label of one exported kpi");
 			}
@@ -2730,6 +2819,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiKpiModel dsCurr = (SbiKpiModel) existObj;
 				metaAss.insertCoupleModel(new Integer(dsExp.getKpiModelId()), new Integer(dsCurr.getKpiModelId()));
+				logger.debug("Found an existing model " + dsCurr.getKpiModelLabel() + " with "
+						+ "the same label of one exported model");
 				metaLog.log("Found an existing model " + dsCurr.getKpiModelLabel() + " with "
 						+ "the same label of one exported model");
 			}
@@ -2744,6 +2835,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiKpiModelInst dsCurr = (SbiKpiModelInst) existObj;
 				metaAss.insertCoupleModelInstance(new Integer(dsExp.getKpiModelInst()), new Integer(dsCurr.getKpiModelInst()));
+				logger.debug("Found an existing model instance" + dsCurr.getLabel() + " with "
+						+ "the same label of one exported model instance");
 				metaLog.log("Found an existing model instance" + dsCurr.getLabel() + " with "
 						+ "the same label of one exported model instance");
 			}
@@ -2770,6 +2863,7 @@ public class ImportManager implements IImportManager, Serializable {
 					if(dsCurr.getSbiKpiInstance()!=null){
 						Integer correspondingIdKpiInstance=dsCurr.getSbiKpiInstance().getIdKpiInstance();
 						metaAss.insertCoupleKpiInstance(idKpiInstance, correspondingIdKpiInstance);
+						logger.debug("Found an existing kpi instance that, as one of the exported kpi instances, is referred by model instance " + dsCurr.getLabel());
 						metaLog.log("Found an existing kpi instance that, as one of the exported kpi instances, is referred by model instance " + dsCurr.getLabel());
 					}
 				}
@@ -2787,6 +2881,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiResources dsCurr = (SbiResources) existObj;
 				metaAss.insertCoupleResources(dsExp.getResourceId(), dsCurr.getResourceId());
+				logger.debug("Found an existing resource code " + dsCurr.getResourceCode() + " with "
+						+ "the same code of one exported resource");
 				metaLog.log("Found an existing resource code " + dsCurr.getResourceCode() + " with "
 						+ "the same code of one exported resource");
 			}
@@ -2805,6 +2901,7 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiKpiModelResources dsCurr = (SbiKpiModelResources) existObj;
 				metaAss.insertCoupleModelResources(dsExp.getKpiModelResourcesId(), dsCurr.getKpiModelResourcesId());
+				logger.debug("Found an existing model resource, with id "+dsCurr.getKpiModelResourcesId()+", referring to resource with name "+ dsCurr.getSbiResources().getResourceName() + " and model instance with label "+dsCurr.getSbiKpiModelInst().getLabel() +" ");
 				metaLog.log("Found an existing model resource, with id "+dsCurr.getKpiModelResourcesId()+", referring to resource with name "+ dsCurr.getSbiResources().getResourceName() + " and model instance with label "+dsCurr.getSbiKpiModelInst().getLabel() +" ");
 			}
 		}
@@ -2822,6 +2919,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiKpiPeriodicity dsCurr = (SbiKpiPeriodicity) existObj;
 				metaAss.insertCouplePeriodicity(dsPer.getIdKpiPeriodicity(), dsCurr.getIdKpiPeriodicity());
+				logger.debug("Found an existing periodicity " + dsCurr.getName() + " with "
+						+ "the same label of one exported periodicity");
 				metaLog.log("Found an existing periodicity " + dsCurr.getName() + " with "
 						+ "the same label of one exported periodicity");
 			}
@@ -2851,6 +2950,7 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiKpiInstPeriod dsCurr = (SbiKpiInstPeriod) existObj;
 				metaAss.insertCoupleKpiInstPeriod(dsInstPer.getKpiInstPeriodId(), dsCurr.getKpiInstPeriodId());
+				logger.debug("Found a kpiInstPeriod, with id "+dsCurr.getKpiInstPeriodId()+" referring to periodicity " + dsCurr.getSbiKpiPeriodicity().getName() + " and kpi instance with id "+dsCurr.getSbiKpiInstance().getIdKpiInstance());
 				metaLog.log("Found a kpiInstPeriod, with id "+dsCurr.getKpiInstPeriodId()+" referring to periodicity " + dsCurr.getSbiKpiPeriodicity().getName() + " and kpi instance with id "+dsCurr.getSbiKpiInstance().getIdKpiInstance());			
 			}
 		}
@@ -2866,6 +2966,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiDomains dsCurr = (SbiDomains) existObj;
 				metaAss.insertCoupleDomain(new Integer(dsExp.getValueId()), new Integer(dsCurr.getValueId()));
+				logger.debug("Found an existing domain" + dsCurr.getValueCd() + " with "
+						+ "the same label of one exported domain");
 				metaLog.log("Found an existing domain" + dsCurr.getValueCd() + " with "
 						+ "the same label of one exported domain");
 			}
@@ -2883,6 +2985,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiAlarm dsCurr = (SbiAlarm) existObj;
 				metaAss.insertCoupleAlarm(dsExp.getId(), dsCurr.getId());
+				logger.debug("Found an existing alarm " + dsCurr.getLabel() + " with "
+						+ "the same label of one exported alarm");
 				metaLog.log("Found an existing alarm " + dsCurr.getLabel() + " with "
 						+ "the same label of one exported alarm");
 			}
@@ -2899,6 +3003,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiAlarmContact dsCurr = (SbiAlarmContact) existObj;
 				metaAss.insertCoupleAlarmContact(dsExp.getId(), dsCurr.getId());
+				logger.debug("Found an existing alarm contact " + dsCurr.getName() + " with "
+						+ "the same name of one exported alarm contact");
 				metaLog.log("Found an existing alarm contact " + dsCurr.getName() + " with "
 						+ "the same name of one exported alarm contact");
 			}
@@ -2972,6 +3078,9 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiObjMetacontents contCurr = (SbiObjMetacontents) existObj;
 				//metaAss.insertCoupleObjMeIDAssociation(metaExp.getKpiModelResourcesId(), metaCurr.getKpiModelResourcesId());				
 				metaAss.insertCoupleObjMetacontentsIDAssociation(contExp.getObjMetacontentId(), contCurr.getObjMetacontentId());
+				logger.debug("Found an existing metacontents with id " + contCurr.getObjMetacontentId()+ "" +
+						"referring to the same object label "+contCurr.getSbiObjects().getLabel()+", " +
+						"referring to meta with id "+ contCurr.getObjmetaId());
 				metaLog.log("Found an existing metacontents with id " + contCurr.getObjMetacontentId()+ "" +
 						"referring to the same object label "+contCurr.getSbiObjects().getLabel()+", " +
 						"referring to meta with id "+ contCurr.getObjmetaId()
@@ -2999,6 +3108,7 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiKpiRel dsCurr = (SbiKpiRel) existObj;
 				metaAss.insertCoupleKpiRelAssociation(kpirel.getKpiRelId(), dsCurr.getKpiRelId());
+				logger.debug("Found an existing kpi Relation");
 				metaLog.log("Found an existing kpi Relation");
 			}
 		}
@@ -3023,6 +3133,10 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiUdp dsCurr = (SbiUdp) existObj;
 				metaAss.insertCoupleUdpAssociation(udp.getUdpId(), dsCurr.getUdpId());
+				logger.debug("Exported association between type id " + udp.getTypeId() + " "
+						+ " and family id " + udp.getFamilyId() + " with label "
+						+ udp.getLabel() + " not inserted"
+						+ " because already existing into the current database");
 				metaLog.log("Exported association between type id " + udp.getTypeId() + " "
 						+ " and family id " + udp.getFamilyId() + " with label "
 						+ udp.getLabel() + " not inserted"
@@ -3058,6 +3172,10 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiUdpValue dsCurr = (SbiUdpValue) existObj;
 				metaAss.insertCoupleUdpValueAssociation(udpVal.getUdpValueId(), dsCurr.getUdpValueId());
+				logger.debug("Exported association udp value between udp with label " + udpVal.getSbiUdp().getLabel() + " "
+						+ " and family " + udpVal.getFamily() + " with reference id "
+						+  udpVal.getReferenceId() + " not inserted"
+						+ " because already existing into the current database");
 				metaLog.log("Exported association udp value between udp with label " + udpVal.getSbiUdp().getLabel() + " "
 						+ " and family " + udpVal.getFamily() + " with reference id "
 						+  udpVal.getReferenceId() + " not inserted"
@@ -3078,6 +3196,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiOrgUnit dsCurr = (SbiOrgUnit) existObj;
 				metaAss.insertCoupleIdOuAssociation(ouVal.getId(), dsCurr.getId());
+				logger.debug("Found an existing ou " + dsCurr.getName() + " with "
+						+ "the same label of one exported ou");
 				metaLog.log("Found an existing ou " + dsCurr.getName() + " with "
 						+ "the same label of one exported ou");
 			}
@@ -3096,6 +3216,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiOrgUnitHierarchies dsCurr = (SbiOrgUnitHierarchies) existObj;
 				metaAss.insertCoupleIdOuHierarchyAssociation(ouHierVal.getId(), dsCurr.getId());
+				logger.debug("Found an existing ou hierarchy " + dsCurr.getName() + " with "
+						+ "the same label of one exported ou hierarchy");
 				metaLog.log("Found an existing ou hierarchy " + dsCurr.getName() + " with "
 						+ "the same label of one exported ou hierarchy");
 			}
@@ -3128,6 +3250,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiOrgUnitNodes dsCurr = (SbiOrgUnitNodes) existObj;
 				metaAss.insertCoupleIdOuNodeAssociation(ouVal.getNodeId(), dsCurr.getNodeId());
+				logger.debug("Found an existing ou node " + dsCurr.getNodeId() + " with "
+						+ "the same organizational unit and hierarchy of one exported ou node");
 				metaLog.log("Found an existing ou node " + dsCurr.getNodeId() + " with "
 						+ "the same organizational unit and hierarchy of one exported ou node");
 			}
@@ -3141,6 +3265,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiOrgUnitGrant dsCurr = (SbiOrgUnitGrant) existObj;
 				metaAss.insertCoupleIdOuGrantAssociation(ouGrantVal.getId(), dsCurr.getId());
+				logger.debug("Found an existing ou grant " + dsCurr.getId() + " with "
+						+ "the same label of one exported ou grant");
 				metaLog.log("Found an existing ou grant " + dsCurr.getId() + " with "
 						+ "the same label of one exported ou grant");
 			}
@@ -3165,6 +3291,8 @@ public class ImportManager implements IImportManager, Serializable {
 			if (existObj != null) {
 				SbiOrgUnitGrantNodes dsCurr = (SbiOrgUnitGrantNodes) existObj;
 				metaAss.insertCoupleIdOuGrantNodesAssociation(ouGrantNode.getId(), dsCurr.getId());
+				logger.debug("Found an existing ou grant node with grant id " + dsCurr.getId().getGrantId() + " with "
+						+ "the same id of one exported ou grant node");
 				metaLog.log("Found an existing ou grant node with grant id " + dsCurr.getId().getGrantId() + " with "
 						+ "the same id of one exported ou grant node");
 			}
@@ -3342,10 +3470,14 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiGeoMaps newMap = null;
 				if (existObj != null) {
 					if (!overwrite) {
+						logger.debug("Found an existing map '" + name + "' with "
+								+ "the same name of the exported map. It will be not overwritten.");
 						metaLog.log("Found an existing map '" + name + "' with "
 								+ "the same name of the exported map. It will be not overwritten.");
 						continue;
 					} else {
+						logger.debug("Found an existing map '" + name + "' with "
+								+ "the same name of the exported map. It will be overwritten.");
 						metaLog.log("Found an existing map '" + name + "' with "
 								+ "the same name of the exported map. It will be overwritten.");
 						newMap = (SbiGeoMaps) existObj;
@@ -3362,6 +3494,7 @@ public class ImportManager implements IImportManager, Serializable {
 					SbiBinContents binary = insertBinaryContent(expMap.getBinContents());
 					newMap.setBinContents(binary);
 				} else {
+					logger.debug("WARN: exported map with name '" + expMap.getName() + "' has no content!!");
 					metaLog.log("WARN: exported map with name '" + expMap.getName() + "' has no content!!");
 					newMap.setBinContents(null);
 				}
@@ -3380,10 +3513,14 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiGeoFeatures newFeature = null;
 				if (existObj != null) {
 					if (!overwrite) {
+						logger.debug("Found an existing feature '" + name + "' with "
+								+ "the same name of the exported feature. It will be not overwritten.");
 						metaLog.log("Found an existing feature '" + name + "' with "
 								+ "the same name of the exported feature. It will be not overwritten.");
 						continue;
 					} else {
+						logger.debug("Found an existing feature '" + name + "' with "
+								+ "the same name of the exported feature. It will be overwritten.");
 						metaLog.log("Found an existing feature '" + name + "' with "
 								+ "the same name of the exported feature. It will be overwritten.");
 						newFeature = (SbiGeoFeatures) existObj;
@@ -3411,6 +3548,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map mapsIDAssociations = metaAss.getMapIDAssociation();
 				Set mapsIDAssociationsKeySet = mapsIDAssociations.keySet();
 				if (!mapsIDAssociationsKeySet.contains(expMapId)) {
+					logger.debug("Association between exported map with id = " + expMapId + " and exported feature with id = " + expFeatureId + 
+							" will not be imported: the map was not imported.");
 					metaLog.log("Association between exported map with id = " + expMapId + " and exported feature with id = " + expFeatureId + 
 					" will not be imported: the map was not imported.");
 					continue;
@@ -3421,6 +3560,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map featuresIDAssociations = metaAss.getFeaturesIDAssociation();
 				Set featuresIDAssociationsKeySet = featuresIDAssociations.keySet();
 				if (!featuresIDAssociationsKeySet.contains(expFeatureId)) {
+					logger.debug("Association between exported map with id = " + expMapId + " and exported feature with id = " + expFeatureId + 
+							" will not be imported: the feature was not imported.");
 					metaLog.log("Association between exported map with id = " + expMapId + " and exported feature with id = " + expFeatureId + 
 					" will not be imported: the feature was not imported.");
 					continue;
@@ -3435,10 +3576,14 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiGeoMapFeatures newMapFeature = null;
 				if (existObj != null) {
 					if (!overwrite) {
+						logger.debug("Found an existing association between map " + existingMapId + " and feature " + existingFeatureId + ". " +
+								"It will be not overwritten.");
 						metaLog.log("Found an existing association between map " + existingMapId + " and feature " + existingFeatureId + ". " +
 						"It will be not overwritten.");
 						continue;
 					} else {
+						logger.debug("Found an existing association between map " + existingMapId + " and feature " + existingFeatureId + ". " +
+								"It will be overwritten.");
 						metaLog.log("Found an existing association between map " + existingMapId + " and feature " + existingFeatureId + ". " +
 						"It will be overwritten.");
 						newMapFeature = (SbiGeoMapFeatures) existObj;
@@ -3529,6 +3674,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map modelIdAss = metaAss.getModelIDAssociation();
 				Set modelIdAssSet = modelIdAss.keySet();
 				if (modelIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported model " + exportedModel.getKpiModelCd() + " not inserted"
+							+ " because it has the same code of an existing model");
 					metaLog.log("Exported model " + exportedModel.getKpiModelCd() + " not inserted"
 							+ " because it has the same code of an existing model");
 					continue;
@@ -3536,7 +3683,7 @@ public class ImportManager implements IImportManager, Serializable {
 					existingModelId = (Integer) modelIdAss.get(oldId);
 				}
 				if (existingModelId != null) {
-					logger.info("The model with id:[" + exportedModel.getKpiModelId() + "] is just present. It will be updated.");
+					logger.debug("The model with id:[" + exportedModel.getKpiModelId() + "] is just present. It will be updated.");
 					metaLog.log("The model with code = [" + exportedModel.getKpiModelCd() + "] will be updated.");
 					SbiKpiModel existingModel = ImportUtilities.modifyExistingSbiModel(exportedModel, sessionCurrDB, existingModelId, metaAss);
 					sessionCurrDB.update(existingModel);
@@ -3545,6 +3692,7 @@ public class ImportManager implements IImportManager, Serializable {
 					// TODO manca da associare il kpi con le entita
 					//ImportUtilities.associateWithExistingEntities(newPar, exportedParameter, sessionCurrDB, importer, metaAss);
 					sessionCurrDB.save(newModel);
+					logger.debug("Inserted new model " + newModel.getKpiModelCd());
 					metaLog.log("Inserted new model " + newModel.getKpiModelCd());
 					Integer newId = newModel.getKpiModelId();
 					metaAss.insertCoupleModel(oldId, newId);
@@ -3596,6 +3744,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map modelInstIdAss = metaAss.getModelInstanceIDAssociation();
 				Set modelInstIdAssSet = modelInstIdAss.keySet();
 				if (modelInstIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported model instance" + exportedModelInst.getLabel() + " not inserted"
+							+ " because it has the same label of an existing model instance");
 					metaLog.log("Exported model instance" + exportedModelInst.getLabel() + " not inserted"
 							+ " because it has the same label of an existing model instance");
 					continue;
@@ -3603,13 +3753,14 @@ public class ImportManager implements IImportManager, Serializable {
 					existingModelInstId = (Integer) modelInstIdAss.get(oldId);
 				}
 				if (existingModelInstId != null) {
-					logger.info("The model instance with id:[" + exportedModelInst.getKpiModelInst() + "] is just present. It will be updated.");
+					logger.debug("The model instance with id:[" + exportedModelInst.getKpiModelInst() + "] is just present. It will be updated.");
 					metaLog.log("The model instance with code = [" + exportedModelInst.getLabel() + "] will be updated.");
 					SbiKpiModelInst existingModelInst = ImportUtilities.modifyExistingSbiModelInstance(exportedModelInst, sessionCurrDB, existingModelInstId, metaAss);
 					sessionCurrDB.update(existingModelInst);
 				} else {
 					SbiKpiModelInst newModelInst = ImportUtilities.makeNewSbiModelInstance(exportedModelInst, sessionCurrDB, metaAss);
 					sessionCurrDB.save(newModelInst);
+					logger.debug("Inserted new model instance " + newModelInst.getLabel());
 					metaLog.log("Inserted new model instance " + newModelInst.getLabel());
 					Integer newId = newModelInst.getKpiModelInst();
 					metaAss.insertCoupleModelInstance(oldId, newId);
@@ -3653,6 +3804,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map kpiIdAss = metaAss.getKpiIDAssociation();
 				Set kpiIdAssSet = kpiIdAss.keySet();
 				if (kpiIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported kpi " + exportedKpi.getName() + " not inserted"
+							+ " because it has the same label of an existing kpi");
 					metaLog.log("Exported kpi " + exportedKpi.getName() + " not inserted"
 							+ " because it has the same label of an existing kpi");
 					continue;
@@ -3661,7 +3814,7 @@ public class ImportManager implements IImportManager, Serializable {
 				}
 				SbiKpi referenceKpi = null;
 				if (existingKpiId != null) {
-					logger.info("The kpi with id:[" + exportedKpi.getKpiId() + "] is just present. It will be updated.");
+					logger.debug("The kpi with id:[" + exportedKpi.getKpiId() + "] is just present. It will be updated.");
 					metaLog.log("The kpi with code = [" + exportedKpi.getCode() + "] will be updated.");
 					SbiKpi existingKpi = ImportUtilities.modifyExistingSbiKpi(exportedKpi, sessionCurrDB, existingKpiId, metaAss);
 					existingKpi.setSbiKpiDocumentses(new HashSet(0));
@@ -3675,6 +3828,7 @@ public class ImportManager implements IImportManager, Serializable {
 					// TODO manca da associare il kpi con le entita
 					//ImportUtilities.associateWithExistingEntities(newPar, exportedParameter, sessionCurrDB, importer, metaAss);
 					sessionCurrDB.save(newKpi);
+					logger.debug("Inserted new kpi " + newKpi.getName());
 					metaLog.log("Inserted new kpi " + newKpi.getName());
 					Integer newId = newKpi.getKpiId();
 					metaAss.insertCoupleKpi(oldId, newId);
@@ -3757,6 +3911,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map kpiInstIdAss = metaAss.getKpiInstanceIDAssociation();
 				Set kpiInstIdAssSet = kpiInstIdAss.keySet();
 				if (kpiInstIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported kpi instance with id" + exportedKpiInst.getIdKpiInstance() + " not inserted"
+							+ " because it has the same relations of an existing kpi instance");
 					metaLog.log("Exported kpi instance with id" + exportedKpiInst.getIdKpiInstance() + " not inserted"
 							+ " because it has the same relations of an existing kpi instance");
 					continue;
@@ -3764,13 +3920,14 @@ public class ImportManager implements IImportManager, Serializable {
 					existingKpiInstId = (Integer) kpiInstIdAss.get(oldId);
 				}
 				if (existingKpiInstId != null) {
-					logger.info("The kpi instance with id:[" + exportedKpiInst.getIdKpiInstance() + "] is just present. It will be updated.");
+					logger.debug("The kpi instance with id:[" + exportedKpiInst.getIdKpiInstance() + "] is just present. It will be updated.");
 					metaLog.log("The kpi instance with id = [" + exportedKpiInst.getIdKpiInstance() + "] will be updated.");
 					SbiKpiInstance existingKpiInst = ImportUtilities.modifyExistingSbiKpiInstance(exportedKpiInst, sessionCurrDB, existingKpiInstId, metaAss);
 					sessionCurrDB.update(existingKpiInst);
 				} else {
 					SbiKpiInstance newKpiInst = ImportUtilities.makeNewSbiKpiInstance(exportedKpiInst, sessionCurrDB, metaAss);
 					sessionCurrDB.save(newKpiInst);
+					logger.debug("Inserted new kpi instance with id " + newKpiInst.getIdKpiInstance());
 					metaLog.log("Inserted new kpi instance with id " + newKpiInst.getIdKpiInstance());
 					Integer newId = newKpiInst.getIdKpiInstance();
 					metaAss.insertCoupleKpiInstance(oldId, newId);
@@ -3818,6 +3975,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map thValuesIdAss = metaAss.getTresholdValueIDAssociation();
 				Set thValuesIdAssSet = thValuesIdAss.keySet();
 				if (thValuesIdAssSet.contains(oldId) && !overwrite) {        // it could have been already inserted
+					logger.debug("Exported threshold values " + exportedThValue.getLabel() + " not inserted"
+							+ " because it has the same label of an existing threshold value");
 					metaLog.log("Exported threshold values " + exportedThValue.getLabel() + " not inserted"
 							+ " because it has the same label of an existing threshold value");
 					continue;
@@ -3825,13 +3984,14 @@ public class ImportManager implements IImportManager, Serializable {
 					existingThValueId = (Integer) thValuesIdAss.get(oldId);
 				}
 				if (existingThValueId != null) {
-					logger.info("The threshold value with id:[" + exportedThValue.getIdThresholdValue() + "] is just present. It will be updated.");
+					logger.debug("The threshold value with id:[" + exportedThValue.getIdThresholdValue() + "] is just present. It will be updated.");
 					metaLog.log("The threshold value with code = [" + exportedThValue.getLabel() + "] will be updated.");
 					SbiThresholdValue existingThValue = ImportUtilities.modifyExistingSbiThresholdValue(exportedThValue, sessionCurrDB, existingThValueId, metaAss,importer);
 					sessionCurrDB.update(existingThValue);
 				} else {
 					SbiThresholdValue newThresholdValue = ImportUtilities.makeNewSbiThresholdValue(exportedThValue, sessionCurrDB, metaAss,importer);
 					sessionCurrDB.save(newThresholdValue);
+					logger.debug("Inserted new Threshold Value " + newThresholdValue.getLabel());
 					metaLog.log("Inserted new Threshold Value " + newThresholdValue.getLabel());
 					Integer newId = newThresholdValue.getIdThresholdValue();
 					metaAss.insertCoupleThresholdValue(oldId, newId);
@@ -3877,6 +4037,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map thIdAss = metaAss.getTresholdIDAssociation();
 				Set thIdAssSet = thIdAss.keySet();
 				if (thIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported threshold " + exportedTh.getCode() + " not inserted"
+							+ " because it has the same label of an existing threshold ");
 					metaLog.log("Exported threshold " + exportedTh.getCode() + " not inserted"
 							+ " because it has the same label of an existing threshold ");
 					continue;
@@ -3884,13 +4046,14 @@ public class ImportManager implements IImportManager, Serializable {
 					existingThId = (Integer) thIdAss.get(oldId);
 				}
 				if (existingThId != null) {
-					logger.info("The threshold with id:[" + exportedTh.getThresholdId() + "] is just present. It will be updated.");
+					logger.debug("The threshold with id:[" + exportedTh.getThresholdId() + "] is just present. It will be updated.");
 					metaLog.log("The threshold with code = [" + exportedTh.getCode() + "] will be updated.");
 					SbiThreshold existingTh = ImportUtilities.modifyExistingSbiThreshold(exportedTh, sessionCurrDB, existingThId, metaAss);
 					sessionCurrDB.update(existingTh);
 				} else {
 					SbiThreshold newThreshold = ImportUtilities.makeNewSbiThreshold(exportedTh, sessionCurrDB, metaAss);
 					sessionCurrDB.save(newThreshold);
+					logger.debug("Inserted new Threshold " + newThreshold.getCode());
 					metaLog.log("Inserted new Threshold " + newThreshold.getCode());
 					Integer newId = newThreshold.getThresholdId();
 					metaAss.insertCoupleThreshold(oldId, newId);
@@ -3945,6 +4108,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map resourcesIdAss = metaAss.getResourcesIDAssociation();
 				Set resourcesIdAssSet = resourcesIdAss.keySet();
 				if (resourcesIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported resources" + exportedResource.getResourceName() + " not inserted"
+							+ " because it has the same name of an existing resource");
 					metaLog.log("Exported resources" + exportedResource.getResourceName() + " not inserted"
 							+ " because it has the same name of an existing resource");
 					continue;
@@ -3952,13 +4117,14 @@ public class ImportManager implements IImportManager, Serializable {
 					existingResourceId = (Integer) resourcesIdAss.get(oldId);
 				}
 				if (existingResourceId != null) {
-					logger.info("The resource with id:[" + exportedResource.getResourceId() + "] is just present. It will be updated.");
+					logger.debug("The resource with id:[" + exportedResource.getResourceId() + "] is just present. It will be updated.");
 					metaLog.log("The resource with name = [" + exportedResource.getResourceName() + "] will be updated.");
 					SbiResources existingResources = ImportUtilities.modifyExistingSbiResources(exportedResource, sessionCurrDB, existingResourceId, metaAss,importer);
 					sessionCurrDB.update(existingResources);
 				} else {
 					SbiResources newResource = ImportUtilities.makeNewSbiResources(exportedResource, sessionCurrDB, metaAss, importer);
 					sessionCurrDB.save(newResource);
+					logger.debug("Inserted new resource " + newResource.getResourceName());
 					metaLog.log("Inserted new resource " + newResource.getResourceName());
 					Integer newId = newResource.getResourceId();
 					metaAss.insertCoupleResources(oldId, newId);
@@ -4005,6 +4171,9 @@ public class ImportManager implements IImportManager, Serializable {
 				Map modResourcesIdAss = metaAss.getModelResourcesIDAssociation();
 				Set modResourcesIdAssSet = modResourcesIdAss.keySet();
 				if (modResourcesIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported model resources with id " + exportedModResource.getKpiModelResourcesId() + " and" +
+							" referencing resource with name "+exportedModResource.getSbiResources().getResourceName() + "" +
+							" and model instance with label "+ exportedModResource.getSbiKpiModelInst().getLabel()+" not inserted  because it has the same name of an existing resource");
 					metaLog.log("Exported model resources with id " + exportedModResource.getKpiModelResourcesId() + " and" +
 							" referencing resource with name "+exportedModResource.getSbiResources().getResourceName() + "" +
 							" and model instance with label "+ exportedModResource.getSbiKpiModelInst().getLabel()+" not inserted  because it has the same name of an existing resource");
@@ -4013,13 +4182,14 @@ public class ImportManager implements IImportManager, Serializable {
 					existingModResourceId = (Integer) modResourcesIdAss.get(oldId);
 				}
 				if (existingModResourceId != null) {
-					logger.info("The model resource with id:[" + exportedModResource.getKpiModelResourcesId() + "] is just present. It will be updated.");
+					logger.debug("The model resource with id:[" + exportedModResource.getKpiModelResourcesId() + "] is just present. It will be updated.");
 					metaLog.log("The model resource referencing resource with name = [" + exportedModResource.getSbiResources().getResourceName() + "] nad model instance with label [ "+exportedModResource.getSbiKpiModelInst().getLabel() +" ]will be updated.");
 					SbiKpiModelResources existingResources = ImportUtilities.modifyExistingSbiModelResources(exportedModResource, sessionCurrDB, existingModResourceId, metaAss,importer);
 					sessionCurrDB.update(existingResources);
 				} else {
 					SbiKpiModelResources newModResource = ImportUtilities.makeNewSbiModelResource(exportedModResource, sessionCurrDB, metaAss, importer);
 					sessionCurrDB.save(newModResource);
+					logger.debug("Inserted new model resource between resource " + newModResource.getSbiResources().getResourceName()+" and model instance "+newModResource.getSbiKpiModelInst().getLabel());
 					metaLog.log("Inserted new model resource between resource " + newModResource.getSbiResources().getResourceName()+" and model instance "+newModResource.getSbiKpiModelInst().getLabel());
 					Integer newId = newModResource.getKpiModelResourcesId();
 					metaAss.insertCoupleModelResources(oldId, newId);
@@ -4063,6 +4233,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map periodicityIdAss = metaAss.getPeriodicityIDAssociation();
 				Set periodicityIdAssSet = periodicityIdAss.keySet();
 				if (periodicityIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported periodicity" + exportedPeriodicity.getName() + " not inserted"
+							+ " because it has the same name of an existing periodicity");
 					metaLog.log("Exported periodicity" + exportedPeriodicity.getName() + " not inserted"
 							+ " because it has the same name of an existing periodicity");
 					continue;
@@ -4070,13 +4242,14 @@ public class ImportManager implements IImportManager, Serializable {
 					existingPeriodicityId = (Integer) periodicityIdAss.get(oldId);
 				}
 				if (existingPeriodicityId != null) {
-					logger.info("The periodicity with id:[" + exportedPeriodicity.getIdKpiPeriodicity() + "] is just present. It will be updated.");
+					logger.debug("The periodicity with id:[" + exportedPeriodicity.getIdKpiPeriodicity() + "] is just present. It will be updated.");
 					metaLog.log("The periodicity with name = [" + exportedPeriodicity.getName() + "] will be updated.");
 					SbiKpiPeriodicity existingPeriodicity = ImportUtilities.modifyExistingSbiPeriodicity(exportedPeriodicity, sessionCurrDB, existingPeriodicityId, metaAss,importer);
 					sessionCurrDB.update(existingPeriodicity);
 				} else {
 					SbiKpiPeriodicity newPeriodicity = ImportUtilities.makeNewSbiPeriodicity(exportedPeriodicity, sessionCurrDB, metaAss, importer);
 					sessionCurrDB.save(newPeriodicity);
+					logger.debug("Inserted new Periodicity " + newPeriodicity.getName());
 					metaLog.log("Inserted new Periodicity " + newPeriodicity.getName());
 					Integer newId = newPeriodicity.getIdKpiPeriodicity();
 					metaAss.insertCouplePeriodicity(oldId, newId);
@@ -4123,6 +4296,9 @@ public class ImportManager implements IImportManager, Serializable {
 				Map kpiInstPeriodIdAss = metaAss.getKpiInstPeriodIDAssociation();
 				Set kpiInstPeriodIdAssSet = kpiInstPeriodIdAss.keySet();
 				if (kpiInstPeriodIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported kpiInstPeriod with id " + exportedKpiInstPeriod.getKpiInstPeriodId() + " and" +
+							" referencing Periodicity with name "+exportedKpiInstPeriod.getSbiKpiPeriodicity().getName() + "" +
+							" and kpiInstance with previous id "+ exportedKpiInstPeriod.getSbiKpiInstance().getIdKpiInstance()+" not inserted  because it has the same name of an existing resource");
 					metaLog.log("Exported kpiInstPeriod with id " + exportedKpiInstPeriod.getKpiInstPeriodId() + " and" +
 							" referencing Periodicity with name "+exportedKpiInstPeriod.getSbiKpiPeriodicity().getName() + "" +
 							" and kpiInstance with previous id "+ exportedKpiInstPeriod.getSbiKpiInstance().getIdKpiInstance()+" not inserted  because it has the same name of an existing resource");
@@ -4131,13 +4307,14 @@ public class ImportManager implements IImportManager, Serializable {
 					existingKpiInstPeriodId = (Integer) kpiInstPeriodIdAss.get(oldId);
 				}
 				if (existingKpiInstPeriodId != null) {
-					logger.info("The kpiInstPeriod with id:[" + exportedKpiInstPeriod.getKpiInstPeriodId() + "] is just present. It will be updated.");
+					logger.debug("The kpiInstPeriod with id:[" + exportedKpiInstPeriod.getKpiInstPeriodId() + "] is just present. It will be updated.");
 					metaLog.log("The kpiInstPeriod referencing periodicity with name = [" + exportedKpiInstPeriod.getSbiKpiPeriodicity().getName() + "] and kpi instance with prev Id [ "+exportedKpiInstPeriod.getSbiKpiInstance().getIdKpiInstance() +" ]will be updated.");
 					SbiKpiInstPeriod existingKpiInstPeriod = ImportUtilities.modifyExistingSbiKpiInstPeriod(exportedKpiInstPeriod, sessionCurrDB, existingKpiInstPeriodId, metaAss,importer);
 					sessionCurrDB.update(existingKpiInstPeriod);
 				} else {
 					SbiKpiInstPeriod newKpiInstPeriod = ImportUtilities.makeNewSbiKpiInstPeriod(exportedKpiInstPeriod, sessionCurrDB, metaAss, importer);
 					sessionCurrDB.save(newKpiInstPeriod);
+					logger.debug("Inserted new kpiInstPeriod  referring to periodicity " + newKpiInstPeriod.getSbiKpiPeriodicity().getName()+" and kpi instance "+newKpiInstPeriod.getSbiKpiInstance().getIdKpiInstance());
 					metaLog.log("Inserted new kpiInstPeriod  referring to periodicity " + newKpiInstPeriod.getSbiKpiPeriodicity().getName()+" and kpi instance "+newKpiInstPeriod.getSbiKpiInstance().getIdKpiInstance());
 					Integer newId = newKpiInstPeriod.getKpiInstPeriodId();
 					metaAss.insertCoupleKpiInstPeriod(oldId, newId);
@@ -4184,6 +4361,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Map alarmIdAss = metaAss.getAlarmIDAssociation();
 				Set alarmIdAssSet = alarmIdAss.keySet();
 				if (alarmIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported alarm " + exportedAlarm.getLabel() + " not inserted"
+							+ " because it has the same label of an existing alarm");
 					metaLog.log("Exported alarm " + exportedAlarm.getLabel() + " not inserted"
 							+ " because it has the same label of an existing alarm");
 					continue;
@@ -4191,13 +4370,14 @@ public class ImportManager implements IImportManager, Serializable {
 					existingAlarmId = (Integer) alarmIdAss.get(oldId);
 				}
 				if (existingAlarmId != null) {
-					logger.info("The Alarm with id:[" + exportedAlarm.getId() + "] is just present. It will be updated.");
+					logger.debug("The Alarm with id:[" + exportedAlarm.getId() + "] is just present. It will be updated.");
 					metaLog.log("The Alarm with label = [" + exportedAlarm.getLabel() + "] will be updated.");
 					SbiAlarm existingAlarm = ImportUtilities.modifyExistingSbiAlarms(exportedAlarm, sessionCurrDB, existingAlarmId, metaAss,importer);
 					sessionCurrDB.update(existingAlarm);
 				} else {
 					SbiAlarm newAlarm = ImportUtilities.makeNewSbiAlarms(exportedAlarm, sessionCurrDB, metaAss, importer);
 					sessionCurrDB.save(newAlarm);
+					logger.debug("Inserted new Alarm " + newAlarm.getLabel());
 					metaLog.log("Inserted new Alarm " + newAlarm.getLabel());
 					Integer newId = newAlarm.getId();
 					metaAss.insertCoupleAlarm(oldId, newId);
@@ -4353,6 +4533,9 @@ public class ImportManager implements IImportManager, Serializable {
 				Map alarmContactIdAss = metaAss.getAlarmContactIDAssociation();
 				Set alarmContactIdAssSet = alarmContactIdAss.keySet();
 				if (alarmContactIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported alarm Contact " + exportedAlarmContact.getName() + " not inserted"
+							+ " because it has the same label of an existing alarm Contact");
+					
 					metaLog.log("Exported alarm Contact " + exportedAlarmContact.getName() + " not inserted"
 							+ " because it has the same label of an existing alarm Contact");
 					continue;
@@ -4360,13 +4543,14 @@ public class ImportManager implements IImportManager, Serializable {
 					existingAlarmContactId = (Integer) alarmContactIdAss.get(oldId);
 				}
 				if (existingAlarmContactId != null) {
-					logger.info("The Alarm Contact with id:[" + exportedAlarmContact.getId() + "] is just present. It will be updated.");
+					logger.debug("The Alarm Contact with id:[" + exportedAlarmContact.getId() + "] is just present. It will be updated.");
 					metaLog.log("The Alarm Contact with name = [" + exportedAlarmContact.getName() + "] will be updated.");
 					SbiAlarmContact existingAlarmContact = ImportUtilities.modifyExistingSbiAlarmContacts(exportedAlarmContact, sessionCurrDB, existingAlarmContactId, metaAss,importer);
 					sessionCurrDB.update(existingAlarmContact);
 				} else {
 					SbiAlarmContact newAlarmContact = ImportUtilities.makeNewSbiAlarmContacts(exportedAlarmContact, sessionCurrDB, metaAss, importer);
 					sessionCurrDB.save(newAlarmContact);
+					logger.debug("Inserted new Alarm Contact " + newAlarmContact.getName());
 					metaLog.log("Inserted new Alarm Contact " + newAlarmContact.getName());
 					Integer newId = newAlarmContact.getId();
 					metaAss.insertCoupleAlarmContact(oldId, newId);
@@ -4410,6 +4594,9 @@ public class ImportManager implements IImportManager, Serializable {
 				Map metaContentIdAss = metaAss.getObjMetacontentsIDAssociation();
 				Set metaContentIdAssSet = metaContentIdAss.keySet();
 				if (metaContentIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported metaContent with original id" + exportedMetacontent.getObjMetacontentId() + " not inserted"
+							+ " because there isalready one asociation to the same object "+exportedMetacontent.getSbiObjects().getLabel()+" " +
+							" and to the same metadata with id "+exportedMetacontent.getObjmetaId());
 					metaLog.log("Exported metaContent with original id" + exportedMetacontent.getObjMetacontentId() + " not inserted"
 							+ " because there isalready one asociation to the same object "+exportedMetacontent.getSbiObjects().getLabel()+" " +
 							" and to the same metadata with id "+exportedMetacontent.getObjmetaId());
@@ -4428,7 +4615,7 @@ public class ImportManager implements IImportManager, Serializable {
 					existingMetacontentsId = (Integer) metaContentIdAss.get(oldId);
 				}
 				if (existingMetacontentsId != null) {
-					logger.info("The Metacontent with id:[" + exportedMetacontent.getObjMetacontentId() + "] is already present. It will be updated.");
+					logger.debug("The Metacontent with id:[" + exportedMetacontent.getObjMetacontentId() + "] is already present. It will be updated.");
 					metaLog.log("The Metacontent with original id = " + exportedMetacontent.getObjMetacontentId() + "and associated to the object with label" + exportedMetacontent.getSbiObjects().getLabel() +"  will be updated.");
 					SbiObjMetacontents existingObjMetacontents = ImportUtilities.modifyExistingSbiObjMetacontents(exportedMetacontent, sessionCurrDB, existingMetacontentsId, metaAss,importer);
 					sessionCurrDB.update(existingObjMetacontents);
@@ -4437,10 +4624,16 @@ public class ImportManager implements IImportManager, Serializable {
 					sessionCurrDB.save(newMetacontents);
 					String subObject = newMetacontents.getSbiSubObjects() != null ? newMetacontents.getSbiSubObjects().getName() : null;
 					if( subObject != null){
+						logger.debug("Inserted new Metacontents associated to subobject "+subObject +" of object  " + 
+								newMetacontents.getSbiObjects().getLabel());
+
 						metaLog.log("Inserted new Metacontents associated to subobject "+subObject +" of object  " + 
 								newMetacontents.getSbiObjects().getLabel());
 					}
 					else {
+						logger.debug("Inserted new Metacontents associated to object  " + 
+								newMetacontents.getSbiObjects().getLabel());
+
 						metaLog.log("Inserted new Metacontents associated to object  " + 
 								newMetacontents.getSbiObjects().getLabel());
 					}
@@ -4488,6 +4681,10 @@ public class ImportManager implements IImportManager, Serializable {
 				Map udpAss = metaAss.getUdpAssociation();
 				Set udpAssSet = udpAss.keySet();
 				if (udpAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported association between type id " + udp.getTypeId() + " "
+							+ " and family id " + udp.getFamilyId() + " with label "
+							+ udp.getLabel() + " not inserted"
+							+ " because already existing into the current database");
 					metaLog.log("Exported association between type id " + udp.getTypeId() + " "
 							+ " and family id " + udp.getFamilyId() + " with label "
 							+ udp.getLabel() + " not inserted"
@@ -4505,6 +4702,9 @@ public class ImportManager implements IImportManager, Serializable {
 				} else {
 					SbiUdp newUdp = ImportUtilities.makeNewSbiUdp(udp, sessionCurrDB, metaAss, importer);
 					sessionCurrDB.save(newUdp);
+					logger.debug("Inserted new udp with label " + newUdp.getLabel()+" type id " + udp.getTypeId() + " "
+							+ " and family id " + udp.getFamilyId());
+
 					metaLog.log("Inserted new udp with label " + newUdp.getLabel()+" type id " + udp.getTypeId() + " "
 								+ " and family id " + udp.getFamilyId());
 					Integer newId = newUdp.getUdpId();
@@ -4558,6 +4758,10 @@ public class ImportManager implements IImportManager, Serializable {
 				Integer existingUdpValueId = null;
 				Set assUdpValueSet = assUdpValue.keySet();
 				if (assUdpValueSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported association udp value with udp with label " + udpvalue.getSbiUdp().getLabel() + " "
+							+ " and family " + udpvalue.getFamily() + " with reference id "
+							+  udpvalue.getReferenceId() + " not inserted"
+							+ " because already existing into the current database");
 					metaLog.log("Exported association udp value with udp with label " + udpvalue.getSbiUdp().getLabel() + " "
 							+ " and family " + udpvalue.getFamily() + " with reference id "
 							+  udpvalue.getReferenceId() + " not inserted"
@@ -4567,7 +4771,9 @@ public class ImportManager implements IImportManager, Serializable {
 					existingUdpValueId = (Integer) assUdpValue.get(oldId);
 				}
 				if (existingUdpValueId != null) {
-
+					logger.debug("The udp value with udp with label " + udpvalue.getSbiUdp().getLabel() + " "
+							+ " and family " + udpvalue.getFamily() + " with reference id "
+							+  udpvalue.getReferenceId()+ "] will be updated.");
 					metaLog.log("The udp value with udp with label " + udpvalue.getSbiUdp().getLabel() + " "
 							+ " and family " + udpvalue.getFamily() + " with reference id "
 							+  udpvalue.getReferenceId()+ "] will be updated.");
@@ -4577,6 +4783,9 @@ public class ImportManager implements IImportManager, Serializable {
 				} else {
 					SbiUdpValue newUdpValue = ImportUtilities.makeNewSbiUdpValue(udpvalue, sessionCurrDB, metaAss, importer);
 					sessionCurrDB.save(newUdpValue);
+					logger.debug("The udp value with udp with label " + udpvalue.getSbiUdp().getLabel() + " "
+							+ " and family " + udpvalue.getFamily() + " with reference id "
+							+  udpvalue.getReferenceId()+" is inserted");
 					metaLog.log("The udp value with udp with label " + udpvalue.getSbiUdp().getLabel() + " "
 							+ " and family " + udpvalue.getFamily() + " with reference id "
 							+  udpvalue.getReferenceId()+" is inserted");
@@ -4628,6 +4837,10 @@ public class ImportManager implements IImportManager, Serializable {
 					Integer existingKpiRelId = null;
 					Set assKpiRelSet = assKpiRel.keySet();
 					if (assKpiRelSet.contains(kpirel.getKpiRelId()) && !overwrite) {
+						logger.debug("Exported association between object " + kpirel.getSbiKpiByKpiFatherId().getName() + " "
+								+ " and kpi " + kpirel.getSbiKpiByKpiChildId().getName() + " with parameter "
+								+ kpirel.getParameter() + " not inserted"
+								+ " because already existing into the current database");
 						metaLog.log("Exported association between object " + kpirel.getSbiKpiByKpiFatherId().getName() + " "
 								+ " and kpi " + kpirel.getSbiKpiByKpiChildId().getName() + " with parameter "
 								+ kpirel.getParameter() + " not inserted"
@@ -4637,6 +4850,9 @@ public class ImportManager implements IImportManager, Serializable {
 						existingKpiRelId = (Integer) assKpiRel.get(kpirel.getKpiRelId());
 					}
 					if (existingKpiRelId != null) {
+						logger.debug("The relation between object " + kpirel.getSbiKpiByKpiFatherId().getName() + " "
+								+ " and kpi " + kpirel.getSbiKpiByKpiChildId().getName() + " with parameter "
+								+ kpirel.getParameter()+ "] will be updated.");
 						metaLog.log("The relation between object " + kpirel.getSbiKpiByKpiFatherId().getName() + " "
 								+ " and kpi " + kpirel.getSbiKpiByKpiChildId().getName() + " with parameter "
 								+ kpirel.getParameter()+ "] will be updated.");
@@ -4646,6 +4862,9 @@ public class ImportManager implements IImportManager, Serializable {
 					} else {
 						SbiKpiRel newRel = ImportUtilities.makeNewSbiKpiRel(kpirel, sessionCurrDB, metaAss, importer);
 						sessionCurrDB.save(newRel);
+						logger.debug("Inserted new relation between object " + kpirel.getSbiKpiByKpiFatherId().getName() + " "
+								+ " and kpi " + kpirel.getSbiKpiByKpiChildId().getName() + " with parameter "
+								+ kpirel.getParameter());					
 						metaLog.log("Inserted new relation between object " + kpirel.getSbiKpiByKpiFatherId().getName() + " "
 								+ " and kpi " + kpirel.getSbiKpiByKpiChildId().getName() + " with parameter "
 								+ kpirel.getParameter());
@@ -4688,6 +4907,8 @@ public class ImportManager implements IImportManager, Serializable {
 				Integer existingGrantId = null;
 				Set assGrantsSet = assGrants.keySet();
 				if (assGrantsSet.contains(grant.getId()) && !overwrite) {
+					logger.debug("Exported association of grant with name " + grant.getName() + "  not inserted"
+							+ " because already existing into the current database");
 					metaLog.log("Exported association of grant with name " + grant.getName() + "  not inserted"
 							+ " because already existing into the current database");
 					continue;
@@ -4695,6 +4916,7 @@ public class ImportManager implements IImportManager, Serializable {
 					existingGrantId = (Integer) assGrants.get(grant.getId());
 				}
 				if (existingGrantId != null) {
+					logger.debug("Exported association of grant with name " + grant.getName() + "] will be updated.");
 					metaLog.log("Exported association of grant with name " + grant.getName() + "] will be updated.");
 					SbiOrgUnitGrant existingGrant = ImportUtilities.modifyExistingOuGrant(grant, sessionCurrDB, existingGrantId);
 					ImportUtilities.entitiesAssociationsOuGrant(grant, existingGrant, sessionCurrDB, metaAss, importer);
@@ -4702,6 +4924,7 @@ public class ImportManager implements IImportManager, Serializable {
 				} else {
 					SbiOrgUnitGrant newGrant = ImportUtilities.makeNewOuGrant(grant, sessionCurrDB, metaAss, importer);
 					sessionCurrDB.save(newGrant);
+					logger.debug("Inserted new grant with name " + grant.getName() );
 					metaLog.log("Inserted new grant with name " + grant.getName() );
 					Integer newId = newGrant.getId();
 					sessionExpDB.evict(grant);
@@ -4741,6 +4964,8 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiOrgUnitGrantNodesId existingGrantNodeId = null;
 				Set assGrantNodesSet = assGrantNodes.keySet();
 				if (assGrantNodesSet.contains(grantNode.getId()) && !overwrite) {
+					logger.debug("Exported association of grant node with grant id " + grantNode.getId().getGrantId()+ "  not inserted"
+							+ " because already existing into the current database");
 					metaLog.log("Exported association of grant node with grant id " + grantNode.getId().getGrantId()+ "  not inserted"
 							+ " because already existing into the current database");
 					continue;
@@ -4748,6 +4973,7 @@ public class ImportManager implements IImportManager, Serializable {
 					existingGrantNodeId = (SbiOrgUnitGrantNodesId) assGrantNodes.get(grantNode.getId());
 				}
 				if (existingGrantNodeId != null) {
+					logger.debug("Exported association of grant node with grant id " + grantNode.getId().getGrantId() + "] will be updated.");
 					metaLog.log("Exported association of grant node with grant id " + grantNode.getId().getGrantId() + "] will be updated.");
 					SbiOrgUnitGrantNodes existingGrantNode = ImportUtilities.modifyExistingOuGrantNode(grantNode, sessionCurrDB, existingGrantNodeId);
 					ImportUtilities.entitiesAssociationsOuGrantNode(existingGrantNode.getId(), grantNode, existingGrantNode, sessionCurrDB, metaAss, importer);
@@ -4755,6 +4981,7 @@ public class ImportManager implements IImportManager, Serializable {
 				} else {
 					SbiOrgUnitGrantNodes newGrantNode = ImportUtilities.makeNewOuGrantNode(grantNode, sessionCurrDB, metaAss, importer);
 					sessionCurrDB.save(newGrantNode);
+					logger.debug("Inserted new grant node with grant id " + grantNode.getId().getGrantId() );
 					metaLog.log("Inserted new grant node with grant id " + grantNode.getId().getGrantId() );
 					SbiOrgUnitGrantNodesId newId = newGrantNode.getId();
 					sessionExpDB.evict(grantNode);
