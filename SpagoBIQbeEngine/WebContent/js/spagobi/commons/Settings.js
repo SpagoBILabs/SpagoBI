@@ -97,8 +97,14 @@ Sbi.settings.worksheet = {
 		}
 		, designer:{
 			common: {
+				//default aggregation function for the worksheet widgets.
+				//if not present (or commented) the worksheet will take the
+				//aggregation function of the query. If no aggregation 
+				//function is available in the query a windows with the choices will appear
 				defaultAggregationFunction : "SUM"
 			}
 		}
+		//Chart library:
+		//possible values: ext3, highchart
 		,chartlib : 'ext3'
 };
