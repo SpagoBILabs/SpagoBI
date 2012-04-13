@@ -264,6 +264,18 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		success : function(response, opts) {
 			try {
 				var firstQuery = Ext.util.JSON.decode( response.responseText );
+				if (!Sbi.user.isPowerUser && firstQuery.fields.length == 0) {
+					// user is NOT a power user and the first query is empty: most likely the user is executing 
+					// a Qbe document, not a saved query
+		        	Ext.MessageBox.show({
+		           		title: LN('sbi.qbe.qbepanel.emptyquerytitle')
+		           		, msg: LN('sbi.qbe.qbepanel.emptyquerymessage')
+		           		, buttons: Ext.MessageBox.OK
+		           		, icon: Ext.MessageBox.WARNING
+		           		, modal: false
+		       		});
+		        	return;
+				}
 				this.checkPromptableFilters(firstQuery);
 			} catch (err) {
 				Sbi.exception.ExceptionHandler.handleFailure();

@@ -36,6 +36,8 @@ Sbi.locale.ln['sbi.qbe.sessionexpired.msg'] = 'La sessione di lavoro è scaduta. 
 //QBE PANEL
 //===================================================================
 Sbi.locale.ln['sbi.qbe.qbepanel.worksheetdesignerpanel.tools.preview'] = 'Visualizza anteprima worksheet';
+Sbi.locale.ln['sbi.qbe.qbepanel.emptyquerytitle'] = 'La query è vuota';
+Sbi.locale.ln['sbi.qbe.qbepanel.emptyquerymessage'] = 'La query è vuota e non hai i privilegi per poter creare nuove query. Seleziona una query salvata dalla lista delle viste customizzate';
 
 
 //===================================================================
