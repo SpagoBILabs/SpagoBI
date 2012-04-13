@@ -95,6 +95,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 				serieNumber: i,
 				serieName: this.formatLegendWithScale(storeObject.serieNames[i]),
 	            dataField: chartSerieNumber,
+	            style: 'height: 85%;',
 	            extraStyle: extraStyle,
 	            series:[{
 	                style: {
@@ -114,7 +115,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 			if (this.chartConfig.showpercentage) {
 
 				var seriesum=0;
-				for(var j=0; j<storeObject.serieNames.length; j++){
+				for(var j=0; j<storeObject.store.totalLength; j++){
 					seriesum = seriesum + parseFloat(((storeObject.store.getAt(j)).data)[chartSerieNumber]);
 				}
 				itemChart.seriesum = seriesum;
