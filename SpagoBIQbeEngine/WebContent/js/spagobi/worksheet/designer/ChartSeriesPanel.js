@@ -114,7 +114,6 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	, aggregationFunctionsStore:  new Ext.data.ArrayStore({
 		 fields: ['funzione', 'nome', 'descrizione'],
 	     data : [
-	        ['NONE', LN('sbi.qbe.selectgridpanel.aggfunc.name.none'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.none')],
 	        ['SUM', LN('sbi.qbe.selectgridpanel.aggfunc.name.sum'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')],
 	        ['AVG', LN('sbi.qbe.selectgridpanel.aggfunc.name.avg'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.avg')],
 	        ['MAX', LN('sbi.qbe.selectgridpanel.aggfunc.name.max'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.max')],
