@@ -123,7 +123,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 			
 			var titlePanel = new Ext.Panel({
 				border: false,
-				html: '<div style=\"padding-top: 5px; color: rgb(255, 102, 0);\" align=\"center\"><font size=\"4\"><b>'+storeObject.serieNames[i]+'</b></font></div>'
+				html: '<div style=\"padding-top: 5px; color: rgb(255, 102, 0);\" align=\"center\"><font size=\"4\"><b>'+itemChart.serieName+'</b></font></div>'
 			});
 			
 			var chartPanel =  new Ext.chart.PieChart(itemChart);
