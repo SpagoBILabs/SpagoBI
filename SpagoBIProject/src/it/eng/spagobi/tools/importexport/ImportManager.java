@@ -624,6 +624,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("SbiExtRoles");
+			if(role != null)params.add(role.getName());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -699,6 +701,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("SbiEngines");
+			if(engine != null)params.add(engine.getLabel());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -764,6 +768,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("Sbi_obj_metadata");
+			if(exportedObjMetadata != null)params.add(exportedObjMetadata.getLabel());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -833,6 +839,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("sbi_data_source");
+			if(dataSource != null)params.add(dataSource.getLabel());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -890,6 +898,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("Sbi_data_set");
+			if(exportedDataSet != null)params.add(exportedDataSet.getLabel());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -990,6 +1000,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("Sbi_functions");
+			if(functToInsert != null)params.add(functToInsert.getPath());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1064,6 +1076,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("Sbi_lov");
+			if(exportedLov!= null)params.add(exportedLov.getLabel());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1120,6 +1134,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("Sbi_checks");
+			if(check!= null)params.add(check.getLabel());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1214,6 +1230,8 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("Sbi_parameters");
+			if(exportedParameter != null)params.add(exportedParameter.getLabel());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1341,6 +1359,8 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("Sbi_objects");
+			if(exportedObj != null)params.add(exportedObj.getLabel());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1389,6 +1409,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while getting exported template objects ", e);
 			List params = new ArrayList();
 			params.add("Sbi_snapshots");
+			if(expSbiSnapshots.getName() != null)params.add(expSbiSnapshots.getName());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1455,6 +1477,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while getting exported template objects ", e);
 			List params = new ArrayList();
 			params.add("Sbi_snapshots");
+			if(expSbiSnapshots != null)params.add(expSbiSnapshots.getName());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1507,6 +1531,7 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while getting exported template objects ", he);
 			List params = new ArrayList();
 			params.add("Sbi_subobject");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1561,6 +1586,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while getting exported template objects ", e);
 			List params = new ArrayList();
 			params.add("Sbi_subobjects");
+			if(expSubObject != null)params.add(expSubObject.getName());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1629,6 +1656,7 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while getting exported template objects ", he);
 			List params = new ArrayList();
 			params.add("Sbi_obj_template");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1679,6 +1707,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while getting exported binary content objects ", he);
 			List params = new ArrayList();
 			params.add("Sbi_bianry_contents");
+			if(newObj != null)params.add(newObj.getId());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1767,6 +1797,8 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("Sbi_paruse");
+			if(paruse != null)params.add(paruse.getLabel());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1873,6 +1905,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("Sbi_paruse_det");
+			if(parusedet != null)params.add(parusedet.getId().getSbiExtRoles().getName());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1948,6 +1982,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("Sbi_paruse_ck");
+			if(paruseck != null)params.add(paruseck.getId().getSbiChecks().getLabel());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -2019,6 +2055,8 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("SbiobjectLink");
+			if(objlink != null)params.add(objlink.getId().getSubReport().getLabel());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -2088,11 +2126,13 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", he);
 			List params = new ArrayList();
 			params.add("sbi_obj_functions");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("sbi_obj_functions");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -2163,6 +2203,9 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("sbi_func_roles");
+			if(functrole != null)params.add(functrole.getId().getRole().getName());
+			else params.add("");
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -2237,11 +2280,13 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", he);
 			List params = new ArrayList();
 			params.add("sbi_obj_par");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019",params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("sbi_obj_par");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -2325,13 +2370,13 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", he);
 			List params = new ArrayList();
 			params.add("sbi_obj_paruse");
-
+params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params,  ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("sbi_obj_paruse");
-
+params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -2429,12 +2474,14 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", he);
 			List params = new ArrayList();
 			params.add("sbi_obj_parview");
+			params.add("");
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("sbi_obj_parview");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params,  ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -3719,6 +3766,8 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("sbi_model");
+			if(exportedModel != null)params.add(exportedModel.getKpiModelCd());
+			else params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -3779,6 +3828,9 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("sbi_kpi_model_inst");
+			if(exportedModelInst != null)params.add(exportedModelInst.getLabel());
+			else params.add("");
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -3882,6 +3934,8 @@ public class ImportManager implements IImportManager, Serializable {
 				logger.error("Error while inserting kpi ", e);
 			}
 			List params = new ArrayList();
+			if(exportedKpi != null)params.add(exportedKpi.getCode());
+			else params.add("");
 			params.add("sbi_kpi");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
@@ -3946,6 +4000,9 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("sbi_kpi_inst");
+			if(exportedKpiInst != null)params.add(exportedKpiInst.getIdKpiInstance());
+			else params.add("");
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4011,6 +4068,9 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("sbi_threshold_value");
+			if(exportedThValue != null)params.add(exportedThValue.getLabel());
+			else params.add("");
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4079,6 +4139,9 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("sbi_threshold");
+			if(exportedTh != null)params.add(exportedTh.getCode());
+			else params.add("");
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4143,6 +4206,9 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("sbi_resources");
+			if(exportedResource != null)params.add(exportedResource.getResourceName());
+			else params.add("");
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4208,6 +4274,9 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("sbi_kpi_model_resources");
+			if(exportedModResource != null)params.add(exportedModResource.getKpiModelResourcesId());
+			else params.add("");
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4268,6 +4337,9 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("sbi_kpi_periodicity");
+			if(exportedPeriodicity != null)params.add(exportedPeriodicity.getName());
+			else params.add("");
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4333,6 +4405,9 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("sbi_kpi_inst_periodicity");
+			if(exportedKpiInstPeriod != null)params.add(exportedKpiInstPeriod.getKpiInstPeriodId());
+			else params.add("");
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4396,6 +4471,9 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("sbi_alarm");
+			if(exportedAlarm != null)params.add(exportedAlarm.getLabel());
+			else params.add("");
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4569,6 +4647,9 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("sbi_alarm_contact");
+			if(exportedAlarmContact != null)params.add(exportedAlarmContact.getName());
+			else params.add("");
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4654,6 +4735,9 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 			List params = new ArrayList();
 			params.add("sbi_obj_metacontent");
+			if(exportedMetacontent != null)params.add(exportedMetacontent.getObjMetacontentId());
+			else params.add("");
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4724,6 +4808,9 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("sbi_udp");
+			if(udp != null)params.add(udp.getName());
+			else params.add("");
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4803,11 +4890,13 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting udp value ", he);
 			List params = new ArrayList();
 			params.add("sbi_udp_value");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting udp value ", e);
 			List params = new ArrayList();
 			params.add("sbi_udp_value");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4883,11 +4972,13 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting kpi relation ", he);
 			List params = new ArrayList();
 			params.add("sbi_kpi_rel");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting kpi relation ", e);
 			List params = new ArrayList();
 			params.add("sbi_kpi_rel");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4940,11 +5031,13 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting grant ", he);
 			List params = new ArrayList();
 			params.add("sbi_grant");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting grant ", e);
 			List params = new ArrayList();
 			params.add("sbi_grant");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -4997,11 +5090,13 @@ public class ImportManager implements IImportManager, Serializable {
 			logger.error("Error while inserting grant node ", he);
 			List params = new ArrayList();
 			params.add("sbi_grant_nodes");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} catch (Exception e) {
 			logger.error("Error while inserting grant node ", e);
 			List params = new ArrayList();
 			params.add("sbi_grant_nodes");
+			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
