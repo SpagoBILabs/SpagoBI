@@ -7,21 +7,33 @@
 <DOMAIN valueCd="REPORT" valueNm="sbidomains.nm.report" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.report"/>
 <DOMAIN valueCd="OLAP" valueNm="sbidomains.nm.olap" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.olap"/>
 <DOMAIN valueCd="DATA_MINING" valueNm="sbidomains.nm.data_mining" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.data_mining"/>
+<DOMAIN valueCd="OFFICE_DOC" valueNm="sbidomains.nm.office_doc" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.office_doc"/>
+<DOMAIN valueCd="ETL" valueNm="sbidomains.nm.etl" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.etl"/>
+<DOMAIN valueCd="KPI" valueNm="Kpi" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="Kpi business indicator"/>
+<DOMAIN valueCd="CHART" valueNm="sbidomains.nm.chart" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.chart"/>
+<DOMAIN valueCd="FREE_INQUIRY" 	  			valueNm="sbidomains.nm.freeinquiry" 				domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.freeinquiry"/>
+<DOMAIN valueCd="ADHOC_REPORTING" 			valueNm="sbidomains.nm.adhoc_reporting" 			domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.adhoc_reporting"/>
+<DOMAIN valueCd="REAL_TIME" 				valueNm="sbidomains.nm.realtime" 				domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.realtime"/>
+<DOMAIN valueCd="LOCATION_INTELLIGENCE" 	valueNm="sbidomains.nm.location_intelligence" 	domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.location_intelligence"/>
+<DOMAIN valueCd="COCKPIT" 					valueNm="sbidomains.nm.cockpit" 					domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.cockpit"/>
+<DOMAIN valueCd="COLLABORATION" 			valueNm="sbidomains.nm.collaboration" 			domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.collaboration"/>
+<DOMAIN valueCd="EXTERNAL_PROCESS" 			valueNm="sbidomains.nm.external_process" 			domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.external_process"/>
+<DOMAIN valueCd="MOBILE_REPORT" valueNm="sbidomains.nm.mobile.report" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.report"/>
+<DOMAIN valueCd="MOBILE_CHART" valueNm="sbidomains.nm.mobile.chart" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.chart"/>
+<DOMAIN valueCd="MOBILE_COCKPIT" valueNm="sbidomains.nm.mobile.cockpit" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.cockpit"/>
+<!--  
+OLD TYPES NOT MORE USED
 <DOMAIN valueCd="DASH" valueNm="sbidomains.nm.dash" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.dash"/>
 <DOMAIN valueCd="DATAMART" valueNm="sbidomains.nm.datamart" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.datamart"/>
 <DOMAIN valueCd="MAP" valueNm="sbidomains.nm.map" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.map"/>
 <DOMAIN valueCd="DOSSIER" valueNm="sbidomains.nm.dossier" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.dossier"/>
-<DOMAIN valueCd="OFFICE_DOC" valueNm="sbidomains.nm.office_doc" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.office_doc"/>
-<DOMAIN valueCd="ETL" valueNm="sbidomains.nm.etl" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.etl"/>
 <DOMAIN valueCd="DOCUMENT_COMPOSITE" valueNm="sbidomains.nm.document_composite" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.document_composite"/>
-<DOMAIN valueCd="KPI" valueNm="Kpi" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="Kpi business indicator"/>
 <DOMAIN valueCd="SMART_FILTER" valueNm="sbidomains.nm.smart_filter" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.smart_filter"/>
-<DOMAIN valueCd="CONSOLE" valueNm="Console" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.console"/>
 <DOMAIN valueCd="WORKSHEET" valueNm="sbidomains.nm.worksheet" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.worksheet"/>
-<DOMAIN valueCd="CHART" valueNm="sbidomains.nm.chart" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.chart"/>
-<DOMAIN valueCd="MOBILE_REPORT" valueNm="sbidomains.nm.mobile.report" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.report"/>
-<DOMAIN valueCd="MOBILE_CHART" valueNm="sbidomains.nm.mobile.chart" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.chart"/>
-<DOMAIN valueCd="MOBILE_COCKPIT" valueNm="sbidomains.nm.mobile.cockpit" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.cockpit"/>
+<DOMAIN valueCd="CONSOLE" valueNm="Console" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.console"/>
+<DOMAIN valueCd="MASTER_DATA_MANGEMENT" 	valueNm="Master Data Management" 	domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="Master Data Management"/>
+<DOMAIN valueCd="ACCESSIBLE_HTML" 			valueNm="Accessible Html" 			domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="Accessible HTML"/>
+-->
 <DOMAIN valueCd="BOOL" valueNm="sbidomains.nm.bool" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.bool"/>
 <DOMAIN valueCd="SINGLE" valueNm="sbidomains.nm.single" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.single"/>
 <DOMAIN valueCd="MULTI" valueNm="sbidomains.nm.multi" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.multi"/>
@@ -111,7 +123,6 @@
 <DOMAIN valueCd="org.hibernate.dialect.DB2400Dialect" valueNm="sbidomains.nm.db2" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.db2"/>
 <DOMAIN valueCd="LONG_TEXT" valueNm="LONG_TEXT" domainCd="OBJMETA_DATA_TYPE" domainNm="Predefined data type for metadata" valueDs="Predefined data type LONG TEXT for metadata"/>
 <DOMAIN valueCd="SHORT_TEXT" valueNm="SHORT_TEXT" domainCd="OBJMETA_DATA_TYPE" domainNm="Predefined data type for metadata" valueDs="Predefined data type SHORT TEXT for metadata"/>
-<DOMAIN valueCd="ACCESSIBLE_HTML" valueNm="Accessible Html" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="Accessible HTML"/>
 <DOMAIN valueCd="Boolean" valueNm="Udp Boolean Type" domainCd="UDP_TYPE" domainNm="Udp type" valueDs="Predefined udp type"/>
 <DOMAIN valueCd="Text" valueNm="Udp Text Type" domainCd="UDP_TYPE" domainNm="Udp type" valueDs="Predefined udp type"/>
 <DOMAIN valueCd="Integer" valueNm="Udp Integer Type" domainCd="UDP_TYPE" domainNm="Udp type" valueDs="Predefined udp type"/>
