@@ -175,7 +175,8 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			try {
 				resultNumber = (jpqlQuery).getResultList().size();
 			} catch (Throwable t2) {
-				throw new RuntimeException("Impossible to read result number");
+				logger.error(t2);
+				throw new RuntimeException("Impossible to read result number", t2);
 			}
 			logger.debug("Result number sucesfully read using the original query(resultNumber=[" + resultNumber + "])");
 		}
