@@ -35,8 +35,8 @@ Sbi.locale.ln['sbi.qbe.sessionexpired.msg'] = 'Votre session a expir\u00E9e. Ess
 //QBE PANEL
 //===================================================================
 Sbi.locale.ln['sbi.qbe.qbepanel.worksheetdesignerpanel.tools.preview'] = 'Previsualiser feuille de calcul';
-Sbi.locale.ln['sbi.qbe.qbepanel.emptyquerytitle'] = 'Query is empty';
-Sbi.locale.ln['sbi.qbe.qbepanel.emptyquerymessage'] = 'Query is empty and you don\'t have the permission to create new queries. Select a saved query from the customized views\' list.';
+Sbi.locale.ln['sbi.qbe.qbepanel.emptyquerytitle'] = 'La requ\u00EAte est vide';
+Sbi.locale.ln['sbi.qbe.qbepanel.emptyquerymessage'] = 'La requ\u00EAte est vide et vous n\'avez pas la permission de cr\u00E9er de nouvelles requ\u00EAte. S\u00E9lectionnez une requ\u00EAte enregistr\u00E9e dans la liste des vues personnalis\u00E9es.';
 
 
 //===================================================================
@@ -360,23 +360,23 @@ Sbi.locale.ln['sbi.qbe.datastore.refreshgrid'] = 'Restaurer le style grille'
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.title'] = 'Validation';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.text'] = 'Validation OK';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.fail.title'] = 'Validation \u00E9chou\u00E9e';
-Sbi.locale.ln['sbi.qbe.calculatedFields.expert.nofilterwindow.title'] = 'Warning: avec ce type de champ impossible d\utiliser un filtre';
+Sbi.locale.ln['sbi.qbe.calculatedFields.expert.nofilterwindow.title'] = 'Attention: avec ce type de champ impossible d\utiliser un filtre';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.ok'] = 'OK';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.cancel'] = 'Annuler';
 
-Sbi.locale.ln['sbi.qbe.calculatedFields.fields'] = 'Fields';
-Sbi.locale.ln['sbi.qbe.calculatedFields.attributes'] = 'Attributes';
-Sbi.locale.ln['sbi.qbe.calculatedFields.parameters'] = 'Parameters';
-Sbi.locale.ln['sbi.qbe.calculatedFields.functions'] = 'Functions';
-Sbi.locale.ln['sbi.qbe.calculatedFields.functions.arithmentic'] = 'Arithmetic functions';
-Sbi.locale.ln['sbi.qbe.calculatedFields.functions.script'] = 'Groovy functions';
-Sbi.locale.ln['sbi.qbe.calculatedFields.aggrfunctions'] = 'Aggregation Functions';
-Sbi.locale.ln['sbi.qbe.calculatedFields.datefunctions'] = 'Date Functions';
-Sbi.locale.ln['sbi.qbe.calculatedFields.string.type'] = 'If the expression script returns a plain text string';
-Sbi.locale.ln['sbi.qbe.calculatedFields.html.type'] = 'If the expression script returns a valid html fragment';
-Sbi.locale.ln['sbi.qbe.calculatedFields.num.type'] = 'If the expression script returns a number';
-Sbi.locale.ln['sbi.qbe.calculatedFields.date.type'] = 'Si l\'expressione de script renvoie une date';
+Sbi.locale.ln['sbi.qbe.calculatedFields.fields'] = 'Champs';
+Sbi.locale.ln['sbi.qbe.calculatedFields.attributes'] = 'Attributs';
+Sbi.locale.ln['sbi.qbe.calculatedFields.parameters'] = 'Paramètres';
+Sbi.locale.ln['sbi.qbe.calculatedFields.functions'] = 'Fonctions';
+Sbi.locale.ln['sbi.qbe.calculatedFields.functions.arithmentic'] = 'Fonctions arithmétiques';
+Sbi.locale.ln['sbi.qbe.calculatedFields.functions.script'] = 'Fonctions Groovy ';
+Sbi.locale.ln['sbi.qbe.calculatedFields.aggrfunctions'] = 'Fonctions d\'agrégation';
+Sbi.locale.ln['sbi.qbe.calculatedFields.datefunctions'] = 'Fonction Date';
+Sbi.locale.ln['sbi.qbe.calculatedFields.string.type'] = 'Si l\'expression du script retourne une chaîne de caractères brut';
+Sbi.locale.ln['sbi.qbe.calculatedFields.html.type'] = 'Si l\'expression du script retourne un fragment html valide';
+Sbi.locale.ln['sbi.qbe.calculatedFields.num.type'] = 'Si l\'expression du script retourne un nombre';
+Sbi.locale.ln['sbi.qbe.calculatedFields.date.type'] = 'Si l\'expression du script renvoie une date';
 Sbi.locale.ln['sbi.qbe.calculatedFields.add'] = 'Add Calculated Field';
 Sbi.locale.ln['sbi.qbe.calculatedFields.remove'] = 'Remove Calculated Field';
 Sbi.locale.ln['sbi.qbe.calculatedFields.edit'] = 'Edit Field';
-Sbi.locale.ln['sbi.qbe.calculatedFields.add.error'] = 'Impossible to add calculated field to a node of type [{0}]';
+Sbi.locale.ln['sbi.qbe.calculatedFields.add.error'] = 'Impossible d\'ajouter champ calculé à un noeud de type [{0}]';
