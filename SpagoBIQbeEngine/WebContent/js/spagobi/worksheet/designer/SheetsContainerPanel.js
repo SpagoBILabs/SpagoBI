@@ -295,7 +295,7 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 					if (i != j && otherSheet.title == aSheet.title) {
 						var valError = new Sbi.worksheet.exception.ValidationError(
 								aSheet.getName(),
-								'Another sheet with the same name exists'
+								LN('sbi.worksheet.designer.msg.samenamesheets')
 						);
 						toReturn[errCounter] = valError;
 						errCounter++;
@@ -315,6 +315,13 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 					}
 				}
 			}
+		}else{
+			var errMessage = LN('sbi.worksheet.designer.msg.emptyworksheet');
+			var valError =new Sbi.worksheet.exception.ValidationError(
+								'Worksheet',
+								errMessage
+								);
+			toReturn.push(valError);
 		}
 		return toReturn;
 	}

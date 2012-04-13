@@ -47,6 +47,8 @@ Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.title'] = 'Veuillez confirme
 Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.msg'] = 'Veuillez confirmer la suppression de l\'\u00E9l\u00E9ment ?';
 Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.title'] = 'Nouvelle Feuille';
 Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.msg'] = 'Une nouvelle feuille a \u00E9t\u00E9 ajout\u00E9e';
+Sbi.locale.ln['sbi.worksheet.designer.msg.emptyworksheet'] = 'Le document worksheet ne contient pas de feuilles';
+Sbi.locale.ln['sbi.worksheet.designer.msg.samenamesheets'] =  'Il existe une autre feuille avec le m\u00E9me nom';
 
 
 //===================================================================
