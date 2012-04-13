@@ -54,6 +54,11 @@ Sbi.crosstab.MeasuresContainerPanel = function(config) {
 	if (Sbi.settings && Sbi.settings.qbe && Sbi.settings.qbe.measuresContainerPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.qbe.measuresContainerPanel);
 	}
+	
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.common) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.common);
+	}
+	
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	this.initialData = c.initialData;		// initial grid's content
@@ -249,15 +254,21 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 				});
 				return;
 			}
-			// if the measure is missing the aggregation function, user must select it
-			if (aRow.data.funct === null || aRow.data.funct === '' || aRow.data.funct === 'NONE') {
-				var aWindow = new Sbi.crosstab.ChooseAggregationFunctionWindow({
-					behindMeasure: Ext.apply({}, aRow.data) // creates a clone
-        	  	});
-        	  	aWindow.show();
-        	  	aWindow.on('apply', function(modifiedMeasure, theWindow) {this.addMeasure(new this.Record(modifiedMeasure));}, this);
-			} else {
-				this.addMeasure(aRow);
+			if(this.defaultAggregationFunction){
+				var measure = Ext.apply({}, aRow.data) ;
+				measure.funct = this.defaultAggregationFunction;
+				this.addMeasure(new this.Record(measure));
+			}else{
+				// if the measure is missing the aggregation function, user must select it
+				if (aRow.data.funct === null || aRow.data.funct === '' || aRow.data.funct === 'NONE') {
+					var aWindow = new Sbi.crosstab.ChooseAggregationFunctionWindow({
+						behindMeasure: Ext.apply({}, aRow.data) // creates a clone
+					});
+					aWindow.show();
+					aWindow.on('apply', function(modifiedMeasure, theWindow) {this.addMeasure(new this.Record(modifiedMeasure));}, this);
+				} else {
+					this.addMeasure(aRow);
+				}
 			}
 			// register if there is a mandatory measure among set
 			//this.hasMandatoryMeasure = aRow.data.mandatory_measure;

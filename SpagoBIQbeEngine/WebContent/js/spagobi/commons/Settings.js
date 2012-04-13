@@ -95,5 +95,10 @@ Sbi.settings.worksheet = {
 				height: 400
 			}
 		}
+		, designer:{
+			common: {
+				defaultAggregationFunction : "SUM"
+			}
+		}
 		,chartlib : 'ext3'
 };
