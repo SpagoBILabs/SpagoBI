@@ -77,3 +77,48 @@ INSERT INTO SBI_EXPORTERS (ENGINE_ID,DOMAIN_ID,DEFAULT_VALUE)
 commit;
 UPDATE SBI_ENGINES SET MAIN_URL = '/SpagoBIConsoleEngine/servlet/AdapterHTTP', DRIVER_NM = 'it.eng.spagobi.engines.drivers.console.ConsoleDriver' WHERE LABEL = 'ConsoleEngine';
 COMMIT;
+
+
+
+update SBI_DOMAINS set VALUE_CD = 'FREE_INQUIRY', VALUE_NM ='sbidomains.nm.freeinquiry', VALUE_DS = 'sbidomains.ds.freeinquiry'
+where  VALUE_CD = 'DATAMART' AND DOMAIN_CD = 'BIOBJ_TYPE';
+
+update SBI_DOMAINS set VALUE_CD = 'ADHOC_REPORTING', VALUE_NM ='sbidomains.nm.adhoc_reporting', VALUE_DS = 'sbidomains.ds.adhoc_reporting' 
+where  VALUE_CD = 'WORKSHEET' AND DOMAIN_CD = 'BIOBJ_TYPE';
+
+update SBI_DOMAINS set VALUE_CD = 'COCKPIT', VALUE_NM ='sbidomains.nm.cockpit', VALUE_DS = 'sbidomains.ds.cockpit'  
+where  VALUE_CD = 'DOCUMENT_COMPOSITE' AND DOMAIN_CD = 'BIOBJ_TYPE';
+
+update SBI_DOMAINS set VALUE_CD = 'COLLABORATION', VALUE_NM ='sbidomains.nm.collaboration', VALUE_DS = 'sbidomains.ds.collaboration'  
+where  VALUE_CD = 'DOSSIER' AND DOMAIN_CD = 'BIOBJ_TYPE';
+					
+update SBI_DOMAINS set VALUE_CD = 'LOCATION_INTELLIGENCE', VALUE_NM ='sbidomains.nm.location_intelligence', VALUE_DS = 'sbidomains.ds.location_intelligence'  
+where  VALUE_CD = 'MAP' AND DOMAIN_CD = 'BIOBJ_TYPE';
+
+update SBI_DOMAINS set VALUE_CD = 'EXTERNAL_PROCESS', VALUE_NM ='sbidomains.nm.external_process' , VALUE_DS = 'sbidomains.ds.external_process'  
+where  VALUE_CD = 'PROCESS' AND DOMAIN_CD = 'BIOBJ_TYPE';
+					
+					
+INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (  maxId  , 'REAL_TIME', 'sbidomains.nm.realtime','BIOBJ_TYPE','BI Object type','sbidomains.ds.realtime');
+INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (  maxId  , 'MOBILE_REPORT', 'sbidomains.nm.mobile.report','BIOBJ_TYPE','BI Object type','sbidomains.ds.mobile.report');
+INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (  maxId  , 'MOBILE_CHART', 'sbidomains.nm.mobile.chart','BIOBJ_TYPE','BI Object type','sbidomains.ds.mobile.chart');
+INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (  maxId  , 'MOBILE_COCKPIT', 'sbidomains.nm.mobile.cockpit','BIOBJ_TYPE','BI Object type','sbidomains.ds.mobile.cockpit');
+INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (  maxId  , 'CHART', 'sbidomains.nm.chart','BIOBJ_TYPE','BI Object type','sbidomains.ds.chart');
+
+update SBI_ENGINES set BIOBJ_TYPE = (SELECT VALUE_ID FROM sbi_domains s WHERE VALUE_CD = 'REAL_TIME' AND DOMAIN_CD = 'BIOBJ_TYPE') WHERE CLASS_NM = 'it.eng.spagobi.engines.dashboard.SpagoBIDashboardInternalEngine';
+update SBI_ENGINES set BIOBJ_TYPE = (SELECT VALUE_ID FROM sbi_domains s WHERE VALUE_CD = 'REPORT' AND DOMAIN_CD = 'BIOBJ_TYPE') WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.accessibility.AccessibilityDriver';
+update SBI_ENGINES set BIOBJ_TYPE = (SELECT VALUE_ID FROM sbi_domains s WHERE VALUE_CD = 'EXTERNAL_PROCESS' AND DOMAIN_CD = 'BIOBJ_TYPE') WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.commonj.CommonjDriver';
+update SBI_ENGINES set BIOBJ_TYPE = (SELECT VALUE_ID FROM sbi_domains s WHERE VALUE_CD = 'REAL_TIME' AND DOMAIN_CD = 'BIOBJ_TYPE') WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.generic.GenericDriver' AND MAIN_URL='/SpagoBIConsoleEngine/servlet/AdapterHTTP?ACTION_NAME=CONSOLE_ENGINE_START_ACTION';
+update SBI_ENGINES set BIOBJ_TYPE = (SELECT VALUE_ID FROM sbi_domains s WHERE VALUE_CD = 'FREE_INQUIRY' AND DOMAIN_CD = 'BIOBJ_TYPE') WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.smartfilter.SmartFilterDriver';
+
+update SBI_OBJECTS set BIOBJ_TYPE_CD = 'REAL_TIME' WHERE BIOBJ_TYPE_CD = 'DASH';
+update SBI_OBJECTS set BIOBJ_TYPE_CD = 'FREE_INQUIRY' WHERE BIOBJ_TYPE_CD = 'DATAMART';
+update SBI_OBJECTS set BIOBJ_TYPE_CD = 'ADHOC_REPORTING' WHERE BIOBJ_TYPE_CD = 'WORKSHEET';
+update SBI_OBJECTS set BIOBJ_TYPE_CD = 'LOCATION_INTELLIGENCE' WHERE BIOBJ_TYPE_CD = 'GEO';
+update SBI_OBJECTS set BIOBJ_TYPE_CD = 'COCKPIT' WHERE BIOBJ_TYPE_CD = 'DOCUMENT_COMPOSITE';
+update SBI_OBJECTS set BIOBJ_TYPE_CD = 'COLLABORATION' WHERE BIOBJ_TYPE_CD = 'DOSSIER';
+update SBI_OBJECTS set BIOBJ_TYPE_CD = 'LOCATION_INTELLIGENCE' WHERE BIOBJ_TYPE_CD = 'MAP';
+update SBI_OBJECTS set BIOBJ_TYPE_CD = 'EXTERNAL_PROCESS' WHERE BIOBJ_TYPE_CD = 'PROCESS';
+update SBI_OBJECTS set BIOBJ_TYPE_CD = 'REPORT' WHERE BIOBJ_TYPE_CD = 'ACCESSIBLE_HTML';
+update SBI_OBJECTS set BIOBJ_TYPE_CD = 'REAL_TIME' WHERE BIOBJ_TYPE_CD = 'CONSOLE';
+
