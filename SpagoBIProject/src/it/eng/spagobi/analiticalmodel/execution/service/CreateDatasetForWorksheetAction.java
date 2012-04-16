@@ -155,7 +155,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		worksheetEngine = null;
 		try {
 			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
-			engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType("WORKSHEET");
+			engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(SpagoBIConstants.WORKSHEET_TYPE_CODE);
 			if (engines == null || engines.size() == 0) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "There are no engines for documents of type [WORKSHEET] available");
 			} else {

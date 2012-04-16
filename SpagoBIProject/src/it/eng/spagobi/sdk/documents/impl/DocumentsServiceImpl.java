@@ -797,10 +797,10 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			Domain state = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "DEV");
 			obj.setStateID(state.getValueId());
 			//sets the qbe engine
-			Domain objectType = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("BIOBJ_TYPE", "DATAMART");
+			Domain objectType = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("BIOBJ_TYPE", SpagoBIConstants.DATAMART_TYPE_CODE);
 			obj.setBiObjectTypeID(objectType.getValueId());
 			obj.setBiObjectTypeCode(objectType.getValueCd());
-			List<Engine> lstQbeEngines =  DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType("DATAMART");
+			List<Engine> lstQbeEngines =  DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(SpagoBIConstants.DATAMART_TYPE_CODE);
 			if (lstQbeEngines == null || lstQbeEngines.size() == 0){
 				logger.error("Error while retrieving Engine list.");
 				return;
