@@ -56,6 +56,7 @@ public class TransformerFrom3_3_0To3_4_0 implements ITransformer {
 			fixExtRoles(conn);
 			fixDataset(conn);
 			fixDomains(conn);
+			fixEngines(conn);
 			conn.commit();
 		} catch (Exception e) {
 			logger.error("Error while changing database", e);	
@@ -119,6 +120,47 @@ public class TransformerFrom3_3_0To3_4_0 implements ITransformer {
 	}
 
 
+	
+	private void fixEngines(Connection conn) throws Exception {
+		logger.debug("IN");	
+		try{
+
+			String[] engineUpdates = {	
+					"update SBI_ENGINES set LABEL ='SpagoBIDashboardEng' , NAME ='Dashboard Engine'  WHERE LABEL = 'DashboardInternalEng'",
+					"update SBI_ENGINES set LABEL ='SpagoBIJFreeChartEng' , NAME ='JFreeChart Engine'  WHERE LABEL = 'ChartInternalEng'",
+					"update SBI_ENGINES set LABEL ='SpagoBIDossierEngine' , NAME ='Dossier Engine'  WHERE LABEL = 'DossierInternalEng'",
+					"update SBI_ENGINES set LABEL ='SpagoBIOfficeEngine' , NAME ='Office Document Engine'  WHERE LABEL = 'OfficeInternalEng'",
+					"update SBI_ENGINES set LABEL ='SpagoBICompositeDocE' , NAME ='Document Composition Engine'  WHERE LABEL = 'DocumentCompositionInternalEng'",
+					"update SBI_ENGINES set LABEL ='SpagoBIKpiEngine' , NAME ='Kpi Engine'  WHERE LABEL = 'KpiEngine'",
+					"update SBI_ENGINES set LABEL ='SpagoBIBirtReportEng' , NAME ='Birt Report Engine'  WHERE LABEL = 'BirtEngine'",
+					"update SBI_ENGINES set LABEL ='SpagoBIGeoEngine' , NAME ='Geo Engine'  WHERE LABEL = 'GeoEngine'",
+					"update SBI_ENGINES set LABEL ='SpagoBIJPivotEngine' , NAME ='JPivot Engine'  WHERE LABEL = 'JPivotEngine'",
+					"update SBI_ENGINES set LABEL ='SpagoBIJasperReportE' , NAME ='Jasper Report Engine'  WHERE LABEL = 'JasperReportEngine'",
+					"update SBI_ENGINES set LABEL ='SpagoBIQbeEngine' , NAME ='Qbe Engine'  WHERE LABEL = 'QbeEngine'",
+					"update SBI_ENGINES set LABEL ='SpagoBITalendEngine' , NAME ='Talend Engine'  WHERE LABEL = 'TALEND'",
+					"update SBI_ENGINES set LABEL ='SpagoBIWekaEngine' , NAME ='Weka Engine'  WHERE LABEL = 'WEKA_ENGINE'",
+					"update SBI_ENGINES set LABEL ='SpagoBIAccessibleRep' , NAME ='Accessible Report Engine'  WHERE LABEL = 'AccessibilityEng'",
+					"update SBI_ENGINES set LABEL ='SpagoBIProcessEngine' , NAME ='Process Engine'  WHERE LABEL = 'CommonJEngine'",
+					"update SBI_ENGINES set LABEL ='SpagoBISmartFilterEn' , NAME ='Smart Filter Engine'  WHERE LABEL = 'SmartFilterEngine'",
+					"update SBI_ENGINES set LABEL ='SpagoBIGisEngine' , NAME ='Gis Engine'  WHERE LABEL = 'GeoReportEngine'",
+					"update SBI_ENGINES set LABEL ='SpagoBIConsoleEngine' , NAME ='Console Engine'  WHERE LABEL = 'ConsoleEngine'",
+					"update SBI_ENGINES set LABEL ='SpagoBIWorksheetEng' , NAME ='Worksheet Engine'  WHERE LABEL = 'WorksheetEngine'",
+					"update SBI_ENGINES set LABEL ='SpagoBIJSChartEngine' , NAME ='JSChart Engine'  WHERE LABEL = 'ChartExternalEngine'"
+			};
+
+			executeSQL(conn, engineUpdates);
+
+
+		}
+		catch (Exception e) {
+			logger.error("Error in inserting new domains from previous version. ", e);
+			throw e;
+		}
+		logger.debug("Insert new domains in 3.4");
+		logger.debug("OUT");
+	}
+	
+	
 
 	private void fixDomains(Connection conn) throws Exception {
 		logger.debug("IN");	
