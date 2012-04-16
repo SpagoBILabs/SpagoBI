@@ -18,7 +18,7 @@ INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, V
 
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
 
-ALTER TABLE sbi_udp_value MODIFY COLUMN VALUE VARCHAR(1000);
+ALTER TABLE SBI_UDP_VALUE MODIFY COLUMN VALUE VARCHAR(1000);
 
 commit;
 
