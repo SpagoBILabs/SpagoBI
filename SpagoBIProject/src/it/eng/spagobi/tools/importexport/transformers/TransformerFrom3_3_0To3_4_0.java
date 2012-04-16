@@ -119,11 +119,37 @@ public class TransformerFrom3_3_0To3_4_0 implements ITransformer {
 	}
 
 
+
+	private void fixDomains(Connection conn) throws Exception {
+		logger.debug("IN");	
+		try{
+			int maxId = getDomainsMaxId(conn);
+
+			String[] updates = {
+					"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'MOBILE_REPORT', 'sbidomains.nm.mobile.report','BIOBJ_TYPE','BI Object type','sbidomains.ds.mobile.report');",
+					"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'MOBILE_CHART', 'sbidomains.nm.mobile.chart','BIOBJ_TYPE','BI Object type','sbidomains.ds.mobile.chart');",
+					"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'MOBILE_COCKPIT', 'sbidomains.nm.mobile.cockpit','BIOBJ_TYPE','BI Object type','sbidomains.ds.mobile.cockpit');",
+					"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'CHART', 'sbidomains.nm.chart','BIOBJ_TYPE','BI Object type','sbidomains.ds.chart');"
+			};
+
+			executeSQL(conn, updates);	
+		}
+		catch (Exception e) {
+			logger.error("Error in inserting new domains from previous version. ", e);
+			throw e;
+		}
+		logger.debug("Insert new domains in 3.4");
+		logger.debug("OUT");
+	}
+
+
+
 	/** In order to have import work, some domains have changed name: in particular
 	 * @param conn
 	 * @throws Exception
 	 */
-	private void fixDomains(Connection conn) throws Exception {
+	/*
+		private void fixDomains(Connection conn) throws Exception {
 		logger.debug("IN");
 
 		try{
@@ -141,10 +167,6 @@ public class TransformerFrom3_3_0To3_4_0 implements ITransformer {
 					", VALUE_NM ='sbidomains.nm.adhoc_reporting', VALUE_DS = 'sbidomains.ds.adhoc_reporting'" +
 					" where  VALUE_CD = 'WORKSHEET' AND DOMAIN_CD = 'BIOBJ_TYPE';",
 
-					"update SBI_DOMAINS set VALUE_CD = 'LOCATION_INTELLIGENCE', VALUE_NM ='sbidomains.nm.location_intelligence', " +
-					" VALUE_DS = 'sbidomains.ds.location_intelligence'" +
-					" where  VALUE_CD = 'GEO' AND DOMAIN_CD = 'BIOBJ_TYPE';",
-
 					"update SBI_DOMAINS set VALUE_CD = 'COCKPIT', VALUE_NM ='sbidomains.nm.cockpit', " +
 					" VALUE_DS = 'sbidomains.ds.cockpit' " +
 					"where  VALUE_CD = 'DOCUMENT_COMPOSITE' AND DOMAIN_CD = 'BIOBJ_TYPE';",
@@ -152,7 +174,7 @@ public class TransformerFrom3_3_0To3_4_0 implements ITransformer {
 					"update SBI_DOMAINS set VALUE_CD = 'COLLABORATION', VALUE_NM ='sbidomains.nm.collaboration', " +
 					"VALUE_DS = 'sbidomains.ds.collaboration' " +
 					" where  VALUE_CD = 'DOSSIER' AND DOMAIN_CD = 'BIOBJ_TYPE';",
-					
+
 					"update SBI_DOMAINS set VALUE_CD = 'LOCATION_INTELLIGENCE', VALUE_NM ='sbidomains.nm.location_intelligence', " +
 					"VALUE_DS = 'sbidomains.ds.location_intelligence' " +
 					" where  VALUE_CD = 'MAP' AND DOMAIN_CD = 'BIOBJ_TYPE';",
@@ -170,12 +192,12 @@ public class TransformerFrom3_3_0To3_4_0 implements ITransformer {
 
 			String[] sqls = {
 					//"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'FREE_INQUIRY', 'sbidomains.nm.freeinquiry','BIOBJ_TYPE','BI Object type','sbidomains.ds.freeinquiry');",
-					"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'ADHOC_REPORTING', 'sbidomains.nm.adhoc_reporting','BIOBJ_TYPE','BI Object type','sbidomains.ds.adhoc_reporting');",
+					//"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'ADHOC_REPORTING', 'sbidomains.nm.adhoc_reporting','BIOBJ_TYPE','BI Object type','sbidomains.ds.adhoc_reporting');",
 					"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'REAL_TIME', 'sbidomains.nm.realtime','BIOBJ_TYPE','BI Object type','sbidomains.ds.realtime');",
 					//"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'LOCATION_INTELLIGENCE', 'sbidomains.nm.location_intelligence','BIOBJ_TYPE','BI Object type','sbidomains.ds.location_intelligence');",
-					"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'COCKPIT', 'sbidomains.nm.cockpit','BIOBJ_TYPE','BI Object type','sbidomains.ds.cockpit');",
-					"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'COLLABORATION', 'sbidomains.nm.collaboration','BIOBJ_TYPE','BI Object type','sbidomains.ds.collaboration');",
-					"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'EXTERNAL_PROCESS', 'sbidomains.nm.external_process','BIOBJ_TYPE','BI Object type','sbidomains.ds.external_process');",
+					//"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'COCKPIT', 'sbidomains.nm.cockpit','BIOBJ_TYPE','BI Object type','sbidomains.ds.cockpit');",
+					//"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'COLLABORATION', 'sbidomains.nm.collaboration','BIOBJ_TYPE','BI Object type','sbidomains.ds.collaboration');",
+					//"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'EXTERNAL_PROCESS', 'sbidomains.nm.external_process','BIOBJ_TYPE','BI Object type','sbidomains.ds.external_process');",
 					"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'MOBILE_REPORT', 'sbidomains.nm.mobile.report','BIOBJ_TYPE','BI Object type','sbidomains.ds.mobile.report');",
 					"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'MOBILE_CHART', 'sbidomains.nm.mobile.chart','BIOBJ_TYPE','BI Object type','sbidomains.ds.mobile.chart');",
 					"INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS) values (" + ++maxId + ", 'MOBILE_COCKPIT', 'sbidomains.nm.mobile.cockpit','BIOBJ_TYPE','BI Object type','sbidomains.ds.mobile.cockpit');",
@@ -193,7 +215,7 @@ public class TransformerFrom3_3_0To3_4_0 implements ITransformer {
 					"update SBI_ENGINES set BIOBJ_TYPE = (SELECT VALUE_ID FROM sbi_domains s WHERE VALUE_CD = 'REAL_TIME' AND DOMAIN_CD = 'BIOBJ_TYPE') WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.generic.GenericDriver' AND MAIN_URL='/SpagoBIConsoleEngine/servlet/AdapterHTTP?ACTION_NAME=CONSOLE_ENGINE_START_ACTION'",
 					"update SBI_ENGINES set BIOBJ_TYPE = (SELECT VALUE_ID FROM sbi_domains s WHERE VALUE_CD = 'FREE_INQUIRY' AND DOMAIN_CD = 'BIOBJ_TYPE') WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.smartfilter.SmartFilterDriver'"
 			};
-			
+
 			executeSQL(conn, engineUpdates);
 
 			String[] objectUpdates = {	
@@ -207,11 +229,11 @@ public class TransformerFrom3_3_0To3_4_0 implements ITransformer {
 					"update SBI_OBJECTS set BIOBJ_TYPE_CD = 'EXTERNAL_PROCESS' WHERE BIOBJ_TYPE_CD = 'PROCESS'",
 					"update SBI_OBJECTS set BIOBJ_TYPE_CD = 'REPORT' WHERE BIOBJ_TYPE_CD = 'ACCESSIBLE_HTML'",
 					"update SBI_OBJECTS set BIOBJ_TYPE_CD = 'REAL_TIME' WHERE BIOBJ_TYPE_CD = 'CONSOLE'"
-					
+
 			};
 			executeSQL(conn, objectUpdates);
 
-		
+
 		}
 		catch (Exception e) {
 			logger.error("Error in updating domains from previous version. ", e);
@@ -219,7 +241,7 @@ public class TransformerFrom3_3_0To3_4_0 implements ITransformer {
 		}
 		logger.debug("OUT");
 	}
-
+	 */
 
 	private void executeSQL(Connection conn, String[] sqls) throws Exception {
 		logger.debug("IN");
