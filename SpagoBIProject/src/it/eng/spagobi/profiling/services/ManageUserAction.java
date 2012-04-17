@@ -12,38 +12,27 @@
 package it.eng.spagobi.profiling.services;
 
 
-import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.kpi.config.bo.Kpi;
-import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
-import it.eng.spagobi.profiling.dao.SbiUserDAOHibImpl;
 import it.eng.spagobi.security.Password;
-import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -305,11 +294,13 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
 			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
 			String columnFilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
+			valuefilter = valuefilter != null? valuefilter.toUpperCase() : "";
 			if(typeFilter.equals("=")){
-				hsql += " h."+columnFilter+" = '"+valuefilter+"'";
+				hsql += " upper(h."+columnFilter+") = '" + valuefilter +"'";
 			}else if(typeFilter.equals("like")){
-				hsql += " h."+columnFilter+" like '%"+valuefilter+"%'";
-			}			
+				hsql += " upper(h."+columnFilter+") like '%"+ valuefilter + "%'";			
+			}
+			logger.debug("Apply filter on user "+hsql);
 		}
 		logger.debug("OUT");
 		return hsql;
