@@ -290,6 +290,8 @@ public class KpiValueComputation {
 			Integer modInstNodeId) throws EMFInternalError,
 			SourceBeanException, EMFUserError, DatasetException {
 		logger.debug("IN");
+		String dsName= dataSet.getName();
+		logger.debug("Elaborating dataset: "+dsName);
 		KpiValue kpiValTemp = null;
 
 		dataSet.setParamsMap(pars);
@@ -301,26 +303,29 @@ public class KpiValueComputation {
 		// Handle in table SbiKpiError dataset Error
 		try {
 			dataSet.loadData();
+			logger.debug("loaded dataset: "+dsName);
 		} catch (RuntimeException e) {
 			// Exception must be handled and recorded in table SbiKpiError, if
 			// it is a datasetexception
-
+			logger.error("Runtime error occured elaborating dataset: "+dsName, e);
 			if (e instanceof DatasetException) {
-				logger.error("write exception in tabe kpiError ", e);
+				logger.error("DatasetException on dataset: "+dsName, e);
 				IKpiErrorDAO dao = DAOFactory.getKpiErrorDAO();
 				dao.setUserProfile(engine.data.getProfile());
 				dao.insertKpiError((DatasetException) e, modInstNodeId, kVal
 						.getR() != null ? kVal.getR().getName() : null);
 			} else {
-				logger.error("Exception not handled by table KpiError ", e);
+				logger.error("Exception not handled by table KpiError on dataset "+dsName, e);
 			}
-			throw e;
+			kVal.setValue(null);
+			return kVal;
 		}
 
 		IDataStore dataStore = dataSet.getDataStore();
-		logger.debug("Got the datastore");
+		logger.debug("Got the datastore for "+dsName);
 
 		if (dataStore != null && !dataStore.isEmpty()) {
+			logger.debug("Datastore for "+dsName+" is not empty");
 			// Transform result into KPIValue (I suppose that the result has a
 			// unique value)
 			IMetaData d = dataStore.getMetaData();
@@ -395,7 +400,7 @@ public class KpiValueComputation {
 				logger.debug("Alarms sent if the value is over the thresholds");
 			}
 		} else {
-			logger.warn("The Data Set doesn't return any value!!!!!");
+			logger.warn("The Data Set "+dsName+" doesn't return any value!!!!!");
 			if (engine.templateConfiguration.isRegister_values()) {
 				if (doSave) {
 					// Insert new Value into the DB
