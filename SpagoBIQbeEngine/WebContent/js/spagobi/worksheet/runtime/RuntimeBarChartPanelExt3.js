@@ -91,6 +91,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 		var items = {
 				store: storeObject.store,
 				extraStyle: extraStyle,
+				style: 'height: 85%;',
 				hiddenseries: new Array(),
 				horizontal: this.chartConfig.orientation === 'horizontal'
 		};
@@ -136,10 +137,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 		
 		var chartConf ={
 			renderTo : this.chartDivId,
-			layout: 'border',
-			bodyStyle: 'height: 100%; width: 100%;',
 			border: false,
-			items: [barChartPanel,exportChartPanel]
+			items: [exportChartPanel, barChartPanel]
 		};
 		
 		this.on('contentclick', function(event){
