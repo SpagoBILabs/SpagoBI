@@ -89,6 +89,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 				store: storeObject.store,
 				xField: 'categories',
 				hiddenseries: new Array(),
+				style: 'height: 85%;',
 				series: this.getChartSeriesExt3(storeObject, 'line', colors),
                 extraStyle: extraStyle,
                 scope: this
@@ -123,10 +124,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 		
 		var chartConf ={
 			renderTo : this.chartDivId,
-			layout: 'border',
-			bodyStyle: 'height: 100%; width: 100%;',
 			border: false,
-			items: [lineChartPanel,exportChartPanel]
+			items: [exportChartPanel, lineChartPanel]
 		}
 		
 		this.on('contentclick', function(event){
