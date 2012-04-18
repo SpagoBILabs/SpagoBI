@@ -182,7 +182,7 @@ Sbi.locale.ln['sbi.goals.threshold'] = 'Soglia';
 //END GOALS messages
 
 
-Sbi.locale.ln['sbi.browser.documentstree.title'] = 'Albero delle funzionalit\u00ef\u00bf\u0153';
+Sbi.locale.ln['sbi.browser.documentstree.title'] = 'Albero delle funzionalit\u00e0';
 Sbi.locale.ln['sbi.browser.documentstree.root']  = 'Radice';
 
 Sbi.locale.ln['sbi.browser.filtrpanel.title']  = 'Ordina, raggruppa e filtra';
@@ -319,7 +319,7 @@ Sbi.locale.ln['sbi.execution.subobjects.description'] = 'descrizione';
 Sbi.locale.ln['sbi.execution.subobjects.owner'] = 'proprietario';
 Sbi.locale.ln['sbi.execution.subobjects.creationDate'] = 'data di creazione';
 Sbi.locale.ln['sbi.execution.subobjects.lastModificationDate'] = 'ultima modifica';
-Sbi.locale.ln['sbi.execution.subobjects.visibility'] = 'visibilit\u00ef\u00bf\u0153';
+Sbi.locale.ln['sbi.execution.subobjects.visibility'] = 'visibilit\u00e0';
 
 Sbi.locale.ln['sbi.execution.subobjects.visibility.public'] = 'Pubblico';
 Sbi.locale.ln['sbi.execution.subobjects.visibility.private'] = 'Privato';
@@ -679,8 +679,8 @@ Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardParametersPage.title'] = '
 
 Sbi.locale.ln['Sbi.browser.mexport.massiveExportWizardTriggerPage.title'] = 'Trigger';
 
-Sbi.locale.ln['Sbi.browser.ProgressPanel.noProgress'] = 'Nessuna attività in esecuzione';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.noDownload'] = 'Nessuna attività da scaricare';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noProgress'] = 'Nessuna attivit\u00e0 in esecuzione';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noDownload'] = 'Nessuna attivit\u00e0 da scaricare';
 Sbi.locale.ln['Sbi.browser.ProgressPanel.exporting'] = 'Esportando ';
 Sbi.locale.ln['Sbi.browser.ProgressPanel.document'] = ' documento ';
 Sbi.locale.ln['Sbi.browser.ProgressPanel.of'] = ' di ';
@@ -690,7 +690,7 @@ Sbi.locale.ln['Sbi.browser.ProgressPanel.completedExport'] = 'Esportazioni compl
 Sbi.locale.ln['Sbi.browser.ProgressPanel.scheduledExport'] = 'Esportazioni schedulate';
 Sbi.locale.ln['Sbi.browser.ProgressPanel.initializing'] = 'Inizializzazione';
 
-Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Attività schedulate'; 
+Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Attivit\u00e0 schedulate'; 
 
 Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.title'] = 'Opzioni per esportazione massiva';
 Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.exportFormat'] = 'Formato di esportazione';
