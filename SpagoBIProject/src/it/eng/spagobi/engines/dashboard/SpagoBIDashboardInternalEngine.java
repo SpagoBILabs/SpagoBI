@@ -38,6 +38,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.cglib.transform.impl.AddDelegateTransformer;
+
 import org.apache.log4j.Logger;
 
 public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
@@ -275,7 +277,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 				throw new Exception("error in reading configuration lov");
 			}
 			SourceBean sbRow = (SourceBean)sourceBeanResult.getAttribute("ROW");
-			if (sbRow == null){
+			if (sbRow == null){				
 				logger.error("The specific configuration dataset '" + confDataset +"' doesn't return rows. Get configuration by template. ATTENTION: the widget could not be created correctly!");
 				//throw new EMFUserError(EMFErrorSeverity.ERROR, "1001", messageBundle);
 			}else{
@@ -297,16 +299,22 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 			List<SourceBean> sbRows = (List)sourceBeanResult.getAttributeAsList("ROW");
 			//defines the number of the dashboards from the number or rows (1 row = 1 serie)
 			int numCharts = sbRows.size();
-			confParameters.put("numCharts", String.valueOf(numCharts));
-			for(int i=0; i<sbRows.size(); i++){
-				SourceBean sbRow = (SourceBean)sbRows.get(i);
-				if (sbRow == null){
-					logger.error("The configuration getted by value's dataset with identifier '" + datasetID +"' doesn't return rows. \n Get configuration by template. ATTENTION: the widget could not be created correctly!");
-					break;
-				}else{
-					addDashboardConfigValues(i, sbRow);
+			if (numCharts == 0){
+				logger.error("The specific configuration dataset with id '" + datasetID +"' doesn't return rows. Get default configuration.");
+				confParameters.put("numCharts", "1");
+				addDefaultDashboardConfig();
+			}else{
+				confParameters.put("numCharts", String.valueOf(numCharts));
+				for(int i=0; i<numCharts; i++){
+					SourceBean sbRow = (SourceBean)sbRows.get(i);
+					if (sbRow == null){
+						logger.error("The configuration getted by value's dataset with identifier '" + datasetID +"' doesn't return rows. \n Get configuration by template. ATTENTION: the widget could not be created correctly!");
+						break;
+					}else{
+						addDashboardConfigValues(i, sbRow);
+					}
 				}
-			}			
+			}
 		}
 		else
 			logger.debug("Configuration set in template");
@@ -544,6 +552,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 		logger.debug("String to replace: " + strToRep);
 		int startIdx = strToRep.indexOf("$P{");
 		int endIdx = strToRep.indexOf("}");
+		boolean cleanTitle = true;
 		
 		while (startIdx != -1){
 			if (startIdx > -1 && endIdx > -1){
@@ -558,6 +567,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 				    for (int i=0, l=values.size(); i<l; i++){
 				    	finalValuePar += (values.get(i).equals("%25"))?"" : values.get(i);				    	
 				    	if (i < l-1) finalValuePar += ", ";
+				    	if (!finalValuePar.equals("")) cleanTitle = false;
 				    }
 					valuePar = finalValuePar.replaceAll("'","");				 
 				}
@@ -567,7 +577,12 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 			startIdx = strToRep.indexOf("$P{");
 			endIdx = strToRep.indexOf("}");
 		}
-		
+				
+		if (isTitle && cleanTitle) {
+			//only for title: if the all parameters value are % the title value is cleaned (specific requirement).
+			strRet = "";
+			logger.debug("String title is cleaned becasue parameters containing only the '%' char! " );
+		}
 		logger.debug("String replaced: " + strRet);
 		
 		logger.debug("OUT");
@@ -594,7 +609,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 		parValue = (sbRow.getAttribute("colorArc3")!=null)?(String)sbRow.getAttribute("colorArc3"):(String)sbRow.getAttribute("COLORARC3");
 		if (parValue != null) singleConfParameters.put("colorArc3", parValue);
 		parValue = (sbRow.getAttribute("valueDesc")!=null)?(String)sbRow.getAttribute("valueDesc"):(String)sbRow.getAttribute("VALUEDESC");
-		if (parValue != null) singleConfParameters.put("valueDesc", parValue);
+		if (parValue != null) singleConfParameters.put("valueDesc", parValue);		
 		//defining needles configuration
 		parValue = (sbRow.getAttribute("numNeedles")!=null)?(String)sbRow.getAttribute("numNeedles"):(String)sbRow.getAttribute("NUMNEEDLES");
 		singleConfParameters.put("numNeedles",parValue);
@@ -614,6 +629,24 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 			if (parValue != null) singleConfParameters.put("value"+(i+1), parValue);
 		}
 		confParameters.put("dash__" + idx, singleConfParameters);
+	}
+	
+	
+	private void addDefaultDashboardConfig() throws Exception{
+		LinkedHashMap singleConfParameters = new LinkedHashMap();		
+		singleConfParameters.put("minValue", "0");		
+		singleConfParameters.put("maxValue", "100");		
+		singleConfParameters.put("lowValue", "25");		
+		singleConfParameters.put("highValue", "50");
+		singleConfParameters.put("colorArc1", "0x9cff00");
+		singleConfParameters.put("colorArc2", "0xfff999");		
+		singleConfParameters.put("colorArc3", "0xff5454");
+		singleConfParameters.put("valueDesc", "");		
+		singleConfParameters.put("numNeedles", "1");
+		singleConfParameters.put("colorNeedle1","red");
+		singleConfParameters.put("value1","0");
+
+		confParameters.put("dash__0", singleConfParameters);
 	}
 	
 	private void addGenericConfigValues(SourceBean sbRow) throws Exception{
@@ -674,6 +707,10 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 			parValue = (sbRow.getAttribute("legend")!=null)?(String)sbRow.getAttribute("legend"):(String)sbRow.getAttribute("LEGEND");
 			if (parValue != null) confParameters.put("legend", parValue);
 		}
+		if (!confParameters.containsKey("detailDesc")){
+			parValue = (sbRow.getAttribute("detailDesc")!=null)?(String)sbRow.getAttribute("detailDesc"):(String)sbRow.getAttribute("DETAILDESC");
+			if (parValue != null) confParameters.put("detailDesc", parValue);
+		}		
 	}
 	
 	/**

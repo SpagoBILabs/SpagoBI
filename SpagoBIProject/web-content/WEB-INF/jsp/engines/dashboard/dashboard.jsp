@@ -21,11 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@ page import="java.util.Set" %>
 <%@page import="java.net.URLEncoder"%>
 
-
 <%
    SourceBean sbModuleResponse = (SourceBean) aServiceResponse.getAttribute("ExecuteBIObjectModule");
    ExecutionInstance instanceO = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
-
+ 
    String execContext = instanceO.getExecutionModality();
    
    Integer executionAuditId_dash = null;
@@ -50,10 +49,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		
 	
 		<script>
-
-		
-		
-
 			function execCrossNavigation(windowName, label, parameters) {
 				if(this.uiType === 'ext'){
 					sendMessage({'label': label, parameters: parameters},'crossnavigation');
@@ -66,7 +61,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	
 			}
 		
-				
 		</script>
 		<%-- end cross navigation scripts --%>
 <%	} 
@@ -175,8 +169,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		dinHeight = String.valueOf(Integer.valueOf(height).intValue()-radius+20);
 	}
 	%>
+	<!-- <br>  -->
+	<div align="center" ><span style="<%=styleTitle%>"><%=title%></span></div>
 	<br>
-		<div align="center" ><span style="<%=styleTitle%>"><%=title%></span></div>
 		<table align="center" >
 		  <tr>
 	<%	 
@@ -244,8 +239,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<td> 
 	<%  } 
 
-// HTML CODE FOR THE FLASH COMPONENT %>
- <div align="center" > 
+// HTML CODE FOR THE FLASH COMPONENT %> 
+ <div align="center" id="swfDiv"> 
        <object  classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" 
                 codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" 
                 type="application/x-shockwave-flash"
@@ -268,6 +263,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</object>    
 </div>  
 
+
+<%-- 
+<div align="center">
+<script type="text/javascript">
+  lz.embed({url: "<%=movie%>", width:"<%=width%>", height:"<%=dinHeight%>"});
+</script>
+</div>
+ --%>
 <% if (orientation.equalsIgnoreCase("horizontal")){%>
   </td>  
 <%   //checks for new rows
