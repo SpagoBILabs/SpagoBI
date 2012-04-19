@@ -33,6 +33,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
@@ -156,17 +158,21 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		return query;
 	}
 	
-	public static void updatePromptableFiltersValue(Query query, AbstractQbeEngineAction action) {
+	public static void updatePromptableFiltersValue(Query query, AbstractQbeEngineAction action) throws JSONException{
 		logger.debug("IN");
 		List whereFields = query.getWhereFields();
 		Iterator whereFieldsIt = whereFields.iterator();
+		
+		JSONObject requestPromptableFilters = action.getAttributeAsJSONObject("promptableFilters");
+			
+		
 		while (whereFieldsIt.hasNext()) {
 			WhereField whereField = (WhereField) whereFieldsIt.next();
 			if (whereField.isPromptable()) {
 				// getting filter value on request
-				List promptValuesList = action.getAttributeAsList(whereField.getName());
-				if (promptValuesList != null) {
-					String[] promptValues = (String[]) promptValuesList.toArray(new String[] {});
+				JSONArray promptValuesList =  requestPromptableFilters.getJSONArray(whereField.getName());
+				if(promptValuesList!=null){
+					String[] promptValues = toStringArray(promptValuesList);
 					logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
 					whereField.getRightOperand().lastValues = promptValues;
 				}
@@ -178,9 +184,10 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			HavingField havingField = (HavingField) havingFieldsIt.next();
 			if (havingField.isPromptable()) {
 				// getting filter value on request
-				List promptValuesList = action.getAttributeAsList(havingField.getName());
-				if (promptValuesList != null) {
-					String[] promptValues = (String[]) promptValuesList.toArray(new String[] {});
+				// promptValuesList = action.getAttributeAsList(havingField.getEscapedName());
+				JSONArray promptValuesList =  requestPromptableFilters.getJSONArray(havingField.getName());
+				if(promptValuesList!=null){
+					String[] promptValues = toStringArray(promptValuesList);
 					logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
 					havingField.getRightOperand().lastValues = promptValues; // TODO how to manage multi-values prompts?
 				}
@@ -189,6 +196,13 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		logger.debug("OUT");
 	}
 	
+	private static String[] toStringArray(JSONArray o ) throws JSONException{
+		String[] promptValues = new String[o.length()];
+		for(int i=0; i<o.length(); i++){
+			promptValues[i] = o.getString(i); 
+		}
+		return promptValues;
+	}
 	
 	public IDataStore executeQuery(Integer start, Integer limit){
 		IDataStore dataStore = null;
