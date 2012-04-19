@@ -127,7 +127,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 					ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure, null);
 					addedViewsEntities.add(viewEntity);
 					propertiesInitializer.addProperties(viewEntity);
-					addCalculatedFields(viewEntity);
+					addCalculatedFieldsForViews(viewEntity);
 					modelStructure.addRootEntity(modelName, viewEntity);
 				}
 			}
@@ -150,7 +150,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 						
 						//Add node for first level entities (using UniqueName)
 						ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure, entity);
-						addCalculatedFields(viewEntity);
+						addCalculatedFieldsForViews(viewEntity);
 						propertiesInitializer.addProperties(viewEntity);
 						entity.addSubEntity(viewEntity);
 						
@@ -160,7 +160,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 							logger.debug("Current Entity type: "+modelEntity.getType());
 							if (modelEntity.getType().equals(entity.getType())){
 								ModelViewEntity viewEntitySub = new ModelViewEntity(viewDescriptor, modelName, modelStructure, modelEntity);
-								addCalculatedFields(viewEntitySub);
+								addCalculatedFieldsForViews(viewEntitySub);
 								propertiesInitializer.addProperties(viewEntitySub);
 								logger.debug(" ** Found matching for: "+modelEntity.getType()+" with "+entity.getType());
 								modelEntity.addSubEntity(viewEntitySub);
@@ -338,6 +338,18 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 		}
 		logger.debug("Added the calculated field "+dataMartEntity.getName());
 	}
+	
+	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate!
+	private void addCalculatedFieldsForViews(IModelEntity dataMartEntity) {
+		addCalculatedFields(dataMartEntity);
+		
+		for(int i = 0; i < dataMartEntity.getSubEntities().size(); i++) {
+			if(!(dataMartEntity.getSubEntities().get(i) instanceof ModelViewEntity)){
+				addCalculatedFieldsForViews(dataMartEntity.getSubEntities().get(i));
+			}
+		}
+	}
+	
 	
 	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate! 
 	private void addSubEntities(IModelEntity dataMartEntity, List subEntities, int recursionLevel) {
