@@ -63,6 +63,9 @@
 	var recNum = typeof(global.recNumber)!="undefined" ? parseInt(global.recNumber) : 0;
 	var viewLegend = typeof(global.legend)!="undefined" ? global.legend : "true";
 	var linkUrl = typeof(global.drillUrl)!="undefined" ? global.drillUrl : "";
+	var detailContent = typeof(global.detailText)!="undefined" ? global.detailText : "";
+	if (detailContent == undefined || detailContent == "undefined")
+	 	detailContent = typeof(global.DETAILTEXT)!="undefined" ? global.DETAILTEXT : "";	
 	
 
 	<!--layout -->
@@ -132,8 +135,51 @@
 	</class>
 	
   <drawview name="display">
-    
-  	<method name="showDisplay" args="min,low,high,max"> 
+		<handler name="onclick">			
+			if (detailContent != "") 
+			{
+				Debug.write("*** detailContent1: -" + detailContent + "-");
+				canvas.display.detailWindow.setAttribute("visible",true);
+			}
+		</handler>
+		
+		<!--  =================================================================== -->
+		<!--  Detail Window														  -->
+		<!--  =================================================================== -->
+		<window name="detailWindow" >
+			<attribute name="y" value="10"/>
+			<attribute name="x" value="0"/>
+			<attribute name="height" value="100"/>
+			<attribute name="width" value="300"/>
+			<attribute name="title" value=""/>
+			<attribute name="resizable" value="true"/>
+			<attribute name="closeable" value="true"/>
+			<attribute name="align" value="center"/>
+
+			<!-- <wrappinglayout axis="y" spacing="10"/> -->  
+			<!-- <view name="viewText"  height="${parent.height+50}" clip="true"> -->
+			<view name="viewText" width="250" height="60" clip="true">
+				<text name="detailText" multiline="true">				 
+				</text>	
+				<scrollbar axis="y"/>
+				<!-- <scrollbar axis="x"/> -->  
+			</view>	
+		</window>	
+		
+
+		<!-- 
+		<button name="btnDetail" width="22" height="22" >
+			  <view width="100%" height="100%" stretches="both" resource="./img/info22.jpg" />
+			  <handler name="onclick" >
+			    Debug.write( "onclick" );
+			    canvas.display.detailWindow.setAttribute("visible",true);
+			    Debug.write("** detailText: "  + canvas.display.viewText.detailText);
+			   // canvas.display.detailWindow.detailText.setAttribute('text', detailContent);
+			  </handler>
+		</button>
+		 -->
+
+  		<method name="showDisplay" args="min,low,high,max"> 
 	     var radiusByWidth = (appWidth-2*appMargin)/2;
 	     var radiusByHeight = (appHeight-2*appMargin)/(1+rectangleHeightRate);
 	     
@@ -159,11 +205,6 @@
 		else{
 			this.setHeight(appHeight);
 		}
-		
-	<!-- ORIG 
-		centerY = (appHeight-2*appMargin)-radius/4+appMargin;
-		centerX = (appWidth-2*appMargin)/2+appMargin;
-		-->	
 		centerY = appHeight-radius+appMargin;
 		
 		if (valueAttributeDesc != undefined &amp;&amp; valueAttributeDesc != ""){
@@ -215,10 +256,6 @@
 		var angLow = (low-min)*Math.PI/(max-min);
 		var angHigh = (high-min)*Math.PI/(max-min);
 
-<!-- 
-		Debug.write(angLow*180/Math.PI);
-		Debug.write(angHigh*180/Math.PI);
--->
 		<!-- setting title serie -->
 		Debug.write("linkUrl: -" + linkUrl +"-");
 		if (linkUrl == undefined || linkUrl == ""){
@@ -248,8 +285,8 @@
 						 });						 
 						 ]]>
 						
-		}
-			
+		}		
+
 		<!--  setting arcs -->
 		this.setArc(centerX,centerY,radius,0,angLow,arc1Color);
 		this.setArc(centerX,centerY,radius,angLow,angHigh,arc2Color);
@@ -275,10 +312,7 @@
 						 ,y:valueDescY
 						 });
 			]]>
-		}
-		
-	
-		<!--this.shadow.showShadow(centerX,centerY,radius);-->	
+		}	
     </method>
 	
 	<method name="setArc" args="centerX,centerY,radius,angStart,angStop,color"> 
@@ -302,18 +336,6 @@
         this.globalAlpha = 0.5; 		
         this.fill();
         
-        <!-- this.strokeStyle = 0xffff00;
-        this.lineWidth = 5;
-        this.stroke();-->
-		   <!-- 
-		var g = this.createRadialGradient(centerX-radius*radialGradientRate,centerY-radius*radialGradientRate, .7, centerX+radius*radialGradientRate, centerX+radius*radialGradientRate, 0)
-        this.globalAlpha = 0; 
-        g.addColorStop(0, 0x000000);
-        this.globalAlpha = 0.7;
-        g.addColorStop(1, 0xffffff);
-        this.fillStyle = g;
-        this.fill();
-                  -->
         this.strokeStyle = 0x000000; 
         this.lineWidth = 2;
         this.stroke();
@@ -571,19 +593,6 @@
 		        this.fillStyle = color;
 		        this.globalAlpha = 1; 		
 		        this.fill();
-		             <!-- 
-		        this.strokeStyle = 0x000000;
-		        this.lineWidth = 5;
-		        this.stroke();
-					  
-				var g = this.createRadialGradient(centerX-radius,centerY-radius, 0.5, centerX+radius, centerX+radius, 0)
-	    		this.globalAlpha = 0; 
-	    		g.addColorStop(0, 0x000000);
-	    		this.globalAlpha = 1;
-	    		g.addColorStop(1, 0xffffff);
-	    		this.fillStyle = g;
-	    		this.fill();
-	                  -->
 	    		this.strokeStyle = 0x000000;
 	    		this.lineWidth = 2;
 	    		this.stroke();
@@ -670,7 +679,35 @@
 						 	canvas.display.valueSerie.setAttribute("text",serieDesc);	
 						 	canvas.display.valueSerie.setAttribute("x",  centerX - (serieDesc.length*3)); 
 						 	canvas.display.valueSerie.setVisible(true);
+						 	//LzBrowser.callJS("setTitle(serieDesc)");
 						 }	 
+						 //updating detail text if is setted
+						 if (detailContent != undefined && detailContent != "undefined" && detailContent != ""){
+						 	Debug.write("*** detailContent2: -" + detailContent + "-");
+						 	if (detailContent.indexOf("$F{") > -1){
+						 		Debug.write("*** fields to replace are presents!! " );
+					      	 		var lastFieldIdx = 0;
+					      	 		var tmpDetail = detailContent;	
+					      	 		while (lastFieldIdx > -1){
+					      	 			var idxStart = 	tmpDetail.indexOf("$F{")+3;					
+					      	 			var idxEnd = tmpDetail.indexOf("}");	
+						      	 		var nameField = tmpDetail.substr(idxStart, (idxEnd-idxStart));				      	 		
+						      	 		var valueField = rotationresponse.getNodeAttribute(nameField);
+						      	 		if (valueField != undefined && valueField != ""){
+						      	 			var tmpPar = "$F{" + nameField + "}";
+							      	 		detailContent = detailContent.replace(tmpPar, valueField);
+							      	 		Debug.write("*** 1) detailContent: " + detailContent);
+							      	 		tmpDetail = detailContent;
+						      	 			lastFieldIdx = tmpDetail.indexOf("$F{");							      	 			
+						      	 			Debug.write("*** 2) lastFieldIdx: " + lastFieldIdx);
+						      	 		}			
+						      	 		else	    
+						      	 			lastFieldIdx = -1;	     	 						      	 
+						      	 	}
+						     }
+						 	canvas.display.detailWindow.viewText.detailText.setAttribute('text', detailContent);
+						 	canvas.display.detailWindow.viewText.detailText.setAttribute("width",appWidth-20);   
+						 }	
 					}				 
 		  		}
 	  		}            		  
@@ -678,6 +715,7 @@
 	  		canvas.display.rotDisplay.needlesGroup.doStart(); 
 	  		]]>
 	  	</method>
+	  
 	</datapointer>
 
 	<method name="changeRotation" args="rotation, idx">
@@ -720,7 +758,11 @@
        	canvas.display.timer();  
     </method>
 	
-    <method name="start" event="oninit">
+    <method name="start" event="oninit">    	
+    	  canvas.display.detailWindow.setAttribute("visible",false);
+    	  canvas.display.detailWindow.setAttribute("width",appWidth);    	  
+    	  canvas.display.detailWindow.viewText.setAttribute("width",appWidth-20);  
+    	  //canvas.display.detailWindow.viewText.detailText.setAttribute('text', detailContent);  	  
           canvas.display.showDisplay(min,low,high,max);
           canvas.datasets.data.doRequest();
           canvas.display.timer();
