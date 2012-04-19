@@ -51,7 +51,13 @@
                  frameborder='0' >
 </iframe> 
 
-
+<iframe id='invalidSessionChart'
+                 name='invalidSessionChart'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%>/SpagoBIChartEngine/invalidateSession.jsp'
+                 height='0'
+                 width='0'
+                 frameborder='0' >
+</iframe> 
 <%
 
 boolean backUrlB=false;
