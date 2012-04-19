@@ -30,14 +30,9 @@ Sbi.locale.ln['sbi.generic.details'] = 'Detail';
 Sbi.locale.ln['sbi.generic.advanced'] = 'Advanced';
 Sbi.locale.ln['sbi.generic.select'] = 'Select';
 Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restore';
-Sbi.locale.ln['sbi.generic.run'] = 'Ejecutar';
-Sbi.locale.ln['sbi.generic.update2'] = 'Actualizaciones';
-Sbi.locale.ln['sbi.kpi.trend.title'] = 'Tendencia de los recursos ';
-Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'No se encontraron datos! Seleccione el nodo específico para ver los datos de tendencia. ';
-
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Nombre';
-Sbi.locale.ln['sbi.generic.descr'] = 'Descripci\u00f3n';
+Sbi.locale.ln['sbi.generic.descr'] = 'Descripci\ufffdn';
 Sbi.locale.ln['sbi.generic.code'] = 'Code';
 Sbi.locale.ln['sbi.generic.type'] = 'Type';
 Sbi.locale.ln['sbi.generic.label'] = 'Label';
@@ -244,7 +239,7 @@ Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']  = 'Cli
 
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Volver to parameters selection page';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Volver to documento selection page';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Recargar ejecuci\u00f3n documento';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Recargar ejecuci\ufffdn documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.rating'] = 'Vote este documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.print'] = 'Imprimir';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.send'] = 'Enviar';
@@ -254,20 +249,20 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate'] = 'Annotate docume
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata'] = 'Show documento metadata';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] = 'Page refresh will cause the lost of actual QBE settings: go on?';
 
-Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Par\u00e1metros guardados';
-Sbi.locale.ln['sbi.execution.viewpoints.emptyText'] = '[Documento has no par\u00e1metros guardados]';
+Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Par\ufffdmetros guardados';
+Sbi.locale.ln['sbi.execution.viewpoints.emptyText'] = '[Documento has no par\ufffdmetros guardados]';
 Sbi.locale.ln['sbi.execution.viewpoints.name'] = 'nombre';
-Sbi.locale.ln['sbi.execution.viewpoints.description'] = 'descripci\u00f3n';
+Sbi.locale.ln['sbi.execution.viewpoints.description'] = 'descripci\ufffdn';
 Sbi.locale.ln['sbi.execution.viewpoints.owner'] = 'owner';
 Sbi.locale.ln['sbi.execution.viewpoints.creationDate'] = 'creation date';
 Sbi.locale.ln['sbi.execution.viewpoints.scope'] = 'scope';
-Sbi.locale.ln['sbi.execution.viewpoints.msg.saved'] = 'Par\u00e1metros guardados succesfully';
+Sbi.locale.ln['sbi.execution.viewpoints.msg.saved'] = 'Par\ufffdmetros guardados succesfully';
 
 Sbi.locale.ln['sbi.execution.snapshots.title'] = 'Scheduled executions';
 Sbi.locale.ln['sbi.execution.snapshots.emptyText'] = '[Document has no scheduled executions]';
 Sbi.locale.ln['sbi.execution.snapshots.name'] = 'nombre';
-Sbi.locale.ln['sbi.execution.snapshots.description'] = 'descripci\u00f3n';
-Sbi.locale.ln['sbi.execution.snapshots.creationDate'] = 'fecha de creaci\u00f3n';
+Sbi.locale.ln['sbi.execution.snapshots.description'] = 'descripci\ufffdn';
+Sbi.locale.ln['sbi.execution.snapshots.creationDate'] = 'fecha de creaci\ufffdn';
 Sbi.locale.ln['sbi.execution.snapshots.deleteSelected'] = 'Borrar';
 Sbi.locale.ln['sbi.execution.snapshots.deleteSelectedTooltip'] = 'Borrar selected scheduled executions';
 Sbi.locale.ln['sbi.execution.snapshots.noSnapshotsSelected'] = 'No scheduled executions selected';
@@ -275,10 +270,10 @@ Sbi.locale.ln['sbi.execution.snapshots.noSnapshotsSelected'] = 'No scheduled exe
 Sbi.locale.ln['sbi.execution.subobjects.title'] = 'Vistas personalizadas';
 Sbi.locale.ln['sbi.execution.subobjects.emptyText'] = '[Documento has no vistas personalizadas]';
 Sbi.locale.ln['sbi.execution.subobjects.name'] = 'nombre';
-Sbi.locale.ln['sbi.execution.subobjects.description'] = 'descripci\u00f3n';
+Sbi.locale.ln['sbi.execution.subobjects.description'] = 'descripci\ufffdn';
 Sbi.locale.ln['sbi.execution.subobjects.owner'] = 'owner';
-Sbi.locale.ln['sbi.execution.subobjects.creationDate'] = 'fecha de creaci\u00f3n';
-Sbi.locale.ln['sbi.execution.subobjects.lastModificationDate'] = 'fecha de \u00f9ltima modificaci\u00f3n';
+Sbi.locale.ln['sbi.execution.subobjects.creationDate'] = 'fecha de creaci\ufffdn';
+Sbi.locale.ln['sbi.execution.subobjects.lastModificationDate'] = 'fecha de \ufffdltima modificaci\ufffdn';
 Sbi.locale.ln['sbi.execution.subobjects.visibility'] = 'visibility';
 
 Sbi.locale.ln['sbi.execution.subobjects.visibility.public'] = 'Public';
@@ -308,7 +303,7 @@ Sbi.locale.ln['sbi.attributes.title'] = 'Profile Attributes';
 Sbi.locale.ln['sbi.attributes.update'] = 'Guardar';
 Sbi.locale.ln['sbi.attributes.validationError'] = 'Error de Validation';
 Sbi.locale.ln['sbi.attributes.headerName'] = 'Nombre';
-Sbi.locale.ln['sbi.attributes.headerDescr'] = 'Descripci\u00f3n';
+Sbi.locale.ln['sbi.attributes.headerDescr'] = 'Descripci\ufffdn';
 Sbi.locale.ln['sbi.attributes.error'] = 'Error';
 Sbi.locale.ln['sbi.attributes.error.msg'] = 'Operation failed';
 Sbi.locale.ln['sbi.attributes.ok'] = 'Information';
@@ -332,10 +327,8 @@ Sbi.locale.ln['sbi.roles.sendMail'] = 'Enviar Mail';
 Sbi.locale.ln['sbi.roles.send'] = 'Enviar';
 Sbi.locale.ln['sbi.roles.build'] = 'Build';
 Sbi.locale.ln['sbi.roles.buildQbe'] = 'Build QBE';
-Sbi.locale.ln['sbi.roles.export'] = 'Export';
-Sbi.locale.ln['sbi.roles.doMassiveExport'] = 'Do Massive Export';
 Sbi.locale.ln['sbi.roles.headerName'] = 'Nombre';
-Sbi.locale.ln['sbi.roles.headerDescr'] = 'Descripci\u00f3n';
+Sbi.locale.ln['sbi.roles.headerDescr'] = 'Descripci\ufffdn';
 Sbi.locale.ln['sbi.roles.headerCode'] = 'Code';
 Sbi.locale.ln['sbi.roles.headerRoleType'] = 'Role Type';
 Sbi.locale.ln['sbi.roles.detail'] = 'Detail';
@@ -424,7 +417,7 @@ Sbi.locale.ln['sbi.execution.stpf.error'] = 'Document NOT saved due to technical
 // Remember me
 Sbi.locale.ln['sbi.execution.saveRememberMe'] = 'Remember me!! (save this execution as my Hot Link)';
 Sbi.locale.ln['sbi.rememberme.name'] = 'Nombre';
-Sbi.locale.ln['sbi.rememberme.descr'] = 'Descripci\u00f3n';
+Sbi.locale.ln['sbi.rememberme.descr'] = 'Descripci\ufffdn';
 Sbi.locale.ln['sbi.rememberme.save'] = 'Guardar';
 Sbi.locale.ln['sbi.rememberme.missingName'] = 'Nombre is missing';
 Sbi.locale.ln['sbi.rememberme.saveOk'] = 'Execution saved as Hot Link correctly';
@@ -432,18 +425,18 @@ Sbi.locale.ln['sbi.rememberme.alreadyExisting'] = 'Execution is already existing
 Sbi.locale.ln['sbi.rememberme.errorWhileSaving'] = 'Error while saving';
 
 
-Sbi.locale.ln['sbi.execution.rating'] = 'Puntuaci\u00f3n del documento';
+Sbi.locale.ln['sbi.execution.rating'] = 'Puntuaci\ufffdn del documento';
 Sbi.locale.ln['sbi.execution.rating.vote'] = 'Vote';
 
 Sbi.locale.ln['sbi.execution.notes.owner'] = 'Proprietario ';
 Sbi.locale.ln['sbi.execution.notes.creationDate'] = 'Creada ';
-Sbi.locale.ln['sbi.execution.notes.modificationDate'] = 'Modificada por \u00faltima vez ';
+Sbi.locale.ln['sbi.execution.notes.modificationDate'] = 'Modificada por \ufffdltima vez ';
 Sbi.locale.ln['sbi.execution.notes.notes'] = 'Lista Pin';
 Sbi.locale.ln['sbi.execution.notes.detailNote'] = 'Detalles';
 Sbi.locale.ln['sbi.execution.notes.deleteNote'] = 'Cancelar';
 Sbi.locale.ln['sbi.execution.notes.owner'] = 'Propietario';
 Sbi.locale.ln['sbi.execution.notes.creationDate'] = 'Creada';
-Sbi.locale.ln['sbi.execution.notes.lastModificationDate'] = 'Modificada por \u00faltima vez';
+Sbi.locale.ln['sbi.execution.notes.lastModificationDate'] = 'Modificada por \ufffdltima vez';
 Sbi.locale.ln['sbi.execution.notes.goBack'] = 'Volver a la lista';
 Sbi.locale.ln['sbi.execution.notes.insertNotes'] = 'Mostrar notas';
 Sbi.locale.ln['sbi.execution.notes.savenotes'] = 'Salvar';
@@ -459,7 +452,6 @@ Sbi.locale.ln['sbi.lookup.Select']= 'Select Value ...';
 
 Sbi.locale.ln['sbi.execution.PdfExport'] = 'PDF';
 Sbi.locale.ln['sbi.execution.XlsExport'] = 'XLS';
-Sbi.locale.ln['sbi.execution.XlsxExport'] = 'XLSX';
 Sbi.locale.ln['sbi.execution.CsvExport'] = 'CSV';
 Sbi.locale.ln['sbi.execution.JpgExport'] = 'JPG';
 Sbi.locale.ln['sbi.execution.XmlExport'] = 'XML';
@@ -473,8 +465,8 @@ Sbi.locale.ln['sbi.execution.jsonExport'] = 'JSON';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Expand/Reduce';
 
 Sbi.locale.ln['sbi.home.Welcome'] = 'Bienvenido: ';
-Sbi.locale.ln['sbi.home.Exit'] = 'Cerrar sesi\u00f3n';
-Sbi.locale.ln['sbi.home.Info'] = 'Informaci\u00f3n sobre SpagoBI';
+Sbi.locale.ln['sbi.home.Exit'] = 'Cerrar sesi\ufffdn';
+Sbi.locale.ln['sbi.home.Info'] = 'Informaci\ufffdn sobre SpagoBI';
 
 Sbi.locale.ln['sbi.lookup.ValueOfColumn'] ='The value of the column';
 Sbi.locale.ln['sbi.lookup.asA'] = 'as a';
@@ -510,60 +502,12 @@ Sbi.locale.ln['sbi.ds.pivotRowName'] = 'Name of the Column not to be Pivoted';
 Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Automatic Columns numeration?';
 Sbi.locale.ln['sbi.ds.help'] = 'Help';
 Sbi.locale.ln['sbi.ds.pars'] = 'Available Profile Attributes';
-Sbi.locale.ln['sbi.ds.customData'] = 'Attributes';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Recalculate metadata?';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = 'Do you want the system to recalculate dataset\'s metadata? (the dataset will be executed by the system: this is required if you modified the dataset significantly)';
-
 
 
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
-Ext.Msg.buttonText.yes = 'S\u00ec'; 
+Ext.Msg.buttonText.yes = 'S\ufffd'; 
 Ext.Msg.buttonText.no = 'No';
-
-Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Please open the worksheet preview tab to export the document';
-Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Export warning';
-
-
-//===================================================================
-//MASSIVE EXPORT
-//===================================================================
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.title'] = 'Wizard for worksheet massive export';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.back'] = '< Back';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.next'] = 'Next >';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.finish'] = 'Finish';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.cancel'] = 'Cancel';
-
-
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.title'] = 'Export options';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.cycle.label'] = 'Cycle on filters';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.label'] = 'Role';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.emptyText'] = 'Select a role';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.documents.label'] = 'Worksheet documents to export';
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.msg.noDoc'] = 'No Worksheet documents to export';
-
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardParametersPage.title'] = 'Parameters';
-
-Sbi.locale.ln['Sbi.browser.mexport.massiveExportWizardTriggerPage.title'] = 'Trigger';
-Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Massive Export progress '; 
-
-Sbi.locale.ln['Sbi.browser.ProgressPanel.noProgress'] = 'No export running';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.noDownload'] = 'No export to be downloaded';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.exporting'] = 'Exporting ';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.document'] = ' document ';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.of'] = ' of ';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.finished'] = ' export finished';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.startedExport'] = 'Started Exports';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.completedExport'] = 'Completed Exports';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.scheduledExport'] = 'Scheduled Exports';
-Sbi.locale.ln['Sbi.browser.ProgressPanel.initializing'] = 'Initializing';
-Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.title'] = 'Setup massive export options';
-Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.exportFormat'] = 'Export format';
-Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.options'] = 'Options';
-Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters'] = 'Parameters';
-Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = 'Setup parameters\' configuration';
-
-//OFFICE DOCUMENTS - ZOOM 
-Sbi.locale.ln['Sbi.office.zoomIn'] = 'Increases dimensions';
-Sbi.locale.ln['Sbi.office.zoomOut'] = 'Decrements dimensions';
