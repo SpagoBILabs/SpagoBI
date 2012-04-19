@@ -91,9 +91,9 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 						id : (i+1)//with 0 it doesn't work
 					});
 		    		freshCheck.on('checkchange', function(checkBox, checked){
-		        		this.crossTab.removePartialSum(true);
+		   
 		    			Sbi.crosstab.core.CrossTabShowHideUtility.showHideNode(header[checkBox.id-1], false, false, this.crossTab);
-		        		this.crossTab.calculatePartialSum();
+		 
 		    		}, this);
 		    		checkBoxes.push(freshCheck);
 		    		if(i<header.length-1 && (header[i].father.name != header[i+1].father.name)){
@@ -175,9 +175,9 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 				id : text
 			});
     		freshCheck.on('checkchange', function(checkBox, checked){
-        		this.crossTab.removePartialSum(true);
+        	
     			Sbi.crosstab.core.CrossTabShowHideUtility.showHideMeasure(checkBox.id, !checked, horizontal, this.crossTab);
-        		this.crossTab.calculatePartialSum();
+    
     		}, this);
     		checkBoxes.push(freshCheck);
     	}
@@ -224,9 +224,9 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 		        	text: LN('sbi.crosstab.menu.hideheader'),
 		        	iconCls:'hide',
 		        	handler:function(){
-		        		this.crossTab.removePartialSum(true);
+		        	
 		        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideNode(node, true, false, this.crossTab) ;       
-		        		this.crossTab.calculatePartialSum();
+		        	
 		        	},
 		        	scope: this
 		        },
@@ -234,9 +234,9 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 		        	text: LN('sbi.crosstab.menu.hideheadertype'),
 		        	iconCls:'hide',
 		        	handler:function(){
-		        		this.crossTab.removePartialSum(true);
+		        		
 		        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideAllNodes(node, true, this.crossTab, false);
-		        		this.crossTab.calculatePartialSum();
+		        	
 		        	},
 		        	scope: this
 		        },
