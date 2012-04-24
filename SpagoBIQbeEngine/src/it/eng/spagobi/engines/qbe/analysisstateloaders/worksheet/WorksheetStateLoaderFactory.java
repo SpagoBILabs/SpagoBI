@@ -23,14 +23,11 @@ public class WorksheetStateLoaderFactory {
 	
 	static {
 		loaderRegistry = new HashMap();
-		
-		loaderRegistry.put("0", 
-			new Version0WorksheetStateLoader()
-		);
-		
-		loaderRegistry.put("1", 
-				new Version1WorksheetStateLoader()
-		);
+		AbstractWorksheetStateLoader l0 = new Version0WorksheetStateLoader();
+		AbstractWorksheetStateLoader l1 = new Version1WorksheetStateLoader();
+		l0.setNextLoader(l1);
+		loaderRegistry.put("0", l0);
+		loaderRegistry.put("1", l1);
 	}
 	
 	private static WorksheetStateLoaderFactory instance;
