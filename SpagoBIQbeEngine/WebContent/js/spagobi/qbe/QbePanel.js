@@ -314,22 +314,9 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	}
 }
 
-//, executeQuery: function(query, promptableFilters) {
-//	this.tabs.activate(this.queryResultPanel);
-//	var newPromptableFilters = {};
-//	for (i in promptableFilters){
-//		var str =i;
-//		while ((str.indexOf(" "))>-1){
-//			str = str.replace(" ","_SPACE_");
-//		}
-//		newPromptableFilters[str] = promptableFilters[i];
-//	}
-//	
-//	this.queryResultPanel.execQuery(query, newPromptableFilters);
-//}
-
 , executeQuery: function(query, promptableFilters) {
 	var newPromptableFilters = { promptableFilters : Ext.encode(promptableFilters)};
+	this.tabs.activate(this.queryResultPanel);
 	this.queryResultPanel.execQuery(query, newPromptableFilters);
 }
 
