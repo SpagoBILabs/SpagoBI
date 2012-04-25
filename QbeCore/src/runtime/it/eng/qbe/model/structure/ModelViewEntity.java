@@ -288,13 +288,8 @@ public class ModelViewEntity extends ModelEntity {
 		Set<String> innerEntityUniqueNames = view.getInnerEntityUniqueNames();
 		for(String innerEntityUniqueName : innerEntityUniqueNames) {
 			IModelEntity e = structure.getRootEntity(modelName, innerEntityUniqueName);
-//			List<IModelEntity> innerEntitySubEntities = e.getSubEntities();
 			IModelEntity clonedEntity = e.clone(null, getUniqueName());
 			entities.add(clonedEntity);
-//			for(IModelEntity innerEntitySubEntity : innerEntitySubEntities) {
-//				IModelEntity subEntity = (innerEntitySubEntity.clone(clonedEntity, null));
-//				subEntities.put(subEntity.getUniqueName(), subEntity);
-//			}
 		}
 				
 		joins = new ArrayList<Join>();
