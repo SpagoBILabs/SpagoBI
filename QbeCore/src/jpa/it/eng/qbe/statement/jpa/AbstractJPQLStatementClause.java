@@ -22,6 +22,7 @@ import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.objects.Couple;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -259,8 +260,6 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 			
 			Slot defaultSlot = null;
 			
-
-			
 			newExpr = "CASE";
 			for(Slot slot : slots) {
 				List<Slot.IMappedValuesDescriptor> descriptors =  slot.getMappedValuesDescriptors();
@@ -331,7 +330,9 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 			if(defaultSlot != null) {
 				newExpr += " ELSE '" + defaultSlot.getName() + "'";
 			} else {
-				newExpr += " ELSE (" + expr + ")";
+				ConnectionDescriptor connection = (ConnectionDescriptor)parentStatement.getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
+				String dialect = connection.getDialect();
+				newExpr += " ELSE (" + SqlUtils.fromObjectToString(expr, dialect) + ")";
 			}
 			newExpr += " END ";
 		} catch (Throwable t) {

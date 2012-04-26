@@ -11,12 +11,17 @@
  */
 package it.eng.spagobi.utilities.sql;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia
@@ -24,6 +29,16 @@ import it.eng.spagobi.utilities.assertion.Assert;
  */
 public class SqlUtils {
 
+	
+	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";
+	public static final String DIALECT_TERADATA = "org.hibernate.dialect.TeradataDialect";
+	public static final String DIALECT_POSTGRES = "org.hibernate.dialect.PostgreSQLDialect";
+	public static final String DIALECT_ORACLE = "org.hibernate.dialect.OracleDialect";
+	public static final String DIALECT_HSQL = "org.hibernate.dialect.HSQLDialect";
+	public static final String DIALECT_ORACLE9i10g = "org.hibernate.dialect.Oracle9Dialect";
+	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
+	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
+	
 	public static boolean isSelectStatement(String query) {
 		if(query == null) return false;		
 		return query.toUpperCase().trim().startsWith("SELECT");
@@ -129,4 +144,34 @@ public class SqlUtils {
 		}
 		
 	}
+	
+	public static String fromObjectToString(Object obj, String dialect){
+		
+		String toReturn = obj.toString();
+		
+		if(dialect!=null){
+			
+			if( dialect.equalsIgnoreCase(DIALECT_MYSQL)){
+				toReturn = " concat("+toReturn+",'') ";
+			}else if( dialect.equalsIgnoreCase(DIALECT_HSQL)){
+				toReturn = " concat("+toReturn+",\"\") ";
+			}else if( dialect.equalsIgnoreCase(DIALECT_INGRES)){
+				toReturn = toReturn +"||''";
+			}else if( dialect.equalsIgnoreCase(DIALECT_ORACLE)){
+				toReturn = " concat("+toReturn+",'') ";
+			}else if( dialect.equalsIgnoreCase(DIALECT_ORACLE9i10g)){
+				toReturn = " concat("+toReturn+",'') ";
+			}else if( dialect.equalsIgnoreCase(DIALECT_POSTGRES)){
+				toReturn = toReturn +"||''";
+			}else if( dialect.equalsIgnoreCase(DIALECT_SQLSERVER)){
+				toReturn = toReturn +"+''";
+			} else if (dialect.equalsIgnoreCase(DIALECT_TERADATA)) {
+				toReturn = toReturn +"||''";
+			}
+		}
+		
+		return toReturn;
+		
+	}
+	
 }
