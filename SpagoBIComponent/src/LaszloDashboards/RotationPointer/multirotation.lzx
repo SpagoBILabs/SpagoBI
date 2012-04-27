@@ -152,9 +152,11 @@
 			<attribute name="height" value="100"/>
 			<attribute name="width" value="300"/>
 			<attribute name="title" value=""/>
-			<attribute name="resizable" value="true"/>
+			<attribute name="resizable" value="false"/>
 			<attribute name="closeable" value="true"/>
 			<attribute name="align" value="center"/>
+			<attribute name="allowdrag" value="false" />
+			
 
 			<!-- <wrappinglayout axis="y" spacing="10"/> -->  
 			<!-- <view name="viewText"  height="${parent.height+50}" clip="true"> -->
