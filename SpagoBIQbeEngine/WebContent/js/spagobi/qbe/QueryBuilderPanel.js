@@ -711,7 +711,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
     			
     			this.selectGridPanel.addField(field);
 			    		    
-    		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {	
+    		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {
  	    		var field = {
  	    			id: node.attributes.formState,
  	    			type: Sbi.constants.qbe.FIELD_TYPE_CALCULATED,
