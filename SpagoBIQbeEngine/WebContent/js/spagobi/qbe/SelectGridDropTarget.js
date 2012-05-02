@@ -110,125 +110,111 @@ Ext.extend(Sbi.qbe.SelectGridDropTarget, Ext.dd.DropTarget, {
 	// from TREE
 	// =====================================================================================
 	, notifyDropFromDatamartStructureTree: function(ddSource, e, data, rowIndex) {
-		//alert('Source object: tree');
-
-
-        var node;  // the node dragged from tree to grid
-        var field;        
-        var nodeType;
-        
-		node = ddSource.dragData.node; 				
+		this.addNodeToSelect(ddSource.dragData.node, rowIndex);
+	} 
+	
+	, addNodeToSelect: function(node, rowIndex, recordBaseConfig) {
+	     
+	    var nodeType;
+	        		
 		nodeType = node.attributes.type || node.attributes.attributes.type;
 
-        if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
-        	field = {
-        		id: node.id , 
-            	entity: node.attributes.attributes.entity , 
-            	field: node.attributes.attributes.field,
-            	alias: node.attributes.attributes.field,
-            	longDescription: node.attributes.attributes.longDescription
-          	};
-        
-        	this.targetPanel.addField(field, rowIndex);
-        	
-        } else if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD){
-        	
-        	field = {
-            	id: node.id , 
-                entity: node.attributes.attributes.entity , 
-                field: node.attributes.attributes.field,
-                alias: node.attributes.attributes.field  
-             };
-            
-            this.targetPanel.addField(field, rowIndex);
-            
-            // TODO: drop also all  the correlated fields. Snippet from method onAddNodeToSelect of QueryBuilderPanel
-            /*
-            var seeds =  Sbi.qbe.CalculatedFieldWizard.getUsedItemSeeds('dmFields', node.attributes.attributes.formState.expression);
- 	    		for(var i = 0; i < seeds.length; i++) {
- 	    			var n = node.parentNode.findChildBy(function(childNode) {
- 	    				return childNode.id === seeds[i];
- 	    			});
- 	    			
- 	    			if(n) {
- 	    				this.onAddNodeToSelect(n, {visible:false});
- 	    				//this.dataMartStructurePanel.fireEvent('click', this.dataMartStructurePanel, n);
- 	    			} else {
- 	    				alert('node  [' + seeds + '] not contained in entity [' + node.parentNode.text + ']');
- 	    			}
- 	    			
- 	    			
- 	    		}
-             */
-        } else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD){
-
-        	field = {
-        			id: node.attributes.attributes.formState,
-        			type: Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED,
-        			entity: node.parentNode.text, 
-        			field: node.text,
-        			alias: node.text,
-        			longDescription: null
-		    };
-
-            this.targetPanel.addField(field, rowIndex);
-            
-        } else if(nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY){
-			
-			for(var i = 0; i < node.attributes.children.length; i++) {
-				var childNode = node.attributes.children[i];
-				var nodeType = node.attributes.children[i].attributes.type;
-				
-				if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
-					field = {
-		      			id: childNode.id , 
-		        		entity:childNode.attributes.entity , 
-		        		field: childNode.attributes.field,
-		        		type: Sbi.constants.qbe.FIELD_TYPE_SIMPLE,
-		               	alias: childNode.attributes.field,
-		               	longDescription: childNode.attributes.longDescription
-		      		};				
-					this.targetPanel.addField(field, rowIndex);
-				} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {
-					field = {
-			           	id: childNode.id , 
-			            entity: childNode.attributes.entity , 
-			            field: childNode.attributes.field,
-			            alias: childNode.attributes.field  
-			        };
-			            
-			        this.targetPanel.addField(field, rowIndex);
-				} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
-					field = {
-		        		id: childNode.attributes.formState,
-		        		type: Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED,
-		        		entity: node.text, 
-		        		field: childNode.text,
-		        		alias: childNode.text,
-		        		longDescription: null
-				    };
-
-		            this.targetPanel.addField(field, rowIndex);
-				} else {
-					continue;
-				}
-				
-				
-				
-			}
-			
-        } else {
-        	Ext.Msg.show({
-				   title:'Drop target not allowed',
-				   msg: 'Node of type [' + nodeType + '] cannot be dropped here',
-				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.ERROR
+	    if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
+	    	this.addSimpleNodeToSelect(node, rowIndex, recordBaseConfig);	        	
+	    } else if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD){
+	    	this.addCalculatedNodeToSelect(node, rowIndex, recordBaseConfig);
+	    } else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD){
+	    	this.addInLineCalculatedNodeToSelect(node, rowIndex, recordBaseConfig);
+	    } else if(nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY){
+			this.addEntityNodeToSelect(node, rowIndex, recordBaseConfig);	
+		} else {
+	       	Ext.Msg.show({
+			   title:'Drop target not allowed',
+			   msg: 'Node of type [' + nodeType + '] cannot be dropped here',
+			   buttons: Ext.Msg.OK,
+			   icon: Ext.MessageBox.ERROR
 			});
-        }
+	    }
 
-        this.targetGrid.getView().refresh();
-	} 
+	    this.targetGrid.getView().refresh();
+	}
 
+	
+	, addSimpleNodeToSelect: function(node, rowIndex, recordBaseConfig) {
+		var field = {
+			id: node.id , 
+        	entity: node.attributes.attributes.entity , 
+        	field: node.attributes.attributes.field,
+        	alias: node.attributes.attributes.field,
+        	longDescription: node.attributes.attributes.longDescription
+        };
+        
+		recordBaseConfig = recordBaseConfig || {};
+		Ext.apply(field, recordBaseConfig);
+		
+        this.targetPanel.addField(field, rowIndex);
+	}
+	
+	, addCalculatedNodeToSelect: function(node, rowIndex, recordBaseConfig) {
+		
+	
+		var field = {
+	       	id: node.attributes.attributes.formState,
+	       	type: Sbi.constants.qbe.FIELD_TYPE_CALCULATED,
+//	        entity: node.attributes.attributes.entity , 
+//	        field: node.attributes.attributes.field,
+//	        alias: node.attributes.attributes.field,
+	       	entity: node.parentNode.text, 
+	    	field: node.text,
+		    alias: node.text,
+	        longDescription: null
+	    };
+	            
+		recordBaseConfig = recordBaseConfig || {};
+		Ext.apply(field, recordBaseConfig);
+			
+		 this.targetPanel.addField(field, rowIndex);
+	           
+	    var seeds =  Sbi.qbe.CalculatedFieldWizard.getUsedItemSeeds('dmFields', node.attributes.attributes.formState.expression);
+		for(var i = 0; i < seeds.length; i++) {
+			
+		  	var n = node.parentNode.findChildBy(function(childNode) {
+		   		return childNode.id === seeds[i];
+		   	});
+		  	
+		   	if(n) {
+		   		this.addNodeToSelect(n, rowIndex, {visible:false});
+		   	} else {
+		   		alert('node  [' + seeds + '] not contained in entity [' + node.parentNode.text + ']');
+		   	}
+		}
+	}
+	
+	, addInLineCalculatedNodeToSelect: function(node, rowIndex, recordBaseConfig) {
+		var field = {
+    			id: node.attributes.attributes.formState,
+    			type: Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED,
+    			entity: node.parentNode.text, 
+    			field: node.text,
+    			alias: node.text,
+    			longDescription: null
+	    };
+
+		recordBaseConfig = recordBaseConfig || {};
+		Ext.apply(field, recordBaseConfig);
+		
+        this.targetPanel.addField(field, rowIndex);
+	}
+	
+	, addEntityNodeToSelect: function(node, rowIndex, recordBaseConfig) {
+		for(var i = 0; i < node.attributes.children.length; i++) {
+			var childNode = node.attributes.children[i];
+			childNode.attributes.attributes = childNode.attributes;
+			this.addNodeToSelect(childNode, rowIndex, recordBaseConfig);
+		}
+	}
+	
+	
 	//=====================================================================================
 	// from SELECT GRID (self)
 	// ====================================================================================
