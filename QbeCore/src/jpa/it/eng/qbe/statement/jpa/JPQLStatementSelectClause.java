@@ -80,6 +80,10 @@ public class JPQLStatementSelectClause extends AbstractJPQLStatementClause {
 			int calculatedFieldNumber = query.getCalculatedSelectFields(true).size();
 			logger.debug("In select clause of query [" + query.getId() + "] there are [" + calculatedFieldNumber + "] calculated fields out of [" + selectFields.size() + "]");
 			
+			int statementFiledsNo = selectFields.size() - calculatedFieldNumber; // = simpleFields + inlineCalculatedFields
+			if(statementFiledsNo == 0) {
+				throw new RuntimeException("Impossible to execute a query that contains in the select statemet only (expert) calculated fields");
+			}
 			statementFields = new String[selectFields.size() - calculatedFieldNumber]; 
 			index = 0;
 			
@@ -114,13 +118,11 @@ public class JPQLStatementSelectClause extends AbstractJPQLStatementClause {
 					logger.debug("select clause element succesfully added to select clause");
 			}
 				
-				
-			for(int y= 0; y < statementFields.length-1; y++){
-				buffer.append(statementFields[y]+",");
-			}
-			
-			buffer.append(statementFields[statementFields.length-1]);
-		
+			String separator = "";
+			for(int y = 0; y < statementFields.length; y++){
+				buffer.append(separator + statementFields[y]);
+				separator = ",";
+			}		
 		} finally {
 			logger.debug("OUT");
 		}
