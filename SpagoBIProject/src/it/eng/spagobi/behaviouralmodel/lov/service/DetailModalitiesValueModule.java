@@ -28,6 +28,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.behaviouralmodel.lov.bo.DatasetDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListItemDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
@@ -391,6 +392,23 @@ public class DetailModalitiesValueModule extends AbstractModule {
 						objectToTest = fixlistDet;
 					}	
 				}
+				else if (input_type_cd.equalsIgnoreCase("DATASET")) {					
+					String lovProv = modVal.getLovProvider();
+					DatasetDetail datasetDet =  null;
+					if( (lovProv==null) || (lovProv.trim().equals("")) ) {
+						datasetDet = new DatasetDetail();
+					} else {
+						datasetDet = (DatasetDetail)LovDetailFactory.getLovFromXML(lovProv);
+					}
+					recoverDatasetWizardValues(request, datasetDet);
+					String lovProvider = datasetDet.toXML();
+					modVal.setLovProvider(lovProvider);
+					ValidationCoordinator.validate("PAGE", "DatasetWizardValidation", this);
+					objectToTest = datasetDet;
+				} 
+				
+				
+				
 				// if there are some validation errors into the errorHandler does not write into DB
 				Collection errors = errorHandler.getErrors();
 				if (errors != null && errors.size() > 0) {
@@ -776,6 +794,19 @@ public class DetailModalitiesValueModule extends AbstractModule {
 			script = "<![CDATA[" + script + "]]>";
 			sdet.setScript(script);	   
 			sdet.setLanguageScript(languageScript);
+	}
+	
+	/**
+	 * Recover all Dataset Wizard values when a value is inserted or modified, choosing "Dataset"
+	 * as the input type. 
+	 * 
+	 * @param request The request SourceBean
+	 */
+	private void recoverDatasetWizardValues (SourceBean request, DatasetDetail dataset) {
+		String datasetId = (String)request.getAttribute("dataset");
+		String datasetLabel = (String)request.getAttribute("datasetReadLabel");
+		dataset.setDatasetId(datasetId);
+		dataset.setDatasetLabel(datasetLabel);
 	}
 	
 	
