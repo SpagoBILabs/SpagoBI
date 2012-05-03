@@ -26,6 +26,8 @@ public class LovDetailFactory {
 	public static final String SCRIPTLOV 	= "SCRIPTLOV";
 	public static final String QUERYLOV 	= "QUERY";
 	public static final String FIXEDLISTLOV = "FIXLISTLOV";
+	public static final String DATASETLOV   = "DATASET";
+
 	
 	/**
 	 * Creates an instace of a lov class (which implements ILovDetail interface)
@@ -49,7 +51,10 @@ public class LovDetailFactory {
 			lov = new QueryDetail(dataDefinition);
 		} else if (dataDefinition.startsWith("<" + FIXEDLISTLOV)) {
 			lov = new FixedListDetail(dataDefinition);
+		} else if (dataDefinition.startsWith("<" + DATASETLOV)) {
+			lov = new DatasetDetail(dataDefinition);
 		}
+		
 		return lov;
 	}
 	
@@ -119,6 +124,8 @@ public class LovDetailFactory {
 			type = "QUERY";
 		} else if( lovprovider.startsWith("<" + FIXEDLISTLOV ) || lovprovider.startsWith("<" + "ROWS" ) ) {
 			type = "FIXED_LIST";
+		} else if( lovprovider.startsWith("<" + DATASETLOV )) {
+			type = "DATASET";
 		}
 		return type;
 	}
