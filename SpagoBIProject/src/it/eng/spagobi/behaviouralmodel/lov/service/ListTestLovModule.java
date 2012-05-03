@@ -29,6 +29,7 @@ import it.eng.spago.paginator.basic.PaginatorIFace;
 import it.eng.spago.paginator.basic.impl.GenericList;
 import it.eng.spago.paginator.basic.impl.GenericPaginator;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.behaviouralmodel.lov.bo.DatasetDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.IJavaClassLov;
 import it.eng.spagobi.behaviouralmodel.lov.bo.JavaClassDetail;
@@ -161,7 +162,23 @@ public class ListTestLovModule extends AbstractBasicListModule {
 				response.setAttribute("testExecuted", "false");
 				return list;
 			}
+		} else if(typeLov.equalsIgnoreCase("DATASET")) {
+			DatasetDetail datasetClassDetail = DatasetDetail.fromXML(looProvider);
+			try{		
+				String result = datasetClassDetail.getLovResult(profile, null, null);
+				rowsSourceBean = SourceBean.fromXMLString(result);
+				colNames = findFirstRowAttributes(rowsSourceBean);
+			} catch (Exception e) {
+				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), 
+			                        "getList", "Error while executing the dataset lov", e);
+				String stacktrace = e.toString();
+				response.setAttribute("stacktrace", stacktrace);
+				response.setAttribute("errorMessage", "Error while executing dataset");
+				response.setAttribute("testExecuted", "false");
+				return list;
+			}
 		}
+		
 		// fill paginator
 		if(rowsSourceBean != null) {
 			List rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
