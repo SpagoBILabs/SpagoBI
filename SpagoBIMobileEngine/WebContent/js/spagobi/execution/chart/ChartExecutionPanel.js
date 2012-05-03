@@ -45,6 +45,8 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 			this.addValueTip(config);
 		}
 
+		
+		///---------------------------------------
 		var chartConfig = {
 
 			items : [ config ]
@@ -99,7 +101,7 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 			this.loadingMask.hide();
 		}
 	}
-	
+
 	, addValueTip: function(config){
 		config.interactions.push({
             type: 'iteminfo',

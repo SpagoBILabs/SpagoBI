@@ -1,10 +1,14 @@
 app.views.WidgetPanel = Ext.extend(Ext.Panel, {
 	
 	executionInstance : null
+	,slider: null
+	, dockedItems: []
+	                
     ,initComponent: function (options) {
 
     	app.views.WidgetPanel.superclass.initComponent.apply(this, arguments);
-
+		///to add a slider configuration property
+		//this.addSlider();
 	}
 	
 	,
@@ -25,4 +29,17 @@ app.views.WidgetPanel = Ext.extend(Ext.Panel, {
 		var targetDoc = drill.document;
 		return targetDoc;
 	}
+/*	, addSlider: function(){
+		var attr = {
+			name: 'Slider',
+			value: 5,
+			minValue: 0,
+			maxValue: 10
+		};
+		this.slider = new app.views.Slider({
+			sliderAttributes: attr
+		});
+
+		this.dockedItems.items.push(this.slider);
+	}*/
 });

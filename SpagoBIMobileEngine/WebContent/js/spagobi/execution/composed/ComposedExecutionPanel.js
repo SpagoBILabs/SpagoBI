@@ -6,9 +6,9 @@ app.views.ComposedExecutionPanel = Ext.extend(app.views.WidgetPanel,
 		, initComponent: function (options)	{
 
 			console.log('init composed execution');
-		    
+
 			app.views.ComposedExecutionPanel.superclass.initComponent.apply(this, arguments);
-			
+
 		},
 		setComposedWidget: function(resp){
 			var title = resp.title.value;
@@ -34,6 +34,8 @@ app.views.ComposedExecutionPanel = Ext.extend(app.views.WidgetPanel,
 					app.controllers.composedExecutionController.executeSubDocument(subDocumentExecutionInstance, subDocumentPanel);
 					items.push(subDocumentPanel);
 				}
+				///to add a slider configuration property
+				this.addSlider(items);
 			}
 
 			var composedDocumentContainerConfig = {
@@ -107,6 +109,18 @@ app.views.ComposedExecutionPanel = Ext.extend(app.views.WidgetPanel,
 			}, panel);
 			
 		}
+		, addSlider: function(items){
+			var attr = {
+				name: 'Slider',
+				value: 5,
+				minValue: 0,
+				maxValue: 10
+			};
+			this.slider = new app.views.Slider({
+				sliderAttributes: attr
+			});
 
+			items.push(this.slider);
+		}
 		
 });
