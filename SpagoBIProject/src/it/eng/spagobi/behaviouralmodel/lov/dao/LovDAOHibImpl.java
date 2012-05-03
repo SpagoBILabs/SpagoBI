@@ -403,6 +403,7 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	modVal.setId(hibLov.getLovId());
 	modVal.setITypeCd(hibLov.getInputTypeCd());
 	modVal.setITypeId(String.valueOf(hibLov.getInputType().getValueId()));
+	modVal.setDataset(hibLov.getDatasetId());
 	modVal.setLovProvider(hibLov.getLovProvider());
 	modVal.setName(hibLov.getName());
 	modVal.setLabel(hibLov.getLabel());
