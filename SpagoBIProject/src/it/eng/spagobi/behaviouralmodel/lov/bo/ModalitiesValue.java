@@ -11,6 +11,8 @@
  */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+
 import java.io.Serializable;
 
 
@@ -31,6 +33,8 @@ public class ModalitiesValue implements Serializable  {
 	private String lovProvider ="";
 	private String iTypeCd ="";
 	private String iTypeId = "";
+	private SbiDataSetConfig dataset;
+	private Integer datasetId;
 	private String label ="";
 	private String selectionType ="";
 	private boolean multivalue = true;
@@ -199,5 +203,34 @@ public class ModalitiesValue implements Serializable  {
 	 */
 	public void setMultivalue(boolean multivalue) {
 		this.multivalue = multivalue;
+	}
+
+	/**
+	 * @return the datasetID
+	 */
+	public Integer getDatasetID() {
+		this.datasetId = new Integer(dataset.getDsId());
+		return datasetId;
+	}
+
+	/**
+	 * @param datasetId the datasetID to set
+	 */
+	public void setDatasetID(Integer datasetId) {
+		this.datasetId = datasetId;
+	}
+
+	/**
+	 * @return the dataset
+	 */
+	public SbiDataSetConfig getDataset() {
+		return dataset;
+	}
+
+	/**
+	 * @param dataset the dataset to set
+	 */
+	public void setDataset(SbiDataSetConfig dataset) {
+		this.dataset = dataset;
 	}
 }
