@@ -296,6 +296,18 @@
         </attribute>
     </tag>
     
+    <tag>
+        <name>datasetLovWizard</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.DatasetLovWizardTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of the dataset lov form</description>
+        <attribute>
+            <name>datasetId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>    
+    
         <tag>
         <name>datasetWizard</name>
         <tag-class>it.eng.spagobi.commons.presentation.tags.DatasetWizardTag</tag-class>
