@@ -712,8 +712,14 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
     			this.selectGridPanel.addField(field);
 			    		    
     		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {
+    			// if is previously saved calculated field
+//    			if(!node.attributes.formState && node.attributes.attributes) {
+//    				node.attributes.formState = node.attributes.attributes.formState;
+//    				alert(node.attributes.toSource());
+//    			}
+    			
  	    		var field = {
- 	    			id: node.attributes.formState,
+ 	    			id: node.attributes.attributes.formState,
  	    			type: Sbi.constants.qbe.FIELD_TYPE_CALCULATED,
  	    			entity: node.parentNode.text, 
 			    	field: node.text,

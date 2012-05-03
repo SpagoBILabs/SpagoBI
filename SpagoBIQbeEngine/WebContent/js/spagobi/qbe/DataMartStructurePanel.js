@@ -758,7 +758,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		var editingMode;
 		
 		nodeType = targetNode.attributes.type || targetNode.attributes.attributes.type;
-			
+		
 		// is it the editing of en existing field or the creation of a new one?
 		if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 			entityId = targetNode.parentNode.id;
@@ -897,8 +897,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     	}); 
 		
 
-    	
 		if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {
+			targetNode.id = formState;
 			targetNode.setText(formState.alias);
 			targetNode.attributes.attributes.formState = formState;
 		} else if (nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY) {
