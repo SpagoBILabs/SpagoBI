@@ -466,6 +466,19 @@
 			</FIELDS>
 		</VALIDATION>
 	</SERVICE>
+	
+	<SERVICE name="DatasetWizardValidation" type="PAGE">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS/>
+			<FIELDS>
+				<FIELD name="datasetReadLabel" label="#SBIDev.datasetLovWiz.datasetLabelField">
+				    <VALIDATOR validatorName="MANDATORY"/>
+				    <VALIDATOR validatorName="XSS"/>
+				 	<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>	
 
     <SERVICE name="LovTestColumnSelector" type="PAGE">
 		<VALIDATION blocking="false" validators="">
