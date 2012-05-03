@@ -4,6 +4,7 @@
 <DOMAIN valueCd="SCRIPT" valueNm="sbidomains.nm.script" domainCd="INPUT_TYPE" domainNm="Input mode and values" valueDs="sbidomains.ds.script"/>
 <DOMAIN valueCd="FIX_LOV" valueNm="sbidomains.nm.fix_lov" domainCd="INPUT_TYPE" domainNm="Input mode and values" valueDs="sbidomains.ds.fix_lov"/>
 <DOMAIN valueCd="JAVA_CLASS" valueNm="sbidomains.nm.java_class" domainCd="INPUT_TYPE" domainNm="Input mode and values" valueDs="sbidomains.ds.java_class"/>
+<DOMAIN valueCd="DATASET" valueNm="sbidomains.nm.dataset" domainCd="INPUT_TYPE" domainNm="Input mode and values" valueDs="sbidomains.ds.dataset"/>
 <DOMAIN valueCd="REPORT" valueNm="sbidomains.nm.report" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.report"/>
 <DOMAIN valueCd="OLAP" valueNm="sbidomains.nm.olap" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.olap"/>
 <DOMAIN valueCd="DATA_MINING" valueNm="sbidomains.nm.data_mining" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.data_mining"/>
