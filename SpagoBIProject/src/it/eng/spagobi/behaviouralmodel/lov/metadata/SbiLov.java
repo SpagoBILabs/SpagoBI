@@ -13,6 +13,7 @@ package it.eng.spagobi.behaviouralmodel.lov.metadata;
 
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 
 
 
@@ -27,6 +28,7 @@ public class SbiLov  extends SbiHibernateModel {
 
      private Integer lovId;
      private SbiDomains inputType;
+     private SbiDataSetConfig datasetId;
      private String inputTypeCd;
      private String defaultVal;
      private String label;
@@ -220,5 +222,19 @@ public class SbiLov  extends SbiHibernateModel {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return the datasetId
+	 */
+	public SbiDataSetConfig getDatasetId() {
+		return datasetId;
+	}
+
+	/**
+	 * @param datasetId the datasetId to set
+	 */
+	public void setDatasetId(SbiDataSetConfig datasetId) {
+		this.datasetId = datasetId;
 	}
 }
