@@ -28,6 +28,7 @@ import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.commons.utilities.urls.IUrlBuilder;
 import it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 
 import java.util.Iterator;
@@ -210,6 +211,7 @@ public class FunctionalitiesTreeInsertObjectHtmlGenerator implements ITreeHtmlGe
 		logger.debug("IN");	
 		String nameLabel = folder.getName();
 		String name = msgBuilder.getMessage(nameLabel, "messages", httpRequest);
+		name = StringUtils.escapeForHtml(name);
 		String codeType = folder.getCodType();
 		Integer id = folder.getId();
 		Integer parentId = null;
