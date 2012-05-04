@@ -447,7 +447,7 @@ public class CrossTab {
 			}
 			nodePosition = nodeToCheck.getChilds().indexOf(node);
 			if(nodePosition<0){
-				nodeToCheck.addChild(node);
+				nodeToCheck.addOrderedChild(node);
 				nodeToCheck = node;
 			}else{
 				nodeToCheck = nodeToCheck.getChilds().get(nodePosition);
@@ -500,7 +500,7 @@ public class CrossTab {
 		if(node.getChilds().size()==0){
 			for(int i=0; i<measuresNodes.size(); i++){
 				Node n = measuresNodes.get(i).clone();
-				node.addChild(n);
+				node.addOrderedChild(n);
 			}
 		}else{
 			for(int i=0; i<node.getChilds().size(); i++){
