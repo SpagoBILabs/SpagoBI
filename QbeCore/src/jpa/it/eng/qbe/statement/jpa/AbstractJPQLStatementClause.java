@@ -349,21 +349,11 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 	 * @return the date in the db format
 	 */
 	protected String parseDate(String date){
-		if (date==null || date.equals("")){
+		if (date == null || date.equals("")) {
 			return "";
 		}
 		
-		String toReturn = "'" +date+ "'";
-		
-		Date operandValueToBoundDate = null;
-		try {			
-			operandValueToBoundDate = TIMESTAMP_FORMATTER.parse(date);
-			DateFormat stagingDataFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");	
-			toReturn = stagingDataFormat.format(operandValueToBoundDate);
-		} catch (ParseException e) {
-			logger.error("Error parsing the date " + date, e);
-			throw new SpagoBIRuntimeException("Error parsing the date "+date);
-		}
+		String toReturn = date;
 		
 		ConnectionDescriptor connection = (ConnectionDescriptor)parentStatement.getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
 		String dialect = connection.getDialect();
