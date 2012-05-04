@@ -197,4 +197,13 @@
 	 background-color: transparent;
 	 padding-top: 3px;
 }
-
+.sliderLbl{
+	color: #283C54;
+	font-family: tahoma, arial, san-serif;
+	font-size: small;
+	font-weight: bold;
+	text-align: center;
+	align: center;
+	vertical-align: middle;
+	padding-top: 20px;
+}

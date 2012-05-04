@@ -4,16 +4,24 @@ app.views.Slider = Ext.extend(Ext.form.Slider,
 	    ui: 'light',
 	    id: 'mobileSlider',
 	    xtype: 'sliderfield',
-	    name: 'year',
-	    maxValue : 2009,
-	    style: 'float: left; width:100%;',
-	    minValue : 1960,
-	    value: 2009
-	    ,listeners: {
-	        change: function(slider, thumb, value) {
-		 /* if (value) {
-	            	alert('ciao');
-	            }*/
+	    style: 'float: left; width:85%;',
+	    increment: 1,
+        tipText: function(thumb){
+            return Ext.String.format('<b>{0}% complete</b>', thumb.value);
+        },
+	    listeners: {
+	        change: function(slider, thumb, value, oldvalue) {
+		    	if (value && value!= oldvalue) {
+
+		    		var params = {};
+		    		var name = slider.name;
+		    		params[name]= value;
+		    		var items = app.views.composed.items.items;
+		    		for(i =0; i < items.length; i++){
+		    			var panel = items[i];
+		    			app.controllers.composedExecutionController.refreshSubDocument(panel, params);
+		    		}
+	            }
 	        }
 	    },
 	    layout: {
@@ -26,10 +34,17 @@ app.views.Slider = Ext.extend(Ext.form.Slider,
 			console.log('init chart slider');
 			var attributes = this.sliderAttributes;
 			
-			this.maxValue = attributes.maxValue;
-			this.minValue = attributes.minValue;
+			this.maxValue = parseInt(attributes.maxValue);
+			this.minValue = parseInt(attributes.minValue);
 			this.name = attributes.name;
-			this.value = attributes.value;
+			if(attributes.value !== undefined){
+				this.value = parseInt(attributes.value);
+			}
+			if(attributes.increment !== undefined){
+				this.increment = parseInt(attributes.increment);
+			}
+			
+			//this.label = attributes.label; //not nice to see...
 			
 			app.views.Slider.superclass.initComponent.apply(this, arguments);
 			
