@@ -11,7 +11,7 @@
  */
 package it.eng.spagobi.engines.qbe.query;
 
-import it.businesslogic.ireport.export.JRTxtExporter;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -34,7 +34,8 @@ import net.sf.jasperreports.engine.export.JRCsvExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
-import net.sf.jasperreports.engine.export.JRRtfExporter;
+import net.sf.jasperreports.engine.export.JRRtfExporter;import net.sf.jasperreports.engine.export.JRTextExporter;
+
 import net.sf.jasperreports.engine.export.JRXmlExporter;
 import net.sf.jasperreports.engine.fill.JRFileVirtualizer;
 
@@ -99,7 +100,7 @@ public class ReportRunner {
 		   	exporter = new JRXmlExporter();
 		} else if (outputType.equalsIgnoreCase("text/plain")) {
 		   	//exporter = new JRTextExporter(); 
-		   	exporter = new JRTxtExporter(); 
+		   	exporter = new JRTextExporter(); 
 		} else if (outputType.equalsIgnoreCase("text/csv")) {
 		   	exporter = new JRCsvExporter(); 	
 		} else if (outputType.equalsIgnoreCase("application/pdf"))	{			
