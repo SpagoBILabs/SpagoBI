@@ -1028,6 +1028,13 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     		}
     		newEntries.push(templine);
     	}
+    	  		
+    	var celltypeOfColumnsNew = new Array();
+    	for(var y=0; y<entries[0].length; y++){
+    		celltypeOfColumnsNew.push(this.celltypeOfColumns[newPositions[y]]);
+    	}
+    	this.celltypeOfColumns = celltypeOfColumnsNew;
+   		
     	this.entries.setEntries(newEntries);
     }
 
@@ -1038,6 +1045,13 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	for(var i=0; i<entries.length; i++){
     		newEntries.push(entries[newPositions[i]]);
     	}
+    	
+    	var celltypeOfRowsNew = new Array();
+    	for(var i=0; i<entries.length; i++){
+   			celltypeOfRowsNew.push(this.celltypeOfRows[newPositions[i]]);
+        }
+   		this.celltypeOfRows = celltypeOfRowsNew;
+   	
     	this.entries.setEntries(newEntries);
     }
     
