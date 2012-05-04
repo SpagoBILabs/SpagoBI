@@ -35,7 +35,7 @@ app.views.ComposedExecutionPanel = Ext.extend(app.views.WidgetPanel,
 					items.push(subDocumentPanel);
 				}
 				///to add a slider configuration property
-				this.addSlider(items);
+				this.addSlider(items, resp.slider);
 			}
 
 			var composedDocumentContainerConfig = {
@@ -109,18 +109,26 @@ app.views.ComposedExecutionPanel = Ext.extend(app.views.WidgetPanel,
 			}, panel);
 			
 		}
-		, addSlider: function(items){
-			var attr = {
-				name: 'Slider',
-				value: 5,
-				minValue: 0,
-				maxValue: 10
-			};
-			this.slider = new app.views.Slider({
-				sliderAttributes: attr
-			});
+		, addSlider: function(items, slider){
 
+			this.slider = new app.views.Slider({
+				sliderAttributes: slider
+			});
+			var minLbl = {
+	            xtype: 'component',
+	            style: 'float: left; width: 7%',
+	            cls: 'sliderLbl',
+	            html: slider.minValue
+	        };
+			var maxLbl = {
+		            xtype: 'component',
+		            style: 'float: left; width: 7%',
+		            cls: 'sliderLbl',
+		            html: slider.maxValue
+		    };
+			items.push(minLbl);
 			items.push(this.slider);
+			items.push(maxLbl);
 		}
 		
 });

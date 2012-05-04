@@ -68,8 +68,13 @@ public class MobileConstants {
 	public static final String PARAMETER = "PARAMETER";
 	public static final String PARAMETER_URL_NAME = "urlName";
 	public static final String PARAMETER_DEFAULT_VALUE = "defaultValue";
-	
-	
+	public static final String SLIDER_TAG = "SLIDER";
+	public static final String SLIDER_NAME_ATTR = "name";
+	public static final String SLIDER_MIN_ATTR = "minValue";
+	public static final String SLIDER_MAX_ATTR = "maxValue";
+	public static final String SLIDER_VALUE_ATTR = "value";
+	public static final String SLIDER_LABEL_ATTR = "label";
+	public static final String SLIDER_INCREMENT_ATTR = "increment";
 	
 	public static final String PARAM_TYPE_RELATIVE = "RELATIVE";
 	public static final String PARAM_TYPE_ABSOLUTE = "ABSOLUTE";

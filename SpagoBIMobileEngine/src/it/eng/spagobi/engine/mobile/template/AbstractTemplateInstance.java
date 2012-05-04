@@ -29,6 +29,7 @@ import org.json.JSONObject;
 public class AbstractTemplateInstance {
 	//table template properties
 	protected JSONObject drill = new JSONObject();
+	
 
 	protected SourceBean template;
 	protected HashMap<String, String> paramsMap = new HashMap<String, String>();
@@ -76,4 +77,5 @@ public class AbstractTemplateInstance {
 		logger.debug("OUT");		
 
 	}
+
 }

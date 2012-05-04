@@ -21,14 +21,14 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 
 
 	private static transient Logger logger = Logger.getLogger(ComposedTemplateInstance.class);
-	
 
-	
 		
 	private SourceBean template;
 	private JSONObject title = new JSONObject();
 	private JSONObject documents = new JSONObject();
 	private JSONObject features = new JSONObject();
+	private JSONObject slider = new JSONObject();
+	
 	
 	public ComposedTemplateInstance(SourceBean template) {
 		this.template = template;
@@ -38,6 +38,7 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 	public void loadTemplateFeatures() throws Exception {
 		buildTitleJSON();
 		buildDocumentsJSON();
+		buildSliderJSON();
 		setFeatures();
 		
 	}
@@ -46,6 +47,7 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 		try {
 			features.put("title", title);
 			features.put("documents", documents);
+			features.put("slider", slider);
 
 		} catch (JSONException e) {
 			logger.error("Unable to set features");
@@ -151,7 +153,34 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 		}
 		return toReturn;
 	}
+	protected void buildSliderJSON() throws Exception {
+		
+		SourceBean confSB = null;
+		
+		logger.debug("IN");
+		confSB = (SourceBean)template.getAttribute(MobileConstants.SLIDER_TAG);
+		if(confSB == null) {
+			return;
+		}else{
 
+			String name = (String)confSB.getAttribute(MobileConstants.SLIDER_NAME_ATTR);
+			String min = (String)confSB.getAttribute(MobileConstants.SLIDER_MIN_ATTR);
+			String max = (String)confSB.getAttribute(MobileConstants.SLIDER_MAX_ATTR);
+			String value = (String)confSB.getAttribute(MobileConstants.SLIDER_VALUE_ATTR);
+			String label = (String)confSB.getAttribute(MobileConstants.SLIDER_LABEL_ATTR);
+			String increm = (String)confSB.getAttribute(MobileConstants.SLIDER_INCREMENT_ATTR);
+
+			slider.putOpt("name", name);
+			slider.putOpt("value", value);
+			slider.putOpt("minValue", min);
+			slider.putOpt("maxValue", max);
+			slider.putOpt("label", label);
+			slider.putOpt("increment", increm);
+		}
+		
+		logger.debug("OUT");		
+
+	}
 	@Override
 	public JSONObject getFeatures() {
 		return features;
