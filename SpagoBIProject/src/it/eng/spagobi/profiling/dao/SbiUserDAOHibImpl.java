@@ -15,17 +15,12 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.kpi.config.bo.Kpi;
-import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
 import it.eng.spagobi.profiling.bo.UserBO;
-import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
@@ -43,8 +38,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+
+import com.ibm.db2.jcc.a.a;
 
 public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserDAO {
 	
@@ -777,7 +773,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		LogMF.debug(logger, "IN : user id = [{0}]", userId);
 		// case insensitive search!!!!
 		Criteria criteria = aSession.createCriteria(SbiUser.class);
-		criteria.add(Restrictions.ilike("userId", userId, MatchMode.EXACT));
+		criteria.add(Restrictions.eq("userId", userId).ignoreCase());
 		SbiUser user = (SbiUser) criteria.uniqueResult();
 		LogMF.debug(logger, "OUT : returning [{0}]", user);
 		return user;
