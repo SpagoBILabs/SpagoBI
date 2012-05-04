@@ -14,6 +14,7 @@ package it.eng.spagobi.engines.qbe.crosstable;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab.CellType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -24,7 +25,7 @@ import org.json.JSONObject;
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-public class Node implements Cloneable{
+public class Node implements Cloneable, Comparable<Node>{
 		public static final String CROSSTAB_NODE_JSON_CHILDS = "node_childs";
 		public static final String CROSSTAB_NODE_JSON_KEY = "node_key";
 	
@@ -50,6 +51,14 @@ public class Node implements Cloneable{
 		
 		public void setChilds(List<Node> childs) {
 			this.childs = childs;
+			//Collections.sort(this.childs);
+		}
+		
+		public void addOrderedChild(Node child){
+			childs.add(child);
+			if(child!=null){
+				Collections.sort(childs);
+			}
 		}
 		
 		public void addChild(Node child){
@@ -322,6 +331,14 @@ public class Node implements Cloneable{
 
 		public void setCellType(CellType cellType) {
 			this.cellType = cellType;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
+		@Override
+		public int compareTo(Node arg0) {
+			return value.compareTo(arg0.getValue());
 		}
 		
 		
