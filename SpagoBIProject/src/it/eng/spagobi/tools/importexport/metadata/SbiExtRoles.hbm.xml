@@ -46,6 +46,9 @@
         <property name="isAbleToSaveIntoPersonalFolder" type="boolean">
             <column name="save_into_folder" />
         </property>
+        <property name="isAbleToEditWorksheet" type="boolean">
+           	<column name="edit_worksheet" />
+       	</property>
         <property name="isAbleToSaveRememberMe" type="boolean">
             <column name="save_remember_me" />
         </property>

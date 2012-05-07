@@ -312,6 +312,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setIsAbleToSaveIntoPersonalFolder(new Boolean(aRole.isAbleToSaveIntoPersonalFolder()));
 			hibRole.setIsAbleToBuildQbeQuery(new Boolean(aRole.isAbleToBuildQbeQuery()));
 			hibRole.setIsAbleToDoMassiveExport(new Boolean(aRole.isAbleToDoMassiveExport()));
+			hibRole.setIsAbleToEditWorksheet(new Boolean(aRole.isAbleToEditWorksheet()));
 			
 			SbiDomains roleType = (SbiDomains)aSession.load(SbiDomains.class,  aRole.getRoleTypeID());
 			hibRole.setRoleType(roleType);
@@ -507,6 +508,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		role.setIsAbleToSaveIntoPersonalFolder(hibRole.getIsAbleToSaveIntoPersonalFolder() == null || hibRole.getIsAbleToSaveIntoPersonalFolder().booleanValue());
 		role.setIsAbleToBuildQbeQuery(hibRole.getIsAbleToBuildQbeQuery() == null || hibRole.getIsAbleToBuildQbeQuery().booleanValue());
 		role.setIsAbleToDoMassiveExport(hibRole.getIsAbleToDoMassiveExport() == null || hibRole.getIsAbleToDoMassiveExport().booleanValue());
+		role.setIsAbleToEditWorksheet(hibRole.getIsAbleToEditWorksheet() == null || hibRole.getIsAbleToEditWorksheet().booleanValue());
 
 		role.setRoleTypeCD(hibRole.getRoleTypeCode());
 		role.setRoleTypeID(hibRole.getRoleType().getValueId());
@@ -635,6 +637,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setIsAbleToSaveIntoPersonalFolder(new Boolean(role.isAbleToSaveIntoPersonalFolder()));
 			hibRole.setIsAbleToBuildQbeQuery(new Boolean(role.isAbleToBuildQbeQuery()));
 			hibRole.setIsAbleToDoMassiveExport(new Boolean(role.isAbleToDoMassiveExport()));
+			hibRole.setIsAbleToEditWorksheet(new Boolean(role.isAbleToEditWorksheet()));
 			updateSbiCommonInfo4Insert(hibRole);
 			roleId = (Integer)aSession.save(hibRole);
 			

@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -261,6 +263,18 @@ public class ObjectsAccessVerifier {
 		}	
 		logger.debug("OUT");
 		monitor.stop();
+		return false;
+	}
+	
+	public static boolean isAbleToSave(JSONArray documentfolders, IEngUserProfile profile) throws EMFInternalError, JSONException {
+		if(documentfolders!=null){
+			for(int it = 0; it<documentfolders.length(); it++){
+				if(canCreateInternal(documentfolders.getInt(it), profile)){
+					return true;
+				}
+			}
+		}
+
 		return false;
 	}
 
@@ -630,6 +644,62 @@ public class ObjectsAccessVerifier {
 			}
 		}
 		logger.debug("OUT. return false");
+		return false;
+
+	}
+	
+	/**
+	 * Private method called by the corrispondent public method isAbleToSave. Executes
+	 * roles functionalities control .
+	 * 
+	 * @param folderId
+	 *                The id of the lowFunctionality
+	 * @param profile
+	 *                user profile
+	 */
+	private static boolean canCreateInternal(Integer folderId, IEngUserProfile profile) {
+		logger.debug("IN");
+		Monitor monitor =MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canSaveInternal");
+		Collection roles = null;
+		try {
+				roles = ((UserProfile)profile).getRolesForUse();
+			
+		} catch (EMFInternalError emfie) {
+			logger.error("EMFInternalError in profile.getRoles", emfie);
+			logger.debug("OUT. return false");
+			monitor.stop();
+			return false;
+		}
+
+		LowFunctionality funct = null;
+		try {
+			funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(folderId, false);
+		} catch (Exception e) {
+			logger.error("EMFInternalError in loadLowFunctionalityByID", e);
+			logger.debug("OUT. return false");
+			monitor.stop();
+			return false;
+		}
+		Role[] createRoles = funct.getCreateRoles();
+		List createRoleNames = new ArrayList();
+		for (int i = 0; i < createRoles.length; i++) {
+			Role role = createRoles[i];
+			createRoleNames.add(role.getName());
+		}
+
+		Iterator iterRoles = roles.iterator();
+		String roleName = "";
+		while (iterRoles.hasNext()) {
+			roleName = (String) iterRoles.next();
+			if (createRoleNames.contains(roleName)) {
+
+				logger.debug("OUT. return true");
+				monitor.stop();
+				return true;
+			}
+		}
+		logger.debug("OUT. return false");
+		monitor.stop();
 		return false;
 
 	}

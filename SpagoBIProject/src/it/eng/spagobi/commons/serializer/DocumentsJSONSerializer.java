@@ -137,7 +137,7 @@ public class DocumentsJSONSerializer implements Serializer {
 				
 				result.put(EXPORTERS, prova);
 			
-			
+		
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {

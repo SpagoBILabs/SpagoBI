@@ -37,6 +37,7 @@ public class SbiExtRoles  extends SbiHibernateModel{
      private Boolean isAbleToSeeNotes;
      private Boolean isAbleToSendMail;
      private Boolean isAbleToSaveIntoPersonalFolder;
+     private Boolean isAbleToEditWorksheet;
      private Boolean isAbleToSaveRememberMe;
      private Boolean isAbleToSeeMetadata;
      private Boolean isAbleToSaveMetadata;
@@ -394,6 +395,14 @@ public class SbiExtRoles  extends SbiHibernateModel{
 
 	public void setIsAbleToDoMassiveExport(Boolean isAbleToDoMassiveExport) {
 		this.isAbleToDoMassiveExport = isAbleToDoMassiveExport;
+	}
+	
+    public Boolean getIsAbleToEditWorksheet() {
+		return isAbleToEditWorksheet;
+	}
+
+	public void setIsAbleToEditWorksheet(Boolean isAbleToEditWorksheet) {
+		this.isAbleToEditWorksheet = isAbleToEditWorksheet;
 	}
 
 }
