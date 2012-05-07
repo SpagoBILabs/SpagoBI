@@ -40,7 +40,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
-import com.ibm.db2.jcc.a.a;
 
 public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserDAO {
 	
