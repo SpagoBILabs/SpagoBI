@@ -348,6 +348,7 @@ public class SpagoBIConstants {
 	public static final String SEE_NOTES_FUNCTIONALITY = "SeeNotesFunctionality";
 	public static final String SEND_MAIL_FUNCTIONALITY = "SendMailFunctionality";
 	public static final String SAVE_INTO_FOLDER_FUNCTIONALITY = "SaveIntoFolderFunctionality";
+	public static final String EDIT_WORKSHEET_FUNCTIONALITY = "EditWorksheetFunctionality";
 	public static final String SAVE_REMEMBER_ME_FUNCTIONALITY = "SaveRememberMeFunctionality";
 	public static final String SEE_METADATA_FUNCTIONALITY = "SeeMetadataFunctionality";
 	public static final String SAVE_METADATA_FUNCTIONALITY = "SaveMetadataFunctionality";

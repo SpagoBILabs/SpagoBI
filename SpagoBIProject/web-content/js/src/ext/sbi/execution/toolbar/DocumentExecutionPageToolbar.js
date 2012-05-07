@@ -553,13 +553,16 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				   }			
 		   }));
 	   }
+	   
+	   if (this.executionInstance.document && this.executionInstance.document.decorators &&  this.executionInstance.document.decorators.isSavable) {
+		   this.addButton(new Ext.Toolbar.Button({
+			   iconCls: 'icon-save' 
+				   , tooltip: LN('sbi.execution.executionpage.toolbar.save')
+				   , scope: this
+				   , handler : this.saveWorksheet
+		   }));
+	   }
 
-	   this.addButton(new Ext.Toolbar.Button({
-		   iconCls: 'icon-save' 
-			   , tooltip: LN('sbi.execution.executionpage.toolbar.save')
-			   , scope: this
-			   , handler : this.saveWorksheet
-	   }));
 	   this.addButton(new Ext.Toolbar.Button({
 		   iconCls: 'icon-saveas' 
 			   , tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
@@ -636,7 +639,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				}));
 		}
 		
-		if (this.executionInstance.document.typeCode === 'WORKSHEET') {
+		if (Sbi.user.functionalities.contains('EditWorksheetFunctionality') && this.executionInstance.document.typeCode === 'WORKSHEET') {
 			this.addButton(new Ext.Toolbar.Button({
 				iconCls: 'icon-edit' 
 				, tooltip: LN('sbi.execution.executionpage.toolbar.edit')

@@ -325,6 +325,9 @@ public class UserUtilities {
 			if (virtualRole.isAbleToDoMassiveExport()) {
 				roleFunctionalities.add(SpagoBIConstants.DO_MASSIVE_EXPORT_FUNCTIONALITY);
 			}
+			if (virtualRole.isAbleToEditWorksheet()) {
+				roleFunctionalities.add(SpagoBIConstants.EDIT_WORKSHEET_FUNCTIONALITY);
+			}
 			
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
@@ -419,6 +422,10 @@ public class UserUtilities {
 					if (anotherRole.isAbleToDoMassiveExport()) {
 						logger.debug("User has role " + roleName + " that is able to do massive export.");
 						virtualRole.setIsAbleToDoMassiveExport(true);
+					}
+					if (anotherRole.isAbleToEditWorksheet()) {
+						logger.debug("User has role " + roleName + " that is able to edit worksheet documents.");
+						virtualRole.setIsAbleToEditWorksheet(true);
 					}
 				}
 			}

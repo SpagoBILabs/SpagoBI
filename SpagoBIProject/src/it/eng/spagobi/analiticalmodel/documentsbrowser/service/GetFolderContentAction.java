@@ -20,6 +20,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.DocumentsJSONDecorator;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -107,6 +108,11 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			MessageBuilder m = new MessageBuilder();
 			Locale locale = m.getLocale(httpRequest);
 			JSONArray documentsJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( objects ,locale);
+			
+			for(int i=0; i<documentsJSON.length(); i++){
+				DocumentsJSONDecorator.decoreDocument(documentsJSON.getJSONObject(i), profile);
+			}
+			
 			Collection func = profile.getFunctionalities();
 
 			if(func.contains("SeeMetadataFunctionality")){
