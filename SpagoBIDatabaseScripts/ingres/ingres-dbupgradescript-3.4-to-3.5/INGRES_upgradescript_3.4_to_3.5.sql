@@ -6,3 +6,5 @@ INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_D
     'DATASET','sbidomains.nm.dataset','INPUT_TYPE','Input mode and values','sbidomains.ds.dataset', 'server', current_timestamp);\p\g
 update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';\p\g
 commit;\p\g
+
+ALTER TABLE SBI_EXT_ROLES ADD COLUMN EDIT_WORKSHEET TINYINT DEFAULT 1;\p\g

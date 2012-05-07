@@ -6,3 +6,7 @@ INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_D
     'DATASET','sbidomains.nm.dataset','INPUT_TYPE','Input mode and values','sbidomains.ds.dataset', 'server', current_timestamp);
 update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
 commit;
+
+ALTER TABLE SBI_EXT_ROLES ADD COLUMN EDIT_WORKSHEET BOOLEAN DEFAULT TRUE;
+
+ALTER TABLE sbi_user ALTER COLUMN USER_ID type VARCHAR(100);
