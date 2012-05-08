@@ -29,7 +29,6 @@ import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**
