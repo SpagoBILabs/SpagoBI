@@ -35,7 +35,9 @@ app.views.ComposedExecutionPanel = Ext.extend(app.views.WidgetPanel,
 					items.push(subDocumentPanel);
 				}
 				///to add a slider configuration property
-				this.addSlider(items, resp.slider);
+				if(resp.slider && resp.slider.name){
+					this.addSlider(items, resp.slider);
+				}
 			}
 
 			var composedDocumentContainerConfig = {

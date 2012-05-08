@@ -16,10 +16,21 @@ app.views.Slider = Ext.extend(Ext.form.Slider,
 		    		var params = {};
 		    		var name = slider.name;
 		    		params[name]= value;
-		    		var items = app.views.composed.items.items;
+		    		var items =[];
+		    		try{
+		    			items = app.views.composed.items.items;
+		    		}catch(err){
+		    			items = this.ownerCt.items.items;
+		    		}
+
 		    		for(i =0; i < items.length; i++){
 		    			var panel = items[i];
-		    			app.controllers.composedExecutionController.refreshSubDocument(panel, params);
+
+		    			var executionInstance = panel.executionInstance;
+		    			if(executionInstance && executionInstance.PARAMETERS){
+		    				app.controllers.composedExecutionController.refreshSubDocument(panel, params);
+		    			}
+
 		    		}
 	            }
 	        }
