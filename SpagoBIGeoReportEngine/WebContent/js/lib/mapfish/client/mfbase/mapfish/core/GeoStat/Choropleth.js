@@ -161,7 +161,7 @@ mapfish.GeoStat.Choropleth = OpenLayers.Class(mapfish.GeoStat, {
      */
     applyClassification: function(options) {
       
-    	alert('applyClassification');
+    	//alert('applyClassification');
     	function Geometry(symbol, maxSize, maxValue){
 		    this.symbol = symbol;
 		    this.maxSize = maxSize;
