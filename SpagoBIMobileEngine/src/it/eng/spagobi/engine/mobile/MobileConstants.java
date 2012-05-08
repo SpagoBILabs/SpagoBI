@@ -80,4 +80,5 @@ public class MobileConstants {
 	public static final String PARAM_TYPE_ABSOLUTE = "ABSOLUTE";
 	public static final String PARAM_TYPE_SERIE = "SERIE";
 	public static final String PARAM_TYPE_CATEGORY = "CATEGORY";
+	public static final String PARAM_TYPE_SERIE_NAME = "SERIE_NAME";
 }

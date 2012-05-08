@@ -46,6 +46,9 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 		}
 
 		
+				
+		
+		
 		///---------------------------------------
 		var chartConfig = {
 
@@ -148,6 +151,8 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 							//chart type
 							var charttype = resp.config.series[t].type;
 							
+							
+							
 							if (charttype == 'area'){
 								for(k = 0; k<series.items.length; k++){
 								
@@ -174,31 +179,37 @@ app.views.ChartExecutionPanel = Ext.extend(app.views.WidgetPanel, {
 				                	//series 
 				                	var seriesField = series.label.field;//array
 				                	
-									var cat;
-									var ser;
-									
-				                	for(var propertyName in storeItem.data){
-				                	   if((storeItem.data).hasOwnProperty(propertyName) ){
-				                		   var propertyValue = (storeItem.data)[propertyName];
-				                		   if(seriesField.indexOf(propertyName) != -1){
-				                			   if(values.indexOf(propertyValue) != -1){ 
-				                				   ser = propertyValue;
-				                			   }
-				                		   }else{
-				                			   if(propertyName != 'id' && propertyName != 'recNo' ){
-				                				   cat = propertyValue;
-				                			   }
-				                		   }
-				                	   }
-				                	}
-				                	//RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE 
-									if(type == 'SERIE'){
-										crossParams.push({name : name, value : ser});
-									}else if(type == 'CATEGORY'){
-										crossParams.push({name : name, value : cat});
+									if(type == 'SERIE_NAME'){
+										crossParams.push({name : name, value : seriesField});
 									}else{
-										crossParams.push({name : name, value : param.paramValue});
+										var cat;
+										var ser;
+										
+					                	for(var propertyName in storeItem.data){
+					                	   if((storeItem.data).hasOwnProperty(propertyName) ){
+					                		   var propertyValue = (storeItem.data)[propertyName];
+					                		   if(seriesField.indexOf(propertyName) != -1){
+					                			   if(values.indexOf(propertyValue) != -1){ 
+					                				   ser = propertyValue;
+					                			   }
+					                		   }else{
+					                			   if(propertyName != 'id' && propertyName != 'recNo' ){
+					                				   cat = propertyValue;
+					                			   }
+					                		   }
+					                	   }
+					                	}
+					                	//RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE 
+										if(type == 'SERIE'){
+											crossParams.push({name : name, value : ser});
+										}else if(type == 'CATEGORY'){
+											crossParams.push({name : name, value : cat});
+										}else{
+											crossParams.push({name : name, value : param.paramValue});
+										}
 									}
+									
+
 								}else{
 									//for pie chart
 									var serieField = series.field;
