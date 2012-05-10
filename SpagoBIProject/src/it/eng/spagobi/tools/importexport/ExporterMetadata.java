@@ -569,7 +569,7 @@ public class ExporterMetadata {
 
 			
 			Transaction tx = session.beginTransaction();
-			GuiGenericDataSet ds = DAOFactory.getDataSetDAO().toDataSet(dataset);
+			GuiGenericDataSet ds = DAOFactory.getDataSetDAO().toGuiGenericDataSet(dataset);
 			if(ds!=null){
 				insertDataSet(ds,session);
 			}

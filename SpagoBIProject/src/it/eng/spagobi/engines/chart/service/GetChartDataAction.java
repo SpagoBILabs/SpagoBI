@@ -579,7 +579,7 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 			String script = getAttributeAsString(DataSetConstants.SCRIPT);
 			String scriptLanguage = getAttributeAsString(DataSetConstants.SCRIPT_LANGUAGE);
 			((ScriptDataSet)ds).setScript(script);
-			((ScriptDataSet)ds).setLanguageScript(scriptLanguage);
+			((ScriptDataSet)ds).setScriptLanguage(scriptLanguage);
 		}
 
 		if(dsType.equalsIgnoreCase(DataSetConstants.DS_JCLASS)){		

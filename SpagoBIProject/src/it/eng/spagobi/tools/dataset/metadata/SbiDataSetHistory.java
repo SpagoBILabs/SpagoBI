@@ -16,7 +16,17 @@ import java.util.Date;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 
 /**
- * @author Chiara Chiarelli
+ * This is the class used by the DAO to map the table 
+ * <code>sbi_meta_data_history</code>. Given the current implementation
+ * of the DAO this is the class used by Hibernate to map the table
+ * <code>sbi_meta_data_history</code>. The following snippet of code, for example, shows
+ * how the <code>DataSetDAOImpl</code> load a dataset version whose id is equal to datasetVersionId...
+ * 
+ * <code>session.load(SbiDataSetHistory.class, datasetVersionId);</code>
+ * 
+ * @authors
+ * 		Chiara Chiarelli
+ * 		Andrea Gioia (andrea.gioia@eng.it)
  */
 public class SbiDataSetHistory {
 	private int dsHId;	
