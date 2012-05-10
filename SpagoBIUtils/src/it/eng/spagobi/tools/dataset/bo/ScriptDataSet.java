@@ -25,8 +25,6 @@ public class ScriptDataSet extends ConfigurableDataSet {
 	
 	private static transient Logger logger = Logger.getLogger(ScriptDataSet.class);
 	
-
-	
 	public ScriptDataSet() {
 		super();
 		setDataProxy( new ScriptDataProxy() );
@@ -41,7 +39,7 @@ public class ScriptDataSet extends ConfigurableDataSet {
 		setDataReader( new XmlDataReader() );
 		addBehaviour( new QuerableBehaviour(this) );	
 		setScript( dataSetConfig.getScript() );
-		setLanguageScript(dataSetConfig.getLanguageScript());
+		setScriptLanguage(dataSetConfig.getLanguageScript());
 		
 	}
 	
@@ -53,7 +51,7 @@ public class ScriptDataSet extends ConfigurableDataSet {
 		sbd.setType( DS_TYPE );		
 		
 		sbd.setScript( getScript() );
-		sbd.setLanguageScript(getLanguageScript());
+		sbd.setLanguageScript(getScriptLanguage());
 		
 		return sbd;
 	}
@@ -75,19 +73,19 @@ public class ScriptDataSet extends ConfigurableDataSet {
 	}
 	
 	public void setScript(String script) {
-		getDataProxy().setScript(script);
+		getDataProxy().setStatement(script);
 	}
 	
 	public String getScript() {
-		return getDataProxy().getScript();
+		return getDataProxy().getStatement();
 	}
 	
-	public void setLanguageScript(String languageScript){
-		getDataProxy().setLanguageScript(languageScript);
+	public void setScriptLanguage(String language){
+		getDataProxy().setLanguage(language);
 	}
 	
-	public String getLanguageScript(){
-		return getDataProxy().getLanguageScript();
+	public String getScriptLanguage(){
+		return getDataProxy().getLanguage();
 	}
 	
 	

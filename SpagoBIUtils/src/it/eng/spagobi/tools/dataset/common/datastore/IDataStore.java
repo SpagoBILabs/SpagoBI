@@ -35,9 +35,9 @@ public interface IDataStore {
     IRecord getRecordAt(int i);
     IRecord getRecordByID(Object value);
     
-    List findRecords(int fieldIndex, Object fieldValue) ;
-    List findRecords(final List fieldIndexes, final List fieldValues) ;
-    List findRecords(IRecordMatcher matcher);
+    List<IRecord> findRecords(int fieldIndex, Object fieldValue) ;
+    List<IRecord> findRecords(final List fieldIndexes, final List fieldValues) ;
+    List<IRecord> findRecords(IRecordMatcher matcher);
     
     List getFieldValues(int fieldIndex);    
     Set getFieldDistinctValues(int fieldIndex);

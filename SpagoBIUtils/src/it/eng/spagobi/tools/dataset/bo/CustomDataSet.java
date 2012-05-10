@@ -234,42 +234,19 @@ public class CustomDataSet extends ConfigurableDataSet {
 		this.classToLaunch = classToLaunch;
 	}
 
-
-	
-	
-	
-//	IDataSet iDataSet = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(dataSet.getLabel());
-//
-//	IDataStore dsStore = iDataSet.test();
-//	if(dsStore != null){
-//		IMetaData meta = dsStore.getMetaData();
-//
-//		DatasetMetadataParser metadataParser = new DatasetMetadataParser();
-//		String xml = metadataParser.metadataToXML(dsStore);
-//
-//		iDataSet.setDsMetadata(xml);
-//		dataSet.setDsId(iDataSet.getId());
-//		GuiDataSetDetail guiDataSetDetail = dataSet.getActiveDetail();
-//		guiDataSetDetail.setDsMetadata(xml);			
-	
-	
 	
 	@Override
 	public IMetaData getMetadata() {
 		IMetaData metadata = null;
 		try {
 			// search if dsMetadaa exist, otherwise calculate them
-			if(dsMetadata != null && !dsMetadata.equals("")){
+			if( hasMetadata() ){
 				DatasetMetadataParser dsp = new DatasetMetadataParser();
-				metadata = dsp.xmlToMetadata(dsMetadata);
+				metadata = dsp.xmlToMetadata( getDsMetadata() );
 				
 			}
 			else{
-				
-//				IDataStore dsStore = test();
-//				if(dsStore != null){
-//					metadata = dsStore.getMetaData();
-//				}
+				// what?!
 			}
 		} catch (Exception e) {
 			logger.error("Error loading the metadata",e);

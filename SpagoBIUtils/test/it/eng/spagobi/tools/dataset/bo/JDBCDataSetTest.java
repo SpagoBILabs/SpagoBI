@@ -1,101 +1,155 @@
-/**
-
-SpagoBI - The Business Intelligence Free Platform
-
-Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-**/
+/*
+ * SpagoBI, the Open Source Business Intelligence suite
+ * © 2005-2015 Engineering Group
+ *
+ * This file is part of SpagoBI. SpagoBI is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version. 
+ * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received
+ * a copy of the GNU Lesser General Public License along with SpagoBI. If not, see: http://www.gnu.org/licenses/.
+ * The complete text of SpagoBI license is included in the COPYING.LESSER file. 
+ */
 package it.eng.spagobi.tools.dataset.bo;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.test.AbstractSpagoBITestCase;
+import it.eng.spagobi.test.TestCaseConstants;
+import it.eng.spagobi.test.TestDataSetFactory;
+import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import junit.framework.TestCase;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class JDBCDataSetTest  extends TestCase {
+public class JDBCDataSetTest extends AbstractSpagoBITestCase {
 
-	protected void setUp() throws Exception {
+	JDBCDataSet dataset;
+	
+	public void setUp() throws Exception {
 		super.setUp();
+		try {
+			SpagoBiDataSet dataSetConfig = new SpagoBiDataSet();
+			dataSetConfig.setQuery("SELECT fullname as 'Full Name' FROM CUSTOMER LIMIT 10");
+			dataSetConfig.setDataSource( TestDataSetFactory.createSpagoBiDataSource() );
+			dataset = new JDBCDataSet(dataSetConfig);
+		} catch(Exception t) {
+			System.err.println("An unespected error occurred during setUp: ");
+			t.printStackTrace();
+			throw t;
+		}
 	}
 	
-	protected void tearDown() throws Exception {
+	public void tearDown() throws Exception {
 		super.tearDown();
 	}
 	
-	public void testDataSet() throws Exception {
-		SpagoBiDataSet dataSetConfig = new SpagoBiDataSet();
-		dataSetConfig.setQuery("SELECT fullname as 'Full Name' FROM CUSTOMER LIMIT 10");
-		
-		SpagoBiDataSource dataSourceConfig = new SpagoBiDataSource();
-		dataSourceConfig.setDriver(TestCaseConstants.CONNECTION_DRIVER);
-		dataSourceConfig.setHibDialectClass(TestCaseConstants.CONNECTION_DIALECT);
-		dataSourceConfig.setHibDialectName(TestCaseConstants.CONNECTION_DIALECT);
-		dataSourceConfig.setMultiSchema(false);
-		dataSourceConfig.setUser(TestCaseConstants.CONNECTION_USER);
-		dataSourceConfig.setPassword(TestCaseConstants.CONNECTION_PWD);
-		dataSourceConfig.setUrl(TestCaseConstants.CONNECTION_URL);
-		
-		dataSetConfig.setDataSource(dataSourceConfig);
-		
-		IDataSet dataset = new JDBCDataSet(dataSetConfig);
+	public void testDataSetLoad() {
 		dataset.loadData();
-		IDataStore dataStore1 = dataset.getDataStore();
-		JSONDataWriter dataWriter = new JSONDataWriter();
-		
-		JSONObject o1 = (JSONObject)dataWriter.write(dataStore1);
-				
-		JSONObject m1 = o1.getJSONObject("metaData");
-		System.out.print(m1.toString(3));
-
-		System.out.print("----------------------");
-		
-		JSONArray d1 = o1.getJSONArray("rows");
-		System.out.print(d1.toString(3));
-		
-		System.out.print("\n\n==========================\n\n");
-		
-		JSONDataReader dataReader = new JSONDataReader();
-		IDataStore dataStore2 = dataReader.read(o1);
-		
-		
-		JSONObject o2 = (JSONObject)dataWriter.write(dataStore2);
-		
-		JSONObject m2 = o2.getJSONObject("metaData");
-		System.out.print(m2.toString(3));
-
-		System.out.print("----------------------");
-		
-		JSONArray d2 = o2.getJSONArray("rows");
-		System.out.print(d2.toString(3));
-		
-		
-		assertEquals(m1.toString(), m2.toString());
-		
-		assertEquals(d1.toString(), d2.toString());
-		
+		IDataStore dataStore = dataset.getDataStore();
+		assertNotNull(dataStore);
+		assertEquals(10, dataStore.getRecordsCount());
+		IMetaData metaData = dataStore.getMetaData();
+		assertNotNull(metaData);
+		assertEquals(1, metaData.getFieldCount());
+		IFieldMetaData fieldMetaData = metaData.getFieldMeta(0);
+		assertEquals("Full Name", fieldMetaData.getName());
+		assertEquals(null, fieldMetaData.getAlias());
+		assertEquals(String.class, fieldMetaData.getType());
 	}
+	public void testSimpleScriptedQuery() {
+		String injectedStatement = "SELECT lname AS \\\'Last Name\\\' FROM CUSTOMER LIMIT 30";
+		String script = "'" + injectedStatement + "';";
+		dataset.setQueryScript(script);
+		dataset.setQueryScriptLanguage("ECMAScript");
+
+		dataset.loadData();
+		IDataStore dataStore = dataset.getDataStore();
+		assertNotNull(dataStore);
+		assertEquals(30, dataStore.getRecordsCount());
+		IMetaData metaData = dataStore.getMetaData();
+		assertNotNull(metaData);
+		assertEquals(1, metaData.getFieldCount());
+		IFieldMetaData fieldMetaData = metaData.getFieldMeta(0);
+		assertEquals("Last Name", fieldMetaData.getName());
+		assertEquals(null, fieldMetaData.getAlias());
+		assertEquals(String.class, fieldMetaData.getType());
+	}
+	
+	public void testScriptedQueryTransform() {
+		String script = "query.replace(\"LIMIT 10\",\"LIMIT 30\");";
+		dataset.setQueryScript(script);
+		dataset.setQueryScriptLanguage("ECMAScript");
+
+		dataset.loadData();
+		IDataStore dataStore = dataset.getDataStore();
+		assertNotNull(dataStore);
+		assertEquals(30, dataStore.getRecordsCount());
+		IMetaData metaData = dataStore.getMetaData();
+		assertNotNull(metaData);
+		assertEquals(1, metaData.getFieldCount());
+		IFieldMetaData fieldMetaData = metaData.getFieldMeta(0);
+		assertEquals("Full Name", fieldMetaData.getName());
+		assertEquals(null, fieldMetaData.getAlias());
+		assertEquals(String.class, fieldMetaData.getType());
+	}
+	
+	public void testScriptedQueryWithParameters() {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("limit", "5");
+		dataset.setParamsMap(parameters);
+		
+		String script = "query.replace(\"LIMIT 10\",\"LIMIT \" + parameters.get('limit'));";
+		dataset.setQueryScript(script);
+		dataset.setQueryScriptLanguage("ECMAScript");
+
+		dataset.loadData();
+		IDataStore dataStore = dataset.getDataStore();
+		assertNotNull(dataStore);
+		assertEquals(5, dataStore.getRecordsCount());
+		IMetaData metaData = dataStore.getMetaData();
+		assertNotNull(metaData);
+		assertEquals(1, metaData.getFieldCount());
+		IFieldMetaData fieldMetaData = metaData.getFieldMeta(0);
+		assertEquals("Full Name", fieldMetaData.getName());
+		assertEquals(null, fieldMetaData.getAlias());
+		assertEquals(String.class, fieldMetaData.getType());
+	}
+	
+	public void testScriptedQueryWithAttributes() {
+		Map<String, Object> attributes = new HashMap<String, Object>();
+		attributes.put("limit", "5");
+		dataset.setUserProfileAttributes(attributes);
+		
+		String script = "query.replace(\"LIMIT 10\",\"LIMIT \" + attributes.get('limit'));";
+		dataset.setQueryScript(script);
+		dataset.setQueryScriptLanguage("ECMAScript");
+
+		dataset.loadData();
+		IDataStore dataStore = dataset.getDataStore();
+		assertNotNull(dataStore);
+		assertEquals(5, dataStore.getRecordsCount());
+		IMetaData metaData = dataStore.getMetaData();
+		assertNotNull(metaData);
+		assertEquals(1, metaData.getFieldCount());
+		IFieldMetaData fieldMetaData = metaData.getFieldMeta(0);
+		assertEquals("Full Name", fieldMetaData.getName());
+		assertEquals(null, fieldMetaData.getAlias());
+		assertEquals(String.class, fieldMetaData.getType());
+	}
+	
+	
 
 }

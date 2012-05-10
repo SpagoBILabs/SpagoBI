@@ -12,10 +12,6 @@
 package it.eng.spagobi.tools.dataset.common.behaviour;
 
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
@@ -27,9 +23,12 @@ import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
 import it.eng.spagobi.tools.dataset.exceptions.ProfileAttributeDsException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
 
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +44,7 @@ import org.apache.log4j.Logger;
 public class QuerableBehaviour extends AbstractDataSetBehaviour {
 
 	IQueryTransformer queryTransformer;
+	
 	private static transient Logger logger = Logger.getLogger(QuerableBehaviour.class);
 
 	public QuerableBehaviour(IDataSet targetDataSet) {
@@ -57,118 +57,175 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 		logger.debug("IN");
 		try {
 			Assert.assertNotNull(getTargetDataSet(), "Target dataset of a QuerableBehaviour cannot be null");
-
 			logger.debug("Querable dataset [" + getTargetDataSet().getName() + "] is of type [" + getTargetDataSet().getClass().getName() + "]");
-
-
-			if (getTargetDataSet() instanceof ScriptDataSet) {
-				statement = (String) ((ScriptDataSet)getTargetDataSet()).getScript();
-			} else if (getTargetDataSet() instanceof JDBCDataSet) {
-				statement = (String) ((JDBCDataSet)getTargetDataSet()).getQuery();
-			} else {
-				// maybe better to delete getQuery from IDataSet
-				statement = (String)getTargetDataSet().getQuery();
-			}
-			logger.debug("Original dataset statement [" + statement + "]");
+			statement = getBaseStatement();
+			logger.debug("Base dataset statement is equal to [" + statement + "]");
 			Assert.assertNotNull(statement, "Querable dataset statment cannot be null");
-			// if script substitute profile attributes in a strict way
-			if (getTargetDataSet() instanceof ScriptDataSet) {
-				try{
-					Map attributes = getTargetDataSet().getUserProfileAttributes(); // to be cancelled, now substitutution inline
-					statement = substituteProfileAttributes(statement, attributes);
-				} catch (Throwable e) {
-					throw new ProfileAttributeDsException("An error occurred while excuting query [" + statement + "]",e);
-				}
-			} else if (getTargetDataSet() instanceof JDBCDataSet) {	 
-				try {
-					statement = StringUtilities.substituteParametersInString(statement, getTargetDataSet().getUserProfileAttributes() );
-				} catch (Exception e) {
-					List list = checkProfileAttributesUnfilled(statement);
-					String atts = "";
-					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-						String string = (String) iterator.next();
-						atts += string;
-						if(iterator.hasNext()){
-							atts += ", ";
-						}
-					}
-					throw new ProfileAttributeDsException("The following profile attributes have no value[" + atts + "]",e);
-
-				}
-			}
-
+			
+			statement = resolveProfileAttributes(statement);			
 			logger.debug("Dataset statement after profile attributes substitution [" + statement + "]");
-			logger.debug("Dataset paramMap [" + getTargetDataSet().getParamsMap() + "]");
-
-			//check if there are parameters filled
-			//if( getTargetDataSet().getParamsMap() != null && !getTargetDataSet().getParamsMap().isEmpty()){
-			if( getTargetDataSet().getParamsMap() != null){
-				logger.debug("Dataset paramMap contains [" + getTargetDataSet().getParamsMap().size() + "] parameters");
-
-				// if a parameter has value '' put null!
-				Map parameterValues = getTargetDataSet().getParamsMap();
-				Vector<String> parsToChange = new Vector<String>();
-
-				for (Iterator iterator = parameterValues.keySet().iterator(); iterator.hasNext();) {
-					String parName = (String) iterator.next();
-					Object val = parameterValues.get(parName);
-					if( val != null && val.equals("")){
-						val = null;
-						parsToChange.add(parName);
-					}
-					//parameterValues.remove(parName);
-					//parameterValues.put(parName, val);
-				}
-				for (Iterator iterator = parsToChange.iterator(); iterator.hasNext();) {
-					String parName = (String) iterator.next();
-					parameterValues.remove(parName);
-					parameterValues.put(parName, null);
-				}
-
-				try{
-					Map parTypeMap = getParTypeMap(getTargetDataSet());
-					statement = StringUtilities.substituteDatasetParametersInString(statement, getTargetDataSet().getParamsMap(), parTypeMap ,false );
-				}
-				catch (Throwable e) {
-					throw new SpagoBIRuntimeException("An error occurred while settin up parameters",e);
-				}
-			}	
-
-			// after having substituted all parameters check there are not other parameters unfilled otherwise throw an exception;
-			List<String> parsUnfilled = checkParametersUnfilled(statement);
-			if(parsUnfilled != null){
-				// means there are parameters not valorized, throw exception
-				logger.error("there are parameters without values");
-				String pars = "";
-				for (Iterator iterator = parsUnfilled.iterator(); iterator.hasNext();) {
-					String string = (String) iterator.next();
-					pars += string;
-					if(iterator.hasNext()){
-						pars += ", ";
-					}
-				}
-				pars += " have no value specified";
-				throw new ParameterDsException("The folowing parameters have no value [" + pars + "]");
-				
-			}
-
-
+			
+			statement = resolveParameters(statement);
 			logger.debug("Dataset statement after  attributes substitution [" + statement + "]");
-
 
 			if(queryTransformer != null) {
 				statement = (String)queryTransformer.transformQuery( statement );
 			}
-
 		} finally {
 			logger.debug("OUT");
 		}
 
 		return statement;
 	}
+	
+	private String getBaseStatement() {
+		String statement = null;
+		if (getTargetDataSet() instanceof ScriptDataSet) {
+			statement = (String) ((ScriptDataSet)getTargetDataSet()).getScript();
+		} else if (getTargetDataSet() instanceof JDBCDataSet) {
+			JDBCDataSet jdbcDataSet = (JDBCDataSet)getTargetDataSet();
+			if(jdbcDataSet.getQueryScript() != null) {
+				statement = (String)jdbcDataSet.getQuery();
+				statement =  applyScript(statement, jdbcDataSet.getQueryScript(), jdbcDataSet.getQueryScriptLanguage());
+			} else {
+				statement = (String)jdbcDataSet.getQuery();
+			}
+		} else {
+			// maybe better to delete getQuery from IDataSet
+			statement = (String)getTargetDataSet().getQuery();
+		}
+		return statement;
+	}
+	
+	private String applyScript(String statement, String script, String language) {
+		List<File> imports = null;
+		if( "groovy".equals(language) ){
+			imports = new ArrayList<File>();
+			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
+			File scriptFile;
+			try {
+				scriptFile = new File(url.toURI());
+				imports.add(scriptFile);
+			} catch (URISyntaxException t) {
+				logger.warn("Impossible to load predefinedGroovyScript.groovy", t);
+			}
+			
+		} else if( "ECMAScript".equals(language ) ){
+			imports = new ArrayList<File>();
+			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
+			File scriptFile;
+			try {
+				scriptFile = new File(url.toURI());
+				imports.add(scriptFile);
+			} catch (URISyntaxException t) {
+				logger.warn("Impossible to load predefinedJavascriptScript.js", t);
+			}
+			
+		}
+		
+		Map<String, Object> bindings = new HashMap<String, Object>();
+		bindings.put("attributes", getTargetDataSet().getUserProfileAttributes());
+		bindings.put("parameters", getTargetDataSet().getParamsMap());
+		bindings.put("query", statement);
+		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
+		Object o = scriptManager.runScript(script, language, bindings, imports);
+		return o == null? statement: o.toString();
+	}
+	
+	private String resolveProfileAttributes(String statement) {
+		
+		String newStatement = statement;
+		
+		Map<String, Object> userProfileAttributes = getTargetDataSet().getUserProfileAttributes(); 
+		
+		if (getTargetDataSet() instanceof ScriptDataSet) {
+			try {
+				newStatement = substituteProfileAttributes(newStatement, userProfileAttributes);
+			} catch (Throwable e) {
+				throw new ProfileAttributeDsException("An error occurred while excuting query [" + newStatement + "]",e);
+			}
+		} else if (getTargetDataSet() instanceof JDBCDataSet) {	 
+			try {
+				newStatement = StringUtilities.substituteParametersInString(newStatement, userProfileAttributes );
+			} catch (Exception e) {
+				List list = checkProfileAttributesUnfilled(newStatement);
+				String atts = "";
+				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+					String string = (String) iterator.next();
+					atts += string;
+					if(iterator.hasNext()){
+						atts += ", ";
+					}
+				}
+				throw new ProfileAttributeDsException("The following profile attributes have no value[" + atts + "]",e);
 
+			}
+		}
+		
+		return newStatement;
+	}
+	
+	private String resolveParameters(String statement) {
+		
+		String newStatement = statement;
+		
+		logger.debug("Dataset paramMap [" + getTargetDataSet().getParamsMap() + "]");
+		
+		if( getTargetDataSet().getParamsMap() != null){
+			logger.debug("Dataset paramMap contains [" + getTargetDataSet().getParamsMap().size() + "] parameters");
 
-	private String substituteProfileAttributes(String script, Map attributes) throws EMFInternalError{
+			// if a parameter has value '' put null!
+			Map parameterValues = getTargetDataSet().getParamsMap();
+			Vector<String> parsToChange = new Vector<String>();
+
+			for (Iterator iterator = parameterValues.keySet().iterator(); iterator.hasNext();) {
+				String parName = (String) iterator.next();
+				Object val = parameterValues.get(parName);
+				if( val != null && val.equals("")){
+					val = null;
+					parsToChange.add(parName);
+				}
+				//parameterValues.remove(parName);
+				//parameterValues.put(parName, val);
+			}
+			for (Iterator iterator = parsToChange.iterator(); iterator.hasNext();) {
+				String parName = (String) iterator.next();
+				parameterValues.remove(parName);
+				parameterValues.put(parName, null);
+			}
+
+			try{
+				Map parTypeMap = getParTypeMap(getTargetDataSet());
+				newStatement = StringUtilities.substituteDatasetParametersInString(newStatement, getTargetDataSet().getParamsMap(), parTypeMap ,false );
+			}
+			catch (Throwable e) {
+				throw new SpagoBIRuntimeException("An error occurred while settin up parameters",e);
+			}
+		}	
+
+		// after having substituted all parameters check there are not other parameters unfilled otherwise throw an exception;
+		List<String> parsUnfilled = checkParametersUnfilled(newStatement);
+		if(parsUnfilled != null){
+			// means there are parameters not valorized, throw exception
+			logger.error("there are parameters without values");
+			String pars = "";
+			for (Iterator iterator = parsUnfilled.iterator(); iterator.hasNext();) {
+				String string = (String) iterator.next();
+				pars += string;
+				if(iterator.hasNext()){
+					pars += ", ";
+				}
+			}
+			pars += " have no value specified";
+			throw new ParameterDsException("The folowing parameters have no value [" + pars + "]");
+			
+		}
+		
+		return newStatement;
+	}
+		
+	
+	private String substituteProfileAttributes(String script, Map attributes) {
 		logger.debug("IN");
 		String cleanScript=new String(script);
 		int indexSubstitution=0;

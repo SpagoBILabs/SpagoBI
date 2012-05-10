@@ -22,27 +22,29 @@ import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 /**
- * @author Andrea Gioia
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class ConfigurableDataSet extends  AbstractDataSet {
 
 	IDataReader dataReader;
 	IDataProxy dataProxy;
 	IDataStore dataStore;
+	
 	protected boolean abortOnOverflow;	
 	protected Map bindings;
 	private boolean calculateResultNumberOnLoad = true;
 
-	Object query;	
 
 
-	Map userProfileParameters;
+
+	Map<String, Object> userProfileParameters;
 
 
 	private static transient Logger logger = Logger.getLogger(ConfigurableDataSet.class);
@@ -50,10 +52,12 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 
 	public ConfigurableDataSet(){
 		super();
+		userProfileParameters = new HashMap<String, Object>();
 	}
 
 	public ConfigurableDataSet(SpagoBiDataSet dataSetConfig){
 		super(dataSetConfig);
+		userProfileParameters = new HashMap<String, Object>();
 	}
 
 	public void loadData(int offset, int fetchSize, int maxResults) {
@@ -61,8 +65,7 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 		dataProxy.setParameters(getParamsMap());
 		dataProxy.setProfile(getUserProfileAttributes());
 		dataProxy.setResPath(resPath);
-		dataProxy.setPredefinedGroovyScriptFileName(groovyFileName);
-		dataProxy.setPredefinedJsScriptFileName(jsFileName);
+		
 		// check if the proxy is able to manage results pagination
 		if(dataProxy.isOffsetSupported()) {
 			dataProxy.setOffset(offset);
@@ -90,11 +93,11 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 		}
 
 
-		if( hasBehaviour(QuerableBehaviour.class.getName()) ) { // Querable Behaviour
+		if( hasBehaviour(QuerableBehaviour.class.getName()) ) { 
 			QuerableBehaviour querableBehaviour = (QuerableBehaviour)getBehaviour(QuerableBehaviour.class.getName()) ;
 			String stm = querableBehaviour.getStatement();
 			stm = stm.replaceAll("''", "'");
-			dataProxy.setStatement(stm);	
+			dataProxy.setStatement(stm);
 		}
 		
 		dataProxy.setCalculateResultNumberOnLoad(this.isCalculateResultNumberOnLoadEnabled());
@@ -111,13 +114,7 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 		return this.dataStore;
 	}    
 
-	public Object getQuery() {
-		return query;
-	}
-
-	public void setQuery(Object query) {
-		this.query = query;
-	}
+	
 
 	/**
 	 * Gets the list of names of the profile attributes required.
@@ -161,11 +158,11 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 		this.dataProxy = dataProxy;
 	}
 
-	public Map getUserProfileAttributes() {
+	public Map<String, Object> getUserProfileAttributes() {
 		return userProfileParameters;
 	}
 
-	public void setUserProfileAttributes(Map parameters) {
+	public void setUserProfileAttributes(Map<String, Object> parameters) {
 		this.userProfileParameters = parameters;
 	}
 
@@ -177,16 +174,7 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 		bindings.put(bindingName, bindingValue);
 	}
 
-	public IMetaData getMetadata() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setMetadata(IMetaData metadata) {
-		// TODO Auto-generated method stub
-
-	}
-
+	
 	public IDataStore test() {
 		logger.debug("IN");
 		loadData();

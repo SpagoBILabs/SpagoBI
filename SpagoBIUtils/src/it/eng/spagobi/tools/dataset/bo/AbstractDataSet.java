@@ -22,12 +22,15 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
- * @author Angelo Bernabei angelo.bernabei@eng.it
+ * @authors 
+ * 		Angelo Bernabei (angelo.bernabei@eng.it)
+ * 		Andrea Gioia (andrea.gioia@eng.it)
  */
 public abstract class AbstractDataSet implements IDataSet {
 
@@ -38,27 +41,38 @@ public abstract class AbstractDataSet implements IDataSet {
     private Integer categoryId;
     private String categoryCd;
     
-    private String dsType;
-
+    // duplication ahead!
     private String parameters;
     private Map paramsMap;
-    private Map behaviours;
+    Map<String, Object> properties;
     
+    // Transformer attributes (better to remove them. 
+    // They should be stored only into dataSetTransformer (see above)
     protected Integer transformerId;
     protected String transformerCd;
     protected String pivotColumnName;
     protected String pivotRowName;
     protected String pivotColumnValue;
     protected boolean numRows;
-    protected String dsMetadata;
-    	
+    
     protected IDataStoreTransformer dataSetTransformer;
     
-    protected String resPath;
-	protected String groovyFileName;
-    protected String jsFileName;
+    // hook for extension points
+    private Map behaviours;
     
-	Map<String, Object> properties;
+    private String dsMetadata;
+    
+    private String dsType;   	
+
+    // Attribute related to the particular dataset implementation
+    // TODO the do not belong here. just store at this level a generic
+    // configuration object that it s then handled properly by the
+    // specific subclasses
+    protected String resPath;
+    protected Object query;	
+    protected String queryScript;	
+    protected String queryScriptLanguage;	
+
     
     private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
 
@@ -94,28 +108,6 @@ public abstract class AbstractDataSet implements IDataSet {
 		behaviours = new HashMap();
     }
     
-    
-    public String getResourcePath() {
-    	if (resPath == null) {
-			try {
-				String jndiName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-				resPath = SpagoBIUtilities.readJndiResource(jndiName);
-			} catch (Throwable t) {
-				logger.debug(t);
-				resPath = EnginConf.getInstance().getResourcePath();
-			}
-    	}
-		if (resPath == null) {
-			throw new SpagoBIRuntimeException("Resource path not found!!!");
-		}
-		return resPath;
-	}
-    
-    
-    public void setResourcePath(String resPath) {
-    	this.resPath = resPath;
-	}
-    
     public SpagoBiDataSet toSpagoBiDataSet() {
 		SpagoBiDataSet sbd = new SpagoBiDataSet();
 		
@@ -134,23 +126,10 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setNumRows(isNumRows());
 		return sbd;
 	}
-
-    public String getGroovyFileName() {
-		return groovyFileName;
-	}
-
-	public void setGroovyFileName(String groovyFileName) {
-		this.groovyFileName = groovyFileName;
-	}
-
-	public String getJsFileName() {
-		return jsFileName;
-	}
-
-	public void setJsFileName(String jsFileName) {
-		this.jsFileName = jsFileName;
-	}
-
+    
+    // ===============================================
+    // Generic dataset's attributes accessor methods
+    // ===============================================
     public int getId() {
     	return id;
     }
@@ -190,12 +169,79 @@ public abstract class AbstractDataSet implements IDataSet {
 	public void setCategoryId(Integer categoryId) {
 		this.categoryId = categoryId;
 	}
-    
-    public String getParameters() {
+	
+	public void setCategoryCd(String categoryCd) {
+		this.categoryCd = categoryCd;
+	}
+	
+	public String getCategoryCd() {
+		return categoryCd;
+	}
+
+	public boolean hasMetadata() {
+		return (getDsMetadata() != null && getDsMetadata().trim().equals("") == false);
+	}
+	public String getDsMetadata() {
+		return dsMetadata;
+	}
+
+	public void setDsMetadata(String dsMetadata) {
+		this.dsMetadata = dsMetadata;
+	}
+	
+	public IMetaData getMetadata() {
+		return null;
+	}
+
+	public void setMetadata(IMetaData metadata) {
+		// do nothings
+	}
+
+
+	public String getDsType() {
+		return dsType;
+	}
+
+	public void setDsType(String dsType) {
+		this.dsType = dsType;
+	}
+	
+	// -----------------------------------------------
+    // Parameters management
+	// -----------------------------------------------
+	
+	public String getParameters() {
     	return parameters;
     }
+	
+	public Map getParamsMap() {
+		return paramsMap;
+	}
 
-    
+	public void setParamsMap(Map paramsMap) {
+		this.paramsMap = paramsMap;
+	}  
+	
+	// these has to be implemented by the user creating a custom DataSet	
+	public Map getProperties() {
+		// TODO Auto-generated method stub
+		return this.properties;
+	}
+	public void setProperties(Map map) {
+		this.properties = map;		
+	}
+
+	public String getTemporaryTableName() {
+		if (this.getParamsMap() == null) {
+			return null;
+		}
+		String toReturn = (String) this.getParamsMap().get(SpagoBIConstants.TEMPORARY_TABLE_NAME);
+		return toReturn;
+	}
+
+	// -----------------------------------------------
+    // Transformer management
+	// -----------------------------------------------
     public void setParameters(String parameters) {
     	this.parameters = parameters;
     }
@@ -206,6 +252,14 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	public void setTransformerId(Integer transformerId) {
 		this.transformerId = transformerId;
+	}
+	
+	public String getTransformerCd() {
+		return transformerCd;
+	}
+
+	public void setTransformerCd(String transformerCd) {
+		this.transformerCd = transformerCd;
 	}
 
 	public String getPivotColumnName() {
@@ -231,27 +285,15 @@ public abstract class AbstractDataSet implements IDataSet {
 	public void setPivotColumnValue(String pivotColumnValue) {
 		this.pivotColumnValue = pivotColumnValue;
 	}
-
-	public Map getParamsMap() {
-		return paramsMap;
-	}
-
-	public void setParamsMap(Map paramsMap) {
-		this.paramsMap = paramsMap;
-	}  
 	
-	public boolean hasBehaviour(String behaviourId) {
-		return behaviours.containsKey(behaviourId);
-	}
-	
-	public Object getBehaviour(String behaviourId) {
-		return behaviours.get(behaviourId);
-	}
-	
-	public void addBehaviour(IDataSetBehaviour behaviour) {
-		behaviours.put(behaviour.getId(), behaviour);
+	public boolean isNumRows() {
+		return numRows;
 	}
 
+	public void setNumRows(boolean numRows) {
+		this.numRows = numRows;
+	}
+	
 	public boolean hasDataStoreTransformer() {
 		return getDataStoreTransformer() != null;
 	}
@@ -268,16 +310,74 @@ public abstract class AbstractDataSet implements IDataSet {
 		return this.dataSetTransformer;
 	}
 
+	// -----------------------------------------------
+    // Extension point hook
+	// -----------------------------------------------
 	
-	public boolean isNumRows() {
-		return numRows;
+	public boolean hasBehaviour(String behaviourId) {
+		return behaviours.containsKey(behaviourId);
+	}
+	
+	public Object getBehaviour(String behaviourId) {
+		return behaviours.get(behaviourId);
+	}
+	
+	public void addBehaviour(IDataSetBehaviour behaviour) {
+		behaviours.put(behaviour.getId(), behaviour);
+	}
+    
+	// ===============================================
+    // Custom dataset's attributes accessor methods
+    // ===============================================
+	
+    public String getResourcePath() {
+    	if (resPath == null) {
+			try {
+				String jndiName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+				resPath = SpagoBIUtilities.readJndiResource(jndiName);
+			} catch (Throwable t) {
+				logger.debug(t);
+				resPath = EnginConf.getInstance().getResourcePath();
+			}
+    	}
+		if (resPath == null) {
+			throw new SpagoBIRuntimeException("Resource path not found!!!");
+		}
+		return resPath;
+	}
+    
+    
+    public void setResourcePath(String resPath) {
+    	this.resPath = resPath;
+	}
+    
+	public Object getQuery() {
+		return query;
 	}
 
-	
-	public void setNumRows(boolean numRows) {
-		this.numRows = numRows;
+	public void setQuery(Object query) {
+		this.query = query;
 	}
 	
+	public String getQueryScript() {
+		return queryScript;
+	}
+
+	public void setQueryScript(String script) {
+		this.queryScript = script;
+	}
+    
+	public String getQueryScriptLanguage() {
+		return queryScriptLanguage;
+	}
+
+	public void setQueryScriptLanguage(String queryScriptLanguage) {
+		this.queryScriptLanguage = queryScriptLanguage;
+	}
+
+	// ===============================================
+    // Core methods
+    // ===============================================
 	public void loadData() {
 		loadData(0, -1, -1);
 	}
@@ -285,56 +385,5 @@ public abstract class AbstractDataSet implements IDataSet {
 	public void loadData(int offset, int fetchSize, int maxResults) {
 		throw new RuntimeException("Unsupported method");
 	}
-	
-	public String getDsMetadata() {
-		return dsMetadata;
-	}
 
-	public void setDsMetadata(String dsMetadata) {
-		this.dsMetadata = dsMetadata;
-	}
-	
-
-	public String getCategoryCd() {
-		return categoryCd;
-	}
-
-	public void setCategoryCd(String categoryCd) {
-		this.categoryCd = categoryCd;
-	}
-
-	public String getDsType() {
-		return dsType;
-	}
-
-	public void setDsType(String dsType) {
-		this.dsType = dsType;
-	}
-
-	public String getTransformerCd() {
-		return transformerCd;
-	}
-
-	public void setTransformerCd(String transformerCd) {
-		this.transformerCd = transformerCd;
-	}
-
-	// these has to be implemented by the user creating a custom DataSet	
-	public Map getProperties() {
-		// TODO Auto-generated method stub
-		return this.properties;
-	}
-	public void setProperties(Map map) {
-		this.properties = map;		
-	}
-
-	public String getTemporaryTableName() {
-		if (this.getParamsMap() == null) {
-			return null;
-		}
-		String toReturn = (String) this.getParamsMap().get(SpagoBIConstants.TEMPORARY_TABLE_NAME);
-		return toReturn;
-	}
-
-	
 }
