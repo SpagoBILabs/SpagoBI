@@ -63,7 +63,7 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 							var paramsFromCrossFilled= this.fillParametersFromCross(parameters, paramsFromCross, paramsToBeFilled);
 							if(paramsToBeFilled.length == 0){
 								//execute now!
-								executionInstance.PARAMETERS = paramsFromCross;
+								executionInstance.PARAMETERS = this.fromArrayToObject(paramsFromCross);
 								executionInstance.isFromCross = true;
 								Ext.dispatch({
 									  controller: app.controllers.executionController,
@@ -90,6 +90,18 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 			}
 		}); 
 	}
+	
+	, fromArrayToObject: function(jsonArray){
+		var params={};
+		for(var i=0; i<jsonArray.length; i++){
+			var obj = jsonArray[i];
+			var name = obj.name;
+			var value = obj.value;
+			params[name]=value;
+		}
+		return params;
+	}
+	
 	, fillParametersFromCross: function(parametersNeeded, parametersFromCross, paramsToBeFilled){
 		var parametersFilled = {};
 		if(parametersNeeded != null && parametersNeeded != undefined && 
@@ -109,6 +121,7 @@ app.controllers.ParametersController = Ext.extend(Ext.Controller,{
 				}
 			}
 		}
+
 		return parametersFilled;
 	}
 	
