@@ -333,9 +333,9 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	    	var suffix = "";
 	    	var text = obj;
 	    	
-	    	if (obj.indexOf("{CATEGORY}")) aliasFields.push("CATEGORY");
-	    	if (obj.indexOf("{SERIE}")) aliasFields.push("SERIE");			
-	    	if (obj.indexOf("{SERIE_NAME}")) aliasFields.push("SERIE_NAME");
+	    	if (text.indexOf("{CATEGORY}") != -1) aliasFields.push("CATEGORY");
+	    	if (text.indexOf("{SERIE_NAME}") != -1) aliasFields.push("SERIE_NAME");
+	    	if (text.indexOf("{SERIE}") != -1) aliasFields.push("SERIE");			
 	    	
 	    	if (aliasFields.length == 0) return text;
 	    	var spanText = "<span style='color:"+ this.series.color +"'>";

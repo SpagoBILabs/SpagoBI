@@ -531,15 +531,17 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     	var doGetLabels = true;
     	
     	while (doGetLabels){
-			if (tmpText.indexOf(prefix) >= 0){			
-				var tmpLabel = tmpText.substring( tmpText.indexOf(prefix)+3, tmpText.indexOf(suffix));
+			if (tmpText.indexOf(prefix) >= 0){	
+				var idxStart = tmpText.indexOf(prefix);
+				var idxStop =  tmpText.indexOf(suffix, idxStart);
+				var tmpLabel = tmpText.substring(idxStart+3, idxStop);
 				var tmpLen = tmpLabel.length + 1;
 				fieldLabels.push(tmpLabel);
 				tmpText = tmpText.substring(tmpText.indexOf(tmpLabel)+tmpLen);
 			}else{
 				doGetLabels = false;
 			}
-    	}
+    	} 
 		return fieldLabels;
 	}
 
