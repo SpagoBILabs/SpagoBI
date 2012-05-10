@@ -11,7 +11,7 @@ import junit.framework.TestCase;
  */
 public class AbstractSpagoBITestCase extends TestCase {
 	
-	protected boolean performTearDown = false;
+	protected boolean performTearDown;
 	
 	public AbstractSpagoBITestCase() {
 		super();
@@ -19,7 +19,7 @@ public class AbstractSpagoBITestCase extends TestCase {
 
 	public void setUp() throws Exception {
 		try {
-			performTearDown = false;
+			performTearDown = true;
 		} catch(Exception t) {
 			System.err.println("An unespected error occurred during setUp: ");
 			t.printStackTrace();

@@ -9,24 +9,24 @@
  * a copy of the GNU Lesser General Public License along with SpagoBI. If not, see: http://www.gnu.org/licenses/.
  * The complete text of SpagoBI license is included in the COPYING.LESSER file. 
  */
-package it.eng.spagobi.tools.dataset.common.datastore;
+package it.eng.spagobi.test;
 
-import java.util.List;
+import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 
 /**
- * @author Angelo Bernabei
- *         angelo.bernabei@eng.it
+ * @author Andrea Gioia (andrea.gioia@eng.it)
+ *
  */
-public interface IRecord {
-
-    IField getFieldAt(int fieldIndex);
-    
-    public void appendField(IField field) ;
-    public void insertField(int fieldIndex, IField field) ;
-    
-    public List<IField> getFields();
-	public void setFields(List<IField> fields);
-	
-	public IDataStore getDataStore();
-    
+public class TestDataSetFactory {
+	public static SpagoBiDataSource createSpagoBiDataSource() {
+		SpagoBiDataSource dataSourceConfig = new SpagoBiDataSource();
+		dataSourceConfig.setDriver(TestCaseConstants.CONNECTION_DRIVER);
+		dataSourceConfig.setHibDialectClass(TestCaseConstants.CONNECTION_DIALECT);
+		dataSourceConfig.setHibDialectName(TestCaseConstants.CONNECTION_DIALECT);
+		dataSourceConfig.setMultiSchema(false);
+		dataSourceConfig.setUser(TestCaseConstants.CONNECTION_USER);
+		dataSourceConfig.setPassword(TestCaseConstants.CONNECTION_PWD);
+		dataSourceConfig.setUrl(TestCaseConstants.CONNECTION_URL);
+		return dataSourceConfig;
+	}
 }

@@ -26,6 +26,8 @@ public interface IDataSet {
 	
 	String getDsMetadata();
 	void setDsMetadata(String dsMetadata);
+	IMetaData getMetadata();
+	void setMetadata(IMetaData metadata);
 	
 	// general properties ....
 	int getId();
@@ -65,27 +67,16 @@ public interface IDataSet {
 	
 	// profilation ...
 	public Map getUserProfileAttributes();
-	public void setUserProfileAttributes(Map attributes);
+	public void setUserProfileAttributes(Map<String, Object> attributes);
 	
 	// execution ...
 	// --------------------------------------------------------------------------------------------------
 	void loadData();
 	void loadData(int offset, int fetchSize, int maxResults);
 	// --------------------------------------------------------------------------------------------------
-    
-	String getResourcePath();
-	void setResourcePath(String resPath);
-	
-	String getGroovyFileName();
-	void setGroovyFileName(String groovyFileName);
-	String getJsFileName();
-	void setJsFileName(String jsFileName);
-	
+ 	
 	IDataStore getDataStore();	
 	
-	// just 4 querable dataSet....
-	Object getQuery();
-	void setQuery(Object query);	
 	
 	// extension points ...
 	boolean hasBehaviour(String behaviourId);
@@ -98,6 +89,15 @@ public interface IDataSet {
 	
 	// --------------------------------------------------------------------------------------------------
 	// TODO these methods do NOT belong to the dataset interface. remove them and refactor the code.
+	
+	String getResourcePath();
+	void setResourcePath(String resPath);
+	Object getQuery();
+	void setQuery(Object query);
+	String getQueryScript();
+	void setQueryScript(String script);
+	
+	
 	Integer getTransformerId();
 	void setTransformerId(Integer transformerId);
 	
@@ -124,6 +124,8 @@ public interface IDataSet {
 	
 	void setDataStoreTransformer(IDataStoreTransformer transformer);
 	IDataStoreTransformer getDataStoreTransformer();
+	
+	
 	// TODO these methods do NOT belong to the dataset interface. remove them and refactor the code.
 	// --------------------------------------------------------------------------------------------------
 	
@@ -135,8 +137,7 @@ public interface IDataSet {
 	SpagoBiDataSet toSpagoBiDataSet();
 	// --------------------------------------------------------------------------------------------------
 	
-	IMetaData getMetadata();
-	void setMetadata(IMetaData metadata);
+	
 	
 	IDataStore test();
 	IDataStore test(int offset, int fetchSize, int maxResults);

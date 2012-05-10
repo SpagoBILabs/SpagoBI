@@ -23,16 +23,16 @@ import java.util.List;
 public class Record implements IRecord,Serializable {
 
 	IDataStore dataStore;
-	List fields = new ArrayList();
+	List<IField> fields = new ArrayList<IField>();
 
 	public Record() {
 		super();
-		this.fields = new ArrayList();
+		this.fields = new ArrayList<IField>();
 	}
 	  
     public Record(IDataStore dataStore) {
 		super();
-		this.fields = new ArrayList();
+		this.fields = new ArrayList<IField>();
 		this.setDataStore(dataStore);
 	}
 
@@ -49,11 +49,11 @@ public class Record implements IRecord,Serializable {
 		fields.add(fieldIndex, field);	
     }
 	
-	public List getFields() {
+	public List<IField> getFields() {
 		return this.fields;
 	}
 
-	public void setFields(List fields) {
+	public void setFields(List<IField> fields) {
 		this.fields = fields;
 	}
 

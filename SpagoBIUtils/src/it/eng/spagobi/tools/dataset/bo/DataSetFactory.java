@@ -62,7 +62,7 @@ public class DataSetFactory {
 					+ "], class [" + className + "]", e);
 		}
 
-		// if custom data set type try instanziate the refeerred class
+		// if custom data set type try instantiate the referred class
 		IDataSet customDataset = dataSet;
 		if(CustomDataSet.DS_TYPE.equals(( dataSetConfig.getType() ) )
 				&& customDataset instanceof CustomDataSet){

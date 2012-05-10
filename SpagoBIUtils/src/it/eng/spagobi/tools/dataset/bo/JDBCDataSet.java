@@ -156,7 +156,7 @@ public static String DS_TYPE = "SbiQueryDataSet";
 		IMetaData metadata = null;
 		try {
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
-			metadata =  dsp.xmlToMetadata(dsMetadata);
+			metadata =  dsp.xmlToMetadata( getDsMetadata() );
 		} catch (Exception e) {
 			logger.error("Error loading the metadata",e);
 			throw new SpagoBIEngineRuntimeException("Error loading the metadata",e);
