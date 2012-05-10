@@ -23,7 +23,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
-import it.eng.spagobi.utilities.scripting.ScriptManager;
+import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +45,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	 * the script
 	 */
 	private String script = "";
-	private String languageScript = "";		private List visibleColumnNames = null;
+	private String languageScript = "";		
+	private List visibleColumnNames = null;
 	private String valueColumnName = "";
 	private String descriptionColumnName = "";
 	private List invisibleColumnNames = null;
@@ -162,13 +163,13 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		logger.debug("IN");
 		String result = null;
 		HashMap attributes = GeneralUtilities.getAllProfileAttributes(profile); // to be cancelled, now substitutution inline
-		Binding bind = ScriptManager.fillBinding(attributes);
-
+		
 		//Substitute profile attributes with their value
 		String cleanScript=substituteProfileAttributes(getScript(), attributes);
 		setScript(cleanScript);
-		ScriptManager sm = new ScriptManager();
-		result = sm.runScript(getScript(), bind, languageScript);   
+		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
+		result = (String)scriptManager.runScript(getScript(), languageScript, attributes);   
+		
 		// check if the result must be converted into the right xml sintax
 		boolean toconvert = checkSintax(result);
 		if(toconvert) { 

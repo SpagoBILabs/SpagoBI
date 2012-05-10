@@ -14,10 +14,25 @@ package it.eng.spagobi.tools.dataset.metadata;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 /**
- * @author Angelo Bernabei
- *         angelo.bernabei@eng.it
+ * This is the class used by the DAO to map the table 
+ * <code>sbi_meta_data</code>. Given the current implementation
+ * of the DAO this is the class used by Hibernate to map the table
+ * <code>sbi_meta_data</code>. The following snippet of code, for example, shows
+ * how the <code>DataSetDAOImpl</code> load a dataset whose id is equal to datasetId...
+ * 
+ * <code>hibernateSession.load(SbiDataSetConfig.class, datasetId);</code>
+ * 
+ * @authors
+ * 		Angelo Bernabei (angelo.bernabei@eng.it)
+ * 		Andrea Gioia (andrea.gioia@eng.it)
  */
-public class SbiDataSetConfig extends SbiHibernateModel{
+public class SbiDataSetConfig extends SbiHibernateModel {
+	
+	/**
+	 * default version UID
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private int dsId;	
 	private String name=null;
 	private String description=null;
