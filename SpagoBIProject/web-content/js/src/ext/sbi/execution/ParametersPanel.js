@@ -418,7 +418,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		for(var p in this.fields) {
 			var theField = this.fields[p];
-			this.updateDependentFields( theField );
+			//this.updateDependentFields( theField );
 			
 			if(this.isFromCross) {
 				//alert('formState[after updateDependentFields on ' + p + ']: ' + this.getFormState().toSource());
