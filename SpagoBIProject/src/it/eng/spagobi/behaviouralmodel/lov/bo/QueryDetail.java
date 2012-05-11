@@ -211,7 +211,7 @@ public class QueryDetail  implements ILovDetail  {
 		String result = getQueryDefinition();
 		if (dependencies != null && dependencies.size() > 0 && executionInstance != null) {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("SELECT * FROM (" + getQueryDefinition() + ") " + getRandomAlias(8) + " ");
+			buffer.append("SELECT * FROM (" + getQueryDefinition() + ") LovTableForCache ");
 			buildWhereClause(buffer, dependencies, executionInstance);
 			result = buffer.toString();
 		}
