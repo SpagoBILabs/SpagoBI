@@ -65,8 +65,12 @@ Sbi.console.FilteringToolbar = function(config) {
 	Ext.apply(this, c);
 	
 	this.services = this.services || new Array();	
-	this.services['export'] = this.services['export'] || Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'EXPORT_ACTION'
+	this.services['createexportfile'] = this.services['createexportfile'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'CREATE_EXPORT_FILE_ACTION'
+		, baseParams: new Object()
+	});
+	this.services['getexportfile'] = this.services['getexportfile'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'GET_TEMPORARY_FILE_ACTION'
 		, baseParams: new Object()
 	});
 	// constructor
@@ -232,10 +236,11 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 			exportName ='';
 		}
 		//check if specific datasource for export is definied
+		var params = null;
 		if (gridConsole.datasetExport != null){
-			var params = {
+			params = {
 					mimeType: output
-					, responseType: 'attachment'
+					//, responseType: 'attachment'
 					, datasetLabel: dsExport
 					, datasetHeadersLabel: dsHeadersLabel
 					, meta: Ext.util.JSON.encode(metaCols)
@@ -243,9 +248,9 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 				};
 		}
 		else {
-			var params = {
+			params = {
 					mimeType: output
-					, responseType: 'attachment'
+					//, responseType: 'attachment'
 					, datasetLabel: gridConsole.store.dsLabel
 					, datasetHeadersLabel: dsHeadersLabel
 					, meta: Ext.util.JSON.encode(meta)
@@ -253,14 +258,42 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 				};
 		}
 		
-
+		this.ownerCt.showMask();
 		
-		Sbi.Sync.request({
-			url: this.services['export']
-			, params: params
-		});
+  		Ext.Ajax.request({
+	       	url: this.services['createexportfile']			       
+	       	, params: params 			       
+	    	, success: this.onExportFileSuccess
+	    	, failure: this.onExportFileFailure
+	    	, scope: this     
+	    });
 		
 	}
+	
+	,
+	onExportFileSuccess : function (response, options) {
+		this.ownerCt.hideMask();
+		if (response !== undefined && response.responseText !== undefined) {
+			var responseJson = Ext.util.JSON.decode( response.responseText );
+			Sbi.Sync.request({
+				url : this.services['getexportfile']
+				, params : {
+					name : responseJson.name
+					, extension : responseJson.extension
+				}
+			});
+		} else {
+			Sbi.Msg.showError('Server response is empty', 'Service Error');
+		}
+	}
+	
+	,
+	onExportFileFailure : function (response, options) {
+		this.ownerCt.hideMask();
+		Sbi.exception.ExceptionHandler.onServiceRequestFailure(response, options);
+	}
+	
+	
 	, orderMetaColumns : function(colModArray, storeMetaArray, columnConfig){
 		var result = new Array();
 		if(colModArray != null && colModArray !== undefined){

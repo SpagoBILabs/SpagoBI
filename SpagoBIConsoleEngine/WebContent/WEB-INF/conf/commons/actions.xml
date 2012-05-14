@@ -93,12 +93,17 @@
 	</ACTION>
 	
 	
-	<ACTION name="EXPORT_ACTION" 
-			class="it.eng.spagobi.engines.console.exporter.ExportAction"
+	<ACTION name="CREATE_EXPORT_FILE_ACTION" 
+			class="it.eng.spagobi.engines.console.exporter.CreateExportFileAction"
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="GET_TEMPORARY_FILE_ACTION" 
+			class="it.eng.spagobi.engines.console.exporter.GetTemporaryFileAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
 
 	<!-- ================================================================================= -->
 	<!-- TRAPS																			   -->
