@@ -405,7 +405,13 @@ public class ExporterMetadata {
 				else if(dataSetActiveDetail instanceof QueryDataSetDetail){
 					hibDataSetHistory=new SbiQueryDataSet();
 					if(((QueryDataSetDetail)dataSetActiveDetail).getQuery()!=null){
-						((SbiQueryDataSet)hibDataSetHistory).setQuery(((QueryDataSetDetail)dataSetActiveDetail).getQuery().toString());
+						((SbiQueryDataSet)hibDataSetHistory).setQuery(((QueryDataSetDetail)dataSetActiveDetail).getQuery());
+					}
+					if(((QueryDataSetDetail)dataSetActiveDetail).getQueryScript()!=null){
+						((SbiQueryDataSet)hibDataSetHistory).setQueryScript(((QueryDataSetDetail)dataSetActiveDetail).getQueryScript());
+					}
+					if(((QueryDataSetDetail)dataSetActiveDetail).getQueryScriptLanguage()!=null){
+						((SbiQueryDataSet)hibDataSetHistory).setQueryScriptLanguage(((QueryDataSetDetail)dataSetActiveDetail).getQueryScriptLanguage());
 					}
 					if(((QueryDataSetDetail)dataSetActiveDetail).getDataSourceLabel()!=null){
 						SbiDataSource hibDataSource = null;

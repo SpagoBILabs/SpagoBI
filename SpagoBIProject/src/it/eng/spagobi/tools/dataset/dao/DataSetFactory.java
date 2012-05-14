@@ -131,6 +131,8 @@ public class DataSetFactory {
 	private static GuiDataSetDetail toGuiDataSetDetail(SbiQueryDataSet sbiDataSetHistory) {
 		QueryDataSetDetail guiDataSetDetail = new QueryDataSetDetail();
 		guiDataSetDetail.setQuery(sbiDataSetHistory.getQuery());
+		guiDataSetDetail.setQueryScript(sbiDataSetHistory.getQueryScript());
+		guiDataSetDetail.setQueryScriptLanguage(sbiDataSetHistory.getQueryScriptLanguage());
 		SbiDataSource sbiDataSource = sbiDataSetHistory.getDataSource();
 		if(sbiDataSource!=null){
 			String dataSourceLabel = sbiDataSource.getLabel();
@@ -276,6 +278,8 @@ public class DataSetFactory {
 		if(sbiDataSetHistory instanceof SbiQueryDataSet){			
 			ds=new JDBCDataSet();
 			((JDBCDataSet)ds).setQuery(((SbiQueryDataSet)sbiDataSetHistory).getQuery());
+			((JDBCDataSet)ds).setQueryScript(((SbiQueryDataSet)sbiDataSetHistory).getQueryScript());
+			((JDBCDataSet)ds).setQueryScriptLanguage(((SbiQueryDataSet)sbiDataSetHistory).getQueryScriptLanguage());
 
 			SbiDataSource sbids=((SbiQueryDataSet)sbiDataSetHistory).getDataSource();
 			if(sbids!=null){

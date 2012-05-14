@@ -57,6 +57,8 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String DS_TYPE_CD = "dsTypeCd";
 	private static final String FILE_NAME = "fileName";
 	private static final String QUERY = "query";
+	private static final String QUERY_SCRIPT = "queryScript";
+	private static final String QUERY_SCRIPT_LANGUAGE = "queryScriptLanguage";
 	private static final String DATA_SOURCE = "dataSource";
 	private static final String WS_ADDRESS = "wsAddress";
 	private static final String WS_OPERATION = "wsOperation";
@@ -175,13 +177,17 @@ public class DataSetJSONSerializer implements Serializer {
 			}
 
 			else if(dsDetail instanceof QueryDataSetDetail){
-				if(((QueryDataSetDetail)dsDetail).getQuery()!=null){
-					String query = ((QueryDataSetDetail)dsDetail).getQuery().toString();
-					if(query!=null){
-						result.put(QUERY, query);
-					}
+				QueryDataSetDetail queryDatasetDetail = (QueryDataSetDetail)dsDetail;
+				if(queryDatasetDetail.getQuery() != null){
+					result.put(QUERY, queryDatasetDetail.getQuery());
 				}
-				String dataSourceLabel = ((QueryDataSetDetail)dsDetail).getDataSourceLabel();
+				if(queryDatasetDetail.getQueryScript() != null){
+					result.put(QUERY_SCRIPT, queryDatasetDetail.getQueryScript());
+				}
+				if(queryDatasetDetail.getQueryScriptLanguage() != null){
+					result.put(QUERY_SCRIPT_LANGUAGE, queryDatasetDetail.getQueryScriptLanguage());
+				}
+				String dataSourceLabel = queryDatasetDetail.getDataSourceLabel();
 				if(dataSourceLabel!=null){
 					result.put(DATA_SOURCE, dataSourceLabel);
 				}				

@@ -53,6 +53,8 @@ public class DataSetConstants {
 	public static final String DS_TYPE_CD = "dsTypeCd";
 	public static final String FILE_NAME = "fileName";
 	public static final String QUERY = "Query";
+	public static final String QUERY_SCRIPT = "queryScript";
+	public static final String QUERY_SCRIPT_LANGUAGE = "queryScriptLanguage";
 	public static final String DATA_SOURCE = "dataSource";
 	public static final String WS_ADDRESS = "wsAddress";
 	public static final String WS_OPERATION = "wsOperation";
@@ -89,8 +91,9 @@ public class DataSetConstants {
 	public static final String START = "start";
 	public static final String LIMIT = "limit";
 	public static final Integer START_DEFAULT = 0;
-	public static final Integer LIMIT_DEFAULT = 14;
+	public static final Integer LIMIT_DEFAULT = 15;
 	
 	//filters parameters
 	public static final String FILTERS = "FILTERS";
+	
 }

@@ -54,6 +54,10 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     private java.lang.String pivotRowName;
 
     private java.lang.String query;
+    
+    private java.lang.String queryScript;
+    
+    private java.lang.String queryScriptLanguage;
 
     private java.lang.String script;
 
@@ -89,6 +93,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            java.lang.String pivotColumnValue,
            java.lang.String pivotRowName,
            java.lang.String query,
+           java.lang.String queryScript,
+           java.lang.String queryScriptLanguage,
            java.lang.String script,
            java.lang.Integer transformerId,
            java.lang.String type,
@@ -114,6 +120,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            this.pivotColumnValue = pivotColumnValue;
            this.pivotRowName = pivotRowName;
            this.query = query;
+           this.queryScript = queryScript;
+           this.queryScriptLanguage = queryScriptLanguage;
            this.script = script;
            this.transformerId = transformerId;
            this.type = type;
@@ -539,9 +547,27 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     public void setQuery(java.lang.String query) {
         this.query = query;
     }
+    
+    
 
 
-    /**
+    public java.lang.String getQueryScript() {
+		return queryScript;
+	}
+
+	public void setQueryScript(java.lang.String queryScript) {
+		this.queryScript = queryScript;
+	}
+
+	public java.lang.String getQueryScriptLanguage() {
+		return queryScriptLanguage;
+	}
+
+	public void setQueryScriptLanguage(java.lang.String queryScriptLanguage) {
+		this.queryScriptLanguage = queryScriptLanguage;
+	}
+
+	/**
      * Gets the script value for this SpagoBiDataSet.
      * 
      * @return script
@@ -691,6 +717,12 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.query==null && other.getQuery()==null) || 
              (this.query!=null &&
               this.query.equals(other.getQuery()))) &&
+            ((this.queryScript==null && other.getQueryScript()==null) || 
+             (this.queryScript!=null &&
+              this.queryScript.equals(other.getQueryScript()))) &&
+            ((this.queryScriptLanguage==null && other.getQueryScriptLanguage()==null) || 
+             (this.queryScriptLanguage!=null && 
+              this.queryScriptLanguage.equals(other.getQueryScriptLanguage()))) &&
             ((this.script==null && other.getScript()==null) || 
              (this.script!=null &&
               this.script.equals(other.getScript()))) &&
@@ -772,6 +804,12 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         }
         if (getQuery() != null) {
             _hashCode += getQuery().hashCode();
+        }
+        if (getQueryScript() != null) {
+            _hashCode += getQueryScript().hashCode();
+        }
+        if (getQueryScriptLanguage() != null) {
+            _hashCode += getQueryScriptLanguage().hashCode();
         }
         if (getScript() != null) {
             _hashCode += getScript().hashCode();

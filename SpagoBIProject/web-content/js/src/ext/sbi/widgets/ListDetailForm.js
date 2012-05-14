@@ -474,8 +474,9 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 			LN('sbi.generic.confirmDelete'),            
             function(btn, text) {
                 if (btn=='yes') {
-                	if (itemId != null) {	
-
+                	alert(itemId);
+                	if (itemId != null) {
+                		
 						Ext.Ajax.request({
 				            url: this.services['deleteItemService'],
 				            params: {'id': itemId},
@@ -506,7 +507,15 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 			
 						});
 					} else {
-						Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.generic.error.msg'),LN('sbi.generic.warning'));
+						var deleteRow = this.rowselModel.getSelected();
+						this.mainElementsStore.remove(deleteRow);
+						this.mainElementsStore.commitChanges();
+						if(this.mainElementsStore.getCount()>0){
+							this.rowselModel.selectRow(0);
+						}else{
+							this.addNewItem();
+						}
+						//Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.generic.error.msg'),LN('sbi.generic.warning'));
 					}
                 }
             },

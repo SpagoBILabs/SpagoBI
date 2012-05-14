@@ -66,6 +66,12 @@
 	        <property name="query" type="text">
 	            <column name="QUERY" />
 	        </property>
+	        <property name="queryScript" type="text">
+	            <column name="QUERY_SCRIPT" />
+	        </property>
+	        <property name="queryScriptLanguage" type="string">
+	            <column name="QUERY_SCRIPT_LANGUAGE" />
+	        </property>	      
 	        <many-to-one name="dataSource" class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource">
 	            <column name="DATA_SOURCE_ID" not-null="false" />
 	        </many-to-one>	        

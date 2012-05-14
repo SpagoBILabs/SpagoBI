@@ -403,6 +403,8 @@ public class SDKObjectsConverter {
 
 			// jdbc dataset
 			toReturn.setJdbcQuery(spagoBiDataSet.getQuery());
+			toReturn.setJdbcQueryScript(spagoBiDataSet.getQueryScript());
+			toReturn.setJdbcQueryScriptLanguage(spagoBiDataSet.getQueryScriptLanguage());
 			if (spagoBiDataSet.getDataSource() != null) {
 				toReturn.setJdbcDataSourceId(spagoBiDataSet.getDataSource().getId());
 			}
