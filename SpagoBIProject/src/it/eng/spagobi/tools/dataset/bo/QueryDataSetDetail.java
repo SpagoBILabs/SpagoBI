@@ -19,6 +19,8 @@ import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 public class QueryDataSetDetail extends GuiDataSetDetail{
 	
     private String query=null;
+    private String queryScript=null;
+    private String queryScriptLanguage=null;
     private String dataSourceLabel=null;
     
     /**
@@ -38,6 +40,24 @@ public class QueryDataSetDetail extends GuiDataSetDetail{
     public void setQuery(String query) {
         this.query = query;
     }
+
+	public String getQueryScript() {
+		return queryScript;
+	}
+
+	public void setQueryScript(String queryScript) {
+		this.queryScript = queryScript;
+	}
+
+	
+
+	public String getQueryScriptLanguage() {
+		return queryScriptLanguage;
+	}
+
+	public void setQueryScriptLanguage(String queryScriptLanguage) {
+		this.queryScriptLanguage = queryScriptLanguage;
+	}
 
 	public String getDataSourceLabel() {
 		return dataSourceLabel;

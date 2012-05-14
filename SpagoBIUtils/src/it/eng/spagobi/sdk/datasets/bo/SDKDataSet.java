@@ -24,6 +24,10 @@ public class SDKDataSet  implements java.io.Serializable {
     private java.lang.Integer jdbcDataSourceId;
 
     private java.lang.String jdbcQuery;
+    
+    private java.lang.String jdbcQueryScript;
+    
+    private java.lang.String jdbcQueryScriptLanguage;
 
     private java.lang.String label;
 
@@ -70,6 +74,8 @@ public class SDKDataSet  implements java.io.Serializable {
            java.lang.String javaClassName,
            java.lang.Integer jdbcDataSourceId,
            java.lang.String jdbcQuery,
+           java.lang.String jdbcQueryScript,
+           java.lang.String jdbcQueryScriptLanguage,
            java.lang.String label,
            java.lang.String name,
            java.lang.Boolean numberingRows,
@@ -101,6 +107,8 @@ public class SDKDataSet  implements java.io.Serializable {
            this.javaClassName = javaClassName;
            this.jdbcDataSourceId = jdbcDataSourceId;
            this.jdbcQuery = jdbcQuery;
+           this.jdbcQueryScript = jdbcQueryScript;
+           this.jdbcQueryScriptLanguage = jdbcQueryScriptLanguage;
            this.label = label;
            this.name = name;
            this.numberingRows = numberingRows;
@@ -240,8 +248,25 @@ public class SDKDataSet  implements java.io.Serializable {
         this.jdbcQuery = jdbcQuery;
     }
 
+    
 
-    /**
+    public java.lang.String getJdbcQueryScript() {
+		return jdbcQueryScript;
+	}
+
+	public void setJdbcQueryScript(java.lang.String jdbcQueryScript) {
+		this.jdbcQueryScript = jdbcQueryScript;
+	}
+
+	public java.lang.String getJdbcQueryScriptLanguage() {
+		return jdbcQueryScriptLanguage;
+	}
+
+	public void setJdbcQueryScriptLanguage(java.lang.String jdbcQueryScriptLanguage) {
+		this.jdbcQueryScriptLanguage = jdbcQueryScriptLanguage;
+	}
+
+	/**
      * Gets the label value for this SDKDataSet.
      * 
      * @return label
@@ -601,6 +626,12 @@ public class SDKDataSet  implements java.io.Serializable {
             ((this.jdbcQuery==null && other.getJdbcQuery()==null) || 
              (this.jdbcQuery!=null &&
               this.jdbcQuery.equals(other.getJdbcQuery()))) &&
+            ((this.jdbcQueryScript==null && other.getJdbcQueryScript()==null) || 
+             (this.jdbcQueryScript!=null &&
+              this.jdbcQueryScript.equals(other.getJdbcQueryScript()))) &&
+            ((this.jdbcQueryScriptLanguage==null && other.getJdbcQueryScriptLanguage()==null) || 
+             (this.jdbcQueryScriptLanguage!=null &&
+              this.jdbcQueryScriptLanguage.equals(other.getJdbcQueryScriptLanguage()))) &&
             ((this.label==null && other.getLabel()==null) || 
              (this.label!=null &&
               this.label.equals(other.getLabel()))) &&
@@ -680,6 +711,12 @@ public class SDKDataSet  implements java.io.Serializable {
         }
         if (getJdbcQuery() != null) {
             _hashCode += getJdbcQuery().hashCode();
+        }
+        if (getJdbcQueryScript() != null) {
+            _hashCode += getJdbcQueryScript().hashCode();
+        }
+        if (getJdbcQueryScriptLanguage() != null) {
+            _hashCode += getJdbcQueryScriptLanguage().hashCode();
         }
         if (getLabel() != null) {
             _hashCode += getLabel().hashCode();

@@ -84,7 +84,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			statement = (String) ((ScriptDataSet)getTargetDataSet()).getScript();
 		} else if (getTargetDataSet() instanceof JDBCDataSet) {
 			JDBCDataSet jdbcDataSet = (JDBCDataSet)getTargetDataSet();
-			if(jdbcDataSet.getQueryScript() != null) {
+			if( StringUtilities.isNotEmpty( jdbcDataSet.getQueryScript() ) ) {
 				statement = (String)jdbcDataSet.getQuery();
 				statement =  applyScript(statement, jdbcDataSet.getQueryScript(), jdbcDataSet.getQueryScriptLanguage());
 			} else {

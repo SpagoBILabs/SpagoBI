@@ -84,6 +84,8 @@ public static String DS_TYPE = "SbiQueryDataSet";
 		}
 	
 		setQuery( dataSetConfig.getQuery() );
+		setQueryScript( dataSetConfig.getQueryScript() );
+		setQueryScriptLanguage( dataSetConfig.getQueryScriptLanguage() );
 		
 		addBehaviour( new QuerableBehaviour(this) );
 	}
@@ -120,8 +122,14 @@ public static String DS_TYPE = "SbiQueryDataSet";
 			
 		dataProxy = (JDBCDataProxy)this.getDataProxy();
 		sbd.setDataSource(dataProxy.getDataSource().toSpagoBiDataSource());
-		if(query!=null){
-		sbd.setQuery(query.toString());
+		if(query != null){
+			sbd.setQuery(query.toString());
+		}
+		if(queryScript != null){
+			sbd.setQueryScript(queryScript);
+		}
+		if(queryScriptLanguage != null){
+			sbd.setQueryScriptLanguage(queryScriptLanguage);
 		}
 		return sbd;
 	}

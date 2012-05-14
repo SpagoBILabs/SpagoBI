@@ -66,7 +66,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Insert data set.
 	 * @param dataSet the a data set
-	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.tools.dataset.dao.IDataSetDAO#insertDataSet(it.eng.spagobi.tools.dataset.bo.AbstractDataSet)
 	 */
 	public Integer insertDataSet(GuiGenericDataSet dataSet) {
@@ -104,7 +103,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				else if(dataSetActiveDetail instanceof QueryDataSetDetail){
 					hibDataSet=new SbiQueryDataSet();
 					if(((QueryDataSetDetail)dataSetActiveDetail).getQuery()!=null){
-						((SbiQueryDataSet)hibDataSet).setQuery(((QueryDataSetDetail)dataSetActiveDetail).getQuery().toString());
+						((SbiQueryDataSet)hibDataSet).setQuery(((QueryDataSetDetail)dataSetActiveDetail).getQuery());
+					}
+					if(((QueryDataSetDetail)dataSetActiveDetail).getQueryScript()!=null){
+						((SbiQueryDataSet)hibDataSet).setQueryScript(((QueryDataSetDetail)dataSetActiveDetail).getQueryScript());
+					}
+					if(((QueryDataSetDetail)dataSetActiveDetail).getQuery()!=null){
+						((SbiQueryDataSet)hibDataSet).setQueryScriptLanguage(((QueryDataSetDetail)dataSetActiveDetail).getQueryScriptLanguage());
 					}
 					if(((QueryDataSetDetail)dataSetActiveDetail).getDataSourceLabel()!=null){
 						SbiDataSource hibDataSource = null;
@@ -924,7 +929,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				else if(dsActiveDetailToSet instanceof QueryDataSetDetail){
 					hibDataSet=new SbiQueryDataSet();
 					if(((QueryDataSetDetail)dsActiveDetailToSet).getQuery()!=null){
-						((SbiQueryDataSet)hibDataSet).setQuery(((QueryDataSetDetail)dsActiveDetailToSet).getQuery().toString());
+						((SbiQueryDataSet)hibDataSet).setQuery(((QueryDataSetDetail)dsActiveDetailToSet).getQuery());
+					}
+					if(((QueryDataSetDetail)dsActiveDetailToSet).getQueryScript()!=null){
+						((SbiQueryDataSet)hibDataSet).setQueryScript(((QueryDataSetDetail)dsActiveDetailToSet).getQueryScript());
+					}
+					if(((QueryDataSetDetail)dsActiveDetailToSet).getQueryScriptLanguage()!=null){
+						((SbiQueryDataSet)hibDataSet).setQueryScriptLanguage(((QueryDataSetDetail)dsActiveDetailToSet).getQueryScriptLanguage());
 					}
 					if(((QueryDataSetDetail)dsActiveDetailToSet).getDataSourceLabel()!=null){
 						SbiDataSource hibDataSource = null;
@@ -1379,6 +1390,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		if(hibDataSet instanceof SbiQueryDataSet){			
 			hibNew  = new SbiQueryDataSet();
 			((SbiQueryDataSet)hibNew).setQuery(((SbiQueryDataSet)hibDataSet).getQuery());
+			((SbiQueryDataSet)hibNew).setQueryScript(((SbiQueryDataSet)hibDataSet).getQueryScript());
+			((SbiQueryDataSet)hibNew).setQueryScriptLanguage(((SbiQueryDataSet)hibDataSet).getQueryScriptLanguage());
 		}
 
 		if(hibDataSet instanceof SbiWSDataSet){			

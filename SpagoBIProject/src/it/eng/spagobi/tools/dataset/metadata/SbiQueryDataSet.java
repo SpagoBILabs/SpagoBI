@@ -19,6 +19,8 @@ import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
  */
 public class SbiQueryDataSet extends SbiDataSetHistory{
     private String query=null;
+    private String queryScript=null;
+    private String queryScriptLanguage=null;
     private SbiDataSource dataSource=null;
     
     /**
@@ -39,7 +41,44 @@ public class SbiQueryDataSet extends SbiDataSetHistory{
         this.query = query;
     }
     
+    
     /**
+     * Get the script used to modify the query at runtime (optional)
+     * 
+     * @return the script used to modify the query at runtime (optional)
+     */
+    public String getQueryScript() {
+		return queryScript;
+	}
+
+    /**
+     * Set the script to use to modify the query at runtime
+     * 
+     * @param queryScript script to use to modify the query at runtime (optional)
+     */
+	public void setQueryScript(String queryScript) {
+		this.queryScript = queryScript;
+	}
+
+	/**
+     * Get the language of the script used to modify the query at runtime
+     * 
+     * @return the language of the script used to modify the query at runtime
+     */
+	public String getQueryScriptLanguage() {
+		return queryScriptLanguage;
+	}
+
+	/**
+     * Set the language of the script used to modify the query at runtime
+     * 
+     * @param queryScriptLanguage the language of the script used to modify the query at runtime
+     */
+	public void setQueryScriptLanguage(String queryScriptLanguage) {
+		this.queryScriptLanguage = queryScriptLanguage;
+	}
+
+	/**
      * Gets the data source.
      * 
      * @return the data source
