@@ -17,12 +17,15 @@ import it.eng.spagobi.engines.accessibility.dao.QueryExecutor;
 import it.eng.spagobi.engines.accessibility.xslt.Transformation;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.callbacks.audit.AuditAccessUtils;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,7 +93,7 @@ public class AccessibilityServlet extends HttpServlet {
     	Connection con = null;
     	String query= null;
 
-    	SpagoBiDataSet dataset = getDataSet(requestConnectionName, session, profile, documentId);
+    	IDataSet dataset = getDataSet(requestConnectionName, session, profile, documentId);
     	if (dataset == null) {
     	    logger.debug("No dataset query associated to this document");
     	    logger.debug("Try to get datasource");
@@ -109,10 +112,17 @@ public class AccessibilityServlet extends HttpServlet {
     	    }   	    
     	} else{
     		//get query
-    		query = dataset.getQuery();
+    		query = (String)dataset.getQuery();
     		try {
-				con = dataset.getDataSource().readConnection(dataset.getDataSource().getSchemaAttribute());
-			} catch (Exception e) {
+				if(dataset instanceof JDBCDataSet) {
+					JDBCDataSet jdbcDataset = (JDBCDataSet)dataset;
+					SpagoBiDataSource dataSource = jdbcDataset.getDataProxy().getDataSource().toSpagoBiDataSource();
+					con = dataSource.readConnection(dataSource.getSchemaAttribute());
+				} else {
+					throw new SpagoBIRuntimeException("Dataset [" + dataset.getName() + "] is not of type [JDBC]");
+				}
+				
+    		} catch (Exception e) {
 				logger.error("Unable to get connection", e);
 			    if (auditAccessUtils != null)
 					auditAccessUtils.updateAudit(session,(String) profile.getUserUniqueIdentifier(), auditId, null, new Long(System
@@ -223,7 +233,7 @@ public class AccessibilityServlet extends HttpServlet {
 
     }
 
-    private SpagoBiDataSet getDataSet(String requestConnectionName,HttpSession session,IEngUserProfile profile,String documentId) {
+    private IDataSet getDataSet(String requestConnectionName,HttpSession session,IEngUserProfile profile,String documentId) {
     	logger.debug("IN");
 		logger.debug("IN.documentId:"+documentId);
 		DataSetServiceProxy proxyDataset =new DataSetServiceProxy((String)profile.getUserUniqueIdentifier(),session);
@@ -234,14 +244,9 @@ public class AccessibilityServlet extends HttpServlet {
 		    logger.warn("Data Set IS NULL. There are problems reading DataSet informations");
 		    return null;
 		}
-		SpagoBiDataSet biDataset = null;
-		try {
-			biDataset= dataset.toSpagoBiDataSet();
-		} catch (Exception e) {
-			logger.error("Cannot retrive SpagoBi DataSet", e);
-		} 
+		
 		logger.debug("OUT");
-		return biDataset;
+		return dataset;
 
     }
     
