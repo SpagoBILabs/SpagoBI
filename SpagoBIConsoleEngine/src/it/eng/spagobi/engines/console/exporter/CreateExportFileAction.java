@@ -16,12 +16,10 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.console.ConsoleEngineConfig;
-import it.eng.spagobi.engines.console.ConsoleEngineInstance;
 import it.eng.spagobi.engines.console.exporter.types.ExporterCSV;
 import it.eng.spagobi.engines.console.exporter.types.ExporterExcel;
 import it.eng.spagobi.engines.console.exporter.types.utils.CSVDocument;
 import it.eng.spagobi.engines.console.services.AbstractConsoleEngineAction;
-import it.eng.spagobi.sdk.proxy.DocumentsServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -32,7 +30,9 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,12 +53,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import utilities.DataSourceUtilities;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class ExportAction extends AbstractConsoleEngineAction {
+public class CreateExportFileAction extends AbstractConsoleEngineAction {
 
 	// INPUT PARAMETERS
 	public static final String MIME_TYPE = "mimeType";
@@ -80,39 +83,34 @@ public class ExportAction extends AbstractConsoleEngineAction {
 	public static final String DEFAULT_FILE_EXTENSION = "txt";
 
 
-	public static final String SERVICE_NAME = "EXPORT_ACTION";
+	public static final String SERVICE_NAME = "CREATE_EXPORT_FILE_ACTION";
 
 	// logger component
-	private static Logger logger = Logger.getLogger(ExportAction.class);
+	private static Logger logger = Logger.getLogger(CreateExportFileAction.class);
 
 	public void service(SourceBean request, SourceBean response) {
 
-		File reportFile;
 		String dataSetLabel;
 		String dataSetHeadersLabel;
 		String mimeType;
 		String responseType;
 		String locale;
-		String datasetExport;
 		JSONArray jsonArray;
 
 		IDataSet dataSet;
 		IDataSet dataSetHeaders;
 		IDataStore dataStore;
 		IDataStore dataStoreHeaders;
-		IDataSource dataSource;
-		JSONObject dataSetJSON;
 
-		boolean writeBackResponseInline;
-
-		String fileName = null;;
 		File file = null;
 
 		logger.debug("IN");
 
+		Monitor monitor = MonitorFactory.start("SpagoBI_Console.CreateExportFileAction.service");	
+		
 		try {
 			super.service(request,response);
-
+			
 			Assert.assertNotNull(getConsoleEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			Assert.assertNotNull(getConsoleEngineInstance().getDataSetServiceProxy(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of DatasetServiceProxy class");			
 
@@ -304,9 +302,11 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			params.put("pagination", "false" );
 			
 			String docName = getExportName(request);
+			String fileExtension = null;
 	
 			if( "application/vnd.ms-excel".equalsIgnoreCase( mimeType ) ) {
 				logger.debug("export excel");
+				fileExtension = "xls";
 				ExporterExcel exp = new ExporterExcel(dataStore);
 
 				long numberOfRows = dataStore.getRecordsCount();
@@ -326,8 +326,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 
 				Workbook wb = exp.export();
 				
-				file = File.createTempFile(docName, ".xls");
-				fileName = docName+".xls";
+				file = File.createTempFile(docName, "." + fileExtension);
 				FileOutputStream stream = new FileOutputStream(file);
 				wb.write(stream);
 				stream.flush();
@@ -336,6 +335,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			}
 			else if( "text/csv".equalsIgnoreCase( mimeType ) ) {
 				logger.debug("export CSV");
+				fileExtension = "csv";
 				ExporterCSV exp = new ExporterCSV(dataStore);
 
 				exp.setExtractedFields(extractedFields);
@@ -343,8 +343,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 
 				CSVDocument csvDocument = exp.export();
 				logger.debug("A CSV document has to be written with "+csvDocument.getHeader().size()+" headers and "+csvDocument.getRows().size()+" rows");
-				file = File.createTempFile(docName, ".csv");
-				fileName = docName+".csv";
+				file = File.createTempFile(docName, "." + fileExtension );
 
 				FileWriter fw = null;
 				try {
@@ -363,25 +362,21 @@ public class ExportAction extends AbstractConsoleEngineAction {
 				}
 			}
 
-			try {				
-				writeBackToClient(file, null, true, fileName, mimeType);
+			try {	
+				JSONObject jsonResponse = new JSONObject();
+				String name = file.getName().substring(0, file.getName().lastIndexOf('.'));
+				String extension = file.getName().substring(file.getName().lastIndexOf('.') + 1);
+				jsonResponse.put("name", name);
+				jsonResponse.put("extension", extension);
+				writeBackToClient( new JSONSuccess( jsonResponse ) );
 			} catch (IOException ioe) {
 				throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
-			}	finally{
-				if(file != null && file.exists()) {
-					try {
-						file.delete();
-					} catch (Exception e) {
-						logger.warn("Impossible to delete temporary file " + file, e);
-					}
-				}
 			}
 
-
-
 		} catch(Throwable t) {
-			logger.error("Impossible to export doc", t);
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
+			monitor.stop();
 			logger.debug("OUT");
 		}
 	}
