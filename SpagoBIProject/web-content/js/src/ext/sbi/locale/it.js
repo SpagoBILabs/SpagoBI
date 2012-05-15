@@ -701,3 +701,10 @@ Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = '
 //OFFICE DOCUMENTS - ZOOM 
 Sbi.locale.ln['Sbi.office.zoomIn'] = 'Incrementa dimensioni';
 Sbi.locale.ln['Sbi.office.zoomOut'] = 'Decrementa dimensioni';
+
+
+Sbi.locale.ln['sbi.kpi.accordionmenu.desciption']= 'Descrizione'
+Sbi.locale.ln['sbi.kpi.accordionmenu.linkeddoc']=  'Documento collegato'
+Sbi.locale.ln['sbi.kpi.accordionmenu.comments']= 'Commenti'
+Sbi.locale.ln['sbi.kpi.accordionmenu.history']= 'Storico'
+Sbi.locale.ln['sbi.kpi.accordionmenu.detail']= 'Dettaglio'
