@@ -595,6 +595,18 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		
 
 	}
+	
+	,
+	stopLoading : function () {
+		this.storeManager.stopRefresh(true, this.storeId);
+	}
+	
+	,
+	restartLoading : function () {
+		this.storeManager.stopRefresh(false, this.storeId);
+	}
+	
+	
     //  -- private methods ---------------------------------------------------------
     
     

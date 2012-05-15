@@ -258,6 +258,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 				};
 		}
 		
+		this.ownerCt.stopLoading();
 		this.ownerCt.showMask();
 		
   		Ext.Ajax.request({
@@ -273,6 +274,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 	,
 	onExportFileSuccess : function (response, options) {
 		this.ownerCt.hideMask();
+		this.ownerCt.restartLoading();
 		if (response !== undefined && response.responseText !== undefined) {
 			var responseJson = Ext.util.JSON.decode( response.responseText );
 			Sbi.Sync.request({
