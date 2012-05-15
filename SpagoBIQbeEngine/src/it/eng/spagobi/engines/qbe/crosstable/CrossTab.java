@@ -177,6 +177,9 @@ public class CrossTab {
 			addRecord(rowsRoot, record, columnsCount, columnsCount+rowsCount);
 		}
 		
+		columnsRoot.orderedSubtree();
+		rowsRoot.orderedSubtree();
+		
 		if(index<dataStore.getRecordsCount()){
 			Node completeColumnsRoot =  new Node("rootCompleteC");
 			for(index = 0; index<dataStore.getRecordsCount(); index++){
@@ -447,7 +450,7 @@ public class CrossTab {
 			}
 			nodePosition = nodeToCheck.getChilds().indexOf(node);
 			if(nodePosition<0){
-				nodeToCheck.addOrderedChild(node);
+				nodeToCheck.addChild(node);
 				nodeToCheck = node;
 			}else{
 				nodeToCheck = nodeToCheck.getChilds().get(nodePosition);

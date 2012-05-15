@@ -56,7 +56,7 @@ public class Node implements Cloneable, Comparable<Node>{
 		
 		public void addOrderedChild(Node child){
 			childs.add(child);
-			if(child!=null){
+			if(childs!=null){
 				Collections.sort(childs);
 			}
 		}
@@ -339,6 +339,15 @@ public class Node implements Cloneable, Comparable<Node>{
 		@Override
 		public int compareTo(Node arg0) {
 			return value.compareTo(arg0.getValue());
+		}
+		
+		public void orderedSubtree(){
+			if(childs!=null){
+				Collections.sort(childs);
+			}
+			for(int i=0; i<childs.size(); i++){
+				childs.get(i).orderedSubtree();
+			}
 		}
 		
 		
