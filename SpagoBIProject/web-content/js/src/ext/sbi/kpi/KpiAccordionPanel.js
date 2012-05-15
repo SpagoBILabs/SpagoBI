@@ -92,7 +92,7 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 			style: 'font-weight: bold; align:center; margin: 20px;'});
 		
 	    this.itemDetail = new Ext.Panel({
-	        title: 'Dettaglio',
+	        title: LN('sbi.kpi.accordionmenu.detail'),
 	        items: [this.detail, this.itemNoKpi ],
 	        autoScroll: true,
             listeners : {
@@ -104,13 +104,13 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	    });
 	    
 	    var item2 = new Ext.Panel({
-	        title: 'Descrizione',
+	        title: LN('sbi.kpi.accordionmenu.desciption'),
 	        items: [this.description],
 	        cls:'empty'
 	    });
 
 	    this.itemDocColl = new Ext.Panel({
-	        title: 'Doc collegato',
+	        title: LN('sbi.kpi.accordionmenu.linkeddoc'),
 	        items: [this.docs],
 	        scope: this,
             listeners : {
@@ -122,7 +122,7 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	    });
 
 	    var item4 = new Ext.Panel({
-	        title: 'Commenti',
+	        title: LN('sbi.kpi.accordionmenu.comments'),
 	        scope: this,
 	        items: [this.comments],
 	        
@@ -134,7 +134,7 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	    });
 
 	    var item5 = new Ext.Panel({
-	        title: 'Storico',
+	        title: LN('sbi.kpi.accordionmenu.history'),
 	        items: [this.historical],
 	        autoScroll: true,
 	        cls:'empty'
@@ -174,7 +174,7 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 		
 		//linked docs
 		if(field.attributes != undefined && field.attributes.documentLabel != undefined){
-			this.itemDocColl.setTitle('Doc collegato '+field.attributes.documentLabel);
+			this.itemDocColl.setTitle(LN('sbi.kpi.accordionmenu.linkeddoc')+' '+field.attributes.documentLabel);
 			this.itemDocColl.show();
 		}else{
 			this.itemDocColl.hide();
