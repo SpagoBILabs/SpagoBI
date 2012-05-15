@@ -107,12 +107,19 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 		return this.stores.get(storeId);
 	}
 	
-	, stopRefresh: function(value){
-		for(var i = 0, l = this.stores.length, s; i < l; i++) {
-			var s = this.stores.get(i);
+	/*
+	 * storeId is optional: in case it is not specified, all stores are stopped
+	 */
+	, stopRefresh: function(value, storeId){
+		if (storeId) { // if a storeId is defined, stopRefresh only on it
+			var s = this.stores.get(storeId);
 			s.stopped = value;
+		} else { // if a storeId is NOT defined, stopRefresh on ALL stores
+			for(var i = 0, l = this.stores.length, s; i < l; i++) {
+				var s = this.stores.get(i);
+				s.stopped = value;
+			}
 		}
-		 
 	}
 	
 	//refresh All stores of the store manager managed
