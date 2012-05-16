@@ -74,6 +74,7 @@ public class CrossTab {
 	public static final String TOTAL = "Total";
 	public static final String SUBTOTAL = "SubTotal";
 
+	private static final String PATH_SEPARATOR = "_S_";
 	private static final String DATA_MATRIX_NA = "NA";
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy" );
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
@@ -201,7 +202,7 @@ public class CrossTab {
 				} else {
 					valueStr = value.toString();
 				}
-				columnPath = columnPath + valueStr;
+				columnPath = columnPath + PATH_SEPARATOR + valueStr;
 			}
 						
 			rowPath="";
@@ -213,7 +214,7 @@ public class CrossTab {
 				} else {
 					valueStr = value.toString();
 				}
-				rowPath = rowPath + valueStr.toString();
+				rowPath = rowPath + PATH_SEPARATOR+ valueStr.toString();
 			}
 			
 				
@@ -368,11 +369,11 @@ public class CrossTab {
 				for(int j=0; j<measuresLength; j++){
 					x = rowsSpecification.indexOf(rowCordinates.get(i+j));
 					if ( x < 0 ) {
-						x = 0;
+						continue;
 					}
 					y = columnsSpecification.indexOf(columnCordinates.get(i+j));
 					if ( y < 0 ) {
-						y = 0;
+						continue;
 					}
 					if((y*measuresLength+j)<columnsN && (y*measuresLength+j)>=0){
 						dataMatrix[x][y*measuresLength+j]=data.get(i+j);
@@ -384,11 +385,11 @@ public class CrossTab {
 				for(int j=0; j<measuresLength; j++){
 					x = rowsSpecification.indexOf(rowCordinates.get(i+j));
 					if ( x < 0 ) {
-						x = 0;
+						continue;
 					}
 					y = columnsSpecification.indexOf(columnCordinates.get(i+j));
 					if ( y < 0 ) {
-						y = 0;
+						continue;
 					}
 					if(y<columnsN && y>=0){
 						dataMatrix[x*measuresLength+j][y]=data.get(i+j);
@@ -466,7 +467,7 @@ public class CrossTab {
 	private List<String> getLeafsPathList(Node n){
 		List<String> toReturn = new ArrayList<String>();
 		for(int i=0; i<n.getChilds().size(); i++){
-			toReturn.addAll(visit(n.getChilds().get(i), ""));
+			toReturn.addAll(visit(n.getChilds().get(i), PATH_SEPARATOR));
 		}
 		return toReturn;
 	}
@@ -474,7 +475,11 @@ public class CrossTab {
 	private List<String> visit(Node n, String prefix){
 		List<String> toReturn = new ArrayList<String>();
 		if(n.getChilds().size()==0){
-			toReturn.add(prefix+(String)(n.getValue()));
+			if(prefix.equals(PATH_SEPARATOR)){
+				toReturn.add(prefix +(String)(n.getValue()));
+			}else{
+				toReturn.add(prefix+ PATH_SEPARATOR +(String)(n.getValue()));
+			}
 			return toReturn;
 		}else{
 			for(int i=0; i<n.getChilds().size(); i++){
