@@ -336,7 +336,6 @@ public class Node implements Cloneable, Comparable<Node>{
 		/* (non-Javadoc)
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
 		 */
-		@Override
 		public int compareTo(Node arg0) {
 			return value.compareTo(arg0.getValue());
 		}
