@@ -94,7 +94,11 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 	, VIEWS: 'views'
 	, MONITOR: 'monitor'
 	, MONITOR_INACTIVE: 'monitor_inactive'
+	, SELECT_ROWS: 'selectRow'
+	, UNSELECT_ROWS: 'unselectRow'
+	, INVERT_SELECT_ROWS: 'invertSelectionRow'
 	, loadMask: null
+	, columnID : null
 		
 	, FILTERBAR_ACTIONS: {		
 		  monitor: {serviceName: 'UPDATE_ACTION', images: 'monitor'}
@@ -117,37 +121,36 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 		var dynamicParams = parameters.dynamicParams;
 	    if(dynamicParams) {        	
 	    	var msgErr = ""; 
+	    	var useSelRows = false;
 	      	for (var i = 0, l = dynamicParams.length; i < l; i++) {      		     
 	      		var param = dynamicParams[i]; 
+	      		if (param.useSelectedRow !== undefined && param.useSelectedRow == true){	      			
+	      			useSelRows = true;
+	      		}
 	        	for(p in param) { 
-	        		if(p === 'scope') continue;	        	
-	        			//Searchs into request
-	        			if (param.scope === 'env'){ 
-	        				var tmpNamePar =  param[p];
-			            	  if (p !== this.USER_ID && context[tmpNamePar] === undefined) {
-			            		  // msgErr += 'Parameter "' + tmpNamePar + '" undefined into request. <p>';
-		                      } else {   
-		                    	  results[p] = context[tmpNamePar];
-		                      }
-			            	  /*
-			            	if (p !== this.USER_ID && context[p] === undefined ) {
-			            		//search into filters
-			            		//var paramValue = this.store.filterPlugin.getFilter(this.store.getFieldNameByAlias(p)); 
-			            		alert("p: " + p + " - param[p]: " + param[p]);
-			            		var paramValue = this.store.filterPlugin.getFilter(this.store.getFieldNameByAlias(param[p]));
-			            		if (paramValue !== undefined){
-			            			//results[param[p]] = paramValue;
-			            			results[p] = paramValue;
-			            		}
-			            		else{
-			            			msgErr += 'Parameter "' + p + '" undefined into request or filter. <p>';
-			            		}
-		                    } else {          	 	 		           	 	 		  
-		                    	//results[param[p]] = context[p];
-		                    	results[p] = context[p];
-		                    } 	 	*/	 
-	                }          	 	 		   
-	          		    
+	        		if(p === 'scope') continue;	      
+	        		if(p === 'useSelectedRow') continue;	
+	        		//Searchs into request
+        			if (param.scope === 'env'){ 
+        			  var tmpNamePar =  param[p];
+        			  if (useSelRows){
+        				  var tb = this.ownerCt;
+        				  var gridConsole = tb.ownerCt;
+        				  var finalSelectedRowsId = this.cleanList(gridConsole.selectedRowsId);
+        				  if (finalSelectedRowsId == null || finalSelectedRowsId.length == 0){
+        					  var msgWar = 'Parameter "' + tmpNamePar + '" has not values selected. Default value is used.<p>';
+        					  Sbi.Msg.showWarning(msgWar, 'Service Warning');
+        				  }else{
+	                    	  results[p] = finalSelectedRowsId;	  
+	                    	  this.columnID = tmpNamePar;
+        				  }
+        				  useSelRows = false; //reset flag
+        			  } else if (p !== this.USER_ID && context[tmpNamePar] === undefined) {
+	            		  // msgErr += 'Parameter "' + tmpNamePar + '" undefined into request. <p>';
+                      } else if (!useSelRows){   
+                    	  results[p] = context[tmpNamePar];                    	  
+                      }		            	
+	                }          	 	 		   	          		    
 	        	 }          			   
 	      	} 
 	      	
@@ -164,10 +167,26 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 	    return results;
 	}
 	
+	, cleanList: function(lst){
+		var toReturn = [];
+		if (lst == null) return lst;
+		
+		for (var i=0, l=lst.length; i<l; i++){
+			var el = lst[i];
+			if (el !== undefined && el !== ''){
+				toReturn.push(el);
+			}
+		}
+		
+		return toReturn;
+		
+	}
     , execAction: function(){
-    	var flgCheck = null;
-    	var checkCol = null;
-    	
+    	//if the action is executable only once and it's disabled, do nothing
+    	if (this.actionConf.singleExecution !== undefined && this.actionConf.singleExecution == true && 
+    			(this.isActive !== undefined && this.isActive == false)){
+    		return;
+    	}
     	//views a confirm message if it's configurated
     	if (this.actionConf.msgConfirm !== undefined && this.actionConf.msgConfirm !== ''){
     		Ext.MessageBox.confirm(
@@ -206,9 +225,21 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     		return;
     	}
     	
+    	if (this.actionConf.type === this.SELECT_ROWS || this.actionConf.type === this.UNSELECT_ROWS ||
+    		this.actionConf.type === this.INVERT_SELECT_ROWS){
+	    	if (this.actionConf.imgSrc !== undefined){
+				//creates css dynamically if it's an extra-icon
+				var tmpImgName = this.actionConf.imgSrc.substr(0,this.actionConf.imgSrc.indexOf(".") );
+				if (Ext.util.CSS.getRule('.' + tmpImgName) == null){
+					Ext.util.CSS.createStyleSheet('.'+tmpImgName+' { background-image: url(../img/'+this.actionConf.imgSrc+') !important; }');
+				}
+				this.setIconClass(tmpImgName);    				
+			}
+	    	return;
+    	}
     	//checks if the button is active (when the action is errors or alarms)
     	if (this.actionConf.type === this.ERROR || this.actionConf.type === this.ALARMS ||
-    		this.actionConf.type === this.VIEWS && this.actionConf.flagColumn !== undefined	){
+    		this.actionConf.type === this.VIEWS && this.actionConf.flagColumn !== undefined){
     		var flagCol = this.store.getFieldNameByAlias(this.actionConf.flagColumn);    
         	if (flagCol === undefined ){
         		return;
@@ -255,10 +286,26 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     }
   
     //updates checkColumn value in each store's row
-    , setCheckValue: function(columnAlias, value){
-    	for (var i=0, l= this.store.getCount(); i < l; i++){
-            var record = this.store.getAt(i);  
-            record.set (this.store.getFieldNameByAlias(columnAlias), value );
+    , setCheckValue: function(columnAlias, value, disableCheck){
+    	var tb = this.ownerCt;
+		var gridConsole = tb.ownerCt;
+		if (gridConsole.selectedRowsId == null)  gridConsole.selectedRowsId = [];
+		var s = gridConsole.store;
+    	for (var i=0, l= s.getCount(); i < l; i++){
+    		var record = s.getAt(i); 
+            var valueID = record.get(s.getFieldNameByAlias(this.columnID));
+            var posValue = tb.getPositionEl(valueID, gridConsole.selectedRowsId);
+            gridConsole.selectedRowsId = [];             
+            if (disableCheck){                         	
+        		if (this.actionConf.singleExecution !== undefined && this.actionConf.singleExecution == true){
+        			gridConsole.isDisable = true; //to hide the checkbox
+        			gridConsole.isDirty = false;
+        		}else{        			
+        			gridConsole.isDisable = false;
+        			gridConsole.isDirty = true;	 //to clean the checkbox
+        		}
+        	}             
+            record.set (s.getFieldNameByAlias(columnAlias), value );
         } 
     	if (value === this.ACTIVE_VALUE){
     		if (this.actionConf.imgSrcInactive !== undefined){
@@ -289,7 +336,11 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     , execRealAction: function(){    	
     	checkCol = this.actionConf.checkColumn;
     	
-    	if (this.actionConf.type === 'monitor' || this.actionConf.type === 'monitor_inactive'){     		
+    	if (this.actionConf.type === 'selectRow' || this.actionConf.type === 'unselectRow' || 
+    		this.actionConf.type === 'invertSelectionRow'){
+    		this.fireEvent('toggleIcons', this, null);
+    		return;
+    	}else if (this.actionConf.type === 'monitor' || this.actionConf.type === 'monitor_inactive'){     		    	
     		this.store.filterPlugin.removeFilter(this.store.getFieldNameByAlias(this.actionConf.checkColumn));
     		var newFilter = new Array();
     		newFilter.push((this.actionConf.type === 'monitor') ? this.ACTIVE_VALUE : this.INACTIVE_VALUE);    	
@@ -307,6 +358,10 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     		} else {
     			this.store.loadStore();    
     		}
+    		var tb = this.ownerCt;
+    		tb.ownerCt.selectedRowsId = [];
+    		tb.ownerCt.isDisable = false;
+    		tb.ownerCt.isDirty = true;
     		this.hideMask();
     		return;
     	} else if (this.actionConf.type === 'errors' || this.actionConf.type === 'errors_inactive'){  
@@ -360,12 +415,16 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 					}	
 					//if by configuration is required a refresh of the dataset, it executes the store's load method,
 					//otherwise it changes the icons by the toggle (default)
-					this.hideMask();
+					this.hideMask();					
 					if (this.refreshDataAfterAction !== undefined && this.refreshDataAfterAction === true ){
+						var tb = this.ownerCt;
+			    		tb.ownerCt.selectedRowsId = [];
+			    		tb.ownerCt.isDisable = false;
+			    		tb.ownerCt.isDirty = true;
 						this.store.loadStore();
 					} else {
 						//fire events to toggle all icons of the same type
-						this.setCheckValue(this.actionConf.checkColumn, flgCheck);    
+						this.setCheckValue(this.actionConf.checkColumn, flgCheck, true);    
 						this.fireEvent('toggleIcons', this, flgCheck);
 					}
 			} else {

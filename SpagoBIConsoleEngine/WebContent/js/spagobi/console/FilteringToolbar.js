@@ -502,12 +502,70 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 	 }
 	 
 	 , onToggleIcons: function(action, flgCheck){
+		 var gridConsole = this.ownerCt;
+		 var s = gridConsole.store;
+		 var isDirty = false;			 
+		 if (gridConsole.selectedRowsId == null) gridConsole.selectedRowsId = [];	
+		 
+		 if (action.actionConf.type == 'selectRow' || action.actionConf.type == 'unselectRow' || 
+			 action.actionConf.type == 'invertSelectionRow' ){			 		 			
+			 for(var i=0; i< s.getCount(); i++){
+				 var record = s.getAt(i);
+				 var value = record.get(s.getFieldNameByAlias(action.actionConf.columnID));
+				 var isVisible = record.get(s.getFieldNameByAlias(action.actionConf.flagColumn));
+				 var posValue = this.getPositionEl(value, gridConsole.selectedRowsId);
+				 if (action.actionConf.type == 'selectRow'  && (isVisible == 1 || isVisible == 'true')){
+					 if (posValue == -1){
+						 isDirty = true;
+						 gridConsole.selectedRowsId.push(value);
+					 }
+				 }else if (action.actionConf.type == 'unselectRow'){
+					 if (posValue != -1){
+						 isDirty = true;
+						 delete gridConsole.selectedRowsId[posValue];
+					 }
+				 }else if (action.actionConf.type == 'invertSelectionRow' && (isVisible == 1 || isVisible == 'true')){
+					 isDirty = true;
+					 if ( posValue == -1){						 
+						 gridConsole.selectedRowsId.push(value);						
+					 }else{
+						 delete gridConsole.selectedRowsId[posValue];
+					 }		
+				 }
+				 
+				 if (isDirty){
+					 //update the check (fisical field to force a refresh of rendering)
+					 gridConsole.isDirty = isDirty;
+					 var newValue = (isVisible === 1 || isVisible === '1' ) ? 'true' : '1';
+					 record.set (s.getFieldNameByAlias(action.actionConf.flagColumn), newValue );
+					 isDirty = false;
+				 }				
+			 }			 
+			 return;
+		 }
+		 
 		//toggles all icons of the same family
 		 for (var i=0, l= this.buttons.length; i<l; i++ ){
-				var btn = this.buttons[i];
-				if (btn.actionConf.type == action.actionConf.type && btn.actionConf.name !== action.actionConf.name){
-					btn.setCheckValue(btn.actionConf.checkColumn, flgCheck);   
-				}			
-			}
-    }	
+			var cleanCheckBox = false;
+			var btn = this.buttons[i];
+			if (btn.actionConf.type == action.actionConf.type && btn.actionConf.name !== action.actionConf.name){
+				btn.setCheckValue(btn.actionConf.checkColumn, flgCheck, false);   
+			}			
+		}
+		
+    }
+	 
+   , getPositionEl: function(value, lst) {	    	
+			//check if the row is in the listRowsSelected (pagination management)
+	    	//returns the position element into the array 
+	    	var toReturn = -1;    	
+	        
+	    	for(var i=0; i<lst.length; i++) {
+	    		if (lst[i] == value ){
+	    			toReturn = i;
+	    			break;
+	    		}   		
+	    	}
+	    	return toReturn;	
+	}
 });

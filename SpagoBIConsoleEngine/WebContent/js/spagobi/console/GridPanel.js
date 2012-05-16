@@ -148,6 +148,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	, tempColumnModel: null
 	, headersToHide: null
 	, fieldsMap: null
+	, selectedRowsId: null
 	
 	// popup
 	, waitWin: null
@@ -594,6 +595,13 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		this.resolveParameters(options, r, this.executionContext, callback);
 		
 
+	},
+	
+	updateSelectedRows: function(listRowsSelected){
+		if (this.selectedRowsId == null){ 
+			this.selectedRowsId = []; 
+		}
+		this.selectedRowsId = listRowsSelected;
 	}
 	
 	,
@@ -1020,16 +1028,19 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		inlineActionColumnConfig.tooltipInactive = Sbi.locale.getLNValue(inlineActionColumnConfig.tooltipInactive);
 		inlineActionColumnConfig.tooltipActive = Sbi.locale.getLNValue(inlineActionColumnConfig.tooltipActive);
 		
-		if (inlineActionColumnConfig.imgSrcActive !== undefined){
-			inlineActionColumnConfig.imgSrcActive = '../img/' + inlineActionColumnConfig.imgSrcActive;
-		}
-		else if (this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['active'] !== undefined){
-			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['active'];			
-		}
-		if (inlineActionColumnConfig.imgSrcInactive !== undefined){
-			inlineActionColumnConfig.imgSrcInactive = '../img/' + inlineActionColumnConfig.imgSrcInactive;
-		}else if (this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['inactive'] !== undefined){
-			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.type ].images['inactive'];
+		//updates img source if it's necessary (only for actionButton)
+		if(inlineActionColumnConfig.type !== 'selectRow') {
+			if (inlineActionColumnConfig.imgSrcActive !== undefined){
+				inlineActionColumnConfig.imgSrcActive = '../img/' + inlineActionColumnConfig.imgSrcActive;
+			}
+			else if (this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['active'] !== undefined){
+				inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['active'];			
+			}
+			if (inlineActionColumnConfig.imgSrcInactive !== undefined){
+				inlineActionColumnConfig.imgSrcInactive = '../img/' + inlineActionColumnConfig.imgSrcInactive;
+			}else if (this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['inactive'] !== undefined){
+				inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.type ].images['inactive'];
+			}
 		}
 		
 		if (inlineActionColumnConfig.type === 'crossnav'){
@@ -1132,8 +1143,11 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			inlineActionColumnConfig.handler = this.downloadLogs;			
 			inlineActionColumn = new Sbi.console.InlineActionColumn(inlineActionColumnConfig);
 			
-		}else {
-			
+		}else if (inlineActionColumnConfig.type === 'selectRow'){							
+			inlineActionColumnConfig.handler = this.updateSelectedRows;		
+			inlineActionColumn = new Sbi.console.InlineCheckColumn(inlineActionColumnConfig); 	
+			inlineActionColumn.masterCheckValue = null; //reset value
+		} else {
 			inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images;
 			inlineActionColumnConfig.handler = this.execAction;
 			inlineActionColumn = new Sbi.console.InlineActionColumn(inlineActionColumnConfig);

@@ -42,6 +42,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/console/ButtonColumn.js'/></script>
 <script type="text/javascript" src='../js/spagobi/console/InlineActionColumn.js'/></script>
 <script type="text/javascript" src='../js/spagobi/console/InlineToggleActionColumn.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/InlineCheckColumn.js'/></script>
 <script type="text/javascript" src='../js/spagobi/console/ActionButton.js'/></script>
 <script type="text/javascript" src='../js/spagobi/console/FilteringToolbar.js'/></script>
 <script type="text/javascript" src='../js/spagobi/console/CustomFilteringToolbar.js'/></script>
