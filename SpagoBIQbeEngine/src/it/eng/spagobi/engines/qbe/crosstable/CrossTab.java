@@ -1571,14 +1571,14 @@ public class CrossTab {
 			sum = new double[dataMatrix[0].length];
 			for(int i=0; i<dataMatrix[0].length; i++){
 				String value = dataMatrix[lines.get(0)][i];
-				if(!value.equals(DATA_MATRIX_NA)){
+				if(!value.equals(DATA_MATRIX_NA) && (getCellType(lines.get(0), i).equals(CellType.DATA))){
 					sum[i] = new Double(value);
 				}
 			}
 			for(int j=1; j<lines.size(); j++){
 				for(int i=0; i<dataMatrix[0].length; i++){
 					String value = dataMatrix[lines.get(j)][i];
-					if(!value.equals(DATA_MATRIX_NA)){
+					if(!value.equals(DATA_MATRIX_NA)&& (getCellType(lines.get(j), i).equals(CellType.DATA))){
 						sum[i] = sum[i] + new Double(value);
 					}
 				}
@@ -1587,14 +1587,14 @@ public class CrossTab {
 			sum = new double[dataMatrix.length];
 			for(int i=0; i<dataMatrix.length; i++){
 				String value = dataMatrix[i][lines.get(0)];
-				if(!value.equals(DATA_MATRIX_NA)){
+				if(!value.equals(DATA_MATRIX_NA)&& (getCellType(i, lines.get(0)).equals(CellType.DATA))){
 					sum[i] = new Double(value);
 				}
 			}
 			for(int j=1; j<lines.size(); j++){
 				for(int i=0; i<dataMatrix.length; i++){
 					String value = dataMatrix[i][lines.get(j)];
-					if(!value.equals(DATA_MATRIX_NA)){
+					if(!value.equals(DATA_MATRIX_NA)&& (getCellType(i, lines.get(j)).equals(CellType.DATA))){
 						sum[i] = sum[i] + new Double(value);
 					}
 					
