@@ -27,6 +27,10 @@
    <STATEMENT name="UPDATE_ALL_VIEWING_STATE_TEST" 
   			   query="UPDATE TEST_CONSOLE  SET FLG6 = ?, COLUMN3 = ?
   			    	  WHERE COLUMN1 like ? and COLUMN2 like ? "/>	
+  			    	  
+	<STATEMENT name="UPDATE_ALL_VIEWING_STATE_TEST_BY_CHECK" 
+  			   query="UPDATE TEST_CONSOLE  SET FLG6 = 1, COLUMN3 = ?
+  			    	  WHERE ID IN ($) "/>	  			    	  
   <!-- end statements for test console -->
 
   			
