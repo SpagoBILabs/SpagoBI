@@ -60,9 +60,6 @@ public class Utilities {
 	public static File getMassiveExportFolder(){
 		logger.debug("IN");
 
-		//		EnginConf enginConf = EnginConf.getInstance();
-		//		String resourcePath = enginConf.getResourcePath();
-
 		String resourcePath = "";
 		String jndiBean = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 		if (jndiBean != null) {

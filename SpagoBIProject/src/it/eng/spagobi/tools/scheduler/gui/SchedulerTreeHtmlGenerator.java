@@ -133,7 +133,7 @@ public class SchedulerTreeHtmlGenerator implements ITreeHtmlGenerator {
 		msgBuilder = MessageBuilderFactory.getMessageBuilder();
 		SessionContainer sessionContainer = reqCont.getSessionContainer();
 		jobInfo = (JobInfo)sessionContainer.getAttribute(SpagoBIConstants.JOB_INFO); 
-		biobjIds = jobInfo.getBiobjectIds();
+		biobjIds = jobInfo.getDocumentIds();
 		
     	currTheme=ThemesManager.getCurrentTheme(reqCont);
     	if(currTheme==null)currTheme=ThemesManager.getDefaultTheme();

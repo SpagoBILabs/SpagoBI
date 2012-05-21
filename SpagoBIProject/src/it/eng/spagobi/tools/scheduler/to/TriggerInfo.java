@@ -27,7 +27,7 @@ public class TriggerInfo implements Serializable{
 	private String endTime = "";
 	private String repeatInterval = "";
 	private JobInfo jobInfo = null;
-	private Map saveOptions = null;
+	private Map<String, DispatchContext> saveOptions = null;
     
 	/**
 	 * Gets the end date.
@@ -178,7 +178,7 @@ public class TriggerInfo implements Serializable{
 	 * 
 	 * @return the save options
 	 */
-	public Map getSaveOptions() {
+	public Map<String, DispatchContext> getSaveOptions() {
 		return saveOptions;
 	}
 	
@@ -187,7 +187,7 @@ public class TriggerInfo implements Serializable{
 	 * 
 	 * @param saveOptions the new save options
 	 */
-	public void setSaveOptions(Map saveOptions) {
+	public void setSaveOptions(Map<String, DispatchContext> saveOptions) {
 		this.saveOptions = saveOptions;
 	}
 	

@@ -43,7 +43,7 @@ public class ExecutionController {
 	
 	/**
 	 * Check if the document can be executed (all parameters must be filled).
-	 * It is used in scheduler (see {@link ExecuteBIDocumentJob}).
+	 * It is used in scheduler (see {@link ExecuteBDocumentJob}).
 	 * 
 	 * @return true, if successful
 	 */

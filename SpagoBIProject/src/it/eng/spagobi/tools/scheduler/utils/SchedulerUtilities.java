@@ -110,22 +110,6 @@ public class SchedulerUtilities {
 	 * @return the sB from web service response
 	 */
 	public static SourceBean getSBFromWebServiceResponse(String response)  {
-		/*
-		SourceBean schedModRespSB = null;
-		try{
-			SourceBean respSB = SourceBean.fromXMLString(response);
-			if(respSB!=null) {
-				SourceBean servRespSB = (SourceBean)respSB.getAttribute("SERVICE_RESPONSE");
-				if(servRespSB!=null) {
-					schedModRespSB = (SourceBean)servRespSB.getAttribute("SCHEDULERMODULE");
-				}
-			}
-		} catch (Exception e) {
-			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, SchedulerUtilities.class.getName(), 
-					            "getSBFromWebServiceResponse", "Error while parsing service response", e);
-		}
-		return schedModRespSB;
-		*/
 		SourceBean schedModRespSB = null;
 		try{
 			schedModRespSB = SourceBean.fromXMLString(response);
@@ -268,7 +252,7 @@ public class SchedulerUtilities {
 					// calculate parameter
 					biobjects.add(biobj);
 				}
-				jobInfo.setBiobjects(biobjects);
+				jobInfo.setDocuments(biobjects);
 			}
 		} catch (Exception e) {
 			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, SchedulerUtilities.class.getName(), 
@@ -283,56 +267,54 @@ public class SchedulerUtilities {
 	/**
 	 * Gets the trigger info from trigger source bean.
 	 * 
-	 * @param triggerDetSB the trigger det sb
-	 * @param jobDetSB the job det sb
+	 * @param triggerInfoSB the trigger det sb
+	 * @param jobInfoSB the job det sb
 	 * 
 	 * @return the trigger info from trigger source bean
 	 */
-	public static TriggerInfo getTriggerInfoFromTriggerSourceBean(SourceBean triggerDetSB, SourceBean jobDetSB) {
+	public static TriggerInfo getTriggerInfoFromTriggerSourceBean(SourceBean triggerInfoSB, SourceBean jobInfoSB) {
 	
-		TriggerInfo tInfo = new TriggerInfo();
-		String triggername = (String)triggerDetSB.getAttribute("triggerName");	
-		String triggerDescription  = (String)triggerDetSB.getAttribute("triggerDescription");	
-		String startdate  = (String)triggerDetSB.getAttribute("triggerStartDate");	
-		String starttime = (String)triggerDetSB.getAttribute("triggerStartTime");
-		String chronstring = (String)triggerDetSB.getAttribute("triggerChronString");
-		String enddate = (String)triggerDetSB.getAttribute("triggerEndDate");
-		if(enddate==null) enddate = "";
-		String endtime = (String)triggerDetSB.getAttribute("triggerEndTime");	
-		if(endtime==null) endtime = "";
-		String repeatinterval = (String)triggerDetSB.getAttribute("triggerRepeatInterval");
-		if(repeatinterval==null) repeatinterval = "";
-		tInfo.setEndDate(enddate);
-		tInfo.setEndTime(endtime);
-		tInfo.setRepeatInterval(repeatinterval);
-		tInfo.setStartDate(startdate);
-		tInfo.setStartTime(starttime);
-		tInfo.setChronString(chronstring);
-		tInfo.setTriggerDescription(triggerDescription);
-		tInfo.setTriggerName(triggername);
+		TriggerInfo triggerInfo = new TriggerInfo();
+		String triggerName = (String)triggerInfoSB.getAttribute("triggerName");	
+		String triggerDescription  = (String)triggerInfoSB.getAttribute("triggerDescription");	
+		String startdate  = (String)triggerInfoSB.getAttribute("triggerStartDate");	
+		String startTime = (String)triggerInfoSB.getAttribute("triggerStartTime");
+		String chronString = (String)triggerInfoSB.getAttribute("triggerChronString");
+		String endDate = (String)triggerInfoSB.getAttribute("triggerEndDate");
+		if(endDate==null) endDate = "";
+		String endTime = (String)triggerInfoSB.getAttribute("triggerEndTime");	
+		if(endTime==null) endTime = "";
+		String triggerRepeatInterval = (String)triggerInfoSB.getAttribute("triggerRepeatInterval");
+		if(triggerRepeatInterval==null) triggerRepeatInterval = "";
+		triggerInfo.setEndDate(endDate);
+		triggerInfo.setEndTime(endTime);
+		triggerInfo.setRepeatInterval(triggerRepeatInterval);
+		triggerInfo.setStartDate(startdate);
+		triggerInfo.setStartTime(startTime);
+		triggerInfo.setChronString(chronString);
+		triggerInfo.setTriggerDescription(triggerDescription);
+		triggerInfo.setTriggerName(triggerName);
 		
-		JobInfo jInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobDetSB);
-		tInfo.setJobInfo(jInfo);
+		JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobInfoSB);
+		triggerInfo.setJobInfo(jobInfo);
 		
-		Map saveOptions = new HashMap();
-		List biobjIds = jInfo.getBiobjectIds();
-		Iterator iterBiobjIds = biobjIds.iterator();
+		Map<String, DispatchContext> saveOptions = new HashMap<String, DispatchContext>();
+		List<Integer> biobjIds = jobInfo.getDocumentIds();
 		int index = 0;
-		while(iterBiobjIds.hasNext()) {
+		for(Integer biobjId : biobjIds) {
 			index ++;
-			DispatchContext sInfo = new DispatchContext();
-			Integer biobjid = (Integer)iterBiobjIds.next();
-			SourceBean objParSB = (SourceBean)triggerDetSB.getFilteredSourceBeanAttribute("JOB_PARAMETERS.JOB_PARAMETER", "name", "biobject_id_" + biobjid.toString()+"__"+index);
-			if(objParSB!=null) {
-				String parString = (String)objParSB.getAttribute("value");
-				sInfo = SchedulerUtilities.decodeDispatchContext(parString);
+			DispatchContext dispatchContext = new DispatchContext();
+			SourceBean dispatchContextSB = (SourceBean)triggerInfoSB.getFilteredSourceBeanAttribute("JOB_PARAMETERS.JOB_PARAMETER", "name", "biobject_id_" + biobjId.toString()+"__"+index);
+			if(dispatchContextSB!=null) {
+				String encodedDispatchContext = (String)dispatchContextSB.getAttribute("value");
+				dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
 			}
-			saveOptions.put(biobjid+"__"+index, sInfo);
+			saveOptions.put(biobjId+"__"+index, dispatchContext);
 		}
 		
-		tInfo.setSaveOptions(saveOptions);
+		triggerInfo.setSaveOptions(saveOptions);
 		
-		return tInfo;
+		return triggerInfo;
 	}
 	
 	
@@ -340,13 +322,14 @@ public class SchedulerUtilities {
 	/**
 	 * From save info string.
 	 * 
-	 * @param saveinfostr the saveinfostr
+	 * @param encodedDispatchContext the encoded dispatch context
 	 * 
 	 * @return the save info
 	 */
-	public static DispatchContext decodeDispatchContext(String saveinfostr) {
+	public static DispatchContext decodeDispatchContext(String encodedDispatchContext) {
 		DispatchContext dispatchContext = new DispatchContext();
-		String[] couples = saveinfostr.split("%26");
+		
+		String[] couples = encodedDispatchContext.split("%26");
 		for(int i=0; i<couples.length; i++) {
 			String couple = couples[i];
 			if(couple.trim().equals("")) {
@@ -361,6 +344,14 @@ public class SchedulerUtilities {
 			}
 			if(name.equals("destinationfolder")) {
 				dispatchContext.setDestinationFolder(value);
+			}
+			if(name.equals("isrelativetoresourcefolder")) {
+				if("true".equalsIgnoreCase(value)) {
+					dispatchContext.setDestinationFolderRelativeToResourceFolder(true);
+				} else {
+					dispatchContext.setDestinationFolderRelativeToResourceFolder(false);
+				}
+				
 			}
 			if(name.equals("functionalitytreefolderlabel")) {
 				dispatchContext.setFunctionalityTreeFolderLabel(value);

@@ -27,7 +27,6 @@ import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.scheduler.jobs.ExecuteBIDocumentJob;
-import it.eng.spagobi.tools.scheduler.jobs.XExecuteBIDocumentJob;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -281,7 +280,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 			job.setDescription( jobConfJSON.optString("description") );
 			job.setGroupName( jobConfJSON.getString("groupName") );
 			job.setRequestsRecovery(false);
-			job.setJobClass(XExecuteBIDocumentJob.class);
+			job.setJobClass( ExecuteBIDocumentJob.class );
 			
 			Map<String, String> parameters = createJobParameters(documentsToExport, documentsParameterValuesJSON);			
 			job.addParameters(parameters);
@@ -374,6 +373,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 		name = "globalDispatcherContext";
 		value = "saveasfile=true"
 			+ "%26" + "destinationfolder=" + destinationFolder.getAbsolutePath()
+			+ "%26" + "isrelativetoresourcefolder=false" 
 			+ "%26" + "functionalitytreefolderlabel=" + folder.getCode()
 			+ "%26" + "owner=" + (String)userProfile.getUserUniqueIdentifier();
 	
@@ -381,23 +381,6 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 		parameters.put(name, value);
 		
 		return parameters;   	   
-		
-//		int docNo = 1;
-//		for(BIObject document : documentsToExport) {
-//			name = "biobject_id_" + document.getId() + "__" + docNo++;
-//			value = "saveassnapshot=true"
-//				+ "%26" + "snapshotname=" + "scheduler"	
-//				+ "%26" + "snapshotdescription=" + "generatedByScheduler"
-//				+ "%26" + "snapshothistorylength=" + "5";
-//			
-//			parameters.put(name, value);
-//			
-//			name = "biobject_id_" + document.getId() + "__" + docNo++;
-//			value = "saveasfile=true";
-//
-//			
-//			parameters.put(name, value);
-//		}
 	}
 
 	private Date getTime(String dateStr, String timeStr) throws ParseException {
@@ -549,11 +532,6 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 		    		expression.append("weeks=NONE;");
 		    		expression.append("days=NONE;");
 		    		expression.append("}");
-		    		
-//	    			rep_n = $('dayinmonthrep_n').options[$('dayinmonthrep_n').selectedIndex].value;
-//	    			repStr = repStr + 'dayRepetition='+rep_n+';';
-//	    			repStr = repStr + 'weeks=NONE;';
-//	    			repStr = repStr + 'days=NONE;';
 	    		}
 	    	}
 	    	
@@ -566,91 +544,5 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 		}
     	
     	return new CronExpression(expression.toString());
-    	
-
-//    	if($('week_repetitionKind').checked) {
-//    		repStr = repStr + 'week{';
-//    		rep_n = $('week_repetition_n').options[$('week_repetition_n').selectedIndex].value;
-//    		repStr = repStr + 'numRepetition='+rep_n+';days=';
-//    		
-//    		if($('day_in_week_rep_sun').checked) {
-//    			repStr = repStr + 'SUN,';
-//    		}
-//    		if($('day_in_week_rep_mon').checked) {
-//    			repStr = repStr + 'MON,';
-//    		}
-//    		if($('day_in_week_rep_tue').checked) {
-//    			repStr = repStr + 'TUE,';
-//    		}
-//    		if($('day_in_week_rep_wed').checked) {
-//    			repStr = repStr + 'WED,';
-//    		}
-//    		if($('day_in_week_rep_thu').checked) {
-//    			repStr = repStr + 'THU,';
-//    		}
-//    		if($('day_in_week_rep_fri').checked) {
-//    			repStr = repStr + 'FRI,';
-//    		}
-//    		if($('day_in_week_rep_sat').checked) {
-//    			repStr = repStr + 'SAT,';
-//    		}
-//    		repStr = repStr + '}';
-//    	}
-//    	if($('month_repetitionKind').checked) {
-//    		repStr = repStr + 'month{';
-//    		if($('month_selection_interval').checked) {
-//    			rep_n = $('monthrep_n').options[$('monthrep_n').selectedIndex].value;
-//    			repStr = repStr + 'numRepetition='+rep_n+';';
-//    			repStr = repStr + 'months=NONE;';
-//    		}
-//    		if($('month_selection_checks').checked) {
-//    			repStr = repStr + 'numRepetition=0;';
-//    			repStr = repStr + 'months=';
-//    			if($('monthrep_jan').checked) repStr = repStr + 'JAN,';
-//    			if($('monthrep_feb').checked) repStr = repStr + 'FEB,';
-//    			if($('monthrep_mar').checked) repStr = repStr + 'MAR,';
-//    			if($('monthrep_apr').checked) repStr = repStr + 'APR,';
-//    			if($('monthrep_may').checked) repStr = repStr + 'MAY,';
-//    			if($('monthrep_jun').checked) repStr = repStr + 'JUN,';
-//    			if($('monthrep_jul').checked) repStr = repStr + 'JUL,';
-//    			if($('monthrep_aug').checked) repStr = repStr + 'AUG,';
-//    			if($('monthrep_sep').checked) repStr = repStr + 'SEP,';
-//    			if($('monthrep_oct').checked) repStr = repStr + 'OCT,';
-//    			if($('monthrep_nov').checked) repStr = repStr + 'NOV,';
-//    			if($('monthrep_dic').checked) repStr = repStr + 'DIC,';	
-//    			repStr = repStr + ';';
-//    		}
-//    		if($('dayinmonth_selection_interval').checked) {
-//    			rep_n = $('dayinmonthrep_n').options[$('dayinmonthrep_n').selectedIndex].value;
-//    			repStr = repStr + 'dayRepetition='+rep_n+';';
-//    			repStr = repStr + 'weeks=NONE;';
-//    			repStr = repStr + 'days=NONE;';
-//    		}
-//    		if($('dayinmonth_selection_checks').checked) {
-//    			repStr = repStr + 'dayRepetition=0;';
-//    			repStr = repStr + 'weeks=';
-//    			weekstr = '';
-//    			if($('dayinmonthrep_week1').checked) weekstr = weekstr + '1';
-//    			if($('dayinmonthrep_week2').checked) weekstr = weekstr + '2';
-//    			if($('dayinmonthrep_week3').checked) weekstr = weekstr + '3';
-//    			if($('dayinmonthrep_week4').checked) weekstr = weekstr + '4';
-//    			if($('dayinmonthrep_weekL').checked) weekstr = weekstr + 'L';
-//    			if(weekstr=='') weekstr='NONE';
-//    			repStr = repStr + weekstr + ';';
-//    			repStr = repStr + 'days=';
-//    			daystr = '';
-//    			if($('dayinmonthrep_sun').checked) daystr = daystr + 'SUN,';
-//    			if($('dayinmonthrep_mon').checked) daystr = daystr + 'MON,';
-//    			if($('dayinmonthrep_tue').checked) daystr = daystr + 'TUE,';
-//    			if($('dayinmonthrep_wed').checked) daystr = daystr + 'WED,';
-//    			if($('dayinmonthrep_thu').checked) daystr = daystr + 'THU,';
-//    			if($('dayinmonthrep_fri').checked) daystr = daystr + 'FRI,';
-//    			if($('dayinmonthrep_sat').checked) daystr = daystr + 'SAT,';
-//    			if(daystr=='') daystr='NONE';
-//    			repStr = repStr + daystr + ';';
-//    		}
-//    		repStr = repStr + '}';
-//    	}
-
     }
 }

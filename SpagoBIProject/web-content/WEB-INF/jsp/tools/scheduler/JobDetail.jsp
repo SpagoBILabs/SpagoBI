@@ -45,11 +45,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.tools.scheduler.Formula"%>
 <%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter"%>
 
-<%  
+<%
 	SourceBean moduleResponse = (SourceBean)aServiceResponse.getAttribute("JobManagementModule"); 
     
 	JobInfo jobInfo = (JobInfo)aSessionContainer.getAttribute(SpagoBIConstants.JOB_INFO);   
-	List jobBiobjects = jobInfo.getBiobjects();
+	List jobBiobjects = jobInfo.getDocuments();
 	Iterator iterJobBiobjs = jobBiobjects.iterator();
 	String allObjIDS = "";
 	int index = 0;
@@ -70,7 +70,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String splitter = ";";
 	
 	List formulas = Formula.getAvailableFormulas();
-	
 %>
 
 <script type="text/javascript" src="<%=linkProto%>"></script>

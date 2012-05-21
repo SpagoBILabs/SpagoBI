@@ -25,7 +25,7 @@ public class JobInfo implements Serializable{
 	private String jobGroupName = "";
 	private String jobDescription = "";
 	private String schedulerAdminstratorIdentifier = "";
-	private List biobjects = new ArrayList();
+	private List<BIObject> documents = new ArrayList<BIObject>();
 	
 	/**
 	 * Gets the job description.
@@ -63,38 +63,22 @@ public class JobInfo implements Serializable{
 		this.jobName = jobName;
 	}
 	
-	/**
-	 * Gets the biobjects.
-	 * 
-	 * @return the biobjects
-	 */
-	public List getBiobjects() {
-		return biobjects;
+
+	public List<BIObject> getDocuments() {
+		return documents;
 	}
 	
-	/**
-	 * Sets the biobjects.
-	 * 
-	 * @param biobjects the new biobjects
-	 */
-	public void setBiobjects(List biobjects) {
-		this.biobjects = biobjects;
+	public void setDocuments(List<BIObject> documents) {
+		this.documents = documents;
 	}
 	
-	/**
-	 * Gets the biobject ids.
-	 * 
-	 * @return the biobject ids
-	 */
-	public List getBiobjectIds() {
-		List biobjIds = new ArrayList();
-		Iterator iterBiobjects = biobjects.iterator();
-		while(iterBiobjects.hasNext()) {
-			BIObject biobj = (BIObject)iterBiobjects.next();
-			Integer id =  biobj.getId();
-			biobjIds.add(id);
+	public List<Integer> getDocumentIds() {
+		List<Integer> documentIds = new ArrayList<Integer>();
+		for( BIObject document : documents) {
+			Integer id =  document.getId();
+			documentIds.add(id);
 		}
-		return biobjIds;
+		return documentIds;
 	}
 	
 	/**
