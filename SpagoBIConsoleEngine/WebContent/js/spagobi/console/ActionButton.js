@@ -106,7 +106,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 		, errors: {serviceName: 'UPDATE_ACTION', images: {active: 'errors', inactive: 'errors_inactive'}} 
 		, alarms: {serviceName: 'UPDATE_ACTION', images: {active: 'alarms', inactive: 'alarms_inactive'}}
 		, views: {serviceName: 'UPDATE_ACTION', images: {active: 'views', inactive: 'views_inactive'}}
-		, refresh: {serviceName: 'REFRESH_ACTION', images: 'refresh'}
+		, refresh: {serviceName: 'REFRESH_ACTION', images: {active: 'refresh', inactive: 'refresh'}}
 	}
    
     // public methods
@@ -141,7 +141,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
         					  var msgWar = 'Parameter "' + tmpNamePar + '" has not values selected. Default value is used.<p>';
         					  Sbi.Msg.showWarning(msgWar, 'Service Warning');
         				  }else{
-	                    	  results[p] = finalSelectedRowsId;	  
+	                    	  results[p] = finalSelectedRowsId;	  	                    	  
 	                    	  this.columnID = tmpNamePar;
         				  }
         				  useSelRows = false; //reset flag
@@ -282,7 +282,21 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     			this.isActive = false;
 	    		this.setTooltip(this.actionConf.tooltipActive);    			
     	    }
-    	}	
+    	}else {
+	    	//if the checkColumn is undefined gets the srcActive image (for default)
+	    	if (this.actionConf.imgSrcActive !== undefined){
+				//creates css dynamically if it's an extra-icon
+				var tmpImgName = this.actionConf.imgSrcActive.substr(0,this.actionConf.imgSrcActive.indexOf(".") );
+				if (Ext.util.CSS.getRule('.' + tmpImgName) == null){
+					Ext.util.CSS.createStyleSheet('.'+tmpImgName+' { background-image: url(../img/'+this.actionConf.imgSrcActive+') !important; }');
+				}
+				this.setIconClass(tmpImgName);    		
+			}else{    			
+				this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.type ].images[ "active"]);
+			}
+			this.isActive = true;
+			this.setTooltip(this.actionConf.tooltipInactive);
+    	}
     }
   
     //updates checkColumn value in each store's row
@@ -290,17 +304,28 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     	var tb = this.ownerCt;
 		var gridConsole = tb.ownerCt;
 		if (gridConsole.selectedRowsId == null)  gridConsole.selectedRowsId = [];
+		
+		if (this.actionConf.hideSelectedRow !== undefined && this.actionConf.hideSelectedRow == true &&
+				gridConsole.hideSelectedRow == null) {
+			gridConsole.hideSelectedRow = [];
+		}
 		var s = gridConsole.store;
     	for (var i=0, l= s.getCount(); i < l; i++){
     		var record = s.getAt(i); 
             var valueID = record.get(s.getFieldNameByAlias(this.columnID));
-            var posValue = tb.getPositionEl(valueID, gridConsole.selectedRowsId);
-            gridConsole.selectedRowsId = [];             
-            if (disableCheck){                         	
-        		if (this.actionConf.singleExecution !== undefined && this.actionConf.singleExecution == true){
+            /*    var posValue = tb.getPositionEl(valueID, gridConsole.selectedRowsId);
+           if (posValue !== -1){
+            	delete gridConsole.selectedRowsId[posValue];
+            	gridConsole.hideSelectedRow.push(valueID);
+            }
+            */
+            if (disableCheck){     
+            	var posHideValue = tb.getPositionEl(valueID, gridConsole.hideSelectedRow);
+        		if  (posHideValue !== -1){
         			gridConsole.isDisable = true; //to hide the checkbox
-        			gridConsole.isDirty = false;
-        		}else{        			
+        			gridConsole.isDirty = false;        			
+        		}else{        		
+        			//gridConsole.selectedRowsId = [];
         			gridConsole.isDisable = false;
         			gridConsole.isDirty = true;	 //to clean the checkbox
         		}
@@ -360,6 +385,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     		}
     		var tb = this.ownerCt;
     		tb.ownerCt.selectedRowsId = [];
+    		tb.ownerCt.hideSelectedRow = [];
     		tb.ownerCt.isDisable = false;
     		tb.ownerCt.isDirty = true;
     		this.hideMask();
@@ -396,13 +422,15 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
         	this.hideMask();
         	return;            	
         }
-    	
-    	this.executionContext[checkCol] = flgCheck;
-		var params = this.resolveParameters(this.actionConf.config, this.executionContext);
+        
+        this.executionContext[checkCol] = flgCheck;
+		
+		var params = this.resolveParameters(this.actionConf.config, this.executionContext);		
 		params = Ext.apply(params, {
 				message: this.actionConf.type, 
 				userId: Sbi.user.userId 
 			}); 
+		
 		this.showMask();		
 		Ext.Ajax.request({
 		url: this.services[this.actionConf.type]	       
@@ -416,6 +444,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 					//if by configuration is required a refresh of the dataset, it executes the store's load method,
 					//otherwise it changes the icons by the toggle (default)
 					this.hideMask();					
+					this.updateHideSelectedRowList();
 					if (this.refreshDataAfterAction !== undefined && this.refreshDataAfterAction === true ){
 						var tb = this.ownerCt;
 			    		tb.ownerCt.selectedRowsId = [];
@@ -440,6 +469,27 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 	    });  
 		
 		//this.hideMask.defer(2000, this);
+		
+    }
+    
+    , updateHideSelectedRowList: function(){
+    	var tb = this.ownerCt;
+		var gridConsole = tb.ownerCt;
+		var addHide = false;
+		if (this.actionConf.hideSelectedRow !== undefined && this.actionConf.hideSelectedRow == true){
+			addHide = true;
+		}
+		if (addHide && gridConsole.hideSelectedRow == null) {			
+			gridConsole.hideSelectedRow = [];
+		}
+		for (var i=0, l=gridConsole.selectedRowsId.length; i<l; i++){
+			var valueID = gridConsole.selectedRowsId[i];
+			var posHideValue = tb.getPositionEl(valueID, gridConsole.hideSelectedRow);
+			delete gridConsole.selectedRowsId[i];
+			if (posHideValue == -1 && addHide){	        	
+	        	gridConsole.hideSelectedRow.push(valueID);
+	        }
+		}
 		
     }
     

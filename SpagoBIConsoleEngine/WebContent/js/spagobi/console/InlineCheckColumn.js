@@ -110,7 +110,7 @@ Ext.extend(Sbi.console.InlineCheckColumn, Ext.util.Observable, {
        
     , updateValuesList: function (value){
     	var isDeleted = false;
-    	var pos = this.getPositionEl(value);
+    	var pos = this.getPositionEl(value, this.listRowsSelected);
     	if (pos != -1){
     		delete this.listRowsSelected[pos];
 			isDeleted = true;
@@ -123,13 +123,14 @@ Ext.extend(Sbi.console.InlineCheckColumn, Ext.util.Observable, {
     	}
     }
     
-    , getPositionEl: function(value) {	    	
+    , getPositionEl: function(value, lst) {    	
 		//check if the row is in the listRowsSelected (pagination management)
     	//returns the position element into the array 
     	var toReturn = -1;    	
-        
-    	for(var i=0; i<this.listRowsSelected.length; i++) {
-    		if (this.listRowsSelected[i] == value ){
+    	if (lst == null)  return toReturn;
+    	
+    	for(var i=0; i<lst.length; i++) {
+    		if (lst[i] == value ){
     			toReturn = i;
     			break;
     		}   		
@@ -138,19 +139,20 @@ Ext.extend(Sbi.console.InlineCheckColumn, Ext.util.Observable, {
 	}
 
     , renderer : function(v, p, record){
+    	var s = this.grid.store;
+    	var value = record.get(s.getFieldNameByAlias(this.columnID));
+    	
 		if (this.grid.isDirty || this.grid.isDisable){
 			this.listRowsSelected = this.grid.selectedRowsId;
 		}
-    	
-    	if(this.isActive(record) === false || this.grid.isDisable) {
-    	//	this.grid.isDisable = false; //reset for next element
+    	var isHidePosition = this.getPositionEl(value, this.grid.hideSelectedRow);
+    	if(this.isActive(record) === false ||  isHidePosition !== -1) {
+    		this.grid.isDisable = false; //reset for next element
     		return '';
     	}
-    	p.css += ' x-grid3-check-col-td';
-    	var s = this.grid.store;
-    	var value = record.get(s.getFieldNameByAlias(this.columnID));
+    	p.css += ' x-grid3-check-col-td';    	
     	var toReturn = '';
-    	if(	value == undefined || this.getPositionEl(value) == -1){
+    	if(	value == undefined || this.getPositionEl(value, this.listRowsSelected) == -1){
     		toReturn = '<div class="x-grid3-check-col x-mygrid3-check-col-'+this.id+ + '" title= "' + this.tooltipInactive + '">&#160;</div>';
     	}
     	else{    		

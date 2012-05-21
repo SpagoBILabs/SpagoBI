@@ -560,6 +560,8 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 			//check if the row is in the listRowsSelected (pagination management)
 	    	//returns the position element into the array 
 	    	var toReturn = -1;    	
+	    	
+	    	if (lst == null) return toReturn;
 	        
 	    	for(var i=0; i<lst.length; i++) {
 	    		if (lst[i] == value ){

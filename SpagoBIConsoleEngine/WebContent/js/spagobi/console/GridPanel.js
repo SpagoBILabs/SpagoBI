@@ -149,6 +149,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	, headersToHide: null
 	, fieldsMap: null
 	, selectedRowsId: null
+	, hideSelectedRow: null
 	
 	// popup
 	, waitWin: null
