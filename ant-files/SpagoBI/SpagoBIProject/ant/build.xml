@@ -374,6 +374,8 @@
 					<file name="./src/ext/sbi/widgets/ConfigurableTree.js"/>
 					<file name="./src/ext/sbi/widgets/ModelInstanceTree.js"/>
 					<file name="./src/ext/sbi/widgets/DataStorePanel.js"/>
+				    <file name="./src/ext/sbi/widgets/ButtonField.js"/>
+				    	
 
 					<file name="./src/ext/sbi/udp/ManageUdp.js"/>
 					<file name="./src/ext/sbi/udp/ManageUdpValues.js"/>
@@ -414,7 +416,11 @@
 					<file name="./src/ext/sbi/tools/ManageDatasetVersions.js"/>
 					<file name="./src/ext/sbi/tools/ManageDatasetParameters.js"/>
 					<file name="./src/ext/sbi/tools/ParametersFillGrid.js"/>
-					<file name="./src/ext/sbi/tools/ManageDatasets.js"/>
+					<file name="./src/ext/sbi/tools/dataset/DatasetManagementPanel.js"/>
+				    <file name="./src/ext/sbi/tools/dataset/QueryDatasetConfigurationPanel.js"/>
+				    <file name="./src/ext/sbi/tools/dataset/QueryDatasetScriptWizard.js"/>
+				    	
+				    	
 					<file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js"/>
 					<file name="./src/ext/sbi/tools/dataset/PreviewWindow.js"/>
 					<file name="./src/ext/sbi/tools/dataset/CustomDataGrid.js"/>
