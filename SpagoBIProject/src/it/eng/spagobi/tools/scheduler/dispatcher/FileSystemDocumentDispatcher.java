@@ -11,6 +11,16 @@
  */
 package it.eng.spagobi.tools.scheduler.dispatcher;
 
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
+import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -25,30 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
-
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
-import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
-import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.ExecutionProxy;
-import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
-import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
-import it.eng.spagobi.tools.massiveExport.services.StartMassiveScheduleAction;
-import it.eng.spagobi.tools.massiveExport.utils.Utilities;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
-import it.eng.spagobi.tools.scheduler.to.DispatchContext;
-import it.eng.spagobi.tools.scheduler.utils.JavaClassDestination;
-import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import org.apache.log4j.Logger;
 
@@ -87,19 +74,18 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 		String fileExtension = dispatchContext.getFileExtension();
 
 		try {
-			progressThreadDAO = DAOFactory.getProgressThreadDAO();
-			
-//			ProgressThread runningProgressThread = progressThreadDAO.loadActiveProgressThreadByUserIdAndFuncCd(
-//					dispatchContext.getOwner(), dispatchContext.getFunctionalityTreeFolderLabel());
-			
-			if(progressThread == null) {
-				progressThread = new ProgressThread(
-						dispatchContext.getOwner(), 
-						dispatchContext.getTotalNumberOfDocumentsToDispatch(), 
-						dispatchContext.getFunctionalityTreeFolderLabel(), null, zipFileName, ProgressThread.TYPE_MASSIVE_SCHEDULE);
-				
-				progressThreadId = progressThreadDAO.insertProgressThread(progressThread);
-				progressThreadDAO.setStartedProgressThread(progressThreadId);
+			if(dispatchContext.isProcessMonitoringEnabled()) {
+				progressThreadDAO = DAOFactory.getProgressThreadDAO();
+		
+				if(progressThread == null) {
+					progressThread = new ProgressThread(
+							dispatchContext.getOwner(), 
+							dispatchContext.getTotalNumberOfDocumentsToDispatch(), 
+							dispatchContext.getFunctionalityTreeFolderLabel(), null, zipFileName, ProgressThread.TYPE_MASSIVE_SCHEDULE);
+					
+					progressThreadId = progressThreadDAO.insertProgressThread(progressThread);
+					progressThreadDAO.setStartedProgressThread(progressThreadId);
+				}
 			}
 			
 		
@@ -115,7 +101,9 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 					randomNamesToName.put(exportFile.getName(), fileName+".txt");
 				} else{
 					logger.error("Export ok for biObj with label "+document.getLabel());
-					String fileName = document.getLabel() + "-" + document.getName();
+					//String fileName = document.getLabel() + "-" + document.getName();
+					String fileName = document.getName() + dispatchContext.getDescriptionSuffix();
+					fileName = fileName.replace(' ', '_');
 					exportFile = File.createTempFile(fileName, fileExtension); 
 					randomNamesToName.put(exportFile.getName(), fileName + fileExtension);
 				}
@@ -126,7 +114,9 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 				logger.debug("create an export file named " + exportFile.getName());
 
 				filesToZip.add(exportFile);
-				progressThreadDAO.incrementProgressThread(progressThreadId);
+				if(dispatchContext.isProcessMonitoringEnabled()) {
+					progressThreadDAO.incrementProgressThread(progressThreadId);
+				}
 			}
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Exception in  writeing export file for BiObject with label "+document.getLabel()+" delete DB row", e);
@@ -145,10 +135,7 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 		
 		try {
 			
-			File destinationFolder = new File(dispatchContext.getDestinationFolder());
-			if(!destinationFolder.exists()) {
-				destinationFolder.mkdirs();
-			}
+			File destinationFolder = getDestinationFolder();
 			
 			File zipFile = new File(destinationFolder, zipFileName + ".zip");
 	
@@ -175,7 +162,9 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 			out.flush();
 			out.close();
 			
-			progressThreadDAO.setDownloadProgressThread(progressThreadId);
+			if(dispatchContext.isProcessMonitoringEnabled()) {
+				progressThreadDAO.setDownloadProgressThread(progressThreadId);
+			}
 		} catch(Throwable t) {
 			throw new DispatchException("An unexpected error occured while closing dipatcher", t);
 		} finally{
@@ -194,6 +183,53 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 			
 			logger.debug("OUT");
 		}
+	}
+	
+	private File getDestinationFolder() {
+		File destinationFolder;
+		
+		logger.debug("IN");
+		
+		destinationFolder = null;
+	
+		try {
+				
+			if (dispatchContext.getDestinationFolder() == null) {
+				throw new SpagoBIRuntimeException("Variable destination folder is not set into dispatch context");
+			}
+			
+			if(dispatchContext.isDestinationFolderRelativeToResourceFolder()) {
+				String resourceFolderPath = null;
+				String jndiVariableName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+				if(jndiVariableName == null){
+					throw new SpagoBIRuntimeException("Could not find configuration variable [SPAGOBI.RESOURCE_PATH_JNDI_NAME]");
+				}
+				
+				resourceFolderPath = SpagoBIUtilities.readJndiResource(jndiVariableName);
+				if(resourceFolderPath == null) {
+					throw new SpagoBIRuntimeException("Could not find resolve jndi variable [" + jndiVariableName + "]");
+				}
+				
+				File resourceFolder = new File(resourceFolderPath);
+				if(!resourceFolder.exists()){
+					throw new SpagoBIRuntimeException("Could not find resource directory ["+resourceFolderPath + "]");
+				}
+				
+				destinationFolder = new File(resourceFolder, dispatchContext.getDestinationFolder());
+			} else {
+				destinationFolder = new File(dispatchContext.getDestinationFolder());
+			}
+		
+			if(!destinationFolder.exists()) {
+				destinationFolder.mkdirs();
+			}
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while retrieving destination folder", t);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return destinationFolder;
 	}
 	
 	private String generateZipFileName(){

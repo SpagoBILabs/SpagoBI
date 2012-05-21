@@ -135,20 +135,6 @@ public class XExecuteBIDocumentJob implements Job {
 				document = documentDAO.loadBIObjectByLabel(documentLabel);
 				loadDocumentMetadata(document);
 				
-				// get the save options
-				DocumentDispatcher documentDispatcher = null;
-				DispatchContext dispatchContext = null;
-				
-				if(globalDocumentDispatcher != null) {
-					documentDispatcher = globalDocumentDispatcher;
-					dispatchContext = globalDispatchContext;
-				} else {
-					String encodedDispatchContext = jobDataMap.getString("biobject_id_" + document.getId() + "__"+ (documentIndex+1));
-					dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
-					dispatchContext.setUserProfile(userProfile);
-					documentDispatcher = new DocumentDispatcher(dispatchContext); 
-				}
-				
 				
 				// create the execution controller 
 				executionController = new ExecutionController();
@@ -241,15 +227,32 @@ public class XExecuteBIDocumentJob implements Job {
 						}
 					}
 
-
+					
+					
+					
 					// do some checks : exec the document only if all its parameter are filled
 					if(executionController.directExecution()) {
 						
-						logger.debug("Save as snapshot is eual to [" + dispatchContext.isSnapshootDispatchChannelEnabled() + "]");
+						// get the save options
+						DocumentDispatcher documentDispatcher = null;
+						DispatchContext dispatchContext = null;
+						
+						if(globalDocumentDispatcher != null) {
+							documentDispatcher = globalDocumentDispatcher;
+							dispatchContext = globalDispatchContext;
+						} else {
+							String encodedDispatchContext = jobDataMap.getString("biobject_id_" + document.getId() + "__"+ (documentIndex+1));
+							dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
+							dispatchContext.setUserProfile(userProfile);
+							documentDispatcher = new DocumentDispatcher(dispatchContext); 
+						}
+						
+						logger.debug("Dispatch to a snapshot is equal to [" + dispatchContext.isSnapshootDispatchChannelEnabled() + "]");
+						logger.debug("Dispatch to a file is equal to [" + dispatchContext.isFileSystemDispatchChannelEnabled() + "]");
 						logger.debug("Dispatch to a distribution list is eual to [" + dispatchContext.isDistributionListDispatchChannelEnabled() + "]");
-						logger.debug("Dispatch to a java class is eual to [" + dispatchContext.isJavaClassDispatchChannelEnabled() + "]");
-						logger.debug("Dispatch by mail-list is eual to [" + dispatchContext.isMailDispatchChannelEnabled() + "]");
-						logger.debug("Dispatch by folder-list is eual to [" + dispatchContext.isFunctionalityTreeDispatchChannelEnabled() + "]");
+						logger.debug("Dispatch to a java class is equal to [" + dispatchContext.isJavaClassDispatchChannelEnabled() + "]");
+						logger.debug("Dispatch by mail-list is equal to [" + dispatchContext.isMailDispatchChannelEnabled() + "]");
+						logger.debug("Dispatch by folder-list is equal to [" + dispatchContext.isFunctionalityTreeDispatchChannelEnabled() + "]");
 						
 						if( documentDispatcher.canDispatch(document) == false ) {
 							logger.debug("No valid dispatch target for document [" + (documentIndex+1) + "] with label [" + documentInstanceName + "] and parameters [" + descriptionSuffix +"]");
@@ -277,7 +280,15 @@ public class XExecuteBIDocumentJob implements Job {
 							logger.debug("Document executed without any response");
 						}
 						String contentType = executionProxy.getReturnedContentType();
-						String fileExtension = MimeUtils.getFileExtension(contentType);
+						
+						String fileExtension = null;
+						if("application/vnd.ms-excel".equals(contentType)) {
+							fileExtension = "xls";
+						} else if("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(contentType)) {
+							fileExtension = "xlsx";
+						} else {
+							fileExtension = MimeUtils.getFileExtension(contentType);
+						}
 						long end = System.currentTimeMillis();			
 						long elapsed = (end - start)/1000;
 						logger.info("Document [" + (documentIndex+1) + "] with label [" + documentInstanceName + "] and parameters " + descriptionSuffix +" executed in [" + elapsed + "]");

@@ -33,6 +33,7 @@ import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory
 import it.eng.spagobi.tools.scheduler.Formula;
 import it.eng.spagobi.tools.scheduler.FormulaParameterValuesRetriever;
 import it.eng.spagobi.tools.scheduler.RuntimeLoadingParameterValuesRetriever;
+import it.eng.spagobi.tools.scheduler.jobs.ExecuteBIDocumentJob;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 
@@ -46,16 +47,19 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 public class JobManagementModule extends AbstractModule {
-	static private Logger logger = Logger.getLogger(JobManagementModule.class);
+	
+	private RequestContainer reqCont = null;
+	private SessionContainer sessionContainer = null;
+	private IEngUserProfile profile = null;
 	
 	public static final String MODULE_PAGE = "SchedulerGUIPage";
 	public static final String JOB_GROUP = "BIObjectExecutions";
 	public static final String JOB_NAME_PREFIX = "Execute_";
 	
-	private RequestContainer reqCont = null;
-	private SessionContainer sessCont = null;
-	private IEngUserProfile profile = null;
-	
+	private static final long serialVersionUID = 1L;
+
+	static private Logger logger = Logger.getLogger(JobManagementModule.class);
+
 	/* (non-Javadoc)
 	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
 	 */
@@ -69,8 +73,8 @@ public class JobManagementModule extends AbstractModule {
 		String message = (String) request.getAttribute("MESSAGEDET");
 		logger.debug("begin of scheuling service =" +message);
 		reqCont = getRequestContainer();
-		sessCont = reqCont.getSessionContainer();
-		profile = (IEngUserProfile) sessCont.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		sessionContainer = reqCont.getSessionContainer();
+		profile = (IEngUserProfile) sessionContainer.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		EMFErrorHandler errorHandler = getErrorHandler();
 		try {
 			if(message == null) {
@@ -165,7 +169,7 @@ public class JobManagementModule extends AbstractModule {
 			JobInfo jobInfo = new JobInfo();
 			jobInfo.setSchedulerAdminstratorIdentifier(profile.getUserUniqueIdentifier().toString());
 			response.setAttribute(SpagoBIConstants.FUNCTIONALITIES_LIST, functionalities);
-			sessCont.setAttribute(SpagoBIConstants.JOB_INFO, jobInfo);
+			sessionContainer.setAttribute(SpagoBIConstants.JOB_INFO, jobInfo);
 			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "JobDetail");
 		} catch (Exception ex) {
 			logger.error("Error while recovering objects for scheduling", ex);
@@ -190,7 +194,7 @@ public class JobManagementModule extends AbstractModule {
 	private void ignoreWarning(SourceBean request, SourceBean response) throws EMFUserError {
 		logger.debug("IN");
 		try {
-			JobInfo jobInfo = (JobInfo) sessCont.getAttribute(SpagoBIConstants.JOB_INFO);
+			JobInfo jobInfo = (JobInfo) sessionContainer.getAttribute(SpagoBIConstants.JOB_INFO);
 			saveJob(jobInfo);
 			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ReturnToJobList");	
 		} catch (Exception ex) {
@@ -250,69 +254,70 @@ public class JobManagementModule extends AbstractModule {
 	private void documentSelected(SourceBean request, SourceBean response) throws EMFUserError {
 		try {
 			List functionalities = DAOFactory.getLowFunctionalityDAO().loadAllLowFunctionalities(true);
-			// get hob information from session
-			JobInfo jobInfo = (JobInfo)sessCont.getAttribute(SpagoBIConstants.JOB_INFO);
-			// recover generic data
+			
+			
+			JobInfo jobInfo = (JobInfo)sessionContainer.getAttribute(SpagoBIConstants.JOB_INFO);
 			getJobGenericDataFromRequest(request, jobInfo);
-			// recover parameter values
 			getDocParValuesFromRequest(request, jobInfo);
-			// get the list of biobject previously setted
-			List biobjects = jobInfo.getBiobjects();
-			// get the list of biobject id previously setted
-			List biobjIds = jobInfo.getBiobjectIds();
-			// create the list of new biobject selected
-			List biobj_sel_now = new ArrayList();
-		    // get the list of biobject id from the request
-			String sel_biobj_ids_str = (String)request.getAttribute("selected_biobject_ids");
-			if (sel_biobj_ids_str.equals(""))
-				biobj_sel_now = new ArrayList();
+		
+			List<BIObject> previouslySelectedDocuments = jobInfo.getDocuments();
+			List<Integer> previouslySelectedDocumentIds = jobInfo.getDocumentIds();
+			logger.debug("Previouly selected documents [" + previouslySelectedDocumentIds.size() + "]");
+			
+			List<BIObject> newlySelectedDocuments = new ArrayList<BIObject>();
+			String newlySelectedDocumentIdsString = (String)request.getAttribute("selected_biobject_ids");
+			logger.debug("Newly selected document ids string is equal to [" + newlySelectedDocumentIdsString + "]");
+			
+			if (newlySelectedDocumentIdsString.equals(""))
+				newlySelectedDocuments = new ArrayList<BIObject>();
 			else{
-				String[] sel_biobj_ids_arr = sel_biobj_ids_str.split(",");
-				List biobjIdsFromRequest = Arrays.asList(sel_biobj_ids_arr);
-				// update the job information
-				Iterator iterBiobjIdsFromRequest = biobjIdsFromRequest.iterator();		
-				while(iterBiobjIdsFromRequest.hasNext()) {					
-					String biobjidStr = (String)iterBiobjIdsFromRequest.next();
-					Integer biobjInt = Integer.valueOf(biobjidStr.substring(0, biobjidStr.lastIndexOf("__")));
-					//adds new documents
-					if(!biobjIds.contains(biobjInt)) {
-						Integer biobjid = new Integer(biobjidStr.substring(0, biobjidStr.lastIndexOf("__")));
-						IBIObjectDAO biobjectDAO = DAOFactory.getBIObjectDAO();
-						IBIObjectParameterDAO ibiobjpardao = DAOFactory.getBIObjectParameterDAO();
-						BIObject biobj = biobjectDAO.loadBIObjectById(biobjid);
-						List bipars = ibiobjpardao.loadBIObjectParametersById(biobjid);
-						biobj.setBiObjectParameters(bipars);
-						biobj_sel_now.add(biobj);
+				String[] newlySelectedDocumentIdsArray = newlySelectedDocumentIdsString.split(",");
+				List<String> newlySelectedDocumentIds = Arrays.asList(newlySelectedDocumentIdsArray);
+				logger.debug("Newly selected documents [" + newlySelectedDocumentIds.size() + "]");
+				
+				for(String newlySelectedDocumentId : newlySelectedDocumentIds) {
+					logger.debug("Processing newly selected document [" + newlySelectedDocumentId + "]");
+					Integer documentId = Integer.valueOf(newlySelectedDocumentId.substring(0, newlySelectedDocumentId.lastIndexOf("__")));
+					logger.debug("The id of newly selected document [" + newlySelectedDocumentId + "] is equal to [" + documentId + "]");
+					
+					if(!previouslySelectedDocumentIds.contains(documentId)) {
+						logger.debug("Document whose id is equal to [" + documentId + "] is not contained in previously selected documents");
+						IBIObjectDAO documentDAO = DAOFactory.getBIObjectDAO();
+						IBIObjectParameterDAO documentParameterDAO = DAOFactory.getBIObjectParameterDAO();
+						BIObject document = documentDAO.loadBIObjectById( documentId );
+						List documentParameters = documentParameterDAO.loadBIObjectParametersById( documentId );
+						document.setBiObjectParameters(documentParameters);
+						newlySelectedDocuments.add(document);
 					} else {
-						Iterator iter_prev_biobj = biobjects.iterator();
+						logger.debug("Document whose id is equal to [" + documentId + "] is contained in previously selected documents");
+						//Iterator iter_prev_biobj = previouslySelectedDocuments.iterator();
 						int index = 0;
 						boolean flgExists = false;
 						//preserves documents already existing
-						while(iter_prev_biobj.hasNext()){
+						for(BIObject previouslySelectedDocument : previouslySelectedDocuments){
 							index ++;
-							BIObject biobj = (BIObject)iter_prev_biobj.next();
-							String tmpID = biobj.getId().toString()+"__"+index;
-							if(tmpID.equals(biobjidStr)) {
-								biobj_sel_now.add(biobj);
+							String tmpID = previouslySelectedDocument.getId().toString()+"__"+index;
+							if(tmpID.equals(newlySelectedDocumentId)) {
+								newlySelectedDocuments.add(previouslySelectedDocument);
 								flgExists = true;
 								continue;
 							}
 						}
 						//adds new copy of document already existing
 						if (!flgExists){
-							Integer biobjid = new Integer(biobjidStr.substring(0, biobjidStr.lastIndexOf("__")));
-							IBIObjectDAO biobjectDAO = DAOFactory.getBIObjectDAO();
-							IBIObjectParameterDAO ibiobjpardao = DAOFactory.getBIObjectParameterDAO();
-							BIObject biobj = biobjectDAO.loadBIObjectById(biobjid);
-							List bipars = ibiobjpardao.loadBIObjectParametersById(biobjid);
-							biobj.setBiObjectParameters(bipars);
-							biobj_sel_now.add(biobj);
+							IBIObjectDAO documentDAO = DAOFactory.getBIObjectDAO();
+							IBIObjectParameterDAO documentParameterDAO = DAOFactory.getBIObjectParameterDAO();
+							BIObject document = documentDAO.loadBIObjectById( documentId );
+							List documentParameters = documentParameterDAO.loadBIObjectParametersById( documentId );
+							document.setBiObjectParameters(documentParameters);
+							newlySelectedDocuments.add(document);
 						}							
 					}
 				}
 			}
-			jobInfo.setBiobjects(biobj_sel_now);
-			sessCont.setAttribute(SpagoBIConstants.JOB_INFO, jobInfo);
+			logger.debug("Selected documents [" + newlySelectedDocuments.size() + "]");
+			jobInfo.setDocuments(newlySelectedDocuments);
+			sessionContainer.setAttribute(SpagoBIConstants.JOB_INFO, jobInfo);
 			response.setAttribute(SpagoBIConstants.FUNCTIONALITIES_LIST, functionalities);
 			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "JobDetail");
 		} catch (Exception ex) {
@@ -327,7 +332,7 @@ public class JobManagementModule extends AbstractModule {
 	private void saveJob(SourceBean request, SourceBean response) throws EMFUserError {
 		try {
 			// get job information from session
-			JobInfo jobInfo = (JobInfo)sessCont.getAttribute(SpagoBIConstants.JOB_INFO);
+			JobInfo jobInfo = (JobInfo)sessionContainer.getAttribute(SpagoBIConstants.JOB_INFO);
 			// recover generic data
 			getJobGenericDataFromRequest(request, jobInfo);
 			// recover parameter values
@@ -342,7 +347,7 @@ public class JobManagementModule extends AbstractModule {
 			
 			boolean warningNeeded = false;
 			Map documents = new HashMap();
-			List biobjs = jobInfo.getBiobjects();
+			List biobjs = jobInfo.getDocuments();
 			Iterator iterbiobj = biobjs.iterator();
 			float totalCombinations = 0;
 			while(iterbiobj.hasNext()) {
@@ -390,10 +395,10 @@ public class JobManagementModule extends AbstractModule {
 			message.append(" jobDescription=\""+jobInfo.getJobDescription()+"\" ");
 			message.append(" jobGroupName=\""+jobGroupName+"\" ");
 			message.append(" jobRequestRecovery=\"false\" ");
-			message.append(" jobClass=\"it.eng.spagobi.tools.scheduler.jobs.ExecuteBIDocumentJob\" ");
+			message.append(" jobClass=\"" + ExecuteBIDocumentJob.class.getName() + "\" ");
 			message.append(">");
 			message.append("   <PARAMETERS>");
-			List biobjs = jobInfo.getBiobjects();
+			List biobjs = jobInfo.getDocuments();
 			Iterator iterbiobj = biobjs.iterator();
 			String doclabels = "";
 			int index = 0;
@@ -512,7 +517,7 @@ public class JobManagementModule extends AbstractModule {
             SourceBean jobDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(respStr);
 			if(jobDetailSB!=null) {
 				JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobDetailSB);
-				sessCont.setAttribute(SpagoBIConstants.JOB_INFO, jobInfo);
+				sessionContainer.setAttribute(SpagoBIConstants.JOB_INFO, jobInfo);
 			} else {
 				throw new Exception("Detail not recovered for job " + jobName);
 			}
@@ -544,7 +549,7 @@ public class JobManagementModule extends AbstractModule {
 		// get the splitter character
 		String splitter = (String)request.getAttribute("splitter");
 		// get the list of biobject previously setted
-		List biobjects = jobInfo.getBiobjects();
+		List biobjects = jobInfo.getDocuments();
 		List newBiObjects = new ArrayList();
 		// iter over biobjects
 		Iterator iterbiobjs = biobjects.iterator();
@@ -606,7 +611,7 @@ public class JobManagementModule extends AbstractModule {
 			biobj.setBiObjectParameters(newBiobjpars);
 			newBiObjects.add(biobj);
 		}
-		jobInfo.setBiobjects(newBiObjects);
+		jobInfo.setDocuments(newBiObjects);
 	}
 	
 	

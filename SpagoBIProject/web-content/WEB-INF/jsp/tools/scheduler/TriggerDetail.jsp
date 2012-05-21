@@ -48,7 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	SourceBean moduleResponse = (SourceBean)aServiceResponse.getAttribute("TriggerManagementModule"); 
 	TriggerInfo triggerInfo = (TriggerInfo)aSessionContainer.getAttribute(SpagoBIConstants.TRIGGER_INFO);
 	JobInfo jobInfo = triggerInfo.getJobInfo();
-	List jobBiobjects = jobInfo.getBiobjects();
+	List jobBiobjects = jobInfo.getDocuments();
 	Map saveOptions = triggerInfo.getSaveOptions();
 	
 	Map backUrlPars = new HashMap();
@@ -1043,7 +1043,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<br/>
 		<div class="div_detail_area_forms_scheduler" >    	
         
-        <input type="checkbox" id="saveassnapshot_<%=biobj.getId()%>__<%=index%>" name="saveassnapshot_<%=biobj.getId()%>__<%=index%>" 
+    <!-- ======================================================================================== -->
+	<!-- SAVE AS SNAPSHOT														  		  -->
+	<!-- ======================================================================================== --> 	
+	<input type="checkbox" id="saveassnapshot_<%=biobj.getId()%>__<%=index%>" name="saveassnapshot_<%=biobj.getId()%>__<%=index%>" 
                <%if(sInfo.isSnapshootDispatchChannelEnabled()){out.write(" checked='checked' " );}%> />
 			  <span class='portlet-form-field-label'>
 					<spagobi:message key="scheduler.saveassnap" bundle="component_scheduler_messages" />
@@ -1078,10 +1081,38 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	         </div>		       
         </div>
         
-<script>  
-toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId()%>__<%=index%>', <%=sInfo%> );
-</script> 
-		    <!-- anto: inizio gestione salvataggio doc -->
+	<script>  
+	toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isSnapshootDispatchChannelEnabled()%> );
+	</script> 
+
+	<!-- ======================================================================================== -->
+	<!-- SAVE AS FILE 																			  -->
+	<!-- ======================================================================================== -->
+	<div> &nbsp;</div>		
+    <br/>
+ 	<input type="checkbox" id="saveasfile_<%=biobj.getId()%>__<%=index%>" name="saveasfile_<%=biobj.getId()%>__<%=index%>" 
+	<%if(sInfo.isFileSystemDispatchChannelEnabled()){out.write(" checked='checked' " );}%> />
+	<span class='portlet-form-field-label'>
+		<spagobi:message key="scheduler.saveasfile" bundle="component_scheduler_messages" />
+	</span>
+	<div id="file_<%=biobj.getId()%>__<%=index%>"  style="margin-left:50px;margin-top:10px;">
+	    <div class='div_detail_label_scheduler'>
+			<span class='portlet-form-field-label'>
+			    <spagobi:message key="scheduler.destinationfolder" bundle="component_scheduler_messages" />
+			</span>
+		</div>
+        <div class='div_detail_form'>
+			<input type="text" id="destinationfolder" value="<%=StringEscapeUtils.escapeHtml(sInfo.getDestinationFolder())%>"
+		           name="destinationfolder_<%=biobj.getId()%>__<%=index%>" size="35"/>
+	   	</div>
+	</div>
+	<script>  
+	toggle('file_<%=biobj.getId()%>__<%=index%>', 'saveasfile_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isFileSystemDispatchChannelEnabled()%> );
+	</script> 
+	
+	<!-- ======================================================================================== -->
+	<!-- SAVE AS DOCUMENT 																		  -->
+	<!-- ======================================================================================== -->
 	<div> &nbsp;</div>		
     <br/>
 		<input type="checkbox" id="saveasdocument_<%=biobj.getId()%>__<%=index%>"  name="saveasdocument_<%=biobj.getId()%>__<%=index%>" 
@@ -1220,14 +1251,17 @@ toggle('snapshot_<%=biobj.getId()%>__<%=index%>', 'saveassnapshot_<%=biobj.getId
 		  	    </div>
 	      	</div>
     	</div>
-<script>
-toggle('document_<%=biobj.getId()%>__<%=index%>', 'saveasdocument_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isFunctionalityTreeDispatchChannelEnabled()%>);
-</script>  
-		<div> &nbsp;</div>			
-        <br/>
+	<script>
+	toggle('document_<%=biobj.getId()%>__<%=index%>', 'saveasdocument_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isFunctionalityTreeDispatchChannelEnabled()%>);
+	</script>  
+		
 
-	<!--  ADD JAVA CLASS OPTION -->	  	
-        <input type="checkbox" id="sendtojavaclass_<%=biobj.getId()%>__<%=index%>" name="sendtojavaclass_<%=biobj.getId()%>__<%=index%>" 
+	<!-- ======================================================================================== -->
+	<!-- SAVE AS JAVA CLASS																		  -->
+	<!-- ======================================================================================== -->
+    <div> &nbsp;</div>			
+    <br/>
+    <input type="checkbox" id="sendtojavaclass_<%=biobj.getId()%>__<%=index%>" name="sendtojavaclass_<%=biobj.getId()%>__<%=index%>" 
                <%if(sInfo.isJavaClassDispatchChannelEnabled()){out.write(" checked='checked' " );}%> />
 			  <span class='portlet-form-field-label'>
 					<spagobi:message key="scheduler.sendtojavaclass" bundle="component_scheduler_messages" />
@@ -1243,16 +1277,16 @@ toggle('document_<%=biobj.getId()%>__<%=index%>', 'saveasdocument_<%=biobj.getId
 		               name="javaclasspath_<%=biobj.getId()%>__<%=index%>" size="35"/>
 	        </div>
         </div>
-<script>  
-toggle('javaclass_<%=biobj.getId()%>__<%=index%>', 'sendtojavaclass_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isJavaClassDispatchChannelEnabled()%> );
-</script> 
+	<script>  
+	toggle('javaclass_<%=biobj.getId()%>__<%=index%>', 'sendtojavaclass_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isJavaClassDispatchChannelEnabled()%> );
+	</script>
 
-		<div> &nbsp;</div>		
-        <br/>
-<!-- END JAVA CLASS OPTION -->			  	
-
-<!--  MAIL SEND -->
-			<input type="checkbox" id="sendmail_<%=biobj.getId()%>__<%=index%>"   name="sendmail_<%=biobj.getId()%>__<%=index%>" 
+    <!-- ======================================================================================== -->
+	<!-- SAVE AS MAIL																	  		  -->
+	<!-- ======================================================================================== -->
+	<div> &nbsp;</div>		
+    <br/>
+	<input type="checkbox" id="sendmail_<%=biobj.getId()%>__<%=index%>"   name="sendmail_<%=biobj.getId()%>__<%=index%>" 
 				       <%if(sInfo.isMailDispatchChannelEnabled()){out.write(" checked='checked' " );} %> />
 				<span class='portlet-form-field-label'>
 					<spagobi:message key="scheduler.sendmail" bundle="component_scheduler_messages" />
@@ -1433,18 +1467,18 @@ toggle('javaclass_<%=biobj.getId()%>__<%=index%>', 'sendtojavaclass_<%=biobj.get
 	  	    </div>
   	     </div>
 
-<script>
-toggle('mail_<%=biobj.getId()%>__<%=index%>', 'sendmail_<%=biobj.getId()%>__<%=index%>', <%= sInfo.isMailDispatchChannelEnabled() %>);
-</script>  	
+	<script>
+	toggle('mail_<%=biobj.getId()%>__<%=index%>', 'sendmail_<%=biobj.getId()%>__<%=index%>', <%= sInfo.isMailDispatchChannelEnabled() %>);
+	</script> 
+
+	<!-- ======================================================================================== -->
+	<!-- SAVE AS DISTRIBUTION LIST														  		  -->
+	<!-- ======================================================================================== --> 	
 	<div> &nbsp;
-		</div>	    
-  	    <br/>
+	</div>	    
+  	<br/>
 
-<!-- END OF MAIL SEND -->
-
-<!--  DISTRIBUTION LIST -->
-
-		<input type="checkbox" id="saveasdl_<%=biobj.getId()%>__<%=index%>" name="saveasdl_<%=biobj.getId()%>__<%=index%>" 
+	<input type="checkbox" id="saveasdl_<%=biobj.getId()%>__<%=index%>" name="saveasdl_<%=biobj.getId()%>__<%=index%>" 
 				       <%if(sInfo.isDistributionListDispatchChannelEnabled()){out.write(" checked='checked' " );}%>/>
 				<span class='portlet-form-field-label'>
 					<spagobi:message key="scheduler.distributionlist" bundle="component_scheduler_messages" />
