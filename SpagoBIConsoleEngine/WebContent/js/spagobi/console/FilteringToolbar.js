@@ -292,6 +292,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 	,
 	onExportFileFailure : function (response, options) {
 		this.ownerCt.hideMask();
+		this.ownerCt.restartLoading();
 		Sbi.exception.ExceptionHandler.onServiceRequestFailure(response, options);
 	}
 	
