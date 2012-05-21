@@ -277,6 +277,11 @@ Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserM
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']  = 'Riempi il form sottostante e clicca sul pulsante di refresh sulla barra per rieseguire il documento';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']  = 'Clicca sul pulsante di refresh sulla barra per rieseguire il documento';
 
+Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.title']  = 'Si inseriscano i valori o si copi una porzione di un documento xls';
+Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.ok']  = 'Ok';
+Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.clear']  = 'Pulisci';
+Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.cancel']  = 'Chiudi';
+
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Torna alla pagina di selezione parametri';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Torna alla pagina di vista documenti';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Riesegui il documento';
@@ -708,3 +713,22 @@ Sbi.locale.ln['sbi.kpi.accordionmenu.linkeddoc']=  'Documento collegato'
 Sbi.locale.ln['sbi.kpi.accordionmenu.comments']= 'Commenti'
 Sbi.locale.ln['sbi.kpi.accordionmenu.history']= 'Storico'
 Sbi.locale.ln['sbi.kpi.accordionmenu.detail']= 'Dettaglio'
+	
+Sbi.locale.ln['sbi.kpi.kpiguidetail.value']= 'Valore'
+Sbi.locale.ln['sbi.kpi.kpiguidetail.targhet']= 'Targhet'
+Sbi.locale.ln['sbi.kpi.kpiguidetail.weight']= 'Peso'
+	
+Sbi.locale.ln['sbi.kpi.kpiguicomments.savecomment']= 'Salva'
+Sbi.locale.ln['sbi.kpi.kpiguicomments.comment']= 'Commento'
+Sbi.locale.ln['sbi.kpi.kpiguicomments.creation']= 'Data creazione'
+Sbi.locale.ln['sbi.kpi.kpiguicomments.owner']= 'Propetario'
+			
+Sbi.locale.ln['sbi.kpi.kpiguidescription.name']= 'Nome'
+Sbi.locale.ln['sbi.kpi.kpiguidescription.description']='Descrizione'
+Sbi.locale.ln['sbi.kpi.kpiguidescription.dataset']='Dataset'
+Sbi.locale.ln['sbi.kpi.kpiguidescription.code']='Codice tipo'
+Sbi.locale.ln['sbi.kpi.kpiguidescription.measure']='Misura'
+Sbi.locale.ln['sbi.kpi.kpiguidescription.targhet']='Targhet Audience'
+Sbi.locale.ln['sbi.kpi.kpiguidescription.scale']='Scala'
+
+Sbi.locale.ln['sbi.kpi.kpiguidoccollegato.nodoc']='Nessun documento collegato'

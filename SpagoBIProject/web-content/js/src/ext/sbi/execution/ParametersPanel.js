@@ -776,7 +776,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				return true;
 			}, this);
 			
+			
+			//field = new Sbi.execution.LookupFieldWithTableWindow(Ext.apply(baseConfig, {
 			field = new Sbi.widgets.LookupField(Ext.apply(baseConfig, {
+				
 				  store: store
 					, params: params
 					, readOnly: true
@@ -793,10 +796,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 					
 				}
 				
-			} else if(p.type === 'NUMBER') {
-				field = new Ext.form.NumberField(baseConfig);
-			} else {	
-				field = new Ext.form.TextField(baseConfig);
+			} else{//if(p.type === 'NUMBER') {
+//				field = new Ext.form.NumberField(baseConfig);
+//			} else {	
+				field = new Sbi.execution.LookupFieldWithMaximize(baseConfig);
 			}			
 		}
 		
