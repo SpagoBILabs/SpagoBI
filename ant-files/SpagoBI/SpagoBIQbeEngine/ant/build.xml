@@ -432,7 +432,7 @@
 		<war warfile="${dist}/${war_name}" webxml="${build}/${webapp_name}/WEB-INF/web.xml" 
 			manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" 
 			basedir="${build}/${webapp_name}" 
-   	   excludes="${build}/${webapp_name}/js/lib/highcharts-2.1.4"/>
+			excludes="**/**/js/lib/highcharts-2.1.4/**"/>
 	</target>
 	<target name="javadoc">
 		<javadoc packagenames="*" sourcepath="${src}" defaultexcludes="yes" destdir="${dist}/javadoc" author="true" version="true" use="true">
