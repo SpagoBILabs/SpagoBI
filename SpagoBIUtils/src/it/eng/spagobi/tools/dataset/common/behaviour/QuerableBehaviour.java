@@ -26,6 +26,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -104,9 +105,12 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
 			File scriptFile;
 			try {
-				scriptFile = new File(url.toURI());
+				logger.debug("predefinedGroovyScript.groovy file URL is equal to [" + url + "]");
+				URI fileURI = url.toURI();
+				logger.debug("predefinedGroovyScript.groovy file URL is equal to [" + fileURI + "]");
+				scriptFile = new File( fileURI );
 				imports.add(scriptFile);
-			} catch (URISyntaxException t) {
+			} catch (Throwable t) {
 				logger.warn("Impossible to load predefinedGroovyScript.groovy", t);
 			}
 			
@@ -115,9 +119,12 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
 			File scriptFile;
 			try {
-				scriptFile = new File(url.toURI());
+				logger.debug("predefinedJavascriptScript.js file URL is equal to [" + url + "]");
+				URI fileURI = url.toURI();
+				logger.debug("predefinedJavascriptScript.js file URL is equal to [" + fileURI + "]");
+				scriptFile = new File( fileURI );
 				imports.add(scriptFile);
-			} catch (URISyntaxException t) {
+			} catch (Throwable t) {
 				logger.warn("Impossible to load predefinedJavascriptScript.js", t);
 			}
 			
