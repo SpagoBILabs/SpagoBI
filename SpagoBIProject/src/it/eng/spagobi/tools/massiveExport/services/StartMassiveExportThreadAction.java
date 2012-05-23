@@ -40,7 +40,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONString;
 
 import commonj.work.WorkEvent;
 import commonj.work.WorkItem;
