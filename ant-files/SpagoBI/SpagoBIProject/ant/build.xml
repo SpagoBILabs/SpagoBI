@@ -502,7 +502,7 @@
 		</replaceregexp>
   </target>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-  <!--   CREAZIONE WAR                                                                -->
+  <!--   WAR CREATION FOR DEMO ALL IN ONE                                                               -->
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
 	<target name="create.war" depends="init,jar" >
         
@@ -514,6 +514,7 @@
         
 	      <mkdir dir="${dist}"/>
 	      <delete file="${dist}/${war_name}" />
+
 	      <war warfile="${dist}/${war_name}" 
 	           webxml="${build}/${webapp_name}/WEB-INF/web.xml" 
 	           manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" 
@@ -521,7 +522,27 @@
 
 
 	</target>
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <!--   WAR CREATION FOR SINGLE PACKAGES                                                         -->
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
+		<target name="create-bin.war" depends="init,jar" >
+	        
+	        <antcall target="${sso}" />
+	        <antcall target="${specific.ant.task}" />
+	        <antcall target="${modality}" />
+	        <antcall target="${ext.deploy}" />
+			<antcall target="upgrade.mf" />
+	        
+		      <mkdir dir="${dist}"/>
+		      <delete file="${dist}/${war_name}" />
 
+		      <war warfile="${dist}/${war_name}" 
+		           webxml="${build}/${webapp_name}/WEB-INF/web.xml" 
+		           manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" 
+		           basedir="${build}/${webapp_name}"
+		      	   excludes="**/**/js/lib/highcharts-2.1.6/**"/>
+
+		</target>
   <target name="javadoc">    
     <javadoc packagenames="*"
       sourcepath="${src}"

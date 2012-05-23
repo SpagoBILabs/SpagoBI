@@ -55,11 +55,20 @@
   </target>
 
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	
 
-  
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   WAR CREATION FOR DEMO ALL IN ONE : CALLS DEFAULT makeDist                    -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  	
   <target name="create.SpagoBI.war" depends="create.qbe.core.jar">
     <ant dir="../SpagoBIProject/ant" />
   </target>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   WAR CREATION FOR SINGLE PACKAGES                                             -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
+  <target name="create-bin.SpagoBI.war" depends="create.qbe.core.jar">
+    <ant dir="../SpagoBIProject/ant" target="create-bin.war" />
+  </target>	
   <target name="deploy.SpagoBI.war" depends="create.sbi.utils.jar,create.exo.security.jar,create.xlm.security.jar,create.ldap.security.jar,create.liferay.security.jar,create.SpagoBI.war">
     <delete dir="${tomcat.home}/webapps/SpagoBI" />
     <mkdir dir="${tomcat.home}/webapps/SpagoBI" />
@@ -166,10 +175,19 @@
     <unzip src="../../../SpagoBIJPivotEngine/dist/SpagoBIJPivotEngine.war" dest="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
   </target>
 
-
-  <target name="create.SpagoBIQbeEngine.war" depends="create.sbi.utils.jar">
-    <ant dir="../SpagoBIQbeEngine/ant" />
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   WAR CREATION FOR DEMO ALL IN ONE : CALLS DEFAULT makeDist                    -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  	
+	<target name="create.SpagoBIQbeEngine.war" depends="create.sbi.utils.jar">
+	    <ant dir="../SpagoBIQbeEngine/ant" />
+	</target>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   WAR CREATION FOR SINGLE PACKAGES                                             -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
+  <target name="create-bin.SpagoBIQbeEngine.war" depends="create.sbi.utils.jar">
+    <ant dir="../SpagoBIQbeEngine/ant" target="create-bin.war"/>
   </target>
+	
   <target name="deploy.SpagoBIQbeEngine.war" depends="create.sbi.utils.jar,create.qbe.core.jar,create.SpagoBIQbeEngine.war">
     <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIQbeEngine" />
     <delete dir="${tomcat.home}/webapps/SpagoBIQbeEngine" />
@@ -258,6 +276,8 @@
 	    <unzip src="../../../SpagoBIMobileEngine/dist/SpagoBIMobileEngine.war" dest="${tomcat.home}/webapps/SpagoBIMobileEngine" />
 	</target>
 	
+	
+  <!--   TO BE EXECUTED FIRST FOR ALL IN ONE DEMO WARS CREATION  -->
   <target name="create.all" depends="clean.all">
 
     <antcall target="create.sbi.utils.jar" />
@@ -335,7 +355,26 @@
   	        todir="../../../dist" overwrite="true" />
                         
   </target>
+	
+	<!-- NEW: 22/05/2012 -->
+	<!--   TO BE EXECUTED IN A SECOND STEP FOR SINGLE PACKAGES CREATION -->
+	<target name="create-bin.all" depends="clean-bin.all">
 
+	    <antcall target="create.sbi.utils.jar" />
+	    <antcall target="create.qbe.core.jar" />    
+	    <antcall target="create.exo.security.jar" /> 
+	    <antcall target="create.liferay.security.jar" />
+	    <antcall target="create.xlm.security.jar" />
+	    <antcall target="create.ldap.security.jar" />
+	    <antcall target="create-bin.SpagoBI.war" />
+	    <copy file="../../../SpagoBIProject/dist/SpagoBI.war" 
+	        todir="../../../dist" overwrite="true" />
+	    <antcall target="create-bin.SpagoBIQbeEngine.war" />
+	    <copy file="../../../SpagoBIQbeEngine/dist/SpagoBIQbeEngine.war" 
+	        todir="../../../dist" overwrite="true" />  
+  </target>
+	
+	
   <target name="deploy.all" >
     <antcall target="deploy.SpagoBI.war" />
     <antcall target="deploy.SpagoBIBirtReportEngine.war" />
@@ -354,7 +393,16 @@
   	<antcall target="deploy.SpagoBIChartEngine.war" /> 
   	<antcall target="deploy.SpagoBIMobileEngine.war" />    
   </target>
-
+	
+	<target name="clean-bin.all" >
+	  <delete file="../../../dist/SpagoBI.war"/>
+      <delete file="../../../dist/SpagoBIQbeEngine.war"/>
+	  <delete dir="../../../SpagoBIQbeEngine/ant-build"/>
+	  <delete dir="../../../SpagoBIQbeEngine/dist"/> 
+	  <delete dir="../../../SpagoBIProject/ant-build"/>
+	  <delete dir="../../../SpagoBIProject/dist"/>    
+	</target>
+	
    <target name="clean.all" >
   <delete dir="../../../dist"/>
   <delete dir="../../../QbeCore/ant-build"/>
