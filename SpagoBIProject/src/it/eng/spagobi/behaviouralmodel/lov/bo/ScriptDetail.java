@@ -25,6 +25,8 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
 
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -167,8 +169,32 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		//Substitute profile attributes with their value
 		String cleanScript=substituteProfileAttributes(getScript(), attributes);
 		setScript(cleanScript);
+		
+		List<Object> imports = null;
+		if( "groovy".equals(languageScript) ){
+			imports = new ArrayList<Object>();
+			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
+			try {
+				logger.debug("predefinedGroovyScript.groovy file URL is equal to [" + url + "]");
+				imports.add(url);
+			} catch (Throwable t) {
+				logger.warn("Impossible to load predefinedGroovyScript.groovy", t);
+			}
+		} else if( "ECMAScript".equals(languageScript ) || "rhino-nonjdk".equals(languageScript ) ){
+			imports = new ArrayList<Object>();
+			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
+			try {
+				logger.debug("predefinedJavascriptScript.js file URL is equal to [" + url + "]");			
+				imports.add(url);
+			} catch (Throwable t) {
+				logger.warn("Impossible to load predefinedJavascriptScript.js", t);
+			}	
+		}  else {
+			logger.debug("There is no predefined script file to import for scripting language [" + languageScript + "]");
+		}
+		
 		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
-		result = (String)scriptManager.runScript(getScript(), languageScript, attributes);   
+		result = (String)scriptManager.runScript(getScript(), languageScript, attributes, imports);   
 		
 		// check if the result must be converted into the right xml sintax
 		boolean toconvert = checkSintax(result);
