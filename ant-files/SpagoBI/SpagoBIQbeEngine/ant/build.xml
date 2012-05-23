@@ -99,7 +99,7 @@
 				<exclude name="**/*.svn" />
 			</fileset>
 		</copy>
-		<copy file="${web.dir}/COPYING" todir="${dist}" overwrite="true" />
+		<copy file="${web.dir}/COPYING.LESSER" todir="${dist}" overwrite="true" />
 	</target>
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   CREAZIONE JAR							                                    -->
@@ -402,6 +402,10 @@
 			<substitution expression="(^)Implementation-Version: ${project.version}($)" />
 		</replaceregexp>
 	</target>
+	
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <!--   WAR CREATION FOR DEMO ALL IN ONE                                                               -->
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
 
 	<target name="create.war" depends="init,copy.artifacts">
 		<antcall target="${sso}" />
@@ -413,7 +417,23 @@
 		<delete file="${dist}/${war_name}" />
 		<war warfile="${dist}/${war_name}" webxml="${build}/${webapp_name}/WEB-INF/web.xml" manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" basedir="${build}/${webapp_name}" />
 	</target>
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <!--   WAR CREATION FOR SINGLE PACKAGES                                                               -->
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
 
+	<target name="create-bin.war" depends="init,copy.artifacts">
+		<antcall target="${sso}" />
+		<antcall target="${specific.ant.task}" />
+		<antcall target="${ext.deploy}" />
+		<antcall target="upgrade.mf" />
+
+		<mkdir dir="${dist}" />
+		<delete file="${dist}/${war_name}" />
+		<war warfile="${dist}/${war_name}" webxml="${build}/${webapp_name}/WEB-INF/web.xml" 
+			manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" 
+			basedir="${build}/${webapp_name}" 
+   	   excludes="${build}/${webapp_name}/js/lib/highcharts-2.1.4"/>
+	</target>
 	<target name="javadoc">
 		<javadoc packagenames="*" sourcepath="${src}" defaultexcludes="yes" destdir="${dist}/javadoc" author="true" version="true" use="true">
 			<classpath refid="web.classpath" />
