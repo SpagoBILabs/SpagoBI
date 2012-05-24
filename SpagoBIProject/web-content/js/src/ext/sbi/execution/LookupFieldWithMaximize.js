@@ -79,6 +79,10 @@ Ext.extend(Sbi.execution.LookupFieldWithMaximize,  Ext.form.TriggerField, {
     	var value;
     	var td = "td";
     	
+    	HTMLtable = HTMLtable.replace(/&nbsp;/g," ");
+    	HTMLtable =  Ext.util.Format.htmlDecode(HTMLtable);
+    	HTMLtable = HTMLtable.trim();
+    	
     	if(HTMLtable.indexOf("<TD")>0){
     		td = "TD";
     	}
@@ -96,9 +100,8 @@ Ext.extend(Sbi.execution.LookupFieldWithMaximize,  Ext.form.TriggerField, {
         		tdClosePositionStart =  HTMLtable.indexOf("</"+td,tdPositionEnd);
         		
         		value = HTMLtable.substring(tdPositionEnd+1,tdClosePositionStart);
-        		value =  Ext.util.Format.htmlDecode(value);
         		value =  Ext.util.Format.stripTags(value);
-        		value = value.replace(/&nbsp;/g," ");
+        		
         		//Add to the list the content of the td tag 
         		list.push(value);
         		
@@ -108,9 +111,9 @@ Ext.extend(Sbi.execution.LookupFieldWithMaximize,  Ext.form.TriggerField, {
         	}	
     	}else{
     		
-    		HTMLtable =  Ext.util.Format.htmlDecode(HTMLtable);
+    		//HTMLtable =  Ext.util.Format.htmlDecode(HTMLtable);
     		HTMLtable =  Ext.util.Format.stripTags(HTMLtable);
-    		HTMLtable = HTMLtable.replace(/&nbsp;/g," ");
+
     		
     		while(HTMLtable.length>0){
     			itemEndPosition = HTMLtable.indexOf(";");
@@ -119,8 +122,6 @@ Ext.extend(Sbi.execution.LookupFieldWithMaximize,  Ext.form.TriggerField, {
         			return list;
         		}
         		list.push(HTMLtable.substring(0,itemEndPosition));
-    		
-        		
         		//update the HTMLtable
         		HTMLtable = HTMLtable.substring(itemEndPosition+1);
         	}
@@ -133,7 +134,9 @@ Ext.extend(Sbi.execution.LookupFieldWithMaximize,  Ext.form.TriggerField, {
     }
     
     ,fromListToString: function(list){
-    	
+    	if(list.length==1){
+    		return list[0];
+    	}
     	var string ="";
     	for(var i=0; i<list.length; i++){
     		if(list[i]!=undefined && list[i]!=null && list[i].length>0){
@@ -149,7 +152,7 @@ Ext.extend(Sbi.execution.LookupFieldWithMaximize,  Ext.form.TriggerField, {
 		var thisPanel = this;
 
 		if(!this.window){
-			var htmleditor = new Ext.form.HtmlEditor({
+			this.htmleditor = new Ext.form.HtmlEditor({
 		        fieldLabel: 'Value',
 			    enableAlignments : false,
 			    enableColors : false,
@@ -162,7 +165,6 @@ Ext.extend(Sbi.execution.LookupFieldWithMaximize,  Ext.form.TriggerField, {
 		        hideLabel: true,
 		        name: 'msg',
 		        flex: 1  // Take up all *remaining* vertical space
-				
 			});
 			
 			this.window = new Ext.Window({
@@ -177,11 +179,11 @@ Ext.extend(Sbi.execution.LookupFieldWithMaximize,  Ext.form.TriggerField, {
 		        plain: true,
 		        bodyStyle: 'padding:5px;',
 		        buttonAlign: 'center',
-		        items: htmleditor,
+		        items: thisPanel.htmleditor,
 		        buttons: [{
 		            text: LN('sbi.execution.parametersselection.maximizelookup.ok'),
 		            handler: function(){
-		            	var v =htmleditor.getValue(); 
+		            	var v =thisPanel.htmleditor.getValue(); 
 		            	var vlist = thisPanel.getListOfValues(v);
 		            	v =  thisPanel.fromListToString( vlist);
 		            	thisPanel.setValue(v);
@@ -190,7 +192,7 @@ Ext.extend(Sbi.execution.LookupFieldWithMaximize,  Ext.form.TriggerField, {
 		        },{
 		            text: LN('sbi.execution.parametersselection.maximizelookup.clear'),
 	            	handler: function(){
-	            		htmleditor.reset();
+	            		thisPanel.htmleditor.reset();
 		            }
 		        },{
 		            text: LN('sbi.execution.parametersselection.maximizelookup.cancel'),
@@ -201,6 +203,12 @@ Ext.extend(Sbi.execution.LookupFieldWithMaximize,  Ext.form.TriggerField, {
 		    });
 		}
 		
+		this.htmleditor.reset();
+		var initValue = thisPanel.getValue();
+		if(initValue!=undefined && initValue!=null && initValue!=' ' && initValue!=''){
+			this.htmleditor.setValue(initValue);
+		}
+			
 		this.window.on("beforeclose",function(){this.window.hide();return false;},this);
 		
 		this.window.show();
