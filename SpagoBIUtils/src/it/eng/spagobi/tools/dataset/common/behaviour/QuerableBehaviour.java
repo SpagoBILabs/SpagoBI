@@ -99,35 +99,38 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 	}
 	
 	private String applyScript(String statement, String script, String language) {
-		List<File> imports = null;
+		List<Object> imports = null;
 		if( "groovy".equals(language) ){
-			imports = new ArrayList<File>();
+			imports = new ArrayList<Object>();
 			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
 			File scriptFile;
 			try {
 				logger.debug("predefinedGroovyScript.groovy file URL is equal to [" + url + "]");
-				URI fileURI = url.toURI();
-				logger.debug("predefinedGroovyScript.groovy file URL is equal to [" + fileURI + "]");
-				scriptFile = new File( fileURI );
-				imports.add(scriptFile);
+//				URI fileURI = url.toURI();
+//				logger.debug("predefinedGroovyScript.groovy file URL is equal to [" + fileURI + "]");
+//				scriptFile = new File( fileURI );
+//				imports.add(scriptFile);
+				imports.add(url);
 			} catch (Throwable t) {
 				logger.warn("Impossible to load predefinedGroovyScript.groovy", t);
 			}
 			
 		} else if( "ECMAScript".equals(language ) ){
-			imports = new ArrayList<File>();
+			imports = new ArrayList<Object>();
 			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
 			File scriptFile;
 			try {
-				logger.debug("predefinedJavascriptScript.js file URL is equal to [" + url + "]");
-				URI fileURI = url.toURI();
-				logger.debug("predefinedJavascriptScript.js file URL is equal to [" + fileURI + "]");
-				scriptFile = new File( fileURI );
-				imports.add(scriptFile);
+				logger.debug("predefinedJavascriptScript.js file URL is equal to [" + url + "]");			
+//				URI fileURI = url.toURI();
+//				logger.debug("predefinedJavascriptScript.js file URL is equal to [" + fileURI + "]");
+//				scriptFile = new File( fileURI );
+//				imports.add(scriptFile);
+				imports.add(url);
 			} catch (Throwable t) {
 				logger.warn("Impossible to load predefinedJavascriptScript.js", t);
-			}
-			
+			}	
+		}  else {
+			logger.debug("There is no predefined script file to import for scripting language [" + language + "]");
 		}
 		
 		Map<String, Object> bindings = new HashMap<String, Object>();
