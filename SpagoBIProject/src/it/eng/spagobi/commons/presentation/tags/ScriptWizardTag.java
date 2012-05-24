@@ -18,16 +18,20 @@ import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.tracing.TracerSingleton;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.commons.utilities.urls.IUrlBuilder;
 import it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.utilities.scripting.ScriptUtilities;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -127,9 +131,31 @@ public class ScriptWizardTag extends CommonWizardLovTag {
 		output.append("		<div class='div_detail_form'>\n");
 		output.append("			<select  style='width:180px;' class='portlet-form-input-field' name='LANGUAGESCRIPT' id='LANGUAGESCRIPT' >\n");
 
-
-		Map engineNames=ScriptUtilities.getEngineFactoriesNames();
 		String selected="";
+		try {
+			
+			List scriptLanguageList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.SCRIPT_TYPE);
+			if(scriptLanguageList != null){
+				for(int i=0; i< scriptLanguageList.size(); i++){
+					Domain domain = (Domain)scriptLanguageList.get(i);
+					String name = domain.getValueName();
+					name = StringEscapeUtils.escapeHtml(name);
+					String value = domain.getValueCd();
+					value = StringEscapeUtils.escapeHtml(value);
+					if(languageScript.equalsIgnoreCase(value)){
+						selected="selected='selected'";
+					}		
+					output.append("<option value='"+value+"' label='"+value+"' "+selected+">");
+					output.append(name);	
+					output.append("</option>");
+				}
+			}	
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		/*
+		Map engineNames=ScriptUtilities.getEngineFactoriesNames();
 		for(Iterator it=engineNames.keySet().iterator();it.hasNext();){
 			String engName=(String)it.next(); 
 			String alias=(String)engineNames.get(engName);
@@ -141,31 +167,12 @@ public class ScriptWizardTag extends CommonWizardLovTag {
 			}		
 			String aliasName=ScriptUtilities.bindAliasEngine(alias);
 
-
-			/*Map engineNames=ScriptManager.getEngineFactoriesNames();		
-				String selected="";
-				for (Iterator iterator = factories.iterator(); iterator.hasNext();) {
-					ScriptEngineFactory factory = (ScriptEngineFactory) iterator.next();
-					String engName = factory.getEngineName();
-				    String engVersion = factory.getEngineVersion();
-				    String langName = factory.getLanguageName();
-				    String langVersion = factory.getLanguageVersion();
-				    List<String> engNames = factory.getNames();
-				    String alias=engName;
-
-				    if(engNames.size()>=1){
-				    	alias=engNames.get(0);
-				    }
-				    selected="";
-
-					if(langName.equalsIgnoreCase(languageScript)){
-						selected="selected='selected'";
-						}*/
-
 			output.append("<option value='"+alias+"' label='"+alias+"' "+selected+">");
 			output.append(aliasName);	
 			output.append("</option>");
 		}
+		*/
+		
 		output.append("</select>");
 		output.append("</div>");
 
