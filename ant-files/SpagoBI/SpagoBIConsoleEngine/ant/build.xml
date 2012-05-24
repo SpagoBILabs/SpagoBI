@@ -201,6 +201,7 @@
 				<file name='./spagobi/console/ButtonColumn.js' />
 				<file name='./spagobi/console/InlineActionColumn.js' />
 				<file name='./spagobi/console/InlineToggleActionColumn.js' />
+				<file name='./spagobi/console/InlineCheckColumn.js' />
 				<file name='./spagobi/console/ActionButton.js' />
 
 				<file name='./spagobi/console/FilteringToolbar.js' />
