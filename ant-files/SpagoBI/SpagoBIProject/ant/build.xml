@@ -314,6 +314,7 @@
               <file name="./src/ext/sbi/execution/ViewpointsPanel.js"/>
               <file name="./src/ext/sbi/execution/ShortcutsPanel.js"/>
               <file name="./src/ext/sbi/execution/ParametersPanel.js"/>
+			  <file name="./src/ext/sbi/execution/LookupFieldWithMaximize.js"/>
               <file name="./src/ext/sbi/execution/SessionParametersManager.js"/>
               <file name="./src/ext/sbi/execution/RoleSelectionPage.js"/>
               <file name="./src/ext/sbi/execution/ParametersSelectionPage.js"/>
