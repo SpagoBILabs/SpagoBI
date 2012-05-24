@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class SpagoBIScriptManager {
 	}
 
 	
-	public Object runScript(String script, String language, Map<String, Object> bindings, List<File> imports) {
+	public Object runScript(String script, String language, Map<String, Object> bindings, List imports) {
 		
 		Object results;
 		
@@ -64,8 +65,15 @@ public class SpagoBIScriptManager {
 	
 			if(imports != null) {
 				StringBuffer importsBuffer = new StringBuffer();
-				for(File scriptFile: imports) {
-					importsBuffer.append(this.getImportedScript(scriptFile) + "\n");
+				for(Object importedScriptReference : imports) {
+					if(importedScriptReference instanceof File) {
+						importsBuffer.append(this.getImportedScript((File)importedScriptReference) + "\n");
+					} else if (importedScriptReference instanceof URL) {
+						importsBuffer.append(this.getImportedScript((URL)importedScriptReference) + "\n");
+					} else {
+						logger.warn("Impossible to resolve import reference of type [" + importedScriptReference.getClass().getName() + "]");
+					}
+					
 				}
 				script = importsBuffer.toString() + script;
 			}
@@ -172,6 +180,7 @@ public class SpagoBIScriptManager {
 		importedScript = null;
 		is = null;
 		try {	
+			logger.debug("Importing script from file [" + scriptFile + "]");
 			is = new FileInputStream(scriptFile);
 			importedScript = getImportedScript(is);
 		} catch (Throwable t) {
@@ -182,6 +191,31 @@ public class SpagoBIScriptManager {
 					is.close();
 				} catch (IOException t) {
 					logger.warn("Impossible to close inpust stream associated to file [" + scriptFile + "]", t);
+				}
+			}
+		}
+		
+		return importedScript;
+	}
+	
+	private String getImportedScript(URL url) {
+		String importedScript;
+		InputStream is;
+		
+		importedScript = null;
+		is = null;
+		try {	
+			logger.debug("Importing script from url [" + url + "]");
+			is = url.openStream();
+			importedScript = getImportedScript(is);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected error occured while importing script from file [" + url + "]", t);	
+		} finally {
+			if(is != null){
+				try {
+					is.close();
+				} catch (IOException t) {
+					logger.warn("Impossible to close inpust stream associated to file [" + url + "]", t);
 				}
 			}
 		}
