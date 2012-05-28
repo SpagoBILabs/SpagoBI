@@ -51,7 +51,7 @@
             <column name="UDP_ID" not-null="true" />
         </many-to-one>
         <property name="value" type="string">
-            <column name="VALUE" length="1000" not-null="true" />
+            <column name="VALUE" length="1000" not-null="false" />
         </property>
         <property name="prog" type="integer">
             <column name="PROG" />
