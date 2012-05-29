@@ -54,3 +54,19 @@ function  getListFromMultiValueProfileAttribute(attrValue){
   return valueToRet;
 }
 
+function  getParameterValuesAsInOperandClause(parName, isString){
+	 var toReturn = "";
+	 var quote = (isString !== undefined && isString == true) ? "'" : "";
+	 if (parameters.get(parName)){
+		 var arValues = parameters.get(parName).split(";"); 
+		 if (arValues.length > 0 ){
+		      for (var i=0, l = arValues.length; i<l; i++){		    	
+		    	  toReturn += quote + arValues[i] + quote;		    	  
+		          if (i < l-1) strValues += ", ";
+		      }
+		 }else{
+			   toReturn = quote + parameters.get(parName) + quote;
+		 }
+	 }
+	  return toReturn;
+}
