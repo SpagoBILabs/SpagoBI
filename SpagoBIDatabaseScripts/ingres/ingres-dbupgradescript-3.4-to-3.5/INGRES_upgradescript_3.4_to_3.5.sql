@@ -8,3 +8,11 @@ update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI
 commit;\p\g
 
 ALTER TABLE SBI_EXT_ROLES ADD COLUMN EDIT_WORKSHEET TINYINT DEFAULT 1;\p\g
+
+
+DELETE FROM SBI_DOMAINS WHERE domain_cd = 'SCRIPT_TYPE' AND value_cd='ejs';\p\g
+UPDATE SBI_DOMAINS SET value_cd='ECMAScript' WHERE domain_cd = 'SCRIPT_TYPE' AND value_cd='rhino-nonjdk';\p\g
+commit;\p\g
+ALTER TABLE SBI_DATA_SET_HISTORY ADD COLUMN QUERY_SCRIPT NVARCHAR DEFAULT NULL;\p\g
+ALTER TABLE SBI_DATA_SET_HISTORY ADD COLUMN QUERY_SCRIPT_LANGUAGE VARCHAR(100) DEFAULT NULL;\p\g
+commit;\p\g
