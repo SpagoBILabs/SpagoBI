@@ -725,10 +725,19 @@ public class TriggerManagementModule extends AbstractModule {
 			if( StringUtilities.isNotEmpty(dispatchContext.getDestinationFolder()) ) {
 				saveOptString += "destinationfolder="+dispatchContext.getDestinationFolder()+"%26";
 			}
+			if( StringUtilities.isNotEmpty(dispatchContext.getDestinationFolder()) ) {
+				saveOptString += "destinationfolder="+dispatchContext.getDestinationFolder()+"%26";
+			}
 			if(dispatchContext.isDestinationFolderRelativeToResourceFolder()) {
 				saveOptString += "isrelativetoresourcefolder=true%26";
 			} else {
 				saveOptString += "isrelativetoresourcefolder=false%26";
+			}
+			
+			if(dispatchContext.isProcessMonitoringEnabled()) {
+				saveOptString += "isprocessmonitoringenabled=true%26";
+			} else {
+				saveOptString += "isprocessmonitoringenabled=false%26";
 			}
 		}	
 		

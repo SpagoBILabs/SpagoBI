@@ -345,6 +345,14 @@ public class SchedulerUtilities {
 			if(name.equals("destinationfolder")) {
 				dispatchContext.setDestinationFolder(value);
 			}
+			if(name.equals("isprocessmonitoringenabled")) {
+				if("true".equalsIgnoreCase(value)) {
+					dispatchContext.setProcessMonitoringEnabled(true);
+				} else {
+					dispatchContext.setProcessMonitoringEnabled(false);
+				}
+				
+			}
 			if(name.equals("isrelativetoresourcefolder")) {
 				if("true".equalsIgnoreCase(value)) {
 					dispatchContext.setDestinationFolderRelativeToResourceFolder(true);

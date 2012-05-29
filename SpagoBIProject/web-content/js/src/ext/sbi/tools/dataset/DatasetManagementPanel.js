@@ -1515,7 +1515,6 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 				
 				, doSave : function(recalculateMetadata) {
 					var values = this.getValues();
-					alert(values.toSource());
 					
 					var idRec = values['id'];
 					var newRec;
