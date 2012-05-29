@@ -75,6 +75,8 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 
 		try {
 			if(dispatchContext.isProcessMonitoringEnabled()) {
+				logger.debug("Monitoring of dispatch process is enabled");
+				
 				progressThreadDAO = DAOFactory.getProgressThreadDAO();
 		
 				if(progressThread == null) {
@@ -86,6 +88,8 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 					progressThreadId = progressThreadDAO.insertProgressThread(progressThread);
 					progressThreadDAO.setStartedProgressThread(progressThreadId);
 				}
+			} else {
+				logger.debug("Monitoring of dispatch process is disabled");
 			}
 			
 		
