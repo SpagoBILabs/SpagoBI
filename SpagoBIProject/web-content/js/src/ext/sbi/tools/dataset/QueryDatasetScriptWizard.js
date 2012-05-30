@@ -152,7 +152,7 @@ Ext.extend(Sbi.tools.dataset.QueryDatasetScriptWizard, Ext.Window, {
 	        width: 300,
 	        //layout: 'fit',
 	        margins:'3 3 0 3', 
-	        items: [this.languageField],
+	        items: [this.languageField]
 	    });
 	}
 
