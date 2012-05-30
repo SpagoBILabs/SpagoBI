@@ -62,7 +62,7 @@ function  getParameterValuesAsInOperandClause(parName, isString){
 		 if (arValues.length > 0 ){
 		      for (var i=0, l = arValues.length; i<l; i++){		    	
 		    	  toReturn += quote + arValues[i] + quote;		    	  
-		          if (i < l-1) strValues += ", ";
+		          if (i < l-1) toReturn += ", ";
 		      }
 		 }else{
 			   toReturn = quote + parameters.get(parName) + quote;
