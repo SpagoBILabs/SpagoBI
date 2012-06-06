@@ -36,9 +36,4 @@ public abstract class JavaClassDestination implements IJavaClassDestination {
 	public void setBiObj(BIObject biObj) {
 		this.biObj = biObj;
 	}
-
-	
-	
-	
-	
 }

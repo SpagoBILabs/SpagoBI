@@ -31,7 +31,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class FileDestination extends JavaClassDestination{
+public class FileDestination extends JavaClassDestination {
 
 	public static final String OUTPUT_FILE_DIR = "D:\\Export_Report\\";
 	public static final String OUTPUT_FILE_NAME = "output.dat";
