@@ -639,19 +639,23 @@ public class HQLStatement extends AbstractStatement {
 			}
 		} else if(operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("DATE") || operandType.equalsIgnoreCase("java.sql.TIMESTAMP") || operandType.equalsIgnoreCase("java.sql.date") || operandType.equalsIgnoreCase("java.util.date")){
 
-			ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-			String dbDialect = connection.getDialect();
-			
-			String userDateFormatPattern = (String)getParameters().get(EngineConstants.ENV_USER_DATE_FORMAT);
-			DateFormat userDataFormat = new SimpleDateFormat(userDateFormatPattern);		
-			try{
-				operandValueToBoundDate = userDataFormat.parse(operandValueToBound);
-			} catch (ParseException e) {
-				logger.error("Error parsing the date "+operandValueToBound);
-				throw new SpagoBIRuntimeException("Error parsing the date "+operandValueToBound+". Check the format, it should be "+userDateFormatPattern);
+			if(operandValueToBound == null || operandValueToBound.equals("")){
+				boundedValue = operandValueToBound;
+			} else {
+				ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
+				String dbDialect = connection.getDialect();
+				
+				String userDateFormatPattern = (String)getParameters().get(EngineConstants.ENV_USER_DATE_FORMAT);
+				DateFormat userDataFormat = new SimpleDateFormat(userDateFormatPattern);		
+				try{
+					operandValueToBoundDate = userDataFormat.parse(operandValueToBound);
+				} catch (ParseException e) {
+					logger.error("Error parsing the date "+operandValueToBound);
+					throw new SpagoBIRuntimeException("Error parsing the date "+operandValueToBound+". Check the format, it should be "+userDateFormatPattern);
+				}
+				
+				boundedValue = composeStringToDt(dbDialect, operandValueToBoundDate);
 			}
-			
-			boundedValue = composeStringToDt(dbDialect, operandValueToBoundDate);
 		}
 		
 		return boundedValue;
