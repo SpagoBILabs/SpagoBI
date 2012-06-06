@@ -256,8 +256,8 @@ public class XExecuteBIDocumentJob implements Job {
 						
 						if( documentDispatcher.canDispatch(document) == false ) {
 							logger.debug("No valid dispatch target for document [" + (documentIndex+1) + "] with label [" + documentInstanceName + "] and parameters [" + descriptionSuffix +"]");
-							logger.info("Document [" + (documentIndex+1) + "] with label [" + documentInstanceName + "] and parameters " + descriptionSuffix + " not executed: no valid dispatch target");
-							continue;
+							logger.warn("Document [" + (documentIndex+1) + "] with label [" + documentInstanceName + "] and parameters [" + descriptionSuffix + "] will be executed but not dispatched");
+							//continue;
 						} else{
 							logger.debug("There is at list one dispatch target for document with label [" + documentInstanceName + "]");
 						}
