@@ -196,6 +196,10 @@
 
 	</target>
 
+	<target name="jboss6">
+
+	</target>
+
 	<target name="liferay.jboss">
 
 		<copy file="${liferay.security.dir}/lib/portal-client.jar" todir="${build}/${webapp_name}/WEB-INF/lib" overwrite="true" />

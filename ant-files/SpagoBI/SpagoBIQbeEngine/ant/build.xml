@@ -121,6 +121,10 @@
 
 	</target>
 
+	<target name="jboss6">
+
+	</target>
+
 	<target name="liferay.jboss">
 		<delete file="${build}/${webapp_name}/WEB-INF/lib/dom4j-1.6.jar" />
 		<delete file="${build}/${webapp_name}/WEB-INF/lib/xercesImpl-2.6.2.jar" />
@@ -402,10 +406,10 @@
 			<substitution expression="(^)Implementation-Version: ${project.version}($)" />
 		</replaceregexp>
 	</target>
-	
-	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-	  <!--   WAR CREATION FOR DEMO ALL IN ONE                                                               -->
-	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   WAR CREATION FOR DEMO ALL IN ONE                                                               -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
 	<target name="create.war" depends="init,copy.artifacts">
 		<antcall target="${sso}" />
@@ -417,9 +421,9 @@
 		<delete file="${dist}/${war_name}" />
 		<war warfile="${dist}/${war_name}" webxml="${build}/${webapp_name}/WEB-INF/web.xml" manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" basedir="${build}/${webapp_name}" />
 	</target>
-	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-	  <!--   WAR CREATION FOR SINGLE PACKAGES                                                               -->
-	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   WAR CREATION FOR SINGLE PACKAGES                                                               -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
 	<target name="create-bin.war" depends="init,copy.artifacts">
 		<antcall target="${sso}" />
@@ -429,10 +433,7 @@
 
 		<mkdir dir="${dist}" />
 		<delete file="${dist}/${war_name}" />
-		<war warfile="${dist}/${war_name}" webxml="${build}/${webapp_name}/WEB-INF/web.xml" 
-			manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" 
-			basedir="${build}/${webapp_name}" 
-			excludes="**/**/js/lib/highcharts-2.1.4/**"/>
+		<war warfile="${dist}/${war_name}" webxml="${build}/${webapp_name}/WEB-INF/web.xml" manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" basedir="${build}/${webapp_name}" excludes="**/**/js/lib/highcharts-2.1.4/**" />
 	</target>
 	<target name="javadoc">
 		<javadoc packagenames="*" sourcepath="${src}" defaultexcludes="yes" destdir="${dist}/javadoc" author="true" version="true" use="true">
