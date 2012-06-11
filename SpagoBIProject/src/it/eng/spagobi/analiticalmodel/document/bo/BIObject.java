@@ -91,7 +91,8 @@ public class BIObject implements Serializable {
 
 	private List<DocumentMetadataProperty> objMetaDataAndContents = null;
 	
-	
+	private String tenant = null;	
+
 	/**
 	 * Gets the id.
 	 * 
@@ -532,7 +533,15 @@ public class BIObject implements Serializable {
 	public void setObjMetaDataAndContents(List<DocumentMetadataProperty> objMetaDataAndContents) {
 		this.objMetaDataAndContents = objMetaDataAndContents;
 	}
+	
+	public String getTenant() {
+		return tenant;
+	}
 
+	public void setTenant(String tenant) {
+		this.tenant = tenant;
+	}
+	
 	@Override
 	public String toString() {
 		return "Document [label=" + label + "]";

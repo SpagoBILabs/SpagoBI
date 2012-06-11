@@ -47,6 +47,8 @@ import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.wapp.services.ChangeTheme;
 import it.eng.spagobi.wapp.util.MenuUtilities;
 
@@ -296,32 +298,45 @@ public class LoginModule extends AbstractHttpModule {
 
 		//String username = (String) profile.getUserUniqueIdentifier();
 		String username = (String) ((UserProfile)profile).getUserId();
-		if (!UserUtilities.userFunctionalityRootExists(username)) {
-			logger.debug("funcitonality root not yet exists for "+username);	
-			//UserUtilities.createUserFunctionalityRoot(profile);
-		}
-		else{
-			logger.debug("funcitonality root already exists for "+username);					
-		}
-
-		//Start writing log in the DB
-		Session aSession =null;
-		try {
-			aSession = HibernateUtil.currentSession();
-			Connection jdbcConnection = aSession.connection();
-			AuditLogUtilities.updateAudit(jdbcConnection, profile, "activity.Login", null);
-		} catch (HibernateException he) {
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+		
+		// putting tenant id on thread local
+		Tenant tenant = new Tenant(((UserProfile)profile).getOrganization());
+        TenantManager.setTenant(tenant);
+        
+        try {
+		
+			if (!UserUtilities.userFunctionalityRootExists(username)) {
+				logger.debug("funcitonality root not yet exists for "+username);	
+				//UserUtilities.createUserFunctionalityRoot(profile);
 			}
-		}
-		//End writing log in the DB
-
-		MenuUtilities.getMenuItems(request, response, profile);
-
-		response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+			else{
+				logger.debug("funcitonality root already exists for "+username);					
+			}
+	
+			//Start writing log in the DB
+			Session aSession =null;
+			try {
+				aSession = HibernateUtil.currentSession();
+				//Connection jdbcConnection = aSession.connection();
+				Connection jdbcConnection = HibernateUtil.getConnection(aSession);
+				AuditLogUtilities.updateAudit(jdbcConnection, profile, "activity.Login", null);
+			} catch (HibernateException he) {
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			} finally {
+				if (aSession!=null){
+					if (aSession.isOpen()) aSession.close();
+				}
+			}
+			//End writing log in the DB
+	
+			MenuUtilities.getMenuItems(request, response, profile);
+	
+			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+		
+        } finally {
+        	// since TenantManager uses a ThreadLocal, we must clean  after request processed in each case
+        	TenantManager.unset();
+        }
 
 		logger.debug("OUT");		
 	}

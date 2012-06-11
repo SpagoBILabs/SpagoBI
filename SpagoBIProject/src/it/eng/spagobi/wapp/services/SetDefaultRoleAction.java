@@ -11,9 +11,6 @@
  */
 package it.eng.spagobi.wapp.services;
 
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -100,7 +97,7 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction{
 				Collection allRoles = profile.getRoles();
 				String[] array = StringUtilities.convertCollectionInArray(allRoles);
 				//String[] arrayFuncs = dao.readUserFunctionality(array);				
-				String[] arrayFuncs = UserUtilities.readFunctionality(array);
+				String[] arrayFuncs = UserUtilities.readFunctionality(array, ((UserProfile)profile).getOrganization());
 
 				coll = StringUtilities.convertArrayInCollection(arrayFuncs);
 				((UserProfile)profile).setFunctionalities(coll);
@@ -116,7 +113,7 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction{
 				logger.debug("Selected role is not null, put right functionality");				
 				String[] selRoleArray = new String[1];
 				selRoleArray[0] = selRole;
-				String[] arrayFuncs = UserUtilities.readFunctionality(selRoleArray);
+				String[] arrayFuncs = UserUtilities.readFunctionality(selRoleArray, ((UserProfile)profile).getOrganization());
 
 				//String[] arrayFuncs = dao.readUserFunctionality(selRoleArray);
 				//String[] arrayFuncs = UserUtilities.readFunctionality(selRoleArray);

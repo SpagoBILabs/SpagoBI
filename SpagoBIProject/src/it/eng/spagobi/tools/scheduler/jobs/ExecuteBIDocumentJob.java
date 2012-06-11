@@ -11,6 +11,7 @@
  */
 package it.eng.spagobi.tools.scheduler.jobs;
 
+import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -26,9 +27,13 @@ import org.quartz.JobExecutionException;
  */
 public class ExecuteBIDocumentJob implements Job {
 
+	private static Logger logger = Logger.getLogger(ExecuteBIDocumentJob.class);
+	
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+		logger.debug("IN");
 		Job job = new XExecuteBIDocumentJob();
 		job.execute(jobExecutionContext);
+		logger.debug("OUT");
 	}
 
 }

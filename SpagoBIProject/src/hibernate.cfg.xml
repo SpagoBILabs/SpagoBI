@@ -23,6 +23,8 @@
         
         <property name="hibernate.cache.use_second_level_cache">false</property>
         <property name="hibernate.cache.use_query_cache">false</property>
+        
+        
         <!--
         <property name="hibernate.show_sql">true</property>
 		<property name="hibernate.cache.use_minimal_puts">true</property>                
@@ -31,6 +33,7 @@
         <property name="hibernate.hbm2ddl.auto">create</property>
         -->
         
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiTenant.hbm.xml" />
         <mapping resource="it/eng/spagobi/events/metadata/mapping/SbiEvents.hbm.xml" />
         <mapping resource="it/eng/spagobi/events/metadata/mapping/SbiEventsLog.hbm.xml" />
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiDomains.hbm.xml" />

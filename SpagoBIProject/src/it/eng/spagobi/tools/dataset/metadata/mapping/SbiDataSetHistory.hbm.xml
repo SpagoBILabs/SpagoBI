@@ -57,6 +57,9 @@
         <property name="metaVersion" type="string">
             <column name="META_VERSION" />
         </property>
+        <property name="organization" type="string">
+            <column name="ORGANIZATION" length="20" not-null="false" />
+        </property>
 		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet" discriminator-value="SbiFileDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory" >
 	        <property name="fileName" type="string">
 	            <column name="FILE_NAME" />
@@ -119,5 +122,9 @@
 	            <column name="DATA_SOURCE_ID" not-null="false" />
 	        </many-to-one>	        
 		</subclass>                
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>

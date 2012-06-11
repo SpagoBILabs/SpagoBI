@@ -64,6 +64,7 @@ public class InternalSecurityServiceSupplierImpl implements
 			obj.setUniqueIdentifier(user.getUserId());
 			obj.setUserId(user.getUserId());
 			obj.setUserName(user.getFullName());
+			obj.setOrganization(user.getCommonInfo().getOrganization());
 			
 			logger.debug("OUT");
 			return obj;
@@ -103,6 +104,7 @@ public class InternalSecurityServiceSupplierImpl implements
 			profile.setUniqueIdentifier(user.getUserId());
 			profile.setUserId(user.getUserId());
 			profile.setUserName(user.getFullName());
+			profile.setOrganization(user.getCommonInfo().getOrganization());
 	
 			// get user name
 			String userName = userId;

@@ -20,14 +20,10 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterValuesRetriever;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.events.EventsManager;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
@@ -59,11 +55,22 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 
-public class XExecuteBIDocumentJob implements Job {
+public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
 	static private Logger logger = Logger.getLogger(XExecuteBIDocumentJob.class);	
 
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+		logger.debug("IN");
+		try {
+			this.setTenant(jobExecutionContext);
+			this.executeInternal(jobExecutionContext);
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
+		}
+	}
+	
+	public void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		
 		IEngUserProfile userProfile;
 		JobDataMap jobDataMap;

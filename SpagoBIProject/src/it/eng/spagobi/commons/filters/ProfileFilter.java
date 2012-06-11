@@ -15,9 +15,12 @@ import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 
 import java.io.IOException;
 
@@ -98,14 +101,33 @@ public class ProfileFilter implements Filter {
 					 * userId + "] already existing in session, ok"); }
 					 */
 				}
+				
+				if (profile != null) {
+					manageTenant(profile);
+				}
 
 			}
 		} catch (Exception e) {
 			logger.error(e);
 		} finally {
 			//logger.debug("OUT");
-			chain.doFilter(request, response);
+			try {
+				chain.doFilter(request, response);
+			} finally {
+				// since TenantManager uses a ThreadLocal, we must clean  after request processed in each case
+				TenantManager.unset();
+			}
+
 		}
+	}
+
+	private void manageTenant(IEngUserProfile profile) {
+		UserProfile userProfile = (UserProfile) profile;
+		// retrieving tenant id
+		String tenantId = userProfile.getOrganization();
+		// putting tenant id on thread local
+		Tenant tenant = new Tenant(tenantId);
+        TenantManager.setTenant(tenant);
 	}
 
 	public void init(FilterConfig config) throws ServletException {

@@ -33,6 +33,9 @@ public class EnginesServiceImpl extends AbstractSDKService implements EnginesSer
 	public SDKEngine getEngine(Integer engineId) throws NotAllowedOperationException {
 		SDKEngine toReturn = null;
 		logger.debug("IN: engineId in input = " + engineId);
+		
+		this.setTenant();
+		
         try {
             super.checkUserPermissionForFunctionality(SpagoBIConstants.ENGINES_MANAGEMENT, "User cannot see engines congifuration.");
             if (engineId == null) {
@@ -52,6 +55,7 @@ public class EnginesServiceImpl extends AbstractSDKService implements EnginesSer
             logger.debug("Returning null");
             return null;
         } finally {
+        	this.unsetTenant();
         	logger.debug("OUT");
         }
         return toReturn;
@@ -60,6 +64,9 @@ public class EnginesServiceImpl extends AbstractSDKService implements EnginesSer
 	public SDKEngine[] getEngines() throws NotAllowedOperationException {
 		SDKEngine[] toReturn = null;
         logger.debug("IN");
+        
+        this.setTenant();
+        
         try {
         	super.checkUserPermissionForFunctionality(SpagoBIConstants.ENGINES_MANAGEMENT, "User cannot see engines congifuration.");
         	List enginesList = DAOFactory.getEngineDAO().loadAllEngines();
@@ -80,6 +87,7 @@ public class EnginesServiceImpl extends AbstractSDKService implements EnginesSer
             logger.debug("Returning null");
             return null;
         } finally {
+        	this.unsetTenant();
         	logger.debug("OUT");
         }
         return toReturn;

@@ -58,7 +58,8 @@ public class ListDistributionListUserModule extends AbstractBasicListModule{
 		Session aSession =null;
 		try {
 			aSession = HibernateUtil.currentSession();
-			Connection jdbcConnection = aSession.connection();
+			//Connection jdbcConnection = aSession.connection();
+			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			IEngUserProfile profile = UserUtilities.getUserProfile();
 			AuditLogUtilities.updateAudit(jdbcConnection,  profile, "activity.DistribListMenu", null);
 		} catch (HibernateException he) {

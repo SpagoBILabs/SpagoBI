@@ -16,7 +16,7 @@ package it.eng.spagobi.commons.constants;
  */
 public class SpagoBIConstants {
 
-
+	public static final String TENANT_ID = "TENANT_ID";
 	public static final String SBI_ENTITY = "SBI_ENTITY";
 	public static final String PAGE = "PAGE";
 	public static final String URL = "URL";

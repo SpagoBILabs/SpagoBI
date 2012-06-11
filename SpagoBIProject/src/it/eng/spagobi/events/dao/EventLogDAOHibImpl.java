@@ -233,6 +233,7 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 		hibEventLog.setDesc(eventLog.getDesc());
 		hibEventLog.setParams(eventLog.getParams());
 		hibEventLog.setHandlerClass(eventLog.getHandler());
+		this.updateSbiCommonInfo4Insert(hibEventLog);
 		session.save(hibEventLog);
 		Set hibEventRoles = new HashSet();
 		List roles = eventLog.getRoles();

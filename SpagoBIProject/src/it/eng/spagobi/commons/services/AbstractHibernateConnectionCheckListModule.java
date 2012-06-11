@@ -24,12 +24,14 @@ import it.eng.spagobi.commons.utilities.HibernateUtil;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.jdbc.Work;
 
 public class AbstractHibernateConnectionCheckListModule extends
 		AbstractBasicCheckListModule {
@@ -58,7 +60,8 @@ public class AbstractHibernateConnectionCheckListModule extends
 		try {
 			aSession = HibernateUtil.currentSession();
 			tx = aSession.beginTransaction();
-			Connection jdbcConnection = aSession.connection();
+			//Connection jdbcConnection = aSession.connection();
+			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			dataConnection = DelegatedHibernateConnectionListService.getDataConnection(jdbcConnection);
         	sqlCommand = dataConnection.createSelectCommand(statement);
         	dataResult = sqlCommand.execute();
@@ -71,6 +74,9 @@ public class AbstractHibernateConnectionCheckListModule extends
 				String key = getObjectKey(objects);
 				checkedObjectsMap.put(key, key);
 			}
+			
+//			aSession.doWork(new MyWork(statement));
+			
 //			tx.commit();
 		} catch (HibernateException he) {
 			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, 
@@ -95,6 +101,35 @@ public class AbstractHibernateConnectionCheckListModule extends
 	 */
 	public ListIFace getList(SourceBean request, SourceBean response) throws Exception {
 		return DelegatedHibernateConnectionListService.getList(this, request, response);
-	} 
+	}
+	
+//	public class MyWork implements Work {
+//		
+//		private String statement = null;
+//		
+//		public MyWork (String statement) {
+//			this.statement = statement;
+//		}
+//		
+//		public void execute(Connection connection) throws SQLException {
+//			try {
+//				DataConnection dataConnection = DelegatedHibernateConnectionListService.getDataConnection(connection);
+//				SQLCommand sqlCommand = dataConnection.createSelectCommand(statement);
+//				DataResult dataResult = sqlCommand.execute();
+//				ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
+//				SourceBean chekedObjectsBean = scrollableDataResult.getSourceBean();
+//				List checkedObjectsList = chekedObjectsBean
+//						.getAttributeAsList("ROW");
+//				for (int i = 0; i < checkedObjectsList.size(); i++) {
+//					SourceBean objects = (SourceBean) checkedObjectsList.get(i);
+//					String key = getObjectKey(objects);
+//					checkedObjectsMap.put(key, key);
+//				}
+//			} catch (Exception e) {
+//				throw new RuntimeException("Error while getting checked objects map", e);
+//			}
+//		}
+//		
+//	}
 	
 }

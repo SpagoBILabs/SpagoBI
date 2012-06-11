@@ -23,7 +23,9 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -42,14 +44,27 @@ public class ChecksInitializer extends SpagoBIInitializer {
 	public void init(SourceBean config, Session hibernateSession) {
 		logger.debug("IN");
 		try {
-			String hql = "from SbiChecks";
+			List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
+			for (SbiTenant tenant : tenants) {
+				init(config, hibernateSession, tenant);
+			}
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	public void init(SourceBean config, Session hibernateSession, SbiTenant tenant) {
+		logger.debug("IN");
+		try {
+			String hql = "from SbiChecks c where c.commonInfo.organization = :organization";
 			Query hqlQuery = hibernateSession.createQuery(hql);
+			hqlQuery.setString("organization", tenant.getName());
 			List checks = hqlQuery.list();
 			if (checks.isEmpty()) {
-				logger.info("Checks table is empty. Starting populating predefined checks...");
-				writeChecks(hibernateSession);
+				logger.info("No checks for tenant " + tenant.getName() + ". Starting populating predefined checks...");
+				writeChecks(hibernateSession, tenant);
 			} else {
-				logger.debug("Checks table is already populated");
+				logger.debug("Checks table is already populated for tenant " + tenant.getName());
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializeng Checks", t);
@@ -58,7 +73,7 @@ public class ChecksInitializer extends SpagoBIInitializer {
 		}
 	}
 	
-	private void writeChecks(Session aSession) throws Exception {
+	private void writeChecks(Session aSession, SbiTenant tenant) throws Exception {
 		logger.debug("IN");
 		SourceBean checksSB = getConfiguration();
 		if (checksSB == null) {
@@ -85,7 +100,10 @@ public class ChecksInitializer extends SpagoBIInitializer {
 
 			aCheck.setValue1((String) aChecksSB.getAttribute("value1"));
 			aCheck.setValue2((String) aChecksSB.getAttribute("value2"));
-
+			
+			// setting tenant/organization info
+			aCheck.getCommonInfo().setOrganization(tenant.getName());
+			
 			logger.debug("Inserting Check with label = [" + aChecksSB.getAttribute("label") + "] ...");
 
 			aSession.save(aCheck);

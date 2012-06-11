@@ -14,15 +14,20 @@ package it.eng.spagobi.tools.scheduler.dao.quartz;
 import it.eng.qbe.datasource.configuration.dao.DAOException;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -36,7 +41,11 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 	
 	private Scheduler scheduler;
 	
+	private String tenant;
+	
 	static private Logger logger = Logger.getLogger(QuarzSchedulerDAOImpl.class);
+	
+	public static String GROUP_NAME_SEPARATOR = "/"; 
 	
 	public QuarzSchedulerDAOImpl() {
 		logger.debug("IN");
@@ -51,7 +60,7 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 	
 	public boolean jobGroupExists(String jobGroupName) {
 		Assert.assertNotNull(jobGroupName, "Input parameter [jobGroupName] cannot be null");
-		List<String> jobGroupNames = getJobGroupNames();
+		List<String> jobGroupNames = this.getJobGroupNames();
 		return jobGroupNames.contains(jobGroupName);
 	}
 	
@@ -62,6 +71,8 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 			Assert.assertNotNull(jobGroupName, "Input parameter [jobName] cannot be null");
 			
 			if( jobGroupExists(jobGroupName) == false ) return false;
+			
+			jobGroupName = this.applyTenant(jobGroupName);
 			String[] jobNames = scheduler.getJobNames(jobGroupName);
 			for(int i = 0; i < jobNames.length; i++) {
 				if( jobName.equalsIgnoreCase(jobNames[i]) ){
@@ -77,6 +88,26 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 		return exists;
 	}
 	
+	private String applyTenant(String jobGroupName) {
+		LogMF.debug(logger, "IN: jobGroupName = [{0}]", jobGroupName);
+		String tenant = this.getTenant();
+		if (tenant != null) {
+			jobGroupName = this.getTenantPrefix(tenant) + jobGroupName;
+		}
+		LogMF.debug(logger, "OUT: jobGroupName = [{0}]", jobGroupName);
+		return jobGroupName;
+	}
+	
+	private String removeTenant(String jobGroupName) {
+		LogMF.debug(logger, "IN: jobGroupName = [{0}]", jobGroupName);
+		String tenant = this.getTenant();
+		if (tenant != null) {
+			jobGroupName = jobGroupName.substring(this.getTenantPrefix(tenant).length());
+		}
+		LogMF.debug(logger, "OUT: jobGroupName = [{0}]", jobGroupName);
+		return jobGroupName;
+	}
+
 	public List<String> getJobGroupNames() {
 		List<String> jobGroupNames;
 		
@@ -86,7 +117,10 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 		try {
 			String[] names = scheduler.getJobGroupNames();
 			List<String> l = Arrays.asList(names);
-			if(l != null) jobGroupNames.addAll(l);
+			if (l != null) {
+				jobGroupNames.addAll(l);
+				jobGroupNames = this.filterForTenant(jobGroupNames);
+			}
 		} catch(Throwable t) {
 			throw new SpagoBIDOAException("An unexpected error occured while loading job group names", t);
 		} finally {
@@ -96,6 +130,29 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 		return jobGroupNames;
 	}
 	
+	private List<String> filterForTenant(List<String> jobGroupNames) {
+		LogMF.debug(logger, "IN: jobGroupNames = [{0}]", jobGroupNames);
+		String tenant = this.getTenant();
+		List<String> toReturn = new ArrayList<String>(); 
+		if (tenant != null) {
+			Iterator<String> it = jobGroupNames.iterator();
+			while( it.hasNext() ) {
+				String aJobGroupName = it.next();
+				if (aJobGroupName.startsWith(this.getTenantPrefix(tenant))) {
+					toReturn.add(this.removeTenant(aJobGroupName));
+				}
+			}
+		} else {
+			toReturn = jobGroupNames;
+		}
+		LogMF.debug(logger, "OUT: jobGroupNames = [{0}]", toReturn);
+		return toReturn;
+	}
+	
+	private String getTenantPrefix(String tenant) {
+		return tenant + GROUP_NAME_SEPARATOR;
+	}
+
 	/**
 	 * @return all jobs. If there are no jobs already stored it returns an empty list
 	 */
@@ -147,7 +204,7 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 		
 		return jobs;
 	}
-	
+
 	/**
 	 * @param jobGroupName the name of the group in which to look for jobs. It it cannot be empty.
 	 * 
@@ -164,7 +221,8 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 		try {
 			Assert.assertTrue(StringUtilities.isNotEmpty(jobGroupName), "Input parameter [jobGroupName] cannot be empty");
 			
-			String[] jobNames = scheduler.getJobNames(jobGroupName);
+			String actualJobGroupName = this.applyTenant(jobGroupName);
+			String[] jobNames = scheduler.getJobNames(actualJobGroupName);
 			if (jobNames != null) {
 				logger.debug("Job group [" + jobGroupName + "] contains [" + jobNames.length + "] job(s)");
 				for (int j = 0; j < jobNames.length; j++) {
@@ -203,9 +261,11 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 			Assert.assertTrue(StringUtilities.isNotEmpty(jobGroupName), "Input parameter [jobGroupName] cannot be empty");
 			Assert.assertTrue(StringUtilities.isNotEmpty(jobName), "Input parameter [jobName] cannot be empty");
 			
-			JobDetail jobDetail = scheduler.getJobDetail(jobName, jobGroupName);
+			String actualJobGroupName = this.applyTenant(jobGroupName);
+			JobDetail jobDetail = scheduler.getJobDetail(jobName, actualJobGroupName);
 			if(jobDetail != null){
 				job = QuartzNativeObjectsConverter.convertJobFromNativeObject(jobDetail);
+				adjustTenant(job);
 				logger.debug("Job [" + jobName + "] succesfully loaded from group [" + jobGroupName + "]");
 			} else {
 				logger.debug("Job [" + jobName + "] not found in group [" + jobGroupName + "]");
@@ -220,12 +280,23 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 	}
 	
 	
+	private void adjustTenant(Job job) {
+		String tenant = this.getTenant();
+		if (tenant != null) {
+			String jobGroupName = job.getGroupName();
+			LogMF.debug(logger, "before: jobGroupName = [{0}]", jobGroupName);
+			job.setGroupName(this.removeTenant(jobGroupName));
+			LogMF.debug(logger, "after: jobGroupName = [{0}]", job.getGroupName());
+		}
+	}
+
 	public void deleteJob(String jobName, String jobGroupName) {
 		logger.debug("IN");
 		
 		try {
 			// TODO delete trigger associated to the job first (?)
-			scheduler.deleteJob(jobName, jobGroupName);
+			String actualJobGroupName = this.applyTenant(jobGroupName);
+			scheduler.deleteJob(jobName, actualJobGroupName);
 		} catch(Throwable t) {
 			throw new SpagoBIDOAException("An unexpected error occured while deleting job [" + jobName + "] of job group [" + jobGroupName + "]", t);
 		} finally {
@@ -241,8 +312,9 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 			Assert.assertNotNull(spagobiJob, "Input parameter [spagobiJob] cannot be null");
 			JobDetail quartzJob = QuartzNativeObjectsConverter.convertJobToNativeObject(spagobiJob);
 			if(quartzJob.getDescription() == null) quartzJob.setDescription("");
-			if(quartzJob.getGroup() == null) quartzJob.setGroup(Scheduler.DEFAULT_GROUP);
-			
+			String jobGroupName = quartzJob.getGroup() != null ? quartzJob.getGroup() : Scheduler.DEFAULT_GROUP;
+			quartzJob.setGroup(jobGroupName);
+			adjustTenant(quartzJob);
 			scheduler.addJob(quartzJob, true);
 		} catch(Throwable t) {
 			throw new SpagoBIDOAException("An unexpected error occured while inserting job [" + spagobiJob + "]", t);
@@ -251,11 +323,14 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 		}
 	}
 	
-	
-	
-	
-	
-	
+	private void adjustTenant(JobDetail quartzJob) {
+		String jobGroupName = quartzJob.getGroup();
+		LogMF.debug(logger, "before: jobGroupName = [{0}]", jobGroupName);
+		jobGroupName = this.applyTenant(jobGroupName);
+		LogMF.debug(logger, "after: jobGroupName = [{0}]", jobGroupName);
+		quartzJob.setGroup(jobGroupName);
+	}
+
 	public boolean triggerExists(Trigger spagobiTrigger) {
 		boolean exists;
 		
@@ -297,6 +372,7 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 			org.quartz.Trigger quartzTrigger = scheduler.getTrigger(triggerName, triggerGroupName);
 			if(quartzTrigger != null) {
 				spagobiTrigger = QuartzNativeObjectsConverter.convertTriggerFromNativeObject(quartzTrigger);
+				adjustTenant(spagobiTrigger);
 			}
 		} catch(Throwable t) {
 			throw new SpagoBIDOAException("An unexpected error occured while checking for the existence of trigger [" + spagobiTrigger.getName() + "] of trigger group [" + spagobiTrigger.getGroupName() + "]", t);
@@ -314,11 +390,13 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 		
 		spagobiTriggers = new ArrayList<Trigger>();
 		try {
-			org.quartz.Trigger[] t = scheduler.getTriggersOfJob(jobName, jobGroupName);
+			String actualJobGroupName = this.applyTenant(jobGroupName);
+			org.quartz.Trigger[] t = scheduler.getTriggersOfJob(jobName, actualJobGroupName);
 			List<org.quartz.Trigger> quartzTriggers = Arrays.asList(t);
 			if(quartzTriggers != null) {
 				for(org.quartz.Trigger quartzTrigger: quartzTriggers) {
 					Trigger spagobiTrigger = QuartzNativeObjectsConverter.convertTriggerFromNativeObject(quartzTrigger);
+					adjustTenant(spagobiTrigger);
 					spagobiTriggers.add(spagobiTrigger);
 				}
 			}
@@ -331,6 +409,15 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 		return spagobiTriggers;
 	}
 	
+	private void adjustTenant(Trigger spagobiTrigger) {
+		Job job = spagobiTrigger.getJob();
+		String jobGroupName = job.getGroupName();
+		LogMF.debug(logger, "before: jobGroupName = [{0}]", jobGroupName);
+		jobGroupName = this.removeTenant(jobGroupName);
+		LogMF.debug(logger, "after: jobGroupName = [{0}]", jobGroupName);
+		job.setGroupName(jobGroupName);
+	}
+
 	public void deleteTrigger(String triggerName, String triggerGroupName) {
 		logger.debug("IN");
 		
@@ -356,7 +443,7 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 			
 			org.quartz.Trigger quartzTrigger = QuartzNativeObjectsConverter.convertTriggerToNativeObject(spagobiTrigger);
 			if(quartzTrigger.getGroup() == null) quartzTrigger.setGroup(Scheduler.DEFAULT_GROUP);
-			if(quartzTrigger.getJobGroup() == null) quartzTrigger.setJobGroup(Scheduler.DEFAULT_GROUP);
+			adjustTenant(quartzTrigger);
 				
 			if( triggerExists(spagobiTrigger) ) {
 				scheduler.rescheduleJob(quartzTrigger.getName(), quartzTrigger.getGroup(), quartzTrigger);
@@ -377,6 +464,14 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 		return overwrite;
 	}
 	
+	private void adjustTenant(org.quartz.Trigger quartzTrigger) {
+		String jobGroupName = quartzTrigger.getJobGroup();
+		LogMF.debug(logger, "before: jobGroupName = [{0}]", jobGroupName);
+		jobGroupName = this.applyTenant(jobGroupName);
+		LogMF.debug(logger, "after: jobGroupName = [{0}]", jobGroupName);
+		quartzTrigger.setJobGroup(jobGroupName);
+	}
+
 	public void insertTrigger(Trigger spagobiTrigger) {
 		logger.debug("IN");
 		
@@ -386,6 +481,7 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 				throw new DAOException("Trigger [" + spagobiTrigger + "] already exists");
 			}
 			org.quartz.Trigger quartzTrigger = QuartzNativeObjectsConverter.convertTriggerToNativeObject(spagobiTrigger);
+			adjustTenant(quartzTrigger);
 			scheduler.scheduleJob(quartzTrigger);
 		} catch(DAOException t) {
 			throw t;
@@ -405,6 +501,7 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 				throw new DAOException("Trigger [" + spagobiTrigger + "] does not exist");
 			}
 			org.quartz.Trigger quartzTrigger = QuartzNativeObjectsConverter.convertTriggerToNativeObject(spagobiTrigger);
+			adjustTenant(quartzTrigger);
 			scheduler.rescheduleJob(quartzTrigger.getName(), quartzTrigger.getGroup(), quartzTrigger);
 		} catch(DAOException t) {
 			throw t;
@@ -413,6 +510,62 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 		} finally {
 			logger.debug("OUT");
 		}	
+	}
+
+	public void setTenant(String tenant) {
+		this.tenant = tenant;
+	}
+	
+	public String getTenant() {
+		logger.debug("IN");
+		
+		// if a tenant is set into the DAO object, it wins
+		String tenantId = this.tenant;
+		LogMF.debug(logger, "This DAO object instance tenant = [{0}]", tenantId);
+		
+		if (tenantId == null) {
+			logger.debug("Tenant id not find in this DAO object instance nor in the user profile object; " +
+					"looking for it using TenantManager ... ");
+			// look for tenant using TenantManager
+			Tenant tenant = TenantManager.getTenant();
+			if (tenant != null) {
+				tenantId = tenant.getName();
+				LogMF.debug(logger, "TenantManager returns tenant = [{0}]", tenantId);
+			} else {
+				logger.debug("TenantManager did not return any Tenant");
+			}
+		}
+		
+		int index = tenantId.indexOf(GROUP_NAME_SEPARATOR);
+		if (index > 0) {
+			SpagoBIRuntimeException e = new SpagoBIRuntimeException("Tenant name [" + tenantId + "] not valid since it contains " + GROUP_NAME_SEPARATOR);
+			throw e;
+		}
+		
+		LogMF.debug(logger, "OUT: tenant = [{0}]", tenantId);
+		return tenantId;
+	}
+
+	public Tenant findTenant(JobDetail jobDetail) {
+		logger.debug("IN");
+		try {
+			Assert.assertNotNull(jobDetail, "Input parameter [jobDetail] cannot be null");
+			String groupName = jobDetail.getGroup();
+			int index = groupName.indexOf(GROUP_NAME_SEPARATOR);
+			if (index < 0) {
+				SpagoBIRuntimeException e = new SpagoBIRuntimeException("Cannot find tenant name from string [" + groupName + "]");
+				e.addHint("Job group name should start with [<tenant name>" + GROUP_NAME_SEPARATOR + "]. Check job definition.");
+				throw e;
+			}
+			String tenant = groupName.substring(0, index);
+			LogMF.debug(logger, "Tenant : [{0}]", tenant);
+			return new Tenant(tenant);
+		} catch (Throwable t) {
+			throw new SpagoBIDOAException("An unexpected error occured while finding tenant for job [" + jobDetail + "]", t);
+		} finally {
+			logger.debug("OUT");
+		}	
+		
 	}
 	
 }

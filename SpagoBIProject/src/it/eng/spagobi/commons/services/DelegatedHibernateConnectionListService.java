@@ -81,7 +81,8 @@ public class DelegatedHibernateConnectionListService extends DelegatedBasicListS
 			
 			aSession = HibernateUtil.currentSession();
 			tx = aSession.beginTransaction();
-			Connection jdbcConnection = aSession.connection();
+			//Connection jdbcConnection = aSession.connection();
+			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			DataConnection dataConnection = getDataConnection(jdbcConnection);
 			
 			rowsSourceBean =

@@ -48,7 +48,8 @@ public class SbiDataSetHistory {
 	private String sbiVersionIn=null;
 	private String metaVersion=null;
 	private Date timeIn = null;
-	
+	private String organization=null;
+
 	public int getVersionNum() {
 		return versionNum;
 	}
@@ -233,6 +234,13 @@ public class SbiDataSetHistory {
 		this.dsMetadata = dsMetadata;
 	}
     	
-    
+	
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}   
     
 }

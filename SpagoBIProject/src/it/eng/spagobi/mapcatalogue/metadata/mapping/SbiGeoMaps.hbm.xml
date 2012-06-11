@@ -62,5 +62,9 @@
        <many-to-one name="binContents" class="it.eng.spagobi.commons.metadata.SbiBinContents">
             <column name="BIN_ID" not-null="false"/>
         </many-to-one>
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>

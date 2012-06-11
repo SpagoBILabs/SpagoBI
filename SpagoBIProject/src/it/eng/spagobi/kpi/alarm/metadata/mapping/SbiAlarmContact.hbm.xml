@@ -66,7 +66,11 @@
         	<many-to-many column="ALARM_ID" class="it.eng.spagobi.kpi.alarm.metadata.SbiAlarm" />
         </set>
         
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
 
     
 </hibernate-mapping>

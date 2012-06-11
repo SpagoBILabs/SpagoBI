@@ -53,7 +53,8 @@ public class HotLinkModule extends AbstractModule {
 		Session aSession =null;
 		try {
 			aSession = HibernateUtil.currentSession();
-			Connection jdbcConnection = aSession.connection();
+			//Connection jdbcConnection = aSession.connection();
+			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			IEngUserProfile profile = UserUtilities.getUserProfile();
 			AuditLogUtilities.updateAudit(jdbcConnection,  profile, "activity.HotLinkMenu", null);
 		} catch (HibernateException he) {

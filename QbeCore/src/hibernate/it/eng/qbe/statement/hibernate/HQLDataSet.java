@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.statement.hibernate;
 
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
+import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
@@ -126,7 +127,7 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		String sqlQuery = "SELECT COUNT(*) FROM (" + statement.getSqlQueryString() + ") temptable";
 		logger.debug("Executing query " + sqlQuery + " ...");
 		JDBCDataSet dataSet = new JDBCDataSet();
-		JDBCSharedConnectionDataProxy proxy = new JDBCSharedConnectionDataProxy(session.connection());
+		JDBCSharedConnectionDataProxy proxy = new JDBCSharedConnectionDataProxy(HibernateTransaction.getConnection(session));
 		dataSet.setDataProxy(proxy);
 		dataSet.setQuery(sqlQuery);
 		dataSet.loadData(0, 1, -1);

@@ -21,6 +21,8 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.massiveExport.utils.Utilities;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
@@ -44,6 +46,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,7 +61,7 @@ import commonj.work.Work;
  *
  */
 
-public class MassiveExportWork implements Work{
+public class MassiveExportWork implements Work {
 
 	private static transient Logger logger = Logger.getLogger(MassiveExportWork.class);
 
@@ -101,8 +104,26 @@ public class MassiveExportWork implements Work{
 		this.splittingFilter = splittingFilter;
 		this.outputMIMEType = outputMIMEType;
 	}
-
+	
 	public void run() {
+		try {
+			this.setTenant();
+			this.runInternal();
+		} finally {
+			TenantManager.unset();
+		}
+	}
+
+	private void setTenant() {
+		logger.debug("IN");
+		UserProfile profile = (UserProfile) this.getProfile();
+		String tenant = profile.getOrganization();
+		LogMF.debug(logger, "Tenant : [{0}]", tenant);
+		TenantManager.setTenant(new Tenant(tenant));
+		logger.debug("OUT");
+	}
+	
+	private void runInternal() {
 		logger.debug("IN");
 
 		progressThreadDAO = null;
@@ -192,7 +213,7 @@ public class MassiveExportWork implements Work{
 						randomNamesToName.put(exportFile.getName(), fileName+".txt");
 					}
 					else{
-						logger.error("Export ok for biObj with label "+document.getLabel());
+						logger.debug("Export ok for biObj with label "+document.getLabel());
 						String fileName = document.getLabel()+"-"+document.getName();
 						exportFile = File.createTempFile(fileName, fileExtension); 
 						randomNamesToName.put(exportFile.getName(), fileName+fileExtension);

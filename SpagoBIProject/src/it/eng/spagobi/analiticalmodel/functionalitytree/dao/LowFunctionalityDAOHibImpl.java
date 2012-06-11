@@ -154,7 +154,9 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				if (maxProg != null) hibFunct.setProg(new Integer(maxProg.intValue() + 1));
 				else hibFunct.setProg(new Integer(1));
 			}
-
+			
+			updateSbiCommonInfo4Insert(hibFunct);
+			
 			aSession.save(hibFunct);
 
 
@@ -679,8 +681,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				if (maxProg != null) hibFunct.setProg(new Integer(maxProg.intValue() + 1));
 				else hibFunct.setProg(new Integer(1));
 			}
-
+			
+			updateSbiCommonInfo4Insert(hibFunct);
 			aSession.save(hibFunct);
+			
 			// save roles functionality
 			Set functRoleToSave = new HashSet();
 			functRoleToSave.addAll(saveRolesFunctionality(aSession, hibFunct,

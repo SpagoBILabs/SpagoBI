@@ -13,11 +13,15 @@ package it.eng.spagobi.sdk;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import org.apache.axis.MessageContext;
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.apache.ws.security.handler.WSHandlerConstants;
 
@@ -87,4 +91,25 @@ public class AbstractSDKService {
 		}
 	}
 	
+	protected void setTenant() {
+		logger.debug("IN");
+		try {
+			IEngUserProfile profile = getUserProfile();
+			Assert.assertNotNull(profile, "Input parameter [profile] cannot be null");
+			UserProfile userProfile = (UserProfile) profile;
+			String tenant = userProfile.getOrganization();
+			LogMF.debug(logger, "Tenant: [{0}]", tenant);
+			TenantManager.setTenant(new Tenant(tenant));
+			LogMF.debug(logger, "Tenant [{0}] set properly", tenant);
+		} catch (Throwable t) {
+			logger.error("Cannot set tenant", t);
+			throw new SpagoBIRuntimeException("Cannot set tenant", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	protected void unsetTenant() {
+		TenantManager.unset();
+	}
 }

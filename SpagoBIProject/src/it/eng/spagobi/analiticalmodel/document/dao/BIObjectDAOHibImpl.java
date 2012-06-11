@@ -1118,6 +1118,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		aBIObject.setId(hibBIObject.getBiobjId());
 		aBIObject.setLabel(hibBIObject.getLabel());
 		aBIObject.setName(hibBIObject.getName());
+		aBIObject.setTenant(hibBIObject.getCommonInfo().getOrganization());
+		
 		// set path
 		aBIObject.setPath(hibBIObject.getPath());
 		aBIObject.setUuid(hibBIObject.getUuid());

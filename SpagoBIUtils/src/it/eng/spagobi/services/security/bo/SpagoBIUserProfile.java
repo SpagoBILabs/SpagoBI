@@ -24,6 +24,8 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
     private java.lang.String uniqueIdentifier;
 
     private java.lang.String userName;
+    
+    private java.lang.String organization;
 
     public SpagoBIUserProfile() {
     }
@@ -34,13 +36,15 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
            java.lang.String[] roles,
            java.lang.String userId,
            java.lang.String uniqueIdentifier,
-           java.lang.String userName) {
+           java.lang.String userName,
+           java.lang.String organization) {
            this.attributes = attributes;
            this.functions = functions;
            this.roles = roles;
            this.userId = userId;
            this.uniqueIdentifier = uniqueIdentifier;
            this.userName = userName;
+           this.organization = organization;
     }
 
 
@@ -153,7 +157,6 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
         return userName;
     }
 
-
     /**
      * Sets the userName value for this SpagoBIUserProfile.
      * 
@@ -162,6 +165,15 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
     public void setUserName(java.lang.String userName) {
         this.userName = userName;
     }
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+    
 
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
@@ -192,7 +204,10 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
               this.uniqueIdentifier.equals(other.getUniqueIdentifier()))) &&
             ((this.userName==null && other.getUserName()==null) || 
              (this.userName!=null &&
-              this.userName.equals(other.getUserName())));
+              this.userName.equals(other.getUserName()))) &&
+            ((this.organization==null && other.getOrganization()==null) || 
+              (this.organization!=null &&
+               this.organization.equals(other.getOrganization())));
         __equalsCalc = null;
         return _equals;
     }
@@ -238,6 +253,9 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
         if (getUserName() != null) {
             _hashCode += getUserName().hashCode();
         }
+        if (getOrganization() != null) {
+            _hashCode += getOrganization().hashCode();
+        }
         __hashCodeCalc = false;
         return _hashCode;
     }
@@ -281,6 +299,12 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("userName");
         elemField.setXmlName(new javax.xml.namespace.QName("", "userName"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("organization");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "organization"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);

@@ -50,7 +50,8 @@ public class LogoutAction extends AbstractHttpAction {
 		Session aSession =null;
 		try {
 			aSession = HibernateUtil.currentSession();
-			Connection jdbcConnection = aSession.connection();
+			//Connection jdbcConnection = aSession.connection();
+			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			AuditLogUtilities.updateAudit(jdbcConnection,  profile, "activity.Logout", null);
 		} catch (HibernateException he) {

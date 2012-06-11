@@ -85,6 +85,7 @@ import java.util.zip.ZipOutputStream;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 
@@ -98,6 +99,9 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	public HashMap getAdmissibleValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException {
 		HashMap values = new HashMap<String, String>();
 		logger.debug("IN: documentParameterId = [" + documentParameterId + "]; roleName = [" + roleName + "]");
+		
+		this.setTenant();
+		
 		try {
 			IEngUserProfile profile = getUserProfile();
 			BIObjectParameter documentParameter = DAOFactory.getBIObjectParameterDAO().loadForDetailByObjParId(documentParameterId);
@@ -151,14 +155,19 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			throw e;
 		} catch(Exception e) {
 			logger.error(e);
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
 		return values;
 	}
 
 	public String[] getCorrectRolesForExecution(Integer documentId) throws NonExecutableDocumentException {
 		String[] toReturn = null;
 		logger.debug("IN: documentId = [" + documentId + "]");
+		
+		this.setTenant();
+		
 		try {
 			IEngUserProfile profile = getUserProfile();
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
@@ -177,14 +186,19 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			throw e;
 		} catch(Exception e) {
 			logger.error(e);
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
 		return toReturn;
 	}
 
 	public SDKDocumentParameter[] getDocumentParameters(Integer documentId, String roleName) throws NonExecutableDocumentException {
 		SDKDocumentParameter parameters[] = null;
 		logger.debug("IN: documentId = [" + documentId + "]; roleName = [" + roleName + "]");
+		
+		this.setTenant();
+		
 		try {
 			IEngUserProfile profile = getUserProfile();
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
@@ -220,14 +234,19 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			throw e;
 		} catch(Exception e) {
 			logger.error(e);
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
 		return parameters;
 	}
 
 	public SDKDocument[] getDocumentsAsList(String type, String state, String folderPath) {
 		SDKDocument documents[] = null;
 		logger.debug("IN");
+		
+		this.setTenant();
+		
 		try {
 			IEngUserProfile profile = getUserProfile();
 			List list = DAOFactory.getBIObjectDAO().loadBIObjects(type, state, folderPath);
@@ -245,14 +264,19 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			documents = (SDKDocument[])toReturn.toArray(documents);
 		} catch(Exception e) {
 			logger.error("Error while loading documents as list", e);
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
 		return documents;
 	}
 
 	public SDKFunctionality getDocumentsAsTree(String initialPath) {
 		logger.debug("IN: initialPath = [" + initialPath + "]");
 		SDKFunctionality toReturn = null;
+		
+		this.setTenant();
+		
 		try {
 			IEngUserProfile profile = getUserProfile();
 			ILowFunctionalityDAO functionalityDAO = DAOFactory.getLowFunctionalityDAO();
@@ -270,8 +294,10 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			}
 		} catch(Exception e) {
 			logger.error("Error while loading documents as tree", e);
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
 		return toReturn;
 	}
 
@@ -317,6 +343,9 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			Integer functionalityId) throws NotAllowedOperationException {
 		logger.debug("IN");
 		Integer toReturn = null;
+		
+		this.setTenant();
+		
 		try {
 			IEngUserProfile profile = getUserProfile();
 			// if user cannot develop in the specified folder, he cannot save documents inside it
@@ -355,14 +384,18 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			}
 		} catch(Exception e) {
 			logger.error("Error while saving new document", e);
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
 		return toReturn;
 	}
 
-	public void uploadTemplate(Integer documentId, SDKTemplate sdkTemplate)
-	throws NotAllowedOperationException {
+	public void uploadTemplate(Integer documentId, SDKTemplate sdkTemplate) throws NotAllowedOperationException {
 		logger.debug("IN: documentId = [" + documentId + "]; template file name = [" + sdkTemplate.getFileName() + "]");
+		
+		this.setTenant();
+		
 		try {
 			IEngUserProfile profile = getUserProfile();
 			// if user cannot develop the specified document, he cannot upload templates on it
@@ -385,13 +418,18 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			logger.debug("Template stored without errors.");
 		} catch(Exception e) {
 			logger.error("Error while uploading template", e);
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
 	}
 
 	public SDKTemplate downloadTemplate(Integer documentId) throws NotAllowedOperationException {
 		logger.debug("IN");
 		SDKTemplate toReturn = null;
+		
+		this.setTenant();
+		
 		try {
 			IEngUserProfile profile = getUserProfile();
 			// if user cannot develop the specified document, he cannot upload templates on it
@@ -411,8 +449,10 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			toReturn = new SDKObjectsConverter().fromObjTemplateToSDKTemplate(temp);
 		} catch(Exception e) {
 			logger.error(e);
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
 		return toReturn;
 	}
 
@@ -585,118 +625,142 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	 * @param: roleName : name of the role
 	 */
 
-	public SDKExecutedDocumentContent executeDocument(SDKDocument document, SDKDocumentParameter[] parameters, String roleName, String outputType)
-	throws NonExecutableDocumentException, NotAllowedOperationException,MissingParameterValue,InvalidParameterValue {
+	public SDKExecutedDocumentContent executeDocument(SDKDocument document,
+			SDKDocumentParameter[] parameters, String roleName,
+			String outputType) throws NonExecutableDocumentException,
+			NotAllowedOperationException, MissingParameterValue,
+			InvalidParameterValue {
 		logger.debug("IN");
-		String output = (outputType != null && !outputType.equals("")) ? outputType : "PDF";
 		SDKExecutedDocumentContent toReturn = null;
-
-		IEngUserProfile profile = null;
-
-		Integer idDocument=document.getId();
-
-		try{
-			profile= getUserProfile();
-		}
-		catch (Exception e) {
-			logger.error("could not retrieve profile",e);
-			throw new NonExecutableDocumentException();
-		}
-
-		ExecutionInstance instance =null;
-		try{
-			instance = new ExecutionInstance(profile, "111", "111", idDocument, roleName, SpagoBIConstants.SDK_EXECUTION_SERVICE, false, false, null);
-		}
-		catch (Exception e) {
-			logger.error("error while creating instance",e);
-			throw new NonExecutableDocumentException();
-		}
-		// put the parameters value in SDKPArameters into BiObject
-		instance.refreshBIObjectWithSDKParameters(parameters);
-
-		//		check if there were errors referring to parameters
-
-		List errors=null;
-		try{
-			errors=instance.getParametersErrors();
-		}
-		catch (Exception e) {
-			logger.error("error while retrieving parameters errors",e);
-			throw new NonExecutableDocumentException();
-		}
-		if(errors!=null && errors.size()>0){
-			for (Iterator iterator = errors.iterator(); iterator.hasNext();) {
-				Object error = (Object) iterator.next();
-				if(error instanceof EMFUserError){
-					EMFUserError emfUser=(EMFUserError)error;
-					String message="Error on parameter values ";
-					if(emfUser.getMessage()!=null) message+=" "+emfUser.getMessage();
-					if(emfUser.getAdditionalInfo()!=null) message+=" "+emfUser.getAdditionalInfo();
-					logger.error(message);
-					throw new MissingParameterValue();
-				}
-				else if(error instanceof EMFValidationError){
-					EMFValidationError emfValidation=(EMFValidationError)error;
-					String message="Error while checking parameters: ";
-					if(emfValidation.getMessage()!=null) message+=" "+emfValidation.getMessage();
-					if(emfValidation.getAdditionalInfo()!=null) message+=" "+emfValidation.getAdditionalInfo();
-					logger.error(message);
-					throw new InvalidParameterValue();
-
-				}
-
-
-			}
-		}
-
-
-		logger.debug("Check the document type and call the exporter (if present)");
+		
+		this.setTenant();
+		
 		try {
+		
+			String output = (outputType != null && !outputType.equals("")) ? outputType : "PDF";
+			
 
-			if ( document.getType().equalsIgnoreCase("KPI")) {  // CASE KPI
-				toReturn = executeKpi(document, instance.getBIObject(), (String)profile.getUserUniqueIdentifier(), output);
-			} else if (document.getType().equalsIgnoreCase("REPORT") || document.getType().equalsIgnoreCase("ACCESSIBLE_HTML")){  // CASE REPORT OR ACCESSIBLE_HTML
-				toReturn = executeReport(document, instance.getBIObject(), profile, output);					
-			} else {
-				logger.error("NO EXPORTER AVAILABLE");
+			IEngUserProfile profile = null;
+
+			Integer idDocument = document.getId();
+
+			try {
+				profile = getUserProfile();
+			} catch (Exception e) {
+				logger.error("could not retrieve profile", e);
+				throw new NonExecutableDocumentException();
 			}
 
-		} catch(Exception e) {
-			logger.error("Error while executing document");
-			throw new NonExecutableDocumentException();
-		}
+			ExecutionInstance instance = null;
+			try {
+				instance = new ExecutionInstance(profile, "111", "111",
+						idDocument, roleName,
+						SpagoBIConstants.SDK_EXECUTION_SERVICE, false, false,
+						null);
+			} catch (Exception e) {
+				logger.error("error while creating instance", e);
+				throw new NonExecutableDocumentException();
+			}
+			// put the parameters value in SDKPArameters into BiObject
+			instance.refreshBIObjectWithSDKParameters(parameters);
 
-		if(toReturn==null){
-			logger.error("No result returned by the document");
-			throw new NonExecutableDocumentException();
-		}
+			// check if there were errors referring to parameters
 
-		logger.debug("OUT");
+			List errors = null;
+			try {
+				errors = instance.getParametersErrors();
+			} catch (Exception e) {
+				logger.error("error while retrieving parameters errors", e);
+				throw new NonExecutableDocumentException();
+			}
+			if (errors != null && errors.size() > 0) {
+				for (Iterator iterator = errors.iterator(); iterator.hasNext();) {
+					Object error = (Object) iterator.next();
+					if (error instanceof EMFUserError) {
+						EMFUserError emfUser = (EMFUserError) error;
+						String message = "Error on parameter values ";
+						if (emfUser.getMessage() != null)
+							message += " " + emfUser.getMessage();
+						if (emfUser.getAdditionalInfo() != null)
+							message += " " + emfUser.getAdditionalInfo();
+						logger.error(message);
+						throw new MissingParameterValue();
+					} else if (error instanceof EMFValidationError) {
+						EMFValidationError emfValidation = (EMFValidationError) error;
+						String message = "Error while checking parameters: ";
+						if (emfValidation.getMessage() != null)
+							message += " " + emfValidation.getMessage();
+						if (emfValidation.getAdditionalInfo() != null)
+							message += " " + emfValidation.getAdditionalInfo();
+						logger.error(message);
+						throw new InvalidParameterValue();
+
+					}
+
+				}
+			}
+
+			logger.debug("Check the document type and call the exporter (if present)");
+			try {
+
+				if (document.getType().equalsIgnoreCase("KPI")) { // CASE KPI
+					toReturn = executeKpi(document, instance.getBIObject(),
+							(String) profile.getUserUniqueIdentifier(), output);
+				} else if (document.getType().equalsIgnoreCase("REPORT")
+						|| document.getType().equalsIgnoreCase(
+								"ACCESSIBLE_HTML")) { // CASE REPORT OR
+														// ACCESSIBLE_HTML
+					toReturn = executeReport(document, instance.getBIObject(),
+							profile, output);
+				} else {
+					logger.error("NO EXPORTER AVAILABLE");
+				}
+
+			} catch (Exception e) {
+				logger.error("Error while executing document");
+				throw new NonExecutableDocumentException();
+			}
+
+			if (toReturn == null) {
+				logger.error("No result returned by the document");
+				throw new NonExecutableDocumentException();
+			}
+
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
+		}
+		
 		return toReturn;
 	}
 
 	public SDKDocument getDocumentById(Integer id) {
 		SDKDocument toReturn = null;
 		logger.debug("IN: document in input = " + id);
+
+		this.setTenant();
+
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
+			super.checkUserPermissionForFunctionality(
+					SpagoBIConstants.DOCUMENT_MANAGEMENT,
+					"User cannot see documents congifuration.");
 			if (id == null) {
 				logger.warn("Document identifier in input is null!");
 				return null;
 			}
-			BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectById(id);
+			BIObject biObject = DAOFactory.getBIObjectDAO()
+					.loadBIObjectById(id);
 			if (biObject == null) {
-				logger.warn("BiObject with identifier [" + id + "] not existing.");
+				logger.warn("BiObject with identifier [" + id
+						+ "] not existing.");
 				return null;
 			}
-			toReturn = new SDKObjectsConverter().fromBIObjectToSDKDocument(biObject);
-		} catch(NotAllowedOperationException e) {
-
-		} catch(Exception e) {
-			logger.error("Error while retrieving SDKEngine list", e);
-			logger.debug("Returning null");
-			return null;
+			toReturn = new SDKObjectsConverter()
+					.fromBIObjectToSDKDocument(biObject);
+		} catch (Exception e) {
+			logger.error("Error while retrieving document", e);
 		} finally {
+			this.unsetTenant();
 			logger.debug("OUT");
 		}
 		return toReturn;
@@ -705,174 +769,212 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	public SDKDocument getDocumentByLabel(String label) {
 		SDKDocument toReturn = null;
 		logger.debug("IN: document in input = " + label);
+
+		this.setTenant();
+
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
+			super.checkUserPermissionForFunctionality(
+					SpagoBIConstants.DOCUMENT_MANAGEMENT,
+					"User cannot see documents congifuration.");
 			if (label == null) {
 				logger.warn("Document label in input is null!");
 				return null;
 			}
-			BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
+			BIObject biObject = DAOFactory.getBIObjectDAO()
+					.loadBIObjectByLabel(label);
 			if (biObject == null) {
 				logger.warn("BiObject with label [" + label + "] not existing.");
 				return null;
 			}
-			toReturn = new SDKObjectsConverter().fromBIObjectToSDKDocument(biObject);
-		} catch(NotAllowedOperationException e) {
-
-		} catch(Exception e) {
-			logger.error("Error while retrieving SDKEngine list", e);
-			logger.debug("Returning null");
-			return null;
+			toReturn = new SDKObjectsConverter()
+					.fromBIObjectToSDKDocument(biObject);
+		} catch (Exception e) {
+			logger.error("Error while retrieving document", e);
 		} finally {
+			this.unsetTenant();
 			logger.debug("OUT");
 		}
 		return toReturn;
 	}
 
 
-	public void uploadDatamartTemplate(SDKTemplate sdkTemplate, SDKTemplate calculatedFields, String dataSourceLabel) {
-		logger.debug("IN: template file name = [" + sdkTemplate.getFileName() + "] and optional calculatedFields file ["+calculatedFields+"]");
+	public void uploadDatamartTemplate(SDKTemplate sdkTemplate,
+			SDKTemplate calculatedFields, String dataSourceLabel) {
+		logger.debug("IN: template file name = [" + sdkTemplate.getFileName()
+				+ "] and optional calculatedFields file [" + calculatedFields
+				+ "]");
 
+		this.setTenant();
 
-
-		/***********************************************************************************************************/
-		/* STEP 1: uploads the datamart document                                                                   */
-		/***********************************************************************************************************/
-		try{
-			uploadFisicalFile(sdkTemplate, DATAMART_FILE_NAME);
-			logger.debug("datamart.jar file uploaded");
-		}
-		catch(Exception e) {
-			logger.error("Could not upload datamart.jar file",e);
-			throw new SpagoBIRuntimeException("Could not upload datamart.jar file: "+e.getMessage());
-		}
-
-		try {	
-			/***********************************************************************************************************/
-			/* STEP 1,5: if present uploads also the calculatedFields xml                                                                   */
-			/***********************************************************************************************************/
-			if(calculatedFields.getContent() != null){
-				logger.debug("Upload calculatedFields xml: cfields.xml ");
-				uploadFisicalFile(calculatedFields, CFIELDS_FILE_NAME );
-				logger.debug("cfields.xml file uploaded");
-			}
-			else{
-				logger.debug("No cfields xml recevied");
-			}
-		}
-		catch(Exception e) {
-			logger.error("Could not upload cfields file",e);
-			throw new SpagoBIRuntimeException("Could not upload cfieldds.xml file: "+e.getMessage());
-		}
-
-		try{
+		try {
 
 			/***********************************************************************************************************/
-			/* STEP 2: template creation in SpagoBI Metadata (under the personal folder) to use the previous datamart. */
+			/* STEP 1: uploads the datamart document */
 			/***********************************************************************************************************/
-			BIObject obj = null;
-			String datamartName = sdkTemplate.getFolderName();
-
-			//checks if the template already exists. In this case doesn't create the new one!
-			obj  =	DAOFactory.getBIObjectDAO().loadBIObjectByLabel(datamartName);
-			if (obj != null){
-				logger.info("The datamart with name "  + datamartName + " is already been inserted in SpagoBI. Template not loaded! " );
-				return;
+			try {
+				uploadFisicalFile(sdkTemplate, DATAMART_FILE_NAME);
+				logger.debug("datamart.jar file uploaded");
+			} catch (Exception e) {
+				logger.error("Could not upload datamart.jar file", e);
+				throw new SpagoBIRuntimeException(
+						"Could not upload datamart.jar file: " + e.getMessage());
 			}
 
-			IEngUserProfile profile = getUserProfile();
-
-			obj = new BIObject();
-			String userId = ((UserProfile) profile).getUserId().toString();
-			logger.debug("Current user id is [" + userId + "]");
-
-			obj.setCreationUser(((UserProfile) profile).getUserId().toString());
-			obj.setCreationDate(new Date());
-			obj.setVisible(new Integer(1));
-			obj.setLabel(datamartName);
-			obj.setName(datamartName);
-			obj.setDescription("");
-			obj.setEncrypt(0);
-			obj.setStateCode("DEV");
-			Domain state = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "DEV");
-			obj.setStateID(state.getValueId());
-			//sets the qbe engine
-			Domain objectType = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("BIOBJ_TYPE", SpagoBIConstants.DATAMART_TYPE_CODE);
-			obj.setBiObjectTypeID(objectType.getValueId());
-			obj.setBiObjectTypeCode(objectType.getValueCd());
-			List<Engine> lstQbeEngines =  DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(SpagoBIConstants.DATAMART_TYPE_CODE);
-			if (lstQbeEngines == null || lstQbeEngines.size() == 0){
-				logger.error("Error while retrieving Engine list.");
-				return;
-			}
-			Engine qbeEngine =  lstQbeEngines.get(0);
-			obj.setEngine(qbeEngine);
-
-			// get the dataSource if label is not null
-			IDataSource dataSource = null;
-			if(dataSourceLabel != null){
-				logger.debug("retrieve data source with label "+dataSourceLabel);
-				dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
-				obj.setDataSourceId(dataSource.getDsId());
+			try {
+				/***********************************************************************************************************/
+				/* STEP 1,5: if present uploads also the calculatedFields xml */
+				/***********************************************************************************************************/
+				if (calculatedFields.getContent() != null) {
+					logger.debug("Upload calculatedFields xml: cfields.xml ");
+					uploadFisicalFile(calculatedFields, CFIELDS_FILE_NAME);
+					logger.debug("cfields.xml file uploaded");
+				} else {
+					logger.debug("No cfields xml recevied");
+				}
+			} catch (Exception e) {
+				logger.error("Could not upload cfields file", e);
+				throw new SpagoBIRuntimeException(
+						"Could not upload cfieldds.xml file: " + e.getMessage());
 			}
 
-			//sets the default functionality (personal folder).  
-			List functionalities = new ArrayList();
-			LowFunctionality funct = null;
-			funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath("/" + userId , false);
-			if (funct != null){
-				functionalities.add(funct.getId());
-				obj.setFunctionalities(functionalities);
-			} else {
-				//the personal folder doesn't exist yet. It creates it, and uses it.
-				UserUtilities.createUserFunctionalityRoot(profile);
-				logger.error("Error while retrieving Functionality identifier.");
-				funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath("/" + userId , false);
-				functionalities.add(funct.getId());
-				obj.setFunctionalities(functionalities);
-			}
-			//sets the template's content
-			ObjTemplate objTemplate = new ObjTemplate();
-			objTemplate.setActive(new Boolean(true));
-			objTemplate.setCreationUser(userId);
-			objTemplate.setCreationDate(new Date());
-			objTemplate.setName(sdkTemplate.getFolderName() + ".xml");
-			String template = getTemplate(datamartName);
-			objTemplate.setContent(template.getBytes());
+			try {
 
-			//inserts the document
-			logger.debug("Saving document ...");
-			IBIObjectDAO biObjDAO = DAOFactory.getBIObjectDAO();
-			biObjDAO.setUserProfile(profile);
-			biObjDAO.insertBIObject(obj, objTemplate);
-			Integer newIdObj = obj.getId();
-			if (newIdObj != null) {
-				logger.info("Document saved with id = " + newIdObj);
-			} else {
-				logger.error("Document not saved!!");
+				/***********************************************************************************************************/
+				/*
+				 * STEP 2: template creation in SpagoBI Metadata (under the
+				 * personal folder) to use the previous datamart.
+				 */
+				/***********************************************************************************************************/
+				BIObject obj = null;
+				String datamartName = sdkTemplate.getFolderName();
+
+				// checks if the template already exists. In this case doesn't
+				// create the new one!
+				obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(
+						datamartName);
+				if (obj != null) {
+					logger.info("The datamart with name "
+							+ datamartName
+							+ " is already been inserted in SpagoBI. Template not loaded! ");
+					return;
+				}
+
+				IEngUserProfile profile = getUserProfile();
+
+				obj = new BIObject();
+				String userId = ((UserProfile) profile).getUserId().toString();
+				logger.debug("Current user id is [" + userId + "]");
+
+				obj.setCreationUser(((UserProfile) profile).getUserId()
+						.toString());
+				obj.setCreationDate(new Date());
+				obj.setVisible(new Integer(1));
+				obj.setLabel(datamartName);
+				obj.setName(datamartName);
+				obj.setDescription("");
+				obj.setEncrypt(0);
+				obj.setStateCode("DEV");
+				Domain state = DAOFactory.getDomainDAO()
+						.loadDomainByCodeAndValue("STATE", "DEV");
+				obj.setStateID(state.getValueId());
+				// sets the qbe engine
+				Domain objectType = DAOFactory.getDomainDAO()
+						.loadDomainByCodeAndValue("BIOBJ_TYPE",
+								SpagoBIConstants.DATAMART_TYPE_CODE);
+				obj.setBiObjectTypeID(objectType.getValueId());
+				obj.setBiObjectTypeCode(objectType.getValueCd());
+				List<Engine> lstQbeEngines = DAOFactory.getEngineDAO()
+						.loadAllEnginesForBIObjectType(
+								SpagoBIConstants.DATAMART_TYPE_CODE);
+				if (lstQbeEngines == null || lstQbeEngines.size() == 0) {
+					logger.error("Error while retrieving Engine list.");
+					return;
+				}
+				Engine qbeEngine = lstQbeEngines.get(0);
+				obj.setEngine(qbeEngine);
+
+				// get the dataSource if label is not null
+				IDataSource dataSource = null;
+				if (dataSourceLabel != null) {
+					logger.debug("retrieve data source with label "
+							+ dataSourceLabel);
+					dataSource = DAOFactory.getDataSourceDAO()
+							.loadDataSourceByLabel(dataSourceLabel);
+					obj.setDataSourceId(dataSource.getDsId());
+				}
+
+				// sets the default functionality (personal folder).
+				List functionalities = new ArrayList();
+				LowFunctionality funct = null;
+				funct = DAOFactory.getLowFunctionalityDAO()
+						.loadLowFunctionalityByPath("/" + userId, false);
+				if (funct != null) {
+					functionalities.add(funct.getId());
+					obj.setFunctionalities(functionalities);
+				} else {
+					// the personal folder doesn't exist yet. It creates it, and
+					// uses it.
+					UserUtilities.createUserFunctionalityRoot(profile);
+					logger.error("Error while retrieving Functionality identifier.");
+					funct = DAOFactory.getLowFunctionalityDAO()
+							.loadLowFunctionalityByPath("/" + userId, false);
+					functionalities.add(funct.getId());
+					obj.setFunctionalities(functionalities);
+				}
+				// sets the template's content
+				ObjTemplate objTemplate = new ObjTemplate();
+				objTemplate.setActive(new Boolean(true));
+				objTemplate.setCreationUser(userId);
+				objTemplate.setCreationDate(new Date());
+				objTemplate.setName(sdkTemplate.getFolderName() + ".xml");
+				String template = getTemplate(datamartName);
+				objTemplate.setContent(template.getBytes());
+
+				// inserts the document
+				logger.debug("Saving document ...");
+				IBIObjectDAO biObjDAO = DAOFactory.getBIObjectDAO();
+				biObjDAO.setUserProfile(profile);
+				biObjDAO.insertBIObject(obj, objTemplate);
+				Integer newIdObj = obj.getId();
+				if (newIdObj != null) {
+					logger.info("Document saved with id = " + newIdObj);
+				} else {
+					logger.error("Document not saved!!");
+				}
+			} catch (Exception e) {
+				logger.error("Error while uploading template", e);
+				throw new SpagoBIRuntimeException(
+						"Error while uploading template");
 			}
-		} catch(Exception e) {
-			logger.error("Error while uploading template", e);
-			throw new SpagoBIRuntimeException("Error while uploading template");
-		} 
-		logger.debug("OUT");
-	} 
+
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
+		}
+	}
 
 	public void uploadDatamartModel(SDKTemplate sdkTemplate) {
-		logger.debug("IN: template file name = [" + sdkTemplate.getFileName() + "]");
-
-		try {	
+		logger.debug("IN: template file name = [" + sdkTemplate.getFileName()
+				+ "]");
+		
+		this.setTenant();
+		
+		try {
 			uploadFisicalFile(sdkTemplate, "");
-
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Error while uploading model template", e);
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
-	} 
+	}
 
 	public SDKTemplate downloadDatamartFile(String folderName, String fileName) {
-		logger.debug("IN");
+		LogMF.debug(logger, "IN: folderName = [{0}], fileName = [{1}]", folderName, fileName);
 		SDKTemplate toReturn = null;
+		
+		this.setTenant();
+		
 		try {
 			FileInputStream isDatamartFile = downloadSingleFile(folderName, fileName);
 			//defines a content to return
@@ -884,11 +986,14 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			MemoryOnlyDataSource mods = objConverter.new MemoryOnlyDataSource(templateContent, null);
 			DataHandler dhSource = new DataHandler(mods);
 			toReturn.setContent(dhSource);
-
 		} catch(Exception e) {
+			logger.error("Error downloading datamart file", e);
+			logger.debug("Returning null");
 			return null;
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
 		return toReturn;
 	}
 
@@ -897,10 +1002,12 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	public SDKTemplate downloadDatamartModelFiles(String folderName, String fileDatamartName , String fileModelName) {
 		logger.debug("IN");
 
+		this.setTenant();
+		
 		File file = null;
 		FileOutputStream fileZip = null;
 		ZipOutputStream zip = null;
-		File inFileZip =null;
+		File inFileZip = null;
 
 		try {
 			// These are the files to include in the ZIP file
@@ -946,8 +1053,11 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			return toReturn;
 
 		} catch(Exception e) {
+			logger.error("Error downloading datamart model file", e);
+			logger.debug("Returning null");
 			return null;
 		} finally {
+			this.unsetTenant();
 			if (zip != null) {
 				try {		
 					zip.close();
@@ -983,8 +1093,10 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		}	
 	}
 
-	public HashMap<String, String> getAllDatamartModels(){
+	public HashMap<String, String> getAllDatamartModels() {
 		logger.debug("IN");
+
+		this.setTenant();
 
 		HashMap<String, String> toReturn = new HashMap<String, String>();
 		try {
@@ -999,13 +1111,14 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				}
 			});
 			if (dirs == null || dirs.length == 0) {
-				throw new SpagoBIRuntimeException("No datamarts found!! Check configuration for datamarts repository");
+				throw new SpagoBIRuntimeException(
+						"No datamarts found!! Check configuration for datamarts repository");
 			}
 			for (int i = 0; i < dirs.length; i++) {
 				File dir = dirs[i];
 				File[] models = dir.listFiles(new FileFilter() {
 					public boolean accept(File file) {
-						if (file.getName().endsWith(".sbimodel")){
+						if (file.getName().endsWith(".sbimodel")) {
 							return true;
 						}
 						return false;
@@ -1015,11 +1128,13 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 					toReturn.put(dir.getName(), models[j].getName());
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error(e);
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
 		}
-
-		logger.debug("OUT");
+		
 		return toReturn;
 	}
 

@@ -58,7 +58,8 @@ public class ListEventsLogModule extends AbstractBasicListModule {
 		Session aSession =null;
 		try {
 			aSession = HibernateUtil.currentSession();
-			Connection jdbcConnection = aSession.connection();
+			//Connection jdbcConnection = aSession.connection();
+			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			AuditLogUtilities.updateAudit(jdbcConnection,  profile, "activity.EventsMenu", null);
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);

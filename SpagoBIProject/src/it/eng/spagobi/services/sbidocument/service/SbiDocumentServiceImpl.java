@@ -12,8 +12,6 @@
 package it.eng.spagobi.services.sbidocument.service;
 
 import it.eng.spagobi.services.common.AbstractServiceImpl;
-import it.eng.spagobi.services.dataset.DataSetService;
-import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.sbidocument.SbiDocumentService;
 import it.eng.spagobi.services.sbidocument.bo.SpagobiAnalyticalDriver;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
@@ -22,10 +20,6 @@ import org.apache.log4j.Logger;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
-
-
-
 
 /**
  * @author Andrea Gioia
@@ -48,11 +42,13 @@ public class SbiDocumentServiceImpl extends AbstractServiceImpl  implements SbiD
     	Monitor monitor = MonitorFactory.start("spagobi.service.sbidocument.getDocumentParameters");
     	try {
     	    validateTicket(token, user);
+    	    this.setTenantByUserId(user);
     	    return supplier.getDocumentAnalyticalDrivers(id, language, country);
     	} catch (SecurityException e) {
     	    logger.error("SecurityException", e);
     	    return null;
     	} finally {
+    		this.unsetTenant();
     	    monitor.stop();
     	    logger.debug("OUT");
     	}	
@@ -63,11 +59,13 @@ public class SbiDocumentServiceImpl extends AbstractServiceImpl  implements SbiD
     	Monitor monitor = MonitorFactory.start("spagobi.service.sbidocument.getDocumentParametersJSON");
     	try {
     	    validateTicket(token, user);
+    	    this.setTenantByUserId(user);
     	    return supplier.getDocumentAnalyticalDriversJSON(id, language, country);
     	} catch (SecurityException e) {
     	    logger.error("SecurityException", e);
     	    return null;
     	} finally {
+    		this.unsetTenant();
     	    monitor.stop();
     	    logger.debug("OUT");
     	}	

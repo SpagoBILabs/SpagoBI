@@ -37,7 +37,6 @@ public class EventsManager {
 	public static final String DEFAULT_EVENT_PRESENTAION_HANDLER_CLASS_NAME = "it.eng.spagobi.events.handlers.DefaultEventPresentationHandler";
 	static private Logger logger = Logger.getLogger(EventsManager.class);
 	
-	private EventLogDAOHibImpl eventLogDAO = null;
 	
 	/**
 	 *  Singleton design pattern
@@ -54,9 +53,7 @@ public class EventsManager {
 		return instance;
 	}
 		
-	private EventsManager(){
-		eventLogDAO = new EventLogDAOHibImpl();
-		
+	private EventsManager() {
 	}
 	
 	
@@ -117,6 +114,7 @@ public class EventsManager {
 		eventLog.setHandler(handler);
 		eventLog.setRoles(roles);
 		try {
+			EventLogDAOHibImpl eventLogDAO = new EventLogDAOHibImpl();
 			eventLogDAO.setUserID(user);
 			id = eventLogDAO.insertEventLog(eventLog);
 		} catch (EMFUserError e) {
@@ -139,6 +137,7 @@ public class EventsManager {
 		logger.debug("IN");
 		EventLog event = null;
 		try {
+			EventLogDAOHibImpl eventLogDAO = new EventLogDAOHibImpl();
 			event = eventLogDAO.loadEventLogById(id);
 		} catch (EMFUserError e) {
 			logger.error("The event with id = " + id + " was not found.", e);
@@ -158,6 +157,7 @@ public class EventsManager {
 		logger.debug("IN");
 		List registeredEventsList = null;
 		try {
+			EventLogDAOHibImpl eventLogDAO = new EventLogDAOHibImpl();
 			registeredEventsList = eventLogDAO.loadEventsLogByUser(profile);
 		} catch (EMFUserError e) {
 			logger.error("Error while loading events list for the user '" + ((UserProfile)profile).getUserId().toString(), e);

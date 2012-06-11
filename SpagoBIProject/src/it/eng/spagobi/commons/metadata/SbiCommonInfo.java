@@ -21,7 +21,7 @@ public class SbiCommonInfo implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public final static String SBI_VERSION="3.0.0";
+	public final static String SBI_VERSION="3.4.0";
 	
 	private String userIn="server";
 	private String userUp=null;

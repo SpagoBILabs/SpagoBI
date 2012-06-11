@@ -14,6 +14,7 @@ package it.eng.spagobi.commons.utilities.indexing;
 public class IndexingConstants {
 	public static final String CONTENTS = "CONTENTS";
 	public static final String UID = "UID";
+	public static final String TENANT = "TENANT";
 	public static final String BIOBJ_ID = "BIOBJ_ID";
 	public static final String BIOBJ_LABEL = "BIOBJ_LABEL";
 	public static final String BIOBJ_NAME = "BIOBJ_NAME";

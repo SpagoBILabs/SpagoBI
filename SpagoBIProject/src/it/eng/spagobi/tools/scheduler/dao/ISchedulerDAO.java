@@ -11,16 +11,23 @@
  */
 package it.eng.spagobi.tools.scheduler.dao;
 
+import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 
 import java.util.List;
+
+import org.quartz.JobDetail;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 public interface ISchedulerDAO {
+	
+	void setTenant(String tenant);
+	
+	Tenant findTenant(JobDetail jobDetail);
 	
 	boolean jobGroupExists(String jobGroupName) ;
 	boolean jobExists(String jobGroupName, String jobName);
@@ -65,4 +72,5 @@ public interface ISchedulerDAO {
 	boolean saveTrigger(Trigger spagobiTrigger);	
 	void insertTrigger(Trigger spagobiTrigger);	
 	void updateTrigger(Trigger spagobiTrigger);
+
 }

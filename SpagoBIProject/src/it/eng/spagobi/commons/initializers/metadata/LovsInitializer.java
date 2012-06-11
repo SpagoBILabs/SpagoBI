@@ -23,7 +23,9 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -42,14 +44,27 @@ public class LovsInitializer extends SpagoBIInitializer {
 	public void init(SourceBean config, Session hibernateSession) {
 		logger.debug("IN");
 		try {
-			String hql = "from SbiLov";
+			List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
+			for (SbiTenant tenant : tenants) {
+				init(config, hibernateSession, tenant);
+			}
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	public void init(SourceBean config, Session hibernateSession, SbiTenant tenant) {
+		logger.debug("IN");
+		try {
+			String hql = "from SbiLov l where l.commonInfo.organization = :organization";
 			Query hqlQuery = hibernateSession.createQuery(hql);
+			hqlQuery.setString("organization", tenant.getName());
 			List lovs = hqlQuery.list();
 			if (lovs.isEmpty()) {
-				logger.info("Lovs table is empty. Starting populating predefined lovs...");
-				writeLovs(hibernateSession);
+				logger.info("No LOVs for tenant " + tenant.getName() + ". Starting populating predefined LOVs...");
+				writeLovs(hibernateSession, tenant);
 			} else {
-				logger.debug("Lovs table is already populated");
+				logger.debug("Lovs table is already populated for tenant " + tenant.getName());
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializeng LOVs", t);
@@ -58,7 +73,7 @@ public class LovsInitializer extends SpagoBIInitializer {
 		}
 	}
 	
-	private void writeLovs(Session aSession) throws Exception {
+	private void writeLovs(Session aSession, SbiTenant tenant) throws Exception {
 		logger.debug("IN");
 		SourceBean lovsSB = getConfiguration();
 		if (lovsSB == null) {
@@ -88,6 +103,9 @@ public class LovsInitializer extends SpagoBIInitializer {
 			aLov.setInputType(domainInputType);
 			aLov.setInputTypeCd(inputTypeCd);
 
+			// setting tenant/organization info
+			aLov.getCommonInfo().setOrganization(tenant.getName());
+			
 			logger.debug("Inserting Lov with label = [" + aLovsSB.getAttribute("label") + "] ...");
 
 			aSession.save(aLov);

@@ -14,41 +14,25 @@ package it.eng.spagobi.sdk.datasources.impl;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.sdk.AbstractSDKService;
-import it.eng.spagobi.sdk.datasets.bo.SDKDataSet;
-import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
-import it.eng.spagobi.sdk.datasets.bo.SDKDataStoreMetadata;
 import it.eng.spagobi.sdk.datasources.bo.SDKDataSource;
-import it.eng.spagobi.sdk.exceptions.InvalidParameterValue;
-import it.eng.spagobi.sdk.exceptions.MissingParameterValue;
 import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
-import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 
 public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.eng.spagobi.sdk.datasources.DataSourcesSDKService {
 
 	static private Logger logger = Logger.getLogger(DataSourcesSDKServiceImpl.class);
 
-
-
-
-
-
-	public SDKDataSource getDataSource(Integer dataSourceId)
-	throws NotAllowedOperationException {
+	public SDKDataSource getDataSource(Integer dataSourceId) throws NotAllowedOperationException {
 		SDKDataSource toReturn = null;
 		logger.debug("IN: dataSourceId in input = " + dataSourceId);
+		
+		this.setTenant();
+		
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASOURCE_MANAGEMENT, "User cannot see datasource congifuration.");
 			if (dataSourceId == null) {
@@ -68,6 +52,7 @@ public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.
 			logger.debug("Returning null");
 			return null;
 		} finally {
+			this.unsetTenant();
 			logger.debug("OUT");
 		}
 		return toReturn;
@@ -76,6 +61,9 @@ public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.
 	public SDKDataSource[] getDataSources() throws NotAllowedOperationException {
 		SDKDataSource[] toReturn = null;
 		logger.debug("IN");
+		
+		this.setTenant();
+		
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASOURCE_MANAGEMENT, "User cannot see datasources congifuration.");
 			List dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();
@@ -92,6 +80,7 @@ public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.
 			logger.debug("Returning null");
 			return null;
 		} finally {
+			this.unsetTenant();
 			logger.debug("OUT");
 		}
 		return toReturn;
