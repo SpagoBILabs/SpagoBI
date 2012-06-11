@@ -19,240 +19,306 @@ import org.apache.log4j.Logger;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+public class SchedulerServiceImpl extends AbstractServiceImpl {
 
-public class SchedulerServiceImpl extends AbstractServiceImpl{
+	static private Logger logger = Logger.getLogger(SchedulerServiceImpl.class);
+	private ISchedulerServiceSupplier supplier = SchedulerServiceSupplierFactory
+			.getSupplier();
 
-    static private Logger logger = Logger.getLogger(SchedulerServiceImpl.class);
-    private ISchedulerServiceSupplier supplier = SchedulerServiceSupplierFactory.getSupplier();
-    
 	/**
 	 * Gets the job list.
 	 * 
-	 * @param token the token
-	 * @param user the user
+	 * @param token
+	 *            the token
+	 * @param user
+	 *            the user
 	 * 
 	 * @return the job list
 	 */
-	public String getJobList(String token,String user){
+	public String getJobList(String token, String user) {
 		logger.debug("IN");
-		Monitor monitor =MonitorFactory.start("spagobi.service.scheduler.getJobList");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.service.scheduler.getJobList");
 		try {
-		    validateTicket(token, user);
-		    return supplier.getJobList();
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			return supplier.getJobList();
 		} catch (SecurityException e) {
-		    logger.error("SecurityException", e);
-		    return null;
+			logger.error("SecurityException", e);
+			return null;
 		} finally {
-		    monitor.stop();
-		    logger.debug("OUT");
-		}		
-    
+			this.unsetTenant();
+			monitor.stop();
+			logger.debug("OUT");
+		}
+
 	}
-	
+
 	/**
 	 * Gets the job schedulation list.
 	 * 
-	 * @param token the token
-	 * @param user the user
-	 * @param jobName the job name
-	 * @param jobGroup the job group
+	 * @param token
+	 *            the token
+	 * @param user
+	 *            the user
+	 * @param jobName
+	 *            the job name
+	 * @param jobGroup
+	 *            the job group
 	 * 
 	 * @return the job schedulation list
 	 */
-	public String getJobSchedulationList(String token,String user,String jobName, String jobGroup){
+	public String getJobSchedulationList(String token, String user,
+			String jobName, String jobGroup) {
 		logger.debug("IN");
-		Monitor monitor =MonitorFactory.start("spagobi.service.scheduler.getJobSchedulationList");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.service.scheduler.getJobSchedulationList");
 		try {
-		    validateTicket(token, user);
-		    return supplier.getJobSchedulationList(jobName,jobGroup);
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			return supplier.getJobSchedulationList(jobName, jobGroup);
 		} catch (SecurityException e) {
-		    logger.error("SecurityException", e);
-		    return null;
+			logger.error("SecurityException", e);
+			return null;
 		} finally {
-		    monitor.stop();
-		    logger.debug("OUT");
-		}		
-	    
+			this.unsetTenant();
+			monitor.stop();
+			logger.debug("OUT");
+		}
+
 	}
-	
+
 	/**
 	 * Delete schedulation.
 	 * 
-	 * @param token the token
-	 * @param user the user
-	 * @param triggerName the trigger name
-	 * @param triggerGroup the trigger group
+	 * @param token
+	 *            the token
+	 * @param user
+	 *            the user
+	 * @param triggerName
+	 *            the trigger name
+	 * @param triggerGroup
+	 *            the trigger group
 	 * 
 	 * @return the string
 	 */
-	public String deleteSchedulation(String token,String user,String triggerName, String triggerGroup){
+	public String deleteSchedulation(String token, String user,
+			String triggerName, String triggerGroup) {
 		logger.debug("IN");
-		Monitor monitor =MonitorFactory.start("spagobi.service.scheduler.deleteSchedulation");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.service.scheduler.deleteSchedulation");
 		try {
-		    validateTicket(token, user);
-		    return supplier.deleteSchedulation(triggerName,triggerGroup);
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			return supplier.deleteSchedulation(triggerName, triggerGroup);
 		} catch (SecurityException e) {
-		    logger.error("SecurityException", e);
-		    return null;
+			logger.error("SecurityException", e);
+			return null;
 		} finally {
-		    monitor.stop();
-		    logger.debug("OUT");
-		}		
-    
+			this.unsetTenant();
+			monitor.stop();
+			logger.debug("OUT");
+		}
+
 	}
-	
+
 	/**
 	 * Delete job.
 	 * 
-	 * @param token the token
-	 * @param user the user
-	 * @param jobName the job name
-	 * @param jobGroupName the job group name
+	 * @param token
+	 *            the token
+	 * @param user
+	 *            the user
+	 * @param jobName
+	 *            the job name
+	 * @param jobGroupName
+	 *            the job group name
 	 * 
 	 * @return the string
 	 */
-	public String deleteJob(String token,String user,String jobName, String jobGroupName){
+	public String deleteJob(String token, String user, String jobName,
+			String jobGroupName) {
 		logger.debug("IN");
-		Monitor monitor =MonitorFactory.start("spagobi.service.scheduler.deleteJob");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.service.scheduler.deleteJob");
 		try {
-		    validateTicket(token, user);
-		    return supplier.deleteJob(jobName,jobGroupName);
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			return supplier.deleteJob(jobName, jobGroupName);
 		} catch (SecurityException e) {
-		    logger.error("SecurityException", e);
-		    return null;
+			logger.error("SecurityException", e);
+			return null;
 		} finally {
-		    monitor.stop();
-		    logger.debug("OUT");
-		}		
-    
+			this.unsetTenant();
+			monitor.stop();
+			logger.debug("OUT");
+		}
+
 	}
-	
+
 	/**
 	 * Define job.
 	 * 
-	 * @param token the token
-	 * @param user the user
-	 * @param xmlRequest the xml request
+	 * @param token
+	 *            the token
+	 * @param user
+	 *            the user
+	 * @param xmlRequest
+	 *            the xml request
 	 * 
 	 * @return the string
 	 */
-	public String defineJob(String token,String user,String xmlRequest){
+	public String defineJob(String token, String user, String xmlRequest) {
 		logger.debug("IN");
-		Monitor monitor =MonitorFactory.start("spagobi.service.scheduler.defineJob");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.service.scheduler.defineJob");
 		try {
-		    validateTicket(token, user);
-		    return supplier.defineJob(xmlRequest);
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			return supplier.defineJob(xmlRequest);
 		} catch (SecurityException e) {
-		    logger.error("SecurityException", e);
-		    return null;
+			logger.error("SecurityException", e);
+			return null;
 		} finally {
-		    monitor.stop();
-		    logger.debug("OUT");
-		}		
-    
+			this.unsetTenant();
+			monitor.stop();
+			logger.debug("OUT");
+		}
+
 	}
-	
+
 	/**
 	 * Gets the job definition.
 	 * 
-	 * @param token the token
-	 * @param user the user
-	 * @param jobName the job name
-	 * @param jobGroup the job group
+	 * @param token
+	 *            the token
+	 * @param user
+	 *            the user
+	 * @param jobName
+	 *            the job name
+	 * @param jobGroup
+	 *            the job group
 	 * 
 	 * @return the job definition
 	 */
-	public String getJobDefinition(String token,String user,String jobName, String jobGroup){
+	public String getJobDefinition(String token, String user, String jobName,
+			String jobGroup) {
 		logger.debug("IN");
-		Monitor monitor =MonitorFactory.start("spagobi.service.scheduler.getJobDefinition");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.service.scheduler.getJobDefinition");
 		try {
-		    validateTicket(token, user);
-		    return supplier.getJobDefinition(jobName,jobGroup);
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			return supplier.getJobDefinition(jobName, jobGroup);
 		} catch (SecurityException e) {
-		    logger.error("SecurityException", e);
-		    return null;
+			logger.error("SecurityException", e);
+			return null;
 		} finally {
-		    monitor.stop();
-		    logger.debug("OUT");
-		}		
-    
+			this.unsetTenant();
+			monitor.stop();
+			logger.debug("OUT");
+		}
+
 	}
-	
+
 	/**
 	 * Schedule job.
 	 * 
-	 * @param token the token
-	 * @param user the user
-	 * @param xmlRequest the xml request
+	 * @param token
+	 *            the token
+	 * @param user
+	 *            the user
+	 * @param xmlRequest
+	 *            the xml request
 	 * 
 	 * @return the string
 	 */
-	public String scheduleJob(String token,String user,String xmlRequest){
+	public String scheduleJob(String token, String user, String xmlRequest) {
 		logger.debug("IN");
-		Monitor monitor =MonitorFactory.start("spagobi.service.scheduler.scheduleJob");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.service.scheduler.scheduleJob");
 		try {
-		    validateTicket(token, user);
-		    return supplier.scheduleJob(xmlRequest);
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			return supplier.scheduleJob(xmlRequest);
 		} catch (SecurityException e) {
-		    logger.error("SecurityException", e);
-		    return null;
+			logger.error("SecurityException", e);
+			return null;
 		} finally {
-		    monitor.stop();
-		    logger.debug("OUT");
-		}		
-	    
+			this.unsetTenant();
+			monitor.stop();
+			logger.debug("OUT");
+		}
+
 	}
-	
+
 	/**
 	 * Gets the job schedulation definition.
 	 * 
-	 * @param token the token
-	 * @param user the user
-	 * @param triggerName the trigger name
-	 * @param triggerGroup the trigger group
+	 * @param token
+	 *            the token
+	 * @param user
+	 *            the user
+	 * @param triggerName
+	 *            the trigger name
+	 * @param triggerGroup
+	 *            the trigger group
 	 * 
 	 * @return the job schedulation definition
 	 */
-	public String getJobSchedulationDefinition(String token,String user,String triggerName, String triggerGroup){
+	public String getJobSchedulationDefinition(String token, String user,
+			String triggerName, String triggerGroup) {
 		logger.debug("IN");
-		Monitor monitor =MonitorFactory.start("spagobi.service.scheduler.getJobSchedulationDefinition");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.service.scheduler.getJobSchedulationDefinition");
 		try {
-		    validateTicket(token, user);
-		    return supplier.getJobSchedulationDefinition(triggerName,triggerGroup);
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			return supplier.getJobSchedulationDefinition(triggerName,
+					triggerGroup);
 		} catch (SecurityException e) {
-		    logger.error("SecurityException", e);
-		    return null;
+			logger.error("SecurityException", e);
+			return null;
 		} finally {
-		    monitor.stop();
-		    logger.debug("OUT");
-		}		
-	    
+			this.unsetTenant();
+			monitor.stop();
+			logger.debug("OUT");
+		}
+
 	}
-	
+
 	/**
 	 * Exist job definition.
 	 * 
-	 * @param token the token
-	 * @param user the user
-	 * @param jobName the job name
-	 * @param jobGroup the job group
+	 * @param token
+	 *            the token
+	 * @param user
+	 *            the user
+	 * @param jobName
+	 *            the job name
+	 * @param jobGroup
+	 *            the job group
 	 * 
 	 * @return the string
 	 */
-	public String existJobDefinition(String token,String user,String jobName, String jobGroup){
+	public String existJobDefinition(String token, String user, String jobName,
+			String jobGroup) {
 		logger.debug("IN");
-		Monitor monitor =MonitorFactory.start("spagobi.service.scheduler.existJobDefinition");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.service.scheduler.existJobDefinition");
 		try {
-		    validateTicket(token, user);
-		    return supplier.existJobDefinition(jobName,jobGroup);
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			return supplier.existJobDefinition(jobName, jobGroup);
 		} catch (SecurityException e) {
-		    logger.error("SecurityException", e);
-		    return null;
+			logger.error("SecurityException", e);
+			return null;
 		} finally {
-		    monitor.stop();
-		    logger.debug("OUT");
-		}		
-  
+			this.unsetTenant();
+			monitor.stop();
+			logger.debug("OUT");
+		}
+
 	}
-	
+
 }

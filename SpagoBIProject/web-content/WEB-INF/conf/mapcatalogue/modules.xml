@@ -4,6 +4,7 @@
 	      <CONFIG pool="spagobi" rows="20" title="SBIMapCatalogue.listMaps">
 	      <QUERIES>
 	        <SELECT_QUERY statement="SELECT_ALL_MAPS">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER" />
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
 	        </SELECT_QUERY>
@@ -46,6 +47,7 @@
 	      <CONFIG pool="spagobi" rows="20" title="SBIMapCatalogue.listFeatures">
 	      <QUERIES>
 	        <SELECT_QUERY statement="SELECT_ALL_FEATURES">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
 	        </SELECT_QUERY>
@@ -97,7 +99,9 @@
    <MODULE class="it.eng.spagobi.mapcatalogue.service.ListLookupFeaturesModule" name="ListLookupFeaturesModule">
 	    <CONFIG pool="spagobi" rows="20" title="SBIMapCatalogue.listFeatures" >
 	      <QUERIES>
-	        <SELECT_QUERY statement="SELECT_LOOKUP_FEATURES"/>		       
+	        <SELECT_QUERY statement="SELECT_LOOKUP_FEATURES">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+	        </SELECT_QUERY>		       
 	      </QUERIES>
 	      <CAPTIONS>
 	        <SELECT_CAPTION confirm="FALSE" image="/img/button_ok.png" label="SBIMapCatalogue.insertButton">

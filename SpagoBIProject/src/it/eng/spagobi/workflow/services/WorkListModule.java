@@ -201,7 +201,8 @@ public class WorkListModule extends AbstractBasicListModule {
 		Session aSession =null;
 		try {
 			aSession = HibernateUtil.currentSession();
-			Connection jdbcConnection = aSession.connection();
+			//Connection jdbcConnection = aSession.connection();
+			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			IEngUserProfile profile = UserUtilities.getUserProfile();
 			AuditLogUtilities.updateAudit(jdbcConnection,  profile, "activity.WorkFlowMenu", null);
 		} catch (HibernateException he) {

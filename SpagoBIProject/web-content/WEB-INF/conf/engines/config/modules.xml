@@ -8,6 +8,7 @@
 	    <CONFIG pool="spagobi" rows="20" title="SBISet.ListEngine.title" >
 	      <QUERIES>
 	        <SELECT_QUERY statement="SELECT_LIST_ENGINE">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
 	        </SELECT_QUERY>

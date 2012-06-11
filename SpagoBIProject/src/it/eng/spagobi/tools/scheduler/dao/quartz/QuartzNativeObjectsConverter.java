@@ -232,7 +232,7 @@ class QuartzNativeObjectsConverter {
 	    		type = cronString.getExpression().substring(0, indFirstBra);
 	    		params = cronString.getExpression().substring((indFirstBra+1), (cronString.getExpression().length()-1));
 	    	} else {
-	    		return chronExpression;
+	    		return cronString.getExpression();
 	    	}
 	    	if(type.equals("single")) {
 	    		return chronExpression; // this will be a normal trigger

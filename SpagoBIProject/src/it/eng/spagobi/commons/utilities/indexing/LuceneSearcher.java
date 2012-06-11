@@ -11,9 +11,11 @@
  */
 package it.eng.spagobi.commons.utilities.indexing;
 
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.JTidyHTMLHandler;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 
@@ -74,6 +76,8 @@ public class LuceneSearcher {
 		Query query = new MultiFieldQueryParser(Version.LUCENE_CURRENT, fields,
 				analyzer).parse(queryString);
 		andQuery.add(query, BooleanClause.Occur.MUST);
+		Query tenantQuery = new TermQuery(new Term(IndexingConstants.TENANT, getTenant()));
+		andQuery.add(tenantQuery, BooleanClause.Occur.MUST);
 		logger.debug("Searching for: " + andQuery.toString());
 		int hitsPerPage = 50;
 		
@@ -198,6 +202,10 @@ public class LuceneSearcher {
 			Query queryMetadata = new TermQuery(new Term(IndexingConstants.METADATA, metaDataToSearch));
 			andQuery.add(queryMetadata, BooleanClause.Occur.MUST);
 		}
+		
+		Query tenantQuery = new TermQuery(new Term(IndexingConstants.TENANT, getTenant()));
+		andQuery.add(tenantQuery, BooleanClause.Occur.MUST);
+		
 		logger.debug("Searching for: " + andQuery.toString());
 		int hitsPerPage = 50;
 
@@ -262,5 +270,9 @@ public class LuceneSearcher {
 
 	}
 	
+	private static String getTenant () {
+		// looks in thread
+		return TenantManager.getTenant().getName();
+	}
 
 }

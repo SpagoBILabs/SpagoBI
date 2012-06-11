@@ -65,5 +65,9 @@
             <column name="DESCRIPTION" length="1000" />
         </property>
         <one-to-one name="sbiGoalHierarchy" class="it.eng.spagobi.kpi.goal.metadata.SbiGoalHierarchy"></one-to-one>
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>

@@ -23,6 +23,8 @@ package it.eng.qbe.datasource.transaction.hibernate;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.datasource.transaction.ITransaction;
 
+import java.sql.Connection;
+
 import org.hibernate.Session;
 
 
@@ -58,7 +60,33 @@ public class HibernateTransaction implements ITransaction{
 	 * @see it.eng.qbe.datasource.transaction.ITransaction#getSQLConnection()
 	 */
 	public java.sql.Connection getSQLConnection(){
+		return getConnection(this.session);
+	}
+	
+	public static Connection getConnection(Session session) {
+		// Hibernate 3
 		return session.connection();
+		
+		// following code for Hibernate 4
+//		try {
+//			// reflective lookup to bridge between Hibernate 3.x and 4.x
+//			// see http://stackoverflow.com/questions/3526556/session-connection-deprecated-on-hibernate
+//			Method connectionMethod = session.getClass().getMethod(
+//						"connection");
+//			return (Connection) connectionMethod.invoke(session);
+//		} catch (NoSuchMethodException e) {
+//			throw new IllegalStateException(
+//					"Cannot find connection() method on Hibernate session", e);
+//		} catch (IllegalArgumentException e) {
+//			throw new IllegalStateException(
+//					"IllegalArgumentException invoking connection() method on Hibernate session", e);
+//		} catch (IllegalAccessException e) {
+//			throw new IllegalStateException(
+//					"IllegalAccessException invoking connection() method on Hibernate session", e);
+//		} catch (InvocationTargetException e) {
+//			throw new IllegalStateException(
+//					"InvocationTargetException invoking connection() method on Hibernate session", e);
+//		}
 	}
 	
 }

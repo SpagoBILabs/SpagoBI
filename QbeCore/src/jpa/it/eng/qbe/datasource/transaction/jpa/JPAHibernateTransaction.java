@@ -20,11 +20,14 @@
  **/
 package it.eng.qbe.datasource.transaction.jpa;
 
-import org.hibernate.Session;
-import org.hibernate.ejb.HibernateEntityManager;
-
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.datasource.transaction.ITransaction;
+import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
+
+import java.sql.Connection;
+
+import org.hibernate.Session;
+import org.hibernate.ejb.HibernateEntityManager;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -58,6 +61,11 @@ public class JPAHibernateTransaction implements ITransaction{
 	 * @see it.eng.qbe.datasource.transaction.ITransaction#getSQLConnection()
 	 */
 	public java.sql.Connection getSQLConnection(){
-		return session.connection();
+		return getConnection(this.session);
 	}
+	
+	public static Connection getConnection(Session session) {
+		return HibernateTransaction.getConnection(session);
+	}
+	
 }

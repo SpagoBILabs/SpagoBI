@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <INTERNAL_PROFILING_INITIALIZER>
 		<DEFAULT_USERS>
-			<USER userId="biadmin" password="biadmin" fullName="SpagoBI Administrator">
+			<USER userId="biadmin" password="biadmin" fullName="SpagoBI Administrator" organization="SPAGOBI">
 				<ATTRIBUTE name="email" value="admin@eng.it" />
 				<ATTRIBUTE name="name" value="SpagoBI Administrator" />
 				<ROLE name="/spagobi/admin"/>
 			</USER>
-			<USER userId="biuser" password="biuser" fullName="SpagoBI User">
+			<USER userId="biuser" password="biuser" fullName="SpagoBI User" organization="SPAGOBI">
 				<ATTRIBUTE name="name" value="SpagoBI User" />
 				<ROLE name="/spagobi/user"/>
 			</USER>
-			<USER userId="bidemo" password="bidemo" fullName="SpagoBI Demo User">
+			<USER userId="bidemo" password="bidemo" fullName="SpagoBI Demo User" organization="SPAGOBI">
 				<ATTRIBUTE name="name" value="SpagoBI Demo User" />
 				<ROLE name="/spagobi/user/demo"/>
 			</USER>
-			<USER userId="bitest" password="bitest" fullName="SpagoBI Test User">
+			<USER userId="bitest" password="bitest" fullName="SpagoBI Test User" organization="SPAGOBI">
 				<ATTRIBUTE name="name" value="SpagoBI TestUser" />
 				<ROLE name="/spagobi/test"/>
 			</USER>
-			<USER userId="bidev" password="bidev" fullName="SpagoBI Developer">
+			<USER userId="bidev" password="bidev" fullName="SpagoBI Developer" organization="SPAGOBI">
 				<ATTRIBUTE name="name" value="SpagoBI Developer" />
 				<ROLE name="/spagobi/dev"/>
 			</USER>
-			<USER userId="bam" password="bam" fullName="Bam User">
+			<USER userId="bam" password="bam" fullName="Bam User" organization="SPAGOBI">
 				<ATTRIBUTE name="name" value="Bam User" />
 				<ROLE name="/spagobi/bam"/>
 			</USER>
 		</DEFAULT_USERS>
 		<DEFAULT_ATTRIBUTES>
-			<ATTRIBUTE name="name" description="name" />
-			<ATTRIBUTE name="surname" description="surname" />
-			<ATTRIBUTE name="address" description="address" />
-			<ATTRIBUTE name="birth_date" description="birth date" />
-			<ATTRIBUTE name="email" description="email" />
+			<ATTRIBUTE name="name" description="name" organization="SPAGOBI"/>
+			<ATTRIBUTE name="surname" description="surname" organization="SPAGOBI"/>
+			<ATTRIBUTE name="address" description="address" organization="SPAGOBI"/>
+			<ATTRIBUTE name="birth_date" description="birth date" organization="SPAGOBI"/>
+			<ATTRIBUTE name="email" description="email" organization="SPAGOBI"/>
 		</DEFAULT_ATTRIBUTES>
 		<DEFAULT_ROLES>
-			<ROLE roleName="/spagobi/dev" description="/spagobi/dev" roleTypeCD="DEV_ROLE"/>
-			<ROLE roleName="/spagobi/test" description="/spagobi/test" roleTypeCD="TEST_ROLE"/>
-			<ROLE roleName="/spagobi/user" description="/spagobi/user" roleTypeCD="USER"/>
-			<ROLE roleName="/spagobi/userb" description="/spagobi/userb" roleTypeCD="USER" />
-			<ROLE roleName="/spagobi/admin" description="/spagobi/admin" roleTypeCD="ADMIN" />
-			<ROLE roleName="/spagobi/modeladmin" description="/spagobi/modeladmin" roleTypeCD="MODEL_ADMIN" />
-			<ROLE roleName="/spagobi/op_reva" description="/spagobi/op_reva" roleTypeCD="USER" />
-			<ROLE roleName="/spagobi/an_reva" description="/spagobi/an_reva" roleTypeCD="USER" />	
-			<ROLE roleName="/spagobi/bam" description="/spagobi/bam" roleTypeCD="USER" />	
-			<ROLE roleName="/spagobi/user/demo" description="/spagobi/user/demo" roleTypeCD="USER" />	
+			<ROLE roleName="/spagobi/dev" description="/spagobi/dev" roleTypeCD="DEV_ROLE" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/test" description="/spagobi/test" roleTypeCD="TEST_ROLE" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/user" description="/spagobi/user" roleTypeCD="USER" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/userb" description="/spagobi/userb" roleTypeCD="USER" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/admin" description="/spagobi/admin" roleTypeCD="ADMIN" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/modeladmin" description="/spagobi/modeladmin" roleTypeCD="MODEL_ADMIN" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/op_reva" description="/spagobi/op_reva" roleTypeCD="USER" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/an_reva" description="/spagobi/an_reva" roleTypeCD="USER" organization="SPAGOBI"/>	
+			<ROLE roleName="/spagobi/bam" description="/spagobi/bam" roleTypeCD="USER" organization="SPAGOBI"/>	
+			<ROLE roleName="/spagobi/user/demo" description="/spagobi/user/demo" roleTypeCD="USER" organization="SPAGOBI"/>	
 		</DEFAULT_ROLES>
 </INTERNAL_PROFILING_INITIALIZER>

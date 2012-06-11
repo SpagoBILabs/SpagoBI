@@ -11,20 +11,19 @@
  */
 package it.eng.spagobi.commons.initializers.metadata;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.init.InitializerIFace;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.engines.config.metadata.SbiEngines;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -42,14 +41,27 @@ public class EnginesInitializer extends SpagoBIInitializer {
 	public void init(SourceBean config, Session hibernateSession) {
 		logger.debug("IN");
 		try {
-			String hql = "from SbiEngines";
+			List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
+			for (SbiTenant tenant : tenants) {
+				init(config, hibernateSession, tenant);
+			}
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	public void init(SourceBean config, Session hibernateSession, SbiTenant tenant) {
+		logger.debug("IN");
+		try {
+			String hql = "from SbiEngines e where e.commonInfo.organization = :organization";
 			Query hqlQuery = hibernateSession.createQuery(hql);
+			hqlQuery.setString("organization", tenant.getName());
 			List engines = hqlQuery.list();
 			if (engines.isEmpty()) {
-				logger.info("Engines table is empty. Starting populating predefined engines...");
-				writeEngines(hibernateSession);
+				logger.info("No engines for tenant " + tenant.getName() + ". Starting populating predefined engines...");
+				writeEngines(hibernateSession, tenant);
 			} else {
-				logger.debug("Engines table is already populated");
+				logger.debug("Engines table is already populated for tenant " + tenant.getName());
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializeng Engines", t);
@@ -58,7 +70,7 @@ public class EnginesInitializer extends SpagoBIInitializer {
 		}
 	}
 	
-	private void writeEngines(Session aSession) throws Exception {
+	private void writeEngines(Session aSession, SbiTenant tenant) throws Exception {
 		logger.debug("IN");
 		SourceBean enginesSB = getConfiguration();
 		if (enginesSB == null) {
@@ -95,6 +107,9 @@ public class EnginesInitializer extends SpagoBIInitializer {
 			SbiDomains domainBiobjectType = findDomain(aSession, biobjTypeCd, "BIOBJ_TYPE");
 			anEngine.setBiobjType(domainBiobjectType);
 
+			// setting tenant/organization info
+			anEngine.getCommonInfo().setOrganization(tenant.getName());
+			
 			logger.debug("Inserting Engine with label = [" + anEngineSB.getAttribute("label") + "] ...");
 
 			aSession.save(anEngine);

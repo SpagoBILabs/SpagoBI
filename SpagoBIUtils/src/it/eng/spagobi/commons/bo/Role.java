@@ -29,6 +29,7 @@ public class Role  implements Serializable  {
 	private String roleTypeCD = null;
 	private String code = null;
 	private Integer roleTypeID;
+	private String organization = null;
 	private boolean isAbleToSaveSubobjects;
     private boolean isAbleToSeeSubobjects;
     private boolean isAbleToSeeViewpoints;
@@ -398,7 +399,13 @@ public class Role  implements Serializable  {
 		this.isAbleToEditWorksheet = isAbleToEditWorksheet;
 	}
 	
-	
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
 	
 	
 }

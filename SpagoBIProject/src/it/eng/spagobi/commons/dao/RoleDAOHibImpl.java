@@ -27,6 +27,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiEventRole;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.events.metadata.SbiEventsLog;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -206,6 +207,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setRoleType(roleType);
 			
 			hibRole.setRoleTypeCode(aRole.getRoleTypeCD());
+			hibRole.getCommonInfo().setOrganization(aRole.getOrganization());
 			updateSbiCommonInfo4Insert(hibRole);
 			aSession.save(hibRole);
 			
@@ -512,6 +514,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		role.setRoleTypeCD(hibRole.getRoleTypeCode());
 		role.setRoleTypeID(hibRole.getRoleType().getValueId());
+		role.setOrganization(hibRole.getCommonInfo().getOrganization());
 		logger.debug( "OUT" );
 		return role;
 	}

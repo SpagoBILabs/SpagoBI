@@ -49,6 +49,9 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 	public SDKDataSet getDataSet(Integer dataSetId) throws NotAllowedOperationException {
 		SDKDataSet toReturn = null;
 		logger.debug("IN: dataSetId in input = " + dataSetId);
+		
+		this.setTenant();
+		
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 			if (dataSetId == null) {
@@ -68,6 +71,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			logger.debug("Returning null");
 			return null;
 		} finally {
+			this.unsetTenant();
 			logger.debug("OUT");
 		}
 		return toReturn;
@@ -76,6 +80,9 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 	public SDKDataSet[] getDataSets() throws NotAllowedOperationException {
 		SDKDataSet[] toReturn = null;
 		logger.debug("IN");
+		
+		this.setTenant();
+		
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 			List dataSetList = DAOFactory.getDataSetDAO().loadAllActiveDataSets();
@@ -92,6 +99,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			logger.debug("Returning null");
 			return null;
 		} finally {
+			this.unsetTenant();
 			logger.debug("OUT");
 		}
 		return toReturn;
@@ -102,6 +110,9 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		IMetaData dsMeta=null;
 		Integer dataSetId = null;
 		logger.debug("IN");
+		
+		this.setTenant();
+		
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 			if (sdkDataSet == null) {
@@ -180,6 +191,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			logger.debug("Returning null");
 			return null;
 		} finally {
+			this.unsetTenant();
 			logger.debug("OUT");
 		}
 		return toReturn;
@@ -189,6 +201,9 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		logger.debug("IN");
 		Integer dataSetId = null;
 		Integer toReturn = null;
+		
+		this.setTenant();
+		
 		try {
 			IEngUserProfile profile = getUserProfile();
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
@@ -222,8 +237,11 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			logger.error("Error while saving dataset", e);
 			return null;
 			// TODO: throw an exception when error rises
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
+		
 		return toReturn;
 	}
 	/**
@@ -232,6 +250,9 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 	public String executeDataSet(String label, SDKDataSetParameter[] params) throws NotAllowedOperationException{
 		String toReturn = null;
 		logger.debug("IN: label in input = " + label);
+		
+		this.setTenant();
+		
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 			if (label == null) {
@@ -265,6 +286,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			logger.debug("Returning null");
 			return null;
 		} finally {
+			this.unsetTenant();
 			logger.debug("OUT");
 		}
 		return toReturn;

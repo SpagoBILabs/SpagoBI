@@ -63,6 +63,7 @@ public class MetadataInitializer extends SpagoBIInitializer {
 		targetComponentName = "SpagoBI Metadata Database";
 		
 		metadataInitializers = new ArrayList<SpagoBIInitializer>();
+		metadataInitializers.add( new TenantsInitializer() );
 		metadataInitializers.add( new DomainsInitializer() );
 		metadataInitializers.add( new EnginesInitializer() );
 		metadataInitializers.add( new ChecksInitializer() );		
@@ -70,8 +71,8 @@ public class MetadataInitializer extends SpagoBIInitializer {
 		metadataInitializers.add( new FunctionalitiesInitializer() );
 		metadataInitializers.add( new ExportersInitializer() );		
 		metadataInitializers.add( new ConfigurationsInitializer() );
-		metadataInitializers.add( new KpiPeriodicityInitializer() );
-		metadataInitializers.add( new UnitGrantInitializer() );		
+		//metadataInitializers.add( new KpiPeriodicityInitializer() );
+		//metadataInitializers.add( new UnitGrantInitializer() );		
 	}
 	
 	public void init(SourceBean config) {

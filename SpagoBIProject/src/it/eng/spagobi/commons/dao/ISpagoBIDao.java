@@ -17,4 +17,5 @@ public interface ISpagoBIDao {
 	void setUserProfile(IEngUserProfile profile);
 	void setUserID(String user);
 	IEngUserProfile getUserProfile();
+	void setTenant(String tenant);
 }

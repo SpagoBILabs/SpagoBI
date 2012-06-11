@@ -33,8 +33,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.hql.QueryTranslator;
 import org.hibernate.hql.ast.ASTQueryTranslatorFactory;
-import org.hibernate.persister.entity.EntityPersister;
-import org.hibernate.persister.entity.Joinable;
 
 /**
  * The Class HqlToSqlQueryRewriter.

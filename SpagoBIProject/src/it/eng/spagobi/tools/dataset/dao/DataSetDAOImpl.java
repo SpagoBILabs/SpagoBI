@@ -213,7 +213,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibDataSet.setUserIn(userIn);
 				hibDataSet.setSbiVersionIn(sbiVersionIn);		
 				hibDataSet.setVersionNum(1);
-				hibDataSet.setTimeIn(currentTStamp);	
+				hibDataSet.setTimeIn(currentTStamp);
+				hibDataSet.setOrganization(dsConfig.getCommonInfo().getOrganization());
 				
 				hibDataSet.setActive(true);			
 
@@ -1047,6 +1048,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibDataSet.setUserIn(userUp);
 				hibDataSet.setSbiVersionIn(sbiVersionUp);	
 				hibDataSet.setTimeIn(currentTStamp);
+				hibDataSet.setOrganization(hibGenericDataSet.getCommonInfo().getOrganization());
 
 				Integer currenthigherVersion = getHigherVersionNumForDS(dsId);
 				Integer newVersion = currenthigherVersion+1;

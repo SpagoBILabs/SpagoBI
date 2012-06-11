@@ -72,6 +72,9 @@
         <property name="descr" type="string">
             <column name="descr" length="160" />
         </property>
-        
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>

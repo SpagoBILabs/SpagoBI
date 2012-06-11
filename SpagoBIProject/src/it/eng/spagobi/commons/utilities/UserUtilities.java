@@ -22,6 +22,7 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -110,7 +111,7 @@ public class UserUtilities {
 	    try {
 		user = supplier.createUserProfile(userId);
 		
-		user.setFunctions(readFunctionality(user.getRoles()));
+		user.setFunctions(readFunctionality(user.getRoles(), user.getOrganization()));
 		userProfile = new UserProfile(user);
 	    } catch (Exception e) {
 	    	logger.error("An error occured while retrieving user profile for user[" + userId +"]");
@@ -143,7 +144,7 @@ public class UserUtilities {
 	    ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 	    try {
 		SpagoBIUserProfile user = supplier.createUserProfile(userId);
-		user.setFunctions(readFunctionality(user.getRoles()));
+		user.setFunctions(readFunctionality(user.getRoles(), user.getOrganization()));
 		return new UserProfile(user);
 	    } catch (Exception e) {
 	    	logger.error("Exception while creating user profile",e);
@@ -152,22 +153,29 @@ public class UserUtilities {
 	    	logger.debug("OUT");
 	    }
     }
-    public static IEngUserProfile getUserProfile(String userId) throws Exception {
-    	logger.debug("IN.userId="+userId);
-    	if (userId==null) return null;
-	    ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
-	    try {
-		SpagoBIUserProfile user = supplier.createUserProfile(userId);
-		if (user==null) return null;
-		user.setFunctions(readFunctionality(user.getRoles()));
-		return new UserProfile(user);
-	    } catch (Exception e) {
-	    	logger.error("Exception while creating user profile",e);
-			throw new SecurityException("Exception while creating user profile", e);
-	    }finally{
-	    	logger.debug("OUT");
-	    }
-    }    
+
+	public static IEngUserProfile getUserProfile(String userId)
+			throws Exception {
+		logger.debug("IN.userId=" + userId);
+		if (userId == null)
+			return null;
+		ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory
+				.createISecurityServiceSupplier();
+		try {
+			SpagoBIUserProfile user = supplier.createUserProfile(userId);
+			if (user == null)
+				return null;
+			user.setFunctions(readFunctionality(user.getRoles(),
+					user.getOrganization()));
+			return new UserProfile(user);
+		} catch (Exception e) {
+			logger.error("Exception while creating user profile", e);
+			throw new SecurityException(
+					"Exception while creating user profile", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}  
 
     /**
      * User functionality root exists.
@@ -279,15 +287,16 @@ public class UserUtilities {
     }
 
 
-    public static String[] readFunctionality(String[] roles) {
+    public static String[] readFunctionality(String[] roles, String organization) {
 		logger.debug("IN");
 		try {
 		    it.eng.spagobi.commons.dao.IUserFunctionalityDAO dao = DAOFactory.getUserFunctionalityDAO();
+		    dao.setTenant(organization);
 		    String[] functionalities = dao.readUserFunctionality(roles);
 		    logger.debug("Functionalities retrieved: " + functionalities == null ? "" : functionalities.toString());
 		    
 		    List<String> roleFunctionalities = new ArrayList<String>();
-		    Role virtualRole = getVirtualRole(roles);
+		    Role virtualRole = getVirtualRole(roles, organization);
 		    
 			if (virtualRole.isAbleToSaveSubobjects()) {
 				roleFunctionalities.add(SpagoBIConstants.SAVE_SUBOBJECT_FUNCTIONALITY);
@@ -354,7 +363,7 @@ public class UserUtilities {
         return userId;
     }
     
-	private static Role getVirtualRole(String[] roles) throws Exception {
+	private static Role getVirtualRole(String[] roles, String organization) throws Exception {
 		logger.debug("IN");
 		Role virtualRole = new Role("", "");
 		virtualRole.setIsAbleToSaveSubobjects(false);
@@ -373,7 +382,9 @@ public class UserUtilities {
 			for (int i = 0; i < roles.length; i++) {
 				String roleName = roles[i];
 				logger.debug("RoleName="+roleName);
-				Role anotherRole = DAOFactory.getRoleDAO().loadByName(roleName);
+				IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+				roleDAO.setTenant(organization);
+				Role anotherRole = roleDAO.loadByName(roleName);
 				if (anotherRole!=null) { 
 					if (anotherRole.isAbleToSaveSubobjects()) {
 						logger.debug("User has role " + roleName + " that is able to save subobjects.");

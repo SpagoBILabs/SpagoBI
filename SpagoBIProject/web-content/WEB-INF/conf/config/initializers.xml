@@ -7,20 +7,21 @@
 	<INITIALIZER class="it.eng.spago.util.MonitorInitializer" config="" />
 	<INITIALIZER class="it.eng.spago.message.MessageBundleInitializer" config="" />
 	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.QuartzInitializer" config="" />
-	<!-- Initializer for Alarm Sending-->
-	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.AlarmQuartzInitializer" config="" />
+
 	<!-- Initializer for Workflow   -->  
 	<INITIALIZER class="it.eng.spagobi.workflow.JbpmContextInitializer" config="" />
 
 	<!-- Initializer for SpagoBI metadata   -->  
 	<INITIALIZER class="it.eng.spagobi.commons.initializers.metadata.MetadataInitializer" config="" />
 
+	<!-- Initializer for Alarm Sending-->
+	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.AlarmQuartzInitializer" config="" />
 
 
     <!-- START-WEB  -->
     
     <INITIALIZER class="it.eng.spagobi.security.init.SecurityInitializer" config="" />
-	  <INITIALIZER class="it.eng.spagobi.analiticalmodel.functionalitytree.init.TreeInitializer" config="TREE_INITIALIZATION" />
+	<INITIALIZER class="it.eng.spagobi.analiticalmodel.functionalitytree.init.TreeInitializer" config="TREE_INITIALIZATION" />
 	
 	<!-- END-WEB  -->
 	<!--  LUCENE INDEXER -->

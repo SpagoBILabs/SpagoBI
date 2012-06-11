@@ -773,4 +773,8 @@ public class DAOFactory {
 	public static ISchedulerDAO getSchedulerDAO() throws EMFUserError{
 		return (ISchedulerDAO)createDAOInstance("SchedulerDAO");
 	}
+	
+	public static ITenantsDAO getTenantsDAO() {
+		return (ITenantsDAO)createDAOInstance("TenantsDAO");
+	}
 }

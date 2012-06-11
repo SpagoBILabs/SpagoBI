@@ -160,7 +160,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 			} catch (SpagoBIServiceException t) {
 				throw (t);		
 			} catch (Throwable t) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "An unexpecte error occered while creating job [" + jobConfJSON + "]", t);
+				throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occurred while creating job [" + jobConfJSON + "]", t);
 			} 
 			
 			
@@ -177,13 +177,13 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 				trigger.setCronExpression(cronExpression);			
 				trigger.setJob(job);
 				
-				Assert.assertNotNull(job, "Impossible to create trugger [" + triggerConfJSON + "]");
+				Assert.assertNotNull(job, "Impossible to create trigger [" + triggerConfJSON + "]");
 				
 				logger.debug("Trigger [" + trigger + "] succesfully created");
 			} catch (SpagoBIServiceException t) {
 				throw (t);		
 			} catch (Throwable t) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "An unexpecte error occered while creating trigger [" + triggerConfJSON + "]", t);
+				throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occurred while creating trigger [" + triggerConfJSON + "]", t);
 			} 
 			
 			// save job and trigger
@@ -254,7 +254,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 			folder = functionalityTreeDao.loadLowFunctionalityByID(folderId, true);
 			Assert.assertNotNull(folder, "Folder [" + folderId + "] cannot be loaded");
 		} catch(Throwable t) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occuerd while loading folder ["+ folderId + "]", t);
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occurred while loading folder ["+ folderId + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}

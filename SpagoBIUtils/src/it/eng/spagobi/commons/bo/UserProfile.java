@@ -13,6 +13,7 @@ package it.eng.spagobi.commons.bo;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.security.AuthorizationsBusinessMapper;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 
@@ -42,6 +43,7 @@ public class UserProfile implements IEngUserProfile {
 	private Collection roles = null;
 	private Collection functionalities = null;
 	private String defaultRole = null;
+	private String organization = null;
 
 	/**
 	 * The Constructor.
@@ -53,6 +55,7 @@ public class UserProfile implements IEngUserProfile {
 		this.userUniqueIdentifier = profile.getUniqueIdentifier();
 		this.userName = profile.getUserName();
 		this.userId = profile.getUserId();
+		this.organization = profile.getOrganization();
 		roles = new ArrayList();
 		if (profile.getRoles() != null) {
 			int l = profile.getRoles().length;
@@ -81,7 +84,11 @@ public class UserProfile implements IEngUserProfile {
 				logger.debug(key + "=" + userAttributes.get(key));
 			}
 			logger.debug("USER ATTRIBUTES----");
+		} else {
+			logger.debug("NO USER ATTRIBUTES");
 		}
+		// putting tenant id on user attributes (for Spago modules' queries) :
+		userAttributes.put(SpagoBIConstants.TENANT_ID, this.organization);
 
 		logger.debug("OUT");
 	}
@@ -336,5 +343,13 @@ public class UserProfile implements IEngUserProfile {
 		return userAttributes;
 	}
 
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
 
 }

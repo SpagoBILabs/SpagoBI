@@ -10,6 +10,7 @@
 	    <CONFIG pool="spagobi" rows="30" title="SBIDev.ListParam.ListLookupParameters.title" >
 	      <QUERIES>
 	        <SELECT_QUERY statement="SELECT_PARAMETERS_LIST">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
 	        </SELECT_QUERY>
@@ -72,6 +73,7 @@
 	    <CONFIG pool="spagobi" rows="30" title="SBIDev.ListParam.title" >
 	      <QUERIES>
 	        <SELECT_QUERY statement="SELECT_LIST_PARAMETERS">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
 	        </SELECT_QUERY>
@@ -185,6 +187,7 @@
 	    <CONFIG pool="spagobi" rows="30" title="SBIDev.ListConfConst.title">
       <QUERIES>
         <SELECT_QUERY statement="SELECT_LIST_MODALITIES_CHECKS">
+        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
          	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
          	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
         </SELECT_QUERY>
@@ -235,6 +238,7 @@
 	    <CONFIG pool="spagobi" rows="30" title="SBIDev.ListPredConst.title">
       <QUERIES>
         <SELECT_QUERY statement="SELECT_PREDEFINED_CHECKS">
+        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
         	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
         	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
         </SELECT_QUERY>
@@ -267,6 +271,7 @@
 	    <CONFIG pool="spagobi" rows="30" title="SBIDev.ListParamUse.ListLookupLov.title" >
 	      <QUERIES>
 	        <SELECT_QUERY statement="SELECT_LIST_MODALITIES_VALUE">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
 				<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
 				<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
 			</SELECT_QUERY>
@@ -331,6 +336,7 @@
 	    <CONFIG pool="spagobi" rows="30" title="SBIDev.predLovList.title">
       <QUERIES>
         	<SELECT_QUERY statement="SELECT_LIST_MODALITIES_VALUE">
+        		<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
         		<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
         		<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
         	</SELECT_QUERY>

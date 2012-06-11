@@ -11,7 +11,9 @@
  */
 package it.eng.spagobi.i18n.metadata;
 
-public class SbiI18NMessages implements java.io.Serializable {
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+
+public class SbiI18NMessages extends SbiHibernateModel implements java.io.Serializable {
 
 	private SbiI18NMessagesId id;
 	private String message;

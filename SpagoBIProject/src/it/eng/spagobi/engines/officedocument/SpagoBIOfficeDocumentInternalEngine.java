@@ -98,7 +98,7 @@ public class SpagoBIOfficeDocumentInternalEngine implements InternalEngineIFace 
 			// set information for the publisher
 			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "OFFICE_DOC");
 		} catch (Exception e) {
-			logger.error("Cannot exec the Office document");
+			logger.error("Cannot exec the Office document", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "100", messageBundle);
 		}
 	}

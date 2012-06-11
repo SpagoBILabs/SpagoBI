@@ -22,6 +22,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.utilities.JTidyHTMLHandler;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
@@ -97,6 +98,9 @@ public class LuceneIndexer {
 			doc.add(new Field(IndexingConstants.BIOBJ_LABEL, biObj.getLabel(),
 					Field.Store.NO, Field.Index.ANALYZED));
 			
+			doc.add(new Field(IndexingConstants.TENANT, getTenant(biObj), Field.Store.YES,
+					Field.Index.NOT_ANALYZED));
+			
 			writer.addDocument(doc);
 			writer.optimize();
 			writer.close();
@@ -164,6 +168,8 @@ public class LuceneIndexer {
 							Document doc = new Document();
 							addSubobjFieldsToDocument(doc, biObj.getId());
 							addFieldsToDocument(doc, String.valueOf(binId.intValue()), biObj.getId(),objMetadata.getName(),domain,htmlContent, content);
+							doc.add(new Field(IndexingConstants.TENANT, getTenant(biObj), Field.Store.YES,
+									Field.Index.NOT_ANALYZED));
 							writer.addDocument(doc);
 						}
 					}
@@ -186,6 +192,10 @@ public class LuceneIndexer {
 						doc.add(new Field(IndexingConstants.BIOBJ_DESCR, biObj.getDescription(),
 								Field.Store.NO, Field.Index.ANALYZED));
 					}
+					
+					doc.add(new Field(IndexingConstants.TENANT, getTenant(biObj), Field.Store.YES,
+							Field.Index.NOT_ANALYZED));
+					
 					doc.add(new Field(IndexingConstants.BIOBJ_LABEL, biObj.getLabel(),
 							Field.Store.NO, Field.Index.ANALYZED));
 					addSubobjFieldsToDocument(doc, biObj.getId());
@@ -333,6 +343,9 @@ public class LuceneIndexer {
 						}
 						doc.add(new Field(IndexingConstants.BIOBJ_LABEL, biobjects.get(k).getLabel(),
 								Field.Store.NO, Field.Index.ANALYZED));
+						doc.add(new Field(IndexingConstants.TENANT, getTenant(biobjects.get(k)), Field.Store.YES,
+								Field.Index.NOT_ANALYZED));
+						
 						addSubobjFieldsToDocument(doc, biobjects.get(k).getId());
 						writer.addDocument(doc);
 					}
@@ -437,4 +450,13 @@ public class LuceneIndexer {
 		logger.debug("OUT");
 	}
 
+	
+	private static String getTenant (BIObject biobj) {
+		// looks in document's info
+		if (biobj.getTenant() != null) {
+			return biobj.getTenant();
+		}
+		// looks in thread
+		return TenantManager.getTenant().getName();
+	}
 }

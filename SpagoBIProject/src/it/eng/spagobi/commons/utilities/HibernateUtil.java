@@ -12,6 +12,10 @@
 package it.eng.spagobi.commons.utilities;
 
 
+import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
+
+import java.sql.Connection;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -49,6 +53,11 @@ public class HibernateUtil {
 	 */
 	public static Session currentSession() {
 		return sessionFactory.openSession();
+	}
+	
+	
+	public static Connection getConnection(Session session) {
+		return HibernateTransaction.getConnection(session);
 	}
 
 	

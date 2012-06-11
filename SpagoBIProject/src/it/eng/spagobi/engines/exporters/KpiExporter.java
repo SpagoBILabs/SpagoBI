@@ -154,7 +154,8 @@ public class KpiExporter {
 			Context ctx = new InitialContext();
 			Session aSession = HibernateUtil.currentSession();
 			Transaction tx = aSession.beginTransaction();
-			Connection jdbcConnection = aSession.connection();
+			//Connection jdbcConnection = aSession.connection();
+			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(dirS + File.separatorChar + "Master.jasper", parameters,jdbcConnection);
 			logger.debug("Report filled succesfully");
 			   if (aSession != null) {

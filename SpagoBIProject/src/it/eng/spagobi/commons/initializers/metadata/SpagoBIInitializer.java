@@ -24,6 +24,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 
 
@@ -131,11 +132,12 @@ public abstract class SpagoBIInitializer extends AbstractHibernateDAO implements
 		return domain;
 	}
 	
-	protected SbiEngines findEngine(Session aSession, String label) {
+	protected SbiEngines findEngine(Session aSession, String label, SbiTenant tenant) {
 		logger.debug("IN");
-		String hql = "from SbiEngines where label = ?";
+		String hql = "from SbiEngines e where e.label = :label and e.commonInfo.organization = :organization";
 		Query hqlQuery = aSession.createQuery(hql);
-		hqlQuery.setParameter(0, label);
+		hqlQuery.setParameter("label", label);
+		hqlQuery.setString("organization", tenant.getName());
 		SbiEngines engine = (SbiEngines) hqlQuery.uniqueResult();
 		logger.debug("OUT");
 		return engine;

@@ -143,5 +143,9 @@
         <property name="executionModality" type="string">
             <column name="execution_modality" length="40" not-null="false" />
         </property>
-     </class>
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
+    </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>
