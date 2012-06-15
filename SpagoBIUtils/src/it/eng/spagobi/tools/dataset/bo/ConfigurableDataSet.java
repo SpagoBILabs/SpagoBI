@@ -23,6 +23,7 @@ import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -59,10 +60,32 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 		super(dataSetConfig);
 		userProfileParameters = new HashMap<String, Object>();
 	}
+	
+	/**utility method used to clean different parameters values that should be null
+	 * @param params parameters map
+	 * @return cleaned params map
+	 */
+	private Map cleanNullParametersValues(Map params){
+		Iterator keys = params.keySet().iterator();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			Object val = params.get(key);
+			if(val instanceof String){
+				if(val != null && (val.equals("") || val.equals("''"))){
+					params.put(key, null);
+				}
+			}
+		}
+		
+		return params;
+	}
 
 	public void loadData(int offset, int fetchSize, int maxResults) {
+		
+		Map parameters = cleanNullParametersValues(getParamsMap());
 
-		dataProxy.setParameters(getParamsMap());
+		dataProxy.setParameters(parameters);
+
 		dataProxy.setProfile(getUserProfileAttributes());
 		dataProxy.setResPath(resPath);
 		
