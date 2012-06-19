@@ -45,7 +45,7 @@ Sbi.settings.browser = {
 }
 
 Sbi.settings.invisibleParameters = {
-		hide : true
+		remove : true
 };
 
 /**
