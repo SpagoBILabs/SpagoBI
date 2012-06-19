@@ -291,7 +291,7 @@ public class MenuUtilities {
 	 * Check if the menu element in input is already presents into the list
 	 * @param lst the list to check
 	 * @param menu the element to check
-	 * @return the index of the input menu item or -1 if it is not found if the element is already presents, false otherwise
+	 * @return the index of the input menu item or -1 if it is not found in the list
 	 */
 	public static int indexOf(List lst, Menu menu){
 		if (lst == null)
