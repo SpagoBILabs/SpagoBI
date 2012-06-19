@@ -168,8 +168,7 @@ public class LoginModule extends AbstractHttpModule {
 				} else {
 					// user must authenticate
 					logger.debug("User must authenticate");
-					String url = servletRequest.getProtocol().substring(0,servletRequest.getProtocol().indexOf("/")) + 
-					"://"+servletRequest.getServerName()+":"+servletRequest.getLocalPort()+servletRequest.getContextPath();
+					String url = GeneralUtilities.getSpagoBiHost() + servletRequest.getContextPath();
 					response.setAttribute("start_url", url);
 					response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "login");
 					logger.debug("OUT");
@@ -250,8 +249,7 @@ public class LoginModule extends AbstractHttpModule {
 					boolean goToChangePwd = checkPwd(user);
 					if (goToChangePwd){
 						response.setAttribute("user_id", user.getUserId());
-						String url = servletRequest.getProtocol().substring(0,servletRequest.getProtocol().indexOf("/")) + 
-						"://"+servletRequest.getServerName()+":"+servletRequest.getLocalPort()+servletRequest.getContextPath();
+						String url = GeneralUtilities.getSpagoBiHost() + servletRequest.getContextPath();
 						response.setAttribute("start_url", url);
 						response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ChangePwdPublisher"); 
 						return;
