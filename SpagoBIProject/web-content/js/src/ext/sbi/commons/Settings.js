@@ -44,6 +44,9 @@ Sbi.settings.browser = {
 		}
 }
 
+Sbi.settings.invisibleParameters = {
+		hide : true
+};
 
 /**
  * KPI
