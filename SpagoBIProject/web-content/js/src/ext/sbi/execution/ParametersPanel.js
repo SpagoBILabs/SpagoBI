@@ -796,10 +796,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 					
 				}
 				
-			} else{//if(p.type === 'NUMBER') {
-//				field = new Ext.form.NumberField(baseConfig);
-//			} else {	
-				field = new Sbi.execution.LookupFieldWithMaximize(baseConfig);
+			} else {
+				if (p.enableMaximizer) {
+					field = new Sbi.execution.LookupFieldWithMaximize(baseConfig);
+				} else {
+					field = new Ext.form.TextField(baseConfig);
+				}
+				
 			}			
 		}
 		

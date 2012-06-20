@@ -34,6 +34,9 @@
         <property name="manualInput" type="integer">
             <column name="man_in" not-null = "true"/>
         </property>
+        <property name="maximizerEnabled" type="boolean">
+            <column name="maximizer_enabled"/>
+        </property>
         <set name="sbiParuseDets" inverse="true">
             <key>
                 <column name="use_id" not-null="true" />

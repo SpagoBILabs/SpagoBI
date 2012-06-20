@@ -531,6 +531,7 @@ public class ImportUtilities {
 		newParuse.setSbiParuseCks(new HashSet());
 		newParuse.setSbiParuseDets(new HashSet());
 		newParuse.setManualInput(paruse.getManualInput());
+		newParuse.setMaximizerEnabled(paruse.getMaximizerEnabled());
 		newParuse.setSelectionType(paruse.getSelectionType());
 		newParuse.setMultivalue(paruse.getMultivalue());
 		logger.debug("OUT");

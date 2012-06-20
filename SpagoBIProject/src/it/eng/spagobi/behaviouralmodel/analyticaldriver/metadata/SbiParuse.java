@@ -37,12 +37,13 @@ public class SbiParuse  extends SbiHibernateModel {
      private String selectionType;
      private Integer multivalue;
      private Integer manualInput;
+     private Boolean maximizerEnabled;
     
 
 
     // Constructors
 
-    /**
+	/**
      * default constructor.
      */
     public SbiParuse() {
@@ -262,6 +263,15 @@ public class SbiParuse  extends SbiHibernateModel {
 	 */
 	public void setMultivalue(Integer multivalue) {
 		this.multivalue = multivalue;
+	}
+	
+
+    public Boolean getMaximizerEnabled() {
+		return maximizerEnabled;
+	}
+
+	public void setMaximizerEnabled(Boolean maximizerEnabled) {
+		this.maximizerEnabled = maximizerEnabled;
 	}
 
 	
