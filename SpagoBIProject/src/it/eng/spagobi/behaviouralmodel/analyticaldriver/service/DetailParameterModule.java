@@ -628,6 +628,7 @@ public class DetailParameterModule extends AbstractModule {
 		String label = (String) request.getAttribute("paruseLabel");
 		String selectionType = (String) request.getAttribute("selectionType");		
 		String manInFlag = (String) request.getAttribute("valueSelection");
+		String maximizerEnabledFlag = (String) request.getAttribute("maximizerEnabled");
 		paruse.setName(name);
 		paruse.setDescription(description);
 		paruse.setLabel(label);
@@ -636,6 +637,7 @@ public class DetailParameterModule extends AbstractModule {
 			paruse.setManualInput(Integer.valueOf("1"));
 			paruse.setSelectionType(null);
 			paruse.setMultivalue(false);
+			paruse.setMaximizerEnabled(Boolean.valueOf(maximizerEnabledFlag));
 		} else {
 			paruse.setManualInput(Integer.valueOf("0"));
 			paruse.setSelectionType(selectionType);
@@ -644,6 +646,7 @@ public class DetailParameterModule extends AbstractModule {
 				paruse.setMultivalue(false);
 			else
 				paruse.setMultivalue(true);
+			paruse.setMaximizerEnabled(false);
 		}
 		
 		paruse.setAssociatedRoles(roles);

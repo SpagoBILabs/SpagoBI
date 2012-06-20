@@ -48,6 +48,7 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 			result.put("label",label);
 			result.put("type", parameter.getParType() );
 			result.put("selectionType", parameter.getSelectionType() );
+			result.put("enableMaximizer", parameter.isEnableMaximizer() );
 			result.put("typeCode", parameter.getTypeCode() );
 			result.put("mandatory", parameter.isMandatory() );
 			result.put("visible", parameter.isVisible() );

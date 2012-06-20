@@ -1063,6 +1063,7 @@ public class ExporterMetadata {
 			hibParuse.setName(parUse.getName());
 			hibParuse.setDescr(parUse.getDescription());
 			hibParuse.setManualInput(parUse.getManualInput());
+			hibParuse.setMaximizerEnabled(parUse.isMaximizerEnabled());
 			hibParuse.setSelectionType(parUse.getSelectionType());
 			hibParuse.setMultivalue(parUse.isMultivalue()? new Integer(1): new Integer(0));
 			session.save(hibParuse);

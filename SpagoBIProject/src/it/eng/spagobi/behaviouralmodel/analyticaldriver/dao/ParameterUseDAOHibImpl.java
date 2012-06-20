@@ -289,6 +289,7 @@ IParameterUseDAO {
 			hibParuse.setSelectionType(aParameterUse.getSelectionType());
 			hibParuse.setMultivalue(aParameterUse.isMultivalue()? new Integer(1): new Integer(0));
 			hibParuse.setManualInput(aParameterUse.getManualInput());
+			hibParuse.setMaximizerEnabled(aParameterUse.isMaximizerEnabled());
 
 			SbiLov hibSbiLov = (SbiLov)aSession.load(SbiLov.class, aParameterUse.getIdLov());
 			//if the lov id is 0 (-1) then the modality is manual input
@@ -410,6 +411,7 @@ IParameterUseDAO {
 			hibParuse.setSelectionType(aParameterUse.getSelectionType());
 			hibParuse.setMultivalue(aParameterUse.isMultivalue()? new Integer(1): new Integer(0));
 			hibParuse.setManualInput(aParameterUse.getManualInput());
+			hibParuse.setMaximizerEnabled(aParameterUse.isMaximizerEnabled());
 			updateSbiCommonInfo4Insert(hibParuse);
 			Integer useId = (Integer)aSession.save(hibParuse);
 
@@ -637,6 +639,7 @@ IParameterUseDAO {
 			aParameterUse.setIdLov(hibParUse.getSbiLov().getLovId());
 		}
 		aParameterUse.setManualInput(hibParUse.getManualInput());
+		aParameterUse.setMaximizerEnabled(hibParUse.getMaximizerEnabled());
 		
 		List checkList = getAssociatedChecks(hibParUse);
 		aParameterUse.setAssociatedChecks(checkList);

@@ -448,12 +448,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   	%>
   		<% 
     	boolean isManualInput = false;
+  		boolean maximizerEnabled = false;
     	boolean isLov = false;
     	int manual = 0;
     	if(paruse.getManualInput()!= null){
     	manual = paruse.getManualInput().intValue();}
-    	if(manual > 0) { isManualInput = true; }
-    	else {isLov = true;}
+    	if(manual > 0) { 
+    		isManualInput = true;
+    		maximizerEnabled = paruse.isMaximizerEnabled();
+    	} else {
+    		isLov = true;
+    		maximizerEnabled = false;
+    	}
     %> 
   		<input type="radio" name="valueSelection"  id ="valueSelection" value="lov" <%=disabled%> <% if(isLov) { out.println(" checked='checked' "); } %> onClick = "lovControl();manualInputSelection=this.value;" />
   	
@@ -517,6 +523,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     	
 
 	</div>
+	
+	<div class='div_detail_label'>
+		<span class='portlet-form-field-label'>
+			<spagobi:message key = "SBIDev.paramUse.maximizerEnabled" />
+		</span>
+	</div>
+	<div class='div_detail_form'>
+		<input type="checkbox" name="maximizerEnabled" <%=disabled%> id ="maximizerEnabled" value="true" <% if(maximizerEnabled) { out.println(" checked='checked' "); } %>></input>
+	</div>
+	
 </div>
 
 
@@ -835,16 +851,19 @@ function lovControl(){
 var var1 = document.getElementById('loadLovLookup');
 var var2 = document.getElementById('paruseLovName');
 var var3 = document.getElementById('paruseSelType');
+var maximizerEnabledInput = document.getElementById('maximizerEnabled');
 
 if(var1.style.display != 'inline'){
    var1.style.display = 'inline';
    var2.disabled = false;
    var3.disabled = false;
+   maximizerEnabledInput.disabled = true;
  }
  else {
- var1.style.display = 'none';
- var2.disabled = true;
-  var3.disabled = true;
+	var1.style.display = 'none';
+	var2.disabled = true;
+	var3.disabled = true;
+	maximizerEnabledInput.disabled = false;
  }
 }
 

@@ -22,7 +22,7 @@ import java.util.List;
 public class ParameterUse  implements Serializable  {
 	
 	Integer useID;
-	Integer id; // in realtï¿½ questo ï¿½ par_id nella tabella
+	Integer id; // in realtà questo è par_id nella tabella
 	Integer idLov;
 	String name = "";
 	String label = "";
@@ -35,6 +35,7 @@ public class ParameterUse  implements Serializable  {
 	boolean multivalue = true;
 	
 	Integer manualInput;
+	boolean maximizerEnabled = true;
 	
 	/**
 	 * Gets the description.
@@ -233,5 +234,13 @@ public class ParameterUse  implements Serializable  {
 	 */
 	public void setMultivalue(boolean multivalue) {
 		this.multivalue = multivalue;
+	}
+	
+	public boolean isMaximizerEnabled() {
+		return maximizerEnabled;
+	}
+
+	public void setMaximizerEnabled(boolean maximizerEnabled) {
+		this.maximizerEnabled = maximizerEnabled;
 	}
 }

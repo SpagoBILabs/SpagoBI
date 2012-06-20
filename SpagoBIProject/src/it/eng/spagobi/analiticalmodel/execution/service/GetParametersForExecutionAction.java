@@ -137,6 +137,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		String label;
 		String parType; // DATE, STRING, ...
 		String selectionType; // COMBOBOX, LIST, ...
+		boolean enableMaximizer;
 		String typeCode; // SpagoBIConstants.INPUT_TYPE_X
 		boolean mandatory;
 		boolean visible;
@@ -251,6 +252,8 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			Assert.assertNotNull(analyticalDriverExecModality, "Impossible to find any valid execution modality for parameter [" + id + "] and role [" + executionInstance.getExecutionRole() + "]" );
 
 			parameterUseId = analyticalDriverExecModality.getUseID();
+			
+			enableMaximizer = analyticalDriverExecModality.isMaximizerEnabled();
 		}
 
 		private void initDependencies() {
@@ -463,6 +466,14 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 
 		public void setSelectionType(String selectionType) {
 			this.selectionType = selectionType;
+		}
+		
+		public boolean isEnableMaximizer() {
+			return enableMaximizer;
+		}
+
+		public void setEnableMaximizer(boolean enableMaximizer) {
+			this.enableMaximizer = enableMaximizer;
 		}
 
 		public int getValuesCount() {
