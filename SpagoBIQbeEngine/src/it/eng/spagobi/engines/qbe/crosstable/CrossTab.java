@@ -367,13 +367,21 @@ public class CrossTab {
 		if(measuresOnColumns){
 			for(int i=0; i<data.size(); i=i+measuresLength){
 				for(int j=0; j<measuresLength; j++){
-					x = rowsSpecification.indexOf(rowCordinates.get(i+j));
-					if ( x < 0 ) {
-						continue;
+					if ( rowsSpecification.size() > 0 ) {
+						x = rowsSpecification.indexOf(rowCordinates.get(i+j));
+						if ( x < 0 ) {
+							continue; // elements not found because crosstab is too big and it was truncated
+						}
+					} else {
+						x = 0; // crosstab with no attributes on rows
 					}
-					y = columnsSpecification.indexOf(columnCordinates.get(i+j));
-					if ( y < 0 ) {
-						continue;
+					if ( columnsSpecification.size() > 0 ) {
+						y = columnsSpecification.indexOf(columnCordinates.get(i+j));
+						if ( y < 0 ) {
+							continue; // elements not found because crosstab is too big and it was truncated
+						}
+					} else {
+						y = 0; // crosstab with no attributes on columns
 					}
 					if((y*measuresLength+j)<columnsN && (y*measuresLength+j)>=0){
 						dataMatrix[x][y*measuresLength+j]=data.get(i+j);
@@ -383,14 +391,25 @@ public class CrossTab {
 		}else{
 			for(int i=0; i<data.size(); i=i+measuresLength){
 				for(int j=0; j<measuresLength; j++){
-					x = rowsSpecification.indexOf(rowCordinates.get(i+j));
-					if ( x < 0 ) {
-						continue;
+					if ( rowsSpecification.size() > 0 ) {
+						x = rowsSpecification.indexOf(rowCordinates.get(i+j));
+						if ( x < 0 ) {
+							continue; // elements not found because crosstab is too big and it was truncated
+						}
+					} else {
+						x = 0; // crosstab with no attributes on rows
 					}
-					y = columnsSpecification.indexOf(columnCordinates.get(i+j));
-					if ( y < 0 ) {
-						continue;
+
+
+					if ( columnsSpecification.size() > 0 ) {
+						y = columnsSpecification.indexOf(columnCordinates.get(i+j));
+						if ( y < 0 ) {
+							continue; // elements not found because crosstab is too big and it was truncated
+						}
+					} else {
+						y = 0; // crosstab with no attributes on columns
 					}
+					
 					if(y<columnsN && y>=0){
 						dataMatrix[x*measuresLength+j][y]=data.get(i+j);
 					}
