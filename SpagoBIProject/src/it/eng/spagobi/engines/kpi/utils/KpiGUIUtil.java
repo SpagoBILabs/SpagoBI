@@ -109,7 +109,7 @@ public class KpiGUIUtil {
 		return visible;
 	}
 	public JSONObject recursiveGetJsonObject(KpiLine kpiLine) {
-		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiGUIUtil.recursiveGetJsonObject");
+		Monitor monitor = MonitorFactory.start("kpi.engines.KpiGUIUtil.recursiveGetJsonObject");
 		JSONObject jsonToReturn = new JSONObject();
 		try {
 
@@ -198,7 +198,7 @@ public class KpiGUIUtil {
 	}
 	private void setKpiInfos(KpiLine kpiLine, JSONObject row) throws JSONException{
 		
-		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiGUIUtil.setKpiInfos");
+		Monitor monitor = MonitorFactory.start("kpi.engines.KpiGUIUtil.setKpiInfos");
 		
 		Integer kpiInstId = getTrend(kpiLine, row);
 		
@@ -227,7 +227,7 @@ public class KpiGUIUtil {
 	}
 	private void setDetailInfos(KpiLine kpiLine, JSONObject row){
 		
-		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiGUIUtil.setDetailInfos");
+		Monitor monitor = MonitorFactory.start("kpi.engines.KpiGUIUtil.setDetailInfos");
 		
 		JSONArray thresholds = new JSONArray();
 		if(kpiLine.getValue() != null){
@@ -314,7 +314,7 @@ public class KpiGUIUtil {
 	}
 	
 	private Integer getTrend(KpiLine kpiLine, JSONObject row){
-		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiGUIUtil.getTrend");
+		Monitor monitor = MonitorFactory.start("kpi.engines.KpiGUIUtil.getTrend");
 		
 		Integer toReturn = null;
 		KpiValue value = kpiLine.getValue();
