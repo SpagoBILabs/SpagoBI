@@ -20,9 +20,7 @@ import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.kpi.model.bo.Model;
-import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
-import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.tools.udp.bo.UdpValue;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
@@ -33,13 +31,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
 
 /**
  * 
@@ -53,32 +48,32 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 
 	public Integer insert(SbiUdpValue propValue) {
 		logger.debug("IN");
-		Session session = getSession();
+		Session session = null;
 		Transaction tx = null;
 		Integer id = null;
 		try {
+			session = getSession();
 			tx = session.beginTransaction();
+			updateSbiCommonInfo4Insert(propValue);
 			id = (Integer)session.save(propValue);
 			tx.commit();
-
 		} catch (HibernateException e) {
 			if( tx != null && tx.isActive() ){
 				tx.rollback();
 			}
 			throw e;
-
-		}finally{
+		} finally {
 			if(session != null){
 				session.close();
 			}
-
 			logger.debug("OUT");
-			return id;
 		}
+		return id;
 	}
 
 
 	public void insert(Session session, SbiUdpValue propValue) {
+		updateSbiCommonInfo4Insert(propValue);
 		session.save(propValue);
 	}
 
@@ -88,6 +83,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
+			updateSbiCommonInfo4Update(propValue);
 			session.update(propValue);
 			tx.commit();
 
@@ -106,6 +102,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 
 	public void update(Session session, SbiUdpValue propValue) {
 		logger.debug("IN");
+		updateSbiCommonInfo4Update(propValue);
 		session.update(propValue);
 		logger.debug("OUT");
 	}	
@@ -461,7 +458,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 					logger.debug("Inserting Udp association between udp "+udpValue.getLabel() + " referencing family " + udpValue.getFamily() + 
 							" with id "+ udpValue.getReferenceId() + "with value "+sbiUdpValue.getValue());
 					sbiUdpValue.setBeginTs(new Date());
-					DAOFactory.getUdpDAOValue().insert(aSession, sbiUdpValue);					
+					this.insert(aSession, sbiUdpValue);					
 					logger.debug("value to Udp "+hibUdp.getLabel()+ " has been inserted");
 				}
 				else{
@@ -472,17 +469,17 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 						// close previous one
 						sbiUdpValueToClose.setBeginTs(already.getBeginTs());
 						sbiUdpValueToClose.setEndTs(new Date());
-						DAOFactory.getUdpDAOValue().update(aSession, sbiUdpValueToClose);
+						this.update(aSession, sbiUdpValueToClose);
 						// insert new one
 						sbiUdpValue.setBeginTs(new Date());
-						DAOFactory.getUdpDAOValue().insert(aSession, sbiUdpValue);
+						this.insert(aSession, sbiUdpValue);
 					}
 					else{
 						logger.debug("Update without closing Udp association between udp "+udpValue.getLabel() + " referencing family " + udpValue.getFamily() + 
 								" with id "+ udpValue.getReferenceId() + "with value "+sbiUdpValue.getValue());						
 						// just update fields no new opening
 						sbiUdpValue.setBeginTs(already.getBeginTs());
-						DAOFactory.getUdpDAOValue().update(aSession, sbiUdpValue);						
+						this.update(aSession, sbiUdpValue);						
 					}
 
 					logger.debug("value to Udp "+hibUdp.getLabel()+ " has been updated; associated to a "+family);

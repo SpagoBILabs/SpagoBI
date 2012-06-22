@@ -74,5 +74,9 @@
         <property name="referenceId" type="integer">
             <column name="REFERENCE_ID" />
         </property>
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>
