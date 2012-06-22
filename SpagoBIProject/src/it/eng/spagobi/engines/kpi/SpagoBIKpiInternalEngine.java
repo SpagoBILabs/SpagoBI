@@ -273,7 +273,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 	public void execute(RequestContainer requestContainer, BIObject obj, SourceBean response) throws EMFUserError {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.execute");
+		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.execute");
 
 		// AUDIT UPDATE
 		Integer auditId = null;
@@ -506,7 +506,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 	public void calculateAndInsertKpiValueWithResources(Integer miId,List resources)throws EMFUserError, EMFInternalError, SourceBeanException {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.calculateAndInsertKpiValueWithResources");
+		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.calculateAndInsertKpiValueWithResources");
 		ModelInstanceNode modI =  DAOFactory.getModelInstanceDAO().loadModelInstanceById(miId, parameters.getDateOfKPI());
 		if (modI != null) {
 			logger.info("Loaded Model Instance Node with id: " + modI.getModelInstanceNodeId());
@@ -637,7 +637,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	private KpiLine retrieveKpiLine(KpiLine line,KpiValue value, KpiInstance kpiI, Integer miId, Resource r, boolean alreadyExistent) throws EMFUserError, EMFInternalError, SourceBeanException{
 		//if parameter exists and OU is abilitaded for Model Instance, than calculate as dataset parameter
 		
-		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.retrieveKpiLine");
+		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.retrieveKpiLine");
 		String parKpiOuLabel = (String)this.parameters.getParametersObject().get("ParKpiOU");
 		logger.info("Got ParKpiOU: " + parKpiOuLabel);
 		String paramLabelHierarchy = (String)this.parameters.getParametersObject().get("ParKpiHierarchy");
@@ -693,7 +693,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	}
 	public KpiLine getBlock(Integer miId, Resource r) throws EMFUserError, EMFInternalError, SourceBeanException {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.getBlock");
+		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.getBlock");
 		KpiLine line = new KpiLine();
 		ModelInstanceNode modI = DAOFactory.getModelInstanceDAO().loadModelInstanceById(miId, parameters.getDateOfKPI());
 		if (modI != null) {
@@ -797,7 +797,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	private void setOUAbilitated(Integer miId, String paramLabelOU, String paramLabelHierarchy){
 		//if paramLabelOU doesn't exist, then scheduling mode
 		//else document execution mode
-		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.setOUAbilitated");
+		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.setOUAbilitated");
 		ouList = new ArrayList<OrganizationalUnitGrantNode>();
 		ouWarning = null;
 		//looks up for OU grants
@@ -853,7 +853,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	}
 	private KpiValue getValueDependingOnBehaviour(KpiInstance kpiI,Integer miId, Resource r, boolean alreadyExistent, OrganizationalUnitGrantNode grantNode) throws EMFUserError, EMFInternalError, SourceBeanException{
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.getValueDependingOnBehaviour");
+		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.getValueDependingOnBehaviour");
 		KpiValue value = new KpiValue();
 		boolean no_period_to_period = false;
 		OrganizationalUnitGrantNode grantNodeToUse = null;
@@ -934,7 +934,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			Date begD, Date endDate, String datasetLabel,
 			Integer modInstId, KpiValue kpiVal) throws EMFUserError, SourceBeanException{
 		
-		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.setKpiValuesFromDataset");
+		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.setKpiValuesFromDataset");
 		int length = fields.size();
 		String xmlData = null;
 		String tempXMLroot = "<XML_DATA></XML_DATA>";

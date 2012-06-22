@@ -76,7 +76,7 @@ public class KpiValueComputation {
 			EMFInternalError, SourceBeanException {
 
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiValueComputation.getNewKpiValue");
+		Monitor monitor = MonitorFactory.start("kpi.engines.KpiValueComputation.getNewKpiValue");
 		Integer kpiInstanceID = kpiInst.getKpiInstanceId();
 		Date kpiInstBegDt = kpiInst.getD();
 
@@ -157,7 +157,7 @@ public class KpiValueComputation {
 	protected KpiValue setTimeAttributes(KpiValue kVal, KpiInstance kpiInst)
 				throws EMFUserError {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiValueComputation.setTimeAttributes");
+		Monitor monitor = MonitorFactory.start("kpi.engines.KpiValueComputation.setTimeAttributes");
 		
 		Date begD = this.parameters.getDateOfKPI();
 		Date endDate = null;
@@ -197,7 +197,7 @@ public class KpiValueComputation {
 	protected KpiValue getFromKpiInstAndSetKpiValueAttributes(
 			KpiInstance kpiInst, KpiValue kVal, Kpi kpi) throws EMFUserError {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiValueComputation.getFromKpiInstAndSetKpiValueAttributes");
+		Monitor monitor = MonitorFactory.start("kpi.engines.KpiValueComputation.getFromKpiInstAndSetKpiValueAttributes");
 		
 		Double weight = null;
 		Double target = null;
@@ -262,7 +262,7 @@ public class KpiValueComputation {
 			Date endDate, Integer modInstNodeId) throws EMFUserError,
 			EMFInternalError, SourceBeanException {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiValueComputation.recursiveGetKpiValueFromKpiRel");
+		Monitor monitor = MonitorFactory.start("kpi.engines.KpiValueComputation.recursiveGetKpiValueFromKpiRel");
 		
 		List<KpiRel> relations = DAOFactory.getKpiDAO()
 				.loadKpiRelListByParentId(kpiParent.getKpiId());
@@ -304,7 +304,7 @@ public class KpiValueComputation {
 			Integer modInstNodeId) throws EMFInternalError,
 			SourceBeanException, EMFUserError, DatasetException {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiValueComputation.getKpiValueFromDataset");
+		Monitor monitor = MonitorFactory.start("kpi.engines.KpiValueComputation.getKpiValueFromDataset");
 		
 		String dsName= dataSet.getName();
 		logger.debug("Elaborating dataset: "+dsName);
