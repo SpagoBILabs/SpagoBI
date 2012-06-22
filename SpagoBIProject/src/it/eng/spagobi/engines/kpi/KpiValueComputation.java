@@ -46,6 +46,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 public class KpiValueComputation {
 
 	private KpiParametrization parameters;
@@ -73,6 +76,7 @@ public class KpiValueComputation {
 			EMFInternalError, SourceBeanException {
 
 		logger.debug("IN");
+		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiValueComputation.getNewKpiValue");
 		Integer kpiInstanceID = kpiInst.getKpiInstanceId();
 		Date kpiInstBegDt = kpiInst.getD();
 
@@ -145,6 +149,7 @@ public class KpiValueComputation {
 			kVal = getKpiValueFromDataset(dataSet, temp, kVal, this.parameters
 					.getDateOfKPI(), kVal.getEndDate(), true, modelInstanceId);
 		}
+		monitor.stop();
 		logger.debug("OUT");
 		return kVal;
 	}
@@ -152,6 +157,8 @@ public class KpiValueComputation {
 	protected KpiValue setTimeAttributes(KpiValue kVal, KpiInstance kpiInst)
 				throws EMFUserError {
 		logger.debug("IN");
+		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiValueComputation.setTimeAttributes");
+		
 		Date begD = this.parameters.getDateOfKPI();
 		Date endDate = null;
 		logger.debug("behaviour: -" + this.parameters.getBehaviour() + "-");
@@ -182,6 +189,7 @@ public class KpiValueComputation {
 			kVal.setEndDate(endDate);
 		}
 		logger.debug("Setted the KpiValue end Date:" + endDate);
+		monitor.stop();
 		logger.debug("OUT");
 		return kVal;
 	}
@@ -189,6 +197,8 @@ public class KpiValueComputation {
 	protected KpiValue getFromKpiInstAndSetKpiValueAttributes(
 			KpiInstance kpiInst, KpiValue kVal, Kpi kpi) throws EMFUserError {
 		logger.debug("IN");
+		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiValueComputation.getFromKpiInstAndSetKpiValueAttributes");
+		
 		Double weight = null;
 		Double target = null;
 		String scaleCode = null;
@@ -243,6 +253,7 @@ public class KpiValueComputation {
 				kVal.setChartType(chartType);
 			logger.debug("OUT");
 		}
+		monitor.stop();
 		return kVal;
 	}
 
@@ -251,6 +262,8 @@ public class KpiValueComputation {
 			Date endDate, Integer modInstNodeId) throws EMFUserError,
 			EMFInternalError, SourceBeanException {
 		logger.debug("IN");
+		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiValueComputation.recursiveGetKpiValueFromKpiRel");
+		
 		List<KpiRel> relations = DAOFactory.getKpiDAO()
 				.loadKpiRelListByParentId(kpiParent.getKpiId());
 		logger.info("extracts relations for kpi parent : "
@@ -282,6 +295,7 @@ public class KpiValueComputation {
 		KpiValue value = getKpiValueFromDataset(dataSet, pars, kVal, begD,
 				endDate, false, modInstNodeId);
 		logger.debug("gets value from dataset : " + value.getValue());
+		monitor.stop();
 		logger.debug("OUT");
 		return value;
 	}
@@ -290,6 +304,8 @@ public class KpiValueComputation {
 			Integer modInstNodeId) throws EMFInternalError,
 			SourceBeanException, EMFUserError, DatasetException {
 		logger.debug("IN");
+		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiValueComputation.getKpiValueFromDataset");
+		
 		String dsName= dataSet.getName();
 		logger.debug("Elaborating dataset: "+dsName);
 		KpiValue kpiValTemp = null;
@@ -413,7 +429,7 @@ public class KpiValueComputation {
 			DAOFactory.getAlarmDAO().isAlarmingValue(kVal);
 			logger.debug("Alarms sent if the value is over the thresholds");
 		}
-
+		monitor.stop();
 		logger.debug("OUT");
 
 		return kVal;

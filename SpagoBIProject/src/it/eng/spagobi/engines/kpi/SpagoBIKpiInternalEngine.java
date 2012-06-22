@@ -61,6 +61,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 /**
  * 
  * @author Chiara Chiarelli
@@ -68,8 +71,6 @@ import org.apache.log4j.Logger;
  */
 
 public class SpagoBIKpiInternalEngine extends AbstractDriver implements InternalEngineIFace {
-
-
 
 
 	static transient Logger logger = Logger.getLogger(SpagoBIKpiInternalEngine.class);
@@ -272,6 +273,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 	public void execute(RequestContainer requestContainer, BIObject obj, SourceBean response) throws EMFUserError {
 		logger.debug("IN");
+		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.execute");
 
 		// AUDIT UPDATE
 		Integer auditId = null;
@@ -467,6 +469,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 					    .getMessage(), null);		
 			   }
 
+		} finally {
+			monitor.stop();
 		}
 	}
 
@@ -502,6 +506,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 	public void calculateAndInsertKpiValueWithResources(Integer miId,List resources)throws EMFUserError, EMFInternalError, SourceBeanException {
 		logger.debug("IN");
+		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.calculateAndInsertKpiValueWithResources");
 		ModelInstanceNode modI =  DAOFactory.getModelInstanceDAO().loadModelInstanceById(miId, parameters.getDateOfKPI());
 		if (modI != null) {
 			logger.info("Loaded Model Instance Node with id: " + modI.getModelInstanceNodeId());
@@ -624,12 +629,15 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				}*/
 
 			}
-		} 	
+		} 
+		monitor.stop();
 		logger.debug("OUT");
 	}
 
 	private KpiLine retrieveKpiLine(KpiLine line,KpiValue value, KpiInstance kpiI, Integer miId, Resource r, boolean alreadyExistent) throws EMFUserError, EMFInternalError, SourceBeanException{
 		//if parameter exists and OU is abilitaded for Model Instance, than calculate as dataset parameter
+		
+		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.retrieveKpiLine");
 		String parKpiOuLabel = (String)this.parameters.getParametersObject().get("ParKpiOU");
 		logger.info("Got ParKpiOU: " + parKpiOuLabel);
 		String paramLabelHierarchy = (String)this.parameters.getParametersObject().get("ParKpiHierarchy");
@@ -680,10 +688,12 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			line.setValue(value);			
 
 		}
+		monitor.stop();
 		return line;
 	}
 	public KpiLine getBlock(Integer miId, Resource r) throws EMFUserError, EMFInternalError, SourceBeanException {
 		logger.debug("IN");
+		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.getBlock");
 		KpiLine line = new KpiLine();
 		ModelInstanceNode modI = DAOFactory.getModelInstanceDAO().loadModelInstanceById(miId, parameters.getDateOfKPI());
 		if (modI != null) {
@@ -766,7 +776,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			}
 
 		}
-
+		monitor.stop();
 		logger.debug("OUT");
 		return line;
 	}
@@ -787,6 +797,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	private void setOUAbilitated(Integer miId, String paramLabelOU, String paramLabelHierarchy){
 		//if paramLabelOU doesn't exist, then scheduling mode
 		//else document execution mode
+		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.setOUAbilitated");
 		ouList = new ArrayList<OrganizationalUnitGrantNode>();
 		ouWarning = null;
 		//looks up for OU grants
@@ -825,6 +836,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 			}
 		}
+		monitor.stop();
 	}
 	//if parameter is passed, than checks if it is granted for the node
 	private boolean behaveLikeDocumentExecution(String paramLabelOU, String paramLabelHierarchy , OrganizationalUnitGrantNode grantNode) {
@@ -841,6 +853,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	}
 	private KpiValue getValueDependingOnBehaviour(KpiInstance kpiI,Integer miId, Resource r, boolean alreadyExistent, OrganizationalUnitGrantNode grantNode) throws EMFUserError, EMFInternalError, SourceBeanException{
 		logger.debug("IN");
+		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.getValueDependingOnBehaviour");
 		KpiValue value = new KpiValue();
 		boolean no_period_to_period = false;
 		OrganizationalUnitGrantNode grantNodeToUse = null;
@@ -910,6 +923,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				} 
 			}
 		}
+		monitor.stop();
 		logger.debug("OUT");
 		return value;
 	}
@@ -919,6 +933,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	protected KpiValue setKpiValuesFromDataset(KpiValue kpiValueToReturn, List fields,IMetaData d, 
 			Date begD, Date endDate, String datasetLabel,
 			Integer modInstId, KpiValue kpiVal) throws EMFUserError, SourceBeanException{
+		
+		Monitor monitor = MonitorFactory.start("spagobi.engines.SpagoBIKpiInternalEngine.setKpiValuesFromDataset");
 		int length = fields.size();
 		String xmlData = null;
 		String tempXMLroot = "<XML_DATA></XML_DATA>";
@@ -999,7 +1015,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 					modInstId, 
 					kpiVal.getR() != null ? kpiVal.getR().getName() : null );
 		}
-
+		monitor.stop();
 		return kpiValueToReturn;
 	}
 

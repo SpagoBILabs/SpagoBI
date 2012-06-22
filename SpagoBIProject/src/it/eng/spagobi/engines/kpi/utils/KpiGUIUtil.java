@@ -34,6 +34,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 public class KpiGUIUtil {
 	static transient Logger logger = Logger.getLogger(KpiGUIUtil.class);
 	private ExecutionInstance kpiInstance;
@@ -106,7 +109,7 @@ public class KpiGUIUtil {
 		return visible;
 	}
 	public JSONObject recursiveGetJsonObject(KpiLine kpiLine) {
-
+		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiGUIUtil.recursiveGetJsonObject");
 		JSONObject jsonToReturn = new JSONObject();
 		try {
 
@@ -186,12 +189,17 @@ public class KpiGUIUtil {
 			logger.error("Error setting children");
 		} catch (Exception e) {
 			logger.error("Error getting execution instances");
+		}finally{
+			monitor.stop();
 		}
 
 		return jsonToReturn;
 
 	}
 	private void setKpiInfos(KpiLine kpiLine, JSONObject row) throws JSONException{
+		
+		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiGUIUtil.setKpiInfos");
+		
 		Integer kpiInstId = getTrend(kpiLine, row);
 		
 		try {
@@ -212,10 +220,15 @@ public class KpiGUIUtil {
 			}
 		} catch (EMFUserError e) {
 			logger.error(e);
+		}finally{
+			monitor.stop();
 		}
 
 	}
 	private void setDetailInfos(KpiLine kpiLine, JSONObject row){
+		
+		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiGUIUtil.setDetailInfos");
+		
 		JSONArray thresholds = new JSONArray();
 		if(kpiLine.getValue() != null){
 			Double weight = kpiLine.getValue().getWeight();
@@ -254,6 +267,7 @@ public class KpiGUIUtil {
 				}
 			}
 		}
+		monitor.stop();
 	}
 	private String detectColor(KpiValue value){
 		String ret = "";
@@ -300,8 +314,11 @@ public class KpiGUIUtil {
 	}
 	
 	private Integer getTrend(KpiLine kpiLine, JSONObject row){
+		Monitor monitor = MonitorFactory.start("spagobi.engines.KpiGUIUtil.getTrend");
+		
 		Integer toReturn = null;
 		KpiValue value = kpiLine.getValue();
+		if (value == null ) return null;
 		Integer modelInstId = kpiLine.getModelInstanceNodeId();
 		try {
 			ModelInstanceNode node = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstId, null);
@@ -316,6 +333,8 @@ public class KpiGUIUtil {
 			
 		} catch (Exception e) {
 			logger.error("Error retrieving modelinstance "+modelInstId, e);
+		}finally{
+			monitor.stop();
 		}
 		return toReturn;
 	}
