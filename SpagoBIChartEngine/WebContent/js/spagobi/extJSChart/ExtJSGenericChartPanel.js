@@ -187,8 +187,8 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
 		   	 localBaseColor = config.colors.baseColor,
 		   	 localTitleFill = "",
 		   	 localTitleFont = "",
-		   	 localLableFill = "",
-		   	 localLableFont = "";
+		   	 localLabelFill = "",
+		   	 localLabelFont = "";
 	   	
 	   	if (config.axesStyle !== undefined){
 		   	localTitleFill = config.axesStyle.color || localBaseColor;
@@ -198,10 +198,10 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
 	   		localTitleFont: 'bold 18px Arial';
 	   	}
 	   	if (config.labelsStyle !== undefined){
-	   		localLableFill = config.labelsStyle.color || localBaseColor;
+	   		localLabelFill = config.labelsStyle.color || localBaseColor;
 		   	localLabelFont = config.labelsStyle.fontWeight + " " + config.labelsStyle.fontSize + " " + config.labelsStyle.fontFamily; 
 	   	}else{
-	   		localLableFill = '#6D869F';
+	   		localLabelFill = '#6D869F';
 	   		localLabelFont: 'bold 12px Arial';
 	   	}
 	   	var themeConfig = {
@@ -210,17 +210,17 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
 	            stroke: localTitleFill
 	        },
 	        axisLabelLeft: {
-	            fill: localLableFill
+	            fill: localLabelFill
 	        },
 	        axisLabelBottom: {
-	            fill: localLableFill
+	            fill: localLabelFill
 	        }, 
 	        axisLabelTop: {
-                fill: localLableFill,
+                fill: localLabelFill,
                 font: localLabelFont
             },
             axisLabelRight: {
-                fill: localLableFill,
+                fill: localLabelFill,
                 font: localLabelFont
             },
 	        axisTitleLeft: {
