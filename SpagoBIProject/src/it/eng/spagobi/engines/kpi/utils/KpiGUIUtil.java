@@ -11,20 +11,12 @@
  */
 package it.eng.spagobi.engines.kpi.utils;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.kpi.bo.KpiLine;
 import it.eng.spagobi.kpi.config.bo.Kpi;
-import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
-import it.eng.spagobi.kpi.model.bo.Model;
-import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
-import it.eng.spagobi.tools.udp.bo.UdpValue;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -42,81 +34,25 @@ public class KpiGUIUtil {
 	private ExecutionInstance kpiInstance;
 	private Locale kpiInstanceLocale;
 	private List parameters ;
-	private String visibilityParameterValues = null;
+	
 	
 	public void setExecutionInstance(ExecutionInstance instance, Locale locale){
 		kpiInstance = instance;
 		kpiInstanceLocale = locale;
-		parameters = kpiInstance.getBIObject().getBiObjectParameters();
-		if(parameters != null){
-			for(int i=0; i<parameters.size(); i++){
-				BIObjectParameter par = (BIObjectParameter)parameters.get(i);
-				if(par.getParameterUrlName().equals("visibilityParameter")){
-					visibilityParameterValues = par.getParameterValuesAsString();
-				}
-			}
-		}
 		
 	}
-	public boolean isVisible(KpiLine kpiLine){
-		boolean visible = false;
-		if(visibilityParameterValues == null){
-			return true;
-		}
-		Integer modelInstId = kpiLine.getModelInstanceNodeId();
-		try {
-			ModelInstanceNode node = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstId, null);
-			Integer modelId= node.getModelNodeId();
-			if(modelId != null){
-				Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(modelId);
-				List<UdpValue> udps = model.getUdpValues();
-				if(udps != null){
-					for(int i=0; i<udps.size(); i++){
-						UdpValue udpVal = udps.get(i);
-						String udpName = udpVal.getName();
-						if(udpName.equals("VISIBILITY")){
-							String val = udpVal.getValue();
-							if(val != null && !val.equals("")){
-								//can be multivalue with 'aa','bb','cc'...format
-								String [] multival = val.split(",");
-								if(multival.length != 0){
-									for(int k = 0; k< multival.length; k++){
-										String v = multival[k].replaceAll("'", "").trim();
-										logger.debug(v+"-"+visibilityParameterValues);
-										if(visibilityParameterValues.equals(v)){
-											visible = true;
-										}
-									}
-								}else{
-									//single value
-									if(visibilityParameterValues.equals(val)){
-										visible = true;									
-									}
-								}
-							}
-						}
 
-					}
-					logger.debug("if udp is present passes a upd name = parameter name to dataset, by ading it to HashMap pars");
-				}
-				
-			}
-			
-		} catch (Exception e) {
-			logger.error("Error retrieving modelinstance "+modelInstId, e);
-		}
-		
-		return visible;
-	}
 	public JSONObject recursiveGetJsonObject(KpiLine kpiLine) {
 		Monitor monitor = MonitorFactory.start("kpi.engines.KpiGUIUtil.recursiveGetJsonObject");
 		JSONObject jsonToReturn = new JSONObject();
 		try {
-
-			boolean isVisible = isVisible(kpiLine);
-			if(!isVisible){
+			if(!kpiLine.isVisible()){
 				jsonToReturn.put("hidden",true);
+			}else{
+				jsonToReturn.put("hidden",false);
 			}
+			
+			
 			String name = kpiLine.getModelNodeName();
 			String label = kpiLine.getModelInstanceNodeId()+"";
 			jsonToReturn.put("statusLabel", label);
@@ -199,30 +135,21 @@ public class KpiGUIUtil {
 	private void setKpiInfos(KpiLine kpiLine, JSONObject row) throws JSONException{
 		
 		Monitor monitor = MonitorFactory.start("kpi.engines.KpiGUIUtil.setKpiInfos");
+
+		row.putOpt("trend", kpiLine.getTrend());
+
+		Kpi kpi = kpiLine.getKpi();
+		row.putOpt("kpiDescr", kpi.getDescription());
+		row.putOpt("kpiName", kpi.getKpiName());
+		row.putOpt("kpiCode", kpi.getCode());
+		row.putOpt("kpiDsLbl", kpi.getDsLabel());
+		row.putOpt("kpiTypeCd", kpi.getKpiTypeCd());
+		row.putOpt("measureTypeCd", kpi.getMeasureTypeCd());
+		row.putOpt("scaleName", kpi.getMetricScaleCd());
+		row.putOpt("targetAudience", kpi.getTargetAudience());
 		
-		Integer kpiInstId = getTrend(kpiLine, row);
-		
-		try {
-			if(kpiInstId != null){
-				KpiInstance kpiInst = DAOFactory.getKpiInstanceDAO().loadKpiInstanceById(kpiInstId);
-				Integer kpiId = kpiInst.getKpi();
-				Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiId);
-				row.putOpt("kpiDescr", kpi.getDescription());
-				row.putOpt("kpiName", kpi.getKpiName());
-				row.putOpt("kpiCode", kpi.getCode());
-				row.putOpt("kpiDsLbl", kpi.getDsLabel());
-				row.putOpt("kpiTypeCd", kpi.getKpiTypeCd());
-				row.putOpt("measureTypeCd", kpi.getMeasureTypeCd());
-				row.putOpt("scaleName", kpi.getMetricScaleCd());
-				row.putOpt("targetAudience", kpi.getTargetAudience());
-				
-				row.putOpt("kpiInstId", kpiInstId);
-			}
-		} catch (EMFUserError e) {
-			logger.error(e);
-		}finally{
-			monitor.stop();
-		}
+		row.putOpt("kpiInstId", kpiLine.getKpiInstId());
+		monitor.stop();
 
 	}
 	private void setDetailInfos(KpiLine kpiLine, JSONObject row){
@@ -313,29 +240,5 @@ public class KpiGUIUtil {
 		
 	}
 	
-	private Integer getTrend(KpiLine kpiLine, JSONObject row){
-		Monitor monitor = MonitorFactory.start("kpi.engines.KpiGUIUtil.getTrend");
-		
-		Integer toReturn = null;
-		KpiValue value = kpiLine.getValue();
-		if (value == null ) return null;
-		Integer modelInstId = kpiLine.getModelInstanceNodeId();
-		try {
-			ModelInstanceNode node = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstId, null);
-			KpiInstance kpiInst= node.getKpiInstanceAssociated();
-			if(kpiInst != null){
-				Integer kpiInstId = kpiInst.getKpiInstanceId();
-				toReturn = kpiInstId;
-				Integer trend = DAOFactory.getKpiDAO().getKpiTrend(null, kpiInstId, value.getBeginDate());
-				row.putOpt("trend", trend);
-				
-			}
-			
-		} catch (Exception e) {
-			logger.error("Error retrieving modelinstance "+modelInstId, e);
-		}finally{
-			monitor.stop();
-		}
-		return toReturn;
-	}
+
 }

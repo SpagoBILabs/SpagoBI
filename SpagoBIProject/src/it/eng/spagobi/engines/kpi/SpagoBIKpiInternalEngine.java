@@ -20,6 +20,8 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -39,6 +41,7 @@ import it.eng.spagobi.kpi.config.bo.KpiValue;
 import it.eng.spagobi.kpi.config.dao.IKpiDAO;
 import it.eng.spagobi.kpi.config.dao.IKpiErrorDAO;
 import it.eng.spagobi.kpi.exceptions.MissingKpiValueException;
+import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
@@ -58,8 +61,11 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -78,25 +84,6 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	public static final String messageBundle = "MessageFiles.messages";
 
 	protected static final String RESOURCE="RES_NAME";
-
-	public String getName() {
-		return name;
-	}
-
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-
-	public String getSubName() {
-		return subName;
-	}
-
-
-	public void setSubName(String subName) {
-		this.subName = subName;
-	}
 
 	protected String name = "";// Document's title
 	protected String subName = "";// Document's subtitle
@@ -119,7 +106,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	public KpiEnginData data;	
 	
 	public KpiParametrization parameters = new KpiParametrization(
-			new Date(), null, "default", null, null, null, null);
+			new Date(), null, "default", null, null, null, null, null);
 	
 	protected KpiValueComputation computation; 
 	// used to set the return of the execution
@@ -132,6 +119,25 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 	public HashMap confMap;
 
+
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public String getSubName() {
+		return subName;
+	}
+
+
+	public void setSubName(String subName) {
+		this.subName = subName;
+	}
 
 	//Method only called by a specific configuration of the scheduler created through the class KPIEngineJob.java
 	public void executeByKpiEngineJob(RequestContainer requestContainer, SourceBean response) throws EMFUserError, SourceBeanException {
@@ -634,6 +640,178 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		logger.debug("OUT");
 	}
 
+	private void setKpiTrend(KpiLine kpiLine){
+		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.setKpiTrend");
+
+		KpiValue value = kpiLine.getValue();
+		if (value == null ) return;
+		Integer modelInstId = kpiLine.getModelInstanceNodeId();
+		try {
+			ModelInstanceNode node = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstId, null);
+			KpiInstance kpiInst= node.getKpiInstanceAssociated();
+			if(kpiInst != null){
+				Integer kpiInstId = kpiInst.getKpiInstanceId();
+				Integer trend = DAOFactory.getKpiDAO().getKpiTrend(null, kpiInstId, value.getBeginDate());
+				kpiLine.setTrend(trend);
+				
+			}
+			
+		} catch (Exception e) {
+			logger.error("Error retrieving modelinstance "+modelInstId, e);
+		}finally{
+			monitor.stop();
+		}
+	}
+	
+	public boolean isVisible(KpiLine kpiLine, Model model){
+		boolean visible = false;
+		if(this.parameters.getVisibilityParameterValues() == null){
+			return true;
+		}
+		Integer modelInstId = kpiLine.getModelInstanceNodeId();
+
+		List<UdpValue> udps = model.getUdpValues();
+		if(udps != null){
+			for(int i=0; i<udps.size(); i++){
+				UdpValue udpVal = udps.get(i);
+				String udpName = udpVal.getName();
+				if(udpName.equals("VISIBILITY")){
+					String val = udpVal.getValue();
+					if(val != null && !val.equals("")){
+						//can be multivalue with 'aa','bb','cc'...format
+						String [] multival = val.split(",");
+						if(multival.length != 0){
+							for(int k = 0; k< multival.length; k++){
+								String v = multival[k].replaceAll("'", "").trim();
+								logger.debug(v+"-"+this.parameters.getVisibilityParameterValues());
+								if(this.parameters.getVisibilityParameterValues().equals(v)){
+									visible = true;
+								}
+							}
+						}else{
+							//single value
+							if(this.parameters.getVisibilityParameterValues().equals(val)){
+								visible = true;									
+							}
+						}
+					}
+				}
+
+			}
+			logger.debug("if udp is present passes a upd name = parameter name to dataset, by ading it to HashMap pars");
+		}
+				
+		
+		return visible;
+	}
+	
+	private void setGUIInformation(KpiLine line,
+					KpiInstance kpiI, 
+					Kpi k,
+					ModelInstanceNode modI) throws EMFUserError{
+		//add information needed by the new GUI 
+		setKpiTrend(line);
+		line.setKpi(k);
+		line.setKpiInstId(kpiI.getKpiInstanceId());
+		Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(modI.getModelNodeId());
+		
+		boolean isVisible = isVisible(line, model);
+		if(!isVisible){
+			line.setVisible(false);				
+		}
+	}
+	
+	public KpiLine getBlock(Integer miId, Resource r) throws EMFUserError, EMFInternalError, SourceBeanException {
+		logger.debug("IN");
+		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.getBlock");
+		KpiLine line = new KpiLine();
+		ModelInstanceNode modI = DAOFactory.getModelInstanceDAO().loadModelInstanceById(miId, parameters.getDateOfKPI());
+		if (modI != null) {
+			logger.info("Loaded Model Instance Node with id: " + modI.getModelInstanceNodeId());
+		}
+		String modelNodeName = modI.getName();
+		line.setModelNodeName(modelNodeName);
+		line.setModelInstanceNodeId(miId);
+		line.setModelInstanceCode(modI.getModelCode());
+		
+		List children = new ArrayList();
+		List childrenIds = modI.getChildrenIds();
+		if (!childrenIds.isEmpty()) {
+			Iterator childrenIt = childrenIds.iterator();
+			while (childrenIt.hasNext()) {
+				Integer id = (Integer) childrenIt.next();	
+				KpiLine childrenLine = getBlock(id, r);
+				if(childrenLine != null){
+					children.add(childrenLine);
+				}
+			}
+		}
+
+		KpiInstance kpiI = modI.getKpiInstanceAssociated();
+		//if true the kpi value will always use the display behaviour
+		boolean alreadyExistent = false;
+
+		if (kpiI == null && modI.getModelInstaceReferenceLabel() != null){
+			ModelInstanceNode modelInstanceRefered = DAOFactory.getModelInstanceDAO().loadModelInstanceByLabel(modI.getModelInstaceReferenceLabel(), parameters.getDateOfKPI());
+			alreadyExistent = true;
+			if (modelInstanceRefered != null && modelInstanceRefered.getKpiInstanceAssociated() != null){
+				kpiI = modelInstanceRefered.getKpiInstanceAssociated();
+				modI.setKpiInstanceAssociated(kpiI);
+			}
+		}		
+
+		line.setChildren(children);
+		if (kpiI != null) {
+			Integer kpiInstID = kpiI.getKpiInstanceId();
+			logger.info("Got KpiInstance with ID: " + kpiInstID.toString());
+			KpiValue value = null;
+			Integer kpiId = kpiI.getKpi();
+			Kpi k = DAOFactory.getKpiDAO().loadKpiById(kpiId);
+			
+			logger.debug("checks for udp related to kpi");
+			ArrayList<UdpValue> udps = (ArrayList<UdpValue>)k.getUdpValues();
+			if(udps != null){
+				for(int i=0; i<udps.size(); i++){
+					UdpValue udpVal = udps.get(i);
+					String udpParameterNameForDataset = udpVal.getName();
+					String udpParameterValueForDataset = udpVal.getValue();
+					this.parameters.getParametersObject().put(udpParameterNameForDataset, udpParameterValueForDataset);
+				}
+				logger.debug("if udp is present passes a upd name = parameter name to dataset, by ading it to HashMap pars");
+			}
+			line = retrieveKpiLine(line, value, kpiI, miId, r, alreadyExistent);
+
+			setGUIInformation(line, kpiI, k, modI);
+			
+			logger.debug("Retrieved the kpi with id: " + kpiId.toString());
+						
+			if (k != null) {
+				List docs = k.getSbiKpiDocuments();
+
+				Iterator it = docs.iterator();
+				List documents = new ArrayList();
+				while(it.hasNext()){
+					KpiDocuments doc = (KpiDocuments)it.next();
+					String docLabel = doc.getBiObjLabel();
+					if (docLabel != null && !docLabel.equals("")) {						
+						logger.debug("Retrieved documents associated to the KPI");
+						documents.add(docLabel);						
+					}
+				}
+				line.setDocuments(documents);
+
+			}
+			if (templateConfiguration.isDisplay_alarm() && value!=null && value.getValue()!= null) {
+				Boolean alarm = DAOFactory.getKpiInstanceDAO().isKpiInstUnderAlramControl(kpiInstID);
+				logger.debug("KPI is under alarm control: " + alarm.toString());
+				line.setAlarm(alarm);
+			}
+
+		}
+		monitor.stop();
+		logger.debug("OUT");
+		return line;
+	}
 	private KpiLine retrieveKpiLine(KpiLine line,KpiValue value, KpiInstance kpiI, Integer miId, Resource r, boolean alreadyExistent) throws EMFUserError, EMFInternalError, SourceBeanException{
 		//if parameter exists and OU is abilitaded for Model Instance, than calculate as dataset parameter
 		
@@ -691,96 +869,6 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		monitor.stop();
 		return line;
 	}
-	public KpiLine getBlock(Integer miId, Resource r) throws EMFUserError, EMFInternalError, SourceBeanException {
-		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.getBlock");
-		KpiLine line = new KpiLine();
-		ModelInstanceNode modI = DAOFactory.getModelInstanceDAO().loadModelInstanceById(miId, parameters.getDateOfKPI());
-		if (modI != null) {
-			logger.info("Loaded Model Instance Node with id: " + modI.getModelInstanceNodeId());
-		}
-		String modelNodeName = modI.getName();
-		line.setModelNodeName(modelNodeName);
-		line.setModelInstanceNodeId(miId);
-		line.setModelInstanceCode(modI.getModelCode());
-
-		List children = new ArrayList();
-		List childrenIds = modI.getChildrenIds();
-		if (!childrenIds.isEmpty()) {
-			Iterator childrenIt = childrenIds.iterator();
-			while (childrenIt.hasNext()) {
-				Integer id = (Integer) childrenIt.next();	
-				KpiLine childrenLine = getBlock(id, r);
-				if(childrenLine != null){
-					children.add(childrenLine);
-				}
-			}
-		}
-
-		KpiInstance kpiI = modI.getKpiInstanceAssociated();
-		//if true the kpi value will always use the display behaviour
-		boolean alreadyExistent = false;
-
-		if (kpiI == null && modI.getModelInstaceReferenceLabel() != null){
-			ModelInstanceNode modelInstanceRefered = DAOFactory.getModelInstanceDAO().loadModelInstanceByLabel(modI.getModelInstaceReferenceLabel(), parameters.getDateOfKPI());
-			alreadyExistent = true;
-			if (modelInstanceRefered != null && modelInstanceRefered.getKpiInstanceAssociated() != null){
-				kpiI = modelInstanceRefered.getKpiInstanceAssociated();
-				modI.setKpiInstanceAssociated(kpiI);
-			}
-		}		
-
-		line.setChildren(children);
-		if (kpiI != null) {
-			Integer kpiInstID = kpiI.getKpiInstanceId();
-			logger.info("Got KpiInstance with ID: " + kpiInstID.toString());
-			KpiValue value = null;
-			Integer kpiId = kpiI.getKpi();
-			Kpi k = DAOFactory.getKpiDAO().loadKpiById(kpiId);
-			
-			logger.debug("checks for udp related to kpi");
-			ArrayList<UdpValue> udps = (ArrayList<UdpValue>)k.getUdpValues();
-			if(udps != null){
-				for(int i=0; i<udps.size(); i++){
-					UdpValue udpVal = udps.get(i);
-					String udpParameterNameForDataset = udpVal.getName();
-					String udpParameterValueForDataset = udpVal.getValue();
-					this.parameters.getParametersObject().put(udpParameterNameForDataset, udpParameterValueForDataset);
-				}
-				logger.debug("if udp is present passes a upd name = parameter name to dataset, by ading it to HashMap pars");
-			}
-			line = retrieveKpiLine(line, value, kpiI, miId, r, alreadyExistent);
-			
-			logger.debug("Retrieved the kpi with id: " + kpiId.toString());
-						
-			if (k != null) {
-				List docs = k.getSbiKpiDocuments();
-
-				Iterator it = docs.iterator();
-				List documents = new ArrayList();
-				while(it.hasNext()){
-					KpiDocuments doc = (KpiDocuments)it.next();
-					String docLabel = doc.getBiObjLabel();
-					if (docLabel != null && !docLabel.equals("")) {						
-						logger.debug("Retrieved documents associated to the KPI");
-						documents.add(docLabel);						
-					}
-				}
-				line.setDocuments(documents);
-
-			}
-			if (templateConfiguration.isDisplay_alarm() && value!=null && value.getValue()!= null) {
-				Boolean alarm = DAOFactory.getKpiInstanceDAO().isKpiInstUnderAlramControl(kpiInstID);
-				logger.debug("KPI is under alarm control: " + alarm.toString());
-				line.setAlarm(alarm);
-			}
-
-		}
-		monitor.stop();
-		logger.debug("OUT");
-		return line;
-	}
-
 	/**Method created to fill ouList class attribute, each time a model instance node is examined.
 	 * If execution modality is document execution: 
 	 * * if node has grants but no document parameter ParKpiOU is passed, than warning (dataset will fail)
