@@ -11,6 +11,8 @@
  */
 package it.eng.spagobi.engines.kpi;
 
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+
 import java.util.Date;
 import java.util.HashMap;
 
@@ -23,10 +25,12 @@ public class KpiParametrization {
 	private Date timeRangeTo;
 	private Date dateIntervalFrom;
 	private Date dateIntervalTo;
-
+	private String visibilityParameterValues = null;//added for new GUI
+	
 	public KpiParametrization(Date dateOfKPI,
 			Date endKpiValueDate, String behaviour, Date timeRangeFrom,
-			Date timeRangeTo, Date dateIntervalFrom, Date dateIntervalTo) {
+			Date timeRangeTo, Date dateIntervalFrom, Date dateIntervalTo,
+			String visibilityParameterValues) {
 		this.dateOfKPI = dateOfKPI;
 		this.endKpiValueDate = endKpiValueDate;
 		this.behaviour = behaviour;
@@ -34,6 +38,29 @@ public class KpiParametrization {
 		this.timeRangeTo = timeRangeTo;
 		this.dateIntervalFrom = dateIntervalFrom;
 		this.dateIntervalTo = dateIntervalTo;
+		getVisibilityParameters();
+	}
+	
+	public void getVisibilityParameters(){
+
+		if(parametersObject != null){
+			for(int i=0; i<parametersObject.size(); i++){
+				BIObjectParameter par = (BIObjectParameter)parametersObject.get("visibilityParameter");
+				if(par != null){
+					visibilityParameterValues = par.getParameterValuesAsString();
+				}
+			}
+		}
+		
+	}
+	
+	
+	public String getVisibilityParameterValues() {
+		return visibilityParameterValues;
+	}
+
+	public void setVisibilityParameterValues(String visibilityParameterValues) {
+		this.visibilityParameterValues = visibilityParameterValues;
 	}
 
 	public HashMap getParametersObject() {

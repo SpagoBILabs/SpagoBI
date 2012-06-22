@@ -11,6 +11,7 @@
  */
 package it.eng.spagobi.engines.kpi.bo;
 
+import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 
@@ -29,13 +30,24 @@ public class KpiLine implements Serializable{
 	List children = null;//List ok kpiLineChildren
 	List documents = null;//List of documents related to the Kpi
 	
+	//added 22/06/2012
+	Integer trend = null;
+	Kpi kpi = null;
+	Integer kpiInstId = null;
+	boolean visible = true;
+	
+
 	public KpiLine() {
 		super();
 		this.children = new ArrayList();
 		this.documents = new ArrayList();
 	}
 	public KpiLine(String modelNodeName, Boolean alarm, KpiValue value, List children,
-			List documents, Integer modelInstanceNodeId, String modelInstanceCode,ThresholdValue thresholdOfValue) {
+			List documents, Integer modelInstanceNodeId, String modelInstanceCode,ThresholdValue thresholdOfValue,
+			Integer trend,
+			Kpi kpi,
+			Integer kpiInstId,
+			boolean visible) {
 		super();
 		this.modelNodeName = modelNodeName;
 		this.alarm = alarm;
@@ -45,8 +57,36 @@ public class KpiLine implements Serializable{
 		this.modelInstanceNodeId = modelInstanceNodeId;
 		this.modelInstanceCode = modelInstanceCode;
 		this.thresholdOfValue = thresholdOfValue;
+		this.trend = trend;
+		this.kpi = kpi;
+		this.kpiInstId = kpiInstId;
+		this.visible = visible;
 	}
 	
+	public boolean isVisible() {
+		return visible;
+	}
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+	public Integer getKpiInstId() {
+		return kpiInstId;
+	}
+	public void setKpiInstId(Integer kpiInstId) {
+		this.kpiInstId = kpiInstId;
+	}
+	public Kpi getKpi() {
+		return kpi;
+	}
+	public void setKpi(Kpi kpi) {
+		this.kpi = kpi;
+	}
+	public Integer getTrend() {
+		return trend;
+	}
+	public void setTrend(Integer trend) {
+		this.trend = trend;
+	}
 	public String getModelNodeName() {
 		return modelNodeName;
 	}
