@@ -231,7 +231,11 @@ public class KpiEngineUtil {
 								logger.error("ParseException.value=" + value, e);
 							}
 							logger.debug("Setted TIME RANGE TO");
+						}else if(url.equals("visibilityParameter")){
+							engine.parameters.setVisibilityParameterValues(value);
+							logger.debug("Setted visibility parameter");
 						}
+						
 						parametersMap.put(url, value);
 					}   
 					//instead if parameter has more than one value

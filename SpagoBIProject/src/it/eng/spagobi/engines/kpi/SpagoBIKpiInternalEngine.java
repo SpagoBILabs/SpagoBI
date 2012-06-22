@@ -153,6 +153,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		// Date for which we want to see the KpiValues
 		this.parameters.setDateOfKPI((Date)requestContainer.getAttribute("start_date"));
 		this.parameters.setEndKpiValueDate((Date)requestContainer.getAttribute("end_date"));
+		
+		this.parameters.setVisibilityParameterValues((String)requestContainer.getAttribute("visibilityParameter"));
 
 		String cascade = (String)requestContainer.getAttribute("cascade");	
 
@@ -665,7 +667,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	
 	public boolean isVisible(KpiLine kpiLine, Model model){
 		boolean visible = false;
-		if(this.parameters.getVisibilityParameterValues() == null){
+		if(!this.parameters.getParametersObject().containsKey("visibilityParameter")){
 			return true;
 		}
 		Integer modelInstId = kpiLine.getModelInstanceNodeId();
@@ -707,12 +709,15 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	
 	private void setGUIInformation(KpiLine line,
 					KpiInstance kpiI, 
-					Kpi k,
-					ModelInstanceNode modI) throws EMFUserError{
+					Kpi k) throws EMFUserError{
 		//add information needed by the new GUI 
 		setKpiTrend(line);
 		line.setKpi(k);
 		line.setKpiInstId(kpiI.getKpiInstanceId());
+
+	}
+	private void setVisibilityInformation(KpiLine line,
+			ModelInstanceNode modI) throws EMFUserError{
 		Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(modI.getModelNodeId());
 		
 		boolean isVisible = isVisible(line, model);
@@ -720,7 +725,6 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			line.setVisible(false);				
 		}
 	}
-	
 	public KpiLine getBlock(Integer miId, Resource r) throws EMFUserError, EMFInternalError, SourceBeanException {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.getBlock");
@@ -733,6 +737,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		line.setModelNodeName(modelNodeName);
 		line.setModelInstanceNodeId(miId);
 		line.setModelInstanceCode(modI.getModelCode());
+		setVisibilityInformation(line, modI);
 		
 		List children = new ArrayList();
 		List childrenIds = modI.getChildrenIds();
@@ -781,7 +786,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			}
 			line = retrieveKpiLine(line, value, kpiI, miId, r, alreadyExistent);
 
-			setGUIInformation(line, kpiI, k, modI);
+			setGUIInformation(line, kpiI, k);
 			
 			logger.debug("Retrieved the kpi with id: " + kpiId.toString());
 						
