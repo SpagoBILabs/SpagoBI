@@ -38,23 +38,10 @@ public class KpiParametrization {
 		this.timeRangeTo = timeRangeTo;
 		this.dateIntervalFrom = dateIntervalFrom;
 		this.dateIntervalTo = dateIntervalTo;
-		getVisibilityParameters();
-	}
-	
-	public void getVisibilityParameters(){
+		this.visibilityParameterValues = visibilityParameterValues;
 
-		if(parametersObject != null){
-			for(int i=0; i<parametersObject.size(); i++){
-				BIObjectParameter par = (BIObjectParameter)parametersObject.get("visibilityParameter");
-				if(par != null){
-					visibilityParameterValues = par.getParameterValuesAsString();
-				}
-			}
-		}
-		
 	}
-	
-	
+
 	public String getVisibilityParameterValues() {
 		return visibilityParameterValues;
 	}
