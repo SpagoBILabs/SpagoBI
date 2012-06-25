@@ -192,66 +192,71 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 		  				// alert(categoryField + ' &' + valueField);
 		  				 
 		  				//Cross Navigation
-		  			  	var drill = config.drill;
-		  		    	if(drill != null && drill !== undefined){
-		  		    		var doc = drill.document;
-		  		    		
-		  		    		var params = "";
-		  		    		for(var i = 0; i< drill.param.length; i++){
-		  		    			if(drill.param[i].type == 'ABSOLUTE'){
-		  		    				if(params !== ""){
-		  			    				params+="&";
-		  			    			}
-		  		    				params+= drill.param[i].name +"="+drill.param[i].value;
-		  		    			}
-		  		    		}
-		  		    		
-		  			    		for(var i = 0; i< drill.param.length; i++){
-		  			    			if(drill.param[i].type == 'CATEGORY'){
-		  			    				if(params !== ""){
-		  		    	    				params+="&";
-		  		    	    			}
-		  			    				if(categoryField !== undefined){
-		  			    					params+= drill.param[i].name +"="+categoryField;
-		  			    				}	    				
-		  			    			}
-		  			    			
-		  			    		}
-		  			    		
-		  			    		var relParams = docParameters[0];
-				        		for(var i = 0; i< drill.param.length; i++){
-				        			if(drill.param[i].type == 'RELATIVE'){
-				        				for(var y =0; y<relParams.length; y++){		        					
-				        					if(relParams[y].name == drill.param[i].name){
-				        						if(params !== ""){
-						    	    				params+="&";
-						    	    			}
-						        				params+= drill.param[i].name +"="+relParams[y].value+"";
-					    	    				params+="&";
-				        					}
-				        				}
-				        			}
-				        		}	
-		  			    		for(var i = 0; i< drill.param.length; i++){
-		  			    			if(drill.param[i].type == 'SERIE'){
-		  			    				if(params !== ""){
-		  		    	    				params+="&";
-		  		    	    			}
-		  			    				if (valueField !== undefined){
-			  			    				params+= drill.param[i].name +"="+valueField;
-		  			    				} 
-		  			    					
-		  			    			}
-		  			    			
-		  			    		}    		
-		  		    		
-		  			    		//execute Cross navigation
-		  			    		//alert("Document Label: "+docLabel);
-		  						parent.execCrossNavigation("iframe_"+docLabel, doc, params);
+		  				var drill = config.drill;
+		  				if(drill != null && drill !== undefined){
+		  					var doc = drill.document;
 
-		  		    	}	 
-		  				 
-		  		    }
+		  					var params = "";
+		  					if (drill.param !== undefined){
+		  						for(var i = 0; i< drill.param.length; i++){
+		  							if(drill.param[i].type == 'ABSOLUTE'){
+		  								if(params !== ""){
+		  									params+="&";
+		  								}
+		  								params+= drill.param[i].name +"="+drill.param[i].value;
+		  							}
+		  						}
+
+		  						for(var i = 0; i< drill.param.length; i++){
+		  							if(drill.param[i].type == 'CATEGORY'){
+		  								if(params !== ""){
+		  									params+="&";
+		  								}
+		  								if(categoryField !== undefined){
+		  									params+= drill.param[i].name +"="+categoryField;
+		  								}	    				
+		  							}
+
+		  						}
+
+		  						var relParams = docParameters[0];
+		  						for(var i = 0; i< drill.param.length; i++){
+		  							if(drill.param[i].type == 'RELATIVE'){
+		  								for(var y =0; y<relParams.length; y++){		        					
+		  									if(relParams[y].name == drill.param[i].name){
+		  										if(params !== ""){
+		  											params+="&";
+		  										}
+		  										params+= drill.param[i].name +"="+relParams[y].value+"";
+		  										params+="&";
+		  									}
+		  								}
+		  							}
+		  						}	
+		  						for(var i = 0; i< drill.param.length; i++){
+		  							if(drill.param[i].type == 'SERIE'){
+		  								if(params !== ""){
+		  									params+="&";
+		  								}
+		  								if (valueField !== undefined){
+		  									params+= drill.param[i].name +"="+valueField;
+		  								} 
+
+		  							}
+
+		  						} 		  		    			
+		  					}
+
+
+		  					//execute Cross navigation
+		  					//alert("Document Label: "+docLabel);
+		  					if (doc !== undefined){
+		  						parent.execCrossNavigation("iframe_"+docLabel, doc, params);
+		  					}
+
+		  				}	 
+
+		  			}
 		  	};
 	  	}
 
