@@ -180,7 +180,7 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
   }
   
  , getThemeConfiguration: function(config) {
-       if (config.colors === undefined){
+       if ( (config.colors === undefined) || (config.colors.color === undefined) ){
     	   return null;
        }
 	   	var  localColors = config.colors.color.split(","),
