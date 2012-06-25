@@ -54,11 +54,11 @@
   <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
 </filter>
 END-CAS -->
-	 
 	
-	<filter>
-		 <filter-name>SpagoBIAccessFilter</filter-name>
-		<filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
+	<!-- This filter tries to create the user profile object before AdapterHTTP servlet execution -->
+ 	<filter>
+		<filter-name>ProfileFilter</filter-name>
+		<filter-class>it.eng.spagobi.commons.filters.ProfileFilter</filter-class>
 	</filter>
 	
 	
@@ -88,15 +88,9 @@ END-CAS -->
 END-CAS -->
 
 	<filter-mapping>
-    	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+		<filter-name>ProfileFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
-
-	<filter-mapping>
-    	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
-	</filter-mapping>
-	
 	
 	<!--  ============================================================================ -->
 	<!--  SERVLETS								 									   -->

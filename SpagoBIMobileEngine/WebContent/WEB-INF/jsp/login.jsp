@@ -32,6 +32,7 @@ authors: Monica Franceschini
 
 		<%@ include file="/WEB-INF/jsp/importSenchaJSLibrary.jspf" %>
 		<%@ include file="/WEB-INF/jsp/constants.jspf" %>
+		<%@ include file="/WEB-INF/jsp/env.jspf" %>
 		<%@ include file="/WEB-INF/jsp/importSbiJS.jspf" %>
 		
 	</head>
