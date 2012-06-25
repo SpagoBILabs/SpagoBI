@@ -91,6 +91,10 @@ app.views.DocumentBrowser = Ext.extend (Ext.NestedList,
 
 			this.store.sync();
 			
+			this.bottomToolbar = new app.views.Toolbar({});
+			
+			this.dockedItems= [this.bottomToolbar];
+			
 			app.views.DocumentBrowser.superclass.initComponent.apply(this, arguments);
 
 		}

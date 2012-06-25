@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
 
-Sbi = {};
+Ext.namespace("Sbi.constants");
 Sbi.constants = {};
 Sbi.constants.documenttype = {};
 Sbi.constants.documenttype.report = '<%= MobileConstants.DOCUMENT_TYPE_MOBILE_REPORT %>';
