@@ -332,7 +332,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	}
 
 	, clearParametersForm: function() {
-		this.parametersPanel.clear();
+		this.parametersPanel.reset();
 	}
 	
 	, saveParametersFormStateAsViewpoint: function() {

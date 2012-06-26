@@ -105,8 +105,8 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardParametersPage, Ext.Panel, {
 		this.currentPage = true;
 		this.wizard.setPageTitle(LN('Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters'), LN('Sbi.browser.mexport.MassiveExportWizardParametersPage.title'));
 		
-		// clear the fields in case you are coming to panel for the second time
-		this.mainPanel.clear();
+		// reset the fields in case you are coming to panel for the second time
+		this.mainPanel.reset();
 
 		// create ExecutionInstances and  get parameters 
 		var selectedRole = this.getPreviousPage().getSelectedRole();	
