@@ -48,7 +48,7 @@
 Ext.ns("Sbi.execution");
 
 Sbi.execution.ParametersPanel = function(config) {
-	defaultSettings
+	
 	var defaultSettings = {
 		columnNo: 3
 		, columnWidth: 350
@@ -67,8 +67,6 @@ Sbi.execution.ParametersPanel = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});	
 	Ext.apply(this, c);
 	
-
-	
 	// create a new variable and store settings into this new variable
 	var temp = {};
 	temp = Ext.apply(temp, defaultSettings);
@@ -81,7 +79,9 @@ Sbi.execution.ParametersPanel = function(config) {
 	if (c.parameters) {
 		this.parametersPreference = c.parameters;
 	}
-	//if(c.isFromCross) alert('parametersPreference: ' + this.parametersPreference.toSource());
+	if (this.parametersPreference) {
+		this.preferenceState = Ext.urlDecode(this.parametersPreference);
+	}
 	
 	// always declare exploited services first!
 	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null, CONTEST: this.contest};
@@ -97,7 +97,6 @@ Sbi.execution.ParametersPanel = function(config) {
 		, baseParams: params
 	});
 	
-	//var cw = 1/c.columnNo;
 	this.formWidth = (c.columnWidth * c.columnNo) ;
 	var columnsBaseConfig = [];
 	for(var i = 0; i < c.columnNo; i++) {		
@@ -138,14 +137,45 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     
     services: null
     , executionInstance: null
-    , parametersPreference: null
     
+    /**
+     * parameters configuration as returned from getParametersForExecutionService. 
+     * @see function loadParametersForExecution()
+     */
+    , parameters: null
+   
+    /**
+     * url encoded parameters whose value must be set during initialization (ex. foodFamily=Drink)
+     */
+    , parametersPreference: null
+    /**
+     * url decoded parameters whose value must be set during initialization (ex. {foodFamily:'Drink'})
+     */
+    , preferenceState: null
+    
+    /**
+     * An array of all the fields contained in the form 
+     * Injected properties:
+     *  - isTransient: true if ???
+     *  - columnNo: the number of the column containing the field
+     *  - dependecies: an array of all the fields that depends from this one
+     *  - dependants: an array of all fields on which the field depends on
+     */
     , fields: null
+    
+    /**
+     * The columns (Ext.FormPanel) that compose the main column layout
+     */
     , columns: null
     , baseConfig: null
     , modality : null
     , drawHelpMessage : true
     , mandatoryFieldAdditionalString: null
+    
+    , manageDataDependencies: true // not used so far but reserved for future use
+    , manageVisualDependencies: true
+    , manageVisualDependenciesOnVisibility: true
+    , manageVisualDependenciesOnLabel: true
     
    
     // ----------------------------------------------------------------------------------------
@@ -156,13 +186,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     , synchronize: function( executionInstance ) {
 		var sync = this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance);
 		this.executionInstance = executionInstance;
-		this.loadParametersForExecution( this.executionInstance );
+		this.loadParametersForExecution( );
 	}
 	
 	, getFormState: function() {
 		var state;
-		//to avoid synchronization problem
 		
+		//to avoid synchronization problem
 		state = {};
 		for(p in this.fields) {
 			var field = this.fields[p];
@@ -191,6 +221,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	
 	, setFormState: function( state ) {
 		var state;	
+		
 		for(p in state) {
 			var fieldName = p;
 			var fieldValue = state[p];
@@ -216,8 +247,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.setFormState(v);
 	}
 	
-	
-	, clear: function() {
+	/**
+	 * reset all the fields in the form and recalculate all the dependencies
+	 */
+	, reset: function() {
 		for(p in this.fields) {
 			var aField = this.fields[p];
 			if (!aField.isTransient) {
@@ -225,25 +258,96 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				this.updateDependentFields( aField );
 			}
 		}
+		
+		for(p in this.fields) {
+			var aField = this.fields[p];
+			aField.clearInvalid();
+		}
+		
+	}
+	
+	/**
+	 * @deprecated use this.reset() instead
+	 */
+	, clear: function() {
+		alert('function clear() is deprecated');
+		this.reset();
+	}
+	
+	, isReadyForExecution: function() {
+		var isReadyForExecution = true;
+		if(this.parameters.length == 0) {
+			isReadyForExecution = true;
+		} else 	{
+			var o = this.getFormState();
+			for(p in o) {
+				// must check is this.fields[p] is undefined because form state contains also parameters' descriptions
+				if(this.fields[p] != undefined && this.fields[p].isTransient === false) {
+					isReadyForExecution = false;
+					break;
+				}
+			}
+		}
+		return isReadyForExecution;
 	}
 	
 	// ----------------------------------------------------------------------------------------
 	// private methods
 	// ----------------------------------------------------------------------------------------
 	
-	, loadParametersForExecution: function( executionInstance ) {
+	
+	// =====================================================================================
+	// PARAMETERS functions
+	// =====================================================================================
+	
+	, setParameters: function(parameters) {
+		this.parameters = parameters;
+	}
+	
+	, parameterHasDependencies: function(parameter) {
+		return parameter.dependencies && parameter.dependencies.length > 0;
+	}
+	
+	, parameterHasOnlyOneValue: function(parameter) {
+		return parameter.valuesCount !== undefined && parameter.valuesCount == 1;
+	}
+	
+	, parameterValueIsInPreferences: function(parameter) {
+		return this.preferenceState !== null && this.preferenceState[parameter.id] !== undefined;
+	}
+	
+	, thereAreParametersToBeFilled: function() {
+		var thereAreParametersToBeFilled = false;
+		if(this.parameters.length > 0) {
+			var o = this.getFormState();
+			for(p in o) {
+				// must check this.fields[p] is undefined because form state contains also parameters' descriptions
+				if(this.fields[p] != undefined && this.fields[p].isTransient === false) {
+					thereAreParametersToBeFilled = true;
+					break;
+				}
+			}
+		}
+		return thereAreParametersToBeFilled;
+	}
+	
+	, loadParametersForExecution: function( ) {
+		
+		if( !this.executionInstance ) {
+			alert("Impossible to load parameters because executionInstance is not properly initialized");
+		}
+		
 		Ext.Ajax.request({
 	          url: this.services['getParametersForExecutionService'],
 	          
-	          params: executionInstance,
+	          params: this.executionInstance,
 	          
 	          callback : function(options, success, response){
 	    	  	if(success && response !== undefined) {   
 		      		if(response.responseText !== undefined) {
 		      			var content = Ext.util.JSON.decode( response.responseText );
 		      			if(content !== undefined) {
-			      			//this.fireEvent('parametersForExecutionLoaded', this, content);
-		      				this.onParametersForExecutionLoaded(executionInstance, content);
+		      				this.initializeParametersPanel(content);
 		      			} 
 		      		} else {
 		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
@@ -254,86 +358,40 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	  		  failure: Sbi.exception.ExceptionHandler.handleFailure      
 	     });
 	}
-
-	, onParametersForExecutionLoaded: function( executionInstance, parameters ) {
-		
-		// clears the form
-		for(p in this.fields) {
-			// if input field has an element (it means that the field was displayed)
-			if (this.fields[p].el !== undefined) {
-				// retrieves the element containing label plus input field and removes it
-				var el = this.fields[p].el.up('.x-form-item');
-				this.columns[this.fields[p].columnNo].remove( this.fields[p], true );
-				el.remove();
-			}
-		}
-		
-		this.fields = {};
-		var preferenceState = undefined;
-		if (this.parametersPreference) {
-			preferenceState = Ext.urlDecode(this.parametersPreference);
-			//if(this.isFromCross) alert('preferenceState: ' + preferenceState.toSource());
-		}
 	
+	, initializeParametersPanel: function( parameters ) {
 		
+		this.setParameters(parameters);
+		
+		this.removeAllFields();
+		
+			
 		var nonTransientField = 0;
 		for(var i = 0; i < parameters.length; i++) {
-			var field = this.createField( executionInstance, parameters[i] );
+			var field = this.createField( parameters[i] );
 			 
-			
-			// check if parameter has dependencies
-			var hasDependencies = false;
-			if(parameters[i].dependencies && parameters[i].dependencies.length>0){			
-				hasDependencies = true;
-			}
-				
-			// if parameter has only one value but has dependencies draw it
-			if(parameters[i].valuesCount !== undefined && parameters[i].valuesCount == 1 && hasDependencies == true) {
-				field.isTransient = false;
-				field.columnNo = (nonTransientField++)%this.columns.length;
-				this.columns[field.columnNo].add( field );
-
-			}
-			else if(parameters[i].valuesCount !== undefined && parameters[i].valuesCount == 1 && parameters[i].type !== 'DATE') {
-				field.isTransient = true;
-				field.setValue(parameters[i].value);
-				
-			} else if (preferenceState !== undefined && preferenceState[parameters[i].id] !== undefined) {
-				//field.isTransient = true;
-				//if(this.isFromCross) alert(parameters[i].id + ' set equals to ' + preferenceState[parameters[i].id]);
-				field.setValue(preferenceState[parameters[i].id]);
-			} else if (parameters[i].visible === false) {
-				//field.isTransient = true;
-				if (preferenceState !== undefined && preferenceState[parameters[i].id] !== undefined) {
-					field.setValue(preferenceState[parameters[i].id]);
+		
+			if( this.parameterHasOnlyOneValue( parameters[i] ) ) {
+				if( this.parameterHasDependencies( parameters[i] ) || parameters[i].type === 'DATE') {
+					this.addField(field, nonTransientField++);
+				} else {
+					field.isTransient = true;
+					field.setValue(parameters[i].value);
 				}
-			} else {
-				field.isTransient = false;
-				field.columnNo = (nonTransientField++)%this.columns.length;
-				this.columns[field.columnNo].add( field );
+			} else {				
+				if ( this.parameterValueIsInPreferences(parameters[i]) ) {
+					field.setValue(preferenceState[parameters[i].id]);
+				} else {
+					if (parameters[i].visible === true && parameters[i].vizible !== false) {
+						this.addField(field, nonTransientField++);
+					}
+				}
 			}
+			
 			this.fields[parameters[i].id] = field;
 		}
 		
-		if(this.isFromCross) {
-			//alert('formState[after set]: ' + this.getFormState().toSource());
-		}
-		
-		var thereAreParametersToBeFilled = false;
-		if(parameters.length > 0) {
-			var o = this.getFormState();
-			for(p in o) {
-				// must check is this.fields[p] is undefined because form state contains also parameters' descriptions
-				if(this.fields[p] != undefined && this.fields[p].isTransient === false) {
-					thereAreParametersToBeFilled = true;
-					break;
-				}
-			}
-		}
-		
-		//if(this.isFromCross) alert('thereAreParametersToBeFilled?' + thereAreParametersToBeFilled);
-		
-		if(thereAreParametersToBeFilled !== true) {
+		if(this.thereAreParametersToBeFilled() !== true) {
 			if (this.rendered) {
 				Ext.DomHelper.append(this.body, '<div class="x-grid-empty">' + LN('sbi.execution.parametersselection.noParametersToBeFilled') + '</div>');
 			}
@@ -343,7 +401,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			// in order to let it be editable, you should click on input label, or above + TAB button
 			var firstItem = this.columns[0].items.get(0);
 			var itemParameter = firstItem.behindParameter;
-			// CONTROLLARE SE VA ANCORA BENE!!!
 			if (itemParameter.typeCode == 'MAN_IN') {
 				firstItem.on('render', function(theField) {
 					theField.focus();
@@ -352,44 +409,34 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 		}
 		
-		// Help message on Parameters Panel.
-		// work-around: since the panel toolbar may be to short, the message is injected with Ext.DomHelper.insertFirst on the body of
-		// the panel, but a function for width calculation is necessary (this function does not work on page 3 when executing in
-		// document browser with tree structure initially opened, since containerWidth is 0).
-		// TODO: try to remove the on resize method and the width calculation
-		if (this.messageElement == undefined && this.rendered && (this.drawHelpMessage == true)) {
-			var containerWidth = this.getInnerWidth();
-			this.widthDiscrepancy = Ext.isIE ? 1 : 5;
-			var initialWidth = containerWidth > this.formWidth ? containerWidth - this.widthDiscrepancy: this.formWidth;
-			
-			var message = this.getHelpMessage(executionInstance, thereAreParametersToBeFilled);
-			
-			this.messageElement = Ext.DomHelper.insertFirst(this.body, 
-					'<div style="font-size: 12px; font-family: tahoma,verdana,helvetica; margin-bottom: 14px; color: rgb(24, 18, 241);' 
-					+ (containerWidth === 0 ? '' : 'width: ' + initialWidth + 'px;') + '"'  
-					+ ' class="x-panel-tbar x-panel-tbar-noheader x-toolbar x-panel-tbar-noborder x-btn-text x-item-disabled">'
-					+ message
-					+ '</div>');
-			this.on('resize', function() {
-				var containerWidth = this.getInnerWidth();
-				this.messageElement.style.width = containerWidth > this.formWidth ? containerWidth - this.widthDiscrepancy: this.formWidth;
-			}, this);
-		}
+		this.insertHelpMessage();
 		
 		this.doLayout();
 		
-		for(var j = 0; j < parameters.length; j++) {
+		this.initializeFieldDependencies();
+		
+		this.reset();
+		
+		this.fireEvent('synchronize', this, this.isReadyForExecution(), this.parametersPreference);
+	}
+	
+	
+	// =====================================================================================
+	// DEPENDENCIES management functions
+	// =====================================================================================
+	
+	, initializeFieldDependencies: function() {
+		for(var j = 0; j < this.parameters.length; j++) {
 			
-			if(parameters[j].dependencies.length > 0) {
-				var field = this.fields[parameters[j].id];
-				var p = parameters[j];
+			if( this.parameters[j].dependencies.length > 0) {
+				var field = this.fields[this.parameters[j].id];
+				var p =  this.parameters[j];
 				
 				field.on('focus', function(f){
 					for(var i = 0; i < f.dependencies.length; i++) {
 						var field = this.fields[ f.dependencies[i].urlName ];
 						field.getEl().addClass('x-form-dependent-field');                         
 					}		
-					//alert(f.getName() + ' get focus');
 				}, this
 				, {delay:250}
 				);
@@ -405,24 +452,14 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				for(var i = 0; i < field.dependencies.length; i++) {
 					var f = this.fields[ field.dependencies[i].urlName ];
 					f.dependants = f.dependants || [];
-					//f.dependants.push( parameters[j].id ); 
-					field.dependencies[i].parameterId = parameters[j].id;
+					field.dependencies[i].parameterId = this.parameters[j].id;
 					f.dependants.push( field.dependencies[i] );                      
 				}	
 			}			
 		}
 		
-		if(this.isFromCross) {
-			//alert('formState[before udating dependecies]: ' + this.getFormState().toSource());
-		}
-		
 		for(var p in this.fields) {
 			var theField = this.fields[p];
-			//this.updateDependentFields( theField );
-			
-			if(this.isFromCross) {
-				//alert('formState[after updateDependentFields on ' + p + ']: ' + this.getFormState().toSource());
-			}
 			
 			/*
 			 * workaround (work-around):
@@ -434,8 +471,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			if (theField.behindParameter.selectionType === 'COMBOBOX'
 				|| theField.behindParameter.selectionType === 'LIST'
 				|| theField.behindParameter.selectionType === 'CHECK_LIST'	) {
-				this.fields[p].on('select', this.updateDependentFields , this);
-				//this.fields[p].on('change', this.updateDependentFields , this);
+			
+				this.fields[p].on('select', function(field, record, index) {
+					this.updateDependentFields( field );
+				} , this);
+				
 			} else if(theField.behindParameter.typeCode == 'MAN_IN') {
 				// if input field has an element (it means that the field was displayed)
 				if (theField.el !== undefined) {
@@ -459,88 +499,52 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				alert("Unable to manage dependencies on input field of type [" + theField.behindParameter.selectionType + "]");
 			}
 		}
-		
-		
-		var isReadyForExecution = true;
-		if(parameters.length == 0) {
-			isReadyForExecution = true;
-		} else 	{
-			var o = this.getFormState();
-			for(p in o) {
-				// must check is this.fields[p] is undefined because form state contains also parameters' descriptions
-				if(this.fields[p] != undefined && this.fields[p].isTransient === false) {
-					isReadyForExecution = false;
-					break;
-				}
-			}
-		}
-		
-		//if(this.isFromCross) alert('isReadyForExecution? ' + isReadyForExecution);
-		
-		if(this.isFromCross && isReadyForExecution) {
-			//alert('parametersPreference: ' + this.parametersPreference.toSource());
-			//alert('formState: ' + this.getFormState().toSource());
-		}
-		
-		this.fireEvent('synchronize', this, isReadyForExecution, this.parametersPreference);
-		
-	}
-	
-	, setValueFromMemento: function(f, moveDown) {
-		if(!f.memento) return;
-		//alert('setValueFromMemento');
-		
-		if(moveDown) {
-			f.memento.readCursor--;
-			//alert("MOVE DOWN ->" + f.memento.readCursor);
-		} else {
-			f.memento.readCursor++;
-			//alert("MOVE UP - > " + f.memento.readCursor);
-		}
-		
-		var lastStateIndex = f.memento.size - 1;
-		if(f.memento.readCursor < 0) {
-			f.memento.readCursor = lastStateIndex; 
-			//alert('vai alla fine >' + f.memento.readCursor);
-		}
-		else if(f.memento.readCursor > lastStateIndex) {
-			f.memento.readCursor = 0;
-			//alert('torna all inizio > '+ f.memento.readCursor);
-		}
-		
-		
-		var state;
-				
-		state = f.memento.states[f.memento.readCursor];
-		
-		f.setValue( state.value );
-		var fieldDescription = f.name + '_field_visible_description';
-		var rawValue = state.description;
-		if (state.description !== undefined && state.description != null && f.rendered === true) {
-			f.setRawValue( state.description );
-			this.updateDependentFields( f );
-		}		
 	}
 	
 	, updateDependentFields: function(f) {
-		
-		//alert(f.getValue());
+		var hasDataDependency = false;
+		var hasVisualDependency = false;
 		
 		if (f.dependants !== undefined) {
 			for(var i = 0; i < f.dependants.length; i++) {
 				if(f.dependants[i].hasDataDependency === true) {
 					this.updateDataDependentField(f, f.dependants[i]);
+					hasDataDependency = true;
 				}
 				
-				if(f.dependants[i].hasVisualDependency === true) {
+				if(this.manageVisualDependencies === true && f.dependants[i].hasVisualDependency === true) {
 					this.updateVisualDependentField(f, f.dependants[i]);
+					hasVisualDependency = true;
 				}
 			}
+		}
+		
+		if(this.manageVisualDependenciesOnVisibility == true 
+			&& hasVisualDependency === true 
+			&& Sbi.settings.invisibleParameters.remove === true) {
+			
+			//alert('doing the dirty tricks: ' + f.name);
+		
+			this.manageVisualDependenciesOnVisibility = false;
+			
+			var state = this.getFormState();
+			
+			this.removeAllFields();
+			
+			//alert('removed all: ' + f.name);
+		
+			this.initializeParametersPanel(this.parameters);
+						
+			//alert('added all: ' + f.name);
+			
+			this.setFormState(state, true);
+			
+			this.manageVisualDependenciesOnVisibility = true;
+		
 		}
 	}
 	
 	, updateDataDependentField: function(fatherField, dependantConf) {
-		//alert("Update data dependency ...");
 		var field = this.fields[ dependantConf.parameterId ];
 		if(field.behindParameter.selectionType === 'COMBOBOX'){ 
 			field.store.load();
@@ -549,6 +553,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	}
 	
 	, updateVisualDependentField: function(fatherField, dependantConf) {
+		//alert('updateVisualDependentField');
 		var dependantField = this.fields[ dependantConf.parameterId ];
 		var conditions = dependantConf.visualDependencyConditions;
 		
@@ -561,7 +566,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var fatherFieldValueSet = {};
 		for(var i = 0; i < fatherFieldValues.length; i++) {
 			if(fatherFieldValues[i]){
-				//var v = fatherFieldValues[i].trim();
 				var v = Ext.util.Format.trim(fatherFieldValues[i]);
 				fatherFieldValueSet[ v ] = v;
 			}
@@ -573,24 +577,30 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			// check condition
 			var condition = conditions[i];
 			if( this.isVisualConditionTrue(condition, fatherFieldValueSet) ) {
-				this.setFieldLabel(dependantField, condition.label + ':');
+				if(this.manageVisualDependenciesOnLabel === true) {
+					this.setFieldLabel(dependantField, condition.label + ':');
+				}
 				disableField = false;
 			}
 		}
 		
-		if(disableField) {
-			this.setFieldLabel(dependantField, dependantField.fieldDefaultLabel + ':');
-			//dependantField.addClass('x-exec-paramlabel-disabled');
-			dependantField.reset();
-			dependantField.disable();
-			this.hideFieldLabel(dependantField);
-			dependantField.setVisible(false);
-		} else {
-			//dependantField.removeClass('x-exec-paramlabel-disabled');
-			dependantField.enable();
-			dependantField.setVisible(true);			
+		if(this.manageVisualDependenciesOnVisibility === true) {
+			if(disableField) {
+				this.setFieldLabel(dependantField, dependantField.fieldDefaultLabel + ':');
+				dependantField.reset();
+				dependantField.disable();
+				
+				this.hideFieldLabel(dependantField);
+				dependantField.setVisible(false);
+				dependantField.parameter.vizible = false;
+			} else {
+				dependantField.enable();
+				dependantField.setVisible(true);	
+				dependantField.parameter.vizible = true;
+			}
 		}
 	}
+	
 	
 	, isVisualConditionTrue: function(condition, fatherFieldValueSet) {
 		var conditionIsTrue = false;
@@ -608,6 +618,35 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		//alert(conditionIsTrue + " ->> " + condition.toSource());
 		return (condition.operation == 'contains')? conditionIsTrue: !conditionIsTrue;
+	}
+	
+	
+	// =====================================================================================
+	// FIELDS functions
+	// =====================================================================================
+	
+	, addField: function(field, index) {
+		field.isTransient = false;
+		field.columnNo = (index)%this.columns.length;
+		this.columns[field.columnNo].add( field );
+	}
+	
+	/**
+	 * Remove and destroy all fields contained in the form. This is a private function
+	 * and should not be called from an external comeponent. To just reset fields content
+	 * use reset().
+	 */
+	, removeAllFields : function() {
+		for(p in this.fields) {
+			// if input field has an element (it means that the field was displayed)
+			if (this.fields[p].el !== undefined) {
+				// retrieves the element containing label plus input field and removes it
+				var el = this.fields[p].el.up('.x-form-item');
+				this.columns[this.fields[p].columnNo].remove( this.fields[p], true );
+				el.remove();
+			}
+		}
+		this.fields = {};
 	}
 	
 	, setFieldLabel: function(field, label){   
@@ -642,7 +681,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}    
 	}
 
-	, createField: function( executionInstance, p, c ) {
+	, createField: function( p, c ) {
 		var field;
 		
 		//alert(p.id + ' - ' + p.selectionType + ' - ' + !p.mandatory);
@@ -652,6 +691,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		   , name : p.id
 		   , width: this.baseConfig.fieldWidth
 		   , allowBlank: !p.mandatory
+		   , parameter: p
 		};
 		
 		var labelStyle = '';
@@ -682,7 +722,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		} else if(p.selectionType === 'COMBOBOX') {
 			var baseParams = {};
-			Ext.apply(baseParams, executionInstance);
+			Ext.apply(baseParams, this.executionInstance);
 			Ext.apply(baseParams, {
 				PARAMETER_ID: p.id
 				, MODE: 'simple'
@@ -766,7 +806,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				PARAMETER_ID: p.id
 				, MODE: 'complete'
 				, OBJ_PARAMETER_IDS: p.objParameterIds  // ONly in massive export case
-			}, executionInstance);
+			}, this.executionInstance);
 			delete params.PARAMETERS;
 			
 			var store = this.createStore();
@@ -832,6 +872,37 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 	}
 	
+	// =====================================================================================
+	// HELP messages functions
+	// =====================================================================================
+	
+	// Help message on Parameters Panel.
+	// work-around: since the panel toolbar may be to short, the message is injected with Ext.DomHelper.insertFirst on the body of
+	// the panel, but a function for width calculation is necessary (this function does not work on page 3 when executing in
+	// document browser with tree structure initially opened, since containerWidth is 0).
+	// TODO: try to remove the on resize method and the width calculation
+	, insertHelpMessage: function() {
+		
+		if (this.messageElement == undefined && this.rendered && (this.drawHelpMessage == true)) {
+			var containerWidth = this.getInnerWidth();
+			this.widthDiscrepancy = Ext.isIE ? 1 : 5;
+			var initialWidth = containerWidth > this.formWidth ? containerWidth - this.widthDiscrepancy: this.formWidth;
+			
+			var message = this.getHelpMessage(this.executionInstance, this.thereAreParametersToBeFilled());
+			
+			this.messageElement = Ext.DomHelper.insertFirst(this.body, 
+					'<div style="font-size: 12px; font-family: tahoma,verdana,helvetica; margin-bottom: 14px; color: rgb(24, 18, 241);' 
+					+ (containerWidth === 0 ? '' : 'width: ' + initialWidth + 'px;') + '"'  
+					+ ' class="x-panel-tbar x-panel-tbar-noheader x-toolbar x-panel-tbar-noborder x-btn-text x-item-disabled">'
+					+ message
+					+ '</div>');
+			this.on('resize', function() {
+				var containerWidth = this.getInnerWidth();
+				this.messageElement.style.width = containerWidth > this.formWidth ? containerWidth - this.widthDiscrepancy: this.formWidth;
+			}, this);
+		}
+	} 
+	
 	, getHelpMessage: function(executionInstance, thereAreParametersToBeFilled) {
 		if (this.baseConfig.pageNumber === 2) {
 			return this.getHelpMessageForPage2(executionInstance, thereAreParametersToBeFilled);
@@ -875,6 +946,40 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			toReturn = LN('sbi.execution.parametersselection.message.page3.fillFormAndRefresh');
 		}
 		return toReturn;
+	}
+	
+	// =====================================================================================
+	// MEMENTO functions
+	// =====================================================================================
+	
+	, setValueFromMemento: function(f, moveDown) {
+		if(!f.memento) return;
+		
+		if(moveDown) {
+			f.memento.readCursor--;
+		} else {
+			f.memento.readCursor++;
+		}
+		
+		var lastStateIndex = f.memento.size - 1;
+		if(f.memento.readCursor < 0) {
+			f.memento.readCursor = lastStateIndex; 
+		}
+		else if(f.memento.readCursor > lastStateIndex) {
+			f.memento.readCursor = 0;
+		}
+		
+		var state;
+				
+		state = f.memento.states[f.memento.readCursor];
+		
+		f.setValue( state.value );
+		var fieldDescription = f.name + '_field_visible_description';
+		var rawValue = state.description;
+		if (state.description !== undefined && state.description != null && f.rendered === true) {
+			f.setRawValue( state.description );
+			this.updateDependentFields( f );
+		}		
 	}
 	
 });
