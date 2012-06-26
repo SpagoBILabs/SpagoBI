@@ -6,18 +6,15 @@
 * You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.initializers.metadata;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.init.InitializerIFace;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -40,28 +37,27 @@ public class UnitGrantInitializer extends SpagoBIInitializer {
 			Query hqlQuery = hibernateSession.createQuery(hql);
 			List grants = hqlQuery.list();
 			if (grants.isEmpty()) {
-				logger.info("Grants table is empty. Nothing to reset...");
-				
+				logger.debug("Nothing to reset...");
 			} else {
-				logger.debug("Grants table is populated. Start resetting availability...");
+				logger.debug("Start resetting availability...");
 				resetGrantsAvailable(hibernateSession, grants);
 			}
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializeng Kpi Periodicity", t);
+			throw new SpagoBIRuntimeException("An unexpected error occured while resetting organizational units' grants", t);
 		} finally {
 			logger.debug("OUT");
 		}
 	}
 	
-	private void resetGrantsAvailable(Session aSession, List grants) throws Exception {
+	private void resetGrantsAvailable(Session aSession, List grants)
+			throws Exception {
 		logger.debug("IN");
-		for(int i=0; i< grants.size(); i++){
-			SbiOrgUnitGrant grant = (SbiOrgUnitGrant)grants.get(i);
+		for (int i = 0; i < grants.size(); i++) {
+			SbiOrgUnitGrant grant = (SbiOrgUnitGrant) grants.get(i);
 			grant.setIsAvailable(true);
 			aSession.save(grant);
 			aSession.flush();
 		}
-		
 		logger.debug("OUT");
 	}
 
