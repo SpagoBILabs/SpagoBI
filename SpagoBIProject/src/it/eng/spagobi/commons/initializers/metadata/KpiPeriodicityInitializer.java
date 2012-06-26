@@ -6,19 +6,18 @@
 * You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.initializers.metadata;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.init.InitializerIFace;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -33,18 +32,30 @@ public class KpiPeriodicityInitializer extends SpagoBIInitializer {
 		configurationFileName = "it/eng/spagobi/commons/initializers/metadata/config/kpi.xml";
 	}
 
-	
 	public void init(SourceBean config, Session hibernateSession) {
 		logger.debug("IN");
 		try {
-			String hql = "from SbiKpiPeriodicity";
+			List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
+			for (SbiTenant tenant : tenants) {
+				init(config, hibernateSession, tenant);
+			}
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	public void init(SourceBean config, Session hibernateSession, SbiTenant tenant) {
+		logger.debug("IN");
+		try {
+			String hql = "from SbiKpiPeriodicity p where p.commonInfo.organization = :organization";
 			Query hqlQuery = hibernateSession.createQuery(hql);
+			hqlQuery.setString("organization", tenant.getName());
 			List periodicities = hqlQuery.list();
 			if (periodicities.isEmpty()) {
-				logger.info("Periodicity table is empty. Starting populating predefined periodicities...");
-				writePeriodicities(hibernateSession);
+				logger.info("No predefined periodicities for tenant " + tenant.getName() + ". Starting populating predefined periodicities...");
+				writePeriodicities(hibernateSession, tenant);
 			} else {
-				logger.debug("Periodicity table is already populated");
+				logger.debug("Predefined periodicities table is already populated for tenant " + tenant.getName());
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializeng Kpi Periodicity", t);
@@ -53,7 +64,7 @@ public class KpiPeriodicityInitializer extends SpagoBIInitializer {
 		}
 	}
 	
-	private void writePeriodicities(Session aSession) throws Exception {
+	private void writePeriodicities(Session aSession, SbiTenant tenant) throws Exception {
 		logger.debug("IN");
 		SourceBean kpiSB = getConfiguration();
 		if (kpiSB == null) {
@@ -72,6 +83,10 @@ public class KpiPeriodicityInitializer extends SpagoBIInitializer {
 			periodicity.setDays(new Integer((String) aPeriodicitySB.getAttribute("days")));
 			periodicity.setHours(new Integer((String) aPeriodicitySB.getAttribute("hours")));
 			periodicity.setMinutes(new Integer((String) aPeriodicitySB.getAttribute("minutes")));
+			
+			// setting tenant/organization info
+			periodicity.getCommonInfo().setOrganization(tenant.getName());
+			
 			logger.debug("Inserting Periodicity with name = [" + aPeriodicitySB.getAttribute("name") + "]");
 			aSession.save(periodicity);
 		}
