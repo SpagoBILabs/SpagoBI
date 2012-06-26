@@ -71,7 +71,6 @@ public class MetadataInitializer extends SpagoBIInitializer {
 	}
 	
 	public void init(SourceBean config) {
-		System.out.println("*********** disposed : " + disposed);
 		if(disposed) {
 			logger.warn("[" + targetComponentName + "] hsa been already initialized");
 		} else {
