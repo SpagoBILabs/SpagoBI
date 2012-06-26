@@ -193,6 +193,7 @@ Ext.extend(Sbi.execution.LookupFieldWithMaximize,  Ext.form.TriggerField, {
 		            text: LN('sbi.execution.parametersselection.maximizelookup.clear'),
 	            	handler: function(){
 	            		thisPanel.htmleditor.reset();
+	            		thisPanel.htmleditor.setValue('');
 		            }
 		        },{
 		            text: LN('sbi.execution.parametersselection.maximizelookup.cancel'),
