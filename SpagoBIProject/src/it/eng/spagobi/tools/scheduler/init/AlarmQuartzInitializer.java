@@ -70,51 +70,26 @@ public class AlarmQuartzInitializer implements InitializerIFace {
 
 				schedulerDAO.insertJob(jobDetail);
 
-				Calendar startDate = new java.util.GregorianCalendar(2008,
-						Calendar.DECEMBER, 24);
-				startDate.set(Calendar.HOUR, 06);
+				Calendar startDate = new java.util.GregorianCalendar(2012,
+						Calendar.JANUARY, 01);
+				startDate.set(Calendar.AM_PM, Calendar.AM);
+				startDate.set(Calendar.HOUR, 00);
 				startDate.set(Calendar.MINUTE, 00);
 				startDate.set(Calendar.SECOND, 0);
 				startDate.set(Calendar.MILLISECOND, 0);
-
-				Calendar endDate = new java.util.GregorianCalendar(2009,
-						Calendar.DECEMBER, 24);
-				startDate.set(Calendar.HOUR, 06);
-				startDate.set(Calendar.MINUTE, 00);
-				startDate.set(Calendar.SECOND, 0);
-				startDate.set(Calendar.MILLISECOND, 0);
-
-//				Calendar startCal = new GregorianCalendar(
-//						new Integer(2008).intValue(),
-//						new Integer(12).intValue() - 1,
-//						new Integer(1).intValue());
 
 				String nameTrig = "schedule_uuid_"
 						+ UUIDGenerator.getInstance().generateTimeBasedUUID()
 								.toString();
-//				CronTrigger trigger = new CronTrigger();
-//				trigger.setName(nameTrig);
-//				trigger.setCronExpression("0 0/5 * * * ? *");
-//				trigger.setJobName("AlarmInspectorJob");
-//				trigger.setJobGroup("AlarmInspectorJob");
-//				trigger.setStartTime(startCal.getTime());
-//				trigger.setJobDataMap(data);
-//				trigger.setVolatility(false);
-//				trigger.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_SMART_POLICY);
 
-				CronExpression cronExpression = new CronExpression("0 0/5 * * * ? *");
+				CronExpression cronExpression = new CronExpression("minute{numRepetition=5}");
 				
 				Trigger simpleTrigger = new Trigger();
-//				simpleTrigger.setRepeatCount(100);
 				simpleTrigger.setName(nameTrig);
-				// simpleTrigger.setRepeatInterval(24L * 60L * 60L * 1000L);
-//				simpleTrigger.setRepeatInterval(5 * 60L * 1000L);
 				simpleTrigger.setStartTime(startDate.getTime());
-				simpleTrigger.setEndTime(endDate.getTime());
 				simpleTrigger.setJob(jobDetail);
 				simpleTrigger.setCronExpression(cronExpression);
 				simpleTrigger.setRunImmediately(false);
-//				simpleTrigger.setMisfireInstruction(SimpleTrigger.INSTRUCTION_RE_EXECUTE_JOB);
 
 				schedulerDAO.insertTrigger(simpleTrigger);
 
