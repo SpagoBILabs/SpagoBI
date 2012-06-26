@@ -48,6 +48,8 @@ public class TransformerFrom3_4_0To3_5_0 implements ITransformer {
 		try {
 			conn = TransformersUtilities.getConnectionToDatabase(pathImpTmpFolder, archiveName);
 			fixParuses(conn);
+			fixRoles(conn);
+			fixDatasets(conn);
 			conn.commit();
 		} catch (Exception e) {
 			logger.error("Error while changing database", e);	
@@ -61,6 +63,38 @@ public class TransformerFrom3_4_0To3_5_0 implements ITransformer {
 				logger.error("Error closing connection to export database", e);
 			}
 		}
+	}
+
+	private void fixDatasets(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			sql = "ALTER TABLE SBI_DATA_SET_HISTORY ADD COLUMN QUERY_SCRIPT VARCHAR DEFAULT NULL;";
+			stmt.execute(sql);
+			sql = "ALTER TABLE SBI_DATA_SET_HISTORY ADD COLUMN QUERY_SCRIPT_LANGUAGE VARCHAR DEFAULT NULL;";
+			stmt.execute(sql);
+		} catch (Exception e) {
+			logger.error(
+					"Error adding column: if add column fails may mean that column already esists; means you are not using an exact version spagobi DB",
+					e);
+		}
+		logger.debug("OUT");
+	}
+	
+	private void fixRoles(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			sql = "ALTER TABLE SBI_EXT_ROLES ADD COLUMN EDIT_WORKSHEET BOOLEAN DEFAULT TRUE;";
+			stmt.execute(sql);
+		} catch (Exception e) {
+			logger.error(
+					"Error adding column: if add column fails may mean that column already esists; means you are not using an exact version spagobi DB",
+					e);
+		}
+		logger.debug("OUT");
 	}
 
 	private void fixParuses(Connection conn) throws Exception {
