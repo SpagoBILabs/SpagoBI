@@ -65,7 +65,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 		}
 	}
 	
-	public void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+	private void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		
 		IEngUserProfile userProfile;
 		JobDataMap jobDataMap;
