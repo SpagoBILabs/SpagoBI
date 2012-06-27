@@ -7,6 +7,8 @@
  
   
  
+  
+ 
 /**
   * SlotEditorPanel - short description
   * 
