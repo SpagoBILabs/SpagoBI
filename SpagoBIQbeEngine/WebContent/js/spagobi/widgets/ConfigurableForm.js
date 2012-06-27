@@ -7,6 +7,8 @@
  
   
  
+  
+ 
 /**
   * Sbi.widgets.ConfigurableForm
   * 
