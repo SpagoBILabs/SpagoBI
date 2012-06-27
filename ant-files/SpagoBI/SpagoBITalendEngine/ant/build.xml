@@ -117,6 +117,10 @@
   <target name="tomcat">  
                
   </target>
+	
+  <target name="jboss6">
+  </target>
+
     
   <target name="liferay.jboss">  
       <delete file="${build}/${webapp_name}/WEB-INF/lib/dom4j-1.6.jar" />
