@@ -122,7 +122,14 @@
 	</target>
 
 	<target name="jboss6">
-
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/commons-logging.jar" />
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/dom4j-1.6.jar" />
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/jaxen-1.1-beta-6.jar" />	
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/jta.jar" />	
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/xercesImpl-2.6.2.jar" />	
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/xml-apis.jar" />	
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/xmlbeans-2.3.0.jar" />	
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/slf4j-api-1.6.1.jar" />
 	</target>
 
 	<target name="liferay.jboss">
