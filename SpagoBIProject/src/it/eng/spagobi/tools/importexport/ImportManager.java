@@ -1055,7 +1055,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					this.updateSbiCommonInfo4Update(existinglov);
 					sessionCurrDB.update(existinglov);
 				} else {
-					SbiLov newlov = ImportUtilities.makeNewSbiLov(exportedLov, getUserAssociation().getDsExportedToUserLabel());
+					SbiLov newlov = ImportUtilities.makeNewSbiLov(exportedLov, sessionCurrDB, getUserAssociation().getDsExportedToUserLabel());
 					ImportUtilities.associateWithExistingEntities(newlov, exportedLov, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Insert(newlov);
 					sessionCurrDB.save(newlov); 
@@ -1339,7 +1339,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		    	BIObject biObj = daoObj.toBIObject(obj);
 		    	LuceneIndexer.addBiobjToIndex(biObj);
 
-				// TODOO controllare che fa questo e se serve!!!
+				// TODO controllare che fa questo e se serve!!!
 				//updateSubObject(obj, exportedObj.getBiobjId());
 			}
 		} 
@@ -1756,7 +1756,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					Map assLovs = metaAss.getLovIDAssociation();
 					Integer newLovId = (Integer) assLovs.get(oldLovId);
 					if (newLovId != null) {
-						SbiLov newlov = ImportUtilities.makeNewSbiLov(lov, newLovId, null);
+						SbiLov newlov = ImportUtilities.makeNewSbiLov(lov, sessionCurrDB, newLovId, null);
 						paruse.setSbiLov(newlov);
 					}
 				}
@@ -3074,7 +3074,7 @@ params.add("");
 			}
 		}
 
-		// TODOO cambiare con i nuovi UDP VAlues
+		// TODO cambiare con i nuovi UDP VAlues
 /*
 		List exportedKpiModelAttrs = importer.getAllExportedSbiObjects(sessionExpDB, "SbiKpiModelAttr", null);
 		Iterator iterSbiKpiModelAttr = exportedKpiModelAttrs.iterator();
@@ -3768,7 +3768,7 @@ params.add("");
 					sessionCurrDB.update(existingModel);
 				} else {
 					SbiKpiModel newModel = ImportUtilities.makeNewSbiModel(exportedModel, sessionCurrDB, metaAss);
-					// TODOO manca da associare il kpi con le entita
+					// TODO manca da associare il kpi con le entita
 					//ImportUtilities.associateWithExistingEntities(newPar, exportedParameter, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Insert(newModel);
 					sessionCurrDB.save(newModel);
@@ -3905,7 +3905,7 @@ params.add("");
 					metaLog.log("The kpi with code = [" + exportedKpi.getCode() + "] will be updated.");
 					SbiKpi existingKpi = ImportUtilities.modifyExistingSbiKpi(exportedKpi, sessionCurrDB, existingKpiId, metaAss);
 					existingKpi.setSbiKpiDocumentses(new HashSet(0));
-					// TODOO manca da associare il kpi alle nuove realtà
+					// TODO manca da associare il kpi alle nuove realtà
 					//ImportUtilities.associateWithExistingEntities(existingParameter, exportedParameter, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Update(existingKpi);
 					sessionCurrDB.update(existingKpi);
@@ -3913,7 +3913,7 @@ params.add("");
 				} else {
 					SbiKpi newKpi = ImportUtilities.makeNewSbiKpi(exportedKpi, sessionCurrDB, metaAss);
 					newKpi.setSbiKpiDocumentses(new HashSet(0));
-					// TODOO manca da associare il kpi con le entita
+					// TODO manca da associare il kpi con le entita
 					//ImportUtilities.associateWithExistingEntities(newPar, exportedParameter, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Insert(newKpi);
 					sessionCurrDB.save(newKpi);
@@ -4542,7 +4542,7 @@ params.add("");
 //	 */
 //	private void importKpiModelAttr(boolean overwrite) throws EMFUserError {
 //		logger.debug("IN");
-//		// TODOO cambiare con i nuovi UDP VAlues
+//		// TODO cambiare con i nuovi UDP VAlues
 //		/*
 //		SbiKpiModelAttr exportedKpiModelAttr = null;
 //		try {
@@ -4596,7 +4596,7 @@ params.add("");
 //	 */
 //	private void importKpiModelAttrVal(boolean overwrite) throws EMFUserError {
 //		logger.debug("IN");
-//		// TODOO cambiare con i nuovi UDP VAlues
+//		// TODO cambiare con i nuovi UDP VAlues
 //		/*SbiKpiModelAttrVal exportedKpiModelAttrVal = null;
 //		try {
 //			List exportedKpiModelAttrVals = importer.getAllExportedSbiObjects(sessionExpDB, "SbiKpiModelAttrVal", null);
@@ -4754,11 +4754,11 @@ params.add("");
 				if (existingMetacontentsId != null) {
 					logger.debug("The Metacontent with id:[" + exportedMetacontent.getObjMetacontentId() + "] is already present. It will be updated.");
 					metaLog.log("The Metacontent with original id = " + exportedMetacontent.getObjMetacontentId() + "and associated to the object with label" + exportedMetacontent.getSbiObjects().getLabel() +"  will be updated.");
-					SbiObjMetacontents existingObjMetacontents = ImportUtilities.modifyExistingSbiObjMetacontents(exportedMetacontent, sessionCurrDB, existingMetacontentsId, metaAss,importer);
+					SbiObjMetacontents existingObjMetacontents = ImportUtilities.modifyExistingSbiObjMetacontents(exportedMetacontent, sessionCurrDB, existingMetacontentsId, metaAss,importer, this.getUserProfile());
 					this.updateSbiCommonInfo4Update(existingObjMetacontents);
 					sessionCurrDB.update(existingObjMetacontents);
 				} else {
-					SbiObjMetacontents newMetacontents = ImportUtilities.makeNewSbiObjMetacontent(exportedMetacontent, sessionCurrDB, metaAss, importer);
+					SbiObjMetacontents newMetacontents = ImportUtilities.makeNewSbiObjMetacontent(exportedMetacontent, sessionCurrDB, metaAss, importer, this.getUserProfile());
 					this.updateSbiCommonInfo4Insert(newMetacontents);
 					sessionCurrDB.save(newMetacontents);
 					String subObject = newMetacontents.getSbiSubObjects() != null ? newMetacontents.getSbiSubObjects().getName() : null;

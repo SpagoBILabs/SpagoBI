@@ -45,7 +45,11 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDetId;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks;
+import it.eng.spagobi.behaviouralmodel.lov.bo.DatasetDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
@@ -1201,7 +1205,6 @@ public class ExporterMetadata {
 	public void insertLov(ModalitiesValue lov, Session session) throws EMFUserError {
 		logger.debug("IN");
 		try {
-			boolean newTransaction=false;
 			Transaction tx = session.beginTransaction();
 			Query hibQuery = session.createQuery(" from SbiLov where lovId = " + lov.getId());
 			List hibList = hibQuery.list();
@@ -1216,6 +1219,23 @@ public class ExporterMetadata {
 			hibLov.setInputType(inpType);
 			hibLov.setInputTypeCd(lov.getITypeCd());
 			hibLov.setLovProvider(lov.getLovProvider());
+			String lovProvider = lov.getLovProvider();
+			try {
+				ILovDetail lovDetail = LovDetailFactory
+						.getLovFromXML(lovProvider);
+				if (lovDetail instanceof DatasetDetail) {
+					// export dataset
+					DatasetDetail datasetDetail = (DatasetDetail) lovDetail;
+					String datasetLabel = datasetDetail.getDatasetLabel();
+					GuiGenericDataSet existingDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(datasetLabel);
+					this.insertDataSet(existingDataset, session);
+					// previuos transaction was closed
+					tx = session.beginTransaction();
+				}
+			} catch (Exception e) {
+				logger.error("Error in evaluating lov provider for exporter lov ["
+						+ lov.getLabel() + "].", e);
+			}
 			session.save(hibLov);
 			tx.commit();
 		} catch (Exception e) {
@@ -1509,6 +1529,7 @@ public class ExporterMetadata {
 			hibRole.setIsAbleToSendMail(new Boolean(role.isAbleToSendMail()));
 			hibRole.setIsAbleToBuildQbeQuery(role.isAbleToBuildQbeQuery());
 			hibRole.setIsAbleToDoMassiveExport(role.isAbleToDoMassiveExport());
+			hibRole.setIsAbleToEditWorksheet(role.isAbleToEditWorksheet());
 			
 			session.save(hibRole);
 			tx.commit();
