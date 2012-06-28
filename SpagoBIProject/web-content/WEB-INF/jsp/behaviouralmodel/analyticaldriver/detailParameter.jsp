@@ -439,16 +439,19 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
   		<% 
     	boolean isManualInput = false;
   		boolean maximizerEnabled = false;
+  		String maximizerDisabled = disabled;
     	boolean isLov = false;
     	int manual = 0;
-    	if(paruse.getManualInput()!= null){
-    	manual = paruse.getManualInput().intValue();}
+    	if (paruse.getManualInput()!= null) {
+    		manual = paruse.getManualInput().intValue();
+    	}
     	if(manual > 0) { 
     		isManualInput = true;
     		maximizerEnabled = paruse.isMaximizerEnabled();
     	} else {
     		isLov = true;
     		maximizerEnabled = false;
+    		maximizerDisabled = "disabled";
     	}
     %> 
   		<input type="radio" name="valueSelection"  id ="valueSelection" value="lov" <%=disabled%> <% if(isLov) { out.println(" checked='checked' "); } %> onClick = "lovControl();manualInputSelection=this.value;" />
@@ -520,7 +523,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		</span>
 	</div>
 	<div class='div_detail_form'>
-		<input type="checkbox" name="maximizerEnabled" <%=disabled%> id ="maximizerEnabled" value="true" <% if(maximizerEnabled) { out.println(" checked='checked' "); } %>></input>
+		<input type="checkbox" name="maximizerEnabled" <%=maximizerDisabled%> id ="maximizerEnabled" value="true" <% if(maximizerEnabled) { out.println(" checked='checked' "); } %>></input>
 	</div>
 	
 </div>
