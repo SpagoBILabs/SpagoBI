@@ -61,6 +61,9 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 	 * @return cleaned params map
 	 */
 	private Map cleanNullParametersValues(Map params){
+		if (params == null) {
+			return null;
+		}
 		Iterator keys = params.keySet().iterator();
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
