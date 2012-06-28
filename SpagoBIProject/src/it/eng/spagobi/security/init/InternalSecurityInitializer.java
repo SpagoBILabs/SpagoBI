@@ -57,7 +57,7 @@ public class InternalSecurityInitializer implements InitializerIFace {
 			
 			List<SbiAttribute> attributesList = initProfileAttributes(config);
 			List<Role> rolesList = initRoles(config);
-			Map<String,Integer> usersLookupMap = initUsers(config, false);
+			Map<String,Integer> usersLookupMap = initUsers(config);
 			
 			ISbiUserDAO userDAO= DAOFactory.getSbiUserDAO();
 			
@@ -163,7 +163,7 @@ public class InternalSecurityInitializer implements InitializerIFace {
 	/**
 	 * @return The map of role ids (Integer) indexed by role name (String)
 	 */
-	public HashMap< String, Integer> initUsers(SourceBean config, boolean includeAleredyExistingUser) {
+	public HashMap< String, Integer> initUsers(SourceBean config) {
 		HashMap< String, Integer> usersLookup;
 		
 		logger.debug("IN");
@@ -176,21 +176,16 @@ public class InternalSecurityInitializer implements InitializerIFace {
 			
 			List<SbiUser> defaultUsers = readUsers(config);
 			for(SbiUser defaultUser: defaultUsers) {
-				Integer existingId = userDAO.loadByUserId( defaultUser.getUserId() );
-		    	if(existingId == null){
+				SbiUser existingUser = userDAO.loadSbiUserByUserId( defaultUser.getUserId() );
+		    	if (existingUser == null) {
 		    		String userId = defaultUser.getUserId(); // save this because the dao during save set it to id
 		    		logger.debug("Storing user [" + defaultUser.getUserId() + "] into database ");
-		    		existingId = userDAO.saveSbiUser(defaultUser);
-		    		usersLookup.put(defaultUser.getUserId(), existingId);
-		    		logger.debug("User [" + defaultUser.getUserId() + "] sucesfully stored into database with id [" + existingId + "]");
+		    		Integer newId = userDAO.saveSbiUser(defaultUser);
+		    		usersLookup.put(defaultUser.getUserId(), newId);
+		    		logger.debug("User [" + defaultUser.getUserId() + "] sucesfully stored into database with id [" + newId + "]");
 			    } else  {
-			    	if(includeAleredyExistingUser) {
-			    		usersLookup.put(defaultUser.getUserId(), existingId);
-			    	}
-			    	logger.debug("User [" + defaultUser.getUserId() + "] is alerdy stored into database with id [" + existingId + "]");
+			    	logger.debug("User [" + defaultUser.getUserId() + "] is alerdy stored into database with id [" + existingUser.getId() + "]");
 			    }	
-		    	
-		    	
 			}
 
 		} catch(Throwable t) {

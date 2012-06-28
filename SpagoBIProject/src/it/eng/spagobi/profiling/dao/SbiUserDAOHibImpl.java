@@ -39,32 +39,6 @@ import org.hibernate.criterion.Restrictions;
 public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserDAO {
 	
 	static private Logger logger = Logger.getLogger(SbiUserDAOHibImpl.class);
-	
-	public Integer loadByUserId(String userId) throws EMFUserError {
-		logger.debug("IN");
-		Session aSession = null;
-		Transaction tx = null;
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-
-			SbiUser user = getSbiUserByUserId(userId, aSession);
-
-			if(user != null)
-				return Integer.valueOf(user.getId());
-		} catch (HibernateException he) {
-			logger.error(he.getMessage(),he);
-			if (tx != null)
-				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-		} finally {
-			logger.debug("OUT");
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-			}
-		}
-		return null;
-	} 
 
 	/**
 	 * Load SbiUser by id.
@@ -213,27 +187,14 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	public SbiUser loadSbiUserByUserId(String userId) throws EMFUserError {
 		logger.debug("IN");
-
-		Session aSession = null;
-		Transaction tx = null;
 		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-			
-			SbiUser user = getSbiUserByUserId(userId, aSession);
-			
-			tx.commit();
+			SbiUser user = getSbiUserByUserId(userId);
 			return user;
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			logger.debug("OUT");
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-			}
 		}
 
 
@@ -730,27 +691,16 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	public Integer isUserIdAlreadyInUse(String userId) {
 		logger.debug("IN");
-		Session aSession = null;
-		Transaction tx = null;
 		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-			
-			SbiUser user = getSbiUserByUserId(userId, aSession);
-
+			SbiUser user = getSbiUserByUserId(userId);
 			if (user != null) {
 				return Integer.valueOf(user.getId());
 			}
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
 			throw new SpagoBIRuntimeException("Error while checking if user identifier is already in use", he);
 		} finally {
 			logger.debug("OUT");
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-			}
 		}
 		return null;
 	}
@@ -760,17 +710,34 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	 * The search method is CASE INSENSITIVE!!! 
 	 * 
 	 * @param userId The user identifier
-	 * @param aSession The Hibernate session 
 	 * @return the SbiUser object with the input user identifier
 	 */
-	protected SbiUser getSbiUserByUserId(String userId, Session aSession) {
-		LogMF.debug(logger, "IN : user id = [{0}]", userId);
-		// case insensitive search!!!!
-		Criteria criteria = aSession.createCriteria(SbiUser.class);
-		criteria.add(Restrictions.eq("userId", userId).ignoreCase());
-		SbiUser user = (SbiUser) criteria.uniqueResult();
-		LogMF.debug(logger, "OUT : returning [{0}]", user);
-		return user;
+	protected SbiUser getSbiUserByUserId(String userId) {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			// WE MUST UNSET THE TENANT FILTER, SINCE USER ID MUST BE UNIQUE ACCROSS ALL TENANTS
+			this.disableTenantFilter(aSession);
+			tx = aSession.beginTransaction();
+			LogMF.debug(logger, "IN : user id = [{0}]", userId);
+			// case insensitive search!!!!
+			Criteria criteria = aSession.createCriteria(SbiUser.class);
+			criteria.add(Restrictions.eq("userId", userId).ignoreCase());
+			SbiUser user = (SbiUser) criteria.uniqueResult();
+			LogMF.debug(logger, "OUT : returning [{0}]", user);
+			return user;
+		} finally {
+			if (tx != null) {
+				tx.rollback();
+			}
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+			logger.debug("OUT");
+		}
 	}
 
 	

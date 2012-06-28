@@ -14,6 +14,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -114,7 +115,7 @@ public class DataSetAccessFunctions {
 		logger.debug("IN");
 		
 		if (profile == null) {
-			profile = new UserProfile("anonymous");
+			profile = new UserProfile("anonymous", TenantManager.getTenant().getName());
 		}
 		
 		SourceBean rowsSourceBean = null;

@@ -18,6 +18,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -86,68 +87,61 @@ public class UserUtilities {
      * 
      * @throws Exception the exception
      */
-    public static IEngUserProfile getUserProfile() throws Exception {
-	RequestContainer aRequestContainer = RequestContainer.getRequestContainer();
-	SessionContainer aSessionContainer = aRequestContainer.getSessionContainer();
-	SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
+	public static IEngUserProfile getUserProfile() throws Exception {
+		RequestContainer aRequestContainer = RequestContainer
+				.getRequestContainer();
+		SessionContainer aSessionContainer = aRequestContainer
+				.getSessionContainer();
+		SessionContainer permanentSession = aSessionContainer
+				.getPermanentContainer();
 
-	IEngUserProfile userProfile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile userProfile = (IEngUserProfile) permanentSession
+				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
-	if (userProfile == null) {
+		if (userProfile == null) {
 
-	    String userId = null;
-	    PortletRequest portletRequest = PortletUtilities.getPortletRequest();
-	    Principal principal = portletRequest.getUserPrincipal();
-	    userId = principal.getName();
-	    logger.debug("got userId from Principal=" + userId);
+			String userId = null;
+			PortletRequest portletRequest = PortletUtilities
+					.getPortletRequest();
+			Principal principal = portletRequest.getUserPrincipal();
+			userId = principal.getName();
+			logger.debug("got userId from Principal=" + userId);
 
-	    ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
-	    SpagoBIUserProfile user = null;
-	    try {
-		user = supplier.createUserProfile(userId);
-		
-		user.setFunctions(readFunctionality(user.getRoles(), user.getOrganization()));
-		userProfile = new UserProfile(user);
-	    } catch (Exception e) {
-	    	logger.error("An error occured while retrieving user profile for user[" + userId +"]");
-	    	throw new SecurityException("An error occured while retrieving user profile for user[" + userId +"]", e);
-	    }
+			userProfile = UserUtilities.getUserProfile(userId);
 
-	    logger.debug("userProfile created.UserID= " + (String) userProfile.getUserUniqueIdentifier());
-	    logger.debug("Attributes name of the user profile: " + userProfile.getUserAttributeNames());
-	    logger.debug("Functionalities of the user profile: " + userProfile.getFunctionalities());
-	    logger.debug("Roles of the user profile: " + userProfile.getRoles());
+			logger.debug("userProfile created.UserID= "
+					+ (String) userProfile.getUserUniqueIdentifier());
+			logger.debug("Attributes name of the user profile: "
+					+ userProfile.getUserAttributeNames());
+			logger.debug("Functionalities of the user profile: "
+					+ userProfile.getFunctionalities());
+			logger.debug("Roles of the user profile: " + userProfile.getRoles());
 
-	    permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
+			permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE,
+					userProfile);
 
-	   // String username = (String) userProfile.getUserUniqueIdentifier();
-	    String username = (String) user.getUserId();
-	    if (!UserUtilities.userFunctionalityRootExists(username)) {
-		UserUtilities.createUserFunctionalityRoot(userProfile);
-	    }
+			// String username = (String) userProfile.getUserUniqueIdentifier();
+			String username = ((UserProfile) userProfile).getUserId().toString();
+			if (!UserUtilities.userFunctionalityRootExists(username)) {
+				UserUtilities.createUserFunctionalityRoot(userProfile);
+			}
 
+		}
+
+		return userProfile;
 	}
 
-	return userProfile;
-    }
-
-    public static IEngUserProfile getUserProfile(HttpServletRequest req) throws Exception {
-    	logger.debug("IN");
-    	SsoServiceInterface userProxy = SsoServiceFactory.createProxyService();
-		String userId = userProxy.readUserIdentifier(req);
-		
-	    ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
-	    try {
-		SpagoBIUserProfile user = supplier.createUserProfile(userId);
-		user.setFunctions(readFunctionality(user.getRoles(), user.getOrganization()));
-		return new UserProfile(user);
-	    } catch (Exception e) {
-	    	logger.error("Exception while creating user profile",e);
-			throw new SecurityException("Exception while creating user profile", e);
-	    }finally{
-	    	logger.debug("OUT");
-	    }
-    }
+	public static IEngUserProfile getUserProfile(HttpServletRequest req)
+			throws Exception {
+		logger.debug("IN");
+		try {
+			SsoServiceInterface userProxy = SsoServiceFactory.createProxyService();
+			String userId = userProxy.readUserIdentifier(req);
+			return UserUtilities.getUserProfile(userId);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
 
 	public static IEngUserProfile getUserProfile(String userId)
 			throws Exception {
@@ -160,6 +154,7 @@ public class UserUtilities {
 			SpagoBIUserProfile user = supplier.createUserProfile(userId);
 			if (user == null)
 				return null;
+			checkTenant(user);
 			user.setFunctions(readFunctionality(user.getRoles(),
 					user.getOrganization()));
 			return new UserProfile(user);
@@ -439,5 +434,28 @@ public class UserUtilities {
 		logger.debug("OUT");
 		return virtualRole;
 	}
+	
+	private static void checkTenant(SpagoBIUserProfile profile) {
+		if (profile.getOrganization() == null) {
+			logger.warn("User profile [" + profile.getUserId()
+					+ "] has no organization/tenant set!!!");
+			List<SbiTenant> tenants = DAOFactory.getTenantsDAO()
+					.loadAllTenants();
+			if (tenants == null || tenants.size() == 0) {
+				throw new SpagoBIRuntimeException(
+						"No tenants found on database");
+			}
+			if (tenants.size() > 1) {
+				throw new SpagoBIRuntimeException(
+						"Tenants are more than one, cannot associate input user profile ["
+								+ profile.getUserId() + "] to a single tenant!!!");
+			}
+			SbiTenant tenant = tenants.get(0);
+			logger.warn("Associating user profile ["
+								+ profile.getUserId() + "] to tenant [" + tenant.getName() + "]");
+			profile.setOrganization(tenant.getName());
+		}
+	}
+
 
 }

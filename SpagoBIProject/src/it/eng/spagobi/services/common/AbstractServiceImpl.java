@@ -10,6 +10,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
@@ -98,8 +99,17 @@ public abstract class AbstractServiceImpl {
 	protected void setTenantByUserId(String userId) {
 		logger.debug("IN");
 		try {
-			IEngUserProfile profile = GeneralUtilities
-					.createNewUserProfile(userId);
+			if (UserProfile.isSchedulerUser(userId)) {
+				UserProfile scheduler = UserProfile.createSchedulerUserProfile(userId);
+				this.setTenantByUserProfile(scheduler);
+				return;
+			}
+			if (UserProfile.isWorkflowUser(userId)) {
+				UserProfile workflow = UserProfile.createWorkflowUserProfile(userId);
+				this.setTenantByUserProfile(workflow);
+				return;
+			}
+			IEngUserProfile profile = UserUtilities.getUserProfile(userId);
 			this.setTenantByUserProfile(profile);
 		} catch (Exception e) {
 			logger.error("Cannot set tenant", e);

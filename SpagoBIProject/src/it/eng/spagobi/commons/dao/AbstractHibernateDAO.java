@@ -37,6 +37,8 @@ public class AbstractHibernateDAO {
 	private IEngUserProfile profile = null;
 	private String tenant = null;
 
+	public static final String TENANT_FILTER_NAME = "tenantFilter";
+	
 	public void setUserID(String user) {
 		userID = user;
 	}
@@ -102,10 +104,21 @@ public class AbstractHibernateDAO {
 		String tenantId = this.getTenant();
 		if (tenantId != null) {
 			// if tenant is set, enable tenant filter and put filter's value
-			Filter filter = session.enableFilter("tenantFilter");
-			filter.setParameter("tenant", tenantId);
+			this.enableTenantFilter(session, tenantId);
 		}
 		return session;
+	}
+	
+	protected void enableTenantFilter(Session session, String tenantId) {
+		Filter filter = session.enableFilter(TENANT_FILTER_NAME);
+		filter.setParameter("tenant", tenantId);
+	}
+	
+	protected void disableTenantFilter(Session session) {
+		Filter filter = session.getEnabledFilter(TENANT_FILTER_NAME);
+		if (filter != null) {
+			session.disableFilter(TENANT_FILTER_NAME);
+		}
 	}
 
 	/**

@@ -20,8 +20,6 @@ import java.util.List;
 
 public interface ISbiUserDAO extends ISpagoBIDao{
 	
-	public Integer loadByUserId(String userId) throws EMFUserError;
-	
 	public SbiUser loadSbiUserByUserId(String userId) throws EMFUserError;
 	
 	public SbiUser loadSbiUserById(Integer id) throws EMFUserError;

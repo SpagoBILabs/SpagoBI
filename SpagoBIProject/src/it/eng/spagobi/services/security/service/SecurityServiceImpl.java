@@ -29,16 +29,12 @@ public class SecurityServiceImpl extends AbstractServiceImpl implements
 		SecurityService {
 
 	static private Logger logger = Logger.getLogger(SecurityServiceImpl.class);
-	private ISecurityServiceSupplier supplier = null;
 
 	/**
 	 * Instantiates a new security service impl.
 	 */
 	public SecurityServiceImpl() {
 		super();
-		logger.debug("IN");
-		supplier = SecurityServiceSupplierFactory
-				.createISecurityServiceSupplier();
 	}
 
 	/**
@@ -57,12 +53,10 @@ public class SecurityServiceImpl extends AbstractServiceImpl implements
 				.start("spagobi.service.security.getUserProfile");
 		try {
 			validateTicket(token, userId);
-			SpagoBIUserProfile user = supplier.createUserProfile(userId);
-			user.setFunctions(UserUtilities.readFunctionality(user.getRoles(),
-					user.getOrganization()));
-			return user;
-		} catch (SecurityException e) {
-			logger.error("SecurityException", e);
+			UserProfile userProfile = (UserProfile) UserUtilities.getUserProfile(userId);
+			return userProfile.getSpagoBIUserProfile();
+		} catch (Exception e) {
+			logger.error("An exception occurred while creating user profile for user " + userId, e);
 			return null;
 		} finally {
 			monitor.stop();
@@ -92,22 +86,22 @@ public class SecurityServiceImpl extends AbstractServiceImpl implements
 				.start("spagobi.service.security.isAuthorized");
 		try {
 			validateTicket(token, userId);
-			SpagoBIUserProfile profile = supplier.createUserProfile(userId);
-			profile.setFunctions(UserUtilities.readFunctionality(
-					profile.getRoles(), profile.getOrganization()));
-			UserProfile userProfile = new UserProfile(profile);
+			UserProfile userProfile = (UserProfile) UserUtilities
+					.getUserProfile(userId);
 			this.setTenantByUserProfile(userProfile);
 			return ObjectsAccessVerifier.canExec(new Integer(idFolder),
 					userProfile);
-		} catch (SecurityException e) {
-			logger.error("SecurityException", e);
+		} catch (Exception e) {
+			logger.error(
+					"An exception occurred while checking authorization for user "
+							+ userId + " to folder " + idFolder
+							+ " with state " + state, e);
 			return false;
 		} finally {
 			this.unsetTenant();
 			monitor.stop();
 			logger.debug("OUT");
 		}
-
 	}
 
 	/**
@@ -129,6 +123,7 @@ public class SecurityServiceImpl extends AbstractServiceImpl implements
 				.start("spagobi.service.security.checkAuthorization");
 		try {
 			validateTicket(token, userId);
+			ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 			return supplier.checkAuthorization(userId, function);
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
