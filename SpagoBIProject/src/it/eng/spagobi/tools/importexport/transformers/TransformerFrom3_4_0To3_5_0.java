@@ -46,6 +46,7 @@ public class TransformerFrom3_4_0To3_5_0 implements ITransformer {
 		Connection conn = null;
 		try {
 			conn = TransformersUtilities.getConnectionToDatabase(pathImpTmpFolder, archiveName);
+			fixDomains(conn);
 			fixParuses(conn);
 			fixRoles(conn);
 			fixDatasets(conn);
@@ -62,6 +63,21 @@ public class TransformerFrom3_4_0To3_5_0 implements ITransformer {
 				logger.error("Error closing connection to export database", e);
 			}
 		}
+	}
+	
+	private void fixDomains(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			sql = "UPDATE SBI_DOMAINS SET value_cd='ECMAScript' WHERE domain_cd = 'SCRIPT_TYPE' AND value_cd='rhino-nonjdk';";
+			stmt.executeUpdate(sql);
+		} catch (Exception e) {
+			logger.error(
+					"Error adding column: if add column fails may mean that column already esists; means you are not using an exact version spagobi DB",
+					e);
+		}
+		logger.debug("OUT");
 	}
 
 	private void fixDatasets(Connection conn) throws Exception {

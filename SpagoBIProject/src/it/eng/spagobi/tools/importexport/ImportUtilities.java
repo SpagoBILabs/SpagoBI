@@ -29,8 +29,12 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseCkId;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDetId;
 import it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks;
+import it.eng.spagobi.behaviouralmodel.lov.bo.DatasetDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
@@ -59,11 +63,7 @@ import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
-import it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiJClassDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiQueryDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiScriptDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiWSDataSet;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
@@ -88,7 +88,6 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.collections.set.CompositeSet.SetMutator;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -217,6 +216,7 @@ public class ImportUtilities {
 		newRole.setIsAbleToSendMail(role.getIsAbleToSendMail());
 		newRole.setIsAbleToBuildQbeQuery(role.getIsAbleToBuildQbeQuery());
 		newRole.setIsAbleToDoMassiveExport(role.getIsAbleToDoMassiveExport());
+		newRole.setIsAbleToEditWorksheet(role.getIsAbleToEditWorksheet());
 		logger.debug("OUT");
 		return newRole;
 	}
@@ -375,7 +375,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate lov object
 	 */
-	public static SbiLov makeNewSbiLov(SbiLov lov,
+	public static SbiLov makeNewSbiLov(SbiLov lov, Session sessionCurrDB, 
 			HashMap<String, String> dsExportUser){
 		logger.debug("IN");
 		SbiLov newlov = new SbiLov();
@@ -384,27 +384,41 @@ public class ImportUtilities {
 		newlov.setInputType(lov.getInputType());
 		newlov.setInputTypeCd(lov.getInputTypeCd());
 		newlov.setLabel(lov.getLabel());
-		newlov.setLovProvider(lov.getLovProvider());
 		newlov.setName(lov.getName());
 		newlov.setProfileAttr(lov.getProfileAttr());
 
+		String lovProvider = lov.getLovProvider();
 		try {
-			// if user has associated another datasource then set the associated one, else put the same
-			QueryDetail queryDetail=new QueryDetail(lov.getLovProvider());
-			String dataSource=queryDetail.getDataSource();
-			if(dsExportUser!=null && dsExportUser.get(dataSource)!=null){
-				String newDs=dsExportUser.get(dataSource);
-				queryDetail.setDataSource(newDs);
-			} else {
-				queryDetail.setDataSource(dataSource);
+			ILovDetail lovDetail = LovDetailFactory
+					.getLovFromXML(lovProvider);
+			if (lovDetail instanceof QueryDetail) {
+				// if user has associated another datasource then set the
+				// associated one, else put the same
+				QueryDetail queryDetail = new QueryDetail(lov.getLovProvider());
+				String dataSource = queryDetail.getDataSource();
+				if (dsExportUser != null
+						&& dsExportUser.get(dataSource) != null) {
+					String newDs = dsExportUser.get(dataSource);
+					queryDetail.setDataSource(newDs);
+				} else {
+					queryDetail.setDataSource(dataSource);
+				}
+				newlov.setLovProvider(queryDetail.toXML());
 			}
-			newlov.setLovProvider(queryDetail.toXML());				
-		} 
-		catch (Exception e) {
-			logger.error("error in reading the xml of lov provider; transcribe the original by default ");		
-		}
-		if(newlov.getLovProvider() == null){
-			newlov.setLovProvider(lov.getLovProvider());
+			if (lovDetail instanceof DatasetDetail) {
+				// update dataset id
+				DatasetDetail datasetDetail = (DatasetDetail) lovDetail;
+				String datasetLabel = datasetDetail.getDatasetLabel();
+				Query query = sessionCurrDB.createQuery("select d.id from SbiDataSetConfig d where d.label = :label");
+				query.setString("label", datasetLabel);
+				Integer datasetId = (Integer) query.uniqueResult();
+				datasetDetail.setDatasetId(datasetId.toString());
+				newlov.setLovProvider(datasetDetail.toXML());
+			}
+		} catch (Exception e) {
+			logger.error("Error in evaluating lov provider for exporter lov ["
+					+ lov.getLabel() + "]. It will not be modified", e);		
+			newlov.setLovProvider(lovProvider);
 		}
 
 		logger.debug("OUT");
@@ -419,9 +433,9 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate lov object
 	 */
-	public static SbiLov makeNewSbiLov(SbiLov lov, Integer id, Map user){
+	public static SbiLov makeNewSbiLov(SbiLov lov, Session sessionCurrDB, Integer id, Map user){
 		logger.debug("IN");
-		SbiLov newlov = makeNewSbiLov(lov, null);
+		SbiLov newlov = makeNewSbiLov(lov, sessionCurrDB, null);
 		newlov.setLovId(id);
 		logger.debug("OUT");
 		return newlov;
@@ -1198,6 +1212,7 @@ public class ImportUtilities {
 			dsnewHistory.setUserIn(userid);
 			dsnewHistory.setTimeIn(new Date());
 			dsnewHistory.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+			dsnewHistory.setOrganization(((UserProfile) profile).getOrganization());
 
 			sessionCurrDB.save(dsnewHistory);
 
@@ -1238,24 +1253,40 @@ public class ImportUtilities {
 			existingLov.setDescr(exportedLov.getDescr());
 			existingLov.setLabel(exportedLov.getLabel());
 
+			String lovProvider = exportedLov.getLovProvider();
 			try {
-				// if user has associated another datasource then set the associated one, else put the same
-				QueryDetail queryDetail=new QueryDetail(exportedLov.getLovProvider());
-				String dataSource=queryDetail.getDataSource();
-				if(dsExportUser!=null && dsExportUser.get(dataSource)!=null){
-					String newDs=dsExportUser.get(dataSource);
-					queryDetail.setDataSource(newDs);
-				} else {
-					queryDetail.setDataSource(dataSource);
+				ILovDetail lovDetail = LovDetailFactory
+						.getLovFromXML(lovProvider);
+				if (lovDetail instanceof QueryDetail) {
+					// if user has associated another datasource then set the
+					// associated one, else put the same
+					QueryDetail queryDetail = (QueryDetail) lovDetail;
+					String dataSource = queryDetail.getDataSource();
+					if (dsExportUser != null
+							&& dsExportUser.get(dataSource) != null) {
+						String newDs = dsExportUser.get(dataSource);
+						queryDetail.setDataSource(newDs);
+					} else {
+						queryDetail.setDataSource(dataSource);
+					}
+					existingLov.setLovProvider(queryDetail.toXML());
 				}
-
-				existingLov.setLovProvider(queryDetail.toXML());				
-			} 
-			catch (Exception e) {
-				logger.error("error in reading the xml of lov provider; transcribe the original by default ");		
-				existingLov.setLovProvider(exportedLov.getLovProvider());
+				if (lovDetail instanceof DatasetDetail) {
+					// update dataset id
+					DatasetDetail datasetDetail = (DatasetDetail) lovDetail;
+					String datasetLabel = datasetDetail.getDatasetLabel();
+					Query query = sessionCurrDB.createQuery("select d.id from SbiDataSetConfig d where d.label = :label");
+					query.setString("label", datasetLabel);
+					Integer datasetId = (Integer) query.uniqueResult();
+					datasetDetail.setDatasetId(datasetId.toString());
+					existingLov.setLovProvider(datasetDetail.toXML());
+				}
+			} catch (Exception e) {
+				logger.error("Error in evaluating lov provider for exporter lov ["
+						+ exportedLov.getLabel() + "]. It will not be modified", e);		
+				existingLov.setLovProvider(lovProvider);
 			}
-
+			
 			existingLov.setName(exportedLov.getName());
 			existingLov.setProfileAttr(exportedLov.getProfileAttr());
 		} finally {
@@ -3407,19 +3438,20 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate SbiObjMetacontent object.
+	 * @param iEngUserProfile 
 	 * 
 	 * @param SbiObjectMetacontent metcontent
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiObjMetacontents makeNewSbiObjMetacontent(SbiObjMetacontents metacontents,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+	public static SbiObjMetacontents makeNewSbiObjMetacontent(SbiObjMetacontents metacontents,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer, IEngUserProfile iEngUserProfile){
 		logger.debug("IN");
 		SbiObjMetacontents newMetacontents = new SbiObjMetacontents();
 		try{
 			newMetacontents.setCreationDate(metacontents.getCreationDate());
 			newMetacontents.setLastChangeDate(metacontents.getLastChangeDate());
 			// associations
-			entitiesAssociationsSbiObjMetacontents(metacontents, newMetacontents, sessionCurrDB, metaAss, importer);
+			entitiesAssociationsSbiObjMetacontents(metacontents, newMetacontents, sessionCurrDB, metaAss, importer, iEngUserProfile);
 
 			logger.debug("OUT");
 		}
@@ -3438,13 +3470,14 @@ public class ImportUtilities {
 	 * @param exportedObjMetacontents the exported ObjMetacontents
 	 * @param sessionCurrDB the session curr db
 	 * @param existingId the existing id
+	 * @param userProfile 
 	 * 
 	 * @return the existing ObjMetacontents modified as per the exported parameter in input
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
 	public static SbiObjMetacontents modifyExistingSbiObjMetacontents(SbiObjMetacontents exportedMetacontents, Session sessionCurrDB, 
-			Integer existingId, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
+			Integer existingId, MetadataAssociations metaAss, ImporterMetadata importer, IEngUserProfile userProfile) throws EMFUserError {
 		logger.debug("IN");
 		SbiObjMetacontents existingMetacontents = null;
 		try {
@@ -3455,7 +3488,7 @@ public class ImportUtilities {
 			existingMetacontents.setLastChangeDate(exportedMetacontents.getLastChangeDate());
 
 			// associations
-			entitiesAssociationsSbiObjMetacontents(exportedMetacontents, existingMetacontents, sessionCurrDB, metaAss, importer);
+			entitiesAssociationsSbiObjMetacontents(exportedMetacontents, existingMetacontents, sessionCurrDB, metaAss, importer, userProfile);
 		}
 
 		finally {
@@ -3470,13 +3503,14 @@ public class ImportUtilities {
 	 * 
 	 * @param exportedMetacontent the exported SbiObjMetacontent
 	 * @param sessionCurrDB the session curr db
+	 * @param iEngUserProfile 
 	 * 
 	 * @return the existing ObjMetacontent modified as per the exported parameter in input
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
 	public static void entitiesAssociationsSbiObjMetacontents(SbiObjMetacontents exportedMetacontents, SbiObjMetacontents existingMetacontents,Session sessionCurrDB, 
-			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
+			MetadataAssociations metaAss, ImporterMetadata importer, IEngUserProfile profile) throws EMFUserError {
 		logger.debug("IN");	
 
 		// overwrite existging entities
@@ -3527,6 +3561,16 @@ public class ImportUtilities {
 		SbiBinContents exportedBinContent = exportedMetacontents.getSbiBinContents();
 		SbiBinContents newBinContents = new SbiBinContents();
 		newBinContents.setContent(exportedBinContent.getContent());
+		
+		SbiCommonInfo commonInfo = new SbiCommonInfo();
+		
+		String userid = (String) profile.getUserUniqueIdentifier();
+		commonInfo.setUserIn(userid);
+		commonInfo.setTimeIn(new Date());
+		commonInfo.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+		commonInfo.setOrganization(((UserProfile) profile).getOrganization());
+		newBinContents.setCommonInfo(commonInfo);
+		
 		sessionCurrDB.save(newBinContents);
 		existingMetacontents.setSbiBinContents(newBinContents);
 
