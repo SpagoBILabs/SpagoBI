@@ -61,7 +61,7 @@ public class SimpleModelProperties implements IModelProperties {
 		return propertyValue;
 	}
 	
-	protected String getPropertyQualifiedName(IModelNode item, String propertyName) {
+	public String getPropertyQualifiedName(IModelNode item, String propertyName) {
 		return getItemQulifier( item ) + "." + propertyName.trim();
 	}
 	
