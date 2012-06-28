@@ -255,20 +255,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	 * @throws Exception the exception
 	 */
 	public static IEngUserProfile createNewUserProfile(String userId) throws Exception {
-		logger.debug("IN");
-		IEngUserProfile profile = null;
-		try {
-			ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
-			SpagoBIUserProfile user = supplier.createUserProfile(userId);
-			user.setFunctions(UserUtilities.readFunctionality(user.getRoles(), user.getOrganization()));
-			profile = new UserProfile(user);
-		} catch (Exception e) {
-			logger.error("An error occurred while creating user profile for user [" + userId + "]");
-			throw new SecurityException("An error occurred while creating user profile for user [" + userId + "]", e);
-		} finally {
-			logger.debug("OUT");
-		}
-		return profile;
+		return UserUtilities.getUserProfile(userId);
 	}
 
 

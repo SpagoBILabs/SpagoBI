@@ -20,7 +20,9 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Iterator;
 import java.util.List;
@@ -68,6 +70,7 @@ public class RoleSynchronizer {
         	String roleName = null;
         	for (Iterator it = roles.iterator(); it.hasNext(); ){
         		aRole = (Role)it.next();
+        		checkTenant(aRole);
         		roleName = aRole.getName();
         		logger.info("Reading role: "+roleName);
         		matcher = filterPattern.matcher(roleName);
@@ -97,6 +100,28 @@ public class RoleSynchronizer {
 	}
 	
 	
+	private void checkTenant(Role aRole) {
+		if (aRole.getOrganization() == null) {
+			logger.warn("Role [" + aRole.getName()
+					+ "] has no organization/tenant set!!!");
+			List<SbiTenant> tenants = DAOFactory.getTenantsDAO()
+					.loadAllTenants();
+			if (tenants == null || tenants.size() == 0) {
+				throw new SpagoBIRuntimeException(
+						"No tenants found on database");
+			}
+			if (tenants.size() > 1) {
+				throw new SpagoBIRuntimeException(
+						"Tenants are more than one, cannot associate input role ["
+								+ aRole.getName() + "] to a single tenant!!!");
+			}
+			SbiTenant tenant = tenants.get(0);
+			logger.warn("Associating role [" + aRole.getName() + "] to tenant [" + tenant.getName() +"]");
+			aRole.setOrganization(tenant.getName());
+		}
+	}
+
+
 	/**
 	 * Returns true if a role already exists into the role list, false if none.
 	 * If the role name is found into the roles list, the <code>

@@ -11,6 +11,9 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.security.AuthorizationsBusinessMapper;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +32,9 @@ public class UserProfile implements IEngUserProfile {
 	private static transient Logger logger = Logger.getLogger(UserProfile.class);
 
 	private static String WORKFLOW_USER_NAME = "[SYSTEM - WORKFLOW]";
+	private static String WORKFLOW_USER_ID_PREFIX = "[SYSTEM - WORKFLOW] - ";
 	private static String SCHEDULER_USER_NAME = "scheduler";
+	private static String SCHEDULER_USER_ID_PREFIX = "scheduler - ";
 
 	private String userUniqueIdentifier = null;
 	private String userId = null;
@@ -39,6 +44,7 @@ public class UserProfile implements IEngUserProfile {
 	private Collection functionalities = null;
 	private String defaultRole = null;
 	private String organization = null;
+	private SpagoBIUserProfile spagoBIUserProfile = null;
 
 	/**
 	 * The Constructor.
@@ -47,6 +53,7 @@ public class UserProfile implements IEngUserProfile {
 	 */
 	public UserProfile(SpagoBIUserProfile profile) {
 		logger.debug("IN");
+		this.setSpagoBIUserProfile(profile);
 		this.userUniqueIdentifier = profile.getUniqueIdentifier();
 		this.userName = profile.getUserName();
 		this.userId = profile.getUserId();
@@ -88,37 +95,53 @@ public class UserProfile implements IEngUserProfile {
 		logger.debug("OUT");
 	}
 
-	/**
-	 * The Constructor.
-	 * 
-	 * @param user String
-	 */
-	public UserProfile(String user) {
-		this.userUniqueIdentifier = user;
-		this.userId=user;
-		this.userName=user;
+	public UserProfile(String userUniqueIdentifier, String userId, String userName, String organization) {
+		this.userUniqueIdentifier = userUniqueIdentifier;
+		this.userId = userId;
+		this.userName = userName;
+		this.organization = organization;
+	}
+	
+	public UserProfile(String userId, String organization) {
+		this.userUniqueIdentifier = userId;
+		this.userId = userId;
+		this.userName = userId;
+		this.organization = organization;
 	}
 
 	/**
-	 * Usato solo nel workflow.
-	 * 
-	 * @return the user profile
+	 * To be user by SpagoBI core ONLY.
+	 * The user identifier in the output object will match this syntax:
+	 * WORKFLOW_USER_ID_PREFIX + tenant name
+	 * @return the user profile for the workflow
 	 */
 	public static final UserProfile createWorkFlowUserProfile() {
-		UserProfile profile = new UserProfile(WORKFLOW_USER_NAME);
+		Tenant tenant = TenantManager.getTenant();
+		if (tenant == null) {
+			throw new SpagoBIRuntimeException("Tenant not found!!!");
+		}
+		String organization = tenant.getName();
+		String userUniqueIdentifier = WORKFLOW_USER_ID_PREFIX + organization;
+		UserProfile profile = new UserProfile(userUniqueIdentifier, WORKFLOW_USER_NAME, WORKFLOW_USER_NAME, organization);
 		profile.roles = new ArrayList();
 		profile.userAttributes = new HashMap();
-//		profile.userAttributes.put("password", WORKFLOW_USER_NAME);
 		return profile;
 	}
 
 	/**
-	 * Usato solo per lanciare i job.
-	 * 
-	 * @return the user profile
+	 * To be user by SpagoBI core ONLY.
+	 * The user identifier in the output object will match this syntax:
+	 * SCHEDULER_USER_ID_PREFIX + tenant name
+	 * @return the user profile for the scheduler
 	 */
 	public static final UserProfile createSchedulerUserProfile() {
-		UserProfile profile = new UserProfile(SCHEDULER_USER_NAME);
+		Tenant tenant = TenantManager.getTenant();
+		if (tenant == null) {
+			throw new SpagoBIRuntimeException("Tenant not found!!!");
+		}
+		String organization = tenant.getName();
+		String userUniqueIdentifier = SCHEDULER_USER_ID_PREFIX + organization;
+		UserProfile profile = new UserProfile(userUniqueIdentifier, SCHEDULER_USER_NAME, SCHEDULER_USER_NAME, organization);
 		profile.roles = new ArrayList();
 		profile.userAttributes = new HashMap();
 		return profile;
@@ -127,23 +150,25 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * Checks if is scheduler user.
 	 * 
-	 * @param userid String
+	 * @param userId String
 	 * 
 	 * @return true, if checks if is scheduler user
 	 */
-	public static boolean isWorkflowUser(String userid) {
-		return WORKFLOW_USER_NAME.equals(userid);
+	public static boolean isWorkflowUser(String userId) {
+		//return WORKFLOW_USER_NAME.equals(userid);
+		return userId != null && userId.startsWith(WORKFLOW_USER_ID_PREFIX);
 	}
 
 	/**
 	 * Checks if is scheduler user.
 	 * 
-	 * @param userid String
+	 * @param userId String
 	 * 
 	 * @return true, if checks if is scheduler user
 	 */
-	public static boolean isSchedulerUser(String userid) {
-		return SCHEDULER_USER_NAME.equals(userid);
+	public static boolean isSchedulerUser(String userId) {
+		//return SCHEDULER_USER_NAME.equals(userid);
+		return userId != null && userId.startsWith(SCHEDULER_USER_ID_PREFIX);
 	}
 
 	/* (non-Javadoc)
@@ -347,4 +372,58 @@ public class UserProfile implements IEngUserProfile {
 		this.organization = organization;
 	}
 
+	public SpagoBIUserProfile getSpagoBIUserProfile() {
+		return spagoBIUserProfile;
+	}
+
+	public void setSpagoBIUserProfile(SpagoBIUserProfile spagoBIUserProfile) {
+		this.spagoBIUserProfile = spagoBIUserProfile;
+	}
+
+	/**
+	 * To be user by external engines ONLY.
+	 * The user identifier must match this syntax:
+	 * SCHEDULER_USER_ID_PREFIX + tenant name
+	 * @param userUniqueIdentifier The user identifier (SCHEDULER_USER_ID_PREFIX + tenant name)
+	 * @return the user profile for the scheduler
+	 */
+	public static UserProfile createSchedulerUserProfile(String userUniqueIdentifier) {
+		logger.debug("IN: userUniqueIdentifier = " + userUniqueIdentifier);
+		if (!isSchedulerUser(userUniqueIdentifier)) {
+			throw new SpagoBIRuntimeException("User unique identifier [" + userUniqueIdentifier + "] is not a scheduler user id");
+		}
+		String actualUserId = SCHEDULER_USER_NAME;
+		String userName = SCHEDULER_USER_NAME;
+		String organization = userUniqueIdentifier.substring(SCHEDULER_USER_ID_PREFIX.length());
+		logger.debug("Organization : " + organization);
+		UserProfile toReturn = new UserProfile(userUniqueIdentifier, actualUserId, userName, organization);
+		toReturn.setRoles(new ArrayList());
+		toReturn.setAttributes(new HashMap());
+		logger.debug("OUT");
+		return toReturn;
+	}
+	
+	/**
+	 * To be user by external engines ONLY.
+	 * The user identifier must match this syntax:
+	 * WORKFLOW_USER_ID_PREFIX + tenant name
+	 * @param userUniqueIdentifier The user identifier (WORKFLOW_USER_ID_PREFIX + tenant name)
+	 * @return the user profile for the workflow
+	 */
+	public static UserProfile createWorkflowUserProfile(String userUniqueIdentifier) {
+		logger.debug("IN: userUniqueIdentifier = " + userUniqueIdentifier);
+		if (!isWorkflowUser(userUniqueIdentifier)) {
+			throw new SpagoBIRuntimeException("User unique identifier [" + userUniqueIdentifier + "] is not a workflow user id");
+		}
+		String actualUserId = WORKFLOW_USER_NAME;
+		String userName = WORKFLOW_USER_NAME;
+		String organization = userUniqueIdentifier.substring(WORKFLOW_USER_ID_PREFIX.length());
+		logger.debug("Organization : " + organization);
+		UserProfile toReturn = new UserProfile(userUniqueIdentifier, actualUserId, userName, organization);
+		toReturn.setRoles(new ArrayList());
+		toReturn.setAttributes(new HashMap());
+		logger.debug("OUT");
+		return toReturn;
+	}
+	
 }

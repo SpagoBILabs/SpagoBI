@@ -8,6 +8,7 @@ package it.eng.spagobi.tools.importexport;
 
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.tools.importexport.bo.AssociationFile;
 
 import java.util.List;
@@ -17,6 +18,8 @@ public interface IImportManager {
 
 	public static final String IMPORT_ASS_PREDEFINED_MODE = "IMPORT_ASS_PREDEFINED_MODE"; 
 	public static final String IMPORT_ASS_DEFAULT_MODE = "IMPORT_ASS_DEFAULT_MODE"; 
+	
+	public void setUserProfile(IEngUserProfile profile);
 	
 	/**
 	 * Prepare the environment for the import procedure. This method must be invoked first.

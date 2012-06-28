@@ -8,6 +8,7 @@
 package it.eng.spagobi.tools.importexport.services;
 
 import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -15,6 +16,7 @@ import it.eng.spago.dispatching.module.AbstractModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
@@ -312,8 +314,11 @@ public class ImportExportModule extends AbstractModule {
 	    archiveBytes = transManager.applyTransformations(archiveBytes, archiveName, pathImpTmpFolder);
 	    logger.debug("Transformation applied succesfully");
 
-	    impManager = ImportUtilities.getImportManagerInstance();
 	    // prepare import environment
+		SessionContainer permanentSession = this.getRequestContainer().getSessionContainer().getPermanentContainer();
+		IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		impManager = ImportUtilities.getImportManagerInstance();
+	    impManager.setUserProfile(profile);
 	    impManager.init(pathImpTmpFolder, archiveName, archiveBytes);
 	    impManager.openSession();
 	    impManager.setAssociationFile(assFile);

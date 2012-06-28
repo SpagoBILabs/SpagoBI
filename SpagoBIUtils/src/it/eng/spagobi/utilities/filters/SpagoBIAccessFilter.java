@@ -78,8 +78,7 @@ public class SpagoBIAccessFilter implements Filter {
 			logger.debug("Filter executionId from request::" + executionId);
 			
 			userId = request.getParameter( SsoServiceInterface.USER_ID );
-			logger.debug("Filter userId from request::" + userId);		   
-		   
+			logger.debug("Filter userId from request::" + userId);
 			
 			if (request instanceof HttpServletRequest) {
 			    
@@ -103,20 +102,20 @@ public class SpagoBIAccessFilter implements Filter {
 					if (passTicket != null && passTicket.equalsIgnoreCase(EnginConf.getInstance().getPass())) {
 					    // if a request is coming from SpagoBI context
 					    isBackend = true;
-					    profile=UserProfile.createSchedulerUserProfile();
+					    //profile=UserProfile.createSchedulerUserProfile();
 					    ioManager.setInSession(IS_BACKEND_ATTR_NAME, "true");
 					    ioManager.contextManager.set(IS_BACKEND_ATTR_NAME, "true");
 					    
 					    if (userId!=null && UserProfile.isSchedulerUser(userId)){
-					    	
-				    		ioManager.setInSession(IEngUserProfile.ENG_USER_PROFILE, UserProfile.createSchedulerUserProfile());
-				    		ioManager.contextManager.set(IEngUserProfile.ENG_USER_PROFILE, UserProfile.createSchedulerUserProfile());
+					    	profile = UserProfile.createSchedulerUserProfile(userId);
+				    		ioManager.setInSession(IEngUserProfile.ENG_USER_PROFILE, profile);
+				    		ioManager.contextManager.set(IEngUserProfile.ENG_USER_PROFILE, profile);
 				    		logger.info("IS a Scheduler Request ...");
 				    		
 					    }else if(userId!=null && UserProfile.isWorkflowUser(userId)){
-					    	
-					    	ioManager.setInSession(IEngUserProfile.ENG_USER_PROFILE, UserProfile.createWorkFlowUserProfile());
-				    		ioManager.contextManager.set(IEngUserProfile.ENG_USER_PROFILE, UserProfile.createWorkFlowUserProfile());
+					    	profile = UserProfile.createWorkflowUserProfile(userId);
+					    	ioManager.setInSession(IEngUserProfile.ENG_USER_PROFILE, profile);
+				    		ioManager.contextManager.set(IEngUserProfile.ENG_USER_PROFILE, profile);
 				    		logger.info("IS a Workflow Request ...");
 				    		
 					    }else{

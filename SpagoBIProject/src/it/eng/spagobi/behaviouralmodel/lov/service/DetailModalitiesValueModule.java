@@ -174,7 +174,8 @@ public class DetailModalitiesValueModule extends AbstractModule {
 			List profAttrToFill = getProfileAttributesToFill(lovDet);
 			if(profAttrToFill.size()!=0) {
 				//	create a fake user profile
-			    UserProfile userProfile=new UserProfile((String)((UserProfile)profile).getUserId());
+				UserProfile currentUserProfile = (UserProfile) profile;
+			    UserProfile userProfile = new UserProfile((String) currentUserProfile.getUserId(), currentUserProfile.getOrganization());
 				// copy all the roles, functionalities of the original profile
 			    userProfile.setFunctionalities(profile.getFunctionalities());
 			    userProfile.setRoles(((UserProfile)profile).getRolesForUse());

@@ -148,14 +148,19 @@ public class KpiExporter {
 			logger.debug("Filling report ...");
 			Context ctx = new InitialContext();
 			Session aSession = HibernateUtil.currentSession();
-			Transaction tx = aSession.beginTransaction();
-			//Connection jdbcConnection = aSession.connection();
-			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(dirS + File.separatorChar + "Master.jasper", parameters,jdbcConnection);
-			logger.debug("Report filled succesfully");
-			   if (aSession != null) {
-				    if (aSession.isOpen()) aSession.close();
-				   }
+			JasperPrint jasperPrint = null;
+			try {
+				Transaction tx = aSession.beginTransaction();
+				//Connection jdbcConnection = aSession.connection();
+				Connection jdbcConnection = HibernateUtil.getConnection(aSession);
+				jasperPrint = JasperFillManager.fillReport(dirS + File.separatorChar + "Master.jasper", parameters,jdbcConnection);
+				logger.debug("Report filled succesfully");
+			} finally {
+				if (aSession != null) {
+					if (aSession.isOpen())
+						aSession.close();
+				}
+			}
 			logger.debug("Exporting report: Output format is [" + outputType + "]");
 			JRExporter exporter=null;
 			//JRExporter exporter = ExporterFactory.getExporter(outputType);	
