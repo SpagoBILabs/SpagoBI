@@ -1,59 +1,10 @@
 <%-- SpagoBI, the Open Source Business Intelligence suite
 
- © 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- This Source Code Form is subject to the terms of the Mozilla Public
- License, v. 2.0. If a copy of the MPL was not distributed with this file,
- You can obtain one at http://mozilla.org/MPL/2.0/. --%>
+Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
  
-<%@page import="it.eng.spagobi.commons.SingletonConfig"%>
-<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
-<%@page import="java.io.IOException"%>
-<%@page import="org.jfree.chart.ChartUtilities"%>
-<%@page import="org.jfree.chart.entity.StandardEntityCollection"%>
-<%@page import="org.jfree.chart.ChartRenderingInfo"%>
-<%@page import="org.jfree.chart.JFreeChart"%>
-<%@page import="it.eng.spagobi.engines.kpi.bo.ChartImpl"%>
-<%@page import="java.text.ParseException"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="it.eng.spago.base.SourceBean"%>
-<%@page import="it.eng.spago.navigation.LightNavigationManager"%>
-<%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
-<%@page import="it.eng.spagobi.kpi.threshold.bo.ThresholdValue"%>
-<%@page import="java.awt.Color"%>
-<%@page import="java.util.Iterator"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="java.util.List"%>
-<%@page import="it.eng.spagobi.kpi.config.bo.KpiValue"%>
-<%@page import="org.safehaus.uuid.UUID"%>
-<%@page import="org.safehaus.uuid.UUIDGenerator"%>
-<%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
-<%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
-<%@page import="java.util.Date"%>
-<%@page import="it.eng.spagobi.kpi.model.bo.Resource"%>
-<%@page import="java.util.HashMap"%>
-<%@page import="it.eng.spagobi.engines.kpi.bo.KpiLine"%>
-<%@page import="it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance"%>
-<%@page import="it.eng.spagobi.engines.kpi.bo.KpiLineVisibilityOptions"%><%--
-SpagoBI - The Business Intelligence Free Platform
-
-Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
---%>
+  
 
 <%!//START RECURSIVE METHOD TO CREATE TREE STRUCTURE
 //PERCENTAGE WIDTH OF EVERY COLUMN (SUM MUST BE 100%)
