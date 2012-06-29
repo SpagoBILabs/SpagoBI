@@ -96,7 +96,7 @@
         <exclude name="**/*.svn"/>
       </fileset>
     </copy>
-            <copy file="${web.dir}/COPYING" todir="${dist}" overwrite="true" />
+            <copy file="${web.dir}/${license}" todir="${dist}" overwrite="true" />
   </target>
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--   CREAZIONE JAR							                                    -->
