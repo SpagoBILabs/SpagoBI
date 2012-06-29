@@ -132,17 +132,12 @@
 	<target name="sso.cas">
 
 		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
-			<replacetoken>
-				<![CDATA[<!-- START-CAS]]>
-			</replacetoken>
-			<replacevalue>
-				<![CDATA[<!-- START-CAS -->]]></replacevalue>
+			<replacetoken><![CDATA[<!-- START-CAS]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-CAS -->]]></replacevalue>
 		</replace>
 		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
-			<replacetoken>
-				<![CDATA[END-CAS -->]]></replacetoken>
-			<replacevalue>
-				<![CDATA[<!-- END-CAS -->]]></replacevalue>
+			<replacetoken><![CDATA[END-CAS -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-CAS -->]]></replacevalue>
 		</replace>
 
 	</target>

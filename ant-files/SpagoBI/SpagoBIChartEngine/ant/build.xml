@@ -132,31 +132,21 @@
 
 	<target name="production" depends="create-production">
 		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiChartJS.jspf">
-			<replacetoken>
-				<![CDATA[<!-- START-PRODUCTION]]>
-			</replacetoken>
-			<replacevalue>
-				<![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
+			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
 		</replace>
 		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiChartJS.jspf">
-			<replacetoken>
-				<![CDATA[END-PRODUCTION -->]]></replacetoken>
-			<replacevalue>
-				<![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
+			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
 		</replace>
 
 		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiChartJS.jspf">
-			<replacetoken>
-				<![CDATA[<!-- START-DEBUG -->]]></replacetoken>
-			<replacevalue>
-				<![CDATA[<!-- START-DEBUG]]>
-			</replacevalue>
+			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
 		</replace>
 		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiChartJS.jspf">
-			<replacetoken>
-				<![CDATA[<!-- END-DEBUG -->]]></replacetoken>
-			<replacevalue>
-				<![CDATA[END-DEBUG -->]]></replacevalue>
+			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
 		</replace>
 	</target>
 
@@ -212,17 +202,13 @@
 	<target name="sso.cas">
 
 		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
-			<replacetoken>
-				<![CDATA[<!-- START-CAS]]>
+			<replacetoken><![CDATA[<!-- START-CAS]]>
 			</replacetoken>
-			<replacevalue>
-				<![CDATA[<!-- START-CAS -->]]></replacevalue>
+			<replacevalue><![CDATA[<!-- START-CAS -->]]></replacevalue>
 		</replace>
 		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
-			<replacetoken>
-				<![CDATA[END-CAS -->]]></replacetoken>
-			<replacevalue>
-				<![CDATA[<!-- END-CAS -->]]></replacevalue>
+			<replacetoken><![CDATA[END-CAS -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-CAS -->]]></replacevalue>
 		</replace>
 
 	</target>
