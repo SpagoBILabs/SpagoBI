@@ -369,7 +369,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				}
 			} else {				
 				if ( this.parameterValueIsInPreferences(parameters[i]) ) {
-					field.setValue(preferenceState[parameters[i].id]);
+					field.setValue(this.preferenceState[parameters[i].id]);
 				} else {
 					if (parameters[i].visible === true && parameters[i].vizible !== false) {
 						this.addField(field, nonTransientField++);
