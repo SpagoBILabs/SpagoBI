@@ -4,9 +4,94 @@ Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competenc
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
  
-  
+  <%@ page language="java" 
+	     contentType="text/html; charset=ISO-8859-1" 
+	     pageEncoding="ISO-8859-1"%>	
+
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA IMPORTS															--%>
+<%-- ---------------------------------------------------------------------- --%>
+<%@page import="it.eng.spago.configuration.*"%>
+<%@page import="it.eng.spago.base.*"%>
+<%@page import="it.eng.spagobi.engines.chart.ChartEngineConfig"%>
+<%@page import="it.eng.spagobi.engines.chart.ChartEngineInstance"%>
+<%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
+<%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
+<%@page import="it.eng.spago.security.IEngUserProfile"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="java.util.Locale"%>
+<%@page import="it.eng.spagobi.tools.dataset.bo.IDataSet"%>
+<%@page import="it.eng.spagobi.services.common.EnginConf"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.Iterator"%>
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA CODE 																--%>
+<%-- ---------------------------------------------------------------------- --%>
+<%
+	ChartEngineInstance chartEngineInstance;
+	UserProfile profile;
+	Locale locale;
+	IDataSet ds;
+	String dsLabel;
+	String dsTypeCd;
+	String isFromCross;
+	String engineContext;
+	String engineServerHost;
+	String enginePort;
+	String executionId;
+	String spagobiServerHost;
+	String spagobiContext;
+	String spagobiSpagoController;
+	String documentLabel;
+	
+	chartEngineInstance = (ChartEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute("ENGINE_INSTANCE");
+	profile = (UserProfile)chartEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+	locale = (Locale)chartEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
+	documentLabel = (String)chartEngineInstance.getEnv().get(EngineConstants.ENV_DOCUMENT_LABEL);
+
+	ds =  (IDataSet)chartEngineInstance.getDataSet();
+	dsLabel = (ds != null) ? ds.getLabel() : "";
+	dsTypeCd = (ds != null) ? ds.getDsType() : "";
+	
+	isFromCross = (String)chartEngineInstance.getEnv().get("isFromCross");
+	if (isFromCross == null) {
+		isFromCross = "false";
+	}
+	
+	ChartEngineConfig chartEngineConfig = ChartEngineConfig.getInstance();
+    
+    spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
+    spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+    spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
+    
+ // used in local ServiceRegistry
+ 	engineServerHost = request.getServerName();
+ 	enginePort = "" + request.getServerPort();
+    engineContext = request.getContextPath();
+    if( engineContext.startsWith("/") || engineContext.startsWith("\\") ) {
+    	engineContext = request.getContextPath().substring(1);
+    }
+    
+    executionId = request.getParameter("SBI_EXECUTION_ID");
+    if(executionId != null) {
+    	executionId = "'" + request.getParameter("SBI_EXECUTION_ID") + "'";;
+    } else {
+    	executionId = "null";
+    }   
+    
+    String chartTemplate = chartEngineInstance.getTemplate().toString();
+    // gets analytical driver
+    //Map analyticalDrivers  = chartEngineInstance.getAnalyticalDrivers();
  
-  
+%>
+
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- HTML	 																--%>
+<%-- ---------------------------------------------------------------------- --%>
 <html>
 	
 	<head>
