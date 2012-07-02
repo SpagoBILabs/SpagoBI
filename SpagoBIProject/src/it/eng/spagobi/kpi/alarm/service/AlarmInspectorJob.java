@@ -86,7 +86,7 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 		try {
 			hsession = sae.getSession();
 
-			activeSbiAlarmEventList = sae.findActive();
+			activeSbiAlarmEventList = sae.findActive(hsession);
 			for (SbiAlarmEvent sbiAlarmEvent : activeSbiAlarmEventList) {
 
 				if (logger.isInfoEnabled())
