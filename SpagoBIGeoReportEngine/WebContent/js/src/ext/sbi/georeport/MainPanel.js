@@ -4,7 +4,363 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
-  
+Ext.ns("Sbi.georeport");
+
+Sbi.georeport.MainPanel = function(config) {
+	
+	var defaultSettings = {
+		mapName: 'sbi.georeport.mappanel.title'
+		, controlPanelConf: {
+			layerPanelEnabled: true
+			, analysisPanelEnabled: true
+			, measurePanelEnabled: true
+			, legendPanelEnabled: true
+			, logoPanelEnabled: true
+			, earthPanelEnabled: true
+		} 
+		, toolbarConf: {
+			enabled: true,
+			zoomToMaxButtonEnabled: true,
+			mouseButtonGroupEnabled: true,
+			measureButtonGroupEnabled: true,
+			wmsGroupEnabled: true,
+			drawButtonGroupEnabled: true,
+			historyButtonGroupEnabled: true
+		}
+	};
+		
+	if(Sbi.settings && Sbi.settings.georeport && Sbi.settings.georeport.georeportPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.georeport.georeportPanel);
+	}
+		
+	var c = Ext.apply(defaultSettings, config || {});
+	
+	// patch for an old typo
+	if(c.feautreInfo) {
+		c.featureInfo = c.feautreInfo;
+		delete c.feautreInfo;
+	}
+		
+	Ext.apply(this, c);
+		
+		
+	this.services = this.services || new Array();	
+	
+	var params = {
+		layer: this.targetLayerConf.name
+		, businessId: this.businessId
+		, geoId: this.geoId
+	};
+	
+	if(this.targetLayerConf.url) {
+		params.featureSourceType = 'wfs';
+		params.featureSource = this.targetLayerConf.url;
+	} else {
+		params.featureSourceType = 'file';
+		params.featureSource = this.targetLayerConf.data;
+	}
+	
+	this.services['MapOl'] = this.services['MapOl'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MapOl'
+		, baseParams: params
+	});
+	
+	this.initMap();
+	this.initMapPanel();
+	this.initControlPanel();
+	
+	c = Ext.apply(c, {
+         layout   : 'border',
+         items    : [this.controlPanel, this.mapPanel]
+	});
+
+	// constructor
+	Sbi.georeport.MainPanel.superclass.constructor.call(this, c);
+	
+	this.on('render', function() {
+		this.setCenter();
+		if(this.controlPanelConf.earthPanelEnabled === true) {
+			this.init3D.defer(500, this);
+		}
+		if(this.toolbarConf.enabled) {
+			this.toolbar.initButtons.defer(500, this.toolbar);
+			//this.initToolbarContent.defer(500, this);	
+		}
+	}, this);
+	
+	
+	
+};
+
+Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
+    
+    services: null
+    
+    , baseLayersConf: null
+    , layers: null
+    
+    , map: null
+    , lon: null
+    , lat: null
+    , zoomLevel: null
+    
+    , showPositon: null
+    , showOverview: null
+    , mapName: null
+    , mapPanel: null
+    , controlPanel: null
+    
+    , analysisType: null
+    , PROPORTIONAL_SYMBOLS:'proportionalSymbols'
+    , CHOROPLETH:'choropleth'
+    , GRAPHIC:'graphic'
+    
+    , targetLayer: null
+    , geostatistic: null
+    
+    // --- modifica fabio
+    
+    , controlPanel2: null
+    
+    , nWLayer: null
+    
+    , wmsLayerUrl: null
+ 
+    , btnAddWms: null
+ 
+    , winWmsForm: null
+    
+    , Form: null
+    
+    , wmsLayerGrid: null
+    
+    , model: null
+    
+    // --- modifica fabio
+    
+    
+    // -- public methods ------------------------------------------------------------------------
+    
+    
+    , setCenter: function(center) {
+      	
+		center = center || {};
+      	this.lon = center.lon || this.lon;
+      	this.lat = center.lat || this.lat;
+      	this.zoomLevel = center.zoomLevel || this.zoomLevel;
+        
+        if(this.map.projection == "EPSG:900913"){            
+            this.centerPoint = Sbi.georeport.GeoReportUtils.lonLatToMercator(new OpenLayers.LonLat(this.lon, this.lat));
+            this.map.setCenter(this.centerPoint, this.zoomLevel);
+        } else if(this.map.projection == "EPSG:4326") {
+        	this.centerPoint = new OpenLayers.LonLat(this.lon, this.lat);
+        	this.map.setCenter(this.centerPoint, this.zoomLevel);
+        } else{
+        	alert("Map Projection not supported yet!");
+        }
+         
+     }
+
+	 // -- private methods ------------------------------------------------------------------------
+	
+	
+	, initMap: function() {  
+		var o = this.baseMapOptions;
+	
+		if(o.projection !== undefined && typeof o.projection === 'string') {
+			o.projection = new OpenLayers.Projection( o.projection );
+		}
+		
+		if(o.displayProjection !== undefined && typeof o.displayProjection === 'string') {
+			o.displayProjection = new OpenLayers.Projection( o.displayProjection );
+		}
+		
+		if(o.maxExtent !== undefined && typeof o.maxExtent === 'object') {
+			o.maxExtent = new OpenLayers.Bounds(
+					o.maxExtent.left, 
+					o.maxExtent.bottom,
+					o.maxExtent.right,
+					o.maxExtent.top
+            );
+		}
+		
+		
+		this.map = new OpenLayers.Map('map', this.baseMapOptions);
+		this.initLayers();
+		this.initControls();  
+		this.initAnalysis();
+    }
+
+	, initLayers: function(c) {
+		this.layers = new Array();
+				
+		if(this.baseLayersConf && this.baseLayersConf.length > 0) {
+			for(var i = 0; i < this.baseLayersConf.length; i++) {
+				if(this.baseLayersConf[i].enabled === true) {
+					var l = Sbi.georeport.LayerFactory.createLayer( this.baseLayersConf[i] );
+					this.layers.push( l	);
+				}
+			}			
+		}
+		
+		this.map.addLayers(this.layers);
+	}
+	
+	, initControls: function() {
+		
+		if(this.baseControlsConf && this.baseControlsConf.length > 0) {
+			for(var i = 0; i < this.baseControlsConf.length; i++) {
+				if(this.baseControlsConf[i].enabled === true) {
+					this.baseControlsConf[i].mapOptions = this.baseMapOptions;
+					var c = Sbi.georeport.ControlFactory.createControl( this.baseControlsConf[i] );
+					this.map.addControl( c );
+				}
+			}			
+		}
+	}
+	
+	
+	, init3D: function(center){
+		center = center || {};
+		this.lon = center.lon || this.lon;
+		this.lat = center.lat || this.lat;
+	    
+	    if(this.map.projection == "EPSG:900913"){
+	        
+	    	var earth = new mapfish.Earth(this.map, 'map3dContainer', {
+	    		lonLat: Sbi.georeport.GeoReportUtils.lonLatToMercator(new OpenLayers.LonLat(this.lon, this.lat)),
+	            altitude: 50, //da configurare
+	            heading: -60, //da configurare
+	            tilt: 70,     //da configurare
+	            range: 700}
+	    	); //da configurare
+	    	
+	    } else if(this.map.projection == "EPSG:4326"){
+	    	
+	    	var earth = new mapfish.Earth(this.map, 'map3dContainer', {
+	    		lonLat: new OpenLayers.LonLat(this.lon, this.lat),
+	            altitude: 50,//da configurare
+	            heading: -60,//da configurare
+	            tilt: 70,//da configurare
+	            range: 700
+	       
+	    	}); //da configurare	    
+	    } else{
+	    	alert('Map projection [' + this.map.projection + '] not supported yet!');
+	    }
+	  
+	  }
+	
+	
+	
+	, initAnalysis: function() {
+		
+		var geostatConf = {
+			map: this.map,
+			layer: null, // this.targetLayer not yet defined here
+			indicators:  this.indicators,
+			url: this.services['MapOl'],
+			loadMask : {msg: 'Analysis...', msgCls: 'x-mask-loading'},
+			legendDiv : 'myChoroplethLegendDiv',
+			featureSelection: false,
+			listeners: {}
+		};
+
+		if(this.map.projection == "EPSG:900913") {
+			 geostatConf.format = new OpenLayers.Format.GeoJSON({
+				 externalProjection: new OpenLayers.Projection("EPSG:4326"),
+			     internalProjection: new OpenLayers.Projection("EPSG:900913")
+			 });
+		}
+		
+		
+		if (this.analysisType === this.PROPORTIONAL_SYMBOLS) {
+			this.initProportionalSymbolsAnalysis();
+			geostatConf.layer = this.targetLayer;
+			this.geostatistic = new mapfish.widgets.geostat.ProportionalSymbol(geostatConf);
+			
+		} else if(this.analysisType === this.GRAPHIC) {
+			this.initGraphicAnalysis();
+			geostatConf.layer = this.targetLayer;
+			this.map.PieDefinition = this.PieDefinition;			
+			this.map.analysisType = this.analysisType;
+			this.map.colors = this.color;
+			this.map.chartType = this.chartType;
+			this.map.totalField= this.totalField;
+			this.map.fieldsToShow= this.fieldsToShow;
+			this.geostatistic = new mapfish.widgets.geostat.Choropleth(geostatConf);//da ridefinire
+		} else if (this.analysisType === this.CHOROPLETH) {
+			this.initChoroplethAnalysis();
+			geostatConf.layer = this.targetLayer;
+			this.geostatistic = new mapfish.widgets.geostat.Choropleth(geostatConf);
+		} else {
+			alert('error: unsupported analysis type [' + this.analysisType + ']');
+		}
+		
+		this.initAnalysislayerSelectControl();
+		this.map.addControl(this.analysisLayerSelectControl); 
+		this.analysisLayerSelectControl.activate();
+		
+		
+	}
+	
+	
+	
+	
+	, initProportionalSymbolsAnalysis: function() {
+	
+		this.targetLayer = new OpenLayers.Layer.Vector(this.targetLayerConf.text, {
+				'visibility': false  ,
+				'styleMap': new OpenLayers.StyleMap({
+	   				'select': new OpenLayers.Style(
+	       				{'strokeColor': 'red', 'cursor': 'pointer'}
+	   				)
+				})
+		});
+
+		this.map.addLayer(this.targetLayer);		
+	}
+	
+	, initChoroplethAnalysis: function() {
+		this.targetLayer = new OpenLayers.Layer.Vector(this.targetLayerConf.text, {
+        	'visibility': false,
+          	'styleMap': new OpenLayers.StyleMap({
+            	'default': new OpenLayers.Style(
+                	OpenLayers.Util.applyDefaults(
+                      {'fillOpacity': 0.5},
+                      OpenLayers.Feature.Vector.style['default']
+                  	)
+              	),
+              	'select': new OpenLayers.Style(
+                  {'strokeColor': 'red', 'cursor': 'pointer'}
+              	)
+          	})
+      	});
+     
+    
+    	this.map.addLayer(this.targetLayer);                                    
+	}
+	
+	, initGraphicAnalysis: function() {
+
+		var context = Sbi.georeport.ContextFactory.createContext();
+
+        var template = {
+			fillColor: "${getColor}",
+            fillOpacity: 0.2,
+            graphicOpacity: 1,
+            externalGraphic: "${getChartURLOriginal}",
+            pointRadius: 20,
+            graphicWidth:  "${getWidth}",
+            graphicHeight: "${getHeight}"
+        };
+            
+        var style = new OpenLayers.Style(template, {context: context});
+        
+		var styleMap = new OpenLayers.StyleMap({'default': style, 'select': {fillOpacity: 0.3}});
+		    	
+		    
+		    /************************************ **********/
 		this.targetLayer = new OpenLayers.Layer.Vector( this.targetLayerConf.text,
                                                 { format: OpenLayers.Format.GeoJSON,
                                                   styleMap: styleMap,
