@@ -8,15 +8,14 @@
  
   
  
- ﻿app.views.Viewport = Ext.extend(Ext.Panel,
+app.views.Viewport = Ext.extend(Ext.Panel,
 	{
 	fullscreen: true,
 	layout: 'card',
 	cardSwitchAnimation: 'slide',
 	initComponent: function() 
 	
-	  {
-	    //put instances of login into app.views namespace
+	  {	    //put instances of login into app.views namespace
 	    Ext.apply(app.views, {
 	        loginView: new app.views.LoginView(),
 	        main:      new app.views.MainContainer(),
