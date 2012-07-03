@@ -8,12 +8,12 @@
  
   
  
- ﻿app.views.CrossExecutionView = Ext.extend(Ext.Panel,
+app.views.CrossExecutionView = Ext.extend(Ext.Panel,
 	{
 	fullscreen: true,
 	layout: 'card',	
     sortable: false,
-	cardSwitchAnimation: 'slide'
+	cardSwitchAnimation: slide'
 	,ui : 'dark'
 	,breadCrumbs: new Array()
 
