@@ -76,7 +76,7 @@
 
 	      						this.setCrossNavigation(resp, target, crossParams);
 	      						var targetDoc;
-	      						if(resp.config != undefined && resp.config.drill != undefined){
+	      						if(resp.features != undefined && resp.features.drill != undefined){
 		      						targetDoc = this.setTargetDocument(resp);		      						
 	      						}
 	      						this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);

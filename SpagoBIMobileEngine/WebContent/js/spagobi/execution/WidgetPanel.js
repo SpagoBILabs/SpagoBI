@@ -35,7 +35,13 @@
 		return this.executionInstance;
 	}
 	, setTargetDocument: function(resp){
-		var drill = resp.config.drill;
+		var drill;
+		try{
+			drill = resp.config.drill;
+		}catch(err){
+			//for table cross navigation
+			drill = resp.features.drill;
+		}
 		var targetDoc = drill.document;
 		return targetDoc;
 	}
