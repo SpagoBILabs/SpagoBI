@@ -42,6 +42,7 @@
 		
 		console.log('app.controllers.ComposedExecutionController:parametersHaveBeenChanged: IN');
 		
+
 		for (var aParameterName in oldParameters) {
 			var oldParameterValue = oldParameters[aParameterName];
 			if (oldParameters.hasOwnProperty(aParameterName) && 
@@ -53,6 +54,22 @@
 					return true;
 				}
 			}
+		}		
+		//in case previous execution didn't have parameters
+		var oldcount = 0;
+		for (var k in oldParameters) {
+			if (oldParameters.hasOwnProperty(k)) {
+				oldcount++;
+			}
+		}
+		var newcount = 0;
+		for (var k in newParameters) {
+			if (newParameters.hasOwnProperty(k)) {
+				newcount++;
+			}
+		}
+		if(newcount != oldcount) {
+			return true;
 		}
 		return false;
 	}
