@@ -55,23 +55,8 @@
 				}
 			}
 		}		
-		//in case previous execution didn't have parameters
-		var oldcount = 0;
-		for (var k in oldParameters) {
-			if (oldParameters.hasOwnProperty(k)) {
-				oldcount++;
-			}
-		}
-		var newcount = 0;
-		for (var k in newParameters) {
-			if (newParameters.hasOwnProperty(k)) {
-				newcount++;
-			}
-		}
-		if(newcount != oldcount) {
-			return true;
-		}
-		return false;
+		return this.compareOldAndNewParameters(oldParameters, newParameters);
+
 	}
 	
 	,
@@ -80,6 +65,16 @@
 		console.log('app.controllers.ComposedExecutionController:applyNewParameters: IN');
 		
 		var toReturn = {};
+		var oldcount = 0;
+		for (var k in oldParameters) {
+			if (oldParameters.hasOwnProperty(k)) {
+				oldcount++;
+			}
+		}
+		if(oldcount == 0){
+			toReturn = newParameters;
+			return toReturn;
+		}
 		
 		for (var aParameterName in oldParameters) {
 			var oldParameterValue = oldParameters[aParameterName];
@@ -96,8 +91,28 @@
 				}
 			}
 		}
-		
+
 		return toReturn;
+	}
+	, compareOldAndNewParameters: function(oldParameters, newParameters){
+		//if old parameters was kind of "empty"
+		var oldcount = 0;
+		for (var k in oldParameters) {
+			if (oldParameters.hasOwnProperty(k)) {
+				oldcount++;
+			}
+		}
+		var newcount = 0;
+		for (var k in newParameters) {
+			if (newParameters.hasOwnProperty(k)) {
+				newcount++;
+			}
+		}
+		if(oldcount != newcount){
+			return true;
+		}else {
+			return false;
+		}
 	}
 	
 });
