@@ -11,10 +11,13 @@
 package it.eng.spagobi.engine.mobile.template;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engine.mobile.MobileConstants;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -107,9 +110,20 @@ public class TableTemplateInstance extends AbstractTemplateInstance implements I
 			return;
 		}
 		titleName = (String)confSB.getAttribute(MobileConstants.TITLE_VALUE_ATTR);
+		Map parNotNull = this.paramsMap;
+		Iterator it = parNotNull.keySet().iterator();
+		while(it.hasNext()){
+			String key = (String)it.next();
+
+			if(parNotNull.get(key)== null){
+				parNotNull.put(key, " ");			
+			}
+		}
+		String titleWithPars = StringUtilities.substituteParametersInString(titleName, ((Map)parNotNull), null, false);
+		
 		String titleStyle = (String)confSB.getAttribute(MobileConstants.TITLE_STYLE_ATTR);
 		
-		title.put("value", titleName);
+		title.put("value", titleWithPars);
 		title.put("style", titleStyle);
 
 		logger.debug("OUT");		
