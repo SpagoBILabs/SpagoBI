@@ -581,7 +581,7 @@ function getParNameFromParId(parId){
     	BIObjectParameter othBiPar = (BIObjectParameter) othBiParIter.next();
   %>
   	if(parId==<%=othBiPar.getId()%>) {
-  		return '<%=othBiPar.getLabel()%>';
+  		return "<%=othBiPar.getLabel()%>";
   	}
   <%  
     }
