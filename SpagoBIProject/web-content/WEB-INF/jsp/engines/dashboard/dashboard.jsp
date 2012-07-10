@@ -133,6 +133,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	//defines dynamic parameters for multichart management (ie. recNum)
 	int numCharts = (confParameters.get("numCharts")==null)? 1:Integer.valueOf((String)confParameters.get("numCharts")).intValue();
 	int numChartsForRow = (confParameters.get("numChartsForRow")==null)? numCharts:Integer.valueOf((String)confParameters.get("numChartsForRow")).intValue();
+	int contChartsForRow =  numChartsForRow;
 	String multichart = (confParameters.get("multichart")==null)?"false":(String)confParameters.get("multichart");
 	String orientation = (confParameters.get("orientation_multichart")==null)?"vertical":(String)confParameters.get("orientation_multichart");
 	String legend = (confParameters.get("legend")==null)?"true":(String)confParameters.get("legend");
@@ -263,8 +264,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <% if (orientation.equalsIgnoreCase("horizontal")){%>
   </td>  
 <%   //checks for new rows
-	 if (idx == numChartsForRow -1){
-		 numChartsForRow += numChartsForRow; 
+	 if (idx == contChartsForRow -1){
+		 contChartsForRow += numChartsForRow; 
 %>
 		
 		</tr>
