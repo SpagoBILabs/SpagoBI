@@ -81,7 +81,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	}
 
 	private static String replaceInternationalizedMessages(String message, int startIndex) {
-		logger.debug("IN");
+		logger.trace("IN");
 		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 		int endIndex = message.indexOf("}", startIndex);
 		if (endIndex == -1 || endIndex < startIndex)
@@ -112,7 +112,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		startIndex = message.indexOf("${", endIndex);
 		if (startIndex != -1)
 			message = replaceInternationalizedMessages(message, startIndex);
-		logger.debug("OUT");
+		logger.trace("OUT");
 		return message;
 	}
 
@@ -128,7 +128,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	 */
 	public static void subsituteBIObjectParametersLovProfileAttributes(BIObject obj, SessionContainer session)
 	throws Exception, EMFInternalError {
-		logger.debug("IN");
+		logger.trace("IN");
 		List biparams = obj.getBiObjectParameters();
 		Iterator iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
@@ -149,7 +149,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 				}
 			}
 		}
-		logger.debug("OUT");
+		logger.trace("OUT");
 	}
 
 
@@ -401,7 +401,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	 * @return the default locale
 	 */
 	public static Locale getStartingDefaultLocale() {
-		logger.debug("IN");
+		logger.trace("IN");
 		String country = null;
 		String language = null;
 		Locale locale = null;
@@ -416,11 +416,11 @@ public class GeneralUtilities extends SpagoBIUtilities{
 			else{
 				// set the locale!
 				locale = new Locale(language, country);				
-				logger.debug("locale set to "+locale);
+				logger.trace("locale set to "+locale);
 			}
 		} 
 
-		logger.debug("OUT");
+		logger.trace("OUT");
 		return locale;
 	}
 
@@ -431,14 +431,14 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	 * @return the default locale
 	 */
 	public static Locale getDefaultLocale() {
-		logger.debug("IN");
+		logger.trace("IN");
 		Locale locale = null;
 		String languageConfig = null;
 		try {
 			String country = null;
 			String language = null;
 			languageConfig = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
-			logger.debug("Default locale found: " + languageConfig);
+			logger.trace("Default locale found: " + languageConfig);
 			if (languageConfig != null && !languageConfig.trim().equals("")) {
 				language = languageConfig.substring(0, 2);
 				country = languageConfig.substring(3);
@@ -459,7 +459,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	}
 
 	public static List<Locale> getSupportedLocales() {
-		logger.debug("IN");
+		logger.trace("IN");
 		List<Locale> toReturn = new ArrayList<Locale>();
 		String locales = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
 		if (locales != null && locales.length() > 0) {
@@ -474,7 +474,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 				else{
 					locales = "0";
 				}
-				logger.debug("Found locale with language = [" + language + "] and country = [" + country + "]");
+				logger.trace("Found locale with language = [" + language + "] and country = [" + country + "]");
 				Locale locale = new Locale(language, country);
 				toReturn.add(locale);
 				
@@ -482,12 +482,12 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		} else {
 			logger.error("NO LOCALES CONFIGURED!!!");
 		}
-		logger.debug("OUT");
+		logger.trace("OUT");
 		return toReturn;
 	}
 	
 	public static String getCountry(String language) {
-		logger.debug("IN");
+		logger.trace("IN");
 		String country=null;
     	List locales=GeneralUtilities.getSupportedLocales();
     	Iterator iter=locales.iterator();
@@ -496,16 +496,16 @@ public class GeneralUtilities extends SpagoBIUtilities{
     		 String languageTmp = localeTmp.getLanguage();
 			 country = localeTmp.getCountry();
 			 if (languageTmp.equals(language)) {
-				 logger.debug("OUT:"+country);
+				 logger.trace("OUT:"+country);
 				 return country;
 			 }
     	}
-		logger.debug("OUT:"+country);
+		logger.trace("OUT:"+country);
 		return country;
 	}
 
 	public static JSONArray getSupportedLocalesAsJSONArray() {
-		logger.debug("IN");
+		logger.trace("IN");
 		JSONArray toReturn = new JSONArray();
 		try {
 			List<Locale> locales = getSupportedLocales();
@@ -520,7 +520,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		} catch (Exception e) {
 			logger.error("Error while retrieving supported locales as JSONArray", e);
 		}
-		logger.debug("OUT");
+		logger.trace("OUT");
 		return toReturn;
 	}
 
