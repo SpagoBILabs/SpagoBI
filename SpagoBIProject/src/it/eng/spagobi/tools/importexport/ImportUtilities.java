@@ -1063,7 +1063,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the sbi data set
 	 */
-	public static SbiDataSetConfig makeNewSbiDataSet(SbiDataSetConfig dataset, SessionContainer session){
+	public static SbiDataSetConfig makeNewSbiDataSet(SbiDataSetConfig dataset, IEngUserProfile profile){
 		logger.debug("IN");
 		SbiDataSetConfig newDsConfig = new SbiDataSetConfig();
 
@@ -1071,7 +1071,6 @@ public class ImportUtilities {
 		newDsConfig.setName(dataset.getName());
 		newDsConfig.setDescription(dataset.getDescription());
 		SbiCommonInfo i = new SbiCommonInfo();
-		IEngUserProfile profile = (IEngUserProfile)session.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		String userid = "biadmin";
 		if(profile!=null){
 			userid =(String) profile.getUserUniqueIdentifier();
@@ -1102,7 +1101,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError 	 */
 	public static SbiDataSetConfig modifyExistingSbiDataSet(SbiDataSetConfig exportedDataset,
-			Session sessionCurrDB, Integer existingId, Session sessionExpDB, SessionContainer session) {
+			Session sessionCurrDB, Integer existingId, Session sessionExpDB, IEngUserProfile profile) {
 		logger.debug("IN");
 		SbiDataSetConfig existingDataset = null;
 		try {
@@ -1114,7 +1113,6 @@ public class ImportUtilities {
 			existingDataset.setName(exportedDataset.getName());			
 			existingDataset.setDescription(exportedDataset.getDescription());
 			SbiCommonInfo i = new SbiCommonInfo();
-			IEngUserProfile profile = (IEngUserProfile)session.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			String userid = "biadmin";
 			if(profile!=null){
 				userid =(String) profile.getUserUniqueIdentifier();
@@ -1175,7 +1173,7 @@ public class ImportUtilities {
 
 	public static void associateNewSbiDataSethistory(SbiDataSetConfig dataset,
 			SbiDataSetConfig exportedDataset, Session sessionCurrDB, Session sessionExpDB, 
-			ImporterMetadata importer, MetadataAssociations metaAss, SessionContainer session) {
+			ImporterMetadata importer, MetadataAssociations metaAss, IEngUserProfile profile) {
 		logger.debug("IN");
 		try {
 			// save the new exported history
@@ -1203,7 +1201,6 @@ public class ImportUtilities {
 
 			}
 			SbiCommonInfo i = new SbiCommonInfo();
-			IEngUserProfile profile = (IEngUserProfile)session.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			String userid = "biadmin";
 			if(profile!=null){
 				userid =(String) profile.getUserUniqueIdentifier();
