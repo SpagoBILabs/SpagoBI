@@ -67,7 +67,7 @@ public interface IImportManager {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void importObjects(boolean overwrite, SessionContainer session) throws EMFUserError;
+	public void importObjects(boolean overwrite) throws EMFUserError;
 	
 	/**
 	 * Gets the list of all exported roles.

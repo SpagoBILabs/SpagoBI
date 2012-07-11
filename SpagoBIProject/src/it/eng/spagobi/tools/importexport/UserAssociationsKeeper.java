@@ -8,7 +8,9 @@ package it.eng.spagobi.tools.importexport;
 import java.util.HashMap;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 
@@ -219,8 +221,9 @@ public class UserAssociationsKeeper {
 			engineAssSB = engineAssSBtmp;
 			datasourceAssSB = datasourceAssSBtmp;
 		} catch (Exception e) {
-			logger.error("Error while loading SourceBean from xml  \n " , e);
-		}finally{
+			LogMF.error(logger, e, "Error while loading SourceBean from xml \n {0}", new Object[] {xmlStr});
+			throw new SpagoBIRuntimeException("Error while loading SourceBean from xml" , e);
+		} finally {
 			logger.debug("OUT");
 		}
 	}

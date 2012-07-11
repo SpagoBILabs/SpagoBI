@@ -248,7 +248,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void importObjects(boolean overwrite, SessionContainer session) throws EMFUserError {
+	public void importObjects(boolean overwrite) throws EMFUserError {
 		logger.debug("IN");
 		metaLog.log("                                             ");
 		metaLog.log("-+-+-+-+-+-+-Begin import objects-+-+-+-+-+-");
@@ -259,7 +259,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		metaLog.log("-------Data Source-----");
 		importDataSource(overwrite);
 		metaLog.log("-------Data Set-----");
-		importDataSet(overwrite, session);
+		importDataSet(overwrite);
 		metaLog.log("-------Roles-----");
 		importRoles();
 		metaLog.log("-------Engines-----");
@@ -842,7 +842,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		}
 	}
 
-	private void importDataSet(boolean overwrite, SessionContainer session) throws EMFUserError {
+	private void importDataSet(boolean overwrite) throws EMFUserError {
 		logger.debug("IN");
 		SbiDataSetConfig exportedDataSet = null;
 		try {				
@@ -869,15 +869,15 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingDatasetId != null) {
 					logger.debug("The dataset with label:[" + exportedDataSet.getLabel() + "] is just present. It will be updated. Existing one has id "+existingDatasetId);
 					metaLog.log("The dataset with label = [" + exportedDataSet.getLabel() + "] will be updated.");
-					SbiDataSetConfig existingDataset = ImportUtilities.modifyExistingSbiDataSet(exportedDataSet, sessionCurrDB, existingDatasetId, sessionExpDB, session);
-					ImportUtilities.associateNewSbiDataSethistory(existingDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, session);
+					SbiDataSetConfig existingDataset = ImportUtilities.modifyExistingSbiDataSet(exportedDataSet, sessionCurrDB, existingDatasetId, sessionExpDB, this.getUserProfile());
+					ImportUtilities.associateNewSbiDataSethistory(existingDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, this.getUserProfile());
 					this.updateSbiCommonInfo4Update(existingDataset);
 					sessionCurrDB.update(existingDataset);
 				} else {
-					SbiDataSetConfig newDataset = ImportUtilities.makeNewSbiDataSet(exportedDataSet, session);
+					SbiDataSetConfig newDataset = ImportUtilities.makeNewSbiDataSet(exportedDataSet, this.getUserProfile());
 					this.updateSbiCommonInfo4Insert(newDataset);
 					sessionCurrDB.save(newDataset);
-					ImportUtilities.associateNewSbiDataSethistory(newDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, session);
+					ImportUtilities.associateNewSbiDataSethistory(newDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, this.getUserProfile());
 					logger.debug("Inserted new dataset " + newDataset.getName());
 					metaLog.log("Inserted new dataset " + newDataset.getName());
 					Integer newId = new Integer(newDataset.getDsId());

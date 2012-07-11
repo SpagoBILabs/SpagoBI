@@ -154,6 +154,22 @@
   <arrayMapping innerType="ns15:SDKDataStoreFieldMetadata" languageSpecificType="java:it.eng.spagobi.sdk.datasets.bo.SDKDataStoreFieldMetadata[]" qname="ns14:ArrayOf_tns2_SDKDataStoreFieldMetadata" xmlns:ns14="urn:spagobisdkdatasets" xmlns:ns15="http://bo.datasets.sdk.spagobi.eng.it"/>
   <arrayMapping innerType="soapenc:string" languageSpecificType="java:java.lang.String[]" qname="ns16:ArrayOf_soapenc_string" xmlns:ns16="urn:spagobisdkdatasets" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"/>
  </service>
+ <service name="ImportExportSDKService" provider="java:RPC">
+  <requestFlow>
+    <handler type="WSDoAllSender"/>
+  </requestFlow>
+  <parameter name="wsdlServicePort" value="ImportExportSDKService"/>
+  <parameter name="className" value="it.eng.spagobi.sdk.importexport.stub.ImportExportSDKServiceSoapBindingStub"/>
+  <parameter name="typeMappingVersion" value="1.2"/>
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="wsdlServiceElement" value="ImportExportSDKServiceService"/>
+  <parameter name="wsdlTargetNamespace" value="urn:spagobisdkimportexport"/>
+  <parameter name="wsdlPortType" value="ImportExportSDKService"/>
+  <parameter name="scope" value="Application"/>
+  <parameter name="schemaUnqualified" value="http://bo.importexport.sdk.spagobi.eng.it,urn:spagobisdkimportexport,http://exceptions.sdk.spagobi.eng.it,http://xml.apache.org/xml-soap"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns12:NotAllowedOperationException" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.sdk.exceptions.NotAllowedOperationException" xmlns:ns12="http://exceptions.sdk.spagobi.eng.it"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns13:SDKFile" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.sdk.importexport.bo.SDKFile" xmlns:ns13="http://bo.importexport.sdk.spagobi.eng.it"/>
+ </service>
  <transport name="java" pivot="java:org.apache.axis.transport.java.JavaSender"/>
  <transport name="http" pivot="java:org.apache.axis.transport.http.HTTPSender"/>
  <transport name="local" pivot="java:org.apache.axis.transport.local.LocalSender"/>

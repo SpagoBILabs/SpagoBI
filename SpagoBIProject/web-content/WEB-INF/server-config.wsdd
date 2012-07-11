@@ -213,7 +213,7 @@
   <parameter name="wsdlServiceElement" value="DataSetsSDKServiceService"/>
   <parameter name="wsdlTargetNamespace" value="urn:spagobisdkdatasets"/>
   <parameter name="wsdlPortType" value="DataSetsSDKService"/>
-<parameter name="scope" value="Application"/>
+  <parameter name="scope" value="Application"/>
   <parameter name="schemaUnqualified" value="http://bo.datasets.sdk.spagobi.eng.it,urn:spagobisdkdatasets,http://exceptions.sdk.spagobi.eng.it,http://xml.apache.org/xml-soap"/>
   <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns41:InvalidParameterValue" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.sdk.exceptions.InvalidParameterValue" xmlns:ns41="http://exceptions.sdk.spagobi.eng.it"/>
   <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns42:SDKDataStoreFieldMetadata" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.sdk.datasets.bo.SDKDataStoreFieldMetadata" xmlns:ns42="http://bo.datasets.sdk.spagobi.eng.it"/>
@@ -226,6 +226,25 @@
   <arrayMapping innerType="ns51:SDKDataSet" languageSpecificType="java:it.eng.spagobi.sdk.datasets.bo.SDKDataSet[]" qname="ns50:ArrayOf_tns2_SDKDataSet" xmlns:ns50="urn:spagobisdkdatasets" xmlns:ns51="http://bo.datasets.sdk.spagobi.eng.it"/>
   <arrayMapping innerType="ns53:SDKDataStoreFieldMetadata" languageSpecificType="java:it.eng.spagobi.sdk.datasets.bo.SDKDataStoreFieldMetadata[]" qname="ns52:ArrayOf_tns2_SDKDataStoreFieldMetadata" xmlns:ns52="urn:spagobisdkdatasets" xmlns:ns53="http://bo.datasets.sdk.spagobi.eng.it"/>
   <arrayMapping innerType="soapenc:string" languageSpecificType="java:java.lang.String[]" qname="ns54:ArrayOf_soapenc_string" xmlns:ns54="urn:spagobisdkdatasets" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"/>
+ </service>
+ <service name="ImportExportSDKService" provider="java:RPC">
+   <requestFlow>
+   <handler type="java:org.apache.ws.axis.security.WSDoAllReceiver">
+    <parameter name="passwordCallbackClass" value="it.eng.spagobi.sdk.callbacks.ServerPWCallback"/>
+    <parameter name="action" value="UsernameToken"/>
+   </handler>
+  </requestFlow>
+  <parameter name="wsdlServicePort" value="ImportExportSDKService"/>
+  <parameter name="className" value="it.eng.spagobi.sdk.importexport.stub.ImportExportSDKServiceSoapBindingSkeleton"/>
+  <parameter name="typeMappingVersion" value="1.2"/>
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="wsdlServiceElement" value="ImportExportSDKServiceService"/>
+  <parameter name="wsdlTargetNamespace" value="urn:spagobisdkimportexport"/>
+  <parameter name="wsdlPortType" value="ImportExportSDKService"/>
+  <parameter name="scope" value="Application"/>
+  <parameter name="schemaUnqualified" value="http://exceptions.sdk.spagobi.eng.it,http://bo.importexport.sdk.spagobi.eng.it"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns12:NotAllowedOperationException" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.sdk.exceptions.NotAllowedOperationException" xmlns:ns12="http://exceptions.sdk.spagobi.eng.it"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns13:SDKFile" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.sdk.importexport.bo.SDKFile" xmlns:ns13="http://bo.importexport.sdk.spagobi.eng.it"/>
  </service>
  <service name="AdminService" provider="java:MSG">
   <parameter name="allowedMethods" value="AdminService"/>

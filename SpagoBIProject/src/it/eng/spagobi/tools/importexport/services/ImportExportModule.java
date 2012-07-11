@@ -666,7 +666,7 @@ public class ImportExportModule extends AbstractModule {
 	    SessionContainer session = requestContainer.getSessionContainer();
 	    impManager = (IImportManager) session.getAttribute(ImportExportConstants.IMPORT_MANAGER);
 	    impManager.openSession();
-	    impManager.importObjects(overwrite, session);
+	    impManager.importObjects(overwrite);
 	    ImportResultInfo iri = impManager.commitAllChanges();
 	    response.setAttribute(ImportExportConstants.IMPORT_RESULT_INFO, iri);
 		AssociationFile assFile = impManager.getAssociationFile();
