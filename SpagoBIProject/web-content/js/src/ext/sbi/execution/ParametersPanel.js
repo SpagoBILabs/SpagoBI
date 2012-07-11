@@ -1,12 +1,23 @@
-/** SpagoBI, the Open Source Business Intelligence suite
+/**
+ * SpagoBI - The Business Intelligence Free Platform
+ *
+ * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
 
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
-  
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ **/
  
 /**
   * Object name 
@@ -188,8 +199,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			var value = field.getValue();
 			state[field.name] = value;
 			var rawValue = field.getRawValue();
+			//alert(field.name + '>' + state[field.name] + '<');
 			if(value == "" && rawValue != ""){
 				state[field.name] = rawValue;
+				//alert(field.name + '<' + state[field.name] + '>');
 			}
 			
 			
@@ -261,6 +274,18 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	, clear: function() {
 		alert('function clear() is deprecated');
 		this.reset();
+	}
+	
+	, getParentPageNumber: function() {
+		return this.baseConfig.pageNumber;
+	}
+	
+	, isInParametersPage: function() {
+		return this.getParentPageNumber() === 2;
+	}
+	
+	, isInExecutionPage: function() {
+		return this.getParentPageNumber() === 3;
 	}
 	
 	, isReadyForExecution: function() {
@@ -350,6 +375,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	
 	, initializeParametersPanel: function( parameters ) {
 		
+//		if(this.isInExecutionPage()) {
+//			alert('initializeParametersPanel IN');
+//		}
+		
 		this.setParameters(parameters);
 		
 		this.removeAllFields();
@@ -377,7 +406,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				}
 			}
 			
-			this.fields[parameters[i].id] = field;
+			 this.fields[parameters[i].id] = field;
 		}
 		
 		if(this.thereAreParametersToBeFilled() !== true) {
@@ -404,9 +433,15 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		this.initializeFieldDependencies();
 		
-		this.reset();
+		if(this.isInParametersPage() && this.isFromCross === false) {
+			this.reset();
+		} 
 		
 		this.fireEvent('synchronize', this, this.isReadyForExecution(), this.parametersPreference);
+		
+//		if(this.isInExecutionPage()) {
+//			alert('initializeParametersPanel OUT');
+//		}
 	}
 	
 	
