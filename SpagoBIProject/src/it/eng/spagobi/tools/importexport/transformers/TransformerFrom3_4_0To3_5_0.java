@@ -50,6 +50,7 @@ public class TransformerFrom3_4_0To3_5_0 implements ITransformer {
 			fixParuses(conn);
 			fixRoles(conn);
 			fixDatasets(conn);
+			fixLovs(conn);
 			conn.commit();
 		} catch (Exception e) {
 			logger.error("Error while changing database", e);	
@@ -74,12 +75,27 @@ public class TransformerFrom3_4_0To3_5_0 implements ITransformer {
 			stmt.executeUpdate(sql);
 		} catch (Exception e) {
 			logger.error(
-					"Error adding column: if add column fails may mean that column already esists; means you are not using an exact version spagobi DB",
+					"Error updating domains",
 					e);
 		}
 		logger.debug("OUT");
 	}
 
+	private void fixLovs(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			sql = "ALTER TABLE SBI_LOV ADD COLUMN DATASET_ID INTEGER;";
+			stmt.execute(sql);
+		} catch (Exception e) {
+			logger.error(
+					"Error adding column: if add column fails may mean that column already esists; means you are not using an exact version spagobi DB",
+					e);
+		}
+		logger.debug("OUT");
+	}
+	
 	private void fixDatasets(Connection conn) throws Exception {
 		logger.debug("IN");
 		Statement stmt = conn.createStatement();
