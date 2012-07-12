@@ -757,23 +757,17 @@ IParameterUseDAO {
 	 */
 	public void eraseParameterUseByParIdSameSession(Integer parId, Session sessionCurrDB) throws EMFUserError {
 		logger.debug("IN");
-//		Session aSession = null;
-//		SbiParuse sbiPar = new SbiParuse();
 		List parUseList = null;
 		IParameterUseDAO parUseDAO = DAOFactory.getParameterUseDAO();
 		parUseList = parUseDAO.loadParametersUseByParId(parId);
 		Iterator i = parUseList.iterator();
 		// run all parqameters Use related to Parameter
-//		Transaction tx = null;
 		try{
 
 			for (Iterator iterator = parUseList.iterator(); iterator.hasNext();) {
 
-//				aSession = getSession();
-//				tx = aSession.beginTransaction();
 				Object o =  iterator.next();
 				ParameterUse parameterUse = (ParameterUse) o;
-//				SbiParuse sbiParuse = (SbiParuse)aSession.load(SbiParuse.class, parameterUse.getUseID());
 				SbiParuse sbiParuse = (SbiParuse) sessionCurrDB.load(SbiParuse.class, parameterUse.getUseID());
 
 				Set checks = sbiParuse.getSbiParuseCks();
@@ -793,19 +787,7 @@ IParameterUseDAO {
 
 				logger.debug("Delete obj Paruse used on correlation parameters");
 				eraseParameterObjUseByParuseIdSameSession(sbiParuse.getUseId(), sessionCurrDB);
-//				sbiPar.setUseId(sbiParuse.getUseId());
-//				sbiPar.setLabel(sbiParuse.getLabel());
-//				sbiPar.setName(sbiParuse.getName());
-//				sbiPar.setDescr(sbiParuse.getDescr());
-//				sbiPar.setSelectionType(sbiParuse.getSelectionType());
-//				sbiPar.setSbiParameters(sbiParuse.getSbiParameters());
-//				sbiPar.setManualInput(sbiParuse.getManualInput());
-//				sbiPar.setMultivalue(sbiParuse.getMultivalue());
-
-
-//				aSession.close();
-
-//				sessionCurrDB.delete(sbiPar);
+				
 				sessionCurrDB.delete(sbiParuse);
 				sessionCurrDB.flush();
 				logger.debug("OUT");
@@ -814,13 +796,7 @@ IParameterUseDAO {
 		}
 		catch(Exception ex){
 			logException(ex);
-//			if (tx != null) tx.rollback();	
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);  
-		}
-		finally {
-//			if(aSession != null && aSession.isOpen()){
-//				aSession.close();
-//			}
 		}
 	}
 
