@@ -404,8 +404,7 @@ public class ImportUtilities {
 					queryDetail.setDataSource(dataSource);
 				}
 				newlov.setLovProvider(queryDetail.toXML());
-			}
-			if (lovDetail instanceof DatasetDetail) {
+			} else if (lovDetail instanceof DatasetDetail) {
 				// update dataset id
 				DatasetDetail datasetDetail = (DatasetDetail) lovDetail;
 				String datasetLabel = datasetDetail.getDatasetLabel();
@@ -414,6 +413,8 @@ public class ImportUtilities {
 				Integer datasetId = (Integer) query.uniqueResult();
 				datasetDetail.setDatasetId(datasetId.toString());
 				newlov.setLovProvider(datasetDetail.toXML());
+			} else {
+				newlov.setLovProvider(lovProvider);
 			}
 		} catch (Exception e) {
 			logger.error("Error in evaluating lov provider for exporter lov ["
@@ -1267,8 +1268,7 @@ public class ImportUtilities {
 						queryDetail.setDataSource(dataSource);
 					}
 					existingLov.setLovProvider(queryDetail.toXML());
-				}
-				if (lovDetail instanceof DatasetDetail) {
+				} else if (lovDetail instanceof DatasetDetail) {
 					// update dataset id
 					DatasetDetail datasetDetail = (DatasetDetail) lovDetail;
 					String datasetLabel = datasetDetail.getDatasetLabel();
@@ -1277,6 +1277,8 @@ public class ImportUtilities {
 					Integer datasetId = (Integer) query.uniqueResult();
 					datasetDetail.setDatasetId(datasetId.toString());
 					existingLov.setLovProvider(datasetDetail.toXML());
+				} else {
+					existingLov.setLovProvider(lovProvider);
 				}
 			} catch (Exception e) {
 				logger.error("Error in evaluating lov provider for exporter lov ["
