@@ -131,6 +131,10 @@
 			<delete file="${build}/${webapp_name}/WEB-INF/lib/xmlbeans-2.3.0.jar" />	
 			<delete file="${build}/${webapp_name}/WEB-INF/lib/slf4j-api-1.6.1.jar" />
 			<delete file="${build}/${webapp_name}/WEB-INF/lib/ojdbc5.jar" />
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/antlr-2.7.6.jar" />
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/hibernate-3.6.2.jar" />
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/javassist-3.12.0.GA.jar" />
+			<!--delete file="${build}/${webapp_name}/WEB-INF/lib/jta-1.1.jar" /-->
 	</target>
 
 	<target name="liferay.jboss">
