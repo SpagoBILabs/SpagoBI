@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexport;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
@@ -55,9 +57,12 @@ import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.management.RuntimeErrorException;
 
@@ -75,6 +80,8 @@ public class ImporterMetadata {
 
 	static private Logger logger = Logger.getLogger(ImporterMetadata.class);
 
+
+	
 	/**
 	 * Get the list of exported hibernate role objects.
 	 * 
@@ -286,7 +293,53 @@ public class ImporterMetadata {
 		}
 	}
 
-
+//public Map<String, List<String>> memorizeLovsMetadata(Session sessionCurrDB){
+//	logger.debug("IN");
+//	
+//	// ma pcontaining lovs metadata; isnerted as lov label:   then a vector of metadata with name and type
+//	Map<String, List<String>> lovsMetadata = new HashMap<String, List<String>>();
+//	
+//	String hql = "from SbiLov lov";
+//	Query hqlQuery = sessionCurrDB.createQuery(hql);
+//	List sbiLovs = hqlQuery.list();
+//// GET METADATA
+//	for (Iterator iterator = sbiLovs.iterator(); iterator.hasNext();) {
+//		SbiLov sbiLov = (SbiLov) iterator.next();
+//		String dataDefinition = sbiLov.getLovProvider().trim();
+//		try{
+//		SourceBean source = SourceBean.fromXMLString(dataDefinition);
+//		SourceBean visCol = (SourceBean)source.getAttribute("VISIBLE-COLUMNS");
+//		SourceBean invisCol = (SourceBean)source.getAttribute("INVISIBLE-COLUMNS");
+//		String visibleColumns = visCol.getCharacters();
+//		String invisibleColumns = visCol.getCharacters();
+//		List allCoulmns = new ArrayList();
+//		if( (visibleColumns!=null) && !visibleColumns.trim().equalsIgnoreCase("") ) {
+//			String[] visColArr = visibleColumns.split(",");
+//			for (int i = 0; i < visColArr.length; i++) {
+//				allCoulmns.add(visColArr[i]);
+//			}
+//		}
+//		List invisColNames = new ArrayList();
+//		if( (invisibleColumns!=null) && !invisibleColumns.trim().equalsIgnoreCase("") ) {
+//			String[] invisColArr = invisibleColumns.split(",");
+//			for (int i = 0; i < invisColArr.length; i++) {
+//				allCoulmns.add(invisColArr[i]);
+//			}
+//		}
+//		logger.debug("insert metadata for lov with label "+sbiLov.getLabel());
+//		lovsMetadata.put(sbiLov.getLabel(), allCoulmns);
+//		
+//		}
+//		catch (SourceBeanException e) {
+//			logger.error("Error in reading XML of metadata for LOV with label "+sbiLov.getLabel()+"; metadata wil  be put to null");
+//			lovsMetadata.put(sbiLov.getLabel(), null);
+//		}
+//	}
+//	logger.debug("OUT");
+//	return lovsMetadata;
+//}
+	
+	
 	/**
 	 * Check the existance of an object, based on his unique constraints, into
 	 * the current SpagoBI database.
@@ -678,6 +731,7 @@ public class ImporterMetadata {
 		}
 		}
 		catch (Exception e) {
+			logger.error("HibObj is of type "+hibObj.getClass().toString());			
 			logger.error("Error: Found in import database more than one "+param+" with the same key");
 			List params = new ArrayList();
 			params.add(param);

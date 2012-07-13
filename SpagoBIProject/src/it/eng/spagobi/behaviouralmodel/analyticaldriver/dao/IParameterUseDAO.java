@@ -172,6 +172,19 @@ public interface IParameterUseDAO extends ISpagoBIDao{
 	 */
 	public List getParameterUsesAssociatedToLov(Integer lovId) throws EMFUserError;
 
+	/**
+	 * Erase from hibSession all things related to parameter with parId
+	 * 
+	 * @param parId the par id
+	 * @param sSession the hibernate session
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO#eraseParameterUseByParId(java.lang.Integer)
+	 */
+	public void eraseParameterUseByParIdSameSession(Integer parId, Session sessionCurrDB) throws EMFUserError; 
+
+	
 
 	/**
 	 * Delete from hibernate session a parameter use
@@ -182,6 +195,7 @@ public interface IParameterUseDAO extends ISpagoBIDao{
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void eraseParameterUseByParIdSameSession(Integer parId, Session sessionCurrDB) throws EMFUserError;
-
+	public void eraseParameterUseByIdSameSession(Integer parUseId, Session sessionCurrDB) throws EMFUserError;
+	
+	public void eraseParameterObjUseByParuseIdSameSession(Integer parUseId, Session sessionCurrDB) throws EMFUserError;
 }

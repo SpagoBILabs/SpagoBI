@@ -8,6 +8,7 @@ package it.eng.spagobi.tools.importexport;
 
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -21,7 +22,9 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRoleId;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuseId;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParview;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParviewId;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseCk;
@@ -77,6 +80,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -522,30 +526,329 @@ public class ImportUtilities {
 		return newPar;
 	}
 
+	
+	
 	/**
 	 * Creates a new hibernate parameter use object.
 	 * 
 	 * @param paruse the paruse
 	 * 
 	 * @return the new hibernate parameter use object
+	 * @throws EMFUserError 
 	 */
-	public static SbiParuse makeNewSbiParuse(SbiParuse paruse){
+	public static SbiObjParview makeNewSbiObjParview(SbiObjParview exportedObjParview, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
+		logger.debug("IN");
+		SbiObjParview newObjParview = new SbiObjParview();
+		try{
+			newObjParview.setViewLabel(exportedObjParview.getViewLabel());
+			newObjParview.setProg(exportedObjParview.getProg());
+			
+			entitiesAssociationsSbiObjParview(exportedObjParview, newObjParview, sessionCurrDB, metaAss);
+		}
+		catch (EMFUserError e) {
+			logger.error("Error in making new SbiObjParview starting with SbiObjParview realted to parameter "+exportedObjParview.getId().getSbiObjPar().getLabel());
+			throw e;
+		}
+		logger.debug("OUT");
+		return newObjParview;
+	}
+	
+	public static SbiObjParview modifyExistingSbiObjParview(SbiObjParview exportedSbiObjParview, SbiObjParview exisingSbiObjParview, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			exisingSbiObjParview.setViewLabel(exportedSbiObjParview.getViewLabel());
+			exisingSbiObjParview.setProg(exportedSbiObjParview.getProg());
+			entitiesAssociationsSbiObjParview(exportedSbiObjParview, exisingSbiObjParview, sessionCurrDB, metaAss);
+		}catch (EMFUserError e) {
+				logger.error("Error in updating SbiObjParview starting with SbiObjParview related to parameter "+exportedSbiObjParview.getId().getSbiObjPar().getLabel());
+				throw e;
+			}
+		logger.debug("OUT");
+		return exisingSbiObjParview;
+	}
+	
+	
+	public static void entitiesAssociationsSbiObjParview(SbiObjParview exportedSbiObjParview, SbiObjParview newSbiObjParview,Session sessionCurrDB, 
+			MetadataAssociations metaAss) throws EMFUserError {
+		logger.debug("IN");
+		// overwrite existging entities
+
+		if(newSbiObjParview.getId() == null)newSbiObjParview.setId(new SbiObjParviewId());
+		
+		if(exportedSbiObjParview.getId().getSbiObjPar() != null){
+			Integer newObjParId = (Integer)metaAss.getObjparIDAssociation().get(exportedSbiObjParview.getId().getSbiObjPar().getObjParId()); 
+			if(newObjParId != null){
+				SbiObjPar newSbiObjPar = (SbiObjPar) sessionCurrDB.load(SbiObjPar.class, newObjParId);
+				newSbiObjParview.getId().setSbiObjPar(newSbiObjPar);
+				}
+			else{
+				logger.error("could not find corresponding obj par");
+				List params = new ArrayList();
+				params.add("Sbi_ObjPar");
+				params.add("sbi_obj_parview");
+				params.add("...");				
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+			}
+		}
+
+		if(exportedSbiObjParview.getId().getSbiObjParFather() != null){
+			Integer newObjParFathId = (Integer)metaAss.getObjparIDAssociation().get(exportedSbiObjParview.getId().getSbiObjParFather().getObjParId()); 
+			if(newObjParFathId != null){
+				SbiObjPar newSbiObjParFather = (SbiObjPar) sessionCurrDB.load(SbiObjPar.class, newObjParFathId);
+				newSbiObjParview.getId().setSbiObjParFather(newSbiObjParFather);
+				}
+			else{
+				logger.error("could not find corresponding obj par father");
+				List params = new ArrayList();
+				params.add("Sbi_ObjPar");
+				params.add("sbi_obj_parview");
+				params.add("...");				
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+			}
+		}
+		
+		newSbiObjParview.getId().setCompareValue(exportedSbiObjParview.getId().getCompareValue());
+		newSbiObjParview.getId().setOperation(exportedSbiObjParview.getId().getOperation());
+		
+		logger.debug("OUT");
+	
+	}
+
+	
+
+	
+	/**
+	 * Creates a new hibernate parameter use object.
+	 * 
+	 * @param paruse the paruse
+	 * 
+	 * @return the new hibernate parameter use object
+	 * @throws EMFUserError 
+	 */
+	public static SbiObjParuse makeNewSbiObjParuse(SbiObjParuse exportedObjParuse, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
+		logger.debug("IN");
+		SbiObjParuse newObjParuse = new SbiObjParuse();
+		try{
+			newObjParuse.setLogicOperator(exportedObjParuse.getLogicOperator());
+			newObjParuse.setPostCondition(exportedObjParuse.getPostCondition());
+			newObjParuse.setPreCondition(exportedObjParuse.getPreCondition());
+			newObjParuse.setProg(exportedObjParuse.getProg());
+			newObjParuse.setFilterColumn(exportedObjParuse.getFilterColumn());
+			entitiesAssociationsSbiObjParuse(exportedObjParuse, newObjParuse, sessionCurrDB, metaAss);
+		}
+		catch (EMFUserError e) {
+			logger.error("Error in making new SbiObjParuse starting with SbiObjParuse realted to parameter "+exportedObjParuse.getId().getSbiObjPar().getLabel());
+			throw e;
+		}
+		logger.debug("OUT");
+		return newObjParuse;
+	}
+	
+	
+	public static SbiObjParuse modifyExistingSbiObjParuse(SbiObjParuse exportedSbiObjParuse, SbiObjParuse exisingSbiObjParuse, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			exisingSbiObjParuse.setLogicOperator(exportedSbiObjParuse.getLogicOperator());
+			exisingSbiObjParuse.setPostCondition(exportedSbiObjParuse.getPostCondition());
+			exisingSbiObjParuse.setPreCondition(exportedSbiObjParuse.getPreCondition());
+			exisingSbiObjParuse.setProg(exportedSbiObjParuse.getProg());
+			exisingSbiObjParuse.setFilterColumn(exportedSbiObjParuse.getFilterColumn());
+			
+			entitiesAssociationsSbiObjParuse(exportedSbiObjParuse, exisingSbiObjParuse, sessionCurrDB, metaAss);
+		}catch (EMFUserError e) {
+				logger.error("Error in updating SbiObjParuse starting with SbiObjParuse related to parameter "+exportedSbiObjParuse.getId().getSbiObjPar().getLabel());
+				throw e;
+			}
+		logger.debug("OUT");
+		return exisingSbiObjParuse;
+	}
+
+	
+	public static void entitiesAssociationsSbiObjParuse(SbiObjParuse exportedSbiObjParuse, SbiObjParuse newSbiObjParuse,Session sessionCurrDB, 
+			MetadataAssociations metaAss) throws EMFUserError {
+		logger.debug("IN");
+		// overwrite existging entities
+
+		if(newSbiObjParuse.getId() == null)newSbiObjParuse.setId(new SbiObjParuseId());
+		
+		if(exportedSbiObjParuse.getId().getSbiParuse() != null){
+			Integer newParuseId = (Integer)metaAss.getParuseIDAssociation().get(exportedSbiObjParuse.getId().getSbiParuse().getUseId()); 
+			if(newParuseId != null){
+				SbiParuse newSbiParuse = (SbiParuse) sessionCurrDB.load(SbiParuse.class, newParuseId);
+				newSbiObjParuse.getId().setSbiParuse(newSbiParuse);
+				}
+			else{
+				logger.error("could not find corresponding modality use");
+				List params = new ArrayList();
+				params.add("sbi_paruse");
+				params.add("sbi_obj_paruse");
+				params.add("...");				
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+			}
+			
+		}
+
+		if(exportedSbiObjParuse.getId().getSbiObjPar() != null){
+			Integer newObjParId = (Integer)metaAss.getObjparIDAssociation().get(exportedSbiObjParuse.getId().getSbiObjPar().getObjParId()); 
+			if(newObjParId != null){
+				SbiObjPar newSbiObjPar = (SbiObjPar) sessionCurrDB.load(SbiObjPar.class, newObjParId);
+				newSbiObjParuse.getId().setSbiObjPar(newSbiObjPar);
+				}
+			else{
+				logger.error("could not find corresponding obj par");
+				List params = new ArrayList();
+				params.add("Sbi_Obj_Par");
+				params.add("sbi_obj_paruse");
+				params.add("...");				
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+			}
+		}
+
+		if(exportedSbiObjParuse.getId().getSbiObjParFather() != null){
+			Integer newObjParFathId = (Integer)metaAss.getObjparIDAssociation().get(exportedSbiObjParuse.getId().getSbiObjParFather().getObjParId()); 
+			if(newObjParFathId != null){
+				SbiObjPar newSbiObjParFather = (SbiObjPar) sessionCurrDB.load(SbiObjPar.class, newObjParFathId);
+				newSbiObjParuse.getId().setSbiObjParFather(newSbiObjParFather);
+				}
+			else{
+				logger.error("could not find corresponding obj par father");
+				List params = new ArrayList();
+				params.add("father Sbi_Obj_Par");
+				params.add("sbi_obj_paruse");
+				params.add("...");				
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+			}
+		}
+		
+		newSbiObjParuse.getId().setFilterOperation(exportedSbiObjParuse.getId().getFilterOperation());
+		
+		logger.debug("OUT");
+	
+	}
+
+	
+	
+	
+	
+	
+	/**
+	 * Creates a new hibernate parameter use object.
+	 * 
+	 * @param paruse the paruse
+	 * 
+	 * @return the new hibernate parameter use object
+	 * @throws EMFUserError 
+	 */
+	public static SbiParuse makeNewSbiParuse(SbiParuse exportedParuse, Session sessionCurrDB, 
+			MetadataAssociations metaAss) throws EMFUserError{
 		logger.debug("IN");
 		SbiParuse newParuse = new SbiParuse();
-		newParuse.setDescr(paruse.getDescr());
-		newParuse.setLabel(paruse.getLabel());
-		newParuse.setName(paruse.getName());
-		newParuse.setSbiLov(paruse.getSbiLov());
-		newParuse.setSbiParameters(paruse.getSbiParameters());
+		try{
+		newParuse.setDescr(exportedParuse.getDescr());
+		newParuse.setLabel(exportedParuse.getLabel());
+		newParuse.setName(exportedParuse.getName());
+		newParuse.setSbiLov(exportedParuse.getSbiLov());
+		newParuse.setSbiParameters(exportedParuse.getSbiParameters());
 		newParuse.setSbiParuseCks(new HashSet());
 		newParuse.setSbiParuseDets(new HashSet());
-		newParuse.setManualInput(paruse.getManualInput());
-		newParuse.setMaximizerEnabled(paruse.getMaximizerEnabled());
-		newParuse.setSelectionType(paruse.getSelectionType());
-		newParuse.setMultivalue(paruse.getMultivalue());
+		newParuse.setManualInput(exportedParuse.getManualInput());
+		newParuse.setMaximizerEnabled(exportedParuse.getMaximizerEnabled());
+		newParuse.setSelectionType(exportedParuse.getSelectionType());
+		newParuse.setMultivalue(exportedParuse.getMultivalue());
+		
+		entitiesAssociationsSbiParuse(exportedParuse, newParuse, sessionCurrDB, metaAss);
+		}
+		catch (EMFUserError e) {
+			logger.error("Error in making new SbiParuse with id "+exportedParuse.getLabel()+ " of parameter "+exportedParuse.getSbiParameters().getLabel());
+			throw e;
+		}
 		logger.debug("OUT");
 		return newParuse;
 	}
+	
+	
+	
+	public static SbiParuse modifyExistingSbiParuse(SbiParuse exportedParuse, SbiParuse exisingParuse, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			exisingParuse.setDescr(exportedParuse.getDescr());
+			exisingParuse.setLabel(exportedParuse.getLabel());
+			exisingParuse.setName(exportedParuse.getName());
+			exisingParuse.setSbiLov(exportedParuse.getSbiLov());
+			exisingParuse.setSbiParameters(exportedParuse.getSbiParameters());
+			exisingParuse.setSbiParuseCks(new HashSet());
+			exisingParuse.setSbiParuseDets(new HashSet());
+			exisingParuse.setManualInput(exportedParuse.getManualInput());
+			exisingParuse.setMaximizerEnabled(exportedParuse.getMaximizerEnabled());
+			exisingParuse.setSelectionType(exportedParuse.getSelectionType());
+			exisingParuse.setMultivalue(exportedParuse.getMultivalue());			
+		
+			entitiesAssociationsSbiParuse(exportedParuse, exisingParuse, sessionCurrDB, metaAss);
+		
+		}catch (EMFUserError e) {
+				logger.error("Error in updating new SbiParuse with id "+exportedParuse.getLabel()+ " of parameter "+exportedParuse.getSbiParameters().getLabel());
+				throw e;
+			}
+		logger.debug("OUT");
+		return exisingParuse;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+		
+		public static void entitiesAssociationsSbiParuse(SbiParuse exportedSbiParuse, SbiParuse newSbiParuse,Session sessionCurrDB, 
+				MetadataAssociations metaAss) throws EMFUserError {
+			logger.debug("IN");
+			// overwrite existging entities
+
+			if(exportedSbiParuse.getSbiParameters()!= null){
+				Integer newParId = (Integer)metaAss.getParameterIDAssociation().get(exportedSbiParuse.getSbiParameters().getParId()); 				
+				if(newParId != null){
+					SbiParameters newSbiPar = (SbiParameters) sessionCurrDB.load(SbiParameters.class, newParId);
+					newSbiParuse.setSbiParameters(newSbiPar);
+				}
+				else{
+					logger.error("could not find corresponding parameter");
+					List params = new ArrayList();
+					params.add("Sbi_Parameter");
+					params.add("sbi_Paruse");
+					params.add(newSbiParuse.getLabel());				
+					throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+				}
+			}
+
+			if(exportedSbiParuse.getSbiLov()!= null){
+				Integer newLovId = (Integer)metaAss.getLovIDAssociation().get(exportedSbiParuse.getSbiLov().getLovId()); 				
+				if(newLovId != null){
+					SbiLov newSbiLov = (SbiLov) sessionCurrDB.load(SbiLov.class, newLovId);
+					newSbiParuse.setSbiLov(newSbiLov);
+				}
+				else{
+					logger.error("could not find corresponding Lov");
+					List params = new ArrayList();
+					params.add("Sbi_Lov");
+					params.add("sbi_Paruse");
+					params.add(newSbiParuse.getLabel());				
+					throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+				}
+			}
+			logger.debug("out");
+		}
+
+
+			
+			
+	
 
 
 	/**
@@ -556,13 +859,13 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter use object
 	 */
-	public static SbiParuse makeNewSbiParuse(SbiParuse paruse, Integer id){
-		logger.debug("IN");
-		SbiParuse newParuse = makeNewSbiParuse(paruse);
-		newParuse.setUseId(id);
-		logger.debug("OUT");
-		return newParuse;
-	}
+//	public static SbiParuse makeNewSbiParuse(SbiParuse paruse, Integer id){
+//		logger.debug("IN");
+//		SbiParuse newParuse = makeNewSbiParuse(paruse);
+//		newParuse.setUseId(id);
+//		logger.debug("OUT");
+//		return newParuse;
+//	}
 
 	/**
 	 * Creates a new hibernate biobject.
@@ -729,10 +1032,12 @@ public class ImportUtilities {
 			existingObj.setProfiledVisibility(exportedObj.getProfiledVisibility());
 			existingObj.setRefreshSeconds(exportedObj.getRefreshSeconds());
 
-			// deletes existing associations between object and parameters 
+			// deletes existing associations between object and parameters
+			// NO MORE
+			
 			Set objPars = existingObj.getSbiObjPars();
 			
-			
+			/*
 			
 			Iterator objParsIt = objPars.iterator();
 			while (objParsIt.hasNext()) {
@@ -769,7 +1074,9 @@ public class ImportUtilities {
 					SbiObjPar objPar = (SbiObjPar) objParsItAgain.next();
 					logger.debug("delete objPar with label "+objPar.getLabel());
 					sessionCurrDB.delete(objPar);
-				}			
+				}
+			
+			*/
 			
 		} finally {
 			logger.debug("OUT");
@@ -810,12 +1117,14 @@ public class ImportUtilities {
 			existingPar.setFunctionalFlag(exportedParameter.getFunctionalFlag());
 			existingPar.setTemporalFlag(exportedParameter.getTemporalFlag());
 			// deletes existing associations between object and parameters 
+			/* NO MORE
 			Set paruses = existingPar.getSbiParuses();
 			Iterator parusesIt = paruses.iterator();
 			while (parusesIt.hasNext()) {
 				SbiParuse paruse = (SbiParuse) parusesIt.next();
 				sessionCurrDB.delete(paruse);
 			}
+			*/
 		} finally {
 			logger.debug("OUT");
 		}
@@ -828,23 +1137,34 @@ public class ImportUtilities {
 	 * @param objpar the objpar
 	 * 
 	 * @return the sbi obj par
+	 * @throws EMFUserError 
 	 */
-	public static SbiObjPar makeNewSbiObjpar(SbiObjPar objpar){
+	public static SbiObjPar makeNewSbiObjpar(SbiObjPar expObjpar, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
 		logger.debug("IN");
 		SbiObjPar newObjPar = new SbiObjPar();
-		newObjPar.setLabel(objpar.getLabel());
-		newObjPar.setModFl(objpar.getModFl());
-		newObjPar.setMultFl(objpar.getMultFl());
-		newObjPar.setParurlNm(objpar.getParurlNm());
-		newObjPar.setPriority(objpar.getPriority());
-		newObjPar.setProg(objpar.getProg());
-		newObjPar.setReqFl(objpar.getReqFl());
-		newObjPar.setSbiObject(objpar.getSbiObject());
-		newObjPar.setSbiParameter(objpar.getSbiParameter());
-		newObjPar.setViewFl(objpar.getViewFl());
+		try{
+
+			newObjPar.setLabel(expObjpar.getLabel());
+			newObjPar.setModFl(expObjpar.getModFl());
+			newObjPar.setMultFl(expObjpar.getMultFl());
+			newObjPar.setParurlNm(expObjpar.getParurlNm());
+			newObjPar.setPriority(expObjpar.getPriority());
+			newObjPar.setProg(expObjpar.getProg());
+			newObjPar.setReqFl(expObjpar.getReqFl());
+			newObjPar.setSbiObject(expObjpar.getSbiObject());
+			newObjPar.setSbiParameter(expObjpar.getSbiParameter());
+			newObjPar.setViewFl(expObjpar.getViewFl());
+
+			entitiesAssociationsSbiObjPar(expObjpar, newObjPar, sessionCurrDB, metaAss);
+		}
+		catch (EMFUserError e) {
+			logger.error("Error while modifying creating new par object", e);
+			throw e;
+		}
 		logger.debug("OUT");
 		return newObjPar;
 	}
+	
 
 	/**
 	 * Creates a new hibernate biobject parameter object.
@@ -853,15 +1173,90 @@ public class ImportUtilities {
 	 * @param id the id
 	 * 
 	 * @return the sbi obj par
+	 * @throws EMFUserError 
 	 */
-	public static SbiObjPar makeNewSbiObjpar(SbiObjPar objpar, Integer id){
+	public static SbiObjPar makeNewSbiObjpar(SbiObjPar objpar, Integer id, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
 		logger.debug("IN");
-		SbiObjPar newObjPar = makeNewSbiObjpar(objpar);
+		SbiObjPar newObjPar = makeNewSbiObjpar(objpar, sessionCurrDB, metaAss);
 		newObjPar.setObjParId(id);
 		logger.debug("OUT");
 		return newObjPar;
 	}
+	
+	
+	public static SbiObjPar modifyExistingSbiObjpar( SbiObjPar exportedSbiObjpar, SbiObjPar existingSbiObjpar
+			, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
+		logger.debug("IN");
+		try{
+		existingSbiObjpar.setLabel(exportedSbiObjpar.getLabel());
+		existingSbiObjpar.setModFl(exportedSbiObjpar.getModFl());
+		existingSbiObjpar.setMultFl(exportedSbiObjpar.getMultFl());
+		existingSbiObjpar.setPriority(exportedSbiObjpar.getPriority());
+		existingSbiObjpar.setProg(exportedSbiObjpar.getProg());
+		existingSbiObjpar.setReqFl(exportedSbiObjpar.getReqFl());
+		existingSbiObjpar.setViewFl(exportedSbiObjpar.getViewFl());
+		existingSbiObjpar.setParurlNm(exportedSbiObjpar.getParurlNm());
+		entitiesAssociationsSbiObjPar(exportedSbiObjpar, existingSbiObjpar, sessionCurrDB, metaAss);
+		}
+		catch (EMFUserError e) {
+			logger.error("Error while modifying existing par object", e);
+			throw e;
+		}
+		logger.debug("OUT");
+		return existingSbiObjpar;
+	}
+	
+	
+	
+	public static void entitiesAssociationsSbiObjPar(SbiObjPar exportedSbiObjPar, SbiObjPar newSbiObjPar,Session sessionCurrDB, 
+			MetadataAssociations metaAss) throws EMFUserError {
+		logger.debug("IN");
+		// overwrite existging entities
 
+		if(exportedSbiObjPar.getSbiObject()!= null){
+			Integer objId = exportedSbiObjPar.getSbiObject().getBiobjId();
+			
+			Integer newObjId = (Integer)metaAss.getBIobjIDAssociation().get(exportedSbiObjPar.getSbiObject().getBiobjId()); 
+			if(newObjId != null){
+				SbiObjects sbiObject = (SbiObjects) sessionCurrDB.load(SbiObjects.class, newObjId);
+				newSbiObjPar.setSbiObject(sbiObject);
+			}
+			else{
+				logger.error("could not find corresponding BiObject");
+				List params = new ArrayList();
+				params.add("Sbi_Object");
+				params.add("sbi_obj_par");
+				params.add(exportedSbiObjPar.getLabel());				
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+			}
+		}
+		
+		if(exportedSbiObjPar.getSbiParameter()!= null){
+			Integer parId = exportedSbiObjPar.getSbiParameter().getParId();
+			
+			Integer newParId = (Integer)metaAss.getParameterIDAssociation().get(exportedSbiObjPar.getSbiParameter().getParId()); 
+			if(newParId != null){
+				SbiParameters sbiParameters = (SbiParameters) sessionCurrDB.load(SbiParameters.class, newParId);
+				newSbiObjPar.setSbiParameter(sbiParameters);
+			}
+			else{
+				logger.error("could not find corresponding BiParameters");
+				List params = new ArrayList();
+				params.add("Sbi_Parameter");
+				params.add("sbi_obj_par");
+				params.add(exportedSbiObjPar.getLabel());				
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+			}
+		}
+		
+		logger.debug("OUT");	
+	}
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * Set into the biobject to the engine/object type/object state/datasource
@@ -1408,53 +1803,220 @@ public class ImportUtilities {
 		return existDom;
 	}
 
-	public static SbiParuseDet makeNewSbiParuseDet(SbiParuseDet parusedet, Integer newParuseid, Integer newRoleid) {
+//	public static SbiParuseDet makeNewSbiParuseDet(SbiParuseDet parusedet, Integer newParuseid, Integer newRoleid) {
+//		logger.debug("IN");
+//		SbiParuseDetId parusedetid = parusedet.getId();
+//		SbiParuseDetId newParusedetid = new SbiParuseDetId();
+//		if (newParuseid != null) {
+//			SbiParuse sbiparuse = parusedetid.getSbiParuse();
+//			SbiParuse newParuse = ImportUtilities.makeNewSbiParuse(sbiparuse, newParuseid);
+//			newParusedetid.setSbiParuse(newParuse);
+//		}
+//		if (newRoleid != null) {
+//			SbiExtRoles sbirole = parusedetid.getSbiExtRoles();
+//			SbiExtRoles newRole = ImportUtilities.makeNewSbiExtRole(sbirole, newRoleid);
+//			newParusedetid.setSbiExtRoles(newRole);
+//		}
+//		SbiParuseDet newParuseDet = new SbiParuseDet();
+//		newParuseDet.setId(newParusedetid);
+//		newParuseDet.setDefaultVal(parusedet.getDefaultVal());
+//		newParuseDet.setHiddenFl(parusedet.getHiddenFl());
+//		newParuseDet.setProg(parusedet.getProg());
+//		logger.debug("OUT");
+//		return newParuseDet;
+//	}
+	
+	public static SbiParuseDet makeNewSbiParuseDet(SbiParuseDet expParuseDet, Session sessionCurrDB, MetadataAssociations metaAss ) throws EMFUserError {
 		logger.debug("IN");
-		SbiParuseDetId parusedetid = parusedet.getId();
-		SbiParuseDetId newParusedetid = new SbiParuseDetId();
-		if (newParuseid != null) {
-			SbiParuse sbiparuse = parusedetid.getSbiParuse();
-			SbiParuse newParuse = ImportUtilities.makeNewSbiParuse(sbiparuse, newParuseid);
-			newParusedetid.setSbiParuse(newParuse);
-		}
-		if (newRoleid != null) {
-			SbiExtRoles sbirole = parusedetid.getSbiExtRoles();
-			SbiExtRoles newRole = ImportUtilities.makeNewSbiExtRole(sbirole, newRoleid);
-			newParusedetid.setSbiExtRoles(newRole);
-		}
+
 		SbiParuseDet newParuseDet = new SbiParuseDet();
-		newParuseDet.setId(newParusedetid);
-		newParuseDet.setDefaultVal(parusedet.getDefaultVal());
-		newParuseDet.setHiddenFl(parusedet.getHiddenFl());
-		newParuseDet.setProg(parusedet.getProg());
+		try{
+			newParuseDet.setDefaultVal(expParuseDet.getDefaultVal());
+			newParuseDet.setHiddenFl(expParuseDet.getHiddenFl());
+			newParuseDet.setProg(expParuseDet.getProg());		
+			entitiesAssociationsSbiParuseDet(expParuseDet, newParuseDet, sessionCurrDB, metaAss);			
+		}
+		catch (EMFUserError e) {
+			logger.error("Error in making new SbiParuseDet related to SbiParuse "+expParuseDet.getId().getSbiParuse().getLabel());
+			throw e;
+		}
 		logger.debug("OUT");
 		return newParuseDet;
 	}
-
-
-
-	public static SbiParuseCk makeNewSbiParuseCk(SbiParuseCk paruseck,
-			Integer newParuseid, Integer newCheckid) {
+		
+	public static SbiParuseDet modifyExistingSbiParuseDet(SbiParuseDet exportedParusedet, SbiParuseDet existingParusedet, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
-		// build a new id for the SbiParuseCheck
-		SbiParuseCkId parusecheckid = paruseck.getId();
-		SbiParuseCkId newParusecheckid = new SbiParuseCkId();
-		if (newParuseid != null) {
-			SbiParuse sbiparuse = parusecheckid.getSbiParuse();
-			SbiParuse newParuse = ImportUtilities.makeNewSbiParuse(sbiparuse, newParuseid);
-			newParusecheckid.setSbiParuse(newParuse);
+		try {
+
+			existingParusedet.setDefaultVal(exportedParusedet.getDefaultVal());
+			existingParusedet.setHiddenFl(exportedParusedet.getHiddenFl());
+			existingParusedet.setProg(exportedParusedet.getProg());
+			
+			entitiesAssociationsSbiParuseDet(exportedParusedet, existingParusedet, sessionCurrDB, metaAss);	
+
+			logger.debug("OUT");
+
+		}catch (EMFUserError e) {
+			logger.error("Error in making new SbiParuseDet related to SbiParuse "+exportedParusedet.getId().getSbiParuse().getLabel());
+			throw e;	
 		}
-		if (newCheckid != null) {
-			SbiChecks sbicheck = parusecheckid.getSbiChecks();
-			SbiChecks newCheck = ImportUtilities.makeNewSbiCheck(sbicheck, newCheckid);
-			newParusecheckid.setSbiChecks(newCheck);
-		}
-		SbiParuseCk newParuseck = new SbiParuseCk();
-		newParuseck.setId(newParusecheckid);
-		newParuseck.setProg(paruseck.getProg());
 		logger.debug("OUT");
-		return newParuseck;
+
+		return existingParusedet;
 	}
+	
+	
+	
+
+	public static void entitiesAssociationsSbiParuseDet(SbiParuseDet exportedSbiParuseDet, SbiParuseDet newSbiParuseDet,Session sessionCurrDB, 
+			MetadataAssociations metaAss) throws EMFUserError {
+		logger.debug("IN");
+		// overwrite existging entities
+
+		//if(exportedSbiParuseDet.getId() == null)exportedSbiParuseDet.setId(new SbiParuseDetId());
+		if(newSbiParuseDet.getId() == null)newSbiParuseDet.setId(new SbiParuseDetId());
+			
+		if(exportedSbiParuseDet.getId().getSbiParuse() != null){
+			Integer newParuseId = (Integer)metaAss.getParuseIDAssociation().get(exportedSbiParuseDet.getId().getSbiParuse().getUseId()); 
+			if(newParuseId != null){
+				SbiParuse newParusePar = (SbiParuse) sessionCurrDB.load(SbiParuse.class, newParuseId);
+				newSbiParuseDet.getId().setSbiParuse(newParusePar);
+				}
+			else{
+				logger.error("could not find corresponding obj par");
+				List params = new ArrayList();
+				params.add("Sbi_Paruse");
+				params.add("Sbi_Paruse_det");
+				params.add("...");				
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+			}
+		}
+
+		if(exportedSbiParuseDet.getId().getSbiExtRoles() != null){
+			Integer newRoleId = (Integer)metaAss.getRoleIDAssociation().get(exportedSbiParuseDet.getId().getSbiExtRoles().getExtRoleId()); 
+			if(newRoleId != null){
+				SbiExtRoles newRole = (SbiExtRoles) sessionCurrDB.load(SbiExtRoles.class, newRoleId);
+				newSbiParuseDet.getId().setSbiExtRoles(newRole);
+			}
+			else{
+				logger.error("could not find corresponding obj par");
+				List params = new ArrayList();
+				params.add("Sbi_Role");
+				params.add("Sbi_Paruse_det");
+				params.add("...");				
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+			}
+
+
+		}
+		logger.debug("OUT");
+	}
+
+
+	
+	
+
+	public static SbiParuseCk makeNewSbiParuseCk(SbiParuseCk expParuseCk, Session sessionCurrDB, MetadataAssociations metaAss ) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiParuseCk newParuseCk = new SbiParuseCk();
+		try{
+			newParuseCk.setProg(expParuseCk.getProg());
+			entitiesAssociationsSbiParuseCk(expParuseCk, newParuseCk, sessionCurrDB, metaAss);			
+		}
+		catch (EMFUserError e) {
+			logger.error("Error in making new SbiParuseCk related to SbiParuse "+expParuseCk.getId().getSbiParuse().getLabel());
+			throw e;
+		}
+		logger.debug("OUT");
+		return newParuseCk;
+	}
+	
+	
+	public static SbiParuseCk modifyExistingSbiParuseCk(SbiParuseCk exportedParuseCk, SbiParuseCk existingParuseCk, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
+		logger.debug("IN");
+		try {
+
+			existingParuseCk.setProg(exportedParuseCk.getProg());
+			entitiesAssociationsSbiParuseCk(exportedParuseCk, existingParuseCk, sessionCurrDB, metaAss);	
+
+
+		}catch (EMFUserError e) {
+			logger.error("Error in making new SbiParuseCk related to SbiParuse "+exportedParuseCk.getId().getSbiParuse().getLabel());
+			throw e;	
+		}
+		logger.debug("OUT");
+
+		return existingParuseCk;
+	}
+	
+	
+	public static void entitiesAssociationsSbiParuseCk(SbiParuseCk exportedSbiParuseCk, SbiParuseCk newSbiParuseCk,Session sessionCurrDB, 
+			MetadataAssociations metaAss) throws EMFUserError {
+		logger.debug("IN");
+		// overwrite existging entities
+
+		if(newSbiParuseCk.getId() == null)newSbiParuseCk.setId(new SbiParuseCkId());
+			
+		if(exportedSbiParuseCk.getId().getSbiParuse() != null){
+			Integer newParuseId = (Integer)metaAss.getParuseIDAssociation().get(exportedSbiParuseCk.getId().getSbiParuse().getUseId()); 
+			if(newParuseId != null){
+				SbiParuse newParusePar = (SbiParuse) sessionCurrDB.load(SbiParuse.class, newParuseId);
+				newSbiParuseCk.getId().setSbiParuse(newParusePar);
+				}
+			else{
+				logger.error("could not find corresponding paruse");
+				List params = new ArrayList();
+				params.add("Sbi_Paruse");
+				params.add("Sbi_Paruse_ck");
+				params.add("...");				
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+			}
+		}
+
+		if(exportedSbiParuseCk.getId().getSbiChecks() != null){
+			Integer newCheckId = (Integer)metaAss.getCheckIDAssociation().get(exportedSbiParuseCk.getId().getSbiChecks().getCheckId()); 
+			if(newCheckId != null){
+				SbiChecks newCheck = (SbiChecks) sessionCurrDB.load(SbiChecks.class, newCheckId);
+				newSbiParuseCk.getId().setSbiChecks(newCheck);
+			}
+			else{
+				logger.error("could not find corresponding obj par");
+				List params = new ArrayList();
+				params.add("Sbi_Check");
+				params.add("Sbi_Paruse_ck");
+				params.add("...");				
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+			}
+
+
+		}
+		logger.debug("OUT");
+	}
+
+
+//	public static SbiParuseCk makeNewSbiParuseCk(SbiParuseCk paruseck,
+//			Integer newParuseid, Integer newCheckid) {
+//		logger.debug("IN");
+//		// build a new id for the SbiParuseCheck
+//		SbiParuseCkId parusecheckid = paruseck.getId();
+//		SbiParuseCkId newParusecheckid = new SbiParuseCkId();
+//		if (newParuseid != null) {
+//			SbiParuse sbiparuse = parusecheckid.getSbiParuse();
+//			SbiParuse newParuse = ImportUtilities.makeNewSbiParuse(sbiparuse, newParuseid);
+//			newParusecheckid.setSbiParuse(newParuse);
+//		}
+//		if (newCheckid != null) {
+//			SbiChecks sbicheck = parusecheckid.getSbiChecks();
+//			SbiChecks newCheck = ImportUtilities.makeNewSbiCheck(sbicheck, newCheckid);
+//			newParusecheckid.setSbiChecks(newCheck);
+//		}
+//		SbiParuseCk newParuseck = new SbiParuseCk();
+//		newParuseck.setId(newParusecheckid);
+//		newParuseck.setProg(paruseck.getProg());
+//		logger.debug("OUT");
+//		return newParuseck;
+//	}
 
 
 
@@ -4110,6 +4672,55 @@ public class ImportUtilities {
 		}
 		return existingGrantNode;
 	}
+
+
+	public static List<String> retrieveLovMetadataById(SbiLov sbiLov){
+		logger.debug("IN");
+
+		// ma pcontaining lovs metadata; isnerted as lov label:   then a vector of metadata with name and type
+		List<String> lovsMetadata = new ArrayList<String>();
+
+//		String hql = "from SbiLov lov where lovId = "+lovId;
+//		Query hqlQuery = sessionCurrDB.createQuery(hql);
+//		SbiLov sbiLov = (SbiLov)hqlQuery.uniqueResult();
+//		// GET METADATA
+		String dataDefinition = sbiLov.getLovProvider().trim();
+		try{
+			SourceBean source = SourceBean.fromXMLString(dataDefinition);
+			SourceBean visCol = (SourceBean)source.getAttribute("VISIBLE-COLUMNS");
+			SourceBean invisCol = (SourceBean)source.getAttribute("INVISIBLE-COLUMNS");
+			String visibleColumns = visCol.getCharacters();
+			String invisibleColumns = visCol.getCharacters();
+			if( (visibleColumns!=null) && !visibleColumns.trim().equalsIgnoreCase("") ) {
+				String[] visColArr = visibleColumns.split(",");
+				for (int i = 0; i < visColArr.length; i++) {
+					lovsMetadata.add(visColArr[i]);
+				}
+			}
+			List invisColNames = new ArrayList<String>();
+			if( (invisibleColumns!=null) && !invisibleColumns.trim().equalsIgnoreCase("") ) {
+				String[] invisColArr = invisibleColumns.split(",");
+				for (int i = 0; i < invisColArr.length; i++) {
+					lovsMetadata.add(invisColArr[i]);
+				}
+			}
+			logger.debug("insert metadata for lov with label "+sbiLov.getLabel());
+		}
+		catch (SourceBeanException e) {
+			logger.error("Error in reading XML of metadata for LOV with label "+sbiLov.getLabel()+"; metadata wil  be put to null");
+		}
+		logger.debug("OUT");
+		return lovsMetadata;
+	}
+
+
+
+
+
+
+
+
+
 }
 
 
