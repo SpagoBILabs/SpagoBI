@@ -822,4 +822,63 @@ IParameterUseDAO {
 		logger.debug("OUT");
 
 	}
+	
+	
+	/**
+	 * Delete from hibernate session a parameter use
+	 * 
+	 * @param Session hibernate Session
+	 * 
+	 * @return The list of parameter uses associated to the lov identified by the lovId at input
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void eraseParameterUseByIdSameSession(Integer parUseId, Session sessionCurrDB) throws EMFUserError
+	{
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiParuse hibParuse = (SbiParuse)aSession.load(SbiParuse.class, parUseId);
+
+			logger.debug("delete ParUSeDet");
+			Set parUseDets = hibParuse.getSbiParuseDets();
+			for (Iterator it = parUseDets.iterator(); it.hasNext();){
+				aSession.delete((SbiParuseDet)it.next());	
+			}
+
+			logger.debug("delete ParUSeCk");
+			Set parUseCks = hibParuse.getSbiParuseCks();
+			for (Iterator it = parUseCks.iterator(); it.hasNext();){
+				aSession.delete((SbiParuseCk)it.next());	
+			}
+			logger.debug("delete ParObjUse");
+			eraseParameterObjUseByParuseIdSameSession(parUseId, sessionCurrDB);
+			
+			aSession.delete(hibParuse);
+
+			tx.commit();
+		}catch(HibernateException he){
+
+			logException(he);
+
+			if (tx != null) tx.rollback();	
+			logger.error("Error in deleting SbiParuse with id "+parUseId);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);  
+
+		}finally{
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		
+		logger.debug("OUT");
+
+	}
+	
+
 }
