@@ -56,7 +56,7 @@ public class ImportExportSDKServiceImpl extends AbstractSDKService implements Im
 	}
 	
 	public SDKFile internalImportDocuments(SDKFile importExportSDKFile,
-			SDKFile associationsSDKFile, boolean overwrite) {
+			SDKFile associationsSDKFile, boolean overwrite) throws NotAllowedOperationException {
 		logger.debug("IN");
 		SDKFile toReturn = null;
 		IImportManager importManager = null;
@@ -109,7 +109,9 @@ public class ImportExportSDKServiceImpl extends AbstractSDKService implements Im
     		toReturn = new SDKFile();
     		toReturn.setFileName(completeFileName);
     		toReturn.setContent(dataHandler);
-
+    		
+        } catch(NotAllowedOperationException e) {
+        	throw e;
         } catch (Exception e) {
         	if (importManager != null) {
         		importManager.stopImport();
@@ -124,15 +126,26 @@ public class ImportExportSDKServiceImpl extends AbstractSDKService implements Im
         return toReturn;
 	}
 
-	private byte[] getFileContent(SDKFile importExportSDKFile) {
+	private byte[] getFileContent(SDKFile importExportSDKFile) throws NotAllowedOperationException {
 		byte[] toReturn = null;
 		logger.debug("IN");
+		int maxSize = ImportUtilities.getImportFileMaxSize();
+		logger.debug("Import/export file max size: " + maxSize);
 		if (importExportSDKFile != null) {
 			InputStream is = null;
 			try {
 				DataHandler dh = importExportSDKFile.getContent();
 				is = dh.getInputStream();
-				toReturn = SpagoBIUtilities.getByteArrayFromInputStream(is);
+				try {
+					toReturn = SpagoBIUtilities.getByteArrayFromInputStream(is, maxSize);
+				} catch (SecurityException e) {
+					logger.error("A security exception was thrown when getting import/export file content: file is too big", e);
+		    		NotAllowedOperationException ex = new NotAllowedOperationException();
+		    		ex.setFaultString("File in input is too big");
+		    		throw ex;
+				}
+	        } catch (NotAllowedOperationException e) {
+	        	throw e;
 			} catch (Exception e) {
 				if (is != null) {
 					try {
