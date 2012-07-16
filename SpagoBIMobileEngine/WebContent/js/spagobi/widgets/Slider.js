@@ -16,6 +16,13 @@
 	    xtype: 'sliderfield',
 	    style: 'float: left; width:85%;',
 	    increment: 1,
+		mySliderTooltip : new Ext.Panel({
+				floating: true,
+				width: 50,
+				height: 30,
+				styleHtmlContent: true,
+				style: "background-color: #FFF;"
+			}),
         tipText: function(thumb){
             return Ext.String.format('<b>{0}% complete</b>', thumb.value);
         },
@@ -44,6 +51,15 @@
 		    		}
 	            }
 	        }
+			,drag: function (theSlider, theThumb, ThumbValue) {
+
+				theSlider.mySliderTooltip.showBy(theThumb);
+				theSlider.mySliderTooltip.el.setHTML(ThumbValue);
+			},
+			dragend: function (theSlider, theThumb, ThumbValue) {
+				theSlider.mySliderTooltip.hide();
+			},
+			scope: this
 	    },
 	    layout: {
 	        type: 'vbox',
@@ -64,7 +80,7 @@
 			if(attributes.increment !== undefined){
 				this.increment = parseInt(attributes.increment);
 			}
-			
+
 			//this.label = attributes.label; //not nice to see...
 			
 			app.views.Slider.superclass.initComponent.apply(this, arguments);
