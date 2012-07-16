@@ -22,11 +22,11 @@ public class MetadataLogger {
 		logBuf = new StringBuffer();
 		Calendar today = new GregorianCalendar();
 		int day = today.get(Calendar.DAY_OF_MONTH);
-		int month = today.get(Calendar.MONTH);
+		int month = today.get(Calendar.MONTH) + 1;
 		int year = today.get(Calendar.YEAR);
 		int hour = today.get(Calendar.HOUR_OF_DAY);
-		int sec = today.get(Calendar.SECOND);
-		logBuf.append("Import of the day "+day+"/"+month+"/"+year+" started at "+hour+":"+sec+" \n\n");
+		int minute = today.get(Calendar.MINUTE);
+		logBuf.append("Import of the day "+day+"/"+month+"/"+year+" started at "+hour+":"+minute+" \n\n");
 	}
 	
 	/**
