@@ -486,7 +486,12 @@ Sbi.locale.ln['sbi.home.Info'] = 'Informaci\u00f3n sobre SpagoBI';
 
 Sbi.locale.ln['sbi.lookup.ValueOfColumn'] ='The value of the column';
 Sbi.locale.ln['sbi.lookup.asA'] = 'as a';
-
+Sbi.locale.ln['sbi.lookup.asString'] = 'Cadena';
+Sbi.locale.ln['sbi.lookup.asNumber'] = 'N\u00FAmero';
+Sbi.locale.ln['sbi.lookup.asDate'] = 'Fecha';
+Sbi.locale.ln['sbi.lookup.Contains'] = 'Contiene';
+Sbi.locale.ln['sbi.lookup.StartsWith'] = 'Comience con';
+Sbi.locale.ln['sbi.lookup.EndsWith'] = 'Termina con';
 
 //Datasets
 Sbi.locale.ln['sbi.ds.clearOldVersion'] = 'Clear All';
