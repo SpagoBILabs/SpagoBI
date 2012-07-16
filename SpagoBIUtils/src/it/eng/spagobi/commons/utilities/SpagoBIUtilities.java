@@ -110,7 +110,7 @@ public class SpagoBIUtilities {
 	 * Given an <code>InputStream</code> as input, gets the correspondent
 	 * bytes array.
 	 * 
-	 * @param is The input straeam
+	 * @param is The input stream
 	 * 
 	 * @return An array of bytes obtained from the input stream.
 	 */
@@ -140,6 +140,47 @@ public class SpagoBIUtilities {
 		}
 
 	}
+	
+
+	/**
+	 * Reads the content from the input <code>InputStream</code> and stores it into a byte array.
+	 * If the byte array exceeds the max size specified in input, a <code>SecurityException</code> is thrown.
+	 * @param is The input stream 
+	 * @param maximum The maximum number of bytes to read
+	 * @return An array of bytes obtained from the input stream.
+	 */
+	public static byte[] getByteArrayFromInputStream(InputStream is, int maximum) {
+		logger.debug("IN");
+		try {
+			java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+			java.io.BufferedOutputStream bos = new java.io.BufferedOutputStream(baos);
+
+			int c = 0;
+			int counter = 0;
+			byte[] b = new byte[1024];
+			while ((c = is.read(b)) != -1) {
+				if (c == 1024)
+					bos.write(b);
+				else
+					bos.write(b, 0, c);
+				counter += c;
+				if (counter > maximum) {
+					throw new SecurityException("Maximum size [" + maximum + "] exceeded");
+				}
+			}
+			bos.flush();
+			byte[] ret = baos.toByteArray();
+			bos.close();
+			return ret;
+		} catch (IOException ioe) {
+			logger.error("IOException", ioe);
+			return null;
+		} finally {
+			logger.debug("OUT");
+		}
+
+	}
+	
 
 	/**
 	 * Given an <code>InputStream</code> as input flushs the content into an
