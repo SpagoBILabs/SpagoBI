@@ -122,7 +122,7 @@ public class ExportManager implements IExportManager {
 			objectsInserted=new ArrayList();
 		} catch (Exception e) {
 			logger.error("Error while creating export environment ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -164,7 +164,7 @@ public class ExportManager implements IExportManager {
 			throw emfue;
 		} catch (Exception e) {
 			logger.error("Error while exporting objects ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -202,7 +202,7 @@ public class ExportManager implements IExportManager {
 			out.flush();
 		} catch (Exception e) {
 			logger.error("Error while creating archive file ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			try {
 				if (out != null) {
@@ -256,7 +256,7 @@ public class ExportManager implements IExportManager {
 			}
 		} catch (Exception e) {
 			logger.error("Error while creating archive file ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			try {
 				if (in != null) {
@@ -289,7 +289,7 @@ public class ExportManager implements IExportManager {
 			fos.close();
 		} catch (Exception e) {
 			logger.error("Error while exporting properties file ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			try {
 				if (fos != null) {
@@ -318,7 +318,7 @@ public class ExportManager implements IExportManager {
 			}
 		} catch (Exception e) {
 			logger.error("Error while exporting domains ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -347,7 +347,7 @@ public class ExportManager implements IExportManager {
 			}
 		} catch (Exception e) {
 			logger.error("Error while exporting udp ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -371,7 +371,7 @@ public class ExportManager implements IExportManager {
 
 		} catch (Exception e) {
 			logger.error("Error while exporting ou ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -395,7 +395,7 @@ public class ExportManager implements IExportManager {
 
 		} catch (Exception e) {
 			logger.error("Error while exporting hierarchy ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -419,7 +419,7 @@ public class ExportManager implements IExportManager {
 
 		} catch (Exception e) {
 			logger.error("Error while exporting ou nodes ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -441,7 +441,7 @@ public class ExportManager implements IExportManager {
 			}
 		} catch (Exception e) {
 			logger.error("Error while exporting object metadata ", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -590,7 +590,7 @@ public class ExportManager implements IExportManager {
 			//						}
 			//					} catch (Exception e) {
 			//						logger.error("Error while exporting kpi with id " + idObj + " and label " + biobj.getLabel());
-			//						throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+			//						throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", ImportManager.messageBundle);
 			//
 			//					}
 			//				}
@@ -669,7 +669,7 @@ public class ExportManager implements IExportManager {
 			throw emfue;
 		} catch (Exception e) {
 			logger.error("Error while exporting document with id " + idObj + " :", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -766,7 +766,7 @@ public class ExportManager implements IExportManager {
 					List paramsErr = new ArrayList();
 					paramsErr.add(lov.getLabel());
 					paramsErr.add(datasourceName);
-					throw new EMFUserError(EMFErrorSeverity.ERROR, "8008", paramsErr, "component_impexp_messages");
+					throw new EMFUserError(EMFErrorSeverity.ERROR, "8008", paramsErr, ImportManager.messageBundle);
 				} else {
 					exporter.insertDataSource(dsFound, session);
 				}
@@ -775,7 +775,7 @@ public class ExportManager implements IExportManager {
 			throw emfue;
 		} catch (Exception e) {
 			logger.error("Error while checking connection" + e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -839,7 +839,7 @@ public class ExportManager implements IExportManager {
 			FileUtilities.copyDirectory(resourcesDir, destDir, true, true, false);
 	    } catch (Exception e) {
         	logger.error("Error during the copy of maps files" , e);
-        	throw new EMFUserError(EMFErrorSeverity.ERROR, "100", "component_impexp_messages");
+        	throw new EMFUserError(EMFErrorSeverity.ERROR, "100", ImportManager.messageBundle);
 	    } finally {
 	    	logger.debug("OUT");
 	    }

@@ -52,7 +52,7 @@ public class ExportUtilities {
 	        fos.flush();
         } catch (Exception e) {
         	logger.error("Error during the copy of the metadata exportdatabase script " , e);
-        	throw new EMFUserError(EMFErrorSeverity.ERROR, "100", "component_impexp_messages");
+        	throw new EMFUserError(EMFErrorSeverity.ERROR, "100", ImportManager.messageBundle);
         } finally {
         	try{
 	        	if(fos!=null){
@@ -95,7 +95,7 @@ public class ExportUtilities {
 	        fos.flush();
         } catch (Exception e) {
             logger.error("Error during the copy of the metadata exportdatabase properties " , e);
-        	throw new EMFUserError(EMFErrorSeverity.ERROR, "100", "component_impexp_messages");
+        	throw new EMFUserError(EMFErrorSeverity.ERROR, "100", ImportManager.messageBundle);
         } finally {
         	try{
 	        	if(fos!=null){
@@ -156,7 +156,7 @@ public class ExportUtilities {
 	         sqlconn = DriverManager.getConnection(url, username, password);
         } catch (Exception e) {
         	logger.error("Error while getting connection to export database " , e);
-        	throw new EMFUserError(EMFErrorSeverity.ERROR, "100", "component_impexp_messages");
+        	throw new EMFUserError(EMFErrorSeverity.ERROR, "100", ImportManager.messageBundle);
         }finally{
             logger.debug("OUT");
         }

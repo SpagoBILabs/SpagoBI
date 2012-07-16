@@ -10,6 +10,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.tools.importexport.ImportExportConstants;
+import it.eng.spagobi.tools.importexport.ImportManager;
 import it.eng.spagobi.tools.importexport.ImportUtilities;
 
 import java.io.File;
@@ -85,7 +86,7 @@ public class TransformersUtilities {
 	    } catch (Exception e) {
 	    	SpagoBITracer.critical(ImportExportConstants.NAME_MODULE, TransformersUtilities.class.getName(), "compressSingleFolder",
 	    						   "Error while creating archive file " + e);
-	    	throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+	    	throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 	    }
 	}
 	
@@ -146,7 +147,7 @@ public class TransformersUtilities {
 		} catch (Exception e){
 			SpagoBITracer.critical(ImportExportConstants.NAME_MODULE, TransformersUtilities.class.getName(), "createExportArchive",
 					   			   "Error while creating archive file " + e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		}
 		return content;
 	}

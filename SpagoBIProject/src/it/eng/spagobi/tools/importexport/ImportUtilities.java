@@ -155,7 +155,7 @@ public class ImportUtilities {
 			logger.warn("Error during the decompression of the exported file " , eofe);
 		} catch (Exception e) {
 			logger.warn("Error during the decompression of the exported file " , e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "100", "component_impexp_messages");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "100", ImportManager.messageBundle);
 		} finally {
 			if (zis != null || fis != null) {
 				try {
@@ -200,7 +200,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate role object
 	 */
-	public static SbiExtRoles makeNewSbiExtRole(SbiExtRoles role){
+	public static SbiExtRoles makeNew(SbiExtRoles role){
 		logger.debug("IN");
 		SbiExtRoles newRole = new SbiExtRoles();
 		newRole.setCode(role.getCode());
@@ -233,9 +233,9 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate role object
 	 */
-	public static SbiExtRoles makeNewSbiExtRole(SbiExtRoles role, Integer id){
+	public static SbiExtRoles makeNew(SbiExtRoles role, Integer id){
 		logger.debug("IN");
-		SbiExtRoles newRole = makeNewSbiExtRole(role);
+		SbiExtRoles newRole = makeNew(role);
 		newRole.setExtRoleId(id);
 		logger.debug("OUT");
 		return newRole;
@@ -249,7 +249,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate engine object
 	 */
-	public static SbiEngines makeNewSbiEngine(SbiEngines engine){
+	public static SbiEngines makeNew(SbiEngines engine){
 		logger.debug("IN");
 		SbiEngines newEng = new SbiEngines();
 		newEng.setDescr(engine.getDescr());
@@ -275,7 +275,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the sbi data source
 	 */
-	public static SbiDataSource makeNewSbiDataSource(SbiDataSource ds){
+	public static SbiDataSource makeNew(SbiDataSource ds){
 		logger.debug("IN");
 		SbiDataSource newDS = new SbiDataSource();
 		newDS.setDescr(ds.getDescr());
@@ -291,7 +291,7 @@ public class ImportUtilities {
 		return newDS;
 	}	
 
-	public static SbiDataSource modifyExistingSbiDataSource(
+	public static SbiDataSource modifyExisting(
 			SbiDataSource dataSource, Session sessionCurrDB,
 			Integer existingDatasourceId) {
 		logger.debug("IN");
@@ -325,9 +325,9 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate engine object
 	 */
-	public static SbiEngines makeNewSbiEngine(SbiEngines engine, Integer id){
+	public static SbiEngines makeNew(SbiEngines engine, Integer id){
 		logger.debug("IN");
-		SbiEngines newEng = makeNewSbiEngine(engine);
+		SbiEngines newEng = makeNew(engine);
 		newEng.setEngineId(id);
 		logger.debug("OUT");
 		return newEng;
@@ -341,7 +341,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate functionality object
 	 */
-	public static SbiFunctions makeNewSbiFunction(SbiFunctions funct){
+	public static SbiFunctions makeNew(SbiFunctions funct){
 		logger.debug("IN");
 		SbiFunctions newFunct = new SbiFunctions();
 		newFunct.setCode(funct.getCode());
@@ -363,9 +363,9 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate functionality object
 	 */
-	public static SbiFunctions makeNewSbiFunction(SbiFunctions funct, Integer id){
+	public static SbiFunctions makeNew(SbiFunctions funct, Integer id){
 		logger.debug("IN");
-		SbiFunctions newFunct = makeNewSbiFunction(funct);
+		SbiFunctions newFunct = makeNew(funct);
 		newFunct.setFunctId(id);
 		logger.debug("OUT");
 		return newFunct;
@@ -379,7 +379,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate lov object
 	 */
-	public static SbiLov makeNewSbiLov(SbiLov lov, Session sessionCurrDB, 
+	public static SbiLov makeNew(SbiLov lov, Session sessionCurrDB, 
 			HashMap<String, String> dsExportUser){
 		logger.debug("IN");
 		SbiLov newlov = new SbiLov();
@@ -438,9 +438,9 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate lov object
 	 */
-	public static SbiLov makeNewSbiLov(SbiLov lov, Session sessionCurrDB, Integer id, Map user){
+	public static SbiLov makeNew(SbiLov lov, Session sessionCurrDB, Integer id, Map user){
 		logger.debug("IN");
-		SbiLov newlov = makeNewSbiLov(lov, sessionCurrDB, null);
+		SbiLov newlov = makeNew(lov, sessionCurrDB, null);
 		newlov.setLovId(id);
 		logger.debug("OUT");
 		return newlov;
@@ -454,7 +454,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate check object
 	 */
-	public static SbiChecks makeNewSbiCheck(SbiChecks check){
+	public static SbiChecks makeNew(SbiChecks check){
 		logger.debug("IN");
 		SbiChecks newck = new SbiChecks();
 		newck.setCheckType(check.getCheckType());
@@ -476,9 +476,9 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate check object
 	 */
-	public static SbiChecks makeNewSbiCheck(SbiChecks check, Integer id){
+	public static SbiChecks makeNew(SbiChecks check, Integer id){
 		logger.debug("IN");
-		SbiChecks newCk = makeNewSbiCheck(check);
+		SbiChecks newCk = makeNew(check);
 		newCk.setCheckId(id);
 		logger.debug("OUT");
 		return newCk;
@@ -492,7 +492,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiParameters makeNewSbiParameter(SbiParameters param){
+	public static SbiParameters makeNew(SbiParameters param){
 		logger.debug("IN");
 		SbiParameters newPar = new SbiParameters();
 		newPar.setDescr(param.getDescr());
@@ -518,9 +518,9 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiParameters makeNewSbiParameter(SbiParameters param, Integer id){
+	public static SbiParameters makeNew(SbiParameters param, Integer id){
 		logger.debug("IN");
-		SbiParameters newPar = makeNewSbiParameter(param);
+		SbiParameters newPar = makeNew(param);
 		newPar.setParId(id);
 		logger.debug("OUT");
 		return newPar;
@@ -536,14 +536,14 @@ public class ImportUtilities {
 	 * @return the new hibernate parameter use object
 	 * @throws EMFUserError 
 	 */
-	public static SbiObjParview makeNewSbiObjParview(SbiObjParview exportedObjParview, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
+	public static SbiObjParview makeNew(SbiObjParview exportedObjParview, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
 		logger.debug("IN");
 		SbiObjParview newObjParview = new SbiObjParview();
 		try{
 			newObjParview.setViewLabel(exportedObjParview.getViewLabel());
 			newObjParview.setProg(exportedObjParview.getProg());
 			
-			entitiesAssociationsSbiObjParview(exportedObjParview, newObjParview, sessionCurrDB, metaAss);
+			entitiesAssociations(exportedObjParview, newObjParview, sessionCurrDB, metaAss);
 		}
 		catch (EMFUserError e) {
 			logger.error("Error in making new SbiObjParview starting with SbiObjParview realted to parameter "+exportedObjParview.getId().getSbiObjPar().getLabel());
@@ -553,12 +553,12 @@ public class ImportUtilities {
 		return newObjParview;
 	}
 	
-	public static SbiObjParview modifyExistingSbiObjParview(SbiObjParview exportedSbiObjParview, SbiObjParview exisingSbiObjParview, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
+	public static SbiObjParview modifyExisting(SbiObjParview exportedSbiObjParview, SbiObjParview exisingSbiObjParview, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		try {
 			exisingSbiObjParview.setViewLabel(exportedSbiObjParview.getViewLabel());
 			exisingSbiObjParview.setProg(exportedSbiObjParview.getProg());
-			entitiesAssociationsSbiObjParview(exportedSbiObjParview, exisingSbiObjParview, sessionCurrDB, metaAss);
+			entitiesAssociations(exportedSbiObjParview, exisingSbiObjParview, sessionCurrDB, metaAss);
 		}catch (EMFUserError e) {
 				logger.error("Error in updating SbiObjParview starting with SbiObjParview related to parameter "+exportedSbiObjParview.getId().getSbiObjPar().getLabel());
 				throw e;
@@ -568,7 +568,7 @@ public class ImportUtilities {
 	}
 	
 	
-	public static void entitiesAssociationsSbiObjParview(SbiObjParview exportedSbiObjParview, SbiObjParview newSbiObjParview,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiObjParview exportedSbiObjParview, SbiObjParview newSbiObjParview,Session sessionCurrDB, 
 			MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -625,7 +625,7 @@ public class ImportUtilities {
 	 * @return the new hibernate parameter use object
 	 * @throws EMFUserError 
 	 */
-	public static SbiObjParuse makeNewSbiObjParuse(SbiObjParuse exportedObjParuse, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
+	public static SbiObjParuse makeNew(SbiObjParuse exportedObjParuse, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
 		logger.debug("IN");
 		SbiObjParuse newObjParuse = new SbiObjParuse();
 		try{
@@ -634,7 +634,7 @@ public class ImportUtilities {
 			newObjParuse.setPreCondition(exportedObjParuse.getPreCondition());
 			newObjParuse.setProg(exportedObjParuse.getProg());
 			newObjParuse.setFilterColumn(exportedObjParuse.getFilterColumn());
-			entitiesAssociationsSbiObjParuse(exportedObjParuse, newObjParuse, sessionCurrDB, metaAss);
+			entitiesAssociations(exportedObjParuse, newObjParuse, sessionCurrDB, metaAss);
 		}
 		catch (EMFUserError e) {
 			logger.error("Error in making new SbiObjParuse starting with SbiObjParuse realted to parameter "+exportedObjParuse.getId().getSbiObjPar().getLabel());
@@ -645,7 +645,7 @@ public class ImportUtilities {
 	}
 	
 	
-	public static SbiObjParuse modifyExistingSbiObjParuse(SbiObjParuse exportedSbiObjParuse, SbiObjParuse exisingSbiObjParuse, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
+	public static SbiObjParuse modifyExisting(SbiObjParuse exportedSbiObjParuse, SbiObjParuse exisingSbiObjParuse, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		try {
 			exisingSbiObjParuse.setLogicOperator(exportedSbiObjParuse.getLogicOperator());
@@ -654,7 +654,7 @@ public class ImportUtilities {
 			exisingSbiObjParuse.setProg(exportedSbiObjParuse.getProg());
 			exisingSbiObjParuse.setFilterColumn(exportedSbiObjParuse.getFilterColumn());
 			
-			entitiesAssociationsSbiObjParuse(exportedSbiObjParuse, exisingSbiObjParuse, sessionCurrDB, metaAss);
+			entitiesAssociations(exportedSbiObjParuse, exisingSbiObjParuse, sessionCurrDB, metaAss);
 		}catch (EMFUserError e) {
 				logger.error("Error in updating SbiObjParuse starting with SbiObjParuse related to parameter "+exportedSbiObjParuse.getId().getSbiObjPar().getLabel());
 				throw e;
@@ -664,7 +664,7 @@ public class ImportUtilities {
 	}
 
 	
-	public static void entitiesAssociationsSbiObjParuse(SbiObjParuse exportedSbiObjParuse, SbiObjParuse newSbiObjParuse,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiObjParuse exportedSbiObjParuse, SbiObjParuse newSbiObjParuse,Session sessionCurrDB, 
 			MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -739,7 +739,7 @@ public class ImportUtilities {
 	 * @return the new hibernate parameter use object
 	 * @throws EMFUserError 
 	 */
-	public static SbiParuse makeNewSbiParuse(SbiParuse exportedParuse, Session sessionCurrDB, 
+	public static SbiParuse makeNew(SbiParuse exportedParuse, Session sessionCurrDB, 
 			MetadataAssociations metaAss) throws EMFUserError{
 		logger.debug("IN");
 		SbiParuse newParuse = new SbiParuse();
@@ -756,7 +756,7 @@ public class ImportUtilities {
 		newParuse.setSelectionType(exportedParuse.getSelectionType());
 		newParuse.setMultivalue(exportedParuse.getMultivalue());
 		
-		entitiesAssociationsSbiParuse(exportedParuse, newParuse, sessionCurrDB, metaAss);
+		entitiesAssociations(exportedParuse, newParuse, sessionCurrDB, metaAss);
 		}
 		catch (EMFUserError e) {
 			logger.error("Error in making new SbiParuse with id "+exportedParuse.getLabel()+ " of parameter "+exportedParuse.getSbiParameters().getLabel());
@@ -768,7 +768,7 @@ public class ImportUtilities {
 	
 	
 	
-	public static SbiParuse modifyExistingSbiParuse(SbiParuse exportedParuse, SbiParuse exisingParuse, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
+	public static SbiParuse modifyExisting(SbiParuse exportedParuse, SbiParuse exisingParuse, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		try {
 			exisingParuse.setDescr(exportedParuse.getDescr());
@@ -783,7 +783,7 @@ public class ImportUtilities {
 			exisingParuse.setSelectionType(exportedParuse.getSelectionType());
 			exisingParuse.setMultivalue(exportedParuse.getMultivalue());			
 		
-			entitiesAssociationsSbiParuse(exportedParuse, exisingParuse, sessionCurrDB, metaAss);
+			entitiesAssociations(exportedParuse, exisingParuse, sessionCurrDB, metaAss);
 		
 		}catch (EMFUserError e) {
 				logger.error("Error in updating new SbiParuse with id "+exportedParuse.getLabel()+ " of parameter "+exportedParuse.getSbiParameters().getLabel());
@@ -806,7 +806,7 @@ public class ImportUtilities {
 	
 		
 		
-		public static void entitiesAssociationsSbiParuse(SbiParuse exportedSbiParuse, SbiParuse newSbiParuse,Session sessionCurrDB, 
+		public static void entitiesAssociations(SbiParuse exportedSbiParuse, SbiParuse newSbiParuse,Session sessionCurrDB, 
 				MetadataAssociations metaAss) throws EMFUserError {
 			logger.debug("IN");
 			// overwrite existging entities
@@ -874,7 +874,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate biobject
 	 */
-	public static SbiObjects makeNewSbiObject(SbiObjects obj){
+	public static SbiObjects makeNew(SbiObjects obj){
 		logger.debug("IN");
 		SbiObjects newObj = new SbiObjects();
 		newObj.setDescr(obj.getDescr());
@@ -914,7 +914,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the sbi snapshots
 	 */
-	public static SbiSnapshots makeNewSbiSnapshots(SbiSnapshots obj){
+	public static SbiSnapshots makeNew(SbiSnapshots obj){
 		logger.debug("IN");
 		SbiSnapshots newObj = new SbiSnapshots();
 		newObj.setCreationDate(obj.getCreationDate());
@@ -931,7 +931,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the sbi sub objects
 	 */
-	public static SbiSubObjects makeNewSbiSubObjects(SbiSubObjects obj){
+	public static SbiSubObjects makeNew(SbiSubObjects obj){
 		logger.debug("IN");
 		SbiSubObjects newObj = new SbiSubObjects();
 		newObj.setCreationDate(obj.getCreationDate());
@@ -951,7 +951,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the sbi obj templates
 	 */
-	public static SbiObjTemplates makeNewSbiObjTemplates(SbiObjTemplates obj){
+	public static SbiObjTemplates makeNew(SbiObjTemplates obj){
 		logger.debug("IN");
 		SbiObjTemplates newObj = new SbiObjTemplates();
 		newObj.setActive(obj.getActive());
@@ -971,7 +971,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the sbi bin contents
 	 */
-	public static SbiBinContents makeNewSbiBinContents(SbiBinContents obj){
+	public static SbiBinContents makeNew(SbiBinContents obj){
 		logger.debug("IN");
 		SbiBinContents newObj = new SbiBinContents();
 		newObj.setContent(obj.getContent());
@@ -987,9 +987,9 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate biobject
 	 */
-	public static SbiObjects makeNewSbiObject(SbiObjects obj, Integer id){
+	public static SbiObjects makeNew(SbiObjects obj, Integer id){
 		logger.debug("IN");
-		SbiObjects newObj = makeNewSbiObject(obj);
+		SbiObjects newObj = makeNew(obj);
 		newObj.setBiobjId(id);
 		logger.debug("OUT");
 		return newObj;
@@ -1008,7 +1008,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiObjects modifyExistingSbiObject(SbiObjects exportedObj, Session sessionCurrDB, 
+	public static SbiObjects modifyExisting(SbiObjects exportedObj, Session sessionCurrDB, 
 			Integer existingId) throws EMFUserError {
 		logger.debug("IN");
 		SbiObjects existingObj = null;
@@ -1101,7 +1101,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiParameters modifyExistingSbiParameter(SbiParameters exportedParameter, Session sessionCurrDB, 
+	public static SbiParameters modifyExisting(SbiParameters exportedParameter, Session sessionCurrDB, 
 			Integer existingId) throws EMFUserError {
 		logger.debug("IN");
 		SbiParameters existingPar = null;
@@ -1139,7 +1139,7 @@ public class ImportUtilities {
 	 * @return the sbi obj par
 	 * @throws EMFUserError 
 	 */
-	public static SbiObjPar makeNewSbiObjpar(SbiObjPar expObjpar, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
+	public static SbiObjPar makeNew(SbiObjPar expObjpar, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
 		logger.debug("IN");
 		SbiObjPar newObjPar = new SbiObjPar();
 		try{
@@ -1155,7 +1155,7 @@ public class ImportUtilities {
 			newObjPar.setSbiParameter(expObjpar.getSbiParameter());
 			newObjPar.setViewFl(expObjpar.getViewFl());
 
-			entitiesAssociationsSbiObjPar(expObjpar, newObjPar, sessionCurrDB, metaAss);
+			entitiesAssociations(expObjpar, newObjPar, sessionCurrDB, metaAss);
 		}
 		catch (EMFUserError e) {
 			logger.error("Error while modifying creating new par object", e);
@@ -1175,16 +1175,16 @@ public class ImportUtilities {
 	 * @return the sbi obj par
 	 * @throws EMFUserError 
 	 */
-	public static SbiObjPar makeNewSbiObjpar(SbiObjPar objpar, Integer id, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
+	public static SbiObjPar makeNew(SbiObjPar objpar, Integer id, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
 		logger.debug("IN");
-		SbiObjPar newObjPar = makeNewSbiObjpar(objpar, sessionCurrDB, metaAss);
+		SbiObjPar newObjPar = makeNew(objpar, sessionCurrDB, metaAss);
 		newObjPar.setObjParId(id);
 		logger.debug("OUT");
 		return newObjPar;
 	}
 	
 	
-	public static SbiObjPar modifyExistingSbiObjpar( SbiObjPar exportedSbiObjpar, SbiObjPar existingSbiObjpar
+	public static SbiObjPar modifyExisting( SbiObjPar exportedSbiObjpar, SbiObjPar existingSbiObjpar
 			, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError{
 		logger.debug("IN");
 		try{
@@ -1196,7 +1196,7 @@ public class ImportUtilities {
 		existingSbiObjpar.setReqFl(exportedSbiObjpar.getReqFl());
 		existingSbiObjpar.setViewFl(exportedSbiObjpar.getViewFl());
 		existingSbiObjpar.setParurlNm(exportedSbiObjpar.getParurlNm());
-		entitiesAssociationsSbiObjPar(exportedSbiObjpar, existingSbiObjpar, sessionCurrDB, metaAss);
+		entitiesAssociations(exportedSbiObjpar, existingSbiObjpar, sessionCurrDB, metaAss);
 		}
 		catch (EMFUserError e) {
 			logger.error("Error while modifying existing par object", e);
@@ -1208,7 +1208,7 @@ public class ImportUtilities {
 	
 	
 	
-	public static void entitiesAssociationsSbiObjPar(SbiObjPar exportedSbiObjPar, SbiObjPar newSbiObjPar,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiObjPar exportedSbiObjPar, SbiObjPar newSbiObjPar,Session sessionCurrDB, 
 			MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -1459,7 +1459,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the sbi data set
 	 */
-	public static SbiDataSetConfig makeNewSbiDataSet(SbiDataSetConfig dataset, IEngUserProfile profile){
+	public static SbiDataSetConfig makeNew(SbiDataSetConfig dataset, IEngUserProfile profile){
 		logger.debug("IN");
 		SbiDataSetConfig newDsConfig = new SbiDataSetConfig();
 
@@ -1496,7 +1496,7 @@ public class ImportUtilities {
 	 * @return the existing dataset modified as per the exported dataset in input
 	 * 
 	 * @throws EMFUserError 	 */
-	public static SbiDataSetConfig modifyExistingSbiDataSet(SbiDataSetConfig exportedDataset,
+	public static SbiDataSetConfig modifyExisting(SbiDataSetConfig exportedDataset,
 			Session sessionCurrDB, Integer existingId, Session sessionExpDB, IEngUserProfile profile) {
 		logger.debug("IN");
 		SbiDataSetConfig existingDataset = null;
@@ -1636,7 +1636,7 @@ public class ImportUtilities {
 	 * @return the existing lov modified as per the exported lov in input
 	 * 
 	 * @throws EMFUserError 	 */
-	public static SbiLov modifyExistingSbiLov(SbiLov exportedLov,
+	public static SbiLov modifyExisting(SbiLov exportedLov,
 			Session sessionCurrDB, Integer existingId, HashMap<String, String> dsExportUser) {
 		logger.debug("IN");
 		SbiLov existingLov = null;
@@ -1826,7 +1826,7 @@ public class ImportUtilities {
 //		return newParuseDet;
 //	}
 	
-	public static SbiParuseDet makeNewSbiParuseDet(SbiParuseDet expParuseDet, Session sessionCurrDB, MetadataAssociations metaAss ) throws EMFUserError {
+	public static SbiParuseDet makeNew(SbiParuseDet expParuseDet, Session sessionCurrDB, MetadataAssociations metaAss ) throws EMFUserError {
 		logger.debug("IN");
 
 		SbiParuseDet newParuseDet = new SbiParuseDet();
@@ -1834,7 +1834,7 @@ public class ImportUtilities {
 			newParuseDet.setDefaultVal(expParuseDet.getDefaultVal());
 			newParuseDet.setHiddenFl(expParuseDet.getHiddenFl());
 			newParuseDet.setProg(expParuseDet.getProg());		
-			entitiesAssociationsSbiParuseDet(expParuseDet, newParuseDet, sessionCurrDB, metaAss);			
+			entitiesAssociations(expParuseDet, newParuseDet, sessionCurrDB, metaAss);			
 		}
 		catch (EMFUserError e) {
 			logger.error("Error in making new SbiParuseDet related to SbiParuse "+expParuseDet.getId().getSbiParuse().getLabel());
@@ -1844,7 +1844,7 @@ public class ImportUtilities {
 		return newParuseDet;
 	}
 		
-	public static SbiParuseDet modifyExistingSbiParuseDet(SbiParuseDet exportedParusedet, SbiParuseDet existingParusedet, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
+	public static SbiParuseDet modifyExisting(SbiParuseDet exportedParusedet, SbiParuseDet existingParusedet, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		try {
 
@@ -1852,7 +1852,7 @@ public class ImportUtilities {
 			existingParusedet.setHiddenFl(exportedParusedet.getHiddenFl());
 			existingParusedet.setProg(exportedParusedet.getProg());
 			
-			entitiesAssociationsSbiParuseDet(exportedParusedet, existingParusedet, sessionCurrDB, metaAss);	
+			entitiesAssociations(exportedParusedet, existingParusedet, sessionCurrDB, metaAss);	
 
 			logger.debug("OUT");
 
@@ -1868,7 +1868,7 @@ public class ImportUtilities {
 	
 	
 
-	public static void entitiesAssociationsSbiParuseDet(SbiParuseDet exportedSbiParuseDet, SbiParuseDet newSbiParuseDet,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiParuseDet exportedSbiParuseDet, SbiParuseDet newSbiParuseDet,Session sessionCurrDB, 
 			MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -1916,13 +1916,13 @@ public class ImportUtilities {
 	
 	
 
-	public static SbiParuseCk makeNewSbiParuseCk(SbiParuseCk expParuseCk, Session sessionCurrDB, MetadataAssociations metaAss ) throws EMFUserError {
+	public static SbiParuseCk makeNew(SbiParuseCk expParuseCk, Session sessionCurrDB, MetadataAssociations metaAss ) throws EMFUserError {
 		logger.debug("IN");
 
 		SbiParuseCk newParuseCk = new SbiParuseCk();
 		try{
 			newParuseCk.setProg(expParuseCk.getProg());
-			entitiesAssociationsSbiParuseCk(expParuseCk, newParuseCk, sessionCurrDB, metaAss);			
+			entitiesAssociations(expParuseCk, newParuseCk, sessionCurrDB, metaAss);			
 		}
 		catch (EMFUserError e) {
 			logger.error("Error in making new SbiParuseCk related to SbiParuse "+expParuseCk.getId().getSbiParuse().getLabel());
@@ -1933,12 +1933,12 @@ public class ImportUtilities {
 	}
 	
 	
-	public static SbiParuseCk modifyExistingSbiParuseCk(SbiParuseCk exportedParuseCk, SbiParuseCk existingParuseCk, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
+	public static SbiParuseCk modifyExisting(SbiParuseCk exportedParuseCk, SbiParuseCk existingParuseCk, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		try {
 
 			existingParuseCk.setProg(exportedParuseCk.getProg());
-			entitiesAssociationsSbiParuseCk(exportedParuseCk, existingParuseCk, sessionCurrDB, metaAss);	
+			entitiesAssociations(exportedParuseCk, existingParuseCk, sessionCurrDB, metaAss);	
 
 
 		}catch (EMFUserError e) {
@@ -1951,7 +1951,7 @@ public class ImportUtilities {
 	}
 	
 	
-	public static void entitiesAssociationsSbiParuseCk(SbiParuseCk exportedSbiParuseCk, SbiParuseCk newSbiParuseCk,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiParuseCk exportedSbiParuseCk, SbiParuseCk newSbiParuseCk,Session sessionCurrDB, 
 			MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -2003,7 +2003,7 @@ public class ImportUtilities {
 //		SbiParuseCkId newParusecheckid = new SbiParuseCkId();
 //		if (newParuseid != null) {
 //			SbiParuse sbiparuse = parusecheckid.getSbiParuse();
-//			SbiParuse newParuse = ImportUtilities.makeNewSbiParuse(sbiparuse, newParuseid);
+//			SbiParuse newParuse = ImportUtilities.SbiParuse(sbiparuse, newParuseid);
 //			newParusecheckid.setSbiParuse(newParuse);
 //		}
 //		if (newCheckid != null) {
@@ -2020,19 +2020,19 @@ public class ImportUtilities {
 
 
 
-	public static SbiFuncRole makeNewSbiFunctRole(SbiFuncRole functrole,
+	public static SbiFuncRole makeNew(SbiFuncRole functrole,
 			Integer newFunctid, Integer newRoleid) {
 		logger.debug("IN");
 		SbiFuncRoleId functroleid = functrole.getId();
 		SbiFuncRoleId newFunctroleid = new SbiFuncRoleId();
 		if (newFunctid != null) {
 			SbiFunctions sbifunct = functroleid.getFunction();
-			SbiFunctions newFunct = ImportUtilities.makeNewSbiFunction(sbifunct, newFunctid);
+			SbiFunctions newFunct = ImportUtilities.makeNew(sbifunct, newFunctid);
 			newFunctroleid.setFunction(newFunct);
 		}
 		if (newRoleid != null) {
 			SbiExtRoles sbirole = functroleid.getRole();
-			SbiExtRoles newRole = ImportUtilities.makeNewSbiExtRole(sbirole, newRoleid);
+			SbiExtRoles newRole = ImportUtilities.makeNew(sbirole, newRoleid);
 			newFunctroleid.setRole(newRole);
 		}
 		SbiFuncRole newFunctRole = new SbiFuncRole();
@@ -2113,7 +2113,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiKpi makeNewSbiKpi(SbiKpi kpi,Session sessionCurrDB, MetadataAssociations metaAss){
+	public static SbiKpi makeNew(SbiKpi kpi,Session sessionCurrDB, MetadataAssociations metaAss){
 		logger.debug("IN");
 		SbiKpi newKpi = new SbiKpi();
 		try{
@@ -2130,7 +2130,7 @@ public class ImportUtilities {
 			newKpi.setTargetAudience(kpi.getTargetAudience());
 
 			// associations
-			entitiesAssociationsSbiKpi(kpi, newKpi, sessionCurrDB, metaAss); 
+			entitiesAssociations(kpi, newKpi, sessionCurrDB, metaAss); 
 
 			logger.debug("OUT");
 		}
@@ -2155,7 +2155,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiKpi modifyExistingSbiKpi(SbiKpi exportedKpi, Session sessionCurrDB, 
+	public static SbiKpi modifyExisting(SbiKpi exportedKpi, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		SbiKpi existingKpi = null;
@@ -2174,7 +2174,7 @@ public class ImportUtilities {
 			existingKpi.setTargetAudience(exportedKpi.getTargetAudience());
 
 			// overwrite existging entities (maybe create a function speciic for domains, maybe not)
-			entitiesAssociationsSbiKpi(exportedKpi, existingKpi, sessionCurrDB, metaAss); 
+			entitiesAssociations(exportedKpi, existingKpi, sessionCurrDB, metaAss); 
 
 		}
 
@@ -2195,7 +2195,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiKpi(SbiKpi exportedKpi, SbiKpi existingKpi, Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiKpi exportedKpi, SbiKpi existingKpi, Session sessionCurrDB, 
 			MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 
@@ -2305,7 +2305,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiKpiInstance makeNewSbiKpiInstance(SbiKpiInstance kpiInst,Session sessionCurrDB, MetadataAssociations metaAss){
+	public static SbiKpiInstance makeNew(SbiKpiInstance kpiInst,Session sessionCurrDB, MetadataAssociations metaAss){
 		logger.debug("IN");
 		SbiKpiInstance newKpiInst = new SbiKpiInstance();
 		try{
@@ -2314,7 +2314,7 @@ public class ImportUtilities {
 			newKpiInst.setWeight(kpiInst.getWeight());
 
 			// associations
-			entitiesAssociationsSbiKpiInstance(kpiInst, newKpiInst, sessionCurrDB, metaAss); 
+			entitiesAssociations(kpiInst, newKpiInst, sessionCurrDB, metaAss); 
 
 			logger.debug("OUT");
 		}
@@ -2339,7 +2339,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiKpiInstance modifyExistingSbiKpiInstance(SbiKpiInstance exportedKpiInst, Session sessionCurrDB, 
+	public static SbiKpiInstance modifyExisting(SbiKpiInstance exportedKpiInst, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		SbiKpiInstance existingKpiInst = null;
@@ -2351,7 +2351,7 @@ public class ImportUtilities {
 			existingKpiInst.setWeight(exportedKpiInst.getWeight());
 
 			// overwrite existging entities (maybe create a function speciic for domains, maybe not)
-			entitiesAssociationsSbiKpiInstance(exportedKpiInst, existingKpiInst, sessionCurrDB, metaAss); 
+			entitiesAssociations(exportedKpiInst, existingKpiInst, sessionCurrDB, metaAss); 
 
 		}
 
@@ -2372,7 +2372,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiKpiInstance(SbiKpiInstance exportedKpiInst, SbiKpiInstance existingKpiInst, Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiKpiInstance exportedKpiInst, SbiKpiInstance existingKpiInst, Session sessionCurrDB, 
 			MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 
@@ -2445,7 +2445,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiThresholdValue makeNewSbiThresholdValue(SbiThresholdValue thresholdValue,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+	public static SbiThresholdValue makeNew(SbiThresholdValue thresholdValue,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiThresholdValue newThValue = new SbiThresholdValue();
 		try{
@@ -2459,7 +2459,7 @@ public class ImportUtilities {
 			newThValue.setThValue(thresholdValue.getThValue());
 
 			// associations
-			entitiesAssociationsSbiThresholdValues(thresholdValue, newThValue, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(thresholdValue, newThValue, sessionCurrDB, metaAss, importer);
 
 			logger.debug("OUT");
 		}
@@ -2483,7 +2483,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiThresholdValue modifyExistingSbiThresholdValue(SbiThresholdValue exportedThValue, Session sessionCurrDB, 
+	public static SbiThresholdValue modifyExisting(SbiThresholdValue exportedThValue, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		SbiThresholdValue existingThValue = null;
@@ -2500,7 +2500,7 @@ public class ImportUtilities {
 			existingThValue.setThValue(exportedThValue.getThValue());
 
 			// associations
-			entitiesAssociationsSbiThresholdValues(exportedThValue, existingThValue, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(exportedThValue, existingThValue, sessionCurrDB, metaAss, importer);
 		}
 
 		finally {
@@ -2520,7 +2520,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiThresholdValues(SbiThresholdValue exportedThValue, SbiThresholdValue existingThvalue,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiThresholdValue exportedThValue, SbiThresholdValue existingThvalue,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -2598,7 +2598,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiThreshold makeNewSbiThreshold(SbiThreshold threshold,Session sessionCurrDB, MetadataAssociations metaAss){
+	public static SbiThreshold makeNew(SbiThreshold threshold,Session sessionCurrDB, MetadataAssociations metaAss){
 		logger.debug("IN");
 		SbiThreshold newTh = new SbiThreshold();
 		try{
@@ -2607,7 +2607,7 @@ public class ImportUtilities {
 			newTh.setName(threshold.getName());
 
 			// associations
-			entitiesAssociationsSbiThreshold(threshold, newTh, sessionCurrDB, metaAss);
+			entitiesAssociations(threshold, newTh, sessionCurrDB, metaAss);
 
 			logger.debug("OUT");
 		}
@@ -2631,7 +2631,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiThreshold modifyExistingSbiThreshold(SbiThreshold exportedTh, Session sessionCurrDB, 
+	public static SbiThreshold modifyExisting(SbiThreshold exportedTh, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		SbiThreshold existingTh = null;
@@ -2642,7 +2642,7 @@ public class ImportUtilities {
 			existingTh.setName(exportedTh.getName());
 
 			// associations
-			entitiesAssociationsSbiThreshold(exportedTh, existingTh, sessionCurrDB, metaAss);
+			entitiesAssociations(exportedTh, existingTh, sessionCurrDB, metaAss);
 		}
 
 		finally {
@@ -2662,7 +2662,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiThreshold(SbiThreshold exportedTh, SbiThreshold existingTh,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiThreshold exportedTh, SbiThreshold existingTh,Session sessionCurrDB, 
 			MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -2698,7 +2698,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiKpiModel makeNewSbiModel(SbiKpiModel model,Session sessionCurrDB, MetadataAssociations metaAss){
+	public static SbiKpiModel makeNew(SbiKpiModel model,Session sessionCurrDB, MetadataAssociations metaAss){
 		logger.debug("IN");
 		SbiKpiModel newMod = new SbiKpiModel();
 		try{
@@ -2715,7 +2715,7 @@ public class ImportUtilities {
 			}
 
 			// associations
-			entitiesAssociationsSbiModel(model, newMod, sessionCurrDB, metaAss);
+			entitiesAssociations(model, newMod, sessionCurrDB, metaAss);
 
 			logger.debug("OUT");
 		}
@@ -2739,7 +2739,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiKpiModel modifyExistingSbiModel(SbiKpiModel exportedMod, Session sessionCurrDB, 
+	public static SbiKpiModel modifyExisting(SbiKpiModel exportedMod, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		SbiKpiModel existingMod = null;
@@ -2754,7 +2754,7 @@ public class ImportUtilities {
 			existingMod.setKpiModelDesc(exportedMod.getKpiModelDesc());
 
 			// associations
-			entitiesAssociationsSbiModel(exportedMod, existingMod, sessionCurrDB, metaAss);
+			entitiesAssociations(exportedMod, existingMod, sessionCurrDB, metaAss);
 		}
 
 		finally {
@@ -2774,7 +2774,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiModel(SbiKpiModel exportedMod, SbiKpiModel existingMod,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiKpiModel exportedMod, SbiKpiModel existingMod,Session sessionCurrDB, 
 			MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -2841,7 +2841,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiKpiModelInst makeNewSbiModelInstance(SbiKpiModelInst modelInst,Session sessionCurrDB, MetadataAssociations metaAss){
+	public static SbiKpiModelInst makeNew(SbiKpiModelInst modelInst,Session sessionCurrDB, MetadataAssociations metaAss){
 		logger.debug("IN");
 		SbiKpiModelInst newModInst = new SbiKpiModelInst();
 		try{
@@ -2853,7 +2853,7 @@ public class ImportUtilities {
 			newModInst.setModelUUID(modelInst.getModelUUID());
 
 			// associations
-			entitiesAssociationsSbiModelInstance(modelInst, newModInst, sessionCurrDB, metaAss);
+			entitiesAssociations(modelInst, newModInst, sessionCurrDB, metaAss);
 
 			logger.debug("OUT");
 		}
@@ -2877,7 +2877,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiKpiModelInst modifyExistingSbiModelInstance(SbiKpiModelInst exportedModInst, Session sessionCurrDB, 
+	public static SbiKpiModelInst modifyExisting(SbiKpiModelInst exportedModInst, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		SbiKpiModelInst existingModInst = null;
@@ -2892,7 +2892,7 @@ public class ImportUtilities {
 			existingModInst.setModelUUID(exportedModInst.getModelUUID());
 
 			// associations
-			entitiesAssociationsSbiModelInstance(exportedModInst, existingModInst, sessionCurrDB, metaAss);
+			entitiesAssociations(exportedModInst, existingModInst, sessionCurrDB, metaAss);
 		}
 
 		finally {
@@ -2912,7 +2912,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiModelInstance(SbiKpiModelInst exportedModInst, SbiKpiModelInst existingModInst,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiKpiModelInst exportedModInst, SbiKpiModelInst existingModInst,Session sessionCurrDB, 
 			MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -2984,7 +2984,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiResources makeNewSbiResources(SbiResources resource,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+	public static SbiResources makeNew(SbiResources resource,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiResources newResource = new SbiResources();
 		try{
@@ -2995,7 +2995,7 @@ public class ImportUtilities {
 			newResource.setTableName(resource.getTableName());
 
 			// associations
-			entitiesAssociationsSbiResources(resource, newResource, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(resource, newResource, sessionCurrDB, metaAss, importer);
 
 			logger.debug("OUT");
 		}
@@ -3019,7 +3019,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiResources modifyExistingSbiResources(SbiResources exportedRes, Session sessionCurrDB, 
+	public static SbiResources modifyExisting(SbiResources exportedRes, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		SbiResources existingRes = null;
@@ -3033,7 +3033,7 @@ public class ImportUtilities {
 			existingRes.setColumnName(exportedRes.getColumnName());
 
 			// associations
-			entitiesAssociationsSbiResources(exportedRes, existingRes, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(exportedRes, existingRes, sessionCurrDB, metaAss, importer);
 		}
 
 		finally {
@@ -3053,7 +3053,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiResources(SbiResources exportedRes, SbiResources existingResources,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiResources exportedRes, SbiResources existingResources,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -3083,12 +3083,12 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiKpiModelResources makeNewSbiModelResource(SbiKpiModelResources modRes,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+	public static SbiKpiModelResources makeNew(SbiKpiModelResources modRes,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiKpiModelResources newModResource = new SbiKpiModelResources();
 		try{
 			// associations
-			entitiesAssociationsSbiModelResources(modRes, newModResource, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(modRes, newModResource, sessionCurrDB, metaAss, importer);
 
 			logger.debug("OUT");
 		}
@@ -3112,7 +3112,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiKpiModelResources modifyExistingSbiModelResources(SbiKpiModelResources exportedModRes, Session sessionCurrDB, 
+	public static SbiKpiModelResources modifyExisting(SbiKpiModelResources exportedModRes, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		SbiKpiModelResources existingModRes = null;
@@ -3121,7 +3121,7 @@ public class ImportUtilities {
 			existingModRes = (SbiKpiModelResources) sessionCurrDB.load(SbiKpiModelResources.class, existingId);
 
 			// associations
-			entitiesAssociationsSbiModelResources(exportedModRes, existingModRes, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(exportedModRes, existingModRes, sessionCurrDB, metaAss, importer);
 		}
 
 		finally {
@@ -3141,7 +3141,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiModelResources(SbiKpiModelResources exportedModRes, SbiKpiModelResources existingModResources,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiKpiModelResources exportedModRes, SbiKpiModelResources existingModResources,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 
@@ -3191,7 +3191,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiKpiPeriodicity makeNewSbiPeriodicity(SbiKpiPeriodicity periodicity,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+	public static SbiKpiPeriodicity makeNew(SbiKpiPeriodicity periodicity,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiKpiPeriodicity newPer = new SbiKpiPeriodicity();
 		try{
@@ -3203,7 +3203,7 @@ public class ImportUtilities {
 			newPer.setName(periodicity.getName());
 
 			// associations
-			entitiesAssociationsSbiPeriodicity(periodicity, newPer, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(periodicity, newPer, sessionCurrDB, metaAss, importer);
 
 			logger.debug("OUT");
 		}
@@ -3227,7 +3227,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiKpiPeriodicity modifyExistingSbiPeriodicity(SbiKpiPeriodicity exportedPer, Session sessionCurrDB, 
+	public static SbiKpiPeriodicity modifyExisting(SbiKpiPeriodicity exportedPer, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		SbiKpiPeriodicity existingPer = null;
@@ -3242,7 +3242,7 @@ public class ImportUtilities {
 			existingPer.setMinutes(exportedPer.getMinutes());
 
 			// associations
-			entitiesAssociationsSbiPeriodicity(exportedPer, existingPer, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(exportedPer, existingPer, sessionCurrDB, metaAss, importer);
 		}
 
 		finally {
@@ -3262,7 +3262,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiPeriodicity(SbiKpiPeriodicity exportedPer, SbiKpiPeriodicity existingPer,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiKpiPeriodicity exportedPer, SbiKpiPeriodicity existingPer,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -3280,14 +3280,14 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiKpiInstPeriod makeNewSbiKpiInstPeriod(SbiKpiInstPeriod kpiInstPeriod,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+	public static SbiKpiInstPeriod makeNew(SbiKpiInstPeriod kpiInstPeriod,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiKpiInstPeriod newKpiInstPeriod = new SbiKpiInstPeriod();
 		try{
 			newKpiInstPeriod.setDefault_(kpiInstPeriod.isDefault_());
 
 			// associations
-			entitiesAssociationsSbiKpiInstPeriod(kpiInstPeriod, newKpiInstPeriod, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(kpiInstPeriod, newKpiInstPeriod, sessionCurrDB, metaAss, importer);
 
 		}
 		catch (Exception e) {
@@ -3311,7 +3311,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiKpiInstPeriod modifyExistingSbiKpiInstPeriod(SbiKpiInstPeriod exportedKpiInstPeriod, Session sessionCurrDB, 
+	public static SbiKpiInstPeriod modifyExisting(SbiKpiInstPeriod exportedKpiInstPeriod, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		SbiKpiInstPeriod existingKpiInstPeriod = null;
@@ -3321,7 +3321,7 @@ public class ImportUtilities {
 			existingKpiInstPeriod.setDefault_(exportedKpiInstPeriod.isDefault_());
 
 			// associations
-			entitiesAssociationsSbiKpiInstPeriod(exportedKpiInstPeriod, existingKpiInstPeriod, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(exportedKpiInstPeriod, existingKpiInstPeriod, sessionCurrDB, metaAss, importer);
 		}
 
 		finally {
@@ -3341,7 +3341,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiKpiInstPeriod(SbiKpiInstPeriod exportedKpiInstPeriod, SbiKpiInstPeriod existingKpiInstPeriod,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiKpiInstPeriod exportedKpiInstPeriod, SbiKpiInstPeriod existingKpiInstPeriod,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 
@@ -3390,7 +3390,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiAlarm makeNewSbiAlarms(SbiAlarm alarm,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+	public static SbiAlarm makeNew(SbiAlarm alarm,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiAlarm newAlarm = new SbiAlarm();
 		try{
@@ -3403,7 +3403,7 @@ public class ImportUtilities {
 			newAlarm.setAutoDisabled(alarm.getAutoDisabled());
 
 			// associations
-			entitiesAssociationsSbiAlarms(alarm, newAlarm, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(alarm, newAlarm, sessionCurrDB, metaAss, importer);
 
 			logger.debug("OUT");
 		}
@@ -3427,7 +3427,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiAlarm modifyExistingSbiAlarms(SbiAlarm exportedAlarm, Session sessionCurrDB, 
+	public static SbiAlarm modifyExisting(SbiAlarm exportedAlarm, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		SbiAlarm existingAlarm = null;
@@ -3443,7 +3443,7 @@ public class ImportUtilities {
 			existingAlarm.setAutoDisabled(exportedAlarm.getAutoDisabled());
 
 			// associations
-			entitiesAssociationsSbiAlarms(exportedAlarm, existingAlarm, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(exportedAlarm, existingAlarm, sessionCurrDB, metaAss, importer);
 		}
 
 		finally {
@@ -3463,7 +3463,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiAlarms(SbiAlarm exportedAlarm, SbiAlarm existingAlarm,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiAlarm exportedAlarm, SbiAlarm existingAlarm,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -3564,7 +3564,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiAlarmContact makeNewSbiAlarmContacts(SbiAlarmContact alarmContact,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+	public static SbiAlarmContact makeNew(SbiAlarmContact alarmContact,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiAlarmContact newAlarmContact = new SbiAlarmContact();
 		try{
@@ -3575,7 +3575,7 @@ public class ImportUtilities {
 
 
 			// associations
-			entitiesAssociationsSbiAlarmContacts(alarmContact, newAlarmContact, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(alarmContact, newAlarmContact, sessionCurrDB, metaAss, importer);
 
 			logger.debug("OUT");
 		}
@@ -3599,7 +3599,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiAlarmContact modifyExistingSbiAlarmContacts(SbiAlarmContact exportedAlarmContact, Session sessionCurrDB, 
+	public static SbiAlarmContact modifyExisting(SbiAlarmContact exportedAlarmContact, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		SbiAlarmContact existingAlarmContact = null;
@@ -3612,7 +3612,7 @@ public class ImportUtilities {
 			existingAlarmContact.setResources(exportedAlarmContact.getResources());
 
 			// associations
-			entitiesAssociationsSbiAlarmContacts(exportedAlarmContact, existingAlarmContact, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(exportedAlarmContact, existingAlarmContact, sessionCurrDB, metaAss, importer);
 		}
 
 		finally {
@@ -3632,7 +3632,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiAlarmContacts(SbiAlarmContact exportedAlarm, SbiAlarmContact existingAlarm,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiAlarmContact exportedAlarm, SbiAlarmContact existingAlarm,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		logger.debug("OUT");
@@ -3901,7 +3901,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiObjMetadata makeNewSbiObjMetadata(SbiObjMetadata objMetadata,Session sessionCurrDB, 
+	public static SbiObjMetadata makeNew(SbiObjMetadata objMetadata,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiObjMetadata newObjMetadata = new SbiObjMetadata();
@@ -3912,7 +3912,7 @@ public class ImportUtilities {
 			newObjMetadata.setCreationDate(objMetadata.getCreationDate());
 
 			// associations
-			entitiesAssociationsSbiObjMetadata(objMetadata, newObjMetadata, sessionCurrDB, metaAss, importer); 
+			entitiesAssociations(objMetadata, newObjMetadata, sessionCurrDB, metaAss, importer); 
 
 			logger.debug("OUT");
 		}
@@ -3937,7 +3937,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiObjMetadata modifyExistingSbiObjMetadata(SbiObjMetadata exportedObjMetadata, Session sessionCurrDB, 
+	public static SbiObjMetadata modifyExisting(SbiObjMetadata exportedObjMetadata, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		SbiObjMetadata existingObjMetadata = null;
@@ -3949,7 +3949,7 @@ public class ImportUtilities {
 			existingObjMetadata.setCreationDate(exportedObjMetadata.getCreationDate());
 
 			// overwrite existging entities (maybe create a function speciic for domains, maybe not)
-			entitiesAssociationsSbiObjMetadata(exportedObjMetadata, existingObjMetadata, sessionCurrDB, metaAss, importer); 
+			entitiesAssociations(exportedObjMetadata, existingObjMetadata, sessionCurrDB, metaAss, importer); 
 
 		}
 
@@ -3971,7 +3971,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiObjMetadata(SbiObjMetadata exportedObjMetadata, SbiObjMetadata existingObjMetadata,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiObjMetadata exportedObjMetadata, SbiObjMetadata existingObjMetadata,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -4005,14 +4005,14 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiObjMetacontents makeNewSbiObjMetacontent(SbiObjMetacontents metacontents,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer, IEngUserProfile iEngUserProfile){
+	public static SbiObjMetacontents makeNew(SbiObjMetacontents metacontents,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer, IEngUserProfile iEngUserProfile){
 		logger.debug("IN");
 		SbiObjMetacontents newMetacontents = new SbiObjMetacontents();
 		try{
 			newMetacontents.setCreationDate(metacontents.getCreationDate());
 			newMetacontents.setLastChangeDate(metacontents.getLastChangeDate());
 			// associations
-			entitiesAssociationsSbiObjMetacontents(metacontents, newMetacontents, sessionCurrDB, metaAss, importer, iEngUserProfile);
+			entitiesAssociations(metacontents, newMetacontents, sessionCurrDB, metaAss, importer, iEngUserProfile);
 
 			logger.debug("OUT");
 		}
@@ -4037,7 +4037,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiObjMetacontents modifyExistingSbiObjMetacontents(SbiObjMetacontents exportedMetacontents, Session sessionCurrDB, 
+	public static SbiObjMetacontents modifyExisting(SbiObjMetacontents exportedMetacontents, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss, ImporterMetadata importer, IEngUserProfile userProfile) throws EMFUserError {
 		logger.debug("IN");
 		SbiObjMetacontents existingMetacontents = null;
@@ -4049,7 +4049,7 @@ public class ImportUtilities {
 			existingMetacontents.setLastChangeDate(exportedMetacontents.getLastChangeDate());
 
 			// associations
-			entitiesAssociationsSbiObjMetacontents(exportedMetacontents, existingMetacontents, sessionCurrDB, metaAss, importer, userProfile);
+			entitiesAssociations(exportedMetacontents, existingMetacontents, sessionCurrDB, metaAss, importer, userProfile);
 		}
 
 		finally {
@@ -4070,7 +4070,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiObjMetacontents(SbiObjMetacontents exportedMetacontents, SbiObjMetacontents existingMetacontents,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiObjMetacontents exportedMetacontents, SbiObjMetacontents existingMetacontents,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer, IEngUserProfile profile) throws EMFUserError {
 		logger.debug("IN");	
 
@@ -4144,14 +4144,14 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiKpiRel makeNewSbiKpiRel(SbiKpiRel kpirel,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+	public static SbiKpiRel makeNew(SbiKpiRel kpirel,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiKpiRel newSbiKpiRel = new SbiKpiRel();
 		try{
 			newSbiKpiRel.setParameter(kpirel.getParameter());
 
 			// associations
-			entitiesAssociationsSbiKpiRel(kpirel, newSbiKpiRel, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(kpirel, newSbiKpiRel, sessionCurrDB, metaAss, importer);
 
 			logger.debug("OUT");
 		}
@@ -4171,7 +4171,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiKpiRel(SbiKpiRel exportedKpiRel, SbiKpiRel existingKpiRel,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiKpiRel exportedKpiRel, SbiKpiRel existingKpiRel,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");	
 
@@ -4216,7 +4216,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiUdp makeNewSbiUdp(SbiUdp udp,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+	public static SbiUdp makeNew(SbiUdp udp,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiUdp newUdp = new SbiUdp();
 		try{
@@ -4226,7 +4226,7 @@ public class ImportUtilities {
 			newUdp.setName(udp.getName());
 
 			// associations
-			entitiesAssociationsSbiUdp(udp, newUdp, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(udp, newUdp, sessionCurrDB, metaAss, importer);
 
 			logger.debug("OUT");
 		}
@@ -4245,7 +4245,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiUdp(SbiUdp exportedSbiUdp, SbiUdp existingSbiUdp,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiUdp exportedSbiUdp, SbiUdp existingSbiUdp,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");	
 
@@ -4291,7 +4291,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiUdp modifyExistingUdp(SbiUdp exportedUdp, Session sessionCurrDB, Integer existingUdpId) throws EMFUserError {
+	public static SbiUdp modifyExisting(SbiUdp exportedUdp, Session sessionCurrDB, Integer existingUdpId) throws EMFUserError {
 		logger.debug("IN");
 		SbiUdp existingSbiUdp = null;
 		try {
@@ -4321,7 +4321,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiKpiRel modifyExistingKpiRel(SbiKpiRel exportedKpiRel, Session sessionCurrDB, Integer existingKpiRelId) throws EMFUserError {
+	public static SbiKpiRel modifyExisting(SbiKpiRel exportedKpiRel, Session sessionCurrDB, Integer existingKpiRelId) throws EMFUserError {
 		logger.debug("IN");
 		SbiKpiRel existingKpiRel = null;
 		try {
@@ -4342,7 +4342,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiUdpValue makeNewSbiUdpValue(SbiUdpValue udpValue ,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+	public static SbiUdpValue makeNew(SbiUdpValue udpValue ,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiUdpValue newUdpValue = new SbiUdpValue();
 		try{
@@ -4355,7 +4355,7 @@ public class ImportUtilities {
 			newUdpValue.setFamily(udpValue.getFamily());
 			newUdpValue.setValue(udpValue.getValue());
 			// associations
-			entitiesAssociationsSbiUdpValue(udpValue, newUdpValue, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(udpValue, newUdpValue, sessionCurrDB, metaAss, importer);
 
 			logger.debug("OUT");
 		}
@@ -4374,7 +4374,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiUdpValue(SbiUdpValue exportedSbiUdpValue, SbiUdpValue existingSbiUdpValue,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiUdpValue exportedSbiUdpValue, SbiUdpValue existingSbiUdpValue,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");	
 
@@ -4440,7 +4440,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiUdpValue modifyExistingSbiUdpValue(SbiUdpValue exportedUdpValue, Session sessionCurrDB, Integer existingUdpValueId) throws EMFUserError {
+	public static SbiUdpValue modifyExisting(SbiUdpValue exportedUdpValue, Session sessionCurrDB, Integer existingUdpValueId) throws EMFUserError {
 		logger.debug("IN");
 		SbiUdpValue existingSbiUdpValue = null;
 		try {
@@ -4467,7 +4467,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiOrgUnitGrant makeNewOuGrant(SbiOrgUnitGrant grant ,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+	public static SbiOrgUnitGrant makeNew(SbiOrgUnitGrant grant ,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiOrgUnitGrant newGrant = new SbiOrgUnitGrant();
 		try{
@@ -4478,7 +4478,7 @@ public class ImportUtilities {
 			newGrant.setStartDate(grant.getStartDate());
 			newGrant.setIsAvailable(true);
 			// associations
-			entitiesAssociationsOuGrant(grant, newGrant, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(grant, newGrant, sessionCurrDB, metaAss, importer);
 
 			logger.debug("OUT");
 		}
@@ -4497,7 +4497,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsOuGrant(SbiOrgUnitGrant exportedGrant, SbiOrgUnitGrant existingGrant,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiOrgUnitGrant exportedGrant, SbiOrgUnitGrant existingGrant,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");	
 		// model instance id
@@ -4542,7 +4542,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiOrgUnitGrant modifyExistingOuGrant(SbiOrgUnitGrant exportedGrant, Session sessionCurrDB, 
+	public static SbiOrgUnitGrant modifyExisting(SbiOrgUnitGrant exportedGrant, Session sessionCurrDB, 
 			Integer existingId) throws EMFUserError {
 		logger.debug("IN");
 		SbiOrgUnitGrant existingGrant = null;
@@ -4569,13 +4569,13 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiOrgUnitGrantNodes makeNewOuGrantNode(SbiOrgUnitGrantNodes grantNode ,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+	public static SbiOrgUnitGrantNodes makeNew(SbiOrgUnitGrantNodes grantNode ,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiOrgUnitGrantNodes newGrantNode = new SbiOrgUnitGrantNodes();
 		try{
 			SbiOrgUnitGrantNodesId id = new SbiOrgUnitGrantNodesId();
 			// associations
-			entitiesAssociationsOuGrantNode(id, grantNode, newGrantNode, sessionCurrDB, metaAss, importer);
+			entitiesAssociations(id, grantNode, newGrantNode, sessionCurrDB, metaAss, importer);
 
 			logger.debug("OUT");
 		}
@@ -4594,7 +4594,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsOuGrantNode(SbiOrgUnitGrantNodesId id, SbiOrgUnitGrantNodes exportedGrantNode, SbiOrgUnitGrantNodes existingGrantNode,Session sessionCurrDB, 
+	public static void entitiesAssociations(SbiOrgUnitGrantNodesId id, SbiOrgUnitGrantNodes exportedGrantNode, SbiOrgUnitGrantNodes existingGrantNode,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");	
 
@@ -4657,7 +4657,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiOrgUnitGrantNodes modifyExistingOuGrantNode(SbiOrgUnitGrantNodes exportedGrantNode, Session sessionCurrDB, 
+	public static SbiOrgUnitGrantNodes modifyExisting(SbiOrgUnitGrantNodes exportedGrantNode, Session sessionCurrDB, 
 			SbiOrgUnitGrantNodesId existingId) throws EMFUserError {
 		logger.debug("IN");
 		SbiOrgUnitGrantNodes existingGrantNode = null;

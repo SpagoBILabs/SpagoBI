@@ -15,6 +15,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.presentation.PublisherDispatcherIFace;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.tools.importexport.ImportExportConstants;
+import it.eng.spagobi.tools.importexport.ImportManager;
 
 import org.apache.log4j.Logger;
 
@@ -42,7 +43,7 @@ public class ImportExportPublisher implements PublisherDispatcherIFace {
 		SourceBean moduleResponse = (SourceBean)responseContainer.getServiceResponse().getAttribute("ImportExportModule");
 		if(moduleResponse==null) {
 			logger.warn( "Module response null");
-			EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, "10", "component_impexp_messages");
+			EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, "10", ImportManager.messageBundle);
 			errorHandler.addError(error);
 			logger.warn("OUT. Error");
 			return "error";
