@@ -96,11 +96,11 @@ Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
 	    
 	    this.typeStore = new Ext.data.SimpleStore({
 	        fields: ['value', 'label'],
-	        data : [
-	                ['string', 'string']
-	                , ['num', 'number']
-	                , ['date', 'date']
-	        ]
+	    	data : [
+                  ['string', LN('sbi.lookup.asString')]
+                , ['num', LN('sbi.lookup.asNumber')]
+                , ['date', LN('sbi.lookup.asDate')]
+            ]
 	    });	    
 	    this.typeCombo = new Ext.form.ComboBox({
 	        store: this.typeStore,
@@ -119,9 +119,9 @@ Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
 	    this.filterStore = new Ext.data.SimpleStore({
 	        fields: ['value', 'label'],
 	        data : [
-	                ['contains', 'contains']
-	                , ['start', 'starts with']
-	                , ['end', 'ends with']
+	                ['contains', LN('sbi.lookup.Contains')]
+	                , ['start', LN('sbi.lookup.StartsWith')]
+	                , ['end', LN('sbi.lookup.EndsWith')]
 	                , ['equal', '=']
 	                , ['less', '<']
 	                , ['lessequal', '<=']
@@ -131,7 +131,7 @@ Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
 	    });	    
 	    this.filterCombo = new Ext.form.ComboBox({
 	        store: this.filterStore,
-	        width: 80,
+	        width: 100,
 	        displayField:'label',
 	        valueField:'value',
 	        typeAhead: true,

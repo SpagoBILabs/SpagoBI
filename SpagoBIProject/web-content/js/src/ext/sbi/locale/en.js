@@ -552,7 +552,12 @@ Sbi.locale.ln['sbi.home.Info'] = 'Informations on SpagoBI';
 
 Sbi.locale.ln['sbi.lookup.ValueOfColumn'] ='The value of the column';
 Sbi.locale.ln['sbi.lookup.asA'] = 'as a';
-
+Sbi.locale.ln['sbi.lookup.asString'] = 'String';
+Sbi.locale.ln['sbi.lookup.asNumber'] = 'Number';
+Sbi.locale.ln['sbi.lookup.asDate'] = 'Date';
+Sbi.locale.ln['sbi.lookup.Contains'] = 'Contains';
+Sbi.locale.ln['sbi.lookup.StartsWith'] = 'Starts with';
+Sbi.locale.ln['sbi.lookup.EndsWith'] = 'Ends with';
 
 Sbi.locale.ln['sbi.datasource.jndiname.info']= 'For the data source configuration you should specify the connection pool configured inside the application server. For example: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 
