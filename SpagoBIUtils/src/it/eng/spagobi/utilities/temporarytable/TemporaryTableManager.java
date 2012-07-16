@@ -179,42 +179,50 @@ public class TemporaryTableManager {
 			} else {
 				actualTableName = tableName;
 			}
+			logger.debug("Looking for table [" + actualTableName + "] in schema [" + schema + "] ....");
 			resultSet = dbMeta.getColumns(null, schema, actualTableName, null);
-			//if (resultSet.first()) {
 			if (resultSet.next()) {
+				logger.debug("Found table [" + actualTableName + "] in schema [" + schema + "].");
 				tableDescriptor = new DataSetTableDescriptor();
-				tableDescriptor.setTableName(tableName);
-				readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource), dbMeta);
+				tableDescriptor.setTableName(getCompleteTableName(actualTableName, schema));
+				readColumns(resultSet, fields, tableDescriptor, dbMeta, schema);
 			} else {
-				if (driverName.contains("HSQL") || driverName.contains("Oracle")) {
+				logger.debug("Table [" + actualTableName + "] in schema [" + schema + "] was not found at firts attempt.");
+				logger.debug("Driver name is [" + driverName + "]");
+				if (driverName.contains("HSQL") || driverName.contains("Oracle")  || driverName.contains("DB2")) {
+					logger.debug("Driver name recognized as for HSQL or Oracle or DB2.");
 					/*
-					 * HSQL and Oracle have this problem: when creating a table with name, for example, "TMPSBIQBE_biadmin", 
+					 * HSQL, Oracle and DB2 have this problem: when creating a table with name, for example, "TMPSBIQBE_biadmin", 
 					 * it creates a table with actual name "TMPSBIQBE_BIADMIN" (all upper case) but the getColumns method 
 					 * is case sensitive, therefore we try also with putting the table name upper case
 					 */
-					String tableNameUpperCase = tableName.toUpperCase();
-					resultSet = dbMeta.getColumns(null, null, tableNameUpperCase, null);
+					String tableNameUpperCase = actualTableName.toUpperCase();
+					logger.debug("Looking for table [" + tableNameUpperCase + "] in schema [" + schema + "] ....");
+					resultSet = dbMeta.getColumns(null, schema, tableNameUpperCase, null);
 					//if (resultSet.first()) {
 					if (resultSet.next()) {
+						logger.debug("Found table [" + tableNameUpperCase + "] in schema [" + schema + "].");
 						tableDescriptor = new DataSetTableDescriptor();
-						tableDescriptor.setTableName(tableNameUpperCase);
-						readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource), dbMeta);
+						tableDescriptor.setTableName(getCompleteTableName(tableNameUpperCase, schema));
+						readColumns(resultSet, fields, tableDescriptor, dbMeta, schema);
 					} else {
 						throw new SpagoBIRuntimeException("Cannot find metadata for table [" + tableName + "]");
 					}
 				} else if (driverName.toLowerCase().contains("postgresql")) {
+					logger.debug("Driver name recognized as for PostgreSQL.");
 					/*
-					 * HSQL and Oracle have this problem: when creating a table with name, for example, "TMPSBIQBE_biadmin", 
+					 * PostgreSQL has this problem: when creating a table with name, for example, "TMPSBIQBE_biadmin", 
 					 * it creates a table with actual name "tmpsbiqbe_biadmin" (all lower case) but the getColumns method 
-					 * is case sensitive, therefore we try also with putting the table name upper case
+					 * is case sensitive, therefore we try also with putting the table name lower case
 					 */
-					String tableNameUpperCase = tableName.toLowerCase();
-					resultSet = dbMeta.getColumns(null, null, tableNameUpperCase, null);
-					//if (resultSet.first()) {
+					String tableNameLowerCase = actualTableName.toLowerCase();
+					logger.debug("Looking for table [" + tableNameLowerCase + "] in schema [" + schema + "] ....");
+					resultSet = dbMeta.getColumns(null, schema, tableNameLowerCase, null);
 					if (resultSet.next()) {
+						logger.debug("Found table [" + tableNameLowerCase + "] in schema [" + schema + "].");
 						tableDescriptor = new DataSetTableDescriptor();
-						tableDescriptor.setTableName(tableNameUpperCase);
-						readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource), dbMeta);
+						tableDescriptor.setTableName(getCompleteTableName(tableNameLowerCase, schema));
+						readColumns(resultSet, fields, tableDescriptor, dbMeta, schema);
 					} else {
 						throw new SpagoBIRuntimeException("Cannot find metadata for table [" + tableName + "]");
 					}
@@ -245,23 +253,40 @@ public class TemporaryTableManager {
 		return tableDescriptor;
 	}
 
+	private static String getCompleteTableName(String actualTableName,
+			String schema) {
+		logger.debug("IN : actualTableName = [" + actualTableName + "], schema = [" + schema + "]");
+		String toReturn = null;
+		if (schema != null && !schema.trim().equals("")) {
+			toReturn = schema + "." + actualTableName;
+		} else {
+			toReturn = actualTableName;
+		}
+		logger.debug("OUT : returning [" + toReturn + "]");
+		return toReturn;
+	}
+
 	private static void readColumns(ResultSet resultSet, List<String> fields,
-			DataSetTableDescriptor tableDescriptor, String delimiter, DatabaseMetaData dbMetadata) throws SQLException {
+			DataSetTableDescriptor tableDescriptor, DatabaseMetaData dbMetadata, String schema) throws SQLException {
 		int index = 0;
 		do {
-			// For oracle we have to check if the table live in the right schema
+			// For oracle we have to check if the table exists in the right schema
 			// If we set the schema name in the method dbMeta.getColumns in this way
 			// dbMeta.getColumns(connection.getCatalog(), dbMeta.getUserName(), tableName, null);
-			// the result contains all the tables for which the user have the select grand
+			// the result contains all the tables for which the user has the select grant
 			// also if they belong to other schema 
+			
+			// if the schema is specified in input, it is the schema to be used;
+			// in case the schema is not specified, the schema name is the user name
+			String actualOracleSchema = schema != null ? schema : dbMetadata.getUserName();
+			
 			String tableSchema = resultSet.getString("TABLE_SCHEM");
-			if(dbMetadata.getDriverName().contains("Oracle")){
-				if(!tableSchema.equalsIgnoreCase(dbMetadata.getUserName())){
+			if (dbMetadata.getDriverName().contains("Oracle")) {
+				if (!tableSchema.equalsIgnoreCase(actualOracleSchema)) {
 					continue;
 				}
 			}
 			String fieldName = fields.get(index);
-//			String columnName = delimiter+resultSet.getString("COLUMN_NAME")+delimiter;
 			String columnName = resultSet.getString("COLUMN_NAME");
 			Class type = JDBCTypeMapper.getJavaType(resultSet.getShort("DATA_TYPE"));
 			tableDescriptor.addField(fieldName, columnName, type);
@@ -332,25 +357,27 @@ public class TemporaryTableManager {
 
 	private static void createTableInternal(String baseQuery, String tableName, IDataSource dataSource) throws Exception {
 		logger.debug("IN");
-		String sql = null;
 		String dialect = dataSource.getHibDialectName();
 		if (dialect.contains("HSQL") || dialect.contains("SQLServer")) {
 			// command in SELECT .... INTO table_name FROM ....
-			// since QbE query cannot contains sub-queries into the SELECT clause,
-			// we simply look for the first " FROM " occurrence
-			
-			sql = "SELECT * INTO " + tableName + " FROM ( " + baseQuery + " ) T ";
-			
-//			int index = baseQuery.toUpperCase().indexOf(" FROM "); 
-//			sql = baseQuery.substring(0, index) + " INTO " + tableName + " "  + baseQuery.substring(index + 1);
+			String sql = "SELECT * INTO " + tableName + " FROM ( " + baseQuery + " ) T ";
+			executeStatement(sql, dataSource);
 		} else if (dialect.contains("Teradata")) {
 			// command CREATE TABLE table_name AS ( SELECT .... ) WITH DATA
-			sql = "CREATE TABLE " + tableName + " AS ( " + baseQuery + " ) WITH DATA";
+			String sql = "CREATE TABLE " + tableName + " AS ( " + baseQuery + " ) WITH DATA";
+			executeStatement(sql, dataSource);
+		} else if (dialect.contains("DB2")) {
+			// command CREATE TABLE table_name AS ( SELECT .... ) WITH NO DATA
+			String sql = "CREATE TABLE " + tableName + " AS ( " + baseQuery + " ) WITH NO DATA";
+			executeStatement(sql, dataSource);
+			// command INSERT INTO table_name SELECT ....
+			sql = "INSERT INTO " + tableName + " " + baseQuery;
+			executeStatement(sql, dataSource);
 		} else {
 			// command CREATE TABLE table_name AS SELECT ....
-			sql = "CREATE TABLE " + tableName + " AS " + baseQuery;
+			String sql = "CREATE TABLE " + tableName + " AS " + baseQuery;
+			executeStatement(sql, dataSource);
 		}
-		executeStatement(sql, dataSource);
 		logger.debug("OUT");
 	}
 
@@ -383,6 +410,16 @@ public class TemporaryTableManager {
 						throw e;
 					}
 				}
+		} else if (dialect.contains("DB2")) { // DB2 does not support DROP TABLE IF EXISTS command
+			try {
+				executeStatement("DROP TABLE " + tableName, dataSource);
+			} catch (SQLException e) {
+				if (e.getErrorCode() == -204) { // DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, Object not defined to DB2
+					logger.debug("Table " + tableName + "does not exists.");
+				} else {
+					throw e;
+				}
+			}
 		} else {
 			executeStatement("DROP TABLE IF EXISTS " + tableName, dataSource);
 		}
@@ -528,7 +565,7 @@ public class TemporaryTableManager {
 			} else if (dialect.contains(DIALECT_SQLSERVER)) {
 				return "\""; // TODO not tested yet!!!!
 			} else if (dialect.contains(DIALECT_DB2)) {
-				return "\""; // TODO not tested yet!!!!
+				return "\"";
 			} else if (dialect.contains(DIALECT_TERADATA)) {
 				return "\"";
 			} 
