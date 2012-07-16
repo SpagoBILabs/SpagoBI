@@ -82,7 +82,7 @@ public class ImportExportModule extends AbstractModule {
 	EMFErrorHandler errorHandler = getErrorHandler();
 	try {
 	    if (message == null) {
-		EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, "101", "component_impexp_messages");
+		EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, "101", ImportManager.messageBundle);
 		logger.warn("The message parameter is null");
 		errorHandler.addError(userError);
 		throw userError;
