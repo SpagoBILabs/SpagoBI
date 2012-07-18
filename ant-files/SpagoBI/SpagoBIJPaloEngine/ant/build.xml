@@ -196,18 +196,6 @@
 			<entry key="databaseName" value="${jpalo_db.name}" />
 		</propertyfile>
 	</target>
-	<target name="datasource_mondrian">
-		<replaceregexp file="${build}/${webapp_name}/WEB-INF/datasources.xml">
-			<regexp pattern="(&lt;Definition&gt;)(.*?)(&lt;/Definition&gt;)" />
-			<substitution expression="&lt;Definition&gt;${mondrian_ds}&lt;/Definition&gt;" />
-		</replaceregexp>
-	</target>
-	<target name="url_mondrian">
-		<replaceregexp file="${build}/${webapp_name}/WEB-INF/datasources.xml">
-			<regexp pattern="(&lt;URL&gt;)(.*?)(&lt;/URL&gt;)" />
-			<substitution expression="&lt;URL&gt;${mondrian_url}&lt;/URL&gt;" />
-		</replaceregexp>
-	</target>
 	<target name="create.war" depends="init,copy.artifacts">
 		<antcall target="${sso}" />
 		<antcall target="${specific.ant.task}" />
@@ -215,8 +203,6 @@
 		<antcall target="${jpalo_db}" />
 		<antcall target="change_db" />
 		<antcall target="url" />
-		<antcall target="datasource_mondrian" />
-		<antcall target="url_mondrian" />
 		<antcall target="upgrade.mf" />
 
 		<mkdir dir="${dist}" />
