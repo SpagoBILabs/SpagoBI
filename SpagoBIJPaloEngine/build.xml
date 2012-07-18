@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SpagoBIJPaloEngine" default="deploy" basedir=".">
+
+	<!-- required projects: -->
+	<property name="palo.dir" value="../palo" />
+	<property name="palo.project" value="palo" />
+	<property name="paloapi.dir" value="../paloapi" />
+	<property name="paloapi.project" value="paloapi" />
+	<property name="paloviewapi.dir" value="../paloviewapi" />
+	<property name="paloviewapi.project" value="paloviewapi" />
+	<property name="paloxmla.dir" value="../com.tensegrity.palo.xmla" />
+	<property name="paloxmla.project" value="paloxmla" />
+	<!--	
+	<property name="palongwss.dir" value="../palongwss" />
+	<property name="palongwss.project" value="palongwss" />
+-->
+	<!-- inherited projects: -->
+	<property name="palo.gwt.core.dir" value="../palo-gwt-core" />
+	<property name="palo.gwt.core.project" value="palo-gwt-core" />
+	<property name="palo.gwt.widgets.dir" value="../palo-gwt-widgets" />
+	<property name="palo.gwt.widgets.project" value="palo-gwt-widgets" />
+
+	<!-- project settings -->
+	<property name="web.xml" value="${basedir}/war/WEB-INF/web.xml"/>
+	<property name="output.dir" value="dist"/>
+	<property name="war.file" value="web-palo-ng.war" />
+	<property name="wpalo.properties" value="wpalo.properties" />
+	<!-- gwt & gxt -->
+	<property name="gxt.jar" value="${basedir}/../web-palo-shared/lib/gxt/gxt.jar" />
+	<property name="gwt.home" value="${basedir}/../web-palo-shared/lib/gwt/1.7.1" />
+	<!-- gwt compiler settings -->
+	<property name="gwt.js.style" value="OBFUSCATED"/>
+	<property name="package" value="com.tensegrity.wpalo"/>
+	<property name="module" value="WPalo"/>
+	<!-- java compiler settings -->
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="classes.dir" value="${output.dir}/classes" />
+	<property name="debug" value="no" />
+	<!-- tomcat settings -->
+	<property name="tomcat.home" value="C:/Software/Tomcat/tomcat-6.0.18" />
+	<!-- database(s) -->
+	<property name="hsql.db" value="${paloviewapi.dir}/libs/hsqldb_1.8.1.1.jar" />
+    <!-- iText -->
+	<property name="iText" value="${paloviewapi.dir}/libs/iText-5.0.1.jar" />
+	<!-- incubator -->
+	<property name="incubator" value="${basedir}/../web-palo-shared/lib/gwt-incubator/gwt-incubator-july-14-2009.jar"/>
+	
+	<path id="cp">
+		<!-- project -->
+		<pathelement path="${src.dir}"/>
+		<pathelement path="${palo.gwt.core.dir}/src" />
+		<pathelement path="${palo.gwt.widgets.dir}/src" />
+		<!-- gwt -->
+		<pathelement path="${gwt.home}/gwt-user.jar"/>
+		<pathelement path="${gwt.home}/gwt-servlet.jar"/>
+		<pathelement path="${gwt.home}/gwt-dev-windows.jar"/>
+		<!-- gxt -->
+		<pathelement path="${gxt.jar}"/>
+		<!-- incubator -->
+		<pathelement path="${incubator}"/>
+		<!-- iText -->
+		<pathelement path="${paloviewapi.dir}/libs/iText-5.0.1.jar"/>
+		<!-- DnD -->
+		<pathelement path="${basedir}/../web-palo-shared/lib/gwt/dnd/gwt-dnd-2.6.5.jar"/>
+		<!-- required projects -->
+		<pathelement path="${output.dir}/${palo.project}/classes"/>
+		<pathelement path="${output.dir}/${paloapi.project}/classes"/>
+		<pathelement path="${output.dir}/${paloviewapi.project}/classes"/>
+		<pathelement path="${output.dir}/${paloxmla.project}/classes"/>
+		<!-- <pathelement path="${output.dir}/${palongwss.project}/classes"/> -->
+		<pathelement path="${output.dir}/${palo.gwt.core.project}/classes"/>
+		<pathelement path="${output.dir}/${palo.gwt.widgets.project}/classes"/>
+	</path>
+
+	<!--============================================================================
+ 		TARGETS
+=============================================================================-->
+	<target name="dist" depends="prepare">
+		<buildnumber file="src/build.number"/>
+		<antcall target="create.required.projects.jars" />
+		<antcall target="compile" />		
+		<antcall target="copy.sql.commands" />
+		<antcall target="copy.wpalo.properties" />
+	</target>
+
+	<target name="prepare" depends="clean"
+		description="creates output directories">
+		<mkdir dir="${output.dir}"/>
+		<!-- output directories for compiling required projects: -->
+		<mkdir dir="${output.dir}/${palo.project}/classes"/>
+		<mkdir dir="${output.dir}/${paloapi.project}/classes"/>
+		<mkdir dir="${output.dir}/${paloviewapi.project}/classes"/>
+		<mkdir dir="${output.dir}/${paloxmla.project}/classes"/>
+		<!-- <mkdir dir="${output.dir}/${palongwss.project}/classes"/> -->
+		<mkdir dir="${output.dir}/${palo.gwt.core.project}/classes"/>
+		<mkdir dir="${output.dir}/${palo.gwt.widgets.project}/classes"/>
+		<mkdir dir="${classes.dir}"/>
+	</target>
+
+	<target name="clean" 
+		description="deletes any generated files from previous runs">
+		<delete dir="dist"/>
+	</target>
+
+	<target name="create.required.projects.jars" depends="compile.required.projects"
+		description="creates the .jar files of all required projects">
+		<antcall target="create.project.jar">
+			<param name="project" value="${palo.project}" />
+		</antcall>
+		<antcall target="create.project.jar">
+			<param name="project" value="${paloapi.project}" />
+		</antcall>
+		<antcall target="create.project.jar">
+			<param name="project" value="${paloviewapi.project}" />
+		</antcall>
+		<antcall target="create.project.jar">
+			<param name="project" value="${paloxmla.project}" />
+		</antcall>
+		<!--
+		<antcall target="create.project.jar">
+			<param name="project" value="${palongwss.project}" />
+		</antcall>
+		-->
+		<antcall target="create.project.jar">
+			<param name="project" value="${palo.gwt.core.project}" />
+		</antcall>
+		<antcall target="create.project.jar">
+			<param name="project" value="${palo.gwt.widgets.project}" />
+		</antcall>
+
+	</target>
+
+	<target name="compile.required.projects"
+		description="compiles all required projects">
+		<antcall target="compile.project">
+			<param name="project" value="${palo.project}" />
+			<param name="project.home" value="${palo.dir}" />
+		</antcall>
+
+		<antcall target="compile.project">
+			<param name="project" value="${paloxmla.project}" />
+			<param name="project.home" value="${paloxmla.dir}" />
+		</antcall>
+		<antcall target="compile.project">
+			<param name="project" value="${paloapi.project}" />
+			<param name="project.home" value="${paloapi.dir}" />
+		</antcall>
+		<!--		
+		<antcall target="compile.project">
+			<param name="project" value="${palongwss.project}" />
+			<param name="project.home" value="${palongwss.dir}" />
+		</antcall>
+-->
+		<antcall target="compile.project">
+			<param name="project" value="${paloviewapi.project}" />
+			<param name="project.home" value="${paloviewapi.dir}" />
+		</antcall>
+
+		<antcall target="compile.project">
+			<param name="project" value="${palo.gwt.core.project}" />
+			<param name="project.home" value="${palo.gwt.core.dir}" />
+		</antcall>
+		<antcall target="compile.project">
+			<param name="project" value="${palo.gwt.widgets.project}" />
+			<param name="project.home" value="${palo.gwt.widgets.dir}" />
+		</antcall>
+	</target>
+
+	<target name="compile" description="compiles java and gwt classes">
+		<antcall target="compile.java">
+		</antcall>
+		<antcall target="compile.gwt">
+		</antcall>
+	</target>
+	<target name="compile.java"
+		description="compiles the server-side java code">
+		<javac srcdir="${src.dir}" debug="${debug}" destdir="${classes.dir}" target="1.5" source="1.5">
+			<classpath refid="cp"/>
+		</javac>
+	</target>
+	<target name="compile.gwt"
+		description="compiles java source to javascript using gwt compiler">
+		<property name="gwt.compiler" value="com.google.gwt.dev.GWTCompiler"/>
+		<property name="gwt.args" value="-out ${output.dir}/${ant.project.name} -style ${gwt.js.style}"/>
+		<echo>${gwt.args}</echo>
+		<java classname="${gwt.compiler}" classpathref="cp" fork="true">
+			<jvmarg value="-Xmx512m"/>
+			<arg line="${gwt.args} ${package}.${module}"/>
+		</java>
+	</target>
+
+	<target name="create.project.jar"
+		description="creates the .jar for the specified project">
+		<jar destfile="${output.dir}/${project}.jar">
+			<fileset dir="${output.dir}/${project}/classes" />
+		</jar>
+	</target>
+	<target name="compile.project" description="compiles the specified project">
+		<javac srcdir="${project.home}/src" debug="${debug}" 
+        	destdir="${output.dir}/${project}/classes"
+	        	target="1.5" source="1.5">
+			<classpath refid="cp"/>
+		</javac>
+		<!-- copy resources -->
+		<copy todir="${output.dir}/${project}/classes">
+			<fileset dir="${project.home}/src" excludes="**/*.java" />
+		</copy>
+	</target>
+
+	<target name="copy.sql.commands" description="copies all sql commands files to classes directory">
+		<copy todir="${output.dir}/classes/sql">
+			<fileset dir="${src.dir}/sql" />
+		</copy>
+	</target>
+	
+	<target name="copy.wpalo.properties" description="copies wpalo.properties file to classes directory">
+		<copy file="${src.dir}/${wpalo.properties}" todir="${output.dir}/classes" />
+		<copy file="${src.dir}/build.number" todir="${output.dir}/classes" />
+	</target>
+
+
+	<!-- OPTIONAL TASKs -->
+	<target name="deploy" depends="war, undeploy"
+		description="deploys generated .war file to Tomcat">		
+		<copy file="${output.dir}/${war.file}" todir="${tomcat.home}/webapps"/>
+	</target>
+	<target name="undeploy"
+		description="undeploys previously deployed web app from Tomcat">
+		<delete dir="${tomcat.home}/webapps/${war.file}" /> <!-- ${ant.project.name}" /> -->
+		<delete file="${tomcat.home}/webapps/${war.file}" />
+	</target>
+
+	<target name="war" depends="dist"
+    	description="creates a .war file for this app to deploy it to tomcat">
+		<delete file="${output.dir}/${war.file}"/>
+		<antcall target="create.libs.dir">
+		</antcall>
+		<war warfile="${output.dir}/${war.file}" webxml="${web.xml}">
+			<!-- application classes -->
+			<classes dir="${output.dir}/classes"/>
+			<!-- generated HTML/JavaScript plus your CSS -->
+			<fileset dir="${output.dir}/${ant.project.name}"/>
+			<fileset dir="war" includes="*"/>
+			<!-- supplied JAR -->
+			<lib dir="${output.dir}/libs" />
+		</war>
+	</target>
+	<target name="create.libs.dir">
+		<mkdir dir="${output.dir}/libs"/>
+		<!-- copy all required projects to this lib directory -->
+		<copy file="${output.dir}/${palo.project}.jar" todir="${output.dir}/libs"/>
+		<copy file="${output.dir}/${paloapi.project}.jar" todir="${output.dir}/libs"/>
+		<copy file="${output.dir}/${paloviewapi.project}.jar" todir="${output.dir}/libs"/>
+		<copy file="${output.dir}/${paloxmla.project}.jar" todir="${output.dir}/libs"/>
+		<copy file="${output.dir}/${palo.gwt.core.project}.jar" todir="${output.dir}/libs"/>
+		<copy file="${output.dir}/${palo.gwt.widgets.project}.jar" todir="${output.dir}/libs"/>
+		<!-- 3rd party libs -->
+		<copy file="${gwt.home}/gwt-servlet.jar" todir="${output.dir}/libs"/>
+		<copy file="${hsql.db}" todir="${output.dir}/libs"/>
+		<copy file="${iText}" todir="${output.dir}/libs"/>
+		<copy file="${incubator}" todir="${output.dir}/libs"/>
+		<copy file="${gxt.jar}" todir="${output.dir}/libs"/>
+	</target>
+</project>
