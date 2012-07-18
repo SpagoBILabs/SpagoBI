@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Class-Path: SpagoBIUtilsJSON.jar
 
 Name: sbi.utils-3.0.0.jar
 Implementation-Title: SpagoBIUtils

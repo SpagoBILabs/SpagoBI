@@ -3,6 +3,7 @@
 	<name>SpagoBIUtils</name>
 	<comment></comment>
 	<projects>
+		<project>SpagoBIUtilsJSON</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

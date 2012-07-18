@@ -6,7 +6,6 @@
 	<classpathentry kind="lib" path="lib/commons-httpclient-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/spago-core-2.2.0.jar" sourcepath="D:/Progetti/Spago/spago2.2.0-src.zip"/>
 	<classpathentry kind="lib" path="lib/spago-web-2.2.0.jar" sourcepath="C:/Installation_files/Spago/spago2.2.0-src.zip"/>
-	<classpathentry kind="lib" path="lib/json.jar"/>
 	<classpathentry kind="lib" path="lib/commonj-twm.jar"/>
 	<classpathentry kind="lib" path="lib/foo-commonj.jar"/>
 	<classpathentry kind="lib" path="lib/axis.jar"/>
@@ -30,5 +29,9 @@
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/commons-discovery-0.2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtilsJSON"/>
+	<classpathentry kind="lib" path="lib/jackson-annotations-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-core-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.0.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
