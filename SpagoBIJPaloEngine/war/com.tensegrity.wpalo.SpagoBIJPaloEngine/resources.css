@@ -1,0 +1,325 @@
+/** stylesheet to load resources like icons... */
+.icon-about {
+  background: url(icons/tools.png) no-repeat center left !important;
+}
+
+.icon-info {
+  background: url(icons/about.png) no-repeat center left !important;
+}
+
+.icon-lightbulb {
+  background: url(icons/lbulb.png) no-repeat !important;
+  margin-right: 10px;
+  width: 79px;
+  height: 74px;
+}
+
+.icon-add {
+  background: url(icons/add.png) no-repeat !important;
+}
+
+.icon-connection {
+  background: url(icons/server.png) no-repeat;
+}
+
+.icon-connection-add {
+  background: url(icons/serverAdd.png) no-repeat !important;
+}
+
+.icon-account {
+  background: url(icons/account.png) no-repeat;
+}
+
+.icon-account-add {
+  background: url(icons/accountAdd.png) no-repeat !important;
+}
+
+.icon-assign-to-folder {
+  background: url(icons/assignToFolder.png) no-repeat !important;
+}
+
+.icon-delete {
+  background: url(icons/delete.png) no-repeat center left !important;
+}
+.icon-delete-off {
+    background: url(icons/delete_off.gif) no-repeat center left !important;
+}
+
+.icon-rename {
+  background: url(icons/rename.png) no-repeat center left !important;
+}
+
+.icon-group {
+  background: url(icons/group.png) no-repeat;
+}
+
+.icon-group-add {
+  background: url(icons/groupAdd.png) no-repeat !important;
+}
+
+.icon-role {
+  background: url(icons/role.png) no-repeat;
+}
+
+.icon-role2 {
+  background: url(icons/role2.png) no-repeat;
+}
+
+.icon-role2-add {
+  background: url(icons/role2Add.png) no-repeat !important;
+}
+
+.icon-role-add {
+  background: url(icons/roleAdd.png) no-repeat !important;
+}
+
+.icon-rule-marker {
+	background: url(icons/rule_marker.png) no-repeat !important;
+}
+
+.icon-invalid {
+  background: url(icons/invalid.gif) no-repeat !important;
+}
+
+.icon-login {
+  background: url(icons/login-logo-new.png) no-repeat;
+  background-color: #ffffff;
+  width: 256px;
+  height: 44px;
+}
+
+.icon-save {
+  background: url(icons/save.png) no-repeat !important;
+  width: 16px !important;
+  height: 16px !important;  
+}
+
+.icon-user {
+  background: url(icons/user.png) no-repeat;
+}
+
+.icon-user-add {
+  background: url(icons/userAdd.png) no-repeat !important;
+}
+
+.icon-create-folder {
+  background: url(icons/createFolder.png) no-repeat center left !important;
+}
+
+.icon-create-dynamic-folder {
+  background: url(icons/createDynamicFolder.png) no-repeat !important;
+}
+
+.icon-create-view {
+  background: url(icons/reportAddView.png) no-repeat center left !important;
+}
+
+.icon-import-view {
+  background: url(icons/importView.png) no-repeat center left !important;
+}
+
+.icon-create-sheet {
+  background: url(icons/reportAddSheet.png) no-repeat !important;
+}
+
+.icon-delete-folder {
+  background: url(icons/deleteFolder.png) no-repeat !important;
+}
+
+.icon-db {
+  background: url(icons/database.png) no-repeat;
+}
+
+.icon-dim {
+  background: url(icons/dimension_on.png) no-repeat;
+}
+
+.icon-subset {
+  background: url(icons/subset.png) no-repeat;
+}
+
+.icon-cube {
+  background: url(icons/cube.png) no-repeat !important;
+}
+
+.icon-swap {
+  background: url(icons/swap.gif) no-repeat !important;
+}
+
+.icon-server {
+  background: url(icons/server.png) no-repeat !important;
+}
+
+.icon-rights {
+  background: url(icons/rights.png) no-repeat;
+}
+
+.tree-style {
+	font-size: 8pt;
+}
+
+.icon-static-folder {
+  background: url(icons/staticFolder.png) no-repeat !important;
+}
+
+.icon-static-folder-expanded {
+  background: url(icons/staticFolderExpanded.png) no-repeat !important;
+}
+
+.icon-dynamic-folder {
+  background: url(icons/dynamicFolder.png) no-repeat !important;
+}
+
+.icon-dynamic-folder-expanded {
+  background: url(icons/dynamicFolderExpanded.png) no-repeat !important;
+}
+
+.icon-view {
+  background: url(icons/view_000.png) no-repeat;
+}
+
+.icon-viewVEO {
+  background: url(icons/view_111.png) no-repeat;
+}
+
+.icon-viewVE {
+  background: url(icons/view_110.png) no-repeat;
+}
+
+.icon-viewVO {
+  background: url(icons/view_101.png) no-repeat;
+}
+
+.icon-viewV {
+  background: url(icons/view_100.png) no-repeat;
+}
+
+.icon-viewEO {
+  background: url(icons/view_011.png) no-repeat;
+}
+
+.icon-viewE {
+  background: url(icons/view_010.png) no-repeat;
+}
+
+.icon-viewO {
+  background: url(icons/view_001.png) no-repeat;
+}
+
+.icon-sheet {
+  background: url(icons/report.png) no-repeat;
+}
+
+.icon-template {
+  background: url(icons/createView.png) no-repeat;
+}
+
+.icon-variable {
+  background: url(icons/variable.png) no-repeat;
+}
+
+.icon-folder {
+  background: url(icons/staticFolder.png) no-repeat !important;
+}
+
+.icon-element-consolidated {
+  background: url(icons/element_con.png) no-repeat !important;
+}
+
+.icon-element-numeric {
+  background: url(icons/element_num.png) no-repeat !important;
+}
+
+.icon-element-string {
+  background: url(icons/element_str.png) no-repeat !important;
+}
+
+.icon-element-virtual {
+  background: url(icons/element.gif) no-repeat !important;
+}
+
+.icon-filter {
+  background: url(icons/filter.gif) no-repeat;
+}
+
+.icon-filter-remove {
+  background: url(icons/filter_remove.gif) no-repeat;
+}
+
+.icon-filter-remove-level {
+  background: url(icons/filter_remove_level.gif) no-repeat;
+}
+
+.icon-refresh-on {
+  background: url(icons/refresh_on.gif) no-repeat !important;
+}
+
+.icon-print {
+  background: url(icons/pdf2.png) no-repeat !important;
+}
+
+.icon-refresh-off {
+  background: url(icons/refresh_off.gif) no-repeat !important;
+}
+
+.icon-plus {
+	width: 9px;
+	height: 9px;
+	background-image: url(icons/plus.gif);
+	background-repeat: no-repeat;
+}
+.icon-minus {
+	width: 9px;
+	height: 9px;
+	background-image: url(icons/minus.gif);
+	background-repeat: no-repeat;
+}
+
+.icons-move_up_on {
+    background: url(icons/move_up.gif) no-repeat !important;
+}
+.icons-move_up_off {
+    background: url(icons/move_up_off.gif) no-repeat !important;
+}
+.icons-move_down_on {
+    background: url(icons/move_down.gif) no-repeat !important;
+}
+.icons-move_down_off {
+    background: url(icons/move_down_off.gif) no-repeat !important;
+}
+.icons-move_right_on {
+    background: url(icons/move_right.gif) no-repeat !important;
+}
+.icons-move_left {
+    background: url(icons/move_left.gif) no-repeat !important;
+}
+.icons-move_right_off {
+    background: url(icons/move_right_off.gif) no-repeat !important;
+}
+.icons-delete_on {
+    background: url(icons/delete_on.gif) no-repeat !important;
+}
+.icons-delete_off {
+    background: url(icons/delete_off.gif) no-repeat !important;
+}
+.icons-add_on {
+    background: url(icons/add_on.gif) no-repeat !important;
+}
+.icons-remove_on {
+    background: url(icons/remove_on.gif) no-repeat !important;
+}
+.icons-sum {
+    background: url(icons/sum.png) no-repeat !important;
+}
+.icons-expand {
+	background: url(icons/expand.gif) no-repeat !important;
+}
+.icons-expand-all {
+	background: url(icons/expand_all.gif) no-repeat !important;
+}
+.icons-collapse {
+	background: url(icons/collapse.gif) no-repeat !important;
+}
+.icons-collapse-all {
+	background: url(icons/collapse_all.gif) no-repeat !important;
+}

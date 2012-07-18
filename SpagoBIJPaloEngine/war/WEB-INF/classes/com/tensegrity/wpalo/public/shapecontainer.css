@@ -1,0 +1,33 @@
+@CHARSET "ISO-8859-1";
+
+.static-filter .empty-label {
+	color: silver;
+	position: relative;
+	font: bolder 14px Verdana !important; 
+}
+
+.ten-icons-sum {
+    padding-top: 2px;
+    background: url(icons/sum.png) no-repeat !important;
+}
+
+.ten-icons-save {
+    background: url(icons/save.gif) no-repeat !important;
+    width: 16px !important;
+    height: 16px !important;
+}
+.ten-icons-save-as {
+    background: url(icons/saveAs_on.gif) no-repeat !important;
+}
+.ten-icons-viewRules {
+    background: url(icons/rules.png) no-repeat !important;
+}
+.ten-icons-hideEmpty {
+    background: url(icons/hideEmpty.png) no-repeat !important;
+}
+.ten-icons-reverseRows {
+    background: url(icons/reverseRows.gif) no-repeat !important;
+}
+.ten-icons-reverseCols {
+    background: url(icons/reverseCols.gif) no-repeat !important;
+}

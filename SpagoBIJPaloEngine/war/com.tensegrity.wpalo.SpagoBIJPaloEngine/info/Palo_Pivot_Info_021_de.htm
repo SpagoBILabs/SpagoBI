@@ -1,0 +1,389 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 12 (filtered)">
+<title>Palo Pivot Info 21</title>
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;}
+p.msolistparagraph0, li.msolistparagraph0, div.msolistparagraph0
+	{mso-style-name:msolistparagraph;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+p.msolistparagraphcxspfirst, li.msolistparagraphcxspfirst, div.msolistparagraphcxspfirst
+	{mso-style-name:msolistparagraphcxspfirst;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+p.msolistparagraphcxspmiddle, li.msolistparagraphcxspmiddle, div.msolistparagraphcxspmiddle
+	{mso-style-name:msolistparagraphcxspmiddle;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+p.msolistparagraphcxsplast, li.msolistparagraphcxsplast, div.msolistparagraphcxsplast
+	{mso-style-name:msolistparagraphcxsplast;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+p.msochpdefault, li.msochpdefault, div.msochpdefault
+	{mso-style-name:msochpdefault;
+	margin-right:0cm;
+	margin-left:0cm;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";}
+.MsoChpDefault
+	{font-size:10.0pt;}
+@page Section1
+	{size:595.3pt 841.9pt;
+	margin:70.85pt 70.85pt 2.0cm 70.85pt;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+
+<meta http-equiv=cache-control content=no-cache>
+<meta http-equiv=pragma content=no-cache>
+<link rel=icon type="image/png" href="Palo_Pivot_Info.png">
+<link rel="SHORTCUT ICON" href="Palo_Pivot_Info.ico">
+</head>
+
+<body lang=DE link=blue vlink=purple>
+
+<div class=Section1>
+
+<p class=MsoNormal><b><u><span style='font-family:"Courier New";color:#3366FF'>Wie
+die Leistung der Applikation maximiert werden kann</span></u></b></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;</span></b></p>
+
+<p class=MsoNormal><b><span style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;&nbsp; Überblick:</span></b></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+I.&nbsp;&nbsp; </span><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'><a
+href="#design_of_olap_databases"><span lang=DE>Design der OLAP-Datenbanken und
+Ansichten im Web Client</span></a></span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+</span><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>II.&nbsp;
+<a href="#client_browser">Client-Browser</a></span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+III. <a href="#client_hardware">Client-Hardware</a></span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+</span><span style='font-size:9.0pt;font-family:"Courier New"'>IV.&nbsp; </span><span
+lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'><a
+href="#tomcat_configuration"><span lang=DE>Tomcat-Konfiguration</span></a></span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+V.&nbsp;&nbsp; </span><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'><a
+href="#server_hardware"><span lang=DE>Server-Hardware</span></a></span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;&nbsp; I. <a name="design_of_olap_databases">Design der
+OLAP</a>-Datenbanken und Ansichten im Web Client</span></b></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Der Web Client kann intern sehr große Datenbanken, Würfel und </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Dimensionen handhaben, aber Internet-Browser benötigen eine gewisse </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Zeit, um eine große Menge von Elementen in einer Combobox oder einer </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Tabelle anzuzeigen. Speziell die Dimensionen, die in der vertikalen </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+oder horizontalen Achse der 2-dimensionalen Tabelle einer Ansicht </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+positioniert werden, sollten so gestaltet oder strukturiert sein, dass </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+nicht zu viele Elemente gleichzeitig angezeigt werden. Dies kann durch </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+eine Strukturierung der ursprünglichen Olap-Dimension mit genügend </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+konsolidierten Elementen gewährleistet werden. Es können aber auch </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+im Web Client Subsets und/oder Lokale Filter für eine Dimension </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+genutzt werden, um zu viele gleichzeitig anzuzeigende Wurzel-Elemente </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+oder Kind-Elemente direkt unter einem Vater-Element zu vermeiden.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;&nbsp; II. <a name="client_browser">Client-Browser</a></span></b></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Die Geschwindigkeit verschiedener Browser bezüglich der </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Script-Ausführung variiert sehr.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+- IE7, IE6 und IE5 sind langsam und nicht zu empfehlen.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+- Internet Explorer 8 ist ca. 3-mal schneller als IE7.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+- Firefox 3.x ist ca. 10-mal schneller als IE7.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+- Safari ist ca. 15-mal schneller als IE7.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+- Iron und Chrome sind ca. 30-mal schneller als IE7.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+- Wir empfehlen IE8, Firefox 3.x, Safari, Chrome und Iron.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+<a name="client_browser_script_msg">Trotzdem </a>könnte die Script-Ausführung
+bei der Anzeige einer Ansicht </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+mit sehr vielen sichtbaren Datenzellen zu lange erscheinen.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+In diesen Fällen stellt der Browser selbst Nachfragen, ob der Anwender </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+die weitere Ausführung des Scripts wünscht oder abbrechen möchte.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Falls das Script abgebrochen wird, verbleibt die Ansicht in einem </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+undefinierten Zustand und muss geschlossen und erneut geöffnet werden.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Es ist möglich, diese Nachfragen des Browsers jedes Mal erneut zu </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+beantworten, wenn sie erscheinen. Es kann aber auch der Grenzwert </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+für die Zeitüberschreitung im jeweiligen Browsers geändert werden.</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+<a name="client_browser_firefox"><u>Firefox</u></a></span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Firefox ermöglicht die Deaktivierung des Benachrichtigungsdialogs </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+direkt im Dialog selber. Im Folgenden wird eine Vorgehensweise </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+beschrieben, den Grenzwert für das Erscheinen der Nachfrage zu</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+ändern:</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+a. ‘about:config’ in der Adresszeile des Firefox eingeben</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+b. Den Schlüssel ‘dom.max_script_run_time’ suchen, indem man ihn eingibt.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+c. Den Wert (in Sekunden) ändern. (Standardwert ist 10 Sekunden)</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+d. Der Schlüssel ‘dom.max_chrome_script_run_time’ ermöglicht es, den </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+gleichen Wert für Applikationen mit Chrome-Rechten zu setzen.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+<u>Internet Explorer</u></span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Die Information zur Beeinflussung des Grenzwertes findet sich hier:</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+(basierend auf der absoluten Zahl der ausgeführten Script-Anweisungen)</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+</span><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'><a
+href="http://support.microsoft.com/kb/175500" target="_blank"><span lang=DE>http://support.microsoft.com/kb/175500</span></a></span><span
+style='font-size:9.0pt;font-family:"Courier New"'>&nbsp; (in aktueller
+Browsersprache)</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+<a href="http://support.microsoft.com/kb/175500/de-de/">http://support.microsoft.com/kb/175500/de-de/</a>&nbsp;
+(in Deutsch)</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+<u>Safari</u></span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Informationen über die Deaktivierung des &quot;Runaway JavaScript Timer&quot; </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+in Safari sind durch Eingabe exakt dieses Suchbegriffes in der Safari </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Hilfe zu finden.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+<u>Iron und Chrome</u></span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Diese sehr ähnlichen Browser benötigen keine Deaktivierung der </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Script-Zeitüberschreitung oder ein Verändern des Grenzwertes, weil sie</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+- im Gegensatz zu allen anderen Browsern – eine hilfreiche Technik nutzen:</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Obwohl sie auch eine Benachrichtigung anzeigen, wird die Script-Ausführung</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+nicht angehalten bis die Nachfrage beantwortet ist, so dass der Anwender </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+die Nachfrage nicht beantworten muss, um den Programmablauf fortzuführen.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;&nbsp; III. <a name="client_hardware">Client-Hardware</a></span></b></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Da die Geschwindigkeit der Script-Ausführung eines Browsers auch von</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;&nbsp;der
+Geschwindigkeit der CPU abhängt hilft ein schneller Prozessor.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;&nbsp; IV. <a name="tomcat_configuration">Tomcat-Konfiguration</a></span></b></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Der Wert des &quot;Maximum memory pool&quot; eines Tomcat Servers ist nach
+einer </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Standardinstallation sehr gering definiert. Die Erhöhung dieses Wertes </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+auf einen für das System passenden Wert ist ratsam. Im 32-Bit-Tomcat</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+empfehlen wir 1024MB. Im 64-Bit-Tomcat kann der Wert höher sein.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+In einer Windows-Installations-Version kann dieser Wert in den </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+&quot;Apache Tomcat Properties&quot; gesetzt werden.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+In einem Linux-System kann in der Datei &quot;/tomcat/bin/catalina.sh&quot;</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+einer Zeile wie diese hier hinzugefügt werden:</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+</span><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>CATALINA_OPTS=&quot;$CATALINA_OPTS
+-Xmx1024m&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span lang=EN-US style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;&nbsp; </span></b><b><span style='font-size:9.0pt;
+font-family:"Courier New";color:#3366FF'>V. <a name="server_hardware">Server-Hardware</a></span></b></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Der Tomcat-Server kann zu Testzwecken auf einem simplen Desktoprechner </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+oder Laptop betrieben werden. Für eine bessere Leistung sollte er aber</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+wie jede Server-Applikation auf einer adäquaten Server-Maschine laufen.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Tensegrity lässt seine öffentliche Online-Demo zu Testzwecken auf einer</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+sehr einfachen Linux-Maschine mit einem Single-Core-Prozessor laufen.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Für ein Produktivsystem empfehlen wir mindestens Dual-Core oder </span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Multi-Core-Prozessoren mit mehr als 2GB RAM.</span></p>
+
+<p class=MsoNormal><span style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+</div>
+
+</body>
+
+</html>
