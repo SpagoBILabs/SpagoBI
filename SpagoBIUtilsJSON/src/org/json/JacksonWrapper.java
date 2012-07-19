@@ -82,7 +82,8 @@ public class JacksonWrapper {
 	            	wrappedObject = wrap (new JSONObject((Map)object));
 	            
 	            } else {
-	            	wrappedObject = new JSONObject(object);
+	            	//wrappedObject = new JSONObject(object);
+	            	wrappedObject = object.toString();
 	            }
 	            
 	            return wrappedObject;
