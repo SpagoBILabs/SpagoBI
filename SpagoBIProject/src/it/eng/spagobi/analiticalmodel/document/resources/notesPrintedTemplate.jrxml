@@ -1,33 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"  ?>
-<!-- Created with iReport - A designer for JasperReports -->
-<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
-<jasperReport
-		 name="notesPrintedTemplate"
-		 columnCount="1"
-		 printOrder="Vertical"
-		 orientation="Portrait"
-		 pageWidth="595"
-		 pageHeight="842"
-		 columnWidth="535"
-		 columnSpacing="0"
-		 leftMargin="30"
-		 rightMargin="30"
-		 topMargin="20"
-		 bottomMargin="20"
-		 whenNoDataType="NoPages"
-		 isTitleNewPage="false"
-		 isSummaryNewPage="false">
-	<property name="ireport.scriptlethandling" value="0" />
-	<property name="ireport.encoding" value="UTF-8" />
-	<import value="java.util.*" />
-	<import value="net.sf.jasperreports.engine.*" />
-	<import value="net.sf.jasperreports.engine.data.*" />
-
-	<parameter name="TITLE" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["titolo"]]></defaultValueExpression>
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="notesPrintedTemplate" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="TITLE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["titolo"]]></defaultValueExpression>
 	</parameter>
-	<queryString><![CDATA[SELECT DISTINCT MIN(VALUE_ID) AS C FROM SBI_DOMAINS]]></queryString>
-
+	<queryString>
+		<![CDATA[SELECT DISTINCT MIN(VALUE_ID) AS C FROM SBI_DOMAINS]]>
+	</queryString>
 	<field name="content" class="java.lang.Object">
 		<fieldDescription><![CDATA[content]]></fieldDescription>
 	</field>
@@ -40,181 +23,91 @@
 	<field name="creationDate" class="java.util.Date">
 		<fieldDescription><![CDATA[creationDate]]></fieldDescription>
 	</field>
-
-		<background>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</background>
-		<title>
-			<band height="36"  isSplitAllowed="false" >
-				<line direction="TopDown">
-					<reportElement
-						x="0"
-						y="35"
-						width="534"
-						height="0"
-						key="line"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="0"
-						y="3"
-						width="534"
-						height="0"
-						key="line"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="21"
-						y="10"
-						width="481"
-						height="19"
-						key="textField-2"/>
-					<box></box>
-					<textElement textAlignment="Center">
-						<font pdfFontName="Helvetica-Bold" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{TITLE}]]></textFieldExpression>
-				</textField>
-			</band>
-		</title>
-		<pageHeader>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</pageHeader>
-		<columnHeader>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</columnHeader>
-		<detail>
-			<band height="170"  isSplitAllowed="false" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="139"
-						y="86"
-						width="356"
-						height="59"
-						key="textField"/>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[it.eng.spagobi.analiticalmodel.document.utils.Html2String.convertHtml2String($F{content}!=null ? new String((byte[])$F{content}) : "null")]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						x="13"
-						y="86"
-						width="117"
-						height="23"
-						key="staticText-2"/>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="36" splitType="Prevent">
+			<line>
+				<reportElement key="line" x="0" y="35" width="534" height="1"/>
+			</line>
+			<line>
+				<reportElement key="line" x="0" y="3" width="534" height="1"/>
+			</line>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-2" x="21" y="10" width="481" height="19"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{TITLE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="170" splitType="Prevent">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement key="textField" x="139" y="86" width="356" height="72"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[it.eng.spagobi.analiticalmodel.document.utils.Html2String.convertHtml2String($F{content}!=null ? new String((byte[])$F{content}) : "null")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-2" x="13" y="86" width="117" height="23"/>
+				<textElement/>
 				<text><![CDATA[Note:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="14"
-						y="13"
-						width="112"
-						height="21"
-						key="staticText-3"/>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-3" x="14" y="13" width="112" height="21"/>
+				<textElement/>
 				<text><![CDATA[Owner:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="139"
-						y="17"
-						width="347"
-						height="18"
-						key="textField"/>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{owner}== null) ? "Not Defined" : $F{owner}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="139"
-						y="48"
-						width="294"
-						height="18"
-						key="textField"/>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{creationDate}!=null ? $F{creationDate}.toString() : ""]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						x="13"
-						y="48"
-						width="117"
-						height="23"
-						key="staticText-4"/>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="139" y="17" width="347" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{owner}== null) ? "Not Defined" : $F{owner}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="139" y="48" width="294" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{creationDate}!=null ? $F{creationDate}.toString() : ""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-4" x="13" y="48" width="117" height="23"/>
+				<textElement/>
 				<text><![CDATA[Creation Date]]></text>
-				</staticText>
-				<line direction="TopDown">
-					<reportElement
-						x="0"
-						y="157"
-						width="534"
-						height="0"
-						key="line-1"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-			</band>
-		</detail>
-		<columnFooter>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</columnFooter>
-		<pageFooter>
-			<band height="17"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="0"
-						y="0"
-						width="100"
-						height="10"
-						key="textField"/>
-					<box></box>
-					<textElement>
-						<font size="5"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="433"
-						y="0"
-						width="100"
-						height="10"
-						key="textField-1"/>
-					<box></box>
-					<textElement textAlignment="Right">
-						<font size="5"/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
-				</textField>
-			</band>
-		</pageFooter>
-		<summary>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</summary>
+			</staticText>
+			<line>
+				<reportElement key="line-1" positionType="FixRelativeToBottom" x="0" y="169" width="534" height="1"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="17" splitType="Stretch">
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="0" y="0" width="100" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-1" x="433" y="0" width="100" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
 </jasperReport>

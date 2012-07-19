@@ -8,11 +8,10 @@ package it.eng.spagobi.analiticalmodel.execution.service;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjNote;
-import it.eng.spagobi.analiticalmodel.document.dao.IObjNoteDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.BIObjectNotesManager;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 
@@ -26,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringBufferInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -66,20 +66,32 @@ public class PrintNotesAction extends AbstractSpagoBIAction {
 
 	public void doService() {
 		logger.debug("IN");
-		IEngUserProfile profile = (IEngUserProfile) this.getUserProfile();
+		
 		ExecutionInstance executionInstance;
 		executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 		String executionIdentifier=new BIObjectNotesManager().getExecutionIdentifier(executionInstance.getBIObject());
 		Integer biobjectId = executionInstance.getBIObject().getId();
-		List objNoteList=null;
+		List globalObjNoteList=null;
 		try {
-			objNoteList=DAOFactory.getObjNoteDAO().getListExecutionNotes(biobjectId, executionIdentifier);
+			globalObjNoteList=DAOFactory.getObjNoteDAO().getListExecutionNotes(biobjectId, executionIdentifier);
 		} catch (EMFUserError e1) {
 			logger.error("Error in retrieving obj notes",e1);
 			return;
 		} catch (Exception e1) {
 			logger.error("Error in retrieving obj notes",e1);
 			return;
+		}
+		//mantains only the personal notes and others one only if they have PUBLIC status
+		List objNoteList=new ArrayList();
+		UserProfile profile = (UserProfile) this.getUserProfile();
+		String userId = (String)profile.getUserId();
+		for (int i=0, l=globalObjNoteList.size(); i<l; i++){
+			ObjNote objNote = (ObjNote)globalObjNoteList.get(i);
+			if (objNote.getIsPublic()){
+				objNoteList.add(objNote);
+			}else if(objNote.getOwner().equalsIgnoreCase(userId)){
+				objNoteList.add(objNote);			
+			}
 		}
 
 		String outputType = "PDF";
