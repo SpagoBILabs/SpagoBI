@@ -80,7 +80,7 @@ public class DeleteViewpointsAction extends AbstractSpagoBIAction {
 			for(int i = 0; i < ids.length; i++) {
 				try {
 					viewpointDAO = DAOFactory.getViewpointDAO();
-					viewpoint =  viewpointDAO.loadViewpointByNameAndBIObjectId( ids[i] , biobjectId);
+					viewpoint =  viewpointDAO.loadViewpointByID( Integer.valueOf(ids[i]));					
 					Assert.assertNotNull(viewpoint, "Viewpoint [" + ids[i] + "] does not exist on the database");
 					
 					
