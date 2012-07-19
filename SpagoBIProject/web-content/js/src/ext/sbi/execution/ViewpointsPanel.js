@@ -53,8 +53,8 @@ Sbi.execution.ViewpointsPanel = function(config, doc) {
 	 
     this.store = new Ext.data.JsonStore({
         root: 'results'
-        , idProperty: 'name'
-        , fields: ['name', 'owner', 'description', 'scope', 
+        , idProperty: 'id'
+        , fields: ['id', 'name', 'owner', 'description', 'scope', 
                    {name:'creationDate', type:'date', dateFormat: Sbi.config.clientServerTimestampFormat}, 
                    'parameters'
                    ]
@@ -107,7 +107,8 @@ Sbi.execution.ViewpointsPanel = function(config, doc) {
 	var c = Ext.apply({}, config, {
         store: this.store
         , columns: [
-              {header: LN('sbi.execution.viewpoints.name'), sortable: true, width: 50, dataIndex: 'name'}
+              {id: "id", header: "Id", sortable: true, dataIndex: 'id',  hidden: true}
+            , {header: LN('sbi.execution.viewpoints.name'), sortable: true, width: 50, dataIndex: 'name'}
             , {header: LN('sbi.execution.viewpoints.description'), sortable: true, width: 50, dataIndex: 'description'}
             , {header: LN('sbi.execution.viewpoints.owner'), sortable: true, width: 50,dataIndex: 'owner'}
             , {header: LN('sbi.execution.viewpoints.scope'), sortable: true, width: 50, dataIndex: 'scope'}
@@ -183,7 +184,7 @@ Ext.extend(Sbi.execution.ViewpointsPanel, Ext.grid.GridPanel, {
 		if (recordsSelected && recordsSelected.length > 0) {
 			var ids = new Array();
 			for (var count = 0; count < recordsSelected.length; count++) {
-				ids[count] = recordsSelected[count].get('name');
+				ids[count] = recordsSelected[count].get('id');
 			}
 			var idsJoined = ids.join(',');
 			
