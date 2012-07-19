@@ -61,34 +61,36 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 	//  -- public methods ---------------------------------------------------------
     
 	, addStore: function(s) {
-		s.ready = s.ready || false;
-		s.storeType = s.storeType || 'ext';
-		s.filterPlugin = new Sbi.console.StorePlugin({store: s});
-		
-		this.stores.add(s);
-				
-		
-		if(s.refreshTime) {
-			var task = {
-				run: function(){
-					//if the console is hidden doesn't refresh the datastore
-					if(s.stopped) return;
+		if (s.dsLabel !== undefined){
+			s.ready = s.ready || false;
+			s.storeType = s.storeType || 'ext';
+			s.filterPlugin = new Sbi.console.StorePlugin({store: s});
+			
+			this.stores.add(s);
 					
-					// if store is paging...
-					if(s.lastParams) {
-						// ...force remote reload
-						delete s.lastParams;
-					}
-					s.load({
-						params: s.pagingParams || {}, 
-						callback: function(){this.ready = true;}, 
-						scope: s, 
-						add: false
-					});
-				},
-				interval: s.refreshTime * 1000 //1 second
+			
+			if(s.refreshTime) {
+				var task = {
+					run: function(){
+						//if the console is hidden doesn't refresh the datastore
+						if(s.stopped) return;
+						
+						// if store is paging...
+						if(s.lastParams) {
+							// ...force remote reload
+							delete s.lastParams;
+						}
+						s.load({
+							params: s.pagingParams || {}, 
+							callback: function(){this.ready = true;}, 
+							scope: s, 
+							add: false
+						});
+					},
+					interval: s.refreshTime * 1000 //1 second
+				};
+				Ext.TaskMgr.start(task);
 			}
-			Ext.TaskMgr.start(task);
 		}
 	}
 
@@ -105,18 +107,20 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 			s.stopped = value;
 		} else { // if a storeId is NOT defined, stopRefresh on ALL stores
 			for(var i = 0, l = this.stores.length, s; i < l; i++) {
-				var s = this.stores.get(i);
-				s.stopped = value;
+				var s = this.stores.get(i);		
+				if (s.dsLabel !== undefined){
+					s.stopped = value;					
+				}
 			}
 		}
 	}
 	
 	//refresh All stores of the store manager managed
-	, forceRefresh: function(){
+	, forceRefresh: function(){		
 		for(var i = 0, l = this.stores.length; i < l; i++) {
-			var s = this.getStore(i);
+			var s = this.getStore(i);			
 			//s.stopped = false; 
-			if (s !== undefined && s.dsLabel !== undefined && s.dsLabel !== 'testStore' && !s.stopped){				
+			if (s !== undefined && s.dsLabel !== undefined && s.dsLabel !== 'testStore' && !s.stopped){					
 				s.load({
 					params: s.pagingParams || {},
 					callback: function(){this.ready = true;}, 
