@@ -11,9 +11,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/palo-gwt-core.jar" sourcepath="/palo-gwt-core"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/paloapi.jar" sourcepath="/paloapi"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/paloviewapi.jar" sourcepath="/paloviewapi"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/com.tensegrity.palo.xmla"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/palo"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/palo-gwt-widgets"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spago-core-2.2.0.jar"/>
 	<classpathentry kind="lib" path="E:/progetti/SpagoBI/SpagoBI-DEMO/lib/servlet-api.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtils"/>
