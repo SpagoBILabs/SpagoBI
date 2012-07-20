@@ -38,11 +38,13 @@ public class EventServiceImpl extends AbstractServiceImpl {
 	Monitor monitor =MonitorFactory.start("spagobi.service.event.fireEvent");
 	try {
 	    validateTicket(token, user);
+	    this.setTenantByUserId(user);
 	    return fireEvent(user, description, parameters,rolesHandler, presentationHandler);
 	} catch (SecurityException e) {
 	    logger.error("SecurityException", e);
 	    return null;
 	} finally {
+		this.unsetTenant();
 	    monitor.stop();
 	    logger.debug("OUT");
 	}	
@@ -67,7 +69,7 @@ public class EventServiceImpl extends AbstractServiceImpl {
 	    }
 	    return returnValue;
 	} catch (Exception e) {
-		logger.error("TalendRolesHandler not found",e);
+		logger.error("Impossible to fire event [" + description + "]",e);
 
 	}finally{
 	    logger.debug("OUT");
