@@ -85,7 +85,7 @@
 	
     <filter-mapping>
     	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/WekaServlet/*</url-pattern>
+    	<url-pattern>/WekaEngineStartServlet/*</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
@@ -132,7 +132,7 @@
     
     <servlet-mapping>
         <servlet-name>WekaEngineStartServlet</servlet-name>
-        <url-pattern>/WekaServlet</url-pattern>
+        <url-pattern>/WekaEngineStartServlet</url-pattern>
     </servlet-mapping>
     
     <servlet-mapping>
