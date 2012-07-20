@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtils"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtilsJSON"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

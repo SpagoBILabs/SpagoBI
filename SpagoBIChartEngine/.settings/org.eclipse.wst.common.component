@@ -6,6 +6,9 @@
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtils/SpagoBIUtils">
 <dependency-type>uses</dependency-type>
 </dependent-module>
+        <dependent-module archiveName="SpagoBIUtilsJSON.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtilsJSON/SpagoBIUtilsJSON">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
 <property name="context-root" value="SpagoBIChartngine"/>
 <property name="java-output-path"/>
 </wb-module>
