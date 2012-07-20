@@ -35,7 +35,7 @@ public class WekaEngineStartServlet extends AbstractEngineStartServlet {
 	
 	public void doService( EngineStartServletIOManager servletIOManager ) throws SpagoBIEngineException {
 		
-		String responseMsg;
+		String responseMessage;
 		WekaEngineInstance engineInstance;
 		Map env;
 		String template;
@@ -45,63 +45,64 @@ public class WekaEngineStartServlet extends AbstractEngineStartServlet {
 		
 		try {
 			
-			
 			env = servletIOManager.getEnv();
 			template = servletIOManager.getTemplateAsString();
 					
-			responseMsg = servletIOManager.getLocalizedMessage("weka.correct.execution");
-			engineInstance = null;
-					
+			responseMessage = servletIOManager.getLocalizedMessage("weka.execution.started");
+			engineInstance = null;		
+			
 			try {
 				engineInstance = WekaEngine.createInstance(template, env);
 				logger.debug("Engine instance succesfully created");	
 			} catch (Exception e) {
 				logger.error("Impossible to create engine instance", e);
-				responseMsg = servletIOManager.getLocalizedMessage("an.unpredicted.error.occured");
+				responseMessage = servletIOManager.getLocalizedMessage("weka.error.engine.instatiation");
 			}
 			
 			if(engineInstance != null) {
 				try {
-					//engineInstance.run();
 					RuntimeRepository rt = new RuntimeRepository();
 					rt.runEngineInstance(engineInstance);
 					logger.debug("Engine instance succesfully started");
 				} catch (Exception e) {
 					logger.error("Impossible to start-up engine instance", e);
-					responseMsg = servletIOManager.getLocalizedMessage("an.unpredicted.error.occured");
+					responseMessage = servletIOManager.getLocalizedMessage("weka.error.engine.startup");
 				}
 			}
 	
-			// prepare response
-			StringBuffer buffer = new StringBuffer();
-			buffer.append("<html>\n");
-			buffer.append("<head><title>Service Response</title></head>\n");
-			buffer.append("<body>");
-			buffer
-					.append("<p style=\"text-align:center;font-size:13pt;font-weight:bold;color:#000033;\">");
-			buffer.append(responseMsg);
-			buffer.append("</p>");
-			buffer.append("</body>\n");
-			buffer.append("</html>\n");
-	
-			servletIOManager.getResponse().setContentLength(buffer.length());
-			servletIOManager.getResponse().setContentType("text/html");
-			PrintWriter writer;
-			
-			// flush response
-			try {
-				writer = servletIOManager.getResponse().getWriter();
-				writer.print(buffer.toString());
-				writer.flush();
-			} catch (IOException e) {
-				throw new SpagoBIRuntimeException("Impossible to write back response to client", e);
-			}
+		
+			writebackResponseToClient(servletIOManager, responseMessage);
 		
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An unpredicted error occurred while executing engine", t);
 		} finally {
 			logger.info("OUT");
 		}
+	}
+	
+	private void writebackResponseToClient(EngineStartServletIOManager servletIOManager, String responseMessage) {
+		String htmlResponse = getHtmlResponseMessage(responseMessage);
+		servletIOManager.getResponse().setContentLength(htmlResponse.length());
+		servletIOManager.getResponse().setContentType("text/html");
+		try {
+			PrintWriter writer = servletIOManager.getResponse().getWriter();
+			writer.print( htmlResponse );
+			writer.flush();
+		} catch (IOException e) {
+			throw new SpagoBIRuntimeException("Impossible to write back response to client", e);
+		}
+	}
+	private String getHtmlResponseMessage(String message) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<html>\n");
+		buffer.append("<head><title>Service Response</title></head>\n");
+		buffer.append("<body>");
+		buffer.append("<p style=\"text-align:center;font-size:13pt;font-weight:bold;color:#000033;\">");
+		buffer.append(message);
+		buffer.append("</p>");
+		buffer.append("</body>\n");
+		buffer.append("</html>\n");
 		
+		return buffer.toString();
 	}
 }

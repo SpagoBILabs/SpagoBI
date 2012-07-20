@@ -5,6 +5,9 @@
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/overrides"/>
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/test"/>
+        <dependent-module archiveName="SpagoBIUtils.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtils/SpagoBIUtils">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
 <property name="context-root" value="SpagoBIWekaEngine"/>
 <property name="java-output-path" value="build/classes"/>
 </wb-module>
