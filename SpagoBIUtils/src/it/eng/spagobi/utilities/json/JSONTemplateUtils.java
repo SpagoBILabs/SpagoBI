@@ -351,7 +351,8 @@ public class JSONTemplateUtils {
 		if(value != null){
 			try{
 				//checks if the value is a number
-				finalValue =Long.valueOf(value);
+				//finalValue =Long.valueOf(value);
+				finalValue = Double.valueOf(value);
 			}catch (Exception e){
 					//checks if the value is a boolean
 					if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false") //boolean
@@ -422,8 +423,9 @@ public class JSONTemplateUtils {
 			}else{				
 				//attribute with list of values
 				if (sb.getKey().endsWith("_list")){
-					String originalKey = sb.getKey().replace("_list","");
-					String originalValue = ((String)subValue).replace("'", "");
+					String originalKey = sb.getKey().replace("_list","");					
+					//String originalValue = ((String)subValue).replace("'", "");
+					String originalValue = getListOfValues(((String)subValue).replace("'", ""));
 					toReturn.write("      " + originalKey + ": [" + originalValue + "] \n" );	
 				}
 				else{
@@ -434,6 +436,29 @@ public class JSONTemplateUtils {
 		}
 		return toReturn;
 	}
+	
+	/**
+	 * Splits the list of values and add ' around the single value. Necessary with Jackson library!
+	 * @param string with the original list of values
+	 * @param toReturn
+	 * @return
+	 * @throws IOException
+	 */
+	private String getListOfValues(String source)throws IOException{
+		String toReturn = "";
+		if (source == null) return source;
+	    String[] values = source.split(",");
+	    for (int i=0, l= values.length ; i<l; i++){
+	    	//add ' only if missing
+	    	if (values[i].startsWith("'")) continue;
+	    	toReturn += "'" + values[i] + "'";
+	    	if (i<(l-1)){
+	    		toReturn += ",";
+	    	}
+	    }
+		return toReturn;
+	}
+	
 	private String convertKeyString(String xmlTag){
 		String jsonKey = xmlTag.toLowerCase();
 		StringBuffer sb = new StringBuffer();

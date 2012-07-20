@@ -136,7 +136,7 @@ public class ObjectUtils {
 		try {
 			toReturn = new JSONObject( toString(o) );
 		} catch (Exception e) {
-			logger.warn("Impossible to convert input object " + o 
+			logger.error("Impossible to convert input object " + o 
 					+ " whose value is " + toString(o)
 					+ " to JSONObject", e);
 		}
