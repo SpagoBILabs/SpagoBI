@@ -116,7 +116,7 @@ public class LoginAction extends AbstractEngineAction{
 				
 				// Propagate user profile
 				getSessionContainer().getPermanentContainer().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
-				writeBackToClient(new JSONSuccess("userhome"));
+				writeBackToClient(new JSONSuccess("'userhome'"));
 				
 
 
