@@ -3,6 +3,9 @@
     <wb-module deploy-name="SpagoBIJPivotEngine">
         <wb-resource deploy-path="/" source-path="/WebContent"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/JavaSource"/>
+        <dependent-module archiveName="SpagoBIUtils.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtils/SpagoBIUtils">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="SpagoBIJPivotEngine"/>
         <property name="java-output-path" value="build/classes"/>
     </wb-module>
