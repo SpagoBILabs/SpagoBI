@@ -50,7 +50,7 @@ public class SbiUserJSONSerializer implements Serializer {
 			result.put(PWD, sbiUser.getPassword());
 			
 			//roles
-			Set<SbiExtUserRoles> userRoles = sbiUser.getSbiExtUserRoleses();
+			Set<SbiExtRoles> userRoles = sbiUser.getSbiExtUserRoleses();
 			Iterator itRoles = userRoles.iterator();
 			JSONArray rolesJSON = new JSONArray();
 			rolesJSON.put("roles");

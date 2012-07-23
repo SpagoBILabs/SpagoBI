@@ -60,7 +60,10 @@
         </property>
         <property name="isAbleToDoMassiveExport" type="boolean">
             <column name="DO_MASSIVE_EXPORT" />
-        </property>        
+        </property>
+        <property name="isAbleToManageUsers" type="boolean">
+            <column name="MANAGE_USERS" />
+        </property> 
         <set name="sbiFuncRoles" inverse="true">
             <key>
                 <column name="ROLE_ID" not-null="true" />

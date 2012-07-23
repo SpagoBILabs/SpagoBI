@@ -7,6 +7,7 @@ package it.eng.spagobi.profiling.bean;
 
 // Generated 22-dic-2009 14.20.04 by Hibernate Tools 3.2.4.GA
 
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 import java.util.Date;
@@ -27,7 +28,7 @@ public class SbiUser extends SbiHibernateModel{
 	private Boolean flgPwdBlocked;
 	private Date dtLastAccess;
 	
-	private Set<SbiExtUserRoles> sbiExtUserRoleses = new HashSet<SbiExtUserRoles>(
+	private Set<SbiExtRoles> sbiExtUserRoleses = new HashSet<SbiExtRoles>(
 			0);
 	private Set<SbiUserAttributes> sbiUserAttributeses = new HashSet<SbiUserAttributes>(
 			0);
@@ -43,7 +44,7 @@ public class SbiUser extends SbiHibernateModel{
 	public SbiUser(int id, String userId, String password, String fullName,
 			Date dtPwdBegin, Date dtPwdEnd, Boolean flgPwdBlocked,
 			Date dtLastAccess,
-			Set<SbiExtUserRoles> sbiExtUserRoleses,
+			Set<SbiExtRoles> sbiExtUserRoleses,
 			Set<SbiUserAttributes> sbiUserAttributeses) {
 		this.id = id;
 		this.userId = userId;
@@ -121,11 +122,11 @@ public class SbiUser extends SbiHibernateModel{
 		this.dtLastAccess = dtLastAccess;
 	}
 	
-	public Set<SbiExtUserRoles> getSbiExtUserRoleses() {
+	public Set<SbiExtRoles> getSbiExtUserRoleses() {
 		return this.sbiExtUserRoleses;
 	}
 
-	public void setSbiExtUserRoleses(Set<SbiExtUserRoles> sbiExtUserRoleses) {
+	public void setSbiExtUserRoleses(Set<SbiExtRoles> sbiExtUserRoleses) {
 		this.sbiExtUserRoleses = sbiExtUserRoleses;
 	}
 

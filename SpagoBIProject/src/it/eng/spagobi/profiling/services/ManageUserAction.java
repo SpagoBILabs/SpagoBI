@@ -6,25 +6,41 @@
 package it.eng.spagobi.profiling.services;
 
 
+import it.eng.qbe.query.CriteriaConstants;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.dao.PagedList;
+import it.eng.spagobi.dao.QueryFilters;
+import it.eng.spagobi.dao.QueryStaticFilter;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
+import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
+import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.profiling.bean.SbiUserAttributes;
+import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
 import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.profiling.dao.filters.FinalUsersFilter;
 import it.eng.spagobi.security.Password;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -61,7 +77,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static Integer START_DEFAULT = 0;
-	public static Integer LIMIT_DEFAULT = 16;
+	public static Integer LIMIT_DEFAULT = 15;
 	public static String FILTERS = "FILTERS";
 	
 	@Override
@@ -71,57 +87,22 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 		try {
 			userDao = DAOFactory.getSbiUserDAO();
 			userDao.setUserProfile(getUserProfile());
-		} catch (EMFUserError e1) {
-			logger.error(e1.getMessage(), e1);
-			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
+		} catch (EMFUserError e) {
+			logger.error("Error occurred while initializating DAO", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred while initializating DAO", e);
 		}
-		Locale locale = getLocale();
 
 		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
 		if (serviceType != null && serviceType.equalsIgnoreCase(USERS_LIST)) {
-			
-			try {				
-				Integer start = getAttributeAsInteger( START );
-				Integer limit = getAttributeAsInteger( LIMIT );
-				
-				if(start==null){
-					start = START_DEFAULT;
-				}
-				if(limit==null){
-					limit = LIMIT_DEFAULT;
-				}
-
-				Integer totalResNum = userDao.countUsers();
-
-				JSONObject filtersJSON = null;
-				List<UserBO> users = null;
-				if(this.requestContainsAttribute( FILTERS ) ) {
-					filtersJSON = getAttributeAsJSONObject( FILTERS );
-					String hsql = filterList(filtersJSON);
-					users = userDao.loadSbiUserListFiltered(hsql, start, limit);
-				}else{//not filtered
-					users = userDao.loadPagedUsersList(start, limit);
-				}
-				
-				
-				
-				logger.debug("Loaded users list");
-				JSONArray usersJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(users,	locale);
-				JSONObject usersResponseJSON = createJSONResponseUsers(usersJSON, totalResNum);
-
-				writeBackToClient(new JSONSuccess(usersResponseJSON));
-
-			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving users", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving users", e);
-			}
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(USER_INSERT)) {
+			getUsersList(userDao);
+		} else if (serviceType != null
+				&& serviceType.equalsIgnoreCase(USER_INSERT)) {
 			saveUser(userDao);
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(USER_DELETE)) {
+		} else if (serviceType != null
+				&& serviceType.equalsIgnoreCase(USER_DELETE)) {
 			deleteUser(userDao);
-		}else if(serviceType == null){
+		} else if (serviceType == null) {
 			setAttributesAndRolesInResponse();
 		}
 		logger.debug("OUT");
@@ -129,70 +110,168 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 	}
 
 
-	protected void saveUser(ISbiUserDAO userDao) {
-		Integer id = getAttributeAsInteger(ID);
-		String userId = getAttributeAsString(USER_ID);
-		String fullName = getAttributeAsString(FULL_NAME);
-		String password = getAttributeAsString(PASSWORD);
-		JSONArray rolesJSON = getAttributeAsJSONArray(ROLES);
-		JSONArray attributesJSON = getAttributeAsJSONArray(ATTRIBUTES);
+	protected void getUsersList(ISbiUserDAO userDao) {
 		
-		if (userId == null) {
-			logger.error("User name missing");
-			throw new SpagoBIServiceException(SERVICE_NAME,
-					"User name missing");
-		}
-		
-		SbiUser user = new SbiUser();
-		user.setUserId(userId);
-		user.setFullName(fullName);
-		if (password != null && password.length() > 0) {
-			try {
-				user.setPassword(Password.encriptPassword(password));
-			} catch (Exception e) {
-				logger.error("Impossible to encrypt Password", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Impossible to encrypt Password", e);
-			}
-		}
+		try {				
+			Integer start = this.getStart();
+			logger.debug("Start : " + start );
+			Integer limit = this.getLimit();
+			logger.debug("Limit : " + limit );
 
-		if (id != null) {
-			user.setId(id);
+			QueryFilters filters = this.getQueryFilter();
+			PagedList<UserBO> usersPagedList = userDao.loadUsersPagedList( filters, start, limit );
+			logger.debug("Loaded users list");
+
+			JSONObject usersResponseJSON = createJSONResponseUsers(usersPagedList);
+			writeBackToClient(new JSONSuccess(usersResponseJSON));
+		} catch (Throwable e) {
+			logger.error("Exception occurred while retrieving users", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Exception occurred while retrieving users", e);
 		}
-		
-		HashMap<Integer, String> attrList = null;
-		List rolesList = null;
+	}
+
+
+	private Integer getStart() {
+		Integer start = getAttributeAsInteger( START );
+		if (start == null) {
+			start = START_DEFAULT;
+		}
+		return start;
+	}
+	
+	private Integer getLimit() {
+		Integer limit = getAttributeAsInteger( LIMIT );
+		if (limit == null) {
+			limit = LIMIT_DEFAULT;
+		}
+		return limit;
+	}
+
+
+	private QueryFilters getQueryFilter() throws Exception {
+		QueryFilters toReturn = new QueryFilters();
+		// static filter by list's toolbar
+		QueryStaticFilter filter = this.getStaticFilter();
+		if (filter != null) {
+			toReturn.add(filter);
+		}
+		IEngUserProfile profile = this.getUserProfile();
+		if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT)) {
+			// administrator: he can see every user
+		} else {
+			// user with FINAL_USERS_MANAGEMENT (users with neither
+			// FINAL_USERS_MANAGEMENT nor PROFILE_MANAGEMENT are blocked by the
+			// business_map.xml therefore they cannot execute this action)
+			toReturn.add(new FinalUsersFilter());
+		}
+		return toReturn;
+	}
+
+
+	protected void saveUser(ISbiUserDAO userDao) {
 		try {
-			if (attributesJSON != null) {
-				attrList = deserializeAttributesJSONArray(attributesJSON);
+			Integer id = getAttributeAsInteger(ID);
+			if (id != null && id > 0) {
+				// modifying an existing user.
+				// We must load user to check if user belongs to the right tenant,
+				// since Hibernate 3.6 puts tenant filter on select, not on delete 
+				SbiUser user = userDao.loadSbiUserById(id);
+				if (user != null) {
+					this.checkIfCurrentUserIsAbleToSaveOrModifyUser(user);
+				} else {
+					throw new SpagoBIServiceException(
+							SERVICE_NAME,
+							"User with id = "
+									+ user
+									+ " does not exists or he belongs to another tenant");
+				}
 			}
-			if (rolesJSON != null) {
-				rolesList = deserializeRolesJSONArray(rolesJSON);
+			
+			String userId = getAttributeAsString(USER_ID);
+			String fullName = getAttributeAsString(FULL_NAME);
+			String password = getAttributeAsString(PASSWORD);
+			
+			if (userId == null) {
+				logger.error("User name missing");
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"User name missing");
 			}
-		} catch (JSONException e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while deserializing attributes and roles", e);
+			
+			SbiUser user = new SbiUser();
+			if (id != null) {
+				user.setId(id);
+			}
+			user.setUserId(userId);
+			user.setFullName(fullName);
+			if (password != null && password.length() > 0) {
+				try {
+					user.setPassword(Password.encriptPassword(password));
+				} catch (Exception e) {
+					logger.error("Impossible to encrypt Password", e);
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Impossible to encrypt Password", e);
+				}
+			}
+
+			try {
+				deserializeAttributesJSONArray(user);
+				deserializeRolesJSONArray(user);
+			} catch (JSONException e) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while deserializing attributes and roles", e);
+			}
+			
+			this.checkIfCurrentUserIsAbleToSaveOrModifyUser(user);
+			
+			// check if user id is valid: in case it is not, an exception will be thrown
+			checkUserId(userId, id);
+			
+			try {
+				id = userDao.fullSaveOrUpdateSbiUser(user);
+				logger.debug("User updated or Inserted");
+			} catch (Throwable t) {
+				logger.error("Exception occurred while saving user", t);
+				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while saving user", t);
+			}
+			
+			try {
+				JSONObject attributesResponseSuccessJSON = new JSONObject();
+				attributesResponseSuccessJSON.put("success", true);
+				attributesResponseSuccessJSON.put("responseText",
+						"Operation succeded");
+				attributesResponseSuccessJSON.put("id", id);
+				writeBackToClient(new JSONSuccess(attributesResponseSuccessJSON));
+			} catch (Exception e) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client", e);
+			}
+		
+		} catch (SpagoBIServiceException e) {
+			throw e;
+		} catch (Throwable e) {
+			logger.error("Exception occurred while saving user", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Exception occurred while saving user", e);
 		}
-		
-		// check if user id is valid: in case it is not, an exception will be thrown
-		checkUserId(userId, id);
-		
-		try {
-			id = userDao.fullSaveOrUpdateSbiUser(user, rolesList, attrList);
-			logger.debug("User updated or Inserted");
-		} catch (Throwable t) {
-			logger.error("Exception occurred while saving user", t);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while saving user", t);
-		}
-		
-		try {
-			JSONObject attributesResponseSuccessJSON = new JSONObject();
-			attributesResponseSuccessJSON.put("success", true);
-			attributesResponseSuccessJSON.put("responseText",
-					"Operation succeded");
-			attributesResponseSuccessJSON.put("id", id);
-			writeBackToClient(new JSONSuccess(attributesResponseSuccessJSON));
-		} catch (Exception e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client", e);
+	}
+
+
+	protected void checkIfCurrentUserIsAbleToSaveOrModifyUser(SbiUser user) throws EMFUserError,
+			EMFInternalError {
+		UserProfile profile = (UserProfile) this.getUserProfile();
+		if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT)) {
+			// administrator: he can modify every user
+		} else {
+			// user with FINAL_USERS_MANAGEMENT (users with neither
+			// FINAL_USERS_MANAGEMENT nor PROFILE_MANAGEMENT are blocked by the
+			// business_map.xml therefore they cannot execute this action)
+			if (!this.isFinalUser(user)) {
+				logger.error("User [" + profile.getUserId()
+						+ "] cannot save or modify user [" + user.getUserId()
+						+ "] since the latter is not a final user");
+				throw new SpagoBIServiceException(
+						SERVICE_NAME,
+						"Cannot save or modify user");
+			}
 		}
 	}
 
@@ -200,9 +279,37 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 	protected void deleteUser(ISbiUserDAO userDao) {
 		Integer id = getAttributeAsInteger(ID);
 		try {
-			userDao.deleteSbiUserById(id);
-			logger.debug("User deleted");
-			writeBackToClient(new JSONAcknowledge("Operation succeded"));
+			UserProfile profile = (UserProfile) this.getUserProfile();
+			// we must load user to check if user belongs to the right tenant,
+			// since Hibernate 3.6 puts tenant filter on select, not on delete 
+			SbiUser user = userDao.loadSbiUserById(id);
+			if (user != null) {
+				if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT)) {
+					// administrator: he can delete every user
+				} else {
+					// user with FINAL_USERS_MANAGEMENT (users with neither
+					// FINAL_USERS_MANAGEMENT nor PROFILE_MANAGEMENT are blocked by the
+					// business_map.xml therefore they cannot execute this action)
+					// He can delete only final users
+					if (!this.isFinalUser(user)) {
+						logger.error("User [" + profile.getUserId()
+								+ "] cannot delete user [" + user.getUserId()
+								+ "]  since it is not a final user");
+						throw new SpagoBIServiceException(
+								SERVICE_NAME,
+								"Cannot delete user");
+					}
+				}
+				userDao.deleteSbiUserById(id);
+				logger.debug("User deleted");
+				writeBackToClient(new JSONAcknowledge("Operation succeded"));
+			} else {
+				throw new SpagoBIServiceException(
+						SERVICE_NAME,
+						"User with id = "
+								+ id
+								+ " does not exists or it belongs to another tenant");
+			}
 		} catch (Throwable e) {
 			logger.error("Exception occurred while deleting user",
 					e);
@@ -212,18 +319,58 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 	}
 
 
+	private boolean isFinalUser(SbiUser user) throws EMFUserError {
+		boolean toReturn = true;
+		Set<SbiExtRoles> roles = user.getSbiExtUserRoleses();
+		Iterator<SbiExtRoles> it = roles.iterator();
+		while (it.hasNext()) {
+			SbiExtRoles role = it.next();
+			Integer roleId = role.getExtRoleId();
+			Role roleBO = DAOFactory.getRoleDAO().loadByID(roleId);
+			if (!roleBO.getRoleTypeCD().equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_USER)) {
+				toReturn = false;
+				break;
+			}
+		}
+		return toReturn;
+	}
+
+
 	protected void setAttributesAndRolesInResponse() {
 		try {
 			List<SbiAttribute> attributes = DAOFactory.getSbiAttributeDAO()
 					.loadSbiAttributes();
-			List<SbiExtRoles> roles = DAOFactory.getRoleDAO().loadAllRoles();
+			List<Role> allRoles = DAOFactory.getRoleDAO().loadAllRoles();
+			List<Role> roles = null;
+			IEngUserProfile profile = this.getUserProfile();
+			if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT)) {
+				// administrator: he can see every role
+				roles = allRoles;
+			} else {
+				// user with FINAL_USERS_MANAGEMENT (users with neither
+				// FINAL_USERS_MANAGEMENT nor PROFILE_MANAGEMENT are blocked by the
+				// business_map.xml therefore they cannot execute this action)
+				roles = this.filterRolesListForFinalUser(allRoles);
+			}
 			getSessionContainer().setAttribute("attributesList", attributes);
 			getSessionContainer().setAttribute("rolesList", roles);
-		} catch (EMFUserError e) {
-			logger.error(e.getMessage(), e);
+		} catch (Exception e) {
+			logger.error("An error occurred when retrieving roles list", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
-					"Exception retrieving role types", e);
+					"An error occurred when retrieving roles list", e);
 		}
+	}
+
+
+	private List<Role> filterRolesListForFinalUser(
+			List<Role> allRoles) {
+		List<Role> toReturn = new ArrayList<Role>();
+		for (Role role : allRoles) {
+			if (role.getRoleTypeCD().equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_USER)) {
+				toReturn.add(role);
+			}
+		}
+		return toReturn;
 	}
 
 
@@ -242,62 +389,79 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 	}
 
 
-	/**
-	 * Creates a json array with children users informations
-	 * 
-	 * @param rows
-	 * @return
-	 * @throws JSONException
-	 */
-	private JSONObject createJSONResponseUsers(JSONArray rows, Integer totalResNumber)
-			throws JSONException {
-		JSONObject results;
-
-		results = new JSONObject();
-		results.put("total", totalResNumber);
+	private JSONObject createJSONResponseUsers(PagedList<UserBO> usersPagedList)
+			throws JSONException, SerializationException {
+		Locale locale = getLocale();
+		JSONArray usersJSON = (JSONArray) SerializerFactory.getSerializer(
+				"application/json").serialize(usersPagedList.getResults(),
+				locale);
+		JSONObject results = new JSONObject();
+		results.put("total", usersPagedList.getTotal());
 		results.put("title", "Users");
-		results.put("rows", rows);
+		results.put("rows", usersJSON);
 		return results;
 	}
 	
-	private List deserializeRolesJSONArray(JSONArray rows) throws JSONException{
-		List toReturn = new ArrayList();
-		for(int i=0; i< rows.length(); i++){
-			JSONObject obj = (JSONObject)rows.get(i);
-			Integer id = obj.getInt("id");
-			toReturn.add(id);
-		}	
-		return toReturn;
+	private void deserializeRolesJSONArray(SbiUser user) throws Exception {
+		Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>();
+		JSONArray rolesJSON = getAttributeAsJSONArray(ROLES);
+		if (rolesJSON == null || rolesJSON.length() == 0) {
+			throw new SpagoBIServiceException(
+					SERVICE_NAME,
+					"User roles were not specified");
+		}
+		for (int i = 0; i < rolesJSON.length(); i++) {
+			JSONObject obj = (JSONObject) rolesJSON.get(i);
+			Integer extRoleId = obj.getInt("id");
+			SbiExtRoles aRole = DAOFactory.getRoleDAO().loadSbiExtRoleById(extRoleId);
+			roles.add(aRole);
+		}
+		user.setSbiExtUserRoleses(roles);
 	}
 	
-	private HashMap<Integer, String> deserializeAttributesJSONArray(JSONArray rows) throws JSONException{
-		HashMap<Integer, String> toReturn = new HashMap<Integer, String>();
-		for(int i=0; i< rows.length(); i++){
-			JSONObject obj = (JSONObject)rows.get(i);
+	private void deserializeAttributesJSONArray(SbiUser user)
+			throws Exception {
+		Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>();
+		JSONArray attributesJSON = getAttributeAsJSONArray(ATTRIBUTES);
+		for (int i = 0; i < attributesJSON.length(); i++) {
+			JSONObject obj = (JSONObject) attributesJSON.get(i);
 			Integer key = obj.getInt("id");
 			String value = obj.getString("value");
-			toReturn.put(key, value);
-		}	
-		return toReturn;
+			if (!value.equals("")) {
+				SbiUserAttributes attribute = new SbiUserAttributes();
+				attribute.setAttributeValue(value);
+				SbiUserAttributesId attributeId = new SbiUserAttributesId();
+				attributeId.setId(user.getId());
+				attributeId.setAttributeId(key);
+				attribute.setId(attributeId);
+				SbiAttribute sbiAttribute = DAOFactory.getSbiAttributeDAO().loadSbiAttributeById(key);
+				attribute.setSbiAttribute(sbiAttribute);
+	
+				attributes.add(attribute);
+			}
+		}
+		user.setSbiUserAttributeses(attributes);
 	}
 
-	private String filterList(JSONObject filtersJSON) throws JSONException {
-		logger.debug("IN");				
-		String hsql= " from SbiUser h where";
-		if (filtersJSON != null) {
+	private QueryStaticFilter getStaticFilter() throws JSONException {
+		logger.debug("IN");
+		QueryStaticFilter toReturn = null;
+		JSONObject filtersJSON = null;
+		if (this.requestContainsAttribute(FILTERS)) {
+			filtersJSON = getAttributeAsJSONObject(FILTERS);
 			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
 			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
-			String columnFilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
-			valuefilter = valuefilter != null? valuefilter.toUpperCase() : "";
-			if(typeFilter.equals("=")){
-				hsql += " upper(h."+columnFilter+") = '" + valuefilter +"'";
-			}else if(typeFilter.equals("like")){
-				hsql += " upper(h."+columnFilter+") like '%"+ valuefilter + "%'";			
+			if (typeFilter.equalsIgnoreCase("like")) {
+				typeFilter = CriteriaConstants.CONTAINS;
+			} else {
+				typeFilter = CriteriaConstants.EQUALS_TO;
 			}
-			logger.debug("Apply filter on user "+hsql);
+			String columnFilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
+			toReturn = new QueryStaticFilter(columnFilter, valuefilter, typeFilter, true);
+			logger.debug("Applying filter on users: " + toReturn.toString());
 		}
 		logger.debug("OUT");
-		return hsql;
+		return toReturn;
 	}
 	
 	

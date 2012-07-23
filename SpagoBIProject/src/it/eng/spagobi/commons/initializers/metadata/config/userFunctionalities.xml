@@ -44,4 +44,5 @@
 <USER_FUNCTIONALITY name="DomainManagement" description="DomainManagement"/>
 <USER_FUNCTIONALITY name="ConfigManagement" description="ConfigManagement"/>
 <USER_FUNCTIONALITY name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
+<USER_FUNCTIONALITY name="FinalUsersManagement" description="FinalUsersManagement"/>
 </USER_FUNCTIONALITIES>

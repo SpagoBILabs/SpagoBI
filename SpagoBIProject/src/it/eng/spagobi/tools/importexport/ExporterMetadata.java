@@ -1530,7 +1530,7 @@ public class ExporterMetadata {
 			hibRole.setIsAbleToBuildQbeQuery(role.isAbleToBuildQbeQuery());
 			hibRole.setIsAbleToDoMassiveExport(role.isAbleToDoMassiveExport());
 			hibRole.setIsAbleToEditWorksheet(role.isAbleToEditWorksheet());
-			
+			hibRole.setIsAbleToManageUsers(role.isAbleToManageUsers());
 			session.save(hibRole);
 			tx.commit();
 		} catch (Exception e) {

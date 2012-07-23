@@ -50,4 +50,11 @@
 	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/hotlinks16.gif">
 	</APPLICATION>
 	
+    <APPLICATION code="FinalUsersManagement" 
+                 title="#menu.Users"  
+                 functionality="FinalUsersManagement" 
+                 link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_USER_ACTION" 
+                 iconUrl="${SPAGOBI_CONTEXT}/img/wapp/users.png">
+    </APPLICATION>
+	
 </FINAL_USER_FUNCTIONALITIES>

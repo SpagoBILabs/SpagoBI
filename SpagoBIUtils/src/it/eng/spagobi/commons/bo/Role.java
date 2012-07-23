@@ -37,8 +37,9 @@ public class Role  implements Serializable  {
     private boolean isAbleToSaveMetadata;
     private boolean isAbleToBuildQbeQuery;
     private boolean isAbleToDoMassiveExport;
+    private boolean isAbleToManageUsers;
     
-    private boolean defaultRole;
+	private boolean defaultRole;
     
 	/**
 	 * Checks if is able to save subobjects.
@@ -393,6 +394,14 @@ public class Role  implements Serializable  {
 		this.isAbleToEditWorksheet = isAbleToEditWorksheet;
 	}
 	
+    public boolean isAbleToManageUsers() {
+		return isAbleToManageUsers;
+	}
+
+	public void setIsAbleToManageUsers(boolean isAbleToManageUsers) {
+		this.isAbleToManageUsers = isAbleToManageUsers;
+	}
+	
 	public String getOrganization() {
 		return organization;
 	}
@@ -400,6 +409,5 @@ public class Role  implements Serializable  {
 	public void setOrganization(String organization) {
 		this.organization = organization;
 	}
-	
 	
 }

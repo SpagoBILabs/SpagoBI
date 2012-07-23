@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -85,6 +86,32 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		return toReturn;
 	}
 
+	public SbiExtRoles loadSbiExtRoleById(Integer roleId) throws EMFUserError {
+		SbiExtRoles toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try{
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+		
+			toReturn = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleId);
+			Hibernate.initialize(toReturn);
+			tx.commit();
+		}catch(HibernateException he){
+			logException(he);
+			
+			if (tx != null) tx.rollback();	
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);  
+		
+		}finally{
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		return toReturn;
+	}
+	
 	/**
 	 * Load by name.
 	 * 
@@ -309,6 +336,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setIsAbleToBuildQbeQuery(new Boolean(aRole.isAbleToBuildQbeQuery()));
 			hibRole.setIsAbleToDoMassiveExport(new Boolean(aRole.isAbleToDoMassiveExport()));
 			hibRole.setIsAbleToEditWorksheet(new Boolean(aRole.isAbleToEditWorksheet()));
+			hibRole.setIsAbleToManageUsers(new Boolean(aRole.isAbleToManageUsers()));
 			
 			SbiDomains roleType = (SbiDomains)aSession.load(SbiDomains.class,  aRole.getRoleTypeID());
 			hibRole.setRoleType(roleType);
@@ -505,6 +533,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		role.setIsAbleToBuildQbeQuery(hibRole.getIsAbleToBuildQbeQuery() == null || hibRole.getIsAbleToBuildQbeQuery().booleanValue());
 		role.setIsAbleToDoMassiveExport(hibRole.getIsAbleToDoMassiveExport() == null || hibRole.getIsAbleToDoMassiveExport().booleanValue());
 		role.setIsAbleToEditWorksheet(hibRole.getIsAbleToEditWorksheet() == null || hibRole.getIsAbleToEditWorksheet().booleanValue());
+		// for ManageUsers the default is false
+		role.setIsAbleToManageUsers(hibRole.getIsAbleToManageUsers() != null && hibRole.getIsAbleToManageUsers().booleanValue());
 
 		role.setRoleTypeCD(hibRole.getRoleTypeCode());
 		role.setRoleTypeID(hibRole.getRoleType().getValueId());
@@ -635,6 +665,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setIsAbleToBuildQbeQuery(new Boolean(role.isAbleToBuildQbeQuery()));
 			hibRole.setIsAbleToDoMassiveExport(new Boolean(role.isAbleToDoMassiveExport()));
 			hibRole.setIsAbleToEditWorksheet(new Boolean(role.isAbleToEditWorksheet()));
+			hibRole.setIsAbleToManageUsers(new Boolean(role.isAbleToManageUsers()));
 			updateSbiCommonInfo4Insert(hibRole);
 			roleId = (Integer)aSession.save(hibRole);
 			

@@ -11,7 +11,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -24,8 +23,6 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -65,6 +62,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 	private final String SAVE_METADATA="saveMeta";
 	private final String BUILD_QBE_QUERY="buildQbe";
 	private final String DO_MASSIVE_EXPORT="doMassiveExport";
+	private final String MANAGE_USERS="manageUsers";
 	
 	public static String START = "start";
 	public static String LIMIT = "limit";
@@ -74,7 +72,6 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 	@Override
 	public void doService() {
 		logger.debug("IN");
-		HttpServletResponse httpResponse = getHttpResponse();
 		RequestContainer requestContainer = this.getRequestContainer();
 		SessionContainer permanentSession = requestContainer.getSessionContainer().getPermanentContainer();
 	    IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -136,6 +133,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 			Boolean saveMetadata= getAttributeAsBoolean(SAVE_METADATA);
 			Boolean buildQbeQuery= getAttributeAsBoolean(BUILD_QBE_QUERY);
 			Boolean doMassiveExport = getAttributeAsBoolean(DO_MASSIVE_EXPORT);
+			Boolean manageUsers = getAttributeAsBoolean(MANAGE_USERS);
 			
 			if (name != null) {
 				//checks for unique role name
@@ -184,6 +182,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 				role.setIsAbleToSeeSubobjects(seeSubobjects);
 				role.setIsAbleToSeeViewpoints(seeViewpoints);
 				role.setIsAbleToSendMail(sendMail);
+				role.setIsAbleToManageUsers(manageUsers);
 				try {
 					String id = getAttributeAsString(ID);
 					if(id != null && !id.equals("") && !id.equals("0")){							
@@ -278,52 +277,4 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 		return results;
 	}
 	
-	/**Adds role flags to JSON response object
-	 * @param object JSONObject representing role
-	 * @param role the <code>Role</code> to publish
-	 * @return JSONObject modified
-	 * @throws JSONException
-	 */
-	private JSONObject addFlagsToJSONRoles(JSONObject object, Role role)
-		throws JSONException {
-		
-		Boolean qbeQuery = role.isAbleToBuildQbeQuery();
-		if(qbeQuery != null)
-			object.put(BUILD_QBE_QUERY, qbeQuery.booleanValue());
-		Boolean doMassiveExport = role.isAbleToDoMassiveExport();
-		if(doMassiveExport != null)
-			object.put(DO_MASSIVE_EXPORT, doMassiveExport.booleanValue());
-		Boolean saveSub = role.isAbleToSaveSubobjects();
-		if(saveSub != null)
-			object.put(SAVE_SUBOBJECTS,saveSub.booleanValue());
-		Boolean seeSub = role.isAbleToSeeSubobjects();
-		if(seeSub != null)
-			object.put(SEE_SUBOBJECTS,seeSub.booleanValue());
-		Boolean seeView = role.isAbleToSeeViewpoints();
-		if(seeView != null)
-			object.put(SEE_VIEWPOINTS,seeView.booleanValue());
-		Boolean seeSnap = role.isAbleToSeeSnapshots();
-		if(seeSnap != null)
-			object.put(SEE_SNAPSHOTS,seeSnap.booleanValue());
-		Boolean seeNotes = role.isAbleToSeeNotes();
-		if(seeNotes != null)
-			object.put(SEE_NOTES,seeNotes.booleanValue());
-		Boolean sendMail = role.isAbleToSendMail();
-		if(sendMail != null)
-			object.put(SEND_MAIL,sendMail.booleanValue());
-		Boolean savePerFol = role.isAbleToSaveIntoPersonalFolder();
-		if(savePerFol != null)
-			object.put(SAVE_INTO_PERSONAL_FOLDER,savePerFol.booleanValue());
-		Boolean saveRememb = role.isAbleToSaveRememberMe();
-		if(saveRememb != null)
-			object.put(SAVE_REMEMBER_ME,saveRememb.booleanValue());
-		Boolean seeMeta = role.isAbleToSeeMetadata();
-		if(seeMeta != null)
-			object.put(SEE_METADATA,seeMeta.booleanValue());
-		Boolean saveMeta = role.isAbleToSaveMetadata();
-		if(saveMeta != null)
-			object.put(SAVE_METADATA,saveMeta.booleanValue());
-		
-		return object;
-	}
 }

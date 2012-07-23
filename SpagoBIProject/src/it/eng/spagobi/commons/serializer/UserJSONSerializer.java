@@ -61,22 +61,19 @@ public class UserJSONSerializer implements Serializer {
 			JSONArray rolesJSON = new JSONArray();
 			//rolesJSON.put("roles");
 			
-			while(itAllRoles.hasNext()){
+			while (itAllRoles.hasNext()) {
 				JSONObject jsonRole = new JSONObject();
-				Role role = (Role)itAllRoles.next();
-				if(role!=null){
+				Role role = (Role) itAllRoles.next();
+				if (role != null) {
 					Integer roleId = role.getId();
-					jsonRole.put("name", role.getName());
-					jsonRole.put("id", role.getId());
-					jsonRole.put("description", role.getDescription());
-					if(userRoles.contains(roleId)){
+					if (userRoles.contains(roleId)) {
+						jsonRole.put("name", role.getName());
+						jsonRole.put("id", role.getId());
+						jsonRole.put("description", role.getDescription());
 						jsonRole.put("checked", true);
-					}else{
-						jsonRole.put("checked", false);
+						rolesJSON.put(jsonRole);
 					}
-					rolesJSON.put(jsonRole);
 				}
-				//Role role = DAOFactory.getRoleDAO().loadByID(roleId);				
 			}
 
 			/*while(itRoles.hasNext()){

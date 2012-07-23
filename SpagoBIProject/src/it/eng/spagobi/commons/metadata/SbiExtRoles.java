@@ -37,7 +37,8 @@ public class SbiExtRoles  extends SbiHibernateModel{
      private Boolean isAbleToSaveMetadata;
      private Boolean isAbleToBuildQbeQuery;
      private Boolean isAbleToDoMassiveExport;
-     private Set sbiFuncRoles;
+     private Boolean isAbleToManageUsers;
+	private Set sbiFuncRoles;
      private Set sbiParuseDets;
 
 
@@ -399,4 +400,11 @@ public class SbiExtRoles  extends SbiHibernateModel{
 		this.isAbleToEditWorksheet = isAbleToEditWorksheet;
 	}
 
+    public Boolean getIsAbleToManageUsers() {
+		return isAbleToManageUsers;
+	}
+
+	public void setIsAbleToManageUsers(Boolean isAbleToManageUsers) {
+		this.isAbleToManageUsers = isAbleToManageUsers;
+	}
 }

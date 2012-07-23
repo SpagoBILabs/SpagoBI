@@ -13,6 +13,7 @@ package it.eng.spagobi.commons.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 
 import java.util.List;
 
@@ -36,6 +37,8 @@ public interface IRoleDAO extends ISpagoBIDao{
 	 * @throws EMFUserError If an Exception occurred
 	 */
 	public Role loadByID(Integer roleID) throws EMFUserError;
+	
+	public SbiExtRoles loadSbiExtRoleById(Integer roleId) throws EMFUserError;
 	
 	/**
 	 * Loads a role identified by its

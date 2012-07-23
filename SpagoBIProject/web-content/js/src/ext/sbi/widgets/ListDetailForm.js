@@ -463,7 +463,6 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 			LN('sbi.generic.confirmDelete'),            
             function(btn, text) {
                 if (btn=='yes') {
-                	alert(itemId);
                 	if (itemId != null) {
                 		
 						Ext.Ajax.request({

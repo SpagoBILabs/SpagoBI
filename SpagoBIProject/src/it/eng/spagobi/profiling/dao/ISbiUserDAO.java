@@ -8,6 +8,8 @@ package it.eng.spagobi.profiling.dao;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.dao.PagedList;
+import it.eng.spagobi.dao.QueryFilters;
 import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
@@ -23,7 +25,7 @@ public interface ISbiUserDAO extends ISpagoBIDao{
 	
 	public SbiUser loadSbiUserById(Integer id) throws EMFUserError;
 	
-	public UserBO loadUserById(Integer id) throws EMFUserError;
+//	public UserBO loadUserById(Integer id) throws EMFUserError;
 	
 	public void deleteSbiUserById(Integer id) throws EMFUserError;
 	
@@ -43,16 +45,14 @@ public interface ISbiUserDAO extends ISpagoBIDao{
 	
 	public void updateSbiUser(SbiUser user, Integer userID) throws EMFUserError;
 	
-	public Integer fullSaveOrUpdateSbiUser(SbiUser user, List roles, HashMap<Integer, String> attributes) throws EMFUserError;
+	public Integer fullSaveOrUpdateSbiUser(SbiUser user) throws EMFUserError;
 	
-	public List<UserBO> loadPagedUsersList(Integer offset, Integer fetchSize)throws EMFUserError;
-	
-	public Integer countUsers()throws EMFUserError;
+	public PagedList<UserBO> loadUsersPagedList(QueryFilters filters, Integer offset, Integer fetchSize) throws EMFUserError;
 	
 	public void checkUserId(String userId, Integer id) throws EMFUserError;
 	
 	public Integer isUserIdAlreadyInUse(String userId);
 	
-	public List<UserBO> loadSbiUserListFiltered(String hsql,Integer offset, Integer fetchSize) throws EMFUserError;
+//	public PagedList<UserBO> loadSbiUserListFiltered(String hsql,Integer offset, Integer fetchSize) throws EMFUserError;
 
 }

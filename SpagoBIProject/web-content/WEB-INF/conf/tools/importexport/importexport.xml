@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <IMPORTEXPORT>
-    <CURRENTVERSION version="3.5.0"/>
+    <CURRENTVERSION version="3.5.1"/>
 	<EXPORTER class="it.eng.spagobi.tools.importexport.ExportManager"
 	          exportFolder="${java.io.tmpdir}/exports" />
 	<IMPORTER class="it.eng.spagobi.tools.importexport.ImportManager" 
@@ -20,6 +20,7 @@
 		<TRANSFORM from="3.2.0" to="3.3.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom3_2_0To3_3_0" />
 		<TRANSFORM from="3.3.0" to="3.4.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom3_3_0To3_4_0" />
 		<TRANSFORM from="3.4.0" to="3.5.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom3_4_0To3_5_0" />
+		<TRANSFORM from="3.5.0" to="3.5.1" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom3_5_0To3_5_1" />
 		<!--
 		put transformers here using the syntax:
 		<TRANSFORM from="{from version}" to="{to version}" class="{transformer class complete name}" />
