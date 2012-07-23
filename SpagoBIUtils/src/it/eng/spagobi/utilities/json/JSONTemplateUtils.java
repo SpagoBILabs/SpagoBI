@@ -77,7 +77,7 @@ public class JSONTemplateUtils {
 			ow = getPropertiesDetail(xmlTemplate, ow);
 			ow.write("}\n");
 			ow.flush();			
-			//System.out.println("*** template: " + out.toString());
+			System.out.println("*** template: " + out.toString());
 			logger.debug("ChartConfig: " + out.toString());
 			
 	    }catch (IOException ioe){
@@ -94,7 +94,11 @@ public class JSONTemplateUtils {
 	    }
 	    //replace dublicate , charachter
 	    String json = out.toString().replaceAll(", ,", ",");
-	    toReturn =  ObjectUtils.toJSONObject(json);
+	    try{
+	    	toReturn =  ObjectUtils.toJSONObject(json);
+	    }catch(Exception e){
+	    	logger.error("Error while serializes the result: " + json + " - Error: " + e.getMessage());
+	    }
 		
 		return toReturn;
 	}
@@ -318,7 +322,10 @@ public class JSONTemplateUtils {
 					SourceBean sb1 = SourceBean.fromXMLString(o.toString());
 					String v = sb1.getCharacters();
 					if(v!= null){
-						toReturn.write(v + "\n" );
+						if (!v.startsWith("'")){
+							v = "'"+v+"'";
+						}
+						toReturn.write(v + "\n" );						
 
 					}else{
 						//attributes
