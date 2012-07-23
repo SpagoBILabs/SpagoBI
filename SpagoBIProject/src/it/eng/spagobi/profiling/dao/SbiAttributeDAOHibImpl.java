@@ -8,10 +8,9 @@ package it.eng.spagobi.profiling.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
-import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
-import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +28,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 	static private Logger logger = Logger
 			.getLogger(SbiAttributeDAOHibImpl.class);
 
-	public List<SbiUserAttributes> loadSbiAttributesById(Integer id)
+	public List<SbiUserAttributes> loadSbiUserAttributesById(Integer id)
 			throws EMFUserError {
 		logger.debug("IN");
 		List<SbiUserAttributes> toReturn = null;
@@ -159,13 +158,12 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			
 			if (aSession != null) {
 				if (aSession.isOpen())
 					aSession.close();
 			}
-			return idToReturn;
 		}
+		return idToReturn;
 
 	}
 
@@ -214,6 +212,31 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 			query.setString("name", name);
 
 			toReturn = (SbiAttribute) query.uniqueResult();
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(),he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+	
+	public SbiAttribute loadSbiAttributeById(Integer id) throws EMFUserError {
+		logger.debug("IN");
+		SbiAttribute toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			toReturn = (SbiAttribute) aSession.load(SbiAttribute.class,  id);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(),he);

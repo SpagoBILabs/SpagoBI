@@ -5,25 +5,32 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.profiling.dao;
 
+import it.eng.qbe.statement.hibernate.HQLStatement;
+import it.eng.qbe.statement.hibernate.HQLStatement.IConditionalOperator;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.dao.PagedList;
+import it.eng.spagobi.dao.QueryFilter;
+import it.eng.spagobi.dao.QueryFilters;
+import it.eng.spagobi.dao.QueryStaticFilter;
 import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
-import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
 import it.eng.spagobi.profiling.bo.UserBO;
+import it.eng.spagobi.profiling.dao.filters.FinalUsersFilter;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -39,6 +46,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	
 	static private Logger logger = Logger.getLogger(SbiUserDAOHibImpl.class);
 
+	static private enum AvailableFiltersOnUsersList {userId, fullName};
+	
 	/**
 	 * Load SbiUser by id.
 	 * 
@@ -60,10 +69,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			String q = "from SbiUser us where us.id = :id";
-			Query query = aSession.createQuery(q);
-			query.setInteger("id", id);
-			toReturn = (SbiUser)query.uniqueResult();
+			toReturn = (SbiUser) aSession.load(SbiUser.class, id);
+//			String q = "from SbiUser us where us.id = :id";
+//			Query query = aSession.createQuery(q);
+//			query.setInteger("id", id);
+//			toReturn = (SbiUser)query.uniqueResult();
 			Hibernate.initialize(toReturn);
 			Hibernate.initialize(toReturn.getSbiExtUserRoleses());
 			Hibernate.initialize(toReturn.getSbiUserAttributeses());
@@ -348,7 +358,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 
-	public Integer fullSaveOrUpdateSbiUser(SbiUser user, List roles, HashMap<Integer, String> attributes)
+	public Integer fullSaveOrUpdateSbiUser(SbiUser user)
 	throws EMFUserError {
 		logger.debug("IN");
 
@@ -359,15 +369,14 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiUser userToUpdate = user;
-			id = userToUpdate.getId();
-			Set<SbiExtUserRoles> extUserRoles = new HashSet<SbiExtUserRoles>();
-			Set<SbiUserAttributes> userAttrList = new HashSet<SbiUserAttributes>();
+			id = user.getId();
 
 			this.checkUserId(user.getUserId(), id);
 			
+			SbiUser currentSessionUser = null;
+			
 			if (id != 0) {
-				userToUpdate =(SbiUser)aSession.load(SbiUser.class, id);
+				SbiUser userToUpdate =(SbiUser) aSession.load(SbiUser.class, id);
 				if (user.getPassword() != null && user.getPassword().length() > 0){
 					userToUpdate.setPassword(user.getPassword());
 				}
@@ -375,105 +384,81 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				userToUpdate.setUserId(user.getUserId());
 				userToUpdate.setId(id);
 				updateSbiCommonInfo4Update(userToUpdate);
+				aSession.save(userToUpdate);
+				currentSessionUser = userToUpdate;
 			} else {
-				updateSbiCommonInfo4Insert(userToUpdate);
-				id = (Integer)aSession.save(userToUpdate);	
-				userToUpdate.setId(id);
+				SbiUser newUser = new SbiUser();
+				newUser.setUserId(user.getUserId());
+				newUser.setFullName(user.getFullName());
+				newUser.setPassword(user.getPassword());
+				updateSbiCommonInfo4Insert(newUser);
+				id = (Integer) aSession.save(newUser);	
+				currentSessionUser = newUser;
 			}
 
 			//sets roles
-			if(roles != null){
-				//remove existing roles
-				String qr = " from SbiExtUserRoles x where x.id.id = :id ";
-				Query queryR = aSession.createQuery(qr);
-				queryR.setInteger("id", id);
-
-				ArrayList<SbiExtUserRoles> userRoles = (ArrayList<SbiExtUserRoles>)queryR.list();
-				if(userRoles != null){
-					Iterator rolesIt = userRoles.iterator();
-					while(rolesIt.hasNext()){
-						SbiExtUserRoles temp = (SbiExtUserRoles)rolesIt.next();
-						rolesIt.remove();
-						aSession.delete(temp);
-						aSession.flush();
-					}
-				}
-
-
-				Iterator rolesIt = roles.iterator();
-				while(rolesIt.hasNext()){
-					Integer extRoleId  = (Integer)rolesIt.next();
-
-					SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
-					SbiExtUserRolesId extUserRoleId = new SbiExtUserRolesId();
-
-					extUserRoleId.setExtRoleId(extRoleId);//role Id
-					extUserRoleId.setId(id.intValue());//user ID
-
-					sbiExtUserRole.setId(extUserRoleId);
-					sbiExtUserRole.setSbiUser(userToUpdate);  
-					updateSbiCommonInfo4Insert(sbiExtUserRole);
-					aSession.saveOrUpdate(sbiExtUserRole);
+			//remove existing roles
+			String qr = " from SbiExtUserRoles x where x.id.id = :id ";
+			Query queryR = aSession.createQuery(qr);
+			queryR.setInteger("id", id);
+			List<SbiExtUserRoles> userRoles = (List<SbiExtUserRoles>) queryR.list();
+			if (userRoles != null && !userRoles.isEmpty()) {
+				Iterator rolesIt = userRoles.iterator();
+				while (rolesIt.hasNext()) {
+					SbiExtUserRoles temp = (SbiExtUserRoles) rolesIt.next();
+					rolesIt.remove();
+					aSession.delete(temp);
 					aSession.flush();
-
 				}
+			}
+			//add new roles
+			Iterator<SbiExtRoles> rolesIt = user.getSbiExtUserRoleses().iterator();
+			while (rolesIt.hasNext()) {
+				SbiExtRoles aRole = rolesIt.next();
+				
+				SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
+				SbiExtUserRolesId extUserRoleId = new SbiExtUserRolesId();
+	
+				extUserRoleId.setExtRoleId(aRole.getExtRoleId());// role Id
+				extUserRoleId.setId(currentSessionUser.getId());// user ID
+	
+				sbiExtUserRole.setId(extUserRoleId);
+				sbiExtUserRole.setSbiUser(currentSessionUser);
+				
+				sbiExtUserRole.setSbiUser(currentSessionUser);
+				sbiExtUserRole.getId().setId(currentSessionUser.getId());
+				updateSbiCommonInfo4Insert(sbiExtUserRole);
+				aSession.saveOrUpdate(sbiExtUserRole);
+				aSession.flush();
 			}
 
 			//sets attributes
-
-			if(attributes != null){
-
-				String qr = " from SbiUserAttributes x where x.id.id = :id ";
-				Query queryR = aSession.createQuery(qr);
-				queryR.setInteger("id", id);
-				ArrayList<SbiUserAttributes> userAttributes = (ArrayList<SbiUserAttributes>)queryR.list();
-
-				boolean userAttrAlreadyExist = false;
-				if(userAttrList.size()!=0){
-					userAttrAlreadyExist=true;
-				}
-				//loop over db attributes for user
-				Iterator attrsIt = userAttributes.iterator();
-				while(attrsIt.hasNext()){				
-
-					//if attribute is modified than update 		
-					SbiUserAttributes attribute = (SbiUserAttributes)attrsIt.next();
-					Integer attrID = attribute.getId().getAttributeId();
-					if(attributes.containsKey(attrID)){
-						String attrVal = attributes.get(attrID);
-						attribute.setAttributeValue(attrVal);
-						//checks if value ==""
-						if(attrVal.equals("")){
-							aSession.delete(attribute);
-						}else{
-							updateSbiCommonInfo4Update(attribute);
-							aSession.saveOrUpdate(attribute);
-						}
-						aSession.flush();
-						attributes.remove(attrID);
-					}
-
-
-				}//else if attribute is not present than add it
-				Iterator attrsItToAdd = attributes.keySet().iterator();
-				while(attrsItToAdd.hasNext()){
-					Integer attrID = (Integer)attrsItToAdd.next();
-					SbiUserAttributes attributeToAdd =  new SbiUserAttributes();
-					attributeToAdd.setAttributeValue(attributes.get(attrID));
-					SbiUserAttributesId attributeToAddId = new SbiUserAttributesId();
-					attributeToAddId.setId(id);
-					attributeToAddId.setAttributeId(attrID);
-					attributeToAdd.setId(attributeToAddId);
-					updateSbiCommonInfo4Insert(attributeToAdd);
-					aSession.saveOrUpdate(attributeToAdd);
+			//remove existing attributes
+			qr = " from SbiUserAttributes x where x.id.id = :id ";
+			queryR = aSession.createQuery(qr);
+			queryR.setInteger("id", id);
+			List<SbiUserAttributes> userAttributes = (List<SbiUserAttributes>) queryR.list();
+			if (userAttributes != null && !userAttributes.isEmpty()) {
+				Iterator<SbiUserAttributes> attrsIt = userAttributes.iterator();
+				while (attrsIt.hasNext()) {
+					SbiUserAttributes temp = attrsIt.next();
+					attrsIt.remove();
+					aSession.delete(temp);
 					aSession.flush();
-
 				}
-
 			}
-
-			//update
-			aSession.saveOrUpdate(userToUpdate);
+			//add new attributes
+			Set<SbiUserAttributes> newAttributes = user.getSbiUserAttributeses();
+			if (newAttributes != null && !newAttributes.isEmpty()) {
+				Iterator<SbiUserAttributes> attrsIt = newAttributes.iterator();
+				while (attrsIt.hasNext()) {
+					SbiUserAttributes attribute = attrsIt.next();
+					attribute.getId().setId(id);
+					updateSbiCommonInfo4Insert(attribute);
+					aSession.saveOrUpdate(attribute);
+					aSession.flush();
+				}
+			}
 
 			tx.commit();
 		} catch (HibernateException he) {
@@ -520,10 +505,10 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		logger.debug("User identifier " + userId + " is valid.");
 	}
 	
-	public UserBO loadUserById(Integer id) throws EMFUserError {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	public UserBO loadUserById(Integer id) throws EMFUserError {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 	public ArrayList<UserBO> loadUsers() throws EMFUserError {
 		logger.debug("IN");
 		ArrayList<UserBO> users = null;
@@ -603,90 +588,98 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		return userBO;
 	}
 
-	public Integer countUsers() throws EMFUserError {
-		logger.debug("IN");
-		Session aSession = null;
-		Transaction tx = null;
-		Long resultNumber;
+//	public Integer countUsers() throws EMFUserError {
+//		logger.debug("IN");
+//		Session aSession = null;
+//		Transaction tx = null;
+//		Long resultNumber;
+//
+//		try {
+//			aSession = getSession();
+//			tx = aSession.beginTransaction();
+//
+//			String hql = "select count(*) from SbiUser ";
+//			Query hqlQuery = aSession.createQuery(hql);
+//			resultNumber = (Long)hqlQuery.uniqueResult();
+//
+//		} catch (HibernateException he) {
+//			logger.error("Error while loading the list of SbiUser", he);	
+//			if (tx != null)
+//				tx.rollback();	
+//			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+//
+//		} finally {
+//			if (aSession != null) {
+//				if (aSession.isOpen())
+//					aSession.close();
+//				logger.debug("OUT");
+//			}
+//		}
+//		return new Integer(resultNumber.intValue());
+//	}
 
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-
-			String hql = "select count(*) from SbiUser ";
-			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Long)hqlQuery.uniqueResult();
-
-		} catch (HibernateException he) {
-			logger.error("Error while loading the list of SbiUser", he);	
-			if (tx != null)
-				tx.rollback();	
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
-
-		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
-		}
-		return new Integer(resultNumber.intValue());
-	}
-
-	public List<UserBO> loadPagedUsersList(Integer offset, Integer fetchSize)
-	throws EMFUserError {
-		logger.debug("IN");
-		List<UserBO> toReturn = null;
-		Session aSession = null;
-		Transaction tx = null;
-		Integer resultNumber;
-		Query hibernateQuery;
-
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-
-			List toTransform = null;
-			String hql = "select count(*) from SbiUser ";
-			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = new Integer(((Long)hqlQuery.uniqueResult()).intValue());
-
-			offset = offset < 0 ? 0 : offset;
-			if(resultNumber > 0) {
-				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
-			}
-
-			hibernateQuery = aSession.createQuery("from SbiUser order by userId");
-			hibernateQuery.setFirstResult(offset);
-			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
-
-			toTransform = hibernateQuery.list();	
-
-			if(toTransform!=null && !toTransform.isEmpty()){
-				toReturn = new ArrayList<UserBO>();
-				Iterator it = toTransform.iterator();
-				while(it.hasNext()){
-					SbiUser sbiUser = (SbiUser)it.next();
-					UserBO us = toUserBO(sbiUser);
-					toReturn.add(us);
-				}
-			}
-
-		} catch (HibernateException he) {
-			logger.error("Error while loading the list of SbiAlarm", he);	
-			if (tx != null)
-				tx.rollback();	
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
-
-		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
-		}
-		return toReturn;
-	}
+//	public List<UserBO> loadPagedUsersList(Integer offset, Integer fetchSize)
+//	throws EMFUserError {
+//		logger.debug("IN");
+//		List<UserBO> toReturn = null;
+//		Session aSession = null;
+//		Transaction tx = null;
+//		Integer resultNumber;
+//		Query hibernateQuery;
+//
+//		try {
+//			aSession = getSession();
+//			tx = aSession.beginTransaction();
+//
+//			List toTransform = null;
+//			String hql = "select count(*) from SbiUser ";
+//			Query hqlQuery = aSession.createQuery(hql);
+//			resultNumber = new Integer(((Long)hqlQuery.uniqueResult()).intValue());
+//
+//			offset = offset < 0 ? 0 : offset;
+//			if(resultNumber > 0) {
+//				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+//			}
+//
+//			hibernateQuery = aSession.createQuery("from SbiUser su where su.id in (" +
+//					" select ur.id.id " +
+//					"	from " +
+//					"		SbiExtUserRoles ur, SbiExtRoles r " +
+//					"	where " +
+//					"		ur.id.extRoleId = r.extRoleId " +
+//					"	group by ur.id.id " +
+//					"	having sum(case when r.roleType.valueCd = 'USER' then 0 else 1 end) = 0) " +
+//					") order by userId");
+//			hibernateQuery.setFirstResult(offset);
+//			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
+//
+//			toTransform = hibernateQuery.list();	
+//
+//			if(toTransform!=null && !toTransform.isEmpty()){
+//				toReturn = new ArrayList<UserBO>();
+//				Iterator it = toTransform.iterator();
+//				while(it.hasNext()){
+//					SbiUser sbiUser = (SbiUser)it.next();
+//					UserBO us = toUserBO(sbiUser);
+//					toReturn.add(us);
+//				}
+//			}
+//
+//		} catch (HibernateException he) {
+//			logger.error("Error while loading the list of SbiAlarm", he);	
+//			if (tx != null)
+//				tx.rollback();	
+//			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+//
+//		} finally {
+//			if (aSession != null) {
+//				if (aSession.isOpen())
+//					aSession.close();
+//				logger.debug("OUT");
+//			}
+//		}
+//		return toReturn;
+//	}
 
 	public Integer isUserIdAlreadyInUse(String userId) {
 		logger.debug("IN");
@@ -741,40 +734,39 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	
 	
-	public List<UserBO> loadSbiUserListFiltered(String hsql,Integer offset, Integer fetchSize) throws EMFUserError {
+	public PagedList<UserBO> loadUsersPagedList(QueryFilters filters, Integer offset, Integer fetchSize) throws EMFUserError {
 		logger.debug("IN");
-		List<UserBO> toReturn = null;
+		PagedList<UserBO> toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
-		Integer resultNumber;
+		Integer total;
 		Query hibernateQuery;
 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			toReturn = new ArrayList();
-			List toTransform = null;
+			
+			hibernateQuery = this.getQueryForUsersList(aSession, filters);
+			List users = hibernateQuery.list();
+			
+			total = users.size();
+			int indexStart = offset < 0 ? 0 : Math.min(offset, total - 1);  // if total = 0 --> indexStart = -1
+			int indexEnd = (fetchSize > 0) ? Math.min(indexStart + fetchSize - 1, total - 1) // if total = 0 --> indexEnd = -1
+					: total - 1;
 
-			String hql = "select count(*) "+hsql;
-			Query hqlQuery = aSession.createQuery(hql);
-			Long temp = (Long)hqlQuery.uniqueResult();
-			resultNumber = new Integer(temp.intValue());
-
-			offset = offset < 0 ? 0 : offset;
-			if(resultNumber > 0) {
-				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+			List<UserBO> results = new ArrayList<UserBO>();
+			if (total > 0) {
+				for (int c = indexStart; c <= indexEnd; c++) {
+					SbiUser hibuser = (SbiUser) users.get(c);
+					results.add(toUserBO(hibuser));
+				}
 			}
-
-			hibernateQuery = aSession.createQuery(hsql);
-			hibernateQuery.setFirstResult(offset);
-			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
-
-			toTransform = hibernateQuery.list();			
-
-			for (Iterator iterator = toTransform.iterator(); iterator.hasNext();) {
-				SbiUser hibuser = (SbiUser) iterator.next();
-				toReturn.add(toUserBO(hibuser));
-			}
+			
+			toReturn = new PagedList<UserBO>();
+			toReturn.setStart(indexStart + 1);
+			toReturn.setEnd(indexEnd + 1);
+			toReturn.setTotal(total);
+			toReturn.setResults(results);
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of users", he);
@@ -782,7 +774,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			if (tx != null)
 				tx.rollback();
 
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
 			if (aSession != null) {
@@ -793,6 +785,111 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		}
 		return toReturn;
 	}
+
+	private Query getQueryForUsersList(Session aSession, QueryFilters filters) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(" from SbiUser ");
+		if (!filters.isEmpty()) {
+			buffer.append(" where ");
+			Iterator<QueryFilter> iterator = filters.iterator();
+			while (iterator.hasNext()) {
+				String hqlFilter = this.toHQL(iterator.next());
+				buffer.append(hqlFilter);
+				if (iterator.hasNext()) {
+					buffer.append(" and ");
+				}
+			}
+		}
+		buffer.append(" order by userId ");
+		String hql = buffer.toString();
+		LogMF.debug(logger, "HQL for users list : [{0}]", hql);
+		Query hqlQuery = aSession.createQuery(hql);
+		return hqlQuery;
+	}
+
+	private String toHQL(QueryFilter filter) {
+		Assert.assertNotNull(filter, "Filter is null");
+		if (filter instanceof QueryStaticFilter) {
+			QueryStaticFilter staticFilter = (QueryStaticFilter) filter;
+			boolean ignoreCase = staticFilter.isIgnoreCase();
+			IConditionalOperator conditionalOperator = (IConditionalOperator) HQLStatement.conditionalOperators.get( staticFilter.getOperator() );
+			String actualFieldName = AvailableFiltersOnUsersList.valueOf(staticFilter.getField()).toString();
+			String leftHandValue = ignoreCase ? "upper(" + actualFieldName + ")" : actualFieldName;
+			String value = staticFilter.getValue() != null ? staticFilter.getValue().toString() : ""; 
+			String escapedValue = StringEscapeUtils.escapeSql(value);
+			String[] rightHandValues = new String[]{ "'" + (ignoreCase ? escapedValue.toUpperCase() : escapedValue) + "'"};
+			return conditionalOperator.apply(leftHandValue, rightHandValues);
+		} else if (filter instanceof FinalUsersFilter) {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(" id in (");
+			buffer.append(" select ur.id.id ");
+			buffer.append("	from ");
+			buffer.append("		SbiExtUserRoles ur, SbiExtRoles r ");
+			buffer.append("	where ");
+			buffer.append("		ur.id.extRoleId = r.extRoleId ");
+			buffer.append("	group by ur.id.id ");
+			buffer.append("	having sum(case when r.roleType.valueCd = 'USER' then 0 else 1 end) = 0) ");
+			buffer.append(") ");
+			return buffer.toString();
+		} else {
+			throw new SpagoBIRuntimeException("Cannot handle filter of type [" + filter.getClass().getName() + "]");
+		}
+	}
+	
+	
+	
+//	public List<UserBO> loadSbiUserListFiltered(String hsql,Integer offset, Integer fetchSize) throws EMFUserError {
+//		logger.debug("IN");
+//		List<UserBO> toReturn = null;
+//		Session aSession = null;
+//		Transaction tx = null;
+//		Integer resultNumber;
+//		Query hibernateQuery;
+//
+//		try {
+//			aSession = getSession();
+//			tx = aSession.beginTransaction();
+//			toReturn = new ArrayList();
+//			List toTransform = null;
+//
+//			String hql = "select count(*) "+hsql;
+//			Query hqlQuery = aSession.createQuery(hql);
+//			Long temp = (Long)hqlQuery.uniqueResult();
+//			resultNumber = new Integer(temp.intValue());
+//
+//			offset = offset < 0 ? 0 : offset;
+//			if(resultNumber > 0) {
+//				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+//			}
+//
+//			hibernateQuery = aSession.createQuery(hsql);
+//			hibernateQuery.setFirstResult(offset);
+//			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
+//
+//			toTransform = hibernateQuery.list();			
+//
+//			for (Iterator iterator = toTransform.iterator(); iterator.hasNext();) {
+//				SbiUser hibuser = (SbiUser) iterator.next();
+//				toReturn.add(toUserBO(hibuser));
+//			}
+//
+//		} catch (HibernateException he) {
+//			logger.error("Error while loading the list of users", he);
+//
+//			if (tx != null)
+//				tx.rollback();
+//
+//			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+//
+//		} finally {
+//			if (aSession != null) {
+//				if (aSession.isOpen())
+//					aSession.close();
+//				logger.debug("OUT");
+//			}
+//		}
+//		return toReturn;
+//	}
 
 
 	

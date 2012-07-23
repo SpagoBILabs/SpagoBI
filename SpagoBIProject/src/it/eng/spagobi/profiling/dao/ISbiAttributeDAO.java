@@ -15,7 +15,9 @@ import java.util.List;
 
 public interface ISbiAttributeDAO extends ISpagoBIDao{
 	
-	public List<SbiUserAttributes> loadSbiAttributesById(Integer id) throws EMFUserError;
+	public SbiAttribute loadSbiAttributeById(Integer id) throws EMFUserError;
+	
+	public List<SbiUserAttributes> loadSbiUserAttributesById(Integer id) throws EMFUserError;
 	
 	public HashMap<Integer, String> loadSbiAttributesByIds(List<String> ids) throws EMFUserError;
 	

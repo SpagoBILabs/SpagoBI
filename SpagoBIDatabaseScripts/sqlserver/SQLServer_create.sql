@@ -105,6 +105,7 @@ CREATE TABLE SBI_EXT_ROLES (
        BUILD_QBE_QUERY 				BIT DEFAULT 1,
        DO_MASSIVE_EXPORT      		BIT DEFAULT 1,
        EDIT_WORKSHEET	      		BIT DEFAULT 1,
+       MANAGE_USERS                 BIT DEFAULT 0,
        USER_IN              		VARCHAR(100) NOT NULL,
        USER_UP             			VARCHAR(100),
        USER_DE              		VARCHAR(100),

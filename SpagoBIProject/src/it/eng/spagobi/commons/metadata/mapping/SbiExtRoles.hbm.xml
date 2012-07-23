@@ -102,6 +102,9 @@
 		<property name="isAbleToDoMassiveExport" type="boolean">
            	<column name="do_massive_export" />
        	</property>
+        <property name="isAbleToManageUsers" type="boolean">
+            <column name="MANAGE_USERS" />
+        </property> 
         <set name="sbiFuncRoles" inverse="true">
             <key>
                 <column name="ROLE_ID" not-null="true" />

@@ -221,6 +221,7 @@ public class ImportUtilities {
 		newRole.setIsAbleToBuildQbeQuery(role.getIsAbleToBuildQbeQuery());
 		newRole.setIsAbleToDoMassiveExport(role.getIsAbleToDoMassiveExport());
 		newRole.setIsAbleToEditWorksheet(role.getIsAbleToEditWorksheet());
+		newRole.setIsAbleToManageUsers(role.getIsAbleToManageUsers());
 		logger.debug("OUT");
 		return newRole;
 	}

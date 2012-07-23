@@ -41,6 +41,13 @@ public class SpagoBIConstants {
 	public static final String DEV_ACTOR = "DEV_ACTOR";
 	*/
 	
+	public static final String ROLE_TYPE_ADMIN = "ACTOR";
+	public static final String ROLE_TYPE_DEV = "DEV_ROLE";
+	public static final String ROLE_TYPE_TEST = "TEST_ROLE";
+	public static final String ROLE_TYPE_MODEL_ADMIN = "MODEL_ADMIN";
+	public static final String ROLE_TYPE_USER = "USER";
+	
+	
 	public static final String OPERATION = "OPERATION";
 	public static final String FUNCTIONALITIES_OPERATION = "FUNCTIONALITIES_OPERATION";
 	public static final String FUNCTIONALITIES_LIST = "FUNCTIONALITIES_LIST";
@@ -334,6 +341,7 @@ public class SpagoBIConstants {
 	public static final String HOTLINK_MANAGEMENT = "HotLinkManagement";
 	public static final String KPI_MANAGEMENT = "KpiManagement";
 	public static final String PROFILE_MANAGEMENT = "ProfileManagement";
+	public static final String FINAL_USERS_MANAGEMENT = "FinalUsersManagement";
 	
 	public static final String SAVE_SUBOBJECT_FUNCTIONALITY = "SaveSubobjectFunctionality";
 	public static final String SEE_SUBOBJECTS_FUNCTIONALITY = "SeeSubobjectsFunctionality";

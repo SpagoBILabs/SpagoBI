@@ -326,6 +326,9 @@ public class UserUtilities {
 			if (virtualRole.isAbleToEditWorksheet()) {
 				roleFunctionalities.add(SpagoBIConstants.EDIT_WORKSHEET_FUNCTIONALITY);
 			}
+			if (virtualRole.isAbleToManageUsers()) {
+				roleFunctionalities.add(SpagoBIConstants.FINAL_USERS_MANAGEMENT);
+			}
 			
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
@@ -367,6 +370,7 @@ public class UserUtilities {
 		virtualRole.setIsAbleToSaveIntoPersonalFolder(false);
 		virtualRole.setIsAbleToBuildQbeQuery(false);
 		virtualRole.setIsAbleToDoMassiveExport(false);
+		virtualRole.setIsAbleToManageUsers(false);
 		if (roles != null) {
 			for (int i = 0; i < roles.length; i++) {
 				String roleName = roles[i];
@@ -426,6 +430,10 @@ public class UserUtilities {
 					if (anotherRole.isAbleToEditWorksheet()) {
 						logger.debug("User has role " + roleName + " that is able to edit worksheet documents.");
 						virtualRole.setIsAbleToEditWorksheet(true);
+					}
+					if (anotherRole.isAbleToManageUsers()) {
+						logger.debug("User has role " + roleName + " that is able to manage users.");
+						virtualRole.setIsAbleToManageUsers(true);
 					}
 				}
 			}

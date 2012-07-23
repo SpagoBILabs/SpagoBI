@@ -136,8 +136,9 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 	    });
 		this.attributesStore.loadData(config.attributesEmpyList);
 	    
-	    this.rolesStore = new Ext.data.JsonStore({	
-			 data:{}
+	    this.rolesStore = new Ext.data.JsonStore({
+	    	id: 'id'
+			, data:{}
 	        , fields : [ 'id', 'name', 'description', 'checked' ]
 	    });
 		this.rolesStore.loadData(config.rolesEmptyList);	
@@ -273,10 +274,6 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 			, scope: this
 		});
 		
-		this.rolesGrid.on('recToSelect', function(roleId, index){		
-			Ext.getCmp("roles-form").selModel.selectRow(index,true);
-		});
-		
 		this.rolesTab = new Ext.Panel({
 	        title: LN('sbi.users.roles')
 	        , id : 'rolesList'
@@ -325,20 +322,20 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
         });
 	}
 	
-	,fillRoles : function(row, rec) {	 
-		    this.rolesGrid.selModel.clearSelections();
-          	var tempArr = rec.data.userRoles;
-         	var length = rec.data.userRoles.length;
-         	for(var i=0;i<length;i++){
-         		var tempRecord = new Ext.data.Record(
-         				{"description":tempArr[i].description, "name":tempArr[i].name, "id":tempArr[i].id }
-         				);
-			    if(tempArr[i].checked){
-			    	var roleId = tempRecord.get('id');				    	
-			    	this.rolesGrid.fireEvent('recToSelect', roleId, i);
-			    }
-         	}	      	
-         }
+	,
+	fillRoles : function(row, rec) {
+		this.rolesGrid.selModel.clearSelections();
+		var userRolesArray = rec.data.userRoles;
+		var length = rec.data.userRoles.length;
+		for ( var i = 0; i < length; i++) {
+			if (userRolesArray[i].checked) {
+				var roleId = userRolesArray[i].id;
+				var store = this.rolesGrid.getStore();
+				var index = store.indexOfId(roleId);
+				this.rolesGrid.getSelectionModel().selectRow(index, true);
+			}
+		}
+	}
 	
      ,fillAttributes : function(row, rec, emptyData) {	 
         this.attributesGridPanel.store.removeAll();
