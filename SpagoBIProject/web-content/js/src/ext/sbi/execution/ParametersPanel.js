@@ -188,8 +188,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.executionInstance = executionInstance;
 		this.loadParametersForExecution( );
 	}
+
 	
-	, getFormState: function() {
+, getFormState: function() {
 		var state;
 		
 		//to avoid synchronization problem
@@ -272,7 +273,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	 * @deprecated use this.reset() instead
 	 */
 	, clear: function() {
-		alert('function clear() is deprecated');
+		//alert('function clear() is deprecated');
 		this.reset();
 	}
 	
@@ -956,7 +957,19 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			if (!thereAreParametersToBeFilled) {
 				toReturn = LN('sbi.execution.parametersselection.message.page2.execute');
 			} else {
-				toReturn = LN('sbi.execution.parametersselection.message.page2.fillFormAndExecute');
+				var day=false;
+				for(p in this.fields) {
+					if(this.fields[p].name=='DAY'){
+						day = true;
+						break;
+					}
+				}
+				if(day){
+					toReturn = LN('sbi.execution.parametersselection.message.page2.fillFormAndExecute')+ LN('sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1');
+				}else{
+					toReturn = LN('sbi.execution.parametersselection.message.page2.fillFormAndExecute')+ LN('sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2');
+				}
+				
 			}
 		}
 		return toReturn;
