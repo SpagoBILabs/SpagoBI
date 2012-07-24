@@ -748,3 +748,10 @@ Sbi.locale.ln['sbi.kpi.kpiguidescription.targhet']='Targhet Audience'
 Sbi.locale.ln['sbi.kpi.kpiguidescription.scale']='Scala'
 
 Sbi.locale.ln['sbi.kpi.kpiguidoccollegato.nodoc']='Nessun documento collegato'
+	
+	
+Sbi.locale.ln['ext.date.dateformat.error.title']='Errore nel formato data'
+Sbi.locale.ln['ext.date.dateformat.error.text']='La data inserita non \u00e8 valida. Il valore verr\u00e0 normalizzato dal sistema'
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']=''
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']=''
+	
