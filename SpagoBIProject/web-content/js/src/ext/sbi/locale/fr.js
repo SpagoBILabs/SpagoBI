@@ -707,5 +707,5 @@ Sbi.locale.ln['Sbi.office.zoomOut'] = 'D\u00e9cr\u00e9mente les dimensions';
 
 Sbi.locale.ln['ext.date.dateformat.error.title']='Date \u00E9rron\u00E9e'
 Sbi.locale.ln['ext.date.dateformat.error.text']='La date saisie contient des erreurs. Elle sera automatiquement remplac\u00E9e par la date correcte.'
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']='La p\u00E9riode d\'analyse par d\u00E9faut est la veille'
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']='Par d\u00E9faut, la date correspond au mois dernier'
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']='<br>La p\u00E9riode d\'analyse par d\u00E9faut est la veille'
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']='<br>Par d\u00E9faut, la date correspond au mois dernier'
