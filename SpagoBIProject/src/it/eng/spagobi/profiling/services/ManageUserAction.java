@@ -281,9 +281,15 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 		try {
 			UserProfile profile = (UserProfile) this.getUserProfile();
 			// we must load user to check if user belongs to the right tenant,
-			// since Hibernate 3.6 puts tenant filter on select, not on delete 
+			// since Hibernate 3.6 does not put tenant filter on delete 
 			SbiUser user = userDao.loadSbiUserById(id);
 			if (user != null) {
+				if (user.getUserId().equals(profile.getUserId())) {
+					// user deleting himself!
+					throw new SpagoBIServiceException(
+							SERVICE_NAME,
+							"You cannot delete yourself!");
+				}
 				if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT)) {
 					// administrator: he can delete every user
 				} else {
@@ -310,6 +316,8 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 								+ id
 								+ " does not exists or it belongs to another tenant");
 			}
+		} catch (SpagoBIServiceException e) {
+			throw e;
 		} catch (Throwable e) {
 			logger.error("Exception occurred while deleting user",
 					e);

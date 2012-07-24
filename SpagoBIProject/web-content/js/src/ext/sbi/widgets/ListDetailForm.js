@@ -482,16 +482,9 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 								} else {
 									Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
 								}
-				            },
-				            failure: function() {
-				                Ext.MessageBox.show({
-				                    title: LN('sbi.generic.error'),
-				                    msg: LN('sbi.generic.deletingItemError'),
-				                    width: 250,
-				                    buttons: Ext.MessageBox.OK
-				               });
 				            }
-				            ,scope: this
+				            , failure: this.onDeleteItemFailure
+				            , scope: this
 			
 						});
 					} else {
@@ -509,6 +502,16 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
             },
             this
 		);
+	}
+	
+	,
+	onDeleteItemFailure : function(response, options) {
+        Ext.MessageBox.show({
+            title: LN('sbi.generic.error'),
+            msg: LN('sbi.generic.deletingItemError'),
+            width: 250,
+            buttons: Ext.MessageBox.OK
+       });
 	}
 	
 	//METHOD TO BE OVERRIDDEN IN EXTENDED ELEMENT!!!!!
