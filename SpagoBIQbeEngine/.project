@@ -5,6 +5,7 @@
 	<projects>
 		<project>QbeCore</project>
 		<project>SpagoBIUtils</project>
+		<project>SpagoBIUtilsJSON</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
