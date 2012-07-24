@@ -629,6 +629,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				<option value="<%= SpagoBIConstants.EVENTS_MANAGEMENT %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.EVENTS_MANAGEMENT)) ? "selected='selected'" : ""%>>
 					<spagobi:message key="menu.Events" />
 				</option>
+                <option value="<%= SpagoBIConstants.FINAL_USERS_MANAGEMENT %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.FINAL_USERS_MANAGEMENT)) ? "selected='selected'" : ""%>>
+                    <spagobi:message key="menu.Users" />
+                </option>
 			</select>
 		</div>
 		
