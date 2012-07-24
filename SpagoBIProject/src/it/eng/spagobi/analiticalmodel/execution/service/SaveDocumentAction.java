@@ -396,8 +396,10 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		
 		try {
 			for(int i=0; i< functsArrayJSon.length(); i++){
-				String folderId = functsArrayJSon.getString(i);
-				Integer id = new Integer(folderId);
+				//with Jackson library isn't necessary to convert the string into integer because the value is already a number!
+				//String folderId = functsArrayJSon.getString(i);
+				//Integer id = new Integer(folderId);
+				Integer id = new Integer(functsArrayJSon.getInt(i));
 				if (id.intValue() == -1) {
 					// -1 stands for personal folder: check is it exists
 					boolean exists = UserUtilities.userFunctionalityRootExists( (UserProfile)getUserProfile() );
