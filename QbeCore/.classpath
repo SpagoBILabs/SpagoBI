@@ -6,7 +6,6 @@
 	<classpathentry kind="src" path="src/serialization"/>
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/json.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/required/antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/required/commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/required/dom4j-1.6.1.jar"/>
@@ -25,5 +24,9 @@
 	<classpathentry kind="lib" path="lib/eclipselink/eclipselink_2.1.2.v20101206-r8635.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate3.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/jsr223.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-annotations-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-core-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.0.2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtilsJSON"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
