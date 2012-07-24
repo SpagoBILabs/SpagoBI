@@ -548,4 +548,7 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 		this.changePwdButton.hide();      
 	}
 
+	,
+	onDeleteItemFailure : Sbi.exception.ExceptionHandler.handleFailure
+	
 });
