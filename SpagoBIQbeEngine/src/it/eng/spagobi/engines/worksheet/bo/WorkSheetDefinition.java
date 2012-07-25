@@ -133,7 +133,8 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 			
 			rowDataJSON = new JSONObject(str);
 			try {
-				encodingFormatVersion = rowDataJSON.getString("version");
+				//encodingFormatVersion = rowDataJSON.getString("version");
+				encodingFormatVersion = String.valueOf(rowDataJSON.getInt("version"));
 			} catch (JSONException e) {
 				logger.debug("no version found, default is 0");
 				encodingFormatVersion = "0";
