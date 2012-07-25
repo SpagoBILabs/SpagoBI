@@ -485,18 +485,24 @@ public class CrossTab {
 		return toReturn;
 	}
 	
-	private List<String> visit(Node n, String prefix){
+	private List<String> visit(Node n, String prefix) {
 		List<String> toReturn = new ArrayList<String>();
-		if(n.getChilds().size()==0){
-			if(prefix.equals(PATH_SEPARATOR)){
-				toReturn.add(prefix +(String)(n.getValue()));
-			}else{
-				toReturn.add(prefix+ PATH_SEPARATOR +(String)(n.getValue()));
+		if (n.getChilds().size() == 0) {
+			if (prefix.equals(PATH_SEPARATOR)) {
+				toReturn.add(prefix + (String) (n.getValue()));
+			} else {
+				toReturn.add(prefix + PATH_SEPARATOR + (String) (n.getValue()));
 			}
 			return toReturn;
-		}else{
-			for(int i=0; i<n.getChilds().size(); i++){
-				toReturn.addAll(visit(n.getChilds().get(i), prefix+(String)(n.getValue())));
+		} else {
+			for (int i = 0; i < n.getChilds().size(); i++) {
+				if (prefix.equals(PATH_SEPARATOR)) {
+					toReturn.addAll(visit(n.getChilds().get(i), prefix
+							+ (String) (n.getValue())));
+				} else {
+					toReturn.addAll(visit(n.getChilds().get(i), prefix
+							+ PATH_SEPARATOR + (String) (n.getValue())));
+				}
 			}
 			return toReturn;
 		}
