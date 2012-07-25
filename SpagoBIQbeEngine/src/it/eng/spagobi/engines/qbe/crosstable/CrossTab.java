@@ -521,7 +521,7 @@ public class CrossTab {
 		if(node.getChilds().size()==0){
 			for(int i=0; i<measuresNodes.size(); i++){
 				Node n = measuresNodes.get(i).clone();
-				node.addOrderedChild(n);
+				node.addChild(n);
 			}
 		}else{
 			for(int i=0; i<node.getChilds().size(); i++){
