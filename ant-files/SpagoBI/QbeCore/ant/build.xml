@@ -36,6 +36,10 @@
     		<fileset dir="${sbiutils.dir}/dist">
           		<include name="**/*.jar"/>
     		</fileset>
+			<!-- LIBRERIA SBI.UTILS.JSON DI SPAGOBI necessaria per la compilazione -->
+			<fileset dir="${sbiutils.json.dir}/dist">
+      			<include name="**/*.jar"/>
+			</fileset>		
  	</path>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
