@@ -35,6 +35,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
@@ -165,7 +166,14 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 			for(int i = 0; i < filters.length(); i++) {
 				JSONObject filter = filters.getJSONObject(i);
 				String columnName = filter.getString("columnName");
-				String value = filter.getString("value");
+				//with Jackson lib numbers aren't managed as string, so is necessary a different cast
+				//String value = filter.getString("value");				
+				String value = null;	
+				try{
+					value = filter.getString("value");
+				}catch(JSONException e){
+					value = String.valueOf(filter.getDouble("value"));
+				}
 				
 				int fieldIndex = query.getSelectFieldIndex(columnName);				
 				String[] f = (String[])selectFields.get(fieldIndex);		

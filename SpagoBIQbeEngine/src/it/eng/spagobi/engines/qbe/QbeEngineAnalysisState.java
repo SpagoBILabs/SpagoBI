@@ -58,7 +58,8 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 			
 			rowDataJSON = new JSONObject(str);
 			try {
-				encodingFormatVersion = rowDataJSON.getString("version");
+				//encodingFormatVersion = rowDataJSON.getString("version");
+				encodingFormatVersion = String.valueOf(rowDataJSON.getInt("version")); //Jackson management
 			} catch (JSONException e) {
 				encodingFormatVersion = "0";
 			}
