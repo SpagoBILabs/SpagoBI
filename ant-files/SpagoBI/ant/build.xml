@@ -91,6 +91,7 @@
   </target>
 
   <target name="create.sbi.utils.jar" >
+    <ant dir="../SpagoBIUtilsJSON/ant" />
     <ant dir="../SpagoBIUtils/ant" />
   </target>
 
@@ -435,6 +436,8 @@
   <delete dir="../../../SpagoBIProject/dist"/>    
   <delete dir="../../../SpagoBIUtils/ant-build"/>
   <delete dir="../../../SpagoBIUtils/dist"/>    
+  <delete dir="../../../SpagoBIUtilsJSON/ant-build"/>
+  <delete dir="../../../SpagoBIUtilsJSON/dist"/>    
   <delete dir="../../../SpagoBIWekaEngine/ant-build"/>
   <delete dir="../../../SpagoBIWekaEngine/dist"/>	
   <delete dir="../../../SpagoBIJPXMLAEngine/ant-build"/>
@@ -483,6 +486,7 @@
     <ant dir="../SpagoBIQbeEngine/ant" target="svn.checkout"/>
     <ant dir="../SpagoBITalendEngine/ant" target="svn.checkout"/>
     <ant dir="../SpagoBIUtils/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBIUtilsJSON/ant" target="svn.checkout"/>
     <ant dir="../SpagoBIWekaEngine/ant" target="svn.checkout"/>
   	<ant dir="../SpagoBIJPXMLAEngine/ant" target="svn.checkout"/>
     <ant dir="../SpagoBIXmlSecurityProvider/ant" target="svn.checkout"/>
@@ -510,6 +514,7 @@
     <ant dir="../SpagoBIQbeEngine/ant" target="javadoc"/>
     <ant dir="../SpagoBITalendEngine/ant" target="javadoc"/>
     <ant dir="../SpagoBIUtils/ant" target="javadoc"/>
+    <ant dir="../SpagoBIUtilsJSON/ant" target="javadoc"/>
     <ant dir="../SpagoBIWekaEngine/ant" target="javadoc"/>
     <ant dir="../SpagoBIXmlSecurityProvider/ant" target="javadoc"/>
     <ant dir="../SpagoBILiferaySecurityProvider/ant" target="javadoc"/>    
