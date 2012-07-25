@@ -16,10 +16,7 @@
     		<fileset dir="${runtime.lib}">
           		<include name="**/*.jar"/>
     		</fileset>
-    		<!-- LIBRERIA SBI.UTILS.JSON necessaria per la compilazione -->
-    		<fileset dir="${sbiutils.json.dir}/dist">
-          		<include name="**/*.jar"/>
-    		</fileset>
+
  	</path>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

@@ -76,6 +76,7 @@
 			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.security.*.jar" />
 		</delete>
 		<!-- copies the newly created jar file -->
+		<copy file="${sbiutils.json.dir}/dist/sbi.utils.json-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 		<copy file="${sbiutils.dir}/dist/sbi.utils-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 
 		<antcall target="copy.sbi.security.liferay" />
