@@ -285,7 +285,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			}
 			
 			return createBaseDocument(documentJSON.getString("label")
-					, documentJSON.getString("label")
+					, documentJSON.getString("name")
 					, documentJSON.getString("description")
 					, documentJSON.getString("type") 
 					, documentJSON.optString("engineId"), sourceDocument, folderJSON);
