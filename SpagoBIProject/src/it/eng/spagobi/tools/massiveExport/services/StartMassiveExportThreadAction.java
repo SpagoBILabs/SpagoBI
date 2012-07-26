@@ -103,10 +103,8 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 				logger.debug("Input parameter [" + MIME_TYPE + "] is equal to [" + output + "]");
 				Assert.assertNotNull(output, "Input parameter [" + MIME_TYPE + "] cannot be null");
 
-				String cycleOnFilters = optionsObject.getString(SPLITTING_FILTER);
-				logger.debug("Input parameter [" + SPLITTING_FILTER + "] is equal to [" + cycleOnFilters + "]");
-				splittingFilter = false;
-				if(cycleOnFilters != null) splittingFilter = Boolean.valueOf(cycleOnFilters);
+				splittingFilter = optionsObject.getBoolean(SPLITTING_FILTER);
+				logger.debug("Input parameter [" + SPLITTING_FILTER + "] is equal to [" + splittingFilter + "]");
 
 				parametersJSON = this.getAttributeAsJSONObject(PARAMETERS_PAGE);
 				logger.debug("Input parameter [" + PARAMETERS_PAGE + "] is equal to [" + parametersJSON + "]");
