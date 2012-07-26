@@ -1396,10 +1396,31 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			//getting correct ext_role_id
 			String hql = " from SbiExtRoles as extRole where extRole.name in (:roles)  "; 
 			hibQuery = aSession.createQuery(hql);
-			hibQuery.setParameterList("roles", roles);
-			List rolesIds = hibQuery.list();
-
-
+			
+			int originalSize = roles.size();
+			int MAX_PARAMIN_SIZE = 1000;
+			List rolesIds = null;
+			if (originalSize >= MAX_PARAMIN_SIZE) {
+				int start = 0;
+				List tmpRoles = new ArrayList(roles);
+				do {
+					List subList = tmpRoles.subList(start, Math.min(start + MAX_PARAMIN_SIZE, originalSize));
+					
+					hibQuery.setParameterList("roles", subList);
+					List rolesIdsTmp = hibQuery.list();
+					
+					if (rolesIds == null) {
+						rolesIds = rolesIdsTmp; 
+					} else {
+						rolesIds.addAll(rolesIdsTmp);
+					}
+					
+					start += MAX_PARAMIN_SIZE;
+				} while (start < originalSize);
+			} else {
+				hibQuery.setParameterList("roles", roles);
+				rolesIds = hibQuery.list();
+			}
 
 			Iterator it = hibList.iterator();
 			//maintains functionalities that have the same user's role
