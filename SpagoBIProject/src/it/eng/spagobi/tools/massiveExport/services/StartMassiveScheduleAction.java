@@ -107,10 +107,8 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 				logger.debug("Input parameter [" + MIME_TYPE + "] is equal to [" + outputMIMEType + "]");
 				Assert.assertNotNull(outputMIMEType, "Input parameter [" + MIME_TYPE + "] cannot be null");
 
-				String cycleOnFilters = optionsPageContentJSON.getString(SPLITTING_FILTER);
-				logger.debug("Input parameter [" + SPLITTING_FILTER + "] is equal to [" + cycleOnFilters + "]");
-				splittingFilter = false;
-				if(cycleOnFilters != null) splittingFilter = Boolean.valueOf(cycleOnFilters);
+				splittingFilter = optionsPageContentJSON.getBoolean(SPLITTING_FILTER);
+				logger.debug("Input parameter [" + SPLITTING_FILTER + "] is equal to [" + splittingFilter + "]");
 
 				parametersPageContentJSON = this.getAttributeAsJSONObject(PARAMETERS_PAGE);
 				logger.debug("Input parameter [" + PARAMETERS_PAGE + "] is equal to [" + parametersPageContentJSON + "]");
