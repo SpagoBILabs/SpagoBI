@@ -32,6 +32,8 @@ public class JSONTemplateUtils {
 
 	public static final String WIDTH = "WIDTH";
 	public static final String HEIGHT = "HEIGHT";
+	public static final String HIGHCHART_TYPE = "HIGHCHART";
+	public static final String HIGH_CHART = "CHART";
 	public static final String HIGH_NUMCHARTS = "NUMCHARTS";
 	public static final String HIGH_SUBTYPE = "SUBTYPE";
 	
@@ -44,10 +46,13 @@ public class JSONTemplateUtils {
 	private String subType = "";
 	private boolean firstBlock = true;
 	private JSONArray parametersJSON = null;
+	private SourceBean template = null;
+	
+
 	/**
 	 * Returns a JSONObject with the input configuration (xml format). 
 	 * 
-	 * @param xmlTemplate the template in xml language
+	 * @param getTemplate(). the template in xml language
 	 * @param
 	 * 
 	 * @return JSONObject the same template in json format (because highcharts uses json format)
@@ -57,27 +62,31 @@ public class JSONTemplateUtils {
 	    ByteArrayOutputStream out = new ByteArrayOutputStream();
 	    OutputStreamWriter ow = new OutputStreamWriter(out);
 	    parametersJSON = parsJSON;
+	    setTemplate(xmlTemplate);
 	    try{
-		    //the begin of all...
+		    //the begin of all..
 		    ow.write("{\n");
 			
 			//dimension definition
-			setDivWidth((String)xmlTemplate.getAttribute(WIDTH));
-			setDivHeight((String)xmlTemplate.getAttribute(HEIGHT));
-			//number of chart definition (for highchart lib)
-			//setNumCharts((xmlTemplate.getAttribute(HIGH_NUMCHARTS)!=null)?Integer.valueOf((String)xmlTemplate.getAttribute(HIGH_NUMCHARTS)):1);
-			//subtype for master/detail chart
-			//setSubType((xmlTemplate.getAttribute(HIGH_CHART+"."+ HIGH_SUBTYPE)!=null)?(String)xmlTemplate.getAttribute(HIGH_CHART+"."+ HIGH_SUBTYPE):"");
+			setDivWidth((String)getTemplate().getAttribute(WIDTH));
+			setDivHeight((String)getTemplate().getAttribute(HEIGHT));
 			
-			//xmlTemplate.delAttribute(WIDTH);
-			//xmlTemplate.delAttribute(HEIGHT);
-			//xmlTemplate.delAttribute(HIGH_NUMCHARTS);
-			//xmlTemplate.delAttribute(HIGH_SUBTYPE);
+			if (isHighChart()){
+				//number of chart definition (for highchart lib)			
+				setNumCharts((getTemplate().getAttribute(HIGH_NUMCHARTS)!=null)?Integer.valueOf((String)getTemplate().getAttribute(HIGH_NUMCHARTS)):1);
+				//subtype for master/detail chart
+				setSubType((getTemplate().getAttribute(HIGH_CHART+"."+ HIGH_SUBTYPE)!=null)?(String)getTemplate().getAttribute(HIGH_CHART+"."+ HIGH_SUBTYPE):"");
+				
+				getTemplate().delAttribute(WIDTH);
+				getTemplate().delAttribute(HEIGHT);
+				getTemplate().delAttribute(HIGH_NUMCHARTS);
+				getTemplate().delAttribute(HIGH_SUBTYPE);				
+			}
 
-			ow = getPropertiesDetail(xmlTemplate, ow);
+			ow = getPropertiesDetail(this.getTemplate(), ow);
 			ow.write("}\n");
 			ow.flush();			
-			System.out.println("*** template: " + out.toString());
+			//System.out.println("*** template: " + out.toString());
 			logger.debug("ChartConfig: " + out.toString());
 			
 	    }catch (IOException ioe){
@@ -101,6 +110,20 @@ public class JSONTemplateUtils {
 	    }
 		
 		return toReturn;
+	}
+	
+	/**
+	 * @return the template
+	 */
+	public SourceBean getTemplate() {
+		return template;
+	}
+
+	/**
+	 * @param template the template to set
+	 */
+	public void setTemplate(SourceBean template) {
+		this.template = template;
 	}
 
 	/**
@@ -322,7 +345,8 @@ public class JSONTemplateUtils {
 					SourceBean sb1 = SourceBean.fromXMLString(o.toString());
 					String v = sb1.getCharacters();
 					if(v!= null){
-						if (!v.startsWith("'")){
+						if (!v.startsWith("[") && !v.startsWith("'")){
+							//adds ' only if the element isn't an array but a simple value
 							v = "'"+v+"'";
 						}
 						toReturn.write(v + "\n" );						
@@ -363,12 +387,13 @@ public class JSONTemplateUtils {
 			}catch (Exception e){
 					//checks if the value is a boolean
 					if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false") //boolean
-							&& ! value.startsWith("[")//not an array example for categories...
-							//&& ! value.trim().startsWith("function")//not an array example for categories...
+							&& ! value.startsWith("[")//not an array example for categories..
+							//&& ! value.trim().startsWith("function")//not an array example for categories..
 						){
 						//replace parameters
 						if(value.contains("$P{")){
-							finalValue = replaceParametersInValue(value);
+							boolean addFinalSpace = (key.equals("text")?true:false);		
+							finalValue = replaceParametersInValue(value, addFinalSpace);
 							finalValue = "'" + finalValue + "'";						
 						}else{
 							//the value is a string!
@@ -383,13 +408,14 @@ public class JSONTemplateUtils {
 		return finalValue;
 	}
 	
-	private String replaceParametersInValue(String valueString){
+	private String replaceParametersInValue(String valueString, boolean addFinalSpace){
 		StringBuffer sb = new StringBuffer();
 		StringTokenizer st = new StringTokenizer(valueString);
 		while(st.hasMoreTokens()){
 			String tok = st.nextToken();
 			if(tok.indexOf("$P{") != -1){
-				String parName = tok.substring(tok.indexOf("$P{")+3, tok.indexOf("}"));				
+				String parName = tok.substring(tok.indexOf("$P{")+3, tok.indexOf("}"));			
+				String remnantString = tok.substring(tok.indexOf("}")+1);	
 				if(!parName.equals("")){					
 					for(int i=0; i<parametersJSON.length(); i++){
 						try {
@@ -398,8 +424,12 @@ public class JSONTemplateUtils {
 								String val = ((String)objPar.get("value")).replaceAll("'", "");
 								if (!val.equals("%")) {
 									sb.append(val);
-									sb.append(" ");
 								}
+								if (remnantString != null && !remnantString.equals("")){
+									sb.append(remnantString);
+									addFinalSpace = false;
+								}
+								if (addFinalSpace) sb.append(" ");								
 								break;
 							}
 						} catch (JSONException e1) {
@@ -490,5 +520,8 @@ public class JSONTemplateUtils {
 
 	}
 	
-	
+	private boolean isHighChart(){
+		boolean toReturn = (getTemplate().getName().equals(HIGHCHART_TYPE))? true : false;
+		return toReturn;
+	}
 }
