@@ -64,17 +64,17 @@
 	<!-- START-CAS 	
    	<filter-mapping>
     	<filter-name>CAS Authentication Filter</filter-name>
-    	<url-pattern>/*</url-pattern>
+    	<url-pattern>/WekaServlet/*</url-pattern>
   	</filter-mapping> 
     	
    	<filter-mapping>
     	<filter-name>CAS Validation Filter</filter-name>
-    	<url-pattern>/*</url-pattern>
+    	<url-pattern>/WekaServlet/*</url-pattern>
   	</filter-mapping> 
  
    	<filter-mapping>
     	<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    	<url-pattern>/*</url-pattern>
+    	<url-pattern>/WekaServlet/*</url-pattern>
   	</filter-mapping> 
 
   	<filter-mapping>
