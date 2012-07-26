@@ -232,7 +232,7 @@ Ext.extend(Sbi.browser.mexport.MassiveExportWizardParametersPage, Ext.Panel, {
 		      		  		}
 		      		  		this.wizard.btnFinish.enable();
 		      				params = Ext.apply(params, this.executionInstances);
-		      				this.mainPanel.loadParametersForExecution(params);
+		      				this.mainPanel.synchronize(params);
 	        			} 
 		      		} else {
 		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
