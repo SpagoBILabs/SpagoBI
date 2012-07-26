@@ -29,6 +29,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1461,41 +1462,31 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			String username = null;
-			Collection roles = null;
+			String username = (String)((UserProfile)profile).getUserId();
+			Collection roles;
 			try {
-				RequestContainer reqCont = RequestContainer.getRequestContainer();
-				if(reqCont!=null){
-					username = (String)((UserProfile)profile).getUserId();
-					roles  = ((UserProfile)profile).getRolesForUse();				
-				}
-			} catch (Exception e) {
-				logger.error("Error while recovering user profile", e);
+				roles = ((UserProfile)profile).getRolesForUse();
+			} catch (EMFInternalError e) {
+				throw new SpagoBIRuntimeException("Error while retrieving user roles", e);
 			}
-			boolean onlyFirstLevel = (parentId == null)? true : false;
+			boolean isFirstLevel = (parentId == null)? true : false;
 
 			Query hibQuery = null;
 
 			//getting correct root parent id (if the function must return only functionality of first level)
 			Integer tmpParentId = null;
 			List lstParentId = null;
-			if (onlyFirstLevel){
+			if (isFirstLevel){
 				hibQuery = aSession.createQuery(" from SbiFunctions s where s.parentFunct.functId is null and s.functTypeCd  = 'LOW_FUNCT'");
 				lstParentId = hibQuery.list();
 				tmpParentId = (lstParentId==null || lstParentId.size() == 0)?new Integer("-1"):((SbiFunctions)lstParentId.get(0)).getFunctId();
-			}
-			else
+			} else {
 				tmpParentId = parentId;
+			}
 
 			//getting functionalities
-			if(username == null || roles == null) {
-				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where "
-				+ "sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.stateCd = ? and sfr.id.role.name in (:roles) "
-				+ "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
-				hibQuery.setString(0,permission);
-				hibQuery.setParameterList("roles", roles);
-			} else if (onlyFirstLevel){
-				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where "
+			if (isFirstLevel) {
+				hibQuery = aSession.createQuery("select distinct sfr.id.function from SbiFuncRole sfr where "
 				+ "sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ?  "
 				+ "and sfr.stateCd = ? and sfr.id.role.name in (:roles) "										
 				+ "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
@@ -1510,8 +1501,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					SbiFunctions tmpFunc = (SbiFunctions) it.next();
 					realResult.add(toLowFunctionality(tmpFunc, recoverBIObjects));
 				}
-			} else{
-				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where "
+			} else {
+				hibQuery = aSession.createQuery("select distinct sfr.id.function from SbiFuncRole sfr where "
 				+ "sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ? "
 				+ "and sfr.stateCd = ? and sfr.id.role.name in (:roles) "										
 				+ "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
