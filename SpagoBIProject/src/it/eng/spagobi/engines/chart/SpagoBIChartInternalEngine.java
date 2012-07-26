@@ -32,19 +32,13 @@ import it.eng.spagobi.engines.chart.bo.charttypes.clusterchart.ClusterCharts;
 import it.eng.spagobi.engines.chart.bo.charttypes.utils.DrillParameter;
 import it.eng.spagobi.engines.chart.utils.AttributesContainer;
 import it.eng.spagobi.engines.chart.utils.DatasetMap;
-import it.eng.spagobi.engines.chart.utils.ExportHighCharts;
-import it.eng.spagobi.engines.chart.utils.Template;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
+import it.eng.spagobi.utilities.json.JSONTemplateUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -311,7 +305,8 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 		ResponseContainer responseContainer=ResponseContainer.getResponseContainer();
 		EMFErrorHandler errorHandler=responseContainer.getErrorHandler();
 		String chartType = getChartType(obj, errorHandler);
-		Template templateUtil = new Template();
+	//	Template templateUtil = new Template();
+		JSONTemplateUtils templateUtil = new JSONTemplateUtils();
 		try{
 			if (chartType != null && chartType.startsWith(HIGHCHART_TEMPLATE)){
 				//gets the dataset object informations
