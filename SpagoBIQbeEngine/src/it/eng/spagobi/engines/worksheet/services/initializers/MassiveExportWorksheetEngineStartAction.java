@@ -41,7 +41,7 @@ public class MassiveExportWorksheetEngineStartAction extends
 			logger.debug("document Id: " + docId);
 
 			SbiDocumentServiceProxy proxy = new SbiDocumentServiceProxy(
-					getUserProfile().getUserId().toString(), getHttpSession());
+					getUserProfile().getUserUniqueIdentifier().toString(), getHttpSession());
 			logger.debug("recover paramters for metadata");
 			try {
 				String jSonPars = proxy.getDocumentAnalyticalDriversJSON(
