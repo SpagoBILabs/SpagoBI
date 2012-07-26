@@ -352,13 +352,6 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	
 	, createDeleteForm: function(functCd, randomKey, progressThreadId, type){
 	   
-		var pars = {
-			FUNCT_CD: functCd
-			, RANDOM_KEY: randomKey
-			, PROGRESS_THREAD_ID: progressThreadId 
-			, PROGRESS_THREAD_TYPE: type
-		};
-		
 		if(this.deleteButtonPanels[functCd+randomKey]){
 	    }
 	    else{
@@ -382,25 +375,7 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	    		disabled: false,
 	    		scope: this,
 	    		disabled: true,
-	    		handler: function(){
-	    			Ext.Ajax.request({
-	    	        url: this.services['DeleteMassiveExportZip'],
-	    	        params: pars,
-	    	        success : function(response, options) {
-	    				if(response !== undefined) {   
-	    	    			this.downloadButtonPanels[functCd+randomKey].hide();
-	    	    			this.downloadButtonPanels[functCd+randomKey].destroy();
-	    	    			this.downloadButtonPanels[functCd+randomKey] = null;
-	    					this.deleteButtonPanels[functCd+randomKey].hide();
-	    	    			this.deleteButtonPanels[functCd+randomKey].destroy();
-	    	    			this.deleteButtonPanels[functCd+randomKey] = null;
-	    	    			this.buttonCounter = this.buttonCounter -1;
-	    				}
-	    			},
-	    	        scope: this,
-	    			failure: Sbi.exception.ExceptionHandler.handleFailure      
-	    		});	
-				}
+	    		handler: this.deleteButtonHandler.createDelegate(this, [functCd, randomKey, progressThreadId, type], 0 )
 			});
 	    	button.enable();
 	    	this.deleteButtonPanels[functCd+randomKey].add(button);
@@ -410,6 +385,48 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 	
 	}
 	
+	,
+	deleteButtonHandler: function(functCd, randomKey, progressThreadId, type) {
+		Ext.MessageBox.confirm(
+			LN('sbi.generic.pleaseConfirm')
+			, LN('sbi.generic.confirmDelete')
+            , function(btn, text) {
+                if ( btn == 'yes' ) {
+                	this.doDeleteItem(functCd, randomKey, progressThreadId, type);
+                }
+			}
+			, this
+		);
+	}
+	
+	,
+	doDeleteItem : function(functCd, randomKey, progressThreadId, type) {
+		
+		var pars = {
+			FUNCT_CD: functCd
+			, RANDOM_KEY: randomKey
+			, PROGRESS_THREAD_ID: progressThreadId 
+			, PROGRESS_THREAD_TYPE: type
+		};
+		
+		Ext.Ajax.request({
+	        url: this.services['DeleteMassiveExportZip'],
+	        params: pars,
+	        success : function(response, options) {
+				if(response !== undefined) {   
+	    			this.downloadButtonPanels[functCd+randomKey].hide();
+	    			this.downloadButtonPanels[functCd+randomKey].destroy();
+	    			this.downloadButtonPanels[functCd+randomKey] = null;
+					this.deleteButtonPanels[functCd+randomKey].hide();
+	    			this.deleteButtonPanels[functCd+randomKey].destroy();
+	    			this.deleteButtonPanels[functCd+randomKey] = null;
+	    			this.buttonCounter = this.buttonCounter -1;
+				}
+			},
+	        scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure      
+		});	
+	}
 
 	, checkEmptyPanels: function(){
 		if(this.progressCounter<1){
