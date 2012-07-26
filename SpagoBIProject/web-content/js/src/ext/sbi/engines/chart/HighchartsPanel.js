@@ -109,11 +109,11 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			}				
 			
 			//defines tooltip
-			/* orig:
-			if(singleChartConfig.tooltip && singleChartConfig.tooltip.formatter){
-				var formatterCode = this.getFormatter(singleChartConfig.tooltip.formatter);				
-				singleChartConfig.tooltip.formatter = formatterCode;
-			}*/
+			// orig:
+			//if(singleChartConfig.tooltip && singleChartConfig.tooltip.formatter){
+			//	var formatterCode = this.getFormatter(singleChartConfig.tooltip.formatter);				
+			//	singleChartConfig.tooltip.formatter = formatterCode;
+			//}
 			if(singleChartConfig.tooltip){
 				if (singleChartConfig.tooltip.formatter){
 					var formatterCode = this.getFormatter(singleChartConfig.tooltip.formatter);				

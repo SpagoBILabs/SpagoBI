@@ -381,14 +381,6 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     		                  params+= drill.param[i].name +"="+ev.point.series.name;                           
     		                }             
     		            }
-    		    		/*
-    		    		if(params.length != 0){
-	    		    		var atpos = params.lastIndexOf("&", params.length-1);
-	    		    		if(params.lastIndexOf("&", params.length-1) != -1){
-	    		    			params = params.substring(0, atpos);
-	    		    		}
-    		    		}
-    		    		*/
     					parent.execCrossNavigation("iframe_"+dataConfig.docLabel, doc, params);
     				}
     		};

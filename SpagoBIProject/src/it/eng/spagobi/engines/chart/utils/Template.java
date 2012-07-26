@@ -23,7 +23,10 @@ import org.json.JSONObject;
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  * Utility Class for highcharts integration
+ * 
+ * @deprecated  Replaced by {@link #JSONTemplateUtils}
  */
+
 public class Template {
 	
 	//template constants
@@ -111,7 +114,7 @@ public class Template {
 		    }
 	    	
 	    }
-	    //replace dublicate , charachter
+	    //replace duplicate , character
 	    String json = out.toString().replaceAll(", ,", ",");
 	    toReturn =  ObjectUtils.toJSONObject(json);
 		
@@ -359,7 +362,8 @@ public class Template {
 						){
 						//replace parameters
 						if(value.contains("$P{")){
-							finalValue = replaceParametersInValue(value);
+							boolean addFinalSpace = (key.equals("text")?true:false);							
+							finalValue = replaceParametersInValue(value, addFinalSpace);
 							finalValue = "'" + finalValue + "'";						
 						}else{
 							//the value is a string!
@@ -374,27 +378,36 @@ public class Template {
 		return finalValue;
 	}
 	
-	private String replaceParametersInValue(String valueString){
+	private String replaceParametersInValue(String valueString, boolean addFinalSpace){
 		StringBuffer sb = new StringBuffer();
 		StringTokenizer st = new StringTokenizer(valueString);
 		while(st.hasMoreTokens()){
 			String tok = st.nextToken();
 			if(tok.indexOf("$P{") != -1){
-				String parName = tok.substring(tok.indexOf("$P{")+3, tok.indexOf("}"));				
+				String parName = tok.substring(tok.indexOf("$P{")+3, tok.indexOf("}"));		
+				String remnantString = tok.substring(tok.indexOf("}")+1);		
 				if(!parName.equals("")){					
 					for(int i=0; i<parametersJSON.length(); i++){
 						try {
 							JSONObject objPar = (JSONObject)parametersJSON.get(i);								
 							if(((String)objPar.get("name")).equals(parName)){
 								String val = ((String)objPar.get("value")).replaceAll("'", "");
-								sb.append(val);
-								sb.append(" ");
+								if (!val.equals("%")) {
+									sb.append(val);
+								}
+								if (remnantString != null && !remnantString.equals("")){
+									sb.append(remnantString);
+									addFinalSpace = false;
+								}
+								if (addFinalSpace) sb.append(" ");							
+								break;
 							}
 						} catch (JSONException e1) {
 							logger.error("Error while replacing parameters in value: " + e1.getMessage());
 						}
 					}
 				}
+				
 			}else{
 				sb.append(tok);
 				sb.append(" ");
