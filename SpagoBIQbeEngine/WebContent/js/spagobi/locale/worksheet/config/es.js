@@ -21,6 +21,7 @@ Sbi.locale.ln['sbi.config.optionswindow.title'] = 'Opciones';
 Sbi.locale.ln['sbi.worksheet.config.optionswindow.buttons.text.apply'] = 'Aplicar';
 Sbi.locale.ln['sbi.worksheet.config.optionswindow.buttons.text.cancel'] = 'Cancelar';
 
+Sbi.locale.ln['sbi.worksheet.config.options.measurepresentation.scalefactor'] = 'Factor de escala';
 Sbi.locale.ln['sbi.worksheet.config.options.measurepresentation.NONE'] = 'ninguno';
 Sbi.locale.ln['sbi.worksheet.config.options.measurepresentation.K'] = 'miles';
 Sbi.locale.ln['sbi.worksheet.config.options.measurepresentation.M'] = 'millones';
