@@ -11,13 +11,24 @@ import it.eng.spagobi.commons.bo.CustomJDBCAppender;
 import it.eng.spagobi.commons.bo.UserProfile;
 
 import java.sql.Connection;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
+
 /**
- * @author Chiara Chiarelli (chiara.chiarelli@eng.it)
+ * @author Chiara Chiarelli (chiara.chiarelli@eng.it) , Monia Spinelli (monia.spinelli@eng.it)
  *
  */
 public class AuditLogUtilities {
@@ -37,17 +48,9 @@ public class AuditLogUtilities {
 	 * 
 	 * @throws Exception the exception
 	 */
-	public static void updateAudit(Connection jdbcConnection,IEngUserProfile profile, String  action_code, String info)
+	public static void updateAudit(HttpServletRequest request,IEngUserProfile profile, String  action_code, HashMap<String, String> parameters, String esito)
 	throws Exception {
 		logger.debug("IN");
-		CustomJDBCAppender ja = null;
-		boolean updateDB= false;
-		SingletonConfig serverConfig = SingletonConfig.getInstance();
-		String dbTimestampFormat = serverConfig.getConfigValue("SPAGOBI.DB-TIMESTAMP-FORMAT.format");
-		String updateDBConf = serverConfig.getConfigValue("SPAGOBI.DB_LOG.value");
-		if(updateDBConf!=null && updateDBConf.equalsIgnoreCase("true")){
-			updateDB=true;
-		}
 
 		String userName = "";
 		String userRoles = "";
@@ -58,24 +61,66 @@ public class AuditLogUtilities {
 
 			userRoles = createRolesString(roles);
 		}
-
-		if(jdbcConnection!=null){
-			ja = new CustomJDBCAppender(jdbcConnection);			
-			if(updateDB && action_code!=null){
-				String sqlInsert = "INSERT INTO SBI_ACTIVITY_MONITORING (ACTION_TIME, USERNAME, USERGROUP, LOG_LEVEL, ACTION_CODE, INFO)";
-				sqlInsert += "VALUES('%d{"+dbTimestampFormat+"}','"+userName+"','"+userRoles+"','%5p','"+action_code+"','"+(info!=null?info:"")+"')";
-				logger.debug("SQL INSERT:"+sqlInsert);
-				ja.setSql(sqlInsert);
-				audit_logger.addAppender(ja);
+		Date now = new Date();
+		String dateString = now.toString();
+		String logFormat = "";
+		Format formatter;
+		formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+		 try {
+			 Date parsed = new Date();
+			 String customDate = formatter.format(parsed);
+			 logFormat = "'"+customDate;
+	        }
+	        catch(ParseException pe) {
+	            System.out.println("ERROR: Cannot parse \"" + dateString + "\"");
+	        }
+		logFormat +="';'"+request.getLocalAddr()+"';'"+request.getLocalName()+"';'"+request.getRemoteAddr()+"';'IP_CLIENT"+"';'"+request.getRemoteHost()+"';'';'"+profile.getUserUniqueIdentifier()+"';'"+profile.getRoles()+"';'"+request.getHeader("user-agent")+"';'"+action_code+"';'"+request.getRequestURI()+"';'OGGETTO';'";
+		if(parameters!=null){
+		Set set = parameters.entrySet(); 
+		Iterator i = set.iterator();
+		int separator = 0;
+		// Display elements
+		
+		while(i.hasNext()) {
+			Map.Entry me = (Map.Entry)i.next();
+			if(separator == 0){
+				logFormat += me.getKey() + "="+me.getValue();
 			}
+			else{
+				logFormat += "&"+me.getKey() + "="+me.getValue();
+			}
+			separator++;
 		}
+		logFormat += "';'";
+		}
+		logFormat += esito+"';'";
+		if(esito=="OK"){
+			logFormat += "0';";
+		}
+		else{
+			logFormat += "-1';";
+		}
+		
+		
+		
+		
+	
+
+//		if(jdbcConnection!=null){
+//			ja = new CustomJDBCAppender(jdbcConnection);			
+//			if(updateDB && action_code!=null){
+//				String sqlInsert = "INSERT INTO SBI_ACTIVITY_MONITORING (ACTION_TIME, USERNAME, USERGROUP, LOG_LEVEL, ACTION_CODE, INFO)";
+//				sqlInsert += "VALUES('%d{"+dbTimestampFormat+"}';'"+userName+"';'"+userRoles+"';'%5p';'"+action_code+"';'"+(info!=null?info:"")+"')";
+//				logger.debug("SQL INSERT:"+sqlInsert);
+//				ja.setSql(sqlInsert);
+//				audit_logger.addAppender(ja);
+//			}
+//		}
 		// These messages with Priority >= setted priority will be logged to the database.
-		audit_logger.info("activity_info: USERNAME="+userName+"; USERGROUP="+userRoles+" ACTION_CODE="+action_code+"");
+		audit_logger.info(logFormat);
+		logger.info("NUOVO_LOG.....................");
 
 		// not required
-		if(updateDB && ja!=null){
-			audit_logger.removeAppender(ja);
-		}
 		logger.debug("OUT");
 	}	
 
