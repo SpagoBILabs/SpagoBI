@@ -9,7 +9,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
+import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
@@ -30,7 +30,7 @@ import org.json.JSONObject;
  * 
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class UploadWorksheetImageAction extends AbstractQbeEngineAction {
+public class UploadWorksheetImageAction extends AbstractWorksheetEngineAction {
 	
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(UploadWorksheetImageAction.class);

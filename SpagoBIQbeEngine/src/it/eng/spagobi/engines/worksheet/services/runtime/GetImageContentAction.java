@@ -8,7 +8,7 @@ package it.eng.spagobi.engines.worksheet.services.runtime;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
+import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class GetImageContentAction extends AbstractQbeEngineAction {	
+public class GetImageContentAction extends AbstractWorksheetEngineAction {	
 	
 	// INPUT PARAMETERS
 	public static String FILE_NAME = "FILE_NAME";
