@@ -14,19 +14,19 @@ Ext.ns("Sbi.worksheet.config");
 Sbi.worksheet.config.options = {
 	'attributes' : 
 		[
-//		 {
-//			  name : 'attributePresentation'
-//			, description : 'An attribute can be displayed using its code or its description or both'
-//			, type : 'radiogroup'
-//			, applyTo : 'datasetdata'
-//			, label : LN('sbi.worksheet.config.options.attributepresentation.label')
-//			, items: 
-//				[
-//	                 {boxLabel: LN('sbi.worksheet.config.options.attributepresentation.code'), inputValue: "code", checked: true}
-//	               , {boxLabel: LN('sbi.worksheet.config.options.attributepresentation.description'), inputValue: "description"}
-//	               , {boxLabel: LN('sbi.worksheet.config.options.attributepresentation.both'), inputValue: "both"}
-//			    ]
-//		 }
+		 {
+			  name : 'attributePresentation'
+			, description : 'An attribute can be displayed using its code or its description or both'
+			, type : 'radiogroup'
+			, applyTo : 'datasetdata'
+			, label : LN('sbi.worksheet.config.options.attributepresentation.label')
+			, items: 
+				[
+	                 {boxLabel: LN('sbi.worksheet.config.options.attributepresentation.code'), inputValue: "code", checked: true}
+	               , {boxLabel: LN('sbi.worksheet.config.options.attributepresentation.description'), inputValue: "description"}
+	               , {boxLabel: LN('sbi.worksheet.config.options.attributepresentation.both'), inputValue: "both"}
+			    ]
+		 }
 		]
 	, 'measures' :
 		[
@@ -35,7 +35,7 @@ Sbi.worksheet.config.options = {
 			, description : 'The scale factor of a measure'
 			, type : 'radiogroup'
 			, applyTo : 'datasetdata'
-			, label : LN('sbi.worksheet.config.options.attributepresentation.label')
+			, label : LN('sbi.worksheet.config.options.measurepresentation.scalefactor')
 			, items: 
 				[
 	                 {boxLabel: LN('sbi.worksheet.config.options.measurepresentation.NONE'), inputValue: "NONE", checked: true}
