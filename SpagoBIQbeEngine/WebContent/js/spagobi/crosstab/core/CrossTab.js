@@ -269,13 +269,13 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     
     , calculatePercent: function(value, i, j, measureMetadata, entries){
 		//Add the percentage to the entries
-		if(this.percenton=='column'){
+		if(this.percenton=='row'){
 			if(!this.misuresOnRow){
 				return 100*parseFloat(value)/parseFloat(entries[i][measureMetadata.measurePosition+this.rowSumStartColumn]);
 			}else{
 				return 100*parseFloat(value)/parseFloat(entries[i][this.rowSumStartColumn]);	
 			}
-		} else if(this.percenton=='row'){
+		} else if(this.percenton=='column'){
 			if(this.misuresOnRow){
 				return 100*parseFloat(value)/parseFloat(entries[measureMetadata.measurePosition+this.columnSumStartRow][j]);
 			}else{
