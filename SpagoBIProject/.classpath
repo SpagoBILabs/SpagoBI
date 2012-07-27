@@ -7,5 +7,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/QbeCore"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtilsJSON"/>
+	<classpathentry kind="lib" path="/SpagoBIUtils/lib/commonj-twm.jar"/>
+	<classpathentry kind="lib" path="/SpagoBIUtils/lib/foo-commonj.jar"/>
 	<classpathentry kind="output" path="web-content/WEB-INF/classes"/>
 </classpath>

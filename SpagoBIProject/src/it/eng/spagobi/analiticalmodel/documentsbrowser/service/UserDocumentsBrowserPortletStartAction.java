@@ -52,9 +52,11 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 		try {
 			aSession = HibernateUtil.currentSession();
 			//Connection jdbcConnection = aSession.connection();
-			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
+			//Connection jdbcConnection = HibernateUtil.getConnection(aSession);
+			//TODO
+			
 			IEngUserProfile profile = UserUtilities.getUserProfile();
-			AuditLogUtilities.updateAudit(jdbcConnection,  profile, "activity.DocumentsBrowserMenu", null);
+			AuditLogUtilities.updateAudit(null,  profile, "activity.DocumentsBrowserMenu", null, "OK");
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {

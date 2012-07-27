@@ -51,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -204,7 +205,8 @@ public class LoginModule extends AbstractHttpModule {
 				if (ris==null){
 					logger.error("pwd uncorrect");
 					EMFUserError emfu = new EMFUserError(EMFErrorSeverity.ERROR, 501);
-					errorHandler.addError(emfu); 		    	
+					errorHandler.addError(emfu); 
+					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
 					return;
 				}
 			} catch (Exception e) {
@@ -268,7 +270,8 @@ public class LoginModule extends AbstractHttpModule {
 			if (profile == null){		            	
 				logger.error("user not created");
 				EMFUserError emfu = new EMFUserError(EMFErrorSeverity.ERROR, 501);
-				errorHandler.addError(emfu); 		    	
+				errorHandler.addError(emfu); 		
+				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "ERR");
 				return;
 			}
 
@@ -285,6 +288,7 @@ public class LoginModule extends AbstractHttpModule {
 
 		} catch (Exception e) {
 			logger.error("Reading user information... ERROR");
+			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "ERR");
 			throw new SecurityException("Reading user information... ERROR",e);
 		}
 
@@ -309,9 +313,7 @@ public class LoginModule extends AbstractHttpModule {
 			Session aSession =null;
 			try {
 				aSession = HibernateUtil.currentSession();
-				//Connection jdbcConnection = aSession.connection();
-				Connection jdbcConnection = HibernateUtil.getConnection(aSession);
-				AuditLogUtilities.updateAudit(jdbcConnection, profile, "activity.Login", null);
+				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "OK");
 			} catch (HibernateException he) {
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 			} finally {

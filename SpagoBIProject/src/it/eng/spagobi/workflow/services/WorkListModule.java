@@ -33,6 +33,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.jbpm.JbpmConfiguration;
@@ -195,10 +197,8 @@ public class WorkListModule extends AbstractBasicListModule {
 		Session aSession =null;
 		try {
 			aSession = HibernateUtil.currentSession();
-			//Connection jdbcConnection = aSession.connection();
-			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
-			IEngUserProfile profile = UserUtilities.getUserProfile();
-			AuditLogUtilities.updateAudit(jdbcConnection,  profile, "activity.WorkFlowMenu", null);
+
+			AuditLogUtilities.updateAudit(((HttpServletRequest)getRequestContainer().getRequestContainer().getInternalRequest()),  UserUtilities.getUserProfile(), "WORKFLOW_MENU.LIST", null, "OK");
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {

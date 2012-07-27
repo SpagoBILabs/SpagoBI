@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -55,7 +57,7 @@ public class ListDistributionListUserModule extends AbstractBasicListModule{
 			//Connection jdbcConnection = aSession.connection();
 			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			IEngUserProfile profile = UserUtilities.getUserProfile();
-			AuditLogUtilities.updateAudit(jdbcConnection,  profile, "activity.DistribListMenu", null);
+			AuditLogUtilities.updateAudit(((HttpServletRequest)getRequestContainer().getRequestContainer().getInternalRequest()),  profile, "DISTRIBUTION_LIST.OPEN", null, "OK");
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {

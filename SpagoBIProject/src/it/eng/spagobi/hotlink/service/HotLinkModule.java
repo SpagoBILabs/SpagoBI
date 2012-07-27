@@ -7,6 +7,8 @@ package it.eng.spagobi.hotlink.service;
 
 import java.sql.Connection;
 
+import javax.servlet.http.HttpServletRequest;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
@@ -47,10 +49,8 @@ public class HotLinkModule extends AbstractModule {
 		Session aSession =null;
 		try {
 			aSession = HibernateUtil.currentSession();
-			//Connection jdbcConnection = aSession.connection();
-			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			IEngUserProfile profile = UserUtilities.getUserProfile();
-			AuditLogUtilities.updateAudit(jdbcConnection,  profile, "activity.HotLinkMenu", null);
+			AuditLogUtilities.updateAudit(((HttpServletRequest)getRequestContainer().getRequestContainer().getInternalRequest()),  profile, "HOT_LINK.OPEN", null, "OK");
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
