@@ -20,7 +20,7 @@ Sbi.locale.ln['sbi.formviewer.formviewerpage.execute.tooltip'] = 'Submit the for
 Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Save form';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Save form state for next executions';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet'] = 'Show worksheet';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet.tooltip'] = 'Open the worksheet desiger';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet.tooltip'] = 'Open the worksheet designer';
 
 //===================================================================
 //FILTERS PANEL
