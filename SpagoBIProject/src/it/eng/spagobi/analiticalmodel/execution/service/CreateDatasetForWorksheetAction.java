@@ -334,7 +334,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 				
 				for (Iterator<String> iterator = parameterValues.keys(); iterator.hasNext();) {
 					String key = iterator.next();
-					String value = parameterValues.getString(key);
+					String value = parameterValues.get(key) != null ? parameterValues.get(key).toString() : null;
 					parametersMap.put(key, value);
 				}			
 			} else {
