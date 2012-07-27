@@ -957,19 +957,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			if (!thereAreParametersToBeFilled) {
 				toReturn = LN('sbi.execution.parametersselection.message.page2.execute');
 			} else {
-				var day=false;
-				for(p in this.fields) {
-					if(this.fields[p].name=='DAY'){
-						day = true;
-						break;
-					}
-				}
-				if(day){
-					toReturn = LN('sbi.execution.parametersselection.message.page2.fillFormAndExecute')+ LN('sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1');
-				}else{
-					toReturn = LN('sbi.execution.parametersselection.message.page2.fillFormAndExecute')+ LN('sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2');
-				}
-				
+				toReturn = LN('sbi.execution.parametersselection.message.page2.fillFormAndExecute');
 			}
 		}
 		return toReturn;
