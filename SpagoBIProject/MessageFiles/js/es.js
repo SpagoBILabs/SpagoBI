@@ -214,8 +214,6 @@ Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Document id is required in orde
 Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'User have no valid roles for the execution of the selected documento';
 
 
-
-
 Sbi.locale.ln['sbi.execution.roleselection.title']  = 'Seleccionar rol';
 Sbi.locale.ln['sbi.execution.roleselection.fieldlabel']  = 'Role';
 Sbi.locale.ln['sbi.execution.roleselection.emptytext']  = 'Seleccionar rol ...';
@@ -296,6 +294,8 @@ Sbi.locale.ln['sbi.execution.metadata.longtextmetadata'] = 'Metadatos Largo';
 Sbi.locale.ln['sbi.execution.metadata.waitmessage'] = 'Please wait....';
 Sbi.locale.ln['sbi.execution.metadata.waittitle'] = 'Saving metadata';
 
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']=' '
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']=' '
 // Profile Management
 Sbi.locale.ln['sbi.attributes.add'] = 'Add';
 Sbi.locale.ln['sbi.attributes.delete'] = 'Borrar';
@@ -504,7 +504,6 @@ Sbi.locale.ln['sbi.ds.help'] = 'Help';
 Sbi.locale.ln['sbi.ds.pars'] = 'Available Profile Attributes';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Recalculate metadata?';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = 'Do you want the system to recalculate dataset\'s metadata? (the dataset will be executed by the system: this is required if you modified the dataset significantly)';
-
 
 //===================================================================
 //MESSAGE BOX BUTTONS

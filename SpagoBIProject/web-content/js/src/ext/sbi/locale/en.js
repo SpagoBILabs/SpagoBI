@@ -745,5 +745,5 @@ Sbi.locale.ln['sbi.kpi.kpiguidoccollegato.nodoc']='No linked document'
 	
 Sbi.locale.ln['ext.date.dateformat.error.title']='Date error'
 Sbi.locale.ln['ext.date.dateformat.error.text']='The entered date is not valid. The system will replace it with a correct date.'
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']=''
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']=''
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']=' '
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']=' '
