@@ -333,6 +333,9 @@ Sbi.locale.ln['sbi.execution.metadata.longtextmetadata']='Metadonn\u00E9s Longue
 Sbi.locale.ln['sbi.execution.metadata.waitmessage']='Veuillez patienter';
 Sbi.locale.ln['sbi.execution.metadata.waittitle']='Enregistrement des m\u00E9tadonn\u00E9es';
 
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']=' '
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']=' '
+	
 //UDP - User Defined Properties
 Sbi.locale.ln['sbi.udp.udpManagement']='Utiliser propri\u00E9t\u00E9 d\u00E9finie';
 Sbi.locale.ln['sbi.udp.udpList']='Liste des propri\u00E9t\u00E9s';
