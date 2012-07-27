@@ -493,7 +493,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 				JSONObject nameJSON = new JSONObject();
 				String name = msgBuild.getMessage(GetMetadataAction.NAME, locale);	
 				nameJSON.put("meta_name", name);
-				nameJSON.put("meta_content", biObject.getLabel());
+				nameJSON.put("meta_content", biObject.getName());
 				nameJSON.put("meta_type", "GENERAL_META");
 				
 				JSONObject typeJSON = new JSONObject();
