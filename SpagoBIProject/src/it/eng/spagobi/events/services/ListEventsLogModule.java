@@ -30,6 +30,8 @@ import java.sql.Connection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -52,9 +54,7 @@ public class ListEventsLogModule extends AbstractBasicListModule {
 		Session aSession =null;
 		try {
 			aSession = HibernateUtil.currentSession();
-			//Connection jdbcConnection = aSession.connection();
-			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
-			AuditLogUtilities.updateAudit(jdbcConnection,  profile, "activity.EventsMenu", null);
+			AuditLogUtilities.updateAudit(((HttpServletRequest)requestContainer.getRequestContainer().getInternalRequest()),  profile, "EVENT_LIST.OPEN", null, "OK");
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {

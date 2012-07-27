@@ -12,6 +12,7 @@
 package it.eng.spagobi.commons.services;
 
 import java.sql.Connection;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -28,6 +29,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 
 public class LogoutAction extends AbstractHttpAction {
 
@@ -47,7 +49,9 @@ public class LogoutAction extends AbstractHttpAction {
 			//Connection jdbcConnection = aSession.connection();
 			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			AuditLogUtilities.updateAudit(jdbcConnection,  profile, "activity.Logout", null);
+			HashMap a = new HashMap();
+			a.put("USER",UserUtilities.getUserProfile());
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SPAGOBI.Logout", a, "OK");
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {

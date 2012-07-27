@@ -42,10 +42,8 @@ public class UserDocumentsBrowserStartAction extends AbstractBaseHttpAction{
 		Session aSession =null;
 		try {
 			aSession = HibernateUtil.currentSession();
-			//Connection jdbcConnection = aSession.connection();
-			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
-			IEngUserProfile profile = UserUtilities.getUserProfile();
-			AuditLogUtilities.updateAudit(jdbcConnection,  profile, "activity.DocumentsBrowserMenu", null);
+
+			AuditLogUtilities.updateAudit(getHttpRequest(),  UserUtilities.getUserProfile(), "DOCUMENTSBROWSER.OPEN", null, "OK");
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
