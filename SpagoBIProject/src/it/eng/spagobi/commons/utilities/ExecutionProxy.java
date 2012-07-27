@@ -265,13 +265,13 @@ public class ExecutionProxy {
 
 			// set country and language (locale)
 			Locale locale = GeneralUtilities.getDefaultLocale();
-			if (!mapPars.containsKey(SpagoBIConstants.COUNTRY)) {
+			if (!mapPars.containsKey(SpagoBIConstants.SBI_COUNTRY)) {
 				String country = locale.getCountry();
-				mapPars.put(SpagoBIConstants.COUNTRY, country);
+				mapPars.put(SpagoBIConstants.SBI_COUNTRY, country);
 			}
-			if (!mapPars.containsKey(SpagoBIConstants.LANGUAGE)) {
+			if (!mapPars.containsKey(SpagoBIConstants.SBI_LANGUAGE)) {
 				String language = locale.getLanguage();
-				mapPars.put(SpagoBIConstants.LANGUAGE, language);
+				mapPars.put(SpagoBIConstants.SBI_LANGUAGE, language);
 			}
 
 			//set userId if it's a send mail operation (backend operation)
