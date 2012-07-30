@@ -5,23 +5,29 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.functionalitytree.service;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.dispatching.module.AbstractModule;
+import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.service.BIObjectsModule;
+import it.eng.spagobi.analiticalmodel.document.utils.DetBIObjModHelper;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
 import java.util.ArrayList;
@@ -42,13 +48,15 @@ import java.util.Vector;
  * 
  * @author sulis
  */
-public class DetailFunctionalityModule extends AbstractModule {
+public class DetailFunctionalityModule extends AbstractHttpModule{
 
 	private String modality = "";
 	public final static String MODULE_PAGE = "DetailFunctionalityPage";
 	public final static String FUNCTIONALITY_OBJ = "FUNCTIONALITY_OBJ";
 	public final static String PATH = "PATH";
 	private String typeFunct = null;
+	private IEngUserProfile profile;
+	SessionContainer session = null;
 
 	/*
 	 * (non-Javadoc)
@@ -192,6 +200,11 @@ public class DetailFunctionalityModule extends AbstractModule {
 			SourceBean response) throws EMFUserError, SourceBeanException {
 		try {
 			// **********************************************************************
+			RequestContainer requestContainer = this.getRequestContainer();	
+			ResponseContainer responseContainer = this.getResponseContainer();	
+			session = requestContainer.getSessionContainer();
+			SessionContainer permanentSession = session.getPermanentContainer();
+			profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			LowFunctionality lowFunct = recoverLowFunctionalityDetails(request,
 					mod);
 			response.setAttribute(FUNCTIONALITY_OBJ, lowFunct);
@@ -220,7 +233,10 @@ public class DetailFunctionalityModule extends AbstractModule {
 											false);
 						}
 						if (parentFolder == null) {
-							// PER MONIA, FUNCTIONALITY.ADD, userId, lowFunct.getName()
+							HashMap< String, String> a = null;
+							a.put("Document_name", lowFunct.getName());
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",a , "OK");		 
+							
 							throw new Exception("Parent folder not available.");
 						} else {
 							response.setAttribute(
@@ -254,19 +270,34 @@ public class DetailFunctionalityModule extends AbstractModule {
 			}
 
 		} catch (EMFUserError eex) {
-			// PER MONIA, FUNCTIONALITY.ADD/MODIFY, userId, lowFunct.getName()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD/MODIFY",null , "ERR");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
 			EMFErrorHandler errorHandler = getErrorHandler();
 			errorHandler.addError(eex);
 			return;
 		} catch (Exception ex) {
-			// PER MONIA, FUNCTIONALITY.ADD/MODIFY, userId, lowFunct.getName()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD/MODIFY",null , "ERR");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE,
 					"DetailFunctionalityModule", "modDettaglioFunctionality",
 					"Cannot fill response container", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute(AdmintoolsConstants.LOOPBACK, "true");
-		// PER MONIA, FUNCTIONALITY.ADD/MODIFY, userId, lowFunct.getName() --> ESITO OK
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD/MODIFY",null , "OK");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -300,19 +331,34 @@ public class DetailFunctionalityModule extends AbstractModule {
 				funcdao.eraseLowFunctionality(funct, profile);
 			}
 		} catch (EMFUserError eex) {
-			// PER MONIA, FUNCTIONALITY.DELETE, userId, funct.getName() 
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.DELETE",null , "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			EMFErrorHandler errorHandler = getErrorHandler();
 			errorHandler.addError(eex);
 			return;
 		} catch (Exception ex) {
-			// PER MONIA, FUNCTIONALITY.DELETE, userId, funct.getName() 
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.DELETE",null , "KO");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE,
 					"DetailFunctionalityModule", "delFunctionality",
 					"Cannot fill response container", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
-		// PER MONIA, FUNCTIONALITY.DELETE, userId, lowFunct.getName() --> ESITO OK
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.DELETE",null , "OK");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		 
 	}
 
 	/**
@@ -361,12 +407,22 @@ public class DetailFunctionalityModule extends AbstractModule {
 			}
 
 		} catch (EMFUserError eex) {
-			// PER MONIA, FUNCTIONALITY.ADD, userId, funct.getName() 
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",null , "ERR");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			EMFErrorHandler errorHandler = getErrorHandler();
 			errorHandler.addError(eex);
 			return;
 		} catch (Exception ex) {
-			// PER MONIA, FUNCTIONALITY.ADD, userId, funct.getName() 
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",null , "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE,
 					"DetailFunctionalityModule", "newDettaglioFunctionality",
 					"Cannot prepare page for the insertion", ex);
@@ -420,7 +476,14 @@ public class DetailFunctionalityModule extends AbstractModule {
 			LowFunctionality parentFunct = DAOFactory.getLowFunctionalityDAO()
 					.loadLowFunctionalityByPath(pathParent, false);
 			if (parentFunct == null) {
-				// PER MONIA, FUNCTIONALITY.ADD, userId, parentFunct.getName() 
+				HashMap< String, String> a = null;
+				a.put("Document_name", parentFunct.getName());
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "parentFunct",a , "OK");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				EMFValidationError error = new EMFValidationError(
 						EMFErrorSeverity.ERROR,
 						AdmintoolsConstants.PATH_PARENT, "1002", new Vector());
@@ -442,13 +505,23 @@ public class DetailFunctionalityModule extends AbstractModule {
 						EMFErrorSeverity.ERROR, "code", "1005", new Vector(),
 						params);
 				getErrorHandler().addError(error);
-				// PER MONIA, FUNCTIONALITY.ADD, userId, funct.getName() 
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",null , "ERR");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			if (DAOFactory.getLowFunctionalityDAO().existByCode(code) != null) {
 				EMFValidationError error = new EMFValidationError(
 						EMFErrorSeverity.ERROR, "code", "1027");
 				getErrorHandler().addError(error);
-				// PER MONIA, FUNCTIONALITY.ADD, userId, funct.getName() 
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",null , "ERR");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			lowFunct = new LowFunctionality();
 			lowFunct.setCode(code);
@@ -469,7 +542,12 @@ public class DetailFunctionalityModule extends AbstractModule {
 					.existByCode(code);
 			if ((idFunctWithSameCode != null)
 					&& !(idFunctWithSameCode.equals(new Integer(idFunct)))) {
-				// PER MONIA, FUNCTIONALITY.MODIFY, userId, funct.getName() 
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.MODIFY",null , "ERR");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				EMFValidationError error = new EMFValidationError(
 						EMFErrorSeverity.ERROR, 1027);
 				getErrorHandler().addError(error);

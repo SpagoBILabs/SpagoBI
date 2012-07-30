@@ -56,7 +56,7 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 			//TODO
 			
 			IEngUserProfile profile = UserUtilities.getUserProfile();
-			AuditLogUtilities.updateAudit(null,  profile, "activity.DocumentsBrowserMenu", null, "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ACTIVITY.DOCUMENTSBROWSERMENU", null, "OK");
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {

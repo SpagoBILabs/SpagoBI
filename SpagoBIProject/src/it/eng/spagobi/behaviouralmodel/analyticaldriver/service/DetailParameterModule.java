@@ -9,6 +9,7 @@ import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.dispatching.module.AbstractModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -27,6 +28,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ import org.apache.commons.validator.GenericValidator;
  * 
  * @author sulis
  */
-public class DetailParameterModule extends AbstractModule {
+public class DetailParameterModule extends AbstractHttpModule {
 	
 	private String modalita = "";
 	public final static String MODULE_PAGE = "DetailParameterPage";
@@ -54,6 +56,7 @@ public class DetailParameterModule extends AbstractModule {
 	EMFErrorHandler errorHandler = null;
 	
 	SessionContainer session = null;
+	private IEngUserProfile profile;
 	
 	/* (non-Javadoc)
 	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
@@ -80,6 +83,8 @@ public class DetailParameterModule extends AbstractModule {
 		RequestContainer reqCont = RequestContainer.getRequestContainer();
 		session = reqCont.getSessionContainer();
 		errorHandler = getErrorHandler();
+		SessionContainer permanentSession = session.getPermanentContainer();
+		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		
 		try {
 			if (message == null) {
@@ -136,7 +141,12 @@ public class DetailParameterModule extends AbstractModule {
 			Parameter parameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(new Integer(key));
 			prepareParameterDetailPage(response, parameter, null, "", modalita, true, true);			
 		} catch (Exception ex) {
-			// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",null , "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","getDetailParameter","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -327,7 +337,10 @@ public class DetailParameterModule extends AbstractModule {
 							while (iterator.hasNext()) {
 								Object error = iterator.next();
 								if (error instanceof EMFValidationError) {
-									// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType()
+									HashMap< String, String> a = null;
+									a.put("Document_name", parameter.getName());
+									a.put("Document_type", parameter.getType());
+										AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",a , "OK");
 					    			prepareParameterDetailPage(response, parameter, paruse, paruseIdStr, 
 					    					ObjectsTreeConstants.DETAIL_MOD, false, false);
 									return;
@@ -368,7 +381,10 @@ public class DetailParameterModule extends AbstractModule {
 							if (error instanceof EMFValidationError) {
 				    			prepareParameterDetailPage(response, parameter, paruse, paruseIdStr, 
 				    					ObjectsTreeConstants.DETAIL_MOD, false, false);
-				    			// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType()
+				    			HashMap< String, String> a = null;
+								a.put("Document_name", parameter.getName());
+								a.put("Document_type", parameter.getType());
+								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",a , "OK");
 								return;
 							}
 						}
@@ -411,7 +427,10 @@ public class DetailParameterModule extends AbstractModule {
 							if (error instanceof EMFValidationError) {
 								prepareParameterDetailPage(response, parameter, paruse, paruseIdInt.toString(), 
 										ObjectsTreeConstants.DETAIL_MOD, false, false);
-								// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType()
+								HashMap< String, String> a = null;
+								a.put("Document_name", parameter.getName());
+								a.put("Document_type", parameter.getType());
+									AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",a , "OK");
 								return;
 							}
 						}
@@ -453,7 +472,10 @@ public class DetailParameterModule extends AbstractModule {
 						if (error instanceof EMFValidationError) {
 							prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr, 
 									ObjectsTreeConstants.DETAIL_INS, false, false);
-							// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType()
+							HashMap< String, String> a = null;
+							a.put("Document_name", parameter.getName());
+							a.put("Document_type", parameter.getType());
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",a , "KO");
 							return;
 						}
 					}
@@ -483,10 +505,20 @@ public class DetailParameterModule extends AbstractModule {
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","modDetailParameter","Cannot fill response container", ex  );
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListParametersModule.MODULE_PAGE);
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",null , "OK");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1015, new Vector(), params);
-			// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType()
 		}
-		// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType() --> ESITO OK
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",null , "OK");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -741,7 +773,7 @@ public class DetailParameterModule extends AbstractModule {
 				v.add(objectsLabels.toString());
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1017, v, params);
 				errorHandler.addError(error);
-			//	PER MONIA, DRIVER.DELETE, userId, parameter.getName(), parameter.getType()
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",null , "OK");
 				return;
 			}
 			
@@ -756,12 +788,22 @@ public class DetailParameterModule extends AbstractModule {
 			parDAO.eraseParameter(parameter);
 			
 		} catch (Exception ex) {
-			// PER MONIA, DRIVER.DELETE, userId, parameter.getName(), parameter.getType()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.DELETE",null , "ERR");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","delDetailParameter","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
-		// PER MONIA, DRIVER.DELETE, userId, parameter.getName(), parameter.getType() --> ESITO OK
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.DELETE",null , "OK");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 	
 	/**
@@ -789,8 +831,25 @@ public class DetailParameterModule extends AbstractModule {
 			session.setAttribute("originIns", "true");
 		} catch (Exception ex) {
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","newDetailParameter","Cannot prepare page for the insertion", ex  );
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD",null , "KO");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD",null , "KO");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD",null , "ERR");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-		//	PER MONIA, DRIVER.ADD, userId, parameter.getName(), parameter.getType()
 		}
 	}
 	
