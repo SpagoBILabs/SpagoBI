@@ -27,7 +27,6 @@
 <DOMAIN valueCd="SINGLE" valueNm="sbidomains.nm.single" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.single"/>
 <DOMAIN valueCd="MULTI" valueNm="sbidomains.nm.multi" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.multi"/>
 <DOMAIN valueCd="DATE" valueNm="sbidomains.nm.date" domainCd="PAR_TYPE" domainNm="Parameter type" valueDs="sbidomains.ds.date"/>
-<DOMAIN valueCd="DATE_DEFAULT" valueNm="sbidomains.nm.date.default" domainCd="PAR_TYPE" domainNm="Parameter type" valueDs="sbidomains.ds.date.default"/>
 <DOMAIN valueCd="NUM" valueNm="sbidomains.nm.num" domainCd="PAR_TYPE" domainNm="Parameter type" valueDs="sbidomains.ds.num"/>
 <DOMAIN valueCd="STRING" valueNm="sbidomains.nm.string" domainCd="PAR_TYPE" domainNm="Parameter type" valueDs="sbidomains.ds.string"/>
 <DOMAIN valueCd="USER" valueNm="sbidomains.nm.user" domainCd="ROLE_TYPE" domainNm="Role type" valueDs="sbidomains.ds.user"/>
