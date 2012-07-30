@@ -1,3 +1,4 @@
+
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
@@ -18,6 +19,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spago.validation.coordinator.ValidationCoordinator;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
@@ -81,7 +83,6 @@ public class DetailEngineModule extends AbstractModule {
 			} else if (message.trim().equalsIgnoreCase(AdmintoolsConstants.DETAIL_DEL)) {
 				delDettaglioEngine(request, AdmintoolsConstants.DETAIL_DEL, response);
 			}
-
 		} catch (EMFUserError eex) {
 			errorHandler.addError(eex);
 			return;
@@ -107,6 +108,7 @@ public class DetailEngineModule extends AbstractModule {
 			Engine engine = DAOFactory.getEngineDAO().loadEngineByID(new Integer(key));
 			response.setAttribute("engineObj", engine);
 		} catch (Exception ex) {
+			// PER MONIA, ENGINE.MODIFY, USER-ID,engine.getName(),engineType
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DettaglioEngineModule","getDettaglioEngine","Cannot fill response container", ex  );
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListEnginesModule.MODULE_PAGE);
@@ -148,6 +150,7 @@ public class DetailEngineModule extends AbstractModule {
 				while (iterator.hasNext()) {
 					Object error = iterator.next();
 					if (error instanceof EMFValidationError) {
+						// PER MONIA, ENGINE.MODIFY, USER-ID,engine.getName(),engineType
 						response.setAttribute("engineObj", engine);
 						response.setAttribute("modality", mod);
 						return;
@@ -157,7 +160,10 @@ public class DetailEngineModule extends AbstractModule {
 			RequestContainer reqCont = getRequestContainer();
 			SessionContainer sessCont = reqCont.getSessionContainer();
 			SessionContainer permSess = sessCont.getPermanentContainer();
-			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		//	IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			UserProfile profile = (UserProfile) this.getRequestContainer().getSessionContainer().getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// check if user is able to erase remember me
+			String userId = profile.getUserId().toString();
 			IEngineDAO dao=DAOFactory.getEngineDAO();
 			dao.setUserProfile(profile);
 			if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
@@ -166,17 +172,33 @@ public class DetailEngineModule extends AbstractModule {
 				dao.modifyEngine(engine);
 			}
             
-		} catch (EMFUserError e){
+		} catch (EMFUserError e){			
+			//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+			// PER MONIA, ENGINE.ADD, userId,engine.getName(),engineType
+			//} else {
+			// PER MONIA, ENGINE.MODIFY, userId,engine.getName(),engineType
+			//}
+			
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListEnginesModule.MODULE_PAGE);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1012, new Vector(), params);
 			
 		}
 		
-		catch (Exception ex) {			
+		catch (Exception ex) {	
+			//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+			// PER MONIA, ENGINE.ADD, userId,engine.getName(),engineType
+			//} else {
+			// PER MONIA, ENGINE.MODIFY, userId,engine.getName(),engineType
+			//}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","modDetailEngine","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
+		//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+		// PER MONIA, ENGINE.ADD, userId,engine.getName(),engineType -->esito ok
+		//} else {
+		// PER MONIA, ENGINE.MODIFY, userId,engine.getName(),engineType -->esito ok
+		//}
 		response.setAttribute("loopback", "true");
 	}
 	
@@ -196,9 +218,12 @@ public class DetailEngineModule extends AbstractModule {
 			String id = (String) request.getAttribute("id");
             IEngineDAO enginedao = DAOFactory.getEngineDAO();
 			Engine engine = enginedao.loadEngineByID(new Integer(id));
+			
+			//PER MONIA: (*) : Domain engineType = DAOFactory.getDomainDAO().loadDomainById(engine.getBiobjTypeId());		
 //			controls if the engine is in use by any BIObject
 			boolean isAss = enginedao.hasBIObjAssociated(id);
 			if (isAss){
+				// PER MONIA, ENGINE-DELETE, USER-ID,engine.getName(),engineType
 				HashMap params = new HashMap();
 				params.put(AdmintoolsConstants.PAGE, ListEnginesModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1030, new Vector(), params );
@@ -207,16 +232,19 @@ public class DetailEngineModule extends AbstractModule {
 				
 			}
 			enginedao.eraseEngine(engine);
-		}   catch (EMFUserError e){
+		}   catch (EMFUserError e){	
+			// PER MONIA, ENGINE-DELETE, USER-ID,engine.getName(),engineType (*)
 			  HashMap params = new HashMap();
 			  params.put(AdmintoolsConstants.PAGE, ListEnginesModule.MODULE_PAGE);
 			  throw new EMFUserError(EMFErrorSeverity.ERROR, 1013, new Vector(), params);
 				
 			}
 		    catch (Exception ex) {
+		    //PER MONIA, ENGINE-DELETE, USER-ID,engine.getName(),engineType
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","delDetailRuolo","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
+		    //  PER MONIA, ENGINE.DELETE, userId,engine.getName(),engineType -->esito ok
 		response.setAttribute("loopback", "true");
 	}
 	
@@ -249,6 +277,7 @@ public class DetailEngineModule extends AbstractModule {
 			engine.setBiobjTypeId(new Integer(-1));
 			response.setAttribute("engineObj", engine);
 		} catch (Exception ex) {
+			//PER MONIA, ENGINE-ADD, USER-ID
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","newDetailEngine","Cannot prepare page for the insertion", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -332,6 +361,7 @@ public class DetailEngineModule extends AbstractModule {
 				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "label", 
 						"1011", new Vector(), params);
 				getErrorHandler().addError(error);
+				//PER MONIA, ENGINE-MODIFY, USER-ID , name, engineType.getValueCd()
 			}
 		}
         

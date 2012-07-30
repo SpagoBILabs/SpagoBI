@@ -172,6 +172,11 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 				if (error instanceof EMFValidationError) {
 					response.setAttribute("featureObj", feature);
 					response.setAttribute("modality", mod);
+					//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+					// PER MONIA, MAP_CATALOG_FEATURE.ADD, userId, feauture.getName()
+					//} else {
+					// PER MONIA, MAP_CATALOG_FEATURE.MODIFY, userId, feauture.getName()
+					//}
 					return;
 				}
 			}
@@ -184,6 +189,7 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 				params.put(AdmintoolsConstants.PAGE, ListFeaturesModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 5018, new Vector(), params );
 				getErrorHandler().addError(error);
+				// PER MONIA, MAP_CATALOG_FEAURE.ADD, userId, feature.getName()
 				return;
 			}			
 			dao.insertFeature(feature);
@@ -192,17 +198,32 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 		}
         
 	} catch (EMFUserError e){
+		//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+		// PER MONIA, MAP_CATALOG_FEATURE.ADD, userId, feauture.getName()
+		//} else {
+		// PER MONIA, MAP_CATALOG_FEATURE.MODIFY, userId, feauture.getName()
+		//}
 		HashMap params = new HashMap();
 		params.put(AdmintoolsConstants.PAGE, ListMapsModule.MODULE_PAGE);
 		throw new EMFUserError(EMFErrorSeverity.ERROR, 5016, new Vector(), params);
 		
 	}
 	
-	catch (Exception ex) {		
+	catch (Exception ex) {
+		//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+		// PER MONIA, MAP_CATALOG_FEATURE.ADD, userId, feauture.getName()
+		//} else {
+		// PER MONIA, MAP_CATALOG_FEATURE.MODIFY, userId, feauture.getName()
+		//}
 		TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());		
 		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 	}
 	response.setAttribute("loopback", "true");
+	//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+	// PER MONIA, MAP_CATALOG_FEATURE.ADD, userId, feauture.getName() -->esito ok
+	//} else {
+	// PER MONIA, MAP_CATALOG_FEATURE.MODIFY, userId, feauture.getName() -->esito ok
+	//}
 	
 }
 
@@ -231,16 +252,19 @@ private void delDetailFeature(SourceBean request, String mod, SourceBean respons
         //deletes the feature
         DAOFactory.getSbiGeoFeaturesDAO().eraseFeature(feature);
 	}   catch (EMFUserError e){
+		// PER MONIA, MAP_CATALOG_FEATURE.DELETE, userId, feauture.getName()
 		  HashMap params = new HashMap();
 		  params.put(AdmintoolsConstants.PAGE, ListFeaturesModule.MODULE_PAGE);
 		  throw new EMFUserError(EMFErrorSeverity.ERROR, 5022, new Vector(), params);
 			
 		}
-	    catch (Exception ex) {		
+	    catch (Exception ex) {	
+	    	// PER MONIA, MAP_CATALOG_FEATURE.DELETE, userId, feauture.getName()
 		TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());
 		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 	}
 	response.setAttribute("loopback", "true");
+	// PER MONIA, MAP_CATALOG_FEATURE.DELETE, userId, feauture.getName() -->ESITO OK
 	
 }
 

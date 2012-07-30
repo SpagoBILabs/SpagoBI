@@ -361,6 +361,7 @@ public class DetailBIObjectModule extends AbstractModule {
 				logger.error("BIObject with id "+id+" cannot be retrieved.");
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1040);
 				errorHandler.addError(error);
+				// PER MONIA, DOCUMENT.MODIFY, userId, obj.getName()	
 				return;
 			}
 			Object selectedObjParIdObj = request.getAttribute("selected_obj_par_id");
@@ -372,6 +373,7 @@ public class DetailBIObjectModule extends AbstractModule {
 			helper.fillResponse(initialPath);
 			prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, true, true);
 		} catch (Exception ex) {
+			// PER MONIA, DOCUMENT.MODIFY, userId, obj.getName()	
 			logger.error("Cannot fill response container", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -697,10 +699,12 @@ public class DetailBIObjectModule extends AbstractModule {
 			**/
 			LuceneIndexer.updateBiobjInIndex(obj, true);
 		} catch (Exception ex) {
+			// PER MONIA, DOCUMENT.DELETE, userId, obj.getName()	
 			logger.error("Cannot erase object", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
+		// PER MONIA, DOCUMENT.DELETE userId, obj.getName()	--> ESITO OK
 	}
 	
 	/**
@@ -847,7 +851,8 @@ public class DetailBIObjectModule extends AbstractModule {
 			// if there are some validation errors into the errorHandler return without write into DB 
 			if(!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 				helper.fillResponse(initialPath);
-				prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, mod, false, false);
+				prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, mod, false, false);				
+				// PER MONIA, DOCUMENT.ADD/MODIFY, userId, obj.getName()				
 				return;
 			}
 			
@@ -890,6 +895,7 @@ public class DetailBIObjectModule extends AbstractModule {
 						if(!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 							helper.fillResponse(initialPath);
 							prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
+							// PER MONIA, DOCUMENT.MODIFY, userId, obj.getName()	
 							return;
 						}
 						IBIObjectParameterDAO objParDAO = DAOFactory.getBIObjectParameterDAO();
@@ -902,11 +908,13 @@ public class DetailBIObjectModule extends AbstractModule {
 							objParDAO.modifyBIObjectParameter(biObjPar);
 						}
 						prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
+						// PER MONIA, DOCUMENT.MODIFY, userId, obj.getName()	 --> esito ok
 						return;
 					} else {
 						helper.fillResponse(initialPath);
 						prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
 		    			// exits without writing into DB
+						// PER MONIA, MDOCUMENT.MODIFY, userId, obj.getName()	 --> esito ok
 		    			return;
 					}
 					
@@ -918,12 +926,14 @@ public class DetailBIObjectModule extends AbstractModule {
 						EMFValidationError error = checkForDependancies(objParIdInt);
 						if (error != null) {
 							errorHandler.addError(error);
+							// PER MONIA,DOCUMENT.MODIFY, userId, obj.getName()	 
 						}
 						helper.fillResponse(initialPath);
 						// if there are some validation errors into the errorHandler does not write into DB
 						if(!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 							helper.fillResponse(initialPath);
 							prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
+							// PER MONIA, DOCUMENT.MODIFY, userId, obj.getName()	 
 							return;
 						}
 						// deletes the BIObjectParameter
@@ -932,6 +942,7 @@ public class DetailBIObjectModule extends AbstractModule {
 						objParDAO.eraseBIObjectParameter(objPar, true);
 						selectedObjParIdStr = "";
 						prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
+						// PER MONIA, DOCUMENT.MODIFY, userId, obj.getName()	 --> esito ok
 						return;
 					
 				} else {
@@ -957,6 +968,7 @@ public class DetailBIObjectModule extends AbstractModule {
 					if(!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 						helper.fillResponse(initialPath);
 						prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
+						// PER MONIA, DOCUMENT.MODIFY, userId, obj.getName()	 
 						return;
 					}
 					
@@ -1007,13 +1019,16 @@ public class DetailBIObjectModule extends AbstractModule {
 				response.setAttribute("selected_obj_par_id", selectedObjParIdStr);
 				response.setAttribute("saveLoop", "true");
 			}		
+			// PER MONIA, DOCUMENT.ADD/MODIFY, userId, obj.getName()	 --> esito ok
 
 		} catch (EMFUserError error) {			
 			logger.error("Cannot fill response container", error  );
 			throw error;
+			// PER MONIA, DOCUMENT.ADD/MODIFY, userId, obj.getName()	
 		} catch (Exception ex) {			
 			logger.error("Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			// PER MONIA, DOCUMENT.ADD/MODIFY, userId, obj.getName()	
 		}
 	}
 }

@@ -108,7 +108,7 @@ public class DetailParameterModule extends AbstractModule {
 				exitFromDetail(request, response);
 			}
 
-		} catch (EMFUserError eex) {
+		} catch (EMFUserError eex) {			
 			errorHandler.addError(eex);
 			return;
 		} catch (Exception ex) {
@@ -134,8 +134,9 @@ public class DetailParameterModule extends AbstractModule {
 		try {
 			this.modalita = AdmintoolsConstants.DETAIL_MOD;	
 			Parameter parameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(new Integer(key));
-			prepareParameterDetailPage(response, parameter, null, "", modalita, true, true);
+			prepareParameterDetailPage(response, parameter, null, "", modalita, true, true);			
 		} catch (Exception ex) {
+			// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType()
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","getDetailParameter","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -326,6 +327,7 @@ public class DetailParameterModule extends AbstractModule {
 							while (iterator.hasNext()) {
 								Object error = iterator.next();
 								if (error instanceof EMFValidationError) {
+									// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType()
 					    			prepareParameterDetailPage(response, parameter, paruse, paruseIdStr, 
 					    					ObjectsTreeConstants.DETAIL_MOD, false, false);
 									return;
@@ -366,6 +368,7 @@ public class DetailParameterModule extends AbstractModule {
 							if (error instanceof EMFValidationError) {
 				    			prepareParameterDetailPage(response, parameter, paruse, paruseIdStr, 
 				    					ObjectsTreeConstants.DETAIL_MOD, false, false);
+				    			// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType()
 								return;
 							}
 						}
@@ -408,6 +411,7 @@ public class DetailParameterModule extends AbstractModule {
 							if (error instanceof EMFValidationError) {
 								prepareParameterDetailPage(response, parameter, paruse, paruseIdInt.toString(), 
 										ObjectsTreeConstants.DETAIL_MOD, false, false);
+								// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType()
 								return;
 							}
 						}
@@ -449,6 +453,7 @@ public class DetailParameterModule extends AbstractModule {
 						if (error instanceof EMFValidationError) {
 							prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr, 
 									ObjectsTreeConstants.DETAIL_INS, false, false);
+							// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType()
 							return;
 						}
 					}
@@ -479,7 +484,9 @@ public class DetailParameterModule extends AbstractModule {
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListParametersModule.MODULE_PAGE);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1015, new Vector(), params);
+			// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType()
 		}
+		// PER MONIA, DRIVER.ADD/MODIFY, userId, parameter.getName(), parameter.getType() --> ESITO OK
 	}
 	
 	/**
@@ -734,6 +741,7 @@ public class DetailParameterModule extends AbstractModule {
 				v.add(objectsLabels.toString());
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1017, v, params);
 				errorHandler.addError(error);
+			//	PER MONIA, DRIVER.DELETE, userId, parameter.getName(), parameter.getType()
 				return;
 			}
 			
@@ -748,10 +756,12 @@ public class DetailParameterModule extends AbstractModule {
 			parDAO.eraseParameter(parameter);
 			
 		} catch (Exception ex) {
+			// PER MONIA, DRIVER.DELETE, userId, parameter.getName(), parameter.getType()
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","delDetailParameter","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
+		// PER MONIA, DRIVER.DELETE, userId, parameter.getName(), parameter.getType() --> ESITO OK
 	}
 	
 	/**
@@ -780,6 +790,7 @@ public class DetailParameterModule extends AbstractModule {
 		} catch (Exception ex) {
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","newDetailParameter","Cannot prepare page for the insertion", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		//	PER MONIA, DRIVER.ADD, userId, parameter.getName(), parameter.getType()
 		}
 	}
 	

@@ -87,7 +87,7 @@ public class DetailDataSourceModule extends AbstractModule {
 				modifyDataSource(request, SpagoBIConstants.DETAIL_INS, response);
 			} else if (message.trim().equalsIgnoreCase(SpagoBIConstants.DETAIL_DEL)) {
 				deleteDataSource(request, SpagoBIConstants.DETAIL_DEL, response);
-			}
+			}			
 		} catch (EMFUserError eex) {
 			errorHandler.addError(eex);
 			return;
@@ -123,8 +123,15 @@ public class DetailDataSourceModule extends AbstractModule {
 			List dialects = domaindao.loadListDomainsByType("DIALECT_HIB");
 			response.setAttribute(NAME_ATTR_LIST_DIALECTS, dialects);
 			response.setAttribute("modality", modalita);
-			response.setAttribute("dsObj", ds);
-		} catch (Exception ex) {
+			response.setAttribute("dsObj", ds);			
+		} catch (Exception ex) {		
+			//PER MONIA: puoi ottimizzare il codice definendo la modalita (ADD/MODIFY) in base e poi fare una chiamata sola del metodo che aggiorna il log!
+			//if (this.modalita.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+			// PER MONIA, DATA_SOURCE.ADD, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
+			//} else {
+			// PER MONIA, DATA_SOURCE.MODIFY, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
+			//}	
+			
 			logger.error("Cannot fill response container" + ex.getLocalizedMessage());	
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
@@ -164,6 +171,11 @@ public class DetailDataSourceModule extends AbstractModule {
 					if (error instanceof EMFValidationError) {
 						serviceResponse.setAttribute("dsObj", dsNew);
 						serviceResponse.setAttribute("modality", mod);
+						//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+						// PER MONIA, DATA_SOURCE.ADD, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
+						//} else {
+						// PER MONIA, DATA_SOURCE.MODIFY, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
+						//}						
 						return;
 					}
 				}
@@ -176,6 +188,7 @@ public class DetailDataSourceModule extends AbstractModule {
 					params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
 					EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 8004, new Vector(), params );
 					getErrorHandler().addError(error);
+					// PER MONIA, DATA_SOURCE.ADD, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
 					return;
 				}	 		
 
@@ -208,13 +221,20 @@ public class DetailDataSourceModule extends AbstractModule {
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 8005, new Vector(), params);
+			// PER MONIA, DATA_SOURCE.MODIFY, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
 			
 		}
 		
 		catch (Exception ex) {		
 			logger.error("Cannot fill response container" , ex);		
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-		}			
+			// PER MONIA, DATA_SOURCE.MODIFY, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
+		}		
+		//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+		// PER MONIA, DATA_SOURCE.ADD, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi() --> ESITO OK
+		//} else {
+		// PER MONIA, DATA_SOURCE.MODIFY, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi() --> ESITO OK
+		//}	
 	}
 
 	/**
@@ -239,6 +259,7 @@ public class DetailDataSourceModule extends AbstractModule {
 				params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 8007, new Vector(), params );
 				getErrorHandler().addError(error);
+				// PER MONIA, DATA_SOURCE.DELETE, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
 				return;
 			}
 			
@@ -247,6 +268,7 @@ public class DetailDataSourceModule extends AbstractModule {
 			DAOFactory.getDataSourceDAO().eraseDataSource(ds);
 		}
 		catch (EMFUserError e){
+			// PER MONIA, DATA_SOURCE.DELETE, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
 			  logger.error("Cannot fill response container" + e.getLocalizedMessage());
 			  HashMap params = new HashMap();		  
 			  params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
@@ -254,10 +276,12 @@ public class DetailDataSourceModule extends AbstractModule {
 				
 		}
 	    catch (Exception ex) {		
+	    	// PER MONIA, DATA_SOURCE.DELETE, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
 		    ex.printStackTrace();
 			logger.error("Cannot fill response container" ,ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 	    }
+	 // PER MONIA, DATA_SOURCE.DELETE, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi() --> ESITO OK
 	    response.setAttribute("loopback", "true");			
 	}
 

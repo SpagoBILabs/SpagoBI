@@ -220,6 +220,7 @@ public class DetailFunctionalityModule extends AbstractModule {
 											false);
 						}
 						if (parentFolder == null) {
+							// PER MONIA, FUNCTIONALITY.ADD, userId, lowFunct.getName()
 							throw new Exception("Parent folder not available.");
 						} else {
 							response.setAttribute(
@@ -253,16 +254,19 @@ public class DetailFunctionalityModule extends AbstractModule {
 			}
 
 		} catch (EMFUserError eex) {
+			// PER MONIA, FUNCTIONALITY.ADD/MODIFY, userId, lowFunct.getName()
 			EMFErrorHandler errorHandler = getErrorHandler();
 			errorHandler.addError(eex);
 			return;
 		} catch (Exception ex) {
+			// PER MONIA, FUNCTIONALITY.ADD/MODIFY, userId, lowFunct.getName()
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE,
 					"DetailFunctionalityModule", "modDettaglioFunctionality",
 					"Cannot fill response container", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute(AdmintoolsConstants.LOOPBACK, "true");
+		// PER MONIA, FUNCTIONALITY.ADD/MODIFY, userId, lowFunct.getName() --> ESITO OK
 	}
 
 	/**
@@ -296,16 +300,19 @@ public class DetailFunctionalityModule extends AbstractModule {
 				funcdao.eraseLowFunctionality(funct, profile);
 			}
 		} catch (EMFUserError eex) {
+			// PER MONIA, FUNCTIONALITY.DELETE, userId, funct.getName() 
 			EMFErrorHandler errorHandler = getErrorHandler();
 			errorHandler.addError(eex);
 			return;
 		} catch (Exception ex) {
+			// PER MONIA, FUNCTIONALITY.DELETE, userId, funct.getName() 
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE,
 					"DetailFunctionalityModule", "delFunctionality",
 					"Cannot fill response container", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
+		// PER MONIA, FUNCTIONALITY.DELETE, userId, lowFunct.getName() --> ESITO OK
 	}
 
 	/**
@@ -354,10 +361,12 @@ public class DetailFunctionalityModule extends AbstractModule {
 			}
 
 		} catch (EMFUserError eex) {
+			// PER MONIA, FUNCTIONALITY.ADD, userId, funct.getName() 
 			EMFErrorHandler errorHandler = getErrorHandler();
 			errorHandler.addError(eex);
 			return;
 		} catch (Exception ex) {
+			// PER MONIA, FUNCTIONALITY.ADD, userId, funct.getName() 
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE,
 					"DetailFunctionalityModule", "newDettaglioFunctionality",
 					"Cannot prepare page for the insertion", ex);
@@ -411,6 +420,7 @@ public class DetailFunctionalityModule extends AbstractModule {
 			LowFunctionality parentFunct = DAOFactory.getLowFunctionalityDAO()
 					.loadLowFunctionalityByPath(pathParent, false);
 			if (parentFunct == null) {
+				// PER MONIA, FUNCTIONALITY.ADD, userId, parentFunct.getName() 
 				EMFValidationError error = new EMFValidationError(
 						EMFErrorSeverity.ERROR,
 						AdmintoolsConstants.PATH_PARENT, "1002", new Vector());
@@ -432,11 +442,13 @@ public class DetailFunctionalityModule extends AbstractModule {
 						EMFErrorSeverity.ERROR, "code", "1005", new Vector(),
 						params);
 				getErrorHandler().addError(error);
+				// PER MONIA, FUNCTIONALITY.ADD, userId, funct.getName() 
 			}
 			if (DAOFactory.getLowFunctionalityDAO().existByCode(code) != null) {
 				EMFValidationError error = new EMFValidationError(
 						EMFErrorSeverity.ERROR, "code", "1027");
 				getErrorHandler().addError(error);
+				// PER MONIA, FUNCTIONALITY.ADD, userId, funct.getName() 
 			}
 			lowFunct = new LowFunctionality();
 			lowFunct.setCode(code);
@@ -457,6 +469,7 @@ public class DetailFunctionalityModule extends AbstractModule {
 					.existByCode(code);
 			if ((idFunctWithSameCode != null)
 					&& !(idFunctWithSameCode.equals(new Integer(idFunct)))) {
+				// PER MONIA, FUNCTIONALITY.MODIFY, userId, funct.getName() 
 				EMFValidationError error = new EMFValidationError(
 						EMFErrorSeverity.ERROR, 1027);
 				getErrorHandler().addError(error);

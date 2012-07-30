@@ -252,6 +252,7 @@ public class DetailModalitiesValueModule extends AbstractModule {
 							Object error = iterator.next();
 							if(error instanceof EMFValidationError) {
 								response.setAttribute("testLov", "true");
+								// PER MONIA, LOV.ADD/MODIFY, userId
 								return;
 							}
 						}
@@ -412,6 +413,7 @@ public class DetailModalitiesValueModule extends AbstractModule {
 						Object error = iterator.next();
 						if (error instanceof EMFValidationError) {
 							prepareDetailModalitiesValuePage(modVal, mod, response);
+							// PER MONIA, DOCUMENT.ADD/MODIFY, userId, modVal.getName(), modVal.getITypeCd()	
 							return;
 						}
 					}
@@ -464,6 +466,7 @@ public class DetailModalitiesValueModule extends AbstractModule {
 						EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "input_type", "1058", params, errparams);
 						errorHandler.addError(error);
 						prepareDetailModalitiesValuePage(modVal, mod, response);
+						// PER MONIA, DOCUMENT.ADD/MODIFY, userId, modVal.getName(), modVal.getITypeCd()
 						return;
 					} else {
 						// the lov type was not changed, must verify that the dependency columns are still present
@@ -501,6 +504,7 @@ public class DetailModalitiesValueModule extends AbstractModule {
 							EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, 1059, params, errparams);
 							errorHandler.addError(error);
 							prepareDetailModalitiesValuePage(modVal, mod, response);
+							// PER MONIA, DOCUMENT.ADD/MODIFY, userId, modVal.getName(), modVal.getITypeCd()
 							return;
 						}
 					}
@@ -515,10 +519,12 @@ public class DetailModalitiesValueModule extends AbstractModule {
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListLovsModule.MODULE_PAGE);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1018, new Vector(), params);
+			// PER MONIA, DOCUMENT.ADD/MODIFY, userId, modVal.getName(), modVal.getITypeCd()
 		}
 		
 		response.setAttribute("loopback", "true");
 		session.delAttribute(SpagoBIConstants.LOV_MODIFIED);
+		// PER MONIA, DOCUMENT.ADD/MODIFY, userId, modVal.getName(), modVal.getITypeCd() --> ESITO OK
 		
 	}
 	
@@ -668,6 +674,7 @@ public class DetailModalitiesValueModule extends AbstractModule {
 			//controls if there is any parameter associated
 			boolean hasPar = DAOFactory.getModalitiesValueDAO().hasParameters(idStr);
 			if (hasPar){
+				// PER MONIA, DOCUMENT.DELETE, userId,( modVal.getName(), modVal.getITypeCd() )
 				EMFUserError error = new EMFUserError (EMFErrorSeverity.ERROR, "1023", new Vector(), null);
 				getErrorHandler().addError(error);
 				return;
@@ -676,6 +683,7 @@ public class DetailModalitiesValueModule extends AbstractModule {
 			ModalitiesValue modVal = moddao.loadModalitiesValueByID(new Integer(idStr));
 			moddao.eraseModalitiesValue(modVal);
 		} catch (Exception ex) {
+			// PER MONIA, DOCUMENT.DELETE, userId, modVal.getName(), modVal.getITypeCd()
 			logger.error("Cannot fill response container", ex  );
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListLovsModule.MODULE_PAGE);
@@ -686,6 +694,7 @@ public class DetailModalitiesValueModule extends AbstractModule {
 			session.delAttribute(SpagoBIConstants.MODALITY_VALUE_OBJECT);
 		}
 		response.setAttribute("afterDeleteLoop", "true");
+		// PER MONIA, DOCUMENT.DELETE, userId, modVal.getName(), modVal.getITypeCd() -->ESITO OK
 	}
 	
 	
@@ -710,6 +719,7 @@ public class DetailModalitiesValueModule extends AbstractModule {
 			session.setAttribute(SpagoBIConstants.LOV_MODIFIED, "false");
 			session.setAttribute(SpagoBIConstants.MODALITY_VALUE_OBJECT, modVal);
 		} catch (Exception ex) {
+			// PER MONIA, DOCUMENT.ADD, userId, modVal.getName(), modVal.getITypeCd()
 			logger.error("Cannot prepare page for the insertion", ex);
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListLovsModule.MODULE_PAGE);
@@ -915,6 +925,7 @@ public class DetailModalitiesValueModule extends AbstractModule {
 					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "label", "1024",
 							new Vector(), params);
 					errorHandler.addError(error);
+					// PER MONIA, DOCUMENT.ADD, userId, label
 				}
 			}
 		} else {
@@ -932,6 +943,7 @@ public class DetailModalitiesValueModule extends AbstractModule {
 					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "label", "1024",
 							new Vector(), params);
 					errorHandler.addError(error);
+					// PER MONIA, DOCUMENT.MODIFY, userId, label
 				}
 			}
 		}
