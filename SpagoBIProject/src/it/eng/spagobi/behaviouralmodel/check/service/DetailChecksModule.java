@@ -112,8 +112,9 @@ public class DetailChecksModule extends AbstractModule {
 			this.modalita = AdmintoolsConstants.DETAIL_MOD;
 			response.setAttribute("modality", modalita);	
 			Check aCheck= DAOFactory.getChecksDAO().loadCheckByID(new Integer(key));
-			response.setAttribute("checkObj", aCheck);
+			response.setAttribute("checkObj", aCheck);			
 		} catch (Exception ex) {
+			// PER MONIA, CHECK.ADD/MODIFY, userId, aCheck.getName(), aCheck.getValueTypeCd()
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DettaglioEngineModule","getDettaglioEngine","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -142,6 +143,7 @@ public class DetailChecksModule extends AbstractModule {
 			if(!errorHandler.isOKBySeverity(EMFErrorSeverity.ERROR)) {
 				response.setAttribute("checkObj", aCheck);
 				response.setAttribute("modality", mod);
+				// PER MONIA, CHECK.ADD/MODIFY, userId, aCheck.getName(), aCheck.getValueTypeCd()
 				return;
 			}
 			SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
@@ -155,10 +157,12 @@ public class DetailChecksModule extends AbstractModule {
 			}
             
 		} catch (Exception ex) {			
+			// PER MONIA, CHECK.ADD/MODIFY, userId, aCheck.getName(), aCheck.getValueTypeCd()
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","modDetailEngine","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
+		// PER MONIA, CHECK.ADD/MODIFY, userId, aCheck.getName(), aCheck.getValueTypeCd() --> ESITO OK
 	
 	}
 	
@@ -214,6 +218,7 @@ public class DetailChecksModule extends AbstractModule {
 			//if check is in use cannot be erased
 			boolean isRef = DAOFactory.getChecksDAO().isReferenced(id);
 			if (isRef) {
+				// PER MONIA, CHECK.DELETE, userId, (aCheck.getName(), aCheck.getValueTypeCd()) 
 				HashMap params = new HashMap();
 				params.put(AdmintoolsConstants.PAGE, ListChecksModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1028, new Vector(), params);
@@ -224,10 +229,12 @@ public class DetailChecksModule extends AbstractModule {
 			aCheck.setCheckId(Integer.valueOf(id));
 			DAOFactory.getChecksDAO().eraseCheck(aCheck);
 		} catch (Exception ex) {
+			// PER MONIA, CHECK.DELETE, userId, aCheck.getName(), aCheck.getValueTypeCd()
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","delDetailRuolo","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
+		// PER MONIA, CHECK.DELETE, userId, aCheck.getName(), aCheck.getValueTypeCd() --> ESITO OK
 	}
 	
 	
@@ -260,6 +267,7 @@ public class DetailChecksModule extends AbstractModule {
 			}
 			response.setAttribute("checkObj", aCheck);
 		} catch (Exception ex) {
+			// PER MONIA, CHECK.ADD, userId, aCheck.getName(), aCheck.getValueTypeCd() -
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","newDetailEngine","Cannot prepare page for the insertion", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}

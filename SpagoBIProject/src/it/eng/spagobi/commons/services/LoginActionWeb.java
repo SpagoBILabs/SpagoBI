@@ -106,6 +106,7 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 		
 			logger.info("SSO is " + (isSSOActive?"enabled" : "disabled"));
 			
+			
 						
 			// If SSO is not active, check username and password, i.e. performs the authentication;
 			// instead, if SSO is active, the authentication mechanism is provided by the SSO itself, so SpagoBI does not make 
@@ -118,11 +119,13 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 				
 				if( supplier.checkAuthentication(usr, pwd) == null) {
 					logger.warn("An attempt to authenticate with wrong credential has made [" + usr + "/" + pwd +"]");
+					// PER MONIA, LOGIN, USER-ID   
 					throw new SpagoBIServiceException(SERVICE_NAME, "An attempt to authenticate with wrong credential has made [" + usr + "/" + pwd +"]");
 				}
 				
 			} else {
 				usr = UserUtilities.getUserId(this.getHttpRequest());
+				// PER MONIA, LOGIN, USER-ID (sarà null)   
 				Assert.assertNotNull(usr, "User identifier not found. Cannot build user profile object");
 				
 			}
@@ -130,6 +133,7 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			logger.info("User ["+ usr + "] has been autheticated succesfully");
 			
 			profile = UserUtilities.getUserProfile( usr );
+			// PER MONIA, LOGIN, USER-ID - profile    
 			Assert.assertNotNull(profile, "Impossible to load profile for the user [" + usr + "]");
 
 			
@@ -171,12 +175,15 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 				results.put("userid", profile.getUserUniqueIdentifier());
 				writeBackToClient( new JSONSuccess( results, callback ) );
 			} catch (IOException e) {
+				// PER MONIA, LOGIN, USER-ID
 				throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
 			}
 		} catch(Throwable t) {
+			// PER MONIA, LOGIN, USER-ID
 			SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
 		} finally {
 			logger.info("User ["+ usr + "] has been logged in succesfully");
+			// PER MONIA, LOGIN, USER-ID
 			logger.debug("OUT");
 		}
 	}
