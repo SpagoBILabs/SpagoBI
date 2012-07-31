@@ -352,12 +352,12 @@
 				<file name="./src/ext/sbi/browser/FolderViewTemplate.js" />
 				<file name="./src/ext/sbi/browser/FolderView.js" />
 				<file name="./src/ext/sbi/browser/FolderDetailPanel.js" />
-				<!--
-			  <file name="./src/ext/sbi/browser/mexport/MassiveExportWizard.js"/>  
-			  <file name="./src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js"/>  
-			  <file name="./src/ext/sbi/browser/mexport/MassiveExportWizardOptionsPage.js"/>  
-			  <file name="./src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js"/>  
-			    -->
+				
+                <file name="./src/ext/sbi/browser/mexport/MassiveExportWizard.js"/>  
+                <file name="./src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js"/>  
+                <file name="./src/ext/sbi/browser/mexport/MassiveExportWizardOptionsPage.js"/>  
+                <file name="./src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js"/>  
+
 				<file name="./src/ext/sbi/widgets/FilteringToolbar.js" />
 				<file name="./src/ext/sbi/widgets/PagingToolbar.js" />
 				<file name="./src/ext/sbi/widgets/LookupField.js" />
