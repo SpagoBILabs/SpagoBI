@@ -10,6 +10,7 @@ import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.dispatching.module.AbstractModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -21,6 +22,7 @@ import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -37,7 +39,7 @@ import org.apache.log4j.Logger;
 /**
  * This class implements a module which  handles data source management. 
  */
-public class DetailDataSourceModule extends AbstractModule {
+public class DetailDataSourceModule extends AbstractHttpModule{
 	static private Logger logger = Logger.getLogger(DetailDataSourceModule.class);
 	public static final String MOD_SAVE = "SAVE";
 	public static final String MOD_SAVEBACK = "SAVEBACK";
@@ -110,8 +112,10 @@ public class DetailDataSourceModule extends AbstractModule {
 	 * @throws EMFUserError If an exception occurs
 	 */   
 	private void getDataSource(SourceBean request, SourceBean response) throws EMFUserError {		
-		try {		 									
-			DataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(new Integer((String)request.getAttribute("ID")));		
+		DataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(new Integer((String)request.getAttribute("ID")));
+		HashMap a = new HashMap();
+		a.put("TYPE",ds.getJndi());
+		try {		 											
 			this.modalita = SpagoBIConstants.DETAIL_MOD;
 			if (request.getAttribute("SUBMESSAGEDET") != null &&
 				((String)request.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVEBACK))
@@ -125,12 +129,21 @@ public class DetailDataSourceModule extends AbstractModule {
 			response.setAttribute("modality", modalita);
 			response.setAttribute("dsObj", ds);			
 		} catch (Exception ex) {		
-			//PER MONIA: puoi ottimizzare il codice definendo la modalita (ADD/MODIFY) in base e poi fare una chiamata sola del metodo che aggiorna il log!
-			//if (this.modalita.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-			// PER MONIA, DATA_SOURCE.ADD, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
-			//} else {
-			// PER MONIA, DATA_SOURCE.MODIFY, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
-			//}	
+			if (this.modalita.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", a, "KO");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.MODIFY", a, "KO");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}	
 			
 			logger.error("Cannot fill response container" + ex.getLocalizedMessage());	
 			HashMap params = new HashMap();
@@ -153,14 +166,13 @@ public class DetailDataSourceModule extends AbstractModule {
 	 */
 	private void modifyDataSource(SourceBean serviceRequest, String mod, SourceBean serviceResponse)
 		throws EMFUserError, SourceBeanException {
-		
 		try {
 			IDataSourceDAO dao=DAOFactory.getDataSourceDAO();
 			dao.setUserProfile(profile);
-			
 			DataSource dsNew = recoverDataSourceDetails(serviceRequest);
-			
 			EMFErrorHandler errorHandler = getErrorHandler();
+			HashMap a = new HashMap();
+			a.put("TYPE",dsNew.getJndi());
 			 
 			// if there are some validation errors into the errorHandler does not write into DB
 			Collection errors = errorHandler.getErrors();
@@ -171,11 +183,21 @@ public class DetailDataSourceModule extends AbstractModule {
 					if (error instanceof EMFValidationError) {
 						serviceResponse.setAttribute("dsObj", dsNew);
 						serviceResponse.setAttribute("modality", mod);
-						//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-						// PER MONIA, DATA_SOURCE.ADD, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
-						//} else {
-						// PER MONIA, DATA_SOURCE.MODIFY, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
-						//}						
+						if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+							try {
+								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", a, "KO");
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						} else {
+							try {
+								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.MODIFY", a, "KO");
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}						
 						return;
 					}
 				}
@@ -188,7 +210,7 @@ public class DetailDataSourceModule extends AbstractModule {
 					params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
 					EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 8004, new Vector(), params );
 					getErrorHandler().addError(error);
-					// PER MONIA, DATA_SOURCE.ADD, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", a, "OK");
 					return;
 				}	 		
 
@@ -215,26 +237,37 @@ public class DetailDataSourceModule extends AbstractModule {
 					((String)serviceRequest.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVEBACK)){
 					serviceResponse.setAttribute("loopback", "true");
 				    return;
-			}					     
+			}
+			if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", a, "OK");
+			} else {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.MODIFY", a, "OK");
+			}	
 		} catch (EMFUserError e){
 			logger.error("Cannot fill response container" + e.getLocalizedMessage());
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.MODIFY",null, "ERR");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 8005, new Vector(), params);
-			// PER MONIA, DATA_SOURCE.MODIFY, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
 			
 		}
 		
 		catch (Exception ex) {		
-			logger.error("Cannot fill response container" , ex);		
+			logger.error("Cannot fill response container" , ex);
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.MODIFY", null, "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-			// PER MONIA, DATA_SOURCE.MODIFY, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
 		}		
-		//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-		// PER MONIA, DATA_SOURCE.ADD, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi() --> ESITO OK
-		//} else {
-		// PER MONIA, DATA_SOURCE.MODIFY, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi() --> ESITO OK
-		//}	
+
 	}
 
 	/**
@@ -259,7 +292,7 @@ public class DetailDataSourceModule extends AbstractModule {
 				params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 8007, new Vector(), params );
 				getErrorHandler().addError(error);
-				// PER MONIA, DATA_SOURCE.DELETE, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.DELETE", null, "OK");
 				return;
 			}
 			
@@ -268,7 +301,12 @@ public class DetailDataSourceModule extends AbstractModule {
 			DAOFactory.getDataSourceDAO().eraseDataSource(ds);
 		}
 		catch (EMFUserError e){
-			// PER MONIA, DATA_SOURCE.DELETE, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
+			  try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.DELETE", null, "ERR");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			  logger.error("Cannot fill response container" + e.getLocalizedMessage());
 			  HashMap params = new HashMap();		  
 			  params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
@@ -276,12 +314,22 @@ public class DetailDataSourceModule extends AbstractModule {
 				
 		}
 	    catch (Exception ex) {		
-	    	// PER MONIA, DATA_SOURCE.DELETE, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi()
 		    ex.printStackTrace();
 			logger.error("Cannot fill response container" ,ex);
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.DELETE", null, "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 	    }
-	 // PER MONIA, DATA_SOURCE.DELETE, ds.getUser(), type: se getJndi torna un valore il tipo è 'jndi' altrimenti 'jdbc' ,  ds.getJndi() --> ESITO OK
+	    try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.DELETE", null, "OK");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    response.setAttribute("loopback", "true");			
 	}
 

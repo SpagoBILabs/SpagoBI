@@ -9,6 +9,7 @@ import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.dispatching.module.AbstractModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -20,6 +21,7 @@ import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.mapcatalogue.bo.GeoFeature;
 import it.eng.spagobi.mapcatalogue.bo.GeoMap;
 import it.eng.spagobi.mapcatalogue.bo.GeoMapFeature;
@@ -37,7 +39,7 @@ import javax.servlet.ServletOutputStream;
 /**
  * Spago Action which executes the map producing request  
  */
-public class DetailFeatureModule extends AbstractModule {
+public class DetailFeatureModule extends AbstractHttpModule {
 	
 	private String modalita = "";
 	
@@ -145,16 +147,18 @@ private void getDetailFeature(String key, SourceBean response) throws EMFUserErr
  */
 private void modDetailFeature(SourceBean request, String mod, SourceBean response)
 	throws EMFUserError, SourceBeanException {
-	
+	GeoFeature feature = recoverFeatureDetails(request);
+	HashMap a = new HashMap();
+	a.put("FEAUTURE_NAME",feature.getName());
+	RequestContainer reqCont = getRequestContainer();
+	SessionContainer sessCont = reqCont.getSessionContainer();
+	SessionContainer permSess = sessCont.getPermanentContainer();
+	IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	try {
-		RequestContainer reqCont = getRequestContainer();
-		SessionContainer sessCont = reqCont.getSessionContainer();
-		SessionContainer permSess = sessCont.getPermanentContainer();
-		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		
 		
 		ISbiGeoFeaturesDAO dao=DAOFactory.getSbiGeoFeaturesDAO();
 		dao.setUserProfile(profile);
-		GeoFeature feature = recoverFeatureDetails(request);
 		if (feature.getName() == null) {
 			response.setAttribute("mapObj", feature);
 			response.setAttribute("modality", mod);
@@ -172,11 +176,11 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 				if (error instanceof EMFValidationError) {
 					response.setAttribute("featureObj", feature);
 					response.setAttribute("modality", mod);
-					//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-					// PER MONIA, MAP_CATALOG_FEATURE.ADD, userId, feauture.getName()
-					//} else {
-					// PER MONIA, MAP_CATALOG_FEATURE.MODIFY, userId, feauture.getName()
-					//}
+					if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", a, "KO");
+					} else {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", a, "KO");
+					}
 					return;
 				}
 			}
@@ -189,7 +193,7 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 				params.put(AdmintoolsConstants.PAGE, ListFeaturesModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 5018, new Vector(), params );
 				getErrorHandler().addError(error);
-				// PER MONIA, MAP_CATALOG_FEAURE.ADD, userId, feature.getName()
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", a, "ERR");
 				return;
 			}			
 			dao.insertFeature(feature);
@@ -198,11 +202,21 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 		}
         
 	} catch (EMFUserError e){
-		//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-		// PER MONIA, MAP_CATALOG_FEATURE.ADD, userId, feauture.getName()
-		//} else {
-		// PER MONIA, MAP_CATALOG_FEATURE.MODIFY, userId, feauture.getName()
-		//}
+		if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", a, "ERR");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} else {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", a, "ERR");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 		HashMap params = new HashMap();
 		params.put(AdmintoolsConstants.PAGE, ListMapsModule.MODULE_PAGE);
 		throw new EMFUserError(EMFErrorSeverity.ERROR, 5016, new Vector(), params);
@@ -210,20 +224,40 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 	}
 	
 	catch (Exception ex) {
-		//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-		// PER MONIA, MAP_CATALOG_FEATURE.ADD, userId, feauture.getName()
-		//} else {
-		// PER MONIA, MAP_CATALOG_FEATURE.MODIFY, userId, feauture.getName()
-		//}
+		if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", a, "KO");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} else {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", a, "KO");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 		TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());		
 		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 	}
 	response.setAttribute("loopback", "true");
-	//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-	// PER MONIA, MAP_CATALOG_FEATURE.ADD, userId, feauture.getName() -->esito ok
-	//} else {
-	// PER MONIA, MAP_CATALOG_FEATURE.MODIFY, userId, feauture.getName() -->esito ok
-	//}
+	if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", a, "OK");
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	} else {
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", a, "OK");
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
 	
 }
 
@@ -238,7 +272,10 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
  */
 private void delDetailFeature(SourceBean request, String mod, SourceBean response)
 	throws EMFUserError, SourceBeanException {
-	
+	RequestContainer reqCont = getRequestContainer();
+	SessionContainer sessCont = reqCont.getSessionContainer();
+	SessionContainer permSess = sessCont.getPermanentContainer();
+	IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	try {
 		String id = (String) request.getAttribute("ID");
         GeoFeature feature = DAOFactory.getSbiGeoFeaturesDAO().loadFeatureByID(new Integer(id));
@@ -252,19 +289,34 @@ private void delDetailFeature(SourceBean request, String mod, SourceBean respons
         //deletes the feature
         DAOFactory.getSbiGeoFeaturesDAO().eraseFeature(feature);
 	}   catch (EMFUserError e){
-		// PER MONIA, MAP_CATALOG_FEATURE.DELETE, userId, feauture.getName()
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.DELETE", null, "ERR");
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		  HashMap params = new HashMap();
 		  params.put(AdmintoolsConstants.PAGE, ListFeaturesModule.MODULE_PAGE);
 		  throw new EMFUserError(EMFErrorSeverity.ERROR, 5022, new Vector(), params);
 			
 		}
 	    catch (Exception ex) {	
-	    	// PER MONIA, MAP_CATALOG_FEATURE.DELETE, userId, feauture.getName()
+	    	try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.DELETE", null, "KO");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());
 		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 	}
 	response.setAttribute("loopback", "true");
-	// PER MONIA, MAP_CATALOG_FEATURE.DELETE, userId, feauture.getName() -->ESITO OK
+	try {
+		AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.DELETE", null, "OK");
+	} catch (Exception e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
 	
 }
 

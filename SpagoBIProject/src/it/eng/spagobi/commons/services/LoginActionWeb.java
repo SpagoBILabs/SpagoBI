@@ -7,6 +7,7 @@ package it.eng.spagobi.commons.services;
 
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
@@ -19,6 +20,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -119,13 +121,13 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 				
 				if( supplier.checkAuthentication(usr, pwd) == null) {
 					logger.warn("An attempt to authenticate with wrong credential has made [" + usr + "/" + pwd +"]");
-					// PER MONIA, LOGIN, USER-ID   
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOGIN", null, "KO");
 					throw new SpagoBIServiceException(SERVICE_NAME, "An attempt to authenticate with wrong credential has made [" + usr + "/" + pwd +"]");
 				}
 				
 			} else {
 				usr = UserUtilities.getUserId(this.getHttpRequest());
-				// PER MONIA, LOGIN, USER-ID (sarà null)   
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOGIN", null, "KO");
 				Assert.assertNotNull(usr, "User identifier not found. Cannot build user profile object");
 				
 			}
@@ -133,7 +135,7 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			logger.info("User ["+ usr + "] has been autheticated succesfully");
 			
 			profile = UserUtilities.getUserProfile( usr );
-			// PER MONIA, LOGIN, USER-ID - profile    
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOGIN", null, "OK"); 
 			Assert.assertNotNull(profile, "Impossible to load profile for the user [" + usr + "]");
 
 			
@@ -175,15 +177,25 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 				results.put("userid", profile.getUserUniqueIdentifier());
 				writeBackToClient( new JSONSuccess( results, callback ) );
 			} catch (IOException e) {
-				// PER MONIA, LOGIN, USER-ID
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOGIN", null, "KO");
 				throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
 			}
 		} catch(Throwable t) {
-			// PER MONIA, LOGIN, USER-ID
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOGIN", null, "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
 		} finally {
 			logger.info("User ["+ usr + "] has been logged in succesfully");
-			// PER MONIA, LOGIN, USER-ID
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOGIN", null, "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			logger.debug("OUT");
 		}
 	}

@@ -10,6 +10,7 @@ import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.dispatching.module.AbstractModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -22,6 +23,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
@@ -39,9 +41,11 @@ import java.util.Vector;
  * 
  * @author sulis
  */
-public class DetailEngineModule extends AbstractModule {
+public class DetailEngineModule extends AbstractHttpModule {
 	
 	private String modalita = "";
+	private IEngUserProfile profile;
+	SessionContainer session = null;
 	
 	/* (non-Javadoc)
 	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
@@ -63,6 +67,8 @@ public class DetailEngineModule extends AbstractModule {
 
 		String message = (String) request.getAttribute("MESSAGEDET");
 		SpagoBITracer.debug(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","service","begin of detail Engine modify/visualization service with message =" +message);
+		SessionContainer permanentSession = session.getPermanentContainer();
+		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 		EMFErrorHandler errorHandler = getErrorHandler();
 		try {
@@ -102,13 +108,21 @@ public class DetailEngineModule extends AbstractModule {
 	 * @throws EMFUserError If an exception occurs
 	 */
 	private void getDettaglioEngine(String key, SourceBean response) throws EMFUserError {
+		Engine engine = DAOFactory.getEngineDAO().loadEngineByID(new Integer(key));
 		try {
 			this.modalita = AdmintoolsConstants.DETAIL_MOD;
 			response.setAttribute("modality", modalita);
-			Engine engine = DAOFactory.getEngineDAO().loadEngineByID(new Integer(key));
 			response.setAttribute("engineObj", engine);
 		} catch (Exception ex) {
-			// PER MONIA, ENGINE.MODIFY, USER-ID,engine.getName(),engineType
+			HashMap a = new HashMap();
+			a.put("NAME",engine.getName());
+			a.put("TYPE",engine.getEngineTypeId());
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", a, "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DettaglioEngineModule","getDettaglioEngine","Cannot fill response container", ex  );
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListEnginesModule.MODULE_PAGE);
@@ -129,7 +143,10 @@ public class DetailEngineModule extends AbstractModule {
 	 */
 	private void modDettaglioEngine(SourceBean request, String mod, SourceBean response)
 		throws EMFUserError, SourceBeanException {
-		
+		Engine engine = recoverEngineDetails(request);
+		HashMap a = new HashMap();
+		a.put("NAME",engine.getName());
+		a.put("TYPE",engine.getEngineTypeId());
 		try {
 			//**********************************************************************
 			
@@ -140,7 +157,6 @@ public class DetailEngineModule extends AbstractModule {
 			if ("EXT".equalsIgnoreCase(engineType.getValueCd())) ValidationCoordinator.validate("PAGE", "ExternalEngineDetailPage", this);
 			else ValidationCoordinator.validate("PAGE", "InternalEngineDetailPage", this);
 			
-			Engine engine = recoverEngineDetails(request);
 			EMFErrorHandler errorHandler = getErrorHandler();
 			
 			// if there are some validation errors into the errorHandler does not write into DB
@@ -150,7 +166,7 @@ public class DetailEngineModule extends AbstractModule {
 				while (iterator.hasNext()) {
 					Object error = iterator.next();
 					if (error instanceof EMFValidationError) {
-						// PER MONIA, ENGINE.MODIFY, USER-ID,engine.getName(),engineType
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", a, "ERR");
 						response.setAttribute("engineObj", engine);
 						response.setAttribute("modality", mod);
 						return;
@@ -172,12 +188,22 @@ public class DetailEngineModule extends AbstractModule {
 				dao.modifyEngine(engine);
 			}
             
-		} catch (EMFUserError e){			
-			//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-			// PER MONIA, ENGINE.ADD, userId,engine.getName(),engineType
-			//} else {
-			// PER MONIA, ENGINE.MODIFY, userId,engine.getName(),engineType
-			//}
+		} catch (EMFUserError e){		
+			if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.ADD", a, "ERR");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			} else {
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", a, "ERR");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 			
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListEnginesModule.MODULE_PAGE);
@@ -186,19 +212,39 @@ public class DetailEngineModule extends AbstractModule {
 		}
 		
 		catch (Exception ex) {	
-			//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-			// PER MONIA, ENGINE.ADD, userId,engine.getName(),engineType
-			//} else {
-			// PER MONIA, ENGINE.MODIFY, userId,engine.getName(),engineType
-			//}
+			if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.ADD", a, "KO");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			} else {
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", a, "KO");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","modDetailEngine","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
-		//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-		// PER MONIA, ENGINE.ADD, userId,engine.getName(),engineType -->esito ok
-		//} else {
-		// PER MONIA, ENGINE.MODIFY, userId,engine.getName(),engineType -->esito ok
-		//}
+		if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.ADD", a, "OK");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} else {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", a, "KO");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 		response.setAttribute("loopback", "true");
 	}
 	
@@ -214,26 +260,32 @@ public class DetailEngineModule extends AbstractModule {
 	private void delDettaglioEngine(SourceBean request, String mod, SourceBean response)
 		throws EMFUserError, SourceBeanException {
 		
-		try {
-			String id = (String) request.getAttribute("id");
-            IEngineDAO enginedao = DAOFactory.getEngineDAO();
-			Engine engine = enginedao.loadEngineByID(new Integer(id));
-			
-			//PER MONIA: (*) : Domain engineType = DAOFactory.getDomainDAO().loadDomainById(engine.getBiobjTypeId());		
-//			controls if the engine is in use by any BIObject
+		String id = (String) request.getAttribute("id");
+        IEngineDAO enginedao = DAOFactory.getEngineDAO();
+		Engine engine = enginedao.loadEngineByID(new Integer(id));
+		Domain engineType = DAOFactory.getDomainDAO().loadDomainById(engine.getBiobjTypeId());
+		HashMap a = new HashMap();
+		a.put("NAME",engine.getName());
+		a.put("VALUE",engineType);
+		
+		try {	
 			boolean isAss = enginedao.hasBIObjAssociated(id);
 			if (isAss){
-				// PER MONIA, ENGINE-DELETE, USER-ID,engine.getName(),engineType
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-DELETE", a, "OK");
 				HashMap params = new HashMap();
 				params.put(AdmintoolsConstants.PAGE, ListEnginesModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1030, new Vector(), params );
 				getErrorHandler().addError(error);
 				return;
-				
 			}
 			enginedao.eraseEngine(engine);
 		}   catch (EMFUserError e){	
-			// PER MONIA, ENGINE-DELETE, USER-ID,engine.getName(),engineType (*)
+			    try {
+				   AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-DELETE", a, "KO");
+			    } catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			  HashMap params = new HashMap();
 			  params.put(AdmintoolsConstants.PAGE, ListEnginesModule.MODULE_PAGE);
 			  throw new EMFUserError(EMFErrorSeverity.ERROR, 1013, new Vector(), params);
@@ -241,10 +293,21 @@ public class DetailEngineModule extends AbstractModule {
 			}
 		    catch (Exception ex) {
 		    //PER MONIA, ENGINE-DELETE, USER-ID,engine.getName(),engineType
+		    try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-DELETE", a, "ERR");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","delDetailRuolo","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
-		    //  PER MONIA, ENGINE.DELETE, userId,engine.getName(),engineType -->esito ok
+		    try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-DELETE", a, "OK");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		response.setAttribute("loopback", "true");
 	}
 	
@@ -278,6 +341,12 @@ public class DetailEngineModule extends AbstractModule {
 			response.setAttribute("engineObj", engine);
 		} catch (Exception ex) {
 			//PER MONIA, ENGINE-ADD, USER-ID
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-ADD", null, "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","newDetailEngine","Cannot prepare page for the insertion", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -362,6 +431,15 @@ public class DetailEngineModule extends AbstractModule {
 						"1011", new Vector(), params);
 				getErrorHandler().addError(error);
 				//PER MONIA, ENGINE-MODIFY, USER-ID , name, engineType.getValueCd()
+				HashMap a = new HashMap();
+				a.put("NAME",name);
+				a.put("VALUE",engineType.getValueCd());
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-MODIFY", a, "OK");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
         
