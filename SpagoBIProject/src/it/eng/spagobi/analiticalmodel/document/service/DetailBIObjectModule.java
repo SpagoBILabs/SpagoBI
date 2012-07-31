@@ -913,7 +913,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 						if(!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 							helper.fillResponse(initialPath);
 							prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
-							HashMap< String, String> a = null;
+							HashMap a = new HashMap();
 							a.put("Document_name", obj.getName());
 							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_DETAIL_MOD",a , "OK");	
 							return;

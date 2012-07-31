@@ -21,6 +21,7 @@ import it.eng.spago.validation.coordinator.ValidationCoordinator;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.mapcatalogue.bo.GeoFeature;
 import it.eng.spagobi.mapcatalogue.bo.GeoMap;
@@ -187,17 +188,19 @@ private void getDetailMap(SourceBean request, SourceBean response) throws EMFUse
  */
 private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serviceResponse)
 	throws EMFUserError, SourceBeanException {
-	
+	RequestContainer reqCont = getRequestContainer();
+	SessionContainer sessCont = reqCont.getSessionContainer();
+	SessionContainer permSess = sessCont.getPermanentContainer();
+	IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	try {
 		
-		RequestContainer reqCont = getRequestContainer();
-		SessionContainer sessCont = reqCont.getSessionContainer();
-		SessionContainer permSess = sessCont.getPermanentContainer();
-		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		
 		ISbiGeoMapsDAO daoGeoMaps=DAOFactory.getSbiGeoMapsDAO();
 		daoGeoMaps.setUserProfile(profile);
 		
 		GeoMap mapNew = recoverMapDetails(serviceRequest);
+		HashMap a = new HashMap();
+		a.put("MAP_NAME",mapNew.getName());
 		
 		EMFErrorHandler errorHandler = getErrorHandler();
 		 
@@ -211,11 +214,11 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 				if (error instanceof EMFValidationError) {
 					serviceResponse.setAttribute("mapObj", mapNew);
 					serviceResponse.setAttribute("modality", mod);
-					//if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-					// PER MONIA, MAP_CATALOG.ADD, userId, mapNew.getName()
-					//} else {
-					// PER MONIA, MAP_CATALOG.MODIFY, userId, mapNew.getName()
-					//}
+					if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", a, "OK");
+					} else {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", a, "OK");
+					}
 					return;
 				}
 			}
@@ -228,7 +231,7 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 				params.put(AdmintoolsConstants.PAGE, ListMapsModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 5005, new Vector(), params );
 				getErrorHandler().addError(error);
-				// PER MONIA, MAP_CATALOG.ADD, userId, mapNew.getName()
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", a, "ERR");
 				return;
 			}	 		
 			/* The activity INSERT consists in:
@@ -251,10 +254,10 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 			if (((String)serviceRequest.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVEBACK))
 			{
 				serviceResponse.setAttribute("loopback", "true");
-				// PER MONIA, MAP_CATALOG.ADD, userId, mapNew.getName() --> ESITO OK
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", a, "OK");
 				return;
 			}
-			// PER MONIA, MAP_CATALOG.ADD, userId, mapNew.getName() -->ESITO OK
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", a, "OK");
 			return;
 
 		} else {
@@ -287,7 +290,7 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 				getTabDetails(serviceRequest, serviceResponse);			
 				serviceResponse.setAttribute("modality", mod);
 				serviceResponse.setAttribute("mapObj", mapNew);	
-				// PER MONIA, MAP_CATALOG.MODIFY, userId, mapNew.getName() -->ESITO OK
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", a, "OK");
 				return;										
 			}				
 		}  
@@ -296,17 +299,22 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 			getTabDetails(serviceRequest, serviceResponse);			
 			serviceResponse.setAttribute("modality", mod);
 			serviceResponse.setAttribute("mapObj", mapNew);		
-			// PER MONIA, MAP_CATALOG.ADD/MODIFY, userId, mapNew.getName() --> ESITO OK
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD/MODIFY", a, "OK");
 			return;
 		}
 		else if (serviceRequest.getAttribute("SUBMESSAGEDET") != null && 
 				((String)serviceRequest.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVEBACK)){
 				serviceResponse.setAttribute("loopback", "true");
-				// PER MONIA, MAP_CATALOG.ADD/MODIFY, userId, mapNew.getName() --> ESITO OK
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD/MODIFY", a, "OK");
 			    return;
 		}					     
 	} catch (EMFUserError e){
-		// PER MONIA, MAP_CATALOG.ADD/MODIFY, userId, mapNew.getName()
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD/MODIFY", null, "ERR");
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		logger.error("Error while saving catalogue map: " +  e.getMessage());
 		HashMap params = new HashMap();
 		params.put(AdmintoolsConstants.PAGE, ListMapsModule.MODULE_PAGE);
@@ -315,7 +323,12 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 	}
 	
 	catch (Exception ex) {	
-		// PER MONIA, MAP_CATALOG.MODIFY, userId, mapNew.getName()
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", null, "KO");
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());		
 		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 	}	
@@ -332,7 +345,10 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
  */
 private void delDetailMap(SourceBean request, String mod, SourceBean response)
 	throws EMFUserError, SourceBeanException {
-	
+	RequestContainer reqCont = getRequestContainer();
+	SessionContainer sessCont = reqCont.getSessionContainer();
+	SessionContainer permSess = sessCont.getPermanentContainer();
+	IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	try {
 		String id = (String) request.getAttribute("ID");
 //		if the map is associated with any BIFeautures, delete before this associations and then delete the map
@@ -348,20 +364,35 @@ private void delDetailMap(SourceBean request, String mod, SourceBean response)
 		GeoMap map = DAOFactory.getSbiGeoMapsDAO().loadMapByID(new Integer(id));
 		DAOFactory.getSbiGeoMapsDAO().eraseMap(map);
 	}   catch (EMFUserError e){
-		// PER MONIA, MAP_CATALOG.DELETE, userId, map.getName()
+		  try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.DELETE", null, "ERR");
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		  HashMap params = new HashMap();		  
 		  params.put(AdmintoolsConstants.PAGE, ListMapsModule.MODULE_PAGE);
 		  throw new EMFUserError(EMFErrorSeverity.ERROR, 5010, new Vector(), params);
 			
 		}
 	    catch (Exception ex) {	
-	    	// PER MONIA, MAP_CATALOG.DELETE, userId, map.getName()
+	    	try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.DELETE", null, "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	    ex.printStackTrace();
 		TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());
 		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 	}
 	response.setAttribute("loopback", "true");	
-	// PER MONIA, MAP_CATALOG.DELETE, userId, map.getName() --> ESITO OK
+	try {
+		AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.DELETE", null, "OK");
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 }
 
 /**
@@ -375,13 +406,12 @@ private void delDetailMap(SourceBean request, String mod, SourceBean response)
  */
 private void insRelMapFeature(SourceBean request, SourceBean response)
 	throws EMFUserError, SourceBeanException {
+	RequestContainer reqCont = getRequestContainer();
+	SessionContainer sessCont = reqCont.getSessionContainer();
+	SessionContainer permSess = sessCont.getPermanentContainer();
+	IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	
 	try {		
-		RequestContainer reqCont = getRequestContainer();
-		SessionContainer sessCont = reqCont.getSessionContainer();
-		SessionContainer permSess = sessCont.getPermanentContainer();
-		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-
 		ISbiGeoMapFeaturesDAO dao=DAOFactory.getSbiGeoMapFeaturesDAO();
 		dao.setUserProfile(profile);
 		
@@ -389,7 +419,8 @@ private void insRelMapFeature(SourceBean request, SourceBean response)
 		String featureId = (String)request.getAttribute("FEATURE_ID");	
 		GeoMap map = DAOFactory.getSbiGeoMapsDAO().loadMapByID(new Integer(mapId));
 		EMFErrorHandler errorHandler = getErrorHandler();
-		
+		HashMap a = new HashMap();
+		a.put("MAP_NAME",map.getName());
 		// if there are some validation errors into the errorHandler does not write into DB
 		Collection errors = errorHandler.getErrors();
 		if (errors != null && errors.size() > 0) {
@@ -399,7 +430,7 @@ private void insRelMapFeature(SourceBean request, SourceBean response)
 				if (error instanceof EMFValidationError) {
 					response.setAttribute("mapObj", map);
 					response.setAttribute("modality", SpagoBIConstants.DETAIL_MOD);
-					// PER MONIA, MAP_CATALOG.MODIFY, userId, map.getName()
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", a, "OK");
 					return;
 				}
 			}
@@ -432,17 +463,27 @@ private void insRelMapFeature(SourceBean request, SourceBean response)
 	    response.setAttribute("selectedFeatureId",featureId);	
 	    response.setAttribute("mapObj", map);
 	    response.setAttribute("modality", SpagoBIConstants.DETAIL_MOD);
-	 // PER MONIA, MAP_CATALOG.MODIFY, userId, map.getName() --> ESITO OK
+	    AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", a, "OK");
 	    
 	}   catch (EMFUserError e){
-		// PER MONIA, MAP_CATALOG.MODIFY, userId, map.getName()
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", null, "ERR");
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		  HashMap params = new HashMap();		  
 		  params.put(AdmintoolsConstants.PAGE, ListMapsModule.MODULE_PAGE);
 		  throw new EMFUserError(EMFErrorSeverity.ERROR, 5027, new Vector(), params);
 			
 		}
 	    catch (Exception ex) {
-	    	// PER MONIA, MAP_CATALOG.MODIFY, userId, map.getName()
+	    	try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", null, "KO");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 	    ex.printStackTrace();
 		TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());
 		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -588,6 +629,10 @@ private GeoMap recoverMapDetails (SourceBean serviceRequest) throws EMFUserError
 	 * @throws EMFUserError If an exception occurs
 	 */
 	private void getTabDetails(SourceBean request, SourceBean response) throws EMFUserError {
+		RequestContainer reqCont = getRequestContainer();
+		SessionContainer sessCont = reqCont.getSessionContainer();
+		SessionContainer permSess = sessCont.getPermanentContainer();
+		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
 			 
 			//create a List of features for tabs features
@@ -610,7 +655,12 @@ private GeoMap recoverMapDetails (SourceBean serviceRequest) throws EMFUserError
 			response.setAttribute("lstMapFeatures",lstMapFeatures);
 			response.setAttribute("selectedFeatureId",selectedFeatureId);								
 		} catch (Exception ex) {			
-			// PER MONIA, MAP_CATALOG.ADD, userId, ((GeoMap)response.getAttribute("mapObj")).getName()
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", null, "ERR");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());	
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListMapsModule.MODULE_PAGE);

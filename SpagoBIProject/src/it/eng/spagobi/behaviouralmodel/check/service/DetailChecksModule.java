@@ -8,6 +8,7 @@ package it.eng.spagobi.behaviouralmodel.check.service;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.dispatching.module.AbstractModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -15,12 +16,16 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.utils.DetBIObjModHelper;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,10 +43,12 @@ import java.util.Vector;
  * @author sulis
  */
 
-public class DetailChecksModule extends AbstractModule {
+public class DetailChecksModule extends AbstractHttpModule {
 	
 	private String modalita = "";
 	private Boolean back = new Boolean(false);
+	private IEngUserProfile profile;
+	SessionContainer session = null;
 
 	/* (non-Javadoc)
 	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
@@ -62,6 +69,8 @@ public class DetailChecksModule extends AbstractModule {
 	public void service(SourceBean request, SourceBean response) throws Exception {
 		String message = (String) request.getAttribute("MESSAGEDET");
 		SpagoBITracer.debug(AdmintoolsConstants.NAME_MODULE, "DetailChecksModule","service","begin of detail Engine modify/visualization service with message =" +message);
+		SessionContainer permanentSession = session.getPermanentContainer();
+		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 		EMFErrorHandler errorHandler = getErrorHandler();
 		try {
@@ -114,7 +123,12 @@ public class DetailChecksModule extends AbstractModule {
 			Check aCheck= DAOFactory.getChecksDAO().loadCheckByID(new Integer(key));
 			response.setAttribute("checkObj", aCheck);			
 		} catch (Exception ex) {
-			// PER MONIA, CHECK.ADD/MODIFY, userId, aCheck.getName(), aCheck.getValueTypeCd()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.ADD/MODIFY", null, "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DettaglioEngineModule","getDettaglioEngine","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -134,16 +148,22 @@ public class DetailChecksModule extends AbstractModule {
 	 */
 	private void modDetailCheck(SourceBean request, String mod, SourceBean response)
 		throws EMFUserError, SourceBeanException {
+		Check aCheck = recoverCheckDetails(request);
 		try {
 			
-			Check aCheck = recoverCheckDetails(request);
+			
 			EMFErrorHandler errorHandler = getErrorHandler();
 			
 			// if there are some errors into the errorHandler does not write into DB
 			if(!errorHandler.isOKBySeverity(EMFErrorSeverity.ERROR)) {
 				response.setAttribute("checkObj", aCheck);
 				response.setAttribute("modality", mod);
-				// PER MONIA, CHECK.ADD/MODIFY, userId, aCheck.getName(), aCheck.getValueTypeCd()
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.ADD/MODIFY", null, "ERR");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				return;
 			}
 			SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
@@ -157,12 +177,25 @@ public class DetailChecksModule extends AbstractModule {
 			}
             
 		} catch (Exception ex) {			
-			// PER MONIA, CHECK.ADD/MODIFY, userId, aCheck.getName(), aCheck.getValueTypeCd()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.ADD/MODIFY", null, "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","modDetailEngine","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
-		// PER MONIA, CHECK.ADD/MODIFY, userId, aCheck.getName(), aCheck.getValueTypeCd() --> ESITO OK
+		HashMap a = new HashMap();
+		a.put("NAME",aCheck.getName());
+		a.put("VALUE",aCheck.getValueTypeCd());
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.ADD/MODIFY", a, "OK");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	
 	}
 	
@@ -213,28 +246,45 @@ public class DetailChecksModule extends AbstractModule {
 	private void delDetailCheck(SourceBean request, String mod, SourceBean response)
 	
 	throws EMFUserError, SourceBeanException {
+		String id = (String) request.getAttribute("id");
+		Check aCheck = new Check();
+		aCheck.setCheckId(Integer.valueOf(id));
+		DAOFactory.getChecksDAO().eraseCheck(aCheck);
 		try {
-			String id = (String) request.getAttribute("id");
 			//if check is in use cannot be erased
 			boolean isRef = DAOFactory.getChecksDAO().isReferenced(id);
 			if (isRef) {
-				// PER MONIA, CHECK.DELETE, userId, (aCheck.getName(), aCheck.getValueTypeCd()) 
+				HashMap a = new HashMap();
+				a.put("NAME",aCheck.getName());
+				a.put("VALUE",aCheck.getValueTypeCd());
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.DELETE", a, "KO");
 				HashMap params = new HashMap();
 				params.put(AdmintoolsConstants.PAGE, ListChecksModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1028, new Vector(), params);
 				getErrorHandler().addError(error);
 				return;
 			}
-			Check aCheck = new Check();
-			aCheck.setCheckId(Integer.valueOf(id));
-			DAOFactory.getChecksDAO().eraseCheck(aCheck);
+			
 		} catch (Exception ex) {
-			// PER MONIA, CHECK.DELETE, userId, aCheck.getName(), aCheck.getValueTypeCd()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.DELETE", null, "ERR");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","delDetailRuolo","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
-		// PER MONIA, CHECK.DELETE, userId, aCheck.getName(), aCheck.getValueTypeCd() --> ESITO OK
+		HashMap a = new HashMap();
+		a.put("NAME",aCheck.getName());
+		a.put("VALUE",aCheck.getValueTypeCd());
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.DELETE", a, "OK");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -267,7 +317,12 @@ public class DetailChecksModule extends AbstractModule {
 			}
 			response.setAttribute("checkObj", aCheck);
 		} catch (Exception ex) {
-			// PER MONIA, CHECK.ADD, userId, aCheck.getName(), aCheck.getValueTypeCd() -
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.DELETE", null, "ERR");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","newDetailEngine","Cannot prepare page for the insertion", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}

@@ -9,6 +9,7 @@ import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.dispatching.module.AbstractModule;
 import it.eng.spago.error.EMFErrorCategory;
 import it.eng.spago.error.EMFErrorHandler;
@@ -36,6 +37,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.security.ISecurityInfoProvider;
 import it.eng.spagobi.security.SecurityInfoProviderFactory;
 
@@ -56,7 +58,7 @@ import org.apache.log4j.Logger;
  * from the others by a <code>message</code> String.
  */
 
-public class DetailModalitiesValueModule extends AbstractModule {
+public class DetailModalitiesValueModule extends AbstractHttpModule {
 	static private Logger logger = Logger.getLogger(DetailModalitiesValueModule.class);
 	private EMFErrorHandler errorHandler;
 	
@@ -227,8 +229,8 @@ public class DetailModalitiesValueModule extends AbstractModule {
 	 * @throws SourceBeanException If a SourceBean exception occurs
 	 */
 	private void modDetailModValue(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException {
+		ModalitiesValue modVal = null;
 		try {
-			ModalitiesValue modVal = null;
 			modVal = (ModalitiesValue) session.getAttribute(SpagoBIConstants.MODALITY_VALUE_OBJECT);
 			// to rember that the lov has been modified 
 			// necessary to show a confirm if the user change the lov and then go back without saving
@@ -252,7 +254,7 @@ public class DetailModalitiesValueModule extends AbstractModule {
 							Object error = iterator.next();
 							if(error instanceof EMFValidationError) {
 								response.setAttribute("testLov", "true");
-								// PER MONIA, LOV.ADD/MODIFY, userId
+								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOV.ADD/MODIFY", null, "ERR");
 								return;
 							}
 						}
@@ -413,7 +415,10 @@ public class DetailModalitiesValueModule extends AbstractModule {
 						Object error = iterator.next();
 						if (error instanceof EMFValidationError) {
 							prepareDetailModalitiesValuePage(modVal, mod, response);
-							// PER MONIA, DOCUMENT.ADD/MODIFY, userId, modVal.getName(), modVal.getITypeCd()	
+							HashMap a = new HashMap();
+							a.put("NAME",modVal.getName());
+							a.put("VALUE",modVal.getITypeCd());
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY", a, "KO");
 							return;
 						}
 					}
@@ -466,7 +471,10 @@ public class DetailModalitiesValueModule extends AbstractModule {
 						EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "input_type", "1058", params, errparams);
 						errorHandler.addError(error);
 						prepareDetailModalitiesValuePage(modVal, mod, response);
-						// PER MONIA, DOCUMENT.ADD/MODIFY, userId, modVal.getName(), modVal.getITypeCd()
+						HashMap a = new HashMap();
+						a.put("NAME",modVal.getName());
+						a.put("VALUE",modVal.getITypeCd());
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY", a, "ERR");
 						return;
 					} else {
 						// the lov type was not changed, must verify that the dependency columns are still present
@@ -504,7 +512,10 @@ public class DetailModalitiesValueModule extends AbstractModule {
 							EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, 1059, params, errparams);
 							errorHandler.addError(error);
 							prepareDetailModalitiesValuePage(modVal, mod, response);
-							// PER MONIA, DOCUMENT.ADD/MODIFY, userId, modVal.getName(), modVal.getITypeCd()
+							HashMap a = new HashMap();
+							a.put("NAME",modVal.getName());
+							a.put("VALUE",modVal.getITypeCd());
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY", a, "ERR");
 							return;
 						}
 					}
@@ -518,13 +529,26 @@ public class DetailModalitiesValueModule extends AbstractModule {
 			logger.error("Cannot fill response container", ex  );
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListLovsModule.MODULE_PAGE);
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY", null, "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1018, new Vector(), params);
-			// PER MONIA, DOCUMENT.ADD/MODIFY, userId, modVal.getName(), modVal.getITypeCd()
 		}
 		
 		response.setAttribute("loopback", "true");
 		session.delAttribute(SpagoBIConstants.LOV_MODIFIED);
-		// PER MONIA, DOCUMENT.ADD/MODIFY, userId, modVal.getName(), modVal.getITypeCd() --> ESITO OK
+		HashMap a = new HashMap();
+		a.put("NAME",modVal.getName());
+		a.put("VALUE",modVal.getITypeCd());
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY", a, "OK");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -669,21 +693,30 @@ public class DetailModalitiesValueModule extends AbstractModule {
 	
 	private void delDetailModValue(SourceBean request, String mod, SourceBean response)
 		throws EMFUserError, SourceBeanException {
+		String idStr = (String) request.getAttribute("id");
+		//controls if there is any parameter associated
+		boolean hasPar = DAOFactory.getModalitiesValueDAO().hasParameters(idStr);
+		IModalitiesValueDAO moddao = DAOFactory.getModalitiesValueDAO();
+		ModalitiesValue modVal = moddao.loadModalitiesValueByID(new Integer(idStr));
 		try {
-			String idStr = (String) request.getAttribute("id");
-			//controls if there is any parameter associated
-			boolean hasPar = DAOFactory.getModalitiesValueDAO().hasParameters(idStr);
+			moddao.eraseModalitiesValue(modVal);
 			if (hasPar){
-				// PER MONIA, DOCUMENT.DELETE, userId,( modVal.getName(), modVal.getITypeCd() )
+				HashMap a = new HashMap();
+				a.put("NAME",modVal.getName());
+				a.put("VALUE",modVal.getITypeCd());
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.DELETE", a, "ERR");
 				EMFUserError error = new EMFUserError (EMFErrorSeverity.ERROR, "1023", new Vector(), null);
 				getErrorHandler().addError(error);
 				return;
 		    }
-			IModalitiesValueDAO moddao = DAOFactory.getModalitiesValueDAO();
-			ModalitiesValue modVal = moddao.loadModalitiesValueByID(new Integer(idStr));
-			moddao.eraseModalitiesValue(modVal);
+			
 		} catch (Exception ex) {
-			// PER MONIA, DOCUMENT.DELETE, userId, modVal.getName(), modVal.getITypeCd()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.DELETE", null, "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			logger.error("Cannot fill response container", ex  );
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListLovsModule.MODULE_PAGE);
@@ -695,6 +728,15 @@ public class DetailModalitiesValueModule extends AbstractModule {
 		}
 		response.setAttribute("afterDeleteLoop", "true");
 		// PER MONIA, DOCUMENT.DELETE, userId, modVal.getName(), modVal.getITypeCd() -->ESITO OK
+		HashMap a = new HashMap();
+		a.put("NAME",modVal.getName());
+		a.put("VALUE",modVal.getITypeCd());
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.DELETE", a, "OK");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	
