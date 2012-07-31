@@ -78,8 +78,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");				
-			} catch(Throwable t) {
-				// PER MONIA, DATA_SET.ADD, dataSet.getUserIn(), dataSet.getName(), dataSet.getDsType()			
+			} catch(Throwable t) {			
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 			
@@ -180,7 +179,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					transformer = (SbiDomains) criteria.uniqueResult();
 
 					if (transformer == null){
-						// PER MONIA, DATA_SET.ADD, dataSetActiveDetail.getUserIn(), dataSet.getName(), dataSetActiveDetail.getDsType()
 						throw new SpagoBIDOAException("The Domain with value_id= "+dataSetActiveDetail.getTransformerId()+" does not exist");
 					}
 				}
@@ -194,7 +192,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					category = (SbiDomains) criteria.uniqueResult();
 
 					if (category == null){
-						// PER MONIA, DATA_SET.ADD, dataSetActiveDetail.getUserIn(), dataSet.getName(), dataSetActiveDetail.getDsType()
 						throw new SpagoBIDOAException("The Domain with value_id= "+dataSetActiveDetail.getCategoryId()+" does not exist");
 					}
 				}
@@ -240,13 +237,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				transaction.rollback();
 			}
 			
-			// PER MONIA, DATA_SET.ADD, dataSetActiveDetail.getUserIn(), dataSet.getName(), dataSetActiveDetail.getDsType()
 			throw new SpagoBIDOAException("An unexpected error occured while inserting dataset", t);	
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
 			}
-			// PER MONIA, DATA_SET.ADD, dataSetActiveDetail.getUserIn(), dataSet.getName(), dataSetActiveDetail.getDsType() --> esito ok
 			logger.debug("OUT");
 		}
 		
@@ -912,8 +907,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				// PER MONIA, DATA_SET.MODIFY, dataSet.getUserIn(), dataSet.getName(), dataSet.getDsType()		
+			} catch(Throwable t) {		
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 			
@@ -1009,7 +1003,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					criteria.add(aCriterion);
 					transformer = (SbiDomains) criteria.uniqueResult();
 					if (transformer == null){
-						// PER MONIA, DATA_SET.MODIFY, dataSetActiveDetail.getUserIn(), dataSet.getName(), dataSetActiveDetail.getDsType()
 						throw new SpagoBIDOAException("The Domain with value_id= "+dsActiveDetailToSet.getTransformerId()+" does not exist");
 					}
 				}
@@ -1021,7 +1014,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					criteria.add(aCriterion);	
 					category = (SbiDomains) criteria.uniqueResult();	
 					if (category == null){
-						// PER MONIA, DATA_SET.MODIFY, dataSetActiveDetail.getUserIn(), dataSet.getName(), dataSetActiveDetail.getDsType()
 						throw new SpagoBIDOAException("The Domain with value_id= "+dsActiveDetailToSet.getCategoryId()+" does not exist");
 					}
 				}
@@ -1075,13 +1067,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			// PER MONIA, DATA_SET.MODIFY, dataSetActiveDetail.getUserIn(), dataSet.getName(), dataSetActiveDetail.getDsType()
 			throw new SpagoBIDOAException("Error while modifing the data Set with id " + ((dataSet == null)?"":String.valueOf(dataSet.getDsId())), t);	
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
 			}
-			// PER MONIA, DATA_SET.MODIFY, dataSetActiveDetail.getUserIn(), dataSet.getName(), dataSetActiveDetail.getDsType() --> esito ok
 			logger.debug("OUT");
 		}
 	}
@@ -1209,7 +1199,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch(Throwable t) {
-				// PER MONIA, datasetId ---> UNICO VALORE DIPOSNIBILE
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 			
@@ -1232,14 +1221,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			// PER MONIA, DATA_SET.DELETE, SbiDataSetConfig.getUserIn(), SbiDataSetConfig.getName(), SbiDataSetConfig.getDsType()
 			throw new SpagoBIDOAException("An unexpected error occured while deleting dataset " +
 					"whose id is equal to [" + datasetId + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
 			}
-			// PER MONIA, DATA_SET.DELETE, SbiDataSetConfig.getUserIn(), SbiDataSetConfig.getName(), SbiDataSetConfig.getDsType() --> ESITO OK
 			logger.debug("OUT");
 		}
 	}
@@ -1277,7 +1264,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch(Throwable t) {
-				// PER MONIA, datasetVersionId ---> UNICO VALORE DIPOSNIBILE
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 
@@ -1292,14 +1278,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			// PER MONIA, DATA_SET.DELETE, sbiDataSetHistory.getUserIn(), sbiDataSetHistory.getUserIn(), sbiDataSetHistory.getUserIn()
 			throw new SpagoBIDOAException("An unexpected error occured while deleting dataset version" +
 					"whose id is equal to [" + datasetVersionId + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
 			}
-			// PER MONIA, DATA_SET.DELETE, sbiDataSetHistory.getUserIn(), sbiDataSetHistory.getName(), sbiDataSetHistory.getDsType() --> ESITO OK
 			logger.debug("OUT");
 		}
 		
