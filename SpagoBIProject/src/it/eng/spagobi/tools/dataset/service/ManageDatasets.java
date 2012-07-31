@@ -149,9 +149,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	private void datatsetInsert(IDataSetDAO dsDao, Locale locale){
 		GuiGenericDataSet ds = getGuiGenericDatasetToInsert();		
-		HashMap a = new HashMap();
-		a.put("NAME", ds.getActiveDetail().getCategoryValueName());
-		a.put("TYPE", ds.getActiveDetail().getDsType());
+		HashMap logParam = new HashMap();
+		logParam.put("NAME", ds.getActiveDetail().getCategoryValueName());
+		logParam.put("TYPE", ds.getActiveDetail().getDsType());
 		
 		if(ds!=null){
 			String id = getAttributeAsString(DataSetConstants.ID);
@@ -164,7 +164,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					attributesResponseSuccessJSON.put("success", true);
 					attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 					attributesResponseSuccessJSON.put("id", id);
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.MODIFY",a , "OK");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.MODIFY",logParam , "OK");
 					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );					
 					
 				}else{
@@ -182,12 +182,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						attributesResponseSuccessJSON.put("versId", dsDetailSaved.getDsHId());
 						attributesResponseSuccessJSON.put("versNum", dsDetailSaved.getVersionNum());
 					}
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.ADD",a , "OK");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.ADD",logParam , "OK");
 					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 				}
 			} catch (Throwable e) {
 				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.ADD",a , "KO");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.ADD",logParam , "KO");
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -197,7 +197,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			}
 		}else{
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.ADD/MODIFY",a , "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.ADD/MODIFY",logParam , "ERR");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -228,17 +228,17 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	private void datatsetDelete(IDataSetDAO dsDao, Locale locale){
 		Integer dsID = getAttributeAsInteger(DataSetConstants.ID);
 		GuiGenericDataSet ds = dsDao.loadDataSetById(dsID);
-		HashMap a = new HashMap();
-		a.put("NAME", ds.getActiveDetail().getCategoryValueName());
-		a.put("TYPE", ds.getActiveDetail().getDsType());
+		HashMap logParam = new HashMap();
+		logParam.put("NAME", ds.getActiveDetail().getCategoryValueName());
+		logParam.put("TYPE", ds.getActiveDetail().getDsType());
 		try {
 			dsDao.deleteDataSet(dsID);
 			logger.debug("Dataset deleted"); 
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.DELETE",a , "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.DELETE",logParam , "OK");
 			writeBackToClient( new JSONAcknowledge("Operation succeded") );
 		} catch (Throwable e) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.DELETE",a , "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.DELETE",logParam , "KO");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

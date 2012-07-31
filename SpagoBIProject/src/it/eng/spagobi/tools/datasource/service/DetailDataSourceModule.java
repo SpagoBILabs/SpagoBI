@@ -113,8 +113,8 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 	 */   
 	private void getDataSource(SourceBean request, SourceBean response) throws EMFUserError {		
 		DataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(new Integer((String)request.getAttribute("ID")));
-		HashMap a = new HashMap();
-		a.put("TYPE",ds.getJndi());
+		HashMap logParam = new HashMap();
+		logParam.put("TYPE",ds.getJndi());
 		try {		 											
 			this.modalita = SpagoBIConstants.DETAIL_MOD;
 			if (request.getAttribute("SUBMESSAGEDET") != null &&
@@ -131,14 +131,14 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 		} catch (Exception ex) {		
 			if (this.modalita.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
 				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", a, "KO");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", logParam, "KO");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} else {
 				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.MODIFY", a, "KO");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.MODIFY", logParam, "KO");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -171,8 +171,8 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 			dao.setUserProfile(profile);
 			DataSource dsNew = recoverDataSourceDetails(serviceRequest);
 			EMFErrorHandler errorHandler = getErrorHandler();
-			HashMap a = new HashMap();
-			a.put("TYPE",dsNew.getJndi());
+			HashMap logParam = new HashMap();
+			logParam.put("TYPE",dsNew.getJndi());
 			 
 			// if there are some validation errors into the errorHandler does not write into DB
 			Collection errors = errorHandler.getErrors();
@@ -185,14 +185,14 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 						serviceResponse.setAttribute("modality", mod);
 						if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
 							try {
-								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", a, "KO");
+								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", logParam, "KO");
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						} else {
 							try {
-								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.MODIFY", a, "KO");
+								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.MODIFY", logParam, "KO");
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -210,7 +210,7 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 					params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
 					EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 8004, new Vector(), params );
 					getErrorHandler().addError(error);
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", a, "OK");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", logParam, "OK");
 					return;
 				}	 		
 
@@ -239,9 +239,9 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 				    return;
 			}
 			if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", a, "OK");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", logParam, "OK");
 			} else {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.MODIFY", a, "OK");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.MODIFY", logParam, "OK");
 			}	
 		} catch (EMFUserError e){
 			logger.error("Cannot fill response container" + e.getLocalizedMessage());
