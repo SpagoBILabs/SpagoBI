@@ -16,6 +16,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -76,12 +77,13 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	public static final String NUMBER_TYPE = "number";
 	public static final String RAW_TYPE = "raw";
 	public static final String GENERIC_TYPE = "generic";
+	private IEngUserProfile profile;
 
 	@Override
 	public void doService() {
 		logger.debug("IN");
 		IDataSetDAO dsDao;
-		IEngUserProfile profile = getUserProfile();
+		profile = getUserProfile();
 		try {
 			dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(profile);
@@ -147,6 +149,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	private void datatsetInsert(IDataSetDAO dsDao, Locale locale){
 		GuiGenericDataSet ds = getGuiGenericDatasetToInsert();		
+		HashMap a = new HashMap();
+		a.put("NAME", ds.getActiveDetail().getCategoryValueName());
+		a.put("TYPE", ds.getActiveDetail().getDsType());
+		
 		if(ds!=null){
 			String id = getAttributeAsString(DataSetConstants.ID);
 			try {
@@ -158,7 +164,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					attributesResponseSuccessJSON.put("success", true);
 					attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 					attributesResponseSuccessJSON.put("id", id);
-					// PER MONIA, DATA_SET.MODIFY, ds.getActiveDetail().getUserIn(), ds.getActiveDetail().getName(), ds.getActiveDetail().getDsType() --> esito ok
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.MODIFY",a , "OK");
 					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );					
 					
 				}else{
@@ -176,16 +182,26 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						attributesResponseSuccessJSON.put("versId", dsDetailSaved.getDsHId());
 						attributesResponseSuccessJSON.put("versNum", dsDetailSaved.getVersionNum());
 					}
-					// PER MONIA, DATA_SET.ADD, ds.getActiveDetail().getUserIn(), ds.getActiveDetail().getName(), ds.getActiveDetail().getDsType() --> esito ok
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.ADD",a , "OK");
 					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 				}
 			} catch (Throwable e) {
-				// PER MONIA, DATA_SET.ADD/MODIFY, ds.getActiveDetail().getUserIn(), ds.getActiveDetail().getName(), ds.getActiveDetail().getDsType()
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.ADD",a , "KO");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.saveDsError", e);
 			}
 		}else{
-			// PER MONIA, DATA_SET.ADD/MODIFY, ds.getActiveDetail().getUserIn(), ds.getActiveDetail().getName(), ds.getActiveDetail().getDsType()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.ADD/MODIFY",a , "ERR");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			logger.error("DataSet name, label or type are missing");
 			throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.fillFieldsError");
 		}
@@ -211,14 +227,22 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	private void datatsetDelete(IDataSetDAO dsDao, Locale locale){
 		Integer dsID = getAttributeAsInteger(DataSetConstants.ID);
+		GuiGenericDataSet ds = dsDao.loadDataSetById(dsID);
+		HashMap a = new HashMap();
+		a.put("NAME", ds.getActiveDetail().getCategoryValueName());
+		a.put("TYPE", ds.getActiveDetail().getDsType());
 		try {
 			dsDao.deleteDataSet(dsID);
 			logger.debug("Dataset deleted"); 
-			//PER MONIA : GuiGenericDataSet ds = dsDao.loadDataSetById(dsID); --> PRE RECUPERARE IL DS (SE è NECESSARIO SPECIFICARE SEMPRE IL NOME, ECC E NON BASTAL'ID)
-			//PER MONIA, DATA_SET.DELETE, ds.getActiveDetail().getUserIn(), ds.getActiveDetail().getName(), ds.getActiveDetail().getDsType() --> ESITO OK
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.DELETE",a , "OK");
 			writeBackToClient( new JSONAcknowledge("Operation succeded") );
 		} catch (Throwable e) {
-			//PER MONIA, DATA_SET.DELETE, ds.getActiveDetail().getUserIn(), ds.getActiveDetail().getName(), ds.getActiveDetail().getDsType()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.DELETE",a , "KO");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			logger.error("Exception occurred while retrieving dataset to delete", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteDsError", e);
 		}
