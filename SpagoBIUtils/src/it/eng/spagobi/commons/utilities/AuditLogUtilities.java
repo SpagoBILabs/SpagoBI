@@ -51,7 +51,9 @@ public class AuditLogUtilities {
 	public static void updateAudit(HttpServletRequest request,IEngUserProfile profile, String  action_code, HashMap<String, String> parameters, String esito)
 	throws Exception {
 		logger.debug("IN");
-
+		
+		StringBuffer strbuf = new StringBuffer();
+		
 		String userName = "";
 		String userRoles = "";
 		if(profile!=null){
@@ -63,18 +65,37 @@ public class AuditLogUtilities {
 		}
 		Date now = new Date();
 		String dateString = now.toString();
-		String logFormat = "";
 		Format formatter;
 		formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 		 try {
 			 Date parsed = new Date();
 			 String customDate = formatter.format(parsed);
-			 logFormat = "'"+customDate;
+			 strbuf.append("'");
+			 strbuf.append(customDate);
 	        }
 	        catch(ParseException pe) {
 	            System.out.println("ERROR: Cannot parse \"" + dateString + "\"");
 	        }
-		logFormat +="';'"+request.getLocalAddr()+"';'"+request.getLocalName()+"';'"+request.getRemoteAddr()+"';'IP_CLIENT"+"';'"+request.getRemoteHost()+"';'';'"+profile.getUserUniqueIdentifier()+"';'"+profile.getRoles()+"';'"+request.getHeader("user-agent")+"';'"+action_code+"';'"+request.getRequestURI()+"';'OGGETTO';'";
+	        strbuf.append("';'");
+	        strbuf.append(request.getLocalAddr());
+	        strbuf.append("';'");
+	        strbuf.append(request.getLocalName());
+	        strbuf.append("';'");
+	        strbuf.append(request.getRemoteAddr());
+	        strbuf.append("';'IP_CLIENT");
+	        strbuf.append("';'");
+	        strbuf.append(request.getRemoteHost());
+	        strbuf.append("';'';'");
+	        strbuf.append(profile.getUserUniqueIdentifier());
+	        strbuf.append("';'");
+	        strbuf.append(profile.getRoles());
+	        strbuf.append("';'");
+	        strbuf.append(request.getHeader("user-agent"));
+	        strbuf.append("';'");
+	        strbuf.append(action_code);
+	        strbuf.append("';'");
+	        strbuf.append(request.getRequestURI());
+	        strbuf.append("';'OGGETTO';'");
 		if(parameters!=null){
 		Set set = parameters.entrySet(); 
 		Iterator i = set.iterator();
@@ -84,21 +105,27 @@ public class AuditLogUtilities {
 		while(i.hasNext()) {
 			Map.Entry me = (Map.Entry)i.next();
 			if(separator == 0){
-				logFormat += me.getKey() + "="+me.getValue();
+				strbuf.append(me.getKey());
+				strbuf.append("=");
+				strbuf.append(me.getValue());
 			}
 			else{
-				logFormat += "&"+me.getKey() + "="+me.getValue();
+				strbuf.append("&");
+				strbuf.append(me.getKey());
+				strbuf.append("=");
+				strbuf.append(me.getValue());
 			}
 			separator++;
 		}
-		logFormat += "';'";
+		strbuf.append("';'");
 		}
-		logFormat += esito+"';'";
-		if(esito=="OK"){
-			logFormat += "0';";
+		strbuf.append(esito);
+		strbuf.append("';'");
+		if(esito.equals("OK")){
+			strbuf.append("0';");
 		}
 		else{
-			logFormat += "-1';";
+			strbuf.append("-1';");
 		}
 		
 		
@@ -117,7 +144,7 @@ public class AuditLogUtilities {
 //			}
 //		}
 		// These messages with Priority >= setted priority will be logged to the database.
-		audit_logger.info(logFormat);
+		audit_logger.info(strbuf);
 		logger.info("NUOVO_LOG.....................");
 
 		// not required
