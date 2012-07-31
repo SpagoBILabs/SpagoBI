@@ -233,7 +233,7 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 											false);
 						}
 						if (parentFolder == null) {
-							HashMap< String, String> a = null;
+							HashMap a = new HashMap();
 							a.put("Document_name", lowFunct.getName());
 							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",a , "OK");		 
 							
@@ -476,7 +476,7 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 			LowFunctionality parentFunct = DAOFactory.getLowFunctionalityDAO()
 					.loadLowFunctionalityByPath(pathParent, false);
 			if (parentFunct == null) {
-				HashMap< String, String> a = null;
+				HashMap a = new HashMap();
 				a.put("Document_name", parentFunct.getName());
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "parentFunct",a , "OK");
