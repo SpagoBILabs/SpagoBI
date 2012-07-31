@@ -35,6 +35,8 @@ public class AuditLogUtilities {
 
 	private static transient Logger logger = Logger.getLogger(AuditLogUtilities.class);
 	private static Logger audit_logger = Logger.getLogger("audit");
+	public static String CLIENT_IP1_KEY = "IP_CLIENT";
+    public static String CLIENT_IP2_KEY = "ip_client";
 
 
 	/**
@@ -70,7 +72,6 @@ public class AuditLogUtilities {
 		 try {
 			 Date parsed = new Date();
 			 String customDate = formatter.format(parsed);
-			 strbuf.append("'");
 			 strbuf.append(customDate);
 	        }
 	        catch(ParseException pe) {
@@ -82,7 +83,15 @@ public class AuditLogUtilities {
 	        strbuf.append(request.getLocalName());
 	        strbuf.append("';'");
 	        strbuf.append(request.getRemoteAddr());
-	        strbuf.append("';'IP_CLIENT");
+	        strbuf.append("';'");
+	        String myClientHostname = request.getHeader(CLIENT_IP1_KEY);
+            if (myClientHostname == null) {
+                myClientHostname = request.getHeader(CLIENT_IP2_KEY);
+                if (myClientHostname == null) {
+                    myClientHostname = "";
+                }
+            }
+            strbuf.append(myClientHostname);
 	        strbuf.append("';'");
 	        strbuf.append(request.getRemoteHost());
 	        strbuf.append("';'';'");
@@ -95,7 +104,9 @@ public class AuditLogUtilities {
 	        strbuf.append(action_code);
 	        strbuf.append("';'");
 	        strbuf.append(request.getRequestURI());
-	        strbuf.append("';'OGGETTO';'");
+	        strbuf.append("';'");
+	        strbuf.append(profile.getUserUniqueIdentifier());
+	        strbuf.append("';'");
 		if(parameters!=null){
 		Set set = parameters.entrySet(); 
 		Iterator i = set.iterator();
