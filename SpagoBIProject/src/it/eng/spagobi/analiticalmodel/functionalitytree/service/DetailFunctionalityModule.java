@@ -233,9 +233,9 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 											false);
 						}
 						if (parentFolder == null) {
-							HashMap a = new HashMap();
-							a.put("Document_name", lowFunct.getName());
-							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",a , "OK");		 
+							HashMap logParam = new HashMap();
+							logParam.put("Document_name", lowFunct.getName());
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",logParam , "OK");		 
 							
 							throw new Exception("Parent folder not available.");
 						} else {
@@ -476,10 +476,10 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 			LowFunctionality parentFunct = DAOFactory.getLowFunctionalityDAO()
 					.loadLowFunctionalityByPath(pathParent, false);
 			if (parentFunct == null) {
-				HashMap a = new HashMap();
-				a.put("Document_name", parentFunct.getName());
+				HashMap logParam = new HashMap();
+				logParam.put("Document_name", parentFunct.getName());
 				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "parentFunct",a , "OK");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "parentFunct",logParam , "OK");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

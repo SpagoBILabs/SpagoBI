@@ -337,10 +337,10 @@ public class DetailParameterModule extends AbstractHttpModule {
 							while (iterator.hasNext()) {
 								Object error = iterator.next();
 								if (error instanceof EMFValidationError) {
-									HashMap a = new HashMap();
-									a.put("Document_name", parameter.getName());
-									a.put("Document_type", parameter.getType());
-										AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",a , "OK");
+									HashMap logParam = new HashMap();
+									logParam.put("Document_name", parameter.getName());
+									logParam.put("Document_type", parameter.getType());
+										AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",logParam , "OK");
 					    			prepareParameterDetailPage(response, parameter, paruse, paruseIdStr, 
 					    					ObjectsTreeConstants.DETAIL_MOD, false, false);
 									return;
@@ -381,10 +381,10 @@ public class DetailParameterModule extends AbstractHttpModule {
 							if (error instanceof EMFValidationError) {
 				    			prepareParameterDetailPage(response, parameter, paruse, paruseIdStr, 
 				    					ObjectsTreeConstants.DETAIL_MOD, false, false);
-				    			HashMap a = new HashMap();
-								a.put("Document_name", parameter.getName());
-								a.put("Document_type", parameter.getType());
-								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",a , "OK");
+				    			HashMap logParam = new HashMap();
+								logParam.put("Document_name", parameter.getName());
+								logParam.put("Document_type", parameter.getType());
+								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",logParam , "OK");
 								return;
 							}
 						}
@@ -427,10 +427,10 @@ public class DetailParameterModule extends AbstractHttpModule {
 							if (error instanceof EMFValidationError) {
 								prepareParameterDetailPage(response, parameter, paruse, paruseIdInt.toString(), 
 										ObjectsTreeConstants.DETAIL_MOD, false, false);
-								HashMap a = new HashMap();
-								a.put("Document_name", parameter.getName());
-								a.put("Document_type", parameter.getType());
-									AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",a , "OK");
+								HashMap logParam = new HashMap();
+								logParam.put("Document_name", parameter.getName());
+								logParam.put("Document_type", parameter.getType());
+									AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",logParam , "OK");
 								return;
 							}
 						}
@@ -472,10 +472,10 @@ public class DetailParameterModule extends AbstractHttpModule {
 						if (error instanceof EMFValidationError) {
 							prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr, 
 									ObjectsTreeConstants.DETAIL_INS, false, false);
-							HashMap a = new HashMap();
-							a.put("Document_name", parameter.getName());
-							a.put("Document_type", parameter.getType());
-							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",a , "KO");
+							HashMap logParam = new HashMap();
+							logParam.put("Document_name", parameter.getName());
+							logParam.put("Document_type", parameter.getType());
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",logParam , "KO");
 							return;
 						}
 					}

@@ -187,11 +187,11 @@ public class DetailChecksModule extends AbstractHttpModule {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
-		HashMap a = new HashMap();
-		a.put("NAME",aCheck.getName());
-		a.put("VALUE",aCheck.getValueTypeCd());
+		HashMap logParam = new HashMap();
+		logParam.put("NAME",aCheck.getName());
+		logParam.put("VALUE",aCheck.getValueTypeCd());
 		try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.ADD/MODIFY", a, "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.ADD/MODIFY", logParam, "OK");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -254,10 +254,10 @@ public class DetailChecksModule extends AbstractHttpModule {
 			//if check is in use cannot be erased
 			boolean isRef = DAOFactory.getChecksDAO().isReferenced(id);
 			if (isRef) {
-				HashMap a = new HashMap();
-				a.put("NAME",aCheck.getName());
-				a.put("VALUE",aCheck.getValueTypeCd());
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.DELETE", a, "KO");
+				HashMap logParam = new HashMap();
+				logParam.put("NAME",aCheck.getName());
+				logParam.put("VALUE",aCheck.getValueTypeCd());
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.DELETE", logParam, "KO");
 				HashMap params = new HashMap();
 				params.put(AdmintoolsConstants.PAGE, ListChecksModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1028, new Vector(), params);
@@ -276,11 +276,11 @@ public class DetailChecksModule extends AbstractHttpModule {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
-		HashMap a = new HashMap();
-		a.put("NAME",aCheck.getName());
-		a.put("VALUE",aCheck.getValueTypeCd());
+		HashMap logParam = new HashMap();
+		logParam.put("NAME",aCheck.getName());
+		logParam.put("VALUE",aCheck.getValueTypeCd());
 		try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.DELETE", a, "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.DELETE", logParam, "OK");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

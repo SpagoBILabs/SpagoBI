@@ -114,11 +114,11 @@ public class DetailEngineModule extends AbstractHttpModule {
 			response.setAttribute("modality", modalita);
 			response.setAttribute("engineObj", engine);
 		} catch (Exception ex) {
-			HashMap a = new HashMap();
-			a.put("NAME",engine.getName());
-			a.put("TYPE",engine.getEngineTypeId());
+			HashMap logParam = new HashMap();
+			logParam.put("NAME",engine.getName());
+			logParam.put("TYPE",engine.getEngineTypeId());
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", a, "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", logParam, "KO");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -144,9 +144,9 @@ public class DetailEngineModule extends AbstractHttpModule {
 	private void modDettaglioEngine(SourceBean request, String mod, SourceBean response)
 		throws EMFUserError, SourceBeanException {
 		Engine engine = recoverEngineDetails(request);
-		HashMap a = new HashMap();
-		a.put("NAME",engine.getName());
-		a.put("TYPE",engine.getEngineTypeId());
+		HashMap logParam = new HashMap();
+		logParam.put("NAME",engine.getName());
+		logParam.put("TYPE",engine.getEngineTypeId());
 		try {
 			//**********************************************************************
 			
@@ -166,7 +166,7 @@ public class DetailEngineModule extends AbstractHttpModule {
 				while (iterator.hasNext()) {
 					Object error = iterator.next();
 					if (error instanceof EMFValidationError) {
-						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", a, "ERR");
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", logParam, "ERR");
 						response.setAttribute("engineObj", engine);
 						response.setAttribute("modality", mod);
 						return;
@@ -191,14 +191,14 @@ public class DetailEngineModule extends AbstractHttpModule {
 		} catch (EMFUserError e){		
 			if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
 				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.ADD", a, "ERR");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.ADD", logParam, "ERR");
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			} else {
 				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", a, "ERR");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", logParam, "ERR");
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -214,14 +214,14 @@ public class DetailEngineModule extends AbstractHttpModule {
 		catch (Exception ex) {	
 			if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
 				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.ADD", a, "KO");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.ADD", logParam, "KO");
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			} else {
 				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", a, "KO");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", logParam, "KO");
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -232,14 +232,14 @@ public class DetailEngineModule extends AbstractHttpModule {
 		}
 		if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.ADD", a, "OK");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.ADD", logParam, "OK");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		} else {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", a, "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", logParam, "KO");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -264,14 +264,14 @@ public class DetailEngineModule extends AbstractHttpModule {
         IEngineDAO enginedao = DAOFactory.getEngineDAO();
 		Engine engine = enginedao.loadEngineByID(new Integer(id));
 		Domain engineType = DAOFactory.getDomainDAO().loadDomainById(engine.getBiobjTypeId());
-		HashMap a = new HashMap();
-		a.put("NAME",engine.getName());
-		a.put("VALUE",engineType);
+		HashMap logParam = new HashMap();
+		logParam.put("NAME",engine.getName());
+		logParam.put("VALUE",engineType);
 		
 		try {	
 			boolean isAss = enginedao.hasBIObjAssociated(id);
 			if (isAss){
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-DELETE", a, "OK");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-DELETE", logParam, "OK");
 				HashMap params = new HashMap();
 				params.put(AdmintoolsConstants.PAGE, ListEnginesModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1030, new Vector(), params );
@@ -281,7 +281,7 @@ public class DetailEngineModule extends AbstractHttpModule {
 			enginedao.eraseEngine(engine);
 		}   catch (EMFUserError e){	
 			    try {
-				   AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-DELETE", a, "KO");
+				   AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-DELETE", logParam, "KO");
 			    } catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -294,7 +294,7 @@ public class DetailEngineModule extends AbstractHttpModule {
 		    catch (Exception ex) {
 		    //PER MONIA, ENGINE-DELETE, USER-ID,engine.getName(),engineType
 		    try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-DELETE", a, "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-DELETE", logParam, "ERR");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -303,7 +303,7 @@ public class DetailEngineModule extends AbstractHttpModule {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		    try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-DELETE", a, "OK");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-DELETE", logParam, "OK");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -431,11 +431,11 @@ public class DetailEngineModule extends AbstractHttpModule {
 						"1011", new Vector(), params);
 				getErrorHandler().addError(error);
 				//PER MONIA, ENGINE-MODIFY, USER-ID , name, engineType.getValueCd()
-				HashMap a = new HashMap();
-				a.put("NAME",name);
-				a.put("VALUE",engineType.getValueCd());
+				HashMap logParam = new HashMap();
+				logParam.put("NAME",name);
+				logParam.put("VALUE",engineType.getValueCd());
 				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-MODIFY", a, "OK");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE-MODIFY", logParam, "OK");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

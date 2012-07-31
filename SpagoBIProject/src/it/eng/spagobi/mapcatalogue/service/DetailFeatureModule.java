@@ -148,8 +148,8 @@ private void getDetailFeature(String key, SourceBean response) throws EMFUserErr
 private void modDetailFeature(SourceBean request, String mod, SourceBean response)
 	throws EMFUserError, SourceBeanException {
 	GeoFeature feature = recoverFeatureDetails(request);
-	HashMap a = new HashMap();
-	a.put("FEAUTURE_NAME",feature.getName());
+	HashMap logParam = new HashMap();
+	logParam.put("FEAUTURE_NAME",feature.getName());
 	RequestContainer reqCont = getRequestContainer();
 	SessionContainer sessCont = reqCont.getSessionContainer();
 	SessionContainer permSess = sessCont.getPermanentContainer();
@@ -177,9 +177,9 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 					response.setAttribute("featureObj", feature);
 					response.setAttribute("modality", mod);
 					if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", a, "KO");
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", logParam, "KO");
 					} else {
-						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", a, "KO");
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", logParam, "KO");
 					}
 					return;
 				}
@@ -193,7 +193,7 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 				params.put(AdmintoolsConstants.PAGE, ListFeaturesModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 5018, new Vector(), params );
 				getErrorHandler().addError(error);
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", a, "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", logParam, "ERR");
 				return;
 			}			
 			dao.insertFeature(feature);
@@ -204,14 +204,14 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 	} catch (EMFUserError e){
 		if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", a, "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", logParam, "ERR");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		} else {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", a, "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", logParam, "ERR");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -226,14 +226,14 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 	catch (Exception ex) {
 		if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", a, "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", logParam, "KO");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		} else {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", a, "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", logParam, "KO");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -245,14 +245,14 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 	response.setAttribute("loopback", "true");
 	if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
 		try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", a, "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", logParam, "OK");
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	} else {
 		try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", a, "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", logParam, "OK");
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

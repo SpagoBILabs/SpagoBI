@@ -199,8 +199,8 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 		daoGeoMaps.setUserProfile(profile);
 		
 		GeoMap mapNew = recoverMapDetails(serviceRequest);
-		HashMap a = new HashMap();
-		a.put("MAP_NAME",mapNew.getName());
+		HashMap logParam = new HashMap();
+		logParam.put("MAP_NAME",mapNew.getName());
 		
 		EMFErrorHandler errorHandler = getErrorHandler();
 		 
@@ -215,9 +215,9 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 					serviceResponse.setAttribute("mapObj", mapNew);
 					serviceResponse.setAttribute("modality", mod);
 					if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", a, "OK");
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", logParam, "OK");
 					} else {
-						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", a, "OK");
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", logParam, "OK");
 					}
 					return;
 				}
@@ -231,7 +231,7 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 				params.put(AdmintoolsConstants.PAGE, ListMapsModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 5005, new Vector(), params );
 				getErrorHandler().addError(error);
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", a, "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", logParam, "ERR");
 				return;
 			}	 		
 			/* The activity INSERT consists in:
@@ -254,10 +254,10 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 			if (((String)serviceRequest.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVEBACK))
 			{
 				serviceResponse.setAttribute("loopback", "true");
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", a, "OK");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", logParam, "OK");
 				return;
 			}
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", a, "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", logParam, "OK");
 			return;
 
 		} else {
@@ -290,7 +290,7 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 				getTabDetails(serviceRequest, serviceResponse);			
 				serviceResponse.setAttribute("modality", mod);
 				serviceResponse.setAttribute("mapObj", mapNew);	
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", a, "OK");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", logParam, "OK");
 				return;										
 			}				
 		}  
@@ -299,13 +299,13 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 			getTabDetails(serviceRequest, serviceResponse);			
 			serviceResponse.setAttribute("modality", mod);
 			serviceResponse.setAttribute("mapObj", mapNew);		
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD/MODIFY", a, "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD/MODIFY", logParam, "OK");
 			return;
 		}
 		else if (serviceRequest.getAttribute("SUBMESSAGEDET") != null && 
 				((String)serviceRequest.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVEBACK)){
 				serviceResponse.setAttribute("loopback", "true");
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD/MODIFY", a, "OK");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD/MODIFY", logParam, "OK");
 			    return;
 		}					     
 	} catch (EMFUserError e){
@@ -419,8 +419,8 @@ private void insRelMapFeature(SourceBean request, SourceBean response)
 		String featureId = (String)request.getAttribute("FEATURE_ID");	
 		GeoMap map = DAOFactory.getSbiGeoMapsDAO().loadMapByID(new Integer(mapId));
 		EMFErrorHandler errorHandler = getErrorHandler();
-		HashMap a = new HashMap();
-		a.put("MAP_NAME",map.getName());
+		HashMap logParam = new HashMap();
+		logParam.put("MAP_NAME",map.getName());
 		// if there are some validation errors into the errorHandler does not write into DB
 		Collection errors = errorHandler.getErrors();
 		if (errors != null && errors.size() > 0) {
@@ -430,7 +430,7 @@ private void insRelMapFeature(SourceBean request, SourceBean response)
 				if (error instanceof EMFValidationError) {
 					response.setAttribute("mapObj", map);
 					response.setAttribute("modality", SpagoBIConstants.DETAIL_MOD);
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", a, "OK");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", logParam, "OK");
 					return;
 				}
 			}
@@ -463,7 +463,7 @@ private void insRelMapFeature(SourceBean request, SourceBean response)
 	    response.setAttribute("selectedFeatureId",featureId);	
 	    response.setAttribute("mapObj", map);
 	    response.setAttribute("modality", SpagoBIConstants.DETAIL_MOD);
-	    AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", a, "OK");
+	    AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", logParam, "OK");
 	    
 	}   catch (EMFUserError e){
 		try {
