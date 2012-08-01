@@ -15,6 +15,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.security.RoleSynchronizer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
@@ -87,7 +88,12 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 		Locale locale = getLocale();
 
 		String serviceType = this.getAttributeAsString(MESSAGE_DET);
+		String name = getAttributeAsString(NAME);
+		String roleTypeCD = getAttributeAsString(ROLE_TYPE_CD);
 		logger.debug("Service type "+serviceType);
+		HashMap logParam = new HashMap();
+		logParam.put("NAME", name);
+		logParam.put("ROLE TYPE", roleTypeCD);
 		if (serviceType != null && serviceType.equalsIgnoreCase(ROLES_LIST)) {
 			try {
 				Integer start = getAttributeAsInteger( START );
@@ -116,8 +122,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 						"Exception occurred while retrieving roles", e);
 			}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(ROLE_INSERT)) {
-			String name = getAttributeAsString(NAME);
-			String roleTypeCD = getAttributeAsString(ROLE_TYPE_CD);
+			
 			String code = getAttributeAsString(CODE);
 			String description = getAttributeAsString(DESCRIPTION);
 			
@@ -134,7 +139,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 			Boolean buildQbeQuery= getAttributeAsBoolean(BUILD_QBE_QUERY);
 			Boolean doMassiveExport = getAttributeAsBoolean(DO_MASSIVE_EXPORT);
 			Boolean manageUsers = getAttributeAsBoolean(MANAGE_USERS);
-			
+						
 			if (name != null) {
 				//checks for unique role name
 				try {
@@ -142,12 +147,22 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 					if(existentRole != null){
 						String id = getAttributeAsString(ID);
 						if(id == null || id.equals("") || id.equals("0")){
-							// PER MONIA, PROF_ROLES.ADD/MODIFY, user, name, roleTypeCD  
+							try {
+								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ROLES.ADD/MODIFY",logParam , "OK");
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							throw new SpagoBIServiceException(SERVICE_NAME,	"Role Name already present.");
 						}
 					}
 				} catch (EMFUserError e1) {
-					// PER MONIA, PROF_ROLES.ADD/MODIFY, user, name , roleTypeCD 
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ROLES.ADD/MODIFY",logParam , "ERR");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					logger.error(e1.getMessage(), e1);
 					throw new SpagoBIServiceException(SERVICE_NAME,
 							"Exception occurred while retrieving role by name", e1);
@@ -162,7 +177,12 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 			    
 			    Integer roleTypeID = domainIds.get(roleTypeCD);
 			    if(roleTypeID == null){
-			    	// PER MONIA, PROF_ROLES.ADD/MODIFY, user, name, roleTypeCD  
+			    	try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ROLES.ADD/MODIFY",logParam , "ERR");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			    	logger.error("Role type CD not existing");
 			    	throw new SpagoBIServiceException(SERVICE_NAME,	"Role Type ID is undefined");
 			    }
@@ -196,7 +216,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 						attributesResponseSuccessJSON.put("success", true);
 						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-						// PER MONIA, PROF_ROLES.MODIFY, user, name , roleTypeCD --> ESITO OK 
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ROLES.ADD/MODIFY",logParam , "OK");
 					}else{
 						Integer roleID = roleDao.insertRoleComplete(role);
 						logger.debug("New Role inserted");
@@ -205,11 +225,16 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 						attributesResponseSuccessJSON.put("id", roleID);
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-						// PER MONIA, PROF_ROLES.ADD, user, name , roleTypeCD  --> ESITO OK
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ROLES.ADD",logParam , "OK");
 					}
 
 				} catch (Throwable e) {
-					// PER MONIA, PROF_ROLES.ADD/MODIFY, user, name , roleTypeCD 
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ROLES.ADD/MODIFY",logParam , "ERR");
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					logger.error(e.getMessage(), e);
 					throw new SpagoBIServiceException(SERVICE_NAME,
 							"Exception occurred while saving new role",
@@ -217,7 +242,12 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 				}
 
 			}else{
-				// PER MONIA, PROF_ROLES.ADD/MODIFY, user, name , roleTypeCD 
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ROLES.ADD/MODIFY",logParam , "KO");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				logger.error("Missing role name");
 				throw new SpagoBIServiceException(SERVICE_NAME,	"Please enter role name");
 			}
@@ -228,9 +258,14 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 				roleDao.eraseRole(aRole);
 				logger.debug("Role deleted");
 				writeBackToClient( new JSONAcknowledge("Operazion succeded") );
-				// PER MONIA, PROF_ROLES.DELETE, user, name , roleTypeCD --> ESITO OK 
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ROLES.DELETE",logParam , "OK");
 			} catch (Throwable e) {
-				// PER MONIA, PROF_ROLES.DELETE, user, name , roleTypeCD 
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ROLES.DELETE",logParam , "KO");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				logger.error("Exception occurred while deleting role", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while deleting role",
@@ -245,10 +280,14 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 				attributesResponseSuccessJSON.put("success", true);
 				attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 				writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-				// PER MONIA, PROF_ROLES.SYNCHRONIZATION, user, name , roleTypeCD  --> ESITO OK
-
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ROLES.SYNCHRONIZATION",logParam , "OK");
 			} catch (Throwable e) {
-				// PER MONIA, PROF_ROLES.SYNCHRONIZATION, user, name , roleTypeCD
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ROLES.SYNCHRONIZATION",logParam , "OK");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				logger.error("Exception occurred while syncronize roles", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while syncronize role",

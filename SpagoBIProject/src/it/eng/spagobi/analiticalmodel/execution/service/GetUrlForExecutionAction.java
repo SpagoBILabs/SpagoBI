@@ -6,6 +6,7 @@
 package it.eng.spagobi.analiticalmodel.execution.service;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +28,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -96,35 +98,44 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 		ExecutionInstance executionInstance;
 		
 		logger.debug("IN");
-		
+		snapshot = null;
+		UserProfile profile = (UserProfile) this.getUserProfile();
+		executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
+		obj = executionInstance.getBIObject();
+		dao = null;
 		try {
-			executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
+			dao = DAOFactory.getSnapshotDAO();
+		} catch (EMFUserError e) {				
+			logger.error("Error while istantiating DAO", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
+		}
+		HashMap logParam = new HashMap();
+		logParam.put("SNAPSHOT NAME", snapshot.getName());
+		logParam.put("NAME", obj.getName());
+		try {
+			snapshot = dao.loadSnapshot(snapshotId);
+		} catch (EMFUserError e) {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SNAPSHOT",logParam , "KO");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}		 
+			logger.error("Snapshot with id = " + snapshotId + " not found", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Scheduled execution not found", e);
+		}
+		try {
 			Assert.assertNotNull(executionInstance, "Execution instance cannot be null in order to properly generate execution url");
 			
 			
 			// we are not executing a subobject, so delete subobject if existing
 			executionInstance.setSubObject(null);
 			
-			dao = null;
-			try {
-				dao = DAOFactory.getSnapshotDAO();
-			} catch (EMFUserError e) {				
-				logger.error("Error while istantiating DAO", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
-			}
 			Assert.assertNotNull(dao, "An internal error occurred while istantiating DAO. DAO cannot be null.");
 
-			snapshot = null;
-			try {
-				snapshot = dao.loadSnapshot(snapshotId);
-			} catch (EMFUserError e) {
-				// PER MONIA, DOCUMENT.GET_URL_FOR_SNAPSHOT, user, snapshotId/snapshot.getName()
-				logger.error("Snapshot with id = " + snapshotId + " not found", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, "Scheduled execution not found", e);
-			}
+			
 			Assert.assertNotNull(dao, "An internal error occurred while loading snapshot [" + snapshotId + "]. Snapshot cannot be null.");
 			
-			obj = executionInstance.getBIObject();
 			if (obj.getId().equals(snapshot.getBiobjId())) {
 				executionInstance.setSnapshot(snapshot);
 				url = executionInstance.getSnapshotUrl();
@@ -132,31 +143,62 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 				try {
 					response.put("url", url);
 				} catch (JSONException e) {
-					// PER MONIA, DOCUMENT.GET_URL_FOR_SNAPSHOT, user, snapshot.getName(), obj.getName()
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SNAPSHOT",logParam , "KO");
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					throw new SpagoBIServiceException("Cannot serialize the url [" + url + "] to the client", e);
 				}
 			} else {
-				// PER MONIA, DOCUMENT.GET_URL_FOR_SNAPSHOT, user, snapshot.getName(), obj.getName()
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SNAPSHOT",logParam , "KO");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				throw new SpagoBIServiceException(SERVICE_NAME, "Required scheduled execution is not relevant to current document");
 			}
 		} finally {
 			logger.debug("OUT");
 		}
-		// PER MONIA, DOCUMENT.GET_URL_FOR_SNAPSHOT, user, snapshot.getName(), obj.getName() --> esito ok
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SNAPSHOT",logParam , "OK");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return response;
 	}
 
 	protected JSONObject handleSubObjectExecution(Integer subObjectId, boolean isFromCross) {
 		ExecutionInstance executionInstance;
-		UserProfile userProfile;
+		UserProfile userProfile = (UserProfile) this.getUserProfile();
 		
 		logger.debug("IN");
 		JSONObject response = new JSONObject();
+		ISubObjectDAO dao = null;
+		SubObject subObject = null;
+		try {
+			subObject = dao.getSubObject(subObjectId);
+			
+		} catch (EMFUserError e) {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ",null , "ERR");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}		 
+			logger.error("SubObject with id = " + subObjectId + " not found", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Customized view not found", e);
+		}
+		HashMap logParam = new HashMap();
+		logParam.put("ID OGGETTO", subObjectId);
+		logParam.put("NOME OGGETTO", subObject.getName());
 		try {
 			executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 			Assert.assertNotNull(executionInstance, "Execution instance cannot be null in order to properly generate execution url");
-			
-			userProfile = (UserProfile) this.getUserProfile();
 			
 			// we are not executing a snapshot, so delete snapshot if existing
 			executionInstance.setSnapshot(null);
@@ -174,6 +216,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
 				}
 			//}
+				
 
 			if ( errors != null && errors.size() > 0) {
 				// there are errors on parameters validation, send errors' descriptions to the client
@@ -190,22 +233,12 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 				}
 			} else {
 			
-				ISubObjectDAO dao = null;
+				
 				try {
 					dao = DAOFactory.getSubObjectDAO();
 				} catch (EMFUserError e) {
 					logger.error("Error while istantiating DAO", e);
 					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
-				}
-	
-				SubObject subObject = null;
-				try {
-					subObject = dao.getSubObject(subObjectId);
-					
-				} catch (EMFUserError e) {
-					// PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user,subObjectId/subObject.getName()
-					logger.error("SubObject with id = " + subObjectId + " not found", e);
-					throw new SpagoBIServiceException(SERVICE_NAME, "Customized view not found", e);
 				}
 				
 				BIObject obj = executionInstance.getBIObject();
@@ -225,36 +258,63 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 						try {
 							response.put("url", url);
 						} catch (JSONException e) {
-							// PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, subObject.getName(), obj.getName()
+							try {
+								AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "ERR");
+							} catch (Exception e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}	
 							throw new SpagoBIServiceException("Cannot serialize the url [" + url + "] to the client", e);
 						}
 					} else {
-						//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, subObject.getName(),obj.getName()
+						try {
+							AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "KO");
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}	
 						throw new SpagoBIServiceException(SERVICE_NAME, "User cannot execute required customized view");
 					}
 				} else {
-					//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, subObject.getName(),obj.getName()
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "KO");
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}	
 					throw new SpagoBIServiceException(SERVICE_NAME, "Required subobject is not relevant to current document");
 				}
 			}
 		} catch (EMFInternalError e) {
-			//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, subObject.getName(),obj.getName()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "ERR");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}	
 			throw new SpagoBIServiceException(SERVICE_NAME, "An internal error has occured", e);
 		} finally {
 			logger.debug("OUT");
 		}
-		//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, subObject.getName() --> esito ok
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "OK");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return response;
 	}
 
 	protected JSONObject handleNormalExecution(boolean isFromCross) {
-		ExecutionInstance executionInstance;
-		
+		ExecutionInstance executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 		
 		logger.debug("IN");
+		UserProfile profile = (UserProfile) this.getUserProfile();
 		JSONObject response = new JSONObject();
+		HashMap logParam = new HashMap();
+		logParam.put("NAME", executionInstance.getBIObject().getName());
+		logParam.put("ENGINE", executionInstance.getBIObject().getEngine());
 		try {
-			executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 			Assert.assertNotNull(executionInstance, "Execution instance cannot be null in order to properly generate execution url");
 			
 			// we are not executing a subobject or a snapshot, so delete subobject/snapshot if existing
@@ -282,7 +342,12 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 				try {
 					response.put("errors", errorsArray);
 				} catch (JSONException e) {
-					//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, executionInstance.getBIObject().getName(), executionInstance.getBIObject().getEngine()
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "ERR");
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize errors to the client", e);
 				}
 			} else {
@@ -293,6 +358,12 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 				try {
 					response.put("url", url);
 				} catch (JSONException e) {
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "KO");
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, executionInstance.getBIObject().getName(), executionInstance.getBIObject().getEngine()
 					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize the url [" + url + "] to the client", e);
 				}
@@ -300,7 +371,12 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 		} finally {
 			logger.debug("OUT");
 		}
-		//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, executionInstance.getBIObject().getName(), executionInstance.getBIObject().getEngine() --> esito ok
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "OK");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return response;
 	}
 

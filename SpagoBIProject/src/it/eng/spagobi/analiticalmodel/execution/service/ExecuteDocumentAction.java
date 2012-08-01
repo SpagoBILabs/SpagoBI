@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.execution.service;
 
+import java.util.HashMap;
+
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -16,6 +18,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -36,13 +39,21 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 	
 	public void doService() {
 		logger.debug("IN");
+		UserProfile profile = (UserProfile) this.getUserProfile();
 		try {
 			BIObject obj = getRequiredBIObject();
+			HashMap logParam = new HashMap();
+			logParam.put("DOCUMENT LABEL", obj.getLabel());
 			if (obj != null) {
-				UserProfile profile = (UserProfile) this.getUserProfile();
+				
 		    	boolean canSee = ObjectsAccessVerifier.canSee(obj, profile);
 		    	if (!canSee) {
-		    		// PER MONIA, DOCUMENT.EXECUTION, user, obj.getLabel() 
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",logParam , "OK");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}		 
 		    		logger.error("User [" + profile.getUserId() + "] cannot see document [id: '" + obj.getId() + "', label: '" + obj.getLabel() + "'].");
 		    	} else {
 					this.getServiceResponse().setAttribute(SpagoBIConstants.OBJECT, obj);
@@ -52,23 +63,52 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 								(subObject.getIsPublic().booleanValue() || subObject.getOwner().equals(profile.getUserId()))) {
 							this.getServiceResponse().setAttribute(SpagoBIConstants.SUBOBJECT, subObject);
 						} else {
-							// PER MONIA, DOCUMENT.EXECUTION, user, obj.getLabel() obj.getEngine() obj.getBiObjectParameters()
+							logParam.put("ENGINE", obj.getEngine());
+							logParam.put("PARAMETERS", obj.getBiObjectParameters());
+							try {
+								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",logParam , "OK");
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							logger.warn("User cannot see subobject [" + subObject.getName() + "] of document with label [" + obj.getLabel() + "].");
 						}
 					}
 		    	}
 			} else {
-				// PER MONIA, DOCUMENT.EXECUTION, user, obj.getLabel() obj.getEngine() obj.getBiObjectParameters()
+				logParam.put("ENGINE", obj.getEngine());
+				logParam.put("PARAMETERS", obj.getBiObjectParameters());
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",logParam , "OK");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				logger.error("Document not found.");
 			}
 		} catch (EMFInternalError e) {
-			// PER MONIA, DOCUMENT.EXECUTION, user, obj.getLabel() obj.getEngine() obj.getBiObjectParameters()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",null , "ERR");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			logger.error("Service internal error", e);
 		} catch (SourceBeanException e) {
-			// PER MONIA, DOCUMENT.EXECUTION, user, obj.getLabel() obj.getEngine() obj.getBiObjectParameters()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",null , "ERR");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			logger.error("Service internal error", e);
 		} catch (EMFUserError e) {
-			// PER MONIA, DOCUMENT.EXECUTION, user, obj.getLabel() obj.getEngine() obj.getBiObjectParameters()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",null , "ERR");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			logger.error("Service internal error", e);
 		}
 		logger.debug("OUT");

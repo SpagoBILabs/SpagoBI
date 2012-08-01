@@ -9,10 +9,12 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.validation.EMFValidationError;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
@@ -24,6 +26,7 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import javax.persistence.metamodel.Attribute;
@@ -62,6 +65,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 	public void doService() {
 		logger.debug("IN");
 		ISbiAttributeDAO attrDao;
+		UserProfile profile = (UserProfile) this.getUserProfile();
 		try {
 			attrDao = DAOFactory.getSbiAttributeDAO();
 			attrDao.setUserProfile(getUserProfile());
@@ -76,10 +80,12 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
 		
+		
 		if (serviceType != null && serviceType.contains(ATTR_LIST)) {
 			String name = null;
 			String description =null;
 			String idStr = null;
+			
 			try {
 				BufferedReader b =httpRequest.getReader();
 				if(b!=null){
@@ -98,6 +104,8 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 							if(!samples.isNull(NAME)){
 								
 								name = samples.getString(NAME);
+								HashMap logParam = new HashMap();
+								logParam.put("NAME", name);
 								if (GenericValidator.isBlankOrNull(name) || 
 										!GenericValidator.matchRegexp(name, ALPHANUMERIC_STRING_REGEXP_NOSPACE)||
 											!GenericValidator.maxLength(name, nameMaxLenght)){
@@ -110,8 +118,8 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 									attributesResponseSuccessJSON.put("data", "[]");
 									
 									writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-									// PER MONIA, PROF_ATTRIBUTES.ADD, user, name  
-
+									
+									AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES.ADD",logParam , "OK");
 									return;
 	
 								}
@@ -131,7 +139,9 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 									attributesResponseSuccessJSON.put("message", "Either the field description is blank or it exceeds maxlength or it is not alfanumeric");
 									attributesResponseSuccessJSON.put("data", "[]");
 									writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-									// PER MONIA, PROF_ATTRIBUTES.ADD, user, name   
+									HashMap logParam = new HashMap();
+									logParam.put("NAME", name);
+									AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES.ADD",logParam , "OK");
 									return;
 								}
 							}
@@ -157,8 +167,9 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 							attributes.add(attribute);
 							
 							getAttributesListAdded(locale,attributes,isNewAttrForRes, attrID);
-							// PER MONIA, PROF_ATTRIBUTES.ADD/MODIFY, user, attribute.getAttributeName()  --> ESITO OK
-
+							HashMap logParam = new HashMap();
+							logParam.put("NAME", attribute.getAttributeName());
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES.ADD/MODIFY",logParam , "OK");
 						}
 						
 						//else the List of attributes will be sent to the client
@@ -170,7 +181,12 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 				}
 
 			} catch (Throwable e) {
-				// PER MONIA, PROF_ATTRIBUTES.ADD, user, attribute.getAttributeName()   
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES.ADD",null , "OK");
+				} catch (Exception e3) {
+					// TODO Auto-generated catch block
+					e3.printStackTrace();
+				}
 				logger.error(e.getMessage(), e);
 				getHttpResponse().setStatus(404);								
 				try {
@@ -220,8 +236,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 					attributesResponseSuccessJSON.put("message", "");
 					attributesResponseSuccessJSON.put("data", "[]");
 					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-					// PER MONIA, PROF_ATTRIBUTES.DELETE, user, attribute.getAttributeName()  --> ESITO OK
-	
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES.DELETE",null , "OK");
 				} catch (Throwable e) {
 					logger.error("Exception occurred while deleting attribute", e);
 					getHttpResponse().setStatus(404);								
@@ -231,7 +246,12 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 						attributesResponseSuccessJSON.put("message", "Exception occurred while deleting attribute");
 						attributesResponseSuccessJSON.put("data", "[]");
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );	
-						// PER MONIA, PROF_ATTRIBUTES.DELETE, user, attribute.getAttributeName()  
+						try {
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES.DELETE",null , "OK");
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					} catch (IOException e1) {
 						logger.error(e1.getMessage(), e1);
 					} catch (JSONException e2) {
