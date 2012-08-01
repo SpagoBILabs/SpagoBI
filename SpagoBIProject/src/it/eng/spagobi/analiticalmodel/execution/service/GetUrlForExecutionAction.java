@@ -108,7 +108,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			dao = null;
 			try {
 				dao = DAOFactory.getSnapshotDAO();
-			} catch (EMFUserError e) {
+			} catch (EMFUserError e) {				
 				logger.error("Error while istantiating DAO", e);
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
 			}
@@ -118,6 +118,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			try {
 				snapshot = dao.loadSnapshot(snapshotId);
 			} catch (EMFUserError e) {
+				// PER MONIA, DOCUMENT.GET_URL_FOR_SNAPSHOT, user, snapshotId/snapshot.getName()
 				logger.error("Snapshot with id = " + snapshotId + " not found", e);
 				throw new SpagoBIServiceException(SERVICE_NAME, "Scheduled execution not found", e);
 			}
@@ -131,15 +132,17 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 				try {
 					response.put("url", url);
 				} catch (JSONException e) {
+					// PER MONIA, DOCUMENT.GET_URL_FOR_SNAPSHOT, user, snapshot.getName(), obj.getName()
 					throw new SpagoBIServiceException("Cannot serialize the url [" + url + "] to the client", e);
 				}
 			} else {
+				// PER MONIA, DOCUMENT.GET_URL_FOR_SNAPSHOT, user, snapshot.getName(), obj.getName()
 				throw new SpagoBIServiceException(SERVICE_NAME, "Required scheduled execution is not relevant to current document");
 			}
 		} finally {
 			logger.debug("OUT");
 		}
-		
+		// PER MONIA, DOCUMENT.GET_URL_FOR_SNAPSHOT, user, snapshot.getName(), obj.getName() --> esito ok
 		return response;
 	}
 
@@ -198,7 +201,9 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 				SubObject subObject = null;
 				try {
 					subObject = dao.getSubObject(subObjectId);
+					
 				} catch (EMFUserError e) {
+					// PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user,subObjectId/subObject.getName()
 					logger.error("SubObject with id = " + subObjectId + " not found", e);
 					throw new SpagoBIServiceException(SERVICE_NAME, "Customized view not found", e);
 				}
@@ -220,20 +225,25 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 						try {
 							response.put("url", url);
 						} catch (JSONException e) {
+							// PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, subObject.getName(), obj.getName()
 							throw new SpagoBIServiceException("Cannot serialize the url [" + url + "] to the client", e);
 						}
 					} else {
+						//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, subObject.getName(),obj.getName()
 						throw new SpagoBIServiceException(SERVICE_NAME, "User cannot execute required customized view");
 					}
 				} else {
+					//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, subObject.getName(),obj.getName()
 					throw new SpagoBIServiceException(SERVICE_NAME, "Required subobject is not relevant to current document");
 				}
 			}
 		} catch (EMFInternalError e) {
+			//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, subObject.getName(),obj.getName()
 			throw new SpagoBIServiceException(SERVICE_NAME, "An internal error has occured", e);
 		} finally {
 			logger.debug("OUT");
 		}
+		//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, subObject.getName() --> esito ok
 		return response;
 	}
 
@@ -272,21 +282,25 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 				try {
 					response.put("errors", errorsArray);
 				} catch (JSONException e) {
+					//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, executionInstance.getBIObject().getName(), executionInstance.getBIObject().getEngine()
 					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize errors to the client", e);
 				}
 			} else {
+				
 				// there are no errors, we can proceed, so calculate the execution url and send it back to the client
 				String url = executionInstance.getExecutionUrl(locale);
 				url += "&isFromCross=" + (isFromCross == true ? "true" : "false");
 				try {
 					response.put("url", url);
 				} catch (JSONException e) {
+					//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, executionInstance.getBIObject().getName(), executionInstance.getBIObject().getEngine()
 					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize the url [" + url + "] to the client", e);
 				}
 			}
 		} finally {
 			logger.debug("OUT");
 		}
+		//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, executionInstance.getBIObject().getName(), executionInstance.getBIObject().getEngine() --> esito ok
 		return response;
 	}
 

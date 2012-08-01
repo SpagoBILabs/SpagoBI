@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import javax.persistence.metamodel.Attribute;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
@@ -109,6 +110,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 									attributesResponseSuccessJSON.put("data", "[]");
 									
 									writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+									// PER MONIA, PROF_ATTRIBUTES.ADD, user, name  
 
 									return;
 	
@@ -129,6 +131,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 									attributesResponseSuccessJSON.put("message", "Either the field description is blank or it exceeds maxlength or it is not alfanumeric");
 									attributesResponseSuccessJSON.put("data", "[]");
 									writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+									// PER MONIA, PROF_ATTRIBUTES.ADD, user, name   
 									return;
 								}
 							}
@@ -154,8 +157,10 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 							attributes.add(attribute);
 							
 							getAttributesListAdded(locale,attributes,isNewAttrForRes, attrID);
+							// PER MONIA, PROF_ATTRIBUTES.ADD/MODIFY, user, attribute.getAttributeName()  --> ESITO OK
 
 						}
+						
 						//else the List of attributes will be sent to the client
 					}else{
 						getAttributesList(locale,attrDao);
@@ -165,6 +170,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 				}
 
 			} catch (Throwable e) {
+				// PER MONIA, PROF_ATTRIBUTES.ADD, user, attribute.getAttributeName()   
 				logger.error(e.getMessage(), e);
 				getHttpResponse().setStatus(404);								
 				try {
@@ -214,6 +220,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 					attributesResponseSuccessJSON.put("message", "");
 					attributesResponseSuccessJSON.put("data", "[]");
 					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+					// PER MONIA, PROF_ATTRIBUTES.DELETE, user, attribute.getAttributeName()  --> ESITO OK
 	
 				} catch (Throwable e) {
 					logger.error("Exception occurred while deleting attribute", e);
@@ -224,6 +231,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 						attributesResponseSuccessJSON.put("message", "Exception occurred while deleting attribute");
 						attributesResponseSuccessJSON.put("data", "[]");
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );	
+						// PER MONIA, PROF_ATTRIBUTES.DELETE, user, attribute.getAttributeName()  
 					} catch (IOException e1) {
 						logger.error(e1.getMessage(), e1);
 					} catch (JSONException e2) {

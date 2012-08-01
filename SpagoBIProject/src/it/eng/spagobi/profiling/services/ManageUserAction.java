@@ -180,6 +180,8 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				if (user != null) {
 					this.checkIfCurrentUserIsAbleToSaveOrModifyUser(user);
 				} else {
+				
+					// PER MONIA, PROF_USERS.MODIFY, user, user.getFullName() 
 					throw new SpagoBIServiceException(
 							SERVICE_NAME,
 							"User with id = "
@@ -193,6 +195,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 			String password = getAttributeAsString(PASSWORD);
 			
 			if (userId == null) {
+				// PER MONIA, PROF_USERS.ADD/MODIFY, user, fullName
 				logger.error("User name missing");
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"User name missing");
@@ -208,6 +211,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				try {
 					user.setPassword(Password.encriptPassword(password));
 				} catch (Exception e) {
+					// PER MONIA, PROF_USERS.ADD/MODIFY, user, fullName
 					logger.error("Impossible to encrypt Password", e);
 					throw new SpagoBIServiceException(SERVICE_NAME,
 							"Impossible to encrypt Password", e);
@@ -218,6 +222,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				deserializeAttributesJSONArray(user);
 				deserializeRolesJSONArray(user);
 			} catch (JSONException e) {
+				// PER MONIA, PROF_USERS.ADD/MODIFY, user, fullName
 				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while deserializing attributes and roles", e);
 			}
 			
@@ -230,6 +235,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				id = userDao.fullSaveOrUpdateSbiUser(user);
 				logger.debug("User updated or Inserted");
 			} catch (Throwable t) {
+				// PER MONIA, PROF_USERS.ADD/MODIFY, user, fullName
 				logger.error("Exception occurred while saving user", t);
 				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while saving user", t);
 			}
@@ -241,13 +247,17 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 						"Operation succeded");
 				attributesResponseSuccessJSON.put("id", id);
 				writeBackToClient(new JSONSuccess(attributesResponseSuccessJSON));
+				// PER MONIA, PROF_USERS.ADD/MODIFY, user, fullName --> esito ok
 			} catch (Exception e) {
+				// PER MONIA, PROF_USERS.ADD/MODIFY, user, fullName
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client", e);
 			}
 		
 		} catch (SpagoBIServiceException e) {
+			// PER MONIA, PROF_USERS.ADD/MODIFY, user, fullName
 			throw e;
 		} catch (Throwable e) {
+			// PER MONIA, PROF_USERS.ADD/MODIFY, user, fullName
 			logger.error("Exception occurred while saving user", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
 					"Exception occurred while saving user", e);
@@ -283,8 +293,9 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 			// we must load user to check if user belongs to the right tenant,
 			// since Hibernate 3.6 does not put tenant filter on delete 
 			SbiUser user = userDao.loadSbiUserById(id);
-			if (user != null) {
+			if (user != null) {				
 				if (user.getUserId().equals(profile.getUserId())) {
+					// PER MONIA, PROF_USERS.DELETE, user, user.getFullName()
 					// user deleting himself!
 					throw new SpagoBIServiceException(
 							SERVICE_NAME,
@@ -298,6 +309,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 					// business_map.xml therefore they cannot execute this action)
 					// He can delete only final users
 					if (!this.isFinalUser(user)) {
+						// PER MONIA, PROF_USERS.DELETE, user, user.getFullName()
 						logger.error("User [" + profile.getUserId()
 								+ "] cannot delete user [" + user.getUserId()
 								+ "]  since it is not a final user");
@@ -309,7 +321,9 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				userDao.deleteSbiUserById(id);
 				logger.debug("User deleted");
 				writeBackToClient(new JSONAcknowledge("Operation succeded"));
+				// PER MONIA, PROF_USERS.DELETE, user, user.getFullName() -> esito ok
 			} else {
+				// PER MONIA, PROF_USERS.DELETE, user, user.getFullName()
 				throw new SpagoBIServiceException(
 						SERVICE_NAME,
 						"User with id = "
@@ -317,8 +331,10 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 								+ " does not exists or it belongs to another tenant");
 			}
 		} catch (SpagoBIServiceException e) {
+			// PER MONIA, PROF_USERS.DELETE, user, user.getFullName()
 			throw e;
 		} catch (Throwable e) {
+			// PER MONIA, PROF_USERS.DELETE, user, user.getFullName()
 			logger.error("Exception occurred while deleting user",
 					e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
