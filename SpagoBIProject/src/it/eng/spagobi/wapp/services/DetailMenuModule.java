@@ -10,6 +10,7 @@ import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.dispatching.module.AbstractModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -24,12 +25,14 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.wapp.bo.Menu;
 import it.eng.spagobi.wapp.dao.IMenuDAO;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +43,7 @@ import org.apache.log4j.Logger;
 /**
  * @author Gavardi Giulio
  */
-public class DetailMenuModule extends AbstractModule {
+public class DetailMenuModule extends AbstractHttpModule {
 
 	static private Logger logger = Logger.getLogger(DetailMenuModule.class);
 	
@@ -198,13 +201,22 @@ public class DetailMenuModule extends AbstractModule {
 				}
 			}
 		}
-
+		HashMap logParam = new HashMap();
+		logParam.put("NAME", menu.getName());
 		if(mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {			
 			menuDao.insertMenu(menu);
-			// PER MONIA, MENU.ADD, user, menu.getName()   --> esito ok 
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MENU.ADD",logParam , "OK");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}		 
 		} else if(mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_MOD)) {
 			menuDao.modifyMenu(menu);
-			// PER MONIA, MENU.MODIFY, user, menu.getName()    --> esito ok
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MENU.MODIFY",logParam , "OK");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}	
 		}
 
 
@@ -223,18 +235,30 @@ public class DetailMenuModule extends AbstractModule {
 	 */
 	private void delMenu(SourceBean request, String mod, SourceBean response)
 	throws EMFUserError, SourceBeanException {
+		String id = (String)request.getAttribute(MENU_ID);
+		IMenuDAO menudao = DAOFactory.getMenuDAO();
+		RequestContainer reqCont = getRequestContainer();
+		Menu menu = menudao.loadMenuByID(Integer.valueOf(id));
+		SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
+		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		HashMap logParam = new HashMap();
+		logParam.put("NAME", menu.getName());
 		try {
-			String id = (String)request.getAttribute(MENU_ID);
-			IMenuDAO menudao = DAOFactory.getMenuDAO();
-			Menu menu = menudao.loadMenuByID(Integer.valueOf(id));
-			SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
 			menudao.eraseMenu(menu);
-			// PER MONIA, MENU.DELETE, user, menu.getName()    --> esito ok
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MENU.DELETE",logParam , "OK");
 		} catch (EMFUserError eex) {
-			// PER MONIA, MENU.DELETE, user, menu.getName()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MENU.DELETE",logParam , "KO");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "10002", messageBundle);
 		} catch (Exception ex) {
-			// PER MONIA, MENU.DELETE, user, menu.getName()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MENU.DELETE",logParam , "ERR");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
@@ -248,6 +272,8 @@ public class DetailMenuModule extends AbstractModule {
 	 * @throws EMFUserError If an Exception occurred
 	 */
 	private void newDetailMenu(SourceBean request, SourceBean response) throws EMFUserError {
+		SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
+		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
 			this.modality = AdmintoolsConstants.DETAIL_INS;
 			String idParent = (String) request.getAttribute(DetailMenuModule.PARENT_ID);
@@ -285,7 +311,11 @@ public class DetailMenuModule extends AbstractModule {
 			response.setAttribute(MENU, menu);
 		}
 		catch (Exception ex) {
-			// PER MONIA, MENU.ADD, user, menu.getName()
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MENU.ADD",null , "KO");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 	}
@@ -293,10 +323,6 @@ public class DetailMenuModule extends AbstractModule {
 	private Menu recoverMenuDetails(SourceBean request, String mod) throws EMFUserError, SourceBeanException {
 		String name = (String)request.getAttribute("name");
 		name = name.trim();
-		if(name.equalsIgnoreCase("")){
-			// PER MONIA, MENU.ADD/MODIFY, user, name
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "10003", messageBundle);
-		}
 
 		String description = (String)request.getAttribute("description");
 		description = description.trim();
@@ -325,6 +351,21 @@ public class DetailMenuModule extends AbstractModule {
 		menu.setName(name);
 		menu.setDescr(description);
 		menu.setRoles(roles);
+		
+		HashMap logParam = new HashMap();
+		logParam.put("NAME", name);
+		
+		SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
+		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		
+		if(name.equalsIgnoreCase("")){
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MENU.ADD/MODIFY",logParam , "OK");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "10003", messageBundle);
+		}
 		
 		String nodeContent = (String) request.getAttribute("nodeContent");
 		if ("nodeDocument".equals(nodeContent)) {
