@@ -201,8 +201,10 @@ public class DetailMenuModule extends AbstractModule {
 
 		if(mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {			
 			menuDao.insertMenu(menu);
+			// PER MONIA, MENU.ADD, user, menu.getName()   --> esito ok 
 		} else if(mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_MOD)) {
 			menuDao.modifyMenu(menu);
+			// PER MONIA, MENU.MODIFY, user, menu.getName()    --> esito ok
 		}
 
 
@@ -227,10 +229,12 @@ public class DetailMenuModule extends AbstractModule {
 			Menu menu = menudao.loadMenuByID(Integer.valueOf(id));
 			SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
 			menudao.eraseMenu(menu);
-
+			// PER MONIA, MENU.DELETE, user, menu.getName()    --> esito ok
 		} catch (EMFUserError eex) {
+			// PER MONIA, MENU.DELETE, user, menu.getName()
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "10002", messageBundle);
 		} catch (Exception ex) {
+			// PER MONIA, MENU.DELETE, user, menu.getName()
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
@@ -281,6 +285,7 @@ public class DetailMenuModule extends AbstractModule {
 			response.setAttribute(MENU, menu);
 		}
 		catch (Exception ex) {
+			// PER MONIA, MENU.ADD, user, menu.getName()
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 	}
@@ -289,6 +294,7 @@ public class DetailMenuModule extends AbstractModule {
 		String name = (String)request.getAttribute("name");
 		name = name.trim();
 		if(name.equalsIgnoreCase("")){
+			// PER MONIA, MENU.ADD/MODIFY, user, name
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "10003", messageBundle);
 		}
 
