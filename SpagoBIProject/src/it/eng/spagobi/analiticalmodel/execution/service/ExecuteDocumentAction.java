@@ -42,6 +42,7 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 				UserProfile profile = (UserProfile) this.getUserProfile();
 		    	boolean canSee = ObjectsAccessVerifier.canSee(obj, profile);
 		    	if (!canSee) {
+		    		// PER MONIA, DOCUMENT.EXECUTION, user, obj.getLabel() 
 		    		logger.error("User [" + profile.getUserId() + "] cannot see document [id: '" + obj.getId() + "', label: '" + obj.getLabel() + "'].");
 		    	} else {
 					this.getServiceResponse().setAttribute(SpagoBIConstants.OBJECT, obj);
@@ -51,18 +52,23 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 								(subObject.getIsPublic().booleanValue() || subObject.getOwner().equals(profile.getUserId()))) {
 							this.getServiceResponse().setAttribute(SpagoBIConstants.SUBOBJECT, subObject);
 						} else {
+							// PER MONIA, DOCUMENT.EXECUTION, user, obj.getLabel() obj.getEngine() obj.getBiObjectParameters()
 							logger.warn("User cannot see subobject [" + subObject.getName() + "] of document with label [" + obj.getLabel() + "].");
 						}
 					}
 		    	}
 			} else {
+				// PER MONIA, DOCUMENT.EXECUTION, user, obj.getLabel() obj.getEngine() obj.getBiObjectParameters()
 				logger.error("Document not found.");
 			}
 		} catch (EMFInternalError e) {
+			// PER MONIA, DOCUMENT.EXECUTION, user, obj.getLabel() obj.getEngine() obj.getBiObjectParameters()
 			logger.error("Service internal error", e);
 		} catch (SourceBeanException e) {
+			// PER MONIA, DOCUMENT.EXECUTION, user, obj.getLabel() obj.getEngine() obj.getBiObjectParameters()
 			logger.error("Service internal error", e);
 		} catch (EMFUserError e) {
+			// PER MONIA, DOCUMENT.EXECUTION, user, obj.getLabel() obj.getEngine() obj.getBiObjectParameters()
 			logger.error("Service internal error", e);
 		}
 		logger.debug("OUT");
@@ -80,7 +86,7 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
     	} else if (label != null) {
     		obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
     	}
-	    logger.debug("OUT");
+	    logger.debug("OUT");	    
 	    return obj;
 	}
 
