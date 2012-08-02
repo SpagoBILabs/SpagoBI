@@ -1253,9 +1253,11 @@ commit;
 
 ALTER TABLE SBI_EXT_ROLES ADD COLUMN MANAGE_USERS BOOLEAN DEFAULT FALSE;
 
-30/07/2012 Antonella: Deleted 'DATE_DEFAULT' as parameter type. The only parameters types usable are: date, num and string!
---Deleted 'DATE_DEFAULT' as parameter type. The only parameters types usable are: date, num and string!
+--30/07/2012 Antonella: Deleted 'DATE_DEFAULT' as parameter type. The only parameters types usable are: date, num and string!
 update SBI_PARAMETERS set PAR_TYPE_CD = 'DATE', PAR_TYPE_ID = 
 		(select VALUE_ID from SBI_DOMAINS where value_cd = 'DATE' and domain_cd = 'PAR_TYPE') WHERE PAR_TYPE_CD = 'DATE_DEFAULT';
 delete from SBI_DOMAINS  where VALUE_NM = 'sbidomains.nm.date.default';
 commit;
+
+-- 02/08/2012 Antonella: 
+ALTER TABLE SBI_AUDIT ALTER COLUMN DOC_NAME TYPE VARCHAR(200);
