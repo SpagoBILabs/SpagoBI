@@ -204,7 +204,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				getDataSet().setParamsMap(getEnv());
 				getDataSet().loadData();
 				for(int i = 0; i < getDataSet().getDataStore().getMetaData().getFieldCount(); i++) {
-					logger.debug("Dataset column [" + (i+1) + "] name is equal to [" + getDataSet().getDataStore().getMetaData().getFieldName(i) + "]");
+					logger.debug("Dataset column [" + (i+1) + "] name is equal to [" + getDataSet().getDataStore().getMetaData().getFieldAlias(i) + "]");
 				}
 				
 				JRSpagoBIDataStoreDataSource dataSource = new JRSpagoBIDataStoreDataSource( getDataSet().getDataStore() );
