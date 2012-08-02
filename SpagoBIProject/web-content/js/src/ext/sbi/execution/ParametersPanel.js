@@ -249,24 +249,41 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}
 		this.setFormState(v);
 	}
-	
+	  
 	/**
 	 * reset all the fields in the form and recalculate all the dependencies
 	 */
 	, reset: function() {
+		//change for menu calls		
 		for(p in this.fields) {
-			var aField = this.fields[p];
-			if (!aField.isTransient) {
-				aField.reset();
-				this.updateDependentFields( aField );
+			if (!this.isInPreferences(p)){
+				var aField = this.fields[p];
+				if (!aField.isTransient) {
+					aField.reset();
+					this.updateDependentFields( aField );
+				}
 			}
 		}
 		
 		for(p in this.fields) {
-			var aField = this.fields[p];
-			aField.clearInvalid();
+			if (!this.isInPreferences(p)){
+				var aField = this.fields[p];
+				aField.clearInvalid();
+			}
 		}
 		
+	}
+	
+	, isInPreferences: function(p){
+		if (this.parametersPreference == null || this.parametersPreference == undefined || this.parametersPreference == "") return false;
+		
+		var values = this.parametersPreference.split("&");
+		for (var i=0, l=values.length; i<l; i++){
+			var parName = values[i].substring(0,  values[i].indexOf("="));
+			if (parName == p) return true;
+		}
+		
+		return false;
 	}
 	
 	/**
