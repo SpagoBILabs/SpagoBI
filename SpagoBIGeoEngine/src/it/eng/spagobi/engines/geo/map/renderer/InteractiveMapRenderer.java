@@ -680,7 +680,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 					if(i == dataStoreMeta.getIdFieldIndex()) continue;
 
 					field = (IField)fields.get(i);
-					String fieldName = dataStoreMeta.getFieldName(i);
+					String fieldName = dataStoreMeta.getFieldAlias(i);
 					//String tmpKpiName = (String)kpiValueIterator.next();
 
 
@@ -981,7 +981,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						continue;
 					}
 					IField field = (IField)fields.get(j);
-					child.setAttribute("attrib:" + dataStore.getMetaData().getFieldName(j), "" + field.getValue());
+					child.setAttribute("attrib:" + dataStore.getMetaData().getFieldAlias(j), "" + field.getValue());
 				}
 				child.setAttribute("attrib:nome", child.getAttribute("id"));
 
