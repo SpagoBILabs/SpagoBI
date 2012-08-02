@@ -80,7 +80,7 @@ public class DataSourceTablePDFExporter {
     	
 	    //reads the names of the visible table columns
     	for(int j = 0; j < colunum; j++){
-    	    String fieldName = dataStoreMetaData.getFieldName(j);
+    	    String fieldName = dataStoreMetaData.getFieldAlias(j);
     	    IFieldMetaData fieldMetaData = dataStoreMetaData.getFieldMeta(j);
 //    	    String format = (String) fieldMetaData.getProperty("format");
     	    String alias = (String) fieldMetaData.getAlias();
