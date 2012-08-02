@@ -6,6 +6,8 @@
 package it.eng.spagobi.events.services;
 
 import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dispatching.module.list.basic.AbstractBasicListModule;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -47,8 +49,11 @@ public class ListEventsLogModule extends AbstractBasicListModule {
 	 * @see it.eng.spago.dispatching.service.list.basic.IFaceBasicListService#getList(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
 	public ListIFace getList(SourceBean request, SourceBean response) throws Exception {
-		RequestContainer requestContainer = getRequestContainer();
-		IEngUserProfile profile = (IEngUserProfile) requestContainer.getSessionContainer().getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		RequestContainer requestContainer = this.getRequestContainer();	
+		ResponseContainer responseContainer = this.getResponseContainer();	
+		SessionContainer session = requestContainer.getSessionContainer();
+		SessionContainer permanentSession = session.getPermanentContainer();
+		IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		 
 		//Start writing log in the DB
 		Session aSession =null;

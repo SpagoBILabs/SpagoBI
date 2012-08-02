@@ -7,6 +7,7 @@
 package it.eng.spagobi.engines.config.service;
 
 import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -64,14 +65,17 @@ public class DetailEngineModule extends AbstractHttpModule {
 	 * @throws Exception the exception
 	 */
 	public void service(SourceBean request, SourceBean response) throws Exception {
-
 		String message = (String) request.getAttribute("MESSAGEDET");
 		SpagoBITracer.debug(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","service","begin of detail Engine modify/visualization service with message =" +message);
+		RequestContainer requestContainer = this.getRequestContainer();	
+		ResponseContainer responseContainer = this.getResponseContainer();	
+		SessionContainer session = requestContainer.getSessionContainer();
 		SessionContainer permanentSession = session.getPermanentContainer();
 		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-
+		
 		EMFErrorHandler errorHandler = getErrorHandler();
 		try {
+			
 			if (message == null) {
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 101);
 				SpagoBITracer.debug(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule", "service", "The message parameter is null");

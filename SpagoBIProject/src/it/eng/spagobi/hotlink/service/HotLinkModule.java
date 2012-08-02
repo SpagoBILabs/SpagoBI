@@ -10,6 +10,7 @@ import java.sql.Connection;
 import javax.servlet.http.HttpServletRequest;
 
 import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dispatching.module.AbstractModule;
@@ -49,7 +50,11 @@ public class HotLinkModule extends AbstractModule {
 		Session aSession =null;
 		try {
 			aSession = HibernateUtil.currentSession();
-			IEngUserProfile profile = UserUtilities.getUserProfile();
+			RequestContainer requestContainer = this.getRequestContainer();	
+			ResponseContainer responseContainer = this.getResponseContainer();	
+			SessionContainer session = requestContainer.getSessionContainer();
+			SessionContainer permanentSession = session.getPermanentContainer();
+			IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			AuditLogUtilities.updateAudit(((HttpServletRequest)getRequestContainer().getRequestContainer().getInternalRequest()),  profile, "HOT_LINK.OPEN", null, "OK");
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);

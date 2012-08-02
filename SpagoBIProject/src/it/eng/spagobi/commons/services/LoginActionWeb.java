@@ -13,6 +13,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spago.base.Constants;
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.security.IEngUserProfile;
@@ -68,6 +71,12 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 		boolean isSSOActive = false;
 		String usr = null;
 		String pwd;
+		
+		RequestContainer requestContainer = this.getRequestContainer();	
+		ResponseContainer responseContainer = this.getResponseContainer();	
+		SessionContainer session = requestContainer.getSessionContainer();
+		SessionContainer permanentSession = session.getPermanentContainer();
+		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		
 		
 		logger.debug("IN");
