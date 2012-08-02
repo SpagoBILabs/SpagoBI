@@ -21,3 +21,5 @@ update SBI_PARAMETERS set PAR_TYPE_CD = 'DATE', PAR_TYPE_ID =
 	(select VALUE_ID from SBI_DOMAINS where value_cd = 'DATE' and domain_cd = 'PAR_TYPE') WHERE PAR_TYPE_CD = 'DATE_DEFAULT';
 delete from SBI_DOMAINS  where VALUE_NM = 'sbidomains.nm.date.default';
 commit;
+
+ALTER TABLE SBI_AUDIT ALTER COLUMN DOC_NAME TYPE VARCHAR(200);
