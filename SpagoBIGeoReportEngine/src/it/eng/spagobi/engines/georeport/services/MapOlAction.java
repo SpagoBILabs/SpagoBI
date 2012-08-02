@@ -162,8 +162,8 @@ public class MapOlAction extends AbstractBaseServlet {
 			        //for each col
 			        for(int j=0; j<nc; j++){
 			        	jsonProperties.accumulate(
-			        			dataStoreMeta.getFieldName(j), 
-			        			record.getFieldAt( dataStoreMeta.getFieldIndex(dataStoreMeta.getFieldName(j)) ).getValue()
+			        			dataStoreMeta.getFieldAlias(j), 
+			        			record.getFieldAt( dataStoreMeta.getFieldIndex(dataStoreMeta.getFieldAlias(j)) ).getValue()
 			        	);  
 			        }
 			        
