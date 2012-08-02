@@ -1032,7 +1032,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			IField f = (IField)fields.get(fieldIndex);			
 			if (f != null) {
 				if (f.getValue() != null) {
-					String fieldName = d.getFieldName(fieldIndex);	  
+					String fieldName = d.getFieldAlias(fieldIndex);	  
 					if (fieldName.equalsIgnoreCase("DESCR")){
 						String descr = f.getValue().toString();
 						kpiValueToReturn.setValueDescr(descr);
