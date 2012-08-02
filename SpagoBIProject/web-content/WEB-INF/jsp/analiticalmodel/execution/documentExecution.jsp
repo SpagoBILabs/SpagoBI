@@ -3,14 +3,12 @@
 Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
- 
-  
- 
-  
+
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
-
+<%@page import="it.eng.spagobi.commons.serializer.DocumentsJSONDecorator"%>
+<%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>    
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject"%>
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
@@ -124,10 +122,13 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		}
 	}
 	// 20100505: check if in request there is parameter
-		boolean comingFromDocOrTreeList = false;
-		if(request.getParameter("BIOBJECT_TREE_LIST") != null){
-			comingFromDocOrTreeList = true;
-		}
+	boolean comingFromDocOrTreeList = false;
+	if(request.getParameter("BIOBJECT_TREE_LIST") != null){
+		comingFromDocOrTreeList = true;
+	}
+	
+	JSONObject biobjectJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize( obj , locale);
+	DocumentsJSONDecorator.decoreDocument(biobjectJSON, userProfile);
 	
     %>
     //var menuConfig = <%= aServiceResponse.getAttribute("metaConfiguration")%>;
@@ -139,7 +140,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		<%
 	} else {
 		%>
-		var object = <%= SerializerFactory.getSerializer("application/json").serialize( obj ,locale).toString() %>
+		var object = <%= biobjectJSON.toString() %>
 		<%
 	}
 	%>
