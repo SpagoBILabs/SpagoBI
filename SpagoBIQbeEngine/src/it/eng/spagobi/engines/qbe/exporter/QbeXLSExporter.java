@@ -139,7 +139,7 @@ public class QbeXLSExporter {
 		for (int j = 0; j < colnum; j++) {
 			Cell cell = row.createCell(j + beginColumnHeaderData);
 			cell.setCellType(this.getCellTypeString());
-			String fieldName = d.getFieldName(j);
+			String fieldName = d.getFieldAlias(j);
 			IFieldMetaData fieldMetaData = d.getFieldMeta(j);
 			String format = (String) fieldMetaData.getProperty("format");
 			String alias = (String) fieldMetaData.getAlias();
