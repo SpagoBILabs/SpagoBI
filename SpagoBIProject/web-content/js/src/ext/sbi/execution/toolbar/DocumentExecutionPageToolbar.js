@@ -1450,7 +1450,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				'OBJECT_WK_DEFINITION': wkDefinition,
 				'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
 			};
-		if(this.executionInstance.document.typeCode == 'DATAMART'){
+		if(this.executionInstance.document.typeCode == 'DATAMART' || this.executionInstance.document.typeCode == 'WORKSHEET'){
 			params.OBJECT_QUERY = templateJSON.OBJECT_QUERY;
 		}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
 			params.OBJECT_FORM_VALUES=templateJSON.OBJECT_FORM_VALUES;
