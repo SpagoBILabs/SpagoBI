@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.check.service;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -69,6 +71,9 @@ public class DetailChecksModule extends AbstractHttpModule {
 	public void service(SourceBean request, SourceBean response) throws Exception {
 		String message = (String) request.getAttribute("MESSAGEDET");
 		SpagoBITracer.debug(AdmintoolsConstants.NAME_MODULE, "DetailChecksModule","service","begin of detail Engine modify/visualization service with message =" +message);
+		RequestContainer requestContainer = this.getRequestContainer();	
+		ResponseContainer responseContainer = this.getResponseContainer();	
+		SessionContainer session = requestContainer.getSessionContainer();
 		SessionContainer permanentSession = session.getPermanentContainer();
 		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 

@@ -6,6 +6,7 @@
 package it.eng.spagobi.mapcatalogue.service;
 
 import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -188,10 +189,11 @@ private void getDetailMap(SourceBean request, SourceBean response) throws EMFUse
  */
 private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serviceResponse)
 	throws EMFUserError, SourceBeanException {
-	RequestContainer reqCont = getRequestContainer();
-	SessionContainer sessCont = reqCont.getSessionContainer();
-	SessionContainer permSess = sessCont.getPermanentContainer();
-	IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	RequestContainer requestContainer = this.getRequestContainer();	
+	ResponseContainer responseContainer = this.getResponseContainer();	
+	SessionContainer session = requestContainer.getSessionContainer();
+	SessionContainer permanentSession = session.getPermanentContainer();
+	IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	try {
 		
 		

@@ -6,6 +6,7 @@
 package it.eng.spagobi.behaviouralmodel.lov.service;
 
 import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -99,8 +100,10 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 			// recover user profile
 			RequestContainer reqCont = getRequestContainer();
 			SessionContainer sessCont = reqCont.getSessionContainer();
-			SessionContainer permSess = sessCont.getPermanentContainer();
-			profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			ResponseContainer responseContainer = this.getResponseContainer();	
+			session = requestContainer.getSessionContainer();
+			SessionContainer permanentSession = session.getPermanentContainer();
+			profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// process message
 			if (message == null) {
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 101);
