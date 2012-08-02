@@ -51,7 +51,7 @@ public class PivotingTransformer implements IDataTransformer {
 			List fields = record.getFields();
 			for(int j = 0; j < fields.size(); j++) {		
 				IField field = (IField)fields.get(j);
-				String fieldName = dataStoreMeta.getFieldName(j);
+				String fieldName = dataStoreMeta.getFieldAlias(j);
 				String fieldValue = "" + field.getValue();
 				
 				//checks if the field is a row, a column or a value specified into configuration and manages them

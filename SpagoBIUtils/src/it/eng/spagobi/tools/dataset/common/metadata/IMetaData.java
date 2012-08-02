@@ -52,6 +52,17 @@ public interface IMetaData {
 	 * @return column name 
 	 */
 	String getFieldName(int fieldIndex);
+
+	/**
+	 * Get the designated column's alias. 
+	 * 
+	 * @param columnIndex the first column is 0, the second is 1, ... 
+	 * 
+	 * @return column alias, if alias is null return the name
+	 */
+	
+	String getFieldAlias(int fieldIndex);
+
 	
 	/**
 	 * Retrieves the designated column's Class type

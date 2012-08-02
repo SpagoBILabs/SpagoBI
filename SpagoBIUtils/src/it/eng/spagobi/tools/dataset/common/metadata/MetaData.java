@@ -82,22 +82,35 @@ public class MetaData implements IMetaData {
 		return results;
 	}
 	
-	public String getFieldName(int fieldIndex) {
-		String fieldName = null;
+	public String getFieldAlias(int fieldIndex) {
+		String fieldAlias = null;
 		IFieldMetaData fieldMeta;
 		
 		fieldMeta = getFieldMeta(fieldIndex);		
 		if(fieldMeta != null) {
 			String alias = fieldMeta.getAlias();
 			if(alias!=null && !alias.equals("")){
-				fieldName = alias;
+				fieldAlias = alias;
 			}else{
-				fieldName = fieldMeta.getName();
+				fieldAlias = fieldMeta.getName();
 			}
 		}
 		
+		return fieldAlias;
+	}
+	
+	
+	public String getFieldName(int fieldIndex) {
+		String fieldName = null;
+		IFieldMetaData fieldMeta;
+		
+		fieldMeta = getFieldMeta(fieldIndex);		
+		if(fieldMeta != null) {
+				fieldName = fieldMeta.getName();
+		}
 		return fieldName;
 	}
+	
 
 	public Class getFieldType(int fieldIndex) {
 		Class fieldType = null;

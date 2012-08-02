@@ -93,7 +93,7 @@ public class JDBCDataReader extends AbstractDataReader {
 					for(int i = 0; i < dataStoreMeta.getFieldCount(); i++) {
 						IFieldMetaData fieldMetaData = dataStoreMeta.getFieldMeta(i);
 						try {
-							Object value = rowSB.getAttribute( dataStoreMeta.getFieldName(i) );
+							Object value = rowSB.getAttribute( dataStoreMeta.getFieldAlias(i) );
 							logger.debug("Column [" + fieldMetaData.getName() + "] of type [" + (value!=null? value.getClass(): "undef") + "] is equal to [" + value + "]");					
 							IField field = new Field( value );
 							if(value != null) {
