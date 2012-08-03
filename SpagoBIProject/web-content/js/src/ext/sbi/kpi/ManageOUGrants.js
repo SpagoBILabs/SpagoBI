@@ -362,7 +362,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			singleSelect: true,
 			allowBlank: false,
 			cm: new Ext.grid.ColumnModel([
-			                              new Ext.grid.RowNumberer(),
+			                              new Ext.grid.RowNumberer(),			                             
 			                              {   header: LN('sbi.generic.label'),
 			                            	  dataIndex: 'label',
 			                            	  width: 75
