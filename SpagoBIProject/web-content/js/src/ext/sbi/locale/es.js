@@ -529,6 +529,11 @@ Sbi.locale.ln['sbi.execution.docExport'] = 'DOC';
 Sbi.locale.ln['sbi.execution.jrxmlExport'] = 'JRXML';
 Sbi.locale.ln['sbi.execution.jsonExport'] = 'JSON';
 
+Sbi.locale.ln['sbi.execution.export.qbe.results'] = 'Resultados';
+Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Tabla de referencias cruzadas';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Por favor, abra la pesta\u00F1a de vista previa de hoja de c\u00E1lculo para exportar el documento';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Advertencia de exportaci\u00F3n';
+
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Ampliar / Reducir';
 
 Sbi.locale.ln['sbi.home.Welcome'] = 'Bienvenido: ';
@@ -586,8 +591,11 @@ Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = '¿Usted desea que el si
 Ext.Msg.buttonText.yes = 'S\u00ED'; 
 Ext.Msg.buttonText.no = 'No';
 
-Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Por favor, abra la pesta\u00F1a de vista previa de hoja de c\u00E1lculo para exportar el documento';
-Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Advertencia de exportaci\u00F3n';
+//===================================================================
+//MESSAGE BOX BUTTONS
+//===================================================================
+Sbi.locale.ln['sbi.generic.from'] = 'Fecha de inicio';
+Sbi.locale.ln['sbi.generic.to'] = 'Fecha de finalizaci\u00F3n';
 
 
 //===================================================================
