@@ -119,9 +119,9 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 				String parentId = (String)getAttributeAsString("modelInstId");
 				if(parentId == null || parentId.startsWith("xnode")){
-					writeBackToClient(new JSONSuccess("OK"));
+					writeBackToClient(new JSONSuccess("'OK'"));
 					return;
-				}
+				} 
 				ModelInstance aModel = modelDao.loadModelInstanceWithChildrenById(Integer.parseInt(parentId));
 
 				logger.debug("Loaded model tree");
@@ -233,7 +233,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			try {
 				boolean result = modelDao.deleteModelInstance(modelInstId);
 				logger.debug("Model instance node deleted");
-				writeBackToClient( new JSONSuccess("Operation succeded") );
+				writeBackToClient( new JSONSuccess("'Operation succeded'") );
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving model instance to delete", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
@@ -341,7 +341,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					modelResourcesDao.addModelResource(modelId, resourceId);						
 				}
 
-				writeBackToClient(new JSONSuccess("Operation succeded"));
+				writeBackToClient(new JSONSuccess("'Operation succeded'"));
 
 
 			} catch (EMFUserError e) {

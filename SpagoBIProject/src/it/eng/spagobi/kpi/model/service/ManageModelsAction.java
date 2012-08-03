@@ -100,7 +100,7 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 				
 				String parentId = (String)getAttributeAsString("modelId");
 				if(parentId == null || parentId.startsWith("xnode")){
-					writeBackToClient(new JSONSuccess("OK"));
+					writeBackToClient(new JSONSuccess("'OK'"));
 					return;
 				}
 				Model aModel = modelDao.loadModelWithChildrenById(Integer.parseInt(parentId));
@@ -120,7 +120,7 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 				
 				String parentId = (String)getAttributeAsString("modelId");
 				if(parentId == null || parentId.startsWith("xnode")){
-					writeBackToClient(new JSONSuccess("OK"));
+					writeBackToClient(new JSONSuccess("'OK'"));
 					return;
 				}
 				Model dbModel = modelDao.loadModelWithChildrenById(Integer.parseInt(parentId));
@@ -164,7 +164,7 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 			try {
 				modelDao.deleteModel(modelId);
 				logger.debug("Model deleted");
-				writeBackToClient( new JSONSuccess("Operation succeded") );
+				writeBackToClient( new JSONSuccess("'Operation succeded'") );
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving model to delete", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
