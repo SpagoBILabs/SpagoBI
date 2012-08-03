@@ -91,7 +91,8 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 			scope: this,
 			height: 120,
 			autoWidth: true,
-			defaults: {border:false}
+			defaults: {border:false},
+			autoScroll: true
 		});
 		
 		this.progressEmptyPanel = new Ext.Panel({  
@@ -111,7 +112,8 @@ Ext.extend(Sbi.browser.ProgressPanel, Ext.Panel, {
 			scope: this,
 			height: 200,
 			collapsible: true,
-			defaults: {border:false}
+			defaults: {border:false},
+			autoScroll: true
 		});
 		
 		// create and hide two empty case panel
