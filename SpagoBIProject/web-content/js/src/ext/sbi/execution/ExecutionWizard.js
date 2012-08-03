@@ -209,7 +209,9 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		}
 		if(this.prevActivePageNumber == this.PARAMETER_SELECTION_PAGE_NUMBER && this.activePageNumber == this.EXECUTION_PAGE_NUMBER) {
 			// save parameters into session
-			Sbi.execution.SessionParametersManager.saveStateObject(this.parametersSelectionPage.parametersPanel);
+			if (!this.isFromCross){
+				Sbi.execution.SessionParametersManager.saveStateObject(this.parametersSelectionPage.parametersPanel);
+			}
 			Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersSelectionPage.parametersPanel);
 			
 			// init document execution page, in case it was not initialized yet
