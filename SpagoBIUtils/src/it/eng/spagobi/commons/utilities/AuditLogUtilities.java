@@ -124,7 +124,7 @@ public class AuditLogUtilities {
 				strbuf.append("&");
 				strbuf.append(me.getKey());
 				strbuf.append("=");
-				strbuf.append(me.getValue());
+				strbuf.append(me.getValue().toString());
 			}
 			separator++;
 		}
