@@ -10,12 +10,19 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.CustomJDBCAppender;
 import it.eng.spagobi.commons.bo.UserProfile;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.net.InetAddress;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.sql.Connection;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Formatter;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,8 +42,17 @@ public class AuditLogUtilities {
 
 	private static transient Logger logger = Logger.getLogger(AuditLogUtilities.class);
 	private static Logger audit_logger = Logger.getLogger("audit");
-	public static String CLIENT_IP1_KEY = "IP_CLIENT";
+	
+	//parametri PCS
+    public static String PROFILE1_KEY  = "PROFILESM";
+    public static String PROFILE2_KEY  = "profilesm";
+    public static String OPERATOR1_KEY  = "USERSM";
+    public static String OPERATOR2_KEY  = "usersm";
+    public static String CLIENT_IP1_KEY = "IP_CLIENT";
     public static String CLIENT_IP2_KEY = "ip_client";
+    //parametri ActiveX
+   // public static String CLIENT_HOSTNAME_KEY  = "clientHost";
+    //public static String CLIENT_USERNAME_KEY = "clientUser";
 
 
 	/**
@@ -72,41 +88,64 @@ public class AuditLogUtilities {
 		 try {
 			 Date parsed = new Date();
 			 String customDate = formatter.format(parsed);
+			 strbuf.append("'");
 			 strbuf.append(customDate);
 	        }
 	        catch(ParseException pe) {
 	            System.out.println("ERROR: Cannot parse \"" + dateString + "\"");
 	        }
 	        strbuf.append("';'");
-	        strbuf.append(request.getLocalAddr());
+	        strbuf.append(request.getLocalAddr());  // IP GENERATORE
 	        strbuf.append("';'");
-	        strbuf.append(request.getLocalName());
+	        strbuf.append(request.getLocalName()); // HOSTNAME GENERATORE
 	        strbuf.append("';'");
-	        strbuf.append(request.getRemoteAddr());
+	        strbuf.append(request.getRemoteAddr()); // IP SORGENTE
 	        strbuf.append("';'");
-	        String myClientHostname = request.getHeader(CLIENT_IP1_KEY);
-            if (myClientHostname == null) {
-                myClientHostname = request.getHeader(CLIENT_IP2_KEY);
-                if (myClientHostname == null) {
-                    myClientHostname = "";
+	        String IpClient = request.getHeader(CLIENT_IP1_KEY);
+	        String hostNameClient = "";
+	        if (IpClient == null) {
+            	IpClient = request.getHeader(CLIENT_IP2_KEY);
+                if (IpClient == null) {
+                	IpClient = "";
+                }else {
+                	InetAddress hostName= InetAddress.getByAddress(IpClient.getBytes());
+                	hostNameClient=hostName.getHostName();
+                }
+	        }
+            strbuf.append(IpClient); // IP CLIENT
+	        strbuf.append("';'");
+	        strbuf.append(hostNameClient); // HOST NAME CLIENT
+	        strbuf.append("';'';'");  // UTENZA CLIENT  lasciato vuoto
+	        String utenzaApplicativa = request.getHeader(OPERATOR1_KEY);
+            if (utenzaApplicativa == null) {
+            	utenzaApplicativa = request.getHeader(OPERATOR2_KEY);
+                if (utenzaApplicativa == null) {
+                	utenzaApplicativa = userName;			// se l'utenza applicativa è vuota inserisco lo user id di spagobi
                 }
             }
-            strbuf.append(myClientHostname);
+            
+	        strbuf.append(utenzaApplicativa);	// UTENZA APPLICATIVA
 	        strbuf.append("';'");
-	        strbuf.append(request.getRemoteHost());
-	        strbuf.append("';'';'");
-	        strbuf.append(profile.getUserUniqueIdentifier());
+	        
+	        String profiloApplicativo = request.getHeader(PROFILE1_KEY);
+            if (profiloApplicativo == null) {
+            	profiloApplicativo = request.getHeader(PROFILE2_KEY);
+                if (profiloApplicativo == null) {
+                	profiloApplicativo = userRoles;			// se il profilo applicativo è vuoto inserisco i ruoli di spagobi
+                }
+            }	        
+	        strbuf.append(profiloApplicativo);					// PROFILO UTENTE
 	        strbuf.append("';'");
-	        strbuf.append(profile.getRoles());
+	        strbuf.append(request.getHeader("user-agent"));		// APPLICATIVO CLIENT
 	        strbuf.append("';'");
-	        strbuf.append(request.getHeader("user-agent"));
+	        if (action_code!=null)  strbuf.append(action_code);	// AZIONE
+	        else strbuf.append("");	
 	        strbuf.append("';'");
-	        strbuf.append(action_code);
+	        strbuf.append(userName);							// OGGETTO
 	        strbuf.append("';'");
-	        strbuf.append(request.getRequestURI());
-	        strbuf.append("';'");
-	        strbuf.append(profile.getUserUniqueIdentifier());
-	        strbuf.append("';'");
+	        strbuf.append(request.getRequestURI());				// URI
+	        strbuf.append("';'");								
+	        													// PARAMETRI
 		if(parameters!=null){
 		Set set = parameters.entrySet(); 
 		Iterator i = set.iterator();
@@ -130,20 +169,20 @@ public class AuditLogUtilities {
 		}
 		strbuf.append("';'");
 		}
-		strbuf.append(esito);
+		strbuf.append(esito);						// ESITO
 		strbuf.append("';'");
 		if(esito.equals("OK")){
-			strbuf.append("0';");
+			strbuf.append("0';");					// RET CODE
 		}
 		else{
 			strbuf.append("-1';");
 		}
-		
-		
-		
-		
-	
+		String logString = strbuf.toString();
 
+        MessageDigest md5  = MessageDigest.getInstance("MD5");        
+
+        strbuf.append(calculateHash(md5, logString));
+		
 //		if(jdbcConnection!=null){
 //			ja = new CustomJDBCAppender(jdbcConnection);			
 //			if(updateDB && action_code!=null){
@@ -156,10 +195,6 @@ public class AuditLogUtilities {
 //		}
 		// These messages with Priority >= setted priority will be logged to the database.
 		audit_logger.info(strbuf);
-		logger.info("NUOVO_LOG.....................");
-
-		// not required
-		logger.debug("OUT");
 	}	
 
 	private static String createRolesString(Collection roles){
@@ -176,5 +211,29 @@ public class AuditLogUtilities {
 		logger.debug("OUT");
 		return rolesStr;
 	}
+	
+	public static String calculateHash(MessageDigest algorithm,
+            String fileName) throws Exception{
+
+        FileInputStream     fis = new FileInputStream(fileName);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        DigestInputStream   dis = new DigestInputStream(bis, algorithm);
+
+        // read the file and update the hash calculation
+        while (dis.read() != -1);
+
+        // get the hash value as byte array
+        byte[] hash = algorithm.digest();
+
+        return byteArray2Hex(hash);
+    }
+
+    private static String byteArray2Hex(byte[] hash) {
+        Formatter formatter = new Formatter();
+        for (byte b : hash) {
+            formatter.format("%02x", b);
+        }
+        return formatter.toString();
+    }
 
 }
