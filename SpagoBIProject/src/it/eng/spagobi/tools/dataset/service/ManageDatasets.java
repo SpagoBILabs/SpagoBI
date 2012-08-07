@@ -149,7 +149,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	private void datatsetInsert(IDataSetDAO dsDao, Locale locale){
 		GuiGenericDataSet ds = getGuiGenericDatasetToInsert();		
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME", ds.getActiveDetail().getCategoryValueName());
 		logParam.put("TYPE", ds.getActiveDetail().getDsType());
 		
@@ -228,7 +228,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	private void datatsetDelete(IDataSetDAO dsDao, Locale locale){
 		Integer dsID = getAttributeAsInteger(DataSetConstants.ID);
 		GuiGenericDataSet ds = dsDao.loadDataSetById(dsID);
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME", ds.getActiveDetail().getCategoryValueName());
 		logParam.put("TYPE", ds.getActiveDetail().getDsType());
 		try {

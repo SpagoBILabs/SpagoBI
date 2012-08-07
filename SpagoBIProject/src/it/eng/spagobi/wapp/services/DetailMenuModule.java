@@ -201,7 +201,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 				}
 			}
 		}
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME", menu.getName());
 		if(mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {			
 			menuDao.insertMenu(menu);
@@ -241,7 +241,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 		Menu menu = menudao.loadMenuByID(Integer.valueOf(id));
 		SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
 		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME", menu.getName());
 		try {
 			menudao.eraseMenu(menu);
@@ -352,7 +352,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 		menu.setDescr(description);
 		menu.setRoles(roles);
 		
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME", name);
 		
 		SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();

@@ -363,7 +363,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 				logger.error("BIObject with id "+id+" cannot be retrieved.");
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1040);
 				errorHandler.addError(error);
-				HashMap logParam = new HashMap();
+				HashMap<String, String> logParam = new HashMap();
 				logParam.put("Document_name", obj.getName());
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY",logParam , "OK");
 				return;
@@ -713,7 +713,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("Document_name", obj.getName());
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY",logParam , "OK");
@@ -868,7 +868,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			if(!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 				helper.fillResponse(initialPath);
 				prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, mod, false, false);				
-				HashMap logParam = new HashMap();
+				HashMap<String, String> logParam = new HashMap();
 				logParam.put("Document_name", obj.getName());
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_VALIDATION_ERROR",logParam , "ERR");				
 				return;
@@ -913,7 +913,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 						if(!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 							helper.fillResponse(initialPath);
 							prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
-							HashMap logParam = new HashMap();
+							HashMap<String, String> logParam = new HashMap();
 							logParam.put("Document_name", obj.getName());
 							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_DETAIL_MOD",logParam , "OK");	
 							return;
@@ -928,7 +928,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 							objParDAO.modifyBIObjectParameter(biObjPar);
 						}
 						prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
-						HashMap logParam = new HashMap();
+						HashMap<String, String> logParam = new HashMap();
 						logParam.put("Document_name", obj.getName());
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_DETAIL_MOD",logParam , "OK");	
 						return;
@@ -936,7 +936,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 						helper.fillResponse(initialPath);
 						prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
 		    			// exits without writing into DB
-						HashMap logParam = new HashMap();
+						HashMap<String, String> logParam = new HashMap();
 						logParam.put("Document_name", obj.getName());
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_DETAIL_MOD",logParam , "OK");	
 		    			return;
@@ -966,7 +966,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 						objParDAO.eraseBIObjectParameter(objPar, true);
 						selectedObjParIdStr = "";
 						prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
-						HashMap logParam = new HashMap();
+						HashMap<String, String> logParam = new HashMap();
 						logParam.put("Document_name", obj.getName());
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_DETAIL_MOD",logParam , "OK");	
 						return;
@@ -994,7 +994,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					if(!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 						helper.fillResponse(initialPath);
 						prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
-						HashMap logParam = new HashMap();
+						HashMap<String, String> logParam = new HashMap();
 						logParam.put("Document_name", obj.getName());
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_DETAIL_MOD",logParam , "OK");		 
 						return;
@@ -1047,7 +1047,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 				response.setAttribute("selected_obj_par_id", selectedObjParIdStr);
 				response.setAttribute("saveLoop", "true");
 			}		
-			HashMap logParam = new HashMap();
+			HashMap<String, String> logParam = new HashMap();
 			logParam.put("Document_name", obj.getName());
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY",logParam , "OK");		 
 

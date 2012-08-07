@@ -201,7 +201,7 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 		daoGeoMaps.setUserProfile(profile);
 		
 		GeoMap mapNew = recoverMapDetails(serviceRequest);
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("MAP_NAME",mapNew.getName());
 		
 		EMFErrorHandler errorHandler = getErrorHandler();
@@ -421,7 +421,7 @@ private void insRelMapFeature(SourceBean request, SourceBean response)
 		String featureId = (String)request.getAttribute("FEATURE_ID");	
 		GeoMap map = DAOFactory.getSbiGeoMapsDAO().loadMapByID(new Integer(mapId));
 		EMFErrorHandler errorHandler = getErrorHandler();
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("MAP_NAME",map.getName());
 		// if there are some validation errors into the errorHandler does not write into DB
 		Collection errors = errorHandler.getErrors();

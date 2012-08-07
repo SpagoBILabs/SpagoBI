@@ -113,7 +113,7 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 	 */   
 	private void getDataSource(SourceBean request, SourceBean response) throws EMFUserError {		
 		DataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(new Integer((String)request.getAttribute("ID")));
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("TYPE",ds.getJndi());
 		try {		 											
 			this.modalita = SpagoBIConstants.DETAIL_MOD;
@@ -171,7 +171,7 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 			dao.setUserProfile(profile);
 			DataSource dsNew = recoverDataSourceDetails(serviceRequest);
 			EMFErrorHandler errorHandler = getErrorHandler();
-			HashMap logParam = new HashMap();
+			HashMap<String, String> logParam = new HashMap();
 			logParam.put("TYPE",dsNew.getJndi());
 			 
 			// if there are some validation errors into the errorHandler does not write into DB

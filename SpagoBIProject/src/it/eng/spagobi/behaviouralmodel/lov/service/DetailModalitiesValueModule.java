@@ -418,7 +418,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 						Object error = iterator.next();
 						if (error instanceof EMFValidationError) {
 							prepareDetailModalitiesValuePage(modVal, mod, response);
-							HashMap logParam = new HashMap();
+							HashMap<String, String> logParam = new HashMap();
 							logParam.put("NAME",modVal.getName());
 							logParam.put("VALUE",modVal.getITypeCd());
 							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY", logParam, "KO");
@@ -474,7 +474,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 						EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "input_type", "1058", params, errparams);
 						errorHandler.addError(error);
 						prepareDetailModalitiesValuePage(modVal, mod, response);
-						HashMap logParam = new HashMap();
+						HashMap<String, String> logParam = new HashMap();
 						logParam.put("NAME",modVal.getName());
 						logParam.put("VALUE",modVal.getITypeCd());
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY", logParam, "ERR");
@@ -515,7 +515,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 							EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, 1059, params, errparams);
 							errorHandler.addError(error);
 							prepareDetailModalitiesValuePage(modVal, mod, response);
-							HashMap logParam = new HashMap();
+							HashMap<String, String> logParam = new HashMap();
 							logParam.put("NAME",modVal.getName());
 							logParam.put("VALUE",modVal.getITypeCd());
 							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY", logParam, "ERR");
@@ -543,7 +543,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 		
 		response.setAttribute("loopback", "true");
 		session.delAttribute(SpagoBIConstants.LOV_MODIFIED);
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME",modVal.getName());
 		logParam.put("VALUE",modVal.getITypeCd());
 		try {
@@ -704,7 +704,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 		try {
 			moddao.eraseModalitiesValue(modVal);
 			if (hasPar){
-				HashMap logParam = new HashMap();
+				HashMap<String, String> logParam = new HashMap();
 				logParam.put("NAME",modVal.getName());
 				logParam.put("VALUE",modVal.getITypeCd());
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.DELETE", logParam, "ERR");
@@ -731,7 +731,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 		}
 		response.setAttribute("afterDeleteLoop", "true");
 		// PER MONIA, DOCUMENT.DELETE, userId, modVal.getName(), modVal.getITypeCd() -->ESITO OK
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME",modVal.getName());
 		logParam.put("VALUE",modVal.getITypeCd());
 		try {

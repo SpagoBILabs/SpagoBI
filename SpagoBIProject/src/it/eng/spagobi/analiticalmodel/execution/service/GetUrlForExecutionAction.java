@@ -109,7 +109,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			logger.error("Error while istantiating DAO", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
 		}
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("SNAPSHOT NAME", snapshot.getName());
 		logParam.put("NAME", obj.getName());
 		try {
@@ -199,8 +199,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			logger.error("SubObject with id = " + subObjectId + " not found", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Customized view not found", e);
 		}
-		HashMap logParam = new HashMap();
-		logParam.put("ID OGGETTO", subObjectId);
+		HashMap<String, String> logParam = new HashMap();
+		logParam.put("ID OGGETTO", subObjectId.toString());
 		logParam.put("NOME OGGETTO", subObject.getName());
 		try {
 			executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
@@ -308,9 +308,9 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 		logger.debug("IN");
 		UserProfile profile = (UserProfile) this.getUserProfile();
 		JSONObject response = new JSONObject();
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME", executionInstance.getBIObject().getName());
-		logParam.put("ENGINE", executionInstance.getBIObject().getEngine());
+		logParam.put("ENGINE", executionInstance.getBIObject().getEngine().toString());
 		try {
 			Assert.assertNotNull(executionInstance, "Execution instance cannot be null in order to properly generate execution url");
 			

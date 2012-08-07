@@ -192,7 +192,7 @@ public class DetailChecksModule extends AbstractHttpModule {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME",aCheck.getName());
 		logParam.put("VALUE",aCheck.getValueTypeCd());
 		try {
@@ -259,7 +259,7 @@ public class DetailChecksModule extends AbstractHttpModule {
 			//if check is in use cannot be erased
 			boolean isRef = DAOFactory.getChecksDAO().isReferenced(id);
 			if (isRef) {
-				HashMap logParam = new HashMap();
+				HashMap<String, String> logParam = new HashMap();
 				logParam.put("NAME",aCheck.getName());
 				logParam.put("VALUE",aCheck.getValueTypeCd());
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.DELETE", logParam, "KO");
@@ -281,7 +281,7 @@ public class DetailChecksModule extends AbstractHttpModule {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME",aCheck.getName());
 		logParam.put("VALUE",aCheck.getValueTypeCd());
 		try {

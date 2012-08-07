@@ -91,7 +91,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 		String name = getAttributeAsString(NAME);
 		String roleTypeCD = getAttributeAsString(ROLE_TYPE_CD);
 		logger.debug("Service type "+serviceType);
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME", name);
 		logParam.put("ROLE TYPE", roleTypeCD);
 		if (serviceType != null && serviceType.equalsIgnoreCase(ROLES_LIST)) {

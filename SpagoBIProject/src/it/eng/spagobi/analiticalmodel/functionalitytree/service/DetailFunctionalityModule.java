@@ -233,7 +233,7 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 											false);
 						}
 						if (parentFolder == null) {
-							HashMap logParam = new HashMap();
+							HashMap<String, String> logParam = new HashMap();
 							logParam.put("Document_name", lowFunct.getName());
 							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",logParam , "OK");		 
 							
@@ -476,7 +476,7 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 			LowFunctionality parentFunct = DAOFactory.getLowFunctionalityDAO()
 					.loadLowFunctionalityByPath(pathParent, false);
 			if (parentFunct == null) {
-				HashMap logParam = new HashMap();
+				HashMap<String, String> logParam = new HashMap();
 				logParam.put("Document_name", parentFunct.getName());
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "parentFunct",logParam , "OK");
@@ -494,13 +494,13 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 			LowFunctionality funct = DAOFactory.getLowFunctionalityDAO()
 					.loadLowFunctionalityByPath(newPath, false);
 			if (funct != null) {
-				HashMap params = new HashMap();
-				params.put(AdmintoolsConstants.PAGE,
-						BIObjectsModule.MODULE_PAGE);
+				HashMap<String, String> params = new HashMap();
+				params.put(AdmintoolsConstants.PAGE.toString(),
+						BIObjectsModule.MODULE_PAGE.toString());
 				// params.put(SpagoBIConstants.ACTOR,
 				// SpagoBIConstants.ADMIN_ACTOR);
-				params.put(SpagoBIConstants.OPERATION,
-						SpagoBIConstants.FUNCTIONALITIES_OPERATION);
+				params.put(SpagoBIConstants.OPERATION.toString(),
+						SpagoBIConstants.FUNCTIONALITIES_OPERATION.toString());
 				EMFValidationError error = new EMFValidationError(
 						EMFErrorSeverity.ERROR, "code", "1005", new Vector(),
 						params);

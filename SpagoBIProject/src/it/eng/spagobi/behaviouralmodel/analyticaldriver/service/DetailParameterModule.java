@@ -337,7 +337,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 							while (iterator.hasNext()) {
 								Object error = iterator.next();
 								if (error instanceof EMFValidationError) {
-									HashMap logParam = new HashMap();
+									HashMap<String, String> logParam = new HashMap();
 									logParam.put("Document_name", parameter.getName());
 									logParam.put("Document_type", parameter.getType());
 										AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",logParam , "OK");
@@ -381,7 +381,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 							if (error instanceof EMFValidationError) {
 				    			prepareParameterDetailPage(response, parameter, paruse, paruseIdStr, 
 				    					ObjectsTreeConstants.DETAIL_MOD, false, false);
-				    			HashMap logParam = new HashMap();
+				    			HashMap<String, String> logParam = new HashMap();
 								logParam.put("Document_name", parameter.getName());
 								logParam.put("Document_type", parameter.getType());
 								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",logParam , "OK");
@@ -427,7 +427,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 							if (error instanceof EMFValidationError) {
 								prepareParameterDetailPage(response, parameter, paruse, paruseIdInt.toString(), 
 										ObjectsTreeConstants.DETAIL_MOD, false, false);
-								HashMap logParam = new HashMap();
+								HashMap<String, String> logParam = new HashMap();
 								logParam.put("Document_name", parameter.getName());
 								logParam.put("Document_type", parameter.getType());
 									AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",logParam , "OK");
@@ -472,7 +472,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 						if (error instanceof EMFValidationError) {
 							prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr, 
 									ObjectsTreeConstants.DETAIL_INS, false, false);
-							HashMap logParam = new HashMap();
+							HashMap<String, String> logParam = new HashMap();
 							logParam.put("Document_name", parameter.getName());
 							logParam.put("Document_type", parameter.getType());
 							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",logParam , "KO");

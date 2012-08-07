@@ -42,7 +42,7 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 		UserProfile profile = (UserProfile) this.getUserProfile();
 		try {
 			BIObject obj = getRequiredBIObject();
-			HashMap logParam = new HashMap();
+			HashMap<String, String> logParam = new HashMap();
 			logParam.put("DOCUMENT LABEL", obj.getLabel());
 			if (obj != null) {
 				
@@ -63,8 +63,8 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 								(subObject.getIsPublic().booleanValue() || subObject.getOwner().equals(profile.getUserId()))) {
 							this.getServiceResponse().setAttribute(SpagoBIConstants.SUBOBJECT, subObject);
 						} else {
-							logParam.put("ENGINE", obj.getEngine());
-							logParam.put("PARAMETERS", obj.getBiObjectParameters());
+							logParam.put("ENGINE", obj.getEngine().toString());
+							logParam.put("PARAMETERS", obj.getBiObjectParameters().toString());
 							try {
 								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",logParam , "OK");
 							} catch (Exception e) {
@@ -76,8 +76,8 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 					}
 		    	}
 			} else {
-				logParam.put("ENGINE", obj.getEngine());
-				logParam.put("PARAMETERS", obj.getBiObjectParameters());
+				logParam.put("ENGINE", obj.getEngine().toString());
+				logParam.put("PARAMETERS", obj.getBiObjectParameters().toString());
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",logParam , "OK");
 					} catch (Exception e) {
