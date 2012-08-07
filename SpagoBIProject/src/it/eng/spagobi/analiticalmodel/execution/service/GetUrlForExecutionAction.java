@@ -179,6 +179,12 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 		logger.debug("IN");
 		JSONObject response = new JSONObject();
 		ISubObjectDAO dao = null;
+		try {
+			dao = DAOFactory.getSubObjectDAO();
+		} catch (EMFUserError e) {				
+			logger.error("Error while istantiating DAO", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
+		}
 		SubObject subObject = null;
 		try {
 			subObject = dao.getSubObject(subObjectId);
@@ -231,16 +237,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 				} catch (JSONException e) {
 					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize errors to the client", e);
 				}
-			} else {
-			
-				
-				try {
-					dao = DAOFactory.getSubObjectDAO();
-				} catch (EMFUserError e) {
-					logger.error("Error while istantiating DAO", e);
-					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
-				}
-				
+			} else {				
 				BIObject obj = executionInstance.getBIObject();
 				if (obj.getId().equals(subObject.getBiobjId())) {
 					boolean canExecuteSubObject = false;
