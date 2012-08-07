@@ -49,8 +49,8 @@ public class LogoutAction extends AbstractHttpAction {
 			//Connection jdbcConnection = aSession.connection();
 			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			HashMap logParam = new HashMap();
-			logParam.put("USER",UserUtilities.getUserProfile());
+			HashMap<String, String> logParam = new HashMap();
+			logParam.put("USER",UserUtilities.getUserProfile().toString());
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SPAGOBI.Logout", logParam, "OK");
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);

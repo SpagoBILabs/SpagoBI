@@ -180,7 +180,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				// We must load user to check if user belongs to the right tenant,
 				// since Hibernate 3.6 puts tenant filter on select, not on delete 
 				SbiUser user = userDao.loadSbiUserById(id);
-				HashMap logParam = new HashMap();
+				HashMap<String, String> logParam = new HashMap();
 				logParam.put("FULLNAME", user.getFullName());
 				if (user != null) {
 					this.checkIfCurrentUserIsAbleToSaveOrModifyUser(user);
@@ -197,7 +197,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 			String userId = getAttributeAsString(USER_ID);
 			String fullName = getAttributeAsString(FULL_NAME);
 			String password = getAttributeAsString(PASSWORD);
-			HashMap logParam = new HashMap();
+			HashMap<String, String> logParam = new HashMap();
 			logParam.put("FULLNAME", fullName);
 			
 			if (userId == null) {
@@ -309,7 +309,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 			// we must load user to check if user belongs to the right tenant,
 			// since Hibernate 3.6 does not put tenant filter on delete 
 			SbiUser user = userDao.loadSbiUserById(id);
-			HashMap logParam = new HashMap();
+			HashMap<String, String> logParam = new HashMap();
 			logParam.put("FULLNAME", user.getFullName());
 			
 			if (user != null) {				

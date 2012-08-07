@@ -149,7 +149,7 @@ private void getDetailFeature(String key, SourceBean response) throws EMFUserErr
 private void modDetailFeature(SourceBean request, String mod, SourceBean response)
 	throws EMFUserError, SourceBeanException {
 	GeoFeature feature = recoverFeatureDetails(request);
-	HashMap logParam = new HashMap();
+	HashMap<String, String> logParam = new HashMap();
 	logParam.put("FEAUTURE_NAME",feature.getName());
 	
 	RequestContainer requestContainer = this.getRequestContainer();	

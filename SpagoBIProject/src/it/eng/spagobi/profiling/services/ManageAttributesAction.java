@@ -104,7 +104,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 							if(!samples.isNull(NAME)){
 								
 								name = samples.getString(NAME);
-								HashMap logParam = new HashMap();
+								HashMap<String, String> logParam = new HashMap();
 								logParam.put("NAME", name);
 								if (GenericValidator.isBlankOrNull(name) || 
 										!GenericValidator.matchRegexp(name, ALPHANUMERIC_STRING_REGEXP_NOSPACE)||
@@ -139,7 +139,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 									attributesResponseSuccessJSON.put("message", "Either the field description is blank or it exceeds maxlength or it is not alfanumeric");
 									attributesResponseSuccessJSON.put("data", "[]");
 									writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-									HashMap logParam = new HashMap();
+									HashMap<String, String> logParam = new HashMap();
 									logParam.put("NAME", name);
 									AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES.ADD",logParam , "OK");
 									return;
@@ -167,7 +167,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 							attributes.add(attribute);
 							
 							getAttributesListAdded(locale,attributes,isNewAttrForRes, attrID);
-							HashMap logParam = new HashMap();
+							HashMap<String, String> logParam = new HashMap();
 							logParam.put("NAME", attribute.getAttributeName());
 							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES.ADD/MODIFY",logParam , "OK");
 						}

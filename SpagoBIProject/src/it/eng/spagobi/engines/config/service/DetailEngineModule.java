@@ -118,9 +118,9 @@ public class DetailEngineModule extends AbstractHttpModule {
 			response.setAttribute("modality", modalita);
 			response.setAttribute("engineObj", engine);
 		} catch (Exception ex) {
-			HashMap logParam = new HashMap();
+			HashMap<String, String> logParam = new HashMap();;
 			logParam.put("NAME",engine.getName());
-			logParam.put("TYPE",engine.getEngineTypeId());
+			logParam.put("TYPE",engine.getEngineTypeId().toString());
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", logParam, "KO");
 			} catch (Exception e) {
@@ -148,9 +148,9 @@ public class DetailEngineModule extends AbstractHttpModule {
 	private void modDettaglioEngine(SourceBean request, String mod, SourceBean response)
 		throws EMFUserError, SourceBeanException {
 		Engine engine = recoverEngineDetails(request);
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME",engine.getName());
-		logParam.put("TYPE",engine.getEngineTypeId());
+		logParam.put("TYPE",engine.getEngineTypeId().toString());
 		try {
 			//**********************************************************************
 			
@@ -268,9 +268,9 @@ public class DetailEngineModule extends AbstractHttpModule {
         IEngineDAO enginedao = DAOFactory.getEngineDAO();
 		Engine engine = enginedao.loadEngineByID(new Integer(id));
 		Domain engineType = DAOFactory.getDomainDAO().loadDomainById(engine.getBiobjTypeId());
-		HashMap logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME",engine.getName());
-		logParam.put("VALUE",engineType);
+		logParam.put("VALUE",engineType.toString());
 		
 		try {	
 			boolean isAss = enginedao.hasBIObjAssociated(id);
@@ -435,7 +435,7 @@ public class DetailEngineModule extends AbstractHttpModule {
 						"1011", new Vector(), params);
 				getErrorHandler().addError(error);
 				//PER MONIA, ENGINE-MODIFY, USER-ID , name, engineType.getValueCd()
-				HashMap logParam = new HashMap();
+				HashMap<String, String> logParam = new HashMap();
 				logParam.put("NAME",name);
 				logParam.put("VALUE",engineType.getValueCd());
 				try {
