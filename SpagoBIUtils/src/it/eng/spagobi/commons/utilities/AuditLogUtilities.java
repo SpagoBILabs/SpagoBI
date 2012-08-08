@@ -6,22 +6,14 @@
 package it.eng.spagobi.commons.utilities;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.CustomJDBCAppender;
 import it.eng.spagobi.commons.bo.UserProfile;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.StringBufferInputStream;
 import java.net.InetAddress;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
-import java.sql.Connection;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Formatter;
