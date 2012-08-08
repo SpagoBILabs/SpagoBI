@@ -173,7 +173,8 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 			EMFErrorHandler errorHandler = getErrorHandler();
 			HashMap<String, String> logParam = new HashMap();
 			logParam.put("TYPE",dsNew.getJndi());
-			 
+			logParam.put("NAME",dsNew.getLabel());
+
 			// if there are some validation errors into the errorHandler does not write into DB
 			Collection errors = errorHandler.getErrors();
 			if (errors != null && errors.size() > 0) {
@@ -210,7 +211,7 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 					params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
 					EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 8004, new Vector(), params );
 					getErrorHandler().addError(error);
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", logParam, "OK");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", logParam, "KO");
 					return;
 				}	 		
 
@@ -219,9 +220,11 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 				IDataSource tmpDS = dao.loadDataSourceByLabel(dsNew.getLabel());
 				dsNew.setDsId(tmpDS.getDsId());
 				mod = SpagoBIConstants.DETAIL_MOD; 
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", logParam, "OK");
 			} else {				
 				//update ds
-				dao.modifyDataSource(dsNew);			
+				dao.modifyDataSource(dsNew);
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.MODIFY", logParam, "OK");
 			}  
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
 			List dialects = domaindao.loadListDomainsByType("DIALECT_HIB");
@@ -238,11 +241,7 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 					serviceResponse.setAttribute("loopback", "true");
 				    return;
 			}
-			if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.ADD", logParam, "OK");
-			} else {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.MODIFY", logParam, "OK");
-			}	
+	
 		} catch (EMFUserError e){
 			logger.error("Cannot fill response container" + e.getLocalizedMessage());
 			HashMap params = new HashMap();
@@ -281,7 +280,7 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 	 */
 	private void deleteDataSource(SourceBean request, String mod, SourceBean response)
 		throws EMFUserError, SourceBeanException {
-		
+		HashMap<String, String> logParam = new HashMap();
 		try {
 			String id = (String) request.getAttribute("ID");
 //			if the ds is associated with any BIEngine or BIObjects, creates an error
@@ -292,13 +291,16 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 				params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 8007, new Vector(), params );
 				getErrorHandler().addError(error);
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.DELETE", null, "OK");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.DELETE", null, "ERR");
 				return;
 			}
 			
 			//delete the ds
 			IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(new Integer(id));
 			DAOFactory.getDataSourceDAO().eraseDataSource(ds);
+			
+			logParam.put("TYPE",ds.getJndi());
+			logParam.put("NAME",ds.getLabel());	
 		}
 		catch (EMFUserError e){
 			  try {
@@ -317,7 +319,7 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 		    ex.printStackTrace();
 			logger.error("Cannot fill response container" ,ex);
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.DELETE", null, "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.DELETE", null, "ERR");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -325,7 +327,7 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 	    }
 	    try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.DELETE", null, "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SOURCE.DELETE", logParam, "OK");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
