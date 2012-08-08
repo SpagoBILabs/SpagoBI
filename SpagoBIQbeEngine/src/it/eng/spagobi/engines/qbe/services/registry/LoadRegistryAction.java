@@ -159,7 +159,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 					logger.error("Field " + column.getField() + " not found!!");
 				} else {
 					orderCol = column.getSorter();
-					query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, orderCol, field.getPropertyAsString("format"));
+					query.addSelectFiled(field.getUniqueName(), "NONE", field.getPropertyAsString("label"), true, true, false, orderCol, field.getPropertyAsString("format"));
 				}
 			}
 		} finally {

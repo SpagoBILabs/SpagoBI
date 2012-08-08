@@ -200,6 +200,14 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 		this.setSize(this.width, this.thisDimension*this.rowHeight);
 		this.un('afterlayout',	this.updateAfterLayout, this);
 	}
+	
+	, getDescription: function(value){
+		var description = this.crosstab.valueDescriptionMap[value];
+		if(description==undefined || description==null){
+			return value;
+		}
+		return description;
+	}
 
 	,getBackground : function(height, padding){
 		
@@ -209,7 +217,7 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 			backGroundI = this.backgroundImgTitle ;
 		}
 		
-		return '<IMG SRC=\"'+ backGroundI +'\" WIDTH=\"100%\" HEIGHT=\"'+height+'\" style=\"z-index:0\"><div style= \" position:relative; z-index:6; height:'+height+'; margin-top: -'+padding+';\">'+this.formattedName+'<div>';
+		return '<IMG SRC=\"'+ backGroundI +'\" WIDTH=\"100%\" HEIGHT=\"'+height+'\" style=\"z-index:0\"><div style= \" position:relative; z-index:6; height:'+height+'; margin-top: -'+padding+';\">'+this.getDescription(this.formattedName)+'<div>';
 	}
 
 	

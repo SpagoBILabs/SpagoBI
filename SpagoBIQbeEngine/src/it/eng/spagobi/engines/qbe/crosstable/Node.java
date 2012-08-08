@@ -24,6 +24,7 @@ public class Node implements Cloneable, Comparable<Node>{
 		public static final String CROSSTAB_NODE_JSON_KEY = "node_key";
 	
 		private String value;//the value of the node
+		private String description;//the value of the node
 		private CellType cellType;//the value of the node
 		private List<Node> childs;//list of childs
 		private int leafPosition =-1;//position of the leafs in the tree.. If this is the right most leaf the value is 0 and so on
@@ -32,13 +33,20 @@ public class Node implements Cloneable, Comparable<Node>{
 		
 		public Node(String value){
 			this.value = value;
+			this.description = value;
+			childs = new ArrayList<Node>();
+		}
+		
+		public Node(String value, String description){
+			this.value = value;
+			this.description = description;
 			childs = new ArrayList<Node>();
 		}
 
 		public String getValue() {
 			return value;
 		}
-
+		
 		public List<Node> getChilds() {
 			return childs;
 		}
@@ -87,7 +95,8 @@ public class Node implements Cloneable, Comparable<Node>{
 		public JSONObject toJSONObject() throws JSONException{
 			JSONObject thisNode = new JSONObject();
 			
-			thisNode.put(CROSSTAB_NODE_JSON_KEY, value);
+			thisNode.put(CROSSTAB_NODE_JSON_KEY, this.value);
+
 			
 			if(childs.size()>0){
 				JSONArray nodeChilds = new JSONArray();
@@ -99,6 +108,10 @@ public class Node implements Cloneable, Comparable<Node>{
 					
 			return thisNode;
 		}
+		
+//		public JSONObject toJSONObject() throws JSONException{
+//			return toJSONObject(false);
+//		}
 		
 		public int getLeafPosition() {
 			return leafPosition;
@@ -246,7 +259,7 @@ public class Node implements Cloneable, Comparable<Node>{
 		 * Clone only the value and the children
 		 */
 		public Node clone(){
-			Node n = new Node(value);
+			Node n = new Node(value,description);
 			if(childs.size()>0){
 				for (int j = 0; j < childs.size(); j++) {
 					n.addChild(childs.get(j).clone());
@@ -260,9 +273,9 @@ public class Node implements Cloneable, Comparable<Node>{
 			String string;
 			
 			if(childs.size()==0){
-				return "["+value.toString()+"]";
+				return "[V:"+value.toString()+"-D:"+description+"]";
 			}else{
-				string = "["+value.toString()+",[";
+				string = "[V:"+value.toString()+"-D:"+description+",[";
 				for(int i=0; i<childs.size()-1; i++){
 					string = string+childs.get(i).toString()+",";
 				}
@@ -271,35 +284,7 @@ public class Node implements Cloneable, Comparable<Node>{
 			return string;
 		}
 
-		/**
-		 * Tho node with the same value are equals
-		 */
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result
-					+ ((value == null) ? 0 : value.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			Node other = (Node) obj;
-			if (value == null) {
-				if (other.value != null)
-					return false;
-			} else if (!value.equals(other.value))
-				return false;
-			return true;
-		}
-		
+	
 		/**
 		 * For test
 		 * @param height
@@ -319,6 +304,41 @@ public class Node implements Cloneable, Comparable<Node>{
 			}
 		}
 
+		/**
+		 * Two node with the same value are equals
+		 */
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result
+					+ ((description == null) ? 0 : description.hashCode());
+			result = prime * result + ((value == null) ? 0 : value.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Node other = (Node) obj;
+			if (description == null) {
+				if (other.description != null)
+					return false;
+			} else if (!description.equals(other.description))
+				return false;
+			if (value == null) {
+				if (other.value != null)
+					return false;
+			} else if (!value.equals(other.value))
+				return false;
+			return true;
+		}
+
 		public CellType getCellType() {
 			return cellType;
 		}
@@ -329,6 +349,7 @@ public class Node implements Cloneable, Comparable<Node>{
 
 		/* (non-Javadoc)
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 * order always for value
 		 */
 		public int compareTo(Node arg0) {
 			return value.compareTo(arg0.getValue());

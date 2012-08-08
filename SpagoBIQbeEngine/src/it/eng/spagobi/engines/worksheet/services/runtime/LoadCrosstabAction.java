@@ -54,7 +54,7 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 	public void service(SourceBean request, SourceBean response)  {				
 				
 		CrossTab crossTab;
-		IDataStore dataStore = null;
+		IDataStore valuesDataStore = null;
 		CrosstabDefinition crosstabDefinition = null;
 		
 		Monitor totalTimeMonitor = null;
@@ -119,31 +119,33 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, engineInstance.getDataSource());
 			// execute SQL query against temporary table
 			logger.debug("Executing query on temporary table : " + worksheetQuery);
-			dataStore = this.executeWorksheetQuery(worksheetQuery, null, null);
-			LogMF.debug(logger, "Query on temporary table executed successfully; datastore obtained: {0}", dataStore);
-			Assert.assertNotNull(dataStore, "Datastore obatined is null!!");
+			valuesDataStore = this.executeWorksheetQuery(worksheetQuery, null, null);
+			LogMF.debug(logger, "Query on temporary table executed successfully; datastore obtained: {0}", valuesDataStore);
+			Assert.assertNotNull(valuesDataStore, "Datastore obatined is null!!");
 			/* since the datastore, at this point, is a JDBC datastore, 
 			* it does not contain information about measures/attributes, fields' name and alias...
 			* therefore we adjust its metadata
 			*/
-			this.adjustMetadata((DataStore) dataStore, dataset, descriptor);
-			LogMF.debug(logger, "Adjusted metadata: {0}", dataStore.getMetaData());
+			this.adjustMetadata((DataStore) valuesDataStore, dataset, descriptor);
+			LogMF.debug(logger, "Adjusted metadata: {0}", valuesDataStore.getMetaData());
 			logger.debug("Decoding dataset ...");
-			this.applyOptions(dataStore);
-			dataStore = dataset.decode(dataStore);
-			LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
+			this.applyOptions(valuesDataStore);
+			dataset.decode(valuesDataStore);
+			LogMF.debug(logger, "Dataset decoded: {0}", valuesDataStore);
 			
 			// serialize crosstab
 			if(crosstabDefinition.isPivotTable()){
 				//load the crosstab for a crosstab widget (with headers, sum, ...)
-				crossTab= new CrossTab(dataStore, crosstabDefinition, null, null);
+				crossTab= new CrossTab(valuesDataStore, crosstabDefinition, null, null);
 			}else{
 				//load the crosstab data structure for all other widgets
-				crossTab= new CrossTab(dataStore, crosstabDefinition);
+				crossTab= new CrossTab(valuesDataStore, crosstabDefinition);
 			}
 			
 			
-			
+//			String showDesciptionString = (String)ConfigSingleton.getInstance().getAttribute("QBE.CROSSTAB.SHOW-DESCRIPTIONS");
+//			boolean showDesciption = (showDesciptionString!=null && showDesciptionString.equals(true));
+//			
 			JSONObject crossTabDefinition = crossTab.getJSONCrossTab();
 			
 			try {
