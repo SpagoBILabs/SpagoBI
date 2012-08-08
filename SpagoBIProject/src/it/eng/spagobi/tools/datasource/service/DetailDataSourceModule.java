@@ -172,8 +172,9 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 			DataSource dsNew = recoverDataSourceDetails(serviceRequest);
 			EMFErrorHandler errorHandler = getErrorHandler();
 			HashMap<String, String> logParam = new HashMap();
-			logParam.put("TYPE",dsNew.getJndi());
+			logParam.put("JNDI",dsNew.getJndi());
 			logParam.put("NAME",dsNew.getLabel());
+			logParam.put("URL",dsNew.getUrlConnection());
 
 			// if there are some validation errors into the errorHandler does not write into DB
 			Collection errors = errorHandler.getErrors();
