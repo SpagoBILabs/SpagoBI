@@ -1,4 +1,4 @@
-/* SpagoBI, the Open Source Business Intelligence suite
+/* SpagoBI, the Open Source Business Intelligence suite/* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
@@ -114,7 +114,7 @@ public class AuditLogUtilities {
             if (utenzaApplicativa == null) {
             	utenzaApplicativa = request.getHeader(OPERATOR2_KEY);
                 if (utenzaApplicativa == null) {
-                	utenzaApplicativa = userName;			// se l'utenza applicativa Ã¨ vuota inserisco lo user id di spagobi
+                	utenzaApplicativa = userName;			// se l'utenza applicativa ÃƒÂ¨ vuota inserisco lo user id di spagobi
                 }
             }
             
@@ -125,7 +125,7 @@ public class AuditLogUtilities {
             if (profiloApplicativo == null) {
             	profiloApplicativo = request.getHeader(PROFILE2_KEY);
                 if (profiloApplicativo == null) {
-                	profiloApplicativo = userRoles;			// se il profilo applicativo Ã¨ vuoto inserisco i ruoli di spagobi
+                	profiloApplicativo = userRoles;			// se il profilo applicativo ÃƒÂ¨ vuoto inserisco i ruoli di spagobi
                 }
             }	        
 	        strbuf.append(profiloApplicativo);					// PROFILO UTENTE
@@ -173,21 +173,11 @@ public class AuditLogUtilities {
 		}
 		String logString = strbuf.toString();
 
-        MessageDigest md5  = MessageDigest.getInstance("MD5");        
+               
 
-        strbuf.append(calculateHash(md5, strbuf));
+        strbuf.append(calculateHash( strbuf));
 		
-//		if(jdbcConnection!=null){
-//			ja = new CustomJDBCAppender(jdbcConnection);			
-//			if(updateDB && action_code!=null){
-//				String sqlInsert = "INSERT INTO SBI_ACTIVITY_MONITORING (ACTION_TIME, USERNAME, USERGROUP, LOG_LEVEL, ACTION_CODE, INFO)";
-//				sqlInsert += "VALUES('%d{"+dbTimestampFormat+"}';'"+userName+"';'"+userRoles+"';'%5p';'"+action_code+"';'"+(info!=null?info:"")+"')";
-//				logger.debug("SQL INSERT:"+sqlInsert);
-//				ja.setSql(sqlInsert);
-//				audit_logger.addAppender(ja);
-//			}
-//		}
-		// These messages with Priority >= setted priority will be logged to the database.
+
 		audit_logger.info(strbuf);
 	}	
 
@@ -206,8 +196,8 @@ public class AuditLogUtilities {
 		return rolesStr;
 	}
 	
-	public static String calculateHash(MessageDigest algorithm,
-			StringBuffer str) throws Exception{
+	public static String calculateHash(StringBuffer str) throws Exception{
+		MessageDigest algorithm  = MessageDigest.getInstance("MD5"); 
 		String is=new String (str);
         DigestInputStream   dis = new DigestInputStream(new ByteArrayInputStream(is.getBytes()), algorithm);
         while (dis.read() != -1);
