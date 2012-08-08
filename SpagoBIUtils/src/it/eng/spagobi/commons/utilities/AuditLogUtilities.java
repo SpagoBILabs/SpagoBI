@@ -11,7 +11,10 @@ import it.eng.spagobi.commons.bo.CustomJDBCAppender;
 import it.eng.spagobi.commons.bo.UserProfile;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.StringBufferInputStream;
 import java.net.InetAddress;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -21,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Formatter;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -120,7 +122,7 @@ public class AuditLogUtilities {
             if (utenzaApplicativa == null) {
             	utenzaApplicativa = request.getHeader(OPERATOR2_KEY);
                 if (utenzaApplicativa == null) {
-                	utenzaApplicativa = userName;			// se l'utenza applicativa è vuota inserisco lo user id di spagobi
+                	utenzaApplicativa = userName;			// se l'utenza applicativa Ã¨ vuota inserisco lo user id di spagobi
                 }
             }
             
@@ -131,7 +133,7 @@ public class AuditLogUtilities {
             if (profiloApplicativo == null) {
             	profiloApplicativo = request.getHeader(PROFILE2_KEY);
                 if (profiloApplicativo == null) {
-                	profiloApplicativo = userRoles;			// se il profilo applicativo è vuoto inserisco i ruoli di spagobi
+                	profiloApplicativo = userRoles;			// se il profilo applicativo Ã¨ vuoto inserisco i ruoli di spagobi
                 }
             }	        
 	        strbuf.append(profiloApplicativo);					// PROFILO UTENTE
@@ -181,7 +183,7 @@ public class AuditLogUtilities {
 
         MessageDigest md5  = MessageDigest.getInstance("MD5");        
 
-        strbuf.append(calculateHash(md5, logString));
+        strbuf.append(calculateHash(md5, strbuf));
 		
 //		if(jdbcConnection!=null){
 //			ja = new CustomJDBCAppender(jdbcConnection);			
@@ -213,18 +215,11 @@ public class AuditLogUtilities {
 	}
 	
 	public static String calculateHash(MessageDigest algorithm,
-            String fileName) throws Exception{
-
-        FileInputStream     fis = new FileInputStream(fileName);
-        BufferedInputStream bis = new BufferedInputStream(fis);
-        DigestInputStream   dis = new DigestInputStream(bis, algorithm);
-
-        // read the file and update the hash calculation
+			StringBuffer str) throws Exception{
+		String is=new String (str);
+        DigestInputStream   dis = new DigestInputStream(new ByteArrayInputStream(is.getBytes()), algorithm);
         while (dis.read() != -1);
-
-        // get the hash value as byte array
         byte[] hash = algorithm.digest();
-
         return byteArray2Hex(hash);
     }
 
