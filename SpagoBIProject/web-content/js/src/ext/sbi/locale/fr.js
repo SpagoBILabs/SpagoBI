@@ -538,12 +538,12 @@ Sbi.locale.ln['sbi.home.Info']='Informations sur SpagoBI';
 
 Sbi.locale.ln['sbi.lookup.ValueOfColumn']='La valeur de la colonne';
 Sbi.locale.ln['sbi.lookup.asA']='comme';
-Sbi.locale.ln['sbi.lookup.asString'] = 'Cha\u00EEne';
+Sbi.locale.ln['sbi.lookup.asString'] = 'Texte';
 Sbi.locale.ln['sbi.lookup.asNumber'] = 'Nombre';
 Sbi.locale.ln['sbi.lookup.asDate'] = 'Date';
 Sbi.locale.ln['sbi.lookup.Contains'] = 'Contient';
-Sbi.locale.ln['sbi.lookup.StartsWith'] = 'Commencez par';
-Sbi.locale.ln['sbi.lookup.EndsWith'] = 'Fini par';
+Sbi.locale.ln['sbi.lookup.StartsWith'] = 'Commence par';
+Sbi.locale.ln['sbi.lookup.EndsWith'] = 'Finit par';
 
 Sbi.locale.ln['sbi.datasource.jndiname.info']='Pour la configuration du DataSource, merci de sp\u00e9cifier le pool des connexions configur\u00e9es dans le serveur. Par exemple: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 
