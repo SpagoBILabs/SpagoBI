@@ -465,7 +465,7 @@ public class FakeDataset extends AbstractCustomDataSet {
 			List l = new ArrayList<String>();
 			for (Iterator iterator2 = valuesList.iterator(); iterator2.hasNext();) {
 				String s = (String) iterator2.next();
-				l.add(s+ " descrizione molto lunga lunghissima eccetera eccetera");
+				l.add("Desc");
 			}
 			map.put(type, l);
 		}
