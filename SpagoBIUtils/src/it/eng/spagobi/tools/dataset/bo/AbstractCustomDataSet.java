@@ -195,9 +195,9 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 			// recupero la relativa descrizione prendendolo dalla stessa posizione nella lista delle descrizioni
 			String newValue = descriptions.get(index);
 			if (append) {
-				field.setValue(code + " - " + newValue); // appendo la descrizione al codice
+				field.setDescription(code + " - " + newValue);
 			} else {
-				field.setValue(newValue); // metto solo la descrizione
+				field.setDescription(newValue); // metto solo la descrizione
 			}
 			
 		}

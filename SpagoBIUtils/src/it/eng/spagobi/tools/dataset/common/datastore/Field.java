@@ -13,34 +13,46 @@ package it.eng.spagobi.tools.dataset.common.datastore;
  */
 public class Field implements IField {
 	Object value = null;
-
-
-
-    public Field(Object value) {
-		super();
-		this.value = value;
-	}
-    
-
+	Object description = null;
+	
+	
 
 	public Field() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
-
-
-
+	
+	/**
+	 * @param value
+	 */
+	public Field(Object value) {
+		super();
+		this.value = value;
+	}
+	/**
+	 * @param value
+	 * @param description
+	 */
+	public Field(Object value, Object description) {
+		super();
+		this.value = value;
+		this.description = description;
+	}
 	public Object getValue() {
-    	return value;
-    }
-
-
+		return value;
+	}
 	public void setValue(Object value) {
 		this.value = value;
 	}
-	
-	public String toString() {
-		return "" + getValue();
+	public Object getDescription() {
+		return description;
 	}
+	public void setDescription(Object description) {
+		this.description = description;
+	}
+
+
+
+
+	
 
 }
