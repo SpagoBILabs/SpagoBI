@@ -550,9 +550,24 @@
  <target name="package.all.src" depends="clean.all">
    <mkdir dir="../../../dist" />
    <zip destfile="../../../dist/SpagoBI-src-${project.version}_${project.date}.zip"
-        excludes="**/*.svn"  basedir="../../../">
-
+        excludes="**/*.svn **/SpagoBIWekaEngine/** **/SpagoBIJPaloEngine/**"  
+   		basedir="../../../">
   </zip> 
-  </target>
-     
+ </target>
+ <target name="package.jpalo.src" depends="clean.all">
+   <mkdir dir="../../../dist" />
+   <zip destfile="../../../dist/SpagoBIJPaloEngine-src-${project.version}_${project.date}.zip"
+        excludes="**/*.svn"
+ 		includes="**/SpagoBIJPaloEngine/** **/SpagoBI-3.0-source/ant-files/SpagoBI-3.x-source/ant/** **/SpagoBI-3.0-source/ant-files/SpagoBI-3.x-source/SpagoBIJPaloEngine/**"	      
+   	    basedir="../../../">
+  </zip> 
+ </target>
+ <target name="package.weka.src" depends="clean.all">
+   <mkdir dir="../../../dist" />
+   <zip destfile="../../../dist/SpagoBIWekaEngine-src-${project.version}_${project.date}.zip"
+        excludes="**/*.svn"
+   		includes="**/SpagoBIWekaEngine/** **/SpagoBI-3.0-source/ant-files/SpagoBI-3.x-source/ant/** **/SpagoBI-3.0-source/ant-files/SpagoBI-3.x-source/SpagoBIWekaEngine/**"
+   	    basedir="../../../">
+  </zip> 
+ </target>    
 </project>
