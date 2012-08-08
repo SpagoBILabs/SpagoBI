@@ -60,7 +60,7 @@ public class CrossTab {
 	public static final String CROSSTAB_CELLTYPEOFCOLUMNS = "celltypeOfColumns";
 	public static final String CROSSTAB_CELLTYPEOFROWS = "celltypeOfRows";
 	
-	
+	public static final String CROSSTAB_JSON_VALUE_DESCRIPTION_MAP = "valueDescriptionMap";
 	public static final String MEASURE_NAME = "name";
 	public static final String MEASURE_TYPE = "type";
 	public static final String MEASURE_FORMAT = "format";
@@ -85,6 +85,7 @@ public class CrossTab {
 	private List<String[]> rowsSum; //sum calculate for the rows (summ the row 1.. )
 	private List<String[]> columnsSum; //sum calculate for the rows (summ the row 1.. )
 	private boolean measuresOnRow;
+	private Map<String,String> mapValueDescription = new HashMap<String,String>();
 	
 	public enum CellType {
 		DATA("data"), CF("cf"), SUBTOTAL("partialsum"), TOTAL("totals");
@@ -108,6 +109,7 @@ public class CrossTab {
 	 * Builds the crossTab (headers structure and data)
 	 * @param dataStore: the source of the data
 	 * @param crosstabDefinition: the definition of the crossTab
+	 * @param fieldOptions: fieldOptions
 	 * @param calculateFields: array of JSONObjects the CF
 	 */
 	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray fieldOptions, JSONArray calculateFields) throws JSONException{
@@ -131,14 +133,16 @@ public class CrossTab {
 		List<CrosstabDefinition.Column> columns =  crosstabDefinition.getColumns();
 		addHeaderTitles(columns, 0, columnsRoot);
 	}
+	
+
 
 	/**
 	 * Builds the crossTab (headers structure and data)
 	 * @param dataStore: the source of the data
 	 * @param crosstabDefinition: the definition of the crossTab
 	 */
-	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition) throws JSONException{
-		IRecord record;
+	public CrossTab(IDataStore valuesDataStore, CrosstabDefinition crosstabDefinition) throws JSONException{
+		IRecord valueRecord;
 		String rowPath;
 		String columnPath;
 		this.config = crosstabDefinition.getConfig();
@@ -166,27 +170,29 @@ public class CrossTab {
 		columnsRoot = new Node("rootC");
 		rowsRoot = new Node("rootR");
 
-		for(index = 0; index<dataStore.getRecordsCount() && (cellLimit<=0 || index<cellLimit); index++){
-			record = dataStore.getRecordAt(index);
-			addRecord(columnsRoot, record, 0, columnsCount);
-			addRecord(rowsRoot, record, columnsCount, columnsCount+rowsCount);
+		for(index = 0; index<valuesDataStore.getRecordsCount() && (cellLimit<=0 || index<cellLimit); index++){
+			valueRecord = valuesDataStore.getRecordAt(index);
+
+			addRecord(columnsRoot, valueRecord, 0, columnsCount);
+			addRecord(rowsRoot, valueRecord, columnsCount, columnsCount+rowsCount);
 		}
 		
 		columnsRoot.orderedSubtree();
 		rowsRoot.orderedSubtree();
 		
-		if(index<dataStore.getRecordsCount()){
+		if(index<valuesDataStore.getRecordsCount()){
 			Node completeColumnsRoot =  new Node("rootCompleteC");
-			for(index = 0; index<dataStore.getRecordsCount(); index++){
-				record = dataStore.getRecordAt(index);
-				addRecord(completeColumnsRoot, record, 0, columnsCount);
+			for(index = 0; index<valuesDataStore.getRecordsCount(); index++){
+				valueRecord = valuesDataStore.getRecordAt(index);
+				
+				addRecord(completeColumnsRoot, valueRecord, 0, columnsCount);
 			}
 			columnsOverflow =  columnsRoot.getLeafsNumber()<completeColumnsRoot.getLeafsNumber();
 		}
 				
-		for(index = 0; index<dataStore.getRecordsCount(); index++){
-			record = dataStore.getRecordAt(index);
-			List<IField> fields= record.getFields();
+		for(index = 0; index<valuesDataStore.getRecordsCount(); index++){
+			valueRecord = valuesDataStore.getRecordAt(index);
+			List<IField> fields= valueRecord.getFields();
 			columnPath="";
 			for(int i=0; i<columnsCount; i++){
 				Object value = fields.get(i).getValue();
@@ -200,7 +206,7 @@ public class CrossTab {
 			}
 						
 			rowPath="";
-			for(int i=columnsCount; i<record.getFields().size()-measuresCount; i++){
+			for(int i=columnsCount; i<valueRecord.getFields().size()-measuresCount; i++){
 				Object value = fields.get(i).getValue();
 				String valueStr = null;
 				if (value == null){
@@ -212,7 +218,7 @@ public class CrossTab {
 			}
 			
 				
-			for(int i=record.getFields().size()-measuresCount; i<record.getFields().size(); i++){
+			for(int i=valueRecord.getFields().size()-measuresCount; i<valueRecord.getFields().size(); i++){
 				columnCordinates.add(columnPath);
 				rowCordinates.add(rowPath);
 				data.add(""+getStringValue(fields.get(i).getValue()));
@@ -232,7 +238,7 @@ public class CrossTab {
 		
 		// put measures' info into measures variable 
 		measures = new ArrayList<CrossTab.MeasureInfo>();
-		IMetaData meta = dataStore.getMetaData();
+		IMetaData meta = valuesDataStore.getMetaData();
 		for(int i = meta.getFieldCount() - measuresCount; i < meta.getFieldCount(); i++){
 			// the field number i contains the measure number (i - <number of dimensions>)
 			// but <number of dimension> is <total fields count> - <total measures count>
@@ -296,19 +302,8 @@ public class CrossTab {
 		
 		JSONArray descriptions = getHeaderDescriptions( crosstabDefinition.getRows());
 		crossTabDefinition.put(CROSSTAB_JSON_ROWS_HEADERS_DESCRIPTION, descriptions);
+		crossTabDefinition.put(CROSSTAB_JSON_VALUE_DESCRIPTION_MAP, serializeMapValueDescription());
 		
-//		Node columnsRootToSerialize;
-		
-//		if(this.crosstabDefinition.isPivotTable()){
-//			//add the headers in the columns
-//			List<CrosstabDefinition.Column> columns =  crosstabDefinition.getColumns();
-//			columnsRootToSerialize = columnsRoot.clone();
-//			addHeaderTitles(columns, 0, columnsRootToSerialize);
-//		}else{
-//			columnsRootToSerialize = columnsRoot;
-//		}
-
-		//crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRootToSerialize.toJSONObject());
 		crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRoot.toJSONObject());
 		crossTabDefinition.put(CROSSTAB_JSON_DATA,  getJSONDataMatrix());
 		crossTabDefinition.put(CROSSTAB_CELLTYPEOFCOLUMNS,  serializeCellType(this.celltypeOfColumns));
@@ -324,6 +319,19 @@ public class CrossTab {
 		}
 		return types;
 	}
+	
+	private JSONObject serializeMapValueDescription() throws JSONException{
+		String value, description;
+		JSONObject valueDescription = new JSONObject();
+		Iterator<String> i = mapValueDescription.keySet().iterator();
+		while(i.hasNext()){
+			value = i.next();
+			description = mapValueDescription.get(value);
+			valueDescription.put(value, description);
+		}
+		return valueDescription;
+	}
+	
 	
 
 	/**
@@ -447,19 +455,27 @@ public class CrossTab {
 	 * @param startPosition 
 	 * @param endPosition
 	 */
-	private void addRecord(Node root, IRecord record, int startPosition, int endPosition){
-		IField field;
+	private void addRecord(Node root, IRecord valueRecord, int startPosition, int endPosition){
+		IField valueField;
 		Node node;
 		Node nodeToCheck = root;
 		int nodePosition;
+		List<IField> valueFields= new ArrayList<IField>();
 		
-		List<IField> fields= new ArrayList<IField>();
-		fields = record.getFields();
+		valueFields = valueRecord.getFields();
+
 		for(int indexFields = startPosition; indexFields<endPosition; indexFields++){
-			field = fields.get(indexFields);
-			if (field.getValue() != null) {
-				node = new Node(field.getValue().toString());
-			} else {
+			valueField = valueFields.get(indexFields);
+			//there is a description
+			//there is only the value
+			if (valueField.getValue() != null) {
+				if (valueField.getDescription() != null) {
+					node = new Node(valueField.getValue().toString(), valueField.getDescription().toString());
+					mapValueDescription.put(valueField.getValue().toString(), valueField.getDescription().toString());
+				}else{
+					node = new Node(valueField.getValue().toString());
+				}
+			}else {
 				node = new Node("null");
 			}
 			nodePosition = nodeToCheck.getChilds().indexOf(node);
