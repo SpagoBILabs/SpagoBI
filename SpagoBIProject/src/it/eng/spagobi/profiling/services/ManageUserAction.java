@@ -130,7 +130,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 			logger.error("Exception occurred while retrieving users", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
 					"Exception occurred while retrieving users", e);
-		}
+		}		
 	}
 
 
@@ -173,18 +173,20 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 
 	protected void saveUser(ISbiUserDAO userDao) {
 		UserProfile profile = (UserProfile) this.getUserProfile();
-		try {
+		boolean insertModality = true;
+		HashMap<String, String> logParam = new HashMap();
+		try {			
 			Integer id = getAttributeAsInteger(ID);
 			if (id != null && id > 0) {
+				insertModality = false;
 				// modifying an existing user.
 				// We must load user to check if user belongs to the right tenant,
 				// since Hibernate 3.6 puts tenant filter on select, not on delete 
-				SbiUser user = userDao.loadSbiUserById(id);
-				HashMap<String, String> logParam = new HashMap();
-				logParam.put("FULLNAME", user.getFullName());
+				SbiUser user = userDao.loadSbiUserById(id);								
 				if (user != null) {
 					this.checkIfCurrentUserIsAbleToSaveOrModifyUser(user);
 				} else {
+					logParam.put("USER ID", id.toString());
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS.MODIFY",logParam , "KO");
 					throw new SpagoBIServiceException(
 							SERVICE_NAME,
@@ -197,11 +199,10 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 			String userId = getAttributeAsString(USER_ID);
 			String fullName = getAttributeAsString(FULL_NAME);
 			String password = getAttributeAsString(PASSWORD);
-			HashMap<String, String> logParam = new HashMap();
 			logParam.put("FULLNAME", fullName);
 			
 			if (userId == null) {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS.ADD/MODIFY",logParam , "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS." +((insertModality)?"ADD":"MODIFY"),logParam , "KO");
 				logger.error("User name missing");
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"User name missing");
@@ -217,7 +218,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				try {
 					user.setPassword(Password.encriptPassword(password));
 				} catch (Exception e) {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS.ADD/MODIFY",logParam , "KO");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS."+((insertModality)?"ADD":"MODIFY"),logParam , "KO");
 					logger.error("Impossible to encrypt Password", e);
 					throw new SpagoBIServiceException(SERVICE_NAME,
 							"Impossible to encrypt Password", e);
@@ -228,7 +229,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				deserializeAttributesJSONArray(user);
 				deserializeRolesJSONArray(user);
 			} catch (JSONException e) {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS.ADD/MODIFY",logParam , "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS"+((insertModality)?"ADD":"MODIFY"),logParam , "ERR");
 				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while deserializing attributes and roles", e);
 			}
 			
@@ -241,7 +242,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				id = userDao.fullSaveOrUpdateSbiUser(user);
 				logger.debug("User updated or Inserted");
 			} catch (Throwable t) {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS.ADD/MODIFY",logParam , "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS."+((insertModality)?"ADD":"MODIFY"),logParam , "KO");
 				logger.error("Exception occurred while saving user", t);
 				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while saving user", t);
 			}
@@ -253,15 +254,15 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 						"Operation succeded");
 				attributesResponseSuccessJSON.put("id", id);
 				writeBackToClient(new JSONSuccess(attributesResponseSuccessJSON));
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS.ADD/MODIFY",logParam , "OK");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS."+((insertModality)?"ADD":"MODIFY"),logParam , "OK");
 			} catch (Exception e) {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS.ADD/MODIFY",logParam , "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS."+((insertModality)?"ADD":"MODIFY"),logParam , "KO");
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client", e);
 			}
 		
 		} catch (SpagoBIServiceException e) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS.ADD/MODIFY",null , "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS."+((insertModality)?"ADD":"MODIFY"),logParam , "ERR");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -269,7 +270,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 			throw e;
 		} catch (Throwable e) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS.ADD/MODIFY",null , "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS"+((insertModality)?"ADD":"MODIFY"),logParam , "ERR");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
