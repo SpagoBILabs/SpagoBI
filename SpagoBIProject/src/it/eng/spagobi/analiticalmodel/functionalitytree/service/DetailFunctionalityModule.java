@@ -198,6 +198,7 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 	 */
 	private void modDettaglioFunctionality(SourceBean request, String mod,
 			SourceBean response) throws EMFUserError, SourceBeanException {
+		HashMap<String, String> logParam = new HashMap();
 		try {
 			// **********************************************************************
 			RequestContainer requestContainer = this.getRequestContainer();	
@@ -207,6 +208,7 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 			profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			LowFunctionality lowFunct = recoverLowFunctionalityDetails(request,
 					mod);
+			logParam.put("Functionality_Name", lowFunct.getName());
 			response.setAttribute(FUNCTIONALITY_OBJ, lowFunct);
 			response.setAttribute(AdmintoolsConstants.MODALITY, mod);
 			EMFErrorHandler errorHandler = getErrorHandler();
@@ -233,9 +235,9 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 											false);
 						}
 						if (parentFolder == null) {
-							HashMap<String, String> logParam = new HashMap();
-							logParam.put("Document_name", lowFunct.getName());
-							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",logParam , "OK");		 
+							
+							
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",logParam , "KO");		 
 							
 							throw new Exception("Parent folder not available.");
 						} else {
@@ -249,15 +251,26 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 			}
 
 			if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-				SessionContainer permSess = getRequestContainer()
-						.getSessionContainer().getPermanentContainer();
-				IEngUserProfile profile = (IEngUserProfile) permSess
-						.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-				DAOFactory.getLowFunctionalityDAO().insertLowFunctionality(
-						lowFunct, profile);
+				//SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
+				//IEngUserProfile profile = (IEngUserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+				DAOFactory.getLowFunctionalityDAO().insertLowFunctionality(lowFunct, profile);
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",logParam , "OK");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}				
 			} else if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_MOD)) {
 				DAOFactory.getLowFunctionalityDAO().modifyLowFunctionality(
 						lowFunct);
+				
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.MODIFY",logParam , "OK");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 				// at this point erase inconsistent child roles that have been
 				// deleted from parents
 				// prova debug
@@ -271,7 +284,7 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 
 		} catch (EMFUserError eex) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD/MODIFY",null , "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD/MODIFY",logParam , "ERR");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -281,7 +294,7 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 			return;
 		} catch (Exception ex) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD/MODIFY",null , "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD/MODIFY",logParam , "ERR");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -292,12 +305,7 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute(AdmintoolsConstants.LOOPBACK, "true");
-		try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD/MODIFY",null , "OK");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 
 	/**
@@ -317,22 +325,25 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 	 */
 	private void delFunctionality(SourceBean request, String mod,
 			SourceBean response) throws EMFUserError, SourceBeanException {
+		HashMap<String, String> logParam = new HashMap();
+		SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
+		IEngUserProfile profile = (IEngUserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		
 		try {
+
 			if (typeFunct.equals("LOW_FUNCT")) {
 				String path = (String) request.getAttribute(PATH);
 				ILowFunctionalityDAO funcdao = DAOFactory
 						.getLowFunctionalityDAO();
 				LowFunctionality funct = funcdao.loadLowFunctionalityByPath(
 						path, false);
-				SessionContainer permSess = getRequestContainer()
-						.getSessionContainer().getPermanentContainer();
-				IEngUserProfile profile = (IEngUserProfile) permSess
-						.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+				if (funct!=null) logParam.put("Functionlity_Name",funct.getName());
+
 				funcdao.eraseLowFunctionality(funct, profile);
 			}
 		} catch (EMFUserError eex) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.DELETE",null , "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.DELETE",logParam , "KO");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -342,7 +353,7 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 			return;
 		} catch (Exception ex) {
 				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.DELETE",null , "KO");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.DELETE",logParam , "KO");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -354,7 +365,7 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 		}
 		response.setAttribute("loopback", "true");
 		try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.DELETE",null , "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.DELETE",logParam , "OK");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -373,6 +384,8 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 	 */
 	private void newDettaglioFunctionality(SourceBean request,
 			SourceBean response) throws EMFUserError {
+		
+		
 		try {
 			this.modality = AdmintoolsConstants.DETAIL_INS;
 			String pathParent = (String) request
@@ -404,25 +417,19 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 				funct.setExecRoles(execRoles);
 				funct.setCreateRoles(createRoles);
 				response.setAttribute(FUNCTIONALITY_OBJ, funct);
+				
+				
 			}
+			
 
+			
 		} catch (EMFUserError eex) {
-			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",null , "ERR");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
 			EMFErrorHandler errorHandler = getErrorHandler();
 			errorHandler.addError(eex);
 			return;
 		} catch (Exception ex) {
-			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",null , "KO");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE,
 					"DetailFunctionalityModule", "newDettaglioFunctionality",
 					"Cannot prepare page for the insertion", ex);
@@ -477,7 +484,7 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 					.loadLowFunctionalityByPath(pathParent, false);
 			if (parentFunct == null) {
 				HashMap<String, String> logParam = new HashMap();
-				logParam.put("Document_name", parentFunct.getName());
+				logParam.put("Funtionality_Name", parentFunct.getName());
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "parentFunct",logParam , "OK");
 				} catch (Exception e) {

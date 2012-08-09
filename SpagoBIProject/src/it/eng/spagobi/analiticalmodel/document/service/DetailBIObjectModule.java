@@ -354,18 +354,17 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	 */
 	private void getDetailObject(SourceBean request, SourceBean response)
 			throws Exception {
+		HashMap<String, String> logParam = new HashMap();
 		try {
 			String idStr = (String) request.getAttribute(ObjectsTreeConstants.OBJECT_ID);
 			Integer id = new Integer(idStr);
 			BIObject obj = biobjDAO.loadBIObjectForDetail(id);
+		
 			
 			if (obj == null) {
 				logger.error("BIObject with id "+id+" cannot be retrieved.");
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1040);
 				errorHandler.addError(error);
-				HashMap<String, String> logParam = new HashMap();
-				logParam.put("Document_name", obj.getName());
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY",logParam , "OK");
 				return;
 			}
 			Object selectedObjParIdObj = request.getAttribute("selected_obj_par_id");
@@ -378,7 +377,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, true, true);
 		} catch (Exception ex) {
 			logger.error("Cannot fill response container", ex);
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY", null , "ERR");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY", logParam , "ERR");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 	}
@@ -653,11 +652,18 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	private void delDetailObject(SourceBean request, String mod, SourceBean response, IEngUserProfile profile)
 		throws EMFUserError, SourceBeanException {
 		BIObject obj = null;
+		HashMap<String, String> logParam = new HashMap();
+
 		try {
 			String idObjStr = (String) request.getAttribute(ObjectsTreeConstants.OBJECT_ID);
 			Integer idObj = new Integer(idObjStr);
 			IBIObjectDAO objdao = biobjDAO;
 			obj = objdao.loadBIObjectById(idObj);
+			if (obj!=null){
+				logParam.put("Document_name", obj.getName());
+				logParam.put("Document_label", obj.getLabel());
+				if (obj.getId() != null) logParam.put("Document_id", obj.getId().toString());
+			}
 			String idFunctStr = (String) request.getAttribute(ObjectsTreeConstants.FUNCT_ID);
 			if (idFunctStr != null) {
 				Integer idFunct = new Integer(idFunctStr);
@@ -705,7 +711,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		} catch (Exception ex) {	
 			logger.error("Cannot erase object", ex  );
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_CANNOT_ERASE_OBJECT", null , "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.DELETE", logParam , "ERR");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -713,10 +719,9 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
-		HashMap<String, String> logParam = new HashMap();
-		logParam.put("Document_name", obj.getName());
+
 		try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY",logParam , "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.DELETE",logParam , "OK");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -822,11 +827,24 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	 *             If a SourceBean exception occurs
 	 */
 	private void modBIObject(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException {
+		HashMap<String, String> logParam = new HashMap();
 		try {
-		    
+			
 		    
 			// build a biobject using data in request
 			BIObject obj = helper.recoverBIObjectDetails(mod);
+			
+			if (obj!=null) {
+				logParam.put("Document_name", obj.getName());
+				logParam.put("Document_Label", obj.getLabel());
+				logParam.put("Creation_User", obj.getCreationUser());
+				logParam.put("path", obj.getPath());
+				logParam.put("tenant", obj.getTenant());
+				logParam.put("state", obj.getStateCode());
+				if (obj.getBiObjectTypeID()!=null) logParam.put("Object Type", obj.getBiObjectTypeID().toString());
+				if (obj.getEngine() !=null) logParam.put("Engine", obj.getEngine().getName());
+			}
+			
 			boolean flgReloadTemp = false;
 			// define variable that contains the id of the parameter selected
 			String selectedObjParIdStr = null;
@@ -868,8 +886,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			if(!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 				helper.fillResponse(initialPath);
 				prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, mod, false, false);				
-				HashMap<String, String> logParam = new HashMap();
-				logParam.put("Document_name", obj.getName());
+
+				
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_VALIDATION_ERROR",logParam , "ERR");				
 				return;
 			}
@@ -889,6 +907,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					biobjDAO.insertBIObject(obj, objTemp, loadParsDCClicked);
 				}
 
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD",logParam , "OK");	
 			} else if(mod.equalsIgnoreCase(SpagoBIConstants.DETAIL_MOD)) {
 				
 				BIObjectParameter biObjPar = null;
@@ -913,8 +932,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 						if(!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 							helper.fillResponse(initialPath);
 							prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
-							HashMap<String, String> logParam = new HashMap();
-							logParam.put("Document_name", obj.getName());
+
 							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_DETAIL_MOD",logParam , "OK");	
 							return;
 						}
@@ -928,7 +946,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 							objParDAO.modifyBIObjectParameter(biObjPar);
 						}
 						prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
-						HashMap<String, String> logParam = new HashMap();
+
 						logParam.put("Document_name", obj.getName());
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_DETAIL_MOD",logParam , "OK");	
 						return;
@@ -936,7 +954,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 						helper.fillResponse(initialPath);
 						prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
 		    			// exits without writing into DB
-						HashMap<String, String> logParam = new HashMap();
+
 						logParam.put("Document_name", obj.getName());
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_DETAIL_MOD",logParam , "OK");	
 		    			return;
@@ -950,14 +968,14 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 						EMFValidationError error = checkForDependancies(objParIdInt);
 						if (error != null) {
 							errorHandler.addError(error);
-							// PER MONIA,DOCUMENT.MODIFY, userId, obj.getName()	 
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_DETAIL_MOD",logParam , "KO"); 
 						}
 						helper.fillResponse(initialPath);
 						// if there are some validation errors into the errorHandler does not write into DB
 						if(!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 							helper.fillResponse(initialPath);
 							prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
-							// PER MONIA, DOCUMENT.MODIFY, userId, obj.getName()	 
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_DETAIL_MOD",logParam , "KO");	 
 							return;
 						}
 						// deletes the BIObjectParameter
@@ -966,7 +984,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 						objParDAO.eraseBIObjectParameter(objPar, true);
 						selectedObjParIdStr = "";
 						prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
-						HashMap<String, String> logParam = new HashMap();
+
 						logParam.put("Document_name", obj.getName());
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_DETAIL_MOD",logParam , "OK");	
 						return;
@@ -994,7 +1012,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					if(!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 						helper.fillResponse(initialPath);
 						prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
-						HashMap<String, String> logParam = new HashMap();
+
 						logParam.put("Document_name", obj.getName());
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_DETAIL_MOD",logParam , "OK");		 
 						return;
@@ -1025,7 +1043,9 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 						selectedObjParIdStr = biObjPar.getId().toString();
 	    			} else selectedObjParIdStr = "-1";
 				}
-				
+
+
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY",logParam , "OK");
 			}
 			
 			// reloads the BIObject with the correct Id 
@@ -1047,14 +1067,12 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 				response.setAttribute("selected_obj_par_id", selectedObjParIdStr);
 				response.setAttribute("saveLoop", "true");
 			}		
-			HashMap<String, String> logParam = new HashMap();
-			logParam.put("Document_name", obj.getName());
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY",logParam , "OK");		 
+	 
 
 		} catch (EMFUserError error) {			
 			logger.error("Cannot fill response container", error  );
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY",null , "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY",logParam , "ERR");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1063,7 +1081,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		} catch (Exception ex) {			
 			logger.error("Cannot fill response container", ex  );
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY",null , "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY",logParam , "ERR");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -141,12 +141,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 			Parameter parameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(new Integer(key));
 			prepareParameterDetailPage(response, parameter, null, "", modalita, true, true);			
 		} catch (Exception ex) {
-			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",null , "KO");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","getDetailParameter","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -308,9 +303,17 @@ public class DetailParameterModule extends AbstractHttpModule {
 	 */
 	private void modDetailParameter(SourceBean request, String mod, SourceBean response)
 		throws EMFUserError, SourceBeanException {
+		
+		HashMap<String, String> logParam = new HashMap();
+
+		
 		try {
 			
 			Parameter parameter = recoverParameterDetails(request, mod);
+			logParam.put("Parameter_name", parameter.getName());
+			logParam.put("Parameter_type", parameter.getType());
+			logParam.put("Parameter_label", parameter.getLabel());
+			
 			String selectedParuseIdStr = null;
 			if (mod.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {
 				String paruseIdStr = (String) request.getAttribute("useId");
@@ -337,10 +340,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 							while (iterator.hasNext()) {
 								Object error = iterator.next();
 								if (error instanceof EMFValidationError) {
-									HashMap<String, String> logParam = new HashMap();
-									logParam.put("Document_name", parameter.getName());
-									logParam.put("Document_type", parameter.getType());
-										AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",logParam , "OK");
+
+										AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.MODIFY",logParam , "KO");
 					    			prepareParameterDetailPage(response, parameter, paruse, paruseIdStr, 
 					    					ObjectsTreeConstants.DETAIL_MOD, false, false);
 									return;
@@ -381,10 +382,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 							if (error instanceof EMFValidationError) {
 				    			prepareParameterDetailPage(response, parameter, paruse, paruseIdStr, 
 				    					ObjectsTreeConstants.DETAIL_MOD, false, false);
-				    			HashMap<String, String> logParam = new HashMap();
-								logParam.put("Document_name", parameter.getName());
-								logParam.put("Document_type", parameter.getType());
-								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",logParam , "OK");
+
+								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.MODIFY",logParam , "KO");
 								return;
 							}
 						}
@@ -427,10 +426,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 							if (error instanceof EMFValidationError) {
 								prepareParameterDetailPage(response, parameter, paruse, paruseIdInt.toString(), 
 										ObjectsTreeConstants.DETAIL_MOD, false, false);
-								HashMap<String, String> logParam = new HashMap();
-								logParam.put("Document_name", parameter.getName());
-								logParam.put("Document_type", parameter.getType());
-									AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",logParam , "OK");
+
+									AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.MODIFY",logParam , "KO");
 								return;
 							}
 						}
@@ -456,7 +453,12 @@ public class DetailParameterModule extends AbstractHttpModule {
 						selectedParuseIdStr = paruse.getUseID().toString();
 	    			} else selectedParuseIdStr = "-1";
 				}
-
+    			try {
+    				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.MODIFY",logParam , "OK");
+    			} catch (Exception e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
     		} else {
     			ValidationCoordinator.validate("PAGE", "ParameterValidation", this);
     			parameterLabelControl(parameter, mod);
@@ -472,10 +474,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 						if (error instanceof EMFValidationError) {
 							prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr, 
 									ObjectsTreeConstants.DETAIL_INS, false, false);
-							HashMap<String, String> logParam = new HashMap();
-							logParam.put("Document_name", parameter.getName());
-							logParam.put("Document_type", parameter.getType());
-							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",logParam , "KO");
+
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD",logParam , "KO");
 							return;
 						}
 					}
@@ -489,6 +489,14 @@ public class DetailParameterModule extends AbstractHttpModule {
     			dao.insertParameter(parameter);
     			// reload the Parameter with the correct id
     			parameter = reloadParameter(parameter.getLabel());
+    			
+    			try {
+    				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD",logParam , "OK");
+    			} catch (Exception e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+    			
     		}
 			
 			Object saveAndGoBack = request.getAttribute("saveAndGoBack");
@@ -506,19 +514,14 @@ public class DetailParameterModule extends AbstractHttpModule {
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListParametersModule.MODULE_PAGE);
 				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",null , "OK");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",null , "ERR");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1015, new Vector(), params);
 		}
-		try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",null , "OK");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 	
 	/**
@@ -760,6 +763,9 @@ public class DetailParameterModule extends AbstractHttpModule {
 	
 	private void delDetailParameter(SourceBean request, String mod, SourceBean response)
 		throws EMFUserError, SourceBeanException {
+		HashMap<String, String> logParam = new HashMap();
+
+		
 		try {
 			IParameterDAO parDAO = DAOFactory.getParameterDAO();
 			IParameterUseDAO parUseDAO = DAOFactory.getParameterUseDAO();
@@ -773,7 +779,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 				v.add(objectsLabels.toString());
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1017, v, params);
 				errorHandler.addError(error);
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",null , "OK");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.DELETE",logParam , "KO");
 				return;
 			}
 			
@@ -785,11 +791,13 @@ public class DetailParameterModule extends AbstractHttpModule {
 			//end of control
 			
 			Parameter parameter =  parDAO.loadForDetailByParameterID(new Integer(id)); 
+			logParam.put("Parameter_name", parameter.getName());
+			logParam.put("Parameter_type", parameter.getType());
 			parDAO.eraseParameter(parameter);
 			
 		} catch (Exception ex) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.DELETE",null , "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.DELETE",logParam , "ERR");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -799,7 +807,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 		}
 		response.setAttribute("loopback", "true");
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.DELETE",null , "OK");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.DELETE",logParam , "OK");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
