@@ -8,7 +8,7 @@ package it.eng.spagobi.tools.scheduler.services;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.dispatching.module.AbstractModule;
+import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.error.EMFErrorCategory;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -20,6 +20,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
@@ -42,11 +43,12 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 
-public class TriggerManagementModule extends AbstractModule {
+public class TriggerManagementModule extends AbstractHttpModule {
 	
 	private RequestContainer requestContainer = null;
 	private SessionContainer sessionContainer = null;
 	private EMFErrorHandler errorHandler=null; 
+	private IEngUserProfile profile = null;
 	
 	private static final long serialVersionUID = 1L;
 	static private Logger logger = Logger.getLogger(TriggerManagementModule.class);
@@ -63,7 +65,7 @@ public class TriggerManagementModule extends AbstractModule {
 		requestContainer = getRequestContainer();
 		sessionContainer = requestContainer.getSessionContainer();
 		errorHandler = getErrorHandler();
-		
+		profile = (IEngUserProfile) sessionContainer.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		message = null;
 		try {
 			
@@ -103,6 +105,7 @@ public class TriggerManagementModule extends AbstractModule {
 	
 	
 	private void runSchedule(SourceBean request, SourceBean response) throws EMFUserError {
+		HashMap<String, String> logParam = new HashMap();
 		try {
 			RequestContainer reqCont = getRequestContainer();
 			SessionContainer sessCont = reqCont.getSessionContainer();
@@ -115,20 +118,46 @@ public class TriggerManagementModule extends AbstractModule {
 			getSchedule(request, response);
 			TriggerInfo triggerInfo = (TriggerInfo)sessCont.getAttribute(SpagoBIConstants.TRIGGER_INFO);
 			StringBuffer message = createMessageSaveSchedulation(triggerInfo, true, profile);
-			
+			logParam.put("JOB NAME", jobName);
+			logParam.put("JOB GROUP NAME", jobGroupName);
 			// call the web service to create the schedule
 			String resp = schedulerService.scheduleJob(message.toString());
 			SourceBean schedModRespSB = SchedulerUtilities.getSBFromWebServiceResponse(resp);
 			if(schedModRespSB!=null) {
 				String outcome = (String)schedModRespSB.getAttribute("outcome");
-				if(outcome.equalsIgnoreCase("fault"))
+				if(outcome.equalsIgnoreCase("fault")){
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHED_TRIGGER.RUN",logParam , "KO");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					throw new Exception("Immediate Trigger not created by the web service");
+				}
 			}
 			// fill spago response
 			response.updAttribute(SpagoBIConstants.PUBLISHER_NAME, "ReturnToTriggerList");
 			response.setAttribute(SpagoBIConstants.JOB_GROUP_NAME, jobGroupName);
 			response.setAttribute(SpagoBIConstants.JOB_NAME, jobName);
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHED_TRIGGER.RUN",logParam , "OK");
+			} catch (Exception e) {
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHED_TRIGGER.RUN",logParam , "KO");
+				} catch (Exception ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (Exception e) {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHED_TRIGGER.RUN",logParam , "KO");
+			} catch (Exception ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+			}
 			logger.error("Error while create immediate trigger ", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -136,10 +165,15 @@ public class TriggerManagementModule extends AbstractModule {
 	 
 	 
 	private void deleteSchedule(SourceBean request, SourceBean response) throws EMFUserError {
+		HashMap<String, String> logParam = new HashMap();
 		String jobName = (String)request.getAttribute("jobName");
 		String jobGroupName = (String)request.getAttribute("jobGroupName");
 		String triggerName = (String) request.getAttribute("triggerName");
 		String triggerGroup = (String) request.getAttribute("triggerGroup");
+		logParam.put("JOB NAME", jobName);
+		logParam.put("JOB GROUP", jobGroupName);
+		logParam.put("TRIGGER NAME", triggerName);
+		logParam.put("TRIGGER GROUP", triggerGroup);
 		try {
 				DAOFactory.getDistributionListDAO().eraseAllRelatedDistributionListObjects(triggerName);
 		        ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
@@ -147,14 +181,33 @@ public class TriggerManagementModule extends AbstractModule {
 			SourceBean schedModRespSB = SchedulerUtilities.getSBFromWebServiceResponse(resp);
 			if(schedModRespSB!=null) {
 				String outcome = (String)schedModRespSB.getAttribute("outcome");
-				if(outcome.equalsIgnoreCase("fault"))
+				if(outcome.equalsIgnoreCase("fault")){
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHED_TRIGGER.DELETE",logParam , "KO");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					throw new Exception("Trigger not deleted by the service");
+				}
 			}
 			// fill spago response
 			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ReturnToTriggerList");
 			response.setAttribute(SpagoBIConstants.JOB_GROUP_NAME, jobGroupName);
 			response.setAttribute(SpagoBIConstants.JOB_NAME, jobName);
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHED_TRIGGER.DELETE",logParam , "OK");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (Exception e) {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHED_TRIGGER.DELETE",logParam , "KO");
+			} catch (Exception ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+			}
 			logger.error("Error while deleting schedule (trigger) ", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -199,10 +252,13 @@ public class TriggerManagementModule extends AbstractModule {
 	// ==========================================================================================================
 	
 	private void saveScheduleForJob(SourceBean request, SourceBean response) throws EMFUserError {
+		HashMap<String, String> logParam = new HashMap();
 		try{
 		
-			TriggerInfo triggerInfo = getTriggerInfoFromRequest(request) ;
-	
+			TriggerInfo triggerInfo = getTriggerInfoFromRequest(request) ;		
+			logParam.put("TRIGGER NAME", triggerInfo.getTriggerName());
+			logParam.put("JOB GROUP", triggerInfo.getJobInfo().getJobGroupName());
+			logParam.put("JOB NAME", triggerInfo.getJobInfo().getJobName());
 			// check for input validation errors 
 			if(!this.getErrorHandler().isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 				List functionalities = DAOFactory.getLowFunctionalityDAO().loadAllLowFunctionalities(false);
@@ -210,11 +266,17 @@ public class TriggerManagementModule extends AbstractModule {
 				List allDatasets = DAOFactory.getDataSetDAO().loadAllActiveDataSets();
 				response.setAttribute(SpagoBIConstants.DATASETS_LIST, allDatasets);
 				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "TriggerDetail");
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHED_TRIGGER.SAVE",logParam , "OK");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				return;
 			}
 			
-			SessionContainer permanentContainer = sessionContainer.getPermanentContainer();
-			IEngUserProfile profile = (IEngUserProfile)permanentContainer.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			//SessionContainer permanentContainer = sessionContainer.getPermanentContainer();
+			//IEngUserProfile profile = (IEngUserProfile)permanentContainer.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		    StringBuffer message = createMessageSaveSchedulation(triggerInfo, false, profile);
 			
 		    // call the web service to create the schedule
@@ -223,13 +285,32 @@ public class TriggerManagementModule extends AbstractModule {
 			SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
 			if(execOutSB!=null) {
 				String outcome = (String)execOutSB.getAttribute("outcome");
-				if(outcome.equalsIgnoreCase("fault"))
+				if(outcome.equalsIgnoreCase("fault")){
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHED_TRIGGER.SAVE",logParam , "KO");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					throw new Exception("Trigger "+ triggerInfo.getTriggerName() +" not created by the web service");
+				}
 			}
 			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ReturnToTriggerList");
 			response.setAttribute(SpagoBIConstants.JOB_GROUP_NAME, triggerInfo.getJobInfo().getJobGroupName());
 			response.setAttribute(SpagoBIConstants.JOB_NAME, triggerInfo.getJobInfo().getJobName());
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHED_TRIGGER.SAVE",logParam , "OK");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (Exception ex) {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHED_TRIGGER.SAVE",logParam , "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			logger.error("Error while saving schedule for job", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}

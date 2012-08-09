@@ -8,7 +8,7 @@ package it.eng.spagobi.tools.scheduler.services;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.dispatching.module.AbstractModule;
+import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.error.EMFErrorCategory;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -21,8 +21,8 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
-import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
 import it.eng.spagobi.tools.scheduler.Formula;
 import it.eng.spagobi.tools.scheduler.FormulaParameterValuesRetriever;
@@ -40,7 +40,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-public class JobManagementModule extends AbstractModule {
+public class JobManagementModule extends AbstractHttpModule {
 	
 	private RequestContainer reqCont = null;
 	private SessionContainer sessionContainer = null;
@@ -200,6 +200,7 @@ public class JobManagementModule extends AbstractModule {
 	}
 	
 	private void deleteJob(SourceBean request, SourceBean response) throws EMFUserError {
+		HashMap<String, String> logParam = new HashMap();
 		try {
 		    ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			String jobName = (String)request.getAttribute("jobName");
@@ -209,6 +210,8 @@ public class JobManagementModule extends AbstractModule {
 			if(rowsSB_JSL==null) {
 				throw new Exception("List of job triggers not returned by Web service ");
 			}
+			logParam.put("JOB NAME", jobName);
+			logParam.put("JOB GROUP NAME", jobGroupName);
 			// delete each schedulation
 			List schedules = rowsSB_JSL.getAttributeAsList("ROW");
 			Iterator iterSchedules = schedules.iterator();
@@ -220,10 +223,22 @@ public class JobManagementModule extends AbstractModule {
 			   	String delResp = schedulerService.deleteSchedulation(triggerName, triggerGroup);
 				SourceBean schedModRespSB_DS = SchedulerUtilities.getSBFromWebServiceResponse(delResp);
 				if(schedModRespSB_DS==null) {
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHEDULER.DELETE",logParam , "KO");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					throw new Exception("Imcomplete response returned by the Web service " +
 							            "during schedule "+triggerName+" deletion");
 				}	
 				if(!SchedulerUtilities.checkResultOfWSCall(schedModRespSB_DS)){
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHEDULER.DELETE",logParam , "KO");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					throw new Exception("Schedule "+triggerName+" not deleted by the Web Service");
 				}
 			}			
@@ -231,17 +246,41 @@ public class JobManagementModule extends AbstractModule {
 			String resp_DJ = schedulerService.deleteJob(jobName, jobGroupName);
 			SourceBean schedModRespSB_DJ = SchedulerUtilities.getSBFromWebServiceResponse(resp_DJ);
 			if(schedModRespSB_DJ==null) {
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHEDULER.DELETE",logParam , "KO");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				throw new Exception("Imcomplete response returned by the Web service " +
 						            "during job "+jobName+" deletion");
 			}	
 			if(!SchedulerUtilities.checkResultOfWSCall(schedModRespSB_DJ)){
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHEDULER.DELETE",logParam , "KO");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				throw new Exception("JOb "+jobName+" not deleted by the Web Service");
 			}
 			// fill response
 			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ReturnToJobList");
 		} catch (Exception ex) {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHEDULER.DELETE",logParam , "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			logger.error("Error while deleting job", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "errors.1002", "component_scheduler_messages");
+		}
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHEDULER.DELETE",logParam , "OK");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -324,7 +363,7 @@ public class JobManagementModule extends AbstractModule {
 	
 	
 	private void saveJob(SourceBean request, SourceBean response) throws EMFUserError {
-		try {
+		try {			
 			// get job information from session
 			JobInfo jobInfo = (JobInfo)sessionContainer.getAttribute(SpagoBIConstants.JOB_INFO);
 			// recover generic data
@@ -379,7 +418,9 @@ public class JobManagementModule extends AbstractModule {
 
 	
 	private void saveJob(JobInfo jobInfo) throws EMFUserError {
-		try {
+		HashMap<String, String> logParam = new HashMap();
+		try {			
+			logParam.put("JOB NAME", jobInfo.getJobName());
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			// create message to define the new job (for the web service)
 			String jobGroupName = JOB_GROUP;
@@ -457,10 +498,12 @@ public class JobManagementModule extends AbstractModule {
 					message.append("<PARAMETER name=\""+biobj.getLabel()+"__"+index+"_useFormula\" value=\""+useFormulaParameters.toString()+"\" />");
 				}
 				doclabels += biobj.getLabel() +"__"+index+ ",";
+				
 			}
 			if(doclabels.length()>0) {
 				doclabels = doclabels.substring(0, doclabels.length()-1);
 			}
+			logParam.put("DOC LABELS", doclabels);
 			message.append("   	   <PARAMETER name=\"documentLabels\" value=\""+doclabels+"\" />");
 			message.append("   </PARAMETERS>");
 			message.append("</SERVICE_REQUEST>");
@@ -468,14 +511,32 @@ public class JobManagementModule extends AbstractModule {
 			String servoutStr = schedulerService.defineJob(message.toString());
 			SourceBean schedModRespSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
 			if(schedModRespSB==null) {
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHEDULER.SAVE",logParam , "KO");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				throw new Exception("Imcomplete response returned by the Web service " +
 						            "during job "+jobInfo.getJobName()+" creation");
 			}	
 			if(!SchedulerUtilities.checkResultOfWSCall(schedModRespSB)){
 				throw new Exception("Job "+jobInfo.getJobName()+" not created by the web service");
 			}
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHEDULER.SAVE",logParam , "OK");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		} catch (Exception ex) {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SCHEDULER.SAVE",logParam , "KO");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			logger.error("Error while saving job", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "errors.1004", "component_scheduler_messages");
 		}
