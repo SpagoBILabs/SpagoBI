@@ -109,13 +109,14 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			logger.error("Error while istantiating DAO", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
 		}
-		HashMap<String, String> logParam = new HashMap();
-		logParam.put("SNAPSHOT NAME", snapshot.getName());
-		logParam.put("NAME", obj.getName());
+		
 		try {
 			snapshot = dao.loadSnapshot(snapshotId);
 		} catch (EMFUserError e) {
 			try {
+				HashMap<String, String> logParam = new HashMap();
+				logParam.put("DOCUMENT NAME", obj.getName());
+				logParam.put("SNAPSHOT ID", snapshotId.toString());
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SNAPSHOT",logParam , "KO");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
@@ -124,6 +125,10 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			logger.error("Snapshot with id = " + snapshotId + " not found", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Scheduled execution not found", e);
 		}
+		HashMap<String, String> logParam = new HashMap();
+		logParam.put("DOCUMENT NAME", obj.getName());
+		logParam.put("SNAPSHOT NAME", snapshot.getName());
+		
 		try {
 			Assert.assertNotNull(executionInstance, "Execution instance cannot be null in order to properly generate execution url");
 			
@@ -173,10 +178,12 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 	}
 
 	protected JSONObject handleSubObjectExecution(Integer subObjectId, boolean isFromCross) {
-		ExecutionInstance executionInstance;
-		UserProfile userProfile = (UserProfile) this.getUserProfile();
-		
 		logger.debug("IN");
+		
+		ExecutionInstance executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
+		UserProfile userProfile = (UserProfile) this.getUserProfile();
+		BIObject obj = executionInstance.getBIObject();
+				
 		JSONObject response = new JSONObject();
 		ISubObjectDAO dao = null;
 		try {
@@ -191,7 +198,10 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			
 		} catch (EMFUserError e) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ",null , "ERR");
+				HashMap<String, String> logParam = new HashMap();
+				logParam.put("SUBOBJECT ID", subObjectId.toString());
+				logParam.put("DOCUMENT NAME", obj.getName());				
+				AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ", logParam, "ERR");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -200,8 +210,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Customized view not found", e);
 		}
 		HashMap<String, String> logParam = new HashMap();
-		logParam.put("ID OGGETTO", subObjectId.toString());
-		logParam.put("NOME OGGETTO", subObject.getName());
+		logParam.put("DOCUMENT NAME", obj.getName());
+		logParam.put("SUBOBJECT NAME", subObject.getName());
 		try {
 			executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 			Assert.assertNotNull(executionInstance, "Execution instance cannot be null in order to properly generate execution url");
@@ -238,7 +248,6 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize errors to the client", e);
 				}
 			} else {				
-				BIObject obj = executionInstance.getBIObject();
 				if (obj.getId().equals(subObject.getBiobjId())) {
 					boolean canExecuteSubObject = false;
 					if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
@@ -310,7 +319,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 		JSONObject response = new JSONObject();
 		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME", executionInstance.getBIObject().getName());
-		logParam.put("ENGINE", executionInstance.getBIObject().getEngine().toString());
+		logParam.put("ENGINE", executionInstance.getBIObject().getEngine().getName());
 		try {
 			Assert.assertNotNull(executionInstance, "Execution instance cannot be null in order to properly generate execution url");
 			
@@ -340,7 +349,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 					response.put("errors", errorsArray);
 				} catch (JSONException e) {
 					try {
-						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "ERR");
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL",logParam , "ERR");
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -356,12 +365,18 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 					response.put("url", url);
 				} catch (JSONException e) {
 					try {
-						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "KO");
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL",logParam , "KO");
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					//PER MONIA, DOCUMENT.GET_URL_FOR_SUBOBJ, user, executionInstance.getBIObject().getName(), executionInstance.getBIObject().getEngine()
+					//PER MONIA, DOCUMENT.GET_URL, user, executionInstance.getBIObject().getName(), executionInstance.getBIObject().getEngine()
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL",logParam , "ERR");
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize the url [" + url + "] to the client", e);
 				}
 			}
@@ -369,7 +384,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			logger.debug("OUT");
 		}
 		try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL",logParam , "OK");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
