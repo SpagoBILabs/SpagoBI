@@ -103,6 +103,9 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 		executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 		obj = executionInstance.getBIObject();
 		dao = null;
+		HashMap<String, String> logParam = new HashMap();
+		logParam.put("DOCUMENT NAME", obj.getName());
+		logParam.put("PARAMS", this.getAttributeAsString( PARAMETERS ));
 		try {
 			dao = DAOFactory.getSnapshotDAO();
 		} catch (EMFUserError e) {				
@@ -114,9 +117,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			snapshot = dao.loadSnapshot(snapshotId);
 		} catch (EMFUserError e) {
 			try {
-				HashMap<String, String> logParam = new HashMap();
-				logParam.put("DOCUMENT NAME", obj.getName());
-				logParam.put("SNAPSHOT ID", snapshotId.toString());
+				
+				logParam.put("SNAPSHOT ID", snapshotId.toString());				
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SNAPSHOT",logParam , "KO");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
@@ -124,11 +126,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			}		 
 			logger.error("Snapshot with id = " + snapshotId + " not found", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Scheduled execution not found", e);
-		}
-		HashMap<String, String> logParam = new HashMap();
-		logParam.put("DOCUMENT NAME", obj.getName());
+		}	
 		logParam.put("SNAPSHOT NAME", snapshot.getName());
-		
 		try {
 			Assert.assertNotNull(executionInstance, "Execution instance cannot be null in order to properly generate execution url");
 			
@@ -183,7 +182,10 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 		ExecutionInstance executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 		UserProfile userProfile = (UserProfile) this.getUserProfile();
 		BIObject obj = executionInstance.getBIObject();
-				
+		HashMap<String, String> logParam = new HashMap();
+		logParam.put("DOCUMENT NAME", obj.getName());	
+		logParam.put("PARAMS", this.getAttributeAsString( PARAMETERS ));
+		
 		JSONObject response = new JSONObject();
 		ISubObjectDAO dao = null;
 		try {
@@ -198,9 +200,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			
 		} catch (EMFUserError e) {
 			try {
-				HashMap<String, String> logParam = new HashMap();
-				logParam.put("SUBOBJECT ID", subObjectId.toString());
-				logParam.put("DOCUMENT NAME", obj.getName());				
+				logParam.put("SUBOBJECT ID", subObjectId.toString());				
 				AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ", logParam, "ERR");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
@@ -209,8 +209,6 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			logger.error("SubObject with id = " + subObjectId + " not found", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Customized view not found", e);
 		}
-		HashMap<String, String> logParam = new HashMap();
-		logParam.put("DOCUMENT NAME", obj.getName());
 		logParam.put("SUBOBJECT NAME", subObject.getName());
 		try {
 			executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
@@ -320,6 +318,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME", executionInstance.getBIObject().getName());
 		logParam.put("ENGINE", executionInstance.getBIObject().getEngine().getName());
+		logParam.put("PARAMS", this.getAttributeAsString( PARAMETERS ));
 		try {
 			Assert.assertNotNull(executionInstance, "Execution instance cannot be null in order to properly generate execution url");
 			

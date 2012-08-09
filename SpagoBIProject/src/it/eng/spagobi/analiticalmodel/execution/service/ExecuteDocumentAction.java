@@ -40,12 +40,22 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 	public void doService() {
 		logger.debug("IN");
 		UserProfile profile = (UserProfile) this.getUserProfile();
-		try {
-			BIObject obj = getRequiredBIObject();
-			HashMap<String, String> logParam = new HashMap();
-			logParam.put("DOCUMENT LABEL", obj.getLabel());
-			if (obj != null) {
-				
+		BIObject obj = null;
+		try{
+			obj = getRequiredBIObject();
+		} catch (EMFUserError e) {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",null , "ERR");
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			logger.error("Service internal error", e);
+		}
+		HashMap<String, String> logParam = new HashMap();
+		try {			
+			if (obj != null) {								
+				logParam.put("DOCUMENT LABEL", obj.getLabel());
 		    	boolean canSee = ObjectsAccessVerifier.canSee(obj, profile);
 		    	if (!canSee) {
 					try {
@@ -59,14 +69,15 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 					this.getServiceResponse().setAttribute(SpagoBIConstants.OBJECT, obj);
 					SubObject subObject = getRequiredSubObject(obj);
 					if (subObject != null) {
+						logParam.put("SUBOJECT NAME", subObject.getName());
 						if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) || 
 								(subObject.getIsPublic().booleanValue() || subObject.getOwner().equals(profile.getUserId()))) {
-							this.getServiceResponse().setAttribute(SpagoBIConstants.SUBOBJECT, subObject);
+							this.getServiceResponse().setAttribute(SpagoBIConstants.SUBOBJECT, subObject);							
 						} else {
 							logParam.put("ENGINE", obj.getEngine().toString());
-							logParam.put("PARAMETERS", obj.getBiObjectParameters().toString());
+							//logParam.put("PARAMETERS", obj.getBiObjectParameters().toString());
 							try {
-								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",logParam , "OK");
+								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",logParam , "ERR");
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -75,20 +86,10 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 						}
 					}
 		    	}
-			} else {
-				logParam.put("ENGINE", obj.getEngine().toString());
-				logParam.put("PARAMETERS", obj.getBiObjectParameters().toString());
-					try {
-						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",logParam , "OK");
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				logger.error("Document not found.");
-			}
+			} 
 		} catch (EMFInternalError e) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",null , "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",logParam , "ERR");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -96,7 +97,7 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 			logger.error("Service internal error", e);
 		} catch (SourceBeanException e) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",null , "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",logParam , "ERR");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -104,12 +105,18 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 			logger.error("Service internal error", e);
 		} catch (EMFUserError e) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",null , "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",logParam , "ERR");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			logger.error("Service internal error", e);
+		}
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.EXECUTION",logParam , "OK");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		logger.debug("OUT");
 	}
