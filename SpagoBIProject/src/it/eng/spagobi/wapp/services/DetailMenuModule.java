@@ -167,7 +167,8 @@ public class DetailMenuModule extends AbstractHttpModule {
 	 */
 	private void modDetailMenu(SourceBean request, String mod, SourceBean response)
 	throws EMFUserError, SourceBeanException {
-
+		HashMap<String, String> logParam = new HashMap();
+		
 		//**********************************************************************
 		RequestContainer reqCont = getRequestContainer();
 		SessionContainer sessCont = reqCont.getSessionContainer();
@@ -176,6 +177,10 @@ public class DetailMenuModule extends AbstractHttpModule {
 
 		
 		Menu menu = recoverMenuDetails(request, mod);
+		logParam.put("Name", menu.getName());
+		logParam.put("Code", menu.getCode());
+
+		
 		response.setAttribute(MENU, menu);
 		response.setAttribute(AdmintoolsConstants.MODALITY, mod);
 		IMenuDAO menuDao=DAOFactory.getMenuDAO();
@@ -201,8 +206,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 				}
 			}
 		}
-		HashMap<String, String> logParam = new HashMap();
-		logParam.put("NAME", menu.getName());
+
 		if(mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {			
 			menuDao.insertMenu(menu);
 			try {
@@ -242,13 +246,14 @@ public class DetailMenuModule extends AbstractHttpModule {
 		SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
 		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		HashMap<String, String> logParam = new HashMap();
-		logParam.put("NAME", menu.getName());
+		logParam.put("Name", menu.getName());
+		logParam.put("Code", menu.getCode());
 		try {
 			menudao.eraseMenu(menu);
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MENU.DELETE",logParam , "OK");
 		} catch (EMFUserError eex) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MENU.DELETE",logParam , "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MENU.DELETE",logParam , "ERR");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

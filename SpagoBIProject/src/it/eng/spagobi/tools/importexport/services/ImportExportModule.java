@@ -11,6 +11,7 @@ import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.dispatching.module.AbstractModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -20,6 +21,7 @@ import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UploadedFile;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
@@ -42,6 +44,7 @@ import it.eng.spagobi.tools.importexport.dao.AssociationFileDAO;
 import it.eng.spagobi.tools.importexport.dao.IAssociationFileDAO;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -51,7 +54,7 @@ import org.apache.log4j.Logger;
 /**
  * This class implements a module which handles the import / export operations
  */
-public class ImportExportModule extends AbstractModule {
+public class ImportExportModule extends AbstractHttpModule {
 
     static private Logger logger = Logger.getLogger(ImportExportModule.class);
 
@@ -132,8 +135,14 @@ public class ImportExportModule extends AbstractModule {
      */
     private void exportConf(SourceBean request, SourceBean response) throws EMFUserError {
 	logger.debug("IN");
+	HashMap<String, String> logParam = new HashMap();
 	IExportManager expManager = null;
 	String exportFileName = (String) request.getAttribute("exportFileName");
+	logParam.put("ExportFileName", exportFileName);
+
+	SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
+	IEngUserProfile profile = (IEngUserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	
 	if ((exportFileName == null) || (exportFileName.trim().equals(""))) {
 	    logger.error("Missing name of the exported file");
 	    throw new EMFValidationError(EMFErrorSeverity.ERROR, "exportFileName", "8006", ImportManager.messageBundle);
@@ -172,13 +181,28 @@ public class ImportExportModule extends AbstractModule {
 	} catch (EMFUserError emfue) {
 	    logger.error("Error while exporting ", emfue);
 	    expManager.cleanExportEnvironment();
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "EXPORT",logParam , "ERR");
+		} catch (Exception ee) {
+			ee.printStackTrace();
+		}
 	    throw emfue;
 	} catch (Exception e) {
 	    expManager.cleanExportEnvironment();
 	    logger.error("Error while exporting ", e);
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "EXPORT",logParam , "ERR");
+		} catch (Exception ee) {
+			ee.printStackTrace();
+		}
 	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 	} finally {
 	    logger.debug("OUT");
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "EXPORT",logParam , "OK");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
     }
 
@@ -208,6 +232,11 @@ public class ImportExportModule extends AbstractModule {
      */
     private void importConf(SourceBean request, SourceBean response) throws EMFUserError {
 	logger.debug("IN");
+	HashMap<String, String> logParam = new HashMap();
+	
+	SessionContainer permanentSession = this.getRequestContainer().getSessionContainer().getPermanentContainer();
+	IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	
 	IImportManager impManager = null;
 	// get exported file and eventually the associations file
 //	UploadedFile archive = null;
@@ -228,6 +257,7 @@ public class ImportExportModule extends AbstractModule {
 			FileItem uplFile = (FileItem) uplFilesIter.next();
 		   
 			logger.debug("Uploded file name [" + uplFile + "]");
+			logParam.put("ImportFileName", uplFile.getName());
 			
 			String nameInForm = uplFile.getFieldName();
 		    if (nameInForm.equals("exportedArchive")) {
@@ -243,6 +273,11 @@ public class ImportExportModule extends AbstractModule {
 		if (archiveName.trim().equals("")) {
 			logger.error("Missing exported file");
 			response.setAttribute(ImportExportConstants.PUBLISHER_NAME, "ImportExportLoopbackStopImport");
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "IMPORT",logParam , "KO");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		    throw new EMFValidationError(EMFErrorSeverity.ERROR, "exportedArchive", "8007", ImportManager.messageBundle);
 		}
 		
@@ -250,12 +285,22 @@ public class ImportExportModule extends AbstractModule {
 		if (archive.getSize() > maxSize) {
 		    logger.error("File is too large!!!");
 			response.setAttribute(ImportExportConstants.PUBLISHER_NAME, "ImportExportLoopbackStopImport");
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "IMPORT",logParam , "KO");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
 		    throw new EMFValidationError(EMFErrorSeverity.ERROR, "exportedArchive", "202");
 		}
 		
 		// checks if the association file is bigger than 1 MB, that is more than enough!!
 		if (associationsFileItem != null) {
 			if (associationsFileItem.getSize() > 1048576) {
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "IMPORT",logParam , "KO");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}				
 				throw new EMFValidationError(EMFErrorSeverity.ERROR, "associationsFile", "202");
 			}
 			// loads association file
@@ -314,8 +359,7 @@ public class ImportExportModule extends AbstractModule {
 	    logger.debug("Transformation applied succesfully");
 
 	    // prepare import environment
-		SessionContainer permanentSession = this.getRequestContainer().getSessionContainer().getPermanentContainer();
-		IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+
 		impManager = ImportUtilities.getImportManagerInstance();
 	    impManager.setUserProfile(profile);
 	    impManager.init(pathImpTmpFolder, archiveName, archiveBytes);
@@ -364,16 +408,31 @@ public class ImportExportModule extends AbstractModule {
 	    logger.error("Importer class not found", cnde);
 	    if (impManager != null)
 		impManager.stopImport();
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "IMPORT",logParam , "ERR");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} catch (InstantiationException ie) {
 	    logger.error("Cannot create an instance of importer class ", ie);
 	    if (impManager != null)
 		impManager.stopImport();
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "IMPORT",logParam , "ERR");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	    
 	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} catch (IllegalAccessException iae) {
 	    logger.error("Cannot create an instance of importer class ", iae);
 	    if (impManager != null)
 		impManager.stopImport();
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "IMPORT",logParam , "ERR");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	    
 	    throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} catch (SourceBeanException sbe) {
 		logger.error("Error: " + sbe);
@@ -385,11 +444,21 @@ public class ImportExportModule extends AbstractModule {
 	    if (impManager != null) {
 			impManager.stopImport();
 	    }
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "IMPORT",logParam , "ERR");
+		} catch (Exception ee) {
+			ee.printStackTrace();
+		}
 		throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
 	} finally {
 	    if (impManager != null)
 			impManager.closeSession();
 	    logger.debug("OUT");
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "IMPORT",logParam , "OK");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
     }
 
