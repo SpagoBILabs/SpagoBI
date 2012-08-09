@@ -185,6 +185,7 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 	private void substituteCodeWithDescriptionsOnColumn(int columnIndex,
 			IDataStore datastore, List<String> codes, List<String> descriptions, boolean append) {
 		Iterator it = datastore.iterator();
+		logger.debug(" Before sobstitute codes ");
 		while (it.hasNext()) {
 			IRecord record = (IRecord) it.next();
 			IField field = record.getFieldAt(columnIndex);
@@ -194,13 +195,18 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 			int index = codes.indexOf(code);
 			// recupero la relativa descrizione prendendolo dalla stessa posizione nella lista delle descrizioni
 			String newValue = descriptions.get(index);
+			
 			if (append) {
 				field.setDescription(code + " - " + newValue);
+				logger.debug("Code "+code+" description "+(code + " - " + newValue));
 			} else {
 				field.setDescription(newValue); // metto solo la descrizione
+				logger.debug("Code "+code+" description "+newValue);
 			}
 			
 		}
+		
+		logger.debug(" After sobstitute codes ");
 	}
 
 	private Map<String, List<String>> getCodes(IDataStore datastore) {
