@@ -169,7 +169,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 							getAttributesListAdded(locale,attributes,isNewAttrForRes, attrID);
 							HashMap<String, String> logParam = new HashMap();
 							logParam.put("NAME", attribute.getAttributeName());
-							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES.ADD/MODIFY",logParam , "OK");
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES." +((isNewAttrForRes)?"ADD":"MODIFY"),logParam , "OK");
 						}
 						
 						//else the List of attributes will be sent to the client
@@ -227,6 +227,8 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 				e.printStackTrace();
 			}
 			if(idStr!=null && !idStr.equals("")){
+				HashMap<String, String> logParam = new HashMap();
+				logParam.put("ATTRIBUTE ID", idStr);
 				Integer id = new Integer(idStr);
 				try {
 					attrDao.deleteSbiAttributeById(id);
@@ -236,7 +238,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 					attributesResponseSuccessJSON.put("message", "");
 					attributesResponseSuccessJSON.put("data", "[]");
 					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES.DELETE",null , "OK");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES.DELETE",logParam , "OK");
 				} catch (Throwable e) {
 					logger.error("Exception occurred while deleting attribute", e);
 					getHttpResponse().setStatus(404);								
@@ -247,7 +249,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 						attributesResponseSuccessJSON.put("data", "[]");
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );	
 						try {
-							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES.DELETE",null , "OK");
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ATTRIBUTES.DELETE",logParam , "KO");
 						} catch (Exception e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
