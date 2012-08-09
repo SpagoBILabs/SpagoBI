@@ -217,9 +217,9 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 					serviceResponse.setAttribute("mapObj", mapNew);
 					serviceResponse.setAttribute("modality", mod);
 					if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", logParam, "OK");
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.ADD", logParam, "KO");
 					} else {
-						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", logParam, "OK");
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", logParam, "KO");
 					}
 					return;
 				}
@@ -351,6 +351,8 @@ private void delDetailMap(SourceBean request, String mod, SourceBean response)
 	SessionContainer sessCont = reqCont.getSessionContainer();
 	SessionContainer permSess = sessCont.getPermanentContainer();
 	IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	HashMap<String, String> logParam = new HashMap();
+	
 	try {
 		String id = (String) request.getAttribute("ID");
 //		if the map is associated with any BIFeautures, delete before this associations and then delete the map
@@ -364,10 +366,12 @@ private void delDetailMap(SourceBean request, String mod, SourceBean response)
 		}
 		//delete the map
 		GeoMap map = DAOFactory.getSbiGeoMapsDAO().loadMapByID(new Integer(id));
+		logParam.put("MAP_NAME",map.getName());
 		DAOFactory.getSbiGeoMapsDAO().eraseMap(map);
+		
 	}   catch (EMFUserError e){
 		  try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.DELETE", null, "ERR");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.DELETE", logParam, "ERR");
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -379,7 +383,7 @@ private void delDetailMap(SourceBean request, String mod, SourceBean response)
 		}
 	    catch (Exception ex) {	
 	    	try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.DELETE", null, "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.DELETE", logParam, "ERR");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -390,7 +394,7 @@ private void delDetailMap(SourceBean request, String mod, SourceBean response)
 	}
 	response.setAttribute("loopback", "true");	
 	try {
-		AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.DELETE", null, "OK");
+		AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.DELETE", logParam, "OK");
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -412,7 +416,7 @@ private void insRelMapFeature(SourceBean request, SourceBean response)
 	SessionContainer sessCont = reqCont.getSessionContainer();
 	SessionContainer permSess = sessCont.getPermanentContainer();
 	IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-	
+	HashMap<String, String> logParam = new HashMap();
 	try {		
 		ISbiGeoMapFeaturesDAO dao=DAOFactory.getSbiGeoMapFeaturesDAO();
 		dao.setUserProfile(profile);
@@ -421,7 +425,7 @@ private void insRelMapFeature(SourceBean request, SourceBean response)
 		String featureId = (String)request.getAttribute("FEATURE_ID");	
 		GeoMap map = DAOFactory.getSbiGeoMapsDAO().loadMapByID(new Integer(mapId));
 		EMFErrorHandler errorHandler = getErrorHandler();
-		HashMap<String, String> logParam = new HashMap();
+		
 		logParam.put("MAP_NAME",map.getName());
 		// if there are some validation errors into the errorHandler does not write into DB
 		Collection errors = errorHandler.getErrors();
@@ -432,7 +436,7 @@ private void insRelMapFeature(SourceBean request, SourceBean response)
 				if (error instanceof EMFValidationError) {
 					response.setAttribute("mapObj", map);
 					response.setAttribute("modality", SpagoBIConstants.DETAIL_MOD);
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", logParam, "OK");
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", logParam, "KO");
 					return;
 				}
 			}
@@ -469,7 +473,7 @@ private void insRelMapFeature(SourceBean request, SourceBean response)
 	    
 	}   catch (EMFUserError e){
 		try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", null, "ERR");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG.MODIFY", logParam, "ERR");
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

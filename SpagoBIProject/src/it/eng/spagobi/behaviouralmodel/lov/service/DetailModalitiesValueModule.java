@@ -233,8 +233,17 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	 */
 	private void modDetailModValue(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException {
 		ModalitiesValue modVal = null;
+		HashMap<String, String> logParam = new HashMap();
+		
 		try {
 			modVal = (ModalitiesValue) session.getAttribute(SpagoBIConstants.MODALITY_VALUE_OBJECT);
+			
+			logParam.put("NAME",modVal.getName());
+			logParam.put("TYPE",modVal.getITypeCd());			
+			logParam.put("LABEL",modVal.getLabel());	
+			
+			
+			
 			// to rember that the lov has been modified 
 			// necessary to show a confirm if the user change the lov and then go back without saving
 			String lovProviderModified = (String) request.getAttribute("lovProviderModified");
@@ -257,7 +266,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 							Object error = iterator.next();
 							if(error instanceof EMFValidationError) {
 								response.setAttribute("testLov", "true");
-								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOV.ADD/MODIFY", null, "ERR");
+								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOV.ADD/MODIFY", logParam, "KO");
 								return;
 							}
 						}
@@ -338,6 +347,10 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 					modVal.setLovProvider(lovProvider);
 					ValidationCoordinator.validate("PAGE", "QueryWizardValidation", this);
 					objectToTest = query;
+					
+					if (query!=null) logParam.put("QUERY",query.getQueryDefinition());
+					
+					
 				} 
 				
 				else if (input_type_cd.equalsIgnoreCase("JAVA_CLASS")) {
@@ -353,6 +366,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 					modVal.setLovProvider(lovProvider);
 					ValidationCoordinator.validate("PAGE", "JavaClassWizardValidation", this);
 					objectToTest = javaClassDet;
+					if (javaClassDet!=null) logParam.put("javaClassDet",javaClassDet.getJavaClassName());
 				} 
 				
 				else if (input_type_cd.equalsIgnoreCase("SCRIPT")) {					
@@ -368,6 +382,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 					modVal.setLovProvider(lovProvider);
 					ValidationCoordinator.validate("PAGE", "ScriptWizardValidation", this);
 					objectToTest = scriptDet;
+					if (scriptDet!=null) logParam.put("scriptDet",scriptDet.getScript());
 				} 
 				
 				else  if (input_type_cd.equalsIgnoreCase("FIX_LOV")) {
@@ -391,7 +406,8 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 							modVal.setLovProvider("<LOV/>");
 						}
 						objectToTest = fixlistDet;
-					}	
+					}
+
 				}
 				else if (input_type_cd.equalsIgnoreCase("DATASET")) {					
 					String lovProv = modVal.getLovProvider();
@@ -406,6 +422,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 					modVal.setLovProvider(lovProvider);
 					ValidationCoordinator.validate("PAGE", "DatasetWizardValidation", this);
 					objectToTest = datasetDet;
+					if (datasetDet!=null) logParam.put("datasetDet",datasetDet.getDatasetLabel());
 				} 
 				
 				
@@ -418,9 +435,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 						Object error = iterator.next();
 						if (error instanceof EMFValidationError) {
 							prepareDetailModalitiesValuePage(modVal, mod, response);
-							HashMap<String, String> logParam = new HashMap();
-							logParam.put("NAME",modVal.getName());
-							logParam.put("VALUE",modVal.getITypeCd());
+
 							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY", logParam, "KO");
 							return;
 						}
@@ -448,6 +463,8 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 				IModalitiesValueDAO dao=DAOFactory.getModalitiesValueDAO();
 				dao.setUserProfile(profile);
 				dao.insertModalitiesValue(modVal);
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOV.ADD", logParam, "OK");
+				
 			} else {
 				// looks for dependencies associated to the previous lov
 				Integer lovId = modVal.getId();
@@ -474,10 +491,8 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 						EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "input_type", "1058", params, errparams);
 						errorHandler.addError(error);
 						prepareDetailModalitiesValuePage(modVal, mod, response);
-						HashMap<String, String> logParam = new HashMap();
-						logParam.put("NAME",modVal.getName());
-						logParam.put("VALUE",modVal.getITypeCd());
-						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY", logParam, "ERR");
+						
+						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOV.MODIFY", logParam, "KO");
 						return;
 					} else {
 						// the lov type was not changed, must verify that the dependency columns are still present
@@ -515,10 +530,9 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 							EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, 1059, params, errparams);
 							errorHandler.addError(error);
 							prepareDetailModalitiesValuePage(modVal, mod, response);
-							HashMap<String, String> logParam = new HashMap();
-							logParam.put("NAME",modVal.getName());
-							logParam.put("VALUE",modVal.getITypeCd());
-							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY", logParam, "ERR");
+							
+
+							AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOV.MODIFY", logParam, "KO");
 							return;
 						}
 					}
@@ -526,6 +540,13 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 				IModalitiesValueDAO dao=DAOFactory.getModalitiesValueDAO();
 				dao.setUserProfile(profile);
 				dao.modifyModalitiesValue(modVal);
+				
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOV.MODIFY", logParam, "OK");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 		} catch (Exception ex) {			
@@ -533,7 +554,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListLovsModule.MODULE_PAGE);
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY", null, "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOV.ADD/MODIFY", logParam, "ERR");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -543,15 +564,9 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 		
 		response.setAttribute("loopback", "true");
 		session.delAttribute(SpagoBIConstants.LOV_MODIFIED);
-		HashMap<String, String> logParam = new HashMap();
-		logParam.put("NAME",modVal.getName());
-		logParam.put("VALUE",modVal.getITypeCd());
-		try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.ADD/MODIFY", logParam, "OK");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+
+
 		
 	}
 	
@@ -696,18 +711,20 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 	
 	private void delDetailModValue(SourceBean request, String mod, SourceBean response)
 		throws EMFUserError, SourceBeanException {
+		HashMap<String, String> logParam = new HashMap();
+
 		String idStr = (String) request.getAttribute("id");
 		//controls if there is any parameter associated
 		boolean hasPar = DAOFactory.getModalitiesValueDAO().hasParameters(idStr);
 		IModalitiesValueDAO moddao = DAOFactory.getModalitiesValueDAO();
 		ModalitiesValue modVal = moddao.loadModalitiesValueByID(new Integer(idStr));
+		logParam.put("NAME",modVal.getName());
+		logParam.put("TYPE",modVal.getITypeCd());
 		try {
 			moddao.eraseModalitiesValue(modVal);
 			if (hasPar){
-				HashMap<String, String> logParam = new HashMap();
-				logParam.put("NAME",modVal.getName());
-				logParam.put("VALUE",modVal.getITypeCd());
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.DELETE", logParam, "ERR");
+
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOV.DELETE", logParam, "KO");
 				EMFUserError error = new EMFUserError (EMFErrorSeverity.ERROR, "1023", new Vector(), null);
 				getErrorHandler().addError(error);
 				return;
@@ -715,7 +732,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 			
 		} catch (Exception ex) {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.DELETE", null, "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOV.DELETE", logParam, "ERR");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -730,16 +747,13 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 			session.delAttribute(SpagoBIConstants.MODALITY_VALUE_OBJECT);
 		}
 		response.setAttribute("afterDeleteLoop", "true");
-		// PER MONIA, DOCUMENT.DELETE, userId, modVal.getName(), modVal.getITypeCd() -->ESITO OK
-		HashMap<String, String> logParam = new HashMap();
-		logParam.put("NAME",modVal.getName());
-		logParam.put("VALUE",modVal.getITypeCd());
 		try {
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.DELETE", logParam, "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOV.DELETE", logParam, "OK");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 	
 	
@@ -764,7 +778,6 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 			session.setAttribute(SpagoBIConstants.LOV_MODIFIED, "false");
 			session.setAttribute(SpagoBIConstants.MODALITY_VALUE_OBJECT, modVal);
 		} catch (Exception ex) {
-			// PER MONIA, DOCUMENT.ADD, userId, modVal.getName(), modVal.getITypeCd()
 			logger.error("Cannot prepare page for the insertion", ex);
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListLovsModule.MODULE_PAGE);
@@ -970,7 +983,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "label", "1024",
 							new Vector(), params);
 					errorHandler.addError(error);
-					// PER MONIA, DOCUMENT.ADD, userId, label
+
 				}
 			}
 		} else {
@@ -988,7 +1001,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "label", "1024",
 							new Vector(), params);
 					errorHandler.addError(error);
-					// PER MONIA, DOCUMENT.MODIFY, userId, label
+
 				}
 			}
 		}

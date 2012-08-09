@@ -243,7 +243,7 @@ public class DetailEngineModule extends AbstractHttpModule {
 			}
 		} else {
 			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", logParam, "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ENGINE.MODIFY", logParam, "OK");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
