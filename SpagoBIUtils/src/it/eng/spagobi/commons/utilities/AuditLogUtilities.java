@@ -141,27 +141,27 @@ public class AuditLogUtilities {
 	        strbuf.append("';'");								
 	        													// PARAMETRI
 		if(parameters!=null){
-		Set set = parameters.entrySet(); 
-		Iterator i = set.iterator();
-		int separator = 0;
-		// Display elements
-		
-		while(i.hasNext()) {
-			Map.Entry me = (Map.Entry)i.next();
-			if(separator == 0){
-				strbuf.append(me.getKey());
-				strbuf.append("=");
-				strbuf.append(me.getValue());
+			Set set = parameters.entrySet(); 
+			Iterator i = set.iterator();
+			int separator = 0;
+			// Display elements
+			
+			while(i.hasNext()) {
+				Map.Entry par = (Map.Entry)i.next();
+				if(separator == 0){
+					strbuf.append(par.getKey());
+					strbuf.append("=");
+					if (par.getValue()!=null) strbuf.append(par.getValue().toString());
+				}
+				else{
+					strbuf.append("&");
+					strbuf.append(par.getKey());
+					strbuf.append("=");
+					if (par.getValue()!=null) strbuf.append(par.getValue().toString());
+				}
+				separator++;
 			}
-			else{
-				strbuf.append("&");
-				strbuf.append(me.getKey());
-				strbuf.append("=");
-				strbuf.append(me.getValue().toString());
-			}
-			separator++;
-		}
-		strbuf.append("';'");
+			strbuf.append("';'");
 		}
 		strbuf.append(esito);						// ESITO
 		strbuf.append("';'");
