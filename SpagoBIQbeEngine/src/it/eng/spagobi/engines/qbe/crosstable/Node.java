@@ -304,15 +304,12 @@ public class Node implements Cloneable, Comparable<Node>{
 			}
 		}
 
-		/**
-		 * Two node with the same value are equals
-		 */
+
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result
-					+ ((description == null) ? 0 : description.hashCode());
 			result = prime * result + ((value == null) ? 0 : value.hashCode());
 			return result;
 		}
@@ -326,11 +323,6 @@ public class Node implements Cloneable, Comparable<Node>{
 			if (getClass() != obj.getClass())
 				return false;
 			Node other = (Node) obj;
-			if (description == null) {
-				if (other.description != null)
-					return false;
-			} else if (!description.equals(other.description))
-				return false;
 			if (value == null) {
 				if (other.value != null)
 					return false;
