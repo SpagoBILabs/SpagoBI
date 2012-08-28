@@ -131,3 +131,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi-all-ext311-3.5.1.js")%>'></script>
 
  END-PRODUCTION -->
+ 
+ <%-- js custom overrides --%>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/customization/custom.js")%>"></script>
+ 
