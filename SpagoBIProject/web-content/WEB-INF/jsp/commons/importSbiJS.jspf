@@ -98,6 +98,9 @@ END-PRODUCTION -->
 	document.onload = Sbi.execution.SessionParametersManager.init();
 </script>
 
+<%-- js custom overrides --%>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/customization/custom.js")%>"></script>
+
 <!-- 
 <script type="text/javascript">
 Ext.Ajax.timeout = 300000;
