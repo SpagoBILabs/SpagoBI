@@ -156,12 +156,12 @@ public class CrossTab {
 		int measuresCount = crosstabDefinition.getMeasures().size();
 		int index;
 		
-		if(crosstabDefinition.isPivotTable()){
-			cellLimit = cellLimit/measuresCount;
-		}else{
-			cellLimit=0;
-		}
-		
+//		if(crosstabDefinition.isPivotTable()){
+//			cellLimit = cellLimit/measuresCount;
+//		}else{
+//			cellLimit=0;
+//		}
+//		
 		
 		List<String> rowCordinates = new ArrayList<String>();
 		List<String> columnCordinates = new ArrayList<String>();
@@ -169,18 +169,25 @@ public class CrossTab {
 
 		columnsRoot = new Node("rootC");
 		rowsRoot = new Node("rootR");
-
-		for(index = 0; index<valuesDataStore.getRecordsCount() && (cellLimit<=0 || index<cellLimit); index++){
+		
+		int cellCount = 0;
+		int actualRows = 0;
+		int actualColumns = 0;
+		for(index = 0; index<valuesDataStore.getRecordsCount() && (cellLimit<=0 || cellCount<cellLimit); index++){
 			valueRecord = valuesDataStore.getRecordAt(index);
 
-			addRecord(columnsRoot, valueRecord, 0, columnsCount);
-			addRecord(rowsRoot, valueRecord, columnsCount, columnsCount+rowsCount);
+			boolean columnInserted = addRecord(columnsRoot, valueRecord, 0, columnsCount);
+			boolean rowInserted = addRecord(rowsRoot, valueRecord, columnsCount, columnsCount+rowsCount);
+			actualRows += rowInserted ? 1 : 0;
+			actualColumns += columnInserted ? 1 : 0;
+			cellCount = actualRows * actualColumns * measuresCount;
 		}
 		
 		columnsRoot.orderedSubtree();
 		rowsRoot.orderedSubtree();
 		
 		if(index<valuesDataStore.getRecordsCount()){
+			logger.debug("Crosstab cells number limit exceeded");
 			Node completeColumnsRoot =  new Node("rootCompleteC");
 			for(index = 0; index<valuesDataStore.getRecordsCount(); index++){
 				valueRecord = valuesDataStore.getRecordAt(index);
@@ -455,7 +462,8 @@ public class CrossTab {
 	 * @param startPosition 
 	 * @param endPosition
 	 */
-	private void addRecord(Node root, IRecord valueRecord, int startPosition, int endPosition){
+	private boolean addRecord(Node root, IRecord valueRecord, int startPosition, int endPosition){
+		boolean toReturn = false;
 		IField valueField;
 		Node node;
 		Node nodeToCheck = root;
@@ -480,12 +488,14 @@ public class CrossTab {
 			}
 			nodePosition = nodeToCheck.getChilds().indexOf(node);
 			if(nodePosition<0){
+				toReturn = true;
 				nodeToCheck.addChild(node);
 				nodeToCheck = node;
 			}else{
 				nodeToCheck = nodeToCheck.getChilds().get(nodePosition);
 			}
 		}
+		return toReturn;
 	}
 	
 	/**
