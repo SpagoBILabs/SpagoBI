@@ -66,8 +66,6 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	private Map env;
 
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
-
 	public static final String AUDIT_ID = "SPAGOBI_AUDIT_ID";
 	public static final String DOCUMENT_ID = "document";
 	public static final String EXECUTION_ROLE = "SBI_EXECUTION_ROLE";
@@ -194,7 +192,10 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		}
 
 		try {
-			templateContent = DECODER.decodeBuffer(template.getContent());
+			// BASE64Decoder cannot be used in a static way, since it is not thread-safe;
+			// see https://spagobi.eng.it/jira/browse/SPAGOBI-881
+			BASE64Decoder decoder = new BASE64Decoder();
+			templateContent = decoder.decodeBuffer(template.getContent());
 		} catch (IOException e) {
 			throw new SpagoBIRuntimeException(
 					"Impossible to get content from template ["
