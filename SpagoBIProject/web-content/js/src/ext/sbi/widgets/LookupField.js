@@ -278,8 +278,12 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
 		if(this.drawFilterToolbar){
 			this.filteringToolbar = new Sbi.widgets.FilteringToolbar({store: this.store});
 		}
+		var checkboxSelectionModelConf = {singleSelect: this.singleSelect };
+		if( this.singleSelect){
+			checkboxSelectionModelConf.header = '';
+		}
 		
-		this.sm = new Ext.grid.CheckboxSelectionModel( {singleSelect: this.singleSelect } );
+		this.sm = new Ext.grid.CheckboxSelectionModel( checkboxSelectionModelConf );
 		this.sm.on('rowselect', this.onSelect, this);
 		this.sm.on('rowdeselect', this.onDeselect, this);
 		
