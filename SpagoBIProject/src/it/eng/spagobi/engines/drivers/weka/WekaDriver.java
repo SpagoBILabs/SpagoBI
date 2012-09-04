@@ -9,7 +9,7 @@ package it.eng.spagobi.engines.drivers.weka;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.EngineURL;
@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 
 
 /**
- * Driver Implementation (IEngineDriver Interface) for Jasper Report Engine. 
+ * Driver Implementation (IEngineDriver Interface) for Weka Engine. 
  */
 public class WekaDriver extends AbstractDriver implements IEngineDriver {
 
@@ -44,16 +44,21 @@ public class WekaDriver extends AbstractDriver implements IEngineDriver {
 	 * @return Map The map of the execution call parameters
 	 */
 	public Map getParameterMap(Object biobject, IEngUserProfile profile, String roleName) {
+		
 		logger.debug("IN");
+		
 		Map map = new Hashtable();
 		try{
 			BIObject biobj = (BIObject)biobject;
 			map = getMap(biobj, profile);
 		} catch (ClassCastException cce) {
-			logger.error("The parameter is not a BIObject type",cce);
-		} 
+			logger.error("The parameter is not a BIObject type", cce);
+		}
+		
 		map = applySecurity(map, profile);
+		
 		logger.debug("OUT");
+		
 		return map;
 	}
 
@@ -93,16 +98,29 @@ public class WekaDriver extends AbstractDriver implements IEngineDriver {
      */    
 	private Map getMap(BIObject biobj, IEngUserProfile profile) {
 		logger.debug("IN");
+		
 		Map pars = new Hashtable();
-
-		 
-		pars.put("document", biobj.getId().toString());
-    	//pars.put("processActivatedMsg", GeneralUtilities.replaceInternationalizedMessages("${weka.execution.processActivatedMsg}"));
-    	//pars.put("processNotActivatedMsg", GeneralUtilities.replaceInternationalizedMessages("${weka.execution.processNotActivatedMsg}"));
+		
+		String documentId = biobj.getId().toString();
+		pars.put("document", documentId);
+		logger.debug("Add document parameter:" + documentId);
+		
+		pars.put("documentLabel", biobj.getLabel());
+		logger.debug("Add document parameter:" + biobj.getLabel());
+		
+		// adding date format parameter
+		SingletonConfig config = SingletonConfig.getInstance();
+		String formatSB = config.getConfigValue("SPAGOBI.DATE-FORMAT.format");
+		String format = (formatSB == null) ? "DD-MM-YYYY" : formatSB;
+		pars.put("dateformat", format);
+		
+    
         Map biobjParameters = findBIParameters(biobj);
         addBIParameterDescriptions(biobj, biobjParameters);
         pars.putAll(biobjParameters);
+        
         logger.debug("OUT");
+        
         return pars;
 	} 
  
