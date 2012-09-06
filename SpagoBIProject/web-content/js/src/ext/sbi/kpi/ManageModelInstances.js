@@ -835,7 +835,9 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		Ext.each(this.nodesToSave, function(node, index) {
 			if(node instanceof Ext.tree.TreeNode){
 				jsonStr += Ext.util.JSON.encode(node.attributes);
-				jsonStr +=',';
+				if(index !== this.nodesToSave.length-1){
+					jsonStr +=',';
+				}
 			}
 		});
 
@@ -849,7 +851,9 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			if(node instanceof Ext.tree.TreeNode){	
 				//alert(node.attributes.name);
 				jsonDroppedStr += JsonSer.nodeToString(node);
-				jsonDroppedStr +=',';
+				if(index !== this.droppedSubtreeToSave.length-1){
+					jsonDroppedStr +=',';
+				}
 			}
 		}, this);
 		
