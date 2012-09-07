@@ -56,6 +56,7 @@ Sbi.locale.ln['sbi.qbe.queryeditor.title'] = 'Requ\u00EAte';
 Sbi.locale.ln['sbi.qbe.queryeditor.westregion.title'] = 'Sch\u00E9ma';
 Sbi.locale.ln['sbi.qbe.queryeditor.westregion.tools.expand'] = 'D\u00E9ployer'; 
 Sbi.locale.ln['sbi.qbe.queryeditor.westregion.tools.collapse'] = 'R\u00E9duire'; 
+Sbi.locale.ln['sbi.qbe.queryeditor.westregion.tools.save'] = 'Sauvegarder'; 
 Sbi.locale.ln['sbi.qbe.queryeditor.westregion.tools.flat'] = 'Vue aplatie'; 
 Sbi.locale.ln['sbi.qbe.queryeditor.westregion.tools.addcalculated'] = 'Ajouter les champs calcul\u00E9s'; 
 
@@ -66,7 +67,7 @@ Sbi.locale.ln['sbi.qbe.queryeditor.msgwarning'] = 'La requ\u00EAte est incorrect
 Sbi.locale.ln['sbi.qbe.queryeditor.saveqasview'] = 'Enregistrer la requ\u00EAte en tant que vue...';
 
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.title'] = 'Editeur de requ\u00EAte';
-Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.save'] = 'Sauver la requ\u00EAte en tant que sous-projet';
+Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.save'] = 'Sauvegarder la requ\u00EAte en tant que sous-projet';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.view'] = 'Enregistrer la requ\u00EAte en tant que vue';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.execute'] = 'Ex\u00E9cuter la requ\u00EAte';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.validate'] = 'Valider la requ\u00EAte';
@@ -213,8 +214,8 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.between'] = 'compris entr
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.notbetween'] = 'n\'est pas compris';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.in'] = 'dans';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.notin'] = 'n\'est pas dans';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.notnull'] = 'n\'est pas nulle';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.isnull'] = 'est nulle';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.notnull'] = 'n\'est pas nul';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.isnull'] = 'est nul';
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.desc.none'] = 'aucun filtre appliqu\u00E9';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.desc.eq'] = 'vrai si la valeur du champ est \u00E9gale \u00E0 la valeur du filtre';
@@ -233,8 +234,8 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.desc.between'] = 'vrai si la v
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.desc.notbetween'] = 'vrai si la valeur du champ n\'est pas comprise dans l\'intervalle sp\u00E9cifi\u00E9 dans le filtre';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.desc.in'] = 'vrai si la valeur du champ est \u00E9gale \u00E0 l\'une des valeurs du filtre';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.desc.notin'] = 'vrai si la valeur du champ est diff\u00E9rente de toutes les valeurs sp\u00E9cifi\u00E9es dans le filtre';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.desc.notnull'] = 'vrai si la valeur du champ n\'est pas nulle';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.desc.isnull'] = 'vrai si la valeur du champ est nulle';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.desc.notnull'] = 'vrai si la valeur du champ n\'est pas nul';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.desc.isnull'] = 'vrai si la valeur du champ est nul';
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.editor.emptymsg'] = 'S\u00E9lectionner un op\u00E9rateur...';
 
@@ -246,7 +247,7 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.text.delete'] = 'Supprimer tout';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.tt.delete'] = 'Supprimer tous les filtres';
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.text.wizard'] = 'Assistant Exp.';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.tt.wizard'] = 'Assistant Exp.';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.tt.wizard'] = 'Visualiser l\'assistant de composition des filtres';
 
 //warnings
 Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.delete.title'] = 'Supprimer le filtre ?';
@@ -262,7 +263,7 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.changebolop.msg'] = 'Changer le c
 // ===================================================================
 //	SELECT GRID
 // ===================================================================
-Sbi.locale.ln['sbi.qbe.selectgridpanel.title'] = 'S\u00E9lectionner des champs';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.title'] = 'S\u00E9lection des champs';
 
 // column headers
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.visible'] = 'Visible';
@@ -298,7 +299,7 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'] = 'S\u00E9lecti
 
 
 // sorting functions
-Sbi.locale.ln['sbi.qbe.selectgridpanel.sortfunc.name.none'] = 'auncun';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.sortfunc.name.none'] = 'aucun';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.sortfunc.name.asc'] = 'croissant';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.sortfunc.name.desc'] = 'd\u00E9croissant';
 
@@ -367,10 +368,14 @@ Sbi.locale.ln['sbi.qbe.datastore.refreshgrid'] = 'Restaurer le style grille'
 //===================================================================
 //CALCULATED FIELD WIZARD
 //===================================================================
+Sbi.locale.ln['sbi.qbe.inlineCalculatedFields.title'] = 'Assistant Champ Calcul\u00e9';
+
+Sbi.locale.ln['sbi.qbe.calculatedFields.title'] = 'Assistant Champ Calcul\u00e9 (Modalit\u00e9 Expert)';
+Sbi.locale.ln['sbi.qbe.inlineCalculatedFields.title'] = 'Assistant Champ Calcul\u00e9 (Modalit\u00e9 Simple)';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.title'] = 'Validation';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.text'] = 'Validation OK';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.fail.title'] = 'Validation \u00E9chou\u00E9e';
-Sbi.locale.ln['sbi.qbe.calculatedFields.expert.nofilterwindow.title'] = 'Attention: avec ce type de champ impossible d\'utiliser un filtre';
+Sbi.locale.ln['sbi.qbe.calculatedFields.expert.nofilterwindow.title'] = 'Attention: impossible d\'utiliser un filtre avec ce type de champ ';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.ok'] = 'OK';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.cancel'] = 'Annuler';
 
@@ -386,7 +391,7 @@ Sbi.locale.ln['sbi.qbe.calculatedFields.string.type'] = 'Si l\'expression du scr
 Sbi.locale.ln['sbi.qbe.calculatedFields.html.type'] = 'Si l\'expression du script retourne un fragment html valide';
 Sbi.locale.ln['sbi.qbe.calculatedFields.num.type'] = 'Si l\'expression du script retourne un nombre';
 Sbi.locale.ln['sbi.qbe.calculatedFields.date.type'] = 'Si l\'expression du script renvoie une date';
-Sbi.locale.ln['sbi.qbe.calculatedFields.add'] = 'Add Calculated Field';
-Sbi.locale.ln['sbi.qbe.calculatedFields.remove'] = 'Remove Calculated Field';
-Sbi.locale.ln['sbi.qbe.calculatedFields.edit'] = 'Edit Field';
+Sbi.locale.ln['sbi.qbe.calculatedFields.add'] = 'Ajouter champ calcul\u00e9';
+Sbi.locale.ln['sbi.qbe.calculatedFields.remove'] = 'Supprimer champ calcul\u00e9';
+Sbi.locale.ln['sbi.qbe.calculatedFields.edit'] = 'Modifier champ calcul\u00e9';
 Sbi.locale.ln['sbi.qbe.calculatedFields.add.error'] = 'Impossible d\'ajouter champ calcul\u00e9 \u00e0 un noeud de type [{0}]';
