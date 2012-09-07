@@ -54,10 +54,10 @@ Sbi.locale.ln['sbi.worksheet.designer.chooseimagewindow.title'] = 'Choisissez l\
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.title'] = 'Veuillez confirmer';
 Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.msg'] = 'Veuillez confirmer la suppression de l\'\u00E9l\u00E9ment ?';
-Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.title'] = 'Nouvelle Feuille';
-Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.msg'] = 'Une nouvelle feuille a \u00E9t\u00E9 ajout\u00E9e';
-Sbi.locale.ln['sbi.worksheet.designer.msg.emptyworksheet'] = 'Le document worksheet ne contient pas de feuilles';
-Sbi.locale.ln['sbi.worksheet.designer.msg.samenamesheets'] =  'Il existe une autre feuille avec le m\u00E9me nom';
+Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.title'] = 'Nouvelle Feuillet';
+Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.msg'] = 'Une nouvelle feuillet a \u00E9t\u00E9 ajout\u00E9e';
+Sbi.locale.ln['sbi.worksheet.designer.msg.emptyworksheet'] = 'Le document worksheet ne contient pas de feuillets';
+Sbi.locale.ln['sbi.worksheet.designer.msg.samenamesheets'] =  'Il existe un autre feuillet avec le m\u00E9me nom';
 
 //===================================================================
 //DESIGNER SHEET
@@ -77,12 +77,12 @@ Sbi.locale.ln['sbi.worksheet.designer.position'] = 'Position';
 //Sbi.worksheet.designer.DesignSheetFiltersPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.title'] = 'Filtre';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.emptymsg'] = 'Glissez et D\u00E9posez ici les champs n\u00E9cessaire pour d\u00E9finir les filtres';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.emptymsg'] = 'Glissez et D\u00E9posez ici les champs n\u00E9cessaires pour d\u00E9finir les filtres';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.title'] = 'Glissez non permis';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.unknownsource'] = 'Source Inconnue';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.attributealreadypresent'] = 'Champ d\u00E9j\u00E0 pr\u00E9sent';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.measures'] = 'Vous pouvez glisser vos mesures ici';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.postlinecalculated'] = 'Vous ne pouvez pas glissez des champs calcul\u00E9s ici';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.postlinecalculated'] = 'Vous ne pouvez pas glissez de champs calcul\u00E9s ici';
 
 //===================================================================
 //Sbi.worksheet.designer.DesignSheetFiltersEditWizard
@@ -102,10 +102,10 @@ Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.splittingFilt
 //Sbi.worksheet.designer.DesignToolsLayoutPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.title'] = 'Mod\u00E8le de pr\u00E9sentation';
-Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.headerfooter'] = 'La feuille contient une ent\u00EAte, un corps et un pied';
-Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.header'] = 'La feuille contient une ent\u00EAte et un corps';
-Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.footer'] = 'La feuille contient un corps et un pied';
-Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.content'] = 'La feuille contient seulement un corps';
+Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.headerfooter'] = 'Le feuillet contient une ent\u00EAte, un corps et un pied';
+Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.header'] = 'Le feuillet contient une ent\u00EAte et un corps';
+Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.footer'] = 'Le feuillet contient un corps et un pied';
+Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.content'] = 'Le feuillet contient seulement un corps';
 
 //===================================================================
 //Sbi.worksheet.designer.SheetContentPanel
@@ -146,11 +146,11 @@ Sbi.locale.ln['sbi.worksheet.designer.linechartdesignerpanel.form.showlegend.tit
 //===================================================================
 //Sbi.worksheet.designer.PieChartDesignerPanel
 //===================================================================
-Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.title'] = 'Concepteur camambert';
+Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.title'] = 'Concepteur camembert';
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.form.showvalues.title'] = 'Afficher les valeurs';
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.form.showlegend.title'] = 'Afficher la l\u00E9gende';
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.form.showpercentage.title'] = 'Afficher les valeurs en pourcentage';
-Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.categorypalette.title'] = 'Palette de couleur des Categories';
+Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.categorypalette.title'] = 'Palette de couleur categories';
 
 
 //===================================================================
@@ -186,7 +186,7 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.title']='Concepteur table aplatie';
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields']='Champs visibles';
-Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields.emptymsg']='Drag & drop ici les attributs et les mesures que vous souhaitez visualiser dans le tableau';
+Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields.emptymsg']='Glissez et d\u00E9posez ici les attributs et les mesures que vous souhaitez visualiser dans le tableau';
 
 
 //===================================================================
@@ -194,9 +194,9 @@ Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields.emptymsg']='Drag
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.menu.close']='Fermer';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.menu.rename']='Renommer';
-Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.rename.sheetname']='Nom du feuille';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.rename.sheetname']='Nom du feuillet';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.apply']='Appliquer';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.cancel']='Supprimer';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error']='Erreur';
-Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error.sheetnamealreadyinuse']='Un feuille ayant le meme nom d\u00E9j\u00E0 existe';
-Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error.nosheetname']='Le nom du feuille n\'as pas \u00E9t\u00E9 sp\u00E8cifi\u00E9';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error.sheetnamealreadyinuse']='Un feuillet ayant le meme nom d\u00E9j\u00E0 existe';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error.nosheetname']='Le nom du feuillet n\'as pas \u00E9t\u00E9 sp\u00E8cifi\u00E9';
