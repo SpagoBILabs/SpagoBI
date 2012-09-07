@@ -41,7 +41,7 @@ Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restaurar';
 Sbi.locale.ln['sbi.generic.run'] = 'Ejecutar';
 Sbi.locale.ln['sbi.generic.update2'] = 'Actualizaciones';
 Sbi.locale.ln['sbi.kpi.trend.title'] = 'Tendencia de los recursos ';
-Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'No se encontraron datos! Seleccione el nodo específico para ver los datos de tendencia. ';
+Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'No se encontraron datos! Seleccione el nodo especï¿½fico para ver los datos de tendencia. ';
 
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Nombre';
@@ -116,7 +116,7 @@ Sbi.locale.ln['sbi.modelinstances.DDHierarchy'] = 'Jerarqu\u00EDa de los nodos d
 Sbi.locale.ln['sbi.modelinstances.remodeNode'] = 'Eliminar el nodo Modelo Instancia';
 Sbi.locale.ln['sbi.modelinstances.selectNode'] = 'Seleccionar nodo para eliminar';
 Sbi.locale.ln['sbi.modelinstances.target'] = 'Objetivo';
-Sbi.locale.ln['sbi.modelinstances.code'] = 'Código de modelo ';
+Sbi.locale.ln['sbi.modelinstances.code'] = 'Cï¿½digo de modelo ';
 Sbi.locale.ln['sbi.modelinstances.copyalltree'] = 'Copiar todo el \u00E1rbol del modelo';
 //END List Detail messages
 
@@ -145,7 +145,7 @@ Sbi.locale.ln['sbi.goals.listTitle'] = 'Lista de Objetivos';
 Sbi.locale.ln['sbi.goals.nogrant'] = 'Debe seleccionar una subvenci\u00F3n'
 Sbi.locale.ln['sbi.goals.nogoal'] = 'Guardar la meta antes que procedi\u00F3'
 Sbi.locale.ln['sbi.goals.define.goal'] = 'Definir Objetivo'
-Sbi.locale.ln['sbi.goals.removed'] = 'Objetivos eliminado con éxito'
+Sbi.locale.ln['sbi.goals.removed'] = 'Objetivos eliminado con ï¿½xito'
 Sbi.locale.ln['sbi.goal.grant'] = 'Grant'
 Sbi.locale.ln['sbi.goal.insert.all.data'] = 'Insertar los campos requeridos'	
 Sbi.locale.ln['sbi.goals.weight1'] = 'Peso  1';
@@ -175,7 +175,7 @@ Sbi.locale.ln['sbi.kpis.days'] = 'D\u00EDas';
 Sbi.locale.ln['sbi.kpis.hours'] = 'Horas';
 Sbi.locale.ln['sbi.kpis.mins'] = 'Minutos';
 
-Sbi.locale.ln['sbi.thresholds.position'] = 'Posic\u00F3ón';
+Sbi.locale.ln['sbi.thresholds.position'] = 'Posic\u00F3ï¿½n';
 Sbi.locale.ln['sbi.thresholds.include'] = 'Incluir?';
 Sbi.locale.ln['sbi.thresholds.min'] = 'Min';
 Sbi.locale.ln['sbi.thresholds.max'] = 'Max';
@@ -258,7 +258,7 @@ Sbi.locale.ln['sbi.browser.defaultRole.cancel']  = 'Cancelar';
 
 Sbi.locale.ln['sbi.execution.error']  = 'Ha ocurrido un error durante la ejecuci\u00F3n de document';
 Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Identificaci\u00F3n del documento se requiere para ejecutar un Documento';
-Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'Usuario no tienen papeles v\u00E1lidos para la ejecución del seleccionado document';
+Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'Usuario no tienen papeles v\u00E1lidos para la ejecuciï¿½n del seleccionado document';
 
 
 
@@ -269,7 +269,7 @@ Sbi.locale.ln['sbi.execution.roleselection.emptytext']  = 'Seleccionar rol ...';
 Sbi.locale.ln['sbi.execution.roleselection.loadingmsg']  = 'Loading roles ...';
 Sbi.locale.ln['sbi.execution.roleselection.toolbar.next']  = 'Confirm rol selection';
 
-Sbi.locale.ln['sbi.execution.parametersselection.loadingmsg']  = 'Carga de los parámetros de ...';
+Sbi.locale.ln['sbi.execution.parametersselection.loadingmsg']  = 'Carga de los parï¿½metros de ...';
 Sbi.locale.ln['sbi.execution.parametersselection.noParametersToBeFilled']  = '[Documento no tiene par\u00E1metros para ser llenados]';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.back']  = 'Cambiar el rol seleccionado';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']  = 'Restablecer los par\u00E1metros de forma';
@@ -284,7 +284,7 @@ Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserM
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']  = 'Rellene el siguiente formulario y haga clic en el bot\u00F3n Actualizar en la barra de herramientas para volver a ejecutar el documento';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']  = 'Haga clic en el bot\u00F3n Actualizar en la barra de herramientas para volver a ejecutar el documento';
 
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Volver a la p\u00E1gina de selección de los par\u00E1metros';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Volver a la p\u00E1gina de selecciï¿½n de los par\u00E1metros';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Volver a la p\u00E1gina de selecci\u00F3n de document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Recargar ejecuci\u00f3n documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.rating'] = 'Vote este documento';
@@ -390,7 +390,7 @@ Sbi.locale.ln['sbi.roles.send'] = 'Enviar';
 Sbi.locale.ln['sbi.roles.build'] = 'Construir';
 Sbi.locale.ln['sbi.roles.buildQbe'] = 'Construir QBE';
 Sbi.locale.ln['sbi.roles.export'] = 'Exportar';
-Sbi.locale.ln['sbi.roles.doMassiveExport'] = 'Exportación masiva';
+Sbi.locale.ln['sbi.roles.doMassiveExport'] = 'Exportaciï¿½n masiva';
 Sbi.locale.ln['sbi.roles.manage'] = 'Gesti\u00F3n';
 Sbi.locale.ln['sbi.roles.manageUsers'] = 'Usuarios';
 Sbi.locale.ln['sbi.roles.headerName'] = 'Nombre';
@@ -435,7 +435,7 @@ Sbi.locale.ln['sbi.alarmcontact.add'] = 'A\u00F1adir';
 Sbi.locale.ln['sbi.alarmcontact.detail'] = 'Detalle';
 Sbi.locale.ln['sbi.alarmcontact.validString'] = 'Alfanum\u00E9rico cadena requerida (\ x2F - incluido)';
 Sbi.locale.ln['sbi.alarmcontact.validEmailString'] = 'Tipo de correo electr\u00F3nico requiere';
-Sbi.locale.ln['sbi.alarmcontact.validMobileString'] = 'S\u00F3lo se permiten dígitos';
+Sbi.locale.ln['sbi.alarmcontact.validMobileString'] = 'S\u00F3lo se permiten dï¿½gitos';
 Sbi.locale.ln['sbi.alarmcontact.error'] = 'Error';
 Sbi.locale.ln['sbi.alarmcontact.result'] = 'Resultados';
 Sbi.locale.ln['sbi.alarmcontact.validationError'] = 'Error de validaci\u00F3n';
@@ -459,12 +459,12 @@ Sbi.locale.ln['sbi.alarms.update'] = 'Guardar';
 Sbi.locale.ln['sbi.alarms.add'] = 'A\u00F1adir';
 Sbi.locale.ln['sbi.alarms.validString'] = 'Alfanum\u00E9rico cadena requerida (\ x2F - incluido)';
 Sbi.locale.ln['sbi.alarms.validEmailString'] = 'Email obligatorio';
-Sbi.locale.ln['sbi.alarms.validMobileString'] = 'S\u00F3lo los números permitidos';
+Sbi.locale.ln['sbi.alarms.validMobileString'] = 'S\u00F3lo los nï¿½meros permitidos';
 Sbi.locale.ln['sbi.alarms.error'] = 'Error';
 Sbi.locale.ln['sbi.alarms.result'] = 'Resultados';
 Sbi.locale.ln['sbi.alarms.validationError'] = 'Error de validaci\u00F3n';
 Sbi.locale.ln['sbi.alarms.confirm'] = 'Confirmar?';
-Sbi.locale.ln['sbi.alarms.confirmDelete'] = '¿Est\u00F3s seguro que quieres eliminar esta alarma?';
+Sbi.locale.ln['sbi.alarms.confirmDelete'] = 'ï¿½Est\u00F3s seguro que quieres eliminar esta alarma?';
 Sbi.locale.ln['sbi.alarms.alarmKpiThreshold'] = 'Umbral';
 Sbi.locale.ln['sbi.alarms.kpis'] = 'KPI';
 Sbi.locale.ln['sbi.alarms.contacts'] = 'Contactos';
@@ -573,7 +573,7 @@ Sbi.locale.ln['sbi.ds.scriptLanguage'] = 'Lenguaje de secuencias de comandos';
 Sbi.locale.ln['sbi.ds.jclassName'] = 'Nombre de clase de Java';
 Sbi.locale.ln['sbi.ds.transfType'] = 'Transformaci\u00F3n';
 Sbi.locale.ln['sbi.ds.trasfTypeCd'] = 'Tipo de Transformaci\u00F3n';
-Sbi.locale.ln['sbi.ds.pivotColName'] = 'Nombre de la columna de categoría para ser dinamizado';
+Sbi.locale.ln['sbi.ds.pivotColName'] = 'Nombre de la columna de categorï¿½a para ser dinamizado';
 Sbi.locale.ln['sbi.ds.pivotColValue'] = 'Nombre de la columna Valor para hacer pivotar';
 Sbi.locale.ln['sbi.ds.pivotRowName'] = 'Nombre de la columna no debe ser dinamizado';
 Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Columnas de numeraci\u00F3n autom\u00E1tica?';
@@ -581,7 +581,7 @@ Sbi.locale.ln['sbi.ds.help'] = 'Ayuda';
 Sbi.locale.ln['sbi.ds.pars'] = 'Los atributos del perfil disponibles';
 Sbi.locale.ln['sbi.ds.customData'] = 'Atributos';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Volver a calcular los metadatos?';
-Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = '¿Usted desea que el sistema vuelva a calcular la base de datos de metadatos? (El conjunto de datos se ejecutar\u00E1 por el sistema: esto es necesario si se ha modificado de manera significativa el conjunto de datos)';
+Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = 'ï¿½Usted desea que el sistema vuelva a calcular la base de datos de metadatos? (El conjunto de datos se ejecutar\u00E1 por el sistema: esto es necesario si se ha modificado de manera significativa el conjunto de datos)';
 
 
 
@@ -623,7 +623,7 @@ Sbi.locale.ln['sbi.widgets.datastorepanel.title'] = 'Resultados';
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.displaymsg'] = 'Mostrando {0} - {1} de {2}';
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.emptymsg'] = 'No hay datos para mostrar';
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.emptywarningmsg'] = 'Consulta no devuelve ning\u00FAn dato';
-Sbi.locale.ln['sbi.widgets.datastorepanel.grid.beforeoverflow'] = 'El límite m\u00E1ximo n\u00FAmero de registros';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.beforeoverflow'] = 'El lï¿½mite m\u00E1ximo n\u00FAmero de registros';
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.afteroverflow'] = 'superado';
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.beforepagetext'] = 'P\u00E1ina';
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.afterpagetext'] = 'de {0}';
@@ -678,7 +678,7 @@ Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.emp
 Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.documents.label'] = 'Los documentos de hoja de c\u00E1lculo para la exportaci\u00F3n';
 Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.msg.noDoc'] = 'No hay documentos de hoja de c\u00E1lculo para la exportaci\u00F3n';
 
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardParametersPage.title'] = 'Parámetros';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardParametersPage.title'] = 'Parï¿½metros';
 
 Sbi.locale.ln['Sbi.browser.mexport.massiveExportWizardTriggerPage.title'] = 'Trigger';
 Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Progreso de la exportaci\u00F3n masiva'; 
@@ -704,3 +704,25 @@ Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecut
 //OFFICE DOCUMENTS - ZOOM 
 Sbi.locale.ln['Sbi.office.zoomIn'] = 'El aumento de las dimensiones';
 Sbi.locale.ln['Sbi.office.zoomOut'] = 'Reduce las dimensiones';
+
+
+
+if(Ext.DatePicker){
+Ext.override(Ext.DatePicker, {
+todayText : "Hoy",
+minText : "La Fecha es anterior al minimo permitido",
+maxText : "La Fecha es posterior al maximo permitido",
+disabledDaysText : "",
+disabledDatesText : "",
+monthNames : ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"],
+dayNames : ["Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"],
+nextText: 'Mes Siguiente (Control+Right)',
+prevText: 'Mes Anterior (Control+Left)',
+monthYearText: 'Elija un Mes (Control+Up/Down moverse entre aÃ±os)',
+todayTip : "{0} (Spacebar)",
+okText : " OK ",
+cancelText : "Cancelar",
+format : "dd/mm/yyyyy",
+startDay : 1
+});
+} 

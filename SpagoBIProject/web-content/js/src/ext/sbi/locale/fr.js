@@ -275,7 +275,7 @@ Sbi.locale.ln['sbi.execution.parametersselection.toolbar.next']='ex\u00E9cuter l
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute']='Remplir le formulaire ci-dessous et cliquer sur le bouton ex\u00E9cuter pour lancer le document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']='Cliquer sur le bouton pour ex\u00E9cuter le document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']='Cliquer sur le bouton pour ex\u00E9cuter le document principal ou double-cliquer sur les vues customiz\u00E9es dans la liste ci-dessous';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']='Remplir la forme ci-dessous et cliquer sur le bouton pour ex\u00E9cuter le document principal ou double-cliquer sur les vues customiz\u00E9es dans la liste ci-dessous';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']='Remplir le formulaire ci-dessous et cliquer sur le bouton pour ex\u00E9cuter le document principal ou double-cliquer sur les vues customis\u00E9es dans la liste ci-dessous';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithoutParameters']='Impossible d\'ex\u00E9cuter le document principal. Double-cliquez sur les vues customiz\u00E9es dans la liste dessous';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithParameters']='Impossible d\'ex\u00E9cuter le document principal. Remplissez le formulaire ci-dessous et double-cliquer sur la vue customiz\u00E9e dans la liste ci-dessous';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']='Remplir le formulaire ci-dessous et cliquer sur le bouton actualiser dans la barre d\'outil pour re-ex\u00E9cuter le document';
@@ -292,7 +292,7 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.bookmark']='Enregistrer mes d
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate']='Ajouter des notes au document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata']='Montrer les metadonn\u00E9es du document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh']='En actualisant la page la strucure actualle de la page serat perdu: voulez vous poursuivre?';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.save']='Enregistrer le document dans un repertoire personnel';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveintopersonalfolder']='Enregistrer le document dans un repertoire personnel';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas']='Enregistrer sous...';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.view']='Voir Document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit']='Editer';
@@ -335,13 +335,13 @@ Sbi.locale.ln['sbi.execution.subobjects.noSubObjectsSelected']='Pas de vues cust
 Sbi.locale.ln['sbi.execution.subobjects.cannotDeleteSubObject']='Impossible d\'effacer la vue customis\u00E9e';
 
 //Metadata
-Sbi.locale.ln['sbi.execution.metadata']='Metadonn\u00E9s';
+Sbi.locale.ln['sbi.execution.metadata']='Metadonn\u00E9es';
 Sbi.locale.ln['sbi.execution.metadata.savemeta']='Enregistrer';
 Sbi.locale.ln['sbi.execution.metadata.metaname']='Nom';
 Sbi.locale.ln['sbi.execution.metadata.metavalue']='Valeur';
-Sbi.locale.ln['sbi.execution.metadata.generalmetadata']='Metadonn\u00E9s G\u00E9n\u00E9rales (Non Editables)';
-Sbi.locale.ln['sbi.execution.metadata.shorttextmetadata']='Metadonn\u00E9s courtes';
-Sbi.locale.ln['sbi.execution.metadata.longtextmetadata']='Metadonn\u00E9s Longues';
+Sbi.locale.ln['sbi.execution.metadata.generalmetadata']='Metadonn\u00E9es G\u00E9n\u00E9rales (Non Editables)';
+Sbi.locale.ln['sbi.execution.metadata.shorttextmetadata']='Metadonn\u00E9es courtes';
+Sbi.locale.ln['sbi.execution.metadata.longtextmetadata']='Metadonn\u00E9es Longues';
 Sbi.locale.ln['sbi.execution.metadata.waitmessage']='Veuillez patienter';
 Sbi.locale.ln['sbi.execution.metadata.waittitle']='Enregistrement des m\u00E9tadonn\u00E9es';
 
@@ -538,7 +538,7 @@ Sbi.locale.ln['sbi.home.Info']='Informations sur SpagoBI';
 
 Sbi.locale.ln['sbi.lookup.ValueOfColumn']='La valeur de la colonne';
 Sbi.locale.ln['sbi.lookup.asA']='comme';
-Sbi.locale.ln['sbi.lookup.asString'] = 'Texte';
+Sbi.locale.ln['sbi.lookup.asString'] = 'Cha\u00EEne';
 Sbi.locale.ln['sbi.lookup.asNumber'] = 'Nombre';
 Sbi.locale.ln['sbi.lookup.asDate'] = 'Date';
 Sbi.locale.ln['sbi.lookup.Contains'] = 'Contient';
@@ -664,7 +664,7 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.category']='Categorie';
 //WORKSHEET
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.validation.error.title']='Erreur Validation';
-Sbi.locale.ln['sbi.worksheet.validation.error.text']='Certaines feuilles ne sont pas valides... V\u00E9rifier que toutes les feuilles ont un contenu valide.';
+Sbi.locale.ln['sbi.worksheet.validation.error.text']='Certaines feuillets ne sont pas valides... V\u00E9rifier que toutes les feuillets ont un contenu valide.';
 
 Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'S\'il vous pla\u00eet, ouvrez l\'onglet de aper\u00e7u du worksheet pour exporter le document';
 Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Alerte Exportation';
@@ -710,3 +710,23 @@ Sbi.locale.ln['ext.date.dateformat.error.text']='La date saisie contient des err
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']='(la p\u00E9riode d\'analyse par d\u00E9faut est la veille)'
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']='(par d\u00E9faut, la date correspond au mois dernier)'
 
+	
+if(Ext.DatePicker){
+	Ext.override(Ext.DatePicker, {
+	todayText : "Aujourd'hui",
+	minText : "Cette date est antérieure à la date minimum",
+	maxText : "Cette date est postérieure à la date maximum",
+	disabledDaysText : "",
+	disabledDatesText : "",
+	monthNames : ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Decembre"],
+	dayNames : ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+	nextText: 'Mois suivant (CTRL+Flèche droite)',
+	prevText: "Mois précédent (CTRL+Flèche gauche)",
+	monthYearText: "Choisissez un mois (CTRL+Flèche haut ou bas pour changer d'année.)",
+	todayTip : "{0} (Barre d'espace)",
+	okText : "&#160;OK&#160;",
+	cancelText : "Annuler",
+	format : "dd/mm/yyyyy",
+	startDay : 1
+	});
+} 
