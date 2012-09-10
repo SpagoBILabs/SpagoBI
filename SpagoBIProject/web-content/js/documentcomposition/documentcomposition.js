@@ -338,6 +338,7 @@ Ext.onReady(function() {
 	  				var titleDoc = asTitleDocs[strDocLabel] ;
 	  				var itemTitleArr = [];
 	  				var itemTitleDoc = {};
+	  				var bodyStyleDoc = "padding:1px";
 	  				if (titleDoc[0] === "" && (zoomDoc[0] === "false" || exportDSDoc[0] === "false")){
 	  					titleDoc = null;	  					
 	  				}else{
@@ -346,6 +347,7 @@ Ext.onReady(function() {
 	  				}
 					var widthPx = "";
 					var heightPx = "";
+					
 					if (style != null){
 						widthPx = style[0].substring(0, style[0].indexOf("|"));
 						heightPx = style[0].substring(style[0].indexOf("|")+1);
@@ -371,6 +373,7 @@ Ext.onReady(function() {
 				        //items: itemTitleArr
 					});
 					if (exportDSDoc !== undefined && exportDSDoc[0] === "true"){
+						bodyStyleDoc = "padding:10px";
 						var docsExpArrays= asExportTypes[strDocLabel];
 						if(docsExpArrays !== undefined && docsExpArrays !== null && docsExpArrays.length != 0){		
 							var docType = asDocTypes[strDocLabel];
@@ -476,7 +479,8 @@ Ext.onReady(function() {
 						,scrolling  : 'auto'	 //possible values: yes, no, auto  
 						//,collapsible: true
 						,tbar		: tb
-						,bodyStyle	:'padding:10px'
+						//,bodyStyle	:'padding:10px'
+						,bodyStyle	: bodyStyleDoc
 						//,preventHeader: true
 						,scope: this
 
