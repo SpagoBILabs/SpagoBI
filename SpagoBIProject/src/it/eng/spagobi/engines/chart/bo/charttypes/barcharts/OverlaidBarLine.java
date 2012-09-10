@@ -365,7 +365,7 @@ public class OverlaidBarLine extends LinkableBar {
 			useBars=true;
 		}
 
-		if(confParameters.get(SECOND_AXIS_LABEL)!=null){	
+		if(confParameters.get(SECOND_AXIS_LABEL)!=null && !confParameters.get(SECOND_AXIS_LABEL).equals("")){	
 			secondAxis=true;
 			secondAxisLabel=(String)confParameters.get(SECOND_AXIS_LABEL);
 
