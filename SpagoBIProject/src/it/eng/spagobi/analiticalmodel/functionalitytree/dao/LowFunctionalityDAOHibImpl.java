@@ -32,7 +32,10 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1509,8 +1512,9 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			if (isFirstLevel) {
 				hibQuery = aSession.createQuery("select distinct sfr.id.function from SbiFuncRole sfr where "
 				+ "sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ?  "
-				+ "and sfr.stateCd = ? and sfr.id.role.name in (:roles) "										
-				+ "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
+				+ "and sfr.stateCd = ? and sfr.id.role.name in (:roles) ");
+				// CANNOT order by in SQL query: see https://spagobi.eng.it/jira/browse/SPAGOBI-942
+				//+ "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
 				hibQuery.setInteger(0, tmpParentId.intValue());
 				hibQuery.setString(1, permission);
 				hibQuery.setParameterList("roles", roles);		
@@ -1525,13 +1529,50 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			} else {
 				hibQuery = aSession.createQuery("select distinct sfr.id.function from SbiFuncRole sfr where "
 				+ "sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ? "
-				+ "and sfr.stateCd = ? and sfr.id.role.name in (:roles) "										
-				+ "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
+				+ "and sfr.stateCd = ? and sfr.id.role.name in (:roles) ");
+				// CANNOT order by in SQL query: see https://spagobi.eng.it/jira/browse/SPAGOBI-942
+				//+ "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
 				hibQuery.setInteger(0, tmpParentId.intValue());
 				hibQuery.setString(1,permission);
 				hibQuery.setParameterList("roles", roles);
 			}
-			List hibList = hibQuery.list();	
+			List<SbiFunctions> hibList = (List<SbiFunctions>) hibQuery.list();	
+			
+			// MUST order using a comparator, see https://spagobi.eng.it/jira/browse/SPAGOBI-942
+			Collections.sort(hibList, new Comparator<SbiFunctions>() {
+
+				public int compare(SbiFunctions funct1, SbiFunctions funct2) {
+					SbiFunctions parent1 = funct1.getParentFunct();
+					SbiFunctions parent2 = funct2.getParentFunct();
+					
+					if (parent1 == null ) {
+						return 1;
+					}
+					if (parent2 == null ) {
+						return -1;
+					}
+					Integer parentId1 = parent1.getFunctId();
+					Integer parentId2 = parent2.getFunctId();
+					
+			        if(parentId1 > parentId2)
+			            return 1;
+			        else if(parentId1 < parentId2)
+			            return -1;
+			        else {
+						Integer progId1 = funct1.getProg();
+						Integer progId2 = funct2.getProg();
+						
+				        if(progId1 > progId2)
+				            return 1;
+				        else if(progId1 < progId2)
+				            return -1;
+				        else
+				            return 0;  
+						
+			        }
+				}
+			});
+			
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
 				SbiFunctions tmpFunc = (SbiFunctions) it.next();
