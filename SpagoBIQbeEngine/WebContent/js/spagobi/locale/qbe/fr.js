@@ -155,10 +155,10 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.lolast'] = 'Derni\u00E8re valeur 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.operator'] = 'Op\u00E9rateur';
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.roval'] = 'Valeur de l\'op\u00E9rande droit';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rodesc'] = 'Op\u00E9rande droite';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rotype'] = 'Type de l\'op\u00E9rande droite';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rodef'] = 'Valeur par d\u00E9faut de l\'op\u00E9rande droite';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rolast'] = 'Derni\u00E8re valeur op\u00E9rande droite';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rodesc'] = 'Op\u00E9rande droit';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rotype'] = 'Type de l\'op\u00E9rande droit';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rodef'] = 'Valeur par d\u00E9faut de l\'op\u00E9rande droit';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rolast'] = 'Derni\u00E8re valeur op\u00E9rande droit';
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.isfree'] = 'est pour l\'invite';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.delete'] = 'Supprimer tout';
@@ -178,11 +178,11 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.lolast'] = 'Derni\u00E8re valeur 
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.operator'] = 'Op\u00E9rateur';
 
-Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.roval'] = 'Valeur de l\'op\u00E9rande droite';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.rodesc'] = 'Op\u00E9rande droite';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.rotype'] = 'Type de l\'op\u00E9rande droite';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.rodef'] = 'Valeur par d\u00E9faut de l\'op\u00E9rande droite';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.rolast'] = 'Derni\u00E8re valeur op\u00E9rande droite';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.roval'] = 'Valeur de l\'op\u00E9rande droit';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.rodesc'] = 'Op\u00E9rande droit';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.rotype'] = 'Type de l\'op\u00E9rande droit';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.rodef'] = 'Valeur par d\u00E9faut de l\'op\u00E9rande droit';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.rolast'] = 'Derni\u00E8re valeur op\u00E9rande droit';
 
 
 //boolean operators
@@ -198,12 +198,12 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.boperators.editor.emptymsg'] = 'S\u00E9le
 //filter operators
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.none'] = 'aucun';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.eq'] = '\u00E9gale \u00E0';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.noteq'] = 'n\'est pas \u00E9gale \u00E0';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.eq'] = '\u00E9gal \u00E0';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.noteq'] = 'n\'est pas \u00E9gal \u00E0';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.gt'] = 'plus grand que';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.eqgt'] = 'plus grand ou \u00E9gale \u00E0';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.eqgt'] = 'plus grand ou \u00E9gal \u00E0';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.lt'] = 'plus petit que';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.eqlt'] = 'plus petit ou \u00E9gale \u00E0';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.eqlt'] = 'plus petit ou \u00E9gal \u00E0';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.starts'] = 'commence par';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.notstarts'] = 'ne commence pas par';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.ends'] = 'finit par';
@@ -211,7 +211,7 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.notends'] = 'ne finit pas
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.contains'] = 'contient';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.notcontains'] = 'ne contient pas';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.between'] = 'compris entre';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.notbetween'] = 'n\'est pas compris';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.notbetween'] = 'n\'est pas compris entre';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.in'] = 'dans';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.notin'] = 'n\'est pas dans';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.name.notnull'] = 'n\'est pas nul';
@@ -395,3 +395,39 @@ Sbi.locale.ln['sbi.qbe.calculatedFields.add'] = 'Ajouter champ calcul\u00e9';
 Sbi.locale.ln['sbi.qbe.calculatedFields.remove'] = 'Supprimer champ calcul\u00e9';
 Sbi.locale.ln['sbi.qbe.calculatedFields.edit'] = 'Modifier champ calcul\u00e9';
 Sbi.locale.ln['sbi.qbe.calculatedFields.add.error'] = 'Impossible d\'ajouter champ calcul\u00e9 \u00e0 un noeud de type [{0}]';
+Sbi.locale.ln['sbi.qbe.calculatedFields.operands.title.text'] = 'Operands selection window';
+
+//===================================================================
+//BANDS WIZARD
+//===================================================================
+Sbi.locale.ln['sbi.qbe.menu.bands.add'] = 'Add Range';
+Sbi.locale.ln['sbi.qbe.menu.bands.edit'] = 'Edit Range';
+Sbi.locale.ln['sbi.qbe.bands.title'] = 'Bands wizard ...';
+Sbi.locale.ln['sbi.qbe.bands.noteditable'] = 'Cannot load range definition';
+Sbi.locale.ln['sbi.qbe.bands.back.btn'] = 'Back';
+Sbi.locale.ln['sbi.qbe.bands.next.btn'] = 'Next';
+Sbi.locale.ln['sbi.qbe.bands.finish.btn'] = 'Finish';
+Sbi.locale.ln['sbi.qbe.bands.save.btn'] = 'Save';
+Sbi.locale.ln['sbi.qbe.bands.addband.btn'] = 'Add Band';
+Sbi.locale.ln['sbi.qbe.bands.adddefault.btn'] = 'Add Default';
+Sbi.locale.ln['sbi.qbe.bands.delete.btn'] = 'Delete';
+Sbi.locale.ln['sbi.qbe.bands.col.name'] = 'Name';
+Sbi.locale.ln['sbi.qbe.bands.col.values'] = 'Values';
+Sbi.locale.ln['sbi.qbe.bands.col.limits'] = 'Limits';
+Sbi.locale.ln['sbi.qbe.bands.col.vallist'] = 'Values List';
+Sbi.locale.ln['sbi.qbe.bands.alert.default'] = 'Operation denied for default band';
+Sbi.locale.ln['sbi.qbe.bands.delete.alert.title'] = 'Band item deletion';
+Sbi.locale.ln['sbi.qbe.bands.delete.alert.msg'] = 'Confirm item delete?';
+Sbi.locale.ln['sbi.qbe.bands.new.name'] = 'New Band';
+Sbi.locale.ln['sbi.qbe.bands.default.name'] = 'Other';
+Sbi.locale.ln['sbi.qbe.bands.default.alert'] = 'Deafult already defined';
+Sbi.locale.ln['sbi.qbe.bands.prefix'] = 'Band-';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.definition'] = 'Invalid definition';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.definition.msg'] = 'Impossible to add slot to a node of type [{0}]';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation'] = 'Invalid operation';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.msg'] = 'Node of type [{0}] doesn\'t been modified';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.delete.msg'] = 'Node of type [{0}] doesn\'t been deleted';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.edit.msg'] = 'Node of type [{0}] doesn\'t been edited';
+Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.node'] = 'The node isn\'t a band';
+Sbi.locale.ln['sbi.qbe.bands.range.title'] = 'Limit definition';
+Sbi.locale.ln['sbi.qbe.bands.range.invalid'] = 'Range not correctly set';

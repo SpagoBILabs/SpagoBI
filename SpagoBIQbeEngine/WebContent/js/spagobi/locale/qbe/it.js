@@ -417,7 +417,7 @@ Sbi.locale.ln['sbi.qbe.calculatedFields.add'] = 'Aggiungi campo calcolato';
 Sbi.locale.ln['sbi.qbe.calculatedFields.remove'] = 'Rimuovi campo calcolato';
 Sbi.locale.ln['sbi.qbe.calculatedFields.edit'] = 'Edita campo';
 Sbi.locale.ln['sbi.qbe.calculatedFields.add.error'] = 'Impossibile aggiungere un campo calcolato ad un nodo di tipo [{0}]';
-
+Sbi.locale.ln['sbi.qbe.calculatedFields.operands.title.text'] = 'Seleziona Operando';
 
 //===================================================================
 //BANDS WIZARD

@@ -40,7 +40,7 @@ Ext.ns("Sbi.qbe");
 Sbi.qbe.OperandsWindow = function(config) {
 
 	var c = Ext.apply({}, config || {}, {
-		title: 'Operands selection window'
+		title: LN('sbi.qbe.calculatedFields.operands.title.text')
 		, width: 500
 		, height: 300
 		, hasBuddy: false	
