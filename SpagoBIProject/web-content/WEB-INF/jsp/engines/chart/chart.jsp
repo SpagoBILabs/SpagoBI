@@ -63,6 +63,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	BIObject objO = instanceO.getBIObject();
 	String documentid=(objO.getId()).toString();
 	
+	String titleNotVisibleString = "&"+SpagoBIConstants.TITLE_VISIBLE+"=false";
+	
    	// if in document composition case do not include header.jsp
 	   if (execContext == null || !execContext.equalsIgnoreCase(SpagoBIConstants.DOCUMENT_COMPOSITION)){%>
 <%@ include file="/WEB-INF/jsp/analiticalmodel/execution/header.jsp"%>
@@ -75,6 +77,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		crossNavigationParameters.put(SpagoBIConstants.MESSAGEDET, SpagoBIConstants.EXEC_CROSS_NAVIGATION);
 		crossNavigationParameters.put("EXECUTION_FLOW_ID", executionFlowId);
 		crossNavigationParameters.put("SOURCE_EXECUTION_ID", uuid);
+		crossNavigationParameters.put(SpagoBIConstants.TITLE_VISIBLE, "FALSE");
 		crossNavigationParameters.put(LightNavigationManager.LIGHT_NAVIGATOR_DISABLED, "TRUE");
 		crossNavigationUrl = urlBuilder.getUrl(request, crossNavigationParameters);%>
 		
@@ -380,6 +383,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				// Set the Url for refreshing the chart: in case of document composition specify also the execution page and document_id
 				refreshUrlPars = new HashMap();
 				refreshUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_DISABLED, "true");
+				refreshUrlPars.put(SpagoBIConstants.TITLE_VISIBLE, "false");
 					
 				if(sbiMode.equalsIgnoreCase("WEB") || docComposition==true){
 				   	Map pars = new HashMap();
@@ -403,7 +407,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					}
 					
 					urlPng=GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() + 
-							"?ACTION_NAME=GET_PNG&NEW_SESSION=TRUE&userid="+userId+"&path="+path_param+"&"+LightNavigationManager.LIGHT_NAVIGATOR_DISABLED+"=TRUE"+auditParameter;
+							"?ACTION_NAME=GET_PNG&NEW_SESSION=TRUE&userid="+userId+"&path="+path_param+"&"+LightNavigationManager.LIGHT_NAVIGATOR_DISABLED+"=TRUE"+auditParameter+"&"+SpagoBIConstants.TITLE_VISIBLE+"=false";
 	
 					if (sbi.getOrientationMultichart().equalsIgnoreCase("horizontal")){
 			%>
@@ -842,6 +846,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 							  }
 							  }
 							}
+
+							seriesURLToCallJS+='&TITLE_VISIBLE=false';
+							
 							//alert(seriesURLToCallJS);	
 							window.location.href=seriesURLToCallJS;
 							}
@@ -1051,6 +1058,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		var second=variable;
 		var url="<%=refreshUrlCategory%>";
 		var finalUrl=url+second;
+		finalUrl+='&TITLE_VISIBLE=false';
 		return finalUrl;
 		}
  
@@ -1064,6 +1072,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		var second=variable+value;
 		var url="<%=refreshUrlCategory%>";
 		var finalUrl=url+second;
+		finalUrl+='&TITLE_VISIBLE=false';
 		return finalUrl;
 	
 }
