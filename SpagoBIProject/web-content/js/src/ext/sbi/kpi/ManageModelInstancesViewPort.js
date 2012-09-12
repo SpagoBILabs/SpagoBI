@@ -618,7 +618,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 
 				this.resId = row.data.resourceId;
 				jsonStr += '{id: '+row.data.resourceId+'}';
-				if(index !== rows.length-1){
+				if(row != undefined && index !== rows.length-1){
 					jsonStr +=',';		
 				}
 			});
