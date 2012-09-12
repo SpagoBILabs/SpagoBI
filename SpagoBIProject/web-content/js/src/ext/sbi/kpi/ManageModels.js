@@ -372,7 +372,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		Ext.each(this.nodesToSave, function(node, index) {
 			if(node instanceof Ext.tree.TreeNode){
 				jsonStr += this.filterAttributes(node);
-				if(index !== this.nodesToSave.length-1){
+				if(this.nodesToSave != undefined &&  index !== this.nodesToSave.length-1){
 					jsonStr +=',';
 				}
 
