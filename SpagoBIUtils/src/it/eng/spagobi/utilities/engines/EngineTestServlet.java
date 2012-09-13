@@ -27,11 +27,12 @@ public class EngineTestServlet extends HttpServlet {
     throws IOException, ServletException {
     	
     	logger.debug("IN");
-
-    		String message = "sbi.connTestOk";
-
-			response.getOutputStream().write(message.getBytes());
-	    	response.getOutputStream().flush();
-	    	logger.debug("OUT");  		
+    	
+    	request.getSession(true);
+		String message = "sbi.connTestOk";
+		
+		response.getOutputStream().write(message.getBytes());
+    	response.getOutputStream().flush();
+    	logger.debug("OUT");  		
     }    
 }
