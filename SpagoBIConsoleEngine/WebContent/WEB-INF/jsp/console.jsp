@@ -51,7 +51,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	
 	
 	consoleEngineConfig = ConsoleEngineConfig.getInstance();
-	consoleEngineInstance = (ConsoleEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute("ENGINE_INSTANCE");
+	consoleEngineInstance = (ConsoleEngineInstance)ResponseContainer.getResponseContainer().getServiceResponse().getAttribute("ENGINE_INSTANCE");
 	
 	profile = (UserProfile)consoleEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);	
 	locale = (Locale)consoleEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
