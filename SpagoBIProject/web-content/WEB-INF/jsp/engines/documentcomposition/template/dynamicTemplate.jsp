@@ -53,6 +53,7 @@ for (int i=0; i<lstUrl.size(); i++){
 <script>
 	/* Create associative arrays with information for refresh (dependencies, ...)   ACTHUNG: Every array is indipendent!!!! */
 	var arUrl = new Object();
+	var arTestUrl = new Object();
 	var arTitleDocs = new Object();
 	var arTypeDocs = new Object();
 	var arZoomDocs = new Object();
@@ -143,8 +144,16 @@ for (int i=0; i<lstUrl.size(); i++){
 	 			} 
 	 		}
  		}
- 	}%>  
-	setDocs(arUrl, arTitleDocs, arZoomDocs, arExportDSDocs, arExportTypes, arTypeDocs);
+ 	}
+ 	
+ 	for (int i = 0; i < lstTestUrl.size(); i++){
+ 		String testUrl = (String)lstTestUrl.get(i); 	
+ 	%>
+ 			arTestUrl['<%=testUrl%>'] = false;
+ 	<%	
+	} 	
+	%>  
+	setDocs(arUrl, arTestUrl, arTitleDocs, arZoomDocs, arExportDSDocs, arExportTypes, arTypeDocs);
 	setLinkedDocs(arLinkedDocs);
 	setLinkedFields(arLinkedFields);
 	setLinkedCross(arLinkedCross);

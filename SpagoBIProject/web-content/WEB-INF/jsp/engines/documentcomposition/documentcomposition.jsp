@@ -62,7 +62,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     List lstDoc = docConfig.getDocumentsArray();
     
     //get information for document composition
-    Map lstUrl = new HashMap();
+    Map lstUrl = new HashMap();    
     Map lstTitles = new HashMap();
     Map lstZoom = new HashMap();
     Map lstExportDS = new HashMap();
@@ -74,6 +74,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     Map lstCrossLinked = new HashMap(); 
     Map lstExporterTypes = new HashMap();  
     Map lstDocTypes = new HashMap();  
+    List lstTestUrl = new ArrayList();
     //loop on documents
     for (int i = 0; i < lstDoc.size(); i++){
     	//gets url, parameters and other informations
@@ -110,9 +111,21 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	      		lstExporterTypes.put(tmpDoc.getSbiObjLabel(), exporters);
 	      	}
     	}
-    	
-    	
-    } 
+    	String tmpTestUrl = DocumentCompositionUtils.getEngineTestUrl(tmpDoc.getSbiObjLabel(), aSessionContainer, aRequestContainer.getServiceRequest());
+    	codeError = tmpTestUrl.substring(0,tmpTestUrl.indexOf("|"));
+    	tmpTestUrl = tmpTestUrl.substring(tmpTestUrl.indexOf("|")+1);
+    	if (codeError!= null && !codeError.equals("")){
+    		List l = new ArrayList();
+			l.add(tmpDoc.getSbiObjLabel());
+    		EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, codeError, l, SpagoBIDocumentCompositionInternalEngine.messageBundle);
+			errorHandler.addError(error);
+    	}
+    	else{
+    		if (!tmpTestUrl.equals("") && !lstTestUrl.contains(tmpTestUrl)){
+    			lstTestUrl.add(tmpTestUrl);
+    		}
+    	}
+    } //for 
 	%>
 <%@ include
 	file="/WEB-INF/jsp/engines/documentcomposition/template/dynamicTemplate.jsp"%>

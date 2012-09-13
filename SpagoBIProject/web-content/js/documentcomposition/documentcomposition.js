@@ -6,6 +6,7 @@
  
   
 var asUrls = new Object();
+var asTestUrls = new Object();
 var asDocTypes = new Object();
 var asTitleDocs = new Object();
 var asZoomDocs = new Object();
@@ -22,12 +23,13 @@ var DEFAULT_SEPARATOR = "%3B" //";";
 var DEFAULT_OPEN_BLOCK_MARKER = "%7B" //"{";
 var DEFAULT_CLOSE_BLOCK_MARKER = "%7D" //"}";
 
-function setDocs(pUrls, pTitle, pZoom, pExport, pExportTypes, pDocTypes){
+function setDocs(pUrls, pTestUrls, pTitle, pZoom, pExport, pExportTypes, pDocTypes){
 	for (i in pUrls)
 	{
 	   numDocs++;
 	}
 	asUrls = pUrls;
+	asTestUrls = pTestUrls;
 	asTitleDocs = pTitle;
 	asZoomDocs = pZoom;
 	asExportDSDocs = pExport;
@@ -307,7 +309,7 @@ function getNewValues(newLabel, paramsNewValues){
    	}
    	return newValues;
 }
-
+ 
 function setMultivalueFormat(newValue, oldValue){
 	//set the format =%7B%3B%newValue%7DSTRING%7D; the type (ie. STRING) is manteined by the original parameter value
 	var typePar = oldValue.substring(oldValue.indexOf(DEFAULT_CLOSE_BLOCK_MARKER)+3 , oldValue.length-3 );
@@ -323,171 +325,222 @@ function setMultivalueFormat(newValue, oldValue){
 	return value;
 }
 
-//create panels for each document
-Ext.onReady(function() {  
-	if (numDocs > 0){   
-  			for (var docLabel in asUrls){ 	
-  				if (docLabel.substring(0,5) !== 'EXT__'){
-	  				var totalDocLabel=docLabel;	
-	  				var strDocLabel = totalDocLabel.substring(totalDocLabel.indexOf('|')+1);
-	  				//gets style (width and height)
-	  				var style = asStylePanels[strDocLabel];	  				
-	  				var zoomDoc = asZoomDocs[strDocLabel] || "false";
-	  				var exportDSDoc = asExportDSDocs[strDocLabel] || "false";
-	  				//the title drives the header's visualization
-	  				var titleDoc = asTitleDocs[strDocLabel] ;
-	  				var itemTitleArr = [];
-	  				var itemTitleDoc = {};
-	  				var bodyStyleDoc = "padding:1px";
-	  				if (titleDoc[0] === "" && (zoomDoc[0] === "false" || exportDSDoc[0] === "false")){
-	  					titleDoc = null;	  					
-	  				}else{
-	  					itemTitleDoc.text = titleDoc;
-	  					itemTitleArr.push(itemTitleDoc);
-	  				}
-					var widthPx = "";
-					var heightPx = "";
-					
-					if (style != null){
-						widthPx = style[0].substring(0, style[0].indexOf("|"));
-						heightPx = style[0].substring(style[0].indexOf("|")+1);
-						widthPx = widthPx.substring(widthPx.indexOf("WIDTH_")+6);
-			       		heightPx = heightPx.substring(heightPx.indexOf("HEIGHT_")+7);
-					}
-					//defines the tools (header's buttons):
-					var menuItems = new Array();
-
-					var tb = new Ext.Toolbar({
-					    style: {
-				            background: '#ffffff',
-				            margin: 0,
-				            border: '0',
-				            color: '#000000',
-				            align: 'right',
-				            padding: 0,
-				            'padding-left': 10,
-				            'z-index': 100
-				        },
-				        buttonAlign: 'right',
-				        items: []
-				        //items: itemTitleArr
-					});
-					if (exportDSDoc !== undefined && exportDSDoc[0] === "true"){
-						bodyStyleDoc = "padding:10px";
-						var docsExpArrays= asExportTypes[strDocLabel];
-						if(docsExpArrays !== undefined && docsExpArrays !== null && docsExpArrays.length != 0){		
-							var docType = asDocTypes[strDocLabel];
-							if(docsExpArrays.length > 1){
-								for(k=0; k< docsExpArrays.length; k++){
-									var type = docsExpArrays[k];
-								
-									var iconname = 'icon-'+type.toLowerCase();
-									
-									var itemExp = new Ext.menu.Item({
-				                        text: type
-				                        , group: 'group_2'
-				                        , iconCls: iconname 
-								     	, scope: this
-										, width: 15
-								    	//, handler : function() { exportExecution(type, strDocLabel); }
-										, listeners:{
-											click: function() { exportExecution(this); }								
-										}
-										, href: ''
-										, document: strDocLabel
-										, docType : docType
-				                    })	
-									menuItems.push(itemExp); 
+function createPanels(){
+	//alert("createPanels!!");
+	//create panel for each document
+	for (var docLabel in asUrls){ 	
+		//alert(asUrls.toSource());
+		if (docLabel.substring(0,5) !== 'EXT__'){
+			var totalDocLabel=docLabel;	
+			var strDocLabel = totalDocLabel.substring(totalDocLabel.indexOf('|')+1);
+			//gets style (width and height)
+			var style = asStylePanels[strDocLabel];	  				
+			var zoomDoc = asZoomDocs[strDocLabel] || "false";
+			var exportDSDoc = asExportDSDocs[strDocLabel] || "false";
+			//the title drives the header's visualization
+			var titleDoc = asTitleDocs[strDocLabel] ;
+			var itemTitleArr = [];
+			var itemTitleDoc = {};
+			var bodyStyleDoc = "padding:1px";
+			if (titleDoc[0] === "" && (zoomDoc[0] === "false" || exportDSDoc[0] === "false")){
+				titleDoc = null;	  					
+			}else{
+				itemTitleDoc.text = titleDoc;
+				itemTitleArr.push(itemTitleDoc);
+			}
+			var widthPx = "";
+			var heightPx = "";
+			
+			if (style != null){
+				widthPx = style[0].substring(0, style[0].indexOf("|"));
+				heightPx = style[0].substring(style[0].indexOf("|")+1);
+				widthPx = widthPx.substring(widthPx.indexOf("WIDTH_")+6);
+	       		heightPx = heightPx.substring(heightPx.indexOf("HEIGHT_")+7);
+			}
+			//defines the tools (header's buttons):
+			var menuItems = new Array();
+	
+			var tb = new Ext.Toolbar({
+			    style: {
+		            background: '#ffffff',
+		            margin: 0,
+		            border: '0',
+		            color: '#000000',
+		            align: 'right',
+		            padding: 0,
+		            'padding-left': 10,
+		            'z-index': 100
+		        },
+		        buttonAlign: 'right',
+		        items: []
+		        //items: itemTitleArr
+			});
+			if (exportDSDoc !== undefined && exportDSDoc[0] === "true"){
+				bodyStyleDoc = "padding:10px";
+				var docsExpArrays= asExportTypes[strDocLabel];
+				if(docsExpArrays !== undefined && docsExpArrays !== null && docsExpArrays.length != 0){		
+					var docType = asDocTypes[strDocLabel];
+					if(docsExpArrays.length > 1){
+						for(k=0; k< docsExpArrays.length; k++){
+							var type = docsExpArrays[k];
+						
+							var iconname = 'icon-'+type.toLowerCase();
+							
+							var itemExp = new Ext.menu.Item({
+		                        text: type
+		                        , group: 'group_2'
+		                        , iconCls: iconname 
+						     	, scope: this
+								, width: 15
+						    	//, handler : function() { exportExecution(type, strDocLabel); }
+								, listeners:{
+									click: function() { exportExecution(this); }								
 								}
-	
-								var menu0 = new Ext.menu.Menu({
-									id: 'basicMenu_0',
-									items: menuItems    
-									});	
-								var menuBtn = new Ext.Toolbar.MenuButton({
-									id: Ext.id()
-						            , tooltip: 'Exporters'
-									, path: 'Exporters'	
-									, iconCls: 'icon-export' 	
-						            , menu: menu0
-						            , width: 15
-						            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-						        });
-								tb = new Ext.Toolbar({
-								    style: {
-							            background: '#ffffff',
-							            margin: 0,	
-							            border: '0',
-							            color: '#000000',
-							            align: 'right',
-							            padding: 0, 
-							            'padding-left': 10,
-							            'z-index': 100
-							        },
-							        buttonAlign: 'right',
-							        //items: [itemTitleDoc, menuBtn]
-							        items: [menuBtn]
-								});
-							}else if(docsExpArrays.length == 1){
-								var type = docsExpArrays[0];								
-								var iconname = 'icon-'+type.toLowerCase();
-								var btnSingle = new Ext.Toolbar.Button({
-			                        text: type
-			                        , group: 'group_2'
-			                        , iconCls: iconname 
-							     	, scope: this
-									, width: 15
-							    	//, handler : function() { exportExecution(type, strDocLabel); }
-									, listeners:{
-										click: function() { exportExecution(this); }								
-									}
-									, href: ''
-									, document: strDocLabel
-									, docType : docType
-								});
-								tb = new Ext.Toolbar({
-								    style: {
-							            background: '#ffffff',
-							            margin: 0, 
-							            border: '0',
-							            color: '#000000',
-							            align: 'right',
-							            padding: 0,	 
-							            'padding-left': 10,
-							            'z-index': 100
-							        },
-							        buttonAlign: 'right',
-							        //items: [itemTitleDoc, btnSingle]
-							        items: [btnSingle]
-								});
-							}
+								, href: ''
+								, document: strDocLabel
+								, docType : docType
+		                    })	
+							menuItems.push(itemExp); 
 						}
-
+	
+						var menu0 = new Ext.menu.Menu({
+							id: 'basicMenu_0',
+							items: menuItems    
+							});	
+						var menuBtn = new Ext.Toolbar.MenuButton({
+							id: Ext.id()
+				            , tooltip: 'Exporters'
+							, path: 'Exporters'	
+							, iconCls: 'icon-export' 	
+				            , menu: menu0
+				            , width: 15
+				            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+				        });
+						tb = new Ext.Toolbar({
+						    style: {
+					            background: '#ffffff',
+					            margin: 0,	
+					            border: '0',
+					            color: '#000000',
+					            align: 'right',
+					            padding: 0, 
+					            'padding-left': 10,
+					            'z-index': 100
+					        },
+					        buttonAlign: 'right',
+					        items: [menuBtn]
+						});
+					}else if(docsExpArrays.length == 1){
+						var type = docsExpArrays[0];								
+						var iconname = 'icon-'+type.toLowerCase();
+						var btnSingle = new Ext.Toolbar.Button({
+	                        text: type
+	                        , group: 'group_2'
+	                        , iconCls: iconname 
+					     	, scope: this
+							, width: 15
+					    	//, handler : function() { exportExecution(type, strDocLabel); }
+							, listeners:{
+								click: function() { exportExecution(this); }								
+							}
+							, href: ''
+							, document: strDocLabel
+							, docType : docType
+						});
+						tb = new Ext.Toolbar({
+						    style: {
+					            background: '#ffffff',
+					            margin: 0, 
+					            border: '0',
+					            color: '#000000',
+					            align: 'right',
+					            padding: 0,	 
+					            'padding-left': 10,
+					            'z-index': 100
+					        },
+					        buttonAlign: 'right',
+					        //items: [itemTitleDoc, btnSingle]
+					        items: [btnSingle]
+						});
 					}
-					
-					
-					//create panel with iframe
-					//alert("titleDoc: -" + titleDoc  + "-");
-					var p = new   Ext.ux.ManagedIframePanel({
-						frameConfig:{autoCreate:{id:'iframe_' + strDocLabel, name:'iframe_' + strDocLabel}}
-						,renderTo   : 'divIframe_'+ strDocLabel
-		                ,title      : titleDoc
-		                ,defaultSrc : asUrls[docLabel]+""
-		                ,loadMask   : true//(Ext.isIE)?true:false
-		                ,border		: false //the border style should be defined into document template within the "style" tag
-						,height		: Number(heightPx)
-						,scrolling  : 'auto'	 //possible values: yes, no, auto  
-						//,collapsible: true
-						,tbar		: tb
-						//,bodyStyle	:'padding:10px'
-						,bodyStyle	: bodyStyleDoc
-						//,preventHeader: true
-						,scope: this
+				}
+	
+			}
+			
+			//create panel with iframe
+			var p = new   Ext.ux.ManagedIframePanel({
+				frameConfig:{autoCreate:{id:'iframe_' + strDocLabel, name:'iframe_' + strDocLabel}}
+				,renderTo   : 'divIframe_'+ strDocLabel
+	            ,title      : titleDoc
+	            ,defaultSrc : asUrls[docLabel]+""
+	            ,loadMask   : true//(Ext.isIE)?true:false
+	            ,border		: false //the border style should be defined into document template within the "style" tag
+				,height		: Number(heightPx)
+				,scrolling  : 'auto'	 //possible values: yes, no, auto  
+				,tbar		: tb
+				,bodyStyle	: bodyStyleDoc
+				//,preventHeader: true
+				,scope: this
+	
+		});
+		}
+	}
+}
+ 
+function isEmpty(obj) { 
+	for(var i in obj) { return false; } return true; 
+}
 
-				});
-  				}
-  	}}
+function setValidSession(url, isValid, msg){
+	asTestUrls[url] = isValid;	
+	if (msg !== ""){
+		alert(msg);
+	}
+}
+
+Ext.onReady(function() {  
 	
-	
+	if (numDocs == 0){ return; }
+		
+	if (asTestUrls == undefined || asTestUrls == null && isEmpty(asTestUrls)){
+		//only internal engines
+		this.createPanels();
+	}else{
+		//with external engines	
+		var stop = false;
+		var task = {
+		    run: function(){
+		        if(!stop){
+		        	stop = true;
+		        	for (var url in asTestUrls){ 	
+		        		var isValid = asTestUrls[url];
+		        		if (isValid == false){
+		        			stop = false;
+		        			break;
+		        		}	        		
+		        	}
+		        	if (stop == true){
+			            runner.stop(task); // stop the task 
+			            createPanels();
+		        	}
+		        }else{
+		            runner.stop(task); // stop the task 
+		        	createPanels();
+		        }
+		    },
+		    interval: 1000 // every second
+		};
+		var runner = new Ext.util.TaskRunner();
+		runner.start(task);
+	 
+		//creates sessions for external engine
+		for (var testUrl in asTestUrls){
+			Ext.Ajax.request({
+				 url: testUrl,
+				 success: this.setValidSession.createDelegate(this, [testUrl, true, ""]),
+			     failure: this.setValidSession.createDelegate(this, [testUrl, true,"Internal error. Retry the document execution!" ])
+		    });
+		}
+	}
 }); 
 
