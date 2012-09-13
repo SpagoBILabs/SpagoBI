@@ -63,8 +63,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	String spagobiContext;
 	String spagobiSpagoController;
 	
-	qbeEngineInstance = (QbeEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute("ENGINE_INSTANCE");
-	worksheetEngineInstance = (WorksheetEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute(WorksheetEngineInstance.class.getName());
+	qbeEngineInstance = (QbeEngineInstance)ResponseContainer.getResponseContainer().getServiceResponse().getAttribute("ENGINE_INSTANCE");
+	worksheetEngineInstance = (WorksheetEngineInstance)ResponseContainer.getResponseContainer().getServiceResponse().getAttribute(WorksheetEngineInstance.class.getName());
   	workSheetDefinition = worksheetEngineInstance != null ? 
   			((WorkSheetDefinition) worksheetEngineInstance.getAnalysisState()) 
   			: null;
