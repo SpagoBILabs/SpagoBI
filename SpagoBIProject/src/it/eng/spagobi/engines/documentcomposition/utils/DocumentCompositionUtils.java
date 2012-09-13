@@ -274,6 +274,58 @@ public class DocumentCompositionUtils {
 	}
 
 	/**
+	 * Returns an url for the test of the EXTERNAL engine.
+	 * 
+	 * @param objLabel the logical label of the document (gets from the template file)
+	 * @param sessionContainer session object
+	 * @param requestSB request object
+	 * 
+	 * @return String the complete url. It use this format: <code_error>|<url>. If there is an error during the execution <code_error> is valorized and url is null, else it is null and the url is complete.
+	 */
+	public static String getEngineTestUrl(String objLabel, SessionContainer sessionContainer, SourceBean requestSB) {
+		logger.debug("IN");
+		
+		Monitor monitor = MonitorFactory.start("spagobi.engines.DocumentCompositionUtils.getEngineTestUrl");
+		
+		String baseUrlReturn = "";
+		String urlReturn = "";
+
+		if (objLabel == null || objLabel.equals("")){
+			logger.error("Object Label is null: cannot get engine's url.");
+			return "1008|";
+		}
+
+		try{
+			// get the user profile from session
+			SessionContainer permSession = sessionContainer.getPermanentContainer();
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel);
+			if (obj == null){ 
+				logger.error("Cannot obtain engine url. Document with label " + objLabel +" doesn't exist into database.");		
+				List l = new ArrayList();
+				l.add(objLabel);
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "1005", l, messageBundle);
+			}
+			
+			String className = obj.getEngine().getClassName();
+			if (className == null || className.trim().equals("")) {
+				// external engine
+				baseUrlReturn = obj.getEngine().getUrl() +"Test?";
+				urlReturn =  baseUrlReturn; 
+				logger.debug("urlReturn: " + "|"+urlReturn);
+			} 
+		}catch(Exception ex){
+			logger.error("Error while getting execution url: " + ex);
+			return null;
+		} finally {
+			monitor.stop();
+		}
+
+		logger.debug("OUT");
+		
+		return "|"+urlReturn;
+	}
+	
+	/**
 	 * Return a string representative an url with all parameters set with a request value (if it is present) or
 	 * with the default's value.
 	 * @param doc the document object that is managed
