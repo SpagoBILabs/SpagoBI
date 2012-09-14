@@ -137,7 +137,9 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			this.definesCategoriesX(singleChartConfig);
 			this.definesCategoriesY(singleChartConfig);
 			//sets the highchart colors table: default uses the own definition
-			Highcharts.setOptions({colors:this.getColors(singleChartConfig)});
+			var newColors = this.getColors(singleChartConfig);
+			//Highcharts.setOptions({colors: newColors }); with this instruction a black color is added on the last category (pie case)
+			singleChartConfig.colors = newColors;
 			
 			this.chart = new Highcharts.Chart(singleChartConfig);
 			//saves the chart for eventually multiple export
