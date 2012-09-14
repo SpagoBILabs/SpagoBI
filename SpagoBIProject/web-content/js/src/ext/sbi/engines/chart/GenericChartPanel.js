@@ -569,7 +569,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 				if (i == colors.length){
 					lenColors = 0;
 				}
-				retColors.push(colors[lenColors]);
+				retColors.push(colors[lenColors].trim());
 				lenColors ++;
 			}
 	    }
