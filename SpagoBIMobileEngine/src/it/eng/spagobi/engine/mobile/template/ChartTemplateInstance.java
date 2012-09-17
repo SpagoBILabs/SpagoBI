@@ -37,6 +37,9 @@ public class ChartTemplateInstance extends AbstractTemplateInstance  implements 
 		JSONTemplateUtils ju = new JSONTemplateUtils();
 		JSONArray array = toJSONArray(this.paramsMap);
 		features = ju.getJSONTemplateFromXml(this.template, array);
+		if(features == null){
+			features = new JSONObject(); 
+		}
 		buildDrillJSON();
 		setFeatures();
 	}
