@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
-Bundle-SymbolicName: spagobi.birt.oda; singleton:=true
+Bundle-SymbolicName: spagobi.birt.oda;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .,
  src,
@@ -30,7 +30,7 @@ Bundle-ClassPath: .,
  lib/javax.persistence_2.0.1.v201006031150.jar,
  lib/jaxrpc.jar,
  lib/js.jar,
- lib/json.jar,
+ lib/sbi.utils.json-3.5.1.jar,
  lib/jsr223.jar,
  lib/jta-1.1.jar,
  lib/log4j-1.2.9.jar,

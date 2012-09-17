@@ -23,9 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package spagobi.birt.oda.impl.server;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -56,11 +56,11 @@ public class ResultSet implements IResultSet
 	private int maxRows;
     private int currentRowIndex;
     private IDataStore dataStore;
-    private IDataStoreMetaData dataStoreMeta;
+    private IMetaData dataStoreMeta;
     
     private static Logger logger = LoggerFactory.getLogger(ResultSet.class);
 	
-    public ResultSet(IDataStore dataStore, IDataStoreMetaData dataStoreMeta) {
+    public ResultSet(IDataStore dataStore, IMetaData dataStoreMeta) {
     	this.dataStore = dataStore;
     	this.dataStoreMeta = dataStoreMeta;
     	this.currentRowIndex = -1;
