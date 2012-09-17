@@ -7,7 +7,7 @@
 
 package spagobi.birt.oda.impl.server;
 
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
 import org.eclipse.datatools.connectivity.oda.IResultSetMetaData;
 import org.eclipse.datatools.connectivity.oda.OdaException;
@@ -27,11 +27,11 @@ import spagobi.birt.oda.impl.Driver;
  */
 public class ResultSetMetaData implements IResultSetMetaData
 {
-	IDataStoreMetaData dataStoreMeta;
+	IMetaData dataStoreMeta;
 	
 	private static Logger logger = LoggerFactory.getLogger(ResultSetMetaData.class);
 	
-	public ResultSetMetaData(IDataStoreMetaData dataStoreMeta) {
+	public ResultSetMetaData(IMetaData dataStoreMeta) {
 
 		this.dataStoreMeta = dataStoreMeta;
 	}
