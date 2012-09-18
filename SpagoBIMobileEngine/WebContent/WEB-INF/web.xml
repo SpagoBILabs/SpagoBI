@@ -14,6 +14,12 @@
 	<!--  ============================================================================ -->
 	<!--  FILTERS								 									   -->
 	<!--  ============================================================================ -->	
+	
+	<filter>
+		<filter-name>SpagoBIMobileCheckSessionFilter</filter-name>
+		<filter-class>it.eng.spagobi.engine.mobile.util.SpagoBIMobileCheckSessionFilter</filter-class>
+	</filter>
+	
 <!-- START-CAS 
 <filter>
   <filter-name>CAS Authentication Filter</filter-name>
@@ -61,6 +67,7 @@ END-CAS -->
 		<filter-class>it.eng.spagobi.commons.filters.ProfileFilter</filter-class>
 	</filter>
 	
+
 	
 	<!--  ============================================================================ -->
 	<!--  FILTER MAPPINGS						 									   -->
@@ -92,6 +99,10 @@ END-CAS -->
 		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
 	
+	<filter-mapping>
+		<filter-name>SpagoBIMobileCheckSessionFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+	</filter-mapping>
 	<!--  ============================================================================ -->
 	<!--  SERVLETS								 									   -->
 	<!--  ============================================================================ -->
