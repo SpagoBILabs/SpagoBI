@@ -28,6 +28,34 @@
     	app.controllers.composedExecutionController = new app.controllers.ComposedExecutionController();
     	console.log('controller created');
     	
-
+    	Ext.util.Observable.observeClass(Ext.data.Connection);
+    	// connection handler, if server sends callback of expired session, logout!
+    	Ext.data.Connection.on('requestcomplete', function (conn, response, options) {
+    		//console.log('----------'+response);
+    		var r = response;
+    		var content = null;
+    		try{
+    			content = Ext.util.JSON.decode( response.responseText );
+    		}catch(err){
+    			console.log('logging out');
+    			return;
+    		}
+    		
+    		//console.log('**********'+response.responseText);
+			if (content.errors !== undefined  && content.errors.length > 0) {
+				if (content.errors[0].message === 'session-expired') {
+		        	Ext.Ajax.request({
+	                     url : Sbi.env.invalidateSessionURL
+	                     , method : 'POST'
+	                     , success : function(response, opts) {
+	                    	 // refresh page
+	                    	 window.location.href = Sbi.env.contextPath;
+	                     }
+	                     , failure : Sbi.exception.ExceptionHandler.handleFailure
+	                     , scope : this
+	                });
+				}
+    	    }
+    	});
     }
 });
