@@ -565,7 +565,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			<% } 
 
 
- if(showSlider || filterSeries==true) {%>
+ if(showSlider || filterSeries==true || filterCatGroup==true) {%>
 			<form id='serieform' name="serie" action="<%=refreshUrl%>" method="get"> 
 				<input type="hidden" name="<%=LightNavigationManager.LIGHT_NAVIGATOR_DISABLED%>" value="TRUE" /> 
 				<% if(!refreshUrlPars.containsKey("category")){%> 
@@ -969,7 +969,11 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		</table> <!-- Close table id="filterSeriesOrCatGroups" -->
 	
 	
-	 <%if((showSlider==true || filterSeries==true || filterCatGroup==true) && applyDrawed==false) {%>
+	 <%if(showSlider==true || filterSeries==true || filterCatGroup==true) 
+			 {
+			 if(applyDrawed==false){
+			 %>
+			 
 			 <tr>
 			   <td>
 				 <div align="center" class='div_detail_form'>
@@ -980,6 +984,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				</div>
 			   </td>
 			 </tr>  	
+			<%}%>
 		<!--CLOSE FORM  -->
 		</form>
 	<%}%>
@@ -1015,7 +1020,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
                 </div>
           		</td>
           		<td align="left">
-              <form name="<%=par%>" action="<%=refreshUrl%>" method="get">
+              <form name="<%=par%>" action="<%=refreshUrl%>" method="post">
               		<%if(sbi.getChangeViewParameter(par)){ %> 
                        <input type="radio"  	name="<%=par%>" value="false" onclick="this.form.submit()" />
                        <span style="<%=datasetMap.getFilterStyle()%> " >

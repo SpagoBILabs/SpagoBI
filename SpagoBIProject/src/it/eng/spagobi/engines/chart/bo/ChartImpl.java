@@ -12,6 +12,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.engines.chart.bo.charttypes.XYCharts.BlockChart;
+import it.eng.spagobi.engines.chart.bo.charttypes.XYCharts.SimpleBlockChart;
 import it.eng.spagobi.engines.chart.bo.charttypes.barcharts.CombinedCategoryBar;
 import it.eng.spagobi.engines.chart.bo.charttypes.barcharts.LinkableBar;
 import it.eng.spagobi.engines.chart.bo.charttypes.barcharts.OverlaidBarLine;
@@ -131,6 +132,7 @@ public class ChartImpl implements IChart {
 
 	public static final String XYCHART = "XYCHART";
 	public static final String blockchart = "blockchart";
+	public static final String simpleblockchart = "simpleblockchart";
 
 	public static final String SCATTERCHART = "SCATTERCHART";
 	public static final String simplescatter = "simplescatter";
@@ -556,6 +558,9 @@ public class ChartImpl implements IChart {
 		else if(type.equals(XYCHART)){
 			if(subtype.equalsIgnoreCase(blockchart)){
 				sbi=new BlockChart();
+			}
+			if(subtype.equalsIgnoreCase(simpleblockchart)){
+				sbi=new SimpleBlockChart();
 			}
 		}
 		
