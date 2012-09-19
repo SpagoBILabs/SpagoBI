@@ -73,13 +73,15 @@
 			    			fn : function(e) {
 		      		 			var crossParams = new Array();
 	      						var target = e.target;
-
+	      						
 	      						this.setCrossNavigation(resp, target, crossParams);
-	      						var targetDoc;
-	      						if(resp.features != undefined && resp.features.drill != undefined){
-		      						targetDoc = this.setTargetDocument(resp);		      						
+	      						if(crossParams.length != 0){
+		      						var targetDoc;
+		      						if(resp.features != undefined && resp.features.drill != undefined){
+			      						targetDoc = this.setTargetDocument(resp);		      						
+		      						}
+		      						this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
 	      						}
-	      						this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
     						},
     						scope : this
   						}
@@ -144,7 +146,10 @@
 
 						/*	RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE */
 						if(type == 'SERIE'){
-							crossParams.push({name : name, value : textCell});
+							if(column == name){
+								crossParams.push({name : name, value : textCell});
+							}
+							
 						}else if(type == 'CATEGORY'){
 							crossParams.push({name : name, value : column});
 						}else{

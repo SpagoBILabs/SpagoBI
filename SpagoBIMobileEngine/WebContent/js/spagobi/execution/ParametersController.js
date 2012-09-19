@@ -187,16 +187,25 @@
 			store.on('beforeload', function(store, o) {
 				var p = Ext.encode(this.getFormState());
 				store.proxy.extraParams.PARAMETERS = p;
-				return true;
+				//return true;
 			}, this);
 	
+			var mandatory= false;
+			if(p.mandatory && p.mandatory == true){
+				mandatory = true;
+			}
 			field = new Ext.form.Select(Ext.apply({
 				valueField : metadata.valueField,
 				displayField : metadata.displayField,
+				placeHolder: 'Selezionare un valore...',
+		        useClearIcon: true,
+		        required: mandatory,
 				store : store
 			},baseConfig));
 
-	
+			field.on('focus', function(f) {
+				f.setValue(' ');
+			}, this);
 		} else { 
 			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
 				field = new Ext.form.DatePicker(baseConfig);
