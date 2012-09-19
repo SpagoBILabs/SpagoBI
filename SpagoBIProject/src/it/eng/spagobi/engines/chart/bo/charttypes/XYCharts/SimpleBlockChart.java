@@ -195,8 +195,8 @@ public class SimpleBlockChart extends XYCharts {
 
 		double[][] data = new double[][] {xvalues, yvalues, zvalues};
 
-		int xVal = 0;
-		int yVal = 0;
+		double xVal = 0;
+		double yVal = 0;
 		double zVal = 0;
 
 		boolean first=true;
@@ -218,12 +218,12 @@ public class SimpleBlockChart extends XYCharts {
 				value=new String((String)object.getValue());
 				if(nameP.equalsIgnoreCase("x"))
 				{						
-					xVal = new Double(value).intValue();	
+					xVal = new Double(value).doubleValue();	
 					xvalues[cont] = xVal;
 				}
 				if(nameP.equalsIgnoreCase("y"))
 				{
-					yVal = new Double(value).intValue();	
+					yVal = new Double(value).doubleValue();	
 					yvalues[cont] = yVal;
 				}
 				if(nameP.equalsIgnoreCase("z"))
@@ -312,7 +312,7 @@ public class SimpleBlockChart extends XYCharts {
 		PaintScale paintScale = null;
 
 		if(grayPaintScale){
-			paintScale = new GrayPaintScale(-2.0, 1.0);
+			paintScale = new GrayPaintScale(minScaleValue, maxScaleValue);
 		}
 		else{
 			if(scaleLowerBound!= null &&  scaleUpperBound != null)	
