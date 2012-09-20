@@ -194,7 +194,7 @@
 			if(p.mandatory && p.mandatory == true){
 				mandatory = true;
 			}
-			field = new Ext.form.Select(Ext.apply({
+			field = new Ext.ux.touch.CustomSelectField(Ext.apply({
 				valueField : metadata.valueField,
 				displayField : metadata.displayField,
 				placeHolder: 'Selezionare un valore...',
