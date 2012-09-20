@@ -18,3 +18,4 @@
 
 <script type="text/javascript" src="../js/sencha/Ext.ux.TouchGridPanel.js"></script>
 <script type="text/javascript" src="../js/sencha/Ext.ux.touch.PagingToolbar.js"></script>
+<script type="text/javascript" src="../js/sencha/Ext.ux.touch.CustomSelectField.js"></script>
