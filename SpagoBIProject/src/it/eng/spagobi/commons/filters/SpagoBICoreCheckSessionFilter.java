@@ -46,7 +46,9 @@ public class SpagoBICoreCheckSessionFilter implements Filter {
     public void destroy() {
     	// do nothing
     }
-    
+    protected String getSessionExpiredUrl(){
+    	return GeneralUtilities.getSessionExpiredURL();
+    }
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
     	throws IOException, ServletException {
     	
@@ -66,7 +68,7 @@ public class SpagoBICoreCheckSessionFilter implements Filter {
 				if (!isValidSession && !isRequestedSessionIdValid && !isRequiredNewSession) {
 					// session has expired
 					//logger.debug("Session has expired!!");
-					String sessionExpiredUrl = GeneralUtilities.getSessionExpiredURL();
+					String sessionExpiredUrl = getSessionExpiredUrl();
 					if (sessionExpiredUrl == null || sessionExpiredUrl.trim().equals("")) {
 						logger.warn("Session expired URL not set!!! check engine-config.xml configuration");
 					} else {
