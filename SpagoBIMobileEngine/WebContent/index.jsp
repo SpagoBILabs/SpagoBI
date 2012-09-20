@@ -15,7 +15,7 @@
 <%@page import="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"%>
 <% 
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
-	String redirectURL = contextName + "/servlet/AdapterHTTP?ACTION_NAME=START_ACTION";
+	String redirectURL = contextName + "/servlet/AdapterHTTP?ACTION_NAME=START_ACTION&NEW_SESSION=TRUE";
     response.sendRedirect(redirectURL);
 %>
 

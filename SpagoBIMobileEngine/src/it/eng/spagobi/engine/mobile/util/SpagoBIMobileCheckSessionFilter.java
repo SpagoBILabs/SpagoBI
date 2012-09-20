@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.mobile.util;
 
+import it.eng.spagobi.commons.filters.SpagoBICoreCheckSessionFilter;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 
 import java.io.IOException;
@@ -24,76 +25,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 
-public class SpagoBIMobileCheckSessionFilter implements Filter {
+public class SpagoBIMobileCheckSessionFilter extends SpagoBICoreCheckSessionFilter{
 
-	public static final String NEW_SESSION = "NEW_SESSION";
+	@Override
+	protected String getSessionExpiredUrl() {
+		// TODO Auto-generated method stub
+		return "/WEB-INF/jsp/sessionExpired.jsp";
+	}
+
 	
-	private static transient Logger logger = Logger.getLogger(SpagoBIMobileCheckSessionFilter.class);
-
-    public void init(FilterConfig config) throws ServletException {
-    	// do nothing
-    }
-	
-    public void destroy() {
-    	// do nothing
-    }
-    
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
-    	throws IOException, ServletException {
-    	
-    	//logger.debug("IN");
-    	
-    	try {
-    		
-			if (request instanceof HttpServletRequest) {
-				HttpServletRequest httpRequest = (HttpServletRequest) request;
-				HttpSession session = httpRequest.getSession(false);
-				boolean isRequiredNewSession = false; // for those requests that require a new session anyway, 
-													  // do not forward to session expired url
-				String newSessionRequestAttr = httpRequest.getParameter(NEW_SESSION);
-	        	isRequiredNewSession = newSessionRequestAttr != null && newSessionRequestAttr.equalsIgnoreCase("TRUE");
-	        	boolean isRequestedSessionIdValid = httpRequest.isRequestedSessionIdValid();
-				if (!isRequestedSessionIdValid && !isRequiredNewSession) {
-					// session has expired
-					ServletOutputStream out=  response.getOutputStream();
-					JSONObject sessionExpiredError = new JSONObject();
-					sessionExpiredError.put("message", "session-expired");
-					JSONArray array = new JSONArray();
-					array.put(sessionExpiredError);
-					JSONObject jsonObject = new JSONObject();
-					jsonObject.put("errors", array);
-
-					out.print(jsonObject.toString());
-					out.flush();
-
-/*					//logger.debug("Session has expired!!");
-					String contextName = ChannelUtilities.getSpagoBIContextName(httpRequest);
-					String redirectURL = contextName + "/servlet/AdapterHTTP?ACTION_NAME=START_ACTION";
-					httpRequest.getRequestDispatcher(redirectURL).forward(request, response);*/
-					return;
-				}
-			}
-			
-			chain.doFilter(request, response);
-			
-	    } catch(Throwable t) {
-	    	logger.error("--------------------------------------------------------------------------------");
-		    logger.error("SpagoBIMobileCheckSessionFilter" + ":doFilter ServletException!!",t); 
-			logger.error(" msg: [" + t.getMessage() + "]"); 
-			Throwable z = t.getCause(); 
-			if(z != null) {
-				logger.error("-----------------------------");
-				logger.error("ROOT CAUSE:");
-				logger.error("-----------------------------"); 
-				logger.error(" msg: ["+ z.getMessage() + "]"); 
-				logger.error(" stacktrace:");
-			}
-			t.printStackTrace(); 
-	    	throw new ServletException(t);
-		} finally {
-			//logger.debug("OUT");
-		}
-	
-    }
     
 }
