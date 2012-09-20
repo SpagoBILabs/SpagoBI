@@ -72,6 +72,12 @@ END-CAS -->
 	<!--  ============================================================================ -->
 	<!--  FILTER MAPPINGS						 									   -->
 	<!--  ============================================================================ -->
+	
+	<filter-mapping>
+		<filter-name>SpagoBIMobileCheckSessionFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+	</filter-mapping>
+	
 <!-- START-CAS 
   <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
@@ -93,16 +99,13 @@ END-CAS -->
 		<url-pattern>/proxyCallback</url-pattern>	
    </filter-mapping>
 END-CAS -->
-
+	
 	<filter-mapping>
 		<filter-name>ProfileFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
 	
-	<filter-mapping>
-		<filter-name>SpagoBIMobileCheckSessionFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-	</filter-mapping>
+
 	<!--  ============================================================================ -->
 	<!--  SERVLETS								 									   -->
 	<!--  ============================================================================ -->
