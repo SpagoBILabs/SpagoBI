@@ -76,7 +76,7 @@ function execCrossNavigation(windowName, label, parameters) {
 						
 			for (var docLabel in asLinkedDocs){
 							
-				if (docLabel.indexOf(sbiLabelMasterDoc) >= 0){					
+				if (docLabel.indexOf(sbiLabelMasterDoc + "__") >= 0){					
 					generalLabelDoc = asLinkedDocs[docLabel];
 					var sbiLabelDocLinked = generalLabelDoc[0];
 					
@@ -249,9 +249,10 @@ function sendUrl(nameIframe, url, msg){
 	}else{
 		//INTERNAL cross management
 		Ext.get(nameIframe).setSrc(url);
+		reload = false; 
 	}
 	return;	
-}
+} 
 
 function pause(interval)
 {
@@ -488,7 +489,17 @@ function createPanels(){
 }
  
 function isEmpty(obj) { 
-	for(var i in obj) { return false; } return true; 
+	for(var i in obj) {
+		var tmpObj = obj[i];
+		if (Ext.isArray(tmpObj)){
+			var strValue = "";
+			for(var i = 0; i < tmpObj.length; i++) {
+				strValue +=	tmpObj[i];
+				if (strValue != "") return false;
+			}
+		}else if (obj != "") return false; 
+	} 
+	return true; 
 }
 
 function setValidSession(url, isValid, msg){
@@ -502,7 +513,7 @@ Ext.onReady(function() {
 	
 	if (numDocs == 0){ return; }
 		
-	if (asTestUrls == undefined || asTestUrls == null && isEmpty(asTestUrls)){
+	if (asTestUrls == undefined || asTestUrls == null || isEmpty(asTestUrls)){
 		//only internal engines
 		this.createPanels();
 	}else{
