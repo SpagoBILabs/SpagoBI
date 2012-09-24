@@ -566,10 +566,10 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	    var lenColors = 0;
 	    if(config.series[0] !== undefined){
 		    for (var i = 0, l = config.series[0].data.length; i < l ; i++) {				
-				if (i == colors.length){
+				if (lenColors == colors.length){
 					lenColors = 0;
 				}
-				retColors.push(colors[lenColors].trim());
+				retColors.push(colors[lenColors].trim());				
 				lenColors ++;
 			}
 	    }
