@@ -108,15 +108,21 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	JSONArray kpiRowsArray = new JSONArray();
 	KpiGUIUtil util = new KpiGUIUtil();
 	util.setExecutionInstance(instance, locale);
-	
-	if(!kpiRBlocks.isEmpty()){
+
+	if(!kpiRBlocks.isEmpty()){		
+		
 		Iterator blocksIt = kpiRBlocks.iterator();
 
 		while(blocksIt.hasNext()){			
 			KpiResourceBlock block = (KpiResourceBlock) blocksIt.next();
+			String resourceName = null;
+			if(block.getR() != null){
+				resourceName = block.getR().getName();
+			}
 			KpiLine root = block.getRoot();
 			JSONObject modelInstJson =  util.recursiveGetJsonObject(root);
-			kpiRowsArray.put(modelInstJson);						
+			modelInstJson.put("resourceName", resourceName);
+			kpiRowsArray.put(modelInstJson);	
 		}			
 	}
 	SessionContainer permSession = aSessionContainer.getPermanentContainer();
