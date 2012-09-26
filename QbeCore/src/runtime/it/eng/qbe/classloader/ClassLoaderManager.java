@@ -7,7 +7,9 @@ package it.eng.qbe.classloader;
 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -17,7 +19,7 @@ import org.apache.log4j.Logger;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class ClassLoaderManager{
+public class ClassLoaderManager {
 	
 	public static ClassLoader qbeClassLoader;
 	private static long jarFileTimeStamp;
@@ -38,30 +40,30 @@ public class ClassLoaderManager{
 		  
 		try {
 			
-			logger.debug("jar file to be loaded: " + jarFile.getAbsoluteFile());
-			jarFile.lastModified();
-			if(qbeClassLoader!=null){
-				if (qbeClassLoader instanceof DynamicClassLoader) {
-					DynamicClassLoader dcl = (DynamicClassLoader) qbeClassLoader;
-					//check if the cached loader has the same jar of the one we need now
-					if (	(dcl.getJarFile().equals(jarFile)) 
-							&& jarFileTimeStamp==jarFile.lastModified()//check if the file has been updated..
-						) {
-						logger.debug("Found a cached loader of type: "+ qbeClassLoader.getClass().getName());
-						logger.debug("Set as current loader the one previusly cached");
-						Thread.currentThread().setContextClassLoader(qbeClassLoader);
-						return qbeClassLoader;//if so we return the cached one
-					} else {//else we set the previous class loader
-						Thread.currentThread().setContextClassLoader(dcl.getParent());
-					}
-				}else{
-					logger.debug("Found a cached loader of type: "+ qbeClassLoader.getClass().getName());
-					logger.debug("Set as current loader the one previusly cached");
-					Thread.currentThread().setContextClassLoader(qbeClassLoader);
+			logger.debug("Jar file to be loaded: " + jarFile.getAbsoluteFile());
+			
+			DynamicClassLoader previousCL = getPreviousClassLoader(qbeClassLoader, jarFile);
+			if ( previousCL != null ) {
+				// the jar file has already been loaded, we must verify if it has been changed
+				logger.debug("Found a previous class loader for file " + jarFile.getAbsolutePath() );
+				if ( jarFile.lastModified() == previousCL.getJarFileLastModified() ) {
+					// the file has not been changed, no need to update the class loader
+					logger.debug("File " + jarFile.getAbsolutePath() + " has not been changed, no need to update the classloader" );
+				} else {
+					// we must remove the class loader associated to that jar file and then recreate it
+					logger.debug("File " + jarFile.getAbsolutePath() + " has been changed, removing it ..." );
+					removeClassLoader(previousCL);
+					// then update the class loader 
+					qbeClassLoader = updateCurrentClassLoader(jarFile);
 				}
+			} else {
+				// the jar file hasn't already been loaded, we must add it with a new class loader
+				logger.debug("File " + jarFile.getAbsolutePath() + " hasn't already been loaded, loading it ...");
+				// update the class loader 
+				qbeClassLoader = updateCurrentClassLoader(jarFile);
 			}
-			//update the class loader 
-			qbeClassLoader = updateCurrentClassLoader(jarFile);
+			
+			Thread.currentThread().setContextClassLoader(qbeClassLoader);
 			
 		} catch (Exception e) {
 			logger.error("Impossible to update current class loader", e);
@@ -70,6 +72,48 @@ public class ClassLoaderManager{
 		return qbeClassLoader;
 	}
 	
+	private static void removeClassLoader(DynamicClassLoader previousCL) {
+		if ( qbeClassLoader instanceof DynamicClassLoader ) {
+			DynamicClassLoader start = (DynamicClassLoader) qbeClassLoader;
+			ClassLoader genericClassLoader = start;
+			// save all the class loaders already defined into a temp list, except the one that we have to remove,
+			// untill we find the root web app class loader
+			List<DynamicClassLoader> currentClassLoaders = new ArrayList<DynamicClassLoader>();
+			ClassLoader root = null;
+			while (genericClassLoader instanceof DynamicClassLoader) {
+				DynamicClassLoader aDynClassLoader = (DynamicClassLoader) genericClassLoader;
+				if (!previousCL.equals(genericClassLoader)) {
+					currentClassLoaders.add(aDynClassLoader);
+				}
+				genericClassLoader = start.getParent();
+			}
+			root = genericClassLoader;
+			
+			// re-recreate all the dynamic class loaders
+			ClassLoader previous = root;
+			for (int i = 0; i < currentClassLoaders.size(); i++) {
+				DynamicClassLoader aDynClassLoader = currentClassLoaders.get(i);
+				DynamicClassLoader newDynClassLoader = new DynamicClassLoader(aDynClassLoader.getJarFile(), previous);
+				previous = newDynClassLoader;
+			}
+			qbeClassLoader = previous;
+		}
+	}
+
+	private static DynamicClassLoader getPreviousClassLoader(ClassLoader loader, File jarFile) {
+		if ( loader instanceof DynamicClassLoader ) {
+			DynamicClassLoader dynamicLoader = (DynamicClassLoader) loader;
+			if (dynamicLoader.getJarFile().equals(jarFile)) {
+				return dynamicLoader;
+			} else {
+				// we call recursively method on parent class loader
+				return getPreviousClassLoader(dynamicLoader.getParent(), jarFile);
+			}
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * Update the thread class loader with a dynamic class loader that
 	 * considers also the jar file

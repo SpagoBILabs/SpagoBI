@@ -26,6 +26,7 @@ public class DynamicClassLoader extends URLClassLoader {
 
 	//private ClassLoader parentClassLoader;
 	private File jarFile;
+	private long jarFileLastModified;
 
 	
 	private static transient Logger logger = Logger.getLogger(DynamicClassLoader.class);
@@ -36,7 +37,7 @@ public class DynamicClassLoader extends URLClassLoader {
 	 * @param jarFileName the jar file name
 	 * @param parentClassLoader the parent class loader
 	 */
-	public DynamicClassLoader(String jarFileName, ClassLoader parentClassLoader) {		
+	public DynamicClassLoader(String jarFileName, ClassLoader parentClassLoader) {
 		this (new File(jarFileName), parentClassLoader);
 	}
 
@@ -51,6 +52,7 @@ public class DynamicClassLoader extends URLClassLoader {
 	public DynamicClassLoader(File jarFile, ClassLoader parentClassLoader) {
 		super(new URL[0], parentClassLoader);
 		this.jarFile = jarFile;
+		this.jarFileLastModified = jarFile.lastModified();
 		//this.parentClassLoader = parentClassLoader;
 	}
 
@@ -257,6 +259,9 @@ public class DynamicClassLoader extends URLClassLoader {
 	}
 	
 	
+	public long getJarFileLastModified() {
+		return jarFileLastModified;
+	}
 	
 }
 
