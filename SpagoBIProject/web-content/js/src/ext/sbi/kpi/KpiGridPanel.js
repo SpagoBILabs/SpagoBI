@@ -32,13 +32,15 @@
  */
 Ext.ns("Sbi.kpi");
 
-Sbi.kpi.KpiGridPanel =  function(config) {
+Sbi.kpi.KpiGridPanel =  function(config, json) {
 		
-		var json = config.json;
 
 		var defaultSettings = {
-	        title: config.title,
+	        //title: config.title,
 	        region: 'center',
+	        flex:1,
+	        fill: true,
+	        autoScroll : true,
 	        enableDD: true
 			,loader: new Ext.tree.TreeLoader() // Note: no dataurl, register a TreeLoader to make use of createNode()
 			,root: new Ext.tree.AsyncTreeNode({
