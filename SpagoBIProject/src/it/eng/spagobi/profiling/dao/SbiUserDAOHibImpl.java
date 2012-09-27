@@ -434,19 +434,19 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 			//sets attributes
 			//remove existing attributes
-			qr = " from SbiUserAttributes x where x.id.id = :id ";
-			queryR = aSession.createQuery(qr);
-			queryR.setInteger("id", id);
-			List<SbiUserAttributes> userAttributes = (List<SbiUserAttributes>) queryR.list();
-			if (userAttributes != null && !userAttributes.isEmpty()) {
-				Iterator<SbiUserAttributes> attrsIt = userAttributes.iterator();
-				while (attrsIt.hasNext()) {
-					SbiUserAttributes temp = attrsIt.next();
-					attrsIt.remove();
-					aSession.delete(temp);
-					aSession.flush();
-				}
-			}
+//			qr = " from SbiUserAttributes x where x.id.id = :id ";
+//			queryR = aSession.createQuery(qr);
+//			queryR.setInteger("id", id);
+//			List<SbiUserAttributes> userAttributes = (List<SbiUserAttributes>) queryR.list();
+//			if (userAttributes != null && !userAttributes.isEmpty()) {
+//				Iterator<SbiUserAttributes> attrsIt = userAttributes.iterator();
+//				while (attrsIt.hasNext()) {
+//					SbiUserAttributes temp = attrsIt.next();
+//					attrsIt.remove();
+//					aSession.delete(temp);
+//					aSession.flush();
+//				}
+//			}
 			//add new attributes
 			Set<SbiUserAttributes> newAttributes = user.getSbiUserAttributeses();
 			if (newAttributes != null && !newAttributes.isEmpty()) {

@@ -462,7 +462,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 		if (rolesJSON == null || rolesJSON.length() == 0) {
 			throw new SpagoBIServiceException(
 					SERVICE_NAME,
-					"User roles were not specified");
+					"User roles were not specified: select at least one");
 		}
 		for (int i = 0; i < rolesJSON.length(); i++) {
 			JSONObject obj = (JSONObject) rolesJSON.get(i);
@@ -481,7 +481,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 			JSONObject obj = (JSONObject) attributesJSON.get(i);
 			Integer key = obj.getInt("id");
 			String value = obj.getString("value");
-			if (!value.equals("")) {
+			//if (!value.equals("")) {
 				SbiUserAttributes attribute = new SbiUserAttributes();
 				attribute.setAttributeValue(value);
 				SbiUserAttributesId attributeId = new SbiUserAttributesId();
@@ -492,7 +492,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				attribute.setSbiAttribute(sbiAttribute);
 	
 				attributes.add(attribute);
-			}
+			//}
 		}
 		user.setSbiUserAttributeses(attributes);
 	}
