@@ -257,7 +257,7 @@ public class CrosstabXLSExporter {
 			List<Node> childs = aNode.getChilds();
 			Row row = sheet.getRow(rowsCounter);
 			Cell cell = row.createCell(columnNum);
-			String text = (String) aNode.getValue();
+			String text = (String) aNode.getDescription();
 			
 			if (cs.isMeasureOnRow() && (childs == null || childs.size() <= 0)) {
 		    	//apply the measure scale factor
@@ -524,7 +524,7 @@ public class CrosstabXLSExporter {
 			List<Node> childs = aNode.getChilds();
 			Row row = sheet.getRow(rowNum);
 			Cell cell = row.createCell(columnCounter);
-			String text = (String) aNode.getValue();
+			String text = (String) aNode.getDescription();
 			if (!cs.isMeasureOnRow() && (childs == null || childs.size() <= 0)) {
 		    	//apply the measure scale factor
 		    	text = MeasureScaleFactorOption.getScaledName(text, cs.getMeasureScaleFactor(text), locale);

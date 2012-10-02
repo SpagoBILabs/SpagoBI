@@ -156,7 +156,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			var categories = [];
 			var i=0;
 			for(; i<measures.length; i++){
-				categories.push(measures[i].node_key);
+				categories.push(measures[i].node_description);
 			}
 			return  categories;
 		}
@@ -185,7 +185,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			i=0;
 			for(; i<seriesNames.length; i++){
 			      serie = {};
-			      serie.name =   seriesNames[i].node_key;
+			      serie.name = seriesNames[i].node_description;
 			      serieData = this.dataContainerObject.data[i];
 			      serieDataFormatted = [];
 			      var j=0;

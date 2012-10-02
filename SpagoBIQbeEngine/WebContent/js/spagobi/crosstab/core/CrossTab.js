@@ -90,7 +90,6 @@ Sbi.crosstab.core.CrossTab = function(config) {
 		this.percenton = 'no';
 	}
 	
-	this.valueDescriptionMap = config.valueDescriptionMap;
 	this.manageDegenerateCrosstab(this.rowHeadersDefinition, this.columnHeadersDefinition);
 	this.entries = new Sbi.crosstab.core.CrossTabData(this.entries);
     this.rowHeader = new Array();
@@ -189,12 +188,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 
 	, manageDegenerateCrosstab: function(rowHeadersDefinition, columnHeadersDefinition) {
 		if (rowHeadersDefinition.length == 1) { // degenerate crosstab (everything on columns)
-			var array = ["Data"];
+			var array = [{'key': "Data", 'description': "Data"}];
 			var wrapper = [array];
 			rowHeadersDefinition.push(wrapper);
 		}
 		if (columnHeadersDefinition.length == 1) { // degenerate crosstab (everything on rows)
-			var array = ["Data"];
+			var array = [{'key': "Data", 'description': "Data"}];
 			var wrapper = [array];
 			columnHeadersDefinition.push(wrapper);
 		}
@@ -412,6 +411,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
  	 ,serializeHeader: function(header){
   		var node = {};
   		node.node_key =  header.name;
+  		node.node_description = header.description;
  		if(header.childs.length>0){
  			var nodeChilds = new Array();
  			for(var i=0; i<header.childs.length; i++){
@@ -440,7 +440,8 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //headers: Or columnHeader or rowHeader
     //horizontal: true for columnHeader and false for rowHeader 
      , build : function(line, level, headers, horizontal){
-		var name = line[0];
+		var name = line[0].key;
+		var description = line[0].description;
 		var leaf = false;
 		var thisDimension;
     	if(line.length==1){
@@ -455,7 +456,16 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     		thisDimension =t;
     	}
     	
-    	var panelConfig = {crosstab:this, percenton: this.percenton, name:name, thisDimension:thisDimension, horizontal:horizontal, level:level,columnWidth: this.columnWidth};
+    	var panelConfig = {
+    			crosstab : this, 
+    			percenton : this.percenton, 
+    			name : name, 
+    			description : description,
+    			thisDimension : thisDimension, 
+    			horizontal : horizontal, 
+    			level : level,
+    			columnWidth : this.columnWidth
+    	};
     	
     	if(level%2==1 && horizontal && !leaf){//its a title header
     		panelConfig.titleHeader = true;	
