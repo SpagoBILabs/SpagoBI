@@ -81,7 +81,7 @@ Sbi.crosstab.core.HeaderEntry = function(config) {
 	this.formattedName = this.applyMeasureScaleFactor(config.crosstab.fieldsOptions, config.name);
 	
 	this.name = config.name;
-	
+	this.description = config.description;
 
 	
 	var sharedConf = {
@@ -201,12 +201,11 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 		this.un('afterlayout',	this.updateAfterLayout, this);
 	}
 	
-	, getDescription: function(value){
-		var description = this.crosstab.valueDescriptionMap[value];
-		if(description==undefined || description==null){
+	, getDescription: function(value) {
+		if (this.description == undefined || this.description == null){
 			return value;
-		}
-		return description;
+		} 
+		return this.description;
 	}
 
 	,getBackground : function(height, padding){

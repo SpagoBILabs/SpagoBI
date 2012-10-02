@@ -185,7 +185,10 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	, fromNodeToArray: function(node){
 		var childs = node.node_childs;
 		var array = new Array();
-		array.push(node.node_key);
+		array.push({
+			'key' : node.node_key
+			, 'description' : node.node_description
+		});
 		if(childs!=null && childs.length>0){
 			var childsArray = new Array();
 			for(var i=0; i<childs.length; i++){

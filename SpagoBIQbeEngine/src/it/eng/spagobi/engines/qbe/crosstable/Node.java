@@ -22,6 +22,7 @@ import org.json.JSONObject;
 public class Node implements Cloneable, Comparable<Node>{
 		public static final String CROSSTAB_NODE_JSON_CHILDS = "node_childs";
 		public static final String CROSSTAB_NODE_JSON_KEY = "node_key";
+		public static final String CROSSTAB_NODE_JSON_DESCRIPTION = "node_description";
 	
 		private String value;//the value of the node
 		private String description;//the value of the node
@@ -45,6 +46,10 @@ public class Node implements Cloneable, Comparable<Node>{
 
 		public String getValue() {
 			return value;
+		}
+		
+		public String getDescription() {
+			return description;
 		}
 		
 		public List<Node> getChilds() {
@@ -96,6 +101,7 @@ public class Node implements Cloneable, Comparable<Node>{
 			JSONObject thisNode = new JSONObject();
 			
 			thisNode.put(CROSSTAB_NODE_JSON_KEY, this.value);
+			thisNode.put(CROSSTAB_NODE_JSON_DESCRIPTION, this.description);
 
 			
 			if(childs.size()>0){

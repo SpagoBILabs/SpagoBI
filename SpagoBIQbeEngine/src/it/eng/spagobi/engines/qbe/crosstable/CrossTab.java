@@ -85,7 +85,6 @@ public class CrossTab {
 	private List<String[]> rowsSum; //sum calculate for the rows (summ the row 1.. )
 	private List<String[]> columnsSum; //sum calculate for the rows (summ the row 1.. )
 	private boolean measuresOnRow;
-	private Map<String,String> mapValueDescription = new HashMap<String,String>();
 	
 	public enum CellType {
 		DATA("data"), CF("cf"), SUBTOTAL("partialsum"), TOTAL("totals");
@@ -309,7 +308,6 @@ public class CrossTab {
 		
 		JSONArray descriptions = getHeaderDescriptions( crosstabDefinition.getRows());
 		crossTabDefinition.put(CROSSTAB_JSON_ROWS_HEADERS_DESCRIPTION, descriptions);
-		crossTabDefinition.put(CROSSTAB_JSON_VALUE_DESCRIPTION_MAP, serializeMapValueDescription());
 		
 		crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRoot.toJSONObject());
 		crossTabDefinition.put(CROSSTAB_JSON_DATA,  getJSONDataMatrix());
@@ -325,18 +323,6 @@ public class CrossTab {
 			types.put(celltypes.get(i).getValue());
 		}
 		return types;
-	}
-	
-	private JSONObject serializeMapValueDescription() throws JSONException{
-		String value, description;
-		JSONObject valueDescription = new JSONObject();
-		Iterator<String> i = mapValueDescription.keySet().iterator();
-		while(i.hasNext()){
-			value = i.next();
-			description = mapValueDescription.get(value);
-			valueDescription.put(value, description);
-		}
-		return valueDescription;
 	}
 	
 	
@@ -479,7 +465,6 @@ public class CrossTab {
 			if (valueField.getValue() != null) {
 				if (valueField.getDescription() != null) {
 					node = new Node(valueField.getValue().toString(), valueField.getDescription().toString());
-					mapValueDescription.put(valueField.getValue().toString(), valueField.getDescription().toString());
 				}else{
 					node = new Node(valueField.getValue().toString());
 				}

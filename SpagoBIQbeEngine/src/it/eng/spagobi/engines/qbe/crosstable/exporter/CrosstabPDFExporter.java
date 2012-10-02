@@ -7,6 +7,7 @@ package it.eng.spagobi.engines.qbe.crosstable.exporter;
 
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
+import it.eng.spagobi.engines.qbe.crosstable.Node;
 import it.eng.spagobi.engines.worksheet.services.export.MeasureFormatter;
 
 import java.awt.Color;
@@ -156,7 +157,12 @@ public class CrosstabPDFExporter {
 		//For every node of the level..
 		for (int i = 0; i < siblings.length(); i++) {
 			JSONObject aNode = (JSONObject) siblings.get(i);
-			String text = (String) aNode.get(CrossTab.CROSSTAB_NODE_JSON_KEY);
+			String text = (String) aNode.opt(Node.CROSSTAB_NODE_JSON_DESCRIPTION);
+			if (text == null) {
+				// in case of calculated fields
+				text = (String) aNode.get(CrossTab.CROSSTAB_NODE_JSON_KEY);
+			}
+			
 			int descendants = aNode.getInt(CrosstabExporterUtility.CROSSTAB_JSON_DESCENDANTS_NUMBER);
 		    
 			PdfPCell cell = new PdfPCell(new Phrase( text, cellFont));
@@ -207,7 +213,7 @@ public class CrosstabPDFExporter {
 
 			}
 			JSONObject aNode = (JSONObject) columnNodes.get(i);
-			String text = (String) aNode.get(CrossTab.CROSSTAB_NODE_JSON_KEY);
+			String text = (String) aNode.get(Node.CROSSTAB_NODE_JSON_DESCRIPTION);
 			int descendants = aNode.getInt(CrosstabExporterUtility.CROSSTAB_JSON_DESCENDANTS_NUMBER);
 		    
 			PdfPCell cell = new PdfPCell(new Phrase(text,cellFont));

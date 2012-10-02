@@ -42,10 +42,10 @@ public class FakeDataset extends AbstractCustomDataSet {
 	
 	public static transient Logger logger = Logger.getLogger(FakeDataset.class);
 	
-	public static String[] sessi = { "Maschio", "Femmina" };
-	public static String[] statimatrimoniali = { "Sposato", "Non sposato" };
+	public static String[] sessi = { "0", "1" }; // { "Maschio", "Femmina" };
+	public static String[] statimatrimoniali = { "0", "1" }; // { "Sposato", "Non sposato" };
 	public static String[] occupazioni = { "Impiegato", "Operario", "Agricoltore", "Artista", "Medico", "Sportivo" };
-	public static String[] titoli = { "Laureato", "Diplomato", "Post-doc", "Master" };
+	public static String[] titoli = { "0", "1", "2", "3" }; // { "Laureato", "Diplomato", "Post-doc", "Master" };
 	public static String[] regioni = { "Veneto", "Lombardia", "Calabria", "Emilia Romagna", "Trentino Alto Adige" };
 	public static String[] lecittacodici = { "PD", "MI", "RC", "RE", "TN", "VE", "BR", "CT", "BO", "BZ" };
 	public static String[] lecittadescrizioni = { "Padova", "Milano", "Reggio Calabria", "Reggio Emilia", "Trento", "Venezia", "Brescia", "Catanzato", "Bologna", "Bolzano" };
@@ -460,14 +460,54 @@ public class FakeDataset extends AbstractCustomDataSet {
 		Map map = new HashMap<String, List<String>>();
 		for (Iterator iterator = codes.keySet().iterator(); iterator.hasNext();) {
 			String type = (String) iterator.next();
+			
 			List valuesList = codes.get(type);
-
 			List l = new ArrayList<String>();
-			for (Iterator iterator2 = valuesList.iterator(); iterator2.hasNext();) {
-				String s = (String) iterator2.next();
-				l.add("Desc");
+			
+			if (type.equals("sesso")) {
+				for (Iterator iterator2 = valuesList.iterator(); iterator2.hasNext();) {
+					String s = (String) iterator2.next();
+					if (s.equals("0")) {
+						l.add("Maschio");
+					} else {
+						l.add("Femmina");
+					}
+				}
+			} else if (type.equals("statomatrimoniale")) {
+				for (Iterator iterator2 = valuesList.iterator(); iterator2.hasNext();) {
+					String s = (String) iterator2.next();
+					if (s.equals("0")) {
+						l.add("Sposato");
+					} else {
+						l.add("Non sposato");
+					}
+				}
+			} else if (type.equals("titolo")) {
+				for (Iterator iterator2 = valuesList.iterator(); iterator2.hasNext();) {
+					Integer s = Integer.parseInt((String) iterator2.next());
+					switch (s) {
+						case 0 :
+							l.add("Laureato");
+							break;
+						case 1 :
+							l.add("Diplomato");
+							break;
+						case 2 :
+							l.add("Diplomato");
+							break;
+						case 3 :
+							l.add("Master");
+							break;
+					}
+				}
+			} else {
+				for (Iterator iterator2 = valuesList.iterator(); iterator2.hasNext();) {
+					String s = (String) iterator2.next();
+					l.add(s+ " descrizione");
+				}
 			}
 			map.put(type, l);
+
 		}
 
 		return map;
