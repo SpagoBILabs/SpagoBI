@@ -14,8 +14,6 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -55,11 +53,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -178,7 +173,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			this.resources = mI.getResources(); //Set all the Resources for the Model Instance
 			logger.info("Dataset multiresource");
 			try {
-				calculateAndInsertKpiValueWithResources(mI.getModelInstanceNodeId(),this.resources);  	
+				calculateAndInsertKpiValueWithResources(mI,this.resources);  	
 			} catch (EMFInternalError e) {
 				e.printStackTrace();
 				logger.error("Error in calculateAndInsertKpiValueWithResources",e);
@@ -203,7 +198,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 					KpiResourceBlock block = new KpiResourceBlock();
 					block.setD(this.parameters.getDateOfKPI());
-					KpiLine line = getBlock(mI.getModelInstanceNodeId(), null);				
+					KpiLine line = getBlock(mI, null);				
 					block.setRoot(line);
 					block.setOptions(options);
 					logger.debug("Setted the tree Root.");
@@ -218,7 +213,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 				block.setD(parameters.getDateOfKPI());
 						block.setOptions(options);
-						KpiLine line = getBlock(mI.getModelInstanceNodeId(), r);
+						KpiLine line = getBlock(mI, r);
 						block.setRoot(line);
 						logger.debug("Setted the tree Root.");
 						kpiRBlocks.add(block);
@@ -373,7 +368,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				this.resources = mI.getResources(); //Set all the Resources for the Model Instance
 				logger.info("Dataset multiresource");
 
-				calculateAndInsertKpiValueWithResources(mI.getModelInstanceNodeId(),this.resources);  	
+				calculateAndInsertKpiValueWithResources(mI,this.resources);  	
 				logger.info("Inserted all values!!");
 				return;    	
 			}
@@ -387,7 +382,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			KpiLineVisibilityOptions options = KpiEngineUtil.setVisibilityOptions(this.templateConfiguration);
 
 			//sets up register values
-			ModelInstanceNode modI = DAOFactory.getModelInstanceDAO().loadModelInstanceById(mI.getModelInstanceNodeId(), parameters.getDateOfKPI());
+			//ModelInstanceNode modI = DAOFactory.getModelInstanceDAO().loadModelInstanceById(mI.getModelInstanceNodeId(), parameters.getDateOfKPI());
 
 			logger.debug("Setted the List of Kpis that does not need to be persisted in db");
 			if (this.resources == null || this.resources.isEmpty()) {
@@ -395,7 +390,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				KpiResourceBlock block = new KpiResourceBlock();
 				block.setD(this.parameters.getDateOfKPI());
 				block.setParMap(this.parameters.getParametersObject());
-				KpiLine line = getBlock(mI.getModelInstanceNodeId(), null);
+				KpiLine line = getBlock(mI, null);
 				block.setRoot(line);
 				block.setTitle(name);
 				block.setSubtitle(subName);
@@ -412,7 +407,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 					block.setR(r);
 					block.setD(parameters.getDateOfKPI());
 					block.setParMap(this.parameters.getParametersObject());
-					KpiLine line = getBlock(mI.getModelInstanceNodeId(), r);
+					KpiLine line = getBlock(mI, r);
 					block.setRoot(line);
 					block.setOptions(options);
 					logger.debug("Setted the tree Root.");
@@ -506,10 +501,10 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 
 
-	public void calculateAndInsertKpiValueWithResources(Integer miId,List resources)throws EMFUserError, EMFInternalError, SourceBeanException {
+	public void calculateAndInsertKpiValueWithResources(ModelInstanceNode modI,List resources)throws EMFUserError, EMFInternalError, SourceBeanException {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.calculateAndInsertKpiValueWithResources");
-		ModelInstanceNode modI =  DAOFactory.getModelInstanceDAO().loadModelInstanceById(miId, parameters.getDateOfKPI());
+		
 		if (modI != null) {
 			logger.info("Loaded Model Instance Node with id: " + modI.getModelInstanceNodeId());
 		}
@@ -519,7 +514,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			Iterator childrenIt = childrenIds.iterator();
 			while (childrenIt.hasNext()) {
 				Integer id = (Integer) childrenIt.next();	
-				calculateAndInsertKpiValueWithResources(id, resources);
+				ModelInstanceNode modIF =  DAOFactory.getModelInstanceDAO().loadModelInstanceById(id, parameters.getDateOfKPI());
+				calculateAndInsertKpiValueWithResources(modIF, resources);
 			}
 		}
 		KpiInstance kpiI = modI.getKpiInstanceAssociated();
@@ -553,7 +549,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 			// If it has to be calculated for a Resource. The resource will be set as parameter
 			HashMap temp = (HashMap) this.parameters.getParametersObject().clone();
-			temp.put("ParModelInstance", miId);	
+			temp.put("ParModelInstance", modI.getModelInstanceNodeId());	
 			temp.put("ParKpiInstance", kpiInstanceID.toString());
 			// If not, the dataset will be calculated without the parameter Resource
 			// and the DataSet won't expect a parameter of type resource
@@ -566,7 +562,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				
 				String paramLabelHierarchy = (String)this.parameters.getParametersObject().get("ParKpiHierarchy");
 				logger.info("Got ParKpiHierarchy: " + paramLabelHierarchy);
-				setOUAbilitated(miId, parKpiOuLabel, paramLabelHierarchy);
+				setOUAbilitated(modI.getModelInstanceNodeId(), parKpiOuLabel, paramLabelHierarchy);
 				
 				if(ouList != null && !ouList.isEmpty()){
 					if(templateConfiguration.isUse_ou()){
@@ -636,14 +632,14 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		logger.debug("OUT");
 	}
 
-	private void setKpiTrend(KpiLine kpiLine){
+	private void setKpiTrend(KpiLine kpiLine, ModelInstanceNode node){
 		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.setKpiTrend");
 
 		KpiValue value = kpiLine.getValue();
 		if (value == null ) return;
 		Integer modelInstId = kpiLine.getModelInstanceNodeId();
 		try {
-			ModelInstanceNode node = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstId, null);
+			//ModelInstanceNode node = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstId, null);
 			KpiInstance kpiInst= node.getKpiInstanceAssociated();
 			if(kpiInst != null){
 				Integer kpiInstId = kpiInst.getKpiInstanceId();
@@ -703,33 +699,34 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	
 	private void setGUIInformation(KpiLine line,
 					KpiInstance kpiI, 
+					ModelInstanceNode node,
 					Kpi k) throws EMFUserError{
 		//add information needed by the new GUI 
-		setKpiTrend(line);
+		setKpiTrend(line,node);
 		line.setKpi(k);
 		line.setKpiInstId(kpiI.getKpiInstanceId());
 
 	}
 	private void setVisibilityInformation(KpiLine line,
 			ModelInstanceNode modI) throws EMFUserError{
-		Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(modI.getModelNodeId());
+		Model model = DAOFactory.getModelDAO().loadModelOnlyPropertiesById(modI.getModelNodeId());
 		
 		boolean isVisible = isVisible(line, model);
 		if(!isVisible){
 			line.setVisible(false);				
 		}
 	}
-	public KpiLine getBlock(Integer miId, Resource r) throws EMFUserError, EMFInternalError, SourceBeanException {
+	public KpiLine getBlock(ModelInstanceNode modI, Resource r) throws EMFUserError, EMFInternalError, SourceBeanException {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("kpi.engines.SpagoBIKpiInternalEngine.getBlock");
 		KpiLine line = new KpiLine();
-		ModelInstanceNode modI = DAOFactory.getModelInstanceDAO().loadModelInstanceById(miId, parameters.getDateOfKPI());
+		
 		if (modI != null) {
 			logger.info("Loaded Model Instance Node with id: " + modI.getModelInstanceNodeId());
 		}
 		String modelNodeName = modI.getName();
 		line.setModelNodeName(modelNodeName);
-		line.setModelInstanceNodeId(miId);
+		line.setModelInstanceNodeId(modI.getModelNodeId());
 		line.setModelInstanceCode(modI.getModelCode());
 		setVisibilityInformation(line, modI);
 		
@@ -739,7 +736,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			Iterator childrenIt = childrenIds.iterator();
 			while (childrenIt.hasNext()) {
 				Integer id = (Integer) childrenIt.next();	
-				KpiLine childrenLine = getBlock(id, r);
+				ModelInstanceNode modIF = DAOFactory.getModelInstanceDAO().loadModelInstanceById(id, parameters.getDateOfKPI());
+				KpiLine childrenLine = getBlock(modIF, r);
 				if(childrenLine != null){
 					children.add(childrenLine);
 				}
@@ -778,9 +776,9 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				}
 				logger.debug("if udp is present passes a upd name = parameter name to dataset, by ading it to HashMap pars");
 			}
-			line = retrieveKpiLine(line, value, kpiI, miId, r, alreadyExistent);
+			line = retrieveKpiLine(line, value, kpiI, modI.getModelInstanceNodeId(), r, alreadyExistent);
 
-			setGUIInformation(line, kpiI, k);
+			setGUIInformation(line, kpiI, modI, k);
 			
 			logger.debug("Retrieved the kpi with id: " + kpiId.toString());
 						
