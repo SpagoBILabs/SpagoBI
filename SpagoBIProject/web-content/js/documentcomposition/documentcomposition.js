@@ -9,8 +9,7 @@ var asUrls = new Object();
 var asTestUrls = new Object();
 var asDocTypes = new Object();
 var asTitleDocs = new Object();
-var asZoomDocs = new Object();
-var asExportDSDocs = new Object();
+var asExportDocs = new Object();
 var asLinkedDocs = new Object();
 var asLinkedFields = new Object();
 var asLinkedCross = new Object();
@@ -18,12 +17,13 @@ var asStylePanels = new Object();
 var asExportTypes = new Object();
 var numDocs = 0;
 
+
 //constants to manage multivalue params
 var DEFAULT_SEPARATOR = "%3B" //";";
 var DEFAULT_OPEN_BLOCK_MARKER = "%7B" //"{";
 var DEFAULT_CLOSE_BLOCK_MARKER = "%7D" //"}";
 
-function setDocs(pUrls, pTestUrls, pTitle, pZoom, pExport, pExportTypes, pDocTypes){
+function setDocs(pUrls, pTestUrls, pTitle, pExport, pExportTypes, pDocTypes){
 	for (i in pUrls)
 	{
 	   numDocs++;
@@ -31,8 +31,7 @@ function setDocs(pUrls, pTestUrls, pTitle, pZoom, pExport, pExportTypes, pDocTyp
 	asUrls = pUrls;
 	asTestUrls = pTestUrls;
 	asTitleDocs = pTitle;
-	asZoomDocs = pZoom;
-	asExportDSDocs = pExport;
+	asExportDocs = pExport;
 	asExportTypes = pExportTypes;
 	asDocTypes = pDocTypes;
 	
@@ -67,7 +66,7 @@ function execCrossNavigation(windowName, label, parameters) {
 	var extDocsExecute = [];
 	
 	
-	for(var docMaster in asUrls){
+	for(var docMaster in asUrls){	
 		var reload = false;
 		var	typeCross = "";
 		var sbiLabelMasterDoc = docMaster;
@@ -214,7 +213,9 @@ function execCrossNavigation(windowName, label, parameters) {
 					//updated general url  with new values
 					if (reload){
 						if (asUrls[generalLabelDoc] !== undefined){
+							//internal cross
 							asUrls[generalLabelDoc][0]=newUrl[0];
+							reload = false; 
 						}else{
 							asUrls["EXT__" + generalLabelDoc][0]=newUrl[0];
 							extDocsExecute.push(generalLabelDoc[0]);
@@ -227,8 +228,7 @@ function execCrossNavigation(windowName, label, parameters) {
 							  , windowName: this.name//docLabel
 							  , typeCross: typeCross
 						  	  };						
-						sendUrl(nameIframe,lastUrl,msg);
-						//reload = false; 
+						sendUrl(nameIframe,lastUrl,msg);						
 					}
 				}//if (docLabel.indexOf(sbiLabelMasterDoc) >= 0){
 			}//for (var docLabel in asLinkedDocs){ 
@@ -249,7 +249,6 @@ function sendUrl(nameIframe, url, msg){
 	}else{
 		//INTERNAL cross management
 		Ext.get(nameIframe).setSrc(url);
-		reload = false; 
 	}
 	return;	
 } 
@@ -336,14 +335,14 @@ function createPanels(){
 			var strDocLabel = totalDocLabel.substring(totalDocLabel.indexOf('|')+1);
 			//gets style (width and height)
 			var style = asStylePanels[strDocLabel];	  				
-			var zoomDoc = asZoomDocs[strDocLabel] || "false";
-			var exportDSDoc = asExportDSDocs[strDocLabel] || "false";
+			var exportDoc = asExportDocs[strDocLabel] || "false";
 			//the title drives the header's visualization
 			var titleDoc = asTitleDocs[strDocLabel] ;
 			var itemTitleArr = [];
 			var itemTitleDoc = {};
 			var bodyStyleDoc = "padding:1px";
-			if (titleDoc[0] === "" && (zoomDoc[0] === "false" || exportDSDoc[0] === "false")){
+									
+			if (titleDoc[0] === "" && exportDoc[0] === "false"){
 				titleDoc = null;	  					
 			}else{
 				itemTitleDoc.text = titleDoc;
@@ -375,8 +374,8 @@ function createPanels(){
 		        buttonAlign: 'right',
 		        items: []
 		        //items: itemTitleArr
-			});
-			if (exportDSDoc !== undefined && exportDSDoc[0] === "true"){
+			}); 
+			if (exportDoc !== undefined && exportDoc[0] === "true"){
 				bodyStyleDoc = "padding:10px";
 				var docsExpArrays= asExportTypes[strDocLabel];
 				if(docsExpArrays !== undefined && docsExpArrays !== null && docsExpArrays.length != 0){		

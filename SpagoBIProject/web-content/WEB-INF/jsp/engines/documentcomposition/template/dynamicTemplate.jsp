@@ -56,8 +56,7 @@ for (int i=0; i<lstUrl.size(); i++){
 	var arTestUrl = new Object();
 	var arTitleDocs = new Object();
 	var arTypeDocs = new Object();
-	var arZoomDocs = new Object();
-	var arExportDSDocs = new Object();
+	var arExportDocs = new Object();
 	var arLinkedDocs  = new Object();
 	var arLinkedFields  = new Object();
 	var arLinkedCross  = new Object();
@@ -75,8 +74,7 @@ for (int i=0; i<lstUrl.size(); i++){
 	 		arTypeDocs['<%=labelDoc%>'] = ['<%=totalSbiDocType%>'];
 	 		arStylePanels['<%=labelDoc%>'] = ['<%=(String)lstStylePanel.get("STYLE__"+labelDoc)%>'];
 	 		arTitleDocs['<%=labelDoc%>'] = ['<%=(String)lstTitles.get("TITLE_DOC__"+labelDoc)%>'];
-	 		arZoomDocs['<%=labelDoc%>'] = ['<%=(String)lstZoom.get("ZOOM_DOC__"+labelDoc)%>'];
-	 		arExportDSDocs['<%=labelDoc%>'] = ['<%=(String)lstExportDS.get("EXPORT_DOC__"+labelDoc)%>'];
+	 		arExportDocs['<%=labelDoc%>'] = ['<%=(String)lstExport.get("EXPORT_DOC__"+labelDoc)%>'];
 	 		var docExporters = new Array();
 	 		<%
 	 		List exportersForDoc = (List)lstExporterTypes.get(labelDoc);
@@ -153,7 +151,7 @@ for (int i=0; i<lstUrl.size(); i++){
  	<%	
 	} 	
 	%>  
-	setDocs(arUrl, arTestUrl, arTitleDocs, arZoomDocs, arExportDSDocs, arExportTypes, arTypeDocs);
+	setDocs(arUrl, arTestUrl, arTitleDocs, arExportDocs, arExportTypes, arTypeDocs);
 	setLinkedDocs(arLinkedDocs);
 	setLinkedFields(arLinkedFields);
 	setLinkedCross(arLinkedCross);
