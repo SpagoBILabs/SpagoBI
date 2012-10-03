@@ -1544,7 +1544,7 @@ public class CrossTab {
 		
 		for(int y=0; y<valuesTosum.size(); y++){
 			List<Integer> linesToSum = valuesTosum.get(y);
-			linesums.add(getTotals(linesToSum, horizontal));
+			linesums.add(getTotals(linesToSum, horizontal, true));
 		}
 		
 		addCrosstabDataLine(startingPosition, linesums, horizontal, CellType.SUBTOTAL);
@@ -1601,19 +1601,23 @@ public class CrossTab {
 	}
 	
 	private String[] getTotals(List<Integer> lines, boolean horizontal){
+		return getTotals(lines,  horizontal, false);
+	}
+	
+	private String[] getTotals(List<Integer> lines, boolean horizontal, boolean subtotal){
 		double sum[];
 		if(!horizontal){
 			sum = new double[dataMatrix[0].length];
 			for(int i=0; i<dataMatrix[0].length; i++){
 				String value = dataMatrix[lines.get(0)][i];
-				if(!value.equals(DATA_MATRIX_NA) && (getCellType(lines.get(0), i).equals(CellType.DATA))){
+				if(!value.equals(DATA_MATRIX_NA) && (getCellType(lines.get(0), i).equals(CellType.DATA) || (subtotal && getCellType(lines.get(0), i).equals(CellType.SUBTOTAL)))){
 					sum[i] = new Double(value);
 				}
 			}
 			for(int j=1; j<lines.size(); j++){
 				for(int i=0; i<dataMatrix[0].length; i++){
 					String value = dataMatrix[lines.get(j)][i];
-					if(!value.equals(DATA_MATRIX_NA)&& (getCellType(lines.get(j), i).equals(CellType.DATA))){
+					if(!value.equals(DATA_MATRIX_NA)&& (getCellType(lines.get(j), i).equals(CellType.DATA)|| (subtotal && getCellType(lines.get(j), i).equals(CellType.SUBTOTAL)))){
 						sum[i] = sum[i] + new Double(value);
 					}
 				}
@@ -1622,14 +1626,14 @@ public class CrossTab {
 			sum = new double[dataMatrix.length];
 			for(int i=0; i<dataMatrix.length; i++){
 				String value = dataMatrix[i][lines.get(0)];
-				if(!value.equals(DATA_MATRIX_NA)&& (getCellType(i, lines.get(0)).equals(CellType.DATA))){
+				if(!value.equals(DATA_MATRIX_NA)&& (getCellType(i, lines.get(0)).equals(CellType.DATA)|| (subtotal && getCellType(i, lines.get(0)).equals(CellType.SUBTOTAL)))){
 					sum[i] = new Double(value);
 				}
 			}
 			for(int j=1; j<lines.size(); j++){
 				for(int i=0; i<dataMatrix.length; i++){
 					String value = dataMatrix[i][lines.get(j)];
-					if(!value.equals(DATA_MATRIX_NA)&& (getCellType(i, lines.get(j)).equals(CellType.DATA))){
+					if(!value.equals(DATA_MATRIX_NA)&& (getCellType(i, lines.get(j)).equals(CellType.DATA)|| (subtotal && getCellType(i, lines.get(j)).equals(CellType.SUBTOTAL)))){
 						sum[i] = sum[i] + new Double(value);
 					}
 					
