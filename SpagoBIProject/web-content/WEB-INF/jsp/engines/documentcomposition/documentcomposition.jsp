@@ -64,8 +64,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     //get information for document composition
     Map lstUrl = new HashMap();    
     Map lstTitles = new HashMap();
-    Map lstZoom = new HashMap();
-    Map lstExportDS = new HashMap();
+    Map lstExport = new HashMap();
     Map lstStyle = new HashMap();
     Map lstStylePanel = new HashMap();
     Map lstUrlParams  = new HashMap();
@@ -101,12 +100,11 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	        lstDocLinked = docConfig.getLstDocLinked();
 	        lstFieldLinked = docConfig.getLstFieldLinked(); 
 	        lstTitles = docConfig.getLstDocTitles();
-	        lstZoom = docConfig.getLstDocZoom();
-	        lstExportDS = docConfig.getLstDocExportDS();
+	        lstExport = docConfig.getLstDocExport();
 	        lstCrossLinked = docConfig.getLstCrossLinked();
 	        lstDocTypes.put("SBI_DOC_TYPE__"+ (i), docType); 
 	      	//retrieve document's exporters
-	      	if(lstExportDS != null && lstExportDS.size()!= 0){
+	      	if(lstExport != null && lstExport.size()!= 0){
 	      		List<String> exporters = DocumentCompositionUtils.getAvailableExporters(tmpDoc.getSbiObjLabel(), aSessionContainer, aRequestContainer.getServiceRequest());
 	      		lstExporterTypes.put(tmpDoc.getSbiObjLabel(), exporters);
 	      	}

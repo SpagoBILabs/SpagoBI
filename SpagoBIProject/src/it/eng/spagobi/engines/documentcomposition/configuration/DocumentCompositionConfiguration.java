@@ -48,8 +48,7 @@ public class DocumentCompositionConfiguration {
 	private Map lstPanelStyle = new LinkedHashMap();
 	private Map lstDocTitles = new LinkedHashMap();
 	private Map lstCrossLinked = new LinkedHashMap();
-	private Map lstDocZoom = new LinkedHashMap();
-	private Map lstDocExportDS = new LinkedHashMap();
+	private Map lstDocExport = new LinkedHashMap();
 	
 
 	private Integer videoHeight=null;
@@ -85,8 +84,7 @@ public class DocumentCompositionConfiguration {
 		String type;
 		String defaultValue;
 		String typeCross;
-		String activeZoom;
-		String activeExportDS;
+		String activeExport;
 		Properties params;
 
 		/**
@@ -221,31 +219,18 @@ public class DocumentCompositionConfiguration {
 		}
 
 		/**
-		 * @return the activeZoom
+		/**
+		 * @return the activeExport
 		 */
-		public String getActiveZoom() {
-			return (activeZoom == null)?"false":activeZoom;
+		public String getActiveExport() {
+			return (activeExport == null)?"false":activeExport;
 		}
 
 		/**
-		 * @param activeZoom the activeZoom to set
+		 * @param activeExport the activeExport to set
 		 */
-		public void setActiveZoom(String activeZoom) {
-			this.activeZoom = activeZoom;
-		}
-
-		/**
-		 * @return the activeExportDS
-		 */
-		public String getActiveExportDS() {
-			return (activeExportDS == null)?"false":activeExportDS;
-		}
-
-		/**
-		 * @param activeExportDS the activeExportDS to set
-		 */
-		public void setActiveExportDS(String activeExportDS) {
-			this.activeExportDS = activeExportDS;
+		public void setActiveExport(String activeExport) {
+			this.activeExport = activeExport;
 		}
 
 		/**
@@ -436,15 +421,12 @@ public class DocumentCompositionConfiguration {
 				
 				attributeValue = (documentSB.getAttribute(Constants.TITLE)==null)?"":(String)documentSB.getAttribute(Constants.TITLE);
 				document.setTitle(attributeValue);
-				attributeValue = (documentSB.getAttribute(Constants.ZOOM)==null)?"false":(String)documentSB.getAttribute(Constants.ZOOM);
-				document.setActiveZoom(attributeValue);				
-				attributeValue = (documentSB.getAttribute(Constants.EXPORT_DS)==null)?"false":(String)documentSB.getAttribute(Constants.EXPORT_DS);
-				//checks if the object has a SpagoBI dataset (only right case to activate the export of the dataset functionality) 
-/*				BIObject obj= DAOFactory.getBIObjectDAO().loadBIObjectByLabel(document.getSbiObjLabel());
-				if (obj.getDataSetId() == null){
-					attributeValue = "false";
-				}*/
-				document.setActiveExportDS(attributeValue);
+				attributeValue = (documentSB.getAttribute(Constants.EXPORT)==null)?null:(String)documentSB.getAttribute(Constants.EXPORT);
+				//for retrocompatibility (when the attribute for the export is called exportDS
+				if (attributeValue == null){
+					attributeValue = (documentSB.getAttribute(Constants.EXPORT_DS)==null)?"false":(String)documentSB.getAttribute(Constants.EXPORT_DS);
+				}
+				document.setActiveExport(attributeValue);
 
 				Integer width = (documentsConfigurationSB.getAttribute(Constants.VIDEO_WIGTH)==null)?DEFAULT_WIDTH:Integer.valueOf((String)documentsConfigurationSB.getAttribute(Constants.VIDEO_WIGTH));
 				Integer height = (documentsConfigurationSB.getAttribute(Constants.VIDEO_HEIGHT)==null)?DEFAULT_HEIGHT:Integer.valueOf((String)documentsConfigurationSB.getAttribute(Constants.VIDEO_HEIGHT));
@@ -710,8 +692,7 @@ public class DocumentCompositionConfiguration {
 			lstDivStyle.put("STYLE_DOC__"+numDoc, tmpDoc.getStyle());
 			lstDocLinked.put("MAIN_DOC_LABEL__"+numDoc, tmpDoc.getSbiObjLabel());
 			lstDocTitles.put("TITLE_DOC__"+ docLabel, tmpDoc.getTitle());
-			lstDocZoom.put("ZOOM_DOC__"+ docLabel, tmpDoc.getActiveZoom());
-			lstDocExportDS.put("EXPORT_DOC__"+ docLabel, tmpDoc.getActiveExportDS());
+			lstDocExport.put("EXPORT_DOC__"+ docLabel, tmpDoc.getActiveExport());
 			//gets layout informations (width and height) for next settings of ext-panels
 			String docStyles = tmpDoc.getStyle();
 			String tmpStyle = "";
@@ -1019,31 +1000,17 @@ public class DocumentCompositionConfiguration {
 	}
 
 	/**
-	 * @return the lstDocZoom
+	 * @return the lstDocExport
 	 */
-	public Map getLstDocZoom() {
-		return lstDocZoom;
+	public Map getLstDocExport() {
+		return lstDocExport;
 	}
 
 	/**
-	 * @param lstDocZoom the lstDocZoom to set
+	 * @param lstDocExport the lstDocExport to set
 	 */
-	public void setLstDocZoom(Map lstDocZoom) {
-		this.lstDocZoom = lstDocZoom;
-	}
-
-	/**
-	 * @return the lstDocExportDS
-	 */
-	public Map getLstDocExportDS() {
-		return lstDocExportDS;
-	}
-
-	/**
-	 * @param lstDocExportDS the lstDocExportDS to set
-	 */
-	public void setLstDocExportDS(Map lstDocExportDS) {
-		this.lstDocExportDS = lstDocExportDS;
+	public void setLstDocExport(Map lstDocExport) {
+		this.lstDocExport = lstDocExport;
 	}
 
 	/**
