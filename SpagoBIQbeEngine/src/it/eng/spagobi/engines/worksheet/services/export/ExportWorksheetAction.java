@@ -365,25 +365,20 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		shortBusinessMetadataProperty = new JSONArray();
 		longBusinessMetadataProperty = new JSONArray();
 
-		if(metadataPropertiesJSON!=null){
-			for (int i = 0; i < metadataPropertiesJSON.length(); i++) {
-				JSONObject metadataProperty = metadataPropertiesJSON.getJSONObject(i);		
-				String  metadataPropertyType = metadataProperty.getString("meta_type");
-				if("SHORT_TEXT".equalsIgnoreCase(metadataPropertyType)) {
-					shortBusinessMetadataProperty.put(metadataProperty);
-					continue;
-				} else if("LONG_TEXT".equalsIgnoreCase(metadataPropertyType)) {
-					longBusinessMetadataProperty.put(metadataProperty);
-					continue;
-				} else {
-					technicalMetadataProperty.put(metadataProperty);
-				}
-
+		for (int i = 0; i < metadataPropertiesJSON.length(); i++) {
+			JSONObject metadataProperty = metadataPropertiesJSON.getJSONObject(i);		
+			String  metadataPropertyType = metadataProperty.getString("meta_type");
+			if("SHORT_TEXT".equalsIgnoreCase(metadataPropertyType)) {
+				shortBusinessMetadataProperty.put(metadataProperty);
+				continue;
+			} else if("LONG_TEXT".equalsIgnoreCase(metadataPropertyType)) {
+				longBusinessMetadataProperty.put(metadataProperty);
+				continue;
+			} else {
+				technicalMetadataProperty.put(metadataProperty);
 			}
-			
-		}
-		
 
+		}
 
 		if (technicalMetadataProperty.length() > 0) {
 
