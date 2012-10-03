@@ -37,8 +37,9 @@
 
 Ext.ns("Sbi.crosstab.core");
 
-Sbi.crosstab.core.CrossTabData = function(entries) {
-    this.entries =entries;
+Sbi.crosstab.core.CrossTabData = function( crosstab) {
+    this.entries =crosstab.entries;
+    this.crosstab = crosstab;
 };
 	
 Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
@@ -85,7 +86,12 @@ Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
         	}
     
         	for(var i=0; i<columns.length; i++){
-        		this.entries[k][i+columnId] = columns[i][k];
+        		var type = this.crosstab.getCellNewType(k,i+columnId);
+        		if(type=='totals' || type=='partialsum'){
+        			this.entries[k][i+columnId] = '0';
+        		}else{
+        			this.entries[k][i+columnId] = columns[i][k];
+        		}
         	}
     	}
     }
@@ -97,6 +103,17 @@ Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
     		this.entries[i]=null;
     	}
     	for(var i=0; i<rows.length; i++){
+    		this.entries[i+rowId]= new Array();
+    		for(var j=0; j<this.entries[0].length; j++){
+        		var type = this.crosstab.getCellNewType(i+rowId,j);
+        		if(type=='totals' || type=='partialsum'){
+        			this.entries[i+rowId][j] = '0';
+        		}else{
+        			this.entries[i+rowId][j] = rows[i][j];
+        		}
+    		}
+
+    		
     		this.entries[i+rowId] = rows[i];
     	}
     }

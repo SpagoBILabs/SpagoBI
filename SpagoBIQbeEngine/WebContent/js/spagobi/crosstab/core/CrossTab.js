@@ -91,7 +91,7 @@ Sbi.crosstab.core.CrossTab = function(config) {
 	}
 	
 	this.manageDegenerateCrosstab(this.rowHeadersDefinition, this.columnHeadersDefinition);
-	this.entries = new Sbi.crosstab.core.CrossTabData(this.entries);
+	this.entries = new Sbi.crosstab.core.CrossTabData(this);
     this.rowHeader = new Array();
     this.build(this.rowHeadersDefinition, 0, this.rowHeader, false);
     this.setFathers(this.rowHeader);
@@ -1493,7 +1493,14 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			nodeS =  headers[level][i];
 			if(nodeS.father == node.father){
 				startDimension=startDimension+this.getLeafsNumber(node.father)-this.getLeafsNumber(node);
-				startPos = i+nodeS.father.childs.length-1;
+//				
+//				var type = this.getCellNewType(level,i);
+//				if(type=='totals' || type=='partialsum'){
+//					startPos = i+nodeS.father.childs.length-2;
+//        		}else{
+        			startPos = i+nodeS.father.childs.length-1;
+//        		}
+				
 				break;
 			}
 			startDimension = startDimension+this.getLeafsNumber(nodeS);
