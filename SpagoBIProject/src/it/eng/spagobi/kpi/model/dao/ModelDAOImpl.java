@@ -67,6 +67,38 @@ public class ModelDAOImpl extends AbstractHibernateDAO implements IModelDAO {
 		logger.debug("OUT");
 		return toReturn;
 	}
+	
+	public Model loadModelOnlyPropertiesById(Integer id) throws EMFUserError {
+		logger.debug("IN");
+		Model toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			SbiKpiModel hibSbiKpiModel = (SbiKpiModel) aSession.load(
+					SbiKpiModel.class, id);
+			toReturn = toModelWithoutChildren(hibSbiKpiModel, aSession);
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the Model with id "
+					+ ((id == null) ? "" : id.toString()), he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 101);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
 
 	public Model loadModelWithChildrenById(Integer id) throws EMFUserError {
 		logger.debug("IN");
@@ -98,6 +130,8 @@ public class ModelDAOImpl extends AbstractHibernateDAO implements IModelDAO {
 		logger.debug("OUT");
 		return toReturn;
 	}
+	
+	
 
 	public void modifyModel(Model value) throws EMFUserError {
 		logger.debug("IN");
@@ -259,6 +293,44 @@ public class ModelDAOImpl extends AbstractHibernateDAO implements IModelDAO {
 		}
 		toReturn.setUdpValues(udpValues);
 
+		toReturn.setId(id);
+		toReturn.setName(name);
+		toReturn.setDescription(description);
+		toReturn.setCode(code);
+		toReturn.setLabel(label);
+		toReturn.setTypeId(typeId);		
+		toReturn.setTypeCd(typeCd);	
+		toReturn.setTypeName(typeName);
+		toReturn.setTypeDescription(typeDescription);
+		
+		toReturn.setChildrenNodes(null);
+		toReturn.setKpiId(kpiId);
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+	
+	static protected Model toModelProperties(SbiKpiModel value,
+			Session aSession) {
+		logger.debug("IN");
+		Model toReturn = new Model();
+
+		String name = value.getKpiModelNm();
+		String description = value.getKpiModelDesc();
+		String code = value.getKpiModelCd();
+		String label = value.getKpiModelLabel();
+		Integer id = value.getKpiModelId();
+		SbiKpi sbiKpi = value.getSbiKpi();
+		Integer kpiId = null;
+		if (sbiKpi != null) {
+			kpiId = sbiKpi.getKpiId();
+		}
+
+		String typeCd = value.getModelType().getValueCd();
+		Integer typeId = value.getModelType().getValueId();
+		String typeName = value.getModelType().getValueNm();
+		String typeDescription = value.getModelType().getValueDs();
+		
 		toReturn.setId(id);
 		toReturn.setName(name);
 		toReturn.setDescription(description);

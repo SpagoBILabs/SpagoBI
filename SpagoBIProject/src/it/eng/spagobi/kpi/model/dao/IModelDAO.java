@@ -22,6 +22,8 @@ public interface IModelDAO extends ISpagoBIDao{
 	 */	
 	public Model loadModelWithoutChildrenById(Integer id) throws EMFUserError;
 	
+	public Model loadModelOnlyPropertiesById(Integer id) throws EMFUserError ;
+	
 	/**
 	 * Returns the Model wit its children of the referred id
 	 * 
