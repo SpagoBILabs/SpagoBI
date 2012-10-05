@@ -5,18 +5,19 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.georeport.features.provider;
 
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.mapfish.geo.MfFeatureCollection;
-import org.mapfish.geo.MfGeoJSONReader;
-
-import it.eng.spagobi.engines.georeport.features.SbiFeatureFactory;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.geojson.feature.FeatureJSON;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it), Fabio D'Ovidio (f.dovidio@inovaos.it)
@@ -31,8 +32,8 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
     private static transient Logger logger = Logger.getLogger(FeaturesProviderDAOWFSImpl.class);
     
     
-	public MfFeatureCollection getFeatures(Object fetureProviderEndPoint, Map parameters) {
-		MfFeatureCollection featureCollection;
+	public FeatureCollection getFeatures(Object fetureProviderEndPoint, Map parameters) {
+		FeatureCollection featureCollection;
 		
 		String wfsUrl;
 		String layerName;
@@ -79,14 +80,14 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 	        result = sb.toString();
 	        logger.debug("Result for query [" + geoIdPName + "=" + geoIdPValue+ "]is equal to [" + result + "]");
 	      
-	        MfGeoJSONReader jsonReader = new MfGeoJSONReader(SbiFeatureFactory.getInstance()); 
-	        featureCollection = (MfFeatureCollection) jsonReader.decode(result);
+	    	Reader reader = new StringReader( result );
+	    	FeatureJSON featureJSON = new FeatureJSON();
+		    featureCollection = featureJSON.readFeatureCollection(reader);
 	    } catch(Throwable t){
 	    	throw new SpagoBIRuntimeException(t);
 	    }finally {
 	    	
-	    }
-		
+	    }		
 		return featureCollection;
 	}
 

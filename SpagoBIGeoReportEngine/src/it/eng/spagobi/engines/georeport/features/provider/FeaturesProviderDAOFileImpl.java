@@ -5,26 +5,27 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.georeport.features.provider;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.georeport.GeoReportEngine;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.assertion.NullReferenceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.mapfish.geo.MfFeature;
-import org.mapfish.geo.MfFeatureCollection;
-import org.mapfish.geo.MfGeoJSONReader;
-
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.georeport.GeoReportEngine;
-import it.eng.spagobi.engines.georeport.features.SbiFeatureFactory;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureCollections;
+import org.geotools.feature.FeatureIterator;
+import org.geotools.geojson.feature.FeatureJSON;
+import org.opengis.feature.simple.SimpleFeature;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it)
@@ -32,27 +33,23 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
 
 	String indexOnAttribute;
-	Map<Object, JSONObject> lookupTable;
+	Map<Object, SimpleFeature> lookupTable;
 	
 	public static final String GEOID_PNAME = "geoIdPName";
 	public static final String GEOID_PVALUE = "geoIdPValue";
 
-	private static final MfGeoJSONReader JSON_READER = new MfGeoJSONReader(SbiFeatureFactory.getInstance());
-	
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(FeaturesProviderDAOFileImpl.class);
     
 	
-	public MfFeatureCollection getFeatures(Object fetureProviderEndPoint, Map parameters) {
-		MfFeatureCollection featureCollection;
+	public FeatureCollection getFeatures(Object featureProviderEndPoint, Map parameters) {
+		SimpleFeatureCollection featureCollection = FeatureCollections.newCollection();
 		
 		String geoIdPName;
 		String geoIdPValue;
-		JSONObject fetaure;
+		SimpleFeature feature;
 		
 		logger.debug("IN");
-		
-		featureCollection = null;
 		
 		try {
 			geoIdPName = (String)parameters.get(GEOID_PNAME);
@@ -62,22 +59,21 @@ public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
 			logger.debug("Parameter [" + GEOID_PVALUE + "] is equal to [" + geoIdPValue + "]");
 	
 			if(!geoIdPName.equalsIgnoreCase(indexOnAttribute)) {
-				createIndex((String)fetureProviderEndPoint, geoIdPName);
+				createIndex((String)featureProviderEndPoint, geoIdPName);
 			}
 			
-			fetaure = lookupTable.get(geoIdPValue);
-			logger.debug("Feature [" + geoIdPValue +"] is equal to [" + fetaure + "]");
-			if(fetaure != null) { 
-				Object x = JSON_READER.decode(fetaure);
-				logger.debug("Decoded object is of type [" + x.getClass().getName() + "]");
-				MfFeature mfFeature = (MfFeature)x;
-				Collection<MfFeature> mfFeatures = new ArrayList();
-				mfFeatures.add(mfFeature);
-				featureCollection = new MfFeatureCollection(mfFeatures);;
+			feature = lookupTable.get(geoIdPValue);
+			logger.debug("Feature [" + geoIdPValue +"] is equal to [" + feature + "]");
+			
+			
+			if(feature != null) { 
+				featureCollection.add(feature);
+				logger.debug("Decoded object is of type [" + feature.getClass().getName() + "]");
 				logger.debug("Feature [" + geoIdPValue + "] added to result features' collection");
 			} else {
 				logger.warn("Impossible to find feature [" + geoIdPValue + "]");
 			}
+						
 		} catch(Throwable t) {
 			throw new SpagoBIRuntimeException(t);
 		} finally {
@@ -110,17 +106,20 @@ public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
 			targetFile = new File(resourcesDir, filename);
 			logger.debug("Target file full name is equal to [" + targetFile + "]");
 			
-			JSONObject o = loadFile( targetFile );
-			JSONArray a = o.getJSONArray("features");
-			Assert.assertNotNull(a, "Impossible to find attribute [features in file [" + filename +"]");
-			
-			logger.debug("Target file contains [" + a.length() + "] features to index");
-			for(int i = 0; i < a.length(); i++) {
-				JSONObject f = a.getJSONObject(i);
-				JSONObject p = f.getJSONObject("properties");
-				lookupTable.put(p.get(geoIdPName), f);
-				logger.debug("Feature [" + p.get(geoIdPName) + "] added to the index");
+			FeatureCollection fc = loadFile( targetFile );
+
+			logger.debug("Target file contains [" + fc.size() + "] features to index");
+			if ( fc.size() == 0){
+				throw new NullReferenceException("Impossible to find attribute [features in file [" + filename +"]");
 			}
+			
+			FeatureIterator iterator = fc.features();
+	    	while (iterator.hasNext()) {
+	    		SimpleFeature feature = (SimpleFeature) iterator.next();
+	    		Object idx = feature.getProperty(geoIdPName).getValue();
+	    		lookupTable.put(idx, feature);
+				logger.debug("Feature [" + idx + "] added to the index");
+	    	}
 			
 			logger.debug("File [" + filename + "] indexed succesfully on attribute [" + geoIdPName + "]");
 		} catch(Throwable t) {
@@ -132,9 +131,9 @@ public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
 		}
 	}
 	
-	private JSONObject loadFile(File targetFile) {
+	private FeatureCollection loadFile(File targetFile) {
 		
-		JSONObject result;
+		FeatureCollection result;
 		BufferedReader reader;
 		StringBuffer buffer;
 		String line;
@@ -147,12 +146,16 @@ public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
 	        	buffer.append(line);        
 	        }
 	        reader.close();
-	        result = new JSONObject(buffer.toString());
+	        String featureStr = buffer.toString();		        
+
+	        Reader strReader = new StringReader( featureStr );
+	        FeatureJSON featureJ = new FeatureJSON();
+	        result = featureJ.readFeatureCollection(strReader);
 	    } catch(Throwable t) {
 	    	throw new SpagoBIRuntimeException(t);
 	    }
-        
+         
         return result;
 	}
-	
+
 }

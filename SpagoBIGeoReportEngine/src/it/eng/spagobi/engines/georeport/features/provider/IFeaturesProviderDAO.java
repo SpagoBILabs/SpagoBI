@@ -7,11 +7,11 @@ package it.eng.spagobi.engines.georeport.features.provider;
 
 import java.util.Map;
 
-import org.mapfish.geo.MfFeatureCollection;
+import org.geotools.feature.FeatureCollection;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it), Fabio D'Ovidio (f.dovidio@inovaos.it)
  */
 public interface IFeaturesProviderDAO {
-	MfFeatureCollection getFeatures(Object fetureProviderEndPoint, Map parameters);
+	FeatureCollection getFeatures(Object fetureProviderEndPoint, Map parameters);
 }

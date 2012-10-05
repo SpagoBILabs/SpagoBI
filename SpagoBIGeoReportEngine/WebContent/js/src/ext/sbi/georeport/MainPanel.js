@@ -254,11 +254,16 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 	
 	
 	, initAnalysis: function() {
-		
+		var upperIndicators = [];
+		for (var i = 0; i < this.indicators.length; i++){
+			var value = this.indicators[i];
+			value[0] = value[0].toUpperCase();
+			upperIndicators.push(value);
+		}
 		var geostatConf = {
 			map: this.map,
 			layer: null, // this.targetLayer not yet defined here
-			indicators:  this.indicators,
+			indicators: upperIndicators, // this.indicators,
 			url: this.services['MapOl'],
 			loadMask : {msg: 'Analysis...', msgCls: 'x-mask-loading'},
 			legendDiv : 'myChoroplethLegendDiv',
