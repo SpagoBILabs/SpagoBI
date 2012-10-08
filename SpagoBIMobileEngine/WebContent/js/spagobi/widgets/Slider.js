@@ -42,7 +42,12 @@
 
 		    		for(i =0; i < items.length; i++){
 		    			var panel = items[i];
-
+		    			try{
+		    				panel.removeAll();
+		    			}catch(err){
+		    				console.log('no problem...');
+		    			}
+		    			
 		    			var executionInstance = panel.executionInstance;
 		    			if(executionInstance && executionInstance.PARAMETERS){
 		    				app.controllers.composedExecutionController.refreshSubDocument(panel, params);
