@@ -110,6 +110,7 @@
 				}
 		    }); 
 		}else if(typeCode != null && typeCode !== undefined && (typeCode == Sbi.constants.documenttype.cockpit)){
+			
 			Ext.Ajax.request({
 		        url: this.services['executeMobileComposedAction'],
 		        scope: this,
