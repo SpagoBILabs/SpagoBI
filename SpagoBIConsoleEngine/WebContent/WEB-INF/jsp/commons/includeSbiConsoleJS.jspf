@@ -55,7 +55,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION
-<script type="text/javascript" src='../js/spagobi/console-all-3.5.1.js'></script>
+<script type="text/javascript" src='../js/spagobi/console-all-3.6.0.js'></script>
  END-PRODUCTION -->
  
 <script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
