@@ -38,6 +38,7 @@ public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 	public final static String ATTRIBUTE_VERSION = "version";
 	public final static String TAG_WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
 	public final static String TAG_QBE = "QBE";
+	public final static String TAG_QBE_COMPOSITE = "COMPOSITE-QBE";
 	public final static String TAG_DATASET = "DATASET";
 
 	/** Logger component. */
@@ -93,8 +94,13 @@ public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 			}
 			
 			// QBE block
-			if (template.containsAttribute(TAG_QBE)) {
-				SourceBean qbeTemplate = (SourceBean) template.getAttribute(TAG_QBE);
+			if (template.containsAttribute(TAG_QBE) || template.containsAttribute(TAG_QBE_COMPOSITE)) {
+				SourceBean qbeTemplate = null;
+				if (template.containsAttribute(TAG_QBE)) {
+					qbeTemplate = (SourceBean) template.getAttribute(TAG_QBE);
+				} else {
+					qbeTemplate = (SourceBean) template.getAttribute(TAG_QBE_COMPOSITE);
+				}
 				QbeEngineInstance qbeEngineInstance = startQbeEngine(qbeTemplate, env);
 				worksheetTemplate.setQbeEngineInstance(qbeEngineInstance);
 			}
