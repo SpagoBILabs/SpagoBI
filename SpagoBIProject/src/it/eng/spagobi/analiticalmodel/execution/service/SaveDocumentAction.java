@@ -468,7 +468,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	
 			
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(SERVICE_NAME,	"An unexpected error occured while building document template");
+			throw new SpagoBIServiceException(SERVICE_NAME,	"An unexpected error occured while building document template", t);
 		}
 		return template;
 	}

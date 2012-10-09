@@ -67,6 +67,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 	public final static String TAG_WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
 	public final static String TAG_WORKSHEET = "WORKSHEET";
 	public final static String TAG_QBE = "QBE";
+	public final static String TAG_QBE_COMPOSITE = "COMPOSITE-QBE";
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the
@@ -274,7 +275,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		// from version 0 to version 1 worksheet change compensation: on version 0 the 
 		// worksheet definition was inside QBE tag; on version 1 the QBE tag is inside 
 		// WORKSHEET tag
-		if (previous.getName().equalsIgnoreCase(TAG_QBE)) {
+		if (previous.getName().equalsIgnoreCase(TAG_QBE) || previous.getName().equalsIgnoreCase(TAG_QBE_COMPOSITE)) {
 
 			if (previous.containsAttribute(TAG_WORKSHEET_DEFINITION)) {
 				previous.delAttribute(TAG_WORKSHEET_DEFINITION);
@@ -298,7 +299,14 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 
 		} else {
 
-			SourceBean qbeSB = (SourceBean) previous.getAttribute(TAG_QBE);
+			SourceBean qbeSB = null;
+			
+			if (previous.containsAttribute(TAG_QBE)) {
+				qbeSB = (SourceBean) previous.getAttribute(TAG_QBE);
+			} else if (previous.containsAttribute(TAG_QBE_COMPOSITE)) {
+				qbeSB = (SourceBean) previous.getAttribute(TAG_QBE_COMPOSITE);
+			}
+			
 			if (qbeSB != null) {
 				templateSB.setAttribute(qbeSB);
 			}
@@ -334,7 +342,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		// from version 0 to version 1 worksheet change compensation: on version 0 the 
 		// worksheet definition was inside QBE tag; on version 1 the QBE tag is inside 
 		// WORKSHEET tag
-		if (confSB.getName().equalsIgnoreCase(TAG_QBE)) {
+		if (confSB.getName().equalsIgnoreCase(TAG_QBE)  || confSB.getName().equalsIgnoreCase(TAG_QBE_COMPOSITE)) {
 
 			if (confSB.containsAttribute(TAG_WORKSHEET_DEFINITION)) {
 				confSB.delAttribute(TAG_WORKSHEET_DEFINITION);
@@ -358,7 +366,14 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 
 		} else {
 
-			SourceBean qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE);
+			SourceBean qbeSB = null;
+			
+			if (confSB.containsAttribute(TAG_QBE)) {
+				qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE);
+			} else if (confSB.containsAttribute(TAG_QBE_COMPOSITE)) {
+				qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE_COMPOSITE);
+			}
+			
 			if (qbeSB != null) {
 				templateSB.setAttribute(qbeSB);
 				if(workSheetQuery!=null && !workSheetQuery.equals("") ){

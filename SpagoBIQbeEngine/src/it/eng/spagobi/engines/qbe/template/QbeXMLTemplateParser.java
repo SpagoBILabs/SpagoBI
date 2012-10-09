@@ -131,7 +131,17 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 					} else {
 						logger.debug("Qbe template associated to datamart [" + dmName + "] does not contain tag [" + TAG_MODALITY +"] so it will be not profiled");
 					}
-				}			
+				}
+				
+				// query block 
+				if(template.containsAttribute(TAG_QUERY)) {
+					querySB = (SourceBean) template.getAttribute(TAG_QUERY);
+					queryJSON = new JSONObject(querySB.getCharacters());
+					qbeTemplate.setProperty("query", queryJSON);
+				} else {
+					logger.debug("Qbe template does not contain tag [" + TAG_QUERY +"]");
+				}
+				
 			} else {
 				logger.debug("The QBE described in the template is of type STANDARD");
 				
