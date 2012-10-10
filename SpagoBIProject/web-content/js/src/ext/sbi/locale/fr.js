@@ -274,10 +274,10 @@ Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save']='Enregistrer les
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.next']='ex\u00E9cuter le document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute']='Remplir le formulaire ci-dessous et cliquer sur le bouton ex\u00E9cuter pour lancer le document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']='Cliquer sur le bouton pour ex\u00E9cuter le document';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']='Cliquer sur le bouton pour ex\u00E9cuter le document principal ou double-cliquer sur les vues customiz\u00E9es dans la liste ci-dessous';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']='Remplir le formulaire ci-dessous et cliquer sur le bouton pour ex\u00E9cuter le document principal ou double-cliquer sur les vues customis\u00E9es dans la liste ci-dessous';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithoutParameters']='Impossible d\'ex\u00E9cuter le document principal. Double-cliquez sur les vues customiz\u00E9es dans la liste dessous';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithParameters']='Impossible d\'ex\u00E9cuter le document principal. Remplissez le formulaire ci-dessous et double-cliquer sur la vue customiz\u00E9e dans la liste ci-dessous';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']='Cliquer sur le bouton pour ex\u00E9cuter le document principal ou double-cliquer sur les vues personnalis\u00E9es dans la liste ci-dessous';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']='Remplir le formulaire ci-dessous et cliquer sur le bouton pour ex\u00E9cuter le document principal ou double-cliquer sur les vues personnalis\u00E9es dans la liste ci-dessous';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithoutParameters']='Impossible d\'ex\u00E9cuter le document principal. Double-cliquez sur les vues personnalis\u00E9es dans la liste dessous';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithParameters']='Impossible d\'ex\u00E9cuter le document principal. Remplissez le formulaire ci-dessous et double-cliquer sur la vue personnalis\u00E9e dans la liste ci-dessous';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']='Remplir le formulaire ci-dessous et cliquer sur le bouton actualiser dans la barre d\'outil pour re-ex\u00E9cuter le document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']='cliquer sur le bouton actualiser dans la toolbar pour re-ex\u00E9cuter le document';
 
@@ -316,8 +316,8 @@ Sbi.locale.ln['sbi.execution.snapshots.deleteSelected']='Effacer';
 Sbi.locale.ln['sbi.execution.snapshots.deleteSelectedTooltip']='Effacer ces ex\u00E9cutions planifi\u00E9es';
 Sbi.locale.ln['sbi.execution.snapshots.noSnapshotsSelected']='Aucune ex\u00E9cution selectionn\u00E9e';
 
-Sbi.locale.ln['sbi.execution.subobjects.title']='Vues Customise\u00E9s';
-Sbi.locale.ln['sbi.execution.subobjects.emptyText']='[Le document n\'a pas de vues customise\u00E9s]';
+Sbi.locale.ln['sbi.execution.subobjects.title']='Vues Personnalis\u00E9es';
+Sbi.locale.ln['sbi.execution.subobjects.emptyText']='[Le document n\'a pas de vues personnalis\u00E9es';
 Sbi.locale.ln['sbi.execution.subobjects.name']='nom';
 Sbi.locale.ln['sbi.execution.subobjects.description']='description';
 Sbi.locale.ln['sbi.execution.subobjects.owner']='propri\u00E9taire';
@@ -710,19 +710,18 @@ Sbi.locale.ln['ext.date.dateformat.error.text']='La date saisie contient des err
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']='(la p\u00E9riode d\'analyse par d\u00E9faut est la veille)'
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']='(par d\u00E9faut, la date correspond au mois dernier)'
 
-	
 if(Ext.DatePicker){
 	Ext.override(Ext.DatePicker, {
 	todayText : "Aujourd'hui",
-	minText : "Cette date est antÃ©rieure Ã  la date minimum",
-	maxText : "Cette date est postÃ©rieure Ã  la date maximum",
+	minText : "Cette date est antérieure à la date minimum",
+	maxText : "Cette date est postérieure à la date maximum",
 	disabledDaysText : "",
 	disabledDatesText : "",
-	monthNames : ["Janvier","FÃ©vrier","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Decembre"],
+	monthNames : ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Decembre"],
 	dayNames : ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
-	nextText: 'Mois suivant (CTRL+FlÃ¨che droite)',
-	prevText: "Mois prÃ©cÃ©dent (CTRL+FlÃ¨che gauche)",
-	monthYearText: "Choisissez un mois (CTRL+FlÃ¨che haut ou bas pour changer d'annÃ©e.)",
+	nextText: 'Mois suivant (CTRL+Flèche droite)',
+	prevText: "Mois précédent (CTRL+Flèche gauche)",
+	monthYearText: "Choisissez un mois (CTRL+Flèche haut ou bas pour changer d'année.)",
 	todayTip : "{0} (Barre d'espace)",
 	okText : "&#160;OK&#160;",
 	cancelText : "Annuler",
