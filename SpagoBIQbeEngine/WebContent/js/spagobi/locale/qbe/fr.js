@@ -23,7 +23,7 @@ Ext.Msg.buttonText.no = 'Non';
 //MESSAGE GENERAL
 //===================================================================
 Sbi.locale.ln['sbi.qbe.messagewin.yes'] = 'Oui';
-Sbi.locale.ln['sbi.qbe.messagewin.no'] = 'No';
+Sbi.locale.ln['sbi.qbe.messagewin.no'] = 'Non';
 Sbi.locale.ln['sbi.qbe.messagewin.cancel'] = 'Annuler';
 
 
