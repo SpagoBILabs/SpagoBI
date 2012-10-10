@@ -185,10 +185,7 @@ END-CAS -->
   <servlet>
     <servlet-name>MondrianXmlaServlet</servlet-name>
     <servlet-class>mondrian.xmla.impl.DefaultXmlaServlet</servlet-class>
-    <init-param>
-      <param-name>DataSourcesConfig</param-name>
-      <param-value>datasources.xml</param-value>
-	</init-param>
+
   </servlet>
 
 
