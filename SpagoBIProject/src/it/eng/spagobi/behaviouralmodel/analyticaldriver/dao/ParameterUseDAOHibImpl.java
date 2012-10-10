@@ -840,28 +840,30 @@ IParameterUseDAO {
 		Transaction tx = null;
 
 		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
+//			aSession = getSession();
+//			tx = aSession.beginTransaction();
 
-			SbiParuse hibParuse = (SbiParuse)aSession.load(SbiParuse.class, parUseId);
+			SbiParuse hibParuse = (SbiParuse)sessionCurrDB.load(SbiParuse.class, parUseId);
 
 			logger.debug("delete ParUSeDet");
 			Set parUseDets = hibParuse.getSbiParuseDets();
 			for (Iterator it = parUseDets.iterator(); it.hasNext();){
-				aSession.delete((SbiParuseDet)it.next());	
+				sessionCurrDB.delete((SbiParuseDet)it.next());	
 			}
 
 			logger.debug("delete ParUSeCk");
 			Set parUseCks = hibParuse.getSbiParuseCks();
 			for (Iterator it = parUseCks.iterator(); it.hasNext();){
-				aSession.delete((SbiParuseCk)it.next());	
+				sessionCurrDB.delete((SbiParuseCk)it.next());	
 			}
 			logger.debug("delete ParObjUse");
 			eraseParameterObjUseByParuseIdSameSession(parUseId, sessionCurrDB);
 			
-			aSession.delete(hibParuse);
-
-			tx.commit();
+			sessionCurrDB.delete(hibParuse);
+			
+//			aSession.delete(hibParuse);
+//
+//			tx.commit();
 		}catch(HibernateException he){
 
 			logException(he);
@@ -871,9 +873,9 @@ IParameterUseDAO {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);  
 
 		}finally{
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-			}
+//			if (aSession!=null){
+//				if (aSession.isOpen()) aSession.close();
+//			}
 		}
 		
 		logger.debug("OUT");

@@ -54,7 +54,9 @@ public class SimpleBlockChart extends XYCharts {
 	Double minScaleValue;
 	Double maxScaleValue;
 	
-	Double blockDimension;
+//	Double blockDimension;
+	Double blockHeight;
+	Double blockWidth;
 
 	ZRange[] zRangeArray;
 	
@@ -66,7 +68,9 @@ public class SimpleBlockChart extends XYCharts {
 	public static final String Y_UPPER_BOUND = "y_upper_bound";
 	public static final String SCALE_LOWER_BOUND = "scale_lower_bound";
 	public static final String SCALE_UPPER_BOUND = "scale_upper_bound";
-	public static final String BLOCK_DIMENSION = "block_dimension";
+	//public static final String BLOCK_DIMENSION = "block_dimension";
+	public static final String BLOCK_HEIGHT = "block_height";
+	public static final String BLOCK_WIDTH = "block_width";
 
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
@@ -103,19 +107,21 @@ public class SimpleBlockChart extends XYCharts {
 			scaleUpperBound = null;
 		}
 		
-		Object blocDimensionOb = confParameters.get(BLOCK_DIMENSION);
-		if(blocDimensionOb != null){
-			blockW = blocDimensionOb.toString();
-			try{
-				blockDimension = Double.valueOf(blocDimensionOb.toString());
-			}
-			catch (Exception e) {
-				logger.error("Error in converting block_dimension parameter into a double",e);
-				throw new RuntimeException("Error in converting block_dimension parameter into a double", e);
-			}
-		}
-		logger.debug("BLock dimension by template is "+blockDimension);
 		
+		Object blocHeightOb = confParameters.get(BLOCK_HEIGHT);
+		Object blocWidthOb = confParameters.get(BLOCK_WIDTH);
+
+		try{
+			blockWidth = Double.valueOf(blocWidthOb.toString());
+			blockHeight = Double.valueOf(blocHeightOb.toString());
+
+		}
+		catch (Exception e) {
+			logger.error("Error in converting block_width and block height parameters: they should be double instead they are block_width="+blockWidth +" and block_height="+blockHeight,e);
+			throw new RuntimeException("Error in converting block_width and block height parameters: they should be double instead they are block_width="+blockWidth +" and block_height="+blockHeight, e);
+		}
+		logger.debug("BLock dimension by template are block_width="+blockWidth + " and block_height="+blockHeight);
+
 
 		
 		SourceBean zranges = (SourceBean)content.getAttribute("ZRANGES");
@@ -364,9 +370,9 @@ public class SimpleBlockChart extends XYCharts {
         	scaleAxis.setLabelPaint(addLabelsStyle.getColor());
         }
 
-        if(blockDimension != null){
-        	renderer.setBlockWidth(blockDimension.doubleValue());
-        	renderer.setBlockHeight(blockDimension.doubleValue());
+        if(blockHeight != null && blockWidth != null){
+        	renderer.setBlockWidth(blockWidth.doubleValue());
+        	renderer.setBlockHeight(blockHeight.doubleValue());
         }
         
 		PaintScaleLegend legend = new PaintScaleLegend(paintScale, 
