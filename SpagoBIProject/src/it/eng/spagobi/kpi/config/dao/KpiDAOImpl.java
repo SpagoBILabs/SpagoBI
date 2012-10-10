@@ -353,6 +353,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			String hql = "select max(s.idKpiInstanceValue) , s.beginDt";
 			hql += " from SbiKpiValue s where s.sbiKpiInstance.idKpiInstance = ? ";
 			hql += " and s.beginDt <= ? " ;
+			hql += " and s.endDt > ? ";
 			if (resId != null) {
 				hql += " and s.sbiResources.resourceId = ? ";
 			} else {
@@ -363,6 +364,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, kpiInstId);
 			hqlQuery.setDate(1, endDate);
+			hqlQuery.setDate(2, endDate);
 			if (resId != null) {
 				hqlQuery.setInteger(2, resId);
 				logger.debug("Resource setted");
@@ -590,9 +592,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			String hql = "select max(s.idKpiInstanceValue), s.beginDt";
+			String hql = "select max(s.idKpiInstanceValue), s.value, s.beginDt";
 			hql += " from SbiKpiValue s where s.sbiKpiInstance.idKpiInstance = ? ";
 			hql += " and s.beginDt <= ? ";
+			hql += " and s.endDt > ? ";
 			if (resId != null) {
 				hql += " and s.sbiResources.resourceId = ? ";
 			} else {
@@ -603,6 +606,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, kpiInstId);
 			hqlQuery.setTimestamp(1, endDate);
+			hqlQuery.setTimestamp(2, endDate);
 			if (resId != null) {
 				hqlQuery.setInteger(3, resId);
 				logger.debug("Resource setted");
@@ -613,30 +617,34 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 			List l = hqlQuery.list();
 			
-			SbiKpiValue lastValue = null;
-			SbiKpiValue previousValue = null;
+			Double lastValue = null;
+			Double previousValue = null;
 			if (!l.isEmpty()) {
 				logger.debug("The result list is not empty");
 				//for (int k = l.size() - 1; k >= 0; k--) {
 				for (int k = 0; k < l.size(); k++) {
 					Object[] tempL =  (Object[])l.get(k);
 					Integer kpiValueId = (Integer) tempL[0];
-					SbiKpiValue temp = (SbiKpiValue) aSession.load(SbiKpiValue.class, kpiValueId);
-					if(lastValue == null){
-						lastValue = temp;
-					}else{
-						previousValue = temp;
-					}					
+					//SbiKpiValue temp = (SbiKpiValue) aSession.load(SbiKpiValue.class, kpiValueId);
+					String tempVal =  (String)tempL[1];
+					if(tempVal != null){
+						if(lastValue == null){
+							lastValue = Double.parseDouble(tempVal);
+						}else{
+							previousValue = Double.parseDouble(tempVal);
+						}
+					}
+					
 				}
 				if(previousValue == null){
 					return null;
 				}else{
-					logger.debug(lastValue.getValue() +"  "+previousValue.getValue());
-					if(lastValue != null && lastValue.getValue() != null 
-							&& previousValue != null && previousValue.getValue() != null){
-						if(Double.parseDouble(lastValue.getValue()) > Double.parseDouble(previousValue.getValue()) ){
+					logger.debug(lastValue +"  "+previousValue);
+					if(lastValue != null && lastValue != null 
+							&& previousValue != null && previousValue != null){
+						if(lastValue > previousValue ){
 							toReturn = 1;
-						}else if(Double.parseDouble(lastValue.getValue()) < Double.parseDouble(previousValue.getValue()) ){
+						}else if(lastValue < previousValue ){
 							toReturn = -1;
 						}else {
 							toReturn = 0;
