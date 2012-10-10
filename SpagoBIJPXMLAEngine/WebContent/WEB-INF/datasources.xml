@@ -34,7 +34,7 @@
         <!-- 
              The URL of the servlet.
         -->
-        <URL>http://localhost:8888/mondrian/xmla</URL>
+        <URL>http://localhost:8080/SpagoBIJPXMLAEngine/xmla</URL> 
 
         <!--
              Mondrian connect string for the data source. If this data
@@ -45,8 +45,7 @@
              Catalogs can override the connect string with their own
              <DataSourceInfo> element.
           -->
-        <DataSourceInfo>Provider=mondrian;Jdbc=jdbc:mysql://localhost/foodmartmondrian?user=root&#38;password=admin;JdbcDrivers=com.mysql.jdbc.Driver;</DataSourceInfo>
-
+       <DataSourceInfo>Provider=mondrian;DataSource=java:comp/env/jdbc/foodmart;</DataSourceInfo> 
         <!-- 
              Provider name must be 'Mondrian'.
         -->
@@ -87,7 +86,7 @@
                 <!-- 
                     URI of the schema definition file.
                 -->
-                <Definition>/WEB-INF/queries/FoodMart.xml</Definition>
+                <Definition>file:./../resources/Olap/FoodMart.xml</Definition> 
             </Catalog>
         </Catalogs>
 
