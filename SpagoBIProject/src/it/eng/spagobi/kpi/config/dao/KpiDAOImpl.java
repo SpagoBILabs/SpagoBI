@@ -595,7 +595,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			String hql = "select max(s.idKpiInstanceValue), s.value, s.beginDt";
 			hql += " from SbiKpiValue s where s.sbiKpiInstance.idKpiInstance = ? ";
 			hql += " and s.beginDt <= ? ";
-			hql += " and s.endDt > ? ";
+			//hql += " and s.endDt > ? ";
 			if (resId != null) {
 				hql += " and s.sbiResources.resourceId = ? ";
 			} else {
@@ -606,7 +606,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, kpiInstId);
 			hqlQuery.setTimestamp(1, endDate);
-			hqlQuery.setTimestamp(2, endDate);
+			//hqlQuery.setTimestamp(2, endDate);
 			if (resId != null) {
 				hqlQuery.setInteger(3, resId);
 				logger.debug("Resource setted");
