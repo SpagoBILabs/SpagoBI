@@ -532,6 +532,8 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			dispatchContext.setMailSubj(mailsubj);
 			String mailtxt = (String)request.getAttribute("mailtxt_"+biobId+"__"+index);	
 			dispatchContext.setMailTxt(mailtxt);
+			boolean zipDocument = "true".equalsIgnoreCase((String) request.getAttribute("zipDocument_"+biobId+"__"+index));
+			dispatchContext.setZipDocument(zipDocument);
 		}
 	}
 	
@@ -872,6 +874,9 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			}
 			if( (dispatchContext.getMailTxt()!=null) && !dispatchContext.getMailTxt().trim().equals("") ) {
 				saveOptString += "mailtxt="+dispatchContext.getMailTxt()+"%26";
+			}
+			if(dispatchContext.isZipDocument()) {
+				saveOptString += "zipDocument=true%26";
 			}
 		}
 		

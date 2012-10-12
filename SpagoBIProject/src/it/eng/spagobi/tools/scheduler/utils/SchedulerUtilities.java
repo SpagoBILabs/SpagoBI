@@ -439,6 +439,9 @@ public class SchedulerUtilities {
 				
 				dispatchContext.setDistributionListDispatchChannelEnabled(true);
 			}
+			if(name.equals("zipDocument")) {
+				dispatchContext.setZipDocument(true);
+			}
 		}
 		return dispatchContext;
 	}
