@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <QBE>
 
+    <!--
+    DATASOURCE_CACHE configuration: use true in production environment, false in development, or in case the business model varies very often.
+    When cache is enabled, the engine does not capture modifications on the business model definition, therefore you cannot
+    deploy from SpagoBI Studio and see live changes; when cache is disables instead, you can see live changes on the business model definition
+    when using SpagoBI Studio and deploying the model into the server.
+    -->
+    <DATASOURCE_CACHE enabled="false" />
+
 	<!--
 	QUERY-VALIDATION configuration is applied when saving a query as a subobject:
 	 - if enabled=true, query is validated before saving

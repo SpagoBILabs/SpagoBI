@@ -88,7 +88,8 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		dataSourceProperties.put("dblinkMap", template.getDbLinkMap());
 		
 		
-		dataSource = QbeDataSourceManager.getInstance().getDataSource(template.getDatamartNames(), dataSourceProperties);
+		dataSource = QbeDataSourceManager.getInstance().getDataSource(template.getDatamartNames(), dataSourceProperties, 
+				QbeEngineConfig.getInstance().isDataSourceCacheEnabled());
 				
 		
 		if(template.getDatamartModelAccessModality() != null) {

@@ -55,6 +55,8 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	protected Map attributes = null;
 	protected Map params = null;
 	
+	protected boolean useCache = false;
+	
 	protected IDataSource dataSource = null;
 	
 	public QbeDataSet() {}
@@ -151,7 +153,7 @@ public static String DS_TYPE = "SbiQbeDataSet";
 
 		return sbd;
 	}
-
+	
 	public it.eng.qbe.datasource.IDataSource getQbeDataSource() {
 
         Map<String, Object> dataSourceProperties = new HashMap<String, Object>();
@@ -183,7 +185,7 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	    compositeConfiguration.addSubConfiguration(new FileDataSourceConfiguration(modelNames.get(0), modelJarFile));
 	
 	    logger.debug("OUT: Finish to load the data source for the model names "+modelNames+"..");
-	    return DriverManager.getDataSource(getDriverName(modelJarFile), compositeConfiguration);
+	    return DriverManager.getDataSource(getDriverName(modelJarFile), compositeConfiguration, this.useCache);
 	}
 	
     /**
@@ -265,5 +267,13 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	@Override
 	public String getSignature() {
 		return ((AbstractQbeDataSet)ds).getSignature();
+	}
+	
+	public boolean isUseCache() {
+		return useCache;
+	}
+
+	public void setUseCache(boolean useCache) {
+		this.useCache = useCache;
 	}
 }

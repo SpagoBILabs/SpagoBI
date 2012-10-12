@@ -22,7 +22,6 @@ import org.apache.log4j.Logger;
 public class ClassLoaderManager {
 	
 	public static ClassLoader qbeClassLoader;
-	private static long jarFileTimeStamp;
 	
 	private static transient Logger logger = Logger.getLogger(ClassLoaderManager.class);
 	
@@ -41,6 +40,7 @@ public class ClassLoaderManager {
 		try {
 			
 			logger.debug("Jar file to be loaded: " + jarFile.getAbsoluteFile());
+			
 			
 			DynamicClassLoader previousCL = getPreviousClassLoader(qbeClassLoader, jarFile);
 			if ( previousCL != null ) {
@@ -64,6 +64,7 @@ public class ClassLoaderManager {
 			}
 			
 			Thread.currentThread().setContextClassLoader(qbeClassLoader);
+			
 			
 		} catch (Exception e) {
 			logger.error("Impossible to update current class loader", e);
@@ -176,7 +177,6 @@ public class ClassLoaderManager {
     		    DynamicClassLoader current = new DynamicClassLoader(file, previous);
 			    Thread.currentThread().setContextClassLoader(current);
 			    cl = current;
-			    jarFileTimeStamp = file.lastModified();
 			}
 			
 		} catch (Exception e) {
