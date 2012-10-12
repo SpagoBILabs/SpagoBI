@@ -5,11 +5,25 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.scheduler.dispatcher;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,6 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -30,33 +46,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.config.dao.IEngineDAO;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.massiveExport.services.StartMassiveScheduleAction;
-import it.eng.spagobi.tools.scheduler.to.DispatchContext;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
-import org.quartz.JobExecutionContext;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -196,9 +189,18 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			MimeBodyPart mbp2 = new MimeBodyPart();
 			// attach the file to the message
 
-			SchedulerDataSource sds = new SchedulerDataSource(executionOutput, contentType, document.getName() + nameSuffix + fileExtension);
-			mbp2.setDataHandler(new DataHandler(sds));
-			mbp2.setFileName(sds.getName());
+			SchedulerDataSource sds = null;
+			//if zip requested
+			if(dispatchContext.isZipDocument()){				
+				mbp2 = zipAttachment(executionOutput, document.getName(), nameSuffix , fileExtension);
+			}
+			//else 
+			else{
+				sds = new SchedulerDataSource(executionOutput, contentType, document.getName() + nameSuffix + fileExtension);
+				mbp2.setDataHandler(new DataHandler(sds));
+				mbp2.setFileName(sds.getName());
+			}
+			
 			// create the Multipart and add its parts to it
 			Multipart mp = new MimeMultipart();
 			mp.addBodyPart(mbp1);
@@ -215,7 +217,82 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 		}
 		return true;
 	}
+	private MimeBodyPart zipAttachment( byte[] attach, String reportFileName ,String nameSuffix, String fileExtension)
+	{
+	    MimeBodyPart messageBodyPart = null;
+	    try
+	    {
 
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            ZipOutputStream zipOut = new ZipOutputStream(bout);
+            String entryName = reportFileName + nameSuffix + fileExtension;
+            zipOut.putNextEntry(new ZipEntry(entryName));
+            zipOut.write(attach);
+            zipOut.closeEntry();
+
+            zipOut.close();
+            
+	        messageBodyPart = new MimeBodyPart();
+	        DataSource source = new ByteArrayDataSource( bout.toByteArray(), "application/zip" );
+	        messageBodyPart.setDataHandler( new DataHandler( source ) );
+	        messageBodyPart.setFileName( reportFileName+nameSuffix+".zip" );
+
+	    }
+	    catch( Exception e )
+	    {
+	        // TODO: handle exception            
+	    }
+	    return messageBodyPart;
+	}
+	private byte[] zipDocument(String fileZipName, byte[] content) {
+		logger.debug("IN");  
+
+		ByteArrayOutputStream bos=null;
+		ZipOutputStream zos=null;
+		ByteArrayInputStream in=null;
+    	try{
+ 
+    		bos = new ByteArrayOutputStream();
+    		zos = new ZipOutputStream(bos);
+    		ZipEntry ze= new ZipEntry(fileZipName);
+    		zos.putNextEntry(ze);
+    		in = new ByteArrayInputStream(content);
+
+    		for (int c = in.read(); c != -1; c = in.read()) {
+    		      zos.write(c);
+    		}
+    		
+    		
+    		return bos.toByteArray();
+
+    	}catch(IOException ex){
+    		logger.error("Error zipping the document",ex);
+    		return null;
+    	}finally{
+    		if (bos != null) {
+				try {		
+					bos.close();
+				} catch (IOException e) {
+					logger.error("Error closing output stream", e);
+				}
+			}
+    		if (zos != null) {
+				try {		
+					zos.close();
+				} catch (IOException e) {
+					logger.error("Error closing output stream", e);
+				}
+			}
+    		if (in != null) {
+				try {		
+					in.close();
+				} catch (IOException e) {
+					logger.error("Error closing output stream", e);
+				}
+			}
+    	}
+
+	}
 	public static boolean canDispatch(DispatchContext dispatchContext, BIObject document, IDataStore emailDispatchDataStore) {
 		String[] recipients = findRecipients(dispatchContext, document, emailDispatchDataStore);
 		return (recipients != null && recipients.length > 0);

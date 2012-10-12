@@ -93,6 +93,15 @@ public class DispatchContext implements Serializable {
 	private int totalNumberOfDocumentsToDispatch;
 	private int indexNumberOfDocumentToDispatch;
 	
+	//property set to zip document in case of e-mail
+	private boolean zipDocument = false;
+	
+	public boolean isZipDocument() {
+		return zipDocument;
+	}
+	public void setZipDocument(boolean zipDocument) {
+		this.zipDocument = zipDocument;
+	}
 	public boolean isDistributionListDispatchChannelEnabled() {
 		return distributionListDispatchChannelEnabled;
 	}

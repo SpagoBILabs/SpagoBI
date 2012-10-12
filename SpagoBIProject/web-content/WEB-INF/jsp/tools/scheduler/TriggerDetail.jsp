@@ -1453,6 +1453,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	  	    <div class='div_detail_form' style="height:125px;">
 	  	    		<textarea rows="8" cols="60" name="mailtxt_<%=biobj.getId()%>__<%=index%>" style="font-size:9pt"><%=sInfo.getMailTxt()%></textarea>
 	  	    </div>
+	  	    <input  type="checkbox" name="zipDocument_<%=biobj.getId()%>__<%=index%>" value="true"
+						<%= sInfo.isZipDocument() ? "checked='checked'" : "" %> />
+			<span class='portlet-form-field-label'>
+				<spagobi:message key="scheduler.zipDocument" bundle="component_scheduler_messages" />
   	     </div>
 
 	<script>
