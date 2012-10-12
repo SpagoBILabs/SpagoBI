@@ -8,10 +8,10 @@ package it.eng.spagobi.engines.qbe.tree;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
-import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.ModelCalculatedField;
-import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.FilteredModelStructure;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
 import it.eng.qbe.model.structure.filter.QbeTreeFilter;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
@@ -26,9 +26,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,12 +51,11 @@ public class ExtJsQbeTreeBuilder  {
 	
 	private IModelProperties datamartLabels;
 	
-	
 	public static final String NODE_TYPE_ENTITY = "entity";
 	public static final String NODE_TYPE_SIMPLE_FIELD = "field";
 	public static final String NODE_TYPE_CALCULATED_FIELD = "calculatedField";
 	public static final String NODE_TYPE_INLINE_CALCULATED_FIELD = "inLineCalculatedField";
-			
+	
 	/**
 	 * Instantiates a new ext js qbe tree builder.
 	 * 

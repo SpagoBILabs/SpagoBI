@@ -12,7 +12,6 @@ import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.file.FileUtils;
 
 import java.io.File;
@@ -281,5 +280,13 @@ public class QbeEngineConfig {
 			logger.debug("No decimal precision for the crosstab has been defined in the qbe.xml");
 		}
 		return precision;
+	}
+	
+	
+	public boolean isDataSourceCacheEnabled() {
+		boolean isDataSourceCacheEnabled = false;
+		String isDataSourceCacheEnabledStr = (String) ConfigSingleton.getInstance().getAttribute("QBE.DATASOURCE_CACHE.enabled");
+		isDataSourceCacheEnabled = Boolean.parseBoolean(isDataSourceCacheEnabledStr);
+		return isDataSourceCacheEnabled;
 	}
 }

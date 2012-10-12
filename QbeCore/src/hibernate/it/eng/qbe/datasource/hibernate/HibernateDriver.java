@@ -55,6 +55,7 @@ public class HibernateDriver implements IDriver {
 			dataSource = cache.containsKey(dataSourceName)? 
 						 cache.get(dataSourceName): 
 					     new HibernateDataSource(dataSourceName, configuration);
+			cache.put(dataSourceName, dataSource);
 		} else {
 			dataSource = new HibernateDataSource(dataSourceName, configuration);
 		}

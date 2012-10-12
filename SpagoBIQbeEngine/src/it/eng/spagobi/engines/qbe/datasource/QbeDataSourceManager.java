@@ -63,7 +63,7 @@ public class QbeDataSourceManager {
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.DataSourceManager#getDataSource(java.util.List, java.util.Map, it.eng.qbe.datasource.DBConnection)
 	 */
-	public IDataSource getDataSource(List<String> dataMartNames, Map<String, Object> dataSourceProperties) {
+	public IDataSource getDataSource(List<String> dataMartNames, Map<String, Object> dataSourceProperties, boolean useCache) {
 		
 		IDataSource dataSource;
 		
@@ -103,7 +103,7 @@ public class QbeDataSourceManager {
 		}
 		
 		String driverName = isJPA? "jpa": "hibernate";
-		dataSource = DriverManager.getDataSource(driverName, compositeConfiguration);
+		dataSource = DriverManager.getDataSource(driverName, compositeConfiguration, useCache);
 		
 		return dataSource;
 	}
