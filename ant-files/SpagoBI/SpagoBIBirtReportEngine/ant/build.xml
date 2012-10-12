@@ -122,6 +122,7 @@
 		<delete file="${build}/${webapp_name}/WEB-INF/lib/hibernate-3.6.2.jar" />
 		<delete file="${build}/${webapp_name}/WEB-INF/lib/javassist-3.12.0.GA.jar" />
 		<delete file="${build}/${webapp_name}/WEB-INF/lib/jta-1.1.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/eclipselink-2.1.2.v20101206-r8635.jar" />
 	</target>
 
 	<target name="liferay.jboss">
