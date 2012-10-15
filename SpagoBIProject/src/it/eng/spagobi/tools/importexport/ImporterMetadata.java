@@ -732,7 +732,7 @@ public class ImporterMetadata {
 		}
 		catch (Exception e) {
 			logger.error("HibObj is of type "+hibObj.getClass().toString());			
-			logger.error("Error: Found in import database more than one "+param+" with the same key");
+			logger.error("Error: Found in import database more than one "+param+" with the same key",e);
 			List params = new ArrayList();
 			params.add(param);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "9000", params, ImportManager.messageBundle);
