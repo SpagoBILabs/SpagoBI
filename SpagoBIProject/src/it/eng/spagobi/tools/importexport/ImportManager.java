@@ -1195,7 +1195,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 					IParameterUseDAO iParameterUseDAO=DAOFactory.getParameterUseDAO();
 					List exportedParuses = importer.getFilteredExportedSbiObjects(sessionExpDB, "SbiParuse", "sbiParameters", oldId);
-					List existingParuses = importer.getFilteredExportedSbiObjects(sessionCurrDB, "SbiParuse", "sbiParameters", oldId);
+					List existingParuses = importer.getFilteredExportedSbiObjects(sessionCurrDB, "SbiParuse", "sbiParameters", newIdPar);
 
 					// check to delete existing Paruse that have not been exported
 					deleteOldParametersUse(newIdPar, oldId, existingParuses, exportedParuses, sessionCurrDB);
