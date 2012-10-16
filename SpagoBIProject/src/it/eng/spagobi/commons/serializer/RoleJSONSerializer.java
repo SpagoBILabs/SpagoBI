@@ -36,6 +36,7 @@ public class RoleJSONSerializer implements Serializer {
 	private static final String DO_MASSIVE_EXPORT="doMassiveExport";
 	private static final String MANAGE_USERS="manageUsers";	
 	private static final String DEFAULT_ROLE="defaultRole";	
+	private static final String EDIT_WORKSHEET="editWorksheet";	
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -68,6 +69,8 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(DO_MASSIVE_EXPORT, role.isAbleToDoMassiveExport() );
 			result.put(MANAGE_USERS, role.isAbleToManageUsers() );
 			result.put(DEFAULT_ROLE, role.isDefaultRole() );
+			result.put(EDIT_WORKSHEET, role.isAbleToEditWorksheet() );
+			
 			
 			
 		} catch (Throwable t) {

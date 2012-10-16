@@ -64,6 +64,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 	private final String BUILD_QBE_QUERY="buildQbe";
 	private final String DO_MASSIVE_EXPORT="doMassiveExport";
 	private final String MANAGE_USERS="manageUsers";
+	private final String EDIT_WORKSHEET="editWorksheet";
 	
 	public static String START = "start";
 	public static String LIMIT = "limit";
@@ -139,6 +140,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 			Boolean buildQbeQuery= getAttributeAsBoolean(BUILD_QBE_QUERY);
 			Boolean doMassiveExport = getAttributeAsBoolean(DO_MASSIVE_EXPORT);
 			Boolean manageUsers = getAttributeAsBoolean(MANAGE_USERS);
+			Boolean editWorksheet = getAttributeAsBoolean(EDIT_WORKSHEET);
+			
 						
 			if (name != null) {
 				//checks for unique role name
@@ -206,6 +209,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 				role.setIsAbleToSeeViewpoints(seeViewpoints);
 				role.setIsAbleToSendMail(sendMail);
 				role.setIsAbleToManageUsers(manageUsers);
+				role.setIsAbleToEditWorksheet(editWorksheet);
 				try {
 					String id = getAttributeAsString(ID);
 					if(id != null && !id.equals("") && !id.equals("0")){							

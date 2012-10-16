@@ -276,6 +276,7 @@ Sbi.locale.ln['sbi.execution.parametersselection.noParametersToBeFilled']  = '[D
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.back']  = 'Change selected role';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']  = 'Reset parameters form';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save']  = 'Save parameters form state as viewpoint';
+
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.next']  = 'Execute document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute']  = 'Fill the form below and click on the top-right button to execute the document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']  = 'Click on the top-right button to execute the document';
@@ -420,6 +421,8 @@ Sbi.locale.ln['sbi.roles.rolesList'] = 'Roles list';
 Sbi.locale.ln['sbi.roles.error'] = 'Error';
 Sbi.locale.ln['sbi.roles.result'] = 'Result';
 Sbi.locale.ln['sbi.roles.rolesSynchronization'] = 'Synchronize';
+Sbi.locale.ln['sbi.roles.edit'] = 'Edit';
+Sbi.locale.ln['sbi.roles.worksheet'] = 'Worksheet';
 
 Sbi.locale.ln['sbi.users.fullName'] = 'Full Name';
 Sbi.locale.ln['sbi.users.userId'] = 'User ID';
