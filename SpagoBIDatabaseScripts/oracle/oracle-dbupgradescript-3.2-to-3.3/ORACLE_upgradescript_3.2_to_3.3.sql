@@ -57,7 +57,17 @@ PRIMARY KEY (KPI_COMMENT_ID)
 ALTER TABLE SBI_KPI_COMMENTS ADD CONSTRAINT FK_SBI_KPI_COMMENT_1 FOREIGN KEY (BIN_ID) REFERENCES SBI_BINARY_CONTENTS (BIN_ID);
 ALTER TABLE SBI_KPI_COMMENTS ADD CONSTRAINT FK_SBI_KPI_COMMENT_2 FOREIGN KEY (KPI_INST_ID) REFERENCES SBI_KPI_INSTANCE (ID_KPI_INSTANCE);
 
-alter table SBI_ORG_UNIT_NODES drop constraint "FK_SBI_ORG_UNIT_NODES_2";
+alter table SBI_ORG_UNIT_NODES drop constraint ( SELECT c.constraint_name
+  FROM user_constraints c, user_cons_columns cc
+  WHERE     c.constraint_name = cc.constraint_name
+       AND c.table_name = 'SBI_ORG_UNIT_NODES'
+       AND c.constraint_type = 'R'
+       AND cc.column_name = 'HIERARCHY_ID' );
 ALTER TABLE SBI_ORG_UNIT_NODES ADD CONSTRAINT FK_SBI_ORG_UNIT_NODES_2 FOREIGN KEY ( HIERARCHY_ID ) REFERENCES SBI_ORG_UNIT_HIERARCHIES ( ID ) ON DELETE CASCADE;
-alter table SBI_ORG_UNIT_NODES drop constraint "FK_SBI_ORG_UNIT_NODES_3";
+alter table SBI_ORG_UNIT_NODES drop constraint ( SELECT c.constraint_name
+  FROM user_constraints c, user_cons_columns cc
+  WHERE     c.constraint_name = cc.constraint_name
+       AND c.table_name = 'SBI_ORG_UNIT_NODES'
+       AND c.constraint_type = 'R'
+       AND cc.column_name = 'PARENT_NODE_ID' );
 ALTER TABLE SBI_ORG_UNIT_NODES ADD CONSTRAINT FK_SBI_ORG_UNIT_NODES_3 FOREIGN KEY ( PARENT_NODE_ID ) REFERENCES SBI_ORG_UNIT_NODES ( NODE_ID ) ON DELETE CASCADE;
