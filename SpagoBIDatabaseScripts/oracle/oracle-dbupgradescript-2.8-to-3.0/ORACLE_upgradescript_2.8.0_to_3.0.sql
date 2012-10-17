@@ -109,7 +109,12 @@ commit
 /
 
 --Drop all SBI_DATA_SET foreign keys
-ALTER TABLE SBI_DATA_SET DROP CONSTRAINT SBI_DATA_SET_1
+ALTER TABLE SBI_DATA_SET DROP CONSTRAINT ( SELECT c.constraint_name
+  FROM user_constraints c, user_cons_columns cc
+ WHERE     c.constraint_name = cc.constraint_name
+       AND c.table_name = 'SBI_DATA_SET'
+       AND c.constraint_type = 'R'
+       AND cc.column_name = 'TRANSFORMER_ID' )
 /
 
 ALTER TABLE SBI_DATA_SET DROP COLUMN EXECUTOR_CLASS

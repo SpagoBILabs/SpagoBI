@@ -43,7 +43,9 @@ update HIBERNATE_SEQUENCES set next_val = next_val+1 where  sequence_name = 'SBI
 Commit;
 Insert Into Sbi_Domains (Value_Id, Value_Cd,Value_Nm,Domain_Cd,Domain_Nm,Value_Ds, User_In, Time_In)
 	Values ((Select Next_Val From Hibernate_Sequences Where Sequence_Name = 'SBI_DOMAINS'),	'Day scale','Day scale','METRIC_SCALE_TYPE','Metric Scale Type','', 'biadmin', SYSDATE);
-commit;			
+commit;
+update HIBERNATE_SEQUENCES set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+Commit;
 	
 --ALTER TABLE SBI_DATA_SET_HISTORY MODIFY ( DS_METADATA CLOB );
 ALTER TABLE SBI_DATA_SET_HISTORY ADD DS_METADATA_TMP CLOB;
