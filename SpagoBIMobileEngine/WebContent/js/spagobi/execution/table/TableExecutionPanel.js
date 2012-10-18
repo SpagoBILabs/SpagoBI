@@ -131,11 +131,17 @@
 				var cellsOfRow = row.cells;
 				var rowIdx = row.rowIndex;
 				var attributes = target.attributes;
-				var column= '';
-				for(i = 0; i<attributes.length; i++){
-					var at = attributes[i];
-					if(at.name == 'mapping'){
-						column = at.value;
+				var columns= new Array();
+				var colValues = {};
+				for(a=0; a<cellsOfRow.length; a++){
+					var cell = cellsOfRow[a];
+					for(i = 0; i<cell.attributes.length; i++){
+						var at = cell.attributes[i];
+						if(at.name == 'mapping'){
+							var nCol=at.value;
+							colValues[nCol] = cell.textContent;
+							
+						}
 					}
 				}
 				if(params != null && params != undefined){
@@ -146,10 +152,10 @@
 
 						/*	RELATIVE AND ABSOLUTE PARAMETERS ARE MANAGED SERVER SIDE */
 						if(type == 'SERIE'){
-							if(column == name){
-								crossParams.push({name : name, value : textCell});
-							}
-							
+								var col = colValues[name];
+								if(col){
+									crossParams.push({name : name, value : col});
+								}	
 						}else if(type == 'CATEGORY'){
 							crossParams.push({name : name, value : column});
 						}else{
