@@ -463,8 +463,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setDescr(biObject.getDescription());
 			hibBIObject.setLabel(biObject.getLabel());
 			hibBIObject.setName(biObject.getName());
+			
+			if(biObject.getEncrypt() != null)
 			hibBIObject.setEncrypt(new Short(biObject.getEncrypt().shortValue()));
+			if(biObject.getVisible() != null)
 			hibBIObject.setVisible(new Short(biObject.getVisible().shortValue()));
+			
 			hibBIObject.setProfiledVisibility(biObject.getProfiledVisibility());
 			hibBIObject.setRelName(biObject.getRelName());
 			SbiDomains hibState = (SbiDomains) aSession.load(SbiDomains.class, biObject.getStateID());
