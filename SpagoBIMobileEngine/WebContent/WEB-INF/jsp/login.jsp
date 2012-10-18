@@ -16,49 +16,41 @@ authors: Monica Franceschini
 
 <html>
 
-
-
 	<head>
-			<script>
-				function backButtonOverride()
-				{
-				  // Work around a Safari bug
-				  // that sometimes produces a blank page
-				  setTimeout("backButtonOverrideBody()", 1);
-				
-				}
-				
-				function backButtonOverrideBody()
-				{
-				  // Works if we backed up to get here
-				  try {
-				    history.forward();
-				  } catch (e) {
-				    // OK to ignore
-				  }
-				  // Every quarter-second, try again. The only
-				  // guaranteed method for Opera, Firefox,
-				  // and Safari, which don't always call
-				  // onLoad but *do* resume any timers when
-				  // returning to a page
-				  setTimeout("backButtonOverrideBody()", 500);
-				}
-			</script>
+
+
 		<%@ include file="/WEB-INF/jsp/importSenchaJSLibrary.jspf" %>
 		<%@ include file="/WEB-INF/jsp/constants.jspf" %>
 		<%@ include file="/WEB-INF/jsp/env.jspf" %>
 		<%@ include file="/WEB-INF/jsp/importSbiJS.jspf" %>
-		
+	<script type="text/javascript">
+
+	function changeHashOnLoad() {
+	            window.location.href += "#";
+	            setTimeout("changeHashAgain()", "50");
+	        }
+	        function changeHashAgain() {
+	            window.location.href += "1";
+	        }
+	        var storedHash = window.location.hash;
+	        window.setInterval(function() {
+	        if (window.location.hash != storedHash) 
+	        { window.location.hash = storedHash; } }, 50);
+	
+	</script>	
 	</head>
 
 
 
-	<body onLoad="backButtonOverride()">
+	<body onload ="changeHashOnLoad();">
 
 		 <script>
+
+		 	
 		 	var ajaxReqGlobalTimeout = 120000;
 			var hostGlobal= '<%= request.getServerName()%>';
 			var portGlobal= '<%= request.getServerPort()%>';
+
 		 </script>
 	</body>
  
