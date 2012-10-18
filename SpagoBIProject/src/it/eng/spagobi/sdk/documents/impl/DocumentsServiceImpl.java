@@ -337,17 +337,12 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			Integer functionalityId) throws NotAllowedOperationException {
 		logger.debug("IN");
 		Integer toReturn = null;
-		
+
 		this.setTenant();
-		
+
 		try {
 			IEngUserProfile profile = getUserProfile();
-			// if user cannot develop in the specified folder, he cannot save documents inside it
-			if (!ObjectsAccessVerifier.canDev(functionalityId, profile)) {
-				NotAllowedOperationException e = new NotAllowedOperationException();
-				e.setFaultString("User cannot save new documents in the specified folder since he hasn't development permission.");
-				throw e;
-			}
+
 			BIObject obj = new SDKObjectsConverter().fromSDKDocumentToBIObject(document);
 			String userId = ((UserProfile) profile).getUserId().toString();
 			logger.debug("Current user id is [" + userId + "]");
@@ -361,20 +356,47 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			ObjTemplate objTemplate = null;
 			if (sdkTemplate != null) {
 				objTemplate = new SDKObjectsConverter().fromSDKTemplateToObjTemplate(sdkTemplate);
-				objTemplate.setActive(new Boolean(true));
-				objTemplate.setCreationUser(userId);
-				objTemplate.setCreationDate(new Date());
+				if (objTemplate != null) {
+					objTemplate.setActive(new Boolean(true));
+					objTemplate.setCreationUser(userId);
+					objTemplate.setCreationDate(new Date());
+				}
 			}
 
-			logger.debug("Saving document ...");
-			IBIObjectDAO biObjDAO = DAOFactory.getBIObjectDAO();
-			biObjDAO.setUserProfile(profile);
-			biObjDAO.insertBIObject(obj, objTemplate);
-			toReturn = obj.getId();
-			if (toReturn != null) {
-				logger.info("Document saved with id = " + toReturn);
-			} else {
-				logger.error("Document not saved!!");
+			logger.debug("Check if document with label "+obj.getLabel()+" i already existing.");
+			BIObject existingObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(obj.getLabel());
+			if(existingObject != null){
+				logger.debug("Found existing object: go on for update");
+				obj.setId(existingObject.getId());
+				if(sdkTemplate != null && objTemplate!=null){
+					DAOFactory.getBIObjectDAO().modifyBIObject(obj, objTemplate);
+				}
+				else{
+					// pass functionalities that must not be changed
+					obj.setFunctionalities(existingObject.getFunctionalities());
+					DAOFactory.getBIObjectDAO().modifyBIObject(obj);
+				}
+				toReturn = existingObject.getId();
+			}
+			else {
+				// check permission on saving new document
+
+				// if user cannot develop in the specified folder, he cannot save documents inside it
+				if (!ObjectsAccessVerifier.canDev(functionalityId, profile)) {
+					NotAllowedOperationException e = new NotAllowedOperationException();
+					e.setFaultString("User cannot save new documents in the specified folder since he hasn't development permission.");
+					throw e;
+				}
+				logger.debug("Not found existing document, saving new one.");
+				IBIObjectDAO biObjDAO = DAOFactory.getBIObjectDAO();
+				biObjDAO.setUserProfile(profile);
+				biObjDAO.insertBIObject(obj, objTemplate);
+				toReturn = obj.getId();
+				if (toReturn != null) {
+					logger.info("Document saved with id = " + toReturn);
+				} else {
+					logger.error("Document not saved!!");
+				}
 			}
 		} catch(Exception e) {
 			logger.error("Error while saving new document", e);
