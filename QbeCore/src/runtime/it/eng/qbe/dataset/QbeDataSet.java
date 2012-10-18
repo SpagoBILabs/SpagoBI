@@ -256,16 +256,19 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	
 	@Override
 	public IDataSetTableDescriptor persist(String tableName, Connection connection) {
+		init();
 		return((AbstractQbeDataSet)ds).persist(tableName, connection);
 	}
 
 	@Override
 	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter ) {
+		init();
 		return ((AbstractQbeDataSet)ds).getDomainValues(fieldName, start, limit, filter);
 	}
 	
 	@Override
 	public String getSignature() {
+		init();
 		return ((AbstractQbeDataSet)ds).getSignature();
 	}
 	
