@@ -4,7 +4,11 @@
 	<comment></comment>
 	<projects>
 		<project>SpagoBIUtils</project>
+<<<<<<< .mine
+		<project>QbeCore</project>
+=======
 		<project>SpagoBIUtilsJSON</project>
+>>>>>>> .r18858
 	</projects>
 	<buildSpec>
 		<buildCommand>

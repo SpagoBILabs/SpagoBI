@@ -5,7 +5,11 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtils"/>
+<<<<<<< .mine
+	<classpathentry combineaccessrules="false" kind="src" path="/QbeCore"/>
+=======
 	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtilsJSON"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+>>>>>>> .r18858
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>
