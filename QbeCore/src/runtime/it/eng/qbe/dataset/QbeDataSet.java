@@ -63,6 +63,7 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	
     public QbeDataSet(SpagoBiDataSet dataSetConfig) {
 
+    	super(dataSetConfig);
     	this.setDatamarts(dataSetConfig.getDatamarts());
     	this.setJsonQuery(dataSetConfig.getJsonQuery());
     	
