@@ -272,6 +272,11 @@ Sbi.locale.ln['sbi.execution.parametersselection.toolbar.back']='Changer le r\u0
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']='r\u00E9initialiser les param\u00E8tres du formulaire';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save']='Enregistrer les param\u00E8tres comme vue pr\u00E9d\u00E9finie';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.next']='ex\u00E9cuter le document';
+
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.public.description']='Tous ceux qui peuvent ex\u00E9cuter ce document ont \u00E9galement acc\u00E8s \u00E0 vos param\u00E8tres';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.private.description']='Les param\u00E8tres sauvegard\u00E9es seront visibles uniquement par vous';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.scope.description']='S\u00E9lectionnez une visibilit\u00E9...';
+
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute']='Remplir le formulaire ci-dessous et cliquer sur le bouton ex\u00E9cuter pour lancer le document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']='Cliquer sur le bouton pour ex\u00E9cuter le document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']='Cliquer sur le bouton pour ex\u00E9cuter le document principal ou double-cliquer sur les vues personnalis\u00E9es dans la liste ci-dessous';

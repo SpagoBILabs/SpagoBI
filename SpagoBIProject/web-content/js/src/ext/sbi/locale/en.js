@@ -277,6 +277,11 @@ Sbi.locale.ln['sbi.execution.parametersselection.toolbar.back']  = 'Change selec
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']  = 'Reset parameters form';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save']  = 'Save parameters form state as viewpoint';
 
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.public.description']='Everybody that can execute this document will see also your saved parameters';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.private.description']='The saved parameters will be visible only to you';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.scope.description']='Select a scope...';
+
+
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.next']  = 'Execute document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute']  = 'Fill the form below and click on the top-right button to execute the document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']  = 'Click on the top-right button to execute the document';

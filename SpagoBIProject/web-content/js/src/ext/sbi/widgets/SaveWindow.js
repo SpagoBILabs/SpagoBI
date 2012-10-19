@@ -32,7 +32,7 @@ Sbi.widgets.SaveWindow = function(config) {
 		height:250,
 		closeAction:'hide',
 		plain: true,
-		title: 'Save as ...',
+		title: LN('sbi.execution.executionpage.toolbar.saveas'),
 		items: [this.formPanel]
     });
     
@@ -75,7 +75,7 @@ Ext.extend(Sbi.widgets.SaveWindow, Ext.Window, {
     		inputType:'text',
     		maxLength:50,
     		width:250,
-    		fieldLabel:'Name' 
+    		fieldLabel:LN('sbi.execution.subobjects.name') 
     	});
     	    
     	this.descriptionField = new Ext.form.TextField({
@@ -84,14 +84,14 @@ Ext.extend(Sbi.widgets.SaveWindow, Ext.Window, {
     		inputType:'text',
     		maxLength:50,
     		width:250,
-    		fieldLabel:'Description' 
+    		fieldLabel: LN('sbi.execution.subobjects.description') 
     	});
     	    
     	    
     	   
     	var scopeComboBoxData = [
-    		['PUBLIC','Public', 'Everybody that can execute this document will see also your saved subobject'],
-    		['PRIVATE', 'Private', 'The saved quary will be visible only to you']
+    		['PUBLIC',LN('sbi.execution.subobjects.visibility.public'), LN('sbi.execution.parametersselection.toolbar.save.public.description')],
+    		['PRIVATE', LN('sbi.execution.subobjects.visibility.private'), LN('sbi.execution.parametersselection.toolbar.save.private.description')]
     	];
     		
     	var scopeComboBoxStore = new Ext.data.SimpleStore({
@@ -103,14 +103,14 @@ Ext.extend(Sbi.widgets.SaveWindow, Ext.Window, {
     	this.scopeField = new Ext.form.ComboBox({
     	   	tpl: '<tpl for="."><div ext:qtip="{field}: {description}" class="x-combo-list-item">{field}</div></tpl>',	
     	   	editable  : false,
-    	   	fieldLabel : 'Scope',
+    	   	fieldLabel : LN('sbi.execution.subobjects.visibility'),
     	   	forceSelection : true,
     	   	mode : 'local',
     	   	name : 'analysisScope',
     	   	store : scopeComboBoxStore,
     	   	displayField:'field',
     	    valueField:'value',
-    	    emptyText:'Select scope...',
+    	    emptyText:LN('sbi.execution.parametersselection.toolbar.save.scope.description'),
     	    typeAhead: true,
     	    triggerAction: 'all',
     	    selectOnFocus:true
@@ -122,14 +122,14 @@ Ext.extend(Sbi.widgets.SaveWindow, Ext.Window, {
     	    buttonAlign : 'center',
     	    items: [this.nameField,this.descriptionField,this.scopeField],
     	    buttons: [{
-    			text: 'Save',
+    			text: LN('sbi.browser.defaultRole.save'),
     		    handler: function(){
     	    		this.fireEvent('save', this, this.getFormState());
                 	this.hide();
             	}
             	, scope: this
     	    },{
-    		    text: 'Cancel',
+    		    text: LN('sbi.browser.defaultRole.cancel'),
     		    handler: function(){
                 	this.hide();
             	}
