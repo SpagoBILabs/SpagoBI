@@ -693,12 +693,14 @@ public class ObjectsAccessVerifier {
 			}
 		}
 
-
-		LowFunctionality personalFolder = UserUtilities.loadUserFunctionalityRoot((UserProfile)profile);
-		if (personalFolder.getId()==folderId){
-			return true;
-			
+		if(profile!=null){
+			LowFunctionality personalFolder = UserUtilities.loadUserFunctionalityRoot((UserProfile)profile);
+			if (personalFolder!= null && personalFolder.getId()==folderId){
+				return true;
+			}
 		}
+		
+
 		
 		logger.debug("OUT. return false");
 		monitor.stop();
