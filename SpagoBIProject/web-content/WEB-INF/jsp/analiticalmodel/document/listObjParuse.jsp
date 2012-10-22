@@ -159,7 +159,7 @@ function rigenerateCorrelationList() {
     }
   } else {
      html += "<tr><td colspan='5'>&nbsp;</td></tr>";  
-     html += "<tr><td colspan='5'><b>No correlations setted</b></td></tr>";  
+     html += "<tr><td colspan='5'><b>No correlation is currently set</b></td></tr>";  
      html += "<tr style='border-bottom:1px solid #bbb;'><td colspan='5'>&nbsp;</td></tr>";    
   }
   html += "</table>";
@@ -673,7 +673,7 @@ function rigenerateViewList() {
     }
   } else {
      html += "<tr><td colspan='5'>&nbsp;</td></tr>";  
-     html += "<tr><td colspan='5'><b>No Views setted</b></td></tr>";  
+     html += "<tr><td colspan='5'><b>No View is currently set</b></td></tr>";  
      html += "<tr style='border-bottom:1px solid #bbb;'><td colspan='5'>&nbsp;</td></tr>";    
   }
   html += "</table>";
