@@ -48,7 +48,7 @@ public class MetaData implements IMetaData {
 	public int getFieldIndex(String fieldName) {
 		Integer columnIndex = null;
 		
-		columnIndex = (Integer)name2IndexMap.get(fieldName.toUpperCase());
+		columnIndex = (Integer)name2IndexMap.get(fieldName);
 		
 		return columnIndex == null? -1: columnIndex.intValue();
 	}
@@ -138,7 +138,7 @@ public class MetaData implements IMetaData {
 		Integer fieldIndex = new Integer(fieldsMeta.size());
 		fieldsMeta.add(fieldMetaData);
 		String fieldName = fieldMetaData.getName();
-		name2IndexMap.put(fieldName.toUpperCase(), fieldIndex);
+		name2IndexMap.put(fieldName, fieldIndex);
 	}
 
 	public String toString() {
