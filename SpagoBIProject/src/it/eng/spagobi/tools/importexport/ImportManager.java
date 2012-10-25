@@ -23,6 +23,8 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreports;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreportsId;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuseId;
@@ -1326,8 +1328,19 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				insertSnapshot(obj, exportedObj);
 				// insert object into folders tree
 				importFunctObject(exportedObj.getBiobjId());
+
+				if(existingObjId != null){
+					logger.debug("delete existing SbiObjPar referring to object with label: "+obj.getLabel());
+					deletePreviousObjParameter(existingObjId, obj.getBiobjId(), obj);
+				}
+				else{
+					logger.debug("not an existing document with label "+obj.getLabel()+" was present before import.");					
+				}
+				
+				logger.debug("import exported SbiObjPar referring to object with label: "+obj.getLabel());
 				// puts parameters into object
 				importBIObjPar(exportedObj.getBiobjId());
+
 				// puts dependencies into object
 				importObjParUse(exportedObj.getBiobjId());
 				// puts visual into object
@@ -1823,6 +1836,27 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 //		}
 
 
+	/**
+	 *  Handle already present parameter's paruse
+	 *  if a paruse is not present between exported delete
+	 *  
+	 */
+
+	public void deletePreviousObjParameter(Integer exstingObjectId, Integer exportObjectId, SbiObjects object) throws EMFUserError {
+		logger.debug("IN");
+
+		IBIObjectParameterDAO objParameterDao = DAOFactory.getBIObjectParameterDAO();
+	
+		metaLog.log("Ecxisting ParObjects referring to document with label"+object.getLabel()+" have been deleted");
+		logger.debug("Ecxisting ParObjects referring to document with label"+object.getLabel()+" have been deleted");
+
+		objParameterDao.eraseBIObjectParametersByObjectId(exstingObjectId, sessionCurrDB);		
+		
+		logger.debug("OUT");
+	}
+		
+	
+	
 	
 	
 	/**
@@ -2467,48 +2501,51 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				
 				logger.debug("importing SbiObjParameter with previous keys: biObjId "+oldBIObjId+" parId "+oldParamId+ " adn url name "+exportedObjpar.getParurlNm());
 				logger.debug("importing SbiObjParameter with new keys: biObjId "+oldBIObjId+" parId "+oldParamId+ " adn url name "+exportedObjpar.getParurlNm());
-							
-//				if (newParamId != null) {
-//					SbiParameters newParam = ImportUtilities.makeNew(param, newParamId);
-//					objpar.setSbiParameter(newParam);
-//				}
-//				if (newBIObjId != null) {
-//					SbiObjects newObj = ImportUtilities.makeNewSbiObject(biobj, newBIObjId);
-//					objpar.setSbiObject(newObj);
-//				}
+
+				//				if (newParamId != null) {
+				//					SbiParameters newParam = ImportUtilities.makeNew(param, newParamId);
+				//					objpar.setSbiParameter(newParam);
+				//				}
+				//				if (newBIObjId != null) {
+				//					SbiObjects newObj = ImportUtilities.makeNewSbiObject(biobj, newBIObjId);
+				//					objpar.setSbiObject(newObj);
+				//				}
 				Integer oldId = exportedObjpar.getObjParId();
 
-				// check if the association already exist
-				Map uniqueMap = new HashMap();
-				uniqueMap.put("biobjid", newBIObjId);
-				uniqueMap.put("paramid", newParamId);
-				uniqueMap.put("urlname", exportedObjpar.getParurlNm());
-				Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiObjPar());
-				if (existObj != null) {
-					SbiObjPar existingSbiObjPar = (SbiObjPar)existObj;
-					ImportUtilities.modifyExisting(exportedObjpar, existingSbiObjPar,  sessionCurrDB, metaAss);
-					sessionCurrDB.save(existingSbiObjPar);
-					logger.debug("Exported association between object " + existingSbiObjPar.getSbiObject().getName() + " "
-							+ " and parameter " + existingSbiObjPar.getSbiParameter().getName() + " with url name "
-							+ existingSbiObjPar.getParurlNm() + " updated because already existing into the current database"
-							+ " because already existing into the current database");
-					metaLog.log("Exported association between object " + existingSbiObjPar.getSbiObject().getName() + " "
-							+ " and parameter " + existingSbiObjPar.getSbiParameter().getName() + " with url name "
-							+ existingSbiObjPar.getParurlNm() + " updated"
-							+ " because already existing into the current database");
-				}
-				else {
-					SbiObjPar newObjpar = ImportUtilities.makeNew(exportedObjpar, sessionCurrDB, metaAss);
-					this.updateSbiCommonInfo4Insert(newObjpar);
-					sessionCurrDB.save(newObjpar);
-					logger.debug("Inserted new biobject parameter with " + newObjpar.getParurlNm() + " for biobject "
-							+ newObjpar.getSbiObject().getName());
-					metaLog.log("Inserted new biobject parameter with " + newObjpar.getParurlNm() + " for biobject "
-							+ newObjpar.getSbiObject().getName());
-					Integer newId = newObjpar.getObjParId();
-					//sessionExpDB.evict(objpar);
-					metaAss.insertCoupleObjpar(oldId, newId);
-				}
+				// check if the association already exist // happens no more because they are deleted before
+
+
+
+				//				Map uniqueMap = new HashMap();
+				//				uniqueMap.put("biobjid", newBIObjId);
+				//				uniqueMap.put("paramid", newParamId);
+				//				uniqueMap.put("urlname", exportedObjpar.getParurlNm());
+				//				Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiObjPar());
+				//				if (existObj != null) {
+				//					SbiObjPar existingSbiObjPar = (SbiObjPar)existObj;
+				//					ImportUtilities.modifyExisting(exportedObjpar, existingSbiObjPar,  sessionCurrDB, metaAss);
+				//					sessionCurrDB.save(existingSbiObjPar);
+				//					logger.debug("Exported association between object " + existingSbiObjPar.getSbiObject().getName() + " "
+				//							+ " and parameter " + existingSbiObjPar.getSbiParameter().getName() + " with url name "
+				//							+ existingSbiObjPar.getParurlNm() + " updated because already existing into the current database"
+				//							+ " because already existing into the current database");
+				//					metaLog.log("Exported association between object " + existingSbiObjPar.getSbiObject().getName() + " "
+				//							+ " and parameter " + existingSbiObjPar.getSbiParameter().getName() + " with url name "
+				//							+ existingSbiObjPar.getParurlNm() + " updated"
+				//							+ " because already existing into the current database");
+				//				}
+				//				else {
+				SbiObjPar newObjpar = ImportUtilities.makeNew(exportedObjpar, sessionCurrDB, metaAss);
+				this.updateSbiCommonInfo4Insert(newObjpar);
+				sessionCurrDB.save(newObjpar);
+				logger.debug("Inserted new biobject parameter with " + newObjpar.getParurlNm() + " for biobject "
+						+ newObjpar.getSbiObject().getName());
+				metaLog.log("Inserted new biobject parameter with " + newObjpar.getParurlNm() + " for biobject "
+						+ newObjpar.getSbiObject().getName());
+				Integer newId = newObjpar.getObjParId();
+				//sessionExpDB.evict(objpar);
+				metaAss.insertCoupleObjpar(oldId, newId);
+				//				}
 			}
 		}  
 		catch (EMFUserError he) {

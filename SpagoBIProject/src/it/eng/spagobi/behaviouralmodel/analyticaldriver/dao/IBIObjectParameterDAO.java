@@ -133,4 +133,12 @@ public interface IBIObjectParameterDAO extends ISpagoBIDao{
 	
 	public void eraseBIObjectParameterDependencies(BIObjectParameter aBIObjectParameter, Session aSession) throws EMFUserError;
 
+	
+	/** erase all Object parameters referring to the Obj with id biObjId
+	 *  
+	 * @param aBIObjectParameter
+	 * @param aSession
+	 */
+	public void eraseBIObjectParametersByObjectId(Integer biObjId,  Session currSession) throws EMFUserError;
+	
 }

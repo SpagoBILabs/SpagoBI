@@ -26,6 +26,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -331,6 +332,37 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 
 	}
 
+	
+	
+	
+	
+	public void eraseBIObjectParametersByObjectId(Integer biObjId,  Session currSession) throws EMFUserError {
+		logger.debug("IN");
+		SbiObjects hibObjects = null;
+		try{
+		hibObjects = (SbiObjects) currSession.load(SbiObjects.class, biObjId);
+		Set<SbiObjPar> setObjPars = hibObjects.getSbiObjPars();
+		
+		logger.debug("delete all objParameters for obj with label "+hibObjects.getLabel());
+	
+			for (Iterator iterator = setObjPars.iterator(); iterator.hasNext();) {
+				SbiObjPar sbiObjPar = (SbiObjPar) iterator.next();
+				BIObjectParameter biObjPar = toBIObjectParameter(sbiObjPar);
+				logger.debug("delete biObjPar with label "+sbiObjPar.getLabel()+" and url name "+sbiObjPar.getParurlNm());
+				eraseBIObjectParameter(biObjPar, currSession, true);
+			}
+		}catch (Exception he) {
+			logger.error("Erro while deleting obj pars associated to document with label = "+hibObjects != null? hibObjects.getLabel() : "null");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		}
+
+		
+		//aaa
+		logger.debug("OUT");	
+	}
+	
+	
+	
 
 
 
