@@ -91,7 +91,7 @@ public class GetChartDataAction extends AbstractChartEngineAction {
 
 			dataSet = null;
 			try {
-				dataSet = getDataSet(dataSetLabel);
+				dataSet = chartEngineInstance.getDataSet();
 			} catch(Throwable t) {
 				throw new SpagoBIServiceException("Impossible to find a dataset whose label is [" + dataSetLabel + "]", t);
 			}
@@ -131,20 +131,6 @@ public class GetChartDataAction extends AbstractChartEngineAction {
 			monitor.stop();
 			logger.debug("OUT");
 		}
-	}
-	
-	private IDataSet getDataSet(String label) {
-		IDataSet dataSet;
-		DataSetServiceProxy datasetProxy;
-		ChartEngineInstance engineInstance;
-		
-		engineInstance = getChartEngineInstance();
-
-		logger.debug("Dataset with label " + label + " was not already loaded. Invoking DataSetService....");
-		datasetProxy = engineInstance.getDataSetServiceProxy();
-		dataSet = datasetProxy.getDataSetByLabel(label);
-		
-		return dataSet;
 	}
 
 }
