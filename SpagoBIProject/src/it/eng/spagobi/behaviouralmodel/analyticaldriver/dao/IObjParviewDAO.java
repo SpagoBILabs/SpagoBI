@@ -84,6 +84,18 @@ public interface IObjParviewDAO extends ISpagoBIDao{
 	 */
 	
 	public void eraseObjParview(ObjParview aObjParview, Session aSession) throws EMFUserError; 
+
+	/**
+	 * 	 Implements the query to erase a ObjParview preserving the session. All information needed is stored
+	 * into the input <code>ObjParview</code> object. If does not exist don'd do anything
+	 * 
+	 * @param aObjParview
+	 * @param aSession
+	 * @throws EMFUserError
+	 */
+
+	public void eraseObjParviewIfExists(ObjParview aObjParview, Session aSession) throws EMFUserError;
+
 	
 	/**
 	 * Returns the list of all ObjParview objects associated to a <code>BIObjectParameter</code>,
@@ -133,4 +145,17 @@ public interface IObjParviewDAO extends ISpagoBIDao{
 	 * @throws EMFUserError the EMF user error
 	 */
 	public List getAllDependenciesForParameterview (Integer viewId) throws EMFUserError;
+	
+	
+	/**
+	 * Returns the list of all ObjParview objects associated to a <code>BIObjectParameter</code> by a father relationship,
+	 * known its <code>objParId</code>.
+	 * 
+	 * @param objParId The input BIObjectParameter id code
+	 * 
+	 * @return The list of all ObjParview objects associated
+	 * 
+	 * @throws EMFUserError If any exception occurred
+	 */
+	public List loadObjParviewsFather(Integer objParId) throws EMFUserError;
 }
