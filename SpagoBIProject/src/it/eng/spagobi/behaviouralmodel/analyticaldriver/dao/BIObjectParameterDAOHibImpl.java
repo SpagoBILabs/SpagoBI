@@ -352,7 +352,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				eraseBIObjectParameter(biObjPar, currSession, true);
 			}
 		}catch (Exception he) {
-			logger.error("Erro while deleting obj pars associated to document with label = "+hibObjects != null? hibObjects.getLabel() : "null");
+			logger.error("Erro while deleting obj pars associated to document with label = "+hibObjects != null? hibObjects.getLabel() : "null", he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 
@@ -382,7 +382,15 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			Iterator itObjParuses = objParuses.iterator();
 			while (itObjParuses.hasNext()) {
 				ObjParuse aObjParuse = (ObjParuse) itObjParuses.next();
-				objParuseDAO.eraseObjParuse(aObjParuse, aSession);
+				objParuseDAO.eraseObjParuseIfExists(aObjParuse, aSession);
+			}
+			
+			// deletes all ObjParuse object (dependencies) of the biObjectParameter that have a father relationship
+			List objParusesFather = objParuseDAO.loadObjParusesFather(hibObjPar.getObjParId());
+			Iterator itObjParusesFather = objParusesFather.iterator();
+			while (itObjParusesFather.hasNext()) {
+				ObjParuse aObjParuseFather = (ObjParuse) itObjParusesFather.next();
+				objParuseDAO.eraseObjParuseIfExists(aObjParuseFather, aSession);
 			}
 
 			// delete also all ObjParView (visibility dependencies) of the biObjectParameter
@@ -391,7 +399,15 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			Iterator itObjParviews = objParview.iterator();
 			while (itObjParviews.hasNext()) {
 				ObjParview aObjParview = (ObjParview) itObjParviews.next();
-				objParviewDAO.eraseObjParview(aObjParview, aSession);
+				objParviewDAO.eraseObjParviewIfExists(aObjParview, aSession);
+			}
+		
+			// delete also all ObjParView (visibility dependencies) of the biObjectParameter father
+			List objParviewFather =objParviewDAO.loadObjParviewsFather(hibObjPar.getObjParId());
+			Iterator itObjParviewsFather = objParviewFather.iterator();
+			while (itObjParviewsFather.hasNext()) {
+				ObjParview aObjParviewFather = (ObjParview) itObjParviewsFather.next();
+				objParviewDAO.eraseObjParviewIfExists(aObjParviewFather, aSession);
 			}
 		}
 

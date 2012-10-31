@@ -17,6 +17,8 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting a
  * ObjParuse.
@@ -119,4 +121,28 @@ public interface IObjParuseDAO extends ISpagoBIDao{
 	 * @throws EMFUserError the EMF user error
 	 */
 	public List getAllDependenciesForParameterUse (Integer useId) throws EMFUserError;
+	
+	/**
+	 * Implements the query to erase a ObjParuse. If the object does not exist does not do anything
+	 * All information needed is stored
+	 * into the input <code>ObjParuse</code> object.
+	 * 
+	 * @param aObjParuse The object containing all delete information
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	public void eraseObjParuseIfExists(ObjParuse aObjParuse, Session aSession) throws EMFUserError;
+
+	/**
+	 * Returns the list of all ObjParuse objects associated to a <code>BIObjectParameter</code> via a father relationship,
+	 * known its <code>objParId</code>.
+	 * 
+	 * @param objParId The input BIObjectParameter id code
+	 * 
+	 * @return The list of all ObjParuse objects associated
+	 * 
+	 * @throws EMFUserError If any exception occurred
+	 */
+	public List loadObjParusesFather(Integer objParId) throws EMFUserError;
+	
 }

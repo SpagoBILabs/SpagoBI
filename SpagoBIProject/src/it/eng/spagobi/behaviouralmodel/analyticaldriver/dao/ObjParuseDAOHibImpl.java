@@ -518,10 +518,60 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	
 	
 	
+	public void eraseObjParuseIfExists(ObjParuse aObjParuse, Session aSession) throws EMFUserError {
+		// get the existing object
+		/*String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + aObjParuse.getObjParId() + 
+		             " and s.id.sbiParuse.useId = " + aObjParuse.getParuseId() + 
+		             " and s.id.sbiObjParFather.objParId = " + aObjParuse.getObjParFatherId() + 
+		             " and s.id.filterOperation = '" + aObjParuse.getFilterOperation() + "'";*/
+		String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = ? "  + 
+        " and s.id.sbiParuse.useId = ? " +  
+        " and s.id.sbiObjParFather.objParId = ? "  + 
+        " and s.id.filterOperation = ? ";
+		Query hqlQuery = aSession.createQuery(hql);
+		hqlQuery.setInteger(0, aObjParuse.getObjParId().intValue());
+		hqlQuery.setInteger(1, aObjParuse.getParuseId().intValue());
+		hqlQuery.setInteger(2, aObjParuse.getObjParFatherId().intValue());
+		hqlQuery.setString(3,  aObjParuse.getFilterOperation());
+		
+		SbiObjParuse sbiObjParuse = (SbiObjParuse)hqlQuery.uniqueResult();
+		if (sbiObjParuse == null) {		
+		}
+		else{
+			aSession.delete(sbiObjParuse);			
+		}
+	}
 	
 	
-	
-	
+	public List loadObjParusesFather(Integer objParId) throws EMFUserError {
+		List toReturn = new ArrayList();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			//String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + objParId + " order by s.prog";	
+			String hql = "from SbiObjParuse s where s.id.sbiObjParFather.objParId = ? order by s.prog"; 
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setInteger(0, objParId.intValue());
+			List sbiObjParuses = hqlQuery.list();
+			Iterator it = sbiObjParuses.iterator();
+			while (it.hasNext()){
+				toReturn.add(toObjParuse((SbiObjParuse)it.next()));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		return toReturn;
+	}
 
 	
 }

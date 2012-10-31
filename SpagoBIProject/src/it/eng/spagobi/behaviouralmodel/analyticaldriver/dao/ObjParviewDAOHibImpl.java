@@ -501,7 +501,72 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 	
 	
 	
+	/**
+	 * Load obj parviews with father relationship
+	 * 
+	 * @param objParId the obj par id
+	 * 
+	 * @return the list
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO#loadObjParviews(Integer)
+	 */
+	public List<ObjParview> loadObjParviewsFather(Integer objParId) throws EMFUserError {
+		List<ObjParview> toReturn = new ArrayList();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			//String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + objParId + " order by s.prog";	
+			String hql = "from SbiObjParview s where s.id.sbiObjParFather = ? order by s.prog";
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setInteger(0, objParId.intValue());
+			List sbiObjParviews = hqlQuery.list();
+			Iterator it = sbiObjParviews.iterator();
+			while (it.hasNext()){
+				toReturn.add(toObjParview((SbiObjParview)it.next()));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		return toReturn;
+	}
 	
+	
+	
+	public void eraseObjParviewIfExists(ObjParview aObjParview, Session aSession) throws EMFUserError {
+		// get the existing object
+		/*String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + aObjParuse.getObjParId() + 
+		             " and s.id.sbiParuse.useId = " + aObjParuse.getParuseId() + 
+		             " and s.id.sbiObjParFather.objParId = " + aObjParuse.getObjParFatherId() + 
+		             " and s.id.filterOperation = '" + aObjParuse.getFilterOperation() + "'";*/
+		String hql = "from SbiObjParview s where s.id.sbiObjPar.objParId = ? "  + 
+		" and s.id.sbiObjParFather.objParId = ? "  + 
+		" and s.id.operation = ? " +
+		" and s.id.compareValue = ? ";
+
+		Query hqlQuery = aSession.createQuery(hql);
+		hqlQuery.setInteger(0, aObjParview.getObjParId().intValue());
+		hqlQuery.setInteger(1, aObjParview.getObjParFatherId().intValue());
+		hqlQuery.setString(2,  aObjParview.getOperation());
+		hqlQuery.setString(3,  aObjParview.getCompareValue());
+
+		SbiObjParview sbiObjParview = (SbiObjParview)hqlQuery.uniqueResult();
+		if (sbiObjParview == null) {		
+		}
+		else{		aSession.delete(sbiObjParview);
+		}
+	}
 	
 	
 	
