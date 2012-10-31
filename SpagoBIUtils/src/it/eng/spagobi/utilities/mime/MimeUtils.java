@@ -38,7 +38,11 @@ public class MimeUtils {
 	}
 	
 	public static String getFileExtension(String mimeType) {
-		return (String)fileExtensions.get( mimeType );
+		if(mimeType!= null){
+			return (String)fileExtensions.get( mimeType );
+		}else{
+			return "";
+		}
 	}
 	
 	public static String getMimeType(File file) {
