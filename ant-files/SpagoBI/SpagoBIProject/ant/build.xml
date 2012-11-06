@@ -83,12 +83,12 @@
 		<antcall target="copy.sbi.security.exo" />
 		<antcall target="copy.sbi.security.xml" />
 		<antcall target="copy.sbi.security.ldap" />
-		<!--
+
   	<copy file="${liferay.security.dir}/dist/sbi.security.liferay-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
   	<copy file="${exo.security.dir}/dist/sbi.security.exo-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
   	<copy file="${xml.security.dir}/dist/sbi.security.xml-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
   	<copy file="${ldap.security.dir}/dist/sbi.security.ldap-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
-  	-->
+
 	</target>
 
 	<!-- lifeay -->
