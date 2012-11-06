@@ -62,12 +62,34 @@
 		<copy file="${sbiutils.dir}/dist/sbi.utils-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
 
+	
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   COPY GWT FILES                                                    -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	 <target name="check">
+	  <condition property="replace.gwt">
+		<available file="${build}/${webapp_name}/com.tensegrity.wpalo.SpagoBIJPaloEngine" type="dir"/>
+	  </condition>
+	 </target>
+	 <target name="replace.gwt" depends="check" if="replace.gwt" >
+			<delete>
+			   <fileset dir="${build}/${webapp_name}/com.tensegrity.wpalo.SpagoBIJPaloEngine">
+			      <include name="*"/>
+			   </fileset>
+			</delete>
 
+		  <copy todir="${build}/${webapp_name}/com.tensegrity.wpalo.SpagoBIJPaloEngine">
+		    <fileset dir="${gwt.dir}/com.tensegrity.wpalo.SpagoBIJPaloEngine">
+			      <include name="**/*"/>
+			</fileset>
+		  </copy>
+
+	</target>
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   COMPILAZIONE							                                                  -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<target name="compile" depends="sbi.utils.update" description="compile the source">
+	<target name="compile" depends="sbi.utils.update, replace.gwt" description="compile the source">
 		<!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
 		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on">
 			<classpath refid="web.classpath" />
@@ -91,6 +113,8 @@
 		</copy>
 		<copy file="${web.dir}/${license}" todir="${dist}" overwrite="true" />
 	</target>
+
+
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   CREAZIONE JAR							                                    -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

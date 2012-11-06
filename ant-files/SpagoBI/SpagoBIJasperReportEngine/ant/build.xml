@@ -60,11 +60,22 @@
 		<copy file="${sbiutils.dir}/dist/sbi.utils-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
 
-
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   AGGIORNAMENTO JAR QBE.CORE							                                    -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="qbe.core.update" description="Updates qbe.core library from distribution folder (THIS JAR MUST BE EXISTING)">
+		<!-- deletes any previuos sbi.utils -->
+		<delete>
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/qbe.core*.jar" />
+		</delete>
+		<!-- copies the newly created jar file -->
+		<copy file="${qbe.core.dir}/dist/qbe.core-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	</target>
+	
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   COMPILAZIONE							                                                  -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<target name="compile" depends="sbi.utils.update" description="compile the source">
+	<target name="compile" depends="sbi.utils.update,qbe.core.update" description="compile the source">
 		<!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
 		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on">
 			<classpath refid="web.classpath" />
