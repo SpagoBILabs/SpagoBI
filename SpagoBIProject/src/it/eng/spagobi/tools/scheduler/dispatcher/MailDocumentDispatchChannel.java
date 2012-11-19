@@ -441,7 +441,12 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 					Object recipientFieldObj = recipientField.getValue();
 					if (recipientFieldObj != null) {
 						recipient = recipientFieldObj.toString();
-						logger.debug("Found recipient [" + recipient + "] on the second field of the record.");
+						// in this case recipients can be separated by ","
+						String[] multiRecipients = recipient.split(",");
+						
+						recipients.addAll(Arrays.asList(multiRecipients));
+						
+						logger.debug("DataSet multi recipients found: " + Arrays.deepToString(multiRecipients));
 					} else {
 						logger.warn("The second field of the record is null.");
 					}
