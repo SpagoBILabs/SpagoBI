@@ -9,6 +9,7 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.jasperreport.JasperReportEngine;
 import it.eng.spagobi.engines.jasperreport.JasperReportEngineInstance;
 import it.eng.spagobi.engines.jasperreport.JasperReportEngineTemplate;
@@ -67,7 +68,7 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
         	
         	outputType = servletIOManager.getParameterAsString(OUTPUT_TYPE);
         	logger.debug("Parameter [" + OUTPUT_TYPE + "] is equal to [" + outputType + "]");
-        	if(outputType == null) {
+        	if(StringUtilities.isEmpty(outputType)) {
         		outputType = JasperReportEngine.getConfig().getDefaultOutputType();
         		servletIOManager.getEnv().put(OUTPUT_TYPE, outputType);
         		logger.debug("Parameter [" + OUTPUT_TYPE + "] has been set to the default value [" + servletIOManager.getEnv().get(OUTPUT_TYPE) + "]");
