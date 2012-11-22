@@ -11,9 +11,9 @@
  Ext.ns("Sbi.locale");
 Sbi.locale.ln = Sbi.locale.ln || new Array();
 
-Sbi.locale.ln['sbi.designertable.tableValidation.noElement'] = 'au moin une attribute or mesur doit etre choisi';
-Sbi.locale.ln['sbi.designerchart.chartValidation.noSeries'] = 'utiliser au moin une mesur comme serie';
-Sbi.locale.ln['sbi.designerchart.chartValidation.noCategory'] = 'utiliser une attribute comne categorie ';
+Sbi.locale.ln['sbi.designertable.tableValidation.noElement'] = 'au moins un attribut ou une mesure doit \u00EAtre choisi';
+Sbi.locale.ln['sbi.designerchart.chartValidation.noSeries'] = 'utiliser au moins une mesure comme s\u00E9rie';
+Sbi.locale.ln['sbi.designerchart.chartValidation.noCategory'] = 'utiliser un attribut comme cat\u00E9gorie ';
 
 
 Sbi.locale.formats = {
