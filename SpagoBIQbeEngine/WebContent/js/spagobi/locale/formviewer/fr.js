@@ -15,12 +15,12 @@ Sbi.locale.ln = Sbi.locale.ln || new Array();
 //VIEWER PANEL
 //===================================================================
 Sbi.locale.ln['sbi.formviewer.formviewerpage.title'] = 'NAVIGATEUR DONN\u00C9ES';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Montrer tables master-detail';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.execute.tooltip'] = 'Envoyer la forme et montrer les r\u00E9sultats dans les tables master-detail';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Montrer le d\u00E9tail des tables principales';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.execute.tooltip'] = 'Envoyer la forme et montrer les r\u00E9sultats dans le d\u00E9tail des tables principales';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Enregistrer la forme';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Enregistrer l\'\u00E9tat de la forme pour les prochaines executions';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Enregistrer l\'\u00E9tat de la forme pour les prochaines ex\u00E9cutions';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet'] = 'Montrer crosstab';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet.tooltip'] = 'Envoyer la forme et montrer les r\u00E9sultats dans une cross-table';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet.tooltip'] = 'Envoyer la forme et montrer les r\u00E9sultats dans un tableau crois\u00E9';
 
 //===================================================================
 //FILTERS PANEL
@@ -33,7 +33,7 @@ Sbi.locale.ln['sbi.formviewer.dynamicfilterspanel.value'] = 'Valeur';
 Sbi.locale.ln['sbi.formviewer.dynamicfilterspanel.fromvalue'] = 'de';
 Sbi.locale.ln['sbi.formviewer.dynamicfilterspanel.tovalue'] = '\u00E0';
 Sbi.locale.ln['sbi.formviewer.dynamicfilterspanel.clear.tt'] = 'Effacer';
-Sbi.locale.ln['sbi.formviewer.groupingvariablespanel.title'] = 'Variables rupture';
+Sbi.locale.ln['sbi.formviewer.groupingvariablespanel.title'] = 'Variables de rupture';
 Sbi.locale.ln['sbi.formviewer.groupingvariablespanel.variable-1'] = 'Premi\u00E8re variable';
 Sbi.locale.ln['sbi.formviewer.groupingvariablespanel.variable-2'] = 'Seconde variable';
 
