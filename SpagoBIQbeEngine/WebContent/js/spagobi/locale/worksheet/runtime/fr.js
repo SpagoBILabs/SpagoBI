@@ -13,7 +13,7 @@ Ext.ns("Sbi.locale");
 //===================================================================
 //Sbi.worksheet.runtime.WorkSheetsRuntimePanel 
 //===================================================================
-Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.title']= 'Pr\u00E9visualisation feuille de calcul';
+Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.title']= 'Pr\u00E9visualisation de la feuille de calcul';
 
 //===================================================================
 //Sbi.worksheet.runtime.RuntimeSheetPanel
@@ -25,14 +25,14 @@ Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetpanel.filterspanel.filter.qtip'
 //===================================================================
 //Sbi.worksheet.designer.WorkSheetPreviewPage
 //===================================================================
-Sbi.locale.ln['sbi.worksheet.runtime.worksheetpreviewpage.title'] = 'Pr\u00E9visualisation feuille de calcul';
+Sbi.locale.ln['sbi.worksheet.runtime.worksheetpreviewpage.title'] = 'Pr\u00E9visualisation de la feuille de calcul';
 
 //===================================================================
 //Sbi.worksheet.RuntimeSheetFiltersPanel
 //===================================================================
-Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.title'] = 'Erreurs filtre';
+Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.title'] = 'Erreurs de filtre';
 Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.mandatory'] = 'Ces filtres doivent avoir au moins une valeur:';
-Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.toomuch'] = 'Ces filtres ont des valeurs de trop:';
+Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.toomuch'] = 'Ces filtres ont des valeurs en trop:';
 Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.maxselection'] = 'maximum permis';
 
 //===========================================================
@@ -45,6 +45,6 @@ Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.chart.includeInTheExp
 //Sbi.worksheet.runtime.RuntimeSheetFiltersInfoPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.title']= 'Filtres sur les valeurs du domaine';
-Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.empty']= 'Pas de filtres d\u00e9finis';
+Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.empty']= 'Pas de filtre d\u00e9fini';
 Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.columns.attribute']= 'Attribut';
 Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.columns.values']= 'Valeurs';
