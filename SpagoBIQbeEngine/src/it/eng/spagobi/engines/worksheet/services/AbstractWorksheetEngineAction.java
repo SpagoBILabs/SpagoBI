@@ -29,6 +29,7 @@ import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -590,8 +591,9 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		long count = clone.getRecordsCount();
 		for (long i = 0; i < count; i++) {
 			it.eng.spagobi.tools.dataset.common.datastore.IRecord record = clone.getRecordAt((int) i);
-			Object value = dataStore.getRecordAt((int) i).getFieldAt(0);
-			record.appendField(new it.eng.spagobi.tools.dataset.common.datastore.Field(value.toString()));
+			IField field = dataStore.getRecordAt((int) i).getFieldAt(0);
+			String description = field.getDescription() != null ? field.getDescription().toString() : field.getValue().toString();
+			record.appendField(new it.eng.spagobi.tools.dataset.common.datastore.Field(description));
 		}
 		
 		return clone;
