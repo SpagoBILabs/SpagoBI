@@ -99,7 +99,8 @@
 			method : 'post',
 			params : {
 				userID : userid,
-				password : pwd
+				password : pwd,
+				roleGlobalLbl : roleGlobal
 			},
 			failure : function(response) {
 				console.log('call Error! ');
