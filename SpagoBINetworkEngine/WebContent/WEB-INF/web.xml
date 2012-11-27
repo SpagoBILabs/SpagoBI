@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:javaee="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" id="SpagoBIXXXSpagoEngine" version="2.4">
+  <display-name>SpagoBINetworkEngine</display-name>
+  <description>
+		Spago BI - SpagoBINetworkEngine Example Web Version
+	</description>
+  <filter>
+    <filter-name>SpagoBIAccessFilter</filter-name>
+    <filter-class>
+			it.eng.spagobi.utilities.filters.SpagoBIAccessFilter
+		</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>SpagoBIAccessFilter</filter-name>
+    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>SpagoBIAccessFilter</filter-name>
+    <url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
+  </filter-mapping>
+  <servlet>
+    <servlet-name>ConfigServlet</servlet-name>
+    <servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
+    <init-param>
+      <param-name>AF_CONFIG_FILE</param-name>
+      <param-value>\WEB-INF\conf\master.xml</param-value>
+    </init-param>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
+  <servlet>
+    <servlet-name>AdapterHTTP</servlet-name>
+    <servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AdapterHTTP</servlet-name>
+    <url-pattern>/servlet/AdapterHTTP</url-pattern>
+  </servlet-mapping>
+  <welcome-file-list>
+    <welcome-file>/html/index.html</welcome-file>
+  </welcome-file-list>
+  <error-page>
+    <exception-type>java.lang.Throwable</exception-type>
+    <location>/html/error.html</location>
+  </error-page>
+  <error-page>
+    <error-code>404</error-code>
+    <location>/html/error.html</location>
+  </error-page>
+  <error-page>
+    <error-code>500</error-code>
+    <location>/html/error.html</location>
+  </error-page>
+</web-app>
