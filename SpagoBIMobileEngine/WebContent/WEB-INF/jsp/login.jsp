@@ -10,37 +10,45 @@ authors: Monica Franceschini
 		 Davide Zerbetto
 
 --%>
+
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
-	     pageEncoding="ISO-8859-1"%>
+	     pageEncoding="ISO-8859-1"
+	     import="it.eng.spagobi.commons.SingletonConfig"%>
+
+<%
+SingletonConfig serverConfig = SingletonConfig.getInstance();
+String roleToCheckLbl  =  SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN");
+String roleToCheckVal = "";
+if (!("").equals(roleToCheckLbl)){
+	roleToCheckVal = (request.getParameter(roleToCheckLbl)!=null)?request.getParameter(roleToCheckLbl):"";	
+}
+%>
 
 <html>
 
 	<head>
-
-
 		<%@ include file="/WEB-INF/jsp/importSenchaJSLibrary.jspf" %>
 		<%@ include file="/WEB-INF/jsp/constants.jspf" %>
 		<%@ include file="/WEB-INF/jsp/env.jspf" %>
 		<%@ include file="/WEB-INF/jsp/importSbiJS.jspf" %>
-	<script type="text/javascript">
-
-	function changeHashOnLoad() {
-	            window.location.href += "#";
-	            setTimeout("changeHashAgain()", "50");
-	        }
-	        function changeHashAgain() {
-	            window.location.href += "1";
-	        }
-	        var storedHash = window.location.hash;
-	        window.setInterval(function() {
-	        if (window.location.hash != storedHash) 
-	        { window.location.hash = storedHash; } }, 50);
-	
-	</script>	
+		
+		<script type="text/javascript">	
+		function changeHashOnLoad() {
+		            window.location.href += "#";
+		            setTimeout("changeHashAgain()", "50");
+		        }
+		        function changeHashAgain() {
+		            window.location.href += "1";
+		        }
+		        var storedHash = window.location.hash;
+		        window.setInterval(function() {
+		        if (window.location.hash != storedHash) 
+		        { window.location.hash = storedHash; } }, 50);
+		
+		</script>	
+		
 	</head>
-
-
 
 	<body onload ="changeHashOnLoad();">
 
@@ -50,7 +58,7 @@ authors: Monica Franceschini
 		 	var ajaxReqGlobalTimeout = 120000;
 			var hostGlobal= '<%= request.getServerName()%>';
 			var portGlobal= '<%= request.getServerPort()%>';
-
+			var roleGlobal = '<%=roleToCheckVal%>';
 		 </script>
 	</body>
  

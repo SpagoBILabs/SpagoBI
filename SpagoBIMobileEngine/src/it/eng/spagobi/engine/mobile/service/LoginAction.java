@@ -13,6 +13,7 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -33,7 +34,9 @@ import it.eng.spagobi.wapp.util.MenuUtilities;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -87,6 +90,7 @@ public class LoginAction extends AbstractEngineAction{
 			}			
 
 			ISecurityServiceSupplier supplier= SecurityServiceSupplierFactory.createISecurityServiceSupplier();
+			
 			String pwd=(String)request.getAttribute("password");       
 			try {
 				Object ris=supplier.checkAuthentication(userId, pwd);
@@ -104,21 +108,50 @@ public class LoginAction extends AbstractEngineAction{
 			}
 			//MenuUtilities.getMenuItems(request, response, profile);
 
-			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+			
 			try {	
 				logger.info("User ["+ userId + "] has been autheticated succesfully");
 				
 				profile = UserUtilities.getUserProfile( userId );
 				Assert.assertNotNull(profile, "Impossible to load profile for the user [" + userId + "]");
-
 				
 				logger.info("User ["+ userId + "] profile has been loaded succesfully");
-				
+	
 				// Propagate user profile
 				getSessionContainer().getPermanentContainer().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
-				writeBackToClient(new JSONSuccess("'userhome'"));
-				
 
+				//Checks if the input role is valid for SpagoBI. 
+				//Only if the configuration about this check returns true.
+				boolean isRoleValid = true;
+				String checkRoleLogin =  SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.CHECK_ROLE_LOGIN");
+				if (("true").equals(checkRoleLogin)){
+					String valueRoleToCheck = (request.getAttribute("roleGlobalLbl")!=null)?(String)request.getAttribute("roleGlobalLbl"):"";
+					if (!("").equals(valueRoleToCheck)){
+						Collection lstRoles = profile.getRoles();
+						isRoleValid = false;
+						Iterator iterRoles = lstRoles.iterator();
+						while (iterRoles.hasNext()) {
+							String iterRoleName = (String)iterRoles.next();						
+							if (iterRoleName.equals(valueRoleToCheck)){
+								isRoleValid = true;
+								logger.debug("Role in input " + valueRoleToCheck + " is valid. ");
+								break;
+							}
+						}
+					}else{
+						logger.debug("Role is not passed into the request. Check on the role is not applied. ");
+					}
+					if (!isRoleValid){
+						logger.error("role uncorrect");
+						SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Login", "Authentication failure");
+						writeBackToClient(new JSONFailure(serviceError));
+						//throw new SecurityException("Role uncorrect");
+						return;
+						
+					}
+				}
+				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+				writeBackToClient(new JSONSuccess("'userhome'"));
 
 			} catch (Exception e) {
 				SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Login", "Authentication failure");
