@@ -477,13 +477,6 @@ if(showfooter){%>
     
     </script>
     
-    <iframe id='validSessionExtChart'
-          name='validSession'
-          src='/SpagoBIChartEngine/validateSession.jsp'
-          height='0'
-          width='0'
-          frameborder='0' >
-	</iframe>
 <%-- END CHECK USER PROFILE EXISTENCE --%>
 
 
