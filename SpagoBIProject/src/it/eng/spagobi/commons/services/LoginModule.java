@@ -51,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -192,7 +193,6 @@ public class LoginModule extends AbstractHttpModule {
 
 		}
 		
-		
 		ISecurityServiceSupplier supplier=SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 		// If SSO is not active, check username and password, i.e. performs the authentication;
 		// instead, if SSO is active, the authentication mechanism is provided by the SSO itself, so SpagoBI does not make 
@@ -220,13 +220,14 @@ public class LoginModule extends AbstractHttpModule {
 				ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 				SbiUser user = userDao.loadSbiUserByUserId(userId);
 
-				//check user's role: if he's admin it doesn't apply checks on password
+				//Checks if the input role is valid for SpagoBI. 
+				//Only if the configuration about this check returns true.
 				String strAdminPatter =  SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN");
 				int sbiUserId=-1;
 				if (user!=null)sbiUserId=user.getId();
 				List lstRoles = userDao.loadSbiUserRolesById(sbiUserId);
+								
 				boolean isAdminUser = false;
-
 				for (int i=0; i<lstRoles.size(); i++){
 					SbiExtRoles tmpRole = (SbiExtRoles)lstRoles.get(i);
 					Role role = DAOFactory.getRoleDAO().loadByID(tmpRole.getExtRoleId());
@@ -260,7 +261,7 @@ public class LoginModule extends AbstractHttpModule {
 					}catch(Exception e){
 						logger.error("Error while update user's dtLastAccess: " + e);
 					}
-				}
+				}				
 			}
 		}
 
@@ -273,6 +274,43 @@ public class LoginModule extends AbstractHttpModule {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "ERR");
 				return;
 			}
+			
+			//checks if the input role is valid with SpagoBI's role list 
+			boolean isRoleValid = true;
+			String checkRoleLogin =  SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.CHECK_ROLE_LOGIN");
+			if (("true").equals(checkRoleLogin)){
+				String roleToCheck  =  SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN");
+				String valueRoleToCheck = "";
+				if (!("").equals(roleToCheck)){
+					valueRoleToCheck = (request.getAttribute(roleToCheck)!=null)?(String)request.getAttribute(roleToCheck):"";
+					if (!("").equals(valueRoleToCheck)){
+						Collection lstRoles = profile.getRoles();
+						isRoleValid = false;
+						Iterator iterRoles = lstRoles.iterator();
+						while (iterRoles.hasNext()) {
+							String iterRoleName = (String)iterRoles.next();						
+							if (iterRoleName.equals(valueRoleToCheck)){
+								isRoleValid = true;
+								logger.debug("Role in input " + valueRoleToCheck + " is valid. ");
+								break;
+							}
+						}
+					}
+					else{
+						logger.debug("Role " + roleToCheck + " is not passed into the request. Check on the role is not applied. ");
+					}
+				}	
+				if (!isRoleValid){
+					logger.error("role uncorrect");
+					EMFUserError emfu = new EMFUserError(EMFErrorSeverity.ERROR, 501);
+					errorHandler.addError(emfu); 
+					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
+					// put user role into session
+					httpSession.setAttribute(roleToCheck, valueRoleToCheck);
+					response.setAttribute(roleToCheck, valueRoleToCheck);
+					return;
+				}
+			}
 
 			Boolean userHasChanged = Boolean.TRUE;
 			// try to find if the user has changed: if so, the session parameters must be reset, see also homebis.jsp
@@ -283,8 +321,8 @@ public class LoginModule extends AbstractHttpModule {
 			response.setAttribute("USER_HAS_CHANGED", userHasChanged);
 			// put user profile into session
 			permSess.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
-
-
+			
+			
 		} catch (Exception e) {
 			logger.error("Reading user information... ERROR");
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "ERR");
