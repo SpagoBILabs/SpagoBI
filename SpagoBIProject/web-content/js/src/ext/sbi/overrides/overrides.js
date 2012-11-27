@@ -394,3 +394,33 @@
 	    stateful : false
 	 
 	});
+	
+	/**
+	 * This is a workaround to solve the bug https://www.spagoworld.org/jira/browse/SPAGOBI-1005 
+	 */
+	Ext.override(Ext.TabPanel, {
+		findTargets : function(e){
+		        var item = null;
+		        var itemEl = e.getTarget('li', this.strip);
+		        if(itemEl){
+		            item = this.getComponent(itemEl.id.split(this.idDelimiter)[1]);
+		            try{
+		                if(item.disabled!=null && item.disabled){	//this line override the Ext method..
+		                    return {								//..We check if item.disabled is not null
+		                        close : null,
+		                        item : null,
+		                        el : null
+		                    };
+		                }
+		            }catch(e){}
+
+
+
+		        }
+		        return {
+		            close : e.getTarget('.x-tab-strip-close', this.strip),
+		            item : item,
+		            el : itemEl
+		        };
+		    }
+	});
