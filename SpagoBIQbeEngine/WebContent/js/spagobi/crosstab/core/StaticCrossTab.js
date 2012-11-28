@@ -556,14 +556,47 @@ Ext.extend(Sbi.crosstab.core.StaticCrossTab, Ext.Panel, {
     	var array = this.getHeaderArray(headers);
     	store.loadData(array);
     	
+//    	var tpl = new Ext.XTemplate(
+//    	    '<tpl for=".">'
+//    	    , '<div class="x-grid3-header crosstab-table-headers" '
+//    	    , ' style="height: {height} px; width: {width} px; float: left; font-size : 10px">'
+//    	    , '{name}'
+//    	    , '</div>'
+//    	    ,'</tpl>'
+//        );
+    	
+    	var ieOffset =0;
+    	if(Ext.isIE){
+    		ieOffset = 2;
+    	}
+    	
     	var tpl = new Ext.XTemplate(
     	    '<tpl for=".">'
-    	    , '<div class="x-grid3-header crosstab-table-headers" '
-    	    , ' style="height: {height} px; width: {width} px; float: left; font-size : 10px">'
-    	    , '{name}'
+    	    , '<div id="{divId}" class="x-panel crosstab-table-headers" ' // the crosstab-table-headers class is needed as itemSelector
+    	    , ' style="height:'+(this.rowHeight-2+ieOffset)+'px; width:{[values.width - 2]}px; float:left;">' //background-color: {backgroundColor}" >'
+    	    , '  <div style="height: 1.5em; margin-top:'+(this.rowHeight-4-this.fontSize)/2+'px; overflow: hidden; font-size:'+this.fontSize+'px;">'
+    	    , '   {name}'
+    	    , '  </div>'
     	    , '</div>'
-    	    ,'</tpl>'
-        );
+    	    , '</tpl>'
+    	);
+    	
+//    	var tpl = new Ext.XTemplate(
+//        	    '<tpl for=".">'
+//        	    , '<div id="{divId}" class="x-panel crosstab-table-cells crosstab-table-cells-{celltype}" ' // the crosstab-table-cells class is needed as itemSelector
+//        	    , ' style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left; background-color: {backgroundColor}" >'
+//        	    , '  <div class="x-panel-bwrap"> '
+//        	    , '    <div style="width:'+(this.columnWidth-2)+'px; overflow:hidden; padding-top:'+(this.rowHeight-4-this.fontSize)/2+'px;font-size:'+this.fontSize+'px;">'
+//        	    , '    {[this.format(values.name, values.datatype, values.format, values.percent,'+this.percentageFontSize+', values.scaleFactor )]}'
+//        	    , '    </div> '
+//        	    , '  </div>'
+//        	    , '</div>'
+//        	    , '</tpl>'
+//        	    , {
+//        	    	format: this.format
+//        	    }
+//        	);
+    	
 		
     	var dataView = new Ext.DataView({
 	        store : store,
