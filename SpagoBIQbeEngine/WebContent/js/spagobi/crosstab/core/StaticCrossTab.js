@@ -548,22 +548,14 @@ Ext.extend(Sbi.crosstab.core.StaticCrossTab, Ext.Panel, {
     	    autoDestroy: true,
     	    fields: [
     	       {name: 'name'}
+    	       , {name: 'description'}
     	       , {name: 'height'}
     	       , {name: 'width'}
-    	       , {name: 'html'}
+    	       , {name: 'headerType'}
     	    ]
     	});
     	var array = this.getHeaderArray(headers);
     	store.loadData(array);
-    	
-//    	var tpl = new Ext.XTemplate(
-//    	    '<tpl for=".">'
-//    	    , '<div class="x-grid3-header crosstab-table-headers" '
-//    	    , ' style="height: {height} px; width: {width} px; float: left; font-size : 10px">'
-//    	    , '{name}'
-//    	    , '</div>'
-//    	    ,'</tpl>'
-//        );
     	
     	var ieOffset =0;
     	if(Ext.isIE){
@@ -572,77 +564,24 @@ Ext.extend(Sbi.crosstab.core.StaticCrossTab, Ext.Panel, {
     	
     	var tpl = new Ext.XTemplate(
     	    '<tpl for=".">'
-    	    , '<div id="{divId}" class="x-panel crosstab-table-headers" ' // the crosstab-table-headers class is needed as itemSelector
-    	    , ' style="height:'+(this.rowHeight-2+ieOffset)+'px; width:{[values.width - 2]}px; float:left;">' //background-color: {backgroundColor}" >'
-    	    , '  <div style="height: 1.5em; margin-top:'+(this.rowHeight-4-this.fontSize)/2+'px; overflow: hidden; font-size:'+this.fontSize+'px;">'
-    	    , '   {name}'
+    	    , '<div id="{divId}" qtip="{description}" class="crosstab-header-static crosstab-header-{headerType}" ' 
+    	    , ' style="height:'+(this.rowHeight-2+ieOffset)+'px; width:{[values.width - 2 + ' + ieOffset + ']}px; float:left;">'
+    	    , '  <div class="crosstab-header-text-static" style="margin-top:'+(this.rowHeight-4-this.fontSize)/2+'px; font-size:'+this.fontSize+'px;">'
+    	    , '   {description}'
     	    , '  </div>'
     	    , '</div>'
     	    , '</tpl>'
     	);
-    	
-//    	var tpl = new Ext.XTemplate(
-//        	    '<tpl for=".">'
-//        	    , '<div id="{divId}" class="x-panel crosstab-table-cells crosstab-table-cells-{celltype}" ' // the crosstab-table-cells class is needed as itemSelector
-//        	    , ' style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left; background-color: {backgroundColor}" >'
-//        	    , '  <div class="x-panel-bwrap"> '
-//        	    , '    <div style="width:'+(this.columnWidth-2)+'px; overflow:hidden; padding-top:'+(this.rowHeight-4-this.fontSize)/2+'px;font-size:'+this.fontSize+'px;">'
-//        	    , '    {[this.format(values.name, values.datatype, values.format, values.percent,'+this.percentageFontSize+', values.scaleFactor )]}'
-//        	    , '    </div> '
-//        	    , '  </div>'
-//        	    , '</div>'
-//        	    , '</tpl>'
-//        	    , {
-//        	    	format: this.format
-//        	    }
-//        	);
     	
 		
     	var dataView = new Ext.DataView({
 	        store : store,
 	        tpl : tpl,
 	        trackOver : true,
-	        itemSelector : 'div.crosstab-table-headers'
+	        itemSelector : 'div.crosstab-header-static'  // mandatory!!! without this, IE will only display 1 DataView, even if there are more than one
 	    });
     	
     	return dataView;
-		
-		
-//		for(var y=1; y<headers.length; y++){
-//			var layoutConfig;
-//			if(horizontal){
-//				layoutConfig= {rows: 1};
-//			}else{
-//				layoutConfig= {columns: 1};
-//			}
-//			
-//			var headersPanel = new Array();
-//			var headersPanelHidden = new Array();
-//			for(var i=0; i<headers[y].length; i++){
-//				headers[y][i].columnWidth= this.columnWidth;
-//				if(!headers[y][i].hidden){
-//					headersPanel.push(headers[y][i]);
-//				}else{
-//					//we put the hidden panels in the tail of the table.
-//					//this because a bug of ie
-//					headersPanelHidden.push(headers[y][i]);
-//				}
-//			}
-//			headersPanel = headersPanel.concat(headersPanelHidden);
-//			c = Ext.apply(c,{
-//		    	cellCls: 'crosstab-header-panel-cell',
-//		    	layout:'table',
-//		    	border: false,
-//	            layoutConfig: layoutConfig,
-//				items:  headersPanel
-//		    });
-//		    var p = new Ext.Panel(c);  
-//		   	    
-//		    //this.createResizable(p,resizeHeandles,headersPanel, horizontal, y);//Alberto: Resizer 2
-//		    headerGroup.push(p);
-//
-//		}
-//		return headerGroup;
 	}
 	
 	, getHeaderArray : function (headers) {
@@ -651,10 +590,11 @@ Ext.extend(Sbi.crosstab.core.StaticCrossTab, Ext.Panel, {
 			var aHeader = headers[i];
 			for (var j = 0; j < aHeader.length; j++ ) {  // TODO: cambiare commento: un header in realta è un array di header
 				toReturn.push([
-					aHeader[j].name
+				    aHeader[j].name
+					, aHeader[j].getDescription(aHeader[j].formattedName)
 					, aHeader[j].height
 					, aHeader[j].width
-					, aHeader[j].html
+					, aHeader[j].titleHeader ? 'level' : 'member'
 				]);
 			}
 		}
@@ -880,13 +820,11 @@ Ext.extend(Sbi.crosstab.core.StaticCrossTab, Ext.Panel, {
     	
     	var tpl = new Ext.XTemplate(
     	    '<tpl for=".">'
-    	    , '<div id="{divId}" class="x-panel crosstab-table-cells crosstab-table-cells-{celltype}" ' // the crosstab-table-cells class is needed as itemSelector
+    	    , '<div id="{divId}" class="crosstab-table-cells crosstab-table-cells-{celltype}" ' // the crosstab-table-cells class is needed as itemSelector
     	    , ' style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left; background-color: {backgroundColor}" >'
-    	    , '  <div class="x-panel-bwrap"> '
-    	    , '    <div style="width:'+(this.columnWidth-2)+'px; overflow:hidden; padding-top:'+(this.rowHeight-4-this.fontSize)/2+'px;font-size:'+this.fontSize+'px;">'
-    	    , '    {[this.format(values.name, values.datatype, values.format, values.percent,'+this.percentageFontSize+', values.scaleFactor )]}'
-    	    , '    </div> '
-    	    , '  </div>'
+    	    , '  <div style="width:'+(this.columnWidth-2)+'px; overflow:hidden; padding-top:'+(this.rowHeight-4-this.fontSize)/2+'px;font-size:'+this.fontSize+'px;">'
+    	    , '  {[this.format(values.name, values.datatype, values.format, values.percent,'+this.percentageFontSize+', values.scaleFactor )]}'
+    	    , '  </div> '
     	    , '</div>'
     	    , '</tpl>'
     	    , {
