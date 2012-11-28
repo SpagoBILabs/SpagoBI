@@ -262,7 +262,48 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 	font:12px arial,tahoma,helvetica,sans-serif;
 	color : #3783E8;
 }
-				
+
+.crosstab-header-static {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: center;
+    font:12px arial,tahoma,helvetica,sans-serif;
+    color : #3783E8;
+}
+
+.crosstab-header-member {
+    background-image:url("../img/crosstab/headerbackground.gif");
+}
+
+.crosstab-header-level {
+    background-image:url("../img/crosstab/headerbackgroundtitle.gif");
+}
+
+.crosstab-header-text-static {
+	/*white-space: nowrap; width: 100%; overflow: hidden; text-overflow: ellipsis; are needed css properties to obtain ellipsis, for example: "Alcoholic Bev..." */
+	white-space: nowrap; 
+	width: 100%; 
+	overflow: hidden; 
+	text-overflow: ellipsis;
+	height: 1.5em;
+}
+
+/*
+.crosstab-table-headers-static-level{
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: center;
+    background-image:url("../img/crosstab/headerbackgroundtitle.gif");
+    font:12px arial,tahoma,helvetica,sans-serif;
+    color : #3783E8;
+}
+*/			
 .crosstab-table-cells-data{
 	border:1px solid;
 	border-left-color:#EEEEEE;	
