@@ -6,12 +6,7 @@
 
 package it.eng.spagobi.engines.network;
 
-import it.eng.spagobi.engines.network.serializer.NetworkSerializerFactory;
-
-
 import java.util.Map;
-
-
 
 import org.apache.log4j.Logger;
 

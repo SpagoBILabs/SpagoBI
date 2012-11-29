@@ -29,6 +29,10 @@ public class NetworkEngineStartAction extends AbstractEngineStartAction {
 
 	// INPUT PARAMETERS
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3424138720053064514L;
 	// OUTPUT PARAMETERS
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
@@ -40,7 +44,7 @@ public class NetworkEngineStartAction extends AbstractEngineStartAction {
     public static transient Logger logger = Logger.getLogger(NetworkEngineStartAction.class);
     
     private static final String ENGINE_NAME = "SpagoBINetworkEngine";
-    private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/network.jsp";
+  //  private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/network.jsp";
 	
 
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse)  {

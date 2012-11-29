@@ -10,15 +10,16 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
 public class Edge implements Serializable, Comparable<Edge>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7921048815814152256L;
 	private String id;
 	private Node sourceNode;
 	private Node targetNode;
@@ -38,35 +39,34 @@ public class Edge implements Serializable, Comparable<Edge>{
 		this.targetNode = destNode;
 	}
 
+	public Edge() {
+		super();
 
-
-	public JSONObject serialize() throws JSONException{
-		
-		JSONObject edgeJSON = new JSONObject();
-		edgeJSON.put("id", id);
-		edgeJSON.put("source",sourceNode.getId());
-		edgeJSON.put("target",targetNode.getId());
-
-		return edgeJSON;
 	}
 	
 	public String getId() {
 		return id;
 	}
 	
-	public String getSource() {
-		return sourceNode.getId();
+	public Node getSourceNode() {
+		return sourceNode;
 	}
 
-	public String getTarget() {
-		return targetNode.getId();
+	public Node getTargetNode() {
+		return targetNode;
 	}
 
 	public void setId(String id) {
 		this.id = id;
 	}
 
+	public void setSourceNode(Node sourceNode) {
+		this.sourceNode = sourceNode;
+	}
 
+	public void setTargetNode(Node targetNode) {
+		this.targetNode = targetNode;
+	}
 
 	public int compareTo(Edge arg0) {
 		return arg0.getId().compareTo(id);
@@ -75,8 +75,14 @@ public class Edge implements Serializable, Comparable<Edge>{
 	public void setProperty(String propertyName, String PropertyValue) {
 		this.properties.put(propertyName, PropertyValue);
 	}
+	
 	public String getProperty(String propertyName) {
 		return this.properties.get(propertyName);
+	}
+	
+
+	public Map<String, String> getProperties() {
+		return properties;
 	}
 
 	@Override
@@ -106,20 +112,7 @@ public class Edge implements Serializable, Comparable<Edge>{
 		return true;
 	}
 	
-	public String toString(){
-		
-		String s = "";
-		try {
-			s = serialize().toString();
-			s=s.replace("\"id\"", "id");
-			s=s.replace("\"source\"", "source");
-			s=s.replace("\"targhet\"", "targhet");
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return s;
-	}
-	
+
 	
 	
 }

@@ -8,6 +8,7 @@ package it.eng.spagobi.engines.network.template;
 
 import org.json.JSONObject;
 
+import it.eng.spagobi.engines.network.bean.CrossNavigationLink;
 import it.eng.spagobi.engines.network.bo.NetworkDefinition;
 
 
@@ -17,11 +18,21 @@ import it.eng.spagobi.engines.network.bo.NetworkDefinition;
  */
 public class NetworkTemplate {
 
-	private NetworkDefinition networkDefinition;
-	private JSONObject networkOptions;
+	private NetworkDefinition networkDefinition; //XMLGRAPH
+	private JSONObject networkJSON; //JSON parsing of the template
+	private CrossNavigationLink crossNavigationLink;// cross navigation link
+	
+	public static final String OPTIONS = "options";
+	public static final String DATA_SET_MAPPING = "datasetMapping";
+	public static final String DATA_SET_MAPPING_ELEMENT = "element";
+	public static final String DATA_SET_MAPPING_COLUMN = "column";
+	public static final String DATA_SET_MAPPING_PROPERTY = "property";
+	public static final String DATA_SET_MAPPING_SOURCE = "source";
+	public static final String DATA_SET_MAPPING_TARGHET = "targhet";
+	public static final String DATA_SET_MAPPING_EDGE = "edge";
 	
 	public NetworkTemplate() {
-		networkDefinition = NetworkDefinition.EMPTY_NETWORK ;
+		networkDefinition = new NetworkDefinition() ;
 	}
 
 	public NetworkDefinition getNetworkDefinition() {
@@ -36,15 +47,20 @@ public class NetworkTemplate {
 		networkDefinition.setNetworkXML(networkXML);
 	}
 
-	public JSONObject getNetworkOptions() {
-		return networkOptions;
+	public JSONObject getNetworkJSON() {
+		return networkJSON;
 	}
 
-	public void setNetworkOptions(JSONObject networkOptions) {
-		this.networkOptions = networkOptions;
+	public void setNetworkJSNO(JSONObject networkJSON) {
+		this.networkJSON = networkJSON;
 	}
-	
-	
-	
+
+	public CrossNavigationLink getCrossNavigationLink() {
+		return crossNavigationLink;
+	}
+
+	public void setCrossNavigationLink(CrossNavigationLink crossNavigationLink) {
+		this.crossNavigationLink = crossNavigationLink;
+	}	
 	
 }

@@ -87,11 +87,7 @@ author: Alberto Ghedin
             window.onload=function() {
                 // id of Cytoscape Web container div
                 var div_id = "cytoscapeweb";
-                
 
-
-
-                
                 // initialization options
                 var options = {
                     // where you have the Cytoscape Web SWF
@@ -104,16 +100,49 @@ author: Alberto Ghedin
                 var vis = new org.cytoscapeweb.Visualization(div_id, options);
 
                 var networkEscaped = <%= net.getNetworkType().equals("json")?net.getNetworkAsString():("\""+StringEscapeUtils.escapeJavaScript( net.getNetworkAsString() )+"\"")	%>;
+                var networkLink = <%= net.getNetworkCrossNavigation()	%>;
 
+                if(<%= net.getNetworkType().equals("json") %>){
+              	   var network = {
+                     		dataSchema: {
+                     			nodes: networkEscaped.nodeMetadata
+                     		}
+              	   };
+              	  	network.data = {};
+              	  	var options = <%= (net instanceof JSONNetwork)?((JSONNetwork)net).getNetworkOptions():"\"\"" %>;
+              	  	network.data.edges= networkEscaped.edges;
+              	  	network.data.nodes= networkEscaped.nodes;
+              	 	vis.draw(Ext.apply({ network: network},options ||{}));
 
+                 }else{
+                	 vis.draw({ network: networkEscaped});
+                 }
 
-                	vis.draw({ network: networkEscaped});
                 
                 
-                
+
                 vis.addListener("click", "edges", function(evt) {
                     var edge = evt.target;
-                    alert("Edge " + edge.data.id + " was clicked");
+                    var parametersString="";
+
+                    var fixedParameters = networkLink.fixedParameters;
+                    if(fixedParameters!=null && fixedParameters!=undefined){
+                    	for(var parameter in fixedParameters){
+                    		parametersString = parametersString+"&"+parameter+'='+fixedParameters[parameter];
+                    	}
+                    }
+
+                    var dynamicParameters = networkLink.dynamicParameters;
+                    if(dynamicParameters!=null && dynamicParameters!=undefined){
+                    	var edgeParameters = dynamicParameters.EDGE; 
+                        if(edgeParameters!=null && edgeParameters!=undefined){
+                        	for(var parameter in edgeParameters){
+                        		parametersString = parametersString+"&"+edgeParameters[parameter]+'='+edge.data[parameter];
+                        	}
+                        }
+                    }
+
+                    alert("Edge " +parametersString + " was clicked");
                 });
             };
         </script>

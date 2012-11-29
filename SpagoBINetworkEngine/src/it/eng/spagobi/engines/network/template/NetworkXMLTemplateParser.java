@@ -7,9 +7,12 @@
 package it.eng.spagobi.engines.network.template;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.network.bean.CrossNavigationLink;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONTemplateUtils;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -26,7 +29,19 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 	
 	public final static String ATTRIBUTE_VERSION = "version";
 	public final static String TAG_GRAPHML = "GRAPHML";
-	public final static String TAG_GRAPH_OPTIONS = "options";
+	public final static String TAG_NETWOK_DEFINITION = "NETWOK_DEFINITION";
+	public static final String DRILL_TAG = "DRILL";
+	public static final String PARAM_TAG = "PARAM";
+	public static final String DRILL_DOCUMENT_ATTR = "document";
+	public static final String PARAM_NAME_ATTR = "name";
+	public static final String PARAM_TYPE_ATTR = "type";
+	public static final String PARAM_VALUE_ATTR = "value";
+	public static final String PARAM_PROPERTY_ATTR = "property";
+	public static final String PARAM_TYPE_RELATIVE = "RELATIVE";
+	public static final String PARAM_TYPE_ABSOLUTE = "ABSOLUTE";
+	public static final String NODE = "NODE";
+	public static final String EDGE = "EDGE";
+
 
 	
 	public static transient Logger logger = Logger.getLogger(NetworkXMLTemplateParser.class);
@@ -67,18 +82,20 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 				template = xml;
 			}
 			
-			// TAG_GRAPHML block
+			// This is the template in the pure format GRAPHML
 			if (template.getName().equalsIgnoreCase(TAG_GRAPHML)) {
 				//SourceBean graphmlTemplate = (SourceBean) template.getAttribute(TAG_GRAPHML);
 				networkTemplate.setNetworkXML((String)templateObject);
-			}
+				networkTemplate.setCrossNavigationLink(getDrill(template,new HashMap()));
+			}else
 			// TAG_GRAPH_OPTIONS block
-			if(template.containsAttribute(TAG_GRAPH_OPTIONS)) {
-				SourceBean optionsBean;
-				optionsBean = (SourceBean) template.getAttribute(TAG_GRAPH_OPTIONS);
-				networkTemplate.setNetworkOptions(loadTemplateFeatures(optionsBean));
+			if(template.containsAttribute(TAG_NETWOK_DEFINITION)) {
+				SourceBean networkDefinitionBean = (SourceBean) template.getAttribute(TAG_NETWOK_DEFINITION);
+				networkTemplate.setNetworkJSNO(loadTemplateFeatures(networkDefinitionBean));
+				networkTemplate.setCrossNavigationLink(getDrill(template,new HashMap()));
 			} 
 
+			
 			logger.debug("Templete parsed succesfully");
 
 		} catch(Throwable t) {
@@ -103,6 +120,8 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 		JSONObject features = ju.getJSONTemplateFromXml(optionsBean, array);
 		return features;
 	}
+	
+	
 
 //	private JSONArray toJSONArray(HashMap<String, String> paramsMap) {
 //		JSONArray array = new JSONArray();
@@ -123,5 +142,50 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 //		return array;
 //	}
 
+	
+	/**
+	 * Parse the tamplate to get the cross navigation link
+	 * @param template template as ResourceBean
+	 * @param paramsMap mp of the parameters
+	 * @return
+	 * @throws Exception
+	 */
+	private CrossNavigationLink getDrill(SourceBean template, Map paramsMap) throws Exception {
+		
+		SourceBean confSB = null;
+		String documentName = null;
+		
+		logger.debug("IN");
+		confSB = (SourceBean)template.getAttribute(DRILL_TAG);
+		if(confSB == null) {
+			logger.debug("Cannot find title drill settings: tag name " + DRILL_TAG);
+			return null;
+		}
+		documentName = (String)confSB.getAttribute(DRILL_DOCUMENT_ATTR);
+
+		CrossNavigationLink drill = new CrossNavigationLink(documentName);
+		List paramslist = (List)template.getAttributeAsList(DRILL_TAG+"."+PARAM_TAG);
+
+		if(paramslist != null){
+			
+			for(int k=0; k<paramslist.size(); k++){
+				SourceBean param = (SourceBean)paramslist.get(k);
+				String paramName = (String)param.getAttribute(PARAM_NAME_ATTR);
+				String paramType = (String)param.getAttribute(PARAM_TYPE_ATTR);
+				String paramValue = (String)param.getAttribute(PARAM_VALUE_ATTR);
+				String paramProperty = (String)param.getAttribute(PARAM_PROPERTY_ATTR);
+				
+				//FILLS RELATIVE TYPE PARAMETERS' VALUE FROM REQUEST
+				if(paramType.equalsIgnoreCase(PARAM_TYPE_RELATIVE)){
+					paramValue=  (String)paramsMap.get(paramName);
+				}
+				drill.addParameter(paramName, paramValue, paramType,paramProperty);
+			}
+		}
+		
+		logger.debug("OUT");	
+		return drill;
+
+	}
 	
 }
