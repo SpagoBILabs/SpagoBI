@@ -6,8 +6,6 @@
 
 package it.eng.spagobi.engines.network.bo;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engines.network.bean.JSONNetwork;
 import it.eng.spagobi.utilities.engines.EngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
@@ -21,11 +19,6 @@ public class NetworkDefinition extends EngineAnalysisState{
 	
 	private String networkXML;
 	
-	public static final NetworkDefinition EMPTY_NETWORK;
-	
-	static {
-		EMPTY_NETWORK = new NetworkDefinition();
-	}
 
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.utilities.engines.IEngineAnalysisState#load(byte[])

@@ -6,6 +6,9 @@
 
 package it.eng.spagobi.engines.network.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.eng.spagobi.engines.network.serializer.SerializationException;
 import it.eng.spagobi.utilities.StringUtils;
 
@@ -17,15 +20,16 @@ public class XMLNetwork implements INetwork{
 
 	private static final String TYPE = "XML";
 	private String net="";
-	
+	private CrossNavigationLink networkCrossNavigation;
 	
 	
 	/**
 	 * @param net
 	 */
-	public XMLNetwork(String net) {
+	public XMLNetwork(String net, CrossNavigationLink networkCrossNavigation) {
 		super();
 		this.net = net;
+		this.networkCrossNavigation = networkCrossNavigation;
 	}
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.network.bean.INetwork#getNetworkAsString()
@@ -40,5 +44,26 @@ public class XMLNetwork implements INetwork{
 		return TYPE;
 	}
 	
+	
+	
+	public void setNetworkCrossNavigation(CrossNavigationLink networkCrossNavigation) {
+		this.networkCrossNavigation = networkCrossNavigation;
+	}
+	@JsonIgnore
+	public String getNetworkCrossNavigation() throws SerializationException{
+		ObjectMapper mapper = new ObjectMapper();
+		String s ="";
+		try {
+			
+			s = mapper.writeValueAsString(networkCrossNavigation);
 
+		} catch (Exception e) {
+			
+			throw new SerializationException("Error serializing the network",e);
+		}
+		return  s; 
+	}
+
+	
+	
 }

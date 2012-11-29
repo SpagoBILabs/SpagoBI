@@ -10,20 +10,24 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
 public class Node implements Serializable, Comparable<Node>{
 	
-	private String label;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4431969032355898744L;
 	private String id;
-	//private Map<String,String> properties = new HashMap<String, String>();
+	private Map<String,String> properties = new HashMap<String, String>();
 	
 	
+
+	public Node() {
+		super();
+	}
 	
 	/**
 	 * @param id
@@ -31,49 +35,27 @@ public class Node implements Serializable, Comparable<Node>{
 	public Node(String id) {
 		super();
 		this.id = id;
-		this.label = id;
 	}
-	/**
-	 * @param name
-	 * @param id
-	 */
-	public Node(String name, String id) {
-		super();
-		this.label = name;
-		this.id = id;
-	}
-	public String getLabel() {
-		return label;
-	}
-	public void setLabel(String name) {
-		this.label = name;
-	}
+
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-//	public Map<String, String> getProperties() {
-//		return properties;
-//	}
-//	public void setProperty(String propertyName, String PropertyValue) {
-//		this.properties.put(propertyName, PropertyValue);
-//	}
-//	public String getProperty(String propertyName) {
-//		return this.properties.get(propertyName);
-//	}
-	
-	public JSONObject serialize() throws JSONException{
-		
-		JSONObject nodeJSON = new JSONObject();
-		JSONObject dataJSON = new JSONObject();
-		nodeJSON.put("id", id);
-		dataJSON.put("label", label);
-		nodeJSON.put("data",dataJSON);
 
-		return nodeJSON;
+	public Map<String, String> getProperties() {
+		return properties;
 	}
+	public void setProperty(String propertyName, String PropertyValue) {
+		this.properties.put(propertyName, PropertyValue);
+	}
+
+	public String getProperty(String propertyName) {
+		return this.properties.get(propertyName);
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
@@ -104,20 +86,7 @@ public class Node implements Serializable, Comparable<Node>{
 		return true;
 	}
 	
-	
-	public String toString(){
-		
-		String s = "";
-		try {
-			s = serialize().toString();
-			s=s.replace("\"id\"", "id");
-			s=s.replace("\"data\"", "data");
-			s=s.replace("\"label\"", "label");
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return s;
-	}
+
 	
 	
 	
