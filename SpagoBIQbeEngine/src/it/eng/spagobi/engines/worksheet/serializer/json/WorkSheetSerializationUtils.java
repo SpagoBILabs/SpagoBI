@@ -28,6 +28,7 @@ public class WorkSheetSerializationUtils {
 	public static final String DESIGNER = "designer";
 	public static final String DESIGNER_TABLE = "Table";
 	public static final String DESIGNER_PIVOT = "Pivot Table";
+	public static final String DESIGNER_STATIC_PIVOT = "Static Pivot Table";
 	public static final String VISIBLE_SELECT_FIELDS = "visibleselectfields";
 	public static final String CATEGORY = "category";
 	public static final String SERIES = "series";

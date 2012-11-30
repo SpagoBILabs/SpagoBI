@@ -43,6 +43,9 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 	private static final String CROSSTAB_DEFINITION = QbeEngineStaticVariables.CROSSTAB_DEFINITION;
 	//private static final String OPTIONAL_FILTERS = QbeEngineStaticVariables.OPTIONAL_FILTERS;
 	public static final String SHEET = "sheetName";
+	
+	public static final String OUTPUT_TYPE = "OUTPUT_TYPE";
+	public enum OutputType {JSON, HTML};
 
 	private static final long serialVersionUID = -5780454016202425492L;
 
@@ -142,14 +145,19 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 				crossTab= new CrossTab(valuesDataStore, crosstabDefinition);
 			}
 			
-			
-//			String showDesciptionString = (String)ConfigSingleton.getInstance().getAttribute("QBE.CROSSTAB.SHOW-DESCRIPTIONS");
-//			boolean showDesciption = (showDesciptionString!=null && showDesciptionString.equals(true));
-//			
-			JSONObject crossTabDefinition = crossTab.getJSONCrossTab();
-			
+
 			try {
-				writeBackToClient( new JSONSuccess(crossTabDefinition) );
+				OutputType output = this.getOutputType();
+				switch (output) {
+					case JSON:
+						JSONObject crossTabDefinition = crossTab.getJSONCrossTab();
+						writeBackToClient(new JSONSuccess(crossTabDefinition));
+						break;
+					case HTML: 
+						String htmlCode = crossTab.getHTMLCrossTab(this.getLocale());
+						writeBackToClient(htmlCode);
+						break;
+				}
 			} catch (IOException e) {
 				String message = "Impossible to write back the responce to the client";
 				throw new SpagoBIEngineServiceException(getActionName(), message, e);
@@ -163,6 +171,21 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			if (totalTimeMonitor != null) totalTimeMonitor.stop();
 			logger.debug("OUT");
 		}	
+	}
+
+
+	private OutputType getOutputType() {
+		OutputType toReturn = OutputType.JSON;  // default
+		String outputTypeStr = null;
+		if (this.requestContainsAttribute(OUTPUT_TYPE)) {
+			try {
+				outputTypeStr = this.getAttributeAsString(OUTPUT_TYPE);
+				toReturn = OutputType.valueOf(outputTypeStr);
+			} catch (Exception e) {
+				throw new SpagoBIEngineServiceException(getActionName(), "Output type [" + outputTypeStr + "] not valid", e);
+			}
+		}
+		return toReturn;
 	}
 
 

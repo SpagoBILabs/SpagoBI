@@ -48,13 +48,12 @@ Sbi.crosstab.CrosstabPreviewPanel = function(config) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.qbe.crosstabPreviewPanel);
 	}
 	
-	this.services = new Array();
+	this.services = this.services || new Array();
 	var params = {};
-	this.services['loadCrosstab'] = Sbi.config.serviceRegistry.getServiceUrl({
+	this.services['loadCrosstab'] = this.services['loadCrosstab'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'LOAD_CROSSTAB_ACTION'
 		, baseParams: params
 	});
-	
 
 	var c = Ext.apply(defaultSettings, config || {});
 	
@@ -118,7 +117,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		        url: this.services['loadCrosstab'],
 		        params: this.requestParameters,
 		        success : function(response, opts) {
-		  			this.refreshCrossTab(Ext.util.JSON.decode( response.responseText ));
+		        	this.refreshCrossTab( response.responseText );
 		        },
 		        scope: this,
 				failure: function(response, options) {
@@ -128,8 +127,10 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 			});
 		}
 			
-	, refreshCrossTab: function(crosstab){
+	, refreshCrossTab: function(serviceResponseText){
 
+		var crosstab = Ext.util.JSON.decode( serviceResponseText );
+		
 		if(this.crosstab!=null){
 			this.calculatedFields = Ext.apply(this.calculatedFields, this.crosstab.getCalculatedFields());
 		}
@@ -168,7 +169,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 
 		c = Ext.apply(c,this.crosstabConfig||{});
 		
-		this.crosstab =  new Sbi.crosstab.core.CrossTab(c);
+		this.crosstab = new Sbi.crosstab.core.CrossTab(c);
 		this.crosstab.reloadHeadersAndTable(null,true);
 		this.add(this.crosstab);
 		

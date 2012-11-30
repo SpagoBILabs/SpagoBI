@@ -91,7 +91,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPallettePanel, Ext.Panel, {
 				border: false,
 				items: [
 				        new Ext.Panel({
-				        	height:285,
+				        	height:342,
 				        	border: false,
 				        	style: 'padding-top: 0px; padding-left: 0px',
 				        	items:[
@@ -120,6 +120,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPallettePanel, Ext.Panel, {
 		pallette.push({name: 'Line Chart', url:'../img/worksheet/palette_line_chart.png'});
 		pallette.push({name: 'Table', url:'../img/worksheet/palette_table.png'});
 		pallette.push({name: 'Pivot Table', url:'../img/worksheet/palette_crosstab.png'});	
+		pallette.push({name: 'Static Pivot Table', url:'../img/worksheet/palette_crosstab.png'});
 		return pallette;
 	}
 

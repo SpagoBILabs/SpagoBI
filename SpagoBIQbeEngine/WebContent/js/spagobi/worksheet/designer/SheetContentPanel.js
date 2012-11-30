@@ -139,6 +139,20 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		this.insertDesigner();
 	}
 	
+	, insertStaticCrosstabDesigner: function (sheredConf) {
+		this.designer = new Sbi.crosstab.StaticCrosstabDefinitionPanel(Ext.apply({
+			crosstabTemplate: {}
+			, ddGroup: 'worksheetDesignerDDGroup'
+			, tools:  [{
+				id: 'close'
+	        	, handler: this.removeDesigner
+	          	, scope: this
+	          	, qtip: LN('sbi.worksheet.designer.sheetcontentpanel.tools.tt.remove')
+			}]
+		},sheredConf));
+		this.insertDesigner();
+	}
+	
 	, insertBarchartDesigner: function (sheredConf) {
 		this.designer = new Sbi.worksheet.designer.BarChartDesignerPanel(Ext.apply({
 			ddGroup: 'worksheetDesignerDDGroup'
@@ -243,6 +257,9 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		switch (state.designer) {
 	        case 'Pivot Table':
 	        	this.insertCrosstabDesigner(sheredConf);
+	            break;
+	        case 'Static Pivot Table':
+	        	this.insertStaticCrosstabDesigner(sheredConf);
 	            break;
 	        case 'Bar Chart':
 	        	this.insertBarchartDesigner(sheredConf);
