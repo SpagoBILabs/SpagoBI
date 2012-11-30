@@ -45,6 +45,7 @@ public class CrosstabDefinition extends SheetContent {
 	private JSONObject config = null;
 	private JSONArray calculatedFields = null;
 	private JSONObject additionalData = null;
+	private boolean isStatic = true;
 	
 	public CrosstabDefinition() {
 		cellLimit = new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) ;
@@ -185,6 +186,13 @@ public class CrosstabDefinition extends SheetContent {
 		}
 		return false;
 	}
+	
+	public boolean isStatic() {
+		return isStatic;
+	}
 
+	public void setStatic(boolean isStatic) {
+		this.isStatic = isStatic;
+	}
 	
 }

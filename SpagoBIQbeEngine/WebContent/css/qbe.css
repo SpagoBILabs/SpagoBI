@@ -263,6 +263,7 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 	color : #3783E8;
 }
 
+/*
 .crosstab-header-static {
     border:1px solid;
     border-left-color:#EEEEEE;  
@@ -281,29 +282,18 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 .crosstab-header-level {
     background-image:url("../img/crosstab/headerbackgroundtitle.gif");
 }
-
+*/
+/*white-space: nowrap; width: 100%; overflow: hidden; text-overflow: ellipsis; are needed css properties to obtain ellipsis, for example: "Alcoholic Bev..."*/ 
+/*
 .crosstab-header-text-static {
-	/*white-space: nowrap; width: 100%; overflow: hidden; text-overflow: ellipsis; are needed css properties to obtain ellipsis, for example: "Alcoholic Bev..." */
 	white-space: nowrap; 
 	width: 100%; 
 	overflow: hidden; 
 	text-overflow: ellipsis;
 	height: 1.5em;
 }
-
-/*
-.crosstab-table-headers-static-level{
-    border:1px solid;
-    border-left-color:#EEEEEE;  
-    border-right-color:#D0D0D0;
-    border-top-color:#EEEEEE;   
-    border-bottom-color:#D0D0D0;    
-    text-align: center;
-    background-image:url("../img/crosstab/headerbackgroundtitle.gif");
-    font:12px arial,tahoma,helvetica,sans-serif;
-    color : #3783E8;
-}
-*/			
+*/
+			
 .crosstab-table-cells-data{
 	border:1px solid;
 	border-left-color:#EEEEEE;	
@@ -527,3 +517,97 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 .disabled-record {
 	background-color: #EAEAEA;
 }
+
+.crosstab table {
+	border-spacing: 0px;
+}
+
+.crosstab td {
+	padding-top:5px;
+	padding-bottom:5px;
+	padding-left:10px;
+}
+
+.crosstab td.empty {
+	border:0px solid;
+    background-color: transparent;
+}
+
+.crosstab td.member {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: center;
+    background-image:url("../img/crosstab/headerbackground.gif");
+    background-size:contain;
+    /*background-repeat:repeat-x;*/
+    font:11px tahoma,arial,verdana,sans-serif;
+    color: #3783E8;
+    padding-right:10px;
+}
+
+.crosstab td.level {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: center;
+    background-image:url("../img/crosstab/headerbackgroundtitle.gif");
+    background-size:contain;
+    /*background-repeat:repeat-x;*/
+    font:11px tahoma,arial,verdana,sans-serif;
+    color: #3783E8;
+    padding-right:10px;
+}
+
+.crosstab td.data {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: right;
+    background-color: transparent;
+    font:11px tahoma,arial,verdana,sans-serif;
+    padding-right:0px;
+}
+
+.crosstab td.cf {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: right;
+    font:11px tahoma,arial,verdana,sans-serif;
+    background-color: #F1F1F1;
+    padding-right:0px;
+}
+
+.crosstab td.partialsum {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: right;
+    font:11px tahoma,arial,verdana,sans-serif;
+    background-color: #E1E1E1;
+    padding-right:0px;
+}
+
+.crosstab td.totals{
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: right;
+    font:bold 11px tahoma,arial,verdana,sans-serif;
+    background-color: #D1D1D1;
+    padding-right:0px;
+}
+

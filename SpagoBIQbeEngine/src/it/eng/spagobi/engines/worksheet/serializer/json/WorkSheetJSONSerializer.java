@@ -166,7 +166,11 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			JSONObject toReturn = new JSONObject();
 			toReturn.put(WorkSheetSerializationUtils.CROSSTABDEFINITION, 
 					(JSONObject) SerializationManager.serialize(content, "application/json"));
-			toReturn.put(WorkSheetSerializationUtils.DESIGNER, WorkSheetSerializationUtils.DESIGNER_PIVOT);
+			boolean isStatic = ((CrosstabDefinition) content).isStatic();
+			toReturn.put(WorkSheetSerializationUtils.DESIGNER, 
+					isStatic ? 
+							WorkSheetSerializationUtils.DESIGNER_STATIC_PIVOT :
+							WorkSheetSerializationUtils.DESIGNER_PIVOT);
 			return toReturn;
 		}
 		if (content instanceof ChartDefinition) {

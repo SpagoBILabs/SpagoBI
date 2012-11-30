@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -1895,6 +1896,15 @@ public class CrossTab {
 			throw new SpagoBIRuntimeException("Error reading the configuration of the crosstab", e);
 		}
 	}
+
+	public String getHTMLCrossTab(Locale locale) {
+		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale);
+		String html = serializer.serialize(this);
+		return html;
+	}
 	
-	
+	public CrosstabDefinition getCrosstabDefinition() {
+		return crosstabDefinition;
+	}
+		
 }

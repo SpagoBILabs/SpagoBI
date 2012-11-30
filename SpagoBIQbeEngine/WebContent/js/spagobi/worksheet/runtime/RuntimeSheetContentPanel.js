@@ -99,10 +99,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	
 	initContent: function (c) {
 		var items = [];
-
 		switch (this.contentConfig.designer) {
 	        case 'Pivot Table':
 	        	return this.initCrossTab(c);
+	        case 'Static Pivot Table':
+	        	return this.initStaticCrossTab(c);
 	        case 'Bar Chart':
 	        	return Sbi.worksheet.runtime.RuntimeChartFactory.createBarChart({'chartConfig':this.contentConfig, sheetName : this.sheetName, fieldsOptions: this.fieldsOptions});
 	        case 'Line Chart':
@@ -174,6 +175,23 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 		return crossTab;
 	},
 	
+	initStaticCrossTab: function(c){
+		var crossTab = new Sbi.crosstab.StaticCrosstabPreviewPanel(Ext.apply(c.contentConfig|| {},{
+			hideLoadingMask: true,
+			sheetName : this.sheetName,
+			crosstabConfig: {autoHeight: true}, 
+			fieldsOptions: c.fieldsOptions,
+			title: false
+		}));
+		if(!c.hiddenContent){
+			this.on('afterlayout',this.loadCrosstab,this);
+		}else{
+			this.on('afterrender', function(){this.fireEvent('contentloaded')}, this);
+		}
+		
+		return crossTab;
+	},
+	
 	loadCrosstab: function(){
 		this.content.load(this.contentConfig.crosstabDefinition);
 		this.un('afterlayout',this.loadCrosstab,this);
@@ -184,6 +202,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 		this.contentConfig.hiddenContent=false;
 		switch (this.contentConfig.designer) {
 	        case 'Pivot Table':
+	        	this.content.load(this.contentConfig.crosstabDefinition, filtersValue);
+	        	break;
+	        case 'Static Pivot Table':
 	        	this.content.load(this.contentConfig.crosstabDefinition, filtersValue);
 	        	break;
 	        case 'Table':
