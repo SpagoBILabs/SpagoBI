@@ -1503,58 +1503,38 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	//		}
 	//	}    
 
-	//	private void updateSubObject(SbiObjects obj, Integer objIdExp) throws EMFUserError {
-	//		logger.debug("IN");
-	//		List subObjList = null;
-	//		try {
-	//			// read the existing sub object
-	//			Query hibQuery = sessionCurrDB
-	//			.createQuery(" from SbiSubObjects ot where ot.sbiObject.biobjId = " + obj.getBiobjId());
-	//			subObjList = hibQuery.list();
-	//			if (subObjList.isEmpty()) {
-	//				logger.warn(" Existing Sub Object is not present");
-	//			}	
-	//			SbiSubObjects existingSubObject = (SbiSubObjects) subObjList.get(0);
-	//			if (existingSubObject==null){
-	//				logger.warn("Don't read the Existing SubObject ... ERROR");
-	//				return;
-	//			}
-	//			// read the import sub object
-	//			hibQuery = sessionExpDB
-	//			.createQuery(" from SbiSubObjects ot where ot.sbiObject.biobjId = " + objIdExp);
-	//			subObjList = hibQuery.list();
-	//			if (subObjList.isEmpty()) {
-	//				logger.warn(" Sub Object is not present");
-	//				return;
-	//			}
-	//			SbiSubObjects expSubObject = (SbiSubObjects) subObjList.get(0);
-	//			existingSubObject.setCreationDate(expSubObject.getCreationDate());
-	//			existingSubObject.setDescription(expSubObject.getDescription());
-	//			existingSubObject.setLastChangeDate(expSubObject.getLastChangeDate());
-	//			existingSubObject.setIsPublic(expSubObject.getIsPublic());
-	//			existingSubObject.setName(expSubObject.getName());
-	//			existingSubObject.setOwner(expSubObject.getOwner());
-	//			//existingSubObject.setSbiObject(obj);
-	//			SbiBinContents existingBinaryContent=existingSubObject.getSbiBinContents();
-	//			sessionCurrDB.delete(existingBinaryContent);
-	//			SbiBinContents binary = insertBinaryContent(expSubObject.getSbiBinContents());
-	//			existingSubObject.setSbiBinContents(binary);
-	//			sessionCurrDB.update(existingSubObject);
-	//
-	//		}  
-	//		 catch (EMFUserError he) {
-	//				throw he;
-	//			}
-	//		 catch (HibernateException he) {
-	//			logger.error("Error while getting exported template objects ", he);
-	//			List params = new ArrayList();
-	//			params.add("Sbi_subobject");
-	//			params.add("");
-	//			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
-	//		} finally {
-	//			logger.debug("OUT");
-	//		}
-	//	}
+		private void updateSubObject(SbiSubObjects existingSubObject, SbiSubObjects expSubObject) throws EMFUserError {
+			logger.debug("IN");
+			List subObjList = null;
+			try {
+				existingSubObject.setCreationDate(expSubObject.getCreationDate());
+				existingSubObject.setDescription(expSubObject.getDescription());
+				existingSubObject.setLastChangeDate(expSubObject.getLastChangeDate());
+				existingSubObject.setIsPublic(expSubObject.getIsPublic());
+				existingSubObject.setName(expSubObject.getName());
+				existingSubObject.setOwner(expSubObject.getOwner());
+				//existingSubObject.setSbiObject(obj);
+				SbiBinContents existingBinaryContent=existingSubObject.getSbiBinContents();
+				sessionCurrDB.delete(existingBinaryContent);
+				SbiBinContents binary = insertBinaryContent(expSubObject.getSbiBinContents());
+				logger.debug("Overwriting the bin with id "+ existingSubObject.getSbiBinContents().getId()+" with "+ expSubObject.getSbiBinContents());
+				existingSubObject.setSbiBinContents(binary);
+				sessionCurrDB.update(existingSubObject);
+	
+			}  
+			 catch (EMFUserError he) {
+					throw he;
+				}
+			 catch (HibernateException he) {
+				logger.error("Error while getting exported template objects ", he);
+				List params = new ArrayList();
+				params.add("Sbi_subobject");
+				params.add("");
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
+			} finally {
+				logger.debug("OUT");
+			}
+		}
 
 	private void insertSubObject(SbiObjects obj, SbiObjects exportedObj) throws EMFUserError {
 		logger.debug("IN");
@@ -1576,21 +1556,43 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 			Map idAssociation = metaAss.getObjSubObjectIDAssociation();
 			while (exportedSubObjListIt.hasNext()) {
 				expSubObject = (SbiSubObjects) exportedSubObjListIt.next();
-				SbiSubObjects current = isAlreadyExisting(expSubObject, currentSubObjList) ;
-				if (current != null) {
-					logger.debug("Exported subobject with name = [" + expSubObject.getName() + "] and owner = [" + expSubObject.getOwner() + "] and visibility = [" + expSubObject.getIsPublic() + "] and creation date = [" + expSubObject.getCreationDate() + "] (of document with name = [" + exportedObj.getName() + "] and label = [" + exportedObj.getLabel() + "]) is already existing, so it will not be inserted.");
-					metaLog.log("Exported subobject with name = [" + expSubObject.getName() + "] and owner = [" + expSubObject.getOwner() + "] and visibility = [" + expSubObject.getIsPublic() + "] and creation date = [" + expSubObject.getCreationDate() + "] (of document with name = [" + exportedObj.getName() + "] and label = [" + exportedObj.getLabel() + "]) is already existing, most likely it is the same subobject, so it will not be inserted.");
-					// if already present don't modify the subObject so don't map the ID!
-					//idAssociation.put(expSubObject.getSubObjId(), current.getSubObjId());
-					continue;
-				} else {
-					SbiSubObjects newSubObj = ImportUtilities.makeNew(expSubObject);
-					newSubObj.setSbiObject(obj);
-					SbiBinContents binary = insertBinaryContent(expSubObject.getSbiBinContents());
-					newSubObj.setSbiBinContents(binary);
-					this.updateSbiCommonInfo4Insert(newSubObj);
-					sessionCurrDB.save(newSubObj);
-					idAssociation.put(expSubObject.getSubObjId(), newSubObj.getSubObjId());
+				SbiSubObjects current;
+				boolean updateSubObject = true;
+				if(updateSubObject){
+					current= isAlreadyExistingIgnoreDate(expSubObject, currentSubObjList) ;
+					if (current != null) {
+						logger.debug("Exported subobject with name = [" + expSubObject.getName() + "] and owner = [" + expSubObject.getOwner() + "] and visibility = [" + expSubObject.getIsPublic() + "] and creation date = [" + expSubObject.getCreationDate() + "] (of document with name = [" + exportedObj.getName() + "] and label = [" + exportedObj.getLabel() + "]) is already existing, so it will not be inserted.");
+						metaLog.log("Exported subobject with name = [" + expSubObject.getName() + "] and owner = [" + expSubObject.getOwner() + "] and visibility = [" + expSubObject.getIsPublic() + "] and creation date = [" + expSubObject.getCreationDate() + "] (of document with name = [" + exportedObj.getName() + "] and label = [" + exportedObj.getLabel() + "]) is already existing, most likely it is the same subobject, so it will not be inserted.");
+						// if already present don't modify the subObject so don't map the ID!
+						updateSubObject(current, expSubObject);
+						continue;
+					} else {
+						SbiSubObjects newSubObj = ImportUtilities.makeNew(expSubObject);
+						newSubObj.setSbiObject(obj);
+						SbiBinContents binary = insertBinaryContent(expSubObject.getSbiBinContents());
+						newSubObj.setSbiBinContents(binary);
+						this.updateSbiCommonInfo4Insert(newSubObj);
+						sessionCurrDB.save(newSubObj);
+						idAssociation.put(expSubObject.getSubObjId(), newSubObj.getSubObjId());
+					}
+				}else{
+				
+					current= isAlreadyExisting(expSubObject, currentSubObjList) ;
+					if (current != null) {
+						logger.debug("Exported subobject with name = [" + expSubObject.getName() + "] and owner = [" + expSubObject.getOwner() + "] and visibility = [" + expSubObject.getIsPublic() + "] and creation date = [" + expSubObject.getCreationDate() + "] (of document with name = [" + exportedObj.getName() + "] and label = [" + exportedObj.getLabel() + "]) is already existing, so it will not be inserted.");
+						metaLog.log("Exported subobject with name = [" + expSubObject.getName() + "] and owner = [" + expSubObject.getOwner() + "] and visibility = [" + expSubObject.getIsPublic() + "] and creation date = [" + expSubObject.getCreationDate() + "] (of document with name = [" + exportedObj.getName() + "] and label = [" + exportedObj.getLabel() + "]) is already existing, most likely it is the same subobject, so it will not be inserted.");
+						// if already present don't modify the subObject so don't map the ID!
+						//idAssociation.put(expSubObject.getSubObjId(), current.getSubObjId());
+						continue;
+					} else {
+						SbiSubObjects newSubObj = ImportUtilities.makeNew(expSubObject);
+						newSubObj.setSbiObject(obj);
+						SbiBinContents binary = insertBinaryContent(expSubObject.getSbiBinContents());
+						newSubObj.setSbiBinContents(binary);
+						this.updateSbiCommonInfo4Insert(newSubObj);
+						sessionCurrDB.save(newSubObj);
+						idAssociation.put(expSubObject.getSubObjId(), newSubObj.getSubObjId());
+					}
 				}
 			}
 		}  
@@ -1632,6 +1634,30 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 							&& currentSubObject.getIsPublic().equals(expSubObject.getIsPublic())
 							&& currentSubObject.getCreationDate().equals(expSubObject.getCreationDate())
 							&& currentSubObject.getLastChangeDate().equals(expSubObject.getLastChangeDate())) {
+				return currentSubObject;
+			}
+		}
+		return null;
+	} 
+	
+	
+	/**
+	 * Controls if a subobject is already existing (i.e. they have the same name, owner, visibility, 
+	 * creation date and last modification date)
+	 * @param expSubObject
+	 * @param currentSubObjList
+	 * @return the subobject if is already existing, null otherwise
+	 */
+	private SbiSubObjects isAlreadyExistingIgnoreDate(SbiSubObjects expSubObject,
+			List currentSubObjList) {
+		Iterator currentSubObjListIt = currentSubObjList.iterator();
+		while (currentSubObjListIt.hasNext()) {
+			SbiSubObjects currentSubObject = (SbiSubObjects) currentSubObjListIt.next();
+			if (((currentSubObject.getName() == null && expSubObject.getName() == null) ||
+					(currentSubObject.getName() != null && currentSubObject.getName().equals(expSubObject.getName())))  
+					&& ((currentSubObject.getOwner() == null && expSubObject.getOwner() == null) ||
+							(currentSubObject.getOwner() != null && currentSubObject.getOwner().equals(expSubObject.getOwner())))
+							&& currentSubObject.getIsPublic().equals(expSubObject.getIsPublic())) {
 				return currentSubObject;
 			}
 		}
