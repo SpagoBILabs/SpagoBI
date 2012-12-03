@@ -45,7 +45,7 @@ public class AbstractHibernateDAO {
 	public void setUserProfile(IEngUserProfile profile) {
 		this.profile = profile;
 		if (profile != null) {
-			this.setUserID( (String) profile.getUserUniqueIdentifier() );
+			this.setUserID( (String) (((UserProfile)profile).getUserId() ));
 		}
 		LogMF.debug(logger, "userID = [{0}]", this.userID);
 	}
