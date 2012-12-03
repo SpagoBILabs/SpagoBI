@@ -46,7 +46,6 @@ Sbi.crosstab.StaticCrosstabPreviewPanel = function(config) {
 		serviceName: 'LOAD_CROSSTAB_ACTION'
 		, baseParams: params
 	});
-//	this.services['loadCrosstab'] = 'http://localhost:8080/SpagoBIQbeEngine/servlet/table.html';
 	
     Sbi.crosstab.StaticCrosstabPreviewPanel.superclass.constructor.call(this, config);
     
@@ -65,6 +64,12 @@ Ext.extend(Sbi.crosstab.StaticCrosstabPreviewPanel, Sbi.crosstab.CrosstabPreview
 		this.add(this.crosstab);
 		this.hideMask();
 		this.doLayout();
+	}
+
+	,
+	exportContent: function() {
+		var exportedCrosstab = {SHEET_TYPE: 'STATIC_CROSSTAB', CROSSTABDEFINITION: this.crosstabDefinition};
+		return exportedCrosstab;
 	}
 	
 });

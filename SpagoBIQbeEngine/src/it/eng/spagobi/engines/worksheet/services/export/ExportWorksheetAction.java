@@ -724,6 +724,28 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				sheetRow = expCr.fillAlreadyCreatedSheet(sheet, cs,
 						crosstabDefinitionJSON, createHelper, sheetRow, locale);
 
+			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.STATIC_CROSSTAB)) {
+				String crosstabDefinition = content.optString("CROSSTABDEFINITION");
+				if (crosstabDefinition.equals("")) {
+					crosstabDefinition = content.getString("crosstabDefinition");
+				}
+
+				String sheetName = sheetJ.getString(SHEET);
+
+				JSONObject crosstabDefinitionJSON = new JSONObject(
+						crosstabDefinition);
+
+				JSONObject filters = sheetJ.optJSONObject(QbeEngineStaticVariables.FILTERS);
+				CrossTab cs = getCrosstab(crosstabDefinitionJSON, fieldOptions,
+						filters, sheetName, splittingWhereField,
+						null);
+
+				Properties properties = new Properties();
+				CrosstabXLSExporter expCr = new CrosstabXLSExporter(properties);
+
+				sheetRow = expCr.fillAlreadyCreatedSheet(sheet, cs,
+						crosstabDefinitionJSON, createHelper, sheetRow, locale);
+				
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
 
 				IDataStore dataStore = getTableDataStore(sheetJ, fieldOptions, splittingWhereField);
@@ -890,7 +912,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		dataStore = dataset.decode(dataStore);
 		LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
 
-		CrossTab crossTab = new CrossTab(dataStore, crosstabDefinition, fieldOptions, calculateFieldsJSON);
+		CrossTab crossTab = new CrossTab(dataStore, crosstabDefinition, this.getEngineInstance(), calculateFieldsJSON);
 
 		return crossTab;
 	}

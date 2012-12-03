@@ -78,57 +78,60 @@ Ext.extend(Sbi.crosstab.CrosstabDetailsWizard, Ext.Window, {
 		if(crosstabCellLimit==null || crosstabCellLimit==undefined){
 			crosstabCellLimit=0;
 		}
+
+		var items = [
+            {
+	            xtype: 'radiogroup'
+	            , fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.measureson')
+	            , items: [
+	                {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.rows'), name: 'measureson', inputValue: 'rows'}
+	                , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.columns'), name: 'measureson', inputValue: 'columns', checked: true}
+	            ]
+            }
+            , {
+                xtype: 'checkboxgroup',
+                fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.onrows'),
+                itemCls: 'x-check-group-alt',
+                columns: 1,
+                items: [
+                    checkboxTotalRows
+                    , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.calculatesubtotalsonrows'), name: 'calculatesubtotalsonrows'}
+                ]
+            }
+            , {
+                xtype: 'checkboxgroup',
+                fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.oncolumns'),
+                columns: 1,
+                items: [
+                    checkboxTotalColumns
+                    , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.calculatesubtotalsoncolumns'), name: 'calculatesubtotalsoncolumns'}
+                ]
+            }, 
+            {
+	            xtype: 'radiogroup'
+	            , fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.percenton')
+	            , itemCls: 'x-check-group-alt'
+	            , items: [
+	                  //radioPercentageRows
+	                  {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.row'), name: 'percenton', inputValue: 'row', listeners:{'check':{fn: function(radio, checked){checkboxTotalRows.setValue(checked);}, scope: this}}}
+	                , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.column'), name: 'percenton', inputValue: 'column', listeners:{'check':{fn:  function(radio, checked){checkboxTotalColumns.setValue(checked);}, scope: this}}}
+	                , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.nopercent'), name: 'percenton', inputValue: 'no', checked: true}
+	            ]
+            }
+		];
+		if (this.isStatic == false) {
+            items.push({
+	            xtype: 'field'
+	            , name: 'maxcellnumber' 
+	            , fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.maxcellnumber')
+	            , value: crosstabCellLimit
+            });
+		}
 		
 		this.crosstabDetailsForm = new Ext.form.FormPanel({
 			frame: true
 			, labelWidth : 150
-			, items: [
-	            {
-		            xtype: 'radiogroup'
-		            , fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.measureson')
-		            , items: [
-		                {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.rows'), name: 'measureson', inputValue: 'rows'}
-		                , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.columns'), name: 'measureson', inputValue: 'columns', checked: true}
-		            ]
-	            }
-	            , {
-	                xtype: 'checkboxgroup',
-	                fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.onrows'),
-	                itemCls: 'x-check-group-alt',
-	                columns: 1,
-	                items: [
-	                    checkboxTotalRows
-	                    , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.calculatesubtotalsonrows'), name: 'calculatesubtotalsonrows'}
-	                ]
-	            }
-	            , {
-	                xtype: 'checkboxgroup',
-	                fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.oncolumns'),
-	                columns: 1,
-	                items: [
-	                    checkboxTotalColumns
-	                    , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.calculatesubtotalsoncolumns'), name: 'calculatesubtotalsoncolumns'}
-	                ]
-	            }, 
-	            {
-		            xtype: 'radiogroup'
-		            , fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.percenton')
-		            , itemCls: 'x-check-group-alt'
-		            , items: [
-		                  //radioPercentageRows
-		                  {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.row'), name: 'percenton', inputValue: 'row', listeners:{'check':{fn: function(radio, checked){checkboxTotalRows.setValue(checked);}, scope: this}}}
-		                , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.column'), name: 'percenton', inputValue: 'column', listeners:{'check':{fn:  function(radio, checked){checkboxTotalColumns.setValue(checked);}, scope: this}}}
-		                , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.nopercent'), name: 'percenton', inputValue: 'no', checked: true}
-		            ]
-	            }
-	            , 
-	            {
-		            xtype: 'field'
-		            , name: 'maxcellnumber' 
-		            , fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.maxcellnumber')
-		            , value: crosstabCellLimit
-	            }
-			]
+			, items : items
 			, buttons: [{
     			text: LN('sbi.crosstab.crosstabdetailswizard.buttons.apply')
     		    , handler: function() {
@@ -153,5 +156,5 @@ Ext.extend(Sbi.crosstab.CrosstabDetailsWizard, Ext.Window, {
 		this.crosstabDetailsForm.getForm().reset(); // it is mandatory, since setValues method does not work properly for checkboxes
 		this.crosstabDetailsForm.getForm().setValues(values);
 	}
-	
+		
 });

@@ -11,6 +11,9 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
+import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
+import it.eng.spagobi.engines.worksheet.bo.WorksheetFieldsOptions;
+import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetSerializationUtils;
 import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
@@ -32,6 +35,7 @@ import java.util.Map;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
@@ -139,7 +143,11 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			// serialize crosstab
 			if(crosstabDefinition.isPivotTable()){
 				//load the crosstab for a crosstab widget (with headers, sum, ...)
-				crossTab= new CrossTab(valuesDataStore, crosstabDefinition, null, null);
+				if (crosstabDefinition.isStatic()) {
+					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, engineInstance, null);
+				} else {
+					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, null);
+				}
 			}else{
 				//load the crosstab data structure for all other widgets
 				crossTab= new CrossTab(valuesDataStore, crosstabDefinition);

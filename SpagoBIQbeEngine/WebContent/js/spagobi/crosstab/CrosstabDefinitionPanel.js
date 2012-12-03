@@ -71,6 +71,7 @@ Sbi.crosstab.CrosstabDefinitionPanel = function(config) {
 Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 
 	crosstabTemplate: {}
+	, isStatic: false
 	, crosstabDefinitionPanel: null
 	, columnsContainerPanel: null
 	, rowsContainerPanel: null
@@ -129,6 +130,7 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 			, initialData: this.crosstabTemplate.measures
 			, crosstabConfig: this.crosstabTemplate.config
 			, ddGroup: this.ddGroup
+			, isStatic: this.isStatic
 		});
 	
 		this.crosstabDefinitionPanel = new Ext.Panel({

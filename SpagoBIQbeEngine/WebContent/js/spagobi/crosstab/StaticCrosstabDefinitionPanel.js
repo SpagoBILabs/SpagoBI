@@ -46,6 +46,9 @@ Sbi.crosstab.StaticCrosstabDefinitionPanel = function(config) {
 Ext.extend(Sbi.crosstab.StaticCrosstabDefinitionPanel, Sbi.crosstab.CrosstabDefinitionPanel, {
 	
 	// override
+	isStatic: true
+	
+	,
 	getFormState: function() {
 		var crosstabDefinition = this.getCrosstabDefinition();
 		var state = {

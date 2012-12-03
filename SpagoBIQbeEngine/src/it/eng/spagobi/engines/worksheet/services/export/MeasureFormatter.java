@@ -7,15 +7,24 @@ package it.eng.spagobi.engines.worksheet.services.export;
 
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
+import it.eng.spagobi.engines.qbe.crosstable.CrossTab.CellType;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab.MeasureInfo;
 import it.eng.spagobi.engines.qbe.crosstable.serializer.json.CrosstabSerializationConstants;
 import it.eng.spagobi.engines.worksheet.bo.MeasureScaleFactorOption;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -74,7 +83,7 @@ public class MeasureFormatter {
 			}
 		}
 		
-		public MeasureFormatter(CrossTab crosstab, DecimalFormat numberFormat, String pattern) throws SerializationException, JSONException{
+		public MeasureFormatter(CrossTab crosstab) {
 			this.measuresInfo = crosstab.getMeasures();
 			this.measureOnRow = crosstab.isMeasureOnRow();
 		}
@@ -131,6 +140,23 @@ public class MeasureFormatter {
 			return MeasureScaleFactorOption.applyScaleFactor(value, scaleFactor);
 
 
+		}
+
+		public String format(double value, int i, int j, Locale locale) {
+			int decimals = this.getFormatXLS(i, j);
+			Double scaledValue = this.applyScaleFactor(value, i, j);
+			String pattern = "#,##0";
+			if (decimals > 0) {
+				pattern += ".";
+				for (int count = 0; count < decimals; count++) {
+					pattern += "0";
+				}
+			}
+			NumberFormat nf = NumberFormat.getInstance(locale);
+			DecimalFormat formatter = (DecimalFormat) nf;
+			formatter.applyPattern(pattern);
+			String toReturn = formatter.format(scaledValue);
+			return toReturn;
 		}
 
 }

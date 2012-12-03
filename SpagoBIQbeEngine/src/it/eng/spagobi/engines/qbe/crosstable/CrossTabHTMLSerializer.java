@@ -5,19 +5,22 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.crosstable;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.engines.qbe.crosstable.CrossTab.CellType;
+import it.eng.spagobi.engines.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.bo.MeasureScaleFactorOption;
+import it.eng.spagobi.engines.worksheet.services.export.MeasureFormatter;
+import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition.Row;
+import it.eng.spagobi.utilities.engines.EngineMessageBundle;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.engines.qbe.crosstable.CrossTab.CellType;
-import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition.Row;
-import it.eng.spagobi.utilities.engines.EngineMessageBundle;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class CrossTabHTMLSerializer {
 	
@@ -31,6 +34,7 @@ public class CrossTabHTMLSerializer {
 	private static String EMPTY_CLASS = "empty";
 	private static String MEMBER_CLASS = "member";
 	private static String LEVEL_CLASS = "level";
+	private static String NA_CLASS = "na";
 	
 	private Locale locale = null;
 	
@@ -83,30 +87,71 @@ public class CrossTabHTMLSerializer {
 		SourceBean table = new SourceBean(TABLE_TAG);
 		int leaves = crossTab.getRowsRoot().getLeafsNumber();
 		
-		List<SourceBean> rows = new ArrayList<SourceBean>();
-		// initialize all rows (with no columns)
-		for (int i = 0 ; i < leaves; i++) {
-			SourceBean aRow = new SourceBean(ROW_TAG);
-			table.setAttribute(aRow);
-			rows.add(aRow);
-		}
-		
-		int levels = crossTab.getRowsRoot().getDistanceFromLeaves();
-		for (int i = 0 ; i < levels; i++) {
-			List<Node> levelNodes = crossTab.getRowsRoot().getLevel(i + 1);
-			int counter = 0;
-			for (int j = 0 ; j < levelNodes.size(); j++) {
-				SourceBean aRow = rows.get(counter);
-				Node aNode = levelNodes.get(j);
+		if (leaves == 1) { // only root node exists 
+			// no attributes on rows, maybe measures?
+			if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
+				List<Measure> measures = crossTab.getCrosstabDefinition().getMeasures();
+				for (int i = 0; i < measures.size(); i++) {
+					Measure measure = measures.get(i);
+					SourceBean aRow = new SourceBean(ROW_TAG);
+					SourceBean aColumn = new SourceBean(COLUMN_TAG);
+					aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS);
+					String measureAlias = measure.getAlias();
+					String text = MeasureScaleFactorOption.getScaledName(
+							measureAlias,
+							crossTab.getMeasureScaleFactor(measureAlias),
+							this.locale);
+					aColumn.setCharacters(text);
+					aRow.setAttribute(aColumn);
+					table.setAttribute(aRow);
+				}
+			} else {
+				// nothing on rows
+				SourceBean aRow = new SourceBean(ROW_TAG);
 				SourceBean aColumn = new SourceBean(COLUMN_TAG);
 				aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS);
-				aColumn.setCharacters(aNode.getDescription());
-				int rowSpan = aNode.getLeafsNumber();
-				if (rowSpan > 1) {
-					aColumn.setAttribute(ROWSPAN_ATTRIBUTE, rowSpan);
-				}
+				aColumn.setCharacters(EngineMessageBundle.getMessage("sbi.crosstab.runtime.headers.data", this.getLocale()));
 				aRow.setAttribute(aColumn);
-				counter = counter + rowSpan;
+				table.setAttribute(aRow);
+			}
+		} else {
+			List<SourceBean> rows = new ArrayList<SourceBean>();
+			// initialize all rows (with no columns)
+			for (int i = 0 ; i < leaves; i++) {
+				SourceBean aRow = new SourceBean(ROW_TAG);
+				table.setAttribute(aRow);
+				rows.add(aRow);
+			}
+			
+			int levels = crossTab.getRowsRoot().getDistanceFromLeaves();
+			for (int i = 0 ; i < levels; i++) {
+				List<Node> levelNodes = crossTab.getRowsRoot().getLevel(i + 1);
+				int counter = 0;
+				for (int j = 0 ; j < levelNodes.size(); j++) {
+					SourceBean aRow = rows.get(counter);
+					Node aNode = levelNodes.get(j);
+					SourceBean aColumn = new SourceBean(COLUMN_TAG);
+					aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS);
+					
+					String text = null;
+					if (crossTab.getCrosstabDefinition().isMeasuresOnRows() && i + 1 == levels) {
+						String measureAlias = aNode.getDescription();
+						text = MeasureScaleFactorOption.getScaledName(
+							measureAlias,
+							crossTab.getMeasureScaleFactor(measureAlias),
+							this.locale);
+					} else {
+						text = aNode.getDescription();
+					}
+					
+					aColumn.setCharacters(text);
+					int rowSpan = aNode.getLeafsNumber();
+					if (rowSpan > 1) {
+						aColumn.setAttribute(ROWSPAN_ATTRIBUTE, rowSpan);
+					}
+					aRow.setAttribute(aColumn);
+					counter = counter + rowSpan;
+				}
 			}
 		}
 		
@@ -116,22 +161,45 @@ public class CrossTabHTMLSerializer {
 	private SourceBean serializeColumnsHeaders(CrossTab crossTab) throws SourceBeanException {
 		SourceBean table = new SourceBean(TABLE_TAG);
 		int levels = crossTab.getColumnsRoot().getDistanceFromLeaves();
-		for (int i = 0 ; i < levels; i++) {
+		if (levels == 0) {
+			// nothing on columns
 			SourceBean aRow = new SourceBean(ROW_TAG);
-			List<Node> levelNodes = crossTab.getColumnsRoot().getLevel(i + 1);
-			for (int j = 0 ; j < levelNodes.size(); j++) {
-				Node aNode = levelNodes.get(j);
-				SourceBean aColumn = new SourceBean(COLUMN_TAG);
-				String className = (( i + 1 ) % 2 == 0 || ( i + 1 ) == levels) ? MEMBER_CLASS : LEVEL_CLASS;
-				aColumn.setAttribute(CLASS_ATTRIBUTE, className);
-				aColumn.setCharacters(aNode.getDescription());
-				int colSpan = aNode.getLeafsNumber();
-				if (colSpan > 1) {
-					aColumn.setAttribute(COLSPAN_ATTRIBUTE, colSpan);
-				}
-				aRow.setAttribute(aColumn);
-			}
+			SourceBean aColumn = new SourceBean(COLUMN_TAG);
+			aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS);
+			aColumn.setCharacters(EngineMessageBundle.getMessage("sbi.crosstab.runtime.headers.data", this.getLocale()));
+			aRow.setAttribute(aColumn);
 			table.setAttribute(aRow);
+		} else {
+			for (int i = 0 ; i < levels; i++) {
+				SourceBean aRow = new SourceBean(ROW_TAG);
+				List<Node> levelNodes = crossTab.getColumnsRoot().getLevel(i + 1);
+				for (int j = 0 ; j < levelNodes.size(); j++) {
+					Node aNode = levelNodes.get(j);
+					SourceBean aColumn = new SourceBean(COLUMN_TAG);
+					// odd levels are levels (except the last one, since it contains measures' names)
+					String className = (( i + 1 ) % 2 == 0 || ( i + 1 ) == levels) ? MEMBER_CLASS : LEVEL_CLASS;
+					aColumn.setAttribute(CLASS_ATTRIBUTE, className);
+					
+					String text = null;
+					if (crossTab.getCrosstabDefinition().isMeasuresOnColumns() && i + 1 == levels) {
+						String measureAlias = aNode.getDescription();
+						text = MeasureScaleFactorOption.getScaledName(
+							measureAlias,
+							crossTab.getMeasureScaleFactor(measureAlias),
+							this.locale);
+					} else {
+						text = aNode.getDescription();
+					}
+					
+					aColumn.setCharacters(text);
+					int colSpan = aNode.getLeafsNumber();
+					if (colSpan > 1) {
+						aColumn.setAttribute(COLSPAN_ATTRIBUTE, colSpan);
+					}
+					aRow.setAttribute(aColumn);
+				}
+				table.setAttribute(aRow);
+			}
 		}
 		return table;
 	}
@@ -139,22 +207,32 @@ public class CrossTabHTMLSerializer {
 	private SourceBean serializeData(CrossTab crossTab) throws SourceBeanException {
 		SourceBean table = new SourceBean(TABLE_TAG);
 		String[][] data = crossTab.getDataMatrix();
+		MeasureFormatter measureFormatter = new MeasureFormatter(crossTab);
 		for (int i = 0; i < data.length; i++) {
 			SourceBean aRow = new SourceBean(ROW_TAG);
 			String[] values = data[i];
 			for (int j = 0 ; j < values.length; j++) {
-				String value = values[j];
+				String text = values[j];
 				SourceBean aColumn = new SourceBean(COLUMN_TAG);
 				CellType cellType = crossTab.getCellType(i, j);
-				aColumn.setAttribute(CLASS_ATTRIBUTE, cellType.getValue());
-				aColumn.setCharacters(value);
+				try {
+					double value = Double.parseDouble(text);
+					String actualText = measureFormatter.format(value, i, j, this.locale);
+					aColumn.setAttribute(CLASS_ATTRIBUTE, cellType.getValue());
+					aColumn.setCharacters(actualText);
+				} catch (NumberFormatException e) {
+					logger.debug("Text " + text
+							+ " is not recognized as a number");
+					aColumn.setAttribute(CLASS_ATTRIBUTE, NA_CLASS);
+					aColumn.setCharacters(text);
+				}
 				aRow.setAttribute(aColumn);
 			}
 			table.setAttribute(aRow);
 		}
 		return table;
 	}
-
+	
 	private SourceBean mergeHorizontally(SourceBean left,
 			SourceBean right) throws SourceBeanException {
 		
@@ -218,9 +296,17 @@ public class CrossTabHTMLSerializer {
 		if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
 			SourceBean aColumn = new SourceBean(COLUMN_TAG);
 			aColumn.setAttribute(CLASS_ATTRIBUTE, LEVEL_CLASS);
-			aColumn.setCharacters(EngineMessageBundle.getMessage("sbi.crosstab.crosstabdefinitionpanel.measures", this.getLocale()));
+			aColumn.setCharacters(EngineMessageBundle.getMessage("sbi.crosstab.runtime.headers.measures", this.getLocale()));
 			aRow.setAttribute(aColumn);
 		}
+		
+		// if row is still empty (nothing on rows), add an empty cell
+		if (!aRow.containsAttribute(COLUMN_TAG)) {
+			SourceBean emptyColumn = new SourceBean(COLUMN_TAG);
+			emptyColumn.setAttribute(CLASS_ATTRIBUTE, EMPTY_CLASS);
+			aRow.setAttribute(emptyColumn);
+		}
+		
 		table.setAttribute(aRow);
 		return table;
 	}

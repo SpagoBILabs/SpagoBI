@@ -520,6 +520,7 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 
 .crosstab table {
 	border-spacing: 0px;
+	border-collapse: collapse;
 }
 
 .crosstab td {
@@ -540,8 +541,14 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
     border-top-color:#EEEEEE;   
     border-bottom-color:#D0D0D0;    
     text-align: center;
-    background-image:url("../img/crosstab/headerbackground.gif");
-    background-size:contain;
+    
+    background: #f2f2f2; /* for non-css3 browsers */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f2f2', endColorstr='#e6e6e6'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#e6e6e6)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #f2f2f2,  #e6e6e6); /* for firefox 3.6+ */
+    
+    /*background-image:url("../img/crosstab/headerbackground.gif");*/
+    /*background-size:100%;*/
     /*background-repeat:repeat-x;*/
     font:11px tahoma,arial,verdana,sans-serif;
     color: #3783E8;
@@ -555,8 +562,14 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
     border-top-color:#EEEEEE;   
     border-bottom-color:#D0D0D0;    
     text-align: center;
-    background-image:url("../img/crosstab/headerbackgroundtitle.gif");
-    background-size:contain;
+    
+    background: #ebf3fd; /* for non-css3 browsers */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ebf3fd', endColorstr='#d9e8fb'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#ebf3fd), to(#d9e8fb)); /* for webkit browsers */
+    background: -moz-linear-gradient(top,  #ebf3fd,  #d9e8fb); /* for firefox 3.6+ */
+    
+    /*background-image:url("../img/crosstab/headerbackgroundtitle.gif");*/
+    /*background-size:contain;*/
     /*background-repeat:repeat-x;*/
     font:11px tahoma,arial,verdana,sans-serif;
     color: #3783E8;
@@ -570,6 +583,18 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
     border-top-color:#EEEEEE;   
     border-bottom-color:#D0D0D0;    
     text-align: right;
+    background-color: transparent;
+    font:11px tahoma,arial,verdana,sans-serif;
+    padding-right:0px;
+}
+
+.crosstab td.na {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: center;
     background-color: transparent;
     font:11px tahoma,arial,verdana,sans-serif;
     padding-right:0px;
