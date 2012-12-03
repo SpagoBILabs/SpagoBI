@@ -61,9 +61,16 @@ public class MeasureScaleFactorOption extends FieldOption {
 		return value;
 	}
 	
-	public static String getScaledName(String name, String scaleFactor, Locale locale){
-		if(scaleFactor!=null && !scaleFactor.equals("") && locale!=null && !scaleFactor.equals("NONE") ){
-			return name+" "+EngineMessageBundle.getMessage("worksheet.export.scaleFactor."+scaleFactor, locale);
+	public static String getScaledName(String name, String scaleFactor,
+			Locale locale) {
+		if (scaleFactor != null && !scaleFactor.equals("") && locale != null
+				&& !scaleFactor.equals("NONE")) {
+			return name
+					+ " ("
+					+ EngineMessageBundle.getMessage(
+							"worksheet.export.scaleFactor." + scaleFactor,
+							locale)
+					+ ")";
 		}
 		return name;
 	}

@@ -82,6 +82,7 @@ public class WorkSheetXLSExporter {
 	public static final String SHEET_TYPE = "SHEET_TYPE";
 	public static final String CHART = "CHART";
 	public static final String CROSSTAB = "CROSSTAB";
+	public static final String STATIC_CROSSTAB = "STATIC_CROSSTAB";
 	public static final String TABLE = "TABLE";
 
 	public static final String SVG = "SVG";

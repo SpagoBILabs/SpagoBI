@@ -7,8 +7,13 @@
 package it.eng.spagobi.engines.qbe.crosstable;
 
 import groovy.util.Eval;
+import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.worksheet.bo.FieldOption;
+import it.eng.spagobi.engines.worksheet.bo.FieldOptions;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
+import it.eng.spagobi.engines.worksheet.bo.WorksheetFieldsOptions;
 import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetSerializationUtils;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -112,7 +117,7 @@ public class CrossTab {
 	 * @param fieldOptions: fieldOptions
 	 * @param calculateFields: array of JSONObjects the CF
 	 */
-	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray fieldOptions, JSONArray calculateFields) throws JSONException{
+	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, WorksheetEngineInstance worksheetEngineInstance, JSONArray calculateFields) throws JSONException{
 		this(dataStore, crosstabDefinition);
 		
 		rowsSum =  getTotalsOnRows(measuresOnRow);
@@ -126,7 +131,7 @@ public class CrossTab {
 				calculateCF(cf.getString("operation"), horizontal, cf.getInt("level"), cf.getString("name"), CellType.CF);
 			}
 		}
-		addMeasuresScaleFactor(fieldOptions);
+		addMeasuresScaleFactor(worksheetEngineInstance);
 		addSubtotals();
 		
 		addTotals();
@@ -1852,21 +1857,25 @@ public class CrossTab {
 		return dataMatrix;
 	}
 	
-	private void addMeasuresScaleFactor(JSONArray fieldOptions){
-		if(fieldOptions!=null){
-			for (int i = 0; i < fieldOptions.length(); i++) {
-				try {
-					JSONObject field = fieldOptions.getJSONObject(i);
-					JSONObject aFieldOptions = field.getJSONObject(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
-					String fieldId = field.getString("id");
-					for (int j = 0; j < measures.size(); j++) {
-						if(fieldId.equals(measures.get(j).getId())){
-							measures.get(j).setScaleFactor(aFieldOptions.getString(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR));
-							break;
+	private void addMeasuresScaleFactor(
+			WorksheetEngineInstance engineInstance) {
+		if (engineInstance != null) {
+			
+			WorkSheetDefinition definition = engineInstance.getTemplate().getWorkSheetDefinition();
+			WorksheetFieldsOptions options = definition.getFieldsOptions();
+			
+			for (int i = 0; i < measures.size(); i++) {
+				MeasureInfo measure = measures.get(i);
+				FieldOptions aFieldOptions = options.getOptionsForFieldByFieldId(measure.getId());
+				if (aFieldOptions != null) {
+					List<FieldOption> opts = aFieldOptions.getOptions();
+					for (int j = 0; j < opts.size(); j++) {
+						FieldOption anOption = opts.get(j);
+						if (anOption.getName().equals(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR)) {
+							String value = anOption.getValue().toString();
+							measure.setScaleFactor(value);
 						}
 					}
-				} catch (Exception e) {
-					logger.error("No scale factor setted for the measures "+fieldOptions,e);
 				}
 			}
 		}

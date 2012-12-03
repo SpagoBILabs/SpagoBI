@@ -132,6 +132,7 @@ Sbi.crosstab.MeasuresContainerPanel = function(config) {
 Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 	
 	initialData: undefined
+	, isStatic: false
 	, targetRow: null
 	, detailsWizard: undefined
 	, crosstabConfig: undefined
@@ -332,7 +333,9 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 	
 	, openDetailsWizard: function(event, toolEl, panel) {
 	  	if (this.detailsWizard === undefined) {
-	  		this.detailsWizard = new Sbi.crosstab.CrosstabDetailsWizard({});
+	  		this.detailsWizard = new Sbi.crosstab.CrosstabDetailsWizard({
+	  			isStatic: this.isStatic
+	  		});
 	  		this.detailsWizard.on('apply', function(values, theWizard) {
 	  			this.crosstabConfig = values;
 	  		}, this);

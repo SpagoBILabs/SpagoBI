@@ -189,6 +189,7 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 		String designer = content.getString(WorkSheetSerializationUtils.DESIGNER);
 		if (WorkSheetSerializationUtils.DESIGNER_PIVOT.equals(designer)) {
 			toReturn = (CrosstabDefinition) SerializationManager.deserialize(content.getJSONObject(WorkSheetSerializationUtils.CROSSTABDEFINITION), "application/json", CrosstabDefinition.class);
+			((CrosstabDefinition) toReturn).setStatic(false);
 		} else if (WorkSheetSerializationUtils.DESIGNER_STATIC_PIVOT.equals(designer)) {
 			toReturn = (CrosstabDefinition) SerializationManager.deserialize(content.getJSONObject(WorkSheetSerializationUtils.CROSSTABDEFINITION), "application/json", CrosstabDefinition.class);
 			((CrosstabDefinition) toReturn).setStatic(true);

@@ -84,6 +84,7 @@ Sbi.crosstab.core.HTMLCrossTab = function(config) {
   		html : c.htmlData
   		, border: false
   		, autoWidth: true
+  		, width: 'auto'
 	});
     
     Sbi.crosstab.core.HTMLCrossTab.superclass.constructor.call(this, c);

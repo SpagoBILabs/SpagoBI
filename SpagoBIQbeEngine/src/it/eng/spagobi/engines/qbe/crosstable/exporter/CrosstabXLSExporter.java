@@ -116,8 +116,7 @@ public class CrosstabXLSExporter {
 		int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
 		int rowsDepth = cs.getRowsRoot().getSubTreeDepth();
 
-		MeasureFormatter measureFormatter = new MeasureFormatter(cs,
-				new DecimalFormat("#0.00"), "#0.00");
+		MeasureFormatter measureFormatter = new MeasureFormatter(cs);
 		int rowsNumber = cs.getDataMatrix().length;
 		// + 1 because there may be also the bottom row with the totals
 		int totalRowsNumber = columnsDepth + rowsNumber + 1;
