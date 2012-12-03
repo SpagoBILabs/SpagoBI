@@ -15,5 +15,13 @@
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
+	
+	<ACTION name="NETWORK_EXPORT_ACTION" 
+			class="it.eng.spagobi.engines.network.services.NetworkExportAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	
 
 </ACTIONS>

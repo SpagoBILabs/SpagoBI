@@ -53,7 +53,7 @@ Sbi.locale.formats = {
 //===================================================================
 // MESSAGE WINDOW
 //===================================================================
-Sbi.locale.ln['sbi.qbe.messagewin.warning.title'] = 'Warning message';
-Sbi.locale.ln['sbi.qbe.messagewin.error.title'] = 'Error message';
-Sbi.locale.ln['sbi.qbe.messagewin.info.title'] = 'Info message';
+Sbi.locale.ln['sbi.qbe.messagewin.warning.title'] = 'Message d\'alerte';
+Sbi.locale.ln['sbi.qbe.messagewin.error.title'] = 'Message d\'erreur';
+Sbi.locale.ln['sbi.qbe.messagewin.info.title'] = 'Message d\'information';
 

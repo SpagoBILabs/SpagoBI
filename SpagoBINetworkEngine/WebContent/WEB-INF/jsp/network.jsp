@@ -47,6 +47,10 @@ author: Alberto Ghedin
 	String spagobiServerHost;
 	String spagobiContext;
 	String spagobiSpagoController;
+	String executionId;
+	String engineServerHost;
+	String enginePort;
+	String engineContext;
 	
 	networkEngineInstance = (NetworkEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute("ENGINE_INSTANCE");
 	profile = (UserProfile)networkEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
@@ -63,6 +67,21 @@ author: Alberto Ghedin
     spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
     spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
     INetwork net = networkEngineInstance.getNet();
+    
+
+ 	engineServerHost = request.getServerName();
+ 	enginePort = "" + request.getServerPort();
+    engineContext = request.getContextPath();
+    if( engineContext.startsWith("/") || engineContext.startsWith("\\") ) {
+    	engineContext = request.getContextPath().substring(1);
+    }
+    
+    executionId = request.getParameter("SBI_EXECUTION_ID");
+    if(executionId != null) {
+    	executionId = "'" + request.getParameter("SBI_EXECUTION_ID") + "'";;
+    } else {
+    	executionId = "null";
+    }   
 %>
 
 
@@ -83,82 +102,65 @@ author: Alberto Ghedin
 		<-- END SCRIPT FOR DOMAIN DEFINITION --%>
 	
 	
-        <script type="text/javascript">
-            window.onload=function() {
-                // id of Cytoscape Web container div
-                var div_id = "cytoscapeweb";
 
-                // initialization options
-                var options = {
-                    // where you have the Cytoscape Web SWF
-                    swfPath: "../swf/CytoscapeWeb",
-                    // where you have the Flash installer SWF
-                    flashInstallerPath: "../swf/playerProductInstall"
-                };
-                
-                // init and draw
-                var vis = new org.cytoscapeweb.Visualization(div_id, options);
-
-                var networkEscaped = <%= net.getNetworkType().equals("json")?net.getNetworkAsString():("\""+StringEscapeUtils.escapeJavaScript( net.getNetworkAsString() )+"\"")	%>;
-                var networkLink = <%= net.getNetworkCrossNavigation()	%>;
-
-                if(<%= net.getNetworkType().equals("json") %>){
-              	   var network = {
-                     		dataSchema: {
-                     			nodes: networkEscaped.nodeMetadata
-                     		}
-              	   };
-              	  	network.data = {};
-              	  	var options = <%= (net instanceof JSONNetwork)?((JSONNetwork)net).getNetworkOptions():"\"\"" %>;
-              	  	network.data.edges= networkEscaped.edges;
-              	  	network.data.nodes= networkEscaped.nodes;
-              	 	vis.draw(Ext.apply({ network: network},options ||{}));
-
-                 }else{
-                	 vis.draw({ network: networkEscaped});
-                 }
-
-                
-                
-
-                vis.addListener("click", "edges", function(evt) {
-                    var edge = evt.target;
-                    var parametersString="";
-
-                    var fixedParameters = networkLink.fixedParameters;
-                    if(fixedParameters!=null && fixedParameters!=undefined){
-                    	for(var parameter in fixedParameters){
-                    		parametersString = parametersString+"&"+parameter+'='+fixedParameters[parameter];
-                    	}
-                    }
-
-                    var dynamicParameters = networkLink.dynamicParameters;
-                    if(dynamicParameters!=null && dynamicParameters!=undefined){
-                    	var edgeParameters = dynamicParameters.EDGE; 
-                        if(edgeParameters!=null && edgeParameters!=undefined){
-                        	for(var parameter in edgeParameters){
-                        		parametersString = parametersString+"&"+edgeParameters[parameter]+'='+edge.data[parameter];
-                        	}
-                        }
-                    }
-
-                    alert("Edge " +parametersString + " was clicked");
-                });
-            };
-        </script>
         
         <style>
             /* The Cytoscape Web container must have its dimensions set. */
             html, body { height: 100%; width: 100%; padding: 0; margin: 0; }
-            #cytoscapeweb { width: 100%; height: 100%; }
+            #aaa { width: 100%; height: 100%; }
         </style>
     </head>
     
     <body>
-    SSSSSSSSSSS
-        <div id="cytoscapeweb">
-            Cytoscape Web will replace the contents of this div with your graph.
-        </div>
+
+        <script type="text/javascript">
+        
+        
+        Sbi.config = {};
+        var url = {
+				  host: '<%= engineServerHost %>'
+				, port: '<%= enginePort %>'
+				, contextPath: '<%= engineContext %>'
+			};
+		
+			var params = {
+				SBI_EXECUTION_ID: <%=executionId %>			
+			  , LIGHT_NAVIGATOR_DISABLED: 'TRUE'
+			};
+			Sbi.config.serviceRegistry = Ext.create('Sbi.service.ServiceRegistry',{ baseUrl: url
+  																			  , baseParams: params}); 
+			Sbi.config.spagobiServiceRegistry = Ext.create('Sbi.service.ServiceRegistry',{
+															baseUrl: {contextPath: '<%= spagobiContext %>'}
+														  , baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
+												});
+			
+			
+			
+        
+                var networkEscaped = <%= net.getNetworkType().equals("json")?net.getNetworkAsString():("\""+StringEscapeUtils.escapeJavaScript( net.getNetworkAsString() )+"\"")	%>;
+                var networkLink = <%= net.getNetworkCrossNavigation()	%>;
+				var networkType = <%= net.getNetworkType().equals("json") %>;	
+				var config = {};
+				config.networkEscaped = networkEscaped;
+				config.networkLink = networkLink;
+				config.networkType = networkType;
+				
+				var network =null;
+				
+				Ext.onReady(function() { 
+					Ext.QuickTips.init();
+					network = Ext.create('Sbi.network.networkObject',config); //by alias
+
+			
+					var networkPanel = Ext.create('Ext.container.Viewport', {
+				      layout: 'border',
+				      items: [network]
+				    });
+					
+
+
+				});
+        </script>
     </body>
 	
 

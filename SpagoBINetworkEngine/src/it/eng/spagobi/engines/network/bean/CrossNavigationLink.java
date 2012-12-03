@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 public class CrossNavigationLink {
 
 	private String document;//name of the linked document
+	private String navigationMode = "self";//update, self, popup
 	private List<CrossNavigationParameter> parameters;//list of parameters
 
 	public static transient Logger logger = Logger.getLogger(CrossNavigationLink.class);
@@ -167,4 +168,14 @@ public class CrossNavigationLink {
 	public String getDocument() {
 		return document;
 	}
+
+	public String getNavigationMode() {
+		return navigationMode;
+	}
+
+	public void setNavigationMode(String navigationMode) {
+		this.navigationMode = navigationMode;
+	}
+	
+	
 }

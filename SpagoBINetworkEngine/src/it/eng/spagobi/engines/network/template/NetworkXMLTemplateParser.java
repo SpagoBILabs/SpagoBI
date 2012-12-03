@@ -33,6 +33,7 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 	public static final String DRILL_TAG = "DRILL";
 	public static final String PARAM_TAG = "PARAM";
 	public static final String DRILL_DOCUMENT_ATTR = "document";
+	public static final String DRILL_NAVIGATION_MODE_ATTR = "navigationMode";
 	public static final String PARAM_NAME_ATTR = "name";
 	public static final String PARAM_TYPE_ATTR = "type";
 	public static final String PARAM_VALUE_ATTR = "value";
@@ -154,6 +155,7 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 		
 		SourceBean confSB = null;
 		String documentName = null;
+		String navigationMode = null;
 		
 		logger.debug("IN");
 		confSB = (SourceBean)template.getAttribute(DRILL_TAG);
@@ -162,8 +164,14 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 			return null;
 		}
 		documentName = (String)confSB.getAttribute(DRILL_DOCUMENT_ATTR);
+		navigationMode = (String)confSB.getAttribute(DRILL_NAVIGATION_MODE_ATTR);
 
 		CrossNavigationLink drill = new CrossNavigationLink(documentName);
+		
+		if(navigationMode!=null && navigationMode.length()>0){
+			drill.setNavigationMode(navigationMode);
+		}
+		
 		List paramslist = (List)template.getAttributeAsList(DRILL_TAG+"."+PARAM_TAG);
 
 		if(paramslist != null){

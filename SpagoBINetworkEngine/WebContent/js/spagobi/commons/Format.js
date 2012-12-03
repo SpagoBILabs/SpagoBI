@@ -1,23 +1,12 @@
-/**
- * SpagoBI - The Business Intelligence Free Platform
- *
- * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+/** SpagoBI, the Open Source Business Intelligence suite
 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * 
- **/
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
+ 
+  
+ 
+  
  
 /**
   * Object name 
@@ -32,14 +21,12 @@
   * 
   * Authors
   * 
-  * - Andrea Gioia (adrea.gioia@eng.it)
+  * - Antonella Giachino (antonella.giachino@eng.it)
   */
 
-Ext.ns("Sbi.qbe.commons");
 
-Sbi.qbe.commons.Format = function(){
- 
-	return {
+Ext.define('Sbi.network.commons.Format', {
+	statics: {
 		/**
          * Cut and paste from Ext.util.Format
          */
@@ -77,7 +64,7 @@ Sbi.qbe.commons.Format = function(){
          */
         , dateRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.date(v, format);
+                return Sbi.network.commons.Format.date(v, format);
             };
         }
         
@@ -141,7 +128,7 @@ Sbi.qbe.commons.Format = function(){
         
         , numberRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.number(v, format);
+                return Sbi.network.commons.Format.number(v, format);
             };
         }
         
@@ -185,11 +172,11 @@ Sbi.qbe.commons.Format = function(){
         
         , stringRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.string(v, format);
+                return Sbi.network.commons.Format.string(v, format);
             };
         }
         
-        , boolean : function(v, format) {
+        , 'boolean' : function(v, format) {
         	format = Ext.apply({}, format || {}, {
 	    		trueSymbol: 'true',
 	    		falseSymbol: 'false',
@@ -207,9 +194,10 @@ Sbi.qbe.commons.Format = function(){
         	return v;
         }
         
+        
         , booleanRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.boolean(v, format);
+                return Sbi.network.commons.Format['boolean'](v, format);
             };
         }
         
@@ -222,13 +210,14 @@ Sbi.qbe.commons.Format = function(){
         
         , htmlRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.html(v, format);
+                return Sbi.network.commons.Format.html(v, format);
             };
         }
         
-	};
+	} 
+});
+
 	
-}();
 
 
 
