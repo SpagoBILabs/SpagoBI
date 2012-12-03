@@ -199,7 +199,7 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 				var str = "";
 				for(var i = 0; i < serieValue.length; i++) {
 					seriesData = serieValue[i];					
-					seriesData.data = this.getSeries(serieValue[i].alias);//values from dataset
+					seriesData.data = this.getSeries(serieValue[i].alias,serieValue[i].group );//values from dataset
 					seriesNode.push(seriesData);
 				}
 			}
@@ -276,6 +276,9 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	, formatWithNameValue: function (){
 		return function (){return '<b>'+ this.series.name+ '</b><br/>'+ this.point.name ;};
 	}	
+	, formatWithNameValuePlain: function (){
+		return function (){return  '<b>'+this.series.name +'</b><br/>'+this.point.name +':'+  this.y;};
+	}
 	, formatSubstringLabel: function (len){
 		return function (){return '<b>'+ this.value.substring(0,len)+ '</b>';};
 	}
@@ -298,6 +301,9 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
         case 'name_value':
         	formatterCode = this.formatWithNameValue();
         	break;
+        case 'name_value_plain':
+        	formatterCode = this.formatWithNameValuePlain();
+        	break;        	
         case 'percentage':
         	formatterCode = this.formatWithPercentage();
         	break;
