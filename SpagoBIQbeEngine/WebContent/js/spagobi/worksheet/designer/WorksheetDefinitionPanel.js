@@ -163,8 +163,15 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 				var sheets = sheetTemplate.sheets;
 				for(var i=0; i<sheets.length; i++){
 					if(additionalData[i]!=undefined && additionalData[i]!=null && additionalData[i].data!=undefined && additionalData[i].data!=null && !Ext.isEmpty(additionalData[i].data) && sheets[i].content.crosstabDefinition!=undefined && sheets[i].content.crosstabDefinition!=null){
-						sheets[i].content.crosstabDefinition.calculatedFields =additionalData[i].data.crosstabDefinition.calculatedFields;
-						sheets[i].content.crosstabDefinition.additionalData =additionalData[i].data.crosstabDefinition.additionalData;
+						if (additionalData[i].data.crosstabDefinition) {
+							var crosstabDefinition = additionalData[i].data.crosstabDefinition;
+							if (crosstabDefinition.calculatedFields) {
+								sheets[i].content.crosstabDefinition.calculatedFields = crosstabDefinition.calculatedFields;
+							}
+							if (crosstabDefinition.additionalData) {
+								sheets[i].content.crosstabDefinition.additionalData = crosstabDefinition.additionalData;
+							}
+						}
 					}
 				}	
 			}
