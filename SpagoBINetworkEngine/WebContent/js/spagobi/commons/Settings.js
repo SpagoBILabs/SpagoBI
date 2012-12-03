@@ -1,37 +1,28 @@
-Ext.ns("Sbi.settings");
+/** SpagoBI, the Open Source Business Intelligence suite
 
-Sbi.settings.qbe = {
-		queryBuilderPanel: {
-			enableTreeToolbar: true,
-			enableTreeTbPinBtn: true,
-			enableTreeTbUnpinBtn: true,
-			
-			
-			enableQueryTbExecuteBtn: true,
-			enableQueryTbSaveBtn: true,
-			enableQueryTbValidateBtn: false,
-			
-			enableCatalogueTbDeleteBtn: true,
-			enableCatalogueTbAddBtn: false,
-			enableCatalogueTbInsertBtn: true
-		}
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
+ 
+  
+ 
+  
+/**
+  * Object name 
+  * 
+  * [description]
+  * 
+  * 
+  * Public Functions
+  * 
+  *  [list]
+  * 
+  * 
+  * Authors
+  * 
+  * - Antonella Giachino (antonella.giachino@eng.it)
+  */
 
-		, selectGridPanel: {
-		
-			enableTbHideNonvisibleBtn: true
-			, enableTbAddCalculatedBtn: true
-			, enableTbDeleteAllBtn: true
-			, columns : {
-				'entity': {hideable: true, hidden: false, sortable: false}
-				, 'field': {hideable: true, hidden: false, sortable: false}
-				, 'alias': {hideable: true, hidden: false, sortable: false}	
-				, 'funct': {hideable: true, hidden: false, width: 50, sortable: false}
-				, 'group': {hideable: true, hidden: false, width: 50, sortable: false}
-				, 'order': {hideable: true, hidden: false, width: 50, sortable: false}
-				, 'visible': {hideable: true, hidden: false, width: 50, sortable: false}
-				, 'include': {hideable: true, hidden: false, width: 50, sortable: false}
-				, 'filter': {hideable: true, hidden: false, width: 50, sortable: false}
-				, 'having': {hideable: true, hidden: false, width: 50, sortable: false}			
-			}
-		}
-}; 
+Ext.define('Sbi.settings.chart', {
+
+});
