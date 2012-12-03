@@ -215,7 +215,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	/**
 	 * Loads the series for the chart
 	 */
-	, getSeries: function(alias){
+	, getSeries: function(alias, group){
 		if(this.store!=null){
 			//single serie
 		   	var series = [];
@@ -240,7 +240,24 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 								//recArray.push(rec[serieColumn]);		
 								recArray.push(tmpValue);		
 							}
-						}						
+						}
+						if(group && series.length>0){
+							var recArrayName = recArray[0];
+							var recArrayValue = recArray[1]; 
+							for(var i=0; i<series.length;i++){
+								var name = series[series.length-1][0];
+								var value = series[series.length-1][1];
+								
+								if(name==recArrayName){
+									recArrayValue = parseFloat(recArrayValue)+parseFloat(value);
+									series.splice(i,1);
+									recArray[0]=recArrayName;
+									recArray[1]=recArrayValue;
+									break;
+								}
+							}
+
+						}
 						series.push(recArray);
 					}
 		    	}
