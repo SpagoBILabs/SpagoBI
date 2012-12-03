@@ -143,6 +143,14 @@
 	background-image: url('../../../img/xlsx16.png') !important;
 }
 
+.icon-png {
+	background-image: url('../../../img/png16.png') !important;
+}
+
+.icon-graphml {
+	background-image: url('../../../img/graphml16.png') !important;
+}
+
 .icon-txt {
 	background-image: url('../../../img/txt16.png') !important;
 }

@@ -968,29 +968,51 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 							        })					    				        				
 						);	
 					}				
-			}else if ( this.executionInstance.document.typeCode == 'WORKSHEET') {
+			}else if ( this.executionInstance.document.typeCode == 'NETWORK') {
 
-					var menu0 = new Ext.menu.Menu({
-						id: 'basicMenu_0',
-						items: this.getWorksheetExportMenuItems()  
-					});	
+				var menu0 = new Ext.menu.Menu({
+					id: 'basicMenu_0',
+					items: this.getNetworkExportMenuItems()  
+				});	
 
-					
-					
-					if(this.executionInstance.document.exporters.length > 0){
-						this.add(
-									new Ext.Toolbar.MenuButton({
-										id: Ext.id()
-							            , tooltip: 'Exporters'
-										, path: 'Exporters'	
-										, iconCls: 'icon-export' 	
-							            , menu: menu0
-							            , width: 15
-							            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-							        })					    				        				
-						);	
-					}
-			}else if ( this.executionInstance.document.typeCode == 'DATAMART' || 
+				
+				
+				if(this.executionInstance.document.exporters.length > 0){
+					this.add(
+								new Ext.Toolbar.MenuButton({
+									id: Ext.id()
+						            , tooltip: 'Exporters'
+									, path: 'Exporters'	
+									, iconCls: 'icon-export' 	
+						            , menu: menu0
+						            , width: 15
+						            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+						        })					    				        				
+					);	
+				}
+		}else if ( this.executionInstance.document.typeCode == 'WORKSHEET') {
+
+			var menu0 = new Ext.menu.Menu({
+				id: 'basicMenu_0',
+				items: this.getWorksheetExportMenuItems()  
+			});	
+
+			
+			
+			if(this.executionInstance.document.exporters.length > 0){
+				this.add(
+							new Ext.Toolbar.MenuButton({
+								id: Ext.id()
+					            , tooltip: 'Exporters'
+								, path: 'Exporters'	
+								, iconCls: 'icon-export' 	
+					            , menu: menu0
+					            , width: 15
+					            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+					        })					    				        				
+				);	
+			}
+		}else if ( this.executionInstance.document.typeCode == 'DATAMART' || 
 						this.executionInstance.document.typeCode == 'SMART_FILTER' ) {
 			
 					
@@ -1508,4 +1530,64 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			throw err;
 		}
    }
+	 
+	 , getNetworkExportMenuItems: function() {
+
+		 var menuItems = new Array();
+
+		 for(i=0;i<this.executionInstance.document.exporters.length ;i++){
+
+			 if (this.executionInstance.document.exporters[i]=='PDF'){
+				 menuItems.push(	new Ext.menu.Item({
+					 id:  Ext.id()
+					 , text: LN('sbi.execution.PdfExport')
+					 , group: 'group_2'
+						 , iconCls: 'icon-pdf' 
+							 , scope: this
+							 , width: 15
+							 , handler : function() { this.exportNetworkExecution('pdf'); }
+				 , href: ''   
+				 })	 
+				 ); 
+			 }else if(this.executionInstance.document.exporters[i]=='PNG'){
+				 menuItems.push(   new Ext.menu.Item({
+					 id:  Ext.id()
+					 , text: LN('sbi.execution.PngExport')
+					 , group: 'group_2'
+						 , iconCls: 'icon-png' 
+							 , scope: this
+							 , width: 15
+							 , handler : function() { this.exportNetworkExecution('png'); }
+				 , href: ''   
+				 })	
+				 ); 
+			 } else if(this.executionInstance.document.exporters[i]=='GRAPHML'){
+				 menuItems.push(   new Ext.menu.Item({
+					 id:  Ext.id()
+					 , text: LN('sbi.execution.GraphmlExport')
+					 , group: 'group_2'
+						 , iconCls: 'icon-graphml' 
+							 , scope: this
+							 , width: 15
+							 , handler : function() { 
+								 this.exportNetworkExecution('graphml'); 
+							 }
+				 , href: ''   
+				 })	
+				 ); 
+			 }
+		 }
+
+		 return menuItems;
+	 }
+	 
+	 , exportNetworkExecution: function(type){
+		 var thePanel = this.miframe.getFrame().getWindow().network;
+		 var thePanel2 = this.miframe.getFrame();
+		 var thePanel3 = this.miframe.getFrame().getWindow();
+		 thePanel.exportNetwork(type);
+	 }
+	 
+	 
+	 
 });

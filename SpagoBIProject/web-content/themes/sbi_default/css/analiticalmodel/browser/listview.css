@@ -143,6 +143,12 @@
 	    background-image:url('../../../img/analiticalmodel/browser/document_mobile_cockpit.png')!important;
 	}
     
+ 	.group-view .document-item-icon .NETWORK-icon {
+	   	width:96px;
+	    height:96px;
+	    background-image:url('../../../img/analiticalmodel/browser/document_network.png')!important;
+	}   
+    
     .list-view #icon {
     	height:96px;	
     	width:96px;	
