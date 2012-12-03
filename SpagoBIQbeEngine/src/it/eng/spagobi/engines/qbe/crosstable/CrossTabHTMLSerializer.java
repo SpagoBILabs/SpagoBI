@@ -8,6 +8,7 @@ package it.eng.spagobi.engines.qbe.crosstable;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab.CellType;
+import it.eng.spagobi.engines.qbe.crosstable.CrossTab.MeasureInfo;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.engines.worksheet.bo.MeasureScaleFactorOption;
 import it.eng.spagobi.engines.worksheet.services.export.MeasureFormatter;
@@ -21,6 +22,7 @@ import java.util.Locale;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 public class CrossTabHTMLSerializer {
 	
@@ -66,7 +68,7 @@ public class CrossTabHTMLSerializer {
 		return html;
 	}
 
-	private SourceBean getSourceBean(CrossTab crossTab) throws SourceBeanException {
+	private SourceBean getSourceBean(CrossTab crossTab) throws SourceBeanException, JSONException {
 		
 		SourceBean emptyTopLeftCorner = this.serializeTopLeftCorner(crossTab);
 		SourceBean rowsHeaders = this.serializeRowsHeaders(crossTab);
@@ -204,9 +206,10 @@ public class CrossTabHTMLSerializer {
 		return table;
 	}
 
-	private SourceBean serializeData(CrossTab crossTab) throws SourceBeanException {
+	private SourceBean serializeData(CrossTab crossTab) throws SourceBeanException, JSONException {
 		SourceBean table = new SourceBean(TABLE_TAG);
 		String[][] data = crossTab.getDataMatrix();
+		
 		MeasureFormatter measureFormatter = new MeasureFormatter(crossTab);
 		for (int i = 0; i < data.length; i++) {
 			SourceBean aRow = new SourceBean(ROW_TAG);
@@ -218,6 +221,14 @@ public class CrossTabHTMLSerializer {
 				try {
 					double value = Double.parseDouble(text);
 					String actualText = measureFormatter.format(value, i, j, this.locale);
+					
+					String percentOn = crossTab.getCrosstabDefinition().getConfig().optString("percenton");
+					if ("row".equals(percentOn) || "column".equals(percentOn)) {
+						Double percent = calculatePercent(value, i, j, percentOn, crossTab);
+						String percentStr = measureFormatter.formatPercent(percent, this.locale);
+						actualText += " (" + percentStr + "%)";
+					}
+					
 					aColumn.setAttribute(CLASS_ATTRIBUTE, cellType.getValue());
 					aColumn.setCharacters(actualText);
 				} catch (NumberFormatException e) {
@@ -233,6 +244,50 @@ public class CrossTabHTMLSerializer {
 		return table;
 	}
 	
+	private Double calculatePercent(double value, int i, int j, String percentOn, CrossTab crossTab) {
+		String[][] entries = crossTab.getDataMatrix();
+    	int rowSumStartColumn, columnSumStartRow;
+    	List<MeasureInfo> measures = crossTab.getMeasures();
+    	int measuresNumber = measures.size();
+		if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
+			rowSumStartColumn = entries[0].length - 1;
+			columnSumStartRow = entries.length - measuresNumber;
+		} else {
+			rowSumStartColumn = entries[0].length - measuresNumber;
+			columnSumStartRow = entries.length - 1;
+		}
+		
+		int offset;
+		
+		if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
+			offset = i % measuresNumber;
+		} else {
+			offset = j % measuresNumber;
+		}
+		
+		if (percentOn.equals("row")) {
+			if (!crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
+				return 100
+						* value
+						/ Double.parseDouble(entries[i][offset
+								+ rowSumStartColumn]);
+			} else {
+				return 100 * value
+						/ Double.parseDouble(entries[i][rowSumStartColumn]);
+			}
+		} else {
+			if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
+				return 100
+						* value
+						/ Double.parseDouble(entries[offset
+								+ columnSumStartRow][j]);
+			} else {
+				return 100 * value
+						/ Double.parseDouble(entries[columnSumStartRow][j]);
+			}
+		}
+	}
+
 	private SourceBean mergeHorizontally(SourceBean left,
 			SourceBean right) throws SourceBeanException {
 		

@@ -129,17 +129,16 @@ public class MeasureFormatter {
 		public Double applyScaleFactor(Double value, int positionI, int positionJ) {
 			String scaleFactor = "";
 			int pos;
-			
-			if(measureOnRow){
-				pos = positionI%measuresInfo.size();
-			}else{
-				pos = positionJ%measuresInfo.size();
+	
+			if (measureOnRow) {
+				pos = positionI % measuresInfo.size();
+			} else {
+				pos = positionJ % measuresInfo.size();
 			}
 			scaleFactor = measuresInfo.get(pos).getScaleFactor();
-			
+	
 			return MeasureScaleFactorOption.applyScaleFactor(value, scaleFactor);
-
-
+	
 		}
 
 		public String format(double value, int i, int j, Locale locale) {
@@ -156,6 +155,15 @@ public class MeasureFormatter {
 			DecimalFormat formatter = (DecimalFormat) nf;
 			formatter.applyPattern(pattern);
 			String toReturn = formatter.format(scaledValue);
+			return toReturn;
+		}
+		
+		public String formatPercent(double value, Locale locale) {
+			String pattern = "#0.00";
+			NumberFormat nf = NumberFormat.getInstance(locale);
+			DecimalFormat formatter = (DecimalFormat) nf;
+			formatter.applyPattern(pattern);
+			String toReturn = formatter.format(value);
 			return toReturn;
 		}
 
