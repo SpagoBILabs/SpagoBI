@@ -209,7 +209,7 @@ public class LoginModule extends AbstractHttpModule {
 					return;
 				}
 			} catch (Exception e) {
-				logger.error("Reading user information... ERROR");
+				logger.error("Reading user information... ERROR", e);
 				throw new SecurityException("Reading user information... ERROR",e);
 			}
 			//getting security type: if it's internal (SpagoBI) active pwd management and checks
