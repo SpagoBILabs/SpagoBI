@@ -250,7 +250,6 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
  * Cross Tab
  ********************************************************************************************************/
 .crosstab-table-headers{
-	font:15px arial,tahoma,helvetica,sans-serif;
 	cursor: pointer !important;
 	border:1px solid;
 	border-left-color:#EEEEEE;	
@@ -259,7 +258,7 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 	border-bottom-color:#D0D0D0;	
 	text-align: center;
 	background-image:url("../img/crosstab/headerbackground.gif");
-	font:12px arial,tahoma,helvetica,sans-serif;
+	font:12px tahoma,arial,verdana,sans-serif;
 	color : #3783E8;
 }
 
