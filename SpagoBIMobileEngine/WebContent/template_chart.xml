@@ -6,7 +6,7 @@
   <LEGEND position='right'/>
   
   <OPTIONS showValueTip='true'/>
-  
+ 
   <TITLE value="Bar Chart"/>
   
   <ANIMATE easing='bounceOut' duration='750'/>
