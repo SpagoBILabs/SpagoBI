@@ -234,7 +234,10 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	}
 	
 	, addFilterIntoStore : function (filter) {
-		var data = Ext.apply({}, filter); // making a clone
+		var data = Ext.apply({
+			selection   : "multivalue"
+			, mandatory : "no"
+		}, filter); // making a clone
 		var row = new this.Record(data); 
 		this.store.add([row]);
 		return row;
