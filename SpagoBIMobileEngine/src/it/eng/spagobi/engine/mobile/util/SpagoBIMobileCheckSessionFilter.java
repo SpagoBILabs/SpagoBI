@@ -6,33 +6,30 @@
 package it.eng.spagobi.engine.mobile.util;
 
 import it.eng.spagobi.commons.filters.SpagoBICoreCheckSessionFilter;
-import it.eng.spagobi.commons.utilities.ChannelUtilities;
+import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 
 public class SpagoBIMobileCheckSessionFilter extends SpagoBICoreCheckSessionFilter{
 
+	
+	private static transient Logger logger = Logger.getLogger(SpagoBIMobileCheckSessionFilter.class);
 	@Override
 	protected String getSessionExpiredUrl() {
 		// TODO Auto-generated method stub
 		return "/WEB-INF/jsp/sessionExpired.jsp";
 	}
 
-	
     
 }

@@ -40,6 +40,10 @@
 			    });
 			    this.add(app.views.browser);
 			    this.add(app.views.preview);
+			    
+			    
+			    //refresh management
+			    localStorage.setItem('app.views.browser', 'true');
 			}
 		    /*PAY ATTENTION TO INVOKE DO LAYOUT METHOD OF MAIN CONTAINER...otherwise no child item is displayed!!!!*/
 		    this.doLayout();  

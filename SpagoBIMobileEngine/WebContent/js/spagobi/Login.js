@@ -113,8 +113,8 @@
 					var content = Ext.util.JSON.decode(response.responseText);
 					var esito = content.text;
 					if (esito == 'userhome') {
-
 						app.views.form.hide();
+						localStorage.setItem('app.views.launched', 'true');
 						Ext.dispatch({
 							controller : app.controllers.mobileController,
 							action : 'login',
@@ -123,6 +123,7 @@
 								direction : 'right'
 							}
 						});
+						
 					} else {
 						Ext.Msg.alert('','<p style="color:#fff; font-weight: bold;">Login</p><br/>Authentication failure!',Ext.emptyFn).doLayout();
 						return;

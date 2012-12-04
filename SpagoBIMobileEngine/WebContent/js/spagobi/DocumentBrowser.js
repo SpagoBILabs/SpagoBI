@@ -100,7 +100,7 @@
 			});
 
 			this.store.sync();
-			
+						
 			this.bottomToolbar = new app.views.Toolbar({});
 			
 			this.dockedItems= [this.bottomToolbar];

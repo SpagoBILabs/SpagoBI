@@ -21,6 +21,7 @@
     	console.log('viewport created');
     	app.controllers.mobileController = new app.controllers.MobileController();
     	app.controllers.mobileController.init();
+    	
     	app.controllers.parametersController = new app.controllers.ParametersController();
     	app.controllers.parametersController.init();
     	app.controllers.executionController = new app.controllers.ExecutionController();
@@ -28,6 +29,34 @@
     	app.controllers.composedExecutionController = new app.controllers.ComposedExecutionController();
     	console.log('controller created');
     	
+    	// Retrieve the object from storage
+    	var appViewsLaunched = localStorage.getItem('app.views.launched');
+    	var loadedBrowser = localStorage.getItem('app.views.browser');
+    	
+    	if(appViewsLaunched !== undefined &&
+    			appViewsLaunched != null &&
+    			appViewsLaunched == 'true' &&
+    			loadedBrowser != undefined &&
+    			loadedBrowser != null &&
+    			loadedBrowser == 'true'
+    			){
+    		
+			Ext.dispatch({
+				controller : app.controllers.mobileController,
+				action : 'login',
+				animation : {
+					type : 'slide',
+					direction : 'right'
+				}
+			});
+
+			if(app.views.form != undefined && app.views.form != null){
+				app.views.form.hide();
+			}
+			// refresh page
+
+    	}
+
     	Ext.util.Observable.observeClass(Ext.data.Connection);
     	// connection handler, if server sends callback of expired session, logout!
     	Ext.data.Connection.on('requestexception', function (conn, response, options) {
@@ -44,8 +73,10 @@
     		//console.log('**********'+response.responseText);
 			if (content.errors !== undefined  && content.errors.length > 0) {
 				if (content.errors[0].message === 'session-expired') {
+					
+					localStorage.removeItem('app.views.launched');
+					localStorage.removeItem('app.views.browser');
 					window.location.href = Sbi.env.contextPath;
-
 				}
     	    }
     	});
