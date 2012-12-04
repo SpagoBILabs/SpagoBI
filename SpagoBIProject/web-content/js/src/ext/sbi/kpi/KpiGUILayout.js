@@ -48,16 +48,10 @@ Sbi.kpi.KpiGUILayout =  function(config) {
 		Ext.apply(this, c);
 		this.addEvents();
 		this.intPanels(config);
-		
-		if(this.kpiGridPanel != null){
-			c = {
-					items:[this.kpiMainPanel, this.kpiAccordionPanel]
-				};
-		}else{
-			c = {
-					items:[this.kpiMainPanel, this.kpiAccordionPanel]
-				};
-		}
+		c = {
+				items:[this.kpiMainPanel, this.kpiAccordionPanel]
+			};
+
 
    
 		Sbi.kpi.KpiGUILayout.superclass.constructor.call(this, c);
@@ -73,13 +67,15 @@ Ext.extend(Sbi.kpi.KpiGUILayout , Ext.Panel, {
 		var accordionconf = config.accordion;
 		
 		this.kpiMainPanel = new Ext.Panel({
-			collapsible: false,
-			layout: 'vbox',
-			scollable: true,
+			//collapsible: false,
+			//layout: 'vbox',
 			region: 'center',
+			//layout : 'fit',
+			autoScroll:true,
 			layoutConfig: {
 				padding: '2',
 				border: true,
+				autoScroll:true,
 				align: 'left'
 			} });
 
@@ -102,11 +98,9 @@ Ext.extend(Sbi.kpi.KpiGUILayout , Ext.Panel, {
 				var kpiPanel = new Ext.Panel({
 					title: resource,
 					collapsible: true,
-					layout: 'vbox',
-					style: 'width: 650px; border: 1px solid white;',
+					style: 'width: 100%; border: 1px solid white;',
 					height: 250,
 					items: [kpiGridPan],
-					
 					layoutConfig: {
 						padding: '5',
 						border: true,
@@ -115,7 +109,7 @@ Ext.extend(Sbi.kpi.KpiGUILayout , Ext.Panel, {
 
 				this.kpiMainPanel.add(kpiPanel);
 			}
-
+			
 		}else{
 			this.kpiGridPanel = new Sbi.kpi.KpiGridPanel(gridconf,gridconf.json);
 			this.kpiGridPanel.on('updateAccordion',function(field){
@@ -127,7 +121,8 @@ Ext.extend(Sbi.kpi.KpiGUILayout , Ext.Panel, {
 		
 		this.kpiAccordionPanel = new Sbi.kpi.KpiAccordionPanel(accordionconf);
 		this.add(this.kpiMainPanel);
-
+		this.kpiMainPanel.doLayout();
+		this.doLayout();
 	}
 
 	
