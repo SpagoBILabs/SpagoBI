@@ -23,6 +23,7 @@ public class MobileConstants {
 	public static final String COLUMN_VALUE_ATTR = "value";
 	public static final String COLUMN_STYLE_ATTR = "style";
 	public static final String COLUMN_ALARM_ATTR = "alarm";
+	public static final String COLUMN_WIDTH_ATTR = "width";
 	public static final String CONDITIONS_TAG = "CONDITIONS";
 	public static final String CONDITION_TAG = "CONDITION";
 	public static final String CONDITION_STYLE_ATTR = "style";

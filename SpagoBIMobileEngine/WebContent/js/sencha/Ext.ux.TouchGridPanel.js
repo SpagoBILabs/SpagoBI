@@ -7,7 +7,6 @@ Ext.ns("Ext.ux");
 
 Ext.ux.TouchGridPanel = Ext.extend(Ext.Panel, {
 	layout        : "fit",
-
 	multiSelect   : false,
 	scroll        : "vertical",
 	conditions    : null,
@@ -48,7 +47,9 @@ Ext.ux.TouchGridPanel = Ext.extend(Ext.Panel, {
 	},
 	
 	buildHeader   : function() {
-		var me        = this,
+		
+
+	var me        = this,
 			colModel  = me.colModel,
 			colNum    = me.getColNum(false),
 			cellWidth = 100/colNum,
@@ -60,13 +61,16 @@ Ext.ux.TouchGridPanel = Ext.extend(Ext.Panel, {
 				flex = col.flex || 1,
 				cls  = "";
 
-			var width = flex * cellWidth;
-
+			var width = (flex * cellWidth)+'%';
+			if(col.width != null && col.width !== undefined){
+				//percetage column or oixel are specified in template
+				width = col.width;		
+			}
 			if (col.hidden) {
 				cls += "x-grid-col-hidden";
 			}
 
-			colTpl += '<td width="' + width + '%" class="x-grid-cell x-grid-hd-cell x-grid-col-' + col.mapping + ' ' + cls + '" mapping="' + col.mapping + '">' + col.header + '</td>';
+			colTpl += '<td width="' + width + '" class="x-grid-cell x-grid-hd-cell x-grid-col-' + col.mapping + ' ' + cls + '" mapping="' + col.mapping + '">' + col.header + '</td>';
 		}
 		colTpl += '    </tr>';
 		colTpl += '</table>';
@@ -114,10 +118,14 @@ Ext.ux.TouchGridPanel = Ext.extend(Ext.Panel, {
 		for (var i = 0; i < colModel.length; i++) {
 			var col   = colModel[i],
 				flex  = col.flex || 1,
-				width = flex * cellWidth,
+				width = (flex * cellWidth)+'%',
 				style = (i === colModel.length - 1) ? "padding-right: 10px;" : "",
 				cls   = col.cls || "";
 			
+			if(col.width != null && col.width !== undefined){
+				//percetage column or oixel are specified in template
+				width = col.width;		
+			}
 			generatedCellId = "spagobi-"+i+"-";
 				
 			style += col.style || "";
@@ -127,9 +135,9 @@ Ext.ux.TouchGridPanel = Ext.extend(Ext.Panel, {
 			}
 
 			if(me.columnToStyle.indexOf(col.mapping) != -1){
-				colTpl += '<td id="'+generatedCellId+'{rowIndex}" width="' + width + '%" class="x-grid-cell x-grid-col-' + col.mapping + ' ' + cls + ' {isDirty:this.isCellDirty(parent)}" style="' + style + ' {[values.styleTD['+i+']]}" mapping="' + col.mapping + '" rowIndex="{rowIndex}">{' + col.mapping + '}</td>';
+				colTpl += '<td id="'+generatedCellId+'{rowIndex}" width="' + width + '" class="x-grid-cell x-grid-col-' + col.mapping + ' ' + cls + ' {isDirty:this.isCellDirty(parent)}" style="' + style + ' {[values.styleTD['+i+']]}" mapping="' + col.mapping + '" rowIndex="{rowIndex}">{' + col.mapping + '}</td>';
 			}else{
-				colTpl += '<td id="'+generatedCellId+'{rowIndex}" width="' + width + '%" class="x-grid-cell x-grid-col-' + col.mapping + ' ' + cls + ' {isDirty:this.isCellDirty(parent)}" style="' + style + '" mapping="' + col.mapping + '" rowIndex="{rowIndex}">{' + col.mapping + '}</td>';
+				colTpl += '<td id="'+generatedCellId+'{rowIndex}" width="' + width + '" class="x-grid-cell x-grid-col-' + col.mapping + ' ' + cls + ' {isDirty:this.isCellDirty(parent)}" style="' + style + '" mapping="' + col.mapping + '" rowIndex="{rowIndex}">{' + col.mapping + '}</td>';
 			}	
 			
 		}

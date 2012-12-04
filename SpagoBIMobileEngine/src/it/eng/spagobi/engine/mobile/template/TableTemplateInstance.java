@@ -61,6 +61,9 @@ public class TableTemplateInstance extends AbstractTemplateInstance implements I
 			
 			String header = (String)column.getAttribute(MobileConstants.COLUMN_HEADER_ATTR);
 			colJSON.put("header", header);
+			
+			String colWidth = (String)column.getAttribute(MobileConstants.COLUMN_WIDTH_ATTR);
+			colJSON.putOpt("width", colWidth);
 
 			String style = (String)column.getAttribute(MobileConstants.COLUMN_STYLE_ATTR);
 			if(style!= null){

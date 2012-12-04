@@ -42,6 +42,8 @@ app.views.Toolbar = Ext.extend(Ext.Toolbar, {
                      , method : 'POST'
                      , success : function(response, opts) {
                     	 // refresh page
+                    	 localStorage.removeItem('app.views.launched');
+                    	 localStorage.removeItem('app.views.browser');
                     	 window.location.href = Sbi.env.contextPath;
                      }
                      , failure : Sbi.exception.ExceptionHandler.handleFailure
