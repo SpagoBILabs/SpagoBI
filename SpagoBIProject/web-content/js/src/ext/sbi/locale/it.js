@@ -545,6 +545,8 @@ Sbi.locale.ln['sbi.execution.rtfExport'] = 'RTF';
 Sbi.locale.ln['sbi.execution.docExport'] = 'DOC';
 Sbi.locale.ln['sbi.execution.jrxmlExport'] = 'JRXML';
 Sbi.locale.ln['sbi.execution.jsonExport'] = 'JSON';
+Sbi.locale.ln['sbi.execution.PngExport'] = 'PNG';
+Sbi.locale.ln['sbi.execution.GraphmlExport'] = 'GRAPHML';
 
 Sbi.locale.ln['sbi.execution.export.qbe.results'] = 'Risultati';
 Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Crosstab';

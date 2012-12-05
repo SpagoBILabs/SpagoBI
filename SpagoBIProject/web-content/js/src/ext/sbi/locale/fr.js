@@ -537,6 +537,8 @@ Sbi.locale.ln['sbi.execution.rtfExport']='RTF';
 Sbi.locale.ln['sbi.execution.docExport']='DOC';
 Sbi.locale.ln['sbi.execution.jrxmlExport']='JRXML';
 Sbi.locale.ln['sbi.execution.jsonExport']='JSON';
+Sbi.locale.ln['sbi.execution.PngExport'] = 'PNG';
+Sbi.locale.ln['sbi.execution.GraphmlExport'] = 'GRAPHML';
 
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand']='D\u00E9velopper/R\u00E9duire';
 
