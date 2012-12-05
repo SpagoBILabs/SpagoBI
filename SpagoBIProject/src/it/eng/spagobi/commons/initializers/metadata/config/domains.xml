@@ -23,6 +23,7 @@
 <DOMAIN valueCd="MOBILE_REPORT" valueNm="sbidomains.nm.mobile.report" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.report"/>
 <DOMAIN valueCd="MOBILE_CHART" valueNm="sbidomains.nm.mobile.chart" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.chart"/>
 <DOMAIN valueCd="MOBILE_COCKPIT" valueNm="sbidomains.nm.mobile.cockpit" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.cockpit"/>
+<DOMAIN valueCd="NETWORK" valueNm="sbidomains.nm.network" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.network"/>
 <DOMAIN valueCd="BOOL" valueNm="sbidomains.nm.bool" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.bool"/>
 <DOMAIN valueCd="SINGLE" valueNm="sbidomains.nm.single" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.single"/>
 <DOMAIN valueCd="MULTI" valueNm="sbidomains.nm.multi" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.multi"/>
@@ -135,5 +136,6 @@
 <DOMAIN valueCd="ITA" valueNm="Italian" domainCd="LANG" domainNm="Language ISO code" valueDs="Italian"/>
 <DOMAIN valueCd="SPA" valueNm="Spanish" domainCd="LANG" domainNm="Language ISO code" valueDs="Spanish"/>
 <DOMAIN valueCd="ENG" valueNm="English" domainCd="LANG" domainNm="Language ISO code" valueDs="English"/>
+<DOMAIN valueCd="FRA" valueNm="French" domainCd="LANG" domainNm="Language ISO code" valueDs="French"/>
 <DOMAIN valueCd="FRA" valueNm="French" domainCd="LANG" domainNm="Language ISO code" valueDs="French"/>
 </DOMAINS>
