@@ -267,6 +267,9 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	, formatWithNamePercentage: function (){
 		return function (){return  '<b>'+this.series.name +'</b><br/>'+this.point.name +':'+  this.y+'%';};
 	}
+	, formatWithNameValuePlain: function (){
+		return function (){return  '<b>'+this.series.name +'</b><br/>'+this.point.name +':'+  this.y;};
+	}
 	, formatWithPercentage: function (){
 		return  function (){return '<b>'+ this.series.name +'</b><br/>'+ this.y+'%';};
 	}
@@ -276,9 +279,6 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	, formatWithNameValue: function (){
 		return function (){return '<b>'+ this.series.name+ '</b><br/>'+ this.point.name ;};
 	}	
-	, formatWithNameValuePlain: function (){
-		return function (){return  '<b>'+this.series.name +'</b><br/>'+this.point.name +':'+  this.y;};
-	}
 	, formatSubstringLabel: function (len){
 		return function (){return '<b>'+ this.value.substring(0,len)+ '</b>';};
 	}
@@ -295,15 +295,15 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 		}
 
 		switch (formatFunc) {
+		case 'name_value_plain':
+        	formatterCode = this.formatWithNameValuePlain();
+        	break;    
         case 'name_percentage':
         	formatterCode = this.formatWithNamePercentage();        	
         	break;
         case 'name_value':
         	formatterCode = this.formatWithNameValue();
         	break;
-        case 'name_value_plain':
-        	formatterCode = this.formatWithNameValuePlain();
-        	break;        	
         case 'percentage':
         	formatterCode = this.formatWithPercentage();
         	break;
