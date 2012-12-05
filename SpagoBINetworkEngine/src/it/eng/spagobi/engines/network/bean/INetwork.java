@@ -16,4 +16,5 @@ public interface INetwork {
 	public String getNetworkAsString() throws SerializationException;
 	public String getNetworkType();
 	public String getNetworkCrossNavigation() throws SerializationException;
+	public String getNetworkOptions();
 }

@@ -63,9 +63,13 @@ Ext.define('Sbi.network.networkObject', {
     		layout: 'fit'
     	};
 
-    	var c = Ext.apply(defaultSettings, config || {});
     	
+
+    	
+    	var c = Ext.apply(defaultSettings, config || {});
     	Ext.apply(this, c);
+    	this.initOptions();
+    	
     	
         // initialization options
         this.options = {
@@ -78,31 +82,75 @@ Ext.define('Sbi.network.networkObject', {
     	this.callParent(arguments);
         this.on('afterrender',this.drawNetwork,this);
     }
+
+	, initOptions: function(){
+   	 if(this.networkOptions==null || this.networkOptions==undefined){
+		 this.networkOptions={}; 
+	 }
+	 if(this.networkOptions.visualStyle==null || this.networkOptions.visualStyle==undefined){
+		 this.networkOptions.visualStyle={}; 
+	 }
+	 if(this.networkOptions.visualStyle.edges==null || this.networkOptions.visualStyle.edges==undefined){
+		 this.networkOptions.visualStyle.edges={}; 
+	 }
+	 if(this.networkOptions.visualStyle.nodes==null || this.networkOptions.visualStyle.nodes==undefined){
+		 this.networkOptions.visualStyle.nodes={}; 
+	 }
+	}
 	
 	, drawNetwork: function () {
-        // init and draw
-        this.networkSwf = new org.cytoscapeweb.Visualization(this.div_id, this.options);
-
-        if(this.networkType == ("json")){
-      	   var network = {
-             		dataSchema: {
-             			nodes: networkEscaped.nodeMetadata
-             		}
-      	   };
-      	  	network.data = {};
-      	  	network.data.edges= networkEscaped.edges;
-      	  	network.data.nodes= networkEscaped.nodes;
-      	  this.networkSwf.draw(Ext.apply({ network: network},this.networkOptions ||{}));
-
-         }else{
-        	 this.networkSwf.draw({ network: networkEscaped});
-         }	
-        this.addCrossNavigation();
+	    // init and draw
+	    this.networkSwf = new org.cytoscapeweb.Visualization(this.div_id, this.options);
+	
+	    if(this.networkType == ("json")){
+	        var network = {
+	        		dataSchema: networkEscaped.dataSchema
+	        };
+	  	  	network.data = {};
+	  	  	network.data.edges= networkEscaped.edges;
+	  	  	network.data.nodes= networkEscaped.nodes;
+	  	    var datasetVisualStyle = this.createMappers(networkEscaped.dataSchema);
+	  	    	  	    
+	  	    Ext.apply(this.networkOptions.visualStyle.nodes, datasetVisualStyle.nodes);
+	  	    Ext.apply(this.networkOptions.visualStyle.edges, datasetVisualStyle.edges);
+	  	    this.addTooltip();
+	  	  	this.networkSwf.draw(Ext.apply({ network: network}, this.networkOptions));
+	     }else{
+	    	 this.networkSwf.draw({ network: networkEscaped});
+	     }	
+	    this.addCrossNavigation();
+	}
+	
+	, createMappers:function(dataSchema){
+		var mappers = {};
+		if(dataSchema!=null && dataSchema!=undefined){
+			varDataSchemaNodes = dataSchema.nodes;
+			varDataSchemaEdges = dataSchema.edges;
+			mappers.nodes = this.createElementMappers(varDataSchemaNodes);
+			mappers.edges = this.createElementMappers(varDataSchemaEdges);
+		}
+		return mappers;
 	}
 
+	, createElementMappers:function(dataSchema){
+		var mappers = {};
+		var propertName;
+		if(dataSchema!=null && dataSchema!=undefined){
+			for(var property =0; property< dataSchema.length; property++){
+				propertName = dataSchema[property].name;
+				if(propertName!="id" &&propertName!="label"){
+					mappers[propertName] = { passthroughMapper: { attrName: propertName } };
+				}
+			}
+		}
+		return mappers;
+	}
+		
 	,addCrossNavigation:function(){
+		
+
 		if(networkLink!=null && networkLink!=undefined){
-			this.networkSwf.addListener("click", "edges", function(evt) {
+			this.networkSwf.addListener("dbclick", "edges", function(evt) {
 	
 	            var edge = evt.target;
 	            var parametersString="";
@@ -124,9 +172,9 @@ Ext.define('Sbi.network.networkObject', {
 	                }
 	            }
 	  
-	            eval("javascript:parent.execCrossNavigation(this.name,  '" +networkLink.document+"','"+parametersString + "','','','"+networkLink.navigationMode+"');");
+	            eval("javascript:parent.execCrossNavigation(this.name,  '" +networkLink.document+"','"+parametersString + "','','','"+networkLink.target+"');");
 	        });
-			this.networkSwf.addListener("click", "nodes", function(evt) {
+			this.networkSwf.addListener("dbclick", "nodes", function(evt) {
 				
 	            var edge = evt.target;
 	            var parametersString="";
@@ -148,11 +196,41 @@ Ext.define('Sbi.network.networkObject', {
 	                }
 	            }
 	  
-	            eval("javascript:parent.execCrossNavigation(this.name,  '" +networkLink.document+"','"+parametersString + "','','','"+networkLink.navigationMode+"');");
+	            eval("javascript:parent.execCrossNavigation(this.name,  '" +networkLink.document+"','"+parametersString + "','','','"+networkLink.target+"');");
 	        });
 		}
 	}
   
+	,addTooltip:function(){
+		
+		var tooltipFunction = function(evt) {
+			var tooltipText="";
+			var partialText="";
+			var propertyName="";
+            var target = evt.target;
+            var tooltipProperties = networkOptions.visualStyle[target.group].tooltip;
+            if(tooltipProperties!=null && tooltipProperties!=undefined){
+	            for(var i=0; i<tooltipProperties.length; i++){
+	            	propertyName = tooltipProperties[i].property;
+	            	if(propertyName!=null && propertyName!=undefined){
+	            		partialText = propertyName+": "+target.data[propertyName]+"   ";
+	            		tooltipText = tooltipText+partialText;
+	            	}
+	            }
+            }
+
+            
+            alert(tooltipText);
+            
+        };
+		if(this.networkOptions.visualStyle.nodes.tooltip){
+			this.networkSwf.addListener("click", "nodes", tooltipFunction);
+		}
+		if(this.networkOptions.visualStyle.edges.tooltip){
+			this.networkSwf.addListener("click", "edges", tooltipFunction);
+		}
+
+	}
 
 	
 	, exportNetwork : function(mimeType) {
