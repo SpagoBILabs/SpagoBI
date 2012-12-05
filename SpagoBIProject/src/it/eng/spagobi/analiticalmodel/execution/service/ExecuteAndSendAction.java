@@ -20,6 +20,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 
 import java.io.ByteArrayInputStream;
@@ -202,18 +203,27 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	    if(pass == null || pass.trim().equals(""))pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.password");
     
 	    if ((from == null) || from.trim().equals("")) throw new Exception("From field missing from input form or not configured");
-	    if(login == null || login.trim().equals(""))throw new Exception("Login field missing from input form or not configured");
-	    if(pass == null || pass.trim().equals(""))throw new Exception("Password field missing from input form or not configured");
+	    
 	    // Set the host smtp address
 	    Properties props = new Properties();
 	    props.put("mail.smtp.host", smtphost);
 	    props.put("mail.smtp.port", smptPort);
-	    props.put("mail.smtp.auth", "true");
+	    
+	    Session session = null;
+	    if(StringUtilities.isEmpty(login) || StringUtilities.isEmpty(pass)){
+	    	 props.put("mail.smtp.auth", "false");
+	    	 session = Session.getDefaultInstance(props);
+			 logger.debug("Connecting to mail server without authentication");
+	    } else {
+	    	props.put("mail.smtp.auth", "true");
+	    	Authenticator auth = new SMTPAuthenticator(login, pass);
+	 	    session = Session.getDefaultInstance(props, auth);
+			logger.debug("Connecting to mail server with authentication");
+	    }
+	   
+	  
 	    logger.debug("properties: mail.smtp.host:"+smtphost+" mail.smtp.port:"+smtpport);
-	    // create autheticator object
-	    Authenticator auth = new SMTPAuthenticator(login, pass);
-	    // open session
-	    Session session = Session.getDefaultInstance(props, auth);
+	   
 
 	    // create a message
 	    Message msg = new MimeMessage(session);

@@ -110,13 +110,18 @@ public class DistributionListDocumentDispatchChannel implements IDocumentDispatc
 			String from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.from");
 			if( (from==null) || from.trim().equals(""))
 				from = "spagobi.scheduler@eng.it";
+			
 			String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.user");
+			String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.password");
+		
+			/*
 			if( (user==null) || user.trim().equals(""))
 				throw new Exception("Smtp user not configured");
-			String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.password");
+			
 			if( (pass==null) || pass.trim().equals(""))
 				throw new Exception("Smtp password not configured");
-
+			*/
+			
 			String mailTos = "";
 			List dlIds = dispatchContext.getDlIds();
 			Iterator it = dlIds.iterator();
@@ -150,11 +155,19 @@ public class DistributionListDocumentDispatchChannel implements IDocumentDispatc
 			//Set the host smtp address
 			Properties props = new Properties();
 			props.put("mail.smtp.host", smtphost);
-			props.put("mail.smtp.auth", "true");
-			// create autheticator object
-			Authenticator auth = new SMTPAuthenticator(user, pass);
-			// open session
-			Session session = Session.getDefaultInstance(props, auth);
+			Session session = null;
+			
+			if(StringUtilities.isEmpty(user) || StringUtilities.isEmpty(pass)) {
+				props.put("mail.smtp.auth", "false");
+				session = Session.getDefaultInstance(props);
+				logger.debug("Connecting to mail server without authentication");
+			} else {
+				props.put("mail.smtp.auth", "true");
+				Authenticator auth = new SMTPAuthenticator(user, pass);
+				session = Session.getDefaultInstance(props, auth);
+				logger.debug("Connecting to mail server with authentication");
+			}
+			
 			// create a message
 			Message msg = new MimeMessage(session);
 			// set the from and to address
