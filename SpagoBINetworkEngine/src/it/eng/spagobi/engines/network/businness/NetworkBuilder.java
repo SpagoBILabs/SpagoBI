@@ -79,15 +79,18 @@ public class NetworkBuilder {
 			for(int fieldIndex = 0; fieldIndex<fields.size() ; fieldIndex++){
 				IFieldMetaData fieldMetaData = metaData.getFieldMeta(fieldIndex);
 				metadataAlias = fieldMetaData.getName();
-				setElement(metadataAlias, (String)(fields.get(fieldIndex)).getValue(), net, src, dest, edge);
+				setElement(metadataAlias, ((fields.get(fieldIndex)).getValue()).toString(), net, src, dest, edge);
 			}
 			if(src.getId()!=null){
+				net.addSourceNodeValueProperties(src);
 				net.addNode(src);
 			}
 			if(dest.getId()!=null){
+				net.addTargetNodeValueProperties(src);
 				net.addNode(dest);
 			}
 			if(edge.getId()!=null && dest.getId()!=null && src.getId()!=null){
+				net.addEdgeValueProperties(edge);
 				edge.setSourceNode(src);
 				edge.setTargetNode(dest);
 				net.addEdge(edge);

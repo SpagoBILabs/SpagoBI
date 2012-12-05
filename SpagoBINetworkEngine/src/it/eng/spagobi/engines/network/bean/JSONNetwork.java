@@ -13,7 +13,9 @@ import it.eng.spagobi.engines.network.serializer.SerializationException;
 import it.eng.spagobi.engines.network.serializer.json.EdgeJSONSerializer;
 import it.eng.spagobi.engines.network.serializer.json.NodeJSONSerializer;
 import it.eng.spagobi.engines.network.template.NetworkTemplate;
+import it.eng.spagobi.engines.network.template.NetworkXMLTemplateParser;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,10 +43,16 @@ public class JSONNetwork implements INetwork{
 	private Set<Edge> edges; //list of edges
 	private JSONObject networkOptions;
 	private static final String TYPE="json";
-	private Map<String, String> targetNodeProperties;//column-->property
-	private Map<String, String> sourceNodeProperties;//column-->property
-	private Map<String, String> edgeProperties;//column-->property
-	private Set<JSONNetworkMappingMetadata> nodeMetadata;//structure of the data for the nodes. For example if the node has the property id,label,color the nodeMetadata are {label:string,color:string}. So all the property without the id
+	//properties linked to a data set column
+	private Map<String, String> targetNodeColumnProperties;//column-->property
+	private Map<String, String> sourceNodeColumnProperties;//column-->property
+	private Map<String, String> edgeColumnProperties;//column-->property
+	//properties with the value directly set in the template
+	private Map<String, String> targetNodeValueProperties;//property-->value
+	private Map<String, String> sourceNodeValueProperties;//property-->value
+	private Map<String, String> edgeValueProperties;//property-->value
+	
+	private Map<String,Set<JSONNetworkMappingMetadata>> dataSchema;//structure of the data for the nodes and edges. For example if the node has the property id,label,color the nodeMetadata are {label:string,color:string}. So all the property without the id
 	private CrossNavigationLink networkCrossNavigation;//Cross navigation link structure
 
 	public static transient Logger logger = Logger.getLogger(JSONNetwork.class);
@@ -53,10 +61,13 @@ public class JSONNetwork implements INetwork{
 		super();
 		nodes = new HashSet<Node>();
 		edges = new HashSet<Edge>();
-		targetNodeProperties = new HashMap<String, String>();
-		sourceNodeProperties = new HashMap<String, String>();
-		edgeProperties = new HashMap<String, String>();
-		nodeMetadata = new HashSet<JSONNetworkMappingMetadata>();
+		targetNodeColumnProperties = new HashMap<String, String>();
+		sourceNodeColumnProperties = new HashMap<String, String>();
+		edgeColumnProperties = new HashMap<String, String>();
+		targetNodeValueProperties = new HashMap<String, String>();
+		sourceNodeValueProperties = new HashMap<String, String>();
+		edgeValueProperties = new HashMap<String, String>();
+		dataSchema = new HashMap<String,Set<JSONNetworkMappingMetadata>>();
 		
 	}
 	
@@ -65,7 +76,10 @@ public class JSONNetwork implements INetwork{
 		this();
 		this.networkCrossNavigation = networkCrossNavigation;
 		try {
-			this.networkOptions = network.getJSONObject(NetworkTemplate.OPTIONS);
+			this.networkOptions = network.optJSONObject(NetworkTemplate.OPTIONS);
+			if(networkOptions==null){
+				networkOptions = new JSONObject();
+			}
 			parseDataSetMapping(network.getJSONArray(NetworkTemplate.DATA_SET_MAPPING));
 		} catch (Exception e) {
 			logger.error("Error loading building the Network object from the json object", e);
@@ -80,47 +94,63 @@ public class JSONNetwork implements INetwork{
 	 */
 	private void parseDataSetMapping(JSONArray dataSetMapping) throws JSONException{
 		JSONObject mapping;
-		String element, column, property;
+		String element, column, property,value;
 		for (int i = 0; i < dataSetMapping.length(); i++) {
 			mapping = dataSetMapping.getJSONObject(i);
 			element = mapping.getString(NetworkTemplate.DATA_SET_MAPPING_ELEMENT);
-			column = mapping.getString(NetworkTemplate.DATA_SET_MAPPING_COLUMN);
 			property = mapping.getString(NetworkTemplate.DATA_SET_MAPPING_PROPERTY);
-			if(element.equalsIgnoreCase(NetworkTemplate.DATA_SET_MAPPING_SOURCE)){
-				sourceNodeProperties.put(column,property);
-			}else if(element.equalsIgnoreCase(NetworkTemplate.DATA_SET_MAPPING_TARGHET)){
-				targetNodeProperties.put(column,property);
-			}else if(element.equalsIgnoreCase(NetworkTemplate.DATA_SET_MAPPING_EDGE)){
-				edgeProperties.put(column,property);
+			column = mapping.optString(NetworkTemplate.DATA_SET_MAPPING_COLUMN);
+			if(column==null || column.equals("")){//value of the property set directly in the template
+				value = mapping.getString(NetworkTemplate.DATA_SET_MAPPING_VALUE);
+				if(element.equalsIgnoreCase(NetworkTemplate.DATA_SET_MAPPING_SOURCE)){
+					sourceNodeValueProperties.put(property,value);
+				}else if(element.equalsIgnoreCase(NetworkTemplate.DATA_SET_MAPPING_TARGHET)){
+					targetNodeValueProperties.put(property,value);
+				}else if(element.equalsIgnoreCase(NetworkTemplate.DATA_SET_MAPPING_EDGE)){
+					edgeValueProperties.put(property,value);
+				}
+			}else{//value of the property taken from the dataset
+				if(element.equalsIgnoreCase(NetworkTemplate.DATA_SET_MAPPING_SOURCE)){
+					sourceNodeColumnProperties.put(column,property);
+				}else if(element.equalsIgnoreCase(NetworkTemplate.DATA_SET_MAPPING_TARGHET)){
+					targetNodeColumnProperties.put(column,property);
+				}else if(element.equalsIgnoreCase(NetworkTemplate.DATA_SET_MAPPING_EDGE)){
+					edgeColumnProperties.put(column,property);
+				}	
 			}
+			
+
 		}
 		//remove the property id
-		sourceNodeProperties.remove("id");
-		targetNodeProperties.remove("id");
-		edgeProperties.remove("id");
-		this.nodeMetadata= buildNodesMetadata();
+		sourceNodeColumnProperties.remove("id");
+		targetNodeColumnProperties.remove("id");
+		edgeColumnProperties.remove("id");
+		buildNetworkMetadata();
 	} 
 
 
-	public JSONNetwork(Set<Node> nodes,Set<Edge> edges, JSONObject networkOptions) {
-		super();
-		this.networkOptions = networkOptions;
-		this.nodes = nodes;
-		this.edges = edges;
-	}
-
 	
-	public String getElementFromMapping(String column){
-		if(targetNodeProperties.containsKey(column)){
-			return "targhet";
-		}
-		if(sourceNodeProperties.containsKey(column)){
-			return "source";
-		}
-		if(edgeProperties.containsKey(column)){
-			return "edge";
-		}
-		return "no";
+//	public String getElementFromMapping(String column){
+//		if(targetNodeProperties.containsKey(column)){
+//			return "targhet";
+//		}
+//		if(sourceNodeProperties.containsKey(column)){
+//			return "source";
+//		}
+//		if(edgeProperties.containsKey(column)){
+//			return "edge";
+//		}
+//		return "no";
+//	}
+	
+	/**
+	 * Builds the schema for the nodes. 
+	 * @return Set({name: "label", type: "string"},...)
+	 */
+	private void buildNetworkMetadata(){
+		dataSchema = new HashMap<String, Set<JSONNetworkMappingMetadata>>();
+		dataSchema.put(NetworkXMLTemplateParser.EDGES, buildEdgesMetadata());
+		dataSchema.put(NetworkXMLTemplateParser.NODES, buildNodesMetadata());
 	}
 	
 
@@ -129,14 +159,29 @@ public class JSONNetwork implements INetwork{
 	 * @return Set({name: "label", type: "string"},...)
 	 */
 	private Set<JSONNetworkMappingMetadata> buildNodesMetadata(){
+		Set<JSONNetworkMappingMetadata> metadata = new HashSet<JSONNetworkMappingMetadata>();
+		metadata.addAll(buildMapMetadata(sourceNodeColumnProperties.values()));
+		metadata.addAll(buildMapMetadata(sourceNodeValueProperties.keySet()));
+		metadata.addAll(buildMapMetadata(targetNodeColumnProperties.values()));
+		metadata.addAll(buildMapMetadata(targetNodeValueProperties.keySet()));
+		return metadata;
+	}
+	
+	/**
+	 * Builds the schema for the edges. 
+	 * @return Set({name: "label", type: "string"},...)
+	 */
+	private Set<JSONNetworkMappingMetadata> buildEdgesMetadata(){
+		Set<JSONNetworkMappingMetadata> metadata = new HashSet<JSONNetworkMappingMetadata>();
+		metadata.addAll(buildMapMetadata(edgeColumnProperties.values()));
+		metadata.addAll(buildMapMetadata(edgeValueProperties.keySet()));
+		return metadata;
+	}
+	
+	private Set<JSONNetworkMappingMetadata> buildMapMetadata(Collection<String> mapValues){
 		String property;
 		Set<JSONNetworkMappingMetadata> metadata = new HashSet<JSONNetworkMappingMetadata>();
-		Iterator<String> propertiesIterator = sourceNodeProperties.values().iterator();
-		while(propertiesIterator.hasNext()){
-			property = propertiesIterator.next();
-			metadata.add(new JSONNetworkMappingMetadata(property));
-		}
-		propertiesIterator = targetNodeProperties.values().iterator();
+		Iterator<String> propertiesIterator = mapValues.iterator();
 		while(propertiesIterator.hasNext()){
 			property = propertiesIterator.next();
 			metadata.add(new JSONNetworkMappingMetadata(property));
@@ -162,8 +207,8 @@ public class JSONNetwork implements INetwork{
 	}
 
 	
-	public Set<JSONNetworkMappingMetadata> getNodeMetadata() {
-		return nodeMetadata;
+	public Map<String,Set<JSONNetworkMappingMetadata>> getDataSchema() {
+		return dataSchema;
 	}
 	
 	//NOT SERIALIZABLE PROPERTIES
@@ -176,21 +221,48 @@ public class JSONNetwork implements INetwork{
 	}
 
 	@JsonIgnore
-	public String getNetworkOptions() {
+	public String getNetworkOptions(){
 		return networkOptions.toString();
 	}
 
 	@JsonIgnore
 	public String getMappingForNodeSource(String column){
-		return sourceNodeProperties.get(column);
+		return sourceNodeColumnProperties.get(column);
 	}
 	@JsonIgnore
 	public String getMappingForNodeTarget(String column){
-		return targetNodeProperties.get(column);
+		return targetNodeColumnProperties.get(column);
 	}
 	@JsonIgnore
 	public String getMappingForEdge(String column){
-		return edgeProperties.get(column);
+		return edgeColumnProperties.get(column);
+	}
+	
+	public void addTargetNodeValueProperties(Node node){
+		String property;
+		Iterator<String> propertiesIterator = targetNodeValueProperties.keySet().iterator();
+		while(propertiesIterator.hasNext()){
+			property = propertiesIterator.next();
+			node.setProperty(property,targetNodeValueProperties.get(property));
+		}
+	}
+	
+	public void addSourceNodeValueProperties(Node node){
+		String property;
+		Iterator<String> propertiesIterator = sourceNodeValueProperties.keySet().iterator();
+		while(propertiesIterator.hasNext()){
+			property = propertiesIterator.next();
+			node.setProperty(property,sourceNodeValueProperties.get(property));
+		}
+	}
+	
+	public void addEdgeValueProperties(Edge edge){
+		String property;
+		Iterator<String> propertiesIterator = edgeValueProperties.keySet().iterator();
+		while(propertiesIterator.hasNext()){
+			property = propertiesIterator.next();
+			edge.setProperty(property,edgeValueProperties.get(property));
+		}
 	}
 	
 	public void setNetworkCrossNavigation(CrossNavigationLink networkCrossNavigation) {

@@ -139,12 +139,13 @@ author: Alberto Ghedin
         
                 var networkEscaped = <%= net.getNetworkType().equals("json")?net.getNetworkAsString():("\""+StringEscapeUtils.escapeJavaScript( net.getNetworkAsString() )+"\"")	%>;
                 var networkLink = <%= net.getNetworkCrossNavigation()	%>;
-				var networkType = <%= net.getNetworkType().equals("json") %>;	
+				var networkType = '<%= net.getNetworkType() %>';	
+				var networkOptions = <%= StringEscapeUtils.unescapeJava(net.getNetworkOptions()) %>;	
 				var config = {};
 				config.networkEscaped = networkEscaped;
 				config.networkLink = networkLink;
 				config.networkType = networkType;
-				
+				config.networkOptions = networkOptions;
 				var network =null;
 				
 				Ext.onReady(function() { 

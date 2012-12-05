@@ -29,11 +29,12 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 	
 	public final static String ATTRIBUTE_VERSION = "version";
 	public final static String TAG_GRAPHML = "GRAPHML";
+	public final static String TAG_XGMML= "graph";
 	public final static String TAG_NETWOK_DEFINITION = "NETWOK_DEFINITION";
 	public static final String DRILL_TAG = "DRILL";
 	public static final String PARAM_TAG = "PARAM";
 	public static final String DRILL_DOCUMENT_ATTR = "document";
-	public static final String DRILL_NAVIGATION_MODE_ATTR = "navigationMode";
+	public static final String DRILL_TARGHET_ATTR = "targhet";
 	public static final String PARAM_NAME_ATTR = "name";
 	public static final String PARAM_TYPE_ATTR = "type";
 	public static final String PARAM_VALUE_ATTR = "value";
@@ -42,7 +43,8 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 	public static final String PARAM_TYPE_ABSOLUTE = "ABSOLUTE";
 	public static final String NODE = "NODE";
 	public static final String EDGE = "EDGE";
-
+	public static final String NODES = "nodes";
+	public static final String EDGES = "edges";
 
 	
 	public static transient Logger logger = Logger.getLogger(NetworkXMLTemplateParser.class);
@@ -89,6 +91,14 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 				networkTemplate.setNetworkXML((String)templateObject);
 				networkTemplate.setCrossNavigationLink(getDrill(template,new HashMap()));
 			}else
+				// This is the template in the pure format XGMML
+			if (template.getName().equalsIgnoreCase(TAG_XGMML)) {
+				//SourceBean graphmlTemplate = (SourceBean) template.getAttribute(TAG_GRAPHML);
+				networkTemplate.setNetworkXML((String)templateObject);
+				networkTemplate.setCrossNavigationLink(getDrill(template,new HashMap()));
+			}else	
+				
+				
 			// TAG_GRAPH_OPTIONS block
 			if(template.containsAttribute(TAG_NETWOK_DEFINITION)) {
 				SourceBean networkDefinitionBean = (SourceBean) template.getAttribute(TAG_NETWOK_DEFINITION);
@@ -155,7 +165,7 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 		
 		SourceBean confSB = null;
 		String documentName = null;
-		String navigationMode = null;
+		String target = null;
 		
 		logger.debug("IN");
 		confSB = (SourceBean)template.getAttribute(DRILL_TAG);
@@ -164,12 +174,12 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 			return null;
 		}
 		documentName = (String)confSB.getAttribute(DRILL_DOCUMENT_ATTR);
-		navigationMode = (String)confSB.getAttribute(DRILL_NAVIGATION_MODE_ATTR);
+		target = (String)confSB.getAttribute(DRILL_TARGHET_ATTR);
 
 		CrossNavigationLink drill = new CrossNavigationLink(documentName);
 		
-		if(navigationMode!=null && navigationMode.length()>0){
-			drill.setNavigationMode(navigationMode);
+		if(target!=null && target.length()>0){
+			drill.setTarget(target);
 		}
 		
 		List paramslist = (List)template.getAttributeAsList(DRILL_TAG+"."+PARAM_TAG);

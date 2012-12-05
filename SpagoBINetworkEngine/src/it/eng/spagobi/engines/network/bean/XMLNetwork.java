@@ -6,11 +6,12 @@
 
 package it.eng.spagobi.engines.network.bean;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONObject;
 
 import it.eng.spagobi.engines.network.serializer.SerializationException;
-import it.eng.spagobi.utilities.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -21,6 +22,7 @@ public class XMLNetwork implements INetwork{
 	private static final String TYPE = "XML";
 	private String net="";
 	private CrossNavigationLink networkCrossNavigation;
+	private JSONObject networkOptions;
 	
 	
 	/**
@@ -29,6 +31,7 @@ public class XMLNetwork implements INetwork{
 	public XMLNetwork(String net, CrossNavigationLink networkCrossNavigation) {
 		super();
 		this.net = net;
+		this.networkOptions = new JSONObject();
 		this.networkCrossNavigation = networkCrossNavigation;
 	}
 	/* (non-Javadoc)
@@ -64,6 +67,12 @@ public class XMLNetwork implements INetwork{
 		return  s; 
 	}
 
+	public String getNetworkOptions(){
+		return networkOptions.toString();
+	}
+	public void setNetworkOptions(JSONObject networkOptions) {
+		this.networkOptions = networkOptions;
+	}
 	
 	
 }
