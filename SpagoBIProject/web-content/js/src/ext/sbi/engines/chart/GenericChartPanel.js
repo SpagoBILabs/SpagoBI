@@ -240,23 +240,18 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 								//recArray.push(rec[serieColumn]);		
 								recArray.push(tmpValue);		
 							}
-						}
+						}						
 						if(group && series.length>0){
+							var name = series[series.length-1][0];
+							var value = series[series.length-1][1];
 							var recArrayName = recArray[0];
 							var recArrayValue = recArray[1]; 
-							for(var i=0; i<series.length;i++){
-								var name = series[series.length-1][0];
-								var value = series[series.length-1][1];
-								
-								if(name==recArrayName){
-									recArrayValue = parseFloat(recArrayValue)+parseFloat(value);
-									series.splice(i,1);
-									recArray[0]=recArrayName;
-									recArray[1]=recArrayValue;
-									break;
-								}
+							if(name==recArrayName){
+								recArrayValue = parseFloat(recArrayValue)+parseFloat(value);
+								series.pop();
+								recArray[0]=recArrayName;
+								recArray[1]=recArrayValue;
 							}
-
 						}
 						series.push(recArray);
 					}
@@ -389,7 +384,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     		    			}
     		    			
     		    		}
-    		    		
+
     		    		for(var i = 0; i< drill.param.length; i++){
     		                if(drill.param[i].type == 'SERIE_NAME'){
     		                  if(params !== ""){
@@ -579,19 +574,24 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		}else{
 			colors = Highcharts.getOptions().colors;
 		}
-		//adaptes the colors array to the real number of the serie (necessary for force the same color for each serie in double pie)
-	    var lenColors = 0;
-	    if(config.series[0] !== undefined){
-		    for (var i = 0, l = config.series[0].data.length; i < l ; i++) {				
-				if (lenColors == colors.length){
-					lenColors = 0;
+		if(config.colors !== undefined && config.colors[0] !== undefined && config.colors[0].color !== undefined && config.colors[0].dontcut !=null && config.colors[0].dontcut !=undefined && config.colors[0].dontcut){
+			return colors;
+		}else{
+			//adaptes the colors array to the real number of the serie (necessary for force the same color for each serie in double pie)
+		    var lenColors = 0;
+		    if(config.series[0] !== undefined){
+			    for (var i = 0, l = config.series[0].data.length; i < l ; i++) {				
+					if (lenColors == colors.length){
+						lenColors = 0;
+					}
+					retColors.push(colors[lenColors].trim());				
+					lenColors ++;
 				}
-				retColors.push(colors[lenColors].trim());				
-				lenColors ++;
-			}
-	    }
-	    
-		return retColors;
+		    }
+			return retColors;
+		}
+
+
 	}
     
     , getSeriesByParam: function(filterParam, params){
