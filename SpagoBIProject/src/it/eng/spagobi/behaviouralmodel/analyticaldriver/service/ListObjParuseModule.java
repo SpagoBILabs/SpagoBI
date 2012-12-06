@@ -184,7 +184,8 @@ public class ListObjParuseModule extends AbstractModule {
 						ObjParuse correlation = new ObjParuse();
 						correlation.setFilterColumn(oncolumn);
 						correlation.setFilterOperation(condition);
-						correlation.setLogicOperator(logicOperator);
+						if(logicOperator != null && logicOperator.equalsIgnoreCase("null")) logicOperator = null;
+						correlation.setLogicOperator(logicOperator);						
 						correlation.setObjParFatherId(idParFather);
 						correlation.setObjParId(biParamId);
 						correlation.setParuseId(paruseid);
