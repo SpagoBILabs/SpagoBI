@@ -263,7 +263,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 		var geostatConf = {
 			map: this.map,
 			layer: null, // this.targetLayer not yet defined here
-			indicators: upperIndicators, // this.indicators,
+			indicators: upperIndicators, // this.indicators,			
 			url: this.services['MapOl'],
 			loadMask : {msg: 'Analysis...', msgCls: 'x-mask-loading'},
 			legendDiv : 'myChoroplethLegendDiv',
@@ -849,7 +849,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 		
 		params = Ext.apply({}, detailDocumentConf.staticParams);
 		for(p in detailDocumentConf.dynamicParams) {
-			var attrName = detailDocumentConf.dynamicParams[p];
+			var attrName = detailDocumentConf.dynamicParams[p].toUpperCase();			
 			params[p] = feature.attributes[attrName];
 		}
 		
@@ -891,7 +891,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 		
 		var params = Ext.apply({}, this.inlineDocumentConf.staticParams);
 		for(p in this.inlineDocumentConf.dynamicParams) {
-			var attrName = this.inlineDocumentConf.dynamicParams[p];
+			var attrName = this.inlineDocumentConf.dynamicParams[p].toUpperCase();
 			params[p] = feature.attributes[attrName];
 		}
 		
