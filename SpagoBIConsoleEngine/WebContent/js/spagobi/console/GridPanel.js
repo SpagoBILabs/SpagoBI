@@ -679,13 +679,14 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	}
 	
 	//redefines the renderer for inline charts.
+	/*
 	, updateInLineCharts: function(){
 
 		for(var j = 0, len = this.inlineCharts.length; j < len; j++) {
 			var idx = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[j].column));
 			this.getColumnModel().setRenderer(idx, this.createInlineChartRenderer(this.inlineCharts[j]) );			
 		}
-	}
+	}*/
 	
 	, updateMetaStructure: function(cm, headerToHide, fieldsMap){
 		for(var i = 0, len = headerToHide.length; i < len; i++) {
@@ -853,12 +854,12 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 							}
 						}
 					}  
-					if (this.inlineCharts[p].type == 'bar'){
+					if (numRec > 0 && this.inlineCharts[p].type == 'bar'){
 						//update initial value config with news								
 						this.inlineCharts[p].maxValue = maxValue;
 						this.inlineCharts[p].minValue = minValue;
 						this.inlineCharts[p].totValue = totValue; 	
-											
+							
 						var idx = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].column));
 						this.getColumnModel().setRenderer(idx, this.createInlineChartRenderer(this.inlineCharts[p]) );
 					}
