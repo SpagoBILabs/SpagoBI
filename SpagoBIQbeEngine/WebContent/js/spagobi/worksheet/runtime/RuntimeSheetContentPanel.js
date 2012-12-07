@@ -215,10 +215,18 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
         		this.content.execQuery(params);
 	        	break;
 	        case 'Bar Chart':
-	        	this.content.loadChartData({'rows':[this.contentConfig.category],'measures':this.contentConfig.series},filtersValue);
+	        	this.content.loadChartData({
+	        		'rows':[this.contentConfig.category]
+	        		, 'measures':this.contentConfig.series
+	        		, 'columns': this.contentConfig.groupingVariable ? [this.contentConfig.groupingVariable] : []}
+	        		, filtersValue);
 	        	break;
 	        case 'Line Chart':
-	    		this.content.loadChartData({'rows':[this.contentConfig.category],'measures':this.contentConfig.series},filtersValue);
+	    		this.content.loadChartData({
+	        		'rows':[this.contentConfig.category]
+	        		, 'measures':this.contentConfig.series
+	        		, 'columns': this.contentConfig.groupingVariable ? [this.contentConfig.groupingVariable] : []}
+	        		, filtersValue);
 	        	break;
 	        case 'Pie Chart':
 	        	this.content.loadChartData({'rows':[this.contentConfig.category],'measures':this.contentConfig.series},filtersValue);

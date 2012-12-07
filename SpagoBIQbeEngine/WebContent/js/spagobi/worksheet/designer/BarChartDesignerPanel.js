@@ -70,6 +70,9 @@ Sbi.worksheet.designer.BarChartDesignerPanel = function(config) {
 	
 	this.on('afterLayout', this.addToolTips, this);
 	
+	this.categoryContainerPanel.on(	'beforeAddAttribute', this.checkIfAttributeIsAlreadyPresent, this);
+	this.seriesGroupingPanel.on(	'beforeAddAttribute', this.checkIfAttributeIsAlreadyPresent, this);
+	
 };
 
 Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
@@ -81,6 +84,7 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 	, showValuesCheck: null
 	, imageTemplate: null
 	, categoryContainerPanel: null
+	, seriesGroupingPanel: null
 	, seriesContainerPanel: null
 	, axisDefinitionPanel: null
 	, showLegendCheck: null
@@ -159,6 +163,28 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 			this
 		);
 		
+		this.seriesGroupingPanel = new Sbi.worksheet.designer.SeriesGroupingPanel({
+            width: 430
+            , height: 70
+            , initialData: null
+            , ddGroup: this.ddGroup
+		});
+		// propagate events
+		this.seriesGroupingPanel.on(
+			'attributeDblClick' , 
+			function (thePanel, attribute) { 
+				this.fireEvent("attributeDblClick", this, attribute); 
+			}, 
+			this
+		);
+		this.seriesGroupingPanel.on(
+			'attributeRemoved' , 
+			function (thePanel, attribute) { 
+				this.fireEvent("attributeRemoved", this, attribute); 
+			}, 
+			this
+		);
+		
 		this.seriesContainerPanel = new Sbi.worksheet.designer.ChartSeriesPanel({
             width: 430
             , height: 120
@@ -185,12 +211,8 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 	        , items:[
 	            this.seriesContainerPanel
 	            , this.imageContainerPanel 
-	            , {
-		        	border: false
-		        }
+	            , this.seriesGroupingPanel
 		        , this.categoryContainerPanel
-		        
-		        
 		    ]
 	    });
 	    
@@ -279,6 +301,7 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 		state.showvalues = this.showValuesCheck.getValue();
 		state.showlegend = this.showLegendCheck.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
+		state.groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
 		state.series = this.seriesContainerPanel.getContainedMeasures();
 		return state;
 	}
@@ -289,28 +312,47 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
+		if (state.groupingVariable) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
 	}
 	
 	, validate: function(){
-		if (this.categoryContainerPanel.category== null){
+		if (this.categoryContainerPanel.category == null){
 			return LN("sbi.designerchart.chartValidation.noCategory");
 		}
 		var store = this.seriesContainerPanel.store;
 		var seriesCount = store.getCount();
-		if(seriesCount == 0 ){
+		if (seriesCount == 0) {
 			return LN("sbi.designerchart.chartValidation.noSeries");
 		}
 		return; 
-
 	}
 	
 	, containsAttribute: function (attributeId) {
-		if (this.categoryContainerPanel.category == null) {
-			return false;
-		} else {
-			return this.categoryContainerPanel.category.id == attributeId;
+		var category = this.categoryContainerPanel.getCategory();
+		if (category != null && category.id == attributeId) {
+			return true;
 		}
+		var groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
+		if (groupingVariable != null && groupingVariable.id == attributeId) {
+			return true;
+		}
+		return false;
+	}
+	
+	, checkIfAttributeIsAlreadyPresent: function(aPanel, attribute) {
+		var attributeId = attribute.id;
+		var alreadyPresent = this.containsAttribute(attributeId);
+		if (alreadyPresent) {
+			Ext.Msg.show({
+				   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
+				   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.WARNING
+			});
+			return false;
+		}
+		return true;
 	}
 
 });

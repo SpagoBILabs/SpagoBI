@@ -78,8 +78,9 @@ Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.splittingFilt
 Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.title'] = 'Per favore confermare';
 Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.msg'] = 'Confermi l\'eliminazione dell\'oggetto?';
 Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.title'] = 'Nuovo sheet';
-Sbi.locale.ln['sbi.worksheet.designer.msg.emptyworksheet'] = 'E\' stato aggiunto un nuovo sheet';
-Sbi.locale.ln['sbi.worksheet.designer.msg.samenamesheets'] = 'Il documento worksheet e\' vuoto';
+Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.msg'] = 'E\' stato aggiunto un nuovo sheet';
+Sbi.locale.ln['sbi.worksheet.designer.msg.emptyworksheet'] = 'Il documento worksheet e\' vuoto';
+Sbi.locale.ln['sbi.worksheet.designer.msg.samenamesheets'] =  'Esiste un\'altro sheet con lo stesso nome';
 
 //===================================================================
 //DESIGNER SHEET
@@ -160,6 +161,13 @@ Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.title'] 
 Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.unknownsource'] = 'Sorgente sconosciuta';
 Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.measures'] = 'Non puoi trascinare qui le misure';
 Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.postlinecalculated'] = 'Non puoi trascinare qui i campi calcolati basati su script';
+
+
+//===================================================================
+//Sbi.worksheet.designer.SeriesGroupingPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.seriesgroupingpanel.title'] = 'Variabile di raggruppamento per le serie';
+Sbi.locale.ln['sbi.worksheet.designer.seriesgroupingpanel.emptymsg'] = 'Trascina qui un attributo della query come variabile di raggruppamento per le serie';
 
 
 //===================================================================

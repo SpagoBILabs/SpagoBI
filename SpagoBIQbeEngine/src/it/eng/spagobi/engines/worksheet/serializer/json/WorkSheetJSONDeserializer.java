@@ -212,6 +212,12 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 			chart.setCategory(category);
 		}
 		
+		JSONObject groupingVariableJSON = content.optJSONObject(WorkSheetSerializationUtils.GROUPING_VARIABLE);
+		if (groupingVariableJSON != null) {
+			Attribute groupingVariable = (Attribute) SerializationManager.deserialize(groupingVariableJSON, "application/json", Attribute.class);
+			chart.setGroupingVariable(groupingVariable);
+		}
+		
 		List<Serie> series = new ArrayList<Serie>();
 		JSONArray seriesJSON = content.getJSONArray(WorkSheetSerializationUtils.SERIES);
 		SerieJSONDeserializer deserialier = new SerieJSONDeserializer();

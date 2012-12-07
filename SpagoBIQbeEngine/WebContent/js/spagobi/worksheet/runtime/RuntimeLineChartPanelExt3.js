@@ -52,6 +52,7 @@ Sbi.worksheet.runtime.RuntimeLineChartPanelExt3 = function(config) {
 	
 	c = Ext.apply(c, {
 		html : '<div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>'
+		, autoScroll: true
 	});
 	
 	Sbi.worksheet.runtime.RuntimeLineChartPanelExt3.superclass.constructor.call(this, c);
@@ -67,13 +68,26 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 	, chartConfig : null 
 	
 	, init : function () {
-		this.loadChartData({'rows':[this.chartConfig.category],'measures':this.chartConfig.series});
+		this.loadChartData({
+			'rows':[this.chartConfig.category]
+			, 'measures': this.chartConfig.series
+			, 'columns': this.chartConfig.groupingVariable ? [this.chartConfig.groupingVariable] : []
+		});
 	}
 
 	, createChart: function () {
+		
+		var retriever = new Sbi.worksheet.runtime.DefaultChartDimensionRetrieverStrategy();
+		var size = retriever.getChartDimension(this);
+		this.update(' <div id="' + this.chartDivId + '" style="width: ' + size.width + '; height: ' + size.height + ';"></div>');
+		
 		var storeObject = this.getJsonStoreLineExt3();
-		var colors = this.getColors();
-		var extraStyle ={};
+		var colors = null;
+		if (this.chartConfig.groupingVariable != null) {
+			colors = Sbi.widgets.Colors.defaultColors;
+		} else {
+			colors = this.getColors();
+		}
 		
 		var items = {
 				//xtype: 'linechart',
@@ -82,12 +96,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 				hiddenseries: new Array(),
 				style: 'height: 85%;',
 				series: this.getChartSeriesExt3(storeObject, 'line', colors),
-                extraStyle: extraStyle,
                 scope: this
 			};
 		//set the height if ie
-    	if(Ext.isIE){
-    		items.height = this.ieChartHeight;
+    	if (Ext.isIE){
+    		var heightPx = size.height.substr(0, size.height.indexOf('px'));
+    		items.height = Math.round(heightPx * 85 / 100);
     	}
 
 		//set the maximum of the axis
@@ -287,7 +301,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 	, getTooltipFormatter: function () {
 
 		var chartType = this.chartConfig.designer;
-		var allSeries = this.chartConfig.series;
+		var allRuntimeSeries = this.getRuntimeSeries();
+		var allDesignSeries = this.chartConfig.series;
 		var stacking  =this.getStacking();
 		
 		var getFormattedValueExt3 = this.getFormattedValueExt3;
@@ -295,7 +310,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 		var toReturn = function (chart, record, index, series) {
 			var valuePrefix= '';
 			
-			var value = getFormattedValueExt3(chart, record, series, chartType, allSeries, stacking);
+			var value = getFormattedValueExt3(chart, record, series, chartType, allRuntimeSeries, allDesignSeries, stacking);
 		
 			valuePrefix = series.displayName+'\n'+record.data.categories+'\n';
 
@@ -306,10 +321,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 	}
 	
 	//Format the value to display
-	, getFormattedValueExt3: function (chart, record, series, chartType, allSeries, stacking){
+	, getFormattedValueExt3: function (chart, record, series, chartType, allRuntimeSeries, allDesignSeries, stacking){
 		var theSerieName  = series.displayName;
 		var value ;
-		var serieDefinition;
+		var serieName;  // the serie name without eventual scale factor
+		var measureName;  // the measure related to the serie
+		var serieDefinition;  // the design-time serie definition (the measure with precision, color, ....)
 		
 		
 		if(stacking=='normal'){
@@ -321,31 +338,47 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 			value = record.data[series.yField];
 		}
 		
-		// find the serie configuration
+		// find the measure's name
 		var i = 0;
-		for (; i < allSeries.length; i++) {
+		for (; i < allRuntimeSeries.length; i++) {
 			//substring to remove the scale factor
-			if (allSeries[i].seriename === theSerieName.substring(0, allSeries[i].seriename.length)) {
-				serieDefinition = allSeries[i];
+			if (allRuntimeSeries[i].name === theSerieName.substring(0, allRuntimeSeries[i].name.length)) {
+				serieName = allRuntimeSeries[i].name;
+				measureName = allRuntimeSeries[i].measure;
+				break;
+			}
+		}
+		
+		i = 0;
+		// find the serie's (design-time) definition
+		for (; i < allDesignSeries.length; i++) {
+			//substring to remove the scale factor
+			if (allDesignSeries[i].seriename === measureName) {
+				serieDefinition = allDesignSeries[i];
 				break;
 			}
 		}
 
-		//if(stacking!='percent'){
-			// format the value according to serie configuration
-			value = Sbi.qbe.commons.Format.number(value, {
-	    		decimalSeparator: Sbi.locale.formats['float'].decimalSeparator,
-	    		decimalPrecision: serieDefinition.precision,
-	    		groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats['float'].groupingSeparator : '',
-	    		groupingSize: 3,
-	    		currencySymbol: '',
-	    		nullValue: ''
-			});
-		//}
+		// format the value according to serie configuration
+		value = Sbi.qbe.commons.Format.number(value, {
+    		decimalSeparator: Sbi.locale.formats['float'].decimalSeparator,
+    		decimalPrecision: serieDefinition.precision,
+    		groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats['float'].groupingSeparator : '',
+    		groupingSize: 3,
+    		currencySymbol: '',
+    		nullValue: ''
+		});
+		
 		// add suffix
 		if (serieDefinition.suffix !== undefined && serieDefinition.suffix !== null && serieDefinition.suffix !== '') {
 			value = value + ' ' + serieDefinition.suffix;
 		}
+		
+		// in case the serie name is different from the measure name, put also the measure name
+		if (measureName !== serieName) {
+			value = measureName + ' : ' + value;
+		}
+		
 		return value;
 	}
 

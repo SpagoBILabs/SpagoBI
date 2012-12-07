@@ -53,7 +53,7 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanel  = function(config) {
 	
 	Ext.apply(this, c);
 
-	this.style='width: 80%; margin-left: auto; margin-right: auto;';
+	//this.style='width: 80%; margin-left: auto; margin-right: auto;';
 	
 	this.services = this.services || new Array();
 	var params = {};
@@ -66,8 +66,6 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanel  = function(config) {
 //		, baseParams: params
 //	});
 
-
-	
 	this.addEvents('contentloaded');
 	Sbi.worksheet.runtime.RuntimeGenericChartPanel.superclass.constructor.call(this, c);	 	
 };
@@ -77,7 +75,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	services: null,
 	sheetName: null,
 	dataContainerObject: null,//the object with the data for the panel
-	legendStyle: null
+	legendStyle: null,
+	legendFontSize : Sbi.settings.worksheet.runtime.chart.legend.fontSize || 10
 	
 	/**
 	 * Loads the data for the chart.. Call the action which loads the crosstab 
@@ -90,7 +89,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		if ( !this.chartConfig.hiddenContent ){
 			var requestParameters = {
 					'crosstabDefinition': Ext.util.JSON.encode({
-						'rows': [],
+						'rows': dataConfig.columns,
 						'columns': dataConfig.rows,
 						'measures': dataConfig.measures,
 						'config': {'measureson':'rows'}
@@ -106,7 +105,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		        success : function(response, opts) {
 		        	
 		        	this.dataContainerObject = Ext.util.JSON.decode( response.responseText );
-		        	this.update(' <div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>');
+		        	//this.update(' <div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>');
 		        	if (this.isEmpty()) {
 //		        		this.update(' <div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>');
 		    			Ext.Msg.show({
@@ -167,7 +166,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	 */
 	, getSeries: function(){
 		if(this.dataContainerObject!=null){
-			var seriesNames = this.dataContainerObject.rows.node_childs;
+			var runtimeSeries = this.getRuntimeSeries();
 			var data = this.dataContainerObject.data;
 			var measures_metadata = this.dataContainerObject.measures_metadata;
 			var measures_metadata_map = {};
@@ -183,21 +182,51 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			var map ;
 			var serieData, serieDataFormatted;
 			i=0;
-			for(; i<seriesNames.length; i++){
+			for (; i < runtimeSeries.length; i++){
 			      serie = {};
-			      serie.name = seriesNames[i].node_description;
+			      serie.name = runtimeSeries[i].name;
+			      var measure = runtimeSeries[i].measure;
 			      serieData = this.dataContainerObject.data[i];
 			      serieDataFormatted = [];
 			      var j=0;
 			      for(; j<serieData.length; j++){
-			    	  map = measures_metadata_map[serie.name];
+			    	  map = measures_metadata_map[measure];
 			    	  serieDataFormatted.push(this.format(serieData[j], map.type, map.format, map.scaleFactorValue ));
 			      }
 			      serie.data = serieDataFormatted;
+			      serie.shadow = false;
 			      series.push(serie);
 			}	
 			return series;
 		}
+	}
+	
+	, getRuntimeSeries : function () {
+		var toReturn = [];
+		// rows (of dataContainerObject) can contain 2 level, it depends if a groupingVariable was defined or not
+		if (this.chartConfig.groupingVariable != null) {
+			// first level contains groupingVariable, second level contains series
+			var groupingAttributeValues = this.dataContainerObject.rows.node_childs;
+			for(var i = 0; i < groupingAttributeValues.length; i++) {
+				var measureNodes = groupingAttributeValues[i].node_childs;
+				for(var j = 0; j < measureNodes.length; j++) {
+					toReturn.push({
+						name : groupingAttributeValues[i].node_description // + ' (' + measureNodes[j].node_description + ')'
+						, measure : measureNodes[j].node_description
+					});
+				}
+			}
+		} else {
+			// no grouping variable: series are just first level nodes
+			var measureNodes = this.dataContainerObject.rows.node_childs;
+			for(var i = 0; i < measureNodes.length; i++) {
+				toReturn.push({
+					name : measureNodes[i].node_description
+					, measure : measureNodes[i].node_description
+				});
+			}
+		}
+		return toReturn;
 	}
 	
     , format: function(value, type, format, scaleFactor) {
@@ -224,17 +253,33 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	, getDataLabelsFormatter: function () {
 		var showPercentage = this.chartConfig.showpercentage;
 		var chartType = this.chartConfig.designer;
-		var allSeries = this.chartConfig.series;
+		
+		var allRuntimeSeries = this.getRuntimeSeries();
+		var allDesignSeries = this.chartConfig.series;
 		
 		var toReturn = function () {
 			var theSerieName = this.series.name;
-			var serieDefinition = null;
+			
+			var serieName;  // the serie name without eventual scale factor
+			var measureName;  // the measure related to the serie
+			var serieDefinition;  // the design-time serie definition (the measure with precision, color, ....)
 			
 			// find the serie configuration
 			var i = 0;
-			for (; i < allSeries.length; i++) {
-				if (allSeries[i].seriename === theSerieName) {
-					serieDefinition = allSeries[i];
+			for (; i < allRuntimeSeries.length; i++) {
+				if (allRuntimeSeries[i].name === theSerieName) {
+					serieName = allRuntimeSeries[i].name;
+					measureName = allRuntimeSeries[i].measure;
+					break;
+				}
+			}
+			
+			i = 0;
+			// find the serie's (design-time) definition
+			for (; i < allDesignSeries.length; i++) {
+				//substring to remove the scale factor
+				if (allDesignSeries[i].seriename === measureName) {
+					serieDefinition = allDesignSeries[i];
 					break;
 				}
 			}
@@ -275,18 +320,35 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	, getTooltipFormatter: function () {
 		var showPercentage = this.chartConfig.showpercentage;
 		var chartType = this.chartConfig.designer;
-		var allSeries = this.chartConfig.series;
-		var thisPanel = this;		
+		var thisPanel = this;
+		
+		var allRuntimeSeries = this.getRuntimeSeries();
+		var allDesignSeries = this.chartConfig.series;
+		
 		var toReturn = function () {
 			
 			var theSerieName = this.series.name;
-			var serieDefinition = null;
+			var serieName;  // the serie name without eventual scale factor
+			var measureName;  // the measure related to the serie
+			var serieDefinition;  // the design-time serie definition (the measure with precision, color, ....)
+			
 			
 			// find the serie configuration
 			var i = 0;
-			for (; i < allSeries.length; i++) {
-				if (allSeries[i].seriename === theSerieName) {
-					serieDefinition = allSeries[i];
+			for (; i < allRuntimeSeries.length; i++) {
+				if (allRuntimeSeries[i].name === theSerieName) {
+					serieName = allRuntimeSeries[i].name;
+					measureName = allRuntimeSeries[i].measure;
+					break;
+				}
+			}
+			
+			i = 0;
+			// find the serie's (design-time) definition
+			for (; i < allDesignSeries.length; i++) {
+				//substring to remove the scale factor
+				if (allDesignSeries[i].seriename === measureName) {
+					serieDefinition = allDesignSeries[i];
 					break;
 				}
 			}
@@ -310,7 +372,13 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			if (chartType == 'Pie Chart') {
 				tooltip = '<b>' + this.point.name + '</b><br/>' + thisPanel.formatLegendWithScale(this.series.name) + ': ' + value;
 			} else {
-				tooltip = '<b>' + this.x + '</b><br/> ' + thisPanel.formatLegendWithScale(this.series.name) + ': ' + value;
+				// in case the serie name is different from the measure name, put also the measure name
+				if (measureName !== serieName) {
+					tooltip = '<b>' + this.x + '</b><br/>' + thisPanel.formatLegendWithScale(this.series.name) + '<br/>' 
+					+ measureName + ': ' + value;
+				} else {
+					tooltip = '<b>' + this.x + '</b><br/>' + thisPanel.formatLegendWithScale(this.series.name) + ': ' + value;
+				}
 			}
 			
 			// display percentage if needed

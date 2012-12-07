@@ -50,7 +50,7 @@ Sbi.worksheet.designer.ChartCategoryPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
-	this.addEvents("attributeDblClick", "attributeRemoved");
+	this.addEvents("attributeDblClick", "attributeRemoved", "beforeAddAttribute");
 	
 	this.init();
 	
@@ -130,6 +130,11 @@ Ext.extend(Sbi.worksheet.designer.ChartCategoryPanel, Ext.Panel, {
 				});
 				return;
 			}
+			
+			if (this.fireEvent('beforeAddAttribute', this, aRow.data) == false) {
+				return;
+			}
+			
 			this.setCategory(aRow.data);
 		}
 

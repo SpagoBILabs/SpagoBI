@@ -154,6 +154,12 @@ Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.categorypalette.titl
 
 
 //===================================================================
+//Sbi.worksheet.designer.SeriesGroupingPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.seriesgroupingpanel.title'] = 'Series\' grouping variable';
+Sbi.locale.ln['sbi.worksheet.designer.seriesgroupingpanel.emptymsg'] = 'Drag & drop here a query attribute as the series\' grouping variable';
+
+//===================================================================
 //Sbi.worksheet.designer.ChartCategoryPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.title'] = 'Category';
@@ -162,7 +168,6 @@ Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.title'] 
 Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.unknownsource'] = 'Unknown source';
 Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.measures'] = 'You cannot drop measures here';
 Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.postlinecalculated'] = 'You cannot drop script-based calculated fields here';
-
 
 //===================================================================
 //Sbi.worksheet.designer.ChartSeriesPanel

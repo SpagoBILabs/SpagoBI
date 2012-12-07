@@ -50,7 +50,9 @@ Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts = function(config) {
 	this.chartDivId = Ext.id();
 	
 	c = Ext.apply(c, {
-		html : '<div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>'
+		html : '<div id="' + this.chartDivId + '" style="width: 200%; height: 200%;"></div>' //" style="width: 200%; height: 200%;"
+		, autoScroll: true
+		, autoWidth: true
 	});
 	
 	Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts.superclass.constructor.call(this, c);
@@ -79,7 +81,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 	
 	
 	, init : function () {
-		this.loadChartData({'rows':[this.chartConfig.category],'measures':this.chartConfig.series});
+		this.loadChartData({
+			'rows':[this.chartConfig.category]
+			, 'measures': this.chartConfig.series
+			, 'columns': this.chartConfig.groupingVariable ? [this.chartConfig.groupingVariable] : []
+		});
 	}
 	
 	, createChart: function () {
@@ -98,13 +104,19 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 				spacingTop : 25,
 				spacingRight : 75,
 				spacingBottom : 25,
-				spacingLeft : 75
+				spacingLeft : 75,
+				zoomType: 'x'
 			},
 			plotOptions: this.getPlotOptions(),
 			legend: {
 				enabled: (this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true,
 				labelFormatter: function() {
 					return thisPanel.formatLegendWithScale(this.name)
+				},
+				layout: 'vertical',
+				align: 'right',
+				itemStyle: {
+					fontSize: this.legendFontSize + 'px'
 				}
 			},
 			tooltip: {
@@ -124,7 +136,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 				categories : this.getCategories(),
 				title : {
 					text : this.chartConfig.category.alias
-				}
+				}, 
+				maxZoom: 1  // minRange: 1 for Highcharts 2.2+
 			},
 			series : this.getSeries(),
 			credits : {
@@ -149,6 +162,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 		if (this.chartConfig.orientation === 'horizontal') {
 			plotOptions = {
 				bar: {
+					borderWidth: 0,
 					stacking: this.getStacking(),
 					dataLabels: {
 						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true,
@@ -159,6 +173,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 		} else {
 			plotOptions = {
 				column: {
+					borderWidth: 0,
 					stacking: this.getStacking(),
 					dataLabels: {
 						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true,
@@ -167,6 +182,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 				}
 			};
 		}
+		plotOptions.series = {shadow: false};
+		
 		return plotOptions;
 	}
 	
