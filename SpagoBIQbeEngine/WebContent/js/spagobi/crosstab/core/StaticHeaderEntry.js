@@ -32,8 +32,18 @@
   * 
   * Authors
   * 
-  * - Alberto Ghedin (alberto.ghedin@eng.it)
+  * - Davide Zerbetto (davide.zerbetto@eng.it)
   */
+
+//================================================================
+// Important!!
+//================================================================
+// This is class is not used. It was intended to replace HeaderEntry class using 
+// a DataView instead of Panels: this improves performances, in particulare on IE
+// but is not enough for very large tables
+
+
+
 //================================================================
 // HeaderEntry
 //================================================================
