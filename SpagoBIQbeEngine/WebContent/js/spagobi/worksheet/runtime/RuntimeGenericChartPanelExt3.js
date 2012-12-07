@@ -37,7 +37,7 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3  = function(config) {
 	
 	this.legendStyle = 		
 	{
-			display: 'bottom',
+			display: 'right',
 			border:{
 				color: "bcbcbc",
 				size: 1
@@ -46,7 +46,7 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3  = function(config) {
 			font:
 			{
 				family: 'Tahoma',
-				size: 13
+				size: 9
 			}
 	};
 	

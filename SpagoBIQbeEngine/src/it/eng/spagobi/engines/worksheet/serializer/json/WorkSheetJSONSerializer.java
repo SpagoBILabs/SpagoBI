@@ -201,6 +201,10 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		JSONObject toReturn = new JSONObject(config);
 		toReturn.put(WorkSheetSerializationUtils.CATEGORY, SerializationManager.serialize(chart.getCategory(), "application/json"));
 
+		if (chart.getGroupingVariable() != null) {
+			toReturn.put(WorkSheetSerializationUtils.GROUPING_VARIABLE, SerializationManager.serialize(chart.getGroupingVariable(), "application/json"));
+		}
+		
 		JSONArray seriesJSON = new JSONArray();
 		List<Serie> series = chart.getSeries();
 		SerieJSONSerializer serialier = new SerieJSONSerializer();

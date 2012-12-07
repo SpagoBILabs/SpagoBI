@@ -22,6 +22,7 @@ import org.json.JSONObject;
 public class ChartDefinition extends SheetContent {
 	
 	private Attribute category = null;
+	private Attribute groupingVariable = null;
 	private List<Serie> series = null;
 	private JSONObject config = null;
 	
@@ -33,6 +34,14 @@ public class ChartDefinition extends SheetContent {
 
 	public void setCategory(Attribute category) {
 		this.category = category;
+	}
+	
+	public void setGroupingVariable(Attribute groupingVariable) {
+		this.groupingVariable = groupingVariable;
+	}
+	
+	public Attribute getGroupingVariable() {
+		return groupingVariable;
 	}
 
 	public List<Serie> getSeries() {
@@ -59,6 +68,11 @@ public class ChartDefinition extends SheetContent {
 		if (values != null && !values.equals(new JSONArray().toString())) {
 			toReturn.add(category);
 		}
+		Attribute groupingVariable = getGroupingVariable();
+		values = groupingVariable.getValues();
+		if (values != null && !values.equals(new JSONArray().toString())) {
+			toReturn.add(groupingVariable);
+		}
 		return toReturn;
 	}
 
@@ -66,6 +80,7 @@ public class ChartDefinition extends SheetContent {
 	public List<Field> getAllFields() {
 		List<Field> toReturn = new ArrayList<Field>();
 		toReturn.add(getCategory());
+		toReturn.add(getGroupingVariable());
 		toReturn.addAll(getSeries());
 		return toReturn;
 	}

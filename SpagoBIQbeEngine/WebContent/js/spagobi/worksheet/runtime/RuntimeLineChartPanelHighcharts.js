@@ -50,7 +50,8 @@ Sbi.worksheet.runtime.RuntimeLineChartPanelHighcharts = function(config) {
 	this.chartDivId = Ext.id();
 	
 	c = Ext.apply(c, {
-		html : '<div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>'
+		html : '<div id="' + this.chartDivId + '" style="width: 4000px; height: 2000px;"></div>' //
+		, autoScroll: true
 	});
 	
 	Sbi.worksheet.runtime.RuntimeLineChartPanelHighcharts.superclass.constructor.call(this, c);
@@ -79,10 +80,22 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelHighcharts, Sbi.worksheet.
 	
 	
 	, init : function () {
-		this.loadChartData({'rows':[this.chartConfig.category],'measures':this.chartConfig.series});
+		this.loadChartData({
+			'rows':[this.chartConfig.category]
+			, 'measures': this.chartConfig.series
+			, 'columns': this.chartConfig.groupingVariable ? [this.chartConfig.groupingVariable] : []
+		});
 	}
 
 	, createChart: function () {
+		
+		  var retriever = new Sbi.worksheet.runtime.DefaultChartDimensionRetrieverStrategy();
+		  var size = retriever.getChartDimension(this);
+		  this.update(' <div id="' + this.chartDivId + '" style="width: ' + size.width + '; height: ' + size.height + ';"></div>');
+
+		  var series = this.getSeries();
+		  var categories = this.getCategories();
+		  
 		  var thisPanel = this;
 		  this.chart = new Highcharts.Chart({
 			exporting : {
@@ -105,8 +118,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelHighcharts, Sbi.worksheet.
 				enabled: (this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true,
 				labelFormatter: function() {
 					return thisPanel.formatLegendWithScale(this.name)
+				},
+				layout: 'vertical',
+				align: 'right',
+				itemStyle: {
+					fontSize: this.legendFontSize + 'px'
 				}
-				
 			},
 			tooltip: {
 				enabled: true,
@@ -122,12 +139,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelHighcharts, Sbi.worksheet.
 				}
 			},
 			xAxis : {
-				categories : this.getCategories(),
+				categories : categories,
 				title : {
 					text : this.chartConfig.category.alias
 				}
 			},
-			series : this.getSeries(),
+			series : series,
 			credits : {
 				enabled : false
 			}
@@ -185,5 +202,5 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelHighcharts, Sbi.worksheet.
 	        return null;
 		}
 	}
-
+	
 });

@@ -176,6 +176,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/WorksheetDesignerPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetContentPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/ChartCategoryPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/SeriesGroupingPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/ChartSeriesPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/BarChartDesignerPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/LineChartDesignerPanel.js'></script>
@@ -203,6 +204,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeBarChartPanelExt3.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeLineChartPanelExt3.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimePieChartPanelExt3.js'></script>
+
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/DefaultChartDimensionRetrieverStrategy.js'></script>
 
 <script type="text/javascript" src='../js/spagobi/worksheet/config/OptionsWindow.js'></script>
 

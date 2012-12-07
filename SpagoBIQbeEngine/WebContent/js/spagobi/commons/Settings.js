@@ -104,6 +104,11 @@ Sbi.settings.worksheet = {
 			table : {
 				height: 400
 			}
+			, chart : {
+				legend : {
+					fontSize : 10
+				}
+			}
 		}
 		, designer:{
 			common: {
@@ -116,5 +121,5 @@ Sbi.settings.worksheet = {
 		}
 		//Chart library:
 		//possible values: ext3, highchart
-		,chartlib : 'ext3'
+		, chartlib : 'ext3'
 };
