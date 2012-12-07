@@ -80,6 +80,11 @@ public class ChartDefinition extends SheetContent {
 	public List<Field> getAllFields() {
 		List<Field> toReturn = new ArrayList<Field>();
 		toReturn.add(getCategory());
+//		Attribute groupingVariable = getGroupingVariable();
+//		if (groupingVariable != null) {
+//			toReturn.add(groupingVariable);
+//		}
+		
 		toReturn.add(getGroupingVariable());
 		toReturn.addAll(getSeries());
 		return toReturn;
