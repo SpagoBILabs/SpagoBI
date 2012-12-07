@@ -305,7 +305,9 @@
 				<file name='./spagobi/crosstab/CrosstabDefinitionPanel.js' />
 				<file name='./spagobi/crosstab/CrosstabPreviewPanel.js' />
 
-
+                <file name='./spagobi/crosstab/StaticCrosstabDefinitionPanel.js' />
+                <file name='./spagobi/crosstab/StaticCrosstabPreviewPanel.js' />
+                <file name='./spagobi/crosstab/core/HTMLCrossTab.js' />
 
 				<file name='./spagobi/dataset/ParametersGridPanel.js' />
 
@@ -324,6 +326,7 @@
 				<file name='./spagobi/worksheet/designer/WorksheetDesignerPanel.js' />
 				<file name='./spagobi/worksheet/designer/SheetContentPanel.js' />
 				<file name='./spagobi/worksheet/designer/ChartCategoryPanel.js' />
+                <file name='./spagobi/worksheet/designer/SeriesGroupingPanel.js' />
 				<file name='./spagobi/worksheet/designer/ChartSeriesPanel.js' />
 				<file name='./spagobi/worksheet/designer/BarChartDesignerPanel.js' />
 				<file name='./spagobi/worksheet/designer/LineChartDesignerPanel.js' />
@@ -351,6 +354,8 @@
 				<file name='./spagobi/worksheet/runtime/RuntimeBarChartPanelExt3.js' />
 				<file name='./spagobi/worksheet/runtime/RuntimeLineChartPanelExt3.js' />
 				<file name='./spagobi/worksheet/runtime/RuntimePieChartPanelExt3.js' />
+				
+				<file name='./spagobi/worksheet/runtime/DefaultChartDimensionRetrieverStrategy.js' />
 
 				<file name='./spagobi/worksheet/config/OptionsWindow.js' />
 
