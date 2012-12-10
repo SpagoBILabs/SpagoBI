@@ -105,7 +105,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelHighcharts, Sbi.worksheet.r
 				formatter: this.getTooltipFormatter()
 			},
 			title : {
-				text : ''
+				text : this.getTitle()
 			},
 			series : this.getSeries(),
 			colors : this.getColors(),
@@ -162,6 +162,13 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelHighcharts, Sbi.worksheet.r
 		series.push(serie);
 		return series;
 		
+	}
+	
+	, getTitle : function () {
+		var superSeries = Sbi.worksheet.runtime.RuntimePieChartPanelHighcharts.superclass.getSeries.call(this);
+		var theSerie = superSeries[0];
+		var title = this.formatTextWithMeasureScaleFactor(theSerie.name, theSerie.name);
+		return title;
 	}
 	
 });

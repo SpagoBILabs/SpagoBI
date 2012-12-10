@@ -265,16 +265,23 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 		var type = this.chartConfig.type;
 		var horizontal = this.chartConfig.orientation === 'horizontal';
 		
-		var getFormattedValueExt3 = this.getFormattedValueExt3;
+		var thePanel = this;
 		
 		var toReturn = function (chart, record, index, series) {
-			var valuePrefix= '';
+			var tooltip = '';
 			
-			var value = getFormattedValueExt3(chart, record, series, chartType, allRuntimeSeries, allDesignSeries, type, horizontal);
+			var valueObj = thePanel.getFormattedValueExt3(chart, record, series, chartType, allRuntimeSeries, allDesignSeries, type, horizontal);
+			
+			if (valueObj.measureName !== valueObj.serieName) {
+				tooltip = valueObj.serieName + '\n' + record.data.categories + '\n';
+				// in case the serie name is different from the measure name, put also the measure name
+				tooltip += thePanel.formatTextWithMeasureScaleFactor(valueObj.measureName, valueObj.measureName) + ' : ';
+			} else {
+				tooltip =  record.data.categories + '\n' + series.displayName + ' : ' ;
+			}
+			tooltip += valueObj.value;
 		
-			valuePrefix = series.displayName+'\n'+record.data.categories+'\n';
-
-			return valuePrefix+value;
+			return tooltip;
 			
 		};
 		return toReturn;
@@ -339,12 +346,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 			value = value + ' ' + serieDefinition.suffix;
 		}
 
-		// in case the serie name is different from the measure name, put also the measure name
-		if (measureName !== serieName) {
-			value = measureName + ' : ' + value;
-		}
-		
-		return value;
+		var toReturn = {};
+		toReturn.value = value;
+		toReturn.serieName = serieName;
+		toReturn.measureName = measureName;
+		return toReturn;
 	}
 
 });

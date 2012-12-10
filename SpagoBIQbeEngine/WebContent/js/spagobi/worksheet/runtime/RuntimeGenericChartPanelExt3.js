@@ -35,27 +35,23 @@ Ext.ns("Sbi.worksheet.runtime");
 
 Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3  = function(config) { 
 	
-	this.legendStyle = 		
-	{
-			display: 'right',
-			border:{
-				color: "bcbcbc",
-				size: 1
-			},
-			padding: 5,
-			font:
-			{
-				family: 'Tahoma',
-				size: 9
-			}
+	this.legendStyle = {
+		display : 'right',
+		border : {
+			color : "bcbcbc",
+			size : 1
+		},
+		padding : 5,
+		font : {
+			family : 'Tahoma',
+			size : Sbi.settings.worksheet.runtime.chart.legend.fontSize || 10
+		}
 	};
 	
 	this.addEvents();
 	
 	Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3.superclass.constructor.call(this, config);	 	
-	
 
-	
 };
 
 Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.runtime.RuntimeGenericChartPanel, {
@@ -195,6 +191,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.run
 	
 	, addChartConfExt3: function(chartConf, showTipMask){
 		if((this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true){
+			if (chartConf.extraStyle === undefined || chartConf.extraStyle == null) {
+				chartConf.extraStyle = {};
+			}
 			chartConf.extraStyle.legend = this.legendStyle;
 		}
 		chartConf.tipRenderer = this.getTooltipFormatter();

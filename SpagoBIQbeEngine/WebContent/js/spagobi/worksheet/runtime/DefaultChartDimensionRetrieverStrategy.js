@@ -41,74 +41,78 @@ Ext.ns("Sbi.worksheet.runtime");
 
 Sbi.worksheet.runtime.DefaultChartDimensionRetrieverStrategy = function(config) { 
 	
-return {
-
-	getChartDimension : function (chart) {
-		
-		var series = chart.getSeries();
-		var categories = chart.getCategories();
-		var legendFontSize = chart.legendFontSize;
-		var showlegend = chart.chartConfig.showlegend;
-		
-		var width = '100%';
-		var height = '100%';
-		
-		var seriesNumber = series.length;
-		var categoriesNumber = categories.length;
-		
-		var maxSerieNameInLength = this.getMaxSerieNameInLength(series);
-		var maxCategoryLength = this.getMaxCategoryLength(categories);
+	var WIDTH_TO_HEIGHT_RATIO = 1.3;
+	
+	return {
+	
+		getChartDimension : function (chart) {
 			
-		if (seriesNumber > 20) {
-			var heightNum = seriesNumber * legendFontSize * 2;
-			var minWidthNum = heightNum * 2;
-			var widthNum = Math.max(minWidthNum, maxCategoryLength * 10 * categoriesNumber);
-			if (showlegend) {
-				widthNum = widthNum + maxSerieNameInLength * legendFontSize;
+			var series = chart.getSeries();
+			var categories = chart.getCategories();
+			var legendFontSize = chart.legendFontSize;
+			var showlegend = chart.chartConfig.showlegend;
+			
+			var width = '100%';
+			var height = '100%';
+			
+			var seriesNumber = series.length;
+			var categoriesNumber = categories.length;
+			
+			var maxSerieNameInLength = this.getMaxSerieNameInLength(series);
+			var maxCategoryLength = this.getMaxCategoryLength(categories);
+				
+			if (seriesNumber > 20) {
+				var heightNum = seriesNumber * legendFontSize * 2;
+				var minWidthNum = Math.round(heightNum * WIDTH_TO_HEIGHT_RATIO);
+				var widthNum = Math.max(minWidthNum, maxCategoryLength * 10 * categoriesNumber);
+				if (showlegend) {
+					widthNum = widthNum + maxSerieNameInLength * legendFontSize;
+				}
+				height = heightNum + 'px';
+				width = widthNum + 'px';
 			}
-			height = heightNum + 'px';
-			width = widthNum + 'px';
-		}
-		
-		var size = {};
-		size.width = width;
-		size.height = height;
-		
-		if (Ext.isIE && size.height == '100%') {
-			//set the height if ie
-			size.height = '400px';
-//			size.width = '';
-		}
-		
-//		alert('width : ' + size.width);
-//		alert('height : ' + size.height);
-		return size;
-	}
-	
-	, getMaxSerieNameInLength : function (series) {
-		var toReturn = 0;
-		for (var i = 0; i < series.length; i++) {
-			var aSerie = series[i];
-			if (aSerie.name.length > toReturn) {
-				toReturn = aSerie.name.length;
+			
+			var size = {};
+			size.width = width;
+			size.height = height;
+			
+			if (Ext.isIE && size.height == '100%') {
+				//set the height if ie
+				size.height = '400px';
+	//			size.width = '';
 			}
+			
+	//		alert('width : ' + size.width);
+	//		alert('height : ' + size.height);
+			return size;
 		}
-		return toReturn;
-	}
-	
-	, getMaxCategoryLength : function (categories) {
-		var toReturn = 0;
-		for (var i = 0; i < categories.length; i++) {
-			var aCategory = categories[i];
-			var words = aCategory.split(" ");
-			for (var j = 0; j < words.length; j++) {
-				var aWord = words[j];
-				if (aWord.length > toReturn) {
-					toReturn = aWord.length;
+		
+		, getMaxSerieNameInLength : function (series) {
+			var toReturn = 0;
+			for (var i = 0; i < series.length; i++) {
+				var aSerie = series[i];
+				if (aSerie.name.length > toReturn) {
+					toReturn = aSerie.name.length;
 				}
 			}
+			return toReturn;
 		}
-		return toReturn;
+		
+		, getMaxCategoryLength : function (categories) {
+			var toReturn = 0;
+			for (var i = 0; i < categories.length; i++) {
+				var aCategory = categories[i];
+				var words = aCategory.split(" ");
+				for (var j = 0; j < words.length; j++) {
+					var aWord = words[j];
+					if (aWord.length > toReturn) {
+						toReturn = aWord.length;
+					}
+				}
+			}
+			return toReturn;
+		}
+	
 	}
 
-}};
+};
