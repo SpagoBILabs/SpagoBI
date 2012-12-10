@@ -303,18 +303,25 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 		var chartType = this.chartConfig.designer;
 		var allRuntimeSeries = this.getRuntimeSeries();
 		var allDesignSeries = this.chartConfig.series;
-		var stacking  =this.getStacking();
+		var stacking = this.getStacking();
 		
-		var getFormattedValueExt3 = this.getFormattedValueExt3;
+		var thePanel = this;
 		
 		var toReturn = function (chart, record, index, series) {
-			var valuePrefix= '';
+			var tooltip = '';
 			
-			var value = getFormattedValueExt3(chart, record, series, chartType, allRuntimeSeries, allDesignSeries, stacking);
+			var valueObj = thePanel.getFormattedValueExt3(chart, record, series, chartType, allRuntimeSeries, allDesignSeries, stacking);
+			
+			if (valueObj.measureName !== valueObj.serieName) {
+				tooltip = valueObj.serieName + '\n' + record.data.categories + '\n';
+				// in case the serie name is different from the measure name, put also the measure name
+				tooltip += thePanel.formatTextWithMeasureScaleFactor(valueObj.measureName, valueObj.measureName) + ' : ';
+			} else {
+				tooltip =  record.data.categories + '\n' + series.displayName + ' : ' ;
+			}
+			tooltip += valueObj.value;
 		
-			valuePrefix = series.displayName+'\n'+record.data.categories+'\n';
-
-			return valuePrefix+value;
+			return tooltip;
 			
 		};
 		return toReturn;
@@ -374,12 +381,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 			value = value + ' ' + serieDefinition.suffix;
 		}
 		
-		// in case the serie name is different from the measure name, put also the measure name
-		if (measureName !== serieName) {
-			value = measureName + ' : ' + value;
-		}
-		
-		return value;
+		var toReturn = {};
+		toReturn.value = value;
+		toReturn.serieName = serieName;
+		toReturn.measureName = measureName;
+		return toReturn;
 	}
 
 });

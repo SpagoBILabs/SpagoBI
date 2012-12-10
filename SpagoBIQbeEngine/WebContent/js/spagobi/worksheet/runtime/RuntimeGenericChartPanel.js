@@ -211,7 +211,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 				var measureNodes = groupingAttributeValues[i].node_childs;
 				for(var j = 0; j < measureNodes.length; j++) {
 					toReturn.push({
-						name : groupingAttributeValues[i].node_description // + ' (' + measureNodes[j].node_description + ')'
+						name : groupingAttributeValues[i].node_description + 
+								( measureNodes.length > 1 ? ' [' + measureNodes[j].node_description + ']' : '' )
 						, measure : measureNodes[j].node_description
 					});
 				}
@@ -374,8 +375,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			} else {
 				// in case the serie name is different from the measure name, put also the measure name
 				if (measureName !== serieName) {
-					tooltip = '<b>' + this.x + '</b><br/>' + thisPanel.formatLegendWithScale(this.series.name) + '<br/>' 
-					+ measureName + ': ' + value;
+					tooltip = '<b>' + this.x + '</b><br/>' + this.series.name + '<br/>' 
+					+ thisPanel.formatTextWithMeasureScaleFactor(measureName, measureName) + ': ' + value;
 				} else {
 					tooltip = '<b>' + this.x + '</b><br/>' + thisPanel.formatLegendWithScale(this.series.name) + ': ' + value;
 				}
@@ -411,18 +412,29 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		return colors;
 	}
 	
-	, formatLegendWithScale : function(theSerieName){
-		
-		var fieldsOptions = this.fieldsOptions;
-		
-		var optionDefinition = null;
-		var legendSuffix = (this.getMeasureScaleFactor(theSerieName)).text;
-		//alert(theSerieName+' '+legendSuffix);
-		if(legendSuffix!=''){
-			return theSerieName +' '+legendSuffix;
+	, formatLegendWithScale : function(theSerieName) {
+		var serie = this.getRuntimeSerie(theSerieName);
+		var toReturn = this.formatTextWithMeasureScaleFactor(serie.name, serie.measure);
+		return toReturn;
+	}
+	
+	, getRuntimeSerie : function (theSerieName) {
+		var allRuntimeSeries = this.getRuntimeSeries();
+		var i = 0;
+		for (; i < allRuntimeSeries.length; i++) {
+			if (allRuntimeSeries[i].name === theSerieName) {
+				return allRuntimeSeries[i];
+			}
 		}
-		
-		return theSerieName;
+		return null;
+	}
+	
+	, formatTextWithMeasureScaleFactor : function(text, measureName) {
+		var legendSuffix = (this.getMeasureScaleFactor(measureName)).text;
+		if (legendSuffix != '' ) {
+			return text + ' ' + legendSuffix;
+		}
+		return text;
 	}
 	
 	, getMeasureScaleFactor: function (theMeasureName){
@@ -438,7 +450,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		if(optionDefinition!=null){
 			legendSuffix = optionDefinition.options.measureScaleFactor;
 			if(legendSuffix != undefined && legendSuffix != null && legendSuffix!='NONE'){
-				scaleFactor.text = LN('sbi.worksheet.config.options.measurepresentation.'+legendSuffix);
+				scaleFactor.text = LN('sbi.worksheet.runtime.options.scalefactor.'+legendSuffix);
 				switch (legendSuffix)
 				{
 				case 'K':

@@ -121,5 +121,5 @@ Sbi.settings.worksheet = {
 		}
 		//Chart library:
 		//possible values: ext3, highchart
-		, chartlib : 'ext3'
+		, chartlib : 'highchart'
 };

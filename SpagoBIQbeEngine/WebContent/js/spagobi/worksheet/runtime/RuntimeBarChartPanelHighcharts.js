@@ -89,6 +89,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 	}
 	
 	, createChart: function () {
+		
+		  var retriever = new Sbi.worksheet.runtime.DefaultChartDimensionRetrieverStrategy();
+		  var size = retriever.getChartDimension(this);
+		  this.update(' <div id="' + this.chartDivId + '" style="width: ' + size.width + '; height: ' + size.height + ';"></div>');
+		  
 		  var thisPanel = this;
 		  this.chart = new Highcharts.Chart({
 			exporting : {

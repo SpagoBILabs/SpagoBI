@@ -49,3 +49,11 @@ Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.title']= 'Filt
 Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.empty']= 'No filters are set';
 Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.columns.attribute']= 'Attribute';
 Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetfiltersinfopanel.columns.values']= 'Values';
+
+
+//===========================================================
+//Sbi.worksheet.runtime.RuntimeGenericChartPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.runtime.options.scalefactor.K'] = '(in thousands)';
+Sbi.locale.ln['sbi.worksheet.runtime.options.scalefactor.M'] = '(in millions)';
+Sbi.locale.ln['sbi.worksheet.runtime.options.scalefactor.G'] = '(in billions)';
