@@ -135,11 +135,8 @@ public class JDBCStandardDataReader extends AbstractDataReader {
     			logger.debug("Calculation of result set number is NOT enabled");
     		}
 
-    	} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			logger.error("Class type not found",e);
-			e.printStackTrace();
+    	} catch (Throwable t) {
+			logger.error("An unexpected error occured while resding resultset", t);
 		} finally {
     		logger.debug("OUT");
     	}
