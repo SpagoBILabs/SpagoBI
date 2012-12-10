@@ -1932,7 +1932,12 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 					ImportUtilities.modifyExisting(exportedParuse, existingParuse,  sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Update(existingParuse);
-					sessionCurrDB.save(existingParuse);
+
+					IParameterUseDAO iParameterUseDAO=DAOFactory.getParameterUseDAO();
+					// delete previous checks and det because they will be overwritten
+					iParameterUseDAO.eraseParameterUseDetAndCkSameSession(existingParuse.getUseId(), sessionCurrDB);
+					sessionCurrDB.update(existingParuse);	
+					sessionCurrDB.flush();
 					metaAss.insertCoupleParuse(oldId, existingParuse.getUseId());
 					
 					logger.debug("Updated parameter use " + existingParuse.getName() + " for param " + param.getName());
