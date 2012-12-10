@@ -72,7 +72,7 @@ public class KpiEngineUtil {
 			content = SourceBean.fromXMLString(contentStr);
 			logger.debug("Got the content of the template");
 		} catch (Exception e) {
-			logger.error("Error while converting the Template bytes into a SourceBean object");
+			logger.error("Error while converting the Template bytes into a SourceBean object", e);
 			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2003);
 			userError.setBundle("messages");
 			throw userError;
