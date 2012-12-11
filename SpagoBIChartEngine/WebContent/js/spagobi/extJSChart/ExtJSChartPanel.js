@@ -154,7 +154,7 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
 		  				var categoryField ;
 		  				var valueField ;
 		  				
-		  				if (obj.series.type == 'bar'){
+		  				if (obj.series.type == 'bar' || obj.series.type == 'column'){
 		  					categoryField = obj.storeItem.data[obj.series.xField];
 			  				valueField = obj.storeItem.data[obj.yField];
 		  				}
