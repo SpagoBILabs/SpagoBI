@@ -34,7 +34,7 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 	public static final String DRILL_TAG = "DRILL";
 	public static final String PARAM_TAG = "PARAM";
 	public static final String DRILL_DOCUMENT_ATTR = "document";
-	public static final String DRILL_TARGHET_ATTR = "targhet";
+	public static final String DRILL_TARGHET_ATTR = "target";
 	public static final String PARAM_NAME_ATTR = "name";
 	public static final String PARAM_TYPE_ATTR = "type";
 	public static final String PARAM_VALUE_ATTR = "value";
