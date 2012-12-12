@@ -29,7 +29,7 @@ public class NetworkTemplate {
 	public static final String DATA_SET_MAPPING_VALUE = "value";
 	public static final String DATA_SET_MAPPING_PROPERTY = "property";
 	public static final String DATA_SET_MAPPING_SOURCE = "source";
-	public static final String DATA_SET_MAPPING_TARGHET = "targhet";
+	public static final String DATA_SET_MAPPING_TARGHET = "target";
 	public static final String DATA_SET_MAPPING_EDGE = "edge";
 	
 	public NetworkTemplate() {

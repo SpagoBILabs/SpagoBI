@@ -86,7 +86,7 @@ public class NetworkBuilder {
 				net.addNode(src);
 			}
 			if(dest.getId()!=null){
-				net.addTargetNodeValueProperties(src);
+				net.addTargetNodeValueProperties(dest);
 				net.addNode(dest);
 			}
 			if(edge.getId()!=null && dest.getId()!=null && src.getId()!=null){
