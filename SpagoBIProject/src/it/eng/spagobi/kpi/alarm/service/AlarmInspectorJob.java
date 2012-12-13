@@ -140,8 +140,7 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 							+ "\n");
 
 				for (SbiAlarmContact sbiAlarmContact : sbiAlarmContactList) {
-					alertSendingSessionList = alertSendingSessionMap
-							.get(sbiAlarmContact);
+					alertSendingSessionList = alertSendingSessionMap.get(sbiAlarmContact);
 					if (alertSendingSessionList == null) {
 
 						if (logger.isDebugEnabled())
@@ -301,24 +300,24 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 			if ((from == null) || from.trim().equals(""))
 				from = "spagobi.scheduler@eng.it";
 
-			String user = SingletonConfig.getInstance().getConfigValue(
-					"MAIL.PROFILES.kpi_alarm.user");
-
-			if ((user == null) || user.trim().equals(""))
-				throw new Exception("Smtp user not configured");
-
-			String pass = SingletonConfig.getInstance().getConfigValue(
-					"MAIL.PROFILES.kpi_alarm.password");
-
-			if ((pass == null) || pass.trim().equals(""))
-				throw new Exception("Smtp password not configured");
-
+			String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.kpi_alarm.user");
+			if( (user==null) || user.trim().equals("")){
+				logger.debug("Smtp user not configured");	
+				user="";
+			}
+			//	throw new Exception("Smtp user not configured");
+			String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.kpi_alarm.password");
+			if( (pass==null) || pass.trim().equals("")){
+				pass= "";
+			logger.debug("Smtp password not configured");	
+			}
 			String mailTos = sInfo.getMailTos();
 
 			if ((mailTos == null) || mailTos.trim().equals("")) {
 				throw new Exception("No recipient address found");
 
 			}
+
 			String mailSubj = sInfo.getMailSubj();
 			String mailTxt = sInfo.getMailTxt();
 
@@ -330,12 +329,22 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 			props.put("mail.smtp.port", smptPort);
 			props.put("mail.smtp.auth", "true");
 
-			// create autheticator object
-			Authenticator auth = new SMTPAuthenticator(user, pass);
 
 			// open session
-			Session session = Session.getDefaultInstance(props, auth);
-
+			Session session = null;
+			// create autheticator object
+			Authenticator auth = null;
+			if (user.equals("")) {
+				auth = new SMTPAuthenticator(user, pass);
+				props.put("mail.smtp.auth", "false");
+				session = Session.getDefaultInstance(props, auth);
+				logger.error("Session.getDefaultInstance(props, auth)");
+			}else{
+				auth = new SMTPAuthenticator(user, pass);
+				props.put("mail.smtp.auth", "true");
+				session = Session.getDefaultInstance(props, auth);
+				logger.error("Session.getDefaultInstance(props, auth)");
+			}
 			// create a message
 			MimeMessage msg = new MimeMessage(session);
 
