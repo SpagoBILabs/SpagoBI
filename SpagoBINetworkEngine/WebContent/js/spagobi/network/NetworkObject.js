@@ -348,6 +348,15 @@ Ext.define('Sbi.network.NetworkObject', {
 		this.networkSwf.addListener("mouseout", "nodes", function(event) {
 			tooltip.hide();
 		});
+
+		this.networkSwf.addListener("mouseover", "edges", function(event) {
+			tooltip.show(getTooltipText(event));
+		});
+
+		this.networkSwf.addListener("mouseout", "edges", function(event) {
+			tooltip.hide();
+		});
+		
 	}
 	
 });

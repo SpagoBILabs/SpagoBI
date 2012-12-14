@@ -184,7 +184,7 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 
 		JSONObject info = new JSONObject();
 		if(title!=null){
-			info.put("text", title);
+			info.put(INFO_TITLE, title);
 		}
 		info.put("content", content);
 		return info;
