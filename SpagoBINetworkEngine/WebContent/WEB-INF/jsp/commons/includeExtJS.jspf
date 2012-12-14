@@ -12,7 +12,7 @@
     
 <!-- Include Ext stylesheets here: -->
 <link id="extall" rel="styleSheet" href ="../js/lib/extjs-4.1.0-rc1/resources/css/ext-all.css" type="text/css" />
-<!--<link id="theme-gray" rel="styleSheet" href ="../js/lib/extjs-4.1.0-rc1/resources/css/xtheme-gray.css" type="text/css" />-->
+<link id="theme-gray" rel="styleSheet" href ="../js/lib/extjs-4.1.0-rc1/resources/css/ext-all-gray.css" type="text/css" />
 <link id="theme-overrides" rel="styleSheet" href ="../js/spagobi/overrides/overrides.css" type="text/css" />
 
 <script type="text/javascript">

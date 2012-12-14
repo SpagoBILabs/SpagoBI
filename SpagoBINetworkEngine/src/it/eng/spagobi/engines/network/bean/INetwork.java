@@ -15,6 +15,7 @@ import it.eng.spagobi.engines.network.serializer.SerializationException;
 public interface INetwork {
 	public String getNetworkAsString() throws SerializationException;
 	public String getNetworkType();
+	public String getNetworkInfo();
 	public String getNetworkCrossNavigation() throws SerializationException;
 	public String getNetworkOptions();
 }

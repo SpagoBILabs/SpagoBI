@@ -6,7 +6,6 @@
 
 package it.eng.spagobi.engines.network.template;
 
-import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.HashMap;

@@ -67,7 +67,7 @@ public class NetworkBuilder {
 		Edge edge;
 		List<IField> fields;
 		String metadataAlias;
-		JSONNetwork net = new JSONNetwork(template.getNetworkJSON(), template.getCrossNavigationLink());
+		JSONNetwork net = new JSONNetwork(template);
 		
 		for(int index = 0; index<dataStore.getRecordsCount() ; index++){
 			record = dataStore.getRecordAt(index);

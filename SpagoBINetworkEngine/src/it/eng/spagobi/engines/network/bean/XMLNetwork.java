@@ -73,6 +73,9 @@ public class XMLNetwork implements INetwork{
 	public void setNetworkOptions(JSONObject networkOptions) {
 		this.networkOptions = networkOptions;
 	}
-	
+
+	public String getNetworkInfo(){
+		return null;
+	}	
 	
 }
