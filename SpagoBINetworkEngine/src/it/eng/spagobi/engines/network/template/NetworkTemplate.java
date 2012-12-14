@@ -21,6 +21,7 @@ public class NetworkTemplate {
 	private NetworkDefinition networkDefinition; //XMLGRAPH
 	private JSONObject networkJSON; //JSON parsing of the template
 	private CrossNavigationLink crossNavigationLink;// cross navigation link
+	private JSONObject info;
 	
 	public static final String OPTIONS = "options";
 	public static final String DATA_SET_MAPPING = "datasetMapping";
@@ -62,6 +63,16 @@ public class NetworkTemplate {
 
 	public void setCrossNavigationLink(CrossNavigationLink crossNavigationLink) {
 		this.crossNavigationLink = crossNavigationLink;
+	}
+
+	public JSONObject getInfo() {
+		return info;
+	}
+
+	public void setInfo(JSONObject info) {
+		this.info = info;
 	}	
+	
+	
 	
 }

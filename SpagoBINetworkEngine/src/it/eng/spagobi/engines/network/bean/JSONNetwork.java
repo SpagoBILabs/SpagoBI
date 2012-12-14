@@ -54,6 +54,8 @@ public class JSONNetwork implements INetwork{
 	
 	private Map<String,Set<JSONNetworkMappingMetadata>> dataSchema;//structure of the data for the nodes and edges. For example if the node has the property id,label,color the nodeMetadata are {label:string,color:string}. So all the property without the id
 	private CrossNavigationLink networkCrossNavigation;//Cross navigation link structure
+	
+	private JSONObject info;//info of the networ. For example legend or other texts
 
 	public static transient Logger logger = Logger.getLogger(JSONNetwork.class);
 	
@@ -72,15 +74,19 @@ public class JSONNetwork implements INetwork{
 	}
 	
 	
-	public JSONNetwork(JSONObject network, CrossNavigationLink networkCrossNavigation) {
+	public JSONNetwork(NetworkTemplate template) {
 		this();
-		this.networkCrossNavigation = networkCrossNavigation;
+		this.networkCrossNavigation = template.getCrossNavigationLink();
 		try {
-			this.networkOptions = network.optJSONObject(NetworkTemplate.OPTIONS);
+			this.networkOptions = template.getNetworkJSON().optJSONObject(NetworkTemplate.OPTIONS);
 			if(networkOptions==null){
 				networkOptions = new JSONObject();
 			}
-			parseDataSetMapping(network.getJSONArray(NetworkTemplate.DATA_SET_MAPPING));
+			info = template.getInfo();
+			if(info==null){
+				info = new JSONObject();
+			}
+			parseDataSetMapping(template.getNetworkJSON().getJSONArray(NetworkTemplate.DATA_SET_MAPPING));
 		} catch (Exception e) {
 			logger.error("Error loading building the Network object from the json object", e);
 			throw new NetworkEngineRuntimeException("Error loading building the Network object from the json object", e);
@@ -237,7 +243,10 @@ public class JSONNetwork implements INetwork{
 	public String getMappingForEdge(String column){
 		return edgeColumnProperties.get(column);
 	}
-	
+	@JsonIgnore
+	public String getNetworkInfo(){
+		return info.toString();
+	}	
 	public void addTargetNodeValueProperties(Node node){
 		String property;
 		Iterator<String> propertiesIterator = targetNodeValueProperties.keySet().iterator();

@@ -32,7 +32,9 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 	public final static String TAG_XGMML= "graph";
 	public final static String TAG_NETWOK_DEFINITION = "NETWOK_DEFINITION";
 	public static final String DRILL_TAG = "DRILL";
+	public static final String INFO_TAG = "INFO";
 	public static final String PARAM_TAG = "PARAM";
+	public static final String INFO_TITLE = "TITLE";
 	public static final String DRILL_DOCUMENT_ATTR = "document";
 	public static final String DRILL_TARGHET_ATTR = "target";
 	public static final String PARAM_NAME_ATTR = "name";
@@ -89,13 +91,12 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 			if (template.getName().equalsIgnoreCase(TAG_GRAPHML)) {
 				//SourceBean graphmlTemplate = (SourceBean) template.getAttribute(TAG_GRAPHML);
 				networkTemplate.setNetworkXML((String)templateObject);
-				networkTemplate.setCrossNavigationLink(getDrill(template,new HashMap()));
+				
 			}else
 				// This is the template in the pure format XGMML
 			if (template.getName().equalsIgnoreCase(TAG_XGMML)) {
 				//SourceBean graphmlTemplate = (SourceBean) template.getAttribute(TAG_GRAPHML);
 				networkTemplate.setNetworkXML((String)templateObject);
-				networkTemplate.setCrossNavigationLink(getDrill(template,new HashMap()));
 			}else	
 				
 				
@@ -103,8 +104,11 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 			if(template.containsAttribute(TAG_NETWOK_DEFINITION)) {
 				SourceBean networkDefinitionBean = (SourceBean) template.getAttribute(TAG_NETWOK_DEFINITION);
 				networkTemplate.setNetworkJSNO(loadTemplateFeatures(networkDefinitionBean));
-				networkTemplate.setCrossNavigationLink(getDrill(template,new HashMap()));
+				JSONObject info = getNetworkInfo(template);
+				networkTemplate.setInfo(info);
 			} 
+
+			networkTemplate.setCrossNavigationLink(getDrill(template,new HashMap()));
 
 			
 			logger.debug("Templete parsed succesfully");
@@ -152,8 +156,40 @@ public class NetworkXMLTemplateParser implements INetworkTemplateParser{
 //		}
 //		return array;
 //	}
-
 	
+	
+
+
+	/**
+	 * Parse the tamplate to get the cross navigation link
+	 * @param template template as ResourceBean
+	 * @param paramsMap mp of the parameters
+	 * @return
+	 * @throws Exception
+	 */
+	private JSONObject getNetworkInfo(SourceBean template) throws Exception {
+
+		SourceBean infoSB = null;
+		String title = null;
+		String content = null;
+
+		logger.debug("IN");
+		infoSB = (SourceBean)template.getAttribute(INFO_TAG);
+		if(infoSB == null) {
+			logger.debug("Cannot find title drill settings: tag name " + DRILL_TAG);
+			return null;
+		}
+		title = (String)infoSB.getAttribute(INFO_TITLE);
+		content = (String)infoSB.getCharacters();
+
+		JSONObject info = new JSONObject();
+		if(title!=null){
+			info.put("text", title);
+		}
+		info.put("content", content);
+		return info;
+	}
+
 	/**
 	 * Parse the tamplate to get the cross navigation link
 	 * @param template template as ResourceBean

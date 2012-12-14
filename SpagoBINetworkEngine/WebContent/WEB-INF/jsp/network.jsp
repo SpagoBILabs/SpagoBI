@@ -108,6 +108,10 @@ author: Alberto Ghedin
             /* The Cytoscape Web container must have its dimensions set. */
             html, body { height: 100%; width: 100%; padding: 0; margin: 0; }
             #aaa { width: 100%; height: 100%; }
+                                   #tt {position:absolute; display:block}
+                        #tttop {display:block; height:5px; margin-left:5px; overflow:hidden}
+                        #ttcont {display:block; padding:2px 12px 3px 7px; margin-left:5px; background:#666; color:#FFF}
+                        #ttbot {display:block; height:5px; margin-left:5px; overflow:hidden}
         </style>
     </head>
     
@@ -141,16 +145,18 @@ author: Alberto Ghedin
                 var networkLink = <%= net.getNetworkCrossNavigation()	%>;
 				var networkType = '<%= net.getNetworkType() %>';	
 				var networkOptions = <%= StringEscapeUtils.unescapeJava(net.getNetworkOptions()) %>;	
+				var networkInfo= <%= StringEscapeUtils.unescapeJava(net.getNetworkInfo()) %>;	
 				var config = {};
 				config.networkEscaped = networkEscaped;
 				config.networkLink = networkLink;
 				config.networkType = networkType;
 				config.networkOptions = networkOptions;
+				config.networkInfo = networkInfo;
 				var network =null;
 				
 				Ext.onReady(function() { 
 					Ext.QuickTips.init();
-					network = Ext.create('Sbi.network.networkObject',config); //by alias
+					network = Ext.create('Sbi.network.NetworkContainerPanel',config); //by alias
 
 			
 					var networkPanel = Ext.create('Ext.container.Viewport', {
