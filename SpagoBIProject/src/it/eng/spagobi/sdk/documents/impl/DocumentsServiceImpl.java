@@ -354,7 +354,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			obj.setFunctionalities(functionalities);
 
 			ObjTemplate objTemplate = null;
-			if (sdkTemplate != null) {
+			if (sdkTemplate != null && sdkTemplate.getContent() != null) {
 				objTemplate = new SDKObjectsConverter().fromSDKTemplateToObjTemplate(sdkTemplate);
 				if (objTemplate != null) {
 					objTemplate.setActive(new Boolean(true));
