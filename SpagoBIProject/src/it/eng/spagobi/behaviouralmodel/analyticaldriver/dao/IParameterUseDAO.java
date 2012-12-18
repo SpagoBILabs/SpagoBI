@@ -198,4 +198,8 @@ public interface IParameterUseDAO extends ISpagoBIDao{
 	public void eraseParameterUseByIdSameSession(Integer parUseId, Session sessionCurrDB) throws EMFUserError;
 	
 	public void eraseParameterObjUseByParuseIdSameSession(Integer parUseId, Session sessionCurrDB) throws EMFUserError;
+	
+	public void eraseParameterUseDetAndCkSameSession(Integer parUseId, Session sessionCurrDB) throws EMFUserError;
+
+	
 }

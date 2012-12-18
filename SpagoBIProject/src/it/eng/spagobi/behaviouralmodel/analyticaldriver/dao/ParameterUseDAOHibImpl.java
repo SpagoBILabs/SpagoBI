@@ -883,4 +883,49 @@ IParameterUseDAO {
 	}
 	
 
+	
+	public void eraseParameterUseDetAndCkSameSession(Integer parUseId, Session sessionCurrDB) throws EMFUserError
+	{
+		logger.debug("IN");
+
+		//SbiParuse hibParuse = (SbiParuse)sessionCurrDB.load(SbiParuseCk.class, parUseId);
+
+		String qCk = "from SbiParuseCk ck where ck.id.sbiParuse.useId = ?";
+		Query hqlQueryCk = sessionCurrDB.createQuery(qCk);
+		hqlQueryCk.setInteger(0, parUseId);
+
+		String qDet = "from SbiParuseDet det where det.id.sbiParuse.useId = ?";
+		Query hqlQueryDet = sessionCurrDB.createQuery(qDet);
+		hqlQueryDet.setInteger(0, parUseId);
+
+		try{
+			logger.debug("delete ParUSeDet for paruse ");
+			List hibDet = (List) hqlQueryDet.list();
+			for (Iterator iterator = hibDet.iterator(); iterator.hasNext();) {
+				SbiParuseDet  hibParuseDet = (SbiParuseDet) iterator.next();
+				sessionCurrDB.delete(hibParuseDet);	
+			}
+			
+			logger.debug("delete ParUSeCk for paruse ");
+			List hibCk = (List) hqlQueryCk.list();
+			for (Iterator iterator = hibCk.iterator(); iterator.hasNext();) {
+				SbiParuseCk  hibParuseCk = (SbiParuseCk) iterator.next();
+				sessionCurrDB.delete(hibParuseCk);	
+			}
+
+
+		}catch(HibernateException he){
+
+			logException(he);
+
+			logger.error("Error in deleting checks and dets associated to SbiParuse with id "+parUseId, he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);  
+
+		}finally{
+		}
+
+		logger.debug("OUT");
+
+	}
+	
 }
