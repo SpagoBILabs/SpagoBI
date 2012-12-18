@@ -36,5 +36,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jaxrpc.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/json.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-lang-2.1.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/cas-client-core-3.1.6.jar"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>
