@@ -350,7 +350,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			obj.setCreationDate(new Date());
 			obj.setVisible(new Integer(1));
 			List functionalities = new ArrayList();
-			functionalities.add(functionalityId);
+			if(functionalityId != null)functionalities.add(functionalityId);
 			obj.setFunctionalities(functionalities);
 
 			ObjTemplate objTemplate = null;

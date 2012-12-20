@@ -480,6 +480,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			hibBIObject.setRefreshSeconds(biObject.getRefreshSeconds());
 
+			// if new defining object has no functionality associated keep previous ones
+			
+			if(biObject.getFunctionalities() != null && biObject.getFunctionalities().size()>0){
 			// functionalities erasing
 			Set hibFunctionalities = hibBIObject.getSbiObjFuncs();
 			for (Iterator it = hibFunctionalities.iterator(); it.hasNext(); ) {
@@ -501,6 +504,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			hibBIObject.setSbiObjFuncs(hibObjFunc);
 
+			}
+			
 			tx.commit();
 
 			// update biobject template info 
