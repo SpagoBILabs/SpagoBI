@@ -153,7 +153,7 @@ Ext.define('Sbi.network.NetworkObject', {
 		
 
 		if(networkLink!=null && networkLink!=undefined){
-			this.networkSwf.addListener("dbclick", "edges", function(evt) {
+			this.networkSwf.addListener("click", "edges", function(evt) {
 	
 	            var edge = evt.target;
 	            var parametersString="";
@@ -177,7 +177,7 @@ Ext.define('Sbi.network.NetworkObject', {
 	  
 	            eval("javascript:parent.execCrossNavigation(this.name,  '" +networkLink.document+"','"+parametersString + "','','','"+networkLink.target+"');");
 	        });
-			this.networkSwf.addListener("dbclick", "nodes", function(evt) {
+			this.networkSwf.addListener("click", "nodes", function(evt) {
 				
 	            var edge = evt.target;
 	            var parametersString="";
@@ -204,36 +204,6 @@ Ext.define('Sbi.network.NetworkObject', {
 		}
 	}
   
-//	,addTooltip:function(){
-//		
-//		var tooltipFunction = function(evt) {
-//			var tooltipText="";
-//			var partialText="";
-//			var propertyName="";
-//            var target = evt.target;
-//            var tooltipProperties = networkOptions.visualStyle[target.group].tooltip;
-//            if(tooltipProperties!=null && tooltipProperties!=undefined){
-//	            for(var i=0; i<tooltipProperties.length; i++){
-//	            	propertyName = tooltipProperties[i].property;
-//	            	if(propertyName!=null && propertyName!=undefined){
-//	            		partialText = propertyName+": "+target.data[propertyName]+"   ";
-//	            		tooltipText = tooltipText+partialText;
-//	            	}
-//	            }
-//            }
-//
-//            alert(tooltipText);
-//            
-//        };
-//		if(this.networkOptions.visualStyle.nodes.tooltip){
-//			this.networkSwf.addListener("click", "nodes", tooltipFunction);
-//		}
-//		if(this.networkOptions.visualStyle.edges.tooltip){
-//			this.networkSwf.addListener("click", "edges", tooltipFunction);
-//		}
-//
-//	}
-
 	
 	, exportNetwork : function(mimeType) {
 		this.networkSwf.exportNetwork(mimeType, this.services['exportNetwork']+'&type='+mimeType);
@@ -341,7 +311,7 @@ Ext.define('Sbi.network.NetworkObject', {
 		}();
 
 
-		if(networkOptions.visualStyle[nodes].tooltip!=null && networkOptions.visualStyle[nodes].tooltip!=undefined && networkOptions.visualStyle[nodes].tooltip!=''){
+		if(networkOptions.visualStyle.nodes.tooltip!=null && networkOptions.visualStyle.nodes.tooltip!=undefined && networkOptions.visualStyle.nodes.tooltip!=''){
 			this.networkSwf.addListener("mouseover", "nodes", function(event) {
 				tooltip.show(getTooltipText(event));
 			});
@@ -351,7 +321,7 @@ Ext.define('Sbi.network.NetworkObject', {
 			});
 		}
 		
-		if(networkOptions.visualStyle[edges].tooltip!=null && networkOptions.visualStyle[edges].tooltip!=undefined && networkOptions.visualStyle[edges].tooltip!=''){
+		if(networkOptions.visualStyle.edges.tooltip!=null && networkOptions.visualStyle.edges.tooltip!=undefined && networkOptions.visualStyle.edges.tooltip!=''){
 			this.networkSwf.addListener("mouseover", "edges", function(event) {
 				tooltip.show(getTooltipText(event));
 			});
