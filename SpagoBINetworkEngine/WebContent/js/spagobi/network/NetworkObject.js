@@ -341,21 +341,27 @@ Ext.define('Sbi.network.NetworkObject', {
 		}();
 
 
-		this.networkSwf.addListener("mouseover", "nodes", function(event) {
-			tooltip.show(getTooltipText(event));
-		});
+		if(networkOptions.visualStyle[nodes].tooltip!=null && networkOptions.visualStyle[nodes].tooltip!=undefined && networkOptions.visualStyle[nodes].tooltip!=''){
+			this.networkSwf.addListener("mouseover", "nodes", function(event) {
+				tooltip.show(getTooltipText(event));
+			});
 
-		this.networkSwf.addListener("mouseout", "nodes", function(event) {
-			tooltip.hide();
-		});
+			this.networkSwf.addListener("mouseout", "nodes", function(event) {
+				tooltip.hide();
+			});
+		}
+		
+		if(networkOptions.visualStyle[edges].tooltip!=null && networkOptions.visualStyle[edges].tooltip!=undefined && networkOptions.visualStyle[edges].tooltip!=''){
+			this.networkSwf.addListener("mouseover", "edges", function(event) {
+				tooltip.show(getTooltipText(event));
+			});
 
-		this.networkSwf.addListener("mouseover", "edges", function(event) {
-			tooltip.show(getTooltipText(event));
-		});
+			this.networkSwf.addListener("mouseout", "edges", function(event) {
+				tooltip.hide();
+			});
+		}
 
-		this.networkSwf.addListener("mouseout", "edges", function(event) {
-			tooltip.hide();
-		});
+
 		
 	}
 	
