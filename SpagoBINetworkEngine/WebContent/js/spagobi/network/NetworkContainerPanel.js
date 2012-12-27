@@ -67,5 +67,9 @@ Ext.define('Sbi.network.NetworkContainerPanel', {
         
     }
 
+	, exportNetwork : function(mimeType) {
+		this.networkObject.exportNetwork(mimeType);
+	}
+
 	
 });
