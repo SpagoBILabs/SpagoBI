@@ -32,4 +32,7 @@
 <EXPORTER domain="PDF" engine="SpagoBIConsoleEngine" defaultValue="true"/>
 <EXPORTER domain="JPG" engine="SpagoBIJSChartEngine" defaultValue="true"/>
 <EXPORTER domain="PDF" engine="SpagoBIJSChartEngine" defaultValue="false"/>
+<EXPORTER domain="GRAPHML" engine="SpagoBINetworkEngine" defaultValue="true"/>
+<EXPORTER domain="PNG" engine="SpagoBINetworkEngine" defaultValue="true"/>
+<EXPORTER domain="PDF" engine="SpagoBINetworkEngine" defaultValue="false"/>
 </EXPORTERS>
