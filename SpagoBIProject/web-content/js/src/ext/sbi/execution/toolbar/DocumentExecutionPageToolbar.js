@@ -726,14 +726,14 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			    	, handler : this.pdfExecution
 				}));
 			}
-			else if ( this.executionInstance.document.typeCode == 'DOCUMENT_COMPOSITE' ) {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-pdf' 
-					, tooltip: LN('sbi.execution.PdfExport')
-			     	, scope: this
-			    	, handler : this.pdfDCExecution
-				}));
-			}
+//			else if ( this.executionInstance.document.typeCode == 'DOCUMENT_COMPOSITE' ) {
+//				this.addButton(new Ext.Toolbar.Button({
+//					iconCls: 'icon-pdf' 
+//					, tooltip: LN('sbi.execution.PdfExport')
+//			     	, scope: this
+//			    	, handler : this.pdfDCExecution
+//				}));
+//			}
 			else if( this.executionInstance.document.typeCode == 'REPORT') {
 					var menuItems = new Array();
 					
