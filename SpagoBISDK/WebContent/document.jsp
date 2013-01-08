@@ -5,14 +5,17 @@
  License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.  If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/. --%>
  
- <%@page import="java.io.InputStream"%>
+ <%@page import="java.io.*"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="java.util.Random"%>
 <%@page import="it.eng.spagobi.sdk.proxy.DocumentsServiceProxy"%>
 <%@page import="it.eng.spagobi.sdk.documents.bo.SDKTemplate"%>
+<%@page import="it.eng.spagobi.sdk.documents.bo.SDKSchema"%>
+<%@page import="it.eng.spagobi.sdk.importexport.bo.SDKFile"%>
 <%@page import="javax.activation.DataHandler"%>
-<%@page import="it.eng.spagobi.commons.utilities.SpagoBIUtilities"%>
+<%@page import="org.apache.axis.attachments.ManagedMemoryDataSource"%>
+<%@page import="it.eng.spagobi.sdk.exceptions.SDKException" %>
 <%
 /**
 This page invokes a SpagoBI web services in order to execute the document's methods.
@@ -24,7 +27,7 @@ The parameter 'folderUpload' gives the name of the folder to upload the file. If
 a random folder name is created.
 */
 %>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+<%@ page  session="true"  language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%
 String user = "biadmin";
@@ -34,6 +37,7 @@ String doUpload = "false";
 String folderUpload = null;
 String action = null;
 String bodyCode = "";
+String idCatalogue = "";
 
 if (user != null && password != null) {
 	try { 
@@ -42,7 +46,7 @@ if (user != null && password != null) {
 		//gets request variables
 		doUpload = (String)request.getParameter("doUpload");
 		folderUpload = (String)request.getParameter("folderUpload");
-		action = (String)request.getParameter("action");
+		action = (request.getParameter("action")!=null)?(String)request.getParameter("action"):"";
 		
 		SDKTemplate template = new SDKTemplate();
 		
@@ -57,6 +61,60 @@ if (user != null && password != null) {
 					message += " <b>Folder:</b> " + folderName + "  - <b>Model:</b> " + fileName + "<br>";
 				}				
 				bodyCode += "<body>  " + message + " </body></html>";
+			}
+		}else if (action.equalsIgnoreCase("uploadMondrianSchema")){
+			try{					
+				Random randomGenerator = new Random();				
+				SDKSchema schema = new SDKSchema();
+				schema.setSchemaName("Sisba3"+ randomGenerator.nextInt(100));
+				schema.setSchemaDescription("Schema di test");
+				schema.setSchemaDataSourceLbl("SISBA3");
+				
+				//recupera il file con lo schema di test
+				SDKFile schemaFile = new SDKFile();
+				schemaFile.setFileName("schema");			
+				
+				// retrieves template
+				//String path = "D:\\Progetti\\Sisba3\\starschema.xml";
+				String path = "D:\\Progetti\\Sisba3\\sisba3.xml";
+				//check file content
+				FileInputStream isFile = new FileInputStream(path);
+				//defines a content to return
+				java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+				java.io.BufferedOutputStream bos = new java.io.BufferedOutputStream(baos);	
+				int c = 0;
+				byte[] b = new byte[1024];
+				while ((c = isFile.read(b)) != -1) {
+					if (c == 1024)
+						bos.write(b);
+					else
+						bos.write(b, 0, c);
+				}
+				bos.flush();
+				byte[] templateContent = baos.toByteArray();
+				bos.close();
+				ManagedMemoryDataSource mods =  new ManagedMemoryDataSource(new java.io.ByteArrayInputStream(templateContent), Integer.MAX_VALUE - 2,
+						null, true);
+				DataHandler dhSource = new DataHandler(mods);
+				schemaFile.setContent(dhSource);
+				schema.setSchemaFile(schemaFile);
+				isFile.close();
+				try{
+					proxy.uploadMondrianSchema(schema);		
+					message = "<H2>Upload dello schema Mondrian terminato con successo!</H2><br>";
+					bodyCode += "<body>  " + message + " </body></html>";
+				}catch(SDKException e){
+					e.printStackTrace();
+					message = "<H2>Upload dello schema Mondrian terminato con errore!</H2><br> " + e.getCode() + " - " + e.getDescription() ;					
+					bodyCode += "<body>  " + message + " </body></html>";
+				}catch(Exception e){
+					e.printStackTrace();
+					message = "<H2>Upload dello schema Mondrian terminato con errore!</H2><br> " + e.getMessage();					
+					bodyCode += "<body>  " + message + " </body></html>";
+				}
+				
+			}  catch (Exception e) {
+				e.printStackTrace();				
 			}
 		}
 		else{
@@ -108,8 +166,8 @@ if (user != null && password != null) {
 				template.setFileName("datamart.jar");
 				template.setFolderName(folderUpload);
 				template.setContent(template.getContent());
-				//proxy.uploadDatamartTemplate(template);
-				proxy.uploadDatamartModel(template);
+				proxy.uploadDatamartTemplate(template,template,null);
+				//proxy.uploadDatamartModel(template);
 				message += "aggiornato con successo!";
 				bodyCode += "<body> <h2> " + message + " </h2> " + new java.util.Date() +" </body></html>";
 			}
