@@ -154,7 +154,7 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction{
 				if(((String)doc.get("typeCode")).equalsIgnoreCase(MobileConstants.DOCUMENT_TYPE_MOBILE_REPORT) || 
 						((String)doc.get("typeCode")).equalsIgnoreCase(MobileConstants.DOCUMENT_TYPE_MOBILE_CHART)||
 						((String)doc.get("typeCode")).equalsIgnoreCase(MobileConstants.DOCUMENT_TYPE_MOBILE_COCKPIT)){
-					doc.put("leaf", true);
+					doc.put("leaf", "true");
 					folders.put(doc);
 				}
 			}
