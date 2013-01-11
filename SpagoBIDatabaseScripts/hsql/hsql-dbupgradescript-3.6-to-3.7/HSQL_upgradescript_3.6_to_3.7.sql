@@ -5,3 +5,15 @@ INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, V
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
 UPDATE SBI_DOMAINS SET VALUE_CD = 'org.hibernate.dialect.MySQLInnoDBDialect' WHERE VALUE_CD = 'org.hibernate.dialect.MySQLDialect';
 COMMIT;
+
+-- 11/01/2014 Andrea: added some new selection modalities for analytical driver to domain table
+DELETE FROM sbi_domains WHERE domain_cd = 'SELECTION_TYPE';
+INSERT INTO sbi_domains (VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM, VALUE_DS, USER_IN, ORGANIZATION)
+VALUES ('LIST', 'sbidomains.nm.list', 'SELECTION_TYPE', 'Selection modality of parameter values', 'sbidomains.ds.list', 'SPAGOBI', 'SPAGOBI');
+INSERT INTO sbi_domains (VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM, VALUE_DS, USER_IN, ORGANIZATION)
+VALUES ('LOOKUP', 'sbidomains.nm.lookup', 'SELECTION_TYPE', 'Selection modality of parameter values', 'sbidomains.ds.lookup', 'SPAGOBI', 'SPAGOBI');
+INSERT INTO sbi_domains (VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM, VALUE_DS, USER_IN, ORGANIZATION)
+VALUES ('SLIDER', 'sbidomains.nm.slider', 'SELECTION_TYPE', 'Selection modality of parameter values', 'sbidomains.ds.slider', 'SPAGOBI', 'SPAGOBI');
+INSERT INTO sbi_domains (VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM, VALUE_DS, USER_IN, ORGANIZATION)
+VALUES ('TREE', 'sbidomains.nm.tree', 'SELECTION_TYPE', 'Selection modality of parameter values', 'sbidomains.ds.tree', 'SPAGOBI', 'SPAGOBI');
+COMMIT;
