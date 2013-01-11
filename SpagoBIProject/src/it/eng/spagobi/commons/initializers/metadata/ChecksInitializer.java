@@ -38,7 +38,9 @@ public class ChecksInitializer extends SpagoBIInitializer {
 	public void init(SourceBean config, Session hibernateSession) {
 		logger.debug("IN");
 		try {
-			List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
+			String hql = "from SbiTenant";
+			Query hqlQuery = hibernateSession.createQuery(hql);
+			List<SbiTenant> tenants = hqlQuery.list();
 			for (SbiTenant tenant : tenants) {
 				init(config, hibernateSession, tenant);
 			}
