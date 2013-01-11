@@ -57,8 +57,9 @@
 <DOMAIN valueCd="EXT" valueNm="sbidomains.nm.ext" domainCd="ENGINE_TYPE" domainNm="Engine types" valueDs="sbidomains.ds.ext"/>
 <DOMAIN valueCd="INT" valueNm="sbidomains.nm.int" domainCd="ENGINE_TYPE" domainNm="Engine types" valueDs="sbidomains.ds.int"/>
 <DOMAIN valueCd="LIST" valueNm="sbidomains.nm.list" domainCd="SELECTION_TYPE" domainNm="Selection modality of parameter values" valueDs="sbidomains.ds.list"/>
-<DOMAIN valueCd="CHECK_LIST" valueNm="sbidomains.nm.check_list" domainCd="SELECTION_TYPE" domainNm="Selection modality of parameter values" valueDs="sbidomains.ds.check_list"/>
-<DOMAIN valueCd="COMBOBOX" valueNm="sbidomains.nm.combobox" domainCd="SELECTION_TYPE" domainNm="Selection modality of parameter values" valueDs="sbidomains.ds.combobox"/>
+<DOMAIN valueCd="LOOKUP" valueNm="sbidomains.nm.lookup" domainCd="SELECTION_TYPE" domainNm="Selection modality of parameter values" valueDs="sbidomains.ds.lookup"/>
+<DOMAIN valueCd="SLIDER" valueNm="sbidomains.nm.slider" domainCd="SELECTION_TYPE" domainNm="Selection modality of parameter values" valueDs="sbidomains.ds.slider"/>
+<DOMAIN valueCd="TREE" valueNm="sbidomains.nm.tree" domainCd="SELECTION_TYPE" domainNm="Selection modality of parameter values" valueDs="sbidomains.ds.tree"/>
 <DOMAIN valueCd="-1" valueNm="sbidomains.nm.default" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.default"/>
 <DOMAIN valueCd="org.hibernate.dialect.OracleDialect" valueNm="sbidomains.nm.oracle" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.oracle"/>
 <DOMAIN valueCd="org.hibernate.dialect.Oracle9Dialect" valueNm="sbidomains.nm.oracle_9i10g" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.oracle_9i10g"/>
