@@ -56,6 +56,7 @@ Sbi.execution.ParametersPanel = function(config) {
 		, fieldWidth: 200	
 		, maskOnRender: false
 		, fieldLabelWidth: 100
+		, addEmptyValueToCombo: false
 		, moveInMementoUsingCtrlKey: false
 	};
 	
@@ -189,21 +190,30 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.loadParametersForExecution( );
 	}
 
+	, getFieldValue: function(field) {
+		var value;
+		
+		if(field.behindParameter.multivalue === true) {
+			value = field.getValues();
+		} else {
+			value = field.getValue();
+		}
+		
+		return value;
+	}
 	
-, getFormState: function() {
+	, getFormState: function() {
 		var state;
 		
 		//to avoid synchronization problem
 		state = {};
 		for(p in this.fields) {
 			var field = this.fields[p];
-			var value = field.getValue();
+			var value = this.getFieldValue(field);;
 			state[field.name] = value;
 			var rawValue = field.getRawValue();
-			//alert(field.name + '>' + state[field.name] + '<');
 			if(value == "" && rawValue != ""){
 				state[field.name] = rawValue;
-				//alert(field.name + '<' + state[field.name] + '>');
 			}
 			
 			
@@ -599,11 +609,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var conditions = dependantConf.visualDependencyConditions;
 		
 		var fatherFieldValues;
-		if(fatherField.behindParameter.selectionType === 'LOOKUP' && fatherField.behindParameter.multivalue === true) {
-			fatherFieldValues = fatherField.getValue();
-		} else {
-			fatherFieldValues = [fatherField.getValue()];
+		fatherFieldValues = this.getFieldValue(fatherField);
+		if(fatherField.behindParameter.multivalue === false) {
+			fatherFieldValues = [fatherFieldValues];
 		}
+		
 		var fatherFieldValueSet = {};
 		for(var i = 0; i < fatherFieldValues.length; i++) {
 			if(fatherFieldValues[i]){
@@ -725,7 +735,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	, createField: function( p, c ) {
 		var field;
 		
-		//alert(p.id + ' - ' + p.selectionType + ' - ' + !p.mandatory);
 		var baseConfig = {
 	       fieldLabel: p.label
 	       , fieldDefaultLabel: p.label
@@ -780,36 +789,34 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				return true;
 			}, this);
 			
-			//on the load event, adds an empty value for the reset at the first position ONLY if the lov doesn't return an 
-			//element with empty description
-			store.on('load', function(store, records, options) {
-				
-				var exist = false;
-				for (i =0, l= records.length; i<l; i++ ){
-					if (store.getAt(i).get('description') === '' ){
-						exist = true;
-						break;
+			//on the load event, adds an empty value for the reset at the first 
+			// position ONLY if the lov doesn't return an element with empty description
+			if(this.addEmptyValueToCombo) {
+				store.on('load', function(store, records, options) {
+					
+					var exist = false;
+					for (i =0, l= records.length; i<l; i++ ){
+						if (store.getAt(i).get('description') === '' ){
+							exist = true;
+							break;
+						}
 					}
-				}
-
-				if (!exist){
-					var emptyData = {
-							value: '',
-							label: '',
-							description:'Empty value'
-						};
-				
-					var emptyId =  store.getTotalCount()+1;
-					var r = new store.recordType(emptyData, emptyId); // create new record
-					store.insert(0, r);
-				}
-			}, this);
+	
+					if (!exist){
+						var emptyData = {
+								value: '',
+								label: '',
+								description:'Empty value'
+							};
+					
+						var emptyId =  store.getTotalCount()+1;
+						var r = new store.recordType(emptyData, emptyId); // create new record
+						store.insert(0, r);
+					}
+				}, this);
+			}
 			
 			/*
-			 * The following store.load() instruction should not be necessary: the parameter's values are loaded when combobox is expanded
-			 */
-			//store.load(/*{params: param}*/);
-			
 			field = new Ext.form.ComboBox(Ext.apply(baseConfig, {
 				tpl: '<tpl for="."><div ext:qtip="{label} ({value}): {description}" class="x-combo-list-item">{label}&nbsp;</div></tpl>'
                 , editable  : false			    
@@ -823,11 +830,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			    , triggerAction: 'all'
 			    , selectOnFocus:true
 			    , autoLoad: false
-				/*
-				 * The following "mode : 'local'" instruction should not be necessary: the parameter's values are loaded from remote server
-				 */
-			    //, mode : 'local'
-			    // used to hack it the first time the panel is expanded in DocumentExecutionPage
+				 // used to hack it the first time the panel is expanded in DocumentExecutionPage
 			    , xtype : 'combo'
 			    , listeners: {
 			    	'select': {
@@ -837,7 +840,29 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			    	}			    
 			}
 			}));
-			
+			*/
+			field = new Ext.ux.Andrie.Select(Ext.apply(baseConfig, {
+				multiSelect: p.multivalue
+				//, minLength:2
+				, editable  : false			    
+				, forceSelection : false
+				, store :  store
+				, displayField:'label'
+				, valueField:'value'
+				, emptyText: ''
+				, typeAhead: false
+				//, typeAheadDelay: 1000
+				, triggerAction: 'all'
+				, selectOnFocus:true
+				, autoLoad: false
+				, xtype : 'combo'
+				, listeners: {
+				    'select': {
+				       	fn: function(){	}
+				       	, scope: this
+				    }			    
+				}
+			}));
 
 			
 			

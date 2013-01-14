@@ -1558,11 +1558,8 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 	</div>
 	<div class='div_detail_form'>
 	<%
-		boolean isMultivalue = false;
-		int multivalue = objPar.getMultivalue().intValue();
-		if (multivalue > 0) {
-			isMultivalue = true;
-		}
+		boolean isMultivalue = objPar.getMultivalue();
+		
 	%> 
     	<input type="radio" name="mult_fl" value="1" <%if (isMultivalue) {
 					out.println(" checked='checked' ");
