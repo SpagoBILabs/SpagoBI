@@ -13,6 +13,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/commons/loadmask.css", currTheme)%>' />
 <LINK rel='StyleSheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/domain/domain.css",currTheme)%>' />
 
+<LINK rel='StyleSheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "/js/lib/ext-2.0.1/ux/andrie/Select.js",currTheme)%>' />
+
+
+
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/commons/" + locale.getLanguage() + ".js")%>'></script>	
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/" + locale.getLanguage() + ".js")%>'></script>
 
@@ -68,6 +72,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/DocumentsBrowser.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/miframe/miframe-min.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/grid/Ext.grid.ButtonColumn.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/andrie/Select.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/decorator/ComponentBuddy.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/SendToWindow.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/SaveRememberMeWindow.js")%>'></script>

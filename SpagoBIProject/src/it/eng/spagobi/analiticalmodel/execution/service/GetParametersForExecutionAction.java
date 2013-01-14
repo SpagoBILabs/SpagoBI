@@ -239,7 +239,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			*/
 			mandatory = analyticalDocumentParameter.getRequired() == 1;
 			
-			multivalue = analyticalDocumentParameter.getMultivalue() == 1;
+			multivalue = analyticalDocumentParameter.isMultivalue();
 
 			visible = analyticalDocumentParameter.getVisible() == 1;
 

@@ -139,15 +139,16 @@ public class ParameterValuesEncoder {
 	    String type = parameter.getType();
 	    ModalitiesValue modValue = parameter.getModalityValue();
 	    if (modValue != null) {
-		boolean mult = biobjPar.getParameter().getModalityValue().isMultivalue();
-
+	   
+		boolean multivalue =  biobjPar.isMultivalue();
+		
 		String typeCode = biobjPar.getParameter().getModalityValue().getITypeCd();
 		logger.debug("typeCode="+typeCode);
 		if (typeCode.equalsIgnoreCase(SpagoBIConstants.INPUT_TYPE_MAN_IN_CODE)) {
-		    mult = false;
+		    multivalue = false;
 		}
 
-		if (!mult) {
+		if (!multivalue) {
 		    return (String) biobjPar.getParameterValues().get(0);
 		} else {
 		    return encodeMultivaluesParam(biobjPar.getParameterValues(), type);
@@ -211,7 +212,7 @@ public class ParameterValuesEncoder {
     		
     	    ModalitiesValue modValue = parameter.getModalityValue();
     	    if (modValue != null) {
-	    		boolean mult = biobjPar.getParameter().getModalityValue().isMultivalue();
+	    		boolean mult = biobjPar.isMultivalue();
 	
 	    		String typeCode = biobjPar.getParameter().getModalityValue().getITypeCd();
 	    		logger.debug("typeCode="+typeCode);

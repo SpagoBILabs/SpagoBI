@@ -151,12 +151,17 @@ public class BIObjectParameter implements Serializable {
 	}
 	
 	/**
-	 * Gets the multivalue.
+	 * Gets the multivalue attribute that is equal to 0 if the parameter is not multivalue, 1 otherwise .
 	 * 
 	 * @return Returns the multivalue.
 	 */
 	public Integer getMultivalue() {
 		return multivalue;
+	}
+	
+	public boolean isMultivalue() {
+		if(multivalue == null) return false;
+		return multivalue.intValue() > 0;
 	}
 	
 	/**

@@ -186,7 +186,7 @@ public class ModalitiesValue implements Serializable  {
 	 * 
 	 * @return true, if is multivalue
 	 */
-	public boolean isMultivalue() {
+	private boolean isMultivalue() {
 		return multivalue;
 	}
 	

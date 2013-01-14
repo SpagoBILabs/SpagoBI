@@ -375,7 +375,7 @@ public class DocumentCompositionUtils {
 							Parameter tmpPar = par.getParameter() ;				
 							logger.debug("Manage parameter : " + tmpPar.getLabel() + "...");
 							if (tmpPar != null && values.size()>1 && tmpPar.getModalityValue() != null &&
-									((!(tmpPar.getModalityValue()).isMultivalue()) ||
+									((!(par).isMultivalue()) ||
 										tmpPar.getModalityValue().getITypeCd().equalsIgnoreCase(SpagoBIConstants.INPUT_TYPE_MAN_IN_CODE))){ 
 								logger.debug("Force the multivalue modality for parameter " + tmpPar.getLabel());
 								//force the multivalue management if the parameter has defined as MANUAL INPUT and the values is multiple.							

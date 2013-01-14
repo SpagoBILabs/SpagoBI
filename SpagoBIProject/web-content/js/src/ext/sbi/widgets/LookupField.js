@@ -156,6 +156,12 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
 		return v;
 	}
 
+	, getValues : function(){
+		var v = this.getValue();
+		if(this.singleSelect === true) v = [v];
+		return v;
+	}
+
 	/**
 	 * v: 
 	 *  - object -> multivalue with values/descriptions
