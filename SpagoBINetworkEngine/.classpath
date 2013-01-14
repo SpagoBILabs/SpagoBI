@@ -8,16 +8,8 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jackson-annotations-2.0.2.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jackson-core-2.0.2.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jackson-databind-2.0.2.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spago-axis-2.2.0.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spago-core-2.2.0.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spago-portlet-2.2.0.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spago-profile-2.2.0.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spago-web-2.2.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-1.2.8.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mail-1.4.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/portlet-api-1.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/saaj.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spagobi.core-3.3.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/wsdl4j-1.5.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/wss4j-1.5.7.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xalan.jar"/>
@@ -30,12 +22,18 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-discovery-0.2.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-fileupload-1.1.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-logging-1.0.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-logging-api-1.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-validator-1.1.4.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jamon-2.7.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jaxrpc.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/json.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-lang-2.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/cas-client-core-3.1.6.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spago-core-2.2.0.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spago-web-2.2.0.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/SpagoBIUtils"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/SpagoBIUtilsJSON"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spago-portlet-2.2.0.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spago-profile-2.2.0.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/portlet-api-1.0.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-lang-2.1.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-logging-api-1.1.jar"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>
