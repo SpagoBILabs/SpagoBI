@@ -8,31 +8,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
-<%@ page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject,
-				 it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter,
-				 it.eng.spagobi.analiticalmodel.document.service.DetailBIObjectModule,
-				 it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO,
-				 it.eng.spagobi.commons.dao.DAOFactory,
-				 it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter,
-				 java.util.List,
-				 it.eng.spagobi.commons.constants.ObjectsTreeConstants,
-				 it.eng.spagobi.commons.constants.AdmintoolsConstants,
-				 it.eng.spagobi.commons.bo.Domain,
-				 java.util.Iterator,
-				 it.eng.spagobi.engines.config.bo.Engine,
-				 it.eng.spagobi.commons.utilities.SpagoBITracer,
-				 it.eng.spago.navigation.LightNavigationManager,
-				 it.eng.spago.base.SourceBean,
-				 java.util.TreeMap,
-				 java.util.Collection,
-				 java.util.ArrayList,
-				 java.util.Date,
-				 it.eng.spagobi.commons.utilities.GeneralUtilities,
-				 it.eng.spagobi.commons.utilities.ChannelUtilities,
-				 java.util.Map,
-				 java.util.HashMap,
-				 it.eng.spagobi.commons.bo.Subreport,
-				 it.eng.spago.security.IEngUserProfile" %>
+<%@ page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject,it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter,it.eng.spagobi.analiticalmodel.document.service.DetailBIObjectModule,it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO,it.eng.spagobi.commons.dao.DAOFactory,it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter,java.util.List,it.eng.spagobi.commons.constants.ObjectsTreeConstants,it.eng.spagobi.commons.constants.AdmintoolsConstants,it.eng.spagobi.commons.bo.Domain,java.util.Iterator,it.eng.spagobi.engines.config.bo.Engine,it.eng.spagobi.commons.utilities.SpagoBITracer,it.eng.spago.navigation.LightNavigationManager,it.eng.spago.base.SourceBean,java.util.TreeMap,java.util.Collection,java.util.ArrayList,java.util.Date,it.eng.spagobi.commons.utilities.GeneralUtilities,it.eng.spagobi.commons.utilities.ChannelUtilities,java.util.Map,java.util.HashMap,it.eng.spagobi.commons.bo.Subreport,it.eng.spago.security.IEngUserProfile" %>
 <%@page import="it.eng.spagobi.engines.config.bo.Engine"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate"%>
@@ -47,35 +23,46 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spagobi.security.ISecurityInfoProvider"%>
 <%@page import="org.apache.log4j.Logger"%>
 
-<%! private static transient Logger logger = Logger.getLogger(DetailBIObjectModule.class);%>
+<%!private static transient Logger logger = Logger
+			.getLogger(DetailBIObjectModule.class);%>
 <%
 	// GET RESPONSE OBJECTS
-    SourceBean moduleResponse = (SourceBean) aServiceResponse.getAttribute("DetailBIObjectModule"); 
-	BIObject obj = (BIObject) moduleResponse.getAttribute(DetailBIObjectModule.NAME_ATTR_OBJECT);
-	List listEngines = (List) moduleResponse.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_ENGINES);
-	List listTypes = (List) moduleResponse.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_OBJ_TYPES);
-	List listStates = (List) moduleResponse.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_STATES);
-	List listDataSource = (List) moduleResponse.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_DS);
-	if (listDataSource == null) listDataSource = new ArrayList();
-	List listDataSet = (List) moduleResponse.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_DATASET);
-	if (listDataSet == null) listDataSet = new ArrayList();
-	
-	String modality = (String) moduleResponse.getAttribute(ObjectsTreeConstants.MODALITY);
+	SourceBean moduleResponse = (SourceBean) aServiceResponse
+			.getAttribute("DetailBIObjectModule");
+	BIObject obj = (BIObject) moduleResponse
+			.getAttribute(DetailBIObjectModule.NAME_ATTR_OBJECT);
+	List listEngines = (List) moduleResponse
+			.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_ENGINES);
+	List listTypes = (List) moduleResponse
+			.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_OBJ_TYPES);
+	List listStates = (List) moduleResponse
+			.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_STATES);
+	List listDataSource = (List) moduleResponse
+			.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_DS);
+	if (listDataSource == null)
+		listDataSource = new ArrayList();
+	List listDataSet = (List) moduleResponse
+			.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_DATASET);
+	if (listDataSet == null)
+		listDataSet = new ArrayList();
+
+	String modality = (String) moduleResponse
+			.getAttribute(ObjectsTreeConstants.MODALITY);
 	IObjTemplateDAO objtempdao = DAOFactory.getObjTemplateDAO();
-	
+
 	// CREATE PAGE URLs
 	Map formUrlPars = new HashMap();
 
 	String formUrl = urlBuilder.getUrl(request, formUrlPars);
-	
-    Map backUrlPars = new HashMap();
-    backUrlPars.put("PAGE", "detailBIObjectPage");
-    backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_DISABLED, "true");
-    backUrlPars.put("MESSAGEDET", "EXIT_FROM_DETAIL");
-    String backUrl = urlBuilder.getUrl(request, backUrlPars);
-    
-    //boolean flgLoadParDC = moduleResponse.getAttribute(DetailBIObjectModule.LOADING_PARS_DC);
-   	
+
+	Map backUrlPars = new HashMap();
+	backUrlPars.put("PAGE", "detailBIObjectPage");
+	backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_DISABLED,
+			"true");
+	backUrlPars.put("MESSAGEDET", "EXIT_FROM_DETAIL");
+	String backUrl = urlBuilder.getUrl(request, backUrlPars);
+
+	//boolean flgLoadParDC = moduleResponse.getAttribute(DetailBIObjectModule.LOADING_PARS_DC);
 %>
 
 <script>
@@ -95,38 +82,36 @@ function showEngField(docType) {
 	var type = docType.substring(ind+1);
 	var engines = document.objectForm.engine.options;
 	engines.length = 0;
-	<%
-	for (int i = 0; i < listEngines.size(); i++) {
-		Engine en = (Engine) listEngines.get(i);
-		out.print("var engine_" + i + " = new Option('" + en.getName() + "', '" + en.getId().toString() + "');\n");
-		Integer biobjTypeId = en.getBiobjTypeId();
-		Domain aDomain = DAOFactory.getDomainDAO().loadDomainById(biobjTypeId);
-		out.print("if ('" + aDomain.getValueCd() + "' == type) {\n");
-		out.print("	engines[engines.length] = engine_" + i + ";\n");
-		if (obj.getEngine() != null) {
-			out.print("	if ('" + en.getId().toString() + "' == '" + obj.getEngine().getId().toString() + "') {\n");
-			out.print("		document.getElementById('doc_engine').selectedIndex = engines.length -1;\n");
-			//out.print("  alert("cosa sei tu "+document.getElementById('doc_engine').value);");			
-			//out.print("  checkSourceVisibility(document.getElementById('doc_engine').value);");
-			out.print("	}\n");
-		}
-		out.print("}\n");
-	}
-	%>
+	<%for (int i = 0; i < listEngines.size(); i++) {
+				Engine en = (Engine) listEngines.get(i);
+				out.print("var engine_" + i + " = new Option('" + en.getName()
+						+ "', '" + en.getId().toString() + "');\n");
+				Integer biobjTypeId = en.getBiobjTypeId();
+				Domain aDomain = DAOFactory.getDomainDAO().loadDomainById(
+						biobjTypeId);
+				out.print("if ('" + aDomain.getValueCd() + "' == type) {\n");
+				out.print("	engines[engines.length] = engine_" + i + ";\n");
+				if (obj.getEngine() != null) {
+					out.print("	if ('" + en.getId().toString() + "' == '"
+							+ obj.getEngine().getId().toString() + "') {\n");
+					out.print("		document.getElementById('doc_engine').selectedIndex = engines.length -1;\n");
+					//out.print("  alert("cosa sei tu "+document.getElementById('doc_engine').value);");			
+					//out.print("  checkSourceVisibility(document.getElementById('doc_engine').value);");
+					out.print("	}\n");
+				}
+				out.print("}\n");
+			}%>
 }
 
 		engineSource = new Array();
 		engineSet= new Array();
 		
-	<%
-	for (int i = 0; i < listEngines.size(); i++) {
-		Engine en = (Engine) listEngines.get(i);
-		String labelEng=en.getLabel();
-		Integer idEng=en.getId();
-		boolean useDataSource=en.getUseDataSource();
-		boolean useDataSet=en.getUseDataSet();
-		
-	%>
+	<%for (int i = 0; i < listEngines.size(); i++) {
+				Engine en = (Engine) listEngines.get(i);
+				String labelEng = en.getLabel();
+				Integer idEng = en.getId();
+				boolean useDataSource = en.getUseDataSource();
+				boolean useDataSet = en.getUseDataSet();%>
 		engineSource[<%=idEng%>]=<%=useDataSource%>;
 		engineSet[<%=idEng%>]=<%=useDataSet%>;
 
@@ -179,7 +164,8 @@ function saveDocument(goBack) {
 
 	var type = document.getElementById('doc_type').value;
 	if (type.match('DOCUMENT_COMPOSITE') != null){
-	    var message = "<%=msgBuilder.getMessage("1012", "component_spagobidocumentcompositionIE_messages",  request) %>";
+	    var message = "<%=msgBuilder.getMessage("1012",
+					"component_spagobidocumentcompositionIE_messages", request)%>";
 		if (versionTemplateChanged == 'true' || fileUploadChanged == 'true'){
 			versionTemplateChanged = 'false';
 			fileUploadChanged = 'false';
@@ -214,32 +200,35 @@ function saveDocument(goBack) {
 			<spagobi:message key = "SBIDev.docConf.docDet.title" />
 		</td>
 		
-		<% 
-			if(modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)){
-		%>
+		<%
+					if (modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {
+				%>
 		<td class='header-button-column-portlet-section'>
 			<input type="hidden" name="" value="" id="loadLinksLookup" />
 			<a href='javascript:checkDocumentType("<spagobi:message key = "SBIDev.docConf.docDet.saveBeforeLinksConfig" />");'> 
 			<img style="margin-top:2px;height:21px;" name='links' id='links' class='header-button-image-portlet-section'
-				   src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/links.jpg", currTheme) %>'
+				   src='<%=urlBuilder.getResourceLinkByTheme(request,
+						"/img/links.jpg", currTheme)%>'
       		 title='<spagobi:message key = "SBIDev.docConf.docDet.linkButton" />' 
       		 alt='<spagobi:message key = "SBIDev.docConf.docDet.linkButton" />' />
 			</a>
 		</td>
-		<% 		
+		<%
 			}
 		%>
 		<td class='header-button-column-portlet-section'>
 		<input type="hidden" name="" value="" id="loadParsDC" />
 			<a href='javascript:saveDocument("false");'> 
 			<img name='save' id='save' class='header-button-image-portlet-section'
-				   src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/save.png", currTheme) %>'
+				   src='<%=urlBuilder.getResourceLinkByTheme(request,
+					"/img/save.png", currTheme)%>'
       		 title='<spagobi:message key = "SBIDev.docConf.docDet.saveButt" />' 
       		 alt='<spagobi:message key = "SBIDev.docConf.docDet.saveButt" />' />
 			</a>
 		<!-- 
 			<input type='image' name='save' id='save' value='true' class='header-button-image-portlet-section'
-				src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/save.png", currTheme) %>'
+				src='<%=urlBuilder.getResourceLinkByTheme(request,
+					"/img/save.png", currTheme)%>'
       				title='<spagobi:message key = "SBIDev.docConf.docDet.saveButt" />' alt='<spagobi:message key = "SBIDev.docConf.docDet.saveButt" />'
 			/>
 			-->
@@ -248,25 +237,34 @@ function saveDocument(goBack) {
 		<input type="hidden" name="" value="" id="saveAndGoBack" />
 		<a href='javascript:saveDocument("true");'> 
 			<img name='isaveAndGoBack' id='isaveAndGoBack' class='header-button-image-portlet-section'
-				   src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/saveAndGoBack.png", currTheme) %>'
+				   src='<%=urlBuilder.getResourceLinkByTheme(request,
+					"/img/saveAndGoBack.png", currTheme)%>'
       		 title='<spagobi:message key = "SBIDev.docConf.docDet.saveAndGoBackButt" />' 
       		 alt='<spagobi:message key = "SBIDev.docConf.docDet.saveAndGoBackButt" />' />
 			</a>
 			<!-- 
 			<input type='image' name='saveAndGoBack' id='saveAndGoBack' value='true' class='header-button-image-portlet-section'
-				src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/saveAndGoBack.png", currTheme) %>'
+				src='<%=urlBuilder.getResourceLinkByTheme(request,
+					"/img/saveAndGoBack.png", currTheme)%>'
       				title='<spagobi:message key = "SBIDev.docConf.docDet.saveAndGoBackButt" />' alt='<spagobi:message key = "SBIDev.docConf.docDet.saveAndGoBackButt" />'
 			/> 
 			-->
 		</td>
 		<td class='header-button-column-portlet-section'>
-			<% if(modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {%>
+			<%
+				if (modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {
+			%>
 				<a href='javascript:saveAndGoBackConfirm("<spagobi:message key = "SBIDev.docConf.docDet.saveConfirm" />","<%=backUrl%>")'> 
-			<% } else { %>
+			<%
+ 				} else {
+ 			%>
 				<a href='<%=backUrl%>'>
-			<% } %>
+			<%
+				}
+			%>
       				<img class='header-button-image-portlet-section' title='<spagobi:message key = "SBIDev.docConf.docDet.backButt" />' 
-      				src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/back.png", currTheme)%>' alt='<spagobi:message key = "SBIDev.docConf.docDet.backButt"/>' />
+      				src='<%=urlBuilder.getResourceLinkByTheme(request,
+					"/img/back.png", currTheme)%>' alt='<spagobi:message key = "SBIDev.docConf.docDet.backButt"/>' />
 			</a>
 		</td>
 	</tr>
@@ -274,8 +272,8 @@ function saveDocument(goBack) {
 
 <spagobi:error/>
 
-<input type='hidden' value='<%= obj.getId() %>' name='id' />
-<input type='hidden' value='<%= modality %>' name='MESSAGEDET' />
+<input type='hidden' value='<%=obj.getId()%>' name='id' />
+<input type='hidden' value='<%=modality%>' name='MESSAGEDET' />
 <input type='hidden' value='' name='' id='saveBIObjectParameter'/>
 	
 <%-- if(modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) { %>
@@ -313,12 +311,12 @@ function saveDocument(goBack) {
 					</span>
 				</div>
 				<div class='div_detail_form'>
-					<% 
-		      		String desc = obj.getDescription();
-		      		if(desc==null) {
-		      			desc = "";
-		      		}
-		      		%>
+					<%
+						String desc = obj.getDescription();
+						if (desc == null) {
+							desc = "";
+						}
+					%>
 					<input class='portlet-form-input-field' style='width:230px;' type="text" 
  							name="description" id="doc_description" value="<%=StringEscapeUtils.escapeHtml(desc)%>" maxlength="160" />
 				</div>
@@ -328,12 +326,12 @@ function saveDocument(goBack) {
 					</span>
 				</div>
 				<div class='div_detail_form' style='display:none;'>
-					<% 
-		      		String relName = obj.getRelName();
-		      		if(relName==null) {
-		      			relName = "";
-		      		}
-		      		%>
+					<%
+						String relName = obj.getRelName();
+						if (relName == null) {
+							relName = "";
+						}
+					%>
 					<input class='portlet-form-input-field' style='width:230px;' type="text" 
 							name="relname" id="doc_relname" value="<%=StringEscapeUtils.escapeHtml(relName)%>" maxlength="400" />
 				</div>
@@ -346,20 +344,21 @@ function saveDocument(goBack) {
 					<select class='portlet-form-input-field' style='width:230px;' 
 							name="type" id="doc_type" 
 							onchange = 'showEngField(this.value);checkFormVisibility(this.value);checkSourceVisibility(document.getElementById("doc_engine").value)'>
-		      		<% 
-		      		    Iterator iterdom = listTypes.iterator();
-		      		    while(iterdom.hasNext()) {
-		      		    	Domain type = (Domain)iterdom.next();
-		      		    	String BIobjTypecode = obj.getBiObjectTypeCode();
-		      		    	String currTypecode = type.getValueCd();
-		      		    	boolean isType = false;
-		      		    	if(BIobjTypecode.equals(currTypecode)){
-		      		    		isType = true;   
-							}
+		      		<%
+		      			Iterator iterdom = listTypes.iterator();
+		      			while (iterdom.hasNext()) {
+		      				Domain type = (Domain) iterdom.next();
+		      				String BIobjTypecode = obj.getBiObjectTypeCode();
+		      				String currTypecode = type.getValueCd();
+		      				boolean isType = false;
+		      				if (BIobjTypecode.equals(currTypecode)) {
+		      					isType = true;
+		      				}
 		      		%>
-		      			<option value="<%=type.getValueId() + "," + type.getValueCd()  %>"<%if(isType) out.print(" selected='selected' ");  %>><%=type.getTranslatedValueName(locale)%></option>
-		      		<% 
-		      		    }
+		      			<option value="<%=type.getValueId() + "," + type.getValueCd()%>"<%if (isType)
+					out.print(" selected='selected' ");%>><%=type.getTranslatedValueName(locale)%></option>
+		      		<%
+		      			}
 		      		%>
 		      		</select>
 				</div>
@@ -374,42 +373,42 @@ function saveDocument(goBack) {
 		      		<select class='portlet-form-input-field' style='width:230px;' 
 							name="engine" id="doc_engine" onchange = 'javascript:checkSourceVisibility(this.value);' >
 					<%
-						boolean initialUseDataSet=false;
-						boolean initialUseDataSource=false;
-					
+						boolean initialUseDataSet = false;
+						boolean initialUseDataSource = false;
+
 						Iterator itereng = listEngines.iterator();
-		      			while(itereng.hasNext()) {
-		      		    	Engine engine = (Engine)itereng.next();
-		      		    	String objEngName = (obj.getEngine() != null ? obj.getEngine().getName() : null);
-		      		    	String currEngName = engine.getName();
-		      		    	boolean isEngine = false;
-		      		    	if( //(!obj.getBiObjectTypeCode().equals("DATAMART")) && 
-		      		    		//(!obj.getBiObjectTypeCode().equals("DASH")) && 
-		      		    		(objEngName != null) &&  
-		      		    		objEngName.equals(currEngName)){
-		      		    		isEngine = true; 
-		      		    		initialUseDataSet=(obj.getEngine()).getUseDataSet();
-		      		    		initialUseDataSource=(obj.getEngine()).getUseDataSource();
-		    						}
-		      		%>
-		      			<option value="<%=engine.getId().toString() %>"<%if (isEngine) out.print(" selected='selected' ");  %>><%=engine.getName()%></option>
-		      		<% 	
+						while (itereng.hasNext()) {
+							Engine engine = (Engine) itereng.next();
+							String objEngName = (obj.getEngine() != null ? obj.getEngine()
+									.getName() : null);
+							String currEngName = engine.getName();
+							boolean isEngine = false;
+							if ( //(!obj.getBiObjectTypeCode().equals("DATAMART")) && 
+									//(!obj.getBiObjectTypeCode().equals("DASH")) && 
+							(objEngName != null) && objEngName.equals(currEngName)) {
+								isEngine = true;
+								initialUseDataSet = (obj.getEngine()).getUseDataSet();
+								initialUseDataSource = (obj.getEngine()).getUseDataSource();
+							}
+					%>
+		      			<option value="<%=engine.getId().toString()%>"<%if (isEngine)
+					out.print(" selected='selected' ");%>><%=engine.getName()%></option>
+		      		<%
 		      			}
-	String styleSource="style=\"display:none;\"";	
-	String disableSource="disabled";
-	if(initialUseDataSource==true){
-		styleSource="style=\"display:inline;\"";
-		disableSource="";
-	}
-	
-	String styleSet="style=\"display:none;\"";		      	
-	String disableSet="disabled";
-	if(initialUseDataSet==true){
-		styleSet="style=\"display:inline;\"";
-		disableSet="";
-	}
-	
-		      			%>
+		      			String styleSource = "style=\"display:none;\"";
+		      			String disableSource = "disabled";
+		      			if (initialUseDataSource == true) {
+		      				styleSource = "style=\"display:inline;\"";
+		      				disableSource = "";
+		      			}
+
+		      			String styleSet = "style=\"display:none;\"";
+		      			String disableSet = "disabled";
+		      			if (initialUseDataSet == true) {
+		      				styleSet = "style=\"display:inline;\"";
+		      				disableSet = "";
+		      			}
+		      		%>
 		      		</select>
 				</div> 
 				
@@ -428,17 +427,18 @@ function saveDocument(goBack) {
 							<option></option>
 					<%
 						Iterator iterds = listDataSource.iterator();
-		      			while(iterds.hasNext()) {
-		      		    	DataSource ds = (DataSource)iterds.next();
-		      		    	Integer objDsId = obj.getDataSourceId();
-		      		    	Integer currDsId = new Integer(ds.getDsId());
-		      		    	boolean isDs = false;
-		      		    	if(objDsId != null && objDsId.equals(currDsId)){
-		      		    		isDs = true; 
+						while (iterds.hasNext()) {
+							DataSource ds = (DataSource) iterds.next();
+							Integer objDsId = obj.getDataSourceId();
+							Integer currDsId = new Integer(ds.getDsId());
+							boolean isDs = false;
+							if (objDsId != null && objDsId.equals(currDsId)) {
+								isDs = true;
 							}
-		      		%>
-		      			<option value="<%=String.valueOf(ds.getDsId()) %>"<%if (isDs) out.print(" selected='selected' ");  %>><%=ds.getLabel()%></option>
-		      		<% 	
+					%>
+		      			<option value="<%=String.valueOf(ds.getDsId())%>"<%if (isDs)
+					out.print(" selected='selected' ");%>><%=ds.getLabel()%></option>
+		      		<%
 		      			}
 		      		%>
 		      		</select>
@@ -453,23 +453,26 @@ function saveDocument(goBack) {
 					</span>
 				</div>
 				
-			<%	
-			String url=GeneralUtilities.getSpagoBiHost()+GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() + 
-					"?" + "PAGE=SelectDatasetLookupPage&NEW_SESSION=TRUE&" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
-			 
-			String currDataSetLabel="";
-			Integer currDataSetId=null;
-			String currDataSetIdValue="";
-			if(obj.getDataSetId()!=null){
-				 currDataSetId=obj.getDataSetId();
-				 currDataSetIdValue=currDataSetId.toString();
-				 IDataSet dataSet= DAOFactory.getDataSetDAO().loadActiveIDataSetByID(currDataSetId); 
-				 if(dataSet!=null){	
-				 	currDataSetLabel=dataSet.getLabel();
-						}
-				}
+			<%
+								String url = GeneralUtilities.getSpagoBiHost()
+										+ GeneralUtilities.getSpagoBiContext()
+										+ GeneralUtilities.getSpagoAdapterHttpUrl() + "?"
+										+ "PAGE=SelectDatasetLookupPage&NEW_SESSION=TRUE&"
+										+ LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
 
-			 %>
+								String currDataSetLabel = "";
+								Integer currDataSetId = null;
+								String currDataSetIdValue = "";
+								if (obj.getDataSetId() != null) {
+									currDataSetId = obj.getDataSetId();
+									currDataSetIdValue = currDataSetId.toString();
+									IDataSet dataSet = DAOFactory.getDataSetDAO()
+											.loadActiveIDataSetByID(currDataSetId);
+									if (dataSet != null) {
+										currDataSetLabel = dataSet.getLabel();
+									}
+								}
+							%>
 				<div class='div_detail_form' id="datasetForm" >
 				  	<input type="hidden" name="dataset" id="dataset" value="<%=currDataSetIdValue%>" <%=disableSet%> />	
 												
@@ -477,7 +480,8 @@ function saveDocument(goBack) {
 									name="datasetReadLabel" id="datasetReadLabel" value="<%=StringEscapeUtils.escapeHtml(currDataSetLabel)%>" maxlength="400" /> 
 				
 					<a href='javascript:void(0);' id="datasetLink">
-						<img src="<%=urlBuilder.getResourceLinkByTheme(request, "/img/detail.gif", currTheme) %>" title="Lookup" alt="Lookup" />
+						<img src="<%=urlBuilder.getResourceLinkByTheme(request,
+					"/img/detail.gif", currTheme)%>" title="Lookup" alt="Lookup" />
 					</a> 	
 				</div>
 			</div>
@@ -521,7 +525,8 @@ function saveDocument(goBack) {
 			<!-- IF THE USER IS A DEV ACTOR THE COMBO FOR THE STATE SELECTION CONTAINS ONLY A VALUE
      			 (development) SO IS NOT USEFUL TO SHOW IT	 -->
             <%
-            	if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_STATE_MANAGEMENT)){
+            	if (userProfile
+            			.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_STATE_MANAGEMENT)) {
             %>
             	<div class='div_detail_label'>
 					<span class='portlet-form-field-label'>
@@ -530,24 +535,27 @@ function saveDocument(goBack) {
 				</div>  
  				<div class='div_detail_form'>
 					<select class='portlet-form-input-field' style='width:230px;' name="state" id="doc_state">
-		      			<% 
-		      		    Iterator iterstates = listStates.iterator();
-		      		    while(iterstates.hasNext()) {
-		      		    	Domain state = (Domain)iterstates.next();
-		      		    	String objState = obj.getStateCode();
-		      		    	String currState = state.getValueCd();
-		      		    	boolean isState = false;
-		      		    	if(objState.equals(currState)){
-		      		    		isState = true;   
-		      		    	}
+		      			<%
+		      				Iterator iterstates = listStates.iterator();
+		      					while (iterstates.hasNext()) {
+		      						Domain state = (Domain) iterstates.next();
+		      						String objState = obj.getStateCode();
+		      						String currState = state.getValueCd();
+		      						boolean isState = false;
+		      						if (objState.equals(currState)) {
+		      							isState = true;
+		      						}
 		      			%>
-		      				<option value="<%=state.getValueId() + "," + state.getValueCd()  %>"<%if(isState) out.print(" selected='selected' ");  %>><%=state.getTranslatedValueName(locale)%></option>
-		      			<%  
-		      		    }
+		      				<option value="<%=state.getValueId() + "," + state.getValueCd()%>"<%if (isState)
+						out.print(" selected='selected' ");%>><%=state.getTranslatedValueName(locale)%></option>
+		      			<%
+		      				}
 		      			%>
 		      		</select>	
 				</div>             	
-            <% }else { %>
+            <%
+             	            	} else {
+             	            %>
 	            <div class='div_detail_label' style='display:none;'>
 						<span class='portlet-form-field-label'>
 							<spagobi:message key = "SBIDev.docConf.docDet.stateField" />
@@ -555,23 +563,29 @@ function saveDocument(goBack) {
 				</div>
 				<div class='div_detail_form' style='display:none;'>
 						<select class='portlet-form-input-field' style='width:230px;' name="state" id="doc_state"> 
-			      			<%     
-			      		    	Iterator iterstates = listStates.iterator();
-			      		    	while(iterstates.hasNext()) {
-			      		    		Domain state = (Domain)iterstates.next();
-			      		    		String objState = obj.getStateCode();
-			      		    		String currState = state.getValueCd();
-			      		    		boolean isState = false;
-			      		    		if(objState.equals(currState)){
-			      		    			isState = true;   
-			      		    		}
-			      		    		if (state.getValueCd().equalsIgnoreCase("DEV")){ %>
-			      						<option value="<%=state.getValueId() + "," + state.getValueCd()  %>"<%if(isState) out.print(" selected='selected' ");  %>><%=state.getTranslatedValueName(locale)%></option>
-			      					<%  }  
-			      		   		 }%>
+			      			<%
+ 			      				Iterator iterstates = listStates.iterator();
+ 			      					while (iterstates.hasNext()) {
+ 			      						Domain state = (Domain) iterstates.next();
+ 			      						String objState = obj.getStateCode();
+ 			      						String currState = state.getValueCd();
+ 			      						boolean isState = false;
+ 			      						if (objState.equals(currState)) {
+ 			      							isState = true;
+ 			      						}
+ 			      						if (state.getValueCd().equalsIgnoreCase("DEV")) {
+ 			      			%>
+			      						<option value="<%=state.getValueId() + "," + state.getValueCd()%>"<%if (isState)
+							out.print(" selected='selected' ");%>><%=state.getTranslatedValueName(locale)%></option>
+			      					<%
+			      						}
+			      							}
+			      					%>
 			      		  </select>  
 				</div>  
-		    <% } %>
+		    <%
+  		    	}
+  		    %>
                    
 				<div class='div_detail_label'>
 					<span class='portlet-form-field-label'>
@@ -580,20 +594,24 @@ function saveDocument(goBack) {
 				</div>
 				
 				<div class='div_detail_form'>
-				<%	
+				<%
 					Integer refresh = obj.getRefreshSeconds();
-		      		if(refresh==null) {
-		      		refresh = new Integer(0);
-		      			}
-		      		if (userProfile.isAbleToExecuteAction(SpagoBIConstants.MODIFY_REFRESH)){
-		      		%>
+					if (refresh == null) {
+						refresh = new Integer(0);
+					}
+					if (userProfile
+							.isAbleToExecuteAction(SpagoBIConstants.MODIFY_REFRESH)) {
+				%>
 					<input class='portlet-form-input-field' style='width:230px;' type="text" 
  							name="refreshseconds" id="doc_refresh" value="<%=StringEscapeUtils.escapeHtml(refresh.toString())%>" maxlength="160" />
-						<%}
-					else{%>
+						<%
+							} else {
+						%>
 						<%=refresh%>
 						<input type="hidden" name="refreshseconds" value="<%=StringEscapeUtils.escapeHtml(refresh.toString())%>"/>
-					<%} %>
+					<%
+						}
+					%>
 				</div>     
                    
                    
@@ -609,15 +627,21 @@ function saveDocument(goBack) {
 					</span>
 				</div>
 				<div class='div_detail_form'>
-					<% 
-		      	      boolean isCrypt = false;
-		      	      int cript = obj.getEncrypt().intValue();
-		      	      if(cript > 0) { isCrypt = true; }
-		      	     %> 
-		      	   	<input type="radio" name="criptable" value="1" <% if(isCrypt) { out.println(" checked='checked' "); } %> >
+					<%
+						boolean isCrypt = false;
+						int cript = obj.getEncrypt().intValue();
+						if (cript > 0) {
+							isCrypt = true;
+						}
+					%> 
+		      	   	<input type="radio" name="criptable" value="1" <%if (isCrypt) {
+				out.println(" checked='checked' ");
+			}%> >
 							<span class="portlet-font">True</span>
 					</input>
-		      	   	<input type="radio" name="criptable" value="0" <% if(!isCrypt) { out.println(" checked='checked' "); } %> >
+		      	   	<input type="radio" name="criptable" value="0" <%if (!isCrypt) {
+				out.println(" checked='checked' ");
+			}%> >
 							<span class="portlet-font">False</span>
 					</input>
 				</div>
@@ -630,16 +654,23 @@ function saveDocument(goBack) {
 					</span>
 				</div>
 				<div class='div_detail_form'>
-					<% 
-		      	      boolean isVisible = false;
-		      	      
-		      	      int visible = (obj.getVisible()!=null)? obj.getVisible().intValue(): 1;
-		      	      if(visible > 0) { isVisible = true; }
-		      	     %> 
-				   	<input type="radio" name="visible" value="1" <% if(isVisible) { out.println(" checked='checked' "); } %>>
+					<%
+						boolean isVisible = false;
+
+						int visible = (obj.getVisible() != null) ? obj.getVisible()
+								.intValue() : 1;
+						if (visible > 0) {
+							isVisible = true;
+						}
+					%> 
+				   	<input type="radio" name="visible" value="1" <%if (isVisible) {
+				out.println(" checked='checked' ");
+			}%>>
 							<span class="portlet-font">True</span>
 					</input>
-		      		<input type="radio" name="visible" value="0" <% if(!isVisible) { out.println(" checked='checked' "); } %>>
+		      		<input type="radio" name="visible" value="0" <%if (!isVisible) {
+				out.println(" checked='checked' ");
+			}%>>
 							<span class="portlet-font">False</span>
 					</input>
 				</div>
@@ -651,21 +682,26 @@ function saveDocument(goBack) {
 					</span>
 				</div>
 				<%
-				List attributeNames = null;
-				try {
-					ISecurityInfoProvider portalSecurityProvider = SecurityInfoProviderFactory.getPortalSecurityProvider();
-					attributeNames = portalSecurityProvider.getAllProfileAttributesNames();
-				} catch (Exception e) {
-					logger.error("detailBIObject.jsp: Error while retrieving the list of available profile attributes", e);
-					attributeNames = new ArrayList();
-				}
-				String profiledVisibilityRules = obj.getProfiledVisibility();
+					List attributeNames = null;
+					try {
+						ISecurityInfoProvider portalSecurityProvider = SecurityInfoProviderFactory
+								.getPortalSecurityProvider();
+						attributeNames = portalSecurityProvider
+								.getAllProfileAttributesNames();
+					} catch (Exception e) {
+						logger.error(
+								"detailBIObject.jsp: Error while retrieving the list of available profile attributes",
+								e);
+						attributeNames = new ArrayList();
+					}
+					String profiledVisibilityRules = obj.getProfiledVisibility();
 				%>
 				<div class='div_detail_form' style="height:100px">
 					<table style="width: 50%;">
 						<tr>
 							<td colspan="2">
-								<textarea id="profileVisibility" name="profileVisibility" rows="3" cols="35" readonly><%= profiledVisibilityRules != null ? profiledVisibilityRules : "" %></textarea>
+								<textarea id="profileVisibility" name="profileVisibility" rows="3" cols="35" readonly><%=profiledVisibilityRules != null ? profiledVisibilityRules
+					: ""%></textarea>
 							</td>
 						</tr>
 						<tr>
@@ -673,22 +709,26 @@ function saveDocument(goBack) {
 								<select name="attributeName" id="attributeName" class='portlet-form-input-field' style='width:80px;'>
 									<option value=""></option>
 									<%
-									Iterator attributeNamesIter = attributeNames.iterator();
-									while (attributeNamesIter.hasNext()) {
-										String profAttrName = (String) attributeNamesIter.next();
+										Iterator attributeNamesIter = attributeNames.iterator();
+										while (attributeNamesIter.hasNext()) {
+											String profAttrName = (String) attributeNamesIter.next();
 									%>
 								 	<option value="<%=profAttrName%>"><%=profAttrName%></option>
-								 	<% } %>
+								 	<%
+								 		}
+								 	%>
 								</select>
 								<span style="font-size: 7pt;">=</span>
 								<input type="text" name="attributeValue" id="attributeValue" class='portlet-form-input-field' style='width:80px;' />
-								<img src="<%=urlBuilder.getResourceLinkByTheme(request, "/img/attach.gif", currTheme) %>" 
+								<img src="<%=urlBuilder.getResourceLinkByTheme(request,
+					"/img/attach.gif", currTheme)%>" 
 										alt="<spagobi:message key = "SBIDev.docConf.docDet.addRule" />" 
 										title="<spagobi:message key = "SBIDev.docConf.docDet.addRule" />" 
 										onclick="addConstraint()"/>
 							</td>
 							<td>
-								<img src="<%=urlBuilder.getResourceLinkByTheme(request, "/img/clear16.gif", currTheme) %>" 
+								<img src="<%=urlBuilder.getResourceLinkByTheme(request,
+					"/img/clear16.gif", currTheme)%>" 
 										alt="<spagobi:message key = "SBIDev.docConf.docDet.eraseRules" />" 
 										title="<spagobi:message key = "SBIDev.docConf.docDet.eraseRules" />" 
 										onclick="clearConstraints()"/>
@@ -740,13 +780,16 @@ function saveDocument(goBack) {
 				
 				
 			    <!-- TEMPLATE LABEL AND BUTTONS FOR DOSSIER AND OLAP -->
-				<% 
+				<%
 					String styleDivLinkConf = " ";
 					String BIobjTypecode = obj.getBiObjectTypeCode();
-			    	if(BIobjTypecode.equalsIgnoreCase("DOSSIER") || BIobjTypecode.equalsIgnoreCase("OLAP") || BIobjTypecode.equalsIgnoreCase("SMART_FILTER"))
-			    		styleDivLinkConf = " style='display:inline' ";
-			    	else styleDivLinkConf = " style='display:none' ";
-			    %>	
+					if (BIobjTypecode.equalsIgnoreCase("DOSSIER")
+							|| BIobjTypecode.equalsIgnoreCase("OLAP")
+							|| BIobjTypecode.equalsIgnoreCase("SMART_FILTER"))
+						styleDivLinkConf = " style='display:inline' ";
+					else
+						styleDivLinkConf = " style='display:none' ";
+				%>	
 			    <!-- LINK FOR OBJECT CONFIGURATION -->
 			    <div id="link_obj_conf" <%=styleDivLinkConf%>>
 					<div class='div_detail_label'>
@@ -755,47 +798,58 @@ function saveDocument(goBack) {
 						</span>
 					</div>
 					<div class='div_detail_form'>
-					<% 
+					<%
 						boolean hasTemplates = false;
-					    List templates = objtempdao.getBIObjectTemplateList(obj.getId());
-		 				if( (templates!=null) && !templates.isEmpty() ) {
-		 					hasTemplates = true;
-		 				}
-						if(!hasTemplates) {
+						List templates = objtempdao.getBIObjectTemplateList(obj.getId());
+						if ((templates != null) && !templates.isEmpty()) {
+							hasTemplates = true;
+						}
+						if (!hasTemplates) {
 							String hrefConf = "";
-							if(!modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_INS)) { 
+							if (!modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_INS)) {
 								Map confUrlPars = new HashMap();
-								confUrlPars.put(SpagoBIConstants.PAGE, SpagoBIConstants.DOCUMENT_TEMPLATE_BUILD);
-								confUrlPars.put(SpagoBIConstants.MESSAGEDET, SpagoBIConstants.NEW_DOCUMENT_TEMPLATE);
-								confUrlPars.put(ObjectsTreeConstants.OBJECT_ID, obj.getId().toString());
-							    hrefConf = urlBuilder.getUrl(request, confUrlPars);
+								confUrlPars.put(SpagoBIConstants.PAGE,
+										SpagoBIConstants.DOCUMENT_TEMPLATE_BUILD);
+								confUrlPars.put(SpagoBIConstants.MESSAGEDET,
+										SpagoBIConstants.NEW_DOCUMENT_TEMPLATE);
+								confUrlPars.put(ObjectsTreeConstants.OBJECT_ID, obj.getId()
+										.toString());
+								hrefConf = urlBuilder.getUrl(request, confUrlPars);
 							} else {
-								hrefConf = "javascript:alert('"+msgBuilder.getMessage("sbi.detailbiobj.objectnotsaved", "messages", request)+"')";
-							}				
+								hrefConf = "javascript:alert('"
+										+ msgBuilder.getMessage(
+												"sbi.detailbiobj.objectnotsaved",
+												"messages", request) + "')";
+							}
 					%>	
 							<a href="<%=hrefConf%>">
 								<img class='header-button-image-portlet-section' 
 	      				 			 title='<spagobi:message key = "sbi.detailbiobj.generateNewTemplate" />' 
-	      				 			 src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/createTemplate.jpg", currTheme)%>' 
+	      				 			 src='<%=urlBuilder.getResourceLinkByTheme(request,
+						"/img/createTemplate.jpg", currTheme)%>' 
 	      				 			 alt='<spagobi:message key = "sbi.detailbiobj.generateNewTemplate"  />' />
 							</a>
 					<%
 						} else { // if(!hasTemplates)
 							Map editUrlPars = new HashMap();
-							editUrlPars.put(SpagoBIConstants.PAGE, SpagoBIConstants.DOCUMENT_TEMPLATE_BUILD);
-							editUrlPars.put(SpagoBIConstants.MESSAGEDET, SpagoBIConstants.EDIT_DOCUMENT_TEMPLATE);
-							editUrlPars.put(ObjectsTreeConstants.OBJECT_ID, obj.getId().toString());
+							editUrlPars.put(SpagoBIConstants.PAGE,
+									SpagoBIConstants.DOCUMENT_TEMPLATE_BUILD);
+							editUrlPars.put(SpagoBIConstants.MESSAGEDET,
+									SpagoBIConstants.EDIT_DOCUMENT_TEMPLATE);
+							editUrlPars.put(ObjectsTreeConstants.OBJECT_ID, obj.getId()
+									.toString());
 							String editUrlStr = urlBuilder.getUrl(request, editUrlPars);
 					%>
 							<a href="<%=editUrlStr%>">
 								<img class='header-button-image-portlet-section' 
 	      				 			 title='<spagobi:message key = "sbi.detailbiobj.editTemplate" />' 
-	      				 			 src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/createTemplate.jpg", currTheme)%>' 
+	      				 			 src='<%=urlBuilder.getResourceLinkByTheme(request,
+						"/img/createTemplate.jpg", currTheme)%>' 
 	      				 			 alt='<spagobi:message key = "sbi.detailbiobj.editTemplate"  />' />
 							</a> 	
 					<%
-				 		}
-					%>
+ 							}
+ 						%>
 					</div>
 	        </div>
 	        
@@ -855,83 +909,132 @@ function saveDocument(goBack) {
 		<div style='border: 1px solid black;max-height:160px;overflow:auto;'>
 			
 			<table> 
-				<% 
-					templates = objtempdao.getBIObjectTemplateList(obj.getId());
-		 			ObjTemplate currTemplate = objtempdao.getBIObjectActiveTemplate(obj.getId());
-					if(templates==null)
-		 				templates = new ArrayList();
-					Integer curVer = null;
-					if(currTemplate != null) 
-						curVer = currTemplate.getProg();
-					int numTemp = templates.size();  
-					if(numTemp == 0) {
-						out.print("<tr class='portlet-section-body'>");
-		      			out.print("<td class='portlet-font'>No Version Found</td></tr>");
-		      		}
-					// loads subReports id, if any
-					List subReports = DAOFactory.getSubreportDAO().loadSubreportsByMasterRptId(obj.getId());
-					
-					Iterator iterTemp = templates.iterator();
-		      		while(iterTemp.hasNext()) {
-		      			ObjTemplate tempVer = (ObjTemplate)iterTemp.next();
-		      		 	String checkStr = " ";
-		      		    boolean isCurrentVer = false;
-		      		    if(curVer.equals(tempVer.getProg())) {
-		      		       	checkStr = " checked='checked' ";
-		      		      	isCurrentVer = true;
-		      		    }
-		      		    out.print("<tr class='portlet-section-body'>");
-		      		    out.print("<td class='portlet-font'>Version "+tempVer.getProg()+"</td>");
-		      		    Date creDate = tempVer.getCreationDate();
-		      		    Calendar creCal = new GregorianCalendar();
-		      		    creCal.setTime(creDate);
-		      		    String creDateStr = creCal.get(Calendar.DAY_OF_MONTH) + "/" +
-		      		  						(creCal.get(Calendar.MONTH) + 1) + "/" +
-		      		  					    creCal.get(Calendar.YEAR) + "  " + 
-		      		  						creCal.get(Calendar.HOUR_OF_DAY) + ":" + 
-		      		  						(creCal.get(Calendar.MINUTE) < 10 ? "0" : "") +
-		      		  						creCal.get(Calendar.MINUTE);
-		      		    out.print("<td class='portlet-font'>"+creDateStr+"</td>");
-		      		    out.print("<td class='portlet-font'>"+tempVer.getName()+"</td>");
-		      		        
-		      			Map eraseVerUrlPars = new HashMap();
-		      			eraseVerUrlPars.put("PAGE", "detailBIObjectPage");
-		      			eraseVerUrlPars.put("MESSAGEDET", SpagoBIConstants.ERASE_VERSION);
-		      			eraseVerUrlPars.put(SpagoBIConstants.TEMPLATE_ID, tempVer.getId());
-		      			eraseVerUrlPars.put(AdmintoolsConstants.OBJECT_ID, obj.getId().toString());
-		      			eraseVerUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_DISABLED, "true");
-						String eraseVerUrlStr = urlBuilder.getUrl(request, eraseVerUrlPars);
-						
-						String pathTemp = obj.getPath() + "/template";
-   						//String downl = GeneralUtilities.getSpagoBIProfileBaseUrl(userId) + 
-   						String downl = GeneralUtilities.getSpagoBIProfileBaseUrl(userUniqueIdentifier) + 
-   									   "&ACTION_NAME=DOWNLOAD_BIOBJ_TEMPLATE&TEMP_ID="+tempVer.getId() + "&" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
-   						
-		      		        if(isCurrentVer) {
-		      		        	out.print("<td class='portlet-font' >&nbsp;</td>");
-		      		        } else {
-		      		        	out.print("<td class='portlet-font' ><a href='javascript:deleteVersionConfirm(\""+msgBuilder.getMessage("SBIDev.docConf.docDet.deleteVersionConfirm", "messages", request)+"\", \""+eraseVerUrlStr+"\")' style='font-size:9px;' >" + msgBuilder.getMessage("SBIDev.docConf.execBIObject.eraseLink", "messages", request) + "</a></td>");
-		      		        }
-		      		        if (!isCurrentVer || subReports == null || subReports.size() == 0) {
-		      		        	out.print("<td class='portlet-font' ><a href='"+downl+"' style='font-size:9px;' >" + msgBuilder.getMessage("SBIDev.docConf.execBIObject.downloadLink", "messages", request) + "</a></td>");
-		      		        } else {
-		      		        	//String downloadAlsoLinkedTemplateUrl = GeneralUtilities.getSpagoBIProfileBaseUrl(userId)+ "&ACTION_NAME=DOWNLOAD_BIOBJ_TEMPLATE&operation=downloadAll&biobjectId=" +
-		      		        	String downloadAlsoLinkedTemplateUrl = GeneralUtilities.getSpagoBIProfileBaseUrl(userUniqueIdentifier)+ "&ACTION_NAME=DOWNLOAD_BIOBJ_TEMPLATE&operation=downloadAll&biobjectId=" +
-		      		        			obj.getId().toString() + "&" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE&fileName=template.zip";
-		      		        	String downloadAlsoLinkedTemplateMsg = msgBuilder.getMessage("SBIDev.docConf.docDet.downloadAlsoLinkedTemplates", "messages", request);
-		      		        	out.print("<td class='portlet-font' ><a href='javascript:downloadAlsoLinkedTemplatesConfirm(\"" + downloadAlsoLinkedTemplateMsg + "\",\"" + downloadAlsoLinkedTemplateUrl + "\", \"" + downl + "\")' style='font-size:9px;' >" 
-		      		        			+ msgBuilder.getMessage("SBIDev.docConf.execBIObject.downloadLink", "messages", request) 
-		      		        			+ "</a></td>");
-		      		        }
-		      		        
-		      		        if(numTemp > 1) {
-		      		        	out.print("<td class='portlet-font'><input type='radio' value='"+tempVer.getId()+" 'name='versionTemplate' onchange='versionTemplateSelected()' "+checkStr+" /></td></tr>");
-		      		        } else {
-		      		        	out.print("<td class='portlet-font'>&nbsp;</td></tr>");
-		      		        }
-		      		        
-		      		}
-		      		%>    
+				<%
+ 					templates = objtempdao.getBIObjectTemplateList(obj.getId());
+ 					ObjTemplate currTemplate = objtempdao.getBIObjectActiveTemplate(obj
+ 							.getId());
+ 					if (templates == null)
+ 						templates = new ArrayList();
+ 					Integer curVer = null;
+ 					if (currTemplate != null)
+ 						curVer = currTemplate.getProg();
+ 					int numTemp = templates.size();
+ 					if (numTemp == 0) {
+ 						out.print("<tr class='portlet-section-body'>");
+ 						out.print("<td class='portlet-font'>No Version Found</td></tr>");
+ 					}
+ 					// loads subReports id, if any
+ 					List subReports = DAOFactory.getSubreportDAO()
+ 							.loadSubreportsByMasterRptId(obj.getId());
+
+ 					Iterator iterTemp = templates.iterator();
+ 					while (iterTemp.hasNext()) {
+ 						ObjTemplate tempVer = (ObjTemplate) iterTemp.next();
+ 						String checkStr = " ";
+ 						boolean isCurrentVer = false;
+ 						if (curVer.equals(tempVer.getProg())) {
+ 							checkStr = " checked='checked' ";
+ 							isCurrentVer = true;
+ 						}
+ 						out.print("<tr class='portlet-section-body'>");
+ 						out.print("<td class='portlet-font'>Version "
+ 								+ tempVer.getProg() + "</td>");
+ 						Date creDate = tempVer.getCreationDate();
+ 						Calendar creCal = new GregorianCalendar();
+ 						creCal.setTime(creDate);
+ 						String creDateStr = creCal.get(Calendar.DAY_OF_MONTH) + "/"
+ 								+ (creCal.get(Calendar.MONTH) + 1) + "/"
+ 								+ creCal.get(Calendar.YEAR) + "  "
+ 								+ creCal.get(Calendar.HOUR_OF_DAY) + ":"
+ 								+ (creCal.get(Calendar.MINUTE) < 10 ? "0" : "")
+ 								+ creCal.get(Calendar.MINUTE);
+ 						out.print("<td class='portlet-font'>" + creDateStr + "</td>");
+ 						out.print("<td class='portlet-font'>" + tempVer.getName()
+ 								+ "</td>");
+
+ 						Map eraseVerUrlPars = new HashMap();
+ 						eraseVerUrlPars.put("PAGE", "detailBIObjectPage");
+ 						eraseVerUrlPars.put("MESSAGEDET",
+ 								SpagoBIConstants.ERASE_VERSION);
+ 						eraseVerUrlPars.put(SpagoBIConstants.TEMPLATE_ID,
+ 								tempVer.getId());
+ 						eraseVerUrlPars.put(AdmintoolsConstants.OBJECT_ID, obj.getId()
+ 								.toString());
+ 						eraseVerUrlPars
+ 								.put(LightNavigationManager.LIGHT_NAVIGATOR_DISABLED,
+ 										"true");
+ 						String eraseVerUrlStr = urlBuilder.getUrl(request,
+ 								eraseVerUrlPars);
+
+ 						String pathTemp = obj.getPath() + "/template";
+ 						//String downl = GeneralUtilities.getSpagoBIProfileBaseUrl(userId) + 
+ 						String downl = GeneralUtilities
+ 								.getSpagoBIProfileBaseUrl(userUniqueIdentifier)
+ 								+ "&ACTION_NAME=DOWNLOAD_BIOBJ_TEMPLATE&TEMP_ID="
+ 								+ tempVer.getId()
+ 								+ "&"
+ 								+ LightNavigationManager.LIGHT_NAVIGATOR_DISABLED
+ 								+ "=TRUE";
+
+ 						if (isCurrentVer) {
+ 							out.print("<td class='portlet-font' >&nbsp;</td>");
+ 						} else {
+ 							out.print("<td class='portlet-font' ><a href='javascript:deleteVersionConfirm(\""
+ 									+ msgBuilder
+ 											.getMessage(
+ 													"SBIDev.docConf.docDet.deleteVersionConfirm",
+ 													"messages", request)
+ 									+ "\", \""
+ 									+ eraseVerUrlStr
+ 									+ "\")' style='font-size:9px;' >"
+ 									+ msgBuilder.getMessage(
+ 											"SBIDev.docConf.execBIObject.eraseLink",
+ 											"messages", request) + "</a></td>");
+ 						}
+ 						if (!isCurrentVer || subReports == null
+ 								|| subReports.size() == 0) {
+ 							out.print("<td class='portlet-font' ><a href='"
+ 									+ downl
+ 									+ "' style='font-size:9px;' >"
+ 									+ msgBuilder.getMessage(
+ 											"SBIDev.docConf.execBIObject.downloadLink",
+ 											"messages", request) + "</a></td>");
+ 						} else {
+ 							//String downloadAlsoLinkedTemplateUrl = GeneralUtilities.getSpagoBIProfileBaseUrl(userId)+ "&ACTION_NAME=DOWNLOAD_BIOBJ_TEMPLATE&operation=downloadAll&biobjectId=" +
+ 							String downloadAlsoLinkedTemplateUrl = GeneralUtilities
+ 									.getSpagoBIProfileBaseUrl(userUniqueIdentifier)
+ 									+ "&ACTION_NAME=DOWNLOAD_BIOBJ_TEMPLATE&operation=downloadAll&biobjectId="
+ 									+ obj.getId().toString()
+ 									+ "&"
+ 									+ LightNavigationManager.LIGHT_NAVIGATOR_DISABLED
+ 									+ "=TRUE&fileName=template.zip";
+ 							String downloadAlsoLinkedTemplateMsg = msgBuilder
+ 									.getMessage(
+ 											"SBIDev.docConf.docDet.downloadAlsoLinkedTemplates",
+ 											"messages", request);
+ 							out.print("<td class='portlet-font' ><a href='javascript:downloadAlsoLinkedTemplatesConfirm(\""
+ 									+ downloadAlsoLinkedTemplateMsg
+ 									+ "\",\""
+ 									+ downloadAlsoLinkedTemplateUrl
+ 									+ "\", \""
+ 									+ downl
+ 									+ "\")' style='font-size:9px;' >"
+ 									+ msgBuilder.getMessage(
+ 											"SBIDev.docConf.execBIObject.downloadLink",
+ 											"messages", request) + "</a></td>");
+ 						}
+
+ 						if (numTemp > 1) {
+ 							out.print("<td class='portlet-font'><input type='radio' value='"
+ 									+ tempVer.getId()
+ 									+ " 'name='versionTemplate' onchange='versionTemplateSelected()' "
+ 									+ checkStr + " /></td></tr>");
+ 						} else {
+ 							out.print("<td class='portlet-font'>&nbsp;</td></tr>");
+ 						}
+
+ 					}
+ 				%>    
 		      	</table>
 
 		</div>
@@ -944,12 +1047,17 @@ function saveDocument(goBack) {
 	
 
 
-<% if(modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_INS)) { %>
+<%
+		if (modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_INS)) {
+	%>
 </form>
 
 
-<% } else if(modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {
-  		BIObjectParameter objPar = (BIObjectParameter) moduleResponse.getAttribute(DetailBIObjectModule.NAME_ATTR_OBJECT_PAR);
+<%
+	} else if (modality
+			.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {
+		BIObjectParameter objPar = (BIObjectParameter) moduleResponse
+				.getAttribute(DetailBIObjectModule.NAME_ATTR_OBJECT_PAR);
 %>
 
 	<!--  <a style="margin: 0px 0px 5px 10px;" id="parDiv_" name="parDiv_" > 
@@ -970,32 +1078,35 @@ function saveDocument(goBack) {
 			<input type='hidden' id='selected_obj_par_id' name='' value=''/>
 <%
 	List biObjParams = obj.getBiObjectParameters();
-	String obj_par_idStr = (String) moduleResponse.getAttribute("selected_obj_par_id");
-	Integer obj_par_idInt = new Integer(obj_par_idStr);
-	int obj_par_id = Integer.parseInt(obj_par_idStr);
-	String linkClass = "tab";
-	boolean foundSelectedParId = false;
-	for (int i = 0; i < biObjParams.size(); i++){
-		BIObjectParameter biObjPar = (BIObjectParameter) biObjParams.get(i);
-		if (biObjPar.getId().equals(obj_par_idInt)) {
-			linkClass = "tab selected";
-			foundSelectedParId = true;
-		}
-		else linkClass = "tab";
-	%>
-					<div class='<%= linkClass%>'>
-						<a href='javascript:changeBIParameter("<%= biObjPar.getId().toString() %>", "<spagobi:message key = "SBIDev.docConf.docDetParam.saveBIParameterConfirm" />")'
+		String obj_par_idStr = (String) moduleResponse
+				.getAttribute("selected_obj_par_id");
+		Integer obj_par_idInt = new Integer(obj_par_idStr);
+		int obj_par_id = Integer.parseInt(obj_par_idStr);
+		String linkClass = "tab";
+		boolean foundSelectedParId = false;
+		for (int i = 0; i < biObjParams.size(); i++) {
+			BIObjectParameter biObjPar = (BIObjectParameter) biObjParams
+					.get(i);
+			if (biObjPar.getId().equals(obj_par_idInt)) {
+				linkClass = "tab selected";
+				foundSelectedParId = true;
+			} else
+				linkClass = "tab";
+%>
+					<div class='<%=linkClass%>'>
+						<a href='javascript:changeBIParameter("<%=biObjPar.getId().toString()%>", "<spagobi:message key = "SBIDev.docConf.docDetParam.saveBIParameterConfirm" />")'
 						   style="color:black;"> 
-							<%= StringEscapeUtils.escapeHtml(biObjPar.getLabel())%>
+							<%=StringEscapeUtils.escapeHtml(biObjPar.getLabel())%>
 						</a>
 					</div>
-<%	}
-	if (obj_par_id < 0 || !foundSelectedParId) 
-		linkClass = "tab selected";
-	else 
-		linkClass = "tab";
+<%
+	}
+		if (obj_par_id < 0 || !foundSelectedParId)
+			linkClass = "tab selected";
+		else
+			linkClass = "tab";
 %>
-					<div class='<%= linkClass%>'>
+					<div class='<%=linkClass%>'>
 						<a href='javascript:changeBIParameter("-1", "<spagobi:message key = "SBIDev.docConf.docDetParam.saveBIParameterConfirm" />")'
 						   style="color:black;"> 
 							<spagobi:message key = "SBIDev.docConf.docDet.newBIParameter" />
@@ -1008,12 +1119,14 @@ function saveDocument(goBack) {
 
 <script>
 
-<%
-	BIObject initialBIObject = (BIObject) aSessionContainer.getAttribute("initial_BIObject");
-	if (initialBIObject == null) initialBIObject = obj;
-	BIObjectParameter initialBIObjectParameter = (BIObjectParameter) aSessionContainer.getAttribute("initial_BIObjectParameter");
-	if (initialBIObjectParameter == null) initialBIObjectParameter = objPar;
-%>
+<%BIObject initialBIObject = (BIObject) aSessionContainer
+						.getAttribute("initial_BIObject");
+				if (initialBIObject == null)
+					initialBIObject = obj;
+				BIObjectParameter initialBIObjectParameter = (BIObjectParameter) aSessionContainer
+						.getAttribute("initial_BIObjectParameter");
+				if (initialBIObjectParameter == null)
+					initialBIObjectParameter = objPar;%>
 
 function isBIObjectFormChanged() {
 	
@@ -1031,14 +1144,21 @@ function isBIObjectFormChanged() {
 	var state = document.getElementById('doc_state').value;
 
   
-	if ((label != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObject.getLabel()))%>')
-		|| (name != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObject.getName()))%>')
-		|| (description != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObject.getDescription()))%>')
-		//|| (relName != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObject.getRelName()))%>')
-		|| (type != '<%=initialBIObject.getBiObjectTypeID()+","+initialBIObject.getBiObjectTypeCode()%>')
+	if ((label != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils
+						.escapeHtml(initialBIObject.getLabel()))%>')
+		|| (name != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils
+						.escapeHtml(initialBIObject.getName()))%>')
+		|| (description != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils
+						.escapeHtml(initialBIObject.getDescription()))%>')
+		//|| (relName != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils
+						.escapeHtml(initialBIObject.getRelName()))%>')
+		|| (type != '<%=initialBIObject.getBiObjectTypeID() + ","
+						+ initialBIObject.getBiObjectTypeCode()%>')
 		|| (engine != '<%=initialBIObject.getEngine().getId()%>')
-		|| (datasource != '<%=initialBIObject.getDataSourceId() != null ? initialBIObject.getDataSourceId().toString() : ""%>')
-		|| (state != '<%=initialBIObject.getStateID()+","+initialBIObject.getStateCode()%>') 
+		|| (datasource != '<%=initialBIObject.getDataSourceId() != null ? initialBIObject
+						.getDataSourceId().toString() : ""%>')
+		|| (state != '<%=initialBIObject.getStateID() + ","
+						+ initialBIObject.getStateCode()%>') 
 		|| (versionTemplateChanged == 'true')
 		|| (fileUploadChanged == 'true') 
 		){
@@ -1059,9 +1179,14 @@ function isBIParameterFormChanged () {
 	var parurl_nm = document.getElementById('parurl_nm').value;
 	var view_fl = document.getElementById('view_fl').checked ? 1 : 0;
 			
-	if ((objParLabel != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObjectParameter.getLabel()))%>')
-		|| (par_Id != '<%=(initialBIObjectParameter.getParID() == null || initialBIObjectParameter.getParID().intValue() == -1) ? "" : initialBIObjectParameter.getParID().toString()%>')
-		|| (parurl_nm != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObjectParameter.getParameterUrlName()))%>') 
+	if ((objParLabel != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils
+						.escapeHtml(initialBIObjectParameter.getLabel()))%>')
+		|| (par_Id != '<%=(initialBIObjectParameter.getParID() == null || initialBIObjectParameter
+						.getParID().intValue() == -1) ? ""
+						: initialBIObjectParameter.getParID().toString()%>')
+		|| (parurl_nm != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils
+						.escapeHtml(initialBIObjectParameter
+								.getParameterUrlName()))%>') 
 		|| (view_fl != '<%=initialBIObjectParameter.getVisible()%>') )
 	{
 		biobjParFormModified = 'true';
@@ -1120,28 +1245,23 @@ function deleteVersionConfirm(message, url){
 function deleteBIParameterConfirm (message) {
 	if (confirm(message)) {
 		document.getElementById('deleteBIObjectParameter').name = 'deleteBIObjectParameter';
-		document.getElementById('deleteBIObjectParameter').value = '<%= objPar.getId() %>';
+		document.getElementById('deleteBIObjectParameter').value = '<%=objPar.getId()%>';
         	document.getElementById('objectForm').submit();
         }
 }
 
 function verifyDependencies() {
-	<%
-	List correlations = DAOFactory.getObjParuseDAO().loadObjParuses(objPar.getId());
-	if (correlations != null && correlations.size() > 0) {
-		%>
+	<%List correlations = DAOFactory.getObjParuseDAO()
+						.loadObjParuses(objPar.getId());
+				if (correlations != null && correlations.size() > 0) {%>
 		document.getElementById('parameterCannotBeChanged').style.display = 'inline';
-		<%
-	} else {
-		%>
+		<%} else {%>
 		document.getElementById('loadParametersLookup').name = 'loadParametersLookup';
 		document.getElementById('loadParametersLookup').value = 'loadParametersLookup';
 		//document.getElementById('save').click();
 		document.objectForm.submit();
 		
-		<%
-	}
-	%>
+		<%}%>
 }
 
 function saveBIParameterConfirm (message) {
@@ -1204,41 +1324,53 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 		      
 <table  class='header-sub-table-portlet-section' >		
 	<tr class='header-sub-row-portlet-section'>
-		<% if (obj_par_id != -1) { %>
+		<%
+			if (obj_par_id != -1) {
+		%>
 		<td class='header-sub-title-column-portlet-section'>
 			<spagobi:message key = "SBIDev.docConf.docDetParam.title" />
 		</td>
 		<td class='header-empty-column-portlet-section'>&nbsp;</td>
-		<% 
-		int objParPriority = objPar.getPriority().intValue();
-		if (objParPriority > 1) { %>
+		<%
+			int objParPriority = objPar.getPriority().intValue();
+					if (objParPriority > 1) {
+		%>
 		<td class='header-button-column-portlet-section'>
 			<a href='javascript:void(0);'
-			   onclick='document.getElementById("priority").selectedIndex=<%= objParPriority - 2 %>;document.getElementById("objectForm").submit();'>
-				<img 	src= '<%=urlBuilder.getResourceLinkByTheme(request, "/img/Back.gif", currTheme) %>'
+			   onclick='document.getElementById("priority").selectedIndex=<%=objParPriority - 2%>;document.getElementById("objectForm").submit();'>
+				<img 	src= '<%=urlBuilder.getResourceLinkByTheme(request,
+								"/img/Back.gif", currTheme)%>'
 					title='<spagobi:message key = "SBIDev.docConf.docDetParam.increasePriority" />' 
 					alt='<spagobi:message key = "SBIDev.docConf.docDetParam.increasePriority" />'
 				/>
 			</a>
 		</td>
-		<% } %>
-		<% if (objParPriority < biObjParams.size()) { %>
+		<%
+			}
+		%>
+		<%
+			if (objParPriority < biObjParams.size()) {
+		%>
 		<td class='header-button-column-portlet-section'>
 			<a href='javascript:void(0);' 
-			   onclick='document.getElementById("priority").selectedIndex=<%= objParPriority %>;document.getElementById("objectForm").submit();'>
-				<img 	src= '<%=urlBuilder.getResourceLinkByTheme(request, "/img/Forward.gif", currTheme) %>'
+			   onclick='document.getElementById("priority").selectedIndex=<%=objParPriority%>;document.getElementById("objectForm").submit();'>
+				<img 	src= '<%=urlBuilder.getResourceLinkByTheme(request,
+								"/img/Forward.gif", currTheme)%>'
 					title='<spagobi:message key = "SBIDev.docConf.docDetParam.reducePriority" />' 
 					alt='<spagobi:message key = "SBIDev.docConf.docDetParam.reducePriority" />'
 				/>
 			</a>
 		</td>
-		<% } %>
-		<% 
-			if(biObjParams != null && biObjParams.size() > 1) { 
+		<%
+			}
+		%>
+		<%
+			if (biObjParams != null && biObjParams.size() > 1) {
 		%>
 			<td class='header-button-column-portlet-section'>
 				<a href='javascript:saveBIParameterConfirm("<spagobi:message key="SBIDev.docConf.docDetParam.saveBIParameterConfirm"/>")'>
-					<img 	src= '<%=urlBuilder.getResourceLinkByTheme(request, "/img/Class.gif", currTheme) %>'
+					<img 	src= '<%=urlBuilder.getResourceLinkByTheme(request,
+								"/img/Class.gif", currTheme)%>'
 						title='<spagobi:message key = "SBIDev.docConf.docDetParam.parametersCorrelationManagement" />'
 						alt='<spagobi:message key = "SBIDev.docConf.docDetParam.parametersCorrelationManagement" />'
 					/>
@@ -1249,29 +1381,38 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 		%>
 		<td class='header-button-column-portlet-section'>
 			<a href='javascript:deleteBIParameterConfirm("<spagobi:message key="SBIDev.docConf.docDetParam.deleteBIParameterConfirm"/>")'>
-				<img 	src= '<%=urlBuilder.getResourceLinkByTheme(request, "/img/erase.gif", currTheme) %>'
+				<img 	src= '<%=urlBuilder.getResourceLinkByTheme(request,
+							"/img/erase.gif", currTheme)%>'
 					title='<spagobi:message key = "SBIDev.docConf.docDetParam.eraseButt" />' alt='<spagobi:message key = "SBIDev.docConf.docDetParam.eraseButt" />'
 				/>
 			</a>
 		</td>
-		<% } else { %>
+		<%
+			} else {
+		%>
 			<td class='header-sub-title-column-portlet-section-no-buttons'>
 				<spagobi:message key = "SBIDev.docConf.docDetParam.title" />
 			</td>
-		<% } %>
+		<%
+			}
+		%>
 	</tr>
 </table>
 
 
 
-<input type='hidden' name='objParId' value='<%= objPar.getId() != null ? objPar.getId().toString() : "-1" %>' />
+<input type='hidden' name='objParId' value='<%=objPar.getId() != null ? objPar.getId().toString()
+						: "-1"%>' />
 <input type='hidden' name='' value='' id='deleteBIObjectParameter' />
 <input type='hidden' name='' value='' id='goToDependenciesPage' />
 		
 
-
-
+<!-- ======================================================================================  -->
+<!-- PARAMETERS PANEL  																		 -->
+<!-- ======================================================================================  -->
 <div class="div_detail_area_sub_forms">
+	
+	<!-- TITLE -->
 	<div class='div_detail_label'>
 		<span class='portlet-form-field-label'>
 			<spagobi:message key = "SBIDev.docConf.docDetParam.labelField" />
@@ -1282,6 +1423,8 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 			   id="objParLabel" size="42" value="<%=StringEscapeUtils.escapeHtml(objPar.getLabel())%>" maxlength="40" />
 		&nbsp;*
 	</div>
+	
+	<!-- ANALTYCAL DRIVER -->
 	<div class='div_detail_label'>
 		<span class='portlet-form-field-label'>
 			<spagobi:message key = "SBIDev.docConf.docDetParam.paramField" />
@@ -1289,51 +1432,59 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 	</div>
 	<div class='div_detail_form'>
 	<%
-    	IParameterDAO param = DAOFactory.getParameterDAO();
-		String objParId = (objPar.getParameter() != null ? objPar.getParameter().getId().toString() : null);
-      	List list = param.loadAllParameters();
-		Parameter parameter = null;
-      	for (int i = 0; i < list.size(); i++) {
-			Parameter parameterTemp = (Parameter) list.get(i);
-      		String curr_parId = parameterTemp.getId().toString();
-      		if (curr_parId.equals(objParId)){
-				parameter = parameterTemp;
-      			break;
-      		}
-      	} 
-	 %> 
+		IParameterDAO param = DAOFactory.getParameterDAO();
+			String objParId = (objPar.getParameter() != null ? objPar
+					.getParameter().getId().toString() : null);
+			List list = param.loadAllParameters();
+			Parameter parameter = null;
+			for (int i = 0; i < list.size(); i++) {
+				Parameter parameterTemp = (Parameter) list.get(i);
+				String curr_parId = parameterTemp.getId().toString();
+				if (curr_parId.equals(objParId)) {
+					parameter = parameterTemp;
+					break;
+				}
+			}
+	%> 
     <input type='hidden' id='par_Id' 
-			   value='<%= parameter != null ? parameter.getId().toString() : "" %>' name='par_Id' />	 
+			   value='<%=parameter != null ? parameter.getId().toString() : ""%>' name='par_Id' />	 
 		<input class='portlet-form-input-field' type="text" id="parameterName" size="42" 
-	    	   name="parameterName" value='<%= parameter != null ? StringEscapeUtils.escapeHtml(parameter.getName()) : "" %>' 
+	    	   name="parameterName" value='<%=parameter != null ? StringEscapeUtils
+						.escapeHtml(parameter.getName()) : ""%>' 
 			   	maxlength="100" readonly />
 
 
   		&nbsp;*&nbsp;
 		<a style="text-decoration:none;"  href="javascript:verifyDependencies();">
-			<img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/detail.gif", currTheme)%>' 
+			<img src='<%=urlBuilder.getResourceLinkByTheme(request,
+						"/img/detail.gif", currTheme)%>' 
 			   title='<spagobi:message key = "SBIDev.docConf.docDetParam.parametersLookupList" />' 
 			   alt='<spagobi:message key = "SBIDev.docConf.docDetParam.parametersLookupList" />' />
 		</a>
 			   
 		<input type='hidden' name='' value='' id='loadParametersLookup' />
 	</div>
+	
+	
+	<!-- URL NAME -->
 	<div class='div_detail_label'>
 		<span class='portlet-form-field-label'>
 			<spagobi:message key = "SBIDev.docConf.docDetParam.parurl_nmField" />
 		</span>
 	</div>
 	<div class='div_detail_form'>
-	<% 
-    	String urlName = objPar.getParameterUrlName();
-    	if (urlName==null) {
-    		urlName = "";
-    	}
-    %>
-		<input class='portlet-form-input-field' type="text" size="42" 
-			   name="parurl_nm" id="parurl_nm" value="<%=StringEscapeUtils.escapeHtml(urlName)%>" maxlength="20" />&nbsp;&nbsp;*
+	<%
+		String urlName = objPar.getParameterUrlName();
+			if (urlName == null) {
+				urlName = "";
+			}
+	%>
+			<input class='portlet-form-input-field' type="text" size="42"
+				name="parurl_nm" id="parurl_nm"
+				value="<%=StringEscapeUtils.escapeHtml(urlName)%>" maxlength="20" />&nbsp;&nbsp;*
 	</div>
 	
+	<!-- PRIORITY -->
 	<div class='div_detail_label'>
 		<span class='portlet-form-field-label'>
 			<spagobi:message key = "SBIDev.docConf.docDetParam.priorityField" />
@@ -1343,76 +1494,104 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 		<select class='portlet-form-input-field' name="priority" id="priority">
 		<%
 			int objParsnumber = biObjParams.size();
-			for (int i = 0; i < objParsnumber; i++) {
-				%>
-				<option value="<%=i + 1%>" <% if (objPar.getPriority() != null && objPar.getPriority().intValue() == i + 1) out.print(" selected='selected' ");  %> ><%=i+1%></option>
-				<%
-			}
-			if (obj_par_id < 0) {
-				%>
-				<option value="<%=objParsnumber+1%>" selected="selected"><%=objParsnumber+1%></option>
-				<%
-			} else 
+				for (int i = 0; i < objParsnumber; i++) {
 		%>
+				<option value="<%=i + 1%>" <%if (objPar.getPriority() != null
+							&& objPar.getPriority().intValue() == i + 1)
+						out.print(" selected='selected' ");%> ><%=i + 1%></option>
+				<%
+					}
+						if (obj_par_id < 0) {
+				%>
+				<option value="<%=objParsnumber + 1%>" selected="selected"><%=objParsnumber + 1%></option>
+				<%
+					} else
+				%>
 		</select>
 	</div>
 	
-	
+	<!-- VISIBLE -->
 	<div class='div_detail_label'>
 		<span class='portlet-form-field-label'>
 			<spagobi:message key = "SBIDev.docConf.docDetParam.view_flField" />
 		</span>
 	</div>
 	<div class='div_detail_form'>
-	<% 
-    	isVisible = false;
-    	visible = objPar.getVisible().intValue();
-    	if(visible > 0) { isVisible = true; }
-    %> 
+	<%
+		isVisible = false;
+			visible = objPar.getVisible().intValue();
+			if (visible > 0) {
+				isVisible = true;
+			}
+	%> 
 		<input class='portlet-form-input-field' type="checkbox" name="view_fl" id="view_fl" 
 			   value="1" <%=(isVisible ? "checked='checked'" : "")%>/>
 	</div>
+	
+	<!-- MANDATORY -->
+	<div class='div_detail_label' >
+		<span class='portlet-form-field-label'>
+			<spagobi:message key = "SBIDev.docConf.docDetParam.req_flField" />
+		</span>
+	</div>
+	<div class='div_detail_form'>
+	<%
+		boolean isRequired = false;
+			int required = objPar.getRequired().intValue();
+			if (required > 0) {
+				isRequired = true;
+			}
+	%> 
+    	<input type="radio" name="req_fl" value="1" <%if (isRequired) {
+					out.println(" checked='checked' ");
+				}%> >True</input>
+    	<input type="radio" name="req_fl" value="0" <%if (!isRequired) {
+					out.println(" checked='checked' ");
+				}%> >False</input>
+	</div>
+	
+	<!-- MULTISELECTION  -->
+	<div class='div_detail_label' >
+		<span class='portlet-form-field-label'>
+			<spagobi:message key = "SBIDev.docConf.docDetParam.mult_flField" />
+		</span>
+	</div>
+	<div class='div_detail_form'>
+	<%
+		boolean isMultivalue = false;
+		int multivalue = objPar.getMultivalue().intValue();
+		if (multivalue > 0) {
+			isMultivalue = true;
+		}
+	%> 
+    	<input type="radio" name="mult_fl" value="1" <%if (isMultivalue) {
+					out.println(" checked='checked' ");
+				}%> >True</input>
+    	<input type="radio" name="mult_fl" value="0" <%if (!isMultivalue) {
+					out.println(" checked='checked' ");
+				}%> >False</input>
+	</div>
+	
+	<!-- deprecati ... -->
 	<div class='div_detail_label' style='display:none;'>
 		<span class='portlet-form-field-label'>
 			<spagobi:message key = "SBIDev.docConf.docDetParam.mod_flField" />
 		</span>
 	</div>
 	<div class='div_detail_form' style='display:none;'>
-	<% 
+	<%
 		boolean isModifiable = false;
-    	int modifiable = objPar.getModifiable().intValue();
-    	if(modifiable > 0) { isModifiable = true; }
-    %> 
-    	<input type="radio" name="mod_fl" value="1" <% if(isModifiable) { out.println(" checked='checked' "); } %> >True</input>
-    	<input type="radio" name="mod_fl" value="0" <% if(!isModifiable) { out.println(" checked='checked' "); } %> >False</input>
-	</div>
-	<div class='div_detail_label' style='display:none;'>
-		<span class='portlet-form-field-label'>
-			<spagobi:message key = "SBIDev.docConf.docDetParam.req_flField" />
-		</span>
-	</div>
-	<div class='div_detail_form' style='display:none;'>
-	<% 
-    	boolean isRequired = false;
-    	int required = objPar.getRequired().intValue();
-    	if(required > 0) { isRequired = true; }
-    %> 
-    	<input type="radio" name="req_fl" value="1" <% if(isRequired) { out.println(" checked='checked' "); } %> >True</input>
-    	<input type="radio" name="req_fl" value="0" <% if(!isRequired) { out.println(" checked='checked' "); } %> >False</input>
-	</div>
-	<div class='div_detail_label' style='display:none;'>
-		<span class='portlet-form-field-label'>
-			<spagobi:message key = "SBIDev.docConf.docDetParam.mult_flField" />
-		</span>
-	</div>
-	<div class='div_detail_form' style='display:none;'>
-	<% 
-    	boolean isMultivalue = false;
-    	int multivalue = objPar.getMultivalue().intValue();
-    	if(multivalue > 0) { isMultivalue = true; }
-    %> 
-    	<input type="radio" name="mult_fl" value="1" <% if(isMultivalue) { out.println(" checked='checked' "); } %> >True</input>
-    	<input type="radio" name="mult_fl" value="0" <% if(!isMultivalue) { out.println(" checked='checked' "); } %> >False</input>
+			int modifiable = objPar.getModifiable().intValue();
+			if (modifiable > 0) {
+				isModifiable = true;
+			}
+	%> 
+    	<input type="radio" name="mod_fl" value="1" <%if (isModifiable) {
+					out.println(" checked='checked' ");
+				}%> >True</input>
+    	<input type="radio" name="mod_fl" value="0" <%if (!isModifiable) {
+					out.println(" checked='checked' ");
+				}%> >False</input>
 	</div>
 </div>
 
@@ -1427,7 +1606,9 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 </form>
 
 
-<% } %>
+<%
+	}
+%>
 
 <div id = 'parameterCannotBeChanged' class='portlet-msg-error' style='display:none;'>
 	<spagobi:message key = "SBIDev.docConf.docDetParam.cannotChangeParameter" />

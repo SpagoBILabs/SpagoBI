@@ -511,8 +511,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			 */
 			
 			if (theField.behindParameter.selectionType === 'COMBOBOX'
-				|| theField.behindParameter.selectionType === 'LIST'
-				|| theField.behindParameter.selectionType === 'CHECK_LIST'	) {
+				|| theField.behindParameter.selectionType === 'LOOKUP') {
 			
 				this.fields[p].on('select', function(field, record, index) {
 					this.updateDependentFields( field );
@@ -600,7 +599,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var conditions = dependantConf.visualDependencyConditions;
 		
 		var fatherFieldValues;
-		if(fatherField.behindParameter.selectionType === 'CHECK_LIST') {
+		if(fatherField.behindParameter.selectionType === 'LOOKUP' && fatherField.behindParameter.multivalue === true) {
 			fatherFieldValues = fatherField.getValue();
 		} else {
 			fatherFieldValues = [fatherField.getValue()];
@@ -842,7 +841,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 
 			
 			
-		} else if(p.selectionType === 'LIST' || p.selectionType ===  'CHECK_LIST') {
+		} else if(p.selectionType === 'LOOKUP') {
 			
 			var params = Ext.apply({}, {
 				PARAMETER_ID: p.id
@@ -865,7 +864,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				  store: store
 					, params: params
 					, readOnly: true
-					, singleSelect: (p.selectionType === 'LIST')
+					, singleSelect: (p.multivalue === false)
 			}));
 			
 			

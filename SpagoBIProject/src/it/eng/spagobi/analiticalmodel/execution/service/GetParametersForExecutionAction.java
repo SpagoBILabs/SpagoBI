@@ -81,7 +81,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		}
 	}
 	
-	public List getParameters() {
+	public List<ParameterForExecution> getParameters() {
 		
 		List parametersForExecution;
 		ExecutionInstance executionInstance;
@@ -134,6 +134,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		boolean enableMaximizer;
 		String typeCode; // SpagoBIConstants.INPUT_TYPE_X
 		boolean mandatory;
+		boolean multivalue;
 		boolean visible;
 
 		int valuesCount;
@@ -225,6 +226,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			
 			typeCode = analyticalDriver.getModalityValue().getITypeCd();			
 
+			/*
 			mandatory = false;
 			Iterator it = analyticalDriver.getChecks().iterator();	
 			while (it.hasNext()){
@@ -234,6 +236,10 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 					break;
 				}
 			} 
+			*/
+			mandatory = analyticalDocumentParameter.getRequired() == 1;
+			
+			multivalue = analyticalDocumentParameter.getMultivalue() == 1;
 
 			visible = analyticalDocumentParameter.getVisible() == 1;
 
@@ -444,6 +450,14 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 
 		public void setMandatory(boolean mandatory) {
 			this.mandatory = mandatory;
+		}
+		
+		public boolean isMultivalue() {
+			return multivalue;
+		}
+
+		public void setMultivalue(boolean multivalue) {
+			this.multivalue = multivalue;
 		}
 
 		public boolean isVisible() {
