@@ -113,17 +113,10 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		biobjDAO = DAOFactory.getBIObjectDAO();
 		biobjDAO.setUserProfile(profile);
 		errorHandler = getErrorHandler();
-		// IN CASE THE REQUEST IS MULTIPART AND THE APPLICATION RUN ON A PORTAL SERVER THE REQUEST CONTAINER MUST BE FILLED 
-		/*
-		if(ChannelUtilities.isPortletRunning()){
-			if(PortletUtilities.isMultipartRequest()) {
-				request = ChannelUtilities.getSpagoRequestFromMultipart();
-				DetBIObjModHelper.fillRequestContainer(requestContainer, request, errorHandler);
-			}
-		}
-		*/
+		
 		// CREATE THE HELPER
 		helper = new DetBIObjModHelper(requestContainer, responseContainer, request, response);
+		
 		// GET THE EXECUTION MODALITY AND THE INITIAL PATH  
 		String modality = (String) ChannelUtilities.getPreferenceValue(this.getRequestContainer(), BIObjectsModule.MODALITY, "");
 		initialPath = null;
@@ -550,7 +543,6 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		response.setAttribute(NAME_ATTR_OBJECT, obj);
 		response.setAttribute(NAME_ATTR_OBJECT_PAR, biObjPar);
 		
-		logger.debug("XXXXXXXXXX " + detail_mod);
 		
 		response.setAttribute(ObjectsTreeConstants.MODALITY, detail_mod);
 		
