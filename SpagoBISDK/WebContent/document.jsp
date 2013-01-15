@@ -75,8 +75,8 @@ if (user != null && password != null) {
 				schemaFile.setFileName("schema");			
 				
 				// retrieves template
-				//String path = "D:\\Progetti\\Sisba3\\starschema.xml";
-				String path = "D:\\Progetti\\Sisba3\\sisba3.xml";
+				String path = "D:\\Progetti\\Sisba3\\starschema.xml";
+				//String path = "D:\\Progetti\\Sisba3\\sisba3.xml";
 				//check file content
 				FileInputStream isFile = new FileInputStream(path);
 				//defines a content to return
