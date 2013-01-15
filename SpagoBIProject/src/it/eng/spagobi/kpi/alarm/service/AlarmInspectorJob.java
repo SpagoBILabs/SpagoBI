@@ -94,6 +94,7 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 							+ sbiAlarmEvent.getKpiName());
 
 				sbiAlarm = sbiAlarmEvent.getSbiAlarms();
+
 				String resource = sbiAlarmEvent.getResources();
 
 				// creo un item e gli imposto l'evento e l'allarme
@@ -104,8 +105,7 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 							+ alertSendingItem);
 
 				List<SbiAlarmContact> sbiAlarmContactList = new ArrayList<SbiAlarmContact>();
-				List<SbiAlarmContact> associatedContactList = new ArrayList<SbiAlarmContact>(
-						sbiAlarm.getSbiAlarmContacts());
+				List<SbiAlarmContact> associatedContactList = new ArrayList<SbiAlarmContact>(sbiAlarm.getSbiAlarmContacts());
 
 				if (resource != null) {
 					if (logger.isDebugEnabled())
@@ -126,7 +126,8 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 						logger.debug("Resource not enhanced.");
 
 					for (SbiAlarmContact associatedContact : associatedContactList) {
-						if (associatedContact.getResources() == null) {
+						String rr = associatedContact.getResources();
+						if (associatedContact.getResources() == null || associatedContact.getResources().equals("")) {
 							sbiAlarmContactList.add(associatedContact);
 
 							if (logger.isDebugEnabled())
