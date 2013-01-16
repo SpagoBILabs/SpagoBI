@@ -276,6 +276,11 @@ public class BIObjectParameter implements Serializable {
 		return required;
 	}
 	
+	public boolean isRequired() {
+		if(required == null) return false;
+		return required.intValue() > 0;
+	}
+	
 	/**
 	 * Sets the required.
 	 * 
