@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ACTIONS>
+ <ACTION name="LIST_TEST_LOV_ACTION" class="it.eng.spagobi.behaviouralmodel.lov.service.ListTestLovAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+
+</ACTIONS>
+

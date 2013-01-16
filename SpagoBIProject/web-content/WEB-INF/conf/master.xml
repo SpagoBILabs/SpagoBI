@@ -27,7 +27,7 @@
     <CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/documentBrowser.xml" />
     
 	<!-- behaviouralmodel -->
-	
+	<CONFIGURATOR path="/WEB-INF/conf/behaviouralmodel/actions.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/behaviouralmodel/modules.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/behaviouralmodel/pages.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/behaviouralmodel/presentation.xml" />
