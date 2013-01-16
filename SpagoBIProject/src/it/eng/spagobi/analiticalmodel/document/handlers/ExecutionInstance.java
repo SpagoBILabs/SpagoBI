@@ -600,11 +600,18 @@ public class ExecutionInstance implements Serializable{
 			biparam.setLabel(viewLabel);
 			logger.debug("Evaluating errors for biparameter " + biparam.getLabel() + " ...");
 			List errorsOnChecks = getValidationErrorsOnChecks(biparam);
+			
+			List values = biparam.getParameterValues();
+			if (biparam.isRequired() && (values == null || values.isEmpty()) ) {
+					EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null, null, null);
+					errorsOnChecks.add(error);
+			}
+			
 			if (errorsOnChecks != null && errorsOnChecks.size() > 0) {
 				logger.warn("Found " + errorsOnChecks.size() + " errors on checks for biparameter " + biparam.getLabel());
 			}
 			toReturn.addAll(errorsOnChecks);
-			List values = biparam.getParameterValues();
+			
 			if (values != null && values.size() >= 1 && 
 					!(values.size() == 1 && ( values.get(0) == null || values.get(0).toString().trim().equals("") ) )) {
 				List errorsOnValues = getValidationErrorsOnValues(biparam);
@@ -637,6 +644,7 @@ public class ExecutionInstance implements Serializable{
 			Check check = null;
 			while (it.hasNext()) {
 				check = (Check) it.next();
+				if(check.getValueTypeCd().equalsIgnoreCase("MANDATORY")) continue;
 				logger.debug("Applying check [" + check.getLabel() + "] to biparameter [" + label + "] ...");
 				List errors = getValidationErrorOnCheck(biparameter, check);
 				if (errors != null && errors.size() > 0) {
