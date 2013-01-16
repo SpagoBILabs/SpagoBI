@@ -32,13 +32,16 @@
 Ext.define('Sbi.widgets.store.DynamicStore', {
     extend: 'Ext.data.Store'
 
+    ,config: {
+
+    }
       
     /**
      * Creates the store.
      * @param {Object} config (optional) Config object
      */
     , constructor: function(config) {
-    	
+    	console.log('constructor IN'+config);
     	Ext.apply(this, config);
     	var d = new Date();
     	var modelname =  'DynamicStoreModel'+(d.getTime()%10000000);
@@ -61,7 +64,7 @@ Ext.define('Sbi.widgets.store.DynamicStore', {
     	this.callParent([config]);
         
     	this.fields = this.model.prototype.fields;
-    	console.log('constructor');
+    	console.log('constructor OUT');
 		this.on('load', this.onStoreLoad, this);
     }
 

@@ -38,7 +38,7 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 
 	, constructor: function(config) {
 		
-		var defautlConf = {		};
+		var defautlConf = { pagingConfig:{}, storeConfig:{ pageSize: 7}	};
 		
 		defautlConf = Ext.apply( defautlConf,config ||{} );
 		Ext.apply(this,defautlConf);
