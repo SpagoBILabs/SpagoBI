@@ -63,7 +63,10 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 public class ListTestLovAction extends AbstractSpagoBIAction{
 	
 	private static Logger logger = Logger.getLogger(ListTestLovAction.class);
-	
+	private static final String PAGINATION_PAGE = "page";
+	private static final String PAGINATION_START = "start";
+	private static final String PAGINATION_LIMIT = "limit";
+
 	
 	@Override
 	public void doService() {
@@ -183,8 +186,13 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 			}
 			if(rowsSourceBean!=null){
 
+				//MANAGE THE PAGINATION
+				//int page = getAttributeAsInteger(PAGINATION_PAGE);
+				Integer start = getAttributeAsInteger(PAGINATION_START);
+				Integer limit = getAttributeAsInteger(PAGINATION_LIMIT);
 				
-				lovExecutionResult.setValues(toList(rowsSourceBean));
+
+				lovExecutionResult.setValues(toList(rowsSourceBean, start, limit));
 				lovExecutionResult.setFields(GridMetadataContainer.buildHeaderMapForGrid(colNames));
 				List rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
 				lovExecutionResult.setResults(rows.size());
@@ -205,28 +213,6 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 			try {
 				logger.debug("OUT");
 				String toreturn = lovExecutionResult.toJSONString();
-				//application/x-json
-				JSONObject j1 = new JSONObject();
-
-				JSONArray ja1 = new JSONArray();
-				JSONObject j2 = new JSONObject();
-				j2.put("name","media_type");
-				j2.put("header","media_type");
-				ja1.put(j2);
-				j1.put("fields",ja1);
-				j1.put("results","1");
-
-				JSONArray ja2 = new JSONArray();
-				JSONObject j3 = new JSONObject();
-				j3.put("media_type","aaaa");
-				ja2.put(j3);
-
-				JSONObject j0 = new JSONObject();
-				j0.put("metaData",j1);
-				j0.put("root",ja2);
-			//	writeBackToClient( new JSONSuccess(j0) );
-				//writeBackToClient( new JSONSuccess(lovExecutionResult.toJSON()));
-
 				writeBackToClient( new JSONSuccess(new JSONObject(toreturn)) );
 			} catch (IOException e) {
 				SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Error executing the cockpit");
@@ -318,14 +304,29 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 			return columnsNames;
 		}
 		
-		private List<Map<String,String>> toList (SourceBean rowsSourceBean) throws JSONException {
+		private List<Map<String,String>> toList (SourceBean rowsSourceBean, Integer start, Integer limit) throws JSONException {
 			Map<String,String> map;
 			List<Map<String,String>> list = new ArrayList<Map<String,String>>();
+			int startIter =0;
+			int endIter;
+			
+			if(start != null){
+				startIter = start;
+			}
+			
 			if (rowsSourceBean != null) {
 				List<SourceBean> rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
 				if (rows != null && rows.size() > 0) {
+					if(limit != null && limit>0){
+						endIter = startIter+limit;
+						if(endIter > rows.size() ){
+							endIter =rows.size();
+						}
+					}else{
+						endIter = rows.size();
+					}
 
-					for(int i=0; i<rows.size(); i++){
+					for(int i=startIter; i<endIter; i++){
 						JSONObject rowJson = new JSONObject();
 						List<SourceBeanAttribute> rowAttrs = (rows.get(i)).getContainedAttributes();
 						Iterator<SourceBeanAttribute> rowAttrsIter = rowAttrs.iterator();
