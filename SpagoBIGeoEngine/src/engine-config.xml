@@ -5,10 +5,36 @@
 	<!--  GENERAL SETTINGS 																        --> 
 	<!-- ====================================================================================== -->
 	
+	<EMBEDDED_MODE>
+		
+		<WINDOW name='navigation'>
+          <PARAM name='visible'>false</PARAM>
+        </WINDOW>
+                
+        <WINDOW name='layers'>
+          <PARAM name='visible'>false</PARAM>
+        </WINDOW>
+        
+        <WINDOW name='detail'>
+          <PARAM name='visible'>false</PARAM>
+        </WINDOW>
+        
+        <WINDOW name='colourpicker'>
+          <PARAM name='visible'>false</PARAM>
+        </WINDOW> 
+        
+        <WINDOW name='legend'>
+          <PARAM name='visible'>true</PARAM>
+        </WINDOW>
+        
+         <WINDOW name='measures'>
+          <PARAM name='visible'>true</PARAM>
+        </WINDOW>
+	</EMBEDDED_MODE>
 	
 	
 	<!-- ====================================================================================== -->
-	<!--  SSO settings 																	--> 
+	<!--  SSO settings 																	        --> 
 	<!-- ====================================================================================== -->
 	
 	<!--  SSO settings  -->

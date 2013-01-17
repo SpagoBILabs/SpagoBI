@@ -19,6 +19,10 @@
  */
 package it.eng.spagobi.engines.geo;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
@@ -32,6 +36,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 public class GeoEngineConfig {
 	
 	private EnginConf engineConfig;
+	private Map<String, Map<String,String>> windowsGuiPropertiesInEmbeddedMode;
 	
 	private static GeoEngineConfig instance;
 	
@@ -79,8 +84,40 @@ public class GeoEngineConfig {
 		return spagoBIServerURL;
 	}
 	
+	private Map<String, Map<String,String>> getWindowsGuiPropertiesInEmbeddedMode() {
+		if(windowsGuiPropertiesInEmbeddedMode == null) {
+			windowsGuiPropertiesInEmbeddedMode = new HashMap<String, Map<String,String>>();
+			List<SourceBean> windowsConfiguration = getConfigSourceBean().getAttributeAsList("EMBEDDED_MODE.WINDOW");
+			
+			// parse properties
+			for(SourceBean windowConfiguration : windowsConfiguration) {
+				String name = (String)windowConfiguration.getAttribute("name");
+				Map<String,String> propertyMap = new HashMap<String,String>();
+				windowsGuiPropertiesInEmbeddedMode.put(name, propertyMap);
+				List<SourceBean> guiProperties = windowConfiguration.getAttributeAsList("PARAM");
+				for(SourceBean guiProperty: guiProperties) {
+					String pName = (String)guiProperty.getAttribute("name");
+					String  pValue  = (String) guiProperty.getCharacters();
+					if(pName != null && pValue != null) propertyMap.put(pName, pValue);
+				}
+			}
+		}
+		return windowsGuiPropertiesInEmbeddedMode;
+	} 
 	
-	
+	public Map<String,String> getWindowGuiPropertiesInEmbeddedMode(String windowName) {
+		return getWindowsGuiPropertiesInEmbeddedMode().get(windowName);
+	}
+	public boolean isWindowVisibleInEmbeddedMode(String windowName, boolean defaultValue) {
+		boolean isVisible = defaultValue;
+		Map<String,String> propertyMap = getWindowGuiPropertiesInEmbeddedMode(windowName);
+		if(propertyMap != null && propertyMap.get("visible") != null) {
+			String visible = propertyMap.get("visible");
+			isVisible = visible.equalsIgnoreCase("true");
+		} 
+		
+		return isVisible;
+	}
 	
 	
 	protected EnginConf getEngineConfig() {
