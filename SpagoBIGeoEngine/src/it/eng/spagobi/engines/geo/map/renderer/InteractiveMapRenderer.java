@@ -40,6 +40,7 @@ import com.jamonapi.MonitorFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.geo.GeoEngineConfig;
 import it.eng.spagobi.engines.geo.GeoEngineConstants;
 import it.eng.spagobi.engines.geo.GeoEngineException;
 import it.eng.spagobi.engines.geo.datamart.provider.IDataMartProvider;
@@ -1515,12 +1516,12 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		pVal =(String)getEnv().get(GeoEngineConstants.ENV_IS_WINDOWS_ACTIVE);
 		boolean activeWindow = pVal==null || pVal.equalsIgnoreCase("TRUE");
 		if(!activeWindow) {
-			getGuiSettings().getColourpickerWindowSettings().put("visible", Boolean.FALSE);
-			getGuiSettings().getDetailWindowSettings().put("visible", Boolean.FALSE);
-			getGuiSettings().getLayersWindowSettings().put("visible", Boolean.FALSE);
-			//getGuiSettings().getLegendWindowSettings().put("visible", Boolean.FALSE);
-			getGuiSettings().getMeasureWindowSettings().put("visible", Boolean.FALSE);
-			getGuiSettings().navigationWindowSettings.put("visible", Boolean.FALSE);
+			getGuiSettings().getColourpickerWindowSettings().put("visible", GeoEngineConfig.getInstance().isWindowVisibleInEmbeddedMode("colourpicker", false));
+			getGuiSettings().getDetailWindowSettings().put("visible", GeoEngineConfig.getInstance().isWindowVisibleInEmbeddedMode("detail", false));
+			getGuiSettings().getLayersWindowSettings().put("visible", GeoEngineConfig.getInstance().isWindowVisibleInEmbeddedMode("layers", false));
+			getGuiSettings().getLegendWindowSettings().put("visible", GeoEngineConfig.getInstance().isWindowVisibleInEmbeddedMode("legend", true));
+			getGuiSettings().getMeasureWindowSettings().put("visible", GeoEngineConfig.getInstance().isWindowVisibleInEmbeddedMode("measures", false));
+			getGuiSettings().navigationWindowSettings.put("visible", GeoEngineConfig.getInstance().isWindowVisibleInEmbeddedMode("navigation", false));
 		}
 
 
