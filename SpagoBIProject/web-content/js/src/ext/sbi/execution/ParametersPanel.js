@@ -770,6 +770,41 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				field.setValue(p.value);				
 			}
 		
+		} else if(p.selectionType === 'LIST') {
+			var baseParams = {};
+			Ext.apply(baseParams, this.executionInstance);
+			Ext.apply(baseParams, {
+				PARAMETER_ID: p.id
+				, MODE: 'simple'
+				, OBJ_PARAMETER_IDS: p.objParameterIds  // ONly in massive export case
+			});
+			delete baseParams.PARAMETERS;
+			var store = this.createStore();
+			store.baseParams  = baseParams;
+			
+			store.on('beforeload', function(store, o) {
+				var p = Sbi.commons.JSON.encode(this.getFormState());
+				o.params = o.params || {};
+				o.params.PARAMETERS = p;
+				return true;
+			}, this);
+			
+			if(p.multivalue) {	
+				field = new Sbi.widgets.CheckboxField(Ext.apply(baseConfig, {
+		           store : store
+		           , displayField:'label'
+				   , valueField:'value'
+				   , parameterId: p.id
+		        }));
+			
+			} else {
+				field = new Sbi.widgets.RadioField(Ext.apply(baseConfig, {
+			       store : store
+			       , displayField:'label'
+				   , valueField:'value'
+				   , parameterId: p.id
+			    }));
+			}
 		} else if(p.selectionType === 'COMBOBOX') {
 			var baseParams = {};
 			Ext.apply(baseParams, this.executionInstance);
