@@ -85,7 +85,16 @@ public class DocumentCompositionConfiguration {
 		String defaultValue;
 		String typeCross;
 		String activeExport;
+		Boolean snapshot;
 		Properties params;
+
+		public Boolean getSnapshot() {
+			return snapshot;
+		}
+
+		public void setSnapshot(Boolean snapshot) {
+			this.snapshot = snapshot;
+		}
 
 		/**
 		 * Gets the sbi obj label.
@@ -410,6 +419,8 @@ public class DocumentCompositionConfiguration {
 				attributeValue = (String)documentSB.getAttribute(Constants.SBI_OBJ_LABEL);
 				document.setSbiObjLabel(attributeValue);
 				
+				String snap= (String)documentSB.getAttribute(Constants.SNAPSHOT);
+				document.setSnapshot(Boolean.valueOf(snap));
 				
 				BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(attributeValue);
 				if (obj == null){
