@@ -61,4 +61,6 @@ public class Constants {
 	
 	public static final String EXPORT = "export";
 	
+	public static final String SNAPSHOT = "snapshot";
+	
 }

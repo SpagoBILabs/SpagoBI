@@ -7,6 +7,7 @@ package it.eng.spagobi.analiticalmodel.document.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiSnapshots;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
@@ -56,5 +57,14 @@ public interface ISnapshotDAO extends ISpagoBIDao{
 	 */
 	public Snapshot loadSnapshot(Integer idSnap) throws EMFUserError;
 	
-	
+	/**
+	 * Gets the last snapshot that is children of a biobject.
+	 * 
+	 * @param idBIObj the id of the biobject parent
+	 * 
+	 * @return Snapshot the snapshot loaded
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public Snapshot getLastSnapshot(Integer idBIObj)  throws EMFUserError;
 }

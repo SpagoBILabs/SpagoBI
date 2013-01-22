@@ -172,6 +172,43 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 		}
 		return snap;
 	}
+
+
+
+
+	public Snapshot getLastSnapshot(Integer idBIObj) throws EMFUserError {
+		Session aSession = null;
+		Transaction tx = null;
+		Snapshot snap = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			//String hql = "from SbiSnapshots ss where ss.sbiObject.biobjId = " + idBIObj;
+			String hql = "from SbiSnapshots ss where ss.sbiObject.biobjId = ? and ss.creationDate = (select max(s.creationDate) from SbiSnapshots s where s.sbiObject.biobjId = ?)" ;
+			
+			Query query = aSession.createQuery(hql);
+			query.setInteger(0, idBIObj.intValue());
+			query.setInteger(1, idBIObj.intValue());
+			
+			SbiSnapshots hibSnap =(SbiSnapshots)query.uniqueResult();
+
+			if(hibSnap != null) {
+				snap = toSnapshot(hibSnap);
+				
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}		
+		return snap;
+	}
 	
 	
 }

@@ -12,18 +12,17 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.navigation.LightNavigationManager;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
 import it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.container.CoreContextManager;
 import it.eng.spagobi.container.SpagoBISessionContainer;
@@ -43,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
@@ -170,7 +168,7 @@ public class DocumentCompositionUtils {
 			}
 
 			String className = obj.getEngine().getClassName();
-			if (className == null || className.trim().equals("")) {
+			if (className == null || className.trim().equals("") && !document.getSnapshot()) {
 				// external engine
 				//baseUrlReturn = obj.getEngine().getUrl() + "?";
 				baseUrlReturn = obj.getEngine().getUrl();
@@ -208,6 +206,7 @@ public class DocumentCompositionUtils {
 				// Auditing
 				AuditManager auditManager = AuditManager.getInstance();
 				Integer executionAuditId = auditManager.insertAudit(instance.getBIObject(), null, profile, executionRole, instance.getExecutionModality());
+				
 				// adding parameters for AUDIT updating
 				if (executionAuditId != null) {
 					mapPars.put(AuditManager.AUDIT_ID, executionAuditId.toString());
@@ -227,15 +226,25 @@ public class DocumentCompositionUtils {
 				} while(true);
 
 			} else {
+
 				// internal engine
 				baseUrlReturn =  GeneralUtilities.getSpagoBIProfileBaseUrl(profile.getUserUniqueIdentifier().toString());
-				urlReturn = "&PAGE=ExecuteBIObjectPage&" + SpagoBIConstants.IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS + "=true&"
-				+ ObjectsTreeConstants.OBJECT_LABEL + "=" + objLabel + "&" 
-				+ ObjectsTreeConstants.MODALITY + "=" + SpagoBIConstants.DOCUMENT_COMPOSITION;
+				urlReturn = "&"+ObjectsTreeConstants.OBJECT_LABEL + "=" + objLabel;
 				// identity string for context
 				UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
 				UUID uuid = uuidGen.generateRandomBasedUUID();
 				urlReturn += "&" + LightNavigationManager.LIGHT_NAVIGATOR_ID + "=" + uuid.toString();
+				if(document.getSnapshot()){
+					Snapshot snap = DAOFactory.getSnapshotDAO().getLastSnapshot(objId);		
+					if(snap != null){
+						urlReturn += "&SNAPSHOT_ID=" + snap.getId();
+					}
+					urlReturn += "&OBJECT_ID=" + objId;
+					urlReturn += "&ACTION_NAME=GET_SNAPSHOT_CONTENT";
+				}else{
+					urlReturn += "&PAGE=ExecuteBIObjectPage&" + SpagoBIConstants.IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS + "=true";
+					urlReturn += "&"+ObjectsTreeConstants.MODALITY + "=" + SpagoBIConstants.DOCUMENT_COMPOSITION;
+				}
 			}
 			// I add passing of SBI_LANGUAGE and SBI_COUNTRY
 			// on session container they are called AF_COUNTRY and AF_LANGUAGE
