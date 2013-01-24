@@ -21,6 +21,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
@@ -31,6 +32,7 @@ import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JClassDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.QbeDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
@@ -688,26 +690,30 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		} 
 
 		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QUERY)){		
-			dataSet=new JDBCDataSet();
 			String query = getAttributeAsString(DataSetConstants.QUERY);
 			String queryScript = getAttributeAsString(DataSetConstants.QUERY_SCRIPT);
 			String queryScriptLanguage = getAttributeAsString(DataSetConstants.QUERY_SCRIPT_LANGUAGE);
 			String dataSourceLabel = getAttributeAsString(DataSetConstants.DATA_SOURCE);
-			((JDBCDataSet)dataSet).setQuery(query);
-			((JDBCDataSet)dataSet).setQueryScript(queryScript);
-			((JDBCDataSet)dataSet).setQueryScriptLanguage(queryScriptLanguage);
+			
 			if(dataSourceLabel!=null && !dataSourceLabel.equals("")){
 				IDataSource dataSource;
 				try {
 					dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
 					if(dataSource!=null){
-						((JDBCDataSet)dataSet).setDataSource(dataSource);
+						dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
+						((AbstractJDBCDataset)dataSet).setDataSource(dataSource);
+						((AbstractJDBCDataset)dataSet).setQuery(query);
+						((AbstractJDBCDataset)dataSet).setQueryScript(queryScript);
+						((AbstractJDBCDataset)dataSet).setQueryScriptLanguage(queryScriptLanguage);
 					}
 				} catch (EMFUserError e) {
 					logger.error("Error while retrieving Datasource with label="+dataSourceLabel,e);
 					e.printStackTrace();
 				}			
 			}
+
+
+
 		}
 
 		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_WS)){	
