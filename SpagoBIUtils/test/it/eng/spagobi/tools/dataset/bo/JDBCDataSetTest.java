@@ -38,7 +38,7 @@ public class JDBCDataSetTest extends AbstractSpagoBITestCase {
 			SpagoBiDataSet dataSetConfig = new SpagoBiDataSet();
 			dataSetConfig.setQuery("SELECT fullname as 'Full Name' FROM CUSTOMER LIMIT 10");
 			dataSetConfig.setDataSource( TestDataSetFactory.createSpagoBiDataSource() );
-			dataset = new JDBCDataSet(dataSetConfig);
+			dataset = new JDBCDataSet();
 		} catch(Exception t) {
 			System.err.println("An unespected error occurred during setUp: ");
 			t.printStackTrace();

@@ -93,6 +93,8 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				//a stmt forward only 			
 				if (dialect.contains("Ingres")){
 					stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);	
+				}else if(dialect.contains("hbase") || dialect.contains("hive")){
+					stmt = connection.createStatement();					
 				}else{
 					stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);					
 				}
@@ -127,7 +129,17 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				} catch (Throwable t) {
 					logger.warn("Error while try to get query total result number using inline view stategy", t);
 					// something went wrong, we need to ask the datareader to calculate the query total result number
-					dataReader.setCalculateResultNumberEnabled(true);
+					try{
+						resultNumber = getResultNumberForHive(connection);
+						logger.debug("Calculation of result set total number for Hive query language : resultNumber = " + resultNumber);
+						// ok, no need to ask the datareader to calculate the query total result number
+						dataReader.setCalculateResultNumberEnabled(true);
+						inlineViewStrategyUsedSuccessfully = false;
+						
+					}catch (Throwable th) {
+						dataReader.setCalculateResultNumberEnabled(true);
+					}
+					
 				}
 			} else {
 				logger.debug("Calculation of result set total number is NOT enabled");
@@ -178,6 +190,27 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		return resultNumber;
 	}
 
+	protected int getResultNumberForHive(Connection connection) {
+		logger.debug("IN");
+		int resultNumber = 0;
+		Statement stmt = null;
+		ResultSet records = null;
+		try {
+			stmt = connection.createStatement();
+	        records = stmt.executeQuery(this.getStatement());
+       		
+			while (records.next()) {
+				resultNumber++;
+			}
+
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
+		} finally {
+			releaseResources(null, stmt, records);
+		}
+		logger.debug("OUT : returning " + resultNumber);
+		return resultNumber;
+	}
 	public IDataSource getDataSource() {
 		return dataSource;
 	}
