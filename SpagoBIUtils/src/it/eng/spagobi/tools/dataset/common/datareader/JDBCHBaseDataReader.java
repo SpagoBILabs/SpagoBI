@@ -87,12 +87,12 @@ public class JDBCHBaseDataReader extends AbstractDataReader {
 			}
 				
 		} catch (HBqlException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("An unexpected error occured while reading resultset", e);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			logger.error("An unexpected error occured while reading resultset", e);
+		}finally {
+    		logger.debug("OUT");
+    	}
 		
 		return dataStore;
     }
