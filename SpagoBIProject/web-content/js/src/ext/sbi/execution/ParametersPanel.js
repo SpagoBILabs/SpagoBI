@@ -229,6 +229,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 			
 		}
+		console.log('getFormState ' + state.toSource());
 		return state;
 	}
 	
@@ -239,7 +240,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			var fieldName = p;
 			var fieldValue = state[p];
 			if(this.fields[fieldName]) {
-				console.log('setValue ' + p);
+				console.log('setValue ' + p + ' to ' + fieldValue);
 				var aField = this.fields[fieldName];
 				var hasChangeEvent = false;		
 				if(aField.hasListener('change')) {

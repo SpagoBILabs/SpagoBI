@@ -28,12 +28,7 @@ Sbi.widgets.RadioField = Ext.extend(Sbi.widgets.CheckboxField, {
     }
 
 	, getValue : function(){
-        var out = [];
-        this.eachItem(function(item){
-            if(item.checked){
-                out.push(item.value);
-            }
-        });
+        var out = Sbi.widgets.RadioField.superclass.getValue.call(this);
         if(out.length > 1) alert("Assertion failed. In a radio field only one value can be checked at the same time");
         return out[0];
     }

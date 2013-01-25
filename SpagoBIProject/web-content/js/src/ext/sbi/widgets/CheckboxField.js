@@ -55,6 +55,9 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
     }
     
 	, refreshOptions: function() {		
+		console.log('refreshOptions');
+		var oldValue = this.getValue();
+		
 		// manage the case in which the store is loaded before the component is rendered
 		if(this.rendered === false) {
 			this.pendingRefreshOptions = true;
@@ -101,6 +104,8 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 				this.doSetValue(this.bufferedValue);
 	        	delete this.bufferedValue;
 			}
+		} else {
+			this.doSetValue(oldValue);
 		}
 	}
 
@@ -150,6 +155,7 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 	}
 	
 	, reset : function(){
+		console.log('reset');
 		this.suspendFireChecked();
 		if(this.bufferedValue) delete this.bufferedValue;
 		Sbi.widgets.CheckboxField.superclass.reset.call(this);
@@ -159,14 +165,19 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
     }
     
 	, setValue: function(v){
-		if(!Ext.isArray(v) || v.length == 0) return;
+		if(typeof v == 'string' && v.trim() != '') {v = [v];}
+		if(!Ext.isArray(v) || v.length == 0) {
+			console.log('Impossible to set value ' + v + ' ' + (typeof v));
+			return;
+		} 
+				
 		this.suspendFireChecked();
 		if(this.isReady()){
-			//alert('set value : >' + v + '< ');
+			console.log('set value : >' + v + '< ');
 			this.doSetValue(v);
 		} else {
 			this.bufferedValue = v;
-			//alert('buffer value : >' + v + '< ');
+			console.log('buffer value : >' + v + '< ');
 		}
 		this.resumeFireChecked();
 		this.fireChecked();
@@ -178,7 +189,7 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 		if(Ext.isArray(v)){
 			this.eachItem(function(item){
 				if(v.indexOf(item.value)> -1){
-					//alert('doSetValue ' + item.value);
+					console.log('doSetValue ' + item.value);
 					item.setValue(true);
 		        }
 		    }); 
@@ -197,10 +208,14 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 	            }
 	        });
         } else {
+        	console.log(this.rendered + ' ' + this.refreshed);
         	if(this.bufferedValue) {
         		out = this.bufferedValue;
+        		console.log('getBufferedValue ' + out + ' - ' + Ext.isArray(out));
         	}
         }
+      
+        console.log('getValue ' + out + ' - ' + Ext.isArray(out));
         return out;
     }
     
