@@ -15,7 +15,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,9 +23,7 @@ import java.util.Set;
 
 import org.apache.hadoop.hbase.hbql.client.HBqlException;
 import org.apache.hadoop.hbase.hbql.client.HRecord;
-import org.apache.hadoop.hbase.jdbc.impl.ResultSetImpl;
 import org.apache.log4j.Logger;
-import org.apache.tomcat.dbcp.dbcp.DelegatingResultSet;
 
 /**
  * @author Monica Franceschini (monica.franceschini@eng.it)
@@ -45,14 +42,15 @@ public class JDBCHiveDataReader extends AbstractDataReader {
     public IDataStore read(Object data) throws EMFUserError, EMFInternalError {
     	DataStore dataStore = null;
 		MetaData dataStoreMeta;
-		
-		DelegatingResultSet rs;
-		ResultSetImpl rsh;
-		
+    	int columnCount;
+    	int columnIndex;
+		ResultSet rs;
+
+    	FieldMetadata fieldMeta;
+    	
 		logger.debug("IN");
-		
-		DelegatingResultSet dRS = (DelegatingResultSet) data;
-		rsh = (ResultSetImpl) dRS.getInnermostDelegate();  
+
+		rs = (ResultSet) data;  
 
 		
 		dataStore = new DataStore();
@@ -62,37 +60,38 @@ public class JDBCHiveDataReader extends AbstractDataReader {
 		
 		try {				
 
-			while ( rsh.next() ){
-				IRecord record = new Record(dataStore);
-				HRecord hRec= rsh.getCurrentHRecord();
-				Set<String> columns = hRec.getColumnNameList();
-				Iterator<String> it = columns.iterator();
-				while(it.hasNext()){
-					String name= it.next();
+        	logger.debug("Reading metadata ...");
+        	columnCount = rs.getMetaData().getColumnCount();
+    		for(columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+        		fieldMeta = new FieldMetadata();
+        		String fieldName = rs.getMetaData().getColumnLabel(columnIndex);
 
-					Object value = hRec.getCurrentValue(name);
-							
-					FieldMetadata fieldMeta = new FieldMetadata();
-					fieldMeta.setName(name);
-					fieldMeta.setType(String.class);
-					if(dataStoreMeta.getFieldIndex(name) == -1){
-						dataStoreMeta.addFiedMeta(fieldMeta);
+        		logger.debug("Field [" + columnIndex + "] name is equal to [" + fieldName + "]");
+        		fieldMeta.setName( fieldName );
+        		dataStoreMeta.addFiedMeta(fieldMeta);
+        	}    
+    		dataStore.setMetaData(dataStoreMeta);
+    		logger.debug("Metadata readed succcesfully");
+    		
+    		while (rs.next()) {
+    			IRecord record = new Record(dataStore);
+    			for(columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+    				Object columnValue = rs.getObject(columnIndex);
+    				IField field = new Field( columnValue );
+					if(columnValue != null) {
+						dataStoreMeta.getFieldMeta(columnIndex-1).setType( columnValue.getClass() );
 					}
-					IField field = new Field(value);
-					record.appendField(field);
-					
-				}
-				dataStore.appendRecord(record);				
-
-			}
+					record.appendField( field );
+    			}
+    			dataStore.appendRecord(record);
+    			logger.debug("Records [" + rs.getRow()  + "] succesfully readed");
+    		}
 				
-		} catch (HBqlException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			logger.error("An unexpected error occured while reading resultset", e);
+		}finally {
+    		logger.debug("OUT");
+    	}
 		
 		return dataStore;
     }
