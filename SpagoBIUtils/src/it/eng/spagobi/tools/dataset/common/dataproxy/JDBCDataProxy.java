@@ -130,7 +130,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 					logger.warn("Error while try to get query total result number using inline view stategy", t);
 					// something went wrong, we need to ask the datareader to calculate the query total result number
 					try{
-						resultNumber = getResultNumberForHive(connection);
+
 						logger.debug("Calculation of result set total number for Hive query language : resultNumber = " + resultNumber);
 						// ok, no need to ask the datareader to calculate the query total result number
 						dataReader.setCalculateResultNumberEnabled(true);
@@ -190,27 +190,6 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		return resultNumber;
 	}
 
-	protected int getResultNumberForHive(Connection connection) {
-		logger.debug("IN");
-		int resultNumber = 0;
-		Statement stmt = null;
-		ResultSet records = null;
-		try {
-			stmt = connection.createStatement();
-	        records = stmt.executeQuery(this.getStatement());
-       		
-			while (records.next()) {
-				resultNumber++;
-			}
-
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
-		} finally {
-			releaseResources(null, stmt, records);
-		}
-		logger.debug("OUT : returning " + resultNumber);
-		return resultNumber;
-	}
 	public IDataSource getDataSource() {
 		return dataSource;
 	}
