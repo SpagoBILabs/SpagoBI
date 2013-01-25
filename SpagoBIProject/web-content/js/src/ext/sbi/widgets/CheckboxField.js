@@ -21,13 +21,15 @@ Sbi.widgets.CheckboxField = function(config) {
 		items : [ {
 			boxLabel : 'Loading options...',
 			name : 'loading-mask',
-			value : 'Food1'
+			value : 'mask'
 		}]
 	}, config || {});
 	
 	this.store = config.store;
 	this.store.on('load', this.refreshOptions, this);
 	this.store.load();
+	
+	this.addEvents('change');
 	
 	// constructor
 	Sbi.widgets.CheckboxField.superclass.constructor.call(this, c);
@@ -40,24 +42,35 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 	, displayField:'label'
     , valueField:'value'
     , pendingRefreshOptions: false
+    , bufferedValue: null
+    , refreshed: false
+    , fireChekedActive: true
 	
-	, refreshOptions: function() {
-		//alert('Store succesfully loaded: ' + this.rendered);
-		
+    , afterRender : function(){
+    	Sbi.widgets.CheckboxField.superclass.afterRender.call(this);
+        if(this.bufferedValue && this.refreshed) {
+        	this.doSetValue(this.bufferedValue);
+        	delete this.bufferedValue;
+        }
+    }
+    
+	, refreshOptions: function() {		
 		// manage the case in which the store is loaded before the component is rendered
 		if(this.rendered === false) {
 			this.pendingRefreshOptions = true;
 			this.on('render', this.refreshOptions, this);
 			return;
-		}		
+		}			
+		
 		if(this.pendingRefreshOptions === true) {
 			this.pendingRefreshOptions = false;
-			this.on('render', this.refreshOptions);
+			this.un('render', this.refreshOptions);
 		}
 		
 		// remove old options
 		while(this.items.length > 0) {
 			var item = this.items.removeAt(0);
+			this.panel.items.get(0).remove(item);
 			item.destroy();
 		}
 		this.panel.doLayout();
@@ -81,27 +94,113 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 			this.panel.doLayout();
 		}
 		this.panel.doLayout();
+		
+		if(this.refreshed === false) {
+			this.refreshed = true;
+			if(this.bufferedValue) {
+				this.doSetValue(this.bufferedValue);
+	        	delete this.bufferedValue;
+			}
+		}
 	}
 
 	, createOptionItem: function(optionConfig) {
 		var checkbox = new Ext.form.Checkbox(optionConfig);
+		checkbox.on('check', this.fireChecked, this);
+//		checkbox.on('check', function(){
+//			this.fireEvent('change', this);
+//		}, this);
 		return checkbox;
 	}
-
-	// public methods
+	
+	, fireChecked: function(){
+		if(this.fireChekedActive === false) return;
+        var arr = [];
+        if(this.isReady()) {
+	        this.eachItem(function(item){
+	            if(item.checked){
+	                arr.push(item.value);
+	            }
+	        });
+		} else {
+			if(this.bufferedValue) {
+				arr = this.bufferedValue;
+        	}
+		}
+        //alert('fireChecked: (' + arr + ')');
+        this.fireEvent('change', this, arr);
+    }
+	
+	, suspendFireChecked: function() {
+		this.fireChekedActive = false;
+	}
+	
+	, resumeFireChecked: function() {
+		this.fireChekedActive = true;
+	}
+	
 	, eachItem : function(fn){
         if(this.items && this.items.each){
             this.items.each(fn, this);
         }
     }
+	
+	, isReady: function() {
+		return (this.rendered && this.refreshed);
+	}
+	
+	, reset : function(){
+		this.suspendFireChecked();
+		if(this.bufferedValue) delete this.bufferedValue;
+		Sbi.widgets.CheckboxField.superclass.reset.call(this);
+		this.resumeFireChecked();
+		this.fireChecked();
+		
+    }
     
+	, setValue: function(v){
+		if(!Ext.isArray(v) || v.length == 0) return;
+		this.suspendFireChecked();
+		if(this.isReady()){
+			//alert('set value : >' + v + '< ');
+			this.doSetValue(v);
+		} else {
+			this.bufferedValue = v;
+			//alert('buffer value : >' + v + '< ');
+		}
+		this.resumeFireChecked();
+		this.fireChecked();
+	}
+	
+	, doSetValue: function(v){
+		this.suspendFireChecked();
+	
+		if(Ext.isArray(v)){
+			this.eachItem(function(item){
+				if(v.indexOf(item.value)> -1){
+					//alert('doSetValue ' + item.value);
+					item.setValue(true);
+		        }
+		    }); 
+		 } else {
+			 alert('CheckboxField.setValue: value [' + v + '] is not an array');
+		 }
+		 this.resumeFireChecked();
+	}
+	
 	, getValue : function(){
         var out = [];
-        this.eachItem(function(item){
-            if(item.checked){
-                out.push(item.value);
-            }
-        });
+        if(this.isReady()) {
+	        this.eachItem(function(item){
+	            if(item.checked){
+	                out.push(item.value);
+	            }
+	        });
+        } else {
+        	if(this.bufferedValue) {
+        		out = this.bufferedValue;
+        	}
+        }
         return out;
     }
     
