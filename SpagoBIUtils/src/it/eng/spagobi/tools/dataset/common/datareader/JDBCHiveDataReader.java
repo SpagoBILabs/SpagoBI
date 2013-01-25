@@ -18,11 +18,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.Set;
 
-import org.apache.hadoop.hbase.hbql.client.HBqlException;
-import org.apache.hadoop.hbase.hbql.client.HRecord;
 import org.apache.log4j.Logger;
 
 /**
@@ -55,37 +51,38 @@ public class JDBCHiveDataReader extends AbstractDataReader {
 		
 		dataStore = new DataStore();
 		dataStoreMeta = new MetaData();
-		dataStore.setMetaData(dataStoreMeta);
-
 		
 		try {				
 
-        	logger.debug("Reading metadata ...");
-        	columnCount = rs.getMetaData().getColumnCount();
-    		for(columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
-        		fieldMeta = new FieldMetadata();
-        		String fieldName = rs.getMetaData().getColumnLabel(columnIndex);
-
-        		logger.debug("Field [" + columnIndex + "] name is equal to [" + fieldName + "]");
-        		fieldMeta.setName( fieldName );
-        		dataStoreMeta.addFiedMeta(fieldMeta);
-        	}    
-    		dataStore.setMetaData(dataStoreMeta);
-    		logger.debug("Metadata readed succcesfully");
-    		
     		while (rs.next()) {
     			IRecord record = new Record(dataStore);
-    			for(columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+            	logger.debug("Reading metadata ...");
+            	columnCount = rs.getMetaData().getColumnCount();
+            	
+        		for(columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+            		fieldMeta = new FieldMetadata();
+            		
     				Object columnValue = rs.getObject(columnIndex);
     				IField field = new Field( columnValue );
-					if(columnValue != null) {
-						dataStoreMeta.getFieldMeta(columnIndex-1).setType( columnValue.getClass() );
-					}
-					record.appendField( field );
-    			}
+
+    				record.appendField( field );					
+					
+            		String fieldName = rs.getMetaData().getColumnLabel(columnIndex);
+            		
+            		logger.debug("Field [" + columnIndex + "] name is equal to [" + fieldName + "]");
+            		if(dataStoreMeta.getFieldIndex(fieldName) == -1){
+                		fieldMeta.setName( fieldName );
+                		fieldMeta.setType(String.class);
+                		dataStoreMeta.addFiedMeta(fieldMeta);
+            		}
+
+            		
+            	}    
+        		
     			dataStore.appendRecord(record);
-    			logger.debug("Records [" + rs.getRow()  + "] succesfully readed");
+    			
     		}
+    		dataStore.setMetaData(dataStoreMeta);
 				
 		} catch (SQLException e) {
 			logger.error("An unexpected error occured while reading resultset", e);
