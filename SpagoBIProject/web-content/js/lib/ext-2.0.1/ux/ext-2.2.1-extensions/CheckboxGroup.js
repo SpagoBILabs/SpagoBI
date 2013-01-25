@@ -165,7 +165,6 @@ Ext.form.CheckboxGroup = Ext.extend(Ext.form.Field, {
             this.items.addAll(fields);
         }
         Ext.form.CheckboxGroup.superclass.onRender.call(this, ct, position);
-        alert('rendered : ' + this.defaultType);
     },
     
     // private

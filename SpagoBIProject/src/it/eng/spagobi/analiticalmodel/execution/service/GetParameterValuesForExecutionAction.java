@@ -125,10 +125,9 @@ public class GetParameterValuesForExecutionAction  extends AbstractSpagoBIAction
 			executionInstance= null;
 			if(!isAMap){
 				executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
-			}
-			else{
+			} else{
 				Map<Integer, ExecutionInstance> instances = getContext().getExecutionInstancesAsMap( ExecutionInstance.class.getName() );
-				// I want to get (at leat one) of the document the parameter is referring to,
+				// I want to get (at least one) of the document the parameter is referring to,
 				// I can reach it via the ObjectParameter passed from ParametersPanel
 				Integer biObjectId = null;
 				Assert.assertNotNull(objParameterIds, "In map case objParameterids list cannot be null" );

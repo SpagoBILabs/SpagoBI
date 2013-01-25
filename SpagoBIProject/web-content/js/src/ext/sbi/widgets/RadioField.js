@@ -21,6 +21,9 @@ Sbi.widgets.RadioField = Ext.extend(Sbi.widgets.CheckboxField, {
 	
     , createOptionItem: function(optionConfig) {
     	var radio = new Ext.form.Radio(optionConfig);
+    	radio.on('check', function() {
+			this.fireEvent('change', this);
+		}, this);
     	return radio;
     }
 

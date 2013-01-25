@@ -239,12 +239,25 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			var fieldName = p;
 			var fieldValue = state[p];
 			if(this.fields[fieldName]) {
-				this.fields[fieldName].setValue( fieldValue );
+				console.log('setValue ' + p);
+				var aField = this.fields[fieldName];
+				var hasChangeEvent = false;		
+				if(aField.hasListener('change')) {
+					hasChangeEvent = true;
+					aField.un('change', this.onUpdateDependentFields);
+					console.log('setValue ' + p + ' sterelized');
+				}			
+				aField.setValue( fieldValue );
+				if(hasChangeEvent) aField.on('change', this.onUpdateDependentFields, this);
+				
+				
+				
+				
 				var fieldDescription = fieldName + '_field_visible_description';
 				var rawValue = state[fieldDescription];
 				if (rawValue !== undefined && rawValue != null && this.fields[fieldName].rendered === true) {
 					this.fields[fieldName].setRawValue( rawValue );
-					this.updateDependentFields( this.fields[fieldName] );
+					//this.updateDependentFields( this.fields[fieldName] );
 				}
 			}
 		}
@@ -269,7 +282,15 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			if (!this.isInPreferences(p)){
 				var aField = this.fields[p];
 				if (!aField.isTransient) {
+					console.log('reset ' + p);
+					var hasChangeEvent = false;				
+					if(aField.hasListener('change')) {
+						hasChangeEvent = true;
+						aField.un('change', this.onUpdateDependentFields);
+						console.log('reset ' + p + ' sterilized');
+					}			
 					aField.reset();
+					if(hasChangeEvent) aField.on('change', this.onUpdateDependentFields, this);
 					this.updateDependentFields( aField );
 				}
 			}
@@ -402,16 +423,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	}
 	
 	, initializeParametersPanel: function( parameters ) {
-		
-//		if(this.isInExecutionPage()) {
-//			alert('initializeParametersPanel IN');
-//		}
-		
+				
 		this.setParameters(parameters);
 		
-		this.removeAllFields();
+		this.removeAllFields();		
 		
-			
 		var nonTransientField = 0;
 		for(var i = 0; i < parameters.length; i++) {
 			var field = this.createField( parameters[i] );
@@ -460,16 +476,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.doLayout();
 		
 		this.initializeFieldDependencies();
-		
 		if(this.isInParametersPage() && this.isFromCross === false) {
 			this.reset();
 		} 
 		
 		this.fireEvent('synchronize', this, this.isReadyForExecution(), this.parametersPreference);
-		
-//		if(this.isInExecutionPage()) {
-//			alert('initializeParametersPanel OUT');
-//		}
 	}
 	
 	
@@ -477,6 +488,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	// DEPENDENCIES management functions
 	// =====================================================================================
 	
+	, onUpdateDependentFields: function(field, record, index) {
+		this.updateDependentFields( field );
+	}
 	, initializeFieldDependencies: function() {
 		for(var j = 0; j < this.parameters.length; j++) {
 			
@@ -513,20 +527,17 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		for(var p in this.fields) {
 			var theField = this.fields[p];
 			
-			/*
-			 * workaround (work-around):
-			 * 'change' event works properly for combo-boxes but not for lookup fields (it is not fired, don't know why...);
-			 * 'valid' event works properly for lookup fields but not for combo-boxes (it is fired more times and the first time the getValue() method returns the description column, not the value column);
-			 * Therefore we mix them...
-			 */
 			
-			if (theField.behindParameter.selectionType === 'COMBOBOX'
-				|| theField.behindParameter.selectionType === 'LOOKUP') {
+			if (theField.behindParameter.selectionType === 'LOOKUP') {
 			
 				this.fields[p].on('select', function(field, record, index) {
 					this.updateDependentFields( field );
 				} , this);
 				
+			} else if(theField.behindParameter.selectionType === 'COMBOBOX'
+				|| theField.behindParameter.selectionType === 'LIST') {
+				this.fields[p].on('change', this.onUpdateDependentFields, this);
+				//this.fields[p].on('change', this.updateDependentField, this);
 			} else if(theField.behindParameter.typeCode == 'MAN_IN') {
 				// if input field has an element (it means that the field was displayed)
 				if (theField.el !== undefined) {
@@ -574,21 +585,17 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			&& hasVisualDependency === true 
 			&& Sbi.settings.invisibleParameters.remove === true) {
 			
-			//alert('doing the dirty tricks: ' + f.name);
+			console.log('doing the dirty tricks: ' + f.name + ' = ' + this.getFormState()[f.name]);
 		
 			this.manageVisualDependenciesOnVisibility = false;
 			
 			var state = this.getFormState();
 			
 			this.removeAllFields();
-			
-			//alert('removed all: ' + f.name);
 		
 			this.initializeParametersPanel(this.parameters);
-						
-			//alert('added all: ' + f.name);
-			
-			this.setFormState(state, true);
+				
+			this.setFormState(state);
 			
 			this.manageVisualDependenciesOnVisibility = true;
 		
@@ -597,7 +604,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	
 	, updateDataDependentField: function(fatherField, dependantConf) {
 		var field = this.fields[ dependantConf.parameterId ];
-		if(field.behindParameter.selectionType === 'COMBOBOX'){ 
+		if(field.behindParameter.selectionType === 'COMBOBOX' || field.behindParameter.selectionType === 'LIST'){ 
 			field.store.load();
 		}		
 		field.reset();
@@ -650,6 +657,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				dependantField.parameter.vizible = true;
 			}
 		}
+		
+		
 	}
 	
 	
