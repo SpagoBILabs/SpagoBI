@@ -37,6 +37,8 @@ Sbi.locale.ln['sbi.generic.type']='Type';
 Sbi.locale.ln['sbi.generic.label']='Libell\u00E9';
 Sbi.locale.ln['sbi.generic.engine']='Moteur';
 Sbi.locale.ln['sbi.generic.state']='Etat';
+Sbi.locale.ln['sbi.generic.upload'] = 'Charger';
+Sbi.locale.ln['sbi.generic.download'] = 'T\u00E9l\u00E9charger';
 Sbi.locale.ln['sbi.generic.value']='Valeur';
 Sbi.locale.ln['sbi.generic.udpValues']='Valeur MAJ';
 

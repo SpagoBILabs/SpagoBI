@@ -68,6 +68,8 @@
 	  	<DAO name="ProgressThreadDAO" implementation="it.eng.spagobi.tools.massiveExport.dao.ProgressThreadDAOImpl"/>
 	  	
 	  	<DAO name="SchedulerDAO" implementation="it.eng.spagobi.tools.scheduler.dao.quartz.QuarzSchedulerDAOImpl"/>
+	  	<DAO name="MetaModelsDAO" implementation="it.eng.spagobi.tools.catalogue.dao.MetaModelsDAOImpl"/>
+	  	<DAO name="ArtifactsDAO" implementation="it.eng.spagobi.tools.catalogue.dao.ArtifactsDAOImpl"/>
 	  	
 
 	 </DAO-CONF>     

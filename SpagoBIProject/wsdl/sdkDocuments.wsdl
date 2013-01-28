@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions targetNamespace="urn:spagobisdkdocuments" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:spagobisdkdocuments" xmlns:intf="urn:spagobisdkdocuments" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns2="http://bo.documents.sdk.spagobi.eng.it" xmlns:tns3="http://exceptions.sdk.spagobi.eng.it" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<wsdl:definitions targetNamespace="urn:spagobisdkdocuments" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:spagobisdkdocuments" xmlns:intf="urn:spagobisdkdocuments" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns2="http://bo.documents.sdk.spagobi.eng.it" xmlns:tns3="http://exceptions.sdk.spagobi.eng.it" xmlns:tns4="http://bo.importexport.sdk.spagobi.eng.it" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 <!--WSDL created by Apache Axis version: 1.4
 Built on Apr 22, 2006 (06:55:48 PDT)-->
  <wsdl:types>
   <schema targetNamespace="http://bo.documents.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
    <import namespace="urn:spagobisdkdocuments"/>
    <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://bo.importexport.sdk.spagobi.eng.it"/>
    <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
    <complexType name="SDKDocument">
@@ -69,10 +70,19 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element name="fileType" nillable="true" type="soapenc:string"/>
     </sequence>
    </complexType>
+   <complexType name="SDKSchema">
+    <sequence>
+     <element name="schemaName" nillable="true" type="soapenc:string"/>
+     <element name="schemaDescription" nillable="true" type="soapenc:string"/>
+     <element name="schemaDataSourceLbl" nillable="true" type="soapenc:string"/>
+     <element name="schemaFile" nillable="true" type="tns4:SDKFile"/>
+    </sequence>
+   </complexType>
   </schema>
   <schema targetNamespace="urn:spagobisdkdocuments" xmlns="http://www.w3.org/2001/XMLSchema">
    <import namespace="http://bo.documents.sdk.spagobi.eng.it"/>
    <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://bo.importexport.sdk.spagobi.eng.it"/>
    <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
    <complexType name="ArrayOf_tns2_SDKDocument">
@@ -122,6 +132,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <import namespace="urn:spagobisdkdocuments"/>
    <import namespace="http://bo.documents.sdk.spagobi.eng.it"/>
    <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://bo.importexport.sdk.spagobi.eng.it"/>
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
    <complexType name="NonExecutableDocumentException">
     <sequence/>
@@ -142,10 +153,17 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element name="parameterName" nillable="true" type="soapenc:string"/>
     </sequence>
    </complexType>
+   <complexType name="SDKException">
+    <sequence>
+     <element name="code" nillable="true" type="soapenc:string"/>
+     <element name="description" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
   </schema>
   <schema targetNamespace="http://xml.apache.org/xml-soap" xmlns="http://www.w3.org/2001/XMLSchema">
    <import namespace="urn:spagobisdkdocuments"/>
    <import namespace="http://bo.documents.sdk.spagobi.eng.it"/>
+   <import namespace="http://bo.importexport.sdk.spagobi.eng.it"/>
    <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
    <complexType name="mapItem">
@@ -157,6 +175,19 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <complexType name="Map">
     <sequence>
      <element maxOccurs="unbounded" minOccurs="0" name="item" type="apachesoap:mapItem"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://bo.importexport.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobisdkdocuments"/>
+   <import namespace="http://bo.documents.sdk.spagobi.eng.it"/>
+   <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="SDKFile">
+    <sequence>
+     <element name="content" nillable="true" type="apachesoap:DataHandler"/>
+     <element name="fileName" nillable="true" type="soapenc:string"/>
     </sequence>
    </complexType>
   </schema>
@@ -215,6 +246,12 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <wsdl:message name="getDocumentByIdResponse">
 
       <wsdl:part name="getDocumentByIdReturn" type="tns2:SDKDocument"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadMondrianSchemaRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKSchema"/>
 
    </wsdl:message>
 
@@ -278,11 +315,21 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="SDKException">
+
+      <wsdl:part name="fault" type="tns3:SDKException"/>
+
+   </wsdl:message>
+
    <wsdl:message name="downloadDatamartFileRequest">
 
       <wsdl:part name="in0" type="soapenc:string"/>
 
       <wsdl:part name="in1" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadMondrianSchemaResponse">
 
    </wsdl:message>
 
@@ -309,10 +356,10 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <wsdl:message name="uploadDatamartTemplateRequest">
 
       <wsdl:part name="in0" type="tns2:SDKTemplate"/>
-      
+
       <wsdl:part name="in1" type="tns2:SDKTemplate"/>
 
-	  <wsdl:part name="in2" type="soapenc:string"/>
+      <wsdl:part name="in2" type="soapenc:string"/>
 
    </wsdl:message>
 
@@ -510,7 +557,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
-      <wsdl:operation name="	" parameterOrder="in0 in1 in2">
+      <wsdl:operation name="uploadDatamartTemplate" parameterOrder="in0 in1 in2">
 
          <wsdl:input message="impl:uploadDatamartTemplateRequest" name="uploadDatamartTemplateRequest"/>
 
@@ -547,6 +594,20 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          <wsdl:input message="impl:getAllDatamartModelsRequest" name="getAllDatamartModelsRequest"/>
 
          <wsdl:output message="impl:getAllDatamartModelsResponse" name="getAllDatamartModelsResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadMondrianSchema" parameterOrder="in0">
+
+         <wsdl:input message="impl:uploadMondrianSchemaRequest" name="uploadMondrianSchemaRequest"/>
+
+         <wsdl:output message="impl:uploadMondrianSchemaResponse" name="uploadMondrianSchemaResponse"/>
+
+         <wsdl:fault message="impl:SDKException" name="SDKException"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
 
       </wsdl:operation>
 
@@ -901,6 +962,42 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
 
          </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadMondrianSchema">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadMondrianSchemaRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadMondrianSchemaResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SDKException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SDKException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
 
       </wsdl:operation>
 

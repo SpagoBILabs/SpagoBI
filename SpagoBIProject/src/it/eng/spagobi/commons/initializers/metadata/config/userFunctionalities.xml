@@ -45,4 +45,6 @@
 <USER_FUNCTIONALITY name="ConfigManagement" description="ConfigManagement"/>
 <USER_FUNCTIONALITY name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
 <USER_FUNCTIONALITY name="FinalUsersManagement" description="FinalUsersManagement"/>
+<USER_FUNCTIONALITY name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
+<USER_FUNCTIONALITY name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement"/>
 </USER_FUNCTIONALITIES>

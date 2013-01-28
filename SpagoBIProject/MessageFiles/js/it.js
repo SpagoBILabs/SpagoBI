@@ -39,6 +39,9 @@ Sbi.locale.ln['sbi.generic.label'] = 'Etichetta';
 Sbi.locale.ln['sbi.generic.engine'] = 'Motore';
 Sbi.locale.ln['sbi.generic.state'] = 'Stato';
 Sbi.locale.ln['sbi.generic.value'] = 'Valore';
+Sbi.locale.ln['sbi.generic.upload'] = 'Upload';
+Sbi.locale.ln['sbi.generic.download'] = 'Download';
+Sbi.locale.ln['sbi.generic.noItemsSelected'] = 'Non è stato selezionato alcun elemento';
 Sbi.locale.ln['sbi.generic.udpValues'] = 'Valori Udp';
 
 Sbi.locale.ln['sbi.generic.kpi'] = 'Kpi';
@@ -46,6 +49,8 @@ Sbi.locale.ln['sbi.generic.nodetype'] = 'Tipo Nodo';
 Sbi.locale.ln['sbi.generic.nodedescr'] = 'Descrizione Nodo';
 //Messages
 Sbi.locale.ln['sbi.generic.validationError'] = 'Errore di Validazione';
+Sbi.locale.ln['sbi.generic.validation.missingName'] = 'Nome non specificato';
+Sbi.locale.ln['sbi.generic.wait'] = 'Attendere prego...';
 Sbi.locale.ln['sbi.generic.info'] = 'Informazione';
 Sbi.locale.ln['sbi.generic.error'] = 'Errore';
 Sbi.locale.ln['sbi.generic.error.msg'] = 'Operazione fallita';
@@ -648,3 +653,13 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.clearFilter'] = 'Cancella filtri';
 Sbi.locale.ln['sbi.config.manageconfig.fields.selectCategory'] = 'Selecziona Categoria';
 Sbi.locale.ln['sbi.config.manageconfig.fields.searchName'] = 'Cerca Name';
 Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Cerca Etichetta';
+
+
+Sbi.locale.ln['sbi.tools.catalogue.metaModelsCatalogue']='Catalogo modelli di business';
+Sbi.locale.ln['sbi.tools.catalogue.mondrianSchemasCatalogue']='Catalogo schemi Mondrian';
+Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.title']='Versioni memorizzate';
+Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.userIn']='Creatore';
+Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.dateIn']='Data di creazione';
+Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.fileName']='Nome del file';
+Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.deleteNonActive']='Elimina versioni non attive';
+Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.isactive'] = 'Attivo';

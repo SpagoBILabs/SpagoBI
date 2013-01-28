@@ -195,7 +195,7 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
+			throw SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
 		} finally {
 			logger.info("User ["+ usr + "] has been logged in succesfully");
 			try {

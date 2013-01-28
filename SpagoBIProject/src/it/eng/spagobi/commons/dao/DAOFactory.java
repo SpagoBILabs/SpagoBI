@@ -58,6 +58,8 @@ import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapFeaturesDAO;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapsDAO;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
+import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
@@ -771,4 +773,13 @@ public class DAOFactory {
 	public static ITenantsDAO getTenantsDAO() {
 		return (ITenantsDAO)createDAOInstance("TenantsDAO");
 	}
+	
+	public static IMetaModelsDAO getMetaModelsDAO() {
+		return (IMetaModelsDAO)createDAOInstance("MetaModelsDAO");
+	}
+	
+	public static IArtifactsDAO getArtifactsDAO() {
+		return (IArtifactsDAO)createDAOInstance("ArtifactsDAO");
+	}
+
 }

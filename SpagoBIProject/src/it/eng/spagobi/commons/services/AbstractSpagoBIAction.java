@@ -160,7 +160,7 @@ public abstract class AbstractSpagoBIAction extends AbstractBaseHttpAction {
     	// release resources
     	// rethrows the wrapped exception (it will be trapped)
     	
-    	SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
+    	throw SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
     }
     
     protected void checkError() {

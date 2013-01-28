@@ -39,6 +39,8 @@ Sbi.locale.ln['sbi.generic.label'] = 'Label';
 Sbi.locale.ln['sbi.generic.engine'] = 'Engine';
 Sbi.locale.ln['sbi.generic.state'] = 'State';
 Sbi.locale.ln['sbi.generic.value'] = 'Value';
+Sbi.locale.ln['sbi.generic.upload'] = 'Subir';
+Sbi.locale.ln['sbi.generic.download'] = 'Descargar';
 Sbi.locale.ln['sbi.generic.udpValues'] = 'Udp Values';
 
 Sbi.locale.ln['sbi.generic.kpi'] = 'Kpi';

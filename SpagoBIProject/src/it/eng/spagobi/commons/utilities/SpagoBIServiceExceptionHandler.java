@@ -5,17 +5,16 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.utilities;
 
-import java.util.Iterator;
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
+import java.util.Iterator;
+import java.util.Locale;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -62,7 +61,7 @@ public class SpagoBIServiceExceptionHandler {
 	 * @param e
 	 * @return
 	 */
-	public SpagoBIEngineServiceException getWrappedException(String serviceName,  Throwable e) {
+	public SpagoBIServiceException getWrappedException(String serviceName,  Throwable e) {
 		SpagoBIServiceException serviceException = null;
 		MessageBuilder msgBuild = new MessageBuilder();
 		Locale locale = null;	
@@ -106,7 +105,7 @@ public class SpagoBIServiceExceptionHandler {
 
 		logError(serviceException);
 		
-		throw serviceException;
+		return serviceException;
 	}
 	
 	public static void logError(SpagoBIServiceException serviceError) {

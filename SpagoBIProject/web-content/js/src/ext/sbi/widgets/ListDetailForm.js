@@ -236,7 +236,6 @@ Sbi.widgets.ListDetailForm = function(config) {
  		this.mainElementsStore.load();	
    	
 	var c = Ext.apply({}, config, this.gridForm);
-   	
    	Sbi.widgets.ListDetailForm.superclass.constructor.call(this,c);	
    	this.doLayout(true,true);
    	

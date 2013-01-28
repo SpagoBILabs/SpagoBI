@@ -9,6 +9,7 @@ package it.eng.spagobi.engines.drivers.jpivot;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -19,6 +20,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
@@ -28,6 +30,10 @@ import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
+import it.eng.spagobi.tools.catalogue.bo.Artifact;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -132,6 +138,7 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 			String documentId = biobj.getId().toString();
 			pars.put("document", documentId);
 			pars.put("query", "dynamicOlap");
+			pars = addArtifactVersionId(template, pars);
 			pars = addDataAccessParameter(profile, roleName, pars, template);
 			pars = addBIParameters(biobj, pars);
 			pars = addBIParameterDescriptions(biobj, pars);
@@ -474,6 +481,17 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 		parameters.put("document", documentId);
 		parameters.put("forward", "editQuery.jsp");
 		applySecurity(parameters, profile);
+		byte[] template = null;
+		try {
+			ObjTemplate objTemplate = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(obj.getId());
+			if (objTemplate == null || objTemplate.getContent() == null || objTemplate.getContent().length == 0) {
+				throw new Exception("Document's template is empty");
+			}
+			template = objTemplate.getContent();
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while loading document's template", e);
+		}
+		addArtifactVersionId(template, parameters);
 		EngineURL engineURL = new EngineURL(url, parameters);
 		logger.debug("OUT");
 		return engineURL;
@@ -509,5 +527,22 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 		EngineURL engineURL = new EngineURL(url, parameters);
 		logger.debug("OUT");
 		return engineURL;
+	}
+
+	protected Map addArtifactVersionId(byte[] template, Map pars) {
+		try {
+			SourceBean sb = SourceBean.fromXMLString(new String(template));
+			SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
+			String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
+			IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
+			Artifact artifact = dao.loadArtifactByNameAndType(reference,
+							SpagoBIConstants.MONDRIAN_SCHEMA);
+			Content content = dao.loadActiveArtifactContent(artifact.getId());
+			pars.put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, content.getId());
+			return pars;
+		} catch (SourceBeanException e) {
+			logger.error("Error while decorating document's template", e);
+			throw new SpagoBIRuntimeException("Error while decorating document's template", e);
+		}
 	}
 }
