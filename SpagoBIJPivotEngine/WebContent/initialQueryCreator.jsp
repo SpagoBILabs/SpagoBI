@@ -311,12 +311,15 @@ if (selectedSchema != null) {
 		<wcf:render ref="toolbar01" xslUri="/WEB-INF/jpivot/toolbar/htoolbar.xsl" xslCache="true"/>
 		<p>
 		<wcf:render ref="saveTemplateForm01" xslUri="/WEB-INF/wcf/wcf.xsl" xslCache="true"/>
-		<%-- if there was an overflow, show error message --%>
+		<%-- 
+        The following test is commented since it may hide some other errors' details.
+        If there was an overflow, show error message
 		<c:if test="${query01.result.overflowOccured}">
   			<p>
   				<strong style="color:red">Resultset overflow occured</strong>
   			<p>
 		</c:if>
+		--%>
 		<p>
 		<wcf:render ref="navi01" xslUri="/WEB-INF/jpivot/navi/navigator.xsl" xslCache="true"/>
 		<p>
