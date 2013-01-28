@@ -9,11 +9,13 @@ import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
 import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
 import it.eng.spagobi.sdk.documents.bo.SDKFunctionality;
+import it.eng.spagobi.sdk.documents.bo.SDKSchema;
 import it.eng.spagobi.sdk.documents.bo.SDKTemplate;
 import it.eng.spagobi.sdk.exceptions.InvalidParameterValue;
 import it.eng.spagobi.sdk.exceptions.MissingParameterValue;
 import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
 import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
+import it.eng.spagobi.sdk.exceptions.SDKException;
 
 import java.util.HashMap;
 
@@ -49,5 +51,7 @@ public interface DocumentsService {
     
     SDKTemplate downloadDatamartModelFiles(String folderName, String fileDatamartName , String fileModelName);
     
-    HashMap<String, String> getAllDatamartModels();
+    HashMap<String, String> getAllDatamartModels() throws NotAllowedOperationException;
+    
+    void uploadMondrianSchema(SDKSchema schema) throws NotAllowedOperationException, SDKException;
 }
