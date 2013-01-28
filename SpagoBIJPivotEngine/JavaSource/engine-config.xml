@@ -24,13 +24,7 @@
 	<DataSourceServiceProxy_URL>/services/DataSourceService</DataSourceServiceProxy_URL>
 	<DocumentExecuteServiceProxy_URL>/services/DocumentExecuteService</DocumentExecuteServiceProxy_URL>
 	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>	
-<SbiDocumentServiceProxy_URL>/services/SbiDocumentService</SbiDocumentServiceProxy_URL>
-	
-	<SCHEMAS>
-		<SCHEMA catalogUri="/Olap/FoodMart.xml" name="FoodMart" />
-		<SCHEMA catalogUri="/Olap/SbiMonitor.xml" name="SpagoMonitor" />
-		<SCHEMA catalogUri="/Olap/TestCorso.xml" name="TestCorso" />		
-		<SCHEMA catalogUri="/Olap/FoodMartProfiled.xml" name="FoodMartProfiled" />	
-	</SCHEMAS>
+    <SbiDocumentServiceProxy_URL>/services/SbiDocumentService</SbiDocumentServiceProxy_URL>
+    <ArtifactServiceProxy_URL>/services/ArtifactService</ArtifactServiceProxy_URL>
 	
 </ENGINE-CONFIGURATION>

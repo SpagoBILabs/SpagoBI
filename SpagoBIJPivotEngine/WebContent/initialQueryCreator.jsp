@@ -35,7 +35,14 @@ LICENSE: see LICENSE.txt file
 <%@page import="it.eng.spagobi.services.common.EnginConf" %>
 <%@page import="org.apache.log4j.Logger"%>
 <%@page import="it.eng.spago.security.*" %>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.services.artifact.bo.SpagoBIArtifact"%>
+<%@page import="it.eng.spagobi.services.proxy.ArtifactServiceProxy"%>
+<%@page import="it.eng.spagobi.jpivotaddins.schema.MondrianSchemaManager"%>
 
+<%!
+    private Logger logger = Logger.getLogger("it.eng.spagobi.initialQueryCreator_jsp");
+%>
 
 <html>
 <head>
@@ -54,17 +61,14 @@ LICENSE: see LICENSE.txt file
 <input type="hidden" name="action" id="action" value="" />
 
 <%
-Logger logger = Logger.getLogger(this.getClass());
+String userId = (String) session.getAttribute("userId");
+String documentId = (String) session.getAttribute("document");
+ArtifactServiceProxy artifactProxy = new ArtifactServiceProxy(userId, session);
+MondrianSchemaManager schemaManager = new MondrianSchemaManager(artifactProxy);
+
 //retrieves the locale
 RequestContext context = RequestContext.instance();
 Locale locale = context.getLocale();
-
-//puts in session the spagobi content repository servlet url 
-//and the document path for TemplateBean.saveTemplate method
-String biobjectPath = request.getParameter("biobject_path");
-if (biobjectPath != null) session.setAttribute("biobject_path", biobjectPath);
-//String spagobiurl = request.getParameter("spagobiurl");
-//if (spagobiurl != null) session.setAttribute("spagobiurl", spagobiurl);
 
 String action = request.getParameter("action");
 if (action != null && !action.equals("")) {
@@ -76,7 +80,7 @@ if (action != null && !action.equals("")) {
 		session.removeAttribute("table01");
 		session.removeAttribute("selectedCube");
 		String schemaSelected = request.getParameter("schema");
-		session.setAttribute("selectedSchema", schemaSelected);
+		session.setAttribute("reference", schemaSelected);
 	}
 	if (action.equalsIgnoreCase("selectCube")) {
 		session.removeAttribute("query01");
@@ -87,17 +91,15 @@ if (action != null && !action.equals("")) {
 	}
 }
 
-List schemas = (List) session.getAttribute("schemas");
+SpagoBIArtifact[] schemas = (SpagoBIArtifact[]) session.getAttribute("schemas");
 if (schemas == null) {
-	SAXReader readerConfigFile = new SAXReader();
-	Document documentConfigFile = readerConfigFile.read(getClass().getResourceAsStream("/engine-config.xml"));
-	schemas = documentConfigFile.selectNodes("//ENGINE-CONFIGURATION/SCHEMAS/SCHEMA");
-	session.setAttribute("schemas", schemas);
+    schemas = artifactProxy.getArtifactsByType(SpagoBIConstants.MONDRIAN_SCHEMA);
+    session.setAttribute("schemas", schemas);
 }
 
-if (schemas == null || schemas.size() == 0) {
-	out.write("No schemas defined in engine-config.xml file.");
-	return;
+if (schemas == null || schemas.length == 0) {
+    out.write("No schemas defined in Mondrian schemas' catalogue.");
+    return;
 }
 
 %>
@@ -108,44 +110,40 @@ if (schemas == null || schemas.size() == 0) {
 <div style="margin: 0 0 5 5;">
 	<div style="float:left;clear:left;width:150px;height:25px;">
 		<span style="font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;color: #074B88;font-size: 8pt;">
-			<%=EngineMessageBundle.getMessage("query.creation.select.schema", locale)%>
+			<%= EngineMessageBundle.getMessage("query.creation.select.schema", locale) %>
 		</span>
 	</div>
 	<div style="height:25px;">
 		<select name="schema" id="schema" style="width:200px" 
 			onchange="document.getElementById('action').value='selectSchema';document.getElementById('initialQueryForm').submit()">
-			<%
-				String selectedSchema = (String) session.getAttribute("selectedSchema");
+			    <%
+				String selectedSchema = (String) session.getAttribute("reference");
 				if (selectedSchema == null) {
-			%>
-				<option value="" selected="selected">&nbsp;</option>
-				<%
-					}
-					Iterator it = schemas.iterator();
-					Node selectedSchemaNode = null;
-					while (it.hasNext()) {
-						Node aSchema = (Node) it.next();
-						String aSchemaName = aSchema.valueOf("@name");
-						String isSchemaSelected = "";
-						if (aSchemaName.equalsIgnoreCase(selectedSchema)) {
-							selectedSchemaNode = aSchema;
-							isSchemaSelected = "selected='selected'";
-						}
-				%>
-				<option value="<%=aSchemaName%>" <%=isSchemaSelected%>><%=aSchemaName%></option>
-				<%
+			        %>
+				    <option value="" selected="selected">&nbsp;</option>
+				    <%
+				}
+				
+				SpagoBIArtifact artifact = null;
+				for (int i = 0; i < schemas.length; i++) {
+					SpagoBIArtifact anArtifact = schemas[i];
+					String aSchemaName = anArtifact.getName();
+					String isSchemaSelected = "";
+                    if (aSchemaName.equalsIgnoreCase(selectedSchema)) {
+                    	artifact = anArtifact;
+                        isSchemaSelected = "selected='selected'";
+                    }
+                    %>
+                    <option value="<%=aSchemaName%>" <%=isSchemaSelected%>><%=aSchemaName%></option>
+                    <%
 				}
 				%>
 		</select>
 	</div>
 </div>
 <%
-//if (selectedSchemaNode == null) selectedSchemaNode = (Node) session.getAttribute("selectedSchemaNode");
 if (selectedSchema != null) {
-	//session.setAttribute("selectedSchemaNode", selectedSchemaNode);
-//	String catalogUri = selectedSchemaNode.valueOf("@catalogUri");
-	String catalogUri = EnginConf.getInstance().getResourcePath() + 
-						selectedSchemaNode.valueOf("@catalogUri").replace("/", System.getProperty("file.separator"));
+	String catalogUri = schemaManager.getMondrianSchemaURI(artifact.getContentId());
 	MondrianDef.Cube[] cubes = (MondrianDef.Cube[]) session.getAttribute("MondrianCubes");
 	MondrianDef.VirtualCube[] virtualcubes = (MondrianDef.VirtualCube[]) 
 				session.getAttribute("MondrianVirtualCubes");
@@ -165,7 +163,7 @@ if (selectedSchema != null) {
 		session.setAttribute("MondrianVirtualCubes", virtualcubes);
 	}
 	if ((cubes == null || cubes.length == 0) && (virtualcubes == null || virtualcubes.length == 0)) {
-		out.write("No cubes defined in " + catalogUri + " file.");
+		out.write("No cubes defined in " + artifact.getName() + " schema.");
 		return;
 	}
 %>
@@ -236,15 +234,8 @@ if (selectedSchema != null) {
 			// puts the catalogUri in session for TemplateBean.saveTemplate() method
 			session.setAttribute("catalogUri", catalogUri);			
 			
-			//calls service for gets data source object
-			
-			//String userId=request.getParameter("user");
-			String userId=(String)session.getAttribute("userId");
-			String documentId = (String)session.getAttribute("document");
-			System.out.println("userId: " + userId);
-			System.out.println("documentId: " + documentId);
-			DataSourceServiceProxy proxyDS = new DataSourceServiceProxy(userId,session);
-			IDataSource ds = proxyDS.getDataSource( documentId);
+			DataSourceServiceProxy proxyDS = new DataSourceServiceProxy(userId, session);
+			IDataSource ds = proxyDS.getDataSource( documentId );
 			if (ds == null || (ds.getJndi()==null && (ds.getDriver()==null || 
 				ds.getUrlConnection() == null || ds.getUser()==null || ds.getPwd()==null))){
 			%>

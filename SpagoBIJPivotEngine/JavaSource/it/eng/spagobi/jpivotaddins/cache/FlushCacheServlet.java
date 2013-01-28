@@ -6,7 +6,6 @@
 package it.eng.spagobi.jpivotaddins.cache;
 
 import it.eng.spagobi.jpivotaddins.bean.AnalysisBean;
-import it.eng.spagobi.jpivotaddins.bean.ToolbarBean;
 import it.eng.spagobi.jpivotaddins.bean.adapter.AnalysisAdapterUtil;
 
 import java.io.IOException;
@@ -16,12 +15,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-
 import mondrian.olap.CacheControl;
 import mondrian.olap.Connection;
 import mondrian.olap.Cube;
 import mondrian.olap.Query;
+
+import org.apache.log4j.Logger;
 
 import com.tonbeller.jpivot.chart.ChartComponent;
 import com.tonbeller.jpivot.mondrian.ScriptableMondrianDrillThrough;
@@ -42,8 +41,7 @@ public class FlushCacheServlet extends HttpServlet {
 		ChartComponent chart = (ChartComponent) session.getAttribute("chart01");
 		TableComponent table = (TableComponent) session.getAttribute("table01");
 		AnalysisBean analysis = (AnalysisBean) session.getAttribute("analysisBean");
-		analysis = AnalysisAdapterUtil.createAnalysisBean(analysis.getConnectionName(), analysis.getCatalogUri(),
-			chart, table, olapModel);
+		analysis = AnalysisAdapterUtil.createAnalysisBean(chart, table, olapModel);
 		// stores current analysis information on session
 		session.setAttribute("analysisBean", analysis);
 		

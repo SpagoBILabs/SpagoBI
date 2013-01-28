@@ -20,19 +20,15 @@ public class AnalysisAdapterUtil {
 	/**
      * Constructs an analysis out of jpivot components
      *
-     * @param connectionName
-     * @param catalogUri
      * @param chart
      * @param table
      * @param olapModel
      * @return
      */
-    public static AnalysisBean createAnalysisBean(String connectionName,String catalogUri, ChartComponent chart,
+    public static AnalysisBean createAnalysisBean(ChartComponent chart,
                                           TableComponent table, OlapModel olapModel) {
     	logger.debug("IN");
         AnalysisBean analysis = new AnalysisBean();
-        analysis.setConnectionName(connectionName);
-        analysis.setCatalogUri(catalogUri);
         //analysis.setShowPareto(true);
         analysis.setShowChart(((ComponentSupport)chart).isVisible());
         analysis.setShowTable(((ComponentSupport)table).isVisible());

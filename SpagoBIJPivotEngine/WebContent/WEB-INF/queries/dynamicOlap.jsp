@@ -17,6 +17,7 @@ LICENSE: see LICENSE.txt file
 				 org.apache.log4j.Logger,
 				 com.tonbeller.jpivot.olap.model.OlapModel,
 				 it.eng.spagobi.services.proxy.ContentServiceProxy,
+				 it.eng.spagobi.services.proxy.ArtifactServiceProxy,
 				 it.eng.spagobi.services.content.bo.Content,
 				 it.eng.spagobi.services.proxy.DataSourceServiceProxy,
 				 it.eng.spagobi.services.datasource.bo.SpagoBiDataSource,
@@ -27,20 +28,127 @@ LICENSE: see LICENSE.txt file
 
 <%@ page import="it.eng.spagobi.utilities.ParametersDecoder"%>
 <%@ page import="it.eng.spagobi.commons.utilities.StringUtilities"%>
-<%@page import="it.eng.spago.security.IEngUserProfile"%>
-<%@page import="it.eng.spagobi.jpivotaddins.crossnavigation.SpagoBICrossNavigationConfig"%>
+<%@ page import="it.eng.spago.security.IEngUserProfile"%>
+<%@ page import="it.eng.spagobi.jpivotaddins.crossnavigation.SpagoBICrossNavigationConfig"%>
+<%@ page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@ page import="it.eng.spagobi.jpivotaddins.schema.MondrianSchemaManager"%>
+
 <%@ taglib uri="http://www.tonbeller.com/jpivot" prefix="jp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 
 <%!
-	private static String CONNECTION_NAME="connectionName";
+	private static String CONNECTION_NAME = "connectionName";
+
+    private Logger logger = Logger.getLogger("it.eng.spagobi.dynamicOlap_jsp");
+
+    private Integer getArtifactVersionId(HttpServletRequest request) {
+        try {
+            if (request.getParameter(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID) == null 
+                    || request.getParameter(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID).trim().equals("")) {
+                throw new Exception("Request is missing artifact version id missing");
+            }
+            Integer id = new Integer(request.getParameter(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID));
+            return id;
+        } catch (Exception e) {
+            logger.error("Error while getting artifact version id", e);
+            throw new RuntimeException("Error while getting artifact version id", e);
+        }
+    }
+    
+    private String getReference(HttpServletRequest request) {
+        try {
+        	HttpSession session = request.getSession();
+        	String userId = (String) session.getAttribute("userId");
+            ArtifactServiceProxy artifactProxy = new ArtifactServiceProxy(userId, session);
+            MondrianSchemaManager schemaManager = new MondrianSchemaManager(artifactProxy);
+            Integer artifactVersionId = getArtifactVersionId(request);
+            logger.debug("Artifact version id :" + artifactVersionId);
+            String reference = schemaManager.getMondrianSchemaURI(artifactVersionId);
+            logger.debug("Reference: " + reference);
+            // adjust reference
+            if (!reference.startsWith("file:")) {
+                reference = "file:" + reference;
+                logger.debug("Reference changed to " + reference);
+            }
+            return reference;
+        } catch (Exception e) {
+            logger.error("Error while getting model reference", e);
+            throw new RuntimeException("Error while getting model reference", e);
+        }
+    }
+    
+    private Document getTemplateAsDom4jDocument(HttpServletRequest request, HashMap requestParameters) {
+    	InputStream is = null;
+    	Document document = null;
+    	try {
+	    	HttpSession session = request.getSession();
+	    	String userId = (String)session.getAttribute("userId");
+	    	String documentId = (String) session.getAttribute("document");
+	    	ContentServiceProxy contentProxy = new ContentServiceProxy(userId, session);
+	        Content template = contentProxy.readTemplate(documentId, requestParameters);
+	        BASE64Decoder bASE64Decoder = new BASE64Decoder();
+	        byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
+	        is = new java.io.ByteArrayInputStream(templateContent);
+	        org.dom4j.io.SAXReader reader = new org.dom4j.io.SAXReader();
+	        document = reader.read(is);
+	        return document;
+    	} catch (Exception e) {
+    		logger.error("Error while getting template as a XML document", e);
+    		throw new RuntimeException("Error while getting template as a XML document", e);
+    	} finally {
+    		try {
+	    		if (is != null) {
+	    			is.close();
+	    		}
+    		} catch (Exception e) {
+    			logger.error("Error while closing stream", e);
+    		}
+    	}
+    }
+    
+    private AnalysisBean getSubobjectContentAsAnalysisBean(HttpServletRequest request) {
+        InputStream is = null;
+        InputStreamReader isr = null;
+        AnalysisBean analysis = null;
+        try {
+            HttpSession session = request.getSession();
+            String userId = (String) session.getAttribute("userId");
+            String subObjectId = request.getParameter("subobjectId");
+            ContentServiceProxy contentProxy = new ContentServiceProxy(userId, session);
+            Content subObject = contentProxy.readSubObjectContent(subObjectId);
+            String subobjdata64Coded = subObject.getContent();
+            BASE64Decoder bASE64Decoder = new BASE64Decoder();
+            byte[] subobjBytes = bASE64Decoder.decodeBuffer(subobjdata64Coded);
+            is = new java.io.ByteArrayInputStream(subobjBytes);
+            isr = new InputStreamReader(is);
+            XStream dataBinder = new XStream();
+            analysis = (AnalysisBean) dataBinder.fromXML(isr, new AnalysisBean());
+            return analysis;
+        } catch (Exception e) {
+            logger.error("Error while loading AnalysisBean for analysis definition", e);
+            throw new RuntimeException("Error while loading AnalysisBean for analysis definition", e);
+        } finally {
+            try {
+                if (isr != null) {
+                    isr.close();
+                }
+            } catch (Exception e) {
+                logger.error("Error while closing InputStreamReader", e);
+            }
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (Exception e) {
+                logger.error("Error while closing ByteArrayInputStream", e);
+            }
+        }
+    }
 %>
 
 <%
-	Logger logger = Logger.getLogger(this.getClass());
 	List parameters = null;
-	InputStream is = null;
-	String reference = null, nameConnection = null, query= null;
+	String reference = null, query = null;
 	AnalysisBean analysis = null;
 	Document document = null;
 	try {
@@ -50,23 +158,24 @@ LICENSE: see LICENSE.txt file
 		String documentId = (String)session.getAttribute("document");		
 		ContentServiceProxy contentProxy = new ContentServiceProxy(userId, session);
 		
+		reference = this.getReference(request);
+
 		String requestConnectionName = (String) request.getParameter(CONNECTION_NAME);
-		if (requestConnectionName==null) logger.debug("requestConnectionName is NULL");
-		else logger.debug("requestConnectionName:"+requestConnectionName);
+		logger.debug("Connection name found on request: " + requestConnectionName);
 		
 		//calls service for gets data source object		
-		DataSourceServiceProxy proxyDS = new DataSourceServiceProxy(userId,session);
+		DataSourceServiceProxy proxyDS = new DataSourceServiceProxy(userId, session);
 		IDataSource ds = null;
 		if (requestConnectionName != null) {
-		    ds =proxyDS.getDataSourceByLabel(requestConnectionName);
+		    ds = proxyDS.getDataSourceByLabel(requestConnectionName);
 		} else {
-		    ds =proxyDS.getDataSource(documentId);
+		    ds = proxyDS.getDataSource(documentId);
 		}
 
-		// if into the request is defined the attribute "nameSubObject" the engine must run a subQuery
+		
 		if (nameSubObject != null) {
+			// if request contains parameter "nameSubObject", the engine must run a subQuery
 			
-			BASE64Decoder bASE64Decoder = new BASE64Decoder();
 			HashMap requestParameters = new HashMap();
 			//parameter that permits to tell to SpagoBI not to realize a control on the parameters passed.
 			requestParameters.put("SBI_READ_ONLY_TEMPLATE","true");
@@ -76,49 +185,28 @@ LICENSE: see LICENSE.txt file
 			// TODO move the cube profiling information from driver to engine 
 			requestParameters.remove("dimension_access_rules");
 			
-			Content template = contentProxy.readTemplate(documentId, requestParameters);
-			byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
-			is = new java.io.ByteArrayInputStream(templateContent);
-
-			org.dom4j.io.SAXReader reader = new org.dom4j.io.SAXReader();
-		    document = reader.read(is);	
-		    
+			document = this.getTemplateAsDom4jDocument(request, requestParameters);
+			
 			// if subObject execution in the request there are the description and visibility
 			String descrSO = request.getParameter("descriptionSubObject");
-			if(descrSO==null)
+			if (descrSO == null) {
 				descrSO = "";
+			}
 			String visSO = request.getParameter("visibilitySubObject");
-			if(visSO==null)
+			if (visSO == null) {
 				visSO = "Private";
+			}
 			analysisBean.setAnalysisName(nameSubObject);
 			analysisBean.setAnalysisDescription(descrSO);
 			// the possible values of the visibility are (Private/Public)
 			analysisBean.setAnalysisVisibility(visSO);			
-			// get content from cms
-			String subObjectId = request.getParameter("subobjectId");
-			Content subObject=contentProxy.readSubObjectContent(subObjectId);
-			String subobjdata64Coded = subObject.getContent();
-			byte[] subobjBytes = bASE64Decoder.decodeBuffer(subobjdata64Coded);
-			is = new java.io.ByteArrayInputStream(subobjBytes);
-			InputStreamReader isr = new InputStreamReader(is);
-			XStream dataBinder = new XStream();
-			try {
-				analysis = (AnalysisBean) dataBinder.fromXML(isr, new AnalysisBean());
-				isr.close();
-				query = analysis.getMdxQuery();
-				//sets the datasource of document
-				if (ds != null)	nameConnection = ds.getLabel();
-				//nameConnection = analysis.getConnectionName();
-				reference = analysis.getCatalogUri();
-				logger.debug("Reference: " + reference);
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
+
+			analysis = this.getSubobjectContentAsAnalysisBean(request);
+			query = analysis.getMdxQuery();
 				
-				// normal execution (no subObject)	
 		} else {
-			//String templateBase64Coded = request.getParameter("template");
-			BASE64Decoder bASE64Decoder = new BASE64Decoder();
+			// normal execution (no subObject)
+			
 			HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(request);
 			
 			// remove the dimension_access_rules parameter because it produces an exception (not blocking but the exception 
@@ -126,41 +214,13 @@ LICENSE: see LICENSE.txt file
 			// TODO move the cube profiling information from driver to engine 
 			requestParameters.remove("dimension_access_rules");
 			
-			Content template = contentProxy.readTemplate(documentId, requestParameters);
-			byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
-			is = new java.io.ByteArrayInputStream(templateContent);
-
-//			byte[] template = bASE64Decoder.decodeBuffer(templateBase64Coded);
-			//is = new java.io.ByteArrayInputStream(template);
-			org.dom4j.io.SAXReader reader = new org.dom4j.io.SAXReader();
-		    document = reader.read(is);
+			document = this.getTemplateAsDom4jDocument(request, requestParameters);
 		    
-		    //nameConnection = request.getParameter("connectionName");
-		    if (ds != null)	nameConnection = ds.getLabel();
 			query = document.selectSingleNode("//olap/MDXquery").getStringValue();
-			Node cube = document.selectSingleNode("//olap/cube");
-			//reference = cube.valueOf("@reference");
-			//defines the correct catalogueURI starting the schema name
-			SAXReader readerConfigFile = new SAXReader();
-			Document documentConfigFile = readerConfigFile.read(getClass().getResourceAsStream("/engine-config.xml"));
-			List schemas = documentConfigFile.selectNodes("//ENGINE-CONFIGURATION/SCHEMAS/SCHEMA");
-			Iterator it = schemas.iterator();
-			Node selectedSchemaNode = null;
-			while (it.hasNext()) {
-				Node aSchema = (Node) it.next();
-				String aSchemaName = aSchema.valueOf("@name");
-				if (aSchemaName.equalsIgnoreCase(cube.valueOf("@reference"))) {
-					selectedSchemaNode = aSchema;
-				}
-			}
-			reference = EnginConf.getInstance().getResourcePath() + 
-						selectedSchemaNode.valueOf("@catalogUri").replace("/", System.getProperty("file.separator"));
-			logger.debug("Reference: " + reference);
+			
 			parameters = document.selectNodes("//olap/MDXquery/parameter");
 			analysis = new AnalysisBean();
-			analysis.setConnectionName(nameConnection);
-			analysis.setCatalogUri(reference);
-			session.setAttribute("analysisBean",analysis);
+			session.setAttribute("analysisBean", analysis);
 	
 		}
 		//Check for Toolbar Configuration and put it in session...
@@ -184,12 +244,6 @@ LICENSE: see LICENSE.txt file
 		    }
 	    }
 		
-		// adjust reference
-		if (!reference.startsWith("file:")) {
-			reference = "file:" + reference;
-			logger.debug("Reference changed to " + reference);
-		}
-
 		// SUBSTITUTE QUERY PARAMETERS
 		query = ParameterUtilities.substituteQueryParameters(query, parameters, request);
 		IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
