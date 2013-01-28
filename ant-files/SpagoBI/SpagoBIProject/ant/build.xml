@@ -430,7 +430,8 @@
 				<file name="./src/ext/sbi/widgets/ModelInstanceTree.js" />
 				<file name="./src/ext/sbi/widgets/DataStorePanel.js" />
 				<file name="./src/ext/sbi/widgets/ButtonField.js" />
-
+        		<file name="./src/ext/sbi/widgets/Catalogue.js" />
+        		<file name="./src/ext/sbi/widgets/CatalogueVersionsGridPanel.js" />
 
 				<file name="./src/ext/sbi/udp/ManageUdp.js" />
 				<file name="./src/ext/sbi/udp/ManageUdpValues.js" />
@@ -505,6 +506,9 @@
 				<file name="./src/ext/sbi/kpi/GUI/KpiGUIDocCollegato.js" />
 				<file name="./src/ext/sbi/kpi/GUI/KpiGUIComments.js" />
 				<file name="./src/ext/sbi/kpi/GUI/KpiGUIHistorical.js" />
+
+        		<file name="./src/ext/sbi/tools/catalogue/MetaModelsCatalogue.js" />
+        		<file name="./src/ext/sbi/tools/catalogue/MondrianSchemasCatalogue.js" />
 
 			</filelist>
 
