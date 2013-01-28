@@ -89,7 +89,7 @@ public class ExecuteDataSetAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
 			}
 		} catch (Throwable t) {
-			SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
+			throw SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
 		} finally {
 			logger.debug("OUT");
 		}

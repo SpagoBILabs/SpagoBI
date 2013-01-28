@@ -49,19 +49,25 @@ import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
 import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
 import it.eng.spagobi.sdk.documents.bo.SDKFunctionality;
+import it.eng.spagobi.sdk.documents.bo.SDKSchema;
 import it.eng.spagobi.sdk.documents.bo.SDKTemplate;
 import it.eng.spagobi.sdk.exceptions.InvalidParameterValue;
 import it.eng.spagobi.sdk.exceptions.MissingParameterValue;
 import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
 import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
+import it.eng.spagobi.sdk.exceptions.SDKException;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter.MemoryOnlyDataSource;
+import it.eng.spagobi.tools.catalogue.bo.Artifact;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.file.FileUtils;
 import it.eng.spagobi.utilities.mime.MimeUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -87,6 +93,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	public static final String DATAMART_FILE_NAME = "datamart.jar";
 	public static final String CFIELDS_FILE_NAME = "cfields_meta.xml";
+	public static final String MONDRIAN_SCHEMA_TYPE = "MONDRIAN_SCHEMA";
 
 	static private Logger logger = Logger.getLogger(DocumentsServiceImpl.class);
 
@@ -821,9 +828,8 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				+ "]");
 
 		this.setTenant();
-
+		
 		try {
-
 			/***********************************************************************************************************/
 			/* STEP 1: uploads the datamart document */
 			/***********************************************************************************************************/
@@ -852,7 +858,6 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				throw new SpagoBIRuntimeException(
 						"Could not upload cfieldds.xml file: " + e.getMessage());
 			}
-
 			try {
 
 				/***********************************************************************************************************/
@@ -861,54 +866,21 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				 * personal folder) to use the previous datamart.
 				 */
 				/***********************************************************************************************************/
-				BIObject obj = null;
+				UserProfile userProfile = (UserProfile) this.getUserProfile();
 				String datamartName = sdkTemplate.getFolderName();
-
-				// checks if the template already exists. In this case doesn't
-				// create the new one!
-				obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(
-						datamartName);
-				if (obj != null) {
+				// checks if the template already exists. In this case doesn't create the new one!
+				if (DAOFactory.getBIObjectDAO().loadBIObjectByLabel(
+						datamartName) != null) {
 					logger.info("The datamart with name "
 							+ datamartName
 							+ " is already been inserted in SpagoBI. Template not loaded! ");
 					return;
 				}
-
-				IEngUserProfile profile = getUserProfile();
-
-				obj = new BIObject();
-				String userId = ((UserProfile) profile).getUserId().toString();
-				logger.debug("Current user id is [" + userId + "]");
-
-				obj.setCreationUser(((UserProfile) profile).getUserId()
-						.toString());
-				obj.setCreationDate(new Date());
-				obj.setVisible(new Integer(1));
+				
+				BIObject obj = createGenericObject(SpagoBIConstants.DATAMART_TYPE_CODE);
 				obj.setLabel(datamartName);
 				obj.setName(datamartName);
 				obj.setDescription("");
-				obj.setEncrypt(0);
-				obj.setStateCode("DEV");
-				Domain state = DAOFactory.getDomainDAO()
-						.loadDomainByCodeAndValue("STATE", "DEV");
-				obj.setStateID(state.getValueId());
-				// sets the qbe engine
-				Domain objectType = DAOFactory.getDomainDAO()
-						.loadDomainByCodeAndValue("BIOBJ_TYPE",
-								SpagoBIConstants.DATAMART_TYPE_CODE);
-				obj.setBiObjectTypeID(objectType.getValueId());
-				obj.setBiObjectTypeCode(objectType.getValueCd());
-				List<Engine> lstQbeEngines = DAOFactory.getEngineDAO()
-						.loadAllEnginesForBIObjectType(
-								SpagoBIConstants.DATAMART_TYPE_CODE);
-				if (lstQbeEngines == null || lstQbeEngines.size() == 0) {
-					logger.error("Error while retrieving Engine list.");
-					return;
-				}
-				Engine qbeEngine = lstQbeEngines.get(0);
-				obj.setEngine(qbeEngine);
-
 				// get the dataSource if label is not null
 				IDataSource dataSource = null;
 				if (dataSourceLabel != null) {
@@ -919,37 +891,16 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 					obj.setDataSourceId(dataSource.getDsId());
 				}
 
-				// sets the default functionality (personal folder).
-				List functionalities = new ArrayList();
-				LowFunctionality funct = null;
-				funct = DAOFactory.getLowFunctionalityDAO()
-						.loadLowFunctionalityByPath("/" + userId, false);
-				if (funct != null) {
-					functionalities.add(funct.getId());
-					obj.setFunctionalities(functionalities);
-				} else {
-					// the personal folder doesn't exist yet. It creates it, and
-					// uses it.
-					UserUtilities.createUserFunctionalityRoot(profile);
-					logger.error("Error while retrieving Functionality identifier.");
-					funct = DAOFactory.getLowFunctionalityDAO()
-							.loadLowFunctionalityByPath("/" + userId, false);
-					functionalities.add(funct.getId());
-					obj.setFunctionalities(functionalities);
-				}
+				
 				// sets the template's content
-				ObjTemplate objTemplate = new ObjTemplate();
-				objTemplate.setActive(new Boolean(true));
-				objTemplate.setCreationUser(userId);
-				objTemplate.setCreationDate(new Date());
-				objTemplate.setName(sdkTemplate.getFolderName() + ".xml");
-				String template = getTemplate(datamartName);
+				ObjTemplate objTemplate = createGenericTemplate(sdkTemplate.getFolderName() + ".xml");
+				String template = getDatamartTemplate(datamartName);
 				objTemplate.setContent(template.getBytes());
 
 				// inserts the document
 				logger.debug("Saving document ...");
 				IBIObjectDAO biObjDAO = DAOFactory.getBIObjectDAO();
-				biObjDAO.setUserProfile(profile);
+				biObjDAO.setUserProfile(userProfile);
 				biObjDAO.insertBIObject(obj, objTemplate);
 				Integer newIdObj = obj.getId();
 				if (newIdObj != null) {
@@ -1154,6 +1105,139 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		return toReturn;
 	}
 
+	/**
+	 * Add the schema mondrian to the catalogue and upload a template that uses it 
+	 * @param SDKSchema. The object with all informations
+	 */
+	public void uploadMondrianSchema(SDKSchema schema)throws SDKException, NotAllowedOperationException {
+		logger.debug("IN");
+		this.setTenant();
+		
+		try{
+			//checks permission
+			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents configuration.");			
+			if (schema.getSchemaName() == null){
+				logger.error("Schema name in input is null!");			
+				//throw new SpagoBIRuntimeException("Error while uploading schema. Schema name is null.");
+				throw new SDKException("1000","Error while uploading schema. Schema name is null.");
+				//return;
+			}
+			if (schema.getSchemaFile() == null || schema.getSchemaFile().getContent() == null){
+				logger.error("Schema file content in input is null!");
+				//throw new SpagoBIRuntimeException("Error while uploading schema. Schema file is null.");
+				throw new SDKException("1001","Error while uploading schema. Schema file is null.");
+				//return;
+			}
+			logger.debug("schema name = [" + schema.getSchemaName()+ "] - schema description = [" + schema.getSchemaDescription()
+					+ "] - schema datasource = [" + schema.getSchemaDataSourceLbl() + "] ");
+			UserProfile userProfile = (UserProfile) this.getUserProfile();
+			try {
+				boolean isNewSchema = true;
+				Integer artID = null;
+				//defines content to insert
+				Content content = createGenericContent();
+				DataHandler dh = schema.getSchemaFile().getContent();
+				content.setFileName(schema.getSchemaName());
+				ByteArrayOutputStream outputDH = new ByteArrayOutputStream();
+			    dh.writeTo(outputDH);
+		        byte[] contentSchema = outputDH.toByteArray();
+			    content.setContent(contentSchema);
+			    
+				IArtifactsDAO artdao = DAOFactory.getArtifactsDAO();
+				Artifact artifact = artdao.loadArtifactByNameAndType(schema.getSchemaName(), MONDRIAN_SCHEMA_TYPE);
+				// checks if the artifact already exists. In this case doesn't create the new one!
+				if (artifact != null){
+					logger.info("The schema with name " + schema.getSchemaName()
+							+ " is already been inserted in SpagoBI catalogue. Artifact will be updated! ");
+					isNewSchema = false;
+					artID = artifact.getId();
+				}
+				if (isNewSchema){
+					logger.info("The schema with name " + schema.getSchemaName()
+							+ " doesn't exist in SpagoBI catalogue. Artifact will be inserted! ");
+					//inserts schema into the catalogue (artifact)
+					artifact = new Artifact();
+					artifact.setId(new Integer(0));
+					artifact.setName(schema.getSchemaName());
+					artifact.setDescription(schema.getSchemaDescription());
+					artifact.setType(MONDRIAN_SCHEMA_TYPE);
+					artdao.insertArtifact(artifact);
+					logger.debug("Artifact [" + artifact + "] inserted");
+					//gets the new id
+					artID = artdao.loadArtifactByNameAndType(schema.getSchemaName(), MONDRIAN_SCHEMA_TYPE).getId();
+				}
+		        //inserts the content of artifact
+				artdao.insertArtifactContent(artID, content);
+				logger.debug("Content [" + content + "] inserted");
+	
+				// sets the template's content
+				ObjTemplate objTemplate = createGenericTemplate(schema.getSchemaName() + ".xml");
+				String template = getMondrianTemplate(schema.getSchemaName(), content.getContent());
+				objTemplate.setContent(template.getBytes());
+				
+				// checks if the template already exists.
+				boolean isNewObj = true;
+				IBIObjectDAO biObjDAO = DAOFactory.getBIObjectDAO();
+				biObjDAO.setUserProfile(userProfile);
+				BIObject obj = biObjDAO.loadBIObjectByLabel(schema.getSchemaName());				
+				if (obj != null){
+					logger.info("The schema with name "	+ schema.getSchemaName()
+							+ " is already been inserted in SpagoBI. A new template is loaded for the sbiObject with name  " + obj.getName());
+					isNewObj = false;
+					objTemplate.setBiobjId(obj.getId());
+				}else{					
+					//creates the template in SpagoBI meta db
+					obj = createGenericObject(SpagoBIConstants.OLAP_TYPE_CODE);		
+				}				
+				obj.setLabel(schema.getSchemaName());
+				obj.setName(schema.getSchemaName());
+				obj.setDescription(schema.getSchemaDescription());							
+				// sets the dataSource if label is not null
+				IDataSource dataSource = null;
+				if (schema.getSchemaDataSourceLbl() != null) {
+					logger.debug("retrieve data source with label "	+ schema.getSchemaDataSourceLbl());
+					dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(schema.getSchemaDataSourceLbl());
+					obj.setDataSourceId(dataSource.getDsId());
+					
+				}
+
+				if (isNewObj){
+					// inserts the document
+					logger.debug("Create document ...");									
+					biObjDAO.insertBIObject(obj, objTemplate);
+					Integer newIdObj = obj.getId();
+					if (newIdObj != null) {
+						logger.info("Document saved with id = " + newIdObj);
+					} else {
+						logger.error("Document not saved!!");
+						//throw new SpagoBIRuntimeException("Error while saving template.");
+						throw new SDKException("1002","Error while saving template.");						
+					}
+				}else{
+					// update the template document
+					logger.debug("Modify document ...");									
+					biObjDAO.modifyBIObject(obj, objTemplate);					
+				}
+			}catch (SDKException se) {
+				throw new SDKException(se.getCode(), se.getDescription());
+			}catch (Exception e) {
+				logger.error("Error while uploading template", e);
+				//throw new SpagoBIRuntimeException(e);
+				throw new SDKException("1003",e.getMessage());
+			}
+			
+		}catch (SDKException se) {
+			throw new SDKException(se.getCode(), se.getDescription());
+		}catch(Exception e) {
+			logger.error("Error while uploading schema", e);	
+			//throw new SpagoBIRuntimeException(e);
+			throw new SDKException("1004",e.getMessage());
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
+		}
+	}
+	
 	private void uploadFisicalFile (SDKTemplate sdkTemplate, String defaultName) throws Exception{
 		InputStream is = null;
 		FileOutputStream osFile = null;
@@ -1280,7 +1364,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		return path;
 	}
 
-	private String getTemplate(String datamartName) throws IOException {
+	private String getDatamartTemplate(String datamartName) throws IOException {
 		String template = "";
 		template += "<QBE>\n";
 		template += "\t<DATAMART name=\"" + datamartName + "\"/>\n";
@@ -1288,5 +1372,116 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 		return template;
 	}
+	
+	private String getMondrianTemplate(String schemaName, byte[] schemaContent) throws Exception {
+		String template = "";
 
+		String queryMDX = getQueryMDX(schemaContent);
+		template += "<olap>\n";
+		template += "\t<cube reference='"+ schemaName + "'/>\n";
+		template += "\t<MDXquery>\n";
+		template += "\t\t" + queryMDX + "\n";
+		template += "\t</MDXquery>\n";
+		template += "\t<MDXMondrianQuery>\n";
+		template += "\t\t" + queryMDX + "\n";
+		template += "\t</MDXMondrianQuery>\n";
+		template += "</olap>";
+		return template;
+	}
+	
+	private String getQueryMDX(byte[] fileContent){
+		String toReturn = "";
+		String schemaStr = "";
+		try {
+			schemaStr = new String(fileContent);
+			SourceBean schemaSB = SourceBean.fromXMLString(schemaStr);
+			List cubeLst = schemaSB.getAttributeAsList("Cube");
+			if(cubeLst==null || cubeLst.size()==0) throw new Exception("Cannot recover cube bean. Check the schema.");
+			SourceBean cubeSB = (SourceBean)cubeLst.get(0);
+			if(cubeSB==null) throw new Exception("Cannot recover cube bean");
+			//searching shared dimensions
+			List dimensionLst = cubeSB.getAttributeAsList("DimensionUsage");
+			if(dimensionLst==null || dimensionLst.size() == 0) {
+				//searching local dimensions
+				dimensionLst = cubeSB.getAttributeAsList("Dimension");
+			}
+			
+			if(dimensionLst==null || dimensionLst.size() == 0) throw new Exception("Cannot recover dimensions bean. Check the schema.");
+			SourceBean dimensionSB = (SourceBean)dimensionLst.get(0);
+			List measuresLst = cubeSB.getAttributeAsList("Measure");
+			if(measuresLst==null || measuresLst.size()==0) throw new Exception("Cannot recover measure bean. Check the schema.");
+			SourceBean measureSB = (SourceBean)measuresLst.get(0);
+			//defines the start query
+			toReturn = "select {[Measures].[" + measureSB.getAttribute("name") + "]} on columns, {([" + 
+						dimensionSB.getAttribute("name") + "])} on rows from [" + cubeSB.getAttribute("name") + "]";
+		} catch (Exception e) {
+			LogMF.error(logger, e, "Error while loading SourceBean from xml \n {0}", new Object[] {schemaStr});
+			throw new SpagoBIRuntimeException("Error while loading SourceBean from xml. " + e.getMessage() , e);
+		}	
+		return toReturn;
+	}
+	
+	private Content createGenericContent() throws Exception {
+		Content toReturn = new Content();
+		toReturn.setActive(new Boolean(true));
+		UserProfile userProfile = (UserProfile) this.getUserProfile();
+		toReturn.setCreationUser(userProfile.getUserId().toString());
+		toReturn.setCreationDate(new Date());
+		return toReturn;		
+	}
+	
+	private BIObject createGenericObject(String engineType) throws Exception {
+		BIObject toReturn = new BIObject();
+		UserProfile userProfile = (UserProfile) this.getUserProfile();
+		String userId = userProfile.getUserId().toString();
+		logger.debug("Current user id is [" + userId + "]");
+
+		toReturn.setCreationUser(userId);
+		toReturn.setCreationDate(new Date());
+		toReturn.setVisible(new Boolean(true));
+		toReturn.setEncrypt(0);
+		toReturn.setStateCode("DEV");
+		Domain state = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "DEV");
+		toReturn.setStateID(state.getValueId());
+		// sets the qbe engine
+		Domain objectType = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("BIOBJ_TYPE",engineType);
+		toReturn.setBiObjectTypeID(objectType.getValueId());
+		toReturn.setBiObjectTypeCode(objectType.getValueCd());
+		List<Engine> lstEngines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(SpagoBIConstants.OLAP_TYPE_CODE);
+		if (lstEngines == null || lstEngines.size() == 0) {
+			logger.error("Error while retrieving Engine list.");
+			return null;
+		}
+		Engine engine = lstEngines.get(0);
+		toReturn.setEngine(engine);
+
+		// sets the default functionality (personal folder).
+		List functionalities = new ArrayList();
+		LowFunctionality funct = null;
+		funct = DAOFactory.getLowFunctionalityDAO()
+				.loadLowFunctionalityByPath("/" + userId, false);
+		if (funct != null) {
+			functionalities.add(funct.getId());
+			toReturn.setFunctionalities(functionalities);
+		} else {
+			// the personal folder doesn't exist yet. It creates it, and uses it.
+			UserUtilities.createUserFunctionalityRoot(userProfile);
+			logger.error("Error while retrieving Functionality identifier.");
+			funct = DAOFactory.getLowFunctionalityDAO()
+					.loadLowFunctionalityByPath("/" + userId, false);
+			functionalities.add(funct.getId());
+			toReturn.setFunctionalities(functionalities);
+		}
+		return toReturn;		
+	}
+	
+	private ObjTemplate createGenericTemplate(String name) throws Exception {
+		ObjTemplate toReturn = new ObjTemplate();
+		UserProfile userProfile = (UserProfile) this.getUserProfile();
+		toReturn.setName(name);
+		toReturn.setActive(new Boolean(true));
+		toReturn.setCreationUser((String)userProfile.getUserId());
+		toReturn.setCreationDate(new Date());
+		return toReturn;		
+	}
 }

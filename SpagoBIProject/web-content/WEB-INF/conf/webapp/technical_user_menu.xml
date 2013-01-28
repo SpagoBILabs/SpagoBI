@@ -31,6 +31,14 @@
 				functionality="UserDefinedPropertyManagement"
 				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_UDP_ACTION"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/rolesynch16.png" />
+        <ITEM   title="#menu.MetaModelsCatalogue"
+                functionality="MetaModelsCatalogueManagement"
+                url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_META_MODELS_CATALOGUE_ACTION"
+                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />
+        <ITEM   title="#menu.MondrianCatalogue"
+                functionality="ArtifactCatalogueManagement"
+                url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ARTIFACTS_CATALOGUE_ACTION&amp;type=MONDRIAN_SCHEMA"
+                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/cube16.png" />
 	</ITEM>
 	
 	<ITEM	code="analyticalModel" 

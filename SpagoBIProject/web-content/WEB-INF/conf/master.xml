@@ -171,6 +171,12 @@
 	<!-- tools.massiveExport -->	
 	<CONFIGURATOR path="/WEB-INF/conf/tools/massiveExport/actions.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/massiveExport/business_map.xml" />
+	
+	<!-- tools.catalogue -->   
+    <CONFIGURATOR path="/WEB-INF/conf/tools/catalogue/actions.xml" />
+    <CONFIGURATOR path="/WEB-INF/conf/tools/catalogue/presentation.xml" />
+    <CONFIGURATOR path="/WEB-INF/conf/tools/catalogue/publishers.xml" />
+    <CONFIGURATOR path="/WEB-INF/conf/tools/catalogue/business_map.xml" />
 		
 	<!-- workflow -->	
 	<CONFIGURATOR path="/WEB-INF/conf/workflow/modules.xml" />

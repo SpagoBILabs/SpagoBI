@@ -4,6 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+
 package it.eng.spagobi.sdk.documents.stub;
 
 public class DocumentsServiceSoapBindingSkeleton implements it.eng.spagobi.sdk.documents.stub.DocumentsService, org.apache.axis.wsdl.Skeleton {
@@ -233,8 +234,8 @@ public class DocumentsServiceSoapBindingSkeleton implements it.eng.spagobi.sdk.d
         _params = new org.apache.axis.description.ParameterDesc [] {
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://bo.documents.sdk.spagobi.eng.it", "SDKTemplate"), it.eng.spagobi.sdk.documents.bo.SDKTemplate.class, false, false), 
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://bo.documents.sdk.spagobi.eng.it", "SDKTemplate"), it.eng.spagobi.sdk.documents.bo.SDKTemplate.class, false, false), 
-            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false),
-            };
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
+        };
         _oper = new org.apache.axis.description.OperationDesc("uploadDatamartTemplate", _params, null);
         _oper.setElementQName(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "uploadDatamartTemplate"));
         _oper.setSoapAction("");
@@ -292,6 +293,35 @@ public class DocumentsServiceSoapBindingSkeleton implements it.eng.spagobi.sdk.d
             _myOperations.put("getAllDatamartModels", new java.util.ArrayList());
         }
         ((java.util.List)_myOperations.get("getAllDatamartModels")).add(_oper);
+        _fault = new org.apache.axis.description.FaultDesc();
+        _fault.setName("NotAllowedOperationException");
+        _fault.setQName(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "fault"));
+        _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
+        _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
+        _oper.addFault(_fault);
+        _params = new org.apache.axis.description.ParameterDesc [] {
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://bo.documents.sdk.spagobi.eng.it", "SDKSchema"), it.eng.spagobi.sdk.documents.bo.SDKSchema.class, false, false), 
+        };
+        _oper = new org.apache.axis.description.OperationDesc("uploadMondrianSchema", _params, null);
+        _oper.setElementQName(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "uploadMondrianSchema"));
+        _oper.setSoapAction("");
+        _myOperationsList.add(_oper);
+        if (_myOperations.get("uploadMondrianSchema") == null) {
+            _myOperations.put("uploadMondrianSchema", new java.util.ArrayList());
+        }
+        ((java.util.List)_myOperations.get("uploadMondrianSchema")).add(_oper);
+        _fault = new org.apache.axis.description.FaultDesc();
+        _fault.setName("SDKException");
+        _fault.setQName(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "fault"));
+        _fault.setClassName("it.eng.spagobi.sdk.exceptions.SDKException");
+        _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "SDKException"));
+        _oper.addFault(_fault);
+        _fault = new org.apache.axis.description.FaultDesc();
+        _fault.setName("NotAllowedOperationException");
+        _fault.setQName(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "fault"));
+        _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
+        _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
+        _oper.addFault(_fault);
     }
 
     public DocumentsServiceSoapBindingSkeleton() {
@@ -388,10 +418,15 @@ public class DocumentsServiceSoapBindingSkeleton implements it.eng.spagobi.sdk.d
         return ret;
     }
 
-    public java.util.HashMap getAllDatamartModels() throws java.rmi.RemoteException
+    public java.util.HashMap getAllDatamartModels() throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
     {
         java.util.HashMap ret = impl.getAllDatamartModels();
         return ret;
+    }
+
+    public void uploadMondrianSchema(it.eng.spagobi.sdk.documents.bo.SDKSchema in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.SDKException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
+    {
+        impl.uploadMondrianSchema(in0);
     }
 
 }

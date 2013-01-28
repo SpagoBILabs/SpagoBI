@@ -37,6 +37,8 @@ Sbi.locale.ln['sbi.generic.advanced']='Avanc\u00E9';
 Sbi.locale.ln['sbi.generic.select']='S\u00E9lectionner';
 Sbi.locale.ln['sbi.generic.confirmRestore']='Restaurer';
 Sbi.locale.ln['sbi.generic.run'] = 'Ex\u00E9cuter';
+Sbi.locale.ln['sbi.generic.upload'] = 'Charger';
+Sbi.locale.ln['sbi.generic.download'] = 'T\u00E9l\u00E9charger';
 Sbi.locale.ln['sbi.generic.update2'] = 'Mise \u00e0 jour';
 Sbi.locale.ln['sbi.kpi.trend.title'] = 'Tendance de la ressource ';
 Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'Aucune donn\u00E9e trouv\u00E9e! S\u00E9lectionnez le noeud sp\u00E9cifique pour afficher la tendance des donn\u00E9es. ';
@@ -738,4 +740,4 @@ if(Ext.DatePicker){
 	format : "dd/mm/yyyyy",
 	startDay : 1
 	});
-} 
+}

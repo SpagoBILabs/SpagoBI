@@ -39,7 +39,10 @@ Sbi.locale.ln['sbi.generic.advanced'] = 'Avanzato';
 Sbi.locale.ln['sbi.generic.select'] = 'Seleziona';
 Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restore';
 Sbi.locale.ln['sbi.generic.run'] = 'Esegui';
+Sbi.locale.ln['sbi.generic.upload'] = 'Upload';
+Sbi.locale.ln['sbi.generic.download'] = 'Download';
 Sbi.locale.ln['sbi.generic.update2'] = 'Aggiorna';
+Sbi.locale.ln['sbi.generic.noItemsSelected'] = 'Non \u00e8 stato selezionato alcun elemento';
 Sbi.locale.ln['sbi.kpi.trend.title'] = 'Andamento valori del Kpi ';
 Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'Dati non trovati! Selezionare un nodo specifico per visualizzare lo storico. ';
 //Fields
@@ -58,6 +61,8 @@ Sbi.locale.ln['sbi.generic.nodetype'] = 'Tipo Nodo';
 Sbi.locale.ln['sbi.generic.nodedescr'] = 'Descrizione Nodo';
 //Messages
 Sbi.locale.ln['sbi.generic.validationError'] = 'Errore di Validazione';
+Sbi.locale.ln['sbi.generic.validation.missingName'] = 'Nome non specificato';
+Sbi.locale.ln['sbi.generic.wait'] = 'Attendere prego...';
 Sbi.locale.ln['sbi.generic.info'] = 'Informazione';
 Sbi.locale.ln['sbi.generic.error'] = 'Errore';
 Sbi.locale.ln['sbi.generic.error.msg'] = 'Operazione fallita';
@@ -733,34 +738,41 @@ Sbi.locale.ln['Sbi.office.zoomIn'] = 'Incrementa dimensioni';
 Sbi.locale.ln['Sbi.office.zoomOut'] = 'Decrementa dimensioni';
 
 
-Sbi.locale.ln['sbi.kpi.accordionmenu.desciption']= 'Descrizione'
-Sbi.locale.ln['sbi.kpi.accordionmenu.linkeddoc']=  'Documento collegato'
-Sbi.locale.ln['sbi.kpi.accordionmenu.comments']= 'Commenti'
-Sbi.locale.ln['sbi.kpi.accordionmenu.history']= 'Storico'
-Sbi.locale.ln['sbi.kpi.accordionmenu.detail']= 'Dettaglio'
+Sbi.locale.ln['sbi.kpi.accordionmenu.desciption']= 'Descrizione';
+Sbi.locale.ln['sbi.kpi.accordionmenu.linkeddoc']=  'Documento collegato';
+Sbi.locale.ln['sbi.kpi.accordionmenu.comments']= 'Commenti';
+Sbi.locale.ln['sbi.kpi.accordionmenu.history']= 'Storico';
+Sbi.locale.ln['sbi.kpi.accordionmenu.detail']= 'Dettaglio';
 	
-Sbi.locale.ln['sbi.kpi.kpiguidetail.value']= 'Valore'
-Sbi.locale.ln['sbi.kpi.kpiguidetail.targhet']= 'Targhet'
-Sbi.locale.ln['sbi.kpi.kpiguidetail.weight']= 'Peso'
+Sbi.locale.ln['sbi.kpi.kpiguidetail.value']= 'Valore';
+Sbi.locale.ln['sbi.kpi.kpiguidetail.targhet']= 'Targhet';
+Sbi.locale.ln['sbi.kpi.kpiguidetail.weight']= 'Peso';
 	
-Sbi.locale.ln['sbi.kpi.kpiguicomments.savecomment']= 'Salva'
-Sbi.locale.ln['sbi.kpi.kpiguicomments.comment']= 'Commento'
-Sbi.locale.ln['sbi.kpi.kpiguicomments.creation']= 'Data creazione'
-Sbi.locale.ln['sbi.kpi.kpiguicomments.owner']= 'Propetario'
+Sbi.locale.ln['sbi.kpi.kpiguicomments.savecomment']= 'Salva';
+Sbi.locale.ln['sbi.kpi.kpiguicomments.comment']= 'Commento';
+Sbi.locale.ln['sbi.kpi.kpiguicomments.creation']= 'Data creazione';
+Sbi.locale.ln['sbi.kpi.kpiguicomments.owner']= 'Propetario';
 			
-Sbi.locale.ln['sbi.kpi.kpiguidescription.name']= 'Nome'
-Sbi.locale.ln['sbi.kpi.kpiguidescription.description']='Descrizione'
-Sbi.locale.ln['sbi.kpi.kpiguidescription.dataset']='Dataset'
-Sbi.locale.ln['sbi.kpi.kpiguidescription.code']='Codice tipo'
-Sbi.locale.ln['sbi.kpi.kpiguidescription.measure']='Misura'
-Sbi.locale.ln['sbi.kpi.kpiguidescription.targhet']='Targhet Audience'
-Sbi.locale.ln['sbi.kpi.kpiguidescription.scale']='Scala'
+Sbi.locale.ln['sbi.kpi.kpiguidescription.name']= 'Nome';
+Sbi.locale.ln['sbi.kpi.kpiguidescription.description']='Descrizione';
+Sbi.locale.ln['sbi.kpi.kpiguidescription.dataset']='Dataset';
+Sbi.locale.ln['sbi.kpi.kpiguidescription.code']='Codice tipo';
+Sbi.locale.ln['sbi.kpi.kpiguidescription.measure']='Misura';
+Sbi.locale.ln['sbi.kpi.kpiguidescription.targhet']='Targhet Audience';
+Sbi.locale.ln['sbi.kpi.kpiguidescription.scale']='Scala';
 
-Sbi.locale.ln['sbi.kpi.kpiguidoccollegato.nodoc']='Nessun documento collegato'
+Sbi.locale.ln['sbi.kpi.kpiguidoccollegato.nodoc']='Nessun documento collegato';
 	
 	
 Sbi.locale.ln['ext.date.dateformat.error.title']='Errore nel formato data'
-Sbi.locale.ln['ext.date.dateformat.error.text']='La data inserita non \u00e8 valida. Il valore verr\u00e0 normalizzato dal sistema'
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']=' '
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']=' '
-	
+Sbi.locale.ln['ext.date.dateformat.error.text']='La data inserita non \u00e8 valida. Il valore verr\u00e0 normalizzato dal sistema';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']=' ';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']=' ';
+
+Sbi.locale.ln['sbi.tools.catalogue.metaModelsCatalogue']='Catalogo modelli di business';
+Sbi.locale.ln['sbi.tools.catalogue.mondrianSchemasCatalogue']='Catalogo schemi Mondrian';
+Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.title']='Versioni memorizzate';
+Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.userIn']='Creatore';
+Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.dateIn']='Data di creazione';
+Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.fileName']='Nome del file';
+Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.deleteNonActive']='Elimina versioni non attive';

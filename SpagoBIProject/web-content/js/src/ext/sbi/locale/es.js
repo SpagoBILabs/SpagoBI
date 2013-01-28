@@ -39,6 +39,8 @@ Sbi.locale.ln['sbi.generic.advanced'] = 'Avanzado';
 Sbi.locale.ln['sbi.generic.select'] = 'Seleccionar';
 Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restaurar';
 Sbi.locale.ln['sbi.generic.run'] = 'Ejecutar';
+Sbi.locale.ln['sbi.generic.upload'] = 'Subir';
+Sbi.locale.ln['sbi.generic.download'] = 'Descargar';
 Sbi.locale.ln['sbi.generic.update2'] = 'Actualizaciones';
 Sbi.locale.ln['sbi.kpi.trend.title'] = 'Tendencia de los recursos ';
 Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'No se encontraron datos! Seleccione el nodo espec�fico para ver los datos de tendencia. ';
@@ -725,4 +727,4 @@ cancelText : "Cancelar",
 format : "dd/mm/yyyyy",
 startDay : 1
 });
-} 
+}
