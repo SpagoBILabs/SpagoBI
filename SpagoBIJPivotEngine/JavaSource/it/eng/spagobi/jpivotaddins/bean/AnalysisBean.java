@@ -13,9 +13,15 @@ public class AnalysisBean implements Serializable {
     Although default values are already defined in EnhancedCharComponent,
       default values for properties are required while creating new analysis.
     */
-   private String catalogUri = null;
+   /**
+    * @deprecated
+    */
+   private String catalogUri = null;      // deprecated and unused from Mondrian schemas' catalog implementation
    private String mdxQuery = null;
-   private String connectionName = null;
+   /**
+    * @deprecated
+    */
+   private String connectionName = null;  // deprecated and unused from Mondrian schema's catalog implementation
    private String colorPaletteName = null;
 
    /*As there is no float type formatter in com.tonbeller.wcf.format.BasicTypes class, making
@@ -81,6 +87,7 @@ public class AnalysisBean implements Serializable {
    /**
     *
     * @return String
+    * @deprecated
     */
    public String getCatalogUri() {
        return catalogUri;
@@ -302,6 +309,7 @@ public class AnalysisBean implements Serializable {
    /**
     *
     * @return String
+    * @deprecated
     */
    public String getConnectionName() {
        return connectionName;
@@ -315,6 +323,7 @@ public class AnalysisBean implements Serializable {
    /**
     *
     * @param analysisTitle String
+    * @deprecated
     */
    public void setCatalogUri(String catalogUri) {
        this.catalogUri = catalogUri;
@@ -536,6 +545,7 @@ public class AnalysisBean implements Serializable {
    /**
     *
     * @param dataSource String
+    * @deprecated
     */
    public void setConnectionName(String connectionName) {
        this.connectionName = connectionName;

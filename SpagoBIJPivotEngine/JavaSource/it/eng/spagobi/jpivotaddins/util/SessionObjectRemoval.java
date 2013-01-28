@@ -98,10 +98,6 @@ public class SessionObjectRemoval {
 			session.removeAttribute("toolbar01");
 		}
 		
-		if (session.getAttribute("selectedSchemaNode") != null) {
-			session.removeAttribute("selectedSchemaNode");
-		}
-		
 		if (session.getAttribute("catalogUri") != null) {
 			session.removeAttribute("catalogUri");
 		}
@@ -134,8 +130,8 @@ public class SessionObjectRemoval {
 			session.removeAttribute("selectedConnection");
 		}
 		
-		if (session.getAttribute("selectedSchema") != null) {
-			session.removeAttribute("selectedSchema");
+		if (session.getAttribute("reference") != null) {
+			session.removeAttribute("reference");
 		}
 		
 		if (session.getAttribute("selectedCube") != null) {

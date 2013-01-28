@@ -127,8 +127,7 @@ public class SaveAnalysisBean extends ComponentSupport {
 			ChartComponent chart = (ChartComponent) session.getAttribute("chart01");
 			TableComponent table = (TableComponent) session.getAttribute("table01");
 			AnalysisBean analysis = (AnalysisBean) session.getAttribute("analysisBean");
-			analysis = AnalysisAdapterUtil.createAnalysisBean(analysis.getConnectionName(), analysis.getCatalogUri(),
-				chart, table, olapModel);
+			analysis = AnalysisAdapterUtil.createAnalysisBean(chart, table, olapModel);
 		    XStream dataBinder = new XStream();
 		    String xmlString = dataBinder.toXML(analysis);
 		    String visibilityBoolean = "false";
