@@ -184,5 +184,11 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
 	    if (documentsService == null)
 	      _initDocumentsServiceProxy();
 	    return documentsService.getAllDatamartModels();
-	  }
+  }
+  
+  public void uploadMondrianSchema(it.eng.spagobi.sdk.documents.bo.SDKSchema in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
+	    if (documentsService == null)
+	      _initDocumentsServiceProxy();
+	     documentsService.uploadMondrianSchema(in0);
+  }
 }

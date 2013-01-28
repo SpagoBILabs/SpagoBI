@@ -15,6 +15,7 @@ import it.eng.spagobi.container.SpagoBIResponseContainer;
 import it.eng.spagobi.container.SpagoBISessionContainer;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -272,6 +273,18 @@ public LinkedHashMap<String,Object> getAttributesAsLinkedMap() {
 		getHttpResponse().getOutputStream().close();
 		
 		
+	}
+	
+	public void writeBackToClient(byte[] bytes, IStreamEncoder encoder, boolean inline, String contentName, String contentType) throws IOException {
+		InputStream is = null;
+		try {
+			is = new ByteArrayInputStream(bytes);
+			writeBackToClient(is, encoder, inline, contentName, contentType);
+		} finally {
+			if (is != null) {
+				is.close();
+			}
+		}
 	}
 	
 	// =================================================================================================

@@ -399,5 +399,11 @@ public class SpagoBIConstants {
 	public static final String TEMPORARY_TABLE_ROOT_NAME  = "SBI_TEMPORARY_TABLE_ROOT_NAME";
 	public static final String DROP_TEMPORARY_TABLE_ON_EXIT  = "SBI_DROP_TEMPORARY_TABLE_ON_EXIT";
 	
-    public static final String CHART_TYPE_CODE = "CHART"; 
+    public static final String CHART_TYPE_CODE = "CHART";
+    
+    public static final String MONDRIAN_SCHEMA = "MONDRIAN_SCHEMA";
+    public static final String MONDRIAN_CUBE = "cube";
+    public static final String MONDRIAN_REFERENCE = "reference";
+    public static final String SBI_ARTIFACT_VERSION_ID = "SBI_ARTIFACT_VERSION_ID";
+    
 }
