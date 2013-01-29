@@ -6,7 +6,7 @@
  
   
  
- Ext.ns("Sbi.settings");
+Ext.ns("Sbi.settings");
 
 /**
  * Execution  panel settings
