@@ -39,7 +39,9 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 	, constructor: function(config) {
 		
 		var defautlConf = { pagingConfig:{}, storeConfig:{ pageSize: 7}	};
-		
+		this.title =  "LOV result preview";
+		this.border = false;
+		this.region = 'south';
 		defautlConf = Ext.apply( defautlConf,config ||{} );
 		Ext.apply(this,defautlConf);
 		
@@ -50,6 +52,7 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
     	});
     	
     	this.callParent([defautlConf]);
+    	this.store.on('load',function(){this.fireEvent('storeLoad')},this);
     	console.log('TestLovPanel costructor OUT');
     }
     
