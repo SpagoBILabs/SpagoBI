@@ -41,7 +41,9 @@ public class EnginesInitializer extends SpagoBIInitializer {
 			for (SbiTenant tenant : tenants) {
 				init(config, hibernateSession, tenant);
 			}
-		} finally {
+		} catch(Throwable t){
+			logger.error("Impossible to init EnginesInitializer", t);
+		}finally {
 			logger.debug("OUT");
 		}
 	}

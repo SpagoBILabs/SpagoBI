@@ -206,12 +206,16 @@ Ext.form.CheckboxGroup = Ext.extend(Ext.form.Field, {
     
     // inherit docs from Field
     reset : function(){
+    	console.log('reset group');
         Ext.form.CheckboxGroup.superclass.reset.call(this);
-        this.items.each(function(c){
-            if(c.reset){
-                c.reset();
-            }
-        }, this);
+        if(this.items && this.items.each){
+	        this.items.each(function(c){
+	            if(c.reset){
+	                c.reset();
+	            }
+	        }, this);
+        }
+        console.log('group reseted');
     },
     
     /**
