@@ -39,11 +39,11 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
     extend: 'Ext.grid.Panel'
 
     ,config: {
-
+    	stripeRows: true,
     }
 
 	, constructor: function(config) {
-
+		
 		console.log('DynamicGridPanel costructor IN');
 		Ext.apply(this,config);
 		
@@ -53,7 +53,6 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
       	this.store = store;
       	
       	this.columns = [];
-
 
       	this.store.on('load', this.updateGrid, this);
       	this.addPaging(config);
@@ -65,7 +64,7 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
       		console.log('DynamicGridPanel load store');
       		this.store.load();
       	}
-    	
+    	this.tbar = Ext.create('Sbi.widgets.grid.DynamicFilteringToolbar',{store: this.store});
     	this.callParent([config]);
     	console.log('DynamicGridPanel costructor OUT');
     },
