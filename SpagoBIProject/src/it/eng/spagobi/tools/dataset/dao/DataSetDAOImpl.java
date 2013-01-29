@@ -1418,6 +1418,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		
 		if(hibDataSet instanceof SbiQbeDataSet){			
 			hibNew =new SbiQbeDataSet();
+			((SbiQbeDataSet) hibNew ).setSqlQuery(((SbiQbeDataSet)hibDataSet).getSqlQuery());
+			((SbiQbeDataSet) hibNew ).setJsonQuery(((SbiQbeDataSet)hibDataSet).getJsonQuery());
+			((SbiQbeDataSet) hibNew ).setDataSource(((SbiQbeDataSet)hibDataSet).getDataSource());
+			((SbiQbeDataSet) hibNew ).setDatamarts(((SbiQbeDataSet)hibDataSet).getDatamarts());
+			
+		
 		}
 		
 		hibNew.setCategory(hibDataSet.getCategory());
