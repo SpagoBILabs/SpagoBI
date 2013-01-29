@@ -1415,7 +1415,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			((SbiCustomDataSet)	hibNew ).setCustomData(((SbiCustomDataSet)hibDataSet).getCustomData());
 			((SbiCustomDataSet)	hibNew ).setJavaClassName(((SbiCustomDataSet)hibDataSet).getJavaClassName());
 		}
-
+		
+		if(hibDataSet instanceof SbiQbeDataSet){			
+			hibNew =new SbiQbeDataSet();
+		}
+		
 		hibNew.setCategory(hibDataSet.getCategory());
 		hibNew.setDsMetadata(hibDataSet.getDsMetadata());
 		hibNew.setMetaVersion(hibDataSet.getMetaVersion());
