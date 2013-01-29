@@ -3,10 +3,7 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
- 	
+
 
 	/**
 	 * patch a bug in the datepicker (see SPAGOBI-324). 
@@ -14,6 +11,9 @@
 	 * mouseup that is not handled properly by ClickRepeater. This cause the click event sequence to continue even after the
 	 * mouse button is released. This patch is not resolutive. It is just a work-around that eliminate ClickRepeater behaviour 
 	 */
+
+
+
 
 	Ext.override(Ext.DatePicker, {
 		 // private

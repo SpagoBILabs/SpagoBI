@@ -148,7 +148,7 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	            								this is a workaround (work-around): when executing a document from administration tree or
 	            								from menu, this loading mask does not appear. Invoking hide() solve the issue.
 	            		 						*/
-	          	 		if(this.maskOnRender === true) this.loadingMask.show();
+	          	 		//if(this.maskOnRender === true) this.loadingMask.show();
 	            	},
 	            	scope: this
 	          	}
@@ -420,7 +420,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 									this is a workaround (work-around): when executing a document from administration tree or
 									from menu, this loading mask does not appear. Invoking hide() solve the issue.
 									 */
-			this.loadingMask.show();
+			//this.loadingMask.show();
 		}, this);
 		
 		this.parametersPanel.on('synchronize', function() {
@@ -450,7 +450,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			return;
 		}
 		
-		if(this.loadingMask) this.loadingMask.hide();
+		//if(this.loadingMask) this.loadingMask.hide();
 		
 		// subobject preference wins: if a subobject preference is specified, subobject is executed
 		if (this.preferenceSubobjectId != null) {

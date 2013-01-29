@@ -55,7 +55,7 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
     }
     
 	, refreshOptions: function() {		
-		console.log('refreshOptions');
+		Sbi.trace('[CheckboxField.refreshOptions] : IN');
 		var oldValue = this.getValue();
 		
 		// manage the case in which the store is loaded before the component is rendered
@@ -106,6 +106,8 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 		} else {
 			this.doSetValue(oldValue);
 		}
+		
+		Sbi.trace('[CheckboxField.refreshOptions] : OUT');
 	}
 
 	, createOptionItem: function(optionConfig) {
@@ -118,6 +120,8 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 	}
 	
 	, fireChecked: function(){
+		Sbi.trace('[CheckboxField.fireChecked] : IN');
+		
 		if(this.fireChekedActive === false) return;
         var arr = [];
         if(this.isReady()) {
@@ -131,9 +135,9 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 				arr = this.bufferedValue;
         	}
 		}
-        console.log('fireChecked: (' + arr + ')');
         this.fireEvent('change', this, arr);
-        console.log('fireChecked: OK');
+
+        Sbi.trace('[CheckboxField.fireChecked] : OUT');
     }
 	
 	, suspendFireChecked: function() {
@@ -155,31 +159,32 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 	}
 	
 	, reset : function(){
-		console.log('reset');
+		Sbi.trace('[CheckboxField.reset] : IN');
 		this.suspendFireChecked();
 		if(this.bufferedValue) delete this.bufferedValue;
 		Sbi.widgets.CheckboxField.superclass.reset.call(this);
 		this.resumeFireChecked();
-		console.log('fire checked');
+		Sbi.debug('[CheckboxField.reset] : fire checked');
 		this.fireChecked();
-		console.log('reseted');
+		Sbi.debug('[CheckboxField.reset] : reseted');
 		
+		Sbi.trace('[CheckboxField.reset] : OUT');
     }
     
 	, setValue: function(v){
 		if(typeof v == 'string' && v.trim() != '') {v = [v];}
 		if(!Ext.isArray(v) || v.length == 0) {
-			console.log('Impossible to set value ' + v + ' ' + (typeof v));
+			Sbi.warn('Impossible to set value ' + v + ' ' + (typeof v));
 			return;
 		} 
 				
 		this.suspendFireChecked();
 		if(this.isReady()){
-			console.log('set value : >' + v + '< ');
+			Sbi.debug('[CheckboxField.setValue] : set value : >' + v + '< ');
 			this.doSetValue(v);
 		} else {
 			this.bufferedValue = v;
-			console.log('buffer value : >' + v + '< ');
+			Sbi.debug('[CheckboxField.setValue] : buffer value : >' + v + '< ');
 		}
 		this.resumeFireChecked();
 		this.fireChecked();
@@ -191,12 +196,12 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 		if(Ext.isArray(v)){
 			this.eachItem(function(item){
 				if(v.indexOf(item.value)> -1){
-					console.log('doSetValue ' + item.value);
+					Sbi.debug('[CheckboxField.doSetValue] : do set value ' + item.value);
 					item.setValue(true);
 		        }
 		    }); 
 		 } else {
-			 alert('CheckboxField.setValue: value [' + v + '] is not an array');
+			 Sbi.warn('[CheckboxField.doSetValue] : value [' + v + '] is not an array');
 		 }
 		 this.resumeFireChecked();
 	}
@@ -210,14 +215,13 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 	            }
 	        });
         } else {
-        	console.log(this.rendered + ' ' + this.refreshed);
         	if(this.bufferedValue) {
         		out = this.bufferedValue;
-        		console.log('getBufferedValue ' + out + ' - ' + Ext.isArray(out));
+        		Sbi.debug('[CheckboxField.getValue] : getBufferedValue ' + out + ' - ' + Ext.isArray(out));
         	}
         }
       
-        console.log('getValue ' + out + ' - ' + Ext.isArray(out));
+        Sbi.debug('[CheckboxField.getValue] : ' + out + ' - ' + Ext.isArray(out));
         return out;
     }
     
