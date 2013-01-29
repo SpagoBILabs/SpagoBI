@@ -95,7 +95,11 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 			this.items.add(optionItem);
 			col.add(optionItem);
 		}
-		this.panel.doLayout();
+		try {
+			this.panel.doLayout();
+		} catch(t) {
+			// hide an internal non blocking exception
+		}
 		
 		if(this.refreshed === false) {
 			this.refreshed = true;
