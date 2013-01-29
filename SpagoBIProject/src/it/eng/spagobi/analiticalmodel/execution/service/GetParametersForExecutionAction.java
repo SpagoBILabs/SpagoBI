@@ -327,17 +327,17 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 
 
 		public void loadValues() {	
-			if("COMBOBOX".equalsIgnoreCase(selectionType)) { // load values only if it is not a lookup
+			if("COMBOBOX".equalsIgnoreCase(selectionType)
+					|| "LIST".equalsIgnoreCase(selectionType)
+					|| "SLIDER".equalsIgnoreCase(selectionType)
+					|| "TREE".equalsIgnoreCase(selectionType)) { // load values only if it is not a lookup
 				List lovs = getLOV();
 				setValuesCount( lovs == null? 0: lovs.size() );
 				if(getValuesCount() == 1) {
 					SourceBean lovSB = (SourceBean)lovs.get(0);
 					value = getValueFromLov(lovSB);
 				}
-			}
-
-			if("LIST".equalsIgnoreCase(selectionType)
-					|| "CHECK_LIST".equalsIgnoreCase(selectionType)) {
+			} else {
 				setValuesCount( -1 ); // it means that we don't know the lov size
 			}
 		}

@@ -229,7 +229,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 			
 		}
-		console.log('getFormState ' + state.toSource());
+		//console.log('getFormState ' + state.toSource());
 		return state;
 	}
 	
@@ -274,6 +274,18 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.setFormState(v);
 	}
 	  
+	, resetField: function(aField, suspendEvents) {
+		suspendEvents = suspendEvents || false;
+		var hasChangeEvent = false;				
+		if(suspendEvents && aField.hasListener('change')) {
+			hasChangeEvent = true;
+			aField.un('change', this.onUpdateDependentFields);
+			console.log('reset ' + p + ' sterilized');
+		}			
+		aField.reset();
+		if(hasChangeEvent) aField.on('change', this.onUpdateDependentFields, this);
+	}
+	
 	/**
 	 * reset all the fields in the form and recalculate all the dependencies
 	 */
@@ -284,14 +296,15 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				var aField = this.fields[p];
 				if (!aField.isTransient) {
 					console.log('reset ' + p);
-					var hasChangeEvent = false;				
-					if(aField.hasListener('change')) {
-						hasChangeEvent = true;
-						aField.un('change', this.onUpdateDependentFields);
-						console.log('reset ' + p + ' sterilized');
-					}			
-					aField.reset();
-					if(hasChangeEvent) aField.on('change', this.onUpdateDependentFields, this);
+//					var hasChangeEvent = false;				
+//					if(aField.hasListener('change')) {
+//						hasChangeEvent = true;
+//						aField.un('change', this.onUpdateDependentFields);
+//						console.log('reset ' + p + ' sterilized');
+//					}			
+//					aField.reset();
+//					if(hasChangeEvent) aField.on('change', this.onUpdateDependentFields, this);
+					this.resetField(aField, true);
 					this.updateDependentFields( aField );
 				}
 			}
@@ -424,7 +437,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	}
 	
 	, initializeParametersPanel: function( parameters ) {
-				
+			
+		console.log('>>>>> INIZIALIZE PARAMS <<<<<');
 		this.setParameters(parameters);
 		
 		this.removeAllFields();		
@@ -447,6 +461,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				} else {
 					if (parameters[i].visible === true && parameters[i].vizible !== false) {
 						this.addField(field, nonTransientField++);
+						console.log('field [' + parameters[i].id + '] is added added');
+					} else {
+						console.log('field [' + parameters[i].id + '] is not added');
 					}
 				}
 			}
@@ -632,6 +649,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		var disableField = conditions.length > 0;
 		
+		console.log('check visual condition on [' + dependantField.name + ']');
 		for(var i = 0; i < conditions.length; i++) {
 			// check condition
 			var condition = conditions[i];
@@ -642,16 +660,25 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				disableField = false;
 			}
 		}
+		console.log('condition on [' + dependantField.name + '] are satisfied: ' + !disableField);
 		
 		if(this.manageVisualDependenciesOnVisibility === true) {
 			if(disableField) {
+				console.log('trying to disable field [' + dependantField.name + ']');
 				this.setFieldLabel(dependantField, dependantField.fieldDefaultLabel + ':');
-				dependantField.reset();
+				
+				//this.resetField(dependantField, true);
+				//dependantField.reset();
+				console.log('reset ok');
 				dependantField.disable();
+				console.log('disable ok');
 				
 				this.hideFieldLabel(dependantField);
+				console.log('hide label ok');
 				dependantField.setVisible(false);
+				console.log('set visible ok');
 				dependantField.parameter.vizible = false;
+				console.log('disable field [' + dependantField.name + ']');
 			} else {
 				dependantField.enable();
 				dependantField.setVisible(true);	
@@ -668,7 +695,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var values = condition.value.split(',');
 		for(var i = 0; i < values.length; i++) {
 		  if(values[i]){
-			//var v = values[i].trim();
 			var v = Ext.util.Format.trim(values[i]);
 			if(fatherFieldValueSet[v]) {
 				conditionIsTrue = true;
@@ -677,8 +703,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		   }
 		}
 		
-		//alert(conditionIsTrue + " ->> " + condition.toSource());
-		return (condition.operation == 'contains')? conditionIsTrue: !conditionIsTrue;
+		conditionIsTrue = (condition.operation == 'contains')? conditionIsTrue: !conditionIsTrue
+		console.log('condition [' + condition.value + '] is [' + conditionIsTrue + ']' );
+		return (conditionIsTrue);
 	}
 	
 	

@@ -94,7 +94,6 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 			//alert('Add option [' + value + '] to column [' + colNo + ']');
 			this.items.add(optionItem);
 			col.add(optionItem);
-			this.panel.doLayout();
 		}
 		this.panel.doLayout();
 		
@@ -132,8 +131,9 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 				arr = this.bufferedValue;
         	}
 		}
-        //alert('fireChecked: (' + arr + ')');
+        console.log('fireChecked: (' + arr + ')');
         this.fireEvent('change', this, arr);
+        console.log('fireChecked: OK');
     }
 	
 	, suspendFireChecked: function() {
@@ -160,7 +160,9 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 		if(this.bufferedValue) delete this.bufferedValue;
 		Sbi.widgets.CheckboxField.superclass.reset.call(this);
 		this.resumeFireChecked();
+		console.log('fire checked');
 		this.fireChecked();
+		console.log('reseted');
 		
     }
     
