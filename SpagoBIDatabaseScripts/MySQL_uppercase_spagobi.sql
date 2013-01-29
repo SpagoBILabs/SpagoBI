@@ -130,6 +130,10 @@ ALTER TABLE `sbi_goal_kpi` RENAME `SBI_GOAL_KPI`;
 ALTER TABLE `sbi_data_set_history` RENAME `SBI_DATA_SET_HISTORY`;
 ALTER TABLE `hibernate_sequences` RENAME `hibernate_sequences`;
 ALTER TABLE `sbi_organizations` RENAME `SBI_ORGANIZATIONS`;
+ALTER TABLE `sbi_meta_models` RENAME `SBI_META_MODELS`;
+ALTER TABLE `sbi_meta_models_versions` RENAME `SBI_META_MODELS_VERSIONS`;
+ALTER TABLE `sbi_artifacts` RENAME `SBI_ARTIFACTS`;
+ALTER TABLE `sbi_artifacts_versions` RENAME `SBI_ARTIFACTS_VERSIONS`;
 
 select concat('rename table ', table_name, ' to ' , upper(table_name) , ';') from information_schema.tables where table_schema = 'your_schema_name';
 
