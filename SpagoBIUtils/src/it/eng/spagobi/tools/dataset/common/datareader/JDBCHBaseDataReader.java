@@ -15,9 +15,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.utilities.assertion.Assert;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Set;
@@ -26,10 +24,11 @@ import org.apache.hadoop.hbase.hbql.client.HBqlException;
 import org.apache.hadoop.hbase.hbql.client.HRecord;
 import org.apache.hadoop.hbase.jdbc.impl.ResultSetImpl;
 import org.apache.log4j.Logger;
-import org.apache.tomcat.dbcp.dbcp.DelegatingResultSet;
 
 /**
  * @author Monica Franceschini (monica.franceschini@eng.it)
+ * This class manages only JDBC data source
+ * find the patch on Jira for JNDI
  */
 public class JDBCHBaseDataReader extends AbstractDataReader {
 
@@ -45,14 +44,10 @@ public class JDBCHBaseDataReader extends AbstractDataReader {
     public IDataStore read(Object data) throws EMFUserError, EMFInternalError {
     	DataStore dataStore = null;
 		MetaData dataStoreMeta;
-		
-		DelegatingResultSet rs;
-		ResultSetImpl rsh;
+
+		ResultSetImpl rsh = (ResultSetImpl) data;
 		
 		logger.debug("IN");
-		
-		DelegatingResultSet dRS = (DelegatingResultSet) data;
-		rsh = (ResultSetImpl) dRS.getInnermostDelegate();  
 
 		
 		dataStore = new DataStore();
@@ -90,6 +85,8 @@ public class JDBCHBaseDataReader extends AbstractDataReader {
 			logger.error("An unexpected error occured while reading resultset", e);
 		} catch (SQLException e) {
 			logger.error("An unexpected error occured while reading resultset", e);
+		} catch (RuntimeException e) {
+			logger.error("Must use a JDBC data source - not JNDI", e);
 		}finally {
     		logger.debug("OUT");
     	}
