@@ -194,7 +194,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <%-- Ext lib for release --%>
 <%-- <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ext-all.js")%>"></script>--%>
 <%-- Ext js overrides --%>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/overrides-ext-3.1.1/overrides.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/overrides/overrides.js")%>"></script>
 
 <%-- MIF library --%>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/miframe/miframe-debug.js")%>"></script>
@@ -348,7 +348,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	  href='<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/overrides/overrides.css")%>' 
 	  type='text/css' />
 <LINK rel='StyleSheet' 
-	  href='<%=urlBuilder.getResourceLink(request, "js/lib/overrides-ext-3.1.1/css/overrides.css")%>' 
+	  href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/overrides/resources/css/overrides.css")%>' 
 	  type='text/css' />
 
 	 

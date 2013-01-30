@@ -337,7 +337,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
       type='text/css' />
       
 <LINK rel='StyleSheet'
-      href='<%=urlBuilder.getResourceLink(request, "js/lib/overrides-ext-2.0.1/resources/css/"+extTheme)%>'
+      href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/overrides/resources/css/"+extTheme)%>'
       type='text/css' />
 
 <script>
