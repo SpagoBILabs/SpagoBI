@@ -342,6 +342,7 @@
 				<file name="./src/ext/sbi/commons/Format.js" />
 				<file name="./src/ext/sbi/commons/JSON.js" />
 				<file name="./src/ext/sbi/commons/Session.js" />
+				<file name="./src/ext/sbi/commons/Log.js" />
 				<file name="./src/ext/sbi/browser/SampleData.js" />
 				<file name="./src/ext/sbi/browser/SearchField.js" />
 				<file name="./src/ext/sbi/browser/Toolbar.js" />
@@ -361,6 +362,10 @@
 				<file name="./src/ext/sbi/widgets/FilteringToolbar.js" />
 				<file name="./src/ext/sbi/widgets/PagingToolbar.js" />
 				<file name="./src/ext/sbi/widgets/LookupField.js" />
+				<file name="./lib/ext-2.0.1/ux/ext-2.2.1-extensions/CheckboxGroup.js" />
+				<file name="./src/ext/sbi/widgets/CheckboxField.js" />
+				<file name="./src/ext/sbi/widgets/RadioField.js" />
+						
 				<file name="./src/ext/sbi/widgets/SaveWindow.js" />
 				<file name="./src/ext/sbi/widgets/EditablePanel.js" />
 				<file name="./src/ext/sbi/execution/SubobjectsPanel.js" />
@@ -380,6 +385,8 @@
 				<file name="./src/ext/sbi/browser/DocumentsBrowser.js" />
 				<file name="./lib/ext-2.0.1/ux/miframe/miframe-min.js" />
 				<file name="./lib/ext-2.0.1/ux/grid/Ext.grid.ButtonColumn.js" />
+				<file name="./lib/ext-2.0.1/ux/andrie/Select.js" />
+				
 				<file name="./src/ext/sbi/decorator/ComponentBuddy.js" />
 				<file name="./src/ext/sbi/execution/toolbar/SendToWindow.js" />
 				<file name="./src/ext/sbi/execution/toolbar/SaveRememberMeWindow.js" />
@@ -403,6 +410,7 @@
 				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
 				<file name="./src/ext/sbi/service/ServiceRegistry.js" />
 				<file name="./src/ext/sbi/commons/Session.js" />
+				<file name="./src/ext/sbi/commons/Log.js" />
 				<file name="./lib/ext-3.1.1/ux/grid/Ext.grid.ButtonColumn.js" />
 				<file name="./lib/ext-3.1.1/ux/grid/Ext.ux.ColorField.js" />
 				<file name="./lib/ext-3.1.1/ux/grid/Ext.ux.grid.RowEditor.js" />
