@@ -1,3 +1,6 @@
+
+
+
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
@@ -150,21 +153,100 @@
 	    }
 	    
 	});	
-
+	
 	/**
-    * Imported from Ext 2.3
+	 * Imported from Ext 3.2.1
+     * Returns true if the passed value is a string.
+     * @param {Mixed} value The value to test
+     * @return {Boolean}
+     */
+	Ext.isString = function(v){
+        return typeof v === 'string';
+    };
+    
+	/**
+	 * Imported from Ext 3.2.1
+     * Copies a set of named properties fom the source object to the destination object.
+     * 
+     * @param {Object} The destination object.
+     * @param {Object} The source object.
+     * @param {Array/String} Either an Array of property names, or a comma-delimited list
+     * of property names to copy.
+     * @return {Object} The modified object.
+    */
+
+	Ext.copyTo = function(dest, source, names){
+        if(Ext.isString(names)){
+            names = names.split(/[,;\s]/);
+        }
+        Ext.each(names, function(name){
+            if(source.hasOwnProperty(name)){
+                dest[name] = source[name];
+            }
+        }, this);
+        return dest;
+    };
+    
+    /**
+     * Imported from Ext 3.2.1
+     * Returns true if the passed value is not undefined.
+     * @param {Mixed} value The value to test
+     * @return {Boolean}
+     */
+    Ext.isDefined = function(v){
+        return typeof v !== 'undefined';
+    };
+
+    
+	
+	/**
+    * Imported from Ext 3.2.1
 	* Returns true if the passed object is a JavaScript array, otherwise false.
     * @param {Object} object The object to test
     * @return {Boolean}
-    */
-	
-	
+    */	
 	Ext.isArray = function(v){
         return v && typeof v.length == 'number' && typeof v.splice == 'function';
 		//return Object.prototype.toString.apply(v) === '[object Array]';
-    }
+    };
 
-
+    /**
+     * Imported from Ext 3.2.1
+     * Converts any iterable (numeric indices and a length property) into a true array
+     * Don't use this on strings. IE doesn't support "abc"[0] which this implementation depends on.
+     * For strings, use this instead: "abc".match(/./g) => [a,b,c];
+     * @param {Iterable} the iterable object to be turned into a true Array.
+     * @return (Array) array
+     */
+     Ext.toArray = function(){
+         return Ext.isIE ?
+             function(a, i, j, res){
+                 res = [];
+                 for(var x = 0, len = a.length; x < len; x++) {
+                     res.push(a[x]);
+                 }
+                 return res.slice(i || 0, j || res.length);
+             } :
+             function(a, i, j){
+                 return Array.prototype.slice.call(a, i || 0, j || a.length);
+             }
+     }();
+     
+     /**
+      * Imported from Ext 3.2.1
+      * Rounds the passed number to the required decimal precision.
+      * @param {Number/String} value The numeric value to round.
+      * @param {Number} precision The number of decimal places to which to round the first parameter's value.
+      * @return {Number} The rounded value.
+      */
+     Ext.util.Format.round = function(value, precision) {
+         var result = Number(value);
+         if (typeof precision == 'number') {
+             precision = Math.pow(10, precision);
+             result = Math.round(value * precision) / precision;
+         }
+         return result;
+     },
 
 	/**
 	 * Override Ext.FormPanel so that in case we create a form without items it still has a item list.

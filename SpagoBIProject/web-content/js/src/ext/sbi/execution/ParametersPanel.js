@@ -194,7 +194,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var value;
 		
 		if(field.behindParameter.multivalue === true) {
-			value = field.getValues();
+			if(field.getValues) {
+				value = field.getValues();
+			} else {
+				Sbi.warn('Field [' + field.id + '] is multivalue but does not implement method getValues()');
+				value = field.getValue();
+			}
 		} else {
 			value = field.getValue();
 		}
@@ -521,7 +526,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				);
 				
 				field.on('blur', function(f){
-					//alert(f.getName() + ' lose focus');
 					for(var i = 0; i < f.dependencies.length; i++) {
 						var field = this.fields[ f.dependencies[i].urlName ];
 						field.getEl().removeClass('x-form-dependent-field');                         
@@ -989,6 +993,15 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}));
 			
 			
+		} else if(p.selectionType === 'SLIDER') { 
+			field = new Ext.form.SliderField(Ext.apply(baseConfig, {
+				anchor: '95%',
+	            tipText: function(thumb){
+	                return String(thumb.value) + '%';
+	            },
+				fieldLabel: 'Sound Effects',
+	            value: 50
+			}));
 		} else { 
 			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
 				baseConfig.format = Sbi.config.localizedDateFormat;
@@ -1008,6 +1021,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}			
 		}
 		
+		if(!field) {
+			alert('Impossible to create a field of type [' + p.type + ']');
+			return;
+		}
+		
 		field.behindParameter = p;
 		field.dependencies = p.dependencies;
 		
@@ -1019,6 +1037,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		return field;
 	}
 
+	
 	, createStore: function() {
 		var store;
 		
