@@ -164,9 +164,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 
 <link type="text/css" rel="stylesheet"
-	href="<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/resources/css/ext-ux-slidezone.css")%>" />
+	href="<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/ux/slidezone/Ext.ux.SlideZone.css")%>" />
 <script type="text/javascript"
-	src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/Ext.ux.SlideZone.js")%>"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/ux/slidezone/Ext.ux.SlideZone.js")%>"></script>
 
 
 <% 
