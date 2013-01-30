@@ -17,7 +17,6 @@
 
 
 
-
 	Ext.override(Ext.DatePicker, {
 		 // private
 		
@@ -209,6 +208,27 @@
         return v && typeof v.length == 'number' && typeof v.splice == 'function';
 		//return Object.prototype.toString.apply(v) === '[object Array]';
     };
+    
+    /**
+     * Imported from Ext 3.2.1
+     * Returns true if the passed value is a JavaScript Object, otherwise false.
+     * @param {Mixed} value The value to test
+     * @return {Boolean}
+     */
+    Ext.isObject = function(v){
+        return !!v && Object.prototype.toString.call(v) === '[object Object]';
+    };
+    
+    /**
+     * Imported from Ext 3.2.1
+     * Returns true if the passed value is a JavaScript Function, otherwise false.
+     * @param {Mixed} value The value to test
+     * @return {Boolean}
+     */
+    Ext.isFunction = function(v){
+        return toString.apply(v) === '[object Function]';
+    };
+
 
     /**
      * Imported from Ext 3.2.1
@@ -231,7 +251,7 @@
                  return Array.prototype.slice.call(a, i || 0, j || a.length);
              }
      }();
-     
+    
      /**
       * Imported from Ext 3.2.1
       * Rounds the passed number to the required decimal precision.
@@ -247,6 +267,81 @@
          }
          return result;
      },
+     
+  
+     
+  
+     /**
+      * Imported from Ext 3.2.1
+      */
+       
+     Ext.override(Ext.Component, {
+    	 
+    	 // private
+    	    clearMons : function(){
+    	        Ext.each(this.mons, function(m){
+    	            m.item.un(m.ename, m.fn, m.scope);
+    	        }, this);
+    	        this.mons = [];
+    	    },
+
+    	    // private
+    	    createMons: function(){
+    	        if(!this.mons){
+    	            this.mons = [];
+    	            this.on('beforedestroy', this.clearMons, this, {single: true});
+    	        }
+    	    },
+
+    	    mon : function(item, ename, fn, scope, opt){
+    	        this.createMons();
+    	        if(Ext.isObject(ename)){
+    	            var propRe = /^(?:scope|delay|buffer|single|stopEvent|preventDefault|stopPropagation|normalized|args|delegate)$/;
+
+    	            var o = ename;
+    	            for(var e in o){
+    	                if(propRe.test(e)){
+    	                    continue;
+    	                }
+    	                if(Ext.isFunction(o[e])){
+    	                    // shared options
+    	                    this.mons.push({
+    	                        item: item, ename: e, fn: o[e], scope: o.scope
+    	                    });
+    	                    item.on(e, o[e], o.scope, o);
+    	                }else{
+    	                    // individual options
+    	                    this.mons.push({
+    	                        item: item, ename: e, fn: o[e], scope: o.scope
+    	                    });
+    	                    item.on(e, o[e]);
+    	                }
+    	            }
+    	            return;
+    	        }
+
+    	        this.mons.push({
+    	            item: item, ename: ename, fn: fn, scope: scope
+    	        });
+    	        item.on(ename, fn, scope, opt);
+    	    },
+    	    
+    	    mun : function(item, ename, fn, scope){
+    	        var found, mon;
+    	        this.createMons();
+    	        for(var i = 0, len = this.mons.length; i < len; ++i){
+    	            mon = this.mons[i];
+    	            if(item === mon.item && ename == mon.ename && fn === mon.fn && scope === mon.scope){
+    	                this.mons.splice(i, 1);
+    	                item.un(ename, fn, scope);
+    	                found = true;
+    	                break;
+    	            }
+    	        }
+    	        return found;
+    	    }
+    	    
+     });
 
 	/**
 	 * Override Ext.FormPanel so that in case we create a form without items it still has a item list.
@@ -506,3 +601,4 @@
 		        };
 		    }
 	});
+	

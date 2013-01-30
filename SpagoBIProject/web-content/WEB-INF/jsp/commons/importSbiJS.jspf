@@ -14,7 +14,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <LINK rel='StyleSheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/domain/domain.css",currTheme)%>' />
 
 <LINK rel='StyleSheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "/js/lib/ext-2.0.1/ux/andrie/Select.css",currTheme)%>' />
+<!--  
 <LINK rel='StyleSheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "/js/lib/ext-2.0.1/ux/ext-2.0.1-extensions/SliderField2.css",currTheme)%>' />
+-->
+<LINK rel='StyleSheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "/js/lib/ext-2.0.1/ux/ext-3.2.1-extensions/Slider.css",currTheme)%>' />
 
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/commons/" + locale.getLanguage() + ".js")%>'></script>	

@@ -12,35 +12,26 @@ Ext.ns('Ext.slider');
  * Represents a single thumb element on a Slider. This would not usually be created manually and would instead
  * be created internally by an {@link Ext.slider.MultiSlider Ext.Slider}.
  */
-Ext.slider.Thumb = Ext.extend(Object, {
-
-    /**
-     * @constructor
-     * @cfg {Ext.slider.MultiSlider} slider The Slider to render to (required)
-     */
-    constructor: function(config) {
-    	 alert("Thumb: " + this.slider);
-        /**
-         * @property slider
-         * @type Ext.slider.MultiSlider
-         * The slider this thumb is contained within
-         */
-        Ext.apply(this, config || {}, {
-            cls: 'x-slider-thumb',
-
+Ext.slider.Thumb = function(config) {
+       /**
+        * @property slider
+        * @type Ext.slider.MultiSlider
+        * The slider this thumb is contained within
+        */
+       Ext.apply(this, config || {}, {
+           cls: 'x-slider-thumb',
             /**
-             * @cfg {Boolean} constrain True to constrain the thumb so that it cannot overlap its siblings
-             */
-            constrain: false
-        });
+            * @cfg {Boolean} constrain True to constrain the thumb so that it cannot overlap its siblings
+            */
+           constrain: false
+       });
+       Ext.slider.Thumb.superclass.constructor.call(this, config);
+       if (this.slider.vertical) {
+           Ext.apply(this, Ext.slider.Thumb.Vertical);
+       }
+};
 
-        Ext.slider.Thumb.superclass.constructor.call(this, config);
-
-        if (this.slider.vertical) {
-            Ext.apply(this, Ext.slider.Thumb.Vertical);
-        }
-    },
-
+Ext.extend(Ext.slider.Thumb, Ext.Component, {
     /**
      * Renders the thumb into a slider
      */
@@ -335,7 +326,9 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
          * @type Array
          * Array of values to initalize the thumbs with
          */
-        if (this.values == undefined || Ext.isEmpty(this.values)) this.values = [0];
+        if (this.values == undefined || Ext.isEmpty(this.values)) {
+        	this.values = [0];
+        }
 
         var values = this.values;
 
@@ -353,7 +346,6 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
      * @param {Number} value The initial value to set on the thumb. Defaults to 0
      */
     addThumb: function(value) {
-    	alert('addThumb');
         var thumb = new Ext.slider.Thumb({
             value    : value,
             slider   : this,
@@ -844,17 +836,18 @@ new Ext.slider.SingleSlider({
 </code></pre>
  * The class Ext.slider.SingleSlider is aliased to Ext.Slider for backwards compatibility.
  */
-Ext.slider.SingleSlider = Ext.extend(Ext.slider.MultiSlider, {
-    constructor: function(config) {
-      config = config || {};
+Ext.slider.SingleSlider = function(config) {
+	config = config || {};
 
-      Ext.applyIf(config, {
-          values: [config.value || 0]
-      });
+    Ext.applyIf(config, {
+        values: [config.value || 0]
+    });
 
-      Ext.slider.SingleSlider.superclass.constructor.call(this, config);
-    },
+    Ext.slider.SingleSlider.superclass.constructor.call(this, config);
+};
 
+Ext.extend(Ext.slider.SingleSlider, Ext.slider.MultiSlider, {
+    
     /**
      * Returns the current value of the slider
      * @return {Number} The current value of the slider
