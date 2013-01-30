@@ -994,13 +994,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 			
 		} else if(p.selectionType === 'SLIDER') { 
+			var v = p.multivalue? [30, 50]: [50];
 			field = new Ext.form.SliderField(Ext.apply(baseConfig, {
-				anchor: '95%',
 	            tipText: function(thumb){
 	                return String(thumb.value) + '%';
 	            },
-				fieldLabel: 'Sound Effects',
-	            value: 50
+	            values: v,
+	            constrainThumbs: false
 			}));
 		} else { 
 			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
