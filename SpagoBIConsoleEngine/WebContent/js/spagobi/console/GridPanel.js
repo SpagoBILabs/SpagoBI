@@ -258,9 +258,13 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		var msg = {
 			label: options.document.label
 	    	, windowName: this.name	||  parent.name // parent.name is used in document composition context			
-	    	, target: (options.target === 'new')? 'self': 'popup'
+	    	, target: (options.target === 'new')? 'self': 'popup'	    	
 	    	, typeCross: 'EXTERNAL' //for manage correctly the IE workaround in document composition context 
 	    }; 
+		if (msg.target === 'popup'){
+			msg.width = options.width || 500;
+			msg.height = options.height || 300;
+		}
 		
 		var callback = function(params){
 			var separator = '';
