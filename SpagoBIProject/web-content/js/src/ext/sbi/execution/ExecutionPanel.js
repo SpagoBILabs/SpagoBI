@@ -225,8 +225,8 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		var popupWin = new Ext.Window({
 			layout: 'fit',                	          
 			title: config.title,
-			width: 500,
-			height: 300,	           	
+			width: config.width || 500,
+			height: config.height || 300,	           	
 			closable: true,
 			constrain: true,
 			resizable: true, 

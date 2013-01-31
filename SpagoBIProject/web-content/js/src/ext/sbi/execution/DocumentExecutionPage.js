@@ -348,6 +348,14 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	            	    	config.title = message.data.title;
 	            	    }
 	            	    
+	            	    if(message.data.width !== undefined){
+	            	    	config.width = message.data.width;
+	            	    }
+	            	    
+	            	    if(message.data.height !== undefined){
+	            	    	config.height = message.data.height;
+	            	    }
+	            	    
 	                	// workaround for document composition with a svg map on IE: when clicking on the map, this message is thrown
 	                	// but we must invoke execCrossNavigation defined for document composition, only if it's not an external cross navigation
 	                	if (Ext.isIE && this.executionInstance.document.typeCode == 'DOCUMENT_COMPOSITE') {	         
