@@ -59,5 +59,13 @@ public static String DS_TYPE = "SbiQueryDataSet";
 		super();
 		setDataReader( new JDBCStandardDataReader() );
 	}
+    
+    public JDBCDataSet(JDBCDataSet jdbcDataset) {
+    	super(jdbcDataset);
+    }
+    
+    public JDBCDataSet(SpagoBiDataSet dataSetConfig) {
+		super(dataSetConfig);
+	}
  
 }
