@@ -65,7 +65,7 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
       		this.store.load();
       	}
     	this.tbar = Ext.create('Sbi.widgets.grid.DynamicFilteringToolbar',{store: this.store});
-    	this.callParent([config]);
+    	this.callParent(arguments);
     	console.log('DynamicGridPanel costructor OUT');
     },
     

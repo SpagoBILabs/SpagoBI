@@ -20,6 +20,8 @@ public class AdmintoolsConstants {
 	public static final String DETAIL_DEL = "DETAIL_DEL";
 	public static final String MODALITY = "MODALITY";
 	public static final String NAME_MODULE = "Admintools";
+	public static final String LOV_CONFIGURATION = "LOV_CONFIGURATION";
+	
 	
 	public static final String REPORT_PARAMETERS_ID = "REPORT_PARAMETERS_ID";
 	public static final String PAGE = "PAGE";

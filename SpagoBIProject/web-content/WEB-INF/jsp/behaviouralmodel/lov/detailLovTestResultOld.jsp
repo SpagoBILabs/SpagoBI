@@ -80,6 +80,18 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
    	isreadonly = false;
    	readonly = "readonly";
    	}
+    
+    String treeColumnNames = "";
+    if(lovDet!=null && lovDet.getTreeLevelsColumns()!=null && lovDet.getTreeLevelsColumns().size()>0){
+    	treeColumnNames = treeColumnNames+"['"+lovDet.getTreeLevelsColumns().get(0)+"'";
+    	 for(int i=1; i<lovDet.getTreeLevelsColumns().size(); i++){
+    		 treeColumnNames =treeColumnNames +",'"+ lovDet.getTreeLevelsColumns().get(i)+"'";
+    	 }
+    	 treeColumnNames = treeColumnNames+"]";
+    }else{
+    	treeColumnNames="[]";
+    }
+   
 %>
 
 
@@ -108,49 +120,25 @@ var url = {
 
 	
     Ext.onReady(function(){
-		Ext.QuickTips.init();
-		var treeLov = true;
-		var lovTestConfigurationTree;
-		var config = {};
-		config.descriptionColumnName =  '<%= lovDet.getDescriptionColumnName()%>';
-		config.valueColumnName =  '<%= lovDet.getValueColumnName()%>';
-		config.visibleColumnNames =  '<%= lovDet.getVisibleColumnNames()%>';
-		//Preview result panel
-		var lovTestPreview = Ext.create('Sbi.behavioural.lov.TestLovPanel',{region: 'south',height:300, treeLov: treeLov}); //by alias
-		//ConfigurationPanel(value, description)
-		var lovTestConfiguration = Ext.create('Sbi.behavioural.lov.TestLovConfigurationGridPanel',{parentStore : lovTestPreview.store , treeLov: treeLov, flex: 1}); //by alias
-		lovTestPreview.on('storeLoad',lovTestConfiguration.onParentStroreLoad,lovTestConfiguration);
-		var lovConfigurationPanelItems = [lovTestConfiguration];
-		if(treeLov){
-			//Tree lov panel
-			lovTestConfigurationTree = Ext.create('Sbi.behavioural.lov.TestLovTreePanel',{flex: 2});
-			lovConfigurationPanelItems.push(lovTestConfigurationTree);
+		var lovConfig = {}
+		lovConfig.descriptionColumnName =  '<%= lovDet.getDescriptionColumnName()%>';
+		lovConfig.valueColumnName =  '<%= lovDet.getValueColumnName()%>';
+		lovConfig.visibleColumnNames =  '<%= lovDet.getVisibleColumnNames()%>';
+		
+		lovConfig.lovType =  '<%= lovDet.getLovType()%>';
+		
+		var treeColumnNames =  '<%= lovDet.getTreeLevelsColumns()%>';
+		if(treeColumnNames && treeColumnNames!='null'){
+			lovConfig.treeColumnNames =  <%=treeColumnNames%>;
 		}
-
-		var lovConfigurationPanel = Ext.create('Ext.Panel', {
-		      	layout: 'hbox',
-		      	region: 'center',
-		     	width: "100%",
-		      	items: lovConfigurationPanelItems,
-		      	listeners: {
-		      		"render" : function(){
-		    			var h = lovConfigurationPanel.getHeight();
-		    			lovTestConfiguration.setHeight(h);
-		    			lovTestConfigurationTree.setHeight(h);
-		    		},
-		    		"resize" : function(){
-		    			var h = lovConfigurationPanel.getHeight();
-		    			lovTestConfiguration.setHeight(h);
-		    			lovTestConfigurationTree.setHeight(h);
-		    		}
-		      	}
-		    });
 		
-		var networkPanel = Ext.create('Ext.container.Viewport', {
-			layout:'border',
-	     	items: [lovConfigurationPanel,lovTestPreview]
+		var modality =  '<%= messagedet%>'; 
+		
+    	var lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel',{lovConfig:lovConfig, modality:modality}); //by alias
+		var lovPanel = Ext.create('Ext.container.Viewport', {
+			layout:'fit',
+	     	items: [lovTest]
 	    });
-		
 		 
     });
 	

@@ -36,6 +36,8 @@ public class DatasetDetail implements ILovDetail {
 	private String valueColumnName = "";
 	private String descriptionColumnName = "";
 	private List invisibleColumnNames = null;
+	private List treeLevelsColumns = null;
+	private String lovType = "simple";
 	
 	private String datasetId;
 	private String datasetLabel;
@@ -99,6 +101,8 @@ public class DatasetDetail implements ILovDetail {
 		"<DESCRIPTION-COLUMN>"+this.getDescriptionColumnName()+"</DESCRIPTION-COLUMN>" +
 		"<VISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",")+"</VISIBLE-COLUMNS>" +
 		"<INVISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(this.getInvisibleColumnNames(), ",")+"</INVISIBLE-COLUMNS>" +
+		"<LOVTYPE>"+this.getLovType() + "</LOVTYPE>" +
+		"<TREE-LEVELS-COLUMNS>"+GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",")+"</TREE-LEVELS-COLUMNS>" +
 		"</DATASET>";
 		return XML;
 	}
@@ -124,6 +128,8 @@ public class DatasetDetail implements ILovDetail {
 			}
 		}
 
+		
+		
 		SourceBean source = SourceBean.fromXMLString(dataDefinition);
 		SourceBean idBean = (SourceBean)source.getAttribute("ID"); 
 		String id =  idBean.getCharacters(); 
@@ -150,8 +156,25 @@ public class DatasetDetail implements ILovDetail {
 			if(descriptionColumn==null) {
 				descriptionColumn = valueColumn;
 			}
+		} else descriptionColumn = valueColumn;
+		
+		// compatibility control (versions till 3.6 does not have TREE-LEVELS-COLUMN  definition)
+		SourceBean treeLevelsColumnsBean = (SourceBean)source.getAttribute("TREE-LEVELS-COLUMNS");
+		String treeLevelsColumnsString = null;
+		if (treeLevelsColumnsBean != null) { 
+			treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
 		}
-		else descriptionColumn = valueColumn;
+		if( (treeLevelsColumnsString!=null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("") ) {
+			String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+			this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
+		}
+		SourceBean lovTypeBean = (SourceBean)source.getAttribute("LOVTYPE"); 
+		String lovType;
+		if(lovTypeBean!=null){
+			lovType =  lovTypeBean.getCharacters(); 
+			this.lovType = lovType;
+		}
+		
 		setDatasetId(id);
 		setDatasetLabel(label);
 		setValueColumnName(valueColumn);
@@ -280,4 +303,22 @@ public class DatasetDetail implements ILovDetail {
 		return new DatasetDetail(dataDefinition);
 	}
 
+	public String getLovType() {
+		return lovType;
+	}
+
+	public void setLovType(String lovType) {
+		this.lovType = lovType;
+	}
+
+	public List getTreeLevelsColumns() {
+		return treeLevelsColumns;
+	}
+
+	public void setTreeLevelsColumns(List treeLevelsColumns) {
+		this.treeLevelsColumns = treeLevelsColumns;
+	}
+
+	
+	
 }

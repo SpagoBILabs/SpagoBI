@@ -103,13 +103,23 @@ Ext.define('Ext.ux.CheckColumn', {
 
     // Note: class names are not placed on the prototype bc renderer scope
     // is not in the header.
+//    renderer : function(value){
+//        var cssPrefix = Ext.baseCSSPrefix,
+//            cls = [cssPrefix + 'grid-checkheader'];
+//
+//        if (value) {
+//            cls.push(cssPrefix + 'grid-checkheader-checked');
+//        }
+//        return '<div class="' + cls.join(' ') + '">&#160;</div>';
+//    }
     renderer : function(value){
-        var cssPrefix = Ext.baseCSSPrefix,
-            cls = [cssPrefix + 'grid-checkheader'];
-
+        var cssPrefix = Ext.baseCSSPrefix;
+        cls = [cssPrefix + 'form-checkbox'];
         if (value) {
-            cls.push(cssPrefix + 'grid-checkheader-checked');
-        }
+            cls.push('check-column-checked');
+        }else{
+			cls.push('check-column-unchecked');
+		}
         return '<div class="' + cls.join(' ') + '">&#160;</div>';
     }
 });

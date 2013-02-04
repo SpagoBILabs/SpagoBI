@@ -58,6 +58,8 @@ public class QueryDetail  implements ILovDetail  {
 	private String descriptionColumnName = "";
 	private List invisibleColumnNames = null;
 	private String databaseDialect = null;
+	private List treeLevelsColumns = null;
+	private String lovType = "simple";
 
 	static final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	static Random random = new Random();
@@ -156,6 +158,22 @@ public class QueryDetail  implements ILovDetail  {
 			invisColNames = Arrays.asList(invisColArr);
 		}
 		setInvisibleColumnNames(invisColNames);
+		// compatibility control (versions till 3.6 does not have TREE-LEVELS-COLUMN  definition)
+		SourceBean treeLevelsColumnsBean = (SourceBean)source.getAttribute("TREE-LEVELS-COLUMNS");
+		String treeLevelsColumnsString = null;
+		if (treeLevelsColumnsBean != null) { 
+			treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+		}
+		if( (treeLevelsColumnsString!=null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("") ) {
+			String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+			this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
+		}
+		SourceBean lovTypeBean = (SourceBean)source.getAttribute("LOVTYPE"); 
+		String lovType;
+		if(lovTypeBean!=null){
+			lovType =  lovTypeBean.getCharacters(); 
+			this.lovType = lovType;
+		}
 		logger.debug("OUT");
 	}
 
@@ -172,6 +190,8 @@ public class QueryDetail  implements ILovDetail  {
 		"<DESCRIPTION-COLUMN>"+this.getDescriptionColumnName()+"</DESCRIPTION-COLUMN>" +
 		"<VISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",")+"</VISIBLE-COLUMNS>" +
 		"<INVISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(this.getInvisibleColumnNames(), ",")+"</INVISIBLE-COLUMNS>" +
+		"<LOVTYPE>"+this.getLovType() + "</LOVTYPE>" +
+		"<TREE-LEVELS-COLUMNS>"+GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",")+"</TREE-LEVELS-COLUMNS>" +
 		"</QUERY>";
 		return XML;
 	}
@@ -872,6 +892,21 @@ public class QueryDetail  implements ILovDetail  {
 		visibleColumnNames.addAll(this.getVisibleColumnNames());
 		toReturn.setVisibleColumnNames(visibleColumnNames);
 		return toReturn;
+	}
+	public String getLovType() {
+		return lovType;
+	}
+
+	public void setLovType(String lovType) {
+		this.lovType = lovType;
+	}
+
+	public List getTreeLevelsColumns() {
+		return treeLevelsColumns;
+	}
+
+	public void setTreeLevelsColumns(List treeLevelsColumns) {
+		this.treeLevelsColumns = treeLevelsColumns;
 	}
 
 

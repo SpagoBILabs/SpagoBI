@@ -34,26 +34,116 @@
  */
 
 Ext.define('Sbi.behavioural.lov.TestLovPanel', {
-    extend: 'Sbi.widgets.grid.DynamicGridPanel'
+    extend: 'Ext.panel.Panel',
+    lovTestConfiguration: null
+
+    ,config: {
+    	layout: 'border',
+    	toolbarHeight: 30
+    }
 
 	, constructor: function(config) {
 		
-		var defautlConf = { pagingConfig:{}, storeConfig:{ pageSize: 7}	};
-		this.title =  "LOV result preview";
-		this.border = false;
-		this.region = 'south';
-		defautlConf = Ext.apply( defautlConf,config ||{} );
-		Ext.apply(this,defautlConf);
+		var thisPanel = this;
+		this.services = {};
+		this.services.saveLovAction = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'SAVE_LOV_ACTION'
+		});
 		
-		console.log('TestLovPanel costructor IN');
+		this.dockedItems = [{
+	        xtype: 'toolbar',
+	        dock: 'top',
+	        items: [{
+	            text: 'Save',
+	            handler: this.save,
+	            scope: this
+	        }]
+	    }]
 		
-		defautlConf.serviceUrl=   Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'LIST_TEST_LOV_ACTION'
-    	});
+		Ext.QuickTips.init();
+		this.treeLov = (config.lovConfig.lovType && config.lovConfig.lovType=='tree');
+		
+		this.lovTestPreview = Ext.create('Sbi.behavioural.lov.TestLovResultPanel',{region: 'south',height:315, treeLov: this.treeLov}); //by alias
+		//ConfigurationPanel(value, description)
+		this.lovTestConfiguration = Ext.create('Sbi.behavioural.lov.TestLovConfigurationGridPanel',{lovConfig:config.lovConfig,  parentStore : this.lovTestPreview.store , treeLov: this.treeLov, flex: 1}); //by alias
+		this.lovTestPreview.on('storeLoad',this.lovTestConfiguration.onParentStroreLoad,this.lovTestConfiguration);
+		var lovConfigurationPanelItems = [this.lovTestConfiguration];
+		
+		if(this.treeLov){
+			//Tree lov panel
+			this.lovTestConfigurationTree = Ext.create('Sbi.behavioural.lov.TestLovTreePanel',{lovConfig:config.lovConfig, flex: 2});
+			lovConfigurationPanelItems.push(this.lovTestConfigurationTree);
+		}
+
+		var lovConfigurationPanel = Ext.create('Ext.Panel', {
+		      	layout: 'hbox',
+		      	region: 'center',
+		     	width: "100%",
+		      	items: lovConfigurationPanelItems
+		    });
+		
+		
+		this.listeners = {
+      		"render" : function(){
+      			
+    			var thisH = this.getHeight();
+    			var previewH;
+    			if(this.lovTestPreview.getEl()){
+    				previewH = this.lovTestPreview.getHeight();
+    			}else{
+    				previewH = this.lovTestPreview.height;
+    			}
+    			this.lovTestConfiguration.setHeight(thisH-previewH-this.toolbarHeight);
+    			if(this.treeLov){
+    				this.lovTestConfigurationTree.setHeight(thisH-previewH-this.toolbarHeight);
+    			}
+    		},
+    		"resize" : function(){
+    			var thisH = this.getHeight();
+    			var previewH;
+    			if(this.lovTestPreview.getEl()){
+    				previewH = this.lovTestPreview.getHeight();
+    			}else{
+    				previewH = this.lovTestPreview.height;
+    			}
+    			this.lovTestConfiguration.setHeight(thisH-previewH-this.toolbarHeight);
+    			if(this.treeLov){
+    				this.lovTestConfigurationTree.setHeight(thisH-previewH-this.toolbarHeight);
+    			}
+    		}
+      	};
+		
+		Ext.apply(this,config||{});
+		this.items = [lovConfigurationPanel,this.lovTestPreview];
+    	this.callParent(arguments);
+
+    },
+    
+    save:  function(){
     	
-    	this.callParent([defautlConf]);
-    	this.store.on('load',function(){this.fireEvent('storeLoad')},this);
-    	console.log('TestLovPanel costructor OUT');
+    	var lovConfiguration;
+    	if(this.lovTestConfiguration!=null && this.lovTestConfiguration!=undefined && !this.treeLov ){
+    		lovConfiguration = this.lovTestConfiguration.getValues();
+    	}else{
+    		lovConfiguration = this.lovTestConfigurationTree.getValues();
+    	}
+    	
+    	var params ={};
+    	params.LOV_CONFIGURATION = Ext.JSON.encode(lovConfiguration);
+    	params.MESSAGEDET = this.modality;
+    	params.RETURN_FROM_TEST_MSG = 'SAVE';
+        Ext.Ajax.request({
+            url: this.services.saveLovAction,
+            params:  params,
+            success: function(response, options) {
+            	alert("ok");
+            },
+            failure: function(response) {
+            	alert("dho");
+            }
+            ,scope: this
+   		 });	
+    	
     }
     
 

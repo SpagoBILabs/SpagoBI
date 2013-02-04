@@ -111,6 +111,25 @@ public interface ILovDetail extends Serializable {
 	 */
 	public String getDescriptionColumnName() throws Exception;
 	
+	
+	/**
+	 * Gets the type of the lov. Now the available types are: simple, tree
+	 * 
+	 * @return name the type of the lov
+	 * 
+	 * @throws Exception the exception
+	 */
+	public String getLovType() throws Exception;
+	
+	/**
+	 * Gets the levels names of the tree lov
+	 * 
+	 * @return treeLevelColumns levels names of the tree lov
+	 * 
+	 * @throws Exception the exception
+	 */
+	public List getTreeLevelsColumns() throws Exception;
+	
 	/**
 	 * Sets the visible column names.
 	 * 
@@ -146,5 +165,24 @@ public interface ILovDetail extends Serializable {
 	 * @throws Exception the exception
 	 */
 	public void setDescriptionColumnName(String name) throws Exception;
+	
+	/**
+	 * Sets the type of the lov. Now the available types are: simple, tree
+	 * 
+	 * @param name the type of the lov
+	 * 
+	 * @throws Exception the exception
+	 */
+	public void setLovType(String name) throws Exception;
+	
+	/**
+	 * Sets the levels names of the tree lov
+	 * 
+	 * @param treeLevelColumns levels names of the tree lov
+	 * 
+	 * @throws Exception the exception
+	 */
+	public void setTreeLevelsColumns(List treeLevelColumns) throws Exception;
+	
 	
 }

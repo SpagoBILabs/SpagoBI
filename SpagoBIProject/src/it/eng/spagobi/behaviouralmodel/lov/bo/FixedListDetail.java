@@ -33,6 +33,8 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	private String valueColumnName = "VALUE";
 	private String descriptionColumnName = "DESCRIPTION";
 	private List invisibleColumnNames = null;
+	private List treeLevelsColumns = null;
+	private String lovType = "simple";
 	
 	/**
 	 * constructor.
@@ -123,6 +125,23 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 			}
 		}
 		setInvisibleColumnNames(invisColNames);
+		
+		// compatibility control (versions till 3.6 does not have TREE-LEVELS-COLUMN  definition)
+		SourceBean treeLevelsColumnsBean = (SourceBean)source.getAttribute("TREE-LEVELS-COLUMNS");
+		String treeLevelsColumnsString = null;
+		if (treeLevelsColumnsBean != null) { 
+			treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+		}
+		if( (treeLevelsColumnsString!=null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("") ) {
+			String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+			this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
+		}
+		SourceBean lovTypeBean = (SourceBean)source.getAttribute("LOVTYPE"); 
+		String lovType;
+		if(lovTypeBean!=null){
+			lovType =  lovTypeBean.getCharacters(); 
+			this.lovType = lovType;
+		}
 
 // 		// set visible and invisible columns
 // 		List visColList = new ArrayList();
@@ -158,6 +177,8 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 				  "<DESCRIPTION-COLUMN>"+descriptionColumnName+"</DESCRIPTION-COLUMN>" +
 				  "<VISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(visibleColumnNames, ",")+"</VISIBLE-COLUMNS>" +
 				  "<INVISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(invisibleColumnNames, ",")+"</INVISIBLE-COLUMNS>" +
+				  "<LOVTYPE>"+this.getLovType() + "</LOVTYPE>" +
+				  "<TREE-LEVELS-COLUMNS>"+GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",")+"</TREE-LEVELS-COLUMNS>" +
 				  "</FIXLISTLOV>";
 		return lovXML;
 	}
@@ -363,5 +384,20 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 		this.visibleColumnNames = visibleColumnNames;
 	}
 
-	
+	public String getLovType() {
+		return lovType;
+	}
+
+	public void setLovType(String lovType) {
+		this.lovType = lovType;
+	}
+
+	public List getTreeLevelsColumns() {
+		return treeLevelsColumns;
+	}
+
+	public void setTreeLevelsColumns(List treeLevelsColumns) {
+		this.treeLevelsColumns = treeLevelsColumns;
+	}
+
 }

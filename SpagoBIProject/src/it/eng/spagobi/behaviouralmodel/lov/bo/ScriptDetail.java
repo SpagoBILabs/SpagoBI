@@ -46,6 +46,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	private String valueColumnName = "";
 	private String descriptionColumnName = "";
 	private List invisibleColumnNames = null;
+	private List treeLevelsColumns = null;
+	private String lovType = "simple";
 
 	/**
 	 * constructor.
@@ -130,6 +132,22 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 			if(lang!=null)
 				setLanguageScript(lang);
 		}
+		// compatibility control (versions till 3.6 does not have TREE-LEVELS-COLUMN  definition)
+		SourceBean treeLevelsColumnsBean = (SourceBean)source.getAttribute("TREE-LEVELS-COLUMNS");
+		String treeLevelsColumnsString = null;
+		if (treeLevelsColumnsBean != null) { 
+			treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+		}
+		if( (treeLevelsColumnsString!=null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("") ) {
+			String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+			this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
+		}
+		SourceBean lovTypeBean = (SourceBean)source.getAttribute("LOVTYPE"); 
+		String lovType;
+		if(lovTypeBean!=null){
+			lovType =  lovTypeBean.getCharacters(); 
+			this.lovType = lovType;
+		}
 	}
 
 
@@ -147,6 +165,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		"<VISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",")+"</VISIBLE-COLUMNS>" +
 		"<INVISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(this.getInvisibleColumnNames(), ",")+"</INVISIBLE-COLUMNS>" +
 		"<LANGUAGE>"+this.getLanguageScript()+"</LANGUAGE>" +
+		"<LOVTYPE>"+this.getLovType() + "</LOVTYPE>" +
+		"<TREE-LEVELS-COLUMNS>"+GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",")+"</TREE-LEVELS-COLUMNS>" +
 		"</SCRIPTLOV>";
 		return XML;
 	}
@@ -509,6 +529,21 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	}
 
 
+	public String getLovType() {
+		return lovType;
+	}
+
+	public void setLovType(String lovType) {
+		this.lovType = lovType;
+	}
+
+	public List getTreeLevelsColumns() {
+		return treeLevelsColumns;
+	}
+
+	public void setTreeLevelsColumns(List treeLevelsColumns) {
+		this.treeLevelsColumns = treeLevelsColumns;
+	}
 
 
 }
