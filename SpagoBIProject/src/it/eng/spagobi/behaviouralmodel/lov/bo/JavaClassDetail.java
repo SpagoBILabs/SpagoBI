@@ -14,6 +14,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
@@ -35,6 +36,8 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 	private String valueColumnName = "";
 	private String descriptionColumnName = "";
 	private List invisibleColumnNames = null;
+	private List treeLevelsColumns = null;
+	private String lovType = "simple";
 	
 	
 	/**
@@ -102,6 +105,22 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 			}
 		}
 		setInvisibleColumnNames(invisColNames);
+		// compatibility control (versions till 3.6 does not have TREE-LEVELS-COLUMN  definition)
+		SourceBean treeLevelsColumnsBean = (SourceBean)source.getAttribute("TREE-LEVELS-COLUMNS");
+		String treeLevelsColumnsString = null;
+		if (treeLevelsColumnsBean != null) { 
+			treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+		}
+		if( (treeLevelsColumnsString!=null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("") ) {
+			String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+			this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
+		}
+		SourceBean lovTypeBean = (SourceBean)source.getAttribute("LOVTYPE"); 
+		String lovType;
+		if(lovTypeBean!=null){
+			lovType =  lovTypeBean.getCharacters(); 
+			this.lovType = lovType;
+		}
 	}
 	
 	/**
@@ -116,6 +135,8 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 				     "<DESCRIPTION-COLUMN>"+this.getDescriptionColumnName()+"</DESCRIPTION-COLUMN>" +
 				     "<VISIBLE-COLUMNS>"+SpagoBIUtilities.fromListToString(this.getVisibleColumnNames(), ",")+"</VISIBLE-COLUMNS>" +
 				     "<INVISIBLE-COLUMNS>"+SpagoBIUtilities.fromListToString(this.getInvisibleColumnNames(), ",")+"</INVISIBLE-COLUMNS>" +
+					 "<LOVTYPE>"+this.getLovType() + "</LOVTYPE>" +
+					 "<TREE-LEVELS-COLUMNS>"+GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",")+"</TREE-LEVELS-COLUMNS>" +
 				     "</JAVACLASSLOV>";
 		return XML;
 	}
@@ -314,7 +335,22 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 		this.visibleColumnNames = visibleColumnNames;
 	}
 
-	
+	public String getLovType() {
+		return lovType;
+	}
+
+	public void setLovType(String lovType) {
+		this.lovType = lovType;
+	}
+
+	public List getTreeLevelsColumns() {
+		return treeLevelsColumns;
+	}
+
+	public void setTreeLevelsColumns(List treeLevelsColumns) {
+		this.treeLevelsColumns = treeLevelsColumns;
+	}
+
 
 	
 }

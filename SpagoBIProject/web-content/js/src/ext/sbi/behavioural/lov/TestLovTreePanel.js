@@ -33,7 +33,8 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
         useArrows: true,
         rootVisible: false,
         multiSelect: true,
-        singleExpand: true
+        singleExpand: true,
+        serializedTree: {}
     }
 
     , constructor: function(config) {
@@ -126,7 +127,12 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
 
                     return true;
                 }
-            });},this);
+            });
+            
+            this.setValues(config.lovConfig);
+        
+        
+        },this);
     }
     
     //Add the node in the tree as leaf
@@ -140,12 +146,18 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
 		node.set('leaf', false);
 		node.set('expanded', true);	
 
+		var description = nodeConfig.name;
+		if(nodeConfig.description){
+			description = 	nodeConfig.description;
+		}
+		
 		node.appendChild({         
 			value: nodeConfig.name,
-			description: nodeConfig.name
+			description: description
 		});	
 
 		this.getView().refresh();   
+		
 	}
     
     //Update the node "node" setting as "name" the property position("target") (target position can be value or description)
@@ -242,7 +254,43 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
 			}
 		}
 	}
+
+    , getValues: function(){
+    	this.serializedTree ={};
+    	this.serializedTree.treeLevelsColumns=[];
+    	this.serializedTree.lovType = 'tree';
+    	var node = this.store.getRootNode();
+    	if(node.childNodes!=null && node.childNodes!=undefined && node.childNodes.length>0){
+    		this.serializeSubTree(node.childNodes[0]);
+    	}else{
+    		alert("Tree not defined");
+    		return null;
+    	}
+    	return this.serializedTree;
+    }
     
+    ,serializeSubTree: function(node){
+    	this.serializedTree.treeLevelsColumns.push(node.data.value);
+    	if(node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
+    		this.serializeSubTree(node.childNodes[0]);
+    	}else{
+    		this.serializedTree.descriptionColumnName = node.data.description;
+    		this.serializedTree.valueColumnName = node.data.value;
+    	}
+    }
     
+    , setValues: function(config){
+    	var treeColumnNames = config.treeColumnNames;
+    	var valueColumnName = config.valueColumnName;
+    	var descriptionColumnName = config.descriptionColumnName;
+    	
+    	if(treeColumnNames!=null && treeColumnNames.length>0){
+    		for(var i=0; i<treeColumnNames.length-1; i++){
+    			this.addTreeNode({name: treeColumnNames[i]});
+    		}
+    		this.addTreeNode({name: valueColumnName, description: descriptionColumnName });    	
+    	}
+    	
+    }
 
 });

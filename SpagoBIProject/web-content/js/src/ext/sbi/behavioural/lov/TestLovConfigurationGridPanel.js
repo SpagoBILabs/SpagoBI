@@ -39,7 +39,8 @@ Ext.define('Sbi.behavioural.lov.TestLovConfigurationGridPanel', {
     extend: 'Ext.grid.Panel'
 
     ,config: {
-      	stripeRows: true
+      	stripeRows: true,
+      	columns: []
     }
 
 	, constructor: function(config) {
@@ -63,7 +64,7 @@ Ext.define('Sbi.behavioural.lov.TestLovConfigurationGridPanel', {
 		
 		this.store  = Ext.create('Ext.data.Store', {
 		    fields: ['name', 'isValue', 'isDescription', 'isVisible'],
-		    data : [{'name':'a','isValue':true, 'isDescription':true, 'isVisible':true }]
+		    data : [{'name':'a','isValue':false, 'isDescription':true, 'isVisible':false }]
 	
 		});
 
@@ -102,7 +103,7 @@ Ext.define('Sbi.behavioural.lov.TestLovConfigurationGridPanel', {
 		this.store.load();
     	this.callParent(arguments);
     	console.log('TestLovConfigurationGridPanel costructor OUT');
-    
+    	
 
 
 	}
@@ -114,11 +115,9 @@ Ext.define('Sbi.behavioural.lov.TestLovConfigurationGridPanel', {
 			for(var i=0; i<fields.length; i++){
 				var aData = {};
 				aData.name = fields[i].name;
-				aData.isValue = fields[i].name==this.valueColumnName;
-				aData.isDescription = fields[i].name==this.descriptionColumnName;
-				aData.isVisible = true;//visibleColumnNames
 				data.push(aData);
 			}
+			this.setValues(data);
 			this.store  = Ext.create('Ext.data.Store', {
 				 fields: ['name', 'isValue', 'isDescription', 'isVisible'],
 			    data : data
@@ -127,11 +126,68 @@ Ext.define('Sbi.behavioural.lov.TestLovConfigurationGridPanel', {
 			this.columns = this.columnsDefinition.slice(0,this.columnsDefinition.length);
 			this.reconfigure(this.store, this.columns);
 		}
-
-		
 	}
 	
-	
+	, getValues: function(){
+		var value;
+		var descriptions;
+		var visible =[]; 
+		var data = this.store.data;
+		if(data!=null && data!=undefined && data.items!=null && data.items!=undefined ){
+			for(var i=0; i<data.items.length; i++){
+				var aItem = data.items[i];
+				if(aItem.data.isValue){
+					value = aItem.data.name;
+				}
+				if(aItem.data.isDescription){
+					description = aItem.data.name;
+				}
+				if(aItem.data.isVisible){
+					visible.push(aItem.data.name);
+				}
+			}
+		}
+		
+		var LOVConfiguration = {
+				valueColumnName:value,
+				descriptionColumnName:description,
+				visibleColumnNames:visible,
+				lovType: 'simple',
+				column: this.column
+		}
+		
+		if(this.treeLov){
+			LOVConfiguration.lovType = 'tree';
+		}
+		
+		return LOVConfiguration;
+		
+	}
+
+	, setValues: function(data){
+		this.column = [];
+		if(data!=null && data!=undefined && this.lovConfig!=null && this.lovConfig!=undefined){
+			for(var i=0; i<data.length; i++){
+				var aItem = data[i];
+				if(aItem.name == this.lovConfig.valueColumnName){
+					aItem.isValue = true;
+				}else{
+					aItem.isValue = false;
+				}
+				if(aItem.name == this.lovConfig.descriptionColumnName ){
+					aItem.isDescription = true;
+				}else{
+					aItem.isDescription = false;
+				}
+				if(this.lovConfig.visibleColumnNames.indexOf(aItem.name)>=0){
+					aItem.isVisible = true;
+				}else{
+					aItem.isVisible = false;
+				}
+				this.column.push(aItem.name);
+			}
+		}
+	}
 	
 	
 });
