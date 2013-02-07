@@ -327,9 +327,11 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
          * Array of values to initalize the thumbs with
          */
         if (this.values == undefined || Ext.isEmpty(this.values)) {
+        	Sbi.warn('[Slider.initComponent] : values not set');
         	this.values = [0];
         }
-
+        Sbi.debug('[Slider.initComponent] : number of values is equal to [' + this.values.length + ']');
+        
         var values = this.values;
 
         for (var i=0; i < values.length; i++) {
@@ -420,12 +422,13 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
      * Creates a new DragTracker which is used to control what happens when the user drags the thumb around.
      */
     initEvents : function(){
+    	this.el.on('mousedown', this.onMouseDown, this);
+    	
         this.mon(this.el, {
             scope    : this,
-            mousedown: this.onMouseDown,
+            //mousedown: this.onMouseDown,
             keydown  : this.onKeyDown
         });
-
         this.focusEl.swallowEvent("click", true);
     },
 
@@ -439,7 +442,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         if(this.disabled){
             return;
         }
-
+         
         //see if the click was on any of the thumbs
         var thumbClicked = false;
         for (var i=0; i < this.thumbs.length; i++) {
@@ -449,7 +452,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         if (this.clickToChange && !thumbClicked) {
             var local = this.innerEl.translatePoints(e.getXY());
             this.onClickChange(local);
-        }
+        } 
         this.focus();
     },
 
@@ -462,11 +465,13 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
     onClickChange : function(local) {
         if (local.top > this.clickRange[0] && local.top < this.clickRange[1]) {
             //find the nearest thumb to the click event
-            var thumb = this.getNearest(local, 'left'),
-                index = thumb.index;
-
+        	Sbi.debug("[Slider.onClickChange] : find the nearest thumb to the click event" );
+            var thumb = this.getNearest(local, 'left');
+            var index = thumb.index;
+            Sbi.debug("[Slider.onClickChange] : found the nearest thumb at the index [" + index + "]" );
+           
             this.setValue(index, Ext.util.Format.round(this.reverseValue(local.left), this.decimalPrecision), undefined, true);
-        }
+        } 
     },
 
     /**
@@ -477,23 +482,30 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
      * @return {Object} The closest thumb object and its distance from the click event
      */
     getNearest: function(local, prop) {
+    	
+    	Sbi.debug('[getNearest]');
+    	 
         var localValue = prop == 'top' ? this.innerEl.getHeight() - local[prop] : local[prop],
             clickValue = this.reverseValue(localValue),
             nearestDistance = (this.maxValue - this.minValue) + 5, //add a small fudge for the end of the slider 
             index = 0,
             nearest = null;
 
+        Sbi.debug('[getNearest] : thumb length ' + this.thumbs.length);
+        
         for (var i=0; i < this.thumbs.length; i++) {
             var thumb = this.thumbs[i],
                 value = thumb.value,
                 dist  = Math.abs(value - clickValue);
-
+            
+            Sbi.debug('[getNearest] : ' + value + '] - [' + clickValue + ' = ' +  dist);
             if (Math.abs(dist <= nearestDistance)) {
                 nearest = thumb;
                 index = i;
                 nearestDistance = dist;
             }
         }
+        Sbi.debug('[getNearest] : nearest index : ' + index);
         return nearest;
     },
 
@@ -649,6 +661,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
      * @param {Boolean} animate Turn on or off animation, defaults to true
      */
     setValue : function(index, v, animate, changeComplete) {
+    	Sbi.debug("[Slider.setValue] : value [" + v + "] at index [" + index + "]" );
         var thumb = this.thumbs[index],
             el    = thumb.el;
 
@@ -697,7 +710,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         if(!animate || this.animate === false){
             thumb.setLeft(v);
         }else{
-            thumb.shift({left: v, stopFx: true, duration:.35});
+            thumb.shift({x: this.innerEl.getX() + v, stopFx: true, duration:.35});
         }
     },
 
@@ -792,7 +805,8 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
      * @return {Number} The current value of the slider
      */
     getValue : function(index) {
-        return this.thumbs[index].value;
+    	var i = index || 0;
+        return this.thumbs[i].value;
     },
 
     /**
@@ -803,6 +817,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         var values = [];
 
         for (var i=0; i < this.thumbs.length; i++) {
+        	Sbi.trace("pushValue " + this.thumbs[i].value);
             values.push(this.thumbs[i].value);
         }
 
@@ -924,12 +939,15 @@ Ext.slider.Vertical = {
     },
 
     onClickChange : function(local) {
+    	Sbi.error("onClickChange");
         if (local.left > this.clickRange[0] && local.left < this.clickRange[1]) {
             var thumb = this.getNearest(local, 'top'),
                 index = thumb.index,
                 value = this.minValue + this.reverseValue(this.innerEl.getHeight() - local.top);
 
             this.setValue(index, Ext.util.Format.round(value, this.decimalPrecision), undefined, true);
+        } else {
+        	Sbi.error("onClickChange: impossible");
         }
     }
 };
