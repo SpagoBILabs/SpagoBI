@@ -32,28 +32,41 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
     // private override
     actionMode: 'wrap',
     
+    // private : properties copied by constructor in the config object passed to the constructor of the inner Slider
+    // object. @see method initSlider()
+    sliderCfgProperties: [
+        'vertical'
+        , 'minValue'
+        , 'maxValue'
+        , 'decimalPrecision'
+        , 'keyIncrement'
+        , 'increment'
+        , 'clickToChange'
+        , 'animate'
+    ], 
+    
     /**
      * Initialize the component.
      * @private
      */
     initComponent : function() {
-    	
-    	Sbi.debug('[SliderField.initComponent] : values [' + this.values + ']');
-    	Sbi.debug('[SliderField.initComponent] : value [' + this.value + ']');
-          
-    	
         var cfg = Ext.copyTo({
             id: this.id + '-slider'
-        }, this.initialConfig, ['vertical', 'values', 'value', 'minValue', 'maxValue', 'decimalPrecision', 'keyIncrement', 'increment', 'clickToChange', 'animate']);
+        }, this.initialConfig, this.sliderCfgProperties);
         
         // only can use it if it exists.
         if (this.useTips) {
             var plug = this.tipText ? {getText: this.tipText} : {};
             //cfg.plugins = [new Ext.slider.Tip(plug)];
         }
-        this.slider = new Ext.slider.MultiSlider(cfg);
+        this.slider = this.initSlider(cfg);
         Ext.form.SliderField.superclass.initComponent.call(this);
     },    
+    
+    initSlider : function(cfg) {
+    	this.slider = new Ext.Slider(cfg);
+    	return this.slider;
+    }, 
     
     /**
      * Set up the hidden field
@@ -168,27 +181,10 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
      * @return {Ext.form.SliderField} this
      */
     setValue : function(v, animate, /* private */ silent){
-    	Sbi.debug("[SliderField.setValue] :  set value to [" + v + "]");
-        if(v === "" || v === undefined) { // it's a reset...
-        	v = [];
-        	for(var i = 0; i < this.slider.thumbs.length; i++) {
-        		v.push(this.slider.minValue);
-        	}
-      		
-        	Sbi.debug("[SliderField.setValue] :  this is a reset [" + this.slider.minValue + "]");
-        }
-        
-        if(!Ext.isArray(v)) {
-        	v = [v];
-        }
-        
-    	// silent is used if the setValue method is invoked by the slider
+        // silent is used if the setValue method is invoked by the slider
         // which means we don't need to set the value on the slider.
-    	if(!silent){
-    		for(var i = 0; i < v.length; i++) {
-    			this.slider.setValue(i, v[i], animate);
-    		}
-    		
+        if(!silent){
+            this.slider.setValue(v, animate);
         }
         return Ext.form.SliderField.superclass.setValue.call(this, this.slider.getValue());
     },
@@ -197,8 +193,8 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
      * Gets the current value for this field.
      * @return {Number} The current value.
      */
-    getValues : function(){
-        return this.slider.getValues();    
+    getValue : function(){
+        return this.slider.getValue();    
     }
 });
 
