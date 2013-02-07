@@ -61,8 +61,19 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     	return this.slider;
     }, 
     
+    afterRender : function(){
+    	Sbi.widgets.SliderField.superclass.afterRender.call(this);
+        if(this.multiSelect === true) {
+        	// the add an extra tab
+        	alert(this.slider.maxValue);
+        	this.slider.addThumb();
+        	this.setValue(this.getValues());
+        	this.originalValue = [this.originalValue];
+        	this.originalValue.push(this.slider.maxValue);
+        }
+    },
+    
     reset : function (){
-    	
         this.setValue(this.originalValue);
         this.clearInvalid();
     },
@@ -75,7 +86,6 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
      */
     setValue : function(v, animate, /* private */ silent){
     	Sbi.debug("[SliderField.setValue] :  set value to [" + v + "]");
-    	Sbi.debug("[SliderField.setValue] :  this.reset : " + this.reset);
     	
         if(v === "" || v === undefined) { // it's a reset...
         	v = [];

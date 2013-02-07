@@ -57,7 +57,7 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
         // only can use it if it exists.
         if (this.useTips) {
             var plug = this.tipText ? {getText: this.tipText} : {};
-            //cfg.plugins = [new Ext.slider.Tip(plug)];
+            cfg.plugins = [new Ext.slider.Tip(plug)];
         }
         this.slider = this.initSlider(cfg);
         Ext.form.SliderField.superclass.initComponent.call(this);
