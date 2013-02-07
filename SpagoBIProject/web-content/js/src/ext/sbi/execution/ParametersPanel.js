@@ -994,13 +994,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 			
 		} else if(p.selectionType === 'SLIDER') { 
-			var v = p.multivalue? [30, 50]: [50];
+			//var v = p.multivalue? [30, 50]: [50];
 			field = new Sbi.widgets.SliderField(Ext.apply(baseConfig, {
-				multiSelect: p.multivalu,
+				multiSelect: p.multivalue,
 	            tipText: function(thumb){
 	                return String(thumb.value) + '%';
 	            },
-	            values: v,
 	            constrainThumbs: false
 			}));
 		} else { 
