@@ -995,7 +995,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 		} else if(p.selectionType === 'SLIDER') { 
 			var v = p.multivalue? [30, 50]: [50];
-			field = new Ext.form.SliderField(Ext.apply(baseConfig, {
+			field = new Sbi.widgets.SliderField(Ext.apply(baseConfig, {
+				multiSelect: p.multivalu,
 	            tipText: function(thumb){
 	                return String(thumb.value) + '%';
 	            },
