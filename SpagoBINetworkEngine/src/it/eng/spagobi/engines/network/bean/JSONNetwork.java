@@ -51,6 +51,7 @@ public class JSONNetwork implements INetwork{
 	private Map<String, String> targetNodeValueProperties;//property-->value
 	private Map<String, String> sourceNodeValueProperties;//property-->value
 	private Map<String, String> edgeValueProperties;//property-->value
+	private Map<String, String> propertyType;//property-->type
 	
 	private Map<String,Set<JSONNetworkMappingMetadata>> dataSchema;//structure of the data for the nodes and edges. For example if the node has the property id,label,color the nodeMetadata are {label:string,color:string}. So all the property without the id
 	private CrossNavigationLink networkCrossNavigation;//Cross navigation link structure
@@ -69,6 +70,7 @@ public class JSONNetwork implements INetwork{
 		targetNodeValueProperties = new HashMap<String, String>();
 		sourceNodeValueProperties = new HashMap<String, String>();
 		edgeValueProperties = new HashMap<String, String>();
+		propertyType = new HashMap<String, String>();
 		dataSchema = new HashMap<String,Set<JSONNetworkMappingMetadata>>();
 		
 	}
@@ -100,12 +102,16 @@ public class JSONNetwork implements INetwork{
 	 */
 	private void parseDataSetMapping(JSONArray dataSetMapping) throws JSONException{
 		JSONObject mapping;
-		String element, column, property,value;
+		String element, column, property,value, type;
 		for (int i = 0; i < dataSetMapping.length(); i++) {
 			mapping = dataSetMapping.getJSONObject(i);
 			element = mapping.getString(NetworkTemplate.DATA_SET_MAPPING_ELEMENT);
 			property = mapping.getString(NetworkTemplate.DATA_SET_MAPPING_PROPERTY);
 			column = mapping.optString(NetworkTemplate.DATA_SET_MAPPING_COLUMN);
+			type = mapping.optString(NetworkTemplate.DATA_SET_MAPPING_TYPE);
+			if(type==null){
+				type="string";
+			}
 			if(column==null || column.equals("")){//value of the property set directly in the template
 				value = mapping.getString(NetworkTemplate.DATA_SET_MAPPING_VALUE);
 				if(element.equalsIgnoreCase(NetworkTemplate.DATA_SET_MAPPING_SOURCE)){
@@ -122,9 +128,10 @@ public class JSONNetwork implements INetwork{
 					targetNodeColumnProperties.put(column,property);
 				}else if(element.equalsIgnoreCase(NetworkTemplate.DATA_SET_MAPPING_EDGE)){
 					edgeColumnProperties.put(column,property);
+					
 				}	
 			}
-			
+			propertyType.put(property,type);
 
 		}
 		//remove the property id
@@ -136,18 +143,6 @@ public class JSONNetwork implements INetwork{
 
 
 	
-//	public String getElementFromMapping(String column){
-//		if(targetNodeProperties.containsKey(column)){
-//			return "targhet";
-//		}
-//		if(sourceNodeProperties.containsKey(column)){
-//			return "source";
-//		}
-//		if(edgeProperties.containsKey(column)){
-//			return "edge";
-//		}
-//		return "no";
-//	}
 	
 	/**
 	 * Builds the schema for the nodes. 
@@ -186,11 +181,13 @@ public class JSONNetwork implements INetwork{
 	
 	private Set<JSONNetworkMappingMetadata> buildMapMetadata(Collection<String> mapValues){
 		String property;
+		String type;
 		Set<JSONNetworkMappingMetadata> metadata = new HashSet<JSONNetworkMappingMetadata>();
 		Iterator<String> propertiesIterator = mapValues.iterator();
 		while(propertiesIterator.hasNext()){
 			property = propertiesIterator.next();
-			metadata.add(new JSONNetworkMappingMetadata(property));
+			type = propertyType.get(property);
+			metadata.add(new JSONNetworkMappingMetadata(property,type));
 		}
 		return metadata;
 	}

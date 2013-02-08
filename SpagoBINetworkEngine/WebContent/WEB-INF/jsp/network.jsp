@@ -82,6 +82,12 @@ author: Alberto Ghedin
     } else {
     	executionId = "null";
     }   
+    
+    String networkInfo = "null";
+    if(net.getNetworkInfo()!=null && !net.getNetworkInfo().equals("{}")){
+    	networkInfo = (StringEscapeUtils.unescapeJava(net.getNetworkInfo()));
+    }
+   
 %>
 
 
@@ -145,7 +151,7 @@ author: Alberto Ghedin
                 var networkLink = <%= net.getNetworkCrossNavigation()	%>;
 				var networkType = '<%= net.getNetworkType() %>';	
 				var networkOptions = <%= StringEscapeUtils.unescapeJava(net.getNetworkOptions()) %>;	
-				var networkInfo= <%= StringEscapeUtils.unescapeJava(net.getNetworkInfo()) %>;	
+				var networkInfo= <%= networkInfo %>;	
 				var config = {};
 				config.networkEscaped = networkEscaped;
 				config.networkLink = networkLink;
