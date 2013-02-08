@@ -93,14 +93,25 @@ public class DispatchContext implements Serializable {
 	private int totalNumberOfDocumentsToDispatch;
 	private int indexNumberOfDocumentToDispatch;
 	
-	//property set to zip document in case of e-mail
-	private boolean zipDocument = false;
+
+	//property set to zip document in case of file
+	private boolean zipFileDocument = false;	
+	// property to set name of file
+	private String fileName;
+	private String zipFileName;
+
 	
-	public boolean isZipDocument() {
-		return zipDocument;
+	//property set to zip document in case of e-mail
+	private boolean zipMailDocument = false;
+	// property to set name of zip file and of containedFile
+	private String zipMailName;
+	private String containedFileName;
+	
+	public boolean isZipMailDocument() {
+		return zipMailDocument;
 	}
-	public void setZipDocument(boolean zipDocument) {
-		this.zipDocument = zipDocument;
+	public void setZipMailDocument(boolean zipMailDocument) {
+		this.zipMailDocument = zipMailDocument;
 	}
 	public boolean isDistributionListDispatchChannelEnabled() {
 		return distributionListDispatchChannelEnabled;
@@ -651,6 +662,37 @@ public class DispatchContext implements Serializable {
 			int indexNumberOfDocumentToDispatch) {
 		this.indexNumberOfDocumentToDispatch = indexNumberOfDocumentToDispatch;
 	}
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String zippedFileName) {
+		this.fileName = zippedFileName;
+	}
+	public String getZipFileName() {
+		return zipFileName;
+	}
+	public void setZipFileName(String zipFileName) {
+		this.zipFileName = zipFileName;
+	}
+	public String getContainedFileName() {
+		return containedFileName;
+	}
+	public void setContainedFileName(String containedFileName) {
+		this.containedFileName = containedFileName;
+	}
+	public boolean isZipFileDocument() {
+		return zipFileDocument;
+	}
+	public void setZipFileDocument(boolean zipFileDocument) {
+		this.zipFileDocument = zipFileDocument;
+	}
+	public String getZipMailName() {
+		return zipMailName;
+	}
+	public void setZipMailName(String zipMailName) {
+		this.zipMailName = zipMailName;
+	}
+	
 	
 	
 }

@@ -1093,7 +1093,44 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			<input type="text" id="destinationfolder" value="<%=StringEscapeUtils.escapeHtml(sInfo.getDestinationFolder())%>"
 		           name="destinationfolder_<%=biobj.getId()%>__<%=index%>" size="35"/>
 	   	</div>
+	
+        <input  type="checkbox" name="zipFileDocument_<%=biobj.getId()%>__<%=index%>" value="true"
+                 <%= sInfo.isZipFileDocument() ? "checked='checked'" : "" %> />
+           <span class='portlet-form-field-label'>
+                     <spagobi:message key="scheduler.zipFileDocument" bundle="component_scheduler_messages" />
+           </span>
+
+
+    <div id="fileName_<%=biobj.getId()%>__<%=index%>" style="margin-left:50px;margin-top:10px;">
+
+	      <div class='div_detail_label_scheduler'>
+              <span class='portlet-form-field-label'>
+                   <spagobi:message key="scheduler.zipFileName" bundle="component_scheduler_messages"/>
+              </span>
+        </div>
+        <div class='div_detail_form'>
+                    <input type="text" name="zipFileName_<%=biobj.getId()%>__<%=index%>" 
+                           value="<%=StringEscapeUtils.escapeHtml(sInfo.getZipFileName() != null ? sInfo.getZipFileName() : "")%>" size="60" />
+        </div>
+	
 	</div>
+	     
+
+        <div class='div_detail_label_scheduler'>
+              <span class='portlet-form-field-label'>
+                   <spagobi:message key="scheduler.fileName" bundle="component_scheduler_messages"/>
+              </span>
+        </div>
+        
+         <div class='div_detail_form'>
+                     <input type="text" name="fileName_<%=biobj.getId()%>__<%=index%>" 
+                           value="<%=StringEscapeUtils.escapeHtml(sInfo.getFileName() != null ? sInfo.getFileName() : "")%>" size="60" />
+         </div>
+    	
+	
+	
+	</div>
+	
 	<script>  
 	toggle('file_<%=biobj.getId()%>__<%=index%>', 'saveasfile_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isFileSystemDispatchChannelEnabled()%> );
 	</script> 
@@ -1280,6 +1317,26 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					<spagobi:message key="scheduler.sendmail" bundle="component_scheduler_messages" />
 				</span>
 				<div id="mail_<%=biobj.getId()%>__<%=index%>" style="margin-left:50px;margin-top:10px;"> 
+				
+				
+				  <input  type="checkbox" name="zipMailDocument_<%=biobj.getId()%>__<%=index%>" value="true"
+                        <%= sInfo.isZipMailDocument() ? "checked='checked'" : "" %> />
+                  <span class='portlet-form-field-label'>
+                     <spagobi:message key="scheduler.zipMailDocument" bundle="component_scheduler_messages" />
+                  </span>
+    	          <div id="zipMailName_<%=biobj.getId()%>__<%=index%>" style="margin-left:50px;margin-top:10px;">
+                        <div class='div_detail_label_scheduler'>
+                            <span class='portlet-form-field-label'>
+                                <spagobi:message key="scheduler.zipMailName" bundle="component_scheduler_messages" />
+                            </span>
+                        </div>
+                        <div class='div_detail_form'>
+                                <input  type="text" name="zipMailName_<%=biobj.getId()%>__<%=index%>" 
+                                       value="<%=StringEscapeUtils.escapeHtml(sInfo.getZipMailName() != null ? sInfo.getZipMailName() : "")%>" size="35" />
+                        </div>
+                  </div>
+				
+				
 					<input  type="checkbox" name="useFixedRecipients_<%=biobj.getId()%>__<%=index%>" value="true"
 						<%= sInfo.isUseFixedRecipients() ? "checked='checked'" : "" %> />
 					<span class='portlet-form-field-label'>
@@ -1445,6 +1502,18 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	  		        <input type="text" name="mailsubj_<%=biobj.getId()%>__<%=index%>" 
 	  		               value="<%=StringEscapeUtils.escapeHtml(sInfo.getMailSubj())%>" size="60" />
 	  	    </div>
+	  	    
+	  	    <div class='div_detail_label_scheduler'>
+              <span class='portlet-form-field-label'>
+                   <spagobi:message key="scheduler.containedFileName" bundle="component_scheduler_messages"/>
+              </span>
+            </div>
+            <div class='div_detail_form'>
+                    <input type="text" name="containedFileName_<%=biobj.getId()%>__<%=index%>" 
+                           value="<%=StringEscapeUtils.escapeHtml(sInfo.getContainedFileName() != null ? sInfo.getContainedFileName() : "")%>" size="60" />
+            </div>
+
+            	  	    
 	  	    <div class='div_detail_label_scheduler'>
   		      <span class='portlet-form-field-label'>
   			       <spagobi:message key="Mail text" bundle="component_scheduler_messages"/>
@@ -1453,11 +1522,15 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	  	    <div class='div_detail_form' style="height:125px;">
 	  	    		<textarea rows="8" cols="60" name="mailtxt_<%=biobj.getId()%>__<%=index%>" style="font-size:9pt"><%=sInfo.getMailTxt()%></textarea>
 	  	    </div>
-	  	    <input  type="checkbox" name="zipDocument_<%=biobj.getId()%>__<%=index%>" value="true"
-						<%= sInfo.isZipDocument() ? "checked='checked'" : "" %> />
-			<span class='portlet-form-field-label'>
-				<spagobi:message key="scheduler.zipDocument" bundle="component_scheduler_messages" />
-  	     </div>
+
+
+
+
+
+  	       </div>
+  	       
+            
+            
 
 	<script>
 	toggle('mail_<%=biobj.getId()%>__<%=index%>', 'sendmail_<%=biobj.getId()%>__<%=index%>', <%= sInfo.isMailDispatchChannelEnabled() %>);
