@@ -1,0 +1,21 @@
+/*
+Styles for the component Ext.ux.RadioColumn
+*/ 
+
+.radio-column-checked{
+	background-position: 0 -13px; 
+	
+}
+		
+.radio-column-unchecked{
+	background-position: 0 0px; 
+}
+
+.check-column-checked{
+	background-position: 0 -13px; 
+	margin-left: expression((this.width-13)/2);
+}
+		
+.check-column-unchecked{
+	background-position: 0 0px; 
+}
