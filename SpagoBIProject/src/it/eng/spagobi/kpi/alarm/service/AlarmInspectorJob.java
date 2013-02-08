@@ -6,6 +6,7 @@
 package it.eng.spagobi.kpi.alarm.service;
 
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.kpi.alarm.bo.AlertSendingItem;
 import it.eng.spagobi.kpi.alarm.dao.SbiAlarmContactDAOHibImpl;
 import it.eng.spagobi.kpi.alarm.dao.SbiAlarmEventDAOHibImpl;
@@ -19,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,6 +61,9 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 	private Map<SbiAlarmContact, List<AlertSendingItem>> alertSendingSessionMap = new HashMap<SbiAlarmContact, List<AlertSendingItem>>();
 	private List<AlertSendingItem> alertSendingSessionList = null;
 	private AlertSendingItem alertSendingItem = null;
+    final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
+    final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
+
 
 	/*
 	 * (non-Javadoc)
@@ -285,6 +290,12 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 
 			String smtpport = SingletonConfig.getInstance().getConfigValue(
 					"MAIL.PROFILES.kpi_alarm.smtpport");
+			
+		    String smtpssl = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.kpi_alarm.useSSL"); 
+		    logger.debug(smtphost+" "+smtpport+" use SSL: "+smtpssl);
+		    //Custom Trusted Store Certificate Options
+		    String trustedStorePath = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.file"); 
+		    String trustedStorePassword = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.password"); 
 			int smptPort = 25;
 
 			if ((smtphost == null) || smtphost.trim().equals(""))
@@ -327,7 +338,7 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 			// Set the host smtp address
 			Properties props = new Properties();
 			props.put("mail.smtp.host", smtphost);
-			props.put("mail.smtp.port", smptPort);
+			props.put("mail.smtp.port", Integer.toString(smptPort));
 			props.put("mail.smtp.auth", "true");
 
 
@@ -338,13 +349,39 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 			if (user.equals("")) {
 				auth = new SMTPAuthenticator(user, pass);
 				props.put("mail.smtp.auth", "false");
-				session = Session.getDefaultInstance(props, auth);
-				logger.error("Session.getDefaultInstance(props, auth)");
+				//session = Session.getDefaultInstance(props, auth);
+				session = Session.getInstance(props);
+				logger.error("Session.getDefaultInstance(props)");
 			}else{
 				auth = new SMTPAuthenticator(user, pass);
 				props.put("mail.smtp.auth", "true");
-				session = Session.getDefaultInstance(props, auth);
-				logger.error("Session.getDefaultInstance(props, auth)");
+		    	if (smtpssl.equals("true")){
+		            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());	            
+				    //props.put("mail.smtp.debug", "true");          
+				    props.put("mail.smtps.auth", "true");
+			        props.put("mail.smtps.socketFactory.port", Integer.toString(smptPort));
+		            if ((!StringUtilities.isEmpty(trustedStorePath)) ) {            	
+						/* Dynamic configuration of trustedstore for CA
+						 * Using Custom SSLSocketFactory to inject certificates directly from specified files
+						 */
+		            	//System.setProperty("java.security.debug","certpath");
+		            	//System.setProperty("javax.net.debug","ssl ");
+				        props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);
+
+		            } else {
+		            	//System.setProperty("java.security.debug","certpath");
+		            	//System.setProperty("javax.net.debug","ssl ");
+				        props.put("mail.smtps.socketFactory.class", DEFAULT_SSL_FACTORY);
+		            }
+			        props.put("mail.smtp.socketFactory.fallback", "false"); 
+		    	}
+
+				//session = Session.getDefaultInstance(props, auth);
+				session = Session.getInstance(props, auth);
+		 	    //session.setDebug(true);
+		 	    //session.setDebugOut(null);
+
+				logger.error("Session.getInstance(props, auth)");
 			}
 			// create a message
 			MimeMessage msg = new MimeMessage(session);
@@ -386,7 +423,17 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 			msg.setContent(mailTxt, "text/html");
 
 			// send message
-			Transport.send(msg);
+	    	if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(user)) &&  (!StringUtilities.isEmpty(pass))){
+	    		//USE SSL Transport comunication with SMTPS
+		    	Transport transport = session.getTransport("smtps");
+		    	transport.connect(smtphost,smptPort,user,pass);
+		    	transport.sendMessage(msg, msg.getAllRecipients());
+		    	transport.close(); 
+	    	}
+	    	else {
+	    		//Use normal SMTP
+		    	Transport.send(msg);
+	    	}
 		} catch (Exception e) {
 			logger.error("Error while sending schedule result mail", e);
 		} catch (Throwable t) {
