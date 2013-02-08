@@ -24,9 +24,16 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.security.KeyStore;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +54,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -70,6 +79,9 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	final String ERROR = "20";
 	final String TONOTFOUND = "90";
 	String retCode = "";
+    final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
+    final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
+    
 
 	try {
 
@@ -188,7 +200,14 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 
 	    String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtphost");
 	    String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtpport");
-	    logger.debug(smtphost+" "+smtpport);
+	    String smtpssl = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.useSSL"); 
+	    logger.debug(smtphost+" "+smtpport+" use SSL: "+smtpssl);
+	    
+	    //Custom Trusted Store Certificate Options
+	    String trustedStorePath = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.file"); 
+	    String trustedStorePassword = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.password"); 
+
+	    
 	    
 	    int smptPort=25;
 	    
@@ -207,20 +226,45 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	    // Set the host smtp address
 	    Properties props = new Properties();
 	    props.put("mail.smtp.host", smtphost);
-	    props.put("mail.smtp.port", smptPort);
-	    
+	    props.put("mail.smtp.port", Integer.toString(smptPort));
+
 	    Session session = null;
 	    if(StringUtilities.isEmpty(login) || StringUtilities.isEmpty(pass)){
 	    	 props.put("mail.smtp.auth", "false");
-	    	 session = Session.getDefaultInstance(props);
+	    	 session = Session.getInstance(props);
 			 logger.debug("Connecting to mail server without authentication");
 	    } else {
 	    	props.put("mail.smtp.auth", "true");
 	    	Authenticator auth = new SMTPAuthenticator(login, pass);
-	 	    session = Session.getDefaultInstance(props, auth);
+	 	    //SSL Connection
+	    	if (smtpssl.equals("true")){
+	            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());	            
+			    //props.put("mail.smtp.debug", "true");          
+			    props.put("mail.smtps.auth", "true");
+		        props.put("mail.smtps.socketFactory.port", Integer.toString(smptPort));
+	            if ((!StringUtilities.isEmpty(trustedStorePath)) ) {            	
+					/* Dynamic configuration of trustedstore for CA
+					 * Using Custom SSLSocketFactory to inject certificates directly from specified files
+					 */
+	            	//System.setProperty("java.security.debug","certpath");
+	            	//System.setProperty("javax.net.debug","ssl ");
+			        props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);
+
+	            } else {
+	            	//System.setProperty("java.security.debug","certpath");
+	            	//System.setProperty("javax.net.debug","ssl ");
+			        props.put("mail.smtps.socketFactory.class", DEFAULT_SSL_FACTORY);
+	            }
+		        props.put("mail.smtp.socketFactory.fallback", "false"); 
+	    	}
+ 
+	 	    session = Session.getInstance(props,auth);
+	 	    //session.setDebug(true);
+	 	    //session.setDebugOut(null);
 			logger.debug("Connecting to mail server with authentication");
 	    }
 	   
+
 	  
 	    logger.debug("properties: mail.smtp.host:"+smtphost+" mail.smtp.port:"+smtpport);
 	   
@@ -269,7 +313,17 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	    // send message
 	    EMFErrorHandler errorHandler = getErrorHandler();
 	    if(errorHandler.isOKBySeverity(EMFErrorSeverity.ERROR)) {
-	    	Transport.send(msg);
+	    	if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(login)) &&  (!StringUtilities.isEmpty(pass))){
+	    		//USE SSL Transport comunication with SMTPS
+		    	Transport transport = session.getTransport("smtps");
+		    	transport.connect(smtphost,smptPort,login,pass);
+		    	transport.sendMessage(msg, msg.getAllRecipients());
+		    	transport.close(); 
+	    	}
+	    	else {
+	    		//Use normal SMTP
+		    	Transport.send(msg);
+	    	}
 	    	retCode = OK;
 	    }else{
 	    	logger.error("Error while executing and sending object "+ errorHandler.getStackTrace());

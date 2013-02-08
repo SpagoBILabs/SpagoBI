@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.Security;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,6 +72,8 @@ public class DistributionListDocumentDispatchChannel implements IDocumentDispatc
 	
 	// logger component
 	private static Logger logger = Logger.getLogger(DistributionListDocumentDispatchChannel.class); 
+    final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
+    final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
 	
 	public DistributionListDocumentDispatchChannel(DispatchContext dispatchContext) {
 		this.dispatchContext = dispatchContext;
@@ -104,12 +107,29 @@ public class DistributionListDocumentDispatchChannel implements IDocumentDispatc
 			nameSuffix = dispatchContext.getNameSuffix();
 			jobExecutionContext = dispatchContext.getJobExecutionContext();
 			
+		    //Custom Trusted Store Certificate Options
+		    String trustedStorePath = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.file"); 
+		    String trustedStorePassword = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.password"); 		 
+
 			String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtphost");
+		    String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtpport");
+		    String smtpssl = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.useSSL"); 
+		    logger.debug(smtphost+" "+smtpport+" use SSL: "+smtpssl);
+
+
 			if( (smtphost==null) || smtphost.trim().equals(""))
 				throw new Exception("Smtp host not configured");
 			String from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.from");
 			if( (from==null) || from.trim().equals(""))
 				from = "spagobi.scheduler@eng.it";
+		    
+			int smptPort=25;
+
+		    if( (smtpport==null) || smtpport.trim().equals("")){
+				throw new Exception("Smtp host not configured");
+			}else{
+				smptPort=Integer.parseInt(smtpport);
+			}
 			
 			String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.user");
 			String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.password");
@@ -155,16 +175,39 @@ public class DistributionListDocumentDispatchChannel implements IDocumentDispatc
 			//Set the host smtp address
 			Properties props = new Properties();
 			props.put("mail.smtp.host", smtphost);
+			props.put("mail.smtp.port", Integer.toString(smptPort));
+
 			Session session = null;
 			
 			if(StringUtilities.isEmpty(user) || StringUtilities.isEmpty(pass)) {
 				props.put("mail.smtp.auth", "false");
-				session = Session.getDefaultInstance(props);
+				session = Session.getInstance(props);
 				logger.debug("Connecting to mail server without authentication");
 			} else {
 				props.put("mail.smtp.auth", "true");
 				Authenticator auth = new SMTPAuthenticator(user, pass);
-				session = Session.getDefaultInstance(props, auth);
+		 	    //SSL Connection
+		    	if (smtpssl.equals("true")){
+		            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());	            
+				    //props.put("mail.smtp.debug", "true");          
+				    props.put("mail.smtps.auth", "true");
+			        props.put("mail.smtps.socketFactory.port", Integer.toString(smptPort));
+		            if ((!StringUtilities.isEmpty(trustedStorePath)) ) {            	
+						/* Dynamic configuration of trustedstore for CA
+						 * Using Custom SSLSocketFactory to inject certificates directly from specified files
+						 */
+		            	//System.setProperty("java.security.debug","certpath");
+		            	//System.setProperty("javax.net.debug","ssl ");
+				        props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);
+
+		            } else {
+		            	//System.setProperty("java.security.debug","certpath");
+		            	//System.setProperty("javax.net.debug","ssl ");
+				        props.put("mail.smtps.socketFactory.class", DEFAULT_SSL_FACTORY);
+		            }
+			        props.put("mail.smtp.socketFactory.fallback", "false"); 
+		    	}
+				session = Session.getInstance(props, auth);
 				logger.debug("Connecting to mail server with authentication");
 			}
 			
@@ -198,7 +241,17 @@ public class DistributionListDocumentDispatchChannel implements IDocumentDispatc
 			// add the Multipart to the message
 			msg.setContent(mp);
 			// send message
-			Transport.send(msg);
+	    	if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(user)) &&  (!StringUtilities.isEmpty(pass))){
+	    		//USE SSL Transport comunication with SMTPS
+		    	Transport transport = session.getTransport("smtps");
+		    	transport.connect(smtphost,smptPort,user,pass);
+		    	transport.sendMessage(msg, msg.getAllRecipients());
+		    	transport.close(); 
+	    	}
+	    	else {
+	    		//Use normal SMTP
+		    	Transport.send(msg);
+	    	}
 			
 			if(jobExecutionContext.getNextFireTime()== null){
 				String triggername = jobExecutionContext.getTrigger().getName();
