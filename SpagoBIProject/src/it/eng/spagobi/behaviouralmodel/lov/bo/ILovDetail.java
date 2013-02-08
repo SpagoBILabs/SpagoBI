@@ -119,7 +119,7 @@ public interface ILovDetail extends Serializable {
 	 * 
 	 * @throws Exception the exception
 	 */
-	public String getLovType() throws Exception;
+	public String getLovType();
 	
 	/**
 	 * Gets the levels names of the tree lov
