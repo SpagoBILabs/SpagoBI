@@ -193,9 +193,8 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <!-- Include Ext stylesheets here: -->
 <link id="extall" rel="styleSheet" href ="../js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
 
-<link id="theme-overrides" rel="styleSheet" href ="../js/spagobi/overrides/overrides.css" type="text/css" />
 
-<link id="spagobi-ext-4" rel="styleSheet" href ="../js/lib/overrides-ext-4/resources/css/spagobi.css" type="text/css" />
+<link id="spagobi-ext-4" rel="styleSheet" href ="../js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
 
 
 <script type="text/javascript">
