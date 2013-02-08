@@ -103,7 +103,9 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 		IDataStore emailDispatchDataStore;
 		String nameSuffix;
 		String descriptionSuffix;
-	
+		String containedFileName;
+		String zipFileName;
+		
 		logger.debug("IN");
 		try{
 			parametersMap = dispatchContext.getParametersMap();
@@ -112,6 +114,11 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			emailDispatchDataStore = dispatchContext.getEmailDispatchDataStore();
 			nameSuffix = dispatchContext.getNameSuffix();
 			descriptionSuffix = dispatchContext.getDescriptionSuffix();
+			containedFileName = dispatchContext.getContainedFileName() != null && !dispatchContext.getContainedFileName().equals("")?
+					dispatchContext.getContainedFileName() : document.getName();
+		    zipFileName = dispatchContext.getZipMailName() != null && !dispatchContext.getZipMailName().equals("")?
+							dispatchContext.getZipMailName() : document.getName();
+					
 
 			String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtphost");
 		    String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtpport");
@@ -229,12 +236,12 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 
 			SchedulerDataSource sds = null;
 			//if zip requested
-			if(dispatchContext.isZipDocument()){				
-				mbp2 = zipAttachment(executionOutput, document.getName(), nameSuffix , fileExtension);
+			if(dispatchContext.isZipMailDocument()){				
+				mbp2 = zipAttachment(executionOutput, containedFileName, zipFileName, nameSuffix , fileExtension);
 			}
 			//else 
 			else{
-				sds = new SchedulerDataSource(executionOutput, contentType, document.getName() + nameSuffix + fileExtension);
+				sds = new SchedulerDataSource(executionOutput, contentType, containedFileName + nameSuffix + fileExtension);
 				mbp2.setDataHandler(new DataHandler(sds));
 				mbp2.setFileName(sds.getName());
 			}
@@ -265,7 +272,8 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 		}
 		return true;
 	}
-	private MimeBodyPart zipAttachment( byte[] attach, String reportFileName ,String nameSuffix, String fileExtension)
+	
+	private MimeBodyPart zipAttachment( byte[] attach, String containedFileName, String zipFileName ,String nameSuffix, String fileExtension)
 	{
 	    MimeBodyPart messageBodyPart = null;
 	    try
@@ -273,7 +281,7 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             ZipOutputStream zipOut = new ZipOutputStream(bout);
-            String entryName = reportFileName + nameSuffix + fileExtension;
+            String entryName = containedFileName + nameSuffix + fileExtension;
             zipOut.putNextEntry(new ZipEntry(entryName));
             zipOut.write(attach);
             zipOut.closeEntry();
@@ -283,7 +291,7 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 	        messageBodyPart = new MimeBodyPart();
 	        DataSource source = new ByteArrayDataSource( bout.toByteArray(), "application/zip" );
 	        messageBodyPart.setDataHandler( new DataHandler( source ) );
-	        messageBodyPart.setFileName( reportFileName+nameSuffix+".zip" );
+	        messageBodyPart.setFileName( zipFileName+nameSuffix+".zip" );
 
 	    }
 	    catch( Exception e )
@@ -292,6 +300,7 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 	    }
 	    return messageBodyPart;
 	}
+	
 	private byte[] zipDocument(String fileZipName, byte[] content) {
 		logger.debug("IN");  
 

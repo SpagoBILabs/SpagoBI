@@ -439,9 +439,29 @@ public class SchedulerUtilities {
 				
 				dispatchContext.setDistributionListDispatchChannelEnabled(true);
 			}
-			if(name.equals("zipDocument")) {
-				dispatchContext.setZipDocument(true);
+			
+			//Mail
+			if(name.equals("zipMailDocument")) {
+				dispatchContext.setZipMailDocument(true);
 			}
+			if(name.equals("zipMailName")) {
+				dispatchContext.setZipMailName(value);
+			}
+			if(name.equals("containedFileName")) {
+				dispatchContext.setContainedFileName(value);
+			}
+
+			// File
+			if(name.equals("zipFileDocument")) {
+				dispatchContext.setZipFileDocument(true);
+			}
+			if(name.equals("fileName")) {
+				dispatchContext.setFileName(value);
+			}
+			if(name.equals("zipFileName")) {
+				dispatchContext.setZipFileName(value);
+			}
+			
 		}
 		return dispatchContext;
 	}

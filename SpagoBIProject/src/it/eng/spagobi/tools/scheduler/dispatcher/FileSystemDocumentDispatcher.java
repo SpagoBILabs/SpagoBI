@@ -41,11 +41,14 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 	
 	private DispatchContext dispatchContext;
 	List<File> filesToZip;
+	String fileName;
 	String zipFileName;
+	boolean zipFileDocument=false;
 	Map<String, String> randomNamesToName;
 	ProgressThread progressThread;
 	Integer progressThreadId;
 	IProgressThreadDAO progressThreadDAO;
+	String fileExtension;
 
 	
 	// logger component
@@ -54,7 +57,7 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 	public FileSystemDocumentDispatcher(DispatchContext dispatchContext) {
 		this.dispatchContext = dispatchContext;
 		this.filesToZip = new ArrayList<File>();
-		this.zipFileName = generateZipFileName();
+	//	this.zipFileName = generateZipFileName();
 		this.randomNamesToName = new HashMap<String, String>();
 	}
 	
@@ -64,10 +67,19 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 	
 	public boolean dispatch(BIObject document, byte[] executionOutput) {
 		File exportFile;
-
-		String fileExtension = dispatchContext.getFileExtension();
-
+		
+		fileExtension = dispatchContext.getFileExtension();
+		
 		try {
+			
+			fileName = dispatchContext.getFileName() != null && !dispatchContext.getFileName().equals("")?
+					dispatchContext.getFileName() : document.getName();
+		    zipFileName = dispatchContext.getZipFileName() != null && !dispatchContext.getZipFileName().equals("")?
+							dispatchContext.getZipFileName() : document.getName();
+			zipFileName = zipFileName+dispatchContext.getDescriptionSuffix();
+			
+			zipFileDocument = dispatchContext.isZipFileDocument();
+			
 			if(dispatchContext.isProcessMonitoringEnabled()) {
 				logger.debug("Monitoring of dispatch process is enabled");
 				
@@ -94,13 +106,13 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 				String checkError = new String(executionOutput);
 				if(checkError.startsWith("error") || checkError.startsWith("{\"errors\":")){
 					logger.error("Error found in execution, make txt file");
-					String fileName = "Error " + document.getLabel() + "-" + document.getName();
-					exportFile = File.createTempFile(fileName, ".txt");
-					randomNamesToName.put(exportFile.getName(), fileName+".txt");
+					String fileNameError = "Error " + document.getLabel() + "-" + document.getName();
+					exportFile = File.createTempFile(fileNameError, ".txt");
+					randomNamesToName.put(exportFile.getName(), fileNameError+".txt");
 				} else{
 					logger.error("Export ok for biObj with label "+document.getLabel());
 					//String fileName = document.getLabel() + "-" + document.getName();
-					String fileName = document.getName() + dispatchContext.getDescriptionSuffix();
+					fileName = fileName + dispatchContext.getDescriptionSuffix();
 					fileName = fileName.replace(' ', '_');
 					exportFile = File.createTempFile(fileName, fileExtension); 
 					randomNamesToName.put(exportFile.getName(), fileName + fileExtension);
@@ -127,12 +139,14 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 		
 		byte[] buffer = new byte[1024]; 
 		ZipOutputStream out = null;
+		FileOutputStream simpleOut = null;
 		FileInputStream in = null;
 		
 		logger.debug("IN");
 		
 		try {
-			
+			if(zipFileDocument){
+			logger.debug("Zip file");
 			File destinationFolder = getDestinationFolder();
 			
 			File zipFile = new File(destinationFolder, zipFileName + ".zip");
@@ -159,6 +173,29 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 			}
 			out.flush();
 			out.close();
+			}
+			else{
+				logger.debug("DO not zip file, create plain file");
+				File destinationFolder = getDestinationFolder();
+				File resultFile = new File(destinationFolder, fileName+fileExtension);
+				simpleOut = new FileOutputStream(resultFile); 
+				for (Iterator iterator = filesToZip.iterator(); iterator.hasNext();) {
+					File file = (File) iterator.next();
+					in = new FileInputStream(file); 
+
+					int len; 
+					while ((len = in.read(buffer)) > 0) 
+					{ 
+						simpleOut.write(buffer, 0, len); 
+					} 
+
+					in.close(); 
+				}
+				simpleOut.flush();
+				simpleOut.close();
+			}
+			
+			
 			
 			if(dispatchContext.isProcessMonitoringEnabled()) {
 				progressThreadDAO.setDownloadProgressThread(progressThreadId);
@@ -178,7 +215,12 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 			} catch (IOException e) {
 				throw new DispatchException("An unexpected error occured while closing output stream");
 			}
-			
+			if(simpleOut != null)
+				try {
+					simpleOut.close();
+				} catch (IOException e) {
+					throw new DispatchException("An unexpected error occured while closing output stream");
+				}			
 			logger.debug("OUT");
 		}
 	}
@@ -230,14 +272,14 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 		return destinationFolder;
 	}
 	
-	private String generateZipFileName(){
-		DateFormat formatter = new SimpleDateFormat("dd-MMM-yy hh:mm:ss.SSS");
-		String randomName = formatter.format(new Date());			
-		randomName=randomName.replaceAll(" ", "_");
-		randomName=randomName.replaceAll(":", "-");
-		return randomName;
-
-	}
+//	private String generateZipFileName(){
+//		DateFormat formatter = new SimpleDateFormat("dd-MMM-yy hh:mm:ss.SSS");
+//		String randomName = formatter.format(new Date());			
+//		randomName=randomName.replaceAll(" ", "_");
+//		randomName=randomName.replaceAll(":", "-");
+//		return randomName;
+//
+//	}
 
 	
 	

@@ -396,6 +396,21 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			
 			String destinationFolder = (String)request.getAttribute("destinationfolder_" +biobId + "__" + index);	
 			dispatchContext.setDestinationFolder(destinationFolder);			
+
+			boolean zipFileDocument = "true".equalsIgnoreCase((String) request.getAttribute("zipFileDocument_"+biobId+"__"+index));
+			dispatchContext.setZipFileDocument(zipFileDocument);
+			
+			String fileName = (String)request.getAttribute("fileName_"+biobId+"__"+index);	
+			if(fileName != null && !fileName.equals("")){
+				dispatchContext.setFileName(fileName);
+			}
+			// set Zip File Name if chosen
+			String zipFileName = (String)request.getAttribute("zipFileName_"+biobId+"__"+index);	
+			if(zipFileName != null && !zipFileName.equals("")){
+				dispatchContext.setZipFileName(zipFileName);
+			}
+
+		
 		}
 	}
 	
@@ -532,8 +547,23 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			dispatchContext.setMailSubj(mailsubj);
 			String mailtxt = (String)request.getAttribute("mailtxt_"+biobId+"__"+index);	
 			dispatchContext.setMailTxt(mailtxt);
-			boolean zipDocument = "true".equalsIgnoreCase((String) request.getAttribute("zipDocument_"+biobId+"__"+index));
-			dispatchContext.setZipDocument(zipDocument);
+			
+			
+			//Mail
+			boolean zipMailDocument = "true".equalsIgnoreCase((String) request.getAttribute("zipMailDocument_"+biobId+"__"+index));
+			dispatchContext.setZipMailDocument(zipMailDocument);
+			
+			// set File Name if chosen
+			String containedFileName = (String)request.getAttribute("containedFileName_"+biobId+"__"+index);	
+			if(containedFileName != null && !containedFileName.equals("")){
+				dispatchContext.setContainedFileName(containedFileName);
+			}
+			
+			// set Zip File Name if chosen
+			String zipMailName = (String)request.getAttribute("zipMailName_"+biobId+"__"+index);	
+			if(zipMailName != null && !zipMailName.equals("")){
+				dispatchContext.setZipMailName(zipMailName);
+			}
 		}
 	}
 	
@@ -794,6 +824,8 @@ public class TriggerManagementModule extends AbstractHttpModule {
 		return saveOptString;
 	}
 	
+	
+	
 	private String  serializeSaveAsFileOptions(DispatchContext dispatchContext) {
 		String saveOptString = "";
 		
@@ -817,9 +849,22 @@ public class TriggerManagementModule extends AbstractHttpModule {
 				saveOptString += "isprocessmonitoringenabled=false%26";
 			}
 		}	
+
+		if(dispatchContext.isZipFileDocument()) {
+			saveOptString += "zipFileDocument=true%26";
+		}
+		if(dispatchContext.getFileName() != null) {
+			saveOptString += "fileName="+dispatchContext.getFileName()+"%26";
+		}
+
+		if(dispatchContext.getZipFileName() != null) {
+			saveOptString += "zipFileName="+dispatchContext.getZipFileName()+"%26";
+		}
 		
 		return saveOptString;
 	}
+
+	
 	
 	private String serializeSaveAsDocumentOptions(DispatchContext dispatchContext) {
 		String saveOptString = "";
@@ -875,9 +920,21 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			if( (dispatchContext.getMailTxt()!=null) && !dispatchContext.getMailTxt().trim().equals("") ) {
 				saveOptString += "mailtxt="+dispatchContext.getMailTxt()+"%26";
 			}
-			if(dispatchContext.isZipDocument()) {
-				saveOptString += "zipDocument=true%26";
+
+			
+			
+			// Mail			
+			if(dispatchContext.isZipMailDocument()) {
+				saveOptString += "zipMailDocument=true%26";
 			}
+			if(dispatchContext.getContainedFileName() != null) {
+				saveOptString += "containedFileName="+dispatchContext.getContainedFileName()+"%26";
+			}
+			if(dispatchContext.getZipMailName() != null) {
+				saveOptString += "zipMailName="+dispatchContext.getZipMailName()+"%26";
+			}
+
+			
 		}
 		
 		return saveOptString;
