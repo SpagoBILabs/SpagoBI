@@ -22,15 +22,15 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/JSON.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Session.js")%>'></script>		
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/ext4/store/DynamicStore.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/ext4/grid/RadioColumn.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/ext4/grid/CheckColumn.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/ext4/grid/DynamicFilteringToolbar.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/ext4/grid/DynamicGridPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/behavioural/lov/TestLovTreePanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/behavioural/lov/TestLovResultPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/behavioural/lov/TestLovConfigurationGridPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/behavioural/lov/TestLovPanel.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/store/DynamicStore.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/grid/RadioColumn.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/grid/CheckColumn.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/grid/DynamicFilteringToolbar.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/grid/DynamicGridPanel.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/lov/TestLovTreePanel.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/lov/TestLovResultPanel.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/lov/TestLovConfigurationGridPanel.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/lov/TestLovPanel.js")%>'></script>
 
 
 
