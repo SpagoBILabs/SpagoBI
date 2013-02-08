@@ -7,7 +7,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
   
 
 
-<%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
+<%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>
+<%@ include file="/WEB-INF/jsp/commons/importSbiJS410.jspf"%>
 
 <%@ page import="javax.portlet.PortletURL,
 			it.eng.spagobi.commons.constants.SpagoBIConstants,
@@ -78,218 +79,80 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     if (userProfile.isAbleToExecuteAction(SpagoBIConstants.PARAMETER_MANAGEMENT)){
    	isreadonly = false;
    	readonly = "readonly";
-   }
+   	}
+    
+    String treeColumnNames = "";
+    if(lovDet!=null && lovDet.getTreeLevelsColumns()!=null && lovDet.getTreeLevelsColumns().size()>0){
+    	treeColumnNames = treeColumnNames+"['"+lovDet.getTreeLevelsColumns().get(0)+"'";
+    	 for(int i=1; i<lovDet.getTreeLevelsColumns().size(); i++){
+    		 treeColumnNames =treeColumnNames +",'"+ lovDet.getTreeLevelsColumns().get(i)+"'";
+    	 }
+    	 treeColumnNames = treeColumnNames+"]";
+    }else{
+    	treeColumnNames="[]";
+    }
+   
 %>
 
 
- 
 
-<!--  SCRIPTS  -->
 
-<script type="text/javascript">
 
-<%
-	// get the labels of all documents related to the lov
-	List docLabels = LovManager.getLabelsOfDocumentsWhichUseLov(modVal);
-	String confirmMessage = null;
-	boolean askConfirm = false;
-	if(docLabels.size() > 0) {
-		askConfirm = true;
-		String documentsStr = docLabels.toString();
-		confirmMessage += msgBuilder.getMessage("SBIDev.predLov.savePreamble", "messages", request);
-		confirmMessage += " ";
-		confirmMessage += documentsStr;
-		confirmMessage += ". ";
-		confirmMessage += "\\n\\n";
-		confirmMessage += msgBuilder.getMessage("SBIDev.predLov.saveConfirm", "messages", request);
-	}	
-	
-%>
 
-function askForConfirmIfNecessary() {
-<%
-	if(askConfirm && lovProviderModified.equalsIgnoreCase("true")) {
-		String documentsStr = docLabels.toString();
-%>
-		if (confirm('<spagobi:message key = "SBIDev.predLov.savePreamble" />' + ' ' + '<%=documentsStr%>' + '. ' + '<spagobi:message key = "SBIDev.predLov.saveConfirm" />')) {
-			document.getElementById('formTest').submit();
-		}
-<%
-	} else {
-%>
-		document.getElementById('formTest').submit();
-<%
-	}
-%>
-}
-</script>
+
 
 
 <script type="text/javascript">
 
-	function showStacktrace(){
-		document.getElementById("stacktrace").style.display = 'inline';
-		document.getElementById("showStacktraceDiv").style.display = 'none';
-		document.getElementById("hideStacktraceDiv").style.display = 'inline';
+
+var url = {
+    	host: '<%= request.getServerName()%>'
+    	, port: '<%= request.getServerPort()%>'
+    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
+    	   				  request.getContextPath().substring(1):
+    	   				  request.getContextPath()%>'
+    	    
+    };
+
+    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+    	baseUrl: url
+    });
+
+	var addLovTestEvents = function(lovTest, lovPanel, lovConfig, modality){
+		lovTest.on('lovTypeChanged',function(type){
+			lovPanel.remove(lovTest,'true');
+			lovConfig.lovType=type;
+			lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel',{lovConfig:lovConfig, modality:modality}); //by alias
+			addLovTestEvents(lovTest,lovPanel, lovConfig, modality);
+			lovPanel.add(lovTest);
+		},this);
 	}
-					
-	function hideStacktrace(){
-		document.getElementById("stacktrace").style.display = 'none';
-		document.getElementById("showStacktraceDiv").style.display = 'inline';
-		document.getElementById("hideStacktraceDiv").style.display = 'none';
-	}
-</script>
-
-
-
-
-
-<!-- TITLE -->
-
-<table class='header-table-portlet-section'>		
-	<tr class='header-row-portlet-section'>
-		<td class='header-title-column-portlet-section'
-		    style='vertical-align:middle;padding-left:5px;'>
-			<spagobi:message key = "SBIDev.predLov.testPageTitle" />
-		</td>
-		<td class='header-empty-column-portlet-section'>&nbsp;</td>
-		<td class='header-button-column-portlet-section'>
-			<a href= 'javascript:askForConfirmIfNecessary();' >
-				<img class='header-button-image-portlet-section'
-					src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/save.png", currTheme)%>' 
-					title='<spagobi:message key = "SBIDev.predLov.saveButt" />'  
-					alt='<spagobi:message key = "SBIDev.predLov.saveButt" />' 
-				/>
-			</a>
-		</td>
-		<td class='header-button-column-portlet-section'>
-			<a href="<%=backUrl%>"> 
-      				<img class='header-button-image-portlet-section' 
-      				     title='<spagobi:message key = "SBISet.Funct.backButt" />' 
-      				     src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/back.png", currTheme)%>' 
-      				     alt='<spagobi:message key = "SBISet.Funct.backButt" />' />
-			</a>
-		</td>
-	</tr>
-</table>
-
-
-
-
-<form id="formTest" method="post" action="<%=saveUrl%>" >
-
-<!-- BODY -->
-
-
-<div class='div_background_no_img' >
-
-
-   <!-- ERROR TAG --> 
-	<spagobi:error/>
-
-
-
-<%
-	String errorMessage = (String) listLovMR.getAttribute("errorMessage");	
-	String stack = (String) listLovMR.getAttribute("stacktrace");
-	if (errorMessage != null) {				  
-%>
-		<br/>
-		<div style="left:10%;width:80%" class='portlet-form-field-label' >
-			<spagobi:message key = "SBIDev.predLov.testExecNotCorrect" />
-		</div>	
-<%
-		if (!errorMessage.trim().equals("")) { 
-%>					  
-			<br/>
-		 	<div style="left:10%;width:80%" class='portlet-form-field-label' >
-		 		<spagobi:message key = "SBIDev.predLov.testErrorMessage" />
-		 	</div>
-			<% if (errorMessage.equalsIgnoreCase("Invalid_XML_Output"))  { %>
-				<div style="left:10%;width:70%" class='portlet-section-alternate'>
-					<spagobi:message key = "SBIDev.predLov.testScriptInvalidXMLOutput" />
-				</div>
-			<% } else { %>
-				<div style="left:10%;width:70%" class='portlet-section-alternate'>
-					<%= errorMessage %>
-				</div>
-			<% } %>
-			<br/>
-<% 
+    
+    Ext.onReady(function(){
+		var lovConfig = {}
+		lovConfig.descriptionColumnName =  '<%= lovDet.getDescriptionColumnName()%>';
+		lovConfig.valueColumnName =  '<%= lovDet.getValueColumnName()%>';
+		lovConfig.visibleColumnNames =  '<%= lovDet.getVisibleColumnNames()%>';
+		
+		lovConfig.lovType =  '<%= lovDet.getLovType()%>';
+		
+		var treeColumnNames =  '<%= lovDet.getTreeLevelsColumns()%>';
+		if(treeColumnNames && treeColumnNames!='null'){
+			lovConfig.treeColumnNames =  <%=treeColumnNames%>;
 		}
-
-		if (stack != null) { 
-%>
-			<div id='errorDescriptionJS' style='display:inline;'>
-			  	<br/>
-			  	<div style="left:10%;width:80%;display:inline;" class='portlet-form-field-label' id='showStacktraceDiv'>
-			  		<spagobi:message key = "SBIDev.predLov.testErrorShowStacktrace1" />
-			  		<a href='javascript:showStacktrace()'>
-			 	 		<spagobi:message key = "SBIDev.predLov.testErrorShowStacktrace2" />
-					</a>
-			 		.
-			 	</div>
-			    <div style="left:10%;width:80%;display:none;" class='portlet-form-field-label' id='hideStacktraceDiv'>
-			 		<spagobi:message key = "SBIDev.predLov.testErrorHideStacktrace1" />
-			 		<a href='javascript:hideStacktrace()'>
-				 		<spagobi:message key = "SBIDev.predLov.testErrorHideStacktrace2" />
-			 		</a>
-			 		.
-			 	</div>
-				<br/>	
-				<div id='stacktrace' style="left:10%;width:70%;display:none;" class='portlet-section-alternate'>
-					<%= stack %>
-				</div>
-			 </div>
-<%
-		}		
-		String result = (String) listLovMR.getAttribute("result");
-		if(result != null) { 				  
-	  		result = result.replaceAll(">", "&gt;");
-	  		result = result.replaceAll("<", "&lt;");
-	  		result = result.replaceAll("\"", "&quot;");					  
-%>			  
-			<div width="100%">
-				<br/>
-				<div style="position:relative;left:10%;width:80%" class='portlet-form-field-label' >
-					<spagobi:message key = "SBIDev.predLov.testScriptNonCorrectResult" />
-				</div>
-				<br/>	
-				<div style="position:relative;left:10%;width:70%" class='portlet-section-alternate'>
-					<%= result %>
-				</div>
-			</div>
-			<br/>					  
-<% 
-		} 
-	}else {
-%>
 		
-		<div width="100%">
-			<spagobi:LovColumnsSelector moduleName="ListTestLovModule" 
-			                           visibleColumns="<%=GeneralUtilities.fromListToString(lovDet.getVisibleColumnNames(),\",\")%>"
-			                            valueColumn="<%=lovDet.getValueColumnName()%>" 
-			                            descriptionColumn="<%=lovDet.getDescriptionColumnName()%>" 
-			                            invisibleColumns="<%=GeneralUtilities.fromListToString(lovDet.getInvisibleColumnNames(),\",\")%>" />
-		</div>
+		var modality =  '<%= messagedet%>'; 
 		
-
-<%
-	}%>
+    	var lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel',{lovConfig:lovConfig, modality:modality}); //by alias
+		var lovPanel = Ext.create('Ext.container.Viewport', {
+			layout:'fit',
+	     	items: [lovTest]
+	    });
+		addLovTestEvents(lovTest,lovPanel, lovConfig, modality);
+		
+		 
+    });
 	
-	</div>			
-</form>
-	
-	<% 
 
-	if(errorMessage == null){
-%>
-<br/>
-		<div width="100%">
-			<spagobi:list moduleName="ListTestLovModule"/>
-		</div>
-	<%} %>
-				 
-
-
+</script>
 
