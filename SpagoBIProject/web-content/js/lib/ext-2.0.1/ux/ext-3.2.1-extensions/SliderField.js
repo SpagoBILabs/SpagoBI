@@ -142,6 +142,7 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
      * @private
      */
     beforeDestroy : function(){
+    	Sbi.trace('beforeDestroy() - ' + Ext.destroy);
         Ext.destroy(this.slider);
         Ext.form.SliderField.superclass.beforeDestroy.call(this);
     },
@@ -184,9 +185,9 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
         // silent is used if the setValue method is invoked by the slider
         // which means we don't need to set the value on the slider.
         if(!silent){
-            this.slider.setValue(v, animate);
+            this.slider.setValues(v, animate);
         }
-        return Ext.form.SliderField.superclass.setValue.call(this, this.slider.getValue());
+        return Ext.form.SliderField.superclass.setValue.call(this, this.slider.getValues());
     },
     
     /**

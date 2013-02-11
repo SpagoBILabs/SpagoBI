@@ -37,7 +37,6 @@ Ext.extend(Ext.slider.Thumb, Ext.Component, {
      */
     render: function() {
         this.el = this.slider.innerEl.insertFirst({cls: this.cls});
-
         this.initEvents();
     },
 
@@ -253,6 +252,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
 
     // private override
     initComponent : function(){
+    	Sbi.trace("[Slider.initComponent] : IN");
         if(!Ext.isDefined(this.value)){
             this.value = this.minValue;
         }
@@ -341,6 +341,8 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         if(this.vertical){
             Ext.apply(this, Ext.slider.Vertical);
         }
+        
+        Sbi.trace("[Slider.initComponent] : OUT");
     },
 
     /**
@@ -387,6 +389,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
 
     // private override
     onRender : function() {
+    	Sbi.trace("[Slider.onRender] : IN");
         this.autoEl = {
             cls: 'x-slider ' + (this.vertical ? 'x-slider-vert' : 'x-slider-horz'),
             cn : {
@@ -403,6 +406,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         this.endEl   = this.el.first();
         this.innerEl = this.endEl.first();
         this.focusEl = this.innerEl.child('.x-slider-focus');
+        Sbi.trace("[Slider.onRender] : this innerEl is equal to [" +  this.innerEl + "]");
 
         //render each thumb
         for (var i=0; i < this.thumbs.length; i++) {
@@ -414,6 +418,8 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         this.halfThumb = (this.vertical ? thumb.getHeight() : thumb.getWidth()) / 2;
 
         this.initEvents();
+        
+        Sbi.trace("[Slider.onRender] : OUT");
     },
 
     /**
@@ -483,7 +489,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
      */
     getNearest: function(local, prop) {
     	
-    	Sbi.debug('[getNearest]');
+    	Sbi.trace('[MultiSlider.getNearest] :  IN');
     	 
         var localValue = prop == 'top' ? this.innerEl.getHeight() - local[prop] : local[prop],
             clickValue = this.reverseValue(localValue),
@@ -491,21 +497,27 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
             index = 0,
             nearest = null;
 
-        Sbi.debug('[getNearest] : thumb length ' + this.thumbs.length);
+        Sbi.debug('[MultiSlider.getNearest] : looping on [' + this.thumbs.length + '] thumb(s) to find out the nearest to the clicked value [' + clickValue + ']');
         
         for (var i=0; i < this.thumbs.length; i++) {
             var thumb = this.thumbs[i],
                 value = thumb.value,
                 dist  = Math.abs(value - clickValue);
             
-            Sbi.debug('[getNearest] : ' + value + '] - [' + clickValue + ' = ' +  dist);
+            Sbi.debug('[MultiSlider.getNearest] : Thumb [' + i + '] value [' + value + '] distance from the clicked value is equal to [' + clickValue + ']');
             if (Math.abs(dist <= nearestDistance)) {
                 nearest = thumb;
                 index = i;
                 nearestDistance = dist;
+                Sbi.debug('[MultiSlider.getNearest] : Thumb [' + i + '] is the nearest so far');
+            } else {
+            	 Sbi.debug('[MultiSlider.getNearest] : Thumb [' + i + '] is not the nearest so far');
             }
         }
-        Sbi.debug('[getNearest] : nearest index : ' + index);
+        Sbi.debug('[MultiSlider.getNearest] : nearest thumb index is equal to [' + index + ']');
+        
+        Sbi.trace('[MultiSlider.getNearest] :  OUT');
+        
         return nearest;
     },
 
@@ -661,7 +673,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
      * @param {Boolean} animate Turn on or off animation, defaults to true
      */
     setValue : function(index, v, animate, changeComplete) {
-    	Sbi.debug("[Slider.setValue] : value [" + v + "] at index [" + index + "]" );
+    	Sbi.debug("[Slider.setValue] : set value [" + v + "] to thumb [" + index + "]" );
         var thumb = this.thumbs[index],
             el    = thumb.el;
 
@@ -677,6 +689,18 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
                 }
             }
         }
+    },
+    
+    setValues : function(v, animate, changeComplete) {
+    	
+    	if(!v) return;  
+    	if(!Ext.isArray(v)) {
+          	v = [v];
+        }
+          
+      	for(var i = 0; i < v.length; i++) {
+      		this.setValue(i, v[i], animate, changeComplete);
+      	}
     },
 
     /**
@@ -793,6 +817,10 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
      */
     syncThumb : function() {
         if (this.rendered) {
+        	if(!this.innerEl) {
+        		Sbi.warn("[Slider.syncThumb] : slider is rendered but the innerEl is sill udefined");
+        		return;
+        	}
             for (var i=0; i < this.thumbs.length; i++) {
                 this.moveThumb(i, this.translateValue(this.thumbs[i].value));
             }
@@ -826,6 +854,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
 
     // private
     beforeDestroy : function(){
+    	Sbi.trace('destroyMembers() - ' + Ext.destroyMembers);
         Ext.destroyMembers(this, 'endEl', 'innerEl', 'thumb', 'halfThumb', 'focusEl', 'tracker', 'thumbHolder');
         Ext.slider.MultiSlider.superclass.beforeDestroy.call(this);
     }

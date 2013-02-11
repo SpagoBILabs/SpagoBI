@@ -54,7 +54,7 @@ Ext.slider.Tip = Ext.extend(Ext.Tip, {
      */
     onSlide : function(slider, e, thumb) {
         this.show();
-        this.body.update(this.getText(thumb));
+        this.body.update(this.getText(slider, thumb));
         this.doAutoWidth();
         this.el.alignTo(thumb.el, 'b-t?', this.offsets);
     },
@@ -82,7 +82,7 @@ Ext.slider.Tip = Ext.extend(Ext.Tip, {
      * @param {Ext.slider.Thumb} thumb The Thumb that the Tip is attached to
      * @return {String} The text to display in the tip
      */
-    getText : function(thumb) {
+    getText : function(slider, thumb) {
         return String(thumb.value);
     }
 });
