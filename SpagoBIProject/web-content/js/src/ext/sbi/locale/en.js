@@ -276,6 +276,7 @@ Sbi.locale.ln['sbi.execution.roleselection.emptytext']  = 'Select a role ...';
 Sbi.locale.ln['sbi.execution.roleselection.loadingmsg']  = 'Loading roles ...';
 Sbi.locale.ln['sbi.execution.roleselection.toolbar.next']  = 'Confirm role selection';
 
+Sbi.locale.ln['sbi.execution.parametersselection.parameters']  = 'Parameters';
 Sbi.locale.ln['sbi.execution.parametersselection.loadingmsg']  = 'Loading parameters ...';
 Sbi.locale.ln['sbi.execution.parametersselection.noParametersToBeFilled']  = '[Document has no parameters to be filled]';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.back']  = 'Change selected role';
@@ -779,4 +780,9 @@ Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.isactive'] = 'Active';
 	
 Sbi.locale.ln['sbi.behavioural.lov.type.simple']='Simple'
 Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Tree'
-Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filter'	
+Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filter'
+
+
+
+
+	

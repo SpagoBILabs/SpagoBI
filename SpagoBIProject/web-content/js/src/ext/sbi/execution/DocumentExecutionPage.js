@@ -251,17 +251,18 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		}, this);
 		
 		this.northPanel = new Ext.Panel({
-				region:'north'
+				region:'east'
+				, title: LN('sbi.execution.parametersselection.parameters')
 				, border: false
 				, frame: false
 				, collapsible: true
 				, collapsed: true
-				, hideCollapseTool: true
-				, titleCollapse: true
-				, collapseMode: 'mini'
-				, split: true
+				//, hideCollapseTool: true
+				//, titleCollapse: true
+				//, collapseMode: 'mini'
+				//, split: true
 				, autoScroll: true
-				, height: 130
+				, width: 300
 				, layout: 'fit'
 				, items: [this.parametersPanel]
 		});
