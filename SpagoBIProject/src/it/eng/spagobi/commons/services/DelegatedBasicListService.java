@@ -355,6 +355,69 @@ public class DelegatedBasicListService {
 	 * 
 	 * @return the filtered list
 	 */
+	public static SourceBean filterList(SourceBean allrowsSB, String valuefilter, String valuetypefilter, String columnfilter, 
+						String typeFilter, EMFErrorHandler errorHandler) {
+		if ((valuefilter == null) || (valuefilter.equals(""))) {
+			TracerSingleton.log(
+					Constants.NOME_MODULO,
+					TracerSingleton.WARNING,
+					"DelegatedBasicListService::filterList: the value filter is not set.");
+			HashMap params = new HashMap();
+			params.put(Constants.NOME_MODULO,
+					"DelegatedBasicListService::filterList");
+			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.VALUE_FILTER, "1070", null, params);
+			if(errorHandler!=null) {
+				errorHandler.addError(error);
+			}
+			return allrowsSB;
+		}
+		if ((columnfilter == null) || (columnfilter.trim().equals(""))) {
+			return allrowsSB;
+		}
+		if ((typeFilter == null) || (typeFilter.trim().equals(""))) {
+			return allrowsSB;
+		}
+		if ((valuetypefilter == null) || (valuetypefilter.trim().equals(""))) {
+			return allrowsSB;
+		}
+		// controls the correctness of the filtering conditions
+		boolean filterConditionsAreCorrect = verifyFilterConditions(valuetypefilter, typeFilter, errorHandler);
+		if (!filterConditionsAreCorrect) return allrowsSB;
+
+		PaginatorIFace newPaginator = new GenericPaginator();
+		
+		List rows = allrowsSB.getAttributeAsList("ROW");
+		Iterator iterRow = rows.iterator();
+		while (iterRow.hasNext()) {
+			SourceBean row = (SourceBean) iterRow.next();
+			boolean doesRowSatisfyCondition = false;
+			try {
+				doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter, typeFilter);
+			} catch (EMFValidationError error) {
+				if(errorHandler!=null) {
+					errorHandler.addError(error);
+				}
+				return allrowsSB;
+			}
+			if (doesRowSatisfyCondition) newPaginator.addRow(row);
+		}
+		ListIFace newList = new GenericList();
+		newList.setPaginator(newPaginator);
+		return newPaginator.getAll();
+	}
+	
+	/**
+	 * Filters the list with a unique value filter.
+	 * 
+	 * @param list The list to be filtered
+	 * @param valuefilter The value of the filter
+	 * @param valuetypefilter The type of the value of the filter (STRING/NUM/DATE)
+	 * @param columnfilter The column to be filtered
+	 * @param typeFilter The type of the filter
+	 * @param errorHandler The EMFErrorHandler object, in which errors are stored if they occurs
+	 * 
+	 * @return the filtered list
+	 */
 	public static ListIFace filterList(ListIFace list, String valuefilter, String valuetypefilter, String columnfilter, 
 						String typeFilter, EMFErrorHandler errorHandler) {
 		if ((valuefilter == null) || (valuefilter.equals(""))) {

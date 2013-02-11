@@ -112,7 +112,7 @@ Ext.define('Ext.ux.CheckColumn', {
 //        }
 //        return '<div class="' + cls.join(' ') + '">&#160;</div>';
 //    }
-    renderer : function(value){
+    renderer : function(value, metaData, record, rowIndex, colIndex, store, view){
         var cssPrefix = Ext.baseCSSPrefix;
         cls = [cssPrefix + 'form-checkbox'];
         if (value) {
@@ -120,6 +120,13 @@ Ext.define('Ext.ux.CheckColumn', {
         }else{
 			cls.push('check-column-unchecked');
 		}
-        return '<div class="' + cls.join(' ') + '">&#160;</div>';
+        var marginleft=2;
+        if(this.columns && this.columns.length>colIndex && this.columns[colIndex].width){
+        	marginleft = ((this.columns[colIndex].width-13)/2)-6;
+        	if(marginleft<0){
+        		marginleft = 2;
+        	}
+        }
+        return '<div style="margin-left:'+marginleft+'" class="' + cls.join(' ') + '">&#160;</div>';
     }
 });

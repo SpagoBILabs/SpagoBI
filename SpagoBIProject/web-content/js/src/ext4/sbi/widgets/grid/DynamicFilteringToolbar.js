@@ -128,16 +128,33 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar', {
 	    this.add( this.filterCombo );   
 	    this.add({ xtype: 'tbspacer' });
 	    
-	    this.inputField = Ext.create('Ext.form.TextField', {width: 70});
-	    this.add( this.inputField ); 
-	    	    
-	    this.add({
-            xtype:'splitbutton',
-            text: 'Menu Button',
-            iconCls: 'add16',
-            menu: [{text: 'Menu Item 1'}],
-            reorderable: false
+	    this.valueField = Ext.create('Ext.form.TextField', {width: 70});
+	    this.add( this.valueField ); 
+	    	
+		this.add({
+            text: LN('sbi.behavioural.lov.filter.apply'),
+            handler: this.applyFilter,
+            scope: this
         });
+	}
+	
+	, applyFilter: function(){
+		var filterConfig = this.getValue();
+
+		this.store.loadPage(1,{
+			params: filterConfig
+		});
+	}
+	
+	
+	
+	, getValue: function(){
+		var filterConfig = {};
+		filterConfig.valueFilter = this.valueField.getValue();
+		filterConfig.columnsFilter = this.columnNameCombo.getValue();
+		filterConfig.typeValueFilter = this.typeCombo.getValue();
+		filterConfig.typeFilter = this.filterCombo.getValue();
+		return filterConfig;
 	}
 	
 	, createColumnNameCombo: function(){

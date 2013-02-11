@@ -50,10 +50,28 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 			serviceName: 'SAVE_LOV_ACTION'
 		});
 		
+	    var typeStore = Ext.create('Ext.data.Store', {
+	        fields: ['type','description'],
+	        data : [{type:'simple', description:LN('sbi.behavioural.lov.type.simple')}, {type:'tree', description:LN('sbi.behavioural.lov.type.tree')}]
+	    });
+	    
+		this.comboType = Ext.create('Ext.form.ComboBox', {
+	        store: typeStore,
+	        displayField: 'description',
+	        valueField: 'type',
+	        queryMode: 'local',
+	        triggerAction: 'all',
+	        emptyText:'Select a type...',
+	        selectOnFocus:true,
+	        width:135
+	    });
+	  
+	
+		
 		this.dockedItems = [{
 	        xtype: 'toolbar',
 	        dock: 'top',
-	        items: [{
+	        items: ['->',this.comboType,{
 	            text: 'Save',
 	            handler: this.save,
 	            scope: this
@@ -116,7 +134,7 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 		Ext.apply(this,config||{});
 		this.items = [lovConfigurationPanel,this.lovTestPreview];
     	this.callParent(arguments);
-
+    	this.comboType.on('select',this.updateType,this);
     },
     
     save:  function(){
@@ -139,14 +157,18 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
             	alert("ok");
             },
             failure: function(response) {
-            	alert("dho");
+            	alert("ko");
             }
             ,scope: this
    		 });	
     	
     }
     
-
+    , updateType: function(combo, records,eOpt ){
+    	var value = records[0].data.type;
+    	
+    	this.fireEvent('lovTypeChanged',value);
+    }
 
 
 
