@@ -275,6 +275,7 @@ Sbi.locale.ln['sbi.execution.roleselection.emptytext']  = 'Seleziona un ruolo ..
 Sbi.locale.ln['sbi.execution.roleselection.loadingmsg']  = 'Caricamento ruoli ...';
 Sbi.locale.ln['sbi.execution.roleselection.toolbar.next']  = 'Conferma ruolo selezionato';
 
+Sbi.locale.ln['sbi.execution.parametersselection.parameters']  = 'Parametri';
 Sbi.locale.ln['sbi.execution.parametersselection.loadingmsg']  = 'Caricamento parametri ...';
 Sbi.locale.ln['sbi.execution.parametersselection.noParametersToBeFilled']  = '[Il documento non ha parametri da valorizzare]';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.back']  = 'Cambia il ruolo selezionato';
