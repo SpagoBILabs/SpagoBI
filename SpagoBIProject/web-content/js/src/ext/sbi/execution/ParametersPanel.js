@@ -214,7 +214,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		state = {};
 		for(p in this.fields) {
 			var field = this.fields[p];
-			var value = this.getFieldValue(field);;
+			var value = this.getFieldValue(field);
 			state[field.name] = value;
 			var rawValue = field.getRawValue();
 			if(value == "" && rawValue != ""){
@@ -569,7 +569,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				} , this);
 				
 			} else if(theField.behindParameter.selectionType === 'COMBOBOX'
-				|| theField.behindParameter.selectionType === 'LIST') {
+				|| theField.behindParameter.selectionType === 'LIST' 
+				|| theField.behindParameter.selectionType === 'SLIDER') {
 				this.fields[p].on('change', this.onUpdateDependentFields, this);
 				//this.fields[p].on('change', this.updateDependentField, this);
 			} else if(theField.behindParameter.typeCode == 'MAN_IN') {
@@ -666,13 +667,15 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	}
 	
 	, updateVisualDependentField: function(fatherField, dependantConf) {
-		Sbi.debug('[ParametersPanel.updateVisualDependentField] : updating field [' + dependantConf.label + '] that is visually correlated with field [' + fatherField.name + ']');
+		Sbi.debug('[ParametersPanel.updateVisualDependentField] : updating field [' + dependantConf.parameterId  + '] that is visually correlated with field [' + fatherField.name + ']');
 		var dependantField = this.fields[ dependantConf.parameterId ];
 		var conditions = dependantConf.visualDependencyConditions;
 		
 		var fatherFieldValues;
 		fatherFieldValues = this.getFieldValue(fatherField);
-		if(fatherField.behindParameter.multivalue === false) {
+		if(!fatherFieldValues) {
+			fatherFieldValues = [];
+		} else if(fatherField.behindParameter.multivalue === false) {
 			fatherFieldValues = [fatherFieldValues];
 		}
 		
@@ -1035,7 +1038,30 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 			
 		} else if(p.selectionType === 'SLIDER') { 
-			//var v = p.multivalue? [30, 50]: [50];
+			var baseParams = {};
+			Ext.apply(baseParams, this.executionInstance);
+			Ext.apply(baseParams, {
+				PARAMETER_ID: p.id
+				, MODE: 'simple'
+				, OBJ_PARAMETER_IDS: p.objParameterIds  // ONly in massive export case
+			});
+			delete baseParams.PARAMETERS;
+			var store = this.createStore();
+			store.baseParams  = baseParams;
+			
+			store.on('beforeload', function(store, o) {
+				var p = Sbi.commons.JSON.encode(this.getFormState());
+				o.params = o.params || {};
+				o.params.PARAMETERS = p;
+				
+				var field = this.fields["P1"];
+				var value = this.getFieldValue(field);
+				
+				alert(value + " - " + field.valueArray + " - " +  p);
+				
+				return true;
+			}, this);
+			
 			field = new Sbi.widgets.SliderField(Ext.apply(baseConfig, {
 				multiSelect: p.multivalue,
 	            tipText: function(thumb){

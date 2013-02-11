@@ -248,6 +248,21 @@
                  return Array.prototype.slice.call(a, i || 0, j || a.length);
              }
      }();
+     
+     /**
+      * Imported from Ext 3.2.1
+      * 
+      * Attempts to destroy and then remove a set of named properties of the passed object.
+      * @param {Object} o The object (most likely a Component) who's properties you wish to destroy.
+      * @param {Mixed} arg1 The name of the property to destroy and remove from the object.
+      * @param {Mixed} etc... More property names to destroy and remove.
+      */
+     Ext.destroyMembers = function(o, arg1, arg2, etc){
+         for(var i = 1, a = arguments, len = a.length; i < len; i++) {
+             Ext.destroy(o[a[i]]);
+             delete o[a[i]];
+         }
+     };
     
      /**
       * Imported from Ext 3.2.1
