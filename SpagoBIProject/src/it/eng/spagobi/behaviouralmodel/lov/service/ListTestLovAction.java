@@ -6,20 +6,6 @@
 
 package it.eng.spagobi.behaviouralmodel.lov.service;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -55,6 +41,19 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -191,21 +190,22 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 				Integer start = getAttributeAsInteger(PAGINATION_START);
 				Integer limit = getAttributeAsInteger(PAGINATION_LIMIT);
 				
+				// filter the list 
+				String valuefilter = (String) getAttributeAsString(SpagoBIConstants.VALUE_FILTER);
+				if (valuefilter != null) {
+					String columnfilter = (String) getAttributeAsString(SpagoBIConstants.COLUMNS_FILTER);
+					String typeFilter = (String) getAttributeAsString(SpagoBIConstants.TYPE_FILTER);
+					String typeValueFilter = (String) getAttributeAsString(SpagoBIConstants.TYPE_VALUE_FILTER);
+					rowsSourceBean = DelegatedBasicListService.filterList(rowsSourceBean, valuefilter, typeValueFilter, 
+							columnfilter, typeFilter, getResponseContainer().getErrorHandler());
+				}
 
 				lovExecutionResult.setValues(toList(rowsSourceBean, start, limit));
 				lovExecutionResult.setFields(GridMetadataContainer.buildHeaderMapForGrid(colNames));
 				List rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
 				lovExecutionResult.setResults(rows.size());
 				
-				// filter the list 
-//				String valuefilter = (String) getAttributeAsString(SpagoBIConstants.VALUE_FILTER);
-//				if (valuefilter != null) {
-//					String columnfilter = (String) getAttributeAsString(SpagoBIConstants.COLUMN_FILTER);
-//					String typeFilter = (String) getAttributeAsString(SpagoBIConstants.TYPE_FILTER);
-//					String typeValueFilter = (String) getAttributeAsString(SpagoBIConstants.TYPE_VALUE_FILTER);
-//					list = DelegatedBasicListService.filterList(list, valuefilter, typeValueFilter, 
-//							columnfilter, typeFilter, getResponseContainer().getErrorHandler());
-//				}
+
 				
 				response.put("testExecuted", "true");
 			}

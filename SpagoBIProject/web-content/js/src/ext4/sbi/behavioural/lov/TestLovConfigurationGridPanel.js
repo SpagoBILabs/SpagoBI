@@ -79,19 +79,19 @@ Ext.define('Sbi.behavioural.lov.TestLovConfigurationGridPanel', {
 	            xtype: 'radiocolumn',
 	            header: 'Value',
 	            dataIndex: 'isValue',
-	            width: 60
+	            width: 90
 	        });
 			this.columnsDefinition.push({
 	            xtype: 'radiocolumn',
 	            header: 'Description',
 	            dataIndex: 'isDescription',
-	            width: 60
+	            width: 90
 	        });
 			this.columnsDefinition.push({
 	            xtype: 'checkcolumn',
 	            header: 'Visible',
 	            dataIndex: 'isVisible',
-	            width: 60,
+	            width: 90,
 	            editor: {
 	                xtype: 'checkbox',
 	                cls: 'x-grid-checkheader-editor'

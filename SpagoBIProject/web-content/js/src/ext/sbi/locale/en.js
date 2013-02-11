@@ -771,3 +771,12 @@ Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.dateIn']='Creation date';
 Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.fileName']='File name';
 Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.deleteNonActive']='Clean non-active versions';
 Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.isactive'] = 'Active';
+
+
+//===================================================================
+//BEHAVIOURAL 
+//===================================================================
+	
+Sbi.locale.ln['sbi.behavioural.lov.type.simple']='Simple'
+Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Tree'
+Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filter'	

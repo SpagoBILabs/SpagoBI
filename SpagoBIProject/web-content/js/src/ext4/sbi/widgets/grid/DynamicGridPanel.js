@@ -64,7 +64,10 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
       		console.log('DynamicGridPanel load store');
       		this.store.load();
       	}
-    	this.tbar = Ext.create('Sbi.widgets.grid.DynamicFilteringToolbar',{store: this.store});
+      	if(this.filterConfig!=undefined && this.filterConfig!=null){
+      		this.tbar = Ext.create('Sbi.widgets.grid.DynamicFilteringToolbar',Ext.apply(config.filterConfig||{},{store: this.store}));
+      	}
+    	
     	this.callParent(arguments);
     	console.log('DynamicGridPanel costructor OUT');
     },

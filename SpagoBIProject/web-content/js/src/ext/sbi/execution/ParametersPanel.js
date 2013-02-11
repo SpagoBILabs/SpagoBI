@@ -545,6 +545,14 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			var theField = this.fields[p];
 			
 			
+			//if (theField.behindParameter.selectionType === 'TREE') {
+				
+			//	this.fields[p].on('select', function(field, record, index) {
+			////		this.updateDependentFields( field );
+			//	} , this);
+			//	
+			//} else 
+			
 			if (theField.behindParameter.selectionType === 'LOOKUP') {
 			
 				this.fields[p].on('select', function(field, record, index) {
@@ -964,6 +972,19 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				}
 			}));
 
+			
+			
+		} else if(p.selectionType === 'TREE'){
+			var params = Ext.apply({}, {
+				PARAMETER_ID: p.id
+				, MODE: 'complete'
+				, OBJ_PARAMETER_IDS: p.objParameterIds 
+			
+			}, this.executionInstance);
+			
+		//	var p = Sbi.commons.JSON.encode(this.getFormState());
+		//	params.PARAMETERS = p;
+			field = new Sbi.widgets.TreeLookUpField({params: params, service: this.services['getParameterValueForExecutionService']});
 			
 			
 		} else if(p.selectionType === 'LOOKUP') {

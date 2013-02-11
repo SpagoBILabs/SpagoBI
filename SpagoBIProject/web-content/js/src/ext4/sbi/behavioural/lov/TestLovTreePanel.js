@@ -156,6 +156,7 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
 			description: description
 		});	
 
+		this.normalizeTree();
 		this.getView().refresh();   
 		
 	}
@@ -164,10 +165,15 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
     , updateTreeNode: function(target, name, node){
     	var position = this.getTargetPosition(target);
     	if(position!=null){
-        	node.set(position, name);
-    		this.getView().refresh();   
+    		//if the node is not a leav you can not set the description
+    		if(position!='description' || (node.childNodes && node.childNodes.length==0) ){
+    		 	node.set(position, name);
+    		 	if(position=='value'){
+    		 		node.set('description', name);
+    		 	}
+    		 	this.getView().refresh();   
+    		}
     	}
-
 	}
     
     //Understand if the target is a node, value or description column
@@ -232,6 +238,7 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
 				newChild.set('leaf', false);	
 				node.removeChild(oldChild);
 				newChild.appendChild(oldChild);	
+				this.normalizeTree();
 				this.getView().refresh();   
 				return true;
 			}else if(node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
@@ -290,7 +297,17 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
     		}
     		this.addTreeNode({name: valueColumnName, description: descriptionColumnName });    	
     	}
-    	
     }
+    
+    //set the the description equal to the value
+    , normalizeTree: function(){
+		var store = this.getStore();
+		var root = store.getRootNode();
+		var node = root;
+		while (node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
+			node.set('description', node.data.value);
+			node = node.childNodes[0];
+		}
+	}
 
 });

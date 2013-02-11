@@ -40,6 +40,7 @@ Ext.define('Sbi.behavioural.lov.TestLovResultPanel', {
 		
 		var defautlConf = { pagingConfig:{}, storeConfig:{ pageSize: 10}	};
 		this.title =  "LOV result preview";
+		this.filterConfig={};
 		this.border = false;
 		this.region = 'south';
 		defautlConf = Ext.apply( defautlConf,config ||{} );
