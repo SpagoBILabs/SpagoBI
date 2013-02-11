@@ -89,7 +89,8 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 		
 		if(this.treeLov){
 			//Tree lov panel
-			this.lovTestConfigurationTree = Ext.create('Sbi.behavioural.lov.TestLovTreePanel',{lovConfig:config.lovConfig, flex: 2});
+			this.lovTestConfigurationTree = Ext.create('Sbi.behavioural.lov.TestLovTreePanel',{lovConfig:config.lovConfig, flex: 2, parentStore : this.lovTestPreview.store });
+			this.lovTestPreview.on('storeLoad',this.lovTestConfigurationTree.onParentStroreLoad,this.lovTestConfigurationTree);
 			lovConfigurationPanelItems.push(this.lovTestConfigurationTree);
 		}
 

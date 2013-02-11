@@ -517,27 +517,36 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				var p =  this.parameters[j];
 				
 				field.on('focus', function(f){
-					for(var i = 0; i < f.dependencies.length; i++) {
-						var field = this.fields[ f.dependencies[i].urlName ];
-						field.getEl().addClass('x-form-dependent-field');                         
-					}		
+					if(f.dependencies){
+						for(var i = 0; i < f.dependencies.length; i++) {
+							var field = this.fields[ f.dependencies[i].urlName ];
+							field.getEl().addClass('x-form-dependent-field');                         
+						}	
+					}
+	
 				}, this
 				, {delay:250}
 				);
 				
 				field.on('blur', function(f){
-					for(var i = 0; i < f.dependencies.length; i++) {
-						var field = this.fields[ f.dependencies[i].urlName ];
-						field.getEl().removeClass('x-form-dependent-field');                         
+					if(f.dependencies){
+						for(var i = 0; i < f.dependencies.length; i++) {
+							var field = this.fields[ f.dependencies[i].urlName ];
+							field.getEl().removeClass('x-form-dependent-field');                         
+						}
 					}
+
 				}, this);
 				
-				for(var i = 0; i < field.dependencies.length; i++) {
-					var f = this.fields[ field.dependencies[i].urlName ];
-					f.dependants = f.dependants || [];
-					field.dependencies[i].parameterId = this.parameters[j].id;
-					f.dependants.push( field.dependencies[i] );                      
-				}	
+				if(f.dependencies){
+					for(var i = 0; i < field.dependencies.length; i++) {
+						var f = this.fields[ field.dependencies[i].urlName ];
+						f.dependants = f.dependants || [];
+						field.dependencies[i].parameterId = this.parameters[j].id;
+						f.dependants.push( field.dependencies[i] );                      
+					}	
+				}
+
 			}			
 		}
 		
@@ -545,13 +554,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			var theField = this.fields[p];
 			
 			
-			//if (theField.behindParameter.selectionType === 'TREE') {
+			if (theField.behindParameter.selectionType === 'TREE') {
 				
-			//	this.fields[p].on('select', function(field, record, index) {
-			////		this.updateDependentFields( field );
-			//	} , this);
-			//	
-			//} else 
+				this.fields[p].on('select', function(field, record, index) {
+					this.updateDependentFields( field );
+				} , this);
+				
+			} else 
 			
 			if (theField.behindParameter.selectionType === 'LOOKUP') {
 			
@@ -648,6 +657,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if(field.behindParameter.selectionType === 'COMBOBOX' || field.behindParameter.selectionType === 'LIST'){ 
 			field.store.load();
 		}		
+		if(field.behindParameter.selectionType === 'TREE'){ 
+			field.reloadTree();
+		}	
+		
 		field.reset();
 		Sbi.debug('[ParametersPanel.updateDataDependentField] : field [' +dependantConf.label+ '] that is data correlated with field [' + fatherField.name + '] have been updeted succesfully');
 	}
@@ -982,10 +995,17 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 			}, this.executionInstance);
 			
-		//	var p = Sbi.commons.JSON.encode(this.getFormState());
-		//	params.PARAMETERS = p;
-			field = new Sbi.widgets.TreeLookUpField({params: params, service: this.services['getParameterValueForExecutionService']});
-			
+			var p = Sbi.commons.JSON.encode(this.getFormState());
+			params.PARAMETERS = p;
+			field = new Sbi.widgets.TreeLookUpField(Ext.apply(baseConfig,{
+				params: params, 
+				service: this.services['getParameterValueForExecutionService']
+			}));
+			//var thisPanel = this;
+			field.on('lookup',function(){
+				var p = Sbi.commons.JSON.encode(this.getFormState());
+				field.reloadTree(p);
+			},this);
 			
 		} else if(p.selectionType === 'LOOKUP') {
 			
