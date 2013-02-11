@@ -35,6 +35,12 @@ Ext.ns("Sbi.widgets");
 Sbi.widgets.TreeLookUpField = function(config) {
 	
 	
+	this.rootConfig = {
+			text : 'root',
+			expanded: true,
+			id:  'lovroot___SEPA__0'
+        };
+	
 	Ext.apply(this, config);
 	this.initWin();
 	
@@ -75,29 +81,25 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
     
     , initWin: function() {
     	
-    	
+    	this.treeLoader = new Ext.tree.TreeLoader({
+			dataUrl: this.service ,
+			baseParams: this.params,
+			createNode: function(attr) {
+				attr.text = attr.description;
+				if(attr.leaf){
+					attr.checked =false;
+				}
+				var node = Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+				return node;
+			}
+		});
 		
 		this.tree = new Ext.tree.TreePanel({
 	        width: 200,
 	        autoScroll: true,
 	        rootVisible: false,
-	        loader: new Ext.tree.TreeLoader({
-				dataUrl: this.service ,
-				baseParams: this.params,
-				createNode: function(attr) {
-					attr.text = attr.description;
-					if(attr.leaf){
-						attr.checked =false;
-					}
-					var node = Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
-					return node;
-				}
-			}),
-	        root: new Ext.tree.AsyncTreeNode({
-				text : 'root',
-				expanded: true,
-				id:  'lovroot___SEPA__0'
-	        })
+	        loader: this.treeLoader,
+	        root: new Ext.tree.AsyncTreeNode(this.rootConfig)
 		//,  rootVisible: false
 	    });
 
@@ -136,6 +138,7 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 
  
 	, onLookUp: function() {
+		this.fireEvent('lookup', this);
 		this.win.show(this);
 	}
 
@@ -162,6 +165,15 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 		return values;
 	}
 	
+	//if the parameters has been change we reload the tree
+	,reloadTree: function(formParams){
+		if(formParams && formParams!=this.oldFormParams){
+			this.params.PARAMETERS =  formParams;
+			this.treeLoader.baseParams =this.params;
+			var newRoot = new Ext.tree.AsyncTreeNode(this.rootConfig);
+			this.tree.setRootNode(newRoot);
+		}
+	}
 
 });
 

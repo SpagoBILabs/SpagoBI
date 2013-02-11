@@ -273,6 +273,9 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
     		alert("Tree not defined");
     		return null;
     	}
+    	this.serializedTree.visibleColumnNames = this.column;
+    	this.serializedTree.column = this.column;
+    	
     	return this.serializedTree;
     }
     
@@ -307,6 +310,19 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
 		while (node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
 			node.set('description', node.data.value);
 			node = node.childNodes[0];
+		}
+	}
+    
+    //updates the visible columns (all columns)
+	,onParentStroreLoad: function(store){
+		var fields = this.parentStore.proxy.reader.jsonData.metaData.fields;
+		if(fields!=null && fields!=undefined && fields.length>0){
+			var column = [];
+			for(var i=0; i<fields.length; i++){
+				column.push(fields[i].name);
+			}
+			
+			this.column = column;
 		}
 	}
 
