@@ -781,6 +781,8 @@ Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.isactive'] = 'Active';
 Sbi.locale.ln['sbi.behavioural.lov.type.simple']='Simple'
 Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Tree'
 Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filter'
+Sbi.locale.ln['sbi.behavioural.lov.save.window.title']='LOV Saved'
+Sbi.locale.ln['sbi.behavioural.lov.save.window.text']='The LOV has been successfully saved'
 
 
 
