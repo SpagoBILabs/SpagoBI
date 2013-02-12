@@ -142,8 +142,7 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
      * @private
      */
     beforeDestroy : function(){
-    	Sbi.trace('beforeDestroy() - ' + Ext.destroy);
-        Ext.destroy(this.slider);
+    	Ext.destroy(this.slider);
         Ext.form.SliderField.superclass.beforeDestroy.call(this);
     },
     

@@ -538,13 +538,15 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 
 				}, this);
 				
-				if(f.dependencies){
+				if(field.dependencies){
 					for(var i = 0; i < field.dependencies.length; i++) {
 						var f = this.fields[ field.dependencies[i].urlName ];
 						f.dependants = f.dependants || [];
 						field.dependencies[i].parameterId = this.parameters[j].id;
 						f.dependants.push( field.dependencies[i] );                      
 					}	
+				} else {
+					alert('Field [' + field.name + '] have no dependencies defined');
 				}
 
 			}			
@@ -572,7 +574,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				|| theField.behindParameter.selectionType === 'LIST' 
 				|| theField.behindParameter.selectionType === 'SLIDER') {
 				this.fields[p].on('change', this.onUpdateDependentFields, this);
-				//this.fields[p].on('change', this.updateDependentField, this);
 			} else if(theField.behindParameter.typeCode == 'MAN_IN') {
 				// if input field has an element (it means that the field was displayed)
 				if (theField.el !== undefined) {
@@ -599,6 +600,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	}
 	
 	, updateDependentFields: function(f) {
+		
+		if(f.behindParameter.selectionType === 'SLIDER') alert('succhio succhio');
+		
 		Sbi.trace('[ParametersPanel.updateDependentFields] : IN');
 		Sbi.debug('[ParametersPanel.updateDependentFields] : updating fields that depend on [' + f.name + ']');
 		
@@ -655,7 +659,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		Sbi.debug('[ParametersPanel.updateDataDependentField] : updating field [' + dependantConf.label + '] that is data correlated with field [' + fatherField.name + ']');
 		
 		var field = this.fields[ dependantConf.parameterId ];
-		if(field.behindParameter.selectionType === 'COMBOBOX' || field.behindParameter.selectionType === 'LIST'){ 
+		if(field.behindParameter.selectionType === 'COMBOBOX' 
+			|| field.behindParameter.selectionType === 'LIST' 
+			|| field.behindParameter.selectionType === 'SLIDER'){ 
 			field.store.load();
 		}		
 		if(field.behindParameter.selectionType === 'TREE'){ 
@@ -841,8 +847,187 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 		}    
 	}
+	
+	
+	// ==============================================================================
+	// Create fields
+	// ==============================================================================
+		
+	, createDateField: function( baseConfig, executionInstance ) {
+		
+		var p = baseConfig.parameter;
+		
+		baseConfig.format = Sbi.config.localizedDateFormat;
+		
+		field = new Ext.form.DateField(baseConfig);
+		
+		if(p.value !== undefined && p.value !== null) {	
+			var dt = Sbi.commons.Format.date(p.value, Sbi.config.clientServerDateFormat);
+			field.setValue(p.value);				
+		}
+		
+		return field;
+		
+	}
 
-	, createField: function( p, c ) {
+	, createLookupField: function( baseConfig, executionInstance )  {
+		
+		var p = baseConfig.parameter;
+		
+		var params = this.getBaseParams(p, executionInstance, 'complete');
+		
+		var store = this.createStore();
+		store.on('beforeload', function(store, o) {
+			var p = Sbi.commons.JSON.encode(this.getFormState());
+			o.params.PARAMETERS = p;
+			return true;
+		}, this);
+		
+		field = new Sbi.widgets.LookupField(Ext.apply(baseConfig, {
+			  store: store
+				, params: params
+				, readOnly: true
+				, singleSelect: (p.multivalue === false)
+		}));
+		
+		return field;
+	}
+	
+	, createTreeField: function( baseConfig, executionInstance ) {
+		
+		var p = baseConfig.parameter;
+		
+		var params = this.getBaseParams(p, executionInstance, 'complete');
+		params.PARAMETERS = Sbi.commons.JSON.encode(this.getFormState());;
+		
+		field = new Sbi.widgets.TreeLookUpField(Ext.apply(baseConfig,{
+			params: params, 
+			service: this.services['getParameterValueForExecutionService']
+		}));
+		//var thisPanel = this;
+		field.on('lookup',function(){
+			var p = Sbi.commons.JSON.encode(this.getFormState());
+			field.reloadTree(p);
+		},this);
+		
+		return field;
+	}
+	
+	, createSliderField: function( baseConfig, executionInstance ) {
+		
+		Sbi.trace('[ParametersPanel.createSliderField] : IN');
+		Sbi.trace('[ParametersPanel.createSliderField] : executionInstance [' + executionInstance + ']');
+		
+		
+		var p = baseConfig.parameter;
+		var store = this.createCompleteStore(p, executionInstance, 'simple');
+		
+		field = new Sbi.widgets.SliderField(Ext.apply(baseConfig, {
+			multiSelect: p.multivalue,
+			store :  store,
+			displayField:'label',
+			valueField:'value',
+            tipText: function(slider, thumb){
+            	var record = slider.store.getAt(thumb.value);
+            	var value = record? record.get('label'): null;
+                return String(thumb.value +  ' : ' + value);
+            },
+            constrainThumbs: false 
+		}));
+		
+		Sbi.trace('[ParametersPanel.createSliderField] : OUT');
+		
+		return field;
+	}
+	
+	, createComboField: function( baseConfig, executionInstance ) {
+		
+		var p = baseConfig.parameter;
+		
+		var store = this.createCompleteStore(p, executionInstance, 'simple');
+		
+		//on the load event, adds an empty value for the reset at the first 
+		// position ONLY if the lov doesn't return an element with empty description
+		if(this.addEmptyValueToCombo) {
+			store.on('load', function(store, records, options) {
+				
+				var exist = false;
+				for (i =0, l= records.length; i<l; i++ ){
+					if (store.getAt(i).get('description') === '' ){
+						exist = true;
+						break;
+					}
+				}
+
+				if (!exist){
+					var emptyData = {
+							value: '',
+							label: '',
+							description:'Empty value'
+						};
+				
+					var emptyId =  store.getTotalCount()+1;
+					var r = new store.recordType(emptyData, emptyId); // create new record
+					store.insert(0, r);
+				}
+			}, this);
+		}
+		
+		
+		field = new Ext.ux.Andrie.Select(Ext.apply(baseConfig, {
+			multiSelect: p.multivalue
+			//, minLength:2
+			, editable  : false			    
+			, forceSelection : false
+			, store :  store
+			, displayField:'label'
+			, valueField:'value'
+			, emptyText: ''
+			, typeAhead: false
+			//, typeAheadDelay: 1000
+			, triggerAction: 'all'
+			, selectOnFocus:true
+			, autoLoad: false
+			, xtype : 'combo'
+			, listeners: {
+			    'select': {
+			       	fn: function(){	}
+			       	, scope: this
+			    }			    
+			}
+		}));
+		
+		return field;
+	}
+
+	, createListField: function( baseConfig, executionInstance ) {
+		
+		var p = baseConfig.parameter;
+		
+		var store = this.createCompleteStore(p, executionInstance, 'simple');
+		
+		if(p.multivalue) {	
+			field = new Sbi.widgets.CheckboxField(Ext.apply(baseConfig, {
+	           store : store
+	           , displayField:'label'
+			   , valueField:'value'
+			   , parameterId: p.id
+	        }));
+		
+		} else {
+			field = new Sbi.widgets.RadioField(Ext.apply(baseConfig, {
+		       store : store
+		       , displayField:'label'
+			   , valueField:'value'
+			   , parameterId: p.id
+		    }));
+		}
+		
+		return field;
+	}
+		
+	, createField: function( p, executionInstance ) {
+	
 		var field;
 		
 		var baseConfig = {
@@ -869,222 +1054,31 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 		}
 		
-		//if(p.dependencies.length > 0) baseConfig.fieldClass = 'background-color:yellow;';
 		if(p.type === 'DATE' && p.selectionType !== 'MAN_IN') {		
-			baseConfig.format = Sbi.config.localizedDateFormat;
-			
-			field = new Ext.form.DateField(baseConfig);
-			
-			if(p.value !== undefined && p.value !== null) {	
-				var dt = Sbi.commons.Format.date(p.value, Sbi.config.clientServerDateFormat);
-				field.setValue(p.value);				
-			}
-		
+			field = this.createDateField( baseConfig, this.executionInstance );
 		} else if(p.selectionType === 'LIST') {
-			var baseParams = {};
-			Ext.apply(baseParams, this.executionInstance);
-			Ext.apply(baseParams, {
-				PARAMETER_ID: p.id
-				, MODE: 'simple'
-				, OBJ_PARAMETER_IDS: p.objParameterIds  // ONly in massive export case
-			});
-			delete baseParams.PARAMETERS;
-			var store = this.createStore();
-			store.baseParams  = baseParams;
-			
-			store.on('beforeload', function(store, o) {
-				Sbi.trace('[ParametersPanel.onBeforeStoreLoad] : IN');
-				var p = Sbi.commons.JSON.encode(this.getFormState());
-				Sbi.trace('[ParametersPanel.onBeforeStoreLoad] : form state [' + p + ']');
-				o.params = o.params || {};
-				o.params.PARAMETERS = p;
-				Sbi.trace('[ParametersPanel.onBeforeStoreLoad] : OUT');
-				return true;
-			}, this);
-			
-			if(p.multivalue) {	
-				field = new Sbi.widgets.CheckboxField(Ext.apply(baseConfig, {
-		           store : store
-		           , displayField:'label'
-				   , valueField:'value'
-				   , parameterId: p.id
-		        }));
-			
-			} else {
-				field = new Sbi.widgets.RadioField(Ext.apply(baseConfig, {
-			       store : store
-			       , displayField:'label'
-				   , valueField:'value'
-				   , parameterId: p.id
-			    }));
-			}
+			field = this.createListField( baseConfig, this.executionInstance );
 		} else if(p.selectionType === 'COMBOBOX') {
-			var baseParams = {};
-			Ext.apply(baseParams, this.executionInstance);
-			Ext.apply(baseParams, {
-				PARAMETER_ID: p.id
-				, MODE: 'simple'
-				, OBJ_PARAMETER_IDS: p.objParameterIds  // ONly in massive export case
-			});
-			delete baseParams.PARAMETERS;
-			
-			var store = this.createStore();
-			store.baseParams  = baseParams;
-			store.on('beforeload', function(store, o) {
-				var p = Sbi.commons.JSON.encode(this.getFormState());
-				o.params = o.params || {};
-				o.params.PARAMETERS = p;
-				return true;
-			}, this);
-			
-			//on the load event, adds an empty value for the reset at the first 
-			// position ONLY if the lov doesn't return an element with empty description
-			if(this.addEmptyValueToCombo) {
-				store.on('load', function(store, records, options) {
-					
-					var exist = false;
-					for (i =0, l= records.length; i<l; i++ ){
-						if (store.getAt(i).get('description') === '' ){
-							exist = true;
-							break;
-						}
-					}
-	
-					if (!exist){
-						var emptyData = {
-								value: '',
-								label: '',
-								description:'Empty value'
-							};
-					
-						var emptyId =  store.getTotalCount()+1;
-						var r = new store.recordType(emptyData, emptyId); // create new record
-						store.insert(0, r);
-					}
-				}, this);
-			}
-			
-			
-			field = new Ext.ux.Andrie.Select(Ext.apply(baseConfig, {
-				multiSelect: p.multivalue
-				//, minLength:2
-				, editable  : false			    
-				, forceSelection : false
-				, store :  store
-				, displayField:'label'
-				, valueField:'value'
-				, emptyText: ''
-				, typeAhead: false
-				//, typeAheadDelay: 1000
-				, triggerAction: 'all'
-				, selectOnFocus:true
-				, autoLoad: false
-				, xtype : 'combo'
-				, listeners: {
-				    'select': {
-				       	fn: function(){	}
-				       	, scope: this
-				    }			    
-				}
-			}));
-
-			
-			
+			field = this.createComboField( baseConfig, this.executionInstance );
 		} else if(p.selectionType === 'TREE'){
-			var params = Ext.apply({}, {
-				PARAMETER_ID: p.id
-				, MODE: 'complete'
-				, OBJ_PARAMETER_IDS: p.objParameterIds 
-			
-			}, this.executionInstance);
-			
-			var p = Sbi.commons.JSON.encode(this.getFormState());
-			params.PARAMETERS = p;
-			field = new Sbi.widgets.TreeLookUpField(Ext.apply(baseConfig,{
-				params: params, 
-				service: this.services['getParameterValueForExecutionService']
-			}));
-			//var thisPanel = this;
-			field.on('lookup',function(){
-				var p = Sbi.commons.JSON.encode(this.getFormState());
-				field.reloadTree(p);
-			},this);
-			
+			field = this.createTreeField( baseConfig, this.executionInstance );
 		} else if(p.selectionType === 'LOOKUP') {
-			
-			var params = Ext.apply({}, {
-				PARAMETER_ID: p.id
-				, MODE: 'complete'
-				, OBJ_PARAMETER_IDS: p.objParameterIds  // ONly in massive export case
-			}, this.executionInstance);
-			delete params.PARAMETERS;
-			
-			var store = this.createStore();
-			store.on('beforeload', function(store, o) {
-				var p = Sbi.commons.JSON.encode(this.getFormState());
-				o.params.PARAMETERS = p;
-				return true;
-			}, this);
-			
-			
-			//field = new Sbi.execution.LookupFieldWithTableWindow(Ext.apply(baseConfig, {
-			field = new Sbi.widgets.LookupField(Ext.apply(baseConfig, {
-				
-				  store: store
-					, params: params
-					, readOnly: true
-					, singleSelect: (p.multivalue === false)
-			}));
-			
-			
+			field = this.createLookupField( baseConfig, this.executionInstance );	
 		} else if(p.selectionType === 'SLIDER') { 
-			var baseParams = {};
-			Ext.apply(baseParams, this.executionInstance);
-			Ext.apply(baseParams, {
-				PARAMETER_ID: p.id
-				, MODE: 'simple'
-				, OBJ_PARAMETER_IDS: p.objParameterIds  // ONly in massive export case
-			});
-			delete baseParams.PARAMETERS;
-			var store = this.createStore();
-			store.baseParams  = baseParams;
-			
-			store.on('beforeload', function(store, o) {
-				var p = Sbi.commons.JSON.encode(this.getFormState());
-				o.params = o.params || {};
-				o.params.PARAMETERS = p;
-				
-				var field = this.fields["P1"];
-				var value = this.getFieldValue(field);
-				
-				alert(value + " - " + field.valueArray + " - " +  p);
-				
-				return true;
-			}, this);
-			
-			field = new Sbi.widgets.SliderField(Ext.apply(baseConfig, {
-				multiSelect: p.multivalue,
-	            tipText: function(thumb){
-	                return String(thumb.value) + '%';
-	            },
-	            constrainThumbs: false
-			}));
+			field = this.createSliderField( baseConfig, this.executionInstance );
 		} else { 
 			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
 				baseConfig.format = Sbi.config.localizedDateFormat;
 				field = new Ext.form.DateField(baseConfig);
 				if(p.type ==='DATE_DEFAULT') {
 					field.setValue(new Date());
-					
-				}
-				
+				}		
 			} else {
 				if (p.enableMaximizer) {
 					field = new Sbi.execution.LookupFieldWithMaximize(baseConfig);
 				} else {
 					field = new Ext.form.TextField(baseConfig);
-				}
-				
+				}	
 			}			
 		}
 		
@@ -1104,6 +1098,40 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		return field;
 	}
 
+	, createCompleteStore: function(p, executionInstance, mode) {
+		var store = this.createStore();
+		Sbi.trace('[ParametersPanel.createCompleteStore] : executionInstance [' + executionInstance + ']');
+		store.baseParams  = this.getBaseParams(p, executionInstance, mode);
+		store.on('beforeload', function(store, o) {
+			Sbi.trace('[ParametersPanel.onBeforeStoreLoad] : IN');
+			var p = Sbi.commons.JSON.encode(this.getFormState());
+			//alert('[ParametersPanel.onBeforeStoreLoad] : form state [' + p + ']');
+			Sbi.trace('[ParametersPanel.onBeforeStoreLoad] : form state [' + p + ']');
+			o.params = o.params || {};
+			o.params.PARAMETERS = p;
+			Sbi.trace('[ParametersPanel.onBeforeStoreLoad] : OUT');
+			return true;
+		}, this);
+		
+		return store;
+		// this.createCompleteStore(p, this.executionInstance, 'simple');
+	}
+	
+	, getBaseParams: function(p, executionInstance, mode) {
+		var baseParams = {};
+		Sbi.trace('[ParametersPanel.getBaseParams] : executionInstance [' + executionInstance + ']');
+		
+		Ext.apply(baseParams, executionInstance);
+		Ext.apply(baseParams, {
+			PARAMETER_ID: p.id
+			, MODE: mode || 'simple'
+			, OBJ_PARAMETER_IDS: p.objParameterIds  // Only in massive export case
+		});
+		delete baseParams.PARAMETERS;
+		
+		return baseParams;
+		// store.baseParams  = this.getBaseParams(p, this.executionInstance);
+	}
 	
 	, createStore: function() {
 		var store;

@@ -674,9 +674,14 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
      */
     setValue : function(index, v, animate, changeComplete) {
     	Sbi.debug("[Slider.setValue] : set value [" + v + "] to thumb [" + index + "]" );
-        var thumb = this.thumbs[index],
-            el    = thumb.el;
-
+        var thumb = this.thumbs[index];
+        if(!thumb) {
+        	alert('Thumb [' + index + '] does not exist. Impossible to set value [' + v + ']');
+        	alert('Max thumb [' +  this.thumbs.length + ']');
+        	return;
+        }
+        
+        var el = thumb.el;
         v = this.normalizeValue(v);
 
         if (v !== thumb.value && this.fireEvent('beforechange', this, v, thumb.value, thumb) !== false) {
@@ -845,7 +850,6 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         var values = [];
 
         for (var i=0; i < this.thumbs.length; i++) {
-        	Sbi.trace("pushValue " + this.thumbs[i].value);
             values.push(this.thumbs[i].value);
         }
 
