@@ -66,7 +66,7 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
     this.shortcutsPanel.on('applyviewpoint', this.parametersPanel.applyViewPoint, this.parametersPanel);
     this.shortcutsPanel.on('viewpointexecutionrequest', function(v) {
     	this.southPanel.collapse();
-    	this.northPanel.collapse();
+    	this.eastPanel.collapse();
     	this.parametersPanel.applyViewPoint(v);
     	// save parameters into session
     	Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
@@ -76,7 +76,7 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
     
     this.shortcutsPanel.on('subobjectexecutionrequest', function (subObjectId) {
     	this.southPanel.collapse();
-    	this.northPanel.collapse();
+    	this.eastPanel.collapse();
     	// save parameters into session
     	Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
 		Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersPanel);
@@ -89,7 +89,7 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 	
     this.shortcutsPanel.on('snapshotexcutionrequest', function (snapshotId) {
     	this.southPanel.collapse();
-    	this.northPanel.collapse();
+    	this.eastPanel.collapse();
 		this.executionInstance.SBI_SNAPSHOT_ID = snapshotId;
 		this.synchronize(this.executionInstance, false);
 	}, this);
@@ -127,7 +127,7 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
     
 	var items = [this.miframe, this.southPanel];
 	if (config.hideParametersPanel === undefined || config.hideParametersPanel === false) {
-		items.push(this.northPanel);
+		items.push(this.eastPanel);
 	}
 	
 	var id = Ext.id();
@@ -167,7 +167,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
 			this.executionInstance = executionInstance;
 			if(this.toolbar){
-				this.toolbar.synchronizeToolbar( executionInstance,this.miframe,this.southPanel,this.northPanel,this.parametersPanel,this.shortcutsPanel);
+				this.toolbar.synchronizeToolbar( executionInstance,this.miframe,this.southPanel,this.eastPanel,this.parametersPanel,this.shortcutsPanel);
 			}
 			if(synchronizeSliders === undefined || synchronizeSliders === true) {
 
@@ -256,7 +256,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			this.eastPanelWidth = this.parametersPanel.width;
 		}
 		
-		this.northPanel = new Ext.Panel({
+		this.eastPanel = new Ext.Panel({
 				region:'east'
 				, title: LN('sbi.execution.parametersselection.parameters')
 				, border: true
@@ -276,7 +276,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		// fix the bug with the width of option box in combo. Without this fix when the combobox
 		// is rendered on an hided panel the width of the option box is far less than the with of
 		// the input field
-		this.northPanel.on('expand', function() {
+		this.eastPanel.on('expand', function() {
 			//alert('expand');
 			for(p in this.parametersPanel.fields) {
 				var aField = this.parametersPanel.fields[p];
