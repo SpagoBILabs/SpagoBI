@@ -5,39 +5,39 @@
 			title="#menu.Resources">
 		<ITEM	title="#menu.EngMan"
 				functionality="EnginesManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListEnginesPage&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListEnginesPage&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/engines16.png" />
 		<ITEM	title="#menu.DataSourceMan"
 				functionality="DataSourceManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDataSourcePage&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDataSourcePage&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
 		<ITEM	title="#menu.DataSetMan"
 				functionality="DatasetManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_DATASETS_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_DATASETS_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/dataset/dataset16.png" />
 		<ITEM	title="#menu.MapCat"
 				functionality="MapCatalogueManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListMapsPage&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListMapsPage&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/mapcatalogue/maps16.png" />
 		<ITEM	title="#menu.FeatureMapCat"
 				functionality="MapFeaturesManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListFeaturesPage&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListFeaturesPage&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/mapcatalogue/featureManagement16.png" />
 		<ITEM	title="#menu.MetadataMan"
 				functionality="ObjMetadataManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListObjMetadataPage&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListObjMetadataPage&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/objmetadata/document-meta.gif" />
 		<ITEM	title="#menu.UdpMan"
 				functionality="UserDefinedPropertyManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_UDP_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_UDP_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/rolesynch16.png" />
         <ITEM   title="#menu.MetaModelsCatalogue"
                 functionality="MetaModelsCatalogueManagement"
-                url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_META_MODELS_CATALOGUE_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+                url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_META_MODELS_CATALOGUE_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
                 iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />
         <ITEM   title="#menu.MondrianCatalogue"
                 functionality="ArtifactCatalogueManagement"
-                url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ARTIFACTS_CATALOGUE_ACTION&amp;type=MONDRIAN_SCHEMA&LIGHT_NAVIGATOR_RESET=TRUE"
+                url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ARTIFACTS_CATALOGUE_ACTION&amp;type=MONDRIAN_SCHEMA&amp;LIGHT_NAVIGATOR_RESET=TRUE"
                 iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/cube16.png" />
 	</ITEM>
 	
@@ -45,7 +45,7 @@
 			title="#menu.AnalyticalModel">
 		<ITEM	title="#menu.FunctMan"
 				functionality="FunctionalitiesManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage&amp;OPERATION=FUNCTIONALITIES_OPERATION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage&amp;OPERATION=FUNCTIONALITIES_OPERATION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/functionalities16.png" />
 		<ITEM	title="#menu.DocumentDev"
 				functionality="DocumentDevManagement"
@@ -57,15 +57,15 @@
 			title="#menu.BehaviouralModelMenu">
 		<ITEM	title="#menu.LovMan"
 				functionality="LovsView"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListLovsPage&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListLovsPage&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/lovs16.png" />
 		<ITEM	title="#menu.ConstraintMan"
 				functionality="ConstraintView"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=LISTMODALITIESCHECKSPAGE&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=LISTMODALITIESCHECKSPAGE&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/checks16.png" />
 		<ITEM	title="#menu.ParameterMan"
 				functionality="ParameterView"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListParametersPage&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListParametersPage&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/parameters16.png" />
 	</ITEM>
 	
@@ -73,11 +73,11 @@
 			title="#menu.ToolsMenu">
 		<ITEM	title="#menu.ImpExp"
 				functionality="ImportExportManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage&amp;OPERATION=IMPORTEXPORT_OPERATION&amp;OBJECTS_VIEW=VIEW_OBJECTS_AS_TREE&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage&amp;OPERATION=IMPORTEXPORT_OPERATION&amp;OBJECTS_VIEW=VIEW_OBJECTS_AS_TREE&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/importexport/importexport16.png" />
 		<ITEM	title="#menu.Scheduler"
 				functionality="SchedulerManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=JobManagementPage&amp;MESSAGEDET=MESSAGE_GET_ALL_JOBS&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=JobManagementPage&amp;MESSAGEDET=MESSAGE_GET_ALL_JOBS&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/scheduleIcon16.png" />
 		<ITEM	title="#menu.menuconfiguration"
 				functionality="MenuManagement"
@@ -85,15 +85,15 @@
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/menu16.png" />
 		<ITEM	title="#menu.DistributionListList"
 				functionality="DistributionListManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDistributionListPage&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDistributionListPage&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/distributionlist/distributionlist16.png" />
 		<ITEM	title="#menu.Domain"
 				functionality="DomainManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOMAIN_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOMAIN_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/functionalities16.png" />
 		<ITEM	title="#menu.Config"
 				functionality="ConfigManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=CONFIG_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=CONFIG_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" />
 	</ITEM>
 
@@ -101,15 +101,15 @@
 			title="#menu.ProfileMenu">
 		<ITEM	title="#menu.Attributes"
 				functionality="ProfileManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ATTRIBUTES_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ATTRIBUTES_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/rolesynch16.png" />
 		<ITEM	title="#menu.Roles"
 				functionality="ProfileManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ROLES_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ROLES_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/roles.png" />
 		<ITEM	title="#menu.Users"
 				functionality="ProfileManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_USER_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/users.png" />
 	</ITEM>
 
@@ -131,23 +131,23 @@
 			title="#menu.UserMenu">
 		<ITEM	title="#menu.Events"
 				functionality="EventsManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=EVENTS_MONITOR_PAGE&amp;WEBMODE=TRUE&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=EVENTS_MONITOR_PAGE&amp;WEBMODE=TRUE&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/events16.png" />
 		<ITEM	title="#menu.Worklist"
 				functionality="WorklistManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=WorkflowToDoListPage&amp;WEBMODE=TRUE&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=WorkflowToDoListPage&amp;WEBMODE=TRUE&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/worklist16.png" />
 		<ITEM	title="#menu.DistributionListUser"
 				functionality="DistributionListUser"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDistributionListUserPag&LIGHT_NAVIGATOR_RESET=TRUEe"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDistributionListUserPag&amp;LIGHT_NAVIGATOR_RESET=TRUEe"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/distributionlist/distributionlistuser16.png" />
 		<ITEM	title="#menu.HotLink"
 				functionality="HotLinkManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=HOT_LINK_PAGE&amp;OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=HOT_LINK_PAGE&amp;OPERATION=GET_HOT_LINK_LIST&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/hotlinks16.gif" />
 		<ITEM	title="#menu.Browser"  
 				functionality="DocumentUserManagement" 
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET=TRUE" 
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE" 
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" />
 	</ITEM>
 	
@@ -155,39 +155,39 @@
 			title="#menu.KpiModel">
 		<ITEM	title="#menu.KpiDefinition"
 				functionality="KpiManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_KPIS_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_KPIS_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/kpiico16.png" />
 		<ITEM	title="#menu.ThresholdDefinition"
 				functionality="KpiManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_THRESHOLDS_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_THRESHOLDS_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/thr16.png" />
 		<ITEM	title="#menu.ModelDefinition"
 				functionality="KpiManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_MODELS_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_MODELS_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/modeldef16.png" />
 		<ITEM	title="#menu.ModelInstanceDefinition"
 				functionality="KpiManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_MODEL_INSTANCES_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_MODEL_INSTANCES_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/model16.png" />
 		<ITEM	title="#menu.GrantDefinition"
 				functionality="KpiManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_OU_EMPTY_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_OU_EMPTY_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/door_opened16.png" />
 		<ITEM	title="#menu.GoalDefinition"
 				functionality="KpiManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_GOALS_EMPTY_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_GOALS_EMPTY_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/goal16.png" />
 		<ITEM	title="#menu.ResourcesDefinition"
 				functionality="KpiManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_RESOURCES_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_RESOURCES_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/res16.png" />
 		<ITEM	title="#menu.ManageAlarms"
 				functionality="KpiManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ALARMS_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ALARMS_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/alarm16.png" />
 		<ITEM	title="#menu.ManageContacts"
 				functionality="KpiManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_CONTACTS_ACTION&LIGHT_NAVIGATOR_RESET=TRUE"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_CONTACTS_ACTION&amp;LIGHT_NAVIGATOR_RESET=TRUE"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/mail_generic16.png" />
 	</ITEM>
 <!-- 	
