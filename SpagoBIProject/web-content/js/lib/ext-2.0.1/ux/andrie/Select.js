@@ -516,7 +516,7 @@ Ext.extend(Ext.ux.Andrie.Select, Ext.form.ComboBox, {
 		}
 		
 		if (this.oldValueArray != this.valueArray){
-			alert("change: " + this.valueArray);
+			//alert("change: " + this.valueArray);
 			this.fireEvent('change', this, this.oldValueArray, this.valueArray);
 		}
 		this.oldValueArray = Ext.apply([], this.valueArray);

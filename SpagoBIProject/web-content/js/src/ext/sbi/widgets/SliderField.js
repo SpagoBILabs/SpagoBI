@@ -28,7 +28,7 @@ Sbi.widgets.SliderField = function(config) {
 	this.store.on('load', this.refreshOptions, this);
 	this.store.load();
 	
-	//this.addEvents('change');
+	this.addEvents('change');
 	
 	// constructor
 	Sbi.widgets.SliderField.superclass.constructor.call(this, config);
@@ -138,6 +138,7 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
         if(!silent){
         	this.slider.setValues(v, animate);
         }
+        
     	Sbi.trace("[Sbi.SliderField.setIndexes] : [" + this.name + "] : OUT");
     	return this;
     },
@@ -162,8 +163,7 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
         if(!Ext.isArray(v)) {
         	v = [v];
         }
-        
-       
+             
         var index;
         
         index = this.store.find(this.valueField, v[0]);
@@ -173,8 +173,6 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
         	Sbi.trace("[Sbi.SliderField.setValue] : [" + this.name + "] : index of value [" + v[0] + "] is equal to [" + index + "]");
         	this.slider.setValue(0, index);
         }
-        
-       
         
         if(this.multiSelect == true) {
         	index = this.store.find(this.valueField, v[v.length-1]);
@@ -186,6 +184,9 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
             }
         }
        
+        alert('change to ' + this.getValues());
+        this.fireEvent('change', this, v);
+        
     	Sbi.trace("[Sbi.SliderField.setValue] : [" + this.name + "] : OUT");
     	
         return this;
