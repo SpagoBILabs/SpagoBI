@@ -601,8 +601,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	
 	, updateDependentFields: function(f) {
 		
-		if(f.behindParameter.selectionType === 'SLIDER') alert('succhio succhio');
-		
 		Sbi.trace('[ParametersPanel.updateDependentFields] : IN');
 		Sbi.debug('[ParametersPanel.updateDependentFields] : updating fields that depend on [' + f.name + ']');
 		
