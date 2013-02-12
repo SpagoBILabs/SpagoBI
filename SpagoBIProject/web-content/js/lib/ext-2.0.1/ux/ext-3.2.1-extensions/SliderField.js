@@ -106,7 +106,7 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
      */
     initEvents : function(){
         Ext.form.SliderField.superclass.initEvents.call(this);
-        this.slider.on('change', this.onChange, this);   
+        this.slider.on('changecomplete', this.onChangeComplete, this);   
     },
     
     /**
@@ -115,7 +115,7 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
      * @param {Object} v The new value.
      * @private
      */
-    onChange : function(slider, v){
+    onChangeComplete : function(slider, v){
         this.setValue(v, undefined, true);
     },
     

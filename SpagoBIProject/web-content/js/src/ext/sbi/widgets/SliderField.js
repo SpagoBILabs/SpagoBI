@@ -15,15 +15,6 @@ Ext.ns("Sbi.widgets");
 
 Sbi.widgets.SliderField = function(config) {
 
-//	var c = Ext.apply({
-//		columns : 1,
-//		items : [ {
-//			boxLabel : 'Loading options...',
-//			name : 'loading-mask',
-//			value : 'mask'
-//		}]
-//	}, config || {});
-//	
 	this.store = config.store;
 	this.store.on('load', this.refreshOptions, this);
 	this.store.load();
@@ -47,6 +38,7 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
 	originalIndex: null,
 	thumbRendered: false,
 	storeLoaded: false,
+	reseted: true,
 	
 	  /**
      * Initialize the component.
@@ -91,21 +83,32 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     	var recordNo = this.store.getTotalCount();
     	Sbi.debug("[Sbi.SliderField.refreshOptions] : [" + this.name + "] : loaded store contains [" + recordNo + "] records");
     	Sbi.debug("[Sbi.SliderField.refreshOptions] : [" + this.name + "] : slider alredy rendered [" + this.slider.rendered + "]");
-    	this.slider.setMaxValue(recordNo-1); // first record index is 0, last is recordNo-1
-    	Sbi.trace("[Sbi.SliderField.refreshOptions] : [" + this.name + "] : indexes (pre): " + this.getIndexes());
-    	var indexes = this.multiSelect===true? [0,this.slider.maxValue]: [0]; 
-    	this.setIndexes(indexes);
-    	Sbi.trace("[Sbi.SliderField.refreshOptions] : [" + this.name + "] : indexes (post): " + this.getIndexes());
-    	this.originalIndex = indexes;
+    	//this.slider.setMaxValue(recordNo-1); // first record index is 0, last is recordNo-1
+    	this.slider.maxValue = recordNo-1;
+    	Sbi.trace("[Sbi.SliderField.refreshOptions] : [" + this.name + "] : maxIndex set equal to: " + (recordNo-1));
+    	this.originalIndex = this.multiSelect===true? [0,this.slider.maxValue]: [0]; 
     	Sbi.trace("[Sbi.SliderField.refreshOptions] : [" + this.name + "] : originalIndex set equal to: " + this.originalIndex);
     	this.storeLoaded = true;
+    	
+    	if(this.bufferedValues) {
+    		Sbi.trace("[Sbi.SliderField.refreshOptions] : [" + this.name + "] : set buffered value: [" + this.bufferedValues + "]");
+    		this.doSetValue(this.bufferedValues, false);
+    		delete this.bufferedValues;
+    	} else {
+    		Sbi.trace("[Sbi.SliderField.refreshOptions] : [" + this.name + "] : indexes (pre): " + this.getIndexes());
+        	this.setIndexes(this.originalIndex, false);
+        	Sbi.trace("[Sbi.SliderField.refreshOptions] : [" + this.name + "] : indexes (post): " + this.getIndexes());    
+    	}
+    	
     	Sbi.debug("[Sbi.SliderField.refreshOptions] : [" + this.name + "] : OUT");
     },
     
     reset : function (){
     	Sbi.trace("[Sbi.SliderField.reset] : [" + this.name + "] :  IN");
-        this.setIndexes(this.originalIndex);
+    	if(this.bufferedValues) delete this.bufferedValues;
+        this.setIndexes(this.originalIndex, false);
         this.clearInvalid();
+        this.reseted = true;
         Sbi.trace("[Sbi.SliderField.reset] : [" + this.name + "] : OUT");
     },
     
@@ -174,25 +177,14 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
          
     	// silent is used if the setValue method is invoked by the slider
         // which means we don't need to set the value on the slider.
-        if(!silent){
-	        var index;
-	        index = this.store.find(this.valueField, v[0]);
-	        if(index === -1) {
-	        	Sbi.warn("[Sbi.SliderField.setValue] : [" + this.name + "] : value [" + v[0] + "] is not contained in the dataset");
-	        } else {
-	        	Sbi.trace("[Sbi.SliderField.setValue] : [" + this.name + "] : index of value [" + v[0] + "] is equal to [" + index + "]");
-	        	this.slider.setValue(0, index);
-	        }
-	        
-	        if(this.multiSelect == true) {
-	        	index = this.store.find(this.valueField, v[v.length-1]);
-	        	if(index === -1) {
-	            	Sbi.warn("[Sbi.SliderField.setValue] : [" + this.name + "] : value [" + v[v.length-1] + "] is not contained in the dataset");
-	            } else {
-	            	Sbi.trace("[Sbi.SliderField.setValue] : [" + this.name + "] : index of value [" + v[v.length-1] + "] is equal to [" + index + "]");
-	            	this.slider.setValue(1, index);
-	            }
-	        }
+        if(!silent){	
+        	if(!this.storeLoaded) {
+        		Sbi.warn("[Sbi.SliderField.setValue] : [" + this.name + "] : datastore not yet loaded. The valu will be buffered");
+        		this.bufferedValues = v;
+        	} else {
+        		this.doSetValue(v);
+        	} 		
+        	
         } else {
         	v[0] = this.store.getAt(v[0]);
         	if(this.multiSelect == true) {
@@ -200,12 +192,38 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
         	}
         }
        
-
+        this.reseted = false;
         this.fireEvent('change', this, v);
         
     	Sbi.trace("[Sbi.SliderField.setValue] : [" + this.name + "] : OUT");
     	
         return this;
+    },
+    
+    doSetValue : function(v, animate) {
+    	
+    	this.slider.fireChangeEvent = false;
+    	
+    	var index;
+        index = this.store.find(this.valueField, v[0]);
+        if(index === -1) {
+        	Sbi.warn("[Sbi.SliderField.doSetValue] : [" + this.name + "] : value [" + v[0] + "] is not contained in the dataset (store loaded: " + this.storeLoaded + "; store size: " + (this.storeLoaded?this.store.getTotalCount(): "-") + " )");
+        } else {
+        	Sbi.trace("[Sbi.SliderField.doSetValue] : [" + this.name + "] : index of value [" + v[0] + "] is equal to [" + index + "]");
+        	this.slider.setValue(0, index, animate);
+        }
+        
+        if(this.multiSelect == true) {
+        	index = this.store.find(this.valueField, v[v.length-1]);
+        	if(index === -1) {
+        		Sbi.warn("[Sbi.SliderField.doSetValue] : [" + this.name + "] : value [" + v[v.length-1] + "] is not contained in the dataset (store loaded: " + this.storeLoaded + "; store size: " + (this.storeLoaded?this.store.getTotalCount(): "-")+ " )");
+        		        } else {
+            	Sbi.trace("[Sbi.SliderField.doSetValue] : [" + this.name + "] : index of value [" + v[v.length-1] + "] is equal to [" + index + "]");
+            	this.slider.setValue(1, index, animate);
+            }
+        }
+        
+        this.slider.fireChangeEvent = true;
     },
     
     /**
@@ -227,7 +245,10 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     		return undefined;
     	}
     	var values = this.getValues();
-    	var value = this.multiSelect == true? values: values[0];
+    	var value = undefined;
+    	if(values) {
+    		value = this.multiSelect == true? values: values[0];
+    	}
     	Sbi.trace("[Sbi.SliderField.getValue] : [" + this.name + "] : value is equal to " + value + "");
         
     	Sbi.trace("[Sbi.SliderField.getValue] : [" + this.name + "] : OUT");
@@ -237,9 +258,16 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     getValues : function() {
     	Sbi.trace("[Sbi.SliderField.getValues] : [" + this.name + "] : IN");
     	
+    	if(this.reseted) return undefined;
+    	
     	if(this.storeLoaded == false) {
-    		Sbi.trace("[Sbi.SliderField.getValues] : Value is not set because the store has not be loaded yet");
-    		return undefined;
+    		if(this.bufferedValues) {
+    			Sbi.trace("[Sbi.SliderField.getValues] : Store has not be loaded yet. The buffered value [" + this.bufferedValues + "] will be returned");
+    			return this.bufferedValues;
+    		} else {
+    			Sbi.trace("[Sbi.SliderField.getValues] : Store has not be loaded yet and there is no buffered value set to return");
+    			return undefined;
+    		}
     	}
     	
     	var records;
@@ -249,7 +277,7 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     	} else {
     		records = [this.store.getAt(indexes[0])];
     	}
-    	Sbi.trace("[Sbi.SliderField.getValues] : [" + this.name + "] : Selected values numeber is equalt to [" + records.length + "]");
+    	Sbi.trace("[Sbi.SliderField.getValues] : [" + this.name + "] : Selected values numeber is equal to [" + records.length + "]");
     	
     	var values = [];
     	for(var i  = 0; i < records.length; i++) {

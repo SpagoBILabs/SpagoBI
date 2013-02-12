@@ -713,7 +713,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 			Sbi.debug('[ParametersPanel.updateDependentFields] : Manage visibility dependencies triggered by field [' + f.name + ']');
 		
-			this._doRemoveNotVisibleFields();
+			this.doRemoveNotVisibleFields();
 			
 			Sbi.debug('[ParametersPanel.updateDependentFields] : Visibility dependencies triggered by field [' + f.name + '] have been succesfully managed');
 		
@@ -723,24 +723,28 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		Sbi.trace('[ParametersPanel.updateDependentFields] : OUT');
 	}
 	
-	, doRemoveNotVisibleFields: function() {
+	, _doRemoveNotVisibleFields: function() {
 		this.refreshFields();
 	}
 	
-	// deprecated
-	, _doRemoveNotVisibleFields: function() {
+	
+	, doRemoveNotVisibleFields: function() {
 		this.manageVisualDependenciesOnVisibility = false;
+		Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : IN');
 		
 		var state = this.getFormState();			
 		this.removeAllFields();		
-		this.initializeParametersPanel(this.parameters, false);				
+		this.initializeParametersPanel(this.parameters, false);	
+		Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : restore state [' + state.toSource() + ']');
 		this.setFormState(state);
+		
+		Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : OUT');
 		
 		this.manageVisualDependenciesOnVisibility = true;
 	}
 	
 	, updateDataDependentField: function(fatherField, dependantConf) {
-		Sbi.debug('[ParametersPanel.updateDataDependentField] : updating field [' + dependantConf.label + '] that is data correlated with field [' + fatherField.name + ']');
+		Sbi.debug('[ParametersPanel.updateDataDependentField] : updating field [' + dependantConf.parameterId + '] that is data correlated with field [' + fatherField.name + ']');
 		
 		var field = this.fields[ dependantConf.parameterId ];
 		if(field.behindParameter.selectionType === 'COMBOBOX' 
@@ -753,7 +757,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}	
 		
 		field.reset();
-		Sbi.debug('[ParametersPanel.updateDataDependentField] : field [' +dependantConf.label+ '] that is data correlated with field [' + fatherField.name + '] have been updeted succesfully');
+		Sbi.debug('[ParametersPanel.updateDataDependentField] : field [' + dependantConf.parameterId + '] that is data correlated with field [' + fatherField.name + '] have been updeted succesfully');
 	}
 	
 	, updateVisualDependentField: function(fatherField, dependantConf) {
@@ -810,7 +814,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 		}
 		
-		Sbi.debug('[ParametersPanel.updateVisualDependentField] : field [' + dependantConf.name + '] that is data visually with field [' + fatherField.name + '] have been updeted succesfully');
+		Sbi.debug('[ParametersPanel.updateVisualDependentField] : field [' + dependantConf.parameterId + '] that is visually correlated with field [' + fatherField.name + '] have been updeted succesfully');
 	}
 	
 	
@@ -829,6 +833,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		conditionIsTrue = (condition.operation == 'contains')? conditionIsTrue: !conditionIsTrue
 		Sbi.debug('[ParametersPanel.isVisualConditionTrue] : condition [' + condition.value + '] is [' + conditionIsTrue + ']' );
+		if(!conditionIsTrue) Sbi.debug('[ParametersPanel.isVisualConditionTrue] : father field values [' + fatherFieldValueSet.toSource() + ']' );
 		return (conditionIsTrue);
 	}
 	

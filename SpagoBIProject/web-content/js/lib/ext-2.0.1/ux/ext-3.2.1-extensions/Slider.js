@@ -504,7 +504,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
                 value = thumb.value,
                 dist  = Math.abs(value - clickValue);
             
-            Sbi.debug('[MultiSlider.getNearest] : Thumb [' + i + '] value [' + value + '] distance from the clicked value is equal to [' + clickValue + ']');
+            Sbi.debug('[MultiSlider.getNearest] : Thumb [' + i + '] value [' + value + '] distance from the clicked value is equal to [' + dist + ']');
             if (Math.abs(dist <= nearestDistance)) {
                 nearest = thumb;
                 index = i;
@@ -609,8 +609,8 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
      * @return {Number} The ratio of pixels to mapped values
      */
     getRatio : function(){
-        var w = this.innerEl.getWidth(),
-            v = this.maxValue - this.minValue;
+        var w = this.innerEl.getWidth();
+        var v = this.maxValue - this.minValue;
         return v == 0 ? w : (w/v);
     },
 
@@ -665,6 +665,8 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         this.syncThumb();
     },
 
+    fireChangeEvent: true,
+    
     /**
      * Programmatically sets the value of the Slider. Ensures that the value is constrained within
      * the minValue and maxValue.
@@ -676,8 +678,8 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
     	Sbi.debug("[Slider.setValue] : set value [" + v + "] to thumb [" + index + "]" );
         var thumb = this.thumbs[index];
         if(!thumb) {
-        	alert('Thumb [' + index + '] does not exist. Impossible to set value [' + v + ']');
-        	alert('Max thumb [' +  this.thumbs.length + ']');
+        	Sbi.warn('Thumb [' + index + '] does not exist. Impossible to set value [' + v + ']');
+        	Sbi.warn('Max thumb [' +  this.thumbs.length + ']');
         	return;
         }
         
@@ -686,11 +688,13 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
 
         if (v !== thumb.value && this.fireEvent('beforechange', this, v, thumb.value, thumb) !== false) {
             thumb.value = v;
-            if(this.rendered){
+            if(this.rendered && this.innerEl){
                 this.moveThumb(index, this.translateValue(v), animate !== false);
-                this.fireEvent('change', this, v, thumb);
-                if(changeComplete){
-                    this.fireEvent('changecomplete', this, v, thumb);
+                if(this.fireChangeEvent == true) {
+                	this.fireEvent('change', this, v, thumb);
+	                if(changeComplete){
+	                    this.fireEvent('changecomplete', this, v, thumb);
+	                }
                 }
             }
         }
@@ -739,13 +743,15 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         if(!animate || this.animate === false){
             thumb.setLeft(v);
         }else{
-            thumb.shift({x: this.innerEl.getX() + v, stopFx: true, duration:.35});
+            thumb.shift({x: this.innerEl.getX() + v, stopFx: true, duration:.15});
         }
     },
 
     // private
     focus : function(){
-        this.focusEl.focus(10);
+    	if(this.focusEl) {
+    		this.focusEl.focus(10);
+    	}
     },
 
     // private
@@ -827,8 +833,12 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         		return;
         	}
             for (var i=0; i < this.thumbs.length; i++) {
-                this.moveThumb(i, this.translateValue(this.thumbs[i].value));
+            	var translatedValue = this.translateValue(this.thumbs[i].value);
+            	Sbi.log("[Slider.syncThumb] : move thumb [" + i + "] from [" + this.thumbs[i].value + "] to [" + translatedValue + "]");
+                this.moveThumb(i, translatedValue);
             }
+            Sbi.log("[Slider.syncThumb] : thumbs position synchronized sucesfully");
+            
         }
     },
 
