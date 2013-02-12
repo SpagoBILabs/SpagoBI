@@ -53,6 +53,7 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 		//columnNo: 3
 		//, labelAlign: 'left'
 		//maskOnRender: false
+		eastPanelWidth: 300
 	}, config || {});
 	
 	this.isFromCross = config.isFromCross || false;
@@ -70,10 +71,7 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	// always declare exploited services first!
 	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
 	this.services = new Array();
-	this.services['saveViewpointService'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'SAVE_VIEWPOINT_ACTION'
-		, baseParams: params
-	});
+
 	 
     this.addEvents('beforetoolbarinit'
     			  , 'beforesynchronize'
@@ -89,18 +87,30 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	this.init(c, doc);
 	
 	this.centerPanel = new Ext.Panel({
-		region:'center'
-		    , border: false
-		    , frame: false
-		    , collapsible: false
-		    , collapsed: false
-		    , hideCollapseTool: true
-		    , titleCollapse: true
-		    , collapseMode: 'mini'
-		    , split: true
-		    , autoScroll: true
-		    , layout: 'fit'
-		    , items: [this.parametersPanel]
+		region:'center',
+		    html:'center'
+		});
+	
+	
+	if(this.parametersPanel && this.parametersPanel.width){
+		this.eastPanelWidth = this.parametersPanel.width;
+	}
+	
+	this.eastPanel = new Ext.Panel({
+		region:'east'
+			, title: LN('sbi.execution.parametersselection.parameters')
+			, border: true
+			, frame: false
+			, collapsible: true
+			, collapsed: false
+			//, hideCollapseTool: true
+			//, titleCollapse: true
+			//, collapseMode: 'mini'
+			//, split: true
+			, autoScroll: true
+			, width: this.eastPanelWidth 
+			, layout: 'fit'
+			, items: [this.parametersPanel]
 		});
 	
 	var shortcutsHidden = (!Sbi.user.functionalities.contains('SeeViewpointsFunctionality') 
@@ -153,7 +163,7 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	            	scope: this
 	          	}
 	        },   	        
-			items: [this.centerPanel, this.southPanel]
+			items: [this.centerPanel,this.eastPanel, this.southPanel]
 		}]
 	});   
 	
@@ -286,28 +296,10 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 				}			
 			}));
 			
-			this.toolbar.addSeparator();
+			//this.toolbar.addSeparator();
 		}
 		
-		this.toolbar.addButton(new Ext.Toolbar.Button({
-			iconCls: 'icon-clear'
-			, tooltip: LN('sbi.execution.parametersselection.toolbar.clear')
-		   	, scope: this
-		   	, handler : function() {
-				this.clearParametersForm();
-			}
-		}));
-		
-		if (Sbi.user.functionalities.contains('SeeViewpointsFunctionality') && !this.isFromCross) {
-			this.toolbar.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-save'
-				, tooltip: LN('sbi.execution.parametersselection.toolbar.save')
-			   	, scope: this
-			   	, handler : function() {
-					this.saveParametersFormStateAsViewpoint();
-				}
-			}));
-		}
+
 
 		// if document is QBE datamart and user is a Read-only user, he cannot execute main document, but only saved queries.
 		// If there is a subobject preference, the execution button starts the subobject execution
@@ -333,54 +325,9 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 		}
 	}
 
-	, clearParametersForm: function() {
-		this.parametersPanel.reset();
-	}
+
 	
-	, saveParametersFormStateAsViewpoint: function() {
-		if(this.saveViewpointWin === null) {
-			this.saveViewpointWin = new Sbi.widgets.SaveWindow();
-			this.saveViewpointWin.on('save', function(w, state) {
-				var params = Ext.apply({}, state, this.executionInstance);
-				var formState = this.parametersPanel.getFormState();
-				for(var p in formState) {
-					if(formState[p] instanceof Array ) {
-						formState[p] = formState[p].join(';');
-					}
-				}
-				params.viewpoint = Sbi.commons.JSON.encode( formState );
-				Ext.Ajax.request({
-			          url: this.services['saveViewpointService'],
-			          
-			          params: params,
-			          
-			          callback : function(options, success, response){
-						if(success && response !== undefined) {   
-				      		if(response.responseText !== undefined) {
-				      			var content = Ext.util.JSON.decode( response.responseText );
-				      			if(content !== undefined) {
-				      				Ext.MessageBox.show({
-					      				title: 'Status',
-					      				msg: LN('sbi.execution.viewpoints.msg.saved'),
-					      				modal: false,
-					      				buttons: Ext.MessageBox.OK,
-					      				width:300,
-					      				icon: Ext.MessageBox.INFO 			
-					      			});
-				      				this.shortcutsPanel.viewpointsPanel.addViewpoints(content);
-				      			} 
-				      		} else {
-				      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-				      		}
-			    	   }			    	  	
-			          },
-			          scope: this,
-			  		  failure: Sbi.exception.ExceptionHandler.handleFailure      
-			     });
-			}, this);
-		}
-		this.saveViewpointWin.show();
-	}
+
 	
 	
     
@@ -402,7 +349,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	}
 	
 	, initParametersPanel: function( config ) {
-		Ext.apply(config, {pageNumber: 2}); // this let the ParametersPanel know that it is on parameters selection page
+		Ext.apply(config, {pageNumber: 2, parentPanel: this}); // this let the ParametersPanel know that it is on parameters selection page
 		if(this.isFromCross == true) {
 			//alert(config.toSource());
 		}

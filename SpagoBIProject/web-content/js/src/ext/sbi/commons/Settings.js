@@ -15,12 +15,13 @@ Sbi.settings.execution = {
 		parametersPanel: {
 			columnNo: 1
 			, mandatoryFieldAdditionalString: '*' // a String that will be added in the label of the mandatory fields
-			, columnWidth: 299
+			, columnWidth: 290
 			, labelAlign: 'left'
-			, fieldWidth: 190	
+			, fieldWidth: 180	
 			, maskOnRender: false
 			, fieldLabelWidth: 100
 			, moveInMementoUsingCtrlKey: false
+			, width: 295
 		}
 
 		, shortcutsPanel: {
