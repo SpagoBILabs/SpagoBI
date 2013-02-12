@@ -96,6 +96,11 @@ Sbi.execution.ParametersPanel = function(config) {
 		serviceName: 'GET_PARAMETER_VALUES_FOR_EXECUTION_ACTION'
 		, baseParams: params
 	});
+	this.services['saveViewpointService'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'SAVE_VIEWPOINT_ACTION'
+		, baseParams: params
+	});
+	
 	
 	this.formWidth = (c.columnWidth * c.columnNo) ;
 	var columnsBaseConfig = [];
@@ -108,9 +113,11 @@ Sbi.execution.ParametersPanel = function(config) {
             bodyStyle:'padding:5px 5px 5px 5px'
 		}
 	}
+	this.initTootlbar();
 
 	c = Ext.apply({}, c, {
 		labelAlign: c.labelAlign,
+		tbar: this.toolbar,
         border: false,
         //bodyStyle:'padding:10px 0px 10px 10px',
         autoScroll: true,
@@ -121,6 +128,8 @@ Sbi.execution.ParametersPanel = function(config) {
             items: columnsBaseConfig
         }]
 	});
+	
+	this.saveViewpointWin =null;
 	
 	// constructor
     Sbi.execution.ParametersPanel.superclass.constructor.call(this, c);
@@ -183,6 +192,81 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     // public methods
     // ----------------------------------------------------------------------------------------
     
+    , initTootlbar: function(){
+    	var toolbarItems = ['->'];
+    	toolbarItems.push(new Ext.Toolbar.Button({
+			iconCls: 'icon-clear'
+				, tooltip: LN('sbi.execution.parametersselection.toolbar.clear')
+			   	, scope: this
+			   	, handler : function() {
+					this.clearParametersForm();
+				}
+			}));
+		
+		if (Sbi.user.functionalities.contains('SeeViewpointsFunctionality') && !this.isFromCross) {
+			toolbarItems.push(new Ext.Toolbar.Button({
+				iconCls: 'icon-save'
+				, tooltip: LN('sbi.execution.parametersselection.toolbar.save')
+			   	, scope: this
+			   	, handler : function() {
+					this.saveParametersFormStateAsViewpoint();
+				}
+			}));
+		}
+		
+    	this.toolbar = new Ext.Toolbar({
+			items:toolbarItems
+		});
+    }
+
+	, clearParametersForm: function() {
+		this.reset();
+	}
+	
+	, saveParametersFormStateAsViewpoint: function() {
+		if(this.saveViewpointWin === null) {
+			this.saveViewpointWin = new Sbi.widgets.SaveWindow();
+			this.saveViewpointWin.on('save', function(w, state) {
+				var params = Ext.apply({}, state, this.executionInstance);
+				var formState = this.getFormState();
+				for(var p in formState) {
+					if(formState[p] instanceof Array ) {
+						formState[p] = formState[p].join(';');
+					}
+				}
+				params.viewpoint = Sbi.commons.JSON.encode( formState );
+				Ext.Ajax.request({
+			          url: this.services['saveViewpointService'],
+			          
+			          params: params,
+			          
+			          callback : function(options, success, response){
+						if(success && response !== undefined) {   
+				      		if(response.responseText !== undefined) {
+				      			var content = Ext.util.JSON.decode( response.responseText );
+				      			if(content !== undefined) {
+				      				Ext.MessageBox.show({
+					      				title: 'Status',
+					      				msg: LN('sbi.execution.viewpoints.msg.saved'),
+					      				modal: false,
+					      				buttons: Ext.MessageBox.OK,
+					      				width:300,
+					      				icon: Ext.MessageBox.INFO 			
+					      			});
+				      			this.parentPanel.shortcutsPanel.viewpointsPanel.addViewpoints(content);
+				      			} 
+				      		} else {
+				      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				      		}
+			    	   }			    	  	
+			          },
+			          scope: this,
+			  		  failure: Sbi.exception.ExceptionHandler.handleFailure      
+			     });
+			}, this);
+		}
+		this.saveViewpointWin.show();
+	}
     
     , synchronize: function( executionInstance ) {
 		var sync = this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance);
@@ -1055,7 +1139,43 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if(p.type === 'DATE' && p.selectionType !== 'MAN_IN') {		
 			field = this.createDateField( baseConfig, this.executionInstance );
 		} else if(p.selectionType === 'LIST') {
-			field = this.createListField( baseConfig, this.executionInstance );
+			var baseParams = {};
+			Ext.apply(baseParams, this.executionInstance);
+			Ext.apply(baseParams, {
+				PARAMETER_ID: p.id
+				, MODE: 'simple'
+				, OBJ_PARAMETER_IDS: p.objParameterIds  // ONly in massive export case
+			});
+			delete baseParams.PARAMETERS;
+			var store = this.createStore();
+			store.baseParams  = baseParams;
+			
+			store.on('beforeload', function(store, o) {
+				Sbi.trace('[ParametersPanel.onBeforeStoreLoad] : IN');
+				var p = Sbi.commons.JSON.encode(this.getFormState());
+				Sbi.trace('[ParametersPanel.onBeforeStoreLoad] : form state [' + p + ']');
+				o.params = o.params || {};
+				o.params.PARAMETERS = p;
+				Sbi.trace('[ParametersPanel.onBeforeStoreLoad] : OUT');
+				return true;
+			}, this);
+			
+			if(p.multivalue) {	
+				field = new Sbi.widgets.CheckboxField(Ext.apply(baseConfig, {
+		           store : store
+		           , displayField:'label'
+				   , valueField:'value'
+				   , parameterId: p.id
+		        }));
+			
+			} else {
+				field = new Sbi.widgets.RadioField(Ext.apply(baseConfig, {
+			       store : store
+			       , displayField:'label'
+				   , valueField:'value'
+				   , parameterId: p.id
+			    }));
+			}
 		} else if(p.selectionType === 'COMBOBOX') {
 			field = this.createComboField( baseConfig, this.executionInstance );
 		} else if(p.selectionType === 'TREE'){

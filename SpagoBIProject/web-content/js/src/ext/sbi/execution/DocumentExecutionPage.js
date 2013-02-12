@@ -40,10 +40,12 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 	// apply defaults values
 	config = Ext.apply({
 		// no defaults
+		eastPanelWidth: 300
 	}, config || {});
 	
 	// check mandatory values
 	// ...
+	
 		
 	// declare exploited services
 	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
@@ -221,7 +223,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 
 	, init: function( config, doc ) {
 		this.initToolbar(config);
-		this.initNorthPanel(config);
+		this.initEastPanel(config);
 		this.initCenterPanel(config, doc);
 		this.initSouthPanel(config, doc);
 	}
@@ -242,18 +244,22 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		this.toolbar.on('showmask', this.showMask, this);
 	}
 	
-	, initNorthPanel: function( config ) {
-		Ext.apply(config, {pageNumber: 3}); // this let the ParametersPanel know that it is on execution page
+	, initEastPanel: function( config ) {
+		Ext.apply(config, {pageNumber: 3, parentPanel: this}); // this let the ParametersPanel know that it is on execution page
 		this.parametersPanel = new Sbi.execution.ParametersPanel(config);
 		this.parametersPanel.on('synchronize', function() {
 			// restore memento (= the list of last N value inputed for each parameters)
 			Sbi.execution.SessionParametersManager.restoreMementoObject(this.parametersPanel);
 		}, this);
 		
+		if(this.parametersPanel && this.parametersPanel.width){
+			this.eastPanelWidth = this.parametersPanel.width;
+		}
+		
 		this.northPanel = new Ext.Panel({
 				region:'east'
 				, title: LN('sbi.execution.parametersselection.parameters')
-				, border: false
+				, border: true
 				, frame: false
 				, collapsible: true
 				, collapsed: true
@@ -262,7 +268,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 				//, collapseMode: 'mini'
 				//, split: true
 				, autoScroll: true
-				, width: 300
+				, width: this.eastPanelWidth
 				, layout: 'fit'
 				, items: [this.parametersPanel]
 		});
