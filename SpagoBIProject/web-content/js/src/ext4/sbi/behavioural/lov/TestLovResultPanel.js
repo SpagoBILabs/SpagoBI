@@ -50,6 +50,7 @@ Ext.define('Sbi.behavioural.lov.TestLovResultPanel', {
 		
 		defautlConf.serviceUrl=   Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'LIST_TEST_LOV_ACTION'
+			,baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'} 
     	});
     	
     	this.callParent([defautlConf]);

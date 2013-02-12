@@ -110,17 +110,17 @@ Sbi.exception.ExceptionHandler = function(){
        		});
         },
         
-        showInfoMessage : function(errMessage, title) {
+        showInfoMessage : function(errMessage, title, config) {
         	var m = errMessage || 'Info';
         	var t = title || 'Info';
         	
-        	Ext.MessageBox.show({
+        	Ext.MessageBox.show(Ext.apply({
            		title: t
            		, msg: m
            		, buttons: Ext.MessageBox.OK     
            		, icon: Ext.MessageBox.INFO
            		, modal: false
-       		});
+       		},config||{}));
         },
         
         redirectToLoginUrl: function() {

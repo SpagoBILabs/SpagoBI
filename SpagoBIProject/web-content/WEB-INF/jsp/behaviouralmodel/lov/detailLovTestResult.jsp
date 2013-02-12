@@ -7,6 +7,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
   
 
 
+
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>
 <%@ include file="/WEB-INF/jsp/commons/importSbiJS410.jspf"%>
 
@@ -27,6 +28,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.spagobi.behaviouralmodel.lov.handlers.LovManager"%>
 <%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
+<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
 
@@ -91,6 +93,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     }else{
     	treeColumnNames="[]";
     }
+    
+    String contextName = ChannelUtilities.getSpagoBIContextName(request);
+
    
 %>
 
@@ -142,8 +147,8 @@ var url = {
 		}
 		
 		var modality =  '<%= messagedet%>'; 
-		
-    	var lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel',{lovConfig:lovConfig, modality:modality}); //by alias
+		var contextName = '<%= contextName%>'; 
+    	var lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel',{contextName: contextName, lovConfig:lovConfig, modality:modality}); //by alias
 		var lovPanel = Ext.create('Ext.container.Viewport', {
 			layout:'fit',
 	     	items: [lovTest]

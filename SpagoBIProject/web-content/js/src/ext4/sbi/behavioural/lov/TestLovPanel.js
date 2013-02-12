@@ -47,7 +47,8 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 		var thisPanel = this;
 		this.services = {};
 		this.services.saveLovAction = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'SAVE_LOV_ACTION'
+			serviceName: 'SAVE_LOV_ACTION',
+			baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'} 
 		});
 		
 	    var typeStore = Ext.create('Ext.data.Store', {
@@ -147,6 +148,8 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
     		lovConfiguration = this.lovTestConfigurationTree.getValues();
     	}
     	
+    	var callbackUrl = this.contextName+ "/servlet/AdapterHTTP?PAGE=ListLovsPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+    	var callback = function(){window.location = callbackUrl};
     	var params ={};
     	params.LOV_CONFIGURATION = Ext.JSON.encode(lovConfiguration);
     	params.MESSAGEDET = this.modality;
@@ -155,7 +158,8 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
             url: this.services.saveLovAction,
             params:  params,
             success: function(response, options) {
-            	alert("ok");
+            	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.behavioural.lov.save.window.text'),LN('sbi.behavioural.lov.save.window.title'),{fn:callback});
+            	
             },
             failure: function(response) {
             	alert("ko");
