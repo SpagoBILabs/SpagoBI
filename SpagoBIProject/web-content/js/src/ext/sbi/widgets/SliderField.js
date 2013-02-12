@@ -143,6 +143,22 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     	return this;
     },
     
+    
+    // private
+    normalizeValue: function(v) {
+    	if(v === "" || v === undefined) { // it's a reset...
+        	v = [this.slider.minValue];
+        	if(this.multiSelect == true){
+        		v.push(this.slider.maxValue);
+        	}
+        }        
+        if(!Ext.isArray(v)) {
+        	v = [v];
+        }
+        
+        return v;
+    },
+    
     /**
      * Sets the value for this field.
      * @param {Number} v The new value.
@@ -154,37 +170,37 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     	
     	Sbi.debug("[Sbi.SliderField.setValue] : [" + this.name + "] : set value to [" + v + "]");
     	
-    	if(v === "" || v === undefined) { // it's a reset...
-        	v = [this.slider.minValue];
-        	if(this.multiSelect == true){
-        		v.push(this.slider.maxValue);
-        	}
-        }        
-        if(!Ext.isArray(v)) {
-        	v = [v];
-        }
-             
-        var index;
-        
-        index = this.store.find(this.valueField, v[0]);
-        if(index === -1) {
-        	Sbi.warn("[Sbi.SliderField.setValue] : [" + this.name + "] : value [" + v[0] + "] is not contained in the dataset");
+    	v = this.normalizeValue(v);
+         
+    	// silent is used if the setValue method is invoked by the slider
+        // which means we don't need to set the value on the slider.
+        if(!silent){
+	        var index;
+	        index = this.store.find(this.valueField, v[0]);
+	        if(index === -1) {
+	        	Sbi.warn("[Sbi.SliderField.setValue] : [" + this.name + "] : value [" + v[0] + "] is not contained in the dataset");
+	        } else {
+	        	Sbi.trace("[Sbi.SliderField.setValue] : [" + this.name + "] : index of value [" + v[0] + "] is equal to [" + index + "]");
+	        	this.slider.setValue(0, index);
+	        }
+	        
+	        if(this.multiSelect == true) {
+	        	index = this.store.find(this.valueField, v[v.length-1]);
+	        	if(index === -1) {
+	            	Sbi.warn("[Sbi.SliderField.setValue] : [" + this.name + "] : value [" + v[v.length-1] + "] is not contained in the dataset");
+	            } else {
+	            	Sbi.trace("[Sbi.SliderField.setValue] : [" + this.name + "] : index of value [" + v[v.length-1] + "] is equal to [" + index + "]");
+	            	this.slider.setValue(1, index);
+	            }
+	        }
         } else {
-        	Sbi.trace("[Sbi.SliderField.setValue] : [" + this.name + "] : index of value [" + v[0] + "] is equal to [" + index + "]");
-        	this.slider.setValue(0, index);
-        }
-        
-        if(this.multiSelect == true) {
-        	index = this.store.find(this.valueField, v[v.length-1]);
-        	if(index === -1) {
-            	Sbi.warn("[Sbi.SliderField.setValue] : [" + this.name + "] : value [" + v[v.length-1] + "] is not contained in the dataset");
-            } else {
-            	Sbi.trace("[Sbi.SliderField.setValue] : [" + this.name + "] : index of value [" + v[v.length-1] + "] is equal to [" + index + "]");
-            	this.slider.setValue(1, index);
-            }
+        	v[0] = this.store.getAt(v[0]);
+        	if(this.multiSelect == true) {
+        		v[v.length-1] = this.store.getAt(v[v.length-1]);
+        	}
         }
        
-        alert('change to ' + this.getValues());
+
         this.fireEvent('change', this, v);
         
     	Sbi.trace("[Sbi.SliderField.setValue] : [" + this.name + "] : OUT");
