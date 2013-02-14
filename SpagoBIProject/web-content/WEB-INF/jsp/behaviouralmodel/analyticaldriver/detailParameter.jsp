@@ -461,13 +461,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				value="<%= lovName != null ? StringEscapeUtils.escapeHtml(lovName) : "" %>" maxlength="100" readonly <%if(!isLov) {out.println("disabled = 'disabled'");} %>>
   		
   		<input 	type='hidden' id='paruseLovId' value='<%=(idLov != null?(idLov.intValue() != -1 ? idLov.toString() : ""):"") %>' <%=disabled%>
-           		name='paruseLovId' />           		
-  		<% 	
-	  		Map lovLookupURLPars = new HashMap();
-  			lovLookupURLPars.put("PAGE", "lovLookupPage");
-  			//lovLookupURLPars.put("ORIGIN", "lovLookupPage");
-	  		String lovLookupURL = urlBuilder.getUrl(request, formUrlPars);
-  		%>
+           		name='paruseLovId' />
   		&nbsp;*&nbsp;
     	<input 	type='image' name="loadLovLookup" <%=readonly%> id="loadLovLookup" value="LovLookup" style='<%if(isLov) {out.println("display:inline;");} else {out.println("display:none;");} %>'
 		   		src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/detail.gif", currTheme)%>' 
@@ -526,6 +520,60 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		<input type="checkbox" name="maximizerEnabled" <%=maximizerDisabled%> id ="maximizerEnabled" value="true" <% if(maximizerEnabled) { out.println(" checked='checked' "); } %>></input>
 	</div>
 	
+	
+	<% 
+	String defaultLovName = null;
+    Integer idLovForDefault = paruse.getIdLovForDefault() != null ? paruse.getIdLovForDefault() : -1;
+    Integer idLovInitForDefault = new Integer(-1);
+    if (!idLovForDefault.equals(idLovInitForDefault)) {
+         ModalitiesValue lovForDefault  = DAOFactory.getModalitiesValueDAO().loadModalitiesValueByID(idLovForDefault);
+         defaultLovName = lovForDefault.getName();
+    }
+    String defaultFormula = paruse.getDefaultFormula() != null ? paruse.getDefaultFormula().trim() : "";
+    %>
+	
+    <div class='div_detail_label'>
+        <span class='portlet-form-field-label'>
+            <spagobi:message key = "SBIDev.paramUse.defaultValue" />
+        </span>
+    </div>
+        <div class='div_detail_form'>
+        <input type="radio" name="defaultMethod" id="defaultMethod" value="none" <%= (idLovForDefault == -1 && defaultFormula.equals("")) ? "checked='checked'" : "" %> />
+        <spagobi:message key="SBIDev.paramUse.noDefault" />
+    </div>
+    <div class='div_detail_label'>
+        <span class='portlet-form-field-label'>
+            &nbsp;
+        </span>
+    </div>
+    <div class='div_detail_form'>
+        <input type="radio" name="defaultMethod" id="defaultMethod" value="lov" <%= idLovForDefault != -1 ? "checked='checked'" : "" %> />
+        <spagobi:message key="SBIDev.paramUse.useLovForDefault" />
+        <input  class='portlet-form-input-field' type="text" id="paruseLovForDefaultName"
+                name="paruseLovForDefaultName" size="40" 
+                value="<%= defaultLovName != null ? StringEscapeUtils.escapeHtml(defaultLovName) : "" %>" maxlength="100" readonly>
+        
+        <input  type='hidden' id='paruseLovForDefaultId' value='<%=(idLovForDefault != null ? (idLovForDefault.intValue() != -1 ? idLovForDefault.toString() : ""):"") %>' <%=disabled%>
+                name='paruseLovForDefaultId' />
+
+        <input  type='image' name="loadLovForDefaultLookup" id="loadLovForDefaultLookup" value="LovForDefaultLookup"
+                src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/detail.gif", currTheme)%>' 
+                title='Lov for default Lookup' alt='Lov for default Lookup'/>
+    
+    </div>
+    <div class='div_detail_label'>
+        <span class='portlet-form-field-label'>
+            &nbsp;
+        </span>
+    </div>
+    <div class='div_detail_form'>
+        <input type="radio" name="defaultMethod" id="defaultMethod" value="formula" <%= !defaultFormula.equals("") ? "checked='checked'" : "" %> <%= isManualInput ? "disabled='disabled'" : "" %> />
+        <spagobi:message key="SBIDev.paramUse.useFormulaForDefault" />
+        <select class='portlet-form-input-field' NAME=formulaForDefault id="formulaForDefault">
+            <option value="FIRST" <%= defaultFormula.equals("FIRST") ? "selected='selected'" : "" %> ><spagobi:message key="SBIDev.paramUse.useFormulaForDefault.FIRST" /></option>
+            <option value="LAST" <%= defaultFormula.equals("LAST") ? "selected='selected'" : "" %> ><spagobi:message key="SBIDev.paramUse.useFormulaForDefault.LAST" /></option>
+       </select>
+    </div>
 </div>
 
 

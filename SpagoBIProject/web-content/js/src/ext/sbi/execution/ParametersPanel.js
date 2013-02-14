@@ -575,12 +575,69 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.doLayout();
 		
 		this.initializeFieldDependencies();
-		if(reset === true && this.isInParametersPage() && this.isFromCross === false) {
-			this.reset();
-		} 
+		
+		var defaultValuesFormState = this.getDefaultValuesFormState();
+		this.setFormState(defaultValuesFormState);
+		
+//		if (reset === true && this.isInParametersPage() && this.isFromCross === false) {
+//			// in case there are default values to set, call setFormState, reset otherwise
+//			if (-- in case there are default values to set --) {
+//				this.setFormState(defaultValuesFormState);
+//			} else {
+//				this.reset();
+//			}
+//		} else {
+//			this.setFormState(defaultValuesFormState);
+//		}
 		
 		this.fireEvent('synchronize', this, this.isReadyForExecution(), this.parametersPreference);
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : OUT');
+	}
+	
+	, getDefaultValuesFormState: function () {
+		var state;
+		
+		state = {};
+		for (p in this.fields) {
+			var field = this.fields[p];
+			var behindParameter = field.behindParameter;
+			var value = this.concatenateDefaultValues(behindParameter.defaultValues);
+			var description = this.concatenateDefaultValuesDescription(behindParameter.defaultValues);
+			state[field.name] = value;
+			state[field.name + '_field_visible_description'] = description;
+		}
+
+		return state;
+	}
+	
+	, concatenateDefaultValues: function (defaultValues) {
+		if (defaultValues.length > 0) {
+			var value = '';
+			for (var i = 0; i < defaultValues.length; i++) {
+				value += defaultValues[i].value;
+				if (i < defaultValues.length - 1) {
+					value += ';';
+				}
+			}
+			return value;
+		} else {
+			return null;
+		}
+	}
+	
+	, concatenateDefaultValuesDescription: function (defaultValues) {
+		if (defaultValues.length > 0) {
+			var description = '';
+			for (var i = 0; i < defaultValues.length; i++) {
+				description += defaultValues[i].description;
+				if (i < defaultValues.length - 1) {
+					description += '; ';
+				}
+			}
+			return description;
+		} else {
+			return '';
+		}
 	}
 	
 	
@@ -1222,7 +1279,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		return field;
 	}
-
+	
 	, createCompleteStore: function(p, executionInstance, mode) {
 		var store = this.createStore();
 		Sbi.trace('[ParametersPanel.createCompleteStore] : executionInstance [' + executionInstance + ']');

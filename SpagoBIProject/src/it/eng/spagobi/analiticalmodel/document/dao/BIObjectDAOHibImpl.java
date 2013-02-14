@@ -480,9 +480,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			hibBIObject.setRefreshSeconds(biObject.getRefreshSeconds());
 
-			// if new defining object has no functionality associated keep previous ones
-			
-			if(biObject.getFunctionalities() != null && biObject.getFunctionalities().size()>0){
 			// functionalities erasing
 			Set hibFunctionalities = hibBIObject.getSbiObjFuncs();
 			for (Iterator it = hibFunctionalities.iterator(); it.hasNext(); ) {
@@ -504,8 +501,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			hibBIObject.setSbiObjFuncs(hibObjFunc);
 
-			}
-			
 			tx.commit();
 
 			// update biobject template info 
@@ -1879,20 +1874,20 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			//definition of the the search query 
 			if (roles != null && roles.size() > 0 ) {
-				bufferSelect.append(" select o ");
+				bufferSelect.append(" select distinct o ");
 				/*bufferSelect.append(" select distinct o.biobjId, o.sbiEngines, o.descr, o.label, o.path, o.relName, o.state, "+
 								" o.stateCode, o.objectTypeCode, o.objectType, o.schedFl, "+
 								" o.execMode, o.stateConsideration, o.execModeCode, o.stateConsiderationCode, o.name, o.visible, o.uuid, " +
 								" o.extendedDescription, o.objectve, o.language, o.creationDate, o.creationUser, "+
 								" o.keywords, o.refreshSeconds, o.profiledVisibility ");*/
 				bufferFrom.append(" from SbiObjects as o, SbiObjFunc as sof, SbiFunctions as f,  SbiFuncRole as fr "); 	
-				bufferWhere.append(" where sof.id.sbiFunctions.functId = f.functId and o.biobjId = sof.id.sbiObjects.biobjId" +
-						" and fr.id.role.extRoleId IN (select extRoleId from SbiExtRoles e  where  e.name in (:ROLES)) " +
+				bufferWhere.append(" where sof.id.sbiFunctions.functId = f.functId and o.biobjId = sof.id.sbiObjects.biobjId and " +
+						" ((fr.id.role.extRoleId IN (select extRoleId from SbiExtRoles e  where  e.name in (:ROLES)) " +
 						" and fr.id.function.functId = f.functId and (" +
 						"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_DEV + "') OR" +
 						"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_TEST + "') OR " +
 						"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_REL + "') " +
-						") " ); 
+						") ) OR  f.path like :PERSONAL_FOLDER_PREFIX )" ); 
 				
 			} 
 			String operCondition = "";
@@ -1982,6 +1977,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			Query query = aSession.createQuery(hql);
 
+			query.setParameter("PERSONAL_FOLDER_PREFIX", "/" + ((UserProfile)profile).getUserId().toString() + "%");
+			
 			//setting query parameters
 			query.setParameterList("ROLES", roles);
 			logger.debug("Parameter value ROLES: " + roles);

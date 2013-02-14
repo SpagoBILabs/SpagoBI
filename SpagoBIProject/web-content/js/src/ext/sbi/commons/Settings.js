@@ -21,7 +21,7 @@ Sbi.settings.execution = {
 			, maskOnRender: false
 			, fieldLabelWidth: 100
 			, moveInMementoUsingCtrlKey: false
-			, width: 295
+			, width: 320
 		}
 
 		, shortcutsPanel: {

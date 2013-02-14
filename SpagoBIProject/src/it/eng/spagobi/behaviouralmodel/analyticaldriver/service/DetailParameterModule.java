@@ -79,6 +79,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 		String message = (String) request.getAttribute("MESSAGEDET");
 		SpagoBITracer.debug(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","service","begin of detail Parameter modify/visualization service with message =" +message);
 		Object lovLookup =  request.getAttribute("loadLovLookup");
+		Object lovForDefaultLookup =  request.getAttribute("loadLovForDefaultLookup");
 		
 		RequestContainer reqCont = RequestContainer.getRequestContainer();
 		session = reqCont.getSessionContainer();
@@ -93,7 +94,9 @@ public class DetailParameterModule extends AbstractHttpModule {
 				throw userError;
 			}
 			if(lovLookup != null){
-				lookupLoadHandler (request, message, response);
+				lookupForLovLoadHandler (request, message, response, Boolean.FALSE);
+			} else if (lovForDefaultLookup != null) {
+				lookupForLovLoadHandler (request, message, response, Boolean.TRUE);
 		    } else if (message.trim().equalsIgnoreCase(AdmintoolsConstants.DETAIL_SELECT)) {
 				String id = (String) request.getAttribute("id");
 				getDetailParameter(id, response);
@@ -340,8 +343,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 							while (iterator.hasNext()) {
 								Object error = iterator.next();
 								if (error instanceof EMFValidationError) {
-
-										AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.MODIFY",logParam , "KO");
+									AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.MODIFY",logParam , "KO");
 					    			prepareParameterDetailPage(response, parameter, paruse, paruseIdStr, 
 					    					ObjectsTreeConstants.DETAIL_MOD, false, false);
 									return;
@@ -427,7 +429,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 								prepareParameterDetailPage(response, parameter, paruse, paruseIdInt.toString(), 
 										ObjectsTreeConstants.DETAIL_MOD, false, false);
 
-									AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.MODIFY",logParam , "KO");
+								AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.MODIFY",logParam , "KO");
 								return;
 							}
 						}
@@ -453,12 +455,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 						selectedParuseIdStr = paruse.getUseID().toString();
 	    			} else selectedParuseIdStr = "-1";
 				}
-    			try {
-    				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.MODIFY",logParam , "OK");
-    			} catch (Exception e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			}
+    			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.MODIFY",logParam , "OK");
     		} else {
     			ValidationCoordinator.validate("PAGE", "ParameterValidation", this);
     			parameterLabelControl(parameter, mod);
@@ -490,12 +487,7 @@ public class DetailParameterModule extends AbstractHttpModule {
     			// reload the Parameter with the correct id
     			parameter = reloadParameter(parameter.getLabel());
     			
-    			try {
-    				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD",logParam , "OK");
-    			} catch (Exception e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			}
+    			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD",logParam , "OK");
     			
     		}
 			
@@ -513,12 +505,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","modDetailParameter","Cannot fill response container", ex  );
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListParametersModule.MODULE_PAGE);
-				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",null , "ERR");
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD/MODIFY",null , "ERR");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1015, new Vector(), params);
 		}
 
@@ -658,7 +645,23 @@ public class DetailParameterModule extends AbstractHttpModule {
 
 		String idLovStr = (String) request.getAttribute("paruseLovId");
 		if (idLovStr == null || idLovStr.trim().equals("")) idLovStr = "-1";
-			paruse.setIdLov(Integer.valueOf(idLovStr));
+		paruse.setIdLov(Integer.valueOf(idLovStr));
+		
+		String defaultMethod = (String) request.getAttribute("defaultMethod");
+		if (defaultMethod == null || defaultMethod.trim().equalsIgnoreCase("none")) {
+			paruse.setIdLovForDefault(-1);
+			paruse.setDefaultFormula(null);
+		} else if (defaultMethod.trim().equalsIgnoreCase("lov")) {
+			String idLovForDefaultStr = (String) request.getAttribute("paruseLovForDefaultId");
+			if (idLovForDefaultStr == null || idLovForDefaultStr.trim().equals("")) idLovForDefaultStr = "-1";
+			paruse.setIdLovForDefault(Integer.valueOf(idLovForDefaultStr));
+			paruse.setDefaultFormula(null);
+		} else {
+			paruse.setIdLovForDefault(-1);
+			String formulaForDefault = (String) request.getAttribute("formulaForDefault");
+			paruse.setDefaultFormula(formulaForDefault);
+		}
+		
 		String description = (String) request.getAttribute("paruseDescription");
 		String name = (String) request.getAttribute("paruseName");
 		String label = (String) request.getAttribute("paruseLabel");
@@ -779,7 +782,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 				v.add(objectsLabels.toString());
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1017, v, params);
 				errorHandler.addError(error);
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.DELETE",logParam , "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.DELETE",logParam , "KO");
 				return;
 			}
 			
@@ -796,22 +799,13 @@ public class DetailParameterModule extends AbstractHttpModule {
 			parDAO.eraseParameter(parameter);
 			
 		} catch (Exception ex) {
-			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.DELETE",logParam , "ERR");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.DELETE",logParam , "ERR");
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","delDetailParameter","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
-			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.DELETE",logParam , "OK");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.DELETE",logParam , "OK");
+
 	}
 	
 	/**
@@ -839,24 +833,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 			session.setAttribute("originIns", "true");
 		} catch (Exception ex) {
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","newDetailParameter","Cannot prepare page for the insertion", ex  );
-				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD",null , "KO");
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD",null , "KO");
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD",null , "ERR");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD",null , "ERR");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 	}
@@ -1011,7 +988,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 		}
 	}
 	
-	private void lookupLoadHandler(SourceBean request, String modality, SourceBean response) throws EMFUserError, SourceBeanException{
+	private void lookupForLovLoadHandler(SourceBean request, String modality, SourceBean response, Boolean isForDefault) throws EMFUserError, SourceBeanException{
 		
 		RequestContainer requestContainer = this.getRequestContainer();
 		SessionContainer session = requestContainer.getSessionContainer();
@@ -1021,6 +998,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 		session.setAttribute("LookupParameter", parameter);
 		session.setAttribute("LookupParuse", paruse);
 		session.setAttribute("modality", modality);
+		session.setAttribute("isForDefault", isForDefault);
 		response.setAttribute("lookupLoopback", "true");
 		
 	}
@@ -1031,12 +1009,18 @@ public class DetailParameterModule extends AbstractHttpModule {
 		Parameter parameter = (Parameter) session.getAttribute("LookupParameter");
 		ParameterUse paruse = (ParameterUse) session.getAttribute("LookupParuse");
 		String modality = (String) session.getAttribute("modality");
+		Boolean isForDefault = (Boolean) session.getAttribute("isForDefault");
 		String selectedLovId = (String) request.getAttribute("ID");
-		paruse.setIdLov(Integer.valueOf(selectedLovId));
+		if (isForDefault) {
+			paruse.setIdLovForDefault(Integer.valueOf(selectedLovId));
+		} else {
+			paruse.setIdLov(Integer.valueOf(selectedLovId));
+		}
 		prepareParameterDetailPage(response, parameter, paruse, paruse.getUseID().toString(), modality, false, false);	
 		session.delAttribute("LookupParameter");
 		session.delAttribute("LookupParUse");
 		session.delAttribute("modality");
+		session.delAttribute("isForDefault");
 		session.setAttribute("SelectedLov", "true");
 		response.setAttribute("SelectedLov", "true");
 	}
@@ -1051,6 +1035,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 		session.delAttribute("LookupParameter");
 		session.delAttribute("LookupParUse");
 		session.delAttribute("modality");
+		session.delAttribute("isForDefault");
 	}
 	
 	/**
@@ -1075,7 +1060,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 		session.delAttribute("initial_ParameterUse");
 		session.delAttribute("SelectedLov");
 		session.delAttribute("originIns");
-		
+		session.delAttribute("isForDefault");
 		response.setAttribute("loopback", "true");
 	}
 	

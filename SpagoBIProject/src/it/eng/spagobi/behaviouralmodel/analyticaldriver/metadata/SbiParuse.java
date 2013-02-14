@@ -23,6 +23,7 @@ public class SbiParuse  extends SbiHibernateModel {
      private Integer useId;
      private SbiParameters sbiParameters;
      private SbiLov sbiLov;
+     private SbiLov sbiLovForDefault;
      private String label;
      private String name;
      private String descr;
@@ -32,7 +33,7 @@ public class SbiParuse  extends SbiHibernateModel {
      private Integer multivalue;
      private Integer manualInput;
      private Boolean maximizerEnabled;
-    
+     private String defaultFormula;
 
 
     // Constructors
@@ -111,6 +112,15 @@ public class SbiParuse  extends SbiHibernateModel {
      */
     public void setSbiLov(SbiLov sbiLov) {
         this.sbiLov = sbiLov;
+    }
+    
+    
+    public SbiLov getSbiLovForDefault() {
+        return this.sbiLovForDefault;
+    }
+    
+    public void setSbiLovForDefault(SbiLov sbiLovForDefault) {
+        this.sbiLovForDefault = sbiLovForDefault;
     }
 
     /**
@@ -268,5 +278,12 @@ public class SbiParuse  extends SbiHibernateModel {
 		this.maximizerEnabled = maximizerEnabled;
 	}
 
+	public String getDefaultFormula() {
+		return defaultFormula;
+	}
+
+	public void setDefaultFormula(String defaultFormula) {
+		this.defaultFormula = defaultFormula;
+	}
 	
 }

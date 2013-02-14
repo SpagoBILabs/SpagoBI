@@ -21,7 +21,6 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDA
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
-import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
@@ -108,7 +107,22 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		return parametersForExecution;
 	}
 	
-
+	public class DefaultValue {
+		private Object value;
+		private Object description;
+		public Object getValue() {
+			return value;
+		}
+		public void setValue(Object value) {
+			this.value = value;
+		}
+		public Object getDescription() {
+			return description;
+		}
+		public void setDescription(Object description) {
+			this.description = description;
+		}
+	}
 
 	public class ParameterForExecution {
 
@@ -145,6 +159,8 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		// in case of massive export these are the parameter ids referred by current parameter
 		List<Integer> objParameterIds;
 
+		List<DefaultValue> defaultValues;
+		
 		// dependencies (dataDep & visualDep)
 		Map<String, List<ParameterDependency>> dependencies;
 		public abstract class ParameterDependency {
@@ -165,6 +181,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			initAttributes();
 			initDependencies();
 			loadValues();
+			loadDefaultValues();
 			
 			objParameterIds = new ArrayList<Integer>();
 		}
@@ -195,8 +212,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			}
 		}
 
-		void initAttributes() {
-
+		ExecutionInstance getExecutionInstance () {
 			ExecutionInstance executionInstance = null;
 
 			Assert.assertNotNull(getContext().isExecutionInstanceAMap( ExecutionInstance.class.getName() ), "Execution instance cannot be null");
@@ -210,10 +226,15 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 				Integer objId = analyticalDocumentParameter.getBiObjectID();
 				executionInstance = instances.get(objId);
 			}
-			if(executionInstance == null){
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find in context execution instance for execution of document with id "+" [" + analyticalDocumentParameter.getBiObjectID() + "]: was it searched as a map? "+isAMap);		
+			return executionInstance;
+		}
+		
+		void initAttributes() {
+
+			ExecutionInstance executionInstance = this.getExecutionInstance();
+			if (executionInstance == null) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find in context execution instance for execution of document with id "+" [" + analyticalDocumentParameter.getBiObjectID() + "]");		
 			}
-			
 
 			id = analyticalDocumentParameter.getParameterUrlName();
 			//label = localize( analyticalDocumentParameter.getLabel() );
@@ -340,6 +361,40 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			} else {
 				setValuesCount( -1 ); // it means that we don't know the lov size
 			}
+		}
+		
+		public void loadDefaultValues() {
+			logger.debug("IN");
+			defaultValues = new ArrayList<GetParametersForExecutionAction.DefaultValue>();
+			try {
+				ExecutionInstance executionInstance = this.getExecutionInstance();
+				ILovDetail lovForDefault = executionInstance.getLovDetailForDefault(analyticalDocumentParameter);
+				if (lovForDefault == null) {
+					logger.debug("No LOV for default values defined");
+					return;
+				}
+				logger.debug("A LOV for default values is defined : " + lovForDefault);
+				IEngUserProfile profile = getUserProfile();
+				String lovResult = lovForDefault.getLovResult(profile, null, executionInstance);
+				LovResultHandler lovResultHandler = new LovResultHandler(lovResult);		
+				List rows = lovResultHandler.getRows();
+				logger.debug("LOV executed without errors");
+				logger.debug("LOV contains " + rows.size() + " values");
+				Iterator it = rows.iterator();
+				String valueColumn = lovForDefault.getValueColumnName();
+				String descriptionColumn = lovForDefault.getDescriptionColumnName();
+				while (it.hasNext()) {
+					SourceBean row = (SourceBean) it.next();
+					DefaultValue defaultValue = new DefaultValue();
+					defaultValue.setValue(row.getAttribute(valueColumn));
+					defaultValue.setDescription(row.getAttribute(descriptionColumn));
+					defaultValues.add(defaultValue);
+				}
+			} catch (Exception e) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's default values", e);
+			} 
+
+			logger.debug("OUT");
 		}
 
 		private List getLOV(){
@@ -539,8 +594,14 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		public void setDataDependencies(List dataDependencies) {
 			this.dataDependencies = dataDependencies;
 		}
-
 		
+		public List<DefaultValue> getDefaultValues() {
+			return defaultValues;
+		}
+
+		public void setDefaultValues(List<DefaultValue> defaultValues) {
+			this.defaultValues = defaultValues;
+		}
 		
 	}
 

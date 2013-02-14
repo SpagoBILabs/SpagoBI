@@ -18,6 +18,7 @@ public class ParameterUse  implements Serializable  {
 	Integer useID;
 	Integer id; // in realtà questo è par_id nella tabella
 	Integer idLov;
+	Integer idLovForDefault;
 	String name = "";
 	String label = "";
 	String description = "";
@@ -30,6 +31,8 @@ public class ParameterUse  implements Serializable  {
 	
 	Integer manualInput;
 	boolean maximizerEnabled = true;
+	
+	private String defaultFormula;
 	
 	/**
 	 * Gets the description.
@@ -83,6 +86,14 @@ public class ParameterUse  implements Serializable  {
 	 */
 	public void setIdLov(Integer idLov) {
 		this.idLov = idLov;
+	}
+	
+	public Integer getIdLovForDefault() {
+		return idLovForDefault;
+	}
+	
+	public void setIdLovForDefault(Integer idLovForDefault) {
+		this.idLovForDefault = idLovForDefault;
 	}
 	
 	/**
@@ -237,4 +248,13 @@ public class ParameterUse  implements Serializable  {
 	public void setMaximizerEnabled(boolean maximizerEnabled) {
 		this.maximizerEnabled = maximizerEnabled;
 	}
+	
+	public String getDefaultFormula() {
+		return defaultFormula;
+	}
+
+	public void setDefaultFormula(String defaultFormula) {
+		this.defaultFormula = defaultFormula;
+	}
+	
 }

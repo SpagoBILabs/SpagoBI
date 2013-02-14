@@ -44,8 +44,7 @@ import org.hibernate.Transaction;
  * 
  * @author zoppello
  */
-public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements
-IParameterUseDAO {
+public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IParameterUseDAO {
 
 	static private Logger logger = Logger.getLogger(ParameterUseDAOHibImpl.class);
 	/**
@@ -290,13 +289,20 @@ IParameterUseDAO {
 			//insert into the DB a null lov_id
 			//if the user selected modality is manual input,and before it was a 
 			//lov, we don't need a lov_id and so we can delete it
-			if(hibSbiLov.getLovId().intValue()== -1 || aParameterUse.getManualInput().intValue() == 1){
+			if (hibSbiLov.getLovId().intValue() == -1
+					|| aParameterUse.getManualInput().intValue() == 1) {
 				hibParuse.setSbiLov(null);
+			} else {
+				hibParuse.setSbiLov(hibSbiLov);
 			}
-			else{
-				hibParuse.setSbiLov(hibSbiLov);}
-
-			//hibParuse.setSbiLov(hibSbiLov);
+			
+			SbiLov hibSbiLovForDefault = (SbiLov)aSession.load(SbiLov.class, aParameterUse.getIdLovForDefault());
+			if (hibSbiLovForDefault.getLovId().intValue() == -1) {
+				hibParuse.setSbiLovForDefault(null);
+			} else {
+				hibParuse.setSbiLovForDefault(hibSbiLovForDefault);
+			}
+			hibParuse.setDefaultFormula(aParameterUse.getDefaultFormula());
 
 			Set parUseDets = hibParuse.getSbiParuseDets();
 			for (Iterator it = parUseDets.iterator(); it.hasNext();) {
@@ -393,11 +399,19 @@ IParameterUseDAO {
 			SbiLov hibLov = (SbiLov)aSession.load(SbiLov.class, aParameterUse.getIdLov());
 			//if the lov id is 0 (-1) then the modality is manual input
 			//insert into the DB a null lov_id
-			if(hibLov.getLovId().intValue()== -1)
-			{hibParuse.setSbiLov(null);
+			if (hibLov.getLovId().intValue() == -1) {
+				hibParuse.setSbiLov(null);
+			} else {
+				hibParuse.setSbiLov(hibLov);
 			}
-			else{
-				hibParuse.setSbiLov(hibLov);}
+			
+			SbiLov hibSbiLovForDefault = (SbiLov)aSession.load(SbiLov.class, aParameterUse.getIdLovForDefault());
+			if (hibSbiLovForDefault.getLovId().intValue() == -1) {
+				hibParuse.setSbiLovForDefault(null);
+			} else {
+				hibParuse.setSbiLovForDefault(hibSbiLovForDefault);
+			}
+			hibParuse.setDefaultFormula(aParameterUse.getDefaultFormula());
 
 			hibParuse.setLabel(aParameterUse.getLabel());
 			hibParuse.setName(aParameterUse.getName());
@@ -626,14 +640,20 @@ IParameterUseDAO {
 
 
 		//if the sbi_lov is null, then we have a man in modality
-		if(hibParUse.getSbiLov()==null){
+		if (hibParUse.getSbiLov() == null) {
 			aParameterUse.setIdLov(null);
-		}
-		else{
+		} else {
 			aParameterUse.setIdLov(hibParUse.getSbiLov().getLovId());
 		}
 		aParameterUse.setManualInput(hibParUse.getManualInput());
 		aParameterUse.setMaximizerEnabled(hibParUse.getMaximizerEnabled());
+		
+		if (hibParUse.getSbiLovForDefault() == null) {
+			aParameterUse.setIdLovForDefault(null);
+		} else {
+			aParameterUse.setIdLovForDefault(hibParUse.getSbiLovForDefault().getLovId());
+		}
+		aParameterUse.setDefaultFormula(hibParUse.getDefaultFormula());
 		
 		List checkList = getAssociatedChecks(hibParUse);
 		aParameterUse.setAssociatedChecks(checkList);
@@ -716,10 +736,11 @@ IParameterUseDAO {
 			tx = aSession.beginTransaction();
 
 			//String hql = "from SbiParuse s where s.sbiLov.lovId="+lovId;
-			String hql = "from SbiParuse s where s.sbiLov.lovId=?";
+			String hql = "from SbiParuse s where s.sbiLov.lovId=? or s.sbiLovForDefault.lovId=?";
 
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, lovId.intValue());
+			query.setInteger(1, lovId.intValue());
 			List result = query.list();
 
 			Iterator it = result.iterator();
@@ -761,7 +782,7 @@ IParameterUseDAO {
 		IParameterUseDAO parUseDAO = DAOFactory.getParameterUseDAO();
 		parUseList = parUseDAO.loadParametersUseByParId(parId);
 		Iterator i = parUseList.iterator();
-		// run all parqameters Use related to Parameter
+		// run all parameters Use related to Parameter
 		try{
 
 			for (Iterator iterator = parUseList.iterator(); iterator.hasNext();) {

@@ -6,6 +6,7 @@
 package it.eng.spagobi.commons.serializer;
 
 import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
+import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction.DefaultValue;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 
@@ -90,13 +91,22 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 					}
 				}
 
-
-
-
 				dependencies.put(dependency);
 			}
 			result.put("dependencies", dependencies);
 			result.put("parameterUseId", parameter.getParameterUseId());
+			
+			JSONArray defaultValues = new JSONArray();
+			List<DefaultValue> defaults = parameter.getDefaultValues();
+			Iterator<DefaultValue> defaultsIt = defaults.iterator();
+			while (defaultsIt.hasNext()) {
+				DefaultValue aDefault = defaultsIt.next();
+				JSONObject aDefaultJSON = new JSONObject();
+				aDefaultJSON.put("value", aDefault.getValue());
+				aDefaultJSON.put("description", aDefault.getDescription());
+				defaultValues.put(aDefaultJSON);
+			}
+			result.put("defaultValues", defaultValues);
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
