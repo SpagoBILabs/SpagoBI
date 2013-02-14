@@ -33,6 +33,8 @@ public class Parameter implements Serializable {
 	private boolean isTemporal;
 	
 	private ModalitiesValue modalityValue = null;
+	private ModalitiesValue modalityValueForDefault = null;
+
 	private List checks = null;
 
 	/**
@@ -269,4 +271,13 @@ public class Parameter implements Serializable {
 	public void setIsTemporal(boolean isTemporal) {
 		this.isTemporal = isTemporal;
 	}
+
+	public ModalitiesValue getModalityValueForDefault() {
+		return modalityValueForDefault;
+	}
+
+	public void setModalityValueForDefault(ModalitiesValue modalityValueForDefault) {
+		this.modalityValueForDefault = modalityValueForDefault;
+	}
+	
 }

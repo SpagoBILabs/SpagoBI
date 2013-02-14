@@ -981,6 +981,25 @@ public class ExecutionInstance implements Serializable{
 		}
 		return lovProvDet;
 	}
+	
+	public ILovDetail getLovDetailForDefault(BIObjectParameter parameter) {
+		Parameter par = parameter.getParameter();
+		ModalitiesValue lov = par.getModalityValueForDefault();
+		if (lov == null) {
+			logger.debug("No LOV for default values defined");
+			return null;
+		}
+		logger.debug("A LOV for default values is defined : " + lov);
+		// build the ILovDetail object associated to the lov
+		String lovProv = lov.getLovProvider();
+		ILovDetail lovProvDet = null;
+		try {
+			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to get LOV detail associated to the analytical driver for default values", e);
+		}
+		return lovProvDet;
+	}
 
 	public List<ObjParuse> getDependencies(BIObjectParameter parameter) {
 		List<ObjParuse> biParameterExecDependencies = new ArrayList<ObjParuse>();
