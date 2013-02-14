@@ -74,9 +74,13 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 			
 			fileName = dispatchContext.getFileName() != null && !dispatchContext.getFileName().equals("")?
 					dispatchContext.getFileName() : document.getName();
+			fileName = fileName+dispatchContext.getNameSuffix();
+			fileName = fileName.replace(':', '-');
+					
 		    zipFileName = dispatchContext.getZipFileName() != null && !dispatchContext.getZipFileName().equals("")?
 							dispatchContext.getZipFileName() : document.getName();
-			zipFileName = zipFileName+dispatchContext.getDescriptionSuffix();
+			zipFileName = zipFileName+dispatchContext.getNameSuffix();
+			zipFileName = zipFileName.replace(':', '-');
 			
 			zipFileDocument = dispatchContext.isZipFileDocument();
 			
@@ -112,7 +116,7 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 				} else{
 					logger.error("Export ok for biObj with label "+document.getLabel());
 					//String fileName = document.getLabel() + "-" + document.getName();
-					fileName = fileName + dispatchContext.getDescriptionSuffix();
+					//fileName = fileName + dispatchContext.getDescriptionSuffix();
 					fileName = fileName.replace(' ', '_');
 					exportFile = File.createTempFile(fileName, fileExtension); 
 					randomNamesToName.put(exportFile.getName(), fileName + fileExtension);
