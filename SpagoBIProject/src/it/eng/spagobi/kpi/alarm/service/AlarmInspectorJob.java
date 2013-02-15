@@ -351,7 +351,7 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 				props.put("mail.smtp.auth", "false");
 				//session = Session.getDefaultInstance(props, auth);
 				session = Session.getInstance(props);
-				logger.error("Session.getDefaultInstance(props)");
+				logger.info("Session.getDefaultInstance(props)");
 			}else{
 				auth = new SMTPAuthenticator(user, pass);
 				props.put("mail.smtp.auth", "true");
@@ -381,7 +381,7 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 		 	    //session.setDebug(true);
 		 	    //session.setDebugOut(null);
 
-				logger.error("Session.getInstance(props, auth)");
+				logger.info("Session.getInstance(props, auth)");
 			}
 			// create a message
 			MimeMessage msg = new MimeMessage(session);
