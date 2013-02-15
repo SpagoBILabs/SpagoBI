@@ -44,7 +44,7 @@ public class SingletonConfigCache implements ISingletonConfigCache{
 	
 	public String get(String key){
 		if (cache.get(key)==null) {
-			logger.error("The property '"+key+"' doens't have any value assigned, check SBI_CONFIG table");
+			logger.info("The property '"+key+"' doens't have any value assigned, check SBI_CONFIG table");
 			return null;
 		}
 		logger.debug("GET :"+key+"="+cache.get(key));
