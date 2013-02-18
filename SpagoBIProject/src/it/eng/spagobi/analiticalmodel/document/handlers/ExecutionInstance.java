@@ -1224,5 +1224,9 @@ public class ExecutionInstance implements Serializable{
 		} else 
 			return false;
 	}
+	
+	public Locale getLocale() {
+		return this.locale;
+	}
 
 }
