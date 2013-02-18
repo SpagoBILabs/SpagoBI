@@ -577,7 +577,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.initializeFieldDependencies();
 		
 		var defaultValuesFormState = this.getDefaultValuesFormState();
-		this.setFormState(defaultValuesFormState);
+		var state = Ext.apply(defaultValuesFormState, this.preferenceState);
+		this.setFormState(state);
 		
 //		if (reset === true && this.isInParametersPage() && this.isFromCross === false) {
 //			// in case there are default values to set, call setFormState, reset otherwise

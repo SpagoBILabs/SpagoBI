@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
-import groovy.lang.Binding;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
@@ -19,12 +18,13 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -179,7 +179,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		logger.debug("IN");
 		String result = null;
 		HashMap attributes = GeneralUtilities.getAllProfileAttributes(profile); // to be cancelled, now substitutution inline
-		
+		attributes.putAll(this.getSystemBindings(executionInstance));
 		//Substitute profile attributes with their value
 		String cleanScript=substituteProfileAttributes(getScript(), attributes);
 		setScript(cleanScript);
@@ -219,6 +219,23 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		return result;
 	}
 
+
+	private Map getSystemBindings(ExecutionInstance executionInstance) {
+		Locale locale = null;
+		if (executionInstance != null) {
+			locale = executionInstance.getLocale();
+		}
+		if (locale == null) {
+			locale = GeneralUtilities.getDefaultLocale();
+			logger.debug("Execution instance's locale is null; considering default one: " + locale);
+		}
+		String dateFormat = GeneralUtilities.getLocaleDateFormat(locale);
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("language", locale.getLanguage());
+		map.put("country", locale.getCountry());
+		map.put("dateFormat", dateFormat);
+		return map;
+	}
 
 	private String substituteProfileAttributes(String script, HashMap attributes) throws EMFInternalError{
 		logger.debug("IN");

@@ -560,6 +560,27 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		return format;
 
 	}
+	
+	public static String getLocaleDateFormat(Locale locale){
+		String language = locale.getLanguage();
+		String country = locale.getCountry();
+		String format = null;
+		// if a particular language is specified take the corrisponding date-format
+		if(language!=null ){
+			if(country==null){
+				format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-"+language.toUpperCase()+".format");
+			}
+			else{
+				format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-"+language.toUpperCase()+"_"+country.toUpperCase()+".format");				
+			}		
+		}
+		if(format==null){
+			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.format");
+		}
+		logger.debug("DATE FORMAT.format:"+format);
+		return format;
+
+	}
 
 	public static String getLocaleDateFormatForExtJs(SessionContainer permSess){
 		String language=(String)permSess.getAttribute("AF_LANGUAGE");
