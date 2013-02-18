@@ -93,7 +93,7 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	
 	
 	if(this.parametersPanel && this.parametersPanel.width){
-		this.eastPanelWidth = this.parametersPanel.width;
+		this.eastPanelWidth = this.parametersPanel.width+10;
 	}
 	
 	this.eastPanel = new Ext.Panel({
