@@ -88,5 +88,4 @@ Ext.define('Sbi.widgets.tree.SimpleStore', {
 		
 		
 	}
-
-}
+});
