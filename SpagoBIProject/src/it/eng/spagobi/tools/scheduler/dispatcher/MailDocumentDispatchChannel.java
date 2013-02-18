@@ -205,12 +205,12 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 				session = Session.getInstance(props, auth);
 		 	    //session.setDebug(true);
 		 	    //session.setDebugOut(null);
-				logger.error("Session.getInstance(props, auth)");
+				logger.info("Session.getInstance(props, auth)");
 				
 			}else{
 				//session = Session.getDefaultInstance(props);
 				session = Session.getInstance(props);
-				logger.error("Session.getInstance(props)");
+				logger.info("Session.getInstance(props)");
 			}
 			
 
