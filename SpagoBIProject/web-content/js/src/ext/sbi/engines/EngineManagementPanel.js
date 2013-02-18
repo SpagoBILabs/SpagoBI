@@ -205,18 +205,25 @@ Ext.extend(Sbi.engines.EngineManagementPanel, Sbi.widgets.ListDetailForm, {
 	}
 	
     , initDetailTab : function() {
-		this.profileAttributesStore = new Ext.data.SimpleStore({
-			fields : [ 'profAttrs' ],
-			data : config.attrs,
-			autoLoad : false
-		});
+//		this.profileAttributesStore = new Ext.data.SimpleStore({
+//			fields : [ 'profAttrs' ],
+//			data : config.attrs,
+//			autoLoad : false
+//		});
 		
 		// Store of the combobox
-		this.catTypesStore = new Ext.data.SimpleStore({
+		this.documentTypesStore = new Ext.data.SimpleStore({
 			fields : [ 'catTypeVn' ],
 			data : config.catTypeVn,
 			autoLoad : false
 		});
+
+		this.dataSourceStore = new Ext.data.SimpleStore({
+			fields : [ 'dataSourceLabels' ],
+			data : config.dataSourceLabels,
+			autoLoad : false
+		});
+		
 
 		// START list of detail fields
 		var detailFieldName = {
@@ -244,9 +251,9 @@ Ext.extend(Sbi.engines.EngineManagementPanel, Sbi.widgets.ListDetailForm, {
 			name : 'description'
 		};
 
-		var detailFieldCatType = {
+		var detailFieldDocumentType = {
 			name : 'documentType',
-			store : this.catTypesStore,
+			store : this.documentTypesStore,
 			width : 150,
 			fieldLabel : 'Document Type',
 			displayField : 'documentType', 
@@ -262,7 +269,7 @@ Ext.extend(Sbi.engines.EngineManagementPanel, Sbi.widgets.ListDetailForm, {
 		// added
 		var detailFieldEngineType = {
 				name : 'engineType',
-				store : this.catTypesStore,
+				store : this.documentTypesStore,
 				width : 150,
 				fieldLabel : 'Engine Types',
 				displayField : 'engineType', 
@@ -301,7 +308,7 @@ Ext.extend(Sbi.engines.EngineManagementPanel, Sbi.widgets.ListDetailForm, {
 		
 		var detailFieldDataSource = {
 				name : 'dataSourceId',
-				store : this.catTypesStore,
+				store : this.dataSourceStore,
 				width : 150,
 				fieldLabel : 'Data Source',
 				displayField : 'dataSourceId', 
@@ -367,7 +374,7 @@ Ext.extend(Sbi.engines.EngineManagementPanel, Sbi.widgets.ListDetailForm, {
 						},
 						items : [ 
 						        detailFieldLabel, detailFieldName,
-								detailFieldDescr, detailFieldCatType, detailFieldEngineType, detailFieldUseDataSet,detailFieldUseDataSource, detailFieldDataSource,
+								detailFieldDescr, detailFieldDocumentType, detailFieldEngineType, detailFieldUseDataSet,detailFieldUseDataSource, detailFieldDataSource,
 								detailFieldUrl,detailFieldSecondaryUrl,detailFieldDriverName
 								// this.manageDsVersionsPanel ,
 							// this.detailFieldUserIn,this.detailFieldDateIn,this.detailFieldVersNum,this.detailFieldVersId,this.detailFieldId
