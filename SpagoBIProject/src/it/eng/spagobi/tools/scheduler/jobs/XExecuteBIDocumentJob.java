@@ -197,7 +197,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 					// appending the current date
 					Date date = new Date();
 					SimpleDateFormat sdf = new SimpleDateFormat();
-					sdf.applyPattern("dd:MM:yyyy");
+					sdf.applyPattern("dd-MM-yyyy");
 					String dateStr = sdf.format(date);
 					nameSuffix.append("_" + dateStr);
 					

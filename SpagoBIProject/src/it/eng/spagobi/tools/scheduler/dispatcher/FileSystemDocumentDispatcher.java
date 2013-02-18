@@ -114,7 +114,7 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 					exportFile = File.createTempFile(fileNameError, ".txt");
 					randomNamesToName.put(exportFile.getName(), fileNameError+".txt");
 				} else{
-					logger.error("Export ok for biObj with label "+document.getLabel());
+					logger.info("Export ok for biObj with label "+document.getLabel());
 					//String fileName = document.getLabel() + "-" + document.getName();
 					//fileName = fileName + dispatchContext.getDescriptionSuffix();
 					fileName = fileName.replace(' ', '_');
