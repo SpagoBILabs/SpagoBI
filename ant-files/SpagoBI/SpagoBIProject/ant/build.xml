@@ -7,7 +7,7 @@
 	<!--   DEFINIZIONE CLASSPATH						                                            -->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 	<path id="web.classpath">
-		<pathelement path="${classpath}" />
+		<pathelement path="${java.src.dir}" />
 		<!-- LIBRERIE SPECIFICHE APPLICATIVO  -->
 		<fileset dir="${web.lib}">
 			<include name="**/*.jar" />
@@ -363,6 +363,8 @@
 				<file name="./src/ext/sbi/widgets/PagingToolbar.js" />
 				<file name="./src/ext/sbi/widgets/LookupField.js" />
 				<file name="./lib/ext-2.0.1/ux/ext-2.2.1-extensions/CheckboxGroup.js" />
+				<file name="./lib/ext-2.0.1/ux/ext-3.2.1-extensions/Slider.js" />
+				<file name="./lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderField.js" />
 				<file name="./src/ext/sbi/widgets/CheckboxField.js" />
 				<file name="./src/ext/sbi/widgets/RadioField.js" />
 						
