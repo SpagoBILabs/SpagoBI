@@ -63,10 +63,8 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
     
     this.init(config, doc);    
     
-    this.shortcutsPanel.on('applyviewpoint', this.parametersPanel.applyViewPoint, this.parametersPanel);
+  
     this.shortcutsPanel.on('viewpointexecutionrequest', function(v) {
-    	this.southPanel.collapse();
-    	this.eastPanel.collapse();
     	this.parametersPanel.applyViewPoint(v);
     	// save parameters into session
     	Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
@@ -223,7 +221,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 
 	, init: function( config, doc ) {
 		this.initToolbar(config);
-		this.initEastPanel(config);
+		this.initEastPanel(config,doc);
 		this.initCenterPanel(config, doc);
 		this.initSouthPanel(config, doc);
 	}
@@ -244,9 +242,9 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		this.toolbar.on('showmask', this.showMask, this);
 	}
 	
-	, initEastPanel: function( config ) {
+	, initEastPanel: function( config, doc ) {
 		Ext.apply(config, {pageNumber: 3, parentPanel: this}); // this let the ParametersPanel know that it is on execution page
-		this.parametersPanel = new Sbi.execution.ParametersPanel(config);
+		this.parametersPanel = new Sbi.execution.ParametersPanel(config, doc);
 		this.parametersPanel.on('synchronize', function() {
 			// restore memento (= the list of last N value inputed for each parameters)
 			Sbi.execution.SessionParametersManager.restoreMementoObject(this.parametersPanel);
@@ -445,8 +443,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	, initSouthPanel: function( config, doc ) {
 		this.shortcutsPanel = new Sbi.execution.ShortcutsPanel(config, doc);
 		
-		var shortcutsHidden = (!Sbi.user.functionalities.contains('SeeViewpointsFunctionality') 
-								&& !Sbi.user.functionalities.contains('SeeSnapshotsFunctionality') 
+		var shortcutsHidden = (!Sbi.user.functionalities.contains('SeeSnapshotsFunctionality') 
 								&& !Sbi.user.functionalities.contains('SeeSubobjectsFunctionality'))
 								||
 								this.shortcutsHiddenPreference;

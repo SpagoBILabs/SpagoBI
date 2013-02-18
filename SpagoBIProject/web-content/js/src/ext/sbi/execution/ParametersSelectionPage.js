@@ -83,7 +83,7 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
     			  , 'backToAdmin');	
 	
     this.shortcutsHiddenPreference = config.shortcutsHidden !== undefined ? config.shortcutsHidden : false;
-    
+    this.addEvents();
 	this.init(c, doc);
 	
 	this.centerPanel = new Ext.Panel({
@@ -113,8 +113,7 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 			, items: [this.parametersPanel]
 		});
 	
-	var shortcutsHidden = (!Sbi.user.functionalities.contains('SeeViewpointsFunctionality') 
-							&& !Sbi.user.functionalities.contains('SeeSnapshotsFunctionality') 
+	var shortcutsHidden = (!Sbi.user.functionalities.contains('SeeSnapshotsFunctionality') 
 							&& !Sbi.user.functionalities.contains('SeeSubobjectsFunctionality'))
 							||
 							this.shortcutsHiddenPreference;
@@ -183,8 +182,9 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 		}
 	, this);
 
-	this.shortcutsPanel.on('applyviewpoint', this.parametersPanel.applyViewPoint, this.parametersPanel);
-	this.shortcutsPanel.on('viewpointexecutionrequest', this.onExecuteViewpoint, this);
+	this.parametersPanel.on('viewpointexecutionrequest', this.onExecuteViewpoint, this);
+	
+	
 	this.shortcutsPanel.on('subobjectexecutionrequest', this.onExecuteSubobject, this);
 	this.shortcutsPanel.on('snapshotexcutionrequest', this.onExecuteSnapshot, this);
 	this.shortcutsPanel.on('subobjectshowmetadatarequest', function (subObjectId) {
@@ -221,9 +221,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	
     , parametersPanel: null
     , shortcutsPanel: null
-  
-    , saveViewpointWin: null
-    
+
     , loadingMask: null
     , maskOnRender: null
    
@@ -338,7 +336,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	
 	, init: function( config, doc) {
 		this.initToolbar(config);
-		this.initParametersPanel(config);
+		this.initParametersPanel(config, doc);
 		this.initShortcutsPanel(config, doc);
 	}
 	
@@ -348,14 +346,14 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 		});
 	}
 	
-	, initParametersPanel: function( config ) {
+	, initParametersPanel: function( config, doc ) {
 		Ext.apply(config, {pageNumber: 2, parentPanel: this}); // this let the ParametersPanel know that it is on parameters selection page
 		if(this.isFromCross == true) {
 			//alert(config.toSource());
 		}
 		
 		config.isFromCross = this.isFromCross;
-		this.parametersPanel = new Sbi.execution.ParametersPanel(config);
+		this.parametersPanel = new Sbi.execution.ParametersPanel(config, doc);
 		
 		this.parametersPanel.on('beforesynchronize', function() {
 			if (!this.loadingMask) {
