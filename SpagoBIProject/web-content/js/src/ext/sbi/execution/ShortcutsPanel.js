@@ -41,7 +41,6 @@ Sbi.execution.ShortcutsPanel = function(config, doc) {
 	
 	this.subobjectsPanel =  new Sbi.execution.SubobjectsPanel(config, doc);
 	this.snapshotsPanel =  new Sbi.execution.SnapshotsPanel(config, doc);
-	this.viewpointsPanel =  new Sbi.execution.ViewpointsPanel(config, doc);
 		
 	var c = Ext.apply({}, config, {
 		layout:'accordion',
@@ -55,16 +54,8 @@ Sbi.execution.ShortcutsPanel = function(config, doc) {
 	// constructor
     Sbi.execution.ShortcutsPanel.superclass.constructor.call(this, c);
     
-    this.addEvents('subobjectexecutionrequest', 'snapshotexcutionrequest','viewpointexecutionrequest', 'applyviewpoint','subobjectshowmetadatarequest');
-    
-    this.viewpointsPanel.on('executionrequest', function(viewpoint) {
-    	this.fireEvent('viewpointexecutionrequest', viewpoint);
-    }, this);
-    
-    this.viewpointsPanel.on('applyviewpoint', function(viewpoint) {
-    	this.fireEvent('applyviewpoint', viewpoint);
-    }, this);
-    
+    this.addEvents('subobjectexecutionrequest', 'snapshotexcutionrequest','subobjectshowmetadatarequest');
+        
     this.subobjectsPanel.on('executionrequest', function(subObjectId) {
     	this.fireEvent('subobjectexecutionrequest', subObjectId);
     }, this);
@@ -81,18 +72,13 @@ Sbi.execution.ShortcutsPanel = function(config, doc) {
 
 Ext.extend(Sbi.execution.ShortcutsPanel, Ext.Panel, {
 	
-	viewpointsPanel: null
-    , subobjectsPanel: null
+    subobjectsPanel: null
     , snapshotsPanel: null		
 	
 	, synchronize: function( executionInstance ) {
-		this.synchronizeViewpoints(executionInstance);
+	
 		this.synchronizeSubobjects(executionInstance);
 		this.synchronizeSnapshots(executionInstance);
-	}
-
-	, synchronizeViewpoints: function( executionInstance ) {
-		this.viewpointsPanel.synchronize( executionInstance );
 	}
 	
 	, synchronizeSubobjects: function( executionInstance ) {
@@ -116,16 +102,13 @@ Ext.extend(Sbi.execution.ShortcutsPanel, Ext.Panel, {
 	, getSortedPanels: function() {
 		var toReturn = new Array();
 		if(Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.shortcutsPanel && Sbi.settings.execution.shortcutsPanel.panelsOrder) {
-			var viewpointsPosition = Sbi.settings.execution.shortcutsPanel.panelsOrder.viewpoints - 1;
 			var subobjectsPosition = Sbi.settings.execution.shortcutsPanel.panelsOrder.subobjects - 1;
 			var snapshotsPosition = Sbi.settings.execution.shortcutsPanel.panelsOrder.snapshots - 1;
-			toReturn[viewpointsPosition] = this.viewpointsPanel;
 			toReturn[subobjectsPosition] = this.subobjectsPanel;
 			toReturn[snapshotsPosition] = this.snapshotsPanel;
 		} else {
-			toReturn[0] = this.viewpointsPanel;
-			toReturn[1] = this.subobjectsPanel;
-			toReturn[2] = this.snapshotsPanel;
+			toReturn[0] = this.subobjectsPanel;
+			toReturn[1] = this.snapshotsPanel;
 		}
 		return toReturn;
 	}

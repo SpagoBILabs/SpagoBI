@@ -22,13 +22,14 @@ Sbi.settings.execution = {
 			, fieldLabelWidth: 100
 			, moveInMementoUsingCtrlKey: false
 			, width: 320
+			, viewportWindowWidth: 500
+			, viewportWindowHeight: 500
 		}
 
 		, shortcutsPanel: {
 			panelsOrder: {
 				subobjects: 1
-				, viewpoints: 2
-				, snapshots: 3
+				, snapshots: 2
 			}
 			, height: 205
 		}

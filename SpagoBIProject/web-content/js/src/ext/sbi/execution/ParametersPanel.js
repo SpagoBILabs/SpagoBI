@@ -46,7 +46,10 @@
 
 Ext.ns("Sbi.execution");
 
-Sbi.execution.ParametersPanel = function(config) {
+Sbi.execution.ParametersPanel = function(config, doc) {
+	
+	this.saveViewpointWin =null;
+	this.openViewpointWin =null;
 	
 	var defaultSettings = {
 		columnNo: 3
@@ -57,6 +60,8 @@ Sbi.execution.ParametersPanel = function(config) {
 		, fieldLabelWidth: 100
 		, addEmptyValueToCombo: false
 		, moveInMementoUsingCtrlKey: false
+		, viewportWindowWidth: 300
+		, viewportWindowHeight: 300
 	};
 	
 	
@@ -113,6 +118,9 @@ Sbi.execution.ParametersPanel = function(config) {
             bodyStyle:'padding:5px 5px 5px 5px'
 		}
 	}
+	
+	this.addEvents('viewpointexecutionrequest','applyviewpoint');
+	this.initViewpointsPanel(config, doc)
 	this.initTootlbar();
 
 	c = Ext.apply({}, c, {
@@ -129,7 +137,7 @@ Sbi.execution.ParametersPanel = function(config) {
         }]
 	});
 	
-	this.saveViewpointWin =null;
+	
 	
 	// constructor
     Sbi.execution.ParametersPanel.superclass.constructor.call(this, c);
@@ -187,6 +195,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     , manageVisualDependenciesOnVisibility: true
     , manageVisualDependenciesOnLabel: true
     
+    , showViewpointWin:null
    
     // ----------------------------------------------------------------------------------------
     // public methods
@@ -202,8 +211,17 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 					this.clearParametersForm();
 				}
 			}));
-		
-		if (Sbi.user.functionalities.contains('SeeViewpointsFunctionality') && !this.isFromCross) {
+    	
+    	if (Sbi.user.functionalities.contains('SeeViewpointsFunctionality') && !this.isFromCross) {
+			toolbarItems.push(new Ext.Toolbar.Button({
+				iconCls: 'icon-save'
+				, tooltip: LN('sbi.execution.parametersselection.toolbar.ssss')
+			   	, scope: this
+			   	, handler : function() {
+					this.openParametersFormStateAsViewpoint();
+				}
+			}));
+
 			toolbarItems.push(new Ext.Toolbar.Button({
 				iconCls: 'icon-save'
 				, tooltip: LN('sbi.execution.parametersselection.toolbar.save')
@@ -221,6 +239,39 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 
 	, clearParametersForm: function() {
 		this.reset();
+	}
+	
+	, initViewpointsPanel: function(config, doc){
+		if(!this.viewpointsPanel){
+			var thisPanel= this;
+			
+			this.viewpointsPanel =  new Sbi.execution.ViewpointsPanel(config, doc);
+		
+			this.viewpointsPanel.on('executionrequest', function(viewpoint) {
+				thisPanel.fireEvent('viewpointexecutionrequest', viewpoint);
+				thisPanel.showViewpointWin.close();
+		    }, this);
+			this.viewpointsPanel.on('applyviewpoint', function(viewpoint) {
+				thisPanel.applyViewPoint(viewpoint);
+				thisPanel.showViewpointWin.close();
+		    }, this);
+		}
+	}
+	
+	, synchronizeViewpoints: function( executionInstance ) {
+		this.viewpointsPanel.synchronize( executionInstance );
+	}
+	
+	, openParametersFormStateAsViewpoint: function() {
+		if(this.showViewpointWin === null) {
+			this.showViewpointWin = new Ext.Window({
+				layout: 'fit',
+				width: 400,
+				height: 400,
+				items: [this.viewpointsPanel]
+			});
+		}
+		this.showViewpointWin.show();
 	}
 	
 	, saveParametersFormStateAsViewpoint: function() {
@@ -272,6 +323,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var sync = this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance);
 		this.executionInstance = executionInstance;
 		this.loadParametersForExecution( );
+		this.synchronizeViewpoints(executionInstance);
 	}
 
 	, getFieldValue: function(field) {
@@ -1046,6 +1098,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		var params = this.getBaseParams(p, executionInstance, 'complete');
 		params.PARAMETERS = Sbi.commons.JSON.encode(this.getFormState());;
+		params.LIGHT_NAVIGATOR_DISABLED = 'TRUE';
 		
 		field = new Sbi.widgets.TreeLookUpField(Ext.apply(baseConfig,{
 			params: params, 
