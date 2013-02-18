@@ -628,6 +628,42 @@ public class JSONObject extends AbstractJSONObject {
 //        }
     	return rootNode.toString();
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((rootNode == null) ? 0 : rootNode.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+
+		JSONObject other = (JSONObject) obj;
+		for (Iterator<String> iterator =  other.keys(); iterator.hasNext();) {
+			String type =iterator.next();
+			Object objItem = this.opt(type);
+			if(objItem==null){
+				return false;
+			}else{
+				Object objItemobj = other.opt(type);
+				if(!objItemobj.equals(objItem)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+    
+    
 	
    
 }
