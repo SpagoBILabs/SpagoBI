@@ -214,8 +214,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     	
     	if (Sbi.user.functionalities.contains('SeeViewpointsFunctionality') && !this.isFromCross) {
 			toolbarItems.push(new Ext.Toolbar.Button({
-				iconCls: 'icon-save'
-				, tooltip: LN('sbi.execution.parametersselection.toolbar.ssss')
+				iconCls: 'icon-saved-parameters '
+				, tooltip: LN('sbi.execution.parametersselection.toolbar.open')
 			   	, scope: this
 			   	, handler : function() {
 					this.openParametersFormStateAsViewpoint();

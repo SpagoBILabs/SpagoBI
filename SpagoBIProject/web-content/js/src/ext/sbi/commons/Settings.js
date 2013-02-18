@@ -21,7 +21,7 @@ Sbi.settings.execution = {
 			, maskOnRender: false
 			, fieldLabelWidth: 100
 			, moveInMementoUsingCtrlKey: false
-			, width: 320
+			, width: 295
 			, viewportWindowWidth: 500
 			, viewportWindowHeight: 500
 		}
