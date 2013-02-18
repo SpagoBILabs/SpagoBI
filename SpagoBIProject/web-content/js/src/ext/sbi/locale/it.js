@@ -282,6 +282,7 @@ Sbi.locale.ln['sbi.execution.parametersselection.toolbar.back']  = 'Cambia il ru
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']  = 'Cancella valori inseriti nel form dei parametri';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save']  = 'Salva valori inseriti nel form dei parametri come viewpoint';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.next']  = 'Esegui il documento';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.open']  = 'Apri la finestra dei parametri salvati';
 
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.public.description']='Tutti coloro che possono eseguire questo documento vedranno i tuoi parametri salvati';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.private.description']='Iparametri salvati saranno visibili solo a te';

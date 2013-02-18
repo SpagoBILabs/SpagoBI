@@ -281,7 +281,8 @@ Sbi.locale.ln['sbi.execution.parametersselection.loadingmsg']  = 'Loading parame
 Sbi.locale.ln['sbi.execution.parametersselection.noParametersToBeFilled']  = '[Document has no parameters to be filled]';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.back']  = 'Change selected role';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']  = 'Reset parameters form';
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save']  = 'Save parameters form state as viewpoint';
+Sbi.locale.ln['sRitbi.execution.parametersselection.toolbar.save']  = 'Save parameters form state as viewpoint';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.open']  = 'Open saved parameters window';
 
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.public.description']='Everybody that can execute this document will see also your saved parameters';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.private.description']='The saved parameters will be visible only to you';

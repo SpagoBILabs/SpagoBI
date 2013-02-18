@@ -14,6 +14,11 @@
 	background-image: url('../../../img/save_generic16.png') !important;
 }*/
 
+.icon-saved-parameters {
+	background-image: url('../../../img/savedparameters16.png') !important;
+}
+
+
 .icon-save {
 	background-image: url('../../../img/save16.png') !important;
 }
