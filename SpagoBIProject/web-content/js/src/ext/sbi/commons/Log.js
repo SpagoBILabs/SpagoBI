@@ -26,20 +26,24 @@ Sbi.log = function(level, msg) {
 	
 		if(console) console.log('[' + level + '] : ' + msg);
 	}
-}
+};
 
 Sbi.trace = function(msg) {
 	Sbi.log("TRACE", msg);
-}
+};
 
 Sbi.debug = function(msg) {
 	Sbi.log("DEBUG", msg);
-}
+};
 
 Sbi.info = function(msg) {
 	Sbi.log("INFO", msg);
-}
+};
 
 Sbi.warn = function(msg) {
 	Sbi.log("WARN", msg);
-}
+};
+
+Sbi.toSource = function(o) {
+	return Ext.util.JSON.encode(o);
+};
