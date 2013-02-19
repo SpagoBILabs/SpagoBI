@@ -69,7 +69,7 @@ Ext.define('Sbi.behavioural.lov.TestLovConfigurationGridPanel', {
 		});
 
 		this.columnsDefinition = [{
-            header: 'Name',
+            header: LN('sbi.behavioural.lov.name'),
             dataIndex: 'name',
             flex: 1
         }];
@@ -77,19 +77,19 @@ Ext.define('Sbi.behavioural.lov.TestLovConfigurationGridPanel', {
 		if(!config.treeLov){
 			this.columnsDefinition.push({
 	            xtype: 'radiocolumn',
-	            header: 'Value',
+	            header: LN('sbi.behavioural.lov.value'),
 	            dataIndex: 'isValue',
 	            width: 90
 	        });
 			this.columnsDefinition.push({
 	            xtype: 'radiocolumn',
-	            header: 'Description',
+	            header: LN('sbi.behavioural.lov.description'),
 	            dataIndex: 'isDescription',
 	            width: 90
 	        });
 			this.columnsDefinition.push({
 	            xtype: 'checkcolumn',
-	            header: 'Visible',
+	            header: LN('sbi.behavioural.lov.visible'),
 	            dataIndex: 'isVisible',
 	            width: 90,
 	            editor: {
