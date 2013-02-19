@@ -479,7 +479,7 @@ Ext.extend(Ext.ux.Andrie.Select, Ext.form.ComboBox, {
 	 * @param {Mixed} value The value to match
 	 */
 	setValue:function(v){
-		if(v === '') v = [];
+		if(v === null || v === undefined || v === '') v = [];
 		var result = [],
 			resultRaw = [];
 		if (!(v instanceof Array)){
