@@ -134,8 +134,8 @@ Sbi.config.ToolbarConfig = function(config) {
 	
 };
 
-Ext.extend(Sbi.config.ToolbarConfig, Ext.Toolbar {
+Ext.extend(Sbi.config.ToolbarConfig, Ext.Toolbar, {
 	initToolbar : function() {
-	this.gridToolbar = new Ext.Toolbar( )
-}
+		this.gridToolbar = new Ext.Toolbar( )
+	}
 });
