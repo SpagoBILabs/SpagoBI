@@ -37,6 +37,7 @@ Sbi.widgets.TreeLookUpField = function(config) {
 	
 	this.rootConfig = {
 			text : 'root',
+			triggerClass : 'tree-look-up',
 			expanded: true,
 			id:  'lovroot___SEPA__0'
         };
