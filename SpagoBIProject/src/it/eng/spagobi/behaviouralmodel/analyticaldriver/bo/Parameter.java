@@ -34,6 +34,8 @@ public class Parameter implements Serializable {
 	
 	private ModalitiesValue modalityValue = null;
 	private ModalitiesValue modalityValueForDefault = null;
+	
+	private String defaultFormula = "";
 
 	private List checks = null;
 
@@ -278,6 +280,14 @@ public class Parameter implements Serializable {
 
 	public void setModalityValueForDefault(ModalitiesValue modalityValueForDefault) {
 		this.modalityValueForDefault = modalityValueForDefault;
+	}
+	
+	public String getDefaultFormula() {
+		return this.defaultFormula;
+	}
+	
+	public void setDefaultFormula(String defaultFormula) {
+		this.defaultFormula = defaultFormula;
 	}
 	
 }
