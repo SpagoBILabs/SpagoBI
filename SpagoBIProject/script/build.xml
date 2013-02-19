@@ -39,8 +39,23 @@
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 	<target name="doc.all" depends="doc.init,doc.js,doc.java"/>
 	
-	<target name="doc.js">
-		<exec command="${programs.jsduck} ${js.src.dir} --builtin-classes --warnings=-no_doc,-dup_member,-link_ambiguous --external XMLHttpRequest --output ${js.doc.dir}"/>
+	<target name="doc.js" depends="doc.extjs2,doc.extjs4"/>
+		
+	
+	<target name="doc.extjs2">
+		<mkdir dir="${js.ext2.doc.dir}"/>
+		 <delete includeemptydirs="true">
+		    <fileset dir="${js.ext2.doc.dir}" includes="**/*"/>
+		 </delete>
+		<exec command="${programs.jsduck} ${js.ext2.src.dir} --builtin-classes --warnings=-no_doc,-dup_member,-link_ambiguous --external XMLHttpRequest --output ${js.ext2.doc.dir}"/>
+	</target>
+	
+	<target name="doc.extjs4">
+		<mkdir dir="${js.ext4.doc.dir}"/>
+		<delete includeemptydirs="true">
+			<fileset dir="${js.ext4.doc.dir}" includes="**/*"/>
+		</delete>
+		<exec command="${programs.jsduck} ${js.ext4.src.dir} --builtin-classes --warnings=-no_doc,-dup_member,-link_ambiguous --external XMLHttpRequest --output ${js.ext4.doc.dir}"/>
 	</target>
 	
 	<target name="doc.java">
