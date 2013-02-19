@@ -205,8 +205,10 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements
 						.loadModalitiesValueByID(
 								hibParuse.getSbiLovForDefault().getLovId());
 				parameter.setModalityValueForDefault(lov);
+				parameter.setDefaultFormula(null);
 			} else {
 				parameter.setModalityValueForDefault(null);
+				parameter.setDefaultFormula(hibParuse.getDefaultFormula());
 			}
 
 			ParameterUseDAOHibImpl dao = new ParameterUseDAOHibImpl();

@@ -16,6 +16,8 @@ import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -758,6 +760,18 @@ public class ExecutionInstance implements Serializable{
 			logger.debug("Parameter [" + biparamLabel + "] has lov defined just for default value: any other chose allowed");
 			return new ArrayList();
 		}
+		
+		// from the complete list of values, get the values that are not default values
+		List nonDefaultValues = this.validateAsDefaultValues(biparam);
+		if (nonDefaultValues.isEmpty()) {
+			logger.debug("All selected values are default values");
+			return new ArrayList();
+		}
+		
+		// validation must proceed only with non-default values
+		BIObjectParameter clone = biparam.clone();
+		clone.setParameterValues(nonDefaultValues);
+		
 		// get the lov provider detail
 		String lovProv = lov.getLovProvider();
 		ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
@@ -765,13 +779,32 @@ public class ExecutionInstance implements Serializable{
 		String lovResult = null;
 		List toReturn = null;
 		if (lovProvDet instanceof QueryDetail) {
-			toReturn = getValidationErrorsOnValuesForQueries((QueryDetail) lovProvDet, biparam);
+			toReturn = getValidationErrorsOnValuesForQueries((QueryDetail) lovProvDet, clone);
 		} else {
 			LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-			lovResult = executionCacheManager.getLovResult(this.userProfile, biparam, this, true);
-			toReturn = getValidationErrorsOnValuesByLovResult(lovResult, biparam, lovProvDet);
+			lovResult = executionCacheManager.getLovResult(this.userProfile, clone, this, true);
+			toReturn = getValidationErrorsOnValuesByLovResult(lovResult, clone, lovProvDet);
 		}
 
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	private List validateAsDefaultValues(BIObjectParameter analyticalDocumentParameter) {
+		logger.debug("IN");
+		List toReturn = new ArrayList<String>();
+		List values = analyticalDocumentParameter.getParameterValues();
+		DefaultValuesRetriever retriever = new DefaultValuesRetriever();
+		DefaultValuesList defaultValues = retriever.getDefaultValues(analyticalDocumentParameter, this, this.userProfile);
+		if (values != null && values.size() > 0) {
+			for (int i = 0; i < values.size(); i++) {
+				String value = values.get(i).toString();
+				if (!defaultValues.contains(value)) {
+					logger.debug("Value [" + value + "] is not a default value.");
+					toReturn.add(value);
+				}
+			}
+		}
 		logger.debug("OUT");
 		return toReturn;
 	}

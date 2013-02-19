@@ -12,6 +12,8 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
@@ -107,23 +109,6 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		return parametersForExecution;
 	}
 	
-	public class DefaultValue {
-		private Object value;
-		private Object description;
-		public Object getValue() {
-			return value;
-		}
-		public void setValue(Object value) {
-			this.value = value;
-		}
-		public Object getDescription() {
-			return description;
-		}
-		public void setDescription(Object description) {
-			this.description = description;
-		}
-	}
-
 	public class ParameterForExecution {
 
 		// DAOs
@@ -159,7 +144,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		// in case of massive export these are the parameter ids referred by current parameter
 		List<Integer> objParameterIds;
 
-		List<DefaultValue> defaultValues;
+		DefaultValuesList defaultValues;
 		
 		// dependencies (dataDep & visualDep)
 		Map<String, List<ParameterDependency>> dependencies;
@@ -365,35 +350,14 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		
 		public void loadDefaultValues() {
 			logger.debug("IN");
-			defaultValues = new ArrayList<GetParametersForExecutionAction.DefaultValue>();
 			try {
 				ExecutionInstance executionInstance = this.getExecutionInstance();
-				ILovDetail lovForDefault = executionInstance.getLovDetailForDefault(analyticalDocumentParameter);
-				if (lovForDefault == null) {
-					logger.debug("No LOV for default values defined");
-					return;
-				}
-				logger.debug("A LOV for default values is defined : " + lovForDefault);
+				DefaultValuesRetriever retriever = new DefaultValuesRetriever();
 				IEngUserProfile profile = getUserProfile();
-				String lovResult = lovForDefault.getLovResult(profile, null, executionInstance);
-				LovResultHandler lovResultHandler = new LovResultHandler(lovResult);		
-				List rows = lovResultHandler.getRows();
-				logger.debug("LOV executed without errors");
-				logger.debug("LOV contains " + rows.size() + " values");
-				Iterator it = rows.iterator();
-				String valueColumn = lovForDefault.getValueColumnName();
-				String descriptionColumn = lovForDefault.getDescriptionColumnName();
-				while (it.hasNext()) {
-					SourceBean row = (SourceBean) it.next();
-					DefaultValue defaultValue = new DefaultValue();
-					defaultValue.setValue(row.getAttribute(valueColumn));
-					defaultValue.setDescription(row.getAttribute(descriptionColumn));
-					defaultValues.add(defaultValue);
-				}
+				defaultValues = retriever.getDefaultValues(analyticalDocumentParameter, executionInstance, profile);
 			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's default values", e);
 			} 
-
 			logger.debug("OUT");
 		}
 
@@ -595,11 +559,11 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			this.dataDependencies = dataDependencies;
 		}
 		
-		public List<DefaultValue> getDefaultValues() {
+		public DefaultValuesList getDefaultValues() {
 			return defaultValues;
 		}
 
-		public void setDefaultValues(List<DefaultValue> defaultValues) {
+		public void setDefaultValues(DefaultValuesList defaultValues) {
 			this.defaultValues = defaultValues;
 		}
 		

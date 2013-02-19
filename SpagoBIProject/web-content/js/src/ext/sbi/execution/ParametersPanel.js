@@ -48,9 +48,6 @@ Ext.ns("Sbi.execution");
 
 Sbi.execution.ParametersPanel = function(config, doc) {
 	
-	this.saveViewpointWin =null;
-	this.openViewpointWin =null;
-	
 	var defaultSettings = {
 		columnNo: 3
 		, columnWidth: 350
@@ -119,7 +116,9 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 		}
 	}
 	
-	this.addEvents('viewpointexecutionrequest','applyviewpoint');
+	this.saveViewpointWin = null;
+	this.openViewpointWin = null;
+	
 	this.initViewpointsPanel(config, doc)
 	this.initTootlbar();
 
@@ -137,8 +136,6 @@ Sbi.execution.ParametersPanel = function(config, doc) {
         }]
 	});
 	
-	
-	
 	// constructor
     Sbi.execution.ParametersPanel.superclass.constructor.call(this, c);
 	
@@ -148,7 +145,7 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 		this.columns[i] = columnContainer.items.get(i);
 	}
 	
-    this.addEvents('beforesynchronize', 'synchronize', 'parametersForExecutionLoaded');	
+    this.addEvents('beforesynchronize', 'synchronize', 'parametersForExecutionLoaded', 'viewpointexecutionrequest', 'applyviewpoint');	
 };
 
 Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
@@ -238,7 +235,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     }
 
 	, clearParametersForm: function() {
-		this.reset();
+		//this.reset();
+		var defaultValuesFormState = this.getDefaultValuesFormState();
+		Sbi.debug('[ParametersPanel.initializeParametersPanel] : default values form state is [' + defaultValuesFormState + ']');
+		var state = Ext.apply(defaultValuesFormState, this.preferenceState);
+		Sbi.debug('[ParametersPanel.initializeParametersPanel] : preference state applied to default values [' + state + ']');
+		this.setFormState(state);
 	}
 	
 	, initViewpointsPanel: function(config, doc){
@@ -629,7 +631,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.initializeFieldDependencies();
 		
 		var defaultValuesFormState = this.getDefaultValuesFormState();
+		Sbi.debug('[ParametersPanel.initializeParametersPanel] : default values form state is [' + defaultValuesFormState + ']');
 		var state = Ext.apply(defaultValuesFormState, this.preferenceState);
+		Sbi.debug('[ParametersPanel.initializeParametersPanel] : preference state applied to default values [' + state + ']');
 		this.setFormState(state);
 		
 //		if (reset === true && this.isInParametersPage() && this.isFromCross === false) {

@@ -5,8 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
-import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction.DefaultValue;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 
@@ -97,7 +98,7 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 			result.put("parameterUseId", parameter.getParameterUseId());
 			
 			JSONArray defaultValues = new JSONArray();
-			List<DefaultValue> defaults = parameter.getDefaultValues();
+			DefaultValuesList defaults = parameter.getDefaultValues();
 			Iterator<DefaultValue> defaultsIt = defaults.iterator();
 			while (defaultsIt.hasNext()) {
 				DefaultValue aDefault = defaultsIt.next();
