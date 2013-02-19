@@ -62,7 +62,7 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 	        valueField: 'type',
 	        queryMode: 'local',
 	        triggerAction: 'all',
-	        emptyText:'Select a type...',
+	        emptyText: LN('sbi.behavioural.lov.select.type'),
 	        selectOnFocus:true,
 	        width:135
 	    });
@@ -73,7 +73,7 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 	        xtype: 'toolbar',
 	        dock: 'top',
 	        items: ['->',this.comboType,{
-	            text: 'Save',
+	            text: LN('sbi.behavioural.lov.save'),
 	            handler: this.save,
 	            scope: this
 	        }]
@@ -161,9 +161,7 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
             	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.behavioural.lov.save.window.text'),LN('sbi.behavioural.lov.save.window.title'),{fn:callback});
             	
             },
-            failure: function(response) {
-            	alert("ko");
-            }
+            failure: Sbi.exception.ExceptionHandler.handleFailure
             ,scope: this
    		 });	
     	
