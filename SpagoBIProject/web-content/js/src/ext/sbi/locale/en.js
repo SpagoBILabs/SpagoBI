@@ -784,6 +784,12 @@ Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Tree'
 Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filter'
 Sbi.locale.ln['sbi.behavioural.lov.save.window.title']='LOV Saved'
 Sbi.locale.ln['sbi.behavioural.lov.save.window.text']='The LOV has been successfully saved'
+Sbi.locale.ln['sbi.behavioural.lov.save']='Save'
+Sbi.locale.ln['sbi.behavioural.lov.select.type']='Select a type...'
+Sbi.locale.ln['sbi.behavioural.lov.name']='Name'
+Sbi.locale.ln['sbi.behavioural.lov.value']='Value'
+Sbi.locale.ln['sbi.behavioural.lov.description']='Description'
+Sbi.locale.ln['sbi.behavioural.lov.visible']='Visible'
 
 
 
