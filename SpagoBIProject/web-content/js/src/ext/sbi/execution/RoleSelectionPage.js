@@ -78,6 +78,12 @@ Sbi.execution.RoleSelectionPage = function(config, doc) {
     Sbi.execution.RoleSelectionPage.superclass.constructor.call(this, c);
 };
 
+
+/**
+ * @class Sbi.execution.RoleSelectionPage
+ * @extends Ext.FormPanel
+ * ...
+ */
 Ext.extend(Sbi.execution.RoleSelectionPage, Ext.FormPanel, {
 	
 	// ---------------------------------------------------------------------------

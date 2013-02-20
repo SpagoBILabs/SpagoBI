@@ -142,6 +142,11 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 	
 };
 
+/**
+ * @class Sbi.execution.DocumentExecutionPage
+ * @extends Ext.Panel
+ * ...
+ */
 Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
     
     // static contents and methods definitions

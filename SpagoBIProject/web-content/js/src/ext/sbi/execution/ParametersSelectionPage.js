@@ -212,6 +212,11 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
     
 };
 
+/**
+ * @class Sbi.execution.ParametersSelectionPage
+ * @extends Ext.Panel
+ * ...
+ */
 Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
     
 	services: null
