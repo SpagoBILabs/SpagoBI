@@ -55,7 +55,12 @@ Sbi.exception.ExceptionHandler = function(){
         	var errMessage = ''
         	if(response !== undefined) {
         		if (response.responseText !== undefined) {
-        			var content = Ext.util.JSON.decode( response.responseText );
+        			try{
+        				var content = Ext.util.JSON.decode( response.responseText );
+        			}catch(e){
+        				var content =Ext.JSON.decode( response.responseText );
+        			}
+        			
         			if (content.errors !== undefined  && content.errors.length > 0) {
         				if (content.errors[0].message === 'session-expired') {
         					// session expired
