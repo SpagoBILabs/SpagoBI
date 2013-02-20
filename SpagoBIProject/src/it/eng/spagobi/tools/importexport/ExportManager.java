@@ -717,6 +717,13 @@ public class ExportManager implements IExportManager {
 				checkDataSource(lov);
 				exporter.insertLov(lov, session);
 			}
+			Integer idLovForDefault = paruse.getIdLovForDefault();
+			if (idLovForDefault != null) {
+				IModalitiesValueDAO lovDAO = DAOFactory.getModalitiesValueDAO();
+				ModalitiesValue lov = lovDAO.loadModalitiesValueByID(idLovForDefault);
+				checkDataSource(lov);
+				exporter.insertLov(lov, session);
+			}
 			exporter.insertParUse(paruse, session);
 			List checks = paruse.getAssociatedChecks();
 			Iterator iterChecks = checks.iterator();

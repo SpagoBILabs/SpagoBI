@@ -749,6 +749,8 @@ public class ImportUtilities {
 		newParuse.setLabel(exportedParuse.getLabel());
 		newParuse.setName(exportedParuse.getName());
 		newParuse.setSbiLov(exportedParuse.getSbiLov());
+		newParuse.setSbiLovForDefault(exportedParuse.getSbiLovForDefault());
+		newParuse.setDefaultFormula(exportedParuse.getDefaultFormula());
 		newParuse.setSbiParameters(exportedParuse.getSbiParameters());
 		newParuse.setSbiParuseCks(new HashSet());
 		newParuse.setSbiParuseDets(new HashSet());
@@ -776,6 +778,8 @@ public class ImportUtilities {
 			exisingParuse.setLabel(exportedParuse.getLabel());
 			exisingParuse.setName(exportedParuse.getName());
 			exisingParuse.setSbiLov(exportedParuse.getSbiLov());
+			exisingParuse.setSbiLovForDefault(exportedParuse.getSbiLovForDefault());
+			exisingParuse.setDefaultFormula(exportedParuse.getDefaultFormula());
 			exisingParuse.setSbiParameters(exportedParuse.getSbiParameters());
 			exisingParuse.setSbiParuseCks(new HashSet());
 			exisingParuse.setSbiParuseDets(new HashSet());
@@ -836,6 +840,22 @@ public class ImportUtilities {
 				}
 				else{
 					logger.error("could not find corresponding Lov");
+					List params = new ArrayList();
+					params.add("Sbi_Lov");
+					params.add("sbi_Paruse");
+					params.add(newSbiParuse.getLabel());				
+					throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+				}
+			}
+			
+			if(exportedSbiParuse.getSbiLovForDefault()!= null){
+				Integer newLovId = (Integer)metaAss.getLovIDAssociation().get(exportedSbiParuse.getSbiLovForDefault().getLovId()); 				
+				if(newLovId != null){
+					SbiLov newSbiLov = (SbiLov) sessionCurrDB.load(SbiLov.class, newLovId);
+					newSbiParuse.setSbiLovForDefault(newSbiLov);
+				}
+				else{
+					logger.error("could not find corresponding Lov for default");
 					List params = new ArrayList();
 					params.add("Sbi_Lov");
 					params.add("sbi_Paruse");
