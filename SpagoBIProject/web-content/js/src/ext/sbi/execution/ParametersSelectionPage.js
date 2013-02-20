@@ -18,37 +18,13 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
- 
-/**
-  * Object name 
-  * 
-  * [description]
-  * 
-  * 
-  * Public Properties
-  * 
-  * [list]
-  * 
-  * 
-  * Public Methods
-  * 
-  *  [list]
-  * 
-  * 
-  * Public Events
-  * 
-  *  [list]
-  * 
-  * Authors
-  * 
-  * - Andrea Gioia (andrea.gioia@eng.it)
-  */
-
 
 Ext.ns("Sbi.execution");
 
+// TODO to be renamed in DocumentExecutionPage
 Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	
+	// init properties
 	var c = Ext.apply({
 		//columnNo: 3
 		//, labelAlign: 'left'
@@ -57,7 +33,6 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	}, config || {});
 	
 	this.isFromCross = config.isFromCross || false;
-
 	this.maskOnRender = c.maskOnRender;
 	
 	// variables for preferences and for shortcuts/parameters panel synchronization
@@ -67,77 +42,23 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	this.preferenceSubobjectId = (c.subobject !== undefined && c.subobject.id !== undefined) ? c.subobject.id : null;
 	this.isSnapshotPanelReady = false;
 	this.preferenceSnapshotId = null;
+	this.shortcutsHiddenPreference = config.shortcutsHidden !== undefined ? config.shortcutsHidden : false;
 	
-	// always declare exploited services first!
-	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
-	this.services = new Array();
-
-	 
-    this.addEvents('beforetoolbarinit'
-    			  , 'beforesynchronize'
-    			  , 'synchronize'
-    			  , 'synchronizeexception'
-    			  , 'movenextrequest'
-    			  , 'moveprevrequest'
-    			  , 'collapse3'
-    			  , 'backToAdmin');	
+	this.addEvents(
+		'beforetoolbarinit'
+		, 'beforesynchronize'
+		, 'synchronize'
+		, 'synchronizeexception'
+		, 'movenextrequest'
+		, 'moveprevrequest'
+		, 'collapse3'
+		, 'backToAdmin'
+	);	
 	
-    this.shortcutsHiddenPreference = config.shortcutsHidden !== undefined ? config.shortcutsHidden : false;
-    this.addEvents();
+	this.initServices();
 	this.init(c, doc);
 	
-	this.centerPanel = new Ext.Panel({
-		region:'center',
-		    html:'center'
-		});
-	
-	
-	if(this.parametersPanel && this.parametersPanel.width){
-		this.eastPanelWidth = this.parametersPanel.width+10;
-	}
-	
-	this.eastPanel = new Ext.Panel({
-		region:'east'
-			, title: LN('sbi.execution.parametersselection.parameters')
-			, border: true
-			, frame: false
-			, collapsible: true
-			, collapsed: false
-			//, hideCollapseTool: true
-			//, titleCollapse: true
-			//, collapseMode: 'mini'
-			//, split: true
-			, autoScroll: true
-			, width: this.eastPanelWidth 
-			, layout: 'fit'
-			, items: [this.parametersPanel]
-		});
-	
-	var shortcutsHidden = (!Sbi.user.functionalities.contains('SeeSnapshotsFunctionality') 
-							&& !Sbi.user.functionalities.contains('SeeSubobjectsFunctionality'))
-							||
-							this.shortcutsHiddenPreference;
-	
-	var southPanelHeight = 
-		(Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.shortcutsPanel && Sbi.settings.execution.shortcutsPanel.height) 
-		? Sbi.settings.execution.shortcutsPanel.height : 280;
-	
-	this.southPanel = new Ext.Panel({
-		region:'south'
-			, border: false
-			, frame: false
-			, collapsible: true
-			, collapsed: false
-			, hideCollapseTool: true
-			, titleCollapse: true
-			, collapseMode: 'mini'
-			, split: true
-			, autoScroll: true
-			, height: southPanelHeight
-			, layout: 'fit'
-			, items: [this.shortcutsPanel]
-			, hidden: shortcutsHidden
-	});
+
 	
 	c = Ext.apply({}, c, {
 		layout: 'fit',
@@ -162,7 +83,7 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	            	scope: this
 	          	}
 	        },   	        
-			items: [this.centerPanel,this.eastPanel, this.southPanel]
+			items: [this.centerPanel ,this.eastPanel /*, this.southPanel*/]
 		}]
 	});   
 	
@@ -223,18 +144,254 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	, executionInstance: null
 	
 	, toolbar: null
-	
     , parametersPanel: null
     , shortcutsPanel: null
+    , centerPanel: null
+    , eastPanel: null
+    , southPanel: null
+    
 
     , loadingMask: null
     , maskOnRender: null
    
-    // ----------------------------------------------------------------------------------------
-    // public methods
-    // ----------------------------------------------------------------------------------------
+    // =================================================================================================================
+	// METHODS
+	// =================================================================================================================
+		
+	// -----------------------------------------------------------------------------------------------------------------
+    // init methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * @method 
+	 * 
+	 * Initialize the following services exploited by this component:
+	 * 
+	 *    - none
+	 */
+	, initServices: Ext.emptyFn
     
-   
+	, init: function(config, doc) {
+		this.initToolbar(config, doc);
+		this.initCentralPanel(config, doc);
+		this.initEastPanel(config, doc);
+		//this.initSouthPanel(config, doc);
+	}
+	
+	/**
+	 * @method
+	 * 
+	 *  Initialize the tolbar
+	 * 
+	 * @param {Object} config the configuration object 
+	 * @param {Object} doc the document configuration
+	 */
+	, initToolbar: function(config, doc) {
+		this.toolbar = new Ext.Toolbar({
+			items: [new Ext.Toolbar.Button({iconCls: 'icon-back'})]
+		});
+	}
+	
+	/**
+	 * @method
+	 * 
+	 *  Initialize the central panel
+	 * 
+	 * @param {Object} config the configuration object 
+	 * @param {Object} doc the document configuration
+	 */
+	, initCentralPanel: function(config, doc) {
+		this.initShortcutsPanel(config, doc);
+		
+		var shortcutsHidden = (!Sbi.user.functionalities.contains('SeeSnapshotsFunctionality') 
+				&& !Sbi.user.functionalities.contains('SeeSubobjectsFunctionality'))
+				||
+				this.shortcutsHiddenPreference;
+
+		var southPanelHeight = 
+			(Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.shortcutsPanel && Sbi.settings.execution.shortcutsPanel.height) 
+			? Sbi.settings.execution.shortcutsPanel.height : 280;
+
+		var innerSouthPanel = new Ext.Panel({
+			region:'south'
+			, border: false
+			, frame: false
+			, collapsible: true
+			, collapsed: false
+			, hideCollapseTool: true
+			, titleCollapse: true
+			, collapseMode: 'mini'
+			, split: true
+			, autoScroll: true
+			, height: southPanelHeight
+			, layout: 'fit'
+			, items: [this.shortcutsPanel]
+			, hidden: shortcutsHidden
+		});
+	
+		var innerCenterPanel = new Ext.Panel({
+			region:'center'
+			, layout:'card'
+			, hideMode: !Ext.isIE ? 'nosize' : 'display'
+			, activeItem: 0
+			, items: [
+			    {html: 'Descrizione doc (lavori in corso) ...'}, 
+			    {html: 'Documento eseguito (lavori in corso) ...'}
+			]
+		});
+		
+		this.centerPanel = new Ext.Panel({
+			layout: 'fit'
+			, region:'center'
+			, items:[{
+				layout: 'border'
+				, items: [innerSouthPanel, innerCenterPanel]
+			}]
+		});
+		
+		return this.centerPanel;
+	}
+	
+	/**
+	 * @method
+	 * 
+	 *  Initialize the east panel
+	 * 
+	 * @param {Object} config the configuration object 
+	 * @param {Object} doc the document configuration
+	 */
+	, initEastPanel: function(config, doc) {
+		
+		this.initParametersPanel(config, doc);
+		
+		if(this.parametersPanel && this.parametersPanel.width){
+			this.eastPanelWidth = this.parametersPanel.width + 10;
+		}
+		
+		this.eastPanel = new Ext.Panel({
+			region:'east'
+			, title: LN('sbi.execution.parametersselection.parameters')
+			, border: true
+			, frame: false
+			, collapsible: true
+			, collapsed: false
+			//, hideCollapseTool: true
+			//, titleCollapse: true
+			//, collapseMode: 'mini'
+			//, split: true
+			, autoScroll: true
+			, width: this.eastPanelWidth 
+			, layout: 'fit'
+			, items: [this.parametersPanel]
+		});
+		
+		return this.eastPanel;
+	}
+	
+	/**
+	 * @method
+	 * @deprecated
+	 * 
+	 *  Initialize the south panel
+	 * 
+	 * @param {Object} config the configuration object 
+	 * @param {Object} doc the document configuration
+	 */
+	, initSouthPanel: function(config, doc) {
+		
+		this.initShortcutsPanel(config, doc);
+		
+		var shortcutsHidden = (!Sbi.user.functionalities.contains('SeeSnapshotsFunctionality') 
+				&& !Sbi.user.functionalities.contains('SeeSubobjectsFunctionality'))
+				||
+				this.shortcutsHiddenPreference;
+
+		var southPanelHeight = 
+			(Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.shortcutsPanel && Sbi.settings.execution.shortcutsPanel.height) 
+			? Sbi.settings.execution.shortcutsPanel.height : 280;
+
+		this.southPanel = new Ext.Panel({
+			region:'south'
+			, border: false
+			, frame: false
+			, collapsible: true
+			, collapsed: false
+			, hideCollapseTool: true
+			, titleCollapse: true
+			, collapseMode: 'mini'
+			, split: true
+			, autoScroll: true
+			, height: southPanelHeight
+			, layout: 'fit'
+			, items: [this.shortcutsPanel]
+			, hidden: shortcutsHidden
+		});
+		
+		return this.southPanel;
+	}
+	
+	/**
+	 * @method
+	 * 
+	 *  Initialize the parameters panel
+	 * 
+	 * @param {Object} config the configuration object 
+	 * @param {Object} doc the document configuration
+	 */
+	, initParametersPanel: function( config, doc ) {
+		Ext.apply(config, {pageNumber: 2, parentPanel: this}); // this let the ParametersPanel know that it is on parameters selection page
+		if(this.isFromCross == true) {
+			//alert(config.toSource());
+		}
+		
+		config.isFromCross = this.isFromCross;
+		this.parametersPanel = new Sbi.execution.ParametersPanel(config, doc);
+		
+		this.parametersPanel.on('beforesynchronize', function() {
+			if (!this.loadingMask) {
+				this.loadingMask = new Sbi.decorator.LoadMask(this.body, {
+					msg:LN('sbi.execution.parametersselection.loadingmsg')
+				}); 
+			}
+			this.loadingMask.hide(); /*
+									this is a workaround (work-around): when executing a document from administration tree or
+									from menu, this loading mask does not appear. Invoking hide() solve the issue.
+									 */
+			//this.loadingMask.show();
+		}, this);
+		
+		this.parametersPanel.on('synchronize', function() {
+			if(this.shortcutsPanelSynchronizationPending === false) {
+				this.fireEvent('synchronize', this);
+			}
+			this.parametersPanelSynchronizationPending = false;
+		}, this)
+		return this.parametersPanel;
+	}
+	
+	/**
+	 * @method
+	 * 
+	 *  Initialize the shortcut panel
+	 * 
+	 * @param {Object} config the configuration object 
+	 * @param {Object} doc the document configuration
+	 */
+	, initShortcutsPanel: function( config, doc ) {
+		this.shortcutsPanel = new Sbi.execution.ShortcutsPanel(config, doc);
+		this.shortcutsPanel.on('synchronize', function() {
+			if(this.parametersPanelSynchronizationPending === false) {
+				this.fireEvent('synchronize', this);
+			}
+			this.shortcutsPanelSynchronizationPending = false;
+		}, this)
+		return this.shortcutsPanel;
+	}
+	
+	
+	
+	
+	
     , synchronize: function( executionInstance ) {
 		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
 			this.executionInstance = executionInstance;
@@ -339,59 +496,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	// private methods
 	// ----------------------------------------------------------------------------------------
 	
-	, init: function( config, doc) {
-		this.initToolbar(config);
-		this.initParametersPanel(config, doc);
-		this.initShortcutsPanel(config, doc);
-	}
 	
-	, initToolbar: function( config ) {
-		this.toolbar = new Ext.Toolbar({
-			items: [new Ext.Toolbar.Button({iconCls: 'icon-back'})]
-		});
-	}
-	
-	, initParametersPanel: function( config, doc ) {
-		Ext.apply(config, {pageNumber: 2, parentPanel: this}); // this let the ParametersPanel know that it is on parameters selection page
-		if(this.isFromCross == true) {
-			//alert(config.toSource());
-		}
-		
-		config.isFromCross = this.isFromCross;
-		this.parametersPanel = new Sbi.execution.ParametersPanel(config, doc);
-		
-		this.parametersPanel.on('beforesynchronize', function() {
-			if (!this.loadingMask) {
-				this.loadingMask = new Sbi.decorator.LoadMask(this.body, {
-					msg:LN('sbi.execution.parametersselection.loadingmsg')
-				}); 
-			}
-			this.loadingMask.hide(); /*
-									this is a workaround (work-around): when executing a document from administration tree or
-									from menu, this loading mask does not appear. Invoking hide() solve the issue.
-									 */
-			//this.loadingMask.show();
-		}, this);
-		
-		this.parametersPanel.on('synchronize', function() {
-			if(this.shortcutsPanelSynchronizationPending === false) {
-				this.fireEvent('synchronize', this);
-			}
-			this.parametersPanelSynchronizationPending = false;
-		}, this)
-		return this.parametersPanel;
-	}
-	
-	, initShortcutsPanel: function( config, doc ) {
-		this.shortcutsPanel = new Sbi.execution.ShortcutsPanel(config, doc);
-		this.shortcutsPanel.on('synchronize', function() {
-			if(this.parametersPanelSynchronizationPending === false) {
-				this.fireEvent('synchronize', this);
-			}
-			this.shortcutsPanelSynchronizationPending = false;
-		}, this)
-		return this.shortcutsPanel;
-	}
 	
 	, checkAutomaticStart: function() {
 		
@@ -438,5 +543,68 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 		this.executionInstance.SBI_SNAPSHOT_ID = snapshotId;
 		this.fireEvent('movenextrequest');
 	}
+	
+	// =================================================================================================================
+	// EVENTS
+	// =================================================================================================================
+	
+	//this.addEvents(
+	/**
+     * @event beforetoolbarinit
+     * Fired when button clicked.
+     * @param {Ext.master.Switch} this
+     * @param {Number} times The number of times clicked.
+     */
+	//'beforetoolbarinit'
+	/**
+     * @event beforesynchronize
+     * Fired when button clicked.
+     * @param {Ext.master.Switch} this
+     * @param {Number} times The number of times clicked.
+     */
+	//, 'beforesynchronize'
+	/**
+     * @event synchronize
+     * Fired when button clicked.
+     * @param {Ext.master.Switch} this
+     * @param {Number} times The number of times clicked.
+     */
+	//, 'synchronize'
+	/**
+     * @event synchronizeexception
+     * Fired when button clicked.
+     * @param {Ext.master.Switch} this
+     * @param {Number} times The number of times clicked.
+     */
+	//, 'synchronizeexception'
+	/**
+     * @event movenextrequest
+     * Fired when button clicked.
+     * @param {Ext.master.Switch} this
+     * @param {Number} times The number of times clicked.
+     */
+	//, 'movenextrequest'
+	/**
+     * @event moveprevrequest
+     * Fired when button clicked.
+     * @param {Ext.master.Switch} this
+     * @param {Number} times The number of times clicked.
+     */
+	//, 'moveprevrequest'
+	/**
+     * @event collapse3
+     * Fired when button clicked.
+     * @param {Ext.master.Switch} this
+     * @param {Number} times The number of times clicked.
+     */
+	//, 'collapse3'
+	/**
+     * @event backToAdmin
+     * Fired when button clicked.
+     * @param {Ext.master.Switch} this
+     * @param {Number} times The number of times clicked.
+     */
+	//, 'backToAdmin'
+	//);	
 	
 });

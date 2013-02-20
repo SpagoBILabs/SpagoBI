@@ -165,7 +165,7 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 	//, ERROR_PAGE_NUMBER: 3 
     
 	// =================================================================================================================
-	// PROPERTIES
+	// METHODS
 	// =================================================================================================================
 	
 	
@@ -543,28 +543,32 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		}		
 	}
 	
+	// =================================================================================================================
+	// EVENTS
+	// =================================================================================================================
+	
 	//this.addEvents(
-			/**
-            * @event executionfailure
-            * Fired when button clicked.
-            * @param {Ext.master.Switch} this
-            * @param {Number} times The number of times clicked.
-            */
-			//'executionfailure', 
-			 /**
-            * @event beforetoolbarinit
-            * Fired when button clicked.
-            * @param {Ext.master.Switch} this
-            * @param {Number} times The number of times clicked.
-            */
-			//'beforetoolbarinit', 
-			 /**
-            * @event documentexecutionpageinit
-            * Fired when button clicked.
-            * @param {Ext.master.Switch} this
-            * @param {Number} times The number of times clicked.
-            */
-			//'documentexecutionpageinit'
-	//);
+	/**
+    * @event executionfailure
+    * Fired when button clicked.
+    * @param {Ext.master.Switch} this
+    * @param {Number} times The number of times clicked.
+    */
+	//'executionfailure', 
+	/**
+     * @event beforetoolbarinit
+     * Fired when button clicked.
+     * @param {Ext.master.Switch} this
+     * @param {Number} times The number of times clicked.
+     */
+	 //'beforetoolbarinit', 
+	 /**
+      * @event documentexecutionpageinit
+      * Fired when button clicked.
+      * @param {Ext.master.Switch} this
+      * @param {Number} times The number of times clicked.
+      */
+	  //'documentexecutionpageinit'
+	  //);
 	
 });
