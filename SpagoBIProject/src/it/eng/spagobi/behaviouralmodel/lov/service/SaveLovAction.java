@@ -25,6 +25,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONFailure;
 
 import java.util.ArrayList;
@@ -78,20 +79,20 @@ public class SaveLovAction extends AbstractSpagoBIAction{
 			} else if (message.trim().equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
 				modDetailModValue(AdmintoolsConstants.DETAIL_INS);
 			} 	
-			throw new Exception();
-			//writeBackToClient(new JSONAcknowledge());
+			
+			writeBackToClient(new JSONAcknowledge());
 			
 		} catch (Exception ex) {
 			EMFInternalError internalError = new EMFInternalError(EMFErrorSeverity.ERROR, ex);
 			errorHandler.addError(internalError);
 			logger.error("Exception occurred writing back to client", internalError);
 			try {
-				writeBackToClient(new JSONFailure(internalError));
+				writeBackToClient(new JSONFailure(ex));
 			} catch (Exception ex2) {
 				logger.error("Exception occurred writing back to client", ex2);
 				throw new SpagoBIServiceException("Exception occurred writing back to client", ex2);
 			} 
-			throw new SpagoBIServiceException("Impossible to write back the responce to the client", ex);
+			
 		}
 	}
 	
