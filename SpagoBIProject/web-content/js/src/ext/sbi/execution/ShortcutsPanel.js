@@ -43,7 +43,7 @@ Sbi.execution.ShortcutsPanel = function(config, doc) {
 	this.snapshotsPanel =  new Sbi.execution.SnapshotsPanel(config, doc);
 		
 	var c = Ext.apply({}, config, {
-		layout:'accordion',
+		//layout:'accordion',
 	    layoutConfig:{
 	          animate:true
 	    },
@@ -70,7 +70,7 @@ Sbi.execution.ShortcutsPanel = function(config, doc) {
     
 };
 
-Ext.extend(Sbi.execution.ShortcutsPanel, Ext.Panel, {
+Ext.extend(Sbi.execution.ShortcutsPanel, Ext.TabPanel, {
 	
     subobjectsPanel: null
     , snapshotsPanel: null		
