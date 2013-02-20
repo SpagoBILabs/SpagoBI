@@ -4,41 +4,11 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
-  
- 
-  
- 
-/**
-  * Object name 
-  * 
-  * [description]
-  * 
-  * 
-  * Public Properties
-  * 
-  * [list]
-  * 
-  * 
-  * Public Methods
-  * 
-  *  [list]
-  * 
-  * 
-  * Public Events
-  * 
-  *  [list]
-  * 
-  * Authors
-  * 
-  * - Andrea Gioia (andrea.gioia@eng.it)
-  */
 
 Ext.ns("Sbi.execution");
 
 Sbi.execution.ExecutionPanel = function(config, doc) {
 	
-	// the document to be executed (passed to this constructor for initialization: execution starts with execute() method)
-	this.document = doc;
 	
 	// declare exploited services
 	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
@@ -48,6 +18,7 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 		, baseParams: params
 	});
 	
+	this.document = doc;
 	this.documentsStack = [];
 	
 	var title = config.title;
@@ -59,7 +30,6 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 	this.documentsStack.push( this.activeDocument );
 	
 	this.activeDocument.on('beforetoolbarinit', this.setBreadcrumbs, this);
-	//this.activeDocument.tb.on('beforeinit', this.setBreadcrumbs, this);
 	
 	this.activeDocument.parametersSelectionPage.on('collapse3', function() {
 		sendMessage({}, 'collapse2'); 
@@ -71,14 +41,7 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 			sendMessage({}, 'collapse2'); 
 		}, this);
 	}, this);
-	/*
-	this.activeDocument.parametersSelectionPage.parametersPanel.on('beforesynchronize', function(){
-		this.doLayout();
-		alert('AAA');
-		this.activeDocument.parametersSelectionPage.southPanel.expand();
-	}, this);
-	*/
-	 
+	
 	var c = Ext.apply({}, config || {}, {
 		title: title
 		, closable: closable
@@ -104,22 +67,81 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 	    	return true; // now the execution panel can be destroyed
 	    }, this);
     }
-    
-    //this.addEvents();	
 };
 
+/**
+ * @class Sbi.execution.ExecutionPanel
+ * @extends Ext.Panel
+ * 
+ * Contains a stack of executed documents. The stack contains always at least one element (the original document passed
+ * to the constructor). Other elements in the stack are document to which the user have cross navigated to. For example if the stack contains 
+ * from the bottom to the top the following documents A,B, C that means that the user have executed document A than have cross 
+ * navigated to document B and then from document B have cross navigated to document C. Everytime a new cross navigation starts a 
+ * document is pushed on the top of the stack. On the other hand every time the user returns from a cross navigation one or more documents
+ * are popped from the top of the stack. Usually the active document (i.e. the one visible to the user) is the one at the top of the stack.
+ */
+
+/**
+ * @cfg {Boolean} title
+ * tbd
+ */
+
+/**
+ * @cfg {String} closable
+ * tbd
+ */
 Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 
-	documentsStack: null
+	// =================================================================================================================
+	// PROPERTIES
+	// =================================================================================================================
+	/**
+     * @property {Object} document
+     * The document to be executed
+     */
+	document: null
+	
+	/**
+     * @property {Array} documentsStack 
+     * The stack of executed documents (Sbi.execution.ExecutionWizard)
+     */
+	, documentsStack: null
+	
+	
+	/**
+     * @property {Object} activeDocument
+     * The active document (i.e. the one visible to the user). Usually it is the one at the top of the document stack
+     */
 	, activeDocument: null
+	
+	/**
+     * @property {Object} origDocumentTarget
+     */
 	, origDocumentTarget: null
 	
+	
+	// =================================================================================================================
+	// METHODS
+	// =================================================================================================================
+	
+	/**
+	 * Execute the active document
+     * @method
+     */
 	, execute : function() {
 		this.activeDocument.execute();
 	}
 
+	/**
+	 * @method
+	 * 
+	 * This method is called when a crossnavigation event is fired by the active document.
+	 * @param {Object} config An object describing document and execution preferences:
+	 * @param {Object} [config.document=0] The document.
+	 * @param {Object} [config.preferences=0] The preferences.
+	 */
 	, loadCrossNavigationTargetDocument: function( config ) {
-	  //this.origDocumentTarget = (this.origDocumentTarget === null)?config.target:this.origDocumentTarget;
+	
 		Ext.Ajax.request({
 	        url: this.services['getDocumentInfoService'],
 	        params: {'OBJECT_LABEL' : config.document.label, 'SUBOBJECT_NAME' : config.preferences.subobject.name},
@@ -154,7 +176,17 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		
 	}
 	
-	
+	/**
+	 * This method is used as callback for the ajax call made by method loadCrossNavigationTargetDocument. It delegate the 
+	 * execution of the destination document to the proper method according to the value of target property
+	 * 
+	 * @param {Object} config An object describing document and execution preferences:
+	 * @param {Object} [config.document=0] The document.
+	 * @param {Object} [config.preferences=0] The preferences.
+	 * @param {Object} [config.target=0] The target. Can be update, tab, popup or inline. Default inline.
+	 * 
+	 * @method 
+	 */
 	, executeCrossNavigation: function( config ) {
 
 		var destinationDocument  = config.document;
@@ -182,6 +214,9 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		
 	}
 	
+	/**
+	 * @method 
+	 */
 	, executeCrossNavUpdate: function(config) {
 		
 		var params = config.preferences.parameters;
@@ -216,6 +251,9 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		activeDocumentExecutionPage.synchronize(executionInstance, false);
 	}
 	
+	/**
+	 * @method 
+	 */
 	, executeCrossNavigationPopup: function(config) {	
 		config.preferences.executionToolbarConfig = {};
 		config.preferences.executionToolbarConfig.expandBtnVisible = false;
@@ -247,6 +285,9 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	    popupWin.doLayout();
 	}
 	
+	/**
+	 * @method 
+	 */
 	, executeCrossNavInline: function(config) {
 		//save the original document
 		var oldDoc = this.activeDocument;
@@ -282,6 +323,9 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		oldDoc.documentExecutionPage.miframe.sendMessage('Disable datastore', 'hide');
 	}
 	
+	/**
+	 * @method 
+	 */
 	, setBreadcrumbs: function(tb) {
 		
 		tb.addSpacer();
@@ -294,6 +338,9 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		this.addBreadcrumbsLastButton(tb);
 	}
 	
+	/**
+	 * @method 
+	 */
 	, addBreadcrumbsLastButton: function(tb) {
 		var index = this.documentsStack.length-1;
 		var text = this.documentsStack[index].document.title || this.documentsStack[index].document.name;
@@ -329,6 +376,9 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		}
 	}
 	
+	/**
+	 * @method 
+	 */
 	, addBreadcrumbsMiddleButtons: function(tb) {
 		
 		var truncateLength = this.getTruncateLength(tb);
@@ -356,6 +406,9 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		}
 	}
 	
+	/**
+	 * @method 
+	 */
 	, getTruncateLength: function(tb) {
 		var toReturn = -1;
 		var pixelPerChar = 6;
@@ -375,6 +428,9 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		return toReturn;
 	}
 	
+	/**
+	 * @method 
+	 */
 	, getBreadcrumbsCharLength: function() {
 		var length = 0;
 		for(var i = 0; i < this.documentsStack.length; i++) {
@@ -385,6 +441,9 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		return length;
 	}
 	
+	/**
+	 * @method 
+	 */
 	, onBreadCrumbClick: function(b, e) {
 		//send hide message to the old actived console
 		if (this.activeDocument && this.activeDocument.documentExecutionPage){
@@ -423,5 +482,9 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 			this.activeDocument.documentExecutionPage.miframe.iframe.execScript(scriptFn, true);
 		}
 	}
+	
+	// =================================================================================================================
+	// EVENTS
+	// =================================================================================================================
 
 });
