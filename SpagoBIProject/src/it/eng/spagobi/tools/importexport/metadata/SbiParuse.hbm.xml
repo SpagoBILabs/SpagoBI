@@ -16,6 +16,12 @@
         <many-to-one name="sbiLov" class="it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov">
             <column name="lov_id" not-null="false" />
         </many-to-one>
+        <many-to-one name="sbiLovForDefault" class="it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov">
+            <column name="default_lov_id" not-null="false" />
+        </many-to-one>
+        <property name="defaultFormula" type="string">
+            <column name="default_formula" length="4000"/>
+        </property>
         <property name="label" type="string">
             <column name="label" length="20" not-null="true" />
         </property>

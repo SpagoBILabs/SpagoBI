@@ -1053,10 +1053,16 @@ public class ExporterMetadata {
 			hibParuse.setSbiParameters(hibParameters);
 			// Set the relation with idLov (if the parameter ha a lov related)
 			Integer lovId = parUse.getIdLov();
-			if(lovId!=null){ 
-				SbiLov hibLov = (SbiLov)session.load(SbiLov.class, parUse.getIdLov());
+			if (lovId != null) { 
+				SbiLov hibLov = (SbiLov) session.load(SbiLov.class, parUse.getIdLov());
 				hibParuse.setSbiLov(hibLov);
 			}
+			Integer lovIdForDefault = parUse.getIdLovForDefault();
+			if (lovIdForDefault != null) { 
+				SbiLov hibLov = (SbiLov) session.load(SbiLov.class, lovIdForDefault);
+				hibParuse.setSbiLovForDefault(hibLov);
+			}
+			hibParuse.setDefaultFormula(parUse.getDefaultFormula());
 			hibParuse.setLabel(parUse.getLabel());
 			hibParuse.setName(parUse.getName());
 			hibParuse.setDescr(parUse.getDescription());

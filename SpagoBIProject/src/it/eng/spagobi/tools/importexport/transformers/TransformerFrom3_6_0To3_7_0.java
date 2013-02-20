@@ -47,6 +47,7 @@ public class TransformerFrom3_6_0To3_7_0 implements ITransformer {
 		try {
 			conn = TransformersUtilities.getConnectionToDatabase(pathImpTmpFolder, archiveName);
 			fixAnalyticaDrivers(conn);
+			fixParuses(conn);
 			conn.commit();
 		} catch (Exception e) {
 			logger.error("Error while changing database", e);	
@@ -62,6 +63,24 @@ public class TransformerFrom3_6_0To3_7_0 implements ITransformer {
 		}
 	}
 	
+	private void fixParuses(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			sql = "ALTER TABLE SBI_PARUSE ADD COLUMN DEFAULT_LOV_ID INTEGER NULL;";
+			stmt.execute(sql);
+			sql = "ALTER TABLE SBI_PARUSE ADD COLUMN DEFAULT_FORMULA VARCHAR(4000) NULL;";
+			stmt.executeUpdate(sql);
+		} catch (Exception e) {
+			logger.error(
+					"Error adding column: if add column fails may mean that column already esists; means you are not using an exact version spagobi DB",
+					e);
+		}
+		logger.debug("OUT");
+		
+	}
+
 	private void fixAnalyticaDrivers(Connection conn) throws Exception {
 		logger.debug("IN");
 		Statement stmt = conn.createStatement();
