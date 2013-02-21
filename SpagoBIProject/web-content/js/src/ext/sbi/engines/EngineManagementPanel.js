@@ -283,7 +283,7 @@ Ext
 
 
 						// START list of detail fields
-						this.detailFieldName = {
+						this.detailFieldName = new Ext.form.TextField ({
 							maxLength : 50,
 							minLength : 1,
 							width : 350,
@@ -292,10 +292,9 @@ Ext
 							allowBlank : false,
 							validationEvent : true,
 							name : 'name',
-							id : 'detailFieldNameId'
-						};
+						});
 
-						this.detailFieldLabel = {
+						this.detailFieldLabel = new Ext.form.TextField ({
 							maxLength : 50,
 							minLength : 1,
 							width : 350,
@@ -304,10 +303,10 @@ Ext
 							allowBlank : false,
 							validationEvent : true,
 							name : 'label'
-						};
+						});
 
-						this.detailFieldDescr = {
-							xtype : 'textarea',
+						this.detailFieldDescr = new Ext.form.TextArea ({
+							//xtype : 'textarea',
 							width : 350,
 							height : 80,
 							maxLength : 160,
@@ -315,9 +314,9 @@ Ext
 							fieldLabel : LN('sbi.generic.descr'),
 							validationEvent : true,
 							name : 'description'
-						};
+						});
 
-						this.detailFieldDocumentType = {
+						this.detailFieldDocumentType = new Ext.form.ComboBox ({
 							name : 'documentType',
 							store : this.documentTypesStore,
 							width : 150,
@@ -333,10 +332,10 @@ Ext
 							allowBlank : true,
 							validationEvent : true,
 							xtype : 'combo'
-						};
+						});
 
 						// added
-						this.detailFieldEngineType = {
+						this.detailFieldEngineType = new Ext.form.ComboBox ({
 							name : 'engineType',
 							store : this.engineTypesStore,
 							width : 150,
@@ -350,38 +349,24 @@ Ext
 							selectOnFocus : true,
 							editable : false,
 							allowBlank : true,
-							validationEvent : true,
-							xtype : 'combo'
-						};
+							validationEvent : true
+							//xtype : 'combo'
+						});
 
-						this.detailFieldUseDataSet = {
-							xtype : 'checkboxgroup',
-							columns : 1,
-							boxMinWidth : 150,
-							hideLabel : false,
+						this.detailFieldUseDataSet = new Ext.form.Checkbox ({
+							
 							fieldLabel : 'Use Data Set',
-							itemId : 'isUseDataSet',
-							items : [ {
-								boxLabel : 'Use Data Set',
-								name : 'useDataSet'
-							} ]
-						};
+							name : 'useDataSet'
 
-						this.detailFieldUseDataSource = {
-							xtype : 'checkboxgroup',
-							columns : 1,
-							boxMinWidth : 150,
-							hideLabel : false,
+						});
+
+						this.detailFieldUseDataSource = new Ext.form.Checkbox({
 							fieldLabel : 'Use Data Source',
-							itemId : 'isUseDataSource',
-							items : [ {
-								boxLabel : 'Use Data Source',
-								name : 'useDataSource'
-							} ]
-						};
+							name : 'useDataSource'
+						});
 
-						this.detailFieldDataSource = {
-							name : 'dataSource',
+						this.detailFieldDataSource = new Ext.form.ComboBox ({
+							name : 'dataSourceId',
 							store : this.dataSourcesStore,
 							width : 150,
 							fieldLabel : 'Data Source',
@@ -395,44 +380,43 @@ Ext
 							editable : false,
 							allowBlank : true,
 							validationEvent : true,
-							xtype : 'combo'
-						};
+						});
 						
 						
 
 
-						this.detailFieldUrl = {
+						this.detailFieldUrl = new Ext.form.TextField ({
 							maxLength : 50,
 							minLength : 1,
 							width : 350,
 							regexText : LN('sbi.roles.alfanumericString'),
 							fieldLabel : 'Url',
-							allowBlank : false,
-							validationEvent : true,
+							allowBlank : true,
+							validationEvent : false,
 							name : 'url'
-						};
+						});
 
-						this.detailFieldSecondaryUrl = {
+						this.detailFieldSecondaryUrl = new Ext.form.TextField ({
 							maxLength : 50,
 							minLength : 1,
 							width : 350,
 							regexText : LN('sbi.roles.alfanumericString'),
 							fieldLabel : 'Secondary Url',
-							allowBlank : false,
-							validationEvent : true,
+							allowBlank : true,
+							validationEvent : false,
 							name : 'secondaryUrl'
-						};
+						});
 
-						this.detailFieldDriverName = {
+						this.detailFieldDriverName = new Ext.form.TextField ({
 							maxLength : 50,
 							minLength : 1,
 							width : 350,
 							regexText : LN('sbi.roles.alfanumericString'),
 							fieldLabel : 'Driver Name',
-							allowBlank : false,
-							validationEvent : true,
+							allowBlank : true,
+							validationEvent : false,
 							name : 'driver'
-						};
+						});
 						// END list of detail fields
 
 						var c = {};
@@ -640,12 +624,23 @@ Ext
 
 					,
 					getValues : function() {
-						var values = this.getForm().getFieldValues();
+						//var values = this.getForm().getFieldValues();
 						
 						//TODO: deve diventare, ricavo i valori del form a mano e li ritorno
-						//var values = {};
-						// values.name = this.nameFiled.getValue():
-						
+						var values = {};
+						// values.name = this.nameFiled.getValue();
+						values.name = this.detailFieldName.getValue();
+						values.label = this.detailFieldLabel.getValue();
+						values.description = this.detailFieldDescr.getValue();
+						values.documentType = this.detailFieldDocumentType.getValue();
+						values.engineType = this.detailFieldEngineType.getValue();
+						values.useDataSet = this.detailFieldUseDataSet.getValue();
+						values.useDataSource = this.detailFieldUseDataSource.getValue();
+						values.dataSource = this.detailFieldDataSource.getValue();
+						values.url = this.detailFieldUrl.getValue();
+						values.secondaryUrl = this.detailFieldSecondaryUrl.getValue();
+						values.driver = this.detailFieldDriverName.getValue();
+							
 						return values;
 
 					}
@@ -657,17 +652,16 @@ Ext
 						// TODO: Settare tutti i campi a mano in questo modo
 						
 						this.detailFieldName.setValue( rec.get('name'));
-//						this.detailFieldLabel,
-						//this.detailFieldName.setValue(record.json.get('name'));
-//						this.detailFieldDescr,
-//						this.detailFieldDocumentType,
-//						this.detailFieldEngineType,
-//						this.detailFieldUseDataSet,
-//						this.detailFieldUseDataSource,
-//						this.detailFieldDataSource,
-//						this.detailFieldUrl,
-//						this.detailFieldSecondaryUrl,
-//						this.detailFieldDriverName
+						this.detailFieldLabel.setValue( rec.get('label'));
+						this.detailFieldDescr.setValue( rec.get('description'));
+						this.detailFieldDocumentType.setValue(rec.get('documentType'));
+						this.detailFieldEngineType.setValue(rec.get('engineType'));
+						this.detailFieldUseDataSet.setValue(rec.get('useDataSet'));
+						this.detailFieldUseDataSource.setValue(rec.get('useDataSource'));
+						this.detailFieldDataSource.setValue(rec.get('dataSourceId'));
+						this.detailFieldUrl.setValue(rec.get('url'));
+						this.detailFieldSecondaryUrl.setValue(rec.get('secondaryUrl'));
+						this.detailFieldDriverName.setValue(rec.get('driver'));
 					}
 
 					// OVERRIDING save method
