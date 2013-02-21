@@ -365,7 +365,6 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
     			}, this);
     		} else {
     			this.documentExecutionPage.southPanel.collapse();
-    			this.documentExecutionPage.northPanel.collapse();
     	    	// load execution url
     			this.loadUrlForExecution();
     		}
@@ -373,7 +372,6 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		}
 		if(this.prevActivePageNumber == this.EXECUTION_PAGE_NUMBER && this.activePageNumber == this.EXECUTION_PAGE_NUMBER) { // todo: handle refresh properly
 			this.documentExecutionPage.southPanel.collapse();
-			this.documentExecutionPage.northPanel.collapse();
 			this.loadUrlForExecution();
 		}
 		

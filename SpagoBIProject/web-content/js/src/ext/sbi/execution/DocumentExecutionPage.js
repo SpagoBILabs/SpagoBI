@@ -158,7 +158,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	, parametersPanel: null
     , shortcutsPanel: null
     , southPanel: null
-    , northPanel: null
     , loadMask: null
    
 	// ----------------------------------------------------------------------------------------
