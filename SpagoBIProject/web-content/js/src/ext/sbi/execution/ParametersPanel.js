@@ -849,7 +849,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var state = this.getFormState();			
 		this.removeAllFields();		
 		this.initializeParametersPanel(this.parameters, false);	
-		Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : restore state [' + state.toSource() + ']');
+		//Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : restore state [' + state.toSource() + ']');
 		this.setFormState(state);
 		
 		Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : OUT');
@@ -947,7 +947,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		conditionIsTrue = (condition.operation == 'contains')? conditionIsTrue: !conditionIsTrue
 		Sbi.debug('[ParametersPanel.isVisualConditionTrue] : condition [' + condition.value + '] is [' + conditionIsTrue + ']' );
-		if(!conditionIsTrue) Sbi.debug('[ParametersPanel.isVisualConditionTrue] : father field values [' + fatherFieldValueSet.toSource() + ']' );
+		//if(!conditionIsTrue) Sbi.debug('[ParametersPanel.isVisualConditionTrue] : father field values [' + fatherFieldValueSet.toSource() + ']' );
 		return (conditionIsTrue);
 	}
 	

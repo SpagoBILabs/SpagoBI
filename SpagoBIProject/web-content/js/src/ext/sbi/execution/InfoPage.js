@@ -3,25 +3,19 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
- 
-Ext.ns("Sbi.xxx");
 
 
-/**
- * Every time you create a new class add it to the following files:
- *  - importSbiJS.jspf
- *  - ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml
- */
-Sbi.xxx.Xxxx = function(config) {
+Ext.ns("Sbi.execution");
+
+Sbi.execution.InfoPage = function(config) {
 	
 	// init properties...
 	var defaultSettings = {
 		// set default values here
 	};
-	
-	if (Sbi.settings && Sbi.settings.xxx && Sbi.settings.xxx.xxxx) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.xxx.xxxx);
+
+	if (Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.infopage) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.execution.infopage);
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});	
@@ -29,19 +23,16 @@ Sbi.xxx.Xxxx = function(config) {
 	
 	// init events...
 	this.addEvents();
-	
 	this.initServices();
 	this.init();
 	
-	
-	
 	// constructor
-    Sbi.xxx.Xxxx.superclass.constructor.call(this, c);
+    Sbi.execution.InfoPage.superclass.constructor.call(this, c);
 };
 
 /**
- * @class Sbi.xxx.Xxxx
- * @extends Ext.util.Observable
+ * @class Sbi.execution.InfoPage
+ * @extends Ext.Panel
  * 
  * bla bla bla bla bla ...
  */
@@ -50,7 +41,7 @@ Sbi.xxx.Xxxx = function(config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.xxx.Xxxx, Ext.util.Observable, {
+Ext.extend(Sbi.execution.InfoPage, Ext.Panel, {
     
 	// =================================================================================================================
 	// PROPERTIES
@@ -95,7 +86,9 @@ Ext.extend(Sbi.xxx.Xxxx, Ext.util.Observable, {
 	 * 
 	 * Initialize the GUI
 	 */
-	, init: Ext.emptyFn
+	, init: function() {
+		this.html = 'Descrizione doc (lavori in corso) ...';
+	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
@@ -113,14 +106,14 @@ Ext.extend(Sbi.xxx.Xxxx, Ext.util.Observable, {
 	/**
      * @event eventone
      * Fired when ...
-     * @param {Sbi.xxx.Xxxx} this
+     * @param {Sbi.execution.InfoPage} this
      * @param {Ext.Toolbar} ...
      */
 	//'eventone'
 	/**
      * @event eventtwo
      * Fired before ...
-     * @param {Sbi.xxx.Xxxx} this
+     * @param {Sbi.execution.InfoPage} this
      * @param {Object} ...
      */
 	//'eventtwo'

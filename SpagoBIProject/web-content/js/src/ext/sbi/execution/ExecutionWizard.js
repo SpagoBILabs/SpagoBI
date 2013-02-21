@@ -3,35 +3,6 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
-  
- 
-/**
-  * Object name 
-  * 
-  * [description]
-  * 
-  * 
-  * Public Properties
-  * 
-  * [list]
-  * 
-  * 
-  * Public Methods
-  * 
-  *  [list]
-  * 
-  * 
-  * Public Events
-  * 
-  *  [list]
-  * 
-  * Authors
-  * 
-  * - Andrea Gioia (andrea.gioia@eng.it)
-  */
 
 Ext.ns("Sbi.execution");
 
@@ -356,18 +327,21 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 			Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersSelectionPage.parametersPanel);
 			
 			// init document execution page, in case it was not initialized yet
-    		if (this.documentExecutionPage == null) {
-    			this.initDocumentExecutionPage();
-    			this.add(this.documentExecutionPage);
-    			this.documentExecutionPage.on('render', function() {
-    		    	// load execution url
-    				this.loadUrlForExecution();
-    			}, this);
-    		} else {
-    			this.documentExecutionPage.southPanel.collapse();
-    	    	// load execution url
-    			this.loadUrlForExecution();
-    		}
+//    		if (this.documentExecutionPage == null) {
+//    			this.initDocumentExecutionPage();
+//    			this.add(this.documentExecutionPage);
+//    			this.documentExecutionPage.on('render', function() {
+//    				this.loadUrlForExecution();
+//    			}, this);
+//    		} else {
+//    			this.documentExecutionPage.southPanel.collapse();
+//    			this.documentExecutionPage.southPanel.collapse();
+//    			this.loadUrlForExecution();
+//    		}
+			this.activePageNumber = this.prevActivePageNumber;
+			this.parametersSelectionPage.refreshDocument();
+			
+			
     		
 		}
 		if(this.prevActivePageNumber == this.EXECUTION_PAGE_NUMBER && this.activePageNumber == this.EXECUTION_PAGE_NUMBER) { // todo: handle refresh properly
@@ -377,11 +351,14 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		
 		// down-hill <-
 		if(this.prevActivePageNumber == this.EXECUTION_PAGE_NUMBER && this.activePageNumber == this.PARAMETER_SELECTION_PAGE_NUMBER) {
-			delete this.executionInstance.SBI_SUBOBJECT_ID;
-			delete this.executionInstance.SBI_SNAPSHOT_ID;
-			Sbi.execution.SessionParametersManager.restoreMementoObject(this.parametersSelectionPage.parametersPanel);
-			// force synchronization, since subobject, snapshots, viewpoints may have been deleted, or a new subobject may have been created
-			this.parametersSelectionPage.shortcutsPanel.synchronize(this.executionInstance);
+//			delete this.executionInstance.SBI_SUBOBJECT_ID;
+//			delete this.executionInstance.SBI_SNAPSHOT_ID;
+//			Sbi.execution.SessionParametersManager.restoreMementoObject(this.parametersSelectionPage.parametersPanel);
+//			// force synchronization, since subobject, snapshots, viewpoints may have been deleted, or a new subobject may have been created
+//			this.parametersSelectionPage.shortcutsPanel.synchronize(this.executionInstance);
+			
+			this.activePageNumber = this.prevActivePageNumber;
+			this.parametersSelectionPage.showShortcuts();
 		}
 		
 		this.getLayout().setActiveItem( this.activePageNumber );

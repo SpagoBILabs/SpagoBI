@@ -161,6 +161,9 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
+    // NOTE: the following methods initialize the interface with empty widgets. There are not yet a specific execution 
+    // instance to work on. The interface itself can change then when synchronization methods
+    // are invoked passing in a specific execution instance.
 	
 	/**
 	 * @method 
@@ -181,7 +184,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	/**
 	 * @method
 	 * 
-	 *  Initialize the tolbar
+	 * Initialize the toolbar. By default the toolbar contains only back button
 	 * 
 	 * @param {Object} config the configuration object 
 	 * @param {Object} doc the document configuration
@@ -212,7 +215,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			(Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.shortcutsPanel && Sbi.settings.execution.shortcutsPanel.height) 
 			? Sbi.settings.execution.shortcutsPanel.height : 280;
 
-		var innerSouthPanel = new Ext.Panel({
+		this.innerSouthPanel = new Ext.Panel({
 			region:'south'
 			, border: false
 			, frame: false
@@ -229,14 +232,16 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			, hidden: shortcutsHidden
 		});
 	
-		var innerCenterPanel = new Ext.Panel({
+		this.infoPage = new Sbi.execution.InfoPage(config, doc);
+		this.documentPage = new Sbi.execution.DocumentPage(config, doc);
+		
+		this.innerCenterPanel = new Ext.Panel({
 			region:'center'
 			, layout:'card'
 			, hideMode: !Ext.isIE ? 'nosize' : 'display'
 			, activeItem: 0
 			, items: [
-			    {html: 'Descrizione doc (lavori in corso) ...'}, 
-			    {html: 'Documento eseguito (lavori in corso) ...'}
+			    this.infoPage , this.documentPage
 			]
 		});
 		
@@ -245,7 +250,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			, region:'center'
 			, items:[{
 				layout: 'border'
-				, items: [innerSouthPanel, innerCenterPanel]
+				, items: [this.innerSouthPanel, this.innerCenterPanel]
 			}]
 		});
 		
@@ -389,9 +394,19 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	}
 	
 	
+	// -----------------------------------------------------------------------------------------------------------------
+    // synchronization methods
+	// -----------------------------------------------------------------------------------------------------------------
+	// This methods change properly the interce according to the specific execution instance passed in
 	
-	
-	
+	/**
+	 * Called by Sbi.execution.ExecutionWizard when a new document execution starts. Force
+	 * the parameters' panel, the shorcuts' panel and toolbar re-synchronization. 
+	 * 
+	* @param {Object} executionInstance the execution configuration
+	* 
+	 * @method
+	 */
     , synchronize: function( executionInstance ) {
 		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
 			this.executionInstance = executionInstance;
@@ -405,6 +420,13 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 		}
 	}
 
+    /**
+	 * Synchronize the toolbar
+	 * 
+	 * @param {Object} executionInstance the execution configuration
+	 * 
+	 * @method
+	 */
 	, synchronizeToolbar: function( executionInstance ){
 		
 		this.toolbar.items.each( function(item) {
@@ -431,7 +453,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			drawRoleBack = true;
 		}
 	
-				// 20100505
+		// 20100505
 		if (this.callFromTreeListDoc == true && drawRoleBack == false) {
 			this.toolbar.addButton(new Ext.Toolbar.Button({
 				iconCls: 'icon-back' 
@@ -443,9 +465,6 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			}));
 		}
 		
-		
-		
-		
 		if(Sbi.user.ismodeweb){
 			this.toolbar.addButton(new Ext.Toolbar.Button({
 				iconCls: 'icon-expand' 
@@ -455,8 +474,6 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 					this.fireEvent('collapse3');
 				}			
 			}));
-			
-			//this.toolbar.addSeparator();
 		}
 		
 
@@ -486,11 +503,48 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	}
 
 
+	// ----------------------------------------------------------------------------------------
+	// public methods
+	// ----------------------------------------------------------------------------------------
+	/**
+	 * Show the document info in the central panel
+	 * 
+	 * @method
+	 */
+	, showInfo: function() {
+		this.innerCenterPanel.getLayout().setActiveItem( 0 );
+	}
 	
-
+	/**
+	 * Show the executed document in the central panel
+	 * 
+	 * @method
+	 */
+	, showDocument: function() {
+		this.innerCenterPanel.getLayout().setActiveItem( 1 );
+	}
 	
+	/**
+	 * Show the executed document in the central panel
+	 * 
+	 * @method
+	 */
+	, refreshDocument: function(executionInstance) {
+		var formState = this.parametersPanel.getFormState();
+		this.executionInstance.PARAMETERS = Sbi.commons.JSON.encode( formState );
+		this.documentPage.synchronize( this.executionInstance );
+		this.collapseShortcutsPanel();
+		this.showDocument();
+	}
 	
-    
+	/**
+	 * @method
+	 * 
+	 *  Collapse the shortcut panel
+	 */
+	, collapseShortcutsPanel: function() {
+		this.innerSouthPanel.collapse();
+	}
 	
 	// ----------------------------------------------------------------------------------------
 	// private methods
@@ -551,28 +605,30 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	//this.addEvents(
 	/**
      * @event beforetoolbarinit
-     * Fired when button clicked.
-     * @param {Ext.master.Switch} this
-     * @param {Number} times The number of times clicked.
+     * Fired before toolbar inizialization. Can be used by external object to inject buttons in this panel toolbar.
+     * @param {Sbi.execution.ParametersSelectionPage} this
+     * @param {Ext.Toolbar} The empty toolbar object ready to be initialized
      */
 	//'beforetoolbarinit'
 	/**
      * @event beforesynchronize
-     * Fired when button clicked.
-     * @param {Ext.master.Switch} this
-     * @param {Number} times The number of times clicked.
+     * Fired before panel syncronization. If the callback return false synchronization will be not
+     * performed
+     * @param {Sbi.execution.ParametersSelectionPage} this
+     * @param {Object} oldExecutionInstance The old execution instance
+     * @param {Object} newExecutionInstance The new execution instance
      */
 	//, 'beforesynchronize'
 	/**
      * @event synchronize
-     * Fired when button clicked.
+     * ...
      * @param {Ext.master.Switch} this
      * @param {Number} times The number of times clicked.
      */
 	//, 'synchronize'
 	/**
      * @event synchronizeexception
-     * Fired when button clicked.
+     * ...
      * @param {Ext.master.Switch} this
      * @param {Number} times The number of times clicked.
      */
@@ -586,21 +642,21 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	//, 'movenextrequest'
 	/**
      * @event moveprevrequest
-     * Fired when button clicked.
+     * ...
      * @param {Ext.master.Switch} this
      * @param {Number} times The number of times clicked.
      */
 	//, 'moveprevrequest'
 	/**
      * @event collapse3
-     * Fired when button clicked.
+     * ...
      * @param {Ext.master.Switch} this
      * @param {Number} times The number of times clicked.
      */
 	//, 'collapse3'
 	/**
      * @event backToAdmin
-     * Fired when button clicked.
+     * ...
      * @param {Ext.master.Switch} this
      * @param {Number} times The number of times clicked.
      */
