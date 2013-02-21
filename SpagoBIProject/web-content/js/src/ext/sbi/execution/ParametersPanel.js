@@ -659,7 +659,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			var field = this.fields[p];
 			var behindParameter = field.behindParameter;
 			var value = this.concatenateDefaultValues(behindParameter.defaultValues);
+			Sbi.debug('[ParametersPanel.getDefaultValuesFormState] : default values for field [' + field.name + '] is [' + value + ']');
 			var description = this.concatenateDefaultValuesDescription(behindParameter.defaultValues);
+			Sbi.debug('[ParametersPanel.getDefaultValuesFormState] : default description for field [' + field.name + '] is [' + description + ']');
 			state[field.name] = value;
 			state[field.name + '_field_visible_description'] = description;
 		}
@@ -668,32 +670,32 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	}
 	
 	, concatenateDefaultValues: function (defaultValues) {
-		if (defaultValues.length > 0) {
-			var value = '';
+		if (defaultValues.length == 0) {
+			return null;
+		}
+		if (defaultValues.length == 1) {
+			return defaultValues[0].value;
+		} else {
+			var value = new Array();
 			for (var i = 0; i < defaultValues.length; i++) {
-				value += defaultValues[i].value;
-				if (i < defaultValues.length - 1) {
-					value += ';';
-				}
+				value[i] = defaultValues[i].value;
 			}
 			return value;
-		} else {
-			return null;
 		}
 	}
 	
 	, concatenateDefaultValuesDescription: function (defaultValues) {
-		if (defaultValues.length > 0) {
+		if (defaultValues.length == 0) {
+			return '';
+		}
+		if (defaultValues.length == 1) {
+			return defaultValues[0].description;
+		} else {
 			var description = '';
 			for (var i = 0; i < defaultValues.length; i++) {
-				description += defaultValues[i].description;
-				if (i < defaultValues.length - 1) {
-					description += '; ';
-				}
+				description += defaultValues[i].description + '; ';
 			}
 			return description;
-		} else {
-			return '';
 		}
 	}
 	
