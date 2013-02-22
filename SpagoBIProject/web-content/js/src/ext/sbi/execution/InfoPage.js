@@ -7,17 +7,18 @@
 
 Ext.ns("Sbi.execution");
 
-Sbi.execution.InfoPage = function(config) {
+Sbi.execution.InfoPage = function(config, doc) {
 	
 	// init properties...
 	var defaultSettings = {
 		// set default values here
+		bodyStyle: {padding: "50px"} 
 	};
 
 	if (Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.infopage) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.execution.infopage);
 	}
-	
+	this.document= doc;
 	var c = Ext.apply(defaultSettings, config || {});	
 	Ext.apply(this, c);
 	
@@ -34,7 +35,7 @@ Sbi.execution.InfoPage = function(config) {
  * @class Sbi.execution.InfoPage
  * @extends Ext.Panel
  * 
- * bla bla bla bla bla ...
+ * It shows information related to executed document
  */
 
 /**
@@ -56,7 +57,6 @@ Ext.extend(Sbi.execution.InfoPage, Ext.Panel, {
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
-	
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
@@ -87,7 +87,54 @@ Ext.extend(Sbi.execution.InfoPage, Ext.Panel, {
 	 * Initialize the GUI
 	 */
 	, init: function() {
-		this.html = 'Descrizione doc (lavori in corso) ...';
+		
+
+	/*
+	 * document: {
+	 * 	"id":5,
+	 * 	"label":"DOC0004",
+	 * 	"name":"Combo Simple",
+	 *  "description":"Combo simple test",
+	 *  "typeCode":"REPORT",
+	 *  "typeId":6,
+	 *  "encrypt":0,
+	 *  "visible":1,
+	 *  "profiledVisibility":"",
+	 *  "engine":"Jasper Report Engine",
+	 *  "engineid":10,
+	 *  "datasource":1,
+	 *  "uuid":"e1340fb5-6958-11e2-92cc-f9e75bf56606",
+	 *  "relname":"",
+	 *  "stateCode":"REL",
+	 *  "stateId":41,
+	 *  "functionalities":[13,15],
+	 *  "creationDate":"2013-01-28 15:42:03.086",
+	 *  "creationUser":"biadmin",
+	 *  "refreshSeconds":0,
+	 *  "actions":[{"name":"showmetadata","description":"Show Metadata"}],"exporters":["PDF","XLS","RTF","JPG"],"decorators":{"isSavable":true}}
+						 */
+		var tpl = new Ext.XTemplate(
+			    '<p>Id: {id}</p>',
+			    '<p>Label: {label}</p>',
+			    '<p>Name: {name}</p>',
+			    '<p>Description: {description}</p>',
+			    '<p>Type: {typeCode}</p>',
+			    '<p>Creation date: {creationDate}</p>',
+			    '<p>Author: {creationUser}</p>'
+			);
+		//tpl.overwrite(panel.body, data);
+		this.html = tpl.applyTemplate(this.document);
+		
+		Sbi.trace('[InfoPage.init]: document: ' + Sbi.toSource(this.document));
+		Sbi.trace('[InfoPage.init]: executionInstance: ' + Sbi.toSource(this.executionInstance));
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // synchronization methods
+	// -----------------------------------------------------------------------------------------------------------------
+	// This methods change properly the interface according to the specific execution instance passed in
+	, synchronize: function( executionInstance ) {
+		
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
