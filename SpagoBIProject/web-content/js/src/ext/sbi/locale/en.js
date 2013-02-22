@@ -790,6 +790,9 @@ Sbi.locale.ln['sbi.behavioural.lov.name']='Name'
 Sbi.locale.ln['sbi.behavioural.lov.value']='Value'
 Sbi.locale.ln['sbi.behavioural.lov.description']='Description'
 Sbi.locale.ln['sbi.behavioural.lov.visible']='Visible'
+Sbi.locale.ln['sbi.behavioural.lov.test.error']='Error testing the lov'
+Sbi.locale.ln['sbi.behavioural.lov.back']='Back'
+	
 
 
 

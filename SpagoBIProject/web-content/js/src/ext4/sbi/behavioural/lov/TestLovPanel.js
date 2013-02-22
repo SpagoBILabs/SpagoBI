@@ -76,6 +76,10 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 	            text: LN('sbi.behavioural.lov.save'),
 	            handler: this.save,
 	            scope: this
+	        },{
+	            text: LN('sbi.behavioural.lov.back'),
+	            handler: this.back,
+	            scope: this
 	        }]
 	    }]
 		
@@ -148,7 +152,7 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
     		lovConfiguration = this.lovTestConfigurationTree.getValues();
     	}
     	
-    	var callbackUrl = this.contextName+ "/servlet/AdapterHTTP?PAGE=ListLovsPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+    	var callbackUrl = this.contextName+ "?PAGE=ListLovsPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
     	var callback = function(){window.location = callbackUrl};
     	var params ={};
     	params.LOV_CONFIGURATION = Ext.JSON.encode(lovConfiguration);
@@ -165,6 +169,11 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
             ,scope: this
    		 });	
     	
+    },
+    
+    back: function(){
+    	var callbackUrl = this.contextName+ "?LIGHT_NAVIGATOR_DISABLED=true&PAGE=DetailModalitiesValuePage&lovProviderModified=false&MESSAGEDET="+ this.modality+"&modality=DETAIL_MOD&RETURN_FROM_TEST_MSG=DO_NOT_SAVE";
+    	window.location = callbackUrl;
     }
     
     , updateType: function(combo, records,eOpt ){
