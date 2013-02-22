@@ -18,7 +18,7 @@ public class DeserializerFactory {
 	
 	static {
 		mappings = new HashMap();
-		//mappings.put( "application/json", new JSONSerializer() );
+		mappings.put( "application/json", new JSONDeserializer() );
 		mappings.put( "application/xml", new XMLDeserializer() );
 	}
 	

@@ -62,6 +62,8 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 	private static final String DOMAIN_LIST = "DOMAIN_LIST";
 	private static final String DOMAIN_DELETE = "DOMAIN_DELETE";
 	private static final String DOMAIN_SAVE = "DOMAIN_SAVE";
+	private static final String DOMAINS_FILTER = "DOMAINS_FILTER";
+
 
 	private IEngUserProfile profile = null;
 	private IDomainDAO domainDao=null;
@@ -88,6 +90,11 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 		if (serviceType != null) {
 			if (serviceType.equalsIgnoreCase(DOMAIN_LIST)) {
 				doDomainList();
+			} else if (serviceType.equalsIgnoreCase(DOMAINS_FILTER)) {
+				if(this.requestContainsAttribute("DOMAIN_TYPE")){
+					String domainType = this.getAttributeAsString("DOMAIN_TYPE");
+					doDomainList(domainType);
+				}
 			} else if (serviceType.equalsIgnoreCase(DOMAIN_DELETE)) {
 				doDelete();
 			} else if (serviceType.equalsIgnoreCase(DOMAIN_SAVE)) {
@@ -172,6 +179,28 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 					"Exception occurred while retrieving domain data", e);
 		}
 	}
+
+	public void doDomainList(String domainType) {
+		try {
+			logger.debug("Loaded domain list");
+
+			List<Domain> domainList = domainDao.loadListDomainsByType(domainType);	
+			
+			JSONArray domainListJSON = (JSONArray) SerializerFactory
+					.getSerializer("application/json").serialize(domainList,
+							this.getLocale());
+			JSONObject response = new JSONObject();
+			response.put("domains", domainListJSON);
+
+			writeBackToClient(new JSONSuccess(response));
+
+		} catch (Throwable e) {
+			logger.error("Exception occurred while retrieving domain data", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Exception occurred while retrieving domain data", e);
+		}
+	}
+
 
 	public Domain setDomain() {
 		Domain domain = new Domain();
