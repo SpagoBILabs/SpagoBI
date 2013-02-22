@@ -47,7 +47,7 @@
 		 <delete includeemptydirs="true">
 		    <fileset dir="${js.ext2.doc.dir}" includes="**/*"/>
 		 </delete>
-		<exec command="${programs.jsduck} ${js.ext2.src.dir} --builtin-classes --warnings=-no_doc,-dup_member,-link_ambiguous --external XMLHttpRequest --output ${js.ext2.doc.dir}"/>
+		<exec command="${programs.jsduck} ${js.ext2.src.dir}/sbi/execution --builtin-classes --warnings=-no_doc,-dup_member,-link_ambiguous --external XMLHttpRequest --output ${js.ext2.doc.dir}"/>
 	</target>
 	
 	<target name="doc.extjs4">
