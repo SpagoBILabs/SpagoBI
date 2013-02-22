@@ -44,7 +44,8 @@ Sbi.execution.ShortcutsPanel = function(config, doc) {
 		
 	var c = Ext.apply({}, config, {
 		//layout:'accordion',
-	    layoutConfig:{
+		activeTab: 0
+	    , layoutConfig:{
 	          animate:true
 	    },
 	    border: false,

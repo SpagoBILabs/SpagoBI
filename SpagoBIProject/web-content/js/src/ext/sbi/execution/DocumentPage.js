@@ -20,7 +20,6 @@ Sbi.execution.DocumentPage = function(config, doc) {
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});	
-	this.toolbarHiddenPreference = c.toolbarHidden!== undefined ? c.toolbarHidden : false;
 	Ext.apply(this, c);
 		
 	// add events
@@ -33,7 +32,6 @@ Sbi.execution.DocumentPage = function(config, doc) {
 	var c = Ext.apply({}, config, {
 		id: 'documentexecutionpage' + Ext.id()
 		, layout: 'border'
-		, tbar: this.toolbar
 		, items: [this.miframe]
 	});
 	
@@ -96,26 +94,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 	 * Initialize the GUI
 	 */
 	, init: function( config, doc ) {
-		this.initToolbar(config);
 		this.initMiframe(config, doc);
-	}
-	
-	/**
-	 * @method 
-	 * 
-	 * Initialize the toolbar
-	 */
-	, initToolbar: function( config ) {
-		
-        this.toolbarConfig = config.executionToolbarConfig || {} ;
-		
-		if (this.toolbarHiddenPreference) 
-			return;
-			
-		var c = {TOOLBAR_CONFIG: this.toolbarConfig};
-		this.toolbar = new Sbi.execution.toolbar.DocumentExecutionPageToolbar(c);
-		this.toolbar.on('render', function() {}, this);
-		this.toolbar.on('showmask', this.showMask, this);
 	}
 	
 	
@@ -383,6 +362,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 	 * @method 
 	 * 
 	 * Closes the loading mask
+	 * 
 	 */
 	, hideMask: function() {
     	if (this.loadMask != null) {
@@ -398,9 +378,6 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 		
 		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
 			this.executionInstance = executionInstance;
-			if(this.toolbar){
-				this.toolbar.synchronizeToolbar( executionInstance, this.miframe, this.southPanel, this.eastPanel, this.parametersPanel, this.shortcutsPanel);
-			}
 			
 			if(synchronizeSliders === undefined || synchronizeSliders === true) {
 
@@ -419,9 +396,6 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 		      					this.fireEvent('loadurlfailure', content.errors);
 		      				} else {
 		      					this.miframe.getFrame().setSrc( content.url );
-		      					if(this.toolbar){
-		      						this.toolbar.updateFrame(this.miframe);
-		      					}
 		      				}
 		      			} 
 		      		} else {
@@ -434,6 +408,15 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 			
 			Sbi.debug('[DocumentPage.synchronize] : OUT' );
 		}
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @return {Ext.ux.ManagedIframePanel} the miframe tha contains the executed document
+	 */
+	, getMiFrame: function() {
+		return this.miframe;
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------

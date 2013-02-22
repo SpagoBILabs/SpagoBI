@@ -24,29 +24,34 @@ Ext.ns("Sbi.execution");
 // TODO to be renamed in DocumentExecutionPage
 Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	
-	// init properties
-	var c = Ext.apply({
-		//columnNo: 3
-		//, labelAlign: 'left'
-		//maskOnRender: false
-		eastPanelWidth: 300
-	}, config || {});
+	// init properties...
+	var defaultSettings = {
+		// public...
+		labelAlign: 'left'
+		, maskOnRender: true
+		, parametersSliderWidth: 300
+		, collapseParametersSliderOnExecution: false
+		, collapseShortcutsSliderOnExecution: true
+		, shortcutsHidden: false
+		// private...
+		, isParameterPanelReady: false
+		, isParameterPanelReadyForExecution: false
+		, isSubobjectPanelReady: false
+		, isSnapshotPanelReady: false
+		, isFromCross: false
+	};
 	
-	this.isFromCross = config.isFromCross || false;
-	this.maskOnRender = c.maskOnRender;
+	if (Sbi.settings && Sbi.settings.execution && Sbi.settings.parametersselectionpage) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.parametersselectionpage);
+	}
 	
-	// variables for preferences and for shortcuts/parameters panel synchronization
-	this.isParameterPanelReady = false; // parameters panel has been loaded
-	this.isParameterPanelReadyForExecution = false; // parameters panel has been loaded and there are no parameters to be filled
-	this.isSubobjectPanelReady = false;
-	this.preferenceSubobjectId = (c.subobject !== undefined && c.subobject.id !== undefined) ? c.subobject.id : null;
-	this.isSnapshotPanelReady = false;
-	this.preferenceSnapshotId = null;
-	this.shortcutsHiddenPreference = config.shortcutsHidden !== undefined ? config.shortcutsHidden : false;
-	
+	var c = Ext.apply(defaultSettings, config || {});	
+	//Ext.apply(this, c);
+
 	this.addEvents(
 		'beforetoolbarinit'
 		, 'beforesynchronize'
+		, 'beforeexecution'
 		, 'synchronize'
 		, 'synchronizeexception'
 		, 'movenextrequest'
@@ -57,8 +62,6 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	
 	this.initServices();
 	this.init(c, doc);
-	
-
 	
 	c = Ext.apply({}, c, {
 		layout: 'fit',
@@ -78,32 +81,14 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	            								this is a workaround (work-around): when executing a document from administration tree or
 	            								from menu, this loading mask does not appear. Invoking hide() solve the issue.
 	            		 						*/
-	          	 		//if(this.maskOnRender === true) this.loadingMask.show();
+	          	 		if(this.maskOnRender === true) this.loadingMask.show();
 	            	},
 	            	scope: this
 	          	}
 	        },   	        
-			items: [this.centerPanel ,this.eastPanel /*, this.southPanel*/]
+			items: [this.mainPanel ,this.parametersSlider]
 		}]
 	});   
-	
-	this.parametersPanel.on('synchronize', 
-		function(panel, readyForExecution, parametersPreference) {
-			this.isParameterPanelReady = true;
-			if (readyForExecution) {
-				this.isParameterPanelReadyForExecution = true;
-			}
-			// try to find from session the value used for execution
-			if (!this.isFromCross){
-				Sbi.execution.SessionParametersManager.restoreStateObject(panel);
-			}
-			// restore memento (= the list of last N value inputed for each parameters)
-			Sbi.execution.SessionParametersManager.restoreMementoObject(panel);
-			this.checkAutomaticStart();
-		}
-	, this);
-
-	this.parametersPanel.on('viewpointexecutionrequest', this.onExecuteViewpoint, this);
 	
 	
 	this.shortcutsPanel.on('subobjectexecutionrequest', this.onExecuteSubobject, this);
@@ -115,42 +100,131 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	
 	this.shortcutsPanel.subobjectsPanel.on('ready', function(){
 		this.isSubobjectPanelReady = true;
-		//if (preferenceSubobjectId !== undefined && preferenceSubobjectId != null) {
-		//	this.preferenceSubobjectId = preferenceSubobjectId;
-		//}
 		this.checkAutomaticStart();
 	}, this);
 	
-	this.shortcutsPanel.snapshotsPanel.on('ready', function(preferenceSnapshotId){
+	this.shortcutsPanel.snapshotsPanel.on('ready', function(snapshotId){
 		this.isSnapshotPanelReady = true;
-		this.preferenceSnapshotId = preferenceSnapshotId;
+		this.snapshotId = snapshotId;
 		this.checkAutomaticStart();
 	}, this);
 	
 	// constructor
     Sbi.execution.ParametersSelectionPage.superclass.constructor.call(this, c);
-    
-    
 };
 
 /**
  * @class Sbi.execution.ParametersSelectionPage
  * @extends Ext.Panel
- * ...
+ * @todo to be renamed in DocumentExecutionPage
+ * 
+ * This panel have a border layout. It uses the east region to visualize the Sbi.execution.ParametersPanel and the 
+ * center region to visualize the document. The document can be viuslauzed in one of the following three modalities:
+ * - INFO: Shows only document metadata and shortcuts (see Sbi.execution.InfoPage)
+ * - VIEW: Shows the executed document (see Sbi.execution.DocumentPage)
+ * - EDIT: Shows the document in edit mode
  */
+
+/**
+ * @cfg {String} labelAlign where to align parameter label in parameters selection panel. Possible values are 
+ * left and top. The default value is left.
+ */
+/**
+ * @cfg {Boolean} maskOnRender ...
+ */
+/**
+ * @cfg {Boolean} collapseParametersSliderOnExecution true to collapse parameters panel when the executed document 
+ * is displayed, false otherwise. The default is false.
+ */
+/**
+ * @cfg {Boolean} collapseShortcutsSliderOnExecution true to collapse shortcuts panel when the executed document 
+ * is displayed, false otherwise. The default is true.
+ */
+/**
+ * @cfg {String} shortcutsHidden true if shortcuts panel is hidden, 
+ * false otherwise. The default is false.
+ */
+/**
+ * @cfg {Object} subobject an object that contains information related to the subobject to execute. It is optional.
+ */
+
 Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
     
-	services: null
+	/**
+     * @property {Array} services
+     * This array contains all the services invoked by this class
+     */
+	services: null	
+	
+	/**
+     * @property {Object} executionInstance
+     * This object contains all the informations related to the current execution
+     */
 	, executionInstance: null
 	
+	/**
+     * @property {Boolean} isParameterPanelReady
+     * true if parameters panel has been loaded, false otherwise.
+     */
+	, isParameterPanelReady: null
+	
+	/**
+	 * @property {Boolean} isParameterPanelReadyForExecution
+	 * true if parameters panel has been loaded parameters panel has been loaded 
+	 * and there are no parameters to be filled, false otherwise.
+	 */
+	, isParameterPanelReadyForExecution: null
+	
+	/**
+     * @property {Boolean} isSubobjectPanelReady
+     * true if subobject panel has been loaded, false otherwise.
+     */
+	, isSubobjectPanelReady: null
+	
+	/**
+     * @property {Boolean} isSnapshotPanelReady
+     * true if snapshot panel has been loaded, false otherwise.
+     */
+	, isSnapshotPanelReady: null
+	
+	/**
+     * @property {Object} subobject an object that contains information related to the subobject 
+     * to execute. null if no specific subobject has been specified
+     */
+	, subobject: null
+	
+	/**
+     * @property {String} snapshotId the id of the snapshot to execute. 
+     * null if no specific snapshot has been specified.
+     */
+	, snapshotId: null
+	
+	/**
+	 * @property {Boolean} collapseParametersSliderOnExecution true to collapse parameters panel when the executed document 
+	 * is displayed, false otherwise. The default is false.
+	 */
+	, collapseParametersSliderOnExecution: null
+	/**
+	 * @property {Boolean} collapseShortcutsSliderOnExecution true to collapse shortcuts panel when the executed document 
+	 * is displayed, false otherwise. The default is true.
+	 */
+	, collapseShortcutsSliderOnExecution: null
+	/**
+     * @property {String} shortcutsHidden true if shortcuts panel is hidden, 
+     * false otherwise. The default is false.
+     */
+	, shortcutsHidden: null
+	
 	, toolbar: null
-    , parametersPanel: null
+	
+	, mainPanel: null
+    , documentPanel: null
     , shortcutsPanel: null
-    , centerPanel: null
-    , eastPanel: null
-    , southPanel: null
+    , shortcutsSlider: null
     
-
+	, parametersSlider: null
+    , parametersPanel: null
+   
     , loadingMask: null
     , maskOnRender: null
    
@@ -176,9 +250,8 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
     
 	, init: function(config, doc) {
 		this.initToolbar(config, doc);
-		this.initCentralPanel(config, doc);
-		this.initEastPanel(config, doc);
-		//this.initSouthPanel(config, doc);
+		this.initMainPanel(config, doc);
+		this.initParametersSlider(config, doc);
 	}
 	
 	/**
@@ -189,10 +262,43 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 * @param {Object} config the configuration object 
 	 * @param {Object} doc the document configuration
 	 */
+	
 	, initToolbar: function(config, doc) {
-		this.toolbar = new Ext.Toolbar({
-			items: [new Ext.Toolbar.Button({iconCls: 'icon-back'})]
-		});
+			
+		this.toolbarHiddenPreference = config.toolbarHidden!== undefined ? config.toolbarHidden : false;
+		if (this.toolbarHiddenPreference) return;
+		
+		config.executionToolbarConfig = config.executionToolbarConfig || {};
+		config.executionToolbarConfig.callFromTreeListDoc = this.callFromTreeListDoc;
+		config.executionToolbarConfig.preferenceSubobjectId = this.getSubObjectId();
+		this.toolbar = new Sbi.execution.toolbar.DocumentExecutionPageToolbar(config.executionToolbarConfig);
+		
+		//this.toolbar.on('showmask', this.showMask, this);
+
+		this.toolbar.on('beforeinit', function () {
+			this.fireEvent('beforetoolbarinit', this, this.toolbar);
+		}, this);
+		
+		this.toolbar.on('beforerefresh', function (formState) {
+				this.fireEvent('beforerefresh', this, this.executionInstance, formState);
+		}, this);
+			
+		this.toolbar.on('moveprevrequest', function () {
+			this.fireEvent('moveprevrequest');
+		}, this);
+			
+		this.toolbar.on('backToAdmin', function () {
+			this.fireEvent('backToAdmin');
+		}, this);
+			
+		this.toolbar.on('collapse3', function () {
+			this.fireEvent('collapse3');
+		}, this);
+			
+		this.toolbar.on('refreshexecution', function () {
+			this.executeDocument();
+		}, this);
+		
 	}
 	
 	/**
@@ -203,21 +309,21 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 * @param {Object} config the configuration object 
 	 * @param {Object} doc the document configuration
 	 */
-	, initCentralPanel: function(config, doc) {
+	, initMainPanel: function(config, doc) {
 		this.initShortcutsPanel(config, doc);
 		
 		var shortcutsHidden = (!Sbi.user.functionalities.contains('SeeSnapshotsFunctionality') 
 				&& !Sbi.user.functionalities.contains('SeeSubobjectsFunctionality'))
 				||
-				this.shortcutsHiddenPreference;
+				this.shortcutsHidden;
 
-		var southPanelHeight = 
+		var shortcutsPanelHeight = 
 			(Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.shortcutsPanel && Sbi.settings.execution.shortcutsPanel.height) 
 			? Sbi.settings.execution.shortcutsPanel.height : 280;
 
-		this.innerSouthPanel = new Ext.Panel({
+		this.shortcutsSlider = new Ext.Panel({
 			region:'south'
-			, border: false
+			, border: true
 			, frame: false
 			, collapsible: true
 			, collapsed: false
@@ -226,18 +332,20 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			, collapseMode: 'mini'
 			, split: true
 			, autoScroll: true
-			, height: southPanelHeight
+			, height: shortcutsPanelHeight
 			, layout: 'fit'
 			, items: [this.shortcutsPanel]
 			, hidden: shortcutsHidden
 		});
-	
+		
+		config.border = false;
 		this.infoPage = new Sbi.execution.InfoPage(config, doc);
 		this.documentPage = new Sbi.execution.DocumentPage(config, doc);
 		
-		this.innerCenterPanel = new Ext.Panel({
+		this.documentPanel = new Ext.Panel({
 			region:'center'
 			, layout:'card'
+			, border: false
 			, hideMode: !Ext.isIE ? 'nosize' : 'display'
 			, activeItem: 0
 			, items: [
@@ -245,35 +353,36 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			]
 		});
 		
-		this.centerPanel = new Ext.Panel({
+		this.mainPanel = new Ext.Panel({
 			layout: 'fit'
 			, region:'center'
+			, border: false
 			, items:[{
 				layout: 'border'
-				, items: [this.innerSouthPanel, this.innerCenterPanel]
+				, items: [this.shortcutsSlider, this.documentPanel]
 			}]
 		});
 		
-		return this.centerPanel;
+		return this.mainPanel;
 	}
 	
 	/**
 	 * @method
 	 * 
-	 *  Initialize the east panel
+	 *  Initialize the parameter slider
 	 * 
 	 * @param {Object} config the configuration object 
 	 * @param {Object} doc the document configuration
 	 */
-	, initEastPanel: function(config, doc) {
+	, initParametersSlider: function(config, doc) {
 		
 		this.initParametersPanel(config, doc);
 		
 		if(this.parametersPanel && this.parametersPanel.width){
-			this.eastPanelWidth = this.parametersPanel.width + 10;
+			this.parametersSliderWidth = this.parametersPanel.width + 10;
 		}
 		
-		this.eastPanel = new Ext.Panel({
+		this.parametersSlider = new Ext.Panel({
 			region:'east'
 			, title: LN('sbi.execution.parametersselection.parameters')
 			, border: true
@@ -285,55 +394,15 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			//, collapseMode: 'mini'
 			//, split: true
 			, autoScroll: true
-			, width: this.eastPanelWidth 
+			, width: this.parametersSliderWidth 
 			, layout: 'fit'
 			, items: [this.parametersPanel]
 		});
 		
-		return this.eastPanel;
+		return this.parametersSlider;
 	}
 	
-	/**
-	 * @method
-	 * @deprecated
-	 * 
-	 *  Initialize the south panel
-	 * 
-	 * @param {Object} config the configuration object 
-	 * @param {Object} doc the document configuration
-	 */
-	, initSouthPanel: function(config, doc) {
-		
-		this.initShortcutsPanel(config, doc);
-		
-		var shortcutsHidden = (!Sbi.user.functionalities.contains('SeeSnapshotsFunctionality') 
-				&& !Sbi.user.functionalities.contains('SeeSubobjectsFunctionality'))
-				||
-				this.shortcutsHiddenPreference;
-
-		var southPanelHeight = 
-			(Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.shortcutsPanel && Sbi.settings.execution.shortcutsPanel.height) 
-			? Sbi.settings.execution.shortcutsPanel.height : 280;
-
-		this.southPanel = new Ext.Panel({
-			region:'south'
-			, border: false
-			, frame: false
-			, collapsible: true
-			, collapsed: false
-			, hideCollapseTool: true
-			, titleCollapse: true
-			, collapseMode: 'mini'
-			, split: true
-			, autoScroll: true
-			, height: southPanelHeight
-			, layout: 'fit'
-			, items: [this.shortcutsPanel]
-			, hidden: shortcutsHidden
-		});
-		
-		return this.southPanel;
-	}
+	
 	
 	/**
 	 * @method
@@ -362,7 +431,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 									this is a workaround (work-around): when executing a document from administration tree or
 									from menu, this loading mask does not appear. Invoking hide() solve the issue.
 									 */
-			//this.loadingMask.show();
+			this.loadingMask.show();
 		}, this);
 		
 		this.parametersPanel.on('synchronize', function() {
@@ -370,7 +439,27 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 				this.fireEvent('synchronize', this);
 			}
 			this.parametersPanelSynchronizationPending = false;
-		}, this)
+		}, this);
+		
+		this.parametersPanel.on('synchronize', 
+			function(panel, readyForExecution, parametersPreference) {
+				this.isParameterPanelReady = true;
+				if (readyForExecution) {
+					this.isParameterPanelReadyForExecution = true;
+				}
+				// try to find from session the value used for execution
+				if (!this.isFromCross){
+					Sbi.execution.SessionParametersManager.restoreStateObject(panel);
+				}
+				// restore memento (= the list of last N value inputed for each parameters)
+				Sbi.execution.SessionParametersManager.restoreMementoObject(panel);
+				this.checkAutomaticStart();
+			}
+		, this);
+
+		this.parametersPanel.on('viewpointexecutionrequest', this.onExecuteViewpoint, this);
+		
+		
 		return this.parametersPanel;
 	}
 	
@@ -390,6 +479,25 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			}
 			this.shortcutsPanelSynchronizationPending = false;
 		}, this)
+		
+		this.shortcutsPanel.on('subobjectexecutionrequest', this.onExecuteSubobject, this);
+		this.shortcutsPanel.on('snapshotexcutionrequest', this.onExecuteSnapshot, this);
+		this.shortcutsPanel.on('subobjectshowmetadatarequest', function (subObjectId) {
+	    	 var win_metadata = new Sbi.execution.toolbar.MetadataWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID, 'SUBOBJECT_ID': subObjectId});
+			 win_metadata.show();
+		}, this);
+		
+		this.shortcutsPanel.subobjectsPanel.on('ready', function(){
+			this.isSubobjectPanelReady = true;
+			this.checkAutomaticStart();
+		}, this);
+		
+		this.shortcutsPanel.snapshotsPanel.on('ready', function(snapshotId){
+			this.isSnapshotPanelReady = true;
+			this.snapshotId = snapshotId;
+			this.checkAutomaticStart();
+		}, this);	
+		
 		return this.shortcutsPanel;
 	}
 	
@@ -397,7 +505,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
     // synchronization methods
 	// -----------------------------------------------------------------------------------------------------------------
-	// This methods change properly the interce according to the specific execution instance passed in
+	// This methods change properly the interface according to the specific execution instance passed in
 	
 	/**
 	 * Called by Sbi.execution.ExecutionWizard when a new document execution starts. Force
@@ -408,6 +516,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 * @method
 	 */
     , synchronize: function( executionInstance ) {
+    	Sbi.trace('[ParametersSelectionPage.synchronize]: IN');
 		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
 			this.executionInstance = executionInstance;
 			this.synchronizeToolbar( executionInstance );
@@ -418,90 +527,17 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			this.shortcutsPanelSynchronizationPending = true;
 			this.shortcutsPanel.synchronize( this.executionInstance );
 		}
+		Sbi.trace('[ParametersSelectionPage.synchronize]: OUT');
 	}
 
-    /**
-	 * Synchronize the toolbar
-	 * 
-	 * @param {Object} executionInstance the execution configuration
-	 * 
-	 * @method
-	 */
-	, synchronizeToolbar: function( executionInstance ){
-		
-		this.toolbar.items.each( function(item) {
-			this.toolbar.items.remove(item);
-            item.destroy();           
-        }, this); 
-		
-		this.fireEvent('beforetoolbarinit', this, this.toolbar);
-		
-		this.toolbar.addFill();
-	
-		var drawRoleBack = false;
-		
-		if (executionInstance.isPossibleToComeBackToRolePage == undefined || executionInstance.isPossibleToComeBackToRolePage === true) {
-			this.toolbar.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-back' 
-				, tooltip: LN('sbi.execution.parametersselection.toolbar.back')
-			    , scope: this
-			    , handler : function() {this.fireEvent('moveprevrequest');}
-			}));
-			
-			this.toolbar.addSeparator();
-		
-			drawRoleBack = true;
+    , synchronizeToolbar: function( executionInstance ){
+    	Sbi.trace('[ParametersSelectionPage.synchronizeToolbar]: IN');
+		if(this.toolbar){
+			this.toolbar.documentMode = 'INFO';
+			this.toolbar.synchronize( this, executionInstance);
 		}
-	
-		// 20100505
-		if (this.callFromTreeListDoc == true && drawRoleBack == false) {
-			this.toolbar.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-back' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.documentView')
-				, scope: this
-				, handler : function() {
-					this.fireEvent('backToAdmin');
-				}
-			}));
-		}
-		
-		if(Sbi.user.ismodeweb){
-			this.toolbar.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-expand' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
-			    , scope: this
-			    , handler : function() {
-					this.fireEvent('collapse3');
-				}			
-			}));
-		}
-		
-
-
-		// if document is QBE datamart and user is a Read-only user, he cannot execute main document, but only saved queries.
-		// If there is a subobject preference, the execution button starts the subobject execution
-		if (
-				executionInstance.document.typeCode != 'DATAMART' || 
-				(
-					Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality') || 
-					(this.preferenceSubobjectId !== undefined && this.preferenceSubobjectId !== null)
-				)
-			) {
-			this.toolbar.addSeparator();
-			this.toolbar.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-execute'
-				, tooltip: LN('sbi.execution.parametersselection.toolbar.next')
-				, scope: this
-				, handler : function() {
-					if (this.preferenceSubobjectId !== undefined && this.preferenceSubobjectId !== null) {
-						this.executionInstance.SBI_SUBOBJECT_ID = this.preferenceSubobjectId;
-					}
-					this.fireEvent('movenextrequest');
-				}
-			}));
-		}
-	}
-
+		Sbi.trace('[ParametersSelectionPage.synchronizeToolbar]: IN');
+    }
 
 	// ----------------------------------------------------------------------------------------
 	// public methods
@@ -512,29 +548,29 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 * @method
 	 */
 	, showInfo: function() {
-		this.innerCenterPanel.getLayout().setActiveItem( 0 );
+		this.documentPanel.getLayout().setActiveItem( 0 );
 	}
 	
 	/**
-	 * Show the executed document in the central panel
+	 * Show the executed document in the central panel. The document is not re-executed,
+	 * it is just shown. To rexecute the document before to show it use the method executeDocument.
 	 * 
 	 * @method
 	 */
 	, showDocument: function() {
-		this.innerCenterPanel.getLayout().setActiveItem( 1 );
-	}
-	
-	/**
-	 * Show the executed document in the central panel
-	 * 
-	 * @method
-	 */
-	, refreshDocument: function(executionInstance) {
-		var formState = this.parametersPanel.getFormState();
-		this.executionInstance.PARAMETERS = Sbi.commons.JSON.encode( formState );
-		this.documentPage.synchronize( this.executionInstance );
-		this.collapseShortcutsPanel();
-		this.showDocument();
+		Sbi.trace('[ParametersSelectionPage.showDocument]: IN');
+		this.toolbar.documentMode = 'VIEW';
+		this.toolbar.synchronize( this, this.executionInstance);
+		
+		if(this.collapseParametersSliderOnExecution === true) {
+			this.collapseParametersSlider();
+		}
+		if(this.collapseShortcutsSliderOnExecution === true) {
+			this.collapseShortcutsSlider();
+		}
+		
+		this.documentPanel.getLayout().setActiveItem( 1 );
+		Sbi.trace('[ParametersSelectionPage.showDocument]: OUT');
 	}
 	
 	/**
@@ -542,9 +578,81 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 * 
 	 *  Collapse the shortcut panel
 	 */
-	, collapseShortcutsPanel: function() {
-		this.innerSouthPanel.collapse();
+	, collapseShortcutsSlider: function() {
+		this.shortcutsSlider.collapse();
 	}
+
+	, collapseParametersSlider: function() {
+		this.parametersSlider.collapse();
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @return {String} the ID of the subobject to execute. null if no specific subobject has
+	 * been specified
+	 */
+	, getSubObjectId: function() {
+		return ( !Ext.isEmpty(this.subobject) && Ext.isEmpty(this.subobject.id) ) 
+				? this.subobject.id 
+				: null;
+	}
+	/**
+	 * @method
+	 * 
+	 * @return {String} the ID of the snapshot to execute. null if no specific snapshot has
+	 * been specified
+	 */
+	, getSnapshotId: function() {
+		return this.snapshotId;
+	}
+	
+	
+	
+	// ----------------------------------------------------------------------------------------
+	// controller methods (invoked by the toolbar)
+	// ----------------------------------------------------------------------------------------
+	
+	/**
+	 * Execute the document  passing to the engine the parameter values set by the user
+	 * in the selection panel. Then show the executed document.
+	 * 
+	 * @method
+	 */
+	, executeDocument: function(executionInstance) {
+		Sbi.trace('[ParametersSelectionPage.executeDocument]: IN');
+		var formState = this.parametersPanel.getFormState();
+		
+		if(this.fireEvent('beforeexecution', this, this.executionInstance, formState) !== false){
+			this.executionInstance.PARAMETERS = Sbi.commons.JSON.encode( formState );
+			this.documentPage.synchronize( this.executionInstance );
+		}
+		
+		this.showDocument();
+		Sbi.trace('[ParametersSelectionPage.executeDocument]: OUT');
+	}
+
+	
+	, getFrame: function() {
+		return this.documentPage.getMiFrame().getFrame(); 
+	}
+
+	, memorizeParametersInSession: function() {
+		Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
+		Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersPanel);
+	}
+	
+	, getParameterValues: function() {
+		return this.parametersPanel.getFormState();
+	}
+	
+	, collapseSliders: function() {
+		this.collapseShortcutsSlider();
+		this.collapseParametersSlider();
+	}
+
+	
+	
 	
 	// ----------------------------------------------------------------------------------------
 	// private methods
@@ -559,21 +667,21 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			return;
 		}
 		
-		//if(this.loadingMask) this.loadingMask.hide();
+		if(this.loadingMask) this.loadingMask.hide();
 		
 		// subobject preference wins: if a subobject preference is specified, subobject is executed
-		if (this.preferenceSubobjectId != null) {
+		if (this.getSubObjectId() != null) {
 			// if document is datamart type and there are some parameters to be filled, subobject execution cannot start automatically
 			if (this.executionInstance.document.typeCode != 'DATAMART' || this.isParameterPanelReadyForExecution === true) {
 				this.executionInstance.isPossibleToComeBackToParametersPage = false;
-				this.onExecuteSubobject(this.preferenceSubobjectId);
+				this.onExecuteSubobject(this.getSubObjectId());
 			}
 			return;
 		}
 		// snapshot preference follows: if a snapshot preference is specified, snapshot is executed
-		if (this.preferenceSnapshotId != null) {
+		if (this.snapshotId != null) {
 			this.executionInstance.isPossibleToComeBackToParametersPage = false;
-			this.onExecuteSnapshot(this.preferenceSnapshotId);
+			this.onExecuteSnapshot(this.snapshotId);
 			return;
 		}
 		// parameters form follows: if there are no parameters to be filled, start main document execution
@@ -612,13 +720,22 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	//'beforetoolbarinit'
 	/**
      * @event beforesynchronize
-     * Fired before panel syncronization. If the callback return false synchronization will be not
+     * Fired before panel synchronization. If the callback returns false synchronization will be not
      * performed
      * @param {Sbi.execution.ParametersSelectionPage} this
      * @param {Object} oldExecutionInstance The old execution instance
      * @param {Object} newExecutionInstance The new execution instance
      */
 	//, 'beforesynchronize'
+	/**
+     * @event beforesynchronize
+     * Fired before document execution. If the callback returns false execution will be not
+     * performed
+     * @param {Sbi.execution.ParametersSelectionPage} this
+     * @param {Object} executionInstance Current execution instance
+     * @param {Object} parameterValues Current parameter's form state
+     */
+	//, 'beforeexecution'
 	/**
      * @event synchronize
      * ...
