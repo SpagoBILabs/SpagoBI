@@ -406,14 +406,16 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 		}
 		
-		Sbi.trace("'[ParametersPanel.setFormState] : OUT");
+		Sbi.trace("[ParametersPanel.setFormState] : OUT");
 	}
 	
 	, applyViewPoint: function(v) {
+		Sbi.trace("[ParametersPanel.applyViewPoint] : " + typeof v);
 		for(var p in v) {
 			var str = '' + v[p];
 			if(str.split(';').length > 1) {
 				v[p] = str.split(';');
+				Sbi.trace("[ParametersPanel.applyViewPoint] : split parameter [" + p + "] in [" + v[p].length+ "] chunks");
 			}
 		}
 		this.setFormState(v);

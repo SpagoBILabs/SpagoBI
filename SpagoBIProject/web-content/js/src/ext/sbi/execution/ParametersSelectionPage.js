@@ -334,9 +334,6 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			this.fireEvent('collapse3');
 		}, this);
 			
-		this.toolbar.on('refreshexecution', function () {
-			this.executeDocument();
-		}, this);
 		
 	}
 	
@@ -453,9 +450,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 */
 	, initParametersPanel: function( config, doc ) {
 		Ext.apply(config, {pageNumber: 2, parentPanel: this}); // this let the ParametersPanel know that it is on parameters selection page
-		if(this.isFromCross == true) {
-			//alert(config.toSource());
-		}
+		
 		
 		config.isFromCross = this.isFromCross;
 		this.parametersPanel = new Sbi.execution.ParametersPanel(config, doc);
@@ -671,22 +666,46 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	// ----------------------------------------------------------------------------------------
 	
 	/**
-	 * Execute the document  passing to the engine the parameter values set by the user
+	 * Execute the document (not the subobject) passing to the engine the parameter values set by the user
 	 * in the selection panel. Then show the executed document.
 	 * 
 	 * @method
 	 */
 	, executeDocument: function(executionInstance) {
 		Sbi.trace('[ParametersSelectionPage.executeDocument]: IN');
+		
 		var formState = this.parametersPanel.getFormState();
-		
 		if(this.fireEvent('beforeexecution', this, this.executionInstance, formState) !== false){
-			this.executionInstance.PARAMETERS = Sbi.commons.JSON.encode( formState );
-			this.documentPage.synchronize( this.executionInstance );
+			delete executionInstance.SBI_SUBOBJECT_ID;
+			delete executionInstance.SBI_SNAPSHOT_ID;
+			this.doExecuteDocumunt(executionInstance, formState);
 		}
-		
 		this.showDocument();
 		Sbi.trace('[ParametersSelectionPage.executeDocument]: OUT');
+	}
+	
+	/**
+	 * Execute the the subobject if selected or the document otherwise passing 
+	 * to the engine the parameter values set by the user
+	 * in the selection panel. Then show the executed document.
+	 * 
+	 * @method
+	 */
+	, refreshDocument: function(executionInstance) {
+		Sbi.trace('[ParametersSelectionPage.refreshDocument]: IN');
+		
+		var formState = this.parametersPanel.getFormState();
+		if(this.fireEvent('beforeexecution', this, this.executionInstance, formState) !== false){
+			this.doExecuteDocumunt(executionInstance, formState);
+		}		
+		this.showDocument();
+		Sbi.trace('[ParametersSelectionPage.refreshDocument]: OUT');
+	}
+	
+	, doExecuteDocumunt: function(executionInstance, formState) {
+		this.memorizeParametersInSession();
+		this.executionInstance.PARAMETERS = Sbi.commons.JSON.encode( formState );
+		this.documentPage.synchronize( this.executionInstance );
 	}
 
 	
@@ -695,8 +714,10 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	}
 
 	, memorizeParametersInSession: function() {
-		Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
-		Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersPanel);
+		if (!this.isFromCross){
+			Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
+			Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersPanel);
+		}
 	}
 	
 	, getParameterValues: function() {
@@ -744,23 +765,23 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 		// parameters form follows: if there are no parameters to be filled, start main document execution
 		if (this.isParameterPanelReadyForExecution == true) {
 			this.executionInstance.isPossibleToComeBackToParametersPage = false;
-			this.fireEvent('movenextrequest', this);
+			this.executeDocument(this.executionInstance);
 		}
 	}
 	
 	, onExecuteViewpoint: function(v) {
 		this.parametersPanel.applyViewPoint(v);
-		this.fireEvent('movenextrequest');
+		this.executeDocument(this.executionInstance);
 	}
 	
 	, onExecuteSubobject: function (subObjectId) {
 		this.executionInstance.SBI_SUBOBJECT_ID = subObjectId;
-		this.fireEvent('movenextrequest');
+		this.refreshDocument(this.executionInstance);
 	}
 	
 	, onExecuteSnapshot: function (snapshotId) {
 		this.executionInstance.SBI_SNAPSHOT_ID = snapshotId;
-		this.fireEvent('movenextrequest');
+		this.refreshDocument(this.executionInstance);
 	}
 	
 	// =================================================================================================================
