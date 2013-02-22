@@ -94,8 +94,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     	treeColumnNames="[]";
     }
     
-    String contextName = ChannelUtilities.getSpagoBIContextName(request);
-
+    String contextName = GeneralUtilities.getSpagoBiContext();
+    String adapterHTTPName = GeneralUtilities.getSpagoAdapterHttpUrl();
+    contextName = contextName+adapterHTTPName;
    
 %>
 

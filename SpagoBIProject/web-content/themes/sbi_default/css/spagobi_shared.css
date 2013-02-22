@@ -686,3 +686,8 @@ IMG {
       background-repeat: no-repeat;
       cursor: pointer;
     }
+    
+.tree-look-up{
+      background-image: url(/SpagoBI/themes/sbi_default/img/behavioural/tree-look-up.gif);
+      background-repeat: no-repeat;
+    }

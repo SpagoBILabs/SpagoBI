@@ -59,6 +59,7 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 		, moveInMementoUsingCtrlKey: false
 		, viewportWindowWidth: 300
 		, viewportWindowHeight: 300
+		
 	};
 	
 	
@@ -503,6 +504,25 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		return isReadyForExecution;
 	}
 	
+	, isReadyForExecution: function() {
+		if(this.parameters.length == 0) {
+			return true;
+		} else 	{
+			for (p in this.fields) {
+				var field = this.fields[p];
+				if(!field.allowBlank){
+					var behindParameter = field.behindParameter;
+					var value = this.concatenateDefaultValues(behindParameter.defaultValues);
+					if(field.isTransient == false && (value==undefined || value==null || value.length==0)){
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		
+	}
+	
 	// ----------------------------------------------------------------------------------------
 	// private methods
 	// ----------------------------------------------------------------------------------------
@@ -647,7 +667,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 //			this.setFormState(defaultValuesFormState);
 //		}
 		
-		this.fireEvent('synchronize', this, this.isReadyForExecution(), this.parametersPreference);
+		this.fireEvent('synchronize', this, this.isReadyForExecution(), state);
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : OUT');
 	}
 	
@@ -668,6 +688,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 
 		return state;
 	}
+
+
+
 	
 	, concatenateDefaultValues: function (defaultValues) {
 		if (defaultValues.length == 0) {
@@ -869,7 +892,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			field.store.load();
 		}		
 		if(field.behindParameter.selectionType === 'TREE'){ 
-			field.reloadTree();
+			var p = Sbi.commons.JSON.encode(this.getFormState());
+			field.reloadTree(p);
 		}	
 		
 		field.reset();
@@ -1111,10 +1135,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			service: this.services['getParameterValueForExecutionService']
 		}));
 		//var thisPanel = this;
-		field.on('lookup',function(){
-			var p = Sbi.commons.JSON.encode(this.getFormState());
-			field.reloadTree(p);
-		},this);
+//		field.on('lookup',function(){
+//			var p = Sbi.commons.JSON.encode(this.getFormState());
+//			field.reloadTree(p);
+//		},this);
 		
 		return field;
 	}
@@ -1237,7 +1261,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var field;
 		
 		var baseConfig = {
-	       fieldLabel: p.label
+			multivalue: p.multivalue
+	       , fieldLabel: p.label
 	       , fieldDefaultLabel: p.label
 		   , name : p.id
 		   , width: this.baseConfig.fieldWidth

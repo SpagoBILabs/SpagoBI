@@ -70,11 +70,23 @@ Ext.define('Sbi.widgets.store.DynamicStore', {
 
 
 	, onStoreLoad: function() {
-		console.log('onStoreLoad IN');
-		var columns = this.proxy.reader.jsonData.metaData.fields;
-		console.log('columns length ' + columns.length);
+		console.log('onStoreLoad IN');		
+		try{
+			var metadata = this.proxy.reader.jsonData.metaData;
+			if(metadata.error && metadata.error=='error'){
+				Sbi.exception.ExceptionHandler.showErrorMessage(metadata.stacktrace,LN('sbi.behavioural.lov.test.error'));
+				return false;
+			}else{
+				var columns = metadata.fields;
+				console.log('columns length ' + columns.length);
+			}
+		}catch(e){
+			Sbi.exception.ExceptionHandler.showErrorMessage(e,LN('sbi.behavioural.lov.test.error'));
+			return false;
+		}
 		console.log('onStoreLoad OUT');
-	}
+	
+		}
 	
 	, getColumns: function(){
 		console.log('store.getColumns');
