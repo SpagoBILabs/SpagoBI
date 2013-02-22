@@ -22,7 +22,7 @@ Sbi.execution.toolbar.DocumentExecutionPageToolbar = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});	
 	Ext.apply(this, c);
 	
-	this.addEvents('beforeinit', 'moveprevrequest', 'collapse3', 'backToAdmin','refreshexecution','showmask');
+	this.addEvents('beforeinit', 'moveprevrequest', 'collapse3', 'backToAdmin','showmask');
 	this.initServices();
 	this.init();
 	
@@ -278,8 +278,10 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				, handler : function() {
 					if (this.preferenceSubobjectId !== undefined && this.preferenceSubobjectId !== null) {
 						this.executionInstance.SBI_SUBOBJECT_ID = this.preferenceSubobjectId;
+						this.controller.refreshDocument();
+					} else {
+						this.controller.executeDocument(this.executionInstance);
 					}
-					this.controller.executeDocument();
 				}
 			}));
 		}
@@ -943,21 +945,18 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	            					LN('sbi.execution.executionpage.toolbar.qberefresh'),            
 	            					function(btn, text) {
 	                					if (btn=='yes') {
-	                						this.controller.memorizeParametersInSession();
-											this.controller.executeDocument();
+											this.controller.refreshDocument();
 	                					}
 	            					},
 	            					this
 									);
 								}else{
 									//user who cannot build qbe queries
-									this.controller.memorizeParametersInSession();
-									this.controller.executeDocument();
+									this.controller.refreshDocument();
 								}
 						} // it 's not a qbe
 						else {
-							this.controller.memorizeParametersInSession();
-							this.controller.executeDocument();
+							this.controller.refreshDocument();
 					}
 				}			
 			}));

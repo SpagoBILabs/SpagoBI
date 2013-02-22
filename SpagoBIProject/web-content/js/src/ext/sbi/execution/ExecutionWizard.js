@@ -320,34 +320,19 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		}
 		
 		if(this.prevActivePageNumber == this.PARAMETER_SELECTION_PAGE_NUMBER && this.activePageNumber == this.EXECUTION_PAGE_NUMBER) {
-			// save parameters into session
-			if (!this.isFromCross){
-				Sbi.execution.SessionParametersManager.saveStateObject(this.parametersSelectionPage.parametersPanel);
-			}
-			Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersSelectionPage.parametersPanel);
 			
-			// init document execution page, in case it was not initialized yet
-//    		if (this.documentExecutionPage == null) {
-//    			this.initDocumentExecutionPage();
-//    			this.add(this.documentExecutionPage);
-//    			this.documentExecutionPage.on('render', function() {
-//    				this.loadUrlForExecution();
-//    			}, this);
-//    		} else {
-//    			this.documentExecutionPage.southPanel.collapse();
-//    			this.documentExecutionPage.southPanel.collapse();
-//    			this.loadUrlForExecution();
-//    		}
 			this.activePageNumber = this.prevActivePageNumber;
-			this.parametersSelectionPage.refreshDocument();
+			this.parametersSelectionPage.executeDocument(this.executionInstance);
+			
+			alert("ERRORE UP HILL");
 			
 			
     		
 		}
-		if(this.prevActivePageNumber == this.EXECUTION_PAGE_NUMBER && this.activePageNumber == this.EXECUTION_PAGE_NUMBER) { // todo: handle refresh properly
-			this.documentExecutionPage.southPanel.collapse();
-			this.loadUrlForExecution();
-		}
+//		if(this.prevActivePageNumber == this.EXECUTION_PAGE_NUMBER && this.activePageNumber == this.EXECUTION_PAGE_NUMBER) { // todo: handle refresh properly
+//			this.documentExecutionPage.southPanel.collapse();
+//			this.loadUrlForExecution();
+//		}
 		
 		// down-hill <-
 		if(this.prevActivePageNumber == this.EXECUTION_PAGE_NUMBER && this.activePageNumber == this.PARAMETER_SELECTION_PAGE_NUMBER) {
@@ -359,6 +344,8 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 			
 			this.activePageNumber = this.prevActivePageNumber;
 			this.parametersSelectionPage.showShortcuts();
+			
+			alert("ERROR down-hill")
 		}
 		
 		this.getLayout().setActiveItem( this.activePageNumber );
@@ -411,33 +398,13 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 	/**
 	 * @method 
 	 */
-	, loadUrlForExecution: function() {
-		var formState = this.parametersSelectionPage.parametersPanel.getFormState();
-		this.executionInstance.PARAMETERS = Sbi.commons.JSON.encode( formState );
-		this.documentExecutionPage.parametersPanel.on(
-				'synchronize',
-				this.updateParametersFormState,
-				this
-		);
-		
-		this.documentExecutionPage.synchronize( this.executionInstance );
-	}
-	
-	
-	/**
-	 * update parameters form state when moving from parameters page to execution page
-	 * @method 
-	 */
-	, updateParametersFormState: function () {
-		var formState = this.parametersSelectionPage.parametersPanel.getFormState();
-		this.documentExecutionPage.parametersPanel.setFormState(formState);
-		// removes listener
-		this.documentExecutionPage.parametersPanel.un(
-				'synchronize',
-				this.updateParametersFormState,
-				this
-		);
-	}
+//	, loadUrlForExecution: function() {
+//		var formState = this.parametersSelectionPage.parametersPanel.getFormState();
+//		this.executionInstance.PARAMETERS = Sbi.commons.JSON.encode( formState );
+//		
+//		
+//		this.documentExecutionPage.synchronize( this.executionInstance );
+//	}
 	
 	/**
 	 * @method 
