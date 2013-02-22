@@ -23,7 +23,7 @@ Sbi.execution.DocumentPage = function(config, doc) {
 	Ext.apply(this, c);
 		
 	// add events
-    this.addEvents('beforetoolbarinit', 'beforesynchronize', 'moveprevrequest', 'loadurlfailure', 'crossnavigation', 'beforerefresh','collapse3', 'backToAdmin');
+    this.addEvents('beforesynchronize', 'moveprevrequest', 'loadurlfailure', 'crossnavigation', 'beforerefresh','collapse3', 'backToAdmin');
 
 	// declare exploited services
 	this.initServices();
@@ -65,11 +65,13 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
-	
-	
+		
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
+    // NOTE: the following methods initialize the interface with empty widgets. There are not yet a specific execution 
+    // instance to work on. The interface itself can change then when synchronization methods
+    // are invoked passing in a specific execution instance.
 	
 	/**
 	 * @method 
@@ -126,10 +128,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 						this.refr.defer(seconds*1000, this,[seconds]);
 					}
 			this.refr.defer(doc.refreshSeconds*1000, this,[doc.refreshSeconds]);
-		}
-		
-		
-		
+		}	
 	}
 	
 	/**
@@ -331,7 +330,50 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 	}
 	
 	
-    
+	// -----------------------------------------------------------------------------------------------------------------
+    // synchronization methods
+	// -----------------------------------------------------------------------------------------------------------------
+	// This methods change properly the interface according to the specific execution instance passed in
+	
+	/**
+	 * Called by Sbi.execution.ExecutionWizard when a new document execution starts. Force
+	 * the parameters' panel, the shorcuts' panel and toolbar re-synchronization. 
+	 * 
+	* @param {Object} executionInstance the execution configuration
+	* 
+	 * @method
+	 */
+	, synchronize: function( executionInstance ) {
+		
+		Sbi.debug('[DocumentPage.synchronize] : IN' );
+		
+		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
+			this.executionInstance = executionInstance;
+		
+			Ext.Ajax.request({
+		        url: this.services['getUrlForExecutionService'],
+		        params: executionInstance,
+		        success: function(response, options) {
+		      		if(response !== undefined && response.responseText !== undefined) {
+		      			var content = Ext.util.JSON.decode( response.responseText );
+		      			if(content !== undefined) {
+		      				if(content.errors !== undefined && content.errors.length > 0) {
+		      					this.fireEvent('loadurlfailure', content.errors);
+		      				} else {
+		      					this.miframe.getFrame().setSrc( content.url );
+		      				}
+		      			} 
+		      		} else {
+		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		      		}
+		        },
+		        scope: this,
+				failure: Sbi.exception.ExceptionHandler.handleFailure      
+		   });
+			
+			Sbi.debug('[DocumentPage.synchronize] : OUT' );
+		}
+	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
@@ -370,45 +412,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
     	}
 	}
 	
-	, synchronize: function( executionInstance, synchronizeSliders ) {
-		
-		Sbi.debug('[DocumentPage.synchronize] : IN' );
-		
-		synchronizeSliders = false;
-		
-		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
-			this.executionInstance = executionInstance;
-			
-			if(synchronizeSliders === undefined || synchronizeSliders === true) {
-
-				this.parametersPanel.synchronize(executionInstance);
-				this.shortcutsPanel.synchronize(executionInstance);
-			}
-			
-			Ext.Ajax.request({
-		        url: this.services['getUrlForExecutionService'],
-		        params: executionInstance,
-		        success: function(response, options) {
-		      		if(response !== undefined && response.responseText !== undefined) {
-		      			var content = Ext.util.JSON.decode( response.responseText );
-		      			if(content !== undefined) {
-		      				if(content.errors !== undefined && content.errors.length > 0) {
-		      					this.fireEvent('loadurlfailure', content.errors);
-		      				} else {
-		      					this.miframe.getFrame().setSrc( content.url );
-		      				}
-		      			} 
-		      		} else {
-		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-		      		}
-		        },
-		        scope: this,
-				failure: Sbi.exception.ExceptionHandler.handleFailure      
-		   });
-			
-			Sbi.debug('[DocumentPage.synchronize] : OUT' );
-		}
-	}
+	
 	
 	/**
 	 * @method

@@ -215,14 +215,53 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
      */
 	, shortcutsHidden: null
 	
+	/**
+     * @property {Sbi.execution.toolbar.DocumentExecutionPageToolbar} toolbar The panel toolbar. It changes
+     * its content according to the document current visualization modality (INFO, VIEW or EDIT) 
+     * 
+     */
 	, toolbar: null
 	
+	/**
+     * @property {Ext.Panel} mainPanel The main panel shown in the central region. It contains 
+     * the documentPanel that properly shows the document according to its current visualization modality 
+     * and the shortcutsSlider.
+     * 
+     */
 	, mainPanel: null
+	/**
+     * @property {Ext.Panel} documentPanel The panel that display the the document according to its current visualization modality. 
+     * It use a card layout. Each item is a panel used to visualize the document when it is in one specific visualization modality:
+     * 
+     *  - infoPage (Sbi.execution.InfoPage) is used when visualization modality is equal to INFO
+     *  - documentPage (Sbi.execution.DocumentPage) is used when visualization modality is equal to VIEW
+     * 
+     */
     , documentPanel: null
-    , shortcutsPanel: null
+    /**
+     * @property {Sbi.execution.InfoPage} infoPage The panel used to visualize document when visualization modality is equal to INFO
+     */
+    , infoPage: null 
+    /**
+     * @property {Sbi.execution.DocumentPage} documentPage The panel used to visualize document when visualization modality is equal to VIEW
+     */
+    , documentPage: null
+    /**
+     * @property {Ext.Panel} shortcutsSlider The slider panel that contains the shortchutPanel
+     */
     , shortcutsSlider: null
+    /**
+     * @property {Sbi.execution.ShortcutsPanel} shortcutsPanel The shortcutsPanel
+     */
+    , shortcutsPanel: null
     
+    /**
+     * @property {Ext.Panel} parametersSlider The slider panel that contains the parametersPanel
+     */
 	, parametersSlider: null
+	 /**
+     * @property {Sbi.execution.ParametersPanel} shortcutsPanel The parametersPanel
+     */
     , parametersPanel: null
    
     , loadingMask: null
@@ -508,8 +547,16 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	// This methods change properly the interface according to the specific execution instance passed in
 	
 	/**
-	 * Called by Sbi.execution.ExecutionWizard when a new document execution starts. Force
-	 * the parameters' panel, the shorcuts' panel and toolbar re-synchronization. 
+	 * Called by Sbi.execution.ExecutionWizard when a new document execution starts. Force re-synchronization
+	 * of the following child objects:
+	 * 
+	 *  - {@link Sbi.execution.ParametersSelectionPage#toolbar toolbar} 
+	 *  - {@link Sbi.execution.ParametersSelectionPage#infoPage infoPage} 
+	 *  - {@link Sbi.execution.ParametersSelectionPage#parametersPanel parametersPanel}
+	 *  - {@link Sbi.execution.ParametersSelectionPage#shortcutsPanel shortcutsPanel}  
+	 *  
+	 *  
+	 * {@link Sbi.execution.ParametersSelectionPage#documentPage documentPage} is re-synchronized only when it is shown to the user using method #showDocument
 	 * 
 	* @param {Object} executionInstance the execution configuration
 	* 
@@ -519,7 +566,11 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
     	Sbi.trace('[ParametersSelectionPage.synchronize]: IN');
 		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
 			this.executionInstance = executionInstance;
-			this.synchronizeToolbar( executionInstance );
+			
+			
+			
+			this.infoPage.synchronize( executionInstance );
+			this.showInfo();
 			
 			this.parametersPanelSynchronizationPending = true;
 			this.parametersPanel.synchronize( this.executionInstance );
@@ -530,10 +581,10 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 		Sbi.trace('[ParametersSelectionPage.synchronize]: OUT');
 	}
 
-    , synchronizeToolbar: function( executionInstance ){
+    , synchronizeToolbar: function( executionInstance, documentMode ){
     	Sbi.trace('[ParametersSelectionPage.synchronizeToolbar]: IN');
 		if(this.toolbar){
-			this.toolbar.documentMode = 'INFO';
+			this.toolbar.documentMode = documentMode || 'INFO';
 			this.toolbar.synchronize( this, executionInstance);
 		}
 		Sbi.trace('[ParametersSelectionPage.synchronizeToolbar]: IN');
@@ -548,6 +599,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 * @method
 	 */
 	, showInfo: function() {
+		this.synchronizeToolbar( this.executionInstance, 'INFO' );
 		this.documentPanel.getLayout().setActiveItem( 0 );
 	}
 	
@@ -559,8 +611,8 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 */
 	, showDocument: function() {
 		Sbi.trace('[ParametersSelectionPage.showDocument]: IN');
-		this.toolbar.documentMode = 'VIEW';
-		this.toolbar.synchronize( this, this.executionInstance);
+		
+		this.synchronizeToolbar( this.executionInstance, 'VIEW' );
 		
 		if(this.collapseParametersSliderOnExecution === true) {
 			this.collapseParametersSlider();
@@ -582,6 +634,11 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 		this.shortcutsSlider.collapse();
 	}
 
+	/**
+	 * @method
+	 * 
+	 *  Collapse the parameter panel
+	 */
 	, collapseParametersSlider: function() {
 		this.parametersSlider.collapse();
 	}
