@@ -42,6 +42,8 @@ Sbi.locale.ln['sbi.generic.download'] = 'Download';
 Sbi.locale.ln['sbi.generic.noItemsSelected'] = 'No items selected';
 Sbi.locale.ln['sbi.generic.value'] = 'Value';
 Sbi.locale.ln['sbi.generic.udpValues'] = 'Udp Values';
+Sbi.locale.ln['sbi.generic.author'] = 'Author';
+Sbi.locale.ln['sbi.generic.creationdate'] = 'Creation date';
 
 Sbi.locale.ln['sbi.generic.kpi'] = 'Kpi';
 Sbi.locale.ln['sbi.generic.nodetype'] = 'Node Type';
