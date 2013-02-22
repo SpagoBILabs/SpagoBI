@@ -270,3 +270,17 @@
 .red-row { background-color: #F5C0C0 !important; background-image: none !important } 
 .yellow-row { background-color: #FBF8BF !important; background-image: none !important } 
 .green-row { background-color: #99CC99 !important; background-image: none !important }
+
+.document-table-info {
+	font-size: 10pt;
+}
+
+.document-table-info-title {
+	font-weight: bold;
+	text-align: right;
+	padding: 1pt;
+}
+
+.document-table-info-content {
+	padding: 1pt;
+}

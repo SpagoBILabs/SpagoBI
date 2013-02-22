@@ -13,6 +13,7 @@ Sbi.execution.InfoPage = function(config, doc) {
 	var defaultSettings = {
 		// set default values here
 		bodyStyle: {padding: "50px"} 
+		, tablecellpadding: "10"
 	};
 
 	if (Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.infopage) {
@@ -114,13 +115,40 @@ Ext.extend(Sbi.execution.InfoPage, Ext.Panel, {
 	 *  "actions":[{"name":"showmetadata","description":"Show Metadata"}],"exporters":["PDF","XLS","RTF","JPG"],"decorators":{"isSavable":true}}
 						 */
 		var tpl = new Ext.XTemplate(
-			    '<p>Id: {id}</p>',
-			    '<p>Label: {label}</p>',
-			    '<p>Name: {name}</p>',
-			    '<p>Description: {description}</p>',
-			    '<p>Type: {typeCode}</p>',
-			    '<p>Creation date: {creationDate}</p>',
-			    '<p>Author: {creationUser}</p>'
+				
+			    '<table class="document-table-info">',
+			    '<tr>',
+			    ' <td rowspan="6">',
+			    	'<div class="group-view">',
+			    		'<div class="document-item-icon">',
+			    			'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon"></img></td>',
+			    		'</div>',
+			    	'</div>',
+			    ' </td>',
+			    ' <td class="document-table-info-title">' + LN('sbi.generic.label') + ':</td>',
+			    ' <td class="document-table-info-content">{label}</td>',
+			    '</tr>',
+			    '<tr>',
+			    ' <td class="document-table-info-title">' + LN('sbi.generic.name') + ':</td>',
+			    ' <td class="document-table-info-content">{name}</td>',
+			    '</tr>',
+			    '<tr>',
+			    ' <td class="document-table-info-title">' + LN('sbi.generic.descr') + ':</td>',
+			    ' <td class="document-table-info-content">{description}</td>',
+			    '</tr>',
+			    '<tr>',
+			    ' <td class="document-table-info-title">' + LN('sbi.generic.type') + ':</td>',
+			    ' <td class="document-table-info-content">{typeCode}</td>',
+			    '</tr>',
+			    '<tr>',
+			    ' <td class="document-table-info-title">' + LN('sbi.generic.creationdate') + ':</td>',
+			    ' <td class="document-table-info-content">{creationDate}</td>',
+			    '</tr>',
+			    '<tr>',
+			    ' <td class="document-table-info-title">' + LN('sbi.generic.author') + ':</td>',
+			    ' <td class="document-table-info-content">{creationUser}</td>',
+			    '</tr>',
+			    '</table>'
 			);
 		//tpl.overwrite(panel.body, data);
 		this.html = tpl.applyTemplate(this.document);

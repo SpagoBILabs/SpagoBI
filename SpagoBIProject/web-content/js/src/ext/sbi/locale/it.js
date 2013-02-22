@@ -55,6 +55,8 @@ Sbi.locale.ln['sbi.generic.engine'] = 'Motore';
 Sbi.locale.ln['sbi.generic.state'] = 'Stato';
 Sbi.locale.ln['sbi.generic.value'] = 'Valore';
 Sbi.locale.ln['sbi.generic.udpValues'] = 'Valori Udp';
+Sbi.locale.ln['sbi.generic.author'] = 'Autore';
+Sbi.locale.ln['sbi.generic.creationdate'] = 'Data di creazione';
 
 Sbi.locale.ln['sbi.generic.kpi'] = 'Kpi';
 Sbi.locale.ln['sbi.generic.nodetype'] = 'Tipo Nodo';

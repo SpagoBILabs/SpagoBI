@@ -43,6 +43,8 @@ Sbi.locale.ln['sbi.generic.upload'] = 'Upload';
 Sbi.locale.ln['sbi.generic.download'] = 'Download';
 Sbi.locale.ln['sbi.generic.noItemsSelected'] = 'Non è stato selezionato alcun elemento';
 Sbi.locale.ln['sbi.generic.udpValues'] = 'Valori Udp';
+Sbi.locale.ln['sbi.generic.author'] = 'Autore';
+Sbi.locale.ln['sbi.generic.creationdate'] = 'Data di creazione';
 
 Sbi.locale.ln['sbi.generic.kpi'] = 'Kpi';
 Sbi.locale.ln['sbi.generic.nodetype'] = 'Tipo Nodo';
