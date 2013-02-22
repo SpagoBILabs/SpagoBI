@@ -542,7 +542,7 @@ Ext.extend(Ext.ux.Andrie.Select, Ext.form.ComboBox, {
 					this.el.dom.select();
 				}
 				// ANDRIE
-				this.selectByValue(this.value, true);
+				this.selectByValue(this.valueArray, true);
 				/*if(!this.selectByValue(this.value, true)){
 					this.select(0, true);
 				}*/
@@ -560,6 +560,8 @@ Ext.extend(Ext.ux.Andrie.Select, Ext.form.ComboBox, {
 	},
 	
 	selectByValue:function(v, scrollIntoView){
+		Sbi.debug('[Select.selectByValue] : IN');
+		
 		this.hoverOut();
 		if(v !== undefined && v !== null){
 			if (!(v instanceof Array)){
@@ -568,7 +570,9 @@ Ext.extend(Ext.ux.Andrie.Select, Ext.form.ComboBox, {
 			var result = [];
 			for (var i=0, len=v.length; i<len; i++){
 				var value = v[i];
-				var r = this.findRecord(this.valueField || this.displayField, value);
+				var field = this.valueField || this.displayField;
+				var r = this.findRecord(field, value);
+				Sbi.debug('[Select.selectByValue] : field: [' + field + ']; value: [' + value +   ']; record: [' + r + ']');
 				if(r){
 					this.select(this.store.indexOf(r), scrollIntoView);
 					result.push(value);
@@ -576,6 +580,9 @@ Ext.extend(Ext.ux.Andrie.Select, Ext.form.ComboBox, {
 			}
 			return result.join(',');
 		}
+		
+		Sbi.debug('[Select.selectByValue] : OUT');
+		
 		return false;
 	},
 	
@@ -631,6 +638,7 @@ Ext.extend(Ext.ux.Andrie.Select, Ext.form.ComboBox, {
 			return;
 		}
 		this.view.select(index, this.multiSelect);
+		
 		if(scrollIntoView !== false){
 			var el = this.view.getNode(index);
 			if(el){
