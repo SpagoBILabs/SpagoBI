@@ -48,10 +48,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     
     Map backUrlPars = new HashMap();
     backUrlPars.put("PAGE", "detailParameterPage");
-	if(moduleResponse.getAttribute("SelectedLov") != null && ((String)moduleResponse.getAttribute("SelectedLov")).equalsIgnoreCase("true"))
-			backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO, "2");
-		else
-			backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO, "1");
+    backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO, "1");
     backUrlPars.put("MESSAGEDET", "EXIT_FROM_DETAIL");
     String backUrl = urlBuilder.getUrl(request, backUrlPars);
      String readonly = "readonly" ;

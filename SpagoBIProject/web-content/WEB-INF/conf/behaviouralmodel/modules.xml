@@ -115,7 +115,7 @@
 	          <!--PARAMETER name="TARGET" scope="" type="ABSOLUTE" value="DETAIL"/-->
 	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailParameterPage"/>
 	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_NEW"/>
-	          <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>
+	          <!-- PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/ -->
 	        </INSERT_BUTTON>
 	        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBIDev.ListParam.backButton" onlyPortletRunning="true">
 	          <PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>

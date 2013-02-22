@@ -10,12 +10,10 @@ import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dispatching.module.AbstractHttpModule;
-import it.eng.spago.dispatching.module.AbstractModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.navigation.LightNavigationManager;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spago.validation.coordinator.ValidationCoordinator;
@@ -27,6 +25,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
@@ -140,11 +139,22 @@ public class DetailParameterModule extends AbstractHttpModule {
 	
 	private void getDetailParameter(String key, SourceBean response) throws EMFUserError {
 		try {
-			this.modalita = AdmintoolsConstants.DETAIL_MOD;	
-			Parameter parameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(new Integer(key));
-			prepareParameterDetailPage(response, parameter, null, "", modalita, true, true);			
+			Object exitLovLookupLoopFlag = session.getAttribute("exitLovLookupLoop");
+			if (exitLovLookupLoopFlag != null) {
+				Parameter parameter = (Parameter) session.getAttribute("LookupParameter");
+				ParameterUse paruse = (ParameterUse) session.getAttribute("LookupParuse");
+				String modality = (String) session.getAttribute("modality");
+				prepareParameterDetailPage(response, parameter, paruse, paruse.getUseID().toString(), modality, false, false);
+				session.delAttribute("LookupParameter");
+				session.delAttribute("LookupParUse");
+				session.delAttribute("modality");
+				session.delAttribute("exitLovLookupLoop");
+			} else {
+				this.modalita = AdmintoolsConstants.DETAIL_MOD;	
+				Parameter parameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(new Integer(key));
+				prepareParameterDetailPage(response, parameter, null, "", modalita, true, true);
+			}
 		} catch (Exception ex) {
-
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","getDetailParameter","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -456,6 +466,17 @@ public class DetailParameterModule extends AbstractHttpModule {
 	    			} else selectedParuseIdStr = "-1";
 				}
     			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.MODIFY",logParam , "OK");
+    			
+    			Object saveAndGoBack = request.getAttribute("saveAndGoBack");
+    			if (saveAndGoBack != null) {
+    				// it is request to save the Parameter details and to go back
+    				exitFromDetail(request, response);
+    			} else {
+    				// it is requested to save and remain in the Parameter detail page
+    				prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr, 
+    						ObjectsTreeConstants.DETAIL_MOD, true, true);
+    			}
+    			
     		} else {
     			ValidationCoordinator.validate("PAGE", "ParameterValidation", this);
     			parameterLabelControl(parameter, mod);
@@ -489,17 +510,17 @@ public class DetailParameterModule extends AbstractHttpModule {
     			
     			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD",logParam , "OK");
     			
+    			Object saveAndGoBack = request.getAttribute("saveAndGoBack");
+    			if (saveAndGoBack != null) {
+    				// it is request to save the Parameter details and to go back
+    				exitFromDetail(request, response);
+    			} else {
+    				// it is requested to save and remain in the Parameter detail page
+    				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "afterInsertionLoop");
+    				response.setAttribute("id", parameter.getId().toString());
+    			}
+    			
     		}
-			
-			Object saveAndGoBack = request.getAttribute("saveAndGoBack");
-			if (saveAndGoBack != null) {
-				// it is request to save the Parameter details and to go back
-				exitFromDetail(request, response);
-			} else {
-				// it is requested to save and remain in the Parameter detail page
-				prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr, 
-						ObjectsTreeConstants.DETAIL_MOD, true, true);
-			}
             
 		} catch (Exception ex) {			
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","modDetailParameter","Cannot fill response container", ex  );
@@ -829,8 +850,6 @@ public class DetailParameterModule extends AbstractHttpModule {
 				parameter.setTypeId(domain.getValueId());
 			}
 			response.setAttribute("parametersObj", parameter);
-			//sets information for future definitions of back return
-			session.setAttribute("originIns", "true");
 		} catch (Exception ex) {
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule","newDetailParameter","Cannot prepare page for the insertion", ex  );
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DRIVER.ADD",null , "ERR");
@@ -1004,11 +1023,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 	}
 	
 	private void lookupReturnHandler (SourceBean request, SourceBean response) throws SourceBeanException, EMFUserError {
-		RequestContainer requestContainer = this.getRequestContainer();
-		SessionContainer session = requestContainer.getSessionContainer();
-		Parameter parameter = (Parameter) session.getAttribute("LookupParameter");
 		ParameterUse paruse = (ParameterUse) session.getAttribute("LookupParuse");
-		String modality = (String) session.getAttribute("modality");
 		Boolean isForDefault = (Boolean) session.getAttribute("isForDefault");
 		String selectedLovId = (String) request.getAttribute("ID");
 		if (isForDefault) {
@@ -1016,26 +1031,15 @@ public class DetailParameterModule extends AbstractHttpModule {
 		} else {
 			paruse.setIdLov(Integer.valueOf(selectedLovId));
 		}
-		prepareParameterDetailPage(response, parameter, paruse, paruse.getUseID().toString(), modality, false, false);	
-		session.delAttribute("LookupParameter");
-		session.delAttribute("LookupParUse");
-		session.delAttribute("modality");
 		session.delAttribute("isForDefault");
-		session.setAttribute("SelectedLov", "true");
-		response.setAttribute("SelectedLov", "true");
+		session.setAttribute("exitLovLookupLoop", Boolean.TRUE);
+		response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "exitLovLookupLoop");
 	}
 	
 	private void lookupReturnBackHandler (SourceBean request, SourceBean response) throws SourceBeanException, EMFUserError {
-		RequestContainer requestContainer = this.getRequestContainer();
-		SessionContainer session = requestContainer.getSessionContainer();
-		Parameter parameter = (Parameter) session.getAttribute("LookupParameter");
-		ParameterUse paruse = (ParameterUse) session.getAttribute("LookupParuse");
-		String modality = (String) session.getAttribute("modality");
-		prepareParameterDetailPage(response, parameter, paruse, paruse.getUseID().toString(), modality, false, false);
-		session.delAttribute("LookupParameter");
-		session.delAttribute("LookupParUse");
-		session.delAttribute("modality");
 		session.delAttribute("isForDefault");
+		session.setAttribute("exitLovLookupLoop", Boolean.TRUE);
+		response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "exitLovLookupLoop");
 	}
 	
 	/**
@@ -1046,20 +1050,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 	 * @throws SourceBeanException
 	 */
 	private void exitFromDetail (SourceBean request, SourceBean response) throws SourceBeanException {
-		/*
-		 * define the number of 'page' to return dipendently from the tour of navigation 
-		 * (expecially if the user is went until lookup lov and selected one)
-		 */
-		if(session.getAttribute("SelectedLov") != null && ((String)session.getAttribute("SelectedLov")).equalsIgnoreCase("true") &&
-		   (session.getAttribute("originIns") == null || !((String)session.getAttribute("originIns")).equalsIgnoreCase("true")))
-			response.setAttribute(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO, "2");
-		else
-			response.setAttribute(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO, "1");
-		
 		session.delAttribute("initial_Parameter");
 		session.delAttribute("initial_ParameterUse");
-		session.delAttribute("SelectedLov");
-		session.delAttribute("originIns");
 		session.delAttribute("isForDefault");
 		response.setAttribute("loopback", "true");
 	}

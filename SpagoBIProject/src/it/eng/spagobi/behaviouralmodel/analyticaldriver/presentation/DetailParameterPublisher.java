@@ -13,7 +13,9 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.presentation.PublisherDispatcherIFace;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
 import org.apache.log4j.Logger;
 /**
@@ -66,6 +68,13 @@ public class DetailParameterPublisher implements PublisherDispatcherIFace {
 		// if there are some errors into the errorHandler (not validation errors), return the name for the errors publisher
 		if(!errorHandler.isOKBySeverity(EMFErrorSeverity.ERROR)) {
 			return new String("error");
+		}
+		
+		String publisherName = (String) moduleResponse.getAttribute(SpagoBIConstants.PUBLISHER_NAME);
+		logger.debug(SpagoBIConstants.PUBLISHER_NAME + ": "  + publisherName);
+
+		if (publisherName != null) {
+			return publisherName;
 		}
 
 		//getting publisher name dependently from navigation (ie. document - insert parameter - back) 

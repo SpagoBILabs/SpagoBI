@@ -170,17 +170,35 @@
       		</RESOURCES>
    	 	</RENDERING>
   	</PUBLISHER>
+  	<PUBLISHER name="afterInsertionLoop">
+        <RENDERING channel="PORTLET" mode="" type="LOOP">
+            <RESOURCES>
+                <PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DetailParameterPage" />
+                <PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="DETAIL_SELECT" />
+                <PARAMETER name="id" type="RELATIVE" scope="SERVICE_RESPONSE" value="DetailParameterModule.id" />
+                <PARAMETER name="LIGHT_NAVIGATOR_REPLACE_LAST" type="ABSOLUTE" scope="" value="true" />
+            </RESOURCES>
+        </RENDERING>
+        <RENDERING channel="HTTP" mode="" type="LOOP">
+            <RESOURCES>
+                <PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DetailParameterPage" />
+                <PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="DETAIL_SELECT" />
+                <PARAMETER name="id" type="RELATIVE" scope="SERVICE_RESPONSE" value="DetailParameterModule.id" />
+                <PARAMETER name="LIGHT_NAVIGATOR_REPLACE_LAST" type="ABSOLUTE" scope="" value="true" />
+            </RESOURCES>
+        </RENDERING>
+    </PUBLISHER>
   	<PUBLISHER name="detailParameterLoop">
     	<RENDERING channel="PORTLET" mode="" type="LOOP">
       		<RESOURCES>
         		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListParametersPage" />
-        		  <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="RELATIVE" scope="SERVICE_RESPONSE" value="DetailParameterModule.LIGHT_NAVIGATOR_BACK_TO" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
       		</RESOURCES>
    	 	</RENDERING>
    	 	<RENDERING channel="HTTP" mode="" type="LOOP">
       		<RESOURCES>
         		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListParametersPage" />
-        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="RELATIVE" scope="SERVICE_RESPONSE" value="DetailParameterModule.LIGHT_NAVIGATOR_BACK_TO" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
       		</RESOURCES>
    	 	</RENDERING>
   	</PUBLISHER>
@@ -196,6 +214,18 @@
         	</RESOURCES>
    	 	</RENDERING>
   	</PUBLISHER>
+    <PUBLISHER name="exitLovLookupLoop">
+        <RENDERING channel="PORTLET" mode="" type="LOOP">
+            <RESOURCES>
+            <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+            </RESOURCES>
+        </RENDERING>
+        <RENDERING channel="HTTP" mode="" type="LOOP">
+            <RESOURCES>
+            <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+            </RESOURCES>
+        </RENDERING>
+    </PUBLISHER>
 
   	<PUBLISHER name="LookupPublisher">
     	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
