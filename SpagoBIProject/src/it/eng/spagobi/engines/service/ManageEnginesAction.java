@@ -5,13 +5,17 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.service;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.deserializer.DeserializerFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -60,6 +64,8 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 			insertEngine(engineDao);
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(EngineConstants.ENGINE_DELETE)) {			
 			deleteEngine(engineDao);
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(EngineConstants.ENGINE_DATASOURCES)) {			
+			getDataSources();
 		} else {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to process action of type [" + serviceType + "]");
 		}
@@ -95,18 +101,83 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 		JSONObject results;
 
 		results = new JSONObject();
-		results.put("total", totalResNumber);
-		results.put("title", "Datasets");
+
 		results.put("rows", rows);
 		return results;
 	}
 	
-	private void insertEngine(IEngineDAO engineDao) {
-		throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to save engine");
+	private void getDataSources(){
+		IDataSourceDAO dataSourceDao = null;
+		profile = getUserProfile();
+		List<DataSource> dataSources;
+
+		try {
+			dataSourceDao = DAOFactory.getDataSourceDAO();
+			dataSourceDao.setUserProfile(profile);
+			dataSources = dataSourceDao.loadAllDataSources();
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME,	"An unexpected error occured while instatiating the dao", t);			
+
+		}
+		
+		JSONObject responseJSON;
+		try {
+			JSONArray dataSourcesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSources, getLocale());
+			responseJSON = createJSONResponse(dataSourcesJSON, dataSources.size());
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to serialize engines", t);
+		}
+		
+		try {
+			writeBackToClient(new JSONSuccess(responseJSON));
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back response to client", t);
+		}
+		
+		
 	}
 	
+	//TODO: to implement code
+	private void insertEngine(IEngineDAO engineDao) {
+		Engine engine ;
+		try {
+			JSONObject encodedValues = this.getAttributeAsJSONObject("engineValues");
+			
+			engine = (Engine)DeserializerFactory.getDeserializer("application/json").deserialize(encodedValues, Engine.class);
+			if (engine.getId() != null){
+				logger.debug("Engine modified inserted");
+				engineDao.modifyEngine(engine);
+
+			} else {
+				logger.debug("New Engine inserted");
+				engineDao.insertEngine(engine);
+			}
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to save or modify engine", t);
+		}
+		
+		try {
+			logger.debug("Engine Operation succeded");
+			JSONObject attributesResponseSuccessJSON = new JSONObject();
+			attributesResponseSuccessJSON.put("success", true);
+			attributesResponseSuccessJSON.put("responseText", "Operation succeded");
+			writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back response to client", t);
+		}
+		
+	}
+	
+	//TODO: to implement code
 	private void deleteEngine(IEngineDAO engineDao) {
-		throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to delete engine");
+		try {
+			//engineDao.eraseEngine(aEngine);
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to delete engine", t);
+		}
+		
+		
 	}
 
 

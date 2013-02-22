@@ -8,6 +8,9 @@
   <ACTION name="MANAGE_ENGINE_ACTION" class="it.eng.spagobi.engines.service.ManageEnginesAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
+   <ACTION name="MANAGE_DOMAIN_ACTION" class="it.eng.spagobi.commons.services.ManageDomainService" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
 
 </ACTIONS>
 

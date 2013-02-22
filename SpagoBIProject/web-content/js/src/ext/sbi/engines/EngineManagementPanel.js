@@ -334,7 +334,6 @@ Ext
 							xtype : 'combo'
 						});
 
-						// added
 						this.detailFieldEngineType = new Ext.form.ComboBox ({
 							name : 'engineType',
 							store : this.engineTypesStore,
@@ -382,7 +381,16 @@ Ext
 							validationEvent : true,
 						});
 						
-						
+						this.detailFieldClass = new Ext.form.TextField ({
+							maxLength : 50,
+							minLength : 1,
+							width : 350,
+							regexText : LN('sbi.roles.alfanumericString'),
+							fieldLabel : 'Class',
+							allowBlank : true,
+							validationEvent : false,
+							name : 'class'
+						});
 
 
 						this.detailFieldUrl = new Ext.form.TextField ({
@@ -453,6 +461,7 @@ Ext
 												this.detailFieldUseDataSet,
 												this.detailFieldUseDataSource,
 												this.detailFieldDataSource,
+												this.detailFieldClass,
 												this.detailFieldUrl,
 												this.detailFieldSecondaryUrl,
 												this.detailFieldDriverName
@@ -563,7 +572,8 @@ Ext
 					}
 
 					,
-					updateNewRecord : function(record, values, customString) {
+					updateNewRecord : function(record, values) {
+						record.set('id', values['id']);
 						record.set('label', values['label']);
 						record.set('name', values['name']);
 						record.set('description', values['description']);
@@ -580,9 +590,9 @@ Ext
 						// record.set('pars',arrayPars);
 						// }
 
-						if (customString) {
-							record.set('customData', customString);
-						}
+//						if (customString) {
+//							record.set('customData', customString);
+//						}
 
 					}
 
@@ -626,9 +636,9 @@ Ext
 					getValues : function() {
 						//var values = this.getForm().getFieldValues();
 						
-						//TODO: deve diventare, ricavo i valori del form a mano e li ritorno
+						//Manual setting of values
 						var values = {};
-						// values.name = this.nameFiled.getValue();
+						values.id = "";
 						values.name = this.detailFieldName.getValue();
 						values.label = this.detailFieldLabel.getValue();
 						values.description = this.detailFieldDescr.getValue();
@@ -637,6 +647,7 @@ Ext
 						values.useDataSet = this.detailFieldUseDataSet.getValue();
 						values.useDataSource = this.detailFieldUseDataSource.getValue();
 						values.dataSource = this.detailFieldDataSource.getValue();
+						values.class = this.detailFieldClass.getValue();						
 						values.url = this.detailFieldUrl.getValue();
 						values.secondaryUrl = this.detailFieldSecondaryUrl.getValue();
 						values.driver = this.detailFieldDriverName.getValue();
@@ -649,7 +660,7 @@ Ext
 					setValues : function(rec) {
 						//this.getForm().loadRecord(record);
 
-						// TODO: Settare tutti i campi a mano in questo modo
+						//Manual setting of values
 						
 						this.detailFieldName.setValue( rec.get('name'));
 						this.detailFieldLabel.setValue( rec.get('label'));
@@ -660,6 +671,7 @@ Ext
 						this.detailFieldUseDataSource.setValue(rec.get('useDataSource'));
 						this.detailFieldDataSource.setValue(rec.get('dataSourceId'));
 						this.detailFieldUrl.setValue(rec.get('url'));
+						this.detailFieldClass.setValue(rec.get('class'));						
 						this.detailFieldSecondaryUrl.setValue(rec.get('secondaryUrl'));
 						this.detailFieldDriverName.setValue(rec.get('driver'));
 					}
@@ -686,16 +698,15 @@ Ext
 
 						var idRec = values['id'];
 						var newRec;
-						var newDsVersion;
+						//var newDsVersion;
 						var isNewRec = false;
 						var params = this.buildParamsToSendToServer(values);
 						params.recalculateMetadata = recalculateMetadata;
 						// var arrayPars = this.manageParsGrid.getParsArray();
-						var customString = this.customDataGrid.getDataString();
+						//var customString = this.customDataGrid.getDataString();
 
 						if (idRec == 0 || idRec == null || idRec === '') {
-							this.updateNewRecord(this.newRecord, values,
-									customString);
+							this.updateNewRecord(this.newRecord, values);
 							isNewRec = true;
 						} else {
 							var record;
@@ -709,29 +720,31 @@ Ext
 									oldType = record.get('dsTypeCd');
 								}
 							}
-							this.updateNewRecord(record, values, customString);
+							this.updateNewRecord(record, values);
 
-							newDsVersion = new Ext.data.Record({
-								dsId : values['id'],
-								dateIn : values['dateIn'],
-								userIn : values['userIn'],
-								versId : values['versId'],
-								type : oldType,
-								versNum : values['versNum']
-							});
+//							newDsVersion = new Ext.data.Record({
+//								dsId : values['id'],
+//								dateIn : values['dateIn'],
+//								userIn : values['userIn'],
+//								versId : values['versId'],
+//								type : oldType,
+//								versNum : values['versNum']
+//							});
 						}
 
 						// if (arrayPars) {
 						// params.pars = Ext.util.JSON.encode(arrayPars);
 						// }
-						if (customString) {
-							params.customData = Ext.util.JSON
-									.encode(customString);
-						}
+//						if (customString) {
+//							params.customData = Ext.util.JSON
+//									.encode(customString);
+//						}
 
 						if (idRec) {
 							params.id = idRec;
 						}
+						//Serialize form values to JSON Object
+						params.engineValues = Ext.util.JSON.encode(values);
 
 						Ext.Ajax
 								.request({
@@ -752,7 +765,8 @@ Ext
 																width : 150,
 																buttons : Ext.MessageBox.OK
 															});
-												} else {
+												}
+												else {
 													var itemId = content.id;
 													var dateIn = content.dateIn;
 													var userIn = content.userIn;
@@ -804,20 +818,20 @@ Ext
 															}
 														}
 													} else {
-														if (newDsVersion != null
-																&& newDsVersion != undefined) {
-															this.manageDsVersionsGrid
-																	.getStore()
-																	.addSorted(
-																			newDsVersion);
-															this.manageDsVersionsGrid
-																	.getStore()
-																	.commitChanges();
-															var values = this
-																	.getValues();
-															this
-																	.updateDsVersionsOfMainStore(values['id']);
-														}
+//														if (newDsVersion != null
+//																&& newDsVersion != undefined) {
+//															this.manageDsVersionsGrid
+//																	.getStore()
+//																	.addSorted(
+//																			newDsVersion);
+//															this.manageDsVersionsGrid
+//																	.getStore()
+//																	.commitChanges();
+//															var values = this
+//																	.getValues();
+//															this
+//																	.updateDsVersionsOfMainStore(values['id']);
+//														}
 													}
 													this.mainElementsStore
 															.commitChanges();
@@ -855,51 +869,39 @@ Ext
 								});
 					}
 
-					// ,
-					// manageQbeQuery : function(theQbeDatasetBuilder, qbeQuery)
-					// {
-					// var jsonQuery = qbeQuery.data.jsonQuery;
-					// this.qbeJSONQuery.setValue(Ext.util.JSON.encode(jsonQuery));
-					// var sqlQuery = qbeQuery.data.sqlQuery.sql;
-					// this.qbeSQLQuery.setValue(sqlQuery);
-					// var datamarts = qbeQuery.data.datamarts;
-					// this.qbeDatamarts.setValue(datamarts);
-					// var parameters = qbeQuery.data.parameters;
-					// this.manageParsGrid.loadItems([]);
-					// this.manageParsGrid.loadItems(parameters);
-					// }
 
-					,
-					jsonTriggerFieldHandler : function() {
-						var values = this.getValues();
-						var datasetId = values['id'];
-						var datasourceLabel = this.detailQbeDataSource
-								.getValue();
-						if (datasourceLabel == '') {
-							Ext.MessageBox
-									.show({
-										title : LN('sbi.generic.error'),
-										msg : LN('sbi.tools.managedatasets.errors.missingdatasource'),
-										width : 150,
-										buttons : Ext.MessageBox.OK
-									});
-							return;
-						}
-						if (datamart == '') {
-							Ext.MessageBox
-									.show({
-										title : LN('sbi.generic.error'),
-										msg : LN('sbi.tools.managedatasets.errors.missingdatamart'),
-										width : 150,
-										buttons : Ext.MessageBox.OK
-									});
-							return;
-						}
-						var datamart = this.qbeDatamarts.getValue();
-						this.initQbeDataSetBuilder(datasourceLabel, datamart,
-								datasetId);
-						this.qbeDataSetBuilder.show();
-					}
+
+//					,
+//					jsonTriggerFieldHandler : function() {
+//						var values = this.getValues();
+//						var datasetId = values['id'];
+//						var datasourceLabel = this.detailQbeDataSource
+//								.getValue();
+//						if (datasourceLabel == '') {
+//							Ext.MessageBox
+//									.show({
+//										title : LN('sbi.generic.error'),
+//										msg : LN('sbi.tools.managedatasets.errors.missingdatasource'),
+//										width : 150,
+//										buttons : Ext.MessageBox.OK
+//									});
+//							return;
+//						}
+//						if (datamart == '') {
+//							Ext.MessageBox
+//									.show({
+//										title : LN('sbi.generic.error'),
+//										msg : LN('sbi.tools.managedatasets.errors.missingdatamart'),
+//										width : 150,
+//										buttons : Ext.MessageBox.OK
+//									});
+//							return;
+//						}
+//						var datamart = this.qbeDatamarts.getValue();
+//						this.initQbeDataSetBuilder(datasourceLabel, datamart,
+//								datasetId);
+//						this.qbeDataSetBuilder.show();
+//					}
 
 					// , initQbeDataSetBuilder: function(datasourceLabel,
 					// datamart, datasetId) {
