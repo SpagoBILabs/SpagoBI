@@ -32,7 +32,7 @@ Sbi.widgets.TreeLookUpField = function(config) {
 
 	this.rootConfig = {
 		text : 'root',
-		triggerClass : 'tree-look-up',
+		
 		expanded : true,
 		id : 'lovroot___SEPA__0'
 	};
@@ -41,7 +41,8 @@ Sbi.widgets.TreeLookUpField = function(config) {
 	this.initWin();
 
 	var c = Ext.apply({}, config, {
-		triggerClass : 'x-form-search-trigger',
+		//triggerClass : 'x-form-search-trigger',
+		triggerClass : 'tree-look-up',
 		enableKeyEvents : true,
 		width : 150
 	// , readOnly: true
@@ -83,6 +84,7 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 				attr.text = attr.description;
 
 				if (attr.leaf) {
+					attr.iconCls = 'parameter-leaf';
 					if (thisPanel.xvalues
 							&& thisPanel.xvalues.indexOf(attr.value) >= 0) {
 						attr.checked = true;
@@ -113,6 +115,28 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 		// , rootVisible: false
 		});
 
+		
+		var tb = new Ext.Toolbar({
+		    items: [ '->'
+  	               , {
+  	 				text : LN('sbi.lookup.Annulla'),
+  	 				listeners : {
+  	 					'click' : {
+  	 						fn : this.onCancel,
+  	 						scope : this
+  	 					}
+  	 				}
+  	 			}, {
+  	 				text : LN('sbi.lookup.Confirm'),
+  	 				listeners : {
+  	 					'click' : {
+  	 						fn : this.onOk,
+  	 						scope : this
+  	 					}
+  	 				}
+  	 			} ]
+		});
+		
 		this.win = new Ext.Window({
 			title : LN('sbi.lookup.Select'),
 			layout : 'fit',
@@ -121,23 +145,7 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 			closeAction : 'hide',
 			plain : true,
 			items : [ this.tree ],
-			buttons : [ {
-				text : LN('sbi.lookup.Annulla'),
-				listeners : {
-					'click' : {
-						fn : this.onCancel,
-						scope : this
-					}
-				}
-			}, {
-				text : LN('sbi.lookup.Confirm'),
-				listeners : {
-					'click' : {
-						fn : this.onOk,
-						scope : this
-					}
-				}
-			} ]
+			bbar: tb
 		});
 
 	}
