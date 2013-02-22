@@ -40,7 +40,7 @@ public class EngineConstants {
 	public static final String ENGINE_LIST = "ENGINE_LIST";
 	public static final String ENGINE_INSERT = "ENGINE_INSERT";
 	public static final String ENGINE_DELETE = "ENGINE_DELETE";
-	
+	public static final String ENGINE_DATASOURCES = "ENGINE_DATASOURCES";
 	public static final String MESSAGE_DET = "MESSAGE_DET";
 
 }
