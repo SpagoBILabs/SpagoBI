@@ -32,7 +32,7 @@ Sbi.widgets.TreeLookUpField = function(config) {
 
 	this.rootConfig = {
 		text : 'root',
-		
+		triggerClass : 'tree-look-up',
 		expanded : true,
 		id : 'lovroot___SEPA__0'
 	};
@@ -41,7 +41,6 @@ Sbi.widgets.TreeLookUpField = function(config) {
 	this.initWin();
 
 	var c = Ext.apply({}, config, {
-		//triggerClass : 'x-form-search-trigger',
 		triggerClass : 'tree-look-up',
 		enableKeyEvents : true,
 		width : 150
@@ -83,7 +82,7 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 			createNode : function(attr) {
 				attr.text = attr.description;
 
-				if (attr.leaf) {
+				if (attr.leaf && thisPanel.multivalue) {
 					attr.iconCls = 'parameter-leaf';
 					if (thisPanel.xvalues
 							&& thisPanel.xvalues.indexOf(attr.value) >= 0) {
@@ -95,10 +94,17 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 				}
 				var node = Ext.tree.TreeLoader.prototype.createNode.call(this,
 						attr);
-				if (attr.checked) {
-					node.on('append',
-							function(tree, thisNode, childNode, index) {
-								thisNode.getUI().toggleCheck(false);
+//				if (attr.checked) {
+//					node.on('append',
+//							function(tree, thisNode, childNode, index) {
+//								thisNode.getUI().toggleCheck(false);
+//							}, this);
+//				}
+				
+				if (!thisPanel.multivalue && attr.leaf ) {
+					node.on('click',
+							function(node, e) {
+								thisPanel.onOkSingleValue(node);
 							}, this);
 				}
 
@@ -115,28 +121,6 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 		// , rootVisible: false
 		});
 
-		
-		var tb = new Ext.Toolbar({
-		    items: [ '->'
-  	               , {
-  	 				text : LN('sbi.lookup.Annulla'),
-  	 				listeners : {
-  	 					'click' : {
-  	 						fn : this.onCancel,
-  	 						scope : this
-  	 					}
-  	 				}
-  	 			}, {
-  	 				text : LN('sbi.lookup.Confirm'),
-  	 				listeners : {
-  	 					'click' : {
-  	 						fn : this.onOk,
-  	 						scope : this
-  	 					}
-  	 				}
-  	 			} ]
-		});
-		
 		this.win = new Ext.Window({
 			title : LN('sbi.lookup.Select'),
 			layout : 'fit',
@@ -145,7 +129,23 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 			closeAction : 'hide',
 			plain : true,
 			items : [ this.tree ],
-			bbar: tb
+			buttons : [ {
+				text : LN('sbi.lookup.Annulla'),
+				listeners : {
+					'click' : {
+						fn : this.onCancel,
+						scope : this
+					}
+				}
+			}, {
+				text : LN('sbi.lookup.Confirm'),
+				listeners : {
+					'click' : {
+						fn : this.onOk,
+						scope : this
+					}
+				}
+			} ]
 		});
 
 	}
@@ -158,14 +158,23 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 
 	,
 	onOk : function() {
-		var v = this.getDescription();
-		this.setValue(v);
-		//v//ar v = this.getCheckedValue();
-		//this.setRawValue(v);
+		var d = this.getCheckedValue();
+		this.setValue(d);
+		var v = this.getCheckedDescription();
+		this.setRawValue(v);
 		this.fireEvent('select', this, v);
 		this.win.hide();
 	}
 
+	,
+	onOkSingleValue : function(value) {
+
+		this.setValue(value.attributes.value);
+		this.setRawValue(value.attributes.description);
+		this.fireEvent('select', this, value.attributes.value);
+		this.win.hide();
+	}
+	
 	,
 	onCancel : function() {
 		this.win.hide();
@@ -174,11 +183,17 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 	,
 	setValue : function(values) {
 		var pvalues = "";
+
 		if (values) {
-			for ( var i = 0; i < values.length; i++) {
-				pvalues = pvalues + ";" + (values[i]);
+			if(values instanceof Array) {
+				for ( var i = 0; i < values.length; i++) {
+					pvalues = pvalues + ";" + (values[i]);
+				}
+				pvalues = pvalues.substring(1);
+			}else{
+				pvalues = values;
+				values = values.split(";");
 			}
-			pvalues = pvalues.substring(1);
 			Sbi.widgets.LookupField.superclass.setValue.call( this, pvalues);
 		}
 		this.xvalues = values;
@@ -188,15 +203,21 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 	,
 	setRawValue : function(values) {
 		var pvalues = "";
-		if (values) {
-			for ( var i = 0; i < values.length; i++) {
-				pvalues = pvalues + ";" + (values[i]);
-			}
-			pvalues = pvalues.substring(1);
-			// Sbi.widgets.TreeLookUpField.superclass.setRawValue(pvalues);
-			this.el.dom.value = pvalues;
+		
 
+		if (values) {
+			if(values instanceof Array) {
+				for ( var i = 0; i < values.length; i++) {
+					pvalues = pvalues + ";" + (values[i]);
+				}
+				pvalues = pvalues.substring(1);
+			}else{
+				pvalues = values;
+				values = values.split(";");
+			}
+			Sbi.widgets.LookupField.superclass.setRawValue.call( this, pvalues);
 		}
+		this.xvalues = values;
 
 	}
 
@@ -212,16 +233,9 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 		this.xvalues = values;
 		return values;
 	}
-
+	
 	,
-	getValue : function() {
-		if (this.xvalues)
-			return this.xvalues;
-		return new Array();
-	}
-
-	,
-	getDescription : function() {
+	getCheckedDescription : function() {
 		var checked = this.tree.getChecked();
 		var descriptions = [];
 		if (checked) {
@@ -232,40 +246,31 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 		return descriptions;
 	}
 
+	,
+	getValue : function() {
+		var v = Sbi.widgets.LookupField.superclass.getValue.call( this);
+		var values = [];
+		if(v){
+			values = v.split(";");
+		}
+		this.xvalues = values;
+		return this.xvalues;
+	}
+
+
+
 	// if the parameters has been change we reload the tree
 	,
 	reloadTree : function(formParams) {
 		if (formParams && formParams != this.oldFormParams) {
-//			
-////			if(this.tree){
-////				this.tree.destroy();	
-////				this.tree=null;
-////			}
-//			
-//			if(this.win){
-//				this.win.destroy();	
-//				this.win=null;
-//			}
-//
-//			
-//			this.params.PARAMETERS = formParams;
-//			this.initWin();
-			
 			if(formParams && formParams!=this.oldFormParams){
 				this.params.PARAMETERS =  formParams;
 				this.treeLoader.baseParams =this.params;
 				var newRoot = new Ext.tree.AsyncTreeNode(this.rootConfig);
 				this.tree.setRootNode(newRoot);
 			}
+
 		}
 	}
 
 });
-
-
-
-
-
-
-
-
