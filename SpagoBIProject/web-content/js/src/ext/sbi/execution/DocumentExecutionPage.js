@@ -3,35 +3,6 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
-  
- 
-/**
-  * Object name 
-  * 
-  * [description]
-  * 
-  * 
-  * Public Properties
-  * 
-  * [list]
-  * 
-  * 
-  * Public Methods
-  * 
-  *  [list]
-  * 
-  * 
-  * Public Events
-  * 
-  *  [list]
-  * 
-  * Authors
-  * 
-  * - name (mail)
-  */
 
 Ext.ns("Sbi.execution");
 
@@ -102,7 +73,7 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 			this.fireEvent('beforerefresh', this, this.executionInstance, formState);
 		}, this);
 		
-		this.toolbar.on('beforetoolbarinit', function () {
+		this.toolbar.on('beforeinit', function () {
 			this.fireEvent('beforetoolbarinit', this, this.toolbar);
 		}, this);
 		
@@ -169,7 +140,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
 			this.executionInstance = executionInstance;
 			if(this.toolbar){
-				this.toolbar.synchronizeToolbar( executionInstance,this.miframe,this.southPanel,this.eastPanel,this.parametersPanel,this.shortcutsPanel);
+				this.toolbar.synchronize( this, executionInstance,this.miframe,this.southPanel,this.eastPanel,this.parametersPanel,this.shortcutsPanel);
 			}
 			if(synchronizeSliders === undefined || synchronizeSliders === true) {
 
@@ -232,16 +203,11 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	
 	, initToolbar: function( config ) {
 		
-        this.toolbarConfig = config.executionToolbarConfig || {} ;
-		
+        
 		if (this.toolbarHiddenPreference) 
 			return;
 			
-		/*this.toolbar = new Ext.Toolbar({
-			items: ['']
-		});*/
-		var c = {TOOLBAR_CONFIG: this.toolbarConfig};
-		this.toolbar = new Sbi.execution.toolbar.DocumentExecutionPageToolbar(c);
+		this.toolbar = new Sbi.execution.toolbar.DocumentExecutionPageToolbar(config.executionToolbarConfig);
 		this.toolbar.on('render', function() {}, this);
 		this.toolbar.on('showmask', this.showMask, this);
 	}

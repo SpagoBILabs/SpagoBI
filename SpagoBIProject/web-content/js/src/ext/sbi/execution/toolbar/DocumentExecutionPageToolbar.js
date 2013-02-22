@@ -4,110 +4,971 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
-  
- 
-  
- 
-/**
-  * Object name 
-  * 
-  * [description]
-  * 
-  * 
-  * Public Properties
-  * 
-  * [list]
-  * 
-  * 
-  * Public Methods
-  * 
-  *  [list]
-  * 
-  * 
-  * Public Events
-  * 
-  *  [list]
-  * 
-  * Authors
-  * 
-  * Chiara Chiarelli
-  */
-
-
 Ext.ns("Sbi.execution.toolbar");
 
 Sbi.execution.toolbar.DocumentExecutionPageToolbar = function(config) {	
 	
-	this.toolbarConfig = config.TOOLBAR_CONFIG;
-	
-	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
-	
-	this.services = new Array();
-	this.services['showSendToForm'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'SHOW_SEND_TO_FORM'
-		, baseParams: params
-	});
-	
-	this.services['saveIntoPersonalFolder'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'SAVE_PERSONAL_FOLDER'
-		, baseParams: params
-	});
-	
-	this.services['toPdf'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'EXPORT_PDF'
-		, baseParams: params
-	});
+	// init properties...
+	var defaultSettings = {
+		// set default values here
+		documentMode: 'INFO'
+		, expandBtnVisible: true
+	};
 
-	this.services['toDCPdf'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'EXPORT_DOCUMENT_COMPOSITION_PDF'
-		, baseParams: params
-	});
+	if (Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.toolbar && Sbi.settings.execution.toolbar.documentexecutionpagetoolbar) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.execution.toolbar.documentexecutionpagetoolbar);
+	}
 	
-	this.services['toChartPdf'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'EXPORT_CHART_PDF'
-		, baseParams: params
-	});
+	var c = Ext.apply(defaultSettings, config || {});	
+	Ext.apply(this, c);
 	
-	this.services['toChartJpg'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'EXPORT_CHART_JPG'
-		, baseParams: params
-	});
+	this.addEvents('beforeinit', 'moveprevrequest', 'collapse3', 'backToAdmin','refreshexecution','showmask');
+	this.initServices();
+	this.init();
 	
-	this.services['exportDataStore'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'EXPORT_RESULT_ACTION'
-		, baseParams: params
-	});
+	Sbi.execution.toolbar.DocumentExecutionPageToolbar.superclass.constructor.call(this, c);
 	
-	this.services['getNotesService'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'GET_NOTES_ACTION'
-		, baseParams: params
-	});
 	
-	this.services['getMetadataService'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName : 'GET_METADATA_ACTION',
-		baseParams : params
-	});
-	
-	var updateDocParams = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: 'DOC_UPDATE'};
-	this.services['updateDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'SAVE_DOCUMENT_ACTION'
-		, baseParams: updateDocParams
-	});
-	
-	Sbi.execution.toolbar.DocumentExecutionPageToolbar.superclass.constructor.call(this, config);
-	
-	this.addEvents('beforetoolbarinit', 'moveprevrequest', 'beforerefresh','collapse3', 'backToAdmin','refreshexecution','showmask');
 };
 
+/**
+ * @class Sbi.execution.toolbar.DocumentExecutionPageToolbar
+ * @extends Ext.Toolbar
+ * ...
+ */
+
+/**
+ * @cfg {Object} config
+ * ...
+ */
 Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
-   
-	toolbarConfig: null
-	, services: null
+    
+	// =================================================================================================================
+	// PROPERTIES
+	// =================================================================================================================
+	
+	/**
+     * @property {Array} services
+     * This array contains all the services invoked by this class
+     */
+	services: null
+	
+	/**
+     * @property {String} documentMode
+     * Define which facet of the current document must be shown to the user. There are three possibilities:
+     * - INFO: shows metadata and shortcuts 
+     * - VIEW: sho the executed document
+     * - EDIT: show the document in edit mode
+     * 
+     * The default is INFO
+     */ 
+	, documentMode: null
+	
+	/**
+     * @property {Boolean} expandBtnVisible
+     * True if expand button is visible, false otherwise. 
+     * 
+     * The default is true.
+     */ 
+	, expandBtnVisible: null
+	
+	/**
+     * @property {Object} controller
+     * The controller object. Must implement the following methods:
+     *  - 
+     * 
+     * The default is true.
+     */ 
+	, controller: null
+	
+	
 	, executionInstance: null
-	, miframe: null
-	, parametersPanel: null
-	, shortcutsPanel: null
-	, documentMode: 'VIEW'
+	
+   
+	// =================================================================================================================
+	// METHODS
+	// =================================================================================================================
+	
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // init methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * @method 
+	 * 
+	 * Initialize the following services exploited by this component:
+	 * 
+	 *    - showSendToForm: ... (by default SHOW_SEND_TO_FORM)
+	 *    - saveIntoPersonalFolder: ... (by default SAVE_PERSONAL_FOLDER)
+	 *    - toPdf: ... (by default EXPORT_PDF)
+	 *    - toDCPdf: ... (by default EXPORT_DOCUMENT_COMPOSITION_PDF)
+	 *    - toChartPdf: ... (by default EXPORT_CHART_PDF)
+	 *    - toChartJpg: ... (by default EXPORT_CHART_JPG)
+	 *    - exportDataStore: ... (by default EXPORT_RESULT_ACTION)
+	 *    - getNotesService: ... (by default GET_NOTES_ACTION)
+	 *    - getMetadataService: ... (by default GET_METADATA_ACTION)
+	 *    - updateDocumentService: ... (by default SAVE_DOCUMENT_ACTION)
+	 *    
+	 */
+	, initServices: function() {
+	
+		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
+		
+		this.services = this.services || new Array();
+		
+		this.services['showSendToForm'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'SHOW_SEND_TO_FORM'
+			, baseParams: params
+		});
+		
+		this.services['saveIntoPersonalFolder'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'SAVE_PERSONAL_FOLDER'
+			, baseParams: params
+		});
+		
+		this.services['toPdf'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'EXPORT_PDF'
+			, baseParams: params
+		});
+
+		this.services['toDCPdf'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'EXPORT_DOCUMENT_COMPOSITION_PDF'
+			, baseParams: params
+		});
+		
+		this.services['toChartPdf'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'EXPORT_CHART_PDF'
+			, baseParams: params
+		});
+		
+		this.services['toChartJpg'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'EXPORT_CHART_JPG'
+			, baseParams: params
+		});
+		
+		this.services['exportDataStore'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'EXPORT_RESULT_ACTION'
+			, baseParams: params
+		});
+		
+		this.services['getNotesService'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'GET_NOTES_ACTION'
+			, baseParams: params
+		});
+		
+		this.services['getMetadataService'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName : 'GET_METADATA_ACTION',
+			baseParams : params
+		});
+		
+		var updateDocParams = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: 'DOC_UPDATE'};
+		this.services['updateDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'SAVE_DOCUMENT_ACTION'
+			, baseParams: updateDocParams
+		});
+	}
+	
+	/**
+	 * @method 
+	 * 
+	 * Initialize the GUI
+	 */
+	, init: Ext.emptyFn
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // synchronization methods
+	// -----------------------------------------------------------------------------------------------------------------
+	, synchronize: function(
+			controller
+			, executionInstance
+	) {
+		Sbi.trace('[DocumentExecutionPageToolbar.synchronize]: IN');
+		this.controller = controller;
+	    this.executionInstance = executionInstance;
+	
+		// if toolbar is hidden, do nothing
+		if (this.toolbarHiddenPreference) return;
+		
+		this.removeAllButtons();
+		
+		this.fireEvent('beforeinit', this);
+		
+		this.addFill();
+		
+		Sbi.trace('[DocumentExecutionPageToolbar.synchronize]: Document mode is equal to [' + this.documentMode + ']');
+		if (this.documentMode === 'INFO') {
+			this.addButtonsForInfoMode();
+		} else if (this.documentMode === 'VIEW') {
+			this.addButtonsForViewMode();
+		} else {
+			this.addButtonsForEditMode();
+		}
+		Sbi.trace('[DocumentExecutionPageToolbar.synchronize]: OUT');
+   }
+	
+	// -----------------------------------------------------------------------------------------------------------------
+	// edit methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, removeAllButtons: function() {
+		this.items.each( function(item) {
+			this.items.remove(item);
+            item.destroy();           
+        }, this); 
+	}
+	
+	, addButtonsForInfoMode: function () {
+		Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForInfoMode]: IN');
+		
+		var drawRoleBack = false;
+		
+		if (this.executionInstance.isPossibleToComeBackToRolePage == undefined || this.executionInstance.isPossibleToComeBackToRolePage === true) {
+			this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-back' 
+				, tooltip: LN('sbi.execution.parametersselection.toolbar.back')
+			    , scope: this
+			    , handler : function() {this.fireEvent('moveprevrequest');}
+			}));
+			
+			this.toolbar.addSeparator();
+		
+			drawRoleBack = true;
+		}
+		
+		// 20100505
+		if (this.callFromTreeListDoc == true && drawRoleBack == false) {
+			this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-back' 
+				, tooltip: LN('sbi.execution.executionpage.toolbar.documentView')
+				, scope: this
+				, handler : function() {
+					this.fireEvent('backToAdmin');
+				}
+			}));
+		}
+		
+		if(Sbi.user.ismodeweb){
+			this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-expand' 
+				, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
+			    , scope: this
+			    , handler : function() {
+					this.fireEvent('collapse3');
+				}			
+			}));
+		}
+		
+
+
+		// if document is QBE datamart and user is a Read-only user, he cannot execute main document, but only saved queries.
+		// If there is a subobject preference, the execution button starts the subobject execution
+		if (
+				this.executionInstance.document.typeCode != 'DATAMART' || 
+				(
+					Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality') || 
+					(this.preferenceSubobjectId !== undefined && this.preferenceSubobjectId !== null)
+				)
+			) {
+			this.addSeparator();
+			this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-execute'
+				, tooltip: LN('sbi.execution.parametersselection.toolbar.next')
+				, scope: this
+				, handler : function() {
+					if (this.preferenceSubobjectId !== undefined && this.preferenceSubobjectId !== null) {
+						this.executionInstance.SBI_SUBOBJECT_ID = this.preferenceSubobjectId;
+					}
+					this.controller.executeDocument();
+				}
+			}));
+		}
+		
+		Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForInfoMode]: OUT');
+	}
+	
+	// edit mode buttons (at the moment used by Worksheet documents only)
+	, addButtonsForEditMode: function () {
+
+		Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForEditMode]: IN');
+		
+		   if (Sbi.user.ismodeweb && this.expandBtnVisible  === true) {
+			   this.addButton(new Ext.Toolbar.Button({
+				   iconCls: 'icon-expand' 
+					   , tooltip: LN('sbi.execution.executionpage.toolbar.expand')
+					   , scope: this
+					   , handler : function() {
+						   this.fireEvent('collapse3');
+					   }			
+			   }));
+		   }
+		   
+		   if (this.executionInstance.document && this.executionInstance.document.decorators &&  this.executionInstance.document.decorators.isSavable) {
+			   this.addButton(new Ext.Toolbar.Button({
+				   iconCls: 'icon-save' 
+					   , tooltip: LN('sbi.execution.executionpage.toolbar.save')
+					   , scope: this
+					   , handler : this.saveWorksheet
+			   }));
+		   }
+
+		   this.addButton(new Ext.Toolbar.Button({
+			   iconCls: 'icon-saveas' 
+				   , tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
+				   , scope: this
+				   , handler : this.saveWorksheetAs	
+		   }));
+
+		   if(this.executionInstance.document.exporters.length > 0){
+				
+			   this.exportMenu = new Ext.menu.Menu({
+				   id: 'basicExportMenu_0',
+				   items: this.getWorksheetExportMenuItems(),
+				   listeners: {	'mouseexit': {fn: function(item) {item.hide();}}}
+			   });
+		       this.addButton(new Ext.Toolbar.MenuButton({
+				   id: Ext.id()
+				   , tooltip: 'Exporters'
+				   , path: 'Exporters'	
+				   , iconCls: 'icon-export' 	
+				   , menu: this.exportMenu
+				   , width: 15
+				   , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+			    }));	
+		   }
+		   
+		   this.addSeparator();
+		   this.addButton(new Ext.Toolbar.Button({
+			   iconCls: 'icon-view' 
+				   , tooltip: LN('sbi.execution.executionpage.toolbar.view')
+				   , scope: this
+				   , handler : this.stopWorksheetEditing	
+		   }));
+		   
+		   Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForEditMode]: OUT');
+			
+	   }
+	   
+	   
+	   , addButtonsForViewMode: function () {
+		   
+		   Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForViewMode]: IN');
+			
+		   
+		   var drawParBack = false;
+		   
+			if (this.executionInstance.isPossibleToComeBackToParametersPage == undefined || 
+					this.executionInstance.isPossibleToComeBackToParametersPage === true)
+			 {
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-back' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.back')
+					, scope: this
+					, handler : function() {
+						this.controller.showInfo();
+					}
+				}));
+				drawParBack = true;
+			}
+			
+			// 20100505
+			if (this.callFromTreeListDoc == true && drawParBack == false) {
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-back' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.documentView')
+					, scope: this
+					, handler : function() {
+						this.fireEvent('backToAdmin');
+					}
+				}));
+			}
+			
+	    	if(Sbi.user.ismodeweb && this.expandBtnVisible  === true){
+					this.addButton(new Ext.Toolbar.Button({
+						iconCls: 'icon-expand' 
+						, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
+					    , scope: this
+					    , handler : function() {
+								this.fireEvent('collapse3');
+						}			
+					}));
+			}
+			
+			if (Sbi.user.functionalities.contains('EditWorksheetFunctionality') && this.executionInstance.document.typeCode === 'WORKSHEET') {
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-edit' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.edit')
+				    , scope: this
+				    , handler : this.startWorksheetEditing	
+				}));
+			}
+			
+			if (this.executionInstance.document.typeCode === 'DATAMART') {
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-save' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.save')
+				    , scope: this
+				    , handler : this.saveQbe	
+				}));
+			}
+			
+			if (this.executionInstance.document.typeCode === 'SMART_FILTER') {
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-save' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.save')
+				    , scope: this
+				    , handler : this.saveWorksheetAs	
+				}));
+			}
+			
+			this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-rating' 
+				, tooltip: LN('sbi.execution.executionpage.toolbar.rating')
+			    , scope: this
+			    , handler : this.rateExecution	
+			}));
+			
+			this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-print' 
+				, tooltip: LN('sbi.execution.executionpage.toolbar.print')
+			    , scope: this
+			    , handler : this.printExecution
+			}));
+			
+			if (Sbi.user.functionalities.contains('SendMailFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID
+					&& this.executionInstance.document.typeCode == 'REPORT') {
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-sendMail' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.send')
+			     	, scope: this
+			    	, handler : this.sendExecution
+				}));
+			}
+			
+			if (Sbi.user.functionalities.contains('SaveIntoFolderFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-saveIntoPersonalFolder' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.saveintopersonalfolder')
+			     	, scope: this
+			    	, handler : this.saveExecution
+				}));
+			}
+
+			if (Sbi.user.functionalities.contains('SaveRememberMeFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-saveRememberMe'
+					, tooltip: LN('sbi.execution.executionpage.toolbar.bookmark')
+			     	, scope: this
+			    	, handler :this.bookmarkExecution
+				}));
+			}
+			
+			if (Sbi.user.functionalities.contains('SeeNotesFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
+				this.getNoteIcon();
+		    	this.addButton(new Ext.Toolbar.Button({
+		  			   id: 'noteIcon'
+		  				, tooltip: LN('sbi.execution.executionpage.toolbar.annotate')
+		  				, iconCls: 'icon-no-notes'
+		  		     	, scope: this
+		  		    	, handler : this.annotateExecution
+		  			}));    
+			}
+			
+			if (Sbi.user.functionalities.contains('SeeMetadataFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-metadata' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.metadata')
+			     	, scope: this
+			    	, handler : this.metaExecution
+				}));
+			}
+			
+			if(this.executionInstance.document.exporters){
+				if ( this.executionInstance.document.typeCode == 'KPI' && this.executionInstance.document.exporters.contains('PDF')) {
+					this.addButton(new Ext.Toolbar.Button({
+						iconCls: 'icon-pdf' 
+						, tooltip: LN('sbi.execution.PdfExport')
+				     	, scope: this
+				    	, handler : this.pdfExecution
+					}));
+				}
+				else if ( this.executionInstance.document.typeCode == 'DOCUMENT_COMPOSITE' ) {
+					this.addButton(new Ext.Toolbar.Button({
+						iconCls: 'icon-pdf' 
+						, tooltip: LN('sbi.execution.PdfExport')
+				     	, scope: this
+				    	, handler : this.pdfDCExecution
+					}));
+				}
+				else if( this.executionInstance.document.typeCode == 'REPORT') {
+						var menuItems = new Array();
+						
+						for(i=0;i<this.executionInstance.document.exporters.length ;i++){
+							
+							if (this.executionInstance.document.exporters[i]=='PDF'){
+							menuItems.push(	new Ext.menu.Item({
+					                            id:  Ext.id()
+					                            , text: LN('sbi.execution.PdfExport')
+					                            , group: 'group_2'
+					                            , iconCls: 'icon-pdf' 
+										     	, scope: this
+										        , width: 15
+										    	, handler : function() {this.exportReportExecution('PDF'); }
+												, href: ''   
+					                        })	 
+					                       ); 
+							}else if(this.executionInstance.document.exporters[i]=='XLS'){
+							menuItems.push(   new Ext.menu.Item({
+					                            id:  Ext.id()
+					                            , text: LN('sbi.execution.XlsExport')
+					                            , group: 'group_2'
+					                            , iconCls: 'icon-xls' 
+										     	, scope: this
+												 , width: 15
+										    	, handler : function() { this.exportReportExecution('XLS'); }
+												, href: ''   
+					                        })	
+					                        ); 
+							}else if(this.executionInstance.document.exporters[i]=='RTF'){
+								menuItems.push(   new Ext.menu.Item({
+		                            id:  Ext.id()
+		                            , text: LN('sbi.execution.rtfExport')
+		                            , group: 'group_2'
+		                            , iconCls: 'icon-rtf' 
+							     	, scope: this
+									 , width: 15
+							    	, handler : function() { this.exportReportExecution('RTF'); }
+									, href: ''   
+		                        })	
+		                        );
+							}else if(this.executionInstance.document.exporters[i]=='DOC'){
+								menuItems.push(   new Ext.menu.Item({
+		                            id:  Ext.id()
+		                            , text: LN('sbi.execution.docExport')
+		                            , group: 'group_2'
+		                            , iconCls: 'icon-rtf' 
+							     	, scope: this
+									 , width: 15
+							    	, handler : function() { this.exportReportExecution('DOC'); }
+									, href: ''   
+		                        })	
+		                        );
+							}else if(this.executionInstance.document.exporters[i]=='CSV'){
+								menuItems.push(   new Ext.menu.Item({
+					                            id:  Ext.id()
+					                            , text: LN('sbi.execution.CsvExport')
+					                            , group: 'group_2'
+					                            , iconCls: 'icon-csv' 
+										     	, scope: this
+										   , width: 15
+										    	, handler : function() { this.exportReportExecution('CSV'); }
+												, href: ''   
+					                        })	
+					                        ); 
+							}else if(this.executionInstance.document.exporters[i]=='XML'){
+							menuItems.push(   new Ext.menu.Item({
+					                            id:  Ext.id()
+					                            , text: LN('sbi.execution.XmlExport')
+					                            , group: 'group_2'
+					                            , iconCls: 'icon-xml' 
+										     	, scope: this
+										      , width: 15
+										    	, handler : function() { this.exportReportExecution('XML'); }
+												, href: ''   
+					                        })	
+					                        ); 
+							}else if(this.executionInstance.document.exporters[i]=='JPG'){
+							menuItems.push(   new Ext.menu.Item({
+					                            id: Ext.id()
+					                            , text: LN('sbi.execution.JpgExport')
+					                            , group: 'group_2'
+					                            , iconCls: 'icon-jpg' 
+										     	, scope: this
+										     , width: 15
+										    	, handler : function() { this.exportReportExecution('JPG'); }
+												, href: ''   
+					                        })	
+					                        ); 
+							}else if(this.executionInstance.document.exporters[i]=='TXT'){
+							menuItems.push(   new Ext.menu.Item({
+					                            id:  Ext.id()
+					                            , text: LN('sbi.execution.txtExport')
+					                            , group: 'group_2'
+					                            , iconCls: 'icon-txt' 
+										     	, scope: this
+										     	 , width: 15
+										    	, handler : function() { this.exportReportExecution('TXT'); }
+												, href: ''   
+					                        })	
+					                        ); 
+							}else if(this.executionInstance.document.exporters[i]=='PPT'){
+							menuItems.push(   new Ext.menu.Item({
+					                            id:  Ext.id()
+					                            , text: LN('sbi.execution.pptExport')
+					                            , group: 'group_2'
+					                            , iconCls: 'icon-ppt' 
+										     	, scope: this
+										      , width: 15
+										    	, handler : function() { this.exportReportExecution('PPT'); }
+												, href: ''   
+					                        })	
+					                        ); 
+							}
+					    }   
+						var menu0 = new Ext.menu.Menu({
+						id: 'basicMenu_0',
+						items: menuItems    
+						});	
+						
+						if(this.executionInstance.document.exporters.length > 0){
+							this.add(
+										new Ext.Toolbar.MenuButton({
+											id: Ext.id()
+								            , tooltip: 'Exporters'
+											, path: 'Exporters'	
+											, iconCls: 'icon-export' 	
+								            , menu: menu0
+								            , width: 15
+								            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+								        })					    				        				
+							);	
+						}
+				}else if( this.executionInstance.document.typeCode == 'OLAP') {
+						var menuItems = new Array();
+						
+						for(i=0;i<this.executionInstance.document.exporters.length ;i++){
+							
+							if (this.executionInstance.document.exporters[i]=='PDF'){
+							menuItems.push(	new Ext.menu.Item({
+					                            id:  Ext.id()
+					                            , text: LN('sbi.execution.PdfExport')
+					                            , group: 'group_2'
+					                            , iconCls: 'icon-pdf' 
+										     	, scope: this
+										        , width: 15
+										    	, handler : function() { this.exportOlapExecution('PDF'); }
+												, href: ''   
+					                        })	 
+					                       ); 
+							}else if(this.executionInstance.document.exporters[i]=='XLS'){
+							menuItems.push(   new Ext.menu.Item({
+					                            id:  Ext.id()
+					                            , text: LN('sbi.execution.XlsExport')
+					                            , group: 'group_2'
+					                            , iconCls: 'icon-xls' 
+										     	, scope: this
+												 , width: 15
+										    	, handler : function() { this.exportOlapExecution('XLS'); }
+												, href: ''   
+					                        })	
+					                        ); 
+							}
+					    }   
+						var menu0 = new Ext.menu.Menu({
+						id: 'basicMenu_0',
+						items: menuItems    
+						});	
+						
+						if(this.executionInstance.document.exporters.length > 0){
+							this.add(
+										new Ext.Toolbar.MenuButton({
+											id: Ext.id()
+								            , tooltip: 'Exporters'
+											, path: 'Exporters'	
+											, iconCls: 'icon-export' 	
+								            , menu: menu0
+								            , width: 15
+								            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+								        })					    				        				
+							);	
+						}
+				}
+				else if ( this.executionInstance.document.typeCode == 'DASH') {
+					this.addButton(new Ext.Toolbar.Button({
+						iconCls: 'icon-pdf' 
+						, tooltip: LN('sbi.execution.PdfExport')
+				     	, scope: this
+				    	, handler :  function() { this.exportChartExecution('PDF'); }
+						, href: ''  
+					}));
+				}else if ( this.executionInstance.document.typeCode == 'CHART') {
+					var menuItems = new Array();
+					
+					for(i=0;i<this.executionInstance.document.exporters.length ;i++){
+						if (this.executionInstance.document.exporters[i]=='PDF'){
+							menuItems.push(	new Ext.menu.Item({
+												  id:  Ext.id()
+												, iconCls: 'icon-pdf' 
+												, text: LN('sbi.execution.PdfExport')
+										     	, scope: this
+										    	, handler :  function() { this.exportChartExecution('PDF'); }
+												, href: ''  
+											}));
+						}if (this.executionInstance.document.exporters[i]=='JPG'){
+							menuItems.push(	new Ext.menu.Item({
+									  id:  Ext.id()
+									, iconCls: 'icon-jpg' 
+									, text: LN('sbi.execution.JpgExport')
+							     	, scope: this
+							    	, handler :  function() { this.exportChartExecution('JPG'); }
+									, href: ''  
+								}));
+							}
+						}
+					
+						var menu0 = new Ext.menu.Menu({
+						id: 'basicMenu_0',
+						items: menuItems    
+						});	
+						
+						if(this.executionInstance.document.exporters.length > 0){
+							this.add(
+										new Ext.Toolbar.MenuButton({
+											id: Ext.id()
+								            , tooltip: 'Exporters'
+											, path: 'Exporters'	
+											, iconCls: 'icon-export' 	
+								            , menu: menu0
+								            , width: 15
+								            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+								        })					    				        				
+							);	
+						}				
+				}else if ( this.executionInstance.document.typeCode == 'NETWORK') {
+
+					var menu0 = new Ext.menu.Menu({
+						id: 'basicMenu_0',
+						items: this.getNetworkExportMenuItems()  
+					});	
+
+					
+					
+					if(this.executionInstance.document.exporters.length > 0){
+						this.add(
+									new Ext.Toolbar.MenuButton({
+										id: Ext.id()
+							            , tooltip: 'Exporters'
+										, path: 'Exporters'	
+										, iconCls: 'icon-export' 	
+							            , menu: menu0
+							            , width: 15
+							            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+							        })					    				        				
+						);	
+					}
+			}else if ( this.executionInstance.document.typeCode == 'WORKSHEET') {
+
+				var menu0 = new Ext.menu.Menu({
+					id: 'basicMenu_0',
+					items: this.getWorksheetExportMenuItems()  
+				});	
+
+				
+				
+				if(this.executionInstance.document.exporters.length > 0){
+					this.add(
+								new Ext.Toolbar.MenuButton({
+									id: Ext.id()
+						            , tooltip: 'Exporters'
+									, path: 'Exporters'	
+									, iconCls: 'icon-export' 	
+						            , menu: menu0
+						            , width: 15
+						            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+						        })					    				        				
+					);	
+				}
+			}else if ( this.executionInstance.document.typeCode == 'DATAMART' || 
+							this.executionInstance.document.typeCode == 'SMART_FILTER' ) {
+				
+						
+						var menu0 = new Ext.menu.Menu({
+							id: 'basicMenu_0',
+							listeners: {
+								'mouseexit': {fn: function(item) {item.hide();}},
+								'beforeshow': {
+									fn: function(thisMenu){
+										var theWindow = this.controller.getFrame().getWindow();
+										var thePanel = theWindow.qbe;
+										var isBuildingWorksheet;
+										if(thePanel==null){//smart filter
+											thePanel = theWindow.Sbi.formviewer.formEnginePanel;
+										}
+										isBuildingWorksheet =  thePanel.isWorksheetPageActive();
+										var newItems; 
+										thisMenu.removeAll(false);
+										if (isBuildingWorksheet) {
+											newItems = (this.getWorksheetExportMenuItems());
+										} else {
+											newItems = (this.getQbeExportMenuItems());
+										}
+										for(var i =0; i<newItems.length; i++){
+											thisMenu.add(newItems[i]);
+										}
+
+									},
+									scope: this
+								}
+							},
+							items: this.getQbeExportMenuItems()     
+						});
+						
+
+						/*
+						if (this.executionInstance.document.typeCode == 'DATAMART') {
+							var resultItem = new Ext.menu.Item({
+								id:  Ext.id()
+								, text: LN('sbi.execution.export.qbe.results')
+								, menu: {
+									listeners: {'mouseexit': function(item) {item.hide();}},
+				        			items: menuItems
+				        		}
+							});
+							
+							var crosstabExportItem = new Ext.menu.Item({
+	                            id:  Ext.id()
+	                            , text: LN('sbi.execution.XlsExport')
+	                            , iconCls: 'icon-xls' 
+						     	, scope: this
+								, width: 15
+						    	, handler : function() { this.exportQbECrosstab('application/vnd.ms-excel'); }
+								, href: ''   
+	                        });
+							
+							var crosstabMenuItem = new Ext.menu.Item({
+								id:  Ext.id()
+								, text: LN('sbi.execution.export.qbe.crosstab')
+								, menu: {
+									listeners: {'mouseexit': function(item) {item.hide();}},
+					        		items: [crosstabExportItem]
+					        	}
+							});
+							
+							menu0 = new Ext.menu.Menu({
+								id: 'basicMenu_0',
+								listeners: {'mouseexit': function(item) {item.hide();}},
+								items: [resultItem, crosstabMenuItem]    
+							});
+							
+						} else {
+							menu0 = new Ext.menu.Menu({
+								id: 'basicMenu_0',
+								items: menuItems    
+							});	
+						}
+						*/
+						
+						if(this.executionInstance.document.exporters.length > 0){
+							this.add(
+										new Ext.Toolbar.MenuButton({
+											id: Ext.id()
+								            , tooltip: 'Exporters'
+											, path: 'Exporters'	
+											, iconCls: 'icon-export' 	
+								            , menu: menu0
+								            , width: 15
+								            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+								        })					    				        				
+							);	
+						}
+				}	else if ( this.executionInstance.document.typeCode == 'MAP') {
+				
+						var menuItems = new Array();
+						
+						for(i=0;i<this.executionInstance.document.exporters.length ;i++){
+							
+							if (this.executionInstance.document.exporters[i]=='PDF'){
+							menuItems.push(	new Ext.menu.Item({
+					                            id:  Ext.id()
+					                            , text: LN('sbi.execution.PdfExport')
+					                            , group: 'group_2'
+					                            , iconCls: 'icon-pdf' 
+										     	, scope: this
+										        , width: 15
+										    	, handler : function() { this.exportGeoExecution('pdf'); }
+												, href: ''   
+					                        })	 
+					                       ); 
+							}else if(this.executionInstance.document.exporters[i]=='JPG'){
+							menuItems.push(   new Ext.menu.Item({
+					                            id: Ext.id()
+					                            , text: LN('sbi.execution.JpgExport')
+					                            , group: 'group_2'
+					                            , iconCls: 'icon-jpg' 
+										     	, scope: this
+										     , width: 15
+										    	, handler : function() { this.exportGeoExecution('jpeg'); }
+												, href: ''   
+					                        })	
+					                        ); 
+							}
+				
+				  		}   
+						var menu0 = new Ext.menu.Menu({
+							id: 'basicMenu_0',
+							items: menuItems    
+						});	
+						
+						if(this.executionInstance.document.exporters.length > 0){
+							this.add(
+										new Ext.Toolbar.MenuButton({
+											id: Ext.id()
+								            , tooltip: 'Exporters'
+											, path: 'Exporters'	
+											, iconCls: 'icon-export' 	
+								            , menu: menu0
+								            , width: 15
+								            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+								        })					    				        				
+							);	
+						}
+				}	
+			}
+			
+			this.addSeparator();
+			
+			this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-execute' 
+				, tooltip: LN('sbi.execution.executionpage.toolbar.refresh')
+			    , scope: this
+			    , handler : function() {
+						// save parameters into session
+						// if type is QBE inform user that will lose configurations
+						if(this.executionInstance.document.typeCode == 'DATAMART'){
+							if(Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality') && Sbi.user.functionalities.contains('SaveSubobjectFunctionality')){
+								
+								
+								Ext.MessageBox.confirm(
+	    						    LN('sbi.generic.warning'),
+	            					LN('sbi.execution.executionpage.toolbar.qberefresh'),            
+	            					function(btn, text) {
+	                					if (btn=='yes') {
+	                						this.controller.memorizeParametersInSession();
+											this.controller.executeDocument();
+	                					}
+	            					},
+	            					this
+									);
+								}else{
+									//user who cannot build qbe queries
+									this.controller.memorizeParametersInSession();
+									this.controller.executeDocument();
+								}
+						} // it 's not a qbe
+						else {
+							this.controller.memorizeParametersInSession();
+							this.controller.executeDocument();
+					}
+				}			
+			}));
+			
+			Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForViewMode]: OUT');
+		   
+	   }
+	   
+	// -----------------------------------------------------------------------------------------------------------------
+	// private methods
+	// -----------------------------------------------------------------------------------------------------------------
 	
 	, getNoteIcon: function () {
   		Ext.Ajax.request({
@@ -136,14 +997,14 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	}
 	
 	, printExecution: function() {
-		this.miframe.getFrame().print();
+		this.controller.getFrame().print();
 	}
 	
 	, sendExecution: function () {
 		var sendToIframeUrl = this.services['showSendToForm'] 
 		        + '&objlabel=' + this.executionInstance.OBJECT_LABEL
 		        + '&objid=' + this.executionInstance.OBJECT_ID
-				+ '&' + Sbi.commons.Format.toStringOldSyntax(this.parametersPanel.getFormState());
+				+ '&' + Sbi.commons.Format.toStringOldSyntax(this.controller.getParameterValues());
 		this.win_sendTo = new Sbi.execution.toolbar.SendToWindow({'url': sendToIframeUrl});
 		this.win_sendTo.show();
 	}
@@ -214,7 +1075,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	
 	, pdfDCExecution: function () {
 		// here I have to recover all iframe urls!
-		mainFrame=this.miframe.getFrame();
+		mainFrame=this.controller.getFrame();
 		windowO=mainFrame.getWindow();
 		newPars='';
 		var isHighchart = false;
@@ -344,8 +1205,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	    return svg;
 	}
 	, exportGeoExecution: function (exportType) {	
-	    var mf = this.miframe;
-		var frame = mf.getFrame();
+		var frame = this.controller.getFrame()
 	    var docurl = frame.getDocumentURI();
 	    var baseUrl = docurl.substring(0,docurl.indexOf('?')+1);   
 	    if (baseUrl=="") baseUrl = docurl;
@@ -363,8 +1223,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	}
 	
 	,exportOlapExecution: function (exportType) {
-		var mf = this.miframe;
-		var frame = mf.getFrame();
+		var frame = this.controller.getFrame();
 	    var docurl = frame.getDocumentURI();
 	    var baseUrl = docurl.substring(0,docurl.indexOf('?')+1);   
 	    if (baseUrl=="") baseUrl = docurl;
@@ -380,7 +1239,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	}
 	
 	, exportChartExecution: function (exportType) {
-		this.miframe.getFrame().getWindow().exportChart(exportType);
+		this.controller.getFrame().getWindow().exportChart(exportType);
 		/*
 		var urlExporter = "";
 	    
@@ -393,8 +1252,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	}
 	
 	, exportQbEExecution: function (exportType) {	
-	    var mf = this.miframe;
-		var frame = mf.getFrame();
+		var frame = this.controller.getFrame();
 	    var docurl = frame.getDocumentURI();
 	    var baseUrl = docurl.substring(0,docurl.indexOf('?')+1);   
 	    if (baseUrl=="") baseUrl = docurl;
@@ -466,18 +1324,18 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				}
 
 				 
-				var thePanel = this.miframe.getFrame().getWindow().qbe;
+				var thePanel = this.controller.getFrame().getWindow().qbe;
 				if(thePanel==null){
 					//the worksheet has been constructed starting from a smart filter document
-					thePanel = this.miframe.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
+					thePanel = this.controller.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
 				}
 				if(thePanel==null){
 					//the worksheet is alone with out the qbe
-					thePanel = this.miframe.getFrame().getWindow().workSheetPanel;
+					thePanel = this.controller.getFrame().getWindow().workSheetPanel;
 				}
 				
 				var parameters = [];
-				var formState = this.parametersPanel.getFormState();
+				var formState = this.controller.getParameterValues();
 				for(f in formState) {
 					if(f.indexOf('_field_visible_description') == -1) {
 						var p = {name: f, value: formState[f]};
@@ -494,718 +1352,13 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			throw err;
 		}
 	}
-
-	, updateFrame: function(miframe){
-		this.miframe = miframe;
-	}   
+   
+   
+   
 	
-   , synchronizeToolbar: function( executionInstance,miframe,southPanel,northPanel,parametersPanel,shortcutsPanel) {
-	    this.executionInstance = executionInstance;
-	    this.miframe = miframe;
-		this.southPanel = southPanel;
-		this.northPanel = northPanel;
-		this.parametersPanel = parametersPanel;
-		this.shortcutsPanel = shortcutsPanel;
-		
-		// if toolbar is hidden, do nothing
-		if (this.toolbarHiddenPreference) 
-			return;
-		
-		this.items.each( function(item) {
-			this.items.remove(item);
-            item.destroy();           
-        }, this); 
-		
-		this.fireEvent('beforetoolbarinit', this, this);
-		
-		this.addFill();
-		
-		if (this.documentMode === 'VIEW') {
-			this.addButtonsForViewMode();
-		} else {
-			this.addButtonsForEditMode();
-		}
-		
-   }
-   
-   // edit mode buttons (at the moment used by Worksheet documents only)
-   , addButtonsForEditMode: function () {
-
-	   this.toolbarConfig.expandBtnVisible = (this.toolbarConfig.expandBtnVisible === undefined)? true: this.toolbarConfig.expandBtnVisible ; 
-	   if (Sbi.user.ismodeweb && this.toolbarConfig.expandBtnVisible  === true) {
-		   this.addButton(new Ext.Toolbar.Button({
-			   iconCls: 'icon-expand' 
-				   , tooltip: LN('sbi.execution.executionpage.toolbar.expand')
-				   , scope: this
-				   , handler : function() {
-					   this.fireEvent('collapse3');
-				   }			
-		   }));
-	   }
-	   
-	   if (this.executionInstance.document && this.executionInstance.document.decorators &&  this.executionInstance.document.decorators.isSavable) {
-		   this.addButton(new Ext.Toolbar.Button({
-			   iconCls: 'icon-save' 
-				   , tooltip: LN('sbi.execution.executionpage.toolbar.save')
-				   , scope: this
-				   , handler : this.saveWorksheet
-		   }));
-	   }
-
-	   this.addButton(new Ext.Toolbar.Button({
-		   iconCls: 'icon-saveas' 
-			   , tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
-			   , scope: this
-			   , handler : this.saveWorksheetAs	
-	   }));
-
-	   if(this.executionInstance.document.exporters.length > 0){
-			
-		   this.exportMenu = new Ext.menu.Menu({
-			   id: 'basicExportMenu_0',
-			   items: this.getWorksheetExportMenuItems(),
-			   listeners: {	'mouseexit': {fn: function(item) {item.hide();}}}
-		   });
-	       this.addButton(new Ext.Toolbar.MenuButton({
-			   id: Ext.id()
-			   , tooltip: 'Exporters'
-			   , path: 'Exporters'	
-			   , iconCls: 'icon-export' 	
-			   , menu: this.exportMenu
-			   , width: 15
-			   , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-		    }));	
-	   }
-	   
-	   this.addSeparator();
-	   this.addButton(new Ext.Toolbar.Button({
-		   iconCls: 'icon-view' 
-			   , tooltip: LN('sbi.execution.executionpage.toolbar.view')
-			   , scope: this
-			   , handler : this.stopWorksheetEditing	
-	   }));
-
-   }
-   
-   
-   , addButtonsForViewMode: function () {
-	   
-	   var drawParBack = false;
-	   
-		if (this.executionInstance.isPossibleToComeBackToParametersPage == undefined || 
-				this.executionInstance.isPossibleToComeBackToParametersPage === true)
-		 {
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-back' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.back')
-				, scope: this
-				, handler : function() {this.fireEvent('moveprevrequest');}
-			}));
-			drawParBack = true;
-		}
-		
-		// 20100505
-		if (this.callFromTreeListDoc == true && drawParBack == false) {
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-back' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.documentView')
-				, scope: this
-				, handler : function() {
-					this.fireEvent('backToAdmin');
-				}
-			}));
-		}
-		
-    	this.toolbarConfig.expandBtnVisible = (this.toolbarConfig.expandBtnVisible === undefined)? true: this.toolbarConfig.expandBtnVisible ; 
-		if(Sbi.user.ismodeweb && this.toolbarConfig.expandBtnVisible  === true){
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-expand' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
-				    , scope: this
-				    , handler : function() {
-							this.fireEvent('collapse3');
-					}			
-				}));
-		}
-		
-		if (Sbi.user.functionalities.contains('EditWorksheetFunctionality') && this.executionInstance.document.typeCode === 'WORKSHEET') {
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-edit' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.edit')
-			    , scope: this
-			    , handler : this.startWorksheetEditing	
-			}));
-		}
-		
-		if (this.executionInstance.document.typeCode === 'DATAMART') {
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-save' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.save')
-			    , scope: this
-			    , handler : this.saveQbe	
-			}));
-		}
-		
-		if (this.executionInstance.document.typeCode === 'SMART_FILTER') {
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-save' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.save')
-			    , scope: this
-			    , handler : this.saveWorksheetAs	
-			}));
-		}
-		
-		this.addButton(new Ext.Toolbar.Button({
-			iconCls: 'icon-rating' 
-			, tooltip: LN('sbi.execution.executionpage.toolbar.rating')
-		    , scope: this
-		    , handler : this.rateExecution	
-		}));
-		
-		this.addButton(new Ext.Toolbar.Button({
-			iconCls: 'icon-print' 
-			, tooltip: LN('sbi.execution.executionpage.toolbar.print')
-		    , scope: this
-		    , handler : this.printExecution
-		}));
-		
-		if (Sbi.user.functionalities.contains('SendMailFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID
-				&& this.executionInstance.document.typeCode == 'REPORT') {
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-sendMail' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.send')
-		     	, scope: this
-		    	, handler : this.sendExecution
-			}));
-		}
-		
-		if (Sbi.user.functionalities.contains('SaveIntoFolderFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-saveIntoPersonalFolder' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.saveintopersonalfolder')
-		     	, scope: this
-		    	, handler : this.saveExecution
-			}));
-		}
-
-		if (Sbi.user.functionalities.contains('SaveRememberMeFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-saveRememberMe'
-				, tooltip: LN('sbi.execution.executionpage.toolbar.bookmark')
-		     	, scope: this
-		    	, handler :this.bookmarkExecution
-			}));
-		}
-		
-		if (Sbi.user.functionalities.contains('SeeNotesFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
-			this.getNoteIcon();
-	    	this.addButton(new Ext.Toolbar.Button({
-	  			   id: 'noteIcon'
-	  				, tooltip: LN('sbi.execution.executionpage.toolbar.annotate')
-	  				, iconCls: 'icon-no-notes'
-	  		     	, scope: this
-	  		    	, handler : this.annotateExecution
-	  			}));    
-		}
-		
-		if (Sbi.user.functionalities.contains('SeeMetadataFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-metadata' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.metadata')
-		     	, scope: this
-		    	, handler : this.metaExecution
-			}));
-		}
-		
-		if(this.executionInstance.document.exporters){
-			if ( this.executionInstance.document.typeCode == 'KPI' && this.executionInstance.document.exporters.contains('PDF')) {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-pdf' 
-					, tooltip: LN('sbi.execution.PdfExport')
-			     	, scope: this
-			    	, handler : this.pdfExecution
-				}));
-			}
-			else if ( this.executionInstance.document.typeCode == 'DOCUMENT_COMPOSITE' ) {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-pdf' 
-					, tooltip: LN('sbi.execution.PdfExport')
-			     	, scope: this
-			    	, handler : this.pdfDCExecution
-				}));
-			}
-			else if( this.executionInstance.document.typeCode == 'REPORT') {
-					var menuItems = new Array();
-					
-					for(i=0;i<this.executionInstance.document.exporters.length ;i++){
-						
-						if (this.executionInstance.document.exporters[i]=='PDF'){
-						menuItems.push(	new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.PdfExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-pdf' 
-									     	, scope: this
-									        , width: 15
-									    	, handler : function() {this.exportReportExecution('PDF'); }
-											, href: ''   
-				                        })	 
-				                       ); 
-						}else if(this.executionInstance.document.exporters[i]=='XLS'){
-						menuItems.push(   new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.XlsExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-xls' 
-									     	, scope: this
-											 , width: 15
-									    	, handler : function() { this.exportReportExecution('XLS'); }
-											, href: ''   
-				                        })	
-				                        ); 
-						}else if(this.executionInstance.document.exporters[i]=='RTF'){
-							menuItems.push(   new Ext.menu.Item({
-	                            id:  Ext.id()
-	                            , text: LN('sbi.execution.rtfExport')
-	                            , group: 'group_2'
-	                            , iconCls: 'icon-rtf' 
-						     	, scope: this
-								 , width: 15
-						    	, handler : function() { this.exportReportExecution('RTF'); }
-								, href: ''   
-	                        })	
-	                        );
-						}else if(this.executionInstance.document.exporters[i]=='DOC'){
-							menuItems.push(   new Ext.menu.Item({
-	                            id:  Ext.id()
-	                            , text: LN('sbi.execution.docExport')
-	                            , group: 'group_2'
-	                            , iconCls: 'icon-rtf' 
-						     	, scope: this
-								 , width: 15
-						    	, handler : function() { this.exportReportExecution('DOC'); }
-								, href: ''   
-	                        })	
-	                        );
-						}else if(this.executionInstance.document.exporters[i]=='CSV'){
-							menuItems.push(   new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.CsvExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-csv' 
-									     	, scope: this
-									   , width: 15
-									    	, handler : function() { this.exportReportExecution('CSV'); }
-											, href: ''   
-				                        })	
-				                        ); 
-						}else if(this.executionInstance.document.exporters[i]=='XML'){
-						menuItems.push(   new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.XmlExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-xml' 
-									     	, scope: this
-									      , width: 15
-									    	, handler : function() { this.exportReportExecution('XML'); }
-											, href: ''   
-				                        })	
-				                        ); 
-						}else if(this.executionInstance.document.exporters[i]=='JPG'){
-						menuItems.push(   new Ext.menu.Item({
-				                            id: Ext.id()
-				                            , text: LN('sbi.execution.JpgExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-jpg' 
-									     	, scope: this
-									     , width: 15
-									    	, handler : function() { this.exportReportExecution('JPG'); }
-											, href: ''   
-				                        })	
-				                        ); 
-						}else if(this.executionInstance.document.exporters[i]=='TXT'){
-						menuItems.push(   new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.txtExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-txt' 
-									     	, scope: this
-									     	 , width: 15
-									    	, handler : function() { this.exportReportExecution('TXT'); }
-											, href: ''   
-				                        })	
-				                        ); 
-						}else if(this.executionInstance.document.exporters[i]=='PPT'){
-						menuItems.push(   new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.pptExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-ppt' 
-									     	, scope: this
-									      , width: 15
-									    	, handler : function() { this.exportReportExecution('PPT'); }
-											, href: ''   
-				                        })	
-				                        ); 
-						}
-				    }   
-					var menu0 = new Ext.menu.Menu({
-					id: 'basicMenu_0',
-					items: menuItems    
-					});	
-					
-					if(this.executionInstance.document.exporters.length > 0){
-						this.add(
-									new Ext.Toolbar.MenuButton({
-										id: Ext.id()
-							            , tooltip: 'Exporters'
-										, path: 'Exporters'	
-										, iconCls: 'icon-export' 	
-							            , menu: menu0
-							            , width: 15
-							            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-							        })					    				        				
-						);	
-					}
-			}else if( this.executionInstance.document.typeCode == 'OLAP') {
-					var menuItems = new Array();
-					
-					for(i=0;i<this.executionInstance.document.exporters.length ;i++){
-						
-						if (this.executionInstance.document.exporters[i]=='PDF'){
-						menuItems.push(	new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.PdfExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-pdf' 
-									     	, scope: this
-									        , width: 15
-									    	, handler : function() { this.exportOlapExecution('PDF'); }
-											, href: ''   
-				                        })	 
-				                       ); 
-						}else if(this.executionInstance.document.exporters[i]=='XLS'){
-						menuItems.push(   new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.XlsExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-xls' 
-									     	, scope: this
-											 , width: 15
-									    	, handler : function() { this.exportOlapExecution('XLS'); }
-											, href: ''   
-				                        })	
-				                        ); 
-						}
-				    }   
-					var menu0 = new Ext.menu.Menu({
-					id: 'basicMenu_0',
-					items: menuItems    
-					});	
-					
-					if(this.executionInstance.document.exporters.length > 0){
-						this.add(
-									new Ext.Toolbar.MenuButton({
-										id: Ext.id()
-							            , tooltip: 'Exporters'
-										, path: 'Exporters'	
-										, iconCls: 'icon-export' 	
-							            , menu: menu0
-							            , width: 15
-							            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-							        })					    				        				
-						);	
-					}
-			}
-			else if ( this.executionInstance.document.typeCode == 'DASH') {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-pdf' 
-					, tooltip: LN('sbi.execution.PdfExport')
-			     	, scope: this
-			    	, handler :  function() { this.exportChartExecution('PDF'); }
-					, href: ''  
-				}));
-			}else if ( this.executionInstance.document.typeCode == 'CHART') {
-				var menuItems = new Array();
-				
-				for(i=0;i<this.executionInstance.document.exporters.length ;i++){
-					if (this.executionInstance.document.exporters[i]=='PDF'){
-						menuItems.push(	new Ext.menu.Item({
-											  id:  Ext.id()
-											, iconCls: 'icon-pdf' 
-											, text: LN('sbi.execution.PdfExport')
-									     	, scope: this
-									    	, handler :  function() { this.exportChartExecution('PDF'); }
-											, href: ''  
-										}));
-					}if (this.executionInstance.document.exporters[i]=='JPG'){
-						menuItems.push(	new Ext.menu.Item({
-								  id:  Ext.id()
-								, iconCls: 'icon-jpg' 
-								, text: LN('sbi.execution.JpgExport')
-						     	, scope: this
-						    	, handler :  function() { this.exportChartExecution('JPG'); }
-								, href: ''  
-							}));
-						}
-					}
-				
-					var menu0 = new Ext.menu.Menu({
-					id: 'basicMenu_0',
-					items: menuItems    
-					});	
-					
-					if(this.executionInstance.document.exporters.length > 0){
-						this.add(
-									new Ext.Toolbar.MenuButton({
-										id: Ext.id()
-							            , tooltip: 'Exporters'
-										, path: 'Exporters'	
-										, iconCls: 'icon-export' 	
-							            , menu: menu0
-							            , width: 15
-							            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-							        })					    				        				
-						);	
-					}				
-			}else if ( this.executionInstance.document.typeCode == 'NETWORK') {
-
-				var menu0 = new Ext.menu.Menu({
-					id: 'basicMenu_0',
-					items: this.getNetworkExportMenuItems()  
-				});	
-
-				
-				
-				if(this.executionInstance.document.exporters.length > 0){
-					this.add(
-								new Ext.Toolbar.MenuButton({
-									id: Ext.id()
-						            , tooltip: 'Exporters'
-									, path: 'Exporters'	
-									, iconCls: 'icon-export' 	
-						            , menu: menu0
-						            , width: 15
-						            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-						        })					    				        				
-					);	
-				}
-		}else if ( this.executionInstance.document.typeCode == 'WORKSHEET') {
-
-			var menu0 = new Ext.menu.Menu({
-				id: 'basicMenu_0',
-				items: this.getWorksheetExportMenuItems()  
-			});	
-
-			
-			
-			if(this.executionInstance.document.exporters.length > 0){
-				this.add(
-							new Ext.Toolbar.MenuButton({
-								id: Ext.id()
-					            , tooltip: 'Exporters'
-								, path: 'Exporters'	
-								, iconCls: 'icon-export' 	
-					            , menu: menu0
-					            , width: 15
-					            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-					        })					    				        				
-				);	
-			}
-		}else if ( this.executionInstance.document.typeCode == 'DATAMART' || 
-						this.executionInstance.document.typeCode == 'SMART_FILTER' ) {
-			
-					
-					var menu0 = new Ext.menu.Menu({
-						id: 'basicMenu_0',
-						listeners: {
-							'mouseexit': {fn: function(item) {item.hide();}},
-							'beforeshow': {
-								fn: function(thisMenu){
-									var theWindow = this.miframe.getFrame().getWindow();
-									var thePanel = theWindow.qbe;
-									var isBuildingWorksheet;
-									if(thePanel==null){//smart filter
-										thePanel = theWindow.Sbi.formviewer.formEnginePanel;
-									}
-									isBuildingWorksheet =  thePanel.isWorksheetPageActive();
-									var newItems; 
-									thisMenu.removeAll(false);
-									if (isBuildingWorksheet) {
-										newItems = (this.getWorksheetExportMenuItems());
-									} else {
-										newItems = (this.getQbeExportMenuItems());
-									}
-									for(var i =0; i<newItems.length; i++){
-										thisMenu.add(newItems[i]);
-									}
-
-								},
-								scope: this
-							}
-						},
-						items: this.getQbeExportMenuItems()     
-					});
-					
-
-					/*
-					if (this.executionInstance.document.typeCode == 'DATAMART') {
-						var resultItem = new Ext.menu.Item({
-							id:  Ext.id()
-							, text: LN('sbi.execution.export.qbe.results')
-							, menu: {
-								listeners: {'mouseexit': function(item) {item.hide();}},
-			        			items: menuItems
-			        		}
-						});
-						
-						var crosstabExportItem = new Ext.menu.Item({
-                            id:  Ext.id()
-                            , text: LN('sbi.execution.XlsExport')
-                            , iconCls: 'icon-xls' 
-					     	, scope: this
-							, width: 15
-					    	, handler : function() { this.exportQbECrosstab('application/vnd.ms-excel'); }
-							, href: ''   
-                        });
-						
-						var crosstabMenuItem = new Ext.menu.Item({
-							id:  Ext.id()
-							, text: LN('sbi.execution.export.qbe.crosstab')
-							, menu: {
-								listeners: {'mouseexit': function(item) {item.hide();}},
-				        		items: [crosstabExportItem]
-				        	}
-						});
-						
-						menu0 = new Ext.menu.Menu({
-							id: 'basicMenu_0',
-							listeners: {'mouseexit': function(item) {item.hide();}},
-							items: [resultItem, crosstabMenuItem]    
-						});
-						
-					} else {
-						menu0 = new Ext.menu.Menu({
-							id: 'basicMenu_0',
-							items: menuItems    
-						});	
-					}
-					*/
-					
-					if(this.executionInstance.document.exporters.length > 0){
-						this.add(
-									new Ext.Toolbar.MenuButton({
-										id: Ext.id()
-							            , tooltip: 'Exporters'
-										, path: 'Exporters'	
-										, iconCls: 'icon-export' 	
-							            , menu: menu0
-							            , width: 15
-							            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-							        })					    				        				
-						);	
-					}
-			}	else if ( this.executionInstance.document.typeCode == 'MAP') {
-			
-					var menuItems = new Array();
-					
-					for(i=0;i<this.executionInstance.document.exporters.length ;i++){
-						
-						if (this.executionInstance.document.exporters[i]=='PDF'){
-						menuItems.push(	new Ext.menu.Item({
-				                            id:  Ext.id()
-				                            , text: LN('sbi.execution.PdfExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-pdf' 
-									     	, scope: this
-									        , width: 15
-									    	, handler : function() { this.exportGeoExecution('pdf'); }
-											, href: ''   
-				                        })	 
-				                       ); 
-						}else if(this.executionInstance.document.exporters[i]=='JPG'){
-						menuItems.push(   new Ext.menu.Item({
-				                            id: Ext.id()
-				                            , text: LN('sbi.execution.JpgExport')
-				                            , group: 'group_2'
-				                            , iconCls: 'icon-jpg' 
-									     	, scope: this
-									     , width: 15
-									    	, handler : function() { this.exportGeoExecution('jpeg'); }
-											, href: ''   
-				                        })	
-				                        ); 
-						}
-			
-			  		}   
-					var menu0 = new Ext.menu.Menu({
-						id: 'basicMenu_0',
-						items: menuItems    
-					});	
-					
-					if(this.executionInstance.document.exporters.length > 0){
-						this.add(
-									new Ext.Toolbar.MenuButton({
-										id: Ext.id()
-							            , tooltip: 'Exporters'
-										, path: 'Exporters'	
-										, iconCls: 'icon-export' 	
-							            , menu: menu0
-							            , width: 15
-							            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-							        })					    				        				
-						);	
-					}
-			}	
-		}
-		
-		this.addSeparator();
-		
-		this.addButton(new Ext.Toolbar.Button({
-			iconCls: 'icon-execute' 
-			, tooltip: LN('sbi.execution.executionpage.toolbar.refresh')
-		    , scope: this
-		    , handler : function() {
-					// save parameters into session
-					// if type is QBE inform user that will lose configurations
-					if(this.executionInstance.document.typeCode == 'DATAMART'){
-						if(Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality') && Sbi.user.functionalities.contains('SaveSubobjectFunctionality')){
-							
-							
-							Ext.MessageBox.confirm(
-    						    LN('sbi.generic.warning'),
-            					LN('sbi.execution.executionpage.toolbar.qberefresh'),            
-            					function(btn, text) {
-                					if (btn=='yes') {
-										Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
-										Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersPanel);
-										this.southPanel.collapse();
-										this.northPanel.collapse();
-										this.fireEvent('refreshexecution');
-                					}
-            					},
-            					this
-								);
-							}else{
-								//user who cannot build qbe queries
-								Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
-								Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersPanel);
-								this.southPanel.collapse();
-								this.northPanel.collapse();
-								this.fireEvent('refreshexecution');
-							}
-					} // it 's not a qbe
-					else {
-						Sbi.execution.SessionParametersManager.saveStateObject(this.parametersPanel);
-						Sbi.execution.SessionParametersManager.updateMementoObject(this.parametersPanel);
-						this.southPanel.collapse();
-						this.northPanel.collapse();
-						this.fireEvent('refreshexecution');
-				}
-			}			
-		}));
-	   
-   }
+	
+	
+	
 
    , getQbeExportMenuItems: function() {
 
@@ -1360,9 +1513,9 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    
    , startWorksheetEditing: function() {
 	   this.documentMode = 'EDIT';
-	   this.synchronizeToolbar(this.executionInstance, this.miframe, this.southPanel, this.northPanel, this.parametersPanel, this.shortcutsPanel);
+	   this.synchronize(this.controller, this.executionInstance);
 	   var newUrl = this.changeDocumentExecutionUrlParameter('ACTION_NAME', 'WORKSHEET_START_EDIT_ACTION');
-	   this.miframe.getFrame().setSrc(newUrl);
+	   this.controller.getFrame().setSrc(newUrl);
    }
    
    , saveWorksheet: function () {
@@ -1417,19 +1570,19 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			var thePanel = null;
 			if(this.executionInstance.document.typeCode == 'WORKSHEET'){
 				//the worksheet has been constructed starting from a qbe document
-				thePanel = this.miframe.getFrame().getWindow().qbe;
+				thePanel = this.controller.getFrame().getWindow().qbe;
 				if(thePanel==null){
 					//the worksheet has been constructed starting from a smart filter document
-					thePanel = this.miframe.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
+					thePanel = this.controller.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
 				}
 				if(thePanel==null){
 					//the worksheet is alone with out the qbe
-					thePanel = this.miframe.getFrame().getWindow().workSheetPanel;
+					thePanel = this.controller.getFrame().getWindow().workSheetPanel;
 				}
 			}else if(this.executionInstance.document.typeCode == 'DATAMART'){
-				thePanel = this.miframe.getFrame().getWindow().qbe;
+				thePanel = this.controller.getFrame().getWindow().qbe;
 			}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
-				thePanel = this.miframe.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
+				thePanel = this.controller.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
 			}else{
 				alert('Sorry, cannot perform operation. Invalid engine..');
 				return null;
@@ -1483,13 +1636,13 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    
    , stopWorksheetEditing: function() {
 	   this.documentMode = 'VIEW';
-	   this.synchronizeToolbar(this.executionInstance, this.miframe, this.southPanel, this.northPanel, this.parametersPanel, this.shortcutsPanel);
+	   this.synchronize(this.controller, this.executionInstance);
 	   var newUrl = this.changeDocumentExecutionUrlParameter('ACTION_NAME', 'WORKSHEET_ENGINE_START_ACTION');
-	   this.miframe.getFrame().setSrc(newUrl);
+	   this.controller.getFrame().setSrc(newUrl);
    }
    
    , changeDocumentExecutionUrlParameter: function(parameterName, parameterValue) {
-		var frame = this.miframe.getFrame();
+		var frame = this.controller.getFrame();
 	    var docurl = frame.getDocumentURI();
 	    var startIndex = docurl.indexOf('?')+1;
 	    var endIndex = docurl.length;
@@ -1512,7 +1665,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			} else {
 				// If the user is a Qbe power user, he can save both current query and worksheet definition.
 				// We must get the current active tab in order to understand what must be saved.
-				var qbeWindow = this.miframe.getFrame().getWindow();
+				var qbeWindow = this.controller.getFrame().getWindow();
 				var qbePanel = qbeWindow.qbe;
 				var anActiveTab = qbePanel.tabs.getActiveTab();
 				var activeTabId = anActiveTab.getId();
@@ -1582,11 +1735,31 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	 }
 	 
 	 , exportNetworkExecution: function(type){
-		 var thePanel = this.miframe.getFrame().getWindow().network;
-		 var thePanel2 = this.miframe.getFrame();
-		 var thePanel3 = this.miframe.getFrame().getWindow();
+		 var thePanel = this.controller.getFrame().getWindow().network;
+		 var thePanel2 = this.controller.getFrame();
+		 var thePanel3 = this.controller.getFrame().getWindow();
 		 thePanel.exportNetwork(type);
 	 }
+	 
+		// =================================================================================================================
+		// EVENTS
+		// =================================================================================================================
+	 	
+	 	//this.addEvents(
+	 	/**
+	     * @event beforeinit
+	     * Fired when the toolbar is re-initiated (i.e. just after all buttons have been removed and before specific buttons 
+		 * for the current documentMode are added. This event can be used to inject custom buttons in the toolbar. In 
+		 * Sbi.execution.ExecutionPanel it is used to inject breadcrumbs buttons on the left part.
+		 * 
+	     * @param {Sbi.execution.toolbar.DocumentExecutionPageToolbar} this
+	     */
+	 	//  'beforeinit'
+	 	//, 'moveprevrequest'
+	 	//, 'collapse3'
+	 	//, 'backToAdmin'
+	    //, 'refreshexecution'
+	    //, 'showmask');
 	 
 	 
 	 
