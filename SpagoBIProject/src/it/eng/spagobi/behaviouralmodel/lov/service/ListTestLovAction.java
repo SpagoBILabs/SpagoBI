@@ -70,6 +70,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 	@Override
 	public void doService() {
 		try {
+			Exception responseFailure = null;
 			JSONObject response = new JSONObject();
 			GridMetadataContainer lovExecutionResult = new GridMetadataContainer();
 			// define the spago paginator and list object
@@ -113,6 +114,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 					if (endIndex == -1) endIndex = stacktrace.indexOf(" at ", startIndex);
 					if (startIndex != -1 && endIndex != -1) 
 						response.put("errorMessage", stacktrace.substring(startIndex, endIndex));
+					responseFailure = e;
 					response.put("testExecuted", "false");
 				}
 			} else if(typeLov.equalsIgnoreCase("FIXED_LIST")) {
@@ -132,6 +134,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 					String stacktrace = e.toString();
 					response.put("stacktrace", stacktrace);
 					response.put("errorMessage", "Error while executing fix list lov");
+					responseFailure = e;
 					response.put("testExecuted", "false");
 
 				}
@@ -147,6 +150,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 					String stacktrace = e.toString();
 					response.put("stacktrace", stacktrace);
 					response.put("errorMessage", "Error while executing script");
+					responseFailure = e;
 					response.put("testExecuted", "false");
 
 				}
@@ -164,6 +168,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 					String stacktrace = e.toString();
 					response.put("stacktrace", stacktrace);
 					response.put("errorMessage", "Error while executing java class");
+					responseFailure = e;
 					response.put("testExecuted", "false");
 
 				}
@@ -179,6 +184,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 					String stacktrace = e.toString();
 					response.put("stacktrace", stacktrace);
 					response.put("errorMessage", "Error while executing dataset");
+					responseFailure = e;
 					response.put("testExecuted", "false");
 
 				}
@@ -210,20 +216,43 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 				response.put("testExecuted", "true");
 			}
 			
-			try {
-				logger.debug("OUT");
-				String toreturn = lovExecutionResult.toJSONString();
-				writeBackToClient( new JSONSuccess(new JSONObject(toreturn)) );
-			} catch (IOException e) {
-				SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Error executing the cockpit");
+			if(response.getString("testExecuted").equals("false")){
 				try {
-					writeBackToClient(new JSONFailure(serviceError));
-				} catch (Exception ex) {
-					logger.error("Exception occurred writing back to client", ex);
-					throw new SpagoBIServiceException("Exception occurred writing back to client", ex);
-				} 
-				throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
+					logger.debug("OUT");
+					JSONObject errorStackTrace = new JSONObject();
+					errorStackTrace.put("stacktrace", responseFailure);
+					errorStackTrace.put("error", "error");
+					JSONObject errorJSON = new JSONObject();
+					errorJSON.put("metaData", errorStackTrace);
+					writeBackToClient( new JSONSuccess(errorJSON) );
+				} catch (IOException e) {
+					SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Error executing the cockpit");
+					try {
+						writeBackToClient(new JSONFailure(serviceError));
+					} catch (Exception ex) {
+						logger.error("Exception occurred writing back to client", ex);
+						throw new SpagoBIServiceException("Exception occurred writing back to client", ex);
+					} 
+					throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
+				}
+			}else{
+				try {
+					logger.debug("OUT");
+					String toreturn = lovExecutionResult.toJSONString();
+					writeBackToClient( new JSONSuccess(new JSONObject(toreturn)) );
+				} catch (IOException e) {
+					SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Error executing the cockpit");
+					try {
+						writeBackToClient(new JSONFailure(serviceError));
+					} catch (Exception ex) {
+						logger.error("Exception occurred writing back to client", ex);
+						throw new SpagoBIServiceException("Exception occurred writing back to client", ex);
+					} 
+					throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
+				}
 			}
+			
+
 		
 		} catch (Exception e) {
 			logger.error("Error testing lov", e);

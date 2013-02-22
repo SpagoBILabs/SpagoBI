@@ -322,6 +322,7 @@ public class GetParameterValuesForExecutionAction  extends AbstractSpagoBIAction
 				addNode=false;
 				List columns = row.getContainedAttributes();
 				valueJSON = new JSONObject();
+				boolean notNullNode = false; //if the row does not contain the value atribute we don't add the node
 				for(int i = 0; i < columns.size(); i++) {
 					SourceBeanAttribute attribute = (SourceBeanAttribute)columns.get(i);	
 					if((treeLovParentNodeName=="lovroot" ) || (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName) && (attribute.getValue().toString()).equalsIgnoreCase(treeLovNodeValue))){
@@ -332,9 +333,11 @@ public class GetParameterValuesForExecutionAction  extends AbstractSpagoBIAction
 					if(lovProvDet.getTreeLevelsColumns().size()==treeLovNodeLevel+2){
 						if(attribute.getKey().equalsIgnoreCase(descriptionColumn)){//its the column of the description
 							valueJSON.put("description", attribute.getValue());
+							notNullNode = true;
 						} if(attribute.getKey().equalsIgnoreCase(valueColumn)){//its the column of the value
 							valueJSON.put("value", attribute.getValue());
 							valueJSON.put("id", attribute.getValue()+NODE_ID_SEPARATOR+(treeLovNodeLevel+1));
+							notNullNode = true;
 						}
 						valueJSON.put("leaf", true);
 					}else if(attribute.getKey().equalsIgnoreCase(treeLovNodeName) ){
@@ -342,9 +345,10 @@ public class GetParameterValuesForExecutionAction  extends AbstractSpagoBIAction
 						valueJSON.put("description", attribute.getValue());
 						valueJSON.put("value", attribute.getValue());
 						valueJSON.put("id", attribute.getValue()+NODE_ID_SEPARATOR+(treeLovNodeLevel+1));
+						notNullNode = true;
 					}
 				}
-				if(addNode){
+				if(addNode && notNullNode){
 					valuesDataJSON.add(valueJSON);
 				}
 			}
