@@ -318,23 +318,107 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			this.fireEvent('beforetoolbarinit', this, this.toolbar);
 		}, this);
 		
+		this.toolbar.on('click', function (toolbar, action) {
+			if(action === 'backToRolePage') {
+				this.fireEvent('moveprevrequest');
+			} else if (action === 'backToAdminPage') { 
+				this.fireEvent('backToAdmin');
+			} else if(action === 'expand') { 
+				this.fireEvent('collapse3');
+			}
+		}, this);
+		
 		this.toolbar.on('beforerefresh', function (formState) {
 				this.fireEvent('beforerefresh', this, this.executionInstance, formState);
 		}, this);
 			
-		this.toolbar.on('moveprevrequest', function () {
-			this.fireEvent('moveprevrequest');
-		}, this);
-			
-		this.toolbar.on('backToAdmin', function () {
-			this.fireEvent('backToAdmin');
-		}, this);
-			
-		this.toolbar.on('collapse3', function () {
-			this.fireEvent('collapse3');
-		}, this);
-			
 		
+		
+	}
+	
+	, subobjectWin: null
+	, openSubobjectSelectionWin: function() {
+		var subobjectPanel =  new Sbi.execution.SubobjectsPanel({showTitle:false}, this.executionInstance.document);
+		subobjectPanel.on('executionrequest', function(subObjectId) {
+			this.executionInstance.SBI_SUBOBJECT_ID = subObjectId;
+			this.subobjectWin.cardPanel.getLayout().setActiveItem( 1 );
+			this.subobjectWin.executeButton.enable();
+			if(!this.subobjectWin.parametersPanel.sync) {
+				this.subobjectWin.parametersPanel.synchronize( this.executionInstance );
+				this.subobjectWin.parametersPanel.sync = true;
+			}
+	    }, this);
+		subobjectPanel.on('showmetadatarequest', function (subObjectId) {
+	    	 var win_metadata = new Sbi.execution.toolbar.MetadataWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID, 'SUBOBJECT_ID': subObjectId});
+			 win_metadata.show();
+		}, this);
+		
+	
+		var parametersPanel = new Sbi.execution.ParametersPanel({
+			isFromCross: this.isFromCross
+			, pageNumber: 2
+			, parentPanel: this}, this.executionInstance.document);
+		
+		parametersPanel.on('synchronize', function() {
+			this.subobjectWin.parametersPanel.setFormState(this.parametersPanel.getFormState());
+		}, this);
+		
+		var cardPanel = new Ext.Panel({layout:'card'
+			, border: false
+			, hideMode: !Ext.isIE ? 'nosize' : 'display'
+			, activeItem: 0
+			, items: [
+			    subobjectPanel , parametersPanel
+			]
+		});
+		
+		var executeButton = new Ext.Button({
+            text:'Execute',
+            disabled:true,
+            scope: this,
+            handler: function(){
+           	 this.subobjectWin.close();
+                this.parametersPanel.setFormState(this.subobjectWin.parametersPanel.getFormState());
+                this.refreshDocument();
+            }
+        });
+		
+		this.subobjectWin = new Ext.Window({
+			title: "Execute subobject...",
+			layout: 'fit',
+			width: 600,
+			height: 400,
+			modal: true,
+			buttons: [executeButton ,{
+                 text: 'Close',
+                 scope: this,
+                 handler: function(){
+                	 this.subobjectWin.close();
+                 }
+            }],
+			items: [cardPanel]
+		});
+		this.subobjectWin.cardPanel = cardPanel;
+		this.subobjectWin.parametersPanel = parametersPanel;
+		this.subobjectWin.executeButton = executeButton;
+		this.subobjectWin.show();
+		
+		subobjectPanel.synchronize( this.executionInstance );		
+	}
+	
+	, snapshotWin: null
+	, openSnapshotSelectionWin: function() {
+		var snapshotsPanel =  new Sbi.execution.SnapshotsPanel({showTitle:false}, this.executionInstance.document);
+		this.snapshotWin = new Ext.Window({
+			title: "Execute customized view...",
+			layout: 'fit',
+			modal: true,
+			width: 400,
+			height: 400,
+			items: [snapshotsPanel]
+		});
+		this.snapshotWin.show();
+		snapshotsPanel.synchronize( this.executionInstance );
 	}
 	
 	/**
