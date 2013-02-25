@@ -31,6 +31,14 @@
 	background-image: url('../../../img/edit16.png') !important;
 }
 
+.icon-execute-subobject {
+	background-image: url('../../../img/execsubobject16.png') !important;
+}
+
+.icon-execute-snapshot {
+	background-image: url('../../../img/execsnapshot16.png') !important;
+}
+
 .icon-view {
 	background-image: url('../../../img/editdelete15.png') !important;
 }

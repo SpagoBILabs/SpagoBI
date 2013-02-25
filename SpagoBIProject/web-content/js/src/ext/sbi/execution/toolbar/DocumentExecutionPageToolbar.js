@@ -397,7 +397,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			}
 	    	
 	    	this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-edit' 
+				iconCls: 'icon-execute-subobject' 
 				, tooltip: LN('Execute subobject')
 			    , scope: this
 			    , handler : function() {
@@ -407,7 +407,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			
 	    	
 	    	this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-edit' 
+				iconCls: 'icon-execute-snapshot' 
 				, tooltip: LN('Execute snapshot')
 				, scope: this
 			    , handler : function() {
@@ -836,50 +836,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 						});
 						
 
-						/*
-						if (this.executionInstance.document.typeCode == 'DATAMART') {
-							var resultItem = new Ext.menu.Item({
-								id:  Ext.id()
-								, text: LN('sbi.execution.export.qbe.results')
-								, menu: {
-									listeners: {'mouseexit': function(item) {item.hide();}},
-				        			items: menuItems
-				        		}
-							});
-							
-							var crosstabExportItem = new Ext.menu.Item({
-	                            id:  Ext.id()
-	                            , text: LN('sbi.execution.XlsExport')
-	                            , iconCls: 'icon-xls' 
-						     	, scope: this
-								, width: 15
-						    	, handler : function() { this.exportQbECrosstab('application/vnd.ms-excel'); }
-								, href: ''   
-	                        });
-							
-							var crosstabMenuItem = new Ext.menu.Item({
-								id:  Ext.id()
-								, text: LN('sbi.execution.export.qbe.crosstab')
-								, menu: {
-									listeners: {'mouseexit': function(item) {item.hide();}},
-					        		items: [crosstabExportItem]
-					        	}
-							});
-							
-							menu0 = new Ext.menu.Menu({
-								id: 'basicMenu_0',
-								listeners: {'mouseexit': function(item) {item.hide();}},
-								items: [resultItem, crosstabMenuItem]    
-							});
-							
-						} else {
-							menu0 = new Ext.menu.Menu({
-								id: 'basicMenu_0',
-								items: menuItems    
-							});	
-						}
-						*/
-						
+					
 						if(this.executionInstance.document.exporters.length > 0){
 							this.add(
 										new Ext.Toolbar.MenuButton({
