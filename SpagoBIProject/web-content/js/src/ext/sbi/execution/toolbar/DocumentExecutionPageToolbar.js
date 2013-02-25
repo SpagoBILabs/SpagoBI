@@ -13,6 +13,7 @@ Sbi.execution.toolbar.DocumentExecutionPageToolbar = function(config) {
 		// set default values here
 		documentMode: 'INFO'
 		, expandBtnVisible: true
+		, callFromTreeListDoc: false
 	};
 
 	if (Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.toolbar && Sbi.settings.execution.toolbar.documentexecutionpagetoolbar) {
