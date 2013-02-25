@@ -23,7 +23,7 @@ Sbi.execution.DocumentPage = function(config, doc) {
 	Ext.apply(this, c);
 		
 	// add events
-    this.addEvents('beforesynchronize', 'moveprevrequest', 'loadurlfailure', 'crossnavigation', 'beforerefresh','collapse3', 'backToAdmin');
+    this.addEvents('beforesynchronize', 'loadurlfailure', 'crossnavigation');
 
 	// declare exploited services
 	this.initServices();
@@ -212,6 +212,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 	, initCrossNavigationaMessageListner: function() {
 		return {
 	    	fn: function(srcFrame, message){
+	    		Sbi.trace('[DocumentPage.listeners(message:crossnavigation)]: IN');
 	           	var config = {
 	           		document: {'label': message.data.label}
 	       			, preferences: {
@@ -247,6 +248,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 	           	} else {
 	           		this.fireEvent('crossnavigation', config);
 	           	}
+	           	Sbi.trace('[DocumentPage.listeners(message:crossnavigation)]: OUT');
 	    	}
 	    	, scope: this
 		};

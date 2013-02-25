@@ -230,10 +230,7 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		}
 		this.parametersSelectionPage =  new Sbi.execution.ParametersSelectionPage(parametersSelectionPageConfig || {}, this.document);
 		this.parametersSelectionPage.maskOnRender = true;
-		
-		
-		
-		
+
 		this.parametersSelectionPage.on('moveprevrequest', this.moveToPreviousPage, this);
 		this.parametersSelectionPage.on('movenextrequest', this.moveToNextPage, this);
 		this.parametersSelectionPage.on('beforetoolbarinit', function(page, toolbar){

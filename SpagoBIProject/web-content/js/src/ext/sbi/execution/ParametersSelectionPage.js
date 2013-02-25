@@ -59,6 +59,7 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 		, 'moveprevrequest'
 		, 'collapse3'
 		, 'backToAdmin'
+		, 'crossnavigation'
 	);	
 	
 	this.initServices();
@@ -385,6 +386,11 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 		config.border = false;
 		this.infoPage = new Sbi.execution.InfoPage(config, doc);
 		this.documentPage = new Sbi.execution.DocumentPage(config, doc);
+		this.documentPage.on('crossnavigation', function(config) {
+			Sbi.trace('[ParametersSelectionPage.documentPage.on(\'crossnavigation\')]: IN');
+			this.fireEvent('crossnavigation', config);
+			Sbi.trace('[ParametersSelectionPage.documentPage.on(\'crossnavigation\')]: OUT');
+		}, this);
 		
 		this.documentPanel = new Ext.Panel({
 			region:'center'
