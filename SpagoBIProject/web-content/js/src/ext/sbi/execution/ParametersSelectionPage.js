@@ -39,6 +39,7 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 		, isSubobjectPanelReady: false
 		, isSnapshotPanelReady: false
 		, isFromCross: false
+		, callFromTreeListDoc: false
 	};
 	
 	if (Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.parametersselectionpage) {
@@ -303,12 +304,12 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 */
 	
 	, initToolbar: function(config, doc) {
-			
+		
 		this.toolbarHiddenPreference = config.toolbarHidden!== undefined ? config.toolbarHidden : false;
 		if (this.toolbarHiddenPreference) return;
 		
 		config.executionToolbarConfig = config.executionToolbarConfig || {};
-		config.executionToolbarConfig.callFromTreeListDoc = this.callFromTreeListDoc;
+		config.executionToolbarConfig.callFromTreeListDoc = config.callFromTreeListDoc;
 		config.executionToolbarConfig.preferenceSubobjectId = this.getSubObjectId();
 		this.toolbar = new Sbi.execution.toolbar.DocumentExecutionPageToolbar(config.executionToolbarConfig);
 		
