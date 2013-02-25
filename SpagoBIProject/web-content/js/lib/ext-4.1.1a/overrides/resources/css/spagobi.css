@@ -3,7 +3,7 @@ Styles for the component Ext.ux.RadioColumn
 */ 
 
 .radio-column-checked{
-	background-position: 0 -13px; 
+	background-position: 0 -14px; 
 	
 }
 		
@@ -12,7 +12,7 @@ Styles for the component Ext.ux.RadioColumn
 }
 
 .check-column-checked{
-	background-position: 0 -13px; 
+	background-position: 0 -14px; 
 	margin-left: expression((this.width-13)/2);
 }
 		
