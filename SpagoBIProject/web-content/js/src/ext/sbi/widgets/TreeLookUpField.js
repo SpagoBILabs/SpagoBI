@@ -82,8 +82,12 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 			createNode : function(attr) {
 				attr.text = attr.description;
 
-				if (attr.leaf && thisPanel.multivalue) {
+				if (attr.leaf) {
 					attr.iconCls = 'parameter-leaf';
+				}
+				
+				if (attr.leaf && thisPanel.multivalue) {
+					
 					if (thisPanel.xvalues
 							&& thisPanel.xvalues.indexOf(attr.value) >= 0) {
 						attr.checked = true;
