@@ -68,7 +68,16 @@ Sbi.settings.kpi = {
 };
 
 
-
+/**
+ * WIDGETS
+ */
+Sbi.settings.widgets = {
+		TreeLookUpField : {
+			//true to allow the selection of the internal node of the tree driver
+			//false to allow the selection only foe the leafs
+			allowInternalNodeSelection: false
+		}
+};
 
 // Specific IE settings
 Ext.ns("Sbi.settings.IE");
@@ -78,3 +87,6 @@ Ext.ns("Sbi.settings.IE");
 // if the Sbi.settings.IE.destroyExecutionWizardWhenClosed is true, stacked execution wizards are destroyed instead (this may cause the IE 
 // warning message "A script on this page is causing Internet Explorer to run slowly")
 Sbi.settings.IE.destroyExecutionWizardWhenClosed = false;
+
+
+
