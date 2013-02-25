@@ -1492,6 +1492,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			  		               value="<%=StringEscapeUtils.escapeHtml(sInfo.getExpression())%>" size="35" />
 			  	    </div>
 				</div>
+			  
 			  	    
 	  	    <div class='div_detail_label_scheduler'>
   		      <span class='portlet-form-field-label'>
@@ -1501,6 +1502,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	  	    <div class='div_detail_form'>
 	  		        <input type="text" name="mailsubj_<%=biobj.getId()%>__<%=index%>" 
 	  		               value="<%=StringEscapeUtils.escapeHtml(sInfo.getMailSubj())%>" size="60" />
+	  	    </div>
+	  	    
+           <div class='div_detail_form'>
+               <input  type="checkbox" name="reportNameInSubject_<%=biobj.getId()%>__<%=index%>" value="true"
+                 <%= sInfo.isReportNameInSubject() ? "checked='checked'" : "" %> />
+                   <span class='portlet-form-field-label'>
+                       <spagobi:message key="scheduler.reportNameInSubject" bundle="component_scheduler_messages" />
+                   </span>
 	  	    </div>
 	  	    
 	  	    <div class='div_detail_label_scheduler'>

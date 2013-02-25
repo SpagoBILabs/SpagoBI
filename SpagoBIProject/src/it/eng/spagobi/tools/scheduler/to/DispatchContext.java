@@ -77,6 +77,7 @@ public class DispatchContext implements Serializable {
 	private String javaClassPath = "";	
 	private int biobjId = 0;
 	private List dlIds = new ArrayList();
+	private boolean reportNameInSubject;
 	
 	// injected properties
 	private IEngUserProfile userProfile;
@@ -169,6 +170,12 @@ public class DispatchContext implements Serializable {
 	
 	
 	
+	public boolean isReportNameInSubject() {
+		return reportNameInSubject;
+	}
+	public void setReportNameInSubject(boolean reportNameInSubject) {
+		this.reportNameInSubject = reportNameInSubject;
+	}
 	/**
 	 * @return the useFixedFolder
 	 */

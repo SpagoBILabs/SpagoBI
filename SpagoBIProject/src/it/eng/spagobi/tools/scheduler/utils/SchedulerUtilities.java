@@ -450,7 +450,11 @@ public class SchedulerUtilities {
 			if(name.equals("containedFileName")) {
 				dispatchContext.setContainedFileName(value);
 			}
+			if(name.equals("reportNameInSubject")) {
+				dispatchContext.setReportNameInSubject(true);
+			}
 
+			
 			// File
 			if(name.equals("zipFileDocument")) {
 				dispatchContext.setZipFileDocument(true);

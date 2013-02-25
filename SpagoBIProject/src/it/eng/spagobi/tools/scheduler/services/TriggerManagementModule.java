@@ -553,6 +553,10 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			boolean zipMailDocument = "true".equalsIgnoreCase((String) request.getAttribute("zipMailDocument_"+biobId+"__"+index));
 			dispatchContext.setZipMailDocument(zipMailDocument);
 			
+			boolean reportNameInSubject = "true".equalsIgnoreCase((String) request.getAttribute("reportNameInSubject_"+biobId+"__"+index));
+			dispatchContext.setReportNameInSubject(reportNameInSubject);
+			
+			
 			// set File Name if chosen
 			String containedFileName = (String)request.getAttribute("containedFileName_"+biobId+"__"+index);	
 			if(containedFileName != null && !containedFileName.equals("")){
@@ -927,6 +931,10 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			if(dispatchContext.isZipMailDocument()) {
 				saveOptString += "zipMailDocument=true%26";
 			}
+			if(dispatchContext.isReportNameInSubject()) {
+				saveOptString += "reportNameInSubject=true%26";
+			}
+
 			if(dispatchContext.getContainedFileName() != null) {
 				saveOptString += "containedFileName="+dispatchContext.getContainedFileName()+"%26";
 			}
