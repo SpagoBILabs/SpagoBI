@@ -384,7 +384,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
         });
 		
 		this.subobjectWin = new Ext.Window({
-			title: "Execute subobject...",
+			title: "Execute customized view...",
 			layout: 'fit',
 			width: 600,
 			height: 400,
@@ -409,8 +409,12 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	, snapshotWin: null
 	, openSnapshotSelectionWin: function() {
 		var snapshotsPanel =  new Sbi.execution.SnapshotsPanel({showTitle:false}, this.executionInstance.document);
+		snapshotsPanel.on('executionrequest', function(snapshotId) {
+	    	this.onExecuteSnapshot(snapshotId);
+	    }, this);
+		
 		this.snapshotWin = new Ext.Window({
-			title: "Execute customized view...",
+			title: "Execute scheduled documents...",
 			layout: 'fit',
 			modal: true,
 			width: 400,
