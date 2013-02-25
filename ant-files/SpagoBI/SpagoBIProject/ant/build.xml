@@ -381,7 +381,6 @@
 				<file name="./src/ext/sbi/execution/LookupFieldWithMaximize.js" />
 				<file name="./src/ext/sbi/execution/SessionParametersManager.js" />
 				<file name="./src/ext/sbi/execution/RoleSelectionPage.js" />
-				<file name="./src/ext/sbi/execution/InfoPage.js" />
 				<file name="./src/ext/sbi/execution/DocumentPage.js" />
 				<file name="./src/ext/sbi/execution/ParametersSelectionPage.js" />
 				<file name="./src/ext/sbi/execution/SaveDocumentWindow.js" />
