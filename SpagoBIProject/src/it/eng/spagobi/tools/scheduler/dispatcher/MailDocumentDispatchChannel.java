@@ -105,7 +105,8 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 		String descriptionSuffix;
 		String containedFileName;
 		String zipFileName;
-		
+		boolean reportNameInSubject;
+
 		logger.debug("IN");
 		try{
 			parametersMap = dispatchContext.getParametersMap();
@@ -118,7 +119,7 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 					dispatchContext.getContainedFileName() : document.getName();
 		    zipFileName = dispatchContext.getZipMailName() != null && !dispatchContext.getZipMailName().equals("")?
 							dispatchContext.getZipMailName() : document.getName();
-					
+	       reportNameInSubject = dispatchContext.isReportNameInSubject();
 
 			String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtphost");
 		    String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtpport");
@@ -225,7 +226,14 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			}
 			msg.setRecipients(Message.RecipientType.TO, addressTo);
 			// Setting the Subject and Content Type
-			String subject = mailSubj + " " + document.getName() + nameSuffix;
+
+			String subject = mailSubj;
+			
+	
+			if(reportNameInSubject){
+				subject += " " + document.getName() + nameSuffix;
+			}
+			
 			msg.setSubject(subject);
 			// create and fill the first message part
 			MimeBodyPart mbp1 = new MimeBodyPart();
