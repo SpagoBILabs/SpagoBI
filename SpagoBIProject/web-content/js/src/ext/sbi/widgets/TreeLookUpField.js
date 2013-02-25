@@ -30,6 +30,13 @@ Ext.ns("Sbi.widgets");
 
 Sbi.widgets.TreeLookUpField = function(config) {
 
+	var defaultSettings = Ext.apply({}, config, {
+		triggerClass : 'tree-look-up',
+		enableKeyEvents : true,
+		width : 150,
+		allowInternalNodeSelection: false
+	});
+
 	this.rootConfig = {
 		text : 'root',
 		triggerClass : 'tree-look-up',
@@ -37,18 +44,17 @@ Sbi.widgets.TreeLookUpField = function(config) {
 		id : 'lovroot___SEPA__0'
 	};
 
-	Ext.apply(this, config);
+	if(Sbi.settings && Sbi.settings.widgets && Sbi.settings.widgets.TreeLookUpField) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.widgets.TreeLookUpField);
+	}
+
+	
+	defaultSettings = Ext.apply(defaultSettings, config);
+	Ext.apply(this, defaultSettings);
 	this.initWin();
 
-	var c = Ext.apply({}, config, {
-		triggerClass : 'tree-look-up',
-		enableKeyEvents : true,
-		width : 150
-	// , readOnly: true
-	});
-
 	// constructor
-	Sbi.widgets.TreeLookUpField.superclass.constructor.call(this, c);
+	Sbi.widgets.TreeLookUpField.superclass.constructor.call(this, defaultSettings);
 
 	this.on("render", function(field) {
 		field.trigger.on("click", function(e) {
@@ -86,26 +92,18 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 					attr.iconCls = 'parameter-leaf';
 				}
 				
-				if (attr.leaf && thisPanel.multivalue) {
-					
-					if (thisPanel.xvalues
-							&& thisPanel.xvalues.indexOf(attr.value) >= 0) {
+				if ((thisPanel.allowInternalNodeSelection || attr.leaf) && thisPanel.multivalue) {
+					if (thisPanel.xvalues && thisPanel.xvalues.indexOf(attr.value) >= 0) {
 						attr.checked = true;
 					} else {
 						attr.checked = false;
 					}
-
 				}
+				
 				var node = Ext.tree.TreeLoader.prototype.createNode.call(this,
 						attr);
-//				if (attr.checked) {
-//					node.on('append',
-//							function(tree, thisNode, childNode, index) {
-//								thisNode.getUI().toggleCheck(false);
-//							}, this);
-//				}
 				
-				if (!thisPanel.multivalue && attr.leaf ) {
+				if (!thisPanel.multivalue && (thisPanel.allowInternalNodeSelection || attr.leaf) ) {
 					node.on('click',
 							function(node, e) {
 								thisPanel.onOkSingleValue(node);
