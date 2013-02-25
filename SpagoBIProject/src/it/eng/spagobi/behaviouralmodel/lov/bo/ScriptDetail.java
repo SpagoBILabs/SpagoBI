@@ -36,6 +36,9 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	static private Logger logger = Logger.getLogger(ScriptDetail.class);
 
+	public static final String SBI_BINDINGS_LANGUAGE = "SBI_LANGUAGE";
+	public static final String SBI_BINDINGS_COUNTRY = "SBI_COUNTRY";
+	public static final String SBI_BINDINGS_DATE_FORMAT = "SBI_DATE_FORMAT";
 	
 	/**
 	 * the script
@@ -231,9 +234,9 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		}
 		String dateFormat = GeneralUtilities.getLocaleDateFormat(locale);
 		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("language", locale.getLanguage());
-		map.put("country", locale.getCountry());
-		map.put("dateFormat", dateFormat);
+		map.put(SBI_BINDINGS_LANGUAGE, locale.getLanguage());
+		map.put(SBI_BINDINGS_COUNTRY, locale.getCountry());
+		map.put(SBI_BINDINGS_DATE_FORMAT, dateFormat);
 		return map;
 	}
 
