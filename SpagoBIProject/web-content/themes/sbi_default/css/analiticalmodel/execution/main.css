@@ -280,15 +280,20 @@
 .green-row { background-color: #99CC99 !important; background-image: none !important }
 
 .document-table-info {
-	font-size: 10pt;
+    font-size: 10pt;
+}
+
+.document-table-info-icon {
+    width: 10%;
 }
 
 .document-table-info-title {
-	font-weight: bold;
-	text-align: right;
-	padding: 1pt;
+    width: 20%;
+    font-weight: bold;
+    text-align: right;
+    padding: 1pt;
 }
 
 .document-table-info-content {
-	padding: 1pt;
+    padding: 1pt;
 }

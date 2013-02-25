@@ -118,7 +118,7 @@ Ext.extend(Sbi.execution.InfoPage, Ext.Panel, {
 				
 			    '<table class="document-table-info">',
 			    '<tr>',
-			    ' <td rowspan="6">',
+			    ' <td rowspan="6" class="document-table-info-icon">',
 			    	'<div class="group-view">',
 			    		'<div class="document-item-icon">',
 			    			'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon"></img></td>',
