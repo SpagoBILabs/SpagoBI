@@ -38,7 +38,7 @@ Ext.ns("Sbi.execution");
 Sbi.execution.SnapshotsPanel = function(config, doc) {
 	
 	var c = Ext.apply({
-		// defaults
+		showTitle: true
 	}, config || {});
 	
 	// always declare exploited services first!
@@ -120,7 +120,7 @@ Sbi.execution.SnapshotsPanel = function(config, doc) {
 		}
 		, tbar: this.tbar
         , collapsible: false
-        , title: LN('sbi.execution.snapshots.title')
+        , title: c.showTitle === true? LN('sbi.execution.snapshots.title') : undefined
         , autoScroll: true
         , sm : this.sm
         , height: 200

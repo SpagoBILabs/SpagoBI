@@ -39,6 +39,7 @@ Sbi.execution.SubobjectsPanel = function(config, doc) {
 	
 	var c = Ext.apply({
 		// defaults
+		showTitle: true
 	}, config || {});
 	
 	// always declare exploited services first!
@@ -164,7 +165,7 @@ Sbi.execution.SubobjectsPanel = function(config, doc) {
 		}
         , tbar: tbar
         , collapsible: false
-        , title: LN('sbi.execution.subobjects.title')
+        , title: c.showTitle === true? LN('sbi.execution.subobjects.title'): undefined
         , autoScroll: true
         , sm : this.sm
         , height: 200

@@ -22,7 +22,7 @@ Sbi.execution.toolbar.DocumentExecutionPageToolbar = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});	
 	Ext.apply(this, c);
 	
-	this.addEvents('beforeinit', 'moveprevrequest', 'collapse3', 'backToAdmin','showmask');
+	this.addEvents('beforeinit', 'click', 'showmask');
 	this.initServices();
 	this.init();
 	
@@ -228,11 +228,11 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				iconCls: 'icon-back' 
 				, tooltip: LN('sbi.execution.parametersselection.toolbar.back')
 			    , scope: this
-			    , handler : function() {this.fireEvent('moveprevrequest');}
+			    , handler : function() {
+			    	this.fireEvent('click', this, "backToRolePage");
+			    }
 			}));
-			
 			this.toolbar.addSeparator();
-		
 			drawRoleBack = true;
 		}
 		
@@ -243,7 +243,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				, tooltip: LN('sbi.execution.executionpage.toolbar.documentView')
 				, scope: this
 				, handler : function() {
-					this.fireEvent('backToAdmin');
+					this.fireEvent('click', this, "backToAdminPage");
 				}
 			}));
 		}
@@ -254,7 +254,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
 			    , scope: this
 			    , handler : function() {
-					this.fireEvent('collapse3');
+			    	this.fireEvent('click', this, 'expand');
 				}			
 			}));
 		}
@@ -300,7 +300,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 					   , tooltip: LN('sbi.execution.executionpage.toolbar.expand')
 					   , scope: this
 					   , handler : function() {
-						   this.fireEvent('collapse3');
+						   this.fireEvent('click', this, 'expand');
 					   }			
 			   }));
 		   }
@@ -380,7 +380,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 					, tooltip: LN('sbi.execution.executionpage.toolbar.documentView')
 					, scope: this
 					, handler : function() {
-						this.fireEvent('backToAdmin');
+						this.fireEvent('click', this, "backToAdminPage");
 					}
 				}));
 			}
@@ -391,10 +391,30 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 						, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
 					    , scope: this
 					    , handler : function() {
-								this.fireEvent('collapse3');
+					    	this.fireEvent('click', this, 'expand');
 						}			
 					}));
 			}
+	    	
+	    	this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-edit' 
+				, tooltip: LN('Execute subobject')
+			    , scope: this
+			    , handler : function() {
+			    	this.controller.openSubobjectSelectionWin();
+			    }
+			}));
+			
+	    	
+	    	this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-edit' 
+				, tooltip: LN('Execute snapshot')
+				, scope: this
+			    , handler : function() {
+			    	this.controller.openSnapshotSelectionWin();
+			    }
+			}));
+			
 			
 			if (Sbi.user.functionalities.contains('EditWorksheetFunctionality') && this.executionInstance.document.typeCode === 'WORKSHEET') {
 				this.addButton(new Ext.Toolbar.Button({
@@ -1754,11 +1774,14 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	     * @param {Sbi.execution.toolbar.DocumentExecutionPageToolbar} this
 	     */
 	 	//  'beforeinit'
-	 	//, 'moveprevrequest'
-	 	//, 'collapse3'
-	 	//, 'backToAdmin'
-	    //, 'refreshexecution'
-	    //, 'showmask');
+	 	/**
+	     * @event click
+	     * Fired when the user click on a button of the toolbar
+		 * 
+	     * @param {Sbi.execution.toolbar.DocumentExecutionPageToolbar} this
+	     * @param {String} action 
+	     */
+	    //);
 	 
 	 
 	 
