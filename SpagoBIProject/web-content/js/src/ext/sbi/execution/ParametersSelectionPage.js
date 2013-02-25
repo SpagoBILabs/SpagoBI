@@ -41,8 +41,8 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 		, isFromCross: false
 	};
 	
-	if (Sbi.settings && Sbi.settings.execution && Sbi.settings.parametersselectionpage) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.parametersselectionpage);
+	if (Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.parametersselectionpage) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.execution.parametersselectionpage);
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});	
