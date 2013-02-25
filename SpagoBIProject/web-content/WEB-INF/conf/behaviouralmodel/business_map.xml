@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <BUSINESS_MAP>
 	<MAP_ACTIONS>
+		<MAP_ACTION actionName="LIST_TEST_LOV_ACTION" businessProcess="LovsView" />
+		<MAP_ACTION actionName="SAVE_LOV_ACTION" businessProcess="LovsView" />
 	</MAP_ACTIONS>
 	<MAP_PAGE_MODULES>
 <MAP_PAGE_MODULE pageName="DetailParameterPage" moduleName="DetailParameterModule" businessProcess="ParameterView" />

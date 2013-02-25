@@ -128,8 +128,8 @@ var url = {
 		lovTest.on('lovTypeChanged',function(type){
 			lovPanel.remove(lovTest,'true');
 			lovConfig.lovType=type;
-			lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel',{lovConfig:lovConfig, modality:modality}); //by alias
-			addLovTestEvents(lovTest,lovPanel, lovConfig, modality);
+			lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel',{contextName: contextName,lovConfig:lovConfig, modality:modality}); //by alias
+			addLovTestEvents(lovTest,lovPanel, lovConfig, modality, contextName);
 			lovPanel.add(lovTest);
 		},this);
 	}
@@ -154,7 +154,7 @@ var url = {
 			layout:'fit',
 	     	items: [lovTest]
 	    });
-		addLovTestEvents(lovTest,lovPanel, lovConfig, modality);
+		addLovTestEvents(lovTest,lovPanel, lovConfig, modality, contextName);
 		
 		 
     });

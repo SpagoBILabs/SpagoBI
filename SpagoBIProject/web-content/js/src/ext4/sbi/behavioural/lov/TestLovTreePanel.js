@@ -98,6 +98,8 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
         this.callParent(arguments);
         
         var treePanel = this;
+        this.initContextMenu();
+        this.on('itemcontextmenu', this.onContextMenu, this);
         
         this.on("render",function(){
             var formPanelDropTarget = Ext.create('Ext.dd.DropTarget', this.el, {
@@ -165,12 +167,18 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
     , updateTreeNode: function(target, name, node){
     	var position = this.getTargetPosition(target);
     	if(position!=null){
-    		//if the node is not a leav you can not set the description
+    		//if the node is not a leaf you can not set the description
     		if(position!='description' || (node.childNodes && node.childNodes.length==0) ){
-    		 	node.set(position, name);
+    			var store = this.getStore();
+    			var root = store.getRootNode();
     		 	if(position=='value'){
+    		 		var existingNode = this.findTreeNode(root, "value", name);
+    		 		if(existingNode){
+    		 			return;
+    		 		}
     		 		node.set('description', name);
     		 	}
+    		 	node.set(position, name);
     		 	this.getView().refresh();   
     		}
     	}
@@ -325,5 +333,48 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
 			this.column = column;
 		}
 	}
+	
+	
+	, initContextMenu : function() {
 
+		this.menu = new Ext.menu.Menu( {
+			items : [
+					{
+						text : LN('sbi.behavioural.delete'),
+						iconCls : 'delete-icon',
+						handler : function() {
+							this.removeNode(this.ctxNode);
+						},
+						scope : this
+					} ]
+		});
+
+	}
+	
+	, removeNode : function(node) {
+		if(node.childNodes){
+			for(var i=0; i<node.childNodes.length; i++){
+				node.parentNode.appendChild(node.childNodes[i]);
+			}
+		}
+		node.parentNode.removeChild(node, true);
+	}
+
+	,onContextMenu : function(node, record, item, index, e, eOpts ) {
+		if (this.menu == null) { // create context menu on first right click
+			this.initContextMenu();
+		}
+		
+		if (this.ctxNode) {
+			this.ctxNode = null;
+		}
+		
+		this.ctxNode = record;
+		e.stopEvent();
+		this.menu.showAt(e.getXY());
+        return false;
+		
+	
+	}
+	
 });
