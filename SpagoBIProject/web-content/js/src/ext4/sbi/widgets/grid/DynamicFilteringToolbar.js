@@ -140,10 +140,8 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar', {
 	
 	, applyFilter: function(){
 		var filterConfig = this.getValue();
-
-		this.store.loadPage(1,{
-			params: filterConfig
-		});
+		this.store.proxy.extraParams = filterConfig;
+		this.store.loadPage(1);
 	}
 	
 	
