@@ -176,6 +176,11 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
     }
     
 	, setValue: function(v){
+		if (v == null) {
+			Sbi.debug('Value in input is null');
+			this.doSetValue([]);
+			return;
+		}
 		if(typeof v == 'string' && v.trim() != '') {v = [v];}
 		if(!Ext.isArray(v) || v.length == 0) {
 			Sbi.warn('Impossible to set value ' + v + ' ' + (typeof v));
@@ -202,6 +207,8 @@ Ext.extend(Sbi.widgets.CheckboxField, Ext.form.CheckboxGroup, {
 				if(v.indexOf(item.value)> -1){
 					Sbi.debug('[CheckboxField.doSetValue] : do set value ' + item.value);
 					item.setValue(true);
+		        } else {
+		        	item.setValue(false);
 		        }
 		    }); 
 		 } else {
