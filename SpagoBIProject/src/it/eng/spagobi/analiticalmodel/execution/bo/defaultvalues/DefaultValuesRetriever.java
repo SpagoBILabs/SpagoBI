@@ -9,11 +9,14 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -57,10 +60,13 @@ public class DefaultValuesRetriever {
 			ILovDetail lovForDefault) throws Exception, SourceBeanException {
 		logger.debug("IN");
 		DefaultValuesList defaultValues = new DefaultValuesList();
-		String lovResult = lovForDefault.getLovResult(profile, null, executionInstance);
+		
+		// get from cache, if available
+		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
+		String lovResult = executionCacheManager.getLovResult(profile, lovForDefault, new ArrayList<ObjParuse>(), executionInstance, true);
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);		
 		List rows = lovResultHandler.getRows();
-		logger.debug("LOV executed without errors");
+		logger.debug("LOV result retrieved without errors");
 		logger.debug("LOV contains " + rows.size() + " values");
 		Iterator it = rows.iterator();
 		String valueColumn = lovForDefault.getValueColumnName();

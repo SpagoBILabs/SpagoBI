@@ -57,7 +57,11 @@ public class DefaultFormulas {
 				logger.debug("LOV info retrieved");
 				// get from cache, if available
 				LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-				String lovResultStr = executionCacheManager.getLovResult(profile, analyticalDocumentParameter, executionInstance, true);
+				String lovResultStr = executionCacheManager.getLovResult(
+						profile, lovDetails,
+						executionInstance
+								.getDependencies(analyticalDocumentParameter),
+						executionInstance, true);
 				logger.debug("LOV executed");
 				// get all the rows of the result
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResultStr);		
@@ -96,7 +100,10 @@ public class DefaultFormulas {
 				logger.debug("LOV info retrieved");
 				// get from cache, if available
 				LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-				String lovResultStr = executionCacheManager.getLovResult(profile, analyticalDocumentParameter, executionInstance, true);
+				String lovResultStr = executionCacheManager.getLovResult(
+						profile, lovDetails, executionInstance
+								.getDependencies(analyticalDocumentParameter),
+						executionInstance, true);
 				logger.debug("LOV executed");
 				// get all the rows of the result
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResultStr);		

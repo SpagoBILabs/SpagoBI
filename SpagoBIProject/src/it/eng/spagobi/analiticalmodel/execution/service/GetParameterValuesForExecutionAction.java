@@ -224,7 +224,10 @@ public class GetParameterValuesForExecutionAction  extends AbstractSpagoBIAction
 
 				// get from cache, if available
 				LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-				lovResult = executionCacheManager.getLovResult(profile, biObjectParameter, executionInstance, true);
+				lovResult = executionCacheManager.getLovResult(profile,
+						lovProvDet,
+						executionInstance.getDependencies(biObjectParameter),
+						executionInstance, true);
 
 				// get all the rows of the result
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResult);		
