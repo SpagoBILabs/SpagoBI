@@ -3,6 +3,9 @@ IMPORTANT: every time this file get modified (i.e. a new js file is added to the
 create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
  -->
  
+ 
+<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/execution/main.css",currTheme)%>'/>
+ 
 <!-- Persist library -->
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/persist-0.1.0/persist-all-min.js")%>'></script>
 
