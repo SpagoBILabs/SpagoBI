@@ -32,6 +32,7 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 		, parametersSliderWidth: 300
 		, collapseParametersSliderOnExecution: false
 		, collapseShortcutsSliderOnExecution: true
+		, hideShortcutsSliderOnExecution: true
 		, shortcutsHidden: false
 		// private...
 		, isParameterPanelReady: false
@@ -610,6 +611,10 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	, showInfo: function() {
 		this.synchronizeToolbar( this.executionInstance, 'INFO' );
 		this.documentPanel.getLayout().setActiveItem( 0 );
+		if(this.hideShortcutsSliderOnExecution === true) {
+			this.showShortcutsSlider();
+		}
+		this.expandShortcutsSlider();
 	}
 	
 	/**
@@ -630,6 +635,10 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			this.collapseShortcutsSlider();
 		}
 		
+		if(this.hideShortcutsSliderOnExecution === true) {
+			this.hideShortcutsSlider();
+		}
+		
 		this.documentPanel.getLayout().setActiveItem( 1 );
 		Sbi.trace('[ParametersSelectionPage.showDocument]: OUT');
 	}
@@ -642,6 +651,32 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	, collapseShortcutsSlider: function() {
 		this.shortcutsSlider.collapse();
 	}
+	/**
+	 * @method
+	 * 
+	 *  Expand the shortcut panel
+	 */
+	, expandShortcutsSlider: function() {
+		this.shortcutsSlider.expand();
+	}
+	
+	/**
+	 * @method
+	 * 
+	 *  show the shortcut panel
+	 */
+	, showShortcutsSlider: function() {
+		this.shortcutsSlider.show();
+	}
+	
+	/**
+	 * @method
+	 * 
+	 *  hide the shortcut panel
+	 */
+	, hideShortcutsSlider: function() {
+		this.shortcutsSlider.hide();
+	}
 
 	/**
 	 * @method
@@ -651,6 +686,35 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	, collapseParametersSlider: function() {
 		this.parametersSlider.collapse();
 	}
+	
+	/**
+	 * @method
+	 * 
+	 *  Expand the parameter panel
+	 */
+	, expandParametersSlider: function() {
+		this.parametersSlider.collapse();
+	}
+	
+	/**
+	 * @method
+	 * 
+	 *  Expand the parameter panel
+	 */
+	, showParametersSlider: function() {
+		this.parametersSlider.show();
+	}
+	
+	/**
+	 * @method
+	 * 
+	 *  hide the parameter panel
+	 */
+	, hideParametersSlider: function() {
+		this.parametersSlider.hide();
+	}
+	
+	
 	
 	/**
 	 * @method
