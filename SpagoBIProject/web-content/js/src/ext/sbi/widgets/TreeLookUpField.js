@@ -217,10 +217,24 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 				pvalues = values;
 				values = values.split(";");
 			}
+//			for ( var i = 0; i < values.length; i++) {
+//				values[i] = this.trim(values[i]);
+//			}
 			Sbi.widgets.LookupField.superclass.setRawValue.call( this, pvalues);
 		}
-		this.xvalues = values;
-
+//		this.xvalues = values;
+	}
+	
+	,trim: function(string){
+		if(string){
+			while(string!=null && string.length>0 && string[0]==' '){
+				string = string.substring(1);
+			}
+			while(string!=null && string.length>0 && string[string.length-1]==' '){
+				string = string.substring(0,string.length-1);
+			}
+		}
+		return string;
 	}
 
 	,
@@ -250,12 +264,17 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 
 	,
 	getValue : function() {
-		var v = Sbi.widgets.LookupField.superclass.getValue.call( this);
-		var values = [];
-		if(v){
-			values = v.split(";");
-		}
-		this.xvalues = values;
+//		var v = Sbi.widgets.LookupField.superclass.getValue.call( this);
+//		var values = [];
+//		if(v){
+//			v = this.trim(v);
+//			values = v.split(";");
+//			for ( var i = 0; i < values.length; i++) {
+//				values[i] = this.trim(values[i]);
+//			}
+//
+//		}
+//		this.xvalues = values;
 		return this.xvalues;
 	}
 
