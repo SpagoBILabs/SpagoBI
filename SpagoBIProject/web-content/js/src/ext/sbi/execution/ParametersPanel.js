@@ -142,8 +142,9 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	for(var i = 0; i < c.columnNo; i++) {
 		this.columns[i] = columnContainer.items.get(i);
 	}
-	
-    this.addEvents('beforesynchronize', 'synchronize', 'parametersForExecutionLoaded', 'viewpointexecutionrequest', 'applyviewpoint');	
+
+	this.addEvents('beforesynchronize', 'synchronize',
+			'parametersForExecutionLoaded', 'viewpointexecutionrequest', 'applyviewpoint');	
 };
 
 Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
@@ -309,7 +310,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 					      				width:300,
 					      				icon: Ext.MessageBox.INFO 			
 					      			});
-				      			this.parentPanel.shortcutsPanel.viewpointsPanel.addViewpoints(content);
+				      				if (this.viewpointsPanel) {
+				      					this.viewpointsPanel.addViewpoints(content);
+				      				}
 				      			} 
 				      		} else {
 				      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
