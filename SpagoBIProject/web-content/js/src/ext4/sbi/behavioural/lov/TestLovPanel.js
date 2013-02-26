@@ -50,6 +50,12 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 			serviceName: 'SAVE_LOV_ACTION',
 			baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'} 
 		});
+		this.treeLov = (config.lovConfig.lovType && config.lovConfig.lovType=='tree');
+		
+		var typeStoreValue = "simple";
+		if(this.treeLov){
+			typeStoreValue = "tree";
+		}
 		
 	    var typeStore = Ext.create('Ext.data.Store', {
 	        fields: ['type','description'],
@@ -61,6 +67,7 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 	        displayField: 'description',
 	        valueField: 'type',
 	        queryMode: 'local',
+	        value: typeStoreValue ,
 	        triggerAction: 'all',
 	        emptyText: LN('sbi.behavioural.lov.select.type'),
 	        selectOnFocus:true,
@@ -73,18 +80,20 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 	        xtype: 'toolbar',
 	        dock: 'top',
 	        items: ['->',this.comboType,{
-	            text: LN('sbi.behavioural.lov.save'),
+	           // text: LN('sbi.behavioural.lov.save'),
 	            handler: this.save,
+	            iconCls: 'icon-save',
 	            scope: this
 	        },{
-	            text: LN('sbi.behavioural.lov.back'),
+	           // text: LN('sbi.behavioural.lov.back'),
 	            handler: this.back,
+	            iconCls: 'icon-back',
 	            scope: this
 	        }]
 	    }]
 		
 		Ext.QuickTips.init();
-		this.treeLov = (config.lovConfig.lovType && config.lovConfig.lovType=='tree');
+		
 		
 		this.lovTestPreview = Ext.create('Sbi.behavioural.lov.TestLovResultPanel',{region: 'south',height:315, treeLov: this.treeLov}); //by alias
 		//ConfigurationPanel(value, description)
