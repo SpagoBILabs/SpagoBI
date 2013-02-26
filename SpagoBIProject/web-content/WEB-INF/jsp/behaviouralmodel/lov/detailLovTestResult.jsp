@@ -124,7 +124,7 @@ var url = {
     	baseUrl: url
     });
 
-	var addLovTestEvents = function(lovTest, lovPanel, lovConfig, modality){
+	var addLovTestEvents = function(lovTest, lovPanel, lovConfig, modality, contextName){
 		lovTest.on('lovTypeChanged',function(type){
 			lovPanel.remove(lovTest,'true');
 			lovConfig.lovType=type;
