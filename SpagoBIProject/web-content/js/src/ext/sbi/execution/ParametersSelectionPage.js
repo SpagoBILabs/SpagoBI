@@ -61,6 +61,7 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 		, 'collapse3'
 		, 'backToAdmin'
 		, 'crossnavigation'
+		, 'loadurlfailure'
 	);	
 	
 	this.initServices();
@@ -392,6 +393,21 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			this.fireEvent('crossnavigation', config);
 			Sbi.trace('[ParametersSelectionPage.documentPage.on(\'crossnavigation\')]: OUT');
 		}, this);
+		this.documentPage.on('loadurlfailure', function(errors ) {
+			Sbi.trace('[ParametersSelectionPage.documentPage.on(\'loadurlfailure\')]: IN');
+			this.showInfo();
+			var messageBox = Ext.MessageBox.show({
+				title: 'Error',
+				msg: errors,
+				modal: false,
+				buttons: Ext.MessageBox.OK,
+				width:300,
+				icon: Ext.MessageBox.ERROR,
+				animEl: 'root-menu'        			
+			});
+			this.fireEvent('loadurlfailure', errors);
+			Sbi.trace('[ParametersSelectionPage.documentPage.on(\'loadurlfailure\')]: OUT');
+		}, this);
 		
 		this.documentPanel = new Ext.Panel({
 			region:'center'
@@ -609,12 +625,14 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 * @method
 	 */
 	, showInfo: function() {
+		Sbi.trace('[ParametersSelectionPage.showInfo]: IN');
 		this.synchronizeToolbar( this.executionInstance, 'INFO' );
-		this.documentPanel.getLayout().setActiveItem( 0 );
 		if(this.hideShortcutsSliderOnExecution === true) {
 			this.showShortcutsSlider();
 		}
 		this.expandShortcutsSlider();
+		this.documentPanel.getLayout().setActiveItem( 0 );
+		Sbi.trace('[ParametersSelectionPage.showInfo]: OUT');
 	}
 	
 	/**
@@ -649,7 +667,10 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 *  Collapse the shortcut panel
 	 */
 	, collapseShortcutsSlider: function() {
-		this.shortcutsSlider.collapse();
+		if(this.shortcutsSlider.collapsed === false) {
+			this.shortcutsSlider.collapse(false);
+			Sbi.trace('[ParametersSelectionPage.collapseShortcutsSlider]: slider succesfully collapsed');
+		}
 	}
 	/**
 	 * @method
@@ -657,7 +678,10 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 *  Expand the shortcut panel
 	 */
 	, expandShortcutsSlider: function() {
-		this.shortcutsSlider.expand();
+		if(this.shortcutsSlider.collapsed === true) {
+			this.shortcutsSlider.expand(false);
+			Sbi.trace('[ParametersSelectionPage.expandShortcutsSlider]: slider succesfully expanded');
+		}
 	}
 	
 	/**
@@ -666,7 +690,10 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 *  show the shortcut panel
 	 */
 	, showShortcutsSlider: function() {
-		this.shortcutsSlider.show();
+		if(this.shortcutsSlider.hidden === true) {
+			this.shortcutsSlider.show();
+			Sbi.trace('[ParametersSelectionPage.showShortcutsSlider]: slider succesfully shown');
+		}
 	}
 	
 	/**
@@ -675,7 +702,10 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 *  hide the shortcut panel
 	 */
 	, hideShortcutsSlider: function() {
-		this.shortcutsSlider.hide();
+		if(this.shortcutsSlider.hidden === false) {
+			this.shortcutsSlider.hide();
+			Sbi.trace('[ParametersSelectionPage.hideShortcutsSlider]: slider succesfully hided');
+		}
 	}
 
 	/**
@@ -684,7 +714,8 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 *  Collapse the parameter panel
 	 */
 	, collapseParametersSlider: function() {
-		this.parametersSlider.collapse();
+		this.parametersSlider.collapse(false);
+		Sbi.trace('[ParametersSelectionPage.collapseParametersSlider]: slider succesfully collapsed');
 	}
 	
 	/**
@@ -693,7 +724,8 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 *  Expand the parameter panel
 	 */
 	, expandParametersSlider: function() {
-		this.parametersSlider.collapse();
+		this.parametersSlider.expand(false);
+		Sbi.trace('[ParametersSelectionPage.expandParametersSlider]: slider succesfully expanded');
 	}
 	
 	/**
@@ -703,6 +735,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 */
 	, showParametersSlider: function() {
 		this.parametersSlider.show();
+		Sbi.trace('[ParametersSelectionPage.showParametersSlider]: slider succesfully shown');
 	}
 	
 	/**
@@ -712,6 +745,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	 */
 	, hideParametersSlider: function() {
 		this.parametersSlider.hide();
+		Sbi.trace('[ParametersSelectionPage.hideParametersSlider]: slider succesfully hided');
 	}
 	
 	
