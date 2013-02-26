@@ -30,7 +30,7 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
 	
 	 /**
      * @cfg {Boolean} multiSelect
-     * True to have two thums instead that only one in order to allow the user to select a range 
+     * True to have two thumbs instead that only one in order to allow the user to select a range 
      * and not only e punctual value. Defaults to <tt>false</tt>.
      */
 	multiSelect: false,
@@ -38,7 +38,21 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
 	originalIndex: null,
 	thumbRendered: false,
 	storeLoaded: false,
+	
+	/**
+     * @cfg {Boolean} reseted
+     * <tt>true</tt> if no value has been set for the input field after the last reset, <tt>false</tt>
+     * otherwise. Defaults to <tt>true</tt>.
+     */
 	reseted: true,
+	
+	/**
+     * @cfg {Boolean} useUndefinedWhenReseted
+     * <tt>true</tt> if the method #getValues must return <tt>undefined</tt> when the input field is reseted
+     * (i.e. property reseted equals to <tt>true</tt>),  <tt>false</tt> otherwise. Defaults 
+     * to <tt>false</tt>.
+     */
+	useUndefinedWhenReseted: false,
 	
 	  /**
      * Initialize the component.
@@ -162,6 +176,10 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
         return v;
     },
     
+    isReset: function(v) {
+    	return (v === undefined || v === null);
+    },
+    
     /**
      * Sets the value for this field.
      * @param {Number} v The new value.
@@ -171,6 +189,11 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     setValue : function(v, animate, silent){
     	Sbi.trace("[Sbi.SliderField.setValue] : [" + this.name + "] : IN");
     	
+    	if(this.isReset(v) === true) {
+    		Sbi.debug("[Sbi.SliderField.setValue] : [" + this.name + "] : set field to value [" + v + "] is equal to do a field reset");
+    		this.reset();
+    		return;
+    	}
     	Sbi.debug("[Sbi.SliderField.setValue] : [" + this.name + "] : set value to [" + v + "]");
     	
     	v = this.normalizeValue(v);
@@ -258,7 +281,7 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     getValues : function() {
     	Sbi.trace("[Sbi.SliderField.getValues] : [" + this.name + "] : IN");
     	
-    	if(this.reseted) return undefined;
+    	if(this.reseted && this.useUndefinedWhenReseted ) return undefined;
     	
     	if(this.storeLoaded == false) {
     		if(this.bufferedValues) {

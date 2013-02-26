@@ -238,7 +238,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var defaultValuesFormState = this.getDefaultValuesFormState();
 		Sbi.debug('[ParametersPanel.clearParametersForm] : default values form state is [' + defaultValuesFormState + ']');
 		var state = Ext.apply(defaultValuesFormState, this.preferenceState);
-		Sbi.debug('[ParametersPanel.clearParametersForm] : preference state applied to default values [' + state + ']');
+		Sbi.debug('[ParametersPanel.clearParametersForm] : preference state applied to default values [' + Sbi.toSource(state) + ']');
 		this.setFormState(state);
 	}
 	
