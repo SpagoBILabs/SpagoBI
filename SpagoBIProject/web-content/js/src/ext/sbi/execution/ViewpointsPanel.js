@@ -133,7 +133,7 @@ Sbi.execution.ViewpointsPanel = function(config, doc) {
            	}
         ]
         , collapsible: false
-        , title: LN('sbi.execution.viewpoints.title')
+        , title: config.showTitle===false? undefined:  LN('sbi.execution.viewpoints.title')
         , autoScroll: true
         , sm : sm
         , height: 200

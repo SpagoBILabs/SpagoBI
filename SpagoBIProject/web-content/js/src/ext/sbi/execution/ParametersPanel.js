@@ -116,10 +116,7 @@ Sbi.execution.ParametersPanel = function(config, doc) {
             bodyStyle:'padding:5px 5px 5px 5px'
 		}
 	}
-	
-	this.saveViewpointWin = null;
-	this.openViewpointWin = null;
-	
+		
 	this.initViewpointsPanel(config, doc)
 	this.initTootlbar();
 
@@ -153,7 +150,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     
     services: null
     , executionInstance: null
-    
+        
     /**
      * parameters configuration as returned from getParametersForExecutionService. 
      * @see function loadParametersForExecution()
@@ -194,7 +191,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     , manageVisualDependenciesOnLabel: true
     
     , showViewpointWin:null
-   
+    , saveViewpointWin: null
+    
     // ----------------------------------------------------------------------------------------
     // public methods
     // ----------------------------------------------------------------------------------------
@@ -248,8 +246,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if(!this.viewpointsPanel){
 			var thisPanel= this;
 			
+			config.showTitle = false;
 			this.viewpointsPanel =  new Sbi.execution.ViewpointsPanel(config, doc);
-		
+			delete config.showTitle;
+			
 			this.viewpointsPanel.on('executionrequest', function(viewpoint) {
 				thisPanel.fireEvent('viewpointexecutionrequest', viewpoint);
 				thisPanel.showViewpointWin.close();
@@ -271,6 +271,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				layout: 'fit',
 				width: 400,
 				height: 400,
+				closeAction:'hide',
+				title: LN('sbi.execution.viewpoints.title'),
 				items: [this.viewpointsPanel]
 			});
 		}
