@@ -70,7 +70,7 @@ public class EngineJSONDeserializer implements Deserializer {
 		boolean useDataSource = false;
 		boolean useDataSet = false;
 		
-		Map<String, String> jobParameters;
+		
 		
 		
 		
@@ -125,6 +125,12 @@ public class EngineJSONDeserializer implements Deserializer {
 			engine.setSecondaryUrl(secondaryUrl);
 			engine.setDriverName(driverName);
 			engine.setDataSourceId(dataSourceId);
+			
+			//TODO: verify other options not set
+            engine.setCriptable(new Integer(0));
+			engine.setDirUpload(dirUpload);
+			engine.setDirUsable(dirUsable);
+
 
 		} catch (Throwable t) {
 			throw new DeserializationException("An error occurred while deserializing object: " + o, t);
