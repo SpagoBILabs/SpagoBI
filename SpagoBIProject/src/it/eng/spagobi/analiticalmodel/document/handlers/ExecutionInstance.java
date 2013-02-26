@@ -214,7 +214,12 @@ public class ExecutionInstance implements Serializable{
 						String lovProv = paruse.getLovProvider();
 						ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
 						LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-						String lovResult = executionCacheManager.getLovResult(this.userProfile, aBIObjectParameter, this, true);
+						String lovResult = executionCacheManager.getLovResult(
+								this.userProfile,
+								lovProvDet,
+								this.getDependencies(aBIObjectParameter), 
+								this,
+								true);
 
 						LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 						// if the lov is single value and the parameter value is not set, the parameter value 
@@ -782,7 +787,9 @@ public class ExecutionInstance implements Serializable{
 			toReturn = getValidationErrorsOnValuesForQueries((QueryDetail) lovProvDet, clone);
 		} else {
 			LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-			lovResult = executionCacheManager.getLovResult(this.userProfile, clone, this, true);
+			lovResult = executionCacheManager.getLovResult(this.userProfile,
+					lovProvDet, this.getDependencies(clone),
+					this, true);
 			toReturn = getValidationErrorsOnValuesByLovResult(lovResult, clone, lovProvDet);
 		}
 
@@ -813,7 +820,9 @@ public class ExecutionInstance implements Serializable{
 		List toReturn = null;
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
 		// if query is not in cache, do not execute it as it is!!!
-		String lovResult = executionCacheManager.getLovResult(this.userProfile, biparam, this, false);
+		String lovResult = executionCacheManager.getLovResult(this.userProfile,
+				this.getLovDetail(biparam), this.getDependencies(biparam),
+				this, false);
 		if (lovResult == null) {
 			// lov is not in cache: we must validate values
 			toReturn = queryDetail.validateValues(this.userProfile, biparam);

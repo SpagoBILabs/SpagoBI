@@ -388,7 +388,12 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 				IEngUserProfile profile = getUserProfile();
 
 				LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-				lovResult = executionCacheManager.getLovResult(profile, analyticalDocumentParameter, executionInstance, true);
+				lovResult = executionCacheManager.getLovResult(profile,
+						executionInstance
+								.getLovDetail(analyticalDocumentParameter),
+						executionInstance
+								.getDependencies(analyticalDocumentParameter),
+						executionInstance, true);
 
 				// get all the rows of the result
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResult);		

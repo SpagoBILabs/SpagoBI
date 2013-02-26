@@ -43,8 +43,10 @@ public class LovResultCacheManager {
 	 * 
 	 * @param profile
 	 *            The user profile object
-	 * @param parameter
-	 *            The BIObjectParameter to retrieve the value for
+	 * @param lovDefinition
+	 *            The LOV definition
+	 * @param dependencies
+	 *            The dependencies to be considered          
 	 * @param executionInstance
 	 *            The execution instance
 	 * @param retrieveIfNotcached
@@ -54,12 +56,9 @@ public class LovResultCacheManager {
 	 *         retrieveIfNotcached is false
 	 * @throws Exception
 	 */
-	public String getLovResult(IEngUserProfile profile, BIObjectParameter parameter, 
+	public String getLovResult(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies,
 			ExecutionInstance executionInstance, boolean retrieveIfNotcached) throws Exception {
 		logger.debug("IN");
-		
-		ILovDetail lovDefinition = executionInstance.getLovDetail(parameter);
-		List<ObjParuse> dependencies = executionInstance.getDependencies(parameter);
 		
 		String lovResult = null;
 		
