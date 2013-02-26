@@ -146,12 +146,12 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 			
 			engine = (Engine)DeserializerFactory.getDeserializer("application/json").deserialize(encodedValues, Engine.class);
 			if (engine.getId() != null){
-				logger.debug("Engine modified inserted");
 				engineDao.modifyEngine(engine);
+				logger.debug("Engine modified inserted");
 
 			} else {
-				logger.debug("New Engine inserted");
 				engineDao.insertEngine(engine);
+				logger.debug("New Engine inserted");
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to save or modify engine", t);

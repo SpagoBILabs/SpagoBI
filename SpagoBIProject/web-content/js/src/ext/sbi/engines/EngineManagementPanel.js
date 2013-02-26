@@ -9,7 +9,7 @@
  * 
  * [description]
  * 
- * Authors - ...
+ * Authors - Marco Cortella (marco.cortella@eng.it)
  */
 Ext.ns("Sbi.engines");
 
@@ -66,8 +66,6 @@ Ext
 
 						this.initMasterGridConf();
 
-						// TODO: aggiungere metodo per inizializzare servizi di
-						// DATA STORE
 						this.initDataStoreServicesConf();
 						this.initCrudServicesConf();
 						this.initButtonsConf();
@@ -554,7 +552,7 @@ Ext
 					,
 					buildParamsToSendToServer : function(values) {
 						var params = {
-							id : null,
+							id : values['id'],
 							name : values['name'],
 							label : values['label'],
 							description : values['description'],
@@ -638,7 +636,8 @@ Ext
 						
 						//Manual setting of values
 						var values = {};
-						values.id = "";
+						//values.id = "";
+						values.id = this.detailFieldId;
 						values.name = this.detailFieldName.getValue();
 						values.label = this.detailFieldLabel.getValue();
 						values.description = this.detailFieldDescr.getValue();
@@ -661,7 +660,11 @@ Ext
 						//this.getForm().loadRecord(record);
 
 						//Manual setting of values
-						
+						if (rec.get('id')){
+							this.detailFieldId = rec.get('id');
+						} else {
+							this.detailFieldId = '';
+						}
 						this.detailFieldName.setValue( rec.get('name'));
 						this.detailFieldLabel.setValue( rec.get('label'));
 						this.detailFieldDescr.setValue( rec.get('description'));
@@ -717,7 +720,7 @@ Ext
 										.getAt(i);
 								if (tempRecord.data.id == idRec) {
 									record = tempRecord;
-									oldType = record.get('dsTypeCd');
+									//oldType = record.get('dsTypeCd');
 								}
 							}
 							this.updateNewRecord(record, values);
