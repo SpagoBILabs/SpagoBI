@@ -19,7 +19,7 @@ Sbi.execution.ExecutionWizard = function(config, doc) {
 	this.initRoleSelectionPage(config, doc);
 	this.initParameterSelectionPage(config, doc);
 	this.activePageNumber = this.ROLE_SELECTION_PAGE_NUMBER;
-		
+	
 	var c = Ext.apply({}, config, {
 		layout:'card',
 		hideMode: !Ext.isIE ? 'nosize' : 'display',
@@ -238,6 +238,8 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		}, this);
 		// 20100505
 		this.parametersSelectionPage.on('backToAdmin', this.backToAdmin, this);
+		
+		//this.parametersSelectionPage.addListener('loadurlfailure', this.onLoadUrlFailure, this);
 		
 		return this.parametersSelectionPage;
 	}
