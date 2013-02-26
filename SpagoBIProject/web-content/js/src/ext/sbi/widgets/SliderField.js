@@ -263,10 +263,6 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
      */
     getValue : function(){
     	Sbi.trace("[Sbi.SliderField.getValue] : [" + this.name + "] : IN");
-    	if(this.storeLoaded == false) {
-    		Sbi.warn("[Sbi.SliderField.getValue] : [" + this.name + "] : value not set because the store has no been yet loaded");
-    		return undefined;
-    	}
     	var values = this.getValues();
     	var value = undefined;
     	if(values) {
