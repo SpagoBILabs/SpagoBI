@@ -1133,11 +1133,14 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}));
 		//var thisPanel = this;
 //		field.on('lookup',function(){
-		field.on('lookup',function(field){
-			var p = Sbi.commons.JSON.encode(this.getFormState());
-			field.reloadTree(p);
-		},this);
-teSliderField: function( baseConfig, executionInstance ) {
+//			var p = Sbi.commons.JSON.encode(this.getFormState());
+//			field.reloadTree(p);
+//		},this);
+		
+		return field;
+	}
+	
+	, createSliderField: function( baseConfig, executionInstance ) {
 		
 		Sbi.trace('[ParametersPanel.createSliderField] : IN');
 		Sbi.trace('[ParametersPanel.createSliderField] : executionInstance [' + executionInstance + ']');
