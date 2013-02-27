@@ -17,7 +17,12 @@ Sbi.widgets.SliderField = function(config) {
 
 	this.store = config.store;
 	this.store.on('load', this.refreshOptions, this);
-	this.store.load();
+	
+	this.autoLoad = (config.autoLoad === undefined || config.autoLoad === null)? true: config.autoLoad;
+	Sbi.trace("[Sbi.SliderField.constructor] : autoLoad is equal to [" + this.autoLoad + "]");
+	if(this.autoLoad === true) { 
+		this.store.load();
+	}
 	
 	this.addEvents('change');
 	

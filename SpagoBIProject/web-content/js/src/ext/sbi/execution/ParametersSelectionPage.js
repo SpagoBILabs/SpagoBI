@@ -613,7 +613,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 			this.toolbar.documentMode = documentMode || 'INFO';
 			this.toolbar.synchronize( this, executionInstance);
 		}
-		Sbi.trace('[ParametersSelectionPage.synchronizeToolbar]: IN');
+		Sbi.trace('[ParametersSelectionPage.synchronizeToolbar]: OUT');
     }
 
 	// ----------------------------------------------------------------------------------------
@@ -914,6 +914,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	, doExecuteDocumunt: function(executionInstance, formState) {
 		this.memorizeParametersInSession();
 		this.executionInstance.PARAMETERS = Sbi.commons.JSON.encode( formState );
+		Sbi.trace('[ParametersSelectionPage.doExecuteDocumunt]: Executing document with these parameters: ' + this.executionInstance.PARAMETERS);
 		this.documentPage.synchronize( this.executionInstance );
 	}
 

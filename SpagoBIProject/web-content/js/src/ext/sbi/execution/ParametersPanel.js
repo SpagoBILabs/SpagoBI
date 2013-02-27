@@ -658,21 +658,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.initializeFieldDependencies();
 		
 		var defaultValuesFormState = this.getDefaultValuesFormState();
-		Sbi.debug('[ParametersPanel.initializeParametersPanel] : default values form state is [' + defaultValuesFormState + ']');
+		Sbi.debug('[ParametersPanel.initializeParametersPanel] : default values form state is [' +  Sbi.toSource(defaultValuesFormState) + ']');
 		var state = Ext.apply(defaultValuesFormState, this.preferenceState);
-		Sbi.debug('[ParametersPanel.initializeParametersPanel] : preference state applied to default values [' + state + ']');
+		Sbi.debug('[ParametersPanel.initializeParametersPanel] : preference state applied to default values [' + Sbi.toSource(state) + ']');
 		this.setFormState(state);
 		
-//		if (reset === true && this.isInParametersPage() && this.isFromCross === false) {
-//			// in case there are default values to set, call setFormState, reset otherwise
-//			if (-- in case there are default values to set --) {
-//				this.setFormState(defaultValuesFormState);
-//			} else {
-//				this.reset();
-//			}
-//		} else {
-//			this.setFormState(defaultValuesFormState);
-//		}
 		
 		this.fireEvent('synchronize', this, this.isReadyForExecution(), state);
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : OUT');
@@ -1142,15 +1132,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			service: this.services['getParameterValueForExecutionService']
 		}));
 		//var thisPanel = this;
+//		field.on('lookup',function(){
 		field.on('lookup',function(field){
 			var p = Sbi.commons.JSON.encode(this.getFormState());
 			field.reloadTree(p);
 		},this);
-		
-		return field;
-	}
-	
-	, createSliderField: function( baseConfig, executionInstance ) {
+teSliderField: function( baseConfig, executionInstance ) {
 		
 		Sbi.trace('[ParametersPanel.createSliderField] : IN');
 		Sbi.trace('[ParametersPanel.createSliderField] : executionInstance [' + executionInstance + ']');
@@ -1158,6 +1145,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		var p = baseConfig.parameter;
 		var store = this.createCompleteStore(p, executionInstance, 'simple');
+		
+		Sbi.trace('[ParametersPanel.createSliderField] : baseConfig.autoLoad is equal to [' + baseConfig.autoLoad + ']');
+		
 		
 		field = new Sbi.widgets.SliderField(Ext.apply(baseConfig, {
 			multiSelect: p.multivalue,
@@ -1275,6 +1265,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		   , width: this.baseConfig.fieldWidth
 		   , allowBlank: !p.mandatory
 		   , parameter: p
+		   // do not load store if the right value is passed in the preferences. In this case infact the field will be not added to the parameters panel
+		   // so it is not necessary to calculate all its values
+		   , autoLoad: !this.parameterValueIsInPreferences(p) 
 		};
 		
 		var labelStyle = '';
