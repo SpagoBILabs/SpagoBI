@@ -264,18 +264,9 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 
 	,
 	getValue : function() {
-//		var v = Sbi.widgets.LookupField.superclass.getValue.call( this);
-//		var values = [];
-//		if(v){
-//			v = this.trim(v);
-//			values = v.split(";");
-//			for ( var i = 0; i < values.length; i++) {
-//				values[i] = this.trim(values[i]);
-//			}
-//
-//		}
-//		this.xvalues = values;
-		return this.xvalues;
+		if(this.xvalues)
+			return this.xvalues
+		return "";
 	}
 
 
@@ -290,8 +281,13 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 				var newRoot = new Ext.tree.AsyncTreeNode(this.rootConfig);
 				this.tree.setRootNode(newRoot);
 			}
-
+			if(this.win){
+				this.win.destroy();
+				this.initWin();
+			}
+			this.oldFormParams = formParams;
 		}
+
 	}
 
 });
