@@ -1142,10 +1142,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			service: this.services['getParameterValueForExecutionService']
 		}));
 		//var thisPanel = this;
-//		field.on('lookup',function(){
-//			var p = Sbi.commons.JSON.encode(this.getFormState());
-//			field.reloadTree(p);
-//		},this);
+		field.on('lookup',function(field){
+			var p = Sbi.commons.JSON.encode(this.getFormState());
+			field.reloadTree(p);
+		},this);
 		
 		return field;
 	}

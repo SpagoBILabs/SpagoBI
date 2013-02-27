@@ -272,6 +272,7 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 
 
 	// if the parameters has been change we reload the tree
+	// if the parameters has been change we reload the tree
 	,
 	reloadTree : function(formParams) {
 		if (formParams && formParams != this.oldFormParams) {
@@ -280,12 +281,13 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 				this.treeLoader.baseParams =this.params;
 				var newRoot = new Ext.tree.AsyncTreeNode(this.rootConfig);
 				this.tree.setRootNode(newRoot);
+				if(this.win){
+					this.win.destroy();
+					this.initWin();
+				}
+				this.oldFormParams = formParams;
 			}
-			if(this.win){
-				this.win.destroy();
-				this.initWin();
-			}
-			this.oldFormParams = formParams;
+
 		}
 
 	}
