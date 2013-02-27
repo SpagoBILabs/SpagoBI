@@ -518,7 +518,11 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 				}
 				// restore memento (= the list of last N value inputed for each parameters)
 				Sbi.execution.SessionParametersManager.restoreMementoObject(panel);
-				this.checkAutomaticStart();
+				if(this.automaticStartChecked === false) {
+					this.automaticStartChecked = true;
+					this.checkAutomaticStart();
+				}
+				
 			}
 		, this);
 
@@ -947,8 +951,9 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	// ----------------------------------------------------------------------------------------
 	
 	
-	
+	, automaticStartChecked: false
 	, checkAutomaticStart: function() {
+		
 		
 		// must wait parameters/subobjects/snapshots panels have been loaded
 		if (this.isSubobjectPanelReady === false || this.isSnapshotPanelReady === false || this.isParameterPanelReady === false) {
