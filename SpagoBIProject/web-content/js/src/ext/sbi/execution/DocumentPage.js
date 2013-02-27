@@ -338,9 +338,6 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 	// This methods change properly the interface according to the specific execution instance passed in
 	
 	/**
-	 * Called by Sbi.execution.ExecutionWizard when a new document execution starts. Force
-	 * the parameters' panel, the shorcuts' panel and toolbar re-synchronization. 
-	 * 
 	* @param {Object} executionInstance the execution configuration
 	* 
 	 * @method
@@ -352,9 +349,11 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
 			this.executionInstance = executionInstance;
 		
+			Sbi.trace('[DocumentPage.synchronize]: Executing document with these parameters: ' + this.executionInstance.PARAMETERS);
+			
 			Ext.Ajax.request({
 		        url: this.services['getUrlForExecutionService'],
-		        params: executionInstance,
+		        params: this.executionInstance,
 		        success: function(response, options) {
 		      		if(response !== undefined && response.responseText !== undefined) {
 		      			var content = Ext.util.JSON.decode( response.responseText );
@@ -362,6 +361,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 		      				if(content.errors !== undefined && content.errors.length > 0) {
 		      					this.fireEvent('loadurlfailure', content.errors);
 		      				} else {
+		      					Sbi.trace('[DocumentPage.synchronize]: Url for execution is equal to: ' + content.url);
 		      					this.miframe.getFrame().setSrc( content.url );
 		      				}
 		      			} 
