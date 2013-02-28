@@ -305,7 +305,11 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						dispatchContext.setIndexNumberOfDocumentToDispatch(documentIndex);
 						
 						documentDispatcher.setDispatchContext(dispatchContext);
-						documentDispatcher.dispatch(document, executionOutput);
+						String documentStateCode = document.getStateCode();
+						//Execute dispatchers only if document is Released
+						if (documentStateCode.equals("REL")){
+							documentDispatcher.dispatch(document, executionOutput);
+						}
 						if(globalDocumentDispatcher == null) {
 							documentDispatcher.dispose();
 						}

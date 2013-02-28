@@ -148,7 +148,6 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 			if (engine.getId() != null){
 				engineDao.modifyEngine(engine);
 				logger.debug("Engine modified inserted");
-
 			} else {
 				engineDao.insertEngine(engine);
 				logger.debug("New Engine inserted");

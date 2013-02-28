@@ -621,7 +621,7 @@ Ext
 							url : values['url'],
 							driver : values['driver'],
 							secondaryUrl : values['secondaryUrl'],
-							dataSourceId : values['dataSourceId']
+							dataSourceId : values['dataSource']
 						};
 						return params;
 					}
@@ -745,11 +745,12 @@ Ext
 						if (idRec == 0 || idRec == null || idRec === '') {
 							this.doSave("yes");
 						} else {
-							Ext.MessageBox
-									.confirm(
-											LN('sbi.ds.recalculatemetadataconfirm.title'),
-											LN('sbi.ds.recalculatemetadataconfirm.msg'),
-											this.doSave, this);
+//							Ext.MessageBox
+//									.confirm(
+//											LN('sbi.ds.recalculatemetadataconfirm.title'),
+//											LN('sbi.ds.recalculatemetadataconfirm.msg'),
+//											this.doSave, this);
+							this.doSave("yes");
 						}
 					}
 
