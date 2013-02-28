@@ -234,8 +234,14 @@ Ext
 					}
 					
 					//UseDatasource listener
-					,activateDataSourceCombo : function(combo, checked) {
-						var useDatasource = this.detailFieldUseDataSource.getValue();
+					,activateDataSourceCombo : function(checkbox, checked) {
+						var useDatasource;
+						if (checkbox != null){
+							useDatasource = checkbox.getValue();
+						}
+						else {
+							useDatasource = this.detailFieldUseDataSource.getValue();
+						}
 						if (useDatasource){
 							this.detailFieldDataSource.setVisible(true);
 							this.detailFieldDataSource.getEl().up('.x-form-item').setDisplayed(true);
@@ -410,12 +416,15 @@ Ext
 							name : 'useDataSource',
 							triggerAction : 'all',
 							validationEvent : true,
-							listeners:{ check:this.activateDataSourceCombo }
-						 
-					     
-	
+							listeners : {
+						          check : {
+						            fn : this.activateDataSourceCombo,
+						            scope : this
+						          }
+						        }
+
 						});
-						//this.detailFieldUseDataSource.addListener('click',this.activateDataSourceCombo, this);
+						//this.detailFieldUseDataSource.addListener('check',this.activateDataSourceCombo, this);
 						
 
 						this.detailFieldDataSource = new Ext.form.ComboBox ({
