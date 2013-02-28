@@ -142,9 +142,9 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	for(var i = 0; i < c.columnNo; i++) {
 		this.columns[i] = columnContainer.items.get(i);
 	}
-
+	
 	this.addEvents('beforesynchronize', 'synchronize',
-			'parametersForExecutionLoaded', 'viewpointexecutionrequest', 'applyviewpoint');	
+			'parametersForExecutionLoaded', 'viewpointexecutionrequest', 'applyviewpoint','hideparameterspanel');	
 };
 
 Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
@@ -606,6 +606,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.removeAllFields();		
 		
 		var nonTransientField = 0;
+		
+		if(!this.parameters || this.parameters.length==0){
+			this.fireEvent("hideparameterspanel");
+		}
+			
 		for(var i = 0; i < parameters.length; i++) {
 			var field = this.createField( parameters[i] );
 			 
