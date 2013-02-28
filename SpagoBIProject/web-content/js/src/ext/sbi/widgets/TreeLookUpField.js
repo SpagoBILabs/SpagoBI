@@ -82,6 +82,8 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 	,
 	initWin : function() {
 		var thisPanel = this;
+		this.xvaluesUnchecked = new Array();
+		this.xdescriptionsUnchecked = new Array();
 		this.treeLoader = new Ext.tree.TreeLoader({
 			dataUrl : this.service,
 			baseParams : this.params,
@@ -102,6 +104,26 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 				
 				var node = Ext.tree.TreeLoader.prototype.createNode.call(this,
 						attr);
+				
+				
+				if ((thisPanel.allowInternalNodeSelection || attr.leaf) && thisPanel.multivalue) {
+					node.on('checkchange', function(node, checked){
+						//if the check is checked, we remove it from the unchecked list
+						if(checked){
+							var index = thisPanel.xvaluesUnchecked.indexOf(node.attributes.value);
+							if(index>=0){
+								thisPanel.xvaluesUnchecked.splice(index,1);
+								thisPanel.xdescriptionsUnchecked.splice(index,1);
+							}
+							
+						}else{
+							thisPanel.xvaluesUnchecked.push(node.attributes.value);
+							thisPanel.xdescriptionsUnchecked.push(node.attributes.description);
+						}
+					}, this);
+				}
+				
+				
 				
 				if (!thisPanel.multivalue && (thisPanel.allowInternalNodeSelection || attr.leaf) ) {
 					node.on('click',
@@ -160,10 +182,10 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 
 	,
 	onOk : function() {
-		var d = this.getCheckedValue();
-		this.setValue(d);
-		var v = this.getCheckedDescription();
-		this.setRawValue(v);
+		var v = this.getCheckedValue();
+		this.setValue(v);
+		var d = this.getCheckedDescription();
+		this.setRawValue(d);
 		this.fireEvent('select', this, v);
 		this.win.hide();
 	}
@@ -198,15 +220,13 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 			}
 			Sbi.widgets.LookupField.superclass.setValue.call( this, pvalues);
 		}
+		this.xStartingValues = values;
 		this.xvalues = values;
-
 	}
 
 	,
 	setRawValue : function(values) {
 		var pvalues = "";
-		
-
 		if (values) {
 			if(values instanceof Array) {
 				for ( var i = 0; i < values.length; i++) {
@@ -217,49 +237,62 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 				pvalues = values;
 				values = values.split(";");
 			}
-//			for ( var i = 0; i < values.length; i++) {
-//				values[i] = this.trim(values[i]);
-//			}
 			Sbi.widgets.LookupField.superclass.setRawValue.call( this, pvalues);
 		}
-//		this.xvalues = values;
-	}
-	
-	,trim: function(string){
-		if(string){
-			while(string!=null && string.length>0 && string[0]==' '){
-				string = string.substring(1);
-			}
-			while(string!=null && string.length>0 && string[string.length-1]==' '){
-				string = string.substring(0,string.length-1);
-			}
-		}
-		return string;
+		this.xStartingDescriptions = values;
+		this.xdescriptions = values;
 	}
 
 	,
 	getCheckedValue : function() {
 		var checked = this.tree.getChecked();
 		var values = [];
+		var valuesToReturn = [];
+		var value;
 		if (checked) {
 			for ( var i = 0; i < checked.length; i++) {
-				values.push(checked[i].attributes.value);
+				values.push(checked[i].attributes.value);			
+			}
+			
+			//merge the selected values with the initial values (the ones coming from the setValue)
+			//necessary because the tree is asyncr
+			values = this.mergeArrays(values, this.xStartingValues);
+			for ( var i = 0; i < values.length; i++) {
+				value = values[i];
+				if(this.xvaluesUnchecked== null || this.xvaluesUnchecked== undefined || this.xvaluesUnchecked.indexOf(value)<0){
+					valuesToReturn.push(value);			
+				}
 			}
 		}
-		this.xvalues = values;
-		return values;
+		this.xvalues = valuesToReturn;
+		return valuesToReturn;
 	}
+	
+	
 	
 	,
 	getCheckedDescription : function() {
 		var checked = this.tree.getChecked();
 		var descriptions = [];
+		var descriptionsToReturn = [];
+		var description;
 		if (checked) {
 			for ( var i = 0; i < checked.length; i++) {
-				descriptions.push(checked[i].attributes.description);
+				descriptions.push(checked[i].attributes.description);			
+			}
+			
+			//merge the selected values with the initial values (the ones coming from the setValue)
+			//necessary because the tree is asyncr
+			descriptions = this.mergeArrays(descriptions, this.xStartingDescriptions);
+			for ( var i = 0; i < descriptions.length; i++) {
+				description = descriptions[i];
+				if(this.xdescriptionsUnchecked== null || this.xdescriptionsUnchecked== undefined || this.xdescriptionsUnchecked.indexOf(description)<0){
+					descriptionsToReturn.push(description);			
+				}
 			}
 		}
-		return descriptions;
+		this.xdescriptions = descriptionsToReturn;
+		return descriptionsToReturn;
 	}
 
 	,
@@ -268,8 +301,24 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 			return this.xvalues
 		return "";
 	}
-
-
+	
+	,
+	getRawValue : function() {
+		var toReturn = "";
+		if(this.xdescriptions){//creates the string of the descriptions
+			for ( var i = 0; i < this.xdescriptions.length; i++) {
+				toReturn = toReturn+";"+this.xdescriptions[i];
+			}
+			toReturn = toReturn.substring(1);//remove this first ;
+		}
+		return toReturn;
+	}
+	
+	,reset : function(){
+		this.xvalues ="";
+		this.xdescriptions ="";
+		Sbi.widgets.LookupField.superclass.reset.call( this);
+	}
 
 	// if the parameters has been change we reload the tree
 	// if the parameters has been change we reload the tree
@@ -287,9 +336,36 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 				}
 				this.oldFormParams = formParams;
 			}
-
 		}
-
 	}
+	
+	
+	,trim: function(string){
+		if(string){
+			while(string!=null && string.length>0 && string[0]==' '){
+				string = string.substring(1);
+			}
+			while(string!=null && string.length>0 && string[string.length-1]==' '){
+				string = string.substring(0,string.length-1);
+			}
+		}
+		return string;
+	}
+	
+	,mergeArrays: function(array1, array2){
+		if(array1){
+			if(array2){
+				for(var i=0; i<array2.length; i++){
+					if(array1.indexOf(array2[i])<0){
+						array1.push(array2[i]);
+					}
+				}
+			}
+			return  array1
+		}else{
+			return  array2;
+		}
+	}
+
 
 });
