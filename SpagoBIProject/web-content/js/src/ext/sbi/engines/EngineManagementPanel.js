@@ -193,7 +193,7 @@ Ext
 						];
 
 						this.configurationObject.panelTitle = LN('sbi.ds.panelTitle');
-						this.configurationObject.listTitle = LN('sbi.ds.listTitle');
+						this.configurationObject.listTitle = 'Engine List';
 
 						this.configurationObject.filter = true;
 						this.configurationObject.columnName = [
@@ -298,12 +298,7 @@ Ext
 
 					,
 					initDetailTab : function() {
-						// this.profileAttributesStore = new
-						// Ext.data.SimpleStore({
-						// fields : [ 'profAttrs' ],
-						// data : config.attrs,
-						// autoLoad : false
-						// });
+				
 
 						// Store of the combobox
 						this.documentTypesStore = new Ext.data.JsonStore({
@@ -312,7 +307,6 @@ Ext
 						    root: 'domains',
 						    fields: ['VALUE_CD','VALUE_ID']
 						});
-						//this.documentTypesStore.load();
 
 						this.engineTypesStore = new Ext.data.JsonStore({
 						    url: this.configurationObject.getEngineTypesServiceUrl,
@@ -320,7 +314,6 @@ Ext
 						    root: 'domains',
 						    fields: ['VALUE_CD','VALUE_ID']
 						});
-						//this.engineTypesStore.load();
 						
 						this.dataSourcesStore = new Ext.data.JsonStore({
 						    url: this.configurationObject.getDataSourcesServiceUrl,
@@ -328,7 +321,6 @@ Ext
 						    root: 'rows',
 						    fields: ['DATASOURCE_LABEL','DATASOURCE_ID']
 						});
-						//this.dataSourcesStore.load();
 
 
 
@@ -414,8 +406,8 @@ Ext
 						this.detailFieldUseDataSource = new Ext.form.Checkbox({
 							fieldLabel : 'Use Data Source',
 							name : 'useDataSource',
-							triggerAction : 'all',
-							validationEvent : true,
+							//triggerAction : 'all',
+							//validationEvent : true,
 							listeners : {
 						          check : {
 						            fn : this.activateDataSourceCombo,
@@ -479,7 +471,7 @@ Ext
 						});
 
 						this.detailFieldDriverName = new Ext.form.TextField ({
-							maxLength : 50,
+							//maxLength : 50,
 							minLength : 1,
 							width : 350,
 							regexText : LN('sbi.roles.alfanumericString'),
@@ -581,7 +573,7 @@ Ext
 						// }else{
 						// this.manageParsGrid.loadItems([]);
 						// }
-						this.manageDsVersionsGrid.loadItems([]);
+						//this.manageDsVersionsGrid.loadItems([]);
 
 						this.tabs.items.each(function(item) {
 							item.doLayout();
@@ -643,11 +635,12 @@ Ext
 						record.set('documentType', values['documentType']);
 						record.set('engineType', values['engineType']);
 						record.set('useDataSet', values['useDataSet']);
+						record.set('useDataSource', values['useDataSource']);
 						record.set('class', values['class']);
 						record.set('url', values['url']);
 						record.set('driver', values['driver']);
 						record.set('secondaryUrl', values['secondaryUrl']);
-						record.set('dataSourceId', values['dataSourceId']);
+						record.set('dataSourceId', values['dataSource']);
 
 						// if (arrayPars) {
 						// record.set('pars',arrayPars);
@@ -676,24 +669,24 @@ Ext
 						this.mainElementsStore.commitChanges();
 					}
 
-					,
-					updateDsVersionsOfMainStore : function(idRec) {
-						var arrayVersions = this.manageDsVersionsGrid
-								.getCurrentDsVersions();
-						if (arrayVersions) {
-							var record;
-							var length = this.mainElementsStore.getCount();
-							for ( var i = 0; i < length; i++) {
-								var tempRecord = this.mainElementsStore
-										.getAt(i);
-								if (tempRecord.data.id == idRec) {
-									record = tempRecord;
-								}
-							}
-							record.set('dsVersions', arrayVersions);
-							this.mainElementsStore.commitChanges();
-						}
-					}
+//					,
+//					updateDsVersionsOfMainStore : function(idRec) {
+//						var arrayVersions = this.manageDsVersionsGrid
+//								.getCurrentDsVersions();
+//						if (arrayVersions) {
+//							var record;
+//							var length = this.mainElementsStore.getCount();
+//							for ( var i = 0; i < length; i++) {
+//								var tempRecord = this.mainElementsStore
+//										.getAt(i);
+//								if (tempRecord.data.id == idRec) {
+//									record = tempRecord;
+//								}
+//							}
+//							record.set('dsVersions', arrayVersions);
+//							this.mainElementsStore.commitChanges();
+//						}
+//					}
 
 					,
 					getValues : function() {
