@@ -35,6 +35,8 @@ Sbi.engines.EngineManagementPanel = function(config) {
 	this.rowselModel.addListener('rowselect', function(sm, row, rec) {
 		var record = this.rowselModel.getSelected();
 		this.setValues(record);
+		this.activateEngineDetailFields(null, rec, row);
+		this.activateDataSourceCombo(null,rec);
 
 	}, this);
 
@@ -199,6 +201,50 @@ Ext
 								[ 'sbiDsConfig.name', LN('sbi.generic.name') ] ];
 						this.configurationObject.setCloneButton = true;
 					}
+					
+					//Engine Combo listener
+					,activateEngineDetailFields : function(combo, record, index) {
+						//var engineSelected = record.get('engineType');
+						var engineSelected = this.detailFieldEngineType.getRawValue();
+						if (engineSelected != null
+								&& engineSelected == 'EXT') {
+							//Show External Engine properties
+							
+							this.detailFieldClass.setVisible(false);
+							this.detailFieldClass.getEl().up('.x-form-item').setDisplayed(false);
+							this.detailFieldUrl.setVisible(true);
+							this.detailFieldUrl.getEl().up('.x-form-item').setDisplayed(true);
+							this.detailFieldSecondaryUrl.setVisible(true);
+							this.detailFieldSecondaryUrl.getEl().up('.x-form-item').setDisplayed(true);
+							this.detailFieldDriverName.setVisible(true);
+							this.detailFieldDriverName.getEl().up('.x-form-item').setDisplayed(true);
+							
+						} else {
+							//Show Internal Engine properties
+							this.detailFieldClass.setVisible(true);
+							this.detailFieldClass.getEl().up('.x-form-item').setDisplayed(true);
+							this.detailFieldUrl.setVisible(false);
+							this.detailFieldUrl.getEl().up('.x-form-item').setDisplayed(false);
+							this.detailFieldSecondaryUrl.setVisible(false);
+							this.detailFieldSecondaryUrl.getEl().up('.x-form-item').setDisplayed(false);
+							this.detailFieldDriverName.setVisible(false);
+							this.detailFieldDriverName.getEl().up('.x-form-item').setDisplayed(false);
+
+						}
+					}
+					
+					//UseDatasource listener
+					,activateDataSourceCombo : function(combo, checked) {
+						var useDatasource = this.detailFieldUseDataSource.getValue();
+						if (useDatasource){
+							this.detailFieldDataSource.setVisible(true);
+							this.detailFieldDataSource.getEl().up('.x-form-item').setDisplayed(true);
+						} else {
+							this.detailFieldDataSource.setVisible(false);
+							this.detailFieldDataSource.getEl().up('.x-form-item').setDisplayed(false);
+						}
+					}
+					
 
 					,
 					initButtonsConf : function() {
@@ -349,6 +395,8 @@ Ext
 							validationEvent : true
 							//xtype : 'combo'
 						});
+						this.detailFieldEngineType.addListener('select',this.activateEngineDetailFields, this);
+
 
 						this.detailFieldUseDataSet = new Ext.form.Checkbox ({
 							
@@ -359,8 +407,16 @@ Ext
 
 						this.detailFieldUseDataSource = new Ext.form.Checkbox({
 							fieldLabel : 'Use Data Source',
-							name : 'useDataSource'
+							name : 'useDataSource',
+							triggerAction : 'all',
+							validationEvent : true,
+							listeners:{ check:this.activateDataSourceCombo }
+						 
+					     
+	
 						});
+						//this.detailFieldUseDataSource.addListener('click',this.activateDataSourceCombo, this);
+						
 
 						this.detailFieldDataSource = new Ext.form.ComboBox ({
 							name : 'dataSourceId',
@@ -380,7 +436,7 @@ Ext
 						});
 						
 						this.detailFieldClass = new Ext.form.TextField ({
-							maxLength : 50,
+							//maxLength : 50,
 							minLength : 1,
 							width : 350,
 							regexText : LN('sbi.roles.alfanumericString'),
@@ -392,7 +448,7 @@ Ext
 
 
 						this.detailFieldUrl = new Ext.form.TextField ({
-							maxLength : 50,
+							//maxLength : 50,
 							minLength : 1,
 							width : 350,
 							regexText : LN('sbi.roles.alfanumericString'),
@@ -403,7 +459,7 @@ Ext
 						});
 
 						this.detailFieldSecondaryUrl = new Ext.form.TextField ({
-							maxLength : 50,
+							//maxLength : 50,
 							minLength : 1,
 							width : 350,
 							regexText : LN('sbi.roles.alfanumericString'),
