@@ -528,6 +528,11 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 
 		this.parametersPanel.on('viewpointexecutionrequest', this.onExecuteViewpoint, this);
 		
+		this.parametersPanel.on('hideparameterspanel', function(){
+			this.parametersSlider.hide();
+			this.doLayout();
+		}, this);
+		
 		
 		return this.parametersPanel;
 	}
