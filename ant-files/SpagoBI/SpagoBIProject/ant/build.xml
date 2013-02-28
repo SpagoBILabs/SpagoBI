@@ -7,7 +7,7 @@
 	<!--   DEFINIZIONE CLASSPATH						                                            -->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 	<path id="web.classpath">
-		<pathelement path="${java.src.dir}" />
+		<pathelement path="${classpath}" />
 		<!-- LIBRERIE SPECIFICHE APPLICATIVO  -->
 		<fileset dir="${web.lib}">
 			<include name="**/*.jar" />
@@ -371,6 +371,7 @@
 						
 				<file name="./src/ext/sbi/widgets/SaveWindow.js" />
 				<file name="./src/ext/sbi/widgets/EditablePanel.js" />
+				<file name="./src/ext/sbi/widgets/TreeLookUpField.js" />
 				<file name="./src/ext/sbi/execution/SubobjectsPanel.js" />
 				<file name="./src/ext/sbi/execution/SnapshotsPanel.js" />
 				<file name="./src/ext/sbi/execution/ViewpointsPanel.js" />
@@ -521,9 +522,29 @@
 				<file name="./src/ext/sbi/kpi/GUI/KpiGUIComments.js" />
 				<file name="./src/ext/sbi/kpi/GUI/KpiGUIHistorical.js" />
 
-        		<file name="./src/ext/sbi/tools/catalogue/MetaModelsCatalogue.js" />
+				<file name="./src/ext/sbi/tools/catalogue/MetaModelsCatalogue.js" />
         		<file name="./src/ext/sbi/tools/catalogue/MondrianSchemasCatalogue.js" />
+				
+			</filelist>
 
+		</concat>
+		
+		
+		<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-ext410-debug.js" append="true">
+			<filelist dir="${build}/${webapp_name}/js">
+
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovConfigurationGridPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovResultPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovTreePanel.js" />
+					
+				<file name="./src/ext/sbi/widgets/grid/CheckColumn.js" />
+				<file name="./src/ext/sbi/widgets/grid/DynamicFilteringToolbar.js" />
+				<file name="./src/ext/sbi/widgets/grid/DynamicGridPanel.js" />
+				<file name="./src/ext/sbi/widgets/grid/RadioColumn.js" />
+				<file name="./src/ext/sbi/widgets/store/DynamicStore.js" />
+				<file name="./src/ext/sbi/widgets/tree/BaseTree.js" />
+				
 			</filelist>
 
 		</concat>
