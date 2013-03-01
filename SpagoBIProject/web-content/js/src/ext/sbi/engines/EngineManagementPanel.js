@@ -406,8 +406,6 @@ Ext
 						this.detailFieldUseDataSource = new Ext.form.Checkbox({
 							fieldLabel : 'Use Data Source',
 							name : 'useDataSource',
-							//triggerAction : 'all',
-							//validationEvent : true,
 							listeners : {
 						          check : {
 						            fn : this.activateDataSourceCombo,
