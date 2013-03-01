@@ -5,7 +5,7 @@
  	<CONFIG/>
  </ACTION>
  
- <ACTION name="EXECUTE_DATASETS_ACTION" class="it.eng.spagobi.engines.service.ManageEnginesAction" scope="REQUEST">
+ <ACTION name="EXECUTE_DATASETS_ACTION" class="it.eng.spagobi.tools.dataset.service.ExecuteDatasets" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
 
