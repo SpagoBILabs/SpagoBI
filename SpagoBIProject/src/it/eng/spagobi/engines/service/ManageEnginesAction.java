@@ -38,7 +38,18 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 	public static final String NUMBER_TYPE = "number";
 	public static final String RAW_TYPE = "raw";
 	public static final String GENERIC_TYPE = "generic";
+	
+	public static final String ENGINE_LIST = "ENGINE_LIST";
+	public static final String ENGINE_INSERT = "ENGINE_INSERT";
+	public static final String ENGINE_DELETE = "ENGINE_DELETE";
+	public static final String ENGINE_DATASOURCES = "ENGINE_DATASOURCES";
+	public static final String ENGINE_TEST = "ENGINE_TEST";
+
+	public static final String MESSAGE_DET = "MESSAGE_DET";
+	
 	private IEngUserProfile profile;
+	
+	
 
 	@Override
 	public void doService() {
@@ -55,17 +66,19 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 
 		
 		
-		String serviceType = this.getAttributeAsString(EngineConstants.MESSAGE_DET);
+		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
 
-		if (serviceType != null && serviceType.equalsIgnoreCase(EngineConstants.ENGINE_LIST)) {			
+		if (serviceType != null && serviceType.equalsIgnoreCase(ENGINE_LIST)) {			
 			listEngines(engineDao);
-		} else if(serviceType != null && serviceType.equalsIgnoreCase(EngineConstants.ENGINE_INSERT)) {			
+		} else if(serviceType != null && serviceType.equalsIgnoreCase(ENGINE_INSERT)) {			
 			insertEngine(engineDao);
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(EngineConstants.ENGINE_DELETE)) {			
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(ENGINE_DELETE)) {			
 			deleteEngine(engineDao);
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(EngineConstants.ENGINE_DATASOURCES)) {			
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(ENGINE_DATASOURCES)) {			
 			getDataSources();
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(ENGINE_TEST)) {			
+			testEngine();
 		} else {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to process action of type [" + serviceType + "]");
 		}
@@ -138,7 +151,6 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 		
 	}
 	
-	//TODO: to implement code
 	private void insertEngine(IEngineDAO engineDao) {
 		Engine engine ;
 		try {
@@ -168,14 +180,75 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 		
 	}
 	
-	//TODO: to implement code
 	private void deleteEngine(IEngineDAO engineDao) {
+		Engine engine ;
+
 		try {
-			//engineDao.eraseEngine(aEngine);
+			Integer engineId = getAttributeAsInteger("id");
+			engine = engineDao.loadEngineByID(engineId);
+
+			if (engine != null){
+				engineDao.eraseEngine(engine);
+			}
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to delete engine", t);
 		}
 		
+		try {
+			logger.debug("Engine Operation succeded");
+			JSONObject attributesResponseSuccessJSON = new JSONObject();
+			attributesResponseSuccessJSON.put("success", true);
+			attributesResponseSuccessJSON.put("responseText", "Operation succeded");
+			writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back response to client", t);
+		}
+
+	}
+	
+	private void testEngine() {
+		String message;
+		try {
+			JSONObject encodedValues = this.getAttributeAsJSONObject("engineValues");
+						
+			String driverName = encodedValues.getString("driver");
+			String className = encodedValues.getString("class");
+			
+			if(driverName!=null){
+				Class.forName(driverName);
+			}else if(className!=null){
+				Class.forName(className);
+			}else{
+				message = "Class Name Error";
+			}
+			message = "Operation succeded";
+			
+		} catch (ClassNotFoundException e) {
+			 message = "Class Name Error";
+			e.printStackTrace();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to save or modify engine", t);
+		}
+		
+		try {
+			if (message.equals("Operation succeded")){
+				logger.debug("Test succeded");
+				JSONObject attributesResponseSuccessJSON = new JSONObject();
+				attributesResponseSuccessJSON.put("success", true);
+				attributesResponseSuccessJSON.put("responseText", message);
+				writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+			} else
+			{
+				logger.debug("Test succeded");
+				JSONObject attributesResponseSuccessJSON = new JSONObject();
+				attributesResponseSuccessJSON.put("success", false);
+				attributesResponseSuccessJSON.put("responseText", message);
+				writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+			}
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back response to client", t);
+		}
 		
 	}
 
