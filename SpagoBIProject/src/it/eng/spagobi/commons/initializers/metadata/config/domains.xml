@@ -51,7 +51,7 @@
 <DOMAIN valueCd="NUMERIC" valueNm="sbidomains.nm.numeric" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.numeric"/>
 <DOMAIN valueCd="ALFANUMERIC" valueNm="sbidomains.nm.alfanumeric" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.alfanumeric"/>
 <DOMAIN valueCd="LETTERSTRING" valueNm="sbidomains.nm.letterstring" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.letterstring"/>
-<DOMAIN valueCd="MANDATORY" valueNm="sbidomains.nm.mandatory" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.mandatory"/>
+<!-- DOMAIN valueCd="MANDATORY" valueNm="sbidomains.nm.mandatory" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.mandatory"/-->
 <DOMAIN valueCd="FISCALCODE" valueNm="sbidomains.nm.fiscalcode" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.fiscalcode"/>
 <DOMAIN valueCd="EMAIL" valueNm="sbidomains.nm.email" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.email"/>
 <DOMAIN valueCd="EXT" valueNm="sbidomains.nm.ext" domainCd="ENGINE_TYPE" domainNm="Engine types" valueDs="sbidomains.ds.ext"/>
