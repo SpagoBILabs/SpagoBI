@@ -792,9 +792,34 @@ public class ExecutionInstance implements Serializable{
 					this, true);
 			toReturn = getValidationErrorsOnValuesByLovResult(lovResult, clone, lovProvDet);
 		}
-
+		mergeValuesAndDescriptions(biparam, clone);
 		logger.debug("OUT");
 		return toReturn;
+	}
+	
+	private void mergeValuesAndDescriptions(BIObjectParameter biparam, BIObjectParameter cloned){
+		int valuePosition;
+		int defaultValuePosition =0;
+		int nonDefaultValuePosition =0;
+		List nonDefaultValues = cloned.getParameterValues();
+		List nonDefaultDescriptions = cloned.getParameterValuesDescription();
+		List parameterDescriptions =  new ArrayList<String>();
+		if(nonDefaultValues!=null){
+			List parameterValues = biparam.getParameterValues();
+			if(parameterValues!=null){
+				for(int i=0; i< parameterValues.size(); i++){
+					valuePosition = nonDefaultValues.indexOf(parameterValues.get(i));
+					if(valuePosition>=0){
+						parameterDescriptions.add(nonDefaultDescriptions.get(defaultValuePosition));
+						defaultValuePosition++;
+					}else{
+						parameterDescriptions.add(biparam.getParameterValuesDescription().get(nonDefaultValuePosition));
+						nonDefaultValuePosition++;
+					}
+				}
+			}
+		}
+		biparam.setParameterValuesDescription(parameterDescriptions);
 	}
 
 	private List validateAsDefaultValues(BIObjectParameter analyticalDocumentParameter) {
