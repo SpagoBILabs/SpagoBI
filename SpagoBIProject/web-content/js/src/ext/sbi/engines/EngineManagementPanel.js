@@ -140,6 +140,15 @@ Ext
 										MESSAGE_DET : "ENGINE_DELETE"
 									}
 								});
+						
+						this.configurationObject.testEngineService = Sbi.config.serviceRegistry
+						.getServiceUrl({
+							serviceName : 'MANAGE_ENGINE_ACTION',
+							baseParams : {
+								LIGHT_NAVIGATOR_DISABLED : 'TRUE',
+								MESSAGE_DET : "ENGINE_TEST"
+							}
+						});
 					}
 
 					,
@@ -258,23 +267,7 @@ Ext
 								|| {};
 
 						var tbButtonsArray = new Array();
-						// this.tbProfAttrsButton = new Ext.Toolbar.Button({
-						// text: LN('sbi.ds.pars'),
-						// iconCls: 'icon-profattr',
-						// handler: this.profileAttrs,
-						// width: 30,
-						// scope: this
-						// });
-						// tbButtonsArray.push(this.tbProfAttrsButton);
 
-						// this.tbInfoButton = new Ext.Toolbar.Button({
-						// text: LN('sbi.ds.help'),
-						// iconCls: 'icon-info',
-						// handler: this.info,
-						// width: 30,
-						// scope: this
-						// });
-						// tbButtonsArray.push(this.tbInfoButton);
 
 						this.tbTransfInfoButton = new Ext.Toolbar.Button({
 							text : LN('sbi.ds.help'),
@@ -478,6 +471,19 @@ Ext
 							validationEvent : false,
 							name : 'driver'
 						});
+						
+						
+						this.testButton = new Ext.Button({
+							text : 'Test',
+							listeners : {
+						          click : {
+						            fn : this.testEngine,
+						            scope : this
+						          }
+						        }
+						});
+						
+						
 						// END list of detail fields
 
 						var c = {};
@@ -517,7 +523,8 @@ Ext
 												this.detailFieldClass,
 												this.detailFieldUrl,
 												this.detailFieldSecondaryUrl,
-												this.detailFieldDriverName
+												this.detailFieldDriverName,
+												this.testButton
 										// this.manageDsVersionsPanel ,
 										// this.detailFieldUserIn,this.detailFieldDateIn,this.detailFieldVersNum,this.detailFieldVersId,this.detailFieldId
 										]
@@ -566,12 +573,6 @@ Ext
 						// this.newRecord.set('pars',arrayPars);
 						this.setValues(this.newRecord);
 
-						// if (arrayPars) {
-						// this.manageParsGrid.loadItems(arrayPars);
-						// }else{
-						// this.manageParsGrid.loadItems([]);
-						// }
-						//this.manageDsVersionsGrid.loadItems([]);
 
 						this.tabs.items.each(function(item) {
 							item.doLayout();
@@ -640,13 +641,7 @@ Ext
 						record.set('secondaryUrl', values['secondaryUrl']);
 						record.set('dataSourceId', values['dataSource']);
 
-						// if (arrayPars) {
-						// record.set('pars',arrayPars);
-						// }
 
-//						if (customString) {
-//							record.set('customData', customString);
-//						}
 
 					}
 
@@ -667,24 +662,7 @@ Ext
 						this.mainElementsStore.commitChanges();
 					}
 
-//					,
-//					updateDsVersionsOfMainStore : function(idRec) {
-//						var arrayVersions = this.manageDsVersionsGrid
-//								.getCurrentDsVersions();
-//						if (arrayVersions) {
-//							var record;
-//							var length = this.mainElementsStore.getCount();
-//							for ( var i = 0; i < length; i++) {
-//								var tempRecord = this.mainElementsStore
-//										.getAt(i);
-//								if (tempRecord.data.id == idRec) {
-//									record = tempRecord;
-//								}
-//							}
-//							record.set('dsVersions', arrayVersions);
-//							this.mainElementsStore.commitChanges();
-//						}
-//					}
+
 
 					,
 					getValues : function() {
@@ -782,23 +760,10 @@ Ext
 							}
 							this.updateNewRecord(record, values);
 
-//							newDsVersion = new Ext.data.Record({
-//								dsId : values['id'],
-//								dateIn : values['dateIn'],
-//								userIn : values['userIn'],
-//								versId : values['versId'],
-//								type : oldType,
-//								versNum : values['versNum']
-//							});
+
 						}
 
-						// if (arrayPars) {
-						// params.pars = Ext.util.JSON.encode(arrayPars);
-						// }
-//						if (customString) {
-//							params.customData = Ext.util.JSON
-//									.encode(customString);
-//						}
+
 
 						if (idRec) {
 							params.id = idRec;
@@ -928,95 +893,60 @@ Ext
 									scope : this
 								});
 					}
+					
+					,
+					testEngine : function(){
+						var values = this.getValues();
+
+						var params = this.buildParamsToSendToServer(values);
+
+						//Serialize form values to JSON Object
+						params.engineValues = Ext.util.JSON.encode(values);
+
+						Ext.Ajax.request({
+							url : this.configurationObject.testEngineService,
+							params : params,
+							method : 'POST',
+							success : function(response, options) {
+								if (response !== undefined) {
+									if (response.responseText !== undefined) {
+
+										var content = Ext.util.JSON.decode(response.responseText);
+										if (content.responseText !== 'Operation succeded') {
+											Ext.MessageBox.show({
+												title : LN('sbi.generic.error'),
+												msg : content.responseText,
+												width : 150,
+												buttons : Ext.MessageBox.OK
+											});
+										}
+										else {
+
+											Ext.MessageBox.show({
+												title : LN('Test'),
+												msg : LN('Test successful'),
+												width : 200,
+												buttons : Ext.MessageBox.OK
+											});
+										}
+
+									} else {
+										Sbi.exception.ExceptionHandler.showErrorMessage(
+												LN('sbi.generic.serviceResponseEmpty'),
+												LN('sbi.generic.serviceError'));
+									}
+								} else {
+									Sbi.exception.ExceptionHandler.showErrorMessage(
+											LN('sbi.generic.savingItemError'),
+											LN('sbi.generic.serviceError'));
+								}
+							},
+							failure : Sbi.exception.ExceptionHandler.handleFailure,
+							scope : this
+						});
+					}
 
 
-
-//					,
-//					jsonTriggerFieldHandler : function() {
-//						var values = this.getValues();
-//						var datasetId = values['id'];
-//						var datasourceLabel = this.detailQbeDataSource
-//								.getValue();
-//						if (datasourceLabel == '') {
-//							Ext.MessageBox
-//									.show({
-//										title : LN('sbi.generic.error'),
-//										msg : LN('sbi.tools.managedatasets.errors.missingdatasource'),
-//										width : 150,
-//										buttons : Ext.MessageBox.OK
-//									});
-//							return;
-//						}
-//						if (datamart == '') {
-//							Ext.MessageBox
-//									.show({
-//										title : LN('sbi.generic.error'),
-//										msg : LN('sbi.tools.managedatasets.errors.missingdatamart'),
-//										width : 150,
-//										buttons : Ext.MessageBox.OK
-//									});
-//							return;
-//						}
-//						var datamart = this.qbeDatamarts.getValue();
-//						this.initQbeDataSetBuilder(datasourceLabel, datamart,
-//								datasetId);
-//						this.qbeDataSetBuilder.show();
-//					}
-
-					// , initQbeDataSetBuilder: function(datasourceLabel,
-					// datamart, datasetId) {
-					// if (this.qbeDataSetBuilder === null) {
-					// this.initNewQbeDataSetBuilder(datasourceLabel, datamart,
-					// datasetId);
-					// return;
-					// }
-					// if (this.mustRefreshQbeView(datasourceLabel, datamart,
-					// datasetId)) {
-					// this.qbeDataSetBuilder.destroy();
-					// this.initNewQbeDataSetBuilder(datasourceLabel, datamart,
-					// datasetId);
-					// return;
-					// }
-					// }
-
-					// , initNewQbeDataSetBuilder: function(datasourceLabel,
-					// datamart, datasetId) {
-					// this.qbeDataSetBuilder = new
-					// Sbi.tools.dataset.QbeDatasetBuilder({
-					// datasourceLabel : datasourceLabel,
-					// datamart : datamart,
-					// datasetId : datasetId,
-					// jsonQuery : this.qbeJSONQuery.getValue(),
-					// qbeParameters : this.manageParsGrid.getParsArray(),
-					// modal : true,
-					// width : this.getWidth() - 50,
-					// height : this.getHeight() - 50,
-					// listeners : {
-					// hide :
-					// {
-					// fn : function(theQbeDatasetBuilder) {
-					// theQbeDatasetBuilder.getQbeQuery(); // asynchronous
-					// }
-					// , scope: this
-					// },
-					// gotqbequery : {
-					// fn: this.manageQbeQuery
-					// , scope: this
-					// }
-					// }
-					// });
-					// }
-
-					// , mustRefreshQbeView: function(datasourceLabel, datamart,
-					// datasetId) {
-					// if (datasourceLabel ==
-					// this.qbeDataSetBuilder.getDatasourceLabel()
-					// && datamart == this.qbeDataSetBuilder.getDatamart()
-					// && datasetId == this.qbeDataSetBuilder.getDatasetId()) {
-					// return false;
-					// }
-					// return true;
-					// }
 
 					// METHOD TO BE OVERRIDDEN IN EXTENDED ELEMENT!!!!!
 					,
@@ -1044,47 +974,8 @@ Ext
 						win_info_2.show();
 					}
 
-				// ,transfInfo: function() {
-				// var win_info_4;
-				// if(!win_info_4){
-				// win_info_4= new Ext.Window({
-				// id:'win_info_4',
-				// autoLoad: {url:
-				// Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/dsTrasformationHelp.html'},
-				// layout:'fit',
-				// width:760,
-				// height:420,
-				// autoScroll: true,
-				// closeAction:'close',
-				// buttonAlign : 'left',
-				// plain: true,
-				// title: LN('sbi.ds.help')
-				// });
-				// };
-				// win_info_4.show();
-				// }
 
-				// ,profileAttrs: function() {
-				// var win_info_3;
-				// if(!win_info_3){
-				// win_info_3= new Ext.Window({
-				// id:'win_info_3',
-				// layout:'fit',
-				// width:220,
-				// height:350,
-				// closeAction:'close',
-				// buttonAlign : 'left',
-				// autoScroll: true,
-				// plain: true,
-				// items: {
-				// xtype: 'grid',
-				// border: false,
-				// columns: [{header: LN('sbi.ds.pars'),width : 170}],
-				// store: this.profileAttributesStore
-				// }
-				// });
-				// };
-				// win_info_3.show();
-				// }
+
+
 
 				});
