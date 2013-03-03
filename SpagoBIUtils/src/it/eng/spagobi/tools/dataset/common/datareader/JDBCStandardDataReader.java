@@ -74,6 +74,8 @@ public class JDBCStandardDataReader extends AbstractDataReader {
         				fieldMeta.setType(Class.forName("java.lang.Double"));
         			}else if ("int".equals(fieldType.trim())){
         				fieldMeta.setType(Class.forName("java.lang.Integer"));
+        			}else if ("String".equals(fieldType.trim())){
+        				fieldMeta.setType(Class.forName("java.lang.String"));
         			}else{
         				fieldMeta.setType(Class.forName(fieldType.trim()));
         			}
