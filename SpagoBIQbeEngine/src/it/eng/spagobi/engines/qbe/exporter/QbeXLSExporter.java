@@ -13,6 +13,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -126,54 +127,83 @@ public class QbeXLSExporter {
 					DEFAULT_START_COLUMN);
 		}
 	}
+	/**
+	 * 
+	 * @param sheet ...
+	 * @param workbook ...
+	 * @param createHelper ...
+	 * @param beginRowHeaderData header's vertical offset. Expressed in number of rows
+	 * @param beginColumnHeaderData header's horizontal offset. Expressed in number of columns
+	 
+	 * @return ...
+	 */
+	private CellStyle[] fillSheetHeader(
+			Sheet sheet, 
+			Workbook workbook,
+			CreationHelper createHelper, 
+			int beginRowHeaderData,
+			int beginColumnHeaderData
+	) {
+		
+		CellStyle[] cellTypes;
+		
+		logger.trace("IN");
+		
+		try  {
+		
+			
+			IMetaData dataStoreMetaData = dataStore.getMetaData();
+			int colnumCount = dataStoreMetaData.getFieldCount();
+			
+			Row headerRow = sheet.getRow(beginRowHeaderData);
+			CellStyle headerCellStyle = buildHeaderCellStyle(sheet);
+			
+			cellTypes = new CellStyle[colnumCount]; 
+			for (int j = 0; j < colnumCount; j++) {
+				Cell cell = headerRow.createCell(j + beginColumnHeaderData);
+				cell.setCellType(getCellTypeString());
+				String fieldName = dataStoreMetaData.getFieldAlias(j);
+				IFieldMetaData fieldMetaData = dataStoreMetaData.getFieldMeta(j);
+				String format = (String) fieldMetaData.getProperty("format");
+				String alias = (String) fieldMetaData.getAlias();
+				String scaleFactorHeader = (String) fieldMetaData.getProperty(
+						WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
 	
-	public CellStyle[] fillSheetHeader(Sheet sheet, Workbook wb,
-			CreationHelper createHelper, int beginRowHeaderData,
-			int beginColumnHeaderData) {
-		CellStyle hCellStyle = this.buildHeaderCellStyle(sheet);
-		IMetaData d = dataStore.getMetaData();
-		int colnum = d.getFieldCount();
-		Row row = sheet.getRow(beginRowHeaderData);
-		CellStyle[] cellTypes = new CellStyle[colnum]; // array for numbers
-														// patterns storage
-		for (int j = 0; j < colnum; j++) {
-			Cell cell = row.createCell(j + beginColumnHeaderData);
-			cell.setCellType(this.getCellTypeString());
-			String fieldName = d.getFieldAlias(j);
-			IFieldMetaData fieldMetaData = d.getFieldMeta(j);
-			String format = (String) fieldMetaData.getProperty("format");
-			String alias = (String) fieldMetaData.getAlias();
-			String scaleFactorHeader = (String) fieldMetaData
-					.getProperty(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
-			String header;
-
-			if (extractedFields != null && extractedFields.get(j) != null) {
-				Field field = (Field) extractedFields.get(j);
-				fieldName = field.getAlias();
-				if (field.getPattern() != null) {
-					format = field.getPattern();
+				String header;
+				if (extractedFields != null && j < extractedFields.size() && extractedFields.get(j) != null) {
+					Field field = (Field) extractedFields.get(j);
+					fieldName = field.getAlias();
+					if (field.getPattern() != null) {
+						format = field.getPattern();
+					}
 				}
+				CellStyle aCellStyle = this.buildCellStyle(sheet);
+				if (format != null) {
+					short formatInt = this.getBuiltinFormat(format);
+					aCellStyle.setDataFormat(formatInt);
+					cellTypes[j] = aCellStyle;
+				}
+	
+				if (alias != null && !alias.equals("")) {
+					header = alias;
+				} else {
+					header = fieldName;
+				}
+	
+				header = MeasureScaleFactorOption.getScaledName(header,
+						scaleFactorHeader, locale);
+				cell.setCellValue(createHelper.createRichTextString(header));
+	
+				cell.setCellStyle(headerCellStyle);
+	
 			}
-			CellStyle aCellStyle = this.buildCellStyle(sheet);
-			if (format != null) {
-				short formatInt = this.getBuiltinFormat(format);
-				aCellStyle.setDataFormat(formatInt);
-				cellTypes[j] = aCellStyle;
-			}
-
-			if (alias != null && !alias.equals("")) {
-				header = alias;
-			} else {
-				header = fieldName;
-			}
-
-			header = MeasureScaleFactorOption.getScaledName(header,
-					scaleFactorHeader, locale);
-			cell.setCellValue(createHelper.createRichTextString(header));
-
-			cell.setCellStyle(hCellStyle);
-
+		
+		} catch(Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected error occured while filling sheet header", t);
+		} finally {
+			logger.trace("OUT");
 		}
+		
 		return cellTypes;
 	}
 	
