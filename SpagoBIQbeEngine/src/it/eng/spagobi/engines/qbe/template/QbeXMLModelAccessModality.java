@@ -7,6 +7,7 @@ package it.eng.spagobi.engines.qbe.template;
 
 
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
+import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.Filter;
@@ -228,7 +229,7 @@ public class QbeXMLModelAccessModality extends AbstractModelAccessModality {
 	}
 
 	
-	public boolean isEntityAccessible(ModelEntity entity) {	
+	public boolean isEntityAccessible(IModelEntity entity) {	
 		
 		// ERROR: accessibility of entities is type based: ignore the role
 		/*
