@@ -34,6 +34,7 @@ import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
+import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.ParametersDecoder;
@@ -66,6 +67,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	private AuditServiceProxy auditProxy;
 	private DataSourceServiceProxy datasourceProxy;
 	private DataSetServiceProxy datasetProxy;
+	private MetamodelServiceProxy metamodelProxy;
 
 
 	protected static final BASE64Decoder DECODER = new BASE64Decoder();
@@ -321,40 +323,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 return dataSource;
 	 }
 
-	 /*
-    public IDataSource getDataSource() {
-    	String schema;
-    	String attrname;
-
-    	if(dataSource == null) {
-            dataSource = getDataSourceServiceProxy().getDataSource( getDocumentId() );
-        }
-
-        if (dataSource.checkIsMultiSchema()){
-	        logger.debug("Datasource [" + dataSource.getLabel() + "] is defined on multi schema");
-
-	        try {       
-	        	logger.debug("Retriving target schema for datasource [" + dataSource.getLabel() + "]");
-	         	attrname = dataSource.getSchemaAttribute();
-	         	logger.debug("Datasource's schema attribute name is equals to [" + attrname + "]");	         	
-	         	Assert.assertNotNull(attrname, "Datasource's schema attribute name cannot be null in order to retrive the target schema");
-
-	            schema = (String)getUserProfile().getUserAttribute(attrname);
-	         	Assert.assertNotNull(schema, "Impossible to retrive the value of attribute [" + attrname + "] form user profile");
-
-	         	dataSource.setJndi( dataSource.getJndi() + schema);
-	         	logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] is [" + dataSource.getJndi()+ "]");
-	        } catch (Throwable t) {
-	        	throw new SpagoBIEngineRuntimeException("Impossible to retrive target schema for datasource [" + dataSource.getLabel() + "]", t);
-	        }
-
-	        logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] retrieved succesfully");
-        }
-
-        return dataSource;
-    } 
-	  */
-
+	
 	 public IDataSet getDataSet() {
 		 if(dataSet == null) {
 			 dataSet = getDataSetServiceProxy().getDataSet( getDocumentId() );
@@ -507,7 +476,13 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 return datasetProxy;
 	 }
 
+	 public MetamodelServiceProxy getMetamodelServiceProxy() {
+		 if(metamodelProxy == null) {
+			 metamodelProxy = new MetamodelServiceProxy(getUserIdentifier() , getHttpSession());
+		 }	   
 
+		 return metamodelProxy;
+	 }
 
 	 public Map getEnv() {
 		 Map env = new HashMap();
@@ -523,6 +498,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy() );
 		 env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy());
 		 env.put(EngineConstants.ENV_DATASOURCE_PROXY, getDataSourceServiceProxy()); 
+		 env.put(EngineConstants.ENV_METAMODEL_PROXY, getMetamodelServiceProxy()); 
 		 env.put(EngineConstants.ENV_LOCALE, getLocale()); 
 
 		 return env;
