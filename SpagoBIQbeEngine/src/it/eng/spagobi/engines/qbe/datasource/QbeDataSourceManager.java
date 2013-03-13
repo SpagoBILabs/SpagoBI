@@ -11,6 +11,7 @@ import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.naming.IDataSourceNamingStrategy;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
@@ -24,11 +25,7 @@ import java.util.Map;
  * @author Andrea Gioia
  */
 public class QbeDataSourceManager {
-	
-	private IDataSourceNamingStrategy namingStartegy;
-	
-	//private DataSourceCache dataSourceCache;
-	
+		
 	private static QbeDataSourceManager instance;
 	
 	/**
@@ -38,37 +35,15 @@ public class QbeDataSourceManager {
 	 */
 	public static QbeDataSourceManager getInstance() {
 		if(instance == null) {
-			IDataSourceNamingStrategy namingStartegy = QbeEngineConfig.getInstance().getNamingStrategy();
-			//QbeDataSourceCache dataSourceCache = QbeDataSourceCache.getInstance();
-			instance = new QbeDataSourceManager(namingStartegy/*, dataSourceCache*/);
+			instance = new QbeDataSourceManager();
 		}
 		
 		return instance;
 	}
 	
-	/**
-	 * Instantiates a new qbe data source manager.
-	 * 
-	 * @param namingStartegy the naming startegy
-	 * @param dataSourceCache the data source cache
-	 */
-	private QbeDataSourceManager(IDataSourceNamingStrategy namingStartegy /*, QbeDataSourceCache dataSourceCache*/) {
-		setNamingStartegy(namingStartegy);
-		//setDataSourceCache(dataSourceCache);
-	}
-	
-	
-	
-	
-	/* (non-Javadoc)
-	 * @see it.eng.qbe.datasource.DataSourceManager#getDataSource(java.util.List, java.util.Map, it.eng.qbe.datasource.DBConnection)
-	 */
 	public IDataSource getDataSource(List<String> dataMartNames, Map<String, Object> dataSourceProperties, boolean useCache) {
 		
 		IDataSource dataSource;
-		
-		// = getNamingStartegy().getDataSourceName(dataMartNames, connection);
-		//dataSource = getDataSourceCache().getDataSource(dataSourceName);
 		
 		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration();
 		Iterator<String> it = dataSourceProperties.keySet().iterator();
@@ -82,10 +57,11 @@ public class QbeDataSourceManager {
 		File modelJarFile;
 		FileDataSourceConfiguration c;
 			
-		JarFileRetriever jarFileRetriever = new JarFileRetriever(QbeEngineConfig.getInstance().getQbeDataMartDir());
+		MetamodelServiceProxy metamodelProxy = (MetamodelServiceProxy)dataSourceProperties.get("metadataServiceProxy");
+		MetamodelJarFileRetriever jarFileRetriever = new MetamodelJarFileRetriever(metamodelProxy, QbeEngineConfig.getInstance().getQbeDataMartDir());
 		List<File> modelJarFiles = new ArrayList<File>();
 		for(int i = 0; i < dataMartNames.size(); i++) {
-			modelJarFile = jarFileRetriever.loadDatamartJarFile(dataMartNames.get(i));
+			modelJarFile = jarFileRetriever.loadMetamodelJarFile(dataMartNames.get(i));
 			modelJarFiles.add(modelJarFile);
 			c = new FileDataSourceConfiguration(dataMartNames.get(i), modelJarFile);
 			compositeConfiguration.addSubConfiguration(c);
@@ -106,25 +82,5 @@ public class QbeDataSourceManager {
 		dataSource = DriverManager.getDataSource(driverName, compositeConfiguration, useCache);
 		
 		return dataSource;
-	}
-
-	/*
-	private DataSourceCache getDataSourceCache() {
-		return dataSourceCache;
-	}
-
-	
-	private void setDataSourceCache(DataSourceCache dataSourceCache) {
-		this.dataSourceCache = dataSourceCache;
-	}
-	*/
-
-	private IDataSourceNamingStrategy getNamingStartegy() {
-		return namingStartegy;
-	}
-	
-
-	private void setNamingStartegy(IDataSourceNamingStrategy namingStartegy) {
-		this.namingStartegy = namingStartegy;
 	}
 }
