@@ -169,14 +169,15 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:binding>
 
-   <wsdl:service name="ArtifactServiceService">
+	<wsdl:service name="ArtifactServiceService">
 
-      <wsdl:port binding="impl:ArtifactServiceSoapBinding" name="ArtifactService">
+		<wsdl:port binding="impl:ArtifactServiceSoapBinding" name="ArtifactService">
 
-         <wsdlsoap:address location="http://localhost:8080/SpagoBI/services/ArtifactService"/>
+			<wsdlsoap:address
+				location="http://localhost:8080/SpagoBI/services/ArtifactService" />
 
-      </wsdl:port>
+		</wsdl:port>
 
-   </wsdl:service>
+	</wsdl:service>
 
 </wsdl:definitions>

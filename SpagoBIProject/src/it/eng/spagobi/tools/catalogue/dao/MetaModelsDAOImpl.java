@@ -490,8 +490,10 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
 		return toReturn;
 	}
+	
+	
 
-	public Content loadActiveMetaModelContent(Integer modelId) {
+	public Content loadActiveMetaModelContentById(Integer modelId) {
 		LogMF.debug(logger, "IN: id = [{0}]", modelId);
 		
 		Content toReturn = null;
@@ -526,6 +528,51 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction.rollback();
 			}
 			throw new SpagoBIDOAException("An unexpected error occured while loading active content for model with id [" + modelId + "]", t);	
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+		
+		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
+		return toReturn;
+	}
+	
+	public Content loadActiveMetaModelContentByName(String modelName) {
+		LogMF.debug(logger, "IN: name = [{0}]", modelName);
+		
+		Content toReturn = null;
+		Session session = null;
+		Transaction transaction = null;
+		
+		try {
+			if (modelName == null) {
+				throw new IllegalArgumentException("Input parameter [modelName] cannot be null");
+			}
+			
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch(Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			
+			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.name = ? and mmc.active = true ");
+			query.setString(0, modelName);
+			SbiMetaModelContent hibContent = (SbiMetaModelContent) query.uniqueResult();
+			logger.debug("Content loaded");
+			
+			toReturn = toContent(hibContent, true);
+			
+			transaction.rollback();
+		} catch (Throwable t) {
+			logException(t);
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("An unexpected error occured while loading active content for model with id [" + modelName + "]", t);	
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -658,5 +705,8 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 		logger.debug("OUT");
 		
 	}
+
+
+	
 
 }
