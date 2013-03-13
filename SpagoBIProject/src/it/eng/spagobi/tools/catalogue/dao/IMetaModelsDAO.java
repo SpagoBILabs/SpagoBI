@@ -31,7 +31,9 @@ public interface IMetaModelsDAO extends ISpagoBIDao {
 	
 	public Content loadMetaModelContentById(Integer contendId);
 	
-	public Content loadActiveMetaModelContent(Integer modelId);
+	public Content loadActiveMetaModelContentById(Integer modelId);
+	
+	public Content loadActiveMetaModelContentByName(String name);
 	
 	public List<Content> loadMetaModelVersions(Integer modelId);
 	
