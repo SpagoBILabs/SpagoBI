@@ -72,7 +72,7 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
 			String datamartName = this.getAttributeAsString(DATAMART_NAME);
 			logger.debug("Datamart's name: " + datamartName);
 			
-			checkIfDatamartExists(datamartName);
+			//checkIfDatamartExists(datamartName);
 			
 			SourceBean template = buildTemplate(datamartName);
 			
@@ -162,6 +162,7 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
     		File datamartDir = new File(datamartsDir, datamartName);
     		datamartExists = datamartDir.exists() && datamartDir.isDirectory();
     		if (!datamartExists) {
+    			
     			throw new SpagoBIRuntimeException("Datamart " + datamartName + " not found!");
     		}
     	} finally {
