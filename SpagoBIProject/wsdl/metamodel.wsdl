@@ -19,6 +19,22 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="getMetamodelContentLastModifiedRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getMetamodelContentLastModifiedResponse">
+
+      <wsdl:part name="getMetamodelContentLastModifiedReturn" type="xsd:long"/>
+
+   </wsdl:message>
+
    <wsdl:portType name="MetamodelService">
 
       <wsdl:operation name="getMetamodelContentByName" parameterOrder="in0 in1 in2">
@@ -26,6 +42,14 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          <wsdl:input message="impl:getMetamodelContentByNameRequest" name="getMetamodelContentByNameRequest"/>
 
          <wsdl:output message="impl:getMetamodelContentByNameResponse" name="getMetamodelContentByNameResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getMetamodelContentLastModified" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:getMetamodelContentLastModifiedRequest" name="getMetamodelContentLastModifiedRequest"/>
+
+         <wsdl:output message="impl:getMetamodelContentLastModifiedResponse" name="getMetamodelContentLastModifiedResponse"/>
 
       </wsdl:operation>
 
@@ -53,13 +77,31 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
+      <wsdl:operation name="getMetamodelContentLastModified">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getMetamodelContentLastModifiedRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobimetamodel" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getMetamodelContentLastModifiedResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobimetamodel" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
    </wsdl:binding>
 
    <wsdl:service name="MetamodelServiceService">
 
       <wsdl:port binding="impl:MetamodelServiceSoapBinding" name="MetamodelService">
 
-         <wsdlsoap:address location="http://localhost:8080/SpagoBI/services/MetamodelService"/>
+         <wsdlsoap:address location="http://localhost:8181/SpagoBI/services/MetamodelService"/>
 
       </wsdl:port>
 
