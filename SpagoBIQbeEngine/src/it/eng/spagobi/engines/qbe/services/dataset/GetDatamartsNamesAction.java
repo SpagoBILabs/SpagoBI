@@ -54,7 +54,7 @@ public class GetDatamartsNamesAction extends AbstractQbeEngineAction {
     	try {
 			super.service(request, response);	
 			
-			List<String> datamartsName = getDatamartsName();
+			List<String> datamartsName = getMetamodelNames();
 			
 			JSONArray array = new JSONArray();
 			Iterator<String> it = datamartsName.iterator();
@@ -86,26 +86,42 @@ public class GetDatamartsNamesAction extends AbstractQbeEngineAction {
 
 	}
     
-	private List<String> getDatamartsName() {
-		logger.debug("IN");
-		List<String> toReturn = new ArrayList<String>();
-		File datamartsDir = QbeEngineConfig.getInstance().getQbeDataMartDir();
-		File[] dirs = datamartsDir.listFiles(new FileFilter() {
-			public boolean accept(File pathname) {
-				if (pathname.isDirectory()) {
-					return true;
+    /**
+     * @return the list of existing metamodel names
+     */
+	private List<String> getMetamodelNames() {
+		
+		List<String> metamodelNames;
+		
+		logger.trace("IN");
+		
+		metamodelNames = null;
+		try {
+			metamodelNames = new ArrayList<String>();
+			File metamodelFolder = QbeEngineConfig.getInstance().getQbeDataMartDir();
+			File[] folders = metamodelFolder.listFiles(new FileFilter() {
+				public boolean accept(File pathname) {
+					if (pathname.isDirectory()) {
+						return true;
+					}
+					return false;
 				}
-				return false;
+			});
+			
+			if (folders == null || folders.length == 0) {
+				throw new SpagoBIRuntimeException("No metamodels found!! Check configuration for metamodels repository");
 			}
-		});
-		if (dirs == null || dirs.length == 0) {
-			throw new SpagoBIRuntimeException("No datamarts found!! Check configuration for datamarts repository");
+			
+			for (int i = 0; i < folders.length; i++) {
+				metamodelNames.add(folders[i].getName());
+			}
+			logger.debug("OUT");
+		} catch(Throwable t) {
+			
+		} finally {
+			logger.trace("OUT");
 		}
-		for (int i = 0; i < dirs.length; i++) {
-			toReturn.add(dirs[i].getName());
-		}
-		logger.debug("OUT");
-		return toReturn;
+		return metamodelNames;
 	}
 
 }
