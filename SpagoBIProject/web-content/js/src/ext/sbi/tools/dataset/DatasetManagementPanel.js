@@ -63,7 +63,12 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 				serviceName : 'MANAGE_DATASETS_ACTION',
 				baseParams : paramsDel
 			});
-	this.configurationObject.getDatamartsService = Sbi.config.qbeGetDatamartsUrl;
+	
+	this.configurationObject.getDatamartsService = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName : 'GET_META_MODELS_ACTION',
+		baseParams :  {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
+	});
+	//this.configurationObject.getDatamartsService = Sbi.config.qbeGetDatamartsUrl;
 
 	this.initConfigObject();
 	this.configurationObject.filter = true;
@@ -727,14 +732,23 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					}, this);
 					//this.qbeJSONQuery.on('click', this.jsonTriggerFieldHandler, this);
 					
-					var datamartsStore = new Ext.data.Store({
-				        proxy: new Ext.data.ScriptTagProxy({
-					        url: this.configurationObject.getDatamartsService,
-					        method: 'GET'
-					    }),
-					    reader: new Ext.data.JsonReader({id: 'datamart'}, [
-			                 {name:'datamart'}
-			     	    ])
+					//"id":3,"name":"foodmart360","description":"foodmart360"
+//					var datamartsStore = new Ext.data.Store({
+//				        proxy: new Ext.data.ScriptTagProxy({
+//					        url: this.configurationObject.getDatamartsService,
+//					        method: 'GET'
+//					    }),
+//					    reader: new Ext.data.JsonReader({id: 'id'}, [
+//					         {name:'id'}
+//			                 , {name:'name'}
+//			                 , {name:'description'}
+//			     	    ])
+//					});
+					
+					var datamartsStore = new Ext.data.JsonStore({
+					    url: this.configurationObject.getDatamartsService,
+					    root: 'rows',
+					    fields: ['id', 'name', 'description']
 					});
 					
 					this.qbeDatamarts = new Ext.form.ComboBox({
@@ -743,8 +757,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 			    	   	, forceSelection: true
 			    	   	, editable: false
 			    	   	, store: datamartsStore
-			    	   	, displayField: 'datamart'
-			    	    , valueField: 'datamart'
+			    	   	, displayField: 'name'
+			    	    , valueField: 'name'
 			    	    , typeAhead: true
 			    	    , triggerAction: 'all'
 			    	    , selectOnFocus: true
