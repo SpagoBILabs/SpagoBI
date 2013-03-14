@@ -582,6 +582,17 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
 		return toReturn;
 	}
+	
+	public long getActiveMetaModelContentLastModified(String modelName) {
+		long lastModified = -1;
+		
+		Content content = loadActiveMetaModelContentByName(modelName);
+		if(content != null &&  content.getCreationDate() != null) {
+			lastModified = content.getCreationDate().getTime();
+		} 
+		
+		return lastModified;
+	}
 
 	public List<Content> loadMetaModelVersions(Integer modelId) {
 		LogMF.debug(logger, "IN: id = [{0}]", modelId);
@@ -705,8 +716,4 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 		logger.debug("OUT");
 		
 	}
-
-
-	
-
 }

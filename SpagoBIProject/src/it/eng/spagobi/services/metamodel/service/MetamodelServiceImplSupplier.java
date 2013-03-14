@@ -20,8 +20,7 @@ public class MetamodelServiceImplSupplier {
 
     /**
 	 * return the metamodel by the name
-	 * @param token. The token.
-	 * @param user. The user.
+	 * 
 	 * @param id. The metamodel's name.
 	 * @return the content of the metamodel.
 	 */
@@ -48,4 +47,32 @@ public class MetamodelServiceImplSupplier {
 			logger.debug("OUT");
 		}				
     }
+
+    /**
+	 * Returns the last modification date of the metamodel specified
+	 * 
+	 * @param token The token.
+	 * @param user The user.
+	 * @param name  The metamodel's name.
+	 * 
+	 * @return the last modification date of the metamodel specified
+	 */
+	public long getMetamodelContentLastModified(String name) {
+		logger.debug("IN.name:" + name);
+    	DataHandler toReturn;
+    	
+    	if (name == null) return -1;
+
+    	// gets artifact metamodel from database
+		try {
+			IMetaModelsDAO metamodelsDAO = DAOFactory.getMetaModelsDAO();
+			long lastModified = metamodelsDAO.getActiveMetaModelContentLastModified(name);
+			return lastModified;
+		} catch (Exception e) {
+			logger.error("The metamodel is not correctly returned", e);
+			return -1L;
+		} finally {
+			logger.debug("OUT");
+		}			
+	}
 }
