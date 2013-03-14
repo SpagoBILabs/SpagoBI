@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.services.metamodel.service;
 
-import it.eng.spagobi.services.artifact.bo.SpagoBIArtifact;
 import it.eng.spagobi.services.common.AbstractServiceImpl;
 
 import javax.activation.DataHandler;
@@ -53,4 +52,34 @@ public class MetamodelServiceImpl extends AbstractServiceImpl {
 			logger.debug("OUT");
 		}				
     }
+    
+    /**
+	 * Returns the last modification date of the metamodel specified
+	 * 
+	 * @param token The token.
+	 * @param user The user.
+	 * @param name  The metamodel's name.
+	 * 
+	 * @return the last modification date of the metamodel specified
+	 */
+	public long getMetamodelContentLastModified(String token, String user, String name) {
+		logger.debug("IN");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.service.metamodel.getMetamodelContentByName");
+		try {
+			long lastModified = -1;
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			MetamodelServiceImplSupplier supplier = new MetamodelServiceImplSupplier();			
+			lastModified = supplier.getMetamodelContentLastModified(name);
+			return lastModified;
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			return -1;
+		} finally {
+			this.unsetTenant();
+			monitor.stop();
+			logger.debug("OUT");
+		}				
+	}
 }
