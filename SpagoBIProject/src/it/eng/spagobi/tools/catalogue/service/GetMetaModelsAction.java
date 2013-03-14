@@ -30,7 +30,7 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static Integer START_DEFAULT = 0;
-	public static Integer LIMIT_DEFAULT = 15;
+	public static Integer LIMIT_DEFAULT = -1;
 	
 	@Override
 	public void doService() {
@@ -49,7 +49,7 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 			logger.debug("Limit : " + limit );
 			
 			int startIndex = Math.min(start, allModels.size());
-			int stopIndex = Math.min(start + limit, allModels.size());
+			int stopIndex = (limit>0)? Math.min(start + limit, allModels.size()) : allModels.size();
 			List<MetaModel> models = allModels.subList(startIndex, stopIndex);
 
 			try {
