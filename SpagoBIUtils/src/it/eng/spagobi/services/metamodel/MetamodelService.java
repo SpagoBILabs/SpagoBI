@@ -19,11 +19,23 @@ import javax.activation.DataHandler;
  */
 public interface MetamodelService {
 	/**
-	 * return the metamodel by the name
+	 * Returns the content of specified metamodel
+	 * 
 	 * @param token. The token.
 	 * @param user. The user.
 	 * @param id. The metamodel's name.
-	 * @return the content of the metamodel.
+	 * @return the content of specified metamodel
 	 */
 	DataHandler getMetamodelContentByName(String token, String user, String name);
+	
+	/**
+	 * Returns the last modification date of the metamodel specified
+	 * 
+	 * @param token The token.
+	 * @param user The user.
+	 * @param name  The metamodel's name.
+	 * 
+	 * @return the last modification date of the metamodel specified
+	 */
+	long getMetamodelContentLastModified(String token, String user, String name);
 }

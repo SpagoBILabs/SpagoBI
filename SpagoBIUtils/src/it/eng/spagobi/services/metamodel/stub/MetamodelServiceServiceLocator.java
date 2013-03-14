@@ -22,7 +22,7 @@ public class MetamodelServiceServiceLocator extends org.apache.axis.client.Servi
     }
 
     // Use to get a proxy class for MetamodelService
-    private java.lang.String MetamodelService_address = "http://localhost:8080/SpagoBI/services/MetamodelService";
+    private java.lang.String MetamodelService_address = "http://localhost:8181/SpagoBI/services/MetamodelService";
 
     public java.lang.String getMetamodelServiceAddress() {
         return MetamodelService_address;
