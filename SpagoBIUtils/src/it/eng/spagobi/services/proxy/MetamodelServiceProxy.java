@@ -95,4 +95,29 @@ public final class MetamodelServiceProxy extends AbstractServiceProxy {
 		
 		return serviceResponse;
 	}
+	
+	/**
+	 * Returns the last modification date of the metamodel specified
+	 * 
+	 * @param metamodelName
+	 * 
+	 * @return the last modification date of the metamodel specified
+	 */
+	public long getMetamodelContentLastModified(String metamodelName) {
+		long serviceResponse;
+		
+		logger.debug("IN");
+		
+		serviceResponse = -1;
+		try {
+			Assert.assertTrue(StringUtilities.isNotEmpty(metamodelName), "Input parameter [name] cannot be null when invoking method [getMetamodelContentByName] of service [" + SERVICE_NAME + "]");
+			serviceResponse =  lookUp().getMetamodelContentLastModified(readTicket(), userId, metamodelName);
+		} catch (Throwable se) {
+			throw new SpagoBIRuntimeException("An unexpected error occerd while invoking method [getMetamodelContentByName] of service [" + SERVICE_NAME + "]", se);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return serviceResponse;
+	}
 }
