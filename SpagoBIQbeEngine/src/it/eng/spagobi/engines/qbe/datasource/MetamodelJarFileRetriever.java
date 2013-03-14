@@ -6,6 +6,8 @@
 package it.eng.spagobi.engines.qbe.datasource;
 
 import it.eng.qbe.datasource.configuration.dao.DAOException;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.qbe.exporter.QbeCSVExporter;
 import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -20,6 +22,8 @@ import java.util.zip.ZipFile;
 
 import javax.activation.DataHandler;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Andrea Gioia
  */
@@ -27,6 +31,9 @@ public class MetamodelJarFileRetriever {
 
 	protected File metamodelsLocalDir;
 	protected MetamodelServiceProxy metamodelServiceProxy;
+	
+	/** Logger component. */
+    public static transient Logger logger = Logger.getLogger(MetamodelJarFileRetriever.class);
 	
 	// ============================================================
 	// COSTRUCTORS
@@ -63,55 +70,107 @@ public class MetamodelJarFileRetriever {
 	// ============================================================
 	
 	public File loadMetamodelJarFile(String metamodelName) {
-		File targetMetamodelDir;
+	
 		File metamodelJarFile;
 		
-		targetMetamodelDir = new File(getDatamartsDir(), metamodelName);		
-		metamodelJarFile = new File(targetMetamodelDir, "datamart.jar");
+		logger.trace("IN");
 		
-		if (!metamodelJarFile.exists()) {
-			DataHandler handler = null;
-			try {
-				handler = metamodelServiceProxy.getMetamodelContentByName(metamodelName);	
-			} catch(Throwable t) {
-				throw new SpagoBIRuntimeException("Impossible to load metamodel [" + metamodelName + "]", t);
-			}
-			if(handler != null) {
-				FileOutputStream fos = null;
-				InputStream is = null;
-				try {
-					fos = new FileOutputStream(metamodelJarFile);
-			        is = handler.getInputStream();
-					int c = 0;
-					byte[] b = new byte[1024];
-					while ((c = is.read(b)) != -1) {
-						if (c == 1024)
-							fos.write(b);
-						else
-							fos.write(b, 0, c);
-					}
-			        fos.flush();
-				} catch (IOException e) {
-					//logger.error("Error while storing Mondrian schema into a file", e);
-					throw new SpagoBIEngineRuntimeException("Error while storing Mondrian schema into a file", e);
-				} finally {
-					try {
-						is.close();
-					} catch (IOException e) {
-						//logger.error("Error while closing DataHandler input stream", e);
-					}
-					try {
-						fos.close();
-					} catch (IOException e) {
-						//logger.error("Error while closing file output stream", e);
-					}
+		metamodelJarFile = null;
+		try {
+			Assert.assertTrue(StringUtilities.isNotEmpty(metamodelName), "Input parameter [metamodelName] cannot be null");
+			logger.debug("Load metamodel jar file for model [" + metamodelName + "]");
+			
+			File targetMetamodelFolder = new File(getDatamartsDir(), metamodelName);		
+			metamodelJarFile = new File(targetMetamodelFolder, "datamart.jar");
+			
+			if (metamodelJarFile.exists()) {
+				logger.debug("jar file for metamodel [" + metamodelName + "] has been already loaded in folder [" + targetMetamodelFolder + "]");
+				long localVersionLastModified = metamodelJarFile.lastModified();
+				long remoteVersionLastModified = metamodelServiceProxy.getMetamodelContentLastModified(metamodelName);
+				if(localVersionLastModified < remoteVersionLastModified) {
+					downloadJarFile(metamodelName, targetMetamodelFolder);
 				}
 			} else {
-				throw new SpagoBIRuntimeException("Impossible to load metamodel [" + metamodelName + "]");
+				logger.debug("jar file for metamodel [" + metamodelName + "] has not been already downloaded");
+				downloadJarFile(metamodelName, targetMetamodelFolder);
+			}
+			
+			Assert.assertTrue(metamodelJarFile.exists(), "After load opertion file [" + metamodelJarFile + "] must exist");
+		} catch (Throwable t) {
+			if(t instanceof SpagoBIEngineRuntimeException) throw (SpagoBIEngineRuntimeException)t;
+			throw new SpagoBIEngineRuntimeException("An unexpected error occured while loading metamodel's jar file", t);
+		}
+		
+		return metamodelJarFile;
+	}
+	
+	/**
+	 * Download the jarFile from SpagoBI server and store it on the local filesystem in the
+	 * specified folder
+	 * 
+	 * @param metamodelName the name of the metamodel to download
+	 * @param destinationFolder the destination folder on the local filesystem
+	 */
+	private void downloadJarFile(String metamodelName, File destinationFolder) {
+		DataHandler handler = null;
+		try {
+			logger.debug("Loading jar file for metamodel [" + metamodelName + "] from SpagoBI server...");
+			handler = metamodelServiceProxy.getMetamodelContentByName(metamodelName);
+			if(handler == null) throw new SpagoBIEngineRuntimeException("Metamodel Service returns null value");
+			logger.debug("jar file for metamodel [" + metamodelName + "] has been loaded succesfully from SpagoBI server");
+		} catch(Throwable t) {
+			throw new SpagoBIEngineRuntimeException("Impossible to load jar file of metamodel [" + metamodelName + "] from SpagoBiServer", t);
+		}
+		
+		logger.debug("Copying jar file of metamodel [" + metamodelName + "] locally into folder [" + destinationFolder + "] ...");
+		storeJarFile(handler, destinationFolder);
+		logger.debug("jar file of metamodel [" + metamodelName + "] succesfully copied locally into folder [" + destinationFolder + "] ...");
+	}
+	
+	/**
+	 * Store the jarFile on local filesystem
+	 * 
+	 * @param dataHandler the jarFile content
+	 * @param destinationFolder the destination folder on the local filesystem
+	 */
+	private void storeJarFile(DataHandler dataHandler, File destinationFolder) {
+		
+		File metamodelJarFile = new File(destinationFolder, "datamart.jar");
+		
+		if(metamodelJarFile.exists()) {
+			metamodelJarFile.delete();
+		}
+		
+		if(!destinationFolder.exists()) destinationFolder.mkdirs();
+		
+		FileOutputStream fos = null;
+		InputStream is = null;
+		try {
+			fos = new FileOutputStream(metamodelJarFile);
+		       is = dataHandler.getInputStream();
+			int c = 0;
+			byte[] b = new byte[1024];
+			while ((c = is.read(b)) != -1) {
+				if (c == 1024)
+					fos.write(b);
+				else
+					fos.write(b, 0, c);
+			}
+		       fos.flush();
+		} catch (Throwable t) {
+			throw new SpagoBIEngineRuntimeException("An unexpected error occured while saving localy metamodel's jar file", t);
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				logger.error("Error while closing DataHandler input stream", e);
+			}
+			try {
+				fos.close();
+			} catch (IOException e) {
+				logger.error("Error while closing file output stream", e);
 			}
 		}
-
-		return metamodelJarFile;
 	}
 	
 	public void saveMetamodelJarFile(String metamodelName, File metamodelJarFile) {
