@@ -6,10 +6,8 @@
  
   
  
-  
- 
- app.views.WidgetPanel = Ext.extend(Ext.Panel, {
-	
+Ext.define('app.views.WidgetPanel',{
+	extend:'Ext.Panel',
 	executionInstance : null
 	,slider: null
 	, dockedItems: []

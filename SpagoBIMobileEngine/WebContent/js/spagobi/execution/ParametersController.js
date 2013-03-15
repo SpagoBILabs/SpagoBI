@@ -4,13 +4,11 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
-  
- 
-  
- 
- app.controllers.ParametersController = Ext.extend(Ext.Controller,{
-
-	init: function()  {
+Ext.define('app.controllers.ParametersController',{
+	extend: 'Ext.app.Controller',
+	config:{
+	},
+	constructor: function()  {
 		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
 
 		this.services = new Array();

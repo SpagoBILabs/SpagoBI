@@ -5,12 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
   
- 
-  
- 
- app.views.Slider = Ext.extend(Ext.form.Slider,
-
-		{
+Ext.define('app.views.Slider',{
+		extend:'Ext.form.Slider',
 	    ui: 'light',
 	    id: 'mobileSlider',
 	    xtype: 'sliderfield',

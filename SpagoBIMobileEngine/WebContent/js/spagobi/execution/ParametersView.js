@@ -6,11 +6,8 @@
  
   
  
-  
- 
- app.views.ParametersView = Ext.extend(
-		Ext.Panel,
-		{
+Ext.define('app.views.ParametersView',{
+		extend: 'Ext.Panel',
 			fullscreen: true,
 			style: 'background-color: #747474;',
 

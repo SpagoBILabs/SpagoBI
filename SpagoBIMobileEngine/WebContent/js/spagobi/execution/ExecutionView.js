@@ -4,13 +4,8 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
-  
- 
-  
- 
- app.views.ExecutionView = Ext.extend(Ext.Panel,
-
-		{
+Ext.define('app.views.ExecutionView',{
+		extend:'Ext.Panel',
 	    fullscreen: true,
 	    layout: 'fit',
 	    loadingMaskForExec: null,

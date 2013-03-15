@@ -8,12 +8,17 @@
  
   
  
- app.controllers.MobileController = Ext.extend(Ext.Controller,{
+Ext.define('app.controllers.MobileController',{
+	extend: 'Ext.app.Controller',
 	
-	init: function()  {
+	config:{
+	},
+	
+	constructor: function(){
+		//this.initConfig({});
+		this.services =new Array();
 		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
 		
-		this.services = new Array();
 
 		this.services['getRolesForExecutionService'] = Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'GET_ROLES_FOR_EXECUTION_ACTION'
@@ -30,7 +35,9 @@
 			serviceName: 'EXECUTE_MOBILE_TABLE_ACTION'
 			, baseParams: params
 		});
+	//	this.callParent(arguments);
 	}
+	
 
 	, login: function(options){
 		console.log('MobileController: Received event of login successfull');

@@ -8,7 +8,8 @@
  
   
  
- Ext.regModel('browserItems',	{
+Ext.define('browserItems',{
+	extend:'Ext.data.Model',
 	//foolder atributes
 	fields: [{name: 'devRoles',		type:'array'},	         
 	       	 {name: 'biObjects',	type:'array'},
