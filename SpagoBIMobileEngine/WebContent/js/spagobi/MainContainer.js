@@ -8,9 +8,8 @@
  
   
  
- app.views.MainContainer = Ext.extend(Ext.Panel,
-
-		{
+Ext.define('app.views.MainContainer',{
+		extend: 'Ext.Panel',
 
 	    fullscreen: true,
 	    autoRender: true,

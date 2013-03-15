@@ -8,12 +8,13 @@
  
   
  
-app.views.Viewport = Ext.extend(Ext.Panel,
-	{
+Ext.define('app.views.Viewport',{
+	extend: 'Ext.Panel',
+
 	fullscreen: true,
 	layout: 'card',
 	cardSwitchAnimation: 'slide',
-	initComponent: function() 
+	initialize: function() 
 	
 	  {
 	    //put instances of login into app.views namespace
@@ -34,7 +35,7 @@ app.views.Viewport = Ext.extend(Ext.Panel,
 	        ]
 	    });
 	    
-	    app.views.Viewport.superclass.initComponent.apply(this, arguments);
+	    this.callParent(arguments);
 	    
 		if(app.views.execution.loadingMaskForExec == null){
 			app.views.execution.loadingMaskForExec = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});              

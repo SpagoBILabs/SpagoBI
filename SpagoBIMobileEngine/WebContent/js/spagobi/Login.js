@@ -8,7 +8,8 @@
  
   
  
- app.views.LoginView = Ext.extend(Ext.Panel, {
+Ext.define('app.views.LoginView',{
+	extend: 'Ext.Panel',
 	fullscreen : true,
 	userIDField : null,
 	pwdField : null,

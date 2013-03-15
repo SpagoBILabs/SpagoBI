@@ -5,12 +5,12 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
   
- 
-  
- 
- app.controllers.ExecutionController = Ext.extend(Ext.Controller,{
-	
-	init: function()  {
+Ext.define('app.controllers.ExecutionController',{
+
+	extend:'Ext.app.Controller',
+	config:{
+	},
+	constructor: function()  {
 		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
 		
 		this.services = new Array();

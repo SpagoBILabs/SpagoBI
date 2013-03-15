@@ -5,11 +5,11 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
   
- 
-  
- 
- app.controllers.ComposedExecutionController = Ext.extend(Ext.Controller,{
+Ext.define('app.controllers.ComposedExecutionController',{
 	
+	extend:'Ext.app.Controller',
+	config:{},
+	constructor: function(){},
 	executeSubDocument : function(executionInstance, subDocumentPanel){
 		var option = {};
 		option.executionInstance = executionInstance;

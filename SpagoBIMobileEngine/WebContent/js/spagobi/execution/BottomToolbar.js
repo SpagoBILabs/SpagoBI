@@ -6,11 +6,10 @@
  
   
  
-  
- 
- app.views.BottomToolbar = Ext.extend(Ext.Toolbar,
-		{
-			xtype : 'toolbar',
+Ext.define('app.views.BottomToolbar',{
+		extend:'Ext.Toolbar',
+
+				xtype : 'toolbar',
 			dock : 'bottom',
 			defaults : {
 				ui : 'plain',

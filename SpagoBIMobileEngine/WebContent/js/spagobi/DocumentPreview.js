@@ -8,9 +8,8 @@
  
   
  
- app.views.DocumentPreview = Ext.extend(Ext.Panel,
-
-		{
+Ext.define('app.views.DocumentPreview',{
+		extend:'Ext.Panel',
 	    dockedItems: [],
 	    flex:1.5,
 	    cls: 'spagobi-bg',

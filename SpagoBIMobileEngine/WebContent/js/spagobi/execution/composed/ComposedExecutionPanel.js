@@ -6,14 +6,11 @@
  
   
  
-  
- 
- app.views.ComposedExecutionPanel = Ext.extend(app.views.WidgetPanel,
-
-		{
+Ext.define('app.views.ComposedExecutionPanel',{
+		extend: 'app.views.WidgetPanel',
 	    scroll: 'vertical',
-	     fullscreen: true
-		, initComponent: function (options)	{
+	     fullscreen: true,
+		 initComponent: function (options)	{
 
 			console.log('init composed execution');
 

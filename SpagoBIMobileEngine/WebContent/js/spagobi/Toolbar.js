@@ -6,7 +6,8 @@
  
   
 
-app.views.Toolbar = Ext.extend(Ext.Toolbar, {
+Ext.define('app.views.Toolbar', {
+	extend: 'Ext.Toolbar',
 	
 	xtype : 'toolbar',
 	dock : 'bottom',
