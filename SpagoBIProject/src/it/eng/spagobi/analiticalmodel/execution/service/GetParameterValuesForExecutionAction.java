@@ -176,7 +176,9 @@ public class GetParameterValuesForExecutionAction  extends AbstractSpagoBIAction
 					while(it.hasNext()){
 						String key = (String)it.next();
 						Object v = selectedParameterValuesJSON.get(key);
-						if(v instanceof JSONArray) {
+						if (v == JSONObject.NULL) {
+							selectedParameterValues.put( key, null );
+						} else if(v instanceof JSONArray) {
 							JSONArray a = (JSONArray)v;
 							String[] nv = new String[a.length()];
 							for(int i = 0; i < a.length(); i++) {
