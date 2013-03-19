@@ -89,6 +89,7 @@ Sbi.browser.DocumentsBrowser = function(config) {
 		layout: 'fit'
         , title: 'Browser'
         , iconCls: 'icon-browser-tab'
+        , tabType: 'browser'
         , items: [this.detailPanel]
     });
 	
@@ -114,14 +115,11 @@ Sbi.browser.DocumentsBrowser = function(config) {
 				'tabchange',
 				function () {
 					var anActiveTab = this.centerContainerPanel.getActiveTab();
-					if (anActiveTab.activeDocument !== undefined) {
+					if (anActiveTab.getActiveDocument() !== undefined) {
 						try {
-							var documentPage = anActiveTab.activeDocument.documentExecutionPage;
+							var documentPage = anActiveTab.getActiveDocument().getDocumentExecutionPage();
 							if (documentPage.isVisible()) {
-								var scriptFn = 	"parent.execCrossNavigation = function(d,l,p,s,ti,t) {" +
-												"	sendMessage({'label': l, parameters: p, windowName: d, subobject: s, target: t, title: ti},'crossnavigation');" +
-												"};";
-								documentPage.miframe.iframe.execScript(scriptFn, true);
+								documentPage.injectCrossNavigationFunction();
 							}
 						//} catch (e) {alert(e);}
 						} catch (e) {}
@@ -131,17 +129,16 @@ Sbi.browser.DocumentsBrowser = function(config) {
 		);
 	}
 	
-	//send messages about enable or disable datastore refreh action (for console engine) 
+	//send messages about enable or disable datastore refresh action (for console engine) 
 	this.centerContainerPanel.on(
 	   'beforetabchange',
 	   function (tabPanel, newTab, currentTab ) {
-	//	   alert('tabPanel: ' + tabPanel + ' newTab: ' + newTab + ' currentTab: ' + currentTab);
-		    if(currentTab && currentTab.activeDocument && currentTab.activeDocument.documentExecutionPage) {
-		    	currentTab.activeDocument.documentExecutionPage.miframe.sendMessage('Disable datastore', 'hide');
-		    }
-		    if(newTab.activeDocument && newTab.activeDocument.documentExecutionPage){
-		    	newTab.activeDocument.documentExecutionPage.miframe.sendMessage('Enable datastore', 'show');
-		    }
+		   if(currentTab && currentTab.tabType === 'document' && currentTab.getActiveDocument() && currentTab.getActiveDocument().getDocumentExecutionPage()) {
+			   currentTab.getActiveDocument().getDocumentExecutionPage().getDocumentPage().sendMessage('Disable datastore', 'hide');
+		   }
+		   if(newTab.tabType === 'document' && newTab.getActiveDocument() && newTab.getActiveDocument().getDocumentExecutionPage()){
+			   newTab.getActiveDocument().getDocumentExecutionPage().getDocumentPage().sendMessage('Enable datastore', 'show');
+		   }
 	   }
 	   , this
 	);
@@ -260,6 +257,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		}, r);
 		
 		var executionPanel = new Sbi.execution.ExecutionPanel(config, r.document);
+		executionPanel.tabType = 'document';
 		
 		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
 		
@@ -274,8 +272,10 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 			title: doc.title !== undefined ? doc.title : doc.name
 			, closable: true
 		}, doc);
+		executionPanel.tabType = 'document';
 		
 		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
+		
 		
 		this.centerContainerPanel.add(executionPanel).show();
 		
