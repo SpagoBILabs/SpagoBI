@@ -31,11 +31,11 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 	
 	this.activeDocument.on('beforetoolbarinit', this.setBreadcrumbs, this);
 	
-	this.activeDocument.parametersSelectionPage.on('collapse3', function() {
+	this.activeDocument.documentExecutionPage.on('expandpagerequest', function() {
 		sendMessage({}, 'collapse2'); 
 	}, this);
 	
-	this.activeDocument.parametersSelectionPage.on('crossnavigation', this.loadCrossNavigationTargetDocument , this);
+	this.activeDocument.documentExecutionPage.on('crossnavigation', this.loadCrossNavigationTargetDocument , this);
 	
 	var c = Ext.apply({}, config || {}, {
 		title: title
@@ -78,12 +78,12 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 
 /**
  * @cfg {Boolean} title
- * tbd
+ * The title of the panel. Usually is the one shown in the tab.
  */
 
 /**
  * @cfg {String} closable
- * tbd
+ * Specify if the panel is closable. Usually specify if the tab can be closed by user or not.
  */
 Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 
@@ -104,7 +104,7 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	
 	
 	/**
-     * @property {Object} activeDocument
+     * @property { Sbi.execution.ExecutionWizard} activeDocument
      * The active document (i.e. the one visible to the user). Usually it is the one at the top of the document stack
      */
 	, activeDocument: null
@@ -119,6 +119,24 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	// METHODS
 	// =================================================================================================================
 	
+	// -----------------------------------------------------------------------------------------------------------------
+    // accessor methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * @method
+	 * Returns the active document (i.e. the one at the top of #documentsStack)
+	 
+	 * @return {Sbi.execution.ExecutionWizard} The active document
+	 */
+	, getActiveDocument: function() {
+		return this.activeDocument;
+	}
+
+	// -----------------------------------------------------------------------------------------------------------------
+	// public methods
+	// -----------------------------------------------------------------------------------------------------------------
+
 	/**
 	 * Execute the active document
      * @method
@@ -221,7 +239,7 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		
 		var formState;
 				
-		var activeDocumentExecutionPage = this.activeDocument.parametersSelectionPage;
+		var activeDocumentExecutionPage = this.activeDocument.documentExecutionPage;
 		var executionInstance = activeDocumentExecutionPage.executionInstance;
 			
 		activeDocumentExecutionPage.parametersPanel.clear();
@@ -299,10 +317,10 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 			
 		this.activeDocument.on('beforetoolbarinit', this.setBreadcrumbs, this);
 		
-		this.activeDocument.parametersSelectionPage.on('collapse3', function() {
+		this.activeDocument.documentExecutionPage.on('expandpagerequest', function() {
 			sendMessage({}, 'collapse2'); 
 		}, this);
-		this.activeDocument.parametersSelectionPage.on('crossnavigation', this.loadCrossNavigationTargetDocument , this);	
+		this.activeDocument.documentExecutionPage.on('crossnavigation', this.loadCrossNavigationTargetDocument , this);	
 		
 		
 		
@@ -312,7 +330,7 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		this.activeDocument.execute();
 		
 		//send hide message to the hidden console
-		oldDoc.parametersSelectionPage.documentPage.miframe.sendMessage('Disable datastore', 'hide');
+		oldDoc.documentExecutionPage.documentPage.miframe.sendMessage('Disable datastore', 'hide');
 	}
 	
 	/**
@@ -438,15 +456,15 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	 */
 	, onBreadCrumbClick: function(b, e) {
 		//send hide message to the old actived console
-		if (this.activeDocument && this.activeDocument.parametersSelectionPage){
-			this.activeDocument.parametersSelectionPage.documentPage.miframe.sendMessage('Disable datastore!', 'hide');
+		if (this.activeDocument && this.activeDocument.documentExecutionPage){
+			this.activeDocument.documentExecutionPage.documentPage.miframe.sendMessage('Disable datastore!', 'hide');
 		}
 		var prevActiveDoc =  this.activeDocument;		
 		this.activeDocument = this.documentsStack[b.stackIndex];
 
 		//send show message to the new actived console
-		if (this.activeDocument.parametersSelectionPage)
-			this.activeDocument.parametersSelectionPage.documentPage.miframe.sendMessage('Enable datastore!', 'show');
+		if (this.activeDocument.documentExecutionPage)
+			this.activeDocument.documentExecutionPage.documentPage.miframe.sendMessage('Enable datastore!', 'show');
 				
 		//this.swapPanel(prevActiveDoc, this.activeDocument);
 		
@@ -471,9 +489,11 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 			var scriptFn = 	"parent.execCrossNavigation = function(d,l,p,s,ti,t) {" +
 							"	sendMessage({'label': l, parameters: p, windowName: d, subobject: s, target: t, title: ti},'crossnavigation');" +
 							"};";
-			this.activeDocument.parametersSelectionPage.documentPage.miframe.iframe.execScript(scriptFn, true);
+			this.activeDocument.documentExecutionPage.documentPage.miframe.iframe.execScript(scriptFn, true);
 		}
 	}
+	
+	
 	
 	// =================================================================================================================
 	// EVENTS

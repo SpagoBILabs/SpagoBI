@@ -54,7 +54,7 @@ Sbi.execution.RoleSelectionPage = function(config, doc) {
 	});
 	
 	// add events
-    this.addEvents('beforetoolbarinit', 'beforesynchronize', 'synchronize', 'synchronizeexception', 'movenextrequest', 'moveprevrequest', 'ready', 'backToAdmin');
+    this.addEvents('beforetoolbarinit', 'beforesynchronize', 'synchronize', 'synchronizeexception', 'movetonextpagerequest', 'movetoprevpagerequest', 'ready', 'movetoadminpagerequest');
              
 	// init component
 	this.init();
@@ -131,7 +131,7 @@ Ext.extend(Sbi.execution.RoleSelectionPage, Ext.FormPanel, {
 				, tooltip: LN('sbi.execution.executionpage.toolbar.documentView')
 				, scope: this
 				, handler : function() {
-					this.fireEvent('backToAdmin');
+					this.fireEvent('movetoadminpagerequest');
 				}
 			}));
 		}
@@ -142,7 +142,7 @@ Ext.extend(Sbi.execution.RoleSelectionPage, Ext.FormPanel, {
 			, tooltip: LN('sbi.execution.roleselection.toolbar.next')
 			, scope: this
 			, handler : function() {
-				this.fireEvent('movenextrequest', this, this.getSelectedRole());
+				this.fireEvent('movetonextpagerequest', this, this.getSelectedRole());
 			}
 		}));
 	}

@@ -11,8 +11,10 @@ Sbi.execution.DocumentPage = function(config, doc) {
 	
 	// init properties...
 	var defaultSettings = {
-		// set default values here
+		// public
 		eastPanelWidth: 300
+		// private
+		, state: 'BLANK'
 	};
 	
 	if (Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.documentpage) {
@@ -61,11 +63,148 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
      * This array contains all the services invoked by this class
      */
 	services: null
+	
+	/**
+	 * @property {Ext.ux.ManagedIframePanel} the embedded miframe
+	 */
+	, miframe: null
+	
+	/**
+     * @property {String} state
+     * The state of the page. Can be one of the following:
+     * 
+     *   - BLANK: no document executed yet. It's the initial state before the method #synchronize is invoked
+     *   - LOADING: the url of document to execute has been retrieved successfully and it has been passed to the embedded miframe
+     *   - FAILURE: an error occurred while retrieving the url of the document to execute
+     *   - LOADED: the url of the document to execute has been successfully loaded in the embedded mifreme
+     *   
+     * Initial default value is BLANK
+     * 
+     * NOTE: It's not handled the case in which the url of the document to execute is successfully retrieved but an error occured while
+     * loading in in the embedded miframe.
+     *   
+     */
+	, state: null
+	
+	/**
+	 * @property {String} the definition of cross navifation function
+	 */
+	, EXEC_CROSSNAVIGATION_FN_BODY: "parent.execCrossNavigation = function(d,l,p,s,ti,t) {" +
+	"	sendMessage({'label': l, parameters: p, windowName: d, subobject: s, target: t, title: ti},'crossnavigation');" +
+	"};"
+	
+	
    
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
 		
+	// -----------------------------------------------------------------------------------------------------------------
+    // accessor methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	
+	/**
+	 * @method
+	 * 
+	 * @return {Ext.ux.ManagedIframePanel} the miframe tha contains the executed document
+	 */
+	, getMiFrame: function() {
+		return this.miframe;
+	}
+
+	/**
+	 * @method 
+	 * 
+	 * Returns the state of the page. Can be one of the following:
+     * 
+     *   - BLANK: no document executed yet. It's the initial state before the method #synchronize is invoked
+     *   - LOADING: the url of document to execute has been retrieved successfully and it has been passed to the embedded miframe
+     *   - FAILURE: an error occurred while retrieving the url of the document to execute
+     *   - LOADED: the url of the document to execute has been successfully loaded in the embedded mifreme
+	 * 
+	 * @return {String} The state of the panel
+	 */
+	, getState: function() {
+		return this.state;
+	}
+	
+
+	//-----------------------------------------------------------------------------------------------------------------
+	// public methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * @method 
+	 * 
+	 * Send a message to the document by means of the API provided by the embedded miframe
+	 * 
+	 * @param {Mixed} message The message payload 
+	 * @param {String} tag Optional reference tag
+	 */
+	, sendMessage: function(message, tag) {
+		this.miframe.sendMessage(message, tag);
+	}
+	
+	
+	 /**
+	  * @method 
+	  *  
+	  * eval a javascript code block(string) within the context of the embedde miframe
+
+      * @param {String} block A valid ('eval'able) script source block.
+      * @param {Boolean} useDOM  if true, inserts the function
+      * into a dynamic script tag, false does a simple eval on the function
+      * definition. (useful for debugging) <p> Note: will only work after a
+      * successful iframe.(Updater) update or after same-domain document has
+      * been hooked, otherwise an exception is raised.
+      */
+    , execScript : function(block, useDOM) {
+    	this.miframe.iframe.execScript(block, useDOM);
+    }
+	
+    /**
+	 * @method 
+	 * 
+	 * Inject the cross navigation function in the document loaded in the embedded miframe
+	 */
+    , injectCrossNavigationFunction: function() {
+    	this.execScript(this.EXEC_CROSSNAVIGATION_FN_BODY, true);
+    }
+    
+	/**
+	 * @method 
+	 * 
+	 * Extend session (keep alive)
+	 */
+	, extendSession: function() {
+		Sbi.commons.Session.extend();
+	}
+	
+	/**
+	 * @method 
+	 * 
+	 * Opens the loading mask 
+	 */
+	, showMask : function(message){
+		if (this.loadMask == null) {
+			this.loadMask = new Ext.LoadMask(this.getId(), {msg: message});
+		}
+		this.loadMask.show();
+	}
+	
+	/**
+	 * @method 
+	 * 
+	 * Closes the loading mask
+	 * 
+	 */
+	, hideMask: function() {
+		if (this.loadMask != null) {
+			this.loadMask.hide();
+		}
+	}
+	
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -291,11 +430,9 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 						this.miframe.iframe.execScript("parent = document;", true);
 					}
 		  		}
-				var scriptFn = 	"parent.execCrossNavigation = function(d,l,p,s,ti,t) {" +
-								"	sendMessage({'label': l, parameters: p, windowName: d, subobject: s, target: t, title: ti},'crossnavigation');" +
-								"};";
-				this.miframe.iframe.execScript(scriptFn, true);
-				this.miframe.iframe.execScript("uiType = 'ext';", true);
+				
+				this.execScript(this.EXEC_CROSSNAVIGATION_FN_BODY, true);
+				this.execScript("uiType = 'ext';", true);
 				
 				// iframe resize when iframe content is reloaded
 				if (Ext.isIE) {
@@ -304,7 +441,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 				}
 				
 				frame.hideMask();
-				
+				this.state = 'LOADED';
 			}
 		    , scope: this
 	   };
@@ -359,9 +496,11 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 		      			var content = Ext.util.JSON.decode( response.responseText );
 		      			if(content !== undefined) {
 		      				if(content.errors !== undefined && content.errors.length > 0) {
+		      					this.state = 'FAILURE';
 		      					this.fireEvent('loadurlfailure', content.errors);
 		      				} else {
 		      					Sbi.trace('[DocumentPage.synchronize]: Url for execution is equal to: ' + content.url);
+		      					this.state = 'LOADING';
 		      					this.miframe.getFrame().setSrc( content.url );
 		      				}
 		      			} 
@@ -377,57 +516,12 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 		}
 	}
 	
-	// -----------------------------------------------------------------------------------------------------------------
-    // public methods
-	// -----------------------------------------------------------------------------------------------------------------
 	
-	/**
-	 * @method 
-	 * 
-	 * Extend session (keep alive)
-	 */
-	, extendSession: function() {
-		Sbi.commons.Session.extend();
-	}
-	
-	/**
-	 * @method 
-	 * 
-	 * Opens the loading mask 
-	 */
-    , showMask : function(message){
-    	if (this.loadMask == null) {
-    		this.loadMask = new Ext.LoadMask(this.getId(), {msg: message});
-    	}
-    	this.loadMask.show();
-    }
-	
-	/**
-	 * @method 
-	 * 
-	 * Closes the loading mask
-	 * 
-	 */
-	, hideMask: function() {
-    	if (this.loadMask != null) {
-    		this.loadMask.hide();
-    	}
-	}
-	
-	
-	
-	/**
-	 * @method
-	 * 
-	 * @return {Ext.ux.ManagedIframePanel} the miframe tha contains the executed document
-	 */
-	, getMiFrame: function() {
-		return this.miframe;
-	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
+	
 
 	// =================================================================================================================
 	// EVENTS
