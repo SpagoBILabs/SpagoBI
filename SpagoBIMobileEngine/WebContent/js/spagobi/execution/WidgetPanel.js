@@ -8,13 +8,16 @@
  
 Ext.define('app.views.WidgetPanel',{
 	extend:'Ext.Panel',
-	executionInstance : null
-	,slider: null
-	, dockedItems: []
-	                
-    ,initComponent: function (options) {
+	config:{
+		executionInstance : null
+		,slider: null
+		, dockedItems: []	
+	}
 
-    	app.views.WidgetPanel.superclass.initComponent.apply(this, arguments);
+	                
+    ,initialize: function (options) {
+
+    	this.callParent( arguments);
 		///to add a slider configuration property
 		//this.addSlider();
 	}

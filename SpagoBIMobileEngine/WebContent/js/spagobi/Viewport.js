@@ -18,8 +18,15 @@ Ext.define('app.views.Viewport',{
 
 
 	,initialize: function(){
+		
+		//app.views.loginView = Ext.create('app.views.ParametersView');
+		app.views.execution = Ext.create('app.views.ExecutionView');
 		app.views.loginView = Ext.create('app.views.LoginView');
 		this.add(app.views.loginView);
+		this.add(app.views.execution);
+		this.on("activate",function(){
+			this.setActiveItem(app.views.loginView, { type: 'slide', direction: 'left' });
+		},this);
 
 		
 //	    //put instances of login into app.views namespace
@@ -41,6 +48,7 @@ Ext.define('app.views.Viewport',{
 //	    });
 	    
 	    this.callParent(arguments);
+//	    this.setActiveItem(app.views.loginView, { type: 'slide', direction: 'left' });
 	    
 //		if(app.views.execution.loadingMaskForExec == null){
 //			app.views.execution.loadingMaskForExec = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});              

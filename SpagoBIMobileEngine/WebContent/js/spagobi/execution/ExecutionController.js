@@ -131,16 +131,16 @@ Ext.define('app.controllers.ExecutionController',{
 	, simpleNavigationManagement: function(resp, type, executionInstance){
 		app.controllers.mobileController.destroyExecutionView();
 		if(app.views.execView == undefined || app.views.execView == null){
-			app.views.execView = new app.views.ExecutionView({parameters: executionInstance.PARAMETERS});
+			app.views.execView = Ext.create("app.views.ExecutionView",{parameters: executionInstance.PARAMETERS});
 		}
 	    var viewport = app.views.viewport;	    
 	    viewport.add(app.views.execView);	
-	    app.views.execView.showBottomToolbar();
+//	    app.views.execView.showBottomToolbar();
 	    app.views.execView.setWidget(resp, type);
-		app.views.execView.bottomTools.setBreadCrumb(executionInstance.OBJECT_LABEL, 
-				executionInstance.OBJECT_ID,
-				executionInstance.TYPE_CODE,
-				executionInstance.PARAMETERS);
+//		app.views.execView.bottomTools.setBreadCrumb(executionInstance.OBJECT_LABEL, 
+//				executionInstance.OBJECT_ID,
+//				executionInstance.TYPE_CODE,
+//				executionInstance.PARAMETERS);
 	    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
 	}
 

@@ -6,32 +6,38 @@
  
 Ext.define('app.views.ExecutionView',{
 		extend:'Ext.Panel',
-	    fullscreen: true,
-	    layout: 'fit',
-	    loadingMaskForExec: null,
-		initComponent: function ()	{
-			this.title = 'Execution view';
+		config:{
+			 fullscreen: true,
+			 layout: 'fit',
+			 loadingMaskForExec: null,
+			 title: 'Execution view'
+		}
+
+,
+	   
+		initialize: function ()	{
 			console.log('init Execution view');
-	        this.bottomTools = new app.views.BottomToolbar({parameters: this.parameters});
+//	        this.bottomTools = new app.views.BottomToolbar({parameters: this.parameters});
+//
+//	        this.dockedItems= [this.bottomTools];
 
-	        this.dockedItems= [this.bottomTools];
-
-			app.views.tableExecutionPanel = new app.views.TableExecutionPanel();
-			app.views.chartExecutionPanel = new app.views.ChartExecutionPanel({fullscreen: true});
-			app.views.composedExecutionPanel = new app.views.ComposedExecutionPanel();
-			
-		    Ext.apply(this, {
-		        items: [
-		            app.views.tableExecutionPanel,
-		            app.views.chartExecutionPanel,
-		            app.views.composedExecutionPanel
-		        ]
-		    });
+			app.views.tableExecutionPanel = Ext.create("app.views.TableExecutionPanel");
+			app.views.chartExecutionPanel = Ext.create("app.views.ChartExecutionPanel",{fullscreen: true});
+			//app.views.composedExecutionPanel = new app.views.ComposedExecutionPanel();
+			this.add(app.views.chartExecutionPanel);
+			this.add(app.views.tableExecutionPanel);
+//		    Ext.apply(this, {
+//		        items: [
+//		            app.views.tableExecutionPanel,
+//		            app.views.chartExecutionPanel,
+//		            app.views.composedExecutionPanel
+//		        ]
+//		    });
 		    
 		    app.views.tableExecutionPanel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 		    app.views.chartExecutionPanel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 
-			app.views.ExecutionView.superclass.initComponent.apply(this, arguments);
+			this.callParent(this, arguments);
 
 
 		}
@@ -49,13 +55,13 @@ Ext.define('app.views.ExecutionView',{
 				app.views.composedExecutionPanel.setComposedWidget(resp);
 				this.widget = app.views.composedExecutionPanel;
 			}
-
+			this.add(this.widget);
 		}
 		,hideBottomToolbar: function(){
-			this.bottomTools.hide();
+//			this.bottomTools.hide();
 		}
 		,showBottomToolbar: function(){
-			this.bottomTools.show();
+//			this.bottomTools.show();
 		}
 		,
 		setExecutionInstance : function (executionInstance) {
