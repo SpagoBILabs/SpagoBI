@@ -28,12 +28,19 @@ if (!("").equals(roleToCheckLbl)){
 <html>
 
 	<head>
+	
+
 		<%@ include file="/WEB-INF/jsp/importSenchaJSLibrary.jspf" %>
 		<%@ include file="/WEB-INF/jsp/constants.jspf" %>
 		<%@ include file="/WEB-INF/jsp/env.jspf" %>
+		
+
+		
 		<%@ include file="/WEB-INF/jsp/importSbiJS.jspf" %>
 		
 		<script type="text/javascript">	
+
+			    
 		function changeHashOnLoad() {
 		            window.location.href += "#";
 		            setTimeout("changeHashAgain()", "50");
@@ -53,6 +60,7 @@ if (!("").equals(roleToCheckLbl)){
 	<body onload ="changeHashOnLoad();">
 
 		 <script>
+		 
 
 		 	
 		 	var ajaxReqGlobalTimeout = 120000;
