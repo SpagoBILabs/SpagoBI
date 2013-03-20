@@ -110,7 +110,7 @@ public class ExecuteMobileChartAction extends AbstractExecuteMobileAction {
 			JSONArray data = dataStroreJSON.getJSONArray(dataPosition);
 			extDataStore.put("fields", dataStroreJSONMetdaData.getJSONArray("fields"));
 			extDataStore.put("data", data);
-			extDataStore.put("xtype", "jsonstore");
+			//extDataStore.put("xtype", "jsonstore");
 			logger.debug("Data store builded");
 
 			chartConfigFromTemplate.put("store", extDataStore);

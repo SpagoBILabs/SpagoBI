@@ -7,19 +7,22 @@
   
 Ext.define('app.views.ChartExecutionPanel',{
 	extend: 'app.views.WidgetPanel',
-	dockedItems : [],
-	scroll : 'vertical',
+	config:{
+		//dockedItems : [],
+		scroll : 'vertical',
+		 fullscreen: true
+	},
 
-	initComponent : function() {
+
+	initialize : function() {
 		console.log('init chart execution');
-		app.views.ChartExecutionPanel.superclass.initComponent.apply(this,
-				arguments);
-		if(this.IS_FROM_COMPOSED){
-			this.on('afterlayout',this.showLoadingMask,this);
-			if(app.views.execution.loadingMaskForExec != undefined){
-				app.views.execution.loadingMaskForExec.hide();
-			}
-		}
+		this.callParent(arguments);
+//		if(this.IS_FROM_COMPOSED){
+//			this.on('afterlayout',this.showLoadingMask,this);
+//			if(app.views.execution.loadingMaskForExec != undefined){
+//				app.views.execution.loadingMaskForExec.hide();
+//			}
+//		}
 	},
 	setChartWidget : function(resp, fromcomposition, fromCross) {
 
@@ -76,7 +79,7 @@ Ext.define('app.views.ChartExecutionPanel',{
 	                title: config.title.value
 	            }];
 			}
-			r = new Ext.Panel(chartConfig);
+			r =  Ext.create("Ext.Panel",chartConfig);
 			this.insert(0, r);
 			this.doLayout();
 		}else if (fromCross) {
@@ -94,7 +97,7 @@ Ext.define('app.views.ChartExecutionPanel',{
 	                title: config.title.value
 	            }];
 			}
-			r = new Ext.Panel(chartConfig);
+			r = Ext.create("Ext.Panel",chartConfig);
 			this.insert(0, r);
 			r.doLayout();
 			this.doLayout();
@@ -106,7 +109,8 @@ Ext.define('app.views.ChartExecutionPanel',{
 			if(config.title){
 				chartConfig.title = config.title.value;
 			}
-			app.views.chart = new Ext.chart.Panel(chartConfig);
+			app.views.chart = Ext.create("Ext.chart.CartesianChart",config );
+			this.add(app.views.chart );
 		}
 		if(this.IS_FROM_COMPOSED){
 			this.loadingMask.hide();
