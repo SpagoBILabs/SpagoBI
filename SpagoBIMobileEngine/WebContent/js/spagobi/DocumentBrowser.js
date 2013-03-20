@@ -10,30 +10,25 @@ Ext.define('app.views.DocumentBrowser',{
 		
 		config:{
 		    scroll: 'vertical',
-		    dock : 'left',
-		    layout:'card',
-		    activeItem: 0,
-			cardSwitchAnimation: 'slide',
-		    backText : '&lt;',
-		    store: null,
-		    data: null,
 		    flex:1,
 		    title: 'Document Browser',
-		    useTitleAsBackText: false,
-		    displayField: 'name',
 		    store: new Ext.data.TreeStore({
 			    model: 'browserItems',
 			    proxy: {
-					type: 'ajax',
+			    	type: 'ajax',
+			    	reader:{
+						type: 'json',
+						rootProperty: 'samples'
+			    	},
 					url: Sbi.config.serviceRegistry.getServiceUrl({
 						serviceName: 'DOCUMENT_BROWSER_ACTION'
 							, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
-						}),
-			            root: 'samples'
+						})
+			           
 
 			    }
 		    })
-//			}),
+//,
 //			getItemTextTpl: function(node) {
 //				var tplTxt = '<tpl if="typeCode == \'' + Sbi.constants.documenttype.report + '\'">'+
 //		        '<div class="table-item">{name}</div>'+
@@ -48,7 +43,7 @@ Ext.define('app.views.DocumentBrowser',{
 //			        '<div class="navigate">{name}</div>'+
 //			    '</tpl>';
 //			    return tplTxt;
-//			},
+//			}
 //		    getDetailCard: function( record, parentRecord ){
 //				Ext.dispatch(
 //	            {
@@ -69,11 +64,35 @@ Ext.define('app.views.DocumentBrowser',{
 //				  });
 //
 //	        }
+		},
+
+
+
+	reloadPanel: function(){
+		var store = this.getStore();
+		store.load();
+		
+	},
+		
+        getTitleTextTpl: function() {
+            return '<tpl><div>{name}</div></tpl>';
+        },
+        
+		getItemTextTpl: function(node) {
+		var tplTxt = '<tpl if="typeCode == \'' + Sbi.constants.documenttype.report + '\'">'+
+	        '<div class="table-item">{name}</div>'+
+		    '</tpl>'+
+		    '<tpl if="typeCode == \'' + Sbi.constants.documenttype.chart + '\'">'+
+	        	'<div class="chart-item">{name}</div>'+
+	        '</tpl>'+
+		    '<tpl if="typeCode == \'' + Sbi.constants.documenttype.cockpit + '\'">'+
+		        '<div class="composed-item">{name}</div>'+
+		    '</tpl>'+
+		    '<tpl if="typeCode == undefined || typeCode == null || typeCode ==\'\'">'+
+		        '<div class="navigate">{name}</div>'+
+		    '</tpl>';
+		    return tplTxt;
 		}
-
-
-
-
 
 
 

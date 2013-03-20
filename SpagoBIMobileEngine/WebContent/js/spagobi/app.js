@@ -17,6 +17,8 @@
     },
     mainLaunch: function() {
 
+    	
+    	
         console.log('mainLaunch');
         app.views.viewport = Ext.create('app.views.LoginView');
     	//app.views.viewport = Ext.create('app.views.DocumentBrowser');
