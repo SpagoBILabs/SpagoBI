@@ -69,7 +69,7 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction{
 			
 			//getting default folder (root)
 			LowFunctionality rootFunct = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
-			if (functID == null || functID.equalsIgnoreCase(ROOT_NODE_ID) ||functID.equalsIgnoreCase("0")||functID.equalsIgnoreCase("root")){
+			if (functID == null || functID.equalsIgnoreCase(ROOT_NODE_ID) ||functID.equalsIgnoreCase("0")||functID.equalsIgnoreCase("ext-data-treestore-1-root")){
 				isRoot = true;
 				functID = String.valueOf(rootFunct.getId());
 			}else if (functID.equalsIgnoreCase(rootFunct.getId().toString())) {
@@ -82,7 +82,7 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction{
 			IEngUserProfile profile = (IEngUserProfile)permCont.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			
 			///case user not logged provides a fake store
-			if(profile == null || functID.equals("root")){
+			if(profile == null || functID.equals("ext-data-treestore-1-root")){
 
 				JSONObject foldersAndDocsResponseJSON =  createJSONResponse(new JSONArray("[{name: Document Browser}]"), new JSONArray());
 				
