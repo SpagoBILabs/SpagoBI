@@ -17,6 +17,7 @@ Ext.define('app.views.LoginView',{
 		loginUrl : null,
 		layout:"fit",
 		style: 'background-color: #747474;'
+
 	},
 	
 	initialize : function() {
@@ -32,7 +33,7 @@ Ext.define('app.views.LoginView',{
 	            hideOnMaskTap: true,
 	            centered: true,
 	            width: 320,
-	            height: 290,
+	            height: 270,
 	            items:[
 	                   {
 	                       xtype : 'fieldset',
@@ -50,21 +51,25 @@ Ext.define('app.views.LoginView',{
 		            			//label : 'Password',
 		            			placeHolder : 'Password',
 		            			useClearIcon : false
-		                    },{
-		                        docked: 'bottom',
+		                    },
+		                    {
+		                        //docked: 'bottom',
 		                        xtype: 'toolbar',
-		                        title: 'Overlay Title',
+		                        //ui: 'neutral',
 		                        items:[
+		                            {
+		                            	xtype: 'spacer'
+		                            },
 		                        	{
 		                                text: 'Login',
-		                                ui: 'action',
+		                                ui: 'confirm',
 		                                handler: function(){
 		                                	app.views.loginView.doSubmit(app.views.form.getValues());
 		                                }
 		                            }
 		                        ]
 		                    }]
-	                    	   
+	                   		,dockedItems:[]      
 	                    	   
 	                   }
 	            ],
