@@ -47,9 +47,7 @@ Ext.define('app.controllers.ExecutionController',{
 	        		var doc = resp['document'];
 	        		if(doc != undefined && doc != null){
 		        		var type = doc.typeCode;
-			  			Ext.dispatch({
-							  controller: app.controllers.mobileController,
-							  action: 'getRoles',
+			  			app.controllers.mobileController.getRoles({
 							  id: doc.id,
 							  label: doc.label, 
 							  engine: doc.engine, 

@@ -57,11 +57,7 @@ Ext.define('app.controllers.ParametersController',{
 					};
 					
 					if(responseJson==undefined || responseJson==null || responseJson.length==0  ){
-						  Ext.dispatch({
-							  controller: app.controllers.executionController,
-							  action: 'executeTemplate',
-							  executionInstance: executionInstance
-						  });
+						  app.controllers.executionController.executeTemplate({executionInstance: executionInstance});
 					}else{
 						if(isFromCross){
 
@@ -73,11 +69,7 @@ Ext.define('app.controllers.ParametersController',{
 								//execute now!
 								executionInstance.PARAMETERS = this.fromArrayToObject(paramsFromCross);
 								executionInstance.isFromCross = true;
-								Ext.dispatch({
-									  controller: app.controllers.executionController,
-									  action: 'executeTemplate',
-									  executionInstance: executionInstance
-								});
+								controller: app.controllers.executionController.executeTemplate({executionInstance: executionInstance});
 							}else{
 								app.views.parameters = new app.views.ParametersView();
 								app.views.parameters.refresh(paramsToBeFilled);

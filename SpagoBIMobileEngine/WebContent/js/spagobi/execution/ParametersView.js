@@ -74,9 +74,7 @@ Ext.define('app.views.ParametersView',{
 						        	 handler : function() {
 						        		 var executionInstance = app.controllers.parametersController.executionInstance;
 						        		 executionInstance.PARAMETERS = app.controllers.parametersController.getFormState();
-						        		 Ext.dispatch({
-						        			 controller : app.controllers.executionController,
-						        			 action : 'executeTemplate',
+						        		 app.controllers.executionController.executeTemplate({
 						        			 executionInstance : executionInstance
 						        		 });
 						        	 }

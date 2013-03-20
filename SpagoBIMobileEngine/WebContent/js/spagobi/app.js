@@ -10,10 +10,15 @@
     launch: function() {
         this.launched = true;
         app.views =[];
+        
         app.views.viewport = Ext.create('app.views.Viewport');
+        app.controllers.mobileController = Ext.create('app.controllers.MobileController');
+        app.controllers.parametersController = Ext.create('app.controllers.ParametersController');
+        app.controllers.executionController = Ext.create('app.controllers.ExecutionController');
+        app.controllers.composedExecutionController = Ext.create('app.controllers.ComposedExecutionController');
         Ext.Viewport.add( app.views.viewport);
        
-        app.controllers.mobileController = Ext.create('app.controllers.MobileController');
+       
     },
     mainLaunch: function() {
 

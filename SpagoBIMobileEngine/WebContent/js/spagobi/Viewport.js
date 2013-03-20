@@ -19,9 +19,8 @@ Ext.define('app.views.Viewport',{
 
 	,initialize: function(){
 		app.views.loginView = Ext.create('app.views.LoginView');
-		app.views.main = Ext.create('app.views.MainContainer');
 		this.add(app.views.loginView);
-		this.add(app.views.main);
+
 		
 //	    //put instances of login into app.views namespace
 //	    Ext.apply(app.views, {
@@ -64,6 +63,11 @@ Ext.define('app.views.Viewport',{
 //                //TODO: need to handle the server exceptions
 //        });
 	  }
+	
+	, addMain: function(){
+		app.views.main = Ext.create('app.views.MainContainer');
+		this.add(app.views.main);
+	}
 
 	});
 		

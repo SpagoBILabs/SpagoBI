@@ -22,11 +22,7 @@ Ext.define('app.views.CrossExecutionView',{
 		    iconCls: 'reply',			    
 		    text: 'Home',
             handler: function () {
-        		Ext.dispatch({
-                    controller: app.controllers.mobileController,
-                    action: 'backToBrowser',
-                    fromCross: true
-        		});
+        		app.controllers.mobileController.backToBrowser({fromCross: true});
 
             }};
 		this.toolbarForCross = new Ext.Toolbar({xtype: 'toolbar',
@@ -63,10 +59,7 @@ Ext.define('app.views.CrossExecutionView',{
 			    text: objectLabel,
 			    disabled: true,
 	            handler: function () {
-	  			Ext.dispatch({
-					  controller: app.controllers.mobileController,
-					  action: 'getRoles',
-					  label: objectLabel, 
+	  			app.controllers.mobileController.getRoles({  label: objectLabel, 
 					  id: objectId,
 					  typeCode: typeCode,
 					  parameters: parameters,

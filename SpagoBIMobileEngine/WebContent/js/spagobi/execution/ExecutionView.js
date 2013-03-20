@@ -79,9 +79,7 @@ Ext.define('app.views.ExecutionView',{
 			  console.log('propagating cross nav');
 
 			
-			  Ext.dispatch({
-				  controller: app.controllers.executionController,
-				  action: 'getDocumentInfoForCrossNavExecution',
+			  app.controllers.executionController.getDocumentInfoForCrossNavExecution({
 				  targetDoc: targetDoc,
 				  params: params
 			  });

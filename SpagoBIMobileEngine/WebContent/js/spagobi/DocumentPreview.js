@@ -46,9 +46,7 @@ Ext.define('app.views.DocumentPreview',{
 		    app.views.previewItem = new Ext.Panel({
 		    	html: html,
 		    	listeners: { el:{ tap:function(e){ 
-		  			  Ext.dispatch({
-						  controller: app.controllers.mobileController,
-						  action: 'getRoles',
+		  			  app.controllers.mobileController.getRoles({
 						  id: rec.id,
 						  label: rec.label, 
 						  engine: rec.engine, 
