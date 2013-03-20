@@ -76,10 +76,10 @@ Ext.define('app.views.LoginView',{
 	            scrollable: true
 	        });
 		this.add(app.views.form);
-//		this.on('beforesubmit', function() {
-//			this.doSubmit();
-//			return false;
-//		}, this);
+		app.views.form.on('beforesubmit', function() {
+			this.doSubmit();
+			return false;
+		}, this);
 		
 		this.callParent(this, arguments);
 
