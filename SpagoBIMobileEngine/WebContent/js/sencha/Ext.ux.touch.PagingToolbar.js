@@ -13,7 +13,10 @@
 
 Ext.ns('Ext.ux.touch');
 
-Ext.ux.touch.PagingToolbar = Ext.extend(Ext.Toolbar, {
+Ext.define("Ext.ux.touch.PagingToolbar",{
+	extend:"Ext.Toolbar",
+	xtype: "pagingtoolbar",
+	
 	/**
 	  * Dock Location. Default - 'bottom' Options: 'bottom', 'top', 'left', 'right'
 	  * @type String
@@ -194,4 +197,3 @@ Ext.ux.touch.PagingToolbar = Ext.extend(Ext.Toolbar, {
 	}
 });
 
-Ext.preg('pagingtoolbar', Ext.ux.touch.PagingToolbar);

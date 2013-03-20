@@ -1,6 +1,23 @@
 <link rel="stylesheet" href="../css/spagobi-mobile.css" type="text/css">
 
 <script type="text/javascript" src="../js/spagobi/service/ServiceRegistry.js"></script>
+
+	<script>
+	 Sbi.config={};
+	 var url = {
+		    	host: '<%= request.getServerName()%>'
+		    	, port: '<%= request.getServerPort()%>'
+		    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
+		    	   				  request.getContextPath().substring(1):
+		    	   				  request.getContextPath()%>'
+		    	    
+		    };
+
+		    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+		    	baseUrl: url
+		    });
+	</script>
+
 <script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'></script>
 <script type="text/javascript" src="../js/spagobi/app.js"></script>		
 <script type="text/javascript" src="../js/spagobi/MobileModels.js"></script>
@@ -8,7 +25,6 @@
 <script type="text/javascript" src="../js/spagobi/Viewport.js"></script>
 <script type="text/javascript" src="../js/spagobi/Login.js"></script>
 <script type="text/javascript" src="../js/spagobi/MainContainer.js"></script>
-<script type="text/javascript" src="../js/spagobi/Toolbar.js"></script>
 <script type="text/javascript" src="../js/spagobi/DocumentBrowser.js"></script>
 <script type="text/javascript" src="../js/spagobi/DocumentPreview.js"></script>
 <script type="text/javascript" src="../js/spagobi/execution/WidgetPanel.js"></script>		
@@ -16,10 +32,14 @@
 <script type="text/javascript" src="../js/spagobi/execution/chart/ChartExecutionPanel.js"></script>
 <script type="text/javascript" src="../js/spagobi/execution/composed/ComposedExecutionPanel.js"></script>
 <script type="text/javascript" src="../js/spagobi/execution/composed/ComposedExecutionController.js"></script>
-<script type="text/javascript" src="../js/spagobi/execution/BottomToolbar.js"></script>
 <script type="text/javascript" src="../js/spagobi/execution/ExecutionView.js"></script>
 <script type="text/javascript" src="../js/spagobi/execution/ExecutionController.js"></script>
 <script type="text/javascript" src="../js/spagobi/execution/CrossExecutionView.js"></script>
 <script type="text/javascript" src="../js/spagobi/execution/ParametersView.js"></script>
 <script type="text/javascript" src="../js/spagobi/execution/ParametersController.js"></script>
 <script type="text/javascript" src="../js/spagobi/widgets/Slider.js"></script>
+
+
+
+<!-- script type="text/javascript" src="../js/spagobi/Toolbar.js"--></script>
+<!-- script type="text/javascript" src="../js/spagobi/execution/BottomToolbar.js"--></script>

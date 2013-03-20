@@ -3,9 +3,9 @@
  * I have decided to revert back to using table.
  */
 
-Ext.ns("Ext.ux");
-
-Ext.ux.TouchGridPanel = Ext.extend(Ext.Panel, {
+Ext.define("Ext.ux.TouchGridPanel",{
+	extend: "Ext.Panel",
+	xtype: "touchgridpanel",
 	layout        : "fit",
 	multiSelect   : false,
 	scroll        : "vertical",
@@ -381,5 +381,3 @@ Ext.ux.TouchGridPanel = Ext.extend(Ext.Panel, {
 		return rows[index+1];
 	}
 });
-
-Ext.reg("touchgridpanel", Ext.ux.TouchGridPanel);
