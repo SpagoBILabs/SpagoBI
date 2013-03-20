@@ -94,7 +94,7 @@ Ext.define('app.views.TableExecutionPanel',{
 
 				}
 				
-				app.views.table = new Ext.ux.TouchGridPanel(tbConfig);
+				app.views.table = new Ext.ux.touch.grid.View(tbConfig);
 				if(fromcomposition){
 					  this.insert(0, app.views.table);
 				      this.doLayout();
