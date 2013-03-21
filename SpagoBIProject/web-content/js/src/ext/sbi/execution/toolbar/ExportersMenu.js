@@ -9,6 +9,9 @@ Ext.ns("Sbi.execution.toolbar");
 
 Sbi.execution.toolbar.ExportersMenu = function(config) {
 	
+	this.validateConfigObject(config);
+	this.adjustConfigObject(config);
+	
 	// init properties...
 	var defaultSettings = {
 		tooltip: 'Exporters'
@@ -27,6 +30,9 @@ Sbi.execution.toolbar.ExportersMenu = function(config) {
 			, href: ''   
 		}
 	};
+	
+
+	
 	
 	if (Sbi.settings && Sbi.settings.toolbar && Sbi.settings.toolbar.exportersmenu) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.toolbar.exportersmenu);
@@ -213,6 +219,52 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.Toolbar.MenuButton, {
 	// -----------------------------------------------------------------------------------------------------------------
     // accessor methods
 	// -----------------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * @method 
+	 * 
+	 * Controls that the configuration object passed in to the class constructor contains all the compulsory properties. 
+	 * If it is not the case an exception is thrown. Use it when there are properties necessary for the object
+	 * construction for whom is not possible to find out a valid default value.
+	 * 
+	 * @param {Object} the configuration object passed in to the class constructor
+	 * 
+	 * @return {Object} the config object received as input
+	 */
+	, validateConfigObject: function(config) {
+		if(Ext.isEmpty(config)) {
+			Sbi.error('[ExportersMenu.constructor] : Input parameter [config] cannot be empty');
+			throw {msg: 'Input parameter [config]  passed to the costructor of calss [ExportersMenu] cannot be empty'};
+		}
+		
+		if(Ext.isEmpty(config.toolbar)) {
+			Sbi.error('[ExportersMenu.constructor] : Input parameter [config.toolbar] cannot be empty');
+			throw {msg: 'Input parameter [config.toolbar]  passed to the costructor of calss [ExportersMenu] cannot be empty'};
+		}
+		
+		if(Ext.isEmpty(config.executionInstance)) {
+			Sbi.error('[ExportersMenu.constructor] : Input parameter [config.executionInstance] cannot be empty');
+			throw {msg: 'Input parameter [config.executionInstance] passed to the costructor of calss [ExportersMenu] cannot be empty'};
+		}
+	}
+
+	/**
+	 * @method 
+	 * 
+	 * Modify the configuration object passed in to the class constructor adding/removing properties. Use it for example to 
+	 * rename a property or to filter out not necessary properties.
+	 * 
+	 * @param {Object} the configuration object passed in to the class constructor
+	 * 
+	 * @return {Object} the modified version config object received as input
+	 * 
+	 */
+	, adjustConfigObject: function(config) {
+		if(config && config.executionInstance && config.executionInstance.document) {
+			config.exporters = config.executionInstance.document.exporters;
+			config.documentType = config.executionInstance.document.typeCode;
+		}
+	}
 	
 	/**
 	 * @method
