@@ -175,21 +175,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			, baseParams: params
 		});
 		
-//		this.services['toChartPdf'] = Sbi.config.serviceRegistry.getServiceUrl({
-//			serviceName: 'EXPORT_CHART_PDF'
-//			, baseParams: params
-//		});
-		
-//		this.services['toChartJpg'] = Sbi.config.serviceRegistry.getServiceUrl({
-//			serviceName: 'EXPORT_CHART_JPG'
-//			, baseParams: params
-//		});
-		
-//		this.services['exportDataStore'] = Sbi.config.serviceRegistry.getServiceUrl({
-//			serviceName: 'EXPORT_RESULT_ACTION'
-//			, baseParams: params
-//		});
-		
 		this.services['getNotesService'] = Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'GET_NOTES_ACTION'
 			, baseParams: params
@@ -580,39 +565,10 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		}
 		
 		var menu = new Sbi.execution.toolbar.ExportersMenu({
-			exporters: this.executionInstance.document.exporters
-			, documentType: this.executionInstance.document.typeCode
-			, toolbar: this
+		    toolbar: this
 			, executionInstance: this.executionInstance
 		});
 		this.add(menu);
-			
-//		var menu = null;
-//					
-//		var documentType = this.executionInstance.document.typeCode;
-//		if (  documentType == 'KPI' ) {
-//			menu = this.initKpiExportersMenu();
-//		} else if ( documentType == 'DOCUMENT_COMPOSITE' ) {
-//			menu = this.initDocumentCompositeExportersMenu();
-//		} else if( documentType == 'REPORT') {	
-//			menu = this.initReportExportersMenu();
-//		} else if( documentType == 'OLAP') {
-//			menu = this.initOlapExportersMenu();
-//		} else if ( documentType == 'DASH') {
-//			menu = this.initDashExportersMenu();
-//		} else if ( documentType == 'CHART') {			
-//			menu = this.initChartExportersMenu();
-//		} else if ( documentType == 'NETWORK') {
-//			menu =  this.initNetworkExportersMenu();
-//		} else if ( documentType == 'WORKSHEET') {
-//			menu = this.initWorksheetExportersMenu();
-//		} else if ( documentType == 'DATAMART' || documentType == 'SMART_FILTER' ) {
-//			menu = this.initQbeExportersMenu();
-//		} else if ( documentType == 'MAP') {
-//			menu = this.initGeoExportersMenu();
-//		}	
-//	
-//		if(menu != null) this.add(menu);
 	}	   
 	   
 	   

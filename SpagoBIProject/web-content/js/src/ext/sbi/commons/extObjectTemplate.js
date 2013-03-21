@@ -15,6 +15,9 @@ Ext.ns("Sbi.xxx");
  */
 Sbi.xxx.Xxxx = function(config) {
 	
+	this.validateConfigObject(config);
+	this.adjustConfigObject(config);
+	
 	// init properties...
 	var defaultSettings = {
 		// set default values here
@@ -66,6 +69,35 @@ Ext.extend(Sbi.xxx.Xxxx, Ext.util.Observable, {
 	// METHODS
 	// =================================================================================================================
 	
+	/**
+	 * @method 
+	 * 
+	 * Controls that the configuration object passed in to the class constructor contains all the compulsory properties. 
+	 * If it is not the case an exception is thrown. Use it when there are properties necessary for the object
+	 * construction for whom is not possible to find out a valid default value.
+	 * 
+	 * @param {Object} the configuration object passed in to the class constructor
+	 * 
+	 * @return {Object} the config object received as input
+	 */
+	, validateConfigObject: function(config) {
+		
+	}
+
+	/**
+	 * @method 
+	 * 
+	 * Modify the configuration object passed in to the class constructor adding/removing properties. Use it for example to 
+	 * rename a property or to filter out not necessary properties.
+	 * 
+	 * @param {Object} the configuration object passed in to the class constructor
+	 * 
+	 * @return {Object} the modified version config object received as input
+	 * 
+	 */
+	, adjustConfigObject: function(config) {
+		
+	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
