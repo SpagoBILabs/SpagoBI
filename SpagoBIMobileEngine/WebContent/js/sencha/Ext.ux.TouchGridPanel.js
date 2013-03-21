@@ -11,19 +11,21 @@ Ext.define("Ext.ux.TouchGridPanel",{
 	scroll        : "vertical",
 	conditions    : null,
 	columnToStyle : new Array(),
+	html: 'prrrrrrrrrrrrr',
 	
 
 	initComponent : function() {
 		var me = this;
 		
 		this.conditions = me.conditions ;
-		for(i=0; i<this.conditions.length; i++){
-			if(this.columnToStyle.indexOf(this.conditions[i].column) == -1){
-				this.columnToStyle.push(this.conditions[i].column);
+		if(this.conditions != undefined){
+			for(i=0; i<this.conditions.length; i++){
+				if(this.columnToStyle.indexOf(this.conditions[i].column) == -1){
+					this.columnToStyle.push(this.conditions[i].column);
+				}
+				
 			}
-			
 		}
-		
 		me.items = me.dataview = me.buildDataView();
 
 		if (!Ext.isArray(me.dockedItems)) {
