@@ -34,6 +34,9 @@ Ext.define('Ext.ux.touch.grid.List', {
         },
         itemTpl : false,
         itemCls : 'x-touchgrid-item'
+        /*spagobi*/
+    	,conditions    : null
+    	,columnToStyle : new Array()
     },
 
     
@@ -42,6 +45,11 @@ Ext.define('Ext.ux.touch.grid.List', {
     
     
     constructor : function (config) {
+
+        /*spagobi*/
+		this.conditions = config.conditions ;
+
+		/*------*/
         var me = this,
             features = me.features = config.features || me.config.features || me.features;
         
@@ -113,16 +121,18 @@ Ext.define('Ext.ux.touch.grid.List', {
             cNum = columns.length,
             retWidth = 0,
             stop = false,
+            cellWidth = 100/cNum,
             defaults = this.getDefaults() || {},
             column, width;
 
+
         for (; c < cNum; c++) {
             column = columns[c];
-            width = column.width || defaults.column_width;
-
-            if (!Ext.isNumber(width)) {
-                stop = true;
-                break;
+            flex  = column.flex || 1;
+            if (!Ext.isNumber(column.width)) {//px suffix added
+            	width = column.width
+            }else{
+            	width = (flex * cellWidth)+'%';
             }
 
             retWidth += width;
@@ -179,6 +189,7 @@ Ext.define('Ext.ux.touch.grid.List', {
             tpl = [],
             c = 0,
             cNum = columns.length,
+            cellWidth = 100/cNum,
             basePrefix = Ext.baseCSSPrefix,
             renderers = {},
             defaults = me.getDefaults() || {},
@@ -186,6 +197,7 @@ Ext.define('Ext.ux.touch.grid.List', {
             rowStyle = me.getRowStyle(),
             column, hidden, css, styles, attributes, width, renderer, rendererName, innerText;
 
+        
         for (; c < cNum; c++) {
             column = columns[c];
             hidden = column.hidden;
@@ -196,10 +208,18 @@ Ext.define('Ext.ux.touch.grid.List', {
 
             css = [basePrefix + 'grid-cell'];
             styles = [];
-            attributes = ['dataindex="' + column.dataIndex + '"'];
-            width = column.width || defaults.column_width;
+            attributes = ['dataindex="' + column.mapping + '"'];
+            //width = column.width || defaults.column_width;
+            
+            flex  = column.flex || 1;
+            if (!Ext.isNumber(column.width)) {//px suffix added
+            	width = column.width;
+            }else{            	
+            	width = (flex * notAlarmingCols)+'%';
+            }
+            
             renderer = column[header ? 'headerRenderer' : 'renderer'] || this._defaultRenderer;
-            rendererName = column.dataIndex + '_renderer';
+            rendererName = column.mapping + '_renderer';
 
             styles.push('line-height: '+this.getItemHeight()+'px;');
 
@@ -207,7 +227,7 @@ Ext.define('Ext.ux.touch.grid.List', {
                 css.push(basePrefix + 'grid-cell-hd');
                 innerText = renderer.call(this, column.header);
             } else {
-                innerText = '{[this.' + rendererName + '(values.' + column.dataIndex + ', values)]}';
+                innerText = '{[this.' + rendererName + '(values.' + column.mapping + ', values)]}';
 
                 if (column.style) {
                     styles.push(column.style);
@@ -221,12 +241,29 @@ Ext.define('Ext.ux.touch.grid.List', {
             }
 
             if (width) {
-                styles.push('width: ' + width + (Ext.isString(width) ? '' : 'px') + ';');
+                styles.push('width: ' + width + ';');
+            }
+            //default
+			if (styles.length > 0) {
+				attributes.push('style="' + styles.join(' ') + '"');
             }
 
-            if (styles.length > 0) {
-                attributes.push('style="' + styles.join(' ') + '"');
-            }
+			//column.mapping is the column name
+//			var condList = me.getAlarmConditionForColumn(column.mapping);
+//
+//			if(condList != null && condList.length !== 0){
+//				var result = false;
+//
+//				for(k =0; k < condList.length; k++){
+//					result = me.evaluateCondition(condList[k], column, innerText);
+//					if(result == true){				
+//
+//						attributes.push('style="' + condList[k].style + '"');
+//						break;
+//					}
+//				}	            
+//			}
+			
 
             tpl.push('<div class="' + css.join(' ') + '" ' + attributes.join(' ') + '>' + innerText + '</div>');
         }
@@ -290,7 +327,7 @@ Ext.define('Ext.ux.touch.grid.List', {
         for (; c < cNum; c++) {
             column = columns[c];
 
-            if (column.dataIndex === dataIndex) {
+            if (column.mapping === dataIndex) {
                 return column;
             }
         }
@@ -319,4 +356,31 @@ Ext.define('Ext.ux.touch.grid.List', {
     showColumn : function (index) {
         this.toggleColumn(index, false);
     }
+
+	,getAlarmConditionForColumn: function(column){
+		var condList = new Array();
+		if(this.conditions !== null && this.conditions!== undefined){
+			for (c = 0; c <this.conditions.length; c++){			
+				var cond = this.conditions[c];
+				var col = cond["column"];
+				if(col == column){
+					condList.push(cond);
+				}
+			}
+		}
+		return condList;
+	}
+	,evaluateCondition: function(condition, column, record){
+		var alarmName = column.alarm;
+		var alarmValue = record.data[alarmName];
+		
+		var cond = condition.condition;
+		if(cond.indexOf('=') !== -1 && cond.indexOf('==') == -1){
+			//add one =
+			cond = '='+cond;
+		}
+		var ret =false;
+		eval('if('+alarmValue + cond+'){ret = true;}');
+		return ret;
+	}
 });

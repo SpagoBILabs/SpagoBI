@@ -12,22 +12,15 @@
   <ANIMATE easing='bounceOut' duration='750'/>
   
   <SERIES_LIST>
-  	<SERIE  xField='x' yField='perc' type='column' axis='left'>
+  	<SERIES  xField='x' yField='perc' type='column' axis='left'>
   	      <LABEL field='perc' contrast='true' font='18px Arial' display='insideEnd' text-anchor='middle'/>   
-    </SERIE>
+    </SERIES>
   </SERIES_LIST>
                      
   <AXES_LIST>
-    <AXES  type='Numeric' position='left' title='perc'>
-         <FIELDS_LIST>
-            <FIELDS>perc</FIELDS>
-         </FIELDS_LIST>
-    </AXES>
-    <AXES  type='Category' position='bottom' title='x'>
-         <FIELDS_LIST>
-            <FIELDS>x</FIELDS>
-         </FIELDS_LIST>
-    </AXES>
+    <AXES  type='Numeric' position='left' title='perc' fields='perc'/>
+    <AXES  type='Category' position='bottom' title='x' fields='x'/>
+
   </AXES_LIST>
   
          <INTERACTIONS_LIST>
