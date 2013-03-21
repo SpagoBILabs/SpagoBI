@@ -30,7 +30,7 @@ public class MobileDatasetTableSerializer {
 		try {
 			result = new JSONObject();
 
-			result.put(MODEL_ERROR, false);
+			result.put(MODEL_ERROR, "false");
 			// put udpValues assocated to ModelInstance Node
 
 			JSONArray dsValuesJSON = new JSONArray();
