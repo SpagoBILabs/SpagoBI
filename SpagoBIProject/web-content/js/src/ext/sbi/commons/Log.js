@@ -49,6 +49,10 @@ Sbi.warn = function(msg) {
 	Sbi.log("WARN", msg);
 };
 
+Sbi.error = function(msg) {
+	Sbi.log("ERROR", msg);
+};
+
 Sbi.toSource = function(o) {
 	return Ext.util.JSON.encode(o);
 };
