@@ -19,11 +19,13 @@ Ext.define('app.views.Viewport',{
 
 	,initialize: function(){
 		
-		//app.views.loginView = Ext.create('app.views.ParametersView');
+		
 		app.views.execution = Ext.create('app.views.ExecutionView');
 		app.views.loginView = Ext.create('app.views.LoginView');
+		app.views.parameters = Ext.create("app.views.ParametersView");
 		this.add(app.views.loginView);
 		this.add(app.views.execution);
+		this.add(app.views.parameters);
 		this.on("activate",function(){
 			this.setActiveItem(app.views.loginView, { type: 'slide', direction: 'left' });
 		},this);
