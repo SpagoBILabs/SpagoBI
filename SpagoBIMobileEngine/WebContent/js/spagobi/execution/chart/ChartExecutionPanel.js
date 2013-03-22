@@ -10,20 +10,31 @@ Ext.define('app.views.ChartExecutionPanel',{
 	config:{
 		//dockedItems : [],
 		scroll : 'vertical',
-		 fullscreen: true
+		// fullscreen: true,
+		 items:[]
 	},
 
 
-	initialize : function() {
-		console.log('init chart execution');
+	constructor : function(config) {
+		Ext.apply(this,config);
 		this.callParent(arguments);
-//		if(this.IS_FROM_COMPOSED){
-//			this.on('afterlayout',this.showLoadingMask,this);
-//			if(app.views.execution.loadingMaskForExec != undefined){
-//				app.views.execution.loadingMaskForExec.hide();
-//			}
-//		}
+
 	},
+	
+	initialize : function() {
+		var c = this.setChartWidget(this.resp, this.fromcomposition,this.fromCross );
+		this.add(new Ext.chart.Chart(c));
+		//this.add({html:"asdasdddas444",height:200});
+		console.log('init chart execution');
+//		if(this.IS_FROM_COMPOSED){
+//		this.on('afterlayout',this.showLoadingMask,this);
+//		if(app.views.execution.loadingMaskForExec != undefined){
+//			app.views.execution.loadingMaskForExec.hide();
+//		}
+//	}.callParent(arguments);
+
+	},
+	
 	setChartWidget : function(resp, fromcomposition, fromCross) {
 
 		var r;
@@ -52,69 +63,38 @@ Ext.define('app.views.ChartExecutionPanel',{
 			config.interactions = new Array();
 		}
 
-		if(config.options !== undefined && config.options !== null && config.options.showValueTip){
+	//	if(config.options !== undefined && config.options !== null && config.options.showValueTip){
 			this.addValueTip(config);
-		}
+		//}
 
-		
-				
-		
-		
-		///---------------------------------------
+
 		var chartConfig = {
 
 			items : [ config ]
 		};
 
 		if (fromcomposition) {
+
 			chartConfig.width = '100%';
 			chartConfig.height = '100%';
-			chartConfig.defaultType = 'chart';
-			chartConfig.layout = 'fit';
-			if(config.title){
-				chartConfig.dockedItems = [{
-	                dock: 'top',
-	                xtype: 'toolbar',
-	                ui: 'light',
-	                title: config.title.value
-	            }];
-			}
-			r =  Ext.create("Ext.Panel",chartConfig);
-			this.insert(0, r);
-			this.doLayout();
-		}else if (fromCross) {
-			chartConfig.width = '100%';
-			chartConfig.height = '100%';
-			chartConfig.bodyMargin = '10% 1px 60% 1px';
-			chartConfig.defaultType = 'chart';
-			chartConfig.layout = 'fit';
-			chartConfig.style = 'z-index:100;';//nedded to render charts border informations (like axis..)
-			if(config.title){
-				chartConfig.dockedItems = [{
-	                dock: 'top',
-	                xtype: 'toolbar',
-	                ui: 'light',
-	                title: config.title.value
-	            }];
-			}
-			r = Ext.create("Ext.Panel",chartConfig);
-			this.insert(0, r);
-			r.doLayout();
-			this.doLayout();
 		} else {
+			this.fullscreen = true;
+			chartConfig.fullscreen = true;
+		}
 
 			chartConfig.bodyMargin = '10% 1px 60% 1px';
-			chartConfig.fullscreen = true;
+			
 			
 			if(config.title){
 				chartConfig.title = config.title.value;
 			}
-			app.views.chart = Ext.create("Ext.chart.CartesianChart",config );
-			this.add(app.views.chart );
-		}
-		if(this.IS_FROM_COMPOSED){
-			this.loadingMask.hide();
-		}
+			//app.views.chart = Ext.create("Ext.chart.CartesianChart",config );
+			config.xtype = "chart";
+			return config;
+//		}
+//		if(this.IS_FROM_COMPOSED){
+//			this.loadingMask.hide();
+//		}
 	}
 
 	, addValueTip: function(config){
@@ -125,19 +105,22 @@ Ext.define('app.views.ChartExecutionPanel',{
                 show: function(interaction, item, panel) {
                 	panel.setWidth(400);
                 	var str = "";
-                	var storeItem = item.storeItem;
-                	var values = item.value;
-                	for(var propertyName in storeItem.data){
-                	   if((storeItem.data).hasOwnProperty(propertyName) ){
-                		   var propertyValue = (storeItem.data)[propertyName];
-                		   if(values.indexOf(propertyValue)>=0){
-                			   str = str +"<li><b><span>"+propertyName+"</b>: "+propertyValue+"</span></li>";
+                	var storeItem = item.record.raw;
+                	//var values = item.value;
+                	for(var propertyName in storeItem){
+                	   if((storeItem).hasOwnProperty(propertyName) ){
+                		   var propertyValue = (storeItem)[propertyName];
+                		   if(propertyValue){
+                    		 //  if(values.indexOf(propertyValue)>=0){
+                    			   str = str +"<li><b><span>"+propertyName+"</b>: "+propertyValue+"</span></li>";
+                    		  // } 
                 		   }
+
                 	   }
                 	}
                 	if(str.length>0){
                 		str = "<ul>"+str+"</ul>";
-                		 panel.update(str);
+                		 panel.setHtml(str);
                 	}
                 }
             }
