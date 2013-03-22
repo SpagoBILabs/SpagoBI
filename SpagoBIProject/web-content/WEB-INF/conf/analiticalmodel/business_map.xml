@@ -34,6 +34,8 @@
 		<MAP_ACTION actionName="DELETE_VIEWPOINTS_ACTION"  businessProcess="SeeViewpointsFunctionality"/>
 		<MAP_ACTION actionName="SAVE_VIEWPOINT_ACTION"  businessProcess="SeeViewpointsFunctionality"/>
 		<MAP_ACTION actionName="GET_SNAPSHOTS_ACTION"  businessProcess="SeeSnapshotsFunctionality"/>
+		<MAP_ACTION actionName="GET_FAVOURITES_ACTION"  businessProcess="SeeSnapshotsFunctionality"/>
+		
 		
 		<MAP_ACTION actionName="MANAGE_BIOBJECTS_ACTION"  businessProcess="KpiManagement"/>
 		<MAP_ACTION actionName="SAVE_DOCUMENT_ACTION"  businessProcess="UserSaveDocumentFunctionality"/>
