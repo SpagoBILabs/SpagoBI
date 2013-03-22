@@ -133,20 +133,16 @@ Ext.define('app.views.TableExecutionPanel',{
 			var drill = resp.features.drill;
 			if(drill != null && drill != undefined){
 				var params = drill.params;
-				
-				//captures event e on target				
-				var textCell = target.innerText;
+
 				var row = target.parentNode;
-				var cellsOfRow = row.cells;
-				var rowIdx = row.rowIndex;
-				var attributes = target.attributes;
-				var columns= new Array();
+				var cellsOfRow = row.children;
+
 				var colValues = {};
 				for(a=0; a<cellsOfRow.length; a++){
 					var cell = cellsOfRow[a];
 					for(i = 0; i<cell.attributes.length; i++){
 						var at = cell.attributes[i];
-						if(at.name == 'mapping'){
+						if(at.name == 'dataindex'){
 							var nCol=at.value;
 							colValues[nCol] = cell.textContent;
 							
