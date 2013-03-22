@@ -13,13 +13,19 @@ Ext.define('app.views.TableExecutionPanel',{
 //			style:'border: 3px solid red; background-color: #fff;',
 			
 			
-		}
-	    , initialize: function (options)	{
+		},
 
-			console.log('init table execution');
-
+		constructor : function(config) {
+			Ext.apply(this,config);
 			this.callParent(arguments);
-	    }
+		
+		},
+		
+		initialize : function() {
+			this.setTableWidget(this.resp, this.fromcomposition,this.fromCross );
+			console.log('init table execution');		
+		}
+
 
 		,setTableWidget: function(resp, fromcomposition, fromCross){
 			console.log(resp.features.fields);
