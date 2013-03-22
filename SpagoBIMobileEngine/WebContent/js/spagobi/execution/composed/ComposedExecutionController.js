@@ -10,10 +10,10 @@ Ext.define('app.controllers.ComposedExecutionController',{
 	extend:'Ext.app.Controller',
 	config:{},
 	constructor: function(){},
-	executeSubDocument : function(executionInstance, subDocumentPanel){
+	executeSubDocument : function(executionInstance, parentDocumentPanel){
 		var option = {};
 		option.executionInstance = executionInstance;
-		app.controllers.executionController.executeTemplate(option, subDocumentPanel);
+		app.controllers.executionController.executeTemplate(option, parentDocumentPanel);
 	}
 
 	,

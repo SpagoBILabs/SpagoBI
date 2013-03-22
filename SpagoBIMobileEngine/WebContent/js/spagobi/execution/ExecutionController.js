@@ -83,7 +83,7 @@ Ext.define('app.controllers.ExecutionController',{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createWidgetExecution(resp, 'table', documentContainerPanel, executionInstance);
+		        		this.createWidgetExecution(resp, 'table', documentContainerPanel, executionInstance, option);
 		        	}
 		        }
 				,failure: function(response, options) {
@@ -100,7 +100,7 @@ Ext.define('app.controllers.ExecutionController',{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createWidgetExecution(resp, 'chart', documentContainerPanel, executionInstance);
+		        		this.createWidgetExecution(resp, 'chart', documentContainerPanel, executionInstance, option);
 		        	}
 		        }
 				,failure: function(response, options) {
@@ -118,7 +118,7 @@ Ext.define('app.controllers.ExecutionController',{
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
 		        		resp.executionInstance = params;
-		        		this.createWidgetExecution(resp,  'composed', null, executionInstance);
+		        		this.createWidgetExecution(resp,  'composed', null, executionInstance, option);
 		        	}
 		        }
 				,failure: function(response, options) {
@@ -144,15 +144,15 @@ Ext.define('app.controllers.ExecutionController',{
 	    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
 	}
 
-	, createWidgetExecution: function(resp, type, documentContainerPanel, executionInstance){
+	, createWidgetExecution: function(resp, type, documentContainerPanel, executionInstance, composedComponentOptions){
 
 		if (documentContainerPanel == undefined || documentContainerPanel == null) {
 
 			this.simpleNavigationManagement(resp, type, executionInstance);
 			app.views.execView.setExecutionInstance(executionInstance);
 		} else {
-			app.views.execView.setWidgetComposed(resp, type, documentContainerPanel);
-			documentContainerPanel.setExecutionInstance(executionInstance);
+			documentContainerPanel.addWidgetComposed(resp, type, composedComponentOptions);
+			//documentContainerPanel.setExecutionInstance(executionInstance);
 		}
 		
 		

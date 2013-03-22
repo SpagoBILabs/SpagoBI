@@ -8,29 +8,32 @@
  
 Ext.define('app.views.ComposedExecutionPanel',{
 		extend: 'app.views.WidgetPanel',
-	    scroll: 'vertical',
-	     fullscreen: true,
-		 initComponent: function (options)	{
-
-			console.log('init composed execution');
-
-			app.views.ComposedExecutionPanel.superclass.initComponent.apply(this, arguments);
-
+		config:{
+			scroll: 'vertical',
+		    fullscreen: true
+				
 		},
-		setComposedWidget: function(resp){
-			var title = resp.title.value;
+		
+		constructor: function(config){
+			Ext.apply(this,config);
+			this.callParent();
+		},
+		
+		
+		initialize: function(){
+			var title = this.resp.title.value;
 			
-			var documentsList = resp.documents.docs;
-			var documentWidth = resp.documents.totWidth;
-			var documentHeight = resp.documents.totHeight;
+			var documentsList = this.resp.documents.docs;
+			var documentWidth = this.resp.documents.totWidth;
+			var documentHeight = this.resp.documents.totHeight;
 			
 			var items = new Array();
 			
-			var executionInstance = Ext.apply({}, resp.executionInstance);
+			var executionInstance = Ext.apply({}, this.resp.executionInstance);
 			
 			if (documentsList != undefined && documentsList != null) {
 				for (var i = 0; i < documentsList.length; i++) {
-					var subDocumentPanel = this.buildPanel(documentsList[i]);
+					//var subDocumentPanel = this.buildPanel(documentsList[i]);
 					var mainDocumentParameters = executionInstance.PARAMETERS;
 					var subDocumentDefaultParameters = documentsList[i].IN_PARAMETERS;
 					var subDocumentParameters = Ext.apply(subDocumentDefaultParameters, mainDocumentParameters);
@@ -38,43 +41,27 @@ Ext.define('app.views.ComposedExecutionPanel',{
 					subDocumentExecutionInstance.PARAMETERS = subDocumentParameters;
 					subDocumentExecutionInstance.IS_FROM_COMPOSED = true;
 					subDocumentExecutionInstance.ROLE = executionInstance.ROLE;
-					app.controllers.composedExecutionController.executeSubDocument(subDocumentExecutionInstance, subDocumentPanel);
-					items.push(subDocumentPanel);
+					app.controllers.composedExecutionController.executeSubDocument(subDocumentExecutionInstance, this);
 				}
 				///to add a slider configuration property
-				if(resp.slider && resp.slider.name){
-					this.addSlider(items, resp.slider);
-				}
+//				if(this.resp.slider && this.resp.slider.name){
+//					this.addSlider(items, this.resp.slider);
+//				}
 			}
 
-			var composedDocumentContainerConfig = {
-				fullscreen: true,
-	            bodyMargin: '20px 50px 100px 50px',
-	            items: items
-	        };
-//
-//			if(documentWidth && documentHeight){
-//				composedDocumentContainerConfig.height =documentHeight;
-//				composedDocumentContainerConfig.width =documentWidth;
-//			}
-			
-			var composedDocumentContainer =	new Ext.Panel(composedDocumentContainerConfig);
-			app.views.composed =  composedDocumentContainer;
-			this.add(app.views.composed);
 
 		},
 		
-		buildPanel: function(config){
+		addWidgetComposed: function(resp, type, composedComponentOptions){
 
 			var panel;
-			config = Ext.apply(config,{style: 'float: left;', bodyMargin:10
-				, IS_FROM_COMPOSED: true
-				});
+			resp.config = Ext.apply(resp.config,{IS_FROM_COMPOSED: true});
+			resp.config = Ext.apply(resp.config,composedComponentOptions.executionInstance||{});
 			
-			if (config.TYPE_CODE == Sbi.constants.documenttype.chart) {
-				panel = new app.views.ChartExecutionPanel(config);
+			if (type == "chart") {
+				panel = Ext.create("app.views.ChartExecutionPanel",{resp: resp, fromcomposition: true});
 			} else {
-				panel = new app.views.TableExecutionPanel(config);
+				panel = Ext.create("app.views.TableExecutionPanel",{resp: resp, fromcomposition: true});
 			}
 			
 			panel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
@@ -96,7 +83,23 @@ Ext.define('app.views.ComposedExecutionPanel',{
 				}
 			}, this);
 			
-			return panel;
+			var height;
+			var width;
+			if(resp.config.height){
+				height =resp.config.height;
+			}
+			if(resp.config.width ){
+				width =resp.config.width;
+			}
+			var style = panel.getStyle();
+			if(!style){
+				style = "";
+			}
+			style = style+" float: left;";
+			style = style+" width:"+ width+"; height:"+height;
+			panel.setStyle(style);
+			//panel.setMargin(10);
+			this.add(panel);
 		}
 		
 		,

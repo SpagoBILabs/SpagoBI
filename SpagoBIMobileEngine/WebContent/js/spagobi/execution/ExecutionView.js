@@ -21,11 +21,10 @@ Ext.define('app.views.ExecutionView',{
 //
 //	        this.dockedItems= [this.bottomTools];
 
-			app.views.tableExecutionPanel = Ext.create("app.views.TableExecutionPanel");
-			app.views.chartExecutionPanel = Ext.create("app.views.ChartExecutionPanel",{fullscreen: true});
+			
 			//app.views.composedExecutionPanel = new app.views.ComposedExecutionPanel();
-			this.add(app.views.chartExecutionPanel);
-			this.add(app.views.tableExecutionPanel);
+//			this.add(app.views.chartExecutionPanel);
+//			this.add(app.views.tableExecutionPanel);
 //		    Ext.apply(this, {
 //		        items: [
 //		            app.views.tableExecutionPanel,
@@ -34,8 +33,8 @@ Ext.define('app.views.ExecutionView',{
 //		        ]
 //		    });
 		    
-		    app.views.tableExecutionPanel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
-		    app.views.chartExecutionPanel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
+		    
+		    
 
 			this.callParent(this, arguments);
 
@@ -44,15 +43,21 @@ Ext.define('app.views.ExecutionView',{
 		, setWidget: function(resp, type, fromCross) {
 
 			if (type == 'table'){
+				app.views.tableExecutionPanel = Ext.create("app.views.TableExecutionPanel");
 				app.views.tableExecutionPanel.setTableWidget(resp, false, fromCross);
+				app.views.tableExecutionPanel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 				this.widget = app.views.tableExecutionPanel;
+				
 			}
 			if (type == 'chart'){
-				app.views.chartExecutionPanel.setChartWidget(resp, false, fromCross);
+				
+				
+				app.views.chartExecutionPanel = Ext.create("app.views.ChartExecutionPanel",{fullscreen: true, resp:resp, fromcomposition:false, fromCross:fromCross});
+				app.views.chartExecutionPanel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 				this.widget = app.views.chartExecutionPanel;
 			}
 			if (type == 'composed'){
-				app.views.composedExecutionPanel.setComposedWidget(resp);
+				app.views.composedExecutionPanel = Ext.create("app.views.ComposedExecutionPanel", {resp: resp});
 				this.widget = app.views.composedExecutionPanel;
 			}
 			this.add(this.widget);
@@ -68,17 +73,6 @@ Ext.define('app.views.ExecutionView',{
 			this.widget.setExecutionInstance(executionInstance);
 		}
 
-		, setWidgetComposed: function(resp, type, panel){
-			if(type == 'table'){
-				panel.setTableWidget(resp, true);
-			}
-			if(type == 'chart'){
-				panel.setChartWidget(resp, true);
-			}
-			if(type == 'composed'){
-				panel.setComposedWidget(resp, true);
-			}
-		}
 		,
 		propagateCrossNavigationEvent : function(sourcePanel, params, targetDoc) {
 			
