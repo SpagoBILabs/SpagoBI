@@ -215,7 +215,7 @@ Ext.define('Ext.ux.touch.grid.List', {
             if (!Ext.isNumber(column.width)) {//px suffix added
             	width = column.width;
             }else{            	
-            	width = (flex * notAlarmingCols)+'%';
+            	width = (flex * cNum)+'%';
             }
             
             renderer = column[header ? 'headerRenderer' : 'renderer'] || this._defaultRenderer;
@@ -231,8 +231,9 @@ Ext.define('Ext.ux.touch.grid.List', {
 
                 if (column.style) {
                     styles.push(column.style);
+                    
                 }
-
+                styles.push('' + '{[values.styleTD['+c+']]}' + ';');
                 renderers[rendererName] = renderer;
             }
 
@@ -243,26 +244,12 @@ Ext.define('Ext.ux.touch.grid.List', {
             if (width) {
                 styles.push('width: ' + width + ';');
             }
+            
+            //styles.push('' + '{[values.styleTD['+c+']]}' + ';');
             //default
 			if (styles.length > 0) {
 				attributes.push('style="' + styles.join(' ') + '"');
             }
-
-			//column.mapping is the column name
-//			var condList = me.getAlarmConditionForColumn(column.mapping);
-//
-//			if(condList != null && condList.length !== 0){
-//				var result = false;
-//
-//				for(k =0; k < condList.length; k++){
-//					result = me.evaluateCondition(condList[k], column, innerText);
-//					if(result == true){				
-//
-//						attributes.push('style="' + condList[k].style + '"');
-//						break;
-//					}
-//				}	            
-//			}
 			
 
             tpl.push('<div class="' + css.join(' ') + '" ' + attributes.join(' ') + '>' + innerText + '</div>');
@@ -278,7 +265,7 @@ Ext.define('Ext.ux.touch.grid.List', {
                 renderers._getRowCls = me._getRowClsFn;
                 rcls = 'class="' + basePrefix + 'grid-row {[this._getRowCls(values) || \'\']}"';
             }
-        
+           // '{[values.styleTD['+i+']]}'
             if (Ext.isFunction(rowStyle) || Ext.isString(rowStyle)) {
                 renderers._getRowStyle = me._getRowStyleFn;
                 rstl = 'style="{[this._getRowStyle(values) || \'\']}"';
@@ -294,7 +281,42 @@ Ext.define('Ext.ux.touch.grid.List', {
             renderers : renderers
         };
     },
+    prepareData  : function(data, index, record) {
+		var column,
+			i  = 0
+			,ln = this.config.columns.length;
+		var prepare_data = record;
+		prepare_data.styleTD = {};
+		for (; i < ln; i++) {
+			
+			//column.mapping is the column name
+			var col=this.config.columns[i]
+			var condList = this.getAlarmConditionForColumn(col.mapping);
 
+			
+			if (typeof col.renderer === "function") {
+				prepare_data[col.mapping] = col.renderer.apply(me, [data[col.mapping],col, record, index]);
+			} else {
+				prepare_data[col.mapping] = data[col.mapping];
+				
+			}
+			
+			if(condList != null && condList.length !== 0){
+				var result = false;
+
+				for(k =0; k < condList.length; k++){
+					result = this.evaluateCondition(condList[k],col , record);
+					if(result == true){
+						
+						prepare_data.styleTD[i] = condList[k].style;
+						break;
+					}
+				}
+
+			}
+		}
+		return prepare_data;
+	},
     getRowCls : function (data) {
         var me = this,
             rowCls = me._rowCls;
