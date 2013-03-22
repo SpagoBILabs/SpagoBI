@@ -71,7 +71,7 @@ Ext.define('app.controllers.ParametersController',{
 								executionInstance.isFromCross = true;
 								controller: app.controllers.executionController.executeTemplate({executionInstance: executionInstance});
 							}else{
-								app.views.parameters = new app.views.ParametersView();
+//								app.views.parameters = Ext.create("app.views.ParametersView");
 								app.views.parameters.refresh(paramsToBeFilled);
 								app.views.viewport.add(app.views.parameters);
 								app.views.viewport.setActiveItem(app.views.parameters);
@@ -159,7 +159,7 @@ Ext.define('app.controllers.ParametersController',{
 				, MODE: 'complete'
 			}, executionInstance);
 	
-			var store = new Ext.data.Store({
+			var store = Ext.create("Ext.data.Store",{
 				proxy: {
 					type: 'ajax',
 					url: this.services['getParameterValueForExecutionService'],
@@ -184,26 +184,26 @@ Ext.define('app.controllers.ParametersController',{
 			if(p.mandatory && p.mandatory == true){
 				mandatory = true;
 			}
-			field = new Ext.ux.touch.CustomSelectField(Ext.apply({
+			field = Ext.create("Ext.field.Select",(Ext.apply({
 				valueField : metadata.valueField,
 				displayField : metadata.displayField,
 				placeHolder: 'Selezionare un valore...',
 		        useClearIcon: true,
 		        required: mandatory,
 				store : store
-			},baseConfig));
+			},baseConfig)));
 
 			field.on('focus', function(f) {
 				f.setValue(' ');
 			}, this);
 		} else { 
 			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
-				field = new Ext.form.DatePicker(baseConfig);
+				field = Ext.create("Ext.form.DatePicker",baseConfig);
 	
 			} else if(p.type === 'NUMBER') {
-				field = new Ext.form.Number(baseConfig);
+				field =  Ext.create("Ext.form.Number",baseConfig);
 			} else {	
-				field = new Ext.form.Text(baseConfig);
+				field =  Ext.create("Ext.form.Text",baseConfig);
 			}			
 		}		
 		return field;
@@ -216,15 +216,15 @@ Ext.define('app.controllers.ParametersController',{
 			
 			try{
 				var field = this.fields[i];
-				state[field.name + '_field_visible_description'] = '';
+				state[field.getName() + '_field_visible_description'] = '';
 				var value = field.getValue();
 				if(value==undefined || value==null){
-					state[field.name] = '';
+					state[field.getName()] = '';
 				}else{
-					state[field.name] = value;
+					state[field.getName()] = value;
 				}
 			}catch (e){
-				state[field.name] = '';
+				state[field.getName()] = '';
 			}
 	
 		}
