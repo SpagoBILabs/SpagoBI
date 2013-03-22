@@ -43,8 +43,7 @@ Ext.define('app.views.ExecutionView',{
 		, setWidget: function(resp, type, fromCross) {
 
 			if (type == 'table'){
-				app.views.tableExecutionPanel = Ext.create("app.views.TableExecutionPanel");
-				app.views.tableExecutionPanel.setTableWidget(resp, false, fromCross);
+				app.views.tableExecutionPanel = Ext.create("app.views.TableExecutionPanel",{ resp:resp, fromcomposition:false, fromCross:fromCross});
 				app.views.tableExecutionPanel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 				this.widget = app.views.tableExecutionPanel;
 				
