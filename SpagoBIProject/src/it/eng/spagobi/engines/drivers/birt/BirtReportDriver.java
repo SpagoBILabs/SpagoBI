@@ -82,6 +82,9 @@ public class BirtReportDriver extends AbstractDriver implements IEngineDriver {
 	pars.put("document", documentId);
 	logger.debug("Add document parameter:" + documentId);
 
+	String documentName = biobj.getName();
+	pars.put("documentName", documentName);
+	
 	// retrieving the date format
 	ConfigSingleton config = ConfigSingleton.getInstance();
 	SourceBean formatSB = (SourceBean) config.getAttribute("DATA-ACCESS.DATE-FORMAT");
@@ -122,8 +125,7 @@ public class BirtReportDriver extends AbstractDriver implements IEngineDriver {
 		     * pars.put(biobjPar.getParameterUrlName(), value);
 		     */
 		    value = parValuesEncoder.encode(biobjPar);
-			logger.debug("value:"+value);
-			logger.debug("biobjPar.getParameterUrlName()"+biobjPar.getParameterUrlName());
+			logger.debug("Parameter [" + biobjPar.getParameterUrlName() + "value is equal to [" + value + "]");
 		    if (biobjPar.getParameterUrlName()!=null && value!=null) {
 			pars.put(biobjPar.getParameterUrlName(), value);
 			}

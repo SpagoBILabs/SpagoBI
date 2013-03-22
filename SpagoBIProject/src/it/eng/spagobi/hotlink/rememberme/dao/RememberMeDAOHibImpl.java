@@ -73,7 +73,7 @@ public class RememberMeDAOHibImpl extends AbstractHibernateDAO implements IRemem
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.hotlink.rememberme.dao.IRememberMeDAO#getMyRememberMe(java.lang.String)
 	 */
-	public List getMyRememberMe(String userId) throws EMFInternalError {
+	public List<RememberMe> getMyRememberMe(String userId) throws EMFInternalError {
 		logger.debug("IN");
 		logger.debug("*** RememberMe - userId: "+ userId);
 		Session aSession = null;
