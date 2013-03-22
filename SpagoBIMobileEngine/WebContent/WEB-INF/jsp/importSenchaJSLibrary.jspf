@@ -9,7 +9,7 @@
 
 <link rel="stylesheet" href="../js/sencha/resources/css/sencha-touch.css" type="text/css">
 <link rel="stylesheet" href="../css/Ext.ux.grid.View.css" type="text/css">
-<link rel="stylesheet" href="../css/touch-charts-demo.css" type="text/css">
+
 
 <!-- script type="text/javascript" src="../js/sencha/sencha-touch-debug.js"></script-->
 <script type="text/javascript" src="../js/sencha/sencha-touch-all-debug.js"></script>
