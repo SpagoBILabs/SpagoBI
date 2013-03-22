@@ -2,17 +2,93 @@
 	cursor: pointer
 }
 
+/* Toolbar*/
+
 .icon-back {
 	background-image: url('../../../img/analiticalmodel/execution/ico_back.png') !important;
+}
+
+.icon-expand {
+	background-image: url('../../../img/expand16x17bis.png') !important;
+}
+
+.icon-refresh {
+	background-image: url('../../../img/analiticalmodel/execution/ico_refresh.png') !important;
+}
+
+/* Menu file */
+.icon-print {
+	background-image: url('../../../img/analiticalmodel/execution/ico_print.png') !important;
+}
+
+.icon-send-mail {
+	background-image: url('../../../img/mail_generic16.png') !important;
+}
+
+.icon-save-into-personal-folder {
+	background-image: url('../../../img/analiticalmodel/execution/ico_save_into_personal_folder.png') !important;
+}
+
+/* Menu info */
+.icon-metadata {
+	background-image: url('../../../img/info16.png') !important;
+}
+
+.icon-notes {
+	background-image: url('../../../img/analiticalmodel/execution/ico_note.png') !important;
+}
+
+.icon-no-notes {
+	background-image: url('../../../img/analiticalmodel/execution/ico_no_note.png') !important;
+}
+
+.icon-rating {
+	background-image: url('../../../img/rating16.png') !important;
+}
+
+/* Menu shortcuts */
+
+.icon-add-bookmark {
+	background-image: url('../../../img/analiticalmodel/execution/icon_bookmar_add.png') !important;
+}
+.icon-show-bookmark {
+	background-image: url('../../../img/analiticalmodel/execution/icon_bookmar_show.png') !important;
+}
+
+.icon-show-subobject {
+	background-image: url('../../../img/analiticalmodel/execution/icon_subobject_show.png') !important;
+}
+
+.icon-add-subobject {
+	background-image: url('../../../img/analiticalmodel/execution/icon_subobject_add.png') !important;
+}
+
+.icon-execute-snapshot {
+	background-image: url('../../../img/execsnapshot16.png') !important;
+}
+
+
+
+
+
+
+
+.icon-apply-viewpoint {
+	background-image: url('../../../img/analiticalmodel/execution/apply-viewpoint16.png') !important;
+}
+
+.icon-filter {
+	background:transparent url('../../../img/analiticalmodel/execution/tool-sprites.gif') no-repeat 0 -45px;
+}
+
+.icon-unfilter {
+	background:transparent url('../../../img/analiticalmodel/execution/tool-sprites.gif') no-repeat 0 -45px;
 }
 
 .icon-select {
 	background-image: url('../../../img/select16.png') !important;
 }
 
-/*.icon-save {
-	background-image: url('../../../img/save_generic16.png') !important;
-}*/
 
 .icon-saved-parameters {
 	background-image: url('../../../img/savedparameters16.png') !important;
@@ -31,13 +107,7 @@
 	background-image: url('../../../img/edit16.png') !important;
 }
 
-.icon-execute-subobject {
-	background-image: url('../../../img/execsubobject16.png') !important;
-}
 
-.icon-execute-snapshot {
-	background-image: url('../../../img/execsnapshot16.png') !important;
-}
 
 .icon-view {
 	background-image: url('../../../img/editdelete15.png') !important;
@@ -91,62 +161,17 @@
 	background-image: url('../../../img/exec16.png') !important;
 }
 
-.icon-apply-viewpoint {
-	background-image: url('../../../img/analiticalmodel/execution/apply-viewpoint16.png') !important;
-}
 
-.icon-filter {
-	background:transparent url('../../../img/analiticalmodel/execution/tool-sprites.gif') no-repeat 0 -45px;
-}
 
 .icon-filter-funnel {
 	background-image:url(../../../img/filter-funnel.gif) !important;
 }
 
-.icon-unfilter {
-	background:transparent url('../../../img/analiticalmodel/execution/tool-sprites.gif') no-repeat 0 -45px;
-}
-
-.icon-refresh {
-	background-image: url('../../../img/analiticalmodel/execution/ico_refresh.png') !important;
-}
-
-.icon-sendMail {
-	background-image: url('../../../img/mail_generic16.png') !important;
-}
-
-.icon-saveIntoPersonalFolder {
-	background-image: url('../../../img/saveIntoPersonalFolder16.png') !important;
-}
-
-.icon-saveRememberMe {
-	background-image: url('../../../img/saveRememberMe16.png') !important;
-}
-
-.icon-notes {
-	background-image: url('../../../img/analiticalmodel/execution/ico_note.png') !important;
-}
-
-.icon-no-notes {
-	background-image: url('../../../img/analiticalmodel/execution/ico_no_note.png') !important;
-}
 
 
-.icon-metadata {
-	background-image: url('../../../img/info16.png') !important;
-}
 
-.icon-rating {
-	background-image: url('../../../img/rating16.png') !important;
-}
 
-.icon-expand {
-	background-image: url('../../../img/expand16x17bis.png') !important;
-}
 
-.icon-print {
-	background-image: url('../../../img/analiticalmodel/execution/ico_print.png') !important;
-}
 
 .icon-pdf {
 	background-image: url('../../../img/kpi/pdf16.png') !important;
