@@ -46,7 +46,6 @@ if (rememberMe != null) {
 	//rememberMeList = DAOFactory.getRememberMeDAO().getMyRememberMe(userProfile.getUserUniqueIdentifier().toString());
 	rememberMeList = DAOFactory.getRememberMeDAO().getMyRememberMe(((UserProfile)userProfile).getUserId().toString()); 
 }
-
 %>
 
 

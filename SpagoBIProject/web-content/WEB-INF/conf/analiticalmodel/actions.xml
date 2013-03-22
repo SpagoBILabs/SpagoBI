@@ -178,6 +178,11 @@
  	<CONFIG/>
  </ACTION>
  
+  <ACTION name="GET_FAVOURITES_ACTION" 
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.GetFavouritesAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ 
  <ACTION name="DELETE_SNAPSHOTS_ACTION" 
  	class="it.eng.spagobi.analiticalmodel.execution.service.DeleteSnapshotsAction" scope="REQUEST">
  	<CONFIG/>
