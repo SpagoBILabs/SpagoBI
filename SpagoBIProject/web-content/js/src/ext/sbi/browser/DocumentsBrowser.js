@@ -244,7 +244,24 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
     , onTreeNodeClick: function(node, e) {
 		this.selectFolder(node.id);
 	}
-	,onCrossNavigation: function(config){
+    
+    , onOpenFavourite: function(doc){
+    	var executionPanel = new Sbi.execution.ExecutionPanel({
+			title: doc.title !== undefined ? doc.title : doc.name
+			, closable: true
+		}, doc);
+		executionPanel.tabType = 'document';
+		
+		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
+		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
+		
+		
+		this.centerContainerPanel.add(executionPanel).show();
+		
+		executionPanel.execute();
+	}
+    
+	, onCrossNavigation: function(config){
 		this.onCrossNavigationDocumentClick(config);
 		return false;
 	}
@@ -260,6 +277,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		executionPanel.tabType = 'document';
 		
 		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
+		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
 		
 		this.centerContainerPanel.add(executionPanel).show();
 		
@@ -275,6 +293,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		executionPanel.tabType = 'document';
 		
 		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
+		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
 		
 		
 		this.centerContainerPanel.add(executionPanel).show();

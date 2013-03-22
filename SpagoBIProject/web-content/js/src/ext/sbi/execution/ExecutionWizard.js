@@ -248,6 +248,7 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		this.documentExecutionPage.on('beforetoolbarinit', function(page, toolbar){
 			this.fireEvent('beforetoolbarinit', toolbar);
 		}, this);
+		
 		// 20100505
 		this.documentExecutionPage.on('movetoadminpagerequest', this.backToAdmin, this);
 		

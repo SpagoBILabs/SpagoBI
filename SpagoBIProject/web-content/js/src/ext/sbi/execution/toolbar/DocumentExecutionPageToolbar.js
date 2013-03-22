@@ -396,29 +396,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 					}			
 				}));
 			}
-	    	
-		   
-		   
-	    	this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-execute-subobject' 
-				, tooltip: LN('Execute subobject')
-			    , scope: this
-			    , handler : function() {
-			    	this.controller.openSubobjectSelectionWin();
-			    }
-			}));
-			
-	    	
-	    	this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-execute-snapshot' 
-				, tooltip: LN('Execute snapshot')
-				, scope: this
-			    , handler : function() {
-			    	this.controller.openSnapshotSelectionWin();
-			    }
-			}));
-			
-			
+	   			
 			if (Sbi.user.functionalities.contains('EditWorksheetFunctionality') && this.executionInstance.document.typeCode === 'WORKSHEET') {
 				this.addButton(new Ext.Toolbar.Button({
 					iconCls: 'icon-edit' 
@@ -427,91 +405,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				    , handler : this.startWorksheetEditing	
 				}));
 			}
-			
-			if (this.executionInstance.document.typeCode === 'DATAMART') {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-save' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.save')
-				    , scope: this
-				    , handler : this.saveQbe	
-				}));
-			}
-			
-			if (this.executionInstance.document.typeCode === 'SMART_FILTER') {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-save' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.save')
-				    , scope: this
-				    , handler : this.saveWorksheetAs	
-				}));
-			}
-			
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-rating' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.rating')
-			    , scope: this
-			    , handler : this.rateExecution	
-			}));
-			
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-print' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.print')
-			    , scope: this
-			    , handler : this.printExecution
-			}));
-			
-			if (Sbi.user.functionalities.contains('SendMailFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID
-					&& this.executionInstance.document.typeCode == 'REPORT') {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-sendMail' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.send')
-			     	, scope: this
-			    	, handler : this.sendExecution
-				}));
-			}
-			
-			if (Sbi.user.functionalities.contains('SaveIntoFolderFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-saveIntoPersonalFolder' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.saveintopersonalfolder')
-			     	, scope: this
-			    	, handler : this.saveExecution
-				}));
-			}
-
-			if (Sbi.user.functionalities.contains('SaveRememberMeFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-saveRememberMe'
-					, tooltip: LN('sbi.execution.executionpage.toolbar.bookmark')
-			     	, scope: this
-			    	, handler :this.bookmarkExecution
-				}));
-			}
-			
-			if (Sbi.user.functionalities.contains('SeeNotesFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
-				this.getNoteIcon();
-		    	this.addButton(new Ext.Toolbar.Button({
-		  			   id: 'noteIcon'
-		  				, tooltip: LN('sbi.execution.executionpage.toolbar.annotate')
-		  				, iconCls: 'icon-no-notes'
-		  		     	, scope: this
-		  		    	, handler : this.annotateExecution
-		  			}));    
-			}
-			
-			if (Sbi.user.functionalities.contains('SeeMetadataFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-metadata' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.metadata')
-			     	, scope: this
-			    	, handler : this.metaExecution
-				}));
-			}
-			
-			this.initExportersMenu();
-			
-			
-			this.addSeparator();
+		
+			//this.addSeparator();
 			
 			this.addButton(new Ext.Toolbar.Button({
 				iconCls: 'icon-execute' 
@@ -545,6 +440,13 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				}			
 			}));
 			
+			this.addSeparator();
+			
+			//this.addExportersMenu(this);
+			this.addFileMenu();
+			this.addInfoMenu();
+			this.addShortcutsMenu();
+			
 			Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForViewMode]: OUT');	   
 	}
 	
@@ -556,7 +458,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	 * Create the exporters' menu. The content of the menu depends on the exportation formats
 	 * supported by the specific document type
 	 */   
-    , initExportersMenu: function() {
+    , addExportersMenu: function(parentMenu) {
 			
 		var exporters = this.executionInstance.document.exporters;
 		
@@ -568,41 +470,296 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		    toolbar: this
 			, executionInstance: this.executionInstance
 		});
-		this.add(menu);
-	}	   
-	   
-	   
-	, baseMenuItemConfig: {
-		text: LN('sbi.execution.GenericExport')
-		, group: 'group_2'//ok, where's group_1?
-		, iconCls: 'icon-pdf'  // use a generic icon here
-		, scope: this
-		, width: 15
-		, handler : Ext.emptyFn
-		, href: ''   
-	}   
-	
-	, baseMenuConfig: {
-		tooltip: 'Exporters'
-		, path: 'Exporters'	
-		, iconCls: 'icon-export' 	
-		, width: 15
-		, cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+		parentMenu.add(menu);
 	}
-	
-	, createMenuButton: function(menuItems) {
-		var menuButton = null;
-		if(menuItems && menuItems.length > 0) {
-			var menu = new Ext.menu.Menu({
-				items: menuItems    
-			});				
-			menuButton = new Ext.Toolbar.MenuButton(Ext.apply(this.baseMenuConfig, {menu: menu}));
+    
+    /**
+	 * @method
+	 * 
+	 * Create the file menu
+	 */   
+    , addFileMenu: function() {
+			
+    	var menuItems = new Array();
+    	
+    	var baseMenuItemConfig = {
+			text: LN('sbi.execution.GenericExport')
+			, group: 'group_2'//ok, where's group_1?
+			, iconCls: 'icon-pdf'  // use a generic icon here
+			, scope: this
+			, width: 15
+			, handler : Ext.emptyFn
+			, href: ''   
+		}
+    	// get menu items config
+    	var itemConfig = null;
+    	
+    	// PRINT
+    	itemConfig = Ext.apply(baseMenuItemConfig, {
+			text: LN('sbi.execution.executionpage.toolbar.print')
+			, iconCls: 'icon-print'
+			, handler : this.printExecution
+        });    	
+    	menuItems.push(	
+			new Ext.menu.Item(itemConfig)
+		); 
+    	
+		if(this.executionInstance.document.exporters){
+			var menu = new Sbi.execution.toolbar.ExportersMenu({
+			    toolbar: this
+				, executionInstance: this.executionInstance
+			});
+			menuItems.push({
+				text: LN('sbi.execution.executionpage.toolbar.export')
+				, path: 'Export'	
+				, iconCls: 'icon-export' 	
+	            , menu: menu.menu
+			});			
 		}
 		
-		return menuButton;	
+    	
+    	// SEND BY MAIL
+    	if (Sbi.user.functionalities.contains('SendMailFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID
+				&& this.executionInstance.document.typeCode == 'REPORT') {
+	    	itemConfig = Ext.apply(baseMenuItemConfig, {
+				text: LN('sbi.execution.executionpage.toolbar.send')
+				, iconCls: 'icon-send-mail' 
+				, handler : this.sendExecution
+	        });    	
+	    	menuItems.push(	
+				new Ext.menu.Item(itemConfig)
+			); 
+    	}
+    	
+    	// COPY IN MY FOLDER
+    	if (Sbi.user.functionalities.contains('SaveIntoFolderFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
+	    	itemConfig = Ext.apply(baseMenuItemConfig, {
+				text: LN('sbi.execution.executionpage.toolbar.saveintopersonalfolder')
+				, iconCls: 'icon-save-into-personal-folder' 
+				, handler : this.saveExecution
+	        });    	
+	    	menuItems.push(	
+				new Ext.menu.Item(itemConfig)
+			); 
+    	}    	
+    	
+    	// create menu    	
+    	var menu = new Ext.menu.Menu({
+			items: menuItems    
+		});	
+    	
+    	// create menu button
+		var menuButton = new Ext.Toolbar.MenuButton({
+			text: 'File'
+			, tooltip: 'File'
+			, path: 'File'	
+			//, iconCls: 'icon-export' 	
+			, width: 15
+			, cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+			, menu: menu
+		});
+		
+		this.add(menuButton);
 	}
-	
-	
+	   
+    /**
+	 * @method
+	 * 
+	 * Create the file menu
+	 */   
+    , addInfoMenu: function() {
+			
+    	var menuItems = new Array();
+    	
+    	var baseMenuItemConfig = {
+			text: LN('sbi.execution.GenericExport')
+			, group: 'group_2'//ok, where's group_1?
+			, iconCls: 'icon-pdf'  // use a generic icon here
+			, scope: this
+			, width: 15
+			, handler : Ext.emptyFn
+			, href: ''   
+		}
+    	// get menu items config
+    	var itemConfig = null;
+    	
+    	// METADATA
+    	if (Sbi.user.functionalities.contains('SeeMetadataFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
+	    	itemConfig = Ext.apply(baseMenuItemConfig, {
+				text: LN('sbi.execution.executionpage.toolbar.metadata')
+				, iconCls: 'icon-metadata' 
+				, handler : this.metaExecution
+	        });    	
+	    	menuItems.push(	
+				new Ext.menu.Item(itemConfig)
+			); 
+    	}
+    	
+    	// NOTE
+    	if (Sbi.user.functionalities.contains('SeeNotesFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
+    		this.getNoteIcon();
+	    	itemConfig = Ext.apply(baseMenuItemConfig, {
+	    		 id: 'noteIcon' // used by method getNoteIcon to replace the icon
+				, text: LN('sbi.execution.executionpage.toolbar.annotate')
+				, iconCls: 'icon-no-notes'
+				, handler : this.annotateExecution
+	        });    	
+	    	menuItems.push(	
+				new Ext.menu.Item(itemConfig)
+			); 
+    	}
+    	
+    	// RANK
+    	itemConfig = Ext.apply(baseMenuItemConfig, {
+			text: LN('sbi.execution.executionpage.toolbar.rating')
+			, iconCls: 'icon-rating' 
+			, handler : this.rateExecution
+        });    	
+    	menuItems.push(	
+			new Ext.menu.Item(itemConfig)
+		); 
+    	
+    	// create menu    	
+    	var menu = new Ext.menu.Menu({
+			items: menuItems    
+		});	
+    	
+    	// create menu button
+		var menuButton = new Ext.Toolbar.MenuButton({
+			text: 'Info'
+			, tooltip: 'Info'
+			, path: 'File'	
+			//, iconCls: 'icon-export' 	
+			, width: 15
+			, cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+			, menu: menu
+		});
+		
+		this.add(menuButton);
+	}
+	   
+    , addShortcutsMenu: function() {
+    	var menuItems = new Array();
+    	
+    	var baseMenuItemConfig = {
+			text: LN('sbi.execution.GenericExport')
+			, group: 'group_2'//ok, where's group_1?
+			, iconCls: 'icon-pdf'  // use a generic icon here
+			, scope: this
+			, width: 15
+			, handler : Ext.emptyFn
+			, href: ''   
+		}
+    	// get menu items config
+    	var itemConfig = null;
+
+    	// ADD/VIEW favorites
+    	if (Sbi.user.functionalities.contains('SaveRememberMeFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
+    		itemConfig = Ext.apply({}, {
+				text: LN('sbi.execution.executionpage.toolbar.showbookmark')
+				, iconCls: 'icon-show-bookmark' 
+				, handler : function() {this.controller.openFavouritesWin();} // function(){alert("Function not implemented yet");}
+				//,  disabled: true
+	        }, baseMenuItemConfig);    	
+	    	menuItems.push(	
+				new Ext.menu.Item(itemConfig)
+			); 
+	    	
+    		itemConfig = Ext.apply(baseMenuItemConfig, {
+				text: LN('sbi.execution.executionpage.toolbar.addbookmark')
+				, iconCls: 'icon-add-bookmark'
+				, handler: this.bookmarkExecution
+	        });    	
+	    	menuItems.push(	
+				new Ext.menu.Item(itemConfig)
+			); 
+    	}
+    	
+    	menuItems.push('-'); 
+    	
+    	// ADD/VIEW Customized view
+    	itemConfig = Ext.apply(baseMenuItemConfig, {
+			text: LN('sbi.execution.executionpage.toolbar.showview')
+			, iconCls: 'icon-show-subobject' 
+			, handler : function() {this.controller.openSubobjectSelectionWin();}
+        });    	
+    	menuItems.push(	
+			new Ext.menu.Item(itemConfig)
+		); 
+    	
+		if (this.executionInstance.document.typeCode === 'DATAMART') {
+			itemConfig = Ext.apply(baseMenuItemConfig, {
+				text: LN('sbi.execution.executionpage.toolbar.saveview')
+				, iconCls: 'icon-add-subobject' 
+				, handler : this.saveQbe	
+	        });    	
+	    	menuItems.push(	
+				new Ext.menu.Item(itemConfig)
+			); 
+		} else if (this.executionInstance.document.typeCode === 'SMART_FILTER') {
+			itemConfig = Ext.apply(baseMenuItemConfig, {
+				text: LN('sbi.execution.executionpage.toolbar.saveview')
+				, iconCls: 'icon-add-subobject' 
+				, handler : this.saveWorksheetAs	
+	        });    	
+	    	menuItems.push(	
+				new Ext.menu.Item(itemConfig)
+			); 
+		} else if (this.executionInstance.document.typeCode === 'OLAP' 
+			|| this.executionInstance.document.typeCode === 'MAP') {
+			itemConfig = Ext.apply(baseMenuItemConfig, {
+				text: LN('sbi.execution.executionpage.toolbar.saveview')
+				, iconCls: 'icon-add-subobject' 
+				, handler : function(){alert("Use the save button conatined in the executed docuemnt");}
+	        });    	
+	    	menuItems.push(	
+				new Ext.menu.Item(itemConfig)
+			); 
+		} else {
+			itemConfig = Ext.apply({}, {
+				text: LN('sbi.execution.executionpage.toolbar.saveview')
+				, iconCls: 'icon-add-subobject' 
+				, handler : function(){alert("Function not vailable for this type of document");}
+				, disabled: true
+	        }, baseMenuItemConfig);    
+	    	menuItems.push(	
+				new Ext.menu.Item(itemConfig)
+			); 
+		}
+    	// TODO add SAVE SUBOBJECT item
+		
+		menuItems.push('-'); 
+    	
+    	// VIEW scheduled execution
+    	itemConfig = Ext.apply(baseMenuItemConfig, {
+			text: LN('sbi.execution.executionpage.toolbar.showscheduled')
+			, iconCls: 'icon-execute-snapshot' 
+			, handler :  function() {
+		    	this.controller.openSnapshotSelectionWin();
+		    }
+        });    	
+    	menuItems.push(	
+			new Ext.menu.Item(itemConfig)
+		); 
+    	
+    	// create menu    	
+    	var menu = new Ext.menu.Menu({
+			items: menuItems    
+		});	
+    	
+    	// create menu button
+		var menuButton = new Ext.Toolbar.MenuButton({
+			text: 'Shortcuts'
+			, tooltip: 'Shortcuts'
+			, path: 'Shortcuts'	
+			//, iconCls: 'icon-export' 	
+			, width: 15
+			, cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+			, menu: menu
+		});
+		
+		this.add(menuButton);
+    }
 	
 
 	
