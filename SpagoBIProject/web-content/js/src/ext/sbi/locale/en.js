@@ -306,22 +306,41 @@ Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.ok']  = 'Ok';
 Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.clear']  = 'Clear';
 Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.cancel']  = 'Cancel';
 
+// File menu
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.print'] = 'Print';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.export'] = 'Export';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.send'] = 'Send by e-mail';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveintopersonalfolder'] = 'Copy to personal folder';
+
+
+// Info menu
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata'] = 'Metadata';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate'] = 'Notes';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.rating'] = 'Rank';
+
+//Shortcuts menu
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.addbookmark'] = 'Add to favourites';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.showbookmark'] = 'Show favourites';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveview'] = 'Add to customized views';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.showview'] = 'Show customized views';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.showscheduled'] = 'Show scheduled executions';
+
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Go back to parameters selection page';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Go back to documents selection page';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Refresh document execution';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.rating'] = 'Rate document';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.print'] = 'Print docuemnt';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.send'] = 'Send document by e-mail';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveintopersonalfolder'] = 'Save document into personal folder';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.bookmark'] = 'Bookmark document';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate'] = 'Annotate document';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata'] = 'Show document metadata';
+
+
+
+
+
+
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] = 'Page refresh will cause the lost of actual QBE settings: go on?';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.save'] = 'Save';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas'] = 'Save as ...';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.view'] = 'View document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit'] = 'Edit';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.breadcrumbback'] = 'Go back to previous document';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Expand/Reduce';
 
 
 Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Saved parameters';
@@ -565,7 +584,6 @@ Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Crosstab';
 Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Please open the worksheet preview tab to export the document';
 Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Export warning';
 
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Expand/Reduce';
 
 Sbi.locale.ln['sbi.home.Welcome'] = 'Welcome: ';
 Sbi.locale.ln['sbi.home.Exit'] = 'Exit';

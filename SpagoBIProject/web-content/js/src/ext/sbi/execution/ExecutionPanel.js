@@ -29,13 +29,16 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 	this.activeDocument = new Sbi.execution.ExecutionWizard( config, doc );
 	this.documentsStack.push( this.activeDocument );
 	
-	this.activeDocument.on('beforetoolbarinit', this.setBreadcrumbs, this);
 	
 	this.activeDocument.documentExecutionPage.on('expandpagerequest', function() {
 		sendMessage({}, 'collapse2'); 
 	}, this);
 	
 	this.activeDocument.documentExecutionPage.on('crossnavigation', this.loadCrossNavigationTargetDocument , this);
+	
+	this.activeDocument.documentExecutionPage.on('openfavourite', function(doc){
+		this.fireEvent('openfavourite', doc);
+	} , this);
 	
 	var c = Ext.apply({}, config || {}, {
 		title: title

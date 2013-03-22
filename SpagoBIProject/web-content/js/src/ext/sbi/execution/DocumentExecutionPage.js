@@ -63,6 +63,7 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 		, 'movetoprevpagerequest'
 		, 'movetoadminpagerequest'
 		, 'crossnavigation'
+		, 'openfavourite'
 		, 'loadurlfailure'
 	);	
 	
@@ -254,6 +255,11 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
     , shortcutsPanel: null
     
     /**
+     * @property {Sbi.execution.HotlinksPanel} hotlinksPanel The hotlinksPanel
+     */
+    , hotlinksPanel: null
+    
+    /**
      * @property {Ext.Panel} parametersSlider The slider panel that contains the parametersPanel
      */
 	, parametersSlider: null
@@ -271,6 +277,11 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
      * in the toolbar. It is destroyed on close and regenerated on show. 
      */
     , snapshotWin: null
+    /**
+     * @property {Ext.Window} favouritesWin The favourites window. It appears when the user click on "View favourites" button
+     * in the toolbar. It is hided on close an resynch on show. 
+     */
+    , favouritesWin: null
    
     , loadingMask: null
     , maskOnRender: null
@@ -920,6 +931,34 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		});
 		this.snapshotWin.show();
 		snapshotsPanel.synchronize( this.executionInstance );
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * Open the favourites window
+	 */
+	, openFavouritesWin: function() {
+		if(this.favouritesWin === null){
+			this.hotlinksPanel = new Sbi.execution.HotlinksPanel();
+			this.favouritesWin = new Ext.Window({
+				title: "Favourites",
+				layout: 'fit',
+				modal: true,
+				closeAction : 'hide',
+				width: 500,
+				height: 400,
+				items: [this.hotlinksPanel]
+			});
+			
+			this.hotlinksPanel.on('select', function(doc) {
+				this.favouritesWin.hide();
+				this.fireEvent('openfavourite', doc);
+			}, this);
+		}
+		this.favouritesWin.show();
+		this.hotlinksPanel.synchronize();
+//		iframePanel.getFrame().setSrc('/SpagoBI/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE');
 	}
 	
 	

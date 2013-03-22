@@ -304,16 +304,34 @@ Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.ok']  = 'Ok';
 Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.clear']  = 'Pulisci';
 Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.cancel']  = 'Chiudi';
 
+// File menu
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.print'] = 'Stampa';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.export'] = 'Esporta';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.send'] = 'Invia per posta elettronica';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveintopersonalfolder'] = 'Copia nella cartella personale';
+
+
+//Info menu
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata'] = 'Metadati';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.rating'] = 'Vota';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate'] = 'Note';
+
+// Menu shortcuts
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.addbookmark'] = 'Aggiungi ai preferiti';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.showbookmark'] = 'Aggiungi ai preferiti';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveview'] = 'Aggiungi alle vista customizzta';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.showview'] = 'Mostra viste customizzate';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.showscheduled'] = 'Mostra esecuzioni schedulate';
+
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Torna alla pagina di selezione parametri';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Torna alla pagina di vista documenti';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Riesegui il documento';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.rating'] = 'Dai un voto al documento';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.print'] = 'Stampa il documento';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.send'] = 'Invia il documento per posta elettronica';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveintopersonalfolder'] = 'Salva il documento nella mia cartella personale';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.bookmark'] = 'Aggiungi il documento ai preferiti';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate'] = 'Aggiungi note al documento';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata'] = 'Mostra i metadati associati al documento';
+
+
+
+
+
+
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] = 'Il refresh della pagina comporta la perdita della impostazione attuale del QBE: proseguire?';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.save'] = 'Salva';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas'] = 'Salva come ...';
