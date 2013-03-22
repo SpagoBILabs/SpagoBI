@@ -43,7 +43,7 @@ public interface IRememberMeDAO extends ISpagoBIDao{
 	 * 
 	 * @throws EMFInternalError the EMF internal error
 	 */
-	public List getMyRememberMe(String userId) throws EMFInternalError;
+	public List<RememberMe> getMyRememberMe(String userId) throws EMFInternalError;
 	
 	/**
 	 * Deletes the remember me with the given id.

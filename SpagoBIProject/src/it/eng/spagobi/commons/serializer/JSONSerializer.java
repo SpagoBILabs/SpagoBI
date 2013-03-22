@@ -17,6 +17,7 @@ import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.hotlink.rememberme.bo.RememberMe;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.bo.Kpi;
@@ -81,6 +82,7 @@ public class JSONSerializer implements Serializer {
 		mappings.put( SubObject.class, new SubObjectsJSONSerializer() );
 		mappings.put( Viewpoint.class, new ViewpointJSONSerializer() );
 		mappings.put( Snapshot.class, new SnapshotJSONSerializer() );
+		mappings.put( RememberMe.class, new FavouritesJSONSerializer() );
 		mappings.put( DataStore.class, new DataStoreJSONSerializer() );
 		mappings.put( ObjNote.class, new ObjectNotesJSONSerializer() );
 		mappings.put( DocumentMetadataProperty.class, new MetadataJSONSerializer());	
