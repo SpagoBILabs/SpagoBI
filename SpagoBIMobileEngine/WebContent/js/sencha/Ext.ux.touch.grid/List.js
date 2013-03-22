@@ -214,10 +214,10 @@ Ext.define('Ext.ux.touch.grid.List', {
             //width = column.width || defaults.column_width;
             
             flex  = column.flex || 1;
-            if (!Ext.isNumber(column.width)) {//px suffix added
+            if (column.width != undefined && !Ext.isNumber(column.width)) {//px suffix added 
             	width = column.width;
             }else{            	
-            	width = (flex * cNum)+'%';
+            	width = (Math.round(100/cNum))+'%';//without px or undefined
             }
             
             renderer = column[header ? 'headerRenderer' : 'renderer'] || this._defaultRenderer;
@@ -243,9 +243,9 @@ Ext.define('Ext.ux.touch.grid.List', {
                 css.push(column.cls);
             }
 
-            if (width) {
+            //if (width) {
                 styles.push('width: ' + width + ';');
-            }
+            //}
             
             //styles.push('' + '{[values.styleTD['+c+']]}' + ';');
             //default
