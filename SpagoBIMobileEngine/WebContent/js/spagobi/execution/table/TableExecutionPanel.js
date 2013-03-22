@@ -9,7 +9,10 @@ Ext.define('app.views.TableExecutionPanel',{
 		extend: 'app.views.WidgetPanel',
 		config:{
 			fullscreen:true,
-			scroll: 'vertical',
+			scroll: 'vertical'
+//			style:'border: 3px solid red; background-color: #fff;',
+			
+			
 		}
 	    , initialize: function (options)	{
 
@@ -34,22 +37,22 @@ Ext.define('app.views.TableExecutionPanel',{
 			    data : resp.values
 			});
 		     
-		      
-		      var toolbarForTable = new Ext.Toolbar({
-				xtype : "toolbar",
-				dock  : "top",						
-				title : resp.features.title.value,
-				style:  resp.features.title.style,
-				layout: 'hbox',
-				autoDestroy : true
-              
-		      });
+//		      
+//		      var toolbarForTable = new Ext.Toolbar({
+//				xtype : "toolbar",
+//				dock  : "top",						
+//				title : resp.features.title.value,
+//				style:  resp.features.title.style,
+//				layout: 'hbox',
+//				autoDestroy : true
+//              
+//		      });
 		      
 		      var tbConfig = {
 		    	title       : 'Prova',
 		        store       : store,
 				multiSelect : false,
-				dockedItems: [toolbarForTable],
+//				dockedItems: [toolbarForTable],
 				conditions  : resp.features.conditions,
 				columns    : resp.features.columns,
 				//features    : resp.features,

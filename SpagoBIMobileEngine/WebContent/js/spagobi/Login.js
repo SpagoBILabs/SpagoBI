@@ -55,7 +55,7 @@ Ext.define('app.views.LoginView',{
 		                    {
 		                        //docked: 'bottom',
 		                        xtype: 'toolbar',
-		                        //ui: 'neutral',
+		                        ui: 'neutral',
 		                        items:[
 		                            {
 		                            	xtype: 'spacer'

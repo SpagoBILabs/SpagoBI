@@ -30,7 +30,8 @@ Ext.define('Ext.ux.touch.grid.List', {
         header  : {
             xtype  : 'toolbar',
             docked : 'top',
-            cls    : 'x-grid-header'
+            cls    : 'x-grid-header',
+            height: 30
         },
         itemTpl : false,
         itemCls : 'x-touchgrid-item'
@@ -104,7 +105,8 @@ Ext.define('Ext.ux.touch.grid.List', {
     applyHeader : function (config) {
         Ext.apply(config, {
             docked : 'top',
-            cls    : 'x-grid-header'
+            cls    : 'x-grid-header',
+            height: 30
         });
 
         return Ext.factory(config, Ext.Toolbar);
