@@ -73,14 +73,14 @@ Ext.define('app.views.ComposedExecutionPanel',{
 			
 			this.on('execCrossNavigation', function (sourcePanel, paramsArray) {
 				console.log('app.views.ComposedExecutionPanel:execCrossNavigationHandler: IN');
-				if (panel != sourcePanel) {
+				//if (panel != sourcePanel) {
 					var params = {};
 					for (var i = 0 ; i < paramsArray.length ; i++) {
 						var aParam = paramsArray[i];
 						params[aParam.name] = aParam.value;
 					}
 					app.controllers.composedExecutionController.refreshSubDocument(panel, params);
-				}
+			//	}
 			}, this);
 			
 			var height;
