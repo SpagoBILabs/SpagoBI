@@ -27,10 +27,9 @@ Ext.define('app.views.LoginView',{
 		});
 		console.log("Log in URL: "+ this.loginUrl);
 		
-		app.views.form = Ext.create('Ext.form.Panel',{
-	            
+		app.views.form = Ext.create('Ext.form.FormPanel',{
+				floating : true,
 	            modal: true,
-	            hideOnMaskTap: true,
 	            centered: true,
 	            width: 320,
 	            height: 270,
