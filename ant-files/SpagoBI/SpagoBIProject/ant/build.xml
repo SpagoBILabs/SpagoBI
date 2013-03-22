@@ -376,6 +376,7 @@
 				<file name="./src/ext/sbi/execution/SnapshotsPanel.js" />
 				<file name="./src/ext/sbi/execution/ViewpointsPanel.js" />
 				<file name="./src/ext/sbi/execution/ShortcutsPanel.js" />
+				<file name="./src/ext/sbi/execution/HotlinksPanel.js" />
 				<file name="./src/ext/sbi/execution/InfoPage.js" />
 				<file name="./src/ext/sbi/execution/DocumentPanel.js" />
 				<file name="./src/ext/sbi/execution/ParametersPanel.js" />
@@ -385,6 +386,7 @@
 				<file name="./src/ext/sbi/execution/DocumentPage.js" />
 				<file name="./src/ext/sbi/execution/ParametersSelectionPage.js" />
 				<file name="./src/ext/sbi/execution/SaveDocumentWindow.js" />
+				<file name="./src/ext/sbi/execution/toolbar/ExportersMenu.js" />
 				<file name="./src/ext/sbi/execution/toolbar/DocumentExecutionPageToolbar.js" />
 				<file name="./src/ext/sbi/execution/DocumentExecutionPage.js" />
 				<file name="./src/ext/sbi/execution/ExecutionWizard.js" />
