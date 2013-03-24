@@ -16,7 +16,7 @@ Ext.define('app.views.LoginView',{
 		pwdField : null,
 		loginUrl : null,
 		layout:"fit",
-		style: 'background-color: #747474;'
+		style: 'background-color: #747474;'		
 
 	},
 	
@@ -33,6 +33,14 @@ Ext.define('app.views.LoginView',{
 	            centered: true,
 	            width: 320,
 	            height: 270,
+	            submitOnAction: true,
+	            ui: 'dark',
+	            
+                listeners:{
+                	submit: function( f, result, e, eOpts ) {
+                		alert('bu');
+                	}
+                },
 	            items:[
 	                   {
 	                       xtype : 'fieldset',
@@ -50,32 +58,36 @@ Ext.define('app.views.LoginView',{
 		            			//label : 'Password',
 		            			placeHolder : 'Password',
 		            			useClearIcon : false
-		                    },
-		                    {
-		                        //docked: 'bottom',
-		                        xtype: 'toolbar',
-		                        ui: 'neutral',
-		                        items:[
-		                            {
-		                            	xtype: 'spacer'
-		                            },
-		                        	{
-		                                text: 'Login',
-		                                ui: 'confirm',
-		                                handler: function(){
-		                                	app.views.loginView.doSubmit(app.views.form.getValues());
-		                                }
-		                            }
-		                        ]
 		                    }]
 	                   		,dockedItems:[]      
 	                    	   
 	                   }
+	                   ,
+	                    {
+	                        docked: 'bottom',
+	                        xtype: 'toolbar',
+	                        height:30,
+	                        style:'padding : 7px;',
+	                        ui: 'light',
+	                        items:[
+	                            {
+	                            	xtype: 'spacer'
+	                            },
+	                        	{
+	                                text: 'Login',
+	                                ui: 'confirm',
+	                                handler: function(){
+	                                	app.views.loginView.doSubmit(app.views.form.getValues());
+	                                }
+	                            }
+	                        ]
+	                    }
 	            ],
 	            scrollable: true
 	        });
 		this.add(app.views.form);
-		app.views.form.on('beforesubmit', function() {
+
+		app.views.form.on('submit', function() {
 			this.doSubmit();
 			return false;
 		}, this);
