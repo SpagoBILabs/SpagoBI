@@ -148,8 +148,11 @@ Ext.define('app.controllers.ParametersController',{
 				, name : p.id
 				// , allowBlank: !p.mandatory
 		};
-	
-		if(p.selectionType === 'COMBOBOX' || p.selectionType === 'LIST' || p.selectionType ===  'CHECK_LIST') {
+		var defaultValue= null;
+		if(p.defaultValues && p.defaultValues.length != 0){
+			defaultValue = p.defaultValues[0].value;
+		}
+		if(p.selectionType === 'COMBOBOX' || p.selectionType === 'LIST' || p.selectionType ===  'CHECK_LIST' || p.selectionType === 'LOOKUP') {
 	
 			//get the metadata of the parameter 
 			var metadata = p.metaData.metaData;
@@ -184,6 +187,7 @@ Ext.define('app.controllers.ParametersController',{
 			if(p.mandatory && p.mandatory == true){
 				mandatory = true;
 			}
+
 			field = Ext.create("Ext.field.Select",(Ext.apply({
 				valueField : metadata.valueField,
 				displayField : metadata.displayField,
@@ -204,8 +208,10 @@ Ext.define('app.controllers.ParametersController',{
 				field =  Ext.create("Ext.form.Number",baseConfig);
 			} else {	
 				field =  Ext.create("Ext.form.Text",baseConfig);
+				
 			}			
-		}		
+		}	
+		field.setValue(defaultValue);
 		return field;
 	}
 	

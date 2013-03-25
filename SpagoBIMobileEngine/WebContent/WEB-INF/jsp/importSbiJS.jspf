@@ -38,7 +38,7 @@
 <script type="text/javascript" src="../js/spagobi/execution/ParametersView.js"></script>
 <script type="text/javascript" src="../js/spagobi/execution/ParametersController.js"></script>
 <script type="text/javascript" src="../js/spagobi/widgets/Slider.js"></script>
-
+<script type="text/javascript" src="../js/spagobi/widgets/CustomToolbar.js"></script>
 
 
 

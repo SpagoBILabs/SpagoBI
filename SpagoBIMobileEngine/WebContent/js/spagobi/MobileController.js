@@ -43,6 +43,7 @@ Ext.define('app.controllers.MobileController',{
 		console.log('MobileController: Received event of login successfull');
 		app.views.viewport.addMain();
 		//app.views.main.reloadPanel();
+		app.views.customToolbar.showToolbar();
 		app.views.viewport.setActiveItem(app.views.main, { type: 'slide', direction: 'left' });
 	}
 	
