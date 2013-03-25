@@ -21,21 +21,6 @@ Ext.define('app.views.ExecutionView',{
 //
 //	        this.dockedItems= [this.bottomTools];
 
-			
-			//app.views.composedExecutionPanel = new app.views.ComposedExecutionPanel();
-//			this.add(app.views.chartExecutionPanel);
-//			this.add(app.views.tableExecutionPanel);
-//		    Ext.apply(this, {
-//		        items: [
-//		            app.views.tableExecutionPanel,
-//		            app.views.chartExecutionPanel,
-//		            app.views.composedExecutionPanel
-//		        ]
-//		    });
-		    
-		    
-		    
-
 			this.callParent(this, arguments);
 
 
@@ -49,8 +34,6 @@ Ext.define('app.views.ExecutionView',{
 				
 			}
 			if (type == 'chart'){
-				
-				
 				app.views.chartExecutionPanel = Ext.create("app.views.ChartExecutionPanel",{fullscreen: true, resp:resp, fromcomposition:false, fromCross:fromCross});
 				app.views.chartExecutionPanel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 				this.widget = app.views.chartExecutionPanel;

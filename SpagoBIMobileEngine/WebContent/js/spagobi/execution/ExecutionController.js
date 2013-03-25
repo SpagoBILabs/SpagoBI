@@ -151,7 +151,7 @@ Ext.define('app.controllers.ExecutionController',{
 			this.simpleNavigationManagement(resp, type, executionInstance);
 			app.views.execView.setExecutionInstance(executionInstance);
 		} else {
-			documentContainerPanel.addWidgetComposed(resp, type, composedComponentOptions);
+			documentContainerPanel.addWidgetComposed(resp, type, composedComponentOptions,executionInstance);
 			//documentContainerPanel.setExecutionInstance(executionInstance);
 		}
 		
