@@ -17,7 +17,7 @@ Ext.define('app.controllers.ComposedExecutionController',{
 	}
 
 	,
-	refreshSubDocument : function (panel, newParameters) {
+	refreshSubDocument : function (panel, parentDocumentPanel, newParameters) {
 		
 		console.log('app.controllers.ComposedExecutionController:refreshSubDocument: IN');
 		
@@ -33,7 +33,8 @@ Ext.define('app.controllers.ComposedExecutionController',{
 			app.controllers.executionController.executeTemplate({
 				executionInstance : executionInstance
 				, parameters : newDocumentParameters
-			}, panel);
+			}, parentDocumentPanel);
+
 		}
 	}
 	
