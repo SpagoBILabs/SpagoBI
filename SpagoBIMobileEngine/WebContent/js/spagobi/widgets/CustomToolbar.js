@@ -10,33 +10,24 @@ Ext.define('app.views.CustomToolbar', {
 	extend: 'Ext.Toolbar',
 	config: {
         docked: 'top',
-        padding: '5 5 5 5',
-        height: 30,
-        items: [{
-            iconCls: 'arrow_down',
-            iconMask: true,
-            ui: 'normal',
-            //left: true,
-            text: 'Menu',
-            action: 'openmenu'
-        },{
-            xtype: 'spacer'
-        },{
-            xtype: 'button',
-            iconCls: 'arrow_down',
-            iconMask: true,
-            ui: 'normal',
-            align: 'right',
-            text: 'Logout',
-            action: 'logout'
-        }]
+        padding: 5,
+    	defaults : {
+    		ui : 'plain',
+    		iconMask : true
+    	},
+    	scroll : 'horizontal',
+    	layout : {
+    		pack : 'center'
+    	},
+        height: 30
     },
 
 
 	initialize : function() {
 		this.callParent(arguments);
 		
-		console.log('custom toolbar');
+		console.log('initialize hidden custom toolbar');
+		this.setButtons();
 		this.hideToolbar();
 	}
     ,hideToolbar: function(){
@@ -45,5 +36,88 @@ Ext.define('app.views.CustomToolbar', {
     ,showToolbar: function(){
     	this.show();
     }
-
+    ,setButtons: function(){
+    	var buttons = Sbi.settings.top.toolbar.buttons;
+    	for(i =0; i< buttons.length; i++){
+    		var btnKey = buttons[i];
+	    	if(btnKey === 'home'){
+				this.homeButton = {
+						title : 'Home',
+						iconCls : 'home',
+						text : 'Home',
+						ui: 'plain',
+						iconMask: true,
+						autoEvent: 'home'
+						};
+				this.add(this.homeButton);	
+	    	}else if(btnKey === 'prec'){
+	    		this.precButton = new Ext.Button( {
+	    			text : 'Previous',
+	    			iconCls : 'reply',
+	    			ui: 'plain',
+					autoEvent: 'back'
+	    		});
+	    		this.add(this.precButton);
+	    	}else if(btnKey === 'refresh'){
+	    		this.refreshButton = new Ext.Button( {
+	    			text : 'Refresh',
+	    			iconCls : 'refresh',
+	    			ui: 'plain',
+	    			autoEvent: 'refresh'
+		    		});
+	    		this.add(this.refreshButton);
+	    	}else if(btnKey === 'params'){
+	    		this.paramsButton = {
+						title : 'Parameters',
+						iconCls : 'compose',
+						text : 'Parameters',
+						ui: 'plain',
+						autoEvent: 'params'
+						
+						};
+	    		this.add(this.paramsButton);
+	    	}else if(btnKey === 'html'){
+	    		this.paramsButton = {
+						title : 'Html',
+						ui: 'plain',
+						html: '<div style="color: violet; border: 1px solid red; background-color: #fff;">Questo &egrave; un html di esempio</div>',
+						autoEvent: 'html'
+						
+						};
+	    		this.add(this.paramsButton);
+	    	}else if(btnKey === 'spacer'){
+	    		this.spacer ={
+	    			xtype: 'spacer'
+	    		};
+	    		this.add(this.spacer);
+	    	}else if(btnKey === 'logout'){
+	    		this.logoutButton = new Ext.Button( {
+	    			iconCls : 'logout',
+	    			text : 'Logout',
+	    			ui: 'round',
+	    			autoEvent: 'logout'
+	    		});
+	    		this.add(this.logoutButton);
+	    	}
+    	}
+    }
+    ,
+	logoutHandler : function () {
+		Ext.Msg.confirm(null, 'Are you sure you want to logout?', function(answer) {
+	        if (answer === "yes") {
+	        	Ext.Ajax.request({
+                     url : Sbi.env.invalidateSessionURL
+                     , method : 'POST'
+                     , success : function(response, opts) {
+                    	 // refresh page
+                    	 localStorage.removeItem('app.views.launched');
+                    	 localStorage.removeItem('app.views.browser');
+                    	 window.location.href = Sbi.env.contextPath;
+                     }
+                     , failure : Sbi.exception.ExceptionHandler.handleFailure
+                     , scope : this
+                });
+	        }
+		});
+	}
 });
