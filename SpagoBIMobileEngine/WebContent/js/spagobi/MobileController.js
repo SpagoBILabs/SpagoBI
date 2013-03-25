@@ -134,11 +134,13 @@ Ext.define('app.controllers.MobileController',{
 
 	, backToBrowser: function(opt){
 		this.destroyExecutionView();
-		try{
+		
+		//DA RIVEDERE QUANDO REINTRODURREMO LA BREADCRUMB...
+/*		try{
 			app.views.execView.bottomTools.clearNavigation();
 		}catch(error){
 			app.views.execution.bottomTools.clearNavigation();
-		}
+		}*/
 		app.views.viewport.setActiveItem(app.views.main, { type: 'fade' });	
 		app.views.viewport.doLayout();
   	}

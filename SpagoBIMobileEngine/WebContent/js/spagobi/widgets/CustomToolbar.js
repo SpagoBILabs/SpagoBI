@@ -49,7 +49,7 @@ Ext.define('app.views.CustomToolbar', {
 						text : 'Home',
 						ui: 'plain',
 						iconMask: true,
-						autoEvent: 'home'
+						handler: this.goHome
 						};
 				this.add(this.homeButton);	
 	    	}else if(btnKey === 'prec'){
@@ -123,4 +123,8 @@ Ext.define('app.views.CustomToolbar', {
 	        }
 		});
 	}
+    , goHome: function(){
+    	console.log('go home');
+    	app.controllers.mobileController.backToBrowser();
+    }
 });
