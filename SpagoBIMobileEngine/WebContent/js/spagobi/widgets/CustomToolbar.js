@@ -27,8 +27,10 @@ Ext.define('app.views.CustomToolbar', {
 		this.callParent(arguments);
 		
 		console.log('initialize hidden custom toolbar');
-		this.setButtons();
+		this.setButtons();	
+
 		this.hideToolbar();
+
 	}
     ,hideToolbar: function(){
     	this.hide();
@@ -95,14 +97,15 @@ Ext.define('app.views.CustomToolbar', {
 	    			iconCls : 'logout',
 	    			text : 'Logout',
 	    			ui: 'round',
-	    			autoEvent: 'logout'
+	    			handler: this.logout
 	    		});
 	    		this.add(this.logoutButton);
 	    	}
     	}
     }
     ,
-	logoutHandler : function () {
+	logout : function () {
+		//Ext.Msg.height= 200;
 		Ext.Msg.confirm(null, 'Are you sure you want to logout?', function(answer) {
 	        if (answer === "yes") {
 	        	Ext.Ajax.request({
