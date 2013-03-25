@@ -105,6 +105,13 @@ Sbi.exception.ExceptionHandler = function(){
         	
         	(Ext.Msg.alert('','<p style="color:#fff; font-weight: bold;">'+t+'</p><br/>'+m,Ext.emptyFn)).setHeight(250);
         }
+        
+        ,showConfirmMessage : function(errMessage, title, fn) {
+        	var m = errMessage || 'Confirm';
+        	var t = title || '';
+        	
+        	(Ext.Msg.confirm('','<p style="color:#fff; font-weight: bold;">'+t+'</p><br/>'+m,fn)).setHeight(250);
+        }
 
 	};
 }();
