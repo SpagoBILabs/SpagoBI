@@ -8,6 +8,7 @@
  
 Ext.ns("Sbi.settings.top.toolbar");
 Ext.ns("Sbi.settings.bottom.toolbar");
+Ext.ns("Sbi.settings.toolbar.html");
 
 /**
  * Top custom toolbar settings
@@ -31,3 +32,6 @@ Sbi.settings.bottom.toolbar = {
 		          'logout'
 		          ]
 };
+Sbi.settings.toolbar.html ={
+		code: '<div style="color: violet; border: 1px solid red; background-color: #fff;">Questo &egrave; un html di esempio</div>'
+}
