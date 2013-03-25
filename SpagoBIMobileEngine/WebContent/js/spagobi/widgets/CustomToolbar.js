@@ -105,8 +105,7 @@ Ext.define('app.views.CustomToolbar', {
     }
     ,
 	logout : function () {
-		//Ext.Msg.height= 200;
-		Ext.Msg.confirm(null, 'Are you sure you want to logout?', function(answer) {
+		var func = function(answer) {
 	        if (answer === "yes") {
 	        	Ext.Ajax.request({
                      url : Sbi.env.invalidateSessionURL
@@ -121,7 +120,8 @@ Ext.define('app.views.CustomToolbar', {
                      , scope : this
                 });
 	        }
-		});
+		};
+		Sbi.exception.ExceptionHandler.showConfirmMessage(null, 'Are you sure you want to logout?', func);
 	}
     , goHome: function(){
     	console.log('go home');
