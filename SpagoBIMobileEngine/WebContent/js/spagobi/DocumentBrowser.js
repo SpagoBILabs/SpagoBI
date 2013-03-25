@@ -12,6 +12,7 @@ Ext.define('app.views.DocumentBrowser',{
 		scroll: 'vertical',
 		flex:1,
 		title: 'Document Browser',
+		displayField: 'name',
 		store: new Ext.data.TreeStore({
 			model: 'browserItems',
 			proxy: {
@@ -38,6 +39,8 @@ Ext.define('app.views.DocumentBrowser',{
 
 	},
 
+	
+	
 	getTitleTextTpl: function() {
 		return '<tpl><div>{name}</div></tpl>';
 	},

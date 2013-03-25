@@ -92,6 +92,7 @@ Ext.define('app.views.LoginView',{
 			return false;
 		}, this);
 		
+
 		this.callParent(this, arguments);
 
 	}
