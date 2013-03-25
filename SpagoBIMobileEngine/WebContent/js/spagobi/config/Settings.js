@@ -33,5 +33,6 @@ Sbi.settings.bottom.toolbar = {
 		          ]
 };
 Sbi.settings.toolbar.html ={
-		code: '<div style="color: violet; border: 1px solid red; background-color: #fff;">Questo &egrave; un html di esempio</div>'
+		//code: '<div style="color: violet; border: 1px solid red; background-color: #fff;">Questo &egrave; un html di esempio</div>'
+		code: '<img src="../img/custom/top.png" alt="Telecom Mobile" />'
 }
