@@ -80,7 +80,7 @@ Ext.define('app.views.CustomToolbar', {
 	    		this.paramsButton = {
 						title : 'Html',
 						ui: 'plain',
-						html: '<div style="color: violet; border: 1px solid red; background-color: #fff;">Questo &egrave; un html di esempio</div>',
+						html: Sbi.settings.toolbar.html.code,
 						autoEvent: 'html'
 						
 						};
