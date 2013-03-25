@@ -34,6 +34,7 @@ Ext.define('app.views.Viewport',{
 			this.setActiveItem(app.views.loginView, { type: 'slide', direction: 'left' });
 		},this);
 
+
 		
 //	    //put instances of login into app.views namespace
 //	    Ext.apply(app.views, {
@@ -82,6 +83,6 @@ Ext.define('app.views.Viewport',{
 		app.views.main = Ext.create('app.views.MainContainer');
 		this.add(app.views.main);
 	}
-
+    
 	});
 		
