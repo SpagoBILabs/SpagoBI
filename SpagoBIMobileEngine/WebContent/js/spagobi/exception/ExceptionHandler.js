@@ -108,7 +108,7 @@ Sbi.exception.ExceptionHandler = function(){
         
         ,showConfirmMessage : function(errMessage, title, fn) {
         	var m = errMessage || 'Confirm';
-        	var t = title || '';
+        	var t = title || null;
         	
         	(Ext.Msg.confirm('','<p style="color:#fff; font-weight: bold;">'+t+'</p><br/>'+m,fn)).setHeight(250);
         }
