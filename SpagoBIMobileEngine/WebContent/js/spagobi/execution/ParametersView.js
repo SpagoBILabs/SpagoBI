@@ -46,6 +46,7 @@ Ext.define('app.views.ParametersView',{
 					items: [fieldset, {
 						xtype : 'toolbar',
 						docked : 'bottom',
+						height: 30,
 						defaults : {
 							ui : 'plain',
 							iconMask : true
