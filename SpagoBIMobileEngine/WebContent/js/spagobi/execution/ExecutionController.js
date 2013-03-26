@@ -141,7 +141,7 @@ Ext.define('app.controllers.ExecutionController',{
 //				executionInstance.OBJECT_ID,
 //				executionInstance.TYPE_CODE,
 //				executionInstance.PARAMETERS);
-	    viewport.setActiveItem(app.views.execView, { type: 'slide', direction: 'left' });
+	    		app.views.viewport.goExecution();
 	}
 
 	, createWidgetExecution: function(resp, type, documentContainerPanel, executionInstance, composedComponentOptions){

@@ -74,13 +74,13 @@ Ext.define('app.controllers.ParametersController',{
 //								app.views.parameters = Ext.create("app.views.ParametersView");
 								app.views.parameters.refresh(paramsToBeFilled);
 								app.views.viewport.add(app.views.parameters);
-								app.views.viewport.setActiveItem(app.views.parameters);
+								app.views.viewport.goParameters();
 
 							}
 						}else{
 							var parameters = this.onParametersForExecutionLoaded(executionInstance,responseJson);
 							app.views.parameters.refresh(parameters);
-							app.views.viewport.setActiveItem(app.views.parameters);
+							app.views.viewport.goParameters();
 						}
 					}
 				}
