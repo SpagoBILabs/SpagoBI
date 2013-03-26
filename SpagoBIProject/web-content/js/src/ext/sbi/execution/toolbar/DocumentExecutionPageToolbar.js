@@ -495,15 +495,16 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
     	var itemConfig = null;
     	
     	// PRINT
-    	itemConfig = Ext.apply(baseMenuItemConfig, {
+    	itemConfig = Ext.apply({}, {
 			text: LN('sbi.execution.executionpage.toolbar.print')
 			, iconCls: 'icon-print'
 			, handler : this.printExecution
-        });    	
+        }, baseMenuItemConfig);    	
     	menuItems.push(	
 			new Ext.menu.Item(itemConfig)
 		); 
     	
+    	// EXPORT
 		if(this.executionInstance.document.exporters){
 			var menu = new Sbi.execution.toolbar.ExportersMenu({
 			    toolbar: this
@@ -521,11 +522,11 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
     	// SEND BY MAIL
     	if (Sbi.user.functionalities.contains('SendMailFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID
 				&& this.executionInstance.document.typeCode == 'REPORT') {
-	    	itemConfig = Ext.apply(baseMenuItemConfig, {
+	    	itemConfig = Ext.apply( {}, {
 				text: LN('sbi.execution.executionpage.toolbar.send')
 				, iconCls: 'icon-send-mail' 
 				, handler : this.sendExecution
-	        });    	
+	        }, baseMenuItemConfig);    	
 	    	menuItems.push(	
 				new Ext.menu.Item(itemConfig)
 			); 
@@ -533,11 +534,11 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
     	
     	// COPY IN MY FOLDER
     	if (Sbi.user.functionalities.contains('SaveIntoFolderFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
-	    	itemConfig = Ext.apply(baseMenuItemConfig, {
+	    	itemConfig = Ext.apply({}, {
 				text: LN('sbi.execution.executionpage.toolbar.saveintopersonalfolder')
 				, iconCls: 'icon-save-into-personal-folder' 
 				, handler : this.saveExecution
-	        });    	
+	        }, baseMenuItemConfig);    	
 	    	menuItems.push(	
 				new Ext.menu.Item(itemConfig)
 			); 
@@ -553,7 +554,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			text: 'File'
 			, tooltip: 'File'
 			, path: 'File'	
-			//, iconCls: 'icon-export' 	
 			, width: 15
 			, cls: 'x-btn-menubutton x-btn-text-icon bmenu '
 			, menu: menu
@@ -585,11 +585,11 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
     	
     	// METADATA
     	if (Sbi.user.functionalities.contains('SeeMetadataFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
-	    	itemConfig = Ext.apply(baseMenuItemConfig, {
+	    	itemConfig = Ext.apply({}, {
 				text: LN('sbi.execution.executionpage.toolbar.metadata')
 				, iconCls: 'icon-metadata' 
 				, handler : this.metaExecution
-	        });    	
+	        }, baseMenuItemConfig);    	
 	    	menuItems.push(	
 				new Ext.menu.Item(itemConfig)
 			); 
@@ -598,23 +598,23 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
     	// NOTE
     	if (Sbi.user.functionalities.contains('SeeNotesFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
     		this.getNoteIcon();
-	    	itemConfig = Ext.apply(baseMenuItemConfig, {
-	    		 id: 'noteIcon' // used by method getNoteIcon to replace the icon
+	    	itemConfig = Ext.apply({}, {
+	    		id: 'noteIcon' // used by method getNoteIcon to replace the icon
 				, text: LN('sbi.execution.executionpage.toolbar.annotate')
 				, iconCls: 'icon-no-notes'
 				, handler : this.annotateExecution
-	        });    	
+	        }, baseMenuItemConfig);    	
 	    	menuItems.push(	
 				new Ext.menu.Item(itemConfig)
 			); 
     	}
     	
     	// RANK
-    	itemConfig = Ext.apply(baseMenuItemConfig, {
+    	itemConfig = Ext.apply({}, {
 			text: LN('sbi.execution.executionpage.toolbar.rating')
 			, iconCls: 'icon-rating' 
 			, handler : this.rateExecution
-        });    	
+        }, baseMenuItemConfig);    	
     	menuItems.push(	
 			new Ext.menu.Item(itemConfig)
 		); 
@@ -659,7 +659,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				text: LN('sbi.execution.executionpage.toolbar.showbookmark')
 				, iconCls: 'icon-show-bookmark' 
 				, handler : function() {this.controller.openFavouritesWin();} // function(){alert("Function not implemented yet");}
-				//,  disabled: true
 	        }, baseMenuItemConfig);    	
 	    	menuItems.push(	
 				new Ext.menu.Item(itemConfig)
@@ -731,13 +730,13 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		menuItems.push('-'); 
     	
     	// VIEW scheduled execution
-    	itemConfig = Ext.apply(baseMenuItemConfig, {
+    	itemConfig = Ext.apply({}, {
 			text: LN('sbi.execution.executionpage.toolbar.showscheduled')
 			, iconCls: 'icon-execute-snapshot' 
 			, handler :  function() {
 		    	this.controller.openSnapshotSelectionWin();
 		    }
-        });    	
+        }, baseMenuItemConfig);    	
     	menuItems.push(	
 			new Ext.menu.Item(itemConfig)
 		); 
