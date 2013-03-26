@@ -45,8 +45,7 @@ Ext.define('app.controllers.MobileController',{
 		console.log('MobileController: Received event of login successfull');
 		app.views.viewport.addMain();
 		//app.views.main.reloadPanel();
-		app.views.customToolbar.showToolbar();
-		app.views.viewport.setActiveItem(app.views.main, { type: 'slide', direction: 'left' });
+		app.views.viewport.goHome();
 	}
 	
 //	, showDetail: function(record) {
@@ -143,15 +142,14 @@ Ext.define('app.controllers.MobileController',{
 		}catch(error){
 			app.views.execution.bottomTools.clearNavigation();
 		}*/
-		app.views.viewport.setActiveItem(app.views.main, { type: 'fade' });	
+		app.views.viewport.goHome();	
 //		app.views.viewport.doLayout();
   	}
 
 	, backToParametersView: function(option){
 		this.destroyExecutionView();
 		//app.views.execView.clearNavigation();
-
-	    app.views.viewport.setActiveItem(app.views.parameters, { type: 'fade' });
+		app.views.viewport.goParameters();
   	}
 
 

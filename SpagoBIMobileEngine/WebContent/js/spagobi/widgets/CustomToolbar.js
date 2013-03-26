@@ -40,66 +40,70 @@ Ext.define('app.views.CustomToolbar', {
     }
     ,setButtons: function(){
     	var buttons = Sbi.settings.top.toolbar.buttons;
-    	for(i =0; i< buttons.length; i++){
+    	this.visibleButtons=new Array();
+    	
+    	for(var i =0; i< buttons.length; i++){
+    		var button = null;
     		var btnKey = buttons[i];
 	    	if(btnKey === 'home'){
-				this.homeButton = {
+	    		button = new Ext.Button( {
 						title : 'Home',
 						iconCls : 'home',
 						text : 'Home',
 						ui: 'plain',
 						iconMask: true,
 						handler: this.goHome
-						};
-				this.add(this.homeButton);	
+						});
 	    	}else if(btnKey === 'prec'){
-	    		this.precButton = new Ext.Button( {
+	    		button = new Ext.Button( {
 	    			text : 'Previous',
 	    			iconCls : 'reply',
 	    			ui: 'plain',
-					autoEvent: 'back'
+					autoEvent: 'back',
+					handler: this.fireEvent("toolback")
 	    		});
-	    		this.add(this.precButton);
 	    	}else if(btnKey === 'refresh'){
-	    		this.refreshButton = new Ext.Button( {
+	    		button = new Ext.Button( {
 	    			text : 'Refresh',
 	    			iconCls : 'refresh',
 	    			ui: 'plain',
-	    			autoEvent: 'refresh'
+	    			autoEvent: 'refresh',
+	    			handler: this.fireEvent("toolrefresh")
 		    		});
-	    		this.add(this.refreshButton);
 	    	}else if(btnKey === 'params'){
-	    		this.paramsButton = {
+	    		button = new Ext.Button( {
 						title : 'Parameters',
 						iconCls : 'compose',
 						text : 'Parameters',
 						ui: 'plain',
-						autoEvent: 'params'
-						
-						};
-	    		this.add(this.paramsButton);
+						autoEvent: 'params',
+						handler: this.fireEvent("toolreparams")
+						});
 	    	}else if(btnKey === 'html'){
-	    		this.paramsButton = {
+	    		button = new Ext.Button( {
 						title : 'Html',
 						ui: 'plain',
 						html: Sbi.settings.toolbar.html.code,
 						autoEvent: 'html'
 						
-						};
-	    		this.add(this.paramsButton);
+						});
 	    	}else if(btnKey === 'spacer'){
-	    		this.spacer ={
+	    		button = new Ext.Spacer( {
 	    			xtype: 'spacer'
-	    		};
-	    		this.add(this.spacer);
+	    		});
 	    	}else if(btnKey === 'logout'){
-	    		this.logoutButton = new Ext.Button( {
+	    		button = new Ext.Button( {
 	    			iconCls : 'logout',
 	    			text : 'Logout',
 	    			ui: 'round',
 	    			handler: this.logout
 	    		});
-	    		this.add(this.logoutButton);
+
+	    	}
+	    	if(button){
+	    		button.btnKey = btnKey;
+	    		this.add(button);
+	    		this.visibleButtons.push(button);
 	    	}
     	}
     }
@@ -123,6 +127,35 @@ Ext.define('app.views.CustomToolbar', {
 		};
 		Sbi.exception.ExceptionHandler.showConfirmMessage(null, 'Are you sure you want to logout?', func);
 	}
+    
+    ,setViewModality: function(modality){
+    	this.updateToolbar(Sbi.settings.top.toolbar[modality]);
+    }
+        
+    /**
+     * Show the buttons contained in the visibleButtonsList and hide all the others.
+     * Its important that visibleButtonsList is a proper subset of this.visibleButtons
+     *  
+     */
+    ,updateToolbar: function(visibleButtonsList){
+    	if(visibleButtonsList && visibleButtonsList.length>0){
+    		this.show();
+    		var j=0;
+    		for(var i=0; i<visibleButtonsList.length; i++){
+        		while(j<this.visibleButtons.length && this.visibleButtons[j].btnKey!=visibleButtonsList[i]){
+        			this.visibleButtons[j].hide();
+        			j++;
+        		}
+        		if(j<this.visibleButtons.length && this.visibleButtons[j].btnKey==visibleButtonsList[i]){
+        			this.visibleButtons[j].show();
+        			j++;
+        		}
+    		}
+    	}else{//no button to show, so we hide the toolbar
+    		this.hide();
+    	}
+    }
+    
     , goHome: function(){
     	console.log('go home');
     	app.controllers.mobileController.backToBrowser();

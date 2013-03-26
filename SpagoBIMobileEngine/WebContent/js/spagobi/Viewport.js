@@ -27,18 +27,17 @@ Ext.define('app.views.Viewport',{
 	,initialize: function(){
 		
 		
-	//	app.views.execution = Ext.create('app.views.ExecutionView');
 		app.views.loginView = Ext.create('app.views.LoginView');
 		app.views.parameters = Ext.create("app.views.ParametersView");
 		app.views.customToolbar = Ext.create("app.views.CustomToolbar");
 		this.add(app.views.loginView);
-		//this.add(app.views.execution);
 		this.add(app.views.parameters);
 		this.add(app.views.customToolbar);
 		
 		
 		this.on("activate",function(){
-			this.setActiveItem(app.views.loginView, { type: 'slide', direction: 'left' });
+			app.views.customToolbar.setViewModality("login");
+			this.goLogIn();
 		},this);
 
 
@@ -62,7 +61,7 @@ Ext.define('app.views.Viewport',{
 //	    });
 	    
 	    this.callParent(arguments);
-//	    this.setActiveItem(app.views.loginView, { type: 'slide', direction: 'left' });
+//	    this.goLogIn();
 	    
 //		if(app.views.execution.loadingMaskForExec == null){
 //			app.views.execution.loadingMaskForExec = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});              
@@ -89,6 +88,26 @@ Ext.define('app.views.Viewport',{
 	, addMain: function(){
 		app.views.main = Ext.create('app.views.MainContainer');
 		this.add(app.views.main);
+	}
+	
+	,goLogIn: function(){
+		app.views.customToolbar.setViewModality("login");
+		this.setActiveItem(app.views.loginView, { type: 'fade' });	
+	}
+	
+	,goExecution: function(){
+		app.views.customToolbar.setViewModality("execution");
+		this.setActiveItem(app.views.execView, { type: 'fade' });	
+	}
+	
+	,goParameters: function(){
+		app.views.customToolbar.setViewModality("main");
+		this.setActiveItem(app.views.parameters, { type: 'fade' });	
+	}
+	
+	,goHome: function(){
+		app.views.customToolbar.setViewModality("main");
+		this.setActiveItem(app.views.main, { type: 'fade' });	
 	}
     
 	});
