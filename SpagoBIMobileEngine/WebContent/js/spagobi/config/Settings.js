@@ -31,26 +31,32 @@ Sbi.settings.top.toolbar = {
 		                     'spacer',
 		                     'refresh',
 		                     'spacer',
-		                     'html',
 		                     'logout'
 		                     ],
 		                     main:['documentbrowser',
 		                           'spacer',
-		                           'html',
 		                           'logout'
 		                           ],
 		                           login:[],
 		                           parameters:[]
 
 };
-/**
- * bottom custom toolbar settings
- */
 Sbi.settings.bottom.toolbar = {
 		buttons: [
+		          'html',
 		          'logout'
-		          ]
+		          ],
+		          execution:[
+		                     'html'
+		                     ],
+		                     main:[
+		                           'html'
+		                           ],
+		                           login:[],
+		                           parameters:[]
+
 };
+
 Sbi.settings.toolbar.html ={
 		//code: '<div style="color: violet; border: 1px solid red; background-color: #fff;">Questo &egrave; un html di esempio</div>'
 		code: '<img src="../img/custom/top.png" alt="Telecom Mobile" />'
