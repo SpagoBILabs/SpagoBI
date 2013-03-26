@@ -34,6 +34,7 @@
   * 
   * - Andrea Gioia (andrea.gioia@eng.it)
   * - Monica Franceschini (monica.franceschini@eng.it)
+  * - Alberto Ghedin (alberto.ghedin@eng.it)
   */
 
 
@@ -61,7 +62,7 @@ Sbi.exception.ExceptionHandler = function(){
         			if(content.errors !== undefined && content.errors.length > 0) {
         				errMessage = '';
         				if (content.errors[0].message === 'session-expired') {
-        					errMessage = LN('sbi.qbe.sessionexpired.msg');
+        					errMessage = 'Session Expired';
         				} else {
 	        				for(var i = 0; i < content.errors.length; i++) {
 	        					if(content.errors[i].message != '' && content.errors[i].message != undefined){
