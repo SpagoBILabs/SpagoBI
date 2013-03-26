@@ -21,18 +21,24 @@ Ext.define('app.views.MainContainer',{
 	        }
 		},
 		
+		constructor: function(config){
+			Ext.apply(this, config||{});
+			this.callParent(arguments);
+		},
+		
 		initialize: function(){		
 			this.callParent(arguments);
-			app.views.browser = Ext.create("app.views.DocumentBrowser");
-			//app.views.preview = Ext.create('Ext.Panel', {html: "preview"});
-		   this.add(app.views.browser);
-		    //this.add(app.views.preview);
-		    //refresh management
+			app.views.browser = Ext.create("app.views.DocumentBrowser",{containerToolbar: this.containerToolbar});
+		    this.add(app.views.browser);
 		    localStorage.setItem('app.views.browser', 'true');
 		},
 		
 		reloadPanel: function(){
 			app.views.browser.reloadPanel();
+		}
+		
+		,documentBrowserBack: function(){
+			app.views.browser.goBack();
 		}
 	
 

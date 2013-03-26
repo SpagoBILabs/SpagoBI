@@ -11,8 +11,20 @@ Ext.define('app.views.DocumentBrowser',{
 	config:{
 		scroll: 'vertical',
 		flex:1,
+		toolbar: {
+			hidden: true
+		},
 		title: 'Document Browser',
 		displayField: 'name',
+		listeners: {
+			itemtap:function( item, list, index, target, record, e, eOpts ){
+				var button = this.getBackButtomFromToolbar();
+				if(button){
+					button.show();
+					button.setText(record.data.name);
+				}
+			}
+		},
 		store: new Ext.data.TreeStore({
 			model: 'browserItems',
 			proxy: {
@@ -31,7 +43,10 @@ Ext.define('app.views.DocumentBrowser',{
 		})
 	},
 
-
+	constructor: function(config){
+		Ext.apply(this, config||{});
+		this.callParent(arguments);
+	},
 
 	reloadPanel: function(){
 		var store = this.getStore();
@@ -76,6 +91,47 @@ Ext.define('app.views.DocumentBrowser',{
 		}
 
 
+	}
+
+	,goBack: function(){
+		var node = this.findAncestralNode(this, 1);
+		this.goToNode(node);
+		var backButton = this.getBackButtomFromToolbar();
+		if(backButton){
+			if(node.data.text=="Root"){
+				backButton.hide();
+			}else{
+				backButton.show();
+				backButton.setText(node.data.name);
+			}	
+		}
+
+	}
+	
+	,findAncestralNode: function (theNestedList,levelsUp){
+	    levelsUp = typeof levelsUp !== 'undefined' ? levelsUp : -1;
+	    var levelsSoFar = 0;
+	    var curNode = theNestedList._lastNode;
+	    while( curNode.parentNode !== null && levelsSoFar != levelsUp){
+	        curNode = curNode.parentNode;
+	        levelsSoFar++;
+	    }
+	    return curNode;
+	}
+	
+	,getBackButtomFromToolbar: function(){
+		if(this.containerToolbar && this.containerToolbar.visibleButtons){
+			if(this.backbutton){
+				return this.backbutton;
+			}
+			for(var i=0; i<this.containerToolbar.visibleButtons.length; i++){
+				if(this.containerToolbar.visibleButtons[i].btnKey == 'documentbrowser'){
+					this.backbutton = this.containerToolbar.visibleButtons[i];
+					return this.backbutton;
+				}
+			}
+		}
+		return null;
 	}
 
 

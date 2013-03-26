@@ -29,14 +29,14 @@ Ext.define('app.views.Viewport',{
 		
 		app.views.loginView = Ext.create('app.views.LoginView');
 		app.views.parameters = Ext.create("app.views.ParametersView");
-		app.views.customToolbar = Ext.create("app.views.CustomToolbar");
+		app.views.customTopToolbar = Ext.create("app.views.CustomToolbar",{ docked: 'top'});
 		this.add(app.views.loginView);
 		this.add(app.views.parameters);
-		this.add(app.views.customToolbar);
-		
+		this.add(app.views.customTopToolbar);
+		this.addTopToolbarEvents();
 		
 		this.on("activate",function(){
-			app.views.customToolbar.setViewModality("login");
+			app.views.customTopToolbar.setViewModality("login");
 			this.goLogIn();
 		},this);
 
@@ -86,29 +86,38 @@ Ext.define('app.views.Viewport',{
 	  }
 	
 	, addMain: function(){
-		app.views.main = Ext.create('app.views.MainContainer');
+		app.views.main = Ext.create('app.views.MainContainer',{containerToolbar: app.views.customTopToolbar});
 		this.add(app.views.main);
 	}
 	
 	,goLogIn: function(){
-		app.views.customToolbar.setViewModality("login");
+		app.views.customTopToolbar.setViewModality("login");
 		this.setActiveItem(app.views.loginView, { type: 'fade' });	
 	}
 	
 	,goExecution: function(){
-		app.views.customToolbar.setViewModality("execution");
+		app.views.customTopToolbar.setViewModality("execution");
 		this.setActiveItem(app.views.execView, { type: 'fade' });	
 	}
 	
 	,goParameters: function(){
-		app.views.customToolbar.setViewModality("main");
+		app.views.customTopToolbar.setViewModality("main");
 		this.setActiveItem(app.views.parameters, { type: 'fade' });	
 	}
 	
 	,goHome: function(){
-		app.views.customToolbar.setViewModality("main");
+		app.views.customTopToolbar.setViewModality("main");
 		this.setActiveItem(app.views.main, { type: 'fade' });	
 	}
+	
+	,addTopToolbarEvents: function(){
+		app.views.customTopToolbar.on("documentbrowserback",function(toolbar){
+			if(toolbar.modality=="main"){
+				app.views.main.documentBrowserBack();
+			}
+		},this);
+	}
+	
     
-	});
+});
 		
