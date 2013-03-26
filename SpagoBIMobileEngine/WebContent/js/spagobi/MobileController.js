@@ -3,9 +3,11 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
+ /**
+ * @authors
+ * - Alberto Ghedin (alberto.ghedin@eng.it)
+ * - Monica Franceschini (monica.franceschini@eng.it)  
+  */
   
  
 Ext.define('app.controllers.MobileController',{
@@ -142,7 +144,7 @@ Ext.define('app.controllers.MobileController',{
 			app.views.execution.bottomTools.clearNavigation();
 		}*/
 		app.views.viewport.setActiveItem(app.views.main, { type: 'fade' });	
-		app.views.viewport.doLayout();
+//		app.views.viewport.doLayout();
   	}
 
 	, backToParametersView: function(option){
@@ -155,14 +157,8 @@ Ext.define('app.controllers.MobileController',{
 
 	//Destroy the execution panel
 	, destroyExecutionView: function(){
-		if(app.views.table != undefined && app.views.table != null){
-			app.views.table.destroy();
-		}
-		if(app.views.chart != undefined && app.views.chart != null){
-			app.views.chart.destroy();
-		}
-		if(app.views.composed != undefined && app.views.composed != null){
-			app.views.composed.destroy();
+		if(app.views.execView){
+			app.views.execView.removeAll(true);
 		}
 	}
 });
