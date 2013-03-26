@@ -14,7 +14,9 @@ Ext.ns("Sbi.settings.toolbar.html");
  * Top custom toolbar settings
  */
 Sbi.settings.top.toolbar = {
-		buttons: ['home', 		          
+		buttons: ['documentbrowser',
+		          'back',
+		          'home', 		          
 		          'prec',
 		          'params',
 		          'spacer',
@@ -32,7 +34,8 @@ Sbi.settings.top.toolbar = {
 		                     'html',
 		                     'logout'
 		                     ],
-		                     main:['spacer',
+		                     main:['documentbrowser',
+		                           'spacer',
 		                           'html',
 		                           'logout'
 		                           ],

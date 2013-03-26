@@ -9,7 +9,6 @@
 Ext.define('app.views.CustomToolbar', {
 	extend: 'Ext.Toolbar',
 	config: {
-        docked: 'top',
         padding: 5,
     	defaults : {
     		ui : 'plain',
@@ -22,7 +21,11 @@ Ext.define('app.views.CustomToolbar', {
         height: 30
     },
 
-
+    constructor: function(config){
+    	Ext.apply(this,config||{});
+    	this.callParent(arguments);
+    },
+    
 	initialize : function() {
 		this.callParent(arguments);
 		
@@ -41,7 +44,7 @@ Ext.define('app.views.CustomToolbar', {
     ,setButtons: function(){
     	var buttons = Sbi.settings.top.toolbar.buttons;
     	this.visibleButtons=new Array();
-    	
+    	var thisPanel = this;
     	for(var i =0; i< buttons.length; i++){
     		var button = null;
     		var btnKey = buttons[i];
@@ -59,16 +62,14 @@ Ext.define('app.views.CustomToolbar', {
 	    			text : 'Previous',
 	    			iconCls : 'reply',
 	    			ui: 'plain',
-					autoEvent: 'back',
-					handler: this.fireEvent("toolback")
+					autoEvent: 'previous'
 	    		});
 	    	}else if(btnKey === 'refresh'){
 	    		button = new Ext.Button( {
 	    			text : 'Refresh',
 	    			iconCls : 'refresh',
 	    			ui: 'plain',
-	    			autoEvent: 'refresh',
-	    			handler: this.fireEvent("toolrefresh")
+	    			autoEvent: 'refresh'
 		    		});
 	    	}else if(btnKey === 'params'){
 	    		button = new Ext.Button( {
@@ -76,8 +77,7 @@ Ext.define('app.views.CustomToolbar', {
 						iconCls : 'compose',
 						text : 'Parameters',
 						ui: 'plain',
-						autoEvent: 'params',
-						handler: this.fireEvent("toolreparams")
+						autoEvent: 'params'
 						});
 	    	}else if(btnKey === 'html'){
 	    		button = new Ext.Button( {
@@ -85,6 +85,27 @@ Ext.define('app.views.CustomToolbar', {
 						ui: 'plain',
 						html: Sbi.settings.toolbar.html.code,
 						autoEvent: 'html'
+						
+						});
+	    	}else if(btnKey === 'back'){
+	    		button = new Ext.Button( {
+						title : 'back',
+						ui: 'back',
+						text: 'Back',
+						handler: function(){
+							thisPanel.fireEvent("back",thisPanel);
+						}
+						
+						});
+	    	}else if(btnKey === 'documentbrowser'){
+	    		button = new Ext.Button( {
+	    				hidden: true,
+						title : 'back',
+						ui: 'back',
+						text: 'Back',
+						handler: function(){
+							thisPanel.fireEvent("documentbrowserback",thisPanel, this);
+						}
 						
 						});
 	    	}else if(btnKey === 'spacer'){
@@ -130,6 +151,7 @@ Ext.define('app.views.CustomToolbar', {
     
     ,setViewModality: function(modality){
     	this.updateToolbar(Sbi.settings.top.toolbar[modality]);
+    	this.modality = modality;
     }
         
     /**
@@ -148,6 +170,9 @@ Ext.define('app.views.CustomToolbar', {
         		}
         		if(j<this.visibleButtons.length && this.visibleButtons[j].btnKey==visibleButtonsList[i]){
         			this.visibleButtons[j].show();
+        			if(this.visibleButtons[j].btnKey=="documentbrowser"){
+        				this.visibleButtons[j].hide();
+        			}
         			j++;
         		}
     		}
