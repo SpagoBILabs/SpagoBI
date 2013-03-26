@@ -65,7 +65,7 @@ Ext.define('app.controllers.ParametersController',{
 							app.controllers.mobileController.destroyExecutionView();
 							var paramsToBeFilled = parameters.slice(0);
 							var paramsFromCrossFilled= this.fillParametersFromCross(parameters, paramsFromCross, paramsToBeFilled);
-							if(paramsToBeFilled.length == 0){
+							if(paramsToBeFilled.length == paramsFromCrossFilled.length){
 								//execute now!
 								executionInstance.PARAMETERS = this.fromArrayToObject(paramsFromCross);
 								executionInstance.isFromCross = true;
@@ -103,18 +103,18 @@ Ext.define('app.controllers.ParametersController',{
 	}
 	
 	, fillParametersFromCross: function(parametersNeeded, parametersFromCross, paramsToBeFilled){
-		var parametersFilled = {};
+		var parametersFilled = new Array();
 		if(parametersNeeded != null && parametersNeeded != undefined && 
 				parametersFromCross != null && parametersFromCross != undefined	){
 		
 			for(i =0; i<parametersNeeded.length; i++){
 				var p = parametersNeeded[i];
-				var nm = p.name;
+				var nm = p.getName();
 				for(k =0; k<parametersFromCross.length; k++){
 					var pCross = parametersFromCross[k];
 					if(nm == pCross.name && pCross.value != null && pCross.value != ''){
-						parametersFilled[nm] = pCross.value;
-						paramsToBeFilled.remove(p);
+						parametersFilled.push(pCross);
+						//paramsToBeFilled.remove(p);
 						p.value = pCross.value;
 						break;
 					}
