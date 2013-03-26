@@ -224,9 +224,14 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    }
 	
 	// -----------------------------------------------------------------------------------------------------------------
-	// edit methods
+	// add/remove buttons methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
+	/**
+	 * @method 
+	 * 
+	 * Removes all buttons from the toolbar
+	 */
 	, removeAllButtons: function() {
 		this.items.each( function(item) {
 			this.items.remove(item);
@@ -234,6 +239,11 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
         }, this); 
 	}
 	
+	/**
+	 * @method 
+	 * 
+	 * Add buttons specific for INFO mode 
+	 */
 	, addButtonsForInfoMode: function () {
 		Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForInfoMode]: IN');
 		
@@ -275,9 +285,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			}));
 		}
 		
-
-
-		// if document is QBE datamart and user is a Read-only user, he cannot execute main document, but only saved queries.
+		// if document is QBE datamart and user is a read-only user, he cannot execute main document, but only saved queries.
 		// If there is a subobject preference, the execution button starts the subobject execution
 		if (
 				this.executionInstance.document.typeCode != 'DATAMART' || 
@@ -305,7 +313,94 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForInfoMode]: OUT');
 	}
 	
-	// edit mode buttons (at the moment used by Worksheet documents only)
+	/**
+	 * @method 
+	 * 
+	 * Add buttons specific for VIEW mode 
+	 */
+	, addButtonsForViewMode: function () {
+		   
+		   Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForViewMode]: IN');
+			
+		  
+		   // BACK TO ADMIN PAGE
+		   if (this.callFromTreeListDoc == true) {
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-back' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.documentView')
+					, scope: this
+					, handler : function() {
+						this.fireEvent('click', this, "backToAdminPage");
+					}
+				}));
+		   }
+		   
+		   // EXPAND DOCUMENT
+		   if(Sbi.user.ismodeweb && this.expandBtnVisible === true){
+			   this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-expand' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
+				    , scope: this
+				    , handler : function() {
+				    	this.fireEvent('click', this, 'expand');
+					}			
+				}));
+			}
+	   			
+			if (Sbi.user.functionalities.contains('EditWorksheetFunctionality') && this.executionInstance.document.typeCode === 'WORKSHEET') {
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-edit' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.edit')
+				    , scope: this
+				    , handler : this.startWorksheetEditing	
+				}));
+			}
+		
+			this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-execute' 
+				, tooltip: LN('sbi.execution.executionpage.toolbar.refresh')
+			    , scope: this
+			    , handler : function() {
+						// save parameters into session
+						// if type is QBE inform user that will lose configurations
+						if(this.executionInstance.document.typeCode == 'DATAMART'){
+							if(Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality') && Sbi.user.functionalities.contains('SaveSubobjectFunctionality')){
+								
+								Ext.MessageBox.confirm(
+	    						    LN('sbi.generic.warning'),
+	            					LN('sbi.execution.executionpage.toolbar.qberefresh'),            
+	            					function(btn, text) {
+	                					if (btn=='yes') {
+											this.controller.refreshDocument();
+	                					}
+	            					},
+	            					this
+									);
+								}else{
+									//user who cannot build qbe queries
+									this.controller.refreshDocument();
+								}
+						} // it 's not a qbe
+						else {
+							this.controller.refreshDocument();
+					}
+				}			
+			}));
+			
+			this.addSeparator();
+			
+			this.addFileMenu();
+			this.addInfoMenu();
+			this.addShortcutsMenu();
+			
+			Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForViewMode]: OUT');	   
+	}
+	
+	/**
+	 * @method 
+	 * 
+	 * Add buttons specific for EDIT mode (at the moment used by Worksheet documents only)
+	 */
 	, addButtonsForEditMode: function () {
 
 		Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForEditMode]: IN');
@@ -338,21 +433,21 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		   }));
 
 		   if(this.executionInstance.document.exporters.length > 0){
+			   var menu = new Sbi.execution.toolbar.ExportersMenu({
+				    toolbar: this
+					, executionInstance: this.executionInstance
+				});
 				
-			   this.exportMenu = new Ext.menu.Menu({
-				   id: 'basicExportMenu_0',
-				   items: this.getWorksheetExportMenuItems(),
-				   listeners: {	'mouseexit': {fn: function(item) {item.hide();}}}
-			   });
+			   if(menu.isEmpty() === false) {
 		       this.addButton(new Ext.Toolbar.MenuButton({
-				   id: Ext.id()
-				   , tooltip: 'Exporters'
+				   tooltip: 'Exporters'
 				   , path: 'Exporters'	
 				   , iconCls: 'icon-export' 	
-				   , menu: this.exportMenu
 				   , width: 15
 				   , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+				   , menu: menu
 			    }));	
+			   }
 		   }
 		   
 		   this.addSeparator();
@@ -363,115 +458,13 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				   , handler : this.stopWorksheetEditing	
 		   }));
 		   
-		   Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForEditMode]: OUT');
-			
+		   Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForEditMode]: OUT');	
 	   }
-	   
-	   
-	   , addButtonsForViewMode: function () {
-		   
-		   Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForViewMode]: IN');
-			
-		  
-		   // BACK TO ADMIN PAGE
-		   if (this.callFromTreeListDoc == true) {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-back' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.documentView')
-					, scope: this
-					, handler : function() {
-						this.fireEvent('click', this, "backToAdminPage");
-					}
-				}));
-		   }
-		   
-		   // EXPAND DOCUMENT
-		   if(Sbi.user.ismodeweb && this.expandBtnVisible  === true){
-			   this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-expand' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
-				    , scope: this
-				    , handler : function() {
-				    	this.fireEvent('click', this, 'expand');
-					}			
-				}));
-			}
-	   			
-			if (Sbi.user.functionalities.contains('EditWorksheetFunctionality') && this.executionInstance.document.typeCode === 'WORKSHEET') {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-edit' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.edit')
-				    , scope: this
-				    , handler : this.startWorksheetEditing	
-				}));
-			}
-		
-			//this.addSeparator();
-			
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-execute' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.refresh')
-			    , scope: this
-			    , handler : function() {
-						// save parameters into session
-						// if type is QBE inform user that will lose configurations
-						if(this.executionInstance.document.typeCode == 'DATAMART'){
-							if(Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality') && Sbi.user.functionalities.contains('SaveSubobjectFunctionality')){
-								
-								
-								Ext.MessageBox.confirm(
-	    						    LN('sbi.generic.warning'),
-	            					LN('sbi.execution.executionpage.toolbar.qberefresh'),            
-	            					function(btn, text) {
-	                					if (btn=='yes') {
-											this.controller.refreshDocument();
-	                					}
-	            					},
-	            					this
-									);
-								}else{
-									//user who cannot build qbe queries
-									this.controller.refreshDocument();
-								}
-						} // it 's not a qbe
-						else {
-							this.controller.refreshDocument();
-					}
-				}			
-			}));
-			
-			this.addSeparator();
-			
-			//this.addExportersMenu(this);
-			this.addFileMenu();
-			this.addInfoMenu();
-			this.addShortcutsMenu();
-			
-			Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForViewMode]: OUT');	   
-	}
 	
-	   
-	   
-	/**
-	 * @method
-	 * 
-	 * Create the exporters' menu. The content of the menu depends on the exportation formats
-	 * supported by the specific document type
-	 */   
-    , addExportersMenu: function(parentMenu) {
-			
-		var exporters = this.executionInstance.document.exporters;
-		
-		if(!exporters){
-			return;
-		}
-		
-		var menu = new Sbi.execution.toolbar.ExportersMenu({
-		    toolbar: this
-			, executionInstance: this.executionInstance
-		});
-		parentMenu.add(menu);
-	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+	// add/remove menus
+	// -----------------------------------------------------------------------------------------------------------------  
     
     /**
 	 * @method
@@ -506,7 +499,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
     	
     	// EXPORT
 		if(this.executionInstance.document.exporters){
-			var menu = new Sbi.execution.toolbar.ExportersMenu({
+			var m = new Sbi.execution.toolbar.ExportersMenu({
 			    toolbar: this
 				, executionInstance: this.executionInstance
 			});
@@ -514,8 +507,9 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				text: LN('sbi.execution.executionpage.toolbar.export')
 				, path: 'Export'	
 				, iconCls: 'icon-export' 	
-	            , menu: menu.menu
-			});			
+	            , menu: m.isEmpty()? undefined: m
+	            , disabled: m.isEmpty()
+			});						
 		}
 		
     	
@@ -759,24 +753,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		
 		this.add(menuButton);
     }
-	
 
-	
-	   
-	
-	   
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	   
 	// -----------------------------------------------------------------------------------------------------------------
 	// private methods
 	// -----------------------------------------------------------------------------------------------------------------

@@ -17,7 +17,7 @@ Sbi.execution.toolbar.ExportersMenu = function(config) {
 		tooltip: 'Exporters'
 		, path: 'Exporters'	
 		, iconCls: 'icon-export' 	
-		, width: 15
+		//, width: 15
 		, cls: 'x-btn-menubutton x-btn-text-icon bmenu '
 		, revertToButtonIfSingleItemMenu: false
 		, baseMenuItemConfig: {
@@ -41,37 +41,51 @@ Sbi.execution.toolbar.ExportersMenu = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});	
 	Ext.apply(this, c);
 	
-	// init events...
-	//this.addEvents();
-	
+
 	this.initServices();
 	this.init();
 	
-	if(this.menu != null) {
-		if(this.menuItemsConfig != null && this.menuItemsConfig.length == 1 && this.revertToButtonIfSingleItemMenu == true) {
-			delete this.menuItemsConfig[0].text;
-			Ext.apply(this, this.menuItemsConfig);
-		} else {
-			c.menu = this.menu;
-		}
-	}
-
+	if(this.menuItemsConfig && this.menuItemsConfig.length > 0) {
+		c.items = this.menuItemsConfig;
+	} 
+	
 	// constructor
 	Sbi.execution.toolbar.ExportersMenu.superclass.constructor.call(this, c);
+	
+	if ( this.documentType == 'DATAMART' || this.documentType == 'SMART_FILTER' ) {
+		this.on('mouseexit', function(item) {item.hide();}, this);
+		this.on('beforeshow', function(thisMenu){
+			var documentWindow = this.getDocumentWindow();
+			var documentPanel = documentWindow.qbe;
+			if(documentPanel==null){//smart filter
+				documentPanel = documentWindow.Sbi.formviewer.formEnginePanel;
+			}
+			var isBuildingWorksheet =  documentPanel.isWorksheetPageActive();
+			var newItems; 
+			thisMenu.removeAll(false);
+			if (isBuildingWorksheet) {
+				newItems = this.initMenuItemsConfig('WORKSHEET');
+			} else {
+				newItems = this.initMenuItemsConfig('DATAMART');
+			}
+			for(var i =0; i<newItems.length; i++){
+				thisMenu.add(newItems[i]);
+			}
+		}, this);
+	}
 };
 
 /**
  * @class Sbi.execution.toolbar.ExportersMenu
  * @extends Ext.Toolbar.MenuButton
  * 
- * bla bla bla bla bla ...
+ * The exporter menu. Contains all the exportation format supported by the executed docuement's type
  */
 
 /**
  * @cfg {Object} config
- * ...
  */
-Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.Toolbar.MenuButton, {
+Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
     
 	// =================================================================================================================
 	// PROPERTIES
@@ -90,7 +104,6 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.Toolbar.MenuButton, {
 	, toolbar: null
 	
 	, menuItemsConfig: null
-	, menu: null
 	, exporters: null
 	, documentType: null
 	
@@ -341,6 +354,17 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.Toolbar.MenuButton, {
 		return controller;
 	}
 	
+	/**
+	 * @method 
+	 * 
+	 * @return true if the menu does not contains any elements (= no exporter available for the 
+	 * executed docuement)
+	 */
+	, isEmpty: function() {
+		return this.menuItemsConfig === null || this.menuItemsConfig.length === 0;
+	}
+	
+	
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -381,61 +405,16 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.Toolbar.MenuButton, {
 	 */
 	, init: function() {
 		try {
-			this.initMenu();
+			if(this.exporters == null){
+				return;
+			}		
+			this.initMenuItemsConfig(this.documentType);	
 		} catch (e){
 			Sbi.error('[ExportersMenu.init] : An unexpected error occured during inizialization. The root cause of the error is : ' + e.msg );
 		}
 		
 	}
 	
-	/**
-	 * @method
-	 * 
-	 * Initialize the #menu property
-	 * 
-	 * @return {Sbi.execution.RoleSelectionPage} The #menu property after the initialization
-	 */
-	, initMenu: function() {
-		if(this.exporters == null){
-			return;
-		}
-		
-		Sbi.debug('[ExportersMenu.initMenu] : Creating exporters menu associated to a document of type [' + this.documentType + ']');
-		this.initMenuItemsConfig(this.documentType);	
-		if(this.menuItemsConfig && this.menuItemsConfig.length > 0) {
-			this.menu = new Ext.menu.Menu({
-				items: this.menuItemsConfig    
-			});	
-		}
-		
-		if(this.menu) {
-			if ( this.documentType == 'DATAMART' || this.documentType == 'SMART_FILTER' ) {
-				this.menu.on('mouseexit', function(item) {item.hide();}, this);
-				this.menu.on('beforeshow', function(thisMenu){
-					var documentWindow = this.getDocumentWindow();
-					var documentPanel = documentWindow.qbe;
-					if(documentPanel==null){//smart filter
-						documentPanel = documentWindow.Sbi.formviewer.formEnginePanel;
-					}
-					var isBuildingWorksheet =  documentPanel.isWorksheetPageActive();
-					var newItems; 
-					thisMenu.removeAll(false);
-					if (isBuildingWorksheet) {
-						newItems = this.initMenuItemsConfig('WORKSHEET');
-					} else {
-						newItems = this.initMenuItemsConfig('DATAMART');
-					}
-					for(var i =0; i<newItems.length; i++){
-						thisMenu.add(newItems[i]);
-					}
-				}, this);
-			}
-		}
-		
-		Sbi.debug('[ExportersMenu.createMenu] : Exporters menu succesfully created');
-		
-		return this.menu;
-	}
 	
 	/**
 	 * @method
@@ -734,11 +713,16 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.Toolbar.MenuButton, {
 	}
 	
 	, exportWorksheetsTo: function (mimeType, records) {
+		
+		Sbi.debug('[ExportersMenu.exportWorksheetsTo] : IN');
+		
+		
 		try {
 			
 			this.fireEvent('showmask','Exporting..');
 			
 			if(!records) {
+				Sbi.debug('[ExportersMenu.exportWorksheetsTo] : Loading records...');
 				
 				var urlForMetadata = this.services['getMetadataService'];
 				urlForMetadata += "&OBJECT_ID=" + this.executionInstance.OBJECT_ID;
@@ -761,13 +745,14 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.Toolbar.MenuButton, {
 			        , url: urlForMetadata
 			    });
 			    metadataStore.on('load', function(store, records, options ) {
+			    	Sbi.debug('[ExportersMenu.exportWorksheetsTo] : Record succefully loaded');
 			    	this.exportWorksheetsTo(mimeType, records);
 		    	}, this);
 			    
 			    metadataStore.load();
 			} else {
 				
-		
+				Sbi.debug('[ExportersMenu.exportWorksheetsTo] : exporting records...');
 				var metadata = [];
 				for(var i = 0; i < records.length; i++) {
 					var record = records[i];
@@ -797,11 +782,14 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.Toolbar.MenuButton, {
 				}
 				
 				documentPanel.exportContent(mimeType, false, metadata, parameters);
+				Sbi.debug('[ExportersMenu.exportWorksheetsTo] : recods exported');
 			}
 		} catch (err) {
 			alert('Sorry, cannot perform operation');
 			throw err;
 		}
+		
+		Sbi.debug('[ExportersMenu.exportWorksheetsTo] : OUT');
 	}
 	
 	, exportKpiTo: function () {
