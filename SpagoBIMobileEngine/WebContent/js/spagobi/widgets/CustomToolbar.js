@@ -9,6 +9,7 @@
 Ext.define('app.views.CustomToolbar', {
 	extend: 'Ext.Toolbar',
 	config: {
+		toolbarConfiguration: {},
         padding: 5,
     	defaults : {
     		ui : 'plain',
@@ -42,7 +43,7 @@ Ext.define('app.views.CustomToolbar', {
     	this.show();
     }
     ,setButtons: function(){
-    	var buttons = Sbi.settings.top.toolbar.buttons;
+    	var buttons = this.toolbarConfiguration.buttons;
     	this.visibleButtons=new Array();
     	var thisPanel = this;
     	for(var i =0; i< buttons.length; i++){
@@ -150,7 +151,7 @@ Ext.define('app.views.CustomToolbar', {
 	}
     
     ,setViewModality: function(modality){
-    	this.updateToolbar(Sbi.settings.top.toolbar[modality]);
+    	this.updateToolbar(this.toolbarConfiguration[modality]);
     	this.modality = modality;
     }
         
@@ -175,6 +176,10 @@ Ext.define('app.views.CustomToolbar', {
         			}
         			j++;
         		}
+    		}
+    		while(j<this.visibleButtons.length){
+    			this.visibleButtons[j].hide();
+    			j++;
     		}
     	}else{//no button to show, so we hide the toolbar
     		this.hide();

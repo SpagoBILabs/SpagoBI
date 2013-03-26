@@ -29,10 +29,12 @@ Ext.define('app.views.Viewport',{
 		
 		app.views.loginView = Ext.create('app.views.LoginView');
 		app.views.parameters = Ext.create("app.views.ParametersView");
-		app.views.customTopToolbar = Ext.create("app.views.CustomToolbar",{ docked: 'top'});
+		app.views.customTopToolbar = Ext.create("app.views.CustomToolbar",{toolbarConfiguration:Sbi.settings.top.toolbar, docked: 'top'});
+		app.views.customBottomToolbar = Ext.create("app.views.CustomToolbar",{toolbarConfiguration:Sbi.settings.bottom.toolbar, docked: 'bottom'});
 		this.add(app.views.loginView);
 		this.add(app.views.parameters);
 		this.add(app.views.customTopToolbar);
+		this.add(app.views.customBottomToolbar);
 		this.addTopToolbarEvents();
 		
 		this.on("activate",function(){
@@ -92,21 +94,25 @@ Ext.define('app.views.Viewport',{
 	
 	,goLogIn: function(){
 		app.views.customTopToolbar.setViewModality("login");
+		app.views.customBottomToolbar.setViewModality("login");
 		this.setActiveItem(app.views.loginView, { type: 'fade' });	
 	}
 	
 	,goExecution: function(){
 		app.views.customTopToolbar.setViewModality("execution");
+		app.views.customBottomToolbar.setViewModality("execution");
 		this.setActiveItem(app.views.execView, { type: 'fade' });	
 	}
 	
 	,goParameters: function(){
-		app.views.customTopToolbar.setViewModality("main");
+		app.views.customTopToolbar.setViewModality("parameters");
+		app.views.customBottomToolbar.setViewModality("parameters");
 		this.setActiveItem(app.views.parameters, { type: 'fade' });	
 	}
 	
 	,goHome: function(){
 		app.views.customTopToolbar.setViewModality("main");
+		app.views.customBottomToolbar.setViewModality("main");
 		this.setActiveItem(app.views.main, { type: 'fade' });	
 	}
 	
