@@ -53,9 +53,9 @@ Ext.define('app.views.ComposedExecutionPanel',{
 					app.controllers.composedExecutionController.executeSubDocument(subDocumentExecutionInstance, this);
 				}
 				///to add a slider configuration property
-//				if(this.resp.slider && this.resp.slider.name){
-//					this.addSlider(items, this.resp.slider);
-//				}
+				if(this.resp.slider && this.resp.slider.name){
+					this.addSlider(this.resp.slider);
+				}
 			}
 			this.on("updatedOneDocument",this.updateOneDocument,this);
 
@@ -80,18 +80,26 @@ Ext.define('app.views.ComposedExecutionPanel',{
 					
 			var height;
 			var width;
-			if(resp.config.height){
+			if(resp.config && resp.config.height){
 				height =resp.config.height;
 			}
-			if(resp.config.width ){
+			if(resp.config && resp.config.width ){
 				width =resp.config.width;
+			}else{
+				width ='45%';
 			}
+
 			var style = panel.getStyle();
 			if(!style){
 				style = "";
 			}
 			style = style+" float: left;";
-			style = style+" width:"+ width+"; height:"+height;
+			style = style+" width:"+ width+"; height:"+height;			
+			
+			//slider
+/*			if(this.resp.slider){
+				style= 'float: left; height: 80%; border:2px solid green;';
+			}*/
 			panel.setStyle(style);
 
 			//if its the first execution the subdocument is added to the composition
@@ -149,9 +157,9 @@ Ext.define('app.views.ComposedExecutionPanel',{
 //			}, panel);
 //			
 //		}
-		, addSlider: function(items, slider){
+		, addSlider: function(slider){
 
-			this.slider = new app.views.Slider({
+			var sliderComp = Ext.create('app.views.Slider',{
 				sliderAttributes: slider
 			});
 			var minLbl = {
@@ -166,9 +174,20 @@ Ext.define('app.views.ComposedExecutionPanel',{
 		            cls: 'sliderLbl',
 		            html: slider.maxValue
 		    };
-			items.push(minLbl);
-			items.push(this.slider);
-			items.push(maxLbl);
+			
+			
+			this.sliderToolbar = new Ext.Toolbar({
+                xtype: 'toolbar',
+                docked: 'bottom',
+                height:30,
+                ui: 'neutral',
+                items : [minLbl, 
+                         sliderComp,
+                         maxLbl]
+            });
+			
+			this.add(this.sliderToolbar);
+
 		}
 		
 });

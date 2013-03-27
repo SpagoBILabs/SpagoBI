@@ -6,71 +6,74 @@
  
   
 Ext.define('app.views.Slider',{
-		extend:'Ext.form.Slider',
-	    ui: 'light',
-	    id: 'mobileSlider',
-	    xtype: 'sliderfield',
-	    style: 'float: left; width:85%;',
-	    increment: 1,
-		mySliderTooltip : new Ext.Panel({
-				floating: true,
-				width: 50,
-				height: 30,
-				styleHtmlContent: true,
-				style: "background-color: #FFF;"
-			}),
-        tipText: function(thumb){
-            return Ext.String.format('<b>{0}% complete</b>', thumb.value);
-        },
-	    listeners: {
-	        change: function(slider, thumb, value, oldvalue) {
-		    	if (value && value!= oldvalue) {
-
-		    		var params = {};
-		    		var name = slider.name;
-		    		params[name]= value;
-		    		var items =[];
-		    		try{
-		    			items = app.views.composed.items.items;
-		    		}catch(err){
-		    			items = this.ownerCt.items.items;
-		    		}
-
-		    		for(i =0; i < items.length; i++){
-		    			var panel = items[i];
-		    			try{
-		    				panel.removeAll();
-		    			}catch(err){
-		    				console.log('no problem...');
-		    			}
-		    			
-		    			var executionInstance = panel.executionInstance;
-		    			if(executionInstance && executionInstance.PARAMETERS){
-		    				app.controllers.composedExecutionController.refreshSubDocument(panel, params);
-		    			}
-
-		    		}
-	            }
-	        }
-			,drag: function (theSlider, theThumb, ThumbValue) {
-
-				theSlider.mySliderTooltip.showBy(theThumb);
-				theSlider.mySliderTooltip.el.setHTML(ThumbValue);
-			},
-			dragend: function (theSlider, theThumb, ThumbValue) {
-				theSlider.mySliderTooltip.hide();
-			},
-			scope: this
+		extend:'Ext.field.Slider',
+		config:{
+		    ui: 'light',
+		    id: 'mobileSlider',
+		    xtype: 'slider',
+		    style: 'float: left; width:80%; height: 30px;',
+		    left:'10%',
+		    fullscreen: true,
+		    increment: 1,
+		    bottom: 0,
+			mySliderTooltip : new Ext.Panel({
+					floating: true,
+					width: 50,
+					height: 30,
+					styleHtmlContent: true,
+					style: "background-color: #FFF;"
+				}),
+	        tipText: function(thumb){
+	            return Ext.String.format('<b>{0}% complete</b>', thumb.value);
+	        },
+		    listeners: {
+		        change: function(slider, thumb, value, oldvalue) {
+			    	if (value && value!= oldvalue) {
+	
+			    		var params = {};
+			    		var name = slider.name;
+			    		params[name]= value;
+			    		var items =[];
+			    		try{
+			    			items = app.views.composed.items.items;
+			    		}catch(err){
+			    			items = this.ownerCt.items.items;
+			    		}
+	
+			    		for(i =0; i < items.length; i++){
+			    			var panel = items[i];
+			    			try{
+			    				panel.removeAll();
+			    			}catch(err){
+			    				console.log('no problem...');
+			    			}
+			    			
+			    			var executionInstance = panel.executionInstance;
+			    			if(executionInstance && executionInstance.PARAMETERS){
+			    				app.controllers.composedExecutionController.refreshSubDocument(panel, params);
+			    			}
+	
+			    		}
+		            }
+		        }
+				,drag: function (theSlider, theThumb, ThumbValue) {
+	
+					theSlider.mySliderTooltip.showBy(theThumb);
+					theSlider.mySliderTooltip.el.setHTML(ThumbValue);
+				},
+				dragend: function (theSlider, theThumb, ThumbValue) {
+					theSlider.mySliderTooltip.hide();
+				},
+				scope: this
+		    }
+		},
+	    constructor: function(config){
+	    	Ext.apply(this,config||{});
+	    	this.callParent(arguments);
 	    },
-	    layout: {
-	        type: 'vbox',
-	        padding: '5',
-	        align: 'bottom'
-	    },
-	    dockedItems: [],
-		initComponent: function ()	{
+	    initialize: function ()	{
 			console.log('init chart slider');
-			var attributes = this.sliderAttributes;
+			var attributes = this.config.sliderAttributes;
 			
 			this.maxValue = parseInt(attributes.maxValue);
 			this.minValue = parseInt(attributes.minValue);
@@ -84,7 +87,7 @@ Ext.define('app.views.Slider',{
 
 			//this.label = attributes.label; //not nice to see...
 			
-			app.views.Slider.superclass.initComponent.apply(this, arguments);
+			this.callParent(arguments);
 			
 		}
 

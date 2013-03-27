@@ -8,9 +8,9 @@
 Ext.define('app.views.TableExecutionPanel',{
 		extend: 'app.views.WidgetPanel',
 		config:{
-			fullscreen:true,
+			//fullscreen:true,
 			scroll: 'vertical'
-//			style:'border: 3px solid red; background-color: #fff;',
+			//,style:'border: 3px solid red; background-color: #fff;',
 			
 			
 		},
@@ -112,8 +112,7 @@ Ext.define('app.views.TableExecutionPanel',{
 				app.views.table = new Ext.ux.touch.grid.List(tbConfig);
 				if(fromcomposition){
 					  this.insert(0, app.views.table);
-					  this.add(app.views.table);
-				      this.doLayout();
+
 				}
 				if(fromCross){
 					var r = new Ext.Panel({
