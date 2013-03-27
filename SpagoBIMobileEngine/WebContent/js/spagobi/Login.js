@@ -72,7 +72,7 @@ Ext.define('app.views.LoginView',{
 	                        xtype: 'toolbar',
 	                        height:30,
 	                        style:'padding : 7px;',
-	                        ui: 'light',
+	                        ui: 'neutral',
 	                        items:[
 	                            {
 	                            	xtype: 'spacer'
