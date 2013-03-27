@@ -17,15 +17,61 @@
         app.controllers.executionController = Ext.create('app.controllers.ExecutionController');
         app.controllers.composedExecutionController = Ext.create('app.controllers.ComposedExecutionController');
         Ext.Viewport.add( app.views.viewport);
-       
-       
+        
+		Ext.Ajax.on('requestexception', function (conn, response, options) {
+			//console.log('----------'+response);
+			var r = response;
+			var content = null;
+			try{
+				content = Ext.util.JSON.decode( response.responseText );
+			}catch(err){
+				console.log('logging out');
+				return;
+			}
+			
+			//console.log('**********'+response.responseText);
+			if (content.errors !== undefined  && content.errors.length > 0) {
+				if (content.errors[0].message === 'session-expired') {
+					
+					localStorage.removeItem('app.views.launched');
+					localStorage.removeItem('app.views.browser');
+					window.location.href = Sbi.env.contextPath;
+				}
+		    }
+		});
+
     },
     mainLaunch: function() {
 
     	
-    	
         console.log('mainLaunch');
         app.views.viewport = Ext.create('app.views.LoginView');
+        
+        
+		//Ext.util.Observable.observeClass(Ext.data.Connection);
+//		// connection handler, if server sends callback of expired session, logout!
+//		Ext.data.Connection.on('requestexception', function (conn, response, options) {
+//			//console.log('----------'+response);
+//			var r = response;
+//			var content = null;
+//			try{
+//				content = Ext.util.JSON.decode( response.responseText );
+//			}catch(err){
+//				console.log('logging out');
+//				return;
+//			}
+//			
+//			//console.log('**********'+response.responseText);
+//			if (content.errors !== undefined  && content.errors.length > 0) {
+//				if (content.errors[0].message === 'session-expired') {
+//					
+//					localStorage.removeItem('app.views.launched');
+//					localStorage.removeItem('app.views.browser');
+//					window.location.href = Sbi.env.contextPath;
+//				}
+//		    }
+//		});
+		
     	//app.views.viewport = Ext.create('app.views.DocumentBrowser');
 //    	Ext.Viewport.add(app.views.viewport);
 //    }
