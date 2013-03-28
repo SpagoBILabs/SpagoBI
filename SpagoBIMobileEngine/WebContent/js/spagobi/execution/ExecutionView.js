@@ -25,20 +25,20 @@ Ext.define('app.views.ExecutionView',{
 
 
 		}
-		, setWidget: function(resp, type, fromCross) {
+		, setWidget: function(resp, type, fromCross, executionInstance) {
 
 			if (type == 'table'){
-				var table = Ext.create("app.views.TableExecutionPanel",{ resp:resp, fromcomposition:false, fromCross:fromCross});
+				var table = Ext.create("app.views.TableExecutionPanel",{ resp:resp, fromcomposition:false, fromCross:fromCross, executionInstance:executionInstance});
 				table.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 				this.widget = table;
 			}
 			if (type == 'chart'){
-				var chart = Ext.create("app.views.ChartExecutionPanel",{fullscreen: true, resp:resp, fromcomposition:false, fromCross:fromCross});
+				var chart = Ext.create("app.views.ChartExecutionPanel",{fullscreen: true, resp:resp, fromcomposition:false, fromCross:fromCross, executionInstance:executionInstance});
 				chart.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 				this.widget = chart;
 			}
 			if (type == 'composed'){
-				var composed = Ext.create("app.views.ComposedExecutionPanel", {resp: resp});
+				var composed = Ext.create("app.views.ComposedExecutionPanel", {resp: resp, executionInstance:executionInstance});
 				this.widget = composed;
 			}
 			this.add(this.widget);
@@ -53,7 +53,10 @@ Ext.define('app.views.ExecutionView',{
 		setExecutionInstance : function (executionInstance) {
 			this.widget.setExecutionInstance(executionInstance);
 		}
-
+		,
+		getExecutionInstance : function () {
+			return this.widget.getExecutionInstance();
+		}
 		,
 		propagateCrossNavigationEvent : function(sourcePanel, params, targetDoc) {
 			
