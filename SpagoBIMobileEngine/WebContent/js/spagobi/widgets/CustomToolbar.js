@@ -65,7 +65,9 @@ Ext.define('app.views.CustomToolbar', {
 	    			text : 'Previous',
 	    			iconCls : 'reply',
 	    			ui: 'plain',
-					autoEvent: 'previous'
+	    			handler: function(){
+						thisPanel.fireEvent("previous",thisPanel, this)
+					}
 	    		});
 	    	}else if(btnKey === 'refresh'){
 	    		button = new Ext.Button( {
@@ -129,6 +131,8 @@ Ext.define('app.views.CustomToolbar', {
 					}
 	    		});
 
+	    	}else if(btnKey === 'navigation'){
+	    		button = this.buildNavigationToolbar();
 	    	}
 	    	if(button){
 	    		button.btnKey = btnKey;
@@ -172,6 +176,55 @@ Ext.define('app.views.CustomToolbar', {
     	}else{//no button to show, so we hide the toolbar
     		this.hide();
     	}
+    },
+    
+    
+    getToolbarButtonByType: function(type){
+    	for(var i=0; i<this.visibleButtons.length; i++){
+    		if(this.visibleButtons[i].btnKey == type){
+    			return this.visibleButtons[i];
+    		}
+    	}
+    	return null;
+    },
+    
+    buildNavigationToolbar: function(){
+    	this.navigationToolbar = Ext.create('Ext.SegmentedButton', {
+            allowMultiple: false,
+            items: []
+    	});
+    	//this.navigationToolbar.documentNames = new Array();
+    	return this.navigationToolbar;
+    },
+    
+    addDocumentToNavigationToolbar: function(text,itemPos){
+    	var thisPanel = this;
+    	if(this.navigationToolbar){
+    		//this.navigationToolbar.documentNames.push(text);
+    		var button = Ext.create('Ext.Button', {
+    		    text: text,
+    		    height: 20,
+				handler: function(){
+					thisPanel.fireEvent("navigationbuttonclicked",thisPanel, itemPos);
+				}
+    		});
+    		
+    		this.navigationToolbar.add(button);
+    		this.navigationToolbar.setPressedButtons([button]);
+    	}
+    },
+    
+    cleanNavigationToolbarFromPosition: function(position){	
+    	if(this.navigationToolbar){
+    		for(var i=position; i<this.navigationToolbar.getItems().items.length; i++ ){
+    			this.navigationToolbar.remove(this.navigationToolbar.getItems().items[i]);
+    		}
+    	//	this.navigationToolbar.documentNames.length = position;
+    	}
     }
+
+
+    
+
 
 });

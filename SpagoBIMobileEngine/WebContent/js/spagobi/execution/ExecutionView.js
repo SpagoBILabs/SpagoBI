@@ -10,7 +10,8 @@ Ext.define('app.views.ExecutionView',{
 			 fullscreen: true,
 			 layout: 'fit',
 			 loadingMaskForExec: null,
-			 title: 'Execution view'
+			 title: 'Execution view',
+			 positionInExecutionContainer: null//position of the view in the list of items in the ExecutionContainerView
 		}
 
 ,

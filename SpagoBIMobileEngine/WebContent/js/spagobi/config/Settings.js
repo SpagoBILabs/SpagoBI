@@ -43,11 +43,16 @@ Sbi.settings.top.toolbar = {
 };
 Sbi.settings.bottom.toolbar = {
 		buttons: [
-		          'html',
-		          'logout'
+		         'html',
+		         
+		         'spacer',
+		         'navigation',
+		         'logout'
 		          ],
 		          execution:[
-		                     'html'
+		                     'html',
+		                     'spacer',
+		                     'navigation'
 		                     ],
 		                     main:[
 		                           'html'

@@ -137,12 +137,7 @@ Ext.define('app.views.DocumentBrowser',{
 			if(this.backbutton){
 				return this.backbutton;
 			}
-			for(var i=0; i<this.containerToolbar.visibleButtons.length; i++){
-				if(this.containerToolbar.visibleButtons[i].btnKey == 'documentbrowser'){
-					this.backbutton = this.containerToolbar.visibleButtons[i];
-					return this.backbutton;
-				}
-			}
+			return this.containerToolbar.getToolbarButtonByType('documentbrowser');
 		}
 		return null;
 	}
