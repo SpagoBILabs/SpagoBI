@@ -96,11 +96,7 @@ Ext.define('app.views.ComposedExecutionPanel',{
 			}
 			style = style+" float: left;";
 			style = style+" width:"+ width+"; height:"+height;			
-			
-			//slider
-/*			if(this.resp.slider){
-				style= 'float: left; height: 80%; border:2px solid green;';
-			}*/
+
 			panel.setStyle(style);
 
 			//if its the first execution the subdocument is added to the composition
@@ -167,13 +163,11 @@ Ext.define('app.views.ComposedExecutionPanel',{
 			var minLbl = {
 	            xtype: 'label',
 	            style: 'width: 7%;color: blue;text-align: right;',
-	          //  cls: 'sliderLbl',
 	            html: slider.minValue
 	        };
 			var maxLbl = {
 		            xtype: 'label',
 		           style: 'width: 7%;color: blue;',
-		          //  cls: 'sliderLbl',
 		            html: slider.maxValue
 		    };
 			
