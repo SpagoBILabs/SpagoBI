@@ -161,7 +161,8 @@ Ext.define('app.views.ComposedExecutionPanel',{
 		, addSlider: function(slider){
 
 			var sliderComp = Ext.create('app.views.Slider',{
-				sliderAttributes: slider
+				sliderAttributes: slider,
+				composedDoc: this
 			});
 			var minLbl = {
 	            xtype: 'label',

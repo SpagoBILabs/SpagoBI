@@ -18,6 +18,27 @@
         app.controllers.composedExecutionController = Ext.create('app.controllers.ComposedExecutionController');
         Ext.Viewport.add( app.views.viewport);
         
+        
+    	// Retrieve the object from storage for f5 (stay logged)
+    	var appViewsLaunched = localStorage.getItem('app.views.launched');
+    	var loadedBrowser = localStorage.getItem('app.views.browser');
+    	
+    	if(appViewsLaunched !== undefined &&
+    			appViewsLaunched != null &&
+    			appViewsLaunched == 'true' &&
+    			loadedBrowser != undefined &&
+    			loadedBrowser != null &&
+    			loadedBrowser == 'true'
+    			){
+    		
+    		//app.views.viewport.goHome();
+    		app.controllers.mobileController.login();
+			// refresh page
+			if(app.views.form != undefined && app.views.form != null){
+				app.views.form.hide();
+			}
+    	}
+        
 		Ext.Ajax.on('requestexception', function (conn, response, options) {
 			//console.log('----------'+response);
 			var r = response;
