@@ -31,8 +31,10 @@ Ext.define('app.views.Viewport',{
 		app.views.parameters = Ext.create("app.views.ParametersView");
 		app.views.customTopToolbar = Ext.create("app.views.CustomToolbar",{toolbarConfiguration:Sbi.settings.top.toolbar, docked: 'top'});
 		app.views.customBottomToolbar = Ext.create("app.views.CustomToolbar",{toolbarConfiguration:Sbi.settings.bottom.toolbar, docked: 'bottom'});
+		app.views.executionContainer = Ext.create("app.views.ExecutionContainerView",{containerToolbars: [app.views.customTopToolbar,app.views.customBottomToolbar]});
 		this.add(app.views.loginView);
 		this.add(app.views.parameters);
+		this.add(app.views.executionContainer);
 		this.add(app.views.customTopToolbar);
 		this.add(app.views.customBottomToolbar);
 		this.addToolbarEvents(app.views.customTopToolbar);
@@ -102,7 +104,7 @@ Ext.define('app.views.Viewport',{
 	,goExecution: function(){
 		app.views.customTopToolbar.setViewModality("execution");
 		app.views.customBottomToolbar.setViewModality("execution");
-		this.setActiveItem(app.views.execView, { type: 'fade' });	
+		this.setActiveItem(app.views.executionContainer, { type: 'fade' });	
 	}
 	
 	,goParameters: function(){
@@ -127,8 +129,8 @@ Ext.define('app.views.Viewport',{
 			this.goParameters();
 		},this);
 		aToolbar.on("refreshDoc",function(toolbar){
-			if(app.views.execView && app.views.execView.getExecutionInstance()){
-				app.controllers.executionController.executeTemplate( { executionInstance: app.views.execView.getExecutionInstance()});				
+			if(app.views.executionContainer && app.views.executionContainer.getActiveExecutionInstance()){
+				app.controllers.executionController.executeTemplate( { executionInstance: app.views.executionContainer.getActiveExecutionInstance()});				
 			}
 		},this);
 		aToolbar.on("gohome",function(toolbar){
@@ -137,6 +139,16 @@ Ext.define('app.views.Viewport',{
 		aToolbar.on("logout",function(toolbar){
 			app.controllers.mobileController.logout();
 		},this);
+		aToolbar.on("logout",function(toolbar){
+			app.controllers.mobileController.logout();
+		},this);
+		aToolbar.on("previous",function(toolbar){
+			app.views.executionContainer.goToPreviousExecutions();
+		},this);
+		aToolbar.on("navigationbuttonclicked",function(toolbar, selectedItemPos){
+			app.views.executionContainer.changeActiveDocument(selectedItemPos);
+		},this);
+
 	}
 	
 

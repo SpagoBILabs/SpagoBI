@@ -150,7 +150,7 @@ Ext.define('app.controllers.MobileController',{
   	}
 
 	, backToParametersView: function(option){
-		this.destroyExecutionView();
+		//this.destroyExecutionView();
 		//app.views.execView.clearNavigation();
 		app.views.viewport.goParameters();
   	}
@@ -158,8 +158,8 @@ Ext.define('app.controllers.MobileController',{
 
 	//Destroy the execution panel
 	, destroyExecutionView: function(){
-		if(app.views.execView){
-			app.views.execView.removeAll(true);
+		if(app.views.executionContainer){
+			app.views.executionContainer.clearExecutions(true);
 		}
 	}
 	

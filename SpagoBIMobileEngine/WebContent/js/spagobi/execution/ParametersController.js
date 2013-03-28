@@ -62,7 +62,7 @@ Ext.define('app.controllers.ParametersController',{
 						if(isFromCross){
 
 							var parameters = this.onParametersForExecutionLoaded(executionInstance,responseJson);
-							app.controllers.mobileController.destroyExecutionView();
+							//app.controllers.mobileController.destroyExecutionView();
 							var paramsToBeFilled = parameters.slice(0);
 							var paramsFromCrossFilled= this.fillParametersFromCross(parameters, paramsFromCross, paramsToBeFilled);
 							if(paramsToBeFilled.length == paramsFromCrossFilled.length){

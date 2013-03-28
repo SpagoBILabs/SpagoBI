@@ -128,28 +128,36 @@ Ext.define('app.controllers.ExecutionController',{
 		}
 	}
 
-	, simpleNavigationManagement: function(resp, type, executionInstance){
-		app.controllers.mobileController.destroyExecutionView();
-		if(app.views.execView == undefined || app.views.execView == null){
-			//app.views.execView = Ext.create("app.views.ExecutionView",{parameters: executionInstance.PARAMETERS});
-			app.views.execView = Ext.create("app.views.ExecutionView");
-		}
-	    var viewport = app.views.viewport;	    
-	    viewport.add(app.views.execView);	
-//	    app.views.execView.showBottomToolbar();
-	    app.views.execView.setWidget(resp, type, false, executionInstance);
-//		app.views.execView.bottomTools.setBreadCrumb(executionInstance.OBJECT_LABEL, 
-//				executionInstance.OBJECT_ID,
-//				executionInstance.TYPE_CODE,
-//				executionInstance.PARAMETERS);
-	    		app.views.viewport.goExecution();
-	}
+//	, simpleNavigationManagement: function(resp, type, executionInstance){
+//		
+//		app.views.executionContainer.clearExecutions();
+//		app.views.executionContainer.addExecution(resp, type, false, executionInstance);
+//		app.controllers.mobileController.destroyExecutionView();
+//		if(app.views.execView == undefined || app.views.execView == null){
+//			//app.views.execView = Ext.create("app.views.ExecutionView",{parameters: executionInstance.PARAMETERS});
+//			app.views.execView = Ext.create("app.views.ExecutionView");
+//		}
+//		app.views.execView.setWidget(resp, type, false, executionInstance);
+//	    var viewport = app.views.viewport;	    
+//	    viewport.add(app.views.execView);	
+////	    app.views.execView.showBottomToolbar();
+//	    app.views.execView.setWidget(resp, type, false, executionInstance);
+////		app.views.execView.bottomTools.setBreadCrumb(executionInstance.OBJECT_LABEL, 
+////				executionInstance.OBJECT_ID,
+////				executionInstance.TYPE_CODE,
+////				executionInstance.PARAMETERS);
+//	    		app.views.viewport.goExecution();
+//	}
 
 	, createWidgetExecution: function(resp, type, documentContainerPanel, executionInstance, composedComponentOptions){
 
 		if (documentContainerPanel == undefined || documentContainerPanel == null) {
-
-			this.simpleNavigationManagement(resp, type, executionInstance);
+			if(!executionInstance.isFromCross){
+				app.views.executionContainer.clearExecutions();
+			}
+			app.views.executionContainer.addExecution(resp, type, executionInstance.isFromCross, executionInstance);
+			app.views.viewport.goExecution();
+//			this.simpleNavigationManagement(resp, type, executionInstance);
 			//app.views.execView.setExecutionInstance(executionInstance);
 		} else {
 			documentContainerPanel.addWidgetComposed(resp, type, composedComponentOptions);
