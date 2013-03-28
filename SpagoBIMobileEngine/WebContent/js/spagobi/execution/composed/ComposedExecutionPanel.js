@@ -164,15 +164,15 @@ Ext.define('app.views.ComposedExecutionPanel',{
 				sliderAttributes: slider
 			});
 			var minLbl = {
-	            xtype: 'component',
-	            style: 'float: left; width: 7%',
-	            cls: 'sliderLbl',
+	            xtype: 'label',
+	            style: 'width: 7%;color: blue;text-align: right;',
+	          //  cls: 'sliderLbl',
 	            html: slider.minValue
 	        };
 			var maxLbl = {
-		            xtype: 'component',
-		            style: 'float: left; width: 7%',
-		            cls: 'sliderLbl',
+		            xtype: 'label',
+		           style: 'width: 7%;color: blue;',
+		          //  cls: 'sliderLbl',
 		            html: slider.maxValue
 		    };
 			
@@ -184,6 +184,7 @@ Ext.define('app.views.ComposedExecutionPanel',{
                 ui: 'neutral',
                 items : [minLbl, 
                          sliderComp,
+                         {xtype:"spacer"},
                          maxLbl]
             });
 			
