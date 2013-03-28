@@ -9,7 +9,8 @@ Ext.define('app.views.TableExecutionPanel',{
 		extend: 'app.views.WidgetPanel',
 		config:{
 			//fullscreen:true,
-			scroll: 'vertical'
+			scroll: 'vertical',
+			executionInstance: null,
 			//,style:'border: 3px solid red; background-color: #fff;',
 			
 			

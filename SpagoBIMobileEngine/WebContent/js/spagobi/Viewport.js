@@ -35,7 +35,8 @@ Ext.define('app.views.Viewport',{
 		this.add(app.views.parameters);
 		this.add(app.views.customTopToolbar);
 		this.add(app.views.customBottomToolbar);
-		this.addTopToolbarEvents();
+		this.addToolbarEvents(app.views.customTopToolbar);
+		this.addToolbarEvents(app.views.customBottomToolbar);
 		
 		this.on("activate",function(){
 			app.views.customTopToolbar.setViewModality("login");
@@ -116,13 +117,33 @@ Ext.define('app.views.Viewport',{
 		this.setActiveItem(app.views.main, { type: 'fade' });	
 	}
 	
-	,addTopToolbarEvents: function(){
-		app.views.customTopToolbar.on("documentbrowserback",function(toolbar){
+	,addToolbarEvents: function(aToolbar){
+		aToolbar.on("documentbrowserback",function(toolbar){
 			if(toolbar.modality=="main"){
 				app.views.main.documentBrowserBack();
 			}
 		},this);
+		aToolbar.on("gotoparameters",function(toolbar){
+			this.goParameters();
+		},this);
+		aToolbar.on("refreshDoc",function(toolbar){
+			if(app.views.execView && app.views.execView.getExecutionInstance()){
+				app.controllers.executionController.executeTemplate( { executionInstance: app.views.execView.getExecutionInstance()});				
+			}
+		},this);
+		aToolbar.on("gohome",function(toolbar){
+			app.controllers.mobileController.backToBrowser();
+		},this);
+		aToolbar.on("logout",function(toolbar){
+			app.controllers.mobileController.logout();
+		},this);
 	}
+	
+
+    
+   
+    	
+
 	
     
 });

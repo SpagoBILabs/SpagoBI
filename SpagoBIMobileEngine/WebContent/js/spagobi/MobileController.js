@@ -17,7 +17,7 @@ Ext.define('app.controllers.MobileController',{
 	},
 	
 	constructor: function(){
-		console.log("sss");
+		console.log("Mobile controller");
 		this.services =new Array();
 		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
 		
@@ -135,6 +135,7 @@ Ext.define('app.controllers.MobileController',{
 
 	, backToBrowser: function(opt){
 		this.destroyExecutionView();
+		console.log("Go Home");
 		
 		//DA RIVEDERE QUANDO REINTRODURREMO LA BREADCRUMB...
 /*		try{
@@ -142,7 +143,9 @@ Ext.define('app.controllers.MobileController',{
 		}catch(error){
 			app.views.execution.bottomTools.clearNavigation();
 		}*/
+		app.views.browser.goToRoot();	
 		app.views.viewport.goHome();	
+		
 //		app.views.viewport.doLayout();
   	}
 
@@ -158,5 +161,25 @@ Ext.define('app.controllers.MobileController',{
 		if(app.views.execView){
 			app.views.execView.removeAll(true);
 		}
+	}
+	
+    , logout : function () {
+		var func = function(answer) {
+	        if (answer === "yes") {
+	        	Ext.Ajax.request({
+                     url : Sbi.env.invalidateSessionURL
+                     , method : 'POST'
+                     , success : function(response, opts) {
+                    	 // refresh page
+                    	 localStorage.removeItem('app.views.launched');
+                    	 localStorage.removeItem('app.views.browser');
+                    	 window.location.href = Sbi.env.contextPath;
+                     }
+                     , failure : Sbi.exception.ExceptionHandler.handleFailure
+                     , scope : this
+                });
+	        }
+		};
+		Sbi.exception.ExceptionHandler.showConfirmMessage(null, 'Are you sure you want to logout?', func);
 	}
 });

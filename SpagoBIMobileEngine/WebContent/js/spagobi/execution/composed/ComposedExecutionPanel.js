@@ -9,6 +9,7 @@
 Ext.define('app.views.ComposedExecutionPanel',{
 		extend: 'app.views.WidgetPanel',
 		config:{
+			executionInstance: null,
 			scroll: 'vertical',
 		    fullscreen: true,
 			subdocuments: [],

@@ -56,7 +56,9 @@ Ext.define('app.views.CustomToolbar', {
 						text : 'Home',
 						ui: 'plain',
 						iconMask: true,
-						handler: this.goHome
+						handler: function(){
+							thisPanel.fireEvent("gohome",thisPanel, this);
+						}
 						});
 	    	}else if(btnKey === 'prec'){
 	    		button = new Ext.Button( {
@@ -70,7 +72,9 @@ Ext.define('app.views.CustomToolbar', {
 	    			text : 'Refresh',
 	    			iconCls : 'refresh',
 	    			ui: 'plain',
-	    			autoEvent: 'refresh'
+	    			handler: function(){
+						thisPanel.fireEvent("refreshDoc",thisPanel, this);
+					}
 		    		});
 	    	}else if(btnKey === 'params'){
 	    		button = new Ext.Button( {
@@ -78,7 +82,9 @@ Ext.define('app.views.CustomToolbar', {
 						iconCls : 'compose',
 						text : 'Parameters',
 						ui: 'plain',
-						autoEvent: 'params'
+						handler: function(){
+							thisPanel.fireEvent("gotoparameters",thisPanel, this);
+						}
 						});
 	    	}else if(btnKey === 'html'){
 	    		button = new Ext.Button( {
@@ -118,7 +124,9 @@ Ext.define('app.views.CustomToolbar', {
 	    			iconCls : 'logout',
 	    			text : 'Logout',
 	    			ui: 'round',
-	    			handler: this.logout
+	    			handler: function(){
+						thisPanel.fireEvent("logout",thisPanel, this);
+					}
 	    		});
 
 	    	}
@@ -129,26 +137,6 @@ Ext.define('app.views.CustomToolbar', {
 	    	}
     	}
     }
-    ,
-	logout : function () {
-		var func = function(answer) {
-	        if (answer === "yes") {
-	        	Ext.Ajax.request({
-                     url : Sbi.env.invalidateSessionURL
-                     , method : 'POST'
-                     , success : function(response, opts) {
-                    	 // refresh page
-                    	 localStorage.removeItem('app.views.launched');
-                    	 localStorage.removeItem('app.views.browser');
-                    	 window.location.href = Sbi.env.contextPath;
-                     }
-                     , failure : Sbi.exception.ExceptionHandler.handleFailure
-                     , scope : this
-                });
-	        }
-		};
-		Sbi.exception.ExceptionHandler.showConfirmMessage(null, 'Are you sure you want to logout?', func);
-	}
     
     ,setViewModality: function(modality){
     	this.updateToolbar(this.toolbarConfiguration[modality]);
@@ -185,9 +173,5 @@ Ext.define('app.views.CustomToolbar', {
     		this.hide();
     	}
     }
-    
-    , goHome: function(){
-    	console.log('go home');
-    	app.controllers.mobileController.backToBrowser();
-    }
+
 });
