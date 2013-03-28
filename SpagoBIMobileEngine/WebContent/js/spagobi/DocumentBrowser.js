@@ -108,6 +108,11 @@ Ext.define('app.views.DocumentBrowser',{
 
 	}
 	
+	,goToRoot:function(){
+		var node = this.findRootNode(this);
+		this.goToNode(node);
+	}
+	
 	,findAncestralNode: function (theNestedList,levelsUp){
 	    levelsUp = typeof levelsUp !== 'undefined' ? levelsUp : -1;
 	    var levelsSoFar = 0;
@@ -115,6 +120,14 @@ Ext.define('app.views.DocumentBrowser',{
 	    while( curNode.parentNode !== null && levelsSoFar != levelsUp){
 	        curNode = curNode.parentNode;
 	        levelsSoFar++;
+	    }
+	    return curNode;
+	}
+	
+	,findRootNode: function (theNestedList){
+	    var curNode = theNestedList._lastNode;
+	    while( curNode.parentNode !== null){
+	        curNode = curNode.parentNode;
 	    }
 	    return curNode;
 	}
