@@ -156,7 +156,7 @@ Ext.define('app.views.ComposedExecutionPanel',{
 			if(this.getSubDocumentsToUpdateNumber()==0){				
 				this.removeAll();
 				for(var i=0; i<this.getSubDocumentNumber();i++){
-					this.add(this.getSubDocumentsToUpdate()[i]);//add them to the composition
+					this.insert(position, this.getSubDocumentsToUpdate()[i]);//add them to the composition
 				}
 			}
 		}

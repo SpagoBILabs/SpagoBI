@@ -125,8 +125,7 @@ Ext.define('app.views.TableExecutionPanel',{
 					r.add(app.views.table);
 					
 					this.insert(0, r);
-					r.doLayout();
-					this.doLayout();
+
 				}
 				if(this.IS_FROM_COMPOSED){
 					this.loadingMask.hide();

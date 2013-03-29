@@ -202,12 +202,12 @@ Ext.define('app.controllers.ParametersController',{
 			}, this);
 		} else { 
 			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
-				field = Ext.create("Ext.form.DatePicker",baseConfig);
+				field = Ext.create("Ext.field.DatePicker",baseConfig);
 	
 			} else if(p.type === 'NUMBER') {
-				field =  Ext.create("Ext.form.Number",baseConfig);
+				field =  Ext.create("Ext.field.Number",baseConfig);
 			} else {	
-				field =  Ext.create("Ext.form.Text",baseConfig);
+				field =  Ext.create("Ext.field.Text",baseConfig);
 				
 			}			
 		}	
