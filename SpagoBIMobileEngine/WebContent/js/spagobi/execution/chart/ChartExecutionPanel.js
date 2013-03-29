@@ -110,7 +110,7 @@ Ext.define('app.views.ChartExecutionPanel',{
 						config.colors.from,
 						config.colors.to,
 						config.colors.number);
-			}if(config.colors.functionName=="getGradientColorsHSL"){
+			}if(config.colors.functionName=="getBaseColors"){
 				config.colors = Ext.ux.ColorPatterns.getBaseColors.call(
 						this,
 						config.colors.index);
