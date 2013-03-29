@@ -13,6 +13,8 @@
 
 <!-- script type="text/javascript" src="../js/sencha/sencha-touch-debug.js"></script-->
 <script type="text/javascript" src="../js/sencha/sencha-touch-all-debug.js"></script>
+<script type="text/javascript" src="../js/sencha/override-sencha-2.1.1.js"></script>
+
 <script type="text/javascript" src="../js/add2home/add2home.js"></script>
 
 <!-- script type="text/javascript" src="../js/sencha/Ext.ux.TouchGridPanel.js"></script-->
@@ -28,5 +30,5 @@
 <script type="text/javascript" src="../js/sencha/Ext.ux.touch.PagingToolbar.js"></script>
 <script type="text/javascript" src="../js/sencha/Ext.ux.touch.CustomSelectField.js"></script>
 
-
+<script type="text/javascript" src="../js/sencha/ux/touch/graphics/ColorPatterns.js"></script>
 

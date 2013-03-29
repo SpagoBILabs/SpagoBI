@@ -216,7 +216,7 @@ Ext.define('app.views.CustomToolbar', {
     
     cleanNavigationToolbarFromPosition: function(position){	
     	if(this.navigationToolbar){
-    		for(var i=position; i<this.navigationToolbar.getItems().items.length; i++ ){
+    		for(var i=this.navigationToolbar.getItems().items.length-1; i>=position; i-- ){
     			this.navigationToolbar.remove(this.navigationToolbar.getItems().items[i]);
     		}
     	//	this.navigationToolbar.documentNames.length = position;

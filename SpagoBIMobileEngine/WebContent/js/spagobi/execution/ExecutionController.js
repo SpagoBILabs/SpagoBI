@@ -63,7 +63,7 @@ Ext.define('app.controllers.ExecutionController',{
 			} 
 	    });
 	}
-	, executeTemplate: function(option, documentContainerPanel){
+	, executeTemplate: function(option, documentContainerPanel,refresh){
 
 		var executionInstance = option.executionInstance;
 		var typeCode =  executionInstance.TYPE_CODE;
@@ -83,7 +83,7 @@ Ext.define('app.controllers.ExecutionController',{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createWidgetExecution(resp, 'table', documentContainerPanel, executionInstance, option);
+		        		this.createWidgetExecution(resp, 'table', documentContainerPanel, executionInstance, option,refresh);
 		        	}
 		        }
 				,failure: function(response, options) {
@@ -100,7 +100,7 @@ Ext.define('app.controllers.ExecutionController',{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createWidgetExecution(resp, 'chart', documentContainerPanel, executionInstance, option);
+		        		this.createWidgetExecution(resp, 'chart', documentContainerPanel, executionInstance, option,refresh);
 		        	}
 		        }
 				,failure: function(response, options) {
@@ -118,7 +118,7 @@ Ext.define('app.controllers.ExecutionController',{
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
 		        		resp.executionInstance = params;
-		        		this.createWidgetExecution(resp,  'composed', null, executionInstance, option);
+		        		this.createWidgetExecution(resp,  'composed', null, executionInstance, option, refresh);
 		        	}
 		        }
 				,failure: function(response, options) {
@@ -149,13 +149,13 @@ Ext.define('app.controllers.ExecutionController',{
 //	    		app.views.viewport.goExecution();
 //	}
 
-	, createWidgetExecution: function(resp, type, documentContainerPanel, executionInstance, composedComponentOptions){
+	, createWidgetExecution: function(resp, type, documentContainerPanel, executionInstance, composedComponentOptions,refresh){
 
 		if (documentContainerPanel == undefined || documentContainerPanel == null) {
-			if(!executionInstance.isFromCross){
+			if(!executionInstance.isFromCross && !refresh){
 				app.views.executionContainer.clearExecutions();
 			}
-			app.views.executionContainer.addExecution(resp, type, executionInstance.isFromCross, executionInstance);
+			app.views.executionContainer.addExecution(resp, type, executionInstance.isFromCross, executionInstance,refresh);
 			app.views.viewport.goExecution();
 //			this.simpleNavigationManagement(resp, type, executionInstance);
 			//app.views.execView.setExecutionInstance(executionInstance);

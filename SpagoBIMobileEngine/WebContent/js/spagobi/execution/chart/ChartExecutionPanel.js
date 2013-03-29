@@ -76,8 +76,10 @@ Ext.define('app.views.ChartExecutionPanel',{
 		if(config.options !== undefined && config.options !== null && config.options.showValueTip){
 			this.addValueTip(config);
 		}
-
+		
 		var chartConfig = Ext.apply({},config);
+		
+		this.manageColors(chartConfig);
 
 		if (fromcomposition) {
 
@@ -97,6 +99,19 @@ Ext.define('app.views.ChartExecutionPanel',{
 
 		return chartConfig;
 
+	}
+	
+	, manageColors: function(config){
+		if(config.colors){
+			if(config.colors.functionName=="getGradientColorsHSL"){
+				config.colors = Ext.ux.ColorPatterns.getGradientColorsHSL.call(
+						this,
+						Ext.ux.ColorPatterns.getBaseColors(config.colors.basecolor),
+						config.colors.from,
+						config.colors.to,
+						config.colors.number);
+			}
+		}
 	}
 
 	, addValueTip: function(config){
