@@ -9,7 +9,7 @@ Ext.define('app.views.ExecutionContainerView',{
 		config:{
 			 fullscreen: true,
 			 layout: 'card',
-
+			
 			 title: 'Execution Container View'
 		},
 		
@@ -39,28 +39,50 @@ Ext.define('app.views.ExecutionContainerView',{
 	        });     
 		},
 		
-		addExecution: function(resp, type, fromCross, executionInstance){
+		/**
+		 * removes the documents on the right of the pivot document (usually the active one)
+		 * @documentPos documentPos: position o the pivot document
+		 * @param offset: a offset.. If -1 it removes also the pivot document
+		 */
+		removeDocumentsOnTheRight: function(documentPos, offset){
+			if(!offset){
+				offset = 0;
+			}
+			var positionOfActive = documentPos+offset;
+			for(var i=positionOfActive+1; i<this.executedDocuments; i++){
+				this.remove(this.executedDocumentsList[i]);
+				var p = this.executedDocumentsList.pop();
+				p.destroy();
+			}
+			this.executedDocuments = positionOfActive+1;
+			//remove the old tab in the bread crumb
+			if(this.containerToolbars){
+				var toolbar;
+				
+				for(var i=0; i<this.containerToolbars.length; i++){
+					toolbar = this.containerToolbars[i];
+					toolbar.cleanNavigationToolbarFromPosition(this.executedDocuments);
+				}
+			}
+			
+		},
+		
+		addExecution: function(resp, type, fromCross, executionInstance,refresh){
 			//if we are in a cross navigation, we should remove all the next documents..
 			//Suppose we have this breadcrumbs (A,B,C,D) and the active document is  B
 			//if the user execute the cross navigation from B to C, we should delete the
 			//execution view for C and D because the parameters of C and D are changed
-			if(fromCross){
+			//The same thing happens if you click on refresh.. But
+			//with refresh you should delete also the current active item
+			if(this.getActiveItem()!=0){
 				var positionOfActive = this.getActiveItem().getPositionInExecutionContainer();
-				for(var i=positionOfActive+1; i<this.executedDocuments; i++){
-					this.remove(this.executedDocumentsList[i]);
-				}
-				this.executedDocuments = positionOfActive+1;
-				
-				//remove the old tab in the bread crumb
-				if(this.containerToolbars){
-					var toolbar;
-					
-					for(var i=0; i<this.containerToolbars.length; i++){
-						toolbar = this.containerToolbars[i];
-						toolbar.cleanNavigationToolbarFromPosition(this.executedDocuments);
-					}
+				if(refresh){
+					this.removeDocumentsOnTheRight(positionOfActive,-1);//we should remove also the active document
+				}else if(fromCross){
+					this.removeDocumentsOnTheRight(positionOfActive);
 				}
 			}
+
 			var newExecution = Ext.create("app.views.ExecutionView", {positionInExecutionContainer: this.executedDocuments});
 			newExecution.setWidget(resp, type, fromCross, executionInstance);
 			this.add(newExecution);
@@ -83,6 +105,12 @@ Ext.define('app.views.ExecutionContainerView',{
 		clearExecutions: function(){
 			this.executedDocuments = 0;
 			this.executedDocumentsList = new Array();
+			if(this.containerToolbars){
+				for(var i=0; i<this.containerToolbars.length; i++){
+					this.containerToolbars[i].cleanNavigationToolbarFromPosition(0);
+				}
+			}
+			
 			this.removeAll();
 		},
 		
@@ -96,14 +124,20 @@ Ext.define('app.views.ExecutionContainerView',{
 		
 //		DA FARE: AGGIORNARE LA TOOLBAR DI NAVIGAZIONE
 		goToPreviousExecutions: function(){
-			var position = this.getActiveItem().getPositionInExecutionContainer();
+			var positionOfActive = this.getActiveItem().getPositionInExecutionContainer();
 			if(position>0){
+				this.removeDocumentsOnTheRight(positionOfActive,-1);
 				this.setActiveItem(this.executedDocumentsList[position-1]);
-				for(var i=position; i<this.executedDocuments; i++){
-					this.remove(this.executedDocumentsList[i]);
-				}
-				this.executedDocuments = position;
 			}
+			
+//			var position = this.getActiveItem().getPositionInExecutionContainer();
+//			if(position>0){
+//				this.setActiveItem(this.executedDocumentsList[position-1]);
+//				for(var i=position; i<this.executedDocuments; i++){
+//					this.remove(this.executedDocumentsList[i]);
+//				}
+//				this.executedDocuments = position;
+//			}
 		},
 //		
 		changeActiveDocument:function(documentPosition){
@@ -120,6 +154,13 @@ Ext.define('app.views.ExecutionContainerView',{
 				return activeItem.getExecutionInstance();
 			}	
 			return null;
+		}
+		
+		,refresh: function(){
+			if(app.views.executionContainer && app.views.executionContainer.getActiveExecutionInstance()){
+				var active = app.views.executionContainer.getActiveExecutionInstance();
+				app.controllers.executionController.executeTemplate( { executionInstance: active}, null, true);				
+			}
 		}
 		,showLoadingMask : function(panel){
 			this.loadingMask = new Ext.LoadMask(panel.id, {msg:"Loading..."});					

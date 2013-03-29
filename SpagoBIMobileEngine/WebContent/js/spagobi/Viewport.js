@@ -109,15 +109,10 @@ Ext.define('app.views.Viewport',{
 			this.goParameters();
 		},this);
 		aToolbar.on("refreshDoc",function(toolbar){
-			if(app.views.executionContainer && app.views.executionContainer.getActiveExecutionInstance()){
-				app.controllers.executionController.executeTemplate( { executionInstance: app.views.executionContainer.getActiveExecutionInstance()});				
-			}
+			app.views.executionContainer.refresh();
 		},this);
 		aToolbar.on("gohome",function(toolbar){
 			app.controllers.mobileController.backToBrowser();
-		},this);
-		aToolbar.on("logout",function(toolbar){
-			app.controllers.mobileController.logout();
 		},this);
 		aToolbar.on("logout",function(toolbar){
 			app.controllers.mobileController.logout();
