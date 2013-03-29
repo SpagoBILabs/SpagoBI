@@ -16,26 +16,28 @@ Ext.ns("Sbi.settings.toolbar.html");
 Sbi.settings.top.toolbar = {
 		buttons: ['documentbrowser',
 		          'back',
-		          'home', 		          
+		          'home', 	
+		          'html_telecom_img',    
 		          'prec',
 		          'params',
 		          'spacer',
 		          'refresh',
 		          'spacer',
-		          'html',
+		          'html_telecom',
 		          'logout'
 		          ],
-		          execution:['home', 		          
+		          execution:['home',
+		                     'html_telecom_img',
 		                     'prec',
 		                     'params',
 		                     'refresh',
 		                     'spacer',
-		                     'html',
+		                     'html_telecom',
 		                     'logout'
 		                     ],
 		                     main:['documentbrowser',
 		                           'spacer',
-		                           'html',
+		                           'html_telecom',
 		                           'logout'
 		                           ],
 		                           login:[],
@@ -44,18 +46,18 @@ Sbi.settings.top.toolbar = {
 };
 Sbi.settings.bottom.toolbar = {
 		buttons: [
-		         'html',
+		         'html_telecom_img',
 		         'spacer',
 		         'navigation',
 		         'logout'
 		          ],
 		          execution:[
-		                     'html',
+		                     'html_telecom_img',
 		                     'spacer',
 		                     'navigation'
 		                     ],
 		                     main:[
-		                           'html',
+		                           'html_telecom_img',
 		                           'spacer'
 		                           ],
 		                           login:[],
@@ -65,5 +67,6 @@ Sbi.settings.bottom.toolbar = {
 
 Sbi.settings.toolbar.html ={
 		//code: '<div style="color: violet; border: 1px solid red; background-color: #fff;">Questo &egrave; un html di esempio</div>'
-		code: '<img height="33" src="../img/custom/top.png" alt="Telecom Mobile" />'
+		telecom_img: '<img height="33" src="../img/custom/top.png" alt="Telecom Mobile" />',
+		telecom: 'SpagoBI Mobile'
 }
