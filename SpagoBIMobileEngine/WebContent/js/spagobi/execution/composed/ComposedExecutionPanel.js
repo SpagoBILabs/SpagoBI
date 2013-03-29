@@ -68,8 +68,8 @@ Ext.define('app.views.ComposedExecutionPanel',{
 			var thisPanel = this;
 			
 			//Builds teh subdocument panel
-			resp.config = Ext.apply(resp.config,{IS_FROM_COMPOSED: true});
-			resp.config = Ext.apply(resp.config,composedComponentOptions.executionInstance||{});
+			resp.config = Ext.apply(resp.config||{},{IS_FROM_COMPOSED: true});
+			resp.config = Ext.apply(resp.config||{},composedComponentOptions.executionInstance||{});
 			
 			if (type == "chart") {
 				panel = Ext.create("app.views.ChartExecutionPanel",{resp: resp, fromcomposition: true, executionInstance: composedComponentOptions.executionInstance, parentDocument:this});
@@ -156,7 +156,7 @@ Ext.define('app.views.ComposedExecutionPanel',{
 			if(this.getSubDocumentsToUpdateNumber()==0){				
 				this.removeAll();
 				for(var i=0; i<this.getSubDocumentNumber();i++){
-					this.insert(position, this.getSubDocumentsToUpdate()[i]);//add them to the composition
+					this.insert(i, this.getSubDocumentsToUpdate()[i]);//add them to the composition
 				}
 			}
 		}
