@@ -16,6 +16,7 @@ Ext.define('app.views.Slider',{
 		    fullscreen: true,
 		    increment: 1,
 		    bottom: 0,
+		    tooltip: null,
 		    listeners: {
 		        change: function( me, sl, thumb, newValue, oldValue, eOpts) {
 			    	if (newValue && newValue!= oldValue) {
@@ -24,28 +25,35 @@ Ext.define('app.views.Slider',{
 			    		var name = me.getName();
 			    		params.name= name;
 			    		params.value = newValue;
-			    		var subdocs =this.composedDoc.getSubdocuments();
-	
-//			    		for(i =0; i < subdocs.length; i++){
-//			    			var panel = subdocs[i];
-//			    			
-//			    			var executionInstance = panel.executionInstance;
-//			    			if(executionInstance && executionInstance.PARAMETERS){
-			    				this.composedDoc.propagateCrossNavigationEventForSlider([params]);
-			    				//app.controllers.composedExecutionController.refreshSubDocument(panel, this.composedDoc, params);
-//			    			}
-//	
-//			    		}
+
+			    		this.composedDoc.propagateCrossNavigationEventForSlider([params]);
+
 		            }
 		        }
+
+				, dragend: function( me, sl, thumb, value, e, eOpts ){
+					this.tooltip.setHtml(value);
+					this.tooltip.showBy(thumb);
+					// executes hide after 2 seconds:					
+					Ext.Function.defer(function(){
+						this.tooltip.hide();
+						this.tooltip.setHtml("");
+					}, 2000, this);
+					
+				}
 		    }
 		},
 	    constructor: function(config){
-	    	Ext.apply(this,config||{});
+	    	Ext.apply(this,config||{});	    	
 	    	this.callParent(arguments);
 	    },
 	    initialize: function ()	{
 			console.log('init chart slider');
+			this.tooltip = Ext.create('Ext.Panel', {
+			     html: 'Floating Panel',
+			     left: 0,
+			     padding: 10
+			 });
 			var attributes = this.config.sliderAttributes;
 			this.composedDoc = this.config.composedDoc;
 			
