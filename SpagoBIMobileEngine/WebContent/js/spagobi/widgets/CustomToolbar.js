@@ -88,14 +88,6 @@ Ext.define('app.views.CustomToolbar', {
 							thisPanel.fireEvent("gotoparameters",thisPanel, this);
 						}
 						});
-	    	}else if(btnKey === 'html'){
-	    		button = new Ext.Button( {
-						title : 'Html',
-						ui: 'plain',
-						html: Sbi.settings.toolbar.html.code,
-						autoEvent: 'html'
-						
-						});
 	    	}else if(btnKey === 'back'){
 	    		button = new Ext.Button( {
 						title : 'back',
@@ -133,6 +125,15 @@ Ext.define('app.views.CustomToolbar', {
 
 	    	}else if(btnKey === 'navigation'){
 	    		button = this.buildNavigationToolbar();
+	    	}else if(btnKey.substring(0,4) === 'html'){
+	    		var code = btnKey.substring(5); 
+	    		button = new Ext.Button( {
+					title : 'Html',
+					ui: 'plain',
+					html: Sbi.settings.toolbar.html[code],
+					autoEvent: 'html'
+					
+					});
 	    	}
 	    	if(button){
 	    		button.btnKey = btnKey;
