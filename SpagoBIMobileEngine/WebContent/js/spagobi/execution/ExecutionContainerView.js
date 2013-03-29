@@ -9,7 +9,7 @@ Ext.define('app.views.ExecutionContainerView',{
 		config:{
 			 fullscreen: true,
 			 layout: 'card',
-			 loadingMaskForExec: null,
+
 			 title: 'Execution Container View'
 		},
 		
@@ -24,6 +24,19 @@ Ext.define('app.views.ExecutionContainerView',{
 			this.executedDocuments = 0;
 			this.executedDocumentsList = new Array();
 			this.callParent(this, arguments);
+			
+
+	        // invokes before each ajax request 
+	        Ext.Ajax.on('beforerequest', function(){        
+	                // showing the loadding mask
+	        	app.views.executionContainer.setMasked({xtype:'loadmask',message:'Please wait...'});
+	        });
+
+	        // invokes after request completed 
+	        Ext.Ajax.on('requestcomplete', function(){      
+	                // showing the loadding mask
+	        	app.views.executionContainer.setMasked(false);
+	        });     
 		},
 		
 		addExecution: function(resp, type, fromCross, executionInstance){
@@ -108,5 +121,9 @@ Ext.define('app.views.ExecutionContainerView',{
 			}	
 			return null;
 		}
-
+		,showLoadingMask : function(panel){
+			this.loadingMask = new Ext.LoadMask(panel.id, {msg:"Loading..."});					
+			this.loadingMask.show();
+			this.un('afterlayout',this.showLoadingMask,this);
+		}
 });

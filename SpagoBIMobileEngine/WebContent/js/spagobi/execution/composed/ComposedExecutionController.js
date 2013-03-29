@@ -23,7 +23,7 @@ Ext.define('app.controllers.ComposedExecutionController',{
 		
 		var executionInstance = panel.getExecutionInstance();
 		var oldParameters = executionInstance.PARAMETERS;
-		if (app.controllers.composedExecutionController.parametersHaveBeenChanged(oldParameters, newParameters)) {
+	//	if (app.controllers.composedExecutionController.parametersHaveBeenChanged(oldParameters, newParameters)) {
 			console.log('app.controllers.ComposedExecutionController:refreshSubDocument: parameters have been changed');
 			
 			var newDocumentParameters = app.controllers.composedExecutionController.applyNewParameters(newParameters, oldParameters);
@@ -35,7 +35,11 @@ Ext.define('app.controllers.ComposedExecutionController',{
 				, parameters : newDocumentParameters
 			}, parentDocumentPanel);
 
-		}
+//		}else{
+//			//if no parameters of the document have been updated 
+//			//
+//			parentDocumentPanel.updateOneDocument(panel,executionInstance.position);
+//		}
 	}
 	
 	,

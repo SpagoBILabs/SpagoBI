@@ -22,18 +22,20 @@ Ext.define('app.views.Slider',{
 	
 			    		var params = {};
 			    		var name = me.getName();
-			    		params[name]= newValue;
+			    		params.name= name;
+			    		params.value = newValue;
 			    		var subdocs =this.composedDoc.getSubdocuments();
 	
-			    		for(i =0; i < subdocs.length; i++){
-			    			var panel = subdocs[i];
-			    			
-			    			var executionInstance = panel.executionInstance;
-			    			if(executionInstance && executionInstance.PARAMETERS){
-			    				app.controllers.composedExecutionController.refreshSubDocument(panel, this.composedDoc, params);
-			    			}
-	
-			    		}
+//			    		for(i =0; i < subdocs.length; i++){
+//			    			var panel = subdocs[i];
+//			    			
+//			    			var executionInstance = panel.executionInstance;
+//			    			if(executionInstance && executionInstance.PARAMETERS){
+			    				this.composedDoc.propagateCrossNavigationEventForSlider([params]);
+			    				//app.controllers.composedExecutionController.refreshSubDocument(panel, this.composedDoc, params);
+//			    			}
+//	
+//			    		}
 		            }
 		        }
 		    }

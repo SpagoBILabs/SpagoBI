@@ -67,27 +67,7 @@ Ext.define('app.views.Viewport',{
 	    
 	    this.callParent(arguments);
 //	    this.goLogIn();
-	    
-//		if(app.views.execution.loadingMaskForExec == null){
-//			app.views.execution.loadingMaskForExec = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});              
-//		}
-//
-//        // invokes before each ajax request 
-//        Ext.Ajax.on('beforerequest', function(){        
-//                // showing the loadding mask
-//                app.views.execution.loadingMaskForExec.show();
-//        });
-//
-//        // invokes after request completed 
-//        Ext.Ajax.on('requestcomplete', function(){      
-//                // showing the loadding mask
-//                app.views.execution.loadingMaskForExec.hide();
-//        });             
-//
-//        // invokes if exception occured 
-//        Ext.Ajax.on('requestexception', function(){         
-//                //TODO: need to handle the server exceptions
-//        });
+
 	  }
 	
 	, addMain: function(){
