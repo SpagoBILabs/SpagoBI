@@ -110,7 +110,13 @@ Ext.define('app.views.ChartExecutionPanel',{
 						config.colors.from,
 						config.colors.to,
 						config.colors.number);
+			}if(config.colors.functionName=="getGradientColorsHSL"){
+				config.colors = Ext.ux.ColorPatterns.getBaseColors.call(
+						this,
+						config.colors.index);
 			}
+		}else{
+			config.colors = Ext.ux.ColorPatterns.getBaseColors();
 		}
 	}
 
@@ -132,7 +138,6 @@ Ext.define('app.views.ChartExecutionPanel',{
 								str = str +"<li><b><span>"+propertyName+"</b>: "+propertyValue+"</span></li>";
 								// } 
 							}
-
 						}
 					}
 					if(str.length>0){
