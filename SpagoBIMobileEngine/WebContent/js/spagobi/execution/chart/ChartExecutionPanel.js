@@ -77,11 +77,7 @@ Ext.define('app.views.ChartExecutionPanel',{
 			this.addValueTip(config);
 		}
 
-
-		var chartConfig = {
-
-				items : [ config ]
-		};
+		var chartConfig = Ext.apply({},config);
 
 		if (fromcomposition) {
 
@@ -92,25 +88,15 @@ Ext.define('app.views.ChartExecutionPanel',{
 			chartConfig.fullscreen = true;
 		}
 
-		chartConfig.bodyMargin = '10% 1px 60% 1px';
+		//chartConfig.bodyMargin = '10% 1px 60% 1px';
 
 
 		if(config.title){
 			chartConfig.title = config.title.value;
 		}
 
-//		if(!config.colors && config.series){
-//		config.colors=(this.getColors()).slice(0);
-//		config.colors.length= config.series.length;
-//		}
+		return chartConfig;
 
-		//app.views.chart = Ext.create("Ext.chart.CartesianChart",config );
-//		config.xtype = "chart";
-		return config;
-//		}
-//		if(this.IS_FROM_COMPOSED){
-//		this.loadingMask.hide();
-//		}
 	}
 
 	, addValueTip: function(config){

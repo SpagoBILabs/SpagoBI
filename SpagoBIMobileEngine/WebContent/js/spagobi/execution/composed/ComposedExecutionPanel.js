@@ -86,8 +86,6 @@ Ext.define('app.views.ComposedExecutionPanel',{
 			}
 			if(resp.config && resp.config.width ){
 				width =resp.config.width;
-			}else{
-				width ='45%';
 			}
 
 			var style = panel.getStyle();
@@ -110,6 +108,26 @@ Ext.define('app.views.ComposedExecutionPanel',{
 		}
 		
 		,
+		propagateCrossNavigationEventForSlider : function(paramsArray) {
+			console.log('app.views.ComposedExecutionPanel:execCrossNavigation: IN');
+			this.setSubDocumentsToUpdate(new Array(this.getSubDocumentNumber()));
+			this.setSubDocumentsToUpdateNumber(this.getSubDocumentNumber());
+			this.setCrossNavigated(true);
+			
+			for(var i=0; i<(this.getSubdocuments()).length; i++){
+				var panel = (this.getSubdocuments())[i];
+				console.log('app.views.ComposedExecutionPanel:execCrossNavigationHandler: IN');
+
+				var params = {};
+				for (var j = 0 ; j < paramsArray.length ; j++) {
+					var aParam = paramsArray[j];
+					params[aParam.name] = aParam.value;
+				}
+
+				app.controllers.composedExecutionController.refreshSubDocument(panel, this, params);
+			}
+		},
+		
 		propagateCrossNavigationEvent : function(sourcePanel, paramsArray) {
 			console.log('app.views.ComposedExecutionPanel:execCrossNavigation: IN');
 			sourcePanel.parentDocument.setSubDocumentsToUpdate(new Array(this.getSubDocumentNumber()));
@@ -128,15 +146,14 @@ Ext.define('app.views.ComposedExecutionPanel',{
 
 				app.controllers.composedExecutionController.refreshSubDocument(panel,  sourcePanel.parentDocument, params);
 			}
-		}
-		,
+		},
 		
 		updateOneDocument:function(panel,position){
 			//update the document in the temp list
 			(this.getSubDocumentsToUpdate())[position] = panel;
 			this.setSubDocumentsToUpdateNumber(this.getSubDocumentsToUpdateNumber()-1);
 			//if all the subdocuments has benen updated 
-			if(this.getSubDocumentsToUpdateNumber()==0){
+			if(this.getSubDocumentsToUpdateNumber()==0){				
 				this.removeAll();
 				for(var i=0; i<this.getSubDocumentNumber();i++){
 					this.add(this.getSubDocumentsToUpdate()[i]);//add them to the composition
@@ -162,12 +179,12 @@ Ext.define('app.views.ComposedExecutionPanel',{
 			});
 			var minLbl = {
 	            xtype: 'label',
-	            style: 'width: 7%;color: blue;text-align: right;',
+	            style: 'width: 7%;color: blue;text-align: right; margin-top:5px;',
 	            html: slider.minValue
 	        };
 			var maxLbl = {
 		            xtype: 'label',
-		           style: 'width: 7%;color: blue;',
+		           style: 'width: 7%;color: blue; margin-top:5px;',
 		            html: slider.maxValue
 		    };
 			
