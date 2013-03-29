@@ -180,6 +180,6 @@ Ext.define('app.controllers.MobileController',{
                 });
 	        }
 		};
-		Sbi.exception.ExceptionHandler.showConfirmMessage(null, 'Are you sure you want to logout?', func);
+		Sbi.exception.ExceptionHandler.showConfirmMessage('Are you sure you want to logout?', null, func);
 	}
 });
