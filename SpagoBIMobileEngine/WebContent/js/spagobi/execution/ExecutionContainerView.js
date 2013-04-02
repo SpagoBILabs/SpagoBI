@@ -125,9 +125,11 @@ Ext.define('app.views.ExecutionContainerView',{
 //		DA FARE: AGGIORNARE LA TOOLBAR DI NAVIGAZIONE
 		goToPreviousExecutions: function(){
 			var positionOfActive = this.getActiveItem().getPositionInExecutionContainer();
-			if(position>0){
+			if(positionOfActive>0){
 				this.removeDocumentsOnTheRight(positionOfActive,-1);
 				this.setActiveItem(this.executedDocumentsList[position-1]);
+			}else{
+				app.views.viewport.goHome();//go home with out refresh document browser
 			}
 			
 //			var position = this.getActiveItem().getPositionInExecutionContainer();

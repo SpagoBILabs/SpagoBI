@@ -2,6 +2,9 @@
 
 <script type="text/javascript" src="../js/spagobi/service/ServiceRegistry.js"></script>
 <script type="text/javascript" src="../js/spagobi/config/Settings.js"></script>
+<script type="text/javascript" src="../js/spagobi/config/UserFunctions.js"></script>
+
+
 
 	<script>
 	 Sbi.config={};

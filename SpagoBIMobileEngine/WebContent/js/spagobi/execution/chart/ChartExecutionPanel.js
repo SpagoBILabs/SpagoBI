@@ -52,6 +52,11 @@ Ext.define('app.views.ChartExecutionPanel',{
 		config.animate = true;
 		config.shadow = true;
 
+		if(config.enableUserFunction){
+			this.resolveUserFunctions(config);	
+		}
+		
+		
 		config.listeners = {
 				scope: this,
 				'itemtap': function(series, item, event) { 
@@ -62,12 +67,17 @@ Ext.define('app.views.ChartExecutionPanel',{
 						targetDoc = this.setTargetDocument(resp);					
 					}
 					this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
+				},
+				'itemtouchstart': function(series, item, event) { 
+					var crossParams = new Array();
+					this.setCrossNavigation(resp, item, crossParams);
+					var targetDoc;
+					if(resp.config != undefined && resp.config.drill != undefined){
+						targetDoc = this.setTargetDocument(resp);					
+					}
+					this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
 				}
 		};
-
-		if(config.dockedItems==undefined || config.dockedItems==null){
-			config.dockedItems = new Array();
-		}
 
 		if(config.interactions==undefined || config.interactions==null){
 			config.interactions = new Array();
@@ -96,9 +106,35 @@ Ext.define('app.views.ChartExecutionPanel',{
 		if(config.title){
 			chartConfig.title = config.title.value;
 		}
+		
+		
 
 		return chartConfig;
 
+	}
+	
+	//search in the template, the user function tag,
+	//and resolve it with the function definition in user_functions.js
+	, resolveUserFunctions: function(template){
+	
+		if(!(template instanceof Object)){
+			return template;
+		}
+		for(p in template){
+			if(p=="userFunction"){
+				var functionDef = template[p];
+				var functionName = functionDef.functionName;
+				var functionArgs = functionDef.functionArgs;
+				try{
+					return Sbi.chart.userFunctions[functionName].call(this,functionArgs);
+				}catch (e){
+					Sbi.exception.ExceptionHandler.showErrorMessage("Error executing the user function '"+functionName+"':"+e );
+				}
+			}else{
+				template[p] = this.resolveUserFunctions(template[p]);
+			}
+		}
+		return template;
 	}
 	
 	, manageColors: function(config){
@@ -185,7 +221,7 @@ Ext.define('app.views.ChartExecutionPanel',{
 								}else if(type == 'SERIE'){
 									crossParams.push({name : name, value : storeItem.data[serieField]});
 								}else if(type == 'CATEGORY'){
-									if (charttype == 'pie'){
+									if (charttype == 'pie' || charttype == 'pie3d'){
 										crossParams.push({name : name, value : storeItem.data[serieField]});
 									}else{
 										var cat;
