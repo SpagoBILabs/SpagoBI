@@ -67,15 +67,6 @@ Ext.define('app.views.ChartExecutionPanel',{
 						targetDoc = this.setTargetDocument(resp);					
 					}
 					this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
-				},
-				'itemtouchstart': function(series, item, event) { 
-					var crossParams = new Array();
-					this.setCrossNavigation(resp, item, crossParams);
-					var targetDoc;
-					if(resp.config != undefined && resp.config.drill != undefined){
-						targetDoc = this.setTargetDocument(resp);					
-					}
-					this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
 				}
 		};
 
