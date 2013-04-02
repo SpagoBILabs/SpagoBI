@@ -31,14 +31,28 @@ Ext.define('app.views.DocumentBrowser',{
 				type: 'ajax',
 				reader:{
 					type: 'json',
-					rootProperty: 'samples'
+					rootProperty: 'samples',
+					listeners:{
+						exception: function(reader, response, error, eOpts ){
+							if(response.responseText && response.responseText.indexOf('<SERVICE_RESPONSE')){
+								if(response.responseText.indexOf('internal') != -1){
+									//exception
+									Sbi.exception.ExceptionHandler.handleFailure(response);
+								}else{
+									//go to login page
+									localStorage.removeItem('app.views.launched');
+									localStorage.removeItem('app.views.browser');
+									window.location.href = Sbi.env.contextPath;
+								}
+							}
+						}
+					}
 				},
 				url: Sbi.config.serviceRegistry.getServiceUrl({
 					serviceName: 'DOCUMENT_BROWSER_ACTION'
 						, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
 				})
-
-
+				
 			}
 		})
 	},
