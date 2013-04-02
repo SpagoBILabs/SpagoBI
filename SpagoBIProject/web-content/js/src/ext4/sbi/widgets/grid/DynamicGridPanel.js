@@ -39,15 +39,15 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
     extend: 'Ext.grid.Panel'
 
     ,config: {
-    	stripeRows: true,
+    	stripeRows: true
     }
 
 	, constructor: function(config) {
 		
-		console.log('DynamicGridPanel costructor IN');
+		Sbi.debug('DynamicGridPanel costructor IN');
 		Ext.apply(this,config);
-		
-    	console.log('DynamicGridPanel build store');
+	
+    	Sbi.debug('DynamicGridPanel build store');
     	config.storeConfig = Ext.apply(config.storeConfig||{},{serviceUrl: config.serviceUrl});
     	var store = Ext.create('Sbi.widgets.store.DynamicStore', config.storeConfig ||{});
       	this.store = store;
@@ -58,25 +58,31 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
       	this.addPaging(config);
       	
       	if(config.pagingConfig!=undefined && config.pagingConfig!=null){
-      		console.log('DynamicGridPanel load first page');
+      		Sbi.debug('DynamicGridPanel load first page');
       		this.store.loadPage(1);
       	}else{
-      		console.log('DynamicGridPanel load store');
+      		Sbi.debug('DynamicGridPanel load store');
       		this.store.load();
       	}
+      	
+      	var additionalButtons = Sbi.widget.grid.StaticGridDecorator.getAdditionalToolbarButtons(this.decorators);
+      	
       	if(this.filterConfig!=undefined && this.filterConfig!=null){
-      		this.tbar = Ext.create('Sbi.widgets.grid.DynamicFilteringToolbar',Ext.apply(config.filterConfig||{},{store: this.store}));
+      		this.tbar = Ext.create('Sbi.widgets.grid.DynamicFilteringToolbar',Ext.apply(config.filterConfig||{},{store: this.store, additionalButtons:additionalButtons}));
       	}
-    	
+      	
     	this.callParent(arguments);
-    	console.log('DynamicGridPanel costructor OUT');
+    	
+      	
+    	Sbi.debug('DynamicGridPanel costructor OUT');
     },
     
     addPaging: function(config){
     	
     	if(config.pagingConfig!=undefined && config.pagingConfig!=null){
-    		console.log('DynamicGridPanel add paging IN');
+    		Sbi.debug('DynamicGridPanel add paging IN');
     		var defaultPagingConfig={
+    				width: 400,
                 store: this.store,
                 displayInfo: true,
                 displayMsg: 'Displaying  {0} - {1} of {2}',
@@ -84,13 +90,14 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
             }
     		defaultPagingConfig = Ext.apply(defaultPagingConfig,config.pagingConfig );
     		this.bbar = Ext.create('Ext.PagingToolbar',defaultPagingConfig);
-    		console.log('DynamicGridPanel add paging OUT');
+    		Sbi.debug('DynamicGridPanel add paging OUT');
     	}
     },
     
     updateGrid: function(){
-    	console.log('DynamicGridPanel updategrid IN');
+    	Sbi.debug('DynamicGridPanel updategrid IN');
     	var columns = this.store.getColumns();
+    	Sbi.widget.grid.StaticGridDecorator.addButtonColumns(this.decorators, this.columns, this);
     	if(this.bbar!=undefined && this.bbar!=null){
     		this.bbar.bindStore(this.store);
     	}

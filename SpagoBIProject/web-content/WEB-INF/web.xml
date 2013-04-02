@@ -106,6 +106,12 @@
         <servlet-class>com.liferay.portal.kernel.servlet.PortletServlet</servlet-class>
   </servlet>  
 END-LIFERAY -->
+
+    <listener>
+        <listener-class>
+            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
+        </listener-class>
+    </listener>
   
      <!-- servlet for change pwd management -->
    <servlet>
@@ -174,6 +180,11 @@ EXO -->
     	<jsp-file>/WEB-INF/jsp/public/docs.jsp</jsp-file>
 	</servlet>
 	
+	<servlet>
+        <servlet-name>Resteasy</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    </servlet>
+	
 	<servlet-mapping>
     	<servlet-name>DocsServlet</servlet-name>
     	<url-pattern>/docs</url-pattern>
@@ -224,11 +235,23 @@ END-LIFERAY -->
     </servlet-mapping>
     <!-- end axis servlet -->
 
+    <servlet-mapping>
+        <servlet-name>Resteasy</servlet-name>
+        <url-pattern>/restful-services/*</url-pattern>
+    </servlet-mapping>
 
 
 
+    <context-param>
+         <param-name>resteasy.scan</param-name>
+        <param-value>true</param-value>    
+    </context-param>
 
-
+    
+    <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/restful-services</param-value>
+    </context-param>
      
 	<!-- END SERVLET MAPPINGS --> 
 

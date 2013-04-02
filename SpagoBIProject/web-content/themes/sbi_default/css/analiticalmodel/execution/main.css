@@ -255,6 +255,11 @@
 	background-image: url('../../../img/wapp/exit16.png') !important;
 }
 
+.icon-test {
+	background-image: url('../../../img/test16.png') !important;
+}
+
+
 .icon-role {
 	background-image: url('../../../img/wapp/roles.png') !important;
 }
@@ -262,6 +267,19 @@
 .icon-info {
 	background-image: url('../../../img/question.gif') !important;
 }
+
+.button-select {
+	background-image: url('../../../img/select16.png') !important;
+	width: 16px !important;
+	height: 16px !important;
+}
+
+.button-remove {
+	background-image: url('../../../img/erase.png') !important;
+	width: 16px !important;
+	height: 16px !important;
+}
+
 
 .action-detail-note {
 	width:16px;

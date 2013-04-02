@@ -46,7 +46,7 @@ Ext.define('Sbi.behavioural.lov.TestLovResultPanel', {
 		defautlConf = Ext.apply( defautlConf,config ||{} );
 		Ext.apply(this,defautlConf);
 		
-		console.log('TestLovPanel costructor IN');
+		Sbi.debug('TestLovPanel costructor IN');
 		
 		defautlConf.serviceUrl=   Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'LIST_TEST_LOV_ACTION'
@@ -55,14 +55,9 @@ Ext.define('Sbi.behavioural.lov.TestLovResultPanel', {
     	
     	this.callParent([defautlConf]);
     	this.store.on('load',function(){this.fireEvent('storeLoad')},this);
-    	console.log('TestLovPanel costructor OUT');
+    	Sbi.debug('TestLovPanel costructor OUT');
     }
     
-
-
-
-
-
 	
 });
 

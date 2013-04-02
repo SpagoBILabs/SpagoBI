@@ -46,6 +46,7 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar', {
     	, filterStore: null
     	, filterCombo: null
     	, inputField: null
+    	, additionalButtons: null//additional buttons to write in the top right part
     }
 
 	, constructor: function(config) {
@@ -66,9 +67,15 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar', {
 		this.add(LN('sbi.lookup.ValueOfColumn'));	
 		this.add({ xtype: 'tbspacer' });
 		
+		var columnNameStoreData = [{}];
+		
+		if(this.columnNamesStoreData){
+			columnNameStoreData = this.columnNamesStoreData;
+		}
+		
 		this.columnNameStore = Ext.create('Ext.data.Store', {
 		    fields: ['header', 'name'],
-		    data : [{}]
+		    data : columnNameStoreData
 		});
 		
 		this.createColumnNameCombo();	    
@@ -136,6 +143,13 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar', {
             handler: this.applyFilter,
             scope: this
         });
+		
+		if(this.additionalButtons){
+			this.add('->');
+			for(var i=0; i<this.additionalButtons.length;i++){
+				this.add(this.additionalButtons[i]);
+			}
+		}
 	}
 	
 	, applyFilter: function(){
@@ -171,19 +185,20 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar', {
 	}
 	
 	, onStoreLoad: function(){
-
-			this.columnNameStore  = Ext.create('Ext.data.Store', {
-			    fields: ['header', 'name'],
-			    data : this.store.proxy.reader.jsonData.metaData.fields
-			});
-			
-			if(this.columnNameCombo!=null && this.columnNameCombo!=undefined){
-				this.columnNameCombo.destroy();
-				this.createColumnNameCombo();
-				this.insert(2,this.columnNameCombo );
+			if( this.store.proxy.reader.jsonData.metaData){//only if the metachanges, for the dynamicstore
+				this.columnNameStore  = Ext.create('Ext.data.Store', {
+				    fields: ['header', 'name'],
+				    data : this.store.proxy.reader.jsonData.metaData.fields
+				});
+				
+				if(this.columnNameCombo!=null && this.columnNameCombo!=undefined){
+					this.columnNameCombo.destroy();
+					this.createColumnNameCombo();
+					this.insert(2,this.columnNameCombo );
+				}
+				
+				
 			}
-			
-
 	}
 
 	, onClick: function() {

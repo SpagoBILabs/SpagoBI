@@ -52,6 +52,8 @@ Sbi.exception.ExceptionHandler = function(){
 		
         handleFailure : function(response, options) {
         	
+        	var errorSeparator = "error.mesage.description.";
+        	
         	var errMessage = ''
         	if(response !== undefined) {
         		if (response.responseText !== undefined) {
@@ -69,7 +71,9 @@ Sbi.exception.ExceptionHandler = function(){
         				} else {
         					for (var count = 0; count < content.errors.length; count++) {
         						var anError = content.errors[count];
-			        			if (anError.localizedMessage !== undefined && anError.localizedMessage !== '') {
+        						if (anError.message !== undefined && anError.message !== '' && anError.message.indexOf(errorSeparator)>=0) {
+			        				errMessage += LN(anError.message);
+			        			} else if (anError.localizedMessage !== undefined && anError.localizedMessage !== '') {
 			        				errMessage += anError.localizedMessage;
 			        			} else if (anError.message !== undefined && anError.message !== '') {
 			        				errMessage += anError.message;
