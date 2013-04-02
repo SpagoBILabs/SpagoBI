@@ -41,7 +41,7 @@ Ext.define('Sbi.widgets.store.DynamicStore', {
      * @param {Object} config (optional) Config object
      */
     , constructor: function(config) {
-    	console.log('constructor IN'+config);
+    	Sbi.debug('constructor IN'+config);
     	Ext.apply(this, config);
     	var d = new Date();
     	var modelname =  'DynamicStoreModel'+(d.getTime()%10000000);
@@ -64,13 +64,13 @@ Ext.define('Sbi.widgets.store.DynamicStore', {
     	this.callParent([config]);
         
     	this.fields = this.model.prototype.fields;
-    	console.log('constructor OUT');
+    	Sbi.debug('constructor OUT');
 		this.on('load', this.onStoreLoad, this);
     }
 
 
 	, onStoreLoad: function() {
-		console.log('onStoreLoad IN');		
+		Sbi.debug('onStoreLoad IN');		
 		try{
 			var metadata = this.proxy.reader.jsonData.metaData;
 			if(metadata.error && metadata.error=='error'){
@@ -78,18 +78,18 @@ Ext.define('Sbi.widgets.store.DynamicStore', {
 				return false;
 			}else{
 				var columns = metadata.fields;
-				console.log('columns length ' + columns.length);
+				Sbi.debug('columns length ' + columns.length);
 			}
 		}catch(e){
 			Sbi.exception.ExceptionHandler.showErrorMessage(e,LN('sbi.behavioural.lov.test.error'));
 			return false;
 		}
-		console.log('onStoreLoad OUT');
+		Sbi.debug('onStoreLoad OUT');
 	
 		}
 	
 	, getColumns: function(){
-		console.log('store.getColumns');
+		Sbi.debug('store.getColumns');
 		return this.proxy.reader.jsonData.metaData.fields;
 	}
 	

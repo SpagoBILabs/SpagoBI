@@ -167,6 +167,15 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	String parameterMementoPersistenceScope = SingletonConfig.getInstance().getConfigValue("SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceScope");
 	String parameterMementoPersistenceDepth = SingletonConfig.getInstance().getConfigValue("SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceDepth");
 	
+	
+
+	//  TO USE THE REST CALLS
+	request.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
+	request.getSession().setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());
+	request.getSession().setAttribute(Constants.USER_COUNTRY, locale.getCountry());
+
+
+	
 	%>
 
 
@@ -301,9 +310,9 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
       type='text/css' />
 <%	} %>
 
-<LINK rel='StyleSheet' 
+<!-- LINK rel='StyleSheet' 
       href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_shared.css",currTheme)%>' 
-      type='text/css' />
+      type='text/css' /-->
 
 <LINK rel='StyleSheet' 
       href='<%=urlBuilder.getResourceLinkByTheme(request, "css/jsr168.css",currTheme)%>' 
@@ -328,3 +337,5 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <script>
 	document.onselectstart = function() { return true; }
 </script>
+
+<%@ include file="/WEB-INF/jsp/commons/importSbiJS410.jspf"%>

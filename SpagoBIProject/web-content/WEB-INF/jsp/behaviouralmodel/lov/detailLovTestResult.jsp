@@ -9,7 +9,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>
-<%@ include file="/WEB-INF/jsp/commons/importSbiJS410.jspf"%>
+
 
 <%@ page import="javax.portlet.PortletURL,
 			it.eng.spagobi.commons.constants.SpagoBIConstants,

@@ -74,22 +74,28 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 	        width:135
 	    });
 	  
-	
+		var saveButton = {	
+				handler: this.save,
+				scope: this
+		};
+
+		var backButton = {
+				handler: this.back,
+				scope: this
+		};
 		
+		if(Ext.isIE){
+			saveButton.text = LN('sbi.behavioural.lov.save');
+			backButton.text = LN('sbi.behavioural.lov.back');
+		}else{
+			saveButton.iconCls = 'icon-save';
+			backButton.iconCls = 'icon-back';
+		}
+
 		this.dockedItems = [{
 	        xtype: 'toolbar',
 	        dock: 'top',
-	        items: ['->',this.comboType,{
-	           // text: LN('sbi.behavioural.lov.save'),
-	            handler: this.save,
-	            iconCls: 'icon-save',
-	            scope: this
-	        },{
-	           // text: LN('sbi.behavioural.lov.back'),
-	            handler: this.back,
-	            iconCls: 'icon-back',
-	            scope: this
-	        }]
+	        items: ['->',this.comboType,saveButton,backButton]
 	    }]
 		
 		Ext.QuickTips.init();

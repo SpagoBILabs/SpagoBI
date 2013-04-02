@@ -19,3 +19,13 @@ Styles for the component Ext.ux.RadioColumn
 .check-column-unchecked{
 	background-position: 0 0px; 
 }
+
+.delete-icon{
+	background-image: url('../img/icon/delete.gif') !important;
+}
+
+.x-form-text-search{
+	background-image: url('../img/form/text-bg-search.gif') !important;
+	background-repeat: no-repeat;
+}
+

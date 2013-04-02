@@ -27,7 +27,8 @@ Sbi.service.ServiceRegistry = function(config) {
 		, host: 'localhost'
 	    , port: '8081'
 	    , contextPath: 'SpagoBI'
-	    , controllerPath: 'servlet/AdapterHTTP'    
+	    , controllerPath: 'servlet/AdapterHTTP' 
+	    , restServicesPath: 'restful-services' 
 	});
 	
 	this.baseParams = Ext.apply({}, config.baseParams || {}, {
@@ -87,6 +88,39 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
         return serviceUrl;
     }     
     
+    , getRestServiceUrl : function(s){
+    	var serviceUrl;
+    	
+    	var baseUrlStr;
+    	var serviceType;
+    	var params;
+    	var paramsString = "";
+               
+        if(typeof s == 'string') {
+        	s = {serviceName: s};
+        }
+        
+        serviceType = s.serviceType || this.defaultServiceType;
+        params = Ext.apply({}, s.baseParams || {}, this.baseParams);
+                
+        serviceUrl = this.getRestBaseUrlStr(s);
+        serviceUrl += '/'+ s.serviceName;
+      
+        
+        	
+        for(var p in params){
+        	if(params[p] !== null) {
+        		paramsString += '&' + p + '=' + params[p];
+        	}
+        }
+        
+        if(paramsString.length>0){
+        	serviceUrl += '?'+paramsString.substring(1);
+        }
+        
+        return serviceUrl;
+    }     
+    
     , getBaseUrlStr: function(s) {
     	var baseUrlStr;
     	
@@ -97,6 +131,21 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
     		baseUrlStr = url.protocol + '://' + url.host + ":" + url.port + '/' + url.contextPath + '/' + url.controllerPath;
     	} else {
     		baseUrlStr = '/' + url.contextPath+ '/' + url.controllerPath;
+    	}
+    	
+    	return  baseUrlStr;
+    }
+    
+    , getRestBaseUrlStr: function(s) {
+    	var baseUrlStr;
+    	
+    	var isAbsolute = s.isAbsolute || this.defaultAbsolute;
+    	var url = Ext.apply({}, s.baseUrl || {}, this.baseUrl);
+    	
+    	if(isAbsolute) {
+    		baseUrlStr = url.protocol + '://' + url.host + ":" + url.port + '/' + url.contextPath + '/' + url.restServicesPath;
+    	} else {
+    		baseUrlStr = '/' + url.contextPath+ '/' + url.restServicesPath;
     	}
     	
     	return  baseUrlStr;

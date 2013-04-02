@@ -29,7 +29,9 @@ Sbi.log = function(level, msg) {
 	if(Sbi.logging.enabled 
 		&& Sbi.logging.levels[level] >= Sbi.logging.levels[Sbi.logging.level]) {
 	
-		if(console) console.log('[' + level + '] : ' + msg);
+		if(!Ext.isIE && console) {
+			console.log('[' + level + '] : ' + msg);
+		}
 	}
 };
 
