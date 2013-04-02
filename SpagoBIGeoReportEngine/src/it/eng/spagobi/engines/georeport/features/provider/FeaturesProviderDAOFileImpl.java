@@ -117,7 +117,7 @@ public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
 	    	while (iterator.hasNext()) {
 	    		SimpleFeature feature = (SimpleFeature) iterator.next();
 	    		Object idx = feature.getProperty(geoIdPName).getValue();
-	    		lookupTable.put(idx, feature);
+	    		lookupTable.put(idx.toString(), feature);
 				logger.debug("Feature [" + idx + "] added to the index");
 	    	}
 			
