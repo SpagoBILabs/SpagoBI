@@ -28,7 +28,7 @@ public class FeaturesProviderDAOFactory {
 	}
 	
 	public static IFeaturesProviderDAO getFeaturesProviderDAO(String featureSourceType) {
-		initMappings();
+		//initMappings();
 		return mappings.get(featureSourceType);
 	}
 }
