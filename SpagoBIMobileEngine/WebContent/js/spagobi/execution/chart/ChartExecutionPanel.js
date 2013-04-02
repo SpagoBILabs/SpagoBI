@@ -52,7 +52,7 @@ Ext.define('app.views.ChartExecutionPanel',{
 		config.animate = true;
 		config.shadow = true;
 
-		if(config.enableUserFunction){
+		if(config.enableuserfunction){
 			this.resolveUserFunctions(config);	
 		}
 		
@@ -137,7 +137,24 @@ Ext.define('app.views.ChartExecutionPanel',{
 						config.colors.from,
 						config.colors.to,
 						config.colors.number);
-			}if(config.colors.functionName=="getBaseColors"){
+			}else if(config.colors.functionName=="getGradientColorsByBrightness"){
+				config.colors = Ext.ux.ColorPatterns.getGradientColorsHSL.call(
+						this,
+						Ext.ux.ColorPatterns.getBaseColors(config.colors.basecolor),
+						config.colors.from,
+						config.colors.to,
+						config.colors.number);
+			}else if(config.colors.functionName=="getGradientColors"){
+				config.colors = Ext.ux.ColorPatterns.getGradientColorsHSL.call(
+						this,
+						config.colors.from,
+						config.colors.to,
+						config.colors.number);
+			}else if(config.colors.functionName=="getAlteredBaseColorsHSL"){
+				config.colors = Ext.ux.ColorPatterns.getGradientColorsHSL.call(
+						this,
+						config.colors.deltaHSL);
+			}else if(config.colors.functionName=="getBaseColors"){
 				config.colors = Ext.ux.ColorPatterns.getBaseColors.call(
 						this,
 						config.colors.index);
