@@ -191,6 +191,19 @@ Ext.define('app.views.ChartExecutionPanel',{
 
 
 					if(Ext.isArray(resp.config.series)){
+						var categoryField;
+						if(resp.config.axes){
+							for(var ax = 0; ax<resp.config.axes.length; ax++){
+								var axe = resp.config.axes[ax];
+								if(axe.type && axe.type=="category"){
+									if(axe.fields instanceof Array){
+										categoryField=axe.fields[0];
+									}else{
+										categoryField=axe.fields;
+									}
+								}
+							}
+						}
 						for (var t = 0; t < resp.config.series.length ; t++){
 							//chart type
 							var charttype = resp.config.series[t].type;
@@ -215,19 +228,11 @@ Ext.define('app.views.ChartExecutionPanel',{
 									if (charttype == 'pie' || charttype == 'pie3d'){
 										crossParams.push({name : name, value : storeItem.data[serieField]});
 									}else{
-										var cat;
-										var seriesField = [];//all series name
-										for(var s = 0; s<series.sprites.length; s++){
-											seriesField.push(series.sprites[s].getField());
+										if(categoryField){
+											var cat = (storeItem.data)[categoryField];
+											crossParams.push({name : name, value : cat});
 										}
-										for(var propertyName in storeItem.data){
-											if(seriesField.indexOf(propertyName) < 0 && propertyName != 'id' && propertyName != 'recNo' ){
-												cat = (storeItem.data)[propertyName];;
-											}
-										}
-										crossParams.push({name : name, value : cat});
 									}
-
 								}else{
 									crossParams.push({name : name, value : param.paramValue});
 								}					                	
