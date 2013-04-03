@@ -63,6 +63,12 @@ Sbi.georeport.Toolbar = function(config) {
 
 };
 
+/**
+ * @class Sbi.georeport.Toolbar
+ * @extends mapfish.widgets.toolbar.Toolbar
+ * 
+ * ...
+ */
 Ext.extend(Sbi.georeport.Toolbar, mapfish.widgets.toolbar.Toolbar, {
     
     tbButtons: null

@@ -39,11 +39,19 @@ Sbi.georeport.ControlPanel = function(config) {
 		title       : LN('sbi.georeport.controlpanel.title'),
 		region      : 'west',
 		split       : true,
-		width       : 300,
+		width       : 315,
 		collapsible : true,
 		margins     : '3 0 3 3',
 		cmargins    : '3 3 3 3',
-		autoScroll	 : true
+		autoScroll	 : true,
+		earthPanelConf: {},
+		layerPanelConf: {},
+		analysisPanelConf: {},
+		measurePanelConf: {},
+		logoPanelConf: {},
+		legendPanelConf: {},
+		debugPanelConf: {}
+		
 	};
 	
 	if(Sbi.settings && Sbi.settings.georeport && Sbi.settings.georeport.controlPanel) {
@@ -64,6 +72,12 @@ Sbi.georeport.ControlPanel = function(config) {
 	Sbi.georeport.ControlPanel.superclass.constructor.call(this, c);
 };
 
+/**
+ * @class Sbi.georeport.ControlPanel
+ * @extends Ext.Panel
+ * 
+ * ...
+ */
 Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
     
 	controlPanelItemsConfig: null
@@ -75,6 +89,14 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 	, logoPanelEnabled: false
 	, legendPanelEnabled: false
 	, debugPanelEnabled: false
+	
+	, earthPanelConf: null
+	, layerPanelConf: null
+	, analysisPanelConf: null
+	, measurePanelConf: null
+	, logoPanelConf: null
+	, legendPanelConf: null
+	, debugPanelConf: null
    
 	, layersControlPanel: null
 	, analysisControlPanel: null
@@ -119,16 +141,17 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 		
 		if(this.layerPanelEnabled === true) {			
 			
-			this.layersControlPanel = new mapfish.widgets.LayerTree({
+			this.layersControlPanel = new mapfish.widgets.LayerTree(Ext.apply({
 	        	title: LN('sbi.georeport.layerpanel.title'),
 	            collapsible: true,
+	            collapsed: false,
 	            autoHeight: true,
 	            rootVisible: false,
 	            separator: '!',
 	            model: this.extractModel(),
 	            map: this.map,
 	            bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF'
-	        });
+	        }, this.layerPanelConf));
 			
 			this.map.layerTree = this.layersControlPanel;
 			
@@ -139,12 +162,36 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 	, initAnalysisControlPanel: function() {
 		if(this.analysisPanelEnabled === true) {
 			
-			this.analysisControlPanel = new Ext.Panel({
+			this.analysisControlPanel = new Ext.Panel(Ext.apply({
 	        	title: LN('sbi.georeport.analysispanel.title'),
 	            collapsible: true,
 	            bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
 	            items: [this.geostatistic]
-	        });
+	        }, this.analysisPanelConf));
+			
+			this.geostatistic.on('ready', function(){
+				var analysisConf = this.geostatistic.analysisConf || {};
+				
+				var method = analysisConf.method || 'CLASSIFY_BY_QUANTILS';
+				this.geostatistic.form.findField('method').setValue(method);
+				//this.geostatistic.form.findField('method').setValue('CLASSIFY_BY_EQUAL_INTERVALS');
+				//this.geostatistic.form.findField('method').setValue('CLASSIFY_BY_QUANTILS');
+				
+				var classes =  analysisConf.classes || 5;
+				this.geostatistic.form.findField('numClasses').setValue(classes);
+				
+				var fromColor =  analysisConf.fromColor || '#FFFF99';
+				this.geostatistic.form.findField('colorA').setValue(fromColor);
+				var toColor =  analysisConf.toColor || '#FF6600';
+				this.geostatistic.form.findField('colorB').setValue(toColor);
+				
+				if(analysisConf.indicator) analysisConf.indicator = analysisConf.indicator.toUpperCase();
+				var indicator = analysisConf.indicator || this.geostatistic.indicators[0][0];
+				this.geostatistic.form.findField('indicator').setValue(indicator);
+				
+				this.geostatistic.classify();
+			}, this);
+			
 			
 			this.controlPanelItemsConfig.push(this.analysisControlPanel);
 		}
@@ -155,13 +202,14 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 		
 		if(this.measurePanelEnabled === true) {
 			
-			this.measureControlPanel = new Ext.Panel({
+			this.measureControlPanel = new Ext.Panel(Ext.apply({
 				 id: 'mapOutput',
 	             title: 'Misurazione',
 	             collapsible: true,
+	             collapsed: false,
 	             height: 50,
 	             html: '<center></center>'
-			});
+			 }, this.measurePanelConf));
 				
 			this.controlPanelItemsConfig.push(this.measureControlPanel);
 		}
@@ -170,14 +218,14 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 	, initLegendControlPanel: function() {
 		if(this.legendPanelEnabled === true) {
 			
-			this.legendControlPanel = new Ext.Panel({
+			this.legendControlPanel = new Ext.Panel(Ext.apply({
 		           title: LN('sbi.georeport.legendpanel.title'),
 		           collapsible: true,
 		           bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
-		           height: 150,
+		           height: 180,
 		           autoScroll: true,
 		           html: '<center id="myChoroplethLegendDiv"></center>'
-		     });
+		     },this.legendPanelConf));
 					
 			this.controlPanelItemsConfig.push(this.legendControlPanel);
 		}
@@ -186,12 +234,12 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 	, initLogoControlPanel: function() {
 		if(this.logoPanelEnabled === true) {
 			
-			this.logoControlPanel = new Ext.Panel({
+			this.logoControlPanel = new Ext.Panel(Ext.apply({
 		           title: 'Logo',
 		           collapsible: true,
 		           height: 85,
 		           html: '<center><img src="/SpagoBIGeoReportEngine/img/georeport.jpg" alt="GeoReport"/></center>'
-		    });
+			 },this.logoPanelConf));
 				
 			this.controlPanelItemsConfig.push(this.logoControlPanel);
 		}
@@ -248,14 +296,16 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 	         
 	         var layerNode = {
 	        	 text: layer.name, // TODO: i18n
-                 checked: layer.getVisibility(),
+                 checked: layer.selected, //layer.getVisibility(),
                  cls: className,
                  layerName: layer.name
              };
 	         
 	         if(layer.isBaseLayer) {
+	        	 layerNode.checked = layer.selected;
 	        	 bLayers.push(layerNode);
 	         } else {
+	        	 layerNode.checked = layer.getVisibility();
 	        	 oLayers.push(layerNode);
 	         }
 		}
