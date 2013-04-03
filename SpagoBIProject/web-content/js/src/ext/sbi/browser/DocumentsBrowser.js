@@ -235,7 +235,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
 		
 		
-		this.tabbedBrowser.add(executionPanel).show();
+		this.tabbedBrowser.brTab.add(executionPanel).show();
 		
 		executionPanel.execute();
 	}
@@ -258,7 +258,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
 		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
 		
-		this.tabbedBrowser.add(executionPanel).show();
+		this.tabbedBrowser.brTab.add(executionPanel).show();
 		
 		executionPanel.execute();
 	}
