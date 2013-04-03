@@ -233,6 +233,15 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
     	}
     	
 
+    },
+    
+	/**
+	 * Set the size of the page to the store and reloads the first page
+	 * @param rthe size of the page
+	 */
+    setPageSize: function(size){
+    	this.store.pageSize = size;
+    	this.store.loadPage(1);
     }
 });
 

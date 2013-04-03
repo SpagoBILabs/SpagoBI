@@ -118,13 +118,15 @@ Ext.define('Sbi.widgets.compositepannel.ListDetailPanel', {
 			services: this.services,
 			fields:this.fields,
 			columns: this.columns,
-			filterConfig: {}
+			filterConfig: {},
+			filteredProperties: this.filteredProperties
 		};
 		
 		Ext.apply(this,config||{});
 		
 		this.grid=Ext.create('Sbi.widgets.grid.FixedGridPanel',FixedGridPanelConf);
 		
+
 		
 		//DEFINE ITEMS OF THE GRID
 		this.items = [this.grid, this.detailPanel];
@@ -139,6 +141,13 @@ Ext.define('Sbi.widgets.compositepannel.ListDetailPanel', {
 		this.grid.on("addnewrow", this.onAddNewRow, this);
 		this.grid.view.on("deleterow",this.onDeleteRow,this)
 		this.grid.view.on("selectrow",this.onSelectRow,this);
+		//adjust the size of the grid to fit the height of the container 
+		this.on("resize",function(){
+			var h = this.getHeight();
+			this.grid.setHeight(h);
+			var page = Math.floor((h-70)/22);//calculate the number of the rows that the grid can show in a singla page
+			this.grid.setPageSize(page);
+		},this);
 	}
 	
 	/**
