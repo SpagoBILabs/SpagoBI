@@ -19,7 +19,7 @@ Sbi.browser.DocumentsBrowser = function(config) {
    
 	// sub-components   
 	
-	
+	this.tabbedBrowser = config.parentTab;
 	this.rootFolderId = config.rootFolderId || null;
 	this.selectedFolderId = this.rootFolderId;
 	
@@ -80,73 +80,21 @@ Sbi.browser.DocumentsBrowser = function(config) {
         , metaFolder: config.metaFolder
         , metaDocument: config.metaDocument	
         , folderId: this.selectedFolderId
-        //, closable:false
-        //, title: 'Browser'
     });
-    
-	
-	this.mainTab = new Ext.Panel({ 
-		layout: 'fit'
-        , title: 'Browser'
-        , iconCls: 'icon-browser-tab'
-        , tabType: 'browser'
-        , items: [this.detailPanel]
-    });
-	
-	
-	
-	this.centerContainerPanel = new Ext.TabPanel({
+
+	this.centerContainerPanel = new Ext.Panel({
 		 region: 'center'
-		 
-		 , resizeTabs:true
-		 , minTabWidth: 115
-		 , tabWidth:135
-		 , enableTabScroll:true
-		 , defaults: {autoScroll:true}
-		 , activeItem: 0
-			 
-		 , items: [this.mainTab]
+//		 , enableTabScroll:true
+//		 , defaults: {autoScroll:true}	
+
+		 , items: [this.detailPanel]
+		,layout: 'fit'
 	});
-	
-	// if browser is IE, re-inject parent.execCrossNavigation function in order to solve parent variable conflict that occurs when 
-	// more iframes are built and the same function in injected: it is a workaround that let cross navigation work properly
-	if (Ext.isIE) {
-		this.centerContainerPanel.on(
-				'tabchange',
-				function () {
-					var anActiveTab = this.centerContainerPanel.getActiveTab();
-					if (anActiveTab.getActiveDocument() !== undefined) {
-						try {
-							var documentPage = anActiveTab.getActiveDocument().getDocumentExecutionPage();
-							if (documentPage.isVisible()) {
-								documentPage.injectCrossNavigationFunction();
-							}
-						//} catch (e) {alert(e);}
-						} catch (e) {}
-					}
-				}
-				, this
-		);
-	}
-	
-	//send messages about enable or disable datastore refresh action (for console engine) 
-	this.centerContainerPanel.on(
-	   'beforetabchange',
-	   function (tabPanel, newTab, currentTab ) {
-		   if(currentTab && currentTab.tabType === 'document' && currentTab.getActiveDocument() && currentTab.getActiveDocument().getDocumentExecutionPage()) {
-			   currentTab.getActiveDocument().getDocumentExecutionPage().getDocumentPage().sendMessage('Disable datastore', 'hide');
-		   }
-		   if(newTab.tabType === 'document' && newTab.getActiveDocument() && newTab.getActiveDocument().getDocumentExecutionPage()){
-			   newTab.getActiveDocument().getDocumentExecutionPage().getDocumentPage().sendMessage('Enable datastore', 'show');
-		   }
-	   }
-	   , this
-	);
-	
 	config.baseLayout = config.baseLayout || {}; 	
 	var c = Ext.apply({}, config.baseLayout, {
 		layout: 'border',
 	    border: false,
+	    title:'Document browser',
 	    items: [ 
 	            // CENTER REGION ---------------------------------------------------------
 	            this.centerContainerPanel, 
@@ -180,12 +128,46 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	          	*/
 	        ]
 	});   
-    
-    Sbi.browser.DocumentsBrowser.superclass.constructor.call(this, c);
-    
-    this.treePanel.addListener('click', this.onTreeNodeClick, this);
+	config.baseLayout = config.baseLayout || {}; 	
    
-    
+    Sbi.browser.DocumentsBrowser.superclass.constructor.call(this, c);
+	
+	// if browser is IE, re-inject parent.execCrossNavigation function in order to solve parent variable conflict that occurs when 
+	// more iframes are built and the same function in injected: it is a workaround that let cross navigation work properly
+	if (Ext.isIE) {
+		this.on(
+				'tabchange',
+				function () {
+					var anActiveTab = this.getActiveTab();
+					if (anActiveTab.getActiveDocument() !== undefined) {
+						try {
+							var documentPage = anActiveTab.getActiveDocument().getDocumentExecutionPage();
+							if (documentPage.isVisible()) {
+								documentPage.injectCrossNavigationFunction();
+							}
+						//} catch (e) {alert(e);}
+						} catch (e) {}
+					}
+				}
+				, this
+		);
+	}
+	//send messages about enable or disable datastore refresh action (for console engine) 
+	this.on(
+	   'beforetabchange',
+	   function (tabPanel, newTab, currentTab ) {
+		   if(currentTab && currentTab.tabType === 'document' && currentTab.getActiveDocument() && currentTab.getActiveDocument().getDocumentExecutionPage()) {
+			   currentTab.getActiveDocument().getDocumentExecutionPage().getDocumentPage().sendMessage('Disable datastore', 'hide');
+		   }
+		   if(newTab.tabType === 'document' && newTab.getActiveDocument() && newTab.getActiveDocument().getDocumentExecutionPage()){
+			   newTab.getActiveDocument().getDocumentExecutionPage().getDocumentPage().sendMessage('Enable datastore', 'show');
+		   }
+	   }
+	   , this
+	);
+	
+    this.treePanel.addListener('click', this.onTreeNodeClick, this);
+ 
     this.detailPanel.addListener('onfolderload', this.onFolderLoad, this);
     this.detailPanel.addListener('ondocumentclick', this.onDocumentClick, this);
     
@@ -203,12 +185,8 @@ Sbi.browser.DocumentsBrowser = function(config) {
     	this.progressPanel.addListener('click', this.onTreeNodeClick, this);
     }
     
-   
-    
     
 }
-
-
 
 
 Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
@@ -225,7 +203,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
     , centerRegionContainer: null
     , detailPanel: null
     , executionPanel: null
-    
+
     
     , selectFolder: function(folderId) {
 		this.detailPanel.loadFolder(folderId, this.rootFolderId);
@@ -234,10 +212,11 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 	}
 	
 	, onFolderLoad: function(panel) {
-		if(this.centerContainerPanel.getActiveTab() != this.mainTab) {
-			this.centerContainerPanel.setActiveTab(this.mainTab);
-		}
-		
+//		if(this.brTab.getActiveTab() != this.detailPanel) {
+//			this.brTab.setActiveTab(this.detailPanel);
+//			
+//		}
+//		this.detailPanel.show();
 	}
     
     
@@ -256,7 +235,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
 		
 		
-		this.centerContainerPanel.add(executionPanel).show();
+		this.tabbedBrowser.add(executionPanel).show();
 		
 		executionPanel.execute();
 	}
@@ -279,7 +258,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
 		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
 		
-		this.centerContainerPanel.add(executionPanel).show();
+		this.tabbedBrowser.add(executionPanel).show();
 		
 		executionPanel.execute();
 	}
@@ -296,7 +275,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
 		
 		
-		this.centerContainerPanel.add(executionPanel).show();
+		this.tabbedBrowser.brTab.add(executionPanel).show();
 		
 		executionPanel.execute();
 	}
