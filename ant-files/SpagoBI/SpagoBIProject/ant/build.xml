@@ -392,6 +392,7 @@
 				<file name="./src/ext/sbi/execution/ExecutionWizard.js" />
 				<file name="./src/ext/sbi/execution/ExecutionPanel.js" />
 				<file name="./src/ext/sbi/browser/DocumentsBrowser.js" />
+				<file name="./src/ext/sbi/browser/TabbedDocBrowser.js" />
 				<file name="./lib/ext-2.0.1/ux/miframe/miframe-min.js" />
 				<file name="./lib/ext-2.0.1/ux/grid/Ext.grid.ButtonColumn.js" />
 				<file name="./lib/ext-2.0.1/ux/andrie/Select.js" />
