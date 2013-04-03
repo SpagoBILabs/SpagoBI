@@ -52,12 +52,12 @@ Sbi.settings.georeport = {
 			displayProjection: 'EPSG:4326',
 	        
 			/**
-			 * {String} The map units.  Defaults to ‘degrees’.  Possible values are ‘degrees’ (or ‘dd’), ‘m’, ‘ft’, ‘km’, ‘mi’, ‘inches’.
+			 * {String} The map units.  Defaults to 'degrees'.  Possible values are 'degrees' (or 'dd'), 'm', 'ft', 'km', 'mi', 'inches'.
 			 */
 			units: "m",
 			
 			/**
-			 * {Float} Default max is 360 deg / 256 px, which corresponds to zoom level 0 on gmaps.  
+			 * {Float} Default max is 360 deg 256 px, which corresponds to zoom level 0 on gmaps.  
 			 * Specify a different value in the map options if you are not using a geographic projection and displaying the whole world.
 			 */
 	        maxResolution: 156543.0339,
@@ -90,6 +90,7 @@ Sbi.settings.georeport = {
 	 	 * 		http://dev.openlayers.org/releases/OpenLayers-2.7/doc/apidocs/files/OpenLayers/Layer/WMS-js.html#OpenLayers.Layer.WMS.OpenLayers.Layer.WMS
 	     */ 
 		
+		, selectedBaseLayer: "OpenStreetMap"
 		, baseLayersConf: [
 		    {
 		    	type: 'WMS',

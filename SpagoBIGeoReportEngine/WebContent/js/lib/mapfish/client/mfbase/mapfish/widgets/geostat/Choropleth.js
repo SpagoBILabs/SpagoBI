@@ -252,6 +252,8 @@ mapfish.widgets.geostat.Choropleth = Ext.extend(Ext.FormPanel, {
         if (this.loadMask && this.rendered) {
             this.loadMask.hide();
         }
+        
+        this.fireEvent('ready', this);
     },
 
     /**
@@ -310,6 +312,7 @@ mapfish.widgets.geostat.Choropleth = Ext.extend(Ext.FormPanel, {
             }
             return;
         }
+        
         options.method = mapfish.GeoStat.Distribution[options.method];
         options.numClasses = this.form.findField('numClasses').getValue();
         options.colors = this.getColors();

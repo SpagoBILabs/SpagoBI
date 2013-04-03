@@ -8,6 +8,10 @@ Ext.ns("Sbi.georeport");
 
 Sbi.georeport.MainPanel = function(config) {
 	
+	this.validateConfigObject(config);
+	this.adjustConfigObject(config);
+	
+	
 	var defaultSettings = {
 		mapName: 'sbi.georeport.mappanel.title'
 		, controlPanelConf: {
@@ -34,40 +38,10 @@ Sbi.georeport.MainPanel = function(config) {
 	}
 		
 	var c = Ext.apply(defaultSettings, config || {});
-	
-	// patch for an old typo
-	if(c.feautreInfo) {
-		c.featureInfo = c.feautreInfo;
-		delete c.feautreInfo;
-	}
-		
 	Ext.apply(this, c);
 		
-		
-	this.services = this.services || new Array();	
-	
-	var params = {
-		layer: this.targetLayerConf.name
-		, businessId: this.businessId
-		, geoId: this.geoId
-	};
-	
-	if(this.targetLayerConf.url) {
-		params.featureSourceType = 'wfs';
-		params.featureSource = this.targetLayerConf.url;
-	} else {
-		params.featureSourceType = 'file';
-		params.featureSource = this.targetLayerConf.data;
-	}
-	
-	this.services['MapOl'] = this.services['MapOl'] || Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'MapOl'
-		, baseParams: params
-	});
-	
-	this.initMap();
-	this.initMapPanel();
-	this.initControlPanel();
+	this.initServices();
+	this.init();
 	
 	c = Ext.apply(c, {
          layout   : 'border',
@@ -86,14 +60,25 @@ Sbi.georeport.MainPanel = function(config) {
 			this.toolbar.initButtons.defer(500, this.toolbar);
 			//this.initToolbarContent.defer(500, this);	
 		}
-	}, this);
-	
-	
-	
+	}, this);	
 };
 
+/**
+ * @class Sbi.georeport.MainPanel
+ * @extends Ext.Panel
+ * 
+ * ...
+ */
 Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
     
+	// =================================================================================================================
+	// PROPERTIES
+	// =================================================================================================================
+	
+	/**
+     * @property {Array} services
+     * This array contains all the services invoked by this class
+     */
     services: null
     
     , baseLayersConf: null
@@ -118,8 +103,6 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
     , targetLayer: null
     , geostatistic: null
     
-    // --- modifica fabio
-    
     , controlPanel2: null
     
     , nWLayer: null
@@ -136,12 +119,47 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
     
     , model: null
     
-    // --- modifica fabio
-    
-    
-    // -- public methods ------------------------------------------------------------------------
-    
-    
+    // =================================================================================================================
+	// METHODS
+	// =================================================================================================================
+	
+	/**
+	 * @method 
+	 * 
+	 * Controls that the configuration object passed in to the class constructor contains all the compulsory properties. 
+	 * If it is not the case an exception is thrown. Use it when there are properties necessary for the object
+	 * construction for whom is not possible to find out a valid default value.
+	 * 
+	 * @param {Object} the configuration object passed in to the class constructor
+	 * 
+	 * @return {Object} the config object received as input
+	 */
+	, validateConfigObject: function(config) {
+		
+	}
+
+	/**
+	 * @method 
+	 * 
+	 * Modify the configuration object passed in to the class constructor adding/removing properties. Use it for example to 
+	 * rename a property or to filter out not necessary properties.
+	 * 
+	 * @param {Object} the configuration object passed in to the class constructor
+	 * 
+	 * @return {Object} the modified version config object received as input
+	 * 
+	 */
+	, adjustConfigObject: function(config) {
+		// patch for an old typo
+		if(config.feautreInfo) {
+			config.featureInfo = config.feautreInfo;
+			delete config.feautreInfo;
+		}
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // accessor methods
+	// -----------------------------------------------------------------------------------------------------------------
     , setCenter: function(center) {
       	
 		center = center || {};
@@ -161,8 +179,52 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
          
      }
 
-	 // -- private methods ------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------------------------
+	// init methods
+	// -----------------------------------------------------------------------------------------------------------------
+
+	/**
+	 * @method 
+	 * 
+	 * Initialize the following services exploited by this component:
+	 * 
+	 *    - MapOl: ... (by default MapOl)
+	 *    
+	 */
+	, initServices: function() {
+		this.services = this.services || new Array();	
+		
+		var params = {
+			layer: this.targetLayerConf.name
+			, businessId: this.businessId
+			, geoId: this.geoId
+		};
+		
+		if(this.targetLayerConf.url) {
+			params.featureSourceType = 'wfs';
+			params.featureSource = this.targetLayerConf.url;
+		} else {
+			params.featureSourceType = 'file';
+			params.featureSource = this.targetLayerConf.data;
+		}
+		
+		this.services['MapOl'] = this.services['MapOl'] || Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'MapOl'
+			, baseParams: params
+		});
+	}
 	
+
+	/**
+	 * @method 
+	 * 
+	 * Initialize the GUI
+	 */
+	, init: function() {
+		this.initMap();
+		this.initMapPanel();
+		this.initControlPanel();
+	}
 	
 	, initMap: function() {  
 		var o = this.baseMapOptions;
@@ -198,6 +260,11 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 			for(var i = 0; i < this.baseLayersConf.length; i++) {
 				if(this.baseLayersConf[i].enabled === true) {
 					var l = Sbi.georeport.LayerFactory.createLayer( this.baseLayersConf[i] );
+					if(l.name === this.selectedBaseLayer) {
+						l.selected = true;
+					} else {
+						l.selected = false;
+					}
 					this.layers.push( l	);
 				}
 			}			
@@ -251,8 +318,6 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 	  
 	  }
 	
-	
-	
 	, initAnalysis: function() {
 		var upperIndicators = [];
 		for (var i = 0; i < this.indicators.length; i++){
@@ -283,7 +348,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 			this.initProportionalSymbolsAnalysis();
 			geostatConf.layer = this.targetLayer;
 			this.geostatistic = new mapfish.widgets.geostat.ProportionalSymbol(geostatConf);
-			
+			this.geostatistic.analysisConf = this.analysisConf;
 		} else if(this.analysisType === this.GRAPHIC) {
 			this.initGraphicAnalysis();
 			geostatConf.layer = this.targetLayer;
@@ -294,10 +359,12 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 			this.map.totalField= this.totalField;
 			this.map.fieldsToShow= this.fieldsToShow;
 			this.geostatistic = new mapfish.widgets.geostat.Choropleth(geostatConf);//da ridefinire
+			this.geostatistic.analysisConf = this.analysisConf;
 		} else if (this.analysisType === this.CHOROPLETH) {
 			this.initChoroplethAnalysis();
 			geostatConf.layer = this.targetLayer;
 			this.geostatistic = new mapfish.widgets.geostat.Choropleth(geostatConf);
+			this.geostatistic.analysisConf = this.analysisConf;
 		} else {
 			alert('error: unsupported analysis type [' + this.analysisType + ']');
 		}
@@ -308,9 +375,6 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 		
 		
 	}
-	
-	
-	
 	
 	, initProportionalSymbolsAnalysis: function() {
 	
@@ -328,7 +392,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 	
 	, initChoroplethAnalysis: function() {
 		this.targetLayer = new OpenLayers.Layer.Vector(this.targetLayerConf.text, {
-        	'visibility': false,
+        	'visibility': true,
           	'styleMap': new OpenLayers.StyleMap({
             	'default': new OpenLayers.Style(
                 	OpenLayers.Util.applyDefaults(
@@ -436,6 +500,9 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 	}
 	
 	, onTargetFeatureClick: function(feature) {
+		if(Ext.isEmpty(this.detailDocumentConf)) {
+			this.detailDocumentConf = [];
+		} 
 		if(!Ext.isArray( this.detailDocumentConf )) {
 			this.detailDocumentConf = [this.detailDocumentConf];
 		}
@@ -783,17 +850,21 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 			this.closePopup(feature);
         }.createDelegate(this, []);
         
-        popup = new OpenLayers.Popup.FramedCloud("chicken", 
+        if( Ext.isEmpty(feature.popup) === false ) {
+        	this.closePopup(feature);
+        }
+        
+        feature.popup = new OpenLayers.Popup.AnchoredBubble( //new OpenLayers.Popup.FramedCloud(
+        		Ext.id(), 
                 feature.geometry.getBounds().getCenterLonLat(),
-                null,
+                new OpenLayers.Size(200, 150),
                 content,
                 null, 
                 true, 
                 onPopupCloseFn
         );
         
-        feature.popup = popup;
-        this.map.addPopup(popup);
+        this.map.addPopup(feature.popup);
 	}
 	
 	, closePopup: function(feature) {
@@ -888,6 +959,8 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 	
 	, getInlineDocHtmlFragment: function(feature) {
 		var content = '';
+		
+		if(Ext.isEmpty(this.inlineDocumentConf)) return content;
 		
 		var params = Ext.apply({}, this.inlineDocumentConf.staticParams);
 		for(p in this.inlineDocumentConf.dynamicParams) {

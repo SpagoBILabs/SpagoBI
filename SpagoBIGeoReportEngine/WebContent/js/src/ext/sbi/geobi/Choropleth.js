@@ -163,6 +163,7 @@ mapfish.GeoStat.Choropleth = OpenLayers.Class(mapfish.GeoStat, {
      * options - {Object}
      */
     applyClassification: function(options) {
+    	alert('Bella di padella');
         this.updateOptions(options);
         var boundsArray = this.classification.getBoundsArray();
         var rules = new Array(boundsArray.length - 1);
