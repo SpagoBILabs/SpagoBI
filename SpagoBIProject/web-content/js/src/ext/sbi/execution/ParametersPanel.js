@@ -607,9 +607,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		var nonTransientField = 0;
 		
-		if(!this.parameters || this.parameters.length==0){
-			this.fireEvent("hideparameterspanel");
-		}
+//		if(!this.parameters || this.parameters.length==0){
+//			this.fireEvent("hideparameterspanel");
+//		}
 			
 		for(var i = 0; i < parameters.length; i++) {
 			var field = this.createField( parameters[i] );
@@ -641,6 +641,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if(this.thereAreParametersToBeFilled() !== true) {
 			if (this.rendered) {
 				Ext.DomHelper.append(this.body, '<div class="x-grid-empty">' + LN('sbi.execution.parametersselection.noParametersToBeFilled') + '</div>');
+				this.fireEvent("hideparameterspanel");
 			}
 		} else {
 			// set focus on first field
