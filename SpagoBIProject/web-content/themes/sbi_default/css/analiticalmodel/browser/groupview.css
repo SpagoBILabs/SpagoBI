@@ -309,6 +309,16 @@
 	background-repeat: no-repeat;
 }
 
+.group-view .item-control-panel .action-detail {
+	width: 14px;
+	height: 14px;
+	margin: 2;
+	float: right;
+	background-image:
+		url('../../../img/analiticalmodel/browser/detail.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
 .group-view .item-control-panel .action-export {
 	width: 16px;
 	height: 16px;
