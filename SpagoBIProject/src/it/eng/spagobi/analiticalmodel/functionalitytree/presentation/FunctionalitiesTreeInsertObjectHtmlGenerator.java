@@ -10,12 +10,14 @@ import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.service.DetailBIObjectModule;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
@@ -147,6 +149,19 @@ public class FunctionalitiesTreeInsertObjectHtmlGenerator implements ITreeHtmlGe
 		ResponseContainer responseContainer = ChannelUtilities.getResponseContainer(httpRequest);
 		SourceBean serviceResponse = responseContainer.getServiceResponse();
 		BIObject obj = (BIObject) serviceResponse.getAttribute("DetailBIObjectModule." + DetailBIObjectModule.NAME_ATTR_OBJECT);
+		
+		//GET FOLDER_ID (4.0 implementation)
+		String functionalityId= (String)httpRequest.getParameter(ObjectsTreeConstants.FUNCT_ID);
+		LowFunctionality defaultFunc = null;
+		if(functionalityId != null){
+			try {
+				defaultFunc = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(Integer.parseInt(functionalityId), false);
+			} catch (NumberFormatException e) {
+				logger.error("Error in getting folder " + e.getMessage());
+			} catch (EMFUserError e) {
+				logger.error("Error in getting folder " + e.getMessage());
+			}
+		}
         
 		StringBuffer htmlStream = new StringBuffer();
 		htmlStream.append("<LINK rel='StyleSheet' href='"+urlBuilder.getResourceLinkByTheme(httpRequest, "/css/dtree.css", currTheme )+"' type='text/css' />");
@@ -173,6 +188,10 @@ public class FunctionalitiesTreeInsertObjectHtmlGenerator implements ITreeHtmlGe
 	   	Iterator it = objectsList.iterator();
 	   	while (it.hasNext()) {
 	   		LowFunctionality folder = (LowFunctionality) it.next();
+	   		boolean isDefaultForNew= false;
+	   		if(defaultFunc!= null && defaultFunc.getId() == folder.getId()){
+	   			isDefaultForNew= true;
+	   		}
 	   		/* ********* start luca changes *************** */
 	   		
 	   		
@@ -183,11 +202,11 @@ public class FunctionalitiesTreeInsertObjectHtmlGenerator implements ITreeHtmlGe
 	   		}*/
 	   		/* ********* end luca changes ***************** */
 	   		if (initialPath != null) {
-	   			if (initialPath.equalsIgnoreCase(folder.getPath())) addItemForJSTree(htmlStream, folder, obj, false, true);
-	   			else addItemForJSTree(htmlStream, folder, obj, false, false);
+	   			if (initialPath.equalsIgnoreCase(folder.getPath())) addItemForJSTree(htmlStream, folder, obj, false, true, isDefaultForNew);
+	   			else addItemForJSTree(htmlStream, folder, obj, false, false, isDefaultForNew);
 	   		} else {
-	   			if (folder.getParentId() == null) addItemForJSTree(htmlStream, folder, obj, true, false);
-	   			else addItemForJSTree(htmlStream, folder, obj, false, false);
+	   			if (folder.getParentId() == null) addItemForJSTree(htmlStream, folder, obj, true, false, isDefaultForNew);
+	   			else addItemForJSTree(htmlStream, folder, obj, false, false, isDefaultForNew);
 	   		}
 	   	}
 	   	//htmlStream.append("				document.write(treeFunctIns);\n");
@@ -201,7 +220,7 @@ public class FunctionalitiesTreeInsertObjectHtmlGenerator implements ITreeHtmlGe
 	}
 
 	private void addItemForJSTree(StringBuffer htmlStream, LowFunctionality folder, BIObject obj, 
-			boolean isRoot, boolean isInitialPath) {
+			boolean isRoot, boolean isInitialPath, boolean isDefaultForNew) {
 		logger.debug("IN");	
 		String nameLabel = folder.getName();
 		String name = msgBuilder.getMessage(nameLabel, "messages", httpRequest);
@@ -224,7 +243,9 @@ public class FunctionalitiesTreeInsertObjectHtmlGenerator implements ITreeHtmlGe
 						boolean checked = false;
 						if (obj != null) {
 							List funcs = obj.getFunctionalities();
-							if (funcs.contains(id)) checked = true;
+							if (funcs.contains(id) || isDefaultForNew) {
+								checked = true;
+							}
 						}
 						htmlStream.append("	treeFunctIns.add(" + id + ", " + parentId + ",'" + name + 
 							          "', '', '', '', '" + imgFolder + "', '" + imgFolderOp + 

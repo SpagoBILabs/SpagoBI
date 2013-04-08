@@ -108,7 +108,15 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			}
 			
 			Collection func = profile.getFunctionalities();
-
+			//sets action to modify document's detail
+			JSONObject detailAction = new JSONObject();
+			detailAction.put("name", "detail");
+			detailAction.put("description", "Document detail");
+			for(int i = 0; i < documentsJSON.length(); i++) {
+				JSONObject documentJSON = documentsJSON.getJSONObject(i);
+				documentJSON.getJSONArray("actions").put(detailAction);
+			}
+			
 			if(func.contains("SeeMetadataFunctionality")){
 				JSONObject showmetadataAction = new JSONObject();
 				showmetadataAction.put("name", "showmetadata");
@@ -118,7 +126,7 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 					documentJSON.getJSONArray("actions").put(showmetadataAction);
 				}
 			}
-			if(isHome) {
+			//if(isHome) {
 				JSONObject deleteAction = new JSONObject();
 				deleteAction.put("name", "delete");
 				deleteAction.put("description", "Delete this item");
@@ -126,7 +134,7 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 					JSONObject documentJSON = documentsJSON.getJSONObject(i);
 					documentJSON.getJSONArray("actions").put(deleteAction);
 				}
-			}
+			//}
 			JSONObject documentsResponseJSON =  createJSONResponseDocuments(documentsJSON);
 
 			//getting children folders
