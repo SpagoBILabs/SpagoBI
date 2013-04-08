@@ -246,11 +246,19 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 	}
 	
 	, onCrossNavigationDocumentClick: function(r) {
-		
+
 		var config = Ext.apply({
-			title: r.document.title !== undefined ? r.document.title : r.document.name
-			, closable: true
+			//title: (r.document.title !== undefined || r.document.title != null)? r.document.title : r.document.name, 
+			closable: true
 		}, r);
+		
+		var name = r.document.name;
+		var title = r.document.title;
+		if(title !== undefined){
+			config.title = title;
+		}else{
+			config.title = name;
+		}
 		
 		var executionPanel = new Sbi.execution.ExecutionPanel(config, r.document);
 		executionPanel.tabType = 'document';
