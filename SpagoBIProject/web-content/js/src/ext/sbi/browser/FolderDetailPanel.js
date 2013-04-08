@@ -39,13 +39,13 @@ Sbi.browser.FolderDetailPanel = function(config) {
 	this.services['detailDocument'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceType: 'PAGE'
 		, serviceName: 'DetailBIObjectPage'
-		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGEDET: 'DETAIL_SELECT'}
+		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'FALSE', MESSAGEDET: 'DETAIL_SELECT'}
 	});
   
 	this.services['newDocument'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceType: 'PAGE'
 		, serviceName: 'DetailBIObjectPage'
-		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGEDET: 'DETAIL_NEW'}
+		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'FALSE', MESSAGEDET: 'DETAIL_NEW'}
 	});
 	
 	
