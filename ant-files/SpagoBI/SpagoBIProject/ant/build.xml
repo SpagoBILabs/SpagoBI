@@ -104,7 +104,7 @@
 		<available property="sbi.security.exo.file.exists" file="${exo.security.dir}/dist/sbi.security.exo-${project.version}.jar" />
 	</target>
 	<target name="copy.sbi.security.exo" depends="check.sbi.security.exo" if="${sbi.security.exo.file.exists}">
-		<copy file="${exo.security.dir}/dist/sbi.security.lexo-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+		<copy file="${exo.security.dir}/dist/sbi.security.exo-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
 
 	<!-- xml -->
