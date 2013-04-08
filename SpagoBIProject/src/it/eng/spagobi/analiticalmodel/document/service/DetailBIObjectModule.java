@@ -76,6 +76,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	public final static String NAME_ATTR_LIST_LANGUAGES = "languages";
 	public final static String NAME_ATTR_LIST_DATASET = "datasets";
 	public final static String LOADING_PARS_DC = "loadingParsDC";
+
 	
 	//private String actor = null;
 	private EMFErrorHandler errorHandler = null;
@@ -729,6 +730,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	 */
 	private void newBIObject(SourceBean request, SourceBean response) throws EMFUserError {
 		try {
+
 			response.setAttribute(ObjectsTreeConstants.MODALITY, ObjectsTreeConstants.DETAIL_INS);
             BIObject obj = new BIObject();
             obj.setId(new Integer(0));
@@ -750,9 +752,12 @@ public class DetailBIObjectModule extends AbstractHttpModule {
             obj.setStateCode(state.getValueCd());
             obj.setStateID(state.getValueId());
             List functionalitites = new ArrayList();
+
             obj.setFunctionalities(functionalitites);
             response.setAttribute(NAME_ATTR_OBJECT, obj);
-            helper.fillResponse(initialPath);      
+
+            helper.fillResponse(initialPath); 
+
 		} catch (Exception ex) {
 			logger.error("Cannot prepare page for the insertion", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);

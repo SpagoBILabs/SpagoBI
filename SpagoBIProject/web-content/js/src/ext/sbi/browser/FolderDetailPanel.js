@@ -36,9 +36,17 @@ Sbi.browser.FolderDetailPanel = function(config) {
 		serviceName: 'DELETE_OBJECT_ACTION'
 		, baseParams: params
 	});
-	
+	this.services['detailDocument'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceType: 'PAGE'
+		, serviceName: 'DetailBIObjectPage'
+		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGEDET: 'DETAIL_SELECT'}
+	});
   
-	
+	this.services['newDocument'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceType: 'PAGE'
+		, serviceName: 'DetailBIObjectPage'
+		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGEDET: 'DETAIL_NEW'}
+	});
 	
 	
 	
@@ -83,11 +91,23 @@ Sbi.browser.FolderDetailPanel = function(config) {
 		}
     });
     
+    var newDocumentButton = new Ext.Toolbar.Button({
+    	tooltip: LN('sbi.generic.add'),
+		iconCls:'icon-add',
+		listeners: {
+			'click': {
+          		fn: this.addNewDocument,
+          		scope: this
+        	} 
+		}
+    });
+    
     this.toolbar = new Ext.Toolbar({
       //cls: 'top-toolbar'
       items: [
           ttbarTextItem
           ,'->'
+          , newDocumentButton
           , ttbarToggleViewButton  
       ]
     });
@@ -96,7 +116,7 @@ Sbi.browser.FolderDetailPanel = function(config) {
     //this.toolbar.text = ttbarTextItem;
     this.toolbar.buttonsL = new Array();
     this.toolbar.buttonsL['toggleView'] = ttbarToggleViewButton;
-     
+    this.toolbar.buttonsL['newDocument'] = newDocumentButton;
     
     
     if(config.modality && (
@@ -187,7 +207,15 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
       
       this.loadingMask.hide();
     }
-    
+	, addNewDocument: function() {
+		var urlToCall = this.services['newDocument'];
+		
+		if(this.folderId != null){
+			urlToCall += '&FUNCT_ID='+this.folderId;
+		}
+		
+		window.location.href=urlToCall;	
+	}
     , loadFolder: function(folderId, rootFolderId) {
       
       this.folderId = folderId;	
@@ -314,7 +342,17 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
             	} 
     		}
         });
-        this.toolbar.add('->', this.toolbar.buttonsL['toggleView']);
+        this.toolbar.buttonsL['newDocument'] = new Ext.Toolbar.Button({
+        	tooltip: LN('sbi.generic.add'),
+    		iconCls:'icon-add',
+    		listeners: {
+    			'click': {
+              		fn: this.addNewDocument,
+              		scope: this
+            	} 
+    		}
+        });
+        this.toolbar.add('->', this.toolbar.buttonsL['toggleView'], this.toolbar.buttonsL['newDocument']);
     }
    
     
@@ -420,11 +458,25 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     , performActionOnDocument: function(docRecord, action) {
     	if(this.fireEvent('beforeperformactionondocument', this, docRecord, action) !== false){
     		if(action === 'delete') {
-    			//alert(docRecord.id + '; ' + this.folderId);
-    			this.deleteDocument(docRecord.id);
+    			Ext.MessageBox.confirm(
+    					LN('sbi.generic.pleaseConfirm')
+    					, LN('sbi.generic.confirmDelete')
+    		            , function(btn, text) {
+    		                if ( btn == 'yes' ) {
+    		                	this.deleteDocument(docRecord.id);
+    		                }
+    					}
+    					, this
+    				);
+    			
     		} else if(action === 'showmetadata' && Sbi.user.functionalities.contains('SeeMetadataFunctionality')) {
     			//alert(docRecord.id + '; ' + this.folderId);
     			this.showDocumentMetadata(docRecord.id);
+    		} else if(action === 'detail') {
+
+				var urlToCall = this.services['detailDocument'];
+				urlToCall += '&OBJECT_ID='+docRecord.id;
+				window.location.href=urlToCall;	
     		}
     	}
     }

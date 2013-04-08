@@ -15,7 +15,9 @@ k.icon-ftree-rootx {
 	margin-right: 7px;
 }
 
-
+.icon-add-document{
+	background-image: url('../../../img/new.png') !important;
+}
 #doc-details .x-panel-body {
 	background-color:#fff;
     border:1px solid;

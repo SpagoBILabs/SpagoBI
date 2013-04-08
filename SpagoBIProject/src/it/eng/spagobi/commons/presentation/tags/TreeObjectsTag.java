@@ -9,10 +9,14 @@ import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.tracing.TracerSingleton;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.presentation.ITreeHtmlGenerator;
 import it.eng.spagobi.analiticalmodel.functionalitytree.service.TreeObjectsModule;
+import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
@@ -22,6 +26,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+
+import org.apache.log4j.Logger;
 
 /**
  * Creates the tag for tree objects
@@ -50,6 +56,8 @@ public class TreeObjectsTag extends TagSupport {
 		SourceBean serviceRequest = requestContainer.getServiceRequest();
 		SourceBean serviceResponse = responseContainer.getServiceResponse();
 		SourceBean moduleResponse = (SourceBean)serviceResponse.getAttribute(moduleName);
+
+		
 		List functionalitiesList = null;
 		if (attributeToRender == null || attributeToRender.trim().equals("")) {
 			functionalitiesList = (List) moduleResponse.getAttribute(SpagoBIConstants.FUNCTIONALITIES_LIST);
