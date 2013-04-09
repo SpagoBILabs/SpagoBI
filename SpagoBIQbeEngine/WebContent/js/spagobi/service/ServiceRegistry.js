@@ -45,6 +45,12 @@ Sbi.service.ServiceRegistry = function(config) {
     Sbi.service.ServiceRegistry.superclass.constructor.call(this);
 };
 
+/**
+ * @class Sbi.service.ServiceRegistry
+ * @extends Ext.util.Observable
+ * 
+ * ServiceRegistry
+ */
 Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
     
     // static contens and methods definitions

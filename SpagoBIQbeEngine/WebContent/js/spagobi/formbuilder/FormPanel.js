@@ -93,6 +93,12 @@ Sbi.formbuilder.FormPanel = function(config) {
 
 };
 
+/**
+ * @class Sbi.formbuilder.FormPanel
+ * @extends Ext.TabPanel
+ * 
+ * FormPanel
+ */
 Ext.extend(Sbi.formbuilder.FormPanel, Ext.TabPanel, {
 	
 	services: null

@@ -86,6 +86,12 @@ Sbi.formtemplate.DocumentTemplateBuilder = function(config) {
     Sbi.formtemplate.DocumentTemplateBuilder.superclass.constructor.call(this, c);
 };
 
+/**
+ * @class Sbi.formtemplate.DocumentTemplateBuilder
+ * @extends Ext.Panel
+ * 
+ * DocumentTemplateBuilder
+ */
 Ext.extend(Sbi.formtemplate.DocumentTemplateBuilder, Ext.Panel, {
     
 	services: null

@@ -89,6 +89,12 @@ Sbi.widgets.LookupField = function(config) {
 	
 };
 
+/**
+ * @class Sbi.widgets.LookupField
+ * @extends Ext.form.TriggerField
+ * 
+ * LookupField
+ */
 Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
     
 	// ----------------------------------------------------------------------------------------

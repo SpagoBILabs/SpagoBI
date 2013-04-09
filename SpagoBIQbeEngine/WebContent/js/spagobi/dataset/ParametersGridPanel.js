@@ -68,6 +68,12 @@ Sbi.dataset.ParametersGridPanel = function(config) {
 
 };
 
+/**
+ * @class Sbi.dataset.ParametersGridPanel
+ * @extends Ext.grid.EditorGridPanel
+ * 
+ * ParametersGridPanel
+ */
 Ext.extend(Sbi.dataset.ParametersGridPanel, Ext.grid.EditorGridPanel, {
 
 	currentRowRecordEdited : null

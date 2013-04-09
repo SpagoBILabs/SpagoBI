@@ -81,6 +81,12 @@ Sbi.formviewer.FormViewerPage = function(template, config, formValues) {
     
 };
 
+/**
+ * @class Sbi.formviewer.FormViewerPage
+ * @extends Ext.Panel
+ * 
+ * FormViewerPage
+ */
 Ext.extend(Sbi.formviewer.FormViewerPage, Ext.Panel, {
     
     services: null
