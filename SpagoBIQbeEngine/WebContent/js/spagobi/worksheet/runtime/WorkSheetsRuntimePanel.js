@@ -61,6 +61,12 @@ Sbi.worksheet.runtime.WorkSheetsRuntimePanel = function(template, config) {
 	Sbi.worksheet.runtime.WorkSheetsRuntimePanel.superclass.constructor.call(this, c);	
 };
 
+/**
+ * @class Sbi.worksheet.runtime.WorkSheetsRuntimePanel
+ * @extends Ext.Panel
+ * 
+ * WorkSheetsRuntimePanel
+ */
 Ext.extend(Sbi.worksheet.runtime.WorkSheetsRuntimePanel, Ext.Panel, {
 	sheetsContainerPanel: null,
 

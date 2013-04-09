@@ -28,7 +28,7 @@
 			    "AND"
 			    "GROUP"
 			    "OR"		
-			    '$F{[ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØ‏ÙÚÛÜÝאבגדהוזחטיךכלםמןנסעףפץצרÞשתûü‎A-Za-z0-9_ ]+}'					Identifier
+			    '$F{[A-Za-z0-9_ ]+}'					Identifier
 			    ;
 			
                   			/~ Left-associative tokens, lowest precedence ~/

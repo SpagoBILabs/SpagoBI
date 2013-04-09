@@ -64,6 +64,12 @@ Sbi.registry.RegistryPanel = function(config) {
     
 };
 
+/**
+ * @class Sbi.registry.RegistryPanel
+ * @extends Ext.Panel
+ * 
+ * RegistryPanel
+ */
 Ext.extend(Sbi.registry.RegistryPanel, Ext.Panel, {
 	
 	registryConfiguration : null

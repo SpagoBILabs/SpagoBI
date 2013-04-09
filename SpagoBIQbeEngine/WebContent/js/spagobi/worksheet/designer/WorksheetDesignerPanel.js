@@ -81,6 +81,12 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 
 };
 
+/**
+ * @class Sbi.worksheet.designer.WorksheetDesignerPanel
+ * @extends Ext.Panel
+ * 
+ * WorksheetDesignerPanel
+ */
 Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	designToolsPanel: null,
 	sheetsContainerPanel: null,

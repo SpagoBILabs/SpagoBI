@@ -76,6 +76,12 @@ Sbi.crosstab.CrosstabPreviewPanel = function(config) {
     
 };
 
+/**
+ * @class Sbi.crosstab.CrosstabPreviewPanel
+ * @extends Ext.Panel
+ * 
+ * CrosstabPreviewPanel
+ */
 Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	
 	services: null

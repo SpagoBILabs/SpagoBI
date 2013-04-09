@@ -145,7 +145,7 @@ Sbi.formbuilder.template = {
     , "groupingVariables": [
         {
         	"admissibleFields": [
-        	      {"field": "it.eng.spagobi.SalesFact1998::customer(customer_id):city", "text": "Città"}
+        	      {"field": "it.eng.spagobi.SalesFact1998::customer(customer_id):city", "text": "Citta"}
             ]
         }, {
         	"admissibleFields": [

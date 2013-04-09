@@ -220,6 +220,12 @@ Sbi.qbe.QbePanel = function(config) {
 	}
 };
 
+/**
+ * @class Sbi.qbe.QbePanel
+ * @extends Ext.Panel
+ * 
+ * Main QBE panel
+ */
 Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 
 	services: null

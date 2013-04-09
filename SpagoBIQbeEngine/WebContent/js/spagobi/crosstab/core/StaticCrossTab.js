@@ -595,7 +595,7 @@ Ext.extend(Sbi.crosstab.core.StaticCrossTab, Ext.Panel, {
 		var toReturn = [];
 		for (var i = 1; i < headers.length; i++ ) {
 			var aHeader = headers[i];
-			for (var j = 0; j < aHeader.length; j++ ) {  // TODO: cambiare commento: un header in realta è un array di header
+			for (var j = 0; j < aHeader.length; j++ ) {  // TODO: cambiare commento: un header in realta e un array di header
 				toReturn.push([
 				    aHeader[j].name
 					, aHeader[j].getDescription(aHeader[j].formattedName)
@@ -997,9 +997,9 @@ Ext.extend(Sbi.crosstab.core.StaticCrossTab, Ext.Panel, {
     	
     	this.columnHeaderPanelContainer = new Ext.Panel({
 			style: 'margin: 0px; padding: 0px;',
-			// columnHeader[0][0] è la root, per calcolare l'altezza del contenitore 
+			// columnHeader[0][0] e la root, per calcolare l'altezza del contenitore 
 			// devo prenderne l'altezza e moltiplicarla per il numero di righe, 
-			// cioè this.columnHeader.length - 1 (-1 perché non devo considerare la root)
+			// cioe this.columnHeader.length - 1 (-1 perche non devo considerare la root)
 			height: this.columnHeader[0][0].height * ( this.columnHeader.length - 1 ), 
 	        width: this.columnHeader[0][0].width,
 	        border: false,
@@ -1030,9 +1030,9 @@ Ext.extend(Sbi.crosstab.core.StaticCrossTab, Ext.Panel, {
     	
    		this.rowHeaderPanelContainer = new Ext.Panel({
 			style: 'margin: 0px; padding: 0px; ',
-			// rowHeader[0][0] è la root, per calcolare la larghezza del contenitore 
+			// rowHeader[0][0] e la root, per calcolare la larghezza del contenitore 
 			// devo prenderne la larghezza e moltiplicarla per il numero di colonne, 
-			// cioè this.rowHeader.length - 1 (-1 perché non devo considerare la root)
+			// cioe this.rowHeader.length - 1 (-1 perche non devo considerare la root)
 			height: this.rowHeader[0][0].height,
 	        width: this.rowHeader[0][0].width * ( this.rowHeader.length - 1 ),
 	        border: false,
