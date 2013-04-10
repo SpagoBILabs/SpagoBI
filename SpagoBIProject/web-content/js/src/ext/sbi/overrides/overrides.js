@@ -223,7 +223,7 @@
      * @return {Boolean}
      */
     Ext.isFunction = function(v){
-        return toString.apply(v) === '[object Function]';
+        return Object.prototype.toString.call(v) === '[object Function]';
     };
 
 
