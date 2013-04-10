@@ -139,7 +139,7 @@ Sbi.browser.DocumentsBrowser = function(config) {
 				'tabchange',
 				function () {
 					var anActiveTab = this.getActiveTab();
-					if (anActiveTab.getActiveDocument() !== undefined) {
+					if (anActiveTab.tabType == 'document' && anActiveTab.getActiveDocument() !== undefined) {
 						try {
 							var documentPage = anActiveTab.getActiveDocument().getDocumentExecutionPage();
 							if (documentPage.isVisible()) {
