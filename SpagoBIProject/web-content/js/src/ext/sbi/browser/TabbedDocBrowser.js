@@ -33,7 +33,40 @@ Sbi.browser.TabbedDocBrowser = function(config) {
 
 	});        
     Sbi.browser.TabbedDocBrowser.superclass.constructor.call(this, c);
-
+	// if browser is IE, re-inject parent.execCrossNavigation function in order to solve parent variable conflict that occurs when 
+	// more iframes are built and the same function in injected: it is a workaround that let cross navigation work properly
+	if (Ext.isIE) {
+		this.brTab.on(
+				'tabchange',
+				function  ( thisTabPanel, anActiveTab ) {
+					var act = thisTabPanel.getActiveTab();
+					try {
+						if (act !== undefined && act.getActiveDocument()) {
+							
+								var documentPage = act.getActiveDocument().getDocumentExecutionPage();
+								if (documentPage.isVisible()) {
+									documentPage.injectCrossNavigationFunction();
+								}
+	
+						}
+					} catch (e) {}
+				}
+				, this
+		);
+	}
+	//send messages about enable or disable datastore refresh action (for console engine) 
+	this.brTab.on(
+	   'beforetabchange',
+	   function (tabPanel, newTab, currentTab ) {
+		   if(currentTab && currentTab.tabType === 'document' && currentTab.getActiveDocument() && currentTab.getActiveDocument().getDocumentExecutionPage()) {
+			   currentTab.getActiveDocument().getDocumentExecutionPage().getDocumentPage().sendMessage('Disable datastore', 'hide');
+		   }
+		   if(newTab.tabType === 'document' && newTab.getActiveDocument() && newTab.getActiveDocument().getDocumentExecutionPage()){
+			   newTab.getActiveDocument().getDocumentExecutionPage().getDocumentPage().sendMessage('Enable datastore', 'show');
+		   }
+	   }
+	   , this
+	);
 }
 
 
