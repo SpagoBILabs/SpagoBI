@@ -132,39 +132,7 @@ Sbi.browser.DocumentsBrowser = function(config) {
    
     Sbi.browser.DocumentsBrowser.superclass.constructor.call(this, c);
 	
-	// if browser is IE, re-inject parent.execCrossNavigation function in order to solve parent variable conflict that occurs when 
-	// more iframes are built and the same function in injected: it is a workaround that let cross navigation work properly
-	if (Ext.isIE) {
-		this.on(
-				'tabchange',
-				function () {
-					var anActiveTab = this.getActiveTab();
-					if (anActiveTab.tabType == 'document' && anActiveTab.getActiveDocument() !== undefined) {
-						try {
-							var documentPage = anActiveTab.getActiveDocument().getDocumentExecutionPage();
-							if (documentPage.isVisible()) {
-								documentPage.injectCrossNavigationFunction();
-							}
-						//} catch (e) {alert(e);}
-						} catch (e) {}
-					}
-				}
-				, this
-		);
-	}
-	//send messages about enable or disable datastore refresh action (for console engine) 
-	this.on(
-	   'beforetabchange',
-	   function (tabPanel, newTab, currentTab ) {
-		   if(currentTab && currentTab.tabType === 'document' && currentTab.getActiveDocument() && currentTab.getActiveDocument().getDocumentExecutionPage()) {
-			   currentTab.getActiveDocument().getDocumentExecutionPage().getDocumentPage().sendMessage('Disable datastore', 'hide');
-		   }
-		   if(newTab.tabType === 'document' && newTab.getActiveDocument() && newTab.getActiveDocument().getDocumentExecutionPage()){
-			   newTab.getActiveDocument().getDocumentExecutionPage().getDocumentPage().sendMessage('Enable datastore', 'show');
-		   }
-	   }
-	   , this
-	);
+
 	
     this.treePanel.addListener('click', this.onTreeNodeClick, this);
  
