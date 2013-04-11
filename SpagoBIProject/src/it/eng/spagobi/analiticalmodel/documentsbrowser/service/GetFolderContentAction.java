@@ -7,11 +7,13 @@ package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.DocumentsJSONDecorator;
@@ -108,15 +110,27 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			}
 			
 			Collection func = profile.getFunctionalities();
-			//sets action to modify document's detail
-			JSONObject detailAction = new JSONObject();
-			detailAction.put("name", "detail");
-			detailAction.put("description", "Document detail");
-			for(int i = 0; i < documentsJSON.length(); i++) {
-				JSONObject documentJSON = documentsJSON.getJSONObject(i);
-				documentJSON.getJSONArray("actions").put(detailAction);
+			//---------RELEASE 4.0--------------------//
+			boolean isAdminOrDevRole = isAdminOrDevRole(profile);
+			if(isAdminOrDevRole){
+				
+				//sets action to modify document's detail
+				JSONObject detailAction = new JSONObject();
+				detailAction.put("name", "detail");
+				detailAction.put("description", "Document detail");
+				for(int i = 0; i < documentsJSON.length(); i++) {
+					JSONObject documentJSON = documentsJSON.getJSONObject(i);
+					documentJSON.getJSONArray("actions").put(detailAction);
+				}
+				JSONObject deleteAction = new JSONObject();
+				deleteAction.put("name", "delete");
+				deleteAction.put("description", "Delete this item");
+				for(int i = 0; i < documentsJSON.length(); i++) {
+					JSONObject documentJSON = documentsJSON.getJSONObject(i);
+					documentJSON.getJSONArray("actions").put(deleteAction);
+				}
 			}
-			
+			//--------- end RELEASE 4.0--------------------//
 			if(func.contains("SeeMetadataFunctionality")){
 				JSONObject showmetadataAction = new JSONObject();
 				showmetadataAction.put("name", "showmetadata");
@@ -126,7 +140,7 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 					documentJSON.getJSONArray("actions").put(showmetadataAction);
 				}
 			}
-			//if(isHome) {
+			if(isHome && !isAdminOrDevRole) {
 				JSONObject deleteAction = new JSONObject();
 				deleteAction.put("name", "delete");
 				deleteAction.put("description", "Delete this item");
@@ -134,7 +148,7 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 					JSONObject documentJSON = documentsJSON.getJSONObject(i);
 					documentJSON.getJSONArray("actions").put(deleteAction);
 				}
-			//}
+			}
 			JSONObject documentsResponseJSON =  createJSONResponseDocuments(documentsJSON);
 
 			//getting children folders
@@ -273,5 +287,18 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 		logger.debug("OUT");
 		return functWorksheet;
 	}
-
+	private boolean isAdminOrDevRole(IEngUserProfile profile) throws EMFInternalError, EMFUserError {
+		Iterator roles = profile.getRoles().iterator() ;
+		boolean isDevOrAdmin= false;
+		while(roles.hasNext()){
+			String r = (String)roles.next();
+			Role role = DAOFactory.getRoleDAO().loadByName(r);
+			if(role.getRoleTypeCD().equalsIgnoreCase("ADMIN") || role.getRoleTypeCD().equalsIgnoreCase("DEV_ROLE")){
+				isDevOrAdmin = true;
+			}
+		}
+		
+		return isDevOrAdmin;
+		
+	}
 }
