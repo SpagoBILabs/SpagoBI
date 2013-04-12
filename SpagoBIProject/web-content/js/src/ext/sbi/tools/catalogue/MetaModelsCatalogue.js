@@ -61,6 +61,14 @@ Sbi.tools.catalogue.MetaModelsCatalogue = function(config) {
 			serviceName: 'DELETE_META_MODEL_ACTION'
 				, baseParams: baseParams
 		})
+		, 'getCategoriesService' : Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'domains/listValueDescriptionByType'
+			, baseParams: {
+				LIGHT_NAVIGATOR_DISABLED: 'TRUE',
+				DOMAIN_TYPE:"BM_CATEGORY",
+				EXT_VERSION: "3"
+			}
+		})	
 	};
 	// end services for main catalog list 
 	
@@ -78,8 +86,12 @@ Sbi.tools.catalogue.MetaModelsCatalogue = function(config) {
 			serviceName: 'DOWNLOAD_META_MODEL_VERSION_ACTION'
 			, baseParams: baseParams
 		})
+	
 	};
 	// end services for item versions list
+	
+	// Set property for using a catalogue with categories
+	c.isCategorizationEnabled = true;
 
 	Sbi.tools.catalogue.MetaModelsCatalogue.superclass.constructor.call(this, c);
 

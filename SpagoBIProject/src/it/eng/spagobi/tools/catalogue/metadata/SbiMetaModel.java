@@ -17,6 +17,8 @@ public class SbiMetaModel extends SbiHibernateModel {
 	private String name;
 
 	private String description;
+	
+	private Integer category;
 
 
 	// Constructors
@@ -28,7 +30,7 @@ public class SbiMetaModel extends SbiHibernateModel {
 		this.id = id;
 	}
 
-	public SbiMetaModel(int id, String name, String description) {
+	public SbiMetaModel(int id, String name, String description, int category) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
@@ -57,6 +59,22 @@ public class SbiMetaModel extends SbiHibernateModel {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	/**
+	 * @return the category
+	 */
+	public Integer getCategory() {
+		return category;
+	}
+
+	/**
+	 * @param category the category to set
+	 */
+	public void setCategory(Integer category) {
+		this.category = category;
+	}
+
+
 
 }
 

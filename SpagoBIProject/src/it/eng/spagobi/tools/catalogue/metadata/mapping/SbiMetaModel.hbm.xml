@@ -52,6 +52,9 @@
 		<property name="description" type="string">
 			<column name="DESCR" />
 		</property>
+		<property name="category" type="integer">
+			<column name="CATEGORY_ID" />
+		</property>
 		<filter name="tenantFilter" condition="organization=:tenant" />
 	</class>
 	<filter-def name="tenantFilter">

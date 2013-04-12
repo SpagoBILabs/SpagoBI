@@ -11,6 +11,7 @@ import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
@@ -38,6 +39,7 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 	public static String ID = "id";
 	public static String NAME = "name";
 	public static String DESCRIPTION = "description";
+	public static String CATEGORY = "category";
 	public static String ACTIVE_CONTENT_ID = "active_content_id";
 	
 	@Override
@@ -186,10 +188,16 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 		Integer id = getAttributeAsInteger( ID );
 		String name = getAttributeAsString( NAME );
 		String description = getAttributeAsString( DESCRIPTION );
+		String category = getAttributeAsString(CATEGORY);
+		Integer categoryValue = null;
+		if (StringUtilities.isNotEmpty(category)){
+			categoryValue = getAttributeAsInteger( CATEGORY );		
+		}
 		MetaModel model = new MetaModel();
 		model.setId(id);
 		model.setName(name);
 		model.setDescription(description);
+		model.setCategory(categoryValue);
 		return model;
 	}
 	
