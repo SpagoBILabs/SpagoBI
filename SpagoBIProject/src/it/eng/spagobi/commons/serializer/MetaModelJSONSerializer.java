@@ -16,6 +16,8 @@ public class MetaModelJSONSerializer implements Serializer {
 	public static final String ID = "id";
 	public static final String NAME = "name";
 	public static final String DESCRIPTION = "description";
+	public static final String CATEGORY = "category";
+
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -30,6 +32,7 @@ public class MetaModelJSONSerializer implements Serializer {
 			result.put(ID, model.getId() );
 			result.put(NAME, model.getName() );
 			result.put(DESCRIPTION, model.getDescription() );
+			result.put(CATEGORY, model.getCategory() );
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {

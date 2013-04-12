@@ -115,6 +115,54 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
 		return toReturn;
 	}
+	
+	public List<MetaModel> loadMetaModelByCategory(Integer category) {
+		LogMF.debug(logger, "IN: category = [{0}]", category);
+		
+		List<MetaModel> toReturn = new ArrayList<MetaModel>();
+		Session session = null;
+		Transaction transaction = null;
+		
+		try {
+			if (category == null) {
+				throw new IllegalArgumentException("Input parameter [category] cannot be null");
+			}
+			
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch(Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			
+			Query query = session.createQuery(" from SbiMetaModel m where m.category_id = ?");
+			query.setInteger(0, category);
+			List list = query.list();
+			Iterator it = list.iterator();
+			while (it.hasNext()) {
+				toReturn.add(toModel((SbiMetaModel) it.next()));
+			}
+			logger.debug("Models loaded");
+				
+			transaction.rollback();
+		} catch (Throwable t) {
+			logException(t);
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("An unexpected error occured while loading model with category [" + category + "]", t);	
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+		
+		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
+		return toReturn;		
+	}
+	
 
 	public List<MetaModel> loadAllMetaModels() {
 		logger.debug("IN");
@@ -186,7 +234,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			logger.debug("Model loaded");
 			hibModel.setName(model.getName());
 			hibModel.setDescription(model.getDescription());
-			
+			hibModel.setCategory(model.getCategory());
 			updateSbiCommonInfo4Update(hibModel);
 			session.save(hibModel);
 			
@@ -230,7 +278,8 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			SbiMetaModel hibModel =  new SbiMetaModel();
 			hibModel.setName(model.getName());
 			hibModel.setDescription(model.getDescription());
-			
+			hibModel.setCategory(model.getCategory());
+
 			updateSbiCommonInfo4Insert(hibModel);
 			session.save(hibModel);
 			
@@ -306,6 +355,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			toReturn.setId(hibModel.getId());
 			toReturn.setName(hibModel.getName());
 			toReturn.setDescription(hibModel.getDescription());
+			toReturn.setCategory(hibModel.getCategory());
 		}
 		logger.debug("OUT");
 		return toReturn;

@@ -13,6 +13,8 @@ public class MetaModel {
 
 	private String description;
 	
+	private Integer category;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -37,10 +39,24 @@ public class MetaModel {
 		this.description = description;
 	}
 	
+	/**
+	 * @return the category
+	 */
+	public Integer getCategory() {
+		return category;
+	}
+
+	/**
+	 * @param category the category to set
+	 */
+	public void setCategory(Integer category) {
+		this.category = category;
+	}
+
 	@Override
 	public String toString() {
 		return "MetaModel [id=" + id + ", name=" + name + ", description="
-				+ description + "]";
+				+ description + ", category = "+category+"]";
 	}
 	
 }

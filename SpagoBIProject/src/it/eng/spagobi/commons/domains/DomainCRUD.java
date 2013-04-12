@@ -29,13 +29,15 @@ import org.json.JSONObject;
 public class DomainCRUD {
 	
 	private static final String DOMAIN_TYPE = "DOMAIN_TYPE";
+	private static final String EXT_VERSION = "EXT_VERSION";
+
 	
 	@GET
 	@Path("/listValueDescriptionByType")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getListDomainsByType(@Context HttpServletRequest req){
 		IDomainDAO domaindao = null;
-		List<Domain> dialects = null;
+		List<Domain> domains = null;
 		
 		String language = (String) req.getSession().getAttribute(Constants.USER_LANGUAGE);
 		String country = (String) req.getSession().getAttribute(Constants.USER_COUNTRY);
@@ -48,20 +50,35 @@ public class DomainCRUD {
 			}
 		}
 
-		JSONArray dialectsJSONArray = new JSONArray();
+		JSONArray domainsJSONArray = new JSONArray();
+		JSONObject domainsJSONObject = new JSONObject();
 		
 		String type= (String)req.getParameter(DOMAIN_TYPE);
+		String extVersion = (String)req.getParameter(EXT_VERSION);
+
 		JSONObject datasorcesJSON= new JSONObject();
+		String result = null;
 		try {
 			
 			domaindao = DAOFactory.getDomainDAO();
-			dialects = domaindao.loadListDomainsByType(type);
-			dialectsJSONArray= translate(dialects,locale);
+			domains = domaindao.loadListDomainsByType(type);
+			domainsJSONArray= translate(domains,locale);
+			domainsJSONObject.put("domains", domainsJSONArray);
+			
+			
+			if ((extVersion != null) && (extVersion.equals("3") ) ) {
+				result = domainsJSONObject.toString();
+			} else {
+				result = domainsJSONArray.toString();
+			}
 			
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException("An unexpected error occured while instatiating the dao", t);			
 		}
-		return dialectsJSONArray.toString();
+		
+		
+		
+		return result;
 
 	}
 	
