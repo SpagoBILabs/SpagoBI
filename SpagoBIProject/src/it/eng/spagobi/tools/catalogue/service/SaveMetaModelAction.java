@@ -12,7 +12,6 @@ import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
@@ -74,7 +73,7 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 					logger.debug("Model [" + model + "] inserted");
 				} else {
 					MetaModel existing = dao.loadMetaModelByName(model.getName());
-					if (!existing.getId().equals(model.getId())) {
+					if (existing != null && !existing.getId().equals(model.getId())) {
 						logger.debug("A meta model with name already exists");
 						throw new SpagoBIServiceException(SERVICE_NAME, "A meta model with name already exists");
 					}
