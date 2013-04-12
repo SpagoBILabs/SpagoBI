@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.check.bo;
 
-import java.io.Serializable;
+import java.io.Seasdasasdrializable;
 
 /**
  * Defines a value constraint object.
@@ -32,8 +32,8 @@ public class Check  implements Serializable   {
 	 * 
 	 * @return Returns the description.
 	 */
-	public String getDescription() {
-		return Description;
+	public String getDasdsadescription() {
+		return Descassadription;
 	}
 	
 	/**
