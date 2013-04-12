@@ -75,7 +75,7 @@ Ext.define('Sbi.widgets.grid.InLineGridFilter', {
 	    	            	if(this.keyPressedTimeOut){
 	    	            		clearTimeout(this.keyPressedTimeOut);
 	    	            	}        	
-	    	            	this.keyPressedTimeOut=Ext.defer(this.store.load,this.keyPressedDelay,this.store,[{filterString: textField.getValue()}]);
+	    	            	this.keyPressedTimeOut=Ext.defer(this.filter,this.keyPressedDelay,this,[textField.getValue()]);
 
 	    	    	    },
 	    	    	    render: function(textField){//ad the background
@@ -95,6 +95,11 @@ Ext.define('Sbi.widgets.grid.InLineGridFilter', {
 				this.add(this.additionalButtons[i]);
 			}
 		}
+	}
+	
+	, filter: function(textValue){
+		this.fireEvent("filter",{filterString: textValue});
+		this.store.load({filterString: textValue});
 	}
 	
 	

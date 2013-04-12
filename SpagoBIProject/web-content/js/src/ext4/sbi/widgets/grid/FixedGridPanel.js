@@ -149,6 +149,9 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
     	},this.storeConfig||{});
     	this.store = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);
     	Sbi.debug('FixedGridPanel store built');
+    	for(var i=0; i<this.columns.length; i++){
+    		this.columns[i].renderer =  this.onRenderCell;
+    	}
       	
     	//Add the widgets to the rows
       	Sbi.widget.grid.StaticGridDecorator.addButtonColumns(this.buttonColumnsConfig, this.columns, this);
@@ -167,11 +170,16 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
       	var additionalButtons = Sbi.widget.grid.StaticGridDecorator.getAdditionalToolbarButtons(this.buttonToolbarConfig, this);
       	if(this.filterConfig!=undefined && this.filterConfig!=null){
       		this.tbar = Ext.create('Sbi.widgets.grid.InLineGridFilter',Ext.apply({store: this.store, additionalButtons:additionalButtons}));
+      		this.tbar.on("filter",function(filtercofing){
+      			this.filterString = filtercofing.filterString;
+      		},this);
       	}else{
       		if(additionalButtons){
       			this.tbar = Ext.create('Ext.toolbar.Toolbar',{items: additionalButtons});
       		}
       	}
+      	
+      	
       	
     	this.callParent(arguments);
     	if(this.adjustWidth==undefined || this.adjustWidth==null || this.adjustWidth){
@@ -234,15 +242,45 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
     	
 
     },
-    
-	/**
-	 * Set the size of the page to the store and reloads the first page
-	 * @param rthe size of the page
-	 */
+        
+    /**
+     * Set the size of the page to the store and reloads the first page
+     * @param rthe size of the page
+     */
     setPageSize: function(size){
     	this.store.pageSize = size;
     	this.store.loadPage(1);
+    },
+    
+    
+    onRenderCell: function(value) {
+    	var filterString = this.filterString;
+    	var startPosition;
+    	var tempString = value;
+    	var toReturn="";
+
+    	if(filterString){
+    		while(tempString.length>0){
+    			startPosition = tempString.toLowerCase().indexOf(filterString.toLowerCase());      		
+        		if(startPosition>=0){
+        			//prefix
+        			toReturn = toReturn+ tempString.substring(0,startPosition);
+            		toReturn = toReturn+ "<span class='x-livesearch-match'>"+ tempString.substring(startPosition,startPosition+filterString.length)+"</span>";
+            		tempString = tempString.substring(startPosition+filterString.length);
+        		}else{
+        			toReturn=toReturn+tempString;
+        			tempString ="";
+        		}
+    		}
+    		return toReturn;
+    	}else{
+    		return value;
+    	}
+
+    	
     }
+    
+
 });
 
 
