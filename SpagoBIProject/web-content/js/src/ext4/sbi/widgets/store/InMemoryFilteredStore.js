@@ -77,6 +77,8 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
    			for(var i=0; i<items.length;i++){
    				this.add(items[i]);
    			}
+   			
+   			
     	},this);
     }
 
@@ -137,7 +139,8 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
      */
 	, getFilteredItems: function(items, properties, filterString){
 		var filteredCount = 0;
-		if(this.filterString){
+		if(filterString){
+			filterString = filterString+"";
 			var filteredItems = [];
 			for(var i=0; i<items.length; i++){
 				var item = items[i];
