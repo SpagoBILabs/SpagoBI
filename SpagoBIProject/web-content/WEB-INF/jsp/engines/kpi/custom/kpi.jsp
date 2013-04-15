@@ -90,7 +90,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	
 	ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
 	String EXECUTION_ID = instance.getExecutionId();
-	/*String parsToDetailDocs = "";
+	//filter on resources if selected through AD ParKpiResource or ParKpiResources
+	ArrayList parKpiResource = new ArrayList();
+	ArrayList parKpiResources = new ArrayList();
+	String parsToDetailDocs = "";
 	   if(instance!=null && instance.getBIObject()!=null){
 	   List pars = instance.getBIObject().getBiObjectParameters();			
 		if(pars!=null && !pars.isEmpty()){
@@ -98,11 +101,19 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			while(ite.hasNext()){
 				BIObjectParameter p = (BIObjectParameter)ite.next();
 				String url = p.getParameterUrlName();
+
 				String value = p.getParameterValuesAsString();
-				parsToDetailDocs += url+"="+value+"&";
+				if(value != null && !value.equals("null")){
+					if(url.equals("ParKpiResource")){
+						parKpiResource.add(value);
+					}else if(url.equals("ParKpiResources")){
+						parKpiResources.add(value);
+					}
+				}
+				
 			}		
 		}
-	}*/
+	}
 
 	
 	JSONArray kpiRowsArray = new JSONArray();
@@ -120,9 +131,17 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				resourceName = block.getR().getName();
 			}
 			KpiLine root = block.getRoot();
-			JSONObject modelInstJson =  util.recursiveGetJsonObject(root);
-			modelInstJson.put("resourceName", resourceName);
-			kpiRowsArray.put(modelInstJson);	
+			Integer id = block.getR().getId();
+
+			if((parKpiResource.isEmpty() && parKpiResources.isEmpty())
+						|| (!parKpiResource.isEmpty() && parKpiResource.contains(resourceName))
+						|| (!parKpiResources.isEmpty() && parKpiResources.contains(id+""))){
+				
+				JSONObject modelInstJson =  util.recursiveGetJsonObject(root);
+				modelInstJson.put("resourceName", resourceName);
+				kpiRowsArray.put(modelInstJson);
+			}
+				
 		}			
 	}
 	SessionContainer permSession = aSessionContainer.getPermanentContainer();
