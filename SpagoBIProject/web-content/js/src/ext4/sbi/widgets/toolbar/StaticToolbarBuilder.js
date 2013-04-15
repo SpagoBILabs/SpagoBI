@@ -2,25 +2,48 @@ Ext.define('Sbi.widget.toolbar.StaticToolbarBuilder', {
 	statics: {
 		
 		/**
-		 * Adds to the grid the button columns according to the configuration conf. This configuration object is a map 
-		 * like this one: {"selectbutton": true, "deletebutton":true, "copybutton":true}
+		 * Creates a new toolbar using the configuartion object "conf". adds all the items defined in the property conf.items.
+		 * For the available buttons look at {@link Sbi.widget.toolbar.StaticToolbarBuilder.addButtonsToTheToolbar#addButtonsToTheToolbar}
 		 * @param {Object} configuration object
-		 * @param {Array} list of columns of the grid
-		 * @param {grid} the grid that fire the events handled from the buttons
 		 */
-		buildToolbar: function(conf, parentPanel){
+		buildToolbar: function(conf){
 			
 			var toolbarConf = Ext.apply({},conf);
 			toolbarConf.items = [ { xtype: 'tbspacer' }]
 			var toolbar = Ext.create('Ext.toolbar.Toolbar', toolbarConf);
 			
-			for(var i=0; i<conf.items.length; i++){
-				toolbar.add(Sbi.widget.toolbar.StaticToolbarBuilder.buildButtons(toolbar,conf.items[i]));
-			}
+			toolbar = Sbi.widget.toolbar.StaticToolbarBuilder.addButtonsToTheToolbar(toolbar, conf);
 			return toolbar;
 
 		}
 
+		/**
+		 * Adds to the toolbar the buttons defined in the property conf.items.
+		 * The available buttons are:
+		 * - new
+		 * - save
+		 * - clone
+		 * - test
+		 * - ->
+		 * 		@example
+		 *		addButtonsToTheToolbar(toolbar, {items:[{name:'->'},{name:'test'},{name:'save'}]});
+		 * @param {Object} configuration object
+		 */
+		, addButtonsToTheToolbar: function(toolbar, conf){
+						
+			for(var i=0; i<conf.items.length; i++){
+				toolbar.add(Sbi.widget.toolbar.StaticToolbarBuilder.buildButtons(toolbar,conf.items[i]));
+			}
+			return toolbar;
+		
+		}
+
+		/**
+		 * Builds the buttons configuration. It builds the object and adds the linked event to the toolbar.
+		 * For Example for the button save, the toolbar will throw the event save
+		 * @param {Object} toolbar parent toolbar
+		 * @param {Object} item the configuration of the button to add
+		 */
 		,buildButtons: function(toolbar, item){
 			switch(item.name)
 			{
@@ -39,6 +62,11 @@ Ext.define('Sbi.widget.toolbar.StaticToolbarBuilder', {
 			}
 		}
 
+		/**
+		 * Builds the new button configuration. 
+		 * @param {Object} toolbar parent toolbar
+		 * @param {Object} item the type of the button to add
+		 */
 		,addNewItemToolbarButton: function(toolbar, conf){
 			var toolbarconf = {
 					//text: LN('sbi.generic.add'),
@@ -51,6 +79,11 @@ Ext.define('Sbi.widget.toolbar.StaticToolbarBuilder', {
 			return Ext.apply(toolbarconf,conf||{});
 		}
 		
+		/**
+		 * Builds the clone button configuration. 
+		 * @param {Object} toolbar parent toolbar
+		 * @param {Object} item the type of the button to add
+		 */
 		,addCloneItemToolbarButton: function(toolbar, conf){
 			var toolbarconf = {
 					//text: LN('sbi.generic.clone'),
@@ -63,6 +96,11 @@ Ext.define('Sbi.widget.toolbar.StaticToolbarBuilder', {
 			return Ext.apply(toolbarconf,conf||{});
 		}
 		
+		/**
+		 * Builds the save button configuration. 
+		 * @param {Object} toolbar parent toolbar
+		 * @param {Object} item the type of the button to add
+		 */
 		,addSaveItemToolbarButton: function(toolbar, conf){
 			var toolbarconf = {
 					//text: LN('sbi.generic.update'),
@@ -75,6 +113,11 @@ Ext.define('Sbi.widget.toolbar.StaticToolbarBuilder', {
 			return Ext.apply(toolbarconf,conf||{});
 		}
 		
+		/**
+		 * Builds the add button configuration. 
+		 * @param {Object} toolbar parent toolbar
+		 * @param {Object} item the type of the button to add
+		 */
 		,addTestItemToolbarButton: function(toolbar, conf){
 			var toolbarconf = {
 					//text: LN('sbi.generic.update'),
