@@ -62,7 +62,7 @@ Ext.define('Sbi.widgets.grid.InLineGridFilter', {
             		this.inputEl.dom.className+=" x-form-text-search";
             	}
 	    		this.setValue("");
-	    		thisPanel.store.load({filterString: null});
+	    		thisPanel.filter("")
 			},
 	    	listeners: {
 	    	            keyup: function(textField, event, eOpts){
@@ -97,9 +97,20 @@ Ext.define('Sbi.widgets.grid.InLineGridFilter', {
 		}
 	}
 	
+	/**
+	 * Filter the store and throws the filter event
+	 * @private
+	 * @param {String} textValue the value of the filter
+	 */
 	, filter: function(textValue){
-		this.fireEvent("filter",{filterString: textValue});
-		this.store.load({filterString: textValue});
+		if(!textValue || textValue==""){
+			this.fireEvent("filter",{filterString: ""});
+			this.store.load({reset: true, filterString: ""});
+		}else{
+			this.fireEvent("filter",{filterString: textValue});
+			this.store.load({filterString: textValue});
+		}
+
 	}
 	
 	

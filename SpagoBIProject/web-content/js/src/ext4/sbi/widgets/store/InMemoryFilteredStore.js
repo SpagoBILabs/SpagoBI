@@ -97,17 +97,21 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
 		}
 		
 		this.page = options.page;
+		this.filterString = options.filterString;
 		
-		if(this.useChache ||  this.inMemoryData==null ||  this.inMemoryData==undefined){
+		if(options.reset || !this.useChache ||  this.inMemoryData==null ||  this.inMemoryData==undefined){
 			//set null the paging configuration to load all the items from the store
 			options.start = null;
 			options.limit = null;
 			options.page = null;
 			this.inMemoryData=null;
 			this.callParent([options]);
+		}else{
+			this.fireEvent("load");
 		}
 
-		this.filterString = options.filterString;
+		
+		
 		return this;
 		
 	}
