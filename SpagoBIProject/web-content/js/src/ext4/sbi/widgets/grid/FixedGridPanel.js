@@ -12,7 +12,7 @@
 
 /**
  * 
- * This is a grid panel linked to a Store.. It builds the model and the associated store. It adds the page to the grid and the filtering toolbar.
+ * This is a grid panel linked to a Store.. It builds the model and the associated store. 
  * It adds the widgets to the grid rows and the buttons in the toolbar according to the configuration.
  * 
  * 		@example
@@ -33,8 +33,7 @@
  *			},
  *			services: this.services,
  *			fields:this.fields,
- *			columns: this.columns,
- *			filterConfig: {}
+ *			columns: this.columns
  *		};
  *		
  *		Ext.apply(this,config||{});
@@ -95,10 +94,6 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
     	 */
     	adjustWidth: true,
     	/**
-    	 * Configuration of the filtering toolbar. Null to hide the toolbar
-    	 */
-    	filterConfig: null,
-    	/**
     	 * The list of the properties that should be filtered 
     	 */
     	filteredProperties: new Array()
@@ -115,48 +110,14 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
 		Sbi.debug('FixedGridPanel costructor IN');
 		Ext.apply(this,config||{});
 		
-
-		//BUILD THE MODEL
-		Sbi.debug('FixedGridPanel bulding the model...');
-		var d = new Date();
-    	var modelname =  'StaticStoreModel'+(d.getTime()%10000000);
-    	
-    	this.modelConfig = Ext.apply({
-    		extend: 'Ext.data.Model',
-            fields: this.fields
-    	},
-    	this.modelConfig||{});
-    	Ext.define(modelname, this.modelConfig);
-    	Sbi.debug('FixedGridPanel model built');
-    	
-    	
-    	
-    	//BUILD THE STORE
-    	Sbi.debug('FixedGridPanel bulding the store...');
-    	
-    	this.storeConfig = Ext.apply({
-    		parentGrid: this,
-    		model: modelname,
-    		filteredProperties: this.filteredProperties,
-    		proxy: {
-    			type: 'ajax',
-    			url:  this.services['getAllValues'],
-    			reader: {
-    				type:"json",
-    				root: "root"
-    			}
-    		}
-    	},this.storeConfig||{});
-    	this.store = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);
-    	Sbi.debug('FixedGridPanel store built');
-    	for(var i=0; i<this.columns.length; i++){
-    		this.columns[i].renderer =  this.onRenderCell;
-    	}
-      	
-    	//Add the widgets to the rows
-      	Sbi.widget.grid.StaticGridDecorator.addButtonColumns(this.buttonColumnsConfig, this.columns, this);
-      	
-      	this.addPaging();
+		if(!this.modelname){
+			this.modelname = this.buildModel();
+		}
+		if(!this.store){
+			this.store = this.buildStore(this.modelname);	
+		}
+		
+    	this.addPaging();
       	
       	if(this.pagingConfig!=undefined && this.pagingConfig!=null){
       		Sbi.debug('FixedGridPanel load first page');
@@ -166,23 +127,17 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
       		this.store.load();
       	}
       	
-      	//Adds the additional buttons to the toolbar
-      	var additionalButtons = Sbi.widget.grid.StaticGridDecorator.getAdditionalToolbarButtons(this.buttonToolbarConfig, this);
-      	if(this.filterConfig!=undefined && this.filterConfig!=null){
-      		this.tbar = Ext.create('Sbi.widgets.grid.InLineGridFilter',Ext.apply({store: this.store, additionalButtons:additionalButtons}));
-      		this.tbar.on("filter",function(filtercofing){
-      			this.filterString = filtercofing.filterString;
-      		},this);
-      	}else{
-      		if(additionalButtons){
-      			this.tbar = Ext.create('Ext.toolbar.Toolbar',{items: additionalButtons});
-      		}
-      	}
+
+    	//Add the widgets to the rows
+      	Sbi.widget.grid.StaticGridDecorator.addButtonColumns(this.buttonColumnsConfig, this.columns, this);
+      
       	
-      	
-      	
-    	this.callParent(arguments);
-    	if(this.adjustWidth==undefined || this.adjustWidth==null || this.adjustWidth){
+      	this.addToolbar();
+
+      	this.callParent(arguments);
+    	
+      	//resize the grid to fit the width of the container
+      	if(this.adjustWidth==undefined || this.adjustWidth==null || this.adjustWidth){
     		this.on("resize",this.adjustColumnsWidth,this);
     	}
     	
@@ -211,8 +166,8 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
     	}
     },
     
-    //fit the columns non decorated to the width of the grid
     /**
+     * fit the columns non decorated to the width of the grid
      * @private
      * Set the width of the columns to force the panel width to fit the container width
      */
@@ -252,34 +207,67 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
     	this.store.loadPage(1);
     },
     
+
+    /**
+     * @private
+     * Add the toolbar to the grid
+     */
+    addToolbar: function(){
+    	Sbi.debug('FixedGridPanel adding the toolbar..');
+      	//Adds the additional buttons to the toolbar
+      	this.additionalButtons = Sbi.widget.grid.StaticGridDecorator.getAdditionalToolbarButtons(this.buttonToolbarConfig, this);
+      	//if the toolbar contains some button we create it
+      	if(this.additionalButtons){
+      		this.tbar = Ext.create('Ext.toolbar.Toolbar',{items: this.additionalButtons});
+      	}
+      	Sbi.debug('FixedGridPanel toolbar added.');
+    },
     
-    onRenderCell: function(value) {
-    	var filterString = this.filterString;
-    	var startPosition;
-    	var tempString = value;
-    	var toReturn="";
-
-    	if(filterString){
-    		while(tempString.length>0){
-    			startPosition = tempString.toLowerCase().indexOf(filterString.toLowerCase());      		
-        		if(startPosition>=0){
-        			//prefix
-        			toReturn = toReturn+ tempString.substring(0,startPosition);
-            		toReturn = toReturn+ "<span class='x-livesearch-match'>"+ tempString.substring(startPosition,startPosition+filterString.length)+"</span>";
-            		tempString = tempString.substring(startPosition+filterString.length);
-        		}else{
-        			toReturn=toReturn+tempString;
-        			tempString ="";
-        		}
-    		}
-    		return toReturn;
-    	}else{
-    		return value;
-    	}
-
+    
+    /**
+     * @private
+     * Creates a fresh model
+     */
+    buildModel: function(){
+		//BUILD THE MODEL
+		Sbi.debug('FixedGridPanel bulding the model...');
+	
+    	var d = new Date();
+    	var modelname =  'StaticStoreModel'+(d.getTime()%10000000);
     	
-    }
+    	this.modelConfig = Ext.apply({
+    		extend: 'Ext.data.Model',
+            fields: this.fields
+    	},
+    	this.modelConfig||{});
+    	Ext.define(modelname, this.modelConfig);
+    	Sbi.debug('FixedGridPanel model built');
+    	return modelname;
+    },
     
+    /**
+     * Builds the store starting from the model
+     * @param {String} modelname the name of the model 
+     */
+    buildStore: function(modelname){
+		//BUILD THE STORE
+    	Sbi.debug('FixedGridPanel bulding the store...');
+    	
+    	this.storeConfig = Ext.apply({
+    		parentGrid: this,
+    		model: modelname,
+    		proxy: {
+    			type: 'ajax',
+    			url:  this.services['getAllValues'],
+    			reader: {
+    				type:"json",
+    				root: "root"
+    			}
+    		}
+    	},this.storeConfig||{});
+    	Sbi.debug('FixedGridPanel store built.');
+    	return Ext.create('Ext.data.Store', this.storeConfig);
+    }
 
 });
 

@@ -124,7 +124,7 @@ Ext.define('Sbi.widgets.compositepannel.ListDetailPanel', {
 		
 		Ext.apply(this,config||{});
 		
-		this.grid=Ext.create('Sbi.widgets.grid.FixedGridPanel',FixedGridPanelConf);
+		this.grid=Ext.create('Sbi.widgets.grid.FixedGridPanelInMemoryFiltered',FixedGridPanelConf);
 		
 
 		
