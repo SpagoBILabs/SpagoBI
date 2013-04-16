@@ -74,13 +74,13 @@ Ext.extend(Sbi.kpi.KpiGUILayout , Ext.Panel, {
 			autoScroll:true,
 			layoutConfig: {
 				padding: '2',
-				border: true,
+				border: false,
 				autoScroll:true,
 				align: 'left'
 			} });
 
 		//check whether there are more than one model instance tree--> # of json objects
-		if(gridconf.json.length > 1){
+		if(gridconf.json.length != 0){
 			for(i =0; i<gridconf.json.length;i++){
 				
 				var resource = gridconf.json[i].resourceName;
@@ -99,11 +99,12 @@ Ext.extend(Sbi.kpi.KpiGUILayout , Ext.Panel, {
 					title: resource,
 					collapsible: true,
 					style: 'width: 100%; border: 1px solid white;',
-					height: 250,
+					maxHeight: 300,
+					layout:'fit',
 					items: [kpiGridPan],
 					layoutConfig: {
 						padding: '5',
-						border: true,
+						border: false,
 						align: 'left'
 					} });
 
