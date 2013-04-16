@@ -111,24 +111,38 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			
 			Collection func = profile.getFunctionalities();
 			//---------RELEASE 4.0--------------------//
-			boolean isAdminOrDevRole = isAdminOrDevRole(profile);
-			if(isAdminOrDevRole){
-				
+			boolean isAdmin = isAdminRole(profile);
+			boolean isDevRole = isDevRole(profile);
+			if(isAdmin || isDevRole){				
 				//sets action to modify document's detail
 				JSONObject detailAction = new JSONObject();
 				detailAction.put("name", "detail");
 				detailAction.put("description", "Document detail");
-				for(int i = 0; i < documentsJSON.length(); i++) {
-					JSONObject documentJSON = documentsJSON.getJSONObject(i);
-					documentJSON.getJSONArray("actions").put(detailAction);
-				}
 				JSONObject deleteAction = new JSONObject();
 				deleteAction.put("name", "delete");
 				deleteAction.put("description", "Delete this item");
 				for(int i = 0; i < documentsJSON.length(); i++) {
 					JSONObject documentJSON = documentsJSON.getJSONObject(i);
+					documentJSON.getJSONArray("actions").put(detailAction);
 					documentJSON.getJSONArray("actions").put(deleteAction);
 				}
+
+			}else{
+				JSONObject deleteAction = new JSONObject();
+				deleteAction.put("name", "delete");
+				deleteAction.put("description", "Delete this item");
+				
+				JSONObject detailAction = new JSONObject();
+				detailAction.put("name", "detail");
+				detailAction.put("description", "Document detail");
+				for(int i = 0; i < documentsJSON.length(); i++) {					
+					JSONObject documentJSON = documentsJSON.getJSONObject(i);
+					if(ObjectsAccessVerifier.canDevBIObject(documentJSON.getInt("id"), profile)){
+						documentJSON.getJSONArray("actions").put(deleteAction);
+						documentJSON.getJSONArray("actions").put(detailAction);
+					}
+				}
+				
 			}
 			//--------- end RELEASE 4.0--------------------//
 			if(func.contains("SeeMetadataFunctionality")){
@@ -140,15 +154,16 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 					documentJSON.getJSONArray("actions").put(showmetadataAction);
 				}
 			}
-			if(isHome && !isAdminOrDevRole) {
-				JSONObject deleteAction = new JSONObject();
-				deleteAction.put("name", "delete");
-				deleteAction.put("description", "Delete this item");
-				for(int i = 0; i < documentsJSON.length(); i++) {
-					JSONObject documentJSON = documentsJSON.getJSONObject(i);
-					documentJSON.getJSONArray("actions").put(deleteAction);
-				}
-			}
+//			
+//			if(isHome && !isAdmin) {
+//				JSONObject deleteAction = new JSONObject();
+//				deleteAction.put("name", "delete");
+//				deleteAction.put("description", "Delete this item");
+//				for(int i = 0; i < documentsJSON.length(); i++) {
+//					JSONObject documentJSON = documentsJSON.getJSONObject(i);
+//					documentJSON.getJSONArray("actions").put(deleteAction);
+//				}
+//			}
 			JSONObject documentsResponseJSON =  createJSONResponseDocuments(documentsJSON);
 
 			//getting children folders
@@ -191,11 +206,27 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 				}
 			}
 
+
+			
 			JSONObject foldersResponseJSON =  createJSONResponseFolders(foldersJSON);
-
-
+			//version 4.0--------------------//
+			//find add into folder grants
+			
+			JSONObject canAddResponseJSON =null;
+			
+			if(functID != null){
+				Integer id =Integer.getInteger(functID);
+				if(id != null){
+					boolean canAddDocs = ObjectsAccessVerifier.canDev(id, profile);
+					if(canAddDocs || isAdmin){
+						canAddResponseJSON = createJSONResponseForAdd(true);
+					}else{
+						canAddResponseJSON = createJSONResponseForAdd(false);
+					}
+				}
+			}
 			try {
-				writeBackToClient( new JSONSuccess( createJSONResponse(foldersResponseJSON, documentsResponseJSON) ) );
+				writeBackToClient( new JSONSuccess( createJSONResponse(foldersResponseJSON, documentsResponseJSON, canAddResponseJSON) ) );
 			} catch (IOException e) {
 				throw new SpagoBIException("Impossible to write back the responce to the client", e);
 			}
@@ -206,7 +237,18 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			logger.debug("OUT");
 		}
 	}
-
+	/**
+	 * Creates a json array to display add button or not
+	 * @param rows
+	 * @return
+	 * @throws JSONException
+	 */
+	private JSONObject createJSONResponseForAdd(boolean canCreate) throws JSONException {
+		JSONObject results;
+		results = new JSONObject();
+		results.put("can-add", Boolean.valueOf(canCreate));
+		return results;
+	}
 	/**
 	 * Creates a json array with children document informations
 	 * @param rows
@@ -245,12 +287,15 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 	 * @return
 	 * @throws JSONException
 	 */
-	private JSONObject createJSONResponse(JSONObject folders, JSONObject documents) throws JSONException {
+	private JSONObject createJSONResponse(JSONObject folders, JSONObject documents, JSONObject canAdd) throws JSONException {
 		JSONObject results = new JSONObject();
 		JSONArray folderContent = new JSONArray();
 
 		folderContent.put(folders);
 		folderContent.put(documents);
+		if(canAdd != null){
+			folderContent.put(canAdd);
+		}
 		results.put("folderContent", folderContent);
 
 		return results;
@@ -287,18 +332,32 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 		logger.debug("OUT");
 		return functWorksheet;
 	}
-	private boolean isAdminOrDevRole(IEngUserProfile profile) throws EMFInternalError, EMFUserError {
+	private boolean isDevRole(IEngUserProfile profile) throws EMFInternalError, EMFUserError {
 		Iterator roles = profile.getRoles().iterator() ;
-		boolean isDevOrAdmin= false;
+		boolean isDev= false;
 		while(roles.hasNext()){
 			String r = (String)roles.next();
 			Role role = DAOFactory.getRoleDAO().loadByName(r);
-			if(role.getRoleTypeCD().equalsIgnoreCase("ADMIN") || role.getRoleTypeCD().equalsIgnoreCase("DEV_ROLE")){
-				isDevOrAdmin = true;
+			if(role.getRoleTypeCD().equalsIgnoreCase("DEV_ROLE")){
+				isDev = true;
 			}
 		}
 		
-		return isDevOrAdmin;
+		return isDev;
+		
+	}
+	private boolean isAdminRole(IEngUserProfile profile) throws EMFInternalError, EMFUserError {
+		Iterator roles = profile.getRoles().iterator() ;
+		boolean isAdmin= false;
+		while(roles.hasNext()){
+			String r = (String)roles.next();
+			Role role = DAOFactory.getRoleDAO().loadByName(r);
+			if(role.getRoleTypeCD().equalsIgnoreCase("ADMIN") ){
+				isAdmin = true;
+			}
+		}
+		
+		return isAdmin;
 		
 	}
 }
