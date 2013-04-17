@@ -62,6 +62,7 @@ Sbi.locale.ln['sbi.generic.result'] = 'Updates saved';
 Sbi.locale.ln['sbi.generic.serviceError'] = 'Service Error';
 Sbi.locale.ln['sbi.generic.serviceResponseEmpty'] = 'Server response is empty';
 Sbi.locale.ln['sbi.generic.savingItemError'] = 'Error while saving item';
+Sbi.locale.ln['not-enabled-to-call-service'] = 'The user is not allowed to do this operation';
 Sbi.locale.ln['sbi.generic.deletingItemError'] = 'Error while deleting item. Control eventual items to which it is associated and then try to delete it again!';
 Sbi.locale.ln['sbi.generic.warning'] = 'Warning';
 Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Please confirm';

@@ -81,6 +81,7 @@ Sbi.locale.ln['sbi.generic.confirmDelete'] = 'Confirm item delete?';
 Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'There are unsaved changes. Confirm root node change?';
 Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Delete Kpi';
 Sbi.locale.ln['sbi.generic.attributes'] = 'Attributes';
+Sbi.locale.ln['not-enabled-to-call-service'] = 'The user is not allowed to do this operation';
 //END Generic messages
 
 //START List Detail messages
