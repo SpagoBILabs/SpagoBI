@@ -82,6 +82,7 @@ Sbi.locale.ln['sbi.generic.confirmDelete'] = 'Confermi l\'eliminazione dell\'ogg
 Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'Ci sono delle modifiche non salvate. Confermare il cambio di root?';
 Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Elimina Kpi';
 Sbi.locale.ln['sbi.generic.attributes'] = 'Attributi';
+Sbi.locale.ln['not-enabled-to-call-service'] = 'L\'utente non ha il permesso di eseguire questa operazione';
 //END Generic messages
 
 //START List Detail messages

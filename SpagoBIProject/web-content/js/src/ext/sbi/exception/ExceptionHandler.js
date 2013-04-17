@@ -68,6 +68,8 @@ Sbi.exception.ExceptionHandler = function(){
         					// session expired
         		        	Sbi.exception.ExceptionHandler.redirectToLoginUrl();
         		        	return;
+        				} else if (content.errors[0].message === 'not-enabled-to-call-service') {
+        					Sbi.exception.ExceptionHandler.showErrorMessage(LN('not-enabled-to-call-service'), 'Service Error')
         				} else {
         					for (var count = 0; count < content.errors.length; count++) {
         						var anError = content.errors[count];

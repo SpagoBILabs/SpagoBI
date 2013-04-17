@@ -20,6 +20,7 @@ import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -108,7 +109,7 @@ public class DataSourceCRUD {
 				HashMap params = new HashMap();
 				logger.debug(deleteInUseDSError);
 				updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "ERR");
-				return (serializeException(deleteInUseDSError,null));
+				return ( ExceptionUtilities.serializeException(deleteInUseDSError,null));
 			}
 
 			IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(new Integer(id));
@@ -122,7 +123,7 @@ public class DataSourceCRUD {
 			updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "ERR");
 			logger.debug(canNotFillResponseError);
 			try {
-				return (serializeException(canNotFillResponseError,null));
+				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
 				throw new SpagoBIRuntimeException(
@@ -171,7 +172,7 @@ public class DataSourceCRUD {
 			updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "ERR");
 			logger.debug(ex.getMessage());
 			try {
-				return (serializeException(ex.getMessage(),null));
+				return ( ExceptionUtilities.serializeException(ex.getMessage(),null));
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
 				throw new SpagoBIRuntimeException(
@@ -182,7 +183,7 @@ public class DataSourceCRUD {
 			updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "ERR");
 			logger.debug(canNotFillResponseError);
 			try {
-				return (serializeException(canNotFillResponseError,null));
+				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
 				throw new SpagoBIRuntimeException(
@@ -261,23 +262,10 @@ public class DataSourceCRUD {
 		return ds;
 	}
 	
-	private String serializeException(String message, String localizedMessage) throws JSONException{
-		JSONArray ja = new JSONArray();
-		JSONObject jo = new JSONObject();
-		JSONObject je = new JSONObject();
-		if(message != null){
-			jo.put("message", message);
-		}
-		if(localizedMessage != null){
-			jo.put("localizedMessage", localizedMessage);
-		}
-		ja.put(jo);
-		je.put("errors", ja);
-		return je.toString();
-	}
+
 	
 	private String serializeException(Exception e) throws JSONException{
-		return serializeException(e.getMessage(),null);
+		return ExceptionUtilities.serializeException(e.getMessage(),null);
 	}
 
 
