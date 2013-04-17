@@ -34,6 +34,7 @@ public class UserProfile implements IEngUserProfile {
 	private static String WORKFLOW_USER_ID_PREFIX = "[SYSTEM - WORKFLOW] - ";
 	private static String SCHEDULER_USER_NAME = "scheduler";
 	private static String SCHEDULER_USER_ID_PREFIX = "scheduler - ";
+	private static final String PUBLIC_FUNCTIONALITY = "publicFunctionality";
 
 	private String userUniqueIdentifier = null;
 	private String userId = null;
@@ -282,6 +283,23 @@ public class UserProfile implements IEngUserProfile {
 		}else return false;    
 	}
 
+	/* (non-Javadoc)
+	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteAction(java.lang.String)
+	 */
+	public boolean isAbleToExecuteService(String serviceUrl) throws EMFInternalError {
+		// first check if the actionName is a functionality...
+		if ( this.functionalities.contains(serviceUrl) ){
+			return true;
+		}
+		String functionality = AuthorizationsBusinessMapper.getInstance().mapServiceToBusinessProcess(serviceUrl);
+
+		if (functionality != null){
+			if(functionality.equals(PUBLIC_FUNCTIONALITY)){
+				return true;
+			}
+			return this.functionalities.contains(functionality);
+		}else return false;    
+	}
 
 	/* (non-Javadoc)
 	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteModuleInPage(java.lang.String, java.lang.String)
