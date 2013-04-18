@@ -12,17 +12,10 @@
 	 </MAP_PAGE_MODULES>
 	<MAP_REST_SERVICES>
 		<MAP_REST_SERVICE serviceUrl="/domains/listValueDescriptionByType" businessProcess="DataSourceManagement" />			
-	</MAP_REST_SERVICES>
-	<MAP_REST_SERVICES>
 		<MAP_REST_SERVICE serviceUrl="/datasources/listall" businessProcess="DataSourceManagement" />			
-	</MAP_REST_SERVICES>
-	<MAP_REST_SERVICES>
 		<MAP_REST_SERVICE serviceUrl="/datasources/save" businessProcess="DataSourceManagement" />			
-	</MAP_REST_SERVICES>
-	<MAP_REST_SERVICES>
 		<MAP_REST_SERVICE serviceUrl="/datasources/test" businessProcess="DataSourceManagement" />			
-	</MAP_REST_SERVICES>
-	<MAP_REST_SERVICES>
-		<MAP_REST_SERVICE serviceUrl="/datasources/delete" businessProcess="DataSourceManagement" />			
+		<MAP_REST_SERVICE serviceUrl="/datasources/delete" businessProcess="DataSourceManagement" />	
+		<MAP_REST_SERVICE serviceUrl="/users" businessProcess="DataSourceManagement" />			
 	</MAP_REST_SERVICES>
 </BUSINESS_MAP>
