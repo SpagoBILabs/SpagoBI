@@ -86,7 +86,31 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
         }
         
         return serviceUrl;
-    }     
+    }   
+    
+    , getRestServiceUrlObject : function(s){
+    	var serviceUrl;
+    	
+    	var baseUrlStr;
+    	var serviceType;
+    	var params;
+               
+        if(typeof s == 'string') {
+        	s = {serviceName: s};
+        }
+        
+        serviceType = s.serviceType || this.defaultServiceType;
+        params = Ext.apply({}, s.baseParams || {}, this.baseParams);
+                
+        serviceUrl = this.getRestBaseUrlStr(s);
+        serviceUrl += '/'+ s.serviceName;
+      
+        return {
+        	url: serviceUrl,
+        	params: params
+        }
+        	
+    }    
     
     , getRestServiceUrl : function(s){
     	var serviceUrl;
