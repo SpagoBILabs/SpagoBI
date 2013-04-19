@@ -6,38 +6,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
  
   
 
-<%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>
+<%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
 
-<!-- spagobi:list moduleName="ListDataSourceModule" /-->
+<spagobi:list moduleName="ListDataSourceModule" />
 
 
-
-<script type="text/javascript">
-
-
-var url = {
-    	host: '<%= request.getServerName()%>'
-    	, port: '<%= request.getServerPort()%>'
-    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
-    	   				  request.getContextPath().substring(1):
-    	   				  request.getContextPath()%>'
-    	    
-    };
-
-    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
-    	baseUrl: url
-    });
-
-
-    Ext.onReady(function(){
-		var datasourceDetail = Ext.create('Sbi.tools.datasource.DataSourceListDetailPanel',{}); //by alias
-		var datasourceDetailViewport = Ext.create('Ext.container.Viewport', {
-			layout:'fit',
-	     	items: [datasourceDetail]
-	    });
-    });
-	
-
-</script>
 <%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>

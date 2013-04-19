@@ -24,6 +24,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import nl.bitwalker.useragentutils.UserAgent;
+
 import org.apache.log4j.Logger;
 
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
@@ -129,9 +131,7 @@ public class AuditLogUtilities {
 	                	profiloApplicativo = userRoles;			// se il profilo applicativo ÃƒÂ¨ vuoto inserisco i ruoli di spagobi
 	                }
 	            }	        
-		        strbuf.append(profiloApplicativo);					// PROFILO UTENTE
-		        strbuf.append("';'");
-		        strbuf.append(request.getHeader("user-agent"));		// APPLICATIVO CLIENT
+		        strbuf.append(profiloApplicativo.replaceAll(";", ","));					// PROFILO UTENTE
 		        strbuf.append("';'");
 		        if (action_code!=null)  strbuf.append(action_code);	// AZIONE
 		        else strbuf.append("");	
@@ -152,18 +152,27 @@ public class AuditLogUtilities {
 					if(separator == 0){
 						strbuf.append(par.getKey());
 						strbuf.append("=");
-						if (par.getValue()!=null) strbuf.append(par.getValue().toString());
+						if (par.getValue()!=null) {
+							String value = par.getValue().toString().replaceAll("\"", "");
+							strbuf.append(value);
+						}
 					}
 					else{
 						strbuf.append("&");
 						strbuf.append(par.getKey());
 						strbuf.append("=");
-						if (par.getValue()!=null) strbuf.append(par.getValue().toString());
+						if (par.getValue()!=null) {
+							String value = par.getValue().toString().replaceAll("\"", "");
+							strbuf.append(value);
+						}
 					}
 					separator++;
 				}
 				strbuf.append("';'");
+			} else {
+				strbuf.append("';'");
 			}
+			
 			strbuf.append(esito);						// ESITO
 			strbuf.append("';'");
 			if(esito.equals("OK")){
@@ -174,8 +183,11 @@ public class AuditLogUtilities {
 			}
 			String logString = strbuf.toString();
 	
-	               
-	
+			UserAgent agent = new UserAgent(request.getHeader("user-agent"));
+			strbuf.append("'" + agent.getBrowser() + "';");    
+			strbuf.append("'" + agent.getBrowserVersion() + "';"); 
+			strbuf.append("'" + agent.getOperatingSystem() + "';"); 
+			
 	        strbuf.append(calculateHash( strbuf));
 			
 	

@@ -21,6 +21,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
@@ -194,7 +195,8 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 
 	private String buildSqlStatement(List<String> fieldNames,
 			IDataSetTableDescriptor descriptor, List<WhereField> filters) {
-		return CrosstabQueryCreator.getTableQuery(fieldNames, false, descriptor, filters);	
+		IDataSource dataSource = getDataSource();
+		return CrosstabQueryCreator.getTableQuery(fieldNames, false, descriptor, filters, dataSource);	
 	}
 	
 

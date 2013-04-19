@@ -7,6 +7,7 @@ package it.eng.spagobi.sdk.documents;
 
 import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
+import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue;
 import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
 import it.eng.spagobi.sdk.documents.bo.SDKFunctionality;
 import it.eng.spagobi.sdk.documents.bo.SDKSchema;
@@ -33,7 +34,9 @@ public interface DocumentsService {
 	
 	SDKDocumentParameter[] getDocumentParameters(Integer documentId, String roleName) throws NonExecutableDocumentException;
 	
-	HashMap<String, String> getAdmissibleValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException;
+	SDKDocumentParameterValue[] getAdmissibleValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException;
+	
+	SDKDocumentParameterValue[] getDefaultValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException;
 	
 	SDKTemplate downloadTemplate(Integer documentId) throws NotAllowedOperationException;
 	

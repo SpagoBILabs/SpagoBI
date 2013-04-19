@@ -7,6 +7,7 @@ Sbi.locale.ln['Documents']  = 'Documenti';
 Sbi.locale.ln['sbi.general.yes'] = 'Si';
 Sbi.locale.ln['sbi.general.No'] = 'No';
 Sbi.locale.ln['sbi.general.close'] = 'Chiudi';
+Sbi.locale.ln['sbi.general.ok'] = 'OK';
 
 Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Nodo Generico';
 Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Radice Generica';
@@ -33,6 +34,7 @@ Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restore';
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Nome';
 Sbi.locale.ln['sbi.generic.descr'] = 'Descrizione';
+Sbi.locale.ln['sbi.generic.missing.description'] = 'Descrizione non disponibile';
 Sbi.locale.ln['sbi.generic.code'] = 'Codice';
 Sbi.locale.ln['sbi.generic.type'] = 'Tipo';
 Sbi.locale.ln['sbi.generic.label'] = 'Etichetta';
@@ -42,13 +44,20 @@ Sbi.locale.ln['sbi.generic.value'] = 'Valore';
 Sbi.locale.ln['sbi.generic.upload'] = 'Upload';
 Sbi.locale.ln['sbi.generic.download'] = 'Download';
 Sbi.locale.ln['sbi.generic.noItemsSelected'] = 'Non è stato selezionato alcun elemento';
+Sbi.locale.ln['sbi.generic.next'] = 'Avanti >';
+Sbi.locale.ln['sbi.generic.back'] = '< Indietro';
 Sbi.locale.ln['sbi.generic.udpValues'] = 'Valori Udp';
 Sbi.locale.ln['sbi.generic.author'] = 'Autore';
 Sbi.locale.ln['sbi.generic.creationdate'] = 'Data di creazione';
-
 Sbi.locale.ln['sbi.generic.kpi'] = 'Kpi';
 Sbi.locale.ln['sbi.generic.nodetype'] = 'Tipo Nodo';
 Sbi.locale.ln['sbi.generic.nodedescr'] = 'Descrizione Nodo';
+
+//search filters
+Sbi.locale.ln['sbi.generic.search.title'] = 'Ricerca';
+Sbi.locale.ln['sbi.generic.search.msg'] = 'inserisci testo da ricercare';
+Sbi.locale.ln['sbi.generic.search.clear'] = 'Pulisci';
+
 //Messages
 Sbi.locale.ln['sbi.generic.validationError'] = 'Errore di Validazione';
 Sbi.locale.ln['sbi.generic.validation.missingName'] = 'Nome non specificato';
@@ -71,6 +80,8 @@ Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'Ci sono delle modifiche non sa
 Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Elimina Kpi';
 Sbi.locale.ln['sbi.generic.attributes'] = 'Attributi';
 Sbi.locale.ln['not-enabled-to-call-service'] = 'L\'utente non ha il permesso di eseguire questa operazione';
+Sbi.locale.ln['sbi.generic.select.toclone'] = 'Selezionare la riga da clonare';
+Sbi.locale.ln['sbi.generic.filter'] = 'Filter';
 //END Generic messages
 
 //START List Detail messages
@@ -571,10 +582,53 @@ Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Numerazione automatica delle colonne?'
 Sbi.locale.ln['sbi.ds.openQbeQizard'] = 'Apri il wizard QbE';
 Sbi.locale.ln['sbi.ds.help'] = 'Aiuto';
 Sbi.locale.ln['sbi.ds.pars'] = 'Attributi di Profilo disponibili';
+Sbi.locale.ln['sbi.ds.metadata'] = 'Metadati delle colonne';
+Sbi.locale.ln['sbi.ds.field.metadata'] = 'Metadata';
+Sbi.locale.ln['sbi.ds.field.name'] = 'Nome';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Ricalcolare i metadati?';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = 'Vuoi che il sistema ricalcoli i metadati del dataset? (il dataset verrà rieseguito dal sistema; si consiglia di effettuare questa operazione nel caso in cui il dataset sia stato alterato in modo significativo)';
+Sbi.locale.ln['sbi.ds.measure'] = 'Misura';
+Sbi.locale.ln['sbi.ds.attribute'] = 'Attributo';
+Sbi.locale.ln['sbi.ds.field.nature.title'] = 'Selezionare la tipologia di campo';
+Sbi.locale.ln['sbi.ds.field.metadata.nosaved'] = 'Devi salvare il dataset prima di modificare i metadati';
 
+Sbi.locale.ln['sbi.datasource.label']= 'Etichetta';
+Sbi.locale.ln['sbi.datasource.description']= 'Descrizione';
+Sbi.locale.ln['sbi.datasource.driver']= 'Driver';
+Sbi.locale.ln['sbi.datasource.dialect']= 'Dialetto';
+Sbi.locale.ln['sbi.datasource.multischema']= 'Multischema';
+Sbi.locale.ln['sbi.datasource.multischema.attribute']= 'Attributo Multischema';
+Sbi.locale.ln['sbi.datasource.type']= 'Tipo';
+Sbi.locale.ln['sbi.datasource.type.jndi']= 'Jndi';
+Sbi.locale.ln['sbi.datasource.type.jdbc']= 'Jdbc';
+Sbi.locale.ln['sbi.datasource.type.jndi.name']= 'Nome Jndi';
+Sbi.locale.ln['sbi.datasource.type.jdbc.url']= 'URL';
+Sbi.locale.ln['sbi.datasource.type.jdbc.user']= 'User';
+Sbi.locale.ln['sbi.datasource.type.jdbc.password']= 'Password';
 Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI è necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
+Sbi.locale.ln['sbi.datasource.saved']= 'Data source salvato correttamente';
+Sbi.locale.ln['sbi.datasource.deleted']= 'Data source cancellato correttamente';
+Sbi.locale.ln['sbi.datasource.validation.error']= 'Ci sono degli errori di validazione. Controlla i campi marcati.';
+
+Sbi.locale.ln['sbi.datasource.label']= 'Etichetta';
+Sbi.locale.ln['sbi.datasource.description']= 'Descrizione';
+Sbi.locale.ln['sbi.datasource.driver']= 'Driver';
+Sbi.locale.ln['sbi.datasource.dialect']= 'Dialetto';
+Sbi.locale.ln['sbi.datasource.multischema']= 'Multischema';
+Sbi.locale.ln['sbi.datasource.multischema.attribute']= 'Attributo Multischema';
+Sbi.locale.ln['sbi.datasource.type']= 'Tipo';
+Sbi.locale.ln['sbi.datasource.type.jndi']= 'Jndi';
+Sbi.locale.ln['sbi.datasource.type.jdbc']= 'Jdbc';
+Sbi.locale.ln['sbi.datasource.type.jndi.name']= 'Nome Jndi';
+Sbi.locale.ln['sbi.datasource.type.jdbc.url']= 'URL';
+Sbi.locale.ln['sbi.datasource.type.jdbc.user']= 'User';
+Sbi.locale.ln['sbi.datasource.type.jdbc.password']= 'Password';
+Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI è necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
+Sbi.locale.ln['sbi.datasource.saved']= 'Data source salvato correttamente';
+Sbi.locale.ln['sbi.datasource.deleted']= 'Data source cancellato correttamente';
+Sbi.locale.ln['sbi.datasource.validation.error']= 'Ci sono degli errori di validazione. Controlla i campi marcati.';
+
+
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
@@ -666,3 +720,17 @@ Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.dateIn']='Data di
 Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.fileName']='Nome del file';
 Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.deleteNonActive']='Elimina versioni non attive';
 Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.isactive'] = 'Attivo';
+
+
+//===================================================================
+//Sbi.worksheet.WorksheetFromDatasetPanel : AD-HOC REPORTING 
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.nodatasetselected.msg']='Non è stato selezionato alcun dataset! Seleziona un dataset per proseguire.';
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.choosedataset.msg']='Seleziona un dataset e clicca sul pulsante Avanti ...';
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.createworksheet.msg']='... ora puoi disegnare il worksheet!';
+
+//===================================================================
+//Sbi.worksheet.WorksheetEditorIframePanelExt3 : AD-HOC REPORTING 
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.saveas']='Salva come nuovo documento ...';
+Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.export']='Esporta in uno dei formati disponibili ...';

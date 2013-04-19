@@ -7,11 +7,22 @@ package it.eng.spagobi.utilities.json;
 
 import it.eng.spagobi.utilities.assertion.Assert;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -60,4 +71,54 @@ public class JSONUtils {
 		}
 		return toReturn;
 	}
+	
+	
+	public static JSONArray toJSONArray(String object)  throws JSONException, JsonMappingException, JsonParseException,IOException{
+		ObjectMapper mapper = new ObjectMapper();
+		ArrayNode df = (ArrayNode) mapper.readValue(object, JsonNode.class);
+		return toJSONArray(df);
+	}
+	
+	public static JSONObject toJSONObject(String object) throws JSONException, JsonMappingException, JsonParseException,IOException{
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode df = (ObjectNode) mapper.readValue(object, JsonNode.class);
+		return toJSONObject(df);
+	}
+
+	public static JSONArray toJSONArray(ArrayNode df)  throws JSONException{
+		JSONArray toReturn = new JSONArray();
+		for(int i=0; i<df.size(); i++){
+			
+			toReturn.put(getValueFromJsonNode(df.get(i)));
+		}
+		return toReturn;
+	} 
+	
+	public static JSONObject toJSONObject(ObjectNode df) throws JSONException{
+		JSONObject toReturn = new JSONObject();
+		Iterator<String> namesIter = df.fieldNames();
+		while(namesIter.hasNext()){
+			String key = namesIter.next();
+			JsonNode node = df.get(key);
+			Object value = getValueFromJsonNode(node);
+			toReturn.put(key, value);
+		}
+		return toReturn;
+	} 
+	
+	public static Object getValueFromJsonNode(JsonNode node) throws JSONException{
+		
+		Object value = null;
+		if(node instanceof TextNode){
+			value = ((TextNode)(node)).textValue();
+		}else if(node instanceof ObjectNode){
+			value = toJSONObject((ObjectNode)node);
+		}else if(node instanceof ArrayNode){
+			value = toJSONArray((ArrayNode)node);
+		}
+		return value;
+	}
+	
+	
+	
 }

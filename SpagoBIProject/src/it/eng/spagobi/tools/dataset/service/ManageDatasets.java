@@ -14,6 +14,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
@@ -44,6 +45,8 @@ import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
@@ -52,6 +55,7 @@ import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -69,6 +73,15 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+
 
 public class ManageDatasets extends AbstractSpagoBIAction {
 
@@ -167,6 +180,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					attributesResponseSuccessJSON.put("success", true);
 					attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 					attributesResponseSuccessJSON.put("id", id);
+					GuiDataSetDetail dsDetailSaved = ds.getActiveDetail();
+					attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.serializeMetada(dsDetailSaved.getDsMetadata()));
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.MODIFY",logParam , "OK");
 					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );					
 					
@@ -184,6 +199,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						attributesResponseSuccessJSON.put("userIn", dsDetailSaved.getUserIn());
 						attributesResponseSuccessJSON.put("versId", dsDetailSaved.getDsHId());
 						attributesResponseSuccessJSON.put("versNum", dsDetailSaved.getVersionNum());
+						attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.serializeMetada(dsDetailSaved.getDsMetadata()));
+						
 					}
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.ADD",logParam , "OK");
 					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
@@ -343,7 +360,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return items;
 	}
 
-	private List<GuiGenericDataSet> getListOfGenericDatasets(IDataSetDAO dsDao) throws JSONException, EMFUserError{
+	protected List<GuiGenericDataSet> getListOfGenericDatasets(IDataSetDAO dsDao) throws JSONException, EMFUserError{
 		Integer start = getAttributeAsInteger( DataSetConstants.START );
 		Integer limit = getAttributeAsInteger( DataSetConstants.LIMIT );
 
@@ -422,6 +439,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 			if(meta != null && !meta.equals("")){
 				dsActiveDetail.setDsMetadata(meta);
+				
 			}
 
 			
@@ -453,8 +471,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 							parametersMap = getDataSetParametersAsMap();
 							
 							IEngUserProfile profile = getUserProfile();
-							dsMetadata = getDatasetTestMetadata(ds,
-									parametersMap, profile);
+							dsMetadata = getDatasetTestMetadata(ds,	parametersMap, profile, meta);
 							LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
 						} else {
 							// load existing metadata
@@ -821,7 +838,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return ds;
 	}
 
-	private JSONObject createJSONResponse(JSONArray rows, Integer totalResNumber)
+	protected JSONObject createJSONResponse(JSONArray rows, Integer totalResNumber)
 	throws JSONException {
 		JSONObject results;
 
@@ -963,7 +980,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return toReturn;
 	}
 
-	public String getDatasetTestMetadata(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile) throws Exception {
+	public String getDatasetTestMetadata(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile, String metadata) throws Exception {
 		logger.debug("IN");
 		String dsMetadata = null;
 
@@ -976,6 +993,26 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore();
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
+			
+			JSONArray metadataArray = JSONUtils.toJSONArray(metadata);
+			
+	
+
+			IMetaData metaData = dataStore.getMetaData();
+			for(int i=0; i<metaData.getFieldCount(); i++){
+				IFieldMetaData ifmd = metaData.getFieldMeta(i);
+				for(int j=0; j<metadataArray.length(); j++){
+					if(ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))){
+						if("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))){
+							ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+						}else{
+							ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+						}
+						break;
+					}
+				}
+			}
+
 			dsMetadata = dsp.metadataToXML(dataStore.getMetaData());
 		}
 		catch (Exception e) {
@@ -987,6 +1024,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return dsMetadata;
 	}
 
+	
+
+	
 	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap<String, String> parametersFilled, IEngUserProfile profile) {
 		
 		JSONObject dataSetJSON;

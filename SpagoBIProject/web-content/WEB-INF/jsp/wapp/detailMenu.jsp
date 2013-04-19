@@ -632,6 +632,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
                 <option value="<%= SpagoBIConstants.FINAL_USERS_MANAGEMENT %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.FINAL_USERS_MANAGEMENT)) ? "selected='selected'" : ""%>>
                     <spagobi:message key="menu.Users" />
                 </option>
+                <option value="<%= SpagoBIConstants.CREATE_WORKSHEET_FROM_DATASET_USER %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.CREATE_WORKSHEET_FROM_DATASET_USER)) ? "selected='selected'" : ""%>>
+                    <spagobi:message key="menu.WorksheetFromDataset" />
+                </option>
 			</select>
 		</div>
 		

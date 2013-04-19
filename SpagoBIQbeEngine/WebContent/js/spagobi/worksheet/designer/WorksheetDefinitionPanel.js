@@ -86,7 +86,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 	,
 	init : function (config) {
 		
-		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel({worksheetTemplate : config	});
+		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel({worksheetTemplate : config	, autoloadFields : true});
 		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({id : 'WorkSheetPreviewPage'}); // was ({closable: false});
 			
 		this.worksheetPreviewPanel.on('activate', function() {

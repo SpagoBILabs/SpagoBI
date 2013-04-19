@@ -21,6 +21,9 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -47,6 +50,7 @@ import it.eng.spagobi.sdk.AbstractSDKService;
 import it.eng.spagobi.sdk.documents.DocumentsService;
 import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
+import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue;
 import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
 import it.eng.spagobi.sdk.documents.bo.SDKFunctionality;
 import it.eng.spagobi.sdk.documents.bo.SDKSchema;
@@ -78,6 +82,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -97,8 +102,8 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	static private Logger logger = Logger.getLogger(DocumentsServiceImpl.class);
 
-	public HashMap getAdmissibleValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException {
-		HashMap values = new HashMap<String, String>();
+	public SDKDocumentParameterValue[] getAdmissibleValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException {
+		SDKDocumentParameterValue[] values = new SDKDocumentParameterValue[]{};
 		logger.debug("IN: documentParameterId = [" + documentParameterId + "]; roleName = [" + roleName + "]");
 		
 		this.setTenant();
@@ -144,14 +149,79 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				String lovResult = lovDetail.getLovResult(profile, null, null);
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 				List rows = lovResultHandler.getRows();
-				Iterator it = rows.iterator();
-				while (it.hasNext()) {
-					SourceBean row = (SourceBean) it.next();
+				values = new SDKDocumentParameterValue[rows.size()];
+				for (int i = 0; i < rows.size(); i++) {
+					SourceBean row = (SourceBean) rows.get(i);
 					String value = (String) row.getAttribute(lovDetail.getValueColumnName());
 					String description = (String) row.getAttribute(lovDetail.getDescriptionColumnName());
-					values.put(value, description);
+					values[i] = new SDKDocumentParameterValue(value, description);
 				}
 			}
+		} catch(NonExecutableDocumentException e) {
+			throw e;
+		} catch(Exception e) {
+			logger.error(e);
+		} finally {
+			this.unsetTenant();
+			logger.debug("OUT");
+		}
+		return values;
+	}
+	
+	public SDKDocumentParameterValue[] getDefaultValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException {
+		SDKDocumentParameterValue[] values = new SDKDocumentParameterValue[]{};
+		logger.debug("IN: documentParameterId = [" + documentParameterId + "]; roleName = [" + roleName + "]");
+		
+		this.setTenant();
+		
+		try {
+			IEngUserProfile profile = getUserProfile();
+			BIObjectParameter documentParameter = DAOFactory.getBIObjectParameterDAO().loadForDetailByObjParId(documentParameterId);
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(documentParameter.getBiObjectID());
+			if (!ObjectsAccessVerifier.canSee(obj, profile)) {
+				logger.error("User [" + ((UserProfile) profile).getUserName() + "] cannot execute document with id = [" + obj.getId() + "]");
+				throw new NonExecutableDocumentException();
+			}
+			List correctRoles = ObjectsAccessVerifier.getCorrectRolesForExecution(obj.getId(), profile);
+			if (correctRoles == null || correctRoles.size() == 0) {
+				logger.error("User [" + ((UserProfile) profile).getUserName() + "] has no roles to execute document with id = [" + obj.getId() + "]");
+				throw new NonExecutableDocumentException();
+			}
+			if (!correctRoles.contains(roleName)) {
+				logger.error("Role [" + roleName + "] is not a valid role for executing document with id = [" + obj.getId() + "] for user [" + ((UserProfile) profile).getUserName() + "]");
+				throw new NonExecutableDocumentException();
+			}
+
+			ExecutionInstance executionInstance = new ExecutionInstance(profile, "", "", obj.getId(), roleName, null, null);
+			logger.debug("Execution instance created");
+			
+			// reload BIObjectParameter in execution modality
+			BIObjectParameter biParameter = null;
+			obj = executionInstance.getBIObject();
+			List biparameters = obj.getBiObjectParameters();
+			Iterator biparametersIt = biparameters.iterator();
+			while (biparametersIt.hasNext()) {
+				BIObjectParameter aDocParameter = (BIObjectParameter) biparametersIt.next();
+				if (aDocParameter.getId().equals(documentParameterId)) {
+					biParameter = aDocParameter;
+					break;
+				}
+			}
+			
+			DefaultValuesRetriever retriever = new DefaultValuesRetriever();
+			logger.debug("Retrieving default values ...");
+			DefaultValuesList defaultValues = retriever.getDefaultValues(biParameter, executionInstance, profile);
+			logger.debug("Default values retrieved");
+			
+			values = new SDKDocumentParameterValue[defaultValues.size()];
+			for (int i = 0; i < defaultValues.size(); i++) {
+				DefaultValue defaultValue = defaultValues.get(i);
+				String value = defaultValue.getValue() != null ? defaultValue.getValue().toString() : null;
+				String description = defaultValue.getDescription() != null ? defaultValue.getDescription().toString() : "";
+				logger.debug("Default value retrieved : value = [" + value + "], description = [" + description + "]");
+				values[i] = new SDKDocumentParameterValue(value, description);
+			}
+			
 		} catch(NonExecutableDocumentException e) {
 			throw e;
 		} catch(Exception e) {

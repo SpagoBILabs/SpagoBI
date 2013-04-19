@@ -31,6 +31,14 @@
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
       />
+      <typeMapping
+        xmlns:ns="http://bo.documents.sdk.spagobi.eng.it"
+        qname="ns:SDKDocumentParameterValue"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
       <arrayMapping
         xmlns:ns="urn:spagobisdkdocuments"
         qname="ns:ArrayOf_xsd_anyType"
@@ -39,17 +47,17 @@
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
       />
       <typeMapping
-        xmlns:ns="http://bo.importexport.sdk.spagobi.eng.it"
-        qname="ns:SDKFile"
-        type="java:it.eng.spagobi.sdk.importexport.bo.SDKFile"
+        xmlns:ns="http://xml.apache.org/xml-soap"
+        qname="ns:mapItem"
+        type="java:org.apache.xml.xml_soap.MapItem"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
       />
       <typeMapping
-        xmlns:ns="http://xml.apache.org/xml-soap"
-        qname="ns:mapItem"
-        type="java:org.apache.xml.xml_soap.MapItem"
+        xmlns:ns="http://bo.importexport.sdk.spagobi.eng.it"
+        qname="ns:SDKFile"
+        type="java:it.eng.spagobi.sdk.importexport.bo.SDKFile"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
@@ -75,6 +83,13 @@
         type="java:it.eng.spagobi.sdk.documents.bo.SDKDocument"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkdocuments"
+        qname="ns:ArrayOf_tns2_SDKDocumentParameterValue"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue[]"
+        innerType="cmp-ns:SDKDocumentParameterValue" xmlns:cmp-ns="http://bo.documents.sdk.spagobi.eng.it"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
       />
       <typeMapping

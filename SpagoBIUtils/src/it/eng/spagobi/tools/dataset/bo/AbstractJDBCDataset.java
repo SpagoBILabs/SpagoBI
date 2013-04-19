@@ -13,8 +13,11 @@ import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators;
+import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators.IConditionalOperator;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
@@ -191,9 +194,9 @@ public static String DS_TYPE = "SbiQueryDataSet";
 
 	@Override
 	public IDataSetTableDescriptor persist(String tableName, Connection connection) {
-		List<String> fields = getDataSetSelectedFields((String)query);
+//		List<String> fields = getDataSetSelectedFields((String)query);
 		try{
-			return TemporaryTableManager.createTable(fields, (String)query, tableName, getDataSource());
+			return TemporaryTableManager.createTable(null, (String)query, tableName, getDataSource());
 		} catch (Exception e) {
 			logger.error("Error peristing the temporary table", e);
 			throw new SpagoBIEngineRuntimeException("Error peristing the temporary table", e);
@@ -215,11 +218,12 @@ public static String DS_TYPE = "SbiQueryDataSet";
 				// signature matches: no need to create a TemporaryTable
 				tableDescriptor = TemporaryTableManager.getLastDataSetTableDescriptor(tableName);
 			} else {
-				List<String> fields = getDataSetSelectedFields((String)query);
-				tableDescriptor = TemporaryTableManager.createTable(fields, ((String)query), tableName, getDataSource());
+//				List<String> fields = getDataSetSelectedFields((String)query);
+				tableDescriptor = TemporaryTableManager.createTable(null, ((String)query), tableName, getDataSource());
 			}
 			String filterColumnName = tableDescriptor.getColumnName(fieldName);
-			StringBuffer buffer = new StringBuffer("Select DISTINCT(" + filterColumnName + ") FROM " + tableName);
+			StringBuffer buffer = new StringBuffer("Select DISTINCT(" + encapsulateColumnName(filterColumnName, getDataSource()) + ") FROM " + tableName);
+			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
 			String sqlStatement = buffer.toString();
 			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, getDataSource(), start, limit);
 	
@@ -229,11 +233,39 @@ public static String DS_TYPE = "SbiQueryDataSet";
 		}
 		return toReturn;
 	}
+	
+	private void manageFilterOnDomainValues(StringBuffer buffer,
+			String fieldName, IDataSetTableDescriptor tableDescriptor, IDataStoreFilter filter) {
+		if (filter != null) {
+			String filterColumnName = tableDescriptor.getColumnName(fieldName);
+			if (filterColumnName == null) {
+				throw new SpagoBIRuntimeException("Field name [" + fieldName + "] not found");
+			}
+			String columnName = tableDescriptor.getColumnName(fieldName);
+			Class clazz = tableDescriptor.getColumnType(fieldName);
+			String value = getFilterValue(filter.getValue(), clazz);
+			IConditionalOperator conditionalOperator = SQLStatementConditionalOperators.getOperator(filter.getOperator());
+			String temp = conditionalOperator.apply(encapsulateColumnName(columnName, getDataSource()), new String[] { value });
+			buffer.append(" WHERE " + temp);
+		}
+	}
+	
+	private String getFilterValue(String value, Class clazz) {
+		String toReturn = null;
+		if ( String.class.isAssignableFrom(clazz) ) {
+			value = StringUtils.escapeQuotes(value);
+			toReturn = StringUtils.bound(value, "'");
+		} else if ( Number.class.isAssignableFrom(clazz) ) {
+			toReturn = value;
+		} else if ( Boolean.class.isAssignableFrom(clazz) ) {
+			toReturn = value;
+		} else {
+			// TODO manage other types, such as date and timestamp
+			throw new SpagoBIRuntimeException("Unsupported operation: cannot filter on a fild type " + clazz.getName());
+		}
+		return toReturn;
+	}
 
-	/**
-	 * @param query
-	 * @return
-	 */
 	private List<String> getDataSetSelectedFields(String query) {
 		List<String> toReturn= new ArrayList<String>();
 		String alias = null;
@@ -258,6 +290,17 @@ public static String DS_TYPE = "SbiQueryDataSet";
 		return userId;
 	}
 	
+	public static String encapsulateColumnName (String columnName, IDataSource dataSource) {
+		logger.debug("IN");
+		String toReturn = null;
+		if (columnName != null) {
+			String aliasDelimiter = TemporaryTableManager.getAliasDelimiter(dataSource);
+			logger.debug("Alias delimiter is [" + aliasDelimiter + "]");
+			toReturn = aliasDelimiter + columnName + aliasDelimiter;
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
 	
 		
 }

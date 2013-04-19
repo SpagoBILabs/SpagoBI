@@ -649,7 +649,8 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 	protected String buildSqlStatement(String fieldName, IDataSetTableDescriptor descriptor, List<WhereField> filters, String ordeType) {
 		List<String> fieldNames = new ArrayList<String>();
 		fieldNames.add(fieldName);
-		return CrosstabQueryCreator.getTableQuery(fieldNames, true, descriptor, filters, ordeType, fieldNames);
+		IDataSource dataSource = this.getDataSource();
+		return CrosstabQueryCreator.getTableQuery(fieldNames, true, descriptor, filters, ordeType, fieldNames, dataSource);
 	}
 	
 }

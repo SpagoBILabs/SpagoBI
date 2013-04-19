@@ -84,6 +84,9 @@ public class FiltersInfo {
 			String fieldName = iterator.next();
 			int index = metadata.getFieldIndex(fieldName);
 			String key = metadata.getFieldMeta(index).getAlias();
+			if (key == null || key.trim().equals("")) {
+				key = fieldName;
+			}
 			List<String> values = decodedValues.get(fieldName);
 			toReturn.put(key, values);
 		}
