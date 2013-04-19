@@ -17,6 +17,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
+import it.eng.spagobi.utilities.messages.IEngineMessageBuilder;
 
 import java.util.Locale;
 
@@ -24,11 +25,19 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
+/**
+ * 
+ * DATE            CONTRIBUTOR/DEVELOPER                        NOTE
+ * 19-04-2013      Andrea Frantappiè (andrea.frantappiè@eng.it) added internationalization management 
+ * 																for highchart engine
+ * 
+ */
+
 // Referenced classes of package it.eng.spagobi.commons.utilities.messages:
 //            IMessageBuilder
 
 public class MessageBuilder
-    implements IMessageBuilder
+    implements IMessageBuilder, IEngineMessageBuilder
 {
 
     private static Logger logger = Logger.getLogger(MessageBuilder.class);
