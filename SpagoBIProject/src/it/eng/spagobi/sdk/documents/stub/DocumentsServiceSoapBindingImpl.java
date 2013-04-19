@@ -40,10 +40,16 @@ public class DocumentsServiceSoapBindingImpl implements it.eng.spagobi.sdk.docum
     	return impl.getDocumentParameters(in0, in1);
     }
 
-    public java.util.HashMap getAdmissibleValues(java.lang.Integer in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException {
+    public it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue[] getAdmissibleValues(java.lang.Integer in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException {
     	DocumentsServiceImpl impl = new DocumentsServiceImpl();
-    	return impl.getAdmissibleValues(in0,in1);
+    	return impl.getAdmissibleValues(in0, in1);
     }
+
+    public it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue[] getDefaultValues(java.lang.Integer in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException {
+    	DocumentsServiceImpl impl = new DocumentsServiceImpl();
+    	return impl.getDefaultValues(in0, in1);
+    }
+    
 
     public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadTemplate(java.lang.Integer in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
     	DocumentsServiceImpl impl = new DocumentsServiceImpl();

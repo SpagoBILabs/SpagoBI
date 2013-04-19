@@ -296,7 +296,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		
 		CreationHelper createHelper = wb.getCreationHelper();
 
-		if (metadataPropertiesJSON != null) {
+		if (metadataPropertiesJSON != null && metadataPropertiesJSON.length() > 0) {
 			exportMetadataToXLS(wb, exporter, createHelper, metadataPropertiesJSON, parametersJSON);
 		}
 

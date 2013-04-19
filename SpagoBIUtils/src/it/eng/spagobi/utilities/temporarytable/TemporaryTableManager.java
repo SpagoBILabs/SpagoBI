@@ -286,8 +286,13 @@ public class TemporaryTableManager {
 					continue;
 				}
 			}
-			String fieldName = fields.get(index);
 			String columnName = resultSet.getString("COLUMN_NAME");
+			String fieldName = null;
+			if (fields != null) {
+				fieldName = fields.get(index);
+			} else {
+				fieldName = columnName;
+			}
 			Class type = JDBCTypeMapper.getJavaType(resultSet.getShort("DATA_TYPE"));
 			tableDescriptor.addField(fieldName, columnName, type);
 			index++;

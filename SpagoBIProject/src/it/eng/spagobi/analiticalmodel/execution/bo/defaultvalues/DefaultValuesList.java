@@ -7,27 +7,12 @@ package it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
-public class DefaultValuesList {
+public class DefaultValuesList extends ArrayList<DefaultValue> {
 
 	private static Logger logger = Logger.getLogger(DefaultValuesList.class);
-	
-	private List<DefaultValue> list;
-	
-	public DefaultValuesList () {
-		list = new ArrayList<DefaultValue>();
-	}
-	
-	public void add(DefaultValue defaultValue) {
-		list.add(defaultValue);
-	}
-	
-	public Iterator<DefaultValue> iterator() {
-		return list.iterator();
-	}
 
 	public boolean contains(Object value) {
 		Iterator<DefaultValue> it = this.iterator();

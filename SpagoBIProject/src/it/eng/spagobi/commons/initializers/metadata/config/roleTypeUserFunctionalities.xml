@@ -93,5 +93,6 @@
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FinalUsersManagement" roleType="ADMIN" /> 
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FinalUsersManagement" roleType="USER" />
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MetaModelsCatalogueManagement" roleType="ADMIN" /> 
-<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ArtifactCatalogueManagement" roleType="ADMIN" />  
+<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ArtifactCatalogueManagement" roleType="ADMIN" />
+<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CreateWorksheetFromDatasetUserFunctionality" roleType="USER" />  
 </ROLE_TYPE_USER_FUNCTIONALITIES>

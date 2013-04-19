@@ -48,7 +48,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		});
 		this.dataSourceDescription = Ext.create("Ext.form.field.Text",{
 			name: "DESCRIPTION",
-			fieldLabel: LN('sbi.datasource.description'),
+			fieldLabel: LN('sbi.datasource.description')
 		});
 
 		Ext.create("Ext.form.field.Text",{

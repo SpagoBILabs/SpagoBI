@@ -346,6 +346,7 @@ public class SpagoBIConstants {
 	public static final String KPI_MANAGEMENT = "KpiManagement";
 	public static final String PROFILE_MANAGEMENT = "ProfileManagement";
 	public static final String FINAL_USERS_MANAGEMENT = "FinalUsersManagement";
+	public static final String CREATE_WORKSHEET_FROM_DATASET_USER = "CreateWorksheetFromDatasetUserFunctionality";
 	
 	public static final String SAVE_SUBOBJECT_FUNCTIONALITY = "SaveSubobjectFunctionality";
 	public static final String SEE_SUBOBJECTS_FUNCTIONALITY = "SeeSubobjectsFunctionality";

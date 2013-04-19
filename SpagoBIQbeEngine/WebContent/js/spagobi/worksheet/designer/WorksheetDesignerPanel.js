@@ -38,6 +38,7 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 
 	var defaultSettings = {
 		title: LN('sbi.worksheet.designer.worksheetdesignerpanel.title')
+		, autoloadFields : false
 	};
 
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.worksheetDesignerPanel) {
@@ -92,6 +93,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	sheetsContainerPanel: null,
 	worksheetTemplate: {},   // the initial worksheet template; to be passed as a property of the constructor's input object!!!
 	contextMenu: null,
+	autoloadFields: null,  // if true, dataset fields will be automatically loaded and fields' loading icon will be hidden
 
 	init : function (config) {
 		this.initPanels(config);
@@ -101,7 +103,9 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	},
 	
 	initPanels: function(config){
-		this.designToolsPanel = new Sbi.worksheet.designer.DesignToolsPanel();
+		this.designToolsPanel = new Sbi.worksheet.designer.DesignToolsPanel({
+			autoloadFields : this.autoloadFields
+		});
 		this.designToolsPanel.on('toolschange',function(change){
 			this.sheetsContainerPanel.updateActiveSheet(change);
 		},this);

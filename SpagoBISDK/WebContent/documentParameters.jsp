@@ -21,6 +21,7 @@ If the parameter is manual input, a manul input appears.
 <%@page import="java.util.*"%>
 <%@page import="it.eng.spagobi.sdk.proxy.DocumentsServiceProxy"%>
 <%@page import="it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter"%>
+<%@page import="it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue"%>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -55,8 +56,8 @@ if (user != null && password != null) {
 				<%= aDocParameter.getLabel() %>
 				<%
 				// admissible values for parameter
-				HashMap values = proxy.getAdmissibleValues(aDocParameter.getId(), role);
-				if (values == null || values.isEmpty()) {
+				SDKDocumentParameterValue[] values = proxy.getAdmissibleValues(aDocParameter.getId(), role);
+				if (values == null || values.length == 0) {
 					%>
 					<input type="text" name="<%= aDocParameter.getUrlName() %>" size="30"/>
 					<%
@@ -64,12 +65,10 @@ if (user != null && password != null) {
 					%>
 					<select name="<%= aDocParameter.getUrlName() %>">
 					<%
-					Set entries = values.entrySet();
-					Iterator it = entries.iterator();
-					while (it.hasNext()) {
-						Map.Entry entry = (Map.Entry) it.next();
+					for (int j = 0; j < values.length; j++) {
+						SDKDocumentParameterValue aValue = values[j];
 						%>
-						<option value="<%= entry.getKey() %>"><%= entry.getValue() %></option>
+						<option value="<%= aValue.getValue() %>"><%= aValue.getDescription() %></option>
 						<%
 					}
 					%>

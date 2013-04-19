@@ -20,7 +20,10 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
+import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
+import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -253,11 +256,20 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			if(sourceDataset == null) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Source datset [" + sourceDatasetLabel + "] does not exist");
 			}
+			
 				
 			BIObject document = createBaseDocument(documentJSON, null, foldersJSON);				
 			ObjTemplate template = buildDocumentTemplate(customDataJSON, null);
 								
 			document.setDataSetId(sourceDataset.getDsId());
+			
+			// datasource
+			GuiDataSetDetail detail = sourceDataset.getActiveDetail();
+			if (detail instanceof QueryDataSetDetail) {
+				String dataSourceLabel = ((QueryDataSetDetail) detail).getDataSourceLabel();
+				IDataSource datasource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+				document.setDataSourceId(datasource.getDsId());
+			}
 										
 			documentManagementAPI.saveDocument(document, template);					
 			documentManagementAPI.propagateDatasetParameters(sourceDataset, document);

@@ -5,17 +5,13 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.sdk.proxy;
 
+import it.eng.spagobi.sdk.callbacks.ClientCredentialsHolder;
+import it.eng.spagobi.sdk.documents.stub.DocumentsService;
+
 import java.rmi.Remote;
-import java.rmi.RemoteException;
 
 import org.apache.axis.client.Stub;
 import org.apache.ws.security.handler.WSHandlerConstants;
-
-import it.eng.spagobi.sdk.callbacks.ClientCredentialsHolder;
-import it.eng.spagobi.sdk.documents.bo.SDKTemplate;
-import it.eng.spagobi.sdk.documents.stub.DocumentsService;
-import it.eng.spagobi.sdk.documents.stub.DocumentsServiceServiceLocator;
-import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
 
 
 public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements DocumentsService {
@@ -126,10 +122,16 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
     return documentsService.getDocumentParameters(in0, in1);
   }
   
-  public java.util.HashMap getAdmissibleValues(java.lang.Integer in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException{
+  public it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue[] getAdmissibleValues(java.lang.Integer in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException{
     if (documentsService == null)
       _initDocumentsServiceProxy();
     return documentsService.getAdmissibleValues(in0, in1);
+  }
+  
+  public it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue[] getDefaultValues(java.lang.Integer in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException{
+	    if (documentsService == null)
+	      _initDocumentsServiceProxy();
+	    return documentsService.getDefaultValues(in0, in1);
   }
   
   public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadTemplate(java.lang.Integer in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{

@@ -450,6 +450,7 @@
 				<file name="./src/ext/sbi/widgets/ButtonField.js" />
         		<file name="./src/ext/sbi/widgets/Catalogue.js" />
         		<file name="./src/ext/sbi/widgets/CatalogueVersionsGridPanel.js" />
+				<file name="./src/ext/sbi/widgets/InMemoryFilteredStore.js" />
 
 				<file name="./src/ext/sbi/udp/ManageUdp.js" />
 				<file name="./src/ext/sbi/udp/ManageUdpValues.js" />
@@ -527,6 +528,12 @@
 
 				<file name="./src/ext/sbi/tools/catalogue/MetaModelsCatalogue.js" />
         		<file name="./src/ext/sbi/tools/catalogue/MondrianSchemasCatalogue.js" />
+
+				<file name="./src/ext/sbi/browser/DocumentsTree.js" />
+				<file name="./src/ext/sbi/execution/SaveDocumentWindow.js" />
+				<file name="./src/ext/sbi/worksheet/DatasetsListPanel.js" />
+				<file name="./src/ext/sbi/worksheet/WorksheetEditorIframePanelExt3.js" />
+				<file name="./src/ext/sbi/worksheet/WorksheetFromDatasetPanel.js" />
 				
 			</filelist>
 

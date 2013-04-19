@@ -15,6 +15,7 @@ Sbi.locale.ln['sbi.browser.documentstree.root']  = 'Root';
 Sbi.locale.ln['sbi.general.yes'] = 'Yes';
 Sbi.locale.ln['sbi.general.No'] = 'No';
 Sbi.locale.ln['sbi.general.close'] = 'Close';
+Sbi.locale.ln['sbi.general.ok'] = 'OK';
 
 Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Generic Node';
 Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Generic Root';
@@ -41,12 +42,16 @@ Sbi.locale.ln['sbi.generic.upload'] = 'Upload';
 Sbi.locale.ln['sbi.generic.download'] = 'Download';
 Sbi.locale.ln['sbi.generic.update2'] = 'Update';
 Sbi.locale.ln['sbi.generic.noItemsSelected'] = 'No items selected';
+Sbi.locale.ln['sbi.generic.next'] = 'Next >';
+Sbi.locale.ln['sbi.generic.back'] = '< Back';
 Sbi.locale.ln['sbi.kpi.trend.title'] = 'Trend for resource ';
 Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'No data found! Select the specific node to view the data trend. ';
+Sbi.locale.ln['sbi.generic.filter'] = 'Filter';
 
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Name';
 Sbi.locale.ln['sbi.generic.descr'] = 'Description';
+Sbi.locale.ln['sbi.generic.missing.description'] = 'Description not available';
 Sbi.locale.ln['sbi.generic.code'] = 'Code';
 Sbi.locale.ln['sbi.generic.type'] = 'Type';
 Sbi.locale.ln['sbi.generic.label'] = 'Label';
@@ -56,10 +61,15 @@ Sbi.locale.ln['sbi.generic.value'] = 'Value';
 Sbi.locale.ln['sbi.generic.udpValues'] = 'Udp Values';
 Sbi.locale.ln['sbi.generic.author'] = 'Author';
 Sbi.locale.ln['sbi.generic.creationdate'] = 'Creation date';
-
 Sbi.locale.ln['sbi.generic.kpi'] = 'Kpi';
 Sbi.locale.ln['sbi.generic.nodetype'] = 'Node Type';
 Sbi.locale.ln['sbi.generic.nodedescr'] = 'Node Description';
+
+//search filters
+Sbi.locale.ln['sbi.generic.search.title'] = 'Search';
+Sbi.locale.ln['sbi.generic.search.msg'] = 'enter search string';
+Sbi.locale.ln['sbi.generic.search.clear'] = 'Clear';
+
 //Messages
 Sbi.locale.ln['sbi.generic.validationError'] = 'Validation Error';
 Sbi.locale.ln['sbi.generic.validation.missingName'] = 'Name not specified';
@@ -82,6 +92,7 @@ Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'There are unsaved changes. Con
 Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Delete Kpi';
 Sbi.locale.ln['sbi.generic.attributes'] = 'Attributes';
 Sbi.locale.ln['not-enabled-to-call-service'] = 'The user is not allowed to do this operation';
+Sbi.locale.ln['sbi.generic.select.toclone'] = 'Select the row to clone';
 //END Generic messages
 
 //START List Detail messages
@@ -599,7 +610,23 @@ Sbi.locale.ln['sbi.lookup.Contains'] = 'Contains';
 Sbi.locale.ln['sbi.lookup.StartsWith'] = 'Starts with';
 Sbi.locale.ln['sbi.lookup.EndsWith'] = 'Ends with';
 
+Sbi.locale.ln['sbi.datasource.label']= 'Label';
+Sbi.locale.ln['sbi.datasource.description']= 'Description';
+Sbi.locale.ln['sbi.datasource.driver']= 'Driver';
+Sbi.locale.ln['sbi.datasource.dialect']= 'Dialect';
+Sbi.locale.ln['sbi.datasource.multischema']= 'Multischema';
+Sbi.locale.ln['sbi.datasource.multischema.attribute']= 'Multischema Attribute';
+Sbi.locale.ln['sbi.datasource.type']= 'Type';
+Sbi.locale.ln['sbi.datasource.type.jndi']= 'Jndi';
+Sbi.locale.ln['sbi.datasource.type.jdbc']= 'Jdbc';
+Sbi.locale.ln['sbi.datasource.type.jndi.name']= 'Jndi Name';
+Sbi.locale.ln['sbi.datasource.type.jdbc.user']= 'User';
+Sbi.locale.ln['sbi.datasource.type.jdbc.url']= 'URL';
+Sbi.locale.ln['sbi.datasource.type.jdbc.password']= 'Password';
 Sbi.locale.ln['sbi.datasource.jndiname.info']= 'For the data source configuration you should specify the connection pool configured inside the application server. For example: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
+Sbi.locale.ln['sbi.datasource.saved']= 'Data source correctly saved';
+Sbi.locale.ln['sbi.datasource.deleted']= 'Data source correctly deleted';
+Sbi.locale.ln['sbi.datasource.validation.error']= 'There is some error in the data source configuration. Check the marked fields.';
 
 //Datasets
 Sbi.locale.ln['sbi.ds.clearOldVersion'] = 'Clear All';
@@ -633,10 +660,16 @@ Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Automatic Columns numeration?';
 Sbi.locale.ln['sbi.ds.openQbeQizard'] = 'Open QbE wizard';
 Sbi.locale.ln['sbi.ds.help'] = 'Help';
 Sbi.locale.ln['sbi.ds.pars'] = 'Available Profile Attributes';
+Sbi.locale.ln['sbi.ds.metadata'] = 'Fields metadata';
+Sbi.locale.ln['sbi.ds.field.metadata'] = 'Field metadata';
+Sbi.locale.ln['sbi.ds.field.name'] = 'Field name';
 Sbi.locale.ln['sbi.ds.customData'] = 'Custom Attributes';
-
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Recalculate metadata?';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = 'Do you want the system to recalculate dataset\'s metadata? (the dataset will be executed by the system: this is required if you modified the dataset significantly)';
+Sbi.locale.ln['sbi.ds.measure'] = 'Measure';
+Sbi.locale.ln['sbi.ds.attribute'] = 'Attribute';
+Sbi.locale.ln['sbi.ds.field.nature.title'] = 'Select the nature of the field';
+Sbi.locale.ln['sbi.ds.field.metadata.nosaved'] = 'You should save the dataset before edit metadata';
 
 //===================================================================
 //MESSAGE BOX BUTTONS
@@ -800,23 +833,44 @@ Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.isactive'] = 'Active';
 //BEHAVIOURAL 
 //===================================================================
 	
-Sbi.locale.ln['sbi.behavioural.lov.type.simple']='Simple'
-Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Tree'
-Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filter'
-Sbi.locale.ln['sbi.behavioural.lov.save.window.title']='LOV Saved'
-Sbi.locale.ln['sbi.behavioural.lov.save.window.text']='The LOV has been successfully saved'
-Sbi.locale.ln['sbi.behavioural.lov.save']='Save'
-Sbi.locale.ln['sbi.behavioural.lov.select.type']='Select a type...'
-Sbi.locale.ln['sbi.behavioural.lov.name']='Name'
-Sbi.locale.ln['sbi.behavioural.lov.value']='Value'
-Sbi.locale.ln['sbi.behavioural.lov.description']='Description'
-Sbi.locale.ln['sbi.behavioural.lov.visible']='Visible'
-Sbi.locale.ln['sbi.behavioural.lov.test.error']='Error testing the lov'
-Sbi.locale.ln['sbi.behavioural.lov.back']='Back'
-Sbi.locale.ln['sbi.behavioural.delete']='Delete'
+Sbi.locale.ln['sbi.behavioural.lov.type.simple']='Simple';
+Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Tree';
+Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filter';
+Sbi.locale.ln['sbi.behavioural.lov.save.window.title']='LOV Saved';
+Sbi.locale.ln['sbi.behavioural.lov.save.window.text']='The LOV has been successfully saved';
+Sbi.locale.ln['sbi.behavioural.lov.save']='Save';
+Sbi.locale.ln['sbi.behavioural.lov.select.type']='Select a type...';
+Sbi.locale.ln['sbi.behavioural.lov.name']='Name';
+Sbi.locale.ln['sbi.behavioural.lov.value']='Value';
+Sbi.locale.ln['sbi.behavioural.lov.description']='Description';
+Sbi.locale.ln['sbi.behavioural.lov.visible']='Visible';
+Sbi.locale.ln['sbi.behavioural.lov.test.error']='Error testing the lov';
+Sbi.locale.ln['sbi.behavioural.lov.back']='Back';
+Sbi.locale.ln['sbi.behavioural.delete']='Delete';
+
+//===================================================================
+//Sbi.worksheet.WorksheetFromDatasetPanel : AD-HOC REPORTING
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.nodatasetselected.msg']='No dataset selected! Please select one in order to proceed.';
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.choosedataset.msg']='Please selected a dataset to work with and click on Next';
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.createworksheet.msg']='... now you can design your worksheet! In order to change dataset, click on Back';
+
+//===================================================================
+//Sbi.worksheet.WorksheetEditorIframePanelExt3 : AD-HOC REPORTING 
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.saveas']='Save as new document ...';
+Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.export']='Export into one of the available formats ...';
 	
-
-
-
-
+//===================================================================
+//ERRORS 
+//===================================================================
+		
+//GENERIC
+Sbi.locale.ln["error.mesage.description.generic.can.not.responce"]= "Can not send responce to client"
+	
+//DATASOURCE	
+Sbi.locale.ln["error.mesage.description.data.source.cannot.be.null"]= "The label of teh data source can not be null"
+Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = "Impossible to delete the data source because it is in use"
+Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]="Impossible to save the data source because there is another one with the same label"
+	
 	

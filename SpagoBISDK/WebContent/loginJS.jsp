@@ -33,6 +33,14 @@
 	        , controllerPath: 'servlet/AdapterHTTP'  
 	    });
 
+
+        /*
+         *  This is the timeout to be considered in case the call fails and the error handler is invoked.
+         *  Default values is 30 seconds!!! That's why we need to set it to an reasonable value.
+         *  If it is set to 0 ms, an error occurs.
+         *  TODO: investigate why it cannot be set to 0
+         */
+		Sbi.sdk.jsonp.timeout = 100;
 		
 		doLogin = function() {
 			var userEl = document.getElementById('user');

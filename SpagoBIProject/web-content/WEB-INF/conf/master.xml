@@ -277,4 +277,11 @@
 	<CONFIGURATOR path="/WEB-INF/conf/alarm/publishers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/alarm/business_map.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/alarm/validation.xml" />
+	
+    <!-- ad-hoc reporting -->
+    <CONFIGURATOR path="/WEB-INF/conf/adhocreporting/actions.xml" />
+    <CONFIGURATOR path="/WEB-INF/conf/adhocreporting/presentation.xml" />
+    <CONFIGURATOR path="/WEB-INF/conf/adhocreporting/publishers.xml" />
+    <CONFIGURATOR path="/WEB-INF/conf/adhocreporting/business_map.xml" />
+	
 </MASTER>

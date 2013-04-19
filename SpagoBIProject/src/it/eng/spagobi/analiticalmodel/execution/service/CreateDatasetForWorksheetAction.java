@@ -142,7 +142,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	}
 
 	
-	private Engine getWorksheetEngine() {
+	protected Engine getWorksheetEngine() {
 		Engine worksheetEngine;
 		List<Engine> engines;
 		
@@ -187,7 +187,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		return datasourceLabel;
 	}
 	
-	private Map<String, String> buildWorksheetEditServiceBaseParametersMap() {
+	protected Map<String, String> buildWorksheetEditServiceBaseParametersMap() {
 		HashMap<String, String> parametersMap = new HashMap<String, String>();
 		
 		parametersMap.put("ACTION_NAME", WORKSHEET_EDIT_ACTION);
@@ -208,7 +208,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	}
 
 
-	private String createNewExecutionId() {
+	protected String createNewExecutionId() {
 		String executionId;
 		
 		logger.debug("IN");
