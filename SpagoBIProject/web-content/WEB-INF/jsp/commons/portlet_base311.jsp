@@ -170,7 +170,9 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	String parameterMementoPersistenceScope = SingletonConfig.getInstance().getConfigValue("SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceScope");
 	String parameterMementoPersistenceDepth = SingletonConfig.getInstance().getConfigValue("SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceDepth");
 	
-
+	 request.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
+	 request.getSession().setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());
+	 request.getSession().setAttribute(Constants.USER_COUNTRY, locale.getCountry());
 	
 	%>
 
