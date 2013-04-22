@@ -120,8 +120,6 @@ Ext.define('Sbi.widget.grid.StaticGridDecorator', {
 	            scope: this
 	        });
 		}
-		
-		
 	}
 	
 

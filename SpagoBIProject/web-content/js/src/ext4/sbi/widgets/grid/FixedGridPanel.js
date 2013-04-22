@@ -14,6 +14,7 @@
  * 
  * This is a grid panel linked to a Store.. It builds the model and the associated store. 
  * It adds the widgets to the grid rows and the buttons in the toolbar according to the configuration.
+ * It use the REST services to connect to server. The connection properties are in the definition of the model 
  * 
  * 		@example
  * 		...
@@ -31,8 +32,7 @@
  *				deletebutton:true,
  *				selectbutton: true
  *			},
- *			services: this.services,
- *			fields:this.fields,
+ *			modelName: "ModelName",
  *			columns: this.columns
  *		};
  *		
