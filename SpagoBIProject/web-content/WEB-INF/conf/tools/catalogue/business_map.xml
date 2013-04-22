@@ -17,4 +17,7 @@
         <MAP_ACTION actionName="DELETE_ARTIFACT_VERSIONS_ACTION" businessProcess="ArtifactCatalogueManagement" />
         <MAP_ACTION actionName="DOWNLOAD_ARTIFACT_VERSION_ACTION" businessProcess="ArtifactCatalogueManagement" />
 	</MAP_ACTIONS>
+	<MAP_REST_SERVICES>
+		<MAP_REST_SERVICE serviceUrl="domains/listValueDescriptionByType" businessProcess="MetaModelsCatalogueManagement" />	           
+	</MAP_REST_SERVICES>
 </BUSINESS_MAP>
