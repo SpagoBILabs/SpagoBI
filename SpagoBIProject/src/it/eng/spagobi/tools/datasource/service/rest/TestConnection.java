@@ -7,6 +7,7 @@ package it.eng.spagobi.tools.datasource.service.rest;
 
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONFailure;
@@ -24,6 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -75,10 +77,9 @@ public class TestConnection {
 			 return (new JSONFailure(new Exception(testDataSourceError))).toString();
 		 }
 		} catch (Exception ex) {
-			logger.error("Cannot fill response container", ex);
-
+			logger.error("Error testing datasources", ex);
 			try {
-				return (new JSONFailure(ex)).toString();
+				return "{error: '"+ex.getMessage()+"'}";
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
 				throw new SpagoBIRuntimeException(
@@ -86,4 +87,9 @@ public class TestConnection {
 			}
 		}
 	}	
+	
+	
+	private String serializeException(Exception e) throws JSONException{
+		return ExceptionUtilities.serializeException(e.getMessage(),null);
+	}
 }

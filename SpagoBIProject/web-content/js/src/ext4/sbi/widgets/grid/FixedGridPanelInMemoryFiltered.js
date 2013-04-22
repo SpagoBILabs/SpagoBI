@@ -130,15 +130,7 @@ Ext.define('Sbi.widgets.grid.FixedGridPanelInMemoryFiltered', {
     	this.storeConfig = Ext.apply({
     		parentGrid: this,
     		model: modelname,
-    		filteredProperties: this.filteredProperties,
-    		proxy: {
-    			type: 'ajax',
-    			url:  this.services['getAllValues'],
-    			reader: {
-    				type:"json",
-    				root: "root"
-    			}
-    		}
+    		filteredProperties: this.filteredProperties
     	},this.storeConfig||{});
     	Sbi.debug('FixedGridPanel store built.');
     	return Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);

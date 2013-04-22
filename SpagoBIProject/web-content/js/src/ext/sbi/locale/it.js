@@ -651,8 +651,24 @@ Sbi.locale.ln['sbi.ds.attribute'] = 'Attributo';
 Sbi.locale.ln['sbi.ds.field.nature.title'] = 'Selezionare la tipologia di campo';
 Sbi.locale.ln['sbi.ds.field.metadata.nosaved'] = 'Devi salvare il dataset prima di modificare i metadati';
 
+Sbi.locale.ln['sbi.datasource.label']= 'Etichetta';
+Sbi.locale.ln['sbi.datasource.description']= 'Descrizione';
+Sbi.locale.ln['sbi.datasource.driver']= 'Driver';
+Sbi.locale.ln['sbi.datasource.dialect']= 'Dialetto';
+Sbi.locale.ln['sbi.datasource.multischema']= 'Multischema';
+Sbi.locale.ln['sbi.datasource.multischema.attribute']= 'Attributo Multischema';
+Sbi.locale.ln['sbi.datasource.type']= 'Tipo';
+Sbi.locale.ln['sbi.datasource.type.jndi']= 'Jndi';
+Sbi.locale.ln['sbi.datasource.type.jdbc']= 'Jdbc';
+Sbi.locale.ln['sbi.datasource.type.jndi.name']= 'Nome Jndi';
+Sbi.locale.ln['sbi.datasource.type.jdbc.url']= 'URL';
+Sbi.locale.ln['sbi.datasource.type.jdbc.user']= 'User';
+Sbi.locale.ln['sbi.datasource.type.jdbc.password']= 'Password';
+Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI è necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
+Sbi.locale.ln['sbi.datasource.saved']= 'Data source salvato correttamente';
+Sbi.locale.ln['sbi.datasource.deleted']= 'Data source cancellato correttamente';
+Sbi.locale.ln['sbi.datasource.validation.error']= 'Ci sono degli errori di validazione. Controlla i campi marcati.';
 
-Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI \u00e8 necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
@@ -822,20 +838,21 @@ Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.deleteNonActive']='Elimina
 //BEHAVIOURAL 
 //===================================================================
 	
-Sbi.locale.ln['sbi.behavioural.lov.type.simple']='Normale';
-Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Albero';
-Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filtra';	
-Sbi.locale.ln['sbi.behavioural.lov.save.window.title']='LOV Salvato';
-Sbi.locale.ln['sbi.behavioural.lov.save.window.text']='Il LOV \u00e8 stato salvato correttamente';
-Sbi.locale.ln['sbi.behavioural.lov.save']='Salva';
-Sbi.locale.ln['sbi.behavioural.lov.select.type']='Seleziona una tipologia...';
-Sbi.locale.ln['sbi.behavioural.lov.name']='Nome';
-Sbi.locale.ln['sbi.behavioural.lov.value']='Valore';
-Sbi.locale.ln['sbi.behavioural.lov.description']='Descrizione';
-Sbi.locale.ln['sbi.behavioural.lov.visible']='Visibile';
-Sbi.locale.ln['sbi.behavioural.lov.test.error']='Errore nel test del lov';
-Sbi.locale.ln['sbi.behavioural.lov.back']='Indietro';
-Sbi.locale.ln['sbi.behavioural.delete']='Cancella';
+Sbi.locale.ln['sbi.behavioural.lov.type.simple']='Normale'
+Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Albero'	
+Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filtra'	
+Sbi.locale.ln['sbi.behavioural.lov.save.window.title']='LOV Salvato'
+Sbi.locale.ln['sbi.behavioural.lov.save.window.text']='Il LOV \u00e8 stato salvato correttamente'
+Sbi.locale.ln['sbi.behavioural.lov.save']='Salva'
+Sbi.locale.ln['sbi.behavioural.lov.select.type']='Seleziona una tipologia...'
+Sbi.locale.ln['sbi.behavioural.lov.name']='Nome'
+Sbi.locale.ln['sbi.behavioural.lov.value']='Valore'
+Sbi.locale.ln['sbi.behavioural.lov.description']='Descrizione'
+Sbi.locale.ln['sbi.behavioural.lov.visible']='Visibile'
+Sbi.locale.ln['sbi.behavioural.lov.test.error']='Errore nel test del lov'
+Sbi.locale.ln['sbi.behavioural.lov.back']='Indietro'
+Sbi.locale.ln['sbi.behavioural.delete']='Cancella'
+
 
 //===================================================================
 //Sbi.worksheet.WorksheetFromDatasetPanel : AD-HOC REPORTING 
@@ -849,3 +866,15 @@ Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.createworksheet.msg']='..
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.saveas']='Salva come nuovo documento ...';
 Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.export']='Esporta in uno dei formati disponibili ...';
+
+//===================================================================
+//ERRORS 
+//===================================================================
+			
+//GENERIC
+Sbi.locale.ln["error.mesage.description.generic.can.not.responce"]= "Impossibile mandare la risposta al client"
+		
+//DATASOURCE	
+Sbi.locale.ln["error.mesage.description.data.source.cannot.be.null"]= "La label del documento deve essere valorizata"
+Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = "Impossibile cancellare il datasource perché è in uso"
+Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]="Impossibile salvare il datasource: label duplicata"

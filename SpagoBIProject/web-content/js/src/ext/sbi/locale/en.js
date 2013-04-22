@@ -627,7 +627,6 @@ Sbi.locale.ln['sbi.datasource.jndiname.info']= 'For the data source configuratio
 Sbi.locale.ln['sbi.datasource.saved']= 'Data source correctly saved';
 Sbi.locale.ln['sbi.datasource.deleted']= 'Data source correctly deleted';
 Sbi.locale.ln['sbi.datasource.validation.error']= 'There is some error in the data source configuration. Check the marked fields.';
-
 //Datasets
 Sbi.locale.ln['sbi.ds.clearOldVersion'] = 'Clear All';
 Sbi.locale.ln['sbi.ds.deleteVersion'] = 'Delete Version';
@@ -833,20 +832,21 @@ Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.isactive'] = 'Active';
 //BEHAVIOURAL 
 //===================================================================
 	
-Sbi.locale.ln['sbi.behavioural.lov.type.simple']='Simple';
-Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Tree';
-Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filter';
-Sbi.locale.ln['sbi.behavioural.lov.save.window.title']='LOV Saved';
-Sbi.locale.ln['sbi.behavioural.lov.save.window.text']='The LOV has been successfully saved';
-Sbi.locale.ln['sbi.behavioural.lov.save']='Save';
-Sbi.locale.ln['sbi.behavioural.lov.select.type']='Select a type...';
-Sbi.locale.ln['sbi.behavioural.lov.name']='Name';
-Sbi.locale.ln['sbi.behavioural.lov.value']='Value';
-Sbi.locale.ln['sbi.behavioural.lov.description']='Description';
-Sbi.locale.ln['sbi.behavioural.lov.visible']='Visible';
-Sbi.locale.ln['sbi.behavioural.lov.test.error']='Error testing the lov';
-Sbi.locale.ln['sbi.behavioural.lov.back']='Back';
-Sbi.locale.ln['sbi.behavioural.delete']='Delete';
+Sbi.locale.ln['sbi.behavioural.lov.type.simple']='Simple'
+Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Tree'
+Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filter'
+Sbi.locale.ln['sbi.behavioural.lov.save.window.title']='LOV Saved'
+Sbi.locale.ln['sbi.behavioural.lov.save.window.text']='The LOV has been successfully saved'
+Sbi.locale.ln['sbi.behavioural.lov.save']='Save'
+Sbi.locale.ln['sbi.behavioural.lov.select.type']='Select a type...'
+Sbi.locale.ln['sbi.behavioural.lov.name']='Name'
+Sbi.locale.ln['sbi.behavioural.lov.value']='Value'
+Sbi.locale.ln['sbi.behavioural.lov.description']='Description'
+Sbi.locale.ln['sbi.behavioural.lov.visible']='Visible'
+Sbi.locale.ln['sbi.behavioural.lov.test.error']='Error testing the lov'
+Sbi.locale.ln['sbi.behavioural.lov.back']='Back'
+Sbi.locale.ln['sbi.behavioural.delete']='Delete'
+	
 
 //===================================================================
 //Sbi.worksheet.WorksheetFromDatasetPanel : AD-HOC REPORTING
@@ -872,5 +872,4 @@ Sbi.locale.ln["error.mesage.description.generic.can.not.responce"]= "Can not sen
 Sbi.locale.ln["error.mesage.description.data.source.cannot.be.null"]= "The label of teh data source can not be null"
 Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = "Impossible to delete the data source because it is in use"
 Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]="Impossible to save the data source because there is another one with the same label"
-	
 	
