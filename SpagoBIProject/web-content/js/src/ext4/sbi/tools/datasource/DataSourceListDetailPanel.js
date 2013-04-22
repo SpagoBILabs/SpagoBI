@@ -1,12 +1,13 @@
 Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
-    extend: 'Sbi.widgets.compositepannel.ListDetailPanel'
+	extend: 'Sbi.widgets.compositepannel.ListDetailPanel'
 
-    ,config: {
-    	stripeRows: true
-    }
+	,config: {
+		stripeRows: true,
+		modelName: "Sbi.tools.datasource.DataSourceModel"
+	}
 
 	, constructor: function(config) {
-		
+		this.services =[];
 		this.initServices();
 		this.detailPanel =  Ext.create('Sbi.tools.datasource.DataSourceDetailPanel',{services: this.services});
 		this.columns = [{dataIndex:"DATASOURCE_LABEL", header:"Name"}, {dataIndex:"DESCRIPTION", header:"description"}];
@@ -15,99 +16,112 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 		this.detailPanel.on("test",this.onFormTest,this);
 		this.filteredProperties = ["DATASOURCE_LABEL","DESCRIPTION"];
 		this.buttonToolbarConfig = {
-			newButton: true
-			//,cloneButton: true
+				newButton: true
 		};
 		this.buttonColumnsConfig ={
-			deletebutton:true
-			//,selectbutton: true
+				deletebutton:true
 		};
-		
-    	this.callParent(arguments);
-    }
+	
+		//set the proxy of the model.. Is STATIC
+		var model = Ext.ModelMgr.getModel(this.getModelName());
+		model.setProxy({
+			type: 'rest',
+			url : Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'datasources'}),
+			reader: {
+				type: 'json',
+				root: 'root'
+			}
+	
+		});
+	
+		this.callParent(arguments);
+	}
 	
 	, initServices: function(baseParams){
-		this.services["getAllValues"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-			    							serviceName: 'datasources/listall'
-			    							, baseParams: baseParams
-			    						});
-		this.services["delete"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-											serviceName: 'datasources/delete'
-											, baseParams: baseParams
-		});
-		this.services["save"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-											serviceName: 'datasources/save'
-											, baseParams: baseParams
-		});
 		this.services["test"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-											serviceName: 'datasources/test'
-											, baseParams: baseParams
+			serviceName: 'datasources/test'
+				, baseParams: baseParams
 		});
 		this.services["getDialects"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-											serviceName: 'domains/listValueDescriptionByType'
-											, baseParams: baseParams
-										});
-		    	
+			serviceName: 'domains/listValueDescriptionByType'
+				, baseParams: baseParams
+		});
 	}
 	
 	, onDeleteRow: function(record){
-		Ext.Ajax.request({
-  	        url: this.services["delete"],
-  	        params: {DATASOURCE_ID: record.get('DATASOURCE_ID')},
-  	        success : function(response, options) {
-	      		if(response !== undefined && response.responseText !== undefined) {
-	      			Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.deleted'));
-	      			this.grid.store.remove(record);
-	      			this.grid.store.commitChanges();
-	      		} else {
-	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-	      		}
-  	        },
-  	        scope: this,
-  			failure: Sbi.exception.ExceptionHandler.handleFailure      
-  		});
+		var recordToDelete = Ext.create("Sbi.tools.datasource.DataSourceModel",record.data);
+		recordToDelete.destroy({
+			success : function(object, response, options) {
+				if(response !== undefined && response.response !== undefined && response.response.responseText !== undefined && response.response.statusText=="OK") {
+					Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.deleted'));
+					this.grid.store.remove(record);
+					this.grid.store.commitChanges();
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
+			},
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure      
+		});
 	}
 	
 	, onFormSave: function(record){
-		Ext.Ajax.request({
-  	        url: this.services["save"],
-  	        params: record,
-  	        success : function(response, options) {
-	      		if(response !== undefined && response.statusText !== undefined && response.statusText=="OK") {
-	      			if(response.responseText!=null && response.responseText!=undefined){
-	      				if(response.responseText.indexOf("error.mesage.description")>=0){
-	      					Sbi.exception.ExceptionHandler.handleFailure(response);
-	      				}
-	      			}else{
-	      				Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.saved'));
-		      			var selectedRow = this.grid.getSelectionModel().getSelection();
-		      			Ext.apply(selectedRow[0].data,record);
-		      			this.grid.store.commitChanges();	
-	      			}
-	      			
-	      		} else {
-	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-	      		}
-  	        },
-  	        scope: this,
-  			failure: Sbi.exception.ExceptionHandler.handleFailure      
-  		});
+	
+		var recordToSave = Ext.create("Sbi.tools.datasource.DataSourceModel",record);
+		recordToSave.save({
+			success : function(object, response, options) {
+	
+				if(response !== undefined && response.response !== undefined && response.response.responseText !== undefined && response.response.statusText=="OK") {
+					response = response.response ;
+					if(response.responseText!=null && response.responseText!=undefined){
+						if(response.responseText.indexOf("error.mesage.description")>=0){
+							Sbi.exception.ExceptionHandler.handleFailure(response);
+						}else{
+							var respoceJSON = Ext.decode(response.responseText);
+							if(respoceJSON.DATASOURCE_ID){
+								record.DATASOURCE_ID = respoceJSON.DATASOURCE_ID;
+							}
+							Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.saved'));
+							var selectedRow = this.grid.getSelectionModel().getSelection();
+							
+							
+							//unused.. Its a workaround because it doesn't update the values in the grids...
+							selectedRow[0].set("DESCRIPTION",selectedRow.DESCRIPTION);
+							
+							
+							selectedRow[0].data = Ext.apply(selectedRow[0].data,record);
+							this.grid.store.commitChanges();	
+							this.detailPanel.setFormState(record);
+						}
+					}
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
+			},
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure  
+		});
 	}
 	
 	, onFormTest: function(record){
 		Ext.Ajax.request({
-  	        url: this.services["test"],
-  	        params: record,
-  	        success : function(response, options) {
-	      		if(response !== undefined && response.statusText !== undefined && response.statusText=="OK") {
-	      			Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.saved'));
-	      		} else {
-	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-	      		}
-  	        },
-  	        scope: this,
-  			failure: Sbi.exception.ExceptionHandler.handleFailure      
-  		});
+			url: this.services["test"],
+			params: record,
+			success : function(response, options) {
+				if(response !== undefined && response.statusText !== undefined) {
+					var responceText = Ext.decode(response.responseText);
+					if(responceText.error){
+						Sbi.exception.ExceptionHandler.showErrorMessage(responceText.error, 'Service Error');
+					}else{
+						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.saved'));
+					}
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
+			},
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure      
+		});
 	}
 	
 	, onGridSelect: function(selectionrowmodel, record, index, eOpts){
@@ -115,4 +129,3 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 		this.detailPanel.setFormState(record.data);
 	}
 });
-    

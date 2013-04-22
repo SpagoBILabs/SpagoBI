@@ -551,7 +551,6 @@ Sbi.locale.ln['sbi.home.Info'] = 'Informations on SpagoBI';
 
 Sbi.locale.ln['sbi.lookup.ValueOfColumn'] ='The value of the column';
 Sbi.locale.ln['sbi.lookup.asA'] = 'as a';
-
 Sbi.locale.ln['sbi.datasource.label']= 'Label';
 Sbi.locale.ln['sbi.datasource.description']= 'Description';
 Sbi.locale.ln['sbi.datasource.driver']= 'Driver';
@@ -569,6 +568,7 @@ Sbi.locale.ln['sbi.datasource.jndiname.info']= 'For the data source configuratio
 Sbi.locale.ln['sbi.datasource.saved']= 'Data source correctly saved';
 Sbi.locale.ln['sbi.datasource.deleted']= 'Data source correctly deleted';
 Sbi.locale.ln['sbi.datasource.validation.error']= 'There is some error in the data source configuration. Check the marked fields.';
+
 
 //Datasets
 Sbi.locale.ln['sbi.ds.clearOldVersion'] = 'Clear All';
@@ -712,6 +712,7 @@ Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.saveas']='Sa
 Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.export']='Export into one of the available formats ...';
 
 
+
 //===================================================================
 //ERRORS 
 //===================================================================
@@ -720,6 +721,8 @@ Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.export']='Ex
 Sbi.locale.ln["error.mesage.description.generic.can.not.responce"]= "Can not send responce to client"
 	
 //DATASOURCE	
-Sbi.locale.ln["error.mesage.description.data.source.cannot.be.null"]= "The label of teh data source can not be null"
+Sbi.locale.ln["error.mesage.description.data.source.cannot.be.null"]= "The label of the data source can not be null"
 Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = "Impossible to delete the data source because it is in use"
 Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]="Impossible to save the data source because there is another one with the same label"
+	
+	

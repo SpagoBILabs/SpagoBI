@@ -58,13 +58,9 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
     	 */
     	pagingToolbar: null,
     	/**
-    	 * The fields list used for build the associated Model and Store
+    	 * The name of the Model
     	 */
-    	fields: null,
-    	/**
-    	 * The optional configuration for the model
-    	 */
-    	modelConfig:null,
+    	modelName:null,
     	/**
     	 * The optional configuration for the store
     	 */
@@ -73,10 +69,6 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
     	 * The optional configuration for the paging toolbar. Null to hide the toolbar
     	 */
     	pagingConfig:null,
-    	/**
-    	 * The list of the services. If there is no other specification in the storeConfig configuration variable, the list services should contains the service getAllValues. Thi service is used to load the data from the Ajax store
-    	 */
-    	services: [],
     	/**
     	 * Configuration object for the widgets buttons to add in every row of the grid
     	 */
@@ -101,20 +93,16 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
 
 	/**
 	 * The constructor:
-	 * 1) builds the model associated to the store. The fields for the model are defined in the configuration variable fields
-	 * 2) builds the store. The default is a Ajax Json Store. You can change the behavior using the configuration storeConfig
-	 * 3) add pagination and the additional button to the toolbar
+	 * 1) builds the store. You can change the behavior using the configuration storeConfig
+	 * 2) add pagination and the additional button to the toolbar
 	 */
 	, constructor: function(config) {
 		this.initConfig(config);
 		Sbi.debug('FixedGridPanel costructor IN');
 		Ext.apply(this,config||{});
 		
-		if(!this.modelname){
-			this.modelname = this.buildModel();
-		}
 		if(!this.store){
-			this.store = this.buildStore(this.modelname);	
+			this.store = this.buildStore(this.modelName);	
 		}
 		
     	this.addPaging();
@@ -140,8 +128,7 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
       	if(this.adjustWidth==undefined || this.adjustWidth==null || this.adjustWidth){
     		this.on("resize",this.adjustColumnsWidth,this);
     	}
-    	
-      	
+
     	Sbi.debug('FixedGridPanel costructor OUT');
     },
     
@@ -194,8 +181,6 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
         		}
         	}
     	}
-    	
-
     },
         
     /**
@@ -206,7 +191,6 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
     	this.store.pageSize = size;
     	this.store.loadPage(1);
     },
-    
 
     /**
      * @private
@@ -222,29 +206,7 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
       	}
       	Sbi.debug('FixedGridPanel toolbar added.');
     },
-    
-    
-    /**
-     * @private
-     * Creates a fresh model
-     */
-    buildModel: function(){
-		//BUILD THE MODEL
-		Sbi.debug('FixedGridPanel bulding the model...');
-	
-    	var d = new Date();
-    	var modelname =  'StaticStoreModel'+(d.getTime()%10000000);
-    	
-    	this.modelConfig = Ext.apply({
-    		extend: 'Ext.data.Model',
-            fields: this.fields
-    	},
-    	this.modelConfig||{});
-    	Ext.define(modelname, this.modelConfig);
-    	Sbi.debug('FixedGridPanel model built');
-    	return modelname;
-    },
-    
+
     /**
      * Builds the store starting from the model
      * @param {String} modelname the name of the model 
@@ -255,15 +217,7 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
     	
     	this.storeConfig = Ext.apply({
     		parentGrid: this,
-    		model: modelname,
-    		proxy: {
-    			type: 'ajax',
-    			url:  this.services['getAllValues'],
-    			reader: {
-    				type:"json",
-    				root: "root"
-    			}
-    		}
+    		model: modelname
     	},this.storeConfig||{});
     	Sbi.debug('FixedGridPanel store built.');
     	return Ext.create('Ext.data.Store', this.storeConfig);

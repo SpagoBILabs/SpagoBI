@@ -27,14 +27,14 @@ import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.service.JSONAcknowledge;
-import it.eng.spagobi.utilities.service.JSONFailure;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -61,7 +61,6 @@ public class DataSourceCRUD {
 	static private String saveDuplicatedDSError = "error.mesage.description.data.source.saving.duplicated";
 
 	@GET
-	@Path("/listall")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllDataSources(@Context HttpServletRequest req) {
 		IDataSourceDAO dataSourceDao = null;
@@ -90,8 +89,7 @@ public class DataSourceCRUD {
 	}
 
 
-	@POST
-	@Path("/delete")
+	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	public String deleteDataSource(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession()
@@ -99,7 +97,8 @@ public class DataSourceCRUD {
 		HashMap<String, String> logParam = new HashMap();
 
 		try {
-			String id = (String) req.getParameter("DATASOURCE_ID");
+			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+			String id = (String) requestBodyJSON.opt("DATASOURCE_ID");
 			Assert.assertNotNull(id,deleteNullIdDataSourceError );
 			// if the ds is associated with any BIEngine or BIObjects, creates
 			// an error
@@ -117,7 +116,7 @@ public class DataSourceCRUD {
 			logParam.put("TYPE", ds.getJndi());
 			logParam.put("NAME", ds.getLabel());
 			updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "OK");
-			return (new JSONAcknowledge()).toString();
+			return ("");
 		} catch (Exception ex) {
 			logger.error("Cannot fill response container", ex);
 			updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "ERR");
@@ -133,14 +132,18 @@ public class DataSourceCRUD {
 	}
 	
 	@POST
-	@Path("/save")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String saveDataSource(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
+			
+			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+			
+			
+			
 			IDataSourceDAO dao=DAOFactory.getDataSourceDAO();
 			dao.setUserProfile(profile);
-			DataSource dsNew = recoverDataSourceDetails(req);
+			DataSource dsNew = recoverDataSourceDetails(requestBodyJSON);
 
 			HashMap<String, String> logParam = new HashMap();
 			logParam.put("JNDI",dsNew.getJndi());
@@ -166,7 +169,7 @@ public class DataSourceCRUD {
 				updateAudit(req, profile, "DATA_SOURCE.MODIFY", logParam, "OK");
 			}  
 					
-			return (new JSONAcknowledge()).toString();
+			return ("{DATASOURCE_ID:"+dsNew.getDsId()+" }");
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
 			updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "ERR");
@@ -225,23 +228,23 @@ public class DataSourceCRUD {
 		return dataSourcesJSON;
 	}
 	
-	private DataSource recoverDataSourceDetails (HttpServletRequest req) throws EMFUserError, SourceBeanException, IOException  {
+	private DataSource recoverDataSourceDetails (JSONObject requestBodyJSON) throws EMFUserError, SourceBeanException, IOException  {
 		DataSource ds  = new DataSource();
 		Integer id=-1;
-		String idStr = (String)req.getParameter("DATASOURCE_ID");
+		String idStr = (String)requestBodyJSON.opt("DATASOURCE_ID");
 		if(idStr!=null && !idStr.equals("")){
 			id = new Integer(idStr);
 		}
-		Integer dialectId = Integer.valueOf((String)req.getParameter("DIALECT_ID"));	
-		String description = (String)req.getParameter("DESCRIPTION");	
-		String label = (String)req.getParameter("DATASOURCE_LABEL");
-		String jndi = (String)req.getParameter("JNDI_URL");
-		String url = (String)req.getParameter("CONNECTION_URL");
-		String user = (String)req.getParameter("USER");
-		String pwd = (String)req.getParameter("PASSWORD");
-		String driver = (String)req.getParameter("DRIVER");
-		String schemaAttr = (String)req.getParameter("CONNECTION_URL");
-		String multiSchema = (String)req.getParameter("MULTISCHEMA");
+		Integer dialectId = Integer.valueOf((String)requestBodyJSON.opt("DIALECT_ID"));	
+		String description = (String)requestBodyJSON.opt("DESCRIPTION");	
+		String label = (String)requestBodyJSON.opt("DATASOURCE_LABEL");
+		String jndi = (String)requestBodyJSON.opt("JNDI_URL");
+		String url = (String)requestBodyJSON.opt("CONNECTION_URL");
+		String user = (String)requestBodyJSON.opt("USER");
+		String pwd = (String)requestBodyJSON.opt("PASSWORD");
+		String driver = (String)requestBodyJSON.opt("DRIVER");
+		String schemaAttr = (String)requestBodyJSON.opt("CONNECTION_URL");
+		String multiSchema = (String)requestBodyJSON.opt("MULTISCHEMA");
 		Boolean isMultiSchema = false;
 		if(multiSchema!=null && multiSchema.equals("true")){
 			isMultiSchema = true;

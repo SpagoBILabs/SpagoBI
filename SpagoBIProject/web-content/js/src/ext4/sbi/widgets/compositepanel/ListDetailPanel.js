@@ -58,9 +58,9 @@ Ext.define('Sbi.widgets.compositepannel.ListDetailPanel', {
 
     ,config: {
     	/**
-    	 * List of services used in the object
+    	 * Name Of the model to use
     	 */
-    	services: [],
+    	modelName: null,
     	/**
     	 * Grid object
     	 */
@@ -77,10 +77,6 @@ Ext.define('Sbi.widgets.compositepannel.ListDetailPanel', {
     	 * Configuration object for the buttons to add in the toolbar. {@link Sbi.widget.grid.StaticGridDecorator#StaticGridDecorator}
     	 */
     	buttonToolbarConfig: null,
-    	/**
-    	 * The fields list used for build the associated Model and Store of the grid
-    	 */
-    	fields: null,
     	/**
     	 * The definition of the columns of the grid. {@link Sbi.widgets.store.InMemoryFilteredStore#InMemoryFilteredStore}
     	 */
@@ -115,8 +111,7 @@ Ext.define('Sbi.widgets.compositepannel.ListDetailPanel', {
 			columnWidth: 2/5,
 			buttonToolbarConfig: this.buttonToolbarConfig,
 			buttonColumnsConfig: this.buttonColumnsConfig,
-			services: this.services,
-			fields:this.fields,
+			modelName: this.modelName,
 			columns: this.columns,
 			filterConfig: {},
 			filteredProperties: this.filteredProperties

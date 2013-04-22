@@ -141,6 +141,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		
 		this.dataSourceJdbcPassword = Ext.create("Ext.form.field.Text",{
 			name: "PASSWORD",
+			inputType: 'password',
 			fieldLabel: LN('sbi.datasource.type.jdbc.password'),
 			allowBlank: false,
 			hidden: true
