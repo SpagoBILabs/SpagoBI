@@ -131,7 +131,11 @@ Ext
 									});
 						}
 			
-						
+						this.configurationObject.filter = true;
+						this.configurationObject.columnName = [
+						                                       	['name', LN('sbi.generic.name')],
+						                                       	['category', LN('sbi.ds.catType')]
+						                	                   ];
 
 						this.configurationObject.gridColItems = [ {
 							header : LN('sbi.generic.name'),
