@@ -32,8 +32,7 @@
  *				deletebutton:true,
  *				selectbutton: true
  *			},
- *			services: this.services,
- *			fields:this.fields,
+ *			modelName: "ModelName",
  *			columns: this.columns,
  *			filteredProperties: this.filteredProperties
  *		};
@@ -59,9 +58,8 @@ Ext.define('Sbi.widgets.grid.FixedGridPanelInMemoryFiltered', {
 
 	/**
 	 * The constructor:
-	 * 1) builds the model associated to the store. The fields for the model are defined in the configuration variable fields
-	 * 2) builds the store. The default is a Ajax Json Store. You can change the behavior using the configuration storeConfig
-	 * 3) add pagination and the additional button to the toolbar
+	 * 1) builds the store. You can change the behavior using the configuration storeConfig
+	 * 2) add pagination and the additional button to the toolbar
 	 */
 	, constructor: function(config) {
     	

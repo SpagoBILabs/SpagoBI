@@ -18,15 +18,7 @@
  *   	this.storeConfig = Ext.apply({
  *   		parentGrid: this,
  *   		model: modelname,
- *   		filteredProperties: ["DATASOURCE_LABEL","DESCRIPTION"],
- *   		proxy: {
- *   			type: 'ajax',
- *   			url:  this.services['getAllValues'],
- *   			reader: {
- *   				type:"json",
- *   				root: "root"
- *   			}
- *   		}
+ *   		filteredProperties: ["DATASOURCE_LABEL","DESCRIPTION"]
  *   	},this.storeConfig||{});
  *   	//create the store
  *   	this.store = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);
