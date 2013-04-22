@@ -50,12 +50,6 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 
 <!-- GET SPAGO OBJECTS  -->
 <%
-	//Enumeration headers = request.getHeaderNames();
-	//while (headers.hasMoreElements()) {
-	//	String headerName = (String) headers.nextElement();
-	//	String header = request.getHeader(headerName);
-	//	System.out.println(header + ": ");
-	//}
 
 	RequestContainer aRequestContainer = null;
 	ResponseContainer aResponseContainer = null;
@@ -194,17 +188,17 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 
 
 
-<script type="text/javascript" src='../js/lib/ext-4.1.1a/ext-all-debug.js'/></script>
+<script type="text/javascript" src='../js/lib/ext-4.2.0/ext-all-debug.js'/></script>
     
 <script type="text/javascript" src='../js/src/ext/sbi/service/ServiceRegistry.js'/></script>
     
     
 <!-- Include Ext stylesheets here: -->
-<link id="extall"     rel="styleSheet" href ="../js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
-<link id="theme-gray" rel="styleSheet" href ="../js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
+<link id="extall"     rel="styleSheet" href ="../js/lib/ext-4.2.0/resources/css/ext-all.css" type="text/css" />
+<link id="theme-gray" rel="styleSheet" href ="../js/lib/ext-4.2.0/resources/css/ext-all-gray.css" type="text/css" />
 
 
-<link id="spagobi-ext-4" rel="styleSheet" href ="../js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
+<link id="spagobi-ext-4" rel="styleSheet" href ="../js/lib/ext-4.2.0/overrides/resources/css/spagobi.css" type="text/css" />
 
 
 <script type="text/javascript">
@@ -296,35 +290,6 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
  
 <SCRIPT language='JavaScript' src='<%=linkSbijs%>'></SCRIPT>
 
-<!-- import css  --> 
-<%
-	// based on mode import right css 
-	if (sbiMode.equalsIgnoreCase("WEB")) {
-%>
-<LINK rel='StyleSheet' 
-      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_wa.css",currTheme)%>' 
-      type='text/css' />
-<%  } else {  %>
-<LINK rel='StyleSheet' 
-      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_portlet.css",currTheme)%>' 
-      type='text/css' />
-<%	} %>
-
-<!-- LINK rel='StyleSheet' 
-      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_shared.css",currTheme)%>' 
-      type='text/css' /-->
-
-<LINK rel='StyleSheet' 
-      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/jsr168.css",currTheme)%>' 
-      type='text/css' />
-      
-<LINK rel='StyleSheet' 
-      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/external.css",currTheme)%>' 
-      type='text/css' />
-      
-<LINK rel='StyleSheet' 
-      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/menu.css",currTheme)%>' 
-      type='text/css' />
 
 
 	 
