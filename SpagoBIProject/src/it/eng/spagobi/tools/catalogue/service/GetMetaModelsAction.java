@@ -48,7 +48,6 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 		logger.debug("IN");
 		
 		try {
-			//TODO: controllare se è presente il category o il name (getAttribute) per applicare il filtro dalla toolbar
 			IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 			dao.setUserProfile(this.getUserProfile());
 			List<MetaModel> allModels = null;
