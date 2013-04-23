@@ -28,8 +28,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 
 	static private Logger logger = Logger.getLogger(MetaModelsDAOImpl.class);
 	
-	public static String FILTER_EQUALS = "=";
-	public static String FILTER_CONTAINS = "contains";
+
 
 
 	public MetaModel loadMetaModelById(Integer id) {
