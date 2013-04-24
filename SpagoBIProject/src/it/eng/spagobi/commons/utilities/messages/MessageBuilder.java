@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 /**
  * 
  * DATE            CONTRIBUTOR/DEVELOPER                        NOTE
- * 19-04-2013      Andrea Frantappiè (andrea.frantappiè@eng.it) added internationalization management 
+ * 19-04-2013      Andrea Fantappiè (andrea.fantappiè@eng.it) added internationalization management 
  * 																for highchart engine
  * 
  */
