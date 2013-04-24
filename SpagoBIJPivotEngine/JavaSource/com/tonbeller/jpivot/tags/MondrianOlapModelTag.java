@@ -13,16 +13,12 @@
 package com.tonbeller.jpivot.tags;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.jpivotaddins.roles.SpagoBIMondrianRole;
-
 
 import java.io.IOException;
 import java.net.URL;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
-
-
 
 import org.xml.sax.SAXException;
 
@@ -34,276 +30,297 @@ import com.tonbeller.tbutils.res.Resources;
 import com.tonbeller.wcf.controller.RequestContext;
 
 /**
- * jsp tag that defines a mondrian query
+ * DATE            CONTRIBUTOR/DEVELOPER                        NOTE
+ * 06/10/2009      Angelo Bernabei (angelo.bernabei@eng.it)   	Profiling with user profile object
+ * 
+ * DATE            CONTRIBUTOR/DEVELOPER                        NOTE
+ * 26/03/2013      Davide Zerbetto (davide.zerbetto@eng.it)     SpagoBIFilterDynamicSchemaProcessor now extends 
+ * 				   / Andrea Fantappiè (andrea.fantappiè@eng.it) LocalizingDynamicSchemaProcessor (instead of FilterDynamicSchemaProcessor) 
+ * 																to support i18n
+ * 
+ *  jsp tag that defines a mondrian query
+ *  
  */
-public class MondrianOlapModelTag extends OlapModelTag {
+public class MondrianOlapModelTag extends OlapModelTag
+{
 
-  String dataSource;
-  String jdbcDriver;
-  String jdbcUser;
-  String jdbcPassword;
-  String jdbcUrl;
-  String catalogUri;
-  String config;
-  String role;
-  String dynResolver;
-  String dynLocale;
-  String connectionPooling;
-  String dataSourceChangeListener;
-  
-  Resources res = Resources.instance();
+	String dataSource;
+	String jdbcDriver;
+	String jdbcUser;
+	String jdbcPassword;
+	String jdbcUrl;
+	String catalogUri;
+	String config;
+	String role;
+	String dynResolver;
+	String dynLocale;
+	String connectionPooling;
+	String dataSourceChangeListener;
 
-  protected OlapModel getOlapModel(RequestContext context) throws JspException, OlapException, SAXException, IOException {
-    MondrianModelFactory.Config cfg = new MondrianModelFactory.Config();
-    URL schemaUrl;
-    if (catalogUri.startsWith("/"))
-      schemaUrl = pageContext.getServletContext().getResource(catalogUri);
-    else
-      schemaUrl = new URL(catalogUri);
-    if (schemaUrl == null)
-      throw new JspException("could not find Catalog \"" + catalogUri + "\"");
+	Resources res = Resources.instance();
 
+	protected OlapModel getOlapModel(RequestContext context) throws JspException, OlapException, SAXException, IOException {
+		MondrianModelFactory.Config cfg = new MondrianModelFactory.Config();
+		URL schemaUrl;
+		if (catalogUri.startsWith("/"))
+			schemaUrl = pageContext.getServletContext().getResource(catalogUri);
+		else
+			schemaUrl = new URL(catalogUri);
+		if (schemaUrl == null)
+			throw new JspException("could not find Catalog \"" + catalogUri + "\"");
+		
+		// custom call to add locale information on request string (Andrea Fantappiè)
+		setDynLocale(context.getLocale().getLanguage());
 
-    cfg.setMdxQuery(getBodyContent().getString());
-    // Add the schema URL.  Enclose the value in quotes to permit
-    // schema URLs that include things like ;jsessionid values.
-    cfg.setSchemaUrl("\"" + schemaUrl.toExternalForm() + "\"");
-    cfg.setJdbcUrl(jdbcUrl);
-    cfg.setJdbcDriver(jdbcDriver);
-    cfg.setJdbcUser(jdbcUser);
-    cfg.setJdbcPassword(jdbcPassword);
-    cfg.setDataSource(dataSource);
-    cfg.setRole(role);
-    cfg.setDynResolver(dynResolver);
-    cfg.setDynLocale(dynLocale);
-    cfg.setConnectionPooling(connectionPooling);
-    cfg.setDataSourceChangeListener(dataSourceChangeListener);
+		cfg.setMdxQuery(getBodyContent().getString());
+		// Add the schema URL. Enclose the value in quotes to permit
+		// schema URLs that include things like ;jsessionid values.
+		cfg.setSchemaUrl("\"" + schemaUrl.toExternalForm() + "\"");
+		cfg.setJdbcUrl(jdbcUrl);
+		cfg.setJdbcDriver(jdbcDriver);
+		cfg.setJdbcUser(jdbcUser);
+		cfg.setJdbcPassword(jdbcPassword);
+		cfg.setDataSource(dataSource);
+		cfg.setRole(role);
+		cfg.setDynResolver(dynResolver);
+		cfg.setDynLocale(dynLocale);
+		cfg.setConnectionPooling(connectionPooling);
+		cfg.setDataSourceChangeListener(dataSourceChangeListener);
 
-    allowOverride(context, cfg);
+		allowOverride(context, cfg);
 
-    URL url;
-    if (config == null)
-      url = getDefaultConfig();
-    else
-      url = pageContext.getServletContext().getResource(config);
+		URL url;
+		if (config == null)
+			url = getDefaultConfig();
+		else
+			url = pageContext.getServletContext().getResource(config);
 
-    HttpSession session = context.getRequest().getSession();
-    IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-    
-    String filers=(String)session.getAttribute("filters");
-    
-    MondrianModel mm = MondrianModelFactory.instance(filers,url, cfg, profile);
-    
-    //MondrianModel mm = MondrianModelFactory.instance(url, cfg);
-    //mm.setRole(new SpagoBIMondrianRole(filers,profile));
-    OlapModel om = (OlapModel) mm.getTopDecorator();
-    om.setLocale(context.getLocale());
-    om.setServletContext(context.getSession().getServletContext());
-    return om;
-  }
+		HttpSession session = context.getRequest().getSession();
+		IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
-  /**
-   * default implementation delegates to {@link Config#allowOverride(RequestContext)}
-   */
-  protected void allowOverride(RequestContext context, Config cfg) {
-    cfg.allowOverride(context);
-  }
+		String filers = (String) session.getAttribute("filters");
 
-  protected URL getDefaultConfig() {
-    return MondrianOlapModelTag.class.getResource("/com/tonbeller/jpivot/mondrian/config.xml");
-  }
+		MondrianModel mm = MondrianModelFactory.instance(filers, url, cfg, profile);
 
+		// MondrianModel mm = MondrianModelFactory.instance(url, cfg);
+		// mm.setRole(new SpagoBIMondrianRole(filers,profile));
+		OlapModel om = (OlapModel) mm.getTopDecorator();
+		om.setLocale(context.getLocale());
+		om.setServletContext(context.getSession().getServletContext());
+		return om;
+	}
 
-  /**
-   * Returns the catalogUri.
-   *
-   * @return String
-   */
-  public String getCatalogUri() {
-    return catalogUri;
-  }
+	/**
+	 * default implementation delegates to
+	 * {@link Config#allowOverride(RequestContext)}
+	 */
+	protected void allowOverride(RequestContext context, Config cfg) {
+		cfg.allowOverride(context);
+	}
 
-  /**
-   * Returns the jdbcDriver.
-   *
-   * @return String
-   */
-  public String getJdbcDriver() {
-    return jdbcDriver;
-  }
+	protected URL getDefaultConfig() {
+		return MondrianOlapModelTag.class.getResource("/com/tonbeller/jpivot/mondrian/config.xml");
+	}
 
-  /**
-   * Returns the jdbcUrl.
-   *
-   * @return String
-   */
-  public String getJdbcUrl() {
-    return jdbcUrl;
-  }
+	/**
+	 * Returns the catalogUri.
+	 * 
+	 * @return String
+	 */
+	public String getCatalogUri() {
+		return catalogUri;
+	}
 
-  /**
-   * Sets the catalogUri.
-   *
-   * @param catalogUri
-   *          The catalogUri to set
-   */
-  public void setCatalogUri(String catalogUri) {
-    this.catalogUri = catalogUri;
-  }
+	/**
+	 * Returns the jdbcDriver.
+	 * 
+	 * @return String
+	 */
+	public String getJdbcDriver() {
+		return jdbcDriver;
+	}
 
-  /**
-   * Sets the jdbcDriver.
-   *
-   * @param jdbcDriver
-   *          The jdbcDriver to set
-   */
-  public void setJdbcDriver(String jdbcDriver) {
-    this.jdbcDriver = jdbcDriver;
-  }
+	/**
+	 * Returns the jdbcUrl.
+	 * 
+	 * @return String
+	 */
+	public String getJdbcUrl() {
+		return jdbcUrl;
+	}
 
-  /**
-   * Sets the jdbcUrl.
-   *
-   * @param jdbcUrl
-   *          The jdbcUrl to set
-   */
-  public void setJdbcUrl(String jdbcUrl) {
-    this.jdbcUrl = jdbcUrl;
-  }
+	/**
+	 * Sets the catalogUri.
+	 * 
+	 * @param catalogUri
+	 *            The catalogUri to set
+	 */
+	public void setCatalogUri(String catalogUri) {
+		this.catalogUri = catalogUri;
+	}
 
-  /**
-   * Returns the jdbcPassword.
-   *
-   * @return String
-   */
-  public String getJdbcPassword() {
-    return jdbcPassword;
-  }
+	/**
+	 * Sets the jdbcDriver.
+	 * 
+	 * @param jdbcDriver
+	 *            The jdbcDriver to set
+	 */
+	public void setJdbcDriver(String jdbcDriver) {
+		this.jdbcDriver = jdbcDriver;
+	}
 
-  /**
-   * Returns the jdbcUser.
-   *
-   * @return String
-   */
-  public String getJdbcUser() {
-    return jdbcUser;
-  }
+	/**
+	 * Sets the jdbcUrl.
+	 * 
+	 * @param jdbcUrl
+	 *            The jdbcUrl to set
+	 */
+	public void setJdbcUrl(String jdbcUrl) {
+		this.jdbcUrl = jdbcUrl;
+	}
 
-  /**
-   * Sets the jdbcPassword.
-   *
-   * @param jdbcPassword
-   *          The jdbcPassword to set
-   */
-  public void setJdbcPassword(String jdbcPassword) {
-    this.jdbcPassword = jdbcPassword;
-  }
+	/**
+	 * Returns the jdbcPassword.
+	 * 
+	 * @return String
+	 */
+	public String getJdbcPassword() {
+		return jdbcPassword;
+	}
 
-  /**
-   * Sets the jdbcUser.
-   *
-   * @param jdbcUser
-   *          The jdbcUser to set
-   */
-  public void setJdbcUser(String jdbcUser) {
-    this.jdbcUser = jdbcUser;
-  }
+	/**
+	 * Returns the jdbcUser.
+	 * 
+	 * @return String
+	 */
+	public String getJdbcUser() {
+		return jdbcUser;
+	}
 
-  /**
-   * Returns the config.
-   *
-   * @return String
-   */
-  public String getConfig() {
-    return config;
-  }
+	/**
+	 * Sets the jdbcPassword.
+	 * 
+	 * @param jdbcPassword
+	 *            The jdbcPassword to set
+	 */
+	public void setJdbcPassword(String jdbcPassword) {
+		this.jdbcPassword = jdbcPassword;
+	}
 
-  /**
-   * Sets the config.
-   *
-   * @param config
-   *          The config to set
-   */
-  public void setConfig(String config) {
-    this.config = config;
-  }
+	/**
+	 * Sets the jdbcUser.
+	 * 
+	 * @param jdbcUser
+	 *            The jdbcUser to set
+	 */
+	public void setJdbcUser(String jdbcUser) {
+		this.jdbcUser = jdbcUser;
+	}
 
-  /**
-   * @param string
-   */
-  public void setDataSource(String string) {
-    dataSource = string;
-  }
+	/**
+	 * Returns the config.
+	 * 
+	 * @return String
+	 */
+	public String getConfig() {
+		return config;
+	}
 
-  /**
-   * @param role
-   *          The role to set.
-   */
-  public void setRole(String role) {
-    this.role = role;
-  }
+	/**
+	 * Sets the config.
+	 * 
+	 * @param config
+	 *            The config to set
+	 */
+	public void setConfig(String config) {
+		this.config = config;
+	}
 
-  /**
-   * @return the dynamic variable resolver class name
-   */
-  public String getDynResolver() {
-    return dynResolver;
-  }
+	/**
+	 * @param string
+	 */
+	public void setDataSource(String string) {
+		dataSource = string;
+	}
 
-  /**
-   * @param dynresolver - the dynamic variable resolver class name
-   */
-  public void setDynResolver(String dynResolver) {
-    this.dynResolver = dynResolver;
-  }
+	/**
+	 * @param role
+	 *            The role to set.
+	 */
+	public void setRole(String role) {
+		this.role = role;
+	}
 
-  /**
-   * @param connectionPooling - "false" : Mondrian must not pool JDBC connections
-   */
-  public void setConnectionPooling(String connectionPooling) {
-    this.connectionPooling = connectionPooling;
-  }
+	/**
+	 * @return the dynamic variable resolver class name
+	 */
+	public String getDynResolver() {
+		return dynResolver;
+	}
 
-  /**
-   * @return "false" if Mondrion must not pool JDBC connections
-   */
-  public String getConnectionPooling() {
-    return connectionPooling;
-  }
-  public String getDataSource() {
-    return dataSource;
-  }
-  public String getRole() {
-    return role;
-  }
-/**
- * Getter for property locale.
- * @return Value of property locale.
- */
-  public String getDynLocale() {
-      return this.dynLocale;
-  }
-  /**
-   * Setter for property locale.
-   * @param locale New value of property locale.
-   */
-  public void setDynLocale(String dynLocale) {
-      this.dynLocale = dynLocale;
-  }
+	/**
+	 * @param dynresolver
+	 *            - the dynamic variable resolver class name
+	 */
+	public void setDynResolver(String dynResolver) {
+		this.dynResolver = dynResolver;
+	}
 
-/**
- * @return Returns the dataSourceChangeListener.
- */
-public String getDataSourceChangeListener() {
-    return dataSourceChangeListener;
-}
+	/**
+	 * @param connectionPooling
+	 *            - "false" : Mondrian must not pool JDBC connections
+	 */
+	public void setConnectionPooling(String connectionPooling) {
+		this.connectionPooling = connectionPooling;
+	}
 
-/**
- * @param dataSourceChangeListener The dataSourceChangeListener to set.
- */
-public void setDataSourceChangeListener(String dataSourceChangeListener) {
-    this.dataSourceChangeListener = dataSourceChangeListener;
-}
+	/**
+	 * @return "false" if Mondrion must not pool JDBC connections
+	 */
+	public String getConnectionPooling() {
+		return connectionPooling;
+	}
 
-    
+	public String getDataSource() {
+		return dataSource;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	/**
+	 * Getter for property locale.
+	 * 
+	 * @return Value of property locale.
+	 */
+	public String getDynLocale() {
+		return this.dynLocale;
+	}
+
+	/**
+	 * Setter for property locale.
+	 * 
+	 * @param locale
+	 *            New value of property locale.
+	 */
+	public void setDynLocale(String dynLocale) {
+		this.dynLocale = dynLocale;
+	}
+
+	/**
+	 * @return Returns the dataSourceChangeListener.
+	 */
+	public String getDataSourceChangeListener() {
+		return dataSourceChangeListener;
+	}
+
+	/**
+	 * @param dataSourceChangeListener
+	 *            The dataSourceChangeListener to set.
+	 */
+	public void setDataSourceChangeListener(String dataSourceChangeListener) {
+		this.dataSourceChangeListener = dataSourceChangeListener;
+	}
+
 }
