@@ -26,8 +26,8 @@ import org.json.JSONObject;
  * @author Antonella Giachino (antonella.giachino@eng.it)
  * 
  * DATE            CONTRIBUTOR/DEVELOPER                        NOTE
- * 19-04-2013      Andrea Frantappiè (andrea.frantappiè@eng.it) added internationalization management
- * 																for highchart engine
+ * 19-04-2013      Andrea Fantappiè (andrea.fantappiè@eng.it) added internationalization management
+ * 															  for highchart engine
  * 
  *     Utility Class to convert xml template in json template
  */
