@@ -111,7 +111,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		userIdNow = userIdO.toString();	 
 	 }
 	
-	 if(userIdNow.equalsIgnoreCase("scheduler")){
+	 if(userIdNow.startsWith("scheduler")){
 			// call directly startWorkEngineService
 			// TODO: separate logic code from action so it can be use as a class		
 			//auditProxy = new AuditServiceProxy(getAuditId(), getUserIdentifier(), getHttpSession());
