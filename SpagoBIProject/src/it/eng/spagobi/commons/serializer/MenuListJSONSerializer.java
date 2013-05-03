@@ -46,32 +46,18 @@ public class MenuListJSONSerializer implements Serializer {
 	public static final String NAME = "name";
 	public static final String TEXT = "text";
 	public static final String ITEMS ="items";
+	public static final String LABEL ="itemLabel";
+	public static final String INFO ="INFO";
+	public static final String ROLE ="ROLE";
+	public static final String LANG ="LANG";
+	public static final String HOME ="HOME";
 	
 	public String contextName = "";
 	public String defaultThemePath="/themes/sbi_default";
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONArray  result = null;
-		/*The result is an object of type:
-		  {
-			iconCls: 'cogwheels',
-          iconAlign: 'top',
-          scale: 'large',
-          tooltip: 'Resources',
-          menu: [
-                 {
-              	   xtype: 'buttongroup',
-                     title: 'Data providers',
-                     titleAlign: 'left',
-                     columns: 1,
-                     items: [
-                         {text: 'Data sources'}
-                         , {text: 'Data sets'}
-                     ]
-                 },...
-			]
-		  }
-		 */
+
 		contextName = GeneralUtilities.getSpagoBiContext();
 		if( !(o instanceof List) ) {
 			throw new SerializationException("MenuListJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
@@ -87,13 +73,14 @@ public class MenuListJSONSerializer implements Serializer {
 				//build home
 				JSONObject home = new JSONObject();
 				JSONObject personal = new JSONObject();
-				//JSONObject homeGroup = new JSONObject();
+
 				home.put(ICON_CLS, "home");
 				home.put(TOOLTIP, "Home");
 				home.put(ICON_ALIGN, "top");
 				home.put(SCALE, "large");
 				home.put(PATH, "Home");
-				home.put(HREF, "javascript:execUrl('"+contextName+"to-be')");
+				home.put(LABEL, HOME);
+				home.put(HREF, "javascript:goHome('/html/home.html', 'spagobi')");
 				
 				String userMenu = msgBuild.getI18nMessage(locale, "menu.UserMenu");
 				personal.put(ICON_CLS, "spagobi");
@@ -101,12 +88,7 @@ public class MenuListJSONSerializer implements Serializer {
 				personal.put(ICON_ALIGN, "top");
 				personal.put(SCALE, "large");
 				personal.put(PATH, userMenu);
-				
-/*				homeGroup.put(TITLE, "user");
-				homeGroup.put(TITLE_ALIGN, "left");
-				homeGroup.put(COLUMNS, 1);
-				homeGroup.put(XTYPE, "buttongroup");
-				home.put(MENU, homeGroup);*/
+
 				
 				tempFirstLevelMenuList.put(home);
 				tempFirstLevelMenuList.put(personal);
@@ -214,14 +196,14 @@ public class MenuListJSONSerializer implements Serializer {
 		menuItem.put(ICON_CLS, icon);
 		menuItem.put(TOOLTIP, tooltip);
 		if(label != null){
-			menuItem.put("itemLabel", label);
+			menuItem.put(LABEL, label);
 		}
 		if(idDirectLink){
 			menuItem.put(HREF, "javascript:javascript:execDirectUrl('"+contextName+href+"', '"+tooltip+"')");
 		}else{
-			if(label != null && label.equals("INFO")){
+			if(label != null && label.equals(INFO)){
 				menuItem.put(HREF, "javascript:info()");
-			}else if(label != null && label.equals("ROLE")){
+			}else if(label != null && label.equals(ROLE)){
 				menuItem.put(HREF, "javascript:role()");
 			}else{
 				menuItem.put(HREF, "javascript:execUrl('"+contextName+href+"')");
