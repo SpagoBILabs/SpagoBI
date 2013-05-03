@@ -45,7 +45,29 @@ public class Menu  implements Serializable  {
     private String code;
     private String url;
     private String iconPath;
+    private String iconCls;
+    private String groupingMenu;
     private boolean isAdminsMenu=false;
+    
+
+
+	public String getGroupingMenu() {
+		return groupingMenu;
+	}
+
+	public void setGroupingMenu(String groupingMenu) {
+		this.groupingMenu = groupingMenu;
+	}
+
+	public String getIconCls() {
+		return iconCls;
+	}
+
+	public void setIconCls(String iconCls) {
+		this.iconCls = iconCls;
+	}
+
+	
 
     	/**
 	 * Gets the lst children.
