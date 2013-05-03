@@ -498,7 +498,11 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy() );
 		 env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy());
 		 env.put(EngineConstants.ENV_DATASOURCE_PROXY, getDataSourceServiceProxy()); 
-		 env.put(EngineConstants.ENV_METAMODEL_PROXY, getMetamodelServiceProxy()); 
+		 try {
+			 env.put(EngineConstants.ENV_METAMODEL_PROXY, getMetamodelServiceProxy()); 
+		 } catch (Throwable t) {
+			 logger.warn("Impossible to instatiate the metamodel proxy", t);
+		 }
 		 env.put(EngineConstants.ENV_LOCALE, getLocale()); 
 
 		 return env;

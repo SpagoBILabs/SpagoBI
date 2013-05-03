@@ -112,7 +112,7 @@ public abstract class AbstractServiceProxy {
     }
 
     /**
-     * Initilize the configuration
+     * Initialize the configuration
      */
     protected void init() {
     	if(secureAttributes==null){
@@ -124,27 +124,36 @@ public abstract class AbstractServiceProxy {
 		
 		if(serviceUrlStr == null && spagoBiServerURL == null && pass == null){
 			String className = this.getClass().getSimpleName();
-			logger.debug("Read className = " + className);
+			
+			logger.debug("Initializing proxy [" + className + "]");
+			
 			SourceBean engineConfig = EnginConf.getInstance().getConfig();
 		
 			if (engineConfig != null) {
 	
 			    spagoBiServerURL = EnginConf.getInstance().getSpagoBiServerUrl();
-			    logger.debug("Read spagoBiServerURL=" + spagoBiServerURL);  
+			    
+			    logger.debug("SpagoBI Service url is equal to [" + spagoBiServerURL + "]");  
+			    
 			    SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute(className + "_URL");
+			    if(sourceBeanConf == null) {
+			    	throw new RuntimeException("Impossible to read the URL of service [" + className + "] from engine-config.xml");
+			    }
 			    serviceUrlStr = (String) sourceBeanConf.getCharacters();
 			    logger.debug("Read serviceUrl=" + serviceUrlStr);
 			    try {
-				serviceUrl = new URL(spagoBiServerURL + serviceUrlStr);
+			    	serviceUrl = new URL(spagoBiServerURL + serviceUrlStr);
 			    } catch (MalformedURLException e) {
-				logger.error("MalformedURLException:" + spagoBiServerURL + serviceUrlStr, e);
+			    	logger.error("MalformedURLException:" + spagoBiServerURL + serviceUrlStr, e);
 			    }
 			    pass=EnginConf.getInstance().getPass();
 			    if (pass==null) logger.warn("PassTicked don't set");
 			} else {
-		              logger.warn("this proxy is used in core project.");
+				logger.warn("this proxy is used in core project.");
 			}
-		}else{
+			
+			logger.debug("Proxy [" + className + "] succesfully initialized");
+		} else {
 			try {
 					serviceUrl = new URL(spagoBiServerURL + serviceUrlStr);
 			    } catch (MalformedURLException e) {
