@@ -17,6 +17,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.wapp.bo.Menu;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -43,18 +45,32 @@ public class MenuUtilities {
 	public static final String MENU_EXTRA = "MENU_EXTRA";
 	public static final String LIST_MENU = "LIST_MENU";
 
-	public static String getMenuPath(Menu menu) {
+	public static String getMenuPath(Menu menu, Locale locale) {
+		String path ="";
+		MessageBuilder msgBuild=new MessageBuilder();
 		try {
 			if (menu.getParentId() == null) {
-				return menu.getName();
+				if (menu.getName().startsWith("#")){				
+					String titleCode = menu.getName().substring(1);									
+					path = msgBuild.getMessage(titleCode, locale);								
+				} else {
+					path = menu.getName();
+				}
+				return path;
 			} else {
 				Menu parent = DAOFactory.getMenuDAO().loadMenuByID(
 						menu.getParentId());
 				// can happen that parent is not found
 				if (parent == null) {
-					return menu.getName();
+					if (menu.getName().startsWith("#")){				
+						String titleCode = menu.getName().substring(1);									
+						path = msgBuild.getMessage(titleCode, locale);								
+					} else {
+						path = menu.getName();
+					}
+					return path;
 				} else {
-					return getMenuPath(parent) + " > " + menu.getName();
+					return getMenuPath(parent, locale) + " > " + menu.getName();
 				}
 			}
 		} catch (Exception e) {
@@ -125,8 +141,8 @@ public class MenuUtilities {
 						while (it.hasNext()) {
 							SourceBean itemSB = (SourceBean) it.next();
 							if (isAbleToSeeItem(itemSB, profile)) {
-								//lstAdminMenuItems.add(getAdminItem(itemSB, levelItem, profile));
-								lstFinalMenu.add(getAdminItem(itemSB, levelItem, profile));
+
+								lstFinalMenu.add(getAdminItemRec(itemSB, levelItem, profile, null));
 								levelItem++;
 							}
 						}						
@@ -199,33 +215,37 @@ public class MenuUtilities {
 		while (it.hasNext()) {
 			SourceBean subItem = (SourceBean) it.next();
 			String functionality = (String) subItem.getAttribute("functionality");
-			if (profile.isAbleToExecuteAction(functionality)) return true;
+			String group= (String)subItem.getAttribute("groupingMenu");
+			if (profile.isAbleToExecuteAction(functionality) || (group != null && group.equals("true"))) {
+				return true;
+			}
 		}
 		return false;
 	}
 
-
-
 	/**
-	 * This method return a Menu type element with the technical user item (the item is created in memory, it isn't on db)
+	 * This method return a Menu type element recursivly with the technical user item (the item is created in memory, it isn't on db)
 	 * @param itemSB the technical item to add
 	 * @param father
 	 * @return
 	 */
-	private static Menu getAdminItem(SourceBean itemSB, Integer progStart, IEngUserProfile profile){
+	private static Menu getAdminItemRec(SourceBean itemSB, Integer progStart, IEngUserProfile profile, Integer parent){
 		Menu node = new Menu();
 		try{
-			Integer menuId = new Integer(progStart*1000);					
-
+			Integer menuId = new Integer(progStart*1000);
 			String functionality = (String) itemSB.getAttribute("functionality");
 			String code = (String) itemSB.getAttribute("code");
 			String titleCode = (String) itemSB.getAttribute("title");
 			String iconUrl = (String) itemSB.getAttribute("iconUrl");
 			String url = (String) itemSB.getAttribute("url");
+			String iconCls = (String) itemSB.getAttribute("iconCls");
+			String groupingMenu = (String) itemSB.getAttribute("groupingMenu");
 
-			node.setMenuId(menuId);			
+			node.setParentId(parent);
+			node.setMenuId(menuId);	
+	
 			node.setCode(code);		
-			node.setParentId(null);
+
 			node.setProg(progStart);
 			node.setName(titleCode);
 			node.setLevel(new Integer(1));
@@ -234,6 +254,9 @@ public class MenuUtilities {
 			node.setViewIcons(true);
 			node.setIconPath(iconUrl);
 			node.setAdminsMenu(true);
+			node.setIconCls(iconCls);
+			if(groupingMenu != null)
+				node.setGroupingMenu(groupingMenu);
 
 			if (functionality == null) {
 				//father node
@@ -248,28 +271,13 @@ public class MenuUtilities {
 						//defines children
 						SourceBean subItem = (SourceBean) it.next();
 						if (isAbleToSeeItem(subItem, profile)) {
-							functionality = (String) subItem.getAttribute("functionality");
-							code = (String) subItem.getAttribute("code");
-							titleCode = (String) subItem.getAttribute("title");
-							iconUrl = (String) subItem.getAttribute("iconUrl");
-							url = (String) subItem.getAttribute("url");
-
-							Menu subNode = new Menu();
-							subNode.setMenuId(menuId++);
-							subNode.setCode(code);									
-							subNode.setParentId(progStart*1000);
-							subNode.setName(titleCode);
-							subNode.setProg(progStart);
-							subNode.setLevel(new Integer(2));
-							subNode.setDescr(titleCode);							
-							subNode.setUrl(url);
-							subNode.setViewIcons(true);
-							subNode.setIconPath(iconUrl);	
-							subNode.setAdminsMenu(true);
+							Menu subNode = getAdminItemRec(subItem, progStart, profile, menuId);
 							lstChildren.add(subNode);
 						}
 					}
 					node.setLstChildren(lstChildren);
+					progStart++;
+
 				}
 
 			}
@@ -280,6 +288,7 @@ public class MenuUtilities {
 		}
 		return node;
 	}
+
 
 	/**
 	 * Check if the menu element in input is already presents into the list

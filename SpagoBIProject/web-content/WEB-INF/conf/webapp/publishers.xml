@@ -37,7 +37,7 @@
   	<PUBLISHER name="userhome">
     	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
       		<RESOURCES>
-        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/homebis.jsp"/>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/home40.jsp"/>
       		</RESOURCES>
     	</RENDERING>
   	</PUBLISHER>

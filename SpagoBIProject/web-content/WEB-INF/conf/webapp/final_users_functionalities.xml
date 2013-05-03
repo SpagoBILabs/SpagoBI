@@ -8,12 +8,12 @@
 	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/bidocuments16.png">
 	</APPLICATION>
 
-	<APPLICATION code="DocumentExec" 
+<!-- 	<APPLICATION code="DocumentExec" 
 	             title="#menu.DocumentExec"  
 	             functionality="DocumentUserManagement" 
 	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage" 
 	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/bidocuments16.png">
-	</APPLICATION>
+	</APPLICATION> -->
 	
 	<APPLICATION code="Events" 
 	             title="#menu.Events"  

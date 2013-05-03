@@ -275,7 +275,9 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			Criteria criteria = aSession.createCriteria(SbiFunctions.class);
 			criteria.add(labelCriterrion);
 			SbiFunctions hibFunct = (SbiFunctions) criteria.uniqueResult();
-			funct = toLowFunctionality(hibFunct, recoverBIObjects);
+			if(hibFunct != null){
+				funct = toLowFunctionality(hibFunct, recoverBIObjects);
+			}else return null;
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error( "HibernateException",he );
@@ -290,6 +292,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		logger.debug( "OUT" );
 		return funct;
 	}
+
 
 	/**
 	 * Load low functionality list by id List
