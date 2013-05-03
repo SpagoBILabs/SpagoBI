@@ -253,6 +253,10 @@ function info(){
 	}		
 	win_info_1.show();
   }
+function goHome(html, path){
+	var url = Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+html;
+	execDirectUrl(url, path);
+}
   
 Ext.onReady(function () {
 	
@@ -285,6 +289,14 @@ Ext.onReady(function () {
 				menuItem.hidden=true;
 			}
 		}
+// 		else if(menuItem.itemLabel != null && menuItem.itemLabel == "HOME"){
+// 			if(Sbi.user.roles){
+// 				for(j=0; j < Sbi.user.roles.length; j++){
+// 					var role = Sbi.user.roles[j];
+// 				}
+
+// 			}
+// 		}
 	}
     this.mainpanel =  Ext.create("Ext.Panel",{
     	items: [
