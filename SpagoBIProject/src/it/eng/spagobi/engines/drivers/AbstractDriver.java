@@ -5,17 +5,17 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.drivers;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
+import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -102,5 +102,25 @@ public class AbstractDriver {
     	logger.debug("OUT");
     	return pars;
         }
+    
+    /**
+     * Returns the template elaborated.
+     * 
+     * @param byte[] the template
+     * @param profile the profile
+     * 
+     * @return the byte[] with the modification of the document template
+     * 
+     * @throws InvalidOperationRequest the invalid operation request
+     */
+    public byte[] ElaborateTemplate(byte[] template) throws InvalidOperationRequest{
+    	logger.warn("Default call. No elaborations are applied to the template.");
+    	return template;
+    }
+    
+    public void applyLocale(Locale locale){
+    	logger.warn("Method not implemented.");
+    }
+
 
 }

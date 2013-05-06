@@ -20,6 +20,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.tenant.Tenant;
@@ -28,15 +29,16 @@ import it.eng.spagobi.tenant.TenantManager;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
+import sun.misc.BASE64Encoder;
+
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
-import sun.misc.BASE64Encoder;
 
 public class ContentServiceImplSupplier {
 	static private Logger logger = Logger
@@ -105,6 +107,26 @@ public class ContentServiceImplSupplier {
 						+ "] is NULL");
 			}
 			byte[] template = temp.getContent();
+			if (biobj.getEngine().getUrl() != null && !"".equals(biobj.getEngine().getUrl())){
+				//only for external engine calls the elaborateTemplate method (ie. to internationalize template)
+				try{
+					String driverClassName = biobj.getEngine().getDriverName();
+					logger.warn("The driver used is [" + driverClassName + "]");
+					IEngineDriver aEngineDriver = (IEngineDriver)Class.forName(driverClassName).newInstance();
+					String language = (String) parameters.get(SpagoBIConstants.SBI_LANGUAGE);
+					String country = (String) parameters.get(SpagoBIConstants.SBI_COUNTRY);
+					logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
+					Locale locale =  new Locale(language, country);
+					aEngineDriver.applyLocale(locale);					
+					logger.warn("Calling elaborateTemplate method defined into the driver ... ");
+					byte[] elabTemplate = aEngineDriver.ElaborateTemplate(template);
+					logger.warn("Finished elaborateTemplate method defined into the driver. ");
+					template = elabTemplate;
+				}catch(Exception ex){
+					logger.error("Error while getting template: " + ex);
+					return null;
+				}
+			}
 
 			BASE64Encoder bASE64Encoder = new BASE64Encoder();
 			content.setContent(bASE64Encoder.encode(template));
@@ -269,7 +291,7 @@ public class ContentServiceImplSupplier {
 			logger.debug("Execution modality retrieved : " + modality);
 			ExecutionInstance instance = new ExecutionInstance(profile, "", "",
 					biobjectId, roleName, modality, true, true, null);
-
+			
 			instance.refreshParametersValues(parameters, true);
 			List errors = instance.getParametersErrors();
 			if (errors != null && errors.size() > 0) {

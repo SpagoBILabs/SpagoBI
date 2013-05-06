@@ -7,32 +7,36 @@ package it.eng.spagobi.engines.drivers.chart;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
+import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.messages.IEngineMessageBuilder;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 
 
@@ -42,6 +46,7 @@ import org.json.JSONObject;
 public class ChartDriver extends GenericDriver {
 	
 	static private Logger logger = Logger.getLogger(ChartDriver.class);
+	private Locale locale;
 	 
 		
 	/**
@@ -66,10 +71,8 @@ public class ChartDriver extends GenericDriver {
 		} finally {
 			logger.debug("OUT");
 		}
-		
 		return parameters;
 	}
-	
 	/**
 	 * Returns a map of parameters which will be send in the request to the
 	 * engine application.
@@ -140,10 +143,20 @@ public class ChartDriver extends GenericDriver {
 		} finally {
 			logger.debug("OUT");
 		}
-		
 		return parameters;
 	}
 	
+	  public void applyLocale(Locale locale){
+	    	logger.warn("Method implemented for chart driver.");
+	    	if (locale == null){
+	    		logger.warn("Locale not defined.");
+	    		return;
+	    	}
+	    	this.locale = locale;
+	    	logger.warn("Setted locale as " + locale.getCountry() + " - " + locale.getLanguage());
+	    }
+
+	  
 	private ObjTemplate getTemplate(BIObject biObject) {
 		ObjTemplate template;
 		IObjTemplateDAO templateDAO;
@@ -168,17 +181,18 @@ public class ChartDriver extends GenericDriver {
 		
 		return template;
 	}
-	
+  
     private Locale getLocale() {
     	logger.debug("IN");
 		try {
-			Locale locale = null;
-			RequestContainer requestContainer = RequestContainer.getRequestContainer();
-			SessionContainer permanentSession = requestContainer.getSessionContainer().getPermanentContainer();
-			String language = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-			String country = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
-			logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
-			locale = new Locale(language, country);
+			if (this.locale == null){			
+				RequestContainer requestContainer = RequestContainer.getRequestContainer();
+				SessionContainer permanentSession = requestContainer.getSessionContainer().getPermanentContainer();
+				String language = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+				String country = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+				logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
+				this.locale = new Locale(language, country);
+			}
 			return locale;
 		} catch (Exception e) {
 		    logger.error("Error while getting locale; using default one", e);
@@ -187,6 +201,111 @@ public class ChartDriver extends GenericDriver {
 			logger.debug("OUT");
 		}	
 	}
- 
+   
+    
+    /**
+     * Returns the template elaborated.
+     * 
+     * @param byte[] the template
+     * @param profile the profile
+     * 
+     * @return the byte[] with the modification of the document template
+     * 
+     * @throws InvalidOperationRequest the invalid operation request
+     */
+    public byte[] ElaborateTemplate(byte[] template) throws InvalidOperationRequest{
+    	logger.warn("Internationalization chart template begin...");
+    	byte[] toReturn = null;
+    	try{
+    		SourceBean content = SourceBean.fromXMLString(new String(template));
+    		List atts = ((SourceBean) content).getContainedAttributes();    		
+    		for (int i = 0; i < atts.size(); i++) {
+    			SourceBeanAttribute object = (SourceBeanAttribute) atts.get(i);		
+    			replaceAllMessages(object);    				    			
+    		}
+    		String result = content.toString();
+    		toReturn = result.getBytes();
+    	} catch(Exception e) {
+    		logger.error("Error while elaborating chart's template: " + e.getMessage());
+		}    	
+    	logger.warn("Internationalization chart template end");
+    	return toReturn;
+    }
+    
+    private String replaceMessagesInValue(String valueString, boolean addFinalSpace) {
+		StringBuffer sb = new StringBuffer();
+		StringTokenizer st = new StringTokenizer(valueString);
+		IMessageBuilder engineMessageBuilder = MessageBuilderFactory.getMessageBuilder();
+		while (st.hasMoreTokens()) {
+			String tok = st.nextToken();
+			if (tok.indexOf("$R{") != -1) {
+				String parName = tok.substring(tok.indexOf("$R{") + 3, tok.indexOf("}"));
+				String remnantString = tok.substring(tok.indexOf("}") + 1);
+				if (!parName.equals("")) {
+					try {						
+						String val = engineMessageBuilder.getI18nMessage(this.getLocale(), parName).replaceAll("'", "");
+						if (!val.equals("%")) {
+							sb.append(val);
+						}
+						if (remnantString != null && !remnantString.equals("")) {
+							sb.append(remnantString);
+							addFinalSpace = false;
+						}
+						if (addFinalSpace)
+							sb.append(" ");
+					} catch (Exception e1) {
+						logger.error("Error while replacing message in value: " + e1.getMessage());
+					}
+				}
+			} else {
+				sb.append(tok);
+				sb.append(" ");
+			}
+		}
+
+		return sb.toString();
+	}
+	
+	/**
+	 * Replaces all messages reading by i18n table.
+	 * 
+	 * @param sb the source bean
+	 */
+	private void replaceAllMessages(SourceBeanAttribute sb) {
+		try {
+			if (sb.getValue() instanceof SourceBean) {
+				SourceBean sbSubConfig = (SourceBean) sb.getValue();
+				List subAtts = sbSubConfig.getContainedAttributes();
+
+				// standard tag attributes
+				for (int i = 0; i < subAtts.size(); i++) {
+					SourceBeanAttribute object = (SourceBeanAttribute) subAtts.get(i);
+					if (object.getValue() instanceof SourceBean) {
+						replaceAllMessages(object);
+					}else {
+						String value = String.valueOf(object.getValue());
+						if(value.contains("$R{")) {
+							String key = object.getKey();
+							boolean addFinalSpace = (key.equals("text") ? true : false);
+							Object finalValue = replaceMessagesInValue(value, addFinalSpace);
+							object.setValue(finalValue);
+						}						
+					}
+				}
+			} else {
+				// puts the simple value attribute
+				String value = String.valueOf(sb.getValue());
+				if(value.contains("$R{")) {
+					String key = sb.getKey();
+					boolean addFinalSpace = (key.equals("text") ? true : false);
+					Object finalValue = replaceMessagesInValue(value, addFinalSpace);
+					sb.setValue(finalValue);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error while defining json chart template: " + e.getMessage());
+		}
+	}
+
 }
 

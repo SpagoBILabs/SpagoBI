@@ -9,6 +9,7 @@ package it.eng.spagobi.engines.drivers;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -74,5 +75,30 @@ public interface IEngineDriver {
      * @throws InvalidOperationRequest the invalid operation request
      */
     public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest;
+    
+    /**
+     * Returns the template elaborated.
+     * 
+     * @param byte[] the template
+     * @param profile the profile
+     * 
+     * @return the byte[] with the modification of the document template
+     * 
+     * @throws InvalidOperationRequest the invalid operation request
+     */
+    public byte[] ElaborateTemplate(byte[] template) throws InvalidOperationRequest;
+    
+    /**
+     * Returns the template elaborated.
+     * 
+     * @param byte[] the template
+     * @param profile the profile
+     * 
+     * @return the byte[] with the modification of the document template
+     * 
+     * @throws InvalidOperationRequest the invalid operation request
+     */
+    public void applyLocale (Locale locale) ;
+    
     
 }
