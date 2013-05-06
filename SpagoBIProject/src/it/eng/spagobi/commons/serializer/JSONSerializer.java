@@ -16,6 +16,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.hotlink.rememberme.bo.RememberMe;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
@@ -99,6 +100,7 @@ public class JSONSerializer implements Serializer {
 		mappings.put( SbiScriptDataSet.class, new SbiDataSetConfigJSONSerializer());
 		mappings.put( SbiWSDataSet.class, new SbiDataSetConfigJSONSerializer());
 		mappings.put( SbiCustomDataSet.class, new SbiDataSetConfigJSONSerializer());
+		mappings.put( RoleMetaModelCategory.class, new RoleMetaModelCategoryJSONSerializer());
 		
 		mappings.put( GuiGenericDataSet.class, new DataSetJSONSerializer());
 		mappings.put( Resource.class, new ResourceJSONSerializer());

@@ -17,6 +17,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiEventRole;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
@@ -24,6 +25,7 @@ import it.eng.spagobi.events.metadata.SbiEventsLog;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -772,6 +774,144 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 		}
 		return toReturn;
+	}
+
+	/**
+	 *  Associate a Meta Model Category to the role
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#insertRoleMetaModelCategory(java.lang.Integer, java.lang.Integer)
+	 */
+	public void insertRoleMetaModelCategory(Integer roleId, Integer categoryId)
+	throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try{
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+		
+			SbiExtRoles hibRole = (SbiExtRoles)aSession.load(SbiExtRoles.class, roleId);
+			
+			SbiDomains category = (SbiDomains)aSession.load(SbiDomains.class, categoryId);
+			
+			Set<SbiDomains> metaModelCategories = hibRole.getSbiMetaModelCategories();
+			if (metaModelCategories == null){
+				metaModelCategories = new HashSet<SbiDomains>();
+			}
+			metaModelCategories.add(category);	
+			hibRole.setSbiMetaModelCategories(metaModelCategories);
+			
+			aSession.saveOrUpdate(hibRole);
+			aSession.flush();
+						
+			updateSbiCommonInfo4Update(hibRole);
+			tx.commit();	
+		}
+		catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {			
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+				logger.debug("OUT");
+
+			}
+		}
+
+
+	}
+
+	/**
+	 * Remove the association between the role and the Meta Model Category 
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#removeRoleMetaModelCategory(java.lang.Integer, java.lang.Integer)
+	 */
+	public void removeRoleMetaModelCategory(Integer roleId, Integer categoryId)
+			throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try{
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+		
+			SbiExtRoles hibRole = (SbiExtRoles)aSession.load(SbiExtRoles.class, roleId);
+			
+			SbiDomains category = (SbiDomains)aSession.load(SbiDomains.class, categoryId);
+			
+			Set<SbiDomains> metaModelCategories = hibRole.getSbiMetaModelCategories();
+			if (metaModelCategories != null){
+				if (metaModelCategories.contains(category)){
+					metaModelCategories.remove(category);
+					hibRole.setSbiMetaModelCategories(metaModelCategories);
+				} else {
+					logger.error("Category "+category.getValueNm()+" is not associated to the role "+hibRole.getName());
+				}
+
+			}
+			aSession.saveOrUpdate(hibRole);
+			aSession.flush();
+			updateSbiCommonInfo4Update(hibRole);
+			tx.commit();	
+		}
+		catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {			
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+				logger.debug("OUT");
+
+			}
+		}		
+	}
+
+	/** Get the Meta Model Categories associated to a role
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#getMetaModelCategoryForRole(java.lang.Integer)
+	 */
+	public List<RoleMetaModelCategory> getMetaModelCategoriesForRole(
+			Integer roleId) throws EMFUserError {
+		Session aSession = null;
+		Transaction tx = null;
+		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+		try{
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+		
+			SbiExtRoles sbiExtRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleId);
+			Integer extRoleId = sbiExtRole.getExtRoleId();
+			Set<SbiDomains> sbiDomains = sbiExtRole.getSbiMetaModelCategories();
+			
+			//For each category associated to the role
+			for (SbiDomains sbiDomain: sbiDomains){
+				RoleMetaModelCategory category = new RoleMetaModelCategory();
+				category.setCategoryId(sbiDomain.getValueId());
+				category.setRoleId(extRoleId);
+				categories.add(category);
+			}
+			
+			tx.commit();
+		}catch(HibernateException he){
+			logException(he);
+			
+			if (tx != null) tx.rollback();	
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);  
+		
+		}finally{
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		return categories;
 	}
 	
 	

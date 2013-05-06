@@ -409,6 +409,7 @@ Sbi.locale.ln['sbi.roles.rolesList'] = 'Lista de roles';
 Sbi.locale.ln['sbi.roles.error'] = 'Error';
 Sbi.locale.ln['sbi.roles.result'] = 'Resultados';
 Sbi.locale.ln['sbi.roles.rolesSynchronization'] = 'Sincronizar';
+Sbi.locale.ln['sbi.roles.businessModels'] = 'Business Models';
 
 Sbi.locale.ln['sbi.users.fullName'] = 'Nombre completo';
 Sbi.locale.ln['sbi.users.userId'] = 'ID de usuario';

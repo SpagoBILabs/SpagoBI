@@ -52,6 +52,20 @@ Sbi.profiling.ManageRoles = function(config) {
 		serviceName: 'MANAGE_ROLES_ACTION'
 		, baseParams: paramsDel
 	});
+	
+	// Meta Model Categories Services
+	
+	this.configurationObject.getMetaModelCategoriesService = Sbi.config.serviceRegistry.getRestServiceUrl({
+		serviceName: 'domains/listValueDescriptionByType'
+		, baseParams: {
+				LIGHT_NAVIGATOR_DISABLED: 'TRUE',
+				DOMAIN_TYPE:"BM_CATEGORY",
+				EXT_VERSION: "3"
+			}
+	});
+
+	
+	
 
 	var configSecurity = {};
 	configSecurity.isInternalSecurity = config.isInternalSecurity;
@@ -99,6 +113,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                        	          , 'doMassiveExport'
 	                        	          , 'manageUsers'
 	                        	          , 'editWorksheet'
+	                        	          , 'bmCategories'
 	                        	        ];
 		
 		this.configurationObject.emptyRecToAdd = new Ext.data.Record({
@@ -120,7 +135,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 											saveMeta:true,
 											buildQbe:true,
 											manageUsers:false,
-											editWorksheet: true
+											editWorksheet: true,
+											bmCategories: []
 										});
 		
 		this.configurationObject.gridColItems = [
@@ -150,8 +166,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		
 		this.initDetailtab();
 		this.initChecksTab();
-		
-		this.configurationObject.tabItems = [ this.detailTab, this.authorizationTab];
+		this.initBusinessModelTab();
+		this.configurationObject.tabItems = [ this.detailTab, this.authorizationTab, this.businessModelsTab];
 	}
 
 	,initDetailtab: function() {
@@ -261,6 +277,82 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		    });
 
 	}
+	
+	/* ------------------------------------------------
+	 * Business Model Categories Panel Initialization
+	 * ------------------------------------------------
+	 */
+	
+	,initBusinessModelTab: function() {
+		//Invoke Service to get Categories List
+		
+		this.categoryStore = new Ext.data.JsonStore(
+				{
+					url : this.configurationObject.getMetaModelCategoriesService,
+					autoLoad : true,
+					root : 'domains',
+					fields : [ 'VALUE_NM', 'VALUE_ID' ],
+					restful : true
+				});
+		
+		
+		//create internal panel for checkbox
+		this.businessModelsCheckGroup = {
+		           xtype:'fieldset'
+		           ,id: 'businessModelsCheckGroup'
+		           ,columnWidth: 0.8
+		           , width: 250
+			        , height: 350
+		           , defaults: {
+		               anchor: '-20' // leave room for error icon
+		           }
+		           ,items :[]
+		 	    };
+
+		
+		//Create the main panel Tab
+		this.businessModelsTab = new Ext.Panel({
+		        title: LN('sbi.roles.businessModels')
+		        , width: 430
+		       // , autoScroll: true
+		        , items: [this.businessModelsCheckGroup]
+		        , itemId: 'businessModelsCategoriesTab'
+		        , layout: 'fit'
+		    });
+		
+		var thisPanel = this;
+		var checkBoxConfigs = [];
+		this.categoryStore.load({
+		    callback: function () {
+				this.getRange().forEach(function(record){
+					checkBoxConfigs.push({ //pushing into array
+				        id:record.data.VALUE_ID,
+				        boxLabel:record.data.VALUE_NM,
+				    });
+
+				});
+				
+				var myCheckboxgroup = new Ext.form.CheckboxGroup({
+			        id:'businessModelsCategoriesCheckGroup',
+			        fieldLabel: 'Business Model Categories',
+			        columns:1,
+			        items:checkBoxConfigs,
+			        boxMinWidth  : 150,
+		            boxMinHeight  : 100,
+		            hideLabel  : false
+			    });
+
+		        thisPanel.businessModelsTab.getComponent('businessModelsCheckGroup').add( myCheckboxgroup);
+
+		     }
+		 });
+		
+	
+
+		
+
+	}
+	//----------------------------------------------------------
 	
 	,initChecksTab: function(){
 		
@@ -375,6 +467,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	        , itemId: 'checks'
 	        , layout: 'fit'
 	    });
+ 	    
+
 	}
 	
 	,fillChecks : function(row, rec) {
@@ -403,11 +497,37 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         		  }
 
      	  });
+		
+		
+		//fill checks for Business Model Categories
+		var bmCategoriesArray = rec.get('bmCategories');
+
+		var businessModelsCheckGroup = Ext.getCmp('businessModelsCheckGroup');
+		//Force rendering check boxes if not already rendered
+		businessModelsCheckGroup.doLayout();
+
+		var businessModelsCategoriesCheckGroup = businessModelsCheckGroup.getComponent('businessModelsCategoriesCheckGroup');
+		var bmCheckBoxes = businessModelsCategoriesCheckGroup.items.items
+		
+		if ((bmCheckBoxes != null) && (bmCheckBoxes !== undefined)){
+			bmCheckBoxes.forEach(function(item){
+		    	//set default to false
+				item.setValue('false');
+
+				//for each checkbox item
+				for (var i = 0; i < bmCategoriesArray.length; i++) {
+				    if(item.getItemId() == bmCategoriesArray[i]){	  			  
+			      		item.setValue('true');
+			  		}
+
+				}
+
+			});
+		}
         	 
        }
 	
 	
-	///****
 
 
 	//OVERRIDING ADD METHOD
@@ -433,7 +553,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 								buildQbe:true,
 								doMassiveExport:true,
 								manageUsers:false,
-								editWorksheet: true
+								editWorksheet: true,
+								bmCategories: []
 							});
 		
 		this.getForm().loadRecord(emptyRecToAdd); 
@@ -534,6 +655,20 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         	record.set('editWorksheet', false);
         }
         
+        //Find selected business models categories
+		var bmCategoriesArray = [];
+		var bmCheckBoxes = Ext.getCmp('businessModelsCheckGroup').getComponent('businessModelsCategoriesCheckGroup').items.items;
+		if ((bmCheckBoxes != null) && (bmCheckBoxes !== undefined)){
+			bmCheckBoxes.forEach(function(item){
+		    	//if is checked
+				if(item.getValue()){
+					bmCategoriesArray.push(item.getItemId());
+				}
+
+			});
+		}
+		record.set('bmCategories',bmCategoriesArray);
+        
         
 		return record;		
 	}
@@ -589,7 +724,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			buildQbe:newRec.data.buildQbe,
 			doMassiveExport:newRec.data.doMassiveExport,
 			manageUsers:newRec.data.manageUsers,
-			editWorksheet: newRec.data.editWorksheet
+			editWorksheet: newRec.data.editWorksheet,
+			bmCategories: newRec.data.bmCategories
         };
         if(idRec){
         	params.id = newRec.data.id;

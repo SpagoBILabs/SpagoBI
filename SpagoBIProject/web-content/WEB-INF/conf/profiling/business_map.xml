@@ -6,6 +6,9 @@
 		<MAP_ACTION actionName="MANAGE_ROLES_ACTION" businessProcess="ProfileManagement" />
 		<MAP_ACTION actionName="MANAGE_ATTRIBUTES_ACTION" businessProcess="ProfileManagement" />		
 	</MAP_ACTIONS>
+	<MAP_REST_SERVICES>
+		<MAP_REST_SERVICE serviceUrl="domains/listValueDescriptionByType" businessProcess="ProfileManagement" />	           
+	</MAP_REST_SERVICES>	
 	
 	<MAP_PAGE_MODULES>
 	</MAP_PAGE_MODULES>

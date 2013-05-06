@@ -38,8 +38,9 @@ public class SbiExtRoles  extends SbiHibernateModel{
      private Boolean isAbleToBuildQbeQuery;
      private Boolean isAbleToDoMassiveExport;
      private Boolean isAbleToManageUsers;
-	private Set sbiFuncRoles;
+     private Set sbiFuncRoles;
      private Set sbiParuseDets;
+     private Set sbiMetaModelCategories;
 
 
     // Constructors
@@ -406,5 +407,19 @@ public class SbiExtRoles  extends SbiHibernateModel{
 
 	public void setIsAbleToManageUsers(Boolean isAbleToManageUsers) {
 		this.isAbleToManageUsers = isAbleToManageUsers;
+	}
+
+	/**
+	 * @return the sbiMetaModelCategories
+	 */
+	public Set getSbiMetaModelCategories() {
+		return sbiMetaModelCategories;
+	}
+
+	/**
+	 * @param sbiMetaModelCategories the sbiMetaModelCategories to set
+	 */
+	public void setSbiMetaModelCategories(Set sbiMetaModelCategories) {
+		this.sbiMetaModelCategories = sbiMetaModelCategories;
 	}
 }
