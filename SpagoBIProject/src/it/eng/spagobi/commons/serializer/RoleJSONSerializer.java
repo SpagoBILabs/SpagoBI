@@ -5,11 +5,14 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
+import java.util.List;
 import java.util.Locale;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -37,6 +40,8 @@ public class RoleJSONSerializer implements Serializer {
 	private static final String MANAGE_USERS="manageUsers";	
 	private static final String DEFAULT_ROLE="defaultRole";	
 	private static final String EDIT_WORKSHEET="editWorksheet";	
+	private static final String BUSINESS_MODEL_CATEGORIES="bmCategories";	
+
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -70,6 +75,14 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(MANAGE_USERS, role.isAbleToManageUsers() );
 			result.put(DEFAULT_ROLE, role.isDefaultRole() );
 			result.put(EDIT_WORKSHEET, role.isAbleToEditWorksheet() );
+			
+			//create an array for Business Model Categories Ids
+			JSONArray bmCategories = new JSONArray();
+			List<RoleMetaModelCategory> roleMetaModelCategories = role.getRoleMetaModelCategories();
+			for (RoleMetaModelCategory roleMetaModelCategory: roleMetaModelCategories){
+				bmCategories.put(roleMetaModelCategory.getCategoryId());
+			}
+			result.put(BUSINESS_MODEL_CATEGORIES, bmCategories);
 			
 			
 			

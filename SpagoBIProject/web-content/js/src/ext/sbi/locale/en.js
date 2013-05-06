@@ -468,6 +468,8 @@ Sbi.locale.ln['sbi.roles.result'] = 'Result';
 Sbi.locale.ln['sbi.roles.rolesSynchronization'] = 'Synchronize';
 Sbi.locale.ln['sbi.roles.edit'] = 'Edit';
 Sbi.locale.ln['sbi.roles.worksheet'] = 'Worksheet';
+Sbi.locale.ln['sbi.roles.businessModels'] = 'Business Models';
+
 
 Sbi.locale.ln['sbi.users.fullName'] = 'Full Name';
 Sbi.locale.ln['sbi.users.userId'] = 'User ID';

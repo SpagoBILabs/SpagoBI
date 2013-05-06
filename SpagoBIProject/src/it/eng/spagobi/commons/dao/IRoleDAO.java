@@ -13,6 +13,7 @@ package it.eng.spagobi.commons.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 
 import java.util.List;
@@ -163,5 +164,18 @@ public interface IRoleDAO extends ISpagoBIDao{
 	public List<Role> loadPagedRolesList(Integer offset, Integer fetchSize)throws EMFUserError;
 	
 	public Integer countRoles()throws EMFUserError;
+	
+	/*
+	 * Methods for managing Role - MetaModelCategory association
+	 * 
+	 */
+	
+	public void insertRoleMetaModelCategory(Integer roleId, Integer categoryId) throws EMFUserError;
+	
+	public void removeRoleMetaModelCategory(Integer roleId, Integer categoryId) throws EMFUserError;
+	
+	public List<RoleMetaModelCategory> getMetaModelCategoriesForRole(Integer roleId) throws EMFUserError;
+
+	
 	
 }

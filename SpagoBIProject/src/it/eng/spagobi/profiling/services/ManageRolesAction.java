@@ -11,6 +11,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -21,6 +22,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +47,10 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 	private final String ROLE_INSERT = "ROLE_INSERT";
 	private final String ROLE_DELETE = "ROLE_DELETE";
 	private final String ROLES_SYNCHRONIZATION = "ROLES_SYNCHRONIZATION";
+	private final String ROLE_ADD_BM_CATEGORY ="ROLE_ADD_BM_CATEGORY";
+	private final String ROLE_REMOVE_BM_CATEGORY ="ROLE_REMOVE_BM_CATEGORY";
+	private final String ROLE_LIST_BM_CATEGORY ="ROLE_LIST_BM_CATEGORY";
+
 	
 	private final String ID = "id";
 	private final String NAME = "name";
@@ -65,6 +71,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 	private final String DO_MASSIVE_EXPORT="doMassiveExport";
 	private final String MANAGE_USERS="manageUsers";
 	private final String EDIT_WORKSHEET="editWorksheet";
+	private final String BM_CATEGORY_ID="bmCategoryId";
+	private final String BM_CATEGORIES="bmCategories";
 	
 	public static String START = "start";
 	public static String LIMIT = "limit";
@@ -108,7 +116,13 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 				}
 
 				Integer totalResNum = roleDao.countRoles();
-				List<Role> roles = roleDao.loadPagedRolesList(start, limit);				
+				List<Role> roles = roleDao.loadPagedRolesList(start, limit);	
+				
+				//For each role search if there are any associated Business Model Categories
+				for (Role role : roles){
+					List<RoleMetaModelCategory> roleMetaModelCategories = getMetaModelCategories(roleDao,role);
+					role.setRoleMetaModelCategories(roleMetaModelCategories);
+				}
 				
 				//ArrayList<Role> roles = (ArrayList<Role>)roleDao.loadAllRoles();
 				logger.debug("Loaded roles list");
@@ -142,7 +156,14 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 			Boolean manageUsers = getAttributeAsBoolean(MANAGE_USERS);
 			Boolean editWorksheet = getAttributeAsBoolean(EDIT_WORKSHEET);
 			
-						
+			List<String> bmCategoryIds = getAttributeAsList(BM_CATEGORIES);
+			if (bmCategoryIds.size() == 1){
+				if(bmCategoryIds.get(0).equals("")){
+					bmCategoryIds.remove(0);
+				}
+			}
+			
+			
 			if (name != null) {
 				//checks for unique role name
 				try {
@@ -210,11 +231,25 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 				role.setIsAbleToSendMail(sendMail);
 				role.setIsAbleToManageUsers(manageUsers);
 				role.setIsAbleToEditWorksheet(editWorksheet);
+				
+				
 				try {
 					String id = getAttributeAsString(ID);
 					if(id != null && !id.equals("") && !id.equals("0")){							
 						role.setId(Integer.valueOf(id));
 						roleDao.modifyRole(role);
+						
+						//Erase existing Role - Business Model Categories Associations						
+						List<RoleMetaModelCategory> RoleMetaModelCategories = roleDao.getMetaModelCategoriesForRole(Integer.valueOf(id));						
+						for (RoleMetaModelCategory roleMetaModelCategory : RoleMetaModelCategories){
+							roleDao.removeRoleMetaModelCategory(roleMetaModelCategory.getRoleId(), roleMetaModelCategory.getCategoryId());
+						}
+			
+						//Add Role - Business Model Categories Associations
+						for (String bmCategoryId : bmCategoryIds){
+							roleDao.insertRoleMetaModelCategory(role.getId(), Integer.valueOf(bmCategoryId));
+						}
+						
 						logger.debug("Role "+id+" updated");
 						JSONObject attributesResponseSuccessJSON = new JSONObject();
 						attributesResponseSuccessJSON.put("success", true);
@@ -223,7 +258,12 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_ROLES." +((insertModality)?"ADD":"MODIFY"),logParam , "OK");
 					}else{
 						Integer roleID = roleDao.insertRoleComplete(role);
+						//Add Role - Business Model Categories Associations
+						for (String bmCategoryId : bmCategoryIds){
+							roleDao.insertRoleMetaModelCategory(roleID, Integer.valueOf(bmCategoryId));
+						}
 						logger.debug("New Role inserted");
+
 						JSONObject attributesResponseSuccessJSON = new JSONObject();
 						attributesResponseSuccessJSON.put("success", true);
 						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
@@ -262,6 +302,12 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 				Role existentRole = DAOFactory.getRoleDAO().loadByID(id);
 				logParam.put("NAME", existentRole.getName());
 				logParam.put("ROLE TYPE", existentRole.getRoleTypeCD());
+				//Remove Role - Business Model Categories Associations
+				List<RoleMetaModelCategory> RoleMetaModelCategories = roleDao.getMetaModelCategoriesForRole(id);
+				for (RoleMetaModelCategory roleMetaModelCategory : RoleMetaModelCategories){
+					roleDao.removeRoleMetaModelCategory(roleMetaModelCategory.getRoleId(), roleMetaModelCategory.getCategoryId());
+				}
+				
 				roleDao.eraseRole(aRole);
 				logger.debug("Role deleted");
 				writeBackToClient( new JSONAcknowledge("Operazion succeded") );
@@ -300,7 +346,17 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 						"Exception occurred while syncronize role",
 						e);
 			}
-		}else if(serviceType == null){
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(ROLE_ADD_BM_CATEGORY)){
+			addMetaModelCategory(roleDao,locale);
+		
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(ROLE_REMOVE_BM_CATEGORY)){
+			removeMetaModelCategory(roleDao,locale);
+
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(ROLE_LIST_BM_CATEGORY)){
+			getMetaModelCategories(roleDao,locale);
+	
+		}
+		else if(serviceType == null){
 			try {
 				List<Domain> domains = DAOFactory.getDomainDAO().loadListDomainsByType("ROLE_TYPE");
 				getSessionContainer().setAttribute("roleTypes", domains);
@@ -313,6 +369,84 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 		}
 		logger.debug("OUT");
 
+	}
+	
+	
+	
+	private void getMetaModelCategories(IRoleDAO roleDao, Locale locale){
+		// invoca DAO di Role e ritorna lista delle Categorie di BM associate
+
+		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+		try {
+			Integer roleId = getAttributeAsInteger( ID );
+			categories = roleDao.getMetaModelCategoriesForRole(roleId);
+			logger.debug("Loaded categories list");
+
+			int totalResNum = categories.size();
+			
+			JSONArray rolesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(categories,	locale);
+			
+			JSONObject rolesResponseJSON = createJSONResponse(rolesJSON,totalResNum,"Categories");
+			writeBackToClient(new JSONSuccess(rolesResponseJSON));
+		} catch(Throwable e){
+			logger.error("Exception occurred while retrieving categories roles", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Exception occurred while retrieving categories roles", e);
+		}
+	}
+	
+	// Search for associated Business Model categories for the passed Role
+	private List<RoleMetaModelCategory> getMetaModelCategories(IRoleDAO roleDao, Role role){
+
+		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+		try {
+			Integer roleId = role.getId();
+			categories = roleDao.getMetaModelCategoriesForRole(roleId);
+			logger.debug("Loaded categories list");
+
+			return categories;
+		} catch(Throwable e){
+			logger.error("Exception occurred while retrieving categories roles", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Exception occurred while retrieving categories roles", e);
+		}
+	}
+	
+	
+	private void addMetaModelCategory(IRoleDAO roleDao, Locale locale){
+		// Aggiunge associazione Ruolo - Categoria BM
+		
+		try {
+			Integer roleId = getAttributeAsInteger( ID );
+			Integer categoryId = getAttributeAsInteger( BM_CATEGORY_ID );		
+			roleDao.insertRoleMetaModelCategory(roleId, categoryId);
+			logger.debug("Added Meta Model Category to Role");
+			writeBackToClient( new JSONAcknowledge("Operation succeded") );
+
+			
+		} catch(Throwable e){
+			logger.error("Exception occurred while adding categories roles", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Exception occurred while adding categories roles", e);
+		}
+
+	}
+	
+	
+	private void removeMetaModelCategory(IRoleDAO roleDao, Locale locale){
+		// Rimuove associazione Ruolo - Categoria BM
+		try {
+			Integer roleId = getAttributeAsInteger( ID );
+			Integer categoryId = getAttributeAsInteger( BM_CATEGORY_ID );		
+			roleDao.removeRoleMetaModelCategory(roleId, categoryId);
+			logger.debug("Removed Meta Model Category to Role");
+			writeBackToClient( new JSONAcknowledge("Operation succeded") );
+		
+		} catch(Throwable e){
+			logger.error("Exception occurred while removing categories roles", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Exception occurred while removing categories roles", e);
+		}
 		
 	}
 	/**
@@ -329,6 +463,24 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 		results = new JSONObject();
 		results.put("total", totalResNumber);
 		results.put("title", "Roles");
+		results.put("rows", rows);
+		return results;
+	}
+	
+	/**
+	 * Creates a json array with children informations
+	 * 
+	 * @param rows
+	 * @return
+	 * @throws JSONException
+	 */
+	private JSONObject createJSONResponse(JSONArray rows, Integer totalResNumber, String title)
+			throws JSONException {
+		JSONObject results;
+
+		results = new JSONObject();
+		results.put("total", totalResNumber);
+		results.put("title", title);
 		results.put("rows", rows);
 		return results;
 	}
