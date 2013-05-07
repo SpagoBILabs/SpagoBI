@@ -79,8 +79,10 @@ public class RoleJSONSerializer implements Serializer {
 			//create an array for Business Model Categories Ids
 			JSONArray bmCategories = new JSONArray();
 			List<RoleMetaModelCategory> roleMetaModelCategories = role.getRoleMetaModelCategories();
-			for (RoleMetaModelCategory roleMetaModelCategory: roleMetaModelCategories){
-				bmCategories.put(roleMetaModelCategory.getCategoryId());
+			if (roleMetaModelCategories != null ){
+				for (RoleMetaModelCategory roleMetaModelCategory: roleMetaModelCategories){
+					bmCategories.put(roleMetaModelCategory.getCategoryId());
+				}
 			}
 			result.put(BUSINESS_MODEL_CATEGORIES, bmCategories);
 			
