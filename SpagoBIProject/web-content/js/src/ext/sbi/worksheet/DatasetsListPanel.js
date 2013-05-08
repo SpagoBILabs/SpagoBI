@@ -75,6 +75,9 @@ Ext.extend(Sbi.worksheet.DatasetsListPanel, Ext.Panel, {
 	, datasetsGrid : null
 	, searchInput : null
 	, keyPressedDelay : null
+	//, sm : null
+	//, xselection : []
+	//, showCheckedOnlyCheckbox : null
 	
 	,
 	init : function () {
@@ -97,7 +100,22 @@ Ext.extend(Sbi.worksheet.DatasetsListPanel, Ext.Panel, {
 							'qbeDatamarts',	'userIn', 'dateIn', 'versNum', 'versId']
 			})
 		});
+		/*
+		this.datasetsStore.on('load', function () {
+			this.sm.selectRecords(this.xselection);
+		}, this);
+		*/
 		this.datasetsStore.load({params : {start: 0, limit: this.pagingSize}});
+		
+		/*
+		this.showCheckedOnlyCheckbox =  new Ext.form.Checkbox({
+	    	boxLabel : LN('sbi.worksheet.datasetslistpanel.pagingbar.showcheckedonlycheckbox')
+	    	, hideLabel : true 
+	    	, width : 220
+	    });
+		
+		this.showCheckedOnlyCheckbox.on('check', this.showCheckedOnly, this);
+		*/
 		
 		var pagingBar = new Ext.PagingToolbar({
 			pageSize : this.pagingSize
@@ -105,6 +123,7 @@ Ext.extend(Sbi.worksheet.DatasetsListPanel, Ext.Panel, {
 			, displayInfo : false
 			, scope : this
 			, emptyMsg : "No topics to display"
+	        //, items : ['-', this.showCheckedOnlyCheckbox].concat(this.extraButtons)
 	        , items : this.extraButtons
 		});
 		
@@ -129,6 +148,10 @@ Ext.extend(Sbi.worksheet.DatasetsListPanel, Ext.Panel, {
 			}
 		]);
 		
+		//this.sm = new Ext.grid.CheckboxSelectionModel({singleSelect : true});
+		//this.sm.on('rowselect', this.onSelect, this);
+		//this.sm.on('rowdeselect', this.onDeselect, this);
+		
 		this.datasetsGrid = new Ext.grid.GridPanel({
 		    store: this.datasetsStore
 		    , tbar : toolbar
@@ -137,6 +160,7 @@ Ext.extend(Sbi.worksheet.DatasetsListPanel, Ext.Panel, {
 		        , {header: LN('sbi.generic.name'), dataIndex: 'name', scope : this, renderer: function (value) {return '<b>' + this.highlightSearchString(value) + '</b>';}}
 		        , {header: LN('sbi.generic.type'), dataIndex : 'dsTypeCd', scope : this, renderer: this.highlightSearchString }
 		        , {header: LN('sbi.generic.author'), dataIndex : 'userIn', scope : this, renderer: this.highlightSearchString }
+		        //, this.sm
 		    ]
 		    , viewConfig : {
 		        forceFit : true
@@ -144,6 +168,7 @@ Ext.extend(Sbi.worksheet.DatasetsListPanel, Ext.Panel, {
 	            , getRowClass : this.getRowClass.createDelegate(this)
 				, scope : this
 		    }
+		    //, sm : this.sm
 		    , sm : new Ext.grid.RowSelectionModel({singleSelect:true})
             , bbar : pagingBar
 		});
@@ -196,6 +221,13 @@ Ext.extend(Sbi.worksheet.DatasetsListPanel, Ext.Panel, {
         }
 	}
 
+	/*
+	,
+	getSelectedRecords : function () {
+		return this.xselection;
+	}
+	*/
+	
 	,
 	getSelectedRecord : function () {
 		var record = this.datasetsGrid.getSelectionModel().getSelected();
@@ -226,5 +258,33 @@ Ext.extend(Sbi.worksheet.DatasetsListPanel, Ext.Panel, {
 		this.searchInput.setValue('');
 		this.datasetsStore.load({params : {start: 0, limit: this.pagingSize, filter: {}}});
 	}
+	
+	/*
+    ,
+    onSelect: function(sm, rowIndex, record) {
+    	if (this.xselection.indexOf(record) == -1) {
+    		this.xselection.push(record);
+    	}
+    	
+    }
+    
+    ,
+    onDeselect: function(sm, rowIndex, record) {
+    	if (this.xselection.indexOf(record) != -1) {
+    		this.xselection.splice(this.xselection.indexOf(record), 1);	
+    	}
+    }
+    
+    ,
+    showCheckedOnly: function(theCheckbox, checked) {
+    	if (checked) {
+    		this.datasetsStore.removeAll(false);
+    		this.datasetsStore.add(this.xselection);
+    		this.sm.selectRecords(this.xselection);
+    	} else {
+    		this.clearFilterForm();
+    	}
+    }
+	*/
 
 });

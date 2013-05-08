@@ -854,15 +854,16 @@ Sbi.locale.ln['sbi.behavioural.delete']='Delete'
 //Sbi.worksheet.WorksheetFromDatasetPanel : AD-HOC REPORTING
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.nodatasetselected.msg']='No dataset selected! Please select one in order to proceed.';
-Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.choosedataset.msg']='Please selected a dataset to work with and click on Next';
-Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.createworksheet.msg']='... now you can design your worksheet! In order to change dataset, click on Back';
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.choosedataset.msg']='Please select a dataset to work with';
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.buttons.gotoworksheet']='Edit a Worksheet document >';
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.buttons.gotoqbe']='Create new dataset >';
 
 //===================================================================
 //Sbi.worksheet.WorksheetEditorIframePanelExt3 : AD-HOC REPORTING 
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.saveas']='Save as new document ...';
 Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.export']='Export into one of the available formats ...';
-	
+
 //===================================================================
 //ERRORS 
 //===================================================================

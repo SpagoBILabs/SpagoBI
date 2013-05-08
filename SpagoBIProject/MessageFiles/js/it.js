@@ -704,8 +704,9 @@ Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.isactive'] = 'Att
 //Sbi.worksheet.WorksheetFromDatasetPanel : AD-HOC REPORTING 
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.nodatasetselected.msg']='Non è stato selezionato alcun dataset! Seleziona un dataset per proseguire.';
-Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.choosedataset.msg']='Seleziona un dataset e clicca sul pulsante Avanti ...';
-Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.createworksheet.msg']='... ora puoi disegnare il worksheet!';
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.choosedataset.msg']='Seleziona un dataset ...';
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.buttons.gotoworksheet']='Crea un documento Worksheet >';
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.buttons.gotoqbe']='Crea un nuovo dataset >';
 
 //===================================================================
 //Sbi.worksheet.WorksheetEditorIframePanelExt3 : AD-HOC REPORTING 
