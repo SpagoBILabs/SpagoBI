@@ -80,13 +80,16 @@ Ext.extend(Sbi.worksheet.WorksheetFromDatasetPanel, Ext.Panel, {
 			, layout : 'fit'
 			, border : false
 			, extraButtons : ['->', {
-				text : LN('sbi.generic.next')
-				, handler : this.moveToEditorPage
+				text : LN('sbi.worksheet.worksheetfromdatasetpanel.buttons.gotoworksheet')
+				, handler : this.moveToWorksheet
+				, scope : this
+			}, {
+				text : LN('sbi.worksheet.worksheetfromdatasetpanel.buttons.gotoqbe')
+				, handler : this.moveToQbe
 				, scope : this
 			}]
 		});
 		this.worksheetEditor = new Sbi.worksheet.WorksheetEditorIframePanelExt3({
-			//title : LN('sbi.worksheet.worksheetfromdatasetpanel.createworksheet.msg')
 			defaultSrc: 'about:blank'
 			, businessMetadata : null
 			, border : false
@@ -101,7 +104,7 @@ Ext.extend(Sbi.worksheet.WorksheetFromDatasetPanel, Ext.Panel, {
 	}
 
 	,
-	moveToEditorPage : function () {
+	moveToWorksheet : function () {
 		
 		var selectedRecord = this.datasetsListPanel.getSelectedRecord();
 		if (selectedRecord == null) {
@@ -110,11 +113,33 @@ Ext.extend(Sbi.worksheet.WorksheetFromDatasetPanel, Ext.Panel, {
 					, LN('sbi.generic.warning'));
 			return;
 		}
+		/*
+		if (selectedRecords.length > 1) {
+			Sbi.exception.ExceptionHandler.showWarningMessage(
+					LN('sbi.worksheet.worksheetfromdatasetpanel.onlyonedatasetpermitted.msg')
+					, LN('sbi.generic.warning'));
+			return;
+		}
+		var selectedRecord = selectedRecords[0];
+		*/
 		var datasetLabel = selectedRecord.get('label');
 		var datasourceLabel = selectedRecord.get('dataSource');
 		this.getLayout().setActiveItem( 1 );
 		this.worksheetEditor.setSrc( this.worksheetEngineBaseUrl + '&dataset_label=' + datasetLabel + '&datasource_label=' + datasourceLabel );
 		this.worksheetEditor.setDatasetLabel(datasetLabel);
+	}
+	
+	,
+	moveToQbe : function () {
+		
+		var selectedRecord = this.datasetsListPanel.getSelectedRecord();
+		if (selectedRecord == null) {
+			Sbi.exception.ExceptionHandler.showWarningMessage(
+					LN('sbi.worksheet.worksheetfromdatasetpanel.nodatasetselected.msg')
+					, LN('sbi.generic.warning'));
+			return;
+		}
+		alert(selectedRecord);
 	}
 	
 	,
