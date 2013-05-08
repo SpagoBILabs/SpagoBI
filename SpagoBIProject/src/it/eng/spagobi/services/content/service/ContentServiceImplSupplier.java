@@ -115,9 +115,13 @@ public class ContentServiceImplSupplier {
 					IEngineDriver aEngineDriver = (IEngineDriver)Class.forName(driverClassName).newInstance();
 					String language = (String) parameters.get(SpagoBIConstants.SBI_LANGUAGE);
 					String country = (String) parameters.get(SpagoBIConstants.SBI_COUNTRY);
-					logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
-					Locale locale =  new Locale(language, country);
-					aEngineDriver.applyLocale(locale);					
+					if (language == null || country == null){
+						logger.debug("Not locale informations found in parameters... Not setted it at this time.");
+					}else{
+						logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
+						Locale locale =  new Locale(language, country);
+						aEngineDriver.applyLocale(locale);
+					}
 					logger.warn("Calling elaborateTemplate method defined into the driver ... ");
 					byte[] elabTemplate = aEngineDriver.ElaborateTemplate(template);
 					logger.warn("Finished elaborateTemplate method defined into the driver. ");
@@ -197,6 +201,31 @@ public class ContentServiceImplSupplier {
 			}
 			byte[] template = temp.getContent();
 
+			if (biobj.getEngine().getUrl() != null && !"".equals(biobj.getEngine().getUrl())){
+				//only for external engine calls the elaborateTemplate method (ie. to internationalize template)
+				try{
+					String driverClassName = biobj.getEngine().getDriverName();
+					logger.warn("The driver used is [" + driverClassName + "]");
+					IEngineDriver aEngineDriver = (IEngineDriver)Class.forName(driverClassName).newInstance();
+					String language = (String) parameters.get(SpagoBIConstants.SBI_LANGUAGE);
+					String country = (String) parameters.get(SpagoBIConstants.SBI_COUNTRY);
+					if (language == null || country == null){
+						logger.debug("Not locale informations found in parameters... Not setted it at this time.");
+					}else{
+						logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
+						Locale locale =  new Locale(language, country);
+						aEngineDriver.applyLocale(locale);
+					}
+					logger.warn("Calling elaborateTemplate method defined into the driver ... ");
+					byte[] elabTemplate = aEngineDriver.ElaborateTemplate(template);
+					logger.warn("Finished elaborateTemplate method defined into the driver. ");
+					template = elabTemplate;
+				}catch(Exception ex){
+					logger.error("Error while getting template: " + ex);
+					return null;
+				}
+			}
+			
 			BASE64Encoder bASE64Encoder = new BASE64Encoder();
 			content.setContent(bASE64Encoder.encode(template));
 			logger.debug("template read");
