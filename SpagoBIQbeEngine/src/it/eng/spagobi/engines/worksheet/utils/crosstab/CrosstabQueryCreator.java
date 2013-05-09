@@ -6,6 +6,7 @@
 package it.eng.spagobi.engines.worksheet.utils.crosstab;
 
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
@@ -17,6 +18,9 @@ import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -244,7 +248,7 @@ public class CrosstabQueryCreator {
 				rightValues = whereFields.get(i).getRightOperand().values;
 				if (rightValues.length == 1) {
 					boundedValue = getValueBounded(rightValues[0],
-							descriptor.getColumnType(leftValue));
+							descriptor.getColumnType(leftValue), dataSource);
 					if(dialect.contains("SQLServerDialect")){
 						if(boundedValue.equals("true")){
 							boundedValue = "1";
@@ -257,7 +261,7 @@ public class CrosstabQueryCreator {
 					toReturn.append(AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + " IN (");
 					for (int j = 0; j < rightValues.length; j++) {
 						boundedValue = getValueBounded(rightValues[j],
-								descriptor.getColumnType(leftValue));
+								descriptor.getColumnType(leftValue), dataSource);
 						toReturn.append(boundedValue);
 						if (j < rightValues.length - 1) {
 							toReturn.append(", ");
@@ -273,8 +277,9 @@ public class CrosstabQueryCreator {
 		logger.debug("OUT: returning " + toReturn);
 	}
 	
-	public static String getValueBounded(String operandValueToBound, Class clazz) {
+	public static String getValueBounded(String operandValueToBound, Class clazz, IDataSource dataSource) {
 		String boundedValue;
+		Date operandValueToBoundDate;
 		
 		boundedValue = operandValueToBound;
 		
@@ -286,27 +291,21 @@ public class CrosstabQueryCreator {
 				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
 				return StringUtils.bound(operandValueToBound, "'");
 			}
-		} 
-		
-		// TODO manage dates and timestamps
-//		Date operandValueToBoundDate;
-
-//		else if(operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("DATE") || operandType.equalsIgnoreCase("java.sql.TIMESTAMP") || operandType.equalsIgnoreCase("java.sql.date") || operandType.equalsIgnoreCase("java.util.date")){
-//
-//			ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-//			String dbDialect = connection.getDialect();
-//			
-//			String userDateFormatPattern = (String)getParameters().get("userDateFormatPattern");
-//			DateFormat userDataFormat = new SimpleDateFormat(userDateFormatPattern);		
-//			try{
-//				operandValueToBoundDate = userDataFormat.parse(operandValueToBound);
-//			} catch (ParseException e) {
-//				logger.error("Error parsing the date "+operandValueToBound);
-//				throw new SpagoBIRuntimeException("Error parsing the date "+operandValueToBound+". Check the format, it should be "+userDateFormatPattern);
-//			}
-//			
-//			boundedValue = composeStringToDt(dbDialect, operandValueToBoundDate);
-//		}
+		} else if ( Date.class.isAssignableFrom(clazz) ) {
+			Long time = null;
+			try {
+				time = Long.valueOf(operandValueToBound);
+			} catch (NumberFormatException nfe) {
+				logger.error("Error parsing the date " + operandValueToBound);
+				throw new SpagoBIRuntimeException("Error parsing the date " + operandValueToBound + " as a long");
+			}
+			operandValueToBoundDate = new Date(time);
+			String dialect = dataSource.getHibDialectClass();
+			if (dialect == null) {
+				dialect = dataSource.getHibDialectName();
+			}
+			boundedValue = composeStringToDt(dialect, operandValueToBoundDate);
+		}
 		
 		return boundedValue;
 	}
@@ -399,4 +398,93 @@ public class CrosstabQueryCreator {
 		
 	}
 
+	public static String composeStringToDt(String dialect, Date date){
+		String toReturn = "";
+		
+		DateFormat stagingDataFormat = new SimpleDateFormat("dd/MM/yyyy");	
+		String dateStr = stagingDataFormat.format(date);
+			
+		if(dialect!=null){
+			
+			if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)){
+				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
+					toReturn = " STR_TO_DATE("+dateStr+",'%d/%m/%Y %h:%i:%s') ";
+				}else{
+					toReturn = " STR_TO_DATE('"+dateStr+"','%d/%m/%Y %h:%i:%s') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)){
+				try {
+					DateFormat df;
+					if ( StringUtils.isBounded(dateStr, "'") ) {
+						df = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
+					}else{
+						df = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
+					}
+					
+					Date myDate = df.parse(dateStr);
+					df = new SimpleDateFormat("yyyy-MM-dd");		
+					toReturn =  "'"+df.format(myDate)+"'";
+
+				} catch (Exception e) {
+					toReturn = "'" +dateStr+ "'";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)){
+				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
+					toReturn = " STR_TO_DATE("+dateStr+",'%d/%m/%Y') ";
+				}else{
+					toReturn = " STR_TO_DATE('"+dateStr+"','%d/%m/%Y') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)){
+				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
+					toReturn = " TO_TIMESTAMP("+dateStr+",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				}else{
+					toReturn = " TO_TIMESTAMP('"+dateStr+"','DD/MM/YYYY HH24:MI:SS.FF') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)){
+				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
+					toReturn = " TO_TIMESTAMP("+dateStr+",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				}else{
+					toReturn = " TO_TIMESTAMP('"+dateStr+"','DD/MM/YYYY HH24:MI:SS.FF') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)){
+				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
+					toReturn = " TO_TIMESTAMP("+dateStr+",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				}else{
+					toReturn = " TO_TIMESTAMP('"+dateStr+"','DD/MM/YYYY HH24:MI:SS.FF') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)){
+				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
+					toReturn = dateStr;
+				}else{
+					toReturn = "'"+dateStr+"'";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
+				/*
+				 * Unfortunately we cannot use neither
+				 * CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') 
+				 * nor
+				 * CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy')) As Date)
+				 * because Hibernate does not recognize (and validate) those SQL functions.
+				 * Therefore we must use a predefined date format (yyyy-MM-dd).
+				 */
+				try {
+					DateFormat dateFormat;
+					if ( StringUtils.isBounded(dateStr, "'") ) {
+						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
+					} else {
+						dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+					}
+					Date myDate = dateFormat.parse(dateStr);
+					dateFormat = new SimpleDateFormat("yyyy-MM-dd");		
+					toReturn = "'" + dateFormat.format(myDate) + "'";
+				} catch (Exception e) {
+					logger.error("Error parsing the date " + dateStr, e);
+					throw new SpagoBIRuntimeException("Error parsing the date " + dateStr + ".");
+				}
+			}
+		}
+		
+		return toReturn;
+	}
+	
 }
