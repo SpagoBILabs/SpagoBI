@@ -299,8 +299,9 @@ Ext.onReady(function () {
 // 		}
 	}
     this.mainpanel =  Ext.create("Ext.Panel",{
+    	height:'100%',
     	items: [
-			this.titlePath
+			this.titlePath			
     	    , mainframe]
     	, dockedItems: [{
 	   	    xtype: 'toolbar',

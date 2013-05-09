@@ -51,6 +51,7 @@ public class MenuListJSONSerializer implements Serializer {
 	public static final String ROLE ="ROLE";
 	public static final String LANG ="LANG";
 	public static final String HOME ="HOME";
+	public static final String TARGET ="hrefTarget";
 	
 	public String contextName = "";
 	public String defaultThemePath="/themes/sbi_default";
@@ -80,7 +81,9 @@ public class MenuListJSONSerializer implements Serializer {
 				home.put(SCALE, "large");
 				home.put(PATH, "Home");
 				home.put(LABEL, HOME);
-				home.put(HREF, "javascript:goHome('/html/home.html', 'spagobi')");
+				home.put(TARGET, "_self");
+				home.put(HREF, "javascript:goHome('/html/home.html', 'spagobi');");
+				//home.put(HREF, "javascript:alert('ciao');");
 				
 				String userMenu = msgBuild.getI18nMessage(locale, "menu.UserMenu");
 				personal.put(ICON_CLS, "spagobi");
@@ -88,6 +91,7 @@ public class MenuListJSONSerializer implements Serializer {
 				personal.put(ICON_ALIGN, "top");
 				personal.put(SCALE, "large");
 				personal.put(PATH, userMenu);
+				personal.put(TARGET, "_self");
 
 				
 				tempFirstLevelMenuList.put(home);
@@ -134,6 +138,7 @@ public class MenuListJSONSerializer implements Serializer {
 							temp.put(ICON_ALIGN, "top");
 							temp.put(SCALE, "large");
 							temp.put(PATH, path);
+							temp.put(TARGET, "_self");
 							
 							if (menuElem.getHasChildren()){		
 	
@@ -195,6 +200,7 @@ public class MenuListJSONSerializer implements Serializer {
 		menuItem.put(TOOLTIP, "Info");
 		menuItem.put(ICON_CLS, icon);
 		menuItem.put(TOOLTIP, tooltip);
+		menuItem.put(TARGET, "_self");
 		if(label != null){
 			menuItem.put(LABEL, label);
 		}
@@ -272,6 +278,7 @@ public class MenuListJSONSerializer implements Serializer {
 			temp2.put(TITLE_ALIGN, "left");
 			temp2.put(COLUMNS, 1);
 			temp2.put(XTYPE, "buttongroup");
+			temp2.put(TARGET, "_self");
 			
 			List childrenBis = childElem.getLstChildren();
 			JSONArray tempMenuList2 =(JSONArray)getChildren(childrenBis,level, locale);
@@ -287,6 +294,7 @@ public class MenuListJSONSerializer implements Serializer {
 				temp2.put(TEXT, text);
 				temp2.put("style", "text-align: left;");
 				temp2.put(SRC, childElem.getUrl());
+				temp2.put(TARGET, "_self");
 				
 				if(childElem.getObjId()!=null){
 					temp2.put(HREF, "javascript:execDirectUrl('"+contextName+"/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="+childElem.getMenuId()+"', '"+path+"' )");
