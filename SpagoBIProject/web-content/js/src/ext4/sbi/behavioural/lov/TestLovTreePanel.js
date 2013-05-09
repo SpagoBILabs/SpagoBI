@@ -273,7 +273,7 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
     , getValues: function(){
     	this.serializedTree ={};
     	this.serializedTree.treeLevelsColumns=[];
-    	this.serializedTree.lovType = 'tree';
+    	this.serializedTree.lovType = this.lovType;
     	var node = this.store.getRootNode();
     	if(node.childNodes!=null && node.childNodes!=undefined && node.childNodes.length>0){
     		this.serializeSubTree(node.childNodes[0]);

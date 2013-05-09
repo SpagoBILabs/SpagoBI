@@ -88,7 +88,8 @@ import com.jamonapi.MonitorFactory;
 public class ExecutionInstance implements Serializable{
 
 	static private Logger logger = Logger.getLogger(ExecutionInstance.class);
-
+	private static final String TREE_INNER_LOV_TYPE = "treeinner";
+	
 	private String flowId = null;
 	private String executionId = null;
 	private BIObject object = null;
@@ -869,6 +870,7 @@ public class ExecutionInstance implements Serializable{
 	private List getValidationErrorsOnValuesByLovResult(String lovResult, BIObjectParameter biparam, ILovDetail lovProvDet) throws Exception {
 		logger.debug("IN");
 		List toReturn = new ArrayList();
+		boolean valueFound = false;
 		List parameterValuesDescription = new ArrayList();
 		// get lov result handler
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
@@ -884,8 +886,25 @@ public class ExecutionInstance implements Serializable{
 					value = URLDecoder.decode(val, "UTF-8");
 				}
 				String description = null;
-				if (!value.equals("") && !lovResultHandler.containsValue(value, lovProvDet
-						.getValueColumnName())) {
+				if(value.equals("")){
+					valueFound = true;
+				}else if(lovProvDet.getLovType().equals(TREE_INNER_LOV_TYPE)){
+					List<String> treeColumns = lovProvDet.getTreeLevelsColumns();
+					if(treeColumns!=null){
+						for(int j=0; j<treeColumns.size(); j++){
+							valueFound = lovResultHandler.containsValue(value, treeColumns.get(j));
+							if(valueFound){
+								break;
+							}
+						}
+					}
+				} else if (lovResultHandler.containsValue(value, lovProvDet.getValueColumnName())) {
+					valueFound = true;
+				}
+				if(valueFound){
+					description = lovResultHandler.getValueDescription(value, 
+							lovProvDet.getValueColumnName(), lovProvDet.getDescriptionColumnName());
+				}else{
 					logger.error("Parameter '" + biparam.getLabel() + "' cannot assume value '" + value + "'" +
 							" for user '" + ((UserProfile)this.userProfile).getUserId().toString()
 							+ "' with role '" + this.executionRole + "'.");
@@ -895,9 +914,6 @@ public class ExecutionInstance implements Serializable{
 					EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 1077, l);
 					toReturn.add(userError);
 					description = "NOT ADMISSIBLE";
-				} else {
-					description = lovResultHandler.getValueDescription(value, 
-							lovProvDet.getValueColumnName(), lovProvDet.getDescriptionColumnName());
 				}
 				parameterValuesDescription.add(description);
 			}

@@ -271,7 +271,7 @@ public class GetParameterValuesForExecutionAction  extends AbstractSpagoBIAction
 			}
 			// END filtering for correlation
 
-			if(lovProvDet.getLovType()!=null && lovProvDet.getLovType().equals("tree")){
+			if(lovProvDet.getLovType()!=null && lovProvDet.getLovType().contains("tree")){
 				JSONArray valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, treeLovNodeLevel, treeLovNodeValue);
 				try {
 					writeBackToClient( new JSONSuccess( valuesJSONArray ) );
@@ -353,6 +353,10 @@ public class GetParameterValuesForExecutionAction  extends AbstractSpagoBIAction
 						notNullNode = true;
 					}
 				}
+				if(lovProvDet.getLovType().equals("treeinner")){
+					valueJSON.put("checked",false);
+				}
+				
 				if(addNode && notNullNode){
 					valuesDataJSON.add(valueJSON);
 				}
