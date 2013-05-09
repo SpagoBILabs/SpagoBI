@@ -586,7 +586,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		IFieldMetaData fieldMetadata = metadata.getFieldMeta(0);
 		IMetaData newMetadata = new MetaData();
 		newMetadata.addFiedMeta(fieldMetadata);
-		newMetadata.addFiedMeta(new FieldMetadata(fieldMetadata.getName() + "_description", fieldMetadata.getType()));
+		newMetadata.addFiedMeta(new FieldMetadata(fieldMetadata.getName() + "_description", String.class));
 		clone.setMetaData(newMetadata);
 		long count = clone.getRecordsCount();
 		for (long i = 0; i < count; i++) {

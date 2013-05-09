@@ -7,12 +7,22 @@ package it.eng.spagobi.engines.worksheet.services.runtime;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -57,6 +67,9 @@ public class GetFilterValuesAction extends AbstractWorksheetEngineAction {
 			JSONDataWriter dataSetWriter = new JSONDataWriter();
 			
 			clone = getUserSheetFilterValues(sheetName, fieldName);
+			
+			this.adjustDates(clone);
+			
 			gridDataFeed = (JSONObject) dataSetWriter.write(clone);
 			
 			try {
@@ -75,4 +88,25 @@ public class GetFilterValuesAction extends AbstractWorksheetEngineAction {
 			logger.debug("OUT");
 		}	
 	}
+
+
+	/* 
+	 * Converts dates into long values and description into a localized date
+	 * This is because the client widget Ext.ux.form.SuperBoxSelect is not able to handle dates properly
+	 */
+	private void adjustDates(IDataStore dataStore) {
+		IMetaData metadata = dataStore.getMetaData();
+		IFieldMetaData fieldMetadata = metadata.getFieldMeta(0);
+		Class type = fieldMetadata.getType();
+		if (Date.class.isAssignableFrom(type)) {
+			fieldMetadata.setType(Long.class);
+			long count = dataStore.getRecordsCount();
+			for (long i = 0; i < count; i++) {
+				IField field = dataStore.getRecordAt((int) i).getFieldAt(0);
+				Date value = (Date) field.getValue();
+				field.setValue(value.getTime());
+			}
+		}
+	}
+	
 }
