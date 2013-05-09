@@ -130,9 +130,9 @@ public class ValidateExpressionAction extends AbstractQbeEngineAction {
 					uresolvedReferenceErrors.add("Impossible to resolve reference to filed: " + item);
 				}
 				if(item.trim().startsWith("dmFields")) {
-					dmFields.put(seed, "1000");
+					dmFields.put(seed, 1000);
 				} else {
-					qFields.put(seed, "1000");
+					qFields.put(seed, 1000);
 				}					
 			}
 			
