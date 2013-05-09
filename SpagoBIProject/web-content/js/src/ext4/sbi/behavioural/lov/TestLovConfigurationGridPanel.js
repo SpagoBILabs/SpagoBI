@@ -74,7 +74,7 @@ Ext.define('Sbi.behavioural.lov.TestLovConfigurationGridPanel', {
             flex: 1
         }];
 		
-		if(!config.treeLov){
+		if(config.lovType.indexOf("tree")<0){
 			this.columnsDefinition.push({
 	            xtype: 'radiocolumn',
 	            header: LN('sbi.behavioural.lov.value'),
@@ -122,9 +122,9 @@ Ext.define('Sbi.behavioural.lov.TestLovConfigurationGridPanel', {
 				 fields: ['name', 'isValue', 'isDescription', 'isVisible'],
 			    data : data
 			});
-			
+			this.store.load();
 			this.columns = this.columnsDefinition.slice(0,this.columnsDefinition.length);
-			this.reconfigure(this.store, this.columns);
+			this.reconfigure(this.store);
 		}
 	}
 	
@@ -152,13 +152,10 @@ Ext.define('Sbi.behavioural.lov.TestLovConfigurationGridPanel', {
 				valueColumnName:value,
 				descriptionColumnName:description,
 				visibleColumnNames:visible,
-				lovType: 'simple',
+				lovType: this.lovType,
 				column: this.column
 		}
 		
-		if(this.treeLov){
-			LOVConfiguration.lovType = 'tree';
-		}
 		
 		return LOVConfiguration;
 		

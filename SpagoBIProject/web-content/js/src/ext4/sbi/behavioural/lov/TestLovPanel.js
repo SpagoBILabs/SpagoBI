@@ -50,16 +50,18 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 			serviceName: 'SAVE_LOV_ACTION',
 			baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'} 
 		});
-		this.treeLov = (config.lovConfig.lovType && config.lovConfig.lovType=='tree');
+		this.treeLov = (config.lovConfig.lovType && (config.lovConfig.lovType=='tree'|| config.lovConfig.lovType=='treeinner'));
 		
 		var typeStoreValue = "simple";
-		if(this.treeLov){
-			typeStoreValue = "tree";
+		if(config.lovConfig.lovType){
+			typeStoreValue = config.lovConfig.lovType;
 		}
 		
 	    var typeStore = Ext.create('Ext.data.Store', {
 	        fields: ['type','description'],
-	        data : [{type:'simple', description:LN('sbi.behavioural.lov.type.simple')}, {type:'tree', description:LN('sbi.behavioural.lov.type.tree')}]
+	        data : [{type:'simple', description:LN('sbi.behavioural.lov.type.simple')}, 
+	                {type:'tree', description:LN('sbi.behavioural.lov.type.tree')},
+	                {type:'treeinner', description:LN('sbi.behavioural.lov.type.treeinner')}]
 	    });
 	    
 		this.comboType = Ext.create('Ext.form.ComboBox', {
@@ -103,13 +105,13 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 		
 		this.lovTestPreview = Ext.create('Sbi.behavioural.lov.TestLovResultPanel',{region: 'south',height:315, treeLov: this.treeLov}); //by alias
 		//ConfigurationPanel(value, description)
-		this.lovTestConfiguration = Ext.create('Sbi.behavioural.lov.TestLovConfigurationGridPanel',{lovConfig:config.lovConfig,  parentStore : this.lovTestPreview.store , treeLov: this.treeLov, flex: 1}); //by alias
+		this.lovTestConfiguration = Ext.create('Sbi.behavioural.lov.TestLovConfigurationGridPanel',{lovConfig:config.lovConfig,  parentStore : this.lovTestPreview.store , lovType: typeStoreValue, flex: 1}); //by alias
 		this.lovTestPreview.on('storeLoad',this.lovTestConfiguration.onParentStroreLoad,this.lovTestConfiguration);
 		var lovConfigurationPanelItems = [this.lovTestConfiguration];
 		
 		if(this.treeLov){
 			//Tree lov panel
-			this.lovTestConfigurationTree = Ext.create('Sbi.behavioural.lov.TestLovTreePanel',{lovConfig:config.lovConfig, flex: 2, parentStore : this.lovTestPreview.store });
+			this.lovTestConfigurationTree = Ext.create('Sbi.behavioural.lov.TestLovTreePanel',{lovConfig:config.lovConfig, flex: 2, parentStore : this.lovTestPreview.store ,lovType: typeStoreValue});
 			this.lovTestPreview.on('storeLoad',this.lovTestConfigurationTree.onParentStroreLoad,this.lovTestConfigurationTree);
 			lovConfigurationPanelItems.push(this.lovTestConfigurationTree);
 		}
@@ -120,7 +122,6 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
 		     	width: "100%",
 		      	items: lovConfigurationPanelItems
 		    });
-		
 		
 		this.listeners = {
       		"render" : function(){

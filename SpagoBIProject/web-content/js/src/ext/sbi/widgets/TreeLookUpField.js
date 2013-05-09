@@ -94,7 +94,7 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 					attr.iconCls = 'parameter-leaf';
 				}
 				
-				if ((thisPanel.allowInternalNodeSelection || attr.leaf) && thisPanel.multivalue) {
+				if ((attr.leaf) && thisPanel.multivalue) {
 					if (thisPanel.xvalues && thisPanel.xvalues.indexOf(attr.value) >= 0) {
 						attr.checked = true;
 					} else {
