@@ -25,8 +25,7 @@
 <SbiDocumentServiceProxy_URL>/services/SbiDocumentService</SbiDocumentServiceProxy_URL>
 
 <!--  DEFAULt emitter -->
-	<!-- 	<XLS_EMITTER>org.eclipse.birt.report.engine.emitter.prototype.excel</XLS_EMITTER>-->
+<!-- 		<XLS_EMITTER>org.eclipse.birt.report.engine.emitter.prototype.excel</XLS_EMITTER>  -->
 <!--  tribix  emitter -->
- <XLS_EMITTER>org.uguess.birt.report.engine.emitter.xls</XLS_EMITTER> 
-
+ <XLS_EMITTER>org.uguess.birt.report.engine.emitter.xls</XLS_EMITTER>  
 </ENGINE-CONFIGURATION>

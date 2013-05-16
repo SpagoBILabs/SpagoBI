@@ -98,7 +98,8 @@ public class BirtEngine {
 	    /*DefaultResourceLocator drl=new DefaultResourceLocator();
 	    drl.findResource(birtEngine.openReportDesign(arg0), "messages_it_IT.properties", DefaultResourceLocator.MESSAGE_FILE);
 	    */
-	    config.setEngineHome("");
+	    //Commented for Birt 3.7 Upgrade see: http://wiki.eclipse.org/Birt_3.7_Migration_Guide#BIRT_3.7_API_Changes
+	    //config.setEngineHome("");
 	    IPlatformContext context = new PlatformServletContext(sc);
 	    config.setPlatformContext(context);
 	    config.setTempDir(System.getProperty("java.io.tmpdir") + "/birt/");

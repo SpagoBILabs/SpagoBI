@@ -2,8 +2,6 @@
 <web-app id="SpagoBIBirtReportEngine" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
 
-
- 
     <display-name>Eclipse BIRT Report Viewer</display-name>
 
 	<!-- Default locale setting.
@@ -47,6 +45,23 @@
 		<param-name>WORKING_FOLDER_ACCESS_ONLY</param-name>
 		<param-value>true</param-value>
 	</context-param>
+
+	<!--
+		Settings for how to deal with the url report path. e.g. "http://host/repo/test.rptdesign". 
+		
+		Following values are supported:
+		
+		<all> 		- All paths.
+		<domain>	- Only the paths with host matches current domain. Note the comparison is literal, "127.0.0.1" and "localhost" are considered as different hosts.
+		<none> 		- URL paths are not supported.
+		
+		Defaults to "domain".
+	-->
+	<context-param>
+		<param-name>URL_REPORT_PATH_POLICY</param-name>
+		<param-value>domain</param-value>
+	</context-param>
+
 	<!--
 		Temporary image/chart directory. Defaults to ${birt home}/report/images
 	-->
@@ -222,8 +237,7 @@ END-CAS -->
 		<filter-name>SpagoBIAccessFilter</filter-name>
 		<url-pattern>/BirtReportServletBackEnd/*</url-pattern>
 	</filter-mapping>	
-
-		
+	
 	<!-- Viewer Servlet Context Listener -->
 	<listener>
 		<listener-class>org.eclipse.birt.report.listener.ViewerServletContextListener</listener-class>
@@ -270,10 +284,7 @@ END-CAS -->
 			it.eng.spagobi.utilities.engines.EngineTestServlet
 		</servlet-class>
 	</servlet>
-
-
-   
-    
+ 
     <servlet-mapping>
         <servlet-name>SpagoBIDrillServlet</servlet-name>
         <url-pattern>/SpagoBIDrillServlet</url-pattern>
