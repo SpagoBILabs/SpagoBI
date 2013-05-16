@@ -595,7 +595,13 @@ Sbi.locale.ln['sbi.ds.pars']='Attributs de profil disponibles';
 Sbi.locale.ln['sbi.ds.customData'] = 'Attributs';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Recalculer les m\u00e9tadonn\u00e9es?';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = 'Voulez-vous que le syst\u00e8me recalcule les m\u00e9tadonn\u00e9es? (l\'ensemble des donn\u00e9es sera ex\u00e9cut\u00e9 par le syst\u00e8me: cela est n\u00e9cessaire si vous avez modifi\u00e9 l\'ensemble des donn\u00e9es de mani\u00e8re significative)';
-
+Sbi.locale.ln['sbi.ds.advancedTab'] = 'Avanc\u00e8me';
+Sbi.locale.ln['sbi.ds.helpAdvanced'] = 'Aide';
+Sbi.locale.ln['sbi.ds.persist'] = 'Configuration de dataset persistants';
+Sbi.locale.ln['sbi.ds.isPersisted'] = 'Persistent';
+Sbi.locale.ln['sbi.ds.flat'] = 'Configuratione flat dataset';
+Sbi.locale.ln['sbi.ds.isFlatDataset'] = 'Dataset plat';
+Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nom de la table';
 
 //===================================================================
 //MESSAGE BOX BUTTONS

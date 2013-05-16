@@ -87,6 +87,8 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 	this.rowselModel.addListener('rowselect', function(sm, row, rec) {
 		this.activateDsTypeForm(null, rec, row);
 		this.activateTransfForm(null, rec, row);
+		this.activatePersistForm(null, rec.get('isPersisted'), null, null);
+		this.activateFlatForm(null, rec.get('isFlatDataset'), null, null);
 		this.activateDsVersionsGrid(null, rec, row);
 		this.activateDsTestTab(this.datasetTestTab);
 		this.manageDatasetFieldMetadataGrid.loadItems(rec.get("meta"), rec);
@@ -107,10 +109,13 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 	tbInfoButton: null,
 	tbProfAttrsButton : null,
 	tbTransfInfoButton: null,
+	tbPersistInfoButton: null,
 	gridForm : null,
 	mainElementsStore : null,
 	profileAttributesStore: null,
 	trasfDetail : null,
+	persistDetail : null,
+	flatDetail : null,
 	jClassDetail : null,
 	customDataDetail : null,		
 	scriptDetail : null,
@@ -133,21 +138,29 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 
 	, modifyToolbar : function(tabpanel, panel){
 					var itemId = panel.getItemId();
-					if(itemId !== undefined && itemId !== null && itemId === 'advanced'){
+					if(itemId !== undefined && itemId !== null && itemId === 'type'){
 						this.tbInfoButton.show();
 						this.tbProfAttrsButton.show();
 						this.tbTransfInfoButton.hide();
+						this.tbPersistInfoButton();
 					}else if(itemId !== undefined && itemId !== null && itemId === 'transf'){
 						this.tbTransfInfoButton.show();
 						this.tbInfoButton.hide();
 						this.tbProfAttrsButton.hide();
+						this.tbPersistInfoButton.hide();
+					}else if(itemId !== undefined && itemId !== null && itemId === 'advanced'){
+						this.tbTransfInfoButton.hide();
+						this.tbInfoButton.hide();
+						this.tbProfAttrsButton.hide();
+						this.tbPersistInfoButton.show();
 					}else{
 						this.tbInfoButton.hide();
 						this.tbProfAttrsButton.hide();
 						this.tbTransfInfoButton.hide();
+						this.tbPersistInfoButton.hide();
 					}	
 				}
-			
+							
 				,activateTransfForm : function(combo, record, index) {
 					var transfSelected = record.get('trasfTypeCd');
 					if (transfSelected != null
@@ -155,6 +168,28 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						this.trasfDetail.setVisible(true);
 					} else {
 						this.trasfDetail.setVisible(false);
+					}
+				}
+				
+				//extjs4: ,activatePersistForm : function(check, newValue, oldValue, opts) {
+				,activatePersistForm : function(check, checked) {					
+					//var persistSelected = newValue;
+					var persistSelected = checked;
+					if (persistSelected != null && persistSelected == true) {
+						this.persistDetail.setVisible(true);
+					} else {						
+						this.persistDetail.setVisible(false);
+					}
+				}
+				
+				//extjs4: ,activateFlatForm : function(check, newValue, oldValue, opts) {
+				,activateFlatForm : function(check, checked) {
+					//var flatSelected = newValue;
+					var flatSelected = checked;
+					if (flatSelected != null && flatSelected == true) {
+						this.flatDetail.setVisible(true);
+					} else {
+						this.flatDetail.setVisible(false);
 					}
 				}
 
@@ -284,6 +319,11 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						pivotColValue : values['pivotColValue'],
 						pivotRowName : values['pivotRowName'],
 						pivotIsNumRows : values['pivotIsNumRows'],
+						isPersisted : values['isPersisted'],
+						dataSourcePersist : values['dataSourcePersist'],
+						isFlatDataset : values['isFlatDataset'],
+						dataSourceFlat : values['dataSourceFlat'],
+						flatTableName : values['flatTableName'],
 						qbeSQLQuery : values['qbeSQLQuery'],
 						qbeJSONQuery : values['qbeJSONQuery'],
 						qbeDataSource: values['qbeDataSource'],
@@ -315,7 +355,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					}
 					this.previewWindow.show();
 					this.previewWindow.load(requestParameters);
-				}
+				}							
 
 				,initConfigObject : function() {
 					this.configurationObject.fields = [ 'id', 'name',
@@ -326,6 +366,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							'jclassName', 'customData', 'pars', 'trasfTypeCd',
 							'pivotColName', 'pivotColValue',
 							'pivotRowName', 'pivotIsNumRows', 'dsVersions',
+							'isPersisted','dataSourcePersist',
+							'isFlatDataset','dataSourceFlat', 'flatTableName',
 							'qbeSQLQuery', 'qbeJSONQuery', 'qbeDataSource',
 							'qbeDatamarts',	'userIn','dateIn','versNum','versId','meta'];
 
@@ -336,9 +378,11 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								fileName : '', query : '', queryScript : '', queryScriptLanguage : '', dataSource : '',
 								wsAddress : '', wsOperation : '', script : '',
 								scriptLanguage : '', jclassName : '', customData: '', pars : [],
-								trasfTypeCd : '', pivotColName : '', pivotColValue : '',
-								pivotRowName : '', pivotIsNumRows : '', qbeSQLQuery: '',
-								qbeJSONQuery: '', qbeDataSource: '', qbeDatamarts: '',
+								trasfTypeCd : '', pivotColName : '', pivotColValue : '',								
+								pivotRowName : '', pivotIsNumRows : '', 
+								isPersisted:'', dataSourcePersist:'',
+								isFlatDataset:'', dataSourceFlat:'', flatTableName:'',
+								qbeSQLQuery: '',qbeJSONQuery: '', qbeDataSource: '', qbeDatamarts: '',
 								dsVersions : [], userIn:'',dateIn:'',versNum:'',versId:'',meta:[]
 							});
 
@@ -406,6 +450,15 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 		 	            scope: this
 		 	            });
 					tbButtonsArray.push(this.tbTransfInfoButton);
+					
+					this.tbPersistInfoButton = new Ext.Toolbar.Button({
+		 	            text: LN('sbi.ds.help'),
+		 	            iconCls: 'icon-info',
+		 	            handler: this.persistInfo,
+		 	            width: 30,
+		 	            scope: this
+		 	            });
+					tbButtonsArray.push(this.tbPersistInfoButton);
 					this.configurationObject.tbButtonsArray = tbButtonsArray;
 
 					this.initTabItems();
@@ -415,6 +468,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					this.initDetailTab();
 					this.initTypeTab();
 					this.initTrasfTab();
+					this.initAdvancedTab();
 					this.initTestTab();				
 				}
 				
@@ -521,6 +575,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						var rec = this.buildNewRecordDsVersion(version);
 						this.activateDsTypeForm(null, rec, null);
 						this.activateTransfForm(null, rec, null);
+						this.activatePersistForm(null, rec.get('isPersisted'), null, null);
+						this.activateFlatForm(null, rec.get('isFlatDataset'), null, null);
 						this.activateDsTestTab(this.datasetTestTab);
 						this.setValues(rec);
 						this.updateMainStore(values['id']);
@@ -747,21 +803,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							this.jsonTriggerFieldHandler(); 
 						}, this);
 					}, this);
-					//this.qbeJSONQuery.on('click', this.jsonTriggerFieldHandler, this);
-					
-					//"id":3,"name":"foodmart360","description":"foodmart360"
-//					var datamartsStore = new Ext.data.Store({
-//				        proxy: new Ext.data.ScriptTagProxy({
-//					        url: this.configurationObject.getDatamartsService,
-//					        method: 'GET'
-//					    }),
-//					    reader: new Ext.data.JsonReader({id: 'id'}, [
-//					         {name:'id'}
-//			                 , {name:'name'}
-//			                 , {name:'description'}
-//			     	    ])
-//					});
-					
+
 					var datamartsStore = new Ext.data.JsonStore({
 					    url: this.configurationObject.getDatamartsService,
 					    root: 'rows',
@@ -814,17 +856,6 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						validationEvent : true,
 						name : 'jclassName'
 					});
-					
-//					this.customData = new Ext.form.TextField({
-//						maxLength : 100,
-//						minLength : 1,
-//						width : 350,
-//						regexText : LN('sbi.roles.alfanumericString'),
-//						fieldLabel : LN('sbi.ds.customData'),
-//						allowBlank : false,
-//						validationEvent : true,
-//						name : 'customData'
-//					});
 
 					this.customDataGrid = new Sbi.tools.dataset.CustomDataGrid();
 					
@@ -846,29 +877,6 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								},
 								items : [ detailDsType ]
 							});
-
-					/*
-					this.queryDetail = new Ext.form.FieldSet(
-							{
-								labelWidth : 100,
-								defaults : {
-									border : true
-								},
-								defaultType : 'textfield',
-								autoHeight : true,
-								autoScroll : true,
-								border : true,
-								style : {
-									"margin-left" : "3px",
-									"margin-top" : "0px",
-									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
-											: "-5px")
-											: "3px"
-								},
-								items : [ this.detailDataSource,
-										this.detailQuery, this.detailQueryScript ]
-							});
-							*/
 					
 					this.queryDetail = new Sbi.tools.dataset.QueryDatasetConfigurationPanel(config);
 
@@ -1027,11 +1035,11 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					this.typeTab = new Ext.Panel(
 							{
 								title : LN('sbi.generic.type'),
-								itemId : 'advanced',
+								itemId : 'type',
 								width : 350,
 								items : {
-									id : 'advanced-detail',
-									itemId : 'advanced-detail',
+									id : 'type-detail',
+									itemId : 'type-detail',
 									// columnWidth: 0.4,
 									xtype : 'fieldset',
 									scope : this,
@@ -1202,7 +1210,207 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							});
 				}
 				
-				,initTestTab : function() {
+				, initPersistTab : function(){
+					this.isPersisted = new Ext.form.Checkbox({
+						xtype : 'checkbox',
+						itemId : 'isPersisted',
+						name : 'isPersisted',
+						fieldLabel : LN('sbi.ds.isPersisted')
+					});
+					//extjs4: this.isPersisted.addListener('change',	this.activatePersistForm, this);
+					this.isPersisted.addListener('check',	this.activatePersistForm, this);
+					
+					var dataSourcePersist = new Ext.form.ComboBox({
+						name : 'dataSourcePersist',
+						id  : 'dataSourcePersist',
+						store : this.dataSourceStore,
+						width : 180,
+						fieldLabel : LN('sbi.ds.dataSource'),
+						displayField : 'dataSource', // what the user sees in the popup
+						valueField : 'dataSource', // what is passed to the 'change' event
+						typeAhead : true, forceSelection : true,
+						mode : 'local',
+						triggerAction : 'all',
+						selectOnFocus : true, editable : false,
+						allowBlank : false, validationEvent : true
+					});
+
+					var fsPersist = new Ext.form.FieldSet(
+							{
+								labelWidth : 150,
+								defaults : {
+									width : 200,
+									border : false
+								},
+								defaultType : 'textfield',
+								autoHeight : true,
+								autoScroll : true,
+								bodyStyle : Ext.isIE ? 'padding:0 0 5px 15px;'
+										: 'padding:10px 15px;',
+								border : true,
+								style : {
+									"margin-left" : "10px",
+									"margin-top" : "10px",
+									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-10px"
+											: "-13px")
+											: "10px"
+								},
+								items : [ dataSourcePersist ]
+							});
+					return fsPersist;
+				}
+				
+				, initFlatTab : function(){
+					this.isFlatDataset = new Ext.form.Checkbox({
+						xtype : 'checkbox',
+						itemId : 'isFlatDataset',
+						name : 'isFlatDataset',
+						fieldLabel : LN('sbi.ds.isFlatDataset')
+					});
+				    //extjs4: this.isFlatDataset.addListener('change',this.activateFlatForm, this);
+				    this.isFlatDataset.addListener('check',this.activateFlatForm, this);
+					
+					var dataSourceFlat = new Ext.form.ComboBox({
+						id  : 'dataSourceFlat',
+						name : 'dataSourceFlat',
+						store : this.dataSourceStore,
+						width : 180,
+						fieldLabel : LN('sbi.ds.dataSource'),
+						displayField : 'dataSource', // what the user sees in the popup
+						valueField : 'dataSource', // what is passed to the 'change' event
+						typeAhead : true, forceSelection : true,
+						mode : 'local',
+						triggerAction : 'all',
+						selectOnFocus : true, editable : false,
+						allowBlank : false, validationEvent : true
+					});			
+					
+					var flatTableName = new Ext.form.TextField({
+						maxLength : 50, minLength : 1,
+						width : 200,
+						regexText : LN('sbi.roles.alfanumericString'),
+						fieldLabel : LN('sbi.ds.flatTableName'),
+						allowBlank : false, validationEvent : true,
+						name : 'flatTableName'
+					});
+					
+					var fsFlat = new Ext.form.FieldSet(
+							{
+								labelWidth : 150,
+								defaults : {
+									width : 200,
+									border : false
+								},
+								defaultType : 'textfield',
+								autoHeight : true,
+								autoScroll : true,
+								bodyStyle : Ext.isIE ? 'padding:0 0 5px 15px;'
+										: 'padding:10px 15px;',
+								border : true,
+								style : {
+									"margin-left" : "10px",
+									"margin-top" : "10px",
+									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-10px"
+											: "-13px")
+											: "10px"
+								},
+								items : [ dataSourceFlat,
+								          flatTableName]
+							});
+					return fsFlat;
+				}
+				
+				, initAdvancedTab : function() {
+					
+					this.persistDetail  = this.initPersistTab();
+					this.flatDetail  = this.initFlatTab();
+						
+					this.persistPanel = new Ext.Panel(
+							{
+								title : LN('sbi.ds.persist'),
+								itemId : 'persistPanel',
+								width : 500,
+								items : {
+									id : 'persist-detail',
+									itemId : 'persist-detail',
+									xtype : 'fieldset',
+									scope : this,
+									labelWidth : 90,
+									defaultType : 'textfield',
+									autoHeight : true,
+									autoScroll : true,
+									bodyStyle : Ext.isIE ? 'padding:0 0 5px 15px;'
+											: 'padding:0px 0px;',
+									border : false,
+									style : {
+										"margin-left" : "0px",
+										"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-10px"
+												: "-13px")
+												: "0"
+									},
+									items : [this.isPersisted,
+									         this.persistDetail] 
+								}
+							});
+					
+					this.flatPanel = new Ext.Panel(
+							{
+								title : LN('sbi.ds.flat'),
+								itemId : 'flatPanel',
+								width : 500,
+								items : {
+									id : 'flat-detail',
+									itemId : 'flat-detail',
+									xtype : 'fieldset',
+									scope : this,
+									labelWidth : 90,
+									defaultType : 'textfield',
+									autoHeight : true,
+									autoScroll : true,
+									bodyStyle : Ext.isIE ? 'padding:0 0 5px 15px;'
+											: 'padding:0px 0px;',
+									border : false,
+									style : {
+										"margin-left" : "0px",
+										"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-10px"
+												: "-13px")
+												: "0"
+									},
+									items : [this.isFlatDataset,
+									         this.flatDetail] 
+								}
+							});
+					
+					this.advancedTab = new Ext.Panel(
+							{
+								title : LN('sbi.ds.advancedTab'),
+								itemId : 'advanced',
+								width : 550,
+								items : {
+									id : 'advanced-detail',
+									itemId : 'advanced-detail',
+									xtype : 'fieldset',
+									scope : this,
+									labelWidth : 90,
+									defaultType : 'textfield',
+									autoHeight : true,
+									autoScroll : true,
+									bodyStyle : Ext.isIE ? 'padding:0 0 5px 10px;'
+											: 'padding:0px 0px;',
+									border : true,
+									style : {
+										"margin-left" : "15px",
+										"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-5px"
+												: "-8px")
+												: "0"
+									},
+									items : [this.persistPanel,
+									         this.flatPanel] 
+								}
+							});
+				  }
+				
+				, initTestTab : function() {
 					this.tbTestDSButton = new Ext.Toolbar.Button({
 						text : LN('sbi.ds.test'),
 						width : 30,
@@ -1236,7 +1444,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							this.activateDsTestTab, this);
 
 					this.configurationObject.tabItems = [ this.detailTab,
-							this.typeTab, this.transfTab,
+							this.typeTab, this.transfTab, this.advancedTab, //this.persistTab, this.flatTab, 
 							this.datasetTestTab ];
 				}
 
@@ -1251,7 +1459,10 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								wsAddress : '', wsOperation : '', script : '',
 								scriptLanguage : '', jclassName : '', customData : '', pars : [],
 								trasfTypeCd : '', pivotColName : '', pivotColValue : '',
-								pivotRowName : '', pivotIsNumRows : '', qbeSQLQuery: '',
+								pivotRowName : '', pivotIsNumRows : '',
+								isPersisted:'', dataSourcePersist:'',
+								isFlatDataset:'', dataSourceFlat:'', flatTableName:'',
+								qbeSQLQuery: '',
 								qbeJSONQuery: '', qbeDataSource: '', qbeDatamarts: '',
 								dsVersions : [],
 								userIn: '',
@@ -1267,6 +1478,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						item.doLayout();
 					});
 					this.trasfDetail.setVisible(false);
+					this.persistDetail.setVisible(false);
+					
 					if (this.newRecord != null
 							&& this.newRecord != undefined) {
 						this.mainElementsStore.add(this.newRecord);
@@ -1330,6 +1543,11 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						pivotColValue : values['pivotColValue'],
 						pivotRowName : values['pivotRowName'],
 						pivotIsNumRows : values['pivotIsNumRows'],
+						isPersisted: values['isPersisted'],
+						dataSourcePersist: values['dataSourcePersist'],
+						isFlatDataset: values['isFlatDataset'],
+						dataSourceFlat: values['dataSourceFlat'],
+						flatTableName: values['flatTableName'],
 						qbeSQLQuery : values['qbeSQLQuery'],
 						qbeJSONQuery : values['qbeJSONQuery'],
 						qbeDataSource: values['qbeDataSource'],
@@ -1370,6 +1588,11 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						pivotColValue : values['pivotColValue'],
 						pivotRowName : values['pivotRowName'],
 						pivotIsNumRows : values['pivotIsNumRows'],
+						isPersisted: values['isPersisted'],
+						dataSourcePersist: values['dataSourcePersist'],
+						isFlatDataset: values['isFlatDataset'],
+						dataSourceFlat: values['dataSourceFlat'],
+						flatTableName: values['flatTableName'],
 						qbeSQLQuery : values['qbeSQLQuery'],
 						qbeJSONQuery : values['qbeJSONQuery'],
 						qbeDataSource: values['qbeDataSource'],
@@ -1407,6 +1630,11 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							pivotColValue : values['pivotColValue'],
 							pivotRowName : values['pivotRowName'],
 							pivotIsNumRows : values['pivotIsNumRows'],
+							isPersisted: values['isPersisted'],
+							dataSourcePersist: values['dataSourcePersist'],
+							isFlatDataset: values['isFlatDataset'],
+							dataSourceFlat: values['dataSourceFlat'],
+							flatTableName: values['flatTableName'],
 							qbeSQLQuery : values['qbeSQLQuery'],
 							qbeJSONQuery : values['qbeJSONQuery'],
 							qbeDataSource: values['qbeDataSource'],
@@ -1443,6 +1671,11 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					record.set('pivotColValue',values['pivotColValue']);
 					record.set('pivotRowName',values['pivotRowName']);
 					record.set('pivotIsNumRows',values['pivotIsNumRows']);
+					record.set('isPersisted', values['isPersisted']),
+					record.set('dataSourcePersist', values['dataSourcePersist']),
+					record.set('isFlatDataset', values['isFlatDataset']),
+					record.set('dataSourceFlat', values['dataSourceFlat']),
+					record.set('flatTableName', values['flatTableName']),					
 					record.set('qbeSQLQuery',values['qbeSQLQuery']);
 					record.set('qbeJSONQuery',values['qbeJSONQuery']);
 					record.set('qbeDataSource',values['qbeDataSource']);
@@ -1720,6 +1953,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 				
 				,
 				jsonTriggerFieldHandler : function() {
+					alert("jsonTriggerFieldHandler");
 					var values = this.getValues();
 					var datasetId = values['id'];
 					var datasourceLabel = this.detailQbeDataSource.getValue();
@@ -1830,6 +2064,25 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						});
 					};
 					win_info_4.show();
+			    }
+				
+				,persistInfo: function() {		
+					var win_info_5;
+					if(!win_info_5){
+						win_info_5= new Ext.Window({
+							id:'win_persist_5',
+							autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/dsPersistenceHelp.html'},             				
+							layout:'fit',
+							width:760,
+							height:420,
+							autoScroll: true,
+							closeAction:'close',
+							buttonAlign : 'left',
+							plain: true,
+							title: LN('sbi.ds.help')
+						});
+					};
+					win_info_5.show();
 			    }
 				
 				,fieldsMetadata: function() {		

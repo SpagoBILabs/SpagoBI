@@ -585,7 +585,13 @@ Sbi.locale.ln['sbi.ds.pars'] = 'Los atributos del perfil disponibles';
 Sbi.locale.ln['sbi.ds.customData'] = 'Atributos';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Volver a calcular los metadatos?';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = '�Usted desea que el sistema vuelva a calcular la base de datos de metadatos? (El conjunto de datos se ejecutar\u00E1 por el sistema: esto es necesario si se ha modificado de manera significativa el conjunto de datos)';
-
+Sbi.locale.ln['sbi.ds.advancedTab'] = 'Avanzado';
+Sbi.locale.ln['sbi.ds.helpAdvanced'] = 'Ayudar';
+Sbi.locale.ln['sbi.ds.persist'] = 'Registrada configuraci\u00F3n del dataset';
+Sbi.locale.ln['sbi.ds.isPersisted'] = 'Persistir en la Tabla';
+Sbi.locale.ln['sbi.ds.flat'] = 'Configuraci\u00F3n dataset plano';
+Sbi.locale.ln['sbi.ds.isFlatDataset'] = 'Dataset plano';
+Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nombre de la Tabla';
 
 
 //===================================================================

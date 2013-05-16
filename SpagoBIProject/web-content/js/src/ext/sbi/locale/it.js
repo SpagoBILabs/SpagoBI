@@ -646,11 +646,18 @@ Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Ricalcolare i metada
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = 'Vuoi che il sistema ricalcoli i metadati del dataset? (il dataset verr\u00e0 rieseguito dal sistema; si consiglia di effettuare questa operazione nel caso in cui il dataset sia stato alterato in modo significativo)';
 Sbi.locale.ln['sbi.ds.metadata'] = 'Metadati delle colonne';
 Sbi.locale.ln['sbi.ds.field.metadata'] = 'Metadata';
-Sbi.locale.ln['sbi.ds.field.name'] = 'Nome
+Sbi.locale.ln['sbi.ds.field.name'] = 'Nome';
 Sbi.locale.ln['sbi.ds.measure'] = 'Misura';
 Sbi.locale.ln['sbi.ds.attribute'] = 'Attributo';
 Sbi.locale.ln['sbi.ds.field.nature.title'] = 'Selezionare la tipologia di campo';
 Sbi.locale.ln['sbi.ds.field.metadata.nosaved'] = 'Devi salvare il dataset prima di modificare i metadati';
+Sbi.locale.ln['sbi.ds.advancedTab'] = 'Avanzate';
+Sbi.locale.ln['sbi.ds.helpAdvanced'] = 'Aiuto';
+Sbi.locale.ln['sbi.ds.persist'] = 'Configurazione persistenza del dataset';
+Sbi.locale.ln['sbi.ds.isPersisted'] = 'Persisti';
+Sbi.locale.ln['sbi.ds.flat'] = 'Configurazione dataset di tipo flat';
+Sbi.locale.ln['sbi.ds.isFlatDataset'] = 'Dataset piatto';
+Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nome tabella';
 
 Sbi.locale.ln['sbi.datasource.label']= 'Etichetta';
 Sbi.locale.ln['sbi.datasource.description']= 'Descrizione';
@@ -859,9 +866,8 @@ Sbi.locale.ln['sbi.behavioural.delete']='Cancella'
 //Sbi.worksheet.WorksheetFromDatasetPanel : AD-HOC REPORTING 
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.nodatasetselected.msg']='Non \u00e8 stato selezionato alcun dataset! Seleziona un dataset per proseguire.';
-Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.choosedataset.msg']='Seleziona un dataset ...';
-Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.buttons.gotoworksheet']='Crea un documento Worksheet >';
-Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.buttons.gotoqbe']='Crea un nuovo dataset >';
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.choosedataset.msg']='Seleziona un dataset e clicca sul pulsante Avanti ...';
+Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.createworksheet.msg']='... ora puoi disegnare il worksheet!';
 
 //===================================================================
 //Sbi.worksheet.WorksheetEditorIframePanelExt3 : AD-HOC REPORTING 
