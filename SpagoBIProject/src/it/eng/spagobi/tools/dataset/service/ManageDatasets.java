@@ -51,6 +51,7 @@ import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -63,24 +64,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 
 
 public class ManageDatasets extends AbstractSpagoBIAction {
@@ -162,8 +153,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 	}
 
-	private void datatsetInsert(IDataSetDAO dsDao, Locale locale){
-		GuiGenericDataSet ds = getGuiGenericDatasetToInsert();		
+	protected void datatsetInsert(IDataSetDAO dsDao, Locale locale){
+		GuiGenericDataSet ds = getGuiGenericDatasetToInsert();
+		JSONObject attributesResponseSuccessJSON = new JSONObject();
 		HashMap<String, String> logParam = new HashMap();
 		logParam.put("NAME", ds.getName());
 		logParam.put("LABEL", ds.getLabel());
@@ -175,21 +167,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				if(id != null && !id.equals("") && !id.equals("0")){							
 					ds.setDsId(Integer.valueOf(id));
 					dsDao.modifyDataSet(ds);
-					logger.debug("Resource "+id+" updated");
-					JSONObject attributesResponseSuccessJSON = new JSONObject();
+					logger.debug("Resource "+id+" updated");					
 					attributesResponseSuccessJSON.put("success", true);
 					attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 					attributesResponseSuccessJSON.put("id", id);
 					GuiDataSetDetail dsDetailSaved = ds.getActiveDetail();
-					attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.serializeMetada(dsDetailSaved.getDsMetadata()));
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.MODIFY",logParam , "OK");
-					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );					
-					
+					attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.serializeMetada(dsDetailSaved.getDsMetadata()));										
 				}else{
 					Integer dsID = dsDao.insertDataSet(ds);
 					GuiGenericDataSet dsSaved = dsDao.loadDataSetById(dsID);
-					logger.debug("New Resource inserted");
-					JSONObject attributesResponseSuccessJSON = new JSONObject();
+					logger.debug("New Resource inserted");					
 					attributesResponseSuccessJSON.put("success", true);
 					attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 					attributesResponseSuccessJSON.put("id", dsID);
@@ -199,13 +186,36 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						attributesResponseSuccessJSON.put("userIn", dsDetailSaved.getUserIn());
 						attributesResponseSuccessJSON.put("versId", dsDetailSaved.getDsHId());
 						attributesResponseSuccessJSON.put("versNum", dsDetailSaved.getVersionNum());
-						attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.serializeMetada(dsDetailSaved.getDsMetadata()));
-						
-					}
-					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.ADD",logParam , "OK");
-					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+						attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.serializeMetada(dsDetailSaved.getDsMetadata()));						
+					}					
 				}
-			} catch (Throwable e) {
+				String operation = (id != null && !id.equals("") && !id.equals("0"))?"DATA_SET.MODIFY":"DATA_SET.ADD";				
+				if(ds.getActiveDetail().isPersisted()){
+				//Manage persistence of dataset if required. On modify it will drop and create the destination table!
+					logger.debug("Start persistence...");
+					//gets the dataset object informations		
+					IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(ds.getLabel());								
+					JSONArray parsListJSON = getAttributeAsJSONArray(DataSetConstants.PARS);
+					if(parsListJSON.length()>0)  { 
+						logger.error("The dataset cannot be persisted because uses parameters!");
+						throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.dsCannotPersist");
+					}
+					IDataSource datasource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(ds.getActiveDetail().getDataSourcePersist());
+					PersistedTableManager ptm = new PersistedTableManager(profile);
+					ptm.persistDataSet(dataset, datasource);										
+					logger.debug("Persistence ended succesfully!");
+				}
+				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, operation, logParam , "OK");
+				writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+			} catch (SpagoBIServiceException es) {
+				try {
+					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.ADD",logParam , "KO");
+				} catch (Exception es1) {
+					// TODO Auto-generated catch block
+					es1.printStackTrace();
+				}				
+				throw new SpagoBIServiceException(SERVICE_NAME,es.getMessage(), es);
+			}catch (Throwable e) {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.ADD",logParam , "KO");
 				} catch (Exception e1) {
@@ -382,7 +392,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return items;
 	}
 
-	private GuiGenericDataSet getGuiGenericDatasetToInsert() {
+	protected GuiGenericDataSet getGuiGenericDatasetToInsert() {
 
 		GuiGenericDataSet ds = null;
 
@@ -438,8 +448,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			}
 
 			if(meta != null && !meta.equals("")){
-				dsActiveDetail.setDsMetadata(meta);
-				
+				dsActiveDetail.setDsMetadata(meta);				
 			}
 
 			
@@ -447,13 +456,40 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			if(pars != null) {
 				dsActiveDetail.setParameters(pars);
 			}
-			
-			
 
 			if(trasfTypeCd!=null && !trasfTypeCd.equals("")){
 				dsActiveDetail = setTransformer(dsActiveDetail, trasfTypeCd);
 			}
-
+						
+			Boolean isPersisted = getAttributeAsBoolean(DataSetConstants.IS_PERSISTED);
+			if(isPersisted != null){
+				dsActiveDetail.setPersisted(isPersisted.booleanValue());
+			}
+			if (isPersisted){
+				String dataSourcePersist = getAttributeAsString(DataSetConstants.DATA_SOURCE_PERSIST);
+				if(dataSourcePersist != null && !dataSourcePersist.equals("")){
+					dsActiveDetail.setDataSourcePersist(dataSourcePersist);
+				}
+			}else{
+				dsActiveDetail.setDataSourcePersist("");
+			}
+			Boolean isFlatDataset = getAttributeAsBoolean(DataSetConstants.IS_FLAT_DATASET);
+			if(isFlatDataset != null){
+				dsActiveDetail.setFlatDataset(isFlatDataset.booleanValue());
+			}
+			if (isFlatDataset){
+				String dataSourceFlat = getAttributeAsString(DataSetConstants.DATA_SOURCE_FLAT);
+				if(dataSourceFlat != null && !dataSourceFlat.equals("")){
+					dsActiveDetail.setDataSourceFlat(dataSourceFlat);
+				}
+				String flatTableName = getAttributeAsString(DataSetConstants.FLAT_TABLE_NAME);
+				if(flatTableName != null && !flatTableName.equals("")){
+					dsActiveDetail.setFlatTableName(flatTableName);
+				}
+			}else{
+				dsActiveDetail.setDataSourceFlat("");
+				dsActiveDetail.setFlatTableName("");
+			}	
 			IDataSet ds = null;		
 			try {
 				if (dsType != null && !dsType.equals("")) {

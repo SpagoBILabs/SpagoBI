@@ -12,6 +12,7 @@ import it.eng.spagobi.tools.dataset.bo.CustomDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JClassDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.QbeDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
@@ -72,6 +73,12 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String PIVOT_COL_VALUE = "pivotColValue";
 	private static final String PIVOT_ROW_NAME = "pivotRowName";
 	private static final String PIVOT_IS_NUM_ROWS = "pivotIsNumRows";
+	
+	private static final String IS_PERSISTED = "isPersisted";
+	private static final String DATA_SOURCE_PERSIST = "dataSourcePersist";
+	private static final String IS_FLAT_DATASET = "isFlatDataset";
+	private static final String FLAT_TABLE_NAME = "flatTableName";
+	private static final String DATA_SOURCE_FLAT = "dataSourceFlat";
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -234,7 +241,12 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(PIVOT_COL_NAME, dsDetail.getPivotColumnName());	
 			result.put(PIVOT_COL_VALUE, dsDetail.getPivotColumnValue());	
 			result.put(PIVOT_ROW_NAME,dsDetail.getPivotRowName());	
-			result.put(PIVOT_IS_NUM_ROWS,dsDetail.isNumRows());	
+			result.put(PIVOT_IS_NUM_ROWS,dsDetail.isNumRows());
+			result.put(IS_PERSISTED,dsDetail.isPersisted());	
+			result.put(DATA_SOURCE_PERSIST,dsDetail.getDataSourcePersist());	
+			result.put(IS_FLAT_DATASET,dsDetail.isFlatDataset());	
+			result.put(FLAT_TABLE_NAME,dsDetail.getFlatTableName());
+			result.put(DATA_SOURCE_FLAT,dsDetail.getDataSourceFlat());
 	
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);

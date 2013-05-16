@@ -82,6 +82,12 @@ public class DataSetConstants {
 	public static final String QBE_JSON_QUERY = "qbeJSONQuery";
 	public static final String QBE_SQL_QUERY = "qbeSQLQuery";
 	
+	public static final String IS_PERSISTED = "isPersisted";
+	public static final String DATA_SOURCE_PERSIST = "dataSourcePersist";
+	public static final String IS_FLAT_DATASET = "isFlatDataset";
+	public static final String FLAT_TABLE_NAME = "flatTableName";
+	public static final String DATA_SOURCE_FLAT = "dataSourceFlat";
+	
 	public static final String START = "start";
 	public static final String LIMIT = "limit";
 	public static final Integer START_DEFAULT = 0;
@@ -89,7 +95,6 @@ public class DataSetConstants {
 	
 	//filters parameters
 	public static final String FILTERS = "FILTERS";
-	
 	
 	
 }

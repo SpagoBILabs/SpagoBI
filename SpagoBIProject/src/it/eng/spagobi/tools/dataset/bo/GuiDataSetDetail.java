@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -36,6 +38,12 @@ public class GuiDataSetDetail implements Serializable{
 	private String sbiVersionIn=null;
 	private String metaVersion=null;
 	private Date timeIn = null;
+	
+	private boolean isPersisted = false;
+	private String dataSourcePersist;
+	private boolean isFlatDataset = false;
+	private String flatTableName = null;
+	private String dataSourceFlat;
 	
 	public int getVersionNum() {
 		return versionNum;
@@ -235,5 +243,74 @@ public class GuiDataSetDetail implements Serializable{
 		this.dsMetadata = dsMetadata;
 	}
 
-    	
+	/**
+	 * @return the isPersisted
+	 */
+	public boolean isPersisted() {
+		return isPersisted;
+	}
+
+	/**
+	 * @param isPersisted the isPersisted to set
+	 */
+	public void setPersisted(boolean isPersisted) {
+		this.isPersisted = isPersisted;
+	}
+
+	/**
+	 * @return the dataSourcePersist
+	 */
+	public String getDataSourcePersist() {
+		return dataSourcePersist;
+	}
+
+	/**
+	 * @param dataSourcePersist the dataSourcePersist to set
+	 */
+	public void setDataSourcePersist(String dataSourcePersist) {
+		this.dataSourcePersist = dataSourcePersist;
+	}
+
+	/**
+	 * @return the isFlatDataset
+	 */
+	public boolean isFlatDataset() {
+		return isFlatDataset;
+	}
+
+	/**
+	 * @param isFlatDataset the isFlatDataset to set
+	 */
+	public void setFlatDataset(boolean isFlatDataset) {
+		this.isFlatDataset = isFlatDataset;
+	}
+
+	/**
+	 * @return the flatTableName
+	 */
+	public String getFlatTableName() {
+		return flatTableName;
+	}
+
+	/**
+	 * @param flatTableName the flatTableName to set
+	 */
+	public void setFlatTableName(String flatTableName) {
+		this.flatTableName = flatTableName;
+	}
+
+	/**
+	 * @return the dataSourceFlat
+	 */
+	public String getDataSourceFlat() {
+		return dataSourceFlat;
+	}
+
+	/**
+	 * @param dataSourceFlat the dataSourceFlat to set
+	 */
+	public void setDataSourceFlat(String dataSourceFlat) {
+		this.dataSourceFlat = dataSourceFlat;
+	}
+	
 }

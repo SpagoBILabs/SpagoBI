@@ -217,6 +217,28 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibDataSet.setPivotRowName(dataSetActiveDetail.getPivotRowName());
 				hibDataSet.setPivotColumnValue(dataSetActiveDetail.getPivotColumnValue());
 				hibDataSet.setNumRows(dataSetActiveDetail.isNumRows());
+				
+				//manage of persistence fields
+				if (dataSetActiveDetail.getDataSourcePersist() != null){
+					String dataSourcePersist = dataSetActiveDetail.getDataSourcePersist();
+					Criterion labelCriterrion = Expression.eq("label", dataSourcePersist);
+					Criteria criteria = session.createCriteria(SbiDataSource.class);
+					criteria.add(labelCriterrion);	
+					SbiDataSource hibDataSourcePersist = (SbiDataSource) criteria.uniqueResult();
+					hibDataSet.setDataSourcePersist(hibDataSourcePersist);
+				}
+				hibDataSet.setPersisted(dataSetActiveDetail.isPersisted());
+				//manage of flat fields
+				hibDataSet.setFlatDataset(dataSetActiveDetail.isFlatDataset());
+				if (dataSetActiveDetail.getDataSourceFlat() != null){
+					String dataSourceFlat = dataSetActiveDetail.getDataSourceFlat();
+					Criterion labelCriterrion = Expression.eq("label", dataSourceFlat);
+					Criteria criteria = session.createCriteria(SbiDataSource.class);
+					criteria.add(labelCriterrion);	
+					SbiDataSource hibDataSourceFlat = (SbiDataSource) criteria.uniqueResult();
+					hibDataSet.setDataSourceFlat(hibDataSourceFlat);
+				}
+				hibDataSet.setFlatTableName(dataSetActiveDetail.getFlatTableName());
 
 				hibDataSet.setCategory(category);
 				hibDataSet.setParameters(dataSetActiveDetail.getParameters());
@@ -1031,7 +1053,29 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibDataSet.setCategory(category);
 				hibDataSet.setParameters(dsActiveDetailToSet.getParameters());
 				hibDataSet.setDsMetadata(dsActiveDetailToSet.getDsMetadata());
-
+				
+				//manage of persistence fields
+				if (dsActiveDetailToSet.getDataSourcePersist() != null){
+					String dataSourcePersist = dsActiveDetailToSet.getDataSourcePersist();
+					Criterion labelCriterrion = Expression.eq("label", dataSourcePersist);
+					Criteria criteria = session.createCriteria(SbiDataSource.class);
+					criteria.add(labelCriterrion);	
+					SbiDataSource hibDataSourcePersist = (SbiDataSource) criteria.uniqueResult();
+					hibDataSet.setDataSourcePersist(hibDataSourcePersist);
+				}
+				hibDataSet.setPersisted(dsActiveDetailToSet.isPersisted());
+				//manage of flat fields
+				hibDataSet.setFlatDataset(dsActiveDetailToSet.isFlatDataset());
+				if (dsActiveDetailToSet.getDataSourceFlat() != null){
+					String dataSourceFlat = dsActiveDetailToSet.getDataSourceFlat();
+					Criterion labelCriterrion = Expression.eq("label", dataSourceFlat);
+					Criteria criteria = session.createCriteria(SbiDataSource.class);
+					criteria.add(labelCriterrion);	
+					SbiDataSource hibDataSourceFlat = (SbiDataSource) criteria.uniqueResult();
+					hibDataSet.setDataSourceFlat(hibDataSourceFlat);
+				}
+				hibDataSet.setFlatTableName(dsActiveDetailToSet.getFlatTableName());
+				
 				SbiDataSetConfig hibGenericDataSet = (SbiDataSetConfig) session.load(SbiDataSetConfig.class,dsId);					
 				hibGenericDataSet.setLabel(dataSet.getLabel());
 				hibGenericDataSet.setDescription(dataSet.getDescription());
