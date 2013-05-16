@@ -119,6 +119,11 @@ public class DataSetFactory {
 		guiDataSetDetail.setVersionNum(sbiDataSetHistory.getVersionNum());
 		guiDataSetDetail.setSbiVersionIn(sbiDataSetHistory.getSbiVersionIn());
 		guiDataSetDetail.setDsHId(sbiDataSetHistory.getDsHId());
+		guiDataSetDetail.setPersisted(sbiDataSetHistory.isPersisted());
+		guiDataSetDetail.setDataSourcePersist((sbiDataSetHistory.getDataSourcePersist()==null) ? null:sbiDataSetHistory.getDataSourcePersist().getLabel());
+		guiDataSetDetail.setFlatDataset(sbiDataSetHistory.isFlatDataset());
+		guiDataSetDetail.setDataSourceFlat((sbiDataSetHistory.getDataSourceFlat()==null)?null:sbiDataSetHistory.getDataSourceFlat().getLabel());
+		guiDataSetDetail.setFlatTableName((sbiDataSetHistory.getFlatTableName()==null) ? null:sbiDataSetHistory.getFlatTableName());
 		
 		return guiDataSetDetail;
 	}
@@ -263,6 +268,13 @@ public class DataSetFactory {
 		guiDataSetDetail.setNumRows(dataSet.isNumRows());			
 		guiDataSetDetail.setParameters(dataSet.getParameters());		
 		guiDataSetDetail.setDsMetadata(dataSet.getDsMetadata());		
+		
+		//set persist values
+		guiDataSetDetail.setPersisted(dataSet.isPersisted());
+		//guiDataSetDetail.setDataSourcePersist(dataSet.getDataSourcePersistId());
+		guiDataSetDetail.setFlatDataset(dataSet.isFlatDataset());
+		//guiDataSetDetail.setDataSourceFlat(dataSet.getDataSourceFlatId());
+		guiDataSetDetail.setFlatTableName(dataSet.getFlatTableName());
 
 		guiGenericDataSet.setActiveDetail(guiDataSetDetail);
 
@@ -359,6 +371,11 @@ public class DataSetFactory {
 				ds.setDataStoreTransformer(
 						new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 			}
+			ds.setPersisted(sbiDataSetHistory.isPersisted());
+			ds.setDataSourcePersistId((sbiDataSetHistory.getDataSourcePersist()==null)?null:sbiDataSetHistory.getDataSourcePersist().getDsId());
+			ds.setFlatDataset(sbiDataSetHistory.isFlatDataset());
+			ds.setDataSourceFlatId((sbiDataSetHistory.getDataSourceFlat()==null)?null:sbiDataSetHistory.getDataSourceFlat().getDsId());
+			ds.setFlatTableName(sbiDataSetHistory.getFlatTableName());
 		}
 		return ds;
 	}

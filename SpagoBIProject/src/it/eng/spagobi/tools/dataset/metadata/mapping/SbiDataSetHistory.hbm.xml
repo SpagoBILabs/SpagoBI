@@ -24,6 +24,12 @@
         <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains">
             <column name="CATEGORY_ID" not-null="false"/>
         </many-to-one>
+        <many-to-one name="dataSourcePersist" class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource">
+            <column name="DATA_SOURCE_PERSIST_ID" not-null="false"/>
+        </many-to-one>
+        <many-to-one name="dataSourceFlat" class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource">
+            <column name="DATA_SOURCE_FLAT_ID" not-null="false"/>
+        </many-to-one>
         <property name="parameters" type="string">
             <column name="PARAMS" />
         </property>
@@ -59,6 +65,15 @@
         </property>
         <property name="organization" type="string">
             <column name="ORGANIZATION" length="20" not-null="false" />
+        </property>
+         <property name="persisted" type="boolean">
+            <column name="IS_PERSISTED" />
+        </property>
+         <property name="flatDataset" type="boolean">
+            <column name="IS_FLAT_DATASET" />
+        </property>
+        <property name="flatTableName" type="string">
+            <column name="FLAT_TABLE_NAME" length="50" not-null="false" />
         </property>
 		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet" discriminator-value="SbiFileDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory" >
 	        <property name="fileName" type="string">

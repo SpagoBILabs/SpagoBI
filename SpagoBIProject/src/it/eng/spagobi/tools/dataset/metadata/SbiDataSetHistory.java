@@ -5,9 +5,10 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.metadata;
 
-import java.util.Date;
-
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+
+import java.util.Date;
 
 /**
  * This is the class used by the DAO to map the table 
@@ -43,7 +44,14 @@ public class SbiDataSetHistory {
 	private String metaVersion=null;
 	private Date timeIn = null;
 	private String organization=null;
+	
+	private boolean persisted = false;
+	private SbiDataSource dataSourcePersist;
 
+	private boolean flatDataset = false;
+	private String flatTableName = null;
+	private SbiDataSource dataSourceFlat;
+	
 	public int getVersionNum() {
 		return versionNum;
 	}
@@ -235,6 +243,78 @@ public class SbiDataSetHistory {
 
 	public void setOrganization(String organization) {
 		this.organization = organization;
+	}
+
+	
+
+	/**
+	 * @return the isPersisted
+	 */
+	public boolean isPersisted() {
+		return persisted;
+	}
+
+	/**
+	 * @param isPersisted the isPersisted to set
+	 */
+	public void setPersisted(boolean isPersisted) {
+		this.persisted = isPersisted;
+	}
+
+	/**
+	 * @return the dataSourcePersist
+	 */
+	public SbiDataSource getDataSourcePersist() {
+		return dataSourcePersist;
+	}
+
+	/**
+	 * @param dataSourcePersist the dataSourcePersist to set
+	 */
+	public void setDataSourcePersist(SbiDataSource dataSourcePersist) {
+		this.dataSourcePersist = dataSourcePersist;
+	}
+
+	/**
+	 * @return the flatDataset
+	 */
+	public boolean isFlatDataset() {
+		return flatDataset;
+	}
+
+	/**
+	 * @param flatDataset the flatDataset to set
+	 */
+	public void setFlatDataset(boolean flatDataset) {
+		this.flatDataset = flatDataset;
+	}
+
+	/**
+	 * @return the flatTableName
+	 */
+	public String getFlatTableName() {
+		return flatTableName;
+	}
+
+	/**
+	 * @param flatTableName the flatTableName to set
+	 */
+	public void setFlatTableName(String flatTableName) {
+		this.flatTableName = flatTableName;
+	}
+
+	/**
+	 * @return the dataSourceFlat
+	 */
+	public SbiDataSource getDataSourceFlat() {
+		return dataSourceFlat;
+	}
+
+	/**
+	 * @param dataSourceFlat the dataSourceFlat to set
+	 */
+	public void setDataSourceFlat(SbiDataSource dataSourceFlat) {
+		this.dataSourceFlat = dataSourceFlat;
 	}   
-    
+
 }
