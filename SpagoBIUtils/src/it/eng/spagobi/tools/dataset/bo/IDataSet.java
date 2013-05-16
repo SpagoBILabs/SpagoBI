@@ -119,7 +119,21 @@ public interface IDataSet {
 	void setDataStoreTransformer(IDataStoreTransformer transformer);
 	IDataStoreTransformer getDataStoreTransformer();
 	
+	boolean isPersisted();
+	void setPersisted(boolean persisted);
 	
+	Integer getDataSourcePersistId();
+	void setDataSourcePersistId(Integer dataSourcePersistId);
+	
+	boolean isFlatDataset();
+	void setFlatDataset(boolean flatDataset);
+	
+	Integer getDataSourceFlatId();
+	void setDataSourceFlatId(Integer dataSourceFlatId);
+	
+	String getFlatTableName();
+	void setFlatTableName(String flatTableName);
+
 	// TODO these methods do NOT belong to the dataset interface. remove them and refactor the code.
 	// --------------------------------------------------------------------------------------------------
 	

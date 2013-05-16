@@ -67,6 +67,11 @@ public abstract class AbstractDataSet implements IDataSet {
     protected String queryScript;	
     protected String queryScriptLanguage;	
 
+    protected boolean persisted;
+    protected Integer dataSourcePersistId;
+    protected boolean flatDataset;
+    protected Integer dataSourceFlatId;
+    protected String flatTableName;	
     
     private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
 
@@ -367,6 +372,77 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	public void setQueryScriptLanguage(String queryScriptLanguage) {
 		this.queryScriptLanguage = queryScriptLanguage;
+	}
+
+	/**
+	 * @return the persisted
+	 */
+	public boolean isPersisted() {
+		return persisted;
+	}
+
+	/**
+	 * @param persisted the persisted to set
+	 */
+	public void setPersisted(boolean persisted) {
+		this.persisted = persisted;
+	}
+
+	/**
+	 * @return the dataSourcePersistId
+	 */
+	public Integer getDataSourcePersistId() {
+		return dataSourcePersistId;
+	}
+
+	/**
+	 * @param dataSourcePersistId the dataSourcePersistId to set
+	 */
+	public void setDataSourcePersistId(Integer dataSourcePersistId) {
+		this.dataSourcePersistId = dataSourcePersistId;
+	}
+
+	
+	/**
+	 * @return the flatDataset
+	 */
+	public boolean isFlatDataset() {
+		return flatDataset;
+	}
+
+	/**
+	 * @param flatDataset the flatDataset to set
+	 */
+	public void setFlatDataset(boolean flatDataset) {
+		this.flatDataset = flatDataset;
+	}
+
+	/**
+	 * @return the dataSourceFlatId
+	 */
+	public Integer getDataSourceFlatId() {
+		return dataSourceFlatId;
+	}
+
+	/**
+	 * @param dataSourceFlatId the dataSourceFlatId to set
+	 */
+	public void setDataSourceFlatId(Integer dataSourceFlatId) {
+		this.dataSourceFlatId = dataSourceFlatId;
+	}
+
+	/**
+	 * @return the flatTableName
+	 */
+	public String getFlatTableName() {
+		return flatTableName;
+	}
+
+	/**
+	 * @param flatTableName the flatTableName to set
+	 */
+	public void setFlatTableName(String flatTableName) {
+		this.flatTableName = flatTableName;
 	}
 
 	// ===============================================
