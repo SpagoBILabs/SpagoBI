@@ -72,7 +72,7 @@ public class TestConnection {
 				    connection = DriverManager.getConnection(url, user, pwd);
 			}
 		 if (connection != null){//test ok
-			 return (new JSONAcknowledge()).toString();
+			 return ("{}");
 		 }else{
 			 return (new JSONFailure(new Exception(testDataSourceError))).toString();
 		 }

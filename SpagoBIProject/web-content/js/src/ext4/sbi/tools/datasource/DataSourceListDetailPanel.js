@@ -113,7 +113,7 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 					if(responceText.error){
 						Sbi.exception.ExceptionHandler.showErrorMessage(responceText.error, 'Service Error');
 					}else{
-						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.saved'));
+						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.tested'));
 					}
 				} else {
 					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');

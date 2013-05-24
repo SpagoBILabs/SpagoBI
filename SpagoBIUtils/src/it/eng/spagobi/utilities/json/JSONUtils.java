@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.node.ValueNode;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -115,6 +116,8 @@ public class JSONUtils {
 			value = toJSONObject((ObjectNode)node);
 		}else if(node instanceof ArrayNode){
 			value = toJSONArray((ArrayNode)node);
+		}else if(node instanceof ValueNode){
+			value = ((ValueNode)node).asText();
 		}
 		return value;
 	}

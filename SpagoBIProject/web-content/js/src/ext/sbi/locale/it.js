@@ -675,6 +675,7 @@ Sbi.locale.ln['sbi.datasource.type.jdbc.password']= 'Password';
 Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI è necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 Sbi.locale.ln['sbi.datasource.saved']= 'Data source salvato correttamente';
 Sbi.locale.ln['sbi.datasource.deleted']= 'Data source cancellato correttamente';
+Sbi.locale.ln['sbi.datasource.tested']= 'Data source configurato correttamente';
 Sbi.locale.ln['sbi.datasource.validation.error']= 'Ci sono degli errori di validazione. Controlla i campi marcati.';
 
 //===================================================================
