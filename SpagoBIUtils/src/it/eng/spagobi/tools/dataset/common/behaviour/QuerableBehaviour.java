@@ -87,7 +87,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			}
 		} else {
 			// maybe better to delete getQuery from IDataSet
-			statement = (String)getTargetDataSet().getQuery();
+			//anto statement = (String)getTargetDataSet().getQuery();
 		}
 		return statement;
 	}

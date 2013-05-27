@@ -5,11 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -20,6 +15,13 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 /**
  * @authors 
@@ -55,6 +57,8 @@ public abstract class AbstractDataSet implements IDataSet {
     private Map behaviours;
     
     private String dsMetadata;
+    private String userIn;
+    private Date dateIn;
     
     private String dsType;   	
 
@@ -72,6 +76,8 @@ public abstract class AbstractDataSet implements IDataSet {
     protected boolean flatDataset;
     protected Integer dataSourceFlatId;
     protected String flatTableName;	
+    protected String configuration;
+    protected List noActiveVersions;
     
     private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
 
@@ -80,22 +86,22 @@ public abstract class AbstractDataSet implements IDataSet {
     	behaviours = new HashMap();
     }
     
-    public AbstractDataSet(SpagoBiDataSet dataSetConfig) {
+    public AbstractDataSet(SpagoBiDataSet dataSet) {
     	super();
-    	setId(dataSetConfig.getDsId());
-    	setName(dataSetConfig.getName());
-    	setLabel(dataSetConfig.getLabel());
-    	setDescription(dataSetConfig.getDescription());
-		setLabel(dataSetConfig.getLabel());
-		setCategoryId(dataSetConfig.getCategoryId());
-		setParameters(dataSetConfig.getParameters());
+    	setId(dataSet.getDsId());
+    	setName(dataSet.getName());
+    	setLabel(dataSet.getLabel());
+    	setDescription(dataSet.getDescription());
+		setLabel(dataSet.getLabel());
+		setCategoryId(dataSet.getCategoryId());
+		setParameters(dataSet.getParameters());
 		
-		setTransformerId(dataSetConfig.getTransformerId());
-		setPivotColumnName(dataSetConfig.getPivotColumnName());
-		setPivotRowName(dataSetConfig.getPivotRowName());
-		setPivotColumnValue(dataSetConfig.getPivotColumnValue());
-		setNumRows(dataSetConfig.isNumRows());
-		setDsMetadata(dataSetConfig.getDsMetadata());
+		setTransformerId(dataSet.getTransformerId());
+		setPivotColumnName(dataSet.getPivotColumnName());
+		setPivotRowName(dataSet.getPivotRowName());
+		setPivotColumnValue(dataSet.getPivotColumnValue());
+		setNumRows(dataSet.isNumRows());
+		setDsMetadata(dataSet.getDsMetadata());
 		
 		if(this.getPivotColumnName() != null 
 				&& this.getPivotColumnValue() != null
@@ -117,6 +123,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setDescription(getDescription());
 		sbd.setCategoryId(getCategoryId());
 		sbd.setDsMetadata(getDsMetadata());
+		sbd.setConfiguration(getConfiguration());
 		
 		sbd.setTransformerId(getTransformerId());
 		sbd.setPivotColumnName(getPivotColumnName());
@@ -145,7 +152,7 @@ public abstract class AbstractDataSet implements IDataSet {
     	this.label = label;
     }
 
-    public String getName() {
+	public String getName() {
     	return name;
     }
 
@@ -443,6 +450,64 @@ public abstract class AbstractDataSet implements IDataSet {
 	 */
 	public void setFlatTableName(String flatTableName) {
 		this.flatTableName = flatTableName;
+	}
+
+	
+	/**
+	 * @return the configuration
+	 */
+	public String getConfiguration() {
+		return configuration;
+	}
+
+	/**
+	 * @param configuration the configuration to set
+	 */
+	public void setConfiguration(String configuration) {
+		this.configuration = configuration;
+	}
+
+	
+	/**
+	 * @return the userIn
+	 */
+	public String getUserIn() {
+		return userIn;
+	}
+
+	/**
+	 * @param userIn the userIn to set
+	 */
+	public void setUserIn(String userIn) {
+		this.userIn = userIn;
+	}
+
+	/**
+	 * @return the dateIn
+	 */
+	public Date getDateIn() {
+		return dateIn;
+	}
+
+	/**
+	 * @param dateIn the dateIn to set
+	 */
+	public void setDateIn(Date dateIn) {
+		this.dateIn = dateIn;
+	}
+
+	/**
+	 * @return the oldVersions
+	 */
+	public List getNoActiveVersions() {
+		return noActiveVersions;
+	}
+
+	/**
+	 * @param oldVersions the oldVersions to set
+	 */
+	public void setNoActiveVersions(List noActiveVersions) {
+		this.noActiveVersions = noActiveVersions;
 	}
 
 	// ===============================================

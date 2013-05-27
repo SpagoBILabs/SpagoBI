@@ -5,13 +5,16 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.CsvDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.XmlDataReader;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * @authors
@@ -26,6 +29,7 @@ import org.apache.log4j.Logger;
 public class FileDataSet extends ConfigurableDataSet{
     
 	public static String DS_TYPE = "SbiFileDataSet";
+	public static final String FILE_NAME = "fileName";
 	
 	private static transient Logger logger = Logger.getLogger(FileDataSet.class);
     
@@ -40,14 +44,21 @@ public class FileDataSet extends ConfigurableDataSet{
     	super(dataSetConfig);
     	
     	logger.debug("IN");
-    	
-    	if(dataSetConfig.getFileName() == null || dataSetConfig.getFileName().length() == 0) {
-			throw new  IllegalArgumentException("fileName member of SpagoBiDataSet object parameter cannot be null or empty" +
-					"while creating a FileDataSet. If you whant to create an empty FileDataSet use the proper constructor.");
-		}    	
-    	logger.info("File name: " + dataSetConfig.getFileName());
-    	
-    	setFileName(  dataSetConfig.getFileName() );
+    	try{
+    		//JSONObject jsonConf  = ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
+    		String config = JSONUtils.escapeJsonString(dataSetConfig.getConfiguration());		
+    		JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
+    		String fileName = (jsonConf.get(FILE_NAME) != null)?jsonConf.get(FILE_NAME).toString():"";
+    		if(fileName == null || fileName.length() == 0) {
+    			throw new  IllegalArgumentException("fileName member of SpagoBiDataSet object parameter cannot be null or empty" +
+    					"while creating a FileDataSet. If you whant to create an empty FileDataSet use the proper constructor.");
+    		} 
+    		this.setFileName((jsonConf.get(FILE_NAME) != null)?jsonConf.get(FILE_NAME).toString():"");
+    		logger.info("File name: " + fileName);
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+		}
+    	//setFileName(  dataSetConfig.getFileName() );
     	
     	logger.debug("OUT");    	
     }
@@ -62,8 +73,16 @@ public class FileDataSet extends ConfigurableDataSet{
 		sbd.setType( DS_TYPE );
 				
 		dataProxy = (FileDataProxy)getDataProxy();
-		sbd.setFileName( dataProxy.getFileName() );
-		
+		/* next informations are already loaded in method super.toSpagoBiDataSet() through the table field configuration
+		try{
+			JSONObject jsonConf  = new JSONObject();
+			jsonConf.put(FILE_NAME,  dataProxy.getFileName());			
+			sbd.setConfiguration(jsonConf.toString());
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+		}
+		//sbd.setFileName( dataProxy.getFileName() );
+		*/
 		return sbd;
 	}
 	

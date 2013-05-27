@@ -36,7 +36,9 @@ public class JDBCDataSetTest extends AbstractSpagoBITestCase {
 		super.setUp();
 		try {
 			SpagoBiDataSet dataSetConfig = new SpagoBiDataSet();
-			dataSetConfig.setQuery("SELECT fullname as 'Full Name' FROM CUSTOMER LIMIT 10");
+			String conf = "{\"Query\":\"SELECT fullname as 'Full Name' FROM CUSTOMER LIMIT 10 \",\"queryScript\":\"\",\"queryScriptLanguage\":\"\",\"dataSource\":\"FoodMart\"}";
+			dataSetConfig.setConfiguration(conf);
+			//dataSetConfig.setQuery("SELECT fullname as 'Full Name' FROM CUSTOMER LIMIT 10");
 			dataSetConfig.setDataSource( TestDataSetFactory.createSpagoBiDataSource() );
 			dataset = new JDBCDataSet();
 		} catch(Exception t) {

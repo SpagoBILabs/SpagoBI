@@ -14,6 +14,8 @@ import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 
 import java.sql.Connection;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public interface IDataSet {
@@ -44,10 +46,18 @@ public interface IDataSet {
 	
 	String getDsType();
 	void setDsType(String dsType);
+	
+	String getConfiguration();
+	void setConfiguration(String configuration);
 
 	Map getProperties();
 	void setProperties(Map map);
 	
+	String getUserIn();
+	void setUserIn(String userIn);
+	
+	Date getDateIn();
+	void setDateIn(Date dateIn);
 	
 	// parametrization ....
 	// --------------------------------------------------------------------------------------------------
@@ -80,18 +90,6 @@ public interface IDataSet {
 	// =================================================================================================
 	// TO BE DEPRECATED ( do not cross this line ;-) )
 	// =================================================================================================
-	
-	// --------------------------------------------------------------------------------------------------
-	// TODO these methods do NOT belong to the dataset interface. remove them and refactor the code.
-	
-	String getResourcePath();
-	void setResourcePath(String resPath);
-	Object getQuery();
-	void setQuery(Object query);
-	String getQueryScript();
-	void setQueryScript(String script);
-	
-	
 	Integer getTransformerId();
 	void setTransformerId(Integer transformerId);
 	
@@ -133,7 +131,10 @@ public interface IDataSet {
 	
 	String getFlatTableName();
 	void setFlatTableName(String flatTableName);
-
+	
+	List getNoActiveVersions();
+	void setNoActiveVersions(List noActiveVersions);
+	
 	// TODO these methods do NOT belong to the dataset interface. remove them and refactor the code.
 	// --------------------------------------------------------------------------------------------------
 	
@@ -144,9 +145,7 @@ public interface IDataSet {
 	// all data bean
 	SpagoBiDataSet toSpagoBiDataSet();
 	// --------------------------------------------------------------------------------------------------
-	
-	
-	
+
 	IDataStore test();
 	IDataStore test(int offset, int fetchSize, int maxResults);
 	

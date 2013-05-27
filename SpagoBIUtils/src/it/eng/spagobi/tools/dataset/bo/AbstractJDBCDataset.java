@@ -1,5 +1,6 @@
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
@@ -16,6 +17,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators.IConditionalOperator;
 import it.eng.spagobi.utilities.sql.SqlUtils;
@@ -27,10 +29,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 	
-public static String DS_TYPE = "SbiQueryDataSet";
+	public static String DS_TYPE = "SbiQueryDataSet";
+	private static final String QUERY = "query";
+	private static final String QUERY_SCRIPT = "queryScript";
+	private static final String QUERY_SCRIPT_LANGUAGE = "queryScriptLanguage";
+	private static final String DATA_SOURCE = "dataSource";
 	
 	private static transient Logger logger = Logger.getLogger(AbstractJDBCDataset.class);
     
@@ -61,10 +68,18 @@ public static String DS_TYPE = "SbiQueryDataSet";
 		} catch (Exception e) {
 			throw new RuntimeException("Missing right exstension", e);
 		}
-	
-		setQuery( dataSetConfig.getQuery() );
-		setQueryScript( dataSetConfig.getQueryScript() );
-		setQueryScriptLanguage( dataSetConfig.getQueryScriptLanguage() );
+		try{
+    	//	JSONObject jsonConf  = ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
+    		String config = JSONUtils.escapeJsonString(dataSetConfig.getConfiguration());		
+    		JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
+    		setQuery((jsonConf.get(QUERY) != null)?jsonConf.get(QUERY).toString():"");
+    		setQueryScript( (jsonConf.get(QUERY_SCRIPT) != null)?jsonConf.get(QUERY_SCRIPT).toString():"" );   	
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+		}
+		//setQuery( dataSetConfig.getQuery() );
+		//setQueryScript( dataSetConfig.getQueryScript() );
+		//setQueryScriptLanguage( dataSetConfig.getQueryScriptLanguage() );
 		
 		addBehaviour( new QuerableBehaviour(this) );
 	}
@@ -100,7 +115,19 @@ public static String DS_TYPE = "SbiQueryDataSet";
 		sbd.setType( DS_TYPE );
 			
 		dataProxy = (JDBCDataProxy)this.getDataProxy();
-		sbd.setDataSource(dataProxy.getDataSource().toSpagoBiDataSource());
+		//sbd.setDataSource(dataProxy.getDataSource().toSpagoBiDataSource());
+		/* next informations are already loaded in method super.toSpagoBiDataSet() through the table field configuration
+		try{
+			JSONObject jsonConf  = new JSONObject();
+			jsonConf.put(QUERY, (query==null)?"":query);
+			jsonConf.put(QUERY_SCRIPT,(queryScript==null)?"":queryScript);
+			jsonConf.put(QUERY_SCRIPT_LANGUAGE,(queryScriptLanguage==null)?"":queryScriptLanguage);
+			jsonConf.put(QUERY_SCRIPT_LANGUAGE,(queryScriptLanguage==null)?"":queryScriptLanguage);
+			sbd.setConfiguration(jsonConf.toString());
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+		}*/
+		/*
 		if(query != null){
 			sbd.setQuery(query.toString());
 		}
@@ -109,7 +136,7 @@ public static String DS_TYPE = "SbiQueryDataSet";
 		}
 		if(queryScriptLanguage != null){
 			sbd.setQueryScriptLanguage(queryScriptLanguage);
-		}
+		}*/
 		return sbd;
 	}
 
