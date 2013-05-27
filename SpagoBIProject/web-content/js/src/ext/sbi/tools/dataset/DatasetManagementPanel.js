@@ -72,8 +72,8 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 
 	this.initConfigObject();
 	this.configurationObject.filter = true;
-	this.configurationObject.columnName = [['sbiDsConfig.label', LN('sbi.generic.label')],
-	                                       ['sbiDsConfig.name', LN('sbi.generic.name')],
+	this.configurationObject.columnName = [['label', LN('sbi.generic.label')],
+	                                       ['name', LN('sbi.generic.name')],
 	                                       ['category.valueNm', LN('sbi.ds.catType')]
 	                	                   ];
 	this.configurationObject.setCloneButton = true;
@@ -142,7 +142,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						this.tbInfoButton.show();
 						this.tbProfAttrsButton.show();
 						this.tbTransfInfoButton.hide();
-						this.tbPersistInfoButton();
+						this.tbPersistInfoButton.hide();
 					}else if(itemId !== undefined && itemId !== null && itemId === 'transf'){
 						this.tbTransfInfoButton.show();
 						this.tbInfoButton.hide();
@@ -1777,6 +1777,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 				}
 				
 				, doSave : function(recalculateMetadata) {
+				//	var mask = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});
+			     //   mask.show();
 					var values = this.getValues();
 					
 					var idRec = values['id'];
@@ -1842,6 +1844,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 											var content = Ext.util.JSON
 													.decode(response.responseText);
 											if (content.responseText !== 'Operation succeded') {
+											//	if (mask != undefined) mask.hide();
 												Ext.MessageBox
 														.show({
 															title : LN('sbi.generic.error'),
@@ -1910,7 +1913,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 												if (isNewRec) {
 													this.rowselModel.selectLastRow();
 												}
-
+											//	if (mask != undefined) mask.hide();
 												Ext.MessageBox
 														.show({
 															title : LN('sbi.generic.result'),
@@ -1921,12 +1924,14 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 											}
 
 										} else {
+										//	if (mask != undefined) mask.hide();
 											Sbi.exception.ExceptionHandler
 													.showErrorMessage(
 															LN('sbi.generic.serviceResponseEmpty'),
 															LN('sbi.generic.serviceError'));
 										}
 									} else {
+									//	if (mask != undefined) mask.hide();
 										Sbi.exception.ExceptionHandler
 												.showErrorMessage(
 														LN('sbi.generic.savingItemError'),
@@ -1936,6 +1941,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								failure : Sbi.exception.ExceptionHandler.handleFailure,
 								scope : this
 							});
+				//	 if (mask != undefined) mask.hide();
 				}
 
 				,
@@ -2136,5 +2142,27 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					};
 					win_info_3.show();
 			    }
-
+				
+				/**
+				 * Opens the loading mask 
+				
+			    , showMask : function(){
+			    	this.un('afterlayout',this.showMask,this);
+			    	if (this.loadMask == null) {    		
+			    		this.loadMask = new Ext.LoadMask('GridPanel', {msg: "Saving.."});
+			    	}
+			    	if (this.loadMask){
+			    		this.loadMask.show();
+			    	}
+			    }
+ */
+				/**
+				 * Closes the loading mask
+				
+				, hideMask: function() {
+			    	if (this.loadMask && this.loadMask != null) {	
+			    		this.loadMask.hide();
+			    	}
+				} 
+				*/
 });
