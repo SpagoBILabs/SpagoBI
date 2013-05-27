@@ -210,7 +210,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			Ext.onReady(function() { 
 				Ext.QuickTips.init();
 				chartPanel = Ext.widget('ExtJSChartPanel',config); //by alias
-				var viewport = new Ext.Viewport(chartPanel);
+				//Commented this line beacause after upgrading to ExtJs 4.2 the chart isn't rendered inside viewport
+				//var viewport = new Ext.Viewport(chartPanel);
 			});
 
 
