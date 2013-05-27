@@ -5,6 +5,23 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.geo.datamart.provider;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.engines.geo.GeoEngineException;
+import it.eng.spagobi.engines.geo.datamart.provider.configurator.DataMartProviderConfigurator;
+import it.eng.spagobi.engines.geo.dataset.DataMart;
+import it.eng.spagobi.engines.geo.dataset.provider.Hierarchy;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -14,24 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.engines.geo.GeoEngineException;
-import it.eng.spagobi.engines.geo.datamart.provider.configurator.DataMartProviderConfigurator;
-import it.eng.spagobi.engines.geo.dataset.DataMart;
-import it.eng.spagobi.engines.geo.dataset.provider.Hierarchy;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.EngineConstants;
+import org.json.JSONObject;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -52,6 +52,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(DataMartProvider.class);
 	
+    public static final String QUERY = "Query";
 
     public DataMartProvider() {
         super();
@@ -195,13 +196,19 @@ public class DataMartProvider extends AbstractDataMartProvider {
     	 * @return the executable query
     	 */
     	public String getExecutableQuery() {
-			String executableQuery;			
+			String executableQuery = null;			
 			IDataSet dataSet;
 	    	
 	    	dataSet = (IDataSet)getEnv().get(EngineConstants.ENV_DATASET);
 			
 	    	if(dataSet != null) {
-	    		executableQuery = (String)dataSet.getQuery();
+	    		try{
+		    		JSONObject jsonConf  = ObjectUtils.toJSONObject(ds.getConfiguration());
+		    		//executableQuery = (String)dataSet.getQuery();
+		    		executableQuery =  jsonConf.getString(QUERY);
+	    		}catch (Exception e){
+					logger.error("Error while getting query configuration.  Error: " + e.getMessage());
+				}
 	    	} else {
 	    		executableQuery = query;
 	    	}
