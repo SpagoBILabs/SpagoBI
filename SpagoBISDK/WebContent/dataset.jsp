@@ -41,7 +41,7 @@ if (user != null && password != null) {
 	InputStream is = null;
 	try { 
 		DataSetsSDKServiceProxy proxy = new DataSetsSDKServiceProxy(user, password);
-		proxy.setEndpoint("http://localhost:8080/SpagoBI/sdk/DataSetsSDKService");		
+		proxy.setEndpoint("http://localhost:38080/SpagoBI/sdk/DataSetsSDKService");		
 		
 		//test modifica dataset esistente
 		dsId = (String)request.getParameter("ds_id");
@@ -53,14 +53,20 @@ if (user != null && password != null) {
 			//test inserimento nuovo dataset (tipo qbe)		
 			 Random randomGenerator = new Random();
 			 dataset = new SDKDataSet();		
-			 dataset.setLabel("testDatasetQbe_" + randomGenerator.nextInt(100));
-			 dataset.setName("test WS del Dataset tipo Qbe ");
+			 dataset.setLabel("testDataset_" + randomGenerator.nextInt(100));
+			 dataset.setName("test WS del Dataset ");
 			 //dataset.setDescription("test WS del Dataset tipo Qbe ");
-			 dataset.setType("SbiQbeDataSet");		
-			 dataset.setDatamarts("testDatamart");
-	   		 dataset.setJsonQuery("query json test");
-	 	 	 dataset.setJdbcQuery("select * from sbi_engines");
-	 		 dataset.setJdbcDataSourceId(1);	
+			 dataset.setType("SbiQbeDataSet");
+			 String configuration = "{\'qbeDatamarts\':\'\',\'qbeDataSource\':\'spagobi\',\'qbeSQLQuery\':\'select * from sbi_engines\',\'qbeJSONQuery\':\'select * from sbi_engines\'}";
+			 
+			// dataset.setType("SbiQueryDataSet");		
+			// String configuration = "{\"Query\":\"select * from sbi_checks \",\"queryScript\":\"\",\"queryScriptLanguage\":\"\",\"dataSource\":\"spagobi\"}";
+			 
+			 //dataset.setType("SbiFileDataSet");		
+			 //String configuration = "{\"Query":\"select * from sbi_checks \",\"queryScript\":\"\",\"queryScriptLanguage\":\"\",\"dataSource\":\"spagobi\"}";
+			 
+			 dataset.setConfiguration(configuration);			 					 
+	 		 //dataset.setJdbcDataSourceId(1);	
 		}
 		Integer result = proxy.saveDataset(dataset);
 		
