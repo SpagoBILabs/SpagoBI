@@ -9,19 +9,23 @@ package it.eng.spagobi.sdk.datasets.bo;
 public class SDKDataSet  implements java.io.Serializable {
     private java.lang.String description;
 
-    private java.lang.String fileName;
+   // private java.lang.String fileName;
 
     private java.lang.Integer id;
-
-    private java.lang.String javaClassName;
-
-    private java.lang.Integer jdbcDataSourceId;
-
-    private java.lang.String jdbcQuery;
     
-    private java.lang.String jdbcQueryScript;
+    private java.lang.Integer versionNum;
     
-    private java.lang.String jdbcQueryScriptLanguage;
+    private java.lang.Boolean active;
+
+ //   private java.lang.String javaClassName;
+
+ //   private java.lang.Integer jdbcDataSourceId;
+
+ //   private java.lang.String jdbcQuery;
+    
+ //   private java.lang.String jdbcQueryScript;
+    
+//    private java.lang.String jdbcQueryScriptLanguage;
 
     private java.lang.String label;
 
@@ -37,25 +41,27 @@ public class SDKDataSet  implements java.io.Serializable {
 
     private java.lang.String pivotRowName;
 
-    private java.lang.String scriptLanguage;
+  //  private java.lang.String scriptLanguage;
 
-    private java.lang.String scriptText;
+  //  private java.lang.String scriptText;
 
     private java.lang.String type;
+    
+    private java.lang.String configuration;
 
     private java.lang.String transformer;
 
     private java.lang.String category;
 
-    private java.lang.String jsonQuery;
+  //  private java.lang.String jsonQuery;
 
-    private java.lang.String datamarts;
+  //  private java.lang.String datamarts;
 
-    private java.lang.String webServiceAddress;
+  //  private java.lang.String webServiceAddress;
 
-    private java.lang.String webServiceOperation;
+  //  private java.lang.String webServiceOperation;
     
-    private java.lang.String customData;
+  //  private java.lang.String customData;
     
 
     public SDKDataSet() {
@@ -65,6 +71,8 @@ public class SDKDataSet  implements java.io.Serializable {
            java.lang.String description,
            java.lang.String fileName,
            java.lang.Integer id,
+           java.lang.Integer versionNum,
+           java.lang.Boolean active,
            java.lang.String javaClassName,
            java.lang.Integer jdbcDataSourceId,
            java.lang.String jdbcQuery,
@@ -80,6 +88,7 @@ public class SDKDataSet  implements java.io.Serializable {
            java.lang.String scriptLanguage,
            java.lang.String scriptText,
            java.lang.String type,
+           java.lang.String configuration,
            java.lang.String userIn,
            java.lang.String userUp,
            java.lang.String userDe,
@@ -96,13 +105,15 @@ public class SDKDataSet  implements java.io.Serializable {
            java.lang.String webServiceOperation,
            java.lang.String customData) {
            this.description = description;
-           this.fileName = fileName;
+          // this.fileName = fileName;
            this.id = id;
-           this.javaClassName = javaClassName;
-           this.jdbcDataSourceId = jdbcDataSourceId;
-           this.jdbcQuery = jdbcQuery;
-           this.jdbcQueryScript = jdbcQueryScript;
-           this.jdbcQueryScriptLanguage = jdbcQueryScriptLanguage;
+           this.versionNum = versionNum;
+           this.active = active;
+          // this.javaClassName = javaClassName;
+          // this.jdbcDataSourceId = jdbcDataSourceId;
+           // this.jdbcQuery = jdbcQuery;
+           //  this.jdbcQueryScript = jdbcQueryScript;
+           //this.jdbcQueryScriptLanguage = jdbcQueryScriptLanguage;
            this.label = label;
            this.name = name;
            this.numberingRows = numberingRows;
@@ -110,16 +121,17 @@ public class SDKDataSet  implements java.io.Serializable {
            this.pivotColumnName = pivotColumnName;
            this.pivotColumnValue = pivotColumnValue;
            this.pivotRowName = pivotRowName;
-           this.scriptLanguage = scriptLanguage;
-           this.scriptText = scriptText;
+           //this.scriptLanguage = scriptLanguage;
+           //this.scriptText = scriptText;
            this.type = type;
+           this.configuration = configuration;
            this.transformer = transformer;
            this.category = category;
-           this.jsonQuery = jsonQuery;
-           this.datamarts = datamarts;
-           this.webServiceAddress = webServiceAddress;
-           this.webServiceOperation = webServiceOperation;
-           this.customData = customData;
+           //this.jsonQuery = jsonQuery;
+           //this.datamarts = datamarts;
+           //this.webServiceAddress = webServiceAddress;
+           //this.webServiceOperation = webServiceOperation;
+           //this.customData = customData;
     }
 
 
@@ -147,21 +159,21 @@ public class SDKDataSet  implements java.io.Serializable {
      * Gets the fileName value for this SDKDataSet.
      * 
      * @return fileName
-     */
+    
     public java.lang.String getFileName() {
         return fileName;
     }
-
+    */
 
     /**
      * Sets the fileName value for this SDKDataSet.
      * 
      * @param fileName
-     */
+     *
     public void setFileName(java.lang.String fileName) {
         this.fileName = fileName;
     }
-
+    */
 
     /**
      * Gets the id value for this SDKDataSet.
@@ -174,6 +186,34 @@ public class SDKDataSet  implements java.io.Serializable {
 
 
     /**
+	 * @return the versionNum
+	 */
+	public java.lang.Integer getVersionNum() {
+		return versionNum;
+	}
+
+	/**
+	 * @param versionNum the versionNum to set
+	 */
+	public void setVersionNum(java.lang.Integer versionNum) {
+		this.versionNum = versionNum;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public java.lang.Boolean getActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(java.lang.Boolean active) {
+		this.active = active;
+	}
+
+	/**
      * Sets the id value for this SDKDataSet.
      * 
      * @param id
@@ -187,67 +227,65 @@ public class SDKDataSet  implements java.io.Serializable {
      * Gets the javaClassName value for this SDKDataSet.
      * 
      * @return javaClassName
-     */
+     *
     public java.lang.String getJavaClassName() {
         return javaClassName;
     }
-
+    */
 
     /**
      * Sets the javaClassName value for this SDKDataSet.
      * 
      * @param javaClassName
-     */
+     *
     public void setJavaClassName(java.lang.String javaClassName) {
         this.javaClassName = javaClassName;
     }
-
+*/
 
     /**
      * Gets the jdbcDataSourceId value for this SDKDataSet.
      * 
      * @return jdbcDataSourceId
-     */
+     *
     public java.lang.Integer getJdbcDataSourceId() {
         return jdbcDataSourceId;
     }
-
+*/
 
     /**
      * Sets the jdbcDataSourceId value for this SDKDataSet.
      * 
      * @param jdbcDataSourceId
-     */
+     *
     public void setJdbcDataSourceId(java.lang.Integer jdbcDataSourceId) {
         this.jdbcDataSourceId = jdbcDataSourceId;
     }
-
+*/
 
     /**
      * Gets the jdbcQuery value for this SDKDataSet.
      * 
      * @return jdbcQuery
-     */
+     *
     public java.lang.String getJdbcQuery() {
         return jdbcQuery;
     }
-
+*/
 
     /**
      * Sets the jdbcQuery value for this SDKDataSet.
      * 
      * @param jdbcQuery
-     */
+     *
     public void setJdbcQuery(java.lang.String jdbcQuery) {
         this.jdbcQuery = jdbcQuery;
     }
-
-    
-
+    *
     public java.lang.String getJdbcQueryScript() {
 		return jdbcQueryScript;
 	}
-
+    *
 	public void setJdbcQueryScript(java.lang.String jdbcQueryScript) {
 		this.jdbcQueryScript = jdbcQueryScript;
 	}
@@ -259,7 +297,7 @@ public class SDKDataSet  implements java.io.Serializable {
 	public void setJdbcQueryScriptLanguage(java.lang.String jdbcQueryScriptLanguage) {
 		this.jdbcQueryScriptLanguage = jdbcQueryScriptLanguage;
 	}
-
+	*/
 	/**
      * Gets the label value for this SDKDataSet.
      * 
@@ -404,17 +442,17 @@ public class SDKDataSet  implements java.io.Serializable {
      * Gets the scriptLanguage value for this SDKDataSet.
      * 
      * @return scriptLanguage
-     */
+     *
     public java.lang.String getScriptLanguage() {
         return scriptLanguage;
     }
-
+    */
 
     /**
      * Sets the scriptLanguage value for this SDKDataSet.
      * 
      * @param scriptLanguage
-     */
+     *
     public void setScriptLanguage(java.lang.String scriptLanguage) {
         this.scriptLanguage = scriptLanguage;
     }
@@ -424,7 +462,7 @@ public class SDKDataSet  implements java.io.Serializable {
      * Gets the scriptText value for this SDKDataSet.
      * 
      * @return scriptText
-     */
+     *
     public java.lang.String getScriptText() {
         return scriptText;
     }
@@ -434,11 +472,11 @@ public class SDKDataSet  implements java.io.Serializable {
      * Sets the scriptText value for this SDKDataSet.
      * 
      * @param scriptText
-     */
+     *
     public void setScriptText(java.lang.String scriptText) {
         this.scriptText = scriptText;
     }
-
+    */
 
     /**
      * Gets the type value for this SDKDataSet.
@@ -503,7 +541,7 @@ public class SDKDataSet  implements java.io.Serializable {
      * Gets the jsonQuery value for this SDKDataSet.
      * 
      * @return jsonQuery
-     */
+     *
     public java.lang.String getJsonQuery() {
         return jsonQuery;
     }
@@ -513,7 +551,7 @@ public class SDKDataSet  implements java.io.Serializable {
      * Sets the jsonQuery value for this SDKDataSet.
      * 
      * @param jsonQuery
-     */
+     *
     public void setJsonQuery(java.lang.String jsonQuery) {
         this.jsonQuery = jsonQuery;
     }
@@ -523,7 +561,7 @@ public class SDKDataSet  implements java.io.Serializable {
      * Gets the datamarts value for this SDKDataSet.
      * 
      * @return datamarts
-     */
+     *
     public java.lang.String getDatamarts() {
         return datamarts;
     }
@@ -533,7 +571,7 @@ public class SDKDataSet  implements java.io.Serializable {
      * Sets the datamarts value for this SDKDataSet.
      * 
      * @param datamarts
-     */
+     *
     public void setDatamarts(java.lang.String datamarts) {
         this.datamarts = datamarts;
     }
@@ -543,7 +581,7 @@ public class SDKDataSet  implements java.io.Serializable {
      * Gets the webServiceAddress value for this SDKDataSet.
      * 
      * @return webServiceAddress
-     */
+     *
     public java.lang.String getWebServiceAddress() {
         return webServiceAddress;
     }
@@ -553,7 +591,7 @@ public class SDKDataSet  implements java.io.Serializable {
      * Sets the webServiceAddress value for this SDKDataSet.
      * 
      * @param webServiceAddress
-     */
+     *
     public void setWebServiceAddress(java.lang.String webServiceAddress) {
         this.webServiceAddress = webServiceAddress;
     }
@@ -563,7 +601,7 @@ public class SDKDataSet  implements java.io.Serializable {
      * Gets the webServiceOperation value for this SDKDataSet.
      * 
      * @return webServiceOperation
-     */
+     *
     public java.lang.String getWebServiceOperation() {
         return webServiceOperation;
     }
@@ -573,7 +611,7 @@ public class SDKDataSet  implements java.io.Serializable {
      * Sets the webServiceOperation value for this SDKDataSet.
      * 
      * @param webServiceOperation
-     */
+     *
     public void setWebServiceOperation(java.lang.String webServiceOperation) {
         this.webServiceOperation = webServiceOperation;
     }
@@ -585,6 +623,20 @@ public class SDKDataSet  implements java.io.Serializable {
 
 	public void setCustomData(java.lang.String customData) {
 		this.customData = customData;
+	}
+	*/
+	/**
+	 * @return the configuration
+	 */
+	public java.lang.String getConfiguration() {
+		return configuration;
+	}
+
+	/**
+	 * @param configuration the configuration to set
+	 */
+	public void setConfiguration(java.lang.String configuration) {
+		this.configuration = configuration;
 	}
 
 
@@ -605,13 +657,19 @@ public class SDKDataSet  implements java.io.Serializable {
             ((this.description==null && other.getDescription()==null) || 
              (this.description!=null &&
               this.description.equals(other.getDescription()))) &&
-            ((this.fileName==null && other.getFileName()==null) || 
+     /*       ((this.fileName==null && other.getFileName()==null) || 
              (this.fileName!=null &&
-              this.fileName.equals(other.getFileName()))) &&
+              this.fileName.equals(other.getFileName()))) && */
             ((this.id==null && other.getId()==null) || 
              (this.id!=null &&
               this.id.equals(other.getId()))) &&
-            ((this.javaClassName==null && other.getJavaClassName()==null) || 
+            ((this.versionNum==null && other.getVersionNum()==null) || 
+             (this.versionNum!=null &&
+              this.versionNum.equals(other.getVersionNum()))) &&
+            ((this.active==null && other.getActive()==null) || 
+             (this.active!=null &&
+              this.active.equals(other.getActive()))) &&
+          /*  ((this.javaClassName==null && other.getJavaClassName()==null) || 
              (this.javaClassName!=null &&
               this.javaClassName.equals(other.getJavaClassName()))) &&
             ((this.jdbcDataSourceId==null && other.getJdbcDataSourceId()==null) || 
@@ -625,7 +683,7 @@ public class SDKDataSet  implements java.io.Serializable {
               this.jdbcQueryScript.equals(other.getJdbcQueryScript()))) &&
             ((this.jdbcQueryScriptLanguage==null && other.getJdbcQueryScriptLanguage()==null) || 
              (this.jdbcQueryScriptLanguage!=null &&
-              this.jdbcQueryScriptLanguage.equals(other.getJdbcQueryScriptLanguage()))) &&
+              this.jdbcQueryScriptLanguage.equals(other.getJdbcQueryScriptLanguage()))) && */
             ((this.label==null && other.getLabel()==null) || 
              (this.label!=null &&
               this.label.equals(other.getLabel()))) &&
@@ -647,22 +705,25 @@ public class SDKDataSet  implements java.io.Serializable {
             ((this.pivotRowName==null && other.getPivotRowName()==null) || 
              (this.pivotRowName!=null &&
               this.pivotRowName.equals(other.getPivotRowName()))) &&
-            ((this.scriptLanguage==null && other.getScriptLanguage()==null) || 
+         /*   ((this.scriptLanguage==null && other.getScriptLanguage()==null) || 
              (this.scriptLanguage!=null &&
               this.scriptLanguage.equals(other.getScriptLanguage()))) &&
             ((this.scriptText==null && other.getScriptText()==null) || 
              (this.scriptText!=null &&
-              this.scriptText.equals(other.getScriptText()))) &&
+              this.scriptText.equals(other.getScriptText()))) && */
             ((this.type==null && other.getType()==null) || 
              (this.type!=null &&
-              this.type.equals(other.getType()))) &&           
+              this.type.equals(other.getType()))) &&
+            ((this.configuration==null && other.getConfiguration()==null) || 
+             (this.configuration!=null &&
+              this.configuration.equals(other.getConfiguration()))) &&                         
             ((this.transformer==null && other.getTransformer()==null) || 
              (this.transformer!=null &&
               this.transformer.equals(other.getTransformer()))) &&
             ((this.category==null && other.getCategory()==null) || 
              (this.category!=null &&
-              this.category.equals(other.getCategory()))) &&
-            ((this.jsonQuery==null && other.getJsonQuery()==null) || 
+              this.category.equals(other.getCategory()))) /* &&
+           ((this.jsonQuery==null && other.getJsonQuery()==null) || 
              (this.jsonQuery!=null &&
               this.jsonQuery.equals(other.getJsonQuery()))) &&
             ((this.datamarts==null && other.getDatamarts()==null) || 
@@ -676,7 +737,8 @@ public class SDKDataSet  implements java.io.Serializable {
                        this.customData.equals(other.getCustomData()))) &&              
             ((this.webServiceOperation==null && other.getWebServiceOperation()==null) || 
              (this.webServiceOperation!=null &&
-              this.webServiceOperation.equals(other.getWebServiceOperation())));
+              this.webServiceOperation.equals(other.getWebServiceOperation())))*/
+              ;
         __equalsCalc = null;
         return _equals;
     }
@@ -691,7 +753,7 @@ public class SDKDataSet  implements java.io.Serializable {
         if (getDescription() != null) {
             _hashCode += getDescription().hashCode();
         }
-        if (getFileName() != null) {
+     /*   if (getFileName() != null) {
             _hashCode += getFileName().hashCode();
         }
         if (getId() != null) {
@@ -711,7 +773,7 @@ public class SDKDataSet  implements java.io.Serializable {
         }
         if (getJdbcQueryScriptLanguage() != null) {
             _hashCode += getJdbcQueryScriptLanguage().hashCode();
-        }
+        }*/
         if (getLabel() != null) {
             _hashCode += getLabel().hashCode();
         }
@@ -741,14 +803,17 @@ public class SDKDataSet  implements java.io.Serializable {
         if (getPivotRowName() != null) {
             _hashCode += getPivotRowName().hashCode();
         }
-        if (getScriptLanguage() != null) {
+    /*    if (getScriptLanguage() != null) {
             _hashCode += getScriptLanguage().hashCode();
         }
         if (getScriptText() != null) {
             _hashCode += getScriptText().hashCode();
-        }
+        }*/
         if (getType() != null) {
             _hashCode += getType().hashCode();
+        }
+        if (getConfiguration() != null) {
+            _hashCode += getConfiguration().hashCode();
         }
         if (getTransformer() != null) {
             _hashCode += getTransformer().hashCode();
@@ -756,7 +821,7 @@ public class SDKDataSet  implements java.io.Serializable {
         if (getCategory() != null) {
             _hashCode += getCategory().hashCode();
         }
-        if (getJsonQuery() != null) {
+     /*   if (getJsonQuery() != null) {
             _hashCode += getJsonQuery().hashCode();
         }
         if (getDatamarts() != null) {
@@ -770,7 +835,7 @@ public class SDKDataSet  implements java.io.Serializable {
         }
         if (getCustomData() != null) {
             _hashCode += getCustomData().hashCode();
-        }        
+        }        */
         __hashCodeCalc = false;
         return _hashCode;
     }
@@ -797,6 +862,16 @@ public class SDKDataSet  implements java.io.Serializable {
         elemField.setFieldName("id");
         elemField.setXmlName(new javax.xml.namespace.QName("", "id"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "int"));
+        elemField.setNillable(true);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("versionNum");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "versionNum"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "int"));
+        elemField.setNillable(true);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("active");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "active"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "boolean"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
@@ -874,6 +949,11 @@ public class SDKDataSet  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("type");
         elemField.setXmlName(new javax.xml.namespace.QName("", "type"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("configuration");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "configuration"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);

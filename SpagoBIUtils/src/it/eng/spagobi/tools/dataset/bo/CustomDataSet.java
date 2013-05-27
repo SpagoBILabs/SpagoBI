@@ -8,6 +8,7 @@ package it.eng.spagobi.tools.dataset.bo;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
@@ -16,6 +17,7 @@ import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.sql.Connection;
 import java.util.HashMap;
@@ -32,7 +34,9 @@ import org.json.JSONObject;
  */
 
 public class CustomDataSet extends ConfigurableDataSet {
-
+	public static final String JCLASS_NAME = "jClassName";
+	public static final String CUSTOM_DATA = "customData";
+	
 	String customData;
 	String javaClassName;
 
@@ -51,9 +55,17 @@ public class CustomDataSet extends ConfigurableDataSet {
 
 	public CustomDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
-
-		setCustomData( dataSetConfig.getCustomData() );
-		setJavaClassName( dataSetConfig.getJavaClassName() );
+		try{
+    		//JSONObject jsonConf  = ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
+    		String config = JSONUtils.escapeJsonString(dataSetConfig.getConfiguration());		
+    		JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
+    		this.setCustomData((jsonConf.get(CUSTOM_DATA) != null)?jsonConf.get(CUSTOM_DATA).toString():"");
+        	this.setJavaClassName((jsonConf.get(JCLASS_NAME)!=null)?jsonConf.get(JCLASS_NAME).toString():"");
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+		}
+	//	setCustomData( dataSetConfig.getCustomData() );
+	//	setJavaClassName( dataSetConfig.getJavaClassName() );
 	}
 
 	public SpagoBiDataSet toSpagoBiDataSet() {
@@ -62,10 +74,16 @@ public class CustomDataSet extends ConfigurableDataSet {
 		sbd = super.toSpagoBiDataSet();
 
 		sbd.setType( DS_TYPE );
-
-		sbd.setCustomData( getCustomData() );
-		sbd.setJavaClassName( getJavaClassName() );
-
+/* next informations are already loaded in method super.toSpagoBiDataSet() through the table field configuration
+		try{
+			JSONObject jsonConf  = new JSONObject();
+			jsonConf.put(CUSTOM_DATA, (getCustomData()==null)?"":getCustomData());
+			jsonConf.put(JCLASS_NAME,(getJavaClassName() ==null)?"":getJavaClassName() );
+			sbd.setConfiguration(jsonConf.toString());
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+		}
+*/
 		return sbd;
 	}
 

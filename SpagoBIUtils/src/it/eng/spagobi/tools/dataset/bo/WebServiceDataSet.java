@@ -5,12 +5,15 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.WebServiceDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.XmlDataReader;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * @author Angelo Bernabei
@@ -19,6 +22,8 @@ import org.apache.log4j.Logger;
 public class WebServiceDataSet extends ConfigurableDataSet {
     
     public static String DS_TYPE = "SbiWSDataSet";
+    public static final String WS_ADDRESS = "wsAddress";
+	public static final String WS_OPERATION = "wsOperation";
     
     private static transient Logger logger = Logger.getLogger(WebServiceDataSet.class);
     
@@ -39,8 +44,17 @@ public class WebServiceDataSet extends ConfigurableDataSet {
 		setDataProxy(  new WebServiceDataProxy() );
 		setDataReader( new XmlDataReader() );
 		
-		setAddress( dataSetConfig.getAdress() );
-		setOperation( dataSetConfig.getOperation() );
+		try{
+    		//JSONObject jsonConf  = ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
+    		String config = JSONUtils.escapeJsonString(dataSetConfig.getConfiguration());		
+    		JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
+    		this.setAddress((jsonConf.get(WS_ADDRESS) != null)?jsonConf.get(WS_ADDRESS).toString():"");        	
+    		this.setOperation((jsonConf.get(WS_OPERATION) != null)?jsonConf.get(WS_OPERATION).toString():"");
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+		}
+		//setAddress( dataSetConfig.getAdress() );
+		//setOperation( dataSetConfig.getOperation() );
 		//setParamsMap(dataSetConfig.getP)
 		
 		//addBehaviour( new QuerableBehaviour(this) );
@@ -53,11 +67,19 @@ public class WebServiceDataSet extends ConfigurableDataSet {
 		
 		sbd = super.toSpagoBiDataSet();
 		
-		sbd.setType( DS_TYPE );		
-		
-		sbd.setAdress( getAddress() );
-		sbd.setOperation( getOperation() );
-
+		sbd.setType( DS_TYPE );	
+		/*next informations are already loaded in method super.toSpagoBiDataSet() through the table field configuration
+		try{
+			JSONObject jsonConf  = new JSONObject();
+			jsonConf.put(WS_ADDRESS, getAddress() );	
+			jsonConf.put(WS_OPERATION,   getOperation() );	
+			sbd.setConfiguration(jsonConf.toString());
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+		}
+		//sbd.setAdress( getAddress() );
+		//sbd.setOperation( getOperation() );
+*/
 		return sbd;
 	}
 	

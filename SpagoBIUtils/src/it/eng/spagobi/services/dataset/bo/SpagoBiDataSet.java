@@ -7,37 +7,43 @@
 package it.eng.spagobi.services.dataset.bo;
 
 public class SpagoBiDataSet  implements java.io.Serializable {
-    private java.lang.String adress;
+    //private java.lang.String adress;
 
     private java.lang.Integer categoryId;
 
     private it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource;
 
-    private java.lang.String datamarts;
+   // private java.lang.String datamarts;
 
     private java.lang.String description;
 
     private int dsId;
+    
+    private int versionNum;
+    
+    private boolean active;
+    
+    private java.lang.String configuration;
 
     private java.lang.String dsMetadata;
 
-    private java.lang.String executorClass;
+    //private java.lang.String executorClass;
 
-    private java.lang.String fileName;
+    //private java.lang.String fileName;
 
-    private java.lang.String javaClassName;
+    //private java.lang.String javaClassName;
 
-    private java.lang.String jsonQuery;
+    //private java.lang.String jsonQuery;
 
     private java.lang.String label;
 
-    private java.lang.String languageScript;
+   // private java.lang.String languageScript;
 
     private java.lang.String name;
 
     private boolean numRows;
 
-    private java.lang.String operation;
+    //private java.lang.String operation;
 
     private java.lang.String parameters;
 
@@ -47,38 +53,41 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
     private java.lang.String pivotRowName;
 
-    private java.lang.String query;
+    //private java.lang.String query;
     
-    private java.lang.String queryScript;
+    //private java.lang.String queryScript;
     
-    private java.lang.String queryScriptLanguage;
+    //private java.lang.String queryScriptLanguage;
 
-    private java.lang.String script;
+    //private java.lang.String script;
 
     private java.lang.Integer transformerId;
 
     private java.lang.String type;
 
-    private java.lang.String customData;
+    //private java.lang.String customData;
 
     
     public SpagoBiDataSet() {
     }
 
     public SpagoBiDataSet(
-           java.lang.String adress,
+           //java.lang.String adress,
            java.lang.Integer categoryId,
            it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource,
-           java.lang.String datamarts,
+           //java.lang.String datamarts,
            java.lang.String description,
            int dsId,
+           int versionNum,
+           boolean active,
            java.lang.String dsMetadata,
+           java.lang.String configuration,
            java.lang.String executorClass,
-           java.lang.String fileName,
-           java.lang.String javaClassName,
-           java.lang.String jsonQuery,
+           //java.lang.String fileName,
+           //java.lang.String javaClassName,
+           //java.lang.String jsonQuery,
            java.lang.String label,
-           java.lang.String languageScript,
+           //java.lang.String languageScript,
            java.lang.String name,
            boolean numRows,
            java.lang.String operation,
@@ -91,35 +100,39 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            java.lang.String queryScriptLanguage,
            java.lang.String script,
            java.lang.Integer transformerId,
-           java.lang.String type,
-           java.lang.String customData) {
-           this.adress = adress;
+           java.lang.String type
+           //,java.lang.String customData
+           ) {
+          // this.adress = adress;
            this.categoryId = categoryId;
            this.dataSource = dataSource;
-           this.datamarts = datamarts;
+         //  this.datamarts = datamarts;
            this.description = description;
            this.dsId = dsId;
+           this.versionNum = versionNum;
+           this.active = active;           
            this.dsMetadata = dsMetadata;
-           this.executorClass = executorClass;
-           this.fileName = fileName;
-           this.javaClassName = javaClassName;
-           this.jsonQuery = jsonQuery;
+           this.configuration = configuration;
+           //this.executorClass = executorClass;
+           //this.fileName = fileName;
+           //this.javaClassName = javaClassName;
+           //this.jsonQuery = jsonQuery;
            this.label = label;
-           this.languageScript = languageScript;
+          // this.languageScript = languageScript;
            this.name = name;
            this.numRows = numRows;
-           this.operation = operation;
+           //this.operation = operation;
            this.parameters = parameters;
            this.pivotColumnName = pivotColumnName;
            this.pivotColumnValue = pivotColumnValue;
            this.pivotRowName = pivotRowName;
-           this.query = query;
-           this.queryScript = queryScript;
-           this.queryScriptLanguage = queryScriptLanguage;
-           this.script = script;
+           //this.query = query;
+           //this.queryScript = queryScript;
+           //this.queryScriptLanguage = queryScriptLanguage;
+           //this.script = script;
            this.transformerId = transformerId;
            this.type = type;
-           this.customData = customData;
+           //this.customData = customData;
     }
 
 
@@ -127,7 +140,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Gets the adress value for this SpagoBiDataSet.
      * 
      * @return adress
-     */
+     *
     public java.lang.String getAdress() {
         return adress;
     }
@@ -137,11 +150,11 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Sets the adress value for this SpagoBiDataSet.
      * 
      * @param adress
-     */
+     
     public void setAdress(java.lang.String adress) {
         this.adress = adress;
     }
-
+*/
 
     /**
      * Gets the categoryId value for this SpagoBiDataSet.
@@ -187,7 +200,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Gets the datamarts value for this SpagoBiDataSet.
      * 
      * @return datamarts
-     */
+     *
     public java.lang.String getDatamarts() {
         return datamarts;
     }
@@ -197,11 +210,11 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Sets the datamarts value for this SpagoBiDataSet.
      * 
      * @param datamarts
-     */
+     *
     public void setDatamarts(java.lang.String datamarts) {
         this.datamarts = datamarts;
     }
-
+    */
 
     /**
      * Gets the description value for this SpagoBiDataSet.
@@ -244,6 +257,34 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
 
     /**
+	 * @return the versionNum
+	 */
+	public int getVersionNum() {
+		return versionNum;
+	}
+
+	/**
+	 * @param versionNum the versionNum to set
+	 */
+	public void setVersionNum(int versionNum) {
+		this.versionNum = versionNum;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public boolean isActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	/**
      * Gets the dsMetadata value for this SpagoBiDataSet.
      * 
      * @return dsMetadata
@@ -267,7 +308,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Gets the executorClass value for this SpagoBiDataSet.
      * 
      * @return executorClass
-     */
+     *
     public java.lang.String getExecutorClass() {
         return executorClass;
     }
@@ -277,7 +318,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Sets the executorClass value for this SpagoBiDataSet.
      * 
      * @param executorClass
-     */
+     *
     public void setExecutorClass(java.lang.String executorClass) {
         this.executorClass = executorClass;
     }
@@ -287,7 +328,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Gets the fileName value for this SpagoBiDataSet.
      * 
      * @return fileName
-     */
+     *
     public java.lang.String getFileName() {
         return fileName;
     }
@@ -297,7 +338,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Sets the fileName value for this SpagoBiDataSet.
      * 
      * @param fileName
-     */
+     *
     public void setFileName(java.lang.String fileName) {
         this.fileName = fileName;
     }
@@ -307,7 +348,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Gets the javaClassName value for this SpagoBiDataSet.
      * 
      * @return javaClassName
-     */
+     *
     public java.lang.String getJavaClassName() {
         return javaClassName;
     }
@@ -317,7 +358,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Sets the javaClassName value for this SpagoBiDataSet.
      * 
      * @param javaClassName
-     */
+     *
     public void setJavaClassName(java.lang.String javaClassName) {
         this.javaClassName = javaClassName;
     }
@@ -327,7 +368,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Gets the jsonQuery value for this SpagoBiDataSet.
      * 
      * @return jsonQuery
-     */
+     *
     public java.lang.String getJsonQuery() {
         return jsonQuery;
     }
@@ -337,11 +378,11 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Sets the jsonQuery value for this SpagoBiDataSet.
      * 
      * @param jsonQuery
-     */
+     *
     public void setJsonQuery(java.lang.String jsonQuery) {
         this.jsonQuery = jsonQuery;
     }
-
+    */
 
     /**
      * Gets the label value for this SpagoBiDataSet.
@@ -367,7 +408,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Gets the languageScript value for this SpagoBiDataSet.
      * 
      * @return languageScript
-     */
+     *
     public java.lang.String getLanguageScript() {
         return languageScript;
     }
@@ -377,11 +418,11 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Sets the languageScript value for this SpagoBiDataSet.
      * 
      * @param languageScript
-     */
+     
     public void setLanguageScript(java.lang.String languageScript) {
         this.languageScript = languageScript;
     }
-
+*/
 
     /**
      * Gets the name value for this SpagoBiDataSet.
@@ -427,7 +468,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Gets the operation value for this SpagoBiDataSet.
      * 
      * @return operation
-     */
+     *
     public java.lang.String getOperation() {
         return operation;
     }
@@ -437,11 +478,11 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Sets the operation value for this SpagoBiDataSet.
      * 
      * @param operation
-     */
+     *
     public void setOperation(java.lang.String operation) {
         this.operation = operation;
     }
-
+    */
 
     /**
      * Gets the parameters value for this SpagoBiDataSet.
@@ -527,7 +568,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Gets the query value for this SpagoBiDataSet.
      * 
      * @return query
-     */
+     *
     public java.lang.String getQuery() {
         return query;
     }
@@ -537,7 +578,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Sets the query value for this SpagoBiDataSet.
      * 
      * @param query
-     */
+     *
     public void setQuery(java.lang.String query) {
         this.query = query;
     }
@@ -565,7 +606,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Gets the script value for this SpagoBiDataSet.
      * 
      * @return script
-     */
+     *
     public java.lang.String getScript() {
         return script;
     }
@@ -575,11 +616,11 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Sets the script value for this SpagoBiDataSet.
      * 
      * @param script
-     */
+     *
     public void setScript(java.lang.String script) {
         this.script = script;
     }
-
+    */
 
     /**
      * Gets the transformerId value for this SpagoBiDataSet.
@@ -624,7 +665,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Gets the type value for this SpagoBiDataSet.
      * 
      * @return type
-     */
+     *
     public java.lang.String getCustomData() {
         return customData;
     }
@@ -634,13 +675,30 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      * Sets the type value for this SpagoBiDataSet.
      * 
      * @param type
-     */
+     *
     public void setCustomData(java.lang.String customData) {
         this.customData = customData;
     }
-    
+    */
 
-    private java.lang.Object __equalsCalc = null;
+    /**
+	 * @return the configuration
+	 */
+	public String getConfiguration() {
+		return configuration;
+	}
+
+	/**
+	 * @param configuration the configuration to set
+	 */
+	public void setConfiguration(String configuration) {
+		this.configuration = configuration;
+	}
+
+
+
+
+	private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof SpagoBiDataSet)) return false;
         SpagoBiDataSet other = (SpagoBiDataSet) obj;
@@ -652,26 +710,31 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         __equalsCalc = obj;
         boolean _equals;
         _equals = true && 
-            ((this.adress==null && other.getAdress()==null) || 
+         /*   ((this.adress==null && other.getAdress()==null) || 
              (this.adress!=null &&
-              this.adress.equals(other.getAdress()))) &&
+              this.adress.equals(other.getAdress()))) && */
             ((this.categoryId==null && other.getCategoryId()==null) || 
              (this.categoryId!=null &&
               this.categoryId.equals(other.getCategoryId()))) &&
             ((this.dataSource==null && other.getDataSource()==null) || 
              (this.dataSource!=null &&
               this.dataSource.equals(other.getDataSource()))) &&
-            ((this.datamarts==null && other.getDatamarts()==null) || 
+        /*    ((this.datamarts==null && other.getDatamarts()==null) || 
              (this.datamarts!=null &&
-              this.datamarts.equals(other.getDatamarts()))) &&
+              this.datamarts.equals(other.getDatamarts()))) &&*/
             ((this.description==null && other.getDescription()==null) || 
              (this.description!=null &&
               this.description.equals(other.getDescription()))) &&
             this.dsId == other.getDsId() &&
+            this.versionNum == other.getVersionNum() &&
+            this.active == other.isActive() &&
             ((this.dsMetadata==null && other.getDsMetadata()==null) || 
              (this.dsMetadata!=null &&
               this.dsMetadata.equals(other.getDsMetadata()))) &&
-            ((this.executorClass==null && other.getExecutorClass()==null) || 
+            ((this.configuration==null && other.getConfiguration()==null) || 
+             (this.configuration!=null &&
+              this.configuration.equals(other.getConfiguration()))) &&
+      /*      ((this.executorClass==null && other.getExecutorClass()==null) || 
              (this.executorClass!=null &&
               this.executorClass.equals(other.getExecutorClass()))) &&
             ((this.fileName==null && other.getFileName()==null) || 
@@ -682,20 +745,20 @@ public class SpagoBiDataSet  implements java.io.Serializable {
               this.javaClassName.equals(other.getJavaClassName()))) &&
             ((this.jsonQuery==null && other.getJsonQuery()==null) || 
              (this.jsonQuery!=null &&
-              this.jsonQuery.equals(other.getJsonQuery()))) &&
+              this.jsonQuery.equals(other.getJsonQuery()))) && */
             ((this.label==null && other.getLabel()==null) || 
              (this.label!=null &&
               this.label.equals(other.getLabel()))) &&
-            ((this.languageScript==null && other.getLanguageScript()==null) || 
+          /*  ((this.languageScript==null && other.getLanguageScript()==null) || 
              (this.languageScript!=null &&
-              this.languageScript.equals(other.getLanguageScript()))) &&
+              this.languageScript.equals(other.getLanguageScript()))) && */
             ((this.name==null && other.getName()==null) || 
              (this.name!=null &&
               this.name.equals(other.getName()))) &&
             this.numRows == other.isNumRows() &&
-            ((this.operation==null && other.getOperation()==null) || 
+    /*        ((this.operation==null && other.getOperation()==null) || 
              (this.operation!=null &&
-              this.operation.equals(other.getOperation()))) &&
+              this.operation.equals(other.getOperation()))) && */
             ((this.parameters==null && other.getParameters()==null) || 
              (this.parameters!=null &&
               this.parameters.equals(other.getParameters()))) &&
@@ -708,7 +771,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.pivotRowName==null && other.getPivotRowName()==null) || 
              (this.pivotRowName!=null &&
               this.pivotRowName.equals(other.getPivotRowName()))) &&
-            ((this.query==null && other.getQuery()==null) || 
+         /*   ((this.query==null && other.getQuery()==null) || 
              (this.query!=null &&
               this.query.equals(other.getQuery()))) &&
             ((this.queryScript==null && other.getQueryScript()==null) || 
@@ -719,16 +782,17 @@ public class SpagoBiDataSet  implements java.io.Serializable {
               this.queryScriptLanguage.equals(other.getQueryScriptLanguage()))) &&
             ((this.script==null && other.getScript()==null) || 
              (this.script!=null &&
-              this.script.equals(other.getScript()))) &&
+              this.script.equals(other.getScript()))) && */
             ((this.transformerId==null && other.getTransformerId()==null) || 
              (this.transformerId!=null &&
               this.transformerId.equals(other.getTransformerId()))) &&
             ((this.type==null && other.getType()==null) || 
              (this.type!=null &&
-              this.type.equals(other.getType()))) &&
-            ((this.customData==null && other.getCustomData()==null) || 
+              this.type.equals(other.getType()))) 
+            /*&& ((this.customData==null && other.getCustomData()==null) || 
              (this.customData!=null &&
-              this.customData.equals(other.getCustomData())));
+              this.customData.equals(other.getCustomData())))*/
+              ;
         __equalsCalc = null;
         return _equals;
     }
@@ -740,18 +804,18 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         }
         __hashCodeCalc = true;
         int _hashCode = 1;
-        if (getAdress() != null) {
+      /*  if (getAdress() != null) {
             _hashCode += getAdress().hashCode();
-        }
+        }*/
         if (getCategoryId() != null) {
             _hashCode += getCategoryId().hashCode();
         }
         if (getDataSource() != null) {
             _hashCode += getDataSource().hashCode();
         }
-        if (getDatamarts() != null) {
+      /*  if (getDatamarts() != null) {
             _hashCode += getDatamarts().hashCode();
-        }
+        }*/
         if (getDescription() != null) {
             _hashCode += getDescription().hashCode();
         }
@@ -759,7 +823,10 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         if (getDsMetadata() != null) {
             _hashCode += getDsMetadata().hashCode();
         }
-        if (getExecutorClass() != null) {
+        if (getConfiguration() != null) {
+            _hashCode += getConfiguration().hashCode();
+        }
+   /*     if (getExecutorClass() != null) {
             _hashCode += getExecutorClass().hashCode();
         }
         if (getFileName() != null) {
@@ -770,20 +837,20 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         }
         if (getJsonQuery() != null) {
             _hashCode += getJsonQuery().hashCode();
-        }
+        }*/
         if (getLabel() != null) {
             _hashCode += getLabel().hashCode();
         }
-        if (getLanguageScript() != null) {
+   /*     if (getLanguageScript() != null) {
             _hashCode += getLanguageScript().hashCode();
-        }
+        }*/
         if (getName() != null) {
             _hashCode += getName().hashCode();
         }
         _hashCode += (isNumRows() ? Boolean.TRUE : Boolean.FALSE).hashCode();
-        if (getOperation() != null) {
+    /*    if (getOperation() != null) {
             _hashCode += getOperation().hashCode();
-        }
+        }*/
         if (getParameters() != null) {
             _hashCode += getParameters().hashCode();
         }
@@ -796,7 +863,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         if (getPivotRowName() != null) {
             _hashCode += getPivotRowName().hashCode();
         }
-        if (getQuery() != null) {
+    /*    if (getQuery() != null) {
             _hashCode += getQuery().hashCode();
         }
         if (getQueryScript() != null) {
@@ -807,16 +874,16 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         }
         if (getScript() != null) {
             _hashCode += getScript().hashCode();
-        }
+        }*/
         if (getTransformerId() != null) {
             _hashCode += getTransformerId().hashCode();
         }
         if (getType() != null) {
             _hashCode += getType().hashCode();
         }
-        if (getCustomData() != null) {
+   /*     if (getCustomData() != null) {
             _hashCode += getCustomData().hashCode();
-        }
+        }*/
         __hashCodeCalc = false;
         return _hashCode;
     }
@@ -862,10 +929,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setXmlName(new javax.xml.namespace.QName("", "dsId"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
         elemField.setNillable(false);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("versionNum");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "versionNum"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
+        elemField.setNillable(false);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("active");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "active"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("dsMetadata");
         elemField.setXmlName(new javax.xml.namespace.QName("", "dsMetadata"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("configuration");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "configuration"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);

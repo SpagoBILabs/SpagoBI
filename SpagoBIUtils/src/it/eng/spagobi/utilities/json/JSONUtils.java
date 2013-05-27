@@ -122,6 +122,24 @@ public class JSONUtils {
 		return value;
 	}
 	
-	
+	public static String escapeJsonString(String object){
+		String toReturn = object;
+		
+		toReturn = toReturn.replaceAll("\n", "\\\\n");
+		toReturn = toReturn.replaceAll("\r", "\\\\r");
+		toReturn = toReturn.replaceAll("\t", "\\\\t");
+		toReturn = toReturn.replaceAll("\b", "\\\\b");
+		toReturn = toReturn.replaceAll("\f", "\\\\f");
+		//toReturn = toReturn.replaceAll("\"", "\\\\\"");
+		
+		//toReturn = toReturn.replaceAll("{", "\\{");		
+		//toReturn = toReturn.replaceAll("}", "\\}");
+		//toReturn = toReturn.replaceAll("(", "\\\\(");
+		//toReturn = toReturn.replaceAll(")", "\\\\)");
+		//toReturn = toReturn.replaceAll("[", "\\[");
+		//toReturn = toReturn.replaceAll("]", "\\]");
+		
+		return toReturn;
+	}
 	
 }

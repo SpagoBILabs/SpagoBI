@@ -5,16 +5,20 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JavaClassDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.XmlDataReader;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 public class JavaClassDataSet extends ConfigurableDataSet {
 	 
 	public static String DS_TYPE = "SbiJClassDataSet";
+	public static final String JCLASS_NAME = "jClassName";
 	
 	private static transient Logger logger = Logger.getLogger(JavaClassDataSet.class);
 	 
@@ -30,7 +34,15 @@ public class JavaClassDataSet extends ConfigurableDataSet {
 		setDataProxy( new JavaClassDataProxy() );
 		setDataReader( new XmlDataReader() );		
 		
-		setClassName( dataSetConfig.getJavaClassName() );
+		try{
+    		//JSONObject jsonConf  = ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
+    		String config = JSONUtils.escapeJsonString(dataSetConfig.getConfiguration());		
+    		JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
+    		this.setClassName((jsonConf.get(JCLASS_NAME) != null)?jsonConf.get(JCLASS_NAME).toString():"");        	
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+		}
+	//	setClassName( dataSetConfig.getJavaClassName() );
 	}
 	
 	public SpagoBiDataSet toSpagoBiDataSet() {
@@ -39,9 +51,16 @@ public class JavaClassDataSet extends ConfigurableDataSet {
 		sbd = super.toSpagoBiDataSet();
 		
 		sbd.setType( DS_TYPE );
-				
-		sbd.setJavaClassName( getClassName() );
-		
+		/*next informations are already loaded in method super.toSpagoBiDataSet() through the table field configuration
+		try{
+			JSONObject jsonConf  = new JSONObject();		
+			jsonConf.put(JCLASS_NAME, getClassName());
+			sbd.setConfiguration(jsonConf.toString());
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+		}
+		//sbd.setJavaClassName( getClassName() );
+		*/
 		return sbd;
 	}
 	
