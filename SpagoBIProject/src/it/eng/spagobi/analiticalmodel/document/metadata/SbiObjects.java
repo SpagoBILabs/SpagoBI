@@ -5,12 +5,10 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.document.metadata;
 
-import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
-import it.eng.spagobi.kpi.config.metadata.SbiKpiDocument;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
 import java.util.Date;
@@ -53,7 +51,8 @@ public class SbiObjects  extends SbiHibernateModel {
 	private Date creationDate=null;
 	private String creationUser=null;
 	private Integer refreshSeconds=null;     
-	private SbiDataSetConfig dataSet=null;
+	//private SbiDataSet dataSet=null;
+	private Integer dataSet=null;
 	private Set sbiKpiDocumentses = new HashSet(0);
 
 	// Constructors
@@ -544,20 +543,20 @@ public class SbiObjects  extends SbiHibernateModel {
 	  * Gets the data set.
 	  * 
 	  * @return the data set
-	  */
-	 public SbiDataSetConfig getDataSet() {
+	  
+	 public SbiDataSet getDataSet() {
 		 return dataSet;
-	 }
+	 }*/
 
 	 /**
 	  * Sets the data set.
 	  * 
 	  * @param dataSet the new data set
-	  */
-	 public void setDataSet(SbiDataSetConfig dataSet) {
+	  
+	 public void setDataSet(SbiDataSet dataSet) {
 		 this.dataSet = dataSet;
-	 }
-
+	 }*/
+	 
 	 /**
 	  * Gets the refresh Seconds.
 	  * 
@@ -569,6 +568,22 @@ public class SbiObjects  extends SbiHibernateModel {
 	 }
 
 	 /**
+	 * @return the dataSet
+	 */
+	public Integer getDataSet() {
+		return dataSet;
+	}
+
+
+	/**
+	 * @param dataSet the dataSet to set
+	 */
+	public void setDataSet(Integer dataSet) {
+		this.dataSet = dataSet;
+	}
+
+
+	/**
 	  * Sets the refresh Seconds.
 	  * 
 	  * @param Integer the refreshSeconds

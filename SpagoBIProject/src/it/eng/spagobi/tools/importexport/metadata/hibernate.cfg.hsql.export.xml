@@ -41,8 +41,7 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoMapFeatures.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoFeatures.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoMaps.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSetConfig.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSetHistory.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSet.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModelInst.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModelResources.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiResources.hbm.xml" />

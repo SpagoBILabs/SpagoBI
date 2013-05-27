@@ -10,7 +10,7 @@ package it.eng.spagobi.kpi.config.metadata;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +22,8 @@ public class SbiKpi extends SbiHibernateModel {
 
 	private Integer kpiId;
 	private SbiKpi sbiKpi;
-	private SbiDataSetConfig sbiDataSet;
+	//private SbiDataSet sbiDataSet;
+	private Integer sbiDataSet;
 	private SbiDomains sbiDomainsByMeasureType;
 	private SbiDomains sbiDomainsByKpiType;
 	private SbiThreshold sbiThreshold;
@@ -56,7 +57,8 @@ public class SbiKpi extends SbiHibernateModel {
 		this.kpiId = id;
 	}
 
-	public SbiKpi(SbiKpi sbiKpi, SbiDataSetConfig sbiDataSet,
+	//public SbiKpi(SbiKpi sbiKpi, SbiDataSet sbiDataSet,
+	public SbiKpi(SbiKpi sbiKpi, Integer sbiDataSet,
 			SbiDomains sbiDomainsByMeasureType, SbiDomains sbiDomainsByKpiType,
 			SbiThreshold sbiThreshold, SbiMeasureUnit sbiMeasureUnit,
 			SbiDomains sbiDomainsByMetricScaleType, String name,
@@ -112,15 +114,15 @@ public class SbiKpi extends SbiHibernateModel {
 	public void setSbiKpi(SbiKpi sbiKpi) {
 		this.sbiKpi = sbiKpi;
 	}
-
-	public SbiDataSetConfig getSbiDataSet() {
+/*
+	public SbiDataSet getSbiDataSet() {
 		return this.sbiDataSet;
 	}
 
-	public void setSbiDataSet(SbiDataSetConfig sbiDataSet) {
+	public void setSbiDataSet(SbiDataSet sbiDataSet) {
 		this.sbiDataSet = sbiDataSet;
 	}
-
+*/
 	public SbiDomains getSbiDomainsByMeasureType() {
 		return this.sbiDomainsByMeasureType;
 	}
@@ -280,6 +282,20 @@ public class SbiKpi extends SbiHibernateModel {
 
 	public void setIsAdditive(Boolean isAdditive) {
 		this.isAdditive = isAdditive;
+	}
+
+	/**
+	 * @return the sbiDataSet
+	 */
+	public Integer getSbiDataSet() {
+		return sbiDataSet;
+	}
+
+	/**
+	 * @param sbiDataSet the sbiDataSet to set
+	 */
+	public void setSbiDataSet(Integer sbiDataSet) {
+		this.sbiDataSet = sbiDataSet;
 	}
 
 }

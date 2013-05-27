@@ -9,7 +9,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
@@ -47,7 +47,7 @@ public class GetDatasetsUserListAction extends ManageDatasets {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
 			}
 			Locale locale = getLocale();
-			List<GuiGenericDataSet> items = null;
+			List<IDataSet> items = null;
 			getSpagoBIRequestContainer().set( DataSetConstants.START , new Integer(0) );
 			getSpagoBIRequestContainer().set( DataSetConstants.LIMIT , Integer.MAX_VALUE );
 			

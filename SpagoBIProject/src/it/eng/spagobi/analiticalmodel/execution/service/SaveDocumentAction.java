@@ -18,14 +18,16 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
-import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
-import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.util.ArrayList;
@@ -247,7 +249,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			sourceDatasetLabel = sourceDatasetJSON.optString("label");
 			Assert.assertNotNull( StringUtilities.isNotEmpty( sourceDatasetLabel ) , "Source dataset's label cannot be null or empty");
 			
-			GuiGenericDataSet sourceDataset = null;
+			IDataSet sourceDataset = null;
 			try {
 				sourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
 			} catch (Throwable t ) {
@@ -261,14 +263,22 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			BIObject document = createBaseDocument(documentJSON, null, foldersJSON);				
 			ObjTemplate template = buildDocumentTemplate(customDataJSON, null);
 								
-			document.setDataSetId(sourceDataset.getDsId());
+			document.setDataSetId(sourceDataset.getId());
 			
 			// datasource
-			GuiDataSetDetail detail = sourceDataset.getActiveDetail();
-			if (detail instanceof QueryDataSetDetail) {
-				String dataSourceLabel = ((QueryDataSetDetail) detail).getDataSourceLabel();
-				IDataSource datasource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
-				document.setDataSourceId(datasource.getDsId());
+			//GuiDataSetDetail detail = sourceDataset.getActiveDetail();
+			if (sourceDataset.getDsType().equalsIgnoreCase(DataSetConstants.QUERY)) {
+				String config = JSONUtils.escapeJsonString(sourceDataset.getConfiguration());		
+				JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
+				//JSONObject jsonConf  = ObjectUtils.toJSONObject(sourceDataset.getConfiguration());
+				try{
+					String dataSourceLabel =jsonConf.getString(DataSetConstants.DATA_SOURCE);
+					IDataSource datasource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+					document.setDataSourceId(datasource.getDsId());										
+				}catch (Exception e){
+					logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+				}
+				
 			}
 										
 			documentManagementAPI.saveDocument(document, template);					

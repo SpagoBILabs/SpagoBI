@@ -30,29 +30,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
-import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
-import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 
@@ -66,7 +47,7 @@ public class DatasetManagementAPI {
 
 	static private Logger logger = Logger.getLogger(DatasetManagementAPI.class);
 
-	public  Integer creatDataSet(GuiGenericDataSet dataSet) {
+	public  Integer creatDataSet(IDataSet dataSet) {
 		logger.debug("IN");
 		Integer toReturn = null;
 		if (dataSet == null) {
@@ -106,8 +87,8 @@ public class DatasetManagementAPI {
 		return toReturn;
 	}
 
-	
-	private boolean validateDataSet(GuiGenericDataSet dataSet) throws ValidationException, EMFUserError{
+	  
+	private boolean validateDataSet(IDataSet dataSet) throws ValidationException, EMFUserError{
 		logger.debug("IN");
 
 		logger.debug("check the dataset not alreaduy present with same label");

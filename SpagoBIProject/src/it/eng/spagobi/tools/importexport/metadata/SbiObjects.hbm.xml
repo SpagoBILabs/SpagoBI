@@ -28,9 +28,14 @@
         <many-to-one name="dataSource" class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource">
             <column name="data_source_id" not-null="false" />
         </many-to-one>
-        <many-to-one name="dataSet" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig">
+        <!-- 
+        <many-to-one name="dataSet" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSet">
             <column name="data_set_id" not-null="false" />
-        </many-to-one>        
+        </many-to-one>   
+         -->
+         <property name="dataSet" type="integer">
+		   <column  name="data_set_id" not-null="false"/>
+		  </property>     
         <property name="objectTypeCode" type="string">
             <column name="biobj_type_cd" length="20" not-null="true" />
         </property>

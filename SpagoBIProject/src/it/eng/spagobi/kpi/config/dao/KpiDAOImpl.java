@@ -40,7 +40,7 @@ import it.eng.spagobi.kpi.threshold.dao.IThresholdValueDAO;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.udp.dao.IUdpValueDAO;
 
 import java.text.SimpleDateFormat;
@@ -193,11 +193,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		Integer kpiId = kpi.getKpiId();
 		String kpiName = kpi.getName();
 
-		SbiDataSetConfig dsC = kpi.getSbiDataSet();
+		//SbiDataSet dsC = kpi.getSbiDataSet();
+		IDataSet dsC = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(kpi.getSbiDataSet());
 		Integer dsId = null;
 		String dsLabel = null;
 		if (dsC != null) {
-			dsId = dsC.getDsId();
+			dsId = dsC.getId();
 			dsLabel = dsC.getLabel();
 		}
 
@@ -1109,11 +1110,15 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 		Integer kpiId = kpi.getKpiId();
 		String kpiName = kpi.getName();
-		SbiDataSetConfig dsC = kpi.getSbiDataSet();
+		//SbiDataSet dsC = kpi.getSbiDataSet();
+		IDataSet dsC = null;
+		if (kpi.getSbiDataSet() != null) {
+			dsC = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(kpi.getSbiDataSet());
+		}
 		Integer dsId = null;
 		String dsLabel = null;
 		if (dsC != null) {
-			dsId = dsC.getDsId();
+			dsId = dsC.getId();
 			dsLabel = dsC.getLabel();
 		}
 
@@ -1311,7 +1316,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			String code = kpi.getCode();
 			String metric = kpi.getMetric();
 			Double weight = kpi.getStandardWeight();
-			SbiDataSetConfig ds = null;
+			SbiDataSet ds = null;
 			String interpretation = kpi.getInterpretation(); 
 			String inputAttribute = kpi.getInputAttribute();
 			String modelReference = kpi.getModelReference();
@@ -1319,8 +1324,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 			if (kpi.getKpiDsId() != null) {
 				Integer ds_id = kpi.getKpiDsId() ;
-				ds = (SbiDataSetConfig) aSession.load(SbiDataSetConfig.class,
-						ds_id);
+				//ds = (SbiDataSet) aSession.load(SbiDataSet.class,ds_id);
+				Query countQuery = aSession.createQuery("from SbiDataSet ds where ds.active = ? and ds.id.dsId = ?");
+				countQuery.setBoolean(0, true);
+				countQuery.setInteger(1, ds_id);
+				ds = (SbiDataSet)countQuery.uniqueResult();
 			}
 
 			SbiThreshold sbiThreshold = null;
@@ -1416,7 +1424,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			sbiKpi.setWeight(weight);
 			sbiKpi.setIsAdditive(kpi.getIsAdditive());
 			//sbiKpi.setSbiKpiDocumentses(sbiKpiDocuments);
-			sbiKpi.setSbiDataSet(ds);
+			sbiKpi.setSbiDataSet(ds.getId().getDsId());
 			sbiKpi.setSbiThreshold(sbiThreshold);
 			updateSbiCommonInfo4Update(sbiKpi);
 			aSession.saveOrUpdate(sbiKpi);
@@ -1464,11 +1472,14 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			String metric = kpi.getMetric();
 			Double weight = kpi.getStandardWeight();
 
-			SbiDataSetConfig ds = null;
+			SbiDataSet ds = null;
 			if (kpi.getKpiDsId()  != null) {
 				Integer ds_id = kpi.getKpiDsId();
-				ds = (SbiDataSetConfig) aSession.load(SbiDataSetConfig.class,
-						ds_id);
+				//ds = (SbiDataSet) aSession.load(SbiDataSet.class,ds_id);
+				Query countQuery = aSession.createQuery("from SbiDataSet ds where ds.active = ? and ds.id.dsId = ?");
+				countQuery.setBoolean(0, true);
+				countQuery.setInteger(1, kpi.getKpiDsId());
+				ds = (SbiDataSet)countQuery.uniqueResult();
 			}
 
 			SbiThreshold sbiThreshold = null;
@@ -1516,7 +1527,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			sbiKpi.setMetric(metric);
 			sbiKpi.setWeight(weight);
 			sbiKpi.setIsAdditive(kpi.getIsAdditive());
-			sbiKpi.setSbiDataSet(ds);
+			sbiKpi.setSbiDataSet(ds.getId().getDsId());
 			sbiKpi.setSbiThreshold(sbiThreshold);
 			updateSbiCommonInfo4Insert(sbiKpi);
 			idToReturn = (Integer) aSession.save(sbiKpi);
@@ -1609,11 +1620,13 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiKpi k = (SbiKpi) aSession.load(SbiKpi.class, kpiId);
-			SbiDataSetConfig ds = k.getSbiDataSet();
+			/*SbiDataSet ds = k.getSbiDataSet();
 			if (ds!=null){
-				toReturn = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(ds.getDsId());
+				toReturn = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(ds.getId().getDsId());
+			}*/
+			if (k.getSbiDataSet()!=null){
+				toReturn = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(k.getSbiDataSet());
 			}
-
 		} catch (HibernateException he) {
 
 			if (tx != null)

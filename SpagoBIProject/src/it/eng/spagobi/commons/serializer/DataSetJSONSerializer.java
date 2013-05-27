@@ -8,27 +8,27 @@ package it.eng.spagobi.commons.serializer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.dataset.bo.CustomDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JClassDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.QbeDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DataSetJSONSerializer implements Serializer {
+	
+	private static transient Logger logger = Logger.getLogger(DataSetJSONSerializer.class);
 
 	public static final String DS_ID = "dsId";
 	public static final String VERSION_ID = "versId";
@@ -48,7 +48,7 @@ public class DataSetJSONSerializer implements Serializer {
 		
 	private static final String PARS = "pars";
 	private static final String METADATA = "meta";
-	private static final String CUSTOMS = "customs";
+	private static final String CUSTOMS = "Custom";
 
 	
 	private static final String DS_TYPE_CD = "dsTypeCd";
@@ -83,29 +83,28 @@ public class DataSetJSONSerializer implements Serializer {
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		
-		if( !(o instanceof GuiGenericDataSet) ) {
+		if( !(o instanceof IDataSet)) {
 			throw new SerializationException("DataSetJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 		
 		try {
-			GuiGenericDataSet ds = (GuiGenericDataSet)o;
+			IDataSet ds = (IDataSet)o;
 			result = new JSONObject();
-			Integer dsId = ds.getDsId();
+			Integer dsId = ds.getId();
 			result.put(ID, dsId);
 			result.put(LABEL, ds.getLabel() );	
 			result.put(NAME, ds.getName() );
 			result.put(DESCRIPTION, ds.getDescription() );
-			Integer numObjAssociated = DAOFactory.getDataSetDAO().countBIObjAssociated(new Integer(ds.getDsId()));
+			Integer numObjAssociated = DAOFactory.getDataSetDAO().countBIObjAssociated(new Integer(ds.getId()));
 			if(numObjAssociated!=null){
 				result.put(USED_BY_N_DOCS, numObjAssociated );
 			}
 			
-			GuiDataSetDetail dsDetail = ds.getActiveDetail();
-			
-			result.put(CATEGORY_TYPE_VN, dsDetail.getCategoryValueName());
+			//result.put(CATEGORY_TYPE_VN, ds.getCategoryValueName());
+			result.put(CATEGORY_TYPE_VN, ds.getCategoryCd()); 
 
 			JSONArray parsListJSON = new JSONArray();
-			String pars = dsDetail.getParameters();
+			String pars = ds.getParameters();
 			if(pars!=null && !pars.equals("")){
 				SourceBean source = SourceBean.fromXMLString(pars);
 				if(source!=null && source.getName().equals("PARAMETERSLIST")){
@@ -123,27 +122,28 @@ public class DataSetJSONSerializer implements Serializer {
 			}
 			result.put(PARS, parsListJSON);	
 			
-			String meta = dsDetail.getDsMetadata();
+			String meta = ds.getDsMetadata();
 			result.put(METADATA, serializeMetada(meta));
 			
-
-			
 			JSONArray versionsListJSON = new JSONArray();
-			List<GuiDataSetDetail> nonActiveDetails = ds.getNonActiveDetails();
+			List<IDataSet> nonActiveDetails = ds.getNoActiveVersions();			
 			if(nonActiveDetails!=null && !nonActiveDetails.isEmpty()){
 				Iterator it = nonActiveDetails.iterator();
 				while(it.hasNext()){
-					GuiDataSetDetail tempDetail = (GuiDataSetDetail)it.next();
+					IDataSet tempDetail = (IDataSet)it.next();
+					Integer dsVersionNum = null;
+					if (tempDetail instanceof VersionedDataSet){
+						dsVersionNum = ((VersionedDataSet) tempDetail).getVersionNum();
+					}
 					String dsType = tempDetail.getDsType();
-					String userIn = tempDetail.getUserIn();
-					Integer dsVersionNum = tempDetail.getVersionNum();
-					Integer dsVersionId = tempDetail.getDsHId();
-					Date timeIn = tempDetail.getTimeIn();
+					String userIn = tempDetail.getUserIn();				
+			//		Integer dsVersionId = tempDetail.getDsHId();
+					Date timeIn = tempDetail.getDateIn();
 					JSONObject jsonOldVersion = new JSONObject();
 					jsonOldVersion.put(TYPE, dsType);
 					jsonOldVersion.put(USER_IN, userIn);
 					jsonOldVersion.put(VERSION_NUM, dsVersionNum);
-					jsonOldVersion.put(VERSION_ID, dsVersionId);
+					//jsonOldVersion.put(VERSION_ID, dsVersionId);
 					jsonOldVersion.put(DATE_IN, timeIn);
 					jsonOldVersion.put(DS_ID, dsId);
 					versionsListJSON.put(jsonOldVersion);
@@ -151,103 +151,91 @@ public class DataSetJSONSerializer implements Serializer {
 			}
 			result.put(DS_OLD_VERSIONS, versionsListJSON);	
 			
-			result.put(DS_TYPE_CD, dsDetail.getDsType());	
+			result.put(DS_TYPE_CD, ds.getDsType());	
 			
-			result.put(USER_IN, dsDetail.getUserIn());
-			result.put(VERSION_NUM, dsDetail.getVersionNum());
-			result.put(VERSION_ID, dsDetail.getDsHId());
-			result.put(DATE_IN, dsDetail.getTimeIn());
+			result.put(USER_IN, ds.getUserIn());
+			result.put(VERSION_NUM, ((VersionedDataSet) ds).getVersionNum());
+			//result.put(VERSION_ID, dsDetail.getDsHId());
+			result.put(DATE_IN, ds.getDateIn());
 
-			if(dsDetail instanceof FileDataSetDetail){
-				String fileName = ((FileDataSetDetail)dsDetail).getFileName();
-				if(fileName!=null){
-					result.put(FILE_NAME, fileName);				
+			String config = JSONUtils.escapeJsonString(ds.getConfiguration());		
+			JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
+			try{
+				if(ds.getDsType().equalsIgnoreCase(DataSetConstants.FILE)){
+					String fileName = jsonConf.getString(DataSetConstants.FILE_NAME);
+					if(fileName!=null){
+						result.put(FILE_NAME, fileName);				
+					}				
+				}else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.QUERY)){
+					result.put(QUERY, jsonConf.getString(DataSetConstants.QUERY));
+					result.put(QUERY_SCRIPT, jsonConf.getString(DataSetConstants.QUERY_SCRIPT));
+					result.put(QUERY_SCRIPT_LANGUAGE, jsonConf.getString(DataSetConstants.QUERY_SCRIPT_LANGUAGE));
+					result.put(DATA_SOURCE, jsonConf.getString(DataSetConstants.DATA_SOURCE));
+				}else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.QBE)) {					
+				//	result.put(QBE_SQL_QUERY, jsonConf.getString(DataSetConstants.QBE_SQL_QUERY));
+					result.put(QBE_JSON_QUERY,jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
+					result.put(QBE_DATA_SOURCE, jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
+					result.put(QBE_DATAMARTS, jsonConf.getString(DataSetConstants.QBE_DATAMARTS));			
+				}else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.WEB_SERVICE)){
+					String ws_address = jsonConf.getString(DataSetConstants.WS_ADDRESS);
+					if(ws_address!=null){
+						result.put(WS_ADDRESS, ws_address);
+					}
+					String ws_operation = jsonConf.getString(DataSetConstants.WS_OPERATION);
+					if(ws_operation!=null){
+						result.put(WS_OPERATION, ws_operation);
+					}	
+				}else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.SCRIPT)){
+					String script = jsonConf.getString(DataSetConstants.SCRIPT);
+					if(script!=null){					
+						result.put(SCRIPT, script);
+					}
+					String script_language = jsonConf.getString(DataSetConstants.SCRIPT_LANGUAGE);
+					if(script_language!=null){
+						result.put(SCRIPT_LANGUAGE, script_language);
+					}
+				}else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.JAVA_CLASS)){
+					String jClass =  jsonConf.getString(DataSetConstants.JCLASS_NAME);
+					if(jClass!=null){
+						result.put(JCLASS_NAME, jClass);
+					}
+				}else if(ds.getDsType().equalsIgnoreCase(CUSTOMS)){
+					String customData =  jsonConf.getString(DataSetConstants.CUSTOM_DATA);
+					JSONObject customJSONObject = new JSONObject();
+					if(customData!=null && !customData.equals("")){
+						customJSONObject =new JSONObject(customData);
+					}
+					result.put(CUSTOMS, customJSONObject);	
+					
+					String jClass =  jsonConf.getString(DataSetConstants.JCLASS_NAME);
+					if(jClass!=null){
+						result.put(JCLASS_NAME, jClass);
+					}		
 				}
-			}
-
-			else if(dsDetail instanceof QueryDataSetDetail){
-				QueryDataSetDetail queryDatasetDetail = (QueryDataSetDetail)dsDetail;
-				if(queryDatasetDetail.getQuery() != null){
-					result.put(QUERY, queryDatasetDetail.getQuery());
-				}
-				if(queryDatasetDetail.getQueryScript() != null){
-					result.put(QUERY_SCRIPT, queryDatasetDetail.getQueryScript());
-				}
-				if(queryDatasetDetail.getQueryScriptLanguage() != null){
-					result.put(QUERY_SCRIPT_LANGUAGE, queryDatasetDetail.getQueryScriptLanguage());
-				}
-				String dataSourceLabel = queryDatasetDetail.getDataSourceLabel();
-				if(dataSourceLabel!=null){
-					result.put(DATA_SOURCE, dataSourceLabel);
-				}				
-			}
-			
-			else if(dsDetail instanceof QbeDataSetDetail) {
-				QbeDataSetDetail aQbeDataSetDetail = (QbeDataSetDetail) dsDetail;
-				result.put(QBE_SQL_QUERY, aQbeDataSetDetail.getSqlQuery());
-				result.put(QBE_JSON_QUERY, aQbeDataSetDetail.getJsonQuery());
-				result.put(QBE_DATA_SOURCE, aQbeDataSetDetail.getDataSourceLabel());
-				result.put(QBE_DATAMARTS, aQbeDataSetDetail.getDatamarts());			
-			}
-
-			else if(dsDetail instanceof WSDataSetDetail){
-				String ws_address = ((WSDataSetDetail)dsDetail).getAddress();
-				if(ws_address!=null){
-					result.put(WS_ADDRESS, ws_address);
-				}
-				String ws_operation = ((WSDataSetDetail)dsDetail).getOperation();
-				if(ws_operation!=null){
-					result.put(WS_OPERATION, ws_operation);
-				}	
-			}
-
-			else if(dsDetail instanceof ScriptDataSetDetail){
-				String script = ((ScriptDataSetDetail)dsDetail).getScript();
-				if(script!=null){					
-					result.put(SCRIPT, script);
-				}
-				String script_language = ((ScriptDataSetDetail)dsDetail).getLanguageScript();
-				if(script_language!=null){
-					result.put(SCRIPT_LANGUAGE, script_language);
-				}
-			}
-
-			else if(dsDetail instanceof JClassDataSetDetail){
-				String jClass = ((JClassDataSetDetail)dsDetail).getJavaClassName();
-				if(jClass!=null){
-					result.put(JCLASS_NAME, jClass);
-				}
+			}catch (Exception e){
+				logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 			}
 			
-			
-			else if(dsDetail instanceof CustomDataSetDetail){
-				String customData = ((CustomDataSetDetail)dsDetail).getCustomData();
-				//JSONArray customJSONArray = new JSONArray();
-				JSONObject customJSONObject = new JSONObject();
-				if(customData!=null && !customData.equals("")){
-					//customJSONArray = new JSONArray(customData);
-					customJSONObject =new JSONObject(customData);
-				}
-				result.put(CUSTOMS, customJSONObject);	
-				
-				String jClass = ((CustomDataSetDetail)dsDetail).getJavaClassName();
-				if(jClass!=null){
-					result.put(JCLASS_NAME, jClass);
-				}		
-			}
-			
-			
-			result.put(TRASFORMER_TYPE_CD, dsDetail.getTransformerCd());
-			result.put(PIVOT_COL_NAME, dsDetail.getPivotColumnName());	
-			result.put(PIVOT_COL_VALUE, dsDetail.getPivotColumnValue());	
-			result.put(PIVOT_ROW_NAME,dsDetail.getPivotRowName());	
-			result.put(PIVOT_IS_NUM_ROWS,dsDetail.isNumRows());
-			result.put(IS_PERSISTED,dsDetail.isPersisted());	
-			result.put(DATA_SOURCE_PERSIST,dsDetail.getDataSourcePersist());	
-			result.put(IS_FLAT_DATASET,dsDetail.isFlatDataset());	
-			result.put(FLAT_TABLE_NAME,dsDetail.getFlatTableName());
-			result.put(DATA_SOURCE_FLAT,dsDetail.getDataSourceFlat());
-	
+			result.put(TRASFORMER_TYPE_CD, ds.getTransformerCd());
+			result.put(PIVOT_COL_NAME, ds.getPivotColumnName());	
+			result.put(PIVOT_COL_VALUE, ds.getPivotColumnValue());	
+			result.put(PIVOT_ROW_NAME,ds.getPivotRowName());	
+			result.put(PIVOT_IS_NUM_ROWS,ds.isNumRows());
+			result.put(IS_PERSISTED,ds.isPersisted());	
+			if  (ds.getDataSourcePersistId() != null){ 
+				IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(ds.getDataSourcePersistId() );
+				if (dataSource != null){
+					result.put(DATA_SOURCE_PERSIST,dataSource.getLabel());	
+				}			
+			}		
+			result.put(IS_FLAT_DATASET,ds.isFlatDataset());	
+			result.put(FLAT_TABLE_NAME,ds.getFlatTableName());
+			if  (ds.getDataSourceFlatId() != null){ 
+				IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(ds.getDataSourceFlatId() );
+				if (dataSource != null){
+					result.put(DATA_SOURCE_FLAT,dataSource.getLabel());	
+				}			
+			}				
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {

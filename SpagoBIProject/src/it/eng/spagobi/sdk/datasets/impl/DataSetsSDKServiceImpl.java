@@ -19,7 +19,6 @@ import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
-import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -206,7 +205,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				return null;
 			}
 			//defines the new dataset from the sdk object
-			GuiGenericDataSet sbiDataset = new SDKObjectsConverter().fromSDKDatasetToBIDataset(sdkDataSet);	
+			IDataSet sbiDataset = new SDKObjectsConverter().fromSDKDatasetToBIDataset(sdkDataSet);	
 			
 			dataSetId = sdkDataSet.getId();
 			logger.debug("Looking for dataset with id = " + dataSetId);

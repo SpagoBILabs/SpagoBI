@@ -47,7 +47,8 @@ import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration;
 import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPresentationsDAO;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
@@ -453,11 +454,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			hibBIObject.setDataSource(dSource);
 
-			SbiDataSetConfig dSet = null;
+			SbiDataSet dSet = null;
 			if (biObject.getDataSetId() != null) {
-				dSet = (SbiDataSetConfig) aSession.load(SbiDataSetConfig.class, biObject.getDataSetId());
+				Query hibQuery = aSession.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?" );
+				hibQuery.setBoolean(0, true);
+				hibQuery.setInteger(1,  biObject.getDataSetId());	
+				dSet =(SbiDataSet)hibQuery.uniqueResult();
 			}
-			hibBIObject.setDataSet(dSet);
+			//hibBIObject.setDataSet(dSet);
+			hibBIObject.setDataSet(dSet.getId().getDsId());
 
 
 			hibBIObject.setDescr(biObject.getDescription());
@@ -632,11 +637,16 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			hibBIObject.setDataSource(dSource);
 
-			SbiDataSetConfig dSet= null;
+			SbiDataSet dSet= null;
 			if (obj.getDataSetId() != null) {
-				dSet = (SbiDataSetConfig) aSession.load(SbiDataSetConfig.class, obj.getDataSetId());
+				Query hibQuery = aSession.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?" );
+				hibQuery.setBoolean(0, true);
+				hibQuery.setInteger(1,  obj.getDataSetId());	
+				dSet =(SbiDataSet)hibQuery.uniqueResult();
+				//dSet = (SbiDataSet) aSession.load(SbiDataSet.class, obj.getDataSetId());
 			}
-			hibBIObject.setDataSet(dSet);
+			//hibBIObject.setDataSet(dSet);
+			hibBIObject.setDataSet(dSet.getId().getDsId());
 
 			Integer refreshSeconds=obj.getRefreshSeconds();
 			if(refreshSeconds==null)refreshSeconds=new Integer(0);
@@ -1109,7 +1119,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			aBIObject.setDataSourceId(new Integer(hibBIObject.getDataSource().getDsId()));
 		}
 		if (hibBIObject.getDataSet()!=null){
-			aBIObject.setDataSetId(new Integer(hibBIObject.getDataSet().getDsId()));
+			//aBIObject.setDataSetId(new Integer(hibBIObject.getDataSet().getId().getDsId()));	
+			aBIObject.setDataSetId(new Integer(hibBIObject.getDataSet()));
 		}
 
 		// set id
