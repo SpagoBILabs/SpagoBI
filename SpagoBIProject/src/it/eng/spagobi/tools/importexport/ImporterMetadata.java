@@ -5,8 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexport;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
@@ -49,7 +47,8 @@ import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
@@ -57,14 +56,9 @@ import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-
-import javax.management.RuntimeErrorException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -520,12 +514,13 @@ public class ImporterMetadata {
 			SbiObjParview hibObjParview = (SbiObjParview) hqlQuery.uniqueResult();
 			return hibObjParview;
 		} 
-		else if (hibObj instanceof SbiDataSetConfig) {
+		else if (hibObj instanceof SbiDataSet) {
 			param = "SbiDataSetConfig";
 			String label = (String) unique;
-			hql = "from SbiDataSetConfig ds where ds.label = '" + label + "'";
-			hqlQuery = sessionCurrDB.createQuery(hql);
-			SbiDataSetConfig hibDs = (SbiDataSetConfig) hqlQuery.uniqueResult();
+			hqlQuery = sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.label = ?" );
+			hqlQuery.setBoolean(0, true);
+			hqlQuery.setString(1, label);					
+			SbiDataSet hibDs =(SbiDataSet)hqlQuery.uniqueResult();			
 			return hibDs;
 		} else if (hibObj instanceof SbiDataSource) {
 			param = "SbiDataSource";

@@ -6,7 +6,6 @@
 package it.eng.spagobi.tools.importexport;
 
 
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -44,6 +43,7 @@ import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
@@ -64,14 +64,20 @@ import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
-import it.eng.spagobi.tools.dataset.metadata.SbiQueryDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -97,6 +103,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -413,7 +420,7 @@ public class ImportUtilities {
 				// update dataset id
 				DatasetDetail datasetDetail = (DatasetDetail) lovDetail;
 				String datasetLabel = datasetDetail.getDatasetLabel();
-				Query query = sessionCurrDB.createQuery("select d.id from SbiDataSetConfig d where d.label = :label");
+				Query query = sessionCurrDB.createQuery("select d.id from SbiDataSet d where d.label = :label and d.active= true");
 				query.setString("label", datasetLabel);
 				Integer datasetId = (Integer) query.uniqueResult();
 				datasetDetail.setDatasetId(datasetId.toString());
@@ -1315,8 +1322,8 @@ public class ImportUtilities {
 			SbiDataSource localDS = getAssociatedSbiDataSource(exportedObj, sessionCurrDB, metaAss);
 			if (localDS != null) obj.setDataSource(localDS);
 			// reading exist datasset
-			SbiDataSetConfig localDataSet = getAssociatedSbiDataSet(exportedObj, sessionCurrDB, metaAss);
-			if (localDataSet != null) obj.setDataSet(localDataSet);
+			SbiDataSet localDataSet = getAssociatedSbiDataSet(exportedObj, sessionCurrDB, metaAss);
+			if (localDataSet != null) obj.setDataSet(localDataSet.getId().getDsId());
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1349,10 +1356,27 @@ public class ImportUtilities {
 
 	}
 
-	private static SbiDataSetConfig getAssociatedSbiDataSet(
+	private static SbiDataSet getAssociatedSbiDataSet(
 			SbiObjects exportedObj, Session sessionCurrDB,
 			MetadataAssociations metaAss) {
 		logger.debug("IN");
+		
+		Integer expDataset = exportedObj.getDataSet();
+		Integer existingDatasetId = (Integer) metaAss.getDataSetIDAssociation().get(expDataset);
+		Query hqlQuery = sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?" );
+		hqlQuery.setBoolean(0, true);
+		hqlQuery.setInteger(1, existingDatasetId);	
+		//hqlQuery.setInteger(1, expDataset);	
+		SbiDataSet localDS =(SbiDataSet)hqlQuery.uniqueResult();	
+		if (localDS != null) {
+			logger.debug("OUT");
+			return localDS;
+		}else {
+			logger.debug("OUT");
+			return null;
+		}
+		
+		/*	orig:
 		SbiDataSetConfig expDataset = exportedObj.getDataSet();
 		if (expDataset != null) {
 			Integer existingDatasetId = (Integer) metaAss.getDataSetIDAssociation().get(new Integer(expDataset.getDsId()));
@@ -1363,7 +1387,7 @@ public class ImportUtilities {
 			logger.debug("OUT");
 			return null;
 		}
-
+		*/
 	}
 
 	private static SbiDomains getAssociatedBIObjectState(
@@ -1420,17 +1444,27 @@ public class ImportUtilities {
 		return existingEngine;
 	}
 
-	private static SbiDataSource getAssociatedSbiDataSource(SbiQueryDataSet exportedDataset,
+	private static SbiDataSource getAssociatedSbiDataSource(SbiDataSet exportedDataset,
 			Session sessionCurrDB, MetadataAssociations metaAss) {
 		logger.debug("IN");
 		SbiDataSource existingDs = null;
-		SbiDataSource exportedDs = exportedDataset.getDataSource();
-		if (exportedDs != null) {
-			Integer exportedDsId = new Integer(exportedDs.getDsId());
-			Map assDatasources = metaAss.getDataSourceIDAssociation();
-			Integer existingDsID = (Integer) assDatasources.get(exportedDsId);
-			existingDs = (SbiDataSource) sessionCurrDB.load(SbiDataSource.class, existingDsID);
+		//JSONObject jsonConf  = ObjectUtils.toJSONObject(exportedDataset.getConfiguration());
+		String config = JSONUtils.escapeJsonString(exportedDataset.getConfiguration());		
+		JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
+		DataSourceDAOHibImpl dataSourceDao=new DataSourceDAOHibImpl();
+		try{
+			IDataSource dataSource= dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
+//			SbiDataSource exportedDs = exportedDataset.getDataSource();
+			if (dataSource != null) {
+				Integer exportedDsId = new Integer(dataSource.getDsId());
+				Map assDatasources = metaAss.getDataSourceIDAssociation();
+				Integer existingDsID = (Integer) assDatasources.get(exportedDsId);
+				existingDs = (SbiDataSource) sessionCurrDB.load(SbiDataSource.class, existingDsID);
+			}
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 		}
+
 		logger.debug("OUT");
 		return existingDs;
 	}
@@ -1466,11 +1500,7 @@ public class ImportUtilities {
 		} finally {
 			logger.debug("OUT");
 		}
-
 	}
-
-
-
 
 
 	/**
@@ -1479,10 +1509,41 @@ public class ImportUtilities {
 	 * @param dataProxy the ds
 	 * 
 	 * @return the sbi data set
-	 */
-	public static SbiDataSetConfig makeNew(SbiDataSetConfig dataset, IEngUserProfile profile){
+	 
+	public static SbiDataSet makeNew(SbiDataSet dataset, IEngUserProfile profile){
 		logger.debug("IN");
-		SbiDataSetConfig newDsConfig = new SbiDataSetConfig();
+	
+		SbiDataSet newDsConfig = new SbiDataSet();
+
+		newDsConfig.setLabel(dataset.getLabel());
+		newDsConfig.setName(dataset.getName());
+		newDsConfig.setDescription(dataset.getDescription());
+		SbiCommonInfo i = new SbiCommonInfo();
+		String userid = "biadmin";
+		if(profile!=null){
+			userid =(String) profile.getUserUniqueIdentifier();
+		}
+		i.setTimeIn(new Date());
+		i.setUserIn(userid);
+		i.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+		newDsConfig.setCommonInfo(i);
+
+		logger.debug("OUT");
+		return newDsConfig;
+	}	*/
+
+	/**
+	 * Make new data set.
+	 * 
+	 * @param dataProxy the ds
+	 * 
+	 * @return the sbi data set
+	 */
+	public static SbiDataSet makeNew(SbiDataSet dataset, Session sessionCurrDB, IEngUserProfile profile){
+		logger.debug("IN");
+		SbiDataSetId dsID = getDataSetKey(sessionCurrDB, dataset, true);
+		SbiDataSet newDsConfig  = new SbiDataSet(dsID);
+	//	SbiDataSet newDsConfig = new SbiDataSet();
 
 		newDsConfig.setLabel(dataset.getLabel());
 		newDsConfig.setName(dataset.getName());
@@ -1505,7 +1566,6 @@ public class ImportUtilities {
 
 
 
-
 	/**
 	 * Load an existing dataset and make modifications as per the exported dataset in input
 	 * For what concern the history keep track of the previous one and insert the new one
@@ -1517,12 +1577,24 @@ public class ImportUtilities {
 	 * @return the existing dataset modified as per the exported dataset in input
 	 * 
 	 * @throws EMFUserError 	 */
-	public static SbiDataSetConfig modifyExisting(SbiDataSetConfig exportedDataset,
+	public static SbiDataSet modifyExisting(SbiDataSet exportedDataset,
 			Session sessionCurrDB, Integer existingId, Session sessionExpDB, IEngUserProfile profile) {
 		logger.debug("IN");
-		SbiDataSetConfig existingDataset = null;
+		SbiDataSet existingDataset = null;
 		try {
-			existingDataset = (SbiDataSetConfig) sessionCurrDB.load(SbiDataSetConfig.class, existingId);
+			//Query hibQueryExisting = sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId= ?" );
+			//hibQueryExisting.setBoolean(0, true); 
+			//hibQueryExisting.setInteger(1, existingId);	
+			//existingDataset = (SbiDataSet) sessionCurrDB.load(SbiDataSet.class, existingId);
+		//	existingDataset = (SbiDataSet)hibQueryExisting.uniqueResult();
+			Query hibQueryPreActive =  sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId= ?" );
+			hibQueryPreActive.setBoolean(0, true); 
+			hibQueryPreActive.setInteger(1, existingId);	
+			SbiDataSet preActive = (SbiDataSet)hibQueryPreActive.uniqueResult();	
+			
+			SbiDataSetId dsID = getDataSetKey(sessionCurrDB, preActive, false);
+			existingDataset = new SbiDataSet(dsID);
+			existingDataset.setActive(true);			
 			existingDataset.setLabel(exportedDataset.getLabel());
 			existingDataset.setName(exportedDataset.getName());			
 			existingDataset.setDescription(exportedDataset.getDescription());
@@ -1539,27 +1611,11 @@ public class ImportUtilities {
 			i.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
 			existingDataset.setCommonInfo(i);
 
-
-			// Make precedent active inactive, new one will be active
-			Query hibQueryPreActive = sessionCurrDB.createQuery("from SbiDataSetHistory h where h.active = ? and h.sbiDsConfig = ?" );
-			hibQueryPreActive.setBoolean(0, true); 
-			hibQueryPreActive.setInteger(1, existingId);	
-			SbiDataSetHistory  preActive = (SbiDataSetHistory)hibQueryPreActive.uniqueResult();
+			
 			preActive.setActive(false);
 			sessionCurrDB.update(preActive);
-
-			//			// finally save the new exported history
-			//			// insert new Active dataset: in the export DB there is only one for each datasetConfig
-			//			Query hibQuery = sessionExpDB.createQuery(" from SbiDataSetHistory where dsId = '" + exportedDataset.getDsId() + "'");
-			//			SbiDataSetHistory dsHistory = (SbiDataSetHistory)hibQuery.uniqueResult();
-			//
-			//
-			//			// create a copy for current dataset (cannot modify the one retieved frome export DB
-			//			SbiDataSetHistory dsnewHistory = DAOFactory.getDataSetDAO().copyDataSetHistory(dsHistory );
-			//
-			//			dsnewHistory.setDsId(existingDataset);
-			//			sessionCurrDB.save(dsnewHistory);
-
+			
+		//	existingDataset.setActive(true);
 		}
 		catch (Exception e) {
 			logger.error("Error in modifying exported dataset "+exportedDataset.getLabel(), e);
@@ -1588,33 +1644,44 @@ public class ImportUtilities {
 	 */
 
 
-	public static void associateNewSbiDataSethistory(SbiDataSetConfig dataset,
-			SbiDataSetConfig exportedDataset, Session sessionCurrDB, Session sessionExpDB, 
+	public static void associateNewSbiDataSet(SbiDataSet dataset,
+			SbiDataSet exportedDataset, Session sessionCurrDB, Session sessionExpDB, 
 			ImporterMetadata importer, MetadataAssociations metaAss, IEngUserProfile profile) {
 		logger.debug("IN");
 		try {
-			// save the new exported history
+			// save the new exported 
 			// insert new Active dataset: in the export DB there is only one for each datasetConfig
-			Query hibQuery = sessionExpDB.createQuery(" from SbiDataSetHistory where sbiDsConfig = '" + exportedDataset.getDsId() + "'");
-			SbiDataSetHistory dsHistory = (SbiDataSetHistory)hibQuery.uniqueResult();
-
-			// create a copy for current dataset (cannot modify the one retieved frome export DB
-			SbiDataSetHistory dsnewHistory = DAOFactory.getDataSetDAO().copyDataSetHistory(dsHistory );
-
-			dsnewHistory.setSbiDsConfig(dataset);
+			Query hibQuery = sessionExpDB.createQuery("from SbiDataSet h where h.active = ? and h.label = ?" );
+			hibQuery.setBoolean(0, true);
+			hibQuery.setString(1, exportedDataset.getLabel());					
+			SbiDataSet ds2 =(SbiDataSet)hibQuery.uniqueResult();
+			// create a copy for current dataset (cannot modify the one retieved frome export DB			
+			//SbiDataSet dsnew = DAOFactory.getDataSetDAO().copyDataSet(ds2 );
+			SbiDataSet dsnew = ds2; 
 
 			// associate data source
-			if (dsHistory instanceof SbiQueryDataSet) {
-				SbiQueryDataSet queryDataSet = (SbiQueryDataSet) dsHistory;
-				SbiDataSource ds = getAssociatedSbiDataSource(queryDataSet, sessionCurrDB, metaAss);
+			if(ds2.getType().equalsIgnoreCase(DataSetConstants.QUERY)) { 
+				String config = JSONUtils.escapeJsonString(ds2.getConfiguration());		
+				JSONObject jsonConf  = ObjectUtils.toJSONObject(config);	
+				//SbiDataSet queryDataSet = (SbiDataSet) dsHistory;
+				//SbiDataSource ds = getAssociatedSbiDataSource(queryDataSet, sessionCurrDB, metaAss);
+				SbiDataSource ds = getAssociatedSbiDataSource(ds2, sessionCurrDB, metaAss);
+				
 				if (ds != null) {
-					((SbiQueryDataSet) dsnewHistory).setDataSource(ds);
+					try{
+						jsonConf.remove(DataSetConstants.DATA_SOURCE);
+						jsonConf.put(DataSetConstants.DATA_SOURCE, ds.getLabel());
+						dsnew.setConfiguration(jsonConf.toString());
+					}catch (Exception e){
+						logger.error("Error while defining dataset / dtasource configuration.  Error: " + e.getMessage());
+					}
 				}
 			}
+			
 
 			SbiDomains transformer = getAssociatedTransfomerType(exportedDataset, sessionCurrDB, metaAss, importer);
 			if (transformer != null) {
-				dsnewHistory.setTransformer(transformer);
+				dsnew.setTransformer(transformer);
 
 			}
 			SbiCommonInfo i = new SbiCommonInfo();
@@ -1623,12 +1690,12 @@ public class ImportUtilities {
 				userid =(String) profile.getUserUniqueIdentifier();
 			}
 			
-			dsnewHistory.setUserIn(userid);
-			dsnewHistory.setTimeIn(new Date());
-			dsnewHistory.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
-			dsnewHistory.setOrganization(((UserProfile) profile).getOrganization());
-
-			sessionCurrDB.save(dsnewHistory);
+			dsnew.setUserIn(userid);
+			dsnew.setTimeIn(new Date());
+			dsnew.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+			dsnew.setOrganization(((UserProfile) profile).getOrganization());
+			
+			sessionCurrDB.save(dsnew);
 
 		} catch (EMFUserError e) {
 			logger.error("EMF user Error",e);
@@ -1688,7 +1755,7 @@ public class ImportUtilities {
 					// update dataset id
 					DatasetDetail datasetDetail = (DatasetDetail) lovDetail;
 					String datasetLabel = datasetDetail.getDatasetLabel();
-					Query query = sessionCurrDB.createQuery("select d.id from SbiDataSetConfig d where d.label = :label");
+					Query query = sessionCurrDB.createQuery("select d.id from SbiDataSet d where d.label = :label and d.active=true");
 					query.setString("label", datasetLabel);
 					Integer datasetId = (Integer) query.uniqueResult();
 					datasetDetail.setDatasetId(datasetId.toString());
@@ -1769,7 +1836,7 @@ public class ImportUtilities {
 
 
 
-	private static SbiDomains getAssociatedTransfomerType(SbiDataSetConfig exportedDataset,
+	private static SbiDomains getAssociatedTransfomerType(SbiDataSet exportedDataset,
 			Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		//TODO mettere a posto con nuove tabelle dataset
@@ -2278,15 +2345,20 @@ public class ImportUtilities {
 		// dataset 
 		Map datasetIdAss=metaAss.getDataSetIDAssociation();
 		if(exportedKpi.getSbiDataSet()!=null){
-			Integer oldDataSetId=exportedKpi.getSbiDataSet().getDsId();
+			Integer oldDataSetId=exportedKpi.getSbiDataSet();
 			Integer newDataSetId=(Integer)datasetIdAss.get(oldDataSetId);
 			if(newDataSetId==null) {
-				logger.error("could not find dataset "+exportedKpi.getSbiDataSet().getLabel());
+				logger.error("could not find dataset "+exportedKpi.getSbiDataSet());
 				existingKpi.setSbiDataSet(null);
 			}
 			else{
-				SbiDataSetConfig newSbiDataset = (SbiDataSetConfig) sessionCurrDB.load(SbiDataSetConfig.class, newDataSetId);
-				existingKpi.setSbiDataSet(newSbiDataset);
+				Query hibQuery = sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.id_dsId = ?" );
+				hibQuery.setBoolean(0, true);
+				hibQuery.setInteger(1, newDataSetId);					
+				SbiDataSet newSbiDataset =(SbiDataSet)hibQuery.uniqueResult();
+				
+			//	SbiDataSet newSbiDataset = (SbiDataSet) sessionCurrDB.load(SbiDataSetConfig.class, newDataSetId);
+				existingKpi.setSbiDataSet(newSbiDataset.getId().getDsId());
 			}
 		}
 		else{
@@ -4733,14 +4805,47 @@ public class ImportUtilities {
 		logger.debug("OUT");
 		return lovsMetadata;
 	}
+	
+	private static SbiDataSetId getDataSetKey(Session aSession, SbiDataSet dataSet, boolean isInsert){
+		SbiDataSetId toReturn = new SbiDataSetId();
+		// get the next id or version num of the dataset managed
+		Integer maxId = null;
+		Integer nextId = null;
+		String hql = null;
+		Query query = null;
+		if (isInsert){
+			hql = " select max(sb.id.dsId) as maxId from SbiDataSet sb ";
+			toReturn.setVersionNum(new Integer("1"));
+			query = aSession.createQuery(hql);
+		}else{
+			hql = " select max(sb.id.versionNum) as maxId from SbiDataSet sb where sb.label = ? ";
+			query = aSession.createQuery(hql);
+			query.setString(0, dataSet.getLabel());
+			toReturn.setDsId(dataSet.getId().getDsId());
+		}
 
+		List result = query.list();
+		Iterator it = result.iterator();
+		while (it.hasNext()){
+			maxId = (Integer) it.next();				
+		}
+		logger.debug("Current max prog : " + maxId);
+		if (maxId == null) {
+			nextId = new Integer(1);
+		} else {
+			nextId = new Integer(maxId.intValue() + 1);
+		}	
+		
+		if (isInsert){
+			logger.debug("Nextid: " + nextId);
+			toReturn.setDsId(nextId);
+		}else{
+			logger.debug("NextVersion: " + nextId);
+			toReturn.setVersionNum(nextId);
+		}
 
-
-
-
-
-
-
+		return toReturn;
+	}
 
 }
 

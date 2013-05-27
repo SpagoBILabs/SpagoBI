@@ -7,10 +7,6 @@ package it.eng.spagobi.analiticalmodel.execution.service;
 
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -19,8 +15,7 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.bo.CustomDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -58,6 +53,10 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	public static final String  INPUT_PARAMETER_DS_CUSTOM_DATA = DataSetConstants.CUSTOM_DATA;
 	public static final String  INPUT_PARAMETER_DS_JCLASS_NAME = DataSetConstants.JCLASS_NAME;
 	public static final String  INPUT_PARAMETER_DS_METADATA = DataSetConstants.DS_METADATA;
+	
+	public static final String JCLASS_NAME = "jClassName";
+	public static final String CUSTOM_DATA = "customData";
+	
 	public static final String  INPUT_PARAMETER_DS_PARAMETER_DEFINITION = "parametersDefinition";
 	public static final String  INPUT_PARAMETER_DS_PARAMETERS_VALUES = "parametersValues";	
 	public static final String  INPUT_PARAMETER_BUSINESS_METADATA = "businessMetadata";
@@ -76,7 +75,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	public void doService() {
 		
 		DatasetManagementAPI creationUtilities;
-		GuiGenericDataSet datasetBean;
+		IDataSet datasetBean;
 	
 		
 		logger.debug("IN");
@@ -235,10 +234,10 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	 * @return  GuiGenericDataSet the bean object that collect all the dataset 
 	 * attributes read from request.
 	 */
-	private GuiGenericDataSet getDatasetAttributesFromRequest(){
+	private IDataSet getDatasetAttributesFromRequest(){
 		
 		
-		GuiGenericDataSet datasetBean;
+		IDataSet datasetBean;
 		
 		String label;
 		String name;
@@ -295,21 +294,32 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 			
 			logger.trace("Attributes used to build the new dataset succesfully read from request");
 	
-			CustomDataSetDetail customDataSetDetail = new CustomDataSetDetail();
-			customDataSetDetail.setCustomData(customData);
-			customDataSetDetail.setJavaClassName(jClassName);
-			customDataSetDetail.setParameters(parametersDefinitionXML);
-			customDataSetDetail.setDsType(DataSetConstants.DS_CUSTOM);
-			if(!StringUtilities.isEmpty(metadata)) {
-				customDataSetDetail.setDsMetadata(metadata);
-			}
+			//TODO anto : gestire la vecchia versione del dettaglio
+			//CustomDataSetDetail customDataSetDetail = new CustomDataSetDetail();
+			//customDataSetDetail.setCustomData(customData);
+			//customDataSetDetail.setJavaClassName(jClassName);
+			//customDataSetDetail.setParameters(parametersDefinitionXML);
+			//customDataSetDetail.setDsType(DataSetConstants.DS_CUSTOM);
+			//if(!StringUtilities.isEmpty(metadata)) {
+			//	customDataSetDetail.setDsMetadata(metadata);
+			//}
 			
 			logger.trace("Building the dataset bean...");
-			datasetBean = new GuiGenericDataSet();
 			datasetBean.setLabel(label);
 			datasetBean.setName(name);
 			datasetBean.setDescription(description);
-			datasetBean.setActiveDetail(customDataSetDetail);
+			try{
+				JSONObject jsonConf  = new JSONObject();
+				jsonConf.put(CUSTOM_DATA, customData);
+				jsonConf.put(JCLASS_NAME, jClassName);
+				jsonConf.put(DataSetConstants.PARS, parametersDefinitionXML);
+				jsonConf.put(DataSetConstants.DS_CUSTOM, DataSetConstants.DS_CUSTOM);
+				jsonConf.put(DataSetConstants.DS_TYPE_CD, DataSetConstants.DS_CUSTOM);
+				datasetBean.setConfiguration(jsonConf.toString());
+			}catch (Exception e){
+				logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+			}
+			
 			logger.trace("Dataset bean succesfully built");
 						
 		} catch(Throwable t) {

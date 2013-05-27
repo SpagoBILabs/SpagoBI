@@ -20,20 +20,16 @@ import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JClassDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
-import it.eng.spagobi.tools.dataset.bo.QbeDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
-import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -41,7 +37,7 @@ import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -86,7 +82,7 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 		if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASETS_FOR_KPI_LIST)) {			
 			try {	
 				Integer totalItemsNum = dsDao.countDatasets();
-				List<SbiDataSetConfig> items = getListOfGenericDatasetsForKpi(dsDao);
+				List<SbiDataSet> items = getListOfGenericDatasetsForKpi(dsDao);
 				logger.debug("Loaded items list");
 				JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items, locale);
 				JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
@@ -99,7 +95,7 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 		} else if(serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASETS_LIST)) {			
 			try {		
 				Integer totalItemsNum = dsDao.countDatasets();
-				List<GuiGenericDataSet> items = getListOfGenericDatasets(dsDao);
+				List<IDataSet> items = getListOfGenericDatasets(dsDao);
 				logger.debug("Loaded items list");
 				JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items, locale);
 				JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
@@ -110,12 +106,12 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.general.retrieveItemsError", e);
 			}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_INSERT)) {			
-			GuiGenericDataSet ds = getGuiGenericDatasetToInsert();		
+			IDataSet ds = getGuiGenericDatasetToInsert();		
 			if(ds!=null){
 				String id = getAttributeAsString(DataSetConstants.ID);
 				try {
 					if(id != null && !id.equals("") && !id.equals("0")){							
-						ds.setDsId(Integer.valueOf(id));
+						ds.setId(Integer.valueOf(id));
 						dsDao.modifyDataSet(ds);
 						logger.debug("Resource "+id+" updated");
 						JSONObject attributesResponseSuccessJSON = new JSONObject();
@@ -125,18 +121,17 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 					}else{
 						Integer dsID = dsDao.insertDataSet(ds);
-						GuiGenericDataSet dsSaved = dsDao.loadDataSetById(dsID);
+						VersionedDataSet dsSaved = (VersionedDataSet)dsDao.loadDataSetById(dsID);
 						logger.debug("New Resource inserted");
 						JSONObject attributesResponseSuccessJSON = new JSONObject();
 						attributesResponseSuccessJSON.put("success", true);
 						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 						attributesResponseSuccessJSON.put("id", dsID);
 						if(dsSaved!=null){
-							GuiDataSetDetail dsDetailSaved = dsSaved.getActiveDetail();
-							attributesResponseSuccessJSON.put("dateIn", dsDetailSaved.getTimeIn());
-							attributesResponseSuccessJSON.put("userIn", dsDetailSaved.getUserIn());
-							attributesResponseSuccessJSON.put("versId", dsDetailSaved.getDsHId());
-							attributesResponseSuccessJSON.put("versNum", dsDetailSaved.getVersionNum());
+							attributesResponseSuccessJSON.put("dateIn", dsSaved.getDateIn());
+							attributesResponseSuccessJSON.put("userIn", dsSaved.getUserIn());
+							//attributesResponseSuccessJSON.put("versId", dsSaved.getDsHId());
+							attributesResponseSuccessJSON.put("versNum", dsSaved.getVersionNum());
 						}
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 					}
@@ -202,7 +197,7 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 			Integer dsID = getAttributeAsInteger(DataSetConstants.DS_ID);
 			Integer dsVersionNum = getAttributeAsInteger(DataSetConstants.VERSION_NUM);
 			try {
-				GuiGenericDataSet dsNewDetail= dsDao.restoreOlderDataSetVersion(dsID, dsVersionNum);
+				IDataSet dsNewDetail= dsDao.restoreOlderDataSetVersion(dsID, dsVersionNum);
 				logger.debug("Dataset Version correctly Restored");
 				List temp = new ArrayList();
 				temp.add(dsNewDetail);
@@ -246,7 +241,7 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 	}
 	
-	private List<SbiDataSetConfig> getListOfGenericDatasetsForKpi(IDataSetDAO dsDao) throws JSONException, EMFUserError{
+	private List<SbiDataSet> getListOfGenericDatasetsForKpi(IDataSetDAO dsDao) throws JSONException, EMFUserError{
 		Integer start = getAttributeAsInteger( DataSetConstants.START );
 		Integer limit = getAttributeAsInteger( DataSetConstants.LIMIT );
 		
@@ -256,11 +251,11 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 		if(limit==null){
 			limit = DataSetConstants.LIMIT_DEFAULT;
 		}
-		List<SbiDataSetConfig> items = dsDao.loadPagedSbiDatasetConfigList(start,limit);
+		List<SbiDataSet> items = dsDao.loadPagedSbiDatasetConfigList(start,limit);
 		return items;
 	}
 	
-	private List<GuiGenericDataSet> getListOfGenericDatasets(IDataSetDAO dsDao) throws JSONException, EMFUserError{
+	private List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao) throws JSONException, EMFUserError{
 		Integer start = getAttributeAsInteger( DataSetConstants.START );
 		Integer limit = getAttributeAsInteger( DataSetConstants.LIMIT );
 		
@@ -271,7 +266,7 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 			limit = DataSetConstants.LIMIT_DEFAULT;
 		}
 		JSONObject filtersJSON = null;
-		List<GuiGenericDataSet> items = null;
+		List<IDataSet> items = null;
 		if(this.requestContainsAttribute( DataSetConstants.FILTERS ) ) {
 			filtersJSON = getAttributeAsJSONObject( DataSetConstants.FILTERS );
 			String hsql = filterList(filtersJSON);
@@ -282,9 +277,9 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 		return items;
 	}
 	
-	private GuiGenericDataSet getGuiGenericDatasetToInsert() {
+private IDataSet getGuiGenericDatasetToInsert() {
 		
-		GuiGenericDataSet ds = null;
+		IDataSet ds = null;
 		
 		String label = getAttributeAsString(DataSetConstants.LABEL);
 		String name = getAttributeAsString(DataSetConstants.NAME);
@@ -305,25 +300,28 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 		}			
 		
 	    if (name != null && label != null && dsType!=null && !dsType.equals("")) {
-			
-	    	ds = new GuiGenericDataSet();		
-			if(ds!=null){
-				ds.setLabel(label);
-				ds.setName(name);
-				
-				if(description != null && !description.equals("")){
-					ds.setDescription(description);
+			try{
+				ds = getDataSet(dsType);		
+				if(ds!=null){
+					ds.setLabel(label);
+					ds.setName(name);
+					
+					if(description != null && !description.equals("")){
+						ds.setDescription(description);
+					}
+					//GuiDataSetDetail dsActiveDetail = constructDataSetDetail(dsType);
+					//ds.setActiveDetail(dsActiveDetail);	
+				}else{
+					logger.error("DataSet type is not existent");
+					throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.dsTypeError");
 				}
-				GuiDataSetDetail dsActiveDetail = constructDataSetDetail(dsType);
-				ds.setActiveDetail(dsActiveDetail);	
-			}else{
-				logger.error("DataSet type is not existent");
-				throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.dsTypeError");
+			} catch (Exception e) {
+				logger.error("Error while getting dataset metadata", e);
 			}
 		}    
 		return ds;
 	}
-	
+	/*
 	private GuiDataSetDetail constructDataSetDetail(String dsType){
 		GuiDataSetDetail dsActiveDetail = instantiateCorrectDsDetail(dsType);
 		
@@ -457,6 +455,7 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 		return dsActiveDetail;
 	}
 	
+	
 
 	private GuiDataSetDetail setTransformer(GuiDataSetDetail dsActiveDetail, String trasfTypeCd){
 		List<Domain> domainsTrasf = (List<Domain>)getSessionContainer().getAttribute("trasfTypesList");
@@ -489,7 +488,7 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 		}
 		return dsActiveDetail;
 	}
-	
+	*/
 	private JSONObject datasetTest() throws Exception{
 		
 		JSONObject dataSetJSON = null;		
@@ -799,7 +798,7 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 	
 	private String filterList(JSONObject filtersJSON) throws JSONException {
 		logger.debug("IN");				
-		String hsql= " from SbiDataSetHistory h where h.active = true ";
+		String hsql= " from SbiDataSet h where h.active = true ";
 		if (filtersJSON != null) {
 			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
 			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
@@ -813,6 +812,113 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 		return hsql;
 	}
-	
+
+	private IDataSet getDataSet(String datasetTypeName) throws Exception{
+
+		IDataSet dataSet = null;
+		JSONObject jsonDsConfig = new JSONObject();		
+
+		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FILE)){	
+			dataSet = new FileDataSet();
+			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
+			jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
+			((FileDataSet)dataSet).setFileName(fileName);				
+			
+		} 
+
+		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QUERY)){		
+			String query = getAttributeAsString(DataSetConstants.QUERY);
+			String queryScript = getAttributeAsString(DataSetConstants.QUERY_SCRIPT);
+			String queryScriptLanguage = getAttributeAsString(DataSetConstants.QUERY_SCRIPT_LANGUAGE);
+			String dataSourceLabel = getAttributeAsString(DataSetConstants.DATA_SOURCE);
+			jsonDsConfig.put(DataSetConstants.QUERY, query);
+			jsonDsConfig.put(DataSetConstants.QUERY_SCRIPT, queryScript);
+			jsonDsConfig.put(DataSetConstants.QUERY_SCRIPT_LANGUAGE, queryScriptLanguage);
+			jsonDsConfig.put(DataSetConstants.DATA_SOURCE, dataSourceLabel);
+			
+			if(dataSourceLabel!=null && !dataSourceLabel.equals("")){
+				IDataSource dataSource;
+				try {
+					dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+					if(dataSource!=null){
+						dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
+						((AbstractJDBCDataset)dataSet).setDataSource(dataSource);
+						((AbstractJDBCDataset)dataSet).setQuery(query);
+						((AbstractJDBCDataset)dataSet).setQueryScript(queryScript);
+						((AbstractJDBCDataset)dataSet).setQueryScriptLanguage(queryScriptLanguage);
+					}
+				} catch (EMFUserError e) {
+					logger.error("Error while retrieving Datasource with label="+dataSourceLabel,e);
+					e.printStackTrace();
+				}			
+			}
+		}
+
+		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_WS)){	
+			dataSet=new WebServiceDataSet();
+			String wsAddress = getAttributeAsString(DataSetConstants.WS_ADDRESS);
+			String wsOperation = getAttributeAsString(DataSetConstants.WS_OPERATION);
+			jsonDsConfig.put(DataSetConstants.WS_ADDRESS, wsAddress);
+			jsonDsConfig.put(DataSetConstants.WS_OPERATION, wsOperation);
+			((WebServiceDataSet)dataSet).setAddress(wsAddress);
+			((WebServiceDataSet)dataSet).setOperation(wsOperation);
+		}
+
+		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SCRIPT)){	
+			dataSet=new ScriptDataSet();
+			String script = getAttributeAsString(DataSetConstants.SCRIPT);
+			String scriptLanguage = getAttributeAsString(DataSetConstants.SCRIPT_LANGUAGE);
+			jsonDsConfig.put(DataSetConstants.SCRIPT, script);
+			jsonDsConfig.put(DataSetConstants.SCRIPT_LANGUAGE, scriptLanguage);
+			((ScriptDataSet)dataSet).setScript(script);
+			((ScriptDataSet)dataSet).setScriptLanguage(scriptLanguage);
+		}
+
+		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_JCLASS)){		
+			dataSet=new JavaClassDataSet();
+			String jclassName = getAttributeAsString(DataSetConstants.JCLASS_NAME);
+			jsonDsConfig.put(DataSetConstants.JCLASS_NAME, jclassName);
+			((JavaClassDataSet)dataSet).setClassName(jclassName);
+		}
+
+		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_CUSTOM)){		
+			CustomDataSet customDs=new CustomDataSet();
+			String customData = getAttributeAsString(DataSetConstants.CUSTOM_DATA);
+			jsonDsConfig.put(DataSetConstants.CUSTOM_DATA, customData);
+			customDs.setCustomData(customData);
+			String javaClassName = getAttributeAsString(DataSetConstants.JCLASS_NAME);
+			jsonDsConfig.put(DataSetConstants.JCLASS_NAME, javaClassName);
+			customDs.setJavaClassName(javaClassName);
+//			customDs.init();			
+			// if custom type call the referred class extending CustomAbstractDataSet
+			try {
+				dataSet = customDs.instantiate();			
+			} catch (Exception e) {
+				logger.error("Cannot instantiate class "+customDs.getJavaClassName()+ ": go on with CustomDatasetClass");
+				throw new SpagoBIServiceException("Manage Dataset","Cannot instantiate class "+javaClassName+": check it extends AbstractCustomDataSet");	
+			}			
+		}
+
+
+		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QBE)){
+
+			dataSet = new QbeDataSet();
+			QbeDataSet qbeDataSet = (QbeDataSet) dataSet;
+			String qbeDatamarts = getAttributeAsString(DataSetConstants.QBE_DATAMARTS);
+			String dataSourceLabel = getAttributeAsString(DataSetConstants.QBE_DATA_SOURCE);
+			String jsonQuery = getAttributeAsString(DataSetConstants.QBE_JSON_QUERY);
+			jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, qbeDatamarts);
+			jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
+			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
+
+			qbeDataSet.setJsonQuery(jsonQuery);
+			qbeDataSet.setDatamarts(qbeDatamarts);
+			IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+			qbeDataSet.setDataSource(dataSource);		
+
+		}
+		dataSet.setConfiguration(jsonDsConfig.toString());		
+		return dataSet;
+	}	
 	
 }

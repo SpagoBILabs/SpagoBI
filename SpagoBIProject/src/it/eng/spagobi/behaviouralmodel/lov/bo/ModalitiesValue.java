@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
 import java.io.Serializable;
 
@@ -27,7 +27,7 @@ public class ModalitiesValue implements Serializable  {
 	private String lovProvider ="";
 	private String iTypeCd ="";
 	private String iTypeId = "";
-	private SbiDataSetConfig dataset;
+	private SbiDataSet dataset;
 	private Integer datasetId;
 	private String label ="";
 	private String selectionType ="";
@@ -203,7 +203,7 @@ public class ModalitiesValue implements Serializable  {
 	 * @return the datasetID
 	 */
 	public Integer getDatasetID() {
-		this.datasetId = new Integer(dataset.getDsId());
+		this.datasetId = new Integer(dataset.getId().getDsId());		
 		return datasetId;
 	}
 
@@ -217,14 +217,14 @@ public class ModalitiesValue implements Serializable  {
 	/**
 	 * @return the dataset
 	 */
-	public SbiDataSetConfig getDataset() {
+	public SbiDataSet getDataset() {
 		return dataset;
 	}
 
 	/**
 	 * @param dataset the dataset to set
 	 */
-	public void setDataset(SbiDataSetConfig dataset) {
+	public void setDataset(SbiDataSet dataset) {
 		this.dataset = dataset;
 	}
 }

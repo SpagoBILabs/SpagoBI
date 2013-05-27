@@ -86,8 +86,7 @@
         <!-- rememberMe -->
         <mapping resource="it/eng/spagobi/hotlink/rememberme/metadata/mapping/SbiRememberMe.hbm.xml" />
         
-        <mapping resource="it/eng/spagobi/tools/dataset/metadata/mapping/SbiDataSetConfig.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/dataset/metadata/mapping/SbiDataSetHistory.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/dataset/metadata/mapping/SbiDataSet.hbm.xml" />        
         
          <!-- KPI Engine -->
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpi.hbm.xml" />
@@ -165,7 +164,7 @@
         
         <class-cache class="it.eng.spagobi.commons.metadata.SbiDomains" usage="read-only"/>
         <class-cache class="it.eng.spagobi.commons.metadata.SbiUserFunctionality" usage="read-only"/>
-        <class-cache class="it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig" usage="nonstrict-read-write"/>
+        <class-cache class="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" usage="nonstrict-read-write"/>
         <class-cache class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" usage="nonstrict-read-write"/>
         <class-cache class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole" usage="nonstrict-read-write"/>
      

@@ -6,10 +6,8 @@
 package it.eng.spagobi.tools.dataset.dao;
 
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
 import java.util.List;
 
@@ -22,7 +20,7 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	// ========================================================================================
 	// CEATE operations (Crud)
 	// ========================================================================================
-	public Integer insertDataSet(GuiGenericDataSet dataSet);
+	public Integer insertDataSet(IDataSet dataSet);
 	
 	
 	// ========================================================================================
@@ -32,13 +30,13 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public List<IDataSet> loadAllActiveDataSets();
 	public IDataSet loadActiveDataSetByLabel(String label);
 	public IDataSet loadActiveIDataSetByID(Integer id);
+
+	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize);
+	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize);
+	public IDataSet loadDataSetById(Integer dsId) ;
+	public IDataSet loadDataSetByLabel(String dsLabel);
 	
-	public List<GuiGenericDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize);
-	public List<GuiGenericDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize);
-	public GuiGenericDataSet loadDataSetById(Integer dsId) ;
-	public GuiGenericDataSet loadDataSetByLabel(String dsLabel);
-	
-	public List<SbiDataSetConfig> loadPagedSbiDatasetConfigList(Integer offset, Integer fetchSize);
+	public List<SbiDataSet> loadPagedSbiDatasetConfigList(Integer offset, Integer fetchSize);
 	
 	public Integer countBIObjAssociated(Integer dsId);
 	public Integer countDatasets();
@@ -48,8 +46,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	// UPDATE operations (crUd)
 	// ========================================================================================
 	
-	public void modifyDataSet(GuiGenericDataSet dataSet);
-	public GuiGenericDataSet restoreOlderDataSetVersion(Integer dsId, Integer dsVersion);
+	public void modifyDataSet(IDataSet dataSet);
+	public IDataSet restoreOlderDataSetVersion(Integer dsId, Integer dsVersion);
 	public Integer getHigherVersionNumForDS(Integer dsId);
 	
 	
@@ -66,6 +64,6 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	/**
 	 * @deprecated
 	 */
-	public GuiGenericDataSet toGuiGenericDataSet(IDataSet iDataSet);
-	public SbiDataSetHistory copyDataSetHistory(SbiDataSetHistory hibDataSet);
+	public IDataSet toGuiGenericDataSet(IDataSet iDataSet);
+	public SbiDataSet copyDataSet(SbiDataSet hibDataSet);
 }

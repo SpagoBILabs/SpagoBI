@@ -45,6 +45,7 @@ public class DataSetConstants {
 	public static final String METADATA = "meta";
 	
 	public static final String DS_TYPE_CD = "dsTypeCd";
+	public static final String CONFIGURATION = "configuration";
 	public static final String FILE_NAME = "fileName";
 	public static final String QUERY = "Query";
 	public static final String QUERY_SCRIPT = "queryScript";

@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexport;
 
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -23,17 +22,13 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreports;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreportsId;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuseId;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParview;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParviewId;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseCk;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseCkId;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet;
 import it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
@@ -73,7 +68,7 @@ import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeaturesId;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -849,16 +844,16 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	private void importDataSet(boolean overwrite) throws EMFUserError {
 		logger.debug("IN");
-		SbiDataSetConfig exportedDataSet = null;
+		SbiDataSet exportedDataSet = null;
 		try {				
 
-			List exportedDatasets = importer.getAllExportedSbiObjects(sessionExpDB, "SbiDataSetConfig", null);
+			List exportedDatasets = importer.getAllExportedSbiObjects(sessionExpDB, "SbiDataSet", null);
 			Iterator iterSbiDataSet = exportedDatasets.iterator();
 
 			while (iterSbiDataSet.hasNext()) {
-				exportedDataSet = (SbiDataSetConfig) iterSbiDataSet.next();
-				logger.debug("Importing exported dataset with id "+exportedDataSet.getDsId() + " and label "+exportedDataSet.getLabel());
-				Integer oldId = new Integer(exportedDataSet.getDsId());
+				exportedDataSet = (SbiDataSet) iterSbiDataSet.next();
+				logger.debug("Importing exported dataset with id "+exportedDataSet.getId() + " and label "+exportedDataSet.getLabel());
+				Integer oldId = new Integer(exportedDataSet.getId().getDsId());
 				Integer existingDatasetId = null;
 				Map datasetAss = metaAss.getDataSetIDAssociation();
 				Set datasetAssSet = datasetAss.keySet();
@@ -874,18 +869,18 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingDatasetId != null) {
 					logger.debug("The dataset with label:[" + exportedDataSet.getLabel() + "] is just present. It will be updated. Existing one has id "+existingDatasetId);
 					metaLog.log("The dataset with label = [" + exportedDataSet.getLabel() + "] will be updated.");
-					SbiDataSetConfig existingDataset = ImportUtilities.modifyExisting(exportedDataSet, sessionCurrDB, existingDatasetId, sessionExpDB, this.getUserProfile());
-					ImportUtilities.associateNewSbiDataSethistory(existingDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, this.getUserProfile());
+					SbiDataSet existingDataset = ImportUtilities.modifyExisting(exportedDataSet, sessionCurrDB, existingDatasetId, sessionExpDB, this.getUserProfile());
+					ImportUtilities.associateNewSbiDataSet(existingDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, this.getUserProfile());
 					this.updateSbiCommonInfo4Update(existingDataset);
 					sessionCurrDB.update(existingDataset);
 				} else {
-					SbiDataSetConfig newDataset = ImportUtilities.makeNew(exportedDataSet, this.getUserProfile());
+					SbiDataSet newDataset = ImportUtilities.makeNew(exportedDataSet, sessionCurrDB, this.getUserProfile());
 					this.updateSbiCommonInfo4Insert(newDataset);
 					sessionCurrDB.save(newDataset);
-					ImportUtilities.associateNewSbiDataSethistory(newDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, this.getUserProfile());
+					ImportUtilities.associateNewSbiDataSet(newDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, this.getUserProfile());
 					logger.debug("Inserted new dataset " + newDataset.getName());
 					metaLog.log("Inserted new dataset " + newDataset.getName());
-					Integer newId = new Integer(newDataset.getDsId());
+					Integer newId = new Integer(newDataset.getId().getDsId());
 					metaAss.insertCoupleDataSets(oldId, newId);
 				}
 			}
@@ -3177,15 +3172,15 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				metaLog.log("User already defined association  for datasource with label" + dsExp.getLabel());				
 			}			
 		}
-		List exportedDataset = importer.getAllExportedSbiObjects(sessionExpDB, "SbiDataSetConfig", null);
+		List exportedDataset = importer.getAllExportedSbiObjects(sessionExpDB, "SbiDataSet", null);
 		Iterator iterSbiDataset = exportedDataset.iterator();
 		while (iterSbiDataset.hasNext()) {
-			SbiDataSetConfig dsExp = (SbiDataSetConfig) iterSbiDataset.next();
+			SbiDataSet dsExp = (SbiDataSet) iterSbiDataset.next();
 			String label = dsExp.getLabel();
-			Object existObj = importer.checkExistence(label, sessionCurrDB, new SbiDataSetConfig());
+			Object existObj = importer.checkExistence(label, sessionCurrDB, new SbiDataSet());
 			if (existObj != null) {
-				SbiDataSetConfig dsCurr = (SbiDataSetConfig) existObj;
-				metaAss.insertCoupleDataSets(new Integer(dsExp.getDsId()), new Integer(dsCurr.getDsId()));
+				SbiDataSet dsCurr = (SbiDataSet) existObj;
+				metaAss.insertCoupleDataSets(dsExp.getId().getDsId(),dsCurr.getId().getDsId());
 				logger.debug("Found an existing dataset " + dsCurr.getLabel() + " with "
 						+ "the same label of one exported dataset");
 				metaLog.log("Found an existing dataset " + dsCurr.getLabel() + " with "

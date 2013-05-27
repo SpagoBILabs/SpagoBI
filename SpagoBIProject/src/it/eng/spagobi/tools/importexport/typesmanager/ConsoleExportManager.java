@@ -5,28 +5,24 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexport.typesmanager;
 
-import java.util.Iterator;
-import java.util.Vector;
-
-import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.importexport.ExportManager;
 import it.eng.spagobi.tools.importexport.ExporterMetadata;
+
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.sun.star.configuration.backend.StratumCreationException;
 
 import sun.misc.BASE64Decoder;
 
@@ -92,7 +88,7 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 				for (Iterator iterator = dsLabels.iterator(); iterator.hasNext();) {
 					String string = (String) iterator.next();
 					logger.debug("get dataset with label " + string);
-					GuiGenericDataSet ds = dataSetDAO.loadDataSetByLabel(string);
+					IDataSet ds = dataSetDAO.loadDataSetByLabel(string);
 					// insert dataset if parameter insertDataSet is true (in case of KPI export)
 					if(ds != null){
 						logger.debug("found dataset with label " + string);
@@ -105,7 +101,7 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 					// search for xxxErrors dataset
 					String labelErrors = string+"Errors";
 					logger.debug("get dataset with label " + labelErrors+" if present");
-					GuiGenericDataSet datasetErrors = dataSetDAO.loadDataSetByLabel(labelErrors);
+					IDataSet datasetErrors = dataSetDAO.loadDataSetByLabel(labelErrors);
 					if(datasetErrors != null){
 						logger.debug("found dataset with label " + labelErrors+"");
 						exporter.insertDataSet(datasetErrors, session);
@@ -117,7 +113,7 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 					// search for xxxAlarms dataset
 					String labelAlarms = string+"Alarms";
 					logger.debug("get dataset with label " + labelAlarms+" if present");
-					GuiGenericDataSet datasetAlarms = dataSetDAO.loadDataSetByLabel(labelAlarms);
+					IDataSet datasetAlarms = dataSetDAO.loadDataSetByLabel(labelAlarms);
 					if(datasetAlarms != null){
 						logger.debug("found dataset with label " + labelAlarms+"");
 						exporter.insertDataSet(datasetAlarms, session);

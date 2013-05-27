@@ -36,7 +36,6 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNode;
-import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -481,7 +480,7 @@ public class ExportManager implements IExportManager {
 			Integer objDataSetId = biobj.getDataSetId();
 			if (objDataSetId != null) {
 
-				GuiGenericDataSet genericDs = dataSetDao.loadDataSetById(objDataSetId);
+				IDataSet genericDs = dataSetDao.loadDataSetById(objDataSetId);
 				if(genericDs!=null){
 					exporter.insertDataSet(genericDs, session);
 				}
@@ -529,7 +528,7 @@ public class ExportManager implements IExportManager {
 							String datasetLabel = (String) datasetnameSB.getAttribute("value");
 							IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 							IDataSet dataset = datasetDao.loadActiveDataSetByLabel(datasetLabel);
-							GuiGenericDataSet guiGenericDataSet = datasetDao.loadDataSetByLabel(datasetLabel);
+							IDataSet guiGenericDataSet = datasetDao.loadDataSetByLabel(datasetLabel);
 
 
 

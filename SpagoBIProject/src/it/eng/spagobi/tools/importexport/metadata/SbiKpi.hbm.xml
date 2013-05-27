@@ -10,9 +10,10 @@
         <many-to-one name="sbiKpi" class="it.eng.spagobi.kpi.config.metadata.SbiKpi" >
             <column name="id_kpi_parent" />
         </many-to-one>
-        <many-to-one name="sbiDataSet" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig" >
+        <!-- <many-to-one name="sbiDataSet" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" >
             <column name="DS_ID" />
         </many-to-one>
+         -->
 		<many-to-one name="sbiDomainsByMeasureType" class="it.eng.spagobi.commons.metadata.SbiDomains" >
             <column name="measure_type" />
         </many-to-one>
@@ -28,6 +29,9 @@
         <many-to-one name="sbiDomainsByMetricScaleType" class="it.eng.spagobi.commons.metadata.SbiDomains">
             <column name="metric_scale_type" />
         </many-to-one>
+        <property name="sbiDataSet" type="integer">
+            <column name="DS_ID"  />
+        </property>
         <property name="name" type="string">
             <column name="name" length="400" not-null="true" />
         </property>

@@ -13,9 +13,12 @@
         <many-to-one name="inputType" class="it.eng.spagobi.commons.metadata.SbiDomains">
             <column name="input_type_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="datasetId" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig">
+       <!--  <many-to-one name="datasetId" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSet">
             <column name="dataset_id" not-null="false" />
-        </many-to-one>
+        </many-to-one> -->
+        <property name="datasetId" type="integer">
+            <column name="dataset_id"  not-null="false" />
+        </property>
         <property name="inputTypeCd" type="string">
             <column name="input_type_cd" length="20" not-null="true" />
         </property>

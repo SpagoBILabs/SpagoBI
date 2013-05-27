@@ -17,8 +17,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
-import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
-import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
@@ -397,7 +396,7 @@ public class AnalyticalModelDocumentManagementAPI {
 	 * @param dataset the datset
 	 * @param document the document
 	 */
-	public void propagateDatasetParameters(GuiGenericDataSet dataset, BIObject document) {
+	public void propagateDatasetParameters(IDataSet dataset, BIObject document) {
 
 		List<DataSetParameterItem> datasetParameterItems = getDatasetParameters(dataset);
 		
@@ -468,9 +467,9 @@ public class AnalyticalModelDocumentManagementAPI {
 	}
 	
 	// TODO move this in DataSetManagementAPI
-	private List<DataSetParameterItem> getDatasetParameters (GuiGenericDataSet dataset) {
+	private List<DataSetParameterItem> getDatasetParameters (IDataSet dataset) {
 		
-		GuiDataSetDetail datasetDetail;
+		//GuiDataSetDetail datasetDetail;
 		String parametersRawData;
 		List<DataSetParameterItem> datasetParameters;
 		
@@ -479,8 +478,8 @@ public class AnalyticalModelDocumentManagementAPI {
 		datasetParameters = new ArrayList<DataSetParameterItem>();
 		
 		try {
-			datasetDetail = dataset.getActiveDetail();
-			parametersRawData = datasetDetail.getParameters();
+			//datasetDetail = dataset.getActiveDetail();
+			parametersRawData = dataset.getParameters();
 			parametersRawData = parametersRawData.trim();
 			
 			SourceBean parametersSourceBean;
