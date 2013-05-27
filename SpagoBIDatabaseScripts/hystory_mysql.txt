@@ -1694,7 +1694,7 @@ WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' then
 CONCAT('{"fileName":"',COALESCE(DS_H.FILE_NAME,''),'"}')
 WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' then 
 CONCAT('{"SbiJClassDataSet":"',COALESCE(DS_H.JCLASS_NAME,''),'"}')
-WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' then 
+WHEN ds_h.OBJECT_TYPE = 'SbiWSDataSet' then 
 CONCAT('{"wsAddress":"',COALESCE(DS_H.ADRESS,''),'","wsOperation":"',COALESCE(DS_H.OPERATION,''),'"}')
 WHEN ds_h.OBJECT_TYPE = 'SbiScriptDataSet' then 
 CONCAT('{"Script":"',COALESCE(DS_H.SCRIPT,''),'","scriptLanguage":"',COALESCE(DS_H.LANGUAGE_SCRIPT,''),'"}')
@@ -1712,7 +1712,7 @@ commit;
 --DROP TABLE SBI_DATA_SET_HISTORY;   -- da fare se tutto è andato ok! Sarà nella versione finale.
 --DROP TABLE SBI_DATA_SET;           -- da fare se tutto è andato ok! Sarà nella versione finale.
 RENAME TABLE SBI_DATA_SET TO SBI_DATA_SET_OLD;
-RENAME TABLE SBI_DATA_SET_HISOTRY TO SBI_DATA_SET_HISTORY_OLD;
+RENAME TABLE SBI_DATA_SET_HISTORY TO SBI_DATA_SET_HISTORY_OLD;
 RENAME TABLE SBI_DATA_SET_TEMP TO SBI_DATA_SET;
 
 
