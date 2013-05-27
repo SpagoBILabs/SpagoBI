@@ -36,6 +36,9 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public IDataSet loadDataSetById(Integer dsId) ;
 	public IDataSet loadDataSetByLabel(String dsLabel);
 	
+	/**
+	 * @deprecated
+	 */
 	public List<SbiDataSet> loadPagedSbiDatasetConfigList(Integer offset, Integer fetchSize);
 	
 	public Integer countBIObjAssociated(Integer dsId);
@@ -65,5 +68,9 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	 * @deprecated
 	 */
 	public IDataSet toGuiGenericDataSet(IDataSet iDataSet);
+	
+	/**
+	 * @deprecated
+	 */
 	public SbiDataSet copyDataSet(SbiDataSet hibDataSet);
 }
