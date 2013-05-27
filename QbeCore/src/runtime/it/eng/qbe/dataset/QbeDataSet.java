@@ -14,6 +14,7 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.QbeDatasetFactory;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -49,6 +50,11 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	
 	private static transient Logger logger = Logger.getLogger(QbeDataSet.class);
 	
+	private static final String QBE_DATA_SOURCE = "qbeDataSource";
+	private static final String QBE_DATAMARTS = "qbeDatamarts";
+	private static final String QBE_JSON_QUERY = "qbeJSONQuery";
+	private static final String QBE_SQL_QUERY = "qbeSQLQuery";
+	
 	protected IDataSet ds = null;
 	protected String jsonQuery = null;
 	protected String datamarts = null;
@@ -64,8 +70,15 @@ public static String DS_TYPE = "SbiQbeDataSet";
     public QbeDataSet(SpagoBiDataSet dataSetConfig) {
 
     	super(dataSetConfig);
-    	this.setDatamarts(dataSetConfig.getDatamarts());
-    	this.setJsonQuery(dataSetConfig.getJsonQuery());
+    	try{
+    		JSONObject jsonConf  = ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
+    		this.setDatamarts((jsonConf.get(QBE_DATAMARTS) != null)?jsonConf.get(QBE_DATAMARTS).toString():"");
+        	this.setJsonQuery((jsonConf.get(QBE_JSON_QUERY)!=null)?jsonConf.get(QBE_JSON_QUERY).toString():"");
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+		}
+    	//this.setDatamarts(dataSetConfig.getDatamarts());
+    	//this.setJsonQuery(dataSetConfig.getJsonQuery());
     	
 		IDataSource dataSource = DataSourceFactory.getDataSource( dataSetConfig.getDataSource() ) ;
 		this.setDataSource(dataSource);
@@ -145,12 +158,21 @@ public static String DS_TYPE = "SbiQbeDataSet";
 
 		sbd = super.toSpagoBiDataSet();
 
-		sbd.setType(DS_TYPE);
+		sbd.setType(DS_TYPE);		
 		if(getDataSource() != null) {
 			sbd.setDataSource(getDataSource().toSpagoBiDataSource());
 		}
-		sbd.setJsonQuery(getJsonQuery());
-		sbd.setDatamarts(getDatamarts());
+		/* next informations are already loaded in method super.toSpagoBiDataSet() through the table field configuration 
+		try{
+			JSONObject jsonConf  = new JSONObject();
+			jsonConf.put(QBE_JSON_QUERY, getJsonQuery());
+			jsonConf.put(QBE_DATAMARTS, getDatamarts());
+			sbd.setConfiguration(jsonConf.toString());
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+		}*/
+		//sbd.setJsonQuery(getJsonQuery());
+		//sbd.setDatamarts(getDatamarts());
 
 		return sbd;
 	}
