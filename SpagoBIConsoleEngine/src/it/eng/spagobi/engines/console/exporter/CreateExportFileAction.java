@@ -9,6 +9,7 @@ package it.eng.spagobi.engines.console.exporter;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.console.ConsoleEngineConfig;
 import it.eng.spagobi.engines.console.exporter.types.ExporterCSV;
 import it.eng.spagobi.engines.console.exporter.types.ExporterExcel;
@@ -47,10 +48,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import utilities.DataSourceUtilities;
+
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
-import utilities.DataSourceUtilities;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -75,7 +76,7 @@ public class CreateExportFileAction extends AbstractConsoleEngineAction {
 	//public static final String DEFAULT_FILE_EXTENSION = "txt";
 	public static final String DEFAULT_MIME_TYPE = "text/plain";
 	public static final String DEFAULT_FILE_EXTENSION = "txt";
-
+	public static final String QUERY = "Query";
 
 	public static final String SERVICE_NAME = "CREATE_EXPORT_FILE_ACTION";
 
@@ -190,7 +191,9 @@ public class CreateExportFileAction extends AbstractConsoleEngineAction {
 			if(resultNumber == null) dataStore.getMetaData().setProperty("resultNumber", new Integer((int)dataStore.getRecordsCount()));
 			IDataSource ds = getConsoleEngineInstance().getDataSource();				
 			DataSourceUtilities dsu = new DataSourceUtilities(ds);
-			Vector extractedFields = dsu.readFields(dataSet.getQuery().toString());
+			JSONObject jsonConf  = ObjectUtils.toJSONObject(dataSet.getConfiguration());
+			String dsQuery = jsonConf.getString(QUERY);
+			Vector extractedFields = dsu.readFields(dsQuery);
 			List extractedFieldsMetaData = new ArrayList<IFieldMetaData>();
 			if(jsonArray != null && jsonArray.length() > 0) {
 				int fieldNo = dataStore.getMetaData().getFieldCount();
