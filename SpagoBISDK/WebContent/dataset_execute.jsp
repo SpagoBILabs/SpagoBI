@@ -14,8 +14,7 @@
 /**
 This page invokes a SpagoBI web services in order to execute the dataset's methods.
 It's a JSP for ONLY case tests.
-To call it the url must be: http://localhost:8080/SpagoBISDK/dataset.jsp?ds_id=1
-The parameter 'ds_id' defines an existing dataset (modify test), if it isn't setted the insert method is called.
+To call it the url must be: http://localhost:8080/SpagoBISDK/dataset_execute.jsp
 */
 %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
@@ -35,22 +34,24 @@ The parameter 'ds_id' defines an existing dataset (modify test), if it isn't set
 */
 String user = "biadmin";
 String password = "biadmin";
-String message = "Il dataset è stato ";
+String message = "Il dataset è stato eseguito correttamente ";
 
 if (user != null && password != null) {
 	InputStream is = null;
 	try { 
 		DataSetsSDKServiceProxy proxy = new DataSetsSDKServiceProxy(user, password);
-		proxy.setEndpoint("http://localhost:8080/SpagoBI/sdk/DataSetsSDKService");		
+		proxy.setEndpoint("http://localhost:38080/SpagoBI/sdk/DataSetsSDKService");		
 		
 
 		String dataset = null;
 
-			dataset = proxy.executeDataSet("prova",null);
+			//dataset = proxy.executeDataSet("prova",null);
+			dataset = proxy.executeDataSet("testQBe",null);
+			
 			System.out.println("*** dataset: " + dataset);
 
-
 	}  catch (Exception e) {
+		message = "L'esecuzione del dataset è terminata con errori. Guardare il log!";
 		e.printStackTrace();
 			
 	}
