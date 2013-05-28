@@ -101,6 +101,13 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 	}, this);
 	
 	this.tabs.addListener('tabchange', this.modifyToolbar, this);
+
+	//invokes before each ajax request 
+    Ext.Ajax.on('beforerequest', this.showMask, this);   
+    // invokes after request completed 
+    Ext.Ajax.on('requestcomplete', this.hideMask, this);            
+    // invokes if exception occured 
+    Ext.Ajax.on('requestexception', this.hideMask, this); 
 };
 
 Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm, {
@@ -1777,8 +1784,6 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 				}
 				
 				, doSave : function(recalculateMetadata) {
-				//	var mask = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});
-			     //   mask.show();
 					var values = this.getValues();
 					
 					var idRec = values['id'];
@@ -1913,7 +1918,6 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 												if (isNewRec) {
 													this.rowselModel.selectLastRow();
 												}
-											//	if (mask != undefined) mask.hide();
 												Ext.MessageBox
 														.show({
 															title : LN('sbi.generic.result'),
@@ -1924,14 +1928,12 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 											}
 
 										} else {
-										//	if (mask != undefined) mask.hide();
 											Sbi.exception.ExceptionHandler
 													.showErrorMessage(
 															LN('sbi.generic.serviceResponseEmpty'),
 															LN('sbi.generic.serviceError'));
 										}
 									} else {
-									//	if (mask != undefined) mask.hide();
 										Sbi.exception.ExceptionHandler
 												.showErrorMessage(
 														LN('sbi.generic.savingItemError'),
@@ -1941,7 +1943,6 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								failure : Sbi.exception.ExceptionHandler.handleFailure,
 								scope : this
 							});
-				//	 if (mask != undefined) mask.hide();
 				}
 
 				,
@@ -2145,24 +2146,24 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 				
 				/**
 				 * Opens the loading mask 
-				
+				*/
 			    , showMask : function(){
 			    	this.un('afterlayout',this.showMask,this);
 			    	if (this.loadMask == null) {    		
-			    		this.loadMask = new Ext.LoadMask('GridPanel', {msg: "Saving.."});
+			    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "  Waiting...  "});
 			    	}
 			    	if (this.loadMask){
 			    		this.loadMask.show();
 			    	}
 			    }
- */
+ 
 				/**
 				 * Closes the loading mask
-				
+				*/
 				, hideMask: function() {
 			    	if (this.loadMask && this.loadMask != null) {	
 			    		this.loadMask.hide();
 			    	}
 				} 
-				*/
+				
 });
