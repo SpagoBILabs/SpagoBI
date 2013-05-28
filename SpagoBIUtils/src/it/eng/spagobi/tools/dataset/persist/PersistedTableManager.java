@@ -157,6 +157,7 @@ public class PersistedTableManager {
 			create +=  " " + fmd.getName() + getDBFieldType(fmd) + ((i<filedNo-1)?" , " : ")");	
 		}
 		String totalQuery = query + values;
+		logger.debug("create table statement: " + create);
 		try{
 			if (getDialect().contains(DIALECT_HSQL) || getDialect().contains(DIALECT_HSQL_PRED)){
 				//WORKAROUND for HQL : it needs the fisical table for define a prepareStatement.
@@ -178,22 +179,51 @@ public class PersistedTableManager {
 						if (lenValue > prevValue ){
 							getColumnSize().remove(fmd.getName());
 							getColumnSize().put(fmd.getName(), lenValue);
-						}		
-						toReturn.setString(i2+1,  (String)field.getValue());
-					}else if(fmd.getType().toString().contains("Date")) {
+						}			
+						 toReturn.setString(i2+1,  (String)field.getValue());
+					}else if(fmd.getType().toString().contains("Date")) {	
 						toReturn.setDate(i2+1,  (Date)field.getValue());
 					}else if (fmd.getType().toString().contains("Timestamp")){
 						toReturn.setTimestamp(i2+1,  (Timestamp)field.getValue());
 					}else if(fmd.getType().toString().contains("Integer")) {
-						toReturn.setInt(i2+1, (Integer)field.getValue());
+						//only for primitive type is necessary to use setNull method if value is null
+						if (field.getValue() == null){
+							toReturn.setNull(i2+1, java.sql.Types.INTEGER);
+						 }else{
+							 toReturn.setInt(i2+1, (Integer)field.getValue());
+						 }						
 					}else if(fmd.getType().toString().contains("Double")) {
-						toReturn.setDouble(i2+1, (Double)field.getValue());
+						// only for primitive type is necessary to use setNull method if value is null
+						if (field.getValue() == null){
+							toReturn.setNull(i2+1, java.sql.Types.DOUBLE);
+						 }else{
+					        toReturn.setDouble(i2+1, (Double)field.getValue());
+						 }
+						
 					}else if(fmd.getType().toString().contains("Long")) {
-						toReturn.setLong(i2+1, (Long)field.getValue());
+						// only for primitive type is necessary to use setNull method if value is null
+						if (field.getValue() == null){
+							toReturn.setNull(i2+1, java.sql.Types.BIGINT);
+						 }else{
+							toReturn.setLong(i2+1, (Long)field.getValue());
+						 }						
 					}else if(fmd.getType().toString().contains("Boolean")) {
-						toReturn.setBoolean(i2+1, (Boolean)field.getValue());
-					}else if(fmd.getType().toString().contains("BigDecimal")) {
+						//only for primitive type is necessary to use setNull method if value is null
+						if (field.getValue() == null){
+							toReturn.setNull(i2+1, java.sql.Types.BOOLEAN);
+						 }else{
+							toReturn.setBoolean(i2+1, (Boolean)field.getValue());
+						 }
+						
+					}else if(fmd.getType().toString().contains("BigDecimal")) {		
 						toReturn.setBigDecimal(i2+1, (BigDecimal)field.getValue());
+					}else if(fmd.getType().toString().contains("[B")) {  //BLOB		
+						toReturn.setBytes(i2+1, (byte[])field.getValue());
+						//ByteArrayInputStream bis = new ByteArrayInputStream((byte[])field.getValue());
+						//toReturn.setBinaryStream(1, bis, ((byte[])field.getValue()).length);
+					}else if(fmd.getType().toString().contains("[C")) {	 //CLOB							 
+						toReturn.setBytes(i2+1, (byte[])field.getValue());
+						//toReturn.setAsciiStream(i2+1, new ByteArrayInputStream((byte[])field.getValue()),  ((byte[])field.getValue()).length);
 					}else{				
 						//toReturn.setString(i2+1, (String)field.getValue());
 						logger.debug("Cannot setting the column "+ fmd.getName()+ " with type "+ fmd.getType().toString());
@@ -265,6 +295,22 @@ public class PersistedTableManager {
 			toReturn = " TIMESTAMP ";
 			if (getDialect().contains(DIALECT_SQLSERVER)) { 
 				toReturn = " DATETIME ";	
+			}
+		}else if (type.contains("[B")){
+			toReturn = " TEXT ";
+			if (getDialect().contains(DIALECT_ORACLE)) { 
+				toReturn = " BLOB ";	
+			}else if (getDialect().contains(DIALECT_MYSQL)) { 
+				toReturn = " MEDIUMBLOB ";	
+			}else if (getDialect().contains(DIALECT_POSTGRES)) { 
+				toReturn = " BYTEA ";	
+			}else if (getDialect().contains(DIALECT_HSQL)) { 
+				toReturn = " LONGVARBINARY ";	
+			}
+		}else if (type.contains("[C")){
+			toReturn = " TEXT ";
+			if (getDialect().contains(DIALECT_ORACLE)) { 
+				toReturn = " CLOB ";	
 			}
 		}else {
 			logger.debug("Cannot mapping the column type "+ type);
