@@ -41,7 +41,7 @@ if (user != null && password != null) {
 	InputStream is = null;
 	try { 
 		DataSetsSDKServiceProxy proxy = new DataSetsSDKServiceProxy(user, password);
-		proxy.setEndpoint("http://localhost:38080/SpagoBI/sdk/DataSetsSDKService");		
+		proxy.setEndpoint("http://localhost:8080/SpagoBI/sdk/DataSetsSDKService");		
 		
 		//test modifica dataset esistente
 		dsId = (String)request.getParameter("ds_id");
