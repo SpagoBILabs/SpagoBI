@@ -69,7 +69,7 @@ null as USER_UP,null as USER_DE, ds_h.TIME_IN, null as TIME_UP, null as TIME_DE,
 ds_h.SBI_VERSION_IN, null as SBI_VERSION_UP,  null as SBI_VERSION_DE, ds_h.META_VERSION,
 ds_h.ORGANIZATION,
 CASE WHEN ds_h.OBJECT_TYPE = 'SbiQueryDataSet' THEN 
-TO_CLOB('{"Query":"' || ds_h.QUERY || '","queryScript":"' || NVL(DS_H.QUERY_SCRIPT,'') || '","queryScriptLanguage":"' || NVL(QUERY_SCRIPT_LANGUAGE,'') || '","dataSource":"' || NVL((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID),'') || '"}' )
+TO_CLOB('{"Query":"' || REPLACE(ds_h.QUERY,'"','\\"') || '","queryScript":"' || REPLACE(NVL(DS_H.QUERY_SCRIPT,''),'"','\\"' || '","queryScriptLanguage":"' || REPLACE(NVL(QUERY_SCRIPT_LANGUAGE,''),'"','\\"') || '","dataSource":"' || NVL((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID),'') || '"}' )
 WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' THEN 
 TO_CLOB('{"fileName":"' || NVL(DS_H.FILE_NAME,'') || '"}')
 WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' THEN 
@@ -77,19 +77,19 @@ TO_CLOB('{"SbiJClassDataSet":"' || NVL(DS_H.JCLASS_NAME,'') || '"}')
 WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' THEN 
 TO_CLOB('{"wsAddress":"' || NVL(DS_H.ADRESS,'') || '","wsOperation":"' || NVL(DS_H.OPERATION,'') || '"}')
 WHEN ds_h.OBJECT_TYPE = 'SbiScriptDataSet' THEN 
-TO_CLOB('{"Script":"' || NVL(DS_H.SCRIPT,'') || '","scriptLanguage":"' || NVL(DS_H.LANGUAGE_SCRIPT,'') || '"}')
+TO_CLOB('{"Script":"' || REPLACE(NVL(DS_H.SCRIPT,''),'"','\\"') || '","scriptLanguage":"' || NVL(DS_H.LANGUAGE_SCRIPT,'') || '"}')
 WHEN ds_h.OBJECT_TYPE = 'SbiCustomDataSet' THEN 
-TO_CLOB('{"customData":"' || NVL(DS_H.CUSTOM_DATA,'"{}"') || '","jClassName":"' || NVL(DS_H.JCLASS_NAME,'') || '"}')
+TO_CLOB('{"customData":"' || REPLACE(NVL(DS_H.CUSTOM_DATA,'"{}"'),'"','\\"') || '","jClassName":"' || NVL(DS_H.JCLASS_NAME,'') || '"}')
 WHEN ds_h.OBJECT_TYPE = 'SbiQbeDataSet' THEN 
-TO_CLOB('{"qbeDatamarts":"' || NVL(DS_H.DATAMARTS,'') || '","qbeDataSource":"' || NVL((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID),'') || '","qbeJSONQuery":"' || NVL(DS_H.JSON_QUERY,'') || '"}')
+TO_CLOB('{"qbeDatamarts":"' || NVL(DS_H.DATAMARTS,'') || '","qbeDataSource":"' || NVL((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID),'') || '","qbeJSONQuery":"' || REPLACE()NVL(DS_H.JSON_QUERY,''),'"','\\"') || '"}')
 end AS CONFIGURATION
 FROM SBI_DATA_SET DS INNER JOIN SBI_DATA_SET_HISTORY DS_H ON (DS.DS_ID = DS_H.DS_ID)
 order by ds_id, version_num ;
 
 commit;
 
---DROP TABLE SBI_DATA_SET_HISTORY;   -- to do at the end, when all it's ended correctly!
---DROP TABLE SBI_DATA_SET;           -- to do at the end, when all it's ended correctly!
+--DROP TABLE SBI_DATA_SET_HISTORY CASCADE CONSTRAINTS;;   -- to do at the end, when all it's ended correctly!
+--DROP TABLE SBI_DATA_SET CASCADE CONSTRAINTS;;           -- to do at the end, when all it's ended correctly!
 ALTER TABLE SBI_DATA_SET RENAME TO SBI_DATA_SET_OLD;
 ALTER TABLE SBI_DATA_SET_HISTORY TO SBI_DATA_SET_HISTORY_OLD;
 ALTER TABLE SBI_DATA_SET_TEMP TO SBI_DATA_SET;
