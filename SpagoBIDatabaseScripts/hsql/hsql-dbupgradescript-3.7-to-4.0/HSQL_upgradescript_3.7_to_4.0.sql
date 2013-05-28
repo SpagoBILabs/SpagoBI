@@ -25,12 +25,12 @@ null as USER_UP,null as USER_DE, ds_h.TIME_IN, null as TIME_UP, null as TIME_DE,
 ds_h.SBI_VERSION_IN, null as SBI_VERSION_UP,  null as SBI_VERSION_DE, ds_h.META_VERSION,
 ds_h.ORGANIZATION
 ,case when ds_h.OBJECT_TYPE = 'SbiQueryDataSet' then 
-concat(concat(concat(concat(concat(concat(concat(concat('{"Query":"',ds_h.QUERY),'","queryScript":"'),COALESCE(DS_H.QUERY_SCRIPT,'')),'","queryScriptLanguage":"'),COALESCE(QUERY_SCRIPT_LANGUAGE,'')),'","dataSource":"'),COALESCE(CAST((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID) AS CHAR),'')),'"}')
+concat(concat(concat(concat(concat(concat(concat(concat('{"Query":"',REPLACE(ds_h.QUERY),'"','\\"'),'","queryScript":"'),REPLACE(COALESCE(DS_H.QUERY_SCRIPT,'')),'"','\\"'),'","queryScriptLanguage":"'),COALESCE(QUERY_SCRIPT_LANGUAGE,'')),'","dataSource":"'),COALESCE(CAST((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID) AS CHAR),'')),'"}')
 WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' then concat(concat('{"fileName":"',COALESCE(DS_H.FILE_NAME,'')),'"}')
 WHEN ds_h.OBJECT_TYPE = 'SbiWSDataSet' then concat(concat(concat(concat(concat('{"wsAddress":"',COALESCE(DS_H.ADRESS,'')),'"}'),'","wsOperation":"'),COALESCE(DS_H.OPERATION,'')),'"}')
-WHEN ds_h.OBJECT_TYPE = 'SbiScriptDataSet' then concat(concat(concat(concat(concat('{"Script":"',COALESCE(DS_H.SCRIPT,'')),'"}'),'","scriptLanguage":"'),COALESCE(DS_H.LANGUAGE_SCRIPT,'')),'"}')
-WHEN ds_h.OBJECT_TYPE = 'SbiCustomDataSet' then concat(concat(concat(concat(concat('{"customData":"',COALESCE(DS_H.CUSTOM_DATA,'')),'"}'),'","jClassName":"'),COALESCE(DS_H.JCLASS_NAME,'')),'"}')
-WHEN ds_h.OBJECT_TYPE = 'SbiQbeDataSet' then  concat(concat(concat(concat(concat(concat(concat('{"qbeDatamarts":"',COALESCE(DS_H.DATAMARTS,'')),'","qbeJSONQuery":"'),COALESCE(DS_H.JSON_QUERY,'')),'","qbeDataSource":"'),COALESCE(CAST((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID) AS CHAR))),''),'"}')
+WHEN ds_h.OBJECT_TYPE = 'SbiScriptDataSet' then concat(concat(concat(concat(concat('{"Script":"',REPLACE(COALESCE(DS_H.SCRIPT,'')),'"','\\"'),'"}'),'","scriptLanguage":"'),COALESCE(DS_H.LANGUAGE_SCRIPT,'')),'"}')
+WHEN ds_h.OBJECT_TYPE = 'SbiCustomDataSet' then concat(concat(concat(concat(concat('{"customData":"',REPLACE(COALESCE(DS_H.CUSTOM_DATA,'')),'"','\\"'),'"}'),'","jClassName":"'),COALESCE(DS_H.JCLASS_NAME,'')),'"}')
+WHEN ds_h.OBJECT_TYPE = 'SbiQbeDataSet' then  concat(concat(concat(concat(concat(concat(concat('{"qbeDatamarts":"',COALESCE(DS_H.DATAMARTS,'')),'","qbeJSONQuery":"'),REPLACE(COALESCE(DS_H.JSON_QUERY,'')),'"','\\"'),'","qbeDataSource":"'),COALESCE(CAST((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID) AS CHAR))),''),'"}')
 end AS CONFIGURATION
 FROM 
 SBI_DATA_SET DS INNER JOIN SBI_DATA_SET_HISTORY DS_H ON (DS.DS_ID = DS_H.DS_ID)
@@ -38,8 +38,8 @@ order by ds_id, version_num;
 
 commit;
 
---DROP TABLE SBI_DATA_SET_HISTORY;   -- to do at the end, when all it's ended correctly!
---DROP TABLE SBI_DATA_SET;           -- to do at the end, when all it's ended correctly!
+--DROP TABLE SBI_DATA_SET_HISTORY CASCADE;   -- to do at the end, when all it's ended correctly!
+--DROP TABLE SBI_DATA_SET CASCADE;           -- to do at the end, when all it's ended correctly!
 ALTER TABLE SBI_DATA_SET RENAME TO SBI_DATA_SET_OLD;
 ALTER TABLE SBI_DATA_SET_HISTORY RENAME TO SBI_DATA_SET_HISTORY_OLD;
 ALTER TABLE SBI_DATA_SET_TEMP RENAME TO SBI_DATA_SET;
