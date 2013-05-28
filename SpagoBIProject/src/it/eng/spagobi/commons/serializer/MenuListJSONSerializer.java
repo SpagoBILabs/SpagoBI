@@ -167,15 +167,15 @@ public class MenuListJSONSerializer implements Serializer {
 	
 	private JSONArray createEndUserMenu(Locale locale, int level, JSONArray tempMenuList) throws JSONException, EMFUserError{
 
-		JSONObject charts = createMenuItem("charts","/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&MESSAGEDET=DETAIL_NEW","Analytical model", true, null);
-		JSONObject browser =  createMenuItem("folder_open","/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION","Documents browser", true, null);
-		JSONObject favourites =  createMenuItem("bookmark","/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&amp;OPERATION=GET_HOT_LINK_LIST","My favorites", true, null);
+		 // JSONObject charts = createMenuItem("charts","/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&MESSAGEDET=DETAIL_NEW","Analytical model", true, null);
+		JSONObject browser = createMenuItem("folder_open","/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","Documents browser", true, null);
+		JSONObject favourites = createMenuItem("bookmark","/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","My favorites", true, null);
 
-		JSONObject createDoc =  createMenuItem("pencil","/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&MESSAGEDET=DETAIL_NEW","Create document", true, null);
-		JSONObject subscription =  createMenuItem("edit","/servlet/AdapterHTTP?PAGE=ListDistributionListUserPag&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","Subscriptions", true, null);
-		JSONObject toDoList =  createMenuItem("list","/servlet/AdapterHTTP?PAGE=WorkflowToDoListPage&WEBMODE=TRUE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","To do list", true, null);
+		JSONObject createDoc = createMenuItem("pencil","/servlet/AdapterHTTP?ACTION_NAME=START_CREATING_WORKSHEET_FROM_DATASET_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","Create document", true, null);
+		JSONObject subscription = createMenuItem("edit","/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","Subscriptions", true, null);
+		JSONObject toDoList = createMenuItem("list","/servlet/AdapterHTTP?PAGE=WorkflowToDoListPage&WEBMODE=TRUE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","To do list", true, null);
 
-		tempMenuList.put(charts);
+		// tempMenuList.put(charts);
 		tempMenuList.put(browser);
 		tempMenuList.put(favourites);
 		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
