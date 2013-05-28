@@ -99,7 +99,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		//the store has been injected from the parent
 		if(this.store==null){
 			this.store =  new Ext.data.ArrayStore({
-		        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'selection', 'mandatory']
+		        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'selection', 'mandatory','valid']
 			});
 			// if there are initialData, load them into the store
 			if (this.initialData !== undefined) {
@@ -229,6 +229,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		var item = this.createFilterPanel(newRow);
 
 		this.contents.push(item);
+		
 		this.add(item);
 		this.doLayout();
 	}
@@ -274,21 +275,35 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
       		  	 , iconCls: 'edit-icon'
       		     , text: '&nbsp;&nbsp;&nbsp;&nbsp;'
       		     , handler: this.openEditItemWindow.createDelegate(this, [aRow], true)
-      		     , scope: this
+      		     , scope: this	
       		});
 		
 		var deleteButtonPlaceHolder = new Ext.Panel({width: 12,height: 12,html: ' '}) ;
 		var editButtonPlaceHolder = new Ext.Panel({width: 12,height: 12,html: ' '}) ;
 		
-		var thePanel = new Ext.Panel({
-   			html: '<div style="padding-right: 2px; cursor: pointer;">' + aRow.data.alias + '</div>'
-   		});
+		var thePanel = null;
+		
+		var invalidation = '';
+		var isValid = this.checkRowValidation(aRow);
+		if(isValid == false){
+			invalidation = ' color:#ff0000; text-decoration:line-through;';			
+		}
+			
+			thePanel = new Ext.Panel({
+				html: '<div style="padding-right: 2px; cursor: pointer; '+invalidation+'">' + aRow.data.alias + '</div>'
+			});
+		
+		thePanel.doLayout();
+		
+		
+		//aRow.data.thePanel= thePanel;
 		
 		thePanel.on('render', function(panel) {
 			panel.getEl().on('dblclick', function() {
 		     	this.fireEvent("attributeDblClick", this, aRow.data);
 			}, this);
 		}, this);
+		
 		
 		var item = new Ext.Panel({
 			id: 'designsheetfilterspanel_' + aRow.data.alias
@@ -301,9 +316,13 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
        		     , deleteButtonPlaceHolder
        		     , editButtonPlaceHolder
        		     , deleteButton
-       		     , editButton
+       		     , editButton	
        		]
 		});
+		
+		item.on('render', function(panel) {
+		}, this);
+		
 		
 		//Show/hide the tool buttons when the mouse enter/leave
 		item.on('afterrender', function(){
@@ -356,7 +375,60 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		
 		this.doLayout();
 	}
-	
+	, removeFilter2: function(aRow) {
+		var rowId = aRow.data.id;
+		var recordIndex = this.store.findExact('id', rowId);
+		this.store.removeAt(recordIndex);
+		var item = null;
+		var i = this.contents.length-1;
+		for (; i >= 0; i--) {
+			var temp = this.contents[i];
+			if (temp.id === 'designsheetfilterspanel_' + aRow.data.alias) {
+				item = temp;
+				break;
+			}
+		}
+		this.contents.remove(item);
+		item.destroy();
+		if (this.contents.length === 0) {
+			this.initEmptyMsgPanel();
+			this.contents.push(this.emptyMsgPanel);
+			this.add(this.emptyMsgPanel);
+			this.empty = true;
+		}
+		
+		if(this.splittingFilter!=undefined && this.splittingFilter!=null && aRow.data.id==this.splittingFilter.data.id){
+			//the filter is a splitting filter
+			this.splittingFilter=null;
+		}
+		
+		this.doLayout();
+	}
+	, removeAllButtons: function(a) {
+		for(var j = 0; j<this.contents.length; j++){
+			var item = this.contents[j];
+			this.contents.remove(item);
+			item.destroy();
+		}
+		this.doLayout();
+	}
+	, removeOneButton: function(aRow) {
+		var item = null;
+		var i = this.contents.length-1;
+		for (; i >= 0; i--) {
+			var temp = this.contents[i];
+			if(temp.id  === 'designsheetfilterspanel_' + aRow.data.alias){
+				item= temp
+				break;
+			}
+		}
+		if(item != null){
+		this.contents.remove(item);
+		item.destroy();		
+		this.doLayout();
+}
+	}
+
 	, reset: function() {
 		if (this.contents && this.contents.length) {
 			var i = this.contents.length - 1;
@@ -378,6 +450,20 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		}
 		for(var i=0; i<this.store.getCount(); i++){
 			var aRow = (this.store.getAt(i));
+			var item = this.createFilterPanel(aRow);
+			this.contents.push(item);
+			this.add(item);
+			this.empty = false;
+		}
+		this.doLayout();
+	}
+	, reloadFilters: function(){
+//		this.removeAllButtons();
+		for(var i=0; i<this.store.getCount(); i++){
+			var aRow = (this.store.getAt(i));
+			this.removeOneButton(aRow);
+			//this.removeFilter2(aRow);			
+			//this.closeHandler(null, null, aRow);
 			var item = this.createFilterPanel(aRow);
 			this.contents.push(item);
 			this.add(item);
@@ -407,6 +493,47 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	, containsAttribute: function (attributeId) {
 		var toReturn = this.store.findExact('id', attributeId) !== -1;
 		return toReturn;
+	}
+	, validate: function (validFields) {
+		var invalidFields;
+		this.validFields = validFields;
+		invalidFields = this.modifyStore(validFields);
+		//this.reloadFilters();
+		return invalidFields;
+			
+	}
+	, modifyStore: function (validFields) {
+		var toReturn='';
+		var num = this.store.getCount();
+		for(var i = 0; i < num; i++) {
+			var record = this.store.getAt(i);
+			var isValid = this.validateRecord(record,validFields);
+			record.data.valid = isValid;
+			if(isValid == false) toReturn+=''+record.data.alias+',';
+		}
+		return toReturn;
+	}
+	, validateRecord: function (record, validFields) {
+		var isValid = false;
+		var i = 0;
+		for(; i<validFields.length && isValid == false; i++){
+			if(validFields[i].id == record.data.id){
+			isValid = true;	
+			}
+		}
+		return isValid;
+	}
+	, checkRowValidation: function (row){
+		var valid= true;
+		var num = this.store.getCount();
+		for(var i = 0; i < num; i++) {
+			var record = this.store.getAt(i);
+			if(row.data.id = record.data.id){
+				valid = record.data.valid;
+				break;
+			}
+		}
+		return valid;
 	}
 	
 });

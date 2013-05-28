@@ -68,6 +68,10 @@ From http://dev.sencha.com/deploy/ext-4.0.0/examples/message-box/msg-box.html
 	 background-image:url(../img/worksheet/browser_globe_upload.png) !important;
 }
 
+.infoImgIcon {
+     background-image:url(../img/worksheet/info22.png) !important;
+}
+
 .closeUploadImgIcon {
 	 background-image:url(../img/worksheet/close_icon-15.png) !important;
 }
@@ -276,4 +280,10 @@ From http://dev.sencha.com/deploy/ext-4.0.0/examples/message-box/msg-box.html
 	background:url(../img/worksheet/filter32.png) no-repeat center;
 	width: 200px;
 	height: 50px;
+}
+
+.x-btn-invalid{
+ color:#ff0000;
+ text-decoration:line-through;
+
 }

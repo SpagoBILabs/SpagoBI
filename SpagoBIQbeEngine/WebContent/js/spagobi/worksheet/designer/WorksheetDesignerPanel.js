@@ -76,10 +76,10 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 		        }
 			]
 	}); 
-	
+		
 
 	Sbi.worksheet.designer.WorksheetDesignerPanel.superclass.constructor.call(this, c);	 		
-
+	
 };
 
 /**
@@ -201,13 +201,22 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	
 	, validate: function (successHandler, failureHandler, scope) {
 		// return an array of validationError object, if no error returns an empty array
-		var errorArray = this.sheetsContainerPanel.validate();
+		//var invalidFields = this.designToolsPanel.designToolsFieldsPanel.getInvalidFieldsArray();
+		var validFields = this.designToolsPanel.designToolsFieldsPanel.getFields();
+		
+		var errorArray = this.sheetsContainerPanel.validate(validFields);
 
 		if(errorArray && errorArray.length>0){
-			return failureHandler.call(scope || this, errorArray);
-		}
+			if (failureHandler != undefined){
+				return failureHandler.call(scope || this, errorArray);
+			}
+				else return null;
+			}
 		else {
-			return successHandler.call(scope || this);	
+			if (successHandler != undefined){
+				return successHandler.call(scope || this);	
+			}
+				else return null;
 		}
 	}
 	
@@ -285,6 +294,9 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
      		field.options = formState;
      	}, this);
      	optionsWindow.show();
+	}
+	, fake : function () {
+
 	}
 	
 });

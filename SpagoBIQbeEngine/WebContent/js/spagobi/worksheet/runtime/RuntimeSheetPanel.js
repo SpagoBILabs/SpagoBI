@@ -68,7 +68,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	filtersPanel : null,
 	contentLoaded: false,
 	filtersInfoPanel : null,
-	
+	filtersInfoButton : null,	
+	filtersInfoWindow : null,	
 	exportContent: function(mimeType){
 		var exportedContent = this.content.exportContent();
 		var header = this.sheetConfig.header;	
@@ -123,6 +124,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 				dynamicFilters.push(aDynamicFilter);	
 			}
 		}
+		
+		// filters button
+		this.addFiltersInfoPanelButton(items);
 		
 		//Builds the content
 		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(
@@ -204,7 +208,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			items.push(this.content);
 		}
 		
-		this.addFiltersInfoPanel(items);
+//		this.addFiltersInfoPanelButton(items);
 		
 		//Builds the footer
 		if (this.sheetConfig.footer!=undefined && this.sheetConfig.footer!=null){
@@ -215,11 +219,49 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	}
 	
 	
-	, addFiltersInfoPanel : function(items) {
+	, addFiltersInfoPanelButton : function(items) {
+
 		this.filtersInfoPanel = new Sbi.worksheet.runtime.RuntimeSheetFiltersInfoPanel({
 			filtersInfo : this.sheetConfig.filtersInfo
+		});	
+
+		this.filtersInfoWindow = new Ext.Window({
+			id:'DesignFilersId',
+			layout:'fit',
+			width:500,
+			height:300,
+			x:500,
+			y:150,
+			closeAction:'hide',
+			frame:true,
+			items: this.filtersInfoPanel
+//			, buttons: [{
+//				text: 'Close',
+//				handler: function(){
+//					this.filtersInfoWindow.hide();
+//				}
+//			}]
 		});
-		items.push(this.filtersInfoPanel);
+		
+		this.filtersInfoButton = new Ext.Button({
+			//text: LN('filtri'),
+			iconCls: 'infoImgIcon',
+			x:100,
+			y:50,
+			handler: function(){
+				this.filtersInfoWindow.show(this);
+	        	//this.close();
+	        }
+	        , scope: this
+		});
+		
+		items.push(this.filtersInfoButton);
+		
+		
+
+		
+
+
 	}
 	
 	/**

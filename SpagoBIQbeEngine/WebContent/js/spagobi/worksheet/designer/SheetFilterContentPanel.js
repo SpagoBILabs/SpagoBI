@@ -163,10 +163,27 @@ Ext.extend(Sbi.worksheet.designer.SheetFilterContentPanel, Ext.Panel, {
 		this.contentPanel.addDesigner(state);
 	},
 	
-	validate: function(){
-		return this.contentPanel.validate();
-	},
-	
+	validate: function(validFields){
+		
+		//validate filters Panel invalid Fields
+		var toReturn;
+		var errMesg = this.contentPanel.validate(validFields);
+		if(errMesg!= undefined && errMesg!= null){
+			toReturn = errMesg;
+		}		
+		var validMesg = this.filtersPanel.validate(validFields);
+		if(validMesg!= undefined && validMesg!= null && validMesg!= ''){
+			if(toReturn == undefined) {
+					validMesg = validMesg.substring(0, validMesg.length - 1)
+					toReturn = LN("sbi.worksheet.designer.validation.invalidFields")+ validMesg;
+			}
+			else {
+				toReturn = toReturn + ' / '+ LN("sbi.worksheet.designer.validation.invalidFieldsFilters") +validMesg.substring(0, validMesg.length - 1);
+			}
+		}
+
+		return toReturn;
+	},	
 	containsAttribute: function (attributeId) {
 		var toReturn = this.contentPanel.containsAttribute(attributeId);
 		if (!toReturn) {

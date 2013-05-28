@@ -56,14 +56,16 @@ Sbi.worksheet.designer.DesignToolsPanel = function(config) {
 		, baseParams: new Object()
 	});
 	
-	this.addEvents("attributeDblClick", "fieldRightClick");
+	this.addEvents("attributeDblClick", "fieldRightClick", "validateInvalidFieldsAfterLoad");
+
 	
 	this.initPanels();
 	
 	c = {
         layout: {
-        	type:'border'
-            //type:'vbox',
+        	//type:'border'
+        	type:'accordion'
+        	//type:'vbox',
             //align:'stretch'
         },
         items:[this.designToolsFieldsPanel, this.designToolsPallettePanel, this.designToolsLayoutPanel]
@@ -93,7 +95,8 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 			region : 'north',
 			split: true,
 			height : 120,
-			services : this.services
+			services : this.services,
+			source: 'worksheet'
 		});
 		this.designToolsFieldsPanel.store.on('load', this.fieldsLoadedHandler, this);
 		this.designToolsFieldsPanel.store.on('beforeload', this.getGlobalFilters, this); // forces a calculation of global filters
@@ -180,12 +183,19 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	
 	, refresh: function(){
 		this.designToolsFieldsPanel.refresh();
+		this.designToolsFieldsPanel.on('validateInvalidFieldsAfterLoad', 
+				function(){
+					this.fireEvent("validateInvalidFieldsAfterLoad", this); 	
+		}, this);
+		
 	}
 	
     , getFields : function () {
     	return this.designToolsFieldsPanel.getFields();
     }
-    
+    , getDesignToolsFieldsPanel : function () {
+    	return this.designToolsFieldsPanel;
+    }    
 	, getGlobalFilters : function () {
 		var fields = this.getFields();
 		if (fields.length == 0) {
@@ -245,4 +255,6 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 		var record = grid.store.getAt(rowIndex);
 		this.fireEvent("fieldRightClick", this, record.data, e);
 	}
+
+	
 });

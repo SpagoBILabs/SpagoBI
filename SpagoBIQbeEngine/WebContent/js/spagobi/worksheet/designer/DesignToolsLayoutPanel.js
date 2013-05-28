@@ -15,10 +15,10 @@
  * 
  * getLayoutValue(): returns a string with the selected layout. 
  * 			Available values:
- * 				'layout-headerfooter' (default)
+ * 				'layout-content' (default)
  * 				'layout-header'
  * 				'layout-footer'
- * 				'layout-content'
+ * 				'layout-headerfooter' 
  * 
  * 
  * setLayoutValue(value): sets the layout value..
@@ -48,10 +48,10 @@ Sbi.worksheet.designer.DesignToolsLayoutPanel = function(config) {
 		hideLabel: true,
 		columns: 2,
 		items: [
-		        {name: 'layout', height: 40, id:'layout-headerfooter', ctCls:'layout-headerfooter',inputValue: 'layout-headerfooter', checked: true},
+		        {name: 'layout', height: 40, id:'layout-content', ctCls:'layout-content', inputValue: 'layout-content' , checked: true},
 		        {name: 'layout', height: 40, id:'layout-header', ctCls:'layout-header',inputValue: 'layout-header'},
 		        {name: 'layout', height: 40, id:'layout-footer', ctCls:'layout-footer', inputValue: 'layout-footer'},
-		        {name: 'layout', height: 40, id:'layout-content', ctCls:'layout-content', inputValue: 'layout-content'}
+		        {name: 'layout', height: 40, id:'layout-headerfooter', ctCls:'layout-headerfooter',inputValue: 'layout-headerfooter'}
 		        ]
 	});
 	
@@ -77,8 +77,8 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsLayoutPanel, Ext.FormPanel, {
 		var sharedConf ={anchor: 'top',width:200,trackMouse:true};
 
 		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-layout-headerfooter',
-			html: LN('sbi.worksheet.designer.designtoolslayoutpanel.tooltip.headerfooter')
+			target: 'x-form-el-layout-content',
+			html: LN('sbi.worksheet.designer.designtoolslayoutpanel.tooltip.content')
 		},sharedConf));
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-layout-header',
@@ -89,8 +89,8 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsLayoutPanel, Ext.FormPanel, {
 			html: LN('sbi.worksheet.designer.designtoolslayoutpanel.tooltip.footer')
 		},sharedConf));
 		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-layout-content',
-			html: LN('sbi.worksheet.designer.designtoolslayoutpanel.tooltip.content')
+			target: 'x-form-el-layout-headerfooter',
+			html: LN('sbi.worksheet.designer.designtoolslayoutpanel.tooltip.headerfooter')
 		},sharedConf));
 		
 	},
@@ -101,8 +101,11 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsLayoutPanel, Ext.FormPanel, {
 		if(this.layoutRadioGroup!==null && this.layoutRadioGroup.getValue()!==null && this.layoutRadioGroup.getValue().getGroupValue()!==null){
 			return this.layoutRadioGroup.getValue().getGroupValue();
 		}else{
-			this.layoutRadioGroup.setValue('layout-headerfooter');
-			return 'layout-headerfooter';
+			// Default no header or footer
+			this.layoutRadioGroup.setValue('layout-content');
+			return 'layout-content';
+			//			this.layoutRadioGroup.setValue('layout-headerfooter');
+			//			return 'layout-headerfooter';
 		}
 	},
 

@@ -216,7 +216,16 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
 		if (state.colors) this.seriesPalette.setColors(state.colors);
 	}
-	, validate: function(){
+	, validate: function(validFields){
+		var valErr='';	
+		valErr+=''+this.categoryContainerPanel.validate(validFields);
+		valErr+=''+this.seriesContainerPanel.validate(validFields);
+		
+		if(valErr!= ''){
+			valErr = valErr.substring(0, valErr.length - 1)
+			return LN("sbi.worksheet.designer.validation.invalidFields")+valErr;
+		}
+		
 		if (this.categoryContainerPanel.category== null){
 			return LN("sbi.designerchart.chartValidation.noCategory");
 		}
@@ -225,6 +234,9 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 		if(seriesCount == 0 ){
 			return LN("sbi.designerchart.chartValidation.noSeries");
 		}
+		
+
+		
 		return; 
 
 	}

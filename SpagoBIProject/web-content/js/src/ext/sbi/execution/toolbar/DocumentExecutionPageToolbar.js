@@ -1016,7 +1016,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				var qbePanel = qbeWindow.qbe;
 				var anActiveTab = qbePanel.tabs.getActiveTab();
 				var activeTabId = anActiveTab.getId();
-				var isBuildingWorksheet = (activeTabId === 'WorksheetDesignerPanel' || activeTabId === 'WorkSheetPreviewPage');
+				var isBuildingWorksheet = (activeTabId === 'WorksheetPanel');
 				if (isBuildingWorksheet) {
 					// save worksheet as document
 					this.saveWorksheetAs();

@@ -136,6 +136,7 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 	, targetRow: null
 	, detailsWizard: undefined
 	, crosstabConfig: undefined
+	, validFields: null
 	, Record: Ext.data.Record.create([
 	      {name: 'id', type: 'string'}
 	      , {name: 'alias', type: 'string'}
@@ -151,7 +152,7 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 	
 	, initStore: function(c) {
 		this.store =  new Ext.data.SimpleStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature']
+	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'valid']
 		});
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
@@ -180,9 +181,21 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 	    	, hidden: false	
 	    	, sortable: false
 	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
-	        	return this.template.apply(
-	        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias, record.data.funct]		
-	        	);
+
+				if(record.data.valid != undefined && !record.data.valid){
+	   	    		toReturn = this.template.apply(
+		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon x-btn-invalid', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias, record.data.funct]
+		   	    		);		   	    		
+				}
+				else{
+	   	    		toReturn = this.template.apply(
+		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias, record.data.funct]		   	    		
+		   	    		);  	    							
+				}
+
+   	    	return toReturn;
+	   	    	
+	   	    	
 	    	}
 	        , scope: this
 	    });
@@ -374,6 +387,37 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 	
 	, modifyMeasure: function(recordToBeModified, newRecordsValues) {
 		recordToBeModified.set("funct", newRecordsValues.get("funct")); // only the aggregation function must be modified
+	}
+	, validate: function (validFields) {
+
+		this.validFields = validFields;
+		var invalidFields = this.modifyStore(validFields);
+		this.store.fireEvent("datachanged", this, null); 
+		return invalidFields;
+	}
+	, modifyStore: function (validFields) {
+		var invalidFields = '';
+
+		var num = this.store.getCount();
+		for(var i = 0; i < num; i++) {
+			var record = this.store.getAt(i);
+			var isValid = this.validateRecord(record,validFields);
+			record.data.valid = isValid;
+			if(isValid == false){
+				invalidFields+=''+record.data.alias+',';
+			}
+		}
+		return invalidFields;
+	}
+	, validateRecord: function (record, validFields) {
+		var isValid = false;
+		var i = 0;
+		for(; i<validFields.length && isValid == false; i++){
+			if(validFields[i].id == record.data.id){
+			isValid = true;	
+			}
+		}
+		return isValid;
 	}
 
 });

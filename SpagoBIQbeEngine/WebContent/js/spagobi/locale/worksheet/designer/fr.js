@@ -200,3 +200,10 @@ Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.cancel']='Supprimer';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error']='Erreur';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error.sheetnamealreadyinuse']='Une feuille ayant le m\u00c3\u00aame nom existe d\u00E9j\u00E0';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error.nosheetname']='Le nom de la feuille n\'a pas \u00E9t\u00E9 sp\u00E8cifi\u00E9';
+
+//===================================================================
+//Field Validation: method Validate
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.validation.invalidFields']='Champs pas present: ';
+Sbi.locale.ln['sbi.worksheet.designer.validation.invalidFieldsFilters']='Filters Panel: Champs pas present: ';
+

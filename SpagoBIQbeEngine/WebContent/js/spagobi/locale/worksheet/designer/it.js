@@ -207,3 +207,10 @@ Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.cancel']='Cancella';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error']='Errore';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error.sheetnamealreadyinuse']='Il nome è già utilizzato da un altro foglio';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error.nosheetname']='Nome del foglio non specificato';
+
+
+//===================================================================
+//Field Validation: method Validate
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.validation.invalidFields']='I seguenti campi non sono presenti: ';
+Sbi.locale.ln['sbi.worksheet.designer.validation.invalidFieldsFilters']='Pannello Filtri: I seguenti campi non sono presenti: ';

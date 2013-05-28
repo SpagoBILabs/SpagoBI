@@ -200,3 +200,10 @@ Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.cancel']='Cancelar';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error']='Error';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error.sheetnamealreadyinuse']='Una hoja con el mismo nombre ya existe';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error.nosheetname']='Hoja de nombre no especificado';
+
+//===================================================================
+//Field Validation: method Validate
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.validation.invalidFields']='Following fields are no more retrieved: ';
+Sbi.locale.ln['sbi.worksheet.designer.validation.invalidFieldsFilters']='Filters Panel: Following fields are no more retrieved: ';
+

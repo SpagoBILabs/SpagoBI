@@ -47,7 +47,7 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 
 	Ext.apply(this, c);
 	
-	this.addEvents("attributeDblClick");
+
 	
 	this.initPanels();
 	
@@ -57,6 +57,8 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 		layout: 'fit',
 		hidden: true
 	});
+
+	this.addEvents("attributeDblClick");
 	
 	c = {
 			scrollable: true,
@@ -66,10 +68,20 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 	this.filtersPositionPanel = 'top';
 	Ext.apply(this,c);
 	
-	this.on('resize',this.resizePanels,this);
 	
 	Sbi.worksheet.designer.SheetPanel.superclass.constructor.call(this, c);
+
+	this.on('resize',this.resizePanels,this);
+	this.addEvents("attributeDblClick");
 	
+
+	this.headerPanel.imgPosition.on('afterrender', function() {
+	this.updateHeaderLayout(this.sheetLayout);
+	},this);
+	this.footerPanel.imgPosition.on('afterrender', function() {
+	this.updateFooterLayout(this.sheetLayout);
+	},this);
+
 };
 
 Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
@@ -82,7 +94,8 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	filtersOnDomainValues: null, 
 	
 	initPanels: function(){
-		this.sheetLayout = 'layout_headerfooter';
+		//'layout_headerfooter';
+		this.sheetLayout = 'layout-content';
 		this.headerPanel = new Sbi.worksheet.designer.SheetTitlePanel({});
 		
 		var filtersConf ={
@@ -130,6 +143,9 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		},this)
 		
 		this.footerPanel  = new Sbi.worksheet.designer.SheetTitlePanel({});
+	
+
+		
 	}
 
 	/* 
@@ -169,20 +185,56 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		if(sheetLayout!==null){
 			 this.sheetLayout=sheetLayout;
 			 if(sheetLayout==='layout-header' || sheetLayout==='layout-content'){
-				 this.footerPanel.hide();
+				 if(this.footerPanel != undefined && this.footerPanel != null){
+					 if(this.footerPanel.rendered){
+					 	this.footerPanel.disable();
+				 }
+				 }
 			 }
 			 if(sheetLayout==='layout-footer' || sheetLayout==='layout-content'){
-				 this.headerPanel.hide();
+				 if(this.headerPanel != undefined && this.headerPanel != null){
+					 if(this.headerPanel.rendered){
+					 	this.headerPanel.disable();
+					 }
+				 }
 			 }
 			 if(sheetLayout==='layout-footer' || sheetLayout==='layout-headerfooter'){
-				 this.footerPanel.show();
+				if(this.footerPanel == undefined || this.footerPanel == null)
+					{
+					this.footerPanel = new Sbi.worksheet.designer.SheetTitlePanel({});
+					}
+				this.footerPanel.enable();
 			 }
 			 if(sheetLayout==='layout-header' || sheetLayout==='layout-headerfooter'){
-				 this.headerPanel.show();
+				if(this.headerPanel == undefined || this.headerPanel == null)
+					{
+					this.headerPanel = new Sbi.worksheet.designer.SheetTitlePanel({});
+					}
+				this.headerPanel.enable();
 			 }
 		}
 	}
-	
+	, updateHeaderLayout: function (sheetLayout) {
+		if(sheetLayout!==null){
+			 if(sheetLayout==='layout-footer' || sheetLayout==='layout-content'){
+				 this.headerPanel.disable();
+			 }
+			 if(sheetLayout==='layout-header' || sheetLayout==='layout-headerfooter'){
+				 this.headerPanel.enable();
+			 }
+		}
+	}
+	, updateFooterLayout: function (sheetLayout) {
+		if(sheetLayout!==null){
+			 this.sheetLayout=sheetLayout;
+			 if(sheetLayout==='layout-header' || sheetLayout==='layout-content'){
+				 this.footerPanel.disable();
+			 }
+			 if(sheetLayout==='layout-footer' || sheetLayout==='layout-headerfooter'){
+				 this.footerPanel.enable();
+			 }
+		}
+	}
 	, getSheetState: function(){
 		var state = {};
 		state.name = this.title;
@@ -255,19 +307,20 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		
 	}
 	
-	, validate: function(){
-		var valid;
+	, validate: function(validFields){
+		var valid= '';
 		//if(this.headerPanel!==null){
 		//	valid = valid && this.headerPanel.isValid();
 		//}
 		if(this.content!==null){
-			valid = this.contentPanel.validate();
+			valid = this.contentPanel.validate(validFields);
 		}
 		//if(this.footerPanel!==null){
 		//	valid = valid && this.footerPanel.isValid();
 		//}
 		return valid;
 	}
+	
 	
 	, showLeftFilters: function(){
 		this.filtersPanel.hide();
@@ -320,5 +373,6 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		}
 		return toReturn;
 	}
+
 	
 });

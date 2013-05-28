@@ -19,6 +19,9 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -79,6 +82,9 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 
 		// field's meta
 		JSONArray fieldsMetaDataJSON = new JSONArray();
+		
+		List<JSONObject> attributesList = new ArrayList<JSONObject>();
+		List<JSONObject> measuresList = new ArrayList<JSONObject>();
 
 		int fieldCount = metadata.getFieldCount();
 		logger.debug("Number of fields = " + fieldCount);
@@ -140,8 +146,27 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 				}
 				break;
 			}
-			fieldsMetaDataJSON.put(fieldMetaDataJSON);
+			
+			if(type.equals(it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType.MEASURE)){
+				measuresList.add(fieldMetaDataJSON);
+			}
+			else{
+				attributesList.add(fieldMetaDataJSON);
+			}
 		}
+
+		
+		//  put first measures and only after attributes
+		
+		for (Iterator iterator = measuresList.iterator(); iterator.hasNext();) {
+			JSONObject jsonObject = (JSONObject) iterator.next();
+			fieldsMetaDataJSON.put(jsonObject);
+		}	
+
+		for (Iterator iterator = attributesList.iterator(); iterator.hasNext();) {
+			JSONObject jsonObject = (JSONObject) iterator.next();
+			fieldsMetaDataJSON.put(jsonObject);
+		}	
 
 		return fieldsMetaDataJSON;
 
