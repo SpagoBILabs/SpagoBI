@@ -270,7 +270,7 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		}
 	}
 		
-	, validate: function(){
+	, validate: function(validFields){
 		//var valid = true;
 		var toReturn = new Array();
 		if ( this.items.items.length > 1 ) {
@@ -293,9 +293,10 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 					}
 				}
 				
-				if (aSheet.rendered) { /* workaround (work-around): the sheet is validated only if it is rendered, 
+				if (aSheet.rendered) { 
+					/* workaround (work-around): the sheet is validated only if it is rendered, 
 					because a non-rendered sheet hasn't the state set. TODO improve this behaviour */
-					var errMessage = aSheet.validate();
+					var errMessage = aSheet.validate(validFields);
 					if (errMessage) {
 						var valError = new Sbi.worksheet.exception.ValidationError(
 								aSheet.getName(),

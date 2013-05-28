@@ -192,8 +192,18 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 	 * - if ther is mandatory measure it must be used
 	 */
 
-	, validate: function(){
-	
+	, validate: function(validFields){
+		var valErr='';
+
+		valErr+= ''+this.columnsContainerPanel.validate(validFields);
+		valErr+= ''+this.rowsContainerPanel.validate(validFields);
+		valErr+= ''+this.measuresContainerPanel.validate(validFields);
+		
+		if(valErr != ''){
+			valErr = valErr.substring(0, valErr.length - 1)
+			return LN("sbi.worksheet.designer.validation.invalidFields")+valErr;
+		}
+		
 		var crossTabDef = this.getCrosstabDefinition();
 	
 		// at least one measure

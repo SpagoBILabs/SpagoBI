@@ -302,13 +302,15 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		);
 	}
 	
-	, validate: function () {
+	, validate: function (validFields) {
 		if(this.designer == null) 
 			return 'designer is null';
-		else
-			return this.designer.validate();
-	}
-	
+		else{
+			 var errmsg =  this.designer.validate(validFields);
+			return errmsg; 	
+		}
+		}
+
 	, containsAttribute: function (attributeId) {
 		return this.designer.containsAttribute(attributeId);
 	}

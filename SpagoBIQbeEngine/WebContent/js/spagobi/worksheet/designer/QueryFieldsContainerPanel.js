@@ -108,6 +108,7 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 	, targetRow: null
 	, calculateTotalsCheckbox: null
 	, calculateSubtotalsCheckbox: null
+	, validFields: null
 	, Record: Ext.data.Record.create([
 	      {name: 'id', type: 'string'}
 	      , {name: 'alias', type: 'string'}
@@ -124,7 +125,7 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 	
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values']
+	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'valid']
 		});
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
@@ -164,9 +165,19 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 	    	, hidden: false	
 	    	, sortable: false
 	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
-	        	return this.template.apply(
-	        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias]		
-	        	);
+				if(record.data.valid != undefined && !record.data.valid){
+	   	    		toReturn = this.template.apply(
+		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon x-btn-invalid', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias]		
+		   	    		);		   	    		
+				}
+				else{
+	   	    		toReturn = this.template.apply(
+		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias]		
+		   	    		);  	    							
+				}
+	   	    	return toReturn;
+	   	    	
+	   	    	
 	    	}
 	        , scope: this
 	    });
@@ -235,7 +246,14 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 		var record = new this.Record(data);
 		this.store.add(record); 
 	}
-	
+//    , getRecordFields : function () {
+//    	var recordFields = [];
+//    	var count = this.store.getCount();
+//    	for (var i = 0; i < count; i++) {
+//    		recordFields.push(this.store.getAt(i));
+//    	}
+//    	return recordFields;
+//    }
 	, removeSelectedValues: function() {
         var sm = this.getSelectionModel();
         var rows = sm.getSelections();
@@ -254,5 +272,41 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 		}
 		return false;
 	}
+	, validate: function (validFields) {
+		
+		this.validFields = validFields;
+
+		var invalidFields = this.modifyStore(validFields);
+		if(this.rendered){
+			this.store.fireEvent("datachanged", this, null); 
+		}
+		return invalidFields;
+			
+	}
+	, modifyStore: function (validFields) {
+		var invalidFields = '';
+		var num = this.store.getCount();
+		for(var i = 0; i < num; i++) {
+			var record = this.store.getAt(i);
+			var isValid = this.validateRecord(record,validFields);
+			record.data.valid = isValid;
+			if(isValid == false){
+				invalidFields+=''+record.data.alias+',';
+			}
+		}
+		return invalidFields;
+	}
+	, validateRecord: function (record, validFields) {
+		var isValid = false;
+		var i = 0;
+		for(; i<validFields.length && isValid == false; i++){
+			if(validFields[i].id == record.data.id){
+			isValid = true;	
+			}
+		}
+		return isValid;
+	}
+
 	
+
 });

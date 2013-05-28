@@ -115,6 +115,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 	, targetRow: null
 	, calculateTotalsCheckbox: null
 	, calculateSubtotalsCheckbox: null
+	, validFields: null
 	, Record: Ext.data.Record.create([
 	      {name: 'id', type: 'string'}
 	      , {name: 'alias', type: 'string'}
@@ -131,7 +132,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 	
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values']
+	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'valid']
 		});
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
@@ -171,10 +172,22 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 	    	, hidden: false	
 	    	, sortable: false
 	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
-	        	return this.template.apply(
-	        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.alias]		
-	        	);
-	    	}
+
+	   	    	
+				if(record.data.valid != undefined && !record.data.valid){
+	   	    		toReturn = this.template.apply(
+		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon x-btn-invalid', Ext.id(), record.data.iconCls, record.data.alias]		
+
+		   	    		);		   	    		
+				}
+				else{
+	   	    		toReturn = this.template.apply(
+		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.alias]	
+		   	    		);  	    							
+				}
+	   	    	return toReturn;
+	   	    	
+	   	    	}
 	        , scope: this
 	    });
 	    this.cm = new Ext.grid.ColumnModel([fieldColumn]);
@@ -349,6 +362,38 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 		var row = new this.Record(data); 
 		this.store.add([row]);
 		return row;
+	}
+	, validate: function (validFields) {
+
+		this.validFields = validFields;
+		var invalidFields = this.modifyStore(validFields);
+		this.store.fireEvent("datachanged", this, null); 
+		return invalidFields;
+	}
+	, modifyStore: function (validFields) {
+		var invalidFields='';
+
+		var num = this.store.getCount();
+		for(var i = 0; i < num; i++) {
+			var record = this.store.getAt(i);
+			var isValid = this.validateRecord(record,validFields);
+			if(isValid == false){
+				invalidFields+=''+record.data.alias+',';
+			}
+			record.data.valid = isValid;
+		}
+		
+		return invalidFields;
+	}
+	, validateRecord: function (record, validFields) {
+		var isValid = false;
+		var i = 0;
+		for(; i<validFields.length && isValid == false; i++){
+			if(validFields[i].id == record.data.id){
+			isValid = true;	
+			}
+		}
+		return isValid;
 	}
 
 });

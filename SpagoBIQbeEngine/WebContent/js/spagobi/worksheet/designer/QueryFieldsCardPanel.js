@@ -137,5 +137,11 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsCardPanel, Ext.Panel, {
 	, containsAttribute: function (attributeId) {
 		return this.tableDesigner.containsAttribute(attributeId);
 	}
+
+	, validate: function (validFields) {
+		return this.tableDesigner.validate(validFields);
+	}
+
+	
 	
 });

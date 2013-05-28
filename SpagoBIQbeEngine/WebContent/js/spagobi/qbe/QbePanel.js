@@ -43,6 +43,7 @@ Sbi.qbe.QbePanel = function(config) {
 		// set default values here
 		displayQueryBuilderPanel: true
 		, displayFormBuilderPanel: false
+		, displayWorksheetPanel: true
 		, displayWorksheetDesignerPanel: true
 		, displayWorksheetPreviewPanel: true
 	}, config || {});
@@ -80,6 +81,9 @@ Sbi.qbe.QbePanel = function(config) {
 	this.queryResultPanel = new Sbi.widgets.DataStorePanel(Ext.apply(c, {
 		id : 'DataStorePanel'
 	}));
+	
+	this.worksheetPanel = null;
+	
 	this.worksheetDesignerPanel = null;
 
 	var items = [];
@@ -93,7 +97,8 @@ Sbi.qbe.QbePanel = function(config) {
 
 	items.push(this.queryResultPanel);
 
-	if (c.displayWorksheetDesignerPanel) {
+
+if (c.displayWorksheetDesignerPanel) {
 
 		var worksheetDesignerConfig = c.worksheet || {};
 		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(Ext.apply(worksheetDesignerConfig, {
@@ -116,7 +121,7 @@ Sbi.qbe.QbePanel = function(config) {
 			}, this);
 		}
 		
-		items.push(this.worksheetDesignerPanel);
+		//items.push(this.worksheetDesignerPanel);
 	}
 	
 
@@ -138,7 +143,7 @@ Sbi.qbe.QbePanel = function(config) {
 			
 		}, this);
 
-		items.push(this.worksheetPreviewPanel);
+		//items.push(this.worksheetPreviewPanel);
 	}
 
 	if (c.displayFormBuilderPanel && c.formbuilder !== undefined && c.formbuilder.template !== undefined) {
@@ -152,11 +157,23 @@ Sbi.qbe.QbePanel = function(config) {
 		this.loadFirstQuery();
 	}
 
+	
+	if (c.displayWorksheetPanel) {		
+		var worksheetDesignerConfig = c.worksheet || {};
+		this.worksheetPanel = new Sbi.worksheet.designer.WorksheetPanel(Ext.apply(worksheetDesignerConfig, {
+			id : 'WorksheetPanel',
+			qbePanel: this
+		}));
+		items.push(this.worksheetPanel);
+	}
+	
+	
 	this.tabs = new Ext.TabPanel({
 		border: false,
 		activeTab: config.isFromCross?1:0,
 				items: items
 	});
+		
 
 	if (this.queryEditorPanel != null) {
 		this.queryEditorPanel.on('execute', function(editorPanel, query){
@@ -231,11 +248,13 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	services: null
 	, queryResultPanel: null
 	, queryEditorPanel: null
+	, worksheetPanel: null
 	, worksheetDesignerPanel: null
 	, worksheetPreviewPanel: null
 	, initialQueriesCatalogue: null // used as a queries repository variable when the queryEditorPanel is not displayed
 	, tabs: null
 	, query: null
+	, previousWorksheetDefinition: null
 
 
 	// public methods
@@ -470,7 +489,16 @@ setWorksheetState : function (successFn, failureFn, scope) {
 
 ,
 refreshWorksheetPreview : function () {
-	this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
+
+	var worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
+	var isEqual = false;
+	if(this.previousWorksheetDefinition!= null){
+		isEqual = this.compareWorksheetDefinitions(this.previousWorksheetDefinition, worksheetDefinition);
+	}		
+	if(!isEqual){
+		this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
+		this.previousWorksheetDefinition = worksheetDefinition;
+	}
 }
 
 , validate : function () {
@@ -506,7 +534,10 @@ refreshWorksheetPreview : function () {
 , addAdditionalData : function(sheetTemplate){
 
 	if(this.worksheetPreviewPanel.rendered === true){
-		var additionalData = this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.getAdditionalData();
+		var frame = this.worksheetPreviewPanel.getFrame();
+		var window = frame.getWindow();
+		var panel = window.workSheetPanel;
+		var additionalData = panel.getAdditionalData();
 		if(additionalData!=undefined && additionalData!=null){
 			var sheets = sheetTemplate.sheets;
 			for(var i=0; i<sheets.length; i++){
@@ -579,5 +610,71 @@ refreshWorksheetPreview : function () {
 , isWorksheetPageActive: function(){
 	return this.tabs.getActiveTab().id=='WorkSheetPreviewPage';
 }
+,  getWorksheetDesignerPanel: function(){
+	return this.worksheetDesignerPanel;
+}
+,  getWorksheetPreviewPanel: function(){
+	return this.worksheetPreviewPanel;
+}
+, compareWorksheetDefinitions: function(w1, w2){
+	var result=true;
+	var cont1 = 0;
+	var cont2 = 0;
+	for(var k in w1) {
+		cont1++; } 
+	for(var f in w2){ 
+		cont2++; }
+	if(cont1 != cont2){
+		result = false;
+	}		
+	if(result == true){
+		for(var p in w1){
+			if(result != false){
+			if(w1[p]){
+				if(typeof(w1[p])=='object'){
+					if(w2[p] != undefined){
+						if(w1[p] == null && w2[p] == null){
+							result = true;
+							break;
+						}	
+						else{
+							result = this.compareWorksheetDefinitions(w1[p], w2[p]);
+						}
+					}
+					else {
+						result = false;
+						break;
+					}
+				}
+				else if(typeof(w1[p])=='function'){
+					result = true;					
+					break;
+				}
+				else{
+					if(w2[p] != undefined){
+						if(w1[p]!=w2[p]){
+							result = false;
+							break;
+						}
+					}
+					else{
+						result = false;
+						break;
+					}
+				}
+			} else {
+				if (w2[p]){
+					result = false;
+				break;
+				}
+			}
+		}
+	}
+	}
+	return result;
+}
+
+
+
 
 });

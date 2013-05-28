@@ -135,16 +135,16 @@ Ext.extend(Sbi.worksheet.designer.ChartCategoryPanel, Ext.Panel, {
 				return;
 			}
 			
-			this.setCategory(aRow.data);
+			this.setCategory(aRow.data, true);
 		}
 
 	}
 	
-	, setCategory: function (category) {
+	, setCategory: function (category, isValid) {
 		var previousCategory = this.category;
 		this.category = Ext.apply({}, category); // making a clone of the input object
 		this.content.destroy();
-		var panel = this.createCategoryPanel();
+		var panel = this.createCategoryPanel(isValid);
 		this.add(panel);
 		this.content = panel;
 		if (previousCategory != null) {
@@ -177,11 +177,19 @@ Ext.extend(Sbi.worksheet.designer.ChartCategoryPanel, Ext.Panel, {
 		});
 	}
 
-	, createCategoryPanel: function() {
+	, createCategoryPanel: function(isValid) {
 		
+		var validation= '';
+		
+		if(isValid != undefined && isValid==false){
+			validation = 'color:#ff0000; text-decoration:line-through;';
+			 
+		}
+
 		var thePanel = new Ext.Panel({
-   			html: '<div style="cursor: pointer;">' + this.category.alias + '</div>'
-   		});
+   			html: '<div style="cursor: pointer;'+validation+'">' + this.category.alias + '</div>'
+   		});			
+
 		
 		thePanel.on('render', function(panel) {
 			panel.getEl().on('dblclick', function() {
@@ -189,6 +197,7 @@ Ext.extend(Sbi.worksheet.designer.ChartCategoryPanel, Ext.Panel, {
 			}, this);
 		}, this);
 		
+	
 		var item = new Ext.Panel({
             layout: {
                 type:'column'
@@ -210,6 +219,28 @@ Ext.extend(Sbi.worksheet.designer.ChartCategoryPanel, Ext.Panel, {
        		})]
 		});
 		return item;
+	}
+	, validate: function (validFields) {
+		var invalidFields ='';
+		if (this.category != null){
+			var isValid = this.validateRecord(this.category,validFields);
+			if(isValid == false){
+				invalidFields +=''+this.category.alias+',';	
+			}
+			this.setCategory(this.category, isValid);
+		}
+		return invalidFields;
+	}
+
+	, validateRecord: function (category, validFields) {
+		var isValid = false;
+		var i = 0;
+		for(; i<validFields.length && isValid == false; i++){
+			if(validFields[i].id == category.id){
+			isValid = true;	
+			}
+		}
+		return isValid;
 	}
     
 });

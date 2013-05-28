@@ -96,14 +96,26 @@ Ext.extend(Sbi.worksheet.designer.TableDesignerPanel, Ext.Panel, {
 	 * - at least one measure or attribute is in
 	 */
 
-	, validate: function(){
+	, validate: function(validFields){
+		
+		var valErr = ''+this.tableDesigner.validate(validFields);
+
+		if(valErr!= ''){
+			valErr = valErr.substring(0, valErr.length - 1)
+			return LN("sbi.worksheet.designer.validation.invalidFields")+valErr;
+		}
+		
 		var vals = this.tableDesigner.tableDesigner.getContainedValues();
-		if (vals && vals.length> 0) {return;} // OK
-		else {return LN("sbi.designertable.tableValidation.noElement");} // ERROR MESSAGE
+		if (vals && vals.length> 0) {return} // OK
+		else {
+				return LN("sbi.designertable.tableValidation.noElement");
+		} // ERROR MESSAGE
 	}
 	
 	, containsAttribute: function (attributeId) {
 		return this.tableDesigner.containsAttribute(attributeId);
 	}
+	
+	
 	
 });

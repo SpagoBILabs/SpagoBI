@@ -91,6 +91,7 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	, currentRowEdit : null
 	, displayColorColumn : true // to display or not the color column, default is true
 	, colorColumn : null
+	, validFields: null
 	
 	// static members
 	, Record: Ext.data.Record.create([
@@ -135,7 +136,7 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'seriename', 'color', 'showcomma', 'precision', 'suffix']
+	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'seriename', 'color', 'showcomma', 'precision', 'suffix', 'valid']
 		});
 	}
 	
@@ -147,6 +148,18 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	    	, hideable: false
 	    	, sortable: false
 	    	, editor: new Ext.form.TextField({})
+		, renderer : function(v, metadata, record) {
+		  	
+			if(record.data.valid != undefined && !record.data.valid){
+				metadata.attr = ' style="color:#ff0000; text-decoration:line-through;';	   	    		
+				
+			}
+			else{
+				metadata.attr = ' style="background:' + v + ';"';	   	    							
+			}
+			
+			return v; 
+		}
 	    });
 		
 	    var fieldColumn = new Ext.grid.Column({
@@ -155,6 +168,7 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	    	, hideable: false
 	    	, sortable: false
 	        , scope: this
+
 	    });
 	    
 	    var aggregatorColumn = new Ext.grid.Column({
@@ -186,7 +200,7 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 			, editor: new Ext.form.TextField({}) // only in order to make the column editable: the editor is built 
 			 									 // on the grid's beforeedit event 
 			, renderer : function(v, metadata, record) {
-				metadata.attr = ' style="background:' + v + ';"';
+				metadata.attr = ' style="background:' + v + ';"';	   	
 				return v;  
 	       }
 		});
@@ -284,6 +298,13 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	        		fn: function(e, t) {
 	        			this.targetRow = undefined;
 			        }
+        			, scope: this
+	        	}
+	        	, refresh: {
+	          		fn: function(e, t) {
+	          			var gridView = this.grid.getView();
+	          		
+	          		}
         			, scope: this
 	        	}
 			}
@@ -478,5 +499,41 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
     		this.getLayout().setActiveItem( 0 );
     	}
 	}
+	, validate: function (validFields) {
+			
+		this.validFields = validFields;
 
+		var invalidFields = this.modifyStore(validFields);
+		
+		this.store.fireEvent("datachanged", this, null);
+		
+		return invalidFields;	
+	}
+	, modifyStore: function (validFields) {
+		var invalidFields = '';
+
+		var num = this.store.getCount();
+		for(var i = 0; i < num; i++) {
+			var record = this.store.getAt(i);
+			var isValid = this.validateRecord(record,validFields);
+			record.data.valid = isValid;
+			if(isValid == false){
+				invalidFields+=''+record.data.alias+',';
+			}
+		}
+		return invalidFields;
+	}
+	, validateRecord: function (record, validFields) {
+		var isValid = false;
+		var i = 0;
+		for(; i<validFields.length && isValid == false; i++){
+			if(validFields[i].id == record.data.id){
+			isValid = true;	
+			}
+		}
+		return isValid;
+	}
+
+	
+	
 });

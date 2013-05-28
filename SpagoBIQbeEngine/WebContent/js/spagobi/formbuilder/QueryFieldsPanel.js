@@ -51,7 +51,12 @@ Sbi.formbuilder.QueryFieldsPanel = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});
 		
 	Ext.apply(this, c);
-		
+			
+	
+	var isWorksheet = false;
+	if(config.source && config.source == 'worksheet'){
+		isWorksheet = true;
+	}
 	
 	this.services = this.services || new Array();	
 	this.services['getQueryFields'] = this.services['getQueryFields'] || Sbi.config.serviceRegistry.getServiceUrl({
@@ -60,7 +65,7 @@ Sbi.formbuilder.QueryFieldsPanel = function(config) {
 	});
 	
 	//.addEvents('customEvents');
-	
+	this.addEvents("validateInvalidFieldsAfterLoad");
 		
 		
 	this.initGrid(c.gridConfig || {});
@@ -72,8 +77,8 @@ Sbi.formbuilder.QueryFieldsPanel = function(config) {
 		//bodyStyle:'background:green',
 		bodyStyle:'padding:3px',
       	layout: 'fit',   
-      	items: [this.grid],
-      	tools: this.autoloadFields ? [] : [{
+      	items: [this.grid]
+	,   tools: (this.autoloadFields ||  isWorksheet) ? [] : [{ 
 		    id:'refresh',
 		    qtip: LN('sbi.formbuilder.queryfieldspanel.tools.refresh'),
 		    handler: function(){
@@ -104,10 +109,18 @@ Ext.extend(Sbi.formbuilder.QueryFieldsPanel, Ext.Panel, {
 			, fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'precision', 'options']
 			, url: this.services['getQueryFields']
 		}); 
+    	
 		
 		this.store.on('loadexception', function(store, options, response, e){
 			Sbi.exception.ExceptionHandler.handleFailure(response, options);
 		}, this);
+		
+
+		this.store.on('load', 
+				function(){
+					this.fireEvent("validateInvalidFieldsAfterLoad", this); 		
+		}
+				, this);
 		
         this.template = new Ext.Template( // see Ext.Button.buttonTemplate and Button's onRender method
         		// margin auto in order to have button center alignment

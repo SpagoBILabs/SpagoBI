@@ -88,7 +88,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 		
 		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel({worksheetTemplate : config	, autoloadFields : true});
 		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({id : 'WorkSheetPreviewPage'}); // was ({closable: false});
-			
+		
 		this.worksheetPreviewPanel.on('activate', function() {
 			//validate
 			this.worksheetDesignerPanel.validate(
@@ -105,6 +105,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 			items: [this.worksheetDesignerPanel, this.worksheetPreviewPanel]
 			, activeTab : 0
 		});
+				
 	}
 
 	,
@@ -221,6 +222,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 	, isWorksheetPageActive: function(){
 		return this.tabs.getActiveTab().id=='WorkSheetPreviewPage';
 	}
+
 
 
 });
