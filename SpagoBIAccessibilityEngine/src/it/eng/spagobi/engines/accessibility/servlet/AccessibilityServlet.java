@@ -7,10 +7,10 @@ package it.eng.spagobi.engines.accessibility.servlet;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.accessibility.dao.QueryExecutor;
 import it.eng.spagobi.engines.accessibility.xslt.Transformation;
 import it.eng.spagobi.services.content.bo.Content;
-import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
@@ -24,11 +24,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -37,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import sun.misc.BASE64Decoder;
 
@@ -105,8 +104,18 @@ public class AccessibilityServlet extends HttpServlet {
     	    	
     	    }   	    
     	} else{
-    		//get query
-    		query = (String)dataset.getQuery();
+    		try{
+	    		//get query    		
+	    		JSONObject jsonConf  = ObjectUtils.toJSONObject(dataset.getConfiguration());
+	    		query =  jsonConf.getString(QUERY);
+	    		//query = (String)dataset.getQuery();
+    		}catch (Exception e){
+				logger.error("Error while getting query configuration.  Error: " + e.getMessage());
+				if (auditAccessUtils != null)
+					auditAccessUtils.updateAudit(session,(String) profile.getUserUniqueIdentifier(), auditId, null, new Long(System
+						.currentTimeMillis()), "EXECUTION_FAILED", e.getMessage(), null);
+			    return;			
+			}
     		try {
 				if(dataset instanceof JDBCDataSet) {
 					JDBCDataSet jdbcDataset = (JDBCDataSet)dataset;
