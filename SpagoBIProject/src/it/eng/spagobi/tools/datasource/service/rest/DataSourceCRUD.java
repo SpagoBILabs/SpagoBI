@@ -243,7 +243,7 @@ public class DataSourceCRUD {
 		String user = (String)requestBodyJSON.opt("USER");
 		String pwd = (String)requestBodyJSON.opt("PASSWORD");
 		String driver = (String)requestBodyJSON.opt("DRIVER");
-		String schemaAttr = (String)requestBodyJSON.opt("CONNECTION_URL");
+		String schemaAttr = (String)requestBodyJSON.opt("SCHEMA");
 		String multiSchema = (String)requestBodyJSON.opt("MULTISCHEMA");
 		Boolean isMultiSchema = false;
 		if(multiSchema!=null && multiSchema.equals("true")){

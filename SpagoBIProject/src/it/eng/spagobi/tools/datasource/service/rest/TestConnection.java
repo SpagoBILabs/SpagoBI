@@ -9,7 +9,6 @@ package it.eng.spagobi.tools.datasource.service.rest;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONFailure;
 
 import java.sql.Connection;
@@ -61,7 +60,7 @@ public class TestConnection {
 		Connection connection = null;
 
 		try {
-			if (jndi!=null){
+			if (jndi!=null && jndi.length()>0){
 					String jndiName = schema == null ? jndi : jndi + schema;
 					logger.debug("Lookup JNDI name:"+ jndiName);
 					Context ctx = new InitialContext();
