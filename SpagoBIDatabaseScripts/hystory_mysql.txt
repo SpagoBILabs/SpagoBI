@@ -1721,15 +1721,3 @@ RENAME TABLE SBI_DATA_SET_TEMP TO SBI_DATA_SET;
 --ALTER TABLE SBI_DATA_SET ADD CONSTRAINT FK_SBI_DATA_SET_DS4 FOREIGN KEY ( DATA_SOURCE_FLAT_ID ) REFERENCES SBI_DATA_SOURCE( DS_ID ) ON DELETE CASCADE;
 
 
--- 28/05/2013 Antonella: insert records for selfservice dataset management 
-/*
-INSERT INTO SBI_USER_FUNC (USER_FUNCT_ID, NAME, DESCRIPTION, USER_IN, TIME_IN)
-    VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_USER_FUNC'), 
-    'CreateSelfServiceDatasetFunctionality','CreateSelfServiceDatasetFunctionality', 'server', current_timestamp);
-update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_USER_FUNC';
-commit;
-INSERT INTO SBI_ROLE_TYPE_USER_FUNC (ROLE_TYPE_ID, USER_FUNCT_ID)
-    VALUES ((SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD = 'USER' AND DOMAIN_CD = 'ROLE_TYPE'), 
-    (SELECT USER_FUNCT_ID FROM SBI_USER_FUNC WHERE NAME = 'CreateSelfServiceDatasetFunctionality'));
-commit;
-*/
