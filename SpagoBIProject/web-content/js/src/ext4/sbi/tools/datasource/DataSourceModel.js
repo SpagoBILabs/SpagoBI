@@ -20,6 +20,6 @@
              "USER", 
              "CONNECTION_URL", 
              "PASSWORD",
-             "DIALECT_CLASS"
+             "DRIVER"
              ]
 });
