@@ -462,7 +462,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				dSet =(SbiDataSet)hibQuery.uniqueResult();
 			}
 			//hibBIObject.setDataSet(dSet);
-			hibBIObject.setDataSet(dSet.getId().getDsId());
+			hibBIObject.setDataSet((dSet==null)?null:dSet.getId().getDsId());
 
 
 			hibBIObject.setDescr(biObject.getDescription());
