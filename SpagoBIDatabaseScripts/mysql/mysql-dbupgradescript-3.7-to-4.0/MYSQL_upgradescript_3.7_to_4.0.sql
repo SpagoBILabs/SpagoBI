@@ -71,7 +71,7 @@ null as USER_UP,null as USER_DE, ds_h.TIME_IN, null as TIME_UP, null as TIME_DE,
 ds_h.SBI_VERSION_IN, null as SBI_VERSION_UP,  null as SBI_VERSION_DE, ds_h.META_VERSION,
 ds_h.ORGANIZATION,
 case when ds_h.OBJECT_TYPE = 'SbiQueryDataSet' then 
-concat('{"Query":"',REPLACE(ds_h.QUERY,'"','\\"'),'","queryScript":"',REPLACE(COALESCE(DS_H.QUERY_SCRIPT,''),"\"","\\""),'","queryScriptLanguage":"',COALESCE(QUERY_SCRIPT_LANGUAGE,''),'","dataSource":"',COALESCE(CAST((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID) AS CHAR),''),'"}') 
+concat('{"Query":"',REPLACE(ds_h.QUERY,'"','\\"'),'","queryScript":"',REPLACE(COALESCE(DS_H.QUERY_SCRIPT,''),'"','\\"'),'","queryScriptLanguage":"',COALESCE(QUERY_SCRIPT_LANGUAGE,''),'","dataSource":"',COALESCE(CAST((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID) AS CHAR),''),'"}')  
 WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' then 
 CONCAT('{"fileName":"',COALESCE(DS_H.FILE_NAME,''),'"}')
 WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' then 
