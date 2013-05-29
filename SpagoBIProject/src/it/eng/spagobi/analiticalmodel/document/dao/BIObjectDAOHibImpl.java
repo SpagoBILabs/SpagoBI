@@ -646,7 +646,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				//dSet = (SbiDataSet) aSession.load(SbiDataSet.class, obj.getDataSetId());
 			}
 			//hibBIObject.setDataSet(dSet);
-			hibBIObject.setDataSet(dSet.getId().getDsId());
+			hibBIObject.setDataSet((dSet==null)?null:dSet.getId().getDsId());
 
 			Integer refreshSeconds=obj.getRefreshSeconds();
 			if(refreshSeconds==null)refreshSeconds=new Integer(0);
