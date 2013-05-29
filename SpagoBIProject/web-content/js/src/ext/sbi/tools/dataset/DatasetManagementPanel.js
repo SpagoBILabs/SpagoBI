@@ -2150,7 +2150,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 			    , showMask : function(){
 			    	this.un('afterlayout',this.showMask,this);
 			    	if (this.loadMask == null) {    		
-			    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "  Waiting...  "});
+			    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "  Wait...  "});
 			    	}
 			    	if (this.loadMask){
 			    		this.loadMask.show();
@@ -2165,5 +2165,4 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 			    		this.loadMask.hide();
 			    	}
 				} 
-				
 });
