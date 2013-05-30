@@ -175,6 +175,8 @@ public class MenuListJSONSerializer implements Serializer {
 		JSONObject subscription = createMenuItem("edit","/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","Subscriptions", true, null);
 		JSONObject toDoList = createMenuItem("list","/servlet/AdapterHTTP?PAGE=WorkflowToDoListPage&WEBMODE=TRUE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","To do list", true, null);
 
+		JSONObject myData = createMenuItem("my_data","/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","My Data", true, null);
+		
 		// tempMenuList.put(charts);
 		tempMenuList.put(browser);
 		tempMenuList.put(favourites);
@@ -190,6 +192,7 @@ public class MenuListJSONSerializer implements Serializer {
 		tempMenuList.put(createDoc);
 		tempMenuList.put(subscription);
 		tempMenuList.put(toDoList);
+		tempMenuList.put(myData);
 		
 		return tempMenuList;
 	}
