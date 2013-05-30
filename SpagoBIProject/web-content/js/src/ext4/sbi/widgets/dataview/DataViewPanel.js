@@ -70,20 +70,29 @@ Ext.define('Sbi.widgets.dataview.DataViewPanel', {
     	 */
     	itemSelector: null,    	 
     	
-    	dataView: null
+    	dataView: null,
+    	
+    	/**
+    	 * The definition of the columns of the grid. {@link Sbi.widgets.store.InMemoryFilteredStore#InMemoryFilteredStore}
+    	 */
+    	columns: [],
+    	/**
+    	 * The list of the properties that should be filtered 
+    	 */
+    	filteredProperties: new Array()
     }
 
 	/**
 	 * In this constructor you must pass configuration
 	 */
 	, constructor: function(config) {
-		this.initConfig(config);				
+		//this.initConfig(config);				
 		
 		Ext.apply(this,config||{});
 		
 		this.dataView = Ext.create('Ext.view.View', {
-			 store: Ext.data.StoreManager.lookup('imagesStore'),
-			    tpl: imageTpl,
+			 	store: this.store,
+			    tpl: this.tpl,
 			    itemSelector: 'div.thumb-wrap',
 			    emptyText: 'No images available',
 			    renderTo: Ext.getBody()
@@ -95,16 +104,32 @@ Ext.define('Sbi.widgets.dataview.DataViewPanel', {
 	        frame: true,
 	        collapsible: true,
 	        width: 535,
-	        renderTo: 'dataview-example',
+	        renderTo: Ext.getBody(),
 	        title: 'Simple DataView (0 items selected)'
 	     });
 		
 		//Defines items of the panel
-		this.items = [dataView];
+	//	this.items = [this.dataView];
 			
-		this.callParent(arguments);
+		//this.callParent(arguments);
 	
 	}
+	
+	 /**
+     * @private
+     * Adds the toolbar with the search 
+     */
+   , addToolbar: function(){
+      	//Adds the additional buttons to the toolbar
+   //   	this.additionalButtons = Sbi.widget.grid.StaticDataViewDecorator.getAdditionalToolbarButtons(this.buttonToolbarConfig, this);
+
+      	
+   //   	this.tbar = Ext.create('Sbi.widgets.grid.InLineGridFilter',Ext.apply({store: this.store, additionalButtons:this.additionalButtons}));
+   //   	this.tbar.on("filter",function(filtercofing){
+   //   		this.filterString = filtercofing.filterString;
+   //   	},this);
+      	  
+    }
 	
 	/**
      * @override
@@ -113,12 +138,35 @@ Ext.define('Sbi.widgets.dataview.DataViewPanel', {
 		//BUILD THE STORE
     	Sbi.debug('DataViewPanel bulding the store...');
     	
-    	this.storeConfig = Ext.apply({
-    		parentGrid: this,
+    	var storeConfig = Ext.apply({    		
     		model: modelname,
     		filteredProperties: this.filteredProperties
-    	},this.storeConfig||{});
+    	},{});
+    	    	
     	Sbi.debug('DataViewPanel store built.');
-    	return Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);
+    	
+    	return Ext.create('Sbi.widgets.store.InMemoryFilteredStore', storeConfig);
+
+    }
+    
+    /**
+     * @override
+     */
+    , buildTpl: function(config, store){
+		//BUILD THE TPL
+    	Sbi.debug('DataViewPanel bulding the tpl...');
+    	
+    	var imageTpl = new Ext.XTemplate(
+		    '<tpl for=".">',
+		        '<div style="margin-bottom: 10px;" class="thumb-wrap">',
+		          '<img src="{'+ config.src  +'} title={Name}" />',
+		          '<br/><span>{Name}</span>',
+		        '</div>',
+		    '</tpl>'
+    	);
+    	Sbi.debug('DataViewPanel tpl built.');
+    	
+    	return imageTpl;
+
     }
 });

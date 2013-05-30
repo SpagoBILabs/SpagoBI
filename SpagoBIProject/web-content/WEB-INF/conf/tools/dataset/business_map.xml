@@ -13,7 +13,7 @@
 	
 	<MAP_REST_SERVICES>
 	<!-- <MAP_REST_SERVICE serviceUrl="/selfservicedataset/listValueDescriptionByType" businessProcess="SelfServiceDatasetManagement" />  -->							
-		<MAP_REST_SERVICE serviceUrl="selfservicedataset" businessProcess="SelfServiceDatasetManagement" />			
+		<MAP_REST_SERVICE serviceUrl="/selfservicedataset" businessProcess="SelfServiceDatasetManagement" />			
 	</MAP_REST_SERVICES>
 	
 </BUSINESS_MAP>
