@@ -1709,8 +1709,8 @@ order by ds_id, version_num;
 
 commit;
 
---DROP TABLE SBI_DATA_SET_HISTORY;   -- da fare se tutto è andato ok! Sarà nella versione finale.
---DROP TABLE SBI_DATA_SET;           -- da fare se tutto è andato ok! Sarà nella versione finale.
+--DROP TABLE SBI_DATA_SET_HISTORY CASCADE;   -- to do at the end, when all it's ended correctly!
+--DROP TABLE SBI_DATA_SET CASCADE;           -- to do at the end, when all it's ended correctly!
 RENAME TABLE SBI_DATA_SET TO SBI_DATA_SET_OLD;
 RENAME TABLE SBI_DATA_SET_HISTORY TO SBI_DATA_SET_HISTORY_OLD;
 RENAME TABLE SBI_DATA_SET_TEMP TO SBI_DATA_SET;
@@ -1720,6 +1720,25 @@ RENAME TABLE SBI_DATA_SET_TEMP TO SBI_DATA_SET;
 --ALTER TABLE SBI_DATA_SET ADD CONSTRAINT FK_SBI_DATA_SET_DS3 FOREIGN KEY ( DATA_SOURCE_PERSIST_ID ) REFERENCES SBI_DATA_SOURCE( DS_ID ) ON DELETE CASCADE;
 --ALTER TABLE SBI_DATA_SET ADD CONSTRAINT FK_SBI_DATA_SET_DS4 FOREIGN KEY ( DATA_SOURCE_FLAT_ID ) REFERENCES SBI_DATA_SOURCE( DS_ID ) ON DELETE CASCADE;
 
+--DROP OLDER FK TO SBI_DATA_SET
+ALTER TABLE SBI_LOV DROP FOREIGN KEY FK_SBI_LOV_2;
+ALTER TABLE SBI_OBJECTS DROP FOREIGN KEY FK_SBI_OBJECTS_7;
+
+--per la tabella sbi_kpi la fk non ha nome esplicito: bisogna rilevarlo tramite query e definire così lo stmt di drop (per ora manualemnte!)
+select constraint_name from INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE constraint_schema = '<SCHEMA_DB_NAME>' and
+referenced_table_name = 'SBI_DATA_SET'  and table_name = 'SBI_KPI';
+ALTER TABLE sbi_kpi DROP FOREIGN KEY <FK_NAME_GETTED>;
+
+-- 28/05/2013 Antonella: insert records for selfservice dataset management 
+INSERT INTO SBI_USER_FUNC (USER_FUNCT_ID, NAME, DESCRIPTION, USER_IN, TIME_IN)
+    VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_USER_FUNC'), 
+    'SelfServiceDatasetManagement','SelfServiceDatasetManagement', 'server', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_USER_FUNC';
+commit;
+INSERT INTO SBI_ROLE_TYPE_USER_FUNC (ROLE_TYPE_ID, USER_FUNCT_ID)
+    VALUES ((SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD = 'USER' AND DOMAIN_CD = 'ROLE_TYPE'), 
+    (SELECT USER_FUNCT_ID FROM SBI_USER_FUNC WHERE NAME = 'CreateSelfServiceDatasetFunctionality'));
+commit;
 
 -- 29/05/2013 Davide: Worksheet engine is able to use datasets
 UPDATE SBI_ENGINES SET USE_DATASET = TRUE WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver';
