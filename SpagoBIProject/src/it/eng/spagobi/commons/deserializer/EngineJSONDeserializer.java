@@ -39,7 +39,7 @@ public class EngineJSONDeserializer implements Deserializer {
 	public static final String USE_DATASOURCE = "useDataSource";
 	public static final String DATASOURCE = "dataSource";
 	
-	public static final String CLASS = "class";
+	public static final String CLASS = "engine_class";
 	public static final String URL = "url";
 	public static final String SECONDARY_URL = "secondaryUrl";
 

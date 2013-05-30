@@ -28,7 +28,7 @@ public class EngineJSONSerializer implements Serializer {
 	public static final String USE_DATASOURCE = "useDataSource";
 	public static final String DATASOURCE = "dataSourceId";
 	
-	public static final String CLASS = "class";
+	public static final String CLASS = "engine_class";
 	public static final String URL = "url";
 	public static final String DRIVER = "driver";
 	
