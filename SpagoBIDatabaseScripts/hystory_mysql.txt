@@ -1737,7 +1737,7 @@ update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_
 commit;
 INSERT INTO SBI_ROLE_TYPE_USER_FUNC (ROLE_TYPE_ID, USER_FUNCT_ID)
     VALUES ((SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD = 'USER' AND DOMAIN_CD = 'ROLE_TYPE'), 
-    (SELECT USER_FUNCT_ID FROM SBI_USER_FUNC WHERE NAME = 'CreateSelfServiceDatasetFunctionality'));
+    (SELECT USER_FUNCT_ID FROM SBI_USER_FUNC WHERE NAME = 'SelfServiceDatasetManagement'));
 commit;
 
 -- 29/05/2013 Davide: Worksheet engine is able to use datasets
