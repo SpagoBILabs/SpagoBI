@@ -559,17 +559,28 @@
 		<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-ext410-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
 
+				<file name="./src/ext4/sbi/widgets/store/InMemoryFilteredStore.js" />
+				<file name="./src/ext4/sbi/widgets/store/DynamicStore.js" />
+				<file name="./src/ext4/sbi/widgets/grid/RadioColumn.js" />
+				<file name="./src/ext4/sbi/widgets/grid/StaticGridDecorator.js" />
+				<file name="./src/ext4/sbi/widgets/grid/CheckColumn.js" />
+				<file name="./src/ext4/sbi/widgets/grid/InLineGridFilter.js" />
+				<file name="./src/ext4/sbi/widgets/grid/DynamicFilteringToolbar.js" />
+				<file name="./src/ext4/sbi/widgets/grid/DynamicGridPanel.js" />
+				<file name="./src/ext4/sbi/widgets/grid/FixedGridPanel.js" />
+				<file name="./src/ext4/sbi/widgets/grid/FixedGridPanelInMemoryFiltered.js" />
+				<file name="./src/ext4/sbi/widgets/compositepanel/ListDetailPanel.js" />
+				<file name="./src/ext4/sbi/widgets/toolbar/StaticToolbarBuilder.js" />
+
+
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovTreePanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovResultPanel.js" />
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovConfigurationGridPanel.js" />
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovPanel.js" />
-				<file name="./src/ext4/sbi/behavioural/lov/TestLovResultPanel.js" />
-				<file name="./src/ext4/sbi/behavioural/lov/TestLovTreePanel.js" />
-					
-				<file name="./src/ext/sbi/widgets/grid/CheckColumn.js" />
-				<file name="./src/ext/sbi/widgets/grid/DynamicFilteringToolbar.js" />
-				<file name="./src/ext/sbi/widgets/grid/DynamicGridPanel.js" />
-				<file name="./src/ext/sbi/widgets/grid/RadioColumn.js" />
-				<file name="./src/ext/sbi/widgets/store/DynamicStore.js" />
-				<file name="./src/ext/sbi/widgets/tree/BaseTree.js" />
+
+				<file name="./src/ext4/sbi/tools/datasource/DataSourceModel.js" />
+				<file name="./src/ext4/sbi/tools/datasource/DataSourceListDetailPanel.js" />
+				<file name="./src/ext4/sbi/tools/datasource/DataSourceDetailPanel.js" />
 				
 			</filelist>
 
@@ -582,6 +593,9 @@
 		</java>
 		<java jar="./yuicompressor-2.4.2.jar" fork="true">
 			<arg line="-o ${build}/${webapp_name}/js/src/ext/sbi-all-ext311-${project.version}.js ${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js --nomunge" />
+		</java>
+		<java jar="./yuicompressor-2.4.2.jar" fork="true">
+			<arg line="-o ${build}/${webapp_name}/js/src/ext4/sbi-all-ext410-${project.version}.js ${build}/${webapp_name}/js/src/ext4/sbi-all-ext410-debug.js --nomunge" />
 		</java>
 	</target>
 
