@@ -212,7 +212,7 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 			JSONObject encodedValues = this.getAttributeAsJSONObject("engineValues");
 						
 			String driverName = encodedValues.getString("driver");
-			String className = encodedValues.getString("class");
+			String className = encodedValues.getString("engine_class");
 			
 			if(driverName!=null){
 				Class.forName(driverName);

@@ -160,7 +160,7 @@ Ext
 						this.configurationObject.fields = [ "id", "label",
 								"name", "description", "documentType",
 								"engineType", "useDataSet", "useDataSource",
-								"class", "url", "driver", "secondaryUrl",
+								"engine_class", "url", "driver", "secondaryUrl",
 								"dataSourceId" ];
 
 						this.configurationObject.emptyRecToAdd = new Ext.data.Record(
@@ -173,7 +173,7 @@ Ext
 									engineType : '',
 									useDataSet : '',
 									useDataSource : '',
-									class : '',
+									engine_class : '',
 									url : '',
 									driver : '',
 									secondaryUrl : '',
@@ -435,7 +435,7 @@ Ext
 							fieldLabel : 'Class',
 							allowBlank : true,
 							validationEvent : false,
-							name : 'class'
+							name : 'engine_class'
 						});
 
 
@@ -543,7 +543,7 @@ Ext
 							engineType : '',
 							useDataSet : 'false',
 							useDataSource : 'false',
-							class : '',
+							engine_class : '',
 							url : '',
 							driver : '',
 							secondaryUrl : '',
@@ -596,7 +596,7 @@ Ext
 							engineType : values['engineType'],
 							useDataSet : values['useDataSet'],
 							useDataSource : values['useDataSource'],
-							class : values['class'],
+							engine_class : values['engine_class'],
 							url : values['url'],
 							driver : values['driver'],
 							secondaryUrl : values['secondaryUrl'],
@@ -616,7 +616,7 @@ Ext
 							engineType : values['engineType'],
 							useDataSet : values['useDataSet'],
 							useDataSource : values['useDataSource'],
-							class : values['class'],
+							engine_class : values['engine_class'],
 							url : values['url'],
 							driver : values['driver'],
 							secondaryUrl : values['secondaryUrl'],
@@ -635,7 +635,7 @@ Ext
 						record.set('engineType', values['engineType']);
 						record.set('useDataSet', values['useDataSet']);
 						record.set('useDataSource', values['useDataSource']);
-						record.set('class', values['class']);
+						record.set('engine_class', values['engine_class']);
 						record.set('url', values['url']);
 						record.set('driver', values['driver']);
 						record.set('secondaryUrl', values['secondaryUrl']);
@@ -680,7 +680,7 @@ Ext
 						values.useDataSet = this.detailFieldUseDataSet.getValue();
 						values.useDataSource = this.detailFieldUseDataSource.getValue();
 						values.dataSource = this.detailFieldDataSource.getValue();
-						values.class = this.detailFieldClass.getValue();						
+						values.engine_class = this.detailFieldClass.getValue();						
 						values.url = this.detailFieldUrl.getValue();
 						values.secondaryUrl = this.detailFieldSecondaryUrl.getValue();
 						values.driver = this.detailFieldDriverName.getValue();
@@ -708,7 +708,7 @@ Ext
 						this.detailFieldUseDataSource.setValue(rec.get('useDataSource'));
 						this.detailFieldDataSource.setValue(rec.get('dataSourceId'));
 						this.detailFieldUrl.setValue(rec.get('url'));
-						this.detailFieldClass.setValue(rec.get('class'));						
+						this.detailFieldClass.setValue(rec.get('engine_class'));						
 						this.detailFieldSecondaryUrl.setValue(rec.get('secondaryUrl'));
 						this.detailFieldDriverName.setValue(rec.get('driver'));
 					}
