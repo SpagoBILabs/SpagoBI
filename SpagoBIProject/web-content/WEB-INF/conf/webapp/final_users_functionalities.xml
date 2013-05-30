@@ -63,5 +63,12 @@
                  link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=START_CREATING_WORKSHEET_FROM_DATASET_ACTION" 
                  iconUrl="${SPAGOBI_CONTEXT}/img/wapp/pencil16.png">
     </APPLICATION>
+    
+    <APPLICATION code="CreateSelfServiceDataset" 
+                 title="#menu.CreateSelfServiceDataset"
+                 functionality="SelfServiceDatasetManagement" 
+                 link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION" 
+                 iconUrl="${SPAGOBI_CONTEXT}/img/wapp/pencil16.png">
+    </APPLICATION>
 	
 </FINAL_USER_FUNCTIONALITIES>
