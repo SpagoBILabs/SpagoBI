@@ -177,7 +177,7 @@
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/distributionlist/distributionlist16.png" />
 		  	<ITEM	title="#menu.DistributionListUser"
 					functionality="DistributionListUser"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDistributionListUserPag&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUEe"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDistributionListUserPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUEe"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/distributionlist/distributionlistuser16.png" />
 		</ITEM>
 	</ITEM>

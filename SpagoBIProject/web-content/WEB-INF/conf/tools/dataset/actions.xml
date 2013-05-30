@@ -8,6 +8,10 @@
  <ACTION name="EXECUTE_DATASETS_ACTION" class="it.eng.spagobi.tools.dataset.service.ExecuteDatasets" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
-
+ 
+  <ACTION name="SELF_SERVICE_DATASET_START_ACTION" class="it.eng.spagobi.tools.dataset.service.SelfServiceDatasetStartAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ 
 </ACTIONS>
 
