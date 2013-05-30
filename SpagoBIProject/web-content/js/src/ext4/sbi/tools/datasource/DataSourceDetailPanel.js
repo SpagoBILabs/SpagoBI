@@ -119,11 +119,45 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 			inputValue:'jndi'
 		});
 
-		this.dataSourceJndiName= Ext.create("Ext.form.field.Text",{
+		
+
+		var thisPanel = this;
+		this.dataSourceJndiName= Ext.create('Ext.form.field.Trigger', {
+	    	triggerCls:'x-form-question-trigger',
 			name: "JNDI_URL",
 			fieldLabel: LN('sbi.datasource.type.jndi.name'),
-			allowBlank: false
-		});	 
+			allowBlank: false,
+	    	onTriggerClick: function(e) {
+		        
+	    		if(!thisPanel.win){
+		        	
+		        	var p = new Ext.Panel({
+		        		bodyStyle: 'background-color: white;',
+		        		html:LN('sbi.datasource.jndiname.info')
+		        	})
+		        	
+		        	thisPanel.win = new Ext.Window({
+		                layout:'fit',
+		                bodyStyle: 'background-color: white;',
+		                width:300,
+		                height:150,
+		                closeAction:'hide',
+		                plain: true,
+		                items: [p],
+		                buttons: [{
+		                    text: 'Close',
+		                    handler: function(){
+		                    	thisPanel.win.hide();
+		                    }
+		                }]
+		            });
+		        }
+	    		thisPanel.win.show(this);
+			}
+	    	
+	    });
+		
+
 		
 		this.dataSourceJdbcUser = Ext.create("Ext.form.field.Text",{
 			name: "USER",

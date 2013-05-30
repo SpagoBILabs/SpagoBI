@@ -33,3 +33,7 @@ Styles for the component Ext.ux.RadioColumn
     font-weight: bold;
     background-color: yellow;
 }
+
+.x-form-question-trigger{
+	background-image:url('../img/form/question-trigger.gif');
+}
