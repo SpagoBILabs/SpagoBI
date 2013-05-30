@@ -558,6 +558,16 @@
 		
 		<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-ext410-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
+				
+				<file name="./src/ext/sbi/commons/Format.js" />
+				<file name="./src/ext/sbi/locale/LocaleUtils.js" />
+				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
+				<file name="./src/ext4/sbi/service/ServiceRegistry.js" />
+				<file name="./src/ext/sbi/decorator/LoadMask.js" />
+				<file name="./src/ext/sbi/commons/Format.js" />
+				<file name="./src/ext/sbi/commons/JSON.js" />
+				<file name="./src/ext/sbi/commons/Session.js" />	
+				<file name="./src/ext/sbi/commons/Log.js" />	
 
 				<file name="./src/ext4/sbi/widgets/store/InMemoryFilteredStore.js" />
 				<file name="./src/ext4/sbi/widgets/store/DynamicStore.js" />
