@@ -1065,13 +1065,6 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								autoHeight : true,
 								autoScroll : true,
 								border : true,
-								style : {
-									"margin-left" : "3px",
-									"margin-top" : "0px",
-									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
-											: "-5px")
-											: "3px"
-								},
 								items : [ this.fileUploadFormPanel ]
 							});
 
