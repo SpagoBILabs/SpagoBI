@@ -9,11 +9,13 @@ Ext.define('Sbi.tools.dataset.SelfServiceDatasetsBrowser', {
 
 	, constructor: function(config) {
 		this.services =[];	
-		this.columns = [{dataIndex:"LABEL", header:"Name"}, {dataIndex:"DESCR", header:"Description"},{dataIndex:"CATEGORY_ID", header:"Category"}];		
-		this.fields = ["DS_ID","VERSION_NUM","ACTIVE","LABEL","NAME","DESCR","OBJECT_TYPE","DS_METADATA","PARAMS","CATEGORY_ID","TRANSFORMER_ID","PIVOT_COLUMN", 
-		               "PIVOT_ROW","PIVOT_VALUE","NUM_ROWS","IS_PERSISTED","DATA_SOURCE_PERSIST_ID","IS_FLAT_DATASET","FLAT_TABLE_NAME",
-		               "DATA_SOURCE_FLAT_ID","CONFIGURATION","USER"];
-		this.filteredProperties = ["LABEL","DESCR", "CATEGORY_ID"];
+		this.initServices();	
+		this.columns = [{dataIndex:"label", header:"Name"}, {dataIndex:"description", header:"Description"}];		
+		//this.columns = [{dataIndex:"label", header:"Name"}, {dataIndex:"description", header:"Description"},{dataIndex:"CATEGORY_ID", header:"Category"}];
+		this.fields = ["id","label","name","description"];
+		this.filteredProperties = ["label","name"];
+
+
 		
 		/*	this.buttonToolbarConfig = {
 				newButton: true
@@ -32,12 +34,13 @@ Ext.define('Sbi.tools.dataset.SelfServiceDatasetsBrowser', {
 				type: 'json',
 				root: 'root'
 			}
-		});
+		});		
 		
-		this.initServices();		
-		this.store = this.buildStore(this.getModelName());
+		this.store = this.buildStore( this.getModelName());
 		this.store.load({});
-		this.tpl = this.buildTpl({src:Ext.LEAF_IMAGE_URL},this.store);
+		
+		//this.tpl = this.buildTpl({src:Ext.LEAF_IMAGE_URL},this.store);
+		this.tpl = this.buildTpl({src:Ext.LEAF_IMAGE_URL});
 		config.services = this.services;	
 		config.store = this.store;
 		config.tpl = this.tpl;

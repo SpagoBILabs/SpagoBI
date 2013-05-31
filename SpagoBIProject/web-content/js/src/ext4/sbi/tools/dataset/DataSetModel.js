@@ -7,7 +7,7 @@
   
  Ext.define('Sbi.tools.dataset.DataSetModel', {
     extend: 'Ext.data.Model',
-    fields: [
+  /*  fields: [
              "DS_ID",
              "VERSION_NUM",
              "ACTIVE",
@@ -30,5 +30,9 @@
              "DATA_SOURCE_FLAT_ID",
              "CONFIGURATION",
              "USER"
-             ]
+             ]*/
+    fields:["id",
+            "label",
+            "name",
+            "description"]
 });
