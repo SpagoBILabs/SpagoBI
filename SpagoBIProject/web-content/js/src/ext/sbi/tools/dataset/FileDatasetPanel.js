@@ -43,17 +43,22 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 	this.initForm(myItems);
 	
 	c = {
-			height : 200,
-		    frame:false,
-          	items: myItems 
+	        labelWidth: 75, // label settings here cascade unless overridden
+	        frame:false,
+	        width: 350,
+	        defaults: {width: 230},
+	        defaultType: 'textfield',
+
+	        items: myItems
 		};
+	
 
 
 	Sbi.tools.dataset.FileDatasetPanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
+Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.form.FormPanel, {
 	
 	initForm: function(myItems){
 		this.uploadField = new Ext.form.TextField({
@@ -65,6 +70,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		
 		this.optField = new Ext.form.TextField({
 			width: '300',
+			fieldLabel: 'Opt1',
 			name: "opt1",
 			allowBlank : true,
 		});
