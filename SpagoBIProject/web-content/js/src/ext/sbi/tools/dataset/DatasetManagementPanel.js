@@ -676,7 +676,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						allowBlank : false, validationEvent : true
 					});
 					detailDsType.addListener('select',this.activateDsTypeForm, this);
-					
+					/*
 					this.fileNamesStore = new Ext.data.SimpleStore({
 						fields : ['fileName'],
 						data : config.fileTypes,
@@ -696,6 +696,104 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						selectOnFocus : true, editable : false,
 						allowBlank : false, validationEvent : true
 					});
+					*/
+					
+					/////// File Dataset Management
+				
+					/*
+					this.fileTypeCombo = new Ext.form.ComboBox({
+						name : 'fileType',
+						store: new Ext.data.ArrayStore({
+					        id: 0,
+					        fields: [
+					            'fileTypeName',
+					            'fileTypeValue'
+					        ],
+					        data: [['CSV', 'CSV'], ['Excel 2007', 'XLSX']]
+					    }),
+						width : 150,
+						fieldLabel : LN('sbi.ds.fileType'),
+						displayField : 'fileTypeName', 
+						valueField : 'fileTypeValue', 
+						typeAhead : true, forceSelection : true,
+						mode : 'local',
+						triggerAction : 'all',
+						selectOnFocus : true, editable : false,
+						allowBlank : false, validationEvent : true
+					});
+					
+					this.uploadField = new Ext.form.TextField({
+						inputType : 'file',
+						fieldLabel : LN('sbi.generic.upload'),
+						allowBlank : true
+					});
+					*/
+					this.fileUploadFormPanel = new Sbi.tools.dataset.FileDatasetPanel();
+					
+					//Internal Form Panel for file upload 
+					/*
+					this.fileUploadFormPanel = new Ext.FormPanel({
+						border: false,
+						columnWidth: 0.8,
+						fileUpload: true,
+						items: [this.uploadField]
+					});				
+					
+					//Panel with the load file field
+					this.loadFileBrows = new Ext.Panel({
+						height: 45,
+						layout:'column',
+						frame: true,
+						header: false,
+						border: false,
+						padding: '5 5 5 5',
+						items: [
+							        this.fileUploadFormPanel ,
+							        {
+							        	xtype:          'button',
+							        	border: 		false,
+							        	handler:		this.uploadFileButtonHandler,
+							        	columnWidth:	0.1,
+							        	scope: 			this,
+							        	style:			'padding-left: 5px',
+							        	text: 			'upload'
+							        }
+						        ]
+					});
+					
+					this.csvSeparatorField = new Ext.form.TextField({
+						maxLength : 1, minLength : 1,
+						width : 50,
+						regexText : LN('sbi.roles.alfanumericString'),
+						fieldLabel : LN('sbi.ds.csvSeparator'),
+						allowBlank : false, validationEvent : true,
+						name : 'csvSeparator'
+					});
+					
+					
+					this.fileTypeOptionsDetail = new Ext.form.FieldSet(
+					{
+						labelWidth : 80,
+						defaults : {
+						//width : 280,
+						border : true
+						},
+						defaultType : 'textfield',
+						autoHeight : true,
+						autoScroll : true,
+						border : true,
+						style : {
+									"margin-left" : "3px",
+									"margin-top" : "0px",
+									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
+											: "-5px")
+											: "3px"
+								},
+						items : [ this.csvSeparatorField]
+					});
+					*/
+					////////////////////////////////////////////////////////
+					
 
 					this.detailDataSource = new Ext.form.ComboBox({
 						name : 'dataSource',
@@ -955,7 +1053,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								},
 								items : [ this.detailJclassName, this.customDataGrid ]
 							});
-
+					
 					this.fileDetail = new Ext.form.FieldSet(
 							{
 								labelWidth : 80,
@@ -974,7 +1072,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 											: "-5px")
 											: "3px"
 								},
-								items : [ this.detailFileName ]
+								items : [ this.fileUploadFormPanel ]
 							});
 
 					this.WSDetail = new Ext.form.FieldSet(
@@ -1071,6 +1169,41 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 											this.manageParsPanel ]
 								}
 							});
+				}
+				
+				//handler for the upload file button
+				,uploadFileButtonHandler: function(btn, e) {
+					
+			        var form = this.fileUploadFormPanel.getForm();
+			       // if(form.isValid()){
+			            form.submit({
+			                url: Sbi.config.serviceRegistry.getBaseUrlStr({}), // a multipart form cannot contain parameters on its main URL;
+			                												   // they must POST parameters
+			                params: {
+			                    ACTION_NAME: 'UPLOAD_DATASET_FILE_ACTION'
+			                   // , SBI_EXECUTION_ID: Sbi.config.serviceRegistry.getExecutionId()
+			                },
+			                waitMsg: 'Uploading your file...',
+			                success: function(form, action) {
+			        			Ext.Msg.show({
+			     				   title: LN('sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.title'),
+			     				   msg: LN('sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.msg'),
+			     				   buttons: Ext.Msg.OK,
+			     				   icon: Ext.MessageBox.INFO
+			     				});
+			       				
+			                },
+			                failure : function (form, action) {
+			        			Ext.Msg.show({
+			      				   title: 'Error',
+			      				   msg: action.result.msg,
+			      				   buttons: Ext.Msg.OK,
+			      				   icon: Ext.MessageBox.ERROR
+			      				});
+			                },
+			                scope : this
+			            });
+			        //}
 				}
 				
 				,initTrasfTab : function() {
