@@ -85,7 +85,7 @@ public class MenuListJSONSerializer implements Serializer {
 				home.put(HREF, "javascript:goHome('/html/home.html', 'spagobi');");
 				//home.put(HREF, "javascript:alert('ciao');");
 				
-				String userMenu = msgBuild.getI18nMessage(locale, "menu.UserMenu");
+				String userMenu = msgBuild.getMessage( "menu.UserMenu", locale);
 				personal.put(ICON_CLS, "spagobi");
 				personal.put(TOOLTIP, userMenu);
 				personal.put(ICON_ALIGN, "top");
@@ -214,7 +214,7 @@ public class MenuListJSONSerializer implements Serializer {
 				menuItem.put(HREF, "javascript:info()");
 			}else if(label != null && label.equals(ROLE)){
 				menuItem.put(HREF, "javascript:role()");
-			}else{
+			}else if(href!=null && href.length()>0){
 				menuItem.put(HREF, "javascript:execUrl('"+contextName+href+"')");
 			}
 		}
@@ -225,7 +225,7 @@ public class MenuListJSONSerializer implements Serializer {
 	private JSONArray createFixedMenu(Locale locale, int level, JSONArray tempMenuList) throws JSONException{
 
 		JSONObject spacer = new JSONObject();
-		JSONObject lang = createMenuItem("flag","","Languages", true, "LANG");
+		JSONObject lang = createMenuItem("flag","","Languages", false, "LANG");
 
 		JSONObject roles = createMenuItem("roles","","Roles", false, "ROLE");
 		
