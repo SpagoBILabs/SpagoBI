@@ -93,23 +93,12 @@ Ext.define('Sbi.widgets.dataview.DataViewPanel', {
 		this.dataView = Ext.create('Ext.view.View', {
 			 	store: this.store,
 			    tpl: this.tpl,
-			    itemSelector: 'div.thumb-wrap',
-			    emptyText: 'No images available',
+			    itemSelector: 'dd',
+			    overClass: 'over',
+			   // frame:true,
+			    emptyText: 'No datasets available',
 			    renderTo: Ext.getBody()
         });
-        
-        
-		 Ext.create('Ext.Panel', {
-	        id: 'images-view',
-	        frame: true,
-	        collapsible: true,
-	        width: 535,
-	        renderTo: Ext.getBody(),
-	        title: 'Simple DataView (0 items selected)'
-	     });
-		
-		//Defines items of the panel
-	//	this.items = [this.dataView];
 			
 		//this.callParent(arguments);
 	
@@ -134,35 +123,59 @@ Ext.define('Sbi.widgets.dataview.DataViewPanel', {
 	/**
      * @override
      */
-    , buildStore: function(modelname){
+    , buildStore: function(modelName){
 		//BUILD THE STORE
     	Sbi.debug('DataViewPanel bulding the store...');
-    	
-    	var storeConfig = Ext.apply({    		
-    		model: modelname,
-    		filteredProperties: this.filteredProperties
-    	},{});
-    	    	
-    	Sbi.debug('DataViewPanel store built.');
-    	
-    	return Ext.create('Sbi.widgets.store.InMemoryFilteredStore', storeConfig);
 
+    	this.storeConfig = Ext.apply({
+    		model: modelName,
+    		filteredProperties: ["label","name"]
+    	},{});
+
+    	//creates and returns the store
+    	Sbi.debug('DataViewPanel store built.');
+    	return store = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);
     }
     
     /**
      * @override
      */
-    , buildTpl: function(config, store){
+    , buildTpl: function(config){
 		//BUILD THE TPL
     	Sbi.debug('DataViewPanel bulding the tpl...');
     	
+    	
     	var imageTpl = new Ext.XTemplate(
-		    '<tpl for=".">',
-		        '<div style="margin-bottom: 10px;" class="thumb-wrap">',
-		          '<img src="{'+ config.src  +'} title={Name}" />',
-		          '<br/><span>{Name}</span>',
-		        '</div>',
-		    '</tpl>'
+/*
+    			'<div style="align:center;top:5px;border:10;width:3%;">', 
+	    			'<tpl for=".">',
+						'<div style="border:3;float:left;">', 	
+							'<b><span>{name}</span></b>',
+							'<img src="'+ config.src  +'" width="50">' ,
+							'<br/>',
+						'</div>' ,
+					'</tpl>',
+				'</div>' 
+ */   			
+    		 '<div id="sample-ct">', 	            
+ 	            '<div class="group">',
+ 	            '<h2><div class="group-header">Elenco datasets</div></h2>',
+ 	            '<dl class="group-body">',
+// 	            	'<tpl if="samples.length == 0">',
+// 	            		'<div id="empty-group-message">',
+// 	            		noItem,
+// 	            		'</div>',
+// 	            	'</tpl>',        
+ 	            	'<tpl for=".">',
+	                    '<dd class="group-item">',
+	 	                    '<b><span>{name}</span></b>',
+							'<img src="'+ config.src  +'" width="50">' ,
+							'<br/>', 
+	                    '</dd>',
+	                '</tpl>',
+ 	            '<div style="clear:left"></div></dl></div>',
+ 	        '</div>'
+    		
     	);
     	Sbi.debug('DataViewPanel tpl built.');
     	
