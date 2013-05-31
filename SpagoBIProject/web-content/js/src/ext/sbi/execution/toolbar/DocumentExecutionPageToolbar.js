@@ -274,16 +274,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			}));
 		}
 		
-		if(Sbi.user.ismodeweb){
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-expand' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
-			    , scope: this
-			    , handler : function() {
-			    	this.fireEvent('click', this, 'expand');
-				}			
-			}));
-		}
 		
 		// if document is QBE datamart and user is a read-only user, he cannot execute main document, but only saved queries.
 		// If there is a subobject preference, the execution button starts the subobject execution
@@ -335,17 +325,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				}));
 		   }
 		   
-		   // EXPAND DOCUMENT
-		   if(Sbi.user.ismodeweb && this.expandBtnVisible === true){
-			   this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-expand' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
-				    , scope: this
-				    , handler : function() {
-				    	this.fireEvent('click', this, 'expand');
-					}			
-				}));
-			}
+
 	   			
 			if (Sbi.user.functionalities.contains('EditWorksheetFunctionality') && this.executionInstance.document.typeCode === 'WORKSHEET') {
 				this.addButton(new Ext.Toolbar.Button({
@@ -405,16 +385,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 
 		Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForEditMode]: IN');
 		
-		   if (Sbi.user.ismodeweb && this.expandBtnVisible  === true) {
-			   this.addButton(new Ext.Toolbar.Button({
-				   iconCls: 'icon-expand' 
-					   , tooltip: LN('sbi.execution.executionpage.toolbar.expand')
-					   , scope: this
-					   , handler : function() {
-						   this.fireEvent('click', this, 'expand');
-					   }			
-			   }));
-		   }
 		   
 		   if (this.executionInstance.document && this.executionInstance.document.decorators &&  this.executionInstance.document.decorators.isSavable) {
 			   this.addButton(new Ext.Toolbar.Button({
