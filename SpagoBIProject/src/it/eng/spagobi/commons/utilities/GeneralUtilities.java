@@ -57,6 +57,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	private static transient Logger logger = Logger.getLogger(GeneralUtilities.class);
 
 	public static final int MAX_DEFAULT_TEMPLATE_SIZE = 5242880;
+	public static final int MAX_DEFAULT_FILE_DATASET_SIZE = 104857600; // 100 mega byte
 	private static String SPAGOBI_HOST = null; 
 //	private static String SPAGOBI_DOMAIN = null;
 
