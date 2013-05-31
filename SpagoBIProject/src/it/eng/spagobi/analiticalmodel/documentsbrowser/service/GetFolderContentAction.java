@@ -214,8 +214,9 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			
 			JSONObject canAddResponseJSON =null;
 			
-			if(functID != null){
-				Integer id =Integer.getInteger(functID);
+			
+/*			if(functID != null){
+				Integer id = Integer.valueOf(functID);
 				if(id != null){
 					boolean canAddDocs = ObjectsAccessVerifier.canDev(id, profile);
 					if(canAddDocs || isAdmin){
@@ -224,7 +225,7 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 						canAddResponseJSON = createJSONResponseForAdd(false);
 					}
 				}
-			}
+			}*/
 			try {
 				writeBackToClient( new JSONSuccess( createJSONResponse(foldersResponseJSON, documentsResponseJSON, canAddResponseJSON) ) );
 			} catch (IOException e) {

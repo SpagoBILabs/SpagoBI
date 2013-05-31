@@ -292,7 +292,7 @@ function saveDocument(goBack) {
 				</div>
 				<div class='div_detail_form'>
 					<input class='portlet-form-input-field' type="text" style='width:230px;' 
-							name="label" id="doc_label" value="<%=StringEscapeUtils.escapeHtml(obj.getLabel())%>" maxlength="20" />
+							name="label" id="doc_label" value="<%=StringEscapeUtils.escapeHtml(obj.getLabel())%>" maxlength="100" />
 					&nbsp;*
 				</div>
 				<div class='div_detail_label'>
