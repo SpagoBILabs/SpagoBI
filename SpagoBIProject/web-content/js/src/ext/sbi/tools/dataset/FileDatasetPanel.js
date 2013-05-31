@@ -43,12 +43,11 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 	this.initForm(myItems);
 	
 	c = {
-	        labelWidth: 75, // label settings here cascade unless overridden
+	        labelWidth: 75, 
 	        frame:false,
 	        width: 350,
 	        defaults: {width: 230},
 	        defaultType: 'textfield',
-
 	        items: myItems
 		};
 	
