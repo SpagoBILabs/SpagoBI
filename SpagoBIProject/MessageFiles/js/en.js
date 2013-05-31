@@ -568,6 +568,7 @@ Sbi.locale.ln['sbi.datasource.type.jdbc.url']= 'URL';
 Sbi.locale.ln['sbi.datasource.type.jdbc.password']= 'Password';
 Sbi.locale.ln['sbi.datasource.jndiname.info']= 'For the data source configuration you should specify the connection pool configured inside the application server. For example: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 Sbi.locale.ln['sbi.datasource.saved']= 'Data source correctly saved';
+Sbi.locale.ln['sbi.datasource.tested']= 'Test OK';
 Sbi.locale.ln['sbi.datasource.deleted']= 'Data source correctly deleted';
 Sbi.locale.ln['sbi.datasource.tested']= 'Data source correctly tested';
 Sbi.locale.ln['sbi.datasource.validation.error']= 'There is some error in the data source configuration. Check the marked fields.';
@@ -722,11 +723,15 @@ Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.export']='Ex
 //===================================================================
 		
 //GENERIC
-Sbi.locale.ln["error.mesage.description.generic.can.not.responce"]= "Can not send responce to client"
+Sbi.locale.ln["error.mesage.description.generic.can.not.responce"]= "Can not send responce to client";
 	
 //DATASOURCE	
-Sbi.locale.ln["error.mesage.description.data.source.cannot.be.null"]= "The label of the data source can not be null"
-Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = "Impossible to delete the data source because it is in use"
-Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]="Impossible to save the data source because there is another one with the same label"
-	
-	
+Sbi.locale.ln["error.mesage.description.data.source.cannot.be.null"]= "The label of the data source can not be null";
+Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = "Impossible to delete the data source because it is in use";
+Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]="Impossible to save the data source because there is another one with the same label";
+
+//===================================================================
+//Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 
+//===================================================================
+Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.title"]="Fill in the dataset details and click on Save";
+Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.fields.datasource"]="Save data on";

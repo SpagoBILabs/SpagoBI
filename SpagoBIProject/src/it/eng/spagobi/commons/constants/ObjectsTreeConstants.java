@@ -48,6 +48,9 @@ public class ObjectsTreeConstants {
 	public static final String OBJECT_LABEL = "OBJECT_LABEL";
 	public static final String FUNCT_ID = "FUNCT_ID";
 	
+	public static final String DATASET_LABEL = "DATASET_LABEL";
+	public static final String ENGINE = "ENGINE";
+	
 	public static final String DYNAMIC_PAGE_DATA = "DYNAMIC_PAGE_DATA";
 
 	public static final String SESSION_OBJ_ATTR = "SESSION_OBJ_ATTR";

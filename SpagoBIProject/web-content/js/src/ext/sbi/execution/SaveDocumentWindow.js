@@ -126,7 +126,7 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 	        name: 'docLabel',
 	        allowBlank: false, 
 	        inputType: 'text',
-	        maxLength: 20,
+	        maxLength: 100,
 	        anchor: '95%',
 			fieldLabel: LN('sbi.generic.label')  
 	    });

@@ -588,6 +588,21 @@ Sbi.locale.ln['sbi.ds.field.metadata'] = 'Metadata';
 Sbi.locale.ln['sbi.ds.field.name'] = 'Nome';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Ricalcolare i metadati?';
 Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = 'Vuoi che il sistema ricalcoli i metadati del dataset? (il dataset verrà rieseguito dal sistema; si consiglia di effettuare questa operazione nel caso in cui il dataset sia stato alterato in modo significativo)';
+Sbi.locale.ln['sbi.ds.metadata'] = 'Metadati delle colonne';
+Sbi.locale.ln['sbi.ds.field.metadata'] = 'Metadata';
+Sbi.locale.ln['sbi.ds.field.name'] = 'Nome';
+Sbi.locale.ln['sbi.ds.measure'] = 'Misura';
+Sbi.locale.ln['sbi.ds.attribute'] = 'Attributo';
+Sbi.locale.ln['sbi.ds.field.nature.title'] = 'Selezionare la tipologia di campo';
+Sbi.locale.ln['sbi.ds.field.metadata.nosaved'] = 'Devi salvare il dataset prima di modificare i metadati';
+Sbi.locale.ln['sbi.ds.advancedTab'] = 'Avanzate';
+Sbi.locale.ln['sbi.ds.helpAdvanced'] = 'Aiuto';
+Sbi.locale.ln['sbi.ds.persist'] = 'Configurazione persistenza del dataset';
+Sbi.locale.ln['sbi.ds.isPersisted'] = 'Persisti';
+Sbi.locale.ln['sbi.ds.persistTableName'] = 'Nome tabella';
+Sbi.locale.ln['sbi.ds.flat'] = 'Configurazione dataset di tipo flat';
+Sbi.locale.ln['sbi.ds.isFlatDataset'] = 'Dataset piatto';
+Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nome tabella';
 
 Sbi.locale.ln['sbi.datasource.label']= 'Etichetta';
 Sbi.locale.ln['sbi.datasource.description']= 'Descrizione';
@@ -607,6 +622,7 @@ Sbi.locale.ln['sbi.datasource.saved']= 'Data source salvato correttamente';
 Sbi.locale.ln['sbi.datasource.tested']= 'Data source configurato correttamente';
 Sbi.locale.ln['sbi.datasource.deleted']= 'Data source cancellato correttamente';
 Sbi.locale.ln['sbi.datasource.validation.error']= 'Ci sono degli errori di validazione. Controlla i campi marcati.';
+Sbi.locale.ln['sbi.datasource.tested']= 'Test OK';
 
 //===================================================================
 //MESSAGE BOX BUTTONS
@@ -720,11 +736,16 @@ Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.export']='Es
 //===================================================================
 		
 //GENERIC
-Sbi.locale.ln["error.mesage.description.generic.can.not.responce"]= "Impossibile mandare la risposta al client"
+Sbi.locale.ln["error.mesage.description.generic.can.not.responce"]= "Impossibile mandare la risposta al client";
 	
 //DATASOURCE	
-Sbi.locale.ln["error.mesage.description.data.source.cannot.be.null"]= "La label del documento deve essere valorizata"
-Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = "Impossibile cancellare il datasource perché è in uso"
-Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]="Impossibile salvare il datasource: label duplicata"
-	
+Sbi.locale.ln["error.mesage.description.data.source.cannot.be.null"]= "La label del documento deve essere valorizata";
+Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = "Impossibile cancellare il datasource perché è in uso";
+Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]="Impossibile salvare il datasource: label duplicata";
+
+//===================================================================
+//Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 
+//===================================================================
+Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.title"]="Riempi il form sottostante e clicca sul pulsante Salva";
+Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.fields.datasource"]="Salva i dati in";
 	

@@ -5,8 +5,8 @@ This Source Code Form is subject to the terms of the Mozilla Public License, v. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
 <%@page import="org.json.JSONObject"%>
 <%@page language="java" 
-    contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"
-        import="it.eng.spago.base.*,
+	contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"
+		import="it.eng.spago.base.*,
                  java.util.List,
                  java.util.ArrayList"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
@@ -31,7 +31,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <!-- Include Ext stylesheets here: -->
 <link id="extall"     rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
 <link id="theme-gray" rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
-
+<script type="text/javascript" src="/SpagoBI/js/lib/ext-4.1.1a/overrides/overrides.js"></script>
 
 <link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
 <link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/themes/sbi_default/css/home40/layout.css" type="text/css" />
@@ -40,20 +40,20 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 </script>
 
 <%
-    String contextName = ChannelUtilities.getSpagoBIContextName(request);
-    SourceBean moduleResponse = (SourceBean)aServiceResponse.getAttribute("LoginModule"); 
+	String contextName = ChannelUtilities.getSpagoBIContextName(request);
+	SourceBean moduleResponse = (SourceBean)aServiceResponse.getAttribute("LoginModule"); 
 
-    if(moduleResponse==null) moduleResponse=aServiceResponse;
-    
-    List lstMenu = new ArrayList();
-    
-    if (moduleResponse.getAttribute(MenuUtilities.LIST_MENU) != null){
-        lstMenu = (List)moduleResponse.getAttribute(MenuUtilities.LIST_MENU);
-    }
-    List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
-    MenuListJSONSerializer m = new MenuListJSONSerializer();
-    JSONArray jsonMenuList = (JSONArray)m.serialize(filteredMenuList,locale);
-    //System.out.println(jsonMenuList);
+	if(moduleResponse==null) moduleResponse=aServiceResponse;
+	
+	List lstMenu = new ArrayList();
+	
+	if (moduleResponse.getAttribute(MenuUtilities.LIST_MENU) != null){
+		lstMenu = (List)moduleResponse.getAttribute(MenuUtilities.LIST_MENU);
+	}
+	List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
+	MenuListJSONSerializer m = new MenuListJSONSerializer();
+	JSONArray jsonMenuList = (JSONArray)m.serialize(filteredMenuList,locale);
+	//System.out.println(jsonMenuList);
 
 %>
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
@@ -63,91 +63,106 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 <%-- End javascript object useful for session expired management (see also sessionExpired.jsp) --%>
 <!-- I want to execute if there is an homepage, only for user!-->
 <%
-    String characterEncoding = response.getCharacterEncoding();
-    if (characterEncoding == null) {
-        logger.warn("Response characterEncoding not found!!! Using UTF-8 as default.");
-        characterEncoding = "UTF-8";
-    }
+	String characterEncoding = response.getCharacterEncoding();
+	if (characterEncoding == null) {
+		logger.warn("Response characterEncoding not found!!! Using UTF-8 as default.");
+		characterEncoding = "UTF-8";
+	}
     String firstUrlToCall = "";
-    // if a document execution is required, execute it
-    if (aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL) != null) {
-        String label = (String) aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL);
-        String subobjectName = (String) aServiceRequest.getAttribute(SpagoBIConstants.SUBOBJECT_NAME);
-        
-        StringBuffer temp = new StringBuffer();
-        temp.append(contextName + "/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&");
-        temp.append(ObjectsTreeConstants.OBJECT_LABEL + "=" + label);
-        if (subobjectName != null && !subobjectName.trim().equals("")) {
-            temp.append("&" + SpagoBIConstants.SUBOBJECT_NAME + "=" + URLEncoder.encode(subobjectName, characterEncoding));
-        }
-        
-        // propagates other request parameters than PAGE, NEW_SESSION, OBJECT_LABEL and SUBOBJECT_NAME
-        Enumeration parameters = request.getParameterNames();
-        while (parameters.hasMoreElements()) {
-            String aParameterName = (String) parameters.nextElement();
-            if (aParameterName != null 
-                    && !aParameterName.equalsIgnoreCase("PAGE") && !aParameterName.equalsIgnoreCase("NEW_SESSION") 
-                    && !aParameterName.equalsIgnoreCase(ObjectsTreeConstants.OBJECT_LABEL)
-                    && !aParameterName.equalsIgnoreCase(SpagoBIConstants.SUBOBJECT_NAME) 
-                    && request.getParameterValues(aParameterName) != null) {
-                String[] values = request.getParameterValues(aParameterName);
-                
-                for (int i = 0; i < values.length; i++) {
-                    temp.append("&" + URLEncoder.encode(aParameterName, characterEncoding) + "=" 
-                            + URLEncoder.encode(values[i], characterEncoding));
-                }
-            }
-        }
-        
-        firstUrlToCall = temp.toString();
-        
-    } else {
-    
-        if (filteredMenuList.size() > 0) {
-            //DAO method returns menu ordered by parentId, but null values are higher or lower on different database:
-            //PostgreSQL - Nulls are considered HIGHER than non-nulls.
-            //DB2 - Higher
-            //MSSQL - Lower
-            //MySQL - Lower
-            //Oracle - Higher
-            //Ingres - Higher
-            // so we must look for the first menu item with null parentId
-            Menu firtsItem = null;
-            Iterator it = filteredMenuList.iterator();
-            while (it.hasNext()) {
-                Menu aMenuElement = (Menu) it.next();
-                if (aMenuElement.getParentId() == null) {
-                    firtsItem = aMenuElement;
-                    break;
-                }
-            }
-            String pathInit=MenuUtilities.getMenuPath(firtsItem, locale);
-            Integer objId=firtsItem.getObjId();
-            
-            if(objId!=null){
-                firstUrlToCall = contextName+"/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="+firtsItem.getMenuId();
-            }else if(firtsItem.getStaticPage()!=null){
-                firstUrlToCall = contextName+"/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="+firtsItem.getMenuId();
-            }else if(firtsItem.getFunctionality()!=null){
-                firstUrlToCall = DetailMenuModule.findFunctionalityUrl(firtsItem, contextName);
-            }else if(firtsItem.getExternalApplicationUrl()!=null && !firtsItem.getExternalApplicationUrl().equals("")){
-                firstUrlToCall = firtsItem.getExternalApplicationUrl();
-                if (!GeneralUtilities.isSSOEnabled()) {
-                    if (firstUrlToCall.indexOf("?") == -1) {
-                        firstUrlToCall += "?" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier;
-                    } else {
-                        firstUrlToCall += "&" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier;
-                    }
-                }
-            } else {
-                firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.html";
-            }
-        }
-        
-    }
-    
+	// if a document or a dataset execution is required, execute it
+	if (aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL) != null || aServiceRequest.getAttribute(ObjectsTreeConstants.DATASET_LABEL) != null) {
+        StringBuffer temp = new StringBuffer();	
+		// dcument execution case
+		if(aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL) != null){
+			String label = (String) aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL);
+			   String subobjectName = (String) aServiceRequest.getAttribute(SpagoBIConstants.SUBOBJECT_NAME);
+		
+
+			   temp.append(contextName + "/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&");
+			   temp.append(ObjectsTreeConstants.OBJECT_LABEL + "=" + label);
+			   if (subobjectName != null && !subobjectName.trim().equals("")) {
+				   temp.append("&" + SpagoBIConstants.SUBOBJECT_NAME + "=" + URLEncoder.encode(subobjectName, characterEncoding));
+				   }
+		}
+	    // dataset execution case
+		else{  
+	         String datasetLabel = (String) aServiceRequest.getAttribute(ObjectsTreeConstants.DATASET_LABEL);
+             String engine = (String) aServiceRequest.getAttribute(ObjectsTreeConstants.ENGINE);
+             temp.append(contextName + "/servlet/AdapterHTTP?ACTION_NAME=SELECT_DATASET_ACTION&");
+             temp.append(ObjectsTreeConstants.DATASET_LABEL + "=" + datasetLabel+"&");
+             temp.append(ObjectsTreeConstants.ENGINE + "=" + engine);
+		}
+	    
+	    // propagates other request parameters than PAGE, NEW_SESSION, OBJECT_LABEL and SUBOBJECT_NAME
+	    Enumeration parameters = request.getParameterNames();
+	    while (parameters.hasMoreElements()) {
+	    	String aParameterName = (String) parameters.nextElement();
+	    	if (aParameterName != null 
+	    			&& !aParameterName.equalsIgnoreCase("PAGE") && !aParameterName.equalsIgnoreCase("NEW_SESSION") 
+	    			&& !aParameterName.equalsIgnoreCase(ObjectsTreeConstants.OBJECT_LABEL)
+        	    	&& !aParameterName.equalsIgnoreCase(SpagoBIConstants.SUBOBJECT_NAME) 
+                    && !aParameterName.equalsIgnoreCase(ObjectsTreeConstants.DATASET_LABEL) 
+                    && !aParameterName.equalsIgnoreCase(ObjectsTreeConstants.ENGINE) 
+        	    	&& request.getParameterValues(aParameterName) != null) {
+	    		String[] values = request.getParameterValues(aParameterName);
+	    		
+	    		for (int i = 0; i < values.length; i++) {
+	    			temp.append("&" + URLEncoder.encode(aParameterName, characterEncoding) + "=" 
+	    					+ URLEncoder.encode(values[i], characterEncoding));
+	    		}
+	    	}
+	    }
+	    
+		firstUrlToCall = temp.toString();
+		
+	} else {
+	
+		if (filteredMenuList.size() > 0) {
+			//DAO method returns menu ordered by parentId, but null values are higher or lower on different database:
+			//PostgreSQL - Nulls are considered HIGHER than non-nulls.
+			//DB2 - Higher
+			//MSSQL - Lower
+			//MySQL - Lower
+			//Oracle - Higher
+			//Ingres - Higher
+			// so we must look for the first menu item with null parentId
+			Menu firtsItem = null;
+			Iterator it = filteredMenuList.iterator();
+			while (it.hasNext()) {
+				Menu aMenuElement = (Menu) it.next();
+				if (aMenuElement.getParentId() == null) {
+					firtsItem = aMenuElement;
+					break;
+				}
+			}
+			String pathInit=MenuUtilities.getMenuPath(firtsItem, locale);
+			Integer objId=firtsItem.getObjId();
+			
+			if(objId!=null){
+				firstUrlToCall = contextName+"/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="+firtsItem.getMenuId();
+			}else if(firtsItem.getStaticPage()!=null){
+				firstUrlToCall = contextName+"/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="+firtsItem.getMenuId();
+			}else if(firtsItem.getFunctionality()!=null){
+				firstUrlToCall = DetailMenuModule.findFunctionalityUrl(firtsItem, contextName);
+			}else if(firtsItem.getExternalApplicationUrl()!=null && !firtsItem.getExternalApplicationUrl().equals("")){
+				firstUrlToCall = firtsItem.getExternalApplicationUrl();
+				if (!GeneralUtilities.isSSOEnabled()) {
+					if (firstUrlToCall.indexOf("?") == -1) {
+						firstUrlToCall += "?" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier;
+					} else {
+						firstUrlToCall += "&" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier;
+					}
+				}
+			} else {
+				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.html";
+			}
+		}
+		
+	}
+	
  %>
 <script type="text/javascript">
+
 var win_info_1;
 Ext.require([
              'Ext.panel.*',
@@ -161,71 +176,71 @@ Ext.require([
 
 
 function execDirectDoc(btn){
-    var url = "";
-    var idMenu = btn.id;
-    var path=btn.path;
-<%--    var viewTrackPath='<%=viewTrackPath%>';
-    if( viewTrackPath=='true' && path!=null)
-    {document.getElementById('trackPath').innerHTML=path;} --%>
-    
-    if (idMenu != null && idMenu != 'null'){
-        url =   "'<%=contextName%>/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="+idMenu+"'" ;
-        this.mainframe.load(url);
-    }
-    return;
+	var url = "";
+	var idMenu = btn.id;
+	var path=btn.path;
+<%-- 	var viewTrackPath='<%=viewTrackPath%>';
+	if( viewTrackPath=='true' && path!=null)
+	{document.getElementById('trackPath').innerHTML=path;} --%>
+	
+	if (idMenu != null && idMenu != 'null'){
+		url =   "'<%=contextName%>/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="+idMenu+"'" ;
+		this.mainframe.load(url);
+	}
+	return;
  }
 
 function getFunctionality(btn){
-    var url = btn.url;
-    var path=btn.path;
-    execDirectUrl(url, path);
-    return;
+	var url = btn.url;
+	var path=btn.path;
+	execDirectUrl(url, path);
+	return;
  }
  
 function readHtmlFile(btn){
-    var url = "";
-    var idMenu = btn.id;
-    var path = btn.path;
-<%--    var viewTrackPath='<%=viewTrackPath%>';
-    if( viewTrackPath=='true' && path!=null)
-    {document.getElementById('trackPath').innerHTML=path;} --%>
+	var url = "";
+ 	var idMenu = btn.id;
+ 	var path = btn.path;
+<%-- 	var viewTrackPath='<%=viewTrackPath%>';
+	if( viewTrackPath=='true' && path!=null)
+	{document.getElementById('trackPath').innerHTML=path;} --%>
 
-     if (idMenu != null && idMenu != 'null'){
-        url =  "'<%=contextName%>/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="+idMenu+"'";
-        this.mainframe.load(url);
+ 	 if (idMenu != null && idMenu != 'null'){
+		url =  "'<%=contextName%>/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="+idMenu+"'";
+		this.mainframe.load(url);
 
-    }
-    return;
+	}
+	return;
 }
-     
+ 	 
 function execDirectUrl(url, path){
-    this.mainframe.load(url);
-    this.titlePath.setTitle(path);
-    return;
+	this.mainframe.load(url);
+	this.titlePath.setTitle(path);
+	return;
 }
 
 function callExternalApp(url, path){
-    url = getExternalAppUrl(url);
-    this.mainframe.load(url);
-    this.titlePath.setTitle(path);
-    return;
+	url = getExternalAppUrl(url);
+	this.mainframe.load(url);
+	this.titlePath.setTitle(path);
+	return;
 }
 
 function getExternalAppUrl(url){
-    if (!Sbi.config.isSSOEnabled) {
-        if (url.indexOf("?") == -1) {
-            url += '?<%= SsoServiceInterface.USER_ID %>=' + Sbi.user.userUniqueIdentifier;
-        } else {
-            url += '&<%= SsoServiceInterface.USER_ID %>=' + Sbi.user.userUniqueIdentifier;
-        }
-    }
-    return url;
+	if (!Sbi.config.isSSOEnabled) {
+		if (url.indexOf("?") == -1) {
+			url += '?<%= SsoServiceInterface.USER_ID %>=' + Sbi.user.userUniqueIdentifier;
+		} else {
+			url += '&<%= SsoServiceInterface.USER_ID %>=' + Sbi.user.userUniqueIdentifier;
+		}
+	}
+	return url;
 }
 
 
 function execUrl(url){
-    document.location.href=url;
-    return;
+	document.location.href=url;
+	return;
 }
 //returns the language url to be called in the language menu
 function getLanguageUrl(config){
@@ -233,90 +248,92 @@ function getLanguageUrl(config){
   return languageUrl;
 }
 function role(){
-    if(Sbi.user.roles && Sbi.user.roles.length > 1){
-        this.win_roles = new Sbi.home.DefaultRoleWindow({'SBI_EXECUTION_ID': ''});
-        this.win_roles.show();
-    }
+	if(Sbi.user.roles && Sbi.user.roles.length > 1){
+		this.win_roles = new Sbi.home.DefaultRoleWindow({'SBI_EXECUTION_ID': ''});
+		this.win_roles.show();
+	}
 
 }
 function info(){
 
-    if(!win_info_1){
-        win_info_1= new Ext.Window({
-        id:'win_info_1',
-        autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/infos.html'},                             
-        layout:'fit',
-        width:210,
-        height:180,
-        closeAction:'hide',
-        //closeAction:'close',
-        buttonAlign : 'left',
-        plain: true,
-        title: LN('sbi.home.Info')
-        });
-    }       
-    win_info_1.show();
+	if(!win_info_1){
+		win_info_1= new Ext.Window({
+		id:'win_info_1',
+		autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/infos.html'},             				
+		layout:'fit',
+		width:210,
+		height:180,
+		closeAction:'hide',
+		//closeAction:'close',
+		buttonAlign : 'left',
+		plain: true,
+		title: LN('sbi.home.Info')
+		});
+	}		
+	win_info_1.show();
   }
 function goHome(html, path){
-    var url = Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+html;
-    execDirectUrl(url, path);
+	var url = Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+html;
+	execDirectUrl(url, path);
 }
   
 Ext.onReady(function () {
-    
-    var firstUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
+	
+	var firstUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
     Ext.tip.QuickTipManager.init();
     this.mainframe = Ext.create('Ext.ux.IFrame', 
-                { xtype: 'uxiframe'
-                , src: firstUrl
-                , height: '100%'
-                });
+    			{ xtype: 'uxiframe'
+  	  			, src: firstUrl
+  	  			, height: '100%'
+  	  			});
     
     this.titlePath = Ext.create("Ext.Panel",{title :'Home'});
     var itemsM = <%=jsonMenuList%>;
-    for(i=0; i< itemsM.length; i++){
-        var menuItem = itemsM[i];
-        if(menuItem.itemLabel != null && menuItem.itemLabel == "LANG"){
-            var languagesMenuItems = [];
-            for (var j = 0; j < Sbi.config.supportedLocales.length ; j++) {
-                var aLocale = Sbi.config.supportedLocales[j];
-                var aLanguagesMenuItem = new Ext.menu.Item({
-                    id: '',
-                    text: aLocale.language,
-                    iconCls:'icon-' + aLocale.language,
-                    href: this.getLanguageUrl(aLocale)
-                })
-                languagesMenuItems.push(aLanguagesMenuItem);
-            }
-            menuItem.menu= languagesMenuItems;
-        }else if(menuItem.itemLabel != null && menuItem.itemLabel == "ROLE"){
-            if(Sbi.user.roles && Sbi.user.roles.length == 1){
-                menuItem.hidden=true;
-            }
-        }
-//      else if(menuItem.itemLabel != null && menuItem.itemLabel == "HOME"){
-//          if(Sbi.user.roles){
-//              for(j=0; j < Sbi.user.roles.length; j++){
-//                  var role = Sbi.user.roles[j];
-//              }
-
-//          }
-//      }
+	for(i=0; i< itemsM.length; i++){
+		var menuItem = itemsM[i];
+		if(menuItem.itemLabel != null && menuItem.itemLabel == "LANG"){
+	 		var languagesMenuItems = [];
+	 		for (var j = 0; j < Sbi.config.supportedLocales.length ; j++) {
+	 			var aLocale = Sbi.config.supportedLocales[j];
+ 				var aLanguagesMenuItem = new Ext.menu.Item({
+					id: '',
+					text: aLocale.language,
+					iconCls:'icon-' + aLocale.language,
+					href: this.getLanguageUrl(aLocale)
+				})
+ 				languagesMenuItems.push(aLanguagesMenuItem);
+	 		}
+	 		menuItem.menu= languagesMenuItems;
+		}else if(menuItem.itemLabel != null && menuItem.itemLabel == "ROLE"){
+			if(Sbi.user.roles && Sbi.user.roles.length == 1){
+				menuItem.hidden=true;
+			}
+		}else if(menuItem.itemLabel != null && menuItem.itemLabel == "HOME"){
+			menuItem.tooltip = '<p style="color: blue; ">'+LN('sbi.home.Welcome')+'<b>'+ 
+			'<p style="color: white; font-weight: bold;">'+Sbi.user.userName+'</p>'
+								+'<b></p>'
+		}
+		
+	}
+	function hideItem( menu, e, eOpts){
+        console.log('bye bye ');
+        menu.hide();
     }
-    this.mainpanel =  Ext.create("Ext.Panel",{
-        autoScroll: true,
-        height: '100%',
-        items: [
-            this.titlePath          
-            , mainframe]
-        , dockedItems: [{
-            xtype: 'toolbar',
-            dock: 'left',
-            items: itemsM
-        }]
+    this.mainpanel =  Ext.create("Ext.panel.Panel",{
+    	autoScroll: true,
+    	height: '100%',
+    	items: [
+			//this.titlePath	,		
+    	    mainframe]
+    	, dockedItems: [{
+	   	    xtype: 'toolbar',
+	   	    dock: 'left',
+	   	    items: itemsM
+    	}]
     });
     
     Ext.create('Ext.Viewport', {
+    	
         layout: 'fit',
         items: [this.mainpanel]
     });
@@ -324,5 +341,8 @@ Ext.onReady(function () {
     
 });
 
+	
 </script>
  
+
+
