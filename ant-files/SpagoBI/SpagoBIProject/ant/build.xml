@@ -347,8 +347,8 @@
 		<delete file="${build}/${webapp_name}/js/src/ext/sbi-all.js" />
 		<delete file="${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js" />
 		<delete file="${build}/${webapp_name}/js/src/ext/sbi-all-ext311.js" />
-		<delete file="${build}/${webapp_name}/js/src/ext/sbi-all-ext410-debug.js" />
-		<delete file="${build}/${webapp_name}/js/src/ext/sbi-all-ext410.js" />
+		<delete file="${build}/${webapp_name}/js/src/ext4/sbi-all-ext410-debug.js" />
+		<delete file="${build}/${webapp_name}/js/src/ext4/sbi-all-ext410.js" />
 	</target>
 
 	<target name="create-debug" depends="delete-debug">
