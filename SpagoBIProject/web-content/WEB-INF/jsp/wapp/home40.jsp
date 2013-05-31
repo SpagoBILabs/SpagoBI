@@ -3,6 +3,7 @@
 Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
+<%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 <%@page import="org.json.JSONObject"%>
 <%@page language="java" 
 	contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"
@@ -42,7 +43,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
 	SourceBean moduleResponse = (SourceBean)aServiceResponse.getAttribute("LoginModule"); 
-
+	boolean isAdministrator = UserUtilities.isAdministrator(userProfile);
+	
 	if(moduleResponse==null) moduleResponse=aServiceResponse;
 	
 	List lstMenu = new ArrayList();
@@ -154,7 +156,18 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 					}
 				}
 			} else {
-				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.html";
+				if(isAdministrator){
+					firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.html";	
+				}else{
+					firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.html";
+				}
+				
+			}
+		} else{
+			if(isAdministrator){
+				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.html";	
+			}else{
+				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.html";
 			}
 		}
 		

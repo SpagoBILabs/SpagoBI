@@ -165,6 +165,27 @@ public class UserUtilities {
 			logger.debug("OUT");
 		}
 	}  
+	
+	
+	
+	public static boolean isAdministrator (IEngUserProfile userProfile)throws Exception {
+		logger.debug("IN.user unique id=" + userProfile.getUserUniqueIdentifier());
+
+		try {
+			Collection<String> c = userProfile.getFunctionalities();
+			if(c!=null){
+				return c.contains("DocumentManagement");
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error("Exception while creating user profile", e);
+			throw new SecurityException(
+					"Exception while creating user profile", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}  
+	
 
     /**
      * User functionality root exists.
