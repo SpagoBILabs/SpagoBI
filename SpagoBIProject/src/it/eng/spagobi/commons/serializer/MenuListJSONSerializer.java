@@ -10,7 +10,6 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.bo.Menu;
 import it.eng.spagobi.wapp.services.DetailMenuModule;
 import it.eng.spagobi.wapp.util.MenuUtilities;
@@ -66,9 +65,10 @@ public class MenuListJSONSerializer implements Serializer {
 
 		try {
 			List filteredMenuList = (List) o;
+			JSONArray tempFirstLevelMenuList = new JSONArray();
 			if(filteredMenuList!=null && !filteredMenuList.isEmpty()){
 				result = new JSONArray();
-				JSONArray tempFirstLevelMenuList = new JSONArray();
+				
 				JSONArray menuUserList = new JSONArray();
 				MessageBuilder msgBuild=new MessageBuilder();
 				//build home
@@ -154,9 +154,10 @@ public class MenuListJSONSerializer implements Serializer {
 				if(!isAdmin){
 					tempFirstLevelMenuList= createEndUserMenu(locale, 1, tempFirstLevelMenuList);
 				}
-				tempFirstLevelMenuList= createFixedMenu(locale, 1, tempFirstLevelMenuList);
-				result = tempFirstLevelMenuList;
-			}			
+
+			}	
+			tempFirstLevelMenuList= createFixedMenu(locale, 1, tempFirstLevelMenuList);
+			result = tempFirstLevelMenuList;
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
