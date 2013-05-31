@@ -182,7 +182,6 @@
 	<target name="create-debug" depends="delete-debug">
 		<concat destfile="${build}/${webapp_name}/js/spagobi/qbe-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
-
 				<file name='./spagobi/qbe/filterwizard/parser.js' />
 				<file name='./spagobi/qbe/filterwizard/buttonColumn.js' />
 
@@ -195,7 +194,7 @@
 				<file name='./spagobi/commons/Constants.js' />
 
 				<file name='./spagobi/qbe/filterwizard/filterWizard.js' />
-
+						
 				<file name='./spagobi/qbe/DataStorePanel.js' />
 				<file name='./spagobi/qbe/DataMartStructurePanel.js' />
 				<file name='./spagobi/qbe/QueryCataloguePanel.js' />
@@ -204,7 +203,7 @@
 				<file name='./spagobi/formviewer/OperandChooserWindow.js' />
 				<file name='./spagobi/qbe/FilterGridDropTarget.js' />
 				<file name='./spagobi/qbe/FilterGridPanel.js' />
-
+						
 				<file name='./spagobi/qbe/HavingGridPanel.js' />
 				<file name='./spagobi/qbe/HavingGridDropTarget.js' />
 				<file name='./spagobi/qbe/SaveWindow.js' />
@@ -218,7 +217,7 @@
 				<file name='./spagobi/qbe/CalculatedFieldWizard.js' />
 				<file name='./spagobi/qbe/SlotWizard.js' />
 				<file name='./spagobi/qbe/InLineCalculatedFieldValidator.js' />
-
+						
 				<file name='./spagobi/qbe/DocumentParametersGridPanel.js' />
 				<file name='./spagobi/qbe/DocumentParametersStore.js' />
 				<file name='./spagobi/qbe/HavingGridPanel.js' />
@@ -305,9 +304,9 @@
 				<file name='./spagobi/crosstab/CrosstabDefinitionPanel.js' />
 				<file name='./spagobi/crosstab/CrosstabPreviewPanel.js' />
 
-                <file name='./spagobi/crosstab/StaticCrosstabDefinitionPanel.js' />
-                <file name='./spagobi/crosstab/StaticCrosstabPreviewPanel.js' />
-                <file name='./spagobi/crosstab/core/HTMLCrossTab.js' />
+				<file name='./spagobi/crosstab/StaticCrosstabDefinitionPanel.js' />
+				<file name='./spagobi/crosstab/StaticCrosstabPreviewPanel.js' />
+				<file name='./spagobi/crosstab/core/HTMLCrossTab.js' />
 
 				<file name='./spagobi/dataset/ParametersGridPanel.js' />
 
@@ -326,7 +325,7 @@
 				<file name='./spagobi/worksheet/designer/WorksheetDesignerPanel.js' />
 				<file name='./spagobi/worksheet/designer/SheetContentPanel.js' />
 				<file name='./spagobi/worksheet/designer/ChartCategoryPanel.js' />
-                <file name='./spagobi/worksheet/designer/SeriesGroupingPanel.js' />
+				<file name='./spagobi/worksheet/designer/SeriesGroupingPanel.js' />
 				<file name='./spagobi/worksheet/designer/ChartSeriesPanel.js' />
 				<file name='./spagobi/worksheet/designer/BarChartDesignerPanel.js' />
 				<file name='./spagobi/worksheet/designer/LineChartDesignerPanel.js' />
@@ -336,7 +335,7 @@
 				<file name='./spagobi/worksheet/designer/QueryFieldsContainerPanel.js' />
 				<file name='./spagobi/worksheet/designer/SheetFilterContentPanel.js' />
 				<file name='./spagobi/worksheet/designer/WorksheetDefinitionPanel.js' />
-
+				<file name='./spagobi/worksheet/designer/WorksheetPanel.js' />
 
 				<file name='./spagobi/worksheet/runtime/RuntimeSheetsContainerPanel.js' />
 				<file name='./spagobi/worksheet/runtime/RuntimeSheetPanel.js' />
@@ -354,7 +353,7 @@
 				<file name='./spagobi/worksheet/runtime/RuntimeBarChartPanelExt3.js' />
 				<file name='./spagobi/worksheet/runtime/RuntimeLineChartPanelExt3.js' />
 				<file name='./spagobi/worksheet/runtime/RuntimePieChartPanelExt3.js' />
-				
+
 				<file name='./spagobi/worksheet/runtime/DefaultChartDimensionRetrieverStrategy.js' />
 
 				<file name='./spagobi/worksheet/config/OptionsWindow.js' />
