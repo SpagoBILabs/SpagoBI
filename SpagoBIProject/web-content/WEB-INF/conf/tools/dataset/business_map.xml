@@ -2,6 +2,8 @@
 <BUSINESS_MAP>
 	<MAP_ACTIONS>
 		<MAP_ACTION actionName="MANAGE_DATASETS_ACTION"  businessProcess="DatasetManagement"/>
+		<MAP_ACTION actionName="UPLOAD_DATASET_FILE_ACTION"  businessProcess="DatasetManagement"/>
+	
 	</MAP_ACTIONS>
 	 
 	<MAP_ACTIONS>
@@ -13,7 +15,7 @@
 	
 	<MAP_REST_SERVICES>
 	<!-- <MAP_REST_SERVICE serviceUrl="/selfservicedataset/listValueDescriptionByType" businessProcess="SelfServiceDatasetManagement" />  -->							
-		<MAP_REST_SERVICE serviceUrl="/selfservicedataset" businessProcess="SelfServiceDatasetManagement" />			
+		<MAP_REST_SERVICE serviceUrl="selfservicedataset" businessProcess="SelfServiceDatasetManagement" />			
 	</MAP_REST_SERVICES>
 	
 </BUSINESS_MAP>
