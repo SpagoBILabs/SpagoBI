@@ -38,7 +38,7 @@ Sbi.tools.dataset.PreviewWindow = function(config) {
 	
 	var defaultSettings = {
 		title: LN("sbi.tools.dataset.previewwindow.title")
-		, closeAction: 'hide'
+		, closeAction: 'hide'		
 		, plain: true
 		, width: 800
 		, height: 500
@@ -85,7 +85,7 @@ Ext.extend(Sbi.tools.dataset.PreviewWindow, Ext.Window, {
 			frame: false, 
 		    border: false,
 		    displayInfo: true,
-		    pageSize: 25,
+		    pageSize: 25,		    
 		    sortable: true,
 		    services: {
 		    	loadDataStore : this.services['loadDataStore']

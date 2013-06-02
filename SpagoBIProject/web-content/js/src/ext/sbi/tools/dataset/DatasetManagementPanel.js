@@ -71,6 +71,7 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 	//this.configurationObject.getDatamartsService = Sbi.config.qbeGetDatamartsUrl;
 
 	this.initConfigObject();
+
 	this.configurationObject.filter = true;
 	this.configurationObject.columnName = [['label', LN('sbi.generic.label')],
 	                                       ['name', LN('sbi.generic.name')],
@@ -396,7 +397,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					this.configurationObject.gridColItems = [ {
 						id : 'label',
 						header : LN('sbi.generic.label'),
-						width : 140,
+						width : 150,
 						sortable : true,
 						locked : false,
 						dataIndex : 'label'
@@ -522,7 +523,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					});
 
 					var detailFieldName = {
-						maxLength : 50,	minLength : 1, width : 250,
+						maxLength : 50,	minLength : 1, width : 350,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.generic.name'),
 						allowBlank : false,	validationEvent : true,
@@ -530,7 +531,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					};
 
 					var detailFieldLabel = {
-						maxLength : 50, minLength : 1, width : 250,
+						maxLength : 50, minLength : 1, width : 350,
 						regexText : LN('sbi.roles.alfanumericString2'),
 						fieldLabel : LN('sbi.generic.label'),
 						allowBlank : false, validationEvent : true,
@@ -549,7 +550,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					var detailFieldCatType = {
 						name : 'catTypeVn',
 						store : this.catTypesStore,
-						width : 150,
+						width : 350,
 						fieldLabel : LN('sbi.ds.catType'),
 						displayField : 'catTypeVn', 
 						valueField : 'catTypeVn', 
@@ -663,7 +664,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					var detailDsType = new Ext.form.ComboBox({
 						name : 'dsTypeCd',
 						store : this.dsTypesStore,
-						width : 160,
+						width : 350, //160,
 						fieldLabel : LN('sbi.ds.dsTypeCd'),
 						displayField : 'dsTypeCd', // what the user sees in
 						// the popup
@@ -798,7 +799,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					this.detailDataSource = new Ext.form.ComboBox({
 						name : 'dataSource',
 						store : this.dataSourceStore,
-						width : 180,
+						width : 350, //180,
 						fieldLabel : LN('sbi.ds.dataSource'),
 						displayField : 'dataSource', // what the user
 						// sees in the
@@ -831,8 +832,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					this.detailQuery = new Ext.form.TextArea({
 						maxLength : 30000,
 						xtype : 'textarea',
-						width : 350,
-						height : 140,
+						width : '100%',// 350,
+						height : 500, //140,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.query'),
 						validationEvent : true,
@@ -843,8 +844,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					this.detailQueryScript = new Ext.form.TextArea({
 						maxLength : 30000,
 						xtype : 'textarea',
-						width : 350,
-						height : 80,
+						width : '100%', //350,
+						height : 300, //80,
 						//regexText : 'script',
 						fieldLabel : 'script',
 						//validationEvent : true,
@@ -872,9 +873,9 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					this.detailScript = new Ext.form.TextArea({
 						maxLength : 30000,
 						xtype : 'textarea',
-						width : this.textAreaWidth,
-						height : 195,
-						width : 350,
+						//width : this.textAreaWidth,
+						height : 350, //195,
+						width : '100%', //350,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.script'),
 						allowBlank : false, validationEvent : true,
@@ -899,6 +900,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					this.qbeJSONQuery = new Ext.form.TriggerField({
 						name : 'qbeJSONQuery'
 						, valueField : 'qbeJSONQuery'
+						, width : 350 
 						, fieldLabel : 'Qbe Query'
 						, triggerClass: 'x-form-search-trigger'
 						, editable: false
@@ -921,6 +923,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 			    	   	, forceSelection: true
 			    	   	, editable: false
 			    	   	, store: datamartsStore
+			    	   	, width : 350 
 			    	   	, displayField: 'name'
 			    	    , valueField: 'name'
 			    	    , typeAhead: true
@@ -932,7 +935,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					this.detailScriptLanguage = new Ext.form.ComboBox({
 						name : 'scriptLanguage',
 						store : this.scriptLanguagesStore,
-						width : 160,
+						width : 350, //160,
 						fieldLabel : LN('sbi.ds.scriptLanguage'),
 						displayField : 'name', // what the user
 						// sees in the
@@ -989,7 +992,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							{
 								labelWidth : 120,
 								defaults : {
-									width : 280,
+									//width : 280,
 									border : true
 								},
 								defaultType : 'textfield',
@@ -1053,7 +1056,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								},
 								items : [ this.detailJclassName, this.customDataGrid ]
 							});
-					
+
 					this.fileDetail = new Ext.form.FieldSet(
 							{
 								labelWidth : 80,
@@ -1209,7 +1212,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					var detailTransfType = new Ext.form.ComboBox({
 						name : 'trasfTypeCd',
 						store : this.transfTypesStore,
-						width : 120,
+						width : 350,//120,
 						fieldLabel : LN('sbi.ds.trasfTypeCd'),
 						displayField : 'trasfTypeCd', // what the user
 						// sees in the
@@ -1233,7 +1236,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							{
 								labelWidth : 120,
 								defaults : {
-									width : 260,
+									width : 350,//260,
 									border : true
 								},
 								defaultType : 'textfield',
@@ -1293,7 +1296,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							{
 								labelWidth : 150,
 								defaults : {
-									width : 260,
+									width : 350,
 									border : true
 								},
 								defaultType : 'textfield',
@@ -1357,7 +1360,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						name : 'dataSourcePersist',
 						id  : 'dataSourcePersist',
 						store : this.dataSourceStore,
-						width : 180,
+						width : 350, //180,
 						fieldLabel : LN('sbi.ds.dataSource'),
 						displayField : 'dataSource', // what the user sees in the popup
 						valueField : 'dataSource', // what is passed to the 'change' event
@@ -1372,7 +1375,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							{
 								labelWidth : 150,
 								defaults : {
-									width : 200,
+								//	width : 200,
 									border : false
 								},
 								defaultType : 'textfield',
@@ -1407,7 +1410,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						id  : 'dataSourceFlat',
 						name : 'dataSourceFlat',
 						store : this.dataSourceStore,
-						width : 180,
+						width : 350, //180,
 						fieldLabel : LN('sbi.ds.dataSource'),
 						displayField : 'dataSource', // what the user sees in the popup
 						valueField : 'dataSource', // what is passed to the 'change' event
@@ -1420,7 +1423,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					
 					var flatTableName = new Ext.form.TextField({
 						maxLength : 50, minLength : 1,
-						width : 200,
+						width : 350, //200,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.flatTableName'),
 						allowBlank : false, validationEvent : true,
@@ -1431,7 +1434,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							{
 								labelWidth : 150,
 								defaults : {
-									width : 200,
+									//width : 200,
 									border : false
 								},
 								defaultType : 'textfield',
@@ -1462,7 +1465,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							{
 								title : LN('sbi.ds.persist'),
 								itemId : 'persistPanel',
-								width : 500,
+								width : '100%', //500,
 								items : {
 									id : 'persist-detail',
 									itemId : 'persist-detail',
@@ -1490,7 +1493,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							{
 								title : LN('sbi.ds.flat'),
 								itemId : 'flatPanel',
-								width : 500,
+								width : '100%', //500,
 								items : {
 									id : 'flat-detail',
 									itemId : 'flat-detail',
@@ -1518,7 +1521,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							{
 								title : LN('sbi.ds.advancedTab'),
 								itemId : 'advanced',
-								width : 550,
+								width : '100%', //550,
 								items : {
 									id : 'advanced-detail',
 									itemId : 'advanced-detail',

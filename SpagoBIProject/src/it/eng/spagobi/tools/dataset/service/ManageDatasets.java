@@ -75,6 +75,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	public static final String NUMBER_TYPE = "number";
 	public static final String RAW_TYPE = "raw";
 	public static final String GENERIC_TYPE = "generic";
+	public static final Integer LIMIT_DEFAULT = 20;
 	private IEngUserProfile profile;
 
 	@Override
@@ -369,7 +370,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			start = DataSetConstants.START_DEFAULT;
 		}
 		if(limit==null){
-			limit = DataSetConstants.LIMIT_DEFAULT;
+			//limit = DataSetConstants.LIMIT_DEFAULT;
+			limit = LIMIT_DEFAULT;
 		}
 		JSONObject filtersJSON = null;
 		List<IDataSet> items = null;
