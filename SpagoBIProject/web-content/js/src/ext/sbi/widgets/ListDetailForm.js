@@ -156,16 +156,24 @@ Sbi.widgets.ListDetailForm = function(config) {
 		this.filterWidth = conf.filterWidth;
 	}
 	
+	if(conf.tabPanelHeight){
+		this.baseHeight = conf.baseHeight;
+    }else{
+    	this.baseHeight = 700; 
+    }
+	
 	if(conf.tabPanelWidth){
 		this.tabPanelWidth = conf.tabPanelWidth;
     }else{
-    	this.tabPanelWidth = 520;
+    	this.tabPanelWidth ='70%'; // 520;
     }
+	
 	if(conf.gridWidth){
 		this.gridWidth = conf.gridWidth;
     }else{
-    	this.gridWidth = 470;
+    	this.gridWidth = '30%'; //470;
     }
+	
 	
 	if(config.singleSelection){
 		this.singleSelection = config.singleSelection;
@@ -205,8 +213,8 @@ Sbi.widgets.ListDetailForm = function(config) {
  	          autoWidth: true,
  	         // title: this.panelTitle,
  	          //bodyStyle:'padding:7px',
- 	         // width: 1000,
- 	          height: 550,
+ 	          //width: 1000,
+ 	          //height: '90%', //550,
  	          layout: 'column',
  	          scope:this,
  	          forceLayout: true,
@@ -261,6 +269,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	, ddGroup : null //for dragndrop
 	, singleSelection: true
 	, tabPanelWidth: null
+	, baseHeight: null 
 	, gridWidth: null
 	, filterWidth: 465
 	, setCloneButton: null
@@ -339,7 +348,9 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
            , autoScroll : true
            , deferredRender: false
            , width: this.tabPanelWidth         
-           , height: 490
+           //anto , height: 490
+           , height: this.baseHeight
+           , autoScroll  : true
            , itemId: 'tabs' 
            , tbar: this.tbSave
            , scope: this
@@ -374,7 +385,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
  	    });
  	    
  	   var pagingBar = new Ext.PagingToolbar({
-	        pageSize: 15, 
+	        pageSize: 20, //15, 
 	        store: this.mainElementsStore,
 	        displayInfo: true,
 	        displayMsg: '', 
@@ -415,7 +426,11 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	                  colModel: this.colModel,
 	                  plugins: pluginsToAdd ,
 	                  selModel: this.rowselModel,
-	                  height: 490,
+	                 // anto height: 490,
+	                  height: this.baseHeight,
+	                //  autoHeight: true,
+	                  autoWidth: true,
+	                  autoScroll  : true,
 	                  width: this.gridWidth,
 	                  scope: this,
 	                  title: this.listTitle,

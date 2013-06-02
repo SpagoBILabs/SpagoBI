@@ -51,7 +51,7 @@ Sbi.tools.dataset.CustomDataGrid = function(config) {
 	    },
 	    {
 	    	header: LN('sbi.generic.value'), 
-	    	width: 250, 
+	    	width: 400, //250, 
 			id:'value',
 			sortable: true, 
 			dataIndex: 'value',  
@@ -105,13 +105,13 @@ Sbi.tools.dataset.CustomDataGrid = function(config) {
 	        layout: 'fit',
 	        cm: cm,
 	        sm: sm,
-	        width: 480,
-	        height: 180,
+	        width: '90%', //480,
+	        height: 350, //180,
 	        //autoExpandColumn: 'label', // column with this id will be expanded
 	        frame: true,
 	        clicksToEdit: 2,
 	        tbar: tb,
-	        maxHeight : 230,
+	        maxHeight : 400, //230,
 	        autoHeight : true,
 	        collapsible : true,
 	    	//fieldLabel : ''

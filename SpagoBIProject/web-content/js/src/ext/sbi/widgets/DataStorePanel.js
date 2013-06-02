@@ -258,7 +258,7 @@ Ext.extend(Sbi.widgets.DataStorePanel, Ext.Panel, {
 	        frame: true,
 	        border:true,  	        
 	        collapsible: false,
-	        loadMask: true,
+	        loadMask:false,// true,
 	        viewConfig: {
 	            forceFit:false,
 	            autoFill: true,

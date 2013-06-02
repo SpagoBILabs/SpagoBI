@@ -115,6 +115,8 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 	    	xtype: 'grid',
 	        store: this.store,
 	        layout: 'fit',
+	        autoHeight: true,
+	        autoScroll: true,
 	        cm: cm,
 	        sm: sm,
 	        width: 370,

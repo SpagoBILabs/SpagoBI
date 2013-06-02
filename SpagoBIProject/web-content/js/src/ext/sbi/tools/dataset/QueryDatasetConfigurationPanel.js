@@ -123,7 +123,7 @@ Ext.extend(Sbi.tools.dataset.QueryDatasetConfigurationPanel, Ext.Panel, {
 		this.datasourceField = new Ext.form.ComboBox({
 			name : 'dataSource',
 			store : this.dataSourceStore,
-			width : 180,
+			width : 350, //180,
 			fieldLabel : LN('sbi.ds.dataSource'),
 			displayField : 'dataSource', 
 			valueField : 'dataSource',
@@ -140,8 +140,9 @@ Ext.extend(Sbi.tools.dataset.QueryDatasetConfigurationPanel, Ext.Panel, {
 		this.queryField = new Ext.form.TextArea({
 			maxLength : 30000,
 			xtype : 'textarea',
-			width : 350,
-			height : 110,
+			width : '100%', //350,
+			height : 350,//110,			
+			autoScroll: true,
 			regexText : LN('sbi.roles.alfanumericString'),
 			fieldLabel : LN('sbi.ds.query'),
 			validationEvent : true,
