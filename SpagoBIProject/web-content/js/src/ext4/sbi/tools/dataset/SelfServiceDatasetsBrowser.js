@@ -14,16 +14,10 @@ Ext.define('Sbi.tools.dataset.SelfServiceDatasetsBrowser', {
 		//this.columns = [{dataIndex:"label", header:"Name"}, {dataIndex:"description", header:"Description"},{dataIndex:"CATEGORY_ID", header:"Category"}];
 		this.fields = ["id","label","name","description"];
 		this.filteredProperties = ["label","name"];
-
-
 		
-		/*	this.buttonToolbarConfig = {
-				newButton: true
-		};
-		this.buttonColumnsConfig ={
-				deletebutton:true
-		};
-		*/
+		this.buttonToolbarConfig = {newButton: true};
+		this.buttonColumnsConfig ={deletebutton:true};
+		
 	
 		//set the proxy of the model.. Is STATIC		
 		var model = Ext.ModelMgr.getModel(this.getModelName());
@@ -39,14 +33,13 @@ Ext.define('Sbi.tools.dataset.SelfServiceDatasetsBrowser', {
 		this.store = this.buildStore( this.getModelName());
 		this.store.load({});
 		
-		//this.tpl = this.buildTpl({src:Ext.LEAF_IMAGE_URL},this.store);
 		this.tpl = this.buildTpl({src:Ext.LEAF_IMAGE_URL});
 		config.services = this.services;	
 		config.store = this.store;
 		config.tpl = this.tpl;
 		this.viewPanel =  Ext.create('Sbi.widgets.dataview.DataViewPanel',config);
 	
-		this.callParent(arguments);
+		//this.callParent(arguments);
 	}
 	
 	, initServices: function(baseParams){

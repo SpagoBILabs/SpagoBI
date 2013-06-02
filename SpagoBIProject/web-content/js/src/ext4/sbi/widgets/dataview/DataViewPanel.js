@@ -56,70 +56,85 @@
 Ext.define('Sbi.widgets.dataview.DataViewPanel', {
     extend: 'Ext.Panel'
 
-    ,config: {
-    	/**
-    	 * The Ext.data.Store to bind this DataView to.
-    	 */
-    	store: null,
-    	/**
-    	 * The HTML fragment or an array of fragments that will make up the template used by this DataView.
-    	 */
-    	tpl: null ,
-    	/**
-    	 *  A simple CSS selector that will be used to determine what nodes this DataView will be working with.
-    	 */
-    	itemSelector: null,    	 
+    ,config: {    	  	 
     	
     	dataView: null,
     	
+    	tbar: null,
+    	
     	/**
-    	 * The definition of the columns of the grid. {@link Sbi.widgets.store.InMemoryFilteredStore#InMemoryFilteredStore}
+    	 * Configuration object for the widgets buttons to add in every row of the grid
     	 */
-    	columns: [],
+    	buttonColumnsConfig:null,
     	/**
-    	 * The list of the properties that should be filtered 
+    	 * Configuration object for the buttons to add in the toolbar. {@link Sbi.widget.grid.StaticGridDecorator#StaticGridDecorator}
     	 */
-    	filteredProperties: new Array()
+    	buttonToolbarConfig: null,
     }
 
 	/**
 	 * In this constructor you must pass configuration
 	 */
 	, constructor: function(config) {
-		//this.initConfig(config);				
+		this.initConfig(config);				
 		
-		Ext.apply(this,config||{});
-		
-		this.dataView = Ext.create('Ext.view.View', {
-			 	store: this.store,
-			    tpl: this.tpl,
-			    itemSelector: 'dd',
-			    overClass: 'over',
-			   // frame:true,
-			    emptyText: 'No datasets available',
-			    renderTo: Ext.getBody()
-        });
-			
-		//this.callParent(arguments);
-	
+		Ext.apply(this,config||{});		
+		var newDatasetButton = new Ext.button.Button({
+		    	tooltip: LN('sbi.generic.add'),
+				iconCls:'icon-add',
+				width:50,
+				listeners: {
+					'click': {
+		          		fn: this.addNewDataset,
+		          		scope: this
+		        	} 
+				}
+		    });
+		     
+		var toolbar = Ext.create('Ext.toolbar.Toolbar');
+		var toolbar =  Ext.create('Ext.toolbar.Toolbar',{renderTo: Ext.getBody(),height:30});
+		toolbar.add('->');
+		toolbar.add(' ');
+		toolbar.add(newDatasetButton);
+
+		this.tbar = toolbar;
+		this.dataView =  Ext.create('Sbi.widgets.dataview.DataViewElement',config);					
+
+		//this.doLayout();
+	//	this.callParent(arguments);
 	}
 	
-	 /**
-     * @private
-     * Adds the toolbar with the search 
-     */
-   , addToolbar: function(){
-      	//Adds the additional buttons to the toolbar
-   //   	this.additionalButtons = Sbi.widget.grid.StaticDataViewDecorator.getAdditionalToolbarButtons(this.buttonToolbarConfig, this);
-
-      	
-   //   	this.tbar = Ext.create('Sbi.widgets.grid.InLineGridFilter',Ext.apply({store: this.store, additionalButtons:this.additionalButtons}));
-   //   	this.tbar.on("filter",function(filtercofing){
-   //   		this.filterString = filtercofing.filterString;
-   //   	},this);
-      	  
+	, onRender : function(obj, opt) {	    
+    	Sbi.widgets.dataview.DataViewPanel.superclass.onRender.call(this, opt);
     }
 	
+    , addNewDataset: function() {
+    	alert("new dataset, chiamare wizard...");
+		/*var urlToCall = this.services['newDocument'];
+		
+		if(this.folderId != null){
+			urlToCall += '&FUNCT_ID='+this.folderId;
+		}
+		
+		window.location.href=urlToCall;
+		*/	
+	}
+    
+	    /**
+	     * @private
+	     * Adds the toolbar with the search 
+	    
+	   , addToolbar: function(){
+	      	//Adds the additional buttons to the toolbar
+	      	this.additionalButtons = Sbi.widget.grid.StaticDataViewDecorator.getAdditionalToolbarButtons(this.buttonToolbarConfig, this);
+
+	      	this.tbar = Ext.create('Sbi.widgets.grid.InLineGridFilter',Ext.apply({store: this.store, additionalButtons:this.additionalButtons}));
+	      	this.tbar.on("filter",function(filtercofing){
+	      		this.filterString = filtercofing.filterString;
+	      	},this);
+	      	  
+	    }
+	 */
 	/**
      * @override
      */
@@ -134,9 +149,9 @@ Ext.define('Sbi.widgets.dataview.DataViewPanel', {
 
     	//creates and returns the store
     	Sbi.debug('DataViewPanel store built.');
+    	
     	return store = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);
     }
-    
     /**
      * @override
      */
@@ -146,40 +161,44 @@ Ext.define('Sbi.widgets.dataview.DataViewPanel', {
     	
     	
     	var imageTpl = new Ext.XTemplate(
-/*
-    			'<div style="align:center;top:5px;border:10;width:3%;">', 
-	    			'<tpl for=".">',
-						'<div style="border:3;float:left;">', 	
-							'<b><span>{name}</span></b>',
-							'<img src="'+ config.src  +'" width="50">' ,
-							'<br/>',
-						'</div>' ,
-					'</tpl>',
-				'</div>' 
- */   			
+  			
     		 '<div id="sample-ct">', 	            
- 	            '<div class="group">',
- 	            '<h2><div class="group-header">Elenco datasets</div></h2>',
- 	            '<dl class="group-body">',
+ 	            '<div style="display:inline;list-style-type:null;padding-right:10px;">',
+// 	           '<div class="group">',
+ 	            '<h2><div >Elenco datasets</div></h2>',
+ 	            '<ul>',
+// 	            '<dl >',
 // 	            	'<tpl if="samples.length == 0">',
 // 	            		'<div id="empty-group-message">',
 // 	            		noItem,
 // 	            		'</div>',
 // 	            	'</tpl>',        
  	            	'<tpl for=".">',
-	                    '<dd class="group-item">',
-	 	                    '<b><span>{name}</span></b>',
+//	                    '<dd >',
+	                    '<li>',
+	                    //'<dd class="group-item"  style="width:50px;height:50px;">',
+//			                '<div class="item-control-panel">',	 
+//		                    	'<tpl for="actions">',   
+//		                        	'<div class="button"><img class="action-{name}" title="{description}" src="' + Ext.BLANK_IMAGE_URL + '"/></div>',
+//		                        '</tpl>',
+//		                    '</div>',
+	 	                    '<span>{name}</span>',
 							'<img src="'+ config.src  +'" width="50">' ,
 							'<br/>', 
-	                    '</dd>',
+//	                    '</dd>',
+	                    '</li>',
 	                '</tpl>',
- 	            '<div style="clear:left"></div></dl></div>',
+	              
+// 	            '<div style="clear:left"></div>',
+//	          '</dl>',
+	          '</ul>',
+ 	          '</div>',
  	        '</div>'
-    		
     	);
     	Sbi.debug('DataViewPanel tpl built.');
     	
     	return imageTpl;
 
     }
+   
 });
