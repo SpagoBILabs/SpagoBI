@@ -30,6 +30,8 @@
  * 
  * Authors - Chiara Chiarelli (chiara.chiarelli@eng.it)
  */
+//var thisPanel;
+
 Ext.ns("Sbi.tools.dataset");
 
 Sbi.tools.dataset.DatasetManagementPanel = function(config) {
@@ -64,6 +66,12 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 				baseParams : paramsDel
 			});
 	
+	this.configurationObject.uploadFileService = Sbi.config.serviceRegistry
+	.getServiceUrl({
+		serviceName : 'UPLOAD_DATASET_FILE_ACTION',
+		baseParams : {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
+	});
+	
 	this.configurationObject.getDatamartsService = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName : 'GET_META_MODELS_ACTION',
 		baseParams :  {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
@@ -80,6 +88,14 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 	this.configurationObject.setCloneButton = true;
 	config.configurationObject = this.configurationObject;
 	config.singleSelection = true;
+	
+	
+	//added
+	config.id = 'datasetForm';
+	config.fileUpload = true; // this is a multipart form!!
+	config.isUpload=true;
+	config.method='POST';
+    config.enctype='multipart/form-data';
 
 	var c = Ext.apply({}, config || {}, {});
 
@@ -102,6 +118,8 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 	}, this);
 	
 	this.tabs.addListener('tabchange', this.modifyToolbar, this);
+	
+	thisPanel = this;
 
 	//invokes before each ajax request 
     Ext.Ajax.on('beforerequest', this.showMask, this);   
@@ -730,6 +748,9 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					});
 					*/
 					this.fileUploadFormPanel = new Sbi.tools.dataset.FileDatasetPanel();
+					var uploadButton = this.fileUploadFormPanel.getComponent('fileUploadPanel').getComponent('fileUploadButton');
+					
+					uploadButton.setHandler(this.uploadFileButtonHandler);
 					
 					//Internal Form Panel for file upload 
 					/*
@@ -1169,37 +1190,31 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 				
 				//handler for the upload file button
 				,uploadFileButtonHandler: function(btn, e) {
+			        var form = Ext.getCmp('datasetForm').getForm();
 					
-			        var form = this.fileUploadFormPanel.getForm();
-			       // if(form.isValid()){
-			            form.submit({
-			                url: Sbi.config.serviceRegistry.getBaseUrlStr({}), // a multipart form cannot contain parameters on its main URL;
-			                												   // they must POST parameters
-			                params: {
-			                    ACTION_NAME: 'UPLOAD_DATASET_FILE_ACTION'
-			                   // , SBI_EXECUTION_ID: Sbi.config.serviceRegistry.getExecutionId()
-			                },
-			                waitMsg: 'Uploading your file...',
-			                success: function(form, action) {
-			        			Ext.Msg.show({
-			     				   title: LN('sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.title'),
-			     				   msg: LN('sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.msg'),
-			     				   buttons: Ext.Msg.OK,
-			     				   icon: Ext.MessageBox.INFO
-			     				});
-			       				
-			                },
-			                failure : function (form, action) {
-			        			Ext.Msg.show({
-			      				   title: 'Error',
-			      				   msg: action.result.msg,
-			      				   buttons: Ext.Msg.OK,
-			      				   icon: Ext.MessageBox.ERROR
-			      				});
-			                },
-			                scope : this
-			            });
-			        //}
+			        var completeUrl = thisPanel.configurationObject.uploadFileService;
+					var baseUrl = completeUrl.substr(0, completeUrl
+							.indexOf("?"));
+					var queryStr = completeUrl.substr(completeUrl
+							.indexOf("?") + 1);
+					var params = Ext.urlDecode(queryStr);
+
+					form.submit({
+						url : baseUrl // a multipart form cannot
+										// contain parameters on its
+										// main URL; they must POST
+										// parameters
+						,
+						params : params,
+						waitMsg : LN('sbi.generic.wait'),
+						success : function(form, action) {
+							Ext.MessageBox.alert('success');
+						},
+						failure : function(form, action) {
+							Ext.MessageBox.alert('Error');
+						},
+						scope : this
+					});			        
 				}
 				
 				,initTrasfTab : function() {
