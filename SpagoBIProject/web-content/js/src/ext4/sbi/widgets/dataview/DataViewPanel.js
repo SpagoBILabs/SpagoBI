@@ -91,7 +91,6 @@ Ext.define('Sbi.widgets.dataview.DataViewPanel', {
 				}
 		    });
 		     
-		var toolbar = Ext.create('Ext.toolbar.Toolbar');
 		var toolbar =  Ext.create('Ext.toolbar.Toolbar',{renderTo: Ext.getBody(),height:30});
 		toolbar.add('->');
 		toolbar.add(' ');
@@ -109,7 +108,8 @@ Ext.define('Sbi.widgets.dataview.DataViewPanel', {
     }
 	
     , addNewDataset: function() {
-    	alert("new dataset, chiamare wizard...");
+    	this.wizardWin =  Ext.create('Sbi.widgets.wizard.WizardWindow',{});
+    	this.wizardWin.show();
 		/*var urlToCall = this.services['newDocument'];
 		
 		if(this.folderId != null){
@@ -177,9 +177,10 @@ Ext.define('Sbi.widgets.dataview.DataViewPanel', {
 //		                    	'<tpl for="actions">',   
 //		                        	'<div class="button"><img class="action-{name}" title="{description}" src="' + Ext.BLANK_IMAGE_URL + '"/></div>',
 //		                        '</tpl>',
-//		                    '</div>',
-	                    	'<p>{name}</p>',
+//		                    '</div>',	                    	
 							'<img src=\"'+ config.src  +'\" width="50">' ,
+							'<p><b>{name}</b></p>',
+							'<p>{description}</p>',
 							'<br/>', 
 	                    '</dd>',
 	                '</tpl>',	              

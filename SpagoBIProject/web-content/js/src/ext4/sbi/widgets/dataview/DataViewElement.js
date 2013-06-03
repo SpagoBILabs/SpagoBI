@@ -132,17 +132,17 @@ Ext.define('Sbi.widgets.dataview.DataViewElement', {
 	 }
 	    
 	    , onMouseOver : function(obj, e, opt) {  
-	    
-	      var group = e.getTarget('div[class=group-header]', 10, true);
-	      if(!group){
-	            var d = e.getTarget('[class*=group-item]', 5, true);
-	            if(d){
-	                var t = d.first('div[class*=item-control-panel]', false);
-	                if(t){   
-	                  t.applyStyles('visibility:visible');
-	                }
-	            }
-	        }
+//	    
+//	      var group = e.getTarget('div[class=group-header]', 10, true);
+//	      if(!group){
+//	            var d = e.getTarget('[class*=group-item]', 5, true);
+//	            if(d){
+//	                var t = d.first('div[class*=item-control-panel]', false);
+//	                if(t){   
+//	                  t.applyStyles('visibility:visible');
+//	                }
+//	            }
+//	        }
 	       // return Sbi.browser.FolderView.superclass.onMouseOver.apply(this, arguments);
 	      // return this.callParent.onMouseOver(arguments);	 
 	    
