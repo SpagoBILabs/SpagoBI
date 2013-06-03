@@ -581,7 +581,7 @@ public class SDKObjectsConverter {
 				((JDBCDataSet)ds).setDataSource(dataSource);	
 			}else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_QBE)){
 				ds = new QbeDataSet();
-				String sqlQuery =  jsonConf.getString(DataSetConstants.QBE_SQL_QUERY);
+				//String sqlQuery =  jsonConf.getString(DataSetConstants.QBE_SQL_QUERY);
 				String jsonQuery = jsonConf.getString(DataSetConstants.QBE_JSON_QUERY);
 				String datamarts = jsonConf.getString(DataSetConstants.QBE_DATAMARTS);			
 				//((QbeDataSet) ds).setSqlQuery(sqlQuery);
