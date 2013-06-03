@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <LDAP_AUTHORIZATIONS default="FALSE">
 	<CONFIG>
-		<USER_DN>cn=*,ou=People,dc=spagobi,dc=com</USER_DN>
-		<ADMIN_USER>cn=Manager,dc=spagobi,dc=com</ADMIN_USER>
-		<ADMIN_PSW>6ddbcdd70d086e75bdc121b16bd23f03</ADMIN_PSW>
-		<ATTRIBUTES_ID name="nome">description</ATTRIBUTES_ID>
-		<ATTRIBUTES_ID name="cognome">sn</ATTRIBUTES_ID>
-		<ATTRIBUTES_ID name="userId">cn</ATTRIBUTES_ID>										
-		<HOST>10.10.11.65</HOST>
-		<PORT>389</PORT>	
-		<OBJECTCLASS>person</OBJECTCLASS>
-		<SEARCH_ROOT>ou=People,dc=spagobi,dc=com</SEARCH_ROOT>
-		<OU_ATTRIBUTE>memberOf</OU_ATTRIBUTE>
-		<SEARCH_ROOT_GROUP>CN=Group,dc=spagobi,dc=com</SEARCH_ROOT_GROUP>
-		<OBJECTCLASS_GROUP>organizationalUnit</OBJECTCLASS_GROUP>
-		<ATTRIBUTES_ID_GROUP>description</ATTRIBUTES_ID_GROUP>
-		<ATTRIBUTES_ID_GROUP>CN</ATTRIBUTES_ID_GROUP>			
+	
+		<!--  SERVER -->
+		<HOST>localhost</HOST>
+		<PORT>10389</PORT>	
+		<ADMIN_USER>uid=admin,ou=system</ADMIN_USER>
+		<ADMIN_PSW>secret</ADMIN_PSW>
+		<BASE_DN></BASE_DN>
+	
+		<!-- USERS -->
+		<USER_SEARCH_PATH>ou=users,ou=system</USER_SEARCH_PATH>
+		<USER_OBJECT_CLASS>person</USER_OBJECT_CLASS>
+		<USER_ID_ATTRIBUTE_NAME>sn</USER_ID_ATTRIBUTE_NAME>
+		<USER_MEMBEROF_ATTRIBUTE_NAME>memberOf</USER_MEMBEROF_ATTRIBUTE_NAME>
+		
+		<USER_ATTRIBUTE name="id">sn</USER_ATTRIBUTE>	
+		<USER_ATTRIBUTE name="name">cn</USER_ATTRIBUTE>
+		<USER_ATTRIBUTE name="mail">uid</USER_ATTRIBUTE>
+		<USER_ATTRIBUTE name="memberOf">memberOf</USER_ATTRIBUTE>	
+						
+		<!-- GROUPS -->
+		<GROUP_SEARCH_PATH>OU=BI,OU=apps-role</GROUP_SEARCH_PATH>
+		<GROUP_OBJECT_CLASS>group</GROUP_OBJECT_CLASS>
+		<GROUP_ID_ATTRIBUTE_NAME>cn</GROUP_ID_ATTRIBUTE_NAME>
+		<GROUP_ATTRIBUTE>cn</GROUP_ATTRIBUTE>
+						
 	</CONFIG>
 
 	

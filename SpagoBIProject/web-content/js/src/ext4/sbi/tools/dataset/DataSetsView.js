@@ -80,18 +80,22 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		Ext.apply(this, config || {});
 		
 		this.itemSelector = 'dd';
-		this.overClass = 'dd.over', this.trackOver = true,
-				this.overItemCls = 'x-item-over', this.frame = true,
-				this.emptyText = 'No datasets available', this.inline = {
-					wrap : false
-				}, this.scrollable = 'horizontal', this.renderTo = Ext
-						.getBody()
+		this.overClass = 'over';
+		this.trackOver = true;
+		this.overItemCls = 'x-item-over';
+		this.frame = true;
+		this.emptyText = 'No datasets available';
+		this.inline = {
+			wrap : false
+		};
+		this.scrollable = 'horizontal';
+		this.renderTo = Ext.getBody()
 
 		this.callParent(arguments);
 
 		this.addListener('itemclick', this.onClick, this);
-		this.addListener('itemmouseenter', this.onMouseOver, this);
-		this.addListener('itemmouseleave', this.onMouseOut, this);
+		this.addListener('itemmouseenter', this.onMouseOverX, this);
+		this.addListener('itemmouseleave', this.onMouseOutX, this);
 
 	}
 	
@@ -113,11 +117,11 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 	 	            	'</tpl>',        
 	 	            	'<tpl for=".">',
 		                    '<dd class="group-item">',
-//				                '<div class="item-control-panel">',	 
-//			                    	'<tpl for="actions">',   
-//			                        	'<div class="button"><img class="action-{name}" title="{description}" src="' + Ext.BLANK_IMAGE_URL + '"/></div>',
-//			                        '</tpl>',
-//			                    '</div>',
+				                '<div class="item-control-panel">',	 
+			                    	'<tpl for="actions">',   
+			                        	'<div class="button"><img class="action-{name}" title="{description}" src="' + Ext.BLANK_IMAGE_URL + '"/></div>',
+			                        '</tpl>',
+			                    '</div>',
 		                    	'<p>{name}</p>',
 								'<img src=\"'+ Ext.LEAF_IMAGE_URL  +'\" width="50">' ,
 								'<br/>', 
@@ -139,22 +143,20 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		Ext.DataView.superclass.onRender.call(this, opt);
 	}
 
-	,
-	onClick : function(obj, rec, item, idx, e, opt) {
-		/*
-		 * // is of type Ext.EventObject var group =
-		 * e.getTarget('div[class=group-header]', 10, true); if(group){
-		 * group.up('div[class*=group]').toggleClass('collapsed'); }
-		 * 
-		 * return Sbi.browser.FolderView.superclass.onClick.apply(this,
-		 * arguments);
-		 */
-		alert("click of id: " + idx);
-	}
+	, 
+	onClick : function(obj, record, item, index, e, eOpts) {
+        // is of type Ext.EventObject		
+        var group = e.getTarget('div[class=group-header]', 10, true);
+        if(group){
+            group.up('div[class*=group]').toggleClass('collapsed');
+        }
+        
+        return true;
+    }
 
 	,
-	onMouseOver : function(obj, e, opt) {
-
+	onMouseOverX : function( obj, record, item, index, e, eOpts ) {
+		
 		var group = e.getTarget('div[class=group-header]', 10, true);
 		if (!group) {
 			var d = e.getTarget('[class*=group-item]', 5, true);
@@ -165,20 +167,26 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 				}
 			}
 		}
-		// return Sbi.browser.FolderView.superclass.onMouseOver.apply(this,
-		// arguments);
-		// return this.callParent.onMouseOver(arguments);
-
+		
+		return true;
 	}
+	
 
 	,
-	onMouseOut : function(e) {
-		/*
-		 * var group = e.getTarget('div[class=group-header]', 10, true);
-		 * if(!group){ var d = e.getTarget('[class*=group-item]', 5, true);
-		 * if(d){ var t = d.first('div[class*=item-control-panel]', false);
-		 * if(t){ t.applyStyles('visibility:hidden'); } } } return
-		 * Sbi.browser.FolderView.superclass.onMouseOut.apply(this, arguments);
-		 */
+	onMouseOutX : function( obj, record, item, index, e, eOpts ) {
+		var group = e.getTarget('div[class=group-header]', 10, true);
+		if (!group) {
+			var d = e.getTarget('[class*=group-item]', 5, true);
+			if (d) {
+				var t = d.first('div[class*=item-control-panel]', false);
+				if (t) {
+					t.applyStyles('visibility:hidden');
+				}
+			}
+		}
+		
+		return true;
 	}
+
+
 });
