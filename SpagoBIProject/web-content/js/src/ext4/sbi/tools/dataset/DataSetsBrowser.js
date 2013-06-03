@@ -14,8 +14,10 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		
 		this.initServices();
 		this.initStore();
+		this.initToolbar();
 		this.initViewPanel();
-	
+		this.layout='fit';
+		
 		this.callParent(arguments);
 	}
 
@@ -69,7 +71,26 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.store.load({});
 	}
 	
+	, initToolbar: function() {
+		var newDatasetButton = new Ext.button.Button({
+	    	tooltip: LN('sbi.generic.add'),
+			iconCls:'icon-add',
+			width:50,
+			listeners: {
+				'click': {
+	          		fn: this.addNewDataset,
+	          		scope: this
+	        	} 
+			}
+	    });
+	     
+		var toolbar =  Ext.create('Ext.toolbar.Toolbar',{renderTo: Ext.getBody(),height:30});
+		toolbar.add('->');
+		toolbar.add(' ');
+		toolbar.add(newDatasetButton);
 	
+		this.tbar = toolbar;
+	}
 	
 	,
 	initViewPanel: function() {
@@ -86,12 +107,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 
 	,
 	addNewDataset : function() {
-		alert("new dataset, chiamare wizard...");
+		this.wizardWin =  Ext.create('Sbi.widgets.wizard.WizardWindow',{});
+    	this.wizardWin.show();
 	}
-
-	
-	
-
-
 
 });

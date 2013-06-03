@@ -57,8 +57,8 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
     extend: 'Ext.Window'
 
     ,config: {    	  	     	
-    	width: 1000,
-		height: 700,
+    	width: 700,
+		height: 500,
 		hasBuddy: false,	
 		modal: true,
 	//	layout: 'fit',
