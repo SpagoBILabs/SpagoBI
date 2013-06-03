@@ -79,15 +79,8 @@ Ext.define('Sbi.widgets.dataview.DataViewElement', {
     	 */
     	filteredProperties: new Array(),
     	
-        frame:true,
-        //itemSelector: 'dd',
-        itemSelector: 'li',
-        overClass: 'over',
-        scrollable: 'horizontal',
+        frame:true
 
-        inline: {
-            wrap: false
-        }
     }
 
 	/**
@@ -101,13 +94,16 @@ Ext.define('Sbi.widgets.dataview.DataViewElement', {
 		this.dataView = Ext.create('Ext.view.View', {
 			 	store: this.store,
 			    tpl: this.tpl,
-//			    itemSelector: 'dd',
-			    itemSelector: 'li',
-			    overClass: 'over',
+			    itemSelector: 'dd',
+			    overClass: 'dd.over',
 			    trackOver: true,
 	            overItemCls: 'x-item-over',	
-			   // frame:true,
+			    frame:true,
 			    emptyText: 'No datasets available',
+		        inline: {
+		            wrap: false
+		        },
+		        scrollable: 'horizontal',
 			    renderTo: Ext.getBody()
         });
 			
@@ -135,8 +131,8 @@ Ext.define('Sbi.widgets.dataview.DataViewElement', {
 		  alert("click of id: " + idx);
 	 }
 	    
-	    , onMouseOver : function(obj, e, opt) {    
-	    	/*
+	    , onMouseOver : function(obj, e, opt) {  
+	    
 	      var group = e.getTarget('div[class=group-header]', 10, true);
 	      if(!group){
 	            var d = e.getTarget('[class*=group-item]', 5, true);
@@ -148,8 +144,8 @@ Ext.define('Sbi.widgets.dataview.DataViewElement', {
 	            }
 	        }
 	       // return Sbi.browser.FolderView.superclass.onMouseOver.apply(this, arguments);
-	       return this.callParent.onMouseOver(arguments);	 
-	    */
+	      // return this.callParent.onMouseOver(arguments);	 
+	    
 	    }
 	    
 	    , onMouseOut : function(e){

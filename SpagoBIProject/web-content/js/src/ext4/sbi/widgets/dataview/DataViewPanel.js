@@ -159,38 +159,31 @@ Ext.define('Sbi.widgets.dataview.DataViewPanel', {
 		//BUILD THE TPL
     	Sbi.debug('DataViewPanel bulding the tpl...');
     	
-    	
+    	var noItem = LN('sbi.browser.folderdetailpanel.emptytext');
     	var imageTpl = new Ext.XTemplate(
   			
     		 '<div id="sample-ct">', 	            
- 	            '<div style="display:inline;list-style-type:null;padding-right:10px;">',
-// 	           '<div class="group">',
- 	            '<h2><div >Elenco datasets</div></h2>',
+ 	           '<div class="group-view">',
+ 	            '<h2><div class="group-header">Elenco datasets</div></h2>',
  	            '<ul>',
-// 	            '<dl >',
-// 	            	'<tpl if="samples.length == 0">',
-// 	            		'<div id="empty-group-message">',
-// 	            		noItem,
-// 	            		'</div>',
-// 	            	'</tpl>',        
+ 	            	'<tpl if="root.length == 0">',
+ 	            		'<div id="empty-group-message">',
+ 	            		noItem,
+ 	            		'</div>',
+ 	            	'</tpl>',        
  	            	'<tpl for=".">',
-//	                    '<dd >',
-	                    '<li>',
-	                    //'<dd class="group-item"  style="width:50px;height:50px;">',
+	                    '<dd class="group-item">',
 //			                '<div class="item-control-panel">',	 
 //		                    	'<tpl for="actions">',   
 //		                        	'<div class="button"><img class="action-{name}" title="{description}" src="' + Ext.BLANK_IMAGE_URL + '"/></div>',
 //		                        '</tpl>',
 //		                    '</div>',
-	 	                    '<span>{name}</span>',
-							'<img src="'+ config.src  +'" width="50">' ,
+	                    	'<p>{name}</p>',
+							'<img src=\"'+ config.src  +'\" width="50">' ,
 							'<br/>', 
-//	                    '</dd>',
-	                    '</li>',
-	                '</tpl>',
-	              
-// 	            '<div style="clear:left"></div>',
-//	          '</dl>',
+	                    '</dd>',
+	                '</tpl>',	              
+ 	            '<div style="clear:left"></div>',
 	          '</ul>',
  	          '</div>',
  	        '</div>'
