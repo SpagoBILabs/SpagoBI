@@ -82,8 +82,7 @@ public class MenuListJSONSerializer implements Serializer {
 				home.put(PATH, "Home");
 				home.put(LABEL, HOME);
 				home.put(TARGET, "_self");
-				home.put(HREF, "javascript:goHome('/html/home.html', 'spagobi');");
-				//home.put(HREF, "javascript:alert('ciao');");
+				home.put(HREF, "javascript:goHome(null, 'spagobi');");
 				
 				String userMenu = msgBuild.getMessage( "menu.UserMenu", locale);
 				personal.put(ICON_CLS, "spagobi");
