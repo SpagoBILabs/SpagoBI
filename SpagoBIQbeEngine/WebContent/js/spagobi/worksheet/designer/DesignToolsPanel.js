@@ -39,7 +39,8 @@ Ext.ns("Sbi.worksheet.designer");
 Sbi.worksheet.designer.DesignToolsPanel = function(config) { 
 
 	var defaultSettings = {
-		autoloadFields : false
+		autoloadFields : false,
+		border: false
 	};
 
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.designTools) {

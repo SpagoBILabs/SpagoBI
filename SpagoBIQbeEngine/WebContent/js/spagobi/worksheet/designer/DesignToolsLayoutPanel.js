@@ -31,6 +31,7 @@ Ext.ns("Sbi.worksheet.designer");
 Sbi.worksheet.designer.DesignToolsLayoutPanel = function(config) { 
 	
 	var defaultSettings = {
+		border: false,
 		title:  LN('sbi.worksheet.designer.designtoolslayoutpanel.title'),
 		border: false,
 		bodyStyle: 'padding-top: 15px; padding-left: 15px'
