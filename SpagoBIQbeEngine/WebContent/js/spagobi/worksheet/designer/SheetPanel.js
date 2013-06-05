@@ -61,6 +61,7 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 	this.addEvents("attributeDblClick");
 	
 	c = {
+			border: false,
 			scrollable: true,
             layout: 'fit',
             items:[emptyPanel, this.headerPanel, this.filtersPanel, this.contentPanel, this.footerPanel]
@@ -185,42 +186,27 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		if(sheetLayout!==null){
 			 this.sheetLayout=sheetLayout;
 			 if(sheetLayout==='layout-header' || sheetLayout==='layout-content'){
-				 if(this.footerPanel != undefined && this.footerPanel != null){
-					 if(this.footerPanel.rendered){
-					 	this.footerPanel.disable();
-				 }
-				 }
+				 this.footerPanel.hide();
 			 }
 			 if(sheetLayout==='layout-footer' || sheetLayout==='layout-content'){
-				 if(this.headerPanel != undefined && this.headerPanel != null){
-					 if(this.headerPanel.rendered){
-					 	this.headerPanel.disable();
-					 }
-				 }
+				 this.headerPanel.hide();
 			 }
 			 if(sheetLayout==='layout-footer' || sheetLayout==='layout-headerfooter'){
-				if(this.footerPanel == undefined || this.footerPanel == null)
-					{
-					this.footerPanel = new Sbi.worksheet.designer.SheetTitlePanel({});
-					}
-				this.footerPanel.enable();
+				 this.footerPanel.show();
 			 }
 			 if(sheetLayout==='layout-header' || sheetLayout==='layout-headerfooter'){
-				if(this.headerPanel == undefined || this.headerPanel == null)
-					{
-					this.headerPanel = new Sbi.worksheet.designer.SheetTitlePanel({});
-					}
-				this.headerPanel.enable();
+				 this.headerPanel.show();
 			 }
 		}
 	}
+	
 	, updateHeaderLayout: function (sheetLayout) {
 		if(sheetLayout!==null){
 			 if(sheetLayout==='layout-footer' || sheetLayout==='layout-content'){
-				 this.headerPanel.disable();
+				 this.headerPanel.hide();
 			 }
 			 if(sheetLayout==='layout-header' || sheetLayout==='layout-headerfooter'){
-				 this.headerPanel.enable();
+				 this.headerPanel.show();
 			 }
 		}
 	}
@@ -228,10 +214,10 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		if(sheetLayout!==null){
 			 this.sheetLayout=sheetLayout;
 			 if(sheetLayout==='layout-header' || sheetLayout==='layout-content'){
-				 this.footerPanel.disable();
+				 this.footerPanel.hide();
 			 }
 			 if(sheetLayout==='layout-footer' || sheetLayout==='layout-headerfooter'){
-				 this.footerPanel.enable();
+				 this.footerPanel.show();
 			 }
 		}
 	}
