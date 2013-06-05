@@ -62,6 +62,7 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
     };
 	
 	c = {
+		border: false,
 		tabPosition: 'bottom',        
         enableTabScroll:true,
         defaults: {autoScroll:true},

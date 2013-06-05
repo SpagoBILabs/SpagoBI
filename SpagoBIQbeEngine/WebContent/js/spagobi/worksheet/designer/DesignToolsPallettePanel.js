@@ -36,7 +36,9 @@ Ext.ns("Sbi.worksheet.designer");
 
 Sbi.worksheet.designer.DesignToolsPallettePanel = function(config) { 
 
-	var defaultSettings = {};
+	var defaultSettings = {
+			border: false
+	};
 
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.designToolsPallettePanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.designToolsPallettePanel);
