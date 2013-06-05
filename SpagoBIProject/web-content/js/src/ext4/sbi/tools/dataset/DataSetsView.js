@@ -89,7 +89,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 			wrap : false
 		};
 		this.scrollable = 'horizontal';
-		this.renderTo = Ext.getBody()
+		this.renderTo = Ext.getBody(); //verificare perché dovrebbe essere un item del parent (pannello)
 
 		this.callParent(arguments);
 
@@ -122,8 +122,9 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 			                        	'<div class="button"><img class="action-{name}" title="{description}" src="' + Ext.BLANK_IMAGE_URL + '"/></div>',
 			                        '</tpl>',
 			                    '</div>',
-		                    	'<p>{name}</p>',
 								'<img src=\"'+ Ext.LEAF_IMAGE_URL  +'\" width="50">' ,
+								'<p><b>{name}</b></p>',
+								'<p>{description}</p>',
 								'<br/>', 
 		                    '</dd>',
 		                '</tpl>',	              
@@ -150,7 +151,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         if(group){
             group.up('div[class*=group]').toggleClass('collapsed');
         }
-        
+        alert(index);
         return true;
     }
 

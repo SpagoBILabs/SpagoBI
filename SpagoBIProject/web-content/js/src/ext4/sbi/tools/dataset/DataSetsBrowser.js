@@ -6,7 +6,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		autoLoad : true,
 		modelName : "Sbi.tools.dataset.DataSetModel",
 		dataView : null,
-		tbar : null
+		tbar : null,
+		height: 600
 	}
 
 	,
@@ -106,9 +107,34 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	}
 
 	,
-	addNewDataset : function() {
-		this.wizardWin =  Ext.create('Sbi.widgets.wizard.WizardWindow',{});
+	addNewDataset : function() {		 
+		this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',{});		
     	this.wizardWin.show();
+    	this.wizardWin.on('navigate', function(panel, direction) {
+			alert("navigate!!");
+			this.navigate(panel, direction);
+		}, this);
+		this.wizardWin.on('closeWin', function() {
+			alert("closeWin!!");
+			this.wizardWin.hide();
+		}, this);
 	}
+	
+	
+	, navigate: function(panel, direction){		
+		alert("navigate! " + panel + " - " + direction);
+		
+        // This routine could contain business logic required to manage the navigation steps.
+        // It would call setActiveItem as needed, manage navigation button state, handle any
+         // branching logic that might be required, handle alternate actions like cancellation
+         // or finalization, etc.  A complete wizard implementation could get pretty
+         // sophisticated depending on the complexity required, and should probably be
+         // done as a subclass of CardLayout in a real-world implementation.
+		 var layout = panel.getLayout();
+		 layout[direction]();
+		 Ext.getCmp('move-prev').setDisabled(!layout.getPrev());
+		 Ext.getCmp('move-next').setDisabled(!layout.getNext());
+	}
+	
 
 });

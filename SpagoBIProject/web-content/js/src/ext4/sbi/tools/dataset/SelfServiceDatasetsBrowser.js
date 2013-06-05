@@ -38,7 +38,7 @@ Ext.define('Sbi.tools.dataset.SelfServiceDatasetsBrowser', {
 		config.store = this.store;
 		config.tpl = this.tpl;
 		this.viewPanel =  Ext.create('Sbi.widgets.dataview.DataViewPanel',config);
-	
+		//this.viewPanel.tbar.on("click",this.addNewDataset,this);
 		//this.callParent(arguments);
 	}
 	
@@ -49,5 +49,10 @@ Ext.define('Sbi.tools.dataset.SelfServiceDatasetsBrowser', {
 		  , baseParams: baseParams
 		});
 	}
-	
+	, addNewDataset: function(){
+		alert('SelfServiceDataSetBROWSER: addNewDataset! ');
+	}	
+	, onClick : function(obj, rec, item, idx, e, opt){		
+		  alert("*** SelfServiceDatasetBrowser: click of id: " + idx);
+	 }
 });
