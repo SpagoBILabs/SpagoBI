@@ -42,7 +42,8 @@ Sbi.worksheet.designer.SheetTitlePanel = function(config) {
 		frame:true,
 		style:'padding:5px 15px 2px 15px',  
 		fileUpload: true,
-		height: 100
+		height: 100,
+		hideMode: 'offsets'
 	};
 
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.sheetTitlePanel) {
