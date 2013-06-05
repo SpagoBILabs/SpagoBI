@@ -176,6 +176,7 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
  %>
 <script type="text/javascript">
 
+var firstUrlTocallvar;
 var win_info_1;
 Ext.require([
              'Ext.panel.*',
@@ -285,14 +286,26 @@ function info(){
 	}		
 	win_info_1.show();
   }
+  
 function goHome(html, path){
-	var url = Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+html;
-	execDirectUrl(url, path);
+	var url;
+	if(!html){
+		url = firstUrlTocallvar;
+	}else{
+		url = Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+html;
+	}
+	if(url){
+		execDirectUrl(url, path);
+	}
+	
 }
+
+
   
 Ext.onReady(function () {
 	
 	var firstUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
+	firstUrlTocallvar = firstUrl;
     Ext.tip.QuickTipManager.init();
     this.mainframe = Ext.create('Ext.ux.IFrame', 
     			{ xtype: 'uxiframe'
