@@ -50,6 +50,14 @@ Sbi.locale.ln['sbi.qbe.qbepanel.emptyquerymessage'] = 'Query is empty and you do
 
 
 //===================================================================
+//Sbi.qbe.QbeCardsPanel
+//===================================================================
+Sbi.locale.ln['sbi.qbe.qbecardspanel.title'] = 'QbE';
+Sbi.locale.ln['sbi.qbe.qbecardspanel.preview'] = 'Preview';
+Sbi.locale.ln['sbi.qbe.qbecardspanel.designer'] = 'Designer';
+
+
+//===================================================================
 //QUERY EDITOR PANEL
 //===================================================================
 Sbi.locale.ln['sbi.qbe.queryeditor.title'] = 'Query';
@@ -68,7 +76,7 @@ Sbi.locale.ln['sbi.qbe.queryeditor.saveqasview'] = 'Save query as view...';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.title'] = 'Query Editor';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.save'] = 'Save query as subobject';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.view'] = 'Save query as view';
-Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.execute'] = 'Execute query';
+//Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.execute'] = 'Execute query';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.validate'] = 'Validate query';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.help'] = 'Help me please';
 

@@ -49,7 +49,6 @@ Sbi.qbe.QueryBuilderPanel = function(config) {
 		enableTreeTbSaveBtn: true,
 		enableTreeTbPinBtn: true,
 		enableTreeTbUnpinBtn: true,
-		enableQueryTbExecuteBtn: true,
 		enableQueryTbSaveBtn: true,
 		enableQueryTbSaveViewBtn: false,
 		enableQueryTbValidateBtn: false,
@@ -92,7 +91,7 @@ Sbi.qbe.QueryBuilderPanel = function(config) {
 		, baseParams: params
 	});
 		
-	this.addEvents('execute', 'save');
+	this.addEvents('save');
 		
 	this.initWestRegionPanel(c.westConfig || {});
 	this.initCenterRegionPanel(c.centerConfig || {});
@@ -215,13 +214,6 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		this.setQuery(query);
 	}
 
-    , executeQuery: function() {
-    	this.applyChanges();
-    	this.queryCataloguePanel.commit(function() {
-			this.fireEvent('execute', this, this.queryCataloguePanel.getSelectedQuery());
-		}, this);
-    }
-    
     , showSaveQueryWindow: function(){
         var nameMeta = "";
         var descriptionMeta = "";
@@ -527,12 +519,6 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 					});	   
 				},
 	            scope: this 
-	        },{
-	          id:'gear',
-	          qtip: LN('sbi.qbe.queryeditor.centerregion.tools.execute'),
-	          hidden: (this.enableQueryTbExecuteBtn == false),
-	          handler: this.executeQuery,
-	          scope: this
 	        },{
 	          id:'search',
 	          qtip: LN('sbi.qbe.queryeditor.centerregion.tools.validate'),
