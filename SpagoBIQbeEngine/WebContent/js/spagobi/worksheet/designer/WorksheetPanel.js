@@ -103,13 +103,18 @@ Sbi.worksheet.designer.WorksheetPanel = function(config) {
 
 	this.on('activate', function(meta){
 		// recalculate current fields in store and fires validateInvalidFieldsAfterLoad event
+		var activeItem = this.getLayout().activeItem;
+		var index = this.items.indexOf(activeItem);
+		if (index == 1) {
+			activeItem.fireEvent('activate', activeItem); // force refresh
+		}
 		
 		this.worksheetDesignerPanel.designToolsPanel.refresh();
-		this.setActiveItem(0);
 		this.worksheetDesignerPanel.designToolsPanel.on('validateInvalidFieldsAfterLoad', 
-				function(){
-			this.worksheetDesignerPanel.validate(function(){}, function(){}, this);
-		}, this);
+			function(){
+				this.worksheetDesignerPanel.validate(function(){}, function(){}, this);
+			}, this
+		);
 		
 	}, this);
 	
