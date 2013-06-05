@@ -50,12 +50,16 @@ Sbi.worksheet.designer.WorksheetPanel = function(config) {
 	
 	this.prevButton =  new Ext.Button({
 		    text: '&laquo; ' + LN('sbi.qbe.qbecardspanel.designer')
-			, disabled: true
+			, enableToggle : true
+			, allowDepress : false
 	});
 	this.prevButton.on(
-			'click',
-			function (thePanel, attribute) { 
-				this.setActiveItem(0);
+			'toggle',
+			function (button, pressed) {
+				if (pressed) {
+					this.setActiveItem(0);
+					this.nextButton.toggle(false, true);
+				}
 			}, 
 			this
 	);
@@ -63,14 +67,21 @@ Sbi.worksheet.designer.WorksheetPanel = function(config) {
 	
 	this.nextButton =  new Ext.Button({
 	    text: LN('sbi.qbe.qbecardspanel.preview') + ' &raquo;'
+		, enableToggle : true
+		, allowDepress : false
 	});
 	this.nextButton.on(
-			'click',
-			function (thePanel, attribute) { 
-				this.setActiveItem(1);
+			'toggle',
+			function (button, pressed) { 
+				if (pressed) {
+					this.setActiveItem(1);
+					this.prevButton.toggle(false, true);
+				}
 			}, 
 			this
 	);
+	
+	this.prevButton.toggle(true, true);
 	
 	this.initWorksheetPanel(config);
 	
@@ -116,15 +127,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetPanel, Ext.Panel, {
 		this.worksheetPreviewPanel = config.worksheetPreviewPanel;
 	}
 	, setActiveItem: function(pageIndex) {
-		
 		this.getLayout().setActiveItem( pageIndex );
-		if(pageIndex == 0){
-			this.prevButton.disable();
-			this.nextButton.enable();
-		}else{
-			this.prevButton.enable();
-			this.nextButton.disable();			
-		}
 	}
 
 });
