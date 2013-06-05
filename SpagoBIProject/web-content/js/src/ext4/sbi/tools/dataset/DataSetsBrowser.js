@@ -20,6 +20,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.layout='fit';
 		
 		this.callParent(arguments);
+		this.addListener('cancel', this.closeWin, this);
+		this.addListener('navigate', this.navigate, this);
 	}
 
 	,
@@ -136,5 +138,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		 Ext.getCmp('move-next').setDisabled(!layout.getNext());
 	}
 	
+	, closeWin: function(){
+		alert("close WIn");
+	}
 
 });

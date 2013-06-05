@@ -7,47 +7,12 @@
 
 /**TODO anto: aggiornare documentazione!!!
  * 
- * Data view for a browser style. It define a layout and provides the stubs methods for the icons browser.
+ * Wizard window base. It define a layout and provides the stubs methods for the icons browser.
  * This methods should be overridden to define the logic. Only the methods onAddNewRow, onGridSelect and onCloneRow are implemented.
  * The configuration dataView must be passed to the object. It should contains the method setFormState (it is used by onGridSelect)
  * 
  * 
  * 		@example
- *	Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
- *   extend: 'Sbi.widgets.compositepannel.ListDetailPanel'
- *	, constructor: function(config) {
- *		//init services
- *		this.initServices();
- *		//init form
- *		this.form =  Ext.create('Sbi.tools.datasource.DataSourceDetailPanel',{services: this.services});
- *		this.columns = [{dataIndex:"DATASOURCE_LABEL", header:"Name"}, {dataIndex:"DESCRIPTION", header:"description"}];
- *		this.fields = ["DATASOURCE_ID","DATASOURCE_LABEL","DESCRIPTION","DRIVER","DIALECT_ID","DIALECT_CLASS","DIALECT_NAME","JNDI_URL","USER","PASSWORD","SCHEMA","MULTISCHEMA","CONNECTION_URL"];
- *		this.form.on("save",this.onFormSave,this);
- *    	this.callParent(arguments);
- *    }
- *	, initServices: function(baseParams){
- *		this.services["getAllValues"]= Sbi.config.serviceRegistry.getRestServiceUrl({
- *			    							serviceName: 'datasources/listall'
- *			    							, baseParams: baseParams
- *			    						});
- *		...
- *		    	
- *	}
- *	, onDeleteRow: function(record){
- *		Ext.Ajax.request({
- *  	        url: this.services["delete"],
- *  	        params: {DATASOURCE_ID: record.get('DATASOURCE_ID')},
- *  	       ...
- *	}
- *	, onFormSave: function(record){
- *		Ext.Ajax.request({
- *  	        url: this.services["save"],
- *  	        params: record,
- *  	   ...
- *	}
- *});
- *			... 
- *
  * 
  * @author
  * Antonella Giachino (antonella.giachino@eng.it)
@@ -87,8 +52,8 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		localConf.items = c.tabs;		
 		localConf.activeTab = 0;
 		this.wizardPanel = Ext.create('Ext.TabPanel', localConf);	
-		this.wizardPanel.addListener('cancel',	this.navigate, this);
-		this.wizardPanel.addListener('navigate',this.navigate, this);
+//		this.wizardPanel.addListener('cancel',	this.navigate, this);
+//		this.wizardPanel.addListener('navigate',this.navigate, this);
 		this.items = [this.wizardPanel];
 	}
 	
