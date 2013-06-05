@@ -515,7 +515,7 @@ public class ImporterMetadata {
 			return hibObjParview;
 		} 
 		else if (hibObj instanceof SbiDataSet) {
-			param = "SbiDataSetConfig";
+			param = "SbiDataSet";
 			String label = (String) unique;
 			hqlQuery = sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.label = ?" );
 			hqlQuery.setBoolean(0, true);

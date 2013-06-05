@@ -869,15 +869,17 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingDatasetId != null) {
 					logger.debug("The dataset with label:[" + exportedDataSet.getLabel() + "] is just present. It will be updated. Existing one has id "+existingDatasetId);
 					metaLog.log("The dataset with label = [" + exportedDataSet.getLabel() + "] will be updated.");
-					SbiDataSet existingDataset = ImportUtilities.modifyExisting(exportedDataSet, sessionCurrDB, existingDatasetId, sessionExpDB, this.getUserProfile());
-					ImportUtilities.associateNewSbiDataSet(existingDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, this.getUserProfile());
-					this.updateSbiCommonInfo4Update(existingDataset);
-					sessionCurrDB.update(existingDataset);
+					// close previous and insert new
+					SbiDataSet newDataset = ImportUtilities.modifyExisting(exportedDataSet, sessionCurrDB, existingDatasetId, sessionExpDB, this.getUserProfile());
+					newDataset = ImportUtilities.associateWithExistingEntities(newDataset, exportedDataSet, sessionCurrDB, importer, metaAss);
+					this.updateSbiCommonInfo4Update(newDataset);
+					sessionCurrDB.save(newDataset);
 				} else {
 					SbiDataSet newDataset = ImportUtilities.makeNew(exportedDataSet, sessionCurrDB, this.getUserProfile());
 					this.updateSbiCommonInfo4Insert(newDataset);
+					newDataset = ImportUtilities.associateWithExistingEntities(newDataset, exportedDataSet, sessionCurrDB, importer, metaAss);
 					sessionCurrDB.save(newDataset);
-					ImportUtilities.associateNewSbiDataSet(newDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, this.getUserProfile());
+
 					logger.debug("Inserted new dataset " + newDataset.getName());
 					metaLog.log("Inserted new dataset " + newDataset.getName());
 					Integer newId = new Integer(newDataset.getId().getDsId());

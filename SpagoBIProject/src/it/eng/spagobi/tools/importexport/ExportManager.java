@@ -482,8 +482,12 @@ public class ExportManager implements IExportManager {
 
 				IDataSet genericDs = dataSetDao.loadDataSetById(objDataSetId);
 				if(genericDs!=null){
-					exporter.insertDataSet(genericDs, session);
+					//exporter.insertDataSet(genericDs, session);
+					
+					// when inserting dataset in export must mantain same id and version to preserve costraints
+				exporter.insertDataSetAndDataSource(genericDs, session);
 				}
+				
 
 			}			
 
@@ -536,7 +540,7 @@ public class ExportManager implements IExportManager {
 								logger.warn("Error while exporting dashboard with id " + idObj + " and label " + biobj.getLabel() + " : " +
 										"the template refers to a dataset with label " + datasetLabel + " that does not exist!");
 							} else {
-								exporter.insertDataSet(guiGenericDataSet, session);
+								exporter.insertDataSet(guiGenericDataSet, session, false);
 							}
 						}
 					} catch (Exception e) {
