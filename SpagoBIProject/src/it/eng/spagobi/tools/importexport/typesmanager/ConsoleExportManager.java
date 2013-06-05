@@ -92,7 +92,7 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 					// insert dataset if parameter insertDataSet is true (in case of KPI export)
 					if(ds != null){
 						logger.debug("found dataset with label " + string);
-						exporter.insertDataSet(ds, session);
+						exporter.insertDataSet(ds, session, false);
 					}
 					else {
 						logger.error("could not find dataset with label "+string+" : ignore it");
@@ -104,7 +104,7 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 					IDataSet datasetErrors = dataSetDAO.loadDataSetByLabel(labelErrors);
 					if(datasetErrors != null){
 						logger.debug("found dataset with label " + labelErrors+"");
-						exporter.insertDataSet(datasetErrors, session);
+						exporter.insertDataSet(datasetErrors, session, false);
 					}
 					else {
 						logger.warn("could not find dataset with label "+labelErrors);
@@ -116,7 +116,7 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 					IDataSet datasetAlarms = dataSetDAO.loadDataSetByLabel(labelAlarms);
 					if(datasetAlarms != null){
 						logger.debug("found dataset with label " + labelAlarms+"");
-						exporter.insertDataSet(datasetAlarms, session);
+						exporter.insertDataSet(datasetAlarms, session, false);
 					}
 					else {
 						logger.warn("could not find dataset with label "+labelAlarms);

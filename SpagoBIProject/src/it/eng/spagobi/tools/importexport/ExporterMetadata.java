@@ -126,6 +126,8 @@ import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeaturesId;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -157,6 +159,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.engine.jdbc.WrappedBlob;
 
 /**
  * Implements methods to insert exported metadata into the exported database 
@@ -357,7 +360,7 @@ public class ExporterMetadata {
 	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.tools.dataset.dao.IDataSetDAO#insertDataSet(it.eng.spagobi.tools.dataset.bo.AbstractDataSet)
 	 */
-	public void insertDataSet(IDataSet dataSet, Session session) throws EMFUserError {
+	public void insertDataSet(IDataSet dataSet, Session session, boolean recalculateId) throws EMFUserError {
 		logger.debug("IN");
 		Transaction tx = null;
 		Transaction tx2 = null;
@@ -377,7 +380,17 @@ public class ExporterMetadata {
 			}
 
 			if(dataSet!=null){
-				SbiDataSetId compositeKey = getDataSetKey(session, dataSet, true);
+				SbiDataSetId compositeKey = null;
+				if(recalculateId == true){
+					compositeKey = getDataSetKey(session, dataSet, true);
+				}
+				else{
+					// in case of export do not recaculate id to avoid losing constraints
+					compositeKey = new SbiDataSetId();
+					compositeKey.setDsId(dataSet.getId());
+					compositeKey.setVersionNum(1);					
+				}
+				
 				SbiDataSet sbiDataSet = new SbiDataSet(compositeKey);
 
 				SbiDomains transformer = null;
@@ -456,8 +469,12 @@ public class ExporterMetadata {
 		logger.debug("IN");
 		try {
 			// if it is a query data set, insert datasource first, before opening a new transaction
-			if (dataset instanceof JDBCDataSet) {
-				IDataSource ds = ((JDBCDataSet) dataset).getDataSource();
+			
+			VersionedDataSet versDataSet = null;
+			if(dataset instanceof VersionedDataSet) versDataSet = (VersionedDataSet)dataset;
+			
+			if (versDataSet != null &&  versDataSet.getWrappedDataset() instanceof JDBCDataSet) {
+				IDataSource ds = ((JDBCDataSet) versDataSet.getWrappedDataset()).getDataSource();
 				if (ds != null) insertDataSource(ds, session);
 			}
 
@@ -465,7 +482,7 @@ public class ExporterMetadata {
 			Transaction tx = session.beginTransaction();
 			IDataSet ds = DAOFactory.getDataSetDAO().toGuiGenericDataSet(dataset);
 			if(ds!=null){
-				insertDataSet(ds,session);
+				insertDataSet(ds,session, false);
 			}
 		} catch (Exception e) {
 			logger.error("Error while inserting dataSet into export database " , e);
@@ -735,7 +752,7 @@ public class ExporterMetadata {
 					
 					//IDataSet guiDataSet = datasetDao.loadDataSetById(dataSetId);
 					if(guiDataSet!=null){
-						insertDataSet(guiDataSet, session);
+						insertDataSet(guiDataSet, session, false);
 					}
 				}				
 				//SbiDataSet dataset = (SbiDataSet) session.load(SbiDataSet.class, dataSetId);
@@ -1128,7 +1145,7 @@ public class ExporterMetadata {
 					DatasetDetail datasetDetail = (DatasetDetail) lovDetail;
 					String datasetLabel = datasetDetail.getDatasetLabel();
 					IDataSet existingDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(datasetLabel);
-					this.insertDataSet(existingDataset, session);
+					this.insertDataSet(existingDataset, session, false);
 					// previuos transaction was closed
 					tx = session.beginTransaction();
 				}
@@ -1982,7 +1999,7 @@ public class ExporterMetadata {
 				Integer dsID = kpi.getKpiDsId();				
 				IDataSet guiDataSet = DAOFactory.getDataSetDAO().loadDataSetById(dsID);
 				if(guiDataSet!=null){
-					insertDataSet(guiDataSet, session);
+					insertDataSet(guiDataSet, session, false);
 					hibKpi.setSbiDataSet(guiDataSet.getId());
 				}
 			}
@@ -2126,7 +2143,7 @@ public class ExporterMetadata {
 				Integer dsID = kpi.getKpiDsId();				
 				IDataSet guiDataSet = DAOFactory.getDataSetDAO().loadDataSetById(dsID);
 				if(guiDataSet!=null){
-					insertDataSet(guiDataSet, session);
+					insertDataSet(guiDataSet, session, false);
 					hibKpi.setSbiDataSet( guiDataSet.getId());
 				}
 			}
