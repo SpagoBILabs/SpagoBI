@@ -81,24 +81,38 @@ Sbi.qbe.QbePanel = function(config) {
 	this.queryResultPanel = new Sbi.widgets.DataStorePanel(Ext.apply(c, {
 		id : 'DataStorePanel'
 	}));
+	this.queryResultPanel.on('activate', this.resultPanelActivateHandler, this);
 	
 	this.worksheetPanel = null;
 	
 	this.worksheetDesignerPanel = null;
 
 	var items = [];
+	var qbeItems = [];
 
 	if (c.displayQueryBuilderPanel) {
 		this.queryEditorPanel = new Sbi.qbe.QueryBuilderPanel(Ext.apply(c, {
 			id : 'QueryBuilderPanel'
 		}));
-		items.push(this.queryEditorPanel);
+		qbeItems.push( this.queryEditorPanel );
 	}
 
-	items.push(this.queryResultPanel);
+	qbeItems.push( this.queryResultPanel );
+	this.qbeCardsPanel = new Sbi.qbe.QbeCardsPanel(Ext.apply(c, {
+		id : 'QbeCardsPanel' // WORKAROUND: without this we had a strange behaviour!!! when activating Worksheet panel, it was still not visible!!
+		, items : qbeItems
+	}));
+	// in case there's a cross navigation and user is power user, we activate the result panel directly
+	if (qbeItems.length > 1 && config.isFromCross) {
+		this.qbeCardsPanel.on('render', function() {
+			this.qbeCardsPanel.getLayout().setActiveItem(1);
+		}, this);
+	}
+	
+	items.push(this.qbeCardsPanel);
 
 
-if (c.displayWorksheetDesignerPanel) {
+	if (c.displayWorksheetDesignerPanel) {
 
 		var worksheetDesignerConfig = c.worksheet || {};
 		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(Ext.apply(worksheetDesignerConfig, {
@@ -151,44 +165,46 @@ if (c.displayWorksheetDesignerPanel) {
 		items.push(this.formBuilderPage);
 	}
 
+	/*
 	if (!c.displayQueryBuilderPanel) {
 		// if user is a read-only user, do not instantiate and show the QueryBuilderPanel
 		// and execute first query on catalog
 		this.loadFirstQuery();
 	}
+	*/
 
 	
 	if (c.displayWorksheetPanel) {		
 		var worksheetDesignerConfig = c.worksheet || {};
 		this.worksheetPanel = new Sbi.worksheet.designer.WorksheetPanel(Ext.apply(worksheetDesignerConfig, {
-			id : 'WorksheetPanel',
-			qbePanel: this
+			id : 'WorksheetPanel'
+			, worksheetDesignerPanel : this.getWorksheetDesignerPanel()
+			, worksheetPreviewPanel : this.getWorksheetPreviewPanel()
 		}));
 		items.push(this.worksheetPanel);
 	}
 	
 	
 	this.tabs = new Ext.TabPanel({
-		border: false,
-		activeTab: config.isFromCross?1:0,
-				items: items
+		border : false
+		, activeTab : 0
+		, items : items
+		, hideMode : !Ext.isIE ? 'nosize' : 'display'
 	});
 		
 
 	if (this.queryEditorPanel != null) {
-		this.queryEditorPanel.on('execute', function(editorPanel, query){
-			this.checkPromptableFilters(query);
-		}, this);
 		this.queryEditorPanel.on('save', function(meta){
 			this.saveQuery(meta);
 		}, this);
+		/*
+		 * work-around: forcing the layout recalculation on west/center/est region panels on tab change
+		 * TODO: try to remove it when upgrading Ext library
 		this.tabs.on('tabchange', function () {
+
 			var anActiveTab = this.tabs.getActiveTab();
 						
-			/*
-			 * work-around: forcing the layout recalculation on west/center/est region panels on tab change
-			 * TODO: try to remove it when upgrading Ext library
-			 */
+
 			if (anActiveTab.centerRegionPanel !== undefined) {
 				anActiveTab.centerRegionPanel.doLayout();
 			}
@@ -218,7 +234,7 @@ if (c.displayWorksheetDesignerPanel) {
 						new Sbi.formbuilder.StaticOpenFiltersEditorPanelDropTarget(anActiveTab.filtersTemplatePanel.staticOpenFiltersEditorPanel);
 				}
 			}
-		}, this);
+		}, this); */
 	}
 
 	c = Ext.apply(c, {
@@ -231,10 +247,11 @@ if (c.displayWorksheetDesignerPanel) {
 	// constructor
 	Sbi.qbe.QbePanel.superclass.constructor.call(this, c);
 
-	//alert('isFromCross: ' + config.isFromCross);
-	if(config.isFromCross) {
+	/*
+	if (config.isFromCross) {
 		this.loadFirstQuery();
 	}
+	*/
 };
 
 /**
@@ -246,6 +263,7 @@ if (c.displayWorksheetDesignerPanel) {
 Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 
 	services: null
+	, qbeCardsPanel: null
 	, queryResultPanel: null
 	, queryEditorPanel: null
 	, worksheetPanel: null
@@ -332,7 +350,6 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 
 , executeQuery: function(query, promptableFilters) {
 	var newPromptableFilters = { promptableFilters : Ext.encode(promptableFilters)};
-	this.tabs.activate(this.queryResultPanel);
 	this.queryResultPanel.execQuery(query, newPromptableFilters);
 }
 
@@ -674,7 +691,19 @@ refreshWorksheetPreview : function () {
 	return result;
 }
 
-
-
+	,
+	resultPanelActivateHandler: function() {
+		if (this.queryEditorPanel != null) {
+			// case of power user and normal execution
+			this.queryEditorPanel.applyChanges();
+			this.queryEditorPanel.queryCataloguePanel.commit(function() {
+				var query = this.queryEditorPanel.queryCataloguePanel.getSelectedQuery()
+				this.checkPromptableFilters(query);
+			}, this);
+		} else {
+			// case of non-power user or cross navigation execution
+			this.loadFirstQuery();
+		}
+	}
 
 });

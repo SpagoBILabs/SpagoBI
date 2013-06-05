@@ -192,6 +192,7 @@
 				<file name='./spagobi/commons/JSON.js' />
 				<file name='./spagobi/locale/LocaleUtils.js' />
 				<file name='./spagobi/commons/Constants.js' />
+				<file name='./spagobi/commons/Log.js' />
 
 				<file name='./spagobi/qbe/filterwizard/filterWizard.js' />
 						
@@ -203,6 +204,7 @@
 				<file name='./spagobi/formviewer/OperandChooserWindow.js' />
 				<file name='./spagobi/qbe/FilterGridDropTarget.js' />
 				<file name='./spagobi/qbe/FilterGridPanel.js' />
+				<file name='./spagobi/qbe/QbeCardsPanel.js' />
 						
 				<file name='./spagobi/qbe/HavingGridPanel.js' />
 				<file name='./spagobi/qbe/HavingGridDropTarget.js' />

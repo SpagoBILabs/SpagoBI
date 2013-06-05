@@ -32,16 +32,17 @@
  * 
  * Authors - Alberto Ghedin (alberto.ghedin@eng.it)
  */
-Ext.ns("Sbi.worksheet.designer");
+Ext.ns("Sbi.qbe");
 
-Sbi.worksheet.designer.WorksheetPanel = function(config) { 
-
+Sbi.qbe.QbeCardsPanel = function(config) {
+	
 	var defaultSettings = {
-		title: LN('sbi.worksheet.title')
+		title : LN('sbi.qbe.qbecardspanel.title')
+		, activeItem : 0
 	};
 	
-	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.worksheetpanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.worksheetpanel);
+	if (Sbi.settings && Sbi.settings.qbe && Sbi.settings.qbe.qbecardspanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.qbe.qbecardspanel);
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});
@@ -58,8 +59,7 @@ Sbi.worksheet.designer.WorksheetPanel = function(config) {
 				this.setActiveItem(0);
 			}, 
 			this
-	);
-	
+	)
 	
 	this.nextButton =  new Ext.Button({
 	    text: LN('sbi.qbe.qbecardspanel.preview') + ' &raquo;'
@@ -70,61 +70,38 @@ Sbi.worksheet.designer.WorksheetPanel = function(config) {
 				this.setActiveItem(1);
 			}, 
 			this
-	);
+	)
 	
-	this.initWorksheetPanel(config);
-	
-	// JavaScript Toolbar
 	c = Ext.apply(c, {
-			//id:'WorksheetPanel', 
-			items: [this.worksheetDesignerPanel, this.worksheetPreviewPanel]
-		    , enableDragDrop: true
+			items: [this.items]
 		    , border: false
 			, layout: 'card'
-			, activeItem: 0
-			, height: 100
-			, style: 'margin-top: 0px; margin-left: auto; margin-right: auto;'
-			, width: 250
-			, tbar: ['->', this.prevButton, this.nextButton]
+			, tbar: this.items.length > 1 ? ['->', this.prevButton, this.nextButton] : null 
+			, hideMode: !Ext.isIE ? 'nosize' : 'display'
 	});
 	
 	Sbi.worksheet.designer.QueryFieldsCardPanel.superclass.constructor.call(this, c);
+	
+};
 
-	this.on('activate', function(meta){
-		// recalculate current fields in store and fires validateInvalidFieldsAfterLoad event
-		
-		this.worksheetDesignerPanel.designToolsPanel.refresh();
-		this.setActiveItem(0);
-		this.worksheetDesignerPanel.designToolsPanel.on('validateInvalidFieldsAfterLoad', 
-				function(){
-			this.worksheetDesignerPanel.validate(function(){}, function(){}, this);
-		}, this);
-		
-	}, this);
+Ext.extend(Sbi.qbe.QbeCardsPanel, Ext.Panel, {
 	
-	
-	};
+	items : null
+	, prevButton : null
+	, nextButton : null
 
-Ext.extend(Sbi.worksheet.designer.WorksheetPanel, Ext.Panel, {
-	
-	worksheetDesignerPanel: null
-	, worksheetPreviewPanel: null
-	, prevButton: null
-	, nextButton: null
-	, initWorksheetPanel: function(config) {
-		this.worksheetDesignerPanel = config.worksheetDesignerPanel;
-		this.worksheetPreviewPanel = config.worksheetPreviewPanel;
-	}
-	, setActiveItem: function(pageIndex) {
+	,
+	setActiveItem : function(pageIndex) {
 		
 		this.getLayout().setActiveItem( pageIndex );
-		if(pageIndex == 0){
+		if (pageIndex == 0) {
 			this.prevButton.disable();
 			this.nextButton.enable();
-		}else{
+		} else {
 			this.prevButton.enable();
 			this.nextButton.disable();			
 		}
+		
 	}
 
 });
