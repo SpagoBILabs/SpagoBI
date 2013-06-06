@@ -603,6 +603,21 @@ Sbi.locale.ln['sbi.ds.persistTableName'] = 'Nome tabella';
 Sbi.locale.ln['sbi.ds.flat'] = 'Configurazione dataset di tipo flat';
 Sbi.locale.ln['sbi.ds.isFlatDataset'] = 'Dataset piatto';
 Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nome tabella';
+Sbi.locale.ln['sbi.ds.saved']= 'Data set salvato correttamente';
+Sbi.locale.ln['sbi.ds.deleted']= 'Data set cancellato correttamente';
+Sbi.locale.ln['sbi.ds.wizard']= 'Dataset Wizard';
+Sbi.locale.ln['sbi.ds.label']= 'Etichetta';
+Sbi.locale.ln['sbi.ds.name']= 'Nome';
+Sbi.locale.ln['sbi.ds.description']= 'Descrizione';
+Sbi.locale.ln['sbi.ds.wizard.general']= 'Generale';
+Sbi.locale.ln['sbi.ds.wizard.detail']= 'Dettaglio';
+Sbi.locale.ln['sbi.ds.wizard.metadata']= 'Metadata';
+Sbi.locale.ln['sbi.ds.wizard.back']= '< Indietro';
+Sbi.locale.ln['sbi.ds.wizard.next']= 'Sucessivo >';
+Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Conferma';
+Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Annulla';
+Sbi.locale.ln['sbi.ds.noDataset']= 'Non ci sono dataset disponibili';
+
 
 Sbi.locale.ln['sbi.datasource.label']= 'Etichetta';
 Sbi.locale.ln['sbi.datasource.description']= 'Descrizione';
