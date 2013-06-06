@@ -14,7 +14,7 @@
 	</MAP_PAGE_MODULES>
 	
 	<MAP_REST_SERVICES>
-	<!-- <MAP_REST_SERVICE serviceUrl="/selfservicedataset/listValueDescriptionByType" businessProcess="SelfServiceDatasetManagement" />  -->							
+	 	<MAP_REST_SERVICE serviceUrl="/domains/listValueDescriptionByType" businessProcess="SelfServiceDatasetManagement" /> 							
 		<MAP_REST_SERVICE serviceUrl="/selfservicedataset" businessProcess="SelfServiceDatasetManagement" />			
 	</MAP_REST_SERVICES>
 	

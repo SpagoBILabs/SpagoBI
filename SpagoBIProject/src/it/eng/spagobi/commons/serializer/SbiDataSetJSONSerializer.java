@@ -18,6 +18,7 @@ public class SbiDataSetJSONSerializer implements Serializer {
 	private static final String DATASET_NAME = "name";
 	private static final String DATASET_DESCRIPTION = "description";
 	private static final String DATASET_LABEL = "label";
+	private static final String DATASET_CATEGORY = "catTypeVn";
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -35,6 +36,7 @@ public class SbiDataSetJSONSerializer implements Serializer {
 			result.put(DATASET_NAME, ds.getName() );
 			result.put(DATASET_DESCRIPTION, ds.getDescription() );
 			result.put(DATASET_LABEL, ds.getLabel() );		
+			result.put(DATASET_CATEGORY, ds.getCategory().getValueCd());	
 			
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
