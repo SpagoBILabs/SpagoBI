@@ -7,8 +7,10 @@ package it.eng.spagobi.tools.dataset.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -18,6 +20,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -775,8 +778,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			transaction = session.beginTransaction();
 			Integer dsIdInt = Integer.valueOf(dsId);
 
-			//String hql = " from SbiObjects s where s.dataSet.dsId = ?";
-			String hql = " from SbiObjects s where s.dsId = ?";
+			String hql = " from SbiObjects s where s.dataSet = ?";
 			Query aQuery = session.createQuery(hql);
 			aQuery.setInteger(0, dsIdInt.intValue());
 			List biObjectsAssocitedWithDs = aQuery.list();
@@ -790,6 +792,89 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				transaction.rollback();
 			}
 			throw new SpagoBIDOAException("Error while getting the objects associated with the data set with id " + dsId, t);	
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return bool;
+	}
+	
+	
+	/**
+	 * Checks for bi kpi associated.
+	 * @param dsId the ds id
+	 * @return true, if checks for bi kpi associated
+	 * @throws EMFUserError the EMF user error
+	 * @see it.eng.spagobi.tools.dataSet.dao.IDataSetDAO#hasBIObjAssociated(java.lang.String)
+	 */
+	public boolean hasBIKpiAssociated (String dsId) {
+		logger.debug("IN");		
+		boolean bool = false; 
+
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+			Integer dsIdInt = Integer.valueOf(dsId);
+
+			String hql = " from SbiKpi s where s.sbiDataSet = ?";
+			Query aQuery = session.createQuery(hql);
+			aQuery.setInteger(0, dsIdInt.intValue());
+			List biKPIAssocitedWithDs = aQuery.list();
+			if (biKPIAssocitedWithDs.size() > 0)
+				bool = true;
+			else
+				bool = false;
+			transaction.commit();
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("Error while getting the kpi associated with the data set with id " + dsId, t);	
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return bool;
+	}
+	
+	/**
+	 * Checks for bi lovs associated.
+	 * @param dsId the ds id
+	 * @return true, if checks for lovs associated
+	 * @throws EMFUserError the EMF user error
+	 * @see it.eng.spagobi.tools.dataSet.dao.IDataSetDAO#hasBIObjAssociated(java.lang.String)
+	 */
+	public boolean hasBILovAssociated (String dsId) {
+		logger.debug("IN");		
+		boolean bool = false; 
+
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+			Integer dsIdInt = Integer.valueOf(dsId);
+
+			String hql = " from SbiLov s where datasetId = ?";
+			Query aQuery = session.createQuery(hql);
+			aQuery.setInteger(0, dsIdInt.intValue());
+			List biKPIAssocitedWithDs = aQuery.list();
+			if (biKPIAssocitedWithDs.size() > 0)
+				bool = true;
+			else
+				bool = false;
+			transaction.commit();
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("Error while getting the lovs associated with the data set with id " + dsId, t);	
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -991,17 +1076,26 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 			
-			// check dataset is not used by any document: a DB constraint should be added in future
-			Query hibernateQuery = session.createQuery("from SbiObjects h where h.dataSet = ?" );	
-			hibernateQuery.setInteger(0, datasetId);
-			List objectsRelated = hibernateQuery.list();
-			if(objectsRelated != null && objectsRelated.size() > 0){
+			// check dataset is not used by any document:
+//			Query hibernateQuery = session.createQuery("from SbiObjects h where h.dataSet = ?" );	
+//			hibernateQuery.setInteger(0, datasetId);
+//			List objectsRelated = hibernateQuery.list();
+//			if(objectsRelated != null && objectsRelated.size() > 0){
+//				String message = "Dataset with id [" + datasetId + "] " +
+//						"cannot be erased because it is referenced by [" + objectsRelated.size() + "] document(s)";
+//				throw new SpagoBIDOAException(message);
+//			}
+			boolean bObjects = hasBIObjAssociated(String.valueOf(datasetId));
+			boolean bLovs = hasBILovAssociated(String.valueOf(datasetId));
+			boolean bKpis = hasBIKpiAssociated(String.valueOf(datasetId));
+			if (bObjects || bLovs || bKpis) {
 				String message = "Dataset with id [" + datasetId + "] " +
-						"cannot be erased because it is referenced by [" + objectsRelated.size() + "] document(s)";
+				"cannot be erased because it is referenced by documents or kpis or lovs.";
 				throw new SpagoBIDOAException(message);
 			}
+
 			//deletes all versions of the dataset specified
-			hibernateQuery = session.createQuery("from SbiDataSet h where h.id.dsId = ? " );	
+			Query hibernateQuery = session.createQuery("from SbiDataSet h where h.id.dsId = ? " );	
 			hibernateQuery.setInteger(0, datasetId);				
 			List<SbiDataSet> sbiDataSetList = hibernateQuery.list();
 			for (SbiDataSet sbiDataSet : sbiDataSetList) {

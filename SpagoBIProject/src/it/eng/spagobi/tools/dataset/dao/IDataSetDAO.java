@@ -44,6 +44,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public Integer countBIObjAssociated(Integer dsId);
 	public Integer countDatasets();
 	public boolean hasBIObjAssociated (String dsId);
+	public boolean hasBIKpiAssociated (String dsId);
+	public boolean hasBILovAssociated (String dsId);
 	
 	// ========================================================================================
 	// UPDATE operations (crUd)
