@@ -461,9 +461,17 @@ public class ImporterMetadata {
 			Map uniqueMap = (Map) unique;
 			String valuecd = (String) uniqueMap.get("valuecd");
 			String domaincd = (String) uniqueMap.get("domaincd");
+			
+			// sometimes is passed the valueCd, othertimes the valueNm.. TODO, unify this behaviour
 			hql = "from SbiDomains dom where dom.valueCd='" + valuecd + "' and dom.domainCd='" + domaincd + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiDomains hibDom = (SbiDomains) hqlQuery.uniqueResult();
+			if(hibDom == null){
+				hql = "from SbiDomains dom where dom.valueNm='" + valuecd + "' and dom.domainCd='" + domaincd + "'";
+				hqlQuery = sessionCurrDB.createQuery(hql);
+				hibDom = (SbiDomains) hqlQuery.uniqueResult();
+			}
+			
 			return hibDom;
 		} else if (hibObj instanceof SbiObjFunc) {
 			param = "SbiObjFunc";
