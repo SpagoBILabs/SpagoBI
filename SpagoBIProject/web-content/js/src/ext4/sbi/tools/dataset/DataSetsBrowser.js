@@ -20,8 +20,6 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.layout='fit';
 		
 		this.callParent(arguments);
-		this.addListener('cancel', this.closeWin, this);
-		this.addListener('navigate', this.navigate, this);
 	}
 
 	,
@@ -30,6 +28,10 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName : 'selfservicedataset',
 			baseParams : baseParams
+		});
+		this.services["getCategories"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'domains/listValueDescriptionByType'
+				, baseParams: baseParams
 		});
 	}
 	
@@ -56,7 +58,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			}
 		});
 		
-		this.fields = [ "id", "label", "name", "description" ];
+		this.fields = [ "id", "label", "name", "description","catTypeVn" ];
 		this.filteredProperties = [ "label", "name" ];
 		
 		Sbi.debug('DataViewPanel bulding the store...');
@@ -69,9 +71,10 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		// creates and returns the store
 		Sbi.debug('DataViewPanel store built.');
 
-		this.store = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);
-				
+		this.store = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);				
 		this.store.load({});
+		
+		this.categoriesStore = this.createCategoriesStore();
 	}
 	
 	, initToolbar: function() {
@@ -100,6 +103,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		var config = {};
 		config.services = this.services;
 		config.store = this.store;
+		config.actions = this.actions;
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
 	}
 
@@ -110,36 +114,32 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 
 	,
 	addNewDataset : function() {		 
-		this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',{});		
+		var config =  {};
+		config.categoriesStore = this.categoriesStore;
+		this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',config);		
     	this.wizardWin.show();
-    	this.wizardWin.on('navigate', function(panel, direction) {
-			alert("navigate!!");
-			this.navigate(panel, direction);
-		}, this);
-		this.wizardWin.on('closeWin', function() {
-			alert("closeWin!!");
-			this.wizardWin.hide();
-		}, this);
 	}
 	
-	
-	, navigate: function(panel, direction){		
-		alert("navigate! " + panel + " - " + direction);
-		
-        // This routine could contain business logic required to manage the navigation steps.
-        // It would call setActiveItem as needed, manage navigation button state, handle any
-         // branching logic that might be required, handle alternate actions like cancellation
-         // or finalization, etc.  A complete wizard implementation could get pretty
-         // sophisticated depending on the complexity required, and should probably be
-         // done as a subclass of CardLayout in a real-world implementation.
-		 var layout = panel.getLayout();
-		 layout[direction]();
-		 Ext.getCmp('move-prev').setDisabled(!layout.getPrev());
-		 Ext.getCmp('move-next').setDisabled(!layout.getNext());
-	}
-	
-	, closeWin: function(){
-		alert("close WIn");
+	, createCategoriesStore: function(){
+		Ext.define("CategoriesModel", {
+    		extend: 'Ext.data.Model',
+            fields: ["VALUE_NM","VALUE_DS","VALUE_ID"]
+    	});
+    	
+    	var categoriesStore=  Ext.create('Ext.data.Store',{
+    		model: "CategoriesModel",
+    		proxy: {
+    			type: 'ajax',
+    			extraParams : {DOMAIN_TYPE:"CATEGORY_TYPE"},
+    			url:  this.services['getCategories'],
+    			reader: {
+    				type:"json"
+    			}
+    		}
+    	});
+    	categoriesStore.load();
+    	
+    	return categoriesStore;
 	}
 
 });

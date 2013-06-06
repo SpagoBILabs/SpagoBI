@@ -32,7 +32,8 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		modal:true,
 		title: '',
 		buttonAlign : 'center',
-		wizardPanel: null
+		wizardPanel: null,		
+		fieldMap: {}
     } 
    
 	/**
@@ -40,9 +41,9 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 	 */
 	, constructor: function(config) {
 		this.initTabPanel(config);		
-		
 		this.addEvents('cancel',		           
-		  	 		   'navigate');
+		  	 		   'navigate',
+		  	 		   'confirm');
 
 		this.callParent(arguments);
 	}
@@ -52,8 +53,6 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		localConf.items = c.tabs;		
 		localConf.activeTab = 0;
 		this.wizardPanel = Ext.create('Ext.TabPanel', localConf);	
-//		this.wizardPanel.addListener('cancel',	this.navigate, this);
-//		this.wizardPanel.addListener('navigate',this.navigate, this);
 		this.items = [this.wizardPanel];
 	}
 	
@@ -82,26 +81,29 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		 
 	}
 	
-	, createStepFieldsGUI: function(fieldsConf) {
+	, createStepFieldsGUI: function(fieldsConf) {		
+		if (!fieldsConf) return;
+		
 		var fields = [];		
 		
-		if (!fieldsConf) return;
 		
 		for(var i=0; i<fieldsConf.length;i++){
 			var tmpField = this.createWizardField(fieldsConf[i]);
 			fields.push(tmpField);
+			this.fieldMap[fieldsConf[i].name] = tmpField;	
 		}
 		
 		return fields;
 	}
 	
 	, initWizardBar: function() {
+		var thisPanel = this;
 		var buttonsBar = [];
 		buttonsBar.push('->');
 		buttonsBar.push({ id: 'move-prev',
             text: '< Back',
             handler: function(btn) {
-                this.navigate(btn.up("panel"), "prev");
+            	thisPanel.navigate(btn.up("panel"), "prev");
             }, 
             scope: this,
             disabled: true
@@ -110,65 +112,53 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		buttonsBar.push({id: 'move-next',
             text: 'Next >',
             handler: function(btn) {
-                this.navigate(btn.up("panel"), "next");
+            	thisPanel.navigate(btn.up("panel"), "next");
+            }, scope: this
+        	});
+		
+		buttonsBar.push({id: 'confirm',
+            text: 'Confirm',
+            handler: function(){
+            	thisPanel.fireEvent('confirm', this);   
             }, scope: this
         	});
 		
 		buttonsBar.push({id: 'cancel',
             text: 'Cancel',
             handler: function(){
-            	this.fireEvent('cancel', this);   
-//            	this.hide();
+//            	thisPanel.hide();
+            	thisPanel.fireEvent('cancel', this);   
             }, scope: this
         	});
 		return buttonsBar;
 	}
-	
-//	, closePanel: function(){
-//    	if (this.fireEvent('cancel', this) !== false) {
-//            this.close();
-//        }
-//
-//	}
+
 	, createWizardField: function (obj){
 		var tmpField = null;
-		if (obj.values === undefined ||obj.type == 'text' || obj.type == 'textarea'){        			
+		if (obj.type === undefined ||obj.type == 'text' || obj.type == 'textarea'){        			
 			//default is a textarea
 			tmpField = this.createTextField(obj);        		          		
 		}else if (obj.type == 'data'){  
 			//data
 			tmpField = this.createDataField(obj);   
-		}  else if (param.values.type == 'combo'){	
+		}  else if (obj.type == 'combo'){	
 			//combobox     			
 			tmpField = this.createComboField(obj);    			    					 
-		} else if (param.values.type == 'checkList'){
+		} else if (obj.type == 'checkList'){
 			//multivalue management
 			tmpField = this.createCheckListField(obj);    	
 			
-		} else if (param.values.type == 'lookup'){
+		} else if (obj.type == 'lookup'){
 			//singlevalue management
 			tmpField = this.createListField(obj);        			
-  		} else if (param.values.type == 'group'){
+  		} else if (obj.type == 'group'){
 			//group radio management
   			tmpField = this.createRadioGroupField(obj);        			
-  		} else if (param.values.type == 'html'){
-			//group radio management
-  			tmpField = this.createHtml(obj);        			
-  		}
+  		} 
 		
 		return tmpField;
 	}
-	, createHtml: function(f){
-		var field = new Ext.form.TextField({	  		  	  		  	  
-		           width: 500 
-		          , height: 30
-		          , margin: '0 0 0 10'
-		          , labelStyle:'font-weight:bold;' //usare itemCls : <tagstyle>
-		          , value: f.value || ""
-		        });
-		return field;
-	}
-	
+
 	, createTextField: function(f){
 		var field = new Ext.form.TextField({
   		  fieldLabel: f.label 
@@ -196,36 +186,35 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		
 		return field;
 	}
-	/*
+	
 	, createComboField: function(f){
 		
-		var tmpStore = null; 
-		var tmpValueField = 'column_1';
-		var tmpValueText = 'column_2';
+		var tmpStore = f.data; 
+		var tmpValueField = f.value;
+		var tmpValueText = f.description;
 		
-		tmpStore = this.createStore(f.values);
-		
-		if (f.values.datasetLabel){    				
-			tmpStore.load();
-		}
+		//tmpStore = this.createStore(f.values);
+				
 		var field = new Ext.form.ComboBox({
 		    fieldLabel: f.label ,
 		    name: f.name,
-            width: 250,    	    
+            width: 500,    	    
             store: tmpStore,
 	        valueField: tmpValueField,	
 	        displayField: tmpValueText,
 	        mode : 'local',
 	        typeAhead: true,
+	        labelStyle:'font-weight:bold;', 
+	        margin: '0 0 0 10',
 	        emptyText:'Select ...',
 	        selectOnFocus:true,
 	        triggerAction: 'all',
-	        defaultValue: f.defaultValue 
+	        defaultValue: f.defaultValue || ""
 		 });        		 
 		
 		return field;
 	}
-	
+	/*
 	, createCheckListField: function(f){
 		var smLookup = new Ext.grid.CheckboxSelectionModel( {singleSelect: false } );
 		var cmLookup =  new Ext.grid.ColumnModel([
@@ -349,4 +338,27 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		return radioField;
 	}
 */
+	
+	, getFormState: function() {
+    	var state = {};
+		var index = null;
+    	for(f in this.fieldMap) {  
+    		index = f;
+			var tmpField = this.fieldMap[f];
+			var tmpFieldValue = tmpField.getValue();
+			var tmpDefaultValue = tmpField.defaultValue;    	
+			//the field is correctly valorized:
+			if (tmpField.getXTypes().indexOf('/datefield') >= 0){
+				//if it's a date: sets its format
+//    				state[index] = Sbi.console.commons.Format.date(tmpFieldValue , this.dateFormat);
+			}else{	
+				//sets the current value
+				state[index] = tmpFieldValue;
+			}	    		    		 	
+    	}
+    	//alert('state: ' + state.toSource());
+    	return state;
+    }
+	
+	
 });

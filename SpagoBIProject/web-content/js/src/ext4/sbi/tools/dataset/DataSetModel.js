@@ -10,5 +10,6 @@
     fields:["id",
             "label",
             "name",
-            "description"]
+            "description",
+            "catTypeVn"]
 });

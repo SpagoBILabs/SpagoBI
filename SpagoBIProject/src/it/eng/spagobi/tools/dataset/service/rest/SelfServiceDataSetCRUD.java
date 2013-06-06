@@ -27,9 +27,11 @@ import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -68,25 +70,58 @@ public class SelfServiceDataSetCRUD {
 		IDataSetDAO dataSetDao = null;
 		IDomainDAO domaindao = null;
 		List<IDataSet> dataSets;
-		//List<Domain> dialects = null;
+		List<Domain> categories = null;
 		IEngUserProfile profile = (IEngUserProfile) req.getSession()
 				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		JSONObject datasorcesJSON = new JSONObject();
+		JSONObject JSONReturn = new JSONObject();
+		JSONArray datasetsJSONArray = new JSONArray();
 		try {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
-			dataSets = dataSetDao.loadAllActiveDataSets();
-
+			dataSets = dataSetDao.loadAllActiveDataSets();		
+			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
+			
+			//sets action to modify dataset
+			JSONArray actions = new JSONArray();
+			JSONObject detailAction = new JSONObject();
+			detailAction.put("name", "detail");
+			detailAction.put("description", "Dataset detail");
+			actions.put(detailAction);
+			JSONObject deleteAction = new JSONObject();
+			deleteAction.put("name", "delete");
+			deleteAction.put("description", "Delete dataset");
+			actions.put(deleteAction);
+			JSONObject worksheetAction = new JSONObject();
+			worksheetAction.put("name", "worksheet");
+			worksheetAction.put("description", "Show Worksheet");
+			actions.put(worksheetAction);
+			JSONObject geoAction = new JSONObject();
+			geoAction.put("name", "worksheet");
+			geoAction.put("description", "Show Geo");
+			actions.put(geoAction);
+			JSONArray datasetsJSONReturn = new JSONArray();
+	
+			
+			for(int i = 0; i < datasetsJSONArray.length(); i++) {
+				JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);				
+				datasetJSON.put("actions", actions);
+				datasetsJSONReturn.put(datasetJSON);
+			}
 			domaindao = DAOFactory.getDomainDAO();
-			//dialects = domaindao.loadListDomainsByType("DIALECT_HIB");
-
-			datasorcesJSON = serializeDatasets(dataSets);
+			categories = domaindao.loadListDomainsByType("CATEGORY_TYPE");
+			JSONArray categoriesJSONArray = new JSONArray();
+			if (categories != null) {
+				categoriesJSONArray = (JSONArray) SerializerFactory.getSerializer(
+						"application/json").serialize(categories, null);
+				JSONReturn.put("categories", categoriesJSONArray);
+			}
+			JSONReturn.put("root", datasetsJSONReturn);
 
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(
 					"An unexpected error occured while instatiating the dao", t);
 		}
-		return datasorcesJSON.toString();
+		return JSONReturn.toString();
 
 	}
 
@@ -209,12 +244,12 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 	
-	private JSONObject serializeDatasets(List<IDataSet> dataSources) throws SerializationException, JSONException {
+	private JSONObject serializeDatasets(List<IDataSet> dataSets) throws SerializationException, JSONException {
 		JSONObject dataSetsJSON = new JSONObject();
 		JSONArray dataSetsJSONArray = new JSONArray();
-		if (dataSources != null) {
+		if (dataSets != null) {
 			dataSetsJSONArray = (JSONArray) SerializerFactory.getSerializer(
-					"application/json").serialize(dataSources, null);
+					"application/json").serialize(dataSets, null);
 			dataSetsJSON.put("root", dataSetsJSONArray);
 		}
 		return dataSetsJSON;
