@@ -7,12 +7,14 @@ package it.eng.spagobi.tools.dataset.service;
 
 import it.eng.spagobi.commons.SingletonConfig;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 
 
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
 import it.eng.spagobi.utilities.service.IServiceResponse;
@@ -53,11 +55,11 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			if (uploaded == null) {
 				throw new SpagoBIEngineServiceException(getActionName(), "No file was uploaded");
 			}
-			/*	
-			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+				
+			UserProfile userProfile = (UserProfile) this.getUserProfile();
 			logger.info("User [id : " + userProfile.getUserId() + ", name : " + userProfile.getUserName() + "] " +
 					"is uploading file [" + uploaded.getName() + "] with size [" + uploaded.getSize() + "]");
-			*/
+			
 			checkUploadedFile(uploaded);
 			
 			logger.debug("Saving file...");
@@ -148,11 +150,10 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 		logger.debug("IN");
 		try {
 			String fileName = SpagoBIUtilities.getRelativeFileNames(uploaded.getName());
-			//TODO: settare la directory di salvataggio all'interno delle resources, come recuperarlo?
 			SingletonConfig configSingleton = SingletonConfig.getInstance();
 			String path  = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 			String resourcePath= SpagoBIUtilities.readJndiResource(path);
-			File datasetFileDir = new File(resourcePath)	;
+			File datasetFileDir = new File(resourcePath+File.separatorChar+"dataset"+File.separatorChar+"files");
 			File saveTo = new File(datasetFileDir, fileName);
 			// check if the file already exists
 			if (saveTo.exists()){
