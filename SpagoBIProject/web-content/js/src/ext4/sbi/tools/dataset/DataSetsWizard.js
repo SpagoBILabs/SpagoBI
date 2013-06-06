@@ -30,7 +30,6 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		this.fieldsStep1 = [{label:"Label", name:"label", type:"text", value:""}, 
 		                    {label:"Name", name:"name", type:"text", value:""},
 		                    {label:"Description", name:"description", type:"textarea", value:""}];
-		//recuperare dalla response le categorie in formato JSON	
 		this.fieldsStep1.push({label:"Category", name:"category", type:"combo", value:"VALUE_ID", description:"VALUE_DS", data:this.categoriesStore});		                    	
 		
 		this.fieldsStep2 = [{name:"msg", type:"textarea", value:"Work in progress..."}];	

@@ -20,8 +20,6 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.layout='fit';
 		
 		this.callParent(arguments);
-		
-		this.addListener('detail', this.openDetail, this);
 	}
 
 	,
@@ -107,7 +105,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.store = this.store;
 		config.actions = this.actions;
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
-		this.viewPanel.on('detail', this.openDetail(rec), this);
+		this.viewPanel.on('detail', this.openDetail(), this);
 	}
 
 	,
@@ -146,7 +144,9 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	}
 	
 	, openDetail: function(rec){
-		alert("openDetail del dataset Browser!!");
+		if (rec != undefined){
+			alert("openDetail del dataset Browser!! " + rec);
+		}
 	}
 
 });
