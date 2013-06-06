@@ -1,4 +1,4 @@
-package it.eng.spagobi.security.rest;
+package it.eng.spagobi.rest.interceptors;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
@@ -9,7 +9,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 
@@ -46,7 +45,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor{
 	public ServerResponse preProcess(HttpRequest req, ResourceMethod arg1)	throws Failure, WebApplicationException {
 		boolean isTheUserEnabled = false;
 		logger.debug("SecurityServerInterceptor:preProcess IN");
-		String serviceUrl = getServiceUrl(req);
+		String serviceUrl = InterceptorUtilities.getServiceUrl(req);
 		UserProfile profile = (UserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		
 		logger.debug("Checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]");
@@ -72,22 +71,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor{
 		return null;
 	}
 	
-	/**
-	 * Get the url of the services. It removes the path parameters from the url
-	 * @param req 
-	 * @return the url of the service
-	 */
-	private String getServiceUrl(HttpRequest req){
-		String serviceUrl = req.getPreprocessedPath();
-		UriInfo uri = req.getUri();
-		//Remove the path parameters
-		int pathParametersLength = uri.getPathParameters().size();
-		for(int i=0; i<pathParametersLength;i++){
-			int slahPosition = serviceUrl.lastIndexOf("/");
-			serviceUrl = serviceUrl.substring(0,slahPosition);
-		}
-		return serviceUrl;
-	}
+
 
 
 
