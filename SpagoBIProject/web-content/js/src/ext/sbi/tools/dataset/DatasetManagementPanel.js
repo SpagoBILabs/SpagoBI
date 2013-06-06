@@ -162,165 +162,180 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 	qbeDataSetBuilder: null,
 	customDataGrid: null
 
-	, modifyToolbar : function(tabpanel, panel){
-					var itemId = panel.getItemId();
-					if(itemId !== undefined && itemId !== null && itemId === 'type'){
-						this.tbInfoButton.show();
-						this.tbProfAttrsButton.show();
-						this.tbTransfInfoButton.hide();
-						this.tbPersistInfoButton.hide();
-					}else if(itemId !== undefined && itemId !== null && itemId === 'transf'){
-						this.tbTransfInfoButton.show();
-						this.tbInfoButton.hide();
-						this.tbProfAttrsButton.hide();
-						this.tbPersistInfoButton.hide();
-					}else if(itemId !== undefined && itemId !== null && itemId === 'advanced'){
-						this.tbTransfInfoButton.hide();
-						this.tbInfoButton.hide();
-						this.tbProfAttrsButton.hide();
-						this.tbPersistInfoButton.show();
-					}else{
-						this.tbInfoButton.hide();
-						this.tbProfAttrsButton.hide();
-						this.tbTransfInfoButton.hide();
-						this.tbPersistInfoButton.hide();
-					}	
-				}
-							
-				,activateTransfForm : function(combo, record, index) {
-					var transfSelected = record.get('trasfTypeCd');
-					if (transfSelected != null
-							&& transfSelected == 'PIVOT_TRANSFOMER') {
-						this.trasfDetail.setVisible(true);
-					} else {
-						this.trasfDetail.setVisible(false);
-					}
-				}
-				
-				//extjs4: ,activatePersistForm : function(check, newValue, oldValue, opts) {
-				,activatePersistForm : function(check, checked) {					
-					//var persistSelected = newValue;
-					var persistSelected = checked;
-					if (persistSelected != null && persistSelected == true) {
-						this.persistDetail.setVisible(true);
-					} else {						
-						this.persistDetail.setVisible(false);
-					}
-				}
-				
-				//extjs4: ,activateFlatForm : function(check, newValue, oldValue, opts) {
-				,activateFlatForm : function(check, checked) {
-					//var flatSelected = newValue;
-					var flatSelected = checked;
-					if (flatSelected != null && flatSelected == true) {
-						this.flatDetail.setVisible(true);
-					} else {
-						this.flatDetail.setVisible(false);
-					}
-				}
+	,
+	modifyToolbar : function(tabpanel, panel) {
+		var itemId = panel.getItemId();
+		if (itemId !== undefined && itemId !== null && itemId === 'type') {
+			this.tbInfoButton.show();
+			this.tbProfAttrsButton.show();
+			this.tbTransfInfoButton.hide();
+			this.tbPersistInfoButton.hide();
+		} else if (itemId !== undefined && itemId !== null && itemId === 'transf') {
+			this.tbTransfInfoButton.show();
+			this.tbInfoButton.hide();
+			this.tbProfAttrsButton.hide();
+			this.tbPersistInfoButton.hide();
+		} else if (itemId !== undefined && itemId !== null && itemId === 'advanced') {
+			this.tbTransfInfoButton.hide();
+			this.tbInfoButton.hide();
+			this.tbProfAttrsButton.hide();
+			this.tbPersistInfoButton.show();
+		} else {
+			this.tbInfoButton.hide();
+			this.tbProfAttrsButton.hide();
+			this.tbTransfInfoButton.hide();
+			this.tbPersistInfoButton.hide();
+		}
+	}
 
-				,activateDsTestTab : function(panel) {
-					if (panel) {
-						var record = this.rowselModel.getSelected();
-						if (record) {
-							var dsParsList = this.manageParsGrid
-									.getParsArray();
-							this.parsGrid.fillParameters(dsParsList);
+	,
+	activateTransfForm : function(combo, record, index) {
+		var transfSelected = record.get('trasfTypeCd');
+		if (transfSelected != null && transfSelected == 'PIVOT_TRANSFOMER') {
+			this.trasfDetail.setVisible(true);
+		} else {
+			this.trasfDetail.setVisible(false);
+		}
+	}
+
+	
+					// extjs4: ,activatePersistForm : function(check, newValue,
+					// oldValue, opts) {
+					,
+					activatePersistForm : function(check, checked) {
+						// var persistSelected = newValue;
+						var persistSelected = checked;
+						if (persistSelected != null && persistSelected == true) {
+							this.persistDetail.setVisible(true);
+						} else {
+							this.persistDetail.setVisible(false);
 						}
 					}
-				}
-				,activateDsVersionsGrid : function(combo, record, index) {
-					var dsVersionsList = record.get('dsVersions');
-					this.manageDsVersionsGrid.loadItems(dsVersionsList);
-				}
 
-				,activateDsTypeForm : function(combo, record, index) {
-
-					var dsTypeSelected = record.get('dsTypeCd');
-					if (dsTypeSelected != null && dsTypeSelected == 'File') {
-						this.fileDetail.setVisible(true);
-						this.queryDetail.setVisible(false);
-						this.jClassDetail.setVisible(false);
-						this.scriptDetail.setVisible(false);
-						this.customDataDetail.setVisible(false);
-						this.WSDetail.setVisible(false);
-						this.qbeQueryDetail.setVisible(false);
-					} else if (dsTypeSelected != null && dsTypeSelected == 'Query') {
-						this.fileDetail.setVisible(false);
-						this.queryDetail.setVisible(true);
-						this.jClassDetail.setVisible(false);
-						this.customDataDetail.setVisible(false);
-						this.scriptDetail.setVisible(false);
-						this.WSDetail.setVisible(false);
-						this.qbeQueryDetail.setVisible(false);
-					} else if (dsTypeSelected != null && dsTypeSelected == 'Java Class') {
-						this.fileDetail.setVisible(false);
-						this.queryDetail.setVisible(false);
-						this.jClassDetail.setVisible(true);
-						this.customDataDetail.setVisible(false);
-						this.scriptDetail.setVisible(false);
-						this.WSDetail.setVisible(false);
-						this.qbeQueryDetail.setVisible(false);
-					} else if (dsTypeSelected != null && dsTypeSelected == 'Web Service') {
-						this.fileDetail.setVisible(false);
-						this.queryDetail.setVisible(false);
-						this.customDataDetail.setVisible(false);
-						this.jClassDetail.setVisible(false);
-						this.scriptDetail.setVisible(false);
-						this.WSDetail.setVisible(true);
-						this.qbeQueryDetail.setVisible(false);
-					} else if (dsTypeSelected != null && dsTypeSelected == 'Script') {
-						this.fileDetail.setVisible(false);
-						this.queryDetail.setVisible(false);
-						this.jClassDetail.setVisible(false);
-						this.customDataDetail.setVisible(false);
-						this.scriptDetail.setVisible(true);
-						this.WSDetail.setVisible(false);
-						this.qbeQueryDetail.setVisible(false);
-					} else if (dsTypeSelected != null && dsTypeSelected == 'Qbe') {
-						this.fileDetail.setVisible(false);
-						this.queryDetail.setVisible(false);
-						this.jClassDetail.setVisible(false);
-						this.customDataDetail.setVisible(false);
-						this.scriptDetail.setVisible(false);
-						this.WSDetail.setVisible(false);
-						this.qbeQueryDetail.setVisible(true);
-					} else if (dsTypeSelected != null && dsTypeSelected == 'Custom') {
-						this.fileDetail.setVisible(false);
-						this.queryDetail.setVisible(false);
-						this.jClassDetail.setVisible(false);
-						this.scriptDetail.setVisible(false);
-						this.WSDetail.setVisible(false);
-						this.qbeQueryDetail.setVisible(false);
-						this.customDataDetail.setVisible(true);
-					} else if (dsTypeSelected != null || dsTypeSelected == '') {
-						this.fileDetail.setVisible(false);
-						this.queryDetail.setVisible(false);
-						this.jClassDetail.setVisible(false);
-						this.scriptDetail.setVisible(false);
-						this.WSDetail.setVisible(false);
-						this.qbeQueryDetail.setVisible(false);
-						this.customDataDetail.setVisible(false);
-					}
-					
-					var dsParsList = record.get('pars');
-					if(dsParsList!=null && dsParsList!= undefined){
-						this.manageParsGrid.loadItems(dsParsList);
-					}else{
-						this.manageParsGrid.loadItems([]);
+					// extjs4: ,activateFlatForm : function(check, newValue,
+					// oldValue, opts) {
+					,
+					activateFlatForm : function(check, checked) {
+						// var flatSelected = newValue;
+						var flatSelected = checked;
+						if (flatSelected != null && flatSelected == true) {
+							this.flatDetail.setVisible(true);
+						} else {
+							this.flatDetail.setVisible(false);
+						}
 					}
 
-					if(record && record.json){
-					var dsCustomList = record.json.customs;
-					if(dsCustomList!=null && dsCustomList!= undefined){
-						this.customDataGrid.loadItems(dsCustomList);
-					}else{
-						this.customDataGrid.loadItems([]);
-					}
+					,
+					activateDsTestTab : function(panel) {
+						if (panel) {
+							var record = this.rowselModel.getSelected();
+							if (record) {
+								var dsParsList = this.manageParsGrid
+										.getParsArray();
+								this.parsGrid.fillParameters(dsParsList);
+							}
+						}
+					},
+					activateDsVersionsGrid : function(combo, record, index) {
+						var dsVersionsList = record.get('dsVersions');
+						this.manageDsVersionsGrid.loadItems(dsVersionsList);
 					}
 
-					
-				}
+					,
+					activateDsTypeForm : function(combo, record, index) {
+
+						var dsTypeSelected = record.get('dsTypeCd');
+						if (dsTypeSelected != null && dsTypeSelected == 'File') {
+							this.fileDetail.setVisible(true);
+							this.queryDetail.setVisible(false);
+							this.jClassDetail.setVisible(false);
+							this.scriptDetail.setVisible(false);
+							this.customDataDetail.setVisible(false);
+							this.WSDetail.setVisible(false);
+							this.qbeQueryDetail.setVisible(false);
+						} else if (dsTypeSelected != null
+								&& dsTypeSelected == 'Query') {
+							this.fileDetail.setVisible(false);
+							this.queryDetail.setVisible(true);
+							this.jClassDetail.setVisible(false);
+							this.customDataDetail.setVisible(false);
+							this.scriptDetail.setVisible(false);
+							this.WSDetail.setVisible(false);
+							this.qbeQueryDetail.setVisible(false);
+						} else if (dsTypeSelected != null
+								&& dsTypeSelected == 'Java Class') {
+							this.fileDetail.setVisible(false);
+							this.queryDetail.setVisible(false);
+							this.jClassDetail.setVisible(true);
+							this.customDataDetail.setVisible(false);
+							this.scriptDetail.setVisible(false);
+							this.WSDetail.setVisible(false);
+							this.qbeQueryDetail.setVisible(false);
+						} else if (dsTypeSelected != null
+								&& dsTypeSelected == 'Web Service') {
+							this.fileDetail.setVisible(false);
+							this.queryDetail.setVisible(false);
+							this.customDataDetail.setVisible(false);
+							this.jClassDetail.setVisible(false);
+							this.scriptDetail.setVisible(false);
+							this.WSDetail.setVisible(true);
+							this.qbeQueryDetail.setVisible(false);
+						} else if (dsTypeSelected != null
+								&& dsTypeSelected == 'Script') {
+							this.fileDetail.setVisible(false);
+							this.queryDetail.setVisible(false);
+							this.jClassDetail.setVisible(false);
+							this.customDataDetail.setVisible(false);
+							this.scriptDetail.setVisible(true);
+							this.WSDetail.setVisible(false);
+							this.qbeQueryDetail.setVisible(false);
+						} else if (dsTypeSelected != null
+								&& dsTypeSelected == 'Qbe') {
+							this.fileDetail.setVisible(false);
+							this.queryDetail.setVisible(false);
+							this.jClassDetail.setVisible(false);
+							this.customDataDetail.setVisible(false);
+							this.scriptDetail.setVisible(false);
+							this.WSDetail.setVisible(false);
+							this.qbeQueryDetail.setVisible(true);
+						} else if (dsTypeSelected != null
+								&& dsTypeSelected == 'Custom') {
+							this.fileDetail.setVisible(false);
+							this.queryDetail.setVisible(false);
+							this.jClassDetail.setVisible(false);
+							this.scriptDetail.setVisible(false);
+							this.WSDetail.setVisible(false);
+							this.qbeQueryDetail.setVisible(false);
+							this.customDataDetail.setVisible(true);
+						} else if (dsTypeSelected != null
+								|| dsTypeSelected == '') {
+							this.fileDetail.setVisible(false);
+							this.queryDetail.setVisible(false);
+							this.jClassDetail.setVisible(false);
+							this.scriptDetail.setVisible(false);
+							this.WSDetail.setVisible(false);
+							this.qbeQueryDetail.setVisible(false);
+							this.customDataDetail.setVisible(false);
+						}
+
+						var dsParsList = record.get('pars');
+						if (dsParsList != null && dsParsList != undefined) {
+							this.manageParsGrid.loadItems(dsParsList);
+						} else {
+							this.manageParsGrid.loadItems([]);
+						}
+
+						if (record && record.json) {
+							var dsCustomList = record.json.customs;
+							if (dsCustomList != null
+									&& dsCustomList != undefined) {
+								this.customDataGrid.loadItems(dsCustomList);
+							} else {
+								this.customDataGrid.loadItems([]);
+							}
+						}
+
+					}
 
 				,test : function(button, event, service) {
 					var values = this.getValues();
@@ -658,8 +673,14 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							});
 				}
 				
+				
+				
+				
+				
+				
+				
 				,initTypeTab : function() {
-					// DataSource Store types combobox
+					
 					this.dsTypesStore = new Ext.data.SimpleStore({
 						fields : [ 'dsTypeCd' ],
 						data : config.dsTypes,
@@ -695,127 +716,13 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						allowBlank : false, validationEvent : true
 					});
 					detailDsType.addListener('select',this.activateDsTypeForm, this);
-					/*
-					this.fileNamesStore = new Ext.data.SimpleStore({
-						fields : ['fileName'],
-						data : config.fileTypes,
-						autoLoad : false
-					});
-					
-					this.detailFileName = new Ext.form.ComboBox({
-						name : 'fileName',
-						store : this.fileNamesStore,
-						width : 350,
-						fieldLabel : LN('sbi.ds.fileName'),
-						displayField : 'fileName', 
-						valueField : 'fileName', 
-						typeAhead : true, forceSelection : true,
-						mode : 'local',
-						triggerAction : 'all',
-						selectOnFocus : true, editable : false,
-						allowBlank : false, validationEvent : true
-					});
-					*/
-					
-					/////// File Dataset Management
-				
-					/*
-					this.fileTypeCombo = new Ext.form.ComboBox({
-						name : 'fileType',
-						store: new Ext.data.ArrayStore({
-					        id: 0,
-					        fields: [
-					            'fileTypeName',
-					            'fileTypeValue'
-					        ],
-					        data: [['CSV', 'CSV'], ['Excel 2007', 'XLSX']]
-					    }),
-						width : 150,
-						fieldLabel : LN('sbi.ds.fileType'),
-						displayField : 'fileTypeName', 
-						valueField : 'fileTypeValue', 
-						typeAhead : true, forceSelection : true,
-						mode : 'local',
-						triggerAction : 'all',
-						selectOnFocus : true, editable : false,
-						allowBlank : false, validationEvent : true
-					});
-					
-					this.uploadField = new Ext.form.TextField({
-						inputType : 'file',
-						fieldLabel : LN('sbi.generic.upload'),
-						allowBlank : true
-					});
-					*/
+			
 					this.fileUploadFormPanel = new Sbi.tools.dataset.FileDatasetPanel();
 					var uploadButton = this.fileUploadFormPanel.getComponent('fileUploadPanel').getComponent('fileUploadButton');
 					
 					uploadButton.setHandler(this.uploadFileButtonHandler);
 					
-					//Internal Form Panel for file upload 
-					/*
-					this.fileUploadFormPanel = new Ext.FormPanel({
-						border: false,
-						columnWidth: 0.8,
-						fileUpload: true,
-						items: [this.uploadField]
-					});				
-					
-					//Panel with the load file field
-					this.loadFileBrows = new Ext.Panel({
-						height: 45,
-						layout:'column',
-						frame: true,
-						header: false,
-						border: false,
-						padding: '5 5 5 5',
-						items: [
-							        this.fileUploadFormPanel ,
-							        {
-							        	xtype:          'button',
-							        	border: 		false,
-							        	handler:		this.uploadFileButtonHandler,
-							        	columnWidth:	0.1,
-							        	scope: 			this,
-							        	style:			'padding-left: 5px',
-							        	text: 			'upload'
-							        }
-						        ]
-					});
-					
-					this.csvSeparatorField = new Ext.form.TextField({
-						maxLength : 1, minLength : 1,
-						width : 50,
-						regexText : LN('sbi.roles.alfanumericString'),
-						fieldLabel : LN('sbi.ds.csvSeparator'),
-						allowBlank : false, validationEvent : true,
-						name : 'csvSeparator'
-					});
-					
-					
-					this.fileTypeOptionsDetail = new Ext.form.FieldSet(
-					{
-						labelWidth : 80,
-						defaults : {
-						//width : 280,
-						border : true
-						},
-						defaultType : 'textfield',
-						autoHeight : true,
-						autoScroll : true,
-						border : true,
-						style : {
-									"margin-left" : "3px",
-									"margin-top" : "0px",
-									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
-											: "-5px")
-											: "3px"
-								},
-						items : [ this.csvSeparatorField]
-					});
-					*/
-					////////////////////////////////////////////////////////
-					
+				
 
 					this.detailDataSource = new Ext.form.ComboBox({
 						name : 'dataSource',
@@ -1078,19 +985,18 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								items : [ this.detailJclassName, this.customDataGrid ]
 							});
 
-					this.fileDetail = new Ext.form.FieldSet(
-							{
-								labelWidth : 80,
-								defaults : {
-									//width : 280,
-									border : true
-								},
-								defaultType : 'textfield',
-								autoHeight : true,
-								autoScroll : true,
-								border : true,
-								items : [ this.fileUploadFormPanel ]
-							});
+						this.fileDetail = new Ext.form.FieldSet({
+							labelWidth : 80,
+							defaults : {
+								// width : 280,
+								border : true
+							},
+							defaultType : 'textfield',
+							autoHeight : true,
+							autoScroll : true,
+							border : true,
+							items : [ this.fileUploadFormPanel ]
+						});
 
 					this.WSDetail = new Ext.form.FieldSet(
 							{
@@ -1187,6 +1093,18 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								}
 							});
 				}
+
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
 				
 				//handler for the upload file button
 				,uploadFileButtonHandler: function(btn, e) {
