@@ -679,6 +679,21 @@ Sbi.locale.ln['sbi.ds.isPersisted'] = 'Persist';
 Sbi.locale.ln['sbi.ds.flat'] = 'Configuration flat dataset';
 Sbi.locale.ln['sbi.ds.isFlatDataset'] = 'Flat dataset';
 Sbi.locale.ln['sbi.ds.flatTableName'] = 'Table name';
+Sbi.locale.ln['sbi.ds.saved']= 'Data set correctly saved';
+Sbi.locale.ln['sbi.ds.deleted']= 'Data set correctly deleted';
+Sbi.locale.ln['sbi.ds.wizard']= 'Dataset Wizard';
+Sbi.locale.ln['sbi.ds.label']= 'Label';
+Sbi.locale.ln['sbi.ds.name']= 'Name';
+Sbi.locale.ln['sbi.ds.description']= 'Description';
+Sbi.locale.ln['sbi.ds.wizard.general']= 'General';
+Sbi.locale.ln['sbi.ds.wizard.detail']= 'Detail';
+Sbi.locale.ln['sbi.ds.wizard.metadata']= 'Metadata';
+Sbi.locale.ln['sbi.ds.wizard.back']= '< Back';
+Sbi.locale.ln['sbi.ds.wizard.next']= 'Next >';
+Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Confirm';
+Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Cancel';
+Sbi.locale.ln['sbi.ds.noDataset']= 'No datasets available';
+
 
 //===================================================================
 //MESSAGE BOX BUTTONS

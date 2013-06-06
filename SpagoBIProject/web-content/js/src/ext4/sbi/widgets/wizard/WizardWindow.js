@@ -87,9 +87,11 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		var fields = [];		
 		
 		
-		for(var i=0; i<fieldsConf.length;i++){
-			var tmpField = this.createWizardField(fieldsConf[i]);
-			fields.push(tmpField);
+		for(var i=0; i<fieldsConf.length;i++){			
+			var tmpField = this.createWizardField(fieldsConf[i]);			
+			if (fieldsConf[i].hidden == undefined || fieldsConf[i].hidden == "false"){
+				fields.push(tmpField);
+			}
 			this.fieldMap[fieldsConf[i].name] = tmpField;	
 		}
 		
@@ -101,7 +103,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		var buttonsBar = [];
 		buttonsBar.push('->');
 		buttonsBar.push({ id: 'move-prev',
-            text: '< Back',
+            text: LN('sbi.ds.wizard.back'),
             handler: function(btn) {
             	thisPanel.navigate(btn.up("panel"), "prev");
             }, 
@@ -110,21 +112,21 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
         });
 		
 		buttonsBar.push({id: 'move-next',
-            text: 'Next >',
+            text:  LN('sbi.ds.wizard.next'),
             handler: function(btn) {
             	thisPanel.navigate(btn.up("panel"), "next");
             }, scope: this
         	});
 		
 		buttonsBar.push({id: 'confirm',
-            text: 'Confirm',
+            text:  LN('sbi.ds.wizard.confirm'),
             handler: function(){
             	thisPanel.fireEvent('confirm', this);   
             }, scope: this
         	});
 		
 		buttonsBar.push({id: 'cancel',
-            text: 'Cancel',
+            text:  LN('sbi.ds.wizard.cancel'),
             handler: function(){
 //            	thisPanel.hide();
             	thisPanel.fireEvent('cancel', this);   
@@ -165,8 +167,10 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
   		  	  , name: f.name
 	          , width: 500 
 	          , height: (f.type == 'textarea')?80:30
+//	          , vertical-align:top
 			  , xtype : 'textarea'
 	          , margin: '0 0 0 10'
+	          , readOnly: f.readOnly || false
 	          , labelStyle:'font-weight:bold;' //usare itemCls : <tagstyle>
 	          , value: f.value || f.defaultValue || ""
 	        });
@@ -190,8 +194,8 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 	, createComboField: function(f){
 		
 		var tmpStore = f.data; 
-		var tmpValueField = f.value;
-		var tmpValueText = f.description;
+		var tmpValueField = f.valueCol;
+		var tmpValueText = f.descCol;
 		
 		//tmpStore = this.createStore(f.values);
 				
@@ -209,7 +213,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 	        emptyText:'Select ...',
 	        selectOnFocus:true,
 	        triggerAction: 'all',
-	        defaultValue: f.defaultValue || ""
+	        value: f.value
 		 });        		 
 		
 		return field;
@@ -356,7 +360,6 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 				state[index] = tmpFieldValue;
 			}	    		    		 	
     	}
-    	//alert('state: ' + state.toSource());
     	return state;
     }
 	

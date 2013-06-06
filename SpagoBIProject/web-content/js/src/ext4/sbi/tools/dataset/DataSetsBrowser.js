@@ -20,6 +20,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.layout='fit';
 		
 		this.callParent(arguments);
+
 	}
 
 	,
@@ -30,8 +31,16 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams : baseParams
 		});
 		this.services["getCategories"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-			serviceName: 'domains/listValueDescriptionByType'
-				, baseParams: baseParams
+			serviceName: 'domains/listValueDescriptionByType',
+			baseParams: baseParams
+		});
+		this.services["save"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'selfservicedataset/save',
+			baseParams: baseParams
+		});
+		this.services["delete"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'selfservicedataset/delete',
+			baseParams: baseParams
 		});
 	}
 	
@@ -105,7 +114,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.store = this.store;
 		config.actions = this.actions;
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
-		this.viewPanel.on('detail', this.openDetail(), this);
+		this.viewPanel.on('detail', this.modifyDataset, this);
+		this.viewPanel.on('delete', this.deleteDataset, this);
 	}
 
 	,
@@ -113,13 +123,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		Sbi.widgets.dataview.DataViewPanel.superclass.onRender.call(this, opt);
 	}
 
-	,
-	addNewDataset : function() {		 
-		var config =  {};
-		config.categoriesStore = this.categoriesStore;
-		this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',config);		
-    	this.wizardWin.show();
-	}
+	
 	
 	, createCategoriesStore: function(){
 		Ext.define("CategoriesModel", {
@@ -143,10 +147,81 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
     	return categoriesStore;
 	}
 	
-	, openDetail: function(rec){
+	,
+	addNewDataset : function() {		 
+		var config =  {};
+		config.categoriesStore = this.categoriesStore;
+		config.isNew = true;
+		this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',config);	
+		this.wizardWin.on('save', this.saveDataset, this);
+    	this.wizardWin.show();
+	}
+	
+	, 
+	modifyDataset: function(rec){
 		if (rec != undefined){
-			alert("openDetail del dataset Browser!! " + rec);
+			var config =  {};
+			config.categoriesStore = this.categoriesStore;
+			config.record = rec;
+			config.isNew = false;
+			this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',config);	
+			this.wizardWin.on('save', this.saveDataset, this);
+			this.viewPanel.on('delete', this.deleteDataset, this);
+	    	this.wizardWin.show();
 		}
+	}
+	
+	,
+	saveDataset: function(values){
+		Ext.Ajax.request({
+			url: this.services["save"],
+			params: values,
+			success : function(response, options) {
+				if(response !== undefined && response.statusText !== undefined) {
+					var responceText = Ext.decode(response.responseText);
+					if(responceText.errors){
+						Sbi.exception.ExceptionHandler.showErrorMessage(responceText.error, 'Service Error');
+					}else{
+						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.saved'));
+					}
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
+			},
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure      
+		});
+	}
+	
+	,
+	deleteDataset: function(values){
+		Ext.MessageBox.confirm(
+				LN('sbi.generic.pleaseConfirm'),
+				LN('sbi.generic.confirmDelete'),
+				function(btn, text){
+					if (btn=='yes') {
+						Ext.Ajax.request({
+							url: this.services["delete"],
+							params: values,
+							success : function(response, options) {
+								if(response !== undefined && response.statusText !== undefined) {
+									var responceText = Ext.decode(response.responseText);
+									if(responceText.errors){
+										Sbi.exception.ExceptionHandler.showErrorMessage(responceText.error, 'Service Error');
+									}else{
+										Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.deleted'));
+									}
+								} else {
+									Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+								}
+							},
+							scope: this,
+							failure: Sbi.exception.ExceptionHandler.handleFailure      
+						})
+					}
+				},
+				this
+			);
 	}
 
 });
