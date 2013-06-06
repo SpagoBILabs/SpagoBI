@@ -91,14 +91,14 @@ public class SelfServiceDataSetCRUD {
 			deleteAction.put("name", "delete");
 			deleteAction.put("description", "Delete dataset");
 			actions.put(deleteAction);
-			JSONObject worksheetAction = new JSONObject();
-			worksheetAction.put("name", "worksheet");
-			worksheetAction.put("description", "Show Worksheet");
-			actions.put(worksheetAction);
-			JSONObject geoAction = new JSONObject();
-			geoAction.put("name", "worksheet");
-			geoAction.put("description", "Show Geo");
-			actions.put(geoAction);
+//			JSONObject worksheetAction = new JSONObject();
+//			worksheetAction.put("name", "worksheet");
+//			worksheetAction.put("description", "Show Worksheet");
+//			actions.put(worksheetAction);
+//			JSONObject geoAction = new JSONObject();
+//			geoAction.put("name", "worksheet");
+//			geoAction.put("description", "Show Geo");
+//			actions.put(geoAction);
 			JSONArray datasetsJSONReturn = new JSONArray();
 	
 			
@@ -107,6 +107,7 @@ public class SelfServiceDataSetCRUD {
 				datasetJSON.put("actions", actions);
 				datasetsJSONReturn.put(datasetJSON);
 			}
+			/*categories are getted with domains/listValueDescriptionByType service
 			domaindao = DAOFactory.getDomainDAO();
 			categories = domaindao.loadListDomainsByType("CATEGORY_TYPE");
 			JSONArray categoriesJSONArray = new JSONArray();
@@ -115,7 +116,10 @@ public class SelfServiceDataSetCRUD {
 						"application/json").serialize(categories, null);
 				JSONReturn.put("categories", categoriesJSONArray);
 			}
+			*/
+
 			JSONReturn.put("root", datasetsJSONReturn);
+
 
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(
