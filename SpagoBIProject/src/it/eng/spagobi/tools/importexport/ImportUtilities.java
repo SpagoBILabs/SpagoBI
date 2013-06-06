@@ -1609,7 +1609,7 @@ public class ImportUtilities {
 		SbiDomains existDom = (SbiDomains) importer.checkExistence(unique, sessionCurrDB, new SbiDomains());
 		newDataset.setType(existDom.getValueDs());
 	
-		if(exportedDataset.getType().equalsIgnoreCase(DataSetConstants.QUERY)) { 
+		if(exportedDataset.getType().equalsIgnoreCase(DataSetConstants.QUERY) || exportedDataset.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)) { 
 			String config = JSONUtils.escapeJsonString(newDataset.getConfiguration());		
 			JSONObject jsonConf  = ObjectUtils.toJSONObject(config);	
 			//SbiDataSet queryDataSet = (SbiDataSet) dsHistory;

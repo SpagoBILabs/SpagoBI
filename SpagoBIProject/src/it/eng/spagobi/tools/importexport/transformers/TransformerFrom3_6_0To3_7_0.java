@@ -48,6 +48,8 @@ public class TransformerFrom3_6_0To3_7_0 implements ITransformer {
 			conn = TransformersUtilities.getConnectionToDatabase(pathImpTmpFolder, archiveName);
 			fixAnalyticaDrivers(conn);
 			fixParuses(conn);
+			fixModels(conn);
+			
 			conn.commit();
 		} catch (Exception e) {
 			logger.error("Error while changing database", e);	
@@ -101,6 +103,131 @@ public class TransformerFrom3_6_0To3_7_0 implements ITransformer {
 		}
 		logger.debug("OUT");
 	}
+	
+	
+	private void fixModels(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {				
+			sql = "CREATE MEMORY TABLE SBI_META_MODELS ("+
+					" ID                   INTEGER NOT NULL,"+
+					" NAME                 VARCHAR(100) NOT NULL,"+
+					" DESCR                VARCHAR(500) NULL,"+
+					" USER_IN              VARCHAR(100) NOT NULL,"+
+					" USER_UP              VARCHAR(100),"+
+					" USER_DE              VARCHAR(100),"+
+					" TIME_IN              TIMESTAMP NOT NULL,"+
+					" TIME_UP              TIMESTAMP DEFAULT NULL,"+
+					" TIME_DE              TIMESTAMP DEFAULT NULL,"+
+					" SBI_VERSION_IN       VARCHAR(10),"+
+					" SBI_VERSION_UP       VARCHAR(10),"+
+					" SBI_VERSION_DE       VARCHAR(10),"+
+					" META_VERSION         VARCHAR(100),"+
+					" ORGANIZATION         VARCHAR(20),"+
+					" CONSTRAINT XAK1SBI_META_MODELS UNIQUE (NAME, ORGANIZATION),"+
+					" PRIMARY KEY (ID))";
+			stmt.execute(sql);
+		} catch (Exception e) {
+			logger.error(
+					"Error creating table SBI_META_MODELS in export DB",
+					e);
+		}
+		
+		stmt = conn.createStatement();
+		sql = "";
+		try {				
+			sql = "CREATE MEMORY TABLE SBI_META_MODELS_VERSIONS ("+
+        " ID                   INTEGER NOT NULL,"+
+					" MODEL_ID             INTEGER NOT NULL,"+
+					" CONTENT              LONGVARBINARY NOT NULL,"+
+					" NAME                 VARCHAR(100),  "+
+					" PROG                 INTEGER,"+
+					" CREATION_DATE        TIMESTAMP DEFAULT NULL,"+
+					" CREATION_USER        VARCHAR(50) NOT NULL, "+
+					" ACTIVE               BOOLEAN, "+
+					" USER_IN              VARCHAR(100) NOT NULL,"+
+					" USER_UP              VARCHAR(100),"+
+					" USER_DE              VARCHAR(100),"+
+					" TIME_IN              TIMESTAMP NOT NULL,"+
+					" TIME_UP              TIMESTAMP DEFAULT NULL,"+
+					" TIME_DE              TIMESTAMP DEFAULT NULL,"+
+					" SBI_VERSION_IN       VARCHAR(10),"+
+					" SBI_VERSION_UP       VARCHAR(10),"+
+					" SBI_VERSION_DE       VARCHAR(10),"+
+					" META_VERSION         VARCHAR(100),"+
+					" ORGANIZATION         VARCHAR(20),"+
+					" PRIMARY KEY (ID))";
+			stmt.execute(sql);
+		} catch (Exception e) {
+			logger.error(
+					"Error creating table TABLE SBI_META_MODELS_VERSIONS in export DB",
+					e);
+		}
+		
+		stmt = conn.createStatement();
+		sql = "";
+		try {				
+			sql = "CREATE MEMORY TABLE SBI_ARTIFACTS ("+
+					" ID                   INTEGER NOT NULL,"+
+					" NAME                 VARCHAR(100) NOT NULL,"+
+					" DESCR                VARCHAR(500) NULL,"+
+					" TYPE                 VARCHAR(50) NULL,"+
+					" USER_IN              VARCHAR(100) NOT NULL,"+
+					" USER_UP              VARCHAR(100),"+
+					" USER_DE              VARCHAR(100),"+
+					"  TIME_IN              TIMESTAMP NOT NULL,"+
+					"  TIME_UP              TIMESTAMP DEFAULT NULL,"+
+					" TIME_DE              TIMESTAMP DEFAULT NULL,"+
+					" SBI_VERSION_IN       VARCHAR(10),"+
+					" SBI_VERSION_UP       VARCHAR(10),"+
+					" SBI_VERSION_DE       VARCHAR(10),"+
+					" META_VERSION         VARCHAR(100),"+
+					" ORGANIZATION         VARCHAR(20),"+
+					" CONSTRAINT XAK1SBI_ARTIFACTS UNIQUE (NAME, TYPE, ORGANIZATION),"+	
+					"  PRIMARY KEY (ID))";
+			stmt.execute(sql);
+		} catch (Exception e) {
+			logger.error(
+					"Error creating table TABLE SBI_ARTIFACTS in export DB",
+					e);
+		}
+		
+		stmt = conn.createStatement();
+		sql = "";
+		try {				
+			sql = "CREATE MEMORY TABLE SBI_ARTIFACTS_VERSIONS ("+
+					" ID                 	INTEGER NOT NULL,"+
+					" ARTIFACT_ID          INTEGER NOT NULL,"+
+					" CONTENT              LONGVARBINARY NOT NULL,"+
+					" NAME                 VARCHAR(100),  "+
+					" PROG                 INTEGER,"+
+					" CREATION_DATE        TIMESTAMP DEFAULT NULL,"+
+					" CREATION_USER        VARCHAR(50) NOT NULL, "+
+					" ACTIVE               BOOLEAN, "+
+					" USER_IN              VARCHAR(100) NOT NULL,"+
+					" USER_UP              VARCHAR(100),"+
+					" USER_DE              VARCHAR(100),"+
+					" TIME_IN              TIMESTAMP NOT NULL,"+
+					" TIME_UP              TIMESTAMP DEFAULT NULL,"+
+					" TIME_DE              TIMESTAMP DEFAULT NULL,"+
+					" SBI_VERSION_IN       VARCHAR(10),"+
+					" SBI_VERSION_UP       VARCHAR(10),"+
+					" SBI_VERSION_DE       VARCHAR(10),"+
+					" META_VERSION         VARCHAR(100),"+
+					" ORGANIZATION         VARCHAR(20),"+
+					" PRIMARY KEY (ID))";
+
+			stmt.execute(sql);
+		} catch (Exception e) {
+			logger.error(
+					"Error creating table TABLE SBI_ARTIFACTS in export DB",
+					e);
+		}
+		
+		logger.debug("OUT");
+	}
+	
 	
 
 }
