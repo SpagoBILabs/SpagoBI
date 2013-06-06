@@ -11,5 +11,6 @@
             "label",
             "name",
             "description",
-            "catTypeVn"]
+            "catTypeVn",
+            "actions"]
 });

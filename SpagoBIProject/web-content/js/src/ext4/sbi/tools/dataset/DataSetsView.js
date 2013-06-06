@@ -80,9 +80,10 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		Ext.apply(this, config || {});
 		
 		this.itemSelector = 'dd';
-		this.overClass = 'over';
+		//this.overClass = 'over';
 		this.trackOver = true;
-		this.overItemCls = 'x-item-over';
+		//this.overItemCls = 'x-item-over';
+		this.overItemCls = 'over';
 		this.frame = true;
 		this.emptyText = 'No datasets available';
 		this.inline = {
@@ -96,7 +97,12 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		this.addListener('itemclick', this.onClick, this);
 		this.addListener('itemmouseenter', this.onMouseOverX, this);
 		this.addListener('itemmouseleave', this.onMouseOutX, this);
-
+		
+		this.addEvents('detail');		
+//		this.addListener('itemclick', function(){	
+//			    var cmp  = this;
+//				cmp.fireEvent("detail", this);
+//		},this);
 	}
 	
 	,
@@ -133,7 +139,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 	 	          '</div>',
 	 	        '</div>');
 		
-		
+
 		Sbi.debug('DataViewPanel tpl built.');
 
 		return this.tpl;
@@ -151,8 +157,19 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         if(group){
             group.up('div[class*=group]').toggleClass('collapsed');
         }
-        alert(index);
-        return true;
+        
+        var actionDetail = e.getTarget('img.action-detail', 10, true);
+        var actionDelete = e.getTarget('img.action-delete', 10, true);
+        
+        if (actionDetail != null){
+        	Sbi.debug('DataSetView view detail raise event...');
+//        	var thisPanel = this;
+        	this.fireEvent('detail', record);   
+        }else if (actionDelete != null){
+        	Sbi.debug('DataSetView view delete started...');
+        	Sbi.debug('DataSetView view delete ended');
+        }
+//        return true;
     }
 
 	,
