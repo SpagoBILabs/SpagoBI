@@ -100,8 +100,8 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		
 		this.addEvents('detail');		
 //		this.addListener('itemclick', function(){	
-//			    var cmp  = this;
-//				cmp.fireEvent("detail", this);
+//			    var scope  = this;
+//			    scope.fireEvent("detail", this);
 //		},this);
 	}
 	
@@ -152,6 +152,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 
 	, 
 	onClick : function(obj, record, item, index, e, eOpts) {
+		var scope = this;
         // is of type Ext.EventObject		
         var group = e.getTarget('div[class=group-header]', 10, true);
         if(group){
@@ -163,13 +164,15 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         
         if (actionDetail != null){
         	Sbi.debug('DataSetView view detail raise event...');
-//        	var thisPanel = this;
-        	this.fireEvent('detail', record);   
+        	
+        	delete record.data.actions; // per togliere l'array sulle azioni che non serve
+        	scope.fireEvent('detail', record.data);   
+//        	scope.fireEvent('detail', scope);  
         }else if (actionDelete != null){
         	Sbi.debug('DataSetView view delete started...');
         	Sbi.debug('DataSetView view delete ended');
         }
-//        return true;
+        return true;
     }
 
 	,
