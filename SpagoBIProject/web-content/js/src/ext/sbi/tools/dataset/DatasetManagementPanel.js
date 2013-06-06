@@ -1108,16 +1108,31 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 				
 				//handler for the upload file button
 				,uploadFileButtonHandler: function(btn, e) {
+					
+					Sbi.debug("[DatasetManagementPanel.uploadFileButtonHandler]: IN");
+					
 			        var form = Ext.getCmp('datasetForm').getForm();
+			        
+			        Sbi.debug("[DatasetManagementPanel.uploadFileButtonHandler]: form is equal to [" + form + "]");
 					
 			        var completeUrl = thisPanel.configurationObject.uploadFileService;
 					var baseUrl = completeUrl.substr(0, completeUrl
 							.indexOf("?"));
+					
+					Sbi.debug("[DatasetManagementPanel.uploadFileButtonHandler]: base url is equal to [" + baseUrl + "]");
+					
 					var queryStr = completeUrl.substr(completeUrl
 							.indexOf("?") + 1);
 					var params = Ext.urlDecode(queryStr);
 
+					Sbi.debug("[DatasetManagementPanel.uploadFileButtonHandler]: base url is equal to [" + Sbi.toSource(params) + "]");
+					
+					
+					Sbi.debug("[DatasetManagementPanel.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");
+					
+					
 					form.submit({
+						clientValidation: false,
 						url : baseUrl // a multipart form cannot
 										// contain parameters on its
 										// main URL; they must POST
@@ -1126,13 +1141,24 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						params : params,
 						waitMsg : LN('sbi.generic.wait'),
 						success : function(form, action) {
-							Ext.MessageBox.alert('success');
+							Ext.MessageBox.alert('Success!');
 						},
 						failure : function(form, action) {
-							Ext.MessageBox.alert('Error');
+							switch (action.failureType) {
+				            case Ext.form.Action.CLIENT_INVALID:
+				                Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+				                break;
+				            case Ext.form.Action.CONNECT_FAILURE:
+				                Ext.Msg.alert('Failure', 'Ajax communication failed');
+				                break;
+				            case Ext.form.Action.SERVER_INVALID:
+				               Ext.Msg.alert('Failure', action.result.msg);
+							}
 						},
 						scope : this
-					});			        
+					});		
+					
+					Sbi.debug("[DatasetManagementPanel.uploadFileButtonHandler]: OUT");
 				}
 				
 				,initTrasfTab : function() {
