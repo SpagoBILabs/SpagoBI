@@ -85,7 +85,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		//this.overItemCls = 'x-item-over';
 		this.overItemCls = 'over';
 		this.frame = true;
-		this.emptyText = 'No datasets available';
+		this.emptyText = LN('sbi.ds.noDataset');
 		this.inline = {
 			wrap : false
 		};
@@ -99,10 +99,6 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		this.addListener('itemmouseleave', this.onMouseOutX, this);
 		
 		this.addEvents('detail');		
-//		this.addListener('itemclick', function(){	
-//			    var scope  = this;
-//			    scope.fireEvent("detail", this);
-//		},this);
 	}
 	
 	,
@@ -111,10 +107,11 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		Sbi.debug('DataViewPanel bulding the tpl...');
 
 		var noItem = LN('sbi.browser.folderdetailpanel.emptytext');
+		var title = LN('sbi.ds.listTitle');
 		this.tpl = new Ext.XTemplate(
 				'<div id="sample-ct">', 	            
 	 	           '<div class="group-view">',
-	 	            '<h2><div class="group-header">Elenco datasets</div></h2>',
+	 	            '<h2><div class="group-header">',title,'</div></h2>',
 	 	            '<ul>',
 	 	            	'<tpl if="root.length == 0">',
 	 	            		'<div id="empty-group-message">',
@@ -162,15 +159,13 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         var actionDetail = e.getTarget('img.action-detail', 10, true);
         var actionDelete = e.getTarget('img.action-delete', 10, true);
         
+        delete record.data.actions; 
         if (actionDetail != null){
-        	Sbi.debug('DataSetView view detail raise event...');
-        	
-        	delete record.data.actions; // per togliere l'array sulle azioni che non serve
+        	Sbi.debug('DataSetView view detail raise event...');        	
         	scope.fireEvent('detail', record.data);   
-//        	scope.fireEvent('detail', scope);  
         }else if (actionDelete != null){
-        	Sbi.debug('DataSetView view delete started...');
-        	Sbi.debug('DataSetView view delete ended');
+        	Sbi.debug('DataSetView delete dataset raise event...');        	
+        	scope.fireEvent('delete', record.data);
         }
         return true;
     }

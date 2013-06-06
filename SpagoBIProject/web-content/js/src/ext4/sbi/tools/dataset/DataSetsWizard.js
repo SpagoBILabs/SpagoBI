@@ -5,14 +5,16 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		fieldsStep1: null,
 		fieldsStep2: null,
 		fieldsStep3: null,
-		categoriesStore: null
+		categoriesStore: null,
+		record: {},
+		isNew:true
 	}
 
 	, constructor: function(config) {
 		this.initConfig(config);		
 		this.configureSteps();
 		
-		config.title = 'New Dataset...';	
+		config.title =  LN('sbi.ds.wizard'); 	
 		config.bodyPadding = 10;   
 		config.layout='card';
 		config.tabs = this.initSteps();
@@ -24,13 +26,17 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		this.addListener('navigate', this.navigate, this);
 		this.addListener('confirm', this.save, this);		
 		
+		this.addEvents('save','delete');	
+		
 	}
 	
 	, configureSteps : function(){
-		this.fieldsStep1 = [{label:"Label", name:"label", type:"text", value:""}, 
-		                    {label:"Name", name:"name", type:"text", value:""},
-		                    {label:"Description", name:"description", type:"textarea", value:""}];
-		this.fieldsStep1.push({label:"Category", name:"category", type:"combo", value:"VALUE_ID", description:"VALUE_DS", data:this.categoriesStore});		                    	
+		this.fieldsStep1 = [{label:"Id", name:"id",type:"text",hidden:"true", value:this.record.id},
+		                    {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'SelfService'},
+		                    {label: LN('sbi.ds.label'), name:"label", type:"text", readOnly:(this.isNew)?false:true, value:this.record.label}, 
+		                    {label: LN('sbi.ds.name'), name:"name", type:"text", value:this.record.name},
+		                    {label: LN('sbi.ds.description'), name:"description", type:"textarea", value:this.record.description}];
+		this.fieldsStep1.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", value:this.record.catTypeVn, data:this.categoriesStore});		                    	
 		
 		this.fieldsStep2 = [{name:"msg", type:"textarea", value:"Work in progress..."}];	
 		this.fieldsStep3 = [{name:"msg", type:"textarea", value:"Work in progress..."}];		
@@ -40,9 +46,9 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		
 		var steps = [];
 
-		steps.push({itemId:'0', title:'General', items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep1)});
-		steps.push({itemId:'1', title:'Detail', items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep2)});
-		steps.push({itemId:'2', title:'Metadata', items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep3)});
+		steps.push({itemId:'0', title:LN('sbi.ds.wizard.general'), items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep1)});
+		steps.push({itemId:'1', title:LN('sbi.ds.wizard.detail'), items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep2)});
+		steps.push({itemId:'2', title:LN('sbi.ds.wizard.metadata'), items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep3)});
 		
 		return steps;
 	}
@@ -78,9 +84,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	}
 
 	, save : function(){
-//		this.callParent.getFormState();
 		var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
+		this.fireEvent('save', values); 
 	}
-	
 	
 });
