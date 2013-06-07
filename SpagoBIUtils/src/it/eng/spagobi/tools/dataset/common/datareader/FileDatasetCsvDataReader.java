@@ -56,40 +56,9 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 		
 		inputDataStream = (InputStream)data;
 		
-
-		
-		
-		
 		try {				
-			//ADDED
 			dataStore = readWithCsvMapReader(inputDataStream);
-			//
-			
-			
-//			lineReader = new LineNumberReader( new InputStreamReader( inputDataStream ) );
-//			while ( (line = lineReader.readLine()) != null ){
-//				IRecord record = new Record(dataStore);
-//								
-//				StringTokenizer tokenizer = new StringTokenizer(line, SEPARATOR);
-//				while(tokenizer.hasMoreElements()){
-//					String token = tokenizer.nextToken();
-//					if (lineReader.getLineNumber() == 1) {
-//						FieldMetadata fieldMeta = new FieldMetadata();
-//						fieldMeta.setName(token);
-//						fieldMeta.setType(String.class);
-//						dataStoreMeta.addFiedMeta(fieldMeta);
-//					} else {
-//						if (token != null) {
-//							IField field = new Field(token);
-//							record.appendField(field);
-//						}
-//					}
-//				}
-//				
-//				if (lineReader.getLineNumber() != 1){
-//					dataStore.appendRecord(record);				
-//				}
-//			}
+
 				
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
