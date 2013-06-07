@@ -19,8 +19,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.initViewPanel();
 		this.layout='fit';
 		
-		this.callParent(arguments);
-
+//		this.callParent(arguments);
 	}
 
 	,
@@ -117,13 +116,6 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.viewPanel.on('detail', this.modifyDataset, this);
 		this.viewPanel.on('delete', this.deleteDataset, this);
 	}
-
-	,
-	onRender : function(obj, opt) {
-		Sbi.widgets.dataview.DataViewPanel.superclass.onRender.call(this, opt);
-	}
-
-	
 	
 	, createCategoriesStore: function(){
 		Ext.define("CategoriesModel", {
@@ -166,7 +158,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			config.isNew = false;
 			this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',config);	
 			this.wizardWin.on('save', this.saveDataset, this);
-			this.viewPanel.on('delete', this.deleteDataset, this);
+			this.wizardWin.on('delete', this.deleteDataset, this);
 	    	this.wizardWin.show();
 		}
 	}
@@ -180,8 +172,11 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 				if(response !== undefined && response.statusText !== undefined) {
 					var responceText = Ext.decode(response.responseText);
 					if(responceText.errors){
-						Sbi.exception.ExceptionHandler.showErrorMessage(responceText.error, 'Service Error');
-					}else{
+						Sbi.exception.ExceptionHandler.showErrorMessage(responceText.error, 'Service Error');						
+					}else{						
+						this.store.load({reset:true});
+						this.wizardWin.destroy();						
+						this.viewPanel.refresh();
 						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.saved'));
 					}
 				} else {
@@ -191,6 +186,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			scope: this,
 			failure: Sbi.exception.ExceptionHandler.handleFailure      
 		});
+		
 	}
 	
 	,
@@ -207,8 +203,10 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 								if(response !== undefined && response.statusText !== undefined) {
 									var responceText = Ext.decode(response.responseText);
 									if(responceText.errors){
-										Sbi.exception.ExceptionHandler.showErrorMessage(responceText.error, 'Service Error');
+										Sbi.exception.ExceptionHandler.showErrorMessage(responceText.error, 'Service Error');											
 									}else{
+										this.store.load({reset:true});										
+										this.viewPanel.refresh();			
 										Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.deleted'));
 									}
 								} else {
@@ -223,5 +221,27 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 				this
 			);
 	}
+	
+	/**
+	 * Opens the loading mask 
+	*/
+    , showMask : function(){
+    	this.un('afterlayout',this.showMask,this);
+    	if (this.loadMask == null) {    		
+    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "  Wait...  "});
+    	}
+    	if (this.loadMask){
+    		this.loadMask.show();
+    	}
+    }
+
+	/**
+	 * Closes the loading mask
+	*/
+	, hideMask: function() {
+    	if (this.loadMask && this.loadMask != null) {	
+    		this.loadMask.hide();
+    	}
+	} 
 
 });

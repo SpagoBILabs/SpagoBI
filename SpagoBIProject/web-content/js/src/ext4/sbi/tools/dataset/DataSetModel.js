@@ -16,5 +16,6 @@
             "catTypeVn",
             "dsTypeCd",
             "configuration",
+            "pars",
             "actions"]
 });

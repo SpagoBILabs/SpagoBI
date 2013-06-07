@@ -7,9 +7,9 @@
 
 /**TODO anto: aggiornare documentazione!!!
  * 
- * Wizard window base. It define a layout and provides the stubs methods for the icons browser.
- * This methods should be overridden to define the logic. Only the methods onAddNewRow, onGridSelect and onCloneRow are implemented.
- * The configuration dataView must be passed to the object. It should contains the method setFormState (it is used by onGridSelect)
+ * Wizard window base. It define a layout and provides the stubs methods for the wizard.
+ * This methods should be overridden to define the logic. 
+ * The configuration of the window must be passed to the object.
  * 
  * 
  * 		@example
@@ -137,10 +137,13 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 
 	, createWizardField: function (obj){
 		var tmpField = null;
-		if (obj.type === undefined ||obj.type == 'text' || obj.type == 'textarea'){        			
-			//default is a textarea
+		if (obj.type === undefined ||obj.type == 'text'){        			
+			//default is a text
 			tmpField = this.createTextField(obj);        		          		
-		}else if (obj.type == 'data'){  
+		}else if (obj.type == 'textarea'){  
+			//textarea
+			tmpField = this.createTextAreaField(obj);   
+		} else if (obj.type == 'data'){  
 			//data
 			tmpField = this.createDataField(obj);   
 		}  else if (obj.type == 'combo'){	
@@ -166,9 +169,8 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
   		  fieldLabel: f.label 
   		  	  , name: f.name
 	          , width: 500 
-	          , height: (f.type == 'textarea')?80:30
-//	          , vertical-align:top
-			  , xtype : 'textarea'
+	          , height: 30
+//			  , xtype : 'text'
 			  , validationEvent: f.mandatory || false
 			  , allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true
 	          , margin: '0 0 0 10'
@@ -178,6 +180,27 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 	        });
 		return field;
 	}
+	
+	, createTextAreaField: function(f){
+		var field = new Ext.form.TextArea({
+  		  fieldLabel: f.label 
+  		  	  , name: f.name
+	          , width: 500 
+	          , height: 80
+//	          , vertical-align:top
+			  , xtype : 'textarea'
+			  , multiline: true
+			  , maxLength: 250
+			  , validationEvent: f.mandatory || false
+			  , allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true
+	          , margin: '0 0 0 10'
+	          , readOnly: f.readOnly || false
+	          , labelStyle:'font-weight:bold;' //usare itemCls : <tagstyle>
+	          , value: f.value || f.defaultValue || ""
+	        });
+		return field;
+	}
+	
 	
 	, createDataField: function(f){
 		this.dateFormat = f.values.format || 'd/m/Y';

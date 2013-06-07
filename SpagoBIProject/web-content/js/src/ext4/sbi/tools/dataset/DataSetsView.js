@@ -124,12 +124,13 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 			                    	'<tpl for="actions">',   
 			                        	'<div class="button"><img class="action-{name}" title="{description}" src="' + Ext.BLANK_IMAGE_URL + '"/></div>',
 			                        '</tpl>',
-			                    '</div>',
-								'<img src=\"'+ Ext.LEAF_IMAGE_URL  +'\" width="50">' ,
-								'<p><b>{name}</b></p>',
-								'<p>{description}</p>',
-								'<br/>', 
-		                    '</dd>',
+			                    '</div>',			                    								
+								'<div class="item-desc">' +
+									'<img src=\"'+ Ext.LEAF_IMAGE_URL  +'\" width="50">' ,
+									'<p><b>{name}</b></p>',
+									'<p>{description}</p><br/>',
+								'</div>',
+							'</dd>',
 		                '</tpl>',	              
 	 	            '<div style="clear:left"></div>',
 		          '</ul>',
@@ -158,6 +159,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         
         var actionDetail = e.getTarget('img.action-detail', 10, true);
         var actionDelete = e.getTarget('img.action-delete', 10, true);
+        var actionWorksheet = e.getTarget('img.action-worksheet', 10, true);
         
         delete record.data.actions; 
         if (actionDetail != null){
@@ -166,6 +168,14 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         }else if (actionDelete != null){
         	Sbi.debug('DataSetView delete dataset raise event...');        	
         	scope.fireEvent('delete', record.data);
+        }else if (actionWorksheet != null){
+        	Sbi.debug('DataSetView actionWorksheet raise event...'); 
+        	if (record.data.pars != undefined && record.data.pars != ''){
+        		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noWorksheetDesigner'));
+        		return true;
+        	}
+        	alert("Work in progress...");
+//        	scope.fireEvent('delete', record.data);
         }
         return true;
     }

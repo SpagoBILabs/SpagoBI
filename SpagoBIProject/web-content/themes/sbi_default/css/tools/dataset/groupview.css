@@ -211,7 +211,7 @@
 	/*	item description layout					  			 		 */
 	/* ============================================================= */
 .group-view .item-desc {
-	float: left;
+	float: 	right; /*left;*/
 	width: 160px;
 	margin-left: 10px;
 	margin-top: 5px;
@@ -294,6 +294,17 @@
 	float: right;
 	background-image:
 		url('../../../img/analiticalmodel/browser/delete16.gif');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.group-view .item-control-panel .action-worksheet {
+	width: 16px;
+	height: 16px;
+	margin: 2 2 2 2;
+	float: right;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_worksheet16.png');
 	background-position: center center;
 	background-repeat: no-repeat;
 }

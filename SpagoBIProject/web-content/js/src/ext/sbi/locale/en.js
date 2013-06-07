@@ -694,6 +694,7 @@ Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Confirm';
 Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Cancel';
 Sbi.locale.ln['sbi.ds.noDataset']= 'No datasets available';
 Sbi.locale.ln['sbi.ds.mandatoryFields']= 'Please insert mandatory fields!';
+Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= 'Worksheet designer isn\'t available on parametric datasets!';
 
 
 //===================================================================
