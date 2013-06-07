@@ -617,7 +617,7 @@ Sbi.locale.ln['sbi.ds.wizard.next']= 'Sucessivo >';
 Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Conferma';
 Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Annulla';
 Sbi.locale.ln['sbi.ds.noDataset']= 'Non ci sono dataset disponibili';
-
+Sbi.locale.ln['sbi.ds.mandatoryFields']= 'Inserire campi obbligatori!';
 
 Sbi.locale.ln['sbi.datasource.label']= 'Etichetta';
 Sbi.locale.ln['sbi.datasource.description']= 'Descrizione';

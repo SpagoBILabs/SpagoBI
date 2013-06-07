@@ -693,6 +693,7 @@ Sbi.locale.ln['sbi.ds.wizard.next']= 'Next >';
 Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Confirm';
 Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Cancel';
 Sbi.locale.ln['sbi.ds.noDataset']= 'No datasets available';
+Sbi.locale.ln['sbi.ds.mandatoryFields']= 'Please insert mandatory fields!';
 
 
 //===================================================================
