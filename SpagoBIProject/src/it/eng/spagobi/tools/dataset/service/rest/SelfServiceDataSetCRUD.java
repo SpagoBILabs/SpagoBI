@@ -97,10 +97,10 @@ public class SelfServiceDataSetCRUD {
 			deleteAction.put("name", "delete");
 			deleteAction.put("description", "Delete dataset");
 			actions.put(deleteAction);
-//			JSONObject worksheetAction = new JSONObject();
-//			worksheetAction.put("name", "worksheet");
-//			worksheetAction.put("description", "Show Worksheet");
-//			actions.put(worksheetAction);
+			JSONObject worksheetAction = new JSONObject();
+			worksheetAction.put("name", "worksheet");
+			worksheetAction.put("description", "Show Worksheet");
+			actions.put(worksheetAction);
 //			JSONObject geoAction = new JSONObject();
 //			geoAction.put("name", "worksheet");
 //			geoAction.put("description", "Show Geo");
@@ -328,8 +328,10 @@ public class SelfServiceDataSetCRUD {
 		toReturn.setId(id.intValue());
 		toReturn.setLabel(label);
 		toReturn.setName(name);
-		toReturn.setDescription(description);				
-		toReturn.setCategoryId((catTypeVn.equals(""))?null:Integer.valueOf(catTypeVn));		
+		toReturn.setDescription(description);		
+//		Integer categoryCode = getCategoryCode(catTypeVn);
+		Integer categoryCode = Integer.parseInt(catTypeVn);
+		toReturn.setCategoryId(categoryCode);		
 				
 		return toReturn;
 	}
@@ -372,6 +374,40 @@ public class SelfServiceDataSetCRUD {
 		}
 		
 		return datasetTypeName;
+	}
+	
+	private Integer getCategoryCode(String category) {
+		Integer categoryCode = null;
+		
+		try {
+		
+			if(category == null) return null;
+			List<Domain> categories = null;
+			
+			try {
+				categories = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("An unexpected error occured while loading categories types from database", t);
+			}
+			
+			
+			if(categories == null) {
+				return null;
+			}
+			
+			
+			for(Domain dmCategory : categories){
+				if( category.equalsIgnoreCase( dmCategory.getValueCd() ) ){
+					categoryCode = dmCategory.getValueId();
+					break;
+				}
+			}
+		} catch(Throwable t) {
+			if(t instanceof SpagoBIRuntimeException) throw (SpagoBIRuntimeException)t;
+			throw new SpagoBIRuntimeException("An unexpected error occured while resolving dataset type name from dataset type code [" + category + "]");
+		}
+		
+		return categoryCode;
 	}
 
 }

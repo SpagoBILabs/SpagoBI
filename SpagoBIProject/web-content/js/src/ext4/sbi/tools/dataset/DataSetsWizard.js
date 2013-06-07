@@ -88,7 +88,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();			
 			this.fireEvent('save', values);
 		}else{
-			alert(LN('sbi.ds.mandatoryFields'));
+			//alert(LN('sbi.ds.mandatoryFields'));
+			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryFields'), '');
 		}
 	}
 	
