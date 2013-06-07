@@ -66,10 +66,6 @@ Sbi.qbe.QbePanel = function(config) {
 		serviceName: 'SET_WORKSHEET_DEFINITION_ACTION'
 			, baseParams: params
 	});
-	this.services['executeWorksheetStartAction'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'START_WORKSHEET_FROM_QBE_ACTION'
-			, baseParams: params
-	});
 
 	this.addEvents();
 
@@ -118,24 +114,7 @@ Sbi.qbe.QbePanel = function(config) {
 		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(Ext.apply(worksheetDesignerConfig, {
 			id : 'WorksheetDesignerPanel'
 		}));
-
-		var worksheetEngineInitialized = worksheetDesignerConfig.engineInitialized;
-		if (worksheetEngineInitialized === undefined || worksheetEngineInitialized == false) {
-			// if the worksheet engine is not initialized, we need to initialize it on first activation of worksheet designer tab
-			this.worksheetDesignerPanel.on('activate', function(){
-				if(!this.notFirstTimeDesignPanelOpened){
-					this.notFirstTimeDesignPanelOpened = true;
-					Ext.Ajax.request({
-						url: this.services['executeWorksheetStartAction'],
-						params: {},
-						scope: this,
-						failure: Sbi.exception.ExceptionHandler.handleFailure
-					});
-				}
-			}, this);
-		}
 		
-		//items.push(this.worksheetDesignerPanel);
 	}
 	
 

@@ -39,7 +39,6 @@ Ext.ns("Sbi.worksheet.designer");
 Sbi.worksheet.designer.DesignToolsPanel = function(config) { 
 
 	var defaultSettings = {
-		autoloadFields : false,
 		border: false
 	};
 
@@ -82,12 +81,11 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	designToolsLayoutPanel: null,
 	globalFilters: null,
 	fieldsOptions: null, // JSON object that contains options for attributes (code/description visualization) and measures (scale factor)
-	autoloadFields: null,  // if true, dataset fields will be automatically loaded and fields' loading icon will be hidden
 
 	initPanels: function() {
 		
 		this.designToolsFieldsPanel = new Sbi.formbuilder.QueryFieldsPanel({
-			autoloadFields : this.autoloadFields,
+			displayRefreshButton : false,
 			border: false,
 	        gridConfig: {
 				ddGroup: 'worksheetDesignerDDGroup'
@@ -96,8 +94,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 			region : 'north',
 			split: true,
 			height : 120,
-			services : this.services,
-			source: 'worksheet'
+			services : this.services
 		});
 		this.designToolsFieldsPanel.store.on('load', this.fieldsLoadedHandler, this);
 		this.designToolsFieldsPanel.store.on('beforeload', this.getGlobalFilters, this); // forces a calculation of global filters
