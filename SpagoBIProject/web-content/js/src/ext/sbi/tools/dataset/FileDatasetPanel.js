@@ -41,9 +41,6 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 	var defaultSettings =  {
 	        labelWidth: 75, 
 	        frame:false,
-	        //width: 350,
-	        //height: 300,
-	        //defaults: {width: 230},
 	        defaultType: 'textfield'
 	        	
 		};
@@ -79,21 +76,17 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	
 	initUploadForm : function(items){
 		
-//		this.myBtnHandler = function(btn) {
-//		        Ext.MessageBox.alert('You Clicked', btn.text);
-//		    }
-		
+	
 		this.uploadField = new Ext.form.TextField({
 			inputType : 'file',
 			fieldLabel : LN('sbi.generic.upload'),
 			allowBlank : true,
-			
+			id: 'fileNameField'
 		});
 		
 		this.uploadButton = new Ext.Button({
 	        text: 'Upload File',
 	        id: 'fileUploadButton'	
-	        //handler : this.myBtnHandler
 	    });
 		
 		this.fileUploadFormPanel = new Ext.Panel({

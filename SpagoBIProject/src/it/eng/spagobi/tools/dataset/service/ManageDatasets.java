@@ -851,6 +851,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FILE)){	
 			dataSet = new FileDataSet();
 			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
+			File pathFile = new File(fileName);
+			fileName = pathFile.getName();
 			jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
 			((FileDataSet)dataSet).setFileName(fileName);				
 			
