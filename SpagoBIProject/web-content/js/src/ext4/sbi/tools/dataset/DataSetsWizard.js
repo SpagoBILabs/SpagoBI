@@ -33,8 +33,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	, configureSteps : function(){
 		this.fieldsStep1 = [{label:"Id", name:"id",type:"text",hidden:"true", value:this.record.id},
 		                    {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'SelfService'},
-		                    {label: LN('sbi.ds.label'), name:"label", type:"text", readOnly:(this.isNew)?false:true, value:this.record.label}, 
-		                    {label: LN('sbi.ds.name'), name:"name", type:"text", value:this.record.name},
+		                    {label: LN('sbi.ds.label'), name:"label", type:"text", mandatory:true, readOnly:(this.isNew)?false:true, value:this.record.label}, 
+		                    {label: LN('sbi.ds.name'), name:"name", type:"text", mandatory:true, value:this.record.name},
 		                    {label: LN('sbi.ds.description'), name:"description", type:"textarea", value:this.record.description}];
 		this.fieldsStep1.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", value:this.record.catTypeVn, data:this.categoriesStore});		                    	
 		
@@ -84,8 +84,12 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	}
 
 	, save : function(){
-		var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
-		this.fireEvent('save', values); 
+		if (Sbi.tools.dataset.DataSetsWizard.superclass.validateForm()){
+			var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();			
+			this.fireEvent('save', values);
+		}else{
+			alert(LN('sbi.ds.mandatoryFields'));
+		}
 	}
 	
 });

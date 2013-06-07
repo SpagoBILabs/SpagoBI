@@ -169,6 +169,8 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 	          , height: (f.type == 'textarea')?80:30
 //	          , vertical-align:top
 			  , xtype : 'textarea'
+			  , validationEvent: f.mandatory || false
+			  , allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true
 	          , margin: '0 0 0 10'
 	          , readOnly: f.readOnly || false
 	          , labelStyle:'font-weight:bold;' //usare itemCls : <tagstyle>
@@ -184,6 +186,8 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		  fieldLabel: f.label 
 		  , name: f.name
           , width: 250  
+          , validationEvent: f.mandatory || false
+          , allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true
           , format: f.values.format || 'd/m/Y'
           , defaultValue: f.defaultValue 
         });
@@ -207,6 +211,8 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 	        valueField: tmpValueField,	
 	        displayField: tmpValueText,
 	        mode : 'local',
+	        validationEvent: f.mandatory || false,
+	        allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true,
 	        typeAhead: true,
 	        labelStyle:'font-weight:bold;', 
 	        margin: '0 0 0 10',
@@ -361,6 +367,21 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 			}	    		    		 	
     	}
     	return state;
+    }
+	
+	, validateForm: function() {
+		var toReturn = true;
+    	for(f in this.fieldMap) {  
+    		index = f;
+			var tmpField = this.fieldMap[f];
+			if (tmpField.validationEvent !== undefined && tmpField.validationEvent == true && 
+				tmpField.allowBlank !== undefined && tmpField.allowBlank == false &&
+				(tmpField.value == undefined || tmpField.value == "")){
+				toReturn = false;
+				break;
+			}			   		 	
+    	}
+    	return toReturn;
     }
 	
 	
