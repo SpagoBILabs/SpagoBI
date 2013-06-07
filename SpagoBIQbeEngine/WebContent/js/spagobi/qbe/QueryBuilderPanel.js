@@ -33,6 +33,7 @@
   * Authors
   * 
   * - Andrea Gioia (andrea.gioia@eng.it)
+  * - Davide Zerbetto (davide.zerbetto@eng.it)
   */
 
 Ext.ns("Sbi.qbe");
@@ -330,19 +331,19 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		c.actions = new Array();
 		c.actions.push({
 			text: 'Add to SELECT clause',
-			handler: this.onAddNodeToSelect,
+			handler: this.onAddNodeToSelectAndFocus,
 			scope: this,
 			iconCls: 'option'
 		});
 		c.actions.push({
 			text: 'Add to WHERE clause',
-			handler: this.onAddNodeToWhere,
+			handler: this.onAddNodeToWhereAndFocus,
 			scope: this,
 			iconCls: 'option'
 		});
 		c.actions.push({
 			text: 'Add to HAVING clause',
-			handler: this.onAddNodeToHaving,
+			handler: this.onAddNodeToHavingAndFocus,
 			scope: this,
 			iconCls: 'option'
 		});
@@ -371,8 +372,8 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			aDataMartStructurePanel.on('expand', function(panel, node) {
 				this.currentDataMartStructurePanel = panel;
 		    }, this);
-			aDataMartStructurePanel.on('addnodetoselect', function(panel, node) {
-				this.onAddNodeToSelect(node);
+			aDataMartStructurePanel.on('nodeclick', function(panel, node) {
+				this.onNodeClick(node);
 		    }, this);
 		}
 		
@@ -463,6 +464,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	 * Makes the input panel resizable; if the panel contains a grid property, its height is modified.
 	 * It was conceived for selectGridPanel and filterGridPanel.
 	 */
+	/*
 	, createResizable: function(aPanel) {
 		aPanel.on('render', function() {
 			var resizer = new Ext.Resizable(this.id, {
@@ -477,17 +479,54 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			}, this);
 		}, aPanel);
 	}
+	*/
 	
 	, initCenterRegionPanel: function(c) {
 		c.documentParametersStore = this.documentParametersStore;
-		c.anchor = '-20'; // for anchor layout, see http://www.sencha.com/forum/showthread.php?71796-No-vertical-scrollbar-with-vbox-layout
+		//c.anchor = '-20'; // for anchor layout, see http://www.sencha.com/forum/showthread.php?71796-No-vertical-scrollbar-with-vbox-layout
 		this.selectGridPanel = new Sbi.qbe.SelectGridPanel(c);
-		this.createResizable(this.selectGridPanel);
+		//this.createResizable(this.selectGridPanel);
 	    this.filterGridPanel = new Sbi.qbe.FilterGridPanel(Ext.apply(c || {}, {gridTitle: LN('sbi.qbe.filtergridpanel.title')}));
-	    this.createResizable(this.filterGridPanel);
+	    //this.createResizable(this.filterGridPanel);
 	    this.havingGridPanel = new Sbi.qbe.HavingGridPanel(c);
 	    
+	    var sharedConf = {
+			enableToggle : true
+			, toggleGroup : 'sbi.qbe.querybuilderpanel.togglegroup'
+			, allowDepress : false	
+	    };
+	    
+	    this.selectGridButton = new Ext.Button(Ext.apply(sharedConf, {
+		    text: LN('sbi.qbe.selectgridpanel.title')
+		}));
+	    this.filterGridButton = new Ext.Button(Ext.apply(sharedConf, {
+		    text: LN('sbi.qbe.filtergridpanel.title')
+		}));
+	    this.havingGridButton = new Ext.Button(Ext.apply(sharedConf, {
+		    text: LN('sbi.qbe.havinggridpanel.title')
+		}));
+		this.selectGridButton.on('toggle', this.onButtonToggleHandler.createDelegate(this, [0], true), this);
+		this.filterGridButton.on('toggle', this.onButtonToggleHandler.createDelegate(this, [1], true), this);
+		this.havingGridButton.on('toggle', this.onButtonToggleHandler.createDelegate(this, [2], true), this);
+		this.selectGridButton.toggle(true, true);
+	    
 	    this.centerRegionPanel = new Ext.Panel({ 
+	    	title: LN('sbi.qbe.queryeditor.centerregion.title'),
+	        region:'center',
+	        width: '100%', // this is necessary in order to set the proper width to the columns of select/where/having clauses' grids in Firefox
+	        autoScroll: true,
+	        layout: 'card',
+	        hideMode: !Ext.isIE ? 'nosize' : 'display',
+	        activeItem : 0,
+	        style: {
+	            overflow: 'auto'
+	        },
+	        margins: '5 5 5 5',
+	        items: [this.selectGridPanel, this.filterGridPanel, this.havingGridPanel],
+	        tbar: ['->', this.selectGridButton, this.filterGridButton, this.havingGridButton]
+	    });
+	    
+	    /*this.centerRegionPanel = new Ext.Panel({ 
 	    	title: LN('sbi.qbe.queryeditor.centerregion.title'),
 	        region:'center',
 	        width: '100%', // this is necessary in order to set the proper width to the columns of select/where/having clauses' grids in Firefox
@@ -529,7 +568,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	        }],
 	        
 	        items: [this.selectGridPanel, this.filterGridPanel, this.havingGridPanel]
-	    });
+	    });*/
 	  
 	    this.selectGridPanel.on('filter', function(panel, record) {
 	    	var operandType;
@@ -556,7 +595,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 				, leftOperandLongDescription: record.data.longDescription
 
 			};
-	    	
+	    	this.toggleCenterPanelToItem(1);
 	    	this.filterGridPanel.addFilter(filter);
 	    }, this);
 	    
@@ -585,11 +624,41 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 				, leftOperandAggregator: record.data.funct
 				, leftOperandLongDescription: record.data.longDescription
 			};
+	    	this.toggleCenterPanelToItem(2);
 	    	this.havingGridPanel.addFilter(filter);
 	    }, this);
 	}
 	
+	,
+	onButtonToggleHandler : function (button, pressed, activeItemIndex) {
+		if (pressed) {
+			this.centerRegionPanel.getLayout().setActiveItem(activeItemIndex);
+		}
+	}
 	
+	/**
+	 * activate panel specified by the index in input by toggling the relevant button
+	 */
+	,
+	toggleCenterPanelToItem : function (activeItemIndex) {
+		var activeItem = this.centerRegionPanel.getLayout().activeItem;
+		var index = this.centerRegionPanel.items.indexOf(activeItem);
+		if (index == activeItemIndex) {
+			// panel is already activated
+			return;
+		}
+		switch (activeItemIndex) {
+			case 0:
+				this.selectGridButton.toggle(true, false); // the panel will be actived by the 'toggle' event
+				return;
+			case 1:
+				this.filterGridButton.toggle(true, false); // the panel will be actived by the 'toggle' event
+				return;
+			case 2:
+				this.havingGridButton.toggle(true, false); // the panel will be actived by the 'toggle' event
+				return;
+		}
+	}
 	
 	, initEastRegionPanel: function(c) {
 		
@@ -664,6 +733,28 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	
 	
 	// -- handler methods ---------------------------------------------------------------
+	
+	, onNodeClick : function (node) {
+		var activeItem = this.centerRegionPanel.getLayout().activeItem;
+		var index = this.centerRegionPanel.items.indexOf(activeItem);
+		switch (index) {
+			case 0:
+				this.onAddNodeToSelect(node);
+				return;
+			case 1:
+				this.onAddNodeToWhere(node);
+				return;
+			case 2:
+				this.onAddNodeToHaving(node);
+				return;
+		}
+	}
+	
+	
+	, onAddNodeToSelectAndFocus: function (node, recordBaseConfig) {
+		this.toggleCenterPanelToItem(0);
+		this.onAddNodeToSelect(node, recordBaseConfig);
+	}
 	
 	, onAddNodeToSelect: function(node, recordBaseConfig) {
 		var field;
@@ -778,6 +869,11 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		}
 	}
 	
+	, onAddNodeToWhereAndFocus: function (node, recordBaseConfig) {
+		this.toggleCenterPanelToItem(1);
+		this.onAddNodeToWhere(node, recordBaseConfig);
+	}
+	
 	, onAddNodeToWhere: function(node, recordBaseConfig) {
 		var filter;
 		var nodeType;
@@ -847,6 +943,11 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			}
 		}
 	} 
+	
+	, onAddNodeToHavingAndFocus: function (node, recordBaseConfig) {
+		this.toggleCenterPanelToItem(2);
+		this.onAddNodeToHaving(node, recordBaseConfig);
+	}
 	
 	, onAddNodeToHaving: function(node, recordBaseConfig) {
 		var filter;

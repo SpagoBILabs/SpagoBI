@@ -93,7 +93,7 @@ Sbi.qbe.DataMartStructurePanel = function(config) {
 	});
 	
 	
-	this.addEvents('load', 'addnodetoselect');
+	this.addEvents('load', 'nodeclick');
 	
 	this.initTree(c.treeConfig || {});
 		
@@ -511,7 +511,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		this.tree.on('click', function(node) {
 			var nodeType = node.attributes.type || node.attributes.attributes.type;
 			if(nodeType !== 'entity') {
-				this.fireEvent('addnodetoselect', this, node);
+				this.fireEvent('nodeclick', this, node);
 			}
 		}, this);
 		if(this.enableTreeContextMenu) {
