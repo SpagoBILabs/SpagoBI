@@ -54,7 +54,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/datasource/DataSourceListDetailPanel.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/datasource/DataSourceDetailPanel.js")%>'></script>
 
-<!-- Componente usato sia in Ext3 che in Ext4 -->
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/tools/dataset/FileDatasetPanel.js")%>'></script>
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/DataSetModel.js")%>'></script>
