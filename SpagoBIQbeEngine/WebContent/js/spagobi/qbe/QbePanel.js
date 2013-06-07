@@ -200,6 +200,7 @@ Sbi.qbe.QbePanel = function(config) {
 		/*
 		 * work-around: forcing the layout recalculation on west/center/est region panels on tab change
 		 * TODO: try to remove it when upgrading Ext library
+		 */
 		this.tabs.on('tabchange', function () {
 
 			var anActiveTab = this.tabs.getActiveTab();
@@ -234,7 +235,7 @@ Sbi.qbe.QbePanel = function(config) {
 						new Sbi.formbuilder.StaticOpenFiltersEditorPanelDropTarget(anActiveTab.filtersTemplatePanel.staticOpenFiltersEditorPanel);
 				}
 			}
-		}, this); */
+		}, this);
 	}
 
 	c = Ext.apply(c, {
