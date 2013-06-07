@@ -10,6 +10,7 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.CsvDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetCsvDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.XmlDataReader;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
@@ -99,7 +100,8 @@ public class FileDataSet extends ConfigurableDataSet{
 		
 		if("csv".equalsIgnoreCase( fileExtension )) {
 			logger.info("File format: [CSV]");
-			setDataReader( new CsvDataReader() );
+			//setDataReader( new CsvDataReader() );
+			setDataReader( new FileDatasetCsvDataReader());
 		} else if ("xml".equalsIgnoreCase( fileExtension ) || "txt".equalsIgnoreCase( fileExtension )) {
 			logger.info("File format: [XML]");
 			setDataReader( new XmlDataReader() );
