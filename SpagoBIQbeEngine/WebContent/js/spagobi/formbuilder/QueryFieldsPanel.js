@@ -41,7 +41,7 @@ Sbi.formbuilder.QueryFieldsPanel = function(config) {
 	
 	var defaultSettings = {
 		title: LN('sbi.formbuilder.queryfieldspanel.title')
-		, autoloadFields : false
+		, displayRefreshButton : true
 	};
 		
 	if(Sbi.settings && Sbi.settings.formbuilder && Sbi.settings.formbuilder.queryFieldsPanel) {
@@ -52,12 +52,6 @@ Sbi.formbuilder.QueryFieldsPanel = function(config) {
 		
 	Ext.apply(this, c);
 			
-	
-	var isWorksheet = false;
-	if(config.source && config.source == 'worksheet'){
-		isWorksheet = true;
-	}
-	
 	this.services = this.services || new Array();	
 	this.services['getQueryFields'] = this.services['getQueryFields'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_QUERY_FIELDS_ACTION'
@@ -78,7 +72,7 @@ Sbi.formbuilder.QueryFieldsPanel = function(config) {
 		bodyStyle:'padding:3px',
       	layout: 'fit',   
       	items: [this.grid]
-	,   tools: (this.autoloadFields ||  isWorksheet) ? [] : [{ 
+	,   tools: (!this.displayRefreshButton) ? [] : [{ 
 		    id:'refresh',
 		    qtip: LN('sbi.formbuilder.queryfieldspanel.tools.refresh'),
 		    handler: function(){
@@ -97,14 +91,14 @@ Ext.extend(Sbi.formbuilder.QueryFieldsPanel, Ext.Panel, {
     services: null
     , grid: null
     , store: null
-    , autoloadFields: null  // if true, dataset fields will be automatically loaded and fields' loading icon will be hidden
+    , displayRefreshButton: null  // if true, display the refresh button
     
     // private
     
     , initGrid: function(c) {
 	
 		this.store = new Ext.data.JsonStore({
-			autoLoad : this.autoloadFields
+			autoLoad : false
 			, root: 'results'
 			, fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'precision', 'options']
 			, url: this.services['getQueryFields']

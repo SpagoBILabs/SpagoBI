@@ -101,7 +101,12 @@ Sbi.worksheet.designer.WorksheetPanel = function(config) {
 	
 	Sbi.worksheet.designer.QueryFieldsCardPanel.superclass.constructor.call(this, c);
 
-	this.on('activate', function(meta){
+	this.worksheetDesignerPanel.on('afterworksheetinitialized', function(theWorksheetDesignerPanel) {
+		this.worksheetDesignerPanel.designToolsPanel.refresh();
+		this.worksheetEngineInitialized = true;
+	}, this);
+	
+	this.on('activate', function(thePanel){
 		// recalculate current fields in store and fires validateInvalidFieldsAfterLoad event
 		var activeItem = this.getLayout().activeItem;
 		var index = this.items.indexOf(activeItem);
@@ -109,7 +114,10 @@ Sbi.worksheet.designer.WorksheetPanel = function(config) {
 			activeItem.fireEvent('activate', activeItem); // force refresh
 		}
 		
-		this.worksheetDesignerPanel.designToolsPanel.refresh();
+		if (this.worksheetEngineInitialized) {
+			this.worksheetDesignerPanel.designToolsPanel.refresh();
+		}
+		
 		this.worksheetDesignerPanel.designToolsPanel.on('validateInvalidFieldsAfterLoad', 
 			function(){
 				this.worksheetDesignerPanel.validate(function(){}, function(){}, this);
