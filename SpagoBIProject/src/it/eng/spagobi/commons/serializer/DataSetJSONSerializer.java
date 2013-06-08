@@ -80,6 +80,9 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String FLAT_TABLE_NAME = "flatTableName";
 	private static final String DATA_SOURCE_FLAT = "dataSourceFlat";
 	
+	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
+	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
+	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		
@@ -165,7 +168,16 @@ public class DataSetJSONSerializer implements Serializer {
 					String fileName = jsonConf.getString(DataSetConstants.FILE_NAME);
 					if(fileName!=null){
 						result.put(FILE_NAME, fileName);				
-					}				
+					}			
+					String csvDelimiter = jsonConf.getString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER);
+					if(csvDelimiter!=null){
+						result.put(CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);				
+					}	
+					String csvQuote = jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER); ;
+					if(csvQuote!=null){
+						result.put(CSV_FILE_QUOTE_CHARACTER, csvQuote);				
+					}
+					
 				}else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.QUERY)){
 					result.put(QUERY, jsonConf.getString(DataSetConstants.QUERY));
 					result.put(QUERY_SCRIPT, jsonConf.getString(DataSetConstants.QUERY_SCRIPT));
