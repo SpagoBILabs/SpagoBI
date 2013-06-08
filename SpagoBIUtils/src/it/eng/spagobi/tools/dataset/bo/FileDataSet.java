@@ -11,10 +11,12 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.CsvDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetCsvDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetXlsDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.XmlDataReader;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -31,6 +33,7 @@ public class FileDataSet extends ConfigurableDataSet{
     
 	public static String DS_TYPE = "SbiFileDataSet";
 	public static final String FILE_NAME = "fileName";
+
 	
 	private static transient Logger logger = Logger.getLogger(FileDataSet.class);
     
@@ -93,6 +96,10 @@ public class FileDataSet extends ConfigurableDataSet{
 	 * @param fileName the target filename
 	 */
 	public void setDataReader(String fileName) {
+		JSONObject jsonConf = null;
+		if (this.getConfiguration() != null){
+			jsonConf  = ObjectUtils.toJSONObject(this.getConfiguration());
+		}
 		String fileExtension;
 		
 		fileExtension = fileName.lastIndexOf('.') > 0 ? fileName.substring(fileName.lastIndexOf('.') + 1): null;
@@ -101,8 +108,13 @@ public class FileDataSet extends ConfigurableDataSet{
 		if("csv".equalsIgnoreCase( fileExtension )) {
 			logger.info("File format: [CSV]");
 			//setDataReader( new CsvDataReader() );
-			setDataReader( new FileDatasetCsvDataReader());
-		} else if ("xml".equalsIgnoreCase( fileExtension ) || "txt".equalsIgnoreCase( fileExtension )) {
+			setDataReader( new FileDatasetCsvDataReader(jsonConf));
+		} 
+		else if ("xls".equalsIgnoreCase( fileExtension )){
+			logger.info("File format: [XLS Office 2003]");
+			setDataReader( new FileDatasetXlsDataReader() );
+		}
+		else if ("xml".equalsIgnoreCase( fileExtension ) || "txt".equalsIgnoreCase( fileExtension )) {
 			logger.info("File format: [XML]");
 			setDataReader( new XmlDataReader() );
 		} else {
