@@ -54,7 +54,7 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 	Ext.apply(this, c);
 
 	var panelItems;
-	panelItems = this.initUploadForm(panelItems);
+	panelItems = this.initUploadForm(panelItems,config);
 	
 
 	c = {
@@ -74,7 +74,7 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	
 	
-	initUploadForm : function(items){
+	initUploadForm : function(items,config){
 		
 		//XLS Options Panel
 		this.skipRowsField = new Ext.form.TextField({
@@ -91,6 +91,13 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			width: 100
 		});
 		
+		this.sheetNumberField = new Ext.form.TextField({
+			fieldLabel : 'Sheet Number',
+			allowBlank : true,
+			name: 'sheetNumber',
+			width: 100
+		});		
+		
 		
 		this.xlsOptionsPanel = new Ext.Panel({
 			  margins: '50 50 50 50',
@@ -99,13 +106,14 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	          layout: 'form',
 	          width: 500,
 			  labelWidth: 150,
-	          items: [ this.skipRowsField, this.limitRowsField  ]
+	          items: [ this.skipRowsField, this.limitRowsField, this.sheetNumberField  ]
 		});
 		this.xlsOptionsPanel.setVisible(false);
 
 		
 		
 		//CSV Options Panel
+		//not used now because CSV Reading library supports both Windows and Unix approach for EoL
 		this.csvEndOfLineCombo = new Ext.form.ComboBox({
 			name : 'csvEndOfLine',
 			store: new Ext.data.ArrayStore({
@@ -184,7 +192,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	          layout: 'form',
 	          width: 500,
 			  labelWidth: 150,
-	          items: [ this.csvDelimiterCombo, this.csvQuoteCombo, this.csvEndOfLineCombo ]
+	          items: [ this.csvDelimiterCombo, this.csvQuoteCombo]
 		});
 		
 		
@@ -213,13 +221,20 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		});		
 		this.fileTypeCombo.addListener('select',this.activateFileTypePanel, this);
 
+		this.fileNameField = new Ext.form.TextField({
+			fieldLabel : 'File Name',
+			allowBlank : true,
+			id: 'fileNameField',
+			name: 'fileName',
+			readOnly:true
+		});
 		
 		this.uploadField = new Ext.form.TextField({
 			inputType : 'file',
 			fieldLabel : LN('sbi.generic.upload'),
 			allowBlank : true,
-			id: 'fileNameField',
-			name: 'fileName'
+			id: 'fileUploadField',
+			name: 'fileUpload'
 		});
 		
 		this.uploadButton = new Ext.Button({
@@ -237,7 +252,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		  defaultType: 'textfield',
 		  fileUpload: true,
 		  id: 'fileUploadPanel',
-		  items: [this.uploadField, this.uploadButton, this.fileTypeCombo, this.csvOptionsPanel, this.xlsOptionsPanel]
+		  items: [this.fileNameField, this.uploadField, this.uploadButton, this.fileTypeCombo, this.csvOptionsPanel, this.xlsOptionsPanel]
 
 		});
 		
@@ -255,6 +270,15 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			this.csvOptionsPanel.setVisible(false);
 			this.xlsOptionsPanel.setVisible(true);
 		}
+	}
+	
+	//Public Methods
+	, setFormState: function(formState) {
+		this.fileNameField.setValue(formState.fileName);
+		this.csvDelimiterCombo.setValue(formState.csvDelimiter);
+		this.csvQuoteCombo.setValue(formState.csvQuote);
+
+		
 	}
 
 	
