@@ -849,11 +849,19 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		JSONObject jsonDsConfig = new JSONObject();		
 
 		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FILE)){	
+			//added
+			String csvDelimiter = getAttributeAsString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER);
+			String csvQuote = getAttributeAsString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
+			
+			
 			dataSet = new FileDataSet();
 			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
 			File pathFile = new File(fileName);
 			fileName = pathFile.getName();
 			jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
+			dataSet.setConfiguration(jsonDsConfig.toString());
 			((FileDataSet)dataSet).setFileName(fileName);				
 			
 		} 

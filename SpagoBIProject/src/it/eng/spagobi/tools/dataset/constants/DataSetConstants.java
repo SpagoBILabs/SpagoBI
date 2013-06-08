@@ -97,5 +97,9 @@ public class DataSetConstants {
 	//filters parameters
 	public static final String FILTERS = "FILTERS";
 	
+	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
+	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
+
+	
 	
 }
