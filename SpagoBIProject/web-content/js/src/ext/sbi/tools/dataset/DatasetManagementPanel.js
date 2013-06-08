@@ -345,6 +345,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						limit : 25,
 						dsTypeCd : values['dsTypeCd'],
 						fileName : values['fileName'],
+						csvDelimiter : values['csvDelimiter'],
+						csvQuote : values['csvQuote'],
 						query : values['query'],
 						queryScript : values['queryScript'],
 						queryScriptLanguage : values['queryScriptLanguage'],
@@ -401,7 +403,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 				,initConfigObject : function() {
 					this.configurationObject.fields = [ 'id', 'name',
 							'label', 'description', 'dsTypeCd',
-							'catTypeVn', 'usedByNDocs', 'fileName',
+							'catTypeVn', 'usedByNDocs', 'fileName','csvDelimiter','csvQuote',
 							'query', 'queryScript', 'queryScriptLanguage','dataSource', 'wsAddress',
 							'wsOperation', 'script', 'scriptLanguage',
 							'jclassName', 'customData', 'pars', 'trasfTypeCd',
@@ -416,6 +418,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							{	id : null,
 								name : '', label : '', description : '',
 								dsTypeCd : '', catTypeVn : '', usedByNDocs : 0,
+								csvDelimiter: '',csvQuote: '',
 								fileName : '', query : '', queryScript : '', queryScriptLanguage : '', dataSource : '',
 								wsAddress : '', wsOperation : '', script : '',
 								scriptLanguage : '', jclassName : '', customData: '', pars : [],
@@ -717,7 +720,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					});
 					detailDsType.addListener('select',this.activateDsTypeForm, this);
 			
-					this.fileUploadFormPanel = new Sbi.tools.dataset.FileDatasetPanel();
+					this.fileUploadFormPanel = new Sbi.tools.dataset.FileDatasetPanel(config);
 					var uploadButton = this.fileUploadFormPanel.getComponent('fileUploadPanel').getComponent('fileUploadButton');
 					
 					uploadButton.setHandler(this.uploadFileButtonHandler);
@@ -1141,7 +1144,9 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						params : params,
 						waitMsg : LN('sbi.generic.wait'),
 						success : function(form, action) {
-							Ext.MessageBox.alert('Success!');
+							Ext.MessageBox.alert('Success!','File Uploaded to the Server');
+							var fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
+							Ext.getCmp('fileNameField').setValue(fileNameUploaded);
 						},
 						failure : function(form, action) {
 							switch (action.failureType) {
@@ -1550,6 +1555,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							{	id : null,
 								name : '', label : '', description : '',
 								dsTypeCd : '', catTypeVn : '', usedByNDocs : 0,
+								csvDelimiter: '', csvQuote:'',
 								fileName : '', query : '', queryScript : '', queryScriptLanguage : '', dataSource : '',
 								wsAddress : '', wsOperation : '', script : '',
 								scriptLanguage : '', jclassName : '', customData : '', pars : [],
@@ -1623,6 +1629,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						catTypeVn : values['catTypeVn'],
 						usedByNDocs : values['usedByNDocs'],
 						fileName : values['fileName'],
+						csvDelimiter : values['csvDelimiter'],
+						csvQuote : values['csvQuote'],												
 						query : values['query'],
 						queryScript : values['queryScript'],
 						queryScriptLanguage : values['queryScriptLanguage'],
@@ -1668,6 +1676,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						catTypeVn : values['catTypeVn'],
 						usedByNDocs : values['usedByNDocs'],
 						fileName : values['fileName'],
+						csvDelimiter : values['csvDelimiter'],
+						csvQuote : values['csvQuote'],
 						query : values['query'],
 						queryScript : values['queryScript'],
 						queryScriptLanguage : values['queryScriptLanguage'],
@@ -1710,6 +1720,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							catTypeVn : values['catTypeVn'],
 							usedByNDocs : values['usedByNDocs'],
 							fileName : values['fileName'],
+							csvDelimiter : values['csvDelimiter'],
+							csvQuote : values['csvQuote'],
 							query : values['query'],
 							queryScript : values['queryScript'],
 							queryScriptLanguage : values['queryScriptLanguage'],
@@ -1751,6 +1763,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					record.set('dsTypeCd',values['dsTypeCd']);
 					record.set('catTypeVn',values['catTypeVn']);
 					record.set('fileName',values['fileName']);
+					record.set('csvDelimiter',values['csvDelimiter']);					
+					record.set('csvQuote',values['csvQuote']);					
 					record.set('query',values['query']);
 					record.set('queryScript',values['queryScript']);
 					record.set('queryScriptLanguage',values['queryScriptLanguage']);
@@ -1853,6 +1867,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					// the first refactored part.
 					this.queryDetail.setFormState(record.data);
 					// ----------------------------------------------------------
+					this.fileUploadFormPanel.setFormState(record.data);
 				}
 				
 				// OVERRIDING save method
