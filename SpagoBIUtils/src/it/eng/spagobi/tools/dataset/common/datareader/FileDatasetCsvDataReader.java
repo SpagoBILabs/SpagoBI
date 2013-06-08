@@ -15,11 +15,14 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.ICsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -30,20 +33,41 @@ import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 
 /**
- * @author Angelo Bernabei
- *         angelo.bernabei@eng.it
+ * @author Marco Cortella
+ *         marco.cortella@eng.it
  */
 public class FileDatasetCsvDataReader extends AbstractDataReader {
 	
 	
-	final static String SEPARATOR=";";
+	private static transient Logger logger = Logger.getLogger(FileDatasetCsvDataReader.class);
+	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
+	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
+	private String csvDelimiter;
+	private String csvQuote;
 
-	private static transient Logger logger = Logger.getLogger(CsvDataReader.class);
-	
-  
-
-	public FileDatasetCsvDataReader() {
+	public FileDatasetCsvDataReader(JSONObject jsonConf) {
 		super();
+
+		//Get File Dataset Configuration Options
+		if (jsonConf != null){
+			try {
+				if (jsonConf.get(CSV_FILE_DELIMITER_CHARACTER) != null){
+					csvDelimiter = jsonConf.get(CSV_FILE_DELIMITER_CHARACTER).toString();
+				} else {
+					csvDelimiter="";
+				}
+				
+				if (jsonConf.get(CSV_FILE_QUOTE_CHARACTER) != null){
+					csvQuote = jsonConf.get(CSV_FILE_QUOTE_CHARACTER).toString();
+				} else {
+					csvQuote="";
+				}
+			} catch (JSONException e) {
+				throw new RuntimeException("Error Deserializing File Dataset Options", e);
+			}
+		}
+
+		
 	}
 
 	public IDataStore read( Object data ) {
@@ -61,10 +85,13 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 
 				
 		} catch (FileNotFoundException e) {
+			logger.error("Error reading CSV File: "+e);
 			e.printStackTrace();
 		}catch (IOException e) {
+			logger.error("Error reading CSV File: "+e);
 			e.printStackTrace();
 		} catch (Exception e) {
+			logger.error("Error reading CSV File: "+e);
 			e.printStackTrace();
 		}
 		
@@ -82,9 +109,12 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 
 	        
 	        ICsvMapReader mapReader = null;
+	        
 	        try {
-	                mapReader = new CsvMapReader(inputStreamReader, CsvPreference.STANDARD_PREFERENCE);
-	                
+	        	
+	        	 CsvPreference customPreference = new CsvPreference.Builder(csvQuote.charAt(0), csvDelimiter.charAt(0), "\n").build(); 
+	             // mapReader = new CsvMapReader(inputStreamReader, CsvPreference.STANDARD_PREFERENCE);
+	        	 	mapReader = new CsvMapReader(inputStreamReader, customPreference);  
 	                // the header columns are used as the keys to the Map
 	                final String[] header = mapReader.getHeader(true);
 	                
@@ -113,7 +143,7 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 	                	IRecord record = new Record(dataStore);
 
 	                        for (int i= 0; i<header.length;i++){
-	                        	 System.out.println(header[i]+" = "+contentsMap.get(header[i])); 
+	                        	 logger.debug(header[i]+" = "+contentsMap.get(header[i])); 
 	                        	 IField field = new Field(contentsMap.get(header[i]));
 	 							 record.appendField(field);
 	    	                }
