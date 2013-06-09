@@ -9,6 +9,7 @@ import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileIm
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
@@ -162,6 +163,14 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 		return toReturn;
 	}
 
+	public List<IModelRelationshipDescriptor> loadRelationships() {
+		List<IModelRelationshipDescriptor> relationships = new ArrayList<IModelRelationshipDescriptor>();
+		for(IDataSourceConfiguration subConfiguration: subConfigurations) {
+			relationships.addAll( subConfiguration.loadRelationships() );
+		}
+		return relationships;
+	}
+	
 	public List<IModelViewEntityDescriptor> loadViews() {
 		List<IModelViewEntityDescriptor> views = new ArrayList<IModelViewEntityDescriptor>();
 		for(IDataSourceConfiguration subConfiguration: subConfigurations) {
@@ -176,8 +185,4 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 		
 		return functions;
 	}
-
-
-
-
 }

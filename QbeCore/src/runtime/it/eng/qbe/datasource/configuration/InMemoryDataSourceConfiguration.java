@@ -7,6 +7,7 @@ package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.properties.IModelProperties;
+import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
@@ -30,6 +31,7 @@ public class InMemoryDataSourceConfiguration extends AbstractDataSourceConfigura
 	Map<Locale, IModelProperties> i18nMap;
 	
 	Map<String, Object> dataSourceProperties;
+	List<IModelRelationshipDescriptor> realtionships;
 	List<IModelViewEntityDescriptor> views;
 	Map<String, List<ModelCalculatedField>> calculatedFields;
 	
@@ -69,6 +71,11 @@ public class InMemoryDataSourceConfiguration extends AbstractDataSourceConfigura
 	public List<IModelViewEntityDescriptor> loadViews() {
 		if(views == null) views = super.loadViews();
 		return views;
+	}
+	
+	public List<IModelRelationshipDescriptor> loadRelationships() {
+		if(realtionships == null) realtionships = super.loadRelationships();
+		return realtionships;
 	}
 
 	public Map<String, List<ModelCalculatedField>> loadCalculatedFields() {

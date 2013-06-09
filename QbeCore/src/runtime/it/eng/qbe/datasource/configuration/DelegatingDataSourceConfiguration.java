@@ -9,10 +9,12 @@ import it.eng.qbe.datasource.configuration.dao.ICalculatedFieldsDAO;
 import it.eng.qbe.datasource.configuration.dao.IInLineFunctionsDAO;
 import it.eng.qbe.datasource.configuration.dao.IModelI18NPropertiesDAO;
 import it.eng.qbe.datasource.configuration.dao.IModelPropertiesDAO;
+import it.eng.qbe.datasource.configuration.dao.IRelationshipsDAO;
 import it.eng.qbe.datasource.configuration.dao.IViewsDAO;
 import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
+import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
@@ -27,11 +29,14 @@ import java.util.Map;
  */
 public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfiguration {
 	
+	IModelI18NPropertiesDAO modelLabelsDAOFileImpl;
 	IModelPropertiesDAO modelPropertiesDAO;
 	ICalculatedFieldsDAO calculatedFieldsDAO;
-	IModelI18NPropertiesDAO modelLabelsDAOFileImpl;
-	IViewsDAO viewsDAO;
 	IInLineFunctionsDAO functionsDAO;
+	
+	IRelationshipsDAO relationshipsDAO;
+	IViewsDAO viewsDAO;
+	
 	
 	
 
@@ -39,7 +44,9 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 		super(modelName);
 	}
 	
+	// ====================================================================
 	// overrides
+	// ====================================================================
 	
 	// datasource properties are managed in memory -> no delegation here
 	// public Map<String, Object> loadDataSourceProperties() { ...
@@ -51,6 +58,7 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 	public IModelProperties loadModelI18NProperties() {
 		return loadModelI18NProperties(null);
 	}
+	
 	public IModelProperties loadModelI18NProperties(Locale locale) {
 		SimpleModelProperties properties = modelLabelsDAOFileImpl.loadProperties(locale);
 		return properties;
@@ -65,6 +73,10 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 	}
 
 
+	public List<IModelRelationshipDescriptor> loadRelationships() {
+		return relationshipsDAO.loadModelRelationships();
+	}
+	
 	public List<IModelViewEntityDescriptor> loadViews() {
 		return viewsDAO.loadModelViews();
 	}
@@ -73,8 +85,10 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 		return functionsDAO.loadInLineFunctions(dialect);
 	}
 	
+	// ====================================================================
 	// Accessor methods	
-
+	// ====================================================================
+	
 	public IModelPropertiesDAO getModelPropertiesDAO() {
 		return modelPropertiesDAO;
 	}
@@ -99,14 +113,6 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 			IModelI18NPropertiesDAO modelLabelsDAOFileImpl) {
 		this.modelLabelsDAOFileImpl = modelLabelsDAOFileImpl;
 	}
-
-	public IViewsDAO getViewsDAO() {
-		return viewsDAO;
-	}
-
-	public void setViewsDAO(IViewsDAO viewsDAO) {
-		this.viewsDAO = viewsDAO;
-	}
 	
 	public IInLineFunctionsDAO getFunctionsDAO() {
 		return functionsDAO;
@@ -114,5 +120,21 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 
 	public void setFunctionsDAO(IInLineFunctionsDAO functionsDAO) {
 		this.functionsDAO = functionsDAO;
+	}
+	
+	public IRelationshipsDAO getRelationshipsDAO() {
+		return relationshipsDAO;
+	}
+
+	public void setRelationshipsDAO(IRelationshipsDAO relationshipsDAO) {
+		this.relationshipsDAO = relationshipsDAO;
+	}
+	
+	public IViewsDAO getViewsDAO() {
+		return viewsDAO;
+	}
+
+	public void setViewsDAO(IViewsDAO viewsDAO) {
+		this.viewsDAO = viewsDAO;
 	}
 }

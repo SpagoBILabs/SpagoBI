@@ -10,12 +10,14 @@ import it.eng.qbe.model.properties.initializer.IModelStructurePropertiesInitiali
 import it.eng.qbe.model.properties.initializer.ModelStructurePropertiesInitializerFactory;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewRelationshipDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.ModelStructure;
+import it.eng.qbe.model.structure.ModelStructure.RootEntitiesGraph;
 import it.eng.qbe.model.structure.ModelViewEntity;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -63,14 +65,12 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 	}
 	
 	/**
-	 * This method builds a JPA datamart structure.
+	 * This method builds a JPA model structure.
 	 * @return DataMartModelStructure
 	 */
 	public IModelStructure build() {
 		ModelStructure modelStructure;
 		String modelName;
-		Metamodel jpaMetamodel;
-		Set<EntityType<?>> jpaEntities;
 		
 		logger.debug("IN");
 		
@@ -82,22 +82,100 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			setEntityManager(getDataSource().getEntityManager());
 			Assert.assertNotNull(getEntityManager(), "Impossible to find the jar file associated to datamart named: [" + modelName + "]");
 			
-			
 			propertiesInitializer.addProperties(modelStructure);	
 			Map calculatedFields = getDataSource().getConfiguration().loadCalculatedFields();
 			modelStructure.setCalculatedFields(calculatedFields);
 				
-			jpaMetamodel = getEntityManager().getMetamodel();		
-			jpaEntities = jpaMetamodel.getEntities();
-			logger.debug("Jpa metamodel contains ["+ jpaEntities.size() + "] entity types");
+			addRootEntities(modelStructure);
+			addRelationshipsBetweenRootEntities(modelStructure);
+			addViews(modelStructure);
+
+			logger.info("Model structure for model [" + modelName + "] succesfully built");
 			
-			for(EntityType<?> entityType: jpaEntities) {
-				logger.debug("Adding entity type [" + entityType + "] to model structure");
-				String entityTypeName =  entityType.getJavaType().getName();
-				addEntity(modelStructure, modelName, entityTypeName);	
-				logger.info("Entity type [" + entityType + "] succesfully added to model structure");
-			}		
+			return modelStructure;
 			
+		} catch(Throwable t) {
+			throw new RuntimeException("Impossible to build model structure", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	
+	private void addRootEntities(ModelStructure modelStructure) {
+		Metamodel jpaMetamodel;
+		Set<EntityType<?>> jpaEntities;
+		
+		String modelName = getDataSource().getConfiguration().getModelName();
+		
+		jpaMetamodel = getEntityManager().getMetamodel();		
+		jpaEntities = jpaMetamodel.getEntities();
+		logger.debug("Jpa metamodel contains ["+ jpaEntities.size() + "] entity types");
+		
+		for(EntityType<?> entityType: jpaEntities) {
+			logger.debug("Adding entity type [" + entityType + "] to model structure");
+			String entityTypeName =  entityType.getJavaType().getName();
+			addEntity(modelStructure, modelName, entityTypeName);	
+			logger.info("Entity type [" + entityType + "] succesfully added to model structure");
+		}
+	}
+	
+	private void addRelationshipsBetweenRootEntities(ModelStructure modelStructure) {
+		
+		String modelName = getDataSource().getConfiguration().getModelName();
+		
+		// add relationship between rootEntities
+		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(modelName, false);
+		List<IModelRelationshipDescriptor> relationships = getDataSource().getConfiguration().loadRelationships();
+		for(IModelRelationshipDescriptor relationship: relationships) {
+			if(relationship.getType().equals("many-to-one") == false) continue;
+			
+			IModelEntity sourceEntity = rootEntitiesGraph.getRootEntityByName(relationship.getSourceEntityUniqueName());
+			if(sourceEntity == null) throw new RuntimeException("Impossibe to find source entity whose name is equal to [" + relationship.getSourceEntityUniqueName() + "]");
+			List<IModelField> sourceFields = new ArrayList<IModelField>();
+			List<String> sourceFieldNames = relationship.getSourceFieldUniqueNames();
+			for(String sourceFieldName: sourceFieldNames) {
+				IModelField field = sourceEntity.getField(sourceFieldName);
+				if(field == null) {	// if the field is not part of the key it is not yet added to the entity. we have to create it now.				
+					String generatedFieldName = relationship.getName() + "."  + sourceFieldName.split(":")[1];
+					field = sourceEntity.addNormalField(generatedFieldName);
+					field.getProperties().put("visible", "true");
+					field.getProperties().put("position", "" + Integer.MAX_VALUE);
+					field.getProperties().put("type", "attribute");	
+				}
+				sourceFields.add(field);
+			}
+			
+			IModelEntity destinationEntity = rootEntitiesGraph.getRootEntityByName(relationship.getDestinationEntityUniqueName());
+			if(destinationEntity == null) throw new RuntimeException("Impossibe to find destination entity whose name is equal to [" + relationship.getDestinationEntityUniqueName() + "]");
+			List<IModelField> destinationFields = new ArrayList<IModelField>();
+			List<String> destinationFieldNames = relationship.getDestinationFieldUniqueNames();
+			for(String destinationFieldName: destinationFieldNames) {
+				IModelField field = destinationEntity.getField(destinationFieldName);
+				if(field == null) {
+					String generatedFieldName = relationship.getName() + "."  + destinationFieldName.split(":")[1];
+					field = destinationEntity.addNormalField(generatedFieldName);
+					field.getProperties().put("visible", "true");
+					field.getProperties().put("position", "" + Integer.MAX_VALUE);
+					field.getProperties().put("type", "attribute");
+					//throw new RuntimeException("Impossibe to find in destination entity [" + destinationEntity.getName() + "] a field whose name is equal to [" + destinationFieldName + "]");
+				}
+				destinationFields.add(field);
+			}
+			try {
+				modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "MANY_TO_ONE");
+				logger.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
+			} catch (Throwable t) {
+				logger.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
+			}
+		}
+	}
+	
+	
+	private void addViews(ModelStructure modelStructure) {
+		
+		try {
+			String modelName = getDataSource().getConfiguration().getModelName();
 			
 			/*
 			 * 1) Load Views definitions and adds to the model structure (with outbound relations from Business Views)
@@ -107,7 +185,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			if(list.size() > 0) {
 				for (int i=0; i<list.size(); i++){
 					IModelViewEntityDescriptor viewDescriptor = list.get(i);
-
+	
 					ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure, null);
 					addedViewsEntities.add(viewEntity);
 					propertiesInitializer.addProperties(viewEntity);
@@ -164,23 +242,13 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				//Outbound relationships
 				viewEntity.addOutboundRelationshipsToViewEntities();
 			}
-
-			logger.info("Model structure for model [" + modelName + "] succesfully built");
-			
-			return modelStructure;
-		} 
-		catch (Exception e){
-			e.printStackTrace();
-			logger.debug("Impossible to build model structure", e);
-			throw new RuntimeException("Impossible to build model structure", e);
-		}
-		catch(Throwable t) {
-			throw new RuntimeException("Impossible to build model structure", t);
-		
+		} catch(Throwable t) {
+			throw new RuntimeException("Impossible to add views to model structure", t);
 		} finally {
 			logger.debug("OUT");
 		}
 	}
+	
 	
 	private List<IModelEntity> visitModelStructure(ModelStructure modelStructure, String modelName){
 		List<IModelEntity> rootEntities = modelStructure.getRootEntities(modelName);
@@ -210,14 +278,13 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 	private void addEntity (IModelStructure modelStructure, String modelName, String entityType){
 
 		String entityName = getEntityNameFromEntityType(entityType);		
-		IModelEntity dataMartEntity = modelStructure.addRootEntity(modelName, entityName, null, null, entityType);
-		propertiesInitializer.addProperties(dataMartEntity);
+		IModelEntity entity = modelStructure.addRootEntity(modelName, entityName, null, null, entityType);
+		propertiesInitializer.addProperties(entity);
 		
 		//addKeyFields(dataMartEntity);		
-		List subEntities = addNormalFields(dataMartEntity);
-		addCalculatedFields(dataMartEntity);
-		addSubEntities(dataMartEntity, subEntities, 0);
-		
+		List<IModelEntity> subEntities = addNormalFields(entity);
+		addCalculatedFields(entity);
+		addSubEntities(entity, subEntities, 0);
 	}
 	
 	private String getEntityNameFromEntityType(String entityType) {
@@ -230,20 +297,24 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 	}
 
 	/**
-	 * This method adds the normal fields to the datamart entry structure
-	 * @param dataMartEntity:  the datamart structure to complete
+	 * This method adds the normal fields to the model entry structure
+	 
+	 * @param modelEntity:  the model entity to complete adding normal fields
+	 * 
+	 * @return a list of entities in ONE_TO_MANY relationship with the entity passed in as parameter (i.e. entities whose
+	 * input entity is related to by means of e foreign key - MANY_TO_ONE relatioship)
 	 */
-	public List addNormalFields(IModelEntity dataMartEntity) {		
-		logger.debug("Adding the field "+dataMartEntity.getName());
-		String[] propertyNames;
-		List subEntities = new ArrayList();			
+	public List<IModelEntity> addNormalFields(IModelEntity modelEntity) {		
+		
+		logger.debug("Adding the field "+modelEntity.getName());
+		List<IModelEntity> subEntities = new ArrayList<IModelEntity>();			
 		EntityType thisEntityType = null;
 		
 		Metamodel classMetadata = getEntityManager().getMetamodel();
 		
 		for(Iterator it = classMetadata.getEntities().iterator(); it.hasNext(); ) {
 			EntityType et = (EntityType)it.next();
-			if(et.getJavaType().getName().equals(dataMartEntity.getType())){
+			if(et.getJavaType().getName().equals(modelEntity.getType())){
 				thisEntityType = et;
 				break;
 			}
@@ -261,26 +332,24 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			Attribute a = attributesIt.next();
 			//normal attribute
 			if(a.getPersistentAttributeType().equals(PersistentAttributeType.BASIC)){		
-				addField(a, dataMartEntity,"");
-			}else// relation 
-				if(a.getPersistentAttributeType().equals(PersistentAttributeType.MANY_TO_ONE)){
-					Class c = a.getJavaType();
-					String entityType = c.getName();
-					String columnName = a.getName();
-					String entityName =  a.getName(); //getEntityNameFromEntityType(entityType);
-			 		IModelEntity subentity = new ModelEntity(entityName, null, columnName, entityType, dataMartEntity.getStructure());		
-			 		subEntities.add(subentity);		
-			}else//composite key 
-				if(a.getPersistentAttributeType().equals(PersistentAttributeType.EMBEDDED)){
+				addField(a, modelEntity,"");
+			} else if(a.getPersistentAttributeType().equals(PersistentAttributeType.MANY_TO_ONE)){ // relation
+				Class c = a.getJavaType();
+				String entityType = c.getName();
+				String columnName = a.getName();
+				String entityName =  a.getName(); //getEntityNameFromEntityType(entityType);
+				IModelEntity subentity = new ModelEntity(entityName, null, columnName, entityType, modelEntity.getStructure());		
+				subEntities.add(subentity);		
+			} else if(a.getPersistentAttributeType().equals(PersistentAttributeType.EMBEDDED)){ // key
 				Set<Attribute> keyAttre = ((EmbeddableType)((SingularAttribute)a).getType()).getAttributes();
 				Iterator<Attribute> keyIter = keyAttre.iterator();
 				while(keyIter.hasNext()){
-					addField(keyIter.next(), dataMartEntity, a.getName()+".");	
+					addField(keyIter.next(), modelEntity, a.getName()+".");	
 				}
 			}
 		}
 		
-		logger.debug("Field "+dataMartEntity.getName()+" added");
+		logger.debug("Field "+modelEntity.getName()+" added");
 		return subEntities;
 	}
 	
@@ -299,14 +368,13 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 		int scale = 0;
 		int precision = 0;
 
-		IModelField datamartField = dataMartEntity.addNormalField(keyPrefix+ attr.getName());
-		datamartField.setType(type);
-		datamartField.setPrecision(precision);
-		datamartField.setLength(scale);
-		propertiesInitializer.addProperties(datamartField);
+		IModelField modelField = dataMartEntity.addNormalField(keyPrefix+ attr.getName());
+		modelField.setType(type);
+		modelField.setPrecision(precision);
+		modelField.setLength(scale);
+		propertiesInitializer.addProperties(modelField);
 	}
 	
-	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate!
 	private void addCalculatedFields(IModelEntity dataMartEntity) {
 		logger.debug("Adding the calculated field "+dataMartEntity.getName());
 		List calculatedFileds;
@@ -322,8 +390,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 		}
 		logger.debug("Added the calculated field "+dataMartEntity.getName());
 	}
-	
-	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate!
+
 	private void addCalculatedFieldsForViews(IModelEntity dataMartEntity) {
 		addCalculatedFields(dataMartEntity);
 		
@@ -335,23 +402,21 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 	}
 	
 	
-	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate! 
-	private void addSubEntities(IModelEntity dataMartEntity, List subEntities, int recursionLevel) {
+	private void addSubEntities(IModelEntity modelEntity, List<IModelEntity> subEntities, int recursionLevel) {
 		
-		Iterator it = subEntities.iterator();
+		Iterator<IModelEntity> it = subEntities.iterator();
 		while (it.hasNext()) {
-			IModelEntity subentity = (IModelEntity)it.next();
-			if (subentity.getType().equalsIgnoreCase(dataMartEntity.getType())){
+			IModelEntity subentity = it.next();
+			if (subentity.getType().equalsIgnoreCase(modelEntity.getType())){
 				// ciclo di periodo 0!
 			} else if(recursionLevel > 10) {
 				// prune recursion tree 
 			} else {
-				addSubEntity(dataMartEntity, subentity, recursionLevel+1);
+				addSubEntity(modelEntity, subentity, recursionLevel+1);
 			}
 		}
 	}
 
-	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate!	
 	private void addSubEntity (IModelEntity parentEntity, IModelEntity subEntity, int recursionLevel){
 		logger.debug("Adding the sub entity field "+subEntity.getName()+" child of "+parentEntity.getName());
 		IModelEntity dataMartEntity;				
@@ -361,7 +426,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 		propertiesInitializer.addProperties(dataMartEntity);
 		
 		//addKeyFields(dataMartEntity);			
-		List subEntities = addNormalFields(dataMartEntity);		
+		List<IModelEntity> subEntities = addNormalFields(dataMartEntity);		
 		addCalculatedFields(dataMartEntity);
 		addSubEntities(dataMartEntity, subEntities, recursionLevel);
 		logger.debug("Added the sub entity field "+subEntity.getName()+" child of "+parentEntity.getName());

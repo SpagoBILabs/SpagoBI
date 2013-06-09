@@ -17,6 +17,15 @@ public abstract class AbstractModelNode extends AbstractModelObject implements I
 	
 	protected IModelStructure structure;
 	protected IModelEntity parent;	
+	protected String modelName;
+
+	public String getModelName() {
+		return modelName;
+	}
+
+	public void setModelName(String modelName) {
+		this.modelName = modelName;
+	}
 
 	public IModelStructure getStructure() {
 		return structure;

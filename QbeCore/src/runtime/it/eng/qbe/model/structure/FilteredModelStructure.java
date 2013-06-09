@@ -6,6 +6,7 @@
 package it.eng.qbe.model.structure;
 
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.ModelStructure.RootEntitiesGraph.Relationship;
 import it.eng.qbe.model.structure.filter.QbeTreeFilter;
 
 import java.util.ArrayList;
@@ -145,12 +146,31 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 	public Iterator<IModelEntity> getRootEntityIterator(String modelName) {
 		return getRootEntities(modelName).iterator();
 	}
+	
+	public boolean areRootEntitiesConnected(Set<IModelEntity> entities){
+		return wrappedModelStructure.areRootEntitiesConnected(entities);
+	}
+	
 
 	public void addEntity(IModelEntity entity) {
 		wrappedModelStructure.addEntity(entity);
 		
 	}
+	
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#addRootEntityRelationship(java.lang.String, it.eng.qbe.model.structure.IModelEntity, it.eng.qbe.model.structure.IModelEntity, java.lang.String)
+	 */
+	public void addRootEntityRelationship(String modelName, 
+			IModelEntity fromEntity, List<IModelField> fromFields,
+			IModelEntity toEntity, List<IModelField> toFields,
+			String type) {
+		wrappedModelStructure.addRootEntityRelationship(modelName, fromEntity, fromFields, toEntity, toFields, type);
+	}
 
+	public Set<Relationship> getRootEntitiesConnections(Set<IModelEntity> entities) {
+		return wrappedModelStructure.getRootEntitiesConnections(entities);
+	}
+	
 	public IModelEntity getEntity(String entityUniqueName) {
 		List<IModelEntity> list = new ArrayList<IModelEntity>();
 		List<IModelEntity> filteredList;
@@ -245,7 +265,9 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 			filteredModelEntity = new FilteredModelEntity(modelEntity, dataSource, qbeTreeFilter);
 		}
 		return filteredModelEntity;
-	} 
+	}
+
+ 
 	
 
 }

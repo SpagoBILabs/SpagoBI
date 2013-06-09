@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.model.structure;
 
+import it.eng.qbe.model.structure.ModelStructure.RootEntitiesGraph.Relationship;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +101,28 @@ public interface IModelStructure extends IModelObject {
 		 * @return the root entities
 		 */
 		public List<IModelEntity> getRootEntities(String modelName) ;
+		
+		public boolean areRootEntitiesConnected(Set<IModelEntity> entities);
+		
+		public Set<Relationship> getRootEntitiesConnections(Set<IModelEntity> entities);
+		
+		// ----------------------------------
+		// RootEntityRelationship
+		// ----------------------------------
+		/**
+		 * Add a relationship between the two input entities
+		 * 
+		 * @param modelName the name of the target model
+		 * @param fromEntity the relationship source entity
+		 * @param fromFields the relationship source fields
+		 * @param toEntity the relationship destination entity
+		 * @param fromFields the relationship destination fields
+		 * @param type relationship type
+		 */
+		void addRootEntityRelationship(String modelName, 
+				IModelEntity fromEntity, List<IModelField> fromFields,
+				IModelEntity toEntity, List<IModelField> toFields,
+				String type);
 		
 		
 		// ----------------------------------

@@ -5,8 +5,10 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.datasource.configuration;
 
+import it.eng.qbe.datasource.configuration.dao.IRelationshipsDAO;
 import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.properties.IModelProperties;
+import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
@@ -72,6 +74,7 @@ public interface IDataSourceConfiguration {
 	
 
 	List<IModelViewEntityDescriptor> loadViews();
+	List<IModelRelationshipDescriptor> loadRelationships();
 	Map<String, List<ModelCalculatedField>> loadCalculatedFields();
 	void saveCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields);
 	
@@ -79,6 +82,5 @@ public interface IDataSourceConfiguration {
 	 * Loads the inline functions
 	 * @return the functions 
 	 */
-	HashMap<String, InLineFunction> loadInLineFunctions(String dialect);
-	
+	HashMap<String, InLineFunction> loadInLineFunctions(String dialect);	
 }
