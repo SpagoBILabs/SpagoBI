@@ -5,7 +5,6 @@
 	<classpathentry kind="src" path="src/hibernate"/>
 	<classpathentry kind="src" path="src/serialization"/>
 	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/hibernate/required/antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/required/commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/required/dom4j-1.6.1.jar"/>
