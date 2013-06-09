@@ -40,7 +40,7 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 	
 	private static final String VIEWS_FILE_NAME = "views.json";
 	
-	 public static transient Logger logger = Logger.getLogger(ViewsDAOFileImpl.class);
+	public static transient Logger logger = Logger.getLogger(ViewsDAOFileImpl.class);
 	
 	public ViewsDAOFileImpl(File file) {
 		modelJarFile = file;
@@ -117,6 +117,6 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 	 * @see it.eng.qbe.dao.DatamartPropertiesDAO#saveModelViews()
 	 */
 	public void saveModelViews(List<JSONObject> views) {
-		throw new SpagoBIRuntimeException("saveDatamartProperties method not supported");
+		throw new SpagoBIRuntimeException("saveModelViews method not supported");
 	}
 }

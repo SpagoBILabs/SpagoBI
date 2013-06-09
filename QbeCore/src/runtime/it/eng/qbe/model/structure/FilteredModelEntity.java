@@ -331,5 +331,19 @@ public class FilteredModelEntity implements IModelEntity{
 	public List<ModelViewEntity> getParentViews() {
 		return wrappedModelEntity.getParentViews();
 	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelNode#getModelName()
+	 */
+	public String getModelName() {
+		return wrappedModelEntity.getModelName();
+	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelNode#setModelName(java.lang.String)
+	 */
+	public void setModelName(String modelName) {
+		wrappedModelEntity.setModelName(modelName);
+	}
 	
 }

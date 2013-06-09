@@ -15,6 +15,8 @@ import java.util.List;
  */
 public interface IModelNode extends IModelObject{
 	
+	String getModelName();
+	void setModelName(String modelName);
 	IModelStructure getStructure();
 	IModelEntity getParent();
 	/**

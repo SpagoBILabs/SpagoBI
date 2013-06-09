@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author Andrea Gioia
  */
-public class ModelEntity extends AbstractModelNode implements IModelEntity{
+public class ModelEntity extends AbstractModelNode implements IModelEntity {
 	
 	protected IModelEntity root;	
 	

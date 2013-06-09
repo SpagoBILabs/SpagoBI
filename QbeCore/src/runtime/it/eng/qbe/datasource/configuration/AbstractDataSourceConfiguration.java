@@ -8,6 +8,7 @@ package it.eng.qbe.datasource.configuration;
 import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
+import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
@@ -53,6 +54,10 @@ public class AbstractDataSourceConfiguration implements IDataSourceConfiguration
 		return new HashMap<String, Object>();
 	}
 
+	public List<IModelRelationshipDescriptor> loadRelationships() {
+		return new ArrayList<IModelRelationshipDescriptor>();
+	}
+	
 	public List<IModelViewEntityDescriptor> loadViews() {
 		return new ArrayList<IModelViewEntityDescriptor>();
 	}
@@ -70,5 +75,4 @@ public class AbstractDataSourceConfiguration implements IDataSourceConfiguration
 		return new HashMap<String, InLineFunction>();
 		
 	}
-
 }

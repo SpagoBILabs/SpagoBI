@@ -11,6 +11,7 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelViewEntity;
+import it.eng.qbe.model.structure.ModelStructure.RootEntitiesGraph.Relationship;
 import it.eng.qbe.model.structure.ModelViewEntity.Join;
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.SimpleSelectField;
@@ -60,6 +61,19 @@ public class JPQLStatementWhereClause extends AbstractJPQLStatementFilteringClau
 		JPQLStatementWhereClause clause = new JPQLStatementWhereClause(parentStatement);
 		return clause.buildClause(query, entityAliasesMaps);
 	}
+	
+	public static String fix(JPQLStatement parentStatement, String whereClause, Query query, Map<String, Map<String, String>> entityAliasesMaps){
+		JPQLStatementWhereClause clause = new JPQLStatementWhereClause(parentStatement);
+		return clause.fixWhereClause(whereClause, query, entityAliasesMaps);
+	}
+	
+	public static String injectAutoJoins(JPQLStatement parentStatement, String whereClause, Query query, Map<String, Map<String, String>> entityAliasesMaps){
+		JPQLStatementWhereClause clause = new JPQLStatementWhereClause(parentStatement);
+		return clause.injectAutoJoins(whereClause, query, entityAliasesMaps);
+	}
+	
+	
+	
 	
 	protected JPQLStatementWhereClause(JPQLStatement statement) {
 		parentStatement = statement;
@@ -376,37 +390,123 @@ public class JPQLStatementWhereClause extends AbstractJPQLStatementFilteringClau
 	}
 	
 	
-	
-	protected String fixWhereClause(String whereClause, Query query, Map entityAliasesMaps) {
-		StringBuffer buffer;
-				
+	protected String injectAutoJoins(String whereClause, Query query, Map entityAliasesMaps) {
 		logger.debug("IN");
 		
 		try {
-			Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
+			Map rootEntityAlias = (Map)entityAliasesMaps.get(query.getId());
+			
+			if(rootEntityAlias == null || rootEntityAlias.keySet().size() == 0) {
+				return "";
+			}
+			
+			Set<IModelEntity> unjoinedEntities = getUnjoinedRootEntities(rootEntityAlias);
+			if(unjoinedEntities.size() > 0) {
+				boolean areConnected = parentStatement.getDataSource().getModelStructure().areRootEntitiesConnected(unjoinedEntities);
+				if(areConnected) {
+					Set<Relationship> relationships = parentStatement.getDataSource().getModelStructure().getRootEntitiesConnections(unjoinedEntities);
+					for(Relationship relationship : relationships) {
+						IModelEntity sourceEntity = relationship.getSourceEntity();
+						Assert.assertNotNull(sourceEntity, "In a relationship source entity cannot be null");
+						IModelEntity targetEntity = relationship.getTargetEntity();
+						Assert.assertNotNull(sourceEntity, "In a relationship target entity cannot be null");
+						logger.debug("Adding join condition between entity [" + sourceEntity.getName() + "] and entity [" + targetEntity.getName() + "]");
+						String sourceEntityAlias = null;
+						if( rootEntityAlias.containsKey(sourceEntity.getUniqueName()) ) {
+							sourceEntityAlias = (String)rootEntityAlias.get(sourceEntity.getUniqueName());
+						} else {
+							sourceEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
+							rootEntityAlias.put(sourceEntity.getUniqueName(), sourceEntityAlias);
+						}
+						logger.debug("Source entity alias is equal to [" + sourceEntityAlias + "]");
+						
+						String targetEntityAlias = null;
+						if( rootEntityAlias.containsKey(targetEntity.getUniqueName()) ) {
+							targetEntityAlias = (String)rootEntityAlias.get(targetEntity.getUniqueName());
+						} else {
+							targetEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
+							rootEntityAlias.put(targetEntity.getUniqueName(), targetEntityAlias);
+						}
+						logger.debug("Traget entity alias is equal to [" + targetEntityAlias + "]");
+						
+						String joinCondition;
+						List<IModelField> sourceFields = relationship.getSourceFields();
+						Assert.assertTrue(sourceFields != null && sourceFields.size() > 0, "A relationship must refer at least one column of the source table");
+						List<IModelField> destinationFields = relationship.getTargetFields();
+						Assert.assertTrue(destinationFields != null && destinationFields.size() > 0, "A relationship must refer at least one column of the destination table");
+						Assert.assertTrue(sourceFields.size() == destinationFields.size(), "The number of columns of source table referred by a relationship must be equal to the number of columns it refer in the target table");
+						for(int i = 0; i < sourceFields.size(); i++) {
+							IModelField sourceField =  sourceFields.get(i);
+							String sourceFieldName = (String)sourceField.getQueryName().getFirst();
+							IModelField destinationField =  destinationFields.get(i);
+							String destinationFieldName = (String)destinationField.getQueryName().getFirst();
+							joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
+							logger.debug("succesfullu added auto-join condition [" + joinCondition + "]");
+							if(whereClause == null || whereClause.equals("")) {
+								whereClause = "WHERE ";
+							} else {
+								whereClause = whereClause + " AND ";
+							}						
+							whereClause += joinCondition;
+						}
+					}
+					//throw new RuntimeException("Impossible to auto join entities");
+				} else {
+					logger.warn("Impossible to join antities [" + unjoinedEntities + "]. A cartesian product will be generted.");
+					throw new RuntimeException("Impossible to auto join entities");
+				}
+			}
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while inject auto-joins into query statement", t);
+		}finally {
+			logger.debug("OUT");
+		}
+		
+		return whereClause;
+	}
+	
+	protected String fixWhereClause(String whereClause, Query query, Map entityAliasesMaps) {
+		logger.debug("IN");
+		
+		try {
+			Map rootEntityAlias = (Map)entityAliasesMaps.get(query.getId());
 			
 			
-			if(entityAliases == null || entityAliases.keySet().size() == 0) {
+			if(rootEntityAlias == null || rootEntityAlias.keySet().size() == 0) {
 				return "";
 			}
 		
-			Iterator it = entityAliases.keySet().iterator();
+			Iterator it = rootEntityAlias.keySet().iterator();
 			while( it.hasNext() ) {
 				String entityUniqueName = (String)it.next();
 				logger.debug("entity [" + entityUniqueName +"]");
 				
-				String entityAlias = (String)entityAliases.get(entityUniqueName);
+				String entityAlias = (String)rootEntityAlias.get(entityUniqueName);
 				logger.debug("entity alias [" + entityAlias +"]");
 				
-				IModelEntity datamartEntity =  parentStatement.getDataSource().getModelStructure().getEntity(entityUniqueName);
+				IModelEntity modelEntity =  parentStatement.getDataSource().getModelStructure().getEntity(entityUniqueName);
 				
-				addTableFakeCondition(whereClause, datamartEntity.getName(), entityAlias);
+				addTableFakeCondition(whereClause, modelEntity.getName(), entityAlias);
 			}
 		} finally {
 			logger.debug("OUT");
 		}
 		
 		return whereClause;
+	}
+	
+	private Set<IModelEntity> getUnjoinedRootEntities(Map entityAliases) {
+		
+		Set<IModelEntity> unjoinedEntities = new HashSet();
+		
+		Iterator it = entityAliases.keySet().iterator();
+		while( it.hasNext() ) {
+			String entityUniqueName = (String)it.next();
+			IModelEntity modelEntity =  parentStatement.getDataSource().getModelStructure().getEntity(entityUniqueName);
+			unjoinedEntities.add(modelEntity);
+		}
+		
+		return unjoinedEntities;
 	}
 
 	/**

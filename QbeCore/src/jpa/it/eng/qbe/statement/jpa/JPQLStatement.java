@@ -93,12 +93,13 @@ public class JPQLStatement extends AbstractStatement {
 		groupByClause = JPQLStatementGroupByClause.build(this, query, entityAliasesMaps);
 		orderByClause = JPQLStatementOrderByClause.build(this, query, entityAliasesMaps);
 		havingClause = JPQLStatementHavingClause.build(this, query, entityAliasesMaps);
-		
 		viewRelation = viewsUtility.buildViewsRelations(entityAliasesMaps, query, whereClause);
+		
+		whereClause = JPQLStatementWhereClause.injectAutoJoins(this, whereClause, query, entityAliasesMaps);
+		
 		fromClause = JPQLStatementFromClause.build(this, query, entityAliasesMaps);
 		
-		JPQLStatementWhereClause clause = new JPQLStatementWhereClause(this);
-		whereClause = clause.fixWhereClause(whereClause, query, entityAliasesMaps);
+		whereClause = JPQLStatementWhereClause.fix(this, whereClause, query, entityAliasesMaps);
 		
 		queryStr = selectClause    + " " 
 				   + fromClause    + " " 
