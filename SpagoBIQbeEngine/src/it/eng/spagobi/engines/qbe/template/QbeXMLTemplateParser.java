@@ -33,6 +33,7 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 	public static String TAG_DATAMART = "DATAMART";
 	public static String PROP_DATAMART_NAME = "name";
 	public static String PROP_DATAMART_DBLINK = "dblink";
+	public static String PROP_DATAMART_MAXRECURSIONLEVEL = "maxRecursionLevel";
 	public static String TAG_MODALITY = "MODALITY";
 	public static String TAG_MODALITY_TABLE = "TABLE";
 	public static String TAG_FUNCTIONALITIES = "FUNCTIONALITIES";
@@ -101,6 +102,7 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 				List qbeList;
 				SourceBean qbeSB;
 				String dblink;
+				String maxRecursionLevel;
 				
 				logger.debug("The QBE described in the template is of type COMPOSITE");
 								
@@ -120,6 +122,12 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 						if(dblink != null) {
 							qbeTemplate.setDbLink( dmName, dblink );
 						}
+						
+						maxRecursionLevel = (String)datamartSB.getAttribute(PROP_DATAMART_MAXRECURSIONLEVEL);
+						if(maxRecursionLevel != null) {
+							qbeTemplate.setProperty("maxRecursionLevel", maxRecursionLevel);
+						}
+						
 					} else {
 						Assert.assertUnreachable("Missing compolsury tag [" + TAG_DATAMART + "]");
 					}
@@ -150,8 +158,12 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 					datamartSB = (SourceBean)template.getAttribute(TAG_DATAMART);
 					dmName = (String)datamartSB.getAttribute(PROP_DATAMART_NAME);
 					Assert.assertTrue(!StringUtilities.isEmpty(dmName), "Attribute [" + PROP_DATAMART_NAME +"] in tag [" + TAG_DATAMART + "] must be properly defined");
-					
 					qbeTemplate.addDatamartName( dmName );
+					
+					String maxRecursionLevel = (String)datamartSB.getAttribute(PROP_DATAMART_MAXRECURSIONLEVEL);
+					if(maxRecursionLevel != null) {
+						qbeTemplate.setProperty("maxRecursionLevel", maxRecursionLevel);
+					}
 				} else {
 					Assert.assertUnreachable("Missing compolsury tag [" + TAG_DATAMART + "]");
 				}
