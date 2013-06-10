@@ -181,17 +181,19 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 	}
 	
 	private Integer getStart() {
-		Integer start = getAttributeAsInteger( START );
-		if (start == null) {
-			start = START_DEFAULT;
+		Integer start = START_DEFAULT;
+		Object startObject = getAttribute( START );
+		if (startObject != null && !startObject.equals("")) {
+			start =  getAttributeAsInteger(LIMIT);
 		}
 		return start;
 	}
 	
 	private Integer getLimit() {
-		Integer limit = getAttributeAsInteger( LIMIT );
-		if (limit == null) {
-			limit = LIMIT_DEFAULT;
+		Integer limit = LIMIT_DEFAULT;
+		Object limitObject = getAttribute( LIMIT );
+		if (limit != null && !limitObject.equals("")) {
+			limit = getAttributeAsInteger(LIMIT);
 		}
 		return limit;
 	}
