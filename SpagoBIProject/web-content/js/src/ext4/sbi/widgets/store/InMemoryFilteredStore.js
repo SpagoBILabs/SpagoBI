@@ -78,6 +78,9 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
      * @Override
      */
 	, load: function(options) {
+		if(!options){
+			options = {};
+		}
 
 		if(options.limit){
 			this.limit = options.limit;
