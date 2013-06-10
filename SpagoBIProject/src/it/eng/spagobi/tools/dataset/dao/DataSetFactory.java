@@ -138,6 +138,9 @@ public class DataSetFactory {
 		try{
 			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)){
 				ds = new FileDataSet();			
+				if (jsonConf.getString(DataSetConstants.FILE_TYPE) != null){
+					((FileDataSet)ds).setFileType(jsonConf.getString(DataSetConstants.FILE_TYPE));		
+				}
 				((FileDataSet)ds).setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));		
 				ds.setDsType(FILE_DS_TYPE);
 			}

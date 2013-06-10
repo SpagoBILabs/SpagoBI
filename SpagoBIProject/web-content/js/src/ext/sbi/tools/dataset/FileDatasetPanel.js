@@ -94,7 +94,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		this.sheetNumberField = new Ext.form.TextField({
 			fieldLabel : 'Sheet Number',
 			allowBlank : true,
-			name: 'sheetNumber',
+			name: 'xslSheetNumber',
 			width: 100
 		});		
 		
@@ -194,6 +194,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			  labelWidth: 150,
 	          items: [ this.csvDelimiterCombo, this.csvQuoteCombo]
 		});
+
 		
 		
 		//Upload file fields
@@ -275,10 +276,27 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	//Public Methods
 	, setFormState: function(formState) {
 		this.fileNameField.setValue(formState.fileName);
-		this.csvDelimiterCombo.setValue(formState.csvDelimiter);
-		this.csvQuoteCombo.setValue(formState.csvQuote);
-
-		
+		if (formState.csvDelimiter != null){
+			this.csvDelimiterCombo.setValue(formState.csvDelimiter);
+		}
+		if (formState.csvQuote != null){
+			this.csvQuoteCombo.setValue(formState.csvQuote);
+		}
+		if (formState.csvQuote != null){
+			this.csvQuoteCombo.setValue(formState.csvQuote);
+		}
+		if (formState.fileType != null){
+			this.fileTypeCombo.setValue(formState.fileType);
+		}
+		if (formState.skipRows != null){
+			this.skipRowsField.setValue(formState.skipRows);
+		}
+		if (formState.limitRows != null){
+			this.limitRowsField.setValue(formState.limitRows);
+		}
+		if (formState.xslSheetNumber != null){
+			this.sheetNumberField.setValue(formState.xslSheetNumber);	
+		}
 	}
 
 	
