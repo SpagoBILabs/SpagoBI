@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/spagobi-utils-json-4.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spagobi-qbecore-4.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/logback/ch.qos.logback.classic_0.9.19.v20100519-1505.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/logback/ch.qos.logback.core_0.9.19.v20100419-1216.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/logback/ch.qos.logback.slf4j_0.9.19.v20100519-1910.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/logback/org.slf4j.api_1.5.11.v20100519-1910.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spagobi-utils-4.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/activation-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/antlr-2.7.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/axis-1.4.jar"/>
@@ -25,18 +32,15 @@
 	<classpathentry exported="true" kind="lib" path="lib/javax.persistence_2.0.1.v201006031150.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jaxrpc.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/js.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/sbi.utils.json-3.5.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsr223.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jta-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mail-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/portlet-api-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/qbecore.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/saaj.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/spago-core-2.2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/spago-web-2.2.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spagobi-utils-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/wsdl4j-1.5.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/wss4j-1.5.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xalan.jar"/>

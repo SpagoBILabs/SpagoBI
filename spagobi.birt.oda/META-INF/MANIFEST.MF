@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: spagobi.birt.oda;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 4.0.0
 Bundle-ClassPath: .,
  src,
  lib/activation-1.1.1.jar,
@@ -30,18 +30,15 @@ Bundle-ClassPath: .,
  lib/javax.persistence_2.0.1.v201006031150.jar,
  lib/jaxrpc.jar,
  lib/js.jar,
- lib/sbi.utils.json-3.5.1.jar,
  lib/jsr223.jar,
  lib/jta-1.1.jar,
  lib/log4j-1.2.9.jar,
  lib/mail-1.4.jar,
  lib/portlet-api-1.0.jar,
- lib/qbecore.jar,
  lib/saaj.jar,
  lib/slf4j-api-1.6.1.jar,
  lib/spago-core-2.2.0.jar,
  lib/spago-web-2.2.0.jar,
- lib/spagobi-utils-3.0.jar,
  lib/wsdl4j-1.5.1.jar,
  lib/wss4j-1.5.7.jar,
  lib/xalan.jar,
@@ -49,7 +46,14 @@ Bundle-ClassPath: .,
  lib/xml-apis-2.0.2.jar,
  lib/xmlsec-1.4.2.jar,
  lib/xpp3_min-1.1.4c.jar,
- lib/xstream-1.3.1.jar
+ lib/xstream-1.3.1.jar,
+ lib/logback/ch.qos.logback.classic_0.9.19.v20100519-1505.jar,
+ lib/logback/ch.qos.logback.core_0.9.19.v20100419-1216.jar,
+ lib/logback/ch.qos.logback.slf4j_0.9.19.v20100519-1910.jar,
+ lib/logback/org.slf4j.api_1.5.11.v20100519-1910.jar,
+ lib/spagobi-utils-4.0.0.jar,
+ lib/spagobi-qbecore-4.0.0.jar,
+ lib/spagobi-utils-json-4.0.0.jar
 Bundle-Activator: spagobi.birt.oda.Activator
 Bundle-Localization: plugin
 Export-Package: it.eng.spagobi.commons.constants,
