@@ -130,8 +130,6 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 		return connection;
 	}
 	
-	
-
 	public IModelStructure getModelStructure() {
 		IModelStructureBuilder structureBuilder;
 		if(dataMartModelStructure == null) {			
