@@ -45,18 +45,22 @@ import org.apache.log4j.Logger;
  */
 public class JPAModelStructureBuilder implements IModelStructureBuilder {
 	
-	private static transient Logger logger = Logger.getLogger(JPAModelStructureBuilder.class);
-
 	private JPADataSource dataSource;	
 	private EntityManager entityManager;
+	private int maxRecursionLevel;
 	IModelStructurePropertiesInitializer propertiesInitializer;
 
-
+	private int DEFAULT_MAX_RECURSION_LEVEL = 0;
+	
+	private static transient Logger logger = Logger.getLogger(JPAModelStructureBuilder.class);
 	/**
 	 * Constructor
 	 * @param dataSource the JPA DataSource
 	 */
 	public JPAModelStructureBuilder(JPADataSource dataSource) {
+		
+		maxRecursionLevel = DEFAULT_MAX_RECURSION_LEVEL;
+		
 		if(dataSource == null) {
 			throw new IllegalArgumentException("DataSource parameter cannot be null");
 		}
@@ -128,7 +132,8 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(modelName, false);
 		List<IModelRelationshipDescriptor> relationships = getDataSource().getConfiguration().loadRelationships();
 		for(IModelRelationshipDescriptor relationship: relationships) {
-			if(relationship.getType().equals("many-to-one") == false) continue;
+			if(relationship.getType().equals("many-to-one") == false 
+					&& relationship.getType().equals("optional-many-to-one") == false) continue;
 			
 			IModelEntity sourceEntity = rootEntitiesGraph.getRootEntityByName(relationship.getSourceEntityUniqueName());
 			if(sourceEntity == null) throw new RuntimeException("Impossibe to find source entity whose name is equal to [" + relationship.getSourceEntityUniqueName() + "]");
@@ -163,7 +168,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				destinationFields.add(field);
 			}
 			try {
-				modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "MANY_TO_ONE");
+				modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, relationship.getType());
 				logger.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
 			} catch (Throwable t) {
 				logger.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
@@ -409,7 +414,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			IModelEntity subentity = it.next();
 			if (subentity.getType().equalsIgnoreCase(modelEntity.getType())){
 				// ciclo di periodo 0!
-			} else if(recursionLevel > 10) {
+			} else if(recursionLevel >= maxRecursionLevel) {
 				// prune recursion tree 
 			} else {
 				addSubEntity(modelEntity, subentity, recursionLevel+1);
