@@ -105,6 +105,16 @@ ALTER TABLE SBI_DATA_SET RENAME TO SBI_DATA_SET_OLD;
 ALTER TABLE SBI_DATA_SET_HISTORY TO SBI_DATA_SET_HISTORY_OLD;
 ALTER TABLE SBI_DATA_SET_TEMP TO SBI_DATA_SET;
 
+-- insert records for selfservice dataset management 
+INSERT INTO SBI_USER_FUNC (USER_FUNCT_ID, NAME, DESCRIPTION, USER_IN, TIME_IN)
+    VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_USER_FUNC'), 
+    'SelfServiceDatasetManagement','SelfServiceDatasetManagement', 'server', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_USER_FUNC';
+commit;
+INSERT INTO SBI_ROLE_TYPE_USER_FUNC (ROLE_TYPE_ID, USER_FUNCT_ID)
+    VALUES ((SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD = 'USER' AND DOMAIN_CD = 'ROLE_TYPE'), 
+    (SELECT USER_FUNCT_ID FROM SBI_USER_FUNC WHERE NAME = 'SelfServiceDatasetManagement'));
+commit;
 
 UPDATE SBI_ENGINES SET USE_DATASET = 1 WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver';
 COMMIT;
