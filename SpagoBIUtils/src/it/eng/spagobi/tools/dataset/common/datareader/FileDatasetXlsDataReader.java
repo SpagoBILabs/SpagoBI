@@ -127,7 +127,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		HSSFSheet sheet;
 		if ((xslSheetNumber != null) && (!xslSheetNumber.isEmpty())){
 			
-			int sheetNumber = Integer.parseInt(xslSheetNumber);
+			int sheetNumber = Integer.parseInt(xslSheetNumber)-1;
 			if (sheetNumber > numberOfSheets){
 				logger.error("Wrong sheet number, using first sheet as default");
 				//if not specified take first sheet
@@ -140,14 +140,24 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			sheet = wb.getSheetAt(0);
 
 		}
-		int rows = sheet.getPhysicalNumberOfRows();
+
 		int initialRow = 0;		
 		if ((skipRows != null) && (!skipRows.isEmpty())){
 			initialRow = Integer.parseInt(skipRows);
-			logger.error("Skipping first "+skipRows+" rows");
+			logger.debug("Skipping first "+skipRows+" rows");
 
 		}
-		for (int r = initialRow; r < rows; r++) {
+		int rowsLimit;
+		if ((limitRows != null) && (!limitRows.isEmpty())){
+			rowsLimit = initialRow+Integer.parseInt(limitRows)-1;
+			//if the calculated limit exceed the physical number of rows, just read all the rows
+			if (rowsLimit > sheet.getPhysicalNumberOfRows()){
+				rowsLimit = sheet.getPhysicalNumberOfRows();
+			}
+		} else {
+			rowsLimit = sheet.getPhysicalNumberOfRows();
+		}
+		for (int r = initialRow; r <= rowsLimit; r++) {
 			//get entire spreadsheet row
 			HSSFRow row = sheet.getRow(r);
 			if (row == null) {
@@ -203,78 +213,6 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				dataStore.appendRecord(record);	
 			}
 		}
-		
-		
-		/// Old reading
-
-		
-		/*
-		for (int k = 0; k < wb.getNumberOfSheets(); k++) {
-			HSSFSheet sheet = wb.getSheetAt(k);
-			int rows = sheet.getPhysicalNumberOfRows();
-			logger.debug("Sheet " + k + " \"" + wb.getSheetName(k) + "\" has " + rows
-					+ " row(s).");
-			for (int r = 0; r < rows; r++) {
-				HSSFRow row = sheet.getRow(r);
-				if (row == null) {
-					continue;
-				}
-				
-				//create new Dataset record
-				IRecord record = new Record(dataStore);
-				
-
-
-				int cells = row.getPhysicalNumberOfCells();
-				logger.debug("\nROW " + row.getRowNum() + " has " + cells
-						+ " cell(s).");
-				for (int c = 0; c < cells; c++) {
-					HSSFCell cell = row.getCell(c);
-					String value = null;
-					String valueField = null;
-
-					switch (cell.getCellType()) {
-
-						case HSSFCell.CELL_TYPE_FORMULA:
-							value = "FORMULA value=" + cell.getCellFormula();
-							valueField = cell.getCellFormula().toString();
-							break;
-
-						case HSSFCell.CELL_TYPE_NUMERIC:
-							value = "NUMERIC value=" + cell.getNumericCellValue();
-							valueField = String.valueOf(cell.getNumericCellValue());
-							break;
-
-						case HSSFCell.CELL_TYPE_STRING:
-							value = "STRING value=" + cell.getStringCellValue();
-							valueField = cell.getStringCellValue();
-							break;
-
-						default:
-					}
-					
-					//First row used as header
-					if (r == 0){
-						FieldMetadata fieldMeta = new FieldMetadata();
-	                	fieldMeta.setName(valueField);
-	                	fieldMeta.setType(String.class);
-	                	dataStoreMeta.addFiedMeta(fieldMeta);
-					} else {
-                   	 IField field = new Field(valueField);
-						record.appendField(field);
-					}
-					
-					logger.debug("CELL col=" + cell.getColumnIndex() + " VALUE="
-							+ value);
-				}
-				if (r != 0){
-					dataStore.appendRecord(record);	
-				}
-			}
-		}
-		 */
-		
-		
 		
 	        return dataStore;
 	}
