@@ -82,6 +82,12 @@ public class DataSetJSONSerializer implements Serializer {
 	
 	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
 	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
+	public static final String FILE_TYPE = "fileType";
+	
+	public static final String XSL_FILE_SKIP_ROWS = "skipRows";
+	public static final String XSL_FILE_LIMIT_ROWS = "limitRows";
+	public static final String XSL_FILE_SHEET_NUMBER = "xslSheetNumber";
+
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -168,14 +174,30 @@ public class DataSetJSONSerializer implements Serializer {
 					String fileName = jsonConf.getString(DataSetConstants.FILE_NAME);
 					if(fileName!=null){
 						result.put(FILE_NAME, fileName);				
-					}			
+					}		
+					String fileType = jsonConf.getString(DataSetConstants.FILE_TYPE);
+					if(fileType!=null){
+						result.put(FILE_TYPE, fileType);				
+					}	
 					String csvDelimiter = jsonConf.getString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER);
 					if(csvDelimiter!=null){
 						result.put(CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);				
 					}	
-					String csvQuote = jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER); ;
+					String csvQuote = jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER); 
 					if(csvQuote!=null){
 						result.put(CSV_FILE_QUOTE_CHARACTER, csvQuote);				
+					}
+					String skipRows = jsonConf.getString(DataSetConstants.XSL_FILE_SKIP_ROWS); 
+					if(skipRows!=null){
+						result.put(XSL_FILE_SKIP_ROWS, skipRows);				
+					}
+					String limitRows = jsonConf.getString(DataSetConstants.XSL_FILE_LIMIT_ROWS); 
+					if(limitRows!=null){
+						result.put(XSL_FILE_LIMIT_ROWS, limitRows);				
+					}
+					String xslSheetNumber = jsonConf.getString(DataSetConstants.XSL_FILE_SHEET_NUMBER); 
+					if(xslSheetNumber!=null){
+						result.put(XSL_FILE_SHEET_NUMBER, xslSheetNumber);				
 					}
 					
 				}else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.QUERY)){

@@ -850,11 +850,22 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FILE)){	
 			//added
+			String fileType = getAttributeAsString(DataSetConstants.FILE_TYPE);
+			
 			String csvDelimiter = getAttributeAsString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER);
 			String csvQuote = getAttributeAsString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER);
+			
+			String skipRows = getAttributeAsString(DataSetConstants.XSL_FILE_SKIP_ROWS);
+			String limitRows = getAttributeAsString(DataSetConstants.XSL_FILE_LIMIT_ROWS);
+			String xslSheetNumber = getAttributeAsString(DataSetConstants.XSL_FILE_SHEET_NUMBER);
+			
+			
+			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
-			
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);			
 			
 			dataSet = new FileDataSet();
 			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
@@ -862,6 +873,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			fileName = pathFile.getName();
 			jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
 			dataSet.setConfiguration(jsonDsConfig.toString());
+			((FileDataSet)dataSet).setFileType(fileType);		
 			((FileDataSet)dataSet).setFileName(fileName);				
 			
 		} 
