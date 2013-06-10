@@ -37,7 +37,7 @@ Ext.ns("Sbi.worksheet.designer");
 Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) { 
 
 	var defaultSettings = {
-		title: LN('sbi.worksheet.designer.worksheetdesignerpanel.title')
+		//title: LN('sbi.worksheet.designer.worksheetdesignerpanel.title')
 	};
 
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.worksheetDesignerPanel) {
