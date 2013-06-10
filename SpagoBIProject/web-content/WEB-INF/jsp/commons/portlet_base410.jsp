@@ -207,6 +207,8 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 
 <link id="spagobi-ext-4" rel="styleSheet" href ="../js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
 
+<!-- load of the service registry to define the variable Sbi.config.serviceRegistry  -->
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/service/ServiceRegistry.js")%>'></script>
 
 <script type="text/javascript">
 	Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/resources/images/default/s.gif")%>';
@@ -254,6 +256,22 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
         	isSSOEnabled: <%= GeneralUtilities.isSSOEnabled() %>
         };
     }();
+    
+  
+   
+    var url = {
+    	host: '<%= request.getServerName()%>'
+    	, port: '<%= request.getServerPort()%>'
+    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
+    	   				  request.getContextPath().substring(1):
+    	   				  request.getContextPath()%>'
+    	    
+    };
+
+    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+    	baseUrl: url
+    });
+	
 
     // javascript-side user profile object
     Ext.ns("Sbi.user");
