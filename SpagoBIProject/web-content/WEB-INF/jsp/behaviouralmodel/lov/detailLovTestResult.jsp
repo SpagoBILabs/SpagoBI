@@ -111,18 +111,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <script type="text/javascript">
 
 
-var url = {
-    	host: '<%= request.getServerName()%>'
-    	, port: '<%= request.getServerPort()%>'
-    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
-    	   				  request.getContextPath().substring(1):
-    	   				  request.getContextPath()%>'
-    	    
-    };
-
-    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
-    	baseUrl: url
-    });
 
 	var addLovTestEvents = function(lovTest, lovPanel, lovConfig, modality, contextName){
 		lovTest.on('lovTypeChanged',function(type){

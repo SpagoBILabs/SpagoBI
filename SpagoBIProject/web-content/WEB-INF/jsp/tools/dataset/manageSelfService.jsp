@@ -13,25 +13,13 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <script type="text/javascript">
 
-   var url = {
-    	host: '<%= request.getServerName()%>'
-    	, port: '<%= request.getServerPort()%>'
-    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
-    	   				  request.getContextPath().substring(1):
-    	   				  request.getContextPath()%>'
-    	    
-    };
 
-    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
-    	baseUrl: url
-    });
-	
 
     Ext.onReady(function(){
-		var datasetList = Ext.create('Sbi.tools.dataset.DataSetsBrowser',{}); //by alias
+		var selfService = Ext.create('Sbi.selfservice.ManageSelfService',{}); //by alias
 		var datasetListViewport = Ext.create('Ext.container.Viewport', {
 			layout:'fit',
-	     	items: [datasetList]
+	     	items: [selfService]
 	    });
     });
 	
