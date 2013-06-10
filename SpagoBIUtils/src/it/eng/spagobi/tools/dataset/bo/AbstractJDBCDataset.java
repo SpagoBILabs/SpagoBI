@@ -69,17 +69,15 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 			throw new RuntimeException("Missing right exstension", e);
 		}
 		try{
-    	//	JSONObject jsonConf  = ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
     		String config = JSONUtils.escapeJsonString(dataSetConfig.getConfiguration());		
     		JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
-    		setQuery((jsonConf.get(QUERY) != null)?jsonConf.get(QUERY).toString():"");
-    		setQueryScript( (jsonConf.get(QUERY_SCRIPT) != null)?jsonConf.get(QUERY_SCRIPT).toString():"" );   	
-		}catch (Exception e){
-			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+			setQuery((jsonConf.get(QUERY) != null) ? jsonConf.get(QUERY).toString() : "");
+			setQueryScript((jsonConf.get(QUERY_SCRIPT) != null) ? jsonConf.get(QUERY_SCRIPT).toString() : "");
+			setQueryScriptLanguage((jsonConf.get(QUERY_SCRIPT_LANGUAGE) != null) ? jsonConf.get(QUERY_SCRIPT_LANGUAGE).toString() : "");
+		} catch (Exception e) {
+			logger.error("Error while defining dataset configuration. Error:", e);
+			throw new SpagoBIRuntimeException("Error while defining dataset configuration", e);	
 		}
-		//setQuery( dataSetConfig.getQuery() );
-		//setQueryScript( dataSetConfig.getQueryScript() );
-		//setQueryScriptLanguage( dataSetConfig.getQueryScriptLanguage() );
 		
 		addBehaviour( new QuerableBehaviour(this) );
 	}
@@ -107,37 +105,28 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 
 	
 	public SpagoBiDataSet toSpagoBiDataSet() {
-		SpagoBiDataSet sbd;
+		SpagoBiDataSet toReturn;
 		JDBCDataProxy dataProxy;
 		
-		sbd = super.toSpagoBiDataSet();
+		toReturn = super.toSpagoBiDataSet();
 		
-		sbd.setType( DS_TYPE );
+		toReturn.setType( DS_TYPE );
 			
 		dataProxy = (JDBCDataProxy)this.getDataProxy();
-		//sbd.setDataSource(dataProxy.getDataSource().toSpagoBiDataSource());
-		/* next informations are already loaded in method super.toSpagoBiDataSet() through the table field configuration
-		try{
+		toReturn.setDataSource(dataProxy.getDataSource().toSpagoBiDataSource());
+		
+		try {
 			JSONObject jsonConf  = new JSONObject();
-			jsonConf.put(QUERY, (query==null)?"":query);
-			jsonConf.put(QUERY_SCRIPT,(queryScript==null)?"":queryScript);
-			jsonConf.put(QUERY_SCRIPT_LANGUAGE,(queryScriptLanguage==null)?"":queryScriptLanguage);
-			jsonConf.put(QUERY_SCRIPT_LANGUAGE,(queryScriptLanguage==null)?"":queryScriptLanguage);
-			sbd.setConfiguration(jsonConf.toString());
-		}catch (Exception e){
-			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
-		}*/
-		/*
-		if(query != null){
-			sbd.setQuery(query.toString());
+			jsonConf.put(QUERY, (getQuery() == null) ? "" : getQuery());
+			jsonConf.put(QUERY_SCRIPT, (getQueryScript() == null) ? "" : getQueryScript());
+			jsonConf.put(QUERY_SCRIPT_LANGUAGE, (getQueryScriptLanguage() == null) ? "" : getQueryScriptLanguage());
+			toReturn.setConfiguration(jsonConf.toString());
+		} catch (Exception e) {
+			logger.error("Error while defining dataset configuration. Error:", e);
+			throw new SpagoBIRuntimeException("Error while defining dataset configuration. Error:", e);
 		}
-		if(queryScript != null){
-			sbd.setQueryScript(queryScript);
-		}
-		if(queryScriptLanguage != null){
-			sbd.setQueryScriptLanguage(queryScriptLanguage);
-		}*/
-		return sbd;
+		
+		return toReturn;
 	}
 
 	

@@ -38,6 +38,7 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 
 	var defaultSettings = {
 		//title: LN('sbi.worksheet.designer.worksheetdesignerpanel.title')
+		engineAlreadyInitialized : false
 	};
 
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.worksheetDesignerPanel) {
@@ -88,12 +89,17 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 	Sbi.worksheet.designer.WorksheetDesignerPanel.superclass.constructor.call(this, c);	 		
 	
 	this.on('render', function () {
-		this.initializeEngineInstance({
-			onSuccessHandler : function(response, options) {
-				this.fireEvent('afterworksheetinitialized', this, response, options);
-			}
-			, scope: this
-		});
+		if (!this.engineAlreadyInitialized) {
+			this.initializeEngineInstance({
+				onSuccessHandler : function(response, options) {
+					this.fireEvent('afterworksheetinitialized', this);
+				}
+				, scope: this
+			});
+		} else {
+			this.fireEvent('afterworksheetinitialized', this);
+		}
+
 	}, this, { single : true } );
 	
 };
@@ -109,7 +115,8 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	designToolsPanel: null,
 	sheetsContainerPanel: null,
 	worksheetTemplate: {},   // the initial worksheet template; to be passed as a property of the constructor's input object!!!
-	contextMenu: null
+	contextMenu: null,
+	engineAlreadyInitialized : null
 
 	,
 	initializeEngineInstance : function (config) {

@@ -90,7 +90,7 @@ public class DataSetSupplier {
 			ds = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel( label );	
 			datasetConfig = ds.toSpagoBiDataSet();
 		} catch (EMFUserError e) {
-			e.printStackTrace();
+			logger.error("Error getting dataset with label [" + label + "]", e);	
 		} finally {
 			logger.debug("OUT");
 		}
