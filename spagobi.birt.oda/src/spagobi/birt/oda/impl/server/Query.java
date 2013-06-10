@@ -43,6 +43,8 @@ import org.eclipse.datatools.connectivity.oda.spec.QuerySpecification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import spagobi.birt.oda.impl.util.Utilities;
+
 /**
  * Implementation class of IQuery for an ODA runtime driver.
  * <br>
@@ -67,6 +69,9 @@ public class Query implements IQuery
 	String groovyFileName;
 	String jsFileName;
 
+	public static final String QUERY_SCRIPT = "queryScript";
+	public static final String FILE_NAME = "fileName";
+	
 	private static Logger logger = LoggerFactory.getLogger(Query.class);
 	
 	public Query(DataSetServiceProxy dataSetServiceProxy, Map pars, String resourcePath, Map userProfAttrs,
@@ -107,12 +112,22 @@ public class Query implements IQuery
 			try{
 				ds.setUserProfileAttributes(userProfAttrs);
 				logger.debug("Setted User Profile Attrs");
-				ds.setResourcePath(resourcePath);		
-				logger.debug("Setted Resource Path: "+resourcePath);
-				ds.setQueryScript(jsFileName);
+	
+				Utilities.addToConfiguration(ds.getConfiguration(), QUERY_SCRIPT, jsFileName );
 				logger.debug("Setted Js File Name: "+jsFileName);
+
+				Utilities.addToConfiguration(ds.getConfiguration(), FILE_NAME, groovyFileName );
+				logger.debug("Setted Js File Name: "+jsFileName);
+				
+				//previous dataset use
+
+				//ds.setResourcePath(resourcePath);		
+//				logger.debug("Setted Resource Path: "+resourcePath);
+
+				//ds.setQueryScript(jsFileName);
+//				logger.debug("Setted Js File Name: "+jsFileName);
 				//ds.setGroovyFileName(groovyFileName);
-				logger.debug("Setted Groovy File Name: "+groovyFileName);
+//				logger.debug("Setted Groovy File Name: "+groovyFileName);
 				ds.loadData();
 			}catch(Throwable e){
 				logger.error("Eccezione",e);
