@@ -6,10 +6,13 @@
 package it.eng.spagobi.commons.serializer;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.wapp.bo.Menu;
 import it.eng.spagobi.wapp.services.DetailMenuModule;
 import it.eng.spagobi.wapp.util.MenuUtilities;
@@ -54,7 +57,14 @@ public class MenuListJSONSerializer implements Serializer {
 	
 	public String contextName = "";
 	public String defaultThemePath="/themes/sbi_default";
+	
+	private IEngUserProfile userProfile;
 
+	public MenuListJSONSerializer(IEngUserProfile userProfile) {
+		Assert.assertNotNull(userProfile, "User profile in input is null");
+		this.setUserProfile(userProfile);
+	}
+	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONArray  result = null;
 
@@ -150,12 +160,14 @@ public class MenuListJSONSerializer implements Serializer {
 
 					}
 				}
-				if(!isAdmin){
-					tempFirstLevelMenuList= createEndUserMenu(locale, 1, tempFirstLevelMenuList);
-				}
 
-			}	
-			tempFirstLevelMenuList= createFixedMenu(locale, 1, tempFirstLevelMenuList);
+			}
+			
+			if (!UserUtilities.isTechnicalUser(this.getUserProfile())) {
+				tempFirstLevelMenuList = createEndUserMenu(locale, 1, tempFirstLevelMenuList);
+			}
+			
+			tempFirstLevelMenuList = createFixedMenu(locale, 1, tempFirstLevelMenuList);
 			result = tempFirstLevelMenuList;
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
@@ -321,6 +333,14 @@ public class MenuListJSONSerializer implements Serializer {
 
 		tempMenuList.put(temp2);
 		return tempMenuList;
+	}
+	
+	public IEngUserProfile getUserProfile() {
+		return userProfile;
+	}
+
+	public void setUserProfile(IEngUserProfile userProfile) {
+		this.userProfile = userProfile;
 	}
 
 }

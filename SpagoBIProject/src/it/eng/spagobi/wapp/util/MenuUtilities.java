@@ -17,6 +17,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.wapp.bo.Menu;
 
@@ -130,10 +131,7 @@ public class MenuUtilities {
 						logger.debug("Not found menu items for user role " + (String) arrRoles[i] );
 					}
 					
-					if (!technicalMenuLoaded && (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)  // for administrators
-							|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)  // for developers
-							|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST)  // for testers
-							|| profile.isAbleToExecuteAction(SpagoBIConstants.PARAMETER_MANAGEMENT))){ 
+					if (!technicalMenuLoaded && UserUtilities.isTechnicalUser(profile)){ 
 						//list technical user menu
 						technicalMenuLoaded = true;						
 						List firstLevelItems = ConfigSingleton.getInstance().getAttributeAsList("TECHNICAL_USER_MENU.ITEM");

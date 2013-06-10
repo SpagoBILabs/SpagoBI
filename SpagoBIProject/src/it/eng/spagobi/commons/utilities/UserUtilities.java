@@ -168,21 +168,20 @@ public class UserUtilities {
 	
 	
 	
-	public static boolean isAdministrator (IEngUserProfile userProfile)throws Exception {
-		logger.debug("IN.user unique id=" + userProfile.getUserUniqueIdentifier());
-
+	public static boolean isTechnicalUser (IEngUserProfile profile) {
+		Assert.assertNotNull(profile, "Object in input is null");
+		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
 		try {
-			Collection<String> c = userProfile.getFunctionalities();
-			if(c!=null){
-				return c.contains("DocumentManagement");
+			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)  // for administrators
+					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)  // for developers
+					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST)  // for testers
+					|| profile.isAbleToExecuteAction(SpagoBIConstants.PARAMETER_MANAGEMENT)) {  // for behavioural model administrators
+				return true;
+			} else {
+				return false;
 			}
-			return false;
 		} catch (Exception e) {
-			logger.error("Exception while creating user profile", e);
-			throw new SecurityException(
-					"Exception while creating user profile", e);
-		} finally {
-			logger.debug("OUT");
+			throw new SpagoBIRuntimeException("Error while getting user's information", e);
 		}
 	}  
 	

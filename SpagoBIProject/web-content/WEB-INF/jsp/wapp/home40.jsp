@@ -13,7 +13,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="it.eng.spagobi.commons.services.LoginModule"%>
 <%@page import="it.eng.spagobi.wapp.util.MenuUtilities"%>
-<%@page import="it.eng.spagobi.commons.serializer.MenuListJSONSerializer"%>
 <%@page import="it.eng.spagobi.commons.serializer.MenuThemesListJSONSerializer"%>
 <%@page import="it.eng.spagobi.wapp.services.DetailMenuModule"%>
 <%@page import="it.eng.spagobi.wapp.bo.Menu"%>
@@ -37,13 +36,13 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
 <link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/themes/sbi_default/css/home40/layout.css" type="text/css" />
 <script type="text/javascript">
-    Ext.BLANK_IMAGE_URL = '/SpagoBI/js/lib/ext-2.0.1/resources/images/default/s.gif';
+    Ext.BLANK_IMAGE_URL = '/SpagoBI/js/lib/ext-4.1.1a/resources/themes/images/default/tree/s.gif';
 </script>
 
 <%
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
 	SourceBean moduleResponse = (SourceBean)aServiceResponse.getAttribute("LoginModule"); 
-	boolean isAdministrator = UserUtilities.isAdministrator(userProfile);
+	boolean isTechnicalUser = UserUtilities.isTechnicalUser(userProfile);
 	
 	if(moduleResponse==null) moduleResponse=aServiceResponse;
 	
@@ -53,10 +52,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		lstMenu = (List)moduleResponse.getAttribute(MenuUtilities.LIST_MENU);
 	}
 	List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
-	MenuListJSONSerializer m = new MenuListJSONSerializer();
-	JSONArray jsonMenuList = (JSONArray)m.serialize(filteredMenuList,locale);
+	MenuListJSONSerializer serializer = new MenuListJSONSerializer(userProfile);
+	JSONArray jsonMenuList = (JSONArray) serializer.serialize(filteredMenuList,locale);
 	//System.out.println(jsonMenuList);
-
 %>
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
 <script>
@@ -156,7 +154,7 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 					}
 				}
 			} else {
-				if(isAdministrator){
+				if(isTechnicalUser){
 					firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.html";	
 				}else{
 					firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.html";
@@ -164,7 +162,7 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 				
 			}
 		} else{
-			if(isAdministrator){
+			if(isTechnicalUser){
 				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.html";	
 			}else{
 				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.html";
