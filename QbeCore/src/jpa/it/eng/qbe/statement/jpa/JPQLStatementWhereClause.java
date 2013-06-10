@@ -440,8 +440,34 @@ public class JPQLStatementWhereClause extends AbstractJPQLStatementFilteringClau
 							String sourceFieldName = (String)sourceField.getQueryName().getFirst();
 							IModelField destinationField =  destinationFields.get(i);
 							String destinationFieldName = (String)destinationField.getQueryName().getFirst();
-							joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
-							logger.debug("succesfullu added auto-join condition [" + joinCondition + "]");
+							
+							joinCondition = null;
+							if( "one-to-many".equalsIgnoreCase(relationship.getType()) ) {
+								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
+							} else if( "many-to-one".equalsIgnoreCase(relationship.getType()) ) {
+								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
+							} else if( "many-to-many".equalsIgnoreCase(relationship.getType()) ) {
+								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
+							} else if( "one-to-one".equalsIgnoreCase(relationship.getType()) ) {
+								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
+							} else if( "optional-one-to-one".equalsIgnoreCase(relationship.getType()) ) {
+								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
+							} else if( "one-to-optional-one".equalsIgnoreCase(relationship.getType()) ) {
+								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
+							} else if( "optional-many-to-one".equalsIgnoreCase(relationship.getType()) ) {
+								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
+							} else if( "many-to-optional-one".equalsIgnoreCase(relationship.getType()) ) {
+								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
+							} else if( "optional-one-to-many".equalsIgnoreCase(relationship.getType()) ) {
+								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
+							} else if( "one-to-optional-many".equalsIgnoreCase(relationship.getType()) ) {
+								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
+							} else {
+								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
+							}
+							
+							
+							logger.debug("succesful added auto-join condition [" + joinCondition + "]");
 							if(whereClause == null || whereClause.equals("")) {
 								whereClause = "WHERE ";
 							} else {
@@ -452,7 +478,7 @@ public class JPQLStatementWhereClause extends AbstractJPQLStatementFilteringClau
 					}
 					//throw new RuntimeException("Impossible to auto join entities");
 				} else {
-					logger.warn("Impossible to join antities [" + unjoinedEntities + "]. A cartesian product will be generted.");
+					logger.warn("Impossible to join entities [" + unjoinedEntities + "]. A cartesian product will be generted.");
 					throw new RuntimeException("Impossible to auto join entities");
 				}
 			}
