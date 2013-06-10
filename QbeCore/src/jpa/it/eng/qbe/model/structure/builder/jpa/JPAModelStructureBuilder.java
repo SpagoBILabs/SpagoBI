@@ -50,16 +50,24 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 	private int maxRecursionLevel;
 	IModelStructurePropertiesInitializer propertiesInitializer;
 
-	private int DEFAULT_MAX_RECURSION_LEVEL = 0;
+	private static int DEFAULT_MAX_RECURSION_LEVEL = 0;
 	
 	private static transient Logger logger = Logger.getLogger(JPAModelStructureBuilder.class);
+	
+	
 	/**
 	 * Constructor
 	 * @param dataSource the JPA DataSource
 	 */
 	public JPAModelStructureBuilder(JPADataSource dataSource) {
 		
-		maxRecursionLevel = DEFAULT_MAX_RECURSION_LEVEL;
+		String maxRecursionLevelProperty = (String)dataSource.getConfiguration().loadDataSourceProperties().get("maxRecursionLevel");
+		if(maxRecursionLevelProperty == null) {
+			this.maxRecursionLevel = DEFAULT_MAX_RECURSION_LEVEL;
+		} else {
+			this.maxRecursionLevel = Integer.parseInt(maxRecursionLevelProperty);
+		}
+		
 		
 		if(dataSource == null) {
 			throw new IllegalArgumentException("DataSource parameter cannot be null");

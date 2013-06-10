@@ -34,6 +34,7 @@ public interface IDataSourceConfiguration {
 	 */
 	String getModelName();
 	
+	
 	/**
 	 * Load the properties associated to the model. These properties are usually
 	 * injected into the model by a proper implementation of interface IModelPropertiesInitializer.
