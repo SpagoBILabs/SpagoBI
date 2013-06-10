@@ -68,7 +68,7 @@ Sbi.worksheet.designer.WorksheetDefinitionPanel = function(config) {
 	this.init(config);
 	
 	c = Ext.apply(c, {
-	    items: [this.tabs]
+	    items: [this.worksheetPanel]
 	});
 
 	// constructor
@@ -81,12 +81,16 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 	worksheetDesignerPanel : null
 	, worksheetPreviewPanel : null
 //	, formState : null  // for SmartFilter engine: TODO move this variable elsewhere
-	, tabs : null
+	, worksheetPanel : null
 	
 	,
 	init : function (config) {
 		
-		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel({worksheetTemplate : config});
+		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(Ext.apply({
+			engineAlreadyInitialized : true
+		}, {
+			worksheetTemplate : config
+		}));
 		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({id : 'WorkSheetPreviewPage'}); // was ({closable: false});
 		
 		this.worksheetPreviewPanel.on('activate', function() {
@@ -101,9 +105,10 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 			
 		}, this);
 		
-		this.tabs = new Ext.TabPanel({
-			items: [this.worksheetDesignerPanel, this.worksheetPreviewPanel]
-			, activeTab : 0
+		this.worksheetPanel = new Sbi.worksheet.designer.WorksheetPanel({
+			title : null
+			, worksheetDesignerPanel : this.worksheetDesignerPanel
+			, worksheetPreviewPanel : this.worksheetPreviewPanel
 		});
 				
 	}
@@ -220,9 +225,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 	}
 	
 	, isWorksheetPageActive: function(){
-		return this.tabs.getActiveTab().id=='WorkSheetPreviewPage';
+		return this.worksheetPanel.isWorksheetPageActive();
 	}
-
-
 
 });

@@ -108,8 +108,7 @@ Sbi.worksheet.designer.WorksheetPanel = function(config) {
 	
 	this.on('activate', function(thePanel){
 		// recalculate current fields in store and fires validateInvalidFieldsAfterLoad event
-		var activeItem = this.getLayout().activeItem;
-		var index = this.items.indexOf(activeItem);
+		var index = this.getActiveItemIndex();
 		if (index == 1) {
 			activeItem.fireEvent('activate', activeItem); // force refresh
 		}
@@ -135,12 +134,27 @@ Ext.extend(Sbi.worksheet.designer.WorksheetPanel, Ext.Panel, {
 	, worksheetPreviewPanel: null
 	, prevButton: null
 	, nextButton: null
+	
 	, initWorksheetPanel: function(config) {
 		this.worksheetDesignerPanel = config.worksheetDesignerPanel;
 		this.worksheetPreviewPanel = config.worksheetPreviewPanel;
 	}
-	, setActiveItem: function(pageIndex) {
+
+	,
+	setActiveItem: function(pageIndex) {
 		this.getLayout().setActiveItem( pageIndex );
+	}
+	
+	, 
+	getActiveItemIndex : function () {
+		var activeItem = this.getLayout().activeItem;
+		var index = this.items.indexOf(activeItem);
+		return index;
+	}
+	
+	,
+	isWorksheetPageActive: function(){
+		return this.getActiveItemIndex() == 1;
 	}
 
 });
