@@ -179,15 +179,34 @@ public class MenuListJSONSerializer implements Serializer {
 	
 	private JSONArray createEndUserMenu(Locale locale, int level, JSONArray tempMenuList) throws JSONException, EMFUserError{
 
-		 // JSONObject charts = createMenuItem("charts","/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&MESSAGEDET=DETAIL_NEW","Analytical model", true, null);
-		JSONObject browser = createMenuItem("folder_open","/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","Documents browser", true, null);
-		JSONObject favourites = createMenuItem("bookmark","/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","My favorites", true, null);
+		MessageBuilder messageBuilder = new MessageBuilder();
+		
+		JSONObject browser = createMenuItem(
+				"folder_open",
+				"/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+				messageBuilder.getMessage("menu.Browser", locale), true, null);
+		JSONObject favourites = createMenuItem(
+				"bookmark",
+				"/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+				messageBuilder.getMessage("menu.MyFavorites", locale), true, null);
 
-		JSONObject createDoc = createMenuItem("pencil","/servlet/AdapterHTTP?ACTION_NAME=START_CREATING_WORKSHEET_FROM_DATASET_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","Create document", true, null);
-		JSONObject subscription = createMenuItem("edit","/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","Subscriptions", true, null);
-		JSONObject toDoList = createMenuItem("list","/servlet/AdapterHTTP?PAGE=WorkflowToDoListPage&WEBMODE=TRUE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","To do list", true, null);
+		JSONObject createDoc = createMenuItem(
+				"pencil",
+				"/servlet/AdapterHTTP?ACTION_NAME=START_CREATING_WORKSHEET_FROM_DATASET_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+				messageBuilder.getMessage("menu.CreateDocument", locale), true, null);
+		JSONObject subscription = createMenuItem(
+				"edit",
+				"/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+				messageBuilder.getMessage("menu.Subscriptions", locale), true, null);
+		JSONObject toDoList = createMenuItem(
+				"list",
+				"/servlet/AdapterHTTP?PAGE=WorkflowToDoListPage&WEBMODE=TRUE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+				messageBuilder.getMessage("menu.ToDoList", locale), true, null);
 
-		JSONObject myData = createMenuItem("my_data","/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE","My Data", true, null);
+		JSONObject myData = createMenuItem(
+				"my_data",
+				"/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+				messageBuilder.getMessage("menu.MyData", locale), true, null);
 		
 		// tempMenuList.put(charts);
 		tempMenuList.put(browser);
@@ -196,7 +215,9 @@ public class MenuListJSONSerializer implements Serializer {
 		JSONObject myFolder = new JSONObject();
 		if(personalFolder != null){
 			Integer persFoldId = personalFolder.getId();
-			myFolder =  createMenuItem("my_folder","/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&node="+persFoldId,"My folder", true, null);
+			myFolder = createMenuItem("my_folder",
+					"/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&node="
+							+ persFoldId, messageBuilder.getMessage("menu.MyFolder", locale), true, null);
 			tempMenuList.put(myFolder);
 		}
 		
@@ -236,25 +257,35 @@ public class MenuListJSONSerializer implements Serializer {
 	
 	private JSONArray createFixedMenu(Locale locale, int level, JSONArray tempMenuList) throws JSONException{
 
-		JSONObject spacer = new JSONObject();
-		JSONObject lang = createMenuItem("flag","","Languages", false, "LANG");
+		MessageBuilder messageBuilder = new MessageBuilder();
 
-		JSONObject roles = createMenuItem("roles","","Roles", false, "ROLE");
-		
-		JSONObject info = createMenuItem("info","","Info", false, "INFO");
-		JSONObject power = createMenuItem("power","/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE","Quit", false, null);
-		
+		JSONObject spacer = new JSONObject();
+		JSONObject lang = createMenuItem("flag", "",
+				messageBuilder.getMessage("menu.Languages", locale), false,
+				"LANG");
+
+		JSONObject roles = createMenuItem("roles", "",
+				messageBuilder.getMessage("menu.RoleSelection", locale), false,
+				"ROLE");
+
+		JSONObject info = createMenuItem("info", "",
+				messageBuilder.getMessage("menu.info", locale), false, "INFO");
+		JSONObject power = createMenuItem(
+				"power",
+				"/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE",
+				messageBuilder.getMessage("menu.logout", locale), false, null);
+
 		spacer.put("xtype", "spacer");
-		tempMenuList.put("->");		
+		tempMenuList.put("->");
 
 		tempMenuList.put(roles);
-		
+
 		tempMenuList.put(lang);
 
 		tempMenuList.put(info);
 
 		tempMenuList.put(power);
-		
+
 		return tempMenuList;
 	}
 
