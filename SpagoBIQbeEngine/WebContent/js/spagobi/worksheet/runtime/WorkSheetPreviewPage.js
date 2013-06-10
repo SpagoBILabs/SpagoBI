@@ -40,8 +40,8 @@ Ext.ns("Sbi.worksheet.runtime");
 Sbi.worksheet.runtime.WorkSheetPreviewPage = function(config) {
 	
 	var defaultSettings = {
-		title: LN('sbi.worksheet.runtime.worksheetpreviewpage.title')
-		, defaultSrc: 'about:blank'
+		//title: LN('sbi.worksheet.runtime.worksheetpreviewpage.title')
+		defaultSrc: 'about:blank'
 		, autoLoad: true
         , loadMask: {msg: 'Loading...'}
         , fitToParent: true  // not valid in a layout

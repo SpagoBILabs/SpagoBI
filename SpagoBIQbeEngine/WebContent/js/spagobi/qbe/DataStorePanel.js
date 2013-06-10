@@ -65,7 +65,7 @@ Sbi.widgets.DataStorePanel = function(config) {
 	this.initPanel();
 	
 	c = Ext.apply(c, {
-		title: LN('sbi.qbe.datastorepanel.title'),  
+		//title: LN('sbi.qbe.datastorepanel.title'),  
 		layout: 'fit',
 		items: [this.grid]
 	});

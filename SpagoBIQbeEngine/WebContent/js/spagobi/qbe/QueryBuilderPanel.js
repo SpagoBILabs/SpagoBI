@@ -41,7 +41,7 @@ Ext.ns("Sbi.qbe");
 Sbi.qbe.QueryBuilderPanel = function(config) {
 	
 	var defaultSettings = {
-		title: LN('sbi.qbe.queryeditor.title'),
+		//title: LN('sbi.qbe.queryeditor.title'),
 		frame: false, 
 		border: false,
 		collapseQueryCataloguePanel: true,
