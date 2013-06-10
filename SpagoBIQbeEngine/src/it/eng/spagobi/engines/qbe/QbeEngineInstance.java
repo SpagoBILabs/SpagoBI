@@ -91,7 +91,12 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		
 		dataSource = QbeDataSourceManager.getInstance().getDataSource(template.getDatamartNames(), dataSourceProperties, 
 				QbeEngineConfig.getInstance().isDataSourceCacheEnabled());
-				
+			
+		String maxRecuriosnLevel = (String)template.getProperty("maxRecursionLevel");
+		if(maxRecuriosnLevel != null) {
+			dataSource.getConfiguration().loadDataSourceProperties().put("maxRecursionLevel", maxRecuriosnLevel);
+		}
+		
 		
 		if(template.getDatamartModelAccessModality() != null) {
 			
