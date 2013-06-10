@@ -33,7 +33,9 @@ public class FileDataSet extends ConfigurableDataSet{
     
 	public static String DS_TYPE = "SbiFileDataSet";
 	public static final String FILE_NAME = "fileName";
+	public static final String FILE_TYPE = "fileType";
 
+	public String fileType;
 	
 	private static transient Logger logger = Logger.getLogger(FileDataSet.class);
     
@@ -101,24 +103,35 @@ public class FileDataSet extends ConfigurableDataSet{
 			jsonConf  = ObjectUtils.toJSONObject(this.getConfiguration());
 		}
 		String fileExtension;
+		String fileType = this.getFileType();
 		
 		fileExtension = fileName.lastIndexOf('.') > 0 ? fileName.substring(fileName.lastIndexOf('.') + 1): null;
 		logger.debug("File extension: [" + fileExtension +"]");
 		
-		if("csv".equalsIgnoreCase( fileExtension )) {
+		if (fileType != null){
+			logger.debug("File type is: [" + fileType +"]");
+		} else {
+			logger.debug("No file type specified, using file extension as file type: [" + fileExtension +"]");
+			fileType = fileExtension;
+		}
+
+		
+		if("CSV".equalsIgnoreCase( fileType )) {
 			logger.info("File format: [CSV]");
 			//setDataReader( new CsvDataReader() );
 			setDataReader( new FileDatasetCsvDataReader(jsonConf));
 		} 
-		else if ("xls".equalsIgnoreCase( fileExtension )){
+		else if ("XLS".equalsIgnoreCase( fileType )){
 			logger.info("File format: [XLS Office 2003]");
-			setDataReader( new FileDatasetXlsDataReader() );
-		}
+			setDataReader( new FileDatasetXlsDataReader(jsonConf) );
+		}		
 		else if ("xml".equalsIgnoreCase( fileExtension ) || "txt".equalsIgnoreCase( fileExtension )) {
 			logger.info("File format: [XML]");
 			setDataReader( new XmlDataReader() );
-		} else {
-			throw new  IllegalArgumentException("[" + fileExtension+ "] is not a supported file extension");
+		} 
+		
+		else {
+			throw new  IllegalArgumentException("[" + fileExtension+ "] is not a supported file type");
 		}
 	}
 	
@@ -159,5 +172,19 @@ public class FileDataSet extends ConfigurableDataSet{
 				throw new RuntimeException("Missing right exstension", e);
 			}
 		}
+	}
+
+	/**
+	 * @return the fileType
+	 */
+	public String getFileType() {
+		return fileType;
+	}
+
+	/**
+	 * @param fileType the fileType to set
+	 */
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
 	}
 }
