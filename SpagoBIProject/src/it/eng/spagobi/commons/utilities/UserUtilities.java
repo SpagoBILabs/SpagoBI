@@ -250,6 +250,18 @@ public class UserUtilities {
     	return lf;
     }
     
+    public static boolean isPersonalFolder(LowFunctionality folder, UserProfile userProfile) {
+    	Assert.assertNotNull(userProfile, "User profile in input is null");
+    	Assert.assertNotNull(folder, "Folder in input is null");
+    	LowFunctionality personalFolder = loadUserFunctionalityRoot(userProfile);
+    	if (personalFolder == null) {
+    		String userId = (String) userProfile.getUserId();
+    		logger.debug("Personal folder for user [" + userId + "] does not exist");
+    		return false;
+    	}
+    	return personalFolder.getId().equals(folder.getId());
+    }
+    
     /**
      * Creates the user functionality root.
      * 

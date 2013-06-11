@@ -73,8 +73,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
         , baseParams: params
     });
 
-    <%
-    BIObject obj = (BIObject) aServiceResponse.getAttribute(SpagoBIConstants.OBJECT);
+    <%BIObject obj = (BIObject) aServiceResponse.getAttribute(SpagoBIConstants.OBJECT);
 	SubObject subObject = (SubObject) aServiceResponse.getAttribute(SpagoBIConstants.SUBOBJECT);
     String parameters = (String) aServiceRequest.getAttribute(ObjectsTreeConstants.PARAMETERS);
     logger.debug("Document parameters in request are [" + parameters + "]");
@@ -128,9 +127,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	}
 	
 	JSONObject biobjectJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize( obj , locale);
-	DocumentsJSONDecorator.decoreDocument(biobjectJSON, userProfile);
-	
-    %>
+	DocumentsJSONDecorator.decorateDocument(biobjectJSON, userProfile, null);%>
     //var menuConfig = <%= aServiceResponse.getAttribute("metaConfiguration")%>;
     
 	<%

@@ -24,10 +24,13 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -347,7 +350,7 @@ public class ObjectsAccessVerifier {
 			if (!"DEV".equals(obj.getStateCode())) {
 				logger.debug("User [" + ((UserProfile) profile).getUserId() + "] is not an administrator and document is not in DEV state, so it cannot be developed");
 				monitor.stop();
-				return true;
+				return false;
 			}
 			// if user is not an administrator and document is in DEV state, we must see if he has development permission
 			List folders = obj.getFunctionalities();
@@ -720,48 +723,56 @@ public class ObjectsAccessVerifier {
 	 */
 	private static boolean canDevInternal(Integer folderId, IEngUserProfile profile) {
 		logger.debug("IN");
-		Monitor monitor =MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canDevInternal");
-		Collection roles = null;
+		Monitor monitor = MonitorFactory
+				.start("spagobi.core.ObjectAccessVerifier.canDevInternal");;
+		boolean toReturn = false;
 		try {
-				roles = ((UserProfile)profile).getRolesForUse();
 			
-		} catch (EMFInternalError emfie) {
-			logger.error("EMFInternalError in profile.getRoles", emfie);
-			logger.debug("OUT. return false");
-			monitor.stop();
-			return false;
-		}
-
-		LowFunctionality funct = null;
-		try {
-			funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(folderId, false);
-		} catch (Exception e) {
-			logger.error("EMFInternalError in loadLowFunctionalityByID", e);
-			logger.debug("OUT. return false");
-			monitor.stop();
-			return false;
-		}
-		Role[] devRoles = funct.getDevRoles();
-		List devRoleNames = new ArrayList();
-		for (int i = 0; i < devRoles.length; i++) {
-			Role role = devRoles[i];
-			devRoleNames.add(role.getName());
-		}
-
-		Iterator iterRoles = roles.iterator();
-		String roleName = "";
-		while (iterRoles.hasNext()) {
-			roleName = (String) iterRoles.next();
-			if (devRoleNames.contains(roleName)) {
-
-				logger.debug("OUT. return true");
-				monitor.stop();
-				return true;
+			Assert.assertNotNull(folderId, "Input folder id not specified");
+			Assert.assertNotNull(profile, "Input profile object not specified");
+			
+			// initializing DAO objects
+			ILowFunctionalityDAO foldersDAO = DAOFactory.getLowFunctionalityDAO();
+			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+			foldersDAO.setUserProfile(profile);
+			roleDAO.setUserProfile(profile);
+			
+			// getting roles with DEV permission on folder
+			Collection roles = ((UserProfile) profile).getRolesForUse();
+			LowFunctionality funct = foldersDAO.loadLowFunctionalityByID(folderId, false);
+			Assert.assertNotNull(funct, "Folder with id [" + folderId + "] not found");
+			Role[] devRoles = funct.getDevRoles();
+			List devRoleNames = new ArrayList();
+			for (int i = 0; i < devRoles.length; i++) {
+				Role role = devRoles[i];
+				devRoleNames.add(role.getName());
 			}
+
+			// iterating on user's roles
+			Iterator iterRoles = roles.iterator();
+			String roleName = "";
+			while (iterRoles.hasNext()) {
+				roleName = (String) iterRoles.next();
+				Role role = roleDAO.loadByName(roleName);
+				// if the role is DEV_ROLE role type and has development permission on folder, the user is able to develop in folder
+				if (role.getRoleTypeCD().equals("DEV_ROLE") && devRoleNames.contains(roleName)) {
+					toReturn = true;
+				}
+			}
+			
+			logger.debug("Returning " + toReturn);
+			return toReturn;
+		} catch (Exception e) {
+			logger.error(
+					"Error while evaluating development permission on folder with id ["
+							+ folderId + "] for user [" + profile + "]", e);
+			throw new SpagoBIRuntimeException(
+					"Error while evaluating development permission on folder with id ["
+							+ folderId + "] for user [" + profile + "]", e);
+		} finally {
+			logger.debug("OUT");
+			monitor.stop();
 		}
-		logger.debug("OUT. return false");
-		monitor.stop();
-		return false;
 
 	}
 
@@ -1011,4 +1022,102 @@ public class ObjectsAccessVerifier {
 		}
 		throw new SpagoBIRuntimeException("Document state [" + documentState + "] not valid!!");
 	}
+
+	/**
+	 * Returns true if the user in input is able to delete the input object in the specified position (folder)
+	 * @param biobjectId The id of the document to be deleted
+	 * @param profile The user profile object
+	 * @param lowFunctionality The folder
+	 * @return true if the user in input is able to delete the input object in the specified position (folder)
+	 */
+	public static boolean canDeleteBIObject(int biobjectId, IEngUserProfile profile,
+			LowFunctionality lowFunctionality) {
+		logger.debug("IN");
+		boolean canDelete = false;
+		try {
+			Assert.assertNotNull(profile, "User profile object in input is null");
+			Assert.assertNotNull(lowFunctionality, "LowFunctionality object in input is null");
+			logger.debug("Evaulating deletion permission for user ["
+					+ ((UserProfile) profile).getUserId() + "] on folder ["
+					+ lowFunctionality.getPath() + "] for document with id [" + biobjectId + "] ...");
+			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+				logger.debug("User is administrator, therefore he can delete it");
+				canDelete = true;
+			} else {
+				logger.debug("User isn't an administrator");
+				// if user can dev the document and in folder, he can delete it
+				if (canDev(lowFunctionality.getId(), profile) && canDevBIObject(biobjectId, profile)) {
+					logger.debug("User can develop document, therefore he can delete it");
+					canDelete = true;
+				} else {
+					BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(biobjectId);
+					String userId = ((UserProfile) profile).getUserId().toString();
+					if (userId.equals(obj.getCreationUser())) {
+						logger.debug("User is the creator of the document, therefore he can delete it");
+						canDelete = true;
+					} else {
+						boolean isInPersonalFolder = UserUtilities.isPersonalFolder(lowFunctionality, (UserProfile) profile);
+						if (isInPersonalFolder) {
+							logger.debug("Folder is personal folder, therefore user can delete it");
+							canDelete = true;
+						}
+					}
+				}
+			}
+			logger.debug("OUT : returning " + canDelete);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while evaluating deletion permission", e);
+		}
+		return canDelete;
+	}
+	
+	/**
+	 * Returns true if the user in input is able to delete the input object everywhere
+	 * @param biobjectId The id of the document to be deleted
+	 * @param profile The user profile object
+	 * @return true if the user in input is able to delete the input object everywhere
+	 */
+	public static boolean canDeleteBIObject(int biobjectId, IEngUserProfile profile) {
+		logger.debug("IN");
+		boolean canDelete = false;
+		try {
+			Assert.assertNotNull(profile, "User profile object in input is null");
+			logger.debug("Evaulating deletion permission for user ["
+					+ ((UserProfile) profile).getUserId() + "] for document with id [" + biobjectId + "] ...");
+			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+				logger.debug("User is administrator, therefore he can delete it");
+				canDelete = true;
+			} else {
+				logger.debug("User isn't an administrator");
+				// if user can dev the document and in folder, he can delete it
+				if (canDevBIObject(biobjectId, profile)) {
+					logger.debug("User can develop document, therefore he can delete it");
+					canDelete = true;
+				} else {
+					BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(biobjectId);
+					String userId = ((UserProfile) profile).getUserId().toString();
+					if (userId.equals(obj.getCreationUser())) {
+						logger.debug("User is the creator of the document, therefore he can delete it");
+						canDelete = true;
+					} else {
+						// if the document is ONLY inside the personal folder, the user can delete it
+						List folders = obj.getFunctionalities();
+						if (folders.size() == 1) {
+							LowFunctionality lowFunctionality = (LowFunctionality) folders.get(0);
+							boolean isInPersonalFolder = UserUtilities.isPersonalFolder(lowFunctionality, (UserProfile) profile);
+							if (isInPersonalFolder) {
+								logger.debug("Folder is personal folder, therefore user can delete it");
+								canDelete = true;
+							}
+						}
+					}
+				}
+			}
+			logger.debug("OUT : returning " + canDelete);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while evaluating deletion permission", e);
+		}
+		return canDelete;
+	}
+	
 }
