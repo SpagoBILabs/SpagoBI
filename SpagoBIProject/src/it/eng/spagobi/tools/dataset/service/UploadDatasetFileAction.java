@@ -158,8 +158,8 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			File saveTo = new File(datasetFileDir, fileName);
 			// check if the file already exists
 			if (saveTo.exists()){
-				//TODO: se esiste già lo sovrascrivo ma sarebbe meglio segnalarlo all'utente
-
+				//Overwriting existing file
+				logger.debug("Overwriting existing file "+fileName);
 			}
 			
 			uploaded.write(saveTo);
