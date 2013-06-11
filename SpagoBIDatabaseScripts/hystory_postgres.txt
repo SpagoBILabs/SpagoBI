@@ -1561,3 +1561,10 @@ commit;
 -- 29/05/2013 Davide: Worksheet engine is able to use datasets
 UPDATE SBI_ENGINES SET USE_DATASET = TRUE WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver';
 commit;
+
+-- 10/06/2013 Antonella: add columns for dataset PUBLIC / PRIVATE 
+ALTER TABLE SBI_DATA_SET ADD COLUMN OWNER VARCHAR(50);
+ALTER TABLE SBI_DATA_SET ADD COLUMN IS_PUBLIC BOOLEAN DEFAULT FALSE;
+
+UPDATE SBI_DATA_SET SET IS_PUBLIC = TRUE, OWNER = 'biadmin';
+COMMIT;
