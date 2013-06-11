@@ -38,6 +38,8 @@ public class EngineConstants {
 	public static final String ENV_DB_DATE_FORMAT = "ENV_DB_DATE_FORMAT";
 	public static final Object ENV_METAMODEL_PROXY = "ENV_METAMODEL_PROXY";	
 	
+	public static final String MODEL_NAME = "MODEL_NAME";
+	
 
 
 }

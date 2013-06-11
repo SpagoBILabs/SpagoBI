@@ -18,6 +18,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RestUtilities {
+	
+	/**
+	 * Reads the body of a request and return it as a string
+	 * @param request the HttpServletRequest request
+	 * @return the body
+	 * @throws IOException
+	 */
 	public static String readBody( HttpServletRequest request) throws IOException{
 		
 		StringBuilder stringBuilder = new StringBuilder();
@@ -42,8 +49,18 @@ public class RestUtilities {
 		return stringBuilder.toString();
 	}
 	
+	/**
+	 * 
+	 * Reads the body of a request and return it as a JSONObject
+	 * @param request the HttpServletRequest request
+	 * @return
+	 * @throws IOException
+	 * @throws JSONException
+	 */
 	public static JSONObject readBodyAsJSONObject( HttpServletRequest request) throws IOException, JSONException{
 		String requestBody = RestUtilities.readBody(request);
 		return JSONUtils.toJSONObject(requestBody);
 	}
+	
+
 }
