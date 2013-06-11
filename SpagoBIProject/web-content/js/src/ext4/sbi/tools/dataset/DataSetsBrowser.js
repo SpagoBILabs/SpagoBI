@@ -30,7 +30,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams : baseParams
 		});
 		this.services["getCategories"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-			serviceName: 'domains/listValueDescriptionByType',
+			serviceName: 'domainsforfinaluser/listValueDescriptionByType',
 			baseParams: baseParams
 		});
 		this.services["save"]= Sbi.config.serviceRegistry.getRestServiceUrl({
