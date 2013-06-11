@@ -79,6 +79,9 @@ public abstract class AbstractDataSet implements IDataSet {
     protected String configuration;
     protected List noActiveVersions;
     
+    protected String owner;
+    protected boolean isPublic;
+    
     private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
 
     public AbstractDataSet() {
@@ -508,6 +511,35 @@ public abstract class AbstractDataSet implements IDataSet {
 	 */
 	public void setNoActiveVersions(List noActiveVersions) {
 		this.noActiveVersions = noActiveVersions;
+	}
+
+	
+	/**
+	 * @return the owner
+	 */
+	public String getOwner() {
+		return owner;
+	}
+
+	/**
+	 * @param owner the owner to set
+	 */
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
+	/**
+	 * @return the isPublic
+	 */
+	public boolean isPublic() {
+		return isPublic;
+	}
+
+	/**
+	 * @param isPublic the isPublic to set
+	 */
+	public void setPublic(boolean isPublic) {
+		this.isPublic = isPublic;
 	}
 
 	// ===============================================
