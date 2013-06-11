@@ -732,6 +732,7 @@ Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.dateIn']='Data di
 Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.fileName']='Nome del file';
 Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.deleteNonActive']='Elimina versioni non attive';
 Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.isactive'] = 'Attivo';
+Sbi.locale.ln['sbi.tools.catalogue.metaModelsCatalogue.datasource']='Data Source';
 
 
 //===================================================================

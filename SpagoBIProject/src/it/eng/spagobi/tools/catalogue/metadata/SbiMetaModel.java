@@ -6,6 +6,7 @@
 package it.eng.spagobi.tools.catalogue.metadata;
 
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
 
 public class SbiMetaModel extends SbiHibernateModel {
@@ -20,6 +21,7 @@ public class SbiMetaModel extends SbiHibernateModel {
 	
 	private Integer category;
 
+	private SbiDataSource dataSource;
 
 	// Constructors
 
@@ -73,6 +75,15 @@ public class SbiMetaModel extends SbiHibernateModel {
 	public void setCategory(Integer category) {
 		this.category = category;
 	}
+
+	public SbiDataSource getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(SbiDataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
 
 
 

@@ -861,6 +861,7 @@ Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.dateIn']='Creation date';
 Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.fileName']='File name';
 Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.deleteNonActive']='Clean non-active versions';
 Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.isactive'] = 'Active';
+Sbi.locale.ln['sbi.tools.catalogue.metaModelsCatalogue.datasource']='Data Source';
 
 
 //===================================================================

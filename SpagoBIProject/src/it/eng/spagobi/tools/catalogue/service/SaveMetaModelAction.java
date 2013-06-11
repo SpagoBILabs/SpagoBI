@@ -39,6 +39,7 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 	public static String NAME = "name";
 	public static String DESCRIPTION = "description";
 	public static String CATEGORY = "category";
+	public static String DATA_SOURCE_LABEL = "data_source_label";
 	public static String ACTIVE_CONTENT_ID = "active_content_id";
 	
 	@Override
@@ -188,6 +189,7 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 		String name = getAttributeAsString( NAME );
 		String description = getAttributeAsString( DESCRIPTION );
 		String category = getAttributeAsString(CATEGORY);
+		String dataSourceLabel = getAttributeAsString(DATA_SOURCE_LABEL);
 		Integer categoryValue = null;
 		if (StringUtilities.isNotEmpty(category)){
 			categoryValue = getAttributeAsInteger( CATEGORY );		
@@ -197,6 +199,7 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 		model.setName(name);
 		model.setDescription(description);
 		model.setCategory(categoryValue);
+		model.setDataSourceLabel(dataSourceLabel);
 		return model;
 	}
 	

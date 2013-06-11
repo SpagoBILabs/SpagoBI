@@ -111,25 +111,31 @@ Ext
 						for (f in fields) {
 							this.configurationObject.fields.push(fields[f]);
 						}
-										
+							
+						var r ={
+								id : 0,
+								name : '',
+								description : ''
+							};
 							
 						if (config.isCategorizationEnabled != null) {
-							this.configurationObject.emptyRecToAdd = new Ext.data.Record(
-									{
-										id : 0,
-										name : '',
-										description : '',
-										category: '',
-										categoryVisible: ''
-									});
-						} else {
-							this.configurationObject.emptyRecToAdd = new Ext.data.Record(
-							{
-										id : 0,
-										name : '',
-										description : ''
-									});
+							
+							 r = {
+									id : 0,
+									name : '',
+									description : '',
+									category: '',
+									categoryVisible: ''
+								};
+								
+
 						}
+						
+						if(config && config.additionalFormObjects){
+							r = Ext.apply(r, config.additionalFormObjects.itemFieldsDefault);
+						}
+						
+						this.configurationObject.emptyRecToAdd = new Ext.data.Record(r);
 			
 						this.configurationObject.filter = true;
 						if (config.isCategorizationEnabled != null) {
@@ -141,6 +147,13 @@ Ext
 							this.configurationObject.columnName = [
 							                                       	['name', LN('sbi.generic.name')]
 							                	                   ];
+						}
+						
+						if(this.additionalFormObjects){
+							for(var i=0; i<this.additionalFormObjects.itemFields.length; i++){
+								this.configurationObject.columnName.push([this.additionalFormObjects.itemFields[i], itemFields.additionalFormObjects[i]]);
+							}
+							
 						}
 
 
@@ -164,12 +177,21 @@ Ext
 
 					,
 					initInputFields : function(config) {
+						var fields =  [ 'id', 'name', 'description' ]
 						if (this.configurationObject.isCategorizationEnabled == true) {
-							return fields = [ 'id', 'name', 'description',
-									'category' ];
-						} else {
-							return fields = [ 'id', 'name', 'description' ];
+							fields = [ 'id', 'name', 'description', 'category' ];
+						} 
+						if(config && config.additionalFormObjects){
+							var positionToInject = 0;
+							if(config.additionalFormObjects.position && config.additionalFormObjects.position<fields.length){
+								positionToInject = config.additionalFormObjects.position;
+							}
+							for(var j=0; j<config.additionalFormObjects.items.length; j++){
+								fields.splice(positionToInject+j, 0, config.additionalFormObjects.items[j]);
+							}
+							
 						}
+						return fields;
 					}
 
 					,
@@ -197,7 +219,9 @@ Ext
 							allowBlank : true,
 							name : 'description'
 						};
+						
 
+					
 						this.uploadField = new Ext.form.TextField({
 							inputType : 'file',
 							fieldLabel : LN('sbi.generic.upload'),
@@ -243,7 +267,7 @@ Ext
 								itemId : 'categoryHidden'
 							};
 
-							this.uiItems = [ idField, nameField, descrField,
+							this.uiItems = [  idField, nameField, descrField,
 									this.categoryCombo, this.categoryHidden,
 									this.uploadField ];
 
@@ -252,6 +276,17 @@ Ext
 									this.uploadField ];
 						}
 
+						if(config && config.additionalFormObjects){
+							var positionToInject = 0;
+							if(config.additionalFormObjects.position && config.additionalFormObjects.position<this.uiItems.length){
+								positionToInject = config.additionalFormObjects.position;
+							}
+							for(var j=0; j<config.additionalFormObjects.items.length; j++){
+								this.uiItems.splice(positionToInject+j, 0, config.additionalFormObjects.items[j]);
+							}
+							
+						}
+						
 						this.versionsGridPanel = new Sbi.widgets.CatalogueVersionsGridPanel(
 								{
 									services : {
@@ -430,7 +465,15 @@ Ext
 							if (this.configurationObject.isCategorizationEnabled == true) {
 								record.set('category', values['category']);
 							}
-
+							
+	
+							if(this.additionalFormObjects){
+								for(var i=0; i<this.additionalFormObjects.itemFields.length; i++){
+									record.set(this.additionalFormObjects.itemFields[i], values[this.additionalFormObjects.itemFields[i]]);
+								}
+								
+							}
+							
 							this.mainElementsStore.commitChanges();
 							this.versionsGridPanel.getStore().load({
 								params : {

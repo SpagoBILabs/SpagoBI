@@ -10,6 +10,8 @@
 	<MAP_REST_SERVICES>
 		<MAP_REST_SERVICE serviceUrl="/domains/listValueDescriptionByType" businessProcess="DataSourceManagement" />			
 		<MAP_REST_SERVICE serviceUrl="/datasources/test" businessProcess="DataSourceManagement" />			
-		<MAP_REST_SERVICE serviceUrl="/datasources" businessProcess="DataSourceManagement" />			
+		<MAP_REST_SERVICE serviceUrl="/datasources" businessProcess="DataSourceManagement" />
+		<MAP_REST_SERVICE serviceUrl="/datasourcespublic" businessProcess="publicFunctionality" />		
+				
 	</MAP_REST_SERVICES>
 </BUSINESS_MAP>

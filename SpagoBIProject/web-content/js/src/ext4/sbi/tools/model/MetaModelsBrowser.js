@@ -36,13 +36,13 @@ Ext.define('Sbi.tools.model.MetaModelsBrowser', {
 	
 	,
 	initStore : function(baseParams) {
-		this.columns = [ {
-			dataIndex : "name",
-			header : "Name"
-		}, {
-			dataIndex : "description",
-			header : "Description"
-		} ];
+//		this.columns = [ {
+//			dataIndex : "name",
+//			header : "Name"
+//		}, {
+//			dataIndex : "description",
+//			header : "Description"
+//		} ];
 	
 		var model = Ext.ModelMgr.getModel(this.getModelName());
 
