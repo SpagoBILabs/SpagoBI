@@ -30,6 +30,9 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Session.js")%>'></script>	
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Log.js")%>'></script>	
 
+
+
+
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/store/InMemoryFilteredStore.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/store/DynamicStore.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/grid/RadioColumn.js")%>'></script>
@@ -43,6 +46,12 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/compositepanel/ListDetailPanel.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/toolbar/StaticToolbarBuilder.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/wizard/WizardWindow.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/frame/EditorIFramePanel.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/frame/EditorIFramePanelContainer.js")%>'></script>
+
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/DocumentsTree.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/execution/SaveDocumentWindowsExt4.js")%>'></script>
+
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/lov/TestLovTreePanel.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/lov/TestLovResultPanel.js")%>'></script>
@@ -64,7 +73,12 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/model/MetaModelsView.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/model/MetaModelModel.js")%>'></script>
 
+
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/selfservice/ManageSelfService.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/selfservice/ManageSelfServiceContainer.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/selfservice/SelfServiceExecutionIFrame.js")%>'></script>
+
+
 
 <!-- END-DEBUG -->
 

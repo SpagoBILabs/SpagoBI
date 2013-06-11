@@ -6,6 +6,7 @@
 package it.eng.spagobi.adhocreporting.services;
 
 import it.eng.spagobi.analiticalmodel.execution.service.CreateDatasetForWorksheetAction;
+import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -30,7 +31,7 @@ public class StartCreatingWorksheetFromDatasetAction extends CreateDatasetForWor
 			// create the input parameters to pass to the WorkSheet Edit Service
 			Map worksheetEditActionParameters = buildWorksheetEditServiceBaseParametersMap();
 			
-			String executionId = createNewExecutionId();
+			String executionId = ExecuteAdHocUtility.createNewExecutionId();
 			worksheetEditActionParameters.put("SBI_EXECUTION_ID" , executionId);
 						
 			Engine worksheetEngine = getWorksheetEngine();
