@@ -696,6 +696,13 @@ Sbi.locale.ln['sbi.ds.scope'] = 'Scope';
 Sbi.locale.ln['sbi.ds.noDataset']= 'No datasets available';
 Sbi.locale.ln['sbi.ds.mandatoryFields']= 'Please insert mandatory fields!';
 Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= 'Worksheet designer isn\'t available on parametric datasets!';
+Sbi.locale.ln['sbi.ds.file.type'] = 'Type';
+Sbi.locale.ln['sbi.ds.file.upload.button'] = 'Upload File';
+Sbi.locale.ln['sbi.ds.file.csv.delimiter'] = 'Delimiter Character';
+Sbi.locale.ln['sbi.ds.file.csv.quote'] = 'Quote Character';
+Sbi.locale.ln['sbi.ds.file.xsl.sheetnumber'] = 'Sheet Number';
+Sbi.locale.ln['sbi.ds.file.xsl.limitrows'] = 'Limit Rows Number';
+Sbi.locale.ln['sbi.ds.file.xsl.skiprows'] = 'Skip Rows';
 
 
 //===================================================================

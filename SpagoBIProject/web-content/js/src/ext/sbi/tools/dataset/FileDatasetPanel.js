@@ -78,21 +78,21 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		
 		//XLS Options Panel
 		this.skipRowsField = new Ext.form.NumberField({
-			fieldLabel : 'Skip Rows',
+			fieldLabel : LN('sbi.ds.file.xsl.skiprows'),
 			allowBlank : true,
 			name: 'skipRows',
 			width: 100
 		});
 		
 		this.limitRowsField = new Ext.form.NumberField({
-			fieldLabel : 'Limit Rows Number',
+			fieldLabel : LN('sbi.ds.file.xsl.limitrows'),
 			allowBlank : true,
 			name: 'limitRows',
 			width: 100
 		});
 		
 		this.sheetNumberField = new Ext.form.NumberField({
-			fieldLabel : 'Sheet Number',
+			fieldLabel : LN('sbi.ds.file.xsl.sheetnumber'),
 			allowBlank : true,
 			name: 'xslSheetNumber',
 			width: 100
@@ -148,7 +148,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		        data: [['"', '"'], ['\'', '\'']]
 		    }),
 			width : 150,
-			fieldLabel : 'Quote Character',
+			fieldLabel : LN('sbi.ds.file.csv.quote'),
 			displayField : 'csvQuoteName', 
 			valueField : 'csvQuoteValue', 
 			typeAhead : true,
@@ -171,7 +171,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		        data: [[';', ';'], [',', ','], ['\\t', '\\t']]
 		    }),
 			width : 150,
-			fieldLabel : 'Delimiter Character',
+			fieldLabel : LN('sbi.ds.file.csv.delimiter'),
 			displayField : 'csvDelimiterName', 
 			valueField : 'csvDelimiterValue', 
 			typeAhead : true,
@@ -210,7 +210,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		        data: [['CSV', 'CSV'], ['Excel 2003', 'XLS']]
 		    }),
 			width : 150,
-			fieldLabel : 'Type',
+			fieldLabel : LN('sbi.ds.file.type'),
 			displayField : 'fileTypeName', 
 			valueField : 'fileTypeValue', 
 			typeAhead : true, forceSelection : true,
@@ -224,8 +224,8 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		this.fileTypeCombo.addListener('select',this.activateFileTypePanel, this);
 
 		this.fileNameField = new Ext.form.TextField({
-			fieldLabel : 'File Name',
-			allowBlank : true,
+			fieldLabel : LN('sbi.ds.fileName'),
+			allowBlank : false,
 			id: 'fileNameField',
 			name: 'fileName',
 			readOnly:true
@@ -240,7 +240,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		});
 		
 		this.uploadButton = new Ext.Button({
-	        text: 'Upload File',
+	        text: LN('sbi.ds.file.upload.button'),
 	        id: 'fileUploadButton'	
 	    });
 		
@@ -297,14 +297,9 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		if (formState.csvQuote != null){
 			this.csvQuoteCombo.setValue(formState.csvQuote);
 		}
-		if (formState.csvQuote != null){
-			this.csvQuoteCombo.setValue(formState.csvQuote);
-		}
 		if (formState.fileType != null){
 			this.fileTypeCombo.setValue(formState.fileType);
-			//if (formState.fileType != ''){
-				this.initialActivateFileTypePanel(formState.fileType);
-			//}
+			this.initialActivateFileTypePanel(formState.fileType);
 		}
 		if (formState.skipRows != null){
 			this.skipRowsField.setValue(formState.skipRows);
@@ -315,6 +310,20 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		if (formState.xslSheetNumber != null){
 			this.sheetNumberField.setValue(formState.xslSheetNumber);	
 		}
+	}
+	
+	, getFormState: function() {
+		var formState = {};
+		
+		formState.fileName = this.fileNameField.getValue();
+		formState.csvDelimiter = this.csvDelimiterCombo.getValue();
+		formState.csvQuote = this.csvQuoteCombo.getValue();
+		formState.fileType = this.fileTypeCombo.getValue();
+		formState.skipRows = this.skipRowsField.getValue();
+		formState.limitRows = this.limitRowsField.getValue();
+		formState.xslSheetNumber = this.sheetNumberField.getValue();
+
+		return formState;
 	}
 
 	

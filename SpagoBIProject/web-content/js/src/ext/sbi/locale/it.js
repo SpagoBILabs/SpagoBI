@@ -675,6 +675,13 @@ Sbi.locale.ln['sbi.ds.scope'] = 'Visibilita';
 Sbi.locale.ln['sbi.ds.noDataset']= 'Non ci sono dataset disponibili';
 Sbi.locale.ln['sbi.ds.mandatoryFields']= 'Inserire campi obbligatori!';
 Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= 'Worksheet designer non abilitato per dataset parametrici!';
+Sbi.locale.ln['sbi.ds.file.type'] = 'Tipo';
+Sbi.locale.ln['sbi.ds.file.upload.button'] = 'Caricamento File';
+Sbi.locale.ln['sbi.ds.file.csv.delimiter'] = 'Carattere delimitazione';
+Sbi.locale.ln['sbi.ds.file.csv.quote'] = 'Carattere quote';
+Sbi.locale.ln['sbi.ds.file.xsl.sheetnumber'] = 'Numero Foglio';
+Sbi.locale.ln['sbi.ds.file.xsl.limitrows'] = 'Numero limite righe';
+Sbi.locale.ln['sbi.ds.file.xsl.skiprows'] = 'Salta righe';
 
 Sbi.locale.ln['sbi.datasource.label']= 'Etichetta';
 Sbi.locale.ln['sbi.datasource.description']= 'Descrizione';
