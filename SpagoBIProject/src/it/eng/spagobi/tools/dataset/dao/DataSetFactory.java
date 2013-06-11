@@ -231,6 +231,8 @@ public class DataSetFactory {
 			ds.setFlatDataset(sbiDataSet.isFlatDataset());
 			ds.setDataSourceFlatId((sbiDataSet.getDataSourceFlat()==null)?null:sbiDataSet.getDataSourceFlat().getDsId());
 			ds.setFlatTableName(sbiDataSet.getFlatTableName());
+			ds.setOwner(sbiDataSet.getOwner());
+			ds.setPublic(sbiDataSet.isPublicDS());
 			ds.setUserIn(sbiDataSet.getCommonInfo().getUserIn());
 			ds.setDateIn(sbiDataSet.getCommonInfo().getTimeIn());
 			versionDS = new VersionedDataSet(ds, Integer.valueOf(sbiDataSet.getId().getVersionNum()), sbiDataSet.isActive());	

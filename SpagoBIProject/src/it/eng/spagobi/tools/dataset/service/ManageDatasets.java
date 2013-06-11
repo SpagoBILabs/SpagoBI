@@ -76,6 +76,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	public static final String RAW_TYPE = "raw";
 	public static final String GENERIC_TYPE = "generic";
 	public static final Integer LIMIT_DEFAULT = 20;
+	public static final String PUBLIC = "PUBLIC";
 	private IEngUserProfile profile;
 
 	@Override
@@ -378,9 +379,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		if(this.requestContainsAttribute( DataSetConstants.FILTERS ) ) {
 			filtersJSON = getAttributeAsJSONObject( DataSetConstants.FILTERS );
 			String hsql = filterList(filtersJSON);
-			items = dsDao.loadFilteredDatasetList(hsql, start, limit);
+			items = dsDao.loadFilteredDatasetList(hsql, start, limit, profile.getUserUniqueIdentifier().toString());
 		}else{//not filtered
-			items = dsDao.loadPagedDatasetList(start,limit);
+			items = dsDao.loadPagedDatasetList(start,limit,profile.getUserUniqueIdentifier().toString());
 		}
 		return items;
 	}
@@ -477,6 +478,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						ds.setDataSourceFlatId(null);
 						ds.setFlatTableName("");
 					}	
+					Boolean isPublic = getAttributeAsBoolean(DataSetConstants.IS_PUBLIC);
+					ds.setPublic(isPublic);										
+					
 					IDataSet dsRecalc = null;		
 					try {
 						if (datasetTypeName != null && !datasetTypeName.equals("")) {
@@ -866,6 +870,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);			
+			
 			
 			dataSet = new FileDataSet();
 			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
@@ -1303,7 +1308,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	private String filterList(JSONObject filtersJSON) throws JSONException {
 		logger.debug("IN");				
-		String hsql= " from SbiDataSet h where h.active = true ";
+		String hsql= " from SbiDataSet h where h.active = true and h.owner = '" + profile.getUserUniqueIdentifier().toString() + "'";
 		if (filtersJSON != null) {
 			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
 			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);

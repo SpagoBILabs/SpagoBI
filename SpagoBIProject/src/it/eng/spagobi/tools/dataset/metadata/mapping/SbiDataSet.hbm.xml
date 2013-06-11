@@ -80,6 +80,12 @@
          <property name="configuration" type="string">
             <column name="CONFIGURATION" />
         </property>
+        <property name="owner" type="string">
+            <column name="OWNER" />
+        </property>
+        <property name="publicDS" type="boolean">
+            <column name="IS_PUBLIC" />
+        </property>
 	   <component name="commonInfo" insert="true" update="true"  class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />

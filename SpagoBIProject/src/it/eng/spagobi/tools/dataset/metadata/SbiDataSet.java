@@ -59,6 +59,9 @@ public class SbiDataSet extends SbiHibernateModel {
 	private String flatTableName = null;
 	private SbiDataSource dataSourceFlat;
 	
+	private String owner=null;
+	private boolean publicDS = false;
+	
 	private String userIn=null;
 	private String userUp=null;
 	private String userDe=null;
@@ -512,6 +515,34 @@ public class SbiDataSet extends SbiHibernateModel {
 	 */
 	public void setId(SbiDataSetId id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the owner
+	 */
+	public String getOwner() {
+		return owner;
+	}
+
+	/**
+	 * @param owner the owner to set
+	 */
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
+	/**
+	 * @return the isPublic
+	 */
+	public boolean isPublicDS() {
+		return publicDS;
+	}
+
+	/**
+	 * @param isPublic the isPublic to set
+	 */
+	public void setPublicDS(boolean publicDS) {
+		this.publicDS = publicDS;
 	}
 
 	

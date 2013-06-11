@@ -17,7 +17,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
@@ -64,19 +63,17 @@ import org.json.JSONObject;
 public class SelfServiceDataSetCRUD {
 
 	static private Logger logger = Logger.getLogger(SelfServiceDataSetCRUD.class);
-	static private String deleteNullIdDataSetError = "error.message.description.data.set.cannot.be.null";
-	static private String deleteInUseDSError = "error.message.description.data.set.deleting.inuse";
-	static private String canNotFillResponseError = "error.message.description.generic.can.not.responce";
-	static private String saveDuplicatedDSError = "error.message.description.data.set.saving.duplicated";
+	static private String deleteNullIdDataSetError = "error.mesage.description.data.set.cannot.be.null";
+	static private String deleteInUseDSError = "error.mesage.description.data.set.deleting.inuse";
+	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
+	static private String saveDuplicatedDSError = "error.mesage.description.data.set.saving.duplicated";
 	static private final String SELFSERVICE_DS_TYPE = "SelfService";
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllDataSet(@Context HttpServletRequest req) {
 		IDataSetDAO dataSetDao = null;
-		IDomainDAO domaindao = null;
 		List<IDataSet> dataSets;
-		List<Domain> categories = null;
 		IEngUserProfile profile = (IEngUserProfile) req.getSession()
 				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		JSONObject JSONReturn = new JSONObject();
@@ -84,32 +81,37 @@ public class SelfServiceDataSetCRUD {
 		try {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
-			dataSets = dataSetDao.loadAllActiveDataSets();		
+			dataSets = dataSetDao.loadAllActiveDataSetsByOwner(profile.getUserUniqueIdentifier().toString());	
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
 			
-			//sets action to modify dataset
-			JSONArray actions = new JSONArray();
+			//sets action to modify dataset			
 			JSONObject detailAction = new JSONObject();
 			detailAction.put("name", "detail");
 			detailAction.put("description", "Dataset detail");
-			actions.put(detailAction);
+//			actions.put(detailAction);			
 			JSONObject deleteAction = new JSONObject();
 			deleteAction.put("name", "delete");
 			deleteAction.put("description", "Delete dataset");
-			actions.put(deleteAction);
+//			actions.put(deleteAction);
 			JSONObject worksheetAction = new JSONObject();
 			worksheetAction.put("name", "worksheet");
 			worksheetAction.put("description", "Show Worksheet");
-			actions.put(worksheetAction);
+//			actions.put(worksheetAction);
 //			JSONObject geoAction = new JSONObject();
 //			geoAction.put("name", "worksheet");
 //			geoAction.put("description", "Show Geo");
 //			actions.put(geoAction);
 			JSONArray datasetsJSONReturn = new JSONArray();
-	
-			
+				
 			for(int i = 0; i < datasetsJSONArray.length(); i++) {
-				JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);				
+				JSONArray actions = new JSONArray();
+				JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
+				actions.put(detailAction);		
+				actions.put(worksheetAction);
+				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
+					//the delete action is able only for private dataset
+					actions.put(deleteAction);
+				}
 				datasetJSON.put("actions", actions);
 				datasetsJSONReturn.put(datasetJSON);
 			}
@@ -250,6 +252,8 @@ public class SelfServiceDataSetCRUD {
 		String catTypeVn = (String)req.getParameter("catTypeVn");
 		String type = (String)req.getParameter("type");
 		String configuration = (String)req.getParameter("configuration");
+		Boolean isPublic = Boolean.valueOf((req.getParameter("isPublic")==null)?"false":(String)req.getParameter("isPublic"));
+
 		
 		IDataSet toReturn = dataSet; //for not loose other fields if already esists!	
 		if (toReturn == null && configuration != null){
@@ -329,9 +333,17 @@ public class SelfServiceDataSetCRUD {
 		toReturn.setLabel(label);
 		toReturn.setName(name);
 		toReturn.setDescription(description);		
-//		Integer categoryCode = getCategoryCode(catTypeVn);
-		Integer categoryCode = Integer.parseInt(catTypeVn);
-		toReturn.setCategoryId(categoryCode);		
+		Integer categoryCode = null;
+		try{
+			categoryCode = Integer.parseInt(catTypeVn);			
+		}catch (Exception e){
+			logger.debug("Category must be decodified...");
+			categoryCode = getCategoryCode(catTypeVn);
+			logger.debug("Category value decodified is : " + categoryCode);
+		}
+		logger.debug("Category code is :  " + categoryCode);
+		toReturn.setCategoryId(categoryCode);
+		toReturn.setPublic(isPublic);
 				
 		return toReturn;
 	}
