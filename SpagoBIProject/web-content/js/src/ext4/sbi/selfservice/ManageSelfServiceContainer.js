@@ -50,7 +50,8 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 
 	, executeDocument: function(docType, record){
 		var modelName = record.data.name;
-		this.documentexecution.load( this.qbeEngineBaseUrl+"&MODEL_NAME="+modelName+"&DATA_SOURCE_LABEL=foodmart");
+		var dataSourceLabel = record.data.data_source_label;
+		this.documentexecution.load( this.qbeEngineBaseUrl+"&MODEL_NAME="+modelName+"&DATA_SOURCE_LABEL="+dataSourceLabel);
 		this.getLayout().setActiveItem(1);
 	}
 	

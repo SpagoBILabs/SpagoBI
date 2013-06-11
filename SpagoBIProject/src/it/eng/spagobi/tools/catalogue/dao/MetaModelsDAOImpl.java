@@ -11,6 +11,8 @@ import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
+import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
+import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -20,9 +22,12 @@ import java.util.List;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
 
 public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaModelsDAO {
 
@@ -287,6 +292,16 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			hibModel.setName(model.getName());
 			hibModel.setDescription(model.getDescription());
 			hibModel.setCategory(model.getCategory());
+			if(model.getDataSourceLabel()!=null && !model.getDataSourceLabel().equals("")){
+				Criterion aCriterion = Expression.eq("label",model.getDataSourceLabel());
+				Criteria criteria = session.createCriteria(SbiDataSource.class);
+				criteria.add(aCriterion);
+	
+				SbiDataSource datasource = (SbiDataSource) criteria.uniqueResult();
+				
+				hibModel.setDataSource(datasource);
+			}
+		
 			updateSbiCommonInfo4Update(hibModel);
 			session.save(hibModel);
 			
@@ -323,6 +338,8 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
+				
+
 			} catch(Throwable t) {
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
@@ -331,6 +348,16 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			hibModel.setName(model.getName());
 			hibModel.setDescription(model.getDescription());
 			hibModel.setCategory(model.getCategory());
+			if(model.getDataSourceLabel()!=null && !model.getDataSourceLabel().equals("")){
+					Criterion aCriterion = Expression.eq("label",model.getDataSourceLabel());
+				Criteria criteria = session.createCriteria(SbiDataSource.class);
+				criteria.add(aCriterion);
+
+				SbiDataSource datasource = (SbiDataSource) criteria.uniqueResult();
+				
+				hibModel.setDataSource(datasource);
+			}
+			
 
 			updateSbiCommonInfo4Insert(hibModel);
 			session.save(hibModel);
@@ -408,6 +435,10 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			toReturn.setName(hibModel.getName());
 			toReturn.setDescription(hibModel.getDescription());
 			toReturn.setCategory(hibModel.getCategory());
+			if(hibModel.getDataSource()!=null){
+				toReturn.setDataSourceLabel(DataSourceDAOHibImpl.toDataSource(hibModel.getDataSource()).getLabel());
+			}
+		
 		}
 		logger.debug("OUT");
 		return toReturn;

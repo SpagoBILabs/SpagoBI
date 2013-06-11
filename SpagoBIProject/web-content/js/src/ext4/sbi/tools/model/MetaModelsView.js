@@ -68,23 +68,7 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 			this.scrollable = 'horizontal';
 
 			this.callParent(arguments);
-			
-			
-			
-			
-//			this.worksheetEditor = new Sbi.worksheet.WorksheetEditorIframePanelExt3({
-//				defaultSrc: 'about:blank'
-//				, businessMetadata : null
-//				, border : false
-//				, datasetLabel : null
-//				, datasetParameters : null
-//				, buttons : [{
-//					text : LN('sbi.generic.back')
-//					, handler : this.moveToDatasetsListPage
-//					, scope : this
-//				}]
-//			});
-			
+						
 			this.addListener('itemclick', this.onClick, this);
 			
 			this.addEvents('detail');		

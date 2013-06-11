@@ -15,6 +15,7 @@ public class MetaModelJSONSerializer implements Serializer {
 	
 	public static final String ID = "id";
 	public static final String NAME = "name";
+	public static final String DATA_SOURCE_LABEL = "data_source_label";
 	public static final String DESCRIPTION = "description";
 	public static final String CATEGORY = "category";
 
@@ -33,6 +34,7 @@ public class MetaModelJSONSerializer implements Serializer {
 			result.put(NAME, model.getName() );
 			result.put(DESCRIPTION, model.getDescription() );
 			result.put(CATEGORY, model.getCategory() );
+			result.put(DATA_SOURCE_LABEL, model.getDataSourceLabel() );
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {

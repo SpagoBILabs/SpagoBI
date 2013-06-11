@@ -725,6 +725,7 @@ Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.dateIn']='Creatio
 Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.fileName']='File name';
 Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.deleteNonActive']='Clean non-active versions';
 Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.isactive'] = 'Active';
+Sbi.locale.ln['sbi.tools.catalogue.metaModelsCatalogue.datasource']='Data Source';
 
 //===================================================================
 //Sbi.worksheet.WorksheetFromDatasetPanel : AD-HOC REPORTING

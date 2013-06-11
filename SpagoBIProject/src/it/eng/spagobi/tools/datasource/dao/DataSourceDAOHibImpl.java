@@ -364,7 +364,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	 * 
 	 * @return The corrispondent <code>DataSource</code> object
 	 */
-	public DataSource toDataSource(SbiDataSource hibDataSource){
+	public static DataSource toDataSource(SbiDataSource hibDataSource){
 		DataSource ds = new DataSource();
 		 
 		ds.setDsId(hibDataSource.getDsId());

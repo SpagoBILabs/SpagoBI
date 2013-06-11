@@ -866,6 +866,7 @@ Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.userIn']='Creatore';
 Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.dateIn']='Data di creazione';
 Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.fileName']='Nome del file';
 Sbi.locale.ln['sbi.widgets.catalogueversionsgridpanel.deleteNonActive']='Elimina versioni non attive';
+Sbi.locale.ln['sbi.tools.catalogue.metaModelsCatalogue.datasource']='Data Source';
 
 //===================================================================
 //BEHAVIOURAL 
