@@ -16,7 +16,8 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 	extend: 'Ext.tab.Panel',
 
     config: {
-    	layout: 'fit'
+    	layout: 'fit',
+    	executionPanel: null
     },
 	
 
@@ -32,11 +33,16 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 	 */
 	modelstPanelTab: null
 	
+	
 	, constructor : function(config) {
-
-		//this.datasetPanelTab = Ext.create('Sbi.tools.dataset.DataSetsBrowser',{});
-		this.modelstPanelTab = Ext.create('Sbi.tools.model.MetaModelsBrowser',{title: LN("Sbi.tools.model.MetaModelsBrowser.title")}); 
-		this.items = [ this.modelstPanelTab ]
+		this.datasetPanelTab = Ext.create('Sbi.tools.dataset.DataSetsBrowser',{});
+		//this.modelstPanelTab = Ext.create('Sbi.tools.model.MetaModelsBrowser',{title: LN("Sbi.tools.model.MetaModelsBrowser.title")});
+		this.modelstPanelTab.on('executeDocument',function(docType, record){
+			this.fireEvent('executeDocument',docType,record);
+		},this);
+		
+		//this.items = [ this.modelstPanelTab ];
+		this.items = [ this.datasetPanelTab ];
 
 		this.callParent(arguments);
 	}
