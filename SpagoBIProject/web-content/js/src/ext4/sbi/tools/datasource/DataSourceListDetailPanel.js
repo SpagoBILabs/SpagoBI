@@ -23,16 +23,16 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 		};
 	
 		//set the proxy of the model.. Is STATIC
-		var model = Ext.ModelMgr.getModel(this.getModelName());
-		model.setProxy({
-			type: 'rest',
-			url : Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'datasources'}),
-			reader: {
-				type: 'json',
-				root: 'root'
-			}
-	
-		});
+//		var model = Ext.ModelMgr.getModel(this.getModelName());
+//		model.setProxy({
+//			type: 'rest',
+//			url : Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'datasources'}),
+//			reader: {
+//				type: 'json',
+//				root: 'root'
+//			}
+//	
+//		});
 	
 		this.callParent(arguments);
 	}
