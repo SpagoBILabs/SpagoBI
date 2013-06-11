@@ -635,6 +635,7 @@ Sbi.locale.ln['sbi.ds.wizard.back']= '< Back';
 Sbi.locale.ln['sbi.ds.wizard.next']= 'Next >';
 Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Confirm';
 Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Cancel';
+Sbi.locale.ln['sbi.ds.scope'] = 'Scope';
 Sbi.locale.ln['sbi.ds.noDataset']= 'No datasets available';
 Sbi.locale.ln['sbi.ds.mandatoryFields']= 'Please insert mandatory fields!';
 Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= 'Worksheet designer isn\'t available on parametric datasets!';
@@ -752,6 +753,11 @@ Sbi.locale.ln["error.mesage.description.generic.can.not.responce"]= "Can not sen
 Sbi.locale.ln["error.mesage.description.data.source.cannot.be.null"]= "The label of the data source can not be null";
 Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = "Impossible to delete the data source because it is in use";
 Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]="Impossible to save the data source because there is another one with the same label";
+
+//DATASET
+Sbi.locale.ln["error.mesage.description.data.set.cannot.be.null"]= "The label of the data set can not be null";
+Sbi.locale.ln["error.mesage.description.data.set.deleting.inuse"] = "Impossible to delete the data set because it is in use";
+Sbi.locale.ln["error.mesage.description.data.set.saving.duplicated"]="Impossible to save the data set because there is another one with the same label";
 
 //===================================================================
 //Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 

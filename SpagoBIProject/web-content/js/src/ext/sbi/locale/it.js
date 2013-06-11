@@ -671,6 +671,7 @@ Sbi.locale.ln['sbi.ds.wizard.back']= '< Indietro';
 Sbi.locale.ln['sbi.ds.wizard.next']= 'Sucessivo >';
 Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Conferma';
 Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Annulla';
+Sbi.locale.ln['sbi.ds.scope'] = 'Visibilita';
 Sbi.locale.ln['sbi.ds.noDataset']= 'Non ci sono dataset disponibili';
 Sbi.locale.ln['sbi.ds.mandatoryFields']= 'Inserire campi obbligatori!';
 Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= 'Worksheet designer non abilitato per dataset parametrici!';
@@ -903,3 +904,8 @@ Sbi.locale.ln["error.mesage.description.generic.can.not.responce"]= "Impossibile
 Sbi.locale.ln["error.mesage.description.data.source.cannot.be.null"]= "La label del documento deve essere valorizata"
 Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = "Impossibile cancellare il datasource perché è in uso"
 Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]="Impossibile salvare il datasource: label duplicata"
+	
+//DATASET
+Sbi.locale.ln["error.mesage.description.data.set.cannot.be.null"]= "La label del dataset deve essere valorizzata";
+Sbi.locale.ln["error.mesage.description.data.set.deleting.inuse"] = "Impossibile cancellare il datset perché è in uso";
+Sbi.locale.ln["error.mesage.description.data.set.saving.duplicated"]="Impossibile salvare il dataset: label duplicata";			   

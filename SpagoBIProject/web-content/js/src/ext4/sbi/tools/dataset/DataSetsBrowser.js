@@ -7,12 +7,13 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		modelName : "Sbi.tools.dataset.DataSetModel",
 		dataView : null,
 		tbar : null,
-		height: 600
+		height: 600,
+		user : ''
 	}
 
 	,
 	constructor : function(config) {
-		
+		this.user = config.selfServiceContainer.config.user || '';
 		this.initServices();
 		this.initStore();
 		this.initToolbar();
@@ -83,6 +84,14 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.store.load({});
 		
 		this.categoriesStore = this.createCategoriesStore();
+
+		this.scopeStore = Ext.create('Ext.data.Store', {
+		    fields: ['field', 'value'],
+		    data : [
+		        {"field":"true", "value":"Public"},
+		        {"field":"false", "value":"Private"}
+		    ]
+		});
 	}
 	
 	, initToolbar: function() {
@@ -112,6 +121,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.services = this.services;
 		config.store = this.store;
 		config.actions = this.actions;
+		config.user = this.user;
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
 		this.viewPanel.on('detail', this.modifyDataset, this);
 		this.viewPanel.on('delete', this.deleteDataset, this);
@@ -143,6 +153,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	addNewDataset : function() {		 
 		var config =  {};
 		config.categoriesStore = this.categoriesStore;
+		config.scopeStore = this.scopeStore;
+		config.user = this.user;
 		config.isNew = true;
 		this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',config);	
 		this.wizardWin.on('save', this.saveDataset, this);
@@ -154,6 +166,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		if (rec != undefined){
 			var config =  {};
 			config.categoriesStore = this.categoriesStore;
+			config.scopeStore = this.scopeStore;
+			config.user = this.user;
 			config.record = rec;
 			config.isNew = false;
 			this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',config);	
@@ -168,16 +182,17 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		Ext.Ajax.request({
 			url: this.services["save"],
 			params: values,
-			success : function(response, options) {
-				if(response !== undefined && response.statusText !== undefined) {
-					var responceText = Ext.decode(response.responseText);
-					if(responceText.errors){
-						Sbi.exception.ExceptionHandler.showErrorMessage(responceText.error, 'Service Error');						
-					}else{						
-						this.store.load({reset:true});
-						this.wizardWin.destroy();						
-						this.viewPanel.refresh();
-						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.saved'));
+			success : function(response, options) {				
+				if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+					if(response.responseText!=null && response.responseText!=undefined){
+						if(response.responseText.indexOf("error.mesage.description")>=0){
+							Sbi.exception.ExceptionHandler.handleFailure(response);
+						}else{						
+							this.store.load({reset:true});
+							this.wizardWin.destroy();						
+							this.viewPanel.refresh();
+							Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.saved'));
+						}
 					}
 				} else {
 					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');

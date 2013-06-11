@@ -6,8 +6,10 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		fieldsStep2: null,
 		fieldsStep3: null,
 		categoriesStore: null,
+		scopeStore: null,
 		record: {},
-		isNew:true
+		isNew:true, 
+		user:''
 	}
 
 	, constructor: function(config) {
@@ -31,12 +33,16 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	}
 	
 	, configureSteps : function(){
+   
+
 		this.fieldsStep1 = [{label:"Id", name:"id",type:"text",hidden:"true", value:this.record.id},
 		                    {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'SelfService'},
 		                    {label: LN('sbi.ds.label')+' (*)', name:"label", type:"text", mandatory:true, readOnly:(this.isNew)?false:true, value:this.record.label}, 
 		                    {label: LN('sbi.ds.name')+' (*)', name:"name", type:"text", mandatory:true, value:this.record.name},
 		                    {label: LN('sbi.ds.description'), name:"description", type:"textarea", value:this.record.description}];
-		this.fieldsStep1.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", value:this.record.catTypeVn, data:this.categoriesStore});		                    	
+		this.fieldsStep1.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", value:this.record.catTypeVn, data:this.categoriesStore});
+		var valueScope = (this.record.isPublic==true)?'true':'false' ;
+		this.fieldsStep1.push({label:LN('sbi.ds.scope'), name:"isPublic", type:"combo", valueCol:"field", descCol:"value", value:valueScope, data:this.scopeStore});
 		
 		this.fieldsStep2 = [{name:"msg", type:"textarea", value:"Work in progress..."}];	
 		this.fieldsStep3 = [{name:"msg", type:"textarea", value:"Work in progress..."}];		
@@ -53,9 +59,18 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		return steps;
 	}
 	
-//	, initWizardBar: function() {
-//		return this.callParent();
-//	}
+	, initWizardBar: function() {
+		var bar = this.callParent();
+		for (var i=0; i<bar.length; i++){
+			var btn = bar[i];
+			if (btn.id === 'confirm'){
+				if (this.record.owner !== undefined && this.record.owner !== this.user) {
+					btn.disabled = true;
+				}
+			}				
+		}
+		return bar;
+	}
 	
 	, navigate: function(panel, direction){		
         // This routine could contain business logic required to manage the navigation steps.

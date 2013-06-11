@@ -22,14 +22,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 
     Ext.onReady(function(){
-    	
 		var selfService = Ext.create('Sbi.selfservice.ManageSelfServiceContainer',{
         	worksheetEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(worksheetEditActionUrl) %>'
             , qbeEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditActionUrl) %>'
+            , user: Sbi.user.userUniqueIdentifier
 		}); //by alias
 		var datasetListViewport = Ext.create('Ext.container.Viewport', {
 			layout:'fit',
-	     	items: [selfService]
+	     	items: [selfService]	     	
 	    });
     });
 	
