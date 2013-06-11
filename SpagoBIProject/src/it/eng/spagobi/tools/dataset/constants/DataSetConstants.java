@@ -88,6 +88,7 @@ public class DataSetConstants {
 	public static final String IS_FLAT_DATASET = "isFlatDataset";
 	public static final String FLAT_TABLE_NAME = "flatTableName";
 	public static final String DATA_SOURCE_FLAT = "dataSourceFlat";
+	public static final String IS_PUBLIC = "isPublic";
 	
 	public static final String START = "start";
 	public static final String LIMIT = "limit";

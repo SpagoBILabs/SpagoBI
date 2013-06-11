@@ -80,6 +80,9 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String FLAT_TABLE_NAME = "flatTableName";
 	private static final String DATA_SOURCE_FLAT = "dataSourceFlat";
 	
+	private static final String IS_PUBLIC = "isPublic";
+	private static final String OWNER = "owner";
+	
 	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
 	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
 	public static final String FILE_TYPE = "fileType";
@@ -110,7 +113,7 @@ public class DataSetJSONSerializer implements Serializer {
 			}
 			
 			//result.put(CATEGORY_TYPE_VN, ds.getCategoryValueName());
-			result.put(CATEGORY_TYPE_VN, ds.getCategoryCd()); 
+			result.put(CATEGORY_TYPE_VN, ds.getCategoryId()); 
 
 			JSONArray parsListJSON = new JSONArray();
 			String pars = ds.getParameters();
@@ -269,7 +272,9 @@ public class DataSetJSONSerializer implements Serializer {
 				if (dataSource != null){
 					result.put(DATA_SOURCE_FLAT,dataSource.getLabel());	
 				}			
-			}				
+			}	
+			result.put(IS_PUBLIC, ds.isPublic());
+			result.put(OWNER, ds.getOwner());
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
