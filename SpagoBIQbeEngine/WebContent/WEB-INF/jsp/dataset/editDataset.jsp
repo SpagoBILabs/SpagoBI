@@ -189,9 +189,8 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 
 	       		// if user is a power user, instantiate and show also the QueryBuilderPanel
 	       		qbeConfig.displayQueryBuilderPanel = true;
-	       		qbeConfig.displayWorksheetDesignerPanel = false;
+	       		qbeConfig.displayWorksheetPanel = false;
 	       		qbeConfig.displayFormBuilderPanel = false;
-	       		qbeConfig.displayWorksheetPreviewPanel = false;
 	       		qbeConfig.enableQueryTbSaveBtn = false;
 	       		qbeConfig.eastConfig = {};
 	       		qbeConfig.eastConfig.parametersGridPanel = new Sbi.dataset.ParametersGridPanel({

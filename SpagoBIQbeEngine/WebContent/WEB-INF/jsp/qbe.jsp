@@ -227,7 +227,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 
 	       		// if user is a power user, instantiate and show also the QueryBuilderPanel
 	       		qbeConfig.displayQueryBuilderPanel = Sbi.user.isPowerUser;
-	       		//qbeConfig.displayWorksheetDesignerPanel = Sbi.user.isPowerUser;
 	       		qbeConfig.displayFormBuilderPanel = false;
 	       		
 	           	qbe = new Sbi.qbe.QbePanel(qbeConfig);
