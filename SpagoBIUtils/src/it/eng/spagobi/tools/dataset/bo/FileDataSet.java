@@ -108,7 +108,7 @@ public class FileDataSet extends ConfigurableDataSet{
 		fileExtension = fileName.lastIndexOf('.') > 0 ? fileName.substring(fileName.lastIndexOf('.') + 1): null;
 		logger.debug("File extension: [" + fileExtension +"]");
 		
-		if (fileType != null){
+		if ((fileType != null) && (!fileType.isEmpty())){
 			logger.debug("File type is: [" + fileType +"]");
 		} else {
 			logger.debug("No file type specified, using file extension as file type: [" + fileExtension +"]");
