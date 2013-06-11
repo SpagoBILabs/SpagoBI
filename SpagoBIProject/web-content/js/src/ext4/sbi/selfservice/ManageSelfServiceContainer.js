@@ -17,7 +17,8 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 
 	congig:{
     	worksheetEngineBaseUrl : '',
-        qbeEngineBaseUrl : ''
+        qbeEngineBaseUrl : '',
+        user : ''
 	},
 
 	/**
@@ -30,7 +31,7 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 	 * @property {Panel} documentexecution
 	 *  Tab panel that contains the execution of the engine
 	 */
-    documentexecution: null,
+    documentexecution: null
 	
 	, constructor : function(config) {
 		this.initConfig(config);

@@ -197,7 +197,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 			this.trasfDetail.setVisible(false);
 		}
 	}
-
+ 
 	
 					// extjs4: ,activatePersistForm : function(check, newValue,
 					// oldValue, opts) {
@@ -409,8 +409,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 
 				,initConfigObject : function() {
 					this.configurationObject.fields = [ 'id', 'name',
-							'label', 'description', 'dsTypeCd',
-							'catTypeVn', 'usedByNDocs', 'fileName','fileType','csvDelimiter','csvQuote','skipRows','limitRows','xslSheetNumber',
+							'label', 'description', 'dsTypeCd', 
+							'catTypeVn', 'isPublic', 'usedByNDocs', 'fileName','fileType','csvDelimiter','csvQuote','skipRows','limitRows','xslSheetNumber',
 							'query', 'queryScript', 'queryScriptLanguage','dataSource', 'wsAddress',
 							'wsOperation', 'script', 'scriptLanguage',
 							'jclassName', 'customData', 'pars', 'trasfTypeCd',
@@ -424,7 +424,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					this.configurationObject.emptyRecToAdd = new Ext.data.Record(
 							{	id : null,
 								name : '', label : '', description : '',
-								dsTypeCd : '', catTypeVn : '', usedByNDocs : 0,
+								dsTypeCd : '', catTypeVn : '', isPublic:'', usedByNDocs : 0,
 								csvDelimiter: '', fileType: '',csvQuote: '', skipRows: '', limitRows: '', xslSheetNumber: '',
 								fileName : '', query : '', queryScript : '', queryScriptLanguage : '', dataSource : '',
 								wsAddress : '', wsOperation : '', script : '',
@@ -535,9 +535,15 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						fields : [ 'catTypeVn' ],
 						data : config.catTypeVn,
 						autoLoad : false
-					});
-					
-					
+					});									
+                  		
+                  	this.isPublicStore = new Ext.data.SimpleStore({
+                  		fields: ['value', 'field', 'description'],
+                  		data : [
+                          		[true,'Public', 'Everybody can view this datset'],
+                          		[false, 'Private', 'The saved dataset will be visible only to you']
+                          	] 
+                  	});    
 
 					// START list of detail fields
 					this.detailFieldId = new Ext.form.TextField({
@@ -604,6 +610,21 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						allowBlank : true, validationEvent : true,
 						xtype : 'combo'
 					};
+					
+					var scopeField = new Ext.form.ComboBox({
+						name : 'isPublic',
+						store : this.isPublicStore,
+						width : 350,
+						fieldLabel : LN('sbi.ds.scope'),
+						displayField : 'field', 
+						valueField : 'value', 
+						typeAhead : true, forceSelection : true,
+						mode : 'local',
+						triggerAction : 'all',
+						selectOnFocus : true, editable : false,
+						allowBlank : true, validationEvent : true,
+						xtype : 'combo'							    	
+					});
 					// END list of detail fields
 
 					var c = {};
@@ -676,7 +697,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 									},
 									items : [ 
 									        detailFieldLabel, detailFieldName,
-											detailFieldDescr, detailFieldCatType, this.manageDsVersionsPanel ,
+											detailFieldDescr, detailFieldCatType, scopeField, this.manageDsVersionsPanel ,
 											this.detailFieldUserIn,this.detailFieldDateIn,this.detailFieldVersNum,this.detailFieldVersId,this.detailFieldId
 											]
 								}
@@ -1561,7 +1582,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					this.newRecord = new Ext.data.Record(
 							{	id : null,
 								name : '', label : '', description : '',
-								dsTypeCd : '', catTypeVn : '', usedByNDocs : 0,
+								dsTypeCd : '', catTypeVn : '', isPublic:'', usedByNDocs : 0,
 								csvDelimiter: '', fileType: '' ,csvQuote:'', skipRows:'', limitRows:'', xslSheetNumber:'',
 								fileName : '', query : '', queryScript : '', queryScriptLanguage : '', dataSource : '',
 								wsAddress : '', wsOperation : '', script : '',
@@ -1634,6 +1655,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						description : actualValues['description'],
 						dsTypeCd : values['dsTypeCd'],
 						catTypeVn : values['catTypeVn'],
+						isPublic: values['isPublic'],
 						usedByNDocs : values['usedByNDocs'],
 						fileName : values['fileName'],
 						csvDelimiter : values['csvDelimiter'],
@@ -1685,6 +1707,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						description : values['description'],
 						dsTypeCd : values['dsTypeCd'],
 						catTypeVn : values['catTypeVn'],
+						isPublic: values['isPublic'],
 						usedByNDocs : values['usedByNDocs'],
 						fileName : values['fileName'],
 						csvDelimiter : values['csvDelimiter'],
@@ -1733,6 +1756,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							description : values['description'],
 							dsTypeCd : values['dsTypeCd'],
 							catTypeVn : values['catTypeVn'],
+							isPublic: values['isPublic'],
 							usedByNDocs : values['usedByNDocs'],
 							fileName : values['fileName'],
 							csvDelimiter : values['csvDelimiter'],
@@ -1781,6 +1805,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					record.set('usedByNDocs',0);
 					record.set('dsTypeCd',values['dsTypeCd']);
 					record.set('catTypeVn',values['catTypeVn']);
+					record.set('isPublic',values['isPublic']);
 					record.set('fileName',values['fileName']);
 					record.set('csvDelimiter',values['csvDelimiter']);		
 					record.set('skipRows',values['skipRows']);					

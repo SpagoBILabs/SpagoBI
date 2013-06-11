@@ -17,5 +17,8 @@
             "dsTypeCd",
             "configuration",
             "pars",
-            "actions"]
+            "actions",
+            "isPublic",
+            "owner",
+            "userIn"]
 });

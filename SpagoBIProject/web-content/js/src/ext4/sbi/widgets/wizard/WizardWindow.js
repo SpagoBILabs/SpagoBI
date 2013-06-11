@@ -209,6 +209,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		  fieldLabel: f.label 
 		  , name: f.name
           , width: 250  
+          , margin: '0 0 0 10'
           , validationEvent: f.mandatory || false
           , allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true
           , format: f.values.format || 'd/m/Y'
@@ -222,28 +223,26 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		
 		var tmpStore = f.data; 
 		var tmpValueField = f.valueCol;
-		var tmpValueText = f.descCol;
+		var tmpValueText = f.descCol;    	
 		
-		//tmpStore = this.createStore(f.values);
-				
 		var field = new Ext.form.ComboBox({
-		    fieldLabel: f.label ,
-		    name: f.name,
-            width: 500,    	    
-            store: tmpStore,
-	        valueField: tmpValueField,	
-	        displayField: tmpValueText,
-	        mode : 'local',
-	        validationEvent: f.mandatory || false,
-	        allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true,
-	        typeAhead: true,
-	        labelStyle:'font-weight:bold;', 
-	        margin: '0 0 0 10',
-	        emptyText:'Select ...',
-	        selectOnFocus:true,
-	        triggerAction: 'all',
-	        value: f.value
-		 });        		 
+			fieldLabel: f.label ,
+			store :tmpStore,
+			name : f.name,			
+			width : 500,
+			 margin: '2 0 0 10',
+			displayField : tmpValueText,
+			valueField : tmpValueField,
+			labelStyle:'font-weight:bold;', 
+			emptyText:'Select ...',
+			typeAhead : true, forceSelection : true,
+			mode : 'local',
+			triggerAction : 'all',
+			selectOnFocus : true, editable : false,
+			allowBlank : true, validationEvent : true,
+			xtype : 'combo'	,
+			value:  f.value
+		});
 		
 		return field;
 	}
