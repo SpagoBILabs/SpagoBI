@@ -69,10 +69,23 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 
 			this.callParent(arguments);
 			
-			this.addListener('itemclick', onClick, this);
 			
 			
 			
+//			this.worksheetEditor = new Sbi.worksheet.WorksheetEditorIframePanelExt3({
+//				defaultSrc: 'about:blank'
+//				, businessMetadata : null
+//				, border : false
+//				, datasetLabel : null
+//				, datasetParameters : null
+//				, buttons : [{
+//					text : LN('sbi.generic.back')
+//					, handler : this.moveToDatasetsListPage
+//					, scope : this
+//				}]
+//			});
+			
+			this.addListener('itemclick', this.onClick, this);
 			
 			this.addEvents('detail');		
 		}
@@ -114,25 +127,7 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 		}
 	
 		,onClick : function(obj, record, item, index, e, eOpts) {
-			var scope = this;
-	        // is of type Ext.EventObject		
-	        var group = e.getTarget('div[class=group-header]', 10, true);
-	        if(group){
-	            group.up('div[class*=group]').toggleClass('collapsed');
-	        }
-	        
-	        var actionDetail = e.getTarget('img.action-detail', 10, true);
-	        var actionDelete = e.getTarget('img.action-delete', 10, true);
-	        
-	        delete record.data.actions; 
-	        if (actionDetail != null){
-	        	Sbi.debug('DataSetView view detail raise event...');        	
-	        	scope.fireEvent('detail', record.data);   
-	        }else if (actionDelete != null){
-	        	Sbi.debug('DataSetView delete dataset raise event...');        	
-	        	scope.fireEvent('delete', record.data);
-	        }
-	        return true;
+			this.fireEvent('executeDocument','QBE',record);
 	    }
 
 
