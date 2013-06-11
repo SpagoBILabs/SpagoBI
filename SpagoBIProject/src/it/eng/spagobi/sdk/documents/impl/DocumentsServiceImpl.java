@@ -64,7 +64,9 @@ import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter.MemoryOnlyDataSource;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
+import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -903,14 +905,14 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			/***********************************************************************************************************/
 			/* STEP 1: uploads the datamart document */
 			/***********************************************************************************************************/
-			try {
-				uploadFisicalFile(sdkTemplate, DATAMART_FILE_NAME);
-				logger.debug("datamart.jar file uploaded");
-			} catch (Exception e) {
-				logger.error("Could not upload datamart.jar file", e);
-				throw new SpagoBIRuntimeException(
-						"Could not upload datamart.jar file: " + e.getMessage());
-			}
+//			try {
+//				uploadFisicalFile(sdkTemplate, DATAMART_FILE_NAME);
+//				logger.debug("datamart.jar file uploaded");
+//			} catch (Exception e) {
+//				logger.error("Could not upload datamart.jar file", e);
+//				throw new SpagoBIRuntimeException(
+//						"Could not upload datamart.jar file: " + e.getMessage());
+//			}
 
 			try {
 				/***********************************************************************************************************/
@@ -928,15 +930,83 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				throw new SpagoBIRuntimeException(
 						"Could not upload cfieldds.xml file: " + e.getMessage());
 			}
+			
+			InputStream is = null;
+			DataHandler dh = null;
+			
 			try {
 
+				UserProfile userProfile = (UserProfile) this.getUserProfile();
+				
 				/***********************************************************************************************************/
 				/*
-				 * STEP 2: template creation in SpagoBI Metadata (under the
+				 * STEP 2: Inserting model in Business Service Catalogue
+				 */
+				/***********************************************************************************************************/
+				
+				// check if model already present
+				IMetaModelsDAO metaModelsDAO = DAOFactory.getMetaModelsDAO();
+				String modelName = sdkTemplate.getFolderName();
+				MetaModel metaModel = metaModelsDAO.loadMetaModelByName(modelName);
+				if(metaModel != null){
+					logger.debug("Meta Model "+metaModel+" already present: go on with update");
+				}
+				else{
+					logger.debug("Meta Model "+metaModel+" not aready present: go on with insert");
+					metaModel = new MetaModel();
+					metaModel.setName(modelName);
+					metaModel.setDescription(modelName);
+					metaModelsDAO.insertMetaModel(metaModel);
+				}	
+
+				// Update content			
+				Content content = metaModelsDAO.loadActiveMetaModelContentById(metaModel.getId());
+				if(content != null){
+				}
+				else{
+					content = new Content();
+					content.setActive(true);
+					content.setCreationDate(new Date());
+					content.setCreationUser(userProfile.getUserId().toString());
+				}
+				content.setFileName(DATAMART_FILE_NAME);
+
+				dh = sdkTemplate.getContent();
+				is = dh.getInputStream();
+				logger.debug("Upload file template....");
+				byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
+				content.setContent(templateContent);
+
+				metaModelsDAO.insertMetaModelContent(metaModel.getId(), content);
+				
+				logger.debug("Meta Model inserted in meta model catalogue;");
+
+			} catch (Exception e) {
+				logger.error("Could not insert meta model into meta model catalogue", e);
+				throw new SpagoBIRuntimeException(
+						"Could not insert meta model into meta model  catalogue: " + e.getMessage());
+			}
+			finally{
+				try{
+					if(is != null) is.close();
+				}
+				catch (Exception e) {
+					logger.error("Error in closing io");
+				}
+			}
+			
+			
+			
+			try{	
+				
+				/***********************************************************************************************************/
+				/*
+				 * STEP 3: template creation in SpagoBI Metadata (under the
 				 * personal folder) to use the previous datamart.
 				 */
 				/***********************************************************************************************************/
 				UserProfile userProfile = (UserProfile) this.getUserProfile();
+				
 				String datamartName = sdkTemplate.getFolderName();
 				// checks if the template already exists. In this case doesn't create the new one!
 				if (DAOFactory.getBIObjectDAO().loadBIObjectByLabel(
@@ -1308,6 +1378,10 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		}
 	}
 	
+	
+	
+	
+	
 	private void uploadFisicalFile (SDKTemplate sdkTemplate, String defaultName) throws Exception{
 		InputStream is = null;
 		FileOutputStream osFile = null;
@@ -1319,7 +1393,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			// if user cannot develop the specified document, he cannot upload templates on it
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
 			if (sdkTemplate == null) {
-				logger.warn("SDKTemplate in input is null!");
+				logger.error("SDKTemplate in input is null!");
 				return;
 			}
 
@@ -1517,7 +1591,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		Domain objectType = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("BIOBJ_TYPE",engineType);
 		toReturn.setBiObjectTypeID(objectType.getValueId());
 		toReturn.setBiObjectTypeCode(objectType.getValueCd());
-		List<Engine> lstEngines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(SpagoBIConstants.OLAP_TYPE_CODE);
+		List<Engine> lstEngines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(objectType.getValueCd());
 		if (lstEngines == null || lstEngines.size() == 0) {
 			logger.error("Error while retrieving Engine list.");
 			return null;
