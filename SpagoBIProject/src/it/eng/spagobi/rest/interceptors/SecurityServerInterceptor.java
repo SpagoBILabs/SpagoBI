@@ -9,7 +9,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.log4j.Logger;
@@ -57,7 +56,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor{
 			throw new SpagoBIRuntimeException("Error checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]",e);
 		}
 		if(!isTheUserEnabled){
-			logger.debug("The user ["+profile.getUserName()+"] is not enabled to execute the service ["+serviceUrl+"]");
+			logger.error("NOT ENABLED TO EXECUTE SERVICE-- The user ["+profile.getUserName()+"] is not enabled to execute the service ["+serviceUrl+"]");
 			try {
 				return new ServerResponse( ExceptionUtilities.serializeException("not-enabled-to-call-service",null),	400, new Headers<Object>());
 			} catch (Exception e) {
