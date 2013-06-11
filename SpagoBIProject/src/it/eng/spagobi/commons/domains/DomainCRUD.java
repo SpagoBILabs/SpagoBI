@@ -87,7 +87,7 @@ public class DomainCRUD {
 
 	}
 	
-	private JSONArray translate(List<Domain> domains, Locale locale) throws JSONException{
+	protected JSONArray translate(List<Domain> domains, Locale locale) throws JSONException{
 		JSONArray dialectsJSONArray = new JSONArray();
 		if(domains!=null){
 			for(int i=0; i<domains.size(); i++){
