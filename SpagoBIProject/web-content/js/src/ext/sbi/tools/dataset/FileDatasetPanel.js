@@ -77,21 +77,21 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	initUploadForm : function(items,config){
 		
 		//XLS Options Panel
-		this.skipRowsField = new Ext.form.TextField({
+		this.skipRowsField = new Ext.form.NumberField({
 			fieldLabel : 'Skip Rows',
 			allowBlank : true,
 			name: 'skipRows',
 			width: 100
 		});
 		
-		this.limitRowsField = new Ext.form.TextField({
+		this.limitRowsField = new Ext.form.NumberField({
 			fieldLabel : 'Limit Rows Number',
 			allowBlank : true,
 			name: 'limitRows',
 			width: 100
 		});
 		
-		this.sheetNumberField = new Ext.form.TextField({
+		this.sheetNumberField = new Ext.form.NumberField({
 			fieldLabel : 'Sheet Number',
 			allowBlank : true,
 			name: 'xslSheetNumber',
@@ -194,6 +194,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			  labelWidth: 150,
 	          items: [ this.csvDelimiterCombo, this.csvQuoteCombo]
 		});
+		this.csvOptionsPanel.setVisible(false);
 
 		
 		
@@ -233,7 +234,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		this.uploadField = new Ext.form.TextField({
 			inputType : 'file',
 			fieldLabel : LN('sbi.generic.upload'),
-			allowBlank : true,
+			allowBlank : false,
 			id: 'fileUploadField',
 			name: 'fileUpload'
 		});
@@ -273,6 +274,20 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		}
 	}
 	
+	,initialActivateFileTypePanel: function(fileTypeSelected){
+		if (fileTypeSelected != null && fileTypeSelected == ''){
+			this.csvOptionsPanel.setVisible(false);
+			this.xlsOptionsPanel.setVisible(false);
+		}
+		else if (fileTypeSelected != null && fileTypeSelected == 'CSV') {
+			this.csvOptionsPanel.setVisible(true);
+			this.xlsOptionsPanel.setVisible(false);
+		} else if (fileTypeSelected != null && fileTypeSelected == 'XLS') {
+			this.csvOptionsPanel.setVisible(false);
+			this.xlsOptionsPanel.setVisible(true);
+		}
+	}
+	
 	//Public Methods
 	, setFormState: function(formState) {
 		this.fileNameField.setValue(formState.fileName);
@@ -287,6 +302,9 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		}
 		if (formState.fileType != null){
 			this.fileTypeCombo.setValue(formState.fileType);
+			//if (formState.fileType != ''){
+				this.initialActivateFileTypePanel(formState.fileType);
+			//}
 		}
 		if (formState.skipRows != null){
 			this.skipRowsField.setValue(formState.skipRows);
