@@ -5,25 +5,21 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
-import java.io.IOException;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * @author Bernabei Angelo (angelo.bernabei@eng.it)
@@ -44,56 +40,43 @@ public class DeleteObjectAction extends AbstractSpagoBIAction {
 			// BIObject obj = executionInstance.getBIObject();
 			UserProfile userProfile = (UserProfile) this.getUserProfile();
 			IBIObjectDAO dao = null;
+			ILowFunctionalityDAO functDAO = null;
 			try {
 				dao = DAOFactory.getBIObjectDAO();
+				functDAO = DAOFactory.getLowFunctionalityDAO();
 			} catch (EMFUserError e) {
 				logger.error("Error while istantiating DAO", e);
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
 			}
 			String ids = this.getAttributeAsString(OBJECT_ID);
-			String func = this.getAttributeAsString(FUNCT_ID);
-			Integer iFunc = new Integer(func);
-			logger.debug("Input Folder:" + func);
+			Integer folderId = this.getAttributeAsInteger(FUNCT_ID);
+			logger.debug("Input Folder:" + folderId);
 			logger.debug("Input Object:" + ids);
+			String userId = ((UserProfile)userProfile).getUserId().toString();
+			logger.debug("User id:" + userId);
+			
 			// ids contains the id of the object to be deleted separated by ,
 			String[] idArray = ids.split(",");
 			for (int i = 0; i < idArray.length; i++) {
 				Integer id = new Integer(idArray[i]);
-				BIObject biObject = null;
-				try {
-					biObject = dao.loadBIObjectById(id);
-				} catch (EMFUserError e) {
-					logger.error("BIObject with id = " + id + " not found", e);
-					throw new SpagoBIServiceException(SERVICE_NAME, "Customized view not found", e);
-				}
-
-				if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+				BIObject biObject = dao.loadBIObjectById(id);;
+				Assert.assertNotNull(biObject, "Document with id [" + id + "] not found");
+				
+				LowFunctionality lowFunctionality = functDAO.loadLowFunctionalityByID(folderId, false);
+				Assert.assertNotNull(lowFunctionality, "Folder with id [" + folderId + "] not found");
+				
+				if (ObjectsAccessVerifier.canDeleteBIObject(id, userProfile, lowFunctionality)) {
 					// delete document
 					try {
-						dao.eraseBIObject(biObject, iFunc);
-						logger.debug("Object deleted by administrator");
+						dao.eraseBIObject(biObject, folderId);
+						logger.debug("Object deleted succesfully");
 					} catch (EMFUserError e) {
-						logger.error("Error to delete Document", e);
-						throw new SpagoBIServiceException(SERVICE_NAME, "Error to delete Document", e);
+						logger.error("Error deleting document", e);
+						throw new SpagoBIServiceException(SERVICE_NAME, "Error deleting document", e);
 					}
 				} else {
-					String userId = ((UserProfile)userProfile).getUserId().toString();
-					ILowFunctionalityDAO functDAO = DAOFactory.getLowFunctionalityDAO();
-					LowFunctionality lowFunc = functDAO.loadLowFunctionalityByID(iFunc, false);
-
-					if(lowFunc==null){
-						logger.error("Functionality does not exist");
-						throw new Exception("Functionality does not exist");					
-					}
-
-					if(lowFunc.getPath().equals("/"+userId)){ // folder is current user one
-						dao.eraseBIObject(biObject, iFunc);
-						logger.debug("Object deleted");
-					}
-					else{
-						logger.error("Functionality is not user's one");
-						throw new Exception("Functionality  is not user's one");					
-					}
+					logger.error("User [" + userId + "] cannot delete document with label [" + biObject.getLabel() + "]");
+					throw new SpagoBIServiceException(SERVICE_NAME, "User [" + userId + "] cannot delete document with label [" + biObject.getLabel() + "]");
 				}
 
 			}
@@ -101,14 +84,11 @@ public class DeleteObjectAction extends AbstractSpagoBIAction {
 				JSONObject results = new JSONObject();
 				results.put("result", "OK");
 				writeBackToClient(new JSONSuccess(results));
-			} catch (IOException e) {
+			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client", e);
-			} catch (JSONException e) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize objects into a JSON object", e);
 			}
-		} catch (EMFInternalError e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "An internal error has occured", e);
-		
+		} catch (SpagoBIServiceException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "An internal error has occured", e);
 		} finally {

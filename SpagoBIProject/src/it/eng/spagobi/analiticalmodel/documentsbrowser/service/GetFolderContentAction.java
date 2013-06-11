@@ -7,18 +7,19 @@ package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.DocumentsJSONDecorator;
+import it.eng.spagobi.commons.serializer.DocumentsJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
@@ -59,7 +60,6 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 
 		List functionalities;
 		List objects;
-		boolean isRoot = false;
 		boolean isHome = false;
 
 		logger.debug("IN");
@@ -73,11 +73,8 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 
 			//getting default folder (root)
 			LowFunctionality rootFunct = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
-			if (functID == null || functID.equalsIgnoreCase(ROOT_NODE_ID)){
-				isRoot = true;
+			if (functID == null || functID.equalsIgnoreCase(ROOT_NODE_ID)) {
 				functID = String.valueOf(rootFunct.getId());
-			}else if (functID.equalsIgnoreCase(rootFunct.getId().toString())) {
-				isRoot = true;
 			}
 
 
@@ -86,12 +83,12 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			IEngUserProfile profile = (IEngUserProfile)permCont.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 			LowFunctionality targetFunct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(new Integer(functID), false);
-			isHome = "USER_FUNCT".equalsIgnoreCase( targetFunct.getCodType() );
+			isHome = UserUtilities.isPersonalFolder(targetFunct, (UserProfile) profile);
 
 			//getting children documents
 			//LowFunctionality lowFunct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(functID, true);
 			//objects = lowFunct.getBiObjects();
-			List tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(Integer.valueOf(functID), profile,isHome);
+			List tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(Integer.valueOf(functID), profile, isHome);
 			objects = new ArrayList();
 			if(tmpObjects != null) {
 				for(Iterator it = tmpObjects.iterator(); it.hasNext();) {
@@ -104,67 +101,9 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			MessageBuilder m = new MessageBuilder();
 			Locale locale = m.getLocale(httpRequest);
 			JSONArray documentsJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( objects ,locale);
+			DocumentsJSONDecorator.decorateDocuments(documentsJSON, profile, targetFunct);
 			
-			for(int i=0; i<documentsJSON.length(); i++){
-				DocumentsJSONDecorator.decoreDocument(documentsJSON.getJSONObject(i), profile);
-			}
-			
-			Collection func = profile.getFunctionalities();
-			//---------RELEASE 4.0--------------------//
-			boolean isAdmin = isAdminRole(profile);
-			boolean isDevRole = isDevRole(profile);
-			if(isAdmin || isDevRole){				
-				//sets action to modify document's detail
-				JSONObject detailAction = new JSONObject();
-				detailAction.put("name", "detail");
-				detailAction.put("description", "Document detail");
-				JSONObject deleteAction = new JSONObject();
-				deleteAction.put("name", "delete");
-				deleteAction.put("description", "Delete this item");
-				for(int i = 0; i < documentsJSON.length(); i++) {
-					JSONObject documentJSON = documentsJSON.getJSONObject(i);
-					documentJSON.getJSONArray("actions").put(detailAction);
-					documentJSON.getJSONArray("actions").put(deleteAction);
-				}
-
-			}else{
-				JSONObject deleteAction = new JSONObject();
-				deleteAction.put("name", "delete");
-				deleteAction.put("description", "Delete this item");
-				
-				JSONObject detailAction = new JSONObject();
-				detailAction.put("name", "detail");
-				detailAction.put("description", "Document detail");
-				for(int i = 0; i < documentsJSON.length(); i++) {					
-					JSONObject documentJSON = documentsJSON.getJSONObject(i);
-					if(ObjectsAccessVerifier.canDevBIObject(documentJSON.getInt("id"), profile)){
-						documentJSON.getJSONArray("actions").put(deleteAction);
-						documentJSON.getJSONArray("actions").put(detailAction);
-					}
-				}
-				
-			}
-			//--------- end RELEASE 4.0--------------------//
-			if(func.contains("SeeMetadataFunctionality")){
-				JSONObject showmetadataAction = new JSONObject();
-				showmetadataAction.put("name", "showmetadata");
-				showmetadataAction.put("description", "Show Metadata");
-				for(int i = 0; i < documentsJSON.length(); i++) {
-					JSONObject documentJSON = documentsJSON.getJSONObject(i);
-					documentJSON.getJSONArray("actions").put(showmetadataAction);
-				}
-			}
-//			
-//			if(isHome && !isAdmin) {
-//				JSONObject deleteAction = new JSONObject();
-//				deleteAction.put("name", "delete");
-//				deleteAction.put("description", "Delete this item");
-//				for(int i = 0; i < documentsJSON.length(); i++) {
-//					JSONObject documentJSON = documentsJSON.getJSONObject(i);
-//					documentJSON.getJSONArray("actions").put(deleteAction);
-//				}
-//			}
-			JSONObject documentsResponseJSON =  createJSONResponseDocuments(documentsJSON);
+			JSONObject documentsResponseJSON = createJSONResponseDocuments(documentsJSON);
 
 			//getting children folders
 			/*
@@ -175,7 +114,8 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			 */
 			boolean recoverBiObjects = false;
 			// for massive export must also get the objects to check if there are worksheets
-			if(func.contains("DoMassiveExportFunctionality")){
+			Collection userFunctionalities = profile.getFunctionalities();
+			if (userFunctionalities.contains("DoMassiveExportFunctionality")) {
 				recoverBiObjects = true;
 			}
 			
@@ -192,7 +132,7 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			scheduleAction.put("description", "Schedule");
 
 			// call check for worksheet presence only if user can eexecute massive export, otherwise jump over control
-			if(func.contains("DoMassiveExportFunctionality")){
+			if (userFunctionalities.contains("DoMassiveExportFunctionality")) {
 				Map<String, Boolean> folderToWorksheet = checkIfWorksheetContained(functionalities);
 
 				for(int i = 0; i < foldersJSON.length(); i++) {
@@ -333,32 +273,5 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 		logger.debug("OUT");
 		return functWorksheet;
 	}
-	private boolean isDevRole(IEngUserProfile profile) throws EMFInternalError, EMFUserError {
-		Iterator roles = profile.getRoles().iterator() ;
-		boolean isDev= false;
-		while(roles.hasNext()){
-			String r = (String)roles.next();
-			Role role = DAOFactory.getRoleDAO().loadByName(r);
-			if(role.getRoleTypeCD().equalsIgnoreCase("DEV_ROLE")){
-				isDev = true;
-			}
-		}
-		
-		return isDev;
-		
-	}
-	private boolean isAdminRole(IEngUserProfile profile) throws EMFInternalError, EMFUserError {
-		Iterator roles = profile.getRoles().iterator() ;
-		boolean isAdmin= false;
-		while(roles.hasNext()){
-			String r = (String)roles.next();
-			Role role = DAOFactory.getRoleDAO().loadByName(r);
-			if(role.getRoleTypeCD().equalsIgnoreCase("ADMIN") ){
-				isAdmin = true;
-			}
-		}
-		
-		return isAdmin;
-		
-	}
+
 }
