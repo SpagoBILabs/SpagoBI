@@ -182,8 +182,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 
 	       		qbeConfig.displayQueryBuilderPanel = true;
 	       		qbeConfig.displayFormBuilderPanel = true;
-	       		qbeConfig.displayWorksheetDesignerPanel = false;
-	       		qbeConfig.displayWorksheetPreviewPanel = false;
+	       		qbeConfig.displayWorksheetPanel = false;
 	       		
 				qbeConfig.formbuilder = {};
 				qbeConfig.formbuilder.template = <%= formTemplate != null ? formTemplate.toString() : "{}" %>;

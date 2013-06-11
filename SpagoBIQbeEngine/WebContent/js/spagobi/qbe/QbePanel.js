@@ -44,8 +44,6 @@ Sbi.qbe.QbePanel = function(config) {
 		displayQueryBuilderPanel: true
 		, displayFormBuilderPanel: false
 		, displayWorksheetPanel: true
-		, displayWorksheetDesignerPanel: true
-		, displayWorksheetPreviewPanel: true
 	}, config || {});
 
 	this.services = new Array();
@@ -108,7 +106,7 @@ Sbi.qbe.QbePanel = function(config) {
 	items.push(this.qbeCardsPanel);
 
 
-	if (c.displayWorksheetDesignerPanel) {
+	if (c.displayWorksheetPanel) {
 
 		var worksheetDesignerConfig = c.worksheet || {};
 		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(Ext.apply(worksheetDesignerConfig, {
@@ -119,7 +117,7 @@ Sbi.qbe.QbePanel = function(config) {
 	
 
 
-	if (c.displayWorksheetPreviewPanel) {
+	if (c.displayWorksheetPanel) {
 		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({
 			id : 'WorkSheetPreviewPage',
 			closable: false
