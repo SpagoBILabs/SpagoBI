@@ -192,7 +192,7 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 	private Integer getLimit() {
 		Integer limit = LIMIT_DEFAULT;
 		Object limitObject = getAttribute( LIMIT );
-		if (limit != null && !limitObject.equals("")) {
+		if (limitObject != null && !limitObject.equals("")) {
 			limit = getAttributeAsInteger(LIMIT);
 		}
 		return limit;
