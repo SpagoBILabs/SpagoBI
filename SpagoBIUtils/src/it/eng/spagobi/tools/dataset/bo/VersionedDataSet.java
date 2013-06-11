@@ -325,6 +325,19 @@ public class VersionedDataSet implements IDataSet {
 		wrappedDataset.setFlatTableName(flatTableName);
 	}
 	
+	public boolean isPublic(){
+		return wrappedDataset.isPublic();
+	}
+	public void setPublic(boolean publicDS){
+		wrappedDataset.setPublic(publicDS);
+	}
+	
+	public String getOwner(){
+		return wrappedDataset.getOwner();
+	}
+	public void setOwner(String owner){
+		wrappedDataset.setOwner(owner);
+	}
 
 	public String getUserIn() {
 		return wrappedDataset.getUserIn();
@@ -394,5 +407,6 @@ public class VersionedDataSet implements IDataSet {
 	public void setCalculateResultNumberOnLoad(boolean enabled){
 		wrappedDataset.setCalculateResultNumberOnLoad(enabled);
 	}
+	
 	
 }
