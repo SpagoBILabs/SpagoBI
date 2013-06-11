@@ -85,7 +85,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 			// create the input parameters to pass to the WorkSheet Edit Service
 			Map worksheetEditActionParameters = buildWorksheetEditServiceBaseParametersMap();
 			
-			String executionId = createNewExecutionId();
+			String executionId =  ExecuteAdHocUtility.createNewExecutionId();
 			worksheetEditActionParameters.put("SBI_EXECUTION_ID" , executionId);
 						
 			Engine worksheetEngine = getWorksheetEngine();
@@ -207,25 +207,25 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	}
 
 
-	protected String createNewExecutionId() {
-		String executionId;
-		
-		logger.debug("IN");
-		
-		executionId = null;
-		try {
-			UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
-			UUID uuidObj = uuidGen.generateTimeBasedUUID();
-			executionId = uuidObj.toString();
-			executionId = executionId.replaceAll("-", "");
-		} catch(Throwable t) {
-			
-		} finally {
-			logger.debug("OUT");
-		}
-		
-		return executionId;
-	}
+//	protected String createNewExecutionId() {
+//		String executionId;
+//		
+//		logger.debug("IN");
+//		
+//		executionId = null;
+//		try {
+//			UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+//			UUID uuidObj = uuidGen.generateTimeBasedUUID();
+//			executionId = uuidObj.toString();
+//			executionId = executionId.replaceAll("-", "");
+//		} catch(Throwable t) {
+//			
+//		} finally {
+//			logger.debug("OUT");
+//		}
+//		
+//		return executionId;
+//	}
 
 
 	/** 
