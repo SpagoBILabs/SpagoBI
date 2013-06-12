@@ -34,17 +34,10 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	
 	, configureSteps : function(){
    
-
-		this.fieldsStep1 = [{label:"Id", name:"id",type:"text",hidden:"true", value:this.record.id},
-		                    {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'SelfService'},
-		                    {label: LN('sbi.ds.label')+' (*)', name:"label", type:"text", mandatory:true, readOnly:(this.isNew)?false:true, value:this.record.label}, 
-		                    {label: LN('sbi.ds.name')+' (*)', name:"name", type:"text", mandatory:true, value:this.record.name},
-		                    {label: LN('sbi.ds.description'), name:"description", type:"textarea", value:this.record.description}];
-		this.fieldsStep1.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", value:this.record.catTypeVn, data:this.categoriesStore});
-		var valueScope = (this.record.isPublic==true)?'true':'false' ;
-		this.fieldsStep1.push({label:LN('sbi.ds.scope'), name:"isPublic", type:"combo", valueCol:"field", descCol:"value", value:valueScope, data:this.scopeStore});
-		
-		this.fieldsStep2 = [{name:"msg", type:"textarea", value:"Work in progress..."}];	
+		this.fieldsStep1 = this.getFieldsTab1();
+			
+		this.fieldsStep2 =  this.getFieldsTab2(); 
+			
 		this.fieldsStep3 = [{name:"msg", type:"textarea", value:"Work in progress..."}];		
 
 	}
@@ -53,12 +46,64 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		var steps = [];
 
 		steps.push({itemId:'0', title:LN('sbi.ds.wizard.general'), items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep1)});
-		steps.push({itemId:'1', title:LN('sbi.ds.wizard.detail'), items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep2)});
+		steps.push({itemId:'1', title:LN('sbi.ds.wizard.detail'), items: this.fieldsStep2});
 		steps.push({itemId:'2', title:LN('sbi.ds.wizard.metadata'), items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep3)});
 		
 		return steps;
 	}
 	
+	, getFieldsTab1: function(){
+		//General tab
+		var toReturn = [];
+		
+		toReturn = [{label:"Id", name:"id",type:"text",hidden:"true", value:this.record.id},
+         {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'SelfService'},
+         {label: LN('sbi.ds.label')+' (*)', name:"label", type:"text", mandatory:true, readOnly:(this.isNew)?false:true, value:this.record.label}, 
+         {label: LN('sbi.ds.name')+' (*)', name:"name", type:"text", mandatory:true, value:this.record.name},
+         {label: LN('sbi.ds.description'), name:"description", type:"textarea", value:this.record.description}];
+		
+		toReturn.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", value:this.record.catTypeVn, data:this.categoriesStore});
+		var valueScope = (this.record.isPublic==true)?'true':'false' ;
+		toReturn.push({label:LN('sbi.ds.scope'), name:"isPublic", type:"combo", valueCol:"field", descCol:"value", value:valueScope, data:this.scopeStore});
+		
+		return toReturn;
+	}
+	
+	, getFieldsTab2: function(){
+		//upload details tab
+		var toReturn = [];
+		var fields = new Sbi.tools.dataset.FileDatasetPanel({});
+		var uploadButton = fields.getComponent('fileUploadPanel').getComponent('fileUploadButton');		
+		uploadButton.setHandler(this.uploadFileButtonHandler);
+		toReturn = new  Ext.FormPanel({
+			  id: 'datasetForm',
+			  fileUpload: true, // this is a multipart form!!
+			  isUpload: true,
+			  method: 'POST',
+			  enctype: 'multipart/form-data',
+  		      margins: '50 50 50 50',
+	          labelAlign: 'left',
+	          bodyStyle:'padding:5px',
+	          autoScroll:true,
+	          width: 650,
+	          height: 600,
+	          labelWidth: 130,
+	          layout: 'form',
+	          trackResetOnLoad: true,
+	          items: fields
+	      }); 
+		
+		return toReturn;
+	}
+	
+	, getFieldsTab3: function(){
+		//metadata tab
+		var toReturn = [];
+		
+		toReturn = new Sbi.tools.dataset.FileDatasetPanel({});
+		
+		return toReturn;
+	}
 	, initWizardBar: function() {
 		var bar = this.callParent();
 		for (var i=0; i<bar.length; i++){
@@ -100,12 +145,68 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 
 	, save : function(){
 		if (Sbi.tools.dataset.DataSetsWizard.superclass.validateForm()){
-			var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();			
+			var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();	
+//			this.fileUploadFormPanel.setFormState(record.data);
 			this.fireEvent('save', values);
 		}else{
 			//alert(LN('sbi.ds.mandatoryFields'));
 			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryFields'), '');
 		}
+	}
+	
+	//handler for the upload file button
+	,uploadFileButtonHandler: function(btn, e) {
+		
+		Sbi.debug("[DatasetWizard.uploadFileButtonHandler]: IN");
+		
+        var form = Ext.getCmp('datasetForm').getForm();
+        
+        Sbi.debug("[DatasetWizard.uploadFileButtonHandler]: form is equal to [" + form + "]");
+		
+        var completeUrl =  Sbi.config.serviceRegistry.getServiceUrl({
+					    		serviceName : 'UPLOAD_DATASET_FILE_ACTION',
+					    		baseParams : {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
+					    	});
+		var baseUrl = completeUrl.substr(0, completeUrl
+				.indexOf("?"));
+		
+		Sbi.debug("[DatasetWizard.uploadFileButtonHandler]: base url is equal to [" + baseUrl + "]");
+		
+		var queryStr = completeUrl.substr(completeUrl.indexOf("?") + 1);
+		var params = Ext.urlDecode(queryStr);
+
+		Sbi.debug("[DatasetWizard.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
+		
+		form.submit({
+			clientValidation: false,
+			url : baseUrl // a multipart form cannot
+							// contain parameters on its
+							// main URL; they must POST
+							// parameters
+			,
+			params : params,
+			waitMsg : LN('sbi.generic.wait'),
+			success : function(form, action) {
+				Ext.MessageBox.alert('Success!','File Uploaded to the Server');
+				var fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
+				Ext.getCmp('fileNameField').setValue(fileNameUploaded);
+			},
+			failure : function(form, action) {
+				switch (action.failureType) {
+	            case Ext.form.Action.CLIENT_INVALID:
+	                Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+	                break;
+	            case Ext.form.Action.CONNECT_FAILURE:
+	                Ext.Msg.alert('Failure', 'Ajax communication failed');
+	                break;
+	            case Ext.form.Action.SERVER_INVALID:
+	               Ext.Msg.alert('Failure', action.result.msg);
+				}
+			},
+			scope : this
+		});		
+		
+		Sbi.debug("[DatasetWizard.uploadFileButtonHandler]: OUT");
 	}
 	
 });
