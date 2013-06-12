@@ -8,6 +8,7 @@ package it.eng.spagobi.engines.chart.services.initializers;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.chart.ChartEngine;
 import it.eng.spagobi.engines.chart.ChartEngineInstance;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -209,6 +210,39 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 
 		return JSONPars;
 	}
+	
+	 public Map getEnv() {
+		 IDataSource dataSource = null;
+		 Map env = new HashMap();
+
+		 copyRequestParametersIntoEnv(env, getSpagoBIRequestContainer());
+		
+		 try {
+			 dataSource = getDataSource();
+		 } catch (Exception e){
+			 logger.debug("Datasource is not definied for this Chart");
+		 }
+		 if (dataSource!= null){
+			 env.put(EngineConstants.ENV_DATASOURCE, dataSource);
+		 }
+		 // document id can be null (when using QbE for dataset definition)
+		 if (getDocumentId() != null) {
+			 env.put(EngineConstants.ENV_DOCUMENT_ID, getDocumentId());
+		 }
+		 env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
+		 env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
+		 env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy() );
+		 env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy());
+		 env.put(EngineConstants.ENV_DATASOURCE_PROXY, getDataSourceServiceProxy()); 
+		 try {
+			 env.put(EngineConstants.ENV_METAMODEL_PROXY, getMetamodelServiceProxy()); 
+		 } catch (Throwable t) {
+			 logger.warn("Impossible to instatiate the metamodel proxy", t);
+		 }
+		 env.put(EngineConstants.ENV_LOCALE, getLocale()); 
+
+		 return env;
+	 }
 	/*
 	public Map getAnalyticalDrivers() {
 		Map toReturn = new HashMap();
