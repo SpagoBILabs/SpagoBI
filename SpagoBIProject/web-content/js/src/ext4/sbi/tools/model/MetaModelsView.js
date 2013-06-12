@@ -83,7 +83,7 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 			var title = LN('sbi.ds.listTitle');
 			this.tpl = new Ext.XTemplate(
 					'<div id="sample-ct">', 	            
-		 	           '<div>',
+		 	           '<div class="group-view-small">',
 		 	            '<ul>',
 		 	            	'<tpl if="root.length == 0">',
 		 	            		'<div id="empty-group-message">',
@@ -92,14 +92,13 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 		 	            	'</tpl>',        
 		 	            	'<tpl for=".">',
 			                    '<dd class="group-item">',
-			                    	'<div class="button" style="text-align: center; width: 200px; cursor: pointer;">',
+			                    	'<div class="button">',
 			                        	'<div class="meta-models-view">  &nbsp </div>',
 										'<p><b>{name}</b></p>',
 										'<p>{description}</p>',
 									'</div>',
 			                    '</dd>',
 			                '</tpl>',	              
-		 	            '<div style="clear:left"></div>',
 			          '</ul>',
 		 	          '</div>',
 		 	        '</div>');

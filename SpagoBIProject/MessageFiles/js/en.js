@@ -765,3 +765,10 @@ Sbi.locale.ln["error.mesage.description.data.set.saving.duplicated"]="Impossible
 //===================================================================
 Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.title"]="Fill in the dataset details and click on Save";
 Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.fields.datasource"]="Save data on";
+
+//===================================================================
+//SELF SERVICE
+//===================================================================
+
+Sbi.locale.ln["sbi.tools.dataset.datasetbrowser.title"]="Datasets";
+Sbi.locale.ln["sbi.tools.model.metamodelsbrowser.title"]="Models";

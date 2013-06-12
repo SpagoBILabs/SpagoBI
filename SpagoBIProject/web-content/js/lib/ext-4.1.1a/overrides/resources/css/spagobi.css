@@ -38,11 +38,3 @@ Styles for the component Ext.ux.RadioColumn
 	background-image:url('../img/form/question-trigger.gif');
 }
 
-.meta-models-view{
-	background-image:url('../../../../../../themes/sbi_default/img/metamodel/metamodel.png');
-	background-repeat: no-repeat;
-	background-position: center;
-	margin-top: 5px;
-	height: 130px;
-	width: 200px;
-}

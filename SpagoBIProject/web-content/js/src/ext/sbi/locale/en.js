@@ -919,3 +919,12 @@ Sbi.locale.ln["error.mesage.description.data.set.saving.duplicated"]="Impossible
 //Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 
 //===================================================================
 Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.fields.datasource"]="Datasource for persistence";
+
+
+//===================================================================
+// SELF SERVICE
+//===================================================================
+
+Sbi.locale.ln["sbi.tools.dataset.datasetbrowser.title"]="Datasets";
+Sbi.locale.ln["sbi.tools.model.metamodelsbrowser.title"]="Models";
+

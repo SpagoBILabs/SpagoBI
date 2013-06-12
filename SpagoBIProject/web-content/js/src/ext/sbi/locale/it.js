@@ -917,3 +917,10 @@ Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]="Impossi
 Sbi.locale.ln["error.mesage.description.data.set.cannot.be.null"]= "La label del dataset deve essere valorizzata";
 Sbi.locale.ln["error.mesage.description.data.set.deleting.inuse"] = "Impossibile cancellare il datset perché è in uso";
 Sbi.locale.ln["error.mesage.description.data.set.saving.duplicated"]="Impossibile salvare il dataset: label duplicata";			   
+
+//===================================================================
+//SELF SERVICE
+//===================================================================
+
+Sbi.locale.ln["sbi.tools.dataset.datasetbrowser.title"]="Datasets";
+Sbi.locale.ln["sbi.tools.model.metamodelsbrowser.title"]="Modelli";
