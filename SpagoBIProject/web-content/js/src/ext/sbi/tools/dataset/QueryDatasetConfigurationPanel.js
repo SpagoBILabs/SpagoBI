@@ -141,7 +141,7 @@ Ext.extend(Sbi.tools.dataset.QueryDatasetConfigurationPanel, Ext.Panel, {
 			maxLength : 30000,
 			xtype : 'textarea',
 			width : '100%', //350,
-			height : 350,//110,			
+			height : 300,//110,			
 			autoScroll: true,
 			regexText : LN('sbi.roles.alfanumericString'),
 			fieldLabel : LN('sbi.ds.query'),

@@ -2,7 +2,8 @@
   		<Manager className="org.apache.catalina.session.PersistentManager" saveOnRestart="false"/>
         <ResourceLink global="jdbc/spagobi" name="jdbc/spagobi" type="javax.sql.DataSource"/>
         <ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
-        <ResourceLink global="jdbc/foodmart_hsql" name="jdbc/foodmart_hsql" type="javax.sql.DataSource"/>        
+        <ResourceLink global="jdbc/foodmart_hsql" name="jdbc/foodmart_hsql" type="javax.sql.DataSource"/>
+        <ResourceLink global="jdbc/alliadis" name="jdbc/alliadis" type="javax.sql.DataSource"/>        
         <ResourceLink global="spagobi_resource_path" name="spagobi_resource_path" type="java.lang.String"/>
         <ResourceLink global="spagobi_sso_class" name="spagobi_sso_class" type="java.lang.String"/>
         <ResourceLink global="spagobi_host_url" name="spagobi_host_url" type="java.lang.String"/>

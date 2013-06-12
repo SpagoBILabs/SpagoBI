@@ -159,7 +159,7 @@ Sbi.widgets.ListDetailForm = function(config) {
 	if(conf.tabPanelHeight){
 		this.baseHeight = conf.baseHeight;
     }else{
-    	this.baseHeight = 700; 
+    	this.baseHeight = 650; 
     }
 	
 	if(conf.tabPanelWidth){
@@ -348,7 +348,6 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
            , autoScroll : true
            , deferredRender: false
            , width: this.tabPanelWidth         
-           //anto , height: 490
            , height: this.baseHeight
            , autoScroll  : true
            , itemId: 'tabs' 
@@ -426,9 +425,8 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	                  colModel: this.colModel,
 	                  plugins: pluginsToAdd ,
 	                  selModel: this.rowselModel,
-	                 // anto height: 490,
 	                  height: this.baseHeight,
-	                //  autoHeight: true,
+//	                  autoHeight: true,
 	                  autoWidth: true,
 	                  autoScroll  : true,
 	                  width: this.gridWidth,
