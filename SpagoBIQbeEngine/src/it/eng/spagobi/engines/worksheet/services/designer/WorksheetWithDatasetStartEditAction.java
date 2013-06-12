@@ -23,6 +23,7 @@ public class WorksheetWithDatasetStartEditAction extends WorksheetEngineStartAct
 	// INPUT PARAMETERS
 	public static final String DATASET_LABEL = "dataset_label";
 	public static final String DATASOURCE_LABEL = "datasource_label";
+	public static final String ENGINE_DATASOURCE_LABEL = "ENGINE_DATASOURCE_LABEL";
 	
 	/** Logger component. */
 	private static transient Logger logger = Logger.getLogger(WorksheetWithDatasetStartEditAction.class);
@@ -84,6 +85,9 @@ public class WorksheetWithDatasetStartEditAction extends WorksheetEngineStartAct
 	public IDataSource getDataSource() {
 		// datasource information is coming with the request
 		String datasourceLabel = this.getAttributeAsString( DATASOURCE_LABEL );
+		if(datasourceLabel==null){
+			 datasourceLabel = this.getAttributeAsString( ENGINE_DATASOURCE_LABEL );
+		}		
 		logger.debug("Parameter [" + DATASOURCE_LABEL + "]  is equal to [" + datasourceLabel + "]");
 		Assert.assertNotNull(datasourceLabel, "Data source not specified");
 		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);

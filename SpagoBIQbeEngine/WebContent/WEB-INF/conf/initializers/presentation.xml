@@ -7,6 +7,10 @@
 			 publisher_name="START_QBE_PUBLISHER"/>
 			 
 	<MAPPING business_type="ACTION" 
+			 business_name="QBE_ENGINE_START_ACTION_FROM_BM" 
+			 publisher_name="START_QBE_PUBLISHER"/> 
+			 
+	<MAPPING business_type="ACTION" 
 			 business_name="FORM_ENGINE_START_ACTION" 
 			 publisher_name="FORM_ENGINE_START_ACTION_PUBLISHER"/>
 			 

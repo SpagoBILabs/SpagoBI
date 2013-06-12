@@ -5,12 +5,16 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.service;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.HashMap;
@@ -32,6 +36,8 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 	public static final String OUTPUT_PARAMETER_QBE_EDIT_SERVICE_URL = "qbeServiceURL";
 	public static final String  WORKSHEET_EDIT_ACTION = "WORKSHEET_WITH_DATASET_START_EDIT_ACTION";
 	public static final String QBE_EDIT_ACTION = "QBE_ENGINE_START_ACTION_FROM_BM";
+	public static final String ENGINE_DATASOURCE_LABEL = "ENGINE_DATASOURCE_LABEL";
+	
 
 	// logger component
 	private static Logger logger = Logger.getLogger(SelfServiceDatasetStartAction.class);
@@ -52,8 +58,16 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 
 			Engine worksheetEngine = ExecuteAdHocUtility.getWorksheetEngine();
 			LogMF.debug(logger, "Engine label is equal to [{0}]", worksheetEngine.getLabel());
-			//int defEngineDataSourceWork = worksheetEngine.getDataSourceId();
-		//	worksheetEditActionParameters.put("ENGINE_DATASOURCE_ID", defEngineDataSourceWork);
+			Integer defEngineDataSourceWork = worksheetEngine.getDataSourceId();
+			if(defEngineDataSourceWork!=null){
+				try {
+					IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(defEngineDataSourceWork);
+					worksheetEditActionParameters.put(ENGINE_DATASOURCE_LABEL,ds.getLabel());
+				} catch (EMFUserError e) {
+					logger.error("Error loading the datasource of the engine", e);
+					throw new SpagoBIRuntimeException("Error loading the datasource of the engine", e);
+				}
+			}
 
 			// create the WorkSheet Edit Service's URL
 			String worksheetEditActionUrl = GeneralUtilities.getUrl(worksheetEngine.getUrl(), worksheetEditActionParameters);

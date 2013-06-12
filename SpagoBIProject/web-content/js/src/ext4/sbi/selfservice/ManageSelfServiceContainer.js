@@ -48,54 +48,35 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 
 	}
 
-	, executeDocument: function(docType, record){
-		var modelName = record.data.name;
-		var dataSourceLabel = record.data.data_source_label;
-		this.documentexecution.load( this.qbeEngineBaseUrl+"&MODEL_NAME="+modelName+"&DATA_SOURCE_LABEL="+dataSourceLabel);
-		this.getLayout().setActiveItem(1);
+	, executeDocument: function(docType,inputType, record){
+		if(docType=='QBE'){
+			this.executeQbe(inputType, record);
+		}else{
+			this.executeWorksheet(inputType, record);
+		}
+		this.getLayout().setActiveItem(1);	
 	}
 	
-
-//	, openDataSourceWindow: function(){
-//		if(!this.dataSourceWindow){
-//			
-//			var store = Ext.create('Ext.data.Store', {
-//			    model: 'Sbi.tools.datasource.DataSourceModelForFinalUser'
-//			});
-//			
-//			this.dataSourceCombo = Ext.create('Ext.form.ComboBox', {
-//			    fieldLabel: 'Choose Store',
-//			    store: store,
-//			    displayField: 'DATASOURCE_LABEL',
-//			    valueField: 'DATASOURCE_LABEL'
-//			});
-//			
-////			var form = Ext.create('Ext.form.Panel',{
-////				items:[dataSourceCombo]
-////			})
-////			
-//			this.dataSourceWindow = Ext.create('Ext.window.Window', {
-//			    title: 'Select a data source',
-//			    height: 200,
-//			    width: 400,
-//			    layout: 'form',
-//			    items: [this.dataSourceCombo],
-//			    buttons: [{
-//		            text: 'Save',
-//		            handler: function() {
-//		               // this.up('form').getForm().isValid();
-//		            }
-//		        },{
-//		            text: 'Cancel',
-//		            handler: function() {
-//		              //  this.up('form').getForm().reset();
-//		            }
-//		        }]
-//			});
-//		}
-//		this.dataSourceWindow.show();
-//	}
-//
-//    
+	, executeQbe: function(inputType, record){
+		if(inputType == "MODEL"){
+			var modelName = record.data.name;
+			var dataSourceLabel = record.data.data_source_label;
+			this.documentexecution.load( this.qbeEngineBaseUrl+"&MODEL_NAME="+modelName+"&DATA_SOURCE_LABEL="+dataSourceLabel);
+		}
+	}
+	
+	,executeWorksheet: function(inputType, record){
+		if(inputType == "DATASET"){
+			var datasetLabel = record.data.label;
+			var datasourceLabel = record.data.dataSource;
+			var url =  this.worksheetEngineBaseUrl+ '&dataset_label=' + datasetLabel ;
+			if(datasourceLabel || datasourceLabel!=""){
+				url = url+ '&datasource_label=' + datasourceLabel;
+			}
+			this.documentexecution.load(url);
+		}
+	}
+	
+   
 	
 });

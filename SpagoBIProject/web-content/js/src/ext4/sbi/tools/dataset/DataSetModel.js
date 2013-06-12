@@ -7,6 +7,16 @@
   
  Ext.define('Sbi.tools.dataset.DataSetModel', {
     extend: 'Ext.data.Model',
+    proxy:{
+    	type : 'rest',
+    	url : Sbi.config.serviceRegistry.getRestServiceUrl({
+    		serviceName : 'selfservicedataset'
+    	}),
+    	reader : {
+    		type : 'json',
+    		root : 'root'
+    	}
+    },
     fields:["id",
             "version_num",
             "active",
@@ -20,5 +30,6 @@
             "actions",
             "isPublic",
             "owner",
-            "userIn"]
+            "userIn",
+            "dataSource"]
 });

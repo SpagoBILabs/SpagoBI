@@ -164,14 +164,14 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         }else if (actionDelete != null){
         	Sbi.debug('DataSetView delete dataset raise event...');        	
         	scope.fireEvent('delete', record.data);
-        }else if (actionWorksheet != null){
+        }else{ //if (actionWorksheet != null){
         	Sbi.debug('DataSetView actionWorksheet raise event...'); 
         	if (record.data.pars != undefined && record.data.pars != ''){
         		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noWorksheetDesigner'));
         		return true;
         	}
-        	alert("Work in progress...");
-//        	scope.fireEvent('delete', record.data);
+   			scope.fireEvent('executeDocument','WORKSHEET','DATASET',record);
+
         }
         return true;
     }
