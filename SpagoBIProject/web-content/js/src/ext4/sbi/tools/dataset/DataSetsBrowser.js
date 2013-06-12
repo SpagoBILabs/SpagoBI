@@ -6,7 +6,6 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		modelName : "Sbi.tools.dataset.DataSetModel",
 		dataView : null,
 		tbar : null,
-		height: 600,
 		user : ''
 	}
 
