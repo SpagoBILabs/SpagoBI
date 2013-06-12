@@ -228,6 +228,17 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			WorksheetEngineInstance worksheetEngineInstance) {
 		this.worksheetEngineInstance = worksheetEngineInstance;
 	}
+	
+	 public String getDocumentId() {
+		 String documentId = null;
+		 try {
+			 documentId = super.getDocumentId();
+		} catch (SpagoBIEngineStartupException e) {
+			logger.debug("Impossible tol load the document id ",e);
+		}
+
+		return documentId;   	
+	 }
     
     
 }
