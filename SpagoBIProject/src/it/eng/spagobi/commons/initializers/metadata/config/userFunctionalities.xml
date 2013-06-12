@@ -49,4 +49,5 @@
 <USER_FUNCTIONALITY name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement"/>
 <USER_FUNCTIONALITY name="CreateWorksheetFromDatasetUserFunctionality" description="CreateWorksheetFromDatasetUserFunctionality"/>
 <USER_FUNCTIONALITY name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement"/>
+<USER_FUNCTIONALITY name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement"/>
 </USER_FUNCTIONALITIES>
