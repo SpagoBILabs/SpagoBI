@@ -21,7 +21,7 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 	, init: function(config){
 		this.callParent(config);
 		//adds the toolbar
-		this.initToolbar();
+		//this.initToolbar();
 		
 	}
 
@@ -76,10 +76,6 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
     
     }
 	
-
-	,getDatasourceLabel : function(){
-		return "foodmart";
-	}
 		
 	
 });
