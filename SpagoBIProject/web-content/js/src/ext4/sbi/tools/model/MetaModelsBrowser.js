@@ -26,7 +26,6 @@ Ext.define('Sbi.tools.model.MetaModelsBrowser', {
 	
 	, constructor : function(config) {
 		this.initConfig(config);
-		
 		this.initStore();
 		this.initViewPanel();
 		this.items=[this.viewPanel];
@@ -36,14 +35,6 @@ Ext.define('Sbi.tools.model.MetaModelsBrowser', {
 	
 	,
 	initStore : function(baseParams) {
-//		this.columns = [ {
-//			dataIndex : "name",
-//			header : "Name"
-//		}, {
-//			dataIndex : "description",
-//			header : "Description"
-//		} ];
-	
 		var model = Ext.ModelMgr.getModel(this.getModelName());
 
 		this.filteredProperties = [ "name" ];
@@ -68,8 +59,8 @@ Ext.define('Sbi.tools.model.MetaModelsBrowser', {
 		var config = {};
 		config.store = this.store;
 		this.viewPanel = Ext.create('Sbi.tools.model.MetaModelsView', config);
-		this.viewPanel.on('executeDocument',function(docType, record){
-			this.fireEvent('executeDocument',docType,record);
+		this.viewPanel.on('executeDocument',function(docType, inputType,  record){
+			this.fireEvent('executeDocument',docType, inputType,  record);
 		},this);
 		
 	}

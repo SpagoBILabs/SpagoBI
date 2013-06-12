@@ -45,28 +45,9 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	
 	,
 	initStore : function(baseParams) {
-		this.columns = [ {
-			dataIndex : "label",
-			header : "Name"
-		}, {
-			dataIndex : "description",
-			header : "Description"
-		} ];
 	
-		// set the proxy of the model.. Is STATIC
-		var model = Ext.ModelMgr.getModel(this.getModelName());
-		model.setProxy({
-			type : 'rest',
-			url : Sbi.config.serviceRegistry.getRestServiceUrl({
-				serviceName : 'selfservicedataset'
-			}),
-			reader : {
-				type : 'json',
-				root : 'root'
-			}
-		});
 		
-		this.fields = [ "id", "label", "name", "description","catTypeVn" ];
+//		this.fields = [ "id", "label", "name", "description","catTypeVn", "dataSource" ];
 		this.filteredProperties = [ "label", "name" ];
 		
 		Sbi.debug('DataViewPanel bulding the store...');
@@ -124,6 +105,9 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
 		this.viewPanel.on('detail', this.modifyDataset, this);
 		this.viewPanel.on('delete', this.deleteDataset, this);
+		this.viewPanel.on('executeDocument',function(docType, inputType,  record){
+			this.fireEvent('executeDocument',docType, inputType,  record);
+		},this);
 	}
 	
 	, createCategoriesStore: function(){

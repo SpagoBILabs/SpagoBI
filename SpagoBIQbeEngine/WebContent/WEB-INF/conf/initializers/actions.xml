@@ -9,6 +9,12 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="QBE_ENGINE_START_ACTION_FROM_BM" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineStartActionFromBusinessModel" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 	<!-- FORM_ENGINE Initializations -->
 	<ACTION name="FORM_ENGINE_START_ACTION" 
 			class="it.eng.spagobi.engines.qbe.services.initializers.FormEngineStartAction" 

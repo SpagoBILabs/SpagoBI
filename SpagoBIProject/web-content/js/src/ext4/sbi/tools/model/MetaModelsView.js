@@ -111,7 +111,7 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 		}
 	
 		,onClick : function(obj, record, item, index, e, eOpts) {
-			this.fireEvent('executeDocument','QBE',record);
+			this.fireEvent('executeDocument','QBE','MODEL',record);
 	    }
 
 

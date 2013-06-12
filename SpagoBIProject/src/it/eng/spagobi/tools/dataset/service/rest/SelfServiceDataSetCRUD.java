@@ -88,19 +88,12 @@ public class SelfServiceDataSetCRUD {
 			JSONObject detailAction = new JSONObject();
 			detailAction.put("name", "detail");
 			detailAction.put("description", "Dataset detail");
-//			actions.put(detailAction);			
 			JSONObject deleteAction = new JSONObject();
 			deleteAction.put("name", "delete");
 			deleteAction.put("description", "Delete dataset");
-//			actions.put(deleteAction);
 			JSONObject worksheetAction = new JSONObject();
 			worksheetAction.put("name", "worksheet");
 			worksheetAction.put("description", "Show Worksheet");
-//			actions.put(worksheetAction);
-//			JSONObject geoAction = new JSONObject();
-//			geoAction.put("name", "worksheet");
-//			geoAction.put("description", "Show Geo");
-//			actions.put(geoAction);
 			JSONArray datasetsJSONReturn = new JSONArray();
 				
 			for(int i = 0; i < datasetsJSONArray.length(); i++) {

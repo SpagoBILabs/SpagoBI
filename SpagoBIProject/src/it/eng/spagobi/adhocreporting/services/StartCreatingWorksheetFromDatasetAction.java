@@ -40,6 +40,8 @@ public class StartCreatingWorksheetFromDatasetAction extends CreateDatasetForWor
 			// create the WorkSheet Edit Service's URL
 			String worksheetEditActionUrl = GeneralUtilities.getUrl(worksheetEngine.getUrl(), worksheetEditActionParameters);
 			LogMF.debug(logger, "Worksheet edit service invocation url is equal to [{}]", worksheetEditActionUrl);
+			int defEngineDataSourceWork = worksheetEngine.getDataSourceId();
+			worksheetEditActionParameters.put("ENGINE_DATASOURCE_ID", defEngineDataSourceWork);
 			
 			logger.trace("Copying output parameters to response...");
 			try {
