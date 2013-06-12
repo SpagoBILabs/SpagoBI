@@ -465,6 +465,8 @@ Sbi.locale.ln['sbi.roles.rolesSynchronization'] = 'Sincronizza';
 Sbi.locale.ln['sbi.roles.edit'] = 'Editare';
 Sbi.locale.ln['sbi.roles.worksheet'] = 'Worksheet';
 Sbi.locale.ln['sbi.roles.businessModels'] = 'Business Models';
+Sbi.locale.ln['sbi.roles.businessModels.categories'] = 'Categorie Business Models';
+
 
 Sbi.locale.ln['sbi.users.fullName'] = 'Nome Completo';
 Sbi.locale.ln['sbi.users.userId'] = 'User ID';
