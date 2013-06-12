@@ -132,3 +132,17 @@ ALTER TABLE SBI_DATA_SET ADD COLUMN IS_PUBLIC BOOLEAN DEFAULT FALSE;
 
 UPDATE SBI_DATA_SET SET IS_PUBLIC = TRUE, OWNER = 'biadmin';
 COMMIT;
+
+
+INSERT INTO SBI_USER_FUNC (USER_FUNCT_ID, NAME, DESCRIPTION, USER_IN, TIME_IN)
+    VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_USER_FUNC'), 
+    'SelfServiceMetaModelManagement','SelfServiceMetaModelManagement', 'server', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_USER_FUNC';
+commit;
+INSERT INTO SBI_ROLE_TYPE_USER_FUNC (ROLE_TYPE_ID, USER_FUNCT_ID)
+    VALUES ((SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD = 'USER' AND DOMAIN_CD = 'ROLE_TYPE'), 
+    (SELECT USER_FUNCT_ID FROM SBI_USER_FUNC WHERE NAME = 'SelfServiceMetaModelManagement'));
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_USER_FUNC';
+commit;
+
+ALTER TABLE SBI_META_MODELS  ADD DATA_SOURCE_ID INTEGER;
