@@ -27,6 +27,8 @@ import org.json.JSONObject;
  *         giulio.gavardi@eng.it
  *  Andrea Gioia
  *         andrea.gioia@eng.it
+ *  Davide Zerbetto
+ *         davide.zerbetto@eng.it
  *         
  */
 public class FileDataSet extends ConfigurableDataSet{
@@ -141,7 +143,7 @@ public class FileDataSet extends ConfigurableDataSet{
 		dataProxy = super.getDataProxy();
 		
 		if(dataProxy == null) {
-			setDataProxy( new FileDataProxy() );
+			setDataProxy( new FileDataProxy(this.getResourcePath()) );
 			dataProxy = getDataProxy();
 		}
 		
@@ -186,5 +188,10 @@ public class FileDataSet extends ConfigurableDataSet{
 	 */
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
+	}
+	
+	@Override
+	public String getSignature() {
+		return this.getDataProxy().getMD5Checksum();
 	}
 }
