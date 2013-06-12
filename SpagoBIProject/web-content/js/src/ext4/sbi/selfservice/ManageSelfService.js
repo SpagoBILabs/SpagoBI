@@ -38,14 +38,25 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 	, constructor : function(config) {
 		this.datasetPanelTab = Ext.create('Sbi.tools.dataset.DataSetsBrowser',{title: LN("sbi.tools.dataset.datasetbrowser.title")});
 		this.modelstPanelTab = Ext.create('Sbi.tools.model.MetaModelsBrowser',{title: LN("sbi.tools.model.metamodelsbrowser.title")});
+		
+		this.items = [ this.datasetPanelTab, this.modelstPanelTab];
+		this.callParent(arguments);
+		this.addEvents(
+		        /**
+		         * @event event1
+		         * Execute the qbe clicking in the model/dataset
+				 * @param {Object} docType engine to execute 'QBE'/'WORKSHEET'
+				 * @param {Object} inputType 'DATASET'/'MODEL'
+				 * @param {Object} record the record that contains all the information of the metamodel/dataset
+		         */
+		        'executeDocument'
+				);
 		this.modelstPanelTab.on('executeDocument',function(docType, inputType, record){
 			this.fireEvent('executeDocument',docType,inputType,record);
 		},this);
 		this.datasetPanelTab.on('executeDocument',function(docType, inputType, record){
 			this.fireEvent('executeDocument',docType,inputType,record);
-		},this);		
-		this.items = [ this.datasetPanelTab, this.modelstPanelTab];
-		this.callParent(arguments);
+		},this);
 	}
 
     

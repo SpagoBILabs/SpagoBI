@@ -30,7 +30,16 @@ Ext.define('Sbi.tools.model.MetaModelsBrowser', {
 		this.initViewPanel();
 		this.items=[this.viewPanel];
 		this.callParent(arguments);
-		
+		this.addEvents(
+		        /**
+		         * @event event1
+		         * Execute the qbe clicking in the model
+				 * @param {Object} docType 'QBE'
+				 * @param {Object} inputType 'MODEL'
+				 * @param {Object} record the record that contains all the information of the metamodel
+		         */
+		        'executeDocument'
+				);
 	}
 	
 	,
