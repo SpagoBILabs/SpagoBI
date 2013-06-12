@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/jgrapht-jdk1.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/spagobi-utils-json-4.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/spagobi-qbecore-4.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/logback/ch.qos.logback.classic_0.9.19.v20100519-1505.jar"/>
