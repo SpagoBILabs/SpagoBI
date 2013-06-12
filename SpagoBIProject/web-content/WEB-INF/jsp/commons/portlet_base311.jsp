@@ -341,15 +341,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <LINK rel='StyleSheet' 
 	  href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/resources/css/ext-all.css")%>' 
 	  type='text/css' />
-<%-- Ext css overrides --%>
-<LINK rel='StyleSheet' 
-	  href='<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/overrides/overrides.css")%>' 
-	  type='text/css' />
-<LINK rel='StyleSheet' 
-	  href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/overrides/resources/css/overrides.css")%>' 
-	  type='text/css' />
 
-	 
 	 <% // get the current ext theme
 	 String extTheme=ThemesManager.getTheExtTheme(currTheme);
 	 %>
@@ -368,7 +360,10 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 		href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/css/Ext.ux.ColorField.css")
 		%>'/> 
       
-      
+<%-- Ext css overrides --%>
+<LINK rel='StyleSheet' 
+      href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/overrides/resources/css/overrides.css")%>' 
+      type='text/css' />
       
 <%@ include file="/WEB-INF/jsp/commons/importSbiJS311.jspf"%>
 
