@@ -14,6 +14,7 @@ import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Date;
@@ -199,7 +200,20 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 	
 	public IMetaData getMetadata() {
-		return null;
+		IMetaData toReturn = null;
+		String xmlMetadata = this.getDsMetadata();
+		if (xmlMetadata == null || xmlMetadata.trim().equals("")) {
+			logger.error("This dataset has no metadata");
+			throw new SpagoBIRuntimeException("This dataset has no metadata");
+		}
+		DatasetMetadataParser parser = new DatasetMetadataParser();
+		try {
+			toReturn = parser.xmlToMetadata(xmlMetadata);
+		} catch (Exception e) {
+			logger.error("Error parsing dataset's metadata", e);
+			throw new SpagoBIRuntimeException("Error parsing dataset's metadata", e);
+		}
+		return toReturn;
 	}
 
 	public void setMetadata(IMetaData metadata) {
