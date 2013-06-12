@@ -70,6 +70,8 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			replayToClient( null );
 			
 		} catch (Throwable t) {
+			logger.error("Error while saving file into server: "+t);
+			t.printStackTrace();
 			AuditLogUtilities.updateAudit(getHttpRequest(), this.getUserProfile(), logOperation, logParameters , "KO");
 			SpagoBIEngineServiceException e = new SpagoBIEngineServiceException(this.getActionName(), "Error while saving file data set", t);
 			replayToClient( e );
@@ -164,6 +166,8 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			
 			uploaded.write(saveTo);
 		} catch (Throwable t) {
+			logger.error("Error while saving file into server: "+t);
+			t.printStackTrace();
 			throw new SpagoBIEngineServiceException(getActionName(), "Error while saving file into server", t);
 		} finally {
 			logger.debug("OUT");
