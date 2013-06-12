@@ -5,7 +5,8 @@
 
 /**
  * 
- * Container of an IFrame. It is a panel that contains an IFrame, so it gives some additional  features such as Toolbar
+ * Container of an IFrame. It is a panel that contains an IFrame, so it gives some additional  features such as Toolbar.
+ * It is an Abstract class all the additional functionalities should be implemented in the child class
  * 
  *     
  *  @author
@@ -24,6 +25,10 @@ Ext.define('Sbi.widgets.EditorIFramePanelContainer', {
 		this.callParent(arguments);
 	}
 
+	/**
+	 * Init the component
+	 * @param {Object} config configuration object
+	 */
 	, init: function(config){
 		this.layout = 'fit';
 		if(!this.iframe){
@@ -32,6 +37,10 @@ Ext.define('Sbi.widgets.EditorIFramePanelContainer', {
 		this.items=[this.iframe];
 	}
 	
+	/**
+	 * loads the url into the frame
+	 * @param {String} url The url to load
+	 */
 	, load: function(url){
 		this.iframe.load(url);
 	}

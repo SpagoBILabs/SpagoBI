@@ -39,12 +39,20 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		
 		this.documentexecution = Ext.create('Sbi.selfservice.SelfServiceExecutionIFrame',{}); 
 		this.manageSelfService = Ext.create('Sbi.selfservice.ManageSelfService',{selfServiceContainer : this}); 
-		
-		this.manageSelfService.on('executeDocument', this.executeDocument ,this);
-		
 					
 		this.items = [ this.manageSelfService, this.documentexecution]
 		this.callParent(arguments);
+		this.addEvents(
+		        /**
+		         * @event event1
+		         * Execute the qbe clicking in the model/dataset
+				 * @param {Object} docType engine to execute 'QBE'/'WORKSHEET'
+				 * @param {Object} inputType 'DATASET'/'MODEL'
+				 * @param {Object} record the record that contains all the information of the metamodel/dataset
+		         */
+		        'executeDocument'
+				);
+		this.manageSelfService.on('executeDocument', this.executeDocument ,this);
 
 	}
 

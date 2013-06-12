@@ -71,10 +71,18 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 			this.callParent(arguments);
 						
 			this.addListener('itemclick', this.onClick, this);
-			
-			this.addEvents('detail');		
+
+			this.addEvents(
+			        /**
+			         * @event event1
+			         * Execute the qbe clicking in the model
+					 * @param {Object} docType 'QBE'
+					 * @param {Object} inputType 'MODEL'
+					 * @param {Object} record the record that contains all the information of the metamodel
+			         */
+			        'executeDocument'
+					);
 		}
-		
 		,
 		initTemplate : function() {
 			// BUILD THE TPL
