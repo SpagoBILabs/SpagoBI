@@ -22,7 +22,7 @@
 }
 
 .meta-models-view{
-	background-image:url('../../../../../../themes/sbi_default/img/metamodel/metamodel.png');
+	background-image:url('../../../img/metamodel/metamodel.png');
 	background-repeat: no-repeat;
 	background-position: center;
 	margin-top: 15px;
