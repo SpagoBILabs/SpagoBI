@@ -912,7 +912,12 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 		this.setTenant();
 		
+		
+		
 		try {
+			
+			// no more step 1 and 1,5. datamart.jar and cfields.xml are no more copied in resources but inserted ins ervice catalogue
+			
 			/***********************************************************************************************************/
 			/* STEP 1: uploads the datamart document */
 			/***********************************************************************************************************/
@@ -925,22 +930,22 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 //						"Could not upload datamart.jar file: " + e.getMessage());
 //			}
 
-			try {
-				/***********************************************************************************************************/
-				/* STEP 1,5: if present uploads also the calculatedFields xml */
-				/***********************************************************************************************************/
-				if (calculatedFields.getContent() != null) {
-					logger.debug("Upload calculatedFields xml: cfields.xml ");
-					uploadFisicalFile(calculatedFields, CFIELDS_FILE_NAME);
-					logger.debug("cfields.xml file uploaded");
-				} else {
-					logger.debug("No cfields xml recevied");
-				}
-			} catch (Exception e) {
-				logger.error("Could not upload cfields file", e);
-				throw new SpagoBIRuntimeException(
-						"Could not upload cfieldds.xml file: " + e.getMessage());
-			}
+//			try {
+//				/***********************************************************************************************************/
+//				/* STEP 1,5: if present uploads also the calculatedFields xml */
+//				/***********************************************************************************************************/
+//				if (calculatedFields.getContent() != null) {
+//					logger.debug("Upload calculatedFields xml: cfields.xml ");
+//					uploadFisicalFile(calculatedFields, CFIELDS_FILE_NAME);
+//					logger.debug("cfields.xml file uploaded");
+//				} else {
+//					logger.debug("No cfields xml recevied");
+//				}
+//			} catch (Exception e) {
+//				logger.error("Could not upload cfields file", e);
+//				throw new SpagoBIRuntimeException(
+//						"Could not upload cfieldds.xml file: " + e.getMessage());
+//			}
 			
 			InputStream is = null;
 			DataHandler dh = null;
@@ -961,15 +966,28 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				MetaModel metaModel = metaModelsDAO.loadMetaModelByName(modelName);
 				if(metaModel != null){
 					logger.debug("Meta Model "+metaModel+" already present: go on with update");
+					// in update data source is not changeable
+					//					//Data Source update
+					//					if(dataSourceLabel != null){
+					//						metaModel.setDataSourceLabel(dataSourceLabel);
+					//					}
+					//					metaModelsDAO.modifyMetaModel(metaModel);
+
 				}
 				else{
 					logger.debug("Meta Model "+metaModel+" not aready present: go on with insert");
 					metaModel = new MetaModel();
 					metaModel.setName(modelName);
 					metaModel.setDescription(modelName);
+					//Data Source update
+					if(dataSourceLabel != null){
+						metaModel.setDataSourceLabel(dataSourceLabel);
+					}
 					metaModelsDAO.insertMetaModel(metaModel);
 				}	
 
+
+				
 				// Update content			
 				Content content = metaModelsDAO.loadActiveMetaModelContentById(metaModel.getId());
 				if(content != null){
