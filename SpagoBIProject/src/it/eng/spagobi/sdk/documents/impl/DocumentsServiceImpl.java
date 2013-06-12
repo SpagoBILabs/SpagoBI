@@ -447,6 +447,17 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			if(existingObject != null){
 				logger.debug("Found existing object: go on for update");
 				obj.setId(existingObject.getId());
+				
+				// if Object has already functionalities associated and current one is not specified then keep previous ones,
+				if(functionalityId == null && existingObject.getFunctionalities() != null && !existingObject.getFunctionalities().isEmpty()){
+					logger.debug("Keep previous functionalities");
+					obj.setFunctionalities(existingObject.getFunctionalities());
+				}
+				else{
+					if(functionalityId != null)
+					logger.debug("Insert into functionality with id "+functionalityId);					
+				}
+				
 				if(sdkTemplate != null && objTemplate!=null){
 					DAOFactory.getBIObjectDAO().modifyBIObject(obj, objTemplate);
 				}
