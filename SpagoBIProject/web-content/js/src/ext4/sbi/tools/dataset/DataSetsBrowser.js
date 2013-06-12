@@ -3,7 +3,6 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 
 	,
 	config : {
-		autoLoad : true,
 		modelName : "Sbi.tools.dataset.DataSetModel",
 		dataView : null,
 		tbar : null,
@@ -13,14 +12,15 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 
 	,
 	constructor : function(config) {
-		this.user = config.selfServiceContainer.config.user || '';
+
+		this.user = '';
 		this.initServices();
 		this.initStore();
 		this.initToolbar();
 		this.initViewPanel();
 		this.layout='fit';
-		
-//		this.callParent(arguments);
+		this.items = [this.viewPanel];
+		this.callParent(arguments);
 	}
 
 	,

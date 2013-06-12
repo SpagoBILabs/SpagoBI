@@ -772,3 +772,9 @@ Sbi.locale.ln["error.mesage.description.data.set.saving.duplicated"]="Impossibil
 Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.title"]="Riempi il form sottostante e clicca sul pulsante Salva";
 Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.fields.datasource"]="Salva i dati in";
 	
+//===================================================================
+//SELF SERVICE
+//===================================================================
+
+Sbi.locale.ln["sbi.tools.dataset.datasetbrowser.title"]="Datasets";
+Sbi.locale.ln["sbi.tools.model.metamodelsbrowser.title"]="Modelli";
