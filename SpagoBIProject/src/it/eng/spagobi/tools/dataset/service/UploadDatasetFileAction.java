@@ -16,6 +16,7 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import it.eng.spagobi.utilities.service.IServiceResponse;
 import it.eng.spagobi.utilities.service.JSONResponse;
@@ -73,7 +74,7 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			logger.error("Error while saving file into server: "+t);
 			t.printStackTrace();
 			AuditLogUtilities.updateAudit(getHttpRequest(), this.getUserProfile(), logOperation, logParameters , "KO");
-			SpagoBIEngineServiceException e = new SpagoBIEngineServiceException(this.getActionName(), "Error while saving file data set", t);
+			SpagoBIServiceException e = new SpagoBIServiceException(this.getActionName(), "Error while saving file data set", t);
 			replayToClient( e );
 		} finally {
 			logger.debug("OUT");
@@ -84,7 +85,7 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
     /*
      * see Ext.form.BasicForm for file upload
      */
-	private void replayToClient(final SpagoBIEngineServiceException e) {
+	private void replayToClient(final SpagoBIServiceException e) {
 		
 		try {
 			
@@ -157,6 +158,14 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			String path  = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 			String resourcePath= SpagoBIUtilities.readJndiResource(path);
 			File datasetFileDir = new File(resourcePath+File.separatorChar+"dataset"+File.separatorChar+"files");
+			if (!datasetFileDir.exists()){
+				//Create Directory \dataset\files under \resources if don't exists
+				boolean mkdirResult = datasetFileDir.mkdirs();
+				if (!mkdirResult) {
+					throw new SpagoBIServiceException(getActionName(), "Cannot create \\dataset\\files directory into server resources");
+				}
+			}
+
 			File saveTo = new File(datasetFileDir, fileName);
 			// check if the file already exists
 			if (saveTo.exists()){
@@ -168,7 +177,7 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 		} catch (Throwable t) {
 			logger.error("Error while saving file into server: "+t);
 			t.printStackTrace();
-			throw new SpagoBIEngineServiceException(getActionName(), "Error while saving file into server", t);
+			throw new SpagoBIServiceException(getActionName(), "Error while saving file into server", t);
 		} finally {
 			logger.debug("OUT");
 		}
