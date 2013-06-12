@@ -582,12 +582,14 @@
 				<file name="./src/ext/sbi/commons/Format.js" />
 				<file name="./src/ext/sbi/locale/LocaleUtils.js" />
 				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
-				<file name="./src/ext4/sbi/service/ServiceRegistry.js" />
 				<file name="./src/ext/sbi/decorator/LoadMask.js" />
 				<file name="./src/ext/sbi/commons/Format.js" />
 				<file name="./src/ext/sbi/commons/JSON.js" />
 				<file name="./src/ext/sbi/commons/Session.js" />	
 				<file name="./src/ext/sbi/commons/Log.js" />	
+
+
+
 
 				<file name="./src/ext4/sbi/widgets/store/InMemoryFilteredStore.js" />
 				<file name="./src/ext4/sbi/widgets/store/DynamicStore.js" />
@@ -602,6 +604,12 @@
 				<file name="./src/ext4/sbi/widgets/compositepanel/ListDetailPanel.js" />
 				<file name="./src/ext4/sbi/widgets/toolbar/StaticToolbarBuilder.js" />
 				<file name="./src/ext4/sbi/widgets/wizard/WizardWindow.js" />
+				<file name="./src/ext4/sbi/widgets/frame/EditorIFramePanel.js" />
+				<file name="./src/ext4/sbi/widgets/frame/EditorIFramePanelContainer.js" />
+
+				<file name="./src/ext/sbi/browser/DocumentsTree.js" />
+				<file name="./src/ext4/sbi/execution/SaveDocumentWindowsExt4.js" />
+
 
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovTreePanel.js" />
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovResultPanel.js" />
@@ -611,11 +619,22 @@
 				<file name="./src/ext4/sbi/tools/datasource/DataSourceModel.js" />
 				<file name="./src/ext4/sbi/tools/datasource/DataSourceListDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/datasource/DataSourceDetailPanel.js" />
-				
+
+				<file name="./src/ext/sbi/tools/dataset/FileDatasetPanel.js" />
+
 				<file name="./src/ext4/sbi/tools/dataset/DataSetModel.js" />
-				<file name="./src/ext4/sbi/tools/dataset/DataSetWizard.js" />
-				<file name="./src/ext4/sbi/tools/dataset/DataSetView.js" />
-				<file name="./src/ext4/sbi/tools/dataset/DataSetBrowser.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetsBrowser.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetsView.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetsWizard.js" />
+
+				<file name="./src/ext4/sbi/tools/model/MetaModelsBrowser.js" />
+				<file name="./src/ext4/sbi/tools/model/MetaModelsView.js" />
+				<file name="./src/ext4/sbi/tools/model/MetaModelModel.js" />
+
+
+				<file name="./src/ext4/sbi/selfservice/ManageSelfService.js" />
+				<file name="./src/ext4/sbi/selfservice/ManageSelfServiceContainer.js" />
+				<file name="./src/ext4/sbi/selfservice/SelfServiceExecutionIFrame.js" />
 				
 			</filelist>
 
