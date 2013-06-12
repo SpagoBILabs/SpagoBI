@@ -601,7 +601,7 @@
 				<file name="./src/ext4/sbi/widgets/grid/FixedGridPanelInMemoryFiltered.js" />
 				<file name="./src/ext4/sbi/widgets/compositepanel/ListDetailPanel.js" />
 				<file name="./src/ext4/sbi/widgets/toolbar/StaticToolbarBuilder.js" />
-
+				<file name="./src/ext4/sbi/widgets/wizard/WizardWindow.js" />
 
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovTreePanel.js" />
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovResultPanel.js" />
@@ -611,6 +611,11 @@
 				<file name="./src/ext4/sbi/tools/datasource/DataSourceModel.js" />
 				<file name="./src/ext4/sbi/tools/datasource/DataSourceListDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/datasource/DataSourceDetailPanel.js" />
+				
+				<file name="./src/ext4/sbi/tools/dataset/DataSetModel.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetWizard.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetView.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetBrowser.js" />
 				
 			</filelist>
 
