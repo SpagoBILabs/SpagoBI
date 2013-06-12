@@ -211,6 +211,7 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 		return JSONPars;
 	}
 	
+	//Overriding method because the Chart could work with the Dataset and without specifing the DataSource
 	 public Map getEnv() {
 		 IDataSource dataSource = null;
 		 Map env = new HashMap();
