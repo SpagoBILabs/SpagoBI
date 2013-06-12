@@ -39,8 +39,9 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 			 * The list of the properties that should be filtered
 			 */
 			filteredProperties : new Array(),
+			
+			autoScroll : true
 
-			frame : true
 
 		}
 

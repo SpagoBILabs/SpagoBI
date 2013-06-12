@@ -63,8 +63,8 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		 * The list of the properties that should be filtered
 		 */
 		filteredProperties : new Array(),
-
-		frame : true
+		
+		autoScroll : true
 
 	}
 
@@ -80,9 +80,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		Ext.apply(this, config || {});
 		
 		this.itemSelector = 'dd';
-		//this.overClass = 'over';
 		this.trackOver = true;
-		//this.overItemCls = 'x-item-over';
 		this.overItemCls = 'over';
 		this.frame = true;
 		this.emptyText = LN('sbi.ds.noDataset');
@@ -90,7 +88,6 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 			wrap : false
 		};
 		this.scrollable = 'horizontal';
-		this.renderTo = Ext.getBody(); //verificare perché dovrebbe essere un item del parent (pannello)
 
 		this.callParent(arguments);
 
@@ -111,7 +108,6 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		this.tpl = new Ext.XTemplate(
 				'<div id="sample-ct">', 	            
 	 	           '<div class="group-view">',
-	 	            '<h2><div class="group-header">',title,'</div></h2>',
 	 	            '<ul>',
 	 	            	'<tpl if="root.length == 0">',
 	 	            		'<div id="empty-group-message">',
@@ -125,8 +121,8 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 			                        	'<div class="button"><img class="action-{name}" title="{description}" src="' + Ext.BLANK_IMAGE_URL + '"/></div>',
 			                        '</tpl>',
 			                    '</div>',			                    								
-								'<div class="item-desc">' +
-									'<img src=\"'+ Ext.LEAF_IMAGE_URL  +'\" width="50">' ,
+								'<div class="dataset-view">' +
+									'<img src="/SpagoBI/themes/sbi_default/img/dataset/dataset.png" width="110" style="margin-left: 40px; margin-top: 10px;">' ,
 									'<p><b>{name}</b></p>',
 									'<p>{description}</p><br/>',
 								'</div>',
