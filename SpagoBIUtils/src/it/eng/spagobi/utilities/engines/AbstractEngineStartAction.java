@@ -444,7 +444,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 return analysisStateRowData;
 	 }
 
-	 private ContentServiceProxy getContentServiceProxy() {
+	 protected ContentServiceProxy getContentServiceProxy() {
 		 if(contentProxy == null) {
 			 contentProxy = new ContentServiceProxy(getUserIdentifier(), getHttpSession());
 		 }	   
@@ -488,8 +488,14 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 Map env = new HashMap();
 
 		 copyRequestParametersIntoEnv(env, getSpagoBIRequestContainer());
+		 try {
+			 
+		 } catch (Exception e){
+			 
+		 }
+
 		 env.put(EngineConstants.ENV_DATASOURCE, getDataSource());
-		 // document id can be null (when using QbE for dataset definition)
+		  // document id can be null (when using QbE for dataset definition)
 		 if (getDocumentId() != null) {
 			 env.put(EngineConstants.ENV_DOCUMENT_ID, getDocumentId());
 		 }
