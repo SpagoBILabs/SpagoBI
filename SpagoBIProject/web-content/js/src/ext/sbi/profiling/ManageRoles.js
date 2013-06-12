@@ -324,25 +324,29 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		var checkBoxConfigs = [];
 		this.categoryStore.load({
 		    callback: function () {
-				this.getRange().forEach(function(record){
-					checkBoxConfigs.push({ //pushing into array
-				        id:record.data.VALUE_ID,
-				        boxLabel:record.data.VALUE_NM,
+		    	if (this.getRange().length > 0){
+					this.getRange().forEach(function(record){
+						checkBoxConfigs.push({ //pushing into array
+					        id:record.data.VALUE_ID,
+					        boxLabel:record.data.VALUE_NM,
+					    });
+
+					});
+					var myCheckboxgroup = new Ext.form.CheckboxGroup({
+				        id:'businessModelsCategoriesCheckGroup',
+				        fieldLabel: 'Business Model Categories',
+				        columns:1,
+				        items:checkBoxConfigs,
+				        boxMinWidth  : 150,
+			            boxMinHeight  : 100,
+			            hideLabel  : false
 				    });
 
-				});
-				
-				var myCheckboxgroup = new Ext.form.CheckboxGroup({
-			        id:'businessModelsCategoriesCheckGroup',
-			        fieldLabel: 'Business Model Categories',
-			        columns:1,
-			        items:checkBoxConfigs,
-			        boxMinWidth  : 150,
-		            boxMinHeight  : 100,
-		            hideLabel  : false
-			    });
+			        thisPanel.businessModelsTab.getComponent('businessModelsCheckGroup').add( myCheckboxgroup);
+		    	}
 
-		        thisPanel.businessModelsTab.getComponent('businessModelsCheckGroup').add( myCheckboxgroup);
+				
+
 
 		     }
 		 });
@@ -507,7 +511,10 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		businessModelsCheckGroup.doLayout();
 
 		var businessModelsCategoriesCheckGroup = businessModelsCheckGroup.getComponent('businessModelsCategoriesCheckGroup');
-		var bmCheckBoxes = businessModelsCategoriesCheckGroup.items.items
+		var bmCheckBoxes;
+		if ((businessModelsCategoriesCheckGroup != undefined) && (businessModelsCategoriesCheckGroup.items != undefined) && (businessModelsCategoriesCheckGroup.items.items != undefined)){
+			bmCheckBoxes = businessModelsCategoriesCheckGroup.items.items
+		}
 		
 		if ((bmCheckBoxes != null) && (bmCheckBoxes !== undefined)){
 			bmCheckBoxes.forEach(function(item){
