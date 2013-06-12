@@ -6,16 +6,18 @@
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.security.MessageDigest;
 
 import org.apache.log4j.Logger;
+
+import sun.misc.BASE64Encoder;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -24,16 +26,12 @@ import org.apache.log4j.Logger;
 public class FileDataProxy extends AbstractDataProxy {
 	
 	String fileName;
+	private String resourcePath = null;
 	
 	private static transient Logger logger = Logger.getLogger(FileDataProxy.class);
-	
-	
-	public FileDataProxy() {
-		
-	}
 			
-	public FileDataProxy(String fileName) {
-		
+	public FileDataProxy(String resourcePath) {
+		this.resourcePath = resourcePath;
 	}
 	
 	public IDataStore load(String statement, IDataReader dataReader) throws EMFUserError {
@@ -47,17 +45,7 @@ public class FileDataProxy extends AbstractDataProxy {
 		
 		try {
 			// recover the file from resources!
-			SingletonConfig configSingleton = SingletonConfig.getInstance();
-			String filePath  = "";
-			if(resPath!=null && !resPath.equals("")){
-				filePath = resPath;
-			}else{
-				String pathh  = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-				filePath= SpagoBIUtilities.readJndiResource(pathh);
-			}			
-			
-			filePath += "/dataset/files";
-			filePath+="/"+fileName;
+			String filePath = getCompleteFilePath();
 			inputStream = new FileInputStream(filePath);
 			dataStore = dataReader.read( inputStream );
 		}
@@ -75,11 +63,63 @@ public class FileDataProxy extends AbstractDataProxy {
 		return dataStore;
 	}
 
+	private String getCompleteFilePath() {
+		String filePath = resourcePath;
+		filePath += "/dataset/files";
+		filePath += "/" + fileName;
+		return filePath;
+	}
+
 	public String getFileName() {
 		return fileName;
 	}
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+	
+	private byte[] createChecksum() {
+		logger.debug("IN");
+		byte[] toReturn = null;
+		InputStream fis = null;
+		try {
+			String filePath = this.getCompleteFilePath();
+			fis = new FileInputStream(filePath);
+
+			byte[] buffer = new byte[1024];
+			MessageDigest complete = MessageDigest.getInstance("MD5");
+			int numRead;
+
+			do {
+				numRead = fis.read(buffer);
+				if (numRead > 0) {
+					complete.update(buffer, 0, numRead);
+				}
+			} while (numRead != -1);
+
+			toReturn = complete.digest();
+
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot get file checksum", e);
+		} finally {
+			if (fis != null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					logger.error("Error closing input stream", e);
+				}
+			}
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+	
+	public String getMD5Checksum() {
+		logger.debug("IN");
+		byte[] checksum = this.createChecksum();
+		BASE64Encoder encoder = new BASE64Encoder();
+		String encoded = encoder.encode(checksum);
+		logger.debug("OUT: returning [" + encoded + "]");
+		return encoded;
 	}
 }
