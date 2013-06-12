@@ -334,7 +334,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 					});
 					var myCheckboxgroup = new Ext.form.CheckboxGroup({
 				        id:'businessModelsCategoriesCheckGroup',
-				        fieldLabel: 'Business Model Categories',
+				        fieldLabel: LN('sbi.roles.businessModels.categories'),
 				        columns:1,
 				        items:checkBoxConfigs,
 				        boxMinWidth  : 150,
