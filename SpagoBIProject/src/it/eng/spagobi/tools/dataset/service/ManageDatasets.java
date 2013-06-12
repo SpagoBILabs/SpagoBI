@@ -77,7 +77,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	public static final String GENERIC_TYPE = "generic";
 	public static final Integer LIMIT_DEFAULT = 20;
 	public static final String PUBLIC = "PUBLIC";
-	private IEngUserProfile profile;
+	protected IEngUserProfile profile;
 
 	@Override
 	public void doService() {
@@ -379,9 +379,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		if(this.requestContainsAttribute( DataSetConstants.FILTERS ) ) {
 			filtersJSON = getAttributeAsJSONObject( DataSetConstants.FILTERS );
 			String hsql = filterList(filtersJSON);
-			items = dsDao.loadFilteredDatasetList(hsql, start, limit);
+			items = dsDao.loadFilteredDatasetList(hsql, start, limit, profile.getUserUniqueIdentifier().toString());
 		}else{//not filtered
-			items = dsDao.loadPagedDatasetList(start,limit);
+			items = dsDao.loadPagedDatasetList(start,limit,profile.getUserUniqueIdentifier().toString());
 		}
 		return items;
 	}

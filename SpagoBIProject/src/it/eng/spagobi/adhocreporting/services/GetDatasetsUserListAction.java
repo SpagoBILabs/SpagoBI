@@ -39,7 +39,8 @@ public class GetDatasetsUserListAction extends ManageDatasets {
 		try {
 			
 			IDataSetDAO dao;
-			IEngUserProfile profile = getUserProfile();
+			profile = getUserProfile();
+	
 			try {
 				dao = DAOFactory.getDataSetDAO();
 				dao.setUserProfile(profile);
