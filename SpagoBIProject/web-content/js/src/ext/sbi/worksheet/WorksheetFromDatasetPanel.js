@@ -113,15 +113,13 @@ Ext.extend(Sbi.worksheet.WorksheetFromDatasetPanel, Ext.Panel, {
 					, LN('sbi.generic.warning'));
 			return;
 		}
-		/*
-		if (selectedRecords.length > 1) {
+		var pars = selectedRecord.get('pars');
+		if (pars.length > 0) {
 			Sbi.exception.ExceptionHandler.showWarningMessage(
-					LN('sbi.worksheet.worksheetfromdatasetpanel.onlyonedatasetpermitted.msg')
+					'Sorry but selected dataset has parameters and cannot be used'
 					, LN('sbi.generic.warning'));
 			return;
 		}
-		var selectedRecord = selectedRecords[0];
-		*/
 		var datasetLabel = selectedRecord.get('label');
 		var datasourceLabel = selectedRecord.get('dataSource');
 		this.getLayout().setActiveItem( 1 );
@@ -136,6 +134,13 @@ Ext.extend(Sbi.worksheet.WorksheetFromDatasetPanel, Ext.Panel, {
 		if (selectedRecord == null) {
 			Sbi.exception.ExceptionHandler.showWarningMessage(
 					LN('sbi.worksheet.worksheetfromdatasetpanel.nodatasetselected.msg')
+					, LN('sbi.generic.warning'));
+			return;
+		}
+		var pars = selectedRecord.get('pars');
+		if (pars.length > 0) {
+			Sbi.exception.ExceptionHandler.showWarningMessage(
+					'Sorry but selected dataset has parameters and cannot be used'
 					, LN('sbi.generic.warning'));
 			return;
 		}
