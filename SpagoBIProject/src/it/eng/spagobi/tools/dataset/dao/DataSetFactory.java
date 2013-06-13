@@ -137,7 +137,8 @@ public class DataSetFactory {
 		JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
 		try{
 			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)){
-				ds = new FileDataSet();			
+				ds = new FileDataSet();
+				ds.setConfiguration(sbiDataSet.getConfiguration());
 				if (jsonConf.getString(DataSetConstants.FILE_TYPE) != null){
 					((FileDataSet)ds).setFileType(jsonConf.getString(DataSetConstants.FILE_TYPE));		
 				}
@@ -147,6 +148,7 @@ public class DataSetFactory {
 	
 			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)) { 
 				ds=new JDBCDataSet();
+				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((JDBCDataSet)ds).setQuery(jsonConf.getString(DataSetConstants.QUERY));
 				((JDBCDataSet)ds).setQueryScript(jsonConf.getString(DataSetConstants.QUERY_SCRIPT));
 				((JDBCDataSet)ds).setQueryScriptLanguage(jsonConf.getString(DataSetConstants.QUERY_SCRIPT_LANGUAGE));				
@@ -158,6 +160,7 @@ public class DataSetFactory {
 	
 			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_WS)) { 			
 				ds=new WebServiceDataSet();
+				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((WebServiceDataSet)ds).setAddress(jsonConf.getString(DataSetConstants.WS_ADDRESS));
 				((WebServiceDataSet)ds).setOperation(jsonConf.getString(DataSetConstants.WS_OPERATION));
 				ds.setDsType(WS_DS_TYPE);
@@ -165,6 +168,7 @@ public class DataSetFactory {
 	
 			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {	
 				ds=new ScriptDataSet();
+				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((ScriptDataSet)ds).setScript(jsonConf.getString(DataSetConstants.SCRIPT));
 				((ScriptDataSet)ds).setScriptLanguage(jsonConf.getString(DataSetConstants.SCRIPT_LANGUAGE));
 				ds.setDsType(SCRIPT_DS_TYPE);
@@ -172,19 +176,22 @@ public class DataSetFactory {
 	
 			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_JCLASS)) { 			
 				ds=new JavaClassDataSet();
+				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((JavaClassDataSet)ds).setClassName(jsonConf.getString(DataSetConstants.JCLASS_NAME));
 				ds.setDsType(JCLASS_DS_TYPE);
 			}
 			
 			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_CUSTOM)) { 			
 				ds=new CustomDataSet();
+				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((CustomDataSet)ds).setCustomData(jsonConf.getString(DataSetConstants.CUSTOM_DATA));
 				((CustomDataSet)ds).setJavaClassName(jsonConf.getString(DataSetConstants.JCLASS_NAME));
 				ds.setDsType(CUSTOM_DS_TYPE);
 			}
 			
 			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_QBE)) { 		
-				ds = new QbeDataSet();				
+				ds = new QbeDataSet();		
+				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((QbeDataSet)ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 				((QbeDataSet)ds).setDatamarts( jsonConf.getString(DataSetConstants.QBE_DATAMARTS));
 				DataSourceDAOHibImpl dataSourceDao=new DataSourceDAOHibImpl();
@@ -204,7 +211,7 @@ public class DataSetFactory {
 				ds.setCategoryCd(sbiDataSet.getCategory().getValueCd());
 				ds.setCategoryId(sbiDataSet.getCategory().getValueId());
 			}
-			ds.setConfiguration(sbiDataSet.getConfiguration());
+//			ds.setConfiguration(sbiDataSet.getConfiguration());
 			ds.setId(sbiDataSet.getId().getDsId());
 			ds.setName(sbiDataSet.getName());
 			ds.setLabel(sbiDataSet.getLabel());
