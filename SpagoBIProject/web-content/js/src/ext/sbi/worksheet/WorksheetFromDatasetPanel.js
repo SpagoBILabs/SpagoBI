@@ -83,11 +83,11 @@ Ext.extend(Sbi.worksheet.WorksheetFromDatasetPanel, Ext.Panel, {
 				text : LN('sbi.worksheet.worksheetfromdatasetpanel.buttons.gotoworksheet')
 				, handler : this.moveToWorksheet
 				, scope : this
-			}, {
+			}/*, {
 				text : LN('sbi.worksheet.worksheetfromdatasetpanel.buttons.gotoqbe')
 				, handler : this.moveToQbe
 				, scope : this
-			}]
+			}*/]
 		});
 		this.worksheetEditor = new Sbi.worksheet.WorksheetEditorIframePanelExt3({
 			defaultSrc: 'about:blank'
