@@ -1566,7 +1566,8 @@ SQLExpressionParser.module = function(){
 return{
 	
 	validateInLineCalculatedField: function (str){
-
+		return "";
+		
 		var error_offsets = new Array(); 
 		var error_lookaheads = new Array(); 
 		var error_count = 0; 
