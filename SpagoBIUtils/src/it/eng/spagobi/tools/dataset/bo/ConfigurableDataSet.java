@@ -214,12 +214,6 @@ public class ConfigurableDataSet extends AbstractDataSet {
 		return null;
 	}
 
-	public IDataStore getDomainValues(String fieldName, Integer start,
-			Integer limit, IDataStoreFilter filter) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public IDataStore decode(
 			IDataStore datastore) {
 		return datastore;
