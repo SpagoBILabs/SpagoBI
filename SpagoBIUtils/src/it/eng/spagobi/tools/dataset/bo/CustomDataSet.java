@@ -15,6 +15,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -299,11 +300,11 @@ public class CustomDataSet extends ConfigurableDataSet {
 
 	@Override
 	public IDataSetTableDescriptor persist(String tableName,
-			Connection connection) {
+			IDataSource dataSource) {
 		if(classToLaunch == null)
 			classToLaunch = instantiate();		
 		return classToLaunch.persist(tableName,
-				connection) ;
+				dataSource) ;
 	}
 
 	

@@ -16,6 +16,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.temporarytable.DatasetTemporaryTableUtils;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
@@ -111,7 +112,7 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 	public abstract String getSignature();
 	public abstract IDataStore getDomainValues(String attributeName, Integer start, Integer limit, IDataStoreFilter filter);
 	public abstract Map<String, List<String>> getDomainDescriptions(Map<String, List<String>> codes); 
-	public abstract IDataSetTableDescriptor persist(String tableName, Connection connection);
+	public abstract IDataSetTableDescriptor persist(String tableName, IDataSource dataSource);
 
 	public Map getUserProfileAttributes() {
 		return userAttributes;

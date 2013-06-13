@@ -65,8 +65,12 @@ public class PersistedTableManager {
 	public void persistDataSet(IDataSet dataset, IDataSource dsPersist) throws Exception {
 		logger.debug("IN");
 
-		// get persisted table name
-		this.setTableName(dataset.getLabel());
+		String tableName = this.getTableName();
+		logger.debug("Table name set is [" + tableName + "]");
+		if (tableName == null || tableName.trim().equals("")) {
+			logger.debug("Table name not set. Using dataset's label ...");
+			this.setTableName(dataset.getLabel());
+		}
 		logger.debug("Persisted table name is [" + getTableName() + "]");
 		// set dialect of db
 		this.setDialect(dsPersist.getHibDialectClass());

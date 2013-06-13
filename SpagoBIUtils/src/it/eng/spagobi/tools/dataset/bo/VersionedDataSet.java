@@ -12,6 +12,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.sql.Connection;
 import java.util.Date;
@@ -387,8 +388,8 @@ public class VersionedDataSet implements IDataSet {
 		return wrappedDataset.getSignature();
 	}
 	
-	public IDataSetTableDescriptor persist(String tableName, Connection connection){
-		return wrappedDataset.persist(tableName, connection);
+	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource){
+		return wrappedDataset.persist(tableName, dataSource);
 	}
 	
 	public IDataStore getDomainValues(String fieldName, 

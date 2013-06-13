@@ -40,7 +40,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
@@ -319,16 +317,21 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	}
 
 
-	public IDataSetTableDescriptor persist(String tableName, Connection connection) {
-		IDataSource dataSource = getDataSource();
+	/**
+	 * This method overrides basic persistence, since it uses the CREATE TABLE AS SELECT strategy.
+	 * The datasource provided in input IS NOT CONSIDERED: dataset's datasource is considered instead 
+	 * (but they must be the same datasource of course). 
+	 */
+	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource) {
+		IDataSource datasetDataSource = getDataSource();
 		try {
 			String sql = getSQLQuery();
 			List<String> fields = getDataSetSelectedFields(statement.getQuery());
-			return TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
+			return TemporaryTableManager.createTable(fields, sql, tableName, datasetDataSource);
 		} catch (Exception e) {
 			logger.error("Error creating the temporary table with name " + tableName, e);
 			throw new SpagoBIEngineRuntimeException("Error creating the temporary table with name " + tableName, e);
-		}	
+		}
 	}
 
 	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
@@ -508,7 +511,6 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		// TODO Auto-generated method stub
 
 	}
-	
 
 	public boolean isCalculateResultNumberOnLoadEnabled() {
 		return calculateResultNumberOnLoad;

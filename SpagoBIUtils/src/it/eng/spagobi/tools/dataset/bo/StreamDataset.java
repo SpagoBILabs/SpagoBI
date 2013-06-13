@@ -4,6 +4,7 @@ import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.lang.reflect.Constructor;
@@ -61,7 +62,7 @@ import org.apache.log4j.Logger;
 
 	@Override
 	public IDataSetTableDescriptor persist(String tableName,
-			Connection connection) {
+			IDataSource dataSource) {
 		// TODO Auto-generated method stub
 		return null;
 	}

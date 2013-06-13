@@ -20,6 +20,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
@@ -35,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
+import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 
@@ -358,14 +361,30 @@ public class FakeDataset extends AbstractCustomDataSet {
 	}
 
 	@Override
-	public IDataSetTableDescriptor persist(String tableName,
-			Connection connection) {
+	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource) {
 		logParams();
 		logFilters();
 		logSelectedFields();
-		IDataSetTableDescriptor toReturn = this.createTemporaryTable(tableName, connection);
-		this.populateTable(connection, tableName);
-		return toReturn;
+		Connection connection = null;
+		try {
+			connection = dataSource.getConnection();
+			IDataSetTableDescriptor toReturn = this.createTemporaryTable(tableName, connection);
+			this.populateTable(connection, tableName);
+			return toReturn;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error persisting dataset", e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					if (!connection.isClosed()) {
+						connection.close();
+					}
+				} catch (SQLException e) {
+					logger.error("Error while closing connection", e);
+				}
+			}
+		}
+
 	}
 	
 	@Override

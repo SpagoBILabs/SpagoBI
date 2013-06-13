@@ -14,8 +14,12 @@ import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -97,6 +101,7 @@ public abstract class AbstractDataSet implements IDataSet {
     	setLabel(dataSet.getLabel());
     	setDescription(dataSet.getDescription());
 		setLabel(dataSet.getLabel());
+		setConfiguration(dataSet.getConfiguration());
 		setCategoryId(dataSet.getCategoryId());
 		setParameters(dataSet.getParameters());
 		
@@ -567,4 +572,23 @@ public abstract class AbstractDataSet implements IDataSet {
 		throw new RuntimeException("Unsupported method");
 	}
 
+	public IDataSetTableDescriptor persist(String tableName,
+			IDataSource dataSource) {
+		PersistedTableManager persister = new PersistedTableManager();
+		persister.setTableName(tableName);
+		try {
+			persister.persistDataSet(this, dataSource);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while persisting dataset", e);
+		}
+		IDataSetTableDescriptor descriptor = null;
+		try {
+			descriptor = TemporaryTableManager.getTableDescriptor(null, tableName, dataSource);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting table information", e);
+		}
+		return descriptor;
+	}
+	
+	
 }

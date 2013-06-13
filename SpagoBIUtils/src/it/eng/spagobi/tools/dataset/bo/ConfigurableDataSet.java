@@ -11,10 +11,7 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,7 +23,7 @@ import org.apache.log4j.Logger;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class ConfigurableDataSet extends  AbstractDataSet {
+public class ConfigurableDataSet extends AbstractDataSet {
 
 	IDataReader dataReader;
 	IDataProxy dataProxy;
@@ -213,12 +210,6 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 	}
 
 	public String getSignature() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public IDataSetTableDescriptor persist(String tableName,
-			Connection connection) {
 		// TODO Auto-generated method stub
 		return null;
 	}
