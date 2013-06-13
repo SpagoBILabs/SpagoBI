@@ -13,19 +13,24 @@ import it.eng.qbe.model.structure.ModelCalculatedField.Slot.IMappedValuesDescrip
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesPunctualDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesRangeDescriptor;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -120,12 +125,9 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		
 			logger.debug("Load calculated fields from file [" + calculatedFieldsFile + "]");
 			
-			if(calculatedFieldsFile != null && calculatedFieldsFile.exists()) {
-							
-				document = guardedRead(calculatedFieldsFile);
-				Assert.assertNotNull(document, "Document cannot be null");
-					
-				
+			document = guardedRead(calculatedFieldsFile);
+			
+			if(document != null) {
 				
 				calculatedFieldNodes = document.selectNodes("//" + ROOT_TAG + "/" + FIELD_TAG + "");
 				logger.debug("Found [" + calculatedFieldNodes.size() + "] calculated field/s");
@@ -411,11 +413,6 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		}
 	}
 	
-	
-	
-	
-	
-	
 	private File getUserCalculatedFieldsFile() {
 		File calculatedFieldsFile = null;
 		calculatedFieldsFile = new File(modelJarFile.getParentFile(), CFIELDS_FROM_USER_FILE_NAME);
@@ -450,7 +447,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	}
 	
 	private Document guardedRead(File file) {
-		FileInputStream in;
+		InputStream in;
 		SAXReader reader;
 		Document document;
 		
@@ -466,7 +463,27 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 			logger.debug("Lock acquired");
 			
 			try {
-				in = new FileInputStream(file);
+				if(file.exists()) {
+					in = new FileInputStream(file);
+				} else {
+					ZipEntry zipEntry;
+					
+					zipEntry = null;
+					try {
+						JarFile jarFile = new JarFile( modelJarFile );	
+						zipEntry = jarFile.getEntry( file.getName() );
+						
+						if(zipEntry != null) {
+							in = jarFile.getInputStream(zipEntry);
+						} else {
+							return null;
+						}
+						
+					}catch(IOException ioe){
+						throw new SpagoBIRuntimeException("Impossible to load properties from file [" + zipEntry + "]");
+					}
+				}
+				
 			} catch (FileNotFoundException fnfe) {
 				DAOException e = new DAOException("Impossible to load calculated fields from file [" + file.getName() + "]", fnfe);
 				e.addHint("Check if [" + file.getPath()+ "] folder exist on your server filesystem. If not create it.");
