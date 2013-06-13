@@ -29,8 +29,6 @@ import java.util.Map;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 
 
@@ -153,7 +151,11 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 				throw new SpagoBIServiceException(SERVICE_NAME, "There are no engines for documents of type [WORKSHEET] available");
 			} else {
 				worksheetEngine = (Engine) engines.get(0);
-				LogMF.warn(logger, "There are more than one engine for document of type [WORKSHEET]. We will use the one whose label is equal to [{0}]", worksheetEngine.getLabel());
+				if (engines.size() > 1) {
+					LogMF.warn(logger, "There are more than one engine for document of type [WORKSHEET]. We will use the one whose label is equal to [{0}]", worksheetEngine.getLabel());
+				} else {
+					LogMF.debug(logger, "Using worksheet engine with label [{0}]", worksheetEngine.getLabel());
+				}
 			}
 		} catch(Throwable t) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load a valid engine for document of type [WORKSHEET]", t);				
