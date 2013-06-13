@@ -221,7 +221,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		});		
 		this.fileTypeCombo.addListener('select',this.activateFileTypePanel, this);
 
-		this.fileNameField = new Ext.form.TextField({
+		this.fileNameField = new Ext.form.DisplayField({
 			fieldLabel : LN('sbi.ds.fileName'),
 			width:300,
 			allowBlank : false,
