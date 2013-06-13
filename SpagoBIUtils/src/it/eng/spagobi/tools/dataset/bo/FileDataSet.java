@@ -53,16 +53,21 @@ public class FileDataSet extends ConfigurableDataSet{
     	
     	logger.debug("IN");
     	try{
-    		//JSONObject jsonConf  = ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
-    		String config = JSONUtils.escapeJsonString(dataSetConfig.getConfiguration());		
-    		JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
-    		String fileName = (jsonConf.get(FILE_NAME) != null)?jsonConf.get(FILE_NAME).toString():"";
-    		if(fileName == null || fileName.length() == 0) {
-    			throw new  IllegalArgumentException("fileName member of SpagoBiDataSet object parameter cannot be null or empty" +
-    					"while creating a FileDataSet. If you whant to create an empty FileDataSet use the proper constructor.");
-    		} 
-    		this.setFileName((jsonConf.get(FILE_NAME) != null)?jsonConf.get(FILE_NAME).toString():"");
-    		logger.info("File name: " + fileName);
+			// JSONObject jsonConf =
+			// ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
+			String config = JSONUtils.escapeJsonString(dataSetConfig
+					.getConfiguration());
+			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
+			String fileName = (jsonConf.get(FILE_NAME) != null) ? jsonConf.get(
+					FILE_NAME).toString() : "";
+			if (fileName == null || fileName.length() == 0) {
+				throw new IllegalArgumentException(
+						"fileName member of SpagoBiDataSet object parameter cannot be null or empty"
+								+ "while creating a FileDataSet. If you whant to create an empty FileDataSet use the proper constructor.");
+			}
+			this.setFileName((jsonConf.get(FILE_NAME) != null) ? jsonConf.get(
+					FILE_NAME).toString() : "");
+			logger.info("File name: " + fileName);
 		}catch (Exception e){
 			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 		}
@@ -100,15 +105,11 @@ public class FileDataSet extends ConfigurableDataSet{
 	 * @param fileName the target filename
 	 */
 	public void setDataReader(String fileName) {
-		JSONObject jsonConf = null;
-		if (this.getConfiguration() != null){
-			jsonConf  = ObjectUtils.toJSONObject(this.getConfiguration());
-		}
-		String fileExtension;
-		String fileType = this.getFileType();
-		
-		fileExtension = fileName.lastIndexOf('.') > 0 ? fileName.substring(fileName.lastIndexOf('.') + 1): null;
+		JSONObject jsonConf = ObjectUtils.toJSONObject(this.getConfiguration());;
+		String fileExtension = fileName.lastIndexOf('.') > 0 ? fileName
+				.substring(fileName.lastIndexOf('.') + 1) : null;
 		logger.debug("File extension: [" + fileExtension +"]");
+		String fileType = this.getFileType();
 		
 		if ((fileType != null) && (!fileType.isEmpty())){
 			logger.debug("File type is: [" + fileType +"]");

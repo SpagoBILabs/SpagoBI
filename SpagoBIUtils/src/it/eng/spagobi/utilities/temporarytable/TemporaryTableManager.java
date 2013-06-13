@@ -162,7 +162,7 @@ public class TemporaryTableManager {
 		return tableDescriptor;
 	}
     
-	private static IDataSetTableDescriptor getTableDescriptor(List<String> fields,
+	public static IDataSetTableDescriptor getTableDescriptor(List<String> fields,
 		String tableName, IDataSource dataSource) throws Exception {
 		DataSetTableDescriptor tableDescriptor = null;
 		Connection connection = null;

@@ -12,6 +12,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.sql.Connection;
 import java.util.Date;
@@ -157,7 +158,7 @@ public interface IDataSet {
 	
 	String getSignature();
 	
-	IDataSetTableDescriptor persist(String tableName, Connection connection);
+	IDataSetTableDescriptor persist(String tableName, IDataSource dataSource);
 	
 	public IDataStore getDomainValues(String fieldName, 
             Integer start, Integer limit, IDataStoreFilter filter);

@@ -85,7 +85,7 @@ public class WorksheetWithDatasetStartEditAction extends WorksheetEngineStartAct
 	public IDataSource getDataSource() {
 		// datasource information is coming with the request
 		String datasourceLabel = this.getAttributeAsString( DATASOURCE_LABEL );
-		if(datasourceLabel==null){
+		if (datasourceLabel == null || datasourceLabel.trim().equals("")) {
 			 datasourceLabel = this.getAttributeAsString( ENGINE_DATASOURCE_LABEL );
 		}		
 		logger.debug("Parameter [" + DATASOURCE_LABEL + "]  is equal to [" + datasourceLabel + "]");

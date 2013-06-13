@@ -233,49 +233,52 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			throw new SpagoBIEngineRuntimeException("Impossible to drop the temporary table with name " + tableName, e);
 		}
 		
-		Connection connection = null;
+//		Connection connection = null;
 		IDataSetTableDescriptor td = null;
 		
 		try {
-			connection = getConnection();
-			logger.debug("Cheking autocommit ...");
-			try {
-				if (!connection.getAutoCommit()) {
-					logger.debug("Autocommit is false, setting to true ...");
-					connection.setAutoCommit(true);
-					logger.debug("Autocommit setted to true successfully");
-				}
-			} catch (SQLException e) {
-				logger.error("Cannot set autocommit to true", e);
-			}
+//			connection = getConnection();
+//			logger.debug("Cheking autocommit ...");
+//			try {
+//				if (!connection.getAutoCommit()) {
+//					logger.debug("Autocommit is false, setting to true ...");
+//					connection.setAutoCommit(true);
+//					logger.debug("Autocommit setted to true successfully");
+//				}
+//			} catch (SQLException e) {
+//				logger.error("Cannot set autocommit to true", e);
+//			}
+//			logger.debug("Persisting dataset ...");
+//			td = dataset.persist(tableName, connection);
+			
 			logger.debug("Persisting dataset ...");
-			td = dataset.persist(tableName, connection);
+			td = dataset.persist(tableName, this.getDataSource());
 			
 			this.recordTemporaryTable(tableName, getEngineInstance().getDataSource());
 			
-			try {
-				if (!connection.getAutoCommit() && !connection.isClosed()) {
-					logger.debug("Committing changes ...");
-					connection.commit();
-					logger.debug("Changes committed successfully");
-				}
-			} catch (SQLException e) {
-				logger.error("Error while committing changes", e);
-				throw new SpagoBIRuntimeException("Error while committing changes", e);
-			}
+//			try {
+//				if (!connection.getAutoCommit() && !connection.isClosed()) {
+//					logger.debug("Committing changes ...");
+//					connection.commit();
+//					logger.debug("Changes committed successfully");
+//				}
+//			} catch (SQLException e) {
+//				logger.error("Error while committing changes", e);
+//				throw new SpagoBIRuntimeException("Error while committing changes", e);
+//			}
 		} catch (Throwable t) {
 			logger.error("Error while persisting dataset", t);
 			throw new SpagoBIRuntimeException("Error while persisting dataset", t);
 		} finally {
-			if ( connection != null ) {
-				try {
-					if (!connection.isClosed()) {
-						connection.close();
-					}
-				} catch (SQLException e) {
-					logger.error("Error while closing connection", e);
-				}
-			}
+//			if ( connection != null ) {
+//				try {
+//					if (!connection.isClosed()) {
+//						connection.close();
+//					}
+//				} catch (SQLException e) {
+//					logger.error("Error while closing connection", e);
+//				}
+//			}
 		}
 		
 		logger.debug("Dataset persisted successfully. Table descriptor : " + td);
@@ -294,32 +297,32 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		this.getHttpSession().setAttribute(attributeName, recorder);
 	}
 
-	public Connection getConnection() {
-		try {
-			IDataSource datasource = this.getDataSource();
-			Boolean multiSchema = datasource.getMultiSchema();
-			logger.debug("Datasource is multischema: " + multiSchema);
-			String schema;
-			if (multiSchema == null || !multiSchema.booleanValue()) {
-				schema = null;
-			} else {
-				String attributeName = datasource.getSchemaAttribute();
-				logger.debug("Datasource multischema attribute name: " + attributeName);
-				UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
-				logger.debug("Looking for attribute " + attributeName + " for user " + userProfile + " ...");
-				Object attributeValue = userProfile.getUserAttribute(attributeName);
-				logger.debug("Atribute " + attributeName + " for user " + userProfile.getUserId() + " is " + attributeValue);
-				if (attributeValue == null) {
-					throw new RuntimeException("No attribute with name " + attributeName + " found for user " + userProfile.getUserId());
-				} else {
-					schema = attributeValue.toString();
-				}
-			}
-			return this.getDataSource().getConnection(schema);
-		} catch (Exception e) {
-			throw new SpagoBIEngineRuntimeException("Cannot get connection to datasource", e);
-		}
-	}
+//	public Connection getConnection() {
+//		try {
+//			IDataSource datasource = this.getDataSource();
+//			Boolean multiSchema = datasource.getMultiSchema();
+//			logger.debug("Datasource is multischema: " + multiSchema);
+//			String schema;
+//			if (multiSchema == null || !multiSchema.booleanValue()) {
+//				schema = null;
+//			} else {
+//				String attributeName = datasource.getSchemaAttribute();
+//				logger.debug("Datasource multischema attribute name: " + attributeName);
+//				UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
+//				logger.debug("Looking for attribute " + attributeName + " for user " + userProfile + " ...");
+//				Object attributeValue = userProfile.getUserAttribute(attributeName);
+//				logger.debug("Atribute " + attributeName + " for user " + userProfile.getUserId() + " is " + attributeValue);
+//				if (attributeValue == null) {
+//					throw new RuntimeException("No attribute with name " + attributeName + " found for user " + userProfile.getUserId());
+//				} else {
+//					schema = attributeValue.toString();
+//				}
+//			}
+//			return this.getDataSource().getConnection(schema);
+//		} catch (Exception e) {
+//			throw new SpagoBIEngineRuntimeException("Cannot get connection to datasource", e);
+//		}
+//	}
 	
 	public Map<String, List<String>> getFiltersOnDomainValues() {
 		WorksheetEngineInstance engineInstance = this.getEngineInstance();
