@@ -1598,12 +1598,14 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								userIn: '',
 								dateIn: '',
 								versNum: 2,
-								versId: 0
+								versId: 0,
+								meta: []
 							});
 					this.setValues(this.newRecord);
 					this.manageParsGrid.loadItems([]);
 					this.manageDsVersionsGrid.loadItems([]);
-
+					this.manageDatasetFieldMetadataGrid.loadItems([]);
+					
 					this.tabs.items.each(function(item) {
 						item.doLayout();
 					});
