@@ -108,7 +108,8 @@ Sbi.tools.catalogue.MetaModelsCatalogue = function(config) {
 			width : 150,
 			name: 'data_source_label',
 			displayField : 'label',
-			valueField : 'label'
+			valueField : 'label',
+			triggerAction : 'all'
 		});
 
 	c.additionalFormObjects={
