@@ -5,10 +5,13 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.adhocreporting.services;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.execution.service.CreateDatasetForWorksheetAction;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.Map;
@@ -37,11 +40,24 @@ public class StartCreatingWorksheetFromDatasetAction extends CreateDatasetForWor
 			Engine worksheetEngine = getWorksheetEngine();
 			LogMF.debug(logger, "Engine label is equal to [{0}]", worksheetEngine.getLabel());
 			
+			if (worksheetEngine.getDataSourceId() == null) {
+				throw new SpagoBIServiceException(
+						SERVICE_NAME,
+						"The Wrosksheet engine has no default datasource, that is required for using this functionality. Please contact the administrator");
+			}
+			
+			int engineDatasource = worksheetEngine.getDataSourceId();
+			DataSource datasource;
+			try {
+				datasource = DAOFactory.getDataSourceDAO().loadDataSourceByID(engineDatasource);
+			} catch (EMFUserError e) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Error getting datasource with id " + engineDatasource, e);	
+			}
+			worksheetEditActionParameters.put("ENGINE_DATASOURCE_LABEL", datasource.getLabel());
+			
 			// create the WorkSheet Edit Service's URL
 			String worksheetEditActionUrl = GeneralUtilities.getUrl(worksheetEngine.getUrl(), worksheetEditActionParameters);
 			LogMF.debug(logger, "Worksheet edit service invocation url is equal to [{}]", worksheetEditActionUrl);
-			int defEngineDataSourceWork = worksheetEngine.getDataSourceId();
-			worksheetEditActionParameters.put("ENGINE_DATASOURCE_ID", defEngineDataSourceWork);
 			
 			logger.trace("Copying output parameters to response...");
 			try {
