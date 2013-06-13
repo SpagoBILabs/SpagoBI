@@ -64,9 +64,12 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 					IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(defEngineDataSourceWork);
 					worksheetEditActionParameters.put(ENGINE_DATASOURCE_LABEL,ds.getLabel());
 				} catch (EMFUserError e) {
-					logger.error("Error loading the datasource of the engine", e);
-					throw new SpagoBIRuntimeException("Error loading the datasource of the engine", e);
+					logger.error("Error loading the datasource of the worksheet engine", e);
+					throw new SpagoBIRuntimeException("Error loading the datasource of the worksheet engine", e);
 				}
+			}else{
+				logger.error("No default engine defined for the worksheet engine");
+				throw new SpagoBIRuntimeException("No default engine defined for the worksheet engine");
 			}
 
 			// create the WorkSheet Edit Service's URL
@@ -82,8 +85,19 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 
 			Engine qbeEngine = ExecuteAdHocUtility.getQbeEngine();
 
-			//int defEngineDataSource = qbeEngine.getDataSourceId();
-		//	qbeEditActionParameters.put("ENGINE_DATASOURCE_ID", defEngineDataSource);
+			Integer defEngineDataSourceQbe = worksheetEngine.getDataSourceId();
+			if(defEngineDataSourceWork!=null){
+				try {
+					IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(defEngineDataSourceQbe);
+					qbeEditActionParameters.put(ENGINE_DATASOURCE_LABEL,ds.getLabel());
+				} catch (EMFUserError e) {
+					logger.error("Error loading the datasource of the engine qbe", e);
+					throw new SpagoBIRuntimeException("Error loading the datasource of the engine qbe", e);
+				}
+			}else{
+				logger.error("No default engine defined for the qbe engine");
+				throw new SpagoBIRuntimeException("No default engine defined for the qbe engine");
+			}
 
 
 			LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());

@@ -23,6 +23,7 @@ public class QbeEngineStartActionFromBusinessModel extends QbeEngineStartAction 
 	
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(QbeEngineStartActionFromBusinessModel.class);
+    public static final String ENGINE_DATASOURCE_LABEL = "ENGINE_DATASOURCE_LABEL";
         
     private static final String DATA_SOURCE_LABEL = "DATA_SOURCE_LABEL";
     
@@ -51,6 +52,9 @@ public class QbeEngineStartActionFromBusinessModel extends QbeEngineStartAction 
 	 
 	 public IDataSource getDataSource() {
 		 String dataSourceLabel = getAttributeAsString(DATA_SOURCE_LABEL);
+		if(dataSourceLabel==null){
+			dataSourceLabel = this.getAttributeAsString( ENGINE_DATASOURCE_LABEL );
+		}	
 		 IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(dataSourceLabel);
 		 return dataSource;
 	 }
