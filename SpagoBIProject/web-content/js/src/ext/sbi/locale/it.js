@@ -684,6 +684,7 @@ Sbi.locale.ln['sbi.ds.file.csv.quote'] = 'Carattere quote';
 Sbi.locale.ln['sbi.ds.file.xsl.sheetnumber'] = 'Numero Foglio';
 Sbi.locale.ln['sbi.ds.file.xsl.limitrows'] = 'Numero limite righe';
 Sbi.locale.ln['sbi.ds.file.xsl.skiprows'] = 'Salta righe';
+Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= 'E\' necessario caricare il file sul server!';
 
 Sbi.locale.ln['sbi.datasource.label']= 'Etichetta';
 Sbi.locale.ln['sbi.datasource.description']= 'Descrizione';

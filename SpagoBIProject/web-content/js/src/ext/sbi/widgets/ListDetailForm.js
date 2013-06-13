@@ -159,7 +159,7 @@ Sbi.widgets.ListDetailForm = function(config) {
 	if(conf.tabPanelHeight){
 		this.baseHeight = conf.baseHeight;
     }else{
-    	this.baseHeight = 650; 
+    	this.baseHeight = 700; //650; 
     }
 	
 	if(conf.tabPanelWidth){
