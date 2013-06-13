@@ -620,6 +620,7 @@ Sbi.locale.ln['sbi.ds.scope'] = 'Visibilita';
 Sbi.locale.ln['sbi.ds.noDataset']= 'Non ci sono dataset disponibili';
 Sbi.locale.ln['sbi.ds.mandatoryFields']= 'Inserire campi obbligatori!';
 Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= 'Worksheet designer non abilitato per dataset parametrici!';
+Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= 'E\' necessario caricare il file sul server!';
 
 Sbi.locale.ln['sbi.datasource.label']= 'Etichetta';
 Sbi.locale.ln['sbi.datasource.description']= 'Descrizione';

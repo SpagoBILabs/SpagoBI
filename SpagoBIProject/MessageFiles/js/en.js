@@ -639,6 +639,7 @@ Sbi.locale.ln['sbi.ds.scope'] = 'Scope';
 Sbi.locale.ln['sbi.ds.noDataset']= 'No datasets available';
 Sbi.locale.ln['sbi.ds.mandatoryFields']= 'Please insert mandatory fields!';
 Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= 'Worksheet designer isn\'t available on parametric datasets!';
+Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= 'Is necessary upload the file!';
 
 
 //===================================================================
