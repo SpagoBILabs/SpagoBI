@@ -20,6 +20,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
@@ -29,8 +30,13 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -50,6 +56,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,7 +74,6 @@ public class SelfServiceDataSetCRUD {
 	static private String deleteInUseDSError = "error.mesage.description.data.set.deleting.inuse";
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
 	static private String saveDuplicatedDSError = "error.mesage.description.data.set.saving.duplicated";
-	static private final String SELFSERVICE_DS_TYPE = "SelfService";
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -81,19 +87,24 @@ public class SelfServiceDataSetCRUD {
 		try {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
-			dataSets = dataSetDao.loadAllActiveDataSetsByOwner(profile.getUserUniqueIdentifier().toString());	
+			dataSets = dataSetDao.loadAllActiveDataSetsByOwnerAndType(profile.getUserUniqueIdentifier().toString(), DataSetConstants.DS_FILE);
+			//dataSets = dataSetDao.loadAllActiveDataSetsByOwner(profile.getUserUniqueIdentifier().toString());	
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
 			
 			//sets action to modify dataset			
 			JSONObject detailAction = new JSONObject();
 			detailAction.put("name", "detail");
-			detailAction.put("description", "Dataset detail");
+			detailAction.put("description", "Dataset detail");	
 			JSONObject deleteAction = new JSONObject();
 			deleteAction.put("name", "delete");
 			deleteAction.put("description", "Delete dataset");
 			JSONObject worksheetAction = new JSONObject();
 			worksheetAction.put("name", "worksheet");
 			worksheetAction.put("description", "Show Worksheet");
+//			JSONObject geoAction = new JSONObject();
+//			geoAction.put("name", "worksheet");
+//			geoAction.put("description", "Show Geo");
+//			actions.put(geoAction);
 			JSONArray datasetsJSONReturn = new JSONArray();
 				
 			for(int i = 0; i < datasetsJSONArray.length(); i++) {
@@ -133,7 +144,16 @@ public class SelfServiceDataSetCRUD {
 			String id = (String) req.getParameter("id");
 			Assert.assertNotNull(id,deleteNullIdDataSetError );
 			IDataSet ds = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer(id));
-			DAOFactory.getDataSetDAO().deleteDataSet(ds.getId());		
+			try{
+				DAOFactory.getDataSetDAO().deleteDataSet(ds.getId());
+			}catch(Exception ex){
+				if (ex.getMessage().startsWith("[deleteInUseDSError]")){
+					updateAudit(req, profile, "DATA_SET.DELETE", logParam, "KO");
+					throw new SpagoBIRuntimeException(deleteInUseDSError);
+				}else{
+					throw ex;
+				}
+			}
 			logParam.put("LABEL", ds.getLabel());
 			updateAudit(req, profile, "DATA_SET.DELETE", null, "OK");
 			return ("{resp:'ok'}");
@@ -161,8 +181,17 @@ public class SelfServiceDataSetCRUD {
 			dao.setUserProfile(profile);
 			
 			String label = (String)req.getParameter("label");
+			String meta = (req.getParameter(DataSetConstants.METADATA)==null)?"":(String)req.getParameter(DataSetConstants.METADATA);	
 			IDataSet ds  = dao.loadActiveDataSetByLabel(label);
 			IDataSet dsNew = recoverDataSetDetails(req, ds);
+			if(meta != null && !meta.equals("")){
+				dsNew.setDsMetadata(meta);				
+			}
+
+//			logger.debug("Recalculating dataset's metadata: executing the dataset...");
+//			String dsMetadata = null;
+//			dsMetadata = getDatasetTestMetadata(dsNew, profile, meta);
+//			LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
 			
 			HashMap<String, String> logParam = new HashMap();
 			logParam.put("LABEL",dsNew.getLabel());
@@ -232,100 +261,61 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	private IDataSet recoverDataSetDetails (HttpServletRequest req, IDataSet dataSet) throws EMFUserError, SourceBeanException, IOException  {
+		JSONObject jsonDsConfig = new JSONObject();	
+		boolean insertion = (dataSet == null);
 		Integer id=-1;
 		String idStr = (String)(String)req.getParameter("id");
 		if(idStr!=null && !idStr.equals("")){
 			id = new Integer(idStr);
 		}
+		String type = (String)req.getParameter("type");
 		String label = (String)req.getParameter("label");
-		String versionNum = (String)req.getParameter("version_num");
-		String active = (String)req.getParameter("active");
 		String description = (String)req.getParameter("description");	
 		String name = (String)req.getParameter("name");
-		String catTypeVn = (String)req.getParameter("catTypeVn");
-		String type = (String)req.getParameter("type");
+		String catTypeVn = (String)req.getParameter("catTypeVn");		
 		String configuration = (String)req.getParameter("configuration");
-		Boolean isPublic = Boolean.valueOf((req.getParameter("isPublic")==null)?"false":(String)req.getParameter("isPublic"));
+		String fileName = (String)req.getParameter("fileName");
+		String csvDelimiter = (String)req.getParameter("csvDelimiter");
+		String csvQuote = (String)req.getParameter("csvQuote");
+		String fileType = (String)req.getParameter("fileType");
+		String skipRows = (String)req.getParameter("skipRows");
+		String limitRows = (String)req.getParameter("limitRows");
+		String xslSheetNumber = (String)req.getParameter("xslSheetNumber");
+		String meta = (String)req.getParameter(DataSetConstants.METADATA);		
 
+		Boolean isPublic = Boolean.valueOf((req.getParameter("isPublic")==null)?"false":(String)req.getParameter("isPublic"));
 		
 		IDataSet toReturn = dataSet; //for not loose other fields if already esists!	
-		if (toReturn == null && configuration != null){
-			String config = JSONUtils.escapeJsonString(configuration);
-			JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
-			try{
-				if(type.equalsIgnoreCase(DataSetConstants.DS_FILE) || type.equalsIgnoreCase(SELFSERVICE_DS_TYPE)){
-					toReturn = new FileDataSet();			
-					((FileDataSet)toReturn).setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));		
-				}
-		
-				if(type.equalsIgnoreCase(DataSetConstants.DS_QUERY)) { 
-					toReturn=new JDBCDataSet();
-					((JDBCDataSet)toReturn).setQuery(jsonConf.getString(DataSetConstants.QUERY));
-					((JDBCDataSet)toReturn).setQueryScript(jsonConf.getString(DataSetConstants.QUERY_SCRIPT));
-					((JDBCDataSet)toReturn).setQueryScriptLanguage(jsonConf.getString(DataSetConstants.QUERY_SCRIPT_LANGUAGE));				
-					DataSourceDAOHibImpl dataSourceDao=new DataSourceDAOHibImpl();
-					IDataSource dataSource= dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));				
-					((JDBCDataSet)toReturn).setDataSource(dataSource);				
-				}
-		
-				if(type.equalsIgnoreCase(DataSetConstants.DS_WS)) { 			
-					toReturn=new WebServiceDataSet();
-					((WebServiceDataSet)toReturn).setAddress(jsonConf.getString(DataSetConstants.WS_ADDRESS));
-					((WebServiceDataSet)toReturn).setOperation(jsonConf.getString(DataSetConstants.WS_OPERATION));
-				}
-		
-				if(type.equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {	
-					toReturn=new ScriptDataSet();
-					((ScriptDataSet)toReturn).setScript(jsonConf.getString(DataSetConstants.SCRIPT));
-					((ScriptDataSet)toReturn).setScriptLanguage(jsonConf.getString(DataSetConstants.SCRIPT_LANGUAGE));
-				}
-		
-				if(type.equalsIgnoreCase(DataSetConstants.DS_JCLASS)) { 			
-					toReturn=new JavaClassDataSet();
-					((JavaClassDataSet)toReturn).setClassName(jsonConf.getString(DataSetConstants.JCLASS_NAME));
-				}
-				
-				if(type.equalsIgnoreCase(DataSetConstants.DS_CUSTOM)) { 			
-					toReturn=new CustomDataSet();
-					((CustomDataSet)toReturn).setCustomData(jsonConf.getString(DataSetConstants.CUSTOM_DATA));
-					((CustomDataSet)toReturn).setJavaClassName(jsonConf.getString(DataSetConstants.JCLASS_NAME));
-				}
-				
-				if(type.equalsIgnoreCase(DataSetConstants.DS_QBE) ) { 		
-					toReturn = new QbeDataSet();				
-					((QbeDataSet)toReturn).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
-					((QbeDataSet)toReturn).setDatamarts( jsonConf.getString(DataSetConstants.QBE_DATAMARTS));
-					DataSourceDAOHibImpl dataSourceDao=new DataSourceDAOHibImpl();
-					IDataSource dataSource= dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));									
-					if (dataSource!=null){				
-						((QbeDataSet)toReturn).setDataSource(dataSource);				
-					}			
-					
-				}			
-				toReturn.setDsType(type);
-			}catch (Exception e){
-				logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
-			}
-		}
-		//temporary for self service datasets
-		if (configuration == null && type.equalsIgnoreCase(SELFSERVICE_DS_TYPE)){
-			toReturn = new FileDataSet();			
-			toReturn.setDsType(DataSetConstants.DS_FILE);
-			JSONObject confFile = new JSONObject();
-			try{
-				confFile.put("fileName", "prova.xml");
-			}catch (Exception e){
-				logger.error("Error while defining self service dataset configuration.  Error: " + e.getMessage());
-			}
-			toReturn.setConfiguration(confFile.toString());
-		}else{
-			toReturn.setDsType(getDatasetTypeName(type)); 
-		}
+		try{
+			String config = "{}";
+			if (configuration != null)
+				config = JSONUtils.escapeJsonString(configuration);
+			
+			JSONObject jsonConf  = ObjectUtils.toJSONObject(config);			
+			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
+			jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
 
+		}catch (Exception e){
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+		}
+		type =  getDatasetTypeName(type); 
+		if (insertion){
+			toReturn = new FileDataSet();		
+		}
+			
+		toReturn.setConfiguration(jsonDsConfig.toString());
+		toReturn.setDsType(type);
+		//update general informations
 		toReturn.setId(id.intValue());
 		toReturn.setLabel(label);
 		toReturn.setName(name);
 		toReturn.setDescription(description);		
+		
 		Integer categoryCode = null;
 		try{
 			categoryCode = Integer.parseInt(catTypeVn);			
@@ -414,5 +404,48 @@ public class SelfServiceDataSetCRUD {
 		
 		return categoryCode;
 	}
+
+	private String getDatasetTestMetadata(IDataSet dataSet,  IEngUserProfile profile, String metadata) throws Exception {
+		logger.debug("IN");
+		String dsMetadata = null;
+
+		Integer start = new Integer(0);
+		Integer limit = new Integer(10);
+
+		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
+	
+		try {
+			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
+			IDataStore dataStore = dataSet.getDataStore();
+			DatasetMetadataParser dsp = new DatasetMetadataParser();
+			
+			JSONArray metadataArray = JSONUtils.toJSONArray(metadata);
+
+			IMetaData metaData = dataStore.getMetaData();
+			for(int i=0; i<metaData.getFieldCount(); i++){
+				IFieldMetaData ifmd = metaData.getFieldMeta(i);
+				for(int j=0; j<metadataArray.length(); j++){
+					if(ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))){
+						if("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))){
+							ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+						}else{
+							ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+						}
+						break;
+					}
+				}
+			}
+
+			dsMetadata = dsp.metadataToXML(dataStore.getMetaData());
+		}
+		catch (Exception e) {
+			logger.error("Error while executing dataset for test purpose",e);
+			return null;		
+		}
+
+		logger.debug("OUT");
+		return dsMetadata;
+	}
+
 
 }

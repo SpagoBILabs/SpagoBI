@@ -278,6 +278,68 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return toReturn;		
 	}
 	
+
+	/**
+	 * Load all data set by owner.
+	 * @param ower the owner
+	 * @return list of data set
+	 * @see List#loadActiveDataSetByOwner(string)
+	 */	
+	public  List<IDataSet> loadAllActiveDataSetsByOwnerAndType(String owner, String type) {
+		List<IDataSet>  toReturn;
+		Session session;
+		Transaction transaction;
+		
+		logger.debug("IN");
+		
+		toReturn = new ArrayList<IDataSet>();
+		session = null;
+		transaction = null;
+		try {
+			if(owner == null) {
+				throw new IllegalArgumentException("Input parameter [owner] cannot be null");
+			}
+			if(type == null) {
+				throw new IllegalArgumentException("Input parameter [type] cannot be null");
+			}
+			
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch(Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			
+			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.type = ? and (h.publicDS = ? or h.owner = ?)" );
+			hibQuery.setBoolean(0, true);
+			hibQuery.setString(1, type);
+			hibQuery.setBoolean(2, true);
+			hibQuery.setString(3, owner);	
+			
+			List<SbiDataSet> sbiDataSetList = hibQuery.list();
+			for (SbiDataSet sbiDataSet : sbiDataSetList) {
+				if(sbiDataSet != null){
+					toReturn.add(DataSetFactory.toDataSet(sbiDataSet));				
+				}
+			}
+			transaction.commit();
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose label is equal to [" + owner+ "]", t);	
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		
+		return toReturn;		
+	}
+	
 	/**
 	 * Load data set by label.
 	 * @param label the label
@@ -330,59 +392,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		
 		return toReturn;		
 	}
-	
-	/**
-	 * Load data set by owner.
-	 * @param owner the owner
-	 * @return the data set
-	 * @see it.eng.spagobi.tools.dataset.dao.IDataSetDAO#loadDataSetByOwner(string)
-	 */	
-	public IDataSet loadActiveDataSetByOwner(String owner) {
-		IDataSet toReturn;
-		Session session;
-		Transaction transaction;
 		
-		logger.debug("IN");
-		
-		toReturn = null;
-		session = null;
-		transaction = null;
-		try {
-			if(owner == null) {
-				throw new IllegalArgumentException("Input parameter [owner] cannot be null");
-			}
-			
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			
-			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.owner = ?" );
-			hibQuery.setBoolean(0, true);
-			hibQuery.setString(1, owner);					
-			SbiDataSet dsActiveDetail =(SbiDataSet)hibQuery.uniqueResult();
-			if(dsActiveDetail!=null){
-				toReturn = DataSetFactory.toDataSet(dsActiveDetail);
-			}
-			transaction.commit();
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose label is equal to [" + owner+ "]", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-		
-		return toReturn;		
-	}
 	
 	public IDataSet loadActiveIDataSetByID(Integer id) {
 		IDataSet toReturn;
@@ -1450,7 +1460,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			boolean bLovs = hasBILovAssociated(String.valueOf(datasetId));
 			boolean bKpis = hasBIKpiAssociated(String.valueOf(datasetId));
 			if (bObjects || bLovs || bKpis) {
-				String message = "Dataset with id [" + datasetId + "] " +
+				String message = "[deleteInUseDSError]: Dataset with id [" + datasetId + "] " +
 				"cannot be erased because it is referenced by documents or kpis or lovs.";
 				throw new SpagoBIDOAException(message);
 			}
@@ -1461,10 +1471,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			List<SbiDataSet> sbiDataSetList = hibernateQuery.list();
 			for (SbiDataSet sbiDataSet : sbiDataSetList) {
 				if(sbiDataSet != null){
-				//	SbiDataSetId sbiDataSetId = new SbiDataSetId();
-				//	sbiDataSetId.setDsId(datasetId);
-				//	sbiDataSetId.setVersionNum(sbiDataSet.);
-				//	SbiDataSet sbiDataSet = (SbiDataSet) session.load(SbiDataSet.class, sbiDataSetId);
 					session.delete(sbiDataSet);		
 				}
 			}
@@ -1476,8 +1482,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while deleting dataset " +
-					"whose id is equal to [" + datasetId + "]", t);
+			String msg = (t.getMessage()!=null)?t.getMessage():"An unexpected error occured while deleting dataset " +
+					"whose id is equal to [" + datasetId + "]";
+			throw new SpagoBIDOAException(msg, t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
