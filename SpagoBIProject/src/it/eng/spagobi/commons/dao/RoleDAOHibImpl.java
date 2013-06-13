@@ -538,6 +538,20 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		// for ManageUsers the default is false
 		role.setIsAbleToManageUsers(hibRole.getIsAbleToManageUsers() != null && hibRole.getIsAbleToManageUsers().booleanValue());
 
+		
+		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+		Set<SbiDomains> sbiDomains = hibRole.getSbiMetaModelCategories();
+		if(sbiDomains!=null){
+			for (SbiDomains sbiDomain: sbiDomains){
+				RoleMetaModelCategory category = new RoleMetaModelCategory();
+				category.setCategoryId(sbiDomain.getValueId());
+				category.setRoleId(hibRole.getExtRoleId());
+				categories.add(category);
+			}
+		}
+		role.setRoleMetaModelCategories(categories);
+		
+		
 		role.setRoleTypeCD(hibRole.getRoleTypeCode());
 		role.setRoleTypeID(hibRole.getRoleType().getValueId());
 		role.setOrganization(hibRole.getCommonInfo().getOrganization());

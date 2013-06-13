@@ -127,15 +127,15 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 	
 
 	
-	public List<MetaModel> loadMetaModelByCategory(Integer category) {
-		LogMF.debug(logger, "IN: category = [{0}]", category);
+	public List<MetaModel> loadMetaModelByCategories(List<Integer> categories) {
+		LogMF.debug(logger, "IN: category = [{0}]", categories);
 		
 		List<MetaModel> toReturn = new ArrayList<MetaModel>();
 		Session session = null;
 		Transaction transaction = null;
 		
 		try {
-			if (category == null) {
+			if (categories == null || categories.size()==0) {
 				throw new IllegalArgumentException("Input parameter [category] cannot be null");
 			}
 			
@@ -148,8 +148,18 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 			
-			Query query = session.createQuery(" from SbiMetaModel m where m.category = ?");
-			query.setInteger(0, category);
+			String queryString = "from SbiMetaModel m where m.category in (";
+			for(int i=0; i<categories.size(); i++){
+				queryString = queryString+" ? ,";
+			}
+			queryString = queryString.substring(0,queryString.length()-2) +")";
+			
+			Query query = session.createQuery(queryString);
+						
+			for(int i=0; i<categories.size(); i++){
+				query.setInteger(i, categories.get(i));
+			}
+			
 			List list = query.list();
 			Iterator it = list.iterator();
 			while (it.hasNext()) {
@@ -163,7 +173,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading model with category [" + category + "]", t);	
+			throw new SpagoBIDOAException("An unexpected error occured while loading model with categories [" + categories + "]", t);	
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -174,7 +184,12 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 		return toReturn;		
 	}
 	
+	
 	public List<MetaModel> loadMetaModelByFilter(String filter) {
+		return loadMetaModelByFilter(filter, null); 
+	}
+	
+	public List<MetaModel> loadMetaModelByFilter(String filter, List<Integer> categories) {
 		LogMF.debug(logger, "IN: filter = [{0}]", filter);
 		
 		List<MetaModel> toReturn = new ArrayList<MetaModel>();
@@ -195,7 +210,25 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 			
-			Query query = session.createQuery(" from SbiMetaModel m where "+filter);
+			
+			String queryString = " from SbiMetaModel m where "+filter;
+			
+			if(categories!=null && categories.size()>0){
+				queryString = queryString+" and   m.category in (";
+				for(int i=0; i<categories.size(); i++){
+					queryString = queryString+" ? ,";
+				}
+				queryString = queryString.substring(0,queryString.length()-2) +")";
+			}
+			
+			Query query = session.createQuery(queryString);
+			
+			if(categories!=null && categories.size()>0){
+				for(int i=0; i<categories.size(); i++){
+					query.setInteger(i, categories.get(i));
+				}
+			}
+		
 			List list = query.list();
 			Iterator it = list.iterator();
 			while (it.hasNext()) {

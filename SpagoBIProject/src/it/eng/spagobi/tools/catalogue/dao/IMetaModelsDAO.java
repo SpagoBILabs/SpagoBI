@@ -19,6 +19,8 @@ public interface IMetaModelsDAO extends ISpagoBIDao {
 	
 	public List<MetaModel> loadMetaModelByFilter(String filter);
 	
+	public List<MetaModel> loadMetaModelByFilter(String filter, List<Integer> categories);
+		
 	public List<MetaModel> loadAllMetaModels();
 	
 	public void modifyMetaModel(MetaModel model);
@@ -39,7 +41,7 @@ public interface IMetaModelsDAO extends ISpagoBIDao {
 	
 	public long getActiveMetaModelContentLastModified(String name);
 	
-	public List<MetaModel> loadMetaModelByCategory(Integer category);
+	public List<MetaModel> loadMetaModelByCategories(List<Integer> categories);
 	
 	public List<Content> loadMetaModelVersions(Integer modelId);
 	
