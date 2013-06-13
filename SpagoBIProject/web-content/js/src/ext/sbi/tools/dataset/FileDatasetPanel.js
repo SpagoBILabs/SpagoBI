@@ -41,8 +41,7 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 	var defaultSettings =  {
 	        labelWidth: 75, 
 	        frame:false,
-	        defaultType: 'textfield'
-	        	
+	        defaultType: 'textfield'	        	
 		};
 
 
@@ -199,7 +198,6 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		
 		
 		//Upload file fields
-		
 		this.fileTypeCombo = new Ext.form.ComboBox({
 			name : 'fileType',
 			store: new Ext.data.ArrayStore({
@@ -209,7 +207,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		        ],
 		        data: [['CSV', 'CSV'], ['Excel 2003', 'XLS']]
 		    }),
-			width : 150,
+			width : (this.fromWizard)? 'auto' : 150,
 			fieldLabel : LN('sbi.ds.file.type'),
 			displayField : 'fileTypeName', 
 			valueField : 'fileTypeValue', 
@@ -225,6 +223,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 
 		this.fileNameField = new Ext.form.TextField({
 			fieldLabel : LN('sbi.ds.fileName'),
+			width:300,
 			allowBlank : false,
 			id: 'fileNameField',
 			name: 'fileName',
@@ -235,6 +234,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			inputType : 'file',
 			fieldLabel : LN('sbi.generic.upload'),
 			allowBlank : false,
+			width:300,
 			id: 'fileUploadField',
 			name: 'fileUpload'
 		});
@@ -245,25 +245,27 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	    });
 		
 		//Main Panel
-		
 		this.fileUploadFormPanel = new Ext.Panel({
 		  margins: '50 50 50 50',
           labelAlign: 'left',
           bodyStyle:'padding:5px',
-          layout: 'form',
+//          layout: 'form',
 		  defaultType: 'textfield',
 		  fileUpload: true,
 		  id: 'fileUploadPanel',
 		  items: [this.fileNameField, this.uploadField, this.uploadButton, this.fileTypeCombo, this.csvOptionsPanel, this.xlsOptionsPanel]
 
 		});
-		
+		if (!this.fromWizard) {
+			this.fileUploadFormPanel.layout = 'form';
+		}
 		return this.fileUploadFormPanel;
 
 	}	
 
 	//Listeners
 	,activateFileTypePanel : function(combo, record, index) {
+		if (Array.isArray(record)) record = record[0];
 		var fileTypeSelected = record.get('fileTypeValue');
 		if (fileTypeSelected != null && fileTypeSelected == 'CSV') {
 			this.csvOptionsPanel.setVisible(true);

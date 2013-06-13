@@ -703,7 +703,7 @@ Sbi.locale.ln['sbi.ds.file.csv.quote'] = 'Quote Character';
 Sbi.locale.ln['sbi.ds.file.xsl.sheetnumber'] = 'Sheet Number';
 Sbi.locale.ln['sbi.ds.file.xsl.limitrows'] = 'Limit Rows Number';
 Sbi.locale.ln['sbi.ds.file.xsl.skiprows'] = 'Skip Rows';
-
+Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= 'Is necessary upload the file!';
 
 //===================================================================
 //MESSAGE BOX BUTTONS
