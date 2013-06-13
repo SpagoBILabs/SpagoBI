@@ -6,6 +6,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		modelName : "Sbi.tools.dataset.DataSetModel",
 		dataView : null,
 		tbar : null,
+		height: 600,
 		user : ''
 	}
 
@@ -102,6 +103,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.store = this.store;
 		config.actions = this.actions;
 		config.user = this.user;
+		config.autoScroll = true;
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
 		this.viewPanel.on('detail', this.modifyDataset, this);
 		this.viewPanel.on('delete', this.deleteDataset, this);
@@ -198,14 +200,15 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 							url: this.services["delete"],
 							params: values,
 							success : function(response, options) {
-								if(response !== undefined && response.statusText !== undefined) {
-									var responceText = Ext.decode(response.responseText);
-									if(responceText.errors){
-										Sbi.exception.ExceptionHandler.showErrorMessage(responceText.error, 'Service Error');											
-									}else{
-										this.store.load({reset:true});										
-										this.viewPanel.refresh();			
-										Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.deleted'));
+								if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+									if(response.responseText!=null && response.responseText!=undefined){
+										if(response.responseText.indexOf("error.mesage.description")>=0){
+											Sbi.exception.ExceptionHandler.handleFailure(response);
+										}else{						
+											this.store.load({reset:true});										
+											this.viewPanel.refresh();			
+											Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.deleted'));
+										}
 									}
 								} else {
 									Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');

@@ -9,7 +9,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		scopeStore: null,
 		record: {},
 		isNew:true, 
-		user:''
+		user:'',
+		fileUpload:null
 	}
 
 	, constructor: function(config) {
@@ -57,7 +58,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		var toReturn = [];
 		
 		toReturn = [{label:"Id", name:"id",type:"text",hidden:"true", value:this.record.id},
-         {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'SelfService'},
+         {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'File'},
          {label: LN('sbi.ds.label')+' (*)', name:"label", type:"text", mandatory:true, readOnly:(this.isNew)?false:true, value:this.record.label}, 
          {label: LN('sbi.ds.name')+' (*)', name:"name", type:"text", mandatory:true, value:this.record.name},
          {label: LN('sbi.ds.description'), name:"description", type:"textarea", value:this.record.description}];
@@ -72,8 +73,11 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	, getFieldsTab2: function(){
 		//upload details tab
 		var toReturn = [];
-		var fields = new Sbi.tools.dataset.FileDatasetPanel({});
-		var uploadButton = fields.getComponent('fileUploadPanel').getComponent('fileUploadButton');		
+		this.fileUpload = new Sbi.tools.dataset.FileDatasetPanel({fromWizard:true});
+		if (this.record !== undefined){
+			this.fileUpload.setFormState(this.record);
+		}
+		var uploadButton = this.fileUpload.getComponent('fileUploadPanel').getComponent('fileUploadButton');		
 		uploadButton.setHandler(this.uploadFileButtonHandler);
 		toReturn = new  Ext.FormPanel({
 			  id: 'datasetForm',
@@ -81,17 +85,18 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			  isUpload: true,
 			  method: 'POST',
 			  enctype: 'multipart/form-data',
-  		      margins: '50 50 50 50',
+  		      margins: '10 10 10 10',
 	          labelAlign: 'left',
 	          bodyStyle:'padding:5px',
 	          autoScroll:true,
 	          width: 650,
 	          height: 600,
-	          labelWidth: 130,
-	          layout: 'form',
+//	          labelWidth: 130,
+//	          layout: 'form',
 	          trackResetOnLoad: true,
-	          items: fields
+	          items: this.fileUpload
 	      }); 
+		
 		
 		return toReturn;
 	}
@@ -144,9 +149,15 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	}
 
 	, save : function(){
+		var fileName = this.fileUpload.fileNameField;
+		if (fileName == undefined || fileName.value == ""){
+			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryUploadFile'), '');
+			return;
+		}
 		if (Sbi.tools.dataset.DataSetsWizard.superclass.validateForm()){
-			var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();	
-//			this.fileUploadFormPanel.setFormState(record.data);
+			var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
+			var fileValues = this.fileUpload.getFormState();
+			Ext.apply(values, fileValues);
 			this.fireEvent('save', values);
 		}else{
 			//alert(LN('sbi.ds.mandatoryFields'));
@@ -176,6 +187,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		var params = Ext.urlDecode(queryStr);
 
 		Sbi.debug("[DatasetWizard.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
+		var fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
+		fileNameUploaded = fileNameUploaded.replace("C:\\fakepath\\", "");
 		
 		form.submit({
 			clientValidation: false,
@@ -188,7 +201,6 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			waitMsg : LN('sbi.generic.wait'),
 			success : function(form, action) {
 				Ext.MessageBox.alert('Success!','File Uploaded to the Server');
-				var fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
 				Ext.getCmp('fileNameField').setValue(fileNameUploaded);
 			},
 			failure : function(form, action) {

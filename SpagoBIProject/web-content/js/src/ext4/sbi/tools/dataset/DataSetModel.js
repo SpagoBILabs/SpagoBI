@@ -28,8 +28,15 @@
             "configuration",
             "pars",
             "actions",
+            "fileName",
+            "fileType",
+            "csvDelimiter",
+            "csvQuote",
+            "skipRows",
+            "limitRows",
+            "xslSheetNumber",
             "isPublic",
             "owner",
             "userIn",
             "dataSource"]
-});
+}); 

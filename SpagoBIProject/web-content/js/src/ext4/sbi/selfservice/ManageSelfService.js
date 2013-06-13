@@ -17,8 +17,7 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 
     config: {
     	layout: 'fit',
-    	executionPanel: null,
-    	user:''
+    	executionPanel: null
     },
 	
 
@@ -36,10 +35,13 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 	
 	
 	, constructor : function(config) {
-		this.datasetPanelTab = Ext.create('Sbi.tools.dataset.DataSetsBrowser',{title: LN("sbi.tools.dataset.datasetbrowser.title")});
+		var browserConf = {title: LN("sbi.tools.dataset.datasetbrowser.title"), user: config.selfServiceContainer.config.user};
+//		this.datasetPanelTab = Ext.create('Sbi.tools.dataset.DataSetsBrowser',{title: LN("sbi.tools.dataset.datasetbrowser.title")});
+		this.datasetPanelTab = Ext.create('Sbi.tools.dataset.DataSetsBrowser',browserConf);
 		this.modelstPanelTab = Ext.create('Sbi.tools.model.MetaModelsBrowser',{title: LN("sbi.tools.model.metamodelsbrowser.title")});
 		
-		this.items = [ this.datasetPanelTab, this.modelstPanelTab];
+		this.items = [ this.datasetPanelTab, this.modelstPanelTab  ];
+
 		this.callParent(arguments);
 		this.addEvents(
 		        /**

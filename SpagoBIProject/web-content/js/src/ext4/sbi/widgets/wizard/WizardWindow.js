@@ -175,7 +175,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 			  , allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true
 	          , margin: '0 0 0 10'
 	          , readOnly: f.readOnly || false
-	          , labelStyle:'font-weight:bold;' //usare itemCls : <tagstyle>
+//	          , labelStyle:'font-weight:bold;' //usare itemCls : <tagstyle>
 	          , value: f.value || f.defaultValue || ""
 	        });
 		return field;
@@ -195,7 +195,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 			  , allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true
 	          , margin: '0 0 0 10'
 	          , readOnly: f.readOnly || false
-	          , labelStyle:'font-weight:bold;' //usare itemCls : <tagstyle>
+//	          , labelStyle:'font-weight:bold;' //usare itemCls : <tagstyle>
 	          , value: f.value || f.defaultValue || ""
 	        });
 		return field;
@@ -233,7 +233,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 			 margin: '2 0 0 10',
 			displayField : tmpValueText,
 			valueField : tmpValueField,
-			labelStyle:'font-weight:bold;', 
+//			labelStyle:'font-weight:bold;', 
 			emptyText:'Select ...',
 			typeAhead : true, forceSelection : true,
 			mode : 'local',
