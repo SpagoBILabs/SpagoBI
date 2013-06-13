@@ -78,7 +78,10 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				}
 			} catch (JSONException e) {
 				throw new RuntimeException("Error Deserializing File Dataset Options", e);
-			}
+			} 
+		} else {
+			logger.error("Error jsonConf is not present for FileDatasetXlsDataReader");
+			throw new RuntimeException("Error jsonConf is not present for FileDatasetXlsDataReader");
 		}
 	}
 

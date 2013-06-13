@@ -63,8 +63,13 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 					csvQuote="";
 				}
 			} catch (JSONException e) {
+				logger.error("Error Deserializing File Dataset Options");
 				throw new RuntimeException("Error Deserializing File Dataset Options", e);
 			}
+		} else {
+			logger.error("Error jsonConf is not present for FileDatasetCsvDataReader");
+			throw new RuntimeException("Error jsonConf is not present for FileDatasetCsvDataReader");
+
 		}
 
 		
