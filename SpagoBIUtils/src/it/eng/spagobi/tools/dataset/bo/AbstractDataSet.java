@@ -5,12 +5,15 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spago.dbaccess.SQLStatements;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
@@ -18,7 +21,12 @@ import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators;
+import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators.IConditionalOperator;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.util.Date;
@@ -264,6 +272,14 @@ public abstract class AbstractDataSet implements IDataSet {
 			return null;
 		}
 		String toReturn = (String) this.getParamsMap().get(SpagoBIConstants.TEMPORARY_TABLE_NAME);
+		return toReturn;
+	}
+	
+	public IDataSource getDataSourceForPersistence() {
+		if (this.getParamsMap() == null) {
+			return null;
+		}
+		IDataSource toReturn = (IDataSource) this.getParamsMap().get(EngineConstants.ENV_DATASOURCE);
 		return toReturn;
 	}
 
@@ -590,5 +606,80 @@ public abstract class AbstractDataSet implements IDataSet {
 		return descriptor;
 	}
 	
+	public IDataStore getDomainValues(String fieldName, Integer start,
+			Integer limit, IDataStoreFilter filter) {
+		IDataStore toReturn = null;
+		try {
+			String tableName = this.getTemporaryTableName();
+			logger.debug("Temporary table name : [" + tableName + "]");
+			if (tableName == null) {
+				logger.error("Temporary table name not set, cannot proceed!!");
+				throw new SpagoBIEngineRuntimeException("Temporary table name not set");
+			}
+			IDataSource dataSource = this.getDataSourceForPersistence();
+			if (dataSource == null) {
+				logger.error("Datasource for persistence not set, cannot proceed!!");
+				throw new SpagoBIEngineRuntimeException("Datasource for persistence not set");
+			}
+			String signature = this.getSignature();
+			IDataSetTableDescriptor tableDescriptor = null;
+			if (signature.equals(TemporaryTableManager.getLastDataSetSignature(tableName))) {
+				// signature matches: no need to create a TemporaryTable
+				tableDescriptor = TemporaryTableManager.getLastDataSetTableDescriptor(tableName);
+			} else {
+				tableDescriptor = this.persist(tableName, dataSource);
+				TemporaryTableManager.setLastDataSetTableDescriptor(tableName, tableDescriptor);
+				TemporaryTableManager.setLastDataSetSignature(tableName, signature);
+			}
+			String filterColumnName = tableDescriptor.getColumnName(fieldName);
+			StringBuffer buffer = new StringBuffer("Select DISTINCT " + filterColumnName + " FROM " + tableName);
+			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
+			String sqlStatement = buffer.toString();
+			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, dataSource, start, limit);
+			toReturn.getMetaData().changeFieldAlias(0, fieldName);
+		} catch (Exception e) {
+			logger.error("Error loading the domain values for the field " + fieldName, e);
+			throw new SpagoBIEngineRuntimeException("Error loading the domain values for the field "+fieldName, e);
+
+		}
+		return toReturn;
+	}
+	
+	private void manageFilterOnDomainValues(StringBuffer buffer,
+			String fieldName, IDataSetTableDescriptor tableDescriptor,
+			IDataStoreFilter filter) {
+		if (filter != null) {
+			String filterColumnName = tableDescriptor.getColumnName(fieldName);
+			if (filterColumnName == null) {
+				throw new SpagoBIRuntimeException("Field name [" + fieldName
+						+ "] not found");
+			}
+			String columnName = tableDescriptor.getColumnName(fieldName);
+			Class clazz = tableDescriptor.getColumnType(fieldName);
+			String value = getFilterValue(filter.getValue(), clazz);
+			IConditionalOperator conditionalOperator = (IConditionalOperator) SQLStatementConditionalOperators
+					.getOperator(filter.getOperator());
+			String temp = conditionalOperator.apply(columnName,
+					new String[] { value });
+			buffer.append(" WHERE " + temp);
+		}
+	}
+	
+
+	private String getFilterValue(String value, Class clazz) {
+		String toReturn = null;
+		if ( String.class.isAssignableFrom(clazz) ) {
+			value = StringUtils.escapeQuotes(value);
+			toReturn = StringUtils.bound(value, "'");
+		} else if ( Number.class.isAssignableFrom(clazz) ) {
+			toReturn = value;
+		} else if ( Boolean.class.isAssignableFrom(clazz) ) {
+			toReturn = value;
+		} else {
+			// TODO manage other types, such as date and timestamp
+			throw new SpagoBIRuntimeException("Unsupported operation: cannot filter on a fild type " + clazz.getName());
+		}
+		return toReturn;
+	}
 	
 }

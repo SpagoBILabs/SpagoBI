@@ -14,7 +14,6 @@ import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
