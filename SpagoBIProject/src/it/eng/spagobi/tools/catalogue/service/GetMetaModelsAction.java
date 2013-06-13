@@ -7,16 +7,13 @@ package it.eng.spagobi.tools.catalogue.service;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.container.SpagoBIRequestContainer;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
-
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -61,6 +58,7 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 			}
 			
 			
+			
 			logger.debug("Read " + allModels.size() + " existing models");
 			
 			
@@ -99,7 +97,7 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 		
 	}
 	
-	private List<MetaModel> getFilteredModels(JSONObject jsonObject, IMetaModelsDAO dao) throws JSONException{
+	protected List<MetaModel> getFilteredModels(JSONObject jsonObject, IMetaModelsDAO dao) throws JSONException{
 		List<MetaModel> metaModels = new ArrayList<MetaModel>();
 		String columnFilter = jsonObject.getString("columnFilter");
 		String valueFilter = jsonObject.getString("valueFilter");
@@ -110,13 +108,17 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 			if(typeFilter.equals("=")){
 				Integer categoryId = getCategoryIdbyName(valueFilter);
 				if (categoryId != null){
-					metaModels.addAll(dao.loadMetaModelByCategory(categoryId));
+					List<Integer> categories= new ArrayList<Integer>();
+					categories.add(categoryId);
+					metaModels.addAll(dao.loadMetaModelByCategories(categories));
 				}
 			} else if(typeFilter.equals("like")){
 				List<Integer> categoryIds = getCategoryIdbyContainsName(valueFilter);
 				if (!categoryIds.isEmpty()){
 					for (Integer categoryId : categoryIds){
-						metaModels.addAll(dao.loadMetaModelByCategory(categoryId));
+						List<Integer> categories= new ArrayList<Integer>();
+						categories.add(categoryId);
+						metaModels.addAll(dao.loadMetaModelByCategories(categories));
 					}
 				}
 			}
@@ -130,7 +132,7 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 		return metaModels;
 	}
 	
-	private String getFilterString(String columnFilter, String typeFilter, String valueFilter){
+	protected String getFilterString(String columnFilter, String typeFilter, String valueFilter){
 			String filterString = "";
 			if(typeFilter.equals("=")){
 				filterString = " m."+columnFilter+" = '"+valueFilter+"'";
@@ -141,7 +143,7 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 		
 	}
 	
-	private Integer getCategoryIdbyName(String categoryName){
+	protected Integer getCategoryIdbyName(String categoryName){
 		IDomainDAO domaindao;
 		try {
 
@@ -160,7 +162,7 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 
 	}
 	
-	private List<Integer> getCategoryIdbyContainsName(String categoryName){
+	protected List<Integer> getCategoryIdbyContainsName(String categoryName){
 		IDomainDAO domaindao;
 		List<Integer> categoryIds = new ArrayList<Integer>();
 		try {
@@ -180,7 +182,7 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 
 	}
 	
-	private Integer getStart() {
+	protected Integer getStart() {
 		Integer start = START_DEFAULT;
 		Object startObject = getAttribute( START );
 		if (startObject != null && !startObject.equals("")) {
@@ -189,7 +191,7 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 		return start;
 	}
 	
-	private Integer getLimit() {
+	protected Integer getLimit() {
 		Integer limit = LIMIT_DEFAULT;
 		Object limitObject = getAttribute( LIMIT );
 		if (limitObject != null && !limitObject.equals("")) {
@@ -198,7 +200,8 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 		return limit;
 	}
 	
-	private JSONObject createJSONResponse(JSONArray rows, Integer totalResNumber)
+
+	protected JSONObject createJSONResponse(JSONArray rows, Integer totalResNumber)
 			throws JSONException {
 		JSONObject results;
 		results = new JSONObject();

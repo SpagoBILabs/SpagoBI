@@ -86,7 +86,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 			Engine qbeEngine = ExecuteAdHocUtility.getQbeEngine();
 
 			Integer defEngineDataSourceQbe = worksheetEngine.getDataSourceId();
-			if(defEngineDataSourceWork!=null){
+			if(defEngineDataSourceQbe!=null){
 				try {
 					IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(defEngineDataSourceQbe);
 					qbeEditActionParameters.put(ENGINE_DATASOURCE_LABEL,ds.getLabel());
