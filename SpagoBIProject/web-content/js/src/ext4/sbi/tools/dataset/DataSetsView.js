@@ -122,7 +122,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 			                        '</tpl>',
 			                    '</div>',			                    								
 								'<div class="dataset-view">' +
-									'<img src="/SpagoBI/themes/sbi_default/img/dataset/dataset.png" width="110" style="margin-left: 40px; margin-top: 10px;">' ,
+									'<img src="/SpagoBI/themes/sbi_default/img/dataset/csv-xls.png" width="110" style="margin-left: 40px; margin-top: 10px;">' ,
 									'<p><b>{name}</b></p>',
 									'<p>{description}</p><br/>',
 								'</div>',
