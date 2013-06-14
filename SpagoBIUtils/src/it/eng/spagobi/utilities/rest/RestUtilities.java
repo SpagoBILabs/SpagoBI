@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,6 +61,19 @@ public class RestUtilities {
 	public static JSONObject readBodyAsJSONObject( HttpServletRequest request) throws IOException, JSONException{
 		String requestBody = RestUtilities.readBody(request);
 		return JSONUtils.toJSONObject(requestBody);
+	}
+	
+	/**
+	 * 
+	 * Reads the body of a request and return it as a JSONOArray
+	 * @param request the HttpServletRequest request
+	 * @return
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static JSONArray readBodyAsJSONArray( HttpServletRequest request) throws IOException, JSONException{
+		String requestBody = RestUtilities.readBody(request);
+		return JSONUtils.toJSONArray(requestBody);
 	}
 	
 
