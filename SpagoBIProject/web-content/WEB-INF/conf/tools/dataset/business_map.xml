@@ -2,8 +2,6 @@
 <BUSINESS_MAP>
 	<MAP_ACTIONS>
 		<MAP_ACTION actionName="MANAGE_DATASETS_ACTION"  businessProcess="DatasetManagement"/>
-		<MAP_ACTION actionName="UPLOAD_DATASET_FILE_ACTION"  businessProcess="DatasetManagement"/>
-	
 	</MAP_ACTIONS>
 	 
 	<MAP_ACTIONS>
