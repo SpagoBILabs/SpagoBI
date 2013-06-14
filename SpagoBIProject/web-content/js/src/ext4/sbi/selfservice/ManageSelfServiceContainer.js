@@ -88,6 +88,8 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 				url = url+ '&datasource_label=' + datasourceLabel;
 			}
 			this.documentexecution.load(url);
+			this.documentexecution.datasetLabel = datasetLabel;
+			
 		}
 	}
 	

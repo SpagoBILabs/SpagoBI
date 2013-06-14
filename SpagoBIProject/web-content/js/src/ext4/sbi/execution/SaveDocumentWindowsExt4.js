@@ -39,8 +39,13 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		}
 		
 		if(config.business_metadata != undefined && config.business_metadata != null ){
-			saveDocParams.business_metadata = Ext.util.JSON.encode(config.business_metadata);
+			saveDocParams.business_metadata = Ext.JSON.encode(config.business_metadata);
 		}
+		
+		if(config.model_name != undefined && config.model_name != null ){
+			saveDocParams.model_name = config.model_name;
+		}
+		
 		
 	} else{
 		saveDocParams.MESSAGE_DET = 'DOC_SAVE';		
@@ -80,6 +85,8 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		items: this.saveDocumentForm
 	});   
 	
+	Ext.apply(this,c);
+	
     this.callParent(arguments);
     
 }
@@ -87,7 +94,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	
 	,initFormPanel: function (){
 		
-		this.docName = new Ext.form.TextField({
+		this.docName = Ext.create("Ext.form.TextField", {
 			id: 'docName',
 			name: 'docName',
 			allowBlank: false, 
@@ -97,7 +104,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			fieldLabel: LN('sbi.generic.name') 
 		});
 		
-		this.docLabel = new Ext.form.TextField({
+		this.docLabel =  Ext.create("Ext.form.TextField",{
 	        id:'docLabel',
 	        name: 'docLabel',
 	        allowBlank: false, 
@@ -107,7 +114,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			fieldLabel: LN('sbi.generic.label')  
 	    });
 		
-		this.docDescr = new Ext.form.TextArea({
+		this.docDescr =  Ext.create("Ext.form.TextArea",{
 	        id:'docDescr',
 	        name: 'docDescr',
 	        inputType: 'text',
@@ -118,20 +125,17 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			fieldLabel: LN('sbi.generic.descr')  
 	    });
 	    
-	    this.inputForm = new Ext.Panel({
+	    this.inputForm =  Ext.create("Ext.Panel",{
 	         itemId: 'detail'
 	        , columnWidth: 0.6
+	        , border: false
 	        , items: {
-		   		 id: 'items-detail',   	
-	 		   	 itemId: 'items-detail',   	              
 	 		   	 columnWidth: 0.4,
 	             xtype: 'fieldset',
 	             labelWidth: 80,
 	             defaults: {border:false},    
 	             defaultType: 'textfield',
-	             autoHeight: true,
 	             autoScroll  : true,
-	             bodyStyle: Ext.isIE ? 'padding:0 0 5px 5px;' : 'padding:0px 5px;',
 	             border: false,
 	             style: {
 	                 "margin-left": "4px",
@@ -142,21 +146,18 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	    });
 	    
 	    
-	    this.treePanel = new Sbi.browser.DocumentsTree({
+	    this.treePanel =  Ext.create("Sbi.browser.DocumentsTree",{
 	    	  columnWidth: 0.4,
-	          border: true,
-	          collapsible: false,
-	          title: '',
-	          drawUncheckedChecks: true,
-	          bodyStyle:'padding:6px 6px 6px 6px;'
+	          border: false,
+
+	          drawUncheckedChecks: true
 	    });
 	    
-	    this.saveDocumentForm = new Ext.form.FormPanel({
-		          frame: true,
+	    this.saveDocumentForm =  Ext.create("Ext.form.FormPanel",{
 		          autoScroll: true,
 		          labelAlign: 'left',
 		          autoWidth: true,
-		          height: 650,
+		          height: 350,
 		          layout: 'column',
 		          scope:this,
 		          forceLayout: true,
@@ -188,10 +189,10 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			formValues=Ext.encode(formValues);
 		}
 		if(query!=undefined && query!=null){
-			query = Ext.util.JSON.encode(query);
+			query = Ext.JSON.encode(query);
 		}
 		if(wk_definition!=undefined && wk_definition!=null){
-			wk_definition = Ext.util.JSON.encode(wk_definition);
+			wk_definition = Ext.JSON.encode(wk_definition);
 		}
 		
 		if(docName == null || docName == undefined || docName == '' ||
@@ -205,7 +206,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	                buttons: Ext.MessageBox.OK
 	           });
 		}else{	
-			functs = Ext.util.JSON.encode(functs);
+			functs = Ext.JSON.encode(functs);
 			var params = {
 		        	name :  docName,
 		        	label : docLabel,
@@ -227,7 +228,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		        params: params,
 		        success : function(response , options) {
 			      		if(response !== undefined && response.responseText !== undefined) {
-			      			var content = Ext.util.JSON.decode( response.responseText );
+			      			var content = Ext.JSON.decode( response.responseText );
 			      			if(content.responseText !== 'Operation succeded') {
 			                    Ext.MessageBox.show({
 			                        title: LN('sbi.generic.error'),

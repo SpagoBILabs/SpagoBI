@@ -14,14 +14,15 @@
 Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 	extend: 'Sbi.widgets.EditorIFramePanelContainer'
 
-	/**
-	 * Overrides the parent method
-	 */
+		
+	, modelName: null
+	, datasetLabel: null
 
+	
 	, init: function(config){
 		this.callParent(config);
 		//adds the toolbar
-		//this.initToolbar();
+		this.initToolbar();
 		
 	}
 
@@ -63,14 +64,21 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 		var worksheetQuery = templateJSON.OBJECT_QUERY;
 		var documentWindowsParams = {
 				'OBJECT_TYPE': 'WORKSHEET',
-				//'template': wkDefinition,
+				'template': wkDefinition,
 				'OBJECT_WK_DEFINITION': wkDefinition,
 				'OBJECT_QUERY': worksheetQuery,
-				'MESSAGE_DET': 'DOC_SAVE_FROM_DATASET',
-				'dataset_label': this.datasetLabel,
+				'model_name': this.modelName,
 				'typeid': 'WORKSHEET' 
 		};
-//		
+
+		if(this.datasetLabel!=null){
+			documentWindowsParams.dataset_label= this.datasetLabel;
+			documentWindowsParams.MESSAGE_DET= 'DOC_SAVE_FROM_DATASET';
+		}else if(this.modelName!=null){
+			documentWindowsParams.model_name= this.modelName;
+			documentWindowsParams.MESSAGE_DET= 'DOC_SAVE_FROM_MODEL';
+		}
+		
 		this.win_saveDoc = Ext.create("Sbi.execution.SaveDocumentWindowExt4",documentWindowsParams);
 		this.win_saveDoc.show();
     

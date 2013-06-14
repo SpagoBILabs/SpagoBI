@@ -45,6 +45,7 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 	
 	public static final String PERMISSION_ON_FOLDER = "PERMISSION_ON_FOLDER";
 	public static final String PERMISSION_CREATION = "CREATION";
+	public static final String CHECKBOX = "CHECKBOX";
 	// logger component
 	private static Logger logger = Logger.getLogger(GetFTreeFoldersAction.class);
 	
@@ -160,6 +161,7 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 	private JSONArray createNode(JSONArray jsonFTree) throws Exception {
 		JSONObject node;
 		JSONArray nodes;
+		String checks = getAttributeAsString( CHECKBOX );
 
 		
 		nodes = new JSONArray();
@@ -173,6 +175,9 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 			JSONObject nodeAttributes = new JSONObject();
 			nodeAttributes.put("iconCls", "icon-ftree-folder");
 			node.put("attributes", nodeAttributes);
+			if(checks!=null && checks.equals("true")){
+				node.put("checked", false);
+			}
 			
 			try{
 				List childrenFolders = DAOFactory.getLowFunctionalityDAO().loadChildFunctionalities((Integer)tmpNode.get(FoldersJSONSerializer.ID), false);

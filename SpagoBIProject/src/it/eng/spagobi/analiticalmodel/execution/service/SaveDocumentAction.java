@@ -35,6 +35,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SaveDocumentAction extends AbstractSpagoBIAction {
@@ -49,6 +50,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private final String SAVE_WORKSHEET_FROM_QBE = "DOC_SAVE";
 	private final String SAVE_WORKSHEET_FROM_DATASET = "DOC_SAVE_FROM_DATASET";
 	private final String DOC_UPDATE = "DOC_UPDATE";
+	private final String SAVE_WORKSHEET_FROM_MODEL = "DOC_SAVE_FROM_MODEL";
+	
 
 	// RES detail
 	private final String ID = "id";
@@ -101,7 +104,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		
 		try {
 			if ( SAVE_WORKSHEET_FROM_QBE.equalsIgnoreCase( action ) 
-					|| SAVE_WORKSHEET_FROM_DATASET.equalsIgnoreCase( action ) ) {
+					|| SAVE_WORKSHEET_FROM_DATASET.equalsIgnoreCase( action ) 
+					|| SAVE_WORKSHEET_FROM_MODEL.equalsIgnoreCase( action )) {
 				doInsertDocument(request);
 			} else if ( DOC_UPDATE.equalsIgnoreCase( action ) ) {
 				updateWorksheetDocumentTemplate();
@@ -162,6 +166,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		logger.debug("IN");
 		
 		try {
+			String sourceModelName = getAttributeAsString("model_name");
 			JSONObject documentJSON = request.optJSONObject("document");
 			JSONArray foldersJSON = request.optJSONArray("folders");
 			JSONObject customDataJSON = request.optJSONObject("customData");
@@ -177,6 +182,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			} else if(request.has("sourceDataset")) {
 				JSONObject sourceDatasetJSON = request.getJSONObject("sourceDataset");
 				insertWorksheetDocumentCreatedOnDataset(sourceDatasetJSON, documentJSON, customDataJSON, foldersJSON);
+			}  else if(sourceModelName != null) {
+				insertWorksheetDocumentCreatedOnModel(sourceModelName, documentJSON, customDataJSON, foldersJSON);
 			} else {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to create worksheet document because both sourceDocument and sourceDataset are null");
 			}
@@ -229,6 +236,33 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			throw e;			
 		} catch (Throwable e) {
 			throw new SpagoBIServiceException(SERVICE_NAME,"An unexpected error occured while inserting worksheet document created on document [" + sourceDocumentId + "]", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	private void insertWorksheetDocumentCreatedOnModel(
+			String modelName
+			, JSONObject documentJSON
+			, JSONObject customDataJSON
+			, JSONArray foldersJSON
+	) {
+		
+
+		try {
+
+			BIObject document = createBaseDocument(documentJSON, null, foldersJSON);
+			
+			customDataJSON.put("modelName", modelName);
+			ObjTemplate template = buildDocumentTemplate(customDataJSON, null);
+												
+			documentManagementAPI.saveDocument(document, template);
+
+											
+		} catch (SpagoBIServiceException e) {
+			throw e;			
+		} catch (JSONException e) {
+			throw new SpagoBIServiceException("Error creating the document", e);			
 		} finally {
 			logger.debug("OUT");
 		}
@@ -456,13 +490,13 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		String worksheetData = customDataJSON.optString("worksheet");
 		JSONObject smartFilterData = customDataJSON.optJSONObject("smartFilter");
 		String query = customDataJSON.optString("query");
-		
+		String modelName =  customDataJSON.optString("modelName");
 		return buildDocumentTemplate(templateContent, sourceDocument, 
-				query, smartFilterData, worksheetData);
+				query, smartFilterData, worksheetData, modelName);
 	}
 	
 	private ObjTemplate buildDocumentTemplate(String templateContent, BIObject sourceDocument, 
-			String query, JSONObject smartFilterData, String worksheetData) {
+			String query, JSONObject smartFilterData, String worksheetData, String modelName) {
 		
 		ObjTemplate template = null;
 		
@@ -479,12 +513,14 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			} else if(smartFilterData!=null){ 
 				ExecutionInstance executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 				BIObject parentQbeDocument = executionInstance.getBIObject();
-				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, parentQbeDocument, query, worksheetData, smartFilterData);
+				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, parentQbeDocument, query, worksheetData, smartFilterData, null);
 			} else if(worksheetData!=null && query!=null && sourceDocument!=null){
-				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, sourceDocument, query, worksheetData, smartFilterData);
+				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, sourceDocument, query, worksheetData, smartFilterData, null);
 			} else if(action.equals(SAVE_WORKSHEET_FROM_DATASET) && worksheetData!=null){
-				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, null, null, worksheetData, null);
-			} else{
+				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, null, null, worksheetData, null,null);
+			} else if(modelName!=null && worksheetData!=null){
+				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, null, query, worksheetData, null,modelName);
+			}else{
 				throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.document.saveError");
 			}
 	
