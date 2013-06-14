@@ -26,6 +26,6 @@
 <ENGINE label="SpagoBIChartMobileEn" name="Mobile Chart Engine" descr="Chart engine for mobile devices" mainUrl="/SpagoBIMobileEngine/servlet/AdapterHTTP?ACTION_NAME=MOBILE_ENGINE_START_ACTION" driverNm="it.eng.spagobi.engines.drivers.mobile.chart.MobileChartDriver" engineTypeCd="EXT" classNm="" biobjTypeCd="MOBILE_CHART" useDataSet="true" useDataSource="true" encrypt="0" />
 <ENGINE label="SpagoBICockpitMobile" name="Mobile Cockpit Engine" descr="Cockpit engine for mobile devices" mainUrl="/SpagoBIMobileEngine/servlet/AdapterHTTP?ACTION_NAME=MOBILE_ENGINE_START_ACTION" driverNm="it.eng.spagobi.engines.drivers.mobile.cockpit.MobileCockpitDriver" engineTypeCd="EXT" classNm="" biobjTypeCd="MOBILE_COCKPIT" useDataSet="false" useDataSource="false" encrypt="0" />
 <!-- end mobile engines -->
-<ENGINE label="SpagoBINetworkEngine" name="Network Analysis Engine" descr="Network Analysis Engine" mainUrl="/SpagoBIMobileEngine/servlet/AdapterHTTP?ACTION_NAME=NETWORK_ENGINE_START_ACTION" driverNm="it.eng.spagobi.engines.drivers.network.NetworkDriver" engineTypeCd="EXT" classNm="" biobjTypeCd="NETWORK" useDataSet="true" useDataSource="false" encrypt="0" />
+<ENGINE label="SpagoBINetworkEngine" name="Network Analysis Engine" descr="Network Analysis Engine" mainUrl="/SpagoBINetworkEngine/servlet/AdapterHTTP?ACTION_NAME=NETWORK_ENGINE_START_ACTION" driverNm="it.eng.spagobi.engines.drivers.network.NetworkDriver" engineTypeCd="EXT" classNm="" biobjTypeCd="NETWORK" useDataSet="true" useDataSource="false" encrypt="0" />
 
 </ENGINES>
