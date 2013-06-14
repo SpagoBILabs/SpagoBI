@@ -214,7 +214,8 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 		if (datasetDataSource.getLabel().equals(dataSource.getLabel())) {
 			logger.debug("Specified datasource is the dataset's datasource; using CREATE TABLE AS SELECT tecnique");
 			try{
-				return TemporaryTableManager.createTable(null, (String)query, tableName, getDataSource());
+				List<String> fields = this.getFieldsList();
+				return TemporaryTableManager.createTable(fields, (String)query, tableName, getDataSource());
 			} catch (Exception e) {
 				logger.error("Error peristing the temporary table", e);
 				throw new SpagoBIEngineRuntimeException("Error peristing the temporary table", e);

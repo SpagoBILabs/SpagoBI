@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
-import it.eng.spago.dbaccess.SQLStatements;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -29,6 +28,7 @@ import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators.IConditionalOperator;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -597,15 +597,26 @@ public abstract class AbstractDataSet implements IDataSet {
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while persisting dataset", e);
 		}
+		List<String> fields = this.getFieldsList();
 		IDataSetTableDescriptor descriptor = null;
 		try {
-			descriptor = TemporaryTableManager.getTableDescriptor(null, tableName, dataSource);
+			descriptor = TemporaryTableManager.getTableDescriptor(fields, tableName, dataSource);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while getting table information", e);
 		}
 		return descriptor;
 	}
 	
+	protected List<String> getFieldsList() {
+		List<String> toReturn = new ArrayList<String>();
+		IMetaData metadata = this.getMetadata();
+		int count = metadata.getFieldCount();
+		for (int i = 0 ; i < count ; i++) {
+			toReturn.add(metadata.getFieldName(i));
+		}
+		return toReturn;
+	}
+
 	public IDataStore getDomainValues(String fieldName, Integer start,
 			Integer limit, IDataStoreFilter filter) {
 		IDataStore toReturn = null;
