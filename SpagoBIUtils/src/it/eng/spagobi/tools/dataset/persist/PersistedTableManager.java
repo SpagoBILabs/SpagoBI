@@ -12,6 +12,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -177,7 +178,16 @@ public class PersistedTableManager {
 				for (int i2=0, l2=rec.getFields().size(); i2<l2; i2++){		
 					IFieldMetaData fmd = md.getFieldMeta(i2);
 					IField field = rec.getFieldAt(i2);
-					if (fmd.getType().toString().contains("String")){	
+					// in case of a measure with String type, convert it into a Double
+					if (fmd.getFieldType().equals(FieldType.MEASURE) && fmd.getType().toString().contains("String")) {
+						logger.debug("Column type is string but the field is measure: converting it into a double");
+						// only for primitive type is necessary to use setNull method if value is null
+						if (field.getValue() == null){
+							toReturn.setNull(i2+1, java.sql.Types.DOUBLE);
+						 }else{
+					        toReturn.setDouble(i2+1, Double.parseDouble(field.getValue().toString()));
+						 }
+					} else if (fmd.getType().toString().contains("String")){	
 						Integer lenValue = (field.getValue()==null)?new Integer("0"):new Integer(field.getValue().toString().length());
 						Integer prevValue = getColumnSize().get(fmd.getName()) == null? new Integer("0"): getColumnSize().get(fmd.getName());
 						if (lenValue > prevValue ){
@@ -246,6 +256,10 @@ public class PersistedTableManager {
 		String toReturn = "";
 		String type = fieldMetaData.getType().toString();
 		logger.debug("Column type input: " + type);	
+		if (fieldMetaData.getFieldType().equals(FieldType.MEASURE) && type.contains("java.lang.String")) {
+			logger.debug("Column type is string but the field is measure: converting it into a double");
+			type = "java.lang.Double";
+		}
 
 		//if (type.equalsIgnoreCase("java.lang.String")){
 		if (type.contains("java.lang.String")){
