@@ -76,7 +76,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 				
 		this.initConfig(config);
 		this.initTemplate();
-		
+		 
 		Ext.apply(this, config || {});
 		
 		this.itemSelector = 'dd';

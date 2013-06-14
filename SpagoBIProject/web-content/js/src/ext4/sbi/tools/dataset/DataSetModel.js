@@ -38,5 +38,6 @@
             "isPublic",
             "owner",
             "userIn",
-            "dataSource"]
+            "dataSource",
+            "meta"]
 }); 

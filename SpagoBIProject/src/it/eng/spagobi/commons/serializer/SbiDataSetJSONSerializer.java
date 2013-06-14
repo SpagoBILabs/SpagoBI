@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
+import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
 import java.util.Locale;
@@ -36,7 +37,12 @@ public class SbiDataSetJSONSerializer implements Serializer {
 			result.put(DATASET_NAME, ds.getName() );
 			result.put(DATASET_DESCRIPTION, ds.getDescription() );
 			result.put(DATASET_LABEL, ds.getLabel() );		
-			result.put(DATASET_CATEGORY, ds.getCategory().getValueCd());	
+//			SbiDomains categ = ds.getCategory() ;
+//			
+//			if (categ != null){
+//				String valueCD = categ.getValueCd();
+//				result.put(DATASET_CATEGORY, categ.getValueCd());
+//			}
 			
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);

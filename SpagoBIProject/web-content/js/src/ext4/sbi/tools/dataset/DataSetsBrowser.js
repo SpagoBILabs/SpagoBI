@@ -164,9 +164,13 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	
 	,
 	saveDataset: function(values){
+		var metaConfiguration = values.meta || [];
+		delete values.meta;
+		var params = values;
+		params.meta = Ext.JSON.encode(metaConfiguration) ;
 		Ext.Ajax.request({
 			url: this.services["save"],
-			params: values,
+			params: params,			
 			success : function(response, options) {				
 				if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
 					if(response.responseText!=null && response.responseText!=undefined){

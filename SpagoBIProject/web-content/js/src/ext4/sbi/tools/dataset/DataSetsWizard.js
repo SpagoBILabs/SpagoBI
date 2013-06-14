@@ -10,7 +10,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		record: {},
 		isNew:true, 
 		user:'',
-		fileUpload:null
+		fileUpload:null,
+		metaInfo:null
 	}
 
 	, constructor: function(config) {
@@ -39,7 +40,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			
 		this.fieldsStep2 =  this.getFieldsTab2(); 
 			
-		this.fieldsStep3 = [{name:"msg", type:"textarea", value:"Work in progress..."}];		
+		this.fieldsStep3 =  this.getFieldsTab3(); 
 
 	}
 	, initSteps: function(){
@@ -48,7 +49,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 
 		steps.push({itemId:'0', title:LN('sbi.ds.wizard.general'), items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep1)});
 		steps.push({itemId:'1', title:LN('sbi.ds.wizard.detail'), items: this.fieldsStep2});
-		steps.push({itemId:'2', title:LN('sbi.ds.wizard.metadata'), items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep3)});
+		steps.push({itemId:'2', title:LN('sbi.ds.wizard.metadata'), items: this.fieldsStep3});
 		
 		return steps;
 	}
@@ -72,14 +73,13 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	
 	, getFieldsTab2: function(){
 		//upload details tab
-		var toReturn = [];
 		this.fileUpload = new Sbi.tools.dataset.FileDatasetPanel({fromWizard:true});
 		if (this.record !== undefined){
 			this.fileUpload.setFormState(this.record);
 		}
 		var uploadButton = this.fileUpload.getComponent('fileUploadPanel').getComponent('fileUploadButton');		
 		uploadButton.setHandler(this.uploadFileButtonHandler);
-		toReturn = new  Ext.FormPanel({
+		var toReturn = new  Ext.FormPanel({
 			  id: 'datasetForm',
 			  fileUpload: true, // this is a multipart form!!
 			  isUpload: true,
@@ -91,8 +91,6 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	          autoScroll:true,
 	          width: 650,
 	          height: 600,
-//	          labelWidth: 130,
-//	          layout: 'form',
 	          trackResetOnLoad: true,
 	          items: this.fileUpload
 	      }); 
@@ -103,11 +101,24 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	
 	, getFieldsTab3: function(){
 		//metadata tab
-		var toReturn = [];
-		
-		toReturn = new Sbi.tools.dataset.FileDatasetPanel({});
-		
-		return toReturn;
+		var config = {};
+		config.meta = this.record.meta;
+		if (config.meta == undefined || config.meta.length == 0){
+			this.metaInfo = new Ext.form.DisplayField({
+				value : LN('sbi.ds.field.metadata.nosaved'),
+				width:'100%',
+				readOnly:true,
+				 style: {
+			            width: '95%',
+			            marginBottom: '10px',
+			            'text-align': 'center'
+			        },
+				fieldStyle:'font-weight:bold;align:center;'
+			});
+		}else{
+			this.metaInfo = new Sbi.tools.dataset.ManageDatasetFieldMetadata(config);
+		}
+		return this.metaInfo;
 	}
 	, initWizardBar: function() {
 		var bar = this.callParent();
@@ -158,6 +169,10 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
 			var fileValues = this.fileUpload.getFormState();
 			Ext.apply(values, fileValues);
+			if (this.record.meta !== undefined && this.record.meta.length > 0 ){
+				var metaValues = this.metaInfo.getFormState();
+				values.meta = metaValues;
+			}
 			this.fireEvent('save', values);
 		}else{
 			//alert(LN('sbi.ds.mandatoryFields'));
