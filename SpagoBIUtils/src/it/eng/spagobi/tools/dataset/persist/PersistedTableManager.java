@@ -118,13 +118,14 @@ public class PersistedTableManager {
 			//Steps #1: define prepared statement (and max column size for strings type)
 			connection = getConnection(datasource);
 			connection.setAutoCommit(false);
-			PreparedStatement statement = defineStatements(datastore, datasource, connection);			
+					
 			//Steps #2: define create table statement
 		    String createStmtQuery = getCreateTableQuery(datastore);
 		    dropTableIfExists(datasource);
 		    //Step #3: execute create table statament
 			executeStatement(createStmtQuery, datasource);
 			//Step #4: execute batch with insert statements
+			PreparedStatement statement = defineStatements(datastore, datasource, connection);	
 			statement.executeBatch();	
 			statement.close();
 			connection.commit();
