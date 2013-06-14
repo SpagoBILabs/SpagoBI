@@ -167,7 +167,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		            'csvDelimiterName',
 		            'csvDelimiterValue'
 		        ],
-		        data: [[';', ';'], [',', ','], ['\\t', '\\t']]
+		        data: [[';', ';'], [',', ','], ['\\t', '\\t'], ['\|', '\|']]
 		    }),
 			width : 150,
 			fieldLabel : LN('sbi.ds.file.csv.delimiter'),
