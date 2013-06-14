@@ -623,6 +623,7 @@
 				<file name="./src/ext/sbi/tools/dataset/FileDatasetPanel.js" />
 
 				<file name="./src/ext4/sbi/tools/dataset/DataSetModel.js" />
+				<file name="./src/ext4/sbi/tools/dataset/ManageDatasetFieldMetadatajs" />
 				<file name="./src/ext4/sbi/tools/dataset/DataSetsBrowser.js" />
 				<file name="./src/ext4/sbi/tools/dataset/DataSetsView.js" />
 				<file name="./src/ext4/sbi/tools/dataset/DataSetsWizard.js" />
