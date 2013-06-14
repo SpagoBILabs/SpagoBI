@@ -43,6 +43,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -179,20 +180,18 @@ public class SelfServiceDataSetCRUD {
 		try {
 			IDataSetDAO dao=DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
+			String label = (String)req.getParameter("label");			
+			String meta = (String)req.getParameter(DataSetConstants.METADATA);			
 			
-			String label = (String)req.getParameter("label");
-			String meta = (req.getParameter(DataSetConstants.METADATA)==null)?"":(String)req.getParameter(DataSetConstants.METADATA);	
 			IDataSet ds  = dao.loadActiveDataSetByLabel(label);
 			IDataSet dsNew = recoverDataSetDetails(req, ds);
-			if(meta != null && !meta.equals("")){
-				dsNew.setDsMetadata(meta);				
-			}
-
-//			logger.debug("Recalculating dataset's metadata: executing the dataset...");
-//			String dsMetadata = null;
-//			dsMetadata = getDatasetTestMetadata(dsNew, profile, meta);
-//			LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
 			
+			logger.debug("Recalculating dataset's metadata: executing the dataset...");
+			String dsMetadata = null;
+			dsMetadata = getDatasetTestMetadata(dsNew, profile, meta);
+			dsNew.setDsMetadata(dsMetadata);	
+			LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
+	
 			HashMap<String, String> logParam = new HashMap();
 			logParam.put("LABEL",dsNew.getLabel());
 
@@ -210,6 +209,8 @@ public class SelfServiceDataSetCRUD {
 				dao.modifyDataSet(dsNew);
 				updateAudit(req, profile, "DATA_SET.MODIFY", logParam, "OK");
 			}  
+			
+		
 					
 			return ("{id:"+newId+" }");
 		} catch (SpagoBIRuntimeException ex) {
@@ -282,7 +283,7 @@ public class SelfServiceDataSetCRUD {
 		String limitRows = (String)req.getParameter("limitRows");
 		String xslSheetNumber = (String)req.getParameter("xslSheetNumber");
 		String meta = (String)req.getParameter(DataSetConstants.METADATA);		
-
+		
 		Boolean isPublic = Boolean.valueOf((req.getParameter("isPublic")==null)?"false":(String)req.getParameter("isPublic"));
 		
 		IDataSet toReturn = dataSet; //for not loose other fields if already esists!	
@@ -311,6 +312,7 @@ public class SelfServiceDataSetCRUD {
 		toReturn.setConfiguration(jsonDsConfig.toString());
 		toReturn.setDsType(type);
 		//update general informations
+		toReturn.setDsMetadata(meta);
 		toReturn.setId(id.intValue());
 		toReturn.setLabel(label);
 		toReturn.setName(name);
@@ -419,8 +421,11 @@ public class SelfServiceDataSetCRUD {
 			IDataStore dataStore = dataSet.getDataStore();
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
 			
-			JSONArray metadataArray = JSONUtils.toJSONArray(metadata);
-
+			JSONArray metadataArray = new JSONArray();
+			if (!("").equals(metadata)){
+				metadataArray = JSONUtils.toJSONArray(metadata);
+			}
+			
 			IMetaData metaData = dataStore.getMetaData();
 			for(int i=0; i<metaData.getFieldCount(); i++){
 				IFieldMetaData ifmd = metaData.getFieldMeta(i);
