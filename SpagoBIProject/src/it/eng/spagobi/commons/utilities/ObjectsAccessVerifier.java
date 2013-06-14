@@ -1103,7 +1103,8 @@ public class ObjectsAccessVerifier {
 						// if the document is ONLY inside the personal folder, the user can delete it
 						List folders = obj.getFunctionalities();
 						if (folders.size() == 1) {
-							LowFunctionality lowFunctionality = (LowFunctionality) folders.get(0);
+							Integer folderId = (Integer) folders.get(0);
+							LowFunctionality lowFunctionality = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(folderId, false);
 							boolean isInPersonalFolder = UserUtilities.isPersonalFolder(lowFunctionality, (UserProfile) profile);
 							if (isInPersonalFolder) {
 								logger.debug("Folder is personal folder, therefore user can delete it");
