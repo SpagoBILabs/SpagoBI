@@ -300,13 +300,17 @@ public class SelfServiceDataSetCRUD {
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
+		
 
 		}catch (Exception e){
 			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 		}
 		type =  getDatasetTypeName(type); 
 		if (insertion){
-			toReturn = new FileDataSet();		
+			toReturn = new FileDataSet();
+			//next steps are necessary to define a valid dataProxy
+			((FileDataSet)toReturn).setConfiguration(jsonDsConfig.toString());
+			((FileDataSet)toReturn).setFileName(fileName);
 		}
 			
 		toReturn.setConfiguration(jsonDsConfig.toString());
