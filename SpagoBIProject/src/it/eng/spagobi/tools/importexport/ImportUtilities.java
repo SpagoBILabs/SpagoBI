@@ -1575,6 +1575,8 @@ public class ImportUtilities {
 		newDataset.setPivotColumnName(exportedDataset.getPivotColumnName());
 		newDataset.setPivotColumnValue(exportedDataset.getPivotColumnName());
 		newDataset.setPivotRowName(exportedDataset.getPivotRowName());
+		newDataset.setPublicDS(exportedDataset.isPublicDS());
+		newDataset.setOwner(exportedDataset.getOwner());
 		
 		
 		SbiCommonInfo i = new SbiCommonInfo();
@@ -1689,6 +1691,8 @@ public class ImportUtilities {
 			newDataset.setPivotColumnName(exportedDataset.getPivotColumnName());
 			newDataset.setPivotColumnValue(exportedDataset.getPivotColumnName());
 			newDataset.setPivotRowName(exportedDataset.getPivotRowName());
+			newDataset.setPublicDS(exportedDataset.isPublicDS());
+			newDataset.setOwner(exportedDataset.getOwner());
 
 			
 			SbiCommonInfo i = new SbiCommonInfo();

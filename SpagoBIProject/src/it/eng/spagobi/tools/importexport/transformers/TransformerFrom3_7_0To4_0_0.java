@@ -51,7 +51,8 @@ public class TransformerFrom3_7_0To4_0_0 implements ITransformer {
 			fixSbiDatasetHistory(conn);
 			fixSbiDatasetTemp(conn);
 			fixSbiEngines(conn);
-
+			fixSbiDataSet(conn);
+			
 			conn.commit();
 		} catch (Exception e) {
 			logger.error("Error while changing database", e);	
@@ -196,7 +197,21 @@ public class TransformerFrom3_7_0To4_0_0 implements ITransformer {
 		logger.debug("OUT");
 	}
 	
-	
+	private void fixSbiDataSet(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			sql = "ALTER TABLE SBI_DATA_SET ADD COLUMN OWNER VARCHAR(50); "+
+			"ALTER TABLE SBI_DATA_SET ADD COLUMN IS_PUBLIC BOOLEAN DEFAULT FALSE;";
+			stmt.executeUpdate(sql);
+		} catch (Exception e) {
+			logger.error(
+					"Error in altering sbi dataset",
+					e);
+		}
+		logger.debug("OUT");
+	}
 	
 	
 	
