@@ -150,7 +150,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 			// get the initial worksheet template
 			worksheetDefinition = this.worksheetDesignerPanel.worksheetTemplate;
 		}
-		this.addAdditionalData(worksheetDefinition);
+		//this.addAdditionalData(worksheetDefinition);
 		var template = Ext.util.JSON.encode({
 			'OBJECT_WK_DEFINITION' : worksheetDefinition
 		});
