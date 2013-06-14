@@ -438,6 +438,9 @@ public class ExporterMetadata {
 				sbiDataSet.setCategory(category);
 				sbiDataSet.setParameters(dataSet.getParameters());
 				sbiDataSet.setDsMetadata(dataSet.getDsMetadata());
+
+				sbiDataSet.setPublicDS(dataSet.isPublic());
+				sbiDataSet.setOwner(dataSet.getOwner());
 				
 				tx2 = session.beginTransaction();
 				session.save(sbiDataSet);
