@@ -362,7 +362,7 @@ public class TemporaryTableManager {
 
 	private static void createTableInternal(String baseQuery, String tableName, IDataSource dataSource) throws Exception {
 		logger.debug("IN");
-		String dialect = dataSource.getHibDialectName();
+		String dialect = dataSource.getHibDialectClass().toUpperCase();
 		if (dialect.contains("HSQL") || dialect.contains("SQLServer")) {
 			// command in SELECT .... INTO table_name FROM ....
 			String sql = "SELECT * INTO " + tableName + " FROM ( " + baseQuery + " ) T ";
