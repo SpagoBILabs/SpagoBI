@@ -13,6 +13,9 @@ import it.eng.spagobi.tools.dataset.common.datareader.CsvDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetCsvDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetXlsDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.XmlDataReader;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import org.apache.log4j.Logger;
@@ -182,6 +185,37 @@ public class FileDataSet extends ConfigurableDataSet{
 	 */
 	public String getFileType() {
 		return fileType;
+	}
+	
+	
+
+	@Override
+	public void loadData() {
+		super.loadData();
+		this.adjustMetadata(this.getDataStore());
+	}
+
+	private void adjustMetadata(IDataStore iDataStore) {
+		IMetaData metadata = iDataStore.getMetaData();
+		try {
+			IMetaData definedMetadata = this.getMetadata();
+			int count = metadata.getFieldCount();
+			for (int i = 0 ; i < count ; i++ ) {
+				IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
+				String name = fieldMetadata.getName();
+				int index = definedMetadata.getFieldIndex(name);
+				if (index != -1) {
+					IFieldMetaData aFieldMetaData = definedMetadata.getFieldMeta(index);
+					fieldMetadata.setFieldType(aFieldMetaData.getFieldType());
+				}
+				
+			}
+		} catch (Exception e) {
+			logger.error("Cannot adjust metadata", e);
+		}
+		
+		
+		
 	}
 
 	/**
