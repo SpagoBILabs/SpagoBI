@@ -70,9 +70,11 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			var modelName = record.data.name;
 			var dataSourceLabel = record.data.data_source_label;
 			var url = this.qbeEngineBaseUrl+"&MODEL_NAME="+modelName;
-			if(datasourceLabel || datasourceLabel!=""){
-				url = url+ '&DATA_SOURCE_LABEL=' + datasourceLabel;
+			if(dataSourceLabel || dataSourceLabel!=""){
+				url = url+ 
+				'&DATA_SOURCE_LABEL=' + dataSourceLabel;
 			}
+			this.documentexecution.modelName = modelName;
 			this.documentexecution.load(url);
 		}
 	}
