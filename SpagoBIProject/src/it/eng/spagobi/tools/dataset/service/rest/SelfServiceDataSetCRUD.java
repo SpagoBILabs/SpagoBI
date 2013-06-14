@@ -11,7 +11,6 @@
  */
 package it.eng.spagobi.tools.dataset.service.rest;
 
-import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -23,13 +22,8 @@ import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
-import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
-import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
-import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
@@ -37,13 +31,10 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
 import java.util.HashMap;

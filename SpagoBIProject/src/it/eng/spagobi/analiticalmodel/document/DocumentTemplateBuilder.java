@@ -58,7 +58,7 @@ public class DocumentTemplateBuilder {
 
 	
 	public ObjTemplate buildSmartFilterDocumentTemplate(String templateName, String templateAuthor,
-			BIObject parentQbeDocument, String query, String worksheetData, JSONObject smartFilterData) {
+			BIObject parentQbeDocument, String query, String worksheetData, JSONObject smartFilterData, String modelName) {
 		
 		ObjTemplate template;
 		
@@ -79,7 +79,7 @@ public class DocumentTemplateBuilder {
 				String parentQbeDocumentTemplateContent = new String(parentQbeDocumentTemplate.getContent());
 				worksheetDocumentTemplate = worksheetDriver.composeWorksheetTemplate(worksheetData, query, smartFilterValuesString, parentQbeDocumentTemplateContent);
 			} else if(parentQbeDocument == null && worksheetData != null) {
-				worksheetDocumentTemplate = worksheetDriver.createNewWorksheetTemplate(worksheetData);
+				worksheetDocumentTemplate = worksheetDriver.createNewWorksheetTemplate(worksheetData, modelName, query);
 			} 
 			
 			template = buildDocumentTemplate(templateName, templateAuthor, worksheetDocumentTemplate);

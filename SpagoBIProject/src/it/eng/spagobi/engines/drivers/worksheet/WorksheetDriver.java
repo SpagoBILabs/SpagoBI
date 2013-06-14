@@ -66,6 +66,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 	public final static String ATTRIBUTE_VERSION = "version";
 	public final static String TAG_WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
 	public final static String TAG_WORKSHEET = "WORKSHEET";
+	public final static String DATAMART = "DATAMART";
 	public final static String TAG_QBE = "QBE";
 	public final static String TAG_QBE_COMPOSITE = "COMPOSITE-QBE";
 
@@ -398,12 +399,23 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		return template;
 	}
 
-	public String createNewWorksheetTemplate(String worksheetDefinition) throws SourceBeanException {
+	public String createNewWorksheetTemplate(String worksheetDefinition, String modelName, String query) throws SourceBeanException {
 		SourceBean templateSB = new SourceBean(TAG_WORKSHEET);
 		templateSB.setAttribute(ATTRIBUTE_VERSION, CURRENT_VERSION);
 		SourceBean worksheetDefinitionSB = new SourceBean(TAG_WORKSHEET_DEFINITION);
 		worksheetDefinitionSB.setCharacters(worksheetDefinition);
 		templateSB.setAttribute(worksheetDefinitionSB);
+		if(modelName!=null && !modelName.equals("")){
+			SourceBean templateQBE = new SourceBean(TAG_QBE);
+			SourceBean templateDatamart = new SourceBean(DATAMART);
+			templateDatamart.setAttribute("name", modelName);
+			templateQBE.setAttribute(templateDatamart);
+			SourceBean templateQuery =  new SourceBean(QUERY);
+			templateQuery.setCharacters(query);
+			templateQBE.setAttribute(templateQuery);
+			templateSB.setAttribute(templateQBE);
+		}
+		
 		String template = templateSB.toXML(false);	
 		return template;
 	}
