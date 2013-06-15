@@ -47,8 +47,6 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 
 
 
-
-
 	var c = Ext.apply(defaultSettings, config || {});
 	Ext.apply(this, c);
 
@@ -223,7 +221,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 
 		this.fileNameField = new Ext.form.DisplayField({
 			fieldLabel : LN('sbi.ds.fileName'),
-			width:300,
+			width:  300,
 			allowBlank : false,
 			id: 'fileNameField',
 			name: 'fileName',
@@ -234,7 +232,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			inputType : 'file',
 			fieldLabel : LN('sbi.generic.upload'),
 			allowBlank : false,
-			width:300,
+			width: (this.fromWizard)? 500 : 300,
 			id: 'fileUploadField',
 			name: 'fileUpload'
 		});

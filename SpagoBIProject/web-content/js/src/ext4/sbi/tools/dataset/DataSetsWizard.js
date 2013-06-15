@@ -30,7 +30,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		this.addListener('navigate', this.navigate, this);
 		this.addListener('confirm', this.save, this);		
 		
-		this.addEvents('save','delete');	
+		this.addEvents('save','delete','getMetaValues');	
 		
 	}
 	
@@ -103,21 +103,21 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		//metadata tab
 		var config = {};
 		config.meta = this.record.meta;
-		if (config.meta == undefined || config.meta.length == 0){
-			this.metaInfo = new Ext.form.DisplayField({
-				value : LN('sbi.ds.field.metadata.nosaved'),
-				width:'100%',
-				readOnly:true,
-				 style: {
-			            width: '95%',
-			            marginBottom: '10px',
-			            'text-align': 'center'
-			        },
-				fieldStyle:'font-weight:bold;align:center;'
-			});
-		}else{
+//		if (config.meta == undefined || config.meta.length == 0){
+//			this.metaInfo = new Ext.form.DisplayField({
+//				value : LN('sbi.ds.field.metadata.nosaved'),
+//				width:'100%',
+//				readOnly:true,
+//				 style: {
+//			            width: '95%',
+//			            marginBottom: '10px',
+//			            'text-align': 'center'
+//			        },
+//				fieldStyle:'font-weight:bold;align:center;'
+//			});
+//		}else{
 			this.metaInfo = new Sbi.tools.dataset.ManageDatasetFieldMetadata(config);
-		}
+//		}
 		return this.metaInfo;
 	}
 	, initWizardBar: function() {
@@ -144,15 +144,33 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		 var newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId);
 		 var oldTabId = newTabId;
 		 var numTabs  = (this.wizardPanel.items.length-1);
-		 
+		 var isTabValid = true;
 		 if (direction == 'next'){
-			 newTabId += (newTabId < numTabs)?1:0;				
+			 newTabId += (newTabId < numTabs)?1:0;	
+			 if (newTabId == 1){
+				 isTabValid = this.validateTab1();					
+			 }
+			 if (newTabId == 2){
+				 isTabValid = this.validateTab2();
+				if (isTabValid){						
+					var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
+					var fileValues = this.fileUpload.getFormState();
+					Ext.apply(values, fileValues);
+					if (this.record.meta !== undefined && this.record.meta.length > 0 ){
+						var metaValues = this.metaInfo.getFormState();
+						values.meta = metaValues;
+					}
+					this.fireEvent('getMetaValues', values);
+				}
+			 }
 		 }else{			
 			newTabId -= (newTabId <= numTabs)?1:0;					
 		 }
-		 this.wizardPanel.setActiveTab(newTabId);
-		 Ext.getCmp('move-prev').setDisabled(newTabId==0);
-		 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
+		 if (isTabValid){
+			 this.wizardPanel.setActiveTab(newTabId);
+			 Ext.getCmp('move-prev').setDisabled(newTabId==0);
+			 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
+		 }			 
 	}
 	
 	, closeWin: function(){				
@@ -160,26 +178,50 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	}
 
 	, save : function(){
-		var fileName = this.fileUpload.fileNameField;
-		if (fileName == undefined || fileName.value == ""){
-			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryUploadFile'), '');
-			return;
-		}
-		if (Sbi.tools.dataset.DataSetsWizard.superclass.validateForm()){
+		if (this.validateTab1() && this.validateTab2()){
 			var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
 			var fileValues = this.fileUpload.getFormState();
 			Ext.apply(values, fileValues);
-			if (this.record.meta !== undefined && this.record.meta.length > 0 ){
+			if (this.metaInfo !== undefined){
 				var metaValues = this.metaInfo.getFormState();
 				values.meta = metaValues;
 			}
 			this.fireEvent('save', values);
-		}else{
-			//alert(LN('sbi.ds.mandatoryFields'));
-			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryFields'), '');
 		}
 	}
 	
+	, validateTab1: function(){		
+		if (!Sbi.tools.dataset.DataSetsWizard.superclass.validateForm()){
+			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryFields'), '');
+			return false;
+		}
+		return true;
+	}
+	
+	, validateTab2: function(){
+		var fileName = this.fileUpload.fileNameField;
+		if (fileName == undefined || fileName.value == ""){
+			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryUploadFile'), '');
+			return false;
+		}
+		var fileType =  this.fileUpload.fileTypeCombo;
+		if (fileType == undefined || fileType.value == null || fileType.value == ""){
+			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryFields'), '');
+			return false;
+		}
+		if (fileType.value == 'CSV'){
+			var csvDelimiterCombo = this.fileUpload.csvDelimiterCombo;
+			var csvQuoteCombo = this.fileUpload.csvQuoteCombo;
+			if (csvDelimiterCombo == undefined || csvDelimiterCombo.value == null|| csvDelimiterCombo.value == "" ||
+				csvQuoteCombo == undefined || csvQuoteCombo.value == null || csvQuoteCombo.value == ""){
+				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryFields'), '');
+				return false;
+			}
+		}
+		
+		return true;		
+	}
+
 	//handler for the upload file button
 	,uploadFileButtonHandler: function(btn, e) {
 		

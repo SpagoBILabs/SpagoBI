@@ -16,6 +16,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
@@ -37,6 +38,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -79,8 +81,7 @@ public class SelfServiceDataSetCRUD {
 		try {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
-			dataSets = dataSetDao.loadAllActiveDataSetsByOwnerAndType(profile.getUserUniqueIdentifier().toString(), DataSetConstants.DS_FILE);
-			//dataSets = dataSetDao.loadAllActiveDataSetsByOwner(profile.getUserUniqueIdentifier().toString());	
+			dataSets = dataSetDao.loadAllActiveDataSetsByOwnerAndType(profile.getUserUniqueIdentifier().toString(), DataSetConstants.DS_FILE);	
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
 			
 			//sets action to modify dataset			
@@ -182,7 +183,7 @@ public class SelfServiceDataSetCRUD {
 			dsMetadata = getDatasetTestMetadata(dsNew, profile, meta);
 			dsNew.setDsMetadata(dsMetadata);	
 			LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
-	
+			
 			HashMap<String, String> logParam = new HashMap();
 			logParam.put("LABEL",dsNew.getLabel());
 
@@ -229,7 +230,59 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 
-
+	@POST
+	@Path("/testDataSet")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String testDataSet(@Context HttpServletRequest req) {
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		try {
+			IDataSetDAO dao=DAOFactory.getDataSetDAO();
+			dao.setUserProfile(profile);
+			String label = (String)req.getParameter("label");			
+			String meta = (String)req.getParameter(DataSetConstants.METADATA);			
+			
+			IDataSet ds  = dao.loadActiveDataSetByLabel(label);
+			IDataSet dsToTest = recoverDataSetDetails(req, ds);
+			
+			logger.debug("Recalculating dataset's metadata: executing the dataset...");
+			String dsMetadata = null;
+			dsMetadata = getDatasetTestMetadata(dsToTest, profile, meta);
+			dsToTest.setDsMetadata(dsMetadata);	
+			LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
+			
+//			JSONObject toReturn = new JSONObject();
+//			toReturn.put("meta", dsMetadata);
+//			return toReturn.toString();
+			List<IDataSet> dataSets = new ArrayList();
+			dataSets.add(dsToTest);
+			JSONArray metaJSONArray = DataSetJSONSerializer.serializeMetada(dsMetadata);
+			JSONObject JSONReturn = new JSONObject();
+			JSONReturn.put("meta", metaJSONArray);
+			return JSONReturn.toString();
+		} catch (SpagoBIRuntimeException ex) {
+			logger.error("Cannot fill response container", ex);
+			updateAudit(req, profile, "DATA_SET.SAVE", null, "ERR");
+			logger.debug(ex.getMessage());
+			try {
+				return ( ExceptionUtilities.serializeException(ex.getMessage(),null));
+			} catch (Exception e) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException(
+						"Cannot fill response container", e);
+			}
+		} catch (Exception ex) {
+			logger.error("Cannot fill response container", ex);
+			updateAudit(req, profile, "DATA_SET.SAVE", null, "ERR");
+			logger.debug(canNotFillResponseError);
+			try {
+				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
+			} catch (Exception e) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException(
+						"Cannot fill response container", e);
+			}
+		}
+	}
 	private static void updateAudit(HttpServletRequest request,
 			IEngUserProfile profile, String action_code,
 			HashMap<String, String> parameters, String esito) {
@@ -276,8 +329,7 @@ public class SelfServiceDataSetCRUD {
 		String meta = (String)req.getParameter(DataSetConstants.METADATA);		
 		
 		Boolean isPublic = Boolean.valueOf((req.getParameter("isPublic")==null)?"false":(String)req.getParameter("isPublic"));
-		
-		IDataSet toReturn = dataSet; //for not loose other fields if already esists!	
+				
 		try{
 			String config = "{}";
 			if (configuration != null)
@@ -297,16 +349,37 @@ public class SelfServiceDataSetCRUD {
 			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 		}
 		type =  getDatasetTypeName(type); 
-		if (insertion){
-			toReturn = new FileDataSet();
-			//next steps are necessary to define a valid dataProxy
-			((FileDataSet)toReturn).setConfiguration(jsonDsConfig.toString());
-			((FileDataSet)toReturn).setFileName(fileName);
-		}
+		FileDataSet toReturn = new FileDataSet();
+		if (!insertion){				
+			toReturn.setId(dataSet.getId());			
+			toReturn.setName(dataSet.getName());
+			toReturn.setLabel(dataSet.getLabel());
+			toReturn.setDescription(dataSet.getDescription());	
+
+			// set detail dataset ID
+			toReturn.setTransformerId((dataSet.getTransformerId() == null)? null:dataSet.getTransformerId());
+			toReturn.setPivotColumnName(dataSet.getPivotColumnName());
+			toReturn.setPivotRowName(dataSet.getPivotRowName());
+			toReturn.setPivotColumnValue(dataSet.getPivotColumnValue());
+			toReturn.setNumRows(dataSet.isNumRows());			
+			toReturn.setParameters(dataSet.getParameters());		
+			toReturn.setDsMetadata(dataSet.getDsMetadata());		
 			
-		toReturn.setConfiguration(jsonDsConfig.toString());
-		toReturn.setDsType(type);
+			//set persist values
+			toReturn.setPersisted(dataSet.isPersisted());
+			toReturn.setDataSourcePersistId(dataSet.getDataSourcePersistId());
+			toReturn.setFlatDataset(dataSet.isFlatDataset());
+			toReturn.setDataSourceFlatId(dataSet.getDataSourceFlatId());
+			toReturn.setFlatTableName(dataSet.getFlatTableName());
+			
+
+		}
+		//next steps are necessary to define a valid dataProxy
+		((FileDataSet)toReturn).setConfiguration(jsonDsConfig.toString());
+		((FileDataSet)toReturn).setFileName(fileName);
+				
 		//update general informations
+		toReturn.setDsType(type);
 		toReturn.setDsMetadata(meta);
 		toReturn.setId(id.intValue());
 		toReturn.setLabel(label);

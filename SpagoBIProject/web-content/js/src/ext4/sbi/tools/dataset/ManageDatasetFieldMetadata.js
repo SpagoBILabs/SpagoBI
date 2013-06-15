@@ -2,17 +2,17 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	extend: 'Ext.grid.Panel'
 
 	,config: {
+		id: 'dsMetaGrid',
 		border: false,
 		frame: false,
 		fieldsColumns:null,
 		selModel:null,
 		emptyStore: true,
 		xtype: 'grid',
-        store: null,
-//        
-//        layout: 'fit',		        
+        store: null,		        
         frame: true,
-        autoscroll: true
+        autoscroll: true,
+        loadMask: true
 	}
 
 	, constructor: function(config) {
@@ -60,15 +60,16 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 		this.columns = this.fieldsColumns;
 		 
 		this.fieldStore = new Ext.data.JsonStore({
-			    id : 'name',
+			    id : 'metaStoreData',
 			    fields: ['name', 'fieldType','type' ],
 			    idIndex: 0,
-			    data:this.meta
+			    data:this.meta || []
 			});
 		 
 
 		this.selModel= {selType: 'cellmodel'};
 		this.store = this.fieldStore;
+//		this.store.on('load',this.onLoad);
 	    var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
 	        clicksToEdit: 1
 	    });
@@ -101,5 +102,13 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 		this.record.data.meta = this.getFormState();
 	}
 
-	
+	,updateData: function(meta){
+		var newFieldStore = new Ext.data.Store({
+		    fields: ['name', 'fieldType','type' ],
+		    data:meta
+		});
+		this.store.loadData(meta,false);
+		this.doLayout();	
+	}
+
 });
