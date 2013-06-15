@@ -42,13 +42,14 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			serviceName: 'selfservicedataset/delete',
 			baseParams: baseParams
 		});
+		this.services["testDataSet"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'selfservicedataset/testDataSet',
+			baseParams: baseParams
+		});
 	}
 	
 	,
 	initStore : function(baseParams) {
-	
-		
-//		this.fields = [ "id", "label", "name", "description","catTypeVn", "dataSource" ];
 		this.filteredProperties = [ "label", "name" ];
 		
 		Sbi.debug('DataViewPanel bulding the store...');
@@ -143,6 +144,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.isNew = true;
 		this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',config);	
 		this.wizardWin.on('save', this.saveDataset, this);
+		this.wizardWin.on('getMetaValues', this.getMetaValues, this);
     	this.wizardWin.show();
 	}
 	
@@ -158,6 +160,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',config);	
 			this.wizardWin.on('save', this.saveDataset, this);
 			this.wizardWin.on('delete', this.deleteDataset, this);
+			this.wizardWin.on('getMetaValues', this.getMetaValues, this);
 	    	this.wizardWin.show();
 		}
 	}
@@ -227,6 +230,36 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			);
 	}
 	
+	,
+	getMetaValues: function(values){
+		var metaConfiguration = values.meta || [];
+		delete values.meta;
+		var params = values;
+		params.meta = Ext.JSON.encode(metaConfiguration) ;
+		Ext.Ajax.request({
+			url: this.services["testDataSet"],
+			params: params,			
+			success : function(response, options) {				
+				if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+					if(response.responseText!=null && response.responseText!=undefined){
+						if(response.responseText.indexOf("error.mesage.description")>=0){
+							Sbi.exception.ExceptionHandler.handleFailure(response);
+						}else{			
+							var newMeta = response.responseText;
+							var newMetaDecoded =  Ext.decode(newMeta);				 
+							this.wizardWin.metaInfo.updateData(newMetaDecoded.meta);
+						}
+					}
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
+			},
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure      
+		});
+		
+	}
+	
 	/**
 	 * Opens the loading mask 
 	*/
@@ -250,3 +283,4 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	} 
 
 });
+  
