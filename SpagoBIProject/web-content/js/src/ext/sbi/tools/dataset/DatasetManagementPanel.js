@@ -2114,7 +2114,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 				
 				,
 				jsonTriggerFieldHandler : function() {
-					alert("jsonTriggerFieldHandler");
+					//alert("jsonTriggerFieldHandler");
 					var values = this.getValues();
 					var datasetId = values['id'];
 					var datasourceLabel = this.detailQbeDataSource.getValue();
