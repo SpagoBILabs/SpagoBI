@@ -130,6 +130,10 @@ font-weight:bold;
 	 background-image:url(../img/datamartstructure/dimension.gif) !important;
 }
 
+.generic {
+     background-image:url(../img/datamartstructure/dimension.gif) !important;
+}
+
 .view {
 	 background-image:url(../img/datamartstructure/view.png) !important;
 }
