@@ -109,7 +109,16 @@ Ext.extend(Sbi.tools.dataset.QbeDatasetBuilder, Ext.Window, {
 	        	}
 				, 'domready': {
 					fn: function(frame) {
-						if(frame.domWritable()) {
+						if (!Ext.isChrome && frame.domWritable()) {
+							frame.execScript('init()');
+						}
+					}
+					, scope: this
+				}
+				, 'documentloaded': {  // workaround for Chrome (domready event isn't enough, may because it is fired too early)
+									   // see https://spagobi.eng.it/jira/browse/SPAGOBI-1105 
+					fn: function(frame) {
+						if (Ext.isChrome && frame.domWritable()) {
 							frame.execScript('init()');
 						}
 					}
