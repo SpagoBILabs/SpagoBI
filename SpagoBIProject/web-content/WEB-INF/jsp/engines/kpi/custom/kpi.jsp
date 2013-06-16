@@ -127,12 +127,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		while(blocksIt.hasNext()){			
 			KpiResourceBlock block = (KpiResourceBlock) blocksIt.next();
 			String resourceName = null;
+			KpiLine root = block.getRoot();
+			Integer id =null;
 			if(block.getR() != null){
 				resourceName = block.getR().getName();
+				id = block.getR().getId();
 			}
-			KpiLine root = block.getRoot();
-			Integer id = block.getR().getId();
-
 			if((parKpiResource.isEmpty() && parKpiResources.isEmpty())
 						|| (!parKpiResource.isEmpty() && parKpiResource.contains(resourceName))
 						|| (!parKpiResources.isEmpty() && parKpiResources.contains(id+""))){
