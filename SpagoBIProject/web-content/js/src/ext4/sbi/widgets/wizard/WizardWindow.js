@@ -52,6 +52,10 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		var localConf = {};		
 		localConf.items = c.tabs;		
 		localConf.activeTab = 0;
+		localConf.fieldDefaults= {
+	            labelAlign: 'right',
+	            msgTarget: 'side'
+	        },
 		this.wizardPanel = Ext.create('Ext.TabPanel', localConf);	
 		this.items = [this.wizardPanel];
 	}
@@ -170,7 +174,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
   		  	  , name: f.name
 	          , width: 500 
 	          , height: 30
-//			  , xtype : 'text'
+			  , activeError: this.isError(f)
 			  , validationEvent: f.mandatory || false
 			  , allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true
 	          , margin: '0 0 0 10'
@@ -191,6 +195,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 			  , xtype : 'textarea'
 			  , multiline: true
 			  , maxLength: 250
+			  , activeError:   this.isError(f)
 			  , validationEvent: f.mandatory || false
 			  , allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true
 	          , margin: '0 0 0 10'
@@ -212,6 +217,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
           , margin: '0 0 0 10'
           , validationEvent: f.mandatory || false
           , allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true
+    	  , activeError:   this.isError(f)
           , format: f.values.format || 'd/m/Y'
           , defaultValue: f.defaultValue 
         });
@@ -239,7 +245,9 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 			mode : 'local',
 			triggerAction : 'all',
 			selectOnFocus : true, editable : false,
-			allowBlank : true, validationEvent : true,
+		    validationEvent: f.mandatory || false,
+	        allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true,
+			activeError:  this.isError(f), 
 			xtype : 'combo'	,
 			value:  f.value
 		});
@@ -406,5 +414,14 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
     	return toReturn;
     }
 	
+	, isError: function(f){
+		var toReturn = false;
+		if (f.mandatory == true && (f.value == undefined || f.value == null || f.value == ""))
+			toReturn = true;
+		else
+			toReturn = false;
+
+		return toReturn; 
+	}
 	
 });

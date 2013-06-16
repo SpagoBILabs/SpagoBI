@@ -11,8 +11,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 		xtype: 'grid',
         store: null,		        
         frame: true,
-        autoscroll: true,
-        loadMask: true
+        autoscroll: true
 	}
 
 	, constructor: function(config) {
@@ -69,13 +68,18 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 
 		this.selModel= {selType: 'cellmodel'};
 		this.store = this.fieldStore;
-//		this.store.on('load',this.onLoad);
 	    var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
 	        clicksToEdit: 1
 	    });
 		this.plugins = [cellEditing];
-
 	    this.callParent(arguments);
+	    
+		//invokes before each ajax request 
+	    Ext.Ajax.on('beforerequest', this.showMask, this);   
+	    // invokes after request completed 
+	    Ext.Ajax.on('requestcomplete', this.hideMask, this);            
+	    // invokes if exception occured 
+	    Ext.Ajax.on('requestexception', this.hideMask, this); 
 	}
 	
 	,loadItems: function(fieldsColumns, record){
@@ -103,12 +107,28 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	}
 
 	,updateData: function(meta){
-		var newFieldStore = new Ext.data.Store({
-		    fields: ['name', 'fieldType','type' ],
-		    data:meta
-		});
 		this.store.loadData(meta,false);
 		this.doLayout();	
 	}
+	/**
+	 * Opens the loading mask 
+	*/
+    , showMask : function(){
+    	this.un('afterlayout',this.showMask,this);
+    	if (this.loadMask == null) {    		
+    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "  Wait...  "});
+    	}
+    	if (this.loadMask){
+    		this.loadMask.show();
+    	}
+    }
 
+	/**
+	 * Closes the loading mask
+	*/
+	, hideMask: function() {
+    	if (this.loadMask && this.loadMask != null) {	
+    		this.loadMask.hide();
+    	}
+	} 
 });
