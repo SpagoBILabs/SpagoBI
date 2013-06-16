@@ -82,6 +82,18 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) {
 		}
 	}, this);
 	
+	this.on("resize",function(){
+		var h1 = this.getHeight();
+		if(!this.h){
+			this.h = h1-12;
+			this.setHeight(this.h);
+		}else if(this.h!=h1){
+			this.setHeight(this.h);
+		}
+		
+
+	},this)
+	
 };
 
 Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
