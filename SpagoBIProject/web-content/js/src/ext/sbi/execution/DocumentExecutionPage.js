@@ -31,8 +31,6 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 		, maskOnRender: true
 		, parametersSliderWidth: 300
 		, collapseParametersSliderOnExecution: false
-		, collapseShortcutsSliderOnExecution: true
-		, hideShortcutsSliderOnExecution: true
 		, shortcutsHidden: false
 		
 		// private...
@@ -126,10 +124,6 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
  * is displayed, false otherwise. The default is false.
  */
 /**
- * @cfg {Boolean} collapseShortcutsSliderOnExecution true to collapse shortcuts panel when the executed document 
- * is displayed, false otherwise. The default is true.
- */
-/**
  * @cfg {String} shortcutsHidden true if shortcuts panel is hidden, 
  * false otherwise. The default is false.
  */
@@ -194,11 +188,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 */
 	, collapseParametersSliderOnExecution: null
 	/**
-	 * @property {Boolean} collapseShortcutsSliderOnExecution true to collapse shortcuts panel when the executed document 
-	 * is displayed, false otherwise. The default is true.
-	 */
-	, collapseShortcutsSliderOnExecution: null
-	/**
      * @property {String} shortcutsHidden true if shortcuts panel is hidden, 
      * false otherwise. The default is false.
      */
@@ -245,10 +234,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
      * @property {Sbi.execution.DocumentPage} documentPage The panel used to visualize document when visualization modality is equal to VIEW
      */
     , documentPage: null
-    /**
-     * @property {Ext.Panel} shortcutsSlider The slider panel that contains the shortchutPanel
-     */
-    , shortcutsSlider: null
     /**
      * @property {Sbi.execution.ShortcutsPanel} shortcutsPanel The shortcutsPanel
      */
@@ -420,22 +405,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			(Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.shortcutsPanel && Sbi.settings.execution.shortcutsPanel.height) 
 			? Sbi.settings.execution.shortcutsPanel.height : 280;
 
-		this.shortcutsSlider = new Ext.Panel({
-			region:'south'
-			, border: true
-			, frame: false
-			, collapsible: true
-			, collapsed: false
-			, hideCollapseTool: true
-			, titleCollapse: true
-			, collapseMode: 'mini'
-			, split: true
-			, autoScroll: true
-			, height: shortcutsPanelHeight
-			, layout: 'fit'
-			, items: [this.shortcutsPanel]
-			, hidden: shortcutsHidden
-		});
 		
 		config.border = false;
 		this.infoPage = new Sbi.execution.InfoPage(config, doc);
@@ -478,7 +447,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			, border: false
 			, items:[{
 				layout: 'border'
-				, items: [this.shortcutsSlider, this.documentPanel]
+				, items: [this.documentPanel]
 			}]
 		});
 		
@@ -690,11 +659,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		this.documentVisualizationModality = 'INFO';
 		this.synchronizeToolbar( this.executionInstance, this.documentVisualizationModality );
 		
-		if(this.hideShortcutsSliderOnExecution === true) {
-			this.showShortcutsSlider();
-		}
-		this.expandShortcutsSlider();
-		
 		this.documentPanel.getLayout().setActiveItem( 0 );
 		Sbi.trace('[ParametersSelectionPage.showInfo]: OUT');
 	}
@@ -711,67 +675,10 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		this.documentVisualizationModality = 'VIEW';
 		this.synchronizeToolbar( this.executionInstance, this.documentVisualizationModality );
 		
-		if(this.collapseParametersSliderOnExecution === true) {
-			this.collapseParametersSlider();
-		}
-		if(this.collapseShortcutsSliderOnExecution === true) {
-			this.collapseShortcutsSlider();
-		}
-		
-		if(this.hideShortcutsSliderOnExecution === true) {
-			this.hideShortcutsSlider();
-		}
-		
 		this.documentPanel.getLayout().setActiveItem( 1 );
 		Sbi.trace('[ParametersSelectionPage.showDocument]: OUT');
 	}
 	
-	/**
-	 * @method
-	 * 
-	 *  Collapse the shortcut panel
-	 */
-	, collapseShortcutsSlider: function() {
-		if(this.shortcutsSlider.collapsed === false) {
-			this.shortcutsSlider.collapse(false);
-			Sbi.trace('[ParametersSelectionPage.collapseShortcutsSlider]: slider succesfully collapsed');
-		}
-	}
-	/**
-	 * @method
-	 * 
-	 *  Expand the shortcut panel
-	 */
-	, expandShortcutsSlider: function() {
-		if(this.shortcutsSlider.collapsed === true) {
-			this.shortcutsSlider.expand(false);
-			Sbi.trace('[ParametersSelectionPage.expandShortcutsSlider]: slider succesfully expanded');
-		}
-	}
-	
-	/**
-	 * @method
-	 * 
-	 *  show the shortcut panel
-	 */
-	, showShortcutsSlider: function() {
-		if(this.shortcutsSlider.hidden === true) {
-			this.shortcutsSlider.show();
-			Sbi.trace('[ParametersSelectionPage.showShortcutsSlider]: slider succesfully shown');
-		}
-	}
-	
-	/**
-	 * @method
-	 * 
-	 *  hide the shortcut panel
-	 */
-	, hideShortcutsSlider: function() {
-		if(this.shortcutsSlider.hidden === false) {
-			this.shortcutsSlider.hide();
-			Sbi.trace('[ParametersSelectionPage.hideShortcutsSlider]: slider succesfully hided');
-		}
-	}
 
 	/**
 	 * @method
@@ -1028,7 +935,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	}
 	
 	, collapseSliders: function() {
-		this.collapseShortcutsSlider();
 		this.collapseParametersSlider();
 	}
 
