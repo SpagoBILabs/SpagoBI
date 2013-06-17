@@ -429,6 +429,12 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			this.fireEvent('loadurlfailure', errors);
 			Sbi.trace('[ParametersSelectionPage.documentPage.on(\'loadurlfailure\')]: OUT');
 		}, this);
+		//event comung from the document
+		this.documentPage.on('managebutton', function(button, property, value ) {
+			this.toolbar.manageButton(button, property, value);
+		},this);
+		
+		
 		
 		this.documentPanel = new Ext.Panel({
 			region:'center'
