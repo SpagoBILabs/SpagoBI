@@ -14,6 +14,7 @@ Sbi.execution.toolbar.DocumentExecutionPageToolbar = function(config) {
 		documentMode: 'INFO'
 		, expandBtnVisible: true
 		, callFromTreeListDoc: false
+		, height: 30
 		// private
 	};
 
