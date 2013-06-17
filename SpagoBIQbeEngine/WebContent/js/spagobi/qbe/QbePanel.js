@@ -225,6 +225,15 @@ Sbi.qbe.QbePanel = function(config) {
 	// constructor
 	Sbi.qbe.QbePanel.superclass.constructor.call(this, c);
 
+	
+	this.tabs.on("tabchange",function(object,tab){
+		if(tab.id == 'WorksheetPanel'){
+			sendMessage({button: "saveworksheet", property:"visibility", value:"true"},"managebutton");
+		}else{
+			sendMessage({button: "saveworksheet", property:"visibility", value:"false"},"managebutton");
+		}
+	},this)
+	
 	/*
 	if (config.isFromCross) {
 		this.loadFirstQuery();

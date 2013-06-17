@@ -284,12 +284,27 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 		listeners['message:contentexported'] = this.initContentExportedMessageListner();
     	listeners['message:worksheetexporttaberror'] = this.initWorksheetExportTabErrorMessageListner();
 		listeners['message:crossnavigation'] = this.initCrossNavigationaMessageListner();
+		listeners['message:managebutton'] = this.initManageButton();
 		
 		listeners['domready'] = this.initDomReadyListner();
 		listeners['documentloaded'] = this.initDocumentLoadedListner();
         listeners['resize'] = this.initResizeListner();
 	
 		return listeners;
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * init the listner for event 'message:subobjectsaved'
+	 */
+	, initManageButton: function() {
+		return {
+    		fn: function(srcFrame, message) {
+	        	this.fireEvent("managebutton",message.data.button, message.data.property, message.data.value) 
+    		}
+    		, scope: this
+    	};
 	}
 	
 	/**
@@ -309,6 +324,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
     		, scope: this
     	};
 	}
+	
 	
 	/**
 	 * @method

@@ -326,7 +326,21 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				}));
 		   }
 		   
-
+		   if (this.executionInstance.document && this.executionInstance.document.decorators &&  this.executionInstance.document.decorators.isSavable && (this.executionInstance.document.typeCode === 'WORKSHEET' || this.executionInstance.document.typeCode === 'DATAMART')) {
+			  
+			   var conf ={
+				   iconCls: 'icon-save' 
+					   , tooltip: LN('sbi.execution.executionpage.toolbar.save')
+					   , scope: this
+					   , handler : this.saveWorksheetAs
+			  };
+			 
+			  if(this.executionInstance.document.typeCode === 'DATAMART'){
+				  conf.hidden = "true";
+			  }
+			  this.saveWorksheetButton = new Ext.Toolbar.Button(conf);
+			  this.addButton(this.saveWorksheetButton);
+		   }
 	   			
 			if (Sbi.user.functionalities.contains('EditWorksheetFunctionality') && this.executionInstance.document.typeCode === 'WORKSHEET') {
 				this.addButton(new Ext.Toolbar.Button({
@@ -1003,7 +1017,24 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    }
 	 
 	 
-	 
+	 , manageButton: function(button, property, value){
+		 var aButton;
+		 if(button == "saveworksheet" && this.saveWorksheetButton){
+			 aButton = this.saveWorksheetButton;
+		 }
+		 if(aButton){
+			 if(button == "saveworksheet"){
+				 if(property=="visibility"){
+					 if(value=="true"){
+						 aButton.show();
+					 }else{
+						 aButton.hide();
+					 }
+				 }
+			 } 
+		 }
+
+	 }
 	
 	 
 		// =================================================================================================================
