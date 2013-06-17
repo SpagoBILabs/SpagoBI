@@ -35,7 +35,9 @@ Ext.ns("Sbi.worksheet.runtime");
 
 Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) { 
 	
-	var defaultSettings = {};
+	var defaultSettings = {
+			border : false
+	};
 
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.runtime.runtimeSheetsContainerPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.runtime.runtimeSheetsContainerPanel);
@@ -82,17 +84,6 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) {
 		}
 	}, this);
 	
-	this.on("resize",function(){
-		var h1 = this.getHeight();
-		if(!this.h){
-			this.h = h1-12;
-			this.setHeight(this.h);
-		}else if(this.h!=h1){
-			this.setHeight(this.h);
-		}
-		
-
-	},this)
 	
 };
 
