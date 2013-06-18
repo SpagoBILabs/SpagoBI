@@ -39,7 +39,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		
 		this.layout =  'card';
 		
-		this.documentexecution = Ext.create('Sbi.adhocreporting.AdhocreportingTabsPanel',{}); 
+		this.documentexecution = Ext.create('Sbi.selfservice.SelfServiceExecutionIFrame',{}); 
 		this.adhocreportingTabsPanel = Ext.create('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 			adhocreportingContainer : this
 			, datasetsServicePath : config.datasetsServicePath
