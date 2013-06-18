@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -84,7 +85,7 @@ public class JPQLStatement extends AbstractStatement {
 		Assert.assertTrue(!query.isEmpty(), "Input query cannot be empty (i.e. with no selected fields)");
 				
 		// let's start with the query at hand
-		entityAliasesMaps.put(query.getId(), new HashMap<String, String>());
+		entityAliasesMaps.put(query.getId(), new LinkedHashMap<String, String>());
 		
 		JPQLBusinessViewUtility viewsUtility = new JPQLBusinessViewUtility(this);
 		
