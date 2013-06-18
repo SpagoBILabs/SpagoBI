@@ -270,6 +270,7 @@ a:hover{
 								<tr>
 									<td colspan=3 height="30px">&nbsp;</td>
 								</tr>
+								
 								<tr>
 									<td class='login-label'><a
 										href="<%=contextName %>/ChangePwdServlet?start_url=<%=startUrl%>">
@@ -281,7 +282,17 @@ a:hover{
 							</table></td>
 						<td style="padding-top: 20px">&nbsp;&nbsp;</td>
 					</tr>
-
+							<tr>
+								<td>&nbsp;</td>
+								<td class='header-title-column-portlet-section-nogrey'>
+									<div class="header-row-portlet-section" style = "line-height: 130%; margin-top: 10px; font-size:9pt;">														
+										SpagoBI Demo users' credentials:<br/>
+										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('biuser','biuser')"><b>biuser/biuser</b></a>(business user)<br/>
+										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('bidemo','bidemo')"><b>bidemo/bidemo</b></a> (showcase user)<br/>
+										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('biadmin','biadmin')"><b>biadmin/biadmin</b></a> (administrator)
+									</div>
+								</td>
+							</tr>
 					<tr>
 						<td>&nbsp;</td>
 						<td style='color: red; font-size: 11pt;'><br /><%=authFailed%></td>
