@@ -433,12 +433,6 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 		filterExp = getFilterExpTree( expressionJOSN );
 		
 		query.setWhereClauseStructure( filterExp );
-		
-		/* ... DEBUG
-		if(filterExp != null) {
-			System.out.println(">>>>>>> " + getFilterExpAsString(filterExp));
-		}
-		*/
 	}
 	
 	public static ExpressionNode getFilterExpTree(JSONObject nodeJSON) throws SerializationException {
