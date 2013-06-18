@@ -24,11 +24,11 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 
     Ext.onReady(function(){
-		var selfService = Ext.create('Sbi.selfservice.ManageSelfServiceContainer',{
+		var selfService = Ext.create('Sbi.adhocreporting.AdhocreportingContainer',{
         	worksheetEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(worksheetEditActionUrl) %>'
             , qbeEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditActionUrl) %>'
             , user: Sbi.user.userUniqueIdentifier
-            , datasetsServicePath: 'selfservicedataset'
+            , datasetsServicePath: 'certificateddatasets'
 		}); //by alias
 		var datasetListViewport = Ext.create('Ext.container.Viewport', {
 			layout:'fit',

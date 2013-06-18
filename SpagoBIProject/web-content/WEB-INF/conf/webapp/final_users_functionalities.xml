@@ -60,7 +60,7 @@
     <APPLICATION code="CreateWorksheetFromDatasetUserFunctionality" 
                  title="#menu.WorksheetFromDataset"  
                  functionality="CreateWorksheetFromDatasetUserFunctionality" 
-                 link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=START_CREATING_WORKSHEET_FROM_DATASET_ACTION" 
+                 link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=CREATE_DOCUMENT_START_ACTION" 
                  iconUrl="${SPAGOBI_CONTEXT}/img/wapp/pencil16.png">
     </APPLICATION>
     

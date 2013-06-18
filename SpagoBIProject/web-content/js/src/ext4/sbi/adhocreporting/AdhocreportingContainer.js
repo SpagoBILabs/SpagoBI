@@ -5,14 +5,14 @@
 
 /**
  * 
- * This class is the container for the self service interface 
+ * This class is the container for the ad-hoc reporting interface 
  *    
  *  @author
  *  Alberto Ghedin (alberto.ghedin@eng.it)
  */
  
   
-Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
+Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 	extend: 'Ext.panel.Panel',
 
 	congig:{
@@ -23,10 +23,10 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 	},
 
 	/**
-	 * @property {Panel} manageSelfService
+	 * @property {Panel} adhocreportingTabsPanel
 	 *  Tab panel that contains the datasets and the model views
 	 */
-    manageSelfService: null,
+    adhocreportingTabsPanel: null,
 	
 	/**
 	 * @property {Panel} documentexecution
@@ -39,13 +39,13 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		
 		this.layout =  'card';
 		
-		this.documentexecution = Ext.create('Sbi.selfservice.SelfServiceExecutionIFrame',{}); 
-		this.manageSelfService = Ext.create('Sbi.selfservice.ManageSelfService', {
-			selfServiceContainer : this
+		this.documentexecution = Ext.create('Sbi.adhocreporting.AdhocreportingTabsPanel',{}); 
+		this.adhocreportingTabsPanel = Ext.create('Sbi.adhocreporting.AdhocreportingTabsPanel', {
+			adhocreportingContainer : this
 			, datasetsServicePath : config.datasetsServicePath
 		}); 
 					
-		this.items = [ this.manageSelfService, this.documentexecution]
+		this.items = [ this.adhocreportingTabsPanel, this.documentexecution]
 		this.callParent(arguments);
 		
 		this.addEvents(
@@ -58,11 +58,12 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		         */
 		        'executeDocument'
 				);
-		this.manageSelfService.on('executeDocument', this.executeDocument ,this);
+		this.adhocreportingTabsPanel.on('executeDocument', this.executeDocument ,this);
 
 	}
 
-	, executeDocument: function(docType,inputType, record){
+	,
+	executeDocument: function(docType,inputType, record){
 		if(docType=='QBE'){
 			this.executeQbe(inputType, record);
 		}else{
@@ -71,7 +72,8 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		this.getLayout().setActiveItem(1);	
 	}
 	
-	, executeQbe: function(inputType, record){
+	,
+	executeQbe: function(inputType, record){
 		if(inputType == "MODEL"){
 			var modelName = record.data.name;
 			var dataSourceLabel = record.data.data_source_label;
@@ -85,13 +87,14 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		}
 	}
 	
-	,executeWorksheet: function(inputType, record){
+	,
+	executeWorksheet: function(inputType, record){
 		if(inputType == "DATASET"){
 			var datasetLabel = record.data.label;
-			var dataSourceLabel = record.data.dataSource;
+			var datasourceLabel = record.data.dataSource;
 			var url =  this.worksheetEngineBaseUrl+ '&dataset_label=' + datasetLabel ;
-			if(dataSourceLabel || dataSourceLabel!=""){
-				url = url+ '&datasource_label=' + dataSourceLabel;
+			if(datasourceLabel || datasourceLabel!=""){
+				url = url+ '&datasource_label=' + datasourceLabel;
 			}
 			this.documentexecution.load(url);
 			this.documentexecution.datasetLabel = datasetLabel;

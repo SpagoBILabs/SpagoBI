@@ -7,12 +7,14 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		dataView : null,
 		tbar : null,
 		height: 600,
-		user : ''
+		user : '',
+		datasetsServicePath: '',
+		displayToolbar: true
 	}
 
 	,
 	constructor : function(config) {
-
+		this.initConfig(config);
 		this.user = '';
 		this.initServices();
 		this.initStore();
@@ -26,8 +28,9 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	,
 	initServices : function(baseParams) {
 		this.services = [];
+
 		this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
-			serviceName : 'selfservicedataset',
+			serviceName : this.datasetsServicePath,
 			baseParams : baseParams
 		});
 		this.services["getCategories"]= Sbi.config.serviceRegistry.getRestServiceUrl({
@@ -53,11 +56,19 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.filteredProperties = [ "label", "name" ];
 		
 		Sbi.debug('DataViewPanel bulding the store...');
-
-		this.storeConfig = Ext.apply({
-			model : this.getModelName(),
-			filteredProperties : [ "label", "name" ]
-		}, {});
+		
+		this.storeConfig = {
+			model : this.getModelName()
+			, filteredProperties : [ "label", "name" ]
+		    , proxy: {
+		        type: 'ajax'
+		        , url: this.services["list"]
+	         	, reader : {
+	        		type : 'json',
+	        		root : 'root'
+	        	}
+		     }
+		};
 
 		// creates and returns the store
 		Sbi.debug('DataViewPanel store built.');
@@ -77,24 +88,27 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	}
 	
 	, initToolbar: function() {
-		var newDatasetButton = new Ext.button.Button({
-	    	tooltip: LN('sbi.generic.add'),
-			iconCls:'icon-add',
-			width:50,
-			listeners: {
-				'click': {
-	          		fn: this.addNewDataset,
-	          		scope: this
-	        	} 
-			}
-	    });
-	     
-		var toolbar =  Ext.create('Ext.toolbar.Toolbar',{renderTo: Ext.getBody(),height:30});
-		toolbar.add('->');
-		toolbar.add(' ');
-		toolbar.add(newDatasetButton);
-	
-		this.tbar = toolbar;
+		if (this.displayToolbar) {
+			var newDatasetButton = new Ext.button.Button({
+		    	//tooltip: LN('sbi.generic.add'),
+		    	text : LN('sbi.generic.add'),
+				iconCls:'icon-add',
+				width:50,
+				listeners: {
+					'click': {
+		          		fn: this.addNewDataset,
+		          		scope: this
+		        	} 
+				}
+		    });
+		     
+			var toolbar =  Ext.create('Ext.toolbar.Toolbar',{renderTo: Ext.getBody(),height:30});
+			toolbar.add('->');
+			toolbar.add(' ');
+			toolbar.add(newDatasetButton);
+		
+			this.tbar = toolbar;
+		}
 	}
 	
 	,
