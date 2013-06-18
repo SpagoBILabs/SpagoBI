@@ -668,9 +668,14 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 				, this.documentParametersStore
 		);
 		this.queryCataloguePanel.on('load', function() {
-			var message = {};
-			message.messageName = 'catalogueready';
-			sendMessage(message);
+			try{
+				var message = {};
+				message.messageName = 'catalogueready';
+				sendMessage(message);
+			}catch(e){
+				
+			}
+
 		}, this);
 		
 		this.eastRegionPanel = new Ext.Panel({
