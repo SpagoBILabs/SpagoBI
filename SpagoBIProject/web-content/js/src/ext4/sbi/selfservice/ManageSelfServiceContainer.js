@@ -82,10 +82,10 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 	,executeWorksheet: function(inputType, record){
 		if(inputType == "DATASET"){
 			var datasetLabel = record.data.label;
-			var datasourceLabel = record.data.dataSource;
+			var dataSourceLabel = record.data.dataSource;
 			var url =  this.worksheetEngineBaseUrl+ '&dataset_label=' + datasetLabel ;
-			if(datasourceLabel || datasourceLabel!=""){
-				url = url+ '&datasource_label=' + datasourceLabel;
+			if(dataSourceLabel || dataSourceLabel!=""){
+				url = url+ '&datasource_label=' + dataSourceLabel;
 			}
 			this.documentexecution.load(url);
 			this.documentexecution.datasetLabel = datasetLabel;
