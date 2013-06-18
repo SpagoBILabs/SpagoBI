@@ -74,7 +74,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		layout:'fit',
 		width:640,
 		height:350,
-		closeAction: 'close',
+		closeAction: 'destroy',
 		buttons:[{ 
 			  iconCls: 'icon-save' 	
 			, handler: this.saveDocument
@@ -243,7 +243,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 				                        width: 200,
 				                        buttons: Ext.MessageBox.OK
 				                });
-				      			 this.close();
+				      			 this.destroy();
 				      		}  
 			      		} else {
 			      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');

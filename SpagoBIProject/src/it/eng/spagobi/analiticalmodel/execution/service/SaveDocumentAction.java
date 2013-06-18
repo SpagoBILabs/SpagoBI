@@ -21,7 +21,7 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
-import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -35,7 +35,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SaveDocumentAction extends AbstractSpagoBIAction {
@@ -67,6 +66,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private final String OBJECT_WK_DEFINITION = "wk_definition";
 	private final String OBJECT_QUERY = "query";
 	private final String FORMVALUES = "formValues";
+	
 
 	public static final String OBJ_DATASET_ID ="dataSetId";
 	public static final String OBJ_DATASET_LABEL ="dataset_label";
@@ -183,6 +183,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				JSONObject sourceDatasetJSON = request.getJSONObject("sourceDataset");
 				insertWorksheetDocumentCreatedOnDataset(sourceDatasetJSON, documentJSON, customDataJSON, foldersJSON);
 			}  else if(sourceModelName != null) {
+
 				insertWorksheetDocumentCreatedOnModel(sourceModelName, documentJSON, customDataJSON, foldersJSON);
 			} else {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to create worksheet document because both sourceDocument and sourceDataset are null");
@@ -250,8 +251,17 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		
 
 		try {
-
+			
+			
 			BIObject document = createBaseDocument(documentJSON, null, foldersJSON);
+
+			MetaModel metamodel = DAOFactory.getMetaModelsDAO().loadMetaModelByName(modelName);
+			
+			String dataSourceLabel = metamodel.getDataSourceLabel();
+			if(dataSourceLabel!=null){
+				IDataSource datasource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+				document.setDataSourceId(datasource.getDsId());		
+			}
 			
 			customDataJSON.put("modelName", modelName);
 			ObjTemplate template = buildDocumentTemplate(customDataJSON, null);
@@ -261,7 +271,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 											
 		} catch (SpagoBIServiceException e) {
 			throw e;			
-		} catch (JSONException e) {
+		}  catch (Exception e) {
 			throw new SpagoBIServiceException("Error creating the document", e);			
 		} finally {
 			logger.debug("OUT");
