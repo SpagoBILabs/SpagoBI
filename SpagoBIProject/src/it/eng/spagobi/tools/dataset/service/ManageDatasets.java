@@ -151,11 +151,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		IDataSet ds = getGuiGenericDatasetToInsert();
 		JSONObject attributesResponseSuccessJSON = new JSONObject();
 		HashMap<String, String> logParam = new HashMap();
-		logParam.put("NAME", ds.getName());
-		logParam.put("LABEL", ds.getLabel());
-		logParam.put("TYPE", ds.getDsType());
+
 		
 		if(ds!=null){
+			logParam.put("NAME", ds.getName());
+			logParam.put("LABEL", ds.getLabel());
+			logParam.put("TYPE", ds.getDsType());
 			String id = getAttributeAsString(DataSetConstants.ID);
 			try {
 				if(id != null && !id.equals("") && !id.equals("0")){							
