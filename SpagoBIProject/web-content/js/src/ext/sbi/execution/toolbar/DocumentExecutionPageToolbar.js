@@ -333,11 +333,9 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 					   , tooltip: LN('sbi.execution.executionpage.toolbar.save')
 					   , scope: this
 					   , handler : this.saveWorksheetAs
+					   , hidden: true
 			  };
 			 
-			  if(this.executionInstance.document.typeCode === 'DATAMART'){
-				  conf.hidden = "true";
-			  }
 			  this.saveWorksheetButton = new Ext.Toolbar.Button(conf);
 			  this.addButton(this.saveWorksheetButton);
 		   }
