@@ -227,11 +227,14 @@ Sbi.qbe.QbePanel = function(config) {
 
 	
 	this.tabs.on("tabchange",function(object,tab){
-		if(tab.id == 'WorksheetPanel'){
-			sendMessage({button: "saveworksheet", property:"visibility", value:"true"},"managebutton");
-		}else{
-			sendMessage({button: "saveworksheet", property:"visibility", value:"false"},"managebutton");
-		}
+		try{
+			if(tab.id == 'WorksheetPanel'){
+				sendMessage({button: "saveworksheet", property:"visibility", value:"true"},"managebutton");
+			}else{
+				sendMessage({button: "saveworksheet", property:"visibility", value:"false"},"managebutton");
+			}	
+		}catch (e){}
+
 	},this)
 	
 	/*
