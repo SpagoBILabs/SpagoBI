@@ -5,14 +5,15 @@
 
 /**
  * 
- * This class is the container for the self service interface 
+ * This class is the container for the ad-hoc reporting interface 
  *    
  *  @author
  *  Alberto Ghedin (alberto.ghedin@eng.it)
+ *  Davide Zerbetto (davide.zerbetto@eng.it)
  */
  
   
-Ext.define('Sbi.selfservice.ManageSelfService', {
+Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 	extend: 'Ext.tab.Panel',
 
     config: {
@@ -25,17 +26,16 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 	 * @property {Panel} datasetPanelTab
 	 *  Tab panel that contains the datasets
 	 */
-	datasetPanelTab: null
+	datasetPanelTab: null,
 	
-	/*
+	/**
 	 * @property {Panel} modelstPanelTab
 	 *  Tab panel that contains the models
-	 *
-	 * modelstPanelTab: null
 	 */
+	modelstPanelTab: null
 	
-	, 
-	constructor : function(config) {
+	
+	, constructor : function(config) {
 		this.initConfig(config);
 		
 		this.layout = 'fit';
@@ -44,11 +44,12 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 				title: LN("sbi.tools.dataset.datasetbrowser.title")
 				, user: Sbi.user.userId
 				, datasetsServicePath : config.datasetsServicePath
+				, displayToolbar : false
 		};
 		this.datasetPanelTab = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConf );
-		//this.modelstPanelTab = Ext.create('Sbi.tools.model.MetaModelsBrowser',{title: LN("sbi.tools.model.metamodelsbrowser.title")});
+		this.modelstPanelTab = Ext.create('Sbi.tools.model.MetaModelsBrowser',{title: LN("sbi.tools.model.metamodelsbrowser.title")});
 		
-		this.items = [ this.datasetPanelTab ];
+		this.items = [ this.datasetPanelTab, this.modelstPanelTab  ];
 
 		this.callParent(arguments);
 		this.addEvents(
@@ -61,9 +62,9 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 		         */
 		        'executeDocument'
 				);
-		//this.modelstPanelTab.on('executeDocument',function(docType, inputType, record){
-		//	this.fireEvent('executeDocument',docType,inputType,record);
-		//},this);
+		this.modelstPanelTab.on('executeDocument',function(docType, inputType, record){
+			this.fireEvent('executeDocument',docType,inputType,record);
+		},this);
 		this.datasetPanelTab.on('executeDocument',function(docType, inputType, record){
 			this.fireEvent('executeDocument',docType,inputType,record);
 		},this);

@@ -192,7 +192,7 @@ public class MenuListJSONSerializer implements Serializer {
 
 		JSONObject createDoc = createMenuItem(
 				"pencil",
-				"/servlet/AdapterHTTP?ACTION_NAME=START_CREATING_WORKSHEET_FROM_DATASET_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+				"/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
 				messageBuilder.getMessage("menu.CreateDocument", locale), true, null);
 		JSONObject subscription = createMenuItem(
 				"edit",

@@ -639,7 +639,8 @@
 				<file name="./src/ext4/sbi/selfservice/ManageSelfServiceContainer.js" /> 
 				<file name="./src/ext4/sbi/selfservice/SelfServiceExecutionIFrame.js" /> 
 
-
+				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingTabsPanel.js" />
+				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingContainer.js" />
 
 				
 			</filelist>
