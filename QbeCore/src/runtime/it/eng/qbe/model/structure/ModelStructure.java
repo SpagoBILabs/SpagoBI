@@ -114,8 +114,6 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 				Iterator<IModelEntity> it = entities.iterator();
 				IModelEntity entity = it.next();
 				Set<DefaultEdge> edges = rootEntitiesGraph.edgesOf(entity);
-				System.out.println("Number of edges: " + edges.size());
-				for(DefaultEdge edge : edges) System.out.println(edge);
 				Set<IModelEntity> connectedEntitySet = inspector.connectedSetOf(entity);
 				while(it.hasNext()) {
 					entity = it.next();
