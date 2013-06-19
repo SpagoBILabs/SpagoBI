@@ -45,6 +45,7 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String USED_BY_N_DOCS = "usedByNDocs";
 	
 	private static final String CATEGORY_TYPE_VN = "catTypeVn";
+	private static final String CATEGORY_TYPE_CD = "catTypeCd";
 		
 	private static final String PARS = "pars";
 	private static final String METADATA = "meta";
@@ -114,6 +115,7 @@ public class DataSetJSONSerializer implements Serializer {
 			
 			//result.put(CATEGORY_TYPE_VN, ds.getCategoryValueName());
 			result.put(CATEGORY_TYPE_VN, ds.getCategoryId()); 
+			result.put(CATEGORY_TYPE_CD, ds.getCategoryCd()); 
 
 			JSONArray parsListJSON = new JSONArray();
 			String pars = ds.getParameters();
@@ -275,6 +277,7 @@ public class DataSetJSONSerializer implements Serializer {
 			}	
 			result.put(IS_PUBLIC, ds.isPublic());
 			result.put(OWNER, ds.getOwner());
+			result.put(DATE_IN, ds.getDateIn());
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {

@@ -111,7 +111,7 @@ Ext.define('Sbi.widgets.grid.FixedGridPanelInMemoryFiltered', {
       	this.additionalButtons = Sbi.widget.grid.StaticGridDecorator.getAdditionalToolbarButtons(this.buttonToolbarConfig, this);
 
       	
-      	this.tbar = Ext.create('Sbi.widgets.grid.InLineGridFilter',Ext.apply({store: this.store, additionalButtons:this.additionalButtons}));
+      	this.tbar = Ext.create('Sbi.widgets.toolbar.InLineFilterAndOrder',Ext.apply({store: this.store, additionalButtons:this.additionalButtons}));
       	this.tbar.on("filter",function(filtercofing){
       		this.filterString = filtercofing.filterString;
       	},this);

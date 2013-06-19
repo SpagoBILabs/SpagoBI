@@ -23,6 +23,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.layout='fit';
 		this.items = [this.viewPanel];
 		this.callParent(arguments);
+		
+		this.addEvents('order');
 	}
 
 	,
@@ -53,14 +55,24 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	
 	,
 	initStore : function(baseParams) {
-		this.filteredProperties = [ "label", "name" ];
-		
 		Sbi.debug('DataViewPanel bulding the store...');
 		
-		this.storeConfig = {
-			model : this.getModelName()
-			, filteredProperties : [ "label", "name" ]
-		    , proxy: {
+		this.filteredProperties = [ "label", "name","description","fileName","fileType", "catTypeCd","owner" ];
+		
+		this.sorters = [{property : 'dateIn', direction: 'DESC', description: LN('sbi.ds.moreRecent')}, 
+		                {property : 'label', direction: 'ASC', description:  LN('sbi.ds.label')}, 
+		                {property : 'name', direction: 'ASC', description: LN('sbi.ds.name')}, 
+		                {property : 'fileName', direction: 'ASC', description:  LN('sbi.ds.fileName')},	
+		                {property : 'fileType', direction: 'ASC', description: LN('sbi.ds.file.type')}, 
+		                {property : 'catTypeCd', direction: 'ASC', description: LN('sbi.ds.catType')},						
+						{property : 'owner', direction: 'ASC', description: LN('sbi.ds.owner')}];
+		
+
+		this.storeConfig = Ext.apply({
+			model : this.getModelName(),
+			filteredProperties : this.filteredProperties, 
+			sorters: [],
+			proxy: {
 		        type: 'ajax'
 		        , url: this.services["list"]
 	         	, reader : {
@@ -68,7 +80,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	        		root : 'root'
 	        	}
 		     }
-		};
+		}, {});
 
 		// creates and returns the store
 		Sbi.debug('DataViewPanel store built.');
@@ -85,13 +97,14 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		        {"field":"false", "value":"Private"}
 		    ]
 		});
+		
+		this.sortersCombo = this.createSortersStore({sorters: this.sorters});		
 	}
 	
 	, initToolbar: function() {
 		if (this.displayToolbar) {
 			var newDatasetButton = new Ext.button.Button({
-		    	//tooltip: LN('sbi.generic.add'),
-		    	text : LN('sbi.generic.add'),
+		    	tooltip: LN('sbi.generic.add'),
 				iconCls:'icon-add',
 				width:50,
 				listeners: {
@@ -102,11 +115,41 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 				}
 		    });
 		     
-			var toolbar =  Ext.create('Ext.toolbar.Toolbar',{renderTo: Ext.getBody(),height:30});
-			toolbar.add('->');
-			toolbar.add(' ');
-			toolbar.add(newDatasetButton);
-		
+			var additionalButtons = [];
+			additionalButtons.push(newDatasetButton);
+			
+			var ordersCombo = new Ext.form.ComboBox({
+	//			fieldLabel: LN('sbi.ds.orderComboLabel') ,
+				store : this.sortersCombo,
+				name : 'ordersCombo',			
+				width : 'auto',
+				margin: '2 0 0 10',
+				displayField : 'description', 
+				valueField : 'property',
+	//			labelStyle:'font-weight:bold;', 
+				emptyText:LN('sbi.ds.orderComboLabel'),
+				typeAhead : true, forceSelection : true,
+				mode : 'local',
+				triggerAction : 'all',
+				selectOnFocus : true, editable : false,		   
+				xtype : 'combo'	
+			});
+			
+			var additionalSorters = [];
+			additionalSorters.push(ordersCombo);
+			
+			var config = Ext.apply({store: this.store, additionalButtons:additionalButtons, additionalSorters:additionalSorters});
+			config.alignToRight = true;
+			config.emptyLabel = LN('sbi.ds.filterLabel');
+			var toolbar =  Ext.create('Sbi.widgets.toolbar.InLineFilterAndOrder',config);
+			toolbar.on("filter",function(filterConfig){
+	      		this.filterString = filterConfig.filterString;
+	      	},this);	
+			toolbar.on("order",function(renderConfig){			
+				this.store.sort(renderConfig.property, renderConfig.direction);
+				this.viewPanel.refresh();
+	      	},this);
+	
 			this.tbar = toolbar;
 		}
 	}
@@ -147,6 +190,17 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
     	categoriesStore.load();
     	
     	return categoriesStore;
+	}
+	
+	, createSortersStore: function(config){		
+		var ordersStore = Ext.create('Ext.data.Store', {
+		    fields: ["property","direction","description"],
+		    data : config.sorters
+		});
+    	
+		ordersStore.load();
+    	
+    	return ordersStore;
 	}
 	
 	,
@@ -250,6 +304,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		delete values.meta;
 		var params = values;
 		params.meta = Ext.JSON.encode(metaConfiguration) ;
+//		params.meta =  Ext.util.JSON.encode(metaConfiguration) ;
 		Ext.Ajax.request({
 			url: this.services["testDataSet"],
 			params: params,			

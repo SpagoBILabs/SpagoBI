@@ -25,7 +25,7 @@
  *   	//adds the pagination toolbar
  *		this.addPaging(config);
  *		//add the filter
- *		this.tbar = Ext.create('Sbi.widgets.grid.InLineGridFilter',Ext.apply({store: this.store, additionalButtons:additionalButtons}));
+ *		this.tbar = Ext.create('Sbi.widgets.toolbar.InLineFilterAndOrder',Ext.apply({store: this.store, additionalButtons:additionalButtons}));
  *     	...
  * 
  * 

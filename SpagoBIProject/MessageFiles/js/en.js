@@ -640,7 +640,10 @@ Sbi.locale.ln['sbi.ds.noDataset']= 'No datasets available';
 Sbi.locale.ln['sbi.ds.mandatoryFields']= 'Please insert mandatory fields!';
 Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= 'Worksheet designer isn\'t available on parametric datasets!';
 Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= 'Is necessary upload the file!';
-
+Sbi.locale.ln['sbi.ds.orderComboLabel']= 'Order by...';
+Sbi.locale.ln['sbi.ds.filterLabel']= 'Filter by ...';
+Sbi.locale.ln['sbi.ds.moreRecent']= 'Recent';
+Sbi.locale.ln['sbi.ds.owner']= 'Autor';
 
 //===================================================================
 //MESSAGE BOX BUTTONS

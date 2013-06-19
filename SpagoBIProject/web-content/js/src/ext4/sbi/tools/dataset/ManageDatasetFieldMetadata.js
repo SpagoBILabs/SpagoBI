@@ -101,10 +101,10 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 		return values;
 	}
 
-	,updateRecord: function(){
-
-		this.record.data.meta = this.getFormState();
-	}
+//	,updateRecord: function(){
+//
+//		this.record.data.meta = this.getFormState();
+//	}
 
 	,updateData: function(meta){
 		this.store.loadData(meta,false);
