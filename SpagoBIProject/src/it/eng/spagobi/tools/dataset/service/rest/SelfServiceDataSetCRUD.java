@@ -240,19 +240,14 @@ public class SelfServiceDataSetCRUD {
 			dao.setUserProfile(profile);
 			String label = (String)req.getParameter("label");			
 			String meta = (String)req.getParameter(DataSetConstants.METADATA);			
-			
-			IDataSet ds  = dao.loadActiveDataSetByLabel(label);
-			IDataSet dsToTest = recoverDataSetDetails(req, ds);
+			IDataSet dsToTest = recoverDataSetDetails(req, null);
 			
 			logger.debug("Recalculating dataset's metadata: executing the dataset...");
 			String dsMetadata = null;
 			dsMetadata = getDatasetTestMetadata(dsToTest, profile, meta);
 			dsToTest.setDsMetadata(dsMetadata);	
 			LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
-			
-//			JSONObject toReturn = new JSONObject();
-//			toReturn.put("meta", dsMetadata);
-//			return toReturn.toString();
+
 			List<IDataSet> dataSets = new ArrayList();
 			dataSets.add(dsToTest);
 			JSONArray metaJSONArray = DataSetJSONSerializer.serializeMetada(dsMetadata);
