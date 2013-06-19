@@ -224,6 +224,14 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		this.getForm().setValues(v);
 	}
 	
+	, getValues: function(){
+		var values = this.callParent();
+		if(values.TYPE=='jdbc'){
+			values.JNDI_URL="";
+		}
+		return values;
+	}
+	
 	, validateForm: function(){
 		var valid = true;
 		var v = this.getValues();
@@ -239,7 +247,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 			valid = valid && (v.DRIVER!=null && v.DRIVER!=undefined &&  v.DRIVER!="");
 		}
 		return valid;
-		
 	}
+	
 });
     
