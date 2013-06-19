@@ -24,6 +24,7 @@
             "name",
             "description",
             "catTypeVn",
+            "catTypeCd",
             "dsTypeCd",
             "configuration",
             "pars",
@@ -38,6 +39,7 @@
             "isPublic",
             "owner",
             "userIn",
+            "dateIn",
             "dataSource",
             "meta"]
 }); 

@@ -704,6 +704,10 @@ Sbi.locale.ln['sbi.ds.file.xsl.sheetnumber'] = 'Sheet Number';
 Sbi.locale.ln['sbi.ds.file.xsl.limitrows'] = 'Limit Rows Number';
 Sbi.locale.ln['sbi.ds.file.xsl.skiprows'] = 'Skip Rows';
 Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= 'Is necessary upload the file!';
+Sbi.locale.ln['sbi.ds.orderComboLabel']= 'Order by...';
+Sbi.locale.ln['sbi.ds.filterLabel']= 'Filter by ...';
+Sbi.locale.ln['sbi.ds.moreRecent']= 'Recent';
+Sbi.locale.ln['sbi.ds.owner']= 'Autor';
 
 //===================================================================
 //MESSAGE BOX BUTTONS

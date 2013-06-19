@@ -14,13 +14,13 @@
  * 
  *     @example
  *     ...
- *		this.tbar = Ext.create('Sbi.widgets.grid.InLineGridFilter',Ext.apply({store: this.store, additionalButtons:additionalButtons}));
+ *		this.tbar = Ext.create('Sbi.widgets.grid.InLineFilterAndOrder',Ext.apply({store: this.store, additionalButtons:additionalButtons}));
  *     ...
  * 
  * @author
  * Alberto Ghedin (alberto.ghedin@eng.it) 
  */
-Ext.define('Sbi.widgets.grid.InLineGridFilter', {
+Ext.define('Sbi.widgets.toolbar.InLineFilterAndOrder', {
     extend: 'Ext.toolbar.Toolbar'
 
     ,config: {
@@ -37,11 +37,20 @@ Ext.define('Sbi.widgets.grid.InLineGridFilter', {
     	/**
     	 * Additional buttons to add in the toolbar. Take a look at {@link Sbi.widget.toolbar.StaticToolbarBuilder#StaticToolbarBuilder}
     	 */
-    	additionalButtons:null,
+    	additionalButtons:null,    	
+    	/**
+    	 * Additional sorters to add in the toolbar. 
+    	 */
+    	additionalSorters:null,    	
     	/**
     	 * Milliseconds of delay between the last key pressed and the application of the filter
     	 */
-    	keyPressedDelay: 400 
+    	keyPressedDelay: 400,
+    	
+    	alignToRight: false
+    	
+//    	,emptyLabel:null
+    	
     }
 
 	, constructor: function(config) {
@@ -53,9 +62,14 @@ Ext.define('Sbi.widgets.grid.InLineGridFilter', {
 	    var thisPanel = this;
 		Sbi.widgets.grid.DynamicFilteringToolbar.superclass.onRender.call(this, ct, position);
 
+		if (this.alignToRight){
+			this.add('->');
+		}
+		
 	    this.valueField = Ext.create('Ext.form.field.Trigger', {
 	    	triggerCls:'x-form-clear-trigger',
 	    	width: 120,
+//	    	emptyText:(this.emptyLabel !== null)?this.emptyLabel:'',
 	    	enableKeyEvents: true,
 	    	onTriggerClick: function(e) {
 	    		if(this.inputEl.dom.className.indexOf("x-form-text-search")<0){
@@ -88,9 +102,17 @@ Ext.define('Sbi.widgets.grid.InLineGridFilter', {
 
 	    this.add( this.valueField ); 
 	    
+	    if (this.additionalSorters){
+	    	//adds combo with sorters values			
+	    	for(var i=0; i<this.additionalSorters.length;i++){
+	    		var sortElem = this.additionalSorters[i];	    		
+	    		sortElem.on('change', this.order, this);
+				this.add(sortElem);
+			}		
+	    }
 
 		if(this.additionalButtons){
-			this.add('->');
+			if(!this.alignToRight) this.add('->');
 			for(var i=0; i<this.additionalButtons.length;i++){
 				this.add(this.additionalButtons[i]);
 			}
@@ -113,6 +135,19 @@ Ext.define('Sbi.widgets.grid.InLineGridFilter', {
 
 	}
 	
-	
-	
+	/**
+	 * Order the store and throws the order event
+	 * @private
+	 * @param {String} value the value of the orderField
+	 */
+	, order: function(value){
+		var recOrder = (value.lastSelection!==undefined)?value.lastSelection[0]:null;			
+		var config = {};
+		if (recOrder != null){
+			config.property = recOrder.get('property') || "";
+			config.direction =  recOrder.get('direction') || "";
+		}
+		this.fireEvent("order",config);	
+	}
+	 
 });

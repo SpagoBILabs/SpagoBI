@@ -64,6 +64,8 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		 */
 		filteredProperties : new Array(),
 		
+		sorters : new Array(),
+		
 		autoScroll : true
 
 	}
@@ -88,7 +90,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 			wrap : false
 		};
 		this.scrollable = 'horizontal';
-
+		
 		this.callParent(arguments);
 
 		this.addListener('itemclick', this.onClick, this);
@@ -124,7 +126,8 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 								'<div class="dataset-view">' +
 									'<img src="/SpagoBI/themes/sbi_default/img/dataset/csv-xls.png" width="110" style="margin-left: 40px; margin-top: 10px;">' ,
 									'<p><b>{name}</b></p>',
-									'<p>{description}</p><br/>',
+									'<p>{description}</p>',
+									'<p>{dateIn}</p><br/>',
 								'</div>',
 							'</dd>',
 		                '</tpl>',	              

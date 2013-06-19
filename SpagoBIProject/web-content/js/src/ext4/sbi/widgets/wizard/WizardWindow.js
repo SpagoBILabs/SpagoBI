@@ -26,7 +26,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		height: 500,
 		hasBuddy: false,	
 		modal: true,
-		closeAction:'close',
+		closeAction:'destroy',
 		constrain: true,
 		plain: true,
 		modal:true,
