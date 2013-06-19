@@ -22,18 +22,7 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 				deletebutton:true
 		};
 	
-		//set the proxy of the model.. Is STATIC
-//		var model = Ext.ModelMgr.getModel(this.getModelName());
-//		model.setProxy({
-//			type: 'rest',
-//			url : Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'datasources'}),
-//			reader: {
-//				type: 'json',
-//				root: 'root'
-//			}
-//	
-//		});
-	
+
 		this.callParent(arguments);
 	}
 	
@@ -53,9 +42,16 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 		recordToDelete.destroy({
 			success : function(object, response, options) {
 				if(response !== undefined && response.response !== undefined && response.response.responseText !== undefined && response.response.statusText=="OK") {
-					Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.deleted'));
-					this.grid.store.remove(record);
-					this.grid.store.commitChanges();
+					response = response.response ;
+					if(response.responseText!=null && response.responseText!=undefined){
+						if(response.responseText.indexOf("error.mesage.description")>=0){
+							Sbi.exception.ExceptionHandler.handleFailure(response);
+						}else{
+							Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.deleted'));
+							this.grid.store.remove(record);
+							this.grid.store.commitChanges();
+						}
+					}
 				} else {
 					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
 				}
