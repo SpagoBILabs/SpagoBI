@@ -104,7 +104,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	, initToolbar: function() {
 		if (this.displayToolbar) {
 			var newDatasetButton = new Ext.button.Button({
-		    	tooltip: LN('sbi.generic.add'),
+				//tooltip: LN('sbi.generic.add'),
+		    	text : LN('sbi.generic.add'),
 				iconCls:'icon-add',
 				width:50,
 				listeners: {
