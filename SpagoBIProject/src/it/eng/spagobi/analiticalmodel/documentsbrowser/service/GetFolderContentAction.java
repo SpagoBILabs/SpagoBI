@@ -83,7 +83,12 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			IEngUserProfile profile = (IEngUserProfile)permCont.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 			LowFunctionality targetFunct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(new Integer(functID), false);
-			isHome = UserUtilities.isPersonalFolder(targetFunct, (UserProfile) profile);
+			if(UserUtilities.isAdministrator(profile)){
+				isHome = UserUtilities.isAPersonalFolder(targetFunct);
+			}else{
+				isHome = UserUtilities.isPersonalFolder(targetFunct, (UserProfile) profile);
+			}
+			
 
 			//getting children documents
 			//LowFunctionality lowFunct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(functID, true);
