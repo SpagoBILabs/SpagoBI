@@ -33,6 +33,7 @@
 	<DocumentExecuteServiceProxy_URL>/services/DocumentExecuteService</DocumentExecuteServiceProxy_URL>
 	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>	
 	<SbiDocumentServiceProxy_URL>/services/SbiDocumentService</SbiDocumentServiceProxy_URL>
+	<MetamodelServiceProxy_URL>/services/MetamodelService</MetamodelServiceProxy_URL>
 	<!-- limit number of rows to export -->
 	<EXPORT_ROWS_LIMIT>65000</EXPORT_ROWS_LIMIT>
 	
