@@ -406,7 +406,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 			
 			var delButtonColumn = new Ext.grid.ButtonColumn({
 		       header: LN('sbi.qbe.filtergridpanel.headers.delete')
-		       , tooltip: LN('sbi.qbe.filtergridpanel.tooltip.notdef')
+		       , tooltip: LN('sbi.qbe.filtergridpanel.headers.delete')
 		       , dataIndex: 'deleteButton'
 		       , imgSrc: '../img/actions/delete.gif'
 		       , clickHandler:function(e, t){
@@ -445,7 +445,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 		    
 		    var isFreeCheckColumn = new Ext.grid.CheckColumn({
 			       header: LN('sbi.qbe.filtergridpanel.headers.isfree')
-			       , tooltip: LN('sbi.qbe.filtergridpanel.tooltip.notdef')
+			       , tooltip: LN('sbi.qbe.filtergridpanel.headers.isfree.desc')
 			       , dataIndex: 'promptable'
 			       , hideable: true
 				   , hidden: false
@@ -571,7 +571,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 				// == OPERATOR ========================================
 				{
 					header: LN('sbi.qbe.filtergridpanel.headers.operator')
-			        , tooltip: LN('sbi.qbe.filtergridpanel.tooltip.notdef')
+			        , tooltip: LN('sbi.qbe.filtergridpanel.headers.operator')
 			        , dataIndex: 'operator'     
 			        , editor: filterOptColumnEditor
 			        , hideable: false
@@ -631,7 +631,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 		        isFreeCheckColumn, 
 		        {
 		           header: LN('sbi.qbe.filtergridpanel.headers.boperator')
-		           , tooltip: LN('sbi.qbe.filtergridpanel.tooltip.notdef')
+		           , tooltip: LN('sbi.qbe.filtergridpanel.headers.boperator.desc')
 		           , dataIndex: 'booleanConnector'
 		           , editor: booleanOptColumnEditor
 		           , renderer: function(val){

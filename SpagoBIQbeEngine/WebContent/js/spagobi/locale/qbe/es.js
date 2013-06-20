@@ -454,3 +454,9 @@ Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.edit.msg'] = 'Nodo de tipo
 Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.node'] = 'El nodo no es una banda';
 Sbi.locale.ln['sbi.qbe.bands.range.title'] = 'Limitar la definici\u00F3n';
 Sbi.locale.ln['sbi.qbe.bands.range.invalid'] = 'El alcance no ajustado correctamente';
+
+
+
+
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.boperator.desc'] = 'Bol.Connector between filters';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.isfree.desc'] = 'The user can select the value in a popup when the query is executed';

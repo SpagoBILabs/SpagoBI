@@ -145,7 +145,7 @@ Sbi.locale.ln['sbi.qbe.savewindow.selectmetadata'] = 'Insert metadata';
 //===================================================================
 //FILTER GRID
 //===================================================================
-Sbi.locale.ln['sbi.qbe.filtergridpanel.title'] = 'Where clause';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.title'] = 'Filters';
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.namePrefix'] = 'Filter';
 
@@ -168,8 +168,11 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rodef'] = 'Right operand default 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rolast'] = 'Right operand last value';
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.isfree'] = 'Is for Prompt';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.isfree.desc'] = 'The user can select the value in a popup when the query is executed';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.delete'] = 'Delete all';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.boperator'] = 'Bol.Connector';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.boperator.desc'] = 'Bol.Connector between filters';
+
 
 //column tooltip
 Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.notdef'] = 'Help tooltip not defined yet';
@@ -276,7 +279,7 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.visible'] = 'Visible';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.include'] = 'Include';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.group'] = 'Group';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.filter'] = 'Filter';
-Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.having'] = 'Having';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.having'] = 'Group Filter';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.entity'] = 'Entity';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.alias'] = 'Alias';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.order'] = 'Order';
@@ -378,7 +381,7 @@ Sbi.locale.ln['sbi.qbe.cataloguepanel.title'] = 'Query Catalogue';
 //===================================================================
 //HAVING CLAUSE PANEL
 //===================================================================
-Sbi.locale.ln['sbi.qbe.havinggridpanel.title'] = 'Having clause';
+Sbi.locale.ln['sbi.qbe.havinggridpanel.title'] = 'Filters on Groups';
 
 //===================================================================
 //DOCUMENT PARAMETERS PANEL
