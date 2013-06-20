@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractServiceProxy {
 
-    private HttpSession session;
+    protected HttpSession session;
 
     static private final String SERVICE_NAME = "AbstractServiceProxy";
     

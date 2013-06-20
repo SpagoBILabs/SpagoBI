@@ -26,6 +26,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -206,6 +207,25 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			}
 			//defines the new dataset from the sdk object
 			IDataSet sbiDataset = new SDKObjectsConverter().fromSDKDatasetToBIDataset(sdkDataSet);	
+			
+			try {
+				Map parameters = sbiDataset.getParamsMap();
+				if (parameters == null) {
+					parameters = new HashMap();
+					sbiDataset.setParamsMap(parameters);
+				}
+				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+				parameters.put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+				
+				sbiDataset.loadData();
+				IMetaData metadata = sbiDataset.getDataStore().getMetaData();
+				sbiDataset.setMetadata(metadata);
+				DatasetMetadataParser parser = new DatasetMetadataParser();
+				String metadataStr = parser.metadataToXML(metadata);
+				sbiDataset.setDsMetadata(metadataStr);
+			} catch (Throwable t) {
+				logger.error("Cannot retrieve dataset's metadata", t);
+			}
 			
 			dataSetId = sdkDataSet.getId();
 			logger.debug("Looking for dataset with id = " + dataSetId);

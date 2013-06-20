@@ -14,7 +14,6 @@ import java.lang.reflect.Constructor;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.xml.sax.InputSource;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

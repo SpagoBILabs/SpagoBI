@@ -13,6 +13,7 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.QbeDatasetFactory;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
@@ -20,6 +21,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.utils.datamart.IQbeDataSetDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -120,7 +122,31 @@ public static String DS_TYPE = "SbiQbeDataSet";
     }
     
     public void setParamsMap(Map params) {
-    	this.params = params;
+    	if (this.params == null || this.params.isEmpty()) {
+    		this.params = params;
+    		return;
+    	}
+    	
+    	// keeping previous datamart retriever, if input map doesn't contain any
+		IQbeDataSetDatamartRetriever previousRetriever = this.params == null ? null
+				: (IQbeDataSetDatamartRetriever) this.params
+						.get(SpagoBIConstants.DATAMART_RETRIEVER);
+		IQbeDataSetDatamartRetriever newRetriever = params == null ? null
+				: (IQbeDataSetDatamartRetriever) params
+				.get(SpagoBIConstants.DATAMART_RETRIEVER);
+		
+		this.params = params;
+		if (this.params == null) {
+			this.params = new HashMap();
+		}
+    	
+    	if (previousRetriever != null && newRetriever == null) {
+    		this.params.put(SpagoBIConstants.DATAMART_RETRIEVER, previousRetriever);
+    	}
+    }
+    
+    public Map getParamsMap() {
+    	return this.params;
     }
     
     public IDataStore getDataStore() {
@@ -198,9 +224,14 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	    List<File> modelJarFiles = new ArrayList<File>();
 	    CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration();
 	    compositeConfiguration.loadDataSourceProperties().putAll( dataSourceProperties);
-	    
-	    String resourcePath = getResourcePath();
-	    modelJarFile = new File(resourcePath+File.separator+"qbe" + File.separator + "datamarts" + File.separator + modelNames.get(0)+File.separator+"datamart.jar");
+
+//	    String resourcePath = getResourcePath();
+//	    modelJarFile = new File(resourcePath+File.separator+"qbe" + File.separator + "datamarts" + File.separator + modelNames.get(0)+File.separator+"datamart.jar");
+	    IQbeDataSetDatamartRetriever retriever = this.getDatamartRetriever();
+	    if (retriever == null) {
+	    	throw new SpagoBIRuntimeException("Missing datamart retriever, cannot proceed.");
+	    }
+	    modelJarFile = retriever.retrieveDatamartFile(modelNames.get(0));
 	    modelJarFiles.add(modelJarFile);
 	    compositeConfiguration.addSubConfiguration(new FileDataSourceConfiguration(modelNames.get(0), modelJarFile));
 	
@@ -208,7 +239,15 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	    return DriverManager.getDataSource(getDriverName(modelJarFile), compositeConfiguration, this.useCache);
 	}
 	
-    /**
+    private IQbeDataSetDatamartRetriever getDatamartRetriever() {
+    	if (this.params == null || this.params.isEmpty()) {
+    		return null;
+    	}
+    	IQbeDataSetDatamartRetriever retriever = (IQbeDataSetDatamartRetriever) this.params.get(SpagoBIConstants.DATAMART_RETRIEVER);
+    	return retriever;
+	}
+
+	/**
      * Get the driver name (hibernate or jpa). It checks if the passed jar file contains the persistence.xml
      * in the META-INF folder
      * @param jarFile a jar file with the model definition
@@ -299,4 +338,5 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	public void setUseCache(boolean useCache) {
 		this.useCache = useCache;
 	}
+	
 }

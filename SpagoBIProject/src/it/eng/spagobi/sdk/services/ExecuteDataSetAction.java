@@ -5,11 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.sdk.services;
 
-import java.io.IOException;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
+import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
@@ -20,9 +17,17 @@ import it.eng.spagobi.services.dataset.service.DataSetSupplier;
 import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -71,6 +76,7 @@ public class ExecuteDataSetAction extends AbstractSpagoBIAction {
 			Assert.assertNotNull(dataSetConfig, "Impossible to find a dataset whose label is [" + dataSetLabel + "]");
 			
 			dataSet = DataSetFactory.getDataSet( dataSetConfig );
+			checkQbeDataset(dataSet);
 			dataSet.loadData();
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
@@ -92,6 +98,19 @@ public class ExecuteDataSetAction extends AbstractSpagoBIAction {
 			throw SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
 		} finally {
 			logger.debug("OUT");
+		}
+	}
+
+
+	private void checkQbeDataset(IDataSet dataSet) {
+		if (dataSet instanceof QbeDataSet) {
+			SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+			Map parameters = dataSet.getParamsMap();
+			if (parameters == null) {
+				parameters = new HashMap();
+				dataSet.setParamsMap(parameters);
+			}
+			dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
 		}
 	}
 

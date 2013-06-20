@@ -45,6 +45,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -58,6 +59,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -1238,7 +1240,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			}
 			
 			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
-			dataSet.setParamsMap(parametersFilled);		
+			dataSet.setParamsMap(parametersFilled);
+			checkQbeDataset(dataSet);
 			IDataStore dataStore = null;
 			try {
 				if(dataSet.getTransformerId() != null){
@@ -1284,6 +1287,18 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 		
 		return dataSetJSON;
+	}
+	
+	private void checkQbeDataset(IDataSet dataSet) {
+		if (dataSet instanceof QbeDataSet) {
+			SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+			Map parameters = dataSet.getParamsMap();
+			if (parameters == null) {
+				parameters = new HashMap();
+				dataSet.setParamsMap(parameters);
+			}
+			dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+		}
 	}
 
 	public JSONObject getJSONDatasetResult(Integer dsId, IEngUserProfile profile) {

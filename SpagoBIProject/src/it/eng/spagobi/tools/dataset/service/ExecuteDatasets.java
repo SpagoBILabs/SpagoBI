@@ -6,8 +6,10 @@
 package it.eng.spagobi.tools.dataset.service;
 
 
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -17,12 +19,14 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -97,6 +101,16 @@ public class ExecuteDatasets extends AbstractSpagoBIAction {
 		return dataSetJSON;
 	}
 	
+	private void checkQbeDataset(IDataSet dataSet) {
+		SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+		Map parameters = dataSet.getParamsMap();
+		if (parameters == null) {
+			parameters = new HashMap();
+			dataSet.setParamsMap(parameters);
+		}
+		dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+	}
+	
 	private HashMap deserializeParValuesListJSONArray(JSONArray parsListJSON) throws JSONException{
 		HashMap h = new HashMap();
 		for(int i=0; i< parsListJSON.length(); i++){
@@ -142,7 +156,8 @@ public class ExecuteDatasets extends AbstractSpagoBIAction {
 			logger.info("limit option undefined");			
 		}
 		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
-		dataSet.setParamsMap(parametersFilled);		
+		dataSet.setParamsMap(parametersFilled);	
+		checkQbeDataset(dataSet);
 		try {
 			if(dataSet.getTransformerId()!=null){
 				dataSet.loadData();
