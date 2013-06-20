@@ -20,15 +20,10 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import it.eng.spagobi.services.security.exceptions.SecurityException;
-import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
-import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -57,7 +52,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	private static transient Logger logger = Logger.getLogger(GeneralUtilities.class);
 
 	public static final int MAX_DEFAULT_TEMPLATE_SIZE = 5242880;
-	public static final int MAX_DEFAULT_FILE_DATASET_SIZE = 104857600; // 100 mega byte
+	public static final int MAX_DEFAULT_FILE_DATASET_SIZE = 10485760; // 10 mega byte
 	private static String SPAGOBI_HOST = null; 
 //	private static String SPAGOBI_DOMAIN = null;
 
@@ -665,6 +660,28 @@ public class GeneralUtilities extends SpagoBIUtilities{
 			logger.error("Error while retrieving max template size", e);
 			logger.debug("Considering default value " + MAX_DEFAULT_TEMPLATE_SIZE);
 			toReturn = MAX_DEFAULT_TEMPLATE_SIZE;
+		}
+		logger.debug("OUT: max size = " + toReturn);
+		return toReturn;
+	}
+	
+	public static int getDataSetFileMaxSize() {
+		logger.debug("IN");
+		int toReturn = MAX_DEFAULT_FILE_DATASET_SIZE;
+		try {
+			SingletonConfig serverConfig = SingletonConfig.getInstance();
+			String maxSizeStr = serverConfig.getConfigValue("SPAGOBI.DATASET_FILE_MAX_SIZE");
+			if (maxSizeStr != null) {
+				logger.debug("Configuration found for max dataset file size: " + maxSizeStr);
+				Integer maxSizeInt = new Integer(maxSizeStr);
+				toReturn = maxSizeInt.intValue();
+			} else {
+				logger.debug("No configuration found for max dataset file size");
+			}
+		} catch (Exception e) {
+			logger.error("Error while retrieving max dataset file size", e);
+			logger.debug("Considering default value " + MAX_DEFAULT_FILE_DATASET_SIZE);
+			toReturn = MAX_DEFAULT_FILE_DATASET_SIZE;
 		}
 		logger.debug("OUT: max size = " + toReturn);
 		return toReturn;

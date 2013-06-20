@@ -6,25 +6,17 @@
 package it.eng.spagobi.tools.dataset.service;
 
 import it.eng.spagobi.commons.SingletonConfig;
-
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-
-
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 import it.eng.spagobi.utilities.service.IServiceResponse;
 import it.eng.spagobi.utilities.service.JSONResponse;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
@@ -47,15 +39,11 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
     	
     	logger.debug("IN");
     	
-		String logOperation = null;
-		HashMap logParameters = new HashMap<String, String>();
-		
-       
     	try {
 			
 			FileItem uploaded = (FileItem) getAttribute("UPLOADED_FILE");
 			if (uploaded == null) {
-				throw new SpagoBIEngineServiceException(getActionName(), "No file was uploaded");
+				throw new SpagoBIServiceException(getActionName(), "No file was uploaded");
 			}
 				
 			UserProfile userProfile = (UserProfile) this.getUserProfile();
@@ -70,12 +58,10 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			
 			replayToClient( null );
 			
-		} catch (Throwable t) {
-			logger.error("Error while saving file into server: "+t);
-			t.printStackTrace();
-			AuditLogUtilities.updateAudit(getHttpRequest(), this.getUserProfile(), logOperation, logParameters , "KO");
-			SpagoBIServiceException e = new SpagoBIServiceException(this.getActionName(), "Error while saving file data set", t);
-			replayToClient( e );
+    	} catch (Throwable t) {
+    		logger.error("Error while uploading dataset file", t);
+    		SpagoBIServiceException e = SpagoBIServiceExceptionHandler.getInstance().getWrappedException(this.getActionName(), t);
+    		replayToClient( e );
 		} finally {
 			logger.debug("OUT");
 		}	
@@ -138,12 +124,12 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 
 			// check if the uploaded file is empty
 			if (uploaded.getSize() == 0) {
-				throw new SpagoBIEngineServiceException(getActionName(), "The uploaded file is empty");
+				throw new SpagoBIServiceException(getActionName(), "The uploaded file is empty");
 			}
 			// check if the uploaded file exceeds the maximum dimension
-			int maxSize = GeneralUtilities.MAX_DEFAULT_FILE_DATASET_SIZE;
+			int maxSize = GeneralUtilities.getDataSetFileMaxSize();
 			if (uploaded.getSize() > maxSize) {
-				throw new SpagoBIEngineServiceException(getActionName(), "The uploaded file exceeds the maximum size, that is " + maxSize);
+				throw new SpagoBIServiceException(getActionName(), "The uploaded file exceeds the maximum size, that is " + maxSize + " bytes");
 			}
 		} finally {
 			logger.debug("OUT");
@@ -170,14 +156,14 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			// check if the file already exists
 			if (saveTo.exists()){
 				//Overwriting existing file
-				logger.debug("Overwriting existing file "+fileName);
+				logger.debug("Overwriting existing file " + fileName);
 			}
 			
 			uploaded.write(saveTo);
 		} catch (Throwable t) {
-			logger.error("Error while saving file into server: "+t);
-			t.printStackTrace();
-			throw new SpagoBIServiceException(getActionName(), "Error while saving file into server", t);
+			logger.error("Error while saving file into server: " + t);
+			throw new SpagoBIServiceException(getActionName(),
+					"Error while saving file into server", t);
 		} finally {
 			logger.debug("OUT");
 		}
