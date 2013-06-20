@@ -451,3 +451,7 @@ Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.edit.msg'] = 'N\u0153ud de
 Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.node'] = 'Le n\u0153ud n\'est pas une tranche';
 Sbi.locale.ln['sbi.qbe.bands.range.title'] = 'Limite d\u00E9finition ';
 Sbi.locale.ln['sbi.qbe.bands.range.invalid'] = 'Le range n\'est pas correctement d\u00E9fini';
+
+
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.boperator.desc'] = 'Bol.Connector between the condition';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.isfree.desc'] = 'The user can select the value in a popup when the query is executed';

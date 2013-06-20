@@ -497,12 +497,30 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	    };
 	    
 	    this.selectGridButton = new Ext.Button(Ext.apply(sharedConf, {
+	    	cls: "x-btn-over", 
+	    	listeners:{
+	    		mouseout: function(button){
+	    			button.addClass("x-btn-over");
+	    		}
+	    	},
 		    text: LN('sbi.qbe.selectgridpanel.title')
 		}));
 	    this.filterGridButton = new Ext.Button(Ext.apply(sharedConf, {
+	    	cls: "x-btn-over", 
+	    	listeners:{
+	    		mouseout: function(button){
+	    			button.addClass("x-btn-over");
+	    		}
+	    	},
 		    text: LN('sbi.qbe.filtergridpanel.title')
 		}));
 	    this.havingGridButton = new Ext.Button(Ext.apply(sharedConf, {
+	    	cls: "x-btn-over", 
+	    	listeners:{
+	    		mouseout: function(button){
+	    			button.addClass("x-btn-over");
+	    		}
+	    	},
 		    text: LN('sbi.qbe.havinggridpanel.title')
 		}));
 		this.selectGridButton.on('toggle', this.onButtonToggleHandler.createDelegate(this, [0], true), this);
