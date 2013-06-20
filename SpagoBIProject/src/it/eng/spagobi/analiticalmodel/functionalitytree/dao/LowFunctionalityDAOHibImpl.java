@@ -29,10 +29,10 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1334,6 +1334,38 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 		}
 	}
+	
+	public List loadAllUserFunct() throws EMFUserError {
+		logger.debug( "IN" );
+		Session aSession = null;
+		Transaction tx = null;
+		List sbifunct = new ArrayList();
+		List userfunct = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Query query= aSession.createQuery(" from SbiFunctions where functTypeCd  = 'USER_FUNCT'");
+			sbifunct = query.list();	
+			
+			for (Iterator iterator = sbifunct.iterator(); iterator.hasNext();) {
+				userfunct.add(toLowFunctionality((SbiFunctions)iterator.next(),false));
+				
+			}
+
+		} catch (HibernateException he) {
+			logger.error( "HibernateException",he );
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		logger.debug( "OUT" );
+		return userfunct;
+	}
+	
 
 	/**
 	 * Load all functionalities associated the user roles. 
@@ -1387,14 +1419,29 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			if(username == null || roles == null) {
 				hibQuery = aSession.createQuery(" from SbiFunctions s where s.functTypeCd = 'LOW_FUNCT' order by s.parentFunct.functId, s.prog");
 			} else if (onlyFirstLevel){
+				String queryStr;
+				if(UserUtilities.isAdministrator(profile)){
+					queryStr = " from SbiFunctions s where ((s.functTypeCd = 'LOW_FUNCT' and s.parentFunct.functId = ?) or s.functTypeCd = 'USER_FUNCT' )  order by s.parentFunct.functId, s.prog";
+					hibQuery = aSession.createQuery(queryStr);
+					hibQuery.setInteger(0, tmpParentId.intValue());
+				}else{
+					queryStr = " from SbiFunctions s where ((s.functTypeCd = 'LOW_FUNCT' and s.parentFunct.functId = ?) or s.path like ? )  order by s.parentFunct.functId, s.prog";
+					hibQuery = aSession.createQuery(queryStr);
+					hibQuery.setInteger(0, tmpParentId.intValue());
+					hibQuery.setString(1, "/"+username);
+				}
 
-				hibQuery = aSession.createQuery(" from SbiFunctions s where ((s.functTypeCd = 'LOW_FUNCT' and s.parentFunct.functId = ?) or s.path like ? ) " +											
-				" order by s.parentFunct.functId, s.prog");
-				hibQuery.setInteger(0, tmpParentId.intValue());
-				hibQuery.setString(1, "/"+username);
 			} else{
-				hibQuery = aSession.createQuery(" from SbiFunctions s where (s.functTypeCd = 'LOW_FUNCT' and s.parentFunct.functId = ?  ) " +											
-				" order by s.parentFunct.functId, s.prog");
+				String queryStr;
+				if(UserUtilities.isAdministrator(profile)){
+					queryStr = " from SbiFunctions s where s.parentFunct.functId = ?  order by s.parentFunct.functId, s.prog";
+				}else{
+					queryStr = " from SbiFunctions s where (s.functTypeCd = 'LOW_FUNCT' and s.parentFunct.functId = ?  )  order by s.parentFunct.functId, s.prog";
+				}
+				
+				
+				
+				hibQuery = aSession.createQuery(queryStr);
 				hibQuery.setInteger(0, tmpParentId.intValue());
 			}
 			List hibList = hibQuery.list();	

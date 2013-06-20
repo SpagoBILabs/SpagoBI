@@ -282,4 +282,14 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao{
 	 * 
 	 */
 	public List loadParentFunctionalities(Integer functId, Integer rootFolderID) throws EMFUserError;
+	
+	/**
+	 * Load all functionalities with type USER_FUNCT
+	 * 
+	 * @return the list
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 */
+	public List loadAllUserFunct() throws EMFUserError;
 }

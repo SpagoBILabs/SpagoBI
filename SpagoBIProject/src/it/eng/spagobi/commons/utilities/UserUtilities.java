@@ -185,6 +185,20 @@ public class UserUtilities {
 		}
 	}  
 	
+	
+	public static boolean isAdministrator (IEngUserProfile profile) {
+		Assert.assertNotNull(profile, "Object in input is null");
+		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		try {
+			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)){
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting user's information", e);
+		}
+	}  
 
     /**
      * User functionality root exists.
@@ -260,6 +274,26 @@ public class UserUtilities {
     		return false;
     	}
     	return personalFolder.getId().equals(folder.getId());
+    }
+    
+    public static boolean isAPersonalFolder(LowFunctionality folder) {
+    	Assert.assertNotNull(folder, "Folder in input is null");
+    	try {
+        	List<LowFunctionality> lowFunct = DAOFactory.getLowFunctionalityDAO().loadAllUserFunct();
+
+        	if (lowFunct != null) {
+        		for(int i=0; i<lowFunct.size(); i++){
+        			if((lowFunct.get(i)).getId().equals(folder.getId())){
+        				return true;
+        			}
+        		}
+        		return false;
+        	}
+    	} catch (Exception e) {
+    		throw new SpagoBIRuntimeException("Cannot load user functionality", e);
+    	}
+
+    	return false;
     }
     
     /**

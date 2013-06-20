@@ -5,8 +5,24 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
+import it.eng.spago.base.SessionContainer;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.FoldersJSONSerializer;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
+import it.eng.spagobi.utilities.service.JSONSuccess;
+
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -16,22 +32,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.execution.service.GetUrlForExecutionAction;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.serializer.FoldersJSONSerializer;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
-import it.eng.spagobi.utilities.service.JSONSuccess;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -52,7 +52,7 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 	public void service(SourceBean request, SourceBean response) throws Exception {
 		
 		String nodeId;
-		List folders;
+		List<LowFunctionality> folders;
 		
 		logger.debug("IN");
 		
@@ -125,6 +125,34 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 	    userFunct.setPath("/" + userId);
 	    userFunct.setId(-1);
 	    return userFunct;
+	}
+	
+	private List<LowFunctionality> getPersonalFolders(UserProfile profile) throws SpagoBIException{
+		List<LowFunctionality> funct;
+
+		if(UserUtilities.isAdministrator(profile)){
+			logger.debug("Loading all the personal folders");
+			try {
+				funct = DAOFactory.getLowFunctionalityDAO().loadAllUserFunct();
+			} catch (EMFUserError e) {
+				logger.error(e);
+				throw new SpagoBIException("Error loading the list of personal folders");
+			}
+		}else{
+			
+			String userId = (String) profile.getUserId();
+			logger.debug("Loading the personal folder of the user "+userId);
+			LowFunctionality userFunct = new LowFunctionality();
+		    userFunct.setCode("ufr_" + userId);
+		    userFunct.setDescription("User Functionality Root");
+		    userFunct.setName(userId);
+		    userFunct.setPath("/" + userId);
+		    userFunct.setId(-1);
+		    funct = new ArrayList<LowFunctionality>();
+		    funct.add(userFunct);
+		}
+		logger.debug("Personal folders loaded");
+	    return funct;
 	}
 
 	private JSONObject createNode(String id, String text, String type, JSONArray children) {
