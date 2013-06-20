@@ -9,9 +9,8 @@ import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
-import it.eng.qbe.datasource.naming.IDataSourceNamingStrategy;
-import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
+import it.eng.spagobi.tools.dataset.utils.datamart.DefaultEngineDatamartRetriever;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
@@ -58,10 +57,10 @@ public class QbeDataSourceManager {
 		FileDataSourceConfiguration c;
 			
 		MetamodelServiceProxy metamodelProxy = (MetamodelServiceProxy)dataSourceProperties.get("metadataServiceProxy");
-		MetamodelJarFileRetriever jarFileRetriever = new MetamodelJarFileRetriever(metamodelProxy, QbeEngineConfig.getInstance().getQbeDataMartDir());
+		DefaultEngineDatamartRetriever jarFileRetriever = new DefaultEngineDatamartRetriever(metamodelProxy);
 		List<File> modelJarFiles = new ArrayList<File>();
 		for(int i = 0; i < dataMartNames.size(); i++) {
-			modelJarFile = jarFileRetriever.loadMetamodelJarFile(dataMartNames.get(i));
+			modelJarFile = jarFileRetriever.retrieveDatamartFile(dataMartNames.get(i));
 			modelJarFiles.add(modelJarFile);
 			c = new FileDataSourceConfiguration(dataMartNames.get(i), modelJarFile);
 			compositeConfiguration.addSubConfiguration(c);

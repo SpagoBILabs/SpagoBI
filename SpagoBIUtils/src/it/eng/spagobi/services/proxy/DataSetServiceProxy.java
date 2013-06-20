@@ -6,11 +6,17 @@
 package it.eng.spagobi.services.proxy;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.dataset.stub.DataSetServiceServiceLocator;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.utils.datamart.DefaultEngineDatamartRetriever;
+import it.eng.spagobi.tools.dataset.utils.datamart.IQbeDataSetDatamartRetriever;
 
 import javax.servlet.http.HttpSession;
 import javax.xml.rpc.ServiceException;
@@ -83,6 +89,7 @@ public final class DataSetServiceProxy extends AbstractServiceProxy{
     		dataSetConfig = lookUp().getDataSetByLabel(readTicket(), userId, label);
     		if(dataSetConfig != null) {
     			dataSet = DataSetFactory.getDataSet( dataSetConfig );
+    			addMetaModelProxy(dataSet);
     		}
     	} catch (Exception e) {
     	    logger.error("Error during Service LookUp",e);
@@ -93,7 +100,19 @@ public final class DataSetServiceProxy extends AbstractServiceProxy{
     }
     
    
-    public IDataSet getDataSet(String documentId) {
+    private void addMetaModelProxy(IDataSet dataSet) {
+		// in case of qbe dataset, it need a MetamodelServiceProxy
+		MetamodelServiceProxy proxy = new MetamodelServiceProxy(userId, this.session);
+		IQbeDataSetDatamartRetriever retriever = new DefaultEngineDatamartRetriever(proxy);
+		Map parameters = dataSet.getParamsMap();
+		if (parameters == null) {
+			parameters = new HashMap();
+			dataSet.setParamsMap(parameters);
+		}
+		dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+	}
+
+	public IDataSet getDataSet(String documentId) {
     	IDataSet dataSet = null;
     	SpagoBiDataSet dataSetConfig = null;
     	
@@ -107,6 +126,7 @@ public final class DataSetServiceProxy extends AbstractServiceProxy{
     		dataSetConfig = lookUp().getDataSet(readTicket(), userId, documentId);
     		if(dataSetConfig != null) {
     			dataSet = DataSetFactory.getDataSet( dataSetConfig );
+    			addMetaModelProxy(dataSet);
     		}
     	} catch (Exception e) {
     	    logger.error("Error during Service LookUp",e);
@@ -115,4 +135,5 @@ public final class DataSetServiceProxy extends AbstractServiceProxy{
     	}
     	return dataSet;
      }
+    
 }
