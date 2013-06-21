@@ -42,12 +42,18 @@ public class DatasetMetadataParser {
 	public static final String COLUMNLIST = "COLUMNLIST"; 
 	public static final String COLUMN = "COLUMN"; 
 	public static final String PROPERTY = "PROPERTY"; 
+	public static final String COLUMNS = "COLUMNS"; 
+	public static final String DATASET = "DATASET"; 
+	public static final String META = "META"; 
+
 
 	// XML attributes for tag COLUMM
 	public static final String NAME = "name"; 
 	public static final String FIELD_TYPE = "fieldType"; 
 	public static final String TYPE = "type"; 
 	public static final String ALIAS = "alias"; 
+	public static final String VERSION = "version"; 
+
 
 	// XML VALUES FOR PROPERTIES TAG
 
@@ -103,6 +109,73 @@ public class DatasetMetadataParser {
 		logger.debug("OUT");
 
 		return xml1;
+	}
+	
+	//This is a new implementation to convert the metadata information to a more general structure
+	public String generalizedMetadataToXML(IMetaData dataStoreMetaData) {
+		logger.debug("IN");
+
+
+		SourceBean sb = null;
+		SourceBean sbColumns = null;
+		SourceBean sbDataset = null;
+		try{
+
+			sb = new SourceBean(DatasetMetadataParser.META);
+			sbColumns = new SourceBean(DatasetMetadataParser.COLUMNLIST);
+			sbDataset = new SourceBean(DatasetMetadataParser.DATASET);
+
+			
+			//Dataset Metadata
+			Map datasetProperties = dataStoreMetaData.getProperties();
+			if (datasetProperties != null){
+				insertPropertiesInSourceBean(sbDataset, datasetProperties );
+			}
+
+			//Columns Metadata
+			for (int i = 0; i < dataStoreMetaData.getFieldCount(); i++) {
+				IFieldMetaData fieldMetaData=dataStoreMetaData.getFieldMeta(i);
+				String name = fieldMetaData.getName();
+				String type = fieldMetaData.getType().getName();
+				Assert.assertNotNull(type, "Type of the field "+name+" cannot be null");
+				FieldType fieldType = fieldMetaData.getFieldType();
+
+				Map properties = fieldMetaData.getProperties();
+
+				SourceBean sbMeta = new SourceBean(DatasetMetadataParser.COLUMN);
+				SourceBeanAttribute attN = new SourceBeanAttribute(NAME, name);
+				SourceBeanAttribute attT = new SourceBeanAttribute(TYPE, type);
+				SourceBeanAttribute attF = fieldType != null? new SourceBeanAttribute(FIELD_TYPE, fieldType.toString()) : null;
+				if(attF != null) sbMeta.setAttribute(attF);
+
+				sbMeta.setAttribute(attN);
+				sbMeta.setAttribute(attT);
+
+
+				sbColumns.setAttribute(sbMeta);
+
+				// insert properties
+				if(properties != null){
+					insertPropertiesInSourceBean(sbMeta, properties );
+				}
+
+
+			}		
+			SourceBeanAttribute version = new SourceBeanAttribute(VERSION, "1");
+			sb.setAttribute(version);
+			sb.setAttribute(sbColumns);
+			sb.setAttribute(sbDataset);
+
+		}
+		catch (Exception e) {
+			logger.error("Error in building xml from metadata", e);
+			return null;
+		}
+
+		String resultXml = sb.toXML(false);
+		logger.debug("OUT");
+
+		return resultXml;
 	}
 
 
