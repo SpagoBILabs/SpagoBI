@@ -615,7 +615,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 
 	public static String getServerTimeStampFormat(){
 		logger.debug("IN");
-		String format="dd/MM/yyyy hh:mm:ss";
+		String format="dd/MM/yyyy HH:mm:ss";
 		// if a particular language is specified take the corrisponding date-format
 		format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.TIMESTAMP-FORMAT.format");
 

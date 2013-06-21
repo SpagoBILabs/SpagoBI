@@ -1801,3 +1801,6 @@ INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, V
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
 commit;
 
+-- 21/06/2013 Davide: fixed SPAGOBI.TIMESTAMP-FORMAT.format (was dd/MM/yyyy hh:mm:ss)
+UPDATE SBI_CONFIG SET VALUE_CHECK = 'dd/MM/yyyy HH:mm:ss' WHERE LABEL = 'SPAGOBI.TIMESTAMP-FORMAT.format';
+commit;
