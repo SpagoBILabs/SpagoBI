@@ -117,6 +117,7 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 			allowBlank: false, 
 			inputType: 'text',
 			maxLength: 200,
+			autoCreate: {tag: 'input', type: 'text', autocomplete: 'off', maxlength: '200'},
 			anchor: '95%',
 			fieldLabel: LN('sbi.generic.name') 
 		});
@@ -126,7 +127,8 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 	        name: 'docLabel',
 	        allowBlank: false, 
 	        inputType: 'text',
-	        maxLength: 100,
+	        maxLength: 20,
+	        autoCreate: {tag: 'input', type: 'text', autocomplete: 'off', maxlength: '20'},
 	        anchor: '95%',
 			fieldLabel: LN('sbi.generic.label')  
 	    });
