@@ -156,7 +156,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 					var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
 					var fileValues = this.fileUpload.getFormState();
 					Ext.apply(values, fileValues);
-					if (this.record.meta !== undefined && this.record.meta.length > 0 ){
+					//if (this.record.meta !== undefined && this.record.meta.length > 0 ){
+					if (this.record.meta !== undefined){
 						var metaValues = this.metaInfo.getFormState();
 						values.meta = metaValues;
 					}

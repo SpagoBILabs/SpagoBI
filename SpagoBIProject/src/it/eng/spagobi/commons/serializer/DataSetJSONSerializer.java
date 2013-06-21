@@ -137,7 +137,9 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(PARS, parsListJSON);	
 			
 			String meta = ds.getDsMetadata();
-			result.put(METADATA, serializeMetada(meta));
+			Object serializedMetadata = metadataSerializerChooser(meta);
+			
+			result.put(METADATA, serializedMetadata);
 			
 			JSONArray versionsListJSON = new JSONArray();
 			List<IDataSet> nonActiveDetails = ds.getNoActiveVersions();			
@@ -286,6 +288,24 @@ public class DataSetJSONSerializer implements Serializer {
 	  return result;
 	}
 	
+	public static Object metadataSerializerChooser(String meta) throws SourceBeanException,JSONException{
+		if(meta!=null && !meta.equals("")){
+			SourceBean source = SourceBean.fromXMLString(meta);
+			if(source!=null){
+				if(source.getName().equals("COLUMNLIST")){
+					return serializeMetada(meta);
+				} else if(source.getName().equals("META")){
+					return serializeGenericMetadata(meta);
+				}
+			}
+		}
+		
+		return null;
+		
+
+		
+	}
+	
 	public static JSONArray serializeMetada(String meta) throws JSONException, SourceBeanException{
 		JSONArray metaListJSON = new JSONArray();
 
@@ -321,4 +341,87 @@ public class DataSetJSONSerializer implements Serializer {
 		}
 		return metaListJSON;
 	}
+	
+	//Serialize the new generalized version of Metadata
+	public static JSONObject serializeGenericMetadata(String meta) throws JSONException, SourceBeanException{
+		JSONObject metadataJSONObject = new JSONObject();
+
+		if(meta!=null && !meta.equals("")){
+			SourceBean source = SourceBean.fromXMLString(meta);
+			
+			if(source != null){
+				if(source.getName().equals("META")){
+					// Dataset Metadata --------------
+					
+					SourceBean dataset = (SourceBean)source.getAttribute("DATASET");
+					JSONArray datasetJSONArray = new JSONArray();
+					if (dataset != null){
+						List<SourceBean> propertiesDataset = dataset.getAttributeAsList("PROPERTY");
+						for(int j=0; j< propertiesDataset.size(); j++){
+							SourceBean property = propertiesDataset.get(j);
+							String propertyName = (String)property.getAttribute("name");
+							String propertyValue = (String)property.getAttribute("value");
+							JSONObject propertiesJSONObject = new JSONObject();
+							propertiesJSONObject.put("pname", propertyName);
+							propertiesJSONObject.put("pvalue", propertyValue);
+							datasetJSONArray.put(propertiesJSONObject);
+						}
+					}
+
+					metadataJSONObject.put("dataset", datasetJSONArray);
+				
+					// Columns Metadata -------------
+					SourceBean columns = (SourceBean)source.getAttribute("COLUMNLIST");
+					JSONArray columnsJSONArray = new JSONArray();
+					
+					List<SourceBean> rows = columns.getAttributeAsList("COLUMN");
+					for(int i=0; i< rows.size(); i++){
+						SourceBean row = rows.get(i);
+						String columnName = (String)row.getAttribute("name");
+						String type = (String)row.getAttribute("TYPE");
+						//remove the type prefix 
+						type = type.replace("java.lang.", "");
+						
+						
+						JSONObject typeJSONObject = new JSONObject();
+						typeJSONObject.put("column", columnName);
+						typeJSONObject.put("pname", "Type");
+						typeJSONObject.put("pvalue", type);
+						columnsJSONArray.put(typeJSONObject);
+
+						String fieldType = (String)row.getAttribute("fieldType");
+						JSONObject fieldTypeJSONObject = new JSONObject();
+						fieldTypeJSONObject.put("column", columnName);
+						fieldTypeJSONObject.put("pname", "fieldType");
+						fieldTypeJSONObject.put("pvalue", fieldType);
+						columnsJSONArray.put(fieldTypeJSONObject);
+						
+						List<SourceBean> properties = row.getAttributeAsList("PROPERTY");
+						for(int j=0; j< properties.size(); j++){
+							SourceBean property = properties.get(j);
+							String propertyName = (String)property.getAttribute("name");
+							String propertyValue = (String)property.getAttribute("value");
+							JSONObject propertiesJSONObject = new JSONObject();
+							propertiesJSONObject.put("column", columnName);
+							propertiesJSONObject.put("pname", propertyName);
+							propertiesJSONObject.put("pvalue", propertyValue);
+
+							columnsJSONArray.put(propertiesJSONObject);
+						}
+						
+					}
+					metadataJSONObject.put("columns", columnsJSONArray);
+					
+				}
+			}
+			
+			
+			
+
+		}
+		return metadataJSONObject;
+	}
+	
+
+	
 }

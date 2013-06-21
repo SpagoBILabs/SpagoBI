@@ -1,6 +1,9 @@
 Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
-	extend: 'Ext.grid.Panel'
+	extend: 'Ext.Panel'
 
+	
+		
+		
 	,config: {
 		id: 'dsMetaGrid',
 		border: false,
@@ -8,18 +11,32 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 		fieldsColumns:null,
 		selModel:null,
 		emptyStore: true,
-		xtype: 'grid',
         store: null,		        
         frame: true,
         autoscroll: true
 	}
 
+
+
+
+
 	, constructor: function(config) {
+		
+		var panelItems;
+		panelItems = this.initMetadataPanel(panelItems,config);
+		
+		config.items = [panelItems];
+		
+		thisMetadataPanel = this;
+
+
+		
 		Ext.apply(this, config || {});
 //		this.initConfig(config);	
 
 		//Add to the dom the select used from the combo..
 		//it is referenced by Id from the transform
+		/*
 		var selectElement = document.getElementById("fieldTypeSelect");
 		if(!selectElement){
 			var select = '<select name="fieldTypeSelect" id="fieldTypeSelect" style="display: none;">'+
@@ -29,9 +46,13 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 			var bodyElement = document.getElementsByTagName('body');
 			Ext.DomHelper.append(bodyElement[0].id, select );
 		}
+		*/
+		
+		
+
 		
 	
-		
+		/*
 		this.fieldsColumns =  [
 		    {
 		    	header: LN('sbi.ds.field.name'), 
@@ -72,6 +93,11 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	        clicksToEdit: 1
 	    });
 		this.plugins = [cellEditing];
+		*/
+		
+
+		
+		
 	    this.callParent(arguments);
 	    
 		//invokes before each ajax request 
@@ -81,6 +107,266 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	    // invokes if exception occured 
 	    Ext.Ajax.on('requestexception', this.hideMask, this); 
 	}
+	
+	,initMetadataPanel : function(items,config){
+		
+		
+		//Store-----------------------------------
+		this.fieldStore = new Ext.data.JsonStore({
+		    id : 'datasetColumnsStore',
+		    fields: ['columnName' ],
+		    idIndex: 0,
+		    data: []
+		});
+		
+	
+		//Store for Columns Grid Metadata
+		this.storeMetadata = new Ext.data.JsonStore({
+		    id : 'metaStoreData',
+		    fields: ['column', 'pname','pvalue' ],
+		    idIndex: 0,
+		    data: []
+		});
+		
+		//Load Metadata if already present
+		if ((config.meta != undefined) && (config.meta.columns != undefined)){
+			this.storeMetadata.loadData(config.meta.columns,false); 			
+			this.doLayout();	
+		}
+		
+		//Store for Dataset Grid Metadata
+		this.datasetMetadataStore = new Ext.data.JsonStore({
+		    id : 'datasetMetadataStore',
+		    fields: ['pname','pvalue' ],
+		    idIndex: 0,
+		    data: []
+		});
+		
+		//Load Metadata if already present
+		if ((config.meta != undefined) && (config.meta.dataset != undefined)){
+			this.datasetMetadataStore.loadData(config.meta.dataset,false); 			
+			this.doLayout();	
+		}
+		
+		
+		//-----------------------------------------
+		
+		//Combobox to hide/show the specific Grid
+		
+		this.metadataType = new Ext.form.ComboBox({
+			name : 'metadataType',
+			store: new Ext.data.ArrayStore({
+		        fields: [
+		            'metadataTypeName',
+		            'metadataTypeValue'
+		        ],
+		        data: [ ['Column', 'Column'], ['Dataset', 'Dataset']]
+		    }),
+			width : 150,
+			fieldLabel : 'Metadata Type',
+			displayField : 'metadataTypeName', 
+			valueField : 'metadataTypeValue', 
+			typeAhead : true, forceSelection : true,
+			mode : 'local',
+			triggerAction : 'all',
+			selectOnFocus : true, 
+			editable : false,
+			allowBlank : false, 
+			validationEvent : false
+		});	
+		this.metadataType.addListener('select',this.activateMetadataGrid, this);
+
+		
+		// Columns Metadata Grid  --------	
+		
+		
+		
+		//In cell editors
+		this.columnTextFieldEditor = new Ext.form.TextField();
+		this.attributeTextFieldEditor = new Ext.form.TextField();
+		this.valueTextFieldEditor = new Ext.form.TextField();
+		this.comboColumn = new Ext.form.ComboBox({
+			name : 'columnCombo',
+			store: this.fieldStore,
+			//width : 150,
+			displayField : 'columnName', 
+			valueField : 'columnName', 
+			typeAhead : true, forceSelection : true,
+			mode : 'local',
+			triggerAction : 'all',
+			selectOnFocus : true, 
+			editable : false,
+			allowBlank : false, 
+			validationEvent : false,	
+			queryMode: 'local',
+			});	
+		
+
+		
+		
+		var toolbarColumnsMetadata = new Ext.Toolbar({
+	    	buttonAlign : 'left',
+	    	items:[
+	    	    new Ext.button.Button({
+	            text: 'Add Property',
+	            iconCls: 'icon-restore',
+	            handler: function(){
+	                // access the Record constructor through the grid's store
+	            	var p = {column: 'Column Name',
+	            			pname: 'Attribute Type',
+	            			pvalue: 'Attribute Value'}
+	            	
+	            	thisMetadataPanel.gridColumnsMetadata.store.insert(0, p);
+	            },
+	            scope: this
+	        }), '-', new Ext.button.Button({
+	            text: 'Delete Property',
+	            iconCls: 'icon-remove',
+	            handler: this.onDelete,
+	            scope: this
+	        }), '-', new Ext.button.Button({
+	            text: 'Clear All',
+	            iconCls: 'icon-clear',
+	            handler: this.onDeleteAll,
+	            scope: this
+	        })
+	    	]
+	    });
+		
+		var columnsDefinition =  [
+				             		{
+				             	    	header: 'Column', 
+				             	    	width: '33%', 
+				            			sortable: true, 
+				             			id:'column',
+				             			dataIndex:'column',
+				             			editor: this.comboColumn
+				             	    },{
+				             	    	header: 'Attribute', 
+				             	    	width: '33%', 
+				            			sortable: true, 
+				             			id:'pname',
+				             			dataIndex:'pname',
+				             			editor: this.attributeTextFieldEditor
+				             	    },{
+				             	    	header: 'Value', 
+				             	    	width: '33%', 
+				            			sortable: true, 
+				             			id:'pvalue',
+				             			dataIndex:'pvalue',
+				             			editor: this.valueTextFieldEditor
+				             	    }			
+				             	];		
+		
+		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+	        clicksToEdit: 1
+	    });
+		
+	
+		
+		this.gridColumnsMetadata = new Ext.grid.Panel({        
+	        store: this.storeMetadata,
+	        columns: columnsDefinition,
+	        width: '100%',
+	        height: 280,
+	        title: 'Columns Metadata',
+	        autoscroll: true,
+			selModel: {selType: 'rowmodel'},
+			plugins: [cellEditing],
+	        tbar: toolbarColumnsMetadata
+	    });
+		//----------------------------------------------
+		
+		//Dataset Metadata Grid ---------------------------
+		
+		var datasetGridColumnsDefinition =  [
+		                            {
+				             	    	header: 'Attribute', 
+				             	    	width: '50%', 
+				            			sortable: true, 
+				             			id:'pnameDs',
+				             			dataIndex:'pname',
+				             			editor: this.attributeTextFieldEditor
+				             	    },{
+				             	    	header: 'Value', 
+				             	    	width: '49%', 
+				            			sortable: true, 
+				             			id:'pvalueDs',
+				             			dataIndex:'pvalue',
+				             			editor: this.valueTextFieldEditor
+				             	    }			
+				             	];	
+		
+
+		
+		var cellEditingDs = Ext.create('Ext.grid.plugin.CellEditing', {
+	        clicksToEdit: 1
+	    });
+		
+		var toolbarDatasetMetadata = new Ext.Toolbar({
+	    	buttonAlign : 'left',
+	    	items:[
+	    	    new Ext.button.Button({
+	            text: 'Add Property',
+	            iconCls: 'icon-restore',
+	            handler: function(){
+	                // access the Record constructor through the grid's store
+	            	var rec = {
+	            			pname: 'Attribute Type',
+	            			pvalue: 'Attribute Value'}
+	            	
+	            	thisMetadataPanel.gridDatasetMetadata.store.insert(0, rec);
+	            },
+	            scope: this
+	        }), '-', new Ext.button.Button({
+	            text: 'Delete Property',
+	            iconCls: 'icon-remove',
+	            handler: this.onDeleteDs,
+	            scope: this
+	        }), '-', new Ext.button.Button({
+	            text: 'Clear All',
+	            iconCls: 'icon-clear',
+	            handler: this.onDeleteAllDs,
+	            scope: this
+	        })
+	    	]
+	    });
+		
+		//The Dataset Metadata grid
+		this.gridDatasetMetadata = new Ext.grid.Panel({        
+	        store: this.datasetMetadataStore,
+	        columns: datasetGridColumnsDefinition,
+	        width: '100%',
+	        height: 280,
+	        title: 'Dataset Metadata',
+	        autoscroll: true,
+			selModel: {selType: 'rowmodel'},
+			plugins: [cellEditingDs],
+	        tbar: toolbarDatasetMetadata 
+	    });
+		this.gridDatasetMetadata.setVisible(false); //hide by default
+
+		
+		//-------------------------------------------------
+		
+
+		
+		// Main Panel ----------------------
+		
+		this.mainPanel = new Ext.Panel({
+			  margins: '50 50 50 50',
+	          labelAlign: 'left',
+	          bodyStyle:'padding:5px',
+			  defaultType: 'textfield',
+			  height:500,
+			  layout: 'form',
+			  items: [this.metadataType, this.gridColumnsMetadata, this.gridDatasetMetadata]
+			});
+		
+		return this.mainPanel;
+	}
+	
+	//Public Methods
 	
 	,loadItems: function(fieldsColumns, record){
   		this.record = record;
@@ -93,23 +379,97 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	}
 
 	,getFormState: function(){
-		var data = this.fieldStore.data.items;
+
+		var data = this.storeMetadata.data.items;
 		var values =[];
 		for(var i=0; i<data.length; i++){
 			values.push(data[i].data);
 		}
-		return values;
+		
+		var dataDs = this.datasetMetadataStore.data.items;
+		var valuesDs =[];
+		for(var i=0; i<dataDs.length; i++){
+			valuesDs.push(dataDs[i].data);
+		}
+		
+		var jsonData = {				
+					version: 1,
+					dataset: [],
+					columns: []		
+		};
+
+		jsonData.columns = values;	
+		jsonData.dataset = valuesDs;				
+
+
+		return jsonData;
 	}
 
-//	,updateRecord: function(){
-//
-//		this.record.data.meta = this.getFormState();
-//	}
+	,updateRecord: function(){
 
-	,updateData: function(meta){
-		this.store.loadData(meta,false);
+		this.record.data.meta = this.getFormState();
+	}
+
+	,updateData: function(columnlist){
+		this.fieldStore.loadData(columnlist,false);
 		this.doLayout();	
 	}
+	
+	//Update the Store of the Dataset Grid and Column Grid
+	,updateGridData: function(meta){
+		if ((meta != undefined) && (meta.dataset != undefined)){
+			this.datasetMetadataStore.loadData(meta.dataset,false); 			
+		}
+		
+		if ((meta != undefined) && (meta.columns != undefined)){
+			this.storeMetadata.loadData(meta.columns,false); 			
+		}
+		
+		this.doLayout();	
+	}
+	
+	//Listener Combobox -----------------
+	
+	,activateMetadataGrid : function(combo, record, index) {
+		if (Array.isArray(record)) record = record[0];
+		var metadataSelected = record.get('metadataTypeValue');
+		if (metadataSelected != null && metadataSelected == 'Dataset') {
+			this.gridColumnsMetadata.setVisible(false);
+			this.gridDatasetMetadata.setVisible(true);
+		} else if (metadataSelected != null && metadataSelected == 'Column') {
+			this.gridColumnsMetadata.setVisible(true);
+			this.gridDatasetMetadata.setVisible(false);
+		}
+	}
+	
+	
+	
+	//Listeners Toolbars ------------------
+	,onDelete: function() { 
+		var deleteRow = thisMetadataPanel.gridColumnsMetadata.getSelectionModel().getSelection();
+		this.storeMetadata.remove(deleteRow);
+		this.storeMetadata.commitChanges();
+	}
+	
+	,onDeleteAll: function() {   
+		this.storeMetadata.removeAll();
+		this.storeMetadata.commitChanges();
+	}
+	
+	,onDeleteDs: function() { 
+		var deleteRow = thisMetadataPanel.gridDatasetMetadata.getSelectionModel().getSelection();
+		this.datasetMetadataStore.remove(deleteRow);
+		this.datasetMetadataStore.commitChanges();
+	}
+	
+	,onDeleteAllDs: function() {   
+		this.datasetMetadataStore.removeAll();
+		this.datasetMetadataStore.commitChanges();
+	}
+	
+	//-----------------------------------
+	
+	
 	/**
 	 * Opens the loading mask 
 	*/
