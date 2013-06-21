@@ -120,5 +120,170 @@
 			</FIELDS>
 		</VALIDATION>
 	</SERVICE>
+	
+	<SERVICE name="SAVE_DOCUMENT_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="action" scope="SERVICE_REQUEST" value="DOC_SAVE"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="label" label="#SBIDev.docConf.docDet.labelField">
+				    <VALIDATOR validatorName="MANDATORY"/>
+				    <VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
+				</FIELD>
+				<FIELD name="name" label="#SBIDev.docConf.docDet.nameField">
+				    <VALIDATOR validatorName="MANDATORY"/>
+				    <VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="200"/>
+				</FIELD>
+				<FIELD name="description" label="#SBIDev.docConf.docDet.descriptionField">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>	
+				<FIELD name="relName" label="#SBIDev.docConf.docDet.relNameField">
+					<VALIDATOR validatorName="XSS" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>
+				<FIELD name="criptable" label="#SBIDev.docConf.docDet.criptableField">
+					<VALIDATOR validatorName="NUMERICRANGE" arg0="0" arg1="1" />
+				</FIELD>
+				<FIELD name="visible" label="#SBIDev.docConf.docDet.visibleField">
+					<VALIDATOR validatorName="NUMERICRANGE" arg0="0" arg1="1" />
+				</FIELD>
+				<FIELD name="profileVisibility" label="#SBIDev.docConf.docDet.visibilityRulesField">
+					<VALIDATOR validatorName="XSS" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>
+				<FIELD name="refreshseconds" label="#SBIDev.docConf.docDet.refreshField">
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+				<FIELD name="longDescription" label="#metadata.docLongDescr">
+					<VALIDATOR validatorName="XSS" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="5000"/>
+				</FIELD>
+				<FIELD name="objective" label="#metadata.docObjective">
+					<VALIDATOR validatorName="XSS" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="5000"/>
+				</FIELD>
+				<FIELD name="language" label="#metadata.docLanguage">
+					<VALIDATOR validatorName="LETTERSTRING" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="45"/>
+				</FIELD>
+				<FIELD name="Keywords" label="#metadata.docKeyword">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="250"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="action" scope="SERVICE_REQUEST" value="DOC_SAVE_FROM_DATASET"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="label" label="#SBIDev.docConf.docDet.labelField">
+				    <VALIDATOR validatorName="MANDATORY"/>
+				    <VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
+				</FIELD>
+				<FIELD name="name" label="#SBIDev.docConf.docDet.nameField">
+				    <VALIDATOR validatorName="MANDATORY"/>
+				    <VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="200"/>
+				</FIELD>
+				<FIELD name="description" label="#SBIDev.docConf.docDet.descriptionField">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>	
+				<FIELD name="relName" label="#SBIDev.docConf.docDet.relNameField">
+					<VALIDATOR validatorName="XSS" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>
+				<FIELD name="criptable" label="#SBIDev.docConf.docDet.criptableField">
+					<VALIDATOR validatorName="NUMERICRANGE" arg0="0" arg1="1" />
+				</FIELD>
+				<FIELD name="visible" label="#SBIDev.docConf.docDet.visibleField">
+					<VALIDATOR validatorName="NUMERICRANGE" arg0="0" arg1="1" />
+				</FIELD>
+				<FIELD name="profileVisibility" label="#SBIDev.docConf.docDet.visibilityRulesField">
+					<VALIDATOR validatorName="XSS" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>
+				<FIELD name="refreshseconds" label="#SBIDev.docConf.docDet.refreshField">
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+				<FIELD name="longDescription" label="#metadata.docLongDescr">
+					<VALIDATOR validatorName="XSS" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="5000"/>
+				</FIELD>
+				<FIELD name="objective" label="#metadata.docObjective">
+					<VALIDATOR validatorName="XSS" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="5000"/>
+				</FIELD>
+				<FIELD name="language" label="#metadata.docLanguage">
+					<VALIDATOR validatorName="LETTERSTRING" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="45"/>
+				</FIELD>
+				<FIELD name="Keywords" label="#metadata.docKeyword">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="250"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="action" scope="SERVICE_REQUEST" value="DOC_SAVE_FROM_MODEL"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="label" label="#SBIDev.docConf.docDet.labelField">
+				    <VALIDATOR validatorName="MANDATORY"/>
+				    <VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
+				</FIELD>
+				<FIELD name="name" label="#SBIDev.docConf.docDet.nameField">
+				    <VALIDATOR validatorName="MANDATORY"/>
+				    <VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="200"/>
+				</FIELD>
+				<FIELD name="description" label="#SBIDev.docConf.docDet.descriptionField">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>	
+				<FIELD name="relName" label="#SBIDev.docConf.docDet.relNameField">
+					<VALIDATOR validatorName="XSS" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>
+				<FIELD name="criptable" label="#SBIDev.docConf.docDet.criptableField">
+					<VALIDATOR validatorName="NUMERICRANGE" arg0="0" arg1="1" />
+				</FIELD>
+				<FIELD name="visible" label="#SBIDev.docConf.docDet.visibleField">
+					<VALIDATOR validatorName="NUMERICRANGE" arg0="0" arg1="1" />
+				</FIELD>
+				<FIELD name="profileVisibility" label="#SBIDev.docConf.docDet.visibilityRulesField">
+					<VALIDATOR validatorName="XSS" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>
+				<FIELD name="refreshseconds" label="#SBIDev.docConf.docDet.refreshField">
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+				<FIELD name="longDescription" label="#metadata.docLongDescr">
+					<VALIDATOR validatorName="XSS" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="5000"/>
+				</FIELD>
+				<FIELD name="objective" label="#metadata.docObjective">
+					<VALIDATOR validatorName="XSS" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="5000"/>
+				</FIELD>
+				<FIELD name="language" label="#metadata.docLanguage">
+					<VALIDATOR validatorName="LETTERSTRING" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="45"/>
+				</FIELD>
+				<FIELD name="Keywords" label="#metadata.docKeyword">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="250"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
 
 </VALIDATIONS>

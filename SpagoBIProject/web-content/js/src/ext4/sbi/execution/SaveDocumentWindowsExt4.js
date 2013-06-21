@@ -100,6 +100,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			allowBlank: false, 
 			inputType: 'text',
 			maxLength: 200,
+			enforceMaxLength: true,
 			anchor: '95%',
 			fieldLabel: LN('sbi.generic.name') 
 		});
@@ -109,7 +110,8 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	        name: 'docLabel',
 	        allowBlank: false, 
 	        inputType: 'text',
-	        maxLength: 100,
+	        maxLength: 20,
+	        enforceMaxLength: true,
 	        anchor: '95%',
 			fieldLabel: LN('sbi.generic.label')  
 	    });
