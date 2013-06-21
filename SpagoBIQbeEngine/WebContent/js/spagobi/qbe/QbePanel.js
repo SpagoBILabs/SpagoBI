@@ -316,6 +316,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	if (freeFilters.length > 0) {
 		var freeConditionsWindow = new Sbi.qbe.FreeConditionsWindow({
 			freeFilters: freeFilters
+			, modal : true
 		});
 		freeConditionsWindow.on('apply', function (formState) {
 			// make last values persistent on filter grid panel
