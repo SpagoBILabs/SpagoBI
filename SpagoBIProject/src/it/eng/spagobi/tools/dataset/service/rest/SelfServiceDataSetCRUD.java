@@ -240,19 +240,23 @@ public class SelfServiceDataSetCRUD {
 			dao.setUserProfile(profile);
 			String label = (String)req.getParameter("label");			
 			String meta = (String)req.getParameter(DataSetConstants.METADATA);			
+			
 			IDataSet dsToTest = recoverDataSetDetails(req, null);
 			
 			logger.debug("Recalculating dataset's metadata: executing the dataset...");
 			String dsMetadata = null;
 			dsMetadata = getDatasetTestMetadata(dsToTest, profile, meta);
+			JSONArray datasetColumns = getDatasetColumns(dsToTest, profile);
 			dsToTest.setDsMetadata(dsMetadata);	
 			LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
 
 			List<IDataSet> dataSets = new ArrayList();
 			dataSets.add(dsToTest);
-			JSONArray metaJSONArray = DataSetJSONSerializer.serializeMetada(dsMetadata);
+
+			JSONObject metaJSONobject = DataSetJSONSerializer.serializeGenericMetadata(dsMetadata);
 			JSONObject JSONReturn = new JSONObject();
-			JSONReturn.put("meta", metaJSONArray);
+			JSONReturn.put("meta", metaJSONobject);
+			JSONReturn.put("datasetColumns", datasetColumns);
 			return JSONReturn.toString();
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
@@ -483,28 +487,76 @@ public class SelfServiceDataSetCRUD {
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore();
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
-			
-			JSONArray metadataArray = new JSONArray();
-			if (!("").equals(metadata)){
-				metadataArray = JSONUtils.toJSONArray(metadata);
-			}
+
+
+			JSONObject metadataObject = new JSONObject();
+			JSONArray columnsMetadataArray = new JSONArray();
+			JSONArray datasetMetadataArray = new JSONArray();
+
+			if ((!metadata.equals("")) && (!metadata.equals("[]")))	{
+				metadataObject = JSONUtils.toJSONObject(metadata);			
+				columnsMetadataArray =  metadataObject.getJSONArray("columns");
+				datasetMetadataArray =  metadataObject.getJSONArray("dataset");
+			}						
 			
 			IMetaData metaData = dataStore.getMetaData();
+			//Setting general custom properties for entire Dataset
+			for(int i=0; i<datasetMetadataArray.length(); i++){
+				JSONObject datasetJsonObject = datasetMetadataArray.getJSONObject(i);
+				String propertyName = datasetJsonObject.getString("pname");
+				String propertyValue = datasetJsonObject.getString("pvalue");
+				metaData.setProperty(propertyName, propertyValue);
+			}
 			for(int i=0; i<metaData.getFieldCount(); i++){
 				IFieldMetaData ifmd = metaData.getFieldMeta(i);
-				for(int j=0; j<metadataArray.length(); j++){
-					if(ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))){
-						if("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))){
-							ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
-						}else{
-							ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+				
+				//Setting mandatory property to defaults, if specified they will be overridden
+				ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+
+				
+				for(int j=0; j<columnsMetadataArray.length(); j++){
+					JSONObject columnJsonObject = columnsMetadataArray.getJSONObject(j);
+					String columnName = columnJsonObject.getString("column");
+					if (ifmd.getName().equals( columnName )){
+						
+						String propertyName = columnJsonObject.getString("pname");
+						String propertyValue = columnJsonObject.getString("pvalue");
+						
+						//FieldType is a mandatory property
+						if (propertyName.equalsIgnoreCase("fieldType")){
+							if (propertyValue.equalsIgnoreCase("MEASURE")){
+								ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+							} else {
+								//Default is ATTRIBUTE
+								ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+							}
+						} 
+						//Type is a mandatory property
+						else if (propertyName.equalsIgnoreCase("Type")){
+							if(propertyValue.equalsIgnoreCase("Integer")){
+								Class type = Class.forName("java.lang.Integer");
+								ifmd.setType(type);								
+							} else if(propertyValue.equalsIgnoreCase("Double")){
+								Class type = Class.forName("java.lang.Double");
+								ifmd.setType(type);	
+							} else {
+								//Default Type is String
+								Class type = Class.forName("java.lang.String");
+								ifmd.setType(type);
+							}
 						}
-						break;
+						else {
+							//Custom Properties
+							ifmd.setProperty(propertyName, propertyValue);
+
+						}
+						
 					}
 				}
+
 			}
 
-			dsMetadata = dsp.metadataToXML(dataStore.getMetaData());
+			dsMetadata = dsp.metadataToXML(dataStore.getMetaData()); //using new parser
 		}
 		catch (Exception e) {
 			logger.error("Error while executing dataset for test purpose",e);
@@ -513,6 +565,41 @@ public class SelfServiceDataSetCRUD {
 
 		logger.debug("OUT");
 		return dsMetadata;
+	}
+	
+	public JSONArray getDatasetColumns(IDataSet dataSet,  IEngUserProfile profile) throws Exception{
+		logger.debug("IN");
+
+		Integer start = new Integer(0);
+		Integer limit = new Integer(10);
+		
+		JSONArray columnsJSON = new JSONArray();
+
+
+		try {
+			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
+			IDataStore dataStore = dataSet.getDataStore();
+
+			IMetaData metaData = dataStore.getMetaData();
+			for(int i=0; i<metaData.getFieldCount(); i++){
+				IFieldMetaData ifmd = metaData.getFieldMeta(i);
+				String name = ifmd.getName();
+				JSONObject jsonMeta = new JSONObject();
+				jsonMeta.put("columnName", name);
+				columnsJSON.put(jsonMeta);
+				
+
+			}
+
+		}
+		catch (Exception e) {
+			logger.error("Error while getting dataset columns",e);
+			return null;		
+		}
+
+		logger.debug("OUT");
+		return columnsJSON;
+		
 	}
 
 

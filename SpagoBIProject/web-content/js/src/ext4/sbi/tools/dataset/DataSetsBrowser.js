@@ -99,12 +99,13 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		});
 		
 		this.sortersCombo = this.createSortersStore({sorters: this.sorters});		
+		
 	}
 	
 	, initToolbar: function() {
 		if (this.displayToolbar) {
 			var newDatasetButton = new Ext.button.Button({
-				//tooltip: LN('sbi.generic.add'),
+		    	//tooltip: LN('sbi.generic.add'),
 		    	text : LN('sbi.generic.add'),
 				iconCls:'icon-add',
 				width:70,
@@ -305,7 +306,6 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		delete values.meta;
 		var params = values;
 		params.meta = Ext.JSON.encode(metaConfiguration) ;
-//		params.meta =  Ext.util.JSON.encode(metaConfiguration) ;
 		Ext.Ajax.request({
 			url: this.services["testDataSet"],
 			params: params,			
@@ -317,7 +317,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 						}else{			
 							var newMeta = response.responseText;
 							var newMetaDecoded =  Ext.decode(newMeta);				 
-							this.wizardWin.metaInfo.updateData(newMetaDecoded.meta);
+							this.wizardWin.metaInfo.updateData(newMetaDecoded.datasetColumns);
+							this.wizardWin.metaInfo.updateGridData(newMetaDecoded.meta);
 						}
 					}
 				} else {
