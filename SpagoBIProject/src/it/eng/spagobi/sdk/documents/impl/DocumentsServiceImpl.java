@@ -986,18 +986,11 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 					metaModelsDAO.insertMetaModel(metaModel);
 				}	
 
-
-				
 				// Update content			
-				Content content = metaModelsDAO.loadActiveMetaModelContentById(metaModel.getId());
-				if(content != null){
-				}
-				else{
-					content = new Content();
-					content.setActive(true);
-					content.setCreationDate(new Date());
-					content.setCreationUser(userProfile.getUserId().toString());
-				}
+				Content content = new Content();
+				content.setActive(true);
+				content.setCreationDate(new Date());
+				content.setCreationUser(userProfile.getUserId().toString());
 				content.setFileName(DATAMART_FILE_NAME);
 
 				dh = sdkTemplate.getContent();

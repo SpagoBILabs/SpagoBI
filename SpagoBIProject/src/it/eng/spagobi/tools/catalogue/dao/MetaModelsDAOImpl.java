@@ -16,7 +16,6 @@ import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -529,15 +528,14 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			// store the model content
 			SbiMetaModelContent hibContent = new SbiMetaModelContent();
 			hibContent.setActive(new Boolean(true));
-			hibContent.setCreationDate(new Date());
+			hibContent.setCreationDate(content.getCreationDate());
+			hibContent.setCreationUser(content.getCreationUser());
 			hibContent.setFileName(content.getFileName());
 			hibContent.setProg(nextProg);
 			hibContent.setContent(content.getContent());
+			hibContent.setDimension(content.getDimension());
 			SbiMetaModel sbiModel = (SbiMetaModel) session.load(SbiMetaModel.class, modelId);
 			hibContent.setModel(sbiModel);
-			hibContent.setCreationUser(content.getCreationUser());
-			hibContent.setCreationDate(content.getCreationDate());
-			hibContent.setDimension(content.getDimension());
 			updateSbiCommonInfo4Insert(hibContent);
 			session.save(hibContent);
 			transaction.commit();
