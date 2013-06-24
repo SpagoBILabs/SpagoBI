@@ -10,47 +10,44 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engine.mobile.MobileConstants;
 import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ComposedTemplateInstance implements IMobileTemplateInstance{
+public class ComposedTemplateInstance extends AbstractTemplateInstance implements IMobileTemplateInstance{
 
 
 	private static transient Logger logger = Logger.getLogger(ComposedTemplateInstance.class);
 
-		
-	private SourceBean template;
-	private JSONObject title = new JSONObject();
 	private JSONObject documents = new JSONObject();
 	private JSONObject features = new JSONObject();
 	private JSONObject slider = new JSONObject();
 	
 	
-	public ComposedTemplateInstance(SourceBean template) {
+	public ComposedTemplateInstance(SourceBean template, HashMap<String, String> paramsMap) {
+		this.paramsMap = paramsMap;
 		this.template = template;
 	}
 
-	@Override
 	public void loadTemplateFeatures() throws Exception {
-		buildTitleJSON();
+		super.loadTemplateFeatures();
 		buildDocumentsJSON();
 		buildSliderJSON();
 		setFeatures();
-		
 	}
 	
 	public void setFeatures() {
 		try {
-			features.put("title", title);
 			features.put("documents", documents);
 			features.put("slider", slider);
 
@@ -58,25 +55,7 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 			logger.error("Unable to set features");
 		}		 
 	}
-	private void buildTitleJSON() throws Exception {
-		
-		SourceBean confSB = null;
-		String titleName = null;
-		
-		logger.debug("IN");
-		confSB = (SourceBean)template.getAttribute(MobileConstants.TITLE_TAG);
-		if(confSB == null) {
-			logger.warn("Cannot find title configuration settings: tag name " + MobileConstants.TITLE_TAG);
-		}
-		titleName = (String)confSB.getAttribute(MobileConstants.TITLE_VALUE_ATTR);
-		String titleStyle = (String)confSB.getAttribute(MobileConstants.TITLE_STYLE_ATTR);
-		
-		title.put("value", titleName);
-		title.put("style", titleStyle);
-
-		logger.debug("OUT");		
-
-	}
+	
 
 	private void buildDocumentsJSON() throws Exception {
 
@@ -171,10 +150,18 @@ public class ComposedTemplateInstance implements IMobileTemplateInstance{
 			String name = (String)confSB.getAttribute(MobileConstants.SLIDER_NAME_ATTR);
 			String min = (String)confSB.getAttribute(MobileConstants.SLIDER_MIN_ATTR);
 			String max = (String)confSB.getAttribute(MobileConstants.SLIDER_MAX_ATTR);
-			String value = (String)confSB.getAttribute(MobileConstants.SLIDER_VALUE_ATTR);
+			String value =  (String)confSB.getAttribute(MobileConstants.SLIDER_VALUE_ATTR);
 			String label = (String)confSB.getAttribute(MobileConstants.SLIDER_LABEL_ATTR);
 			String increm = (String)confSB.getAttribute(MobileConstants.SLIDER_INCREMENT_ATTR);
 
+			Map<String, String> params = getNotNullPrameters();
+			if(params!=null && value!=null && value.length()!=0){
+				value = StringUtilities.substituteParametersInString(value,params , null, false);
+			}
+			if(value!=null && value.length()==0){
+				value = min;
+			}
+			
 			slider.putOpt("name", name);
 			slider.putOpt("value", value);
 			slider.putOpt("minValue", min);

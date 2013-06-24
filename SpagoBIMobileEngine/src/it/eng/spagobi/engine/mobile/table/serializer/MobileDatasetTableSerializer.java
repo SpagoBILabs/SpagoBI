@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.mobile.table.serializer;
 
+import it.eng.spagobi.engine.mobile.template.AbstractMobileTemplateJSONSerializer;
+import it.eng.spagobi.engine.mobile.template.TableTemplateInstance;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -17,17 +19,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MobileDatasetTableSerializer {
+public class MobileDatasetTableSerializer extends AbstractMobileTemplateJSONSerializer{
 	private static final String MODEL_ERROR = "error";
 
 	public static transient Logger logger = Logger.getLogger(MobileDatasetTableSerializer.class);
 	
-	public Object write(IDataStore dataStore, JSONObject features) throws RuntimeException {
+	public Object write(IDataStore dataStore, TableTemplateInstance templInst) throws RuntimeException {
 		JSONObject  result = null;
 		int recNo;
 		IRecord record;
 		JSONObject recordJSON;
 		try {
+			JSONObject features = templInst.getFeatures();
+			
 			result = new JSONObject();
 
 			result.put(MODEL_ERROR, "false");
@@ -64,6 +68,7 @@ public class MobileDatasetTableSerializer {
 
 			result.put("features", features);
 			result.put("total", recNo);
+			result.put("documentProperties", getDocumentPropertiesJSON(templInst));
 		} catch (JSONException e) {
 			logger.error(e);
 		} finally {

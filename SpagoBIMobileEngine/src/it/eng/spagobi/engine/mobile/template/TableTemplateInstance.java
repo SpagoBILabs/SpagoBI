@@ -11,13 +11,10 @@
 package it.eng.spagobi.engine.mobile.template;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engine.mobile.MobileConstants;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -28,11 +25,9 @@ import org.json.JSONObject;
 public class TableTemplateInstance extends AbstractTemplateInstance implements IMobileTemplateInstance{
 	
 	//table template properties
-	private JSONObject title = new JSONObject();
 	private JSONArray columns = new JSONArray();
 	private JSONArray fields = new JSONArray();
 	private JSONArray conditions = new JSONArray();
-
 	private JSONObject features = new JSONObject();
 
 	
@@ -101,49 +96,17 @@ public class TableTemplateInstance extends AbstractTemplateInstance implements I
 
 	}
 
-	private void buildTitleJSON() throws Exception {
-		
-		SourceBean confSB = null;
-		String titleName = null;
-		
-		logger.debug("IN");
-		confSB = (SourceBean)template.getAttribute(MobileConstants.TITLE_TAG);
-		if(confSB == null) {
-			logger.warn("Cannot find title configuration settings: tag name " + MobileConstants.TITLE_TAG);
-			return;
-		}
-		titleName = (String)confSB.getAttribute(MobileConstants.TITLE_VALUE_ATTR);
-		Map parNotNull = this.paramsMap;
-		Iterator it = parNotNull.keySet().iterator();
-		while(it.hasNext()){
-			String key = (String)it.next();
 
-			if(parNotNull.get(key)== null){
-				parNotNull.put(key, " ");			
-			}
-		}
-		String titleWithPars = StringUtilities.substituteParametersInString(titleName, ((Map)parNotNull), null, false);
-		
-		String titleStyle = (String)confSB.getAttribute(MobileConstants.TITLE_STYLE_ATTR);
-		
-		title.put("value", titleWithPars);
-		title.put("style", titleStyle);
 
-		logger.debug("OUT");		
-
-	}
-
-	@Override
 	public void loadTemplateFeatures() throws Exception {
+		super.loadTemplateFeatures();
 		buildTitleJSON();
 		buildColumnsJSON();
-		buildDrillJSON();
 		setFeatures();
 	}
 
 	public void setFeatures() {
 		try {
-			features.put("title", title);
 			features.put("columns", columns);
 			features.put("fields", fields);
 			features.put("conditions", conditions);
