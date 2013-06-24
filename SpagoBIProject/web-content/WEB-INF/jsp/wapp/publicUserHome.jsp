@@ -153,10 +153,10 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 					}
 				}
 			} else {				
-				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.html";								
+				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/publicUserIntro.html";								
 			}
 		} else{			
-			firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.html";			
+			firstUrlToCall = contextName+"/themes/" + currTheme + "/html/publicUserIntro.html";			
 		}
 		
 	}
