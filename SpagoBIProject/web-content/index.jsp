@@ -21,12 +21,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
          extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"
          contentType="text/html; charset=ISO-8859-1"
          pageEncoding="ISO-8859-1"
-         session="true" 
-%>
-<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
+         session="true" %>
+<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities,
+                it.eng.spagobi.commons.constants.SpagoBIConstants,
+                it.eng.spagobi.commons.SingletonConfig"%>
+                
 <% 
+	SingletonConfig serverConfig = SingletonConfig.getInstance();
+	String strUsePublicUser = serverConfig.getConfigValue(SpagoBIConstants.USE_PUBLIC_USER);
+	Boolean usePublicUser = (strUsePublicUser == null)?false:Boolean.valueOf(strUsePublicUser);
+	String callLogin = (request.getParameter("login")==null)?"false":(String)request.getParameter("login");
+	//default url
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
 	String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE";
+	if (usePublicUser && callLogin.equals("false")){
+		redirectURL = contextName + "/servlet/AdapterHTTP?ACTION_NAME=START_ACTION_PUBLIC_USER&NEW_SESSION=TRUE";
+	}
     response.sendRedirect(redirectURL);
 %>
 

@@ -395,6 +395,24 @@ public class UserUtilities {
 			if (virtualRole.isAbleToManageUsers()) {
 				roleFunctionalities.add(SpagoBIConstants.FINAL_USERS_MANAGEMENT);
 			}
+			if (virtualRole.isAbleToSeeDocumentBrowser()) {
+				roleFunctionalities.add(SpagoBIConstants.SEE_DOCUMENT_BROWSER);
+			}
+			if (virtualRole.isAbleToSeeMyData()) {
+				roleFunctionalities.add(SpagoBIConstants.SEE_MY_DATA);
+			}
+			if (virtualRole.isAbleToSeeFavourites()) {
+				roleFunctionalities.add(SpagoBIConstants.SEE_FAVOURITES);
+			}
+			if (virtualRole.isAbleToSeeSubscriptions()) {
+				roleFunctionalities.add(SpagoBIConstants.SEE_SUBSCRIPTIONS);
+			}
+			if (virtualRole.isAbleToSeeToDoList()) {
+				roleFunctionalities.add(SpagoBIConstants.SEE_TODO_LIST);
+			}
+			if (virtualRole.isAbleToCreateDocuments()) {
+				roleFunctionalities.add(SpagoBIConstants.CREATE_DOCUMENT);
+			}
 			
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
@@ -500,6 +518,30 @@ public class UserUtilities {
 					if (anotherRole.isAbleToManageUsers()) {
 						logger.debug("User has role " + roleName + " that is able to manage users.");
 						virtualRole.setIsAbleToManageUsers(true);
+					}
+					if (anotherRole.isAbleToSeeDocumentBrowser()) {
+						logger.debug("User has role " + roleName + " that is able to see document browser.");
+						virtualRole.setIsAbleToSeeDocumentBrowser(true);
+					}
+					if (anotherRole.isAbleToSeeMyData()) {
+						logger.debug("User has role " + roleName + " that is able to see MyData.");
+						virtualRole.setIsAbleToSeeMyData(true);
+					}
+					if (anotherRole.isAbleToSeeFavourites()) {
+						logger.debug("User has role " + roleName + " that is able to see Favourites.");
+						virtualRole.setIsAbleToSeeFavourites(true);
+					}
+					if (anotherRole.isAbleToSeeSubscriptions()) {
+						logger.debug("User has role " + roleName + " that is able to see Subscriptions.");
+						virtualRole.setIsAbleToSeeSubscriptions(true);
+					}
+					if (anotherRole.isAbleToSeeToDoList()) {
+						logger.debug("User has role " + roleName + " that is able to see To Do List.");
+						virtualRole.setIsAbleToSeeToDoList(true);
+					}
+					if (anotherRole.isAbleToCreateDocuments()) {
+						logger.debug("User has role " + roleName + " that is able to create documents.");
+						virtualRole.setIsAbleToCreateDocuments(true);
 					}
 				}
 			}

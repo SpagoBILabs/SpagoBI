@@ -69,13 +69,14 @@ Sbi.profiling.ManageUsers = function(config) {
 	
 	this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
 			rec.set('confirmpwd', ''); 
-			this.getForm().loadRecord(rec);  
+			this.getForm().loadRecord(rec);  			
 			this.detailFieldPwd.disable(); 
-       	    this.detailFieldConfirmPwd.disable();
+       	    this.detailFieldConfirmPwd.disable();       	    
        	    Sbi.config.passwordAbilitated = false;
 	       	this.changePwdButton.show();
 		  	this.fillAttributes(row, rec);
 		  	this.fillRoles(row, rec); 
+		  	this.enableUserId(rec);
      }, this);
 };
 
@@ -536,7 +537,7 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 											userAttributes:'',
 											id: 0
 											});
-		
+		this.enableUserId(emptyRecToAdd);
 		this.getForm().loadRecord(emptyRecToAdd); 
         this.fillRoles(0, emptyRecToAdd); 
   		this.fillAttributes(0, emptyRecToAdd, true);  
@@ -550,5 +551,30 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 
 	,
 	onDeleteItemFailure : Sbi.exception.ExceptionHandler.handleFailure
-	
+		
+	, 
+	enableUserId: function(rec){
+		var userElems = this.detailTab.items.items[0].items.items;
+		var userId = null;
+		
+		for (key in userElems) {
+			var elem = userElems[key];
+			if (elem.name == 'userId'){
+				userId = userElems[key];				
+				if (rec.get('userId') !== undefined &&  rec.get('userId') == 'public_user'){								
+					userId.setDisabled(true);		
+					this.detailFieldPwd.setDisabled(true); 
+			   	 	this.detailFieldConfirmPwd.setDisabled(true);
+				    this.changePwdButton.hide();					 
+					
+			    }else{
+					 userId.setDisabled(false);
+					 this.detailFieldPwd.setDisabled(false); 
+				   	 this.detailFieldConfirmPwd.setDisabled(false);
+					 this.changePwdButton.show();
+				}
+				break;
+			}			
+		}
+	}
 });

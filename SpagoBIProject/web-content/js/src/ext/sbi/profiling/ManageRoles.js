@@ -80,6 +80,7 @@ Sbi.profiling.ManageRoles = function(config) {
 	this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
 		this.getForm().loadRecord(rec);  
 		this.fillChecks(row, rec);
+		this.enableChecks(null, rec, null);					
      }, this);
 
 };
@@ -113,6 +114,12 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                        	          , 'doMassiveExport'
 	                        	          , 'manageUsers'
 	                        	          , 'editWorksheet'
+	                        	          , 'seeDocBrowser'
+	                        	          , 'seeFavourites'
+	                        	          , 'seeSubscriptions'
+	                        	          , 'seeMyData'
+	                        	          , 'seeToDoList'
+	                        	          , 'createDocument'
 	                        	          , 'bmCategories'
 	                        	        ];
 		
@@ -136,6 +143,12 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 											buildQbe:true,
 											manageUsers:false,
 											editWorksheet: true,
+											seeDocBrowser:true,
+		                        	        seeFavourites:true,
+		                        	        seeSubscriptions:true,
+		                        	        seeMyData:true,
+		                        	        seeToDoList:true,
+		                        	        createDocument:true,
 											bmCategories: []
 										});
 		
@@ -233,6 +246,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 
 
 	 	   var detailFieldNodeType =  new Ext.form.ComboBox({
+	 		   		  id: 'comboTypeCd',
 	            	  name: 'typeCd',
 	            	  hiddenName: 'typeCd',
 	                  store: this.typesStore,
@@ -249,6 +263,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                  validationEvent:true,
 	                  tpl: '<tpl for="."><div ext:qtip="{typeCd1}" class="x-combo-list-item">{valueNm1}</div></tpl>'
 	             });  
+	 	  
+	 	   detailFieldNodeType.on('select',this.enableChecks, this);
 
 	 	  //END list of detail fields
 	 	   
@@ -460,6 +476,23 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            items: [
 		                {boxLabel: LN('sbi.roles.worksheet'), name: 'editWorksheet', checked:'editWorksheet',inputValue: 1}
 		            ]
+		        },
+		        {
+		            xtype: 'checkboxgroup',
+		            itemId: 'finalUserCan',
+		            columns: 1,
+		            boxMinWidth  : 150,
+		            boxMinHeight  : 100,
+//		            hideLabel  : false,
+		            fieldLabel: LN('sbi.roles.finalUserCan'),
+		            items: [
+		                {boxLabel: LN('sbi.roles.seeDocumentBrowser'), name: 'seeDocBrowser', checked: 'seeDocBrowser', inputValue: 1},
+		                {boxLabel: LN('sbi.roles.seeMyData'), name: 'seeMyData', checked:'seeMyData',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.seeFavourites'), name: 'seeFavourites', checked:'seeFavourites',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.seeSubscriptions'), name: 'seeSubscriptions', checked:'seeSubscriptions',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.seeToDoList'), name: 'seeToDoList', checked:'seeToDoList',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.createDocument'), name: 'createDocument', checked:'createDocument',inputValue: 1}
+		            ]
 		        }
            ]
  	    };
@@ -498,8 +531,14 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
             		  item.setValue('manageUsers', rec.get('manageUsers'));
         		  }else if(item.getItemId() == 'isAbleToEditWorksheet'){
             		  item.setValue('editWorksheet', rec.get('editWorksheet'));
-        		  }
-
+        		  }else  if(item.getItemId() == 'finalUserCan'){
+        			  item.setValue('seeDocBrowser', rec.get('seeDocBrowser'));
+        			  item.setValue('seeMyData', rec.get('seeMyData'));
+        			  item.setValue('seeSubscriptions', rec.get('seeSubscriptions'));           
+        			  item.setValue('seeFavourites', rec.get('seeFavourites'));
+        			  item.setValue('seeToDoList', rec.get('seeToDoList'));
+        			  item.setValue('createDocument', rec.get('createDocument'));
+            	  }        		  
      	  });
 		
 		
@@ -561,6 +600,12 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 								doMassiveExport:true,
 								manageUsers:false,
 								editWorksheet: true,
+								seeDocBrowser:true,
+                    	        seeFavourites:true,
+                    	        seeSubscriptions:true,
+                    	        seeMyData:true,
+                    	        seeToDoList:true,
+                    	        createDocument:true,
 								bmCategories: []
 							});
 		
@@ -588,7 +633,13 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         var builQ =values['buildQbe'];             
         var doMassiveExport =values['doMassiveExport'];
         var manageUsers =values['manageUsers'];  
-        var editWorksheet =values['editWorksheet'];  
+        var editWorksheet =values['editWorksheet'];
+        var seeDocBrowser =values['seeDocBrowser'];  
+        var seeMyData =values['seeMyData'];  
+        var seeFavourites =values['seeFavourites'];  
+        var seeSubscriptions =values['seeSubscriptions'];  
+        var seeToDoList =values['seeToDoList'];  
+        var createDocument =values['createDocument'];  
         
 
 		if(savePf == 1){
@@ -661,6 +712,36 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         }else{
         	record.set('editWorksheet', false);
         }
+        if(seeDocBrowser == 1){
+        	record.set('seeDocBrowser', true);
+        }else{
+        	record.set('seeDocBrowser', false);
+        }
+        if(seeMyData == 1){
+        	record.set('seeMyData', true);
+        }else{
+        	record.set('seeMyData', false);
+        }
+        if(seeFavourites == 1){
+        	record.set('seeFavourites', true);
+        }else{
+        	record.set('seeFavourites', false);
+        }
+        if(seeSubscriptions == 1){
+        	record.set('seeSubscriptions', true);
+        }else{
+        	record.set('seeSubscriptions', false);
+        }
+        if(seeToDoList == 1){
+        	record.set('seeToDoList', true);
+        }else{
+        	record.set('seeToDoList', false);
+        }
+        if(createDocument == 1){
+        	record.set('createDocument', true);
+        }else{
+        	record.set('createDocument', false);
+        }
         
         //Find selected business models categories
 		var bmCategoriesArray = [];
@@ -732,6 +813,12 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			doMassiveExport:newRec.data.doMassiveExport,
 			manageUsers:newRec.data.manageUsers,
 			editWorksheet: newRec.data.editWorksheet,
+			seeDocBrowser: newRec.data.seeDocBrowser,
+			seeMyData: newRec.data.seeMyData,
+			seeFavourites: newRec.data.seeFavourites,
+			seeSubscriptions: newRec.data.seeSubscriptions,
+			seeToDoList: newRec.data.seeToDoList,
+			createDocument: newRec.data.createDocument,
 			bmCategories: newRec.data.bmCategories
         };
         if(idRec){
@@ -887,5 +974,22 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         });
     }
 	
+	, enableChecks: function(combo, rec, idx){
+		var userFuncs = this.authorizationTab.items.items[0].items.items;
+		var userChecks = null;
+		for (key in userFuncs) {
+			var elem = userFuncs[key];
+			 if (elem.itemId == 'finalUserCan'){
+				 userChecks = userFuncs[key];
+				 break;
+			 }
+		}
+		
+		if (rec.get('typeCd') !== undefined && rec.get('typeCd') == 'USER'){
+		    userChecks.setDisabled(false);		    
+		}else{					
+		    userChecks.setDisabled(true);
+		}	
+	}
 
 });

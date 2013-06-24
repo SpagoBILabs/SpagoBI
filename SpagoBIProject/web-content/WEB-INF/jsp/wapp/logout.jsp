@@ -82,10 +82,17 @@ session.invalidate();
 //Check if SSO is active
 
 String active = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE");
+String strUsePublicUser = SingletonConfig.getInstance().getConfigValue(SpagoBIConstants.USE_PUBLIC_USER);
+Boolean usePublicUser = (strUsePublicUser == null)?false:Boolean.valueOf(strUsePublicUser);
 
-if ((active == null || active.equalsIgnoreCase("false")) && backUrlB==false) {
+if ((active == null || active.equalsIgnoreCase("false")) && !backUrlB) {
 	String context = request.getContextPath();
-	response.sendRedirect(context);
+	if (usePublicUser){
+		context += "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE";
+		response.sendRedirect(context);
+	}else{
+		response.sendRedirect(context);
+	}
 }
 else if (active != null && active.equalsIgnoreCase("true")) {
 

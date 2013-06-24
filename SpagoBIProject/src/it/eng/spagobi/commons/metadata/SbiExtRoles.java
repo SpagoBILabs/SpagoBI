@@ -38,6 +38,12 @@ public class SbiExtRoles  extends SbiHibernateModel{
      private Boolean isAbleToBuildQbeQuery;
      private Boolean isAbleToDoMassiveExport;
      private Boolean isAbleToManageUsers;
+     private Boolean isAbleToSeeDocumentBrowser;
+     private Boolean isAbleToSeeFavourites;
+     private Boolean isAbleToSeeSubscriptions;
+     private Boolean isAbleToSeeMyData;
+     private Boolean isAbleToSeeToDoList;
+     private Boolean isAbleToCreateDocuments;
      private Set sbiFuncRoles;
      private Set sbiParuseDets;
      private Set sbiMetaModelCategories;
@@ -403,6 +409,91 @@ public class SbiExtRoles  extends SbiHibernateModel{
 
     public Boolean getIsAbleToManageUsers() {
 		return isAbleToManageUsers;
+	}
+
+    
+	/**
+	 * @return the isAbleToSeeDocumentBrowser
+	 */
+	public Boolean getIsAbleToSeeDocumentBrowser() {
+		return isAbleToSeeDocumentBrowser;
+	}
+
+	/**
+	 * @param isAbleToSeeDocumentBrowser the isAbleToSeeDocumentBrowser to set
+	 */
+	public void setIsAbleToSeeDocumentBrowser(Boolean isAbleToSeeDocumentBrowser) {
+		this.isAbleToSeeDocumentBrowser = isAbleToSeeDocumentBrowser;
+	}
+
+	/**
+	 * @return the isAbleToSeeFavourites
+	 */
+	public Boolean getIsAbleToSeeFavourites() {
+		return isAbleToSeeFavourites;
+	}
+
+	/**
+	 * @param isAbleToSeeFavourites the isAbleToSeeFavourites to set
+	 */
+	public void setIsAbleToSeeFavourites(Boolean isAbleToSeeFavourites) {
+		this.isAbleToSeeFavourites = isAbleToSeeFavourites;
+	}
+
+	/**
+	 * @return the isAbleToSeeSubscriptions
+	 */
+	public Boolean getIsAbleToSeeSubscriptions() {
+		return isAbleToSeeSubscriptions;
+	}
+
+	/**
+	 * @param isAbleToSeeSubscriptions the isAbleToSeeSubscriptions to set
+	 */
+	public void setIsAbleToSeeSubscriptions(Boolean isAbleToSeeSubscriptions) {
+		this.isAbleToSeeSubscriptions = isAbleToSeeSubscriptions;
+	}
+
+	/**
+	 * @return the isAbleToSeeMyData
+	 */
+	public Boolean getIsAbleToSeeMyData() {
+		return isAbleToSeeMyData;
+	}
+
+	/**
+	 * @param isAbleToSeeMyData the isAbleToSeeMyData to set
+	 */
+	public void setIsAbleToSeeMyData(Boolean isAbleToSeeMyData) {
+		this.isAbleToSeeMyData = isAbleToSeeMyData;
+	}
+
+	/**
+	 * @return the isAbleToSeeToDoList
+	 */
+	public Boolean getIsAbleToSeeToDoList() {
+		return isAbleToSeeToDoList;
+	}
+
+	/**
+	 * @param isAbleToSeeToDoList the isAbleToSeeToDoList to set
+	 */
+	public void setIsAbleToSeeToDoList(Boolean isAbleToSeeToDoList) {
+		this.isAbleToSeeToDoList = isAbleToSeeToDoList;
+	}
+
+	/**
+	 * @return the isAbleToCreateDocuments
+	 */
+	public Boolean getIsAbleToCreateDocuments() {
+		return isAbleToCreateDocuments;
+	}
+
+	/**
+	 * @param isAbleToCreateDocuments the isAbleToCreateDocuments to set
+	 */
+	public void setIsAbleToCreateDocuments(Boolean isAbleToCreateDocuments) {
+		this.isAbleToCreateDocuments = isAbleToCreateDocuments;
 	}
 
 	public void setIsAbleToManageUsers(Boolean isAbleToManageUsers) {

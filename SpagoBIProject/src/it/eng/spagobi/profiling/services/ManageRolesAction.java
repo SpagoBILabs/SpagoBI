@@ -71,6 +71,12 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 	private final String DO_MASSIVE_EXPORT="doMassiveExport";
 	private final String MANAGE_USERS="manageUsers";
 	private final String EDIT_WORKSHEET="editWorksheet";
+	private final String SEE_DOCUMENT_BROWSER="seeDocBrowser";
+	private final String SEE_MY_DATA="seeMyData";
+	private final String SEE_FAVOURITES="seeFavourites";
+	private final String SEE_SUBSCRIPTIONS="seeSubscriptions";
+	private final String SEE_TODO_LIST="seeToDoList";
+	private final String CREATE_DOCUMENT="createDocument";
 	private final String BM_CATEGORY_ID="bmCategoryId";
 	private final String BM_CATEGORIES="bmCategories";
 	
@@ -155,6 +161,12 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 			Boolean doMassiveExport = getAttributeAsBoolean(DO_MASSIVE_EXPORT);
 			Boolean manageUsers = getAttributeAsBoolean(MANAGE_USERS);
 			Boolean editWorksheet = getAttributeAsBoolean(EDIT_WORKSHEET);
+			Boolean seeDocBrowser = getAttributeAsBoolean(SEE_DOCUMENT_BROWSER);
+			Boolean seeMyData = getAttributeAsBoolean(SEE_MY_DATA);
+			Boolean seeFavourites = getAttributeAsBoolean(SEE_FAVOURITES);
+			Boolean seeSubscriptions = getAttributeAsBoolean(SEE_SUBSCRIPTIONS);
+			Boolean seeToDoList = getAttributeAsBoolean(SEE_TODO_LIST);
+			Boolean createDocument = getAttributeAsBoolean(CREATE_DOCUMENT);
 			
 			List<String> bmCategoryIds = getAttributeAsList(BM_CATEGORIES);
 			if (bmCategoryIds.size() == 1){
@@ -231,7 +243,12 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 				role.setIsAbleToSendMail(sendMail);
 				role.setIsAbleToManageUsers(manageUsers);
 				role.setIsAbleToEditWorksheet(editWorksheet);
-				
+				role.setIsAbleToSeeDocumentBrowser(seeDocBrowser);
+				role.setIsAbleToSeeMyData(seeMyData);
+				role.setIsAbleToSeeFavourites(seeFavourites);
+				role.setIsAbleToSeeSubscriptions(seeSubscriptions);
+				role.setIsAbleToSeeToDoList(seeToDoList);
+				role.setIsAbleToCreateDocuments(createDocument);				
 				
 				try {
 					String id = getAttributeAsString(ID);

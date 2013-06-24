@@ -339,6 +339,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setIsAbleToDoMassiveExport(new Boolean(aRole.isAbleToDoMassiveExport()));
 			hibRole.setIsAbleToEditWorksheet(new Boolean(aRole.isAbleToEditWorksheet()));
 			hibRole.setIsAbleToManageUsers(new Boolean(aRole.isAbleToManageUsers()));
+			hibRole.setIsAbleToSeeDocumentBrowser(new Boolean(aRole.isAbleToSeeDocumentBrowser()));
+			hibRole.setIsAbleToSeeFavourites(new Boolean(aRole.isAbleToSeeFavourites()));
+			hibRole.setIsAbleToSeeSubscriptions(new Boolean(aRole.isAbleToSeeSubscriptions()));
+			hibRole.setIsAbleToSeeMyData(new Boolean(aRole.isAbleToSeeMyData()));
+			hibRole.setIsAbleToSeeToDoList(new Boolean(aRole.isAbleToSeeToDoList()));
+			hibRole.setIsAbleToCreateDocuments(new Boolean(aRole.isAbleToCreateDocuments()));
 			
 			SbiDomains roleType = (SbiDomains)aSession.load(SbiDomains.class,  aRole.getRoleTypeID());
 			hibRole.setRoleType(roleType);
@@ -535,6 +541,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		role.setIsAbleToBuildQbeQuery(hibRole.getIsAbleToBuildQbeQuery() == null || hibRole.getIsAbleToBuildQbeQuery().booleanValue());
 		role.setIsAbleToDoMassiveExport(hibRole.getIsAbleToDoMassiveExport() == null || hibRole.getIsAbleToDoMassiveExport().booleanValue());
 		role.setIsAbleToEditWorksheet(hibRole.getIsAbleToEditWorksheet() == null || hibRole.getIsAbleToEditWorksheet().booleanValue());
+		role.setIsAbleToSeeDocumentBrowser(hibRole.getIsAbleToSeeDocumentBrowser() == null || hibRole.getIsAbleToSeeDocumentBrowser().booleanValue());
+		role.setIsAbleToSeeFavourites(hibRole.getIsAbleToSeeFavourites() == null || hibRole.getIsAbleToSeeFavourites().booleanValue());
+		role.setIsAbleToSeeSubscriptions(hibRole.getIsAbleToSeeSubscriptions() == null || hibRole.getIsAbleToSeeSubscriptions().booleanValue());
+		role.setIsAbleToSeeMyData(hibRole.getIsAbleToSeeMyData() == null || hibRole.getIsAbleToSeeMyData().booleanValue());
+		role.setIsAbleToSeeToDoList(hibRole.getIsAbleToSeeToDoList() == null || hibRole.getIsAbleToSeeToDoList().booleanValue());
+		role.setIsAbleToCreateDocuments(hibRole.getIsAbleToCreateDocuments() == null || hibRole.getIsAbleToCreateDocuments().booleanValue());
 		// for ManageUsers the default is false
 		role.setIsAbleToManageUsers(hibRole.getIsAbleToManageUsers() != null && hibRole.getIsAbleToManageUsers().booleanValue());
 
@@ -682,6 +694,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setIsAbleToDoMassiveExport(new Boolean(role.isAbleToDoMassiveExport()));
 			hibRole.setIsAbleToEditWorksheet(new Boolean(role.isAbleToEditWorksheet()));
 			hibRole.setIsAbleToManageUsers(new Boolean(role.isAbleToManageUsers()));
+			hibRole.setIsAbleToSeeDocumentBrowser(new Boolean(role.isAbleToSeeDocumentBrowser()));
+			hibRole.setIsAbleToSeeFavourites(new Boolean(role.isAbleToSeeFavourites()));
+			hibRole.setIsAbleToSeeSubscriptions(new Boolean(role.isAbleToSeeSubscriptions()));
+			hibRole.setIsAbleToSeeMyData(new Boolean(role.isAbleToSeeMyData()));
+			hibRole.setIsAbleToSeeToDoList(new Boolean(role.isAbleToSeeToDoList()));
+			hibRole.setIsAbleToCreateDocuments(new Boolean(role.isAbleToCreateDocuments()));
 			updateSbiCommonInfo4Insert(hibRole);
 			roleId = (Integer)aSession.save(hibRole);
 			
