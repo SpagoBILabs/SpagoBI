@@ -5,33 +5,27 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.mobile.table.service;
 
-import it.eng.qbe.query.WhereField;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.DataSetExecutorForBIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.engine.mobile.service.AbstractExecuteMobileAction;
 import it.eng.spagobi.engine.mobile.table.serializer.MobileDatasetTableSerializer;
 import it.eng.spagobi.engine.mobile.template.TableTemplateInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -90,9 +84,9 @@ public class ExecuteMobileTableAction extends AbstractExecuteMobileAction {
 			JSONArray conditionsJSON = null;
 			try {
 				MobileDatasetTableSerializer writer = new MobileDatasetTableSerializer();
-				JSONObject features = templInst.getFeatures();
+				
 				//JSONArray conditions = (JSONArray)features.get("conditions");
-				dataSetJSON = (JSONObject)writer.write(dataStore, features);
+				dataSetJSON = (JSONObject)writer.write(dataStore, templInst);
 				logger.debug("Serialized response");
 				
 			} catch (Throwable e) {

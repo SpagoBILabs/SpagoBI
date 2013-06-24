@@ -12,12 +12,12 @@ import it.eng.spagobi.analiticalmodel.document.bo.DataSetExecutorForBIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engine.mobile.MobileConstants;
+import it.eng.spagobi.engine.mobile.chart.serializer.MobileChartJSONSerializer;
 import it.eng.spagobi.engine.mobile.service.AbstractExecuteMobileAction;
 import it.eng.spagobi.engine.mobile.template.ChartTemplateInstance;
 import it.eng.spagobi.engine.mobile.template.IMobileTemplateInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONFailure;
@@ -26,10 +26,8 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,7 +45,7 @@ public class ExecuteMobileChartAction extends AbstractExecuteMobileAction {
 		logger.debug("IN");
 		IDataStore dataStore;
 		IDataSet dataSet;
-		JSONObject toReturn = new JSONObject();
+		
 		JSONObject parameterJSON;
 		BIObject documentBIObject;
 		
@@ -69,6 +67,15 @@ public class ExecuteMobileChartAction extends AbstractExecuteMobileAction {
 				}
 			}
 
+			Integer id = documentBIObject.getDataSetId();
+			dataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(id);
+			//LOAD DATA
+			DataSetExecutorForBIObject dataSetExecutorForBIObject = new DataSetExecutorForBIObject(dataSet, documentBIObject, this.getUserProfile());
+			dataSetExecutorForBIObject.executeDataSet();
+			logger.debug("Execute the data set");
+			
+			logger.debug("Building the data store..");
+			dataStore = dataSet.getDataStore();
 			
 			logger.debug("Got BIObject from session");
 			//Load the template of the document
@@ -83,40 +90,9 @@ public class ExecuteMobileChartAction extends AbstractExecuteMobileAction {
 			HashMap paramMap = getParametersList(getAttributeAsJSONObject("PARAMETERS"));
 			IMobileTemplateInstance templateInstance = new ChartTemplateInstance(template, paramMap);
 			templateInstance.loadTemplateFeatures();
-			JSONObject chartConfigFromTemplate = templateInstance.getFeatures();
-			logger.debug("Finished to get the chart config from the template. ");
 			
-			logger.debug("Getting the document dataset...");
-			Integer id = documentBIObject.getDataSetId();
-			dataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(id);
-			logger.debug("Got document dataset");
-			//LOAD DATA
-			DataSetExecutorForBIObject dataSetExecutorForBIObject = new DataSetExecutorForBIObject(dataSet, documentBIObject, this.getUserProfile());
-			dataSetExecutorForBIObject.executeDataSet();
-			logger.debug("Execute the data set");
-			
-			logger.debug("Building the data store..");
-			dataStore = dataSet.getDataStore();
-			
-			Map<String,Object> parametersForWriter = new HashMap<String,Object>();
-			parametersForWriter.put(JSONDataWriter.PROPERTY_ADJUST, true);
-			
-			JSONDataWriter dataSetWriter = new JSONDataWriter(parametersForWriter);
-			JSONObject dataStroreJSON =  (JSONObject) dataSetWriter.write(dataStore);
-			JSONObject dataStroreJSONMetdaData = dataStroreJSON.getJSONObject(JSONDataWriter.METADATA);
-
-			JSONObject extDataStore = new JSONObject();
-			String dataPosition = dataStroreJSONMetdaData.getString("root");
-			JSONArray data = dataStroreJSON.getJSONArray(dataPosition);
-			extDataStore.put("fields", dataStroreJSONMetdaData.getJSONArray("fields"));
-			extDataStore.put("data", data);
-			//extDataStore.put("xtype", "jsonstore");
-			logger.debug("Data store builded");
-
-			chartConfigFromTemplate.put("store", extDataStore);
-			toReturn.put("config", chartConfigFromTemplate);
-			toReturn.put("store", extDataStore);
-			
+			MobileChartJSONSerializer writer = new MobileChartJSONSerializer();	
+			JSONObject toReturn =  (JSONObject)writer.write(dataStore, templateInstance);
 			writeBackToClient( new JSONSuccess( toReturn ) );
 			
 		} catch (EMFUserError emf) {

@@ -71,7 +71,7 @@ public class LoginAction extends AbstractEngineAction{
 					logger.debug("User is authenticated");
 					// fill response
 					
-						MenuUtilities.getMenuItems(request, response, profile);
+					MenuUtilities.getMenuItems(request, response, profile);
 	
 					// set publisher name
 					response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");

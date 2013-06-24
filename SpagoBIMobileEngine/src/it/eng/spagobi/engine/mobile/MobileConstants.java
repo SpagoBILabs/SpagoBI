@@ -17,6 +17,7 @@ public class MobileConstants {
 	public static final String TITLE_TAG = "TITLE";
 	public static final String TITLE_VALUE_ATTR = "value";
 	public static final String TITLE_STYLE_ATTR = "style";
+	public static final String DOCUMENT_STYLE_ATTR = "documentstyle";
 	public static final String COLUMNS_TAG = "COLUMNS";
 	public static final String COLUMN_TAG = "COLUMN";
 	public static final String COLUMN_HEADER_ATTR = "header";
@@ -67,4 +68,9 @@ public class MobileConstants {
 	public static final String PARAM_TYPE_SERIE = "SERIE";
 	public static final String PARAM_TYPE_CATEGORY = "CATEGORY";
 	public static final String PARAM_TYPE_SERIE_NAME = "SERIE_NAME";
+	
+	public static final String FOOTER = "FOOTER";
+	public static final String HEADER = "HEADER";
+	
+
 }

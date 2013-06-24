@@ -6,12 +6,11 @@
 
 package it.eng.spagobi.engine.mobile.template;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.utilities.json.JSONTemplateUtils;
+
 import java.util.HashMap;
 import java.util.Iterator;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engine.mobile.MobileConstants;
-import it.eng.spagobi.utilities.json.JSONTemplateUtils;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -34,13 +33,13 @@ public class ChartTemplateInstance extends AbstractTemplateInstance  implements 
 
 	@Override
 	public void loadTemplateFeatures() throws Exception {
+		super.loadTemplateFeatures();
 		JSONTemplateUtils ju = new JSONTemplateUtils();
-		JSONArray array = toJSONArray(this.paramsMap);
+		JSONArray array = toJSONArray((HashMap<String,String>)this.paramsMap);
 		features = ju.getJSONTemplateFromXml(this.template, array);
 		if(features == null){
 			features = new JSONObject(); 
 		}
-		buildDrillJSON();
 		setFeatures();
 	}
 
