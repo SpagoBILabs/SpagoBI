@@ -96,11 +96,62 @@ Ext.extend(Sbi.tools.ManageDatasetFieldMetadata, Ext.grid.EditorGridPanel, {
   	,loadItems: function(fieldsColumns, record){
   		this.record = record;
   		if(fieldsColumns){
-  			this.fieldStore.loadData(fieldsColumns);
+  			//Temporary workaround because fieldsColumns is now an object with a new structure after changing DataSetJSONSerializer
+  			if ((fieldsColumns.columns != undefined) && (fieldsColumns.columns != null)){
+  				var columnsArray = new Array();
+  				
+  				var columnsNames = new Array();
+  				//create columns list
+  				for (var i = 0; i < fieldsColumns.columns.length; i++) {
+  					var element = fieldsColumns.columns[i];
+  					columnsNames.push(element.column); 
+  				}
+  				
+  				columnsNames = this.removeDuplicates(columnsNames);
+  				
+  				
+  				for (var i = 0; i < columnsNames.length; i++) {
+  					var columnObject = {name:'',fieldType:'',type:''};
+  					var currentColumnName = columnsNames[i];
+  					columnObject.name = currentColumnName;
+  					for (var j = 0; j < fieldsColumns.columns.length; j++) {
+  	  					var element = fieldsColumns.columns[j];
+  	  					if (element.column == currentColumnName){
+  	  						if(element.pname.toUpperCase() == 'type'.toUpperCase()){
+  	  							columnObject.type = element.pvalue;
+  	  						}
+  	  						else if(element.pname.toUpperCase() == 'fieldType'.toUpperCase()){
+  	  							columnObject.fieldType = element.pvalue;
+  	  						}
+  	  					}
+  					}
+  					columnsArray.push(columnObject);
+	  			}			
+  				
+  				this.fieldStore.loadData(columnsArray);
+  				// end workaround ---------------------------------------------------
+  			} else {
+  	  			this.fieldStore.loadData(fieldsColumns);
+  			}			
   			this.emptyStore = false;
   		}else{
   			this.emptyStore = true;
   		}
+	}
+
+	,removeDuplicates: function(array) {
+	    var index = {};
+	   
+	    for (var i = array.length - 1; i >= 0; i--) {
+	        if (array[i] in index) {
+	            // remove this item
+	            array.splice(i, 1);
+	        } else {
+	            // add this value to index
+	            index[array[i]] = true;
+	        }
+	    }
+	    return array;
 	}
 
 	,getValues: function(){
