@@ -379,8 +379,7 @@ public class DataSetJSONSerializer implements Serializer {
 						SourceBean row = rows.get(i);
 						String columnName = (String)row.getAttribute("name");
 						String type = (String)row.getAttribute("TYPE");
-						//remove the type prefix 
-						type = type.replace("java.lang.", "");
+
 						
 						
 						JSONObject typeJSONObject = new JSONObject();
