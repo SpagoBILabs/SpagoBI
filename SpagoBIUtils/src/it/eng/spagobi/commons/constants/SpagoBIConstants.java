@@ -40,6 +40,8 @@ public class SpagoBIConstants {
 	public static final String ADMIN_ACTOR = "ADMIN_ACTOR";
 	public static final String DEV_ACTOR = "DEV_ACTOR";
 	*/
+	public static final String USE_PUBLIC_USER = "SPAGOBI.SECURITY.USE_PUBLIC_USER";
+	public static final String PUBLIC_USER_ID = "public_user";
 	
 	public static final String ROLE_TYPE_ADMIN = "ACTOR";
 	public static final String ROLE_TYPE_DEV = "DEV_ROLE";
@@ -362,6 +364,13 @@ public class SpagoBIConstants {
 	public static final String SAVE_METADATA_FUNCTIONALITY = "SaveMetadataFunctionality";
 	public static final String BUILD_QBE_QUERIES_FUNCTIONALITY = "BuildQbeQueriesFunctionality";
 	public static final String DO_MASSIVE_EXPORT_FUNCTIONALITY = "DoMassiveExportFunctionality";
+	
+	public static final String SEE_DOCUMENT_BROWSER = "SeeDocBrowser";
+	public static final String SEE_MY_DATA = "SeeMyData";
+	public static final String SEE_FAVOURITES = "SeeFavourites";
+	public static final String SEE_SUBSCRIPTIONS = "SeeSubscriptions";
+	public static final String SEE_TODO_LIST = "SeeToDoList";
+	public static final String CREATE_DOCUMENT = "CreateDocument";
 	
 	public static final String DOCUMENT_MOVE_DOWN_STATE = "DocumentMoveDownState" ;
 	public static final String DOCUMENT_MOVE_UP_STATE = "DocumentMoveUpState" ;

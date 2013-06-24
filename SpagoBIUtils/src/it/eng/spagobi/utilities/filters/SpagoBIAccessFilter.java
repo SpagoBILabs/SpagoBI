@@ -44,6 +44,7 @@ public class SpagoBIAccessFilter implements Filter {
 
 
     public void init(FilterConfig config) throws ServletException {
+    	logger.debug("IN");
     	// do nothing
     }
 	
