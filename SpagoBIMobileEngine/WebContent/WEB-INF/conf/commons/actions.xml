@@ -69,4 +69,8 @@
 	 	<CONFIG/>
 	 </ACTION> 
 	 
+	  <ACTION name="LOGOUT_ACTION" class="it.eng.spagobi.commons.services.LogoutAction" scope="REQUEST">
+ 		<CONFIG/>
+ 	</ACTION> 
+	 
 </ACTIONS>

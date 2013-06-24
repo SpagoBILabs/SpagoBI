@@ -1,5 +1,7 @@
 <link rel="stylesheet" href="../css/spagobi-mobile.css" type="text/css">
 
+
+
 <script type="text/javascript" src="../js/spagobi/service/ServiceRegistry.js"></script>
 <script type="text/javascript" src="../js/spagobi/config/Settings.js"></script>
 <script type="text/javascript" src="../js/spagobi/config/UserFunctions.js"></script>
@@ -38,7 +40,6 @@
 <script type="text/javascript" src="../js/spagobi/execution/ExecutionView.js"></script>
 <script type="text/javascript" src="../js/spagobi/execution/ExecutionController.js"></script>
 <script type="text/javascript" src="../js/spagobi/execution/ExecutionContainerView.js"></script>
-<script type="text/javascript" src="../js/spagobi/execution/CrossExecutionView.js"></script>
 <script type="text/javascript" src="../js/spagobi/execution/ParametersView.js"></script>
 <script type="text/javascript" src="../js/spagobi/execution/ParametersController.js"></script>
 <script type="text/javascript" src="../js/spagobi/widgets/Slider.js"></script>

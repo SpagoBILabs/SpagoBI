@@ -11,6 +11,10 @@ authors: Monica Franceschini
 
 --%>
 
+<%@page import="it.eng.spago.base.SessionContainer"%>
+<%@page import="it.eng.spago.base.RequestContainer"%>
+<%@page import="it.eng.spago.security.IEngUserProfile"%>
+<%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"
@@ -23,6 +27,11 @@ String roleToCheckVal = "";
 if (!("").equals(roleToCheckLbl)){
 	roleToCheckVal = (request.getParameter(roleToCheckLbl)!=null)?request.getParameter(roleToCheckLbl):"";	
 }
+RequestContainer reqCont = RequestContainer.getRequestContainer();
+SessionContainer sessCont = reqCont.getSessionContainer();
+SessionContainer permSess = sessCont.getPermanentContainer();
+UserProfile previousProfile = (UserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+boolean logged = (previousProfile!=null);
 %>
 
 <html>
@@ -67,6 +76,7 @@ if (!("").equals(roleToCheckLbl)){
 			var hostGlobal= '<%= request.getServerName()%>';
 			var portGlobal= '<%= request.getServerPort()%>';
 			var roleGlobal = '<%=roleToCheckVal%>';
+			var loggedGlobal =  '<%=logged%>';
 		 </script>
 	</body>
  
