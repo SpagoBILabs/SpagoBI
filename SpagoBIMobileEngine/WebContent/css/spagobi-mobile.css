@@ -148,14 +148,21 @@
 	 padding-left: 32px;
 	 padding-bottom: 3px;
 	 padding-top: 3px;
-}  
+}
+
+.x-list-normal.x-list-item.x-list-footer-wrap.x-dock-horizontal{
+	border: none !important;
+}
+
+.x-list-normal.x-list-item.x-dock-horizontal{
+	border: none !important;
+}
 .chart-item {
 	 background-image:url('../img/chart.png') !important;
 	 background-repeat:no-repeat;
-	 background-position: left; 
-	 padding-left: 32px;
+	 background-position: left top; 
 	 padding-bottom: 3px;
-	 padding-top: 3px;
+	 padding-top: 30px;
 }
 .composed-item {
 	 background-image:url('../img/composed.png') !important;
@@ -176,7 +183,7 @@
 }
 
 .login-fieldset-top{
-	 background-image:url('../img/Logo_SpagoBI.png') !important;
+	 background-image:url('../img/Logo_SpagoBI.png');
 	 background-repeat:no-repeat;
 	 background-position: center top; 
 	 padding-top: 60px;
