@@ -41,32 +41,19 @@ Ext.define('app.views.Viewport',{
 		this.addToolbarEvents(app.views.customBottomToolbar);
 		
 		this.on("activate",function(){
-			app.views.customTopToolbar.setViewModality("login");
-			this.goLogIn();
+			if(loggedGlobal && loggedGlobal=="true"){
+				app.views.form.hide();
+				localStorage.setItem('app.views.launched', 'true');
+				this.addMain();
+				
+				this.goHome();
+			}else{
+				this.goLogIn();
+			}
+
 		},this);
 
-
-		
-//	    //put instances of login into app.views namespace
-//	    Ext.apply(app.views, {
-//	        loginView: new app.views.LoginView(),
-//	        main:      new app.views.MainContainer(),
-//	        parameters:new app.views.ParametersView(),
-//	        execution: new app.views.ExecutionView ()
-//
-//	    });
-//	    //put instances of loginView into viewport
-//	    Ext.apply(this, {
-//	        items: [
-//	            app.views.loginView,
-//	            app.views.main,
-//	            app.views.parameters,
-//	            app.views.execution
-//	        ]
-//	    });
-	    
 	    this.callParent(arguments);
-//	    this.goLogIn();
 
 	  }
 	
@@ -81,9 +68,13 @@ Ext.define('app.views.Viewport',{
 		this.setActiveItem(app.views.loginView, { type: 'fade' });	
 	}
 	
-	,goExecution: function(){
+	,goExecution: function(config){
 		app.views.customTopToolbar.setViewModality("execution");
 		app.views.customBottomToolbar.setViewModality("execution");
+		if(config && config.noParametersPageNeeded ){
+			app.views.customTopToolbar.hideItem("params");
+			app.views.customBottomToolbar.hideItem("params");
+		}
 		this.setActiveItem(app.views.executionContainer, { type: 'fade' });	
 	}
 	
@@ -93,9 +84,11 @@ Ext.define('app.views.Viewport',{
 		this.setActiveItem(app.views.parameters, { type: 'fade' });	
 	}
 	
-	,goHome: function(){
-		app.views.customTopToolbar.setViewModality("main");
-		app.views.customBottomToolbar.setViewModality("main");
+	,goHome: function(submodality){
+		app.views.customTopToolbar.setViewModality("main",submodality);
+		app.views.customBottomToolbar.setViewModality("main",submodality);
+		//cleans the execution 
+		app.views.executionContainer.clearExecutions();
 		this.setActiveItem(app.views.main, { type: 'fade' });	
 	}
 	
@@ -106,7 +99,25 @@ Ext.define('app.views.Viewport',{
 			}
 		},this);
 		aToolbar.on("gotoparameters",function(toolbar){
-			this.goParameters();
+			var activeExecutionInstance = app.views.executionContainer.getActiveExecutionInstance();
+			if(activeExecutionInstance && activeExecutionInstance.isFromCross){
+				var option = {
+						docName:activeExecutionInstance.OBJECT_NAME,
+						id: activeExecutionInstance.OBJECT_ID,
+						label: activeExecutionInstance.OBJECT_LABEL,
+						roleName: activeExecutionInstance.ROLE,
+						sbiExecutionId: activeExecutionInstance.SBI_EXECUTION_ID,
+						typeCode : activeExecutionInstance.TYPE_CODE,
+						engine : activeExecutionInstance.ENGINE,
+						isFromCross: activeExecutionInstance.isFromCross,
+						params: activeExecutionInstance.paramsFromCross//filled only from cross navigation
+				};
+
+				app.controllers.parametersController.getParametersForExecutionAction(option, true);
+			}else{
+				this.goParameters();	
+			}
+				
 		},this);
 		aToolbar.on("refreshDoc",function(toolbar){
 			app.views.executionContainer.refresh();

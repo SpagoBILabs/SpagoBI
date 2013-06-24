@@ -15,7 +15,7 @@ Ext.define('app.views.Slider',{
 		    left:'10%',
 		    fullscreen: true,
 		    increment: 1,
-		    bottom: 0,
+		    bottom: 15,
 		    tooltip: null,
 		    listeners: {
 		        change: function( me, sl, thumb, newValue, oldValue, eOpts) {

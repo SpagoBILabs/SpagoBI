@@ -9,7 +9,9 @@ Ext.define('app.views.ChartExecutionPanel',{
 	extend: 'app.views.WidgetPanel',
 	config:{
 		scroll : 'vertical',
-		executionInstance: null,
+		style:{
+			position: "relative"
+		},
 		items:[],
 		//colors: ['red','blue','yellow','green','orange','brown','white','grey'],
 		chartTypes:{
@@ -20,13 +22,8 @@ Ext.define('app.views.ChartExecutionPanel',{
 	},
 
 
-	constructor : function(config) {
-		Ext.apply(this,config);
-		this.callParent(arguments);
-
-	},
-
 	initialize : function() {
+		
 		var c = this.setChartWidget(this.resp, this.fromcomposition,this.fromCross );
 
 		if(c.chartType){
@@ -36,18 +33,10 @@ Ext.define('app.views.ChartExecutionPanel',{
 		}
 
 		console.log('init chart execution');
-//		if(this.IS_FROM_COMPOSED){
-//		this.on('afterlayout',this.showLoadingMask,this);
-//		if(app.views.execution.loadingMaskForExec != undefined){
-//		app.views.execution.loadingMaskForExec.hide();
-//		}
-//		}.callParent(arguments);
-
+		this.callParent();
 	},
 
 	setChartWidget : function(resp, fromcomposition, fromCross) {
-
-		var r;
 		var config = resp.config;
 		config.animate = true;
 		config.shadow = true;
@@ -55,20 +44,49 @@ Ext.define('app.views.ChartExecutionPanel',{
 		if(config.enableuserfunction){
 			this.resolveUserFunctions(config);	
 		}
-		
-		
-		config.listeners = {
-				scope: this,
-				'itemtap': function(series, item, event) { 
-					var crossParams = new Array();
-					this.setCrossNavigation(resp, item, crossParams);
-					var targetDoc;
-					if(resp.config != undefined && resp.config.drill != undefined){
-						targetDoc = this.setTargetDocument(resp);					
+
+		//manage the god direct to the document in any place for the chart I click
+		if(resp.config.series && resp.config.series[0] && resp.config.series[0].type=='gauge'){
+			config.listeners = {
+					scope: this,
+					'tap': function(series, item, event) { 
+						var crossParams = new Array();
+						var targetDoc;
+						if(resp.config && resp.config.drill){
+							if(resp.config.drill.params){
+								crossParams = resp.config.drill.params;
+							}
+							targetDoc = this.setTargetDocument(resp);	
+							if(targetDoc){
+								this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
+							}
+						}
 					}
-					this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
-				}
-		};
+			};
+		}else{
+			config.listeners = {
+					scope: this,
+					'itemtap': function(series, item, event) { 
+
+						if(resp.config && resp.config.drill){
+							var crossParams = new Array();
+							if(resp.config.drill.params){
+								crossParams = resp.config.drill.params;
+							}
+							this.setCrossNavigation(resp, item, crossParams);
+							var targetDoc;
+							targetDoc = this.setTargetDocument(resp);	
+							if(targetDoc){
+								this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
+							}
+						}
+					}
+			};
+		}
+		
+
+		
+
 
 		if(config.interactions==undefined || config.interactions==null){
 			config.interactions = new Array();
@@ -82,14 +100,14 @@ Ext.define('app.views.ChartExecutionPanel',{
 		
 		this.manageColors(chartConfig);
 
-		if (fromcomposition) {
+//		if (fromcomposition) {
 
-			chartConfig.width = '100%';
-			chartConfig.height = '100%';
-		} else {
-			this.fullscreen = true;
-			chartConfig.fullscreen = true;
-		}
+		chartConfig.width = '100%';
+		chartConfig.height = '100%';
+//		} else {
+//			this.fullscreen = true;
+//			chartConfig.fullscreen = true;
+//
 
 		//chartConfig.bodyMargin = '10% 1px 60% 1px';
 
@@ -99,9 +117,7 @@ Ext.define('app.views.ChartExecutionPanel',{
 		}
 		
 		
-
 		return chartConfig;
-
 	}
 	
 	//search in the template, the user function tag,
@@ -109,7 +125,7 @@ Ext.define('app.views.ChartExecutionPanel',{
 	, resolveUserFunctions: function(template){
 	
 		if(!(template instanceof Object)){
-			return template;
+			return this.evalFunction(template);
 		}
 		for(p in template){
 			if(p=="userFunction"){
@@ -123,6 +139,19 @@ Ext.define('app.views.ChartExecutionPanel',{
 				}
 			}else{
 				template[p] = this.resolveUserFunctions(template[p]);
+			}
+		}
+		return template;
+	}
+	
+	, evalFunction: function(template){
+
+		if((typeof template) == "string"){
+			if(template.indexOf("functionToEval")>=0){
+				template = template.replace("functionToEval(","");
+				template = template.replace(")functionToEval","");
+				template = template.replace("userFunctions.","Sbi.chart.userFunctions");
+				template = eval(template);
 			}
 		}
 		return template;

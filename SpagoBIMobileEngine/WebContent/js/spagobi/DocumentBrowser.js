@@ -19,7 +19,8 @@ Ext.define('app.views.DocumentBrowser',{
 		listeners: {
 			itemtap:function( item, list, index, target, record, e, eOpts ){
 				var button = this.getBackButtomFromToolbar();
-				if(button){
+				if(!record.data.typeCode && button){
+					this.isRoot=false;//is the home page (the button should be visible)
 					button.show();
 					button.setText(record.data.name);
 				}
@@ -60,6 +61,15 @@ Ext.define('app.views.DocumentBrowser',{
 	constructor: function(config){
 		Ext.apply(this, config||{});
 		this.callParent(arguments);
+		var button = this.getBackButtomFromToolbar();
+		this.isRoot=true;
+		//when the button is shown, we should check if we are in the root of the document browser tree..
+		//if we are in the root whe should hide the navigation button
+		button.on("show",function(){
+			if(this.isRoot){
+				button.hide();
+			}
+		},this);
 	},
 
 	reloadPanel: function(){
@@ -68,8 +78,6 @@ Ext.define('app.views.DocumentBrowser',{
 
 	},
 
-	
-	
 	getTitleTextTpl: function() {
 		return '<tpl><div>{name}</div></tpl>';
 	},
@@ -95,13 +103,7 @@ Ext.define('app.views.DocumentBrowser',{
 //			app.controllers.mobileController.showDetail({record: record});
 			//direct execution: no preview
 			var rec = record.data;
-			app.controllers.mobileController.getRoles({
-				action: 'getRoles',
-				id: rec.id,
-				label: rec.label, 
-				engine: rec.engine, 
-				typeCode: rec.typeCode
-			});
+			app.controllers.mobileController.getRoles(rec);
 		}
 
 
@@ -114,6 +116,7 @@ Ext.define('app.views.DocumentBrowser',{
 		if(backButton){
 			if(node.data.text=="Root"){
 				backButton.hide();
+				this.isRoot=true;
 			}else{
 				backButton.show();
 				backButton.setText(node.data.name);
@@ -124,6 +127,7 @@ Ext.define('app.views.DocumentBrowser',{
 	
 	,goToRoot:function(){
 		var node = this.findRootNode(this);
+		this.isRoot=true;
 		this.goToNode(node);
 	}
 	

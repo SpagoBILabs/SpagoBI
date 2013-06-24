@@ -49,6 +49,7 @@ Ext.define('app.controllers.ExecutionController',{
 		        		var type = doc.typeCode;
 			  			app.controllers.mobileController.getRoles({
 							  id: doc.id,
+							  name: doc.name,
 							  label: doc.label, 
 							  engine: doc.engine, 
 							  typeCode: doc.typeCode,
@@ -63,11 +64,10 @@ Ext.define('app.controllers.ExecutionController',{
 			} 
 	    });
 	}
-	, executeTemplate: function(option, documentContainerPanel,refresh){
+	, executeTemplate: function(option, documentContainerPanel,refresh, positionInComposition){
 
 		var executionInstance = option.executionInstance;
 		var typeCode =  executionInstance.TYPE_CODE;
-		var engine =  executionInstance.ENGINE;
 		
 		var params = Ext.apply({}, executionInstance);
 		params.PARAMETERS =  Ext.encode(executionInstance.PARAMETERS);
@@ -83,7 +83,7 @@ Ext.define('app.controllers.ExecutionController',{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createWidgetExecution(resp, 'table', documentContainerPanel, executionInstance, option,refresh);
+		        		this.createWidgetExecution(resp, 'table', documentContainerPanel, executionInstance, option,refresh, positionInComposition);
 		        	}
 		        }
 				,failure: function(response, options) {
@@ -100,7 +100,7 @@ Ext.define('app.controllers.ExecutionController',{
 		        success: function(response, opts) {
 		        	if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 		        		var resp = Ext.decode(response.responseText);
-		        		this.createWidgetExecution(resp, 'chart', documentContainerPanel, executionInstance, option,refresh);
+		        		this.createWidgetExecution(resp, 'chart', documentContainerPanel, executionInstance, option,refresh, positionInComposition);
 		        	}
 		        }
 				,failure: function(response, options) {
@@ -128,40 +128,19 @@ Ext.define('app.controllers.ExecutionController',{
 		}
 	}
 
-//	, simpleNavigationManagement: function(resp, type, executionInstance){
-//		
-//		app.views.executionContainer.clearExecutions();
-//		app.views.executionContainer.addExecution(resp, type, false, executionInstance);
-//		app.controllers.mobileController.destroyExecutionView();
-//		if(app.views.execView == undefined || app.views.execView == null){
-//			//app.views.execView = Ext.create("app.views.ExecutionView",{parameters: executionInstance.PARAMETERS});
-//			app.views.execView = Ext.create("app.views.ExecutionView");
-//		}
-//		app.views.execView.setWidget(resp, type, false, executionInstance);
-//	    var viewport = app.views.viewport;	    
-//	    viewport.add(app.views.execView);	
-////	    app.views.execView.showBottomToolbar();
-//	    app.views.execView.setWidget(resp, type, false, executionInstance);
-////		app.views.execView.bottomTools.setBreadCrumb(executionInstance.OBJECT_LABEL, 
-////				executionInstance.OBJECT_ID,
-////				executionInstance.TYPE_CODE,
-////				executionInstance.PARAMETERS);
-//	    		app.views.viewport.goExecution();
-//	}
 
-	, createWidgetExecution: function(resp, type, documentContainerPanel, executionInstance, composedComponentOptions,refresh){
+	, createWidgetExecution: function(resp, type, documentContainerPanel, executionInstance, composedComponentOptions,refresh, positionInComposition){
 
 		if (documentContainerPanel == undefined || documentContainerPanel == null) {
 			if(!executionInstance.isFromCross && !refresh){
 				app.views.executionContainer.clearExecutions();
 			}
 			app.views.executionContainer.addExecution(resp, type, executionInstance.isFromCross, executionInstance,refresh);
-			app.views.viewport.goExecution();
-//			this.simpleNavigationManagement(resp, type, executionInstance);
-			//app.views.execView.setExecutionInstance(executionInstance);
+			//var documentWithParameters = (executionInstance.PARAMETERS!=null) && (executionInstance.PARAMETERS!=undefined) && (executionInstance.PARAMETERS.length!=0);
+			app.views.viewport.goExecution({noParametersPageNeeded: executionInstance.noParametersPageNeeded});
+
 		} else {
-			documentContainerPanel.addWidgetComposed(resp, type, composedComponentOptions);
-			//documentContainerPanel.setExecutionInstance(executionInstance);
+			documentContainerPanel.addWidgetComposed(resp, type, composedComponentOptions, positionInComposition);
 		}
 		
 		

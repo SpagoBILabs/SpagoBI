@@ -69,10 +69,11 @@ Ext.define('app.views.LoginView',{
 	                   ,
 	                    {
 	                        docked: 'bottom',
+	                        cls: 'log-in-toolbar',
 	                        xtype: 'toolbar',
 	                        height:30,
 	                        style:'padding : 7px;',
-	                        //ui: 'neutral',
+	                        ui: 'dark',
 	                        items:[
 	                            {
 	                            	xtype: 'spacer'
@@ -80,6 +81,7 @@ Ext.define('app.views.LoginView',{
 	                        	{
 	                                text: 'Login',
 	                                ui: 'confirm',
+	                                cls:'x-button-custom',
 	                                handler: function(){
 	                                	app.views.loginView.doSubmit(app.views.form.getValues());
 	                                }
@@ -131,11 +133,11 @@ Ext.define('app.views.LoginView',{
 					
 						
 					} else {
-						Ext.Msg.alert('','<p style="color:#fff; font-weight: bold;">Login</p><br/>Authentication failure!',Ext.emptyFn);
+						Sbi.exception.ExceptionHandler.showErrorMessage('<p style="color:#fff; font-weight: bold;">Login</p><br/>Authentication failure!');
 						return;
 					}
 				} else {
-					Ext.Msg.alert('','<p style="color:#fff;font-weight: bold;">Login</p><br/>Authentication failure!',Ext.emptyFn);
+					Sbi.exception.ExceptionHandler.showErrorMessage('<p style="color:#fff; font-weight: bold;">Login</p><br/>Authentication failure!');
 					return;
 				}
 			}
