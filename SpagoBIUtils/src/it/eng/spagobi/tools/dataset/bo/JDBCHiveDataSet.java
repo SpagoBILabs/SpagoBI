@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.datareader.JDBCHiveDataReader;
 
 
@@ -14,4 +15,9 @@ public class JDBCHiveDataSet extends AbstractJDBCDataset {
 		super();
 		setDataReader( new JDBCHiveDataReader() );
 	}
+	    
+    public JDBCHiveDataSet(SpagoBiDataSet dataSetConfig) {
+   		super(dataSetConfig);
+   		setDataReader( new JDBCHiveDataReader() );
+   	}
 }
