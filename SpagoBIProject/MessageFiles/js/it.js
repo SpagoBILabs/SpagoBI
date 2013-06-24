@@ -419,6 +419,13 @@ Sbi.locale.ln['sbi.roles.error'] = 'Errore';
 Sbi.locale.ln['sbi.roles.result'] = 'Risultato';
 Sbi.locale.ln['sbi.roles.rolesSynchronization'] = 'Sincronizza';
 Sbi.locale.ln['sbi.roles.businessModels'] = 'Business Models';
+Sbi.locale.ln['sbi.roles.finalUserCan'] = 'Voci del menu utente:';
+Sbi.locale.ln['sbi.roles.seeDocumentBrowser'] = 'Vede la lista dei documenti';
+Sbi.locale.ln['sbi.roles.seeMyData'] = 'Vede i \'Miei Dati\'';
+Sbi.locale.ln['sbi.roles.seeFavourites'] = 'Vede i favoriti';
+Sbi.locale.ln['sbi.roles.seeSubscriptions'] = 'Vede le sottoscrizioni';
+Sbi.locale.ln['sbi.roles.seeToDoList'] = 'Vede la lista To Do';
+Sbi.locale.ln['sbi.roles.createDocument'] = 'Crea i documenti';
 
 Sbi.locale.ln['sbi.users.fullName'] = 'Nome Completo';
 Sbi.locale.ln['sbi.users.userId'] = 'User ID';
@@ -546,6 +553,7 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Espandi/Riduci';
 
 Sbi.locale.ln['sbi.home.Welcome'] = 'Benvenuto: ';
 Sbi.locale.ln['sbi.home.Exit'] = 'Esci';
+Sbi.locale.ln['sbi.home.Login'] = 'Entra';
 Sbi.locale.ln['sbi.home.Info'] = 'Informazioni su SpagoBI';
 
 Sbi.locale.ln['sbi.lookup.ValueOfColumn'] ='Il valore della colonna';

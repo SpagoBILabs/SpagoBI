@@ -8,9 +8,12 @@ package it.eng.spagobi.security.init;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.init.InitializerIFace;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
@@ -35,6 +38,7 @@ import org.apache.log4j.Logger;
 public class InternalSecurityInitializer implements InitializerIFace {
 
 	private SourceBean _config = null;
+	
 	
 	static private Logger logger = Logger.getLogger(InternalSecurityInitializer.class);
 	
@@ -123,7 +127,6 @@ public class InternalSecurityInitializer implements InitializerIFace {
 				    	logger.debug("Association beetween user [" + userId +"] and role [" + name + "] succesfully created");
 			    	}
 			    }
-	    
 			}
 		} catch (Throwable t) {
 			logger.error("An unexpected error occurred during users' initialization", t);
@@ -172,21 +175,32 @@ public class InternalSecurityInitializer implements InitializerIFace {
 			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
 			
 			ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
+			//get configuration about the public user
+			IConfigDAO configDAO = DAOFactory.getSbiConfigDAO();
+			Config usePublicUserConf = configDAO.loadConfigParametersByLabel(SpagoBIConstants.USE_PUBLIC_USER);
 			
 			List<SbiUser> defaultUsers = readUsers(config);
 			for(SbiUser defaultUser: defaultUsers) {
 				SbiUser existingUser = userDAO.loadSbiUserByUserId( defaultUser.getUserId() );
+				boolean usePublicUser = false;
+				boolean insert = false;
+				
+				if (usePublicUserConf == null ||  (usePublicUserConf.isActive() && 	
+						usePublicUserConf.getValueCheck() != null && usePublicUserConf.getValueCheck().equals("true")))
+					usePublicUser = true;
+			
 		    	if (existingUser == null) {
-		    		String userId = defaultUser.getUserId(); // save this because the dao during save set it to id
-		    		logger.debug("Storing user [" + defaultUser.getUserId() + "] into database ");
-		    		Integer newId = userDAO.saveSbiUser(defaultUser);
-		    		usersLookup.put(defaultUser.getUserId(), newId);
-		    		logger.debug("User [" + defaultUser.getUserId() + "] sucesfully stored into database with id [" + newId + "]");
-			    } else  {
-			    	logger.debug("User [" + defaultUser.getUserId() + "] is alerdy stored into database with id [" + existingUser.getId() + "]");
-			    }	
-			}
-
+		    		insert = true;
+		    		if(defaultUser.getUserId().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID) && !usePublicUser) insert = false;
+		    		if (insert){
+			    		String userId = defaultUser.getUserId(); // save this because the dao during save set it to id
+			    		logger.debug("Storing user [" + defaultUser.getUserId() + "] into database ");
+			    		Integer newId = userDAO.saveSbiUser(defaultUser);
+			    		usersLookup.put(defaultUser.getUserId(), newId);
+			    		logger.debug("User [" + defaultUser.getUserId() + "] sucesfully stored into database with id [" + newId + "]");
+		    		}
+			    } 
+			}			  
 		} catch(Throwable t) {
 			logger.error("An unexpected error occurred while initializieng default users", t);
 		} finally {

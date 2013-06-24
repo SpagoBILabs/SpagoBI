@@ -5,9 +5,11 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -177,40 +179,55 @@ public class MenuListJSONSerializer implements Serializer {
 		return result;
 	}
 	
-	private JSONArray createEndUserMenu(Locale locale, int level, JSONArray tempMenuList) throws JSONException, EMFUserError{
+	private JSONArray createEndUserMenu(Locale locale, int level, JSONArray tempMenuList) throws JSONException, EMFUserError, EMFInternalError{
 
 		MessageBuilder messageBuilder = new MessageBuilder();
 		
-		JSONObject browser = createMenuItem(
-				"folder_open",
-				"/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
-				messageBuilder.getMessage("menu.Browser", locale), true, null);
-		JSONObject favourites = createMenuItem(
-				"bookmark",
-				"/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
-				messageBuilder.getMessage("menu.MyFavorites", locale), true, null);
+		List funcs = (List)userProfile.getFunctionalities();
+	
+		if (isAbleTo(SpagoBIConstants.SEE_DOCUMENT_BROWSER, funcs)){
+			JSONObject browser = createMenuItem(
+					"folder_open",
+					"/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+					messageBuilder.getMessage("menu.Browser", locale), true, null);
+			tempMenuList.put(browser);
+		}
+		if (isAbleTo(SpagoBIConstants.SEE_FAVOURITES, funcs)){
+			JSONObject favourites = createMenuItem(
+					"bookmark",
+					"/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+					messageBuilder.getMessage("menu.MyFavorites", locale), true, null);
+			tempMenuList.put(favourites);
+		}
+		if (isAbleTo(SpagoBIConstants.CREATE_DOCUMENT, funcs)){
+			JSONObject createDoc = createMenuItem(
+					"pencil",
+					"/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+					messageBuilder.getMessage("menu.CreateDocument", locale), true, null);
+			tempMenuList.put(createDoc);
+		}
+		if (isAbleTo(SpagoBIConstants.SEE_SUBSCRIPTIONS, funcs)){
+			JSONObject subscription = createMenuItem(
+					"edit",
+					"/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+					messageBuilder.getMessage("menu.Subscriptions", locale), true, null);
+			tempMenuList.put(subscription);
+		}
+		if (isAbleTo(SpagoBIConstants.SEE_TODO_LIST, funcs)){
+			JSONObject toDoList = createMenuItem(
+					"list",
+					"/servlet/AdapterHTTP?PAGE=WorkflowToDoListPage&WEBMODE=TRUE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+					messageBuilder.getMessage("menu.ToDoList", locale), true, null);
+			tempMenuList.put(toDoList);
+		}
+		if (isAbleTo(SpagoBIConstants.SEE_MY_DATA, funcs)){
+			JSONObject myData = createMenuItem(
+					"my_data",
+					"/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+					messageBuilder.getMessage("menu.MyData", locale), true, null);
+			tempMenuList.put(myData);
+		}
 
-		JSONObject createDoc = createMenuItem(
-				"pencil",
-				"/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
-				messageBuilder.getMessage("menu.CreateDocument", locale), true, null);
-		JSONObject subscription = createMenuItem(
-				"edit",
-				"/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
-				messageBuilder.getMessage("menu.Subscriptions", locale), true, null);
-		JSONObject toDoList = createMenuItem(
-				"list",
-				"/servlet/AdapterHTTP?PAGE=WorkflowToDoListPage&WEBMODE=TRUE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
-				messageBuilder.getMessage("menu.ToDoList", locale), true, null);
-
-		JSONObject myData = createMenuItem(
-				"my_data",
-				"/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
-				messageBuilder.getMessage("menu.MyData", locale), true, null);
-		
-		// tempMenuList.put(charts);
-		tempMenuList.put(browser);
-		tempMenuList.put(favourites);
 		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
 		JSONObject myFolder = new JSONObject();
 		if(personalFolder != null){
@@ -220,13 +237,7 @@ public class MenuListJSONSerializer implements Serializer {
 							+ persFoldId, messageBuilder.getMessage("menu.MyFolder", locale), true, null);
 			tempMenuList.put(myFolder);
 		}
-		
-		
-		tempMenuList.put(createDoc);
-		tempMenuList.put(subscription);
-		tempMenuList.put(toDoList);
-		tempMenuList.put(myData);
-		
+
 		return tempMenuList;
 	}
 	private JSONObject createMenuItem(String icon, String href, String tooltip, boolean idDirectLink, String label) throws JSONException{
@@ -270,11 +281,7 @@ public class MenuListJSONSerializer implements Serializer {
 
 		JSONObject info = createMenuItem("info", "",
 				messageBuilder.getMessage("menu.info", locale), false, "INFO");
-		JSONObject power = createMenuItem(
-				"power",
-				"/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE",
-				messageBuilder.getMessage("menu.logout", locale), false, null);
-
+		
 		spacer.put("xtype", "spacer");
 		tempMenuList.put("->");
 
@@ -284,8 +291,21 @@ public class MenuListJSONSerializer implements Serializer {
 
 		tempMenuList.put(info);
 
-		tempMenuList.put(power);
-
+		
+		if (userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID)){
+			JSONObject login = createMenuItem(
+					"login",
+					"/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE",
+					messageBuilder.getMessage("menu.login", locale), false, null);
+			tempMenuList.put(login);
+		}else{
+			JSONObject power = createMenuItem(
+				"power",
+				"/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE",
+				messageBuilder.getMessage("menu.logout", locale), false, null);
+			tempMenuList.put(power);
+		}
+		
 		return tempMenuList;
 	}
 
@@ -364,6 +384,17 @@ public class MenuListJSONSerializer implements Serializer {
 
 		tempMenuList.put(temp2);
 		return tempMenuList;
+	}
+	
+	private boolean isAbleTo(String func, List funcs){
+		boolean toReturn = false;
+		for (int i=0; i<funcs.size(); i++){			
+			if (func.equals(funcs.get(i))){
+				toReturn = true;
+				break;
+			}
+		}
+		return toReturn;
 	}
 	
 	public IEngUserProfile getUserProfile() {

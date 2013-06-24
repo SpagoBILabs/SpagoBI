@@ -148,6 +148,7 @@
 <CONFIG label="SPAGOBI.SECURITY.CHECK_ROLE_LOGIN" name="SPAGOBI.SECURITY.CHECK_ROLE_LOGIN" description="Check the correct role in login action" isActive="false" valueCheck="false" valueType="STRING" category="SECURITY"/>
 <CONFIG label="SPAGOBI.SECURITY.ROLE_LOGIN" name="SPAGOBI.SECURITY.ROLE_LOGIN" description="The value of the role to check at login module" isActive="false" valueCheck="" valueType="STRING" category="SECURITY"/>
 
+<CONFIG label="SPAGOBI.SECURITY.USE_PUBLIC_USER" name="SPAGOBI.SECURITY.USE_PUBLIC_USER" description="Enables the use of the public user. Usable only without SSO!" isActive="false" valueCheck="false" valueType="STRING" category="SECURITY"/>
 
 </CONFIGS>
 

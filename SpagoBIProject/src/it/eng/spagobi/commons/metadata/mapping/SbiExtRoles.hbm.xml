@@ -105,6 +105,26 @@
         <property name="isAbleToManageUsers" type="boolean">
             <column name="MANAGE_USERS" />
         </property> 
+        
+         <property name="isAbleToSeeDocumentBrowser" type="boolean">
+            <column name="SEE_DOCUMENT_BROWSER" />
+        </property> 
+         <property name="isAbleToSeeFavourites" type="boolean">
+            <column name="SEE_FAVOURITES" />
+        </property> 
+         <property name="isAbleToSeeSubscriptions" type="boolean">
+            <column name="SEE_SUBSCRIPTIONS" />
+        </property> 
+         <property name="isAbleToSeeMyData" type="boolean">
+            <column name="SEE_MY_DATA" />
+        </property> 
+         <property name="isAbleToSeeToDoList" type="boolean">
+            <column name="CREATE_DOCUMENTS" />
+        </property> 
+        <property name="isAbleToCreateDocuments" type="boolean">
+            <column name="SEE_TODO_LIST" />
+        </property> 
+        
         <set name="sbiFuncRoles" inverse="true">
             <key>
                 <column name="ROLE_ID" not-null="true" />

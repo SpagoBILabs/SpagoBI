@@ -26,6 +26,9 @@
 				<ATTRIBUTE name="name" value="Bam User" />
 				<ROLE name="/spagobi/bam"/>
 			</USER>
+			<USER userId="public_user" password="public_user" fullName="Public User" organization="SPAGOBI">
+				<ATTRIBUTE name="name" value="Public User" />				
+			</USER>
 		</DEFAULT_USERS>
 		<DEFAULT_ATTRIBUTES>
 			<ATTRIBUTE name="name" description="name" organization="SPAGOBI"/>
