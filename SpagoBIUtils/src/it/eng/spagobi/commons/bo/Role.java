@@ -39,6 +39,12 @@ public class Role  implements Serializable  {
     private boolean isAbleToBuildQbeQuery;
     private boolean isAbleToDoMassiveExport;
     private boolean isAbleToManageUsers;
+    private boolean isAbleToSeeDocumentBrowser;
+    private boolean isAbleToSeeFavourites;
+    private boolean isAbleToSeeSubscriptions;
+    private boolean isAbleToSeeMyData;
+    private boolean isAbleToSeeToDoList;
+    private boolean isAbleToCreateDocuments;
     
 	private boolean defaultRole;
 	
@@ -405,6 +411,90 @@ public class Role  implements Serializable  {
 		this.isAbleToManageUsers = isAbleToManageUsers;
 	}
 	
+	/**
+	 * @return the isAbleToSeeDocumentBrowser
+	 */
+	public boolean isAbleToSeeDocumentBrowser() {
+		return isAbleToSeeDocumentBrowser;
+	}
+
+	/**
+	 * @param isAbleToSeeDocumentBrowser the isAbleToSeeDocumentBrowser to set
+	 */
+	public void setIsAbleToSeeDocumentBrowser(boolean isAbleToSeeDocumentBrowser) {
+		this.isAbleToSeeDocumentBrowser = isAbleToSeeDocumentBrowser;
+	}
+
+	/**
+	 * @return the isAbleToSeeFavourites
+	 */
+	public boolean isAbleToSeeFavourites() {
+		return isAbleToSeeFavourites;
+	}
+
+	/**
+	 * @param isAbleToSeeFavourites the isAbleToSeeFavourites to set
+	 */
+	public void setIsAbleToSeeFavourites(boolean isAbleToSeeFavourites) {
+		this.isAbleToSeeFavourites = isAbleToSeeFavourites;
+	}
+
+	/**
+	 * @return the isAbleToSeeSubscriptions
+	 */
+	public boolean isAbleToSeeSubscriptions() {
+		return isAbleToSeeSubscriptions;
+	}
+
+	/**
+	 * @param isAbleToSeeSubscriptions the isAbleToSeeSubscriptions to set
+	 */
+	public void setIsAbleToSeeSubscriptions(boolean isAbleToSeeSubscriptions) {
+		this.isAbleToSeeSubscriptions = isAbleToSeeSubscriptions;
+	}
+
+	/**
+	 * @return the isAbleToSeeMyData
+	 */
+	public boolean isAbleToSeeMyData() {
+		return isAbleToSeeMyData;
+	}
+
+	/**
+	 * @param isAbleToSeeMyData the isAbleToSeeMyData to set
+	 */
+	public void setIsAbleToSeeMyData(boolean isAbleToSeeMyData) {
+		this.isAbleToSeeMyData = isAbleToSeeMyData;
+	}
+
+	/**
+	 * @return the isAbleToSeeToDoList
+	 */
+	public boolean isAbleToSeeToDoList() {
+		return isAbleToSeeToDoList;
+	}
+
+	/**
+	 * @param isAbleToSeeToDoList the isAbleToSeeToDoList to set
+	 */
+	public void setIsAbleToSeeToDoList(boolean isAbleToSeeToDoList) {
+		this.isAbleToSeeToDoList = isAbleToSeeToDoList;
+	}
+
+	/**
+	 * @return the isAbleToCreateDocuments
+	 */
+	public boolean isAbleToCreateDocuments() {
+		return isAbleToCreateDocuments;
+	}
+
+	/**
+	 * @param isAbleToCreateDocuments the isAbleToCreateDocuments to set
+	 */
+	public void setIsAbleToCreateDocuments(boolean isAbleToCreateDocuments) {
+		this.isAbleToCreateDocuments = isAbleToCreateDocuments;
+	}
+
 	public String getOrganization() {
 		return organization;
 	}
