@@ -31,6 +31,9 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
+ * 
+ * DATE            CONTRIBUTOR/DEVELOPER                        NOTE
+ * 24-06-2013      Zerbetto Davide/Andrea Fantappiè				Tablespace management on Oracle and DB2
  *
  */
 public class TemporaryTableManager {
@@ -173,14 +176,25 @@ public class TemporaryTableManager {
 			String driverName = connection.getMetaData().getDriverName();
 			String schema = null;
 			String actualTableName = null;
+			String catalog = null;
 			if (tableName.indexOf(".") != -1) {
 				schema = tableName.substring(0, tableName.indexOf("."));
+
+				/*
+				 * If table are on other schema must set catalog name as schema name otherwise it look for
+				 * table [schema].[name] on datasource db
+				 * 
+				 * Andrea Fantappiè
+				 * 
+				 */
+				if(driverName.contains("MySQL"))
+					catalog = schema;
 				actualTableName = tableName.substring( tableName.indexOf(".") + 1 );
 			} else {
 				actualTableName = tableName;
 			}
 			logger.debug("Looking for table [" + actualTableName + "] in schema [" + schema + "] ....");
-			resultSet = dbMeta.getColumns(null, schema, actualTableName, null);
+			resultSet = dbMeta.getColumns(catalog, schema, actualTableName, null);
 			if (resultSet.next()) {
 				logger.debug("Found table [" + actualTableName + "] in schema [" + schema + "].");
 				tableDescriptor = new DataSetTableDescriptor();
@@ -374,6 +388,7 @@ public class TemporaryTableManager {
 		} else if (dialect.contains("DB2")) {
 			// command CREATE TABLE table_name AS ( SELECT .... ) WITH NO DATA
 			String sql = "CREATE TABLE " + tableName + " AS ( " + baseQuery + " ) WITH NO DATA";
+			sql = addTablespace(dialect, sql);
 			executeStatement(sql, dataSource);
 			// command INSERT INTO table_name SELECT ....
 			sql = "INSERT INTO " + tableName + " " + baseQuery;
@@ -381,9 +396,32 @@ public class TemporaryTableManager {
 		} else {
 			// command CREATE TABLE table_name AS SELECT ....
 			String sql = "CREATE TABLE " + tableName + " AS " + baseQuery;
+			sql = addTablespace(dialect, sql);
 			executeStatement(sql, dataSource);
 		}
 		logger.debug("OUT");
+	}
+
+	/**
+	 * Add tablespace to sql statement
+	 * Only for DB2 and Oracle
+	 * @param dialect
+	 * @param sql
+	 * @return SQL statement with tablespace information
+	 */
+	private static String addTablespace(String dialect, String sql)
+	{
+		String tableSpace = getTableTablespace();
+		if(tableSpace == null || tableSpace.length()==0)
+			return sql;
+		
+		if(dialect.contains("Oracle")) {
+			sql += " TABLESPACE " + tableSpace;
+		} else if(dialect.contains("DB2")) {
+			sql += " IN " + tableSpace;
+		}
+		
+		return sql;
 	}
 
 	public static void dropTableIfExists(String tableName, IDataSource dataSource) throws Exception {
@@ -473,6 +511,15 @@ public class TemporaryTableManager {
 			tableNameSuffix = "";
 		}
 		return tableNameSuffix;
+	}
+
+	public static String getTableTablespace() {
+		String tablespace = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE_TEMPORARY_TABLE.tablespace");
+		logger.debug("Configured temporary table tablespace: " + tablespace);
+		if (tablespace == null) {
+			tablespace = "";
+		}
+		return tablespace;
 	}
 
 	public static String getLastDataSetSignature(String tableName) {
