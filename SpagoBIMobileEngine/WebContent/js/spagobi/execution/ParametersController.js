@@ -25,7 +25,7 @@ Ext.define('app.controllers.ParametersController',{
 	}
 
 	
-	, getParametersForExecutionAction: function(option){
+	, getParametersForExecutionAction: function(option, refresh){
 	
 		var id = option.id;
 		var label = option.label;
@@ -36,7 +36,7 @@ Ext.define('app.controllers.ParametersController',{
 		//cross navigation settings
 		var isFromCross = option.isFromCross;
 		var paramsFromCross = option.params;//filled only from cross navigation
-		
+		this.isRefresh=refresh;
 		Ext.Ajax.request({
 			url: this.services['getParametersForExecutionAction'],
 			scope: this,
@@ -47,6 +47,7 @@ Ext.define('app.controllers.ParametersController',{
 					var responseJson = Ext.decode(response.responseText);
 					
 					var executionInstance = {
+							OBJECT_NAME: option.docName,
 							OBJECT_ID: id, 
 							OBJECT_LABEL: label, 
 							isFromCross: isFromCross, 
@@ -57,30 +58,42 @@ Ext.define('app.controllers.ParametersController',{
 					};
 					
 					if(responseJson==undefined || responseJson==null || responseJson.length==0  ){
-						  app.controllers.executionController.executeTemplate({executionInstance: executionInstance});
+						executionInstance.noParametersPageNeeded=true;
+						app.controllers.executionController.executeTemplate({executionInstance: executionInstance},null,refresh);
 					}else{
+						var parameters = this.onParametersForExecutionLoaded(executionInstance,responseJson);
+						var defaultValues = this.fillParametersWithDefault(parameters);
 						if(isFromCross){
-
-							var parameters = this.onParametersForExecutionLoaded(executionInstance,responseJson);
 							//app.controllers.mobileController.destroyExecutionView();
 							var paramsToBeFilled = parameters.slice(0);
-							var paramsFromCrossFilled= this.fillParametersFromCross(parameters, paramsFromCross, paramsToBeFilled);
-							if(paramsToBeFilled.length == paramsFromCrossFilled.length){
+							var paramsFilled= this.fillParametersFromCross(parameters, paramsFromCross, paramsToBeFilled);
+							
+							if((paramsToBeFilled.length-defaultValues)==0){
 								//execute now!
-								executionInstance.PARAMETERS = this.fromArrayToObject(paramsFromCross);
+								executionInstance.PARAMETERS = this.fromArrayToObject(paramsFromCross, defaultValues);
 								executionInstance.isFromCross = true;
-								controller: app.controllers.executionController.executeTemplate({executionInstance: executionInstance});
+								executionInstance.noParametersPageNeeded=true;
+								app.controllers.executionController.executeTemplate({executionInstance: executionInstance},null,refresh);
 							}else{
 //								app.views.parameters = Ext.create("app.views.ParametersView");
+								this.executionInstance.noParametersPageNeeded=false;
+								this.executionInstance.paramsFromCross=paramsFromCross;
 								app.views.parameters.refresh(paramsToBeFilled);
-								app.views.viewport.add(app.views.parameters);
+//								app.views.viewport.add(app.views.parameters);
 								app.views.viewport.goParameters();
 
 							}
 						}else{
-							var parameters = this.onParametersForExecutionLoaded(executionInstance,responseJson);
-							app.views.parameters.refresh(parameters);
-							app.views.viewport.goParameters();
+							if((defaultValues.length)==parameters.length){
+								//execute now!
+								executionInstance.PARAMETERS = this.fromArrayToObject(null, defaultValues);
+								executionInstance.noParametersPageNeeded=true;
+								app.controllers.executionController.executeTemplate({executionInstance: executionInstance},null,this.isRefresh);
+							}else{
+								this.executionInstance.noParametersPageNeeded=false;
+								app.views.parameters.refresh(parameters);
+								app.views.viewport.goParameters();
+							}
 						}
 					}
 				}
@@ -91,15 +104,51 @@ Ext.define('app.controllers.ParametersController',{
 		}); 
 	}
 	
-	, fromArrayToObject: function(jsonArray){
+	, fromArrayToObject: function(jsonArray, defaultValues){
 		var params={};
-		for(var i=0; i<jsonArray.length; i++){
-			var obj = jsonArray[i];
-			var name = obj.name;
-			var value = obj.value;
-			params[name]=value;
+		if(jsonArray){
+			for(var i=0; i<jsonArray.length; i++){
+				var obj = jsonArray[i];
+				var name = obj.name;
+				var value = obj.value;
+				if(!value){
+					value = obj.paramValue;
+				}
+				if(!name){
+					name = obj.paramName;
+				}
+				params[name]=value;
+			}
 		}
+		if(defaultValues){
+			for(var i=0; i<defaultValues.length; i++){
+				var obj = defaultValues[i];
+				var name = obj.name;
+				var value = obj.value;
+				params[name]=value;
+			}
+		}
+
 		return params;
+	}
+	
+	, fillParametersWithDefault: function(parametersNeeded){
+		var parametersFilled = new Array();
+		if(parametersNeeded != null && parametersNeeded != undefined){
+		
+			for(var i =parametersNeeded.length-1; i>=0; i--){
+				var p = parametersNeeded[i];
+				var nm = p.getName();
+				var value = p.getValue();
+				if((!value || value=="") && p.config){
+					value = p.config.value;
+				}
+				if(value && value!=""){
+					parametersFilled.push({name:nm, value:value});
+				}
+			}
+		}
+		return parametersFilled;
 	}
 	
 	, fillParametersFromCross: function(parametersNeeded, parametersFromCross, paramsToBeFilled){
@@ -107,21 +156,32 @@ Ext.define('app.controllers.ParametersController',{
 		if(parametersNeeded != null && parametersNeeded != undefined && 
 				parametersFromCross != null && parametersFromCross != undefined	){
 		
-			for(i =0; i<parametersNeeded.length; i++){
+			for(var i =parametersNeeded.length-1; i>=0; i--){
 				var p = parametersNeeded[i];
 				var nm = p.getName();
-				for(k =0; k<parametersFromCross.length; k++){
+				var found =false;
+				for(var k =0; k<parametersFromCross.length; k++){
 					var pCross = parametersFromCross[k];
-					if(nm == pCross.name && pCross.value != null && pCross.value != ''){
-						parametersFilled.push(pCross);
-						//paramsToBeFilled.remove(p);
-						p.value = pCross.value;
+					var pCrossValue = pCross.value;
+					if(!pCrossValue){
+						pCrossValue = pCross.paramValue;
+					}
+					var pCrossName = pCross.name;
+					if(!pCrossName){
+						pCrossName = pCross.paramName;
+					}
+					if(nm == pCrossName && pCrossValue != null && pCrossValue != ''){
+						found = true;
+						p.setValue(pCrossValue);
+						paramsToBeFilled.splice(i,1);
 						break;
 					}
 				}
+				if(found){
+					parametersFilled.push(p);
+				}
 			}
 		}
-
 		return parametersFilled;
 	}
 	
@@ -151,6 +211,7 @@ Ext.define('app.controllers.ParametersController',{
 		var defaultValue= null;
 		if(p.defaultValues && p.defaultValues.length != 0){
 			defaultValue = p.defaultValues[0].value;
+			baseConfig.value = defaultValue;
 		}
 		if(p.selectionType === 'COMBOBOX' || p.selectionType === 'LIST' || p.selectionType ===  'CHECK_LIST' || p.selectionType === 'LOOKUP') {
 	
@@ -172,7 +233,7 @@ Ext.define('app.controllers.ParametersController',{
 						root: metadata.root
 					}
 				},
-				fields: metadata.root,
+				fields: metadata.fields,
 				autoLoad : true,
 				autoDestroy : true
 			});

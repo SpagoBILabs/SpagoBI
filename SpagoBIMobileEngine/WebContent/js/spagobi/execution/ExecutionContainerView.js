@@ -43,8 +43,9 @@ Ext.define('app.views.ExecutionContainerView',{
 		 * removes the documents on the right of the pivot document (usually the active one)
 		 * @documentPos documentPos: position o the pivot document
 		 * @param offset: a offset.. If -1 it removes also the pivot document
+		 * @param goForward: true if we are adding a new document
 		 */
-		removeDocumentsOnTheRight: function(documentPos, offset){
+		removeDocumentsOnTheRight: function(documentPos, offset, goForward){
 			if(!offset){
 				offset = 0;
 			}
@@ -61,7 +62,7 @@ Ext.define('app.views.ExecutionContainerView',{
 				
 				for(var i=0; i<this.containerToolbars.length; i++){
 					toolbar = this.containerToolbars[i];
-					toolbar.cleanNavigationToolbarFromPosition(this.executedDocuments);
+					toolbar.cleanNavigationToolbarFromPosition(this.executedDocuments, goForward);
 				}
 			}
 			
@@ -77,9 +78,9 @@ Ext.define('app.views.ExecutionContainerView',{
 			if(this.getActiveItem()!=0){
 				var positionOfActive = this.getActiveItem().getPositionInExecutionContainer();
 				if(refresh){
-					this.removeDocumentsOnTheRight(positionOfActive,-1);//we should remove also the active document
+					this.removeDocumentsOnTheRight(positionOfActive,-1, true);//we should remove also the active document
 				}else if(fromCross){
-					this.removeDocumentsOnTheRight(positionOfActive);
+					this.removeDocumentsOnTheRight(positionOfActive, null, true);
 				}
 			}
 
@@ -87,7 +88,7 @@ Ext.define('app.views.ExecutionContainerView',{
 			newExecution.setWidget(resp, type, fromCross, executionInstance);
 			this.add(newExecution);
 			this.executedDocumentsList.push(newExecution);
-			this.setActiveItem(newExecution);
+			this.setActiveExecution(newExecution);
 			
 			//update the navigation toolbar
 			if(this.containerToolbars){
@@ -95,7 +96,16 @@ Ext.define('app.views.ExecutionContainerView',{
 				
 				for(var i=0; i<this.containerToolbars.length; i++){
 					toolbar = this.containerToolbars[i];
-					toolbar.addDocumentToNavigationToolbar(executionInstance.OBJECT_LABEL, this.executedDocuments);
+					var label = executionInstance.OBJECT_NAME;
+					try{
+						if(Sbi.settings && Sbi.settings.navigationToolbar && Sbi.settings.navigationToolbar.label){
+							label = eval(Sbi.settings.navigationToolbar.label);
+						}
+					}catch(e){
+						console.debug(e);
+					}
+
+					toolbar.addDocumentToNavigationToolbar(label, this.executedDocuments);
 				}
 			}
 			this.executedDocuments++;
@@ -114,36 +124,39 @@ Ext.define('app.views.ExecutionContainerView',{
 			this.removeAll();
 		},
 		
-//		goToPreviousExecutions: function(){
-//			if(this.executedDocuments>1){
-//				this.setActiveItem(this.executedDocumentsList[this.executedDocuments-2]);
-//				this.remove(this.executedDocumentsList[this.executedDocuments-1]);
-//				this.executedDocuments--;
-//			}
-//		},
-		
-//		DA FARE: AGGIORNARE LA TOOLBAR DI NAVIGAZIONE
-		goToPreviousExecutions: function(){
-			var positionOfActive = this.getActiveItem().getPositionInExecutionContainer();
-			if(positionOfActive>0){
-				this.removeDocumentsOnTheRight(positionOfActive,-1);
-				this.setActiveItem(this.executedDocumentsList[position-1]);
+		/**
+		 * restore the previous execution.
+		 * If the fromParameters parameter is true
+		 * @param fromParameters
+		 */
+		goToPreviousExecutions: function(fromParameters){
+			var noDocumentRendered = true;
+			var positionOfActive = this.getActiveItem();
+			if(positionOfActive!=0){
+				positionOfActive = positionOfActive.getPositionInExecutionContainer();
+				noDocumentRendered=false;
+			}
+			// (fromParameters && !noDocumentRendered): execute the previous in the parameters panel just after the first document is rendered
+			if(positionOfActive>0 || (fromParameters && !noDocumentRendered)){
+				
+				if(fromParameters){
+					var noParametersPageNeeded=  (this.executedDocumentsList[positionOfActive]).getItems().items[0].executionInstance.noParametersPageNeeded;
+					app.views.viewport.goExecution({noParametersPageNeeded: noParametersPageNeeded});
+				}else{
+					this.removeDocumentsOnTheRight(positionOfActive,-1);
+					this.setActiveExecution(this.executedDocumentsList[positionOfActive-1]);
+				}
+
+
 			}else{
-				app.views.viewport.goHome();//go home with out refresh document browser
+				//app.controllers.mobileController.backToBrowser();
+				app.views.viewport.goHome("refresh");//go home with out refresh document browser
 			}
 			
-//			var position = this.getActiveItem().getPositionInExecutionContainer();
-//			if(position>0){
-//				this.setActiveItem(this.executedDocumentsList[position-1]);
-//				for(var i=position; i<this.executedDocuments; i++){
-//					this.remove(this.executedDocumentsList[i]);
-//				}
-//				this.executedDocuments = position;
-//			}
 		},
-//		
+
 		changeActiveDocument:function(documentPosition){
-			this.setActiveItem(this.executedDocumentsList[documentPosition]);
+			this.setActiveExecution(this.executedDocumentsList[documentPosition]);
 		},
 		
 		/**
@@ -168,5 +181,18 @@ Ext.define('app.views.ExecutionContainerView',{
 			this.loadingMask = new Ext.LoadMask(panel.id, {msg:"Loading..."});					
 			this.loadingMask.show();
 			this.un('afterlayout',this.showLoadingMask,this);
+		}
+		,setActiveExecution:function(execution){
+			this.setActiveItem(execution);
+			//manages the parameters panel icon
+			if(execution.getExecutionInstance().noParametersPageNeeded){
+				//if there is no parameter we hide the parameter icon
+				app.views.customTopToolbar.hideItem("params");
+				app.views.customBottomToolbar.hideItem("params");
+			}else{
+				//if there is some parameter to value we show the parameter icon
+				app.views.customTopToolbar.showItem("params");
+				app.views.customBottomToolbar.showItem("params");
+			}
 		}
 });

@@ -32,18 +32,21 @@ Ext.define('app.views.ComposedExecutionPanel',{
 		
 		
 		initialize: function(){
-			var title = this.resp.title.value;
-			
+		
 			var documentsList = this.resp.documents.docs;
-			var documentWidth = this.resp.documents.totWidth;
-			var documentHeight = this.resp.documents.totHeight;
-			
 			var executionInstance = Ext.apply({}, this.resp.executionInstance);
 			this.setSubDocumentNumber(documentsList.length);
+			this.setSubDocumentsToUpdate(new Array(this.getSubDocumentNumber()));
+			this.setSubDocumentsToUpdateNumber(this.getSubDocumentNumber());
+			
 			if (documentsList != undefined && documentsList != null) {
+				this.getSubdocuments().length = documentsList.length;;
 				for (var i = 0; i < documentsList.length; i++) {
 					//var subDocumentPanel = this.buildPanel(documentsList[i]);
 					var mainDocumentParameters = executionInstance.PARAMETERS;
+					if(mainDocumentParameters){
+						mainDocumentParameters = Ext.decode(mainDocumentParameters);
+					}
 					var subDocumentDefaultParameters = documentsList[i].IN_PARAMETERS;
 					var subDocumentParameters = Ext.apply(subDocumentDefaultParameters, mainDocumentParameters);
 					var subDocumentExecutionInstance = Ext.apply({}, documentsList[i]);
@@ -51,7 +54,7 @@ Ext.define('app.views.ComposedExecutionPanel',{
 					subDocumentExecutionInstance.IS_FROM_COMPOSED = true;
 					subDocumentExecutionInstance.ROLE = executionInstance.ROLE;
 					subDocumentExecutionInstance.position = i;
-					app.controllers.composedExecutionController.executeSubDocument(subDocumentExecutionInstance, this);
+					app.controllers.composedExecutionController.executeSubDocument(subDocumentExecutionInstance, this,i);
 				}
 				///to add a slider configuration property
 				if(this.resp.slider && this.resp.slider.name){
@@ -59,10 +62,10 @@ Ext.define('app.views.ComposedExecutionPanel',{
 				}
 			}
 			this.on("updatedOneDocument",this.updateOneDocument,this);
-
+			this.callParent();
 		},
 		
-		addWidgetComposed: function(resp, type, composedComponentOptions){
+		addWidgetComposed: function(resp, type, composedComponentOptions, positionInComposition){
 
 			var panel;
 			var thisPanel = this;
@@ -76,6 +79,7 @@ Ext.define('app.views.ComposedExecutionPanel',{
 			} else {
 				panel = Ext.create("app.views.TableExecutionPanel",{resp: resp, fromcomposition: true, executionInstance: composedComponentOptions.executionInstance, parentDocument:this});
 			}
+
 			
 			panel.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 					
@@ -89,9 +93,9 @@ Ext.define('app.views.ComposedExecutionPanel',{
 			}
 
 			var style = panel.getStyle();
-			if(!style){
+//			if(!style){
 				style = "";
-			}
+//			}
 			style = style+" float: left;";
 			style = style+" width:"+ width+"; height:"+height;			
 
@@ -99,12 +103,13 @@ Ext.define('app.views.ComposedExecutionPanel',{
 
 			//if its the first execution the subdocument is added to the composition
 			if(!this.getCrossNavigated()){
-				this.add(panel);
-				this.getSubdocuments().push(panel);
-			}else{
+//				this.insert(positionInComposition, panel);
+				this.getSubdocuments()[positionInComposition]=(panel);
+
+			}
 				//if the document is refreshed we refresh it
 				this.fireEvent("updatedOneDocument",panel,composedComponentOptions.executionInstance.position);
-			}
+		
 		}
 		
 		,
@@ -113,12 +118,12 @@ Ext.define('app.views.ComposedExecutionPanel',{
 			this.setSubDocumentsToUpdate(new Array(this.getSubDocumentNumber()));
 			this.setSubDocumentsToUpdateNumber(this.getSubDocumentNumber());
 			this.setCrossNavigated(true);
-			
+			var params = {};
 			for(var i=0; i<(this.getSubdocuments()).length; i++){
 				var panel = (this.getSubdocuments())[i];
 				console.log('app.views.ComposedExecutionPanel:execCrossNavigationHandler: IN');
 
-				var params = {};
+				
 				for (var j = 0 ; j < paramsArray.length ; j++) {
 					var aParam = paramsArray[j];
 					params[aParam.name] = aParam.value;
@@ -126,26 +131,35 @@ Ext.define('app.views.ComposedExecutionPanel',{
 
 				app.controllers.composedExecutionController.refreshSubDocument(panel, this, params);
 			}
+			//update header, footer, title
+			this.updatePanel(params);
 		},
 		
-		propagateCrossNavigationEvent : function(sourcePanel, paramsArray) {
-			console.log('app.views.ComposedExecutionPanel:execCrossNavigation: IN');
-			sourcePanel.parentDocument.setSubDocumentsToUpdate(new Array(this.getSubDocumentNumber()));
-			sourcePanel.parentDocument.setSubDocumentsToUpdateNumber(this.getSubDocumentNumber());
-			this.setCrossNavigated(true);
+		propagateCrossNavigationEvent : function(sourcePanel, paramsArray, targetDoc) {
 			
-			for(var i=0; i<(sourcePanel.parentDocument.getSubdocuments()).length; i++){
-				var panel = (sourcePanel.parentDocument.getSubdocuments())[i];
-				console.log('app.views.ComposedExecutionPanel:execCrossNavigationHandler: IN');
-
+			if(targetDoc){
+				this.fireEvent('execCrossNavigation', sourcePanel, paramsArray, targetDoc);
+			}else{
+				console.log('app.views.ComposedExecutionPanel:execCrossNavigation: IN');
+				sourcePanel.parentDocument.setSubDocumentsToUpdate(new Array(this.getSubDocumentNumber()));
+				sourcePanel.parentDocument.setSubDocumentsToUpdateNumber(this.getSubDocumentNumber());
+				this.setCrossNavigated(true);
 				var params = {};
-				for (var j = 0 ; j < paramsArray.length ; j++) {
-					var aParam = paramsArray[j];
-					params[aParam.name] = aParam.value;
-				}
+				for(var i=0; i<(sourcePanel.parentDocument.getSubdocuments()).length; i++){
+					var panel = (sourcePanel.parentDocument.getSubdocuments())[i];
+					console.log('app.views.ComposedExecutionPanel:execCrossNavigationHandler: IN');
 
-				app.controllers.composedExecutionController.refreshSubDocument(panel,  sourcePanel.parentDocument, params);
+					for (var j = 0 ; j < paramsArray.length ; j++) {
+						var aParam = paramsArray[j];
+						params[aParam.name] = aParam.value;
+					}
+
+					app.controllers.composedExecutionController.refreshSubDocument(panel,  sourcePanel.parentDocument, params);
+				}
+				this.updatePanel(params);
 			}
+			//update header, footer, title
+			
 		},
 		
 		updateOneDocument:function(panel,position){
@@ -160,17 +174,7 @@ Ext.define('app.views.ComposedExecutionPanel',{
 				}
 			}
 		}
-//		,
-//		execCrossNavigationHandler : function(sourcePanel, params, targetPanel) {
-//			
-//			console.log('app.views.ComposedExecutionPanel:execCrossNavigationHandler: IN');
-//			
-//			app.controllers.executionController.executeTemplate({
-//				executionInstance : targetPanel.getExecutionInstance()
-//				, parameters : null
-//			}, panel);
-//			
-//		}
+
 		, addSlider: function(slider){
 
 			var sliderComp = Ext.create('app.views.Slider',{
@@ -188,7 +192,6 @@ Ext.define('app.views.ComposedExecutionPanel',{
 		            html: slider.maxValue
 		    };
 			
-			
 			this.sliderToolbar = new Ext.Toolbar({
                 xtype: 'toolbar',
                 docked: 'bottom',
@@ -201,7 +204,6 @@ Ext.define('app.views.ComposedExecutionPanel',{
             });
 			
 			this.add(this.sliderToolbar);
-
 		}
 		
 });

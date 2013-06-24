@@ -26,7 +26,7 @@ Ext.define('app.views.ParametersView',{
 				this.removeAll();
 	
 				var fieldset = Ext.create("Ext.form.FieldSet",{
-						title : 'Document Parameters',
+						title : 'Parametri del Documento',
 						xtype : 'fieldset',
 						items : items
 				});
@@ -46,6 +46,7 @@ Ext.define('app.views.ParametersView',{
 					items: [fieldset, {
 						xtype : 'toolbar',
 						docked : 'bottom',
+						cls: 'parameters-toolbar',
 						height: 30,
 						defaults : {
 							ui : 'plain',
@@ -57,11 +58,10 @@ Ext.define('app.views.ParametersView',{
 						},
 						items : [
 						         {
-						        	 title : 'Home',
-						        	 iconCls : 'reply',
-						        	 text : 'Home',
+						    		 text : 'Previous',
+						    		 iconCls : 'reply',
 						        	 handler : function() {
-						        		 app.controllers.mobileController.backToBrowser();
+						        		 app.views.executionContainer.goToPreviousExecutions(true);
 						        	 }
 						         },
 						         {
@@ -70,10 +70,11 @@ Ext.define('app.views.ParametersView',{
 						        	 text : 'Execute',
 						        	 handler : function() {
 						        		 var executionInstance = app.controllers.parametersController.executionInstance;
+						        		 var isRefresh = app.controllers.parametersController.isRefresh;
 						        		 executionInstance.PARAMETERS = app.controllers.parametersController.getFormState();
 						        		 app.controllers.executionController.executeTemplate({
 						        			 executionInstance : executionInstance
-						        		 });
+						        		 }, null, isRefresh);
 						        	 }
 						         } ]
 

@@ -6,21 +6,22 @@
  
 Ext.define('app.views.ExecutionView',{
 		extend:'Ext.Panel',
+		
 		config:{
 			 fullscreen: true,
 			 layout: 'fit',
 			 loadingMaskForExec: null,
 			 title: 'Execution view',
+			 style: {
+				    background: 'white'
+				},
 			 positionInExecutionContainer: null//position of the view in the list of items in the ExecutionContainerView
 		}
 
-,
+		,
 	   
 		initialize: function ()	{
 			console.log('init Execution view');
-//	        this.bottomTools = new app.views.BottomToolbar({parameters: this.parameters});
-//
-//	        this.dockedItems= [this.bottomTools];
 
 			this.callParent(this, arguments);
 
@@ -29,26 +30,24 @@ Ext.define('app.views.ExecutionView',{
 		, setWidget: function(resp, type, fromCross, executionInstance) {
 
 			if (type == 'table'){
-				var table = Ext.create("app.views.TableExecutionPanel",{ resp:resp, fromcomposition:false, fromCross:fromCross, executionInstance:executionInstance});
+				var table = Ext.create("app.views.TableExecutionPanel",{ region: "center", resp:resp, fromcomposition:false, fromCross:fromCross, executionInstance:executionInstance});
 				table.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 				this.widget = table;
 			}
 			if (type == 'chart'){
-				var chart = Ext.create("app.views.ChartExecutionPanel",{fullscreen: true, resp:resp, fromcomposition:false, fromCross:fromCross, executionInstance:executionInstance});
+				var chart = Ext.create("app.views.ChartExecutionPanel",{region: "center",fullscreen: true, resp:resp, fromcomposition:false, fromCross:fromCross, executionInstance:executionInstance});
 				chart.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 				this.widget = chart;
 			}
 			if (type == 'composed'){
-				var composed = Ext.create("app.views.ComposedExecutionPanel", {resp: resp, executionInstance:executionInstance});
+				var composed = Ext.create("app.views.ComposedExecutionPanel", {region: "center",resp: resp, executionInstance:executionInstance});
+				composed.on('execCrossNavigation', this.propagateCrossNavigationEvent, this);
 				this.widget = composed;
 			}
+
+			this.widget.updateTitle();
 			this.add(this.widget);
-		}
-		,hideBottomToolbar: function(){
-//			this.bottomTools.hide();
-		}
-		,showBottomToolbar: function(){
-//			this.bottomTools.show();
+			
 		}
 		,
 		setExecutionInstance : function (executionInstance) {

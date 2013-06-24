@@ -103,12 +103,19 @@ Ext.define('app.views.CustomToolbar', {
 	    				hidden: true,
 						title : 'back',
 						ui: 'back',
+						cls: 'toolbar-doc-browser',
 						text: 'Back',
 						handler: function(){
 							thisPanel.fireEvent("documentbrowserback",thisPanel, this);
 						}
 						
 						});
+	    	}else if(btnKey === 'title'){
+	    		button = new Ext.Panel( {
+    				hidden: true,
+					title : 'title',
+					html: ' '
+					});
 	    	}else if(btnKey === 'spacer'){
 	    		button = new Ext.Spacer( {
 	    			xtype: 'spacer'
@@ -127,12 +134,12 @@ Ext.define('app.views.CustomToolbar', {
 	    		button = this.buildNavigationToolbar();
 	    	}else if(btnKey.substring(0,4) === 'html'){
 	    		var code = btnKey.substring(5); 
-	    		button = new Ext.Button( {
+	    		button = new Ext.Panel( {
 					title : 'Html',
 					ui: 'plain',
+					cls: 'toolbar-html',
 					html: Sbi.settings.toolbar.html[code],
 					autoEvent: 'html'
-					
 					});
 	    	}
 	    	if(button){
@@ -143,8 +150,8 @@ Ext.define('app.views.CustomToolbar', {
     	}
     }
     
-    ,setViewModality: function(modality){
-    	this.updateToolbar(this.toolbarConfiguration[modality]);
+    ,setViewModality: function(modality, submodality){
+    	this.updateToolbar(this.toolbarConfiguration[modality],submodality);
     	this.modality = modality;
     }
         
@@ -153,7 +160,7 @@ Ext.define('app.views.CustomToolbar', {
      * Its important that visibleButtonsList is a proper subset of this.visibleButtons
      *  
      */
-    ,updateToolbar: function(visibleButtonsList){
+    ,updateToolbar: function(visibleButtonsList, submodality){
     	if(visibleButtonsList && visibleButtonsList.length>0){
     		this.show();
     		var j=0;
@@ -163,9 +170,8 @@ Ext.define('app.views.CustomToolbar', {
         			j++;
         		}
         		if(j<this.visibleButtons.length && this.visibleButtons[j].btnKey==visibleButtonsList[i]){
-        			this.visibleButtons[j].show();
-        			if(this.visibleButtons[j].btnKey=="documentbrowser"){
-        				this.visibleButtons[j].hide();
+        			if(!this.visibleButtons[j].toHide){
+        				this.visibleButtons[j].show();	
         			}
         			j++;
         		}
@@ -179,6 +185,33 @@ Ext.define('app.views.CustomToolbar', {
     	}
     },
     
+    
+    /**
+     * Show the buttons contained in the visibleButtonsList and hide all the others.
+     * Its important that visibleButtonsList is a proper subset of this.visibleButtons
+     *  
+     */
+    hideItem: function(itemKey){
+    	if(this.visibleButtons){
+        	for(var j=0; j<this.visibleButtons.length; j++){
+        		if(this.visibleButtons[j].btnKey==itemKey){
+        			this.visibleButtons[j].hide();
+        			break;
+        		}
+        	}
+   		}
+    },
+    
+    showItem: function(itemKey){
+    	if(this.visibleButtons){
+        	for(var j=0; j<this.visibleButtons.length; j++){
+        		if(this.visibleButtons[j].btnKey==itemKey){
+        			this.visibleButtons[j].show();
+        			break;
+        		}
+        	}
+   		}
+    },
     
     getToolbarButtonByType: function(type){
     	for(var i=0; i<this.visibleButtons.length; i++){
@@ -205,6 +238,7 @@ Ext.define('app.views.CustomToolbar', {
     		var button = Ext.create('Ext.Button', {
     		    text: text,
     		    height: 20,
+    		    cls: 'toolbar-navigation',
 				handler: function(){
 					thisPanel.fireEvent("navigationbuttonclicked",thisPanel, itemPos);
 				}
@@ -215,17 +249,25 @@ Ext.define('app.views.CustomToolbar', {
     	}
     },
     
-    cleanNavigationToolbarFromPosition: function(position){	
+    /**
+     * Clean the toolbar on the right.
+     * 
+     * @param position
+     * @param goForward if true we are navigating forward
+     */
+    cleanNavigationToolbarFromPosition: function(position, goForward){	
     	if(this.navigationToolbar){
-    		for(var i=this.navigationToolbar.getItems().items.length-1; i>=position; i-- ){
+    		var i=-1;
+    		for(i=this.navigationToolbar.getItems().items.length-1; i>=position; i-- ){
     			this.navigationToolbar.remove(this.navigationToolbar.getItems().items[i]);
     		}
-    	//	this.navigationToolbar.documentNames.length = position;
+    		if(!goForward && i>=0){
+    			this.navigationToolbar.getItems().items[i].addCls("x-button-pressed");
+    		}else{
+        		for(i=0; i<position; i++ ){
+        			this.navigationToolbar.getItems().items[i].removeCls("x-button-pressed");
+        		}
+    		}
     	}
     }
-
-
-    
-
-
 });
