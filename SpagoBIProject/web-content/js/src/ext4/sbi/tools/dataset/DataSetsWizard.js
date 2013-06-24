@@ -6,6 +6,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		fieldsStep2: null,
 		fieldsStep3: null,
 		categoriesStore: null,
+		datasetPropertiesStore: null,
 		scopeStore: null,
 		record: {},
 		isNew:true, 
@@ -103,6 +104,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		//metadata tab
 		var config = {};
 		config.meta = this.record.meta;
+		config.datasetPropertiesStore = this.datasetPropertiesStore;
 //		if (config.meta == undefined || config.meta.length == 0){
 //			this.metaInfo = new Ext.form.DisplayField({
 //				value : LN('sbi.ds.field.metadata.nosaved'),

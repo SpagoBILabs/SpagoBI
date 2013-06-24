@@ -130,7 +130,18 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 		
 		//Load Metadata if already present
 		if ((config.meta != undefined) && (config.meta.columns != undefined)){
-			this.storeMetadata.loadData(config.meta.columns,false); 			
+			//iterate store to modify type and remove prefix java.lang.
+			var typeValue;
+			for (var i = 0; i < config.meta.columns.length; i++) {
+				var element = config.meta.columns[i];
+				if (element.pname.toUpperCase() == 'type'.toUpperCase()){
+					typeValue = element.pvalue;
+					typeValue = typeValue.replace("java.lang.","");
+					element.pvalue = typeValue;
+				}
+			}
+
+			this.storeMetadata.loadData(config.meta.columns,false); 
 			this.doLayout();	
 		}
 		
@@ -169,6 +180,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 			typeAhead : true, forceSelection : true,
 			mode : 'local',
 			triggerAction : 'all',
+			value : 'Column', //default value selected on creation
 			selectOnFocus : true, 
 			editable : false,
 			allowBlank : false, 
@@ -201,6 +213,22 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 			queryMode: 'local',
 			});	
 		
+		this.comboProperties = new Ext.form.ComboBox({
+			name : 'comboProperties',
+			store: config.datasetPropertiesStore,
+			//width : 150,
+			displayField : 'VALUE_NM', 
+			valueField : 'VALUE_NM', 
+			typeAhead : true, forceSelection : true,
+			mode : 'local',
+			triggerAction : 'all',
+			selectOnFocus : true, 
+			editable : false,
+			allowBlank : false, 
+			validationEvent : false,	
+			queryMode: 'local',
+			});	
+		
 
 		
 		
@@ -212,9 +240,9 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	            iconCls: 'icon-restore',
 	            handler: function(){
 	                // access the Record constructor through the grid's store
-	            	var p = {column: 'Column Name',
-	            			pname: 'Attribute Type',
-	            			pvalue: 'Attribute Value'}
+	            	var p = {column: '',
+	            			pname: '',
+	            			pvalue: ''}
 	            	
 	            	thisMetadataPanel.gridColumnsMetadata.store.insert(0, p);
 	            },
@@ -247,7 +275,8 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 				            			sortable: true, 
 				             			id:'pname',
 				             			dataIndex:'pname',
-				             			editor: this.attributeTextFieldEditor
+				             			//editor: this.attributeTextFieldEditor
+				             			editor: this.comboProperties
 				             	    },{
 				             	    	header: 'Value', 
 				             	    	width: '33%', 
@@ -268,7 +297,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	        store: this.storeMetadata,
 	        columns: columnsDefinition,
 	        width: '100%',
-	        height: 280,
+	        height: 320,
 	        title: 'Columns Metadata',
 	        autoscroll: true,
 			selModel: {selType: 'rowmodel'},
@@ -312,8 +341,8 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	            handler: function(){
 	                // access the Record constructor through the grid's store
 	            	var rec = {
-	            			pname: 'Attribute Type',
-	            			pvalue: 'Attribute Value'}
+	            			pname: '',
+	            			pvalue: ''}
 	            	
 	            	thisMetadataPanel.gridDatasetMetadata.store.insert(0, rec);
 	            },
@@ -337,7 +366,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	        store: this.datasetMetadataStore,
 	        columns: datasetGridColumnsDefinition,
 	        width: '100%',
-	        height: 280,
+	        height: 320,
 	        title: 'Dataset Metadata',
 	        autoscroll: true,
 			selModel: {selType: 'rowmodel'},
@@ -422,6 +451,16 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 		}
 		
 		if ((meta != undefined) && (meta.columns != undefined)){
+			//iterate store to modify type and remove prefix java.lang.
+			var typeValue;
+			for (var i = 0; i < meta.columns.length; i++) {
+				var element = meta.columns[i];
+				if (element.pname.toUpperCase() == 'type'.toUpperCase()){
+					typeValue = element.pvalue;
+					typeValue = typeValue.replace("java.lang.","");
+					element.pvalue = typeValue;
+				}
+			}
 			this.storeMetadata.loadData(meta.columns,false); 			
 		}
 		
