@@ -160,9 +160,10 @@
 .chart-item {
 	 background-image:url('../img/chart.png') !important;
 	 background-repeat:no-repeat;
-	 background-position: left top; 
+	 background-position: left; 
+	 padding-left: 32px;
 	 padding-bottom: 3px;
-	 padding-top: 30px;
+	 padding-top: 3px;
 }
 .composed-item {
 	 background-image:url('../img/composed.png') !important;

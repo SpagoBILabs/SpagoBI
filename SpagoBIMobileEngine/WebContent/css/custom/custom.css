@@ -1,0 +1,62 @@
+
+/* white background color in the document browser*/
+.x-scroll-scroller{
+   background-color: white !important;
+}
+
+/* table: char type for column header 
+ */
+.touchgridpanel .x-grid-cell-hd{
+color: black !important;
+text-shadow: none !important;
+font-size: 14px !important;
+font-weight: bold !important;
+font-family: Helvetica !important;
+white-space: normal !important;
+}
+/*.x-list{
+top:10px !important;
+}*/
+/* table: char size for column header and body 
+-webkit-transform: translate3d(0px, 0px, 0px);
+line-height: 100% !important;
+ */
+.x-grid-cell{
+text-shadow: none !important;
+font-size: 16px !important;
+font-weight: normal !important;
+font-family: Verdana !important;
+}
+.x-container.x-list-item.x-stretched.x-touchgrid-item.x-item-selected.x-list-item-first.x-list-header-wrap{
+padding: 0px !important;
+margin: 0px !important;
+}
+.x-list-item-body{
+min-height: 20px !important;
+line-height: 100% !important;
+}
+.x-container.x-unsized.x-panel.x-dock-item.x-docked-top{
+margin-bottom: -10px;
+}
+/*legend: positioning fix
+.x-legend-container .x-legend{
+position: relative !important;
+top: 20px;
+}
+*/
+.x-container.x-unsized.x-legend.x-paint-monitored.x-dock-item.x-docked-top{
+top: 20px !important;
+}
+.x-container.x-unsized.x-panel.x-dock-item.x-docked-top{
+height: 30px !important;
+}
+.x-legend-item{
+text-shadow: none !important;
+font-size: 12px !important;
+font-family: Verdana !important;
+}
+
+
+.x-grid-cell.x-grid-cell-hd{
+	line-height: 25px !important;
+}
