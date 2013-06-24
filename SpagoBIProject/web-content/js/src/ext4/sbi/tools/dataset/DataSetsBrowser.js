@@ -89,6 +89,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.store.load({});
 		
 		this.categoriesStore = this.createCategoriesStore();
+		this.datasetPropertiesStore = this.createDatasetMetadataPropertiesStore();
 
 		this.scopeStore = Ext.create('Ext.data.Store', {
 		    fields: ['field', 'value'],
@@ -194,6 +195,28 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
     	return categoriesStore;
 	}
 	
+	, createDatasetMetadataPropertiesStore: function(){
+		Ext.define("DatasetMetadataPropertiesModel", {
+    		extend: 'Ext.data.Model',
+            fields: ["VALUE_NM"]
+    	});
+    	
+    	var datasetPropertiesStore=  Ext.create('Ext.data.Store',{
+    		model: "DatasetMetadataPropertiesModel",
+    		proxy: {
+    			type: 'ajax',
+    			extraParams : {DOMAIN_TYPE:"DS_META_PROPERTY"},
+    			url:  this.services['getCategories'],
+    			reader: {
+    				type:"json"
+    			}
+    		}
+    	});
+    	datasetPropertiesStore.load();
+    	
+    	return datasetPropertiesStore;
+	}
+	
 	, createSortersStore: function(config){		
 		var ordersStore = Ext.create('Ext.data.Store', {
 		    fields: ["property","direction","description"],
@@ -209,6 +232,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	addNewDataset : function() {		 
 		var config =  {};
 		config.categoriesStore = this.categoriesStore;
+		config.datasetPropertiesStore = this.datasetPropertiesStore;
 		config.scopeStore = this.scopeStore;
 		config.user = this.user;
 		config.isNew = true;
@@ -223,6 +247,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		if (rec != undefined){
 			var config =  {};
 			config.categoriesStore = this.categoriesStore;
+			config.datasetPropertiesStore = this.datasetPropertiesStore;
 			config.scopeStore = this.scopeStore;
 			config.user = this.user;
 			config.record = rec;
