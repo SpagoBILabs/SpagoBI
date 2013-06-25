@@ -90,6 +90,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		
 		this.categoriesStore = this.createCategoriesStore();
 		this.datasetPropertiesStore = this.createDatasetMetadataPropertiesStore();
+		this.datasetValuesStore = this.createDatasetMetadataValuesStore();
+
 
 		this.scopeStore = Ext.create('Ext.data.Store', {
 		    fields: ['field', 'value'],
@@ -198,7 +200,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	, createDatasetMetadataPropertiesStore: function(){
 		Ext.define("DatasetMetadataPropertiesModel", {
     		extend: 'Ext.data.Model',
-            fields: ["VALUE_NM"]
+            fields: ["VALUE_NM","VALUE_DS","VALUE_ID"]
     	});
     	
     	var datasetPropertiesStore=  Ext.create('Ext.data.Store',{
@@ -217,6 +219,28 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
     	return datasetPropertiesStore;
 	}
 	
+	, createDatasetMetadataValuesStore: function(){
+		Ext.define("DatasetMetadataValuesModel", {
+    		extend: 'Ext.data.Model',
+            fields: ["VALUE_NM","VALUE_DS","VALUE_ID"]
+    	});
+    	
+    	var datasetValuesStore=  Ext.create('Ext.data.Store',{
+    		model: "DatasetMetadataValuesModel",
+    		proxy: {
+    			type: 'ajax',
+    			extraParams : {DOMAIN_TYPE:"DS_META_VALUE"},
+    			url:  this.services['getCategories'],
+    			reader: {
+    				type:"json"
+    			}
+    		}
+    	});
+    	datasetValuesStore.load();
+    	
+    	return datasetValuesStore;
+	}
+	
 	, createSortersStore: function(config){		
 		var ordersStore = Ext.create('Ext.data.Store', {
 		    fields: ["property","direction","description"],
@@ -233,6 +257,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		var config =  {};
 		config.categoriesStore = this.categoriesStore;
 		config.datasetPropertiesStore = this.datasetPropertiesStore;
+		config.datasetValuesStore = this.datasetValuesStore;
 		config.scopeStore = this.scopeStore;
 		config.user = this.user;
 		config.isNew = true;
@@ -248,6 +273,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			var config =  {};
 			config.categoriesStore = this.categoriesStore;
 			config.datasetPropertiesStore = this.datasetPropertiesStore;
+			config.datasetValuesStore = this.datasetValuesStore;
 			config.scopeStore = this.scopeStore;
 			config.user = this.user;
 			config.record = rec;
