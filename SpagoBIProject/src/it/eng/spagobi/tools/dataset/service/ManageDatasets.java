@@ -170,7 +170,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					attributesResponseSuccessJSON.put("id", id);	
 					attributesResponseSuccessJSON.put("dateIn", ds.getDateIn());
 					attributesResponseSuccessJSON.put("userIn", ds.getUserIn());
-					attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.serializeMetada(ds.getDsMetadata()));										
+					attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.metadataSerializerChooser(ds.getDsMetadata()));										
 				}else{
 					Integer dsID = dsDao.insertDataSet(ds);
 					VersionedDataSet dsSaved = (VersionedDataSet) dsDao.loadDataSetById(dsID);
@@ -182,7 +182,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						attributesResponseSuccessJSON.put("dateIn", dsSaved.getDateIn());
 						attributesResponseSuccessJSON.put("userIn", dsSaved.getUserIn());
 						attributesResponseSuccessJSON.put("versNum", dsSaved.getVersionNum());
-						attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.serializeMetada(dsSaved.getDsMetadata()));						
+						attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.metadataSerializerChooser(dsSaved.getDsMetadata()));						
 					}					
 				}
 				String operation = (id != null && !id.equals("") && !id.equals("0"))?"DATA_SET.MODIFY":"DATA_SET.ADD";				
