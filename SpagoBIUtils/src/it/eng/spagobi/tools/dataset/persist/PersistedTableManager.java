@@ -115,17 +115,15 @@ public class PersistedTableManager {
 		logger.debug("IN");
 		Connection connection = null;
 		try{			
-			
 			connection = getConnection(datasource);
 			connection.setAutoCommit(false);
-					
-			//Steps #1: define create table statement
+			//Steps #1: define prepared statement (and max column size for strings type)			
+			PreparedStatement statement = defineStatements(datastore, datasource, connection);			
+			//Steps #2: define create table statement
 		    String createStmtQuery = getCreateTableQuery(datastore);
 		    dropTableIfExists(datasource);
-		    //Step #2: execute create table statament
+		    //Step #3: execute create table statament
 			executeStatement(createStmtQuery, datasource);
-			//Steps #3: define prepared statement (and max column size for strings type)
-			PreparedStatement statement = defineStatements(datastore, datasource, connection);	
 			//Step #4: execute batch with insert statements
 			statement.executeBatch();	
 			statement.close();
