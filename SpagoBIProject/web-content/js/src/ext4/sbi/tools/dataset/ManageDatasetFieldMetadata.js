@@ -160,6 +160,22 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 			queryMode: 'local',
 			});	
 		
+		this.comboValues = new Ext.form.ComboBox({
+			name : 'comboValues',
+			store: config.datasetValuesStore,
+			displayField : 'VALUE_NM', 
+			valueField : 'VALUE_NM', 
+			typeAhead : true, forceSelection : true,
+			mode : 'local',
+			triggerAction : 'all',
+			selectOnFocus : true, 
+			editable : false,
+			allowBlank : false, 
+			validationEvent : false
+		});	
+		this.comboValues.addListener('focus',this.filterValueCombo, this);
+
+		
 
 		
 		
@@ -214,7 +230,8 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 				            			sortable: true, 
 				             			id:'pvalue',
 				             			dataIndex:'pvalue',
-				             			editor: this.valueTextFieldEditor
+				             			//editor: this.valueTextFieldEditor
+				             			editor: this.comboValues
 				             	    }			
 				             	];		
 		
@@ -410,6 +427,28 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 			this.gridColumnsMetadata.setVisible(true);
 			this.gridDatasetMetadata.setVisible(false);
 		}
+	}
+	
+	//This will filter the data of comboValues based on comboProperties' selection
+	,filterValueCombo : function(component, The, eOpts) {
+		propertySelected = thisMetadataPanel.gridColumnsMetadata.getSelectionModel().getSelection()[0].data.pname;
+		var comboValues = thisMetadataPanel.comboValues;
+		comboValues.store.clearFilter(false);
+		//filter value combo data
+		if (propertySelected != null && propertySelected.toUpperCase() == 'fieldType'.toUpperCase()) {
+			comboValues.store.filter(function(r) {
+			    var value = r.get('VALUE_NM');
+			    value = value.toUpperCase();
+			    return (value == 'MEASURE'.toUpperCase() || value == 'ATTRIBUTE'.toUpperCase());
+			});
+		} 
+		else if (propertySelected != null && propertySelected.toUpperCase() == 'type'.toUpperCase()) {
+			comboValues.store.filter(function(r) {
+			    var value = r.get('VALUE_NM');
+			    value = value.toUpperCase();
+			    return (value == 'String'.toUpperCase() || value == 'Integer'.toUpperCase() || value == 'Double'.toUpperCase());
+			});
+		} 
 	}
 	
 	
