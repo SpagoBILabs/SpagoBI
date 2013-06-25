@@ -135,3 +135,24 @@ ALTER TABLE SBI_EXT_ROLES ADD COLUMN SEE_SUBSCRIPTIONS 	BOOLEAN DEFAULT TRUE;
 ALTER TABLE SBI_EXT_ROLES ADD COLUMN SEE_MY_DATA 		BOOLEAN DEFAULT TRUE;
 ALTER TABLE SBI_EXT_ROLES ADD COLUMN SEE_TODO_LIST 		BOOLEAN DEFAULT TRUE;
 ALTER TABLE SBI_EXT_ROLES ADD COLUMN CREATE_DOCUMENTS 	BOOLEAN DEFAULT TRUE;
+
+-- 25/06/2013 Marco: Added default mandatory Dataset Metadata Properties' Values
+INSERT into SBI_DOMAINS (VALUE_ID,VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN) values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),'MEASURE','MEASURE','DS_META_VALUE','Data Set Metadata Value','Data Set Metadata Value','biadmin', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+commit;
+
+INSERT into SBI_DOMAINS (VALUE_ID,VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN) values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),'ATTRIBUTE','ATTRIBUTE','DS_META_VALUE','Data Set Metadata Value','Data Set Metadata Value','biadmin', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+commit;
+
+INSERT into SBI_DOMAINS (VALUE_ID,VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN) values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),'String','String','DS_META_VALUE','Data Set Metadata Value','Data Set Metadata Value','biadmin', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+commit;
+
+INSERT into SBI_DOMAINS (VALUE_ID,VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN) values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),'Integer','Integer','DS_META_VALUE','Data Set Metadata Value','Data Set Metadata Value','biadmin', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+commit;
+
+INSERT into SBI_DOMAINS (VALUE_ID,VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN) values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),'Double','Double','DS_META_VALUE','Data Set Metadata Value','Data Set Metadata Value','biadmin', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+commit;
