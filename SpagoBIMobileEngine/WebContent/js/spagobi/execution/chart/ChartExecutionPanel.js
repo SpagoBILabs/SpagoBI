@@ -147,10 +147,10 @@ Ext.define('app.views.ChartExecutionPanel',{
 	, evalFunction: function(template){
 
 		if((typeof template) == "string"){
-			if(template.indexOf("functionToEval")>=0){
-				template = template.replace("functionToEval(","");
-				template = template.replace(")functionToEval","");
-				template = template.replace("userFunctions.","Sbi.chart.userFunctions");
+			if(template.indexOf("$functionToEval[")>=0){
+				template = template.replace("$functionToEval[","");
+				template = template.replace("]","");
+				template = template.replace("userFunctions","Sbi.chart.userFunctions");
 				template = eval(template);
 			}
 		}
