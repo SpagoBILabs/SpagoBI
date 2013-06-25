@@ -597,13 +597,13 @@
 				<file name="./src/ext4/sbi/widgets/store/DynamicStore.js" /> 
 				<file name="./src/ext4/sbi/widgets/grid/RadioColumn.js" /> 
 				<file name="./src/ext4/sbi/widgets/grid/StaticGridDecorator.js" /> 
-				<file name="./src/ext4/sbi/widgets/grid/CheckColumn.js" /> 
-				<file name="./src/ext4/sbi/widgets/grid/InLineGridFilter.js" /> 
+				<file name="./src/ext4/sbi/widgets/grid/CheckColumn.js" /> 				
 				<file name="./src/ext4/sbi/widgets/grid/DynamicFilteringToolbar.js" /> 
 				<file name="./src/ext4/sbi/widgets/grid/DynamicGridPanel.js" /> 
 				<file name="./src/ext4/sbi/widgets/grid/FixedGridPanel.js" /> 
 				<file name="./src/ext4/sbi/widgets/grid/FixedGridPanelInMemoryFiltered.js" /> 
 				<file name="./src/ext4/sbi/widgets/compositepanel/ListDetailPanel.js" /> 
+				<file name="./src/ext4/sbi/widgets/toolbar/InLineFilterAndOrder.js" />
 				<file name="./src/ext4/sbi/widgets/toolbar/StaticToolbarBuilder.js" /> 
 				<file name="./src/ext4/sbi/widgets/wizard/WizardWindow.js" /> 
 				<file name="./src/ext4/sbi/widgets/frame/EditorIFramePanel.js" /> 
