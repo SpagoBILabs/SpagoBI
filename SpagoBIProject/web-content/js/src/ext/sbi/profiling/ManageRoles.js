@@ -745,18 +745,21 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         
         //Find selected business models categories
 		var bmCategoriesArray = [];
-		var bmCheckBoxes = Ext.getCmp('businessModelsCheckGroup').getComponent('businessModelsCategoriesCheckGroup').items.items;
-		if ((bmCheckBoxes != null) && (bmCheckBoxes !== undefined)){
-			bmCheckBoxes.forEach(function(item){
-		    	//if is checked
-				if(item.getValue()){
-					bmCategoriesArray.push(item.getItemId());
-				}
-
-			});
+		var bmItems = Ext.getCmp('businessModelsCheckGroup').getComponent('businessModelsCategoriesCheckGroup');
+		if (bmItems !== undefined && bmItems !== null &&
+			bmItems.items !== undefined && bmItems.items !== null	){
+			var bmCheckBoxes = bmItems.items.items;
+			if ((bmCheckBoxes != null) && (bmCheckBoxes !== undefined)){
+				bmCheckBoxes.forEach(function(item){
+			    	//if is checked
+					if(item.getValue()){
+						bmCategoriesArray.push(item.getItemId());
+					}
+	
+				});
+			}
+			record.set('bmCategories',bmCategoriesArray);
 		}
-		record.set('bmCategories',bmCategoriesArray);
-        
         
 		return record;		
 	}

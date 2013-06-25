@@ -562,13 +562,16 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 			if (elem.name == 'userId'){
 				userId = userElems[key];				
 				if (rec.get('userId') !== undefined &&  rec.get('userId') == 'public_user'){								
-					userId.setDisabled(true);		
+					//userId.setDisabled(true);		
+					userId.getEl().dom.setAttribute('readOnly', true);
 					this.detailFieldPwd.setDisabled(true); 
 			   	 	this.detailFieldConfirmPwd.setDisabled(true);
 				    this.changePwdButton.hide();					 
 					
 			    }else{
-					 userId.setDisabled(false);
+//					 userId.setDisabled(false);
+//			    	 userId.getEl().dom.setAttribute('readOnly', false);
+			    	 userId.getEl().dom.removeAttribute('readOnly');
 					 this.detailFieldPwd.setDisabled(false); 
 				   	 this.detailFieldConfirmPwd.setDisabled(false);
 					 this.changePwdButton.show();
