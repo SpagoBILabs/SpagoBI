@@ -67,100 +67,21 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 		logger.warn("Response characterEncoding not found!!! Using UTF-8 as default.");
 		characterEncoding = "UTF-8";
 	}
+    String firstPublicUrlToCall = "";
     String firstUrlToCall = "";
-	// if a document or a dataset execution is required, execute it
-	if (aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL) != null || aServiceRequest.getAttribute(ObjectsTreeConstants.DATASET_LABEL) != null) {
-        StringBuffer temp = new StringBuffer();	
-		// dcument execution case
-		if(aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL) != null){
-			String label = (String) aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL);
-			   String subobjectName = (String) aServiceRequest.getAttribute(SpagoBIConstants.SUBOBJECT_NAME);
-		
-
-			   temp.append(contextName + "/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&");
-			   temp.append(ObjectsTreeConstants.OBJECT_LABEL + "=" + label);
-			   if (subobjectName != null && !subobjectName.trim().equals("")) {
-				   temp.append("&" + SpagoBIConstants.SUBOBJECT_NAME + "=" + URLEncoder.encode(subobjectName, characterEncoding));
-				   }
+    if (jsonMenuList.get(0) instanceof JSONObject){
+    	JSONObject firstItem = (JSONObject)jsonMenuList.get(0);
+	    if (firstItem != null){
+	    	firstUrlToCall =  firstItem.getString("firstUrl");
+	    	//firstUrlToCall = firstItem.getString("href");
+	    } else{			
+	    	firstUrlToCall = contextName+"/themes/" + currTheme + "/html/publicUserIntro.html";	
+	    	//firstUrlToCall = firstPublicUrlToCall;
 		}
-	    // dataset execution case
-		else{  
-	         String datasetLabel = (String) aServiceRequest.getAttribute(ObjectsTreeConstants.DATASET_LABEL);
-             String engine = (String) aServiceRequest.getAttribute(ObjectsTreeConstants.ENGINE);
-             temp.append(contextName + "/servlet/AdapterHTTP?ACTION_NAME=SELECT_DATASET_ACTION&");
-             temp.append(ObjectsTreeConstants.DATASET_LABEL + "=" + datasetLabel+"&");
-             temp.append(ObjectsTreeConstants.ENGINE + "=" + engine);
-		}
-	    
-	    // propagates other request parameters than PAGE, NEW_SESSION, OBJECT_LABEL and SUBOBJECT_NAME
-	    Enumeration parameters = request.getParameterNames();
-	    while (parameters.hasMoreElements()) {
-	    	String aParameterName = (String) parameters.nextElement();
-	    	if (aParameterName != null 
-	    			&& !aParameterName.equalsIgnoreCase("PAGE") && !aParameterName.equalsIgnoreCase("NEW_SESSION") 
-	    			&& !aParameterName.equalsIgnoreCase(ObjectsTreeConstants.OBJECT_LABEL)
-        	    	&& !aParameterName.equalsIgnoreCase(SpagoBIConstants.SUBOBJECT_NAME) 
-                    && !aParameterName.equalsIgnoreCase(ObjectsTreeConstants.DATASET_LABEL) 
-                    && !aParameterName.equalsIgnoreCase(ObjectsTreeConstants.ENGINE) 
-        	    	&& request.getParameterValues(aParameterName) != null) {
-	    		String[] values = request.getParameterValues(aParameterName);
-	    		
-	    		for (int i = 0; i < values.length; i++) {
-	    			temp.append("&" + URLEncoder.encode(aParameterName, characterEncoding) + "=" 
-	    					+ URLEncoder.encode(values[i], characterEncoding));
-	    		}
-	    	}
-	    }
-	    
-		firstUrlToCall = temp.toString();
-		
-	} else {
-	
-		if (filteredMenuList.size() > 0) {
-			//DAO method returns menu ordered by parentId, but null values are higher or lower on different database:
-			//PostgreSQL - Nulls are considered HIGHER than non-nulls.
-			//DB2 - Higher
-			//MSSQL - Lower
-			//MySQL - Lower
-			//Oracle - Higher
-			//Ingres - Higher
-			// so we must look for the first menu item with null parentId
-			Menu firtsItem = null;
-			Iterator it = filteredMenuList.iterator();
-			while (it.hasNext()) {
-				Menu aMenuElement = (Menu) it.next();
-				if (aMenuElement.getParentId() == null) {
-					firtsItem = aMenuElement;
-					break;
-				}
-			}
-			String pathInit=MenuUtilities.getMenuPath(firtsItem, locale);
-			Integer objId=firtsItem.getObjId();
-			
-			if(objId!=null){
-				firstUrlToCall = contextName+"/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="+firtsItem.getMenuId();
-			}else if(firtsItem.getStaticPage()!=null){
-				firstUrlToCall = contextName+"/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="+firtsItem.getMenuId();
-			}else if(firtsItem.getFunctionality()!=null){
-				firstUrlToCall = DetailMenuModule.findFunctionalityUrl(firtsItem, contextName);
-			}else if(firtsItem.getExternalApplicationUrl()!=null && !firtsItem.getExternalApplicationUrl().equals("")){
-				firstUrlToCall = firtsItem.getExternalApplicationUrl();
-				if (!GeneralUtilities.isSSOEnabled()) {
-					if (firstUrlToCall.indexOf("?") == -1) {
-						firstUrlToCall += "?" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier;
-					} else {
-						firstUrlToCall += "&" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier;
-					}
-				}
-			} else {				
-				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/publicUserIntro.html";								
-			}
-		} else{			
-			firstUrlToCall = contextName+"/themes/" + currTheme + "/html/publicUserIntro.html";			
-		}
-		
-	}
-	
+    }else{
+    	firstUrlToCall = contextName+"/themes/" + currTheme + "/html/publicUserIntro.html";
+    }
+   
  %>
 <script type="text/javascript">
 
@@ -285,13 +206,12 @@ function goHome(html, path){
 
   
 Ext.onReady(function () {
-	
-	var firstUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
-	firstUrlTocallvar = firstUrl;
+	var firstPublicUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
+	firstUrlTocallvar = firstPublicUrl;
     Ext.tip.QuickTipManager.init();
     this.mainframe = Ext.create('Ext.ux.IFrame', 
     			{ xtype: 'uxiframe'
-  	  			, src: firstUrl
+  	  			, src: firstPublicUrl
   	  			, height: '100%'
   	  			});
     
