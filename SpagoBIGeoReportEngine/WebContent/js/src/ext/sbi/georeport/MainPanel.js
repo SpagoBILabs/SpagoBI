@@ -163,13 +163,12 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 		template.mapName = this.mapName;
 		template.analysisType = this.analysisType;
 		
-		template.analysisConf = Ext.util.JSON.encode(this.controlPanel.getAnalysisConf())
+		template.analysisConf = this.controlPanel.getAnalysisConf();
 		template.feautreInfo = this.feautreInfo;
 		template.indicators = this.indicators;
 		template.businessId = this.businessId;
 		template.geoId = this.geoId;
 		template.selectedBaseLayer = this.selectedBaseLayer;
-		console.log( Ext.util.JSON.encode(this.targetLayerConf) );
 		template.targetLayerConf = this.targetLayerConf;
 		
 		//console.log( Ext.util.JSON.encode(this.controlPanelConf) );
@@ -574,24 +573,38 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 			mapPanelConf.tbar = this.toolbar;
 		}
 	 
-	 
-		this.mapPanel = new Ext.TabPanel({
-		    region    : 'center',
-		    margins   : '3 3 3 0', 
-		    activeTab : 0,
-		    defaults  : {
-				autoScroll : true
-			},
-
-	       	items: [
-		       	new Ext.Panel(mapPanelConf), {
-		            title    : 'Info',
-		            html: '<div id="info"</div>',
-		            id: 'infotable',
-		            autoScroll: true
-		        }
-		    ]
-		});
+		if(this.detailDocumentConf) {
+			
+			this.mapPanel = new Ext.TabPanel({
+			    region    : 'center',
+			    margins   : '3 3 3 0', 
+			    activeTab : 0,
+			    defaults  : {
+					autoScroll : true
+				},
+		       	items: [
+		       	   new Ext.Panel(mapPanelConf), 
+		       	   {
+			            title    : 'Info',
+			            html: '<div id="info"</div>',
+			            id: 'infotable',
+			            autoScroll: true
+			        }
+		       	]
+			});
+		} else {
+			delete mapPanelConf.title;
+			this.mapPanel = new Ext.Panel({
+			    region    : 'center',
+			    margins   : '3 3 3 0', 
+			    defaults  : {
+					autoScroll : true
+				},
+		       	items: [new Ext.Panel(mapPanelConf)]
+			});
+		}
+		
+		
 	}
 	
 	, initControlPanel: function() {		

@@ -37,10 +37,11 @@ Sbi.georeport.ControlPanel = function(config) {
 	
 	var defaultSettings = {
 		title       : LN('sbi.georeport.controlpanel.title'),
-		region      : 'west',
+		region      : 'east',
 		split       : true,
 		width       : 315,
 		collapsible : true,
+		collapsed   : true,
 		margins     : '3 0 3 3',
 		cmargins    : '3 3 3 3',
 		autoScroll	 : true,
