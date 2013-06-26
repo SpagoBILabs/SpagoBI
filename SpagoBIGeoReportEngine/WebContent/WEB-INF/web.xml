@@ -98,6 +98,7 @@
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
 		<url-pattern>/GeoReportEngineStartAction/*</url-pattern>
+		<url-pattern>/GeoReportEngineStartEditAction/*</url-pattern>
 	</filter-mapping>
 	
 
@@ -124,6 +125,13 @@
 	</servlet>
 	
 	<servlet>
+		<servlet-name>GeoReportEngineStartEditAction</servlet-name>
+		<servlet-class>
+			it.eng.spagobi.engines.georeport.services.GeoReportEngineStartEditAction
+		</servlet-class>
+	</servlet>
+	
+	<servlet>
       <servlet-name>GetLayersFromWMS</servlet-name>
       <servlet-class>
 			it.eng.spagobi.engines.georeport.services.GetLayersFormWMSAction
@@ -137,7 +145,7 @@
 		</servlet-class>
 	</servlet>
 	  
-      <servlet>
+    <servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>
 			it.eng.spagobi.utilities.engines.EngineTestServlet
@@ -174,6 +182,11 @@
 	<servlet-mapping>
 		<servlet-name>GeoReportEngineStartAction</servlet-name>
 		<url-pattern>/GeoReportEngineStartAction</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>GeoReportEngineStartEditAction</servlet-name>
+		<url-pattern>/GeoReportEngineStartEditAction</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>

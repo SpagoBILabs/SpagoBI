@@ -146,10 +146,12 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		    });
 
 		
+		    var geoReportPanel = null;
+		    
 			Ext.onReady(function(){
 			
 				Ext.QuickTips.init();   
-				var geoReportPanel = new Sbi.georeport.MainPanel(Sbi.template);	    
+				geoReportPanel = new Sbi.georeport.MainPanel(Sbi.template);	    
 	      		var viewport = new Ext.Viewport({
 	      			id:    'view',
 		      		layout: 'fit',

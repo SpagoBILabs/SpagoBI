@@ -170,6 +170,10 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 	        }, this.analysisPanelConf));
 			
 			this.geostatistic.on('ready', function(){
+				
+				this.setAnalysisConf( this.geostatistic.analysisConf );
+				
+				/*
 				var analysisConf = this.geostatistic.analysisConf || {};
 				
 				var method = analysisConf.method || 'CLASSIFY_BY_QUANTILS';
@@ -190,11 +194,48 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 				this.geostatistic.form.findField('indicator').setValue(indicator);
 				
 				this.geostatistic.classify();
+				*/
 			}, this);
 			
 			
 			this.controlPanelItemsConfig.push(this.analysisControlPanel);
 		}
+	}
+	
+	, setAnalysisConf: function(analysisConf) {
+		
+		analysisConf = analysisConf || {};
+		
+		var method = analysisConf.method || 'CLASSIFY_BY_QUANTILS';
+		this.geostatistic.form.findField('method').setValue(method);
+		//this.geostatistic.form.findField('method').setValue('CLASSIFY_BY_EQUAL_INTERVALS');
+		//this.geostatistic.form.findField('method').setValue('CLASSIFY_BY_QUANTILS');
+		
+		var classes =  analysisConf.classes || 5;
+		this.geostatistic.form.findField('numClasses').setValue(classes);
+		
+		var fromColor =  analysisConf.fromColor || '#FFFF99';
+		this.geostatistic.form.findField('colorA').setValue(fromColor);
+		var toColor =  analysisConf.toColor || '#FF6600';
+		this.geostatistic.form.findField('colorB').setValue(toColor);
+		
+		if(analysisConf.indicator) analysisConf.indicator = analysisConf.indicator.toUpperCase();
+		var indicator = analysisConf.indicator || this.geostatistic.indicators[0][0];
+		this.geostatistic.form.findField('indicator').setValue(indicator);
+		
+		this.geostatistic.classify();
+	}
+	
+	, getAnalysisConf: function() {
+		var analysisConf = {};
+		
+		analysisConf.method = this.geostatistic.form.findField('method').getValue();
+		analysisConf.classes = this.geostatistic.form.findField('numClasses').getValue();
+		analysisConf.fromColor = this.geostatistic.form.findField('colorA').getValue();
+		analysisConf.toColor = this.geostatistic.form.findField('colorB').getValue();
+		analysisConf.indicator = this.geostatistic.form.findField('indicator').getValue();
+		
+		return analysisConf;
 	}
 	
 	, initMeasureControlPanel: function() {

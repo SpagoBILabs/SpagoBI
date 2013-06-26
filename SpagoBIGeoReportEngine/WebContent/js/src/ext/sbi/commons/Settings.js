@@ -98,7 +98,7 @@ Sbi.settings.georeport = {
      	        url: "http://labs.metacarta.com/wms/vmap0",
      	        params: {layers: 'basic'},
      	        options: {singleTile: false}, 
-				enabled: true
+				enabled: false
      	    }, 
      	    {
      	    	type: 'WMS',
