@@ -18,6 +18,7 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 	congig:{
     	worksheetEngineBaseUrl : '',
         qbeEngineBaseUrl : '',
+        georeportEngineBaseUrl :  '',
         user : '',
         datasetsServicePath: ''
 	},
@@ -63,11 +64,16 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 	}
 
 	, executeDocument: function(docType,inputType, record){
-		if(docType=='QBE'){
+		if( docType == 'QBE' ) {
 			this.executeQbe(inputType, record);
-		}else{
+		} else if ( docType == 'WORKSHEET' ) {
 			this.executeWorksheet(inputType, record);
+		} else if( docType == 'GEOREPORT' ) {
+			this.executeGeoreport(inputType, record);
+		} else {
+			alert('Impossible to execute document of type [' + docType + ']');
 		}
+		
 		this.getLayout().setActiveItem(1);	
 	}
 	
@@ -85,7 +91,7 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		}
 	}
 	
-	,executeWorksheet: function(inputType, record){
+	, executeWorksheet: function(inputType, record){
 		if(inputType == "DATASET"){
 			var datasetLabel = record.data.label;
 			var dataSourceLabel = record.data.dataSource;
@@ -96,6 +102,20 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			this.documentexecution.load(url);
 			this.documentexecution.datasetLabel = datasetLabel;
 			
+		}
+	}
+	
+	, executeGeoreport: function(inputType, record){
+		if(inputType == "DATASET"){
+			var datasetLabel = record.data.label;
+			var dataSourceLabel = record.data.dataSource;
+			
+			var url =  this.georeportEngineBaseUrl+ '&dataset_label=' + datasetLabel ;
+			if(dataSourceLabel || dataSourceLabel!=""){
+				url = url+ '&datasource_label=' + dataSourceLabel;
+			}
+			this.documentexecution.load(url);
+			this.documentexecution.datasetLabel = datasetLabel;
 		}
 	}
 	

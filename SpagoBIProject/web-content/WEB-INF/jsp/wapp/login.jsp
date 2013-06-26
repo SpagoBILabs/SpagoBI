@@ -248,7 +248,7 @@ a:hover{
 									<td width="25px">&nbsp;</td>
 
 								</tr>
-								<% if (isInternalSecurity) {%>
+								
 								<tr>
 									<td><input id="password" name="password" type="password"
 										size="25" class="login">
@@ -278,7 +278,7 @@ a:hover{
 									<td>&nbsp;</td>
 									<td class='login-label' width="150px"></td>
 								</tr>
-								<% } %>
+								
 							</table></td>
 						<td style="padding-top: 20px">&nbsp;&nbsp;</td>
 					</tr>
