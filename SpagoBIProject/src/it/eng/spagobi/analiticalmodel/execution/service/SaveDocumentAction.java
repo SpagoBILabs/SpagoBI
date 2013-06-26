@@ -219,7 +219,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			
 				
 			BIObject document = createBaseDocument(documentJSON, null, foldersJSON);				
-			ObjTemplate template = buildDocumentTemplate(customDataJSON, null);
+			ObjTemplate template = buildDocumentTemplate("template.sbigeoreport", customDataJSON, null);
 								
 			document.setDataSetId(sourceDataset.getId());
 			
@@ -307,7 +307,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			}
 			
 			BIObject document = createBaseDocument(documentJSON, sourceDocumentJSON, foldersJSON);
-			ObjTemplate template = buildDocumentTemplate(customDataJSON, sourceDocument);
+			ObjTemplate template = buildDocumentTemplate("template.sbiworksheet", customDataJSON, sourceDocument);
 												
 			documentManagementAPI.saveDocument(document, template);
 			documentManagementAPI.copyParameters(sourceDocument, document);
@@ -343,7 +343,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			}
 			
 			customDataJSON.put("modelName", modelName);
-			ObjTemplate template = buildDocumentTemplate(customDataJSON, null);
+			ObjTemplate template = buildDocumentTemplate("template.sbiworksheet", customDataJSON, null);
 												
 			documentManagementAPI.saveDocument(document, template);
 
@@ -384,7 +384,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			
 				
 			BIObject document = createBaseDocument(documentJSON, null, foldersJSON);				
-			ObjTemplate template = buildDocumentTemplate(customDataJSON, null);
+			ObjTemplate template = buildDocumentTemplate("template.sbiworksheet", customDataJSON, null);
 								
 			document.setDataSetId(sourceDataset.getId());
 			
@@ -581,17 +581,17 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		return document;
 	}
 	
-	private ObjTemplate buildDocumentTemplate(JSONObject customDataJSON, BIObject sourceDocument) {
+	private ObjTemplate buildDocumentTemplate(String templateName, JSONObject customDataJSON, BIObject sourceDocument) {
 		String templateContent = customDataJSON.optString("templateContent");
 		String worksheetData = customDataJSON.optString("worksheet");
 		JSONObject smartFilterData = customDataJSON.optJSONObject("smartFilter");
 		String query = customDataJSON.optString("query");
 		String modelName =  customDataJSON.optString("modelName");
-		return buildDocumentTemplate(templateContent, sourceDocument, 
+		return buildDocumentTemplate(templateName, templateContent, sourceDocument, 
 				query, smartFilterData, worksheetData, modelName);
 	}
 	
-	private ObjTemplate buildDocumentTemplate(String templateContent, BIObject sourceDocument, 
+	private ObjTemplate buildDocumentTemplate(String templateName, String templateContent, BIObject sourceDocument, 
 			String query, JSONObject smartFilterData, String worksheetData, String modelName) {
 		
 		ObjTemplate template = null;
@@ -602,7 +602,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 					
 			UserProfile userProfile = (UserProfile) this.getUserProfile();
 			String templateAuthor =  userProfile.getUserId().toString();
-			String templateName = "template.sbiworksheet";
 			
 			if( StringUtilities.isNotEmpty( templateContent ) ){
 				template = documentTemplateBuilder.buildDocumentTemplate(templateName, templateAuthor, templateContent);
